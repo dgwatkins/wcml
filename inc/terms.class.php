@@ -341,7 +341,7 @@ class WCML_Terms{
                                         JOIN {$wpdb->prefix}icl_string_translations t ON t.string_id = s.id
                                     WHERE s.value='". esc_sql($base)."'";
 
-                        if ( defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSION, '3.2', '<' ) ) {
+                        if ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
                             $sql .= " AND s.language = '{$strings_language}' ";
                         }
 
@@ -353,7 +353,7 @@ class WCML_Terms{
                         $base_translated = $base;
                     }
                     
-                    if(!empty($base_translated) && $base_translated != $base){
+                    if(!empty($base_translated) && $base_translated != $base && isset( $wp_rewrite->extra_permastructs[$taxonomy] ) ){
                         
                         $buff = $wp_rewrite->extra_permastructs[$taxonomy]['struct'];
                         $wp_rewrite->extra_permastructs[$taxonomy]['struct'] = str_replace($base, $base_translated, $wp_rewrite->extra_permastructs[$taxonomy]['struct']);

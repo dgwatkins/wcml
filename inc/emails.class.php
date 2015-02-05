@@ -2,7 +2,9 @@
 class WCML_Emails{
 
     private $order_id = false;
-    
+
+    private $locale = false;
+
     function __construct(){
         
         add_action('init', array($this, 'init'));
@@ -48,6 +50,8 @@ class WCML_Emails{
         add_action( 'woocommerce_order_status_failed_to_on-hold_notification', array( $this, 'admin_email' ), 9 );
 
         add_filter( 'icl_st_admin_string_return_cached', array( $this, 'admin_string_return_cached' ), 10, 2 );
+
+        add_filter( 'plugin_locale', array( $this, 'set_locale_for_emails' ), 10, 2 );
     }    
     function email_refresh_in_ajax(){
         if(isset($_GET['order_id'])){
@@ -117,7 +121,7 @@ class WCML_Emails{
     function comments_language(){
         global $sitepress_settings;
 
-        if ( defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSION, '3.2', '>=' ) ) {
+        if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
             $context_ob = icl_st_get_context( 'woocommerce' );
             if($context_ob){
                 $this->change_email_language($context_ob->language);
@@ -219,6 +223,7 @@ class WCML_Emails{
     function change_email_language($lang){
         global $sitepress,$woocommerce;
         $sitepress->switch_lang($lang,true);
+        $this->locale = $sitepress->get_locale( $lang );
         unload_textdomain('woocommerce');
         unload_textdomain('default');
         $woocommerce->load_plugin_textdomain();
@@ -269,7 +274,7 @@ class WCML_Emails{
     function wcml_get_email_string_info( $name ){
         global $wpdb;
 
-        if ( defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSION, '3.2', '>=' ) ) {
+        if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
             $result = $wpdb->get_results( $wpdb->prepare( "SELECT st.value,cn.context FROM {$wpdb->prefix}icl_strings as st LEFT JOIN {$wpdb->prefix}icl_string_contexts as cn ON st.context_id = cn.id WHERE st.name = %s ", $name ) );
         }else{
             global $sitepress_settings;
@@ -305,6 +310,16 @@ class WCML_Emails{
         }
 
         return $current_language;
+    }
+
+    // set correct locale code for emails
+    function set_locale_for_emails(  $locale, $domain ){
+
+        if( $domain == 'woocommerce' && $this->locale ){
+            $locale = $this->locale;
+        }
+
+        return $locale;
     }
 
 }

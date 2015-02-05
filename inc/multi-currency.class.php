@@ -89,6 +89,7 @@ class WCML_WC_MultiCurrency{
 
         //dashboard status screen
         if(is_admin() && ( current_user_can( 'view_woocommerce_reports' ) || current_user_can( 'manage_woocommerce' ) || current_user_can( 'publish_shop_orders' ) ) ){
+            add_action( 'init', array( $this, 'set_dashboard_currency') );
             add_action( 'wp_dashboard_setup', array( $this, 'dashboard_currency_dropdown' ) );
 
             add_filter( 'woocommerce_dashboard_status_widget_sales_query', array( $this, 'filter_dashboard_status_widget_sales_query' ) );
@@ -928,14 +929,31 @@ class WCML_WC_MultiCurrency{
         ");
     }
 
+    function set_dashboard_currency_ajax(){
+
+        $this->set_dashboard_currency($_POST['currency']);
+
+        die();
+    }
+
+
     /*
      * Set dashboard currency cookie
      */
-    function set_dashboard_currency(){
+    function set_dashboard_currency( $currency_code = false ){
 
-        setcookie('_wcml_dashboard_currency', $_POST['currency'], time() + 86400, COOKIEPATH, COOKIE_DOMAIN);
+        if( !$currency_code && !headers_sent()){
+            $order_currencies = $this->get_orders_currencies();
+            $currency_code = get_woocommerce_currency();
+            if(!isset($order_currencies[$currency_code])){
+                foreach( $order_currencies as $currency_code => $count ){
+                    $currency_code = $currency_code;
+                    break;
+                }
+            }
+        }
 
-        die();
+        setcookie('_wcml_dashboard_currency', $currency_code , time() + 86400, COOKIEPATH, COOKIE_DOMAIN);
 
     }
 

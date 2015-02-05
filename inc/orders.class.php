@@ -39,7 +39,7 @@ class WCML_Orders{
         if(in_array($text,$this->standart_order_notes)){
             global $sitepress_settings,$wpdb;
 
-            if ( defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSION, '3.2', '>=' ) ) {
+            if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
                 $string_id = $wpdb->get_var($wpdb->prepare("SELECT st.id FROM {$wpdb->prefix}icl_strings as st LEFT JOIN {$wpdb->prefix}icl_string_contexts as cn ON st.context_id = cn.id WHERE cn.context = %s AND st.value = %s ", $domain, $text ));
                 $language = icl_st_get_string_language( $string_id );
             }else{
@@ -69,7 +69,7 @@ class WCML_Orders{
 
             foreach($comments as $key=>$comment){
 
-                if ( defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSION, '3.2', '>=' ) ) {
+                if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
                     $comment_string_id = $wpdb->get_var($wpdb->prepare("SELECT st.id FROM {$wpdb->prefix}icl_strings as st LEFT JOIN {$wpdb->prefix}icl_string_contexts as cn ON st.context_id = cn.id WHERE st.value = %s ", $comment->comment_content));
                 }else{
                     $comment_string_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}icl_strings WHERE language = %s AND value = %s ", $sitepress_settings['st']['strings_language'], $comment->comment_content));

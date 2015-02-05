@@ -105,9 +105,6 @@ class WCML_Products{
            require WPSEO_PATH . 'admin/class-metabox.php';
         }
 
-        //update icl_translation table after change default language
-        add_action('icl_after_set_default_language',array($this,'after_set_default_language'),10,2);
-
         // Override cached widget id
         add_filter('woocommerce_cached_widget_id', array($this, 'override_cached_widget_id'));
 
@@ -326,7 +323,12 @@ class WCML_Products{
                 if( $lang['code'] == $slang ) continue;
                     $tbl_alias_suffix = str_replace('-','_',$lang['code']);
                     $sql .= " LEFT JOIN {$wpdb->prefix}icl_translations iclt_{$tbl_alias_suffix}
-                                ON iclt_{$tbl_alias_suffix}.trid=t.trid AND iclt_{$tbl_alias_suffix}.language_code='{$lang['code']}'\n";
+                            ON iclt_{$tbl_alias_suffix}.trid=t.trid ";
+                if( $slang ){
+                    $sql .= " AND iclt_{$tbl_alias_suffix}.language_code='{$lang['code']}'\n";
+                }else{
+                    $sql .= " AND iclt_{$tbl_alias_suffix}.source_language_code IS NULL ";
+                }
                     $sql   .= " LEFT JOIN {$wpdb->prefix}icl_translation_status iclts_{$tbl_alias_suffix}
                                 ON iclts_{$tbl_alias_suffix}.translation_id=iclt_{$tbl_alias_suffix}.translation_id\n";
                 }
@@ -2599,6 +2601,7 @@ function get_cart_attribute_translation($taxonomy,$attribute,$product_id,$tr_pro
             $sitepress_settings["translation-management"]["taxonomies_readonly_config"][$tax_key] = 1;
             $iclTranslationManagement->settings['taxonomies_readonly_config'][$tax_key] = 1;
             $sitepress_settings["taxonomies_sync_option"][$tax_key] = 1;
+            $sitepress->verify_taxonomy_translations($tax_key);
         }
         $sitepress->save_settings($sitepress_settings);
 
@@ -2656,19 +2659,37 @@ function get_cart_attribute_translation($taxonomy,$attribute,$product_id,$tr_pro
     function woocommerce_duplicate_product($new_id, $post){
         global $sitepress,$wpdb;
 
-        $sitepress->set_element_language_details($new_id, 'post_' . $post->post_type, false, $sitepress->get_current_language());
-        $new_trid = $sitepress->get_element_trid( $new_id, 'post_' . $post->post_type );
 
-
+        //duplicate original first
         $trid = $sitepress->get_element_trid( $post->ID, 'post_' . $post->post_type );
+        $orig_id = $sitepress->get_original_element_id_by_trid( $trid );
+        $orig_lang = $this->get_original_product_language( $post->ID );
+
+        $wc_admin = new WC_Admin_Duplicate_Product();
+
+        if( $orig_id == $post->ID ){
+            $sitepress->set_element_language_details($new_id, 'post_' . $post->post_type, false, $orig_lang);
+            $new_trid = $sitepress->get_element_trid( $new_id, 'post_' . $post->post_type );
+        }else{
+            $post_to_duplicate = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE ID=$orig_id" );
+
+            if ( ! empty( $post_to_duplicate ) ) {
+                $new_orig_id = $wc_admin->duplicate_product( $post_to_duplicate );
+
+                $sitepress->set_element_language_details( $new_orig_id, 'post_' . $post->post_type, false, $orig_lang );
+                $new_trid = $sitepress->get_element_trid( $new_orig_id, 'post_' . $post->post_type );
+
+                $sitepress->set_element_language_details( $new_id, 'post_' . $post->post_type, $new_trid, $sitepress->get_current_language() );
+            }
+        }
+
         $translations = $sitepress->get_element_translations( $trid, 'post_' . $post->post_type );
 
 
         if($translations){
-            $wc_admin = new WC_Admin_Duplicate_Product();
 
             foreach($translations as $translation){
-                if($translation->element_id != $post->ID){
+                if( !$translation->original && $translation->element_id != $post->ID ){
                     $post_to_duplicate = $wpdb->get_row( "SELECT * FROM $wpdb->posts WHERE ID=$translation->element_id" );
 
                     if ( ! empty( $post_to_duplicate ) ) {
@@ -2678,9 +2699,8 @@ function get_cart_attribute_translation($taxonomy,$attribute,$product_id,$tr_pro
                     }
                 }
             }
-           
-        }
 
+        }
 
     }
 
@@ -2736,27 +2756,6 @@ function get_cart_attribute_translation($taxonomy,$attribute,$product_id,$tr_pro
             }
 
     }
-
-
-    function after_set_default_language( $code, $previous_code ){
-        global $wpdb;
-
-        $wpdb->update(
-            $wpdb->prefix.'icl_translations',
-            array(
-                'source_language_code' => $code
-            ),
-            array(
-                'language_code' => $previous_code,
-                'element_type' => 'post_product'
-            )
-        );
-
-        //Use query to set source_language_code to NULL
-        $wpdb->query("UPDATE {$wpdb->prefix}icl_translations SET source_language_code = NULL WHERE language_code = '".$code."' AND element_type = 'post_product'" );
-
-    }
-
 
     function override_cached_widget_id($widget_id){
 

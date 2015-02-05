@@ -16,6 +16,7 @@ define('WCML_PLUGIN_FOLDER', basename(WCML_PLUGIN_PATH));
 define('WCML_PLUGIN_URL', plugins_url() . '/' . WCML_PLUGIN_FOLDER);
 define('WCML_LOCALE_PATH',WCML_PLUGIN_FOLDER.'/locale');
 define('WPML_LOAD_API_SUPPORT',true);
+define('WPML_SUPPORT_STRINGS_IN_DIFF_LANG', false);
 
 define('WCML_MULTI_CURRENCIES_DISABLED', 0);
 define('WCML_MULTI_CURRENCIES_PER_LANGUAGE', 1); //obsolete - migrate to 2

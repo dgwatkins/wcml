@@ -43,7 +43,7 @@ $default_language = $sitepress->get_default_language();
 $miss_slug_lang = $woocommerce_wpml->strings->get_missed_product_slag_translations_languages();
 $prod_slug = $woocommerce_wpml->strings->product_permalink_slug();
 
-if( ( defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSION, '3.2', '<' ) && $default_language != 'en' && ( $sitepress_settings['st']['strings_language'] != 'en' || empty( $woocommerce_wpml->settings['dismiss_non_default_language_warning'] ) ) ) || !empty($woocommerce_wpml->dependencies->xml_config_errors) || !empty($miss_slug_lang) ): ?>
+if( ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && ( $sitepress_settings['st']['strings_language'] != 'en' || empty( $woocommerce_wpml->settings['dismiss_non_default_language_warning'] ) ) ) || !empty($woocommerce_wpml->dependencies->xml_config_errors) || !empty($miss_slug_lang) ): ?>
 <div class="wcml-section">
     <div class="wcml-section-header">
         <h3>
@@ -56,11 +56,11 @@ if( ( defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSI
 
         <?php if( !empty( $miss_slug_lang ) ): ?>
 
-            <p><i class="icon-warning-sign"></i><?php printf(__("Your product permalink base is not translated in %s. The urls for the translated products will not work. Go to the %sString Translation%s to translate.", 'wpml-wcml'), '<b>'. implode(', ',$miss_slug_lang).'</b>' ,'<a href="'.admin_url('admin.php?page='.WPML_ST_FOLDER.'/menu/string-translation.php&search='.$prod_slug.'&context=WordPress').'">', '</a>') ?> </p>
+            <p><i class="icon-warning-sign"></i><?php printf(__("Your product permalink base is not translated in %s. The urls for the translated products will not work. Go to the %sString Translation%s to translate.", 'wpml-wcml'), '<b>'. implode(', ',$miss_slug_lang).'</b>' ,'<a href="'.admin_url('admin.php?page='.WPML_ST_FOLDER.'/menu/string-translation.php&search='.$prod_slug.'&context=WordPress&em=1').'">', '</a>') ?> </p>
 
         <?php endif;?>
 
-        <?php if(defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSION, '3.2', '<' ) && $default_language != 'en'): ?>
+        <?php if(!WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en'): ?>
         
         <?php if($sitepress_settings['st']['strings_language'] != 'en'): ?>
         <p><i class="icon-warning-sign"></i><strong><?php _e('Attention required: probable problem with URLs in different languages', 'wpml-wcml') ?></strong></p>

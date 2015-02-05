@@ -84,10 +84,12 @@ $woocommerce_wpml->update_settings();
                 $sql = "SELECT tt.term_taxonomy_id,tt.term_id,t.name FROM $wpdb->term_taxonomy AS tt
                         LEFT JOIN $wpdb->terms AS t ON tt.term_id = t.term_id
                         LEFT JOIN {$wpdb->prefix}icl_translations AS icl ON icl.element_id = tt.term_taxonomy_id
-                        WHERE tt.taxonomy = 'product_cat' AND icl.element_type= 'tax_product_cat' AND icl.source_language_code IS NULL";
+                        WHERE tt.taxonomy = 'product_cat' AND icl.element_type= 'tax_product_cat' ";
 
                 if( $slang ){
                     $sql .=  " AND icl.language_code = '".$slang."'";
+                }else{
+                    $sql .=  "AND icl.source_language_code IS NULL";
                 }
 
                 $product_categories = $wpdb->get_results($sql);
