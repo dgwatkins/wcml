@@ -731,6 +731,7 @@ class WCML_Multi_Currency_Support{
     }
 
     function get_product_custom_prices($product_id, $currency = false){
+
         global $wpdb, $sitepress, $woocommerce_wpml;
         
         $distinct_prices = false;
@@ -743,7 +744,7 @@ class WCML_Multi_Currency_Support{
         $post_type = get_post_type($product_id);
         $product_translations = $sitepress->get_element_translations($sitepress->get_element_trid($product_id, 'post_'.$post_type), 'post_'.$post_type);
         foreach($product_translations as $translation){
-            if( $woocommerce_wpml->products->is_original_product($translation->element_id) ){
+            if( $translation->original ){
                 $original_product_id = $translation->element_id;
                 break;
             }
