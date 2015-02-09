@@ -139,7 +139,6 @@ class WCML_Store_Pages{
         if ( ! $q->is_main_query() )
             return;
 
-
         //do not alter query_object and query_object_id (part 1 of 2)
         global $wp_query;
         $queried_object_original = isset($wp_query->queried_object) ? $wp_query->queried_object : null;
@@ -152,9 +151,8 @@ class WCML_Store_Pages{
             (
                 $this->shop_page_id == $q->get('page_id') ||
                 (
-                    !$q->get_queried_object_id() &&
-                    $q->query &&
-                    $this->shop_page_id == $this->front_page_id
+                    isset($q->is_home) &&
+                    $q->is_home
                 )
             )
 
