@@ -2883,40 +2883,21 @@ function get_cart_attribute_translation($taxonomy,$attribute,$product_id,$tr_pro
 
     // Check if original product
     function is_original_product( $product_id ){
-
-        $cache_key =  $product_id;
-        $cache_group = 'is_original_product';
-
-        $temp_is_original = wp_cache_get($cache_key, $cache_group);
-        if($temp_is_original) return $temp_is_original;
-
-
         global $wpdb;
 
         $is_original = $wpdb->get_var( $wpdb->prepare( "SELECT source_language_code IS NULL FROM {$wpdb->prefix}icl_translations WHERE element_id=%d AND element_type='post_product'", $product_id ) );
-
-        wp_cache_set( $cache_key, $is_original, $cache_group );
 
         return $is_original;
     }
 
     // Get original product language
     function get_original_product_language( $product_id ){
-
-        $cache_key = $product_id;
-        $cache_group = 'original_product_language';
-
-        $temp_language = wp_cache_get( $cache_key, $cache_group );
-        if($temp_language) return $temp_language;
-
         global $wpdb;
 
         $language = $wpdb->get_var( $wpdb->prepare( "
                             SELECT t2.language_code FROM {$wpdb->prefix}icl_translations as t1
                             LEFT JOIN {$wpdb->prefix}icl_translations as t2 ON t1.trid = t2.trid
                             WHERE t1.element_id=%d AND t1.element_type=%s AND t2.source_language_code IS NULL", $product_id, 'post_'.get_post_type($product_id) ) );
-
-        wp_cache_set( $cache_key, $language, $cache_group );
 
         return $language;
     }

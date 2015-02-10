@@ -731,7 +731,6 @@ class WCML_Multi_Currency_Support{
     }
 
     function get_product_custom_prices($product_id, $currency = false){
-
         global $wpdb, $sitepress, $woocommerce_wpml;
         
         $distinct_prices = false;
@@ -744,7 +743,7 @@ class WCML_Multi_Currency_Support{
         $post_type = get_post_type($product_id);
         $product_translations = $sitepress->get_element_translations($sitepress->get_element_trid($product_id, 'post_'.$post_type), 'post_'.$post_type);
         foreach($product_translations as $translation){
-            if( $translation->original ){
+            if( $woocommerce_wpml->products->is_original_product($translation->element_id) ){
                 $original_product_id = $translation->element_id;
                 break;
             }
@@ -944,34 +943,40 @@ class WCML_Multi_Currency_Support{
     }
     
     function shipping_taxes_filter($methods){
+        static $filtered_once = false;
+        
+        if(empty($filtered_once)){
             
-        global $woocommerce;
-        $woocommerce->shipping->load_shipping_methods();
-        $shipping_methods = $woocommerce->shipping->get_shipping_methods();
+            global $woocommerce;                
+            $woocommerce->shipping->load_shipping_methods();
+            $shipping_methods = $woocommerce->shipping->get_shipping_methods();
 
-        foreach($methods as $k => $method){
-
-            // exceptions
-            if(
-                isset($shipping_methods[$method->id]) && isset($shipping_methods[$method->id]->settings['type']) && $shipping_methods[$method->id]->settings['type'] == 'percent'
-                 || preg_match('/^table_rate-[0-9]+ : [0-9]+$/', $k)
-            ){
-                continue;
+            foreach($methods as $k => $method){
+                
+                // exceptions
+                if(
+                    isset($shipping_methods[$method->id]) && isset($shipping_methods[$method->id]->settings['type']) && $shipping_methods[$method->id]->settings['type'] == 'percent' 
+                     || preg_match('/^table_rate-[0-9]+ : [0-9]+$/', $k)
+                ){
+                    continue;
+                } 
+                    
+                
+                foreach($method->taxes as $j => $tax){
+                    
+                    $methods[$k]->taxes[$j] = apply_filters('wcml_shipping_price_amount', $methods[$k]->taxes[$j]);
+                    
+                }
+                
+                if($methods[$k]->cost){
+                    $methods[$k]->cost = apply_filters('wcml_shipping_price_amount', $methods[$k]->cost);
+                }
+                
             }
-
-
-            foreach($method->taxes as $j => $tax){
-
-                $methods[$k]->taxes[$j] = apply_filters('wcml_shipping_price_amount', $methods[$k]->taxes[$j]);
-
-            }
-
-            if($methods[$k]->cost){
-                $methods[$k]->cost = apply_filters('wcml_shipping_price_amount', $methods[$k]->cost);
-            }
-
+            
+            $filtered_once = true;
         }
-
+        
         return $methods;
     }
     
