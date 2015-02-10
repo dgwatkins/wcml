@@ -15,6 +15,21 @@ class WCML_Requests{
             
             $woocommerce_wpml->settings['enable_multi_currency'] = $_POST['multi_currency'];                
 
+            //update default currency settings
+            if( $_POST['multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
+                $options = array(
+                    'woocommerce_currency_pos' => 'position',
+                    'woocommerce_price_thousand_sep' => 'thousand_sep',
+                    'woocommerce_price_decimal_sep' => 'decimal_sep',
+                    'woocommerce_price_num_decimals' => 'num_decimals'
+                );
+
+                $woocommerce_currency = get_option('woocommerce_currency', true);
+
+                foreach($options as $wc_key => $key){
+                    $woocommerce_wpml->settings['currency_options'][$woocommerce_currency][$key] = get_option( $wc_key,true );
+                }
+            }
 
             $woocommerce_wpml->update_settings();
             
