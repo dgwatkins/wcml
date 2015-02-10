@@ -944,40 +944,34 @@ class WCML_Multi_Currency_Support{
     }
     
     function shipping_taxes_filter($methods){
-        static $filtered_once = false;
-        
-        if(empty($filtered_once)){
             
-            global $woocommerce;                
-            $woocommerce->shipping->load_shipping_methods();
-            $shipping_methods = $woocommerce->shipping->get_shipping_methods();
+        global $woocommerce;
+        $woocommerce->shipping->load_shipping_methods();
+        $shipping_methods = $woocommerce->shipping->get_shipping_methods();
 
-            foreach($methods as $k => $method){
-                
-                // exceptions
-                if(
-                    isset($shipping_methods[$method->id]) && isset($shipping_methods[$method->id]->settings['type']) && $shipping_methods[$method->id]->settings['type'] == 'percent' 
-                     || preg_match('/^table_rate-[0-9]+ : [0-9]+$/', $k)
-                ){
-                    continue;
-                } 
-                    
-                
-                foreach($method->taxes as $j => $tax){
-                    
-                    $methods[$k]->taxes[$j] = apply_filters('wcml_shipping_price_amount', $methods[$k]->taxes[$j]);
-                    
-                }
-                
-                if($methods[$k]->cost){
-                    $methods[$k]->cost = apply_filters('wcml_shipping_price_amount', $methods[$k]->cost);
-                }
-                
+        foreach($methods as $k => $method){
+
+            // exceptions
+            if(
+                isset($shipping_methods[$method->id]) && isset($shipping_methods[$method->id]->settings['type']) && $shipping_methods[$method->id]->settings['type'] == 'percent'
+                 || preg_match('/^table_rate-[0-9]+ : [0-9]+$/', $k)
+            ){
+                continue;
             }
-            
-            $filtered_once = true;
+
+
+            foreach($method->taxes as $j => $tax){
+
+                $methods[$k]->taxes[$j] = apply_filters('wcml_shipping_price_amount', $methods[$k]->taxes[$j]);
+
+            }
+
+            if($methods[$k]->cost){
+                $methods[$k]->cost = apply_filters('wcml_shipping_price_amount', $methods[$k]->cost);
+            }
+
         }
-        
+
         return $methods;
     }
     
