@@ -16,22 +16,6 @@ if(false === function_exists('lcfirst'))
     }
 }
 
-if (get_magic_quotes_gpc()) {
-    if(!function_exists('stripslashes_deep')){
-    function stripslashes_deep($value)
-    {
-        $value = is_array($value) ?
-            array_map('stripslashes_deep', $value) :
-            stripslashes($value);
-
-        return $value;
-    }
-    }
-
-    $_POST = array_map('stripslashes_deep', $_POST);
-    $_GET = array_map('stripslashes_deep', $_GET);
-    $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
-}
 /* PHP 5.3 - end */
   
 //WPML
