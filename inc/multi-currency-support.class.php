@@ -589,7 +589,7 @@ class WCML_Multi_Currency_Support{
             $currency_code = $_COOKIE[ '_wcml_order_currency' ];
         }elseif( isset($_GET['post']) && get_post_type($_GET['post']) == 'shop_order'){
             $currency_code = get_post_meta( $_GET['post'], '_order_currency', true );
-        }elseif( isset( $_COOKIE[ '_wcml_dashboard_currency' ] ) && $pagenow == 'index.php' ){
+        }elseif( isset( $_COOKIE[ '_wcml_dashboard_currency' ] ) && is_admin() && !defined( 'DOING_AJAX' ) && $pagenow == 'index.php' ){
             $currency_code = $_COOKIE[ '_wcml_dashboard_currency' ];
         }else{
             $currency_code = $this->client_currency;
