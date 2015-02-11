@@ -28,7 +28,7 @@ class WCML_WC_MultiCurrency{
         
         add_filter('wcml_shipping_price_amount', array($this, 'shipping_price_filter'));
         add_filter('wcml_shipping_free_min_amount', array($this, 'shipping_free_min_amount'));
-        add_action('woocommerce_product_meta_start', array($this, 'currency_switcher'));            
+        add_action('woocommerce_product_meta_start', array($this, 'currency_switcher'));
             
         add_filter('wcml_exchange_rates', array($this, 'get_exchange_rates'));
         

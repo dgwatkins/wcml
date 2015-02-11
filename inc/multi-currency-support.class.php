@@ -1019,12 +1019,21 @@ class WCML_Multi_Currency_Support{
     }
     
     function get_client_currency(){
-        global $woocommerce, $woocommerce_wpml, $sitepress;
+        global $woocommerce, $woocommerce_wpml, $sitepress, $wp_query;
         
         $default_currencies   = $woocommerce_wpml->settings['default_currencies'];
         $current_language     = $sitepress->get_current_language() != 'all' ? $sitepress->get_current_language() : $sitepress->get_default_language();
         $active_languages     = $sitepress->get_active_languages();
-        
+
+        if( is_product() &&
+            isset($woocommerce_wpml->settings['display_custom_prices']) &&
+            $woocommerce_wpml->settings['display_custom_prices'] &&
+            !get_post_meta( wc_get_product()->id, '_wcml_custom_prices_status', true )){
+
+                $this->client_currency = get_option('woocommerce_currency');
+        }
+
+
         if(isset($_POST['action']) && $_POST['action'] == 'wcml_switch_currency' && !empty($_POST['currency'])){
            $this->client_currency = $_POST['currency'];
         }
@@ -1184,10 +1193,21 @@ class WCML_Multi_Currency_Support{
     
     function currency_switcher($args = array()){
         global $sitepress, $woocommerce_wpml;
+
         if ( is_page( get_option( 'woocommerce_myaccount_page_id' ) ) ) {
            return '';
         }
         $settings = $woocommerce_wpml->get_settings();
+
+        if( is_product() &&
+            isset($settings['display_custom_prices']) &&
+            $settings['display_custom_prices'] &&
+            !get_post_meta( wc_get_product()->id, '_wcml_custom_prices_status', true ) ){
+
+                return '';
+
+        }
+
         if(!isset($args['switcher_style'])){
             $args['switcher_style'] = isset($settings['currency_switcher_style'])?$settings['currency_switcher_style']:'dropdown';
         }
@@ -1210,7 +1230,7 @@ class WCML_Multi_Currency_Support{
         }
         
         if($args['switcher_style'] == 'dropdown'){
-        echo '<select class="wcml_currency_switcher">';
+            echo '<select class="wcml_currency_switcher">';
         }else{
             $args['orientation'] = $args['orientation'] == 'horizontal'?'curr_list_horizontal':'curr_list_vertical';
             echo '<ul class="wcml_currency_switcher '.$args['orientation'].'">';
@@ -1229,7 +1249,7 @@ class WCML_Multi_Currency_Support{
         }
         }
         if($args['switcher_style'] == 'dropdown'){
-        echo '</select>';
+            echo '</select>';
         }else{
             echo '</ul>';
         }

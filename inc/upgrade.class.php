@@ -285,10 +285,20 @@ class WCML_Upgrade{
 
     function upgrade_3_5()
     {
-        global $wpdb, $sitepress;
+        global $wpdb;
         $wcml_settings = get_option('_wcml_settings');
 
         $wcml_settings['products_sync_order'] = 1;
+
+        update_option('_wcml_settings', $wcml_settings);
+    }
+
+    function upgrade_3_6()
+    {
+        global $wpdb;
+        $wcml_settings = get_option('_wcml_settings');
+
+        $wcml_settings['display_custom_prices'] = 0;
 
         update_option('_wcml_settings', $wcml_settings);
     }

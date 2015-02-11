@@ -12,7 +12,7 @@ jQuery(document).ready(function($){
         discard = false;
     });
 
-    $('.wcml-section input[type="radio"],#wcml_products_sync_date,#wcml_products_sync_order').click(function(){
+    $('.wcml-section input[type="radio"],#wcml_products_sync_date,#wcml_products_sync_order,#display_custom_prices').click(function(){
         discard = true;
         $(this).closest('.wcml-section').find('.button-wrap input').css("border-color","#1e8cbe");
     });
@@ -749,11 +749,13 @@ jQuery(document).ready(function($){
             $('.currencies-table-content').fadeOut();
             $('.wcml_add_currency').fadeOut();
             $('#currency-switcher').fadeOut();
+            $('#display_custom_prices_select').fadeOut();
         }else{
             $('.currencies-table-content').fadeIn();
             $('.wcml_add_currency').fadeIn();
             $('#currency-switcher').fadeIn();
             $('#multi-currency-per-language-details').fadeIn();
+            $('#display_custom_prices_select').fadeIn();
         }
         
     })

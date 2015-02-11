@@ -227,6 +227,10 @@ class woocommerce_wpml {
             if(!isset($this->settings['products_sync_order'])){
                 $this->settings['products_sync_order'] = 1;
             }
+
+            if(!isset($this->settings['display_custom_prices'])){
+                $this->settings['display_custom_prices'] = 0;
+            }
             
             self::set_up_capabilities();
             

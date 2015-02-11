@@ -13,7 +13,8 @@ class WCML_Requests{
         
         if(isset($_POST['general_options']) && check_admin_referer('general_options', 'general_options_nonce') && wp_verify_nonce($_POST['wcml_nonce'], 'general_options')){
             
-            $woocommerce_wpml->settings['enable_multi_currency'] = $_POST['multi_currency'];                
+            $woocommerce_wpml->settings['enable_multi_currency'] = $_POST['multi_currency'];  
+            $woocommerce_wpml->settings['display_custom_prices'] =  empty($_POST['display_custom_prices']) ? 0 : 1;              
 
             //update default currency settings
             if( $_POST['multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
