@@ -27,7 +27,7 @@ class WCML_Products{
             add_filter('wpml_post_edit_page_link_to_translation',array($this,'_filter_link_to_translation'));
             add_action('admin_init', array($this, 'restrict_admin_with_redirect'));
 
-            add_action('admin_init', array($this, 'make_new_attributes_translatable'));
+            add_action('woocommerce_attribute_added', array($this, 'make_new_attribute_translatable'), 10, 2);
 
             // filters to sync variable products
             add_action('save_post', array($this, 'sync_post_action'), 11, 2); // After WPML
@@ -1259,27 +1259,20 @@ class WCML_Products{
 
 
     /**
-     * Makes all new attributes translatable.
+     * Makes new attribute translatable.
      */
-    function make_new_attributes_translatable(){
+    function make_new_attribute_translatable( $id, $attribute ){
         global $sitepress;
-        if(isset($_GET['page']) && $_GET['page'] == 'woocommerce_attributes'){
+        $wpml_settings = $sitepress->get_settings();
 
-            $wpml_settings = $sitepress->get_settings();
+        $wpml_settings['taxonomies_sync_option'][wc_attribute_taxonomy_name($attribute['attribute_name'])] = 1;
 
-            $get_all_taxonomies = get_taxonomies();
-
-            foreach($get_all_taxonomies as $tax_key => $taxonomy){
-                $pos = strpos($taxonomy, 'pa_');
-
-                // get only product attribute taxonomy name
-                if($pos !== false){
-                    $wpml_settings['taxonomies_sync_option'][$taxonomy] = 1;
-                }
-            }
-
-            $sitepress->save_settings($wpml_settings);
+        if( isset($wpml_settings['translation-management'])){
+            $wpml_settings['translation-management']['taxonomies_readonly_config'][wc_attribute_taxonomy_name( $attribute['attribute_name'] )] = 1;
         }
+
+        $sitepress->save_settings($wpml_settings);
+
     }
 
     /**
