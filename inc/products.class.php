@@ -2031,9 +2031,9 @@ class WCML_Products{
 
     function product_images_box($product_id,$lang, $is_duplicate_product = false ) {
         global $sitepress,$wpdb;
-        $original_language = $sitepress->get_language_for_element($product_id,'post_product');
-        if($original_language != $lang){
-            $product_id = icl_object_id($product_id, 'product', false, $lang);
+        $original_language = $this->get_original_product_language($product_id);
+        if(!$this->is_original_product($product_id)){
+            $product_id = icl_object_id($product_id, 'product', false, $original_language);
         }
         $template_data = array();
 
@@ -2065,6 +2065,7 @@ class WCML_Products{
         } else {
             $template_data['empty_translation'] = true;
         }
+
         include WCML_PLUGIN_PATH . '/menu/sub/images-box.php';
     }
 
