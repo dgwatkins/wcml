@@ -658,13 +658,14 @@ class WCML_Products{
                         // not using get_term - unfiltered get_term
                         $translated_term = $wpdb->get_row($wpdb->prepare("
                             SELECT * FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} x ON x.term_id = t.term_id WHERE t.term_id = %d AND x.taxonomy = %s", $tr_id, $taxonomy));
-                        if(is_taxonomy_hierarchical($taxonomy)){
-                            $terms_array[] = $translated_term->term_id;
-                    } else {
-                            $terms_array[] = $translated_term->name;
+
+                        $terms_array[] = $translated_term->term_id;
                     }
                 }
-            }
+
+                if( !is_taxonomy_hierarchical($taxonomy)){
+                    $terms_array = array_unique( array_map( 'intval', $terms_array ) );
+                }
 
                 wp_set_post_terms($tr_product_id, $terms_array, $taxonomy);
 
