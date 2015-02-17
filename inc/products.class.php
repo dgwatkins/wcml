@@ -66,9 +66,6 @@ class WCML_Products{
 
         add_action('woocommerce_reduce_order_stock', array($this, 'sync_product_stocks'));
 
-        add_action('updated_post_meta', array($this,'register_product_name_and_attribute_strings'), 100, 4);
-        add_action('added_post_meta', array($this,'register_product_name_and_attribute_strings'), 100, 4);
-
         add_filter('wcml_custom_box_html',array($this,'downloadable_files_box'),10,3);
 
         //add translation manager filters
@@ -90,9 +87,6 @@ class WCML_Products{
         //save taxonomy in WPML interface
         add_action('wp_ajax_wpml_tt_save_term_translation', array($this, 'update_taxonomy_in_variations'),7);
 
-        // Hooks for translating product attribute values
-        add_filter('woocommerce_variation_option_name', array($this, 'translate_variation_term_name'));
-        add_filter('woocommerce_attribute', array($this, 'translate_attribute_terms'),1);
         add_action('wp_ajax_woocommerce_remove_variation', array($this,'remove_variation_ajax'),9);
         //WooCommerce subscription
         add_filter('woocommerce_users_subscriptions',array($this, 'woocommerce_users_subscriptions'),10,2);
@@ -1387,20 +1381,6 @@ class WCML_Products{
 
     }
 
-    function register_product_name_and_attribute_strings($meta_id, $object_id, $meta_key, $_meta_value) {
-        if ($meta_key == '_product_attributes' || $meta_key == 'attribute_names') {
-            $array = maybe_unserialize($_meta_value);
-            foreach ((array)$array as $attr_slug => $attr) {
-                if (!empty($attr['value'])) {
-                    $values = explode('|',$this->sanitize_cpa_values($attr['value']));
-                    foreach($values as $value) {
-                        icl_register_string('woocommerce',ucfirst($value).'_attribute_name',$value);
-                    }
-                }
-            }
-        }
-    }
-
     function sanitize_cpa_values($values) {
         // Text based, separate by pipe
          $values = explode('|', esc_html(stripslashes($values)));
@@ -2233,33 +2213,6 @@ class WCML_Products{
         }
         return $lang;
 
-    }
-
-    /**
-     * Translates custom attribute/variation title.
-     *
-     * @return type
-     */
-    function translate_variation_term_name($term){
-        if( term_exists( $term ) ){
-            return $term;
-        }
-        return  icl_t('woocommerce', $term .'_attribute_name', $term);
-    }
-
-    function translate_attribute_terms($terms){
-        global $sitepress;
-
-        // iterate terms translating
-        $terms = explode(",", $terms);
-        $out = array();
-        foreach ($terms as $term) {
-            $term = trim($term);
-            $term = icl_t('woocommerce', $term .'_attribute_name', $term);
-            $out[] = $term;
-        }
-
-        return wptexturize(implode(", ", $out));
     }
 
     function sync_product_gallery_duplicate_attachment($att_id, $dup_att_id){
