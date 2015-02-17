@@ -663,7 +663,7 @@ class WCML_Products{
                     }
                 }
 
-                if( !is_taxonomy_hierarchical($taxonomy)){
+                if( $taxonomy != 'product_type' && !is_taxonomy_hierarchical($taxonomy)){
                     $terms_array = array_unique( array_map( 'intval', $terms_array ) );
                 }
 

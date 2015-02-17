@@ -985,11 +985,11 @@ class WCML_Terms{
                             $updated_terms = array();
                             foreach($current_terms as $cterm){
                                 if($cterm->term_id != $term->term_id){
-                                    $updated_terms[] = $term->term_id;
+                                    $updated_terms[] = $taxonomy != 'product_type' ? $term->term_id : $term->name;
                                 }
                                 if(!$preview){
 
-                                    if( !is_taxonomy_hierarchical($taxonomy)){
+                                    if( $taxonomy != 'product_type' && !is_taxonomy_hierarchical($taxonomy)){
                                         $updated_terms = array_unique( array_map( 'intval', $updated_terms ) );
                                     }
 
@@ -1027,7 +1027,7 @@ class WCML_Terms{
 
                             if(!$preview){
 
-                                if( !is_taxonomy_hierarchical($taxonomy)){
+                                if( $taxonomy != 'product_type' && !is_taxonomy_hierarchical($taxonomy)){
                                     $terms_array = array_unique( array_map( 'intval', $terms_array ) );
                                 }
 
