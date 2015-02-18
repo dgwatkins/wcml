@@ -1400,8 +1400,8 @@ class WCML_Products{
         $wpml_media_options = maybe_unserialize(get_option('_wpml_media'));
 
         if($wpml_media_options['new_content_settings']['duplicate_media']){
-        //sync product gallery
-        $this->sync_product_gallery($duplicated_post_id);
+            //sync product gallery
+            $this->sync_product_gallery($duplicated_post_id);
         }
 
         // check its a product
@@ -1409,10 +1409,10 @@ class WCML_Products{
 
         //set trid for variations
         if ($post_type == 'product_variation') {
-            $var_lang = $sitepress->get_language_for_element(wp_get_post_parent_id($post_id),'post_product');
-            if($this->is_original_product(wp_get_post_parent_id($post_id))){
-            $sitepress->set_element_language_details($post_id, 'post_product_variation', false, $var_lang);
-        }
+            $var_lang = $sitepress->get_language_for_element( wp_get_post_parent_id($post_id), 'post_product' );
+            if( $this->is_original_product( wp_get_post_parent_id( $post_id ) ) ){
+                $sitepress->set_element_language_details($post_id, 'post_product_variation', false, $var_lang);
+            }
         }
 
         if ($post_type != 'product') {
@@ -1437,10 +1437,12 @@ class WCML_Products{
         remove_action('save_post', array($this, 'sync_post_action'), 11, 2);
 
         //trnsl_interface option
-        if (!$woocommerce_wpml->settings['trnsl_interface'] && $original_language != $current_language) {
+        if (!$woocommerce_wpml->settings['trnsl_interface'] && $original_language != $current_language ) {
 
-            $this->sync_status_and_parent( $duplicated_post_id, $post_id, $current_language );
-            $this->sync_product_data( $duplicated_post_id, $post_id, $current_language );
+            if( !isset( $_POST['wp-preview'] ) ){
+                $this->sync_status_and_parent( $duplicated_post_id, $post_id, $current_language );
+                $this->sync_product_data( $duplicated_post_id, $post_id, $current_language );
+            }
 
             return;
         }
