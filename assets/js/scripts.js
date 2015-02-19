@@ -101,6 +101,7 @@ jQuery(document).ready(function($){
                             });
                             element.text(textOpened);
                             element.parent().find('.spinner').hide();
+                            wpLink.init();
                         }
                     }
                 });
