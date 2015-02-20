@@ -2649,6 +2649,8 @@ function get_cart_attribute_translation($taxonomy,$attribute,$product_id,$tr_pro
             if ( ! empty( $post_to_duplicate ) ) {
                 $new_orig_id = $wc_admin->duplicate_product( $post_to_duplicate );
 
+                do_action( 'wcml_after_duplicate_product' , $new_id, $post_to_duplicate );
+
                 $sitepress->set_element_language_details( $new_orig_id, 'post_' . $post->post_type, false, $orig_lang );
                 $new_trid = $sitepress->get_element_trid( $new_orig_id, 'post_' . $post->post_type );
 
@@ -2667,6 +2669,8 @@ function get_cart_attribute_translation($taxonomy,$attribute,$product_id,$tr_pro
 
                     if ( ! empty( $post_to_duplicate ) ) {
                         $new_id = $wc_admin->duplicate_product( $post_to_duplicate );
+
+                        do_action( 'wcml_after_duplicate_product' , $new_id, $post_to_duplicate );
 
                         $sitepress->set_element_language_details( $new_id, 'post_' . $post->post_type, $new_trid, $translation->language_code );
                     }
