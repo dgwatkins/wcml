@@ -1021,7 +1021,8 @@ class WCML_Multi_Currency_Support{
         global $woocommerce, $woocommerce_wpml, $sitepress;
         
         $default_currencies   = $woocommerce_wpml->settings['default_currencies'];
-        $current_language     = $sitepress->get_current_language() != 'all' ? $sitepress->get_current_language() : $sitepress->get_default_language();
+        $current_language     = $sitepress->get_current_language();
+        $current_language     = ( $current_language != 'all' && !is_null( $current_language ) ) ? $current_language : $sitepress->get_default_language();
         $active_languages     = $sitepress->get_active_languages();
         
         if(isset($_POST['action']) && $_POST['action'] == 'wcml_switch_currency' && !empty($_POST['currency'])){
