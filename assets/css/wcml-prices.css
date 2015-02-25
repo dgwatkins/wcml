@@ -112,6 +112,8 @@
 
 .woocommerce_variation .currency_blck p input{
     width: 50%;
+    float: left;
+    display: inline-block;
 }
 
 .woocommerce_variation .wcml_schedule_dates input{
@@ -129,5 +131,5 @@
     font-weight: bold;
     margin-left: 5px;
     float: left;
-    padding: 1px 5px;
+    padding: 1px 6px;
 }
