@@ -731,7 +731,6 @@ class WCML_Multi_Currency_Support{
     }
 
     function get_product_custom_prices($product_id, $currency = false){
-
         global $wpdb, $sitepress, $woocommerce_wpml;
         
         $distinct_prices = false;
@@ -971,7 +970,7 @@ class WCML_Multi_Currency_Support{
             }
 
         }
-
+        
         return $methods;
     }
     
@@ -1022,7 +1021,8 @@ class WCML_Multi_Currency_Support{
         global $woocommerce, $woocommerce_wpml, $sitepress, $wp_query;
         
         $default_currencies   = $woocommerce_wpml->settings['default_currencies'];
-        $current_language     = $sitepress->get_current_language() != 'all' ? $sitepress->get_current_language() : $sitepress->get_default_language();
+        $current_language     = $sitepress->get_current_language();
+        $current_language     = ( $current_language != 'all' && !is_null( $current_language ) ) ? $current_language : $sitepress->get_default_language();
         $active_languages     = $sitepress->get_active_languages();
 
         if( is_product() &&

@@ -1,4 +1,4 @@
-=== WooCommerce Multilingual - run WooCommerce with WPML ===
+﻿=== WooCommerce Multilingual - run WooCommerce with WPML ===
 Contributors: AmirHelzer, dominykasgel, dgwatkins, adelval
 Donate link: http://wpml.org/documentation/related-projects/woocommerce-multilingual/
 Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multilingual, e-shop, shop
@@ -90,6 +90,8 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fixed: Only first three attributes were available for translation
 * Bug fixed: The shipping fee was not converted correctly when using the multi-currency mode
 * Bug fixed: The default currency configuration (decimal & thousand separator) was ignored when the multi-currency was active
+* Bug fixed: Subsequent request to product preview page lead to a 404 page.
+* Bug fixed: 'Insert link' button on the visual editor of the products translations screen was not working.
 
 = 3.5.1 =
 * Bug fixed: Performance issue with queries number

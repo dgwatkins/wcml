@@ -985,9 +985,14 @@ class WCML_Terms{
                             $updated_terms = array();
                             foreach($current_terms as $cterm){
                                 if($cterm->term_id != $term->term_id){
-                                    $updated_terms[] = is_taxonomy_hierarchical($taxonomy) ? $term->term_id : $term->name;
+                                    $updated_terms[] = $taxonomy != 'product_type' ? $term->term_id : $term->name;
                                 }
                                 if(!$preview){
+
+                                    if( $taxonomy != 'product_type' && !is_taxonomy_hierarchical($taxonomy)){
+                                        $updated_terms = array_unique( array_map( 'intval', $updated_terms ) );
+                                    }
+
                                     wp_set_post_terms($translation->element_id, $updated_terms, $taxonomy);
                                 }
 
@@ -1017,15 +1022,15 @@ class WCML_Terms{
                             SELECT * FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} x ON x.term_id = t.term_id WHERE t.term_id = %d AND x.taxonomy = %s", $term_id_translated, $taxonomy));
 
                             if( $translated_term ){
-                            if(is_taxonomy_hierarchical($taxonomy)){
                                 $terms_array[] = $translated_term->term_id;
-                            } else {
-                                $terms_array[] = $translated_term->name;
                             }
-                            }
-
 
                             if(!$preview){
+
+                                if( $taxonomy != 'product_type' && !is_taxonomy_hierarchical($taxonomy)){
+                                    $terms_array = array_unique( array_map( 'intval', $terms_array ) );
+                                }
+
                                 wp_set_post_terms($translation->element_id, $terms_array, $taxonomy, true);
                             }
 
