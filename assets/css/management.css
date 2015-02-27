@@ -981,3 +981,7 @@ input[name="wcml_curr_template"]{
     display: inline-block;
     width: 100%;
 }
+.edit_slug_input,
+.edit_slug_hide_link{
+    display: none;
+}

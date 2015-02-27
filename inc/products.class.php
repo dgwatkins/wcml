@@ -488,7 +488,17 @@ class WCML_Products{
             $product_parent = icl_object_id($orig_product->post_parent, 'product', false, $language);
             $args['post_parent'] = is_null($product_parent) ? 0 : $product_parent;
             $_POST['to_lang'] = $language;
+
             wp_update_post($args);
+
+            $post_name = $wpdb->get_var( $wpdb->prepare( "SELECT post_name FROM {$wpdb->posts} WHERE ID=%d", $tr_product_id ));
+            if( $post_name != $data['post_name_' . $language]){
+                // update post_name
+                // need set POST variable ( WPML used them when filtered this function)
+                $_POST[ 'new_title' ] = $data['title_' . $language];
+                $_POST[ 'new_slug' ] = $data['post_name_' . $language];
+                $new_slug = wp_unique_post_slug( $data['post_name_' . $language], $tr_product_id, $orig_product->post_status, $orig_product->post_type, $args['post_parent']);
+            }
 
             $sitepress->set_element_language_details($tr_product_id, 'post_' . $orig_product->post_type, $product_trid, $language);
             $this->duplicate_product_post_meta($original_product_id, $tr_product_id, $data);
@@ -582,6 +592,8 @@ class WCML_Products{
             delete_post_meta($tr_product_id, '_icl_lang_duplicate_of', $original_product_id);
 
         }
+
+        $return['slug'] = isset( $new_slug )? $new_slug : $data['post_name_' . $language];
 
         echo json_encode($return);
         die();
@@ -1870,7 +1882,9 @@ class WCML_Products{
         switch ($content) {
             case 'title':
                 $tr_post = get_post($tr_post_id);
-                return $tr_post->post_title;
+                $tr_post_content['title'] = $tr_post->post_title;
+                $tr_post_content['name'] = $tr_post->post_name;
+                return $tr_post_content;
                 break;
             case 'content':
                 $tr_post = get_post($tr_post_id);
