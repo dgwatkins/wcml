@@ -1198,13 +1198,12 @@ class WCML_Multi_Currency_Support{
            return '';
         }
 
-
         $settings = $woocommerce_wpml->get_settings();
 
-        if( ( is_product() &&
+        if( ( ( is_product() &&
             !get_post_meta( wc_get_product()->id, '_wcml_custom_prices_status', true ) ) ||
             ( is_page( wc_get_page_id('cart') ) ||
-                is_page( wc_get_page_id('checkout') )) &&
+                is_page( wc_get_page_id('checkout') ))) &&
             isset($settings['display_custom_prices']) &&
             $settings['display_custom_prices'] ){
 
