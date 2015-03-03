@@ -2978,9 +2978,9 @@ function get_cart_attribute_translation($taxonomy,$attribute,$product_id,$tr_pro
             if ( $matched_products_query ) {
                 foreach ( $matched_products_query as $product ) {
                     if ( $product->post_type == 'product' )
-                        $matched_products[] = $product->ID;
+                        $matched_products[] = icl_object_id( $product->ID, 'post_'.get_post_type($product->ID), true );
                     if ( $product->post_parent > 0 && ! in_array( $product->post_parent, $matched_products ) )
-                        $matched_products[] = $product->post_parent;
+                        $matched_products[] = icl_object_id( $product->post_parent, 'post_'.get_post_type($product->post_parent), true );
                 }
             }
 
