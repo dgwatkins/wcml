@@ -138,18 +138,18 @@ $button_labels = array(
                                                 <textarea class="<?php if($is_duplicate_product): ?> js-dup-disabled<?php endif;?>" name="<?php echo $product_content.'_'.$key; ?>" rows="2" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"<?php if($is_duplicate_product): ?> disabled="disabled"<?php endif;?> ><?php echo $trn_contents['title']; ?></textarea>
                                             <?php endif;?>
                                             <div class="edit_slug_block">
-                                                <?php if($trn_contents['name']): ?>
-                                                    <a href="javascript:void(0)" class="edit_slug_show_link"><?php _e('Edit slug', 'wpml-wcml') ?></a>
-                                                    <a href="javascript:void(0)" class="edit_slug_hide_link"><?php _e('Hide', 'wpml-wcml') ?></a>
+                                                <?php $hide = !$trn_contents['name'] ? 'hidden' : ''; ?>
+                                                    <a href="javascript:void(0)" class="edit_slug_show_link <?php echo $hide; ?>"><?php _e('Edit slug', 'wpml-wcml') ?></a>
+                                                    <a href="javascript:void(0)" class="edit_slug_hide_link  <?php echo $hide; ?>"><?php _e('Hide', 'wpml-wcml') ?></a>
                                                     </br>
                                                     <?php if($default_language == $key): ?>
                                                         <input type="text" value="<?php echo $trn_contents['name']; ?>" class="edit_slug_input" disabled="disabled" />
                                                     <?php else: ?>
-                                                        <input type="text" value="<?php echo $trn_contents['name']; ?>" class="edit_slug_input" name="<?php echo 'post_name_'.$key; ?>" />
+                                                        <input type="text" value="<?php echo $trn_contents['name']; ?>" class="edit_slug_input <?php echo $hide; ?>" name="<?php echo 'post_name_'.$key; ?>"  <?php echo $hide?'disabled="disabled"':''; ?> />
                                                     <?php endif;?>
-                                                <?php else: ?>
-                                                    <span><?php _e('Please save translation before edit slug', 'wpml-wcml') ?></span>
-                                                <?php endif; ?>
+                                                    <?php if(!$trn_contents['name']): ?>
+                                                        <span class="edit_slug_warning"><?php _e('Please save translation before edit slug', 'wpml-wcml') ?></span>
+                                                    <?php endif;?>
                                             </div>
                                         <?php elseif(is_array($trn_contents)): ?>
                                             <?php foreach ($trn_contents as $tax_key=>$trn_content) : ?>

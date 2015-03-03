@@ -169,6 +169,12 @@ jQuery(document).ready(function($){
              $('.translations_statuses.prid_'+product_id).html(response.status);
 
              //update slug
+             if( field.closest('.outer').find('.edit_slug_warning').size() >0 ){
+                 field.closest('.outer').find('input[name="post_name_'+language+'"]').removeAttr('disabled').removeClass('hidden');
+                 field.closest('.outer').find('.edit_slug_show_link').removeClass('hidden');
+                 field.closest('.outer').find('.edit_slug_hide_link').removeClass('hidden');
+                 field.closest('.outer').find('.edit_slug_warning').remove();
+             }
              field.closest('.outer').find('input[name="post_name_'+language+'"]').val(response.slug);
 
              //update images block

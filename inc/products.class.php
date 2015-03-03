@@ -486,7 +486,7 @@ class WCML_Products{
             wp_update_post($args);
 
             $post_name = $wpdb->get_var( $wpdb->prepare( "SELECT post_name FROM {$wpdb->posts} WHERE ID=%d", $tr_product_id ));
-            if( $post_name != $data['post_name_' . $language]){
+            if(isset( $data['post_name_' . $language]) && $post_name != $data['post_name_' . $language]){
                 // update post_name
                 // need set POST variable ( WPML used them when filtered this function)
                 $_POST[ 'new_title' ] = $data['title_' . $language];
@@ -587,7 +587,8 @@ class WCML_Products{
 
         }
 
-        $return['slug'] = isset( $new_slug )? $new_slug : $data['post_name_' . $language];
+        $old_slug = $wpdb->get_var( $wpdb->prepare( "SELECT post_name FROM {$wpdb->posts} WHERE ID=%d", $tr_product_id ));
+        $return['slug'] = isset( $new_slug )? $new_slug : $old_slug;
 
         echo json_encode($return);
         die();
