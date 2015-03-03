@@ -79,7 +79,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 == Changelog ==
 
 = 3.5.2 =
-* Compatibility with WooCommece 2.3.x
+* Compatibility with WooCommerce 2.3.x
 * Bug fixed: Redirection issues with "Shop" page as front page
 * Bug fixed: Language column was missing from the products list page
 * Bug fixed: Product tags disappeared after updating the product attribute 'size'
@@ -89,6 +89,9 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fixed: The default currency configuration (decimal & thousand separator) was ignored when the multi-currency was active
 * Bug fixed: Subsequent request to product preview page lead to a 404 page.
 * Bug fixed: 'Insert link' button on the visual editor of the products translations screen was not working.
+* Bug fixed: Fixed another compatibility problem with WooCommerce Product Tabs
+* Bug fixed: A variable product was showing an incorrect price in the cart
+* Bug fixed: The flat rate shipping was showing the wrong price on the checkout page in certain conditions
 
 = 3.5.1 =
 * Bug fixed: Performance issue with queries number
