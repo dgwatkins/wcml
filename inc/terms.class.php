@@ -1080,9 +1080,14 @@ class WCML_Terms{
         return $out;
 
     }
-    
+
     function shipping_terms($terms, $post_id, $taxonomy){
-	    if( ( !is_admin() || ( is_ajax() && isset($_POST['action']) && $_POST['action'] == 'woocommerce_update_order_review' ) ) && ( get_post_type($post_id) == 'product' || get_post_type($post_id) == 'product_variation' ) && $taxonomy == 'product_shipping_class'){
+
+        if( is_ajax() && isset($_POST['action']) && $_POST['action'] == 'woocommerce_update_order_review' ){
+            return $terms;
+        }
+
+        if( !is_admin() && ( get_post_type($post_id) == 'product' || get_post_type($post_id) == 'product_variation' ) && $taxonomy == 'product_shipping_class'){
             global $sitepress;
             remove_filter('get_the_terms',array($this,'shipping_terms'), 10, 3);
             $terms = get_the_terms(icl_object_id($post_id,get_post_type($post_id),true,$sitepress->get_default_language()),'product_shipping_class');
