@@ -534,25 +534,36 @@ class woocommerce_wpml {
     function filter_woocommerce_permalinks_option($value){
         global $wpdb, $sitepress_settings;
 
-        if(isset($value['product_base']) && $value['product_base']){
-            icl_register_string('URL slugs', 'Url slug: ' . trim( $value['product_base'], '/'), trim( $value['product_base'], '/') );
+        $cache_key =  md5( serialize( $value ) );
+        $cache_group = 'woocommerce_permalinks_option';
+
+        $temp_value = wp_cache_get($cache_key, $cache_group);
+        if($temp_value) return $temp_value;
+
+        if(isset($value['product_base']) && $prod_base = trim( $value['product_base'], '/') ){
+            if( !icl_st_is_registered_string('URL slugs', 'Url slug: ' . $prod_base) )
+                icl_register_string('URL slugs', 'Url slug: ' . $prod_base, $prod_base );
             // only register. it'll have to be translated via the string translation
         }
 
         $category_base = !empty($value['category_base']) ? $value['category_base'] : 'product-category';
-        icl_register_string('URL product_cat slugs - ' . $category_base, 'Url product_cat slug: ' . $category_base, $category_base );
+        if( !icl_st_is_registered_string('URL product_cat slugs - ' . $category_base, 'Url product_cat slug: ' . $category_base) )
+            icl_register_string('URL product_cat slugs - ' . $category_base, 'Url product_cat slug: ' . $category_base, $category_base );
 
         $tag_base = !empty($value['tag_base']) ? $value['tag_base'] : 'product-tag';
-        icl_register_string('URL product_tag slugs - ' . $tag_base, 'Url product_tag slug: ' . $tag_base, $tag_base);
+        if( !icl_st_is_registered_string('URL product_tag slugs - ' . $tag_base, 'Url product_tag slug: ' . $tag_base) )
+            icl_register_string('URL product_tag slugs - ' . $tag_base, 'Url product_tag slug: ' . $tag_base, $tag_base);
 
-        if(isset($value['attribute_base']) && $value['attribute_base']){
-            $attr_base = trim( $value['attribute_base'], '/');
-            icl_register_string('URL attribute slugs - ' . $attr_base , 'Url attribute slug: ' .$attr_base, $attr_base );
+        if(isset($value['attribute_base']) && $attr_base = trim( $value['attribute_base'], '/')){
+            if( !icl_st_is_registered_string('URL attribute slugs - ' . $attr_base , 'Url attribute slug: ' .$attr_base) )
+                icl_register_string('URL attribute slugs - ' . $attr_base , 'Url attribute slug: ' .$attr_base, $attr_base );
         }
 
         if(isset($value['product_base']) && !$value['product_base']){
             $value['product_base'] = get_option('woocommerce_product_slug') != false ? trim( get_option('woocommerce_product_slug'), '/') : 'product';
         }
+
+        wp_cache_set( $cache_key, $value, $cache_group );
 
         return $value;
 
