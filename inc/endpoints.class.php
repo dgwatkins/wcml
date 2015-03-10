@@ -68,6 +68,9 @@ class WCML_Endpoints{
     }
 
     function add_endpoints(){
+        if( !isset( $this->endpoints_strings ) )
+            return;
+
         global $wpdb;
         //add endpoints and flush rules
         foreach( $this->endpoints_strings as $string_id ){
