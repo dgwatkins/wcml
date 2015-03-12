@@ -8,7 +8,6 @@ class WCML_Multi_Currency_Support{
     private $client_currency;
     private $exchange_rates = array();
     
-    
     function __construct(){
         
         add_action('init', array($this, 'init'), 5);
@@ -28,7 +27,6 @@ class WCML_Multi_Currency_Support{
             
             add_action('wp_ajax_wcml_update_currency_lang', array($this,'update_currency_lang'));
             add_action('wp_ajax_wcml_update_default_currency', array($this,'update_default_currency'));
-            
             
         }
         
@@ -51,12 +49,12 @@ class WCML_Multi_Currency_Support{
             $load = true;
         }else{
             if(is_ajax() && $this->get_client_currency() != get_option('woocommerce_currency')){
-                if(isset($_REQUEST['action'])){
+                if(isset($_POST['action'])){
                     $ajax_actions = apply_filters('wcml_multi_currency_is_ajax', array('woocommerce_get_refreshed_fragments', 'woocommerce_update_order_review', 'woocommerce-checkout', 'woocommerce_checkout', 'woocommerce_add_to_cart')); 
                     if(version_compare($GLOBALS['woocommerce']->version, '2.1', '>=')){
                         $ajax_actions[] = 'woocommerce_update_shipping_method';
                     }
-                    if(in_array($_REQUEST['action'], $ajax_actions)){
+                    if(in_array($_POST['action'], $ajax_actions)){
                         $load = true;
                     }
                 }
@@ -67,7 +65,6 @@ class WCML_Multi_Currency_Support{
     }
     
     function init(){
-        
         
         if($this->_load_filters()){    
             
@@ -199,7 +196,7 @@ class WCML_Multi_Currency_Support{
     }
     
     function add_currency(){
-        if(!wp_verify_nonce($_REQUEST['wcml_nonce'], 'wcml_new_currency')){
+        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_new_currency')){
             die('Invalid nonce');
         }
 
@@ -243,9 +240,7 @@ class WCML_Multi_Currency_Support{
             include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php'; 
             $return['currency_options'] = ob_get_contents();
             ob_end_clean();
-            
-            
-            
+
         }
         
         echo json_encode($return);
@@ -253,6 +248,10 @@ class WCML_Multi_Currency_Support{
     }    
     
     function save_currency(){
+        if(!wp_verify_nonce($_POST['wcml_nonce'], 'save_currency')){
+            die('Invalid nonce');
+        }
+
         global $woocommerce_wpml;
         
         $currency_code = $_POST['currency'];
@@ -299,7 +298,7 @@ class WCML_Multi_Currency_Support{
     }
     
     function delete_currency(){
-        if(!wp_verify_nonce($_REQUEST['wcml_nonce'], 'wcml_delete_currency')){
+        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_delete_currency')){
             die('Invalid nonce');
         }
         global $woocommerce_wpml;
@@ -319,9 +318,10 @@ class WCML_Multi_Currency_Support{
     }
     
     function currencies_list(){
-        if(!wp_verify_nonce($_REQUEST['wcml_nonce'], 'wcml_currencies_list')){
+        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_currencies_list')){
             die('Invalid nonce');
         }
+
         global $woocommerce_wpml;
         $wc_currencies = get_woocommerce_currencies();
         $wc_currency = get_option('woocommerce_currency');
@@ -341,7 +341,7 @@ class WCML_Multi_Currency_Support{
     }
     
     function update_currency_lang(){
-        if(!wp_verify_nonce($_REQUEST['wcml_nonce'], 'wcml_update_currency_lang')){
+        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_update_currency_lang')){
             die('Invalid nonce');
         }
         global $woocommerce_wpml;
@@ -354,13 +354,12 @@ class WCML_Multi_Currency_Support{
     }
 
     function update_default_currency(){
-        if(!wp_verify_nonce($_REQUEST['wcml_nonce'], 'wcml_update_default_currency')){
+        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_update_default_currency')){
             die('Invalid nonce');
         }
         global $woocommerce_wpml;
         $woocommerce_wpml->settings['default_currencies'][$_POST['lang']] = $_POST['code'];
         $woocommerce_wpml->update_settings();
-        
         
         exit;
     }
@@ -600,6 +599,8 @@ class WCML_Multi_Currency_Support{
     }
     
     function load_inline_js(){
+
+        $wcml_switch_currency_nonce = wp_create_nonce('switch_currency');
         
         wc_enqueue_js( "
             jQuery('.wcml_currency_switcher').on('change', function(){                   
@@ -617,18 +618,22 @@ class WCML_Multi_Currency_Support{
                     jQuery('.wcml_currency_switcher').attr('disabled', 'disabled');
                     jQuery('.wcml_currency_switcher').after();
                     ajax_loader.insertAfter(jQuery('.wcml_currency_switcher'));
-                    var data = {action: 'wcml_switch_currency', currency: currency}
                     jQuery.ajax({
                         type : 'post',
                         url : woocommerce_params.ajax_url,
                         data : {
                             action: 'wcml_switch_currency',
-                            currency : currency
+                            currency : currency,
+                            wcml_nonce: '".$wcml_switch_currency_nonce."'
                         },
                         success: function(response) {
-                            jQuery('.wcml_currency_switcher').removeAttr('disabled');
-                        ajax_loader.remove();
-                            window.location = window.location.href;
+                            if(typeof response.error !== 'undefined'){
+                                alert(response.error);
+                            }else{
+                                jQuery('.wcml_currency_switcher').removeAttr('disabled');
+                                ajax_loader.remove();
+                                window.location = window.location.href;
+                            }
                         }
                     });
             }
@@ -713,7 +718,6 @@ class WCML_Multi_Currency_Support{
                             }else{
                                 $variation_fields[$k][$j] = apply_filters('wcml_raw_price_amount', $amount );   // automatic conversion
                             }
-                            
                             
                         }
                         
@@ -820,20 +824,20 @@ class WCML_Multi_Currency_Support{
                 $variation_ids = $wpdb->get_col($wpdb->prepare("SELECT ID FROM {$wpdb->posts} WHERE post_parent = %d", $product_id));
                 
                 // variations with custom prices
-                $res = $wpdb->get_results("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN(" . join(',', $variation_ids) . ") AND meta_key='_wcml_custom_prices_status'");
+                $res = $wpdb->get_results($wpdb->prepare("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN(%s) AND meta_key='_wcml_custom_prices_status'",join(',', $variation_ids)));
                 foreach($res as $row){
                     $custom_prices_enabled[$row->post_id] = $row->meta_value;
                 }
                 
                 // REGULAR PRICES
                 // get custom prices
-                $res = $wpdb->get_results("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN(" . join(',', $variation_ids) . ") AND meta_key='_regular_price_" . $currency . "'");
+                $res = $wpdb->get_results($wpdb->prepare("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN(%s) AND meta_key='_regular_price_" . $currency . "'",join(',', $variation_ids)));
                 foreach($res as $row){
                     $regular_prices[$row->post_id] = $row->meta_value;
                 }
                 
                 // get default prices (default currency)
-                $res = $wpdb->get_results("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN(" . join(',', $variation_ids) . ") AND meta_key='_regular_price'");
+                $res = $wpdb->get_results($wpdb->prepare("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN(%s) AND meta_key='_regular_price'",join(',', $variation_ids)));
                 foreach($res as $row){
                     $default_regular_prices[$row->post_id] = $row->meta_value;
                 }
@@ -847,13 +851,13 @@ class WCML_Multi_Currency_Support{
                 
                 // SALE PRICES
                 // get custom prices
-                $res = $wpdb->get_results("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN(" . join(',', $variation_ids) . ") AND meta_key='_sale_price_" . $currency . "'");
+                $res = $wpdb->get_results($wpdb->prepare("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN(%s) AND meta_key=%s",join(',', $variation_ids),'_sale_price_'.$currency));
                 foreach($res as $row){
                     $custom_sale_prices[$row->post_id] = $row->meta_value;
                 }
                 
                 // get default prices (default currency)
-                $res = $wpdb->get_results("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN(" . join(',', $variation_ids) . ") AND meta_key='_sale_price' AND meta_value <> ''");
+                $res = $wpdb->get_results($wpdb->prepare("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN(%s) AND meta_key='_sale_price' AND meta_value <> ''",join(',', $variation_ids)));
                 foreach($res as $row){
                     $default_sale_prices[$row->post_id] = $row->meta_value;
                 }
@@ -868,13 +872,13 @@ class WCML_Multi_Currency_Support{
                 
                 // PRICES
                 // get custom prices
-                $res = $wpdb->get_results("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN(" . join(',', $variation_ids) . ") AND meta_key='_price_" . $currency . "'");
+                $res = $wpdb->get_results($wpdb->prepare("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN(%s) AND meta_key=%s",join(',', $variation_ids),'_price_'.$currency));
                 foreach($res as $row){
                     $custom_prices_prices[$row->post_id] = $row->meta_value;
                 }
                 
                 // get default prices (default currency)
-                $res = $wpdb->get_results("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN(" . join(',', $variation_ids) . ") AND meta_key='_price'");
+                $res = $wpdb->get_results($wpdb->prepare("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE post_id IN(%s) AND meta_key='_price'",join(',', $variation_ids)));
                 foreach($res as $row){
                     $default_prices[$row->post_id] = $row->meta_value;
                 }
@@ -1083,6 +1087,12 @@ class WCML_Multi_Currency_Support{
     }
     
     function switch_currency(){
+        if(!wp_verify_nonce($_POST['wcml_nonce'], 'switch_currency')){
+            echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
+            die();
+        }
+
+
         $this->set_client_currency($_POST['currency']);
         
         // force set user cookie when user is not logged in        
@@ -1151,7 +1161,11 @@ class WCML_Multi_Currency_Support{
     }
 
     function legacy_update_custom_rates(){
-        
+
+        if(!wp_verify_nonce($_POST['wcml_nonce'], 'legacy_update_custom_rates')){
+            die('Invalid nonce');
+        }
+
         foreach($_POST['posts'] as $post_id => $rates){
             
             update_post_meta($post_id, '_custom_conversion_rate', $rates);
@@ -1164,7 +1178,12 @@ class WCML_Multi_Currency_Support{
     }
     
     function legacy_remove_custom_rates(){
-        
+
+        if(!wp_verify_nonce($_POST['wcml_nonce'], 'legacy_remove_custom_rates')){
+            echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
+            die();
+        }
+
         delete_post_meta($_POST['post_id'], '_custom_conversion_rate');
         echo json_encode(array());
         

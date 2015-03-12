@@ -68,7 +68,7 @@ class WCML_Requests{
                         wp_safe_redirect(admin_url('admin.php?page=wpml-wcml'));
                     }
                 }elseif($exist_currency){
-                    $wpdb->query("DELETE FROM ". $wpdb->prefix ."icl_languages_currencies WHERE language_code = '$key'");
+                    $wpdb->delete($wpdb->prefix .'icl_languages_currencies', array('language_code' => $key) );
                 }
             }
         }
@@ -101,11 +101,6 @@ class WCML_Requests{
             $woocommerce_wpml->settings['dismiss_doc_main'] = 'yes';
             $woocommerce_wpml->update_settings();
         }
-        
-        
-                
-        
-
     }
 
 }

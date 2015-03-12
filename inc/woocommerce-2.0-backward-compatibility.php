@@ -60,7 +60,6 @@ if(version_compare(preg_replace('#-(.+)$#', '', $woocommerce->version), '2.1', '
 
     add_filter('woocommerce_in_cart_product_title',array($this->strings, 'translated_cart_item_name'), 10, 3);
       
-      
 }
   
   

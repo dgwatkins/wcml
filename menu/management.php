@@ -1,6 +1,6 @@
 <?php
 //actions
-global $woocommerce_wpml, $sitepress,$wpdb,$wp_taxonomies;
+global $woocommerce_wpml, $sitepress,$wpdb, $wp_taxonomies;
 
 $current_language = $sitepress->get_current_language();
 $active_languages = $sitepress->get_active_languages();

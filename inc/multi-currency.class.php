@@ -94,7 +94,7 @@ class WCML_WC_MultiCurrency{
 
             add_filter( 'woocommerce_dashboard_status_widget_sales_query', array( $this, 'filter_dashboard_status_widget_sales_query' ) );
             add_filter( 'woocommerce_dashboard_status_widget_top_seller_query', array( $this, 'filter_dashboard_status_widget_sales_query' ) );
-            add_action( 'wp_ajax_wcml_dashboard_set_currency', array( $this, 'set_dashboard_currency' ) );
+            add_action( 'wp_ajax_wcml_dashboard_set_currency', array( $this, 'set_dashboard_currency_ajax' ) );
 
             add_filter('woocommerce_currency_symbol', array($this, 'filter_dashboard_currency_symbol'));
             //filter query to get order by status
@@ -105,7 +105,7 @@ class WCML_WC_MultiCurrency{
     
     
     static function install(){
-        global $wpdb, $woocommerce_wpml;
+        global $woocommerce_wpml;
         
         if(empty($woocommerce_wpml->settings['multi_currency']['set_up'])){
             $woocommerce_wpml->settings['multi_currency']['set_up'] = 1;
@@ -318,8 +318,7 @@ class WCML_WC_MultiCurrency{
     function get_exchange_rates(){
         global $woocommerce_wpml;
         if(empty($this->exchange_rates)){
-            global $wpdb;
-            
+
             $this->exchange_rates = array(get_option('woocommerce_currency') => 1);
             $woo_currencies = get_woocommerce_currencies(); 
             
@@ -336,7 +335,7 @@ class WCML_WC_MultiCurrency{
     
     //@todo - move to multi-currency-support.class.php
     function set_default_currencies_languages(){
-        global $woocommerce_wpml,$sitepress,$wpdb;
+        global $woocommerce_wpml,$sitepress;
         
         if(empty($woocommerce_wpml->multi_currency_support)){
             require_once WCML_PLUGIN_PATH . '/inc/multi-currency-support.class.php';            
@@ -506,7 +505,9 @@ class WCML_WC_MultiCurrency{
         if(isset($_GET['page']) && ($_GET['page'] == 'woocommerce_reports' || $_GET['page'] == 'wc-reports')){ //wc-reports - 2.1.x, woocommerce_reports 2.0.x
             
             add_filter('woocommerce_reports_get_order_report_query', array($this, 'admin_reports_query_filter'));
-                        
+
+            $wcml_reports_set_currency_nonce = wp_create_nonce( 'reports_set_currency' );
+
             wc_enqueue_js( "
                 jQuery('#dropdown_shop_report_currency').on('change', function(){ 
                     jQuery('#dropdown_shop_report_currency_chzn').after('&nbsp;' + icl_ajxloaderimg); // WC 2.0
@@ -516,8 +517,18 @@ class WCML_WC_MultiCurrency{
                     jQuery.ajax({
                         url: ajaxurl,
                         type: 'post',
-                        data: {action: 'wcml_reports_set_currency', currency: jQuery('#dropdown_shop_report_currency').val()},
-                        success: function(){location.reload();}
+                        data: {
+                            action: 'wcml_reports_set_currency',
+                            currency: jQuery('#dropdown_shop_report_currency').val(),
+                            wcml_nonce: '".$wcml_reports_set_currency_nonce."'
+                            },
+                        success: function( response ){
+                            if(typeof response.error !== 'undefined'){
+                                alert(response.error);
+                            }else{
+                               window.location = window.location.href;
+                            }
+                        }
                     })
                 });
             ");
@@ -624,6 +635,11 @@ class WCML_WC_MultiCurrency{
     }
     
     function set_reports_currency(){
+
+        if(!wp_verify_nonce($_POST['wcml_nonce'], 'reports_set_currency')){
+            echo json_encode( array('error' => __('Invalid nonce', 'wpml-wcml') ) );
+            die();
+        }
         
         setcookie('_wcml_reports_currency', $_POST['currency'], time() + 86400, COOKIEPATH, COOKIE_DOMAIN);
         
@@ -643,12 +659,13 @@ class WCML_WC_MultiCurrency{
         
         <select id="dropdown_shop_report_currency">
             <?php if(empty($orders_currencies)): ?>
-            <option value=""><?php _e('Currency - no orders found', 'wpml-wcml') ?></option>
+                <option value=""><?php _e('Currency - no orders found', 'wpml-wcml') ?></option>
             <?php else: ?>                
-            <?php foreach($orders_currencies as $currency => $count): ?>
-            <option value="<?php echo $currency ?>" <?php selected( $currency, $this->reports_currency ); ?>><?php 
-                printf("%s (%s)", $currencies[$currency], get_woocommerce_currency_symbol($currency)) ?></option>
-            <?php endforeach; ?>
+                <?php foreach($orders_currencies as $currency => $count): ?>
+                    <option value="<?php echo $currency ?>" <?php selected( $currency, $this->reports_currency ); ?>>
+                        <?php printf("%s (%s)", $currencies[$currency], get_woocommerce_currency_symbol($currency)) ?>
+                    </option>
+                <?php endforeach; ?>
             <?php endif; ?>
         </select>
         
@@ -722,7 +739,7 @@ class WCML_WC_MultiCurrency{
     }
 
     function set_order_currency(){
-        if(!wp_verify_nonce($_REQUEST['wcml_nonce'], 'set_order_currency')){
+        if(!wp_verify_nonce($_POST['wcml_nonce'], 'set_order_currency')){
             echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
             die();
         }
@@ -831,10 +848,10 @@ class WCML_WC_MultiCurrency{
         wp_nonce_field('wcml_save_custom_prices','_wcml_custom_prices_nonce');
 
         $this->load_custom_prices_js_css();
-        }
+    }
 
     function custom_pricing_output($post_id = false){
-        global $wpdb,$woocommerce,$woocommerce_wpml;
+        global $woocommerce,$woocommerce_wpml;
 
         $custom_prices = array();
         $is_variation = false;
@@ -908,6 +925,9 @@ class WCML_WC_MultiCurrency{
 
             </select>
         <?php
+
+        $wcml_dashboard_set_currency_nonce = wp_create_nonce( 'dashboard_set_currency' );
+
         wc_enqueue_js( "
 
             jQuery(document).ready(function(){
@@ -923,14 +943,29 @@ class WCML_WC_MultiCurrency{
                jQuery.ajax({
                     url: ajaxurl,
                     type: 'post',
-                    data: {action: 'wcml_dashboard_set_currency', currency: jQuery('#dropdown_dashboard_currency').val()},
-                    success: function(){location.reload();}
+                    data: {
+                        action: 'wcml_dashboard_set_currency',
+                        currency: jQuery('#dropdown_dashboard_currency').val(),
+                        wcml_nonce: '".$wcml_dashboard_set_currency_nonce."'
+                    },
+                    success: function( response ){
+                        if(typeof response.error !== 'undefined'){
+                            alert(response.error);
+                        }else{
+                           window.location = window.location.href;
+                        }
+                    }
                 })
             });
         ");
     }
 
     function set_dashboard_currency_ajax(){
+
+        if(!wp_verify_nonce($_POST['wcml_nonce'], 'dashboard_set_currency')){
+            echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
+            die();
+        }
 
         $this->set_dashboard_currency($_POST['currency']);
 

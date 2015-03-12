@@ -27,6 +27,7 @@ class WCML_Upgrade{
         $version_in_db = get_option('_wcml_version');
         
         if(!empty($version_in_db) && version_compare($version_in_db, '2.9.9.1', '<')){
+            $hide_notice_nonce = wp_create_nonce('hide_upgrade_notice');
             $n = 'varimages';
             $wcml_settings['notifications'][$n] = 
                 array(
@@ -34,7 +35,7 @@ class WCML_Upgrade{
                     'text' => __('Looks like you are upgrading from a previous version of WooCommerce Multilingual. Would you like to automatically create translated variations and images?', 'wcml').
                             '<br /><strong>' .
                             ' <a href="' .  admin_url('admin.php?page=' . basename(WCML_PLUGIN_PATH) . '/menu/sub/troubleshooting.php') . '">' . __('Yes, go to the troubleshooting page', 'wcml') . '</a> |' . 
-                            ' <a href="#" onclick="jQuery.ajax({type:\'POST\',url: ajaxurl,data:\'action=wcml_hide_notice&notice='.$n.'\',success:function(){jQuery(\'#' . $n . '\').fadeOut()}});return false;">'  . __('No - dismiss', 'wcml') . '</a>' . 
+                            ' <a href="#" onclick="jQuery.ajax({type:\'POST\',url: ajaxurl,data:\'action=wcml_hide_notice&wcml_nonce='.$hide_notice_nonce.'&notice='.$n.'\',success:function(){jQuery(\'#' . $n . '\').fadeOut()}});return false;">'  . __('No - dismiss', 'wcml') . '</a>' .
                             '</strong>'
                 );
             update_option('_wcml_settings', $wcml_settings);
@@ -62,7 +63,11 @@ class WCML_Upgrade{
     }
     
     function hide_upgrade_notice($k){
-        
+        if(!wp_verify_nonce($_POST['wcml_nonce'], 'hide_upgrade_notice')){
+            die('Invalid nonce');
+        }
+
+
         if(empty($k)){
             $k = $_POST['notice'];
         }

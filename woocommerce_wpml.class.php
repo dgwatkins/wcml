@@ -182,13 +182,17 @@ class woocommerce_wpml {
     }
 
     function update_setting_ajx(){
+        if(!wp_verify_nonce($_POST['nonce'], 'woocommerce_multilingual')){
+            die('Invalid nonce');
+        }
+
         $data = $_POST;
         $error = '';
         $html = '';
-        if($data['nonce'] == wp_create_nonce('woocommerce_multilingual')){ 
-            $this->settings[$data['setting']] = $data['value'];
-            $this->update_settings();
-        }
+
+        $this->settings[$data['setting']] = $data['value'];
+        $this->update_settings();
+
         echo json_encode(array('html' => $html, 'error'=> $error));
         exit;
     }
@@ -788,7 +792,7 @@ class woocommerce_wpml {
      * Hide Translations upgrade notice message ( update option in DB )
      */
     function hide_wcml_translations_message(){
-        if( wp_verify_nonce( $_REQUEST['wcml_nonce'], 'hide_wcml_translations_message' ) ){
+        if( wp_verify_nonce( $_POST['wcml_nonce'], 'hide_wcml_translations_message' ) ){
             update_option( 'hide_wcml_translations_message', true );
         }
 

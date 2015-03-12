@@ -204,15 +204,16 @@ class WCML_Dependencies{
     }
     
     function fix_strings_language(){
-        
-        $ret = array();
-        
-        if(wp_create_nonce($_POST['action']) == $_POST['wcml_nonce']){
-            
-            $ret['_wpnonce'] = wp_create_nonce('icl_sw_form');
-            
-            $ret['success_1'] = '&nbsp;' . sprintf(__('Finished! You can visit the %sstrings translation%s screen to translate the strings now.', 'wpml-wcml'), '<a href="' . admin_url('admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php') . '">', '</a>');
+        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_fix_strings_language')){
+            die('Invalid nonce');
         }
+
+        $ret = array();
+            
+        $ret['_wpnonce'] = wp_create_nonce('icl_sw_form');
+
+        $ret['success_1'] = '&nbsp;' . sprintf(__('Finished! You can visit the %sstrings translation%s screen to translate the strings now.', 'wpml-wcml'), '<a href="' . admin_url('admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php') . '">', '</a>');
+
         
         echo json_encode($ret);
         

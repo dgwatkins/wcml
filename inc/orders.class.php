@@ -194,7 +194,7 @@ class WCML_Orders{
                 </select>
             </li>
             <?php
-            $wcml_set_dashboard_order_languag_nonce = wp_create_nonce( 'set_dashboard_order_languag' );
+            $wcml_set_dashboard_order_language_nonce = wp_create_nonce( 'set_dashboard_order_language' );
             wc_enqueue_js( "
                  var order_lang_current_value = jQuery('#dropdown_shop_order_language option:selected').val();
 
@@ -206,7 +206,7 @@ class WCML_Orders{
                             url: ajaxurl,
                             type: 'post',
                             dataType: 'json',
-                            data: {action: 'wcml_order_delete_items', order_id: woocommerce_admin_meta_boxes.post_id, lang: lang , wcml_nonce: '".$wcml_set_dashboard_order_languag_nonce."' },
+                            data: {action: 'wcml_order_delete_items', order_id: woocommerce_admin_meta_boxes.post_id, lang: lang , wcml_nonce: '".$wcml_set_dashboard_order_language_nonce."' },
                             success: function( response ){
                                 if(typeof response.error !== 'undefined'){
                                     alert(response.error);
@@ -226,7 +226,7 @@ class WCML_Orders{
     }
 
     function order_delete_items(){
-        if(!wp_verify_nonce($_REQUEST['wcml_nonce'], 'set_dashboard_order_languag')){
+        if(!wp_verify_nonce($_POST['wcml_nonce'], 'set_dashboard_order_language')){
             echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
             die();
         }
