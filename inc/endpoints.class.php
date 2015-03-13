@@ -10,7 +10,6 @@ class WCML_Endpoints{
         add_action( 'plugins_loaded', array( $this, 'register_endpoints_translations' ), 2 );
         add_action( 'icl_ajx_custom_call', array( $this, 'rewrite_rule_endpoints' ), 11, 2 );
         add_action( 'woocommerce_settings_saved', array( $this, 'update_endpoints_rules' ) );
-        add_action( 'init', array( $this, 'update_endpoints_rules' ) );
 
         add_filter( 'page_link', array( $this, 'endpoint_permalink_filter' ), 10, 2 ); //after WPML
 
