@@ -196,7 +196,8 @@ class WCML_Multi_Currency_Support{
     }
     
     function add_currency(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_new_currency')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_new_currency')){
             die('Invalid nonce');
         }
 
@@ -207,7 +208,7 @@ class WCML_Multi_Currency_Support{
         
         if(!empty($_POST['currency_code'])){
             
-            $currency_code = $_POST['currency_code'];
+            $currency_code = filter_input( INPUT_POST, 'currency_code', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             
             $active_languages = $sitepress->get_active_languages();
             $return['languages'] ='';
@@ -216,7 +217,7 @@ class WCML_Multi_Currency_Support{
                     $settings['currency_options'][$currency_code]['languages'][$language['code']] = 1;
                 }
             }
-            $settings['currency_options'][$currency_code]['rate'] = (double) $_POST['currency_value'];
+            $settings['currency_options'][$currency_code]['rate'] = (double) filter_input( INPUT_POST, 'currency_value', FILTER_SANITIZE_NUMBER_FLOAT );
             $settings['currency_options'][$currency_code]['updated'] = date('Y-m-d H:i:s');        
 
             $wc_currency = get_option('woocommerce_currency'); 
@@ -248,13 +249,14 @@ class WCML_Multi_Currency_Support{
     }    
     
     function save_currency(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'save_currency')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'save_currency')){
             die('Invalid nonce');
         }
 
         global $woocommerce_wpml;
         
-        $currency_code = $_POST['currency'];
+        $currency_code = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         $options = $_POST['currency_options'][$currency_code];
         
         $changed = false;
@@ -298,7 +300,8 @@ class WCML_Multi_Currency_Support{
     }
     
     function delete_currency(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_delete_currency')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_delete_currency')){
             die('Invalid nonce');
         }
         global $woocommerce_wpml;
@@ -318,7 +321,8 @@ class WCML_Multi_Currency_Support{
     }
     
     function currencies_list(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_currencies_list')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_currencies_list')){
             die('Invalid nonce');
         }
 
@@ -341,7 +345,8 @@ class WCML_Multi_Currency_Support{
     }
     
     function update_currency_lang(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_update_currency_lang')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_update_currency_lang')){
             die('Invalid nonce');
         }
         global $woocommerce_wpml;
@@ -354,7 +359,8 @@ class WCML_Multi_Currency_Support{
     }
 
     function update_default_currency(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_update_default_currency')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_update_default_currency')){
             die('Invalid nonce');
         }
         global $woocommerce_wpml;
@@ -1030,7 +1036,7 @@ class WCML_Multi_Currency_Support{
         $active_languages     = $sitepress->get_active_languages();
         
         if(isset($_POST['action']) && $_POST['action'] == 'wcml_switch_currency' && !empty($_POST['currency'])){
-           $this->client_currency = $_POST['currency'];
+           $this->client_currency = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         }
 
         if( is_null($this->client_currency) && isset($default_currencies[$current_language]) && $default_currencies[$current_language] && !empty($woocommerce->session) && $current_language != $woocommerce->session->get('client_currency_language') ){
@@ -1087,13 +1093,15 @@ class WCML_Multi_Currency_Support{
     }
     
     function switch_currency(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'switch_currency')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'switch_currency')){
             echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
             die();
         }
 
+        $currency = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
-        $this->set_client_currency($_POST['currency']);
+        $this->set_client_currency($currency);
         
         // force set user cookie when user is not logged in        
         global $woocommerce, $current_user;
@@ -1101,7 +1109,7 @@ class WCML_Multi_Currency_Support{
             $woocommerce->session->set_customer_session_cookie(true);    
         }
         
-        do_action('wcml_switch_currency', $_POST['currency']);
+        do_action('wcml_switch_currency', $currency );
         
         exit;
         
@@ -1162,7 +1170,8 @@ class WCML_Multi_Currency_Support{
 
     function legacy_update_custom_rates(){
 
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'legacy_update_custom_rates')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'legacy_update_custom_rates')){
             die('Invalid nonce');
         }
 
@@ -1179,7 +1188,8 @@ class WCML_Multi_Currency_Support{
     
     function legacy_remove_custom_rates(){
 
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'legacy_remove_custom_rates')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'legacy_remove_custom_rates')){
             echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
             die();
         }

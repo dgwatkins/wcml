@@ -457,7 +457,7 @@ class WCML_Terms{
         if (!isset($_POST['thetaxonomy']) || !taxonomy_exists($_POST['thetaxonomy']) || substr($meta_key,0,5) != 'order') 
             return;
         
-        $tax = $_POST['thetaxonomy'];
+        $tax = filter_input( INPUT_POST, 'thetaxonomy', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         
         $term_taxonomy_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id=%d AND taxonomy=%s", $object_id, $tax));
         $trid = $sitepress->get_element_trid($term_taxonomy_id, 'tax_' . $tax);
@@ -506,7 +506,8 @@ class WCML_Terms{
     
     static function wcml_update_term_translated_warnings(){
 
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_update_term_translated_warnings_nonce')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_update_term_translated_warnings_nonce')){
             die('Invalid nonce');
         }
 
@@ -514,7 +515,7 @@ class WCML_Terms{
         
         $ret = array();
 
-        $taxonomy = $_POST['taxonomy'];
+        $taxonomy = filter_input( INPUT_POST, 'taxonomy', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
         $wcml_settings = $woocommerce_wpml->get_settings();
 
@@ -534,7 +535,8 @@ class WCML_Terms{
     }
     
     static function wcml_ingore_taxonomy_translation(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_ingore_taxonomy_translation_nonce')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_ingore_taxonomy_translation_nonce')){
             die('Invalid nonce');
         }
 
@@ -542,7 +544,7 @@ class WCML_Terms{
         
         $ret = array();
         
-        $taxonomy = $_POST['taxonomy'];
+        $taxonomy = filter_input( INPUT_POST, 'taxonomy', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
         $wcml_settings = $woocommerce_wpml->get_settings();
         $wcml_settings['untranstaled_terms'][$taxonomy]['status'] = self::NEW_TAXONOMY_IGNORED;
@@ -560,7 +562,8 @@ class WCML_Terms{
     }
     
     static function wcml_uningore_taxonomy_translation(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_ingore_taxonomy_translation_nonce')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_ingore_taxonomy_translation_nonce')){
             die('Invalid nonce');
         }
 
@@ -568,7 +571,7 @@ class WCML_Terms{
         
         $ret = array();
         
-        $taxonomy = $_POST['taxonomy'];
+        $taxonomy = filter_input( INPUT_POST, 'taxonomy', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
         $wcml_settings = $woocommerce_wpml->get_settings();
 
@@ -792,7 +795,8 @@ class WCML_Terms{
     }
     
     static function wcml_sync_product_variations($taxonomy){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_sync_product_variations')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_sync_product_variations')){
             die('Invalid nonce');
         }
 
@@ -803,9 +807,9 @@ class WCML_Terms{
         $wcml_settings = $woocommerce_wpml->get_settings();
         $response = array();
         
-        $taxonomy = $_POST['taxonomy'];
+        $taxonomy = filter_input( INPUT_POST, 'taxonomy', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         
-        $languages_processed = intval($_POST['languages_processed']);
+        $languages_processed = intval( $_POST['languages_processed']);
 
         $condition = $languages_processed?'>=':'>';
 
@@ -888,7 +892,8 @@ class WCML_Terms{
     }
 
     static function wcml_sync_taxonomies_in_content_preview(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_sync_taxonomies_in_content_preview')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_sync_taxonomies_in_content_preview')){
             die('Invalid nonce');
         }
 
@@ -916,7 +921,8 @@ class WCML_Terms{
     }
 
     public static function wcml_sync_taxonomies_in_content(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_sync_taxonomies_in_content')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_sync_taxonomies_in_content')){
             die('Invalid nonce');
         }
 

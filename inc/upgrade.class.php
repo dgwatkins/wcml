@@ -63,13 +63,14 @@ class WCML_Upgrade{
     }
     
     function hide_upgrade_notice($k){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'hide_upgrade_notice')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'hide_upgrade_notice')){
             die('Invalid nonce');
         }
 
 
         if(empty($k)){
-            $k = $_POST['notice'];
+            $k = filter_input( INPUT_POST, 'notice', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         }
         
         $wcml_settings = get_option('_wcml_settings');

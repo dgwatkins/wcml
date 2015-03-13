@@ -23,7 +23,8 @@ class WCML_Troubleshooting{
 
     function trbl_update_count(){
 
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'trbl_update_count')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'trbl_update_count')){
             die('Invalid nonce');
         }
 
@@ -75,7 +76,8 @@ class WCML_Troubleshooting{
 
     function trbl_sync_variations(){
 
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'trbl_sync_variations')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'trbl_sync_variations')){
             die('Invalid nonce');
         }
 
@@ -121,7 +123,8 @@ class WCML_Troubleshooting{
     }
 
     function trbl_gallery_images(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'trbl_gallery_images')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'trbl_gallery_images')){
             die('Invalid nonce');
         }
 
@@ -145,7 +148,8 @@ class WCML_Troubleshooting{
     }
 
     function trbl_sync_categories(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'trbl_sync_categories')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'trbl_sync_categories')){
             die('Invalid nonce');
         }
 
@@ -180,7 +184,8 @@ class WCML_Troubleshooting{
 
 
     function trbl_duplicate_terms(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'trbl_duplicate_terms')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'trbl_duplicate_terms')){
             die('Invalid nonce');
         }
         global $sitepress;

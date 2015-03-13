@@ -413,7 +413,8 @@ class WCML_Products{
 
     //update product "AJAX"
     function update_product_actions() {
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'update_product_actions')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'update_product_actions')){
             echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
             die();
         }
@@ -425,8 +426,8 @@ class WCML_Products{
         $records = $_POST['records'];
         parse_str($records, $data);
 
-        $original_product_id = $_POST['product_id'];
-        $language = $_POST['language'];
+        $original_product_id = filter_input( INPUT_POST, 'product_id', FILTER_SANITIZE_NUMBER_INT );
+        $language = filter_input( INPUT_POST, 'language', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         $orig_product = get_post($original_product_id);
 
         if (!$data['title_' . $language]) {
@@ -1459,7 +1460,9 @@ class WCML_Products{
         }
 
         //save custom prices
-        if(isset( $_POST['_wcml_custom_prices'][$post_id]) && isset( $_POST['_wcml_custom_prices_nonce'] ) && wp_verify_nonce( $_POST['_wcml_custom_prices_nonce'], 'wcml_save_custom_prices' )){
+        $nonce = filter_input( INPUT_POST, '_wcml_custom_prices_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+        if(isset( $_POST['_wcml_custom_prices'][$post_id]) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_custom_prices' )){
 
             update_post_meta($post_id,'_wcml_custom_prices_status',$_POST['_wcml_custom_prices'][$post_id]);
 
@@ -1601,7 +1604,9 @@ class WCML_Products{
                 $duplicated_post_variation_ids[] = $post_data->ID;
 
                 //save custom prices for variation
-                if(isset( $_POST['_wcml_custom_prices'][$post_data->ID]) && isset( $_POST['_wcml_custom_prices_nonce'] ) && wp_verify_nonce( $_POST['_wcml_custom_prices_nonce'], 'wcml_save_custom_prices' )){
+                $nonce = filter_input( INPUT_POST, '_wcml_custom_prices_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+                if(isset( $_POST['_wcml_custom_prices'][$post_data->ID]) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_custom_prices' )){
 
                     update_post_meta($post_data->ID,'_wcml_custom_prices_status',$_POST['_wcml_custom_prices'][$post_data->ID]);
 
@@ -2167,7 +2172,7 @@ class WCML_Products{
     // sitepress $lang filter
     function wpml_save_post_lang_value($lang){
         if(isset($_POST['action']) &&  $_POST['action'] == 'wcml_update_product' && isset($_POST['to_lang'])){
-            $lang = $_POST['to_lang'];
+            $lang = filter_input( INPUT_POST, 'to_lang', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         }
         return $lang;
     }
@@ -2175,11 +2180,11 @@ class WCML_Products{
     //update taxonomy in variations
     function update_taxonomy_in_variations(){
         global $wpdb;
-        $original_element   = $_POST['translation_of'];
-        $taxonomy           = $_POST['taxonomy'];
-        $language           = $_POST['language'];
-        $slug               = $_POST['slug'];
-        $name               = $_POST['name'];
+        $original_element   = filter_input( INPUT_POST, 'translation_of', FILTER_SANITIZE_NUMBER_INT );
+        $taxonomy           = filter_input( INPUT_POST, 'taxonomy', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        $language           = filter_input( INPUT_POST, 'language', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        $slug               = filter_input( INPUT_POST, 'slug', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        $name               = filter_input( INPUT_POST, 'name', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         $term_id = $wpdb->get_var($wpdb->prepare("SELECT term_id FROM $wpdb->term_taxonomy WHERE term_taxonomy_id = %d",$original_element));
         $original_term = get_term( $term_id, $taxonomy );
         $original_slug = $original_term->slug;
@@ -2278,7 +2283,7 @@ class WCML_Products{
     function remove_variation_ajax(){
         global $sitepress;
         if(isset($_POST['variation_id'])){
-            $trid = $sitepress->get_element_trid($_POST['variation_id'], 'post_product_variation');
+            $trid = $sitepress->get_element_trid( filter_input( INPUT_POST, 'variation_id', FILTER_SANITIZE_NUMBER_INT ), 'post_product_variation');
             if ($trid) {
                 $translations = $sitepress->get_element_translations($trid, 'post_product_variation');
                 if($translations){
@@ -2683,7 +2688,7 @@ class WCML_Products{
     function woocommerce_restore_order_stock_quantity($stock_change,$item_id){
         global $sitepress;
 
-        $order_id = absint( $_POST['order_id'] );
+        $order_id = absint( filter_input( INPUT_POST, 'order_id', FILTER_SANITIZE_NUMBER_INT ) );
         $order = new WC_Order( $order_id );
         $order_items = $order->get_items();
         $_product = $order->get_product_from_item( $order_items[$item_id] );
@@ -2778,14 +2783,17 @@ class WCML_Products{
 
 
     function product_data_html(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_product_data')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_product_data')){
             echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
             die();
         }
         global $woocommerce_wpml,$sitepress,$wpdb;
 
-        $product = get_post( $_POST['product_id'] );
-        $default_language = $sitepress->get_language_for_element($_POST['product_id'],'post_product');
+        $product_id = filter_input( INPUT_POST, 'product_id', FILTER_SANITIZE_NUMBER_INT );
+
+        $product = get_post( $product_id );
+        $default_language = $sitepress->get_language_for_element($product_id,'post_product');
         $active_languages = $sitepress->get_active_languages();
 
         if(ob_get_length()){

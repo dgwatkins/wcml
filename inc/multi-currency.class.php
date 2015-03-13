@@ -636,12 +636,13 @@ class WCML_WC_MultiCurrency{
     
     function set_reports_currency(){
 
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'reports_set_currency')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'reports_set_currency')){
             echo json_encode( array('error' => __('Invalid nonce', 'wpml-wcml') ) );
             die();
         }
         
-        setcookie('_wcml_reports_currency', $_POST['currency'], time() + 86400, COOKIEPATH, COOKIE_DOMAIN);
+        setcookie('_wcml_reports_currency', filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS ), time() + 86400, COOKIEPATH, COOKIE_DOMAIN);
         
         exit;
         
@@ -739,14 +740,16 @@ class WCML_WC_MultiCurrency{
     }
 
     function set_order_currency(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'set_order_currency')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'set_order_currency')){
             echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
             die();
         }
+        $currency = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
-        setcookie('_wcml_order_currency', $_POST['currency'], time() + 86400, COOKIEPATH, COOKIE_DOMAIN);
+        setcookie('_wcml_order_currency', $currency, time() + 86400, COOKIEPATH, COOKIE_DOMAIN);
 
-        $return['currency'] = $_POST['currency'];
+        $return['currency'] = $currency;
 
         echo json_encode($return);
 
@@ -766,7 +769,7 @@ class WCML_WC_MultiCurrency{
     function process_shop_order_meta( $post_id, $post ){
 
         if( isset( $_POST['wcml_shop_order_currency'] ) ){
-            update_post_meta( $post_id, '_order_currency', $_POST['wcml_shop_order_currency'] );
+            update_post_meta( $post_id, '_order_currency', filter_input( INPUT_POST, 'wcml_shop_order_currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) );
         }
 
     }
@@ -962,12 +965,13 @@ class WCML_WC_MultiCurrency{
 
     function set_dashboard_currency_ajax(){
 
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'dashboard_set_currency')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'dashboard_set_currency')){
             echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
             die();
         }
 
-        $this->set_dashboard_currency($_POST['currency']);
+        $this->set_dashboard_currency(filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS ));
 
         die();
     }

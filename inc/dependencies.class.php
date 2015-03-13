@@ -204,7 +204,8 @@ class WCML_Dependencies{
     }
     
     function fix_strings_language(){
-        if(!wp_verify_nonce($_POST['wcml_nonce'], 'wcml_fix_strings_language')){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_fix_strings_language')){
             die('Invalid nonce');
         }
 
