@@ -81,7 +81,6 @@ $woocommerce_wpml->update_settings();
     <select class="wcml_product_category">
         <option value="0"><?php _e('Any category', 'wpml-wcml'); ?></option>
         <?php
-            $prepared_arg = array();
 
             $sql = "SELECT tt.term_taxonomy_id,tt.term_id,t.name FROM $wpdb->term_taxonomy AS tt
                     LEFT JOIN $wpdb->terms AS t ON tt.term_id = t.term_id
@@ -90,12 +89,11 @@ $woocommerce_wpml->update_settings();
 
             if( $slang ){
                 $sql .=  " AND icl.language_code = %s ";
-                $prepared_arg[] = $slang;
+                $product_categories = $wpdb->get_results( $wpdb->prepare( $sql, $slang ) );
             }else{
                 $sql .=  "AND icl.source_language_code IS NULL";
+                $product_categories = $wpdb->get_results( $sql );
             }
-
-            $product_categories = $wpdb->get_results($wpdb->prepare($sql,$prepared_arg));
 
             foreach ($product_categories as $category) {
                 $selected = (isset($_GET['cat']) && $_GET['cat'] == $category->term_taxonomy_id)?'selected="selected"':'';

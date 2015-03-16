@@ -148,18 +148,16 @@ class WCML_Products{
     function get_product_list( $page = 1, $limit = 20, $slang ){
         global $wpdb,$sitepress;
 
-        $prepared_arg = array();
-
         $sql = "SELECT p.ID,p.post_parent FROM $wpdb->posts AS p
                   LEFT JOIN {$wpdb->prefix}icl_translations AS icl ON icl.element_id = p.id
                 WHERE p.post_type = 'product' AND p.post_status IN ('publish','future','draft','pending','private') AND icl.element_type= 'post_product' AND icl.source_language_code IS NULL";
 
         if($slang){
             $sql .= " AND icl.language_code = %s ";
-            $prepared_arg[] = $slang;
+            $products = $wpdb->get_results( $wpdb->prepare( $sql, $slang ) );
+        }else{
+            $products = $wpdb->get_results( $sql );
         }
-
-        $products = $wpdb->get_results( $wpdb->prepare( $sql, $prepared_arg ) );
 
         return $this->display_hierarchical($products,$page,$limit);
     }
@@ -254,18 +252,16 @@ class WCML_Products{
     function get_products_count( $slang ){
         global $sitepress,$wpdb;
 
-        $prepared_arg = array();
-
         $sql = "SELECT count(p.id) FROM $wpdb->posts AS p
                 LEFT JOIN {$wpdb->prefix}icl_translations AS icl ON icl.element_id = p.id
                 WHERE p.post_type = 'product' AND p.post_status IN ('publish','future','draft','pending','private') AND icl.element_type= 'post_product' AND icl.source_language_code IS NULL";
 
         if( $slang ){
             $sql .= " AND icl.language_code = %s ";
-            $prepared_arg[] = $slang;
+            $count = $wpdb->get_var( $wpdb->prepare( $sql, $slang ) );
+        }else{
+            $count = $wpdb->get_var( $sql );
         }
-
-        $count = $wpdb->get_var( $wpdb->prepare( $sql, $prepared_arg ) );
 
         return (int)$count;
     }
