@@ -20,21 +20,24 @@ class WCML_Endpoints{
 
         $wc_vars = WC()->query->query_vars;
 
-        $query_vars = array(
-            // Checkout actions
-            'order-pay'          => $this->get_endpoint_translation( $wc_vars['order-pay'] ),
-            'order-received'     => $this->get_endpoint_translation( $wc_vars['order-received'] ),
+        if ( !empty( $wc_vars ) ){
+            $query_vars = array(
+                // Checkout actions
+                'order-pay'          => $this->get_endpoint_translation( $wc_vars['order-pay'] ),
+                'order-received'     => $this->get_endpoint_translation( $wc_vars['order-received'] ),
 
-            // My account actions
-            'view-order'         => $this->get_endpoint_translation( $wc_vars['view-order'] ),
-            'edit-account'       => $this->get_endpoint_translation( $wc_vars['edit-account'] ),
-            'edit-address'       => $this->get_endpoint_translation( $wc_vars['edit-address'] ),
-            'lost-password'      => $this->get_endpoint_translation( $wc_vars['lost-password'] ),
-            'customer-logout'    => $this->get_endpoint_translation( $wc_vars['customer-logout'] ),
-            'add-payment-method' => $this->get_endpoint_translation( $wc_vars['add-payment-method'] ),
-        );
+                // My account actions
+                'view-order'         => $this->get_endpoint_translation( $wc_vars['view-order'] ),
+                'edit-account'       => $this->get_endpoint_translation( $wc_vars['edit-account'] ),
+                'edit-address'       => $this->get_endpoint_translation( $wc_vars['edit-address'] ),
+                'lost-password'      => $this->get_endpoint_translation( $wc_vars['lost-password'] ),
+                'customer-logout'    => $this->get_endpoint_translation( $wc_vars['customer-logout'] ),
+                'add-payment-method' => $this->get_endpoint_translation( $wc_vars['add-payment-method'] ),
+            );
 
-        WC()->query->query_vars = $query_vars;
+            WC()->query->query_vars = $query_vars;
+
+        }
 
     }
 
