@@ -80,7 +80,6 @@ In order for the checkout and store pages to appear translated, you need to crea
 
 = 3.5.4 =
 * Bug fixed: Can't access source content in WCML product translation table
-* Bug fixed: Security audit
 * Bug fixed: Custom Post Types leads to 404 error
 
 = 3.5.3 =

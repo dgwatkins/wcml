@@ -5,7 +5,7 @@
   Description: Allows running fully multilingual e-Commerce sites with WooCommerce and WPML. <a href="http://wpml.org/documentation/related-projects/woocommerce-multilingual/">Documentation</a>.
   Author: OnTheGoSystems
   Author URI: http://www.onthegosystems.com/
-  Version: 3.5.4-beta1
+  Version: 3.5.4
 */
 
 
