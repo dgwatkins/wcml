@@ -34,7 +34,7 @@ class WCML_Multi_Currency_Support{
         
         if(is_admin()){
             add_action('admin_footer', array($this, 'currency_options_wc_integration'));            
-            add_action('woocommerce_settings_save_general', array($this, 'currency_options_wc_integration_save_hook'));            
+            add_action('woocommerce_settings_save_general', array($this, 'currency_options_wc_integration_save_hook'));
         }
         
         add_action( 'wp_enqueue_scripts', array( $this, 'register_styles' ) );
@@ -42,6 +42,8 @@ class WCML_Multi_Currency_Support{
 
         add_filter( 'woocommerce_cart_contents_total', array( $this, 'filter_woocommerce_cart_contents_total'), 100 );
         add_filter( 'woocommerce_cart_subtotal', array( $this, 'filter_woocommerce_cart_subtotal'), 100, 3 );
+
+        add_action( 'update_option_woocommerce_currency', array( $this, 'set_default_currencies_languages' ), 10, 2 );
     }
     
     function _load_filters(){
@@ -211,11 +213,12 @@ class WCML_Multi_Currency_Support{
         return $this->currency_codes;
     }
 
-    function set_default_currencies_languages(){
+    function set_default_currencies_languages( $old_value = false, $new_value = false ){
         global $woocommerce_wpml,$sitepress;
 
         $settings = $woocommerce_wpml->get_settings();
-        $wc_currency = get_option('woocommerce_currency');
+
+        $wc_currency = $new_value ? $new_value : get_option('woocommerce_currency');
 
         $active_languages = $sitepress->get_active_languages();
         foreach ($this->get_currency_codes() as $code) {
