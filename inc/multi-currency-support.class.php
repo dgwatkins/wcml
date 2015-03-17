@@ -11,6 +11,8 @@ class WCML_Multi_Currency_Support{
     function __construct(){
         
         add_action('init', array($this, 'init'), 5);
+        $this->install();
+
         $this->init_currencies();
 
         if(is_ajax()){        
@@ -111,8 +113,22 @@ class WCML_Multi_Currency_Support{
 
         if(!is_admin()) $this->load_inline_js();
         
-    }    
-    
+    }
+
+    function install(){
+        global $woocommerce_wpml;
+
+        if(empty($woocommerce_wpml->settings['multi_currency']['set_up'])){
+            $woocommerce_wpml->settings['multi_currency']['set_up'] = 1;
+            $woocommerce_wpml->update_settings();
+
+            $this->set_default_currencies_languages();
+        }
+
+        return;
+
+    }
+
     function init_currencies(){
         global $woocommerce_wpml, $sitepress;
         $this->currencies =& $woocommerce_wpml->settings['currency_options'];  // ref
@@ -193,6 +209,35 @@ class WCML_Multi_Currency_Support{
     
     function get_currency_codes(){
         return $this->currency_codes;
+    }
+
+    function set_default_currencies_languages(){
+        global $woocommerce_wpml,$sitepress;
+
+        $settings = $woocommerce_wpml->get_settings();
+        $wc_currency = get_option('woocommerce_currency');
+
+        $active_languages = $sitepress->get_active_languages();
+        foreach ($this->get_currency_codes() as $code) {
+            foreach($active_languages as $language){
+                if(!isset($settings['currency_options'][$code]['languages'][$language['code']])){
+                    $settings['currency_options'][$code]['languages'][$language['code']] = 1;
+                }
+            }
+        }
+
+        foreach($active_languages as $language){
+            if(!isset($settings['default_currencies'][$language['code']])){
+                $settings['default_currencies'][$language['code']] = false;
+            }
+
+            if(!isset($settings['currency_options'][$wc_currency]['languages'][$language['code']])){
+                $settings['currency_options'][$wc_currency]['languages'][$language['code']] = 1;
+            }
+        }
+
+        $woocommerce_wpml->update_settings($settings);
+
     }
     
     function add_currency(){

@@ -20,7 +20,7 @@ class WCML_WC_MultiCurrency{
         
     }
     
-    function init(){        
+    function init(){
         
         add_filter('wcml_price_currency', array($this, 'price_currency_filter'));            
         
@@ -36,11 +36,6 @@ class WCML_WC_MultiCurrency{
         
         
         // exchange rate GUI and logic
-        if(is_admin()){
-
-            $this->init_ajax_currencies_actions();
-        }
-        
         if(defined('W3TC')){
             
             $WCML_WC_MultiCurrency_W3TC = new WCML_WC_MultiCurrency_W3TC;    
@@ -101,24 +96,6 @@ class WCML_WC_MultiCurrency{
             add_filter( 'query', array( $this, 'filter_order_status_query' ) );
         }
 
-    }
-    
-    
-    static function install(){
-        global $woocommerce_wpml;
-        
-        if(empty($woocommerce_wpml->settings['multi_currency']['set_up'])){
-            $woocommerce_wpml->settings['multi_currency']['set_up'] = 1;
-            $woocommerce_wpml->update_settings();
-        }
-        
-        return;
-        
-    }
-    
-    function init_ajax_currencies_actions(){        
-
-        $this->set_default_currencies_languages();
     }
         
     function raw_price_filter($price, $currency = false) {
@@ -331,42 +308,6 @@ class WCML_WC_MultiCurrency{
         }
         
         return $this->exchange_rates;
-    }
-    
-    //@todo - move to multi-currency-support.class.php
-    function set_default_currencies_languages(){
-        global $woocommerce_wpml,$sitepress;
-        
-        if(empty($woocommerce_wpml->multi_currency_support)){
-            require_once WCML_PLUGIN_PATH . '/inc/multi-currency-support.class.php';            
-            $woocommerce_wpml->multi_currency_support = new WCML_Multi_Currency_Support;
-            $woocommerce_wpml->multi_currency_support->init();
-        }
-        
-        $settings = $woocommerce_wpml->get_settings();
-        $wc_currency = get_option('woocommerce_currency');
-
-        $active_languages = $sitepress->get_active_languages();
-        foreach ($woocommerce_wpml->multi_currency_support->get_currency_codes() as $code) {
-            foreach($active_languages as $language){
-                if(!isset($settings['currency_options'][$code]['languages'][$language['code']])){
-                    $settings['currency_options'][$code]['languages'][$language['code']] = 1;
-                }
-            }
-        }
-
-        foreach($active_languages as $language){
-            if(!isset($settings['default_currencies'][$language['code']])){
-                $settings['default_currencies'][$language['code']] = false;
-            }
-
-            if(!isset($settings['currency_options'][$wc_currency]['languages'][$language['code']])){
-                $settings['currency_options'][$wc_currency]['languages'][$language['code']] = 1;
-            }
-        }
-
-        $woocommerce_wpml->update_settings($settings);
-
     }
 
     function currency_switcher(){

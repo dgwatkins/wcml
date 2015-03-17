@@ -22,7 +22,6 @@ class WCML_Products{
         if(is_admin()){
             add_action( 'wp_ajax_wcml_update_product', array( $this, 'update_product_actions' ) );
             add_action( 'wp_ajax_wcml_product_data', array( $this, 'product_data_html' ) );
-            $this->check_currency_ajax_actions();
 
             add_filter( 'wpml_post_edit_page_link_to_translation', array( $this,'_filter_link_to_translation' ) );
             add_action( 'admin_init', array( $this, 'restrict_admin_with_redirect' ) );
@@ -2671,15 +2670,6 @@ class WCML_Products{
         }
 
     }
-
-    function check_currency_ajax_actions(){
-        global $woocommerce_wpml;
-        if($woocommerce_wpml->settings['enable_multi_currency'] != WCML_MULTI_CURRENCIES_INDEPENDENT){
-            $WCML_WC_MultiCurrency = new WCML_WC_MultiCurrency;
-            $WCML_WC_MultiCurrency->init_ajax_currencies_actions();
-        }
-    }
-
 
     function woocommerce_restore_order_stock_quantity($stock_change,$item_id){
         global $sitepress;
