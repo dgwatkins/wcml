@@ -38,6 +38,11 @@ class WCML_CurrencySwitcher{
         }
         global $woocommerce_wpml;
 
+        if( $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_DISABLED ){
+            require_once WCML_PLUGIN_PATH . '/inc/multi-currency-support.class.php';
+            $woocommerce_wpml->multi_currency_support = new WCML_Multi_Currency_Support;
+        }
+
         echo $woocommerce_wpml->multi_currency_support->currency_switcher(array('format' => $_POST['template']?$_POST['template']:'%name% (%symbol%) - %code%','switcher_style' => $_POST['switcher_type'],'orientation'=> $_POST['orientation']));
 
         die();

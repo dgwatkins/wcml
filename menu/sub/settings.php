@@ -411,7 +411,7 @@ if( ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && ( $site
                     <?php       
                     unset($wc_currencies[$wc_currency]);     
                     $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
-                    foreach ($currencies as $code => $currency) : 
+                    foreach ($currencies as $code => $currency) :
                         switch($currency['position']){
                             case 'left': $positioned_price = sprintf('%s99.99', get_woocommerce_currency_symbol($code)); break;
                             case 'right': $positioned_price = sprintf('99.99%s', get_woocommerce_currency_symbol($code)); break;

@@ -17,7 +17,7 @@
                 </tr>
                 <tr>   
                     <td>&nbsp;</td>
-                    <td><small><i><?php printf(__('Set on %s', 'wpml-wcml'), date('F j, Y, H:i', strtotime($currency['updated']))); ?></i></small></td>
+                    <td><small><i><?php printf(__('Set on %s', 'wpml-wcml'), date('F j, Y, H:i', strtotime(isset($currency['updated'])? $currency['updated']: time()))); ?></i></small></td>
                 </tr>
             
                 <tr>    

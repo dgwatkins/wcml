@@ -54,7 +54,7 @@ if(version_compare(preg_replace('#-(.+)$#', '', $woocommerce->version), '2.1', '
     }
     add_filter('woocommerce_available_shipping_methods', 'wcml_wc_2_0_backward_compatibility_register_shipping_methods');
     
-    if(isset($woocommerce_wpml->multi_currency_support)){
+    if( $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
         add_filter('woocommerce_available_shipping_methods', array($woocommerce_wpml->multi_currency_support, 'shipping_taxes_filter'));    
     }
 

@@ -2601,7 +2601,7 @@ class WCML_Products{
                  $save = true;
              }
 
-             if(!empty($woocommerce_wpml->multi_currency_support)){
+             if( $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
                  foreach($woocommerce_wpml->multi_currency_support->get_currency_codes() as $code){
                      $new_key = $key.'_'.$code;
                      $iclTranslationManagement->settings['custom_fields_readonly_config'][] = $new_key;

@@ -33,13 +33,11 @@ class woocommerce_wpml {
 
         global $sitepress,$pagenow;
 
-        if($this->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT){
+        if($this->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
             require_once WCML_PLUGIN_PATH . '/inc/multi-currency-support.class.php';            
             $this->multi_currency_support = new WCML_Multi_Currency_Support;
             require_once WCML_PLUGIN_PATH . '/inc/multi-currency.class.php';
             $this->multi_currency = new WCML_WC_MultiCurrency;
-            require_once WCML_PLUGIN_PATH . '/inc/currency-switcher.class.php';
-            $this->currency_switcher = new WCML_CurrencySwitcher;
         }else{
             add_shortcode('currency_switcher', '__return_empty_string');
         }
@@ -52,6 +50,7 @@ class woocommerce_wpml {
         $this->troubleshooting  = new WCML_Troubleshooting();
         $this->compatibility    = new WCML_Compatibility();
         $this->strings          = new WCML_WC_Strings;
+        $this->currency_switcher = new WCML_CurrencySwitcher;
         
 
         if(isset($_GET['page']) && $_GET['page'] == 'wc-reports'){
