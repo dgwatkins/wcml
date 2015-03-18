@@ -61,7 +61,7 @@ if(isset($_GET['tab'])){
     <div class="wcml_wrap">
         <?php if(!isset($_GET['tab']) && current_user_can('wpml_manage_woocommerce_multilingual')): ?>
             <?php
-            if( $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_DISABLED ){
+            if( !isset($woocommerce_wpml->multi_currency_support) ){
                 require_once WCML_PLUGIN_PATH . '/inc/multi-currency-support.class.php';
                 $woocommerce_wpml->multi_currency_support = new WCML_Multi_Currency_Support;
             }
