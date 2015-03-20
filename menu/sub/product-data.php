@@ -139,7 +139,7 @@ $button_labels = array(
                                             <?php endif;?>
                                             <div class="edit_slug_block">
                                                 <?php $hide = !$trn_contents['name'] ? 'hidden' : ''; ?>
-                                                    <a href="javascript:void(0)" class="edit_slug_show_link <?php echo $hide; ?>"><?php _e('Edit slug', 'wpml-wcml') ?></a>
+                                                    <a href="javascript:void(0)" class="edit_slug_show_link <?php echo $hide; ?>"><?php $default_language == $key ? _e('Show slug', 'wpml-wcml') : _e('Edit slug', 'wpml-wcml') ?></a>
                                                     <a href="javascript:void(0)" class="edit_slug_hide_link  <?php echo $hide; ?>"><?php _e('Hide', 'wpml-wcml') ?></a>
                                                     </br>
                                                     <?php if($default_language == $key): ?>
