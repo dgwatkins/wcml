@@ -2953,11 +2953,13 @@ class WCML_Products{
                 return $filtered_posts;
             }
 
+            $matched_products = array();
+
             $matched_products_query = $wpdb->get_results( $wpdb->prepare("
 	        	SELECT DISTINCT ID, post_parent, post_type FROM $wpdb->posts
 				INNER JOIN $wpdb->postmeta ON ID = post_id
-				WHERE post_type IN ( 'product', 'product_variation' ) AND post_status = 'publish' AND meta_key = %s AND meta_value = 1
-			", '_wcml_custom_prices_status' ), OBJECT_K );
+				WHERE post_type IN ( 'product', 'product_variation' ) AND post_status = 'publish' AND meta_key = %s
+			", '_price_'.$client_currency ), OBJECT_K );
 
             if ( $matched_products_query ) {
                 foreach ( $matched_products_query as $product ) {
