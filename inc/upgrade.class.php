@@ -9,7 +9,8 @@ class WCML_Upgrade{
         '3.2',
         '3.3',
         '3.5',
-        '3.5.4'
+        '3.5.4',
+        '3.6'
 
     );
     
@@ -294,6 +295,11 @@ class WCML_Upgrade{
         update_option('_wcml_settings', $wcml_settings);
     }
 
+    function upgrade_3_5_4()
+    {
+        flush_rewrite_rules( );
+    }
+
     function upgrade_3_6()
     {
         global $wpdb;
@@ -302,11 +308,6 @@ class WCML_Upgrade{
         $wcml_settings['display_custom_prices'] = 0;
 
         update_option('_wcml_settings', $wcml_settings);
-    }
-
-    function upgrade_3_5_4()
-    {
-        flush_rewrite_rules( );
     }
 
 }

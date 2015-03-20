@@ -667,7 +667,13 @@ if( ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && ( $site
                     
                     
                 }
-            ?>           
+            ?>
+            <ul id="display_custom_prices_select">
+                <li>
+                    <input type="checkbox" name="display_custom_prices" id="display_custom_prices" value="1" <?php echo checked( 1, $woocommerce_wpml->settings['display_custom_prices']) ?> >
+                    <label for="display_custom_prices"><?php _e('Show only products with custom prices in secondary currencies', 'wpml-wcml'); ?></label>
+                </li>
+            </ul>
             <p class="button-wrap general_option_btn">
             <input type='submit' name="wcml_mc_options" value='<?php _e('Save', 'wpml-wcml'); ?>' class='button-secondary' />
             <?php wp_nonce_field('wcml_mc_options', 'wcml_mc_options_nonce'); ?>
