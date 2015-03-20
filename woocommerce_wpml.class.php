@@ -38,8 +38,6 @@ class woocommerce_wpml {
             $this->multi_currency_support = new WCML_Multi_Currency_Support;
             require_once WCML_PLUGIN_PATH . '/inc/multi-currency.class.php';
             $this->multi_currency = new WCML_WC_MultiCurrency;
-            require_once WCML_PLUGIN_PATH . '/inc/currency-switcher.class.php';
-            $this->currency_switcher = new WCML_CurrencySwitcher;
         }else{
             add_shortcode('currency_switcher', '__return_empty_string');
         }
@@ -52,6 +50,7 @@ class woocommerce_wpml {
         $this->troubleshooting  = new WCML_Troubleshooting();
         $this->compatibility    = new WCML_Compatibility();
         $this->strings          = new WCML_WC_Strings;
+        $this->currency_switcher = new WCML_CurrencySwitcher;
         
 
         if(isset($_GET['page']) && $_GET['page'] == 'wc-reports'){
@@ -182,13 +181,18 @@ class woocommerce_wpml {
     }
 
     function update_setting_ajx(){
+        $nonce = filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'woocommerce_multilingual')){
+            die('Invalid nonce');
+        }
+
         $data = $_POST;
         $error = '';
         $html = '';
-        if($data['nonce'] == wp_create_nonce('woocommerce_multilingual')){ 
-            $this->settings[$data['setting']] = $data['value'];
-            $this->update_settings();
-        }
+
+        $this->settings[$data['setting']] = $data['value'];
+        $this->update_settings();
+
         echo json_encode(array('html' => $html, 'error'=> $error));
         exit;
     }
@@ -247,10 +251,6 @@ class woocommerce_wpml {
             $this->settings['downloaded_translations_for_wc'] = 1;
             $this->update_settings();
         }
-
-        require_once WCML_PLUGIN_PATH . '/inc/multi-currency.class.php';
-        WCML_WC_MultiCurrency::install();
-        
     }
     
     public static function set_up_capabilities(){
@@ -417,8 +417,6 @@ class woocommerce_wpml {
                 wp_register_script('wpml_tm', WCML_PLUGIN_URL . '/assets/js/wpml_tm.js', array('jquery'), WCML_VERSION);
                 wp_enqueue_script('wpml_tm');
             }
-        }elseif( isset( $_GET['post'] ) && get_post_type( $_GET['post'] ) == 'product' ){
-            wp_enqueue_style('wcml_wc', WCML_PLUGIN_URL . '/assets/css/wcml-wc-integration.css', array(), WCML_VERSION);
         }
     }
 
@@ -534,36 +532,25 @@ class woocommerce_wpml {
     function filter_woocommerce_permalinks_option($value){
         global $wpdb, $sitepress_settings;
 
-        $cache_key =  md5( serialize( $value ) );
-        $cache_group = 'woocommerce_permalinks_option';
-
-        $temp_value = wp_cache_get($cache_key, $cache_group);
-        if($temp_value) return $temp_value;
-
-        if(isset($value['product_base']) && $prod_base = trim( $value['product_base'], '/') ){
-            if( !icl_st_is_registered_string('URL slugs', 'Url slug: ' . $prod_base) )
-                icl_register_string('URL slugs', 'Url slug: ' . $prod_base, $prod_base );
+        if(isset($value['product_base']) && $value['product_base']){
+            icl_register_string('URL slugs', 'Url slug: ' . trim( $value['product_base'], '/'), trim( $value['product_base'], '/') );
             // only register. it'll have to be translated via the string translation
         }
 
         $category_base = !empty($value['category_base']) ? $value['category_base'] : 'product-category';
-        if( !icl_st_is_registered_string('URL product_cat slugs - ' . $category_base, 'Url product_cat slug: ' . $category_base) )
-            icl_register_string('URL product_cat slugs - ' . $category_base, 'Url product_cat slug: ' . $category_base, $category_base );
+        icl_register_string('URL product_cat slugs - ' . $category_base, 'Url product_cat slug: ' . $category_base, $category_base );
 
         $tag_base = !empty($value['tag_base']) ? $value['tag_base'] : 'product-tag';
-        if( !icl_st_is_registered_string('URL product_tag slugs - ' . $tag_base, 'Url product_tag slug: ' . $tag_base) )
-            icl_register_string('URL product_tag slugs - ' . $tag_base, 'Url product_tag slug: ' . $tag_base, $tag_base);
+        icl_register_string('URL product_tag slugs - ' . $tag_base, 'Url product_tag slug: ' . $tag_base, $tag_base);
 
-        if(isset($value['attribute_base']) && $attr_base = trim( $value['attribute_base'], '/')){
-            if( !icl_st_is_registered_string('URL attribute slugs - ' . $attr_base , 'Url attribute slug: ' .$attr_base) )
-                icl_register_string('URL attribute slugs - ' . $attr_base , 'Url attribute slug: ' .$attr_base, $attr_base );
+        if(isset($value['attribute_base']) && $value['attribute_base']){
+            $attr_base = trim( $value['attribute_base'], '/');
+            icl_register_string('URL attribute slugs - ' . $attr_base , 'Url attribute slug: ' .$attr_base, $attr_base );
         }
 
         if(isset($value['product_base']) && !$value['product_base']){
             $value['product_base'] = get_option('woocommerce_product_slug') != false ? trim( get_option('woocommerce_product_slug'), '/') : 'product';
         }
-
-        wp_cache_set( $cache_key, $value, $cache_group );
 
         return $value;
 
@@ -805,7 +792,8 @@ class woocommerce_wpml {
      * Hide Translations upgrade notice message ( update option in DB )
      */
     function hide_wcml_translations_message(){
-        if( wp_verify_nonce( $_REQUEST['wcml_nonce'], 'hide_wcml_translations_message' ) ){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'hide_wcml_translations_message' ) ){
             update_option( 'hide_wcml_translations_message', true );
         }
 

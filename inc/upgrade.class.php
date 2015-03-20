@@ -3,18 +3,20 @@
 class WCML_Upgrade{
     
     private $versions = array(
-            
-                '2.9.9.1',
-                '3.1',
-                '3.2',
-                '3.3'
-                
+
+        '2.9.9.1',
+        '3.1',
+        '3.2',
+        '3.3',
+        '3.5',
+        '3.5.4'
+
     );
     
     function __construct(){
-        
-        add_action('plugins_loaded', array($this, 'run')); 
-        add_action('plugins_loaded', array($this, 'setup_upgrade_notices'));
+
+        add_action('init', array($this, 'run'));
+        add_action('init', array($this, 'setup_upgrade_notices'));
         add_action('admin_notices',  array($this, 'show_upgrade_notices'));
         
         add_action('wp_ajax_wcml_hide_notice', array($this, 'hide_upgrade_notice'));
@@ -81,7 +83,6 @@ class WCML_Upgrade{
         // exception - starting in 2.3.2
         if(empty($version_in_db) && get_option('icl_is_wcml_installed')){
             $version_in_db = '2.3.2';
-            //delete_option('icl_is_wcml_installed');
         }
         
         $migration_ran = false;
@@ -302,5 +303,10 @@ class WCML_Upgrade{
 
         update_option('_wcml_settings', $wcml_settings);
     }
-        
+
+    function upgrade_3_5_4()
+    {
+        flush_rewrite_rules( );
+    }
+
 }

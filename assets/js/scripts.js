@@ -378,7 +378,7 @@ jQuery(document).ready(function($){
             type:       "POST",
             dataType:   'json',
             url:        ajaxurl,
-            data:       'action=wcml_tt_sync_taxonomies_in_content_preview&' + parameters,
+            data:       'action=wcml_tt_sync_taxonomies_in_content_preview&wcml_nonce='+$('#wcml_sync_taxonomies_in_content_preview_nonce').val()+'&' + parameters,
             success:
                 function(ret){
 
@@ -412,7 +412,7 @@ jQuery(document).ready(function($){
             type:       "POST",
             dataType:   'json',
             url:        ajaxurl,
-            data:       'action=wcml_tt_sync_taxonomies_in_content&' + parameters,
+            data:       'action=wcml_tt_sync_taxonomies_in_content&wcml_nonce='+$('#wcml_sync_taxonomies_in_content_nonce').val()+'&' + parameters,
             success:
                 function(ret){
 
@@ -470,26 +470,28 @@ jQuery(document).ready(function($){
 
    })
 
-    $(document).on('click','.wcml_edit_conten',function(){
+    $(document).on('click','.wcml_edit_content',function(){
         $(".wcml_fade").show();
         $(this).parent().find('.wcml_editor').show();
-        $(this).parent().find('.wcml_editor table.mceLayout').css('height','auto');
-        $(this).parent().find('.wcml_editor table.mceLayout iframe').css('min-height','150px');
+
         var txt_height = '90%';
-        $(this).parent().find('textarea.wcml_content_tr').data('def',$(this).parent().find('textarea.wcml_content_tr').val());
         $(this).parent().find('.wcml_original_content').cleditor({
                     height: txt_height,
                     controls:     // controls to add to the toolbar
-                    " source "
+                    " | source "
                     });
         $(this).parent().find('.wcml_original_content').cleditor()[0].disable(true);
 
+        if( !$(this).hasClass('origin_content') ){
+            $(this).parent().find('textarea.wcml_content_tr').data('def',$(this).parent().find('textarea.wcml_content_tr').val());
+            $(this).parent().find('.wcml_editor table.mceLayout').css('height','auto');
+            $(this).parent().find('.wcml_editor table.mceLayout iframe').css('min-height','150px');
+            var id = $(this).parent().find('.switch-tmce').attr('id').replace(/-tmce/, '');
+            $(this).parent().find('.wp-editor-wrap').removeClass('html-active').addClass('tmce-active');
 
-        var id = $(this).parent().find('.switch-tmce').attr('id').replace(/-tmce/, '');
-        $(this).parent().find('.wp-editor-wrap').removeClass('html-active').addClass('tmce-active');
-
-        if(  window.parent.tinyMCE.get(id)  == null ){
-            tinymce.execCommand( 'mceAddEditor', false, id);
+            if(  window.parent.tinyMCE.get(id)  == null ){
+                tinymce.execCommand( 'mceAddEditor', false, id);
+            }
         }
 
     });
@@ -1163,7 +1165,7 @@ jQuery(document).ready(function($){
             url: ajaxurl,
             type: 'POST',
             dataType: 'json',
-            data: $('#wcml_mc_options').serialize() + '&action=wcml_save_currency&currency='+currency,
+            data: $('#wcml_mc_options').serialize() + '&action=wcml_save_currency&currency='+currency+'&wcml_nonce='+ $('#save_currency_nonce').val(),
             success: function(response){                
                 $('.wcml_currency_options_popup').fadeOut(function(){
                     ajaxLoader.remove();

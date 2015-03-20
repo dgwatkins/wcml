@@ -5,7 +5,7 @@ class WCML_WC_Strings{
     function __construct(){
         
         add_action('init', array($this, 'init'));
-        add_action('plugins_loaded', array($this, 'pre_init'));
+        add_action('init', array($this, 'pre_init'));
         add_filter('query_vars', array($this, 'translate_query_var_for_product'));
         add_filter('wp_redirect', array($this, 'encode_shop_slug'),10,2);
         
@@ -96,19 +96,21 @@ class WCML_WC_Strings{
                 $title = get_the_title( $tr_parent ) . ' &rarr; ' . $title;    
             }
             
-            
             $title = sprintf( '<a href="%s">%s</a>', $values['data']->get_permalink(), $title );
                         
         }
+
         return $title;
     }
 
     function translated_checkout_product_title($title,$product){
         global $sitepress;
+
         if(isset($product->id)){
             $tr_product_id = icl_object_id($product->id,'product',true,$sitepress->get_current_language());
             $title = get_the_title($tr_product_id);
         }
+
         return $title;
     }
     
@@ -154,7 +156,6 @@ class WCML_WC_Strings{
             'URL slug: ' . $product_permalink, $product_permalink, $language, ICL_STRING_TRANSLATION_COMPLETE ));
 
         return $translated_slug;
-
     }
 
     // Catch the default slugs for translation
@@ -219,6 +220,7 @@ class WCML_WC_Strings{
         if (function_exists('icl_translate')) {
             $title = icl_translate('woocommerce', $gateway_title .'_gateway_title', $title);
         }
+
         return $title;
     }
 
@@ -226,6 +228,7 @@ class WCML_WC_Strings{
         if (function_exists('icl_translate')) {
             $description = icl_translate('woocommerce', $gateway_title .'_gateway_description', $description);
         }
+
         return $description;
     }
 
@@ -332,6 +335,7 @@ class WCML_WC_Strings{
 
             $location = str_replace($base_slug , urlencode($base_slug),$location);
         }
+
         return $location;
     }
 
@@ -421,7 +425,6 @@ class WCML_WC_Strings{
         }
 
         return $value;
-
     }
 
     /*

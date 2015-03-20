@@ -23,7 +23,8 @@ class WCML_Store_Pages{
         
         add_filter( 'woocommerce_create_page_id', array( $this, 'check_store_page_id'), 10 ,3 );
 
-        if (isset($_POST['create_pages']) && wp_verify_nonce($_POST['wcml_nonce'], 'create_pages')) {
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if (isset($_POST['create_pages']) && wp_verify_nonce($nonce, 'create_pages')) {
             $this->create_missing_store_pages();
         }
         
@@ -33,7 +34,6 @@ class WCML_Store_Pages{
         }
         
         $this->front_page_id = get_option('page_on_front');
-        $this->posts_page_id = get_option('page_for_posts');
         $this->shop_page_id =  wc_get_page_id('shop');
         $this->shop_page = get_post( $this->shop_page_id );
         
@@ -147,6 +147,7 @@ class WCML_Store_Pages{
 
         if (
             !empty($this->shop_page) &&
+            !empty($this->front_page_id) &&
             $q->get('post_type') != 'product' &&
             ( $q->get('page_id') !== $this->front_page_id  &&
                 (
