@@ -94,9 +94,9 @@ class WCML_Products{
         add_action( 'woocommerce_get_cart_item_from_session', array( $this, 'translate_cart_contents' ), 10, 3 );
         add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'translate_cart_subtotal' ) );
         add_action( 'woocommerce_before_calculate_totals', array( $this, 'woocommerce_calculate_totals' ) );
-        
-        if( defined( 'WPSEO_VERSION' ) && defined( 'WPSEO_PATH' ) && isset( $_GET[ 'tab' ] ) && $_GET[ 'tab' ] == 'products' ){
-           require WPSEO_PATH . 'admin/class-metabox.php';
+
+        if(defined('WPSEO_VERSION') && defined('WPSEO_PATH') && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) && $_GET['tab'] == 'products'){
+            require_once WPSEO_PATH . 'admin/class-metabox.php';
         }
 
         // Override cached widget id
