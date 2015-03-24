@@ -15,7 +15,7 @@ jQuery(document).ready(function($){
         $('.'+buttons[i]).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show().css('float','right'));
     }
 
-    $('.remove_variation,.attribute_name').each(function(){
+    $('.remove_variation').each(function(){
         $(this).attr('disabled','disabled');
         $(this).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show().css('float','right'));
     });
@@ -50,7 +50,7 @@ jQuery(document).ready(function($){
     }
 
 
-    $('.woocommerce_attribute_data td textarea,.attribute_values').each(function(){
+    $('.woocommerce_attribute_data td textarea,.attribute_values,.attribute_name').each(function(){
        $(this).attr('readonly','readonly');
        $(this).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
     });
