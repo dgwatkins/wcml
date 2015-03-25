@@ -77,7 +77,7 @@ class WCML_WC_Strings{
         $lang = $sitepress->get_current_language();
         $trnsl_labels = get_option('wcml_custom_attr_translations');
 
-        if(isset($trnsl_labels[$lang][$name])){
+        if( isset( $trnsl_labels[$lang][$name] ) && !empty( $trnsl_labels[$lang][$name] ) ){
             return $trnsl_labels[$lang][$name];
         }
 
