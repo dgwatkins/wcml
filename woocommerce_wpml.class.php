@@ -529,7 +529,7 @@ class woocommerce_wpml {
     function filter_woocommerce_permalinks_option($value){
         global $wpdb, $sitepress_settings;
 
-        if(isset($value['product_base']) && $value['product_base']){
+        if( WPML_SUPPORT_STRINGS_IN_DIFF_LANG && isset($value['product_base']) && $value['product_base']){
             icl_register_string('URL slugs', 'Url slug: ' . trim( $value['product_base'], '/'), trim( $value['product_base'], '/') );
             // only register. it'll have to be translated via the string translation
         }
