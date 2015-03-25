@@ -497,7 +497,7 @@ class WCML_Products{
         $orig_product_attrs = $this->get_product_atributes($original_product_id);
         $trnsl_labels = get_option('wcml_custom_attr_translations');
         foreach ($orig_product_attrs as $key => $orig_product_attr) {
-            if (isset($data[$key . '_' . $language]) && !is_array($data[$key . '_' . $language])) {
+            if (isset($data[$key . '_' . $language]) && !empty($data[$key . '_' . $language]) && !is_array($data[$key . '_' . $language])) {
                 //get translation values from $data
                 $trnsl_labels[$language][$key] = $data[$key . '_name_' . $language];
                 $orig_product_attrs[$key]['value'] = $data[$key . '_' . $language];
