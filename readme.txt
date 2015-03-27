@@ -79,6 +79,11 @@ In order for the checkout and store pages to appear translated, you need to crea
 == Changelog ==
 
 = 3.5.5 =
+* Bug fixed: Custom attributes were disappearing after updating a product in the WooCommerce native product editor
+* Tested compatibility with WordPress 4.2
+* Security review and fixes
+* Made the key "woocommerce_cancelled_order_settings" translatable
+* Email heading and subject sent after placing an order were not translated when using ‘Complete’ button on orders page
 
 = 3.5.4 =
 * Bug fixed: Can't access source content in WCML product translation table
