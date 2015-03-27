@@ -95,6 +95,9 @@ class WCML_Products{
         add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'translate_cart_subtotal' ) );
         add_action( 'woocommerce_before_calculate_totals', array( $this, 'woocommerce_calculate_totals' ) );
 
+        //refresh cart total on submit checkout action
+        add_action( 'woocommerce_before_checkout_process', array( $this, 'wcml_refresh_cart_total' ) );
+
         if(defined('WPSEO_VERSION') && defined('WPSEO_PATH') && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) && $_GET['tab'] == 'products'){
             require_once WPSEO_PATH . 'admin/class-metabox.php';
         }
@@ -2275,6 +2278,11 @@ class WCML_Products{
         $cart->calculate_totals();
     }
 
+    // refresh cart total to return correct price from WC object
+    function wcml_refresh_cart_total() {
+        WC()->cart->calculate_totals();
+    }
+
     function remove_variation_ajax(){
         global $sitepress;
         if(isset($_POST['variation_id'])){
@@ -2325,9 +2333,7 @@ class WCML_Products{
     }
 
     function wcml_refresh_fragments(){
-        global $woocommerce;
-
-        $woocommerce->cart->calculate_totals();
+        WC()->cart->calculate_totals();
         $this->wcml_refresh_text_domain();
     }
 
