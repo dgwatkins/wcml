@@ -648,7 +648,7 @@ class WCML_Multi_Currency_Support{
             $currency_code = $this->client_currency;
         }
 
-        return $currency_code;
+        return apply_filters( 'wcml_filter_currency_position', $currency_code );
 
     }
     

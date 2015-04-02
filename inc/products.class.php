@@ -1451,10 +1451,12 @@ class WCML_Products{
         // Remove filter to avoid double sync
         remove_action('save_post', array($this, 'sync_post_action'), 11, 2);
 
+        do_action( 'wcml_before_sync_product', $duplicated_post_id, $post_id );
+
         //trnsl_interface option
         if (!$woocommerce_wpml->settings['trnsl_interface'] && $original_language != $current_language ) {
 
-            if( !isset( $_POST['wp-preview'] ) ){
+            if( !isset( $_POST['wp-preview'] ) || empty( $_POST['wp-preview'] ) ){
                 $this->sync_status_and_parent( $duplicated_post_id, $post_id, $current_language );
                 $this->sync_product_data( $duplicated_post_id, $post_id, $current_language );
             }
@@ -1480,10 +1482,11 @@ class WCML_Products{
 
             update_post_meta($post_id,'_wcml_custom_prices_status',$_POST['_wcml_custom_prices'][$post_id]);
 
+            if( $_POST['_wcml_custom_prices'][$post_id] == 1){
+
             $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
 
-            if($_POST['_wcml_custom_prices'][$post_id] == 1){
-                foreach($currencies as $code => $currency){
+                foreach( $currencies as $code => $currency ){
                     $sale_price = $_POST['_custom_sale_price'][$code];
                     $regular_price = $_POST['_custom_regular_price'][$code];
 
@@ -2406,7 +2409,7 @@ class WCML_Products{
             $tr_product_id = icl_object_id($cart_item['product_id'],'product',false,$current_language);
 
             if( $cart_item['product_id'] == $tr_product_id ){
-                $new_cart_data[$key] = $cart->cart_contents[$key];
+                $new_cart_data[$key] = apply_filters( 'wcml_cart_contents_not_changed', $cart->cart_contents[$key], $key, $current_language );
                 continue;
             }
 

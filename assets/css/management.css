@@ -976,7 +976,6 @@ input[name="wcml_curr_template"]{
 .wcml_miss_lang p:first-child{
     float:left;
 }
-
 #display_custom_prices_select{
     display: inline-block;
     width: 100%;
