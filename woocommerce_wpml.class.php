@@ -132,7 +132,7 @@ class woocommerce_wpml {
             return;
         }
 
-        $slug = get_option('woocommerce_product_slug') != false ? trim( get_option('woocommerce_product_slug'), '/') : 'product';
+        $slug = $this->get_woocommerce_product_slug();
 
         $string = $wpdb->get_row($wpdb->prepare("SELECT id,status FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'URL slug: ' . $slug, $slug));
         
@@ -141,9 +141,9 @@ class woocommerce_wpml {
             $string = $wpdb->get_row($wpdb->prepare("SELECT id,status FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'URL slug: ' . $slug, $slug));
         }
 
-        if(empty($sitepress_settings['posts_slug_translation']['on']) || empty($sitepress_settings['posts_slug_translation']['types'][$slug])){
+        if(empty($sitepress_settings['posts_slug_translation']['on']) || empty($sitepress_settings['posts_slug_translation']['types']['product'])){
             $iclsettings['posts_slug_translation']['on'] = 1;
-            $iclsettings['posts_slug_translation']['types'][$slug] = 1;
+            $iclsettings['posts_slug_translation']['types']['product'] = 1;
             $sitepress->save_settings($iclsettings);
         }
         
@@ -423,6 +423,8 @@ class woocommerce_wpml {
     function load_lock_fields_js(){
         wp_register_script('wcml-lock-script', WCML_PLUGIN_URL . '/assets/js/lock_fields.js', array('jquery'), WCML_VERSION);
         wp_enqueue_script('wcml-lock-script');
+
+        wp_localize_script( 'wcml-lock-script', 'unlock_fields', array( 'menu_order' => $this->settings['products_sync_order']) );
     }
 
     function hidden_label(){
@@ -532,7 +534,7 @@ class woocommerce_wpml {
     function filter_woocommerce_permalinks_option($value){
         global $wpdb, $sitepress_settings;
 
-        if(isset($value['product_base']) && $value['product_base']){
+        if( WPML_SUPPORT_STRINGS_IN_DIFF_LANG && isset($value['product_base']) && $value['product_base']){
             icl_register_string('URL slugs', 'Url slug: ' . trim( $value['product_base'], '/'), trim( $value['product_base'], '/') );
             // only register. it'll have to be translated via the string translation
         }
@@ -546,10 +548,6 @@ class woocommerce_wpml {
         if(isset($value['attribute_base']) && $value['attribute_base']){
             $attr_base = trim( $value['attribute_base'], '/');
             icl_register_string('URL attribute slugs - ' . $attr_base , 'Url attribute slug: ' .$attr_base, $attr_base );
-        }
-
-        if(isset($value['product_base']) && !$value['product_base']){
-            $value['product_base'] = get_option('woocommerce_product_slug') != false ? trim( get_option('woocommerce_product_slug'), '/') : 'product';
         }
 
         return $value;
@@ -798,6 +796,20 @@ class woocommerce_wpml {
         }
 
         die();
+    }
+
+    function get_woocommerce_product_slug(){
+
+        $woocommerce_permalinks = maybe_unserialize( get_option('woocommerce_permalinks') );
+
+        if( isset( $woocommerce_permalinks['product_base'] ) && !empty( $woocommerce_permalinks['product_base'] ) ){
+            return trim( $woocommerce_permalinks['product_base'], '/');
+        }elseif(get_option('woocommerce_product_slug') != false ){
+            return trim( get_option('woocommerce_product_slug'), '/');
+        }else{
+            return 'product';
+        }
+
     }
 
 }

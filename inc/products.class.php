@@ -2,19 +2,19 @@
 
 class WCML_Products{
 
-    private $not_display_fields_for_variables_product = array('_regular_price','_sale_price','_price','_min_variation_price','_max_variation_price','_min_variation_regular_price','_max_variation_regular_price','_min_variation_sale_price','_max_variation_sale_price');
+    private $not_display_fields_for_variables_product = array( '_regular_price', '_sale_price', '_price', '_min_variation_price', '_max_variation_price', '_min_variation_regular_price', '_max_variation_regular_price', '_min_variation_sale_price', '_max_variation_sale_price' );
     private $tinymce_plugins_for_rtl = '';
-    private $yoast_seo_fields = array('_yoast_wpseo_focuskw','_yoast_wpseo_title','_yoast_wpseo_metadesc');
+    private $yoast_seo_fields = array( '_yoast_wpseo_focuskw', '_yoast_wpseo_title', '_yoast_wpseo_metadesc' );
 
     function __construct(){
 
-        add_action('init', array($this, 'init'));
-        add_action('init', array($this, 'wc_cart_widget_actions'));        
+        add_action( 'init', array( $this, 'init' ) );
+        add_action( 'init', array( $this, 'wc_cart_widget_actions' ) );        
 
         //add action for coupons data from WC_Coupon construct
-        add_action('woocommerce_coupon_loaded',array($this,'wcml_coupon_loaded'));
+        add_action( 'woocommerce_coupon_loaded', array( $this, 'wcml_coupon_loaded' ) );
 
-        add_action('init', array($this, 'set_prices_config'), 9999 ); // After TM
+        add_action( 'init', array( $this, 'set_prices_config' ), 9999 ); // After TM
     }
 
     function init(){
@@ -23,94 +23,97 @@ class WCML_Products{
             add_action( 'wp_ajax_wcml_update_product', array( $this, 'update_product_actions' ) );
             add_action( 'wp_ajax_wcml_product_data', array( $this, 'product_data_html' ) );
 
-            add_filter('wpml_post_edit_page_link_to_translation',array($this,'_filter_link_to_translation'));
-            add_action('admin_init', array($this, 'restrict_admin_with_redirect'));
+            add_filter( 'wpml_post_edit_page_link_to_translation', array( $this,'_filter_link_to_translation' ) );
+            add_action( 'admin_init', array( $this, 'restrict_admin_with_redirect' ) );
 
-            add_action('woocommerce_attribute_added', array($this, 'make_new_attribute_translatable'), 10, 2);
+            add_action( 'woocommerce_attribute_added', array( $this, 'make_new_attribute_translatable' ), 10, 2 );
 
             // filters to sync variable products
-            add_action('save_post', array($this, 'sync_post_action'), 11, 2); // After WPML
+            add_action( 'save_post', array( $this, 'sync_post_action' ), 11, 2 ); // After WPML
             //when save new attachment duplicate product gallery
-            add_action('wpml_media_create_duplicate_attachment', array($this,'sync_product_gallery_duplicate_attachment'),11,2);
+            add_action( 'wpml_media_create_duplicate_attachment', array( $this, 'sync_product_gallery_duplicate_attachment' ), 11, 2 );
 
-            add_filter('icl_make_duplicate', array($this, 'icl_make_duplicate'), 11, 4);
+            add_filter( 'icl_make_duplicate', array( $this, 'icl_make_duplicate'), 11, 4 );
 
             //remove media sync on product page
-            add_action('admin_head', array($this,'remove_language_options'),11);
+            add_action( 'admin_head', array( $this, 'remove_language_options' ), 11 );
 
-            add_action('admin_print_scripts', array($this,'preselect_product_type_in_admin_screen'), 11);
+            add_action( 'admin_print_scripts', array( $this, 'preselect_product_type_in_admin_screen' ), 11 );
 
-            add_filter('woocommerce_json_search_found_products', array($this, 'woocommerce_json_search_found_products'));
-            add_filter('tiny_mce_before_init', array($this, '_mce_set_plugins'), 9);
+            add_filter( 'woocommerce_json_search_found_products', array( $this, 'woocommerce_json_search_found_products' ) );
+            add_filter( 'tiny_mce_before_init', array( $this, '_mce_set_plugins' ), 9 );
             
-            add_action('admin_head', array($this, 'hide_multilingual_content_setup_box'));
+            add_action( 'admin_head', array( $this, 'hide_multilingual_content_setup_box' ) );
             
-            add_action('woocommerce_duplicate_product',array($this,'woocommerce_duplicate_product'),10,2);
+            add_action( 'woocommerce_duplicate_product', array( $this, 'woocommerce_duplicate_product' ), 10, 2 );
 
-            add_filter('post_row_actions', array($this,'filter_product_actions'), 10, 2);
+            add_filter( 'post_row_actions', array( $this, 'filter_product_actions' ), 10, 2 );
             
         }else{
             add_filter('woocommerce_json_search_found_products', array($this, 'filter_found_products_by_language'));
             add_filter( 'loop_shop_post_in', array( $this, 'filter_products_with_custom_prices' ), 100 );
             add_filter( 'woocommerce_related_products_args', array( $this, 'filter_related_products_args' ) );
         }
-        add_filter('woocommerce_restore_order_stock_quantity',array($this,'woocommerce_restore_order_stock_quantity'),10,2);
+        add_filter( 'woocommerce_restore_order_stock_quantity', array( $this, 'woocommerce_restore_order_stock_quantity' ), 10, 2 );
 
-        add_action('woocommerce_email',array($this,'woocommerce_email_refresh_text_domain'));
-        add_action('wp_ajax_woocommerce_update_shipping_method',array($this,'wcml_refresh_text_domain'),9);
-        add_action('wp_ajax_nopriv_woocommerce_update_shipping_method',array($this,'wcml_refresh_text_domain'),9);
-        add_filter('wpml_link_to_translation',array($this,'_filter_link_to_translation'));
+        add_action( 'woocommerce_email', array( $this, 'woocommerce_email_refresh_text_domain' ) );
+        add_action( 'wp_ajax_woocommerce_update_shipping_method', array( $this, 'wcml_refresh_text_domain' ), 9 );
+        add_action( 'wp_ajax_nopriv_woocommerce_update_shipping_method', array( $this, 'wcml_refresh_text_domain' ), 9 );
+        add_filter( 'wpml_link_to_translation', array( $this, '_filter_link_to_translation' ) );
         
-        add_filter('woocommerce_upsell_crosssell_search_products', array($this, 'filter_woocommerce_upsell_crosssell_posts_by_language'));
+        add_filter( 'woocommerce_upsell_crosssell_search_products', array( $this, 'filter_woocommerce_upsell_crosssell_posts_by_language' ) );
 
-        add_filter('icl_post_alternative_languages', array($this, 'hide_post_translation_links'));
+        add_filter( 'icl_post_alternative_languages', array( $this, 'hide_post_translation_links' ) );
 
-        add_action('woocommerce_reduce_order_stock', array($this, 'sync_product_stocks'));
+        add_action( 'woocommerce_reduce_order_stock', array( $this, 'sync_product_stocks' ) );
 
-        add_filter('wcml_custom_box_html',array($this,'downloadable_files_box'),10,3);
+        add_filter( 'wcml_custom_box_html', array( $this, 'downloadable_files_box' ), 10, 3 );
 
         //add translation manager filters
-        add_filter('wpml_tm_save_post_trid_value', array($this,'wpml_tm_save_post_trid_value'),10,2);
-        add_filter('wpml_tm_save_post_lang_value', array($this,'wpml_tm_save_post_lang_value'),10,2);
+        add_filter( 'wpml_tm_save_post_trid_value', array( $this, 'wpml_tm_save_post_trid_value' ), 10, 2 );
+        add_filter( 'wpml_tm_save_post_lang_value', array( $this, 'wpml_tm_save_post_lang_value' ), 10, 2 );
 
-        add_action('icl_pro_translation_completed', array($this,'icl_pro_translation_completed'));
+        add_action( 'icl_pro_translation_completed', array( $this, 'icl_pro_translation_completed' ) );
 
         //add sitepress filters
-        add_filter('wpml_save_post_trid_value',array($this,'wpml_save_post_trid_value'),10,3);
-        add_filter('wpml_save_post_lang',array($this,'wpml_save_post_lang_value'),10);
+        add_filter( 'wpml_save_post_trid_value', array( $this, 'wpml_save_post_trid_value' ), 10, 3 );
+        add_filter( 'wpml_save_post_lang', array( $this, 'wpml_save_post_lang_value' ), 10 );
         //add filter when add term on product page
-        add_filter('wpml_create_term_lang',array($this,'product_page_add_language_info_to_term'));
+        add_filter( 'wpml_create_term_lang', array( $this, 'product_page_add_language_info_to_term' ) );
 
         //quick & bulk edit
-        add_action('woocommerce_product_quick_edit_save',array($this,'woocommerce_product_quick_edit_save'));
-        add_action('woocommerce_product_bulk_edit_save',array($this,'woocommerce_product_quick_edit_save'));
+        add_action( 'woocommerce_product_quick_edit_save', array( $this, 'woocommerce_product_quick_edit_save' ) );
+        add_action( 'woocommerce_product_bulk_edit_save', array( $this, 'woocommerce_product_quick_edit_save' ) );
 
         //save taxonomy in WPML interface
-        add_action('wp_ajax_wpml_tt_save_term_translation', array($this, 'update_taxonomy_in_variations'),7);
+        add_action( 'wp_ajax_wpml_tt_save_term_translation', array( $this, 'update_taxonomy_in_variations' ), 7 );
 
-        add_action('wp_ajax_woocommerce_remove_variation', array($this,'remove_variation_ajax'),9);
+        add_action( 'wp_ajax_woocommerce_remove_variation', array( $this, 'remove_variation_ajax' ), 9 );
         //WooCommerce subscription
-        add_filter('woocommerce_users_subscriptions',array($this, 'woocommerce_users_subscriptions'),10,2);
+        add_filter( 'woocommerce_users_subscriptions', array( $this, 'woocommerce_users_subscriptions' ), 10, 2 );
 
         // cart functions
-        add_action('woocommerce_get_cart_item_from_session', array($this, 'translate_cart_contents'), 10, 3);
-        add_action('woocommerce_cart_loaded_from_session', array($this, 'translate_cart_subtotal'));
-        add_action('woocommerce_before_calculate_totals',array($this,'woocommerce_calculate_totals'));
-        
-        if(defined('WPSEO_VERSION') && defined('WPSEO_PATH') && isset($_GET['tab']) && $_GET['tab'] == 'products'){
-           require WPSEO_PATH . 'admin/class-metabox.php';
+        add_action( 'woocommerce_get_cart_item_from_session', array( $this, 'translate_cart_contents' ), 10, 3 );
+        add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'translate_cart_subtotal' ) );
+        add_action( 'woocommerce_before_calculate_totals', array( $this, 'woocommerce_calculate_totals' ) );
+
+        //refresh cart total on submit checkout action
+        add_action( 'woocommerce_before_checkout_process', array( $this, 'wcml_refresh_cart_total' ) );
+
+        if(defined('WPSEO_VERSION') && defined('WPSEO_PATH') && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) && $_GET['tab'] == 'products'){
+            require_once WPSEO_PATH . 'admin/class-metabox.php';
         }
 
         // Override cached widget id
-        add_filter('woocommerce_cached_widget_id', array($this, 'override_cached_widget_id'));
+        add_filter( 'woocommerce_cached_widget_id', array( $this, 'override_cached_widget_id' ) );
 
         //update menu_order fro translations after ordering original products
-        add_action('woocommerce_after_product_ordering',array($this,'update_translations_product_ordering'));
+        add_action( 'woocommerce_after_product_ordering', array( $this, 'update_translations_product_ordering' ) );
 
         //filter to copy excerpt value
         add_filter( 'wpml_copy_from_original_custom_fields', array( $this, 'filter_excerpt_field_content_copy' ) );
 
-        add_filter('icl_wpml_config_array', array($this, 'set_taxonomies_config'));
+        add_filter( 'icl_wpml_config_array', array( $this, 'set_taxonomies_config' ) );
 
         add_filter( 'manage_product_posts_columns', array( $this, 'add_languages_column' ), 100 );
     }
@@ -119,7 +122,7 @@ class WCML_Products{
         remove_meta_box('icl_div_config', convert_to_screen('shop_order'), 'normal');
         remove_meta_box('icl_div_config', convert_to_screen('shop_coupon'), 'normal');
     }
-    
+
     function wc_cart_widget_actions(){
         add_action('wp_ajax_woocommerce_get_refreshed_fragments',array($this,'wcml_refresh_fragments'),0);
         add_action('wp_ajax_woocommerce_add_to_cart',array($this,'wcml_refresh_fragments'),0);
@@ -130,7 +133,7 @@ class WCML_Products{
     function get_product($product_id) {
         if ( version_compare( WOOCOMMERCE_VERSION, "2.0.0" ) >= 0 ) {
             // WC 2.0
-               return get_product( $product_id);
+            return get_product( $product_id);
         } else {
             return new WC_Product($product_id);
         }
@@ -143,7 +146,7 @@ class WCML_Products{
      * if($page = 0 && $limit=0) return all products;
      * return array;
     */
-    function get_product_list($page = 1,$limit = 20, $slang){
+    function get_product_list( $page = 1, $limit = 20, $slang ){
         global $wpdb,$sitepress;
 
         $sql = "SELECT p.ID,p.post_parent FROM $wpdb->posts AS p
@@ -211,10 +214,8 @@ class WCML_Products{
         return $output_products;
     }
 
-
-
     function preselect_product_type_in_admin_screen(){
-        global $pagenow, $wpdb, $sitepress;
+        global $pagenow, $sitepress;
         if('post-new.php' == $pagenow){
             if(isset($_GET['post_type']) && $_GET['post_type'] == 'product' && isset($_GET['trid'])){
                 $translations = $sitepress->get_element_translations($_GET['trid'], 'post_product_type');
@@ -508,7 +509,7 @@ class WCML_Products{
         $orig_product_attrs = $this->get_product_atributes($original_product_id);
         $trnsl_labels = get_option('wcml_custom_attr_translations');
         foreach ($orig_product_attrs as $key => $orig_product_attr) {
-            if (isset($data[$key . '_' . $language]) && !is_array($data[$key . '_' . $language])) {
+            if (isset($data[$key . '_' . $language]) && !empty($data[$key . '_' . $language]) && !is_array($data[$key . '_' . $language])) {
                 //get translation values from $data
                 $trnsl_labels[$language][$key] = $data[$key . '_name_' . $language];
                 $orig_product_attrs[$key]['value'] = $data[$key . '_' . $language];
@@ -2295,6 +2296,11 @@ class WCML_Products{
         $cart->calculate_totals();
     }
 
+    // refresh cart total to return correct price from WC object
+    function wcml_refresh_cart_total() {
+        WC()->cart->calculate_totals();
+    }
+
     function remove_variation_ajax(){
         global $sitepress;
         if(isset($_POST['variation_id'])){
@@ -2345,9 +2351,7 @@ class WCML_Products{
     }
 
     function wcml_refresh_fragments(){
-        global $woocommerce;
-
-        $woocommerce->cart->calculate_totals();
+        WC()->cart->calculate_totals();
         $this->wcml_refresh_text_domain();
     }
 

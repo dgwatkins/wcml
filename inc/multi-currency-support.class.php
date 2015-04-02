@@ -53,15 +53,15 @@ class WCML_Multi_Currency_Support{
             $load = true;
         }else{
             if(is_ajax() && $this->get_client_currency() != get_option('woocommerce_currency')){
-                if(isset($_POST['action'])){
-                    $ajax_actions = apply_filters('wcml_multi_currency_is_ajax', array('woocommerce_get_refreshed_fragments', 'woocommerce_update_order_review', 'woocommerce-checkout', 'woocommerce_checkout', 'woocommerce_add_to_cart')); 
-                    if(version_compare($GLOBALS['woocommerce']->version, '2.1', '>=')){
-                        $ajax_actions[] = 'woocommerce_update_shipping_method';
-                    }
-                    if(in_array($_POST['action'], $ajax_actions)){
-                        $load = true;
-                    }
+
+                $ajax_actions = apply_filters('wcml_multi_currency_is_ajax', array('woocommerce_get_refreshed_fragments', 'woocommerce_update_order_review', 'woocommerce-checkout', 'woocommerce_checkout', 'woocommerce_add_to_cart'));
+                if(version_compare($GLOBALS['woocommerce']->version, '2.1', '>=')){
+                    $ajax_actions[] = 'woocommerce_update_shipping_method';
                 }
+                if( ( isset( $_POST['action'] ) && in_array( $_POST['action'], $ajax_actions ) ) || (  isset( $_GET['action'] ) && in_array( $_GET['action'], $ajax_actions ) ) ){
+                    $load = true;
+                }
+
             }
         }
         

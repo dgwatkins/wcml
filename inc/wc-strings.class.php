@@ -77,7 +77,7 @@ class WCML_WC_Strings{
         $lang = $sitepress->get_current_language();
         $trnsl_labels = get_option('wcml_custom_attr_translations');
 
-        if(isset($trnsl_labels[$lang][$name])){
+        if( isset( $trnsl_labels[$lang][$name] ) && !empty( $trnsl_labels[$lang][$name] ) ){
             return $trnsl_labels[$lang][$name];
         }
 
@@ -160,10 +160,10 @@ class WCML_WC_Strings{
 
     // Catch the default slugs for translation
     function translate_default_slug($translation, $text, $context, $domain) {
-        global $sitepress_settings, $sitepress;
+        global $sitepress_settings, $sitepress, $woocommerce_wpml;
 
         if ($context == 'slug' || $context == 'default-slug') {
-            $wc_slug = get_option('woocommerce_product_slug') != false ? trim(get_option('woocommerce_product_slug'),'/') : 'product';
+            $wc_slug = $woocommerce_wpml->get_woocommerce_product_slug();
             if(is_admin()){
                 $admin_language = $sitepress->get_admin_language();
             }
