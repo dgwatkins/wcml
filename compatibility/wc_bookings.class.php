@@ -39,6 +39,13 @@ class WCML_Bookings{
         add_filter( 'wcml_filter_currency_position', array( $this, 'create_booking_page_client_currency' ) );
 
         add_filter( 'wcml_client_currency', array( $this, 'create_booking_page_client_currency' ) );
+
+        add_filter( 'wcml_custom_box_html', array( $this, 'custom_box_html'), 10, 3 );
+        add_filter( 'wcml_product_content_fields', array( $this, 'product_content_fields'), 10, 2 );
+        add_filter( 'wcml_product_content_fields_label', array( $this, 'product_content_fields_label'), 10, 2 );
+        add_filter( 'wcml_check_is_single', array( $this, 'show_custom_blocks_for_resources_and_persons'), 10, 3 );
+        add_filter( 'wcml_product_content_exception', array( $this, 'remove_custom_fields_to_translate' ), 10, 3 );
+        add_action( 'wcml_update_extra_fields', array( $this, 'wcml_products_tab_sync_resources_and_persons'), 10, 3 );
     }
 
     function wcml_price_field_after_booking_cost( $post_id ){
@@ -244,6 +251,7 @@ class WCML_Bookings{
 
             echo '</div>';
         }
+
     }
 
     function save_custom_costs( $post_id, $post ){
@@ -340,150 +348,160 @@ class WCML_Bookings{
                 $trn_lang = $sitepress->get_language_for_element( $post_id, 'post_product' );
 
                 //sync_resources
-                $orig_resources = $wpdb->get_results( $wpdb->prepare( "SELECT resource_id, sort_order FROM {$wpdb->prefix}wc_booking_relationships WHERE product_id = %d", $original_product_id ) );
+                $this->sync_resources( $original_product_id, $post_id, $trn_lang );
 
-                $trnsl_product_resources = $wpdb->get_col( $wpdb->prepare( "SELECT resource_id FROM {$wpdb->prefix}wc_booking_relationships WHERE product_id = %d", $post_id ) );
+                //sync_persons
+                $this->sync_persons( $original_product_id, $post_id, $trn_lang );
+            }
 
-                foreach ($orig_resources as $resource) {
+        }
 
-                    $trns_resource_id = icl_object_id( $resource->resource_id, 'post_bookable_resource', false, $trn_lang );
+    }
 
-                    if ( !is_null( $trns_resource_id ) && in_array( $trns_resource_id, $trnsl_product_resources ) ) {
-                        if ( ( $key = array_search( $trns_resource_id, $trnsl_product_resources ) ) !== false ) {
+    function sync_resources( $original_product_id, $trnsl_product_id, $lang_code, $duplicate = true ){
+        global $wpdb;
 
-                            unset($trnsl_product_resources[$key]);
+        $orig_resources = $wpdb->get_results( $wpdb->prepare( "SELECT resource_id, sort_order FROM {$wpdb->prefix}wc_booking_relationships WHERE product_id = %d", $original_product_id ) );
 
-                            $wpdb->update(
-                                $wpdb->prefix . 'wc_booking_relationships',
-                                array(
-                                    'sort_order' => $resource->sort_order
-                                ),
-                                array(
-                                    'product_id' => $post_id,
-                                    'resource_id' => $trns_resource_id
-                                )
-                            );
+        $trnsl_product_resources = $wpdb->get_col( $wpdb->prepare( "SELECT resource_id FROM {$wpdb->prefix}wc_booking_relationships WHERE product_id = %d", $trnsl_product_id ) );
 
-                            update_post_meta( $trns_resource_id, 'qty', get_post_meta( $resource->resource_id, 'qty', true ) );
-                            update_post_meta( $trns_resource_id, '_wc_booking_availability', get_post_meta( $resource->resource_id, '_wc_booking_availability', true ) );
+        foreach ($orig_resources as $resource) {
 
-                        }
-                    } else {
+            $trns_resource_id = icl_object_id( $resource->resource_id, 'bookable_resource', false, $lang_code );
 
-                        if( method_exists( $sitepress, 'make_duplicate' ) ){
+            if ( !is_null( $trns_resource_id ) && in_array( $trns_resource_id, $trnsl_product_resources ) ) {
 
-                            $trns_resource_id = $sitepress->make_duplicate( $resource->resource_id, $trn_lang );
+                if ( ( $key = array_search( $trns_resource_id, $trnsl_product_resources ) ) !== false ) {
 
-                        }else{
+                    unset($trnsl_product_resources[$key]);
 
-                            if ( !isset( $iclTranslationManagement ) ) {
-                                $iclTranslationManagement = new TranslationManagement;
-                            }
-
-                            $trns_resource_id = $iclTranslationManagement->make_duplicate( $resource->resource_id, $trn_lang );
-
-                        }
-
-                        $wpdb->insert(
-                            $wpdb->prefix . 'wc_booking_relationships',
-                            array(
-                                'product_id' => $post_id,
-                                'resource_id' => $trns_resource_id,
-                                'sort_order' => $resource->sort_order
-                            )
-                        );
-
-                        delete_post_meta( $trns_resource_id, '_icl_lang_duplicate_of' );
-
-                    }
-
-                }
-
-                foreach ($trnsl_product_resources as $trnsl_product_resource) {
-
-                    $wpdb->delete(
+                    $wpdb->update(
                         $wpdb->prefix . 'wc_booking_relationships',
                         array(
-                            'product_id' => $post_id,
-                            'resource_id' => $trnsl_product_resource
+                            'sort_order' => $resource->sort_order
+                        ),
+                        array(
+                            'product_id' => $trnsl_product_id,
+                            'resource_id' => $trns_resource_id
                         )
                     );
 
-                    wp_delete_post( $trnsl_product_resource );
+                    update_post_meta( $trns_resource_id, 'qty', get_post_meta( $resource->resource_id, 'qty', true ) );
+                    update_post_meta( $trns_resource_id, '_wc_booking_availability', get_post_meta( $resource->resource_id, '_wc_booking_availability', true ) );
 
                 }
 
-                //sync_persons
+            } else {
 
-                $orig_persons = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_parent = %d", $original_product_id ) );
+                if( $duplicate ){
 
-                $trnsl_persons = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_parent = %d", $post_id ) );
+                    $trns_resource_id = $this->duplicate_resource( $trnsl_product_id, $resource, $lang_code );
 
+                }else{
 
-                foreach ($orig_persons as $person) {
+                    continue;
 
-                    $trnsl_person_id = icl_object_id( $person, 'bookable_person', false, $trn_lang );
-
-                    if ( !is_null( $trnsl_person_id ) && in_array( $trnsl_person_id, $trnsl_persons ) ) {
-
-                        if ( ( $key = array_search( $trnsl_person_id, $trnsl_persons ) ) !== false ) {
-
-                            unset($trnsl_persons[$key]);
-
-                            update_post_meta( $trnsl_person_id, 'block_cost', get_post_meta( $person, 'block_cost', true ) );
-                            update_post_meta( $trnsl_person_id, 'cost', get_post_meta( $person, 'cost', true ) );
-                            update_post_meta( $trnsl_person_id, 'max', get_post_meta( $person, 'max', true ) );
-                            update_post_meta( $trnsl_person_id, 'min', get_post_meta( $person, 'min', true ) );
+                }
 
 
-                            if( get_post_meta( $person, '_wcml_custom_costs_status', true ) ){
-                                $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
+            }
 
-                                foreach( $currencies as $code => $currency ){
+        }
 
-                                    update_post_meta( $trnsl_person_id, 'block_cost_'.$code, get_post_meta( $person, 'block_cost_'.$code, true ) );
-                                    update_post_meta( $trnsl_person_id, 'block_cost_'.$code, get_post_meta( $person, 'cost_'.$code, true ) );
+        foreach ($trnsl_product_resources as $trnsl_product_resource) {
 
-                                }
-                            }
+            $wpdb->delete(
+                $wpdb->prefix . 'wc_booking_relationships',
+                array(
+                    'product_id' => $trnsl_product_id,
+                    'resource_id' => $trnsl_product_resource
+                )
+            );
+
+            wp_delete_post( $trnsl_product_resource );
+
+        }
+
+    }
+
+
+    function duplicate_resource( $tr_product_id, $resource, $lang_code){
+        global $sitepress, $wpdb, $iclTranslationManagement;
+
+        if( method_exists( $sitepress, 'make_duplicate' ) ){
+
+            $trns_resource_id = $sitepress->make_duplicate( $resource->resource_id, $lang_code );
+
+        }else{
+
+            if ( !isset( $iclTranslationManagement ) ) {
+                $iclTranslationManagement = new TranslationManagement;
+            }
+
+            $trns_resource_id = $iclTranslationManagement->make_duplicate( $resource->resource_id, $lang_code );
+
+        }
+
+        $wpdb->insert(
+            $wpdb->prefix . 'wc_booking_relationships',
+            array(
+                'product_id' => $tr_product_id,
+                'resource_id' => $trns_resource_id,
+                'sort_order' => $resource->sort_order
+            )
+        );
+
+        delete_post_meta( $trns_resource_id, '_icl_lang_duplicate_of' );
+
+        return $trns_resource_id;
+    }
+
+    function sync_persons( $original_product_id, $tr_product_id, $lang_code, $duplicate = true ){
+        global $wpdb, $woocommerce_wpml;
+
+        $orig_persons = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'bookable_person'", $original_product_id ) );
+
+        $trnsl_persons = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'bookable_person'", $tr_product_id ) );
+
+
+        foreach ($orig_persons as $person) {
+
+            $trnsl_person_id = icl_object_id( $person, 'bookable_person', false, $lang_code );
+
+            if ( !is_null( $trnsl_person_id ) && in_array( $trnsl_person_id, $trnsl_persons ) ) {
+
+                if ( ( $key = array_search( $trnsl_person_id, $trnsl_persons ) ) !== false ) {
+
+                    unset($trnsl_persons[$key]);
+
+                    update_post_meta( $trnsl_person_id, 'block_cost', get_post_meta( $person, 'block_cost', true ) );
+                    update_post_meta( $trnsl_person_id, 'cost', get_post_meta( $person, 'cost', true ) );
+                    update_post_meta( $trnsl_person_id, 'max', get_post_meta( $person, 'max', true ) );
+                    update_post_meta( $trnsl_person_id, 'min', get_post_meta( $person, 'min', true ) );
+
+
+                    if( get_post_meta( $person, '_wcml_custom_costs_status', true ) ){
+                        $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
+
+                        foreach( $currencies as $code => $currency ){
+
+                            update_post_meta( $trnsl_person_id, 'block_cost_'.$code, get_post_meta( $person, 'block_cost_'.$code, true ) );
+                            update_post_meta( $trnsl_person_id, 'block_cost_'.$code, get_post_meta( $person, 'cost_'.$code, true ) );
 
                         }
-
-                    }else{
-
-                        if( method_exists( $sitepress, 'make_duplicate' ) ){
-
-                            $new_person_id = $sitepress->make_duplicate( $person, $trn_lang );
-
-                        }else{
-
-                            if ( !isset( $iclTranslationManagement ) ) {
-                                $iclTranslationManagement = new TranslationManagement;
-                            }
-
-                            $new_person_id = $iclTranslationManagement->make_duplicate( $person, $trn_lang );
-
-                        }
-
-                        $wpdb->update(
-                            $wpdb->posts,
-                            array(
-                                'post_parent' => $post_id
-                            ),
-                            array(
-                                'ID' => $new_person_id
-                            )
-                        );
-
-                        delete_post_meta( $new_person_id, '_icl_lang_duplicate_of' );
-
                     }
 
                 }
 
-                foreach ($trnsl_persons as $trnsl_persons) {
+            }else{
 
-                    wp_delete_post( $trnsl_persons );
+                if( $duplicate ) {
+
+                    $this->duplicate_person($tr_product_id, $person, $lang_code);
+
+                }else{
+
+                    continue;
 
                 }
 
@@ -491,6 +509,45 @@ class WCML_Bookings{
 
         }
 
+        foreach ($trnsl_persons as $trnsl_persons) {
+
+            wp_delete_post( $trnsl_persons );
+
+        }
+
+    }
+
+
+    function duplicate_person( $tr_product_id, $person_id, $lang_code ){
+        global $sitepress, $wpdb, $iclTranslationManagement;
+
+        if( method_exists( $sitepress, 'make_duplicate' ) ){
+
+            $new_person_id = $sitepress->make_duplicate( $person_id, $lang_code );
+
+        }else{
+
+            if ( !isset( $iclTranslationManagement ) ) {
+                $iclTranslationManagement = new TranslationManagement;
+            }
+
+            $new_person_id = $iclTranslationManagement->make_duplicate( $person_id, $lang_code );
+
+        }
+
+        $wpdb->update(
+            $wpdb->posts,
+            array(
+                'post_parent' => $tr_product_id
+            ),
+            array(
+                'ID' => $new_person_id
+            )
+        );
+
+        delete_post_meta( $new_person_id, '_icl_lang_duplicate_of' );
+
+        return $new_person_id;
     }
 
     function filter_wc_booking_cost( $check, $object_id, $meta_key, $single ){
@@ -556,7 +613,9 @@ class WCML_Bookings{
 
                         $costs = maybe_unserialize( get_post_meta( $object_id, $meta_key, true ) );
 
-                        if( $cost_status && isset( $costs[ 'custom_costs' ][ $currency ] ) ){
+                        if( !$costs ){
+                            $value = $check;
+                        }elseif( $cost_status && isset( $costs[ 'custom_costs' ][ $currency ] ) ){
                             $value = array( 0 => $costs[ 'custom_costs' ][ $currency ] );
                         }elseif( $cost_status && isset( $costs[ 0 ][ 'custom_costs' ][ $currency ] )){
                             $value = array( 0 => $costs[ 0 ][ 'custom_costs' ][ $currency ] );
@@ -768,7 +827,7 @@ class WCML_Bookings{
 
                     foreach( $currencies as $custom_costs_resource_id => $custom_cost ){
 
-                        $trns_resource_id = icl_object_id( $custom_costs_resource_id, 'post_bookable_resource', true, $language_code );
+                        $trns_resource_id = icl_object_id( $custom_costs_resource_id, 'bookable_resource', true, $language_code );
 
                         $wc_booking_resource_costs[ 'custom_costs' ][ $code ][ $trns_resource_id ] = $custom_cost;
 
@@ -778,7 +837,7 @@ class WCML_Bookings{
 
             }else{
 
-                $trns_resource_id = icl_object_id( $resource_id, 'post_bookable_resource', true, $language_code );
+                $trns_resource_id = icl_object_id( $resource_id, 'bookable_resource', true, $language_code );
 
                 $wc_booking_resource_costs[ $trns_resource_id ] = $costs;
 
@@ -1048,6 +1107,237 @@ class WCML_Bookings{
             $args['suppress_filters'] = false;
         }
         return $args;
+    }
+
+    function custom_box_html( $html, $template_data, $lang ){
+
+        if( in_array( $template_data[ 'product_content' ], array( 'wc_booking_resources', 'wc_booking_persons' ) ) ){
+
+            switch( $template_data[ 'product_content' ] ){
+                case 'wc_booking_resources':
+
+                    $resources = array();
+
+                    foreach( maybe_unserialize( get_post_meta( $template_data[ 'product_id' ], '_resource_base_costs', true ) ) as $resource_id => $cost ){
+
+                        $trns_resource_id = icl_object_id( $resource_id, 'bookable_resource', false, $template_data[ 'lang' ] );
+
+                        if( !empty( $trns_resource_id ) && $template_data[ 'translation_exist' ] ){
+                            $resources[ $resource_id ] = $trns_resource_id;
+                        }else{
+                            $resources[ $resource_id ] = false;
+                        }
+
+                    }
+                    $template_data[ 'resources' ] = $resources;
+
+                    break;
+                case 'wc_booking_persons':
+                    global $wpdb;
+
+                    $persons = array();
+
+                    $original_persons = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'bookable_person' AND post_status = 'publish'", $template_data[ 'product_id' ] ) );
+
+                    foreach( $original_persons as $person ){
+
+                        $trnsl_person_id = icl_object_id( $person, 'bookable_person', false, $template_data[ 'lang' ] );
+
+                        if( !empty( $trnsl_person_id ) && $template_data[ 'translation_exist' ] ){
+                            $persons[ $person ] = $trnsl_person_id;
+                        }else{
+                            $persons[ $person ] = false;
+                        }
+
+                    }
+
+                    $template_data[ 'persons' ] = $persons;
+
+                    break;
+            }
+
+            return include WCML_PLUGIN_PATH . '/compatibility/templates/wc_bookings_custom_box_html.php';
+
+        }
+
+        return $html;
+    }
+
+    function product_content_fields( $fields, $product_id ){
+
+        return $this->product_content_fields_data( $fields, $product_id );
+
+    }
+
+    function product_content_fields_label( $fields, $product_id ){
+
+        return $this->product_content_fields_data( $fields, $product_id, 'label' );
+
+    }
+
+    function product_content_fields_data( $fields, $product_id, $data = false ){
+
+        if( get_post_meta( $product_id, '_resource_base_costs', true ) ){
+            if( $data == 'label' ){
+                $fields[] = __( 'Booking resources', 'wpml-wcml' );
+            }else{
+                $fields[] = 'wc_booking_resources';
+            }
+        }
+
+        if( has_term( 'booking', 'product_type', $product_id ) ){
+            global $wpdb;
+
+            $persons = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'bookable_person'", $product_id ) );
+
+            if( $persons ){
+                if( $data == 'label' ){
+                    $fields[] = __( 'Booking persons', 'wpml-wcml' );
+                }else{
+                    $fields[] = 'wc_booking_persons';
+                }
+            }
+
+        }
+
+        return  $fields;
+
+    }
+
+    function show_custom_blocks_for_resources_and_persons( $check, $product_id, $product_content ){
+        if( in_array( $product_content, array( 'wc_booking_resources', 'wc_booking_persons' ) ) ){
+            return false;
+        }
+        return $check;
+    }
+
+    function remove_custom_fields_to_translate( $exception, $product_id, $meta_key ){
+        if( in_array( $meta_key, array( '_resource_base_costs', '_resource_block_costs' ) ) ){
+            $exception = true;
+        }
+        return $exception;
+    }
+
+    function wcml_products_tab_sync_resources_and_persons( $tr_product_id, $data, $language ){
+        global $wpdb, $woocommerce_wpml;
+
+        //sync resources
+        if( isset( $data[ 'wc_booking_resources_'.$language ] ) ){
+
+            $original_product_lang = $woocommerce_wpml->products->get_original_product_language( $tr_product_id );
+            $original_product_id = icl_object_id( $tr_product_id, 'product', true, $original_product_lang );
+
+            foreach( $data[ 'wc_booking_resources_'.$language ][ 'id' ] as $key => $resource_id ){
+
+                if( !$resource_id ){
+
+                    $resource_id = icl_object_id( $data[ 'wc_booking_resources_'.$language ][ 'orig_id' ][ $key ], 'bookable_resource', false, $language );
+
+                    $orig_resource = $wpdb->get_row( $wpdb->prepare( "SELECT resource_id, sort_order FROM {$wpdb->prefix}wc_booking_relationships WHERE resource_id = %d AND product_id = %d", $data[ 'wc_booking_resources_'.$language ][ 'orig_id' ][ $key ], $original_product_id ), OBJECT );
+
+                    if( is_null( $resource_id ) ){
+
+                        if( $orig_resource ) {
+                            $resource_id = $this->duplicate_resource($tr_product_id, $orig_resource, $language);
+                        }else{
+                            continue;
+                        }
+
+                    }else{
+                        //update_relationship
+
+                        $exist = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->prefix}wc_booking_relationships WHERE resource_id = %d AND product_id = %d", $resource_id, $tr_product_id ) );
+
+                        if( !$exist ){
+
+                            $wpdb->insert(
+                                $wpdb->prefix . 'wc_booking_relationships',
+                                array(
+                                    'product_id' => $tr_product_id,
+                                    'resource_id' => $resource_id,
+                                    'sort_order' => $orig_resource->sort_order
+                                )
+                            );
+
+                        }
+
+                    }
+
+                }
+
+                $wpdb->update(
+                    $wpdb->posts,
+                    array(
+                        'post_title' => $data[ 'wc_booking_resources_'.$language ][ 'title' ][ $key ]
+                    ),
+                    array(
+                        'ID' => $resource_id
+                    )
+                );
+
+            }
+
+            //sync resources data
+            $this->sync_resources( $original_product_id, $tr_product_id, $language, false );
+
+            remove_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
+            $this->sync_resource_costs( $original_product_id, $tr_product_id, '_resource_base_costs', $language );
+            $this->sync_resource_costs( $original_product_id, $tr_product_id, '_resource_block_costs', $language );
+            add_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
+
+        }
+
+
+        //sync persons
+        if( isset( $data[ 'wc_booking_persons_'.$language ] ) ){
+
+            $original_product_lang = $woocommerce_wpml->products->get_original_product_language( $tr_product_id );
+            $original_product_id = icl_object_id( $tr_product_id, 'product', true, $original_product_lang );
+
+            foreach( $data[ 'wc_booking_persons_'.$language ][ 'id' ] as $key => $person_id ) {
+
+                if ( !$person_id ) {
+
+                    $person_id = icl_object_id( $data[ 'wc_booking_persons_'.$language ][ 'orig_id' ][ $key ], 'bookable_person', false, $language );
+
+                    if( is_null( $person_id ) ){
+
+                        $person_id = $this->duplicate_person( $tr_product_id, $data['wc_booking_persons_' . $language]['orig_id'][$key], $language);
+
+                    }else{
+
+                        $wpdb->update(
+                            $wpdb->posts,
+                            array(
+                                'post_parent' => $tr_product_id
+                            ),
+                            array(
+                                'ID' => $person_id
+                            )
+                        );
+
+                    }
+
+                }
+
+                $wpdb->update(
+                    $wpdb->posts,
+                    array(
+                        'post_title' => $data[ 'wc_booking_persons_' . $language ][ 'title' ][ $key ],
+                        'post_excerpt' => $data[ 'wc_booking_persons_' . $language ][ 'description' ][ $key ],
+                    ),
+                    array(
+                        'ID' => $person_id
+                    )
+                );
+
+            }
+
+            //sync persons data
+            $this->sync_persons(  $original_product_id, $tr_product_id, $language, false );
+
+        }
+
     }
 
 }

@@ -503,7 +503,7 @@ class WCML_Products{
 
         }
 
-        do_action('wcml_update_extra_fields',$tr_product_id,$data);
+        do_action('wcml_update_extra_fields',$tr_product_id,$data,$language);
 
         //get "_product_attributes" from original product
         $orig_product_attrs = $this->get_product_atributes($original_product_id);
@@ -1135,7 +1135,7 @@ class WCML_Products{
         $trnsl_up_sells = array();
         if($original_up_sells) {
             foreach ($original_up_sells as $original_up_sell_product) {
-                $trnsl_up_sells[] = icl_object_id($original_up_sell_product, 'post_' . get_post_type($original_up_sell_product), false, $lang);
+                $trnsl_up_sells[] = icl_object_id($original_up_sell_product, get_post_type($original_up_sell_product), false, $lang);
             }
         }
 
@@ -1146,7 +1146,7 @@ class WCML_Products{
         $trnsl_cross_sells = array();
         if( $original_cross_sells )
         foreach( $original_cross_sells as $original_cross_sell_product ){
-            $trnsl_cross_sells[] = icl_object_id( $original_cross_sell_product, 'post_'.get_post_type( $original_cross_sell_product ), false, $lang );
+            $trnsl_cross_sells[] = icl_object_id( $original_cross_sell_product, get_post_type( $original_cross_sell_product ), false, $lang );
         }
         update_post_meta( $tr_product_id, '_crosssell_ids', $trnsl_cross_sells );
 
@@ -1779,7 +1779,7 @@ class WCML_Products{
                         continue;
                     }
                 }else{
-                    $exception = apply_filters('wcml_product_content_exception',true,$product_id);
+                    $exception = apply_filters('wcml_product_content_exception',true,$product_id,$meta_key);
                     if($exception){
                         continue;
                     }
@@ -1788,7 +1788,7 @@ class WCML_Products{
             }
         }
 
-        return $contents;
+        return apply_filters('wcml_product_content_fields', $contents, $product_id );
     }
 
     //get product content labels
@@ -1826,7 +1826,7 @@ class WCML_Products{
                         }
                     }
                 }else{
-                    $exception = apply_filters('wcml_product_content_exception',true,$product_id);
+                    $exception = apply_filters('wcml_product_content_exception',true,$product_id,$meta_key);
                     if($exception){
                         continue;
                     }
@@ -1839,15 +1839,16 @@ class WCML_Products{
             }
         }
 
-        return $contents;
+        return apply_filters('wcml_product_content_fields_label', $contents, $product_id);
     }
 
     function check_custom_field_is_single_value($product_id,$meta_key){
-        $meta_value = maybe_unserialize(get_post_meta($product_id,$meta_key,true));
+
+         $meta_value = maybe_unserialize( get_post_meta( $product_id, $meta_key, true ) );
         if(is_array($meta_value)){
             return false;
         }else{
-            return true;
+            return apply_filters( 'wcml_check_is_single', true, $product_id, $meta_key );
         }
 
     }

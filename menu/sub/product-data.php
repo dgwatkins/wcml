@@ -33,7 +33,7 @@ $button_labels = array(
                     <thead>
                         <tr>
                             <th scope="col"><?php _e('Language', 'wpml-wcml') ?></th>
-                            <?php $product_contents_labels = $woocommerce_wpml->products->get_product_contents_labels($product_id); ?>
+                            <?php $product_contents_labels = $woocommerce_wpml->products->get_product_contents_labels($product_id);?>
                             <?php foreach ($product_contents_labels as $product_content) : ?>
                                 <th scope="col"><?php echo $product_content; ?></th>
                             <?php endforeach; ?>
