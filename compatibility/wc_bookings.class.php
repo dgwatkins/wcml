@@ -106,7 +106,7 @@ class WCML_Bookings{
     function echo_wcml_price_field( $post_id, $field, $pricing = false, $check = true, $resource_id = false ){
         global $woocommerce_wpml;
 
-        if( !$check || $woocommerce_wpml->products->is_original_product( $post_id ) ){
+        if( ( !$check || $woocommerce_wpml->products->is_original_product( $post_id ) ) && $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
 
             $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
 
@@ -321,7 +321,7 @@ class WCML_Bookings{
     function sync_booking_data( $original_product_id, $current_product_id ){
 
         if( has_term( 'booking', 'product_type', $original_product_id ) ){
-            global $wpdb, $sitepress, $pagenow, $iclTranslationManagement, $woocommerce_wpml;
+            global $wpdb, $sitepress, $pagenow, $iclTranslationManagement;
 
             // get language code
             $language_details = $sitepress->get_element_language_details( $original_product_id, 'post_product' );
@@ -480,7 +480,7 @@ class WCML_Bookings{
                     update_post_meta( $trnsl_person_id, 'min', get_post_meta( $person, 'min', true ) );
 
 
-                    if( get_post_meta( $person, '_wcml_custom_costs_status', true ) ){
+                    if( get_post_meta( $person, '_wcml_custom_costs_status', true ) && $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT){
                         $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
 
                         foreach( $currencies as $code => $currency ){
@@ -1043,7 +1043,7 @@ class WCML_Bookings{
 
             $currency_code = get_woocommerce_currency();
 
-            if ($woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT){
+            if ( $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
                 $order_currencies = $woocommerce_wpml->multi_currency->get_orders_currencies();
 
                 if (!isset($order_currencies[$currency_code])) {
