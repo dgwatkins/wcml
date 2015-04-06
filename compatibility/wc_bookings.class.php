@@ -928,8 +928,10 @@ class WCML_Bookings{
     function filter_bundled_product_in_cart_contents( $cart_item, $key, $current_language ){
 
         if( $cart_item[ 'data' ] instanceof WC_Product_Booking ){
+            global $woocommerce_wpml;
 
             $current_id = icl_object_id( $cart_item[ 'data' ]->id, 'product', true, $current_language );
+
 
             if( $current_id != $cart_item['data']->id ) {
 
@@ -937,31 +939,39 @@ class WCML_Bookings{
 
             }
 
-            $booking_info = array(
-                'wc_bookings_field_start_date_year' => $cart_item[ 'booking' ][ '_year' ],
-                'wc_bookings_field_start_date_month' => $cart_item[ 'booking' ][ '_month' ],
-                'wc_bookings_field_start_date_day' => $cart_item[ 'booking' ][ '_day' ],
-                'add-to-cart' => $current_id,
-                '_persons' => isset( $cart_item[ 'booking' ][ '_persons' ] ) ? isset( $cart_item[ 'booking' ][ '_persons' ] ) : array()
-            );
+            if( $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
 
-            if( isset( $cart_item[ 'booking' ][ '_resource_id' ]  ) ){
-                $booking_info[ '_resource_id' ] = $cart_item[ 'booking' ][ '_resource_id' ];
+                $booking_info = array(
+                    'wc_bookings_field_start_date_year' => $cart_item[ 'booking' ][ '_year' ],
+                    'wc_bookings_field_start_date_month' => $cart_item[ 'booking' ][ '_month' ],
+                    'wc_bookings_field_start_date_day' => $cart_item[ 'booking' ][ '_day' ],
+                    'add-to-cart' => $current_id,
+                    '_persons' => isset( $cart_item[ 'booking' ][ '_persons' ] ) ? isset( $cart_item[ 'booking' ][ '_persons' ] ) : array()
+                );
+
+                if( isset( $cart_item[ 'booking' ][ '_resource_id' ]  ) ){
+                    $booking_info[ 'wc_bookings_field_resource' ] = $cart_item[ 'booking' ][ '_resource_id' ];
+                }
+
+                if( isset( $cart_item[ 'booking' ][ '_duration' ]  ) ){
+                    $booking_info[ 'wc_bookings_field_duration' ] = $cart_item[ 'booking' ][ '_duration' ];
+                }
+
+                if( isset( $cart_item[ 'booking' ][ '_time' ]  ) ){
+                    $booking_info[ 'wc_bookings_field_start_date_time' ] = $cart_item[ 'booking' ][ '_time' ];
+                }
+
+                $booking_form = new WC_Booking_Form( wc_get_product( $current_id ) );
+
+                $prod_qty = get_post_meta( $current_id, '_wc_booking_qty', true );
+                update_post_meta( $current_id, '_wc_booking_qty', intval( $prod_qty + $cart_item[ 'booking' ][ '_qty' ] ) );
+                $cost = $booking_form->calculate_booking_cost( $booking_info );
+                update_post_meta( $current_id, '_wc_booking_qty', $prod_qty );
+
+                if( !is_wp_error( $cost ) ){
+                    $cart_item[ 'data' ]->set_price( $cost );
+                }
             }
-
-            if( isset( $cart_item[ 'booking' ][ '_duration' ]  ) ){
-                $booking_info[ '_duration' ] = $cart_item[ 'booking' ][ '_duration' ];
-            }
-
-            if( isset( $cart_item[ 'booking' ][ '_start_date' ]  ) ){
-                $booking_info[ '_start_date' ] = $cart_item[ 'booking' ][ '_start_date' ];
-            }
-
-            $booking_form = new WC_Booking_Form( wc_get_product( $current_id ) );
-
-            $cost = $booking_form->calculate_booking_cost( $booking_info );
-
-            $cart_item[ 'data' ]->set_price( $cost );
 
         }
 
