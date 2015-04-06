@@ -1038,14 +1038,19 @@ class WCML_Bookings{
 
     function set_booking_currency( $currency_code = false ){
 
-        if( !isset( $_COOKIE [ '_wcml_booking_currency' ]) && !headers_sent()){
+        if( !isset( $_COOKIE [ '_wcml_booking_currency' ]) && !headers_sent()) {
             global $woocommerce_wpml;
-            $order_currencies = $woocommerce_wpml->multi_currency->get_orders_currencies();
+
             $currency_code = get_woocommerce_currency();
-            if(!isset($order_currencies[$currency_code])){
-                foreach( $order_currencies as $currency_code => $count ){
-                    $currency_code = $currency_code;
-                    break;
+
+            if ($woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT){
+                $order_currencies = $woocommerce_wpml->multi_currency->get_orders_currencies();
+
+                if (!isset($order_currencies[$currency_code])) {
+                    foreach ($order_currencies as $currency_code => $count) {
+                        $currency_code = $currency_code;
+                        break;
+                    }
                 }
             }
         }
