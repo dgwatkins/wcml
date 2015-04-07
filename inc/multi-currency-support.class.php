@@ -1085,12 +1085,16 @@ class WCML_Multi_Currency_Support{
 
         if( is_product() &&
             isset($woocommerce_wpml->settings['display_custom_prices']) &&
-            $woocommerce_wpml->settings['display_custom_prices'] &&
-            !get_post_meta( wc_get_product()->id, '_wcml_custom_prices_status', true )){
+            $woocommerce_wpml->settings['display_custom_prices'] ){
 
+            $current_product_id = wc_get_product()->id;
+            $original_product_language = $woocommerce_wpml->products->get_original_product_language( $current_product_id );
+
+            if( !get_post_meta( icl_object_id( $current_product_id , get_post_type( $current_product_id ), true, $original_product_language ), '_wcml_custom_prices_status', true ) ){
                 $this->client_currency = get_option('woocommerce_currency');
-        }
+            }
 
+        }
 
         if(isset($_POST['action']) && $_POST['action'] == 'wcml_switch_currency' && !empty($_POST['currency'])){
            $this->client_currency = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
@@ -1277,14 +1281,19 @@ class WCML_Multi_Currency_Support{
 
         $settings = $woocommerce_wpml->get_settings();
 
-        if( ( ( is_product() &&
-            !get_post_meta( wc_get_product()->id, '_wcml_custom_prices_status', true ) ) ||
-            ( is_page( wc_get_page_id('cart') ) ||
-                is_page( wc_get_page_id('checkout') ))) &&
-            isset($settings['display_custom_prices']) &&
-            $settings['display_custom_prices'] ){
+        if( isset($settings['display_custom_prices']) && $settings['display_custom_prices'] ){
+
+            $current_product_id = wc_get_product()->id;
+            $original_product_language = $woocommerce_wpml->products->get_original_product_language( $current_product_id );
+
+            if( is_page( wc_get_page_id('cart') ) ||
+                is_page( wc_get_page_id('checkout') ) ||
+                ( is_product() &&
+                    !get_post_meta( icl_object_id( $current_product_id , get_post_type( $current_product_id ), true, $original_product_language ), '_wcml_custom_prices_status', true ) )
+                ){
 
                 return '';
+            }
 
         }
 
