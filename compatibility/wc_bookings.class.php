@@ -931,15 +931,15 @@ class WCML_Bookings{
             global $woocommerce_wpml;
 
             $current_id = icl_object_id( $cart_item[ 'data' ]->id, 'product', true, $current_language );
+            $cart_product_id = $cart_item['data']->id;
 
-
-            if( $current_id != $cart_item['data']->id ) {
+            if( $current_id != $cart_product_id ) {
 
                 $cart_item['data'] = new WC_Product_Booking( $current_id );
 
             }
 
-            if( $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
+            if( $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT || $current_id != $cart_product_id ){
 
                 $booking_info = array(
                     'wc_bookings_field_start_date_year' => $cart_item[ 'booking' ][ '_year' ],
