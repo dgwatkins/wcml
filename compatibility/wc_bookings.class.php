@@ -1135,6 +1135,8 @@ class WCML_Bookings{
 
                     foreach( maybe_unserialize( get_post_meta( $template_data[ 'product_id' ], '_resource_base_costs', true ) ) as $resource_id => $cost ){
 
+                        if( $resource_id == 'custom_costs' ) continue;
+
                         $trns_resource_id = icl_object_id( $resource_id, 'bookable_resource', false, $template_data[ 'lang' ] );
 
                         if( !empty( $trns_resource_id ) && $template_data[ 'translation_exist' ] ){
