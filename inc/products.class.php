@@ -1244,7 +1244,7 @@ class WCML_Products{
 
     function inf_editing_product_in_non_default_lang(){
         $message = '<div class="message error"><p>';
-        $message .= sprintf(__('The recommended way to translate WooCommerce products is using the <b><a href="%s">WooCommerce Multilingual products translation</a></b> page. Please use this page only for translating elements that are not available in the WooCommerce Multilingual products translation table.', 'wpml-wcml'), 'admin.php?page=wpml-wcml&tab=products');
+        $message .= sprintf(__('The recommended way to translate WooCommerce products is using the <b><a href="%s">WooCommerce Multilingual products translation</a></b> page. Please use this page only for translating elements that are not available in the WooCommerce Multilingual products translation table.', 'wpml-wcml'), admin_url('admin.php?page=wpml-wcml&tab=products'));
         $message .= '</p></div>';
 
         echo $message;

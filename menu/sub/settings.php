@@ -688,6 +688,6 @@ if( ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && ( $site
 <input type="hidden" id="wcml_warn_message" value="<?php esc_attr_e('The changes you made will be lost if you navigate away from this page.','wpml-wcml');?>"/>
 <input type="hidden" id="wcml_warn_disable_language_massage" value="<?php esc_attr_e('At least one currency must be enabled for this language!','wpml-wcml');?>"/>
 <div class="troubleshoot_link_block">
-    <a href="admin.php?page=<?php echo basename(WCML_PLUGIN_PATH) ?>/menu/sub/troubleshooting.php"><?php  _e('Troubleshooting page','wpml-wcml'); ?></a>
+    <a href="<?php echo admin_url('admin.php?page='.basename(WCML_PLUGIN_PATH) .'/menu/sub/troubleshooting.php'); ?>"><?php  _e('Troubleshooting page','wpml-wcml'); ?></a>
 </div>
 <div class="clear"></div>
