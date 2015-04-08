@@ -382,7 +382,6 @@ class WCML_WC_MultiCurrency{
             <?php endforeach; ?>
         </select>
         <?php
-        wc_enqueue_js( "jQuery('select#dropdown_shop_order_currency, select[name=m]').css('width', '180px').chosen();");
         
     }
     
