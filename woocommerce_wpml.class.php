@@ -51,18 +51,22 @@ class woocommerce_wpml {
         $this->compatibility    = new WCML_Compatibility();
         $this->strings          = new WCML_WC_Strings;
         $this->currency_switcher = new WCML_CurrencySwitcher;
-        
+
+
 
         if(isset($_GET['page']) && $_GET['page'] == 'wc-reports'){
             require_once WCML_PLUGIN_PATH . '/inc/reports.class.php';
             $this->reports          = new WCML_Reports;
         }
         
-        include WCML_PLUGIN_PATH . '/inc/woocommerce-2.0-backward-compatibility.php';            
+        include WCML_PLUGIN_PATH . '/inc/woocommerce-2.0-backward-compatibility.php';
+        include WCML_PLUGIN_PATH . '/inc/wc-rest-api-support.php';
 
         new WCML_Ajax_Setup;
 
         new WCML_Requests;
+
+        new WCML_WooCommerce_Rest_API_Support;
 
         $this->install();
 
