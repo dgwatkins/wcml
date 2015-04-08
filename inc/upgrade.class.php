@@ -306,6 +306,7 @@ class WCML_Upgrade{
         $wcml_settings = get_option('_wcml_settings');
 
         $wcml_settings['display_custom_prices'] = 0;
+        $wcml_settings['currency_switcher_product_visibility'] = 1;
 
         update_option('_wcml_settings', $wcml_settings);
     }

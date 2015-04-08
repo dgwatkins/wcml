@@ -43,7 +43,8 @@ class WCML_Requests{
             if(isset($_POST['currency_switcher_style'])) $woocommerce_wpml->settings['currency_switcher_style'] = $_POST['currency_switcher_style'];  
             if(isset($_POST['wcml_curr_sel_orientation'])) $woocommerce_wpml->settings['wcml_curr_sel_orientation'] = $_POST['wcml_curr_sel_orientation'];
             if(isset($_POST['wcml_curr_template'])) $woocommerce_wpml->settings['wcml_curr_template'] = $_POST['wcml_curr_template'];
-            
+            $woocommerce_wpml->settings['currency_switcher_product_visibility'] = empty($_POST['currency_switcher_product_visibility']) ? 0 : 1;
+
             $woocommerce_wpml->update_settings();
             
         }

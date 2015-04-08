@@ -311,7 +311,14 @@ class WCML_WC_MultiCurrency{
     }
 
     function currency_switcher(){
-        echo(do_shortcode('[currency_switcher]'));
+        global $woocommerce_wpml;
+
+        $settings = $woocommerce_wpml->get_settings();
+
+        if( is_product() && isset($settings['currency_switcher_product_visibility']) && $settings['currency_switcher_product_visibility'] === 1 ){
+            echo(do_shortcode('[currency_switcher]'));
+        }
+
     }
     
     function get_client_currency(){
