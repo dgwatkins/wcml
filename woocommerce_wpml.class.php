@@ -417,7 +417,7 @@ class woocommerce_wpml {
                     wp_enqueue_style( 'buttons' );
                 }
 
-            }elseif( $_GET['page'] == 'wpml-translation-management/menu/main.php' ){
+            }elseif( $_GET['page'] == WPML_TM_FOLDER.'/menu/main.php' ){
                 wp_register_script('wpml_tm', WCML_PLUGIN_URL . '/assets/js/wpml_tm.js', array('jquery'), WCML_VERSION);
                 wp_enqueue_script('wpml_tm');
             }
