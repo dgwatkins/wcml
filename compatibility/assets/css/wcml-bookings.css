@@ -46,3 +46,7 @@
     margin: 2px 5px 2px 0;
     float: left;
 }
+input.wcml_bookings_custom_price,
+#bookings_pricing .table_grid table td input.wcml_bookings_custom_price{
+    background-color: #F5F2E1;
+}

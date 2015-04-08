@@ -118,19 +118,19 @@ class WCML_Bookings{
 
                 switch( $field ){
                     case 'wcml_wc_booking_cost':
-                        woocommerce_wp_text_input( array( 'id' => 'wcml_wc_booking_cost', 'name' => 'wcml_wc_booking_cost['.$currency_code.']', 'label' => get_woocommerce_currency_symbol($currency_code), 'description' => __( 'One-off cost for the booking as a whole.', 'woocommerce-bookings' ), 'value' => get_post_meta( $post_id, '_wc_booking_cost_'.$currency_code, true ), 'type' => 'number', 'desc_tip' => true, 'custom_attributes' => array(
+                        woocommerce_wp_text_input( array( 'id' => 'wcml_wc_booking_cost', 'class'=>'wcml_bookings_custom_price', 'name' => 'wcml_wc_booking_cost['.$currency_code.']', 'label' => get_woocommerce_currency_symbol($currency_code), 'description' => __( 'One-off cost for the booking as a whole.', 'woocommerce-bookings' ), 'value' => get_post_meta( $post_id, '_wc_booking_cost_'.$currency_code, true ), 'type' => 'number', 'desc_tip' => true, 'custom_attributes' => array(
                             'min'   => '',
                             'step' 	=> '0.01'
                         ) ) );
                         break;
                     case 'wcml_wc_booking_base_cost':
-                        woocommerce_wp_text_input( array( 'id' => 'wcml_wc_booking_base_cost', 'name' => 'wcml_wc_booking_base_cost['.$currency_code.']', 'label' => get_woocommerce_currency_symbol($currency_code), 'description' => __( 'This is the cost per block booked. All other costs (for resources and persons) are added to this.', 'woocommerce-bookings' ), 'value' => get_post_meta( $post_id, '_wc_booking_base_cost_'.$currency_code, true ), 'type' => 'number', 'desc_tip' => true, 'custom_attributes' => array(
+                        woocommerce_wp_text_input( array( 'id' => 'wcml_wc_booking_base_cost', 'class'=>'wcml_bookings_custom_price', 'name' => 'wcml_wc_booking_base_cost['.$currency_code.']', 'label' => get_woocommerce_currency_symbol($currency_code), 'description' => __( 'This is the cost per block booked. All other costs (for resources and persons) are added to this.', 'woocommerce-bookings' ), 'value' => get_post_meta( $post_id, '_wc_booking_base_cost_'.$currency_code, true ), 'type' => 'number', 'desc_tip' => true, 'custom_attributes' => array(
                             'min'   => '',
                             'step' 	=> '0.01'
                         ) ) );
                         break;
                     case 'wcml_wc_display_cost':
-                        woocommerce_wp_text_input( array( 'id' => 'wcml_wc_display_cost', 'name' => 'wcml_wc_display_cost['.$currency_code.']', 'label' => get_woocommerce_currency_symbol($currency_code), 'description' => __( 'The cost is displayed to the user on the frontend. Leave blank to have it calculated for you. If a booking has varying costs, this will be prefixed with the word "from:".', 'woocommerce-bookings' ), 'value' => get_post_meta( $post_id, '_wc_display_cost_'.$currency_code, true ), 'type' => 'number', 'desc_tip' => true, 'custom_attributes' => array(
+                        woocommerce_wp_text_input( array( 'id' => 'wcml_wc_display_cost', 'class'=>'wcml_bookings_custom_price', 'name' => 'wcml_wc_display_cost['.$currency_code.']', 'label' => get_woocommerce_currency_symbol($currency_code), 'description' => __( 'The cost is displayed to the user on the frontend. Leave blank to have it calculated for you. If a booking has varying costs, this will be prefixed with the word "from:".', 'woocommerce-bookings' ), 'value' => get_post_meta( $post_id, '_wc_display_cost_'.$currency_code, true ), 'type' => 'number', 'desc_tip' => true, 'custom_attributes' => array(
                             'min'   => '',
                             'step' 	=> '0.01'
                         ) ) );
@@ -146,7 +146,7 @@ class WCML_Bookings{
 
                         echo '<div class="wcml_bookings_range_block" >';
                         echo '<label>'. get_woocommerce_currency_symbol($currency_code) .'</label>';
-                        echo '<input type="number" step="0.01" name="wcml_wc_booking_pricing_base_cost['.$currency_code.'][]" value="'. $value .'" placeholder="0" />';
+                        echo '<input type="number" step="0.01" name="wcml_wc_booking_pricing_base_cost['.$currency_code.'][]" class="wcml_bookings_custom_price" value="'. $value .'" placeholder="0" />';
                         echo '</div>';
                         break;
 
@@ -160,7 +160,7 @@ class WCML_Bookings{
 
                         echo '<div class="wcml_bookings_range_block" >';
                         echo '<label>'. get_woocommerce_currency_symbol($currency_code) .'</label>';
-                        echo '<input type="number" step="0.01" name="wcml_wc_booking_pricing_cost['.$currency_code.'][]" value="'. $value .'" placeholder="0" />';
+                        echo '<input type="number" step="0.01" name="wcml_wc_booking_pricing_cost['.$currency_code.'][]" class="wcml_bookings_custom_price" value="'. $value .'" placeholder="0" />';
                         echo '</div>';
                         break;
 
@@ -170,7 +170,7 @@ class WCML_Bookings{
 
                         echo '<div class="wcml_bookings_person_block" >';
                         echo '<label>'. get_woocommerce_currency_symbol($currency_code) .'</label>';
-                        echo '<input type="number" step="0.01" name="wcml_wc_booking_person_cost['.$post_id.']['.$currency_code.']" value="'. $value .'" placeholder="0" />';
+                        echo '<input type="number" step="0.01" name="wcml_wc_booking_person_cost['.$post_id.']['.$currency_code.']" class="wcml_bookings_custom_price" value="'. $value .'" placeholder="0" />';
                         echo '</div>';
                         break;
 
@@ -180,7 +180,7 @@ class WCML_Bookings{
 
                         echo '<div class="wcml_bookings_person_block" >';
                         echo '<label>'. get_woocommerce_currency_symbol($currency_code) .'</label>';
-                        echo '<input type="number" step="0.01" name="wcml_wc_booking_person_block_cost['.$post_id.']['.$currency_code.']" value="'. $value .'" placeholder="0" />';
+                        echo '<input type="number" step="0.01" name="wcml_wc_booking_person_block_cost['.$post_id.']['.$currency_code.']" class="wcml_bookings_custom_price" value="'. $value .'" placeholder="0" />';
                         echo '</div>';
                         break;
 
@@ -196,7 +196,7 @@ class WCML_Bookings{
 
                         echo '<div class="wcml_bookings_resource_block" >';
                         echo '<label>'. get_woocommerce_currency_symbol($currency_code) .'</label>';
-                        echo '<input type="number" step="0.01" name="wcml_wc_booking_resource_cost['.$resource_id.']['.$currency_code.']" value="'. $value .'" placeholder="0" />';
+                        echo '<input type="number" step="0.01" name="wcml_wc_booking_resource_cost['.$resource_id.']['.$currency_code.']" class="wcml_bookings_custom_price" value="'. $value .'" placeholder="0" />';
                         echo '</div>';
                         break;
 
@@ -212,7 +212,7 @@ class WCML_Bookings{
 
                         echo '<div class="wcml_bookings_resource_block" >';
                         echo '<label>'. get_woocommerce_currency_symbol($currency_code) .'</label>';
-                        echo '<input type="number" step="0.01" name="wcml_wc_booking_resource_block_cost['.$resource_id.']['.$currency_code.']" value="'. $value .'" placeholder="0" />';
+                        echo '<input type="number" step="0.01" name="wcml_wc_booking_resource_block_cost['.$resource_id.']['.$currency_code.']" class="wcml_bookings_custom_price" value="'. $value .'" placeholder="0" />';
                         echo '</div>';
                         break;
 
@@ -821,7 +821,7 @@ class WCML_Bookings{
 
         foreach ( $original_costs as $resource_id => $costs ) {
 
-            if ( $resource_id == 'custom_costs' ){
+            if ( $resource_id == 'custom_costs' && isset($costs[ 'custom_costs']) ){
 
                 foreach ( $costs[ 'custom_costs'] as $code => $currencies ) {
 
@@ -1134,6 +1134,8 @@ class WCML_Bookings{
                     $resources = array();
 
                     foreach( maybe_unserialize( get_post_meta( $template_data[ 'product_id' ], '_resource_base_costs', true ) ) as $resource_id => $cost ){
+
+                        if( $resource_id == 'custom_costs' ) continue;
 
                         $trns_resource_id = icl_object_id( $resource_id, 'bookable_resource', false, $template_data[ 'lang' ] );
 
