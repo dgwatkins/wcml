@@ -15,7 +15,7 @@ class woocommerce_wpml {
         add_action('init', array($this, 'init'),2);
         add_action('init', array($this, 'load_css_and_js'));
 
-        $this->endpoints = new WCML_Endpoints;
+
         add_action('widgets_init', array($this, 'register_widget'));
     }
 
@@ -41,7 +41,8 @@ class woocommerce_wpml {
         }else{
             add_shortcode('currency_switcher', '__return_empty_string');
         }
-                
+
+        $this->endpoints        = new WCML_Endpoints;
         $this->products         = new WCML_Products;
         $this->store            = new WCML_Store_Pages;
         $this->emails           = new WCML_Emails;
