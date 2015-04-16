@@ -61,7 +61,7 @@ $currency_switcher_style = isset($settings['currency_switcher_style'])?$settings
                 <li>
                     <label>
                         <input type="checkbox" name="currency_switcher_product_visibility" value="1" <?php echo checked( 1, isset($settings['currency_switcher_product_visibility'])?$settings['currency_switcher_product_visibility']:1 ) ?>>
-                        <?php echo __('Display currency switcher in meta block on product page', 'wpml-wcml') ?>
+                        <?php echo __('Show a currency selector on the product page template', 'wpml-wcml') ?>
                     </label>
                 </li>
             </ul>
