@@ -4,8 +4,8 @@ class WCML_Bookings{
 
     function __construct(){
 
-        add_action( 'woocommerce_bookings_after_booking_cost' , array( $this, 'wcml_price_field_after_booking_cost' ) );
         add_action( 'woocommerce_bookings_after_booking_base_cost' , array( $this, 'wcml_price_field_after_booking_base_cost' ) );
+        add_action( 'woocommerce_bookings_after_booking_block_cost' , array( $this, 'wcml_price_field_after_booking_block_cost' ) );
         add_action( 'woocommerce_bookings_after_display_cost' , array( $this, 'wcml_price_field_after_display_cost' ) );
         add_action( 'woocommerce_bookings_after_booking_pricing_base_cost' , array( $this, 'wcml_price_field_after_booking_pricing_base_cost' ), 10, 2 );
         add_action( 'woocommerce_bookings_after_booking_pricing_cost' , array( $this, 'wcml_price_field_after_booking_pricing_cost' ), 10, 2 );
@@ -48,13 +48,13 @@ class WCML_Bookings{
         add_action( 'wcml_update_extra_fields', array( $this, 'wcml_products_tab_sync_resources_and_persons'), 10, 3 );
     }
 
-    function wcml_price_field_after_booking_cost( $post_id ){
+    function wcml_price_field_after_booking_base_cost( $post_id ){
 
         $this->echo_wcml_price_field( $post_id, 'wcml_wc_booking_cost' );
 
     }
 
-    function wcml_price_field_after_booking_base_cost( $post_id ){
+    function wcml_price_field_after_booking_block_cost( $post_id ){
 
         $this->echo_wcml_price_field( $post_id, 'wcml_wc_booking_base_cost' );
 
