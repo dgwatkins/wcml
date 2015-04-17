@@ -1833,8 +1833,14 @@ class WCML_Products{
 
                 }
 
+                $custom_key_label = apply_filters( 'wcml_product_content_label', $meta_key, $product_id );
+                if( $custom_key_label != $meta_key ){
+                    $contents[] = $custom_key_label;
+                    continue;
+                }
+
                 $custom_key_label = str_replace('_',' ',$meta_key);
-                    $contents[] = trim($custom_key_label[0]) ? ucfirst($custom_key_label) : ucfirst(substr($custom_key_label,1));
+                $contents[] = trim($custom_key_label[0]) ? ucfirst($custom_key_label) : ucfirst(substr($custom_key_label,1));
 
             }
         }

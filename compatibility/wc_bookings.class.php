@@ -45,6 +45,7 @@ class WCML_Bookings{
         add_filter( 'wcml_product_content_fields_label', array( $this, 'product_content_fields_label'), 10, 2 );
         add_filter( 'wcml_check_is_single', array( $this, 'show_custom_blocks_for_resources_and_persons'), 10, 3 );
         add_filter( 'wcml_product_content_exception', array( $this, 'remove_custom_fields_to_translate' ), 10, 3 );
+        add_filter( 'wcml_product_content_label', array( $this, 'product_content_resource_label' ), 10, 2 );
         add_action( 'wcml_update_extra_fields', array( $this, 'wcml_products_tab_sync_resources_and_persons'), 10, 3 );
     }
 
@@ -640,7 +641,7 @@ class WCML_Bookings{
 
                 $value = get_post_meta( $original_id, $meta_key.'_'.$currency, true );
 
-                if( $cost_status && $value ){
+                if( $cost_status &&  ( !empty($value) || ( empty($value) && $meta_key == '_wc_display_cost' ) ) ){
 
                     return $value;
 
@@ -1196,7 +1197,7 @@ class WCML_Bookings{
 
         if( get_post_meta( $product_id, '_resource_base_costs', true ) ){
             if( $data == 'label' ){
-                $fields[] = __( 'Booking resources', 'wpml-wcml' );
+                $fields[] = __( 'Resources', 'wpml-wcml' );
             }else{
                 $fields[] = 'wc_booking_resources';
             }
@@ -1209,7 +1210,7 @@ class WCML_Bookings{
 
             if( $persons ){
                 if( $data == 'label' ){
-                    $fields[] = __( 'Booking persons', 'wpml-wcml' );
+                    $fields[] = __( 'Person types', 'wpml-wcml' );
                 }else{
                     $fields[] = 'wc_booking_persons';
                 }
@@ -1233,6 +1234,13 @@ class WCML_Bookings{
             $exception = true;
         }
         return $exception;
+    }
+
+    function product_content_resource_label( $meta_key, $product_id ){
+        if ($meta_key == '_wc_booking_resouce_label'){
+            return __( 'Resources label', 'wpml-wcml' );
+        }
+        return $meta_key;
     }
 
     function wcml_products_tab_sync_resources_and_persons( $tr_product_id, $data, $language ){
