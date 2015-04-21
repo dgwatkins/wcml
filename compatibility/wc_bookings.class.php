@@ -23,17 +23,17 @@ class WCML_Bookings{
         add_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
 
         add_filter( 'get_post_metadata', array( $this, 'filter_wc_booking_cost' ), 10, 4 );
-        add_filter( 'wc_bookings_process_cost_rules_cost', array( $this, 'wc_bookings_process_cost_rules_cost' ), 10, 3 );
-        add_filter( 'wc_bookings_process_cost_rules_base_cost', array( $this, 'wc_bookings_process_cost_rules_base_cost' ), 10, 3 );
+        add_filter( 'woocommerce_bookings_process_cost_rules_cost', array( $this, 'wc_bookings_process_cost_rules_cost' ), 10, 3 );
+        add_filter( 'woocommerce_bookings_process_cost_rules_base_cost', array( $this, 'wc_bookings_process_cost_rules_base_cost' ), 10, 3 );
 
         add_filter( 'wcml_multi_currency_is_ajax', array( $this, 'wcml_multi_currency_is_ajax' ) );
 
         add_filter( 'wcml_cart_contents_not_changed', array( $this, 'filter_bundled_product_in_cart_contents' ), 10, 3 );
 
-        add_action( 'after_wc_bookings_create_booking_page', array( $this, 'booking_currency_dropdown' ) );
+        add_action( 'after_woocommerce_bookings_create_booking_page', array( $this, 'booking_currency_dropdown' ) );
         add_action( 'init', array( $this, 'set_booking_currency') );
         add_action( 'wp_ajax_wcml_booking_set_currency', array( $this, 'set_booking_currency_ajax' ) );
-        add_action( 'wc_bookings_create_booking_page_add_order_item', array( $this, 'set_order_currency_on_create_booking_page' ) );
+        add_action( 'woocommerce_bookings_create_booking_page_add_order_item', array( $this, 'set_order_currency_on_create_booking_page' ) );
         add_filter( 'woocommerce_currency_symbol', array( $this, 'filter_booking_currency_symbol' ) );
         add_filter( 'get_booking_products_args', array( $this, 'filter_get_booking_products_args' ) );
         add_filter( 'wcml_filter_currency_position', array( $this, 'create_booking_page_client_currency' ) );
