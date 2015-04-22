@@ -2969,14 +2969,15 @@ class WCML_Products{
 
             $matched_products = array();
 
-            $matched_products_query = $wpdb->get_results( $wpdb->prepare("
+            $matched_products_query = $wpdb->get_results( "
 	        	SELECT DISTINCT ID, post_parent, post_type FROM $wpdb->posts
 				INNER JOIN $wpdb->postmeta ON ID = post_id
-				WHERE post_type IN ( 'product', 'product_variation' ) AND post_status = 'publish' AND meta_key = %s
-			", '_price_'.$client_currency ), OBJECT_K );
+				WHERE post_type IN ( 'product', 'product_variation' ) AND post_status = 'publish' AND meta_key = '_wcml_custom_prices_status' AND meta_value = 1
+			", OBJECT_K );
 
             if ( $matched_products_query ) {
                 foreach ( $matched_products_query as $product ) {
+                    if( ! get_post_meta( $product->ID,'_price_'.$client_currency ) ) continue;
                     if ( $product->post_type == 'product' )
                         $matched_products[] = icl_object_id( $product->ID, 'post_'.get_post_type($product->ID), true );
                     if ( $product->post_parent > 0 && ! in_array( $product->post_parent, $matched_products ) )
