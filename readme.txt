@@ -5,7 +5,7 @@ Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multili
 License: GPLv2
 Requires at least: 3.0
 Tested up to: 4.2
-Stable tag: 3.6-beta1
+Stable tag: 3.6
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
 
@@ -79,6 +79,19 @@ In order for the checkout and store pages to appear translated, you need to crea
 == Changelog ==
 
 = 3.6 =
+* Added the ability to edit the slugs of the translated products in the products editor
+* Added the option to show only products with custom prices on the front end
+* Performance improvements: fewer db queries, caching. Up to 40% faster on large sites.
+* Support for the 'lang' parameter in WooCommerce REST API calls
+* Option to hide the default currency selector on the product page
+* Bug fix: Fixed a design issue on the 'connect with translation' pop-up on products.
+* Bug fix: Accessing the source content in the WooCommerce Multilingual product translation content editor was not possible sometimes.
+* Bug fix: 'Invisible' products were showing as links in the cart instead of just names.
+* Bug fix: The cart_widget.js code was always loaded.
+* Bug fix: Screen Options & Check All not working on WooCommerce Orders page
+* Bug fix: Sometimes the IPN Url sent to Paypal was wrong causing a 404 error after the payment was complete
+* Bug fix: Translated endpoint pages were sometimes returning 404
+* Bug fix: When using a default language different than English, the product permalink base was not in English.
 
 = 3.5.5 =
 * Bug fixed: Custom attributes were disappearing after updating a product in the WooCommerce native product editor
