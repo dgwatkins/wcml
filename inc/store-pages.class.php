@@ -330,7 +330,7 @@ class WCML_Store_Pages{
                 }
                 unload_textdomain('wpml-wcml');
                 $sitepress->switch_lang($default_language);
-                $woocommerce_wpml->load_locale();
+                load_textdomain( 'wpml-wcml', WCML_LOCALE_PATH . '/wpml-wcml-' . $sitepress->get_locale( $default_language ) . '.mo' );
             }
             
             wp_redirect(admin_url('admin.php?page=wpml-wcml')); exit;
