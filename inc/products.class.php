@@ -496,6 +496,7 @@ class WCML_Products{
                 $_POST[ 'new_title' ] = $data['title_' . $language];
                 $_POST[ 'new_slug' ] = $data['post_name_' . $language];
                 $new_slug = wp_unique_post_slug( $data['post_name_' . $language], $tr_product_id, $orig_product->post_status, $orig_product->post_type, $args['post_parent']);
+                $wpdb->update( $wpdb->posts, array( 'post_name' => $new_slug ), array( 'ID' => $tr_product_id ) );
             }
 
             $sitepress->set_element_language_details($tr_product_id, 'post_' . $orig_product->post_type, $product_trid, $language);
