@@ -9,19 +9,19 @@ class WCML_Multi_Currency_Support{
     private $exchange_rates = array();
     
     function __construct(){
-        
+
         add_action('init', array($this, 'init'), 5);
         $this->install();
 
         $this->init_currencies();
 
-        if(is_ajax()){        
+        if(is_ajax()){
             add_action('wp_ajax_nopriv_wcml_switch_currency', array($this, 'switch_currency'));
             add_action('wp_ajax_wcml_switch_currency', array($this, 'switch_currency'));
             
             add_action('wp_ajax_legacy_update_custom_rates', array($this, 'legacy_update_custom_rates'));
             add_action('wp_ajax_legacy_remove_custom_rates', array($this, 'legacy_remove_custom_rates'));
-            
+
             add_action('wp_ajax_wcml_new_currency', array($this,'add_currency')); 
             add_action('wp_ajax_wcml_save_currency', array($this,'save_currency'));
             add_action('wp_ajax_wcml_delete_currency', array($this,'delete_currency'));
@@ -265,7 +265,7 @@ class WCML_Multi_Currency_Support{
                     $settings['currency_options'][$currency_code]['languages'][$language['code']] = 1;
                 }
             }
-            $settings['currency_options'][$currency_code]['rate'] = (double) filter_input( INPUT_POST, 'currency_value', FILTER_SANITIZE_NUMBER_FLOAT );
+            $settings['currency_options'][$currency_code]['rate'] = (double) filter_input( INPUT_POST, 'currency_value', FILTER_VALIDATE_FLOAT , FILTER_FLAG_ALLOW_FRACTION);
             $settings['currency_options'][$currency_code]['updated'] = date('Y-m-d H:i:s');        
 
             $wc_currency = get_option('woocommerce_currency'); 
@@ -291,7 +291,7 @@ class WCML_Multi_Currency_Support{
             ob_end_clean();
 
         }
-        
+
         echo json_encode($return);
         die();
     }    
