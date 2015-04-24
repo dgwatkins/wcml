@@ -163,7 +163,7 @@ class WCML_Orders{
             if(!in_array('order', $parameters)) $parameters[] = 'order';
             if(!in_array('key', $parameters)) $parameters[] = 'key';
         }
-            
+
         return $parameters;
     }
 

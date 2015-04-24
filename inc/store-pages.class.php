@@ -274,7 +274,7 @@ class WCML_Store_Pages{
 
                 unload_textdomain('wpml-wcml');
                 $sitepress->switch_lang($mis_lang);
-                $woocommerce_wpml->load_locale();
+                load_textdomain( 'wpml-wcml', WCML_LOCALE_PATH . '/wpml-wcml-' . $sitepress->get_locale( $mis_lang ) . '.mo' );
                     
                 foreach ($check_pages as $page) {
                     $orig_id = get_option($page);
