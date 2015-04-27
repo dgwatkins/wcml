@@ -106,7 +106,7 @@ class woocommerce_wpml {
         }
 
         if( ($pagenow == 'post.php' && isset($_GET['post']) && get_post_type($_GET['post']) == 'product' && !$this->products->is_original_product($_GET['post'])) ||
-            ($pagenow == 'post-new.php' && isset($_GET['source_lang']) )
+            ($pagenow == 'post-new.php' && isset($_GET['source_lang']) && isset($_GET['post_type']) && get_post_type($_GET['post_type']) == 'product')
             && !$this->settings['trnsl_interface']){
             add_action('init', array($this, 'load_lock_fields_js'));
             add_action( 'admin_footer', array($this,'hidden_label'));
