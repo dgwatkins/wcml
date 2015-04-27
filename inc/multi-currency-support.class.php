@@ -1079,7 +1079,7 @@ class WCML_Multi_Currency_Support{
     }
     
     function get_client_currency(){
-        global $woocommerce, $woocommerce_wpml, $sitepress, $wp_query;
+        global $woocommerce, $woocommerce_wpml, $sitepress, $wp_query, $wpdb;
         
         $default_currencies   = $woocommerce_wpml->settings['default_currencies'];
         $current_language     = $sitepress->get_current_language();
@@ -1098,6 +1098,14 @@ class WCML_Multi_Currency_Support{
             }
 
         }
+
+        if( isset($_GET['pay_for_order']) && $_GET['pay_for_order'] == true && isset($_GET['key']) ){
+            $order_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_order_key' AND meta_value = %s", $_GET['key']));
+            if( $order_id ){
+                $this->client_currency = get_post_meta( $order_id, '_order_currency', true );
+            }
+        }
+
 
         if(isset($_POST['action']) && $_POST['action'] == 'wcml_switch_currency' && !empty($_POST['currency'])){
            $this->client_currency = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
