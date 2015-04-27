@@ -1479,11 +1479,17 @@ class WCML_Products{
         //save custom prices
         $nonce = filter_input( INPUT_POST, '_wcml_custom_prices_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
-        if(isset( $_POST['_wcml_custom_prices'][$post_id]) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_custom_prices' )){
+        if( isset( $_POST['_wcml_custom_prices'] ) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_custom_prices' )){
 
-            update_post_meta($post_id,'_wcml_custom_prices_status',$_POST['_wcml_custom_prices'][$post_id]);
+            if( isset( $_POST['_wcml_custom_prices'][$post_id] ) ) {
+                $wcml_custom_prices_option = $_POST['_wcml_custom_prices'][$post_id];
+            }else{
+                $wcml_custom_prices_option = $_POST['_wcml_custom_prices'][0];
+            }
 
-            if( $_POST['_wcml_custom_prices'][$post_id] == 1){
+            update_post_meta($post_id,'_wcml_custom_prices_status',$wcml_custom_prices_option);
+
+            if( $wcml_custom_prices_option == 1){
 
             $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
 
