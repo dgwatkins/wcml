@@ -1372,7 +1372,7 @@ jQuery(document).ready(function($){
                 action: 'wcml_update_setting_ajx',
                 setting: 'dismiss_non_default_language_warning',
                 value: 1,
-                nonce: wcml_settings.nonce
+                nonce: $('#wcml_settings_nonce').val()
             },
             success: function(response){
                 location.reload();

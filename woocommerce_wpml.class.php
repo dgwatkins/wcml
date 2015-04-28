@@ -191,7 +191,7 @@ class woocommerce_wpml {
 
     function update_setting_ajx(){
         $nonce = filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-        if(!$nonce || !wp_verify_nonce($nonce, 'woocommerce_multilingual')){
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_settings')){
             die('Invalid nonce');
         }
 
