@@ -801,8 +801,9 @@ class woocommerce_wpml {
     function hide_wcml_translations_message(){
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         if(!$nonce || !wp_verify_nonce($nonce, 'hide_wcml_translations_message' ) ){
-            update_option( 'hide_wcml_translations_message', true );
+            die('Invalid nonce');
         }
+        update_option( 'hide_wcml_translations_message', true );
 
         die();
     }
