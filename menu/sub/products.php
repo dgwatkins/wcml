@@ -9,7 +9,7 @@ $translator_id = false;
 if(isset($_GET['prid'])){
     if( !$woocommerce_wpml->products->is_original_product($_GET['prid']) ){
         $original_language = $this->products->get_original_product_language($_GET['prid']);
-        $products[] = get_post(icl_object_id($_GET['prid'],'product',true,$original_language));
+        $products[] = get_post(apply_filters( 'translate_object_id',$_GET['prid'],'product',true,$original_language));
     }else{
     $products[] = get_post($_GET['prid']);
     }
@@ -176,7 +176,7 @@ $woocommerce_wpml->update_settings();
                     } else{
                         $original_lang = $slang;
                     }
-                    $product_id = icl_object_id($product->ID,'product',true,$original_lang);
+                    $product_id = apply_filters( 'translate_object_id',$product->ID,'product',true,$original_lang);
 
             ?>
                 <tr>

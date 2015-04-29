@@ -191,7 +191,7 @@ $button_labels = array(
                                                 <div class="wcml_editor_translation">
                                                     <?php if($default_language != $key): ?>
                                                         <?php
-                                                        $tr_id = icl_object_id($product_id, 'product', true, $key);
+                                                        $tr_id = apply_filters( 'translate_object_id',$product_id, 'product', true, $key);
                                                         if(!$woocommerce_wpml->settings['first_editor_call']):
                                                              wp_editor($trn_contents, 'wcmleditor'.$product_content.$tr_id.$key, array('textarea_name'=>$product_content .'_'.$key,'textarea_rows'=>20,'editor_class'=>'wcml_content_tr')); ?>
                                                         <?php else: ?>

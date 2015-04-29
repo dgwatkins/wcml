@@ -716,7 +716,7 @@ class WCML_Multi_Currency_Support{
                 
                 // exception for products migrated from before WCML 3.1 with independent prices
                 // legacy prior 3.1
-                $original_object_id = icl_object_id($object_id, get_post_type($object_id), false, $sitepress->get_default_language());                    
+                $original_object_id = apply_filters( 'translate_object_id',$object_id, get_post_type($object_id), false, $sitepress->get_default_language());
                 $ccr = get_post_meta($original_object_id, '_custom_conversion_rate', true);
                 if(in_array($meta_key, array('_price', '_regular_price', '_sale_price')) && !empty($ccr) && isset($ccr[$meta_key][$this->get_client_currency()])){                    
                     $price_original = get_post_meta($original_object_id, $meta_key, $single);
@@ -1093,7 +1093,7 @@ class WCML_Multi_Currency_Support{
             $current_product_id = wc_get_product()->id;
             $original_product_language = $woocommerce_wpml->products->get_original_product_language( $current_product_id );
 
-            if( !get_post_meta( icl_object_id( $current_product_id , get_post_type( $current_product_id ), true, $original_product_language ), '_wcml_custom_prices_status', true ) ){
+            if( !get_post_meta( apply_filters( 'translate_object_id', $current_product_id , get_post_type( $current_product_id ), true, $original_product_language ), '_wcml_custom_prices_status', true ) ){
                 $this->client_currency = get_option('woocommerce_currency');
             }
 
@@ -1301,7 +1301,7 @@ class WCML_Multi_Currency_Support{
                 $current_product_id = wc_get_product()->id;
                 $original_product_language = $woocommerce_wpml->products->get_original_product_language( $current_product_id );
 
-                if( !get_post_meta( icl_object_id( $current_product_id , get_post_type( $current_product_id ), true, $original_product_language ), '_wcml_custom_prices_status', true ) ){
+                if( !get_post_meta( apply_filters( 'translate_object_id', $current_product_id , get_post_type( $current_product_id ), true, $original_product_language ), '_wcml_custom_prices_status', true ) ){
                     return '';
                 }
             }

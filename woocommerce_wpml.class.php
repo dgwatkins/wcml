@@ -441,7 +441,7 @@ class woocommerce_wpml {
 
         if( isset($_GET['post']) ){
             $original_language = $this->products->get_original_product_language($_GET['post']);
-            $original_id = icl_object_id($_GET['post'],'product',true,$original_language);
+            $original_id = apply_filters( 'translate_object_id',$_GET['post'],'product',true,$original_language);
         }elseif( isset($_GET['trid']) ){
             global $sitepress;
             $original_id = $sitepress->get_original_element_id_by_trid( $_GET['trid'] );

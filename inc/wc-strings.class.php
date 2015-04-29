@@ -88,11 +88,11 @@ class WCML_WC_Strings{
 
         if($values){
             $parent = $values['data']->post->post_parent;
-            $tr_product_id = icl_object_id( $values['product_id'], 'product', true );
+            $tr_product_id = apply_filters( 'translate_object_id', $values['product_id'], 'product', true );
             $title = get_the_title($tr_product_id);    
             
             if($parent){
-                $tr_parent = icl_object_id( $parent, 'product', true );
+                $tr_parent = apply_filters( 'translate_object_id', $parent, 'product', true );
                 $title = get_the_title( $tr_parent ) . ' &rarr; ' . $title;    
             }
 
@@ -112,7 +112,7 @@ class WCML_WC_Strings{
         global $sitepress;
 
         if(isset($product->id)){
-            $tr_product_id = icl_object_id($product->id,'product',true,$sitepress->get_current_language());
+            $tr_product_id = apply_filters( 'translate_object_id',$product->id,'product',true,$sitepress->get_current_language());
             $title = get_the_title($tr_product_id);
         }
 
@@ -439,7 +439,7 @@ class WCML_WC_Strings{
         global $sitepress;
 
         if( isset( $_GET['post'] ) && $sitepress->get_default_language() != $sitepress->get_current_language() ){
-            $original_product_id = icl_object_id( $_GET['post'], 'product', true, $sitepress->get_default_language() );
+            $original_product_id = apply_filters( 'translate_object_id', $_GET['post'], 'product', true, $sitepress->get_default_language() );
 
             printf( '<p>'.__('In order to edit custom attributes you need to use the <a href="%s">custom product translation editor</a>', 'wpml-wcml').'</p>', admin_url('admin.php?page=wpml-wcml&tab=products&prid='.$original_product_id ) );
         }

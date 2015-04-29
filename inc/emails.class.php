@@ -52,7 +52,7 @@ class WCML_Emails{
         add_filter( 'icl_st_admin_string_return_cached', array( $this, 'admin_string_return_cached' ), 10, 2 );
 
         add_filter( 'plugin_locale', array( $this, 'set_locale_for_emails' ), 10, 2 );
-    }    
+    }
     function email_refresh_in_ajax(){
         if(isset($_GET['order_id'])){
             $this->refresh_email_lang($_GET['order_id']);
