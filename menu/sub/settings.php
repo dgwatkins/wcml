@@ -675,6 +675,7 @@ if($posts){
 <ul id="display_custom_prices_select">
     <li>
         <input type="checkbox" name="display_custom_prices" id="display_custom_prices" value="1" <?php echo checked( 1, $woocommerce_wpml->settings['display_custom_prices']) ?> >
+        <i class="icon-question-sign js-display-tooltip" data-header="<?php _e('Show only products with custom prices in secondary currencies', 'wpml-wcml') ?>" data-content="<?php _e('When this option is on, when you switch to a secondary currency on the front end, only the products with custom prices in that currency are being displayed. Products with prices determined based on the exchange rate are hidden.', 'wpml-wcml') ?>"></i>
         <label for="display_custom_prices"><?php _e('Show only products with custom prices in secondary currencies', 'wpml-wcml'); ?></label>
     </li>
 </ul>
