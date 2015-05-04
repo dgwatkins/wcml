@@ -78,6 +78,13 @@ In order for the checkout and store pages to appear translated, you need to crea
 
 == Changelog ==
 
+= 3.6.1 =
+* Bug fix: the notice that shows up on the general settings page when the default language is not English did not hide when it was dismissed.
+* Bug fix: after adding a new currency and reloading the page, the new currency was gone. Also the exchange rate was wrong after re-adding teh currency.
+* Bug fix: an incorrect currency was being passed to the payment gateway when paying for an order created in the backend.
+* Bug fix: the prices in the custom currencies were not saved when a product was published.
+* Bug fix: extra backslashes were added when translating custom attribute name in products
+
 = 3.6 =
 * Added the ability to edit the slugs of the translated products in the products editor
 * Added the option to show only products with custom prices on the front end
