@@ -984,3 +984,21 @@ input[name="wcml_curr_template"]{
 .edit_slug_hide_link{
     display: none;
 }
+.wcml_wrap #term-table-tab-controls .nav-tab{
+    border: none;
+    background-color: #fff;
+    cursor: pointer;
+    text-decoration: underline;
+    color: #0074a2;
+    margin-bottom: 5px;
+}
+
+.wcml_wrap #term-table-tab-controls .nav-tab:nth-child(2){
+    border-left: 1px solid #888;
+}
+
+.wcml_wrap #term-table-tab-controls .nav-tab.nav-tab-active{
+    text-decoration: none;
+    color: #888;
+    cursor: auto;
+}
