@@ -946,7 +946,8 @@ class WCML_Terms{
         global $sitepress, $wp_post_types, $wp_taxonomies,$wpdb;
 
         $default_language = $sitepress->get_default_language();
-        $posts            = get_posts( array( 'post_type' => $object_type, 'suppress_filters' => false, 'posts_per_page' => -1  ) );
+
+        $posts = $wpdb->get_results($wpdb->prepare( "SELECT p.ID FROM $wpdb->posts AS p LEFT JOIN {$wpdb->prefix}icl_translations AS tr ON tr.element_id = p.ID WHERE p.post_status = 'publish' AND p.post_type = %s AND tr.source_language_code is NULL", $object_type ) );
 
         foreach($posts as $post){
 
