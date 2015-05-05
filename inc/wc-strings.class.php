@@ -302,7 +302,6 @@ class WCML_WC_Strings{
                             'woocommerce_customer_note_subject','woocommerce_customer_note_heading',
                             'woocommerce_customer_reset_password_subject','woocommerce_customer_reset_password_heading',
                             'woocommerce_customer_new_account_subject','woocommerce_customer_new_account_heading',
-                            'woocommerce_cancelled_order_subject','woocommerce_cancelled_order_heading',
                             'woocommerce_bacs_title','woocommerce_bacs_description','woocommerce_bacs_instructions',
                             'woocommerce_cheque_title','woocommerce_cheque_description','woocommerce_cheque_instructions',
                             'woocommerce_cod_title','woocommerce_cod_description','woocommerce_cod_instructions',
@@ -324,12 +323,12 @@ class WCML_WC_Strings{
     function string_language_notice(){
         global $sitepress_settings, $sitepress;
 
-        echo '<div id="wpml_wcml_custom_base_req" style="display:none"><br /><i>';
-        if(  !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ){
+        echo '<div id="wpml_wcml_custom_base_req" style="display:none"><div><i>';
+        if(  !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $sitepress_settings['st']['strings_language'] != $sitepress->get_default_language() ){
             $strings_language = $sitepress->get_language_details($sitepress_settings['st']['strings_language']);
             echo sprintf(__('Please enter string in %s (the strings language)', 'wpml-wcml'), '<strong>' . $strings_language['display_name'] . '</strong>');
         }
-        echo '</i></div>';
+        echo '</i></div></div>';
 
     }
 
