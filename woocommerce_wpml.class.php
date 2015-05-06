@@ -422,18 +422,21 @@ class woocommerce_wpml {
                     wp_enqueue_style( 'buttons' );
                 }
 
-
-                //load Tooltip js and styles from WC
-                if( class_exists('woocommerce') ){
-                    wp_register_script( 'jquery-tiptip', WC()->plugin_url() . '/assets/js/jquery-tiptip/jquery.tipTip.min.js', array( 'jquery' ), WC_VERSION, true );
-                    wp_enqueue_script('jquery-tiptip');
-                    wp_enqueue_style( 'woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION );
-                }
-
             }elseif( $_GET['page'] == WPML_TM_FOLDER.'/menu/main.php' ){
                 wp_register_script('wpml_tm', WCML_PLUGIN_URL . '/assets/js/wpml_tm.js', array('jquery'), WCML_VERSION);
                 wp_enqueue_script('wpml_tm');
             }
+        }
+    }
+
+    //load Tooltip js and styles from WC
+    function load_tooltip_resources(){
+        if( class_exists('woocommerce') ){
+            wp_register_script( 'jquery-tiptip', WC()->plugin_url() . '/assets/js/jquery-tiptip/jquery.tipTip.min.js', array( 'jquery' ), WC_VERSION, true );
+            wp_register_script( 'wcml-tooltip-init', WCML_PLUGIN_URL . '/assets/js/tooltip_init.js', array('jquery'), WCML_VERSION);
+            wp_enqueue_script( 'jquery-tiptip' );
+            wp_enqueue_script( 'wcml-tooltip-init' );
+            wp_enqueue_style( 'woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION );
         }
     }
 
