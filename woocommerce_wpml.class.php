@@ -437,6 +437,7 @@ class woocommerce_wpml {
             wp_enqueue_script( 'jquery-tiptip' );
             wp_enqueue_script( 'wcml-tooltip-init' );
             wp_enqueue_style( 'woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION );
+            wp_enqueue_style( 'wcml_tooltip_styles', WCML_PLUGIN_URL . '/assets/css/tooltip.css', null, WCML_VERSION);
         }
     }
 
