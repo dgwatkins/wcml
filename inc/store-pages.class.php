@@ -11,7 +11,7 @@ class WCML_Store_Pages{
         add_action( 'icl_after_set_default_language', array( $this, 'after_set_default_language' ), 10, 2 );
         // Translate shop page ids
         $this->add_filter_to_get_shop_translated_page_id();
-        add_filter( 'template_include', array( $this, 'template_loader' ) );
+        add_filter( 'template_include', array( $this, 'template_loader' ), 100 );
     }   
     
     function init(){        
