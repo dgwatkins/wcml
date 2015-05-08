@@ -11,6 +11,7 @@ class WCML_Store_Pages{
         add_action( 'icl_after_set_default_language', array( $this, 'after_set_default_language' ), 10, 2 );
         // Translate shop page ids
         $this->add_filter_to_get_shop_translated_page_id();
+        add_filter( 'template_include', array( $this, 'template_loader' ) );
     }   
     
     function init(){        
@@ -494,6 +495,70 @@ class WCML_Store_Pages{
         // Clear any unwanted data
         wc_delete_product_transients();
         delete_transient( 'woocommerce_cache_excluded_uris' );
+    }
+
+    function template_loader( $template ){
+
+        if ( is_product_taxonomy() ) {
+            global $sitepress;
+
+            $current_language = $sitepress->get_current_language();
+            $default_language = $sitepress->get_default_language();
+
+            if( $current_language != $default_language ) {
+
+                $wpml_frontend_filters = new WPML_Frontend_Tax_Filters;
+
+                $filtered_template = $wpml_frontend_filters->slug_template($template);
+
+                if ($filtered_template == $template) {
+                    // check templates in WC folder in default lang
+
+                    $term = get_queried_object();
+                    $taxonomy = $term->taxonomy;
+                    $prefix = 'taxonomy-'.$taxonomy;
+                    $original_term_id = icl_object_id($term->term_id, $taxonomy, true, $default_language);
+                    remove_filter( 'get_term', array( $sitepress, 'get_term_adjust_id' ), 1 );
+                    $original_term = get_term_by("id", $original_term_id, $taxonomy);
+                    add_filter ( 'get_term', array( $sitepress, 'get_term_adjust_id' ), 1, 1 );
+
+                    if ($original_term) {
+                        $templates[] = WC()->template_path() ."$prefix-{$current_language}-{$original_term->slug}.php";
+                        $templates[] = WC()->template_path() ."$prefix-{$current_language}-{$original_term_id}.php";
+                        $templates[] = WC()->template_path() ."$prefix-{$original_term->slug}.php";
+                        $templates[] = WC()->template_path() ."$prefix-{$original_term_id}.php";
+                        $templates[] = WC()->template_path() ."$prefix-{$current_language}.php";
+                        $templates[] = WC()->template_path() ."$prefix.php";
+                    }
+
+                    $template = locate_template( array_unique($templates) );
+
+                } else {
+
+                    $template = $filtered_template;
+
+                }
+
+                if (!$template || WC_TEMPLATE_DEBUG_MODE) {
+
+                    $term = get_queried_object();
+
+                    if (is_tax('product_cat') || is_tax('product_tag')) {
+                        $file = 'taxonomy-' . $term->taxonomy . '.php';
+                    } else {
+                        $file = 'archive-product.php';
+                    }
+
+                    $template = WC()->plugin_path() . '/templates/' . $file;
+
+                }
+
+            }
+
+        }
+
+        return $template;
+
     }
     
 }
