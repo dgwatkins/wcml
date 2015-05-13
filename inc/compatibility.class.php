@@ -88,6 +88,12 @@ class WCML_Compatibility {
             $this->bookings = new WCML_Bookings();
         }
 
+        // WooCommerce Checkout Field Editor
+        if ( function_exists( 'woocommerce_init_checkout_field_editor' ) ) {
+            require_once WCML_PLUGIN_PATH . '/compatibility/wc_checkout_field_editor.class.php';
+            $this->checkout_field_editor = new WCML_Checkout_Field_Editor();
+        }
+
     }
 
 }
