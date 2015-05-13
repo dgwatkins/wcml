@@ -30,7 +30,7 @@ class WCML_Bookings{
 
         add_filter( 'wcml_cart_contents_not_changed', array( $this, 'filter_bundled_product_in_cart_contents' ), 10, 3 );
 
-        add_action( 'after_woocommerce_bookings_create_booking_page', array( $this, 'booking_currency_dropdown' ) );
+        add_action( 'woocommerce_bookings_after_create_booking_page', array( $this, 'booking_currency_dropdown' ) );
         add_action( 'init', array( $this, 'set_booking_currency') );
         add_action( 'wp_ajax_wcml_booking_set_currency', array( $this, 'set_booking_currency_ajax' ) );
         add_action( 'woocommerce_bookings_create_booking_page_add_order_item', array( $this, 'set_order_currency_on_create_booking_page' ) );
