@@ -686,7 +686,7 @@ class woocommerce_wpml {
 
                 $sitepress->switch_lang( $language['code'], true );
 
-                $locale = get_locale();
+                $locale = $sitepress->get_locale( $language['code'] );
 
                 if ( $this->has_available_update( $locale, $wc_upgrader_class ) && isset( $data->translations ) ) {
 
