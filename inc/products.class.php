@@ -2983,13 +2983,18 @@ class WCML_Products{
 			", OBJECT_K );
 
             if ( $matched_products_query ) {
+
+                remove_filter('get_post_metadata', array($woocommerce_wpml->multi_currency_support, 'product_price_filter'), 10, 4);
+
                 foreach ( $matched_products_query as $product ) {
-                    if( ! get_post_meta( $product->ID,'_price_'.$client_currency ) ) continue;
+                    if( !get_post_meta( $product->ID,'_price_'.$client_currency, true ) ) continue;
                     if ( $product->post_type == 'product' )
                         $matched_products[] = apply_filters( 'translate_object_id', $product->ID, 'post_'.get_post_type($product->ID), true );
                     if ( $product->post_parent > 0 && ! in_array( $product->post_parent, $matched_products ) )
                         $matched_products[] = apply_filters( 'translate_object_id', $product->post_parent, 'post_'.get_post_type($product->post_parent), true );
                 }
+
+                add_filter('get_post_metadata', array($woocommerce_wpml->multi_currency_support, 'product_price_filter'), 10, 4);
             }
 
             // Filter the id's
