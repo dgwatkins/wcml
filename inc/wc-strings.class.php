@@ -305,7 +305,15 @@ class WCML_WC_Strings{
                             'woocommerce_bacs_title','woocommerce_bacs_description','woocommerce_bacs_instructions',
                             'woocommerce_cheque_title','woocommerce_cheque_description','woocommerce_cheque_instructions',
                             'woocommerce_cod_title','woocommerce_cod_description','woocommerce_cod_instructions',
-                            'woocommerce_paypal_title','woocommerce_paypal_description'
+                            'woocommerce_paypal_title','woocommerce_paypal_description',
+                            'woocommerce_checkout_pay_endpoint',
+                            'woocommerce_checkout_order_received_endpoint',
+                            'woocommerce_myaccount_add_payment_method_endpoint',
+                            'woocommerce_myaccount_view_order_endpoint',
+                            'woocommerce_myaccount_edit_account_endpoint',
+                            'woocommerce_myaccount_edit_address_endpoint',
+                            'woocommerce_myaccount_lost_password_endpoint',
+                            'woocommerce_logout_endpoint'
             ];
 
             for (i = 0; i < notice_ids.length; i++) {
