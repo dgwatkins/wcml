@@ -507,9 +507,17 @@ class WCML_Store_Pages{
 
             if( $current_language != $default_language ) {
 
-                $wpml_frontend_filters = new WPML_Frontend_Tax_Filters;
+                if( class_exists( 'WPML_Frontend_Tax_Filters' ) ){
 
-                $filtered_template = $wpml_frontend_filters->slug_template($template);
+                    $wpml_frontend_filters = new WPML_Frontend_Tax_Filters;
+
+                    $filtered_template = $wpml_frontend_filters->slug_template($template);
+
+                }else{
+
+                    $filtered_template = $sitepress->slug_template($template);
+
+                }
 
                 if ($filtered_template == $template) {
                     // check templates in WC folder in default lang
