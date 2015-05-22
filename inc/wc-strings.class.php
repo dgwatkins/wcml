@@ -77,6 +77,13 @@ class WCML_WC_Strings{
             }
 
         }
+
+        $trnsl_label = icl_t('WordPress','taxonomy singular name: '.$label,$label);
+
+        if( $label != $trnsl_label ){
+            return $trnsl_label;
+        }
+
         $name = sanitize_title($name);
         $lang = $sitepress->get_current_language();
         $trnsl_labels = get_option('wcml_custom_attr_translations');
@@ -85,7 +92,7 @@ class WCML_WC_Strings{
             return $trnsl_labels[$lang][$name];
         }
 
-        return icl_t('WordPress','taxonomy singular name: '.$label,$label);
+        return $label;
     }
 
     function translated_cart_item_name($title, $values, $cart_item_key){
