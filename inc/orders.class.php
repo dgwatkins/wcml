@@ -61,11 +61,14 @@ class WCML_Orders{
     }
 
     function get_filtered_comments($comments){
-        global $sitepress_settings, $wpdb, $current_user;
-        
-        if(!empty($current_user) && !is_null($current_user->data->ID)){
+
+        $user_id = get_current_user_id();
+
+        if( $user_id ){
+
+            global $sitepress_settings, $wpdb;
             
-            $user_language    = get_user_meta( $current_user->data->ID, 'icl_admin_language', true );
+            $user_language    = get_user_meta( $user_id, 'icl_admin_language', true );
 
             foreach($comments as $key=>$comment){
 
