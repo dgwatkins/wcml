@@ -168,7 +168,7 @@ $woocommerce_wpml->update_settings();
             <tr>
                 <th scope="col" width="5%"><?php _e('Type', 'wpml-wcml') ?></th>
                 <th scope="col" width="20%"><?php _e('Product', 'wpml-wcml') ?></th>
-                <th scope="col" width="75%"><?php echo $woocommerce_wpml->products->get_translation_flags($active_languages,$slang,$job_language); ?></th>
+                <th scope="col" width="75%"><?php echo $woocommerce_wpml->products->get_translation_flags($active_languages,$slang,$job_id ?  $job_language : false); ?></th>
             </tr>
         </thead>
         <tbody>
@@ -219,7 +219,7 @@ $woocommerce_wpml->update_settings();
                     </td>
                     <td>
                         <div class="translations_statuses prid_<?php echo $product->ID; ?>">
-                            <?php echo $woocommerce_wpml->products->get_translation_statuses($product_translations,$active_languages,$slang,$trid,$job_language); ?>
+                            <?php echo $woocommerce_wpml->products->get_translation_statuses($product_translations,$active_languages,$slang,$trid,$job_id ? $job_language : false); ?>
                         </div>
                         <span class="spinner"></span>
                         <a href="#prid_<?php echo $product->ID; ?>" job_id = "<?php echo $job_id; ?>" id="wcml_details_<?php echo $product->ID; ?>" class="wcml_details" data-text-opened="<?php _e('Close', 'wpml-wcml') ?>" data-text-closed="<?php _e('Edit translation', 'wpml-wcml') ?>"><?php _e('Edit translation', 'wpml-wcml') ?></a>
