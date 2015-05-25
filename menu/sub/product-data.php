@@ -31,7 +31,7 @@ $button_labels = array(
     'update'    => esc_attr__('Update', 'wpml-wcml'),
 );
 ?>
-<tr class="outer" data-prid="<?php echo $product->ID; ?>">
+<tr class="outer" data-prid="<?php echo $product->ID; ?>" <?php echo !isset( $display_inline ) ? 'display="none"' : ''; ?> >
     <td colspan="3">
         <div class="wcml_product_row" id="prid_<?php echo $product->ID; ?>" <?php echo isset($pr_edit) ? 'style="display:block;"':''; ?>>
             <div class="inner">
@@ -94,12 +94,20 @@ $button_labels = array(
                                 <?php
                                 if(isset($product_translations[$key])){
                                     $tr_status = $wpdb->get_row($wpdb->prepare("SELECT status,translator_id FROM ". $wpdb->prefix ."icl_translation_status WHERE translation_id = %d",$product_translations[$key]->translation_id));
+
                                     if(!is_null($tr_status) && get_current_user_id() != $tr_status->translator_id){
                                         if($tr_status->status == ICL_TM_IN_PROGRESS){ ?>
                                             <td><?php _e('Translation in progress', 'wpml-wcml'); ?><br>&nbsp;</td>
                                             <?php continue;
-                                        }elseif($tr_status->status == ICL_TM_WAITING_FOR_TRANSLATOR && !$job_id ){ ?>
-                                            <td><?php _e('Waiting for translator', 'wpml-wcml'); ?><br>&nbsp;</td>
+                                        }elseif($tr_status->status == ICL_TM_WAITING_FOR_TRANSLATOR && !$job_id ){
+                                            $tr_job_id = $wpdb->get_var($wpdb->prepare("
+                                                                    SELECT j.job_id
+                                                                        FROM {$wpdb->prefix}icl_translate_job j
+                                                                        JOIN {$wpdb->prefix}icl_translation_status s ON j.rid = s.rid
+                                                                    WHERE s.translation_id = %d
+                                                                ", $product_translations[$key]->translation_id ) );
+                                            ?>
+                                            <td><?php printf('<a href="%s" class="button-secondary">'.__('Take this and edit', 'wpml-wcml').'</a>', admin_url('admin.php?page=wpml-wcml&tab=products&prid=' . $product->ID.'&job_id='.$tr_job_id)); ?><br>&nbsp;</td>
                                             <?php continue;
                                         }
                                     }

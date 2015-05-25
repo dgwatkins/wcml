@@ -213,7 +213,6 @@
 }
 .wcml_products .outer {
     position:relative;
-    display: none;
 }
 
 .wcml_product_row .inner {
@@ -502,7 +501,8 @@
     color: #777;
     font-family: Georgia,"Times New Roman","Bitstream Charter",Times,serif;
 }
-.wcml_product_pagination a{
+.wcml_product_pagination a,
+.wcml_product_title_block a{
     border-color: #e3e3e3;
     background: #eee;
     -moz-box-shadow: inset 0 1px 0 #fff;
@@ -515,10 +515,17 @@
     border-width: 1px;
     border-style: solid;
 }
-.wcml_product_pagination a.disabled{
+.wcml_product_pagination a.disabled,
+.wcml_product_title_block a.disabled{
     color: #aaa;
     cursor: default;
 }
+
+.wcml_product_title_block h3{
+    display: inline-block;
+    margin-right: 20px;
+}
+
 .wcml_product_pagination input{
     text-align: center;
     border-color: #dfdfdf;

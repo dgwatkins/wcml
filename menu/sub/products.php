@@ -76,8 +76,16 @@ $button_labels = array(
 
 $woocommerce_wpml->settings['first_editor_call'] = false;
 $woocommerce_wpml->update_settings();
-?>
-<h3><?php _e('WooCommerce Products','wpml-wcml'); ?></h3>
+
+if(isset($_GET['prid'])): ?>
+    <div class="wcml_product_title_block">
+        <h3><?php printf( __('Translate %s','wpml-wcml'), get_the_title($_GET['prid']) ); ?></h3>
+        <a href="<?php echo $pagination_url; ?>1"><?php _e('Show all products', 'wpml-wcml'); ?></a>
+    </div>
+<?php else: ?>
+    <h3><?php _e('WooCommerce Products','wpml-wcml'); ?></h3>
+<?php endif; ?>
+
 <span style="display:none" id="wcml_product_update_button_label"><?php echo $button_labels['update'] ?></span>
 <form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
     <?php if(!isset($_GET['prid']) && !$translator_id): ?>
@@ -145,7 +153,7 @@ $woocommerce_wpml->update_settings();
     </div>
     <?php endif; ?>
 
-    <?php if($products): ?>
+    <?php if( $products && !isset( $_GET['prid'] ) ): ?>
         <div class="wcml_product_pagination">
         <span class="displaying-num"><?php printf(__('%d products', 'wpml-wcml'), $products_count); ?></span>
         <?php if(!isset($_GET['prid']) && isset($last) && $last > 1): ?>
@@ -226,14 +234,21 @@ $woocommerce_wpml->update_settings();
 
                     </td>
                 </tr>
-            <?php endforeach; ?>
+
+            <?php
+                if( isset( $_GET['prid']) ){
+                    $default_language = $sitepress->get_language_for_element($_GET['prid'],'post_product');
+                    $display_inline = true;
+                    include WCML_PLUGIN_PATH . '/menu/sub/product-data.php';
+                }
+                endforeach; ?>
             <?php endif; ?>
         </tbody>
     </table>
 
     <div class="wcml_fade"></div>
 
-    <?php if($products): ?>
+    <?php if( $products && !isset( $_GET['prid'] )): ?>
         <div class="wcml_product_pagination">
         <span class="displaying-num"><?php printf(__('%d products', 'wpml-wcml'), $products_count); ?></span>
         <?php if(!isset($_GET['prid']) && isset($last) && $last > 1): ?>
