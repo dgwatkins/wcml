@@ -52,7 +52,7 @@ class WCML_WC_Strings{
         
         add_action( 'woocommerce_product_options_attributes', array ( $this, 'notice_after_woocommerce_product_options_attributes' ) );
     }
-    
+
     function translated_attribute_label($label, $name){
         global $sitepress;
 

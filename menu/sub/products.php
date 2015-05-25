@@ -17,6 +17,17 @@ if(isset($_GET['prid'])){
     $pr_edit = true;
 }
 
+$job_id = 0;
+if(isset($_GET['job_id'])){
+    $job_id = $_GET['job_id'];
+
+    global $iclTranslationManagement;
+    $job = $iclTranslationManagement->get_translation_job( $_GET['job_id'] );
+
+    $job_language = $job->language_code;
+}
+
+
 if( !current_user_can('wpml_operate_woocommerce_multilingual') ) {
     global $iclTranslationManagement,$wp_query;
     $current_translator = $iclTranslationManagement->get_current_translator();
@@ -157,7 +168,7 @@ $woocommerce_wpml->update_settings();
             <tr>
                 <th scope="col" width="5%"><?php _e('Type', 'wpml-wcml') ?></th>
                 <th scope="col" width="20%"><?php _e('Product', 'wpml-wcml') ?></th>
-                <th scope="col" width="75%"><?php echo $woocommerce_wpml->products->get_translation_flags($active_languages,$slang); ?></th>
+                <th scope="col" width="75%"><?php echo $woocommerce_wpml->products->get_translation_flags($active_languages,$slang,$job_language); ?></th>
             </tr>
         </thead>
         <tbody>
@@ -208,10 +219,10 @@ $woocommerce_wpml->update_settings();
                     </td>
                     <td>
                         <div class="translations_statuses prid_<?php echo $product->ID; ?>">
-                            <?php echo $woocommerce_wpml->products->get_translation_statuses($product_translations,$active_languages,$slang,$trid,$translator_id); ?>
+                            <?php echo $woocommerce_wpml->products->get_translation_statuses($product_translations,$active_languages,$slang,$trid,$job_language); ?>
                         </div>
                         <span class="spinner"></span>
-                        <a href="#prid_<?php echo $product->ID; ?>" id="wcml_details_<?php echo $product->ID; ?>" class="wcml_details" data-text-opened="<?php _e('Close', 'wpml-wcml') ?>" data-text-closed="<?php _e('Edit translation', 'wpml-wcml') ?>"><?php _e('Edit translation', 'wpml-wcml') ?></a>
+                        <a href="#prid_<?php echo $product->ID; ?>" job_id = "<?php echo $job_id; ?>" id="wcml_details_<?php echo $product->ID; ?>" class="wcml_details" data-text-opened="<?php _e('Close', 'wpml-wcml') ?>" data-text-closed="<?php _e('Edit translation', 'wpml-wcml') ?>"><?php _e('Edit translation', 'wpml-wcml') ?></a>
 
                     </td>
                 </tr>

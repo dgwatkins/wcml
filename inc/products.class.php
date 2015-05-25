@@ -116,7 +116,10 @@ class WCML_Products{
         add_filter( 'icl_wpml_config_array', array( $this, 'set_taxonomies_config' ) );
 
         add_filter( 'manage_product_posts_columns', array( $this, 'add_languages_column' ), 100 );
+
     }
+
+
     
     function hide_multilingual_content_setup_box(){
         remove_meta_box('icl_div_config', convert_to_screen('shop_order'), 'normal');
@@ -416,7 +419,7 @@ class WCML_Products{
             die();
         }
 
-        global $woocommerce_wpml,$sitepress, $wpdb,$sitepress_settings;
+        global $woocommerce_wpml,$sitepress, $wpdb,$sitepress_settings,$iclTranslationManagement;
 
         //get post values
         $data = array();
@@ -424,6 +427,7 @@ class WCML_Products{
         parse_str($records, $data);
 
         $original_product_id = filter_input( INPUT_POST, 'product_id', FILTER_SANITIZE_NUMBER_INT );
+        $job_id = filter_input( INPUT_POST, 'job_id', FILTER_SANITIZE_NUMBER_INT );
         $language = filter_input( INPUT_POST, 'language', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         $orig_product = get_post($original_product_id);
 
@@ -467,7 +471,38 @@ class WCML_Products{
 
             $tr_product_id = wp_insert_post($args);
 
-            $sitepress->set_element_language_details($tr_product_id, 'post_' . $orig_product->post_type, $product_trid, $language);
+            if( $job_id ){
+
+                $translation_id = $wpdb->get_var( $wpdb->prepare("SELECT translation_id
+                                                                  FROM {$wpdb->prefix}icl_translations
+                                                                  WHERE element_type=%s AND trid=%d AND language_code=%s" ,
+                                                    "post_product", $product_trid, $language ) );
+
+                if ( $translation_id ) {
+
+                    $wpdb->query(
+                        $wpdb->prepare(
+                            "DELETE FROM {$wpdb->prefix}icl_translations WHERE element_id=%d AND trid=%d",
+                            $tr_product_id, $product_trid
+                        )
+                    );
+
+                    $wpdb->update($wpdb->prefix . 'icl_translations', array('element_id' => $tr_product_id), array('translation_id' => $translation_id));
+
+                    $iclTranslationManagement->update_translation_status(
+                        array(
+                            'status' => ICL_TM_COMPLETE,
+                            'needs_update' => 0,
+                            'translation_id' => $translation_id,
+                            'translator_id' => get_current_user_id()
+                        ));
+                }
+
+            }else{
+
+                $sitepress->set_element_language_details($tr_product_id, 'post_' . $orig_product->post_type, $product_trid, $language);
+
+            }
 
             $this->duplicate_product_post_meta($original_product_id, $tr_product_id, $data, true);
 
@@ -569,7 +604,7 @@ class WCML_Products{
         ob_start();
         $return = array();
 
-        $this->get_translation_statuses($translations,$languages,isset($_POST['slang']) && $_POST['slang'] != 'all'?$_POST['slang']:false, $product_trid);
+        $this->get_translation_statuses($translations,$languages,isset($_POST['slang']) && $_POST['slang'] != 'all'?$_POST['slang']:false, $product_trid, $job_id ? $language : false );
         $return['status'] =  ob_get_clean();
 
 
@@ -834,28 +869,35 @@ class WCML_Products{
         }
     }
 
-    function get_translation_flags($active_languages,$slang = false){
+    function get_translation_flags($active_languages,$slang = false,$job_language =false){
         global $sitepress;
 
         foreach($active_languages as $language){
-            if (!$slang || ( ($slang != $language['code']) && (current_user_can('wpml_operate_woocommerce_multilingual') || wpml_check_user_is_translator($slang,$language['code'])) && (!isset($_POST['translation_status_lang']) || (isset($_POST['translation_status_lang']) && ($_POST['translation_status_lang'] == $language['code']) || $_POST['translation_status_lang']=='')))){
+            if( $job_language && $language['code'] != $job_language ) {
+                continue;
+            }elseif (!$slang || ( ($slang != $language['code']) && (current_user_can('wpml_operate_woocommerce_multilingual') || wpml_check_user_is_translator($slang,$language['code'])) && (!isset($_POST['translation_status_lang']) || (isset($_POST['translation_status_lang']) && ($_POST['translation_status_lang'] == $language['code']) || $_POST['translation_status_lang']=='')))){
+
                 echo '<img src="'. ICL_PLUGIN_URL .'/res/flags/'. $language['code'] .'.png" width="18" height="12" class="flag_img" />';
+
             }
         }
     }
 
 
-    function get_translation_statuses($product_translations,$active_languages,$slang = false, $trid = false ){
+    function get_translation_statuses($product_translations,$active_languages,$slang = false, $trid = false, $job_language = false ){
         global $wpdb,$sitepress;
 
         foreach ($active_languages as $language) {
-            if(!$slang && isset($product_translations[$language['code']]) && $product_translations[$language['code']]->original){
+            if( $job_language && $language['code'] != $job_language ) {
+                continue;
+            }elseif(!$slang && isset($product_translations[$language['code']]) && $product_translations[$language['code']]->original){
                 $alt = __('Original language','wpml-wcml');
                 echo '<i title="'. $alt .'" class="stat_img icon-minus"></i>';
             }elseif( $trid && !current_user_can('wpml_operate_woocommerce_multilingual') && !$this->user_can_translate_product( $trid, $language['code'] ) && $slang != $language['code'] ){
                 $alt = __('No Permissions','wpml-wcml');
                 echo '<i title="'. $alt .'" class="stat_img"></i>';
             }elseif ($slang != $language['code'] && (current_user_can('wpml_operate_woocommerce_multilingual') || wpml_check_user_is_translator($slang,$language['code'])) && (!isset($_POST['translation_status_lang']) || (isset($_POST['translation_status_lang']) && ($_POST['translation_status_lang'] == $language['code']) || $_POST['translation_status_lang']==''))) {
+
                 if (isset($product_translations[$language['code']])) {
                     $tr_status = $wpdb->get_row($wpdb->prepare("SELECT status,needs_update FROM " . $wpdb->prefix . "icl_translation_status WHERE translation_id = %d", $product_translations[$language['code']]->translation_id));
                         if(!$tr_status){
@@ -1074,47 +1116,53 @@ class WCML_Products{
                     $meta_key = $post_meta->meta_key;
                     $meta_value = maybe_unserialize($post_meta->meta_value);
 
-                    // adjust the global attribute slug in the custom field
-                    $attid = null;
+                    // update current post variations meta
+                    if ((substr($meta_key, 0, 10) == 'attribute_' || isset($cf[$meta_key]) && $cf[$meta_key] == 1)) {
 
-                    if (substr($meta_key, 0, 10) == 'attribute_') {
-                        $tax = substr($meta_key, 10);
+                        // adjust the global attribute slug in the custom field
+                        $attid = null;
 
-                        if (taxonomy_exists($tax)) {
-                            $att_term = get_term_by('slug', $meta_value, $tax);
-                            $attid = $att_term?$att_term->term_taxonomy_id:false;
-                            if($attid){
-                                $trid = $sitepress->get_element_trid($attid, 'tax_' . $tax);
-                                if ($trid) {
-                                    $translations = $sitepress->get_element_translations($trid,'tax_' . $tax);
-                                    if (isset($translations[$lang])) {
-                                        $meta_value = $wpdb->get_var($wpdb->prepare("SELECT slug FROM $wpdb->terms WHERE term_id = %s", $translations[$lang]->term_id));
+                        if (substr($meta_key, 0, 10) == 'attribute_') {
+                            $tax = substr($meta_key, 10);
+
+                            if (taxonomy_exists($tax)) {
+                                $att_term = get_term_by('slug', $meta_value, $tax);
+                                $attid = $att_term?$att_term->term_taxonomy_id:false;
+                                if($attid){
+                                    $trid = $sitepress->get_element_trid($attid, 'tax_' . $tax);
+                                    if ($trid) {
+                                        $translations = $sitepress->get_element_translations($trid,'tax_' . $tax);
+                                        if (isset($translations[$lang])) {
+                                            $meta_value = $wpdb->get_var($wpdb->prepare("SELECT slug FROM $wpdb->terms WHERE term_id = %s", $translations[$lang]->term_id));
+                                        }else{
+                                            $meta_value = $meta_value.'_'.$lang;
+                                        }
+                                    }
+                                }
+                            }else{
+                                $tax = sanitize_title($tax);
+
+                                if(isset($original_product_attr[$tax])){
+                                    if(isset($tr_product_attr[$tax])){
+                                        $values_arrs = array_map('trim', explode('|',$original_product_attr[$tax]['value']));
+                                        $values_arrs_tr = array_map('trim',explode('|',$tr_product_attr[$tax]['value']));
+                                        foreach($values_arrs as $key=>$value){
+                                            $value_sanitized = sanitize_title($value);
+                                            if($value_sanitized == urldecode($meta_value) && isset($values_arrs_tr[$key])){
+                                                $meta_value = $values_arrs_tr[$key];
+                                            }
+                                        }
                                     }else{
                                         $meta_value = $meta_value.'_'.$lang;
                                     }
+
                                 }
-                            }
-                        }else{
-                            if(isset($original_product_attr[$tax])){
-                                if(isset($tr_product_attr[$tax])){
-                                    $values_arrs = array_map('trim', explode('|',$original_product_attr[$tax]['value']));
-                                    $values_arrs_tr = array_map('trim',explode('|',$tr_product_attr[$tax]['value']));
-                                    foreach($values_arrs as $key=>$value){
-                                        $value_sanitized = sanitize_title($value);
-                                        if($value_sanitized == urldecode($meta_value) && isset($values_arrs_tr[$key])){
-                                            $meta_value = $values_arrs_tr[$key];
-                                        }
-                                    }
-                                }else{
-                                    $meta_value = $meta_value.'_'.$lang;
-                                }
+
+                                $meta_key = 'attribute_'.$tax;
 
                             }
                         }
-                    }
-                    // update current post variations meta
 
-                    if ((substr($meta_key, 0, 10) == 'attribute_' || isset($cf[$meta_key]) && $cf[$meta_key] == 1)) {
                         update_post_meta($current_post_variation_ids[$dp_key], $meta_key, $meta_value);
                     }
 
@@ -1547,7 +1595,7 @@ class WCML_Products{
             update_post_meta($post_id, '_product_attributes', $orig_product_attrs);
 
             // synchronize post variations
-                        $this->sync_product_variations($duplicated_post_id,$post_id,$lang);
+            $this->sync_product_variations($duplicated_post_id,$post_id,$lang);
             $this->sync_linked_products($duplicated_post_id,$post_id,$lang);
         }
 
@@ -2825,9 +2873,11 @@ class WCML_Products{
             echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
             die();
         }
-        global $woocommerce_wpml,$sitepress,$wpdb;
+        global $woocommerce_wpml,$sitepress,$wpdb,$iclTranslationManagement;
 
         $product_id = filter_input( INPUT_POST, 'product_id', FILTER_SANITIZE_NUMBER_INT );
+        $job_id = filter_input( INPUT_POST, 'job_id', FILTER_SANITIZE_NUMBER_INT );
+        $job = $iclTranslationManagement->get_translation_job ( $job_id );
 
         $product = get_post( $product_id );
         $default_language = $sitepress->get_language_for_element($product_id,'post_product');

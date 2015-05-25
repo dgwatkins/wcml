@@ -18,7 +18,13 @@ foreach ($active_languages as $language) {
 }
 $default_language_display_name = $lang_codes[$default_language];
 unset($lang_codes[$default_language]);
-$lang_codes = array($default_language => $default_language_display_name)+$lang_codes;
+
+if( isset($job->language_code ) ){
+    $lang_codes = array($default_language => $default_language_display_name, $job->language_code => $lang_codes[$job->language_code] );
+}else{
+    $lang_codes = array($default_language => $default_language_display_name)+$lang_codes;
+}
+
 
 $button_labels = array(
     'save'      => esc_attr__('Save', 'wpml-wcml'),
@@ -77,7 +83,8 @@ $button_labels = array(
                                     <?php if($default_language == $key): ?>
                                         <a class="edit-translation-link" title="<?php __("edit product", "wpml-wcml") ?>" href="<?php echo get_edit_post_link($product_id); ?>"><i class="icon-edit"></i></a>
                                     <?php else: ?>
-                                        <input type="hidden" class="icl_language" value="<?php echo $key ?>" />
+                                        <input type="hidden" name="icl_language" value="<?php echo $key ?>" />
+                                        <input type="hidden" name="job_id" value="<?php echo $job_id ?>" />
                                         <input type="hidden" name="end_duplication[<?php echo $product_id ?>][<?php echo $key ?>]" value="<?php echo !intval($is_duplicate_product) ?>" />
                                         <?php $button_label = isset($product_translations[$key]) ? $button_labels['update'] : $button_labels['save'] ;?>
                                         <input type="submit" name="product#<?php echo $product_id ?>#<?php echo $key ?>" disabled value="<?php echo $button_label ?>" class="button-secondary wcml_update">
@@ -91,7 +98,7 @@ $button_labels = array(
                                         if($tr_status->status == ICL_TM_IN_PROGRESS){ ?>
                                             <td><?php _e('Translation in progress', 'wpml-wcml'); ?><br>&nbsp;</td>
                                             <?php continue;
-                                        }elseif($tr_status->status == ICL_TM_WAITING_FOR_TRANSLATOR){ ?>
+                                        }elseif($tr_status->status == ICL_TM_WAITING_FOR_TRANSLATOR && !$job_id ){ ?>
                                             <td><?php _e('Waiting for translator', 'wpml-wcml'); ?><br>&nbsp;</td>
                                             <?php continue;
                                         }
