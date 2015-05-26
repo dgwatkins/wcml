@@ -890,12 +890,12 @@ class WCML_Products{
         foreach ($active_languages as $language) {
             if( $job_language && $language['code'] != $job_language ) {
                 continue;
-            }elseif(!$slang && isset($product_translations[$language['code']]) && $product_translations[$language['code']]->original){
+            }elseif(isset($product_translations[$language['code']]) && $product_translations[$language['code']]->original){
                 $alt = __('Original language','wpml-wcml');
                 echo '<i title="'. $alt .'" class="stat_img icon-minus"></i>';
             }elseif( $trid && !current_user_can('wpml_operate_woocommerce_multilingual') && !$this->user_can_translate_product( $trid, $language['code'] ) && $slang != $language['code'] ){
                 $alt = __('No Permissions','wpml-wcml');
-                echo '<i title="'. $alt .'" class="stat_img"></i>';
+                echo '<i title="'. $alt .'" class="stat_img icon-lock"></i>';
             }elseif ($slang != $language['code'] && (current_user_can('wpml_operate_woocommerce_multilingual') || wpml_check_user_is_translator($slang,$language['code'])) && (!isset($_POST['translation_status_lang']) || (isset($_POST['translation_status_lang']) && ($_POST['translation_status_lang'] == $language['code']) || $_POST['translation_status_lang']==''))) {
 
                 if (isset($product_translations[$language['code']])) {
@@ -904,15 +904,15 @@ class WCML_Products{
                                 $alt = __('Not translated','wpml-wcml');
                                 echo '<i title="'. $alt .'" class="stat_img icon-warning-sign"></i>';
                         }elseif($tr_status->needs_update){
-		                $alt = __('Not translated - needs update','wpml-wcml');
-				echo '<i title="'. $alt .'" class="stat_img icon-repeat"></i>';
-			}elseif($tr_status->status != ICL_TM_COMPLETE && $tr_status->status != ICL_TM_DUPLICATE) {
-				$alt = __('In progress','wpml-wcml');
-				echo '<i title="'. $alt .'" class="stat_img icon-spinner"></i>';
-			}elseif($tr_status->status == ICL_TM_COMPLETE || $tr_status->status == ICL_TM_DUPLICATE){
-				$alt = __('Complete','wpml-wcml');
-				echo '<i title="'. $alt .'" class="stat_img icon-ok"></i>';
-			}
+                            $alt = __('Not translated - needs update','wpml-wcml');
+                            echo '<i title="'. $alt .'" class="stat_img icon-repeat"></i>';
+                        }elseif($tr_status->status != ICL_TM_COMPLETE && $tr_status->status != ICL_TM_DUPLICATE) {
+                            $alt = __('In progress','wpml-wcml');
+                            echo '<i title="'. $alt .'" class="stat_img icon-spinner"></i>';
+                        }elseif($tr_status->status == ICL_TM_COMPLETE || $tr_status->status == ICL_TM_DUPLICATE){
+                            $alt = __('Complete','wpml-wcml');
+                            echo '<i title="'. $alt .'" class="stat_img icon-ok"></i>';
+                        }
                 } else {
                     $alt = __('Not translated','wpml-wcml');
                     echo '<i title="'. $alt .'" class="stat_img icon-warning-sign"></i>';
@@ -2900,17 +2900,18 @@ class WCML_Products{
 
     // Check if user can translate product
     function user_can_translate_product( $trid, $language_code ){
-        global $wpdb, $iclTranslationManagement;
+        global $wpdb, $iclTranslationManagement,$sitepress;
+
         $current_translator = $iclTranslationManagement->get_current_translator();
         $job_id = $wpdb->get_var($wpdb->prepare("
 			SELECT tj.job_id FROM {$wpdb->prefix}icl_translate_job tj
 				JOIN {$wpdb->prefix}icl_translation_status ts ON tj.rid = ts.rid
 				JOIN {$wpdb->prefix}icl_translations t ON ts.translation_id = t.translation_id
-				WHERE t.trid = %d AND t.language_code='%s' AND ts.translator_id = %d
+				WHERE t.trid = %d AND t.language_code='%s'
 				ORDER BY tj.job_id DESC LIMIT 1
-		", $trid, $language_code, $current_translator->translator_id));
+		", $trid, $language_code));
 
-        if( $job_id ){
+        if( $job_id && wpml_check_user_is_translator( $sitepress->get_source_language_by_trid($trid), $language_code)){
             return true;
         }
 

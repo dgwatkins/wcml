@@ -39,11 +39,14 @@ if( !current_user_can('wpml_operate_woocommerce_multilingual') ) {
         $icl_translation_filter['limit_no'] = $lm;
         $translation_jobs = $iclTranslationManagement->get_translation_jobs((array)$icl_translation_filter);
         $products = array();
+        $products_count = 0;
         foreach ($translation_jobs as $translation_job) {
-            $products[] = get_post($translation_job->original_doc_id);
+            if( $translation_job->original_post_type  == 'post_product' && !array_key_exists( $translation_job->original_doc_id, $products ) ){
+                $products[$translation_job->original_doc_id] = get_post($translation_job->original_doc_id);
+                $products_count ++;
+            }
         }
 
-        $products_count = $wp_query->found_posts;
     }
 
 }
@@ -185,7 +188,7 @@ if(isset($_GET['prid'])): ?>
             <?php else: ?>
             <?php foreach ($products as $product) :
                     $trid = $sitepress->get_element_trid($product->ID,'post_'.$product->post_type);
-                $product_translations = $sitepress->get_element_translations($trid,'post_'.$product->post_type,true,true);
+                    $product_translations = $sitepress->get_element_translations($trid,'post_'.$product->post_type,true,true);
                     if(!$slang){
                         foreach($product_translations as $lang_code=>$translation){
                             if($translation->original){
@@ -227,7 +230,13 @@ if(isset($_GET['prid'])): ?>
                     </td>
                     <td>
                         <div class="translations_statuses prid_<?php echo $product->ID; ?>">
-                            <?php echo $woocommerce_wpml->products->get_translation_statuses($product_translations,$active_languages,$slang,$trid,$job_id ? $job_language : false); ?>
+                            <?php
+                            if( isset( $current_translator ) ){
+                                $prod_lang = $woocommerce_wpml->products->get_original_product_language($product->ID);
+                            }else{
+                                $prod_lang = $slang;
+                            }
+                            echo $woocommerce_wpml->products->get_translation_statuses($product_translations,$active_languages,$prod_lang,$trid,$job_id ? $job_language : false); ?>
                         </div>
                         <span class="spinner"></span>
                         <a href="#prid_<?php echo $product->ID; ?>" job_id = "<?php echo $job_id; ?>" id="wcml_details_<?php echo $product->ID; ?>" class="wcml_details" data-text-opened="<?php _e('Close', 'wpml-wcml') ?>" data-text-closed="<?php _e('Edit translation', 'wpml-wcml') ?>"><?php _e('Edit translation', 'wpml-wcml') ?></a>

@@ -92,10 +92,10 @@ $button_labels = array(
                                     <?php endif; ?>
                                 </td>
                                 <?php
-                                if(isset($product_translations[$key])){
+                                if(!current_user_can('wpml_manage_woocommerce_multilingual') && isset($product_translations[$key])){
                                     $tr_status = $wpdb->get_row($wpdb->prepare("SELECT status,translator_id FROM ". $wpdb->prefix ."icl_translation_status WHERE translation_id = %d",$product_translations[$key]->translation_id));
 
-                                    if(!is_null($tr_status) && get_current_user_id() != $tr_status->translator_id){
+                                    if(!is_null($tr_status) && get_current_user_id() != $tr_status->translator_id ){
                                         if($tr_status->status == ICL_TM_IN_PROGRESS){ ?>
                                             <td><?php _e('Translation in progress', 'wpml-wcml'); ?><br>&nbsp;</td>
                                             <?php continue;
