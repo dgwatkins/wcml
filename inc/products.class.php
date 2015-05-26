@@ -893,10 +893,7 @@ class WCML_Products{
             }elseif(isset($product_translations[$language['code']]) && $product_translations[$language['code']]->original){
                 $alt = __('Original language','wpml-wcml');
                 echo '<i title="'. $alt .'" class="stat_img icon-minus"></i>';
-            }elseif( $trid && !current_user_can('wpml_operate_woocommerce_multilingual') && !$this->user_can_translate_product( $trid, $language['code'] ) && $slang != $language['code'] ){
-                $alt = __('No Permissions','wpml-wcml');
-                echo '<i title="'. $alt .'" class="stat_img icon-lock"></i>';
-            }elseif ($slang != $language['code'] && (current_user_can('wpml_operate_woocommerce_multilingual') || wpml_check_user_is_translator($slang,$language['code'])) && (!isset($_POST['translation_status_lang']) || (isset($_POST['translation_status_lang']) && ($_POST['translation_status_lang'] == $language['code']) || $_POST['translation_status_lang']==''))) {
+            }elseif ($slang != $language['code']  && (!isset($_POST['translation_status_lang']) || (isset($_POST['translation_status_lang']) && ($_POST['translation_status_lang'] == $language['code']) || $_POST['translation_status_lang']==''))) {
 
                 if (isset($product_translations[$language['code']])) {
                     $tr_status = $wpdb->get_row($wpdb->prepare("SELECT status,needs_update FROM " . $wpdb->prefix . "icl_translation_status WHERE translation_id = %d", $product_translations[$language['code']]->translation_id));
