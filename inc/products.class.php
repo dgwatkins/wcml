@@ -120,7 +120,7 @@ class WCML_Products{
     }
 
 
-    
+
     function hide_multilingual_content_setup_box(){
         remove_meta_box('icl_div_config', convert_to_screen('shop_order'), 'normal');
         remove_meta_box('icl_div_config', convert_to_screen('shop_coupon'), 'normal');
@@ -1126,8 +1126,8 @@ class WCML_Products{
                             $tax = substr($meta_key, 10);
 
                             if (taxonomy_exists($tax)) {
-                                $att_term = get_term_by('slug', $meta_value, $tax);
-                                $attid = $att_term?$att_term->term_taxonomy_id:false;
+
+                                $attid = $wpdb->get_var( $wpdb->prepare( "SELECT tt.term_taxonomy_id FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id WHERE tt.taxonomy = %s AND t.slug = %s LIMIT 1", $tax, $meta_value ) );
                                 if($attid){
                                     $trid = $sitepress->get_element_trid($attid, 'tax_' . $tax);
                                     if ($trid) {
