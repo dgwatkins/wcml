@@ -215,8 +215,9 @@ class WCML_WC_Strings{
     }
 
     function register_shipping_methods($available_methods){
-        foreach($available_methods as $method){
-            $method->label = icl_translate('woocommerce', $method->label .'_shipping_method_title', $method->label);
+        foreach($available_methods as $key => $method){
+            icl_register_string('woocommerce', $key .'_shipping_method_title', $method->label );
+            $method->label = icl_t('woocommerce', $key .'_shipping_method_title', $method->label);
         }
 
         return $available_methods;
