@@ -471,32 +471,29 @@ class WCML_Products{
 
             $tr_product_id = wp_insert_post($args);
 
-            if( $job_id ){
-
-                $translation_id = $wpdb->get_var( $wpdb->prepare("SELECT translation_id
+            $translation_id = $wpdb->get_var( $wpdb->prepare("SELECT translation_id
                                                                   FROM {$wpdb->prefix}icl_translations
-                                                                  WHERE element_type=%s AND trid=%d AND language_code=%s" ,
-                                                    "post_product", $product_trid, $language ) );
+                                                                  WHERE element_type=%s AND trid=%d AND language_code=%s AND element_id IS NULL " ,
+                "post_product", $product_trid, $language ) );
 
-                if ( $translation_id ) {
+            if ( $translation_id ) {
 
-                    $wpdb->query(
-                        $wpdb->prepare(
-                            "DELETE FROM {$wpdb->prefix}icl_translations WHERE element_id=%d AND trid=%d",
-                            $tr_product_id, $product_trid
-                        )
-                    );
+                $wpdb->query(
+                    $wpdb->prepare(
+                        "DELETE FROM {$wpdb->prefix}icl_translations WHERE element_id=%d AND trid=%d",
+                        $tr_product_id, $product_trid
+                    )
+                );
 
-                    $wpdb->update($wpdb->prefix . 'icl_translations', array('element_id' => $tr_product_id), array('translation_id' => $translation_id));
+                $wpdb->update($wpdb->prefix . 'icl_translations', array('element_id' => $tr_product_id), array('translation_id' => $translation_id));
 
-                    $iclTranslationManagement->update_translation_status(
-                        array(
-                            'status' => ICL_TM_COMPLETE,
-                            'needs_update' => 0,
-                            'translation_id' => $translation_id,
-                            'translator_id' => get_current_user_id()
-                        ));
-                }
+                $iclTranslationManagement->update_translation_status(
+                    array(
+                        'status' => ICL_TM_COMPLETE,
+                        'needs_update' => 0,
+                        'translation_id' => $translation_id,
+                        'translator_id' => get_current_user_id()
+                    ));
 
             }else{
 
