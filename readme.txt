@@ -90,6 +90,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fix: Variable products returned error in secondary language "This product is currently out of stock and unavailable."
 * Bug fix: The publishing date was not updating on translation when changed on the product in the original language
 * Bug fix: Attributes with the value "0" value were not displayed on the front end
+* Bug fix: Modified Free shipping label could not be translated
 
 = 3.6 =
 * Added the ability to edit the slugs of the translated products in the products editor
