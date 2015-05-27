@@ -525,9 +525,11 @@ class WCML_Products{
             if(isset( $data['post_name_' . $language]) && $post_name != $data['post_name_' . $language]){
                 // update post_name
                 // need set POST variable ( WPML used them when filtered this function)
+
+                $new_post_name = sanitize_title( $data['post_name_' . $language] ? $data['post_name_' . $language] :  $data['title_' . $language] );
                 $_POST[ 'new_title' ] = $data['title_' . $language];
-                $_POST[ 'new_slug' ] = $data['post_name_' . $language];
-                $new_slug = wp_unique_post_slug( $data['post_name_' . $language], $tr_product_id, $orig_product->post_status, $orig_product->post_type, $args['post_parent']);
+                $_POST[ 'new_slug' ] = $new_post_name;
+                $new_slug = wp_unique_post_slug( $new_post_name, $tr_product_id, $orig_product->post_status, $orig_product->post_type, $args['post_parent']);
                 $wpdb->update( $wpdb->posts, array( 'post_name' => $new_slug ), array( 'ID' => $tr_product_id ) );
             }
 
