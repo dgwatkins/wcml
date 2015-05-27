@@ -249,6 +249,7 @@
     float: left;
     margin: 0 5px;
     display: none;
+    visibility: visible;
 }
 .wcml_cat_block{
     display: none;
