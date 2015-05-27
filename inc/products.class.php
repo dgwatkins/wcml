@@ -48,6 +48,8 @@ class WCML_Products{
             add_action( 'woocommerce_duplicate_product', array( $this, 'woocommerce_duplicate_product' ), 10, 2 );
 
             add_filter( 'post_row_actions', array( $this, 'filter_product_actions' ), 10, 2 );
+
+            add_filter ( 'locale',array( $this, 'update_product_action_locale_check' ) );
             
         }else{
             add_filter('woocommerce_json_search_found_products', array($this, 'filter_found_products_by_language'));
@@ -118,8 +120,6 @@ class WCML_Products{
         add_filter( 'manage_product_posts_columns', array( $this, 'add_languages_column' ), 100 );
 
     }
-
-
 
     function hide_multilingual_content_setup_box(){
         remove_meta_box('icl_div_config', convert_to_screen('shop_order'), 'normal');
@@ -545,13 +545,26 @@ class WCML_Products{
         $orig_product_attrs = $this->get_product_atributes($original_product_id);
         $trnsl_labels = get_option('wcml_custom_attr_translations');
         foreach ($orig_product_attrs as $key => $orig_product_attr) {
+            $sanitized_key = sanitize_title( $orig_product_attr['name'] );
+
+            if( $sanitized_key != $key ) {
+                $orig_product_attrs_buff = $orig_product_attrs[$key];
+                unset($orig_product_attrs[$key]);
+                $orig_product_attrs[$sanitized_key] = $orig_product_attrs_buff;
+                $key_to_save = $sanitized_key;
+            }else{
+                $key_to_save = $key;
+            }
+
             if (isset($data[$key . '_' . $language]) && !empty($data[$key . '_' . $language]) && !is_array($data[$key . '_' . $language])) {
                 //get translation values from $data
-                $trnsl_labels[$language][$key] = stripslashes( $data[$key . '_name_' . $language] );
-                $orig_product_attrs[$key]['value'] = $data[$key . '_' . $language];
+
+                $trnsl_labels[$language][$key_to_save] = stripslashes( $data[$key . '_name_' . $language] );
+                $orig_product_attrs[$key_to_save]['value'] = $data[$key . '_' . $language];
             } else {
-                $orig_product_attrs[$key]['value'] = '';
+                $orig_product_attrs[$key_to_save]['value'] = '';
             }
+
         }
         update_option('wcml_custom_attr_translations', $trnsl_labels);
 
@@ -1137,7 +1150,9 @@ class WCML_Products{
                                     }
                                 }
                             }else{
-                                $tax = sanitize_title($tax);
+                                if( isset( $original_product_attr[$tax] ) ){
+                                    $tax = sanitize_title( $original_product_attr[$tax]['name'] );
+                                }
 
                                 if(isset($original_product_attr[$tax])){
                                     if(isset($tr_product_attr[$tax])){
@@ -1171,6 +1186,19 @@ class WCML_Products{
                 }
             }
         }
+    }
+
+    /* Change locale to saving language - needs for sanitize_title exception wcml-390 */
+    function update_product_action_locale_check( $locale ){
+
+        if( isset($_POST['action']) && $_POST['action'] == 'wcml_update_product' ){
+            global $sitepress;
+
+            return $sitepress->get_locale( $_POST['language'] );
+        }
+
+        return $locale;
+
     }
 
     function sync_linked_products($product_id,$tr_product_id,$lang){

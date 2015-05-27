@@ -12,11 +12,11 @@ class woocommerce_wpml {
     var $missing;
 
     function __construct(){
+
         add_action('init', array($this, 'init'),2);
         add_action('init', array($this, 'load_css_and_js'));
-
-
         add_action('widgets_init', array($this, 'register_widget'));
+
     }
 
     function init(){
