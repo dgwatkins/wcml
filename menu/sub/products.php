@@ -239,7 +239,7 @@ if(isset($_GET['prid'])): ?>
                             echo $woocommerce_wpml->products->get_translation_statuses($product_translations,$active_languages,$prod_lang,$trid,$job_id ? $job_language : false); ?>
                         </div>
                         <span class="spinner"></span>
-                        <a href="#prid_<?php echo $product->ID; ?>" job_id = "<?php echo $job_id; ?>" id="wcml_details_<?php echo $product->ID; ?>" class="wcml_details" data-text-opened="<?php _e('Close', 'wpml-wcml') ?>" data-text-closed="<?php _e('Edit translation', 'wpml-wcml') ?>"><?php _e('Edit translation', 'wpml-wcml') ?></a>
+                        <a href="#prid_<?php echo $product->ID; ?>" job_id = "<?php echo $job_id; ?>" id="wcml_details_<?php echo $product->ID; ?>" class="wcml_details" data-text-opened="<?php _e('Close', 'wpml-wcml') ?>" data-text-closed="<?php _e('Edit translation', 'wpml-wcml') ?>"><?php isset( $_GET['prid'] ) ? _e('Close', 'wpml-wcml') : _e('Edit translation', 'wpml-wcml') ?></a>
 
                     </td>
                 </tr>
