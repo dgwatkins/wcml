@@ -2129,8 +2129,12 @@ class WCML_Products{
         global $sitepress,$wpdb;
         $original_language = $this->get_original_product_language($product_id);
         if(!$this->is_original_product($product_id)){
-            $product_id = apply_filters( 'translate_object_id',$product_id, 'product', false, $original_language);
+            $orig_product_id = apply_filters( 'translate_object_id',$product_id, 'product', false, $original_language);
+        }else{
+            $orig_product_id = $product_id;
         }
+
+        $product_id = apply_filters( 'translate_object_id',$product_id, 'product', false, $lang);
         $template_data = array();
 
         if($original_language == $lang){
@@ -2139,7 +2143,7 @@ class WCML_Products{
             $template_data['original'] = false;
         }
         if (!is_null($product_id)) {
-            $product_images = $this->product_images_ids($product_id);
+            $product_images = $this->product_images_ids($orig_product_id);
             if (empty($product_images)) {
                 $template_data['empty_images'] = true;
             } else {
