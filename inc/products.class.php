@@ -61,7 +61,7 @@ class WCML_Products{
         add_action( 'woocommerce_email', array( $this, 'woocommerce_email_refresh_text_domain' ) );
         add_action( 'wp_ajax_woocommerce_update_shipping_method', array( $this, 'wcml_refresh_text_domain' ), 9 );
         add_action( 'wp_ajax_nopriv_woocommerce_update_shipping_method', array( $this, 'wcml_refresh_text_domain' ), 9 );
-        add_filter( 'wpml_link_to_translation', array( $this, '_filter_link_to_translation' ) );
+        add_filter( 'wpml_link_to_translation', array( $this, '_filter_link_to_translation' ), 100 );
         
         add_filter( 'woocommerce_upsell_crosssell_search_products', array( $this, 'filter_woocommerce_upsell_crosssell_posts_by_language' ) );
 
@@ -525,9 +525,11 @@ class WCML_Products{
             if(isset( $data['post_name_' . $language]) && $post_name != $data['post_name_' . $language]){
                 // update post_name
                 // need set POST variable ( WPML used them when filtered this function)
+
+                $new_post_name = sanitize_title( $data['post_name_' . $language] ? $data['post_name_' . $language] :  $data['title_' . $language] );
                 $_POST[ 'new_title' ] = $data['title_' . $language];
-                $_POST[ 'new_slug' ] = $data['post_name_' . $language];
-                $new_slug = wp_unique_post_slug( $data['post_name_' . $language], $tr_product_id, $orig_product->post_status, $orig_product->post_type, $args['post_parent']);
+                $_POST[ 'new_slug' ] = $new_post_name;
+                $new_slug = wp_unique_post_slug( $new_post_name, $tr_product_id, $orig_product->post_status, $orig_product->post_type, $args['post_parent']);
                 $wpdb->update( $wpdb->posts, array( 'post_name' => $new_slug ), array( 'ID' => $tr_product_id ) );
             }
 
@@ -2127,8 +2129,12 @@ class WCML_Products{
         global $sitepress,$wpdb;
         $original_language = $this->get_original_product_language($product_id);
         if(!$this->is_original_product($product_id)){
-            $product_id = apply_filters( 'translate_object_id',$product_id, 'product', false, $original_language);
+            $orig_product_id = apply_filters( 'translate_object_id',$product_id, 'product', false, $original_language);
+        }else{
+            $orig_product_id = $product_id;
         }
+
+        $product_id = apply_filters( 'translate_object_id',$product_id, 'product', false, $lang);
         $template_data = array();
 
         if($original_language == $lang){
@@ -2137,7 +2143,7 @@ class WCML_Products{
             $template_data['original'] = false;
         }
         if (!is_null($product_id)) {
-            $product_images = $this->product_images_ids($product_id);
+            $product_images = $this->product_images_ids($orig_product_id);
             if (empty($product_images)) {
                 $template_data['empty_images'] = true;
             } else {
