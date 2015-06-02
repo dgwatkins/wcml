@@ -451,10 +451,12 @@ class WCML_Store_Pages{
         
         if(is_array($rates)){
             foreach($rates as $shipping_class => $value){
-                $term = get_term_by('slug', $shipping_class, 'product_shipping_class');
-                if($term && !is_wp_error($term)){
-                    $translated_term_id = apply_filters( 'translate_object_id',$term->term_id, 'product_shipping_class', true);
-                    if($translated_term_id != $term->term_id){
+                global $woocommerce_wpml;
+                $term_id = $woocommerce_wpml->get_term_id_by_slug('product_shipping_class', $shipping_class );
+
+                if($term_id && !is_wp_error($term_id)){
+                    $translated_term_id = apply_filters( 'translate_object_id', $term_id, 'product_shipping_class', true);
+                    if($translated_term_id != $term_id){
                         $term = get_term_by('id', $translated_term_id, 'product_shipping_class');
                         unset($rates[$shipping_class]);
                         $rates[$term->slug] = $value;

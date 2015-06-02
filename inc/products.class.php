@@ -1136,7 +1136,7 @@ class WCML_Products{
 
                             if (taxonomy_exists($tax)) {
 
-                                $attid = $wpdb->get_var( $wpdb->prepare( "SELECT tt.term_taxonomy_id FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id WHERE tt.taxonomy = %s AND t.slug = %s LIMIT 1", $tax, $meta_value ) );
+                                $attid = $this->get_term_id_by_slug( $tax, $meta_value );
                                 if($attid){
                                     $trid = $sitepress->get_element_trid($attid, 'tax_' . $tax);
                                     if ($trid) {
@@ -1771,8 +1771,8 @@ class WCML_Products{
                 // get the correct language
                 if (substr($attribute, 0, 3) == 'pa_') {
                     //attr is taxonomy
-                    $default_term = get_term_by('slug', $default_term_slug, $attribute);
-                    $tr_id = apply_filters( 'translate_object_id',$default_term->term_id, $attribute, false, $lang);
+                    $default_term_id = $this->get_term_id_by_slug( $attribute, $default_term_slug );
+                    $tr_id = apply_filters( 'translate_object_id',$default_term_id, $attribute, false, $lang);
 
                     if($tr_id){
                         $translated_term = $wpdb->get_row($wpdb->prepare("
@@ -2011,9 +2011,9 @@ class WCML_Products{
                             }else{
                                 //get attribute name
                                 $attribute = str_replace('attribute_','',$variation_value->meta_key);
-                                    $tr_product_attr  = maybe_unserialize(get_post_meta($tr_post_id,'_product_attributes',true));
-                                $term_name = get_term_by('slug',$variation_value->meta_value,$tr_product_attr[$attribute]['name']);
-
+                                $tr_product_attr  = maybe_unserialize(get_post_meta($tr_post_id,'_product_attributes',true));
+                                $term_id = $this->get_term_id_by_slug( $tr_product_attr[$attribute]['name'], $variation_value->meta_value );
+                                $term_name = get_term( $term_id );
                                 if($term_name){
                                     //if attribute is taxonomy
                                     $term_name = $term_name->name;
@@ -2509,8 +2509,8 @@ class WCML_Products{
             $tr_product_id = apply_filters( 'translate_object_id',$cart_item['product_id'],'product',false,$current_language);
 
             if( $cart_item['product_id'] == $tr_product_id ){
-                $new_cart_data[$key] = apply_filters( 'wcml_cart_contents_not_changed', $cart->cart_contents[$key], $key, $current_language );
-                continue;
+                //$new_cart_data[$key] = apply_filters( 'wcml_cart_contents_not_changed', $cart->cart_contents[$key], $key, $current_language );
+                //continue;
             }
 
             if(isset($cart->cart_contents[$key]['variation_id']) && $cart->cart_contents[$key]['variation_id']){
@@ -2560,8 +2560,9 @@ class WCML_Products{
     function get_cart_attribute_translation($taxonomy,$attribute,$product_id,$tr_product_id,$current_language){
 
         if(taxonomy_exists($taxonomy)){
-            $term = get_term_by('slug',$attribute,$taxonomy);
-            $trnsl_term_id = apply_filters( 'translate_object_id',$term->term_id,$taxonomy,true,$current_language);
+
+            $term_id = $this->get_term_id_by_slug( $taxonomy, $attribute );
+            $trnsl_term_id = apply_filters( 'translate_object_id',$term_id,$taxonomy,true,$current_language);
 
             return get_term($trnsl_term_id,$taxonomy)->slug;
         }else{
@@ -3120,6 +3121,14 @@ class WCML_Products{
         }
 
         return $args;
+    }
+
+    /*
+     * Use custom query, because get_term_by function return false for terms with "0" slug      *
+     */
+    function get_term_id_by_slug( $taxonomy, $slug ){
+        global $wpdb;
+        return $wpdb->get_var( $wpdb->prepare( "SELECT tt.term_id FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id WHERE tt.taxonomy = %s AND t.slug = %s LIMIT 1", $taxonomy, $slug ) );
     }
 
 }
