@@ -2549,11 +2549,41 @@ class WCML_Products{
             }
 
         }
-        $cart->cart_contents = $new_cart_data;
+
+        $cart->cart_contents = $this->wcml_check_on_duplicate_products_in_cart( $new_cart_data );
 
         $woocommerce->session->cart = $cart;
 
         return $cart;
+    }
+
+    function wcml_check_on_duplicate_products_in_cart( $cart_contents ){
+        global $woocommerce;
+
+        $exists_products = array();
+        remove_action( 'woocommerce_before_calculate_totals', array( $this, 'woocommerce_calculate_totals' ) );
+
+        foreach( $cart_contents as $key => $cart_content ){
+
+            if( empty( $cart_content[ 'variation_id' ] ) ){
+                $search_key = $cart_content[ 'product_id' ];
+            }else{
+                $search_key = $cart_content[ 'product_id' ].'_'.$cart_content['variation_id'];
+            }
+
+            if( array_key_exists( $search_key, $exists_products ) ){
+                unset( $cart_contents[ $key ] );
+                $cart_contents[$exists_products[$search_key]]['quantity'] = $cart_contents[$exists_products[$search_key]]['quantity'] + $cart_content['quantity'];
+                $woocommerce->cart->calculate_totals();
+            }else{
+                $exists_products[ $search_key ] = $key;
+            }
+        }
+
+        add_action( 'woocommerce_before_calculate_totals', array( $this, 'woocommerce_calculate_totals' ) );
+
+        return $cart_contents;
+
     }
 
     function get_cart_attribute_translation($taxonomy,$attribute,$product_id,$tr_product_id,$current_language){
