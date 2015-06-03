@@ -759,9 +759,9 @@ class WCML_WC_MultiCurrency{
     }
     
     function _use_categories_in_all_languages($product_ids, $category_id){
-        global $sitepress;
+        global $sitepress, $woocommerce_wpml;
         
-        $category_term = get_term($category_id, 'product_cat');
+        $category_term = $woocommerce_wpml->wcml_get_term_by_id( $category_id, 'product_cat' );
         
         if(!is_wp_error($category_term)){
             $trid = $sitepress->get_element_trid($category_term->term_taxonomy_id, 'tax_product_cat');

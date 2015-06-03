@@ -16,7 +16,7 @@ class WCML_Variation_Swatches_and_Photos{
         foreach($atts as $att_name=>$att_opts){
 	    	foreach($att_opts['attributes'] as $slug=>$options){
                 global $woocommerce_wpml;
-                $term_id = $woocommerce_wpml->get_term_id_by_slug( $att_name, $slug );
+                $term_id = $woocommerce_wpml->wcml_get_term_id_by_slug( $att_name, $slug );
 
 		    	$tr_term_id = apply_filters( 'translate_object_id',$term_id,$att_name,false,$lang);
 		    	if(!is_null($tr_term_id)){			    	

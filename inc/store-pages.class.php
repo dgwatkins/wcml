@@ -452,12 +452,12 @@ class WCML_Store_Pages{
         if(is_array($rates)){
             foreach($rates as $shipping_class => $value){
                 global $woocommerce_wpml;
-                $term_id = $woocommerce_wpml->get_term_id_by_slug('product_shipping_class', $shipping_class );
+                $term_id = $woocommerce_wpml->wcml_get_term_id_by_slug('product_shipping_class', $shipping_class );
 
                 if($term_id && !is_wp_error($term_id)){
                     $translated_term_id = apply_filters( 'translate_object_id', $term_id, 'product_shipping_class', true);
                     if($translated_term_id != $term_id){
-                        $term = get_term_by('id', $translated_term_id, 'product_shipping_class');
+                        $term = $woocommerce_wpml->wcml_get_term_by_id( $translated_term_id, 'product_shipping_class' );
                         unset($rates[$shipping_class]);
                         $rates[$term->slug] = $value;
                         
@@ -502,7 +502,7 @@ class WCML_Store_Pages{
     function template_loader( $template ){
 
         if ( is_product_taxonomy() ) {
-            global $sitepress;
+            global $sitepress, $woocommerce_wpml;
 
             $current_language = $sitepress->get_current_language();
             $default_language = $sitepress->get_default_language();
@@ -529,7 +529,7 @@ class WCML_Store_Pages{
                     $prefix = 'taxonomy-'.$taxonomy;
                     $original_term_id = icl_object_id($term->term_id, $taxonomy, true, $default_language);
                     remove_filter( 'get_term', array( $sitepress, 'get_term_adjust_id' ), 1 );
-                    $original_term = get_term_by("id", $original_term_id, $taxonomy);
+                    $original_term = $woocommerce_wpml->wcml_get_term_by_id( $original_term_id, $taxonomy );
                     add_filter ( 'get_term', array( $sitepress, 'get_term_adjust_id' ), 1, 1 );
 
                     if ($original_term) {
