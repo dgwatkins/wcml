@@ -52,6 +52,8 @@ class WCML_WC_Strings{
         
         add_action( 'woocommerce_product_options_attributes', array ( $this, 'notice_after_woocommerce_product_options_attributes' ) );
 
+        add_filter( 'woocommerce_attribute_taxonomies', array( $this, 'translate_attribute_taxonomies_labels') );
+
     }
 
     function translated_attribute_label($label, $name, $product_obj = false){
@@ -523,5 +525,18 @@ class WCML_WC_Strings{
 
             printf( '<p>'.__('In order to edit custom attributes you need to use the <a href="%s">custom product translation editor</a>', 'wpml-wcml').'</p>', admin_url('admin.php?page=wpml-wcml&tab=products&prid='.$original_product_id ) );
         }
+    }
+
+    function translate_attribute_taxonomies_labels( $attribute_taxonomies ){
+        global $wpdb,$sitepress;
+
+        foreach( $attribute_taxonomies as $key => $attribute_taxonomy ){
+            $string = $wpdb->get_var($wpdb->prepare("SELECT st.value FROM {$wpdb->prefix}icl_string_translations AS st JOIN {$wpdb->prefix}icl_strings AS s ON s.id = st.string_id WHERE s.context = %s AND s.name = %s AND st.language = %s", 'WordPress', 'taxonomy singular name: '.$attribute_taxonomy->attribute_name, $sitepress->get_current_language() ) );
+            if($string) {
+                $attribute_taxonomies[$key]->attribute_label = $string;
+            }
+        }
+
+        return $attribute_taxonomies;
     }
 }
