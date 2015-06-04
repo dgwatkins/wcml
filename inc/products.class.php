@@ -542,7 +542,7 @@ class WCML_Products{
 
         //get "_product_attributes" from original product
         $orig_product_attrs = $this->get_product_atributes($original_product_id);
-        $trnsl_labels = get_option('wcml_custom_attr_translations');
+        $trnsl_labels = get_post_meta( $tr_product_id, 'attr_label_translations', true );
         foreach ($orig_product_attrs as $key => $orig_product_attr) {
             $sanitized_key = sanitize_title( $orig_product_attr['name'] );
 
@@ -565,7 +565,7 @@ class WCML_Products{
             }
 
         }
-        update_option('wcml_custom_attr_translations', $trnsl_labels);
+        update_post_meta( $tr_product_id, 'attr_label_translations', $trnsl_labels );
 
         //update "_product_attributes"
         update_post_meta($tr_product_id, '_product_attributes', $orig_product_attrs);
@@ -1822,7 +1822,7 @@ class WCML_Products{
                     foreach ($tr_attrs as $key=>$tr_attr) {
                         if ($attribute_key == $key) {
                             $transl['value'] = $tr_attr['value'];
-                            $trnsl_labels = get_option('wcml_custom_attr_translations');
+                            $trnsl_labels = maybe_unserialize( get_post_meta( $tr_post_id, 'attr_label_translations', true ) );
                             if(isset($trnsl_labels[$lang_code][$attribute_key])){
                                 $transl['name'] = $trnsl_labels[$lang_code][$attribute_key];
                             }else{
@@ -2500,12 +2500,21 @@ class WCML_Products{
      *  Update cart and cart session when switch language
      */
     function woocommerce_calculate_totals($cart){
-        global $sitepress, $woocommerce;
+        global $sitepress, $woocommerce, $woocommerce_wpml;
         $current_language = $sitepress->get_current_language();
         $new_cart_data = array();
 
         foreach($cart->cart_contents as $key=>$cart_item){
             $tr_product_id = apply_filters( 'translate_object_id',$cart_item['product_id'],'product',false,$current_language);
+
+            //translate custom attr labels in cart object
+            if(isset($cart_item['data']->product_attributes)){
+                foreach($cart_item['data']->product_attributes as $attr_key => $product_attribute){
+                    if(!$product_attribute['is_taxonomy']){
+                        $cart->cart_contents[$key]['data']->product_attributes[$attr_key]['name'] =  $woocommerce_wpml->strings->translated_attribute_label( $product_attribute['name'], $product_attribute['name'], $cart_item['data']->parent);
+                    }
+                }
+            }
 
             if( $cart_item['product_id'] == $tr_product_id ){
                 $new_cart_data[$key] = apply_filters( 'wcml_cart_contents_not_changed', $cart->cart_contents[$key], $key, $current_language );
@@ -2520,7 +2529,6 @@ class WCML_Products{
                     $cart->cart_contents[$key]['data']->id = intval($tr_product_id);
                     $cart->cart_contents[$key]['data']->post = get_post( $tr_product_id );
                     if($cart_item['variation']){
-
                         foreach($cart_item['variation'] as $attr_key=>$attribute){
                             if(version_compare(preg_replace('#-(.+)$#', '', $woocommerce->version), '2.1', '<')){
                                 $taxonomy = $attr_key;

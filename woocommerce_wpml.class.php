@@ -220,10 +220,6 @@ class woocommerce_wpml {
                 add_action('init', array($this->terms, 'sync_term_order_globally'), 20);
             }
 
-            if(!get_option('wcml_custom_attr_translations')){
-                add_option('wcml_custom_attr_translations',array());
-            }
-
             if(!isset($this->settings['wc_admin_options_saved'])){
                 $this->handle_admin_texts();
                 $this->settings['wc_admin_options_saved'] = 1;
