@@ -889,7 +889,7 @@ class WCML_Products{
                 continue;
             }elseif (!$slang || ( ($slang != $language['code']) && (current_user_can('wpml_operate_woocommerce_multilingual') || wpml_check_user_is_translator($slang,$language['code'])) && (!isset($_POST['translation_status_lang']) || (isset($_POST['translation_status_lang']) && ($_POST['translation_status_lang'] == $language['code']) || $_POST['translation_status_lang']=='')))){
 
-                echo '<img src="'. ICL_PLUGIN_URL .'/res/flags/'. $language['code'] .'.png" width="18" height="12" class="flag_img" />';
+                echo '<img src="'. $sitepress->get_flag_url($language['code']).'" width="18" height="12" class="flag_img" />';
 
             }
         }
