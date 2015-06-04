@@ -528,14 +528,20 @@ class WCML_WC_Strings{
     }
 
     function translate_attribute_taxonomies_labels( $attribute_taxonomies ){
-        global $wpdb,$sitepress;
 
-        foreach( $attribute_taxonomies as $key => $attribute_taxonomy ){
-            $string = $wpdb->get_var($wpdb->prepare("SELECT st.value FROM {$wpdb->prefix}icl_string_translations AS st JOIN {$wpdb->prefix}icl_strings AS s ON s.id = st.string_id WHERE s.context = %s AND s.name = %s AND st.language = %s", 'WordPress', 'taxonomy singular name: '.$attribute_taxonomy->attribute_name, $sitepress->get_current_language() ) );
-            if($string) {
-                $attribute_taxonomies[$key]->attribute_label = $string;
+        if( is_admin() && !wpml_is_ajax() ){
+
+            global $wpdb,$sitepress;
+
+            foreach( $attribute_taxonomies as $key => $attribute_taxonomy ){
+                $string = $wpdb->get_var($wpdb->prepare("SELECT st.value FROM {$wpdb->prefix}icl_string_translations AS st JOIN {$wpdb->prefix}icl_strings AS s ON s.id = st.string_id WHERE s.context = %s AND s.name = %s AND st.language = %s", 'WordPress', 'taxonomy singular name: '.$attribute_taxonomy->attribute_name, $sitepress->get_current_language() ) );
+                if($string) {
+                    $attribute_taxonomies[$key]->attribute_label = $string;
+                }
             }
+
         }
+
 
         return $attribute_taxonomies;
     }
