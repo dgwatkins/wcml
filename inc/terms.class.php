@@ -81,7 +81,7 @@ class WCML_Terms{
     
     function pre_update_rewrite_rules($value){ 
         global $sitepress, $sitepress_settings, $woocommerce, $woocommerce_wpml;
-        
+
         // force saving in strings language
         $strings_language = $woocommerce_wpml->strings->get_wc_context_language();
 
