@@ -72,7 +72,7 @@ class WCML_Product_Bundles{
                         if( $term_id ){
                             // Global Attribute
                             $tr_def_id = apply_filters( 'translate_object_id',$term_id,$tax,true,$lang);
-                            $tr_term = $woocommerce_wpml->wcml_get_term_by_id( $tr_def_id, $tax );
+                            $tr_term = $woocommerce_wpml->products->wcml_get_term_by_id( $tr_def_id, $tax );
                             $tr_bundle[$bundle_key]['bundle_defaults'][$tax] =  $tr_term->slug;
                         }else{
                             // Custom Attribute
