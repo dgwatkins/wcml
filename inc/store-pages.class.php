@@ -521,6 +521,15 @@ class WCML_Store_Pages{
 
                 }
 
+                $term = get_queried_object();
+
+                if (is_tax('product_cat') || is_tax('product_tag')) {
+                    $file = 'taxonomy-' . $term->taxonomy . '.php';
+                } else {
+                    $file = 'archive-product.php';
+                }
+
+
                 if ($filtered_template == $template) {
                     // check templates in WC folder in default lang
 
@@ -539,6 +548,8 @@ class WCML_Store_Pages{
                         $templates[] = WC()->template_path() ."$prefix-{$original_term_id}.php";
                         $templates[] = WC()->template_path() ."$prefix-{$current_language}.php";
                         $templates[] = WC()->template_path() ."$prefix.php";
+                        $templates[] = $file;
+                        $templates[] = WC()->template_path() . $file;
                     }
 
                     $template = locate_template( array_unique($templates) );
@@ -550,14 +561,6 @@ class WCML_Store_Pages{
                 }
 
                 if (!$template || WC_TEMPLATE_DEBUG_MODE) {
-
-                    $term = get_queried_object();
-
-                    if (is_tax('product_cat') || is_tax('product_tag')) {
-                        $file = 'taxonomy-' . $term->taxonomy . '.php';
-                    } else {
-                        $file = 'archive-product.php';
-                    }
 
                     $template = WC()->plugin_path() . '/templates/' . $file;
 
