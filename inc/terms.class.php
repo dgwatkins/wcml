@@ -143,16 +143,16 @@ class WCML_Terms{
                     
                     $taxonomy_obj  = get_taxonomy($taxonomy);
                     $slug = isset($taxonomy_obj->rewrite['slug']) ? trim($taxonomy_obj->rewrite['slug'] ,'/') : false;
-                    
+
                     if($slug && $sitepress->get_current_language() != $strings_language){
-                        
+
                         $slug_translation = $wpdb->get_var($wpdb->prepare("
-                                    SELECT t.value 
+                                    SELECT t.value
                                     FROM {$wpdb->prefix}icl_string_translations t
                                         JOIN {$wpdb->prefix}icl_strings s ON t.string_id = s.id
-                                    WHERE t.language = %s AND s.name = %s AND s.value = %s
-                                ", $sitepress->get_current_language(), 'URL ' . $taxonomy . ' slug: ' . $slug, $slug));
-                        
+                                    WHERE t.language = %s AND t.status = %s AND s.name = %s AND s.value = %s
+                                ", $sitepress->get_current_language(), ICL_STRING_TRANSLATION_COMPLETE, 'URL ' . $taxonomy . ' slug: ' . $slug, $slug));
+
                         if(!$slug_translation){
                             // handle exception - default woocommerce category and tag bases used
                             // get translation from WooCommerce mo files?
@@ -163,23 +163,18 @@ class WCML_Terms{
                         }
 
                         if($slug_translation){
-                            $buff_value = array();                     
-                            foreach((array)$value as $k=>$v){            
-                                
+                            $buff_value = array();
+                            foreach((array)$value as $k=>$v){
                                 if($slug != $slug_translation && preg_match('#^[^/]*/?' . $slug . '/#', $k)){
-
-                                        $k = preg_replace('#^([^/]*)(/?)' . $slug . '/#',  '$1$2' . $slug_translation . '/' , $k);    
-                                    }
-                                
+                                    $k = preg_replace('#^([^/]*)(/?)' . $slug . '/#',  '$1$2' . $slug_translation . '/' , $k);
+                                }
                                 $buff_value[$k] = $v;
                             }
-                            
                             $value = $buff_value;
-                            unset($buff_value);                     
-                            
+                            unset($buff_value);
                         }
-                        
-                    }                
+
+                    }
                     
                 }
                 
@@ -204,22 +199,17 @@ class WCML_Terms{
                                     SELECT t.value 
                                     FROM {$wpdb->prefix}icl_string_translations t
                                         JOIN {$wpdb->prefix}icl_strings s ON t.string_id = s.id
-                                    WHERE t.language = %s AND s.name = %s AND s.value = %s
-                                ", $sitepress->get_current_language(), 'URL attribute slug: ' . $slug, $slug));
-                        
+                                    WHERE t.language = %s AND t.status = %s AND s.name = %s AND s.value = %s
+                                ", $sitepress->get_current_language(), ICL_STRING_TRANSLATION_COMPLETE, 'URL attribute slug: ' . $slug, $slug));
+
                         if($slug_translation){
                             
                             $buff_value = array();                     
-                            foreach((array)$value as $k=>$v){            
-                                
-                                if($slug != $slug_translation){                        
-                                    if(preg_match('#^' . $slug . '/(.*)#', $k) && $slug != $slug_translation){
-                                        $k = preg_replace('#^' . $slug . '/(.*)#',   $slug_translation . '/$1' , $k);    
-                                    }
+                            foreach((array)$value as $k=>$v){
+                                if( $slug != $slug_translation && preg_match('#^' . $slug . '/(.*)#', $k) ){
+                                    $k = preg_replace('#^' . $slug . '/(.*)#',   $slug_translation . '/$1' , $k);
                                 }
-                                
                                 $buff_value[$k] = $v;
-                                
                             }
                             
                             $value = $buff_value;
@@ -259,14 +249,10 @@ class WCML_Terms{
             if( $current_slug != $default_slug ){
                 $buff_value = array();
                 foreach( (array) $value as $k => $v ){
-
                     if( $current_slug != $default_slug && preg_match( '#^[^/]*/?' . $default_slug . '/page/#', $k ) ){
-        
                         $k = preg_replace( '#^([^/]*)(/?)' . $default_slug . '/#',  '$1$2' . $current_slug . '/' , $k );
                     }
-
                     $buff_value[$k] = $v;
-
                 }
 
                 $value = $buff_value;
@@ -278,7 +264,7 @@ class WCML_Terms{
 
         return $value;
     }
-    
+
     function _switch_wc_locale(){
         global $sitepress;
         $locale = !empty($this->_tmp_locale_val) ? $this->_tmp_locale_val : $sitepress->get_locale($sitepress->get_current_language());
@@ -330,8 +316,9 @@ class WCML_Terms{
                         $sql = "SELECT t.value
                                         FROM {$wpdb->prefix}icl_strings s    
                                         JOIN {$wpdb->prefix}icl_string_translations t ON t.string_id = s.id
-                                    WHERE s.value=%s";
+                                    WHERE s.value=%s AND t.status = %s ";
                         $prepared[] = esc_sql($base);
+                        $prepared[] = ICL_STRING_TRANSLATION_COMPLETE;
 
                         if ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
                             $sql .= " AND s.language = %s ";
@@ -347,9 +334,9 @@ class WCML_Terms{
                     }else{
                         $base_translated = $base;
                     }
-                    
+
                     if(!empty($base_translated) && $base_translated != $base && isset( $wp_rewrite->extra_permastructs[$taxonomy] ) ){
-                        
+
                         $buff = $wp_rewrite->extra_permastructs[$taxonomy]['struct'];
                         $wp_rewrite->extra_permastructs[$taxonomy]['struct'] = str_replace($base, $base_translated, $wp_rewrite->extra_permastructs[$taxonomy]['struct']);
                         $no_recursion_flag = true;
@@ -367,7 +354,7 @@ class WCML_Terms{
             }          
                
         }
-        
+
         return $termlink;
     }
 
