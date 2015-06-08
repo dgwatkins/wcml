@@ -1885,7 +1885,7 @@ class WCML_Products{
 
         $contents = array();
         $contents[] = __('Title','wpml-wcml');
-        $contents[] = __('Content','wpml-wcml');
+        $contents[] = __('Content / Description','wpml-wcml');
         $contents[] = __('Excerpt','wpml-wcml');
         $contents[] = __('Images','wpml-wcml');
 
