@@ -11,7 +11,6 @@ class WCML_Terms{
     function __construct(){
         
         add_action('init', array($this, 'init'));
-
     }
     
     function init(){
@@ -58,7 +57,9 @@ class WCML_Terms{
         //filter coupons terms in admin
         add_filter('get_terms',array($this,'filter_coupons_terms'),10,3);
         add_filter('get_terms',array($this,'filter_shipping_classes_terms'),10,3);
-        
+
+
+        add_filter( 'woocommerce_get_product_terms', array( $this, 'get_product_terms_filter' ), 10, 4 );
     }
     
     function admin_menu_setup(){
@@ -1121,6 +1122,18 @@ class WCML_Terms{
             }
         }
 
+    }
+
+    function get_product_terms_filter( $terms, $product_id, $taxonomy, $args ){
+        global $sitepress;
+        remove_filter( 'woocommerce_get_product_terms', array( $this, 'get_product_terms_filter' ), 10, 4 );
+        $current_language = $sitepress->get_current_language();
+        $sitepress->switch_lang( $sitepress->get_language_for_element( $product_id, 'post_'.get_post_type( $product_id ) ) );
+        $terms = wc_get_product_terms( $product_id, $taxonomy, $args );
+        $sitepress->switch_lang( $current_language );
+        add_filter( 'woocommerce_get_product_terms', array( $this, 'get_product_terms_filter' ), 10, 4 );
+
+        return $terms;
     }
 
 }
