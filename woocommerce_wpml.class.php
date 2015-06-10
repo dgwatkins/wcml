@@ -55,6 +55,7 @@ class woocommerce_wpml {
         $this->compatibility    = new WCML_Compatibility();
         $this->strings          = new WCML_WC_Strings;
         $this->currency_switcher = new WCML_CurrencySwitcher;
+        $this->xdomain_data      = new xDomain_Data;
 
 
 
@@ -554,8 +555,13 @@ class woocommerce_wpml {
         global $wpdb, $sitepress_settings;
 
         if( WPML_SUPPORT_STRINGS_IN_DIFF_LANG && isset($value['product_base']) && $value['product_base']){
-            icl_register_string('URL slugs', 'Url slug: ' . trim( $value['product_base'], '/'), trim( $value['product_base'], '/') );
+            icl_register_string('URL slugs', 'URL slug: ' . trim( $value['product_base'], '/'), trim( $value['product_base'], '/') );
             // only register. it'll have to be translated via the string translation
+            // return translated base
+            $value['product_base'] = '/'. icl_t('URL slugs', 'URL slug: ' . trim( $value['product_base'], '/'), trim( $value['product_base'], '/') );
+        }else{
+            // return translated base
+            $value['product_base'] = '/'. icl_t('WordPress', 'URL slug: ' . trim( $value['product_base'], '/'), trim( $value['product_base'], '/') );
         }
 
         $category_base = !empty($value['category_base']) ? $value['category_base'] : 'product-category';

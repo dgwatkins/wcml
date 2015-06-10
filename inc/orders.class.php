@@ -115,7 +115,7 @@ class WCML_Orders{
                         global $wpdb, $woocommerce_wpml;
                         //attr is taxonomy
 
-                        $term_id = $woocommerce_wpml->products->products->wcml_get_term_id_by_slug( $key, $item_data );
+                        $term_id = $woocommerce_wpml->products->wcml_get_term_id_by_slug( $key, $item_data );
                         $tr_id = apply_filters( 'translate_object_id', $term_id, $key, false, $sitepress_settings['admin_default_language']);
 
                         if(!is_null($tr_id)){

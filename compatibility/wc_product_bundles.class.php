@@ -67,7 +67,7 @@ class WCML_Product_Bundles{
                     foreach($bundle_data['bundle_defaults'] as $tax=>$term_slug){
 
                         global $woocommerce_wpml;
-                        $term_id = $woocommerce_wpml->wcml_get_term_id_by_slug( $tax, $term_slug );
+                        $term_id = $woocommerce_wpml->products->wcml_get_term_id_by_slug( $tax, $term_slug );
 
                         if( $term_id ){
                             // Global Attribute
