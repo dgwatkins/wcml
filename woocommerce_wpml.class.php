@@ -55,6 +55,7 @@ class woocommerce_wpml {
         $this->compatibility    = new WCML_Compatibility();
         $this->strings          = new WCML_WC_Strings;
         $this->currency_switcher = new WCML_CurrencySwitcher;
+        $this->xdomain_data      = new xDomain_Data;
 
 
 

@@ -38,6 +38,7 @@ require WCML_PLUGIN_PATH . '/inc/functions-troubleshooting.class.php';
 require WCML_PLUGIN_PATH . '/inc/compatibility.class.php';
 require WCML_PLUGIN_PATH . '/inc/endpoints.class.php';
 require WCML_PLUGIN_PATH . '/inc/currency-switcher.class.php';
+require WCML_PLUGIN_PATH . '/inc/xdomain-data.class.php';
 
 require WCML_PLUGIN_PATH . '/woocommerce_wpml.class.php';
 
