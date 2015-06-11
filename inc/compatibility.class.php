@@ -96,7 +96,7 @@ class WCML_Compatibility {
 				
 				if (class_exists('WC_Bulk_Stock_Management')) {
 						require_once WCML_PLUGIN_PATH . '/compatibility/wc_bulk_stock_management.class.php';
-            $this->dynamic_pricing = new WCML_Bulk_Stock_Management();
+            $this->wc_bulk_stock_management = new WCML_Bulk_Stock_Management();
 				}
 
     }
