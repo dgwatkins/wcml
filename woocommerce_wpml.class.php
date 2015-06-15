@@ -552,27 +552,30 @@ class woocommerce_wpml {
     }
 
     function filter_woocommerce_permalinks_option($value){
-        global $wpdb, $sitepress_settings;
+        global $sitepress_settings;
 
-        if( WPML_SUPPORT_STRINGS_IN_DIFF_LANG && isset($value['product_base']) && $value['product_base']){
-            icl_register_string('URL slugs', 'URL slug: ' . trim( $value['product_base'], '/'), trim( $value['product_base'], '/') );
-            // only register. it'll have to be translated via the string translation
-            // return translated base
-            $value['product_base'] = '/'. icl_t('URL slugs', 'URL slug: ' . trim( $value['product_base'], '/'), trim( $value['product_base'], '/') );
-        }else{
-            // return translated base
-            $value['product_base'] = '/'. icl_t('WordPress', 'URL slug: ' . trim( $value['product_base'], '/'), trim( $value['product_base'], '/') );
-        }
+        if( function_exists('icl_t') ) {
 
-        $category_base = !empty($value['category_base']) ? $value['category_base'] : 'product-category';
-        icl_register_string('URL product_cat slugs - ' . $category_base, 'Url product_cat slug: ' . $category_base, $category_base );
+            if (WPML_SUPPORT_STRINGS_IN_DIFF_LANG && isset($value['product_base']) && $value['product_base']) {
+                apply_filters('register_string_for_translation', 'URL slugs', 'URL slug: ' . trim($value['product_base'], '/'), trim($value['product_base'], '/'));
+                // only register. it'll have to be translated via the string translation
+                // return translated base
+                $value['product_base'] = '/' . icl_t('URL slugs', 'URL slug: ' . trim($value['product_base'], '/'), trim($value['product_base'], '/'));
+            } else {
+                // return translated base
+                $value['product_base'] = '/' . icl_t('WordPress', 'URL slug: ' . trim($value['product_base'], '/'), trim($value['product_base'], '/'));
+            }
 
-        $tag_base = !empty($value['tag_base']) ? $value['tag_base'] : 'product-tag';
-        icl_register_string('URL product_tag slugs - ' . $tag_base, 'Url product_tag slug: ' . $tag_base, $tag_base);
+            $category_base = !empty($value['category_base']) ? $value['category_base'] : 'product-category';
+            apply_filters('register_string_for_translation', 'URL product_cat slugs - ' . $category_base, 'Url product_cat slug: ' . $category_base, $category_base);
 
-        if(isset($value['attribute_base']) && $value['attribute_base']){
-            $attr_base = trim( $value['attribute_base'], '/');
-            icl_register_string('URL attribute slugs - ' . $attr_base , 'Url attribute slug: ' .$attr_base, $attr_base );
+            $tag_base = !empty($value['tag_base']) ? $value['tag_base'] : 'product-tag';
+            apply_filters('register_string_for_translation', 'URL product_tag slugs - ' . $tag_base, 'Url product_tag slug: ' . $tag_base, $tag_base);
+
+            if (isset($value['attribute_base']) && $value['attribute_base']) {
+                $attr_base = trim($value['attribute_base'], '/');
+                apply_filters('register_string_for_translation', 'URL attribute slugs - ' . $attr_base, 'Url attribute slug: ' . $attr_base, $attr_base);
+            }
         }
 
         return $value;
