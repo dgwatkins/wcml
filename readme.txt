@@ -79,7 +79,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 == Changelog ==
 
 = 3.6.3 =
-* Fixed a bug causing a php warning when using an odler version of WPML String Translation
+* Fixed a bug causing a PHP warning when using an older version of WPML String Translation
 
 = 3.6.2 =
 * Bug fix: A product could appear multiple times in the cart when added in different languages
