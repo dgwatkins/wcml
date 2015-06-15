@@ -23,12 +23,12 @@ class WCML_Product_Addons{
 
         foreach($addons as $addon){
             //register name
-            icl_register_string('wc_product_addons_strings', $id.'_addon_'.$addon['type'].'_'.$addon['position'].'_name', $addon['name']);
+            apply_filters('register_string_for_translation', 'wc_product_addons_strings', $id.'_addon_'.$addon['type'].'_'.$addon['position'].'_name', $addon['name']);
             //register description
-            icl_register_string('wc_product_addons_strings', $id.'_addon_'.$addon['type'].'_'.$addon['position'].'_description', $addon['description']);
+            apply_filters('register_string_for_translation', 'wc_product_addons_strings', $id.'_addon_'.$addon['type'].'_'.$addon['position'].'_description', $addon['description']);
             //register options labels
             foreach($addon['options'] as $key=>$option){
-                icl_register_string('wc_product_addons_strings', $id.'_addon_'.$addon['type'].'_'.$addon['position'].'_option_label_'.$key, $option['label']);
+                apply_filters('register_string_for_translation', 'wc_product_addons_strings', $id.'_addon_'.$addon['type'].'_'.$addon['position'].'_option_label_'.$key, $option['label']);
             }
         }
     }

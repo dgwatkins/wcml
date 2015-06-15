@@ -306,7 +306,7 @@ class WCML_Terms{
                     
                     if($base === ''){
                         $base = $taxonomy == 'product_tag' ? 'product-tag' : 'product-category'; // strings language
-                        icl_register_string('URL ' . $taxonomy . ' slugs - ' . $base, 'Url ' . $string_identifier . ' slug: ' . $base, $base, array('language' => 'en'));
+                        apply_filters('register_string_for_translation', 'URL ' . $taxonomy . ' slugs - ' . $base, 'Url ' . $string_identifier . ' slug: ' . $base, $base, array('language' => 'en'));
                     }
                     
                     //

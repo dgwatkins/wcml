@@ -146,7 +146,7 @@ class woocommerce_wpml {
         $string = $wpdb->get_row($wpdb->prepare("SELECT id,status FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'URL slug: ' . $slug, $slug));
         
         if(!$string){
-            icl_register_string('WordPress', 'URL slug: ' . $slug, $slug);
+            apply_filters('register_string_for_translation', 'WordPress', 'URL slug: ' . $slug, $slug);
             $string = $wpdb->get_row($wpdb->prepare("SELECT id,status FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'URL slug: ' . $slug, $slug));
         }
 
