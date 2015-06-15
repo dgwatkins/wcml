@@ -55,7 +55,7 @@ class WCML_Extra_Product_Options{
                     foreach( $values as $value_key => $value ){
                         if( $value ){
                             if( $action == 'register'){
-                                apply_filters('register_string_for_translation', 'wc_extra_product_options', $id.'_option_'.$value_key.'_'.$key, $value );
+                                do_action('wpml_register_single_string', 'wc_extra_product_options', $id.'_option_'.$value_key.'_'.$key, $value );
                             }else{
                                 $options[ 'tmfbuilder' ][ $key ][ $value_key ] = icl_t('wc_extra_product_options', $id.'_option_'.$value_key.'_'.$key, $value);
                             }

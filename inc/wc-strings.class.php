@@ -240,7 +240,7 @@ class WCML_WC_Strings{
 
     function register_shipping_methods($available_methods){
         foreach($available_methods as $key => $method){
-            apply_filters('register_string_for_translation', 'woocommerce', $key .'_shipping_method_title', $method->label );
+            do_action('wpml_register_single_string', 'woocommerce', $key .'_shipping_method_title', $method->label );
             $method->label = icl_t('woocommerce', $key .'_shipping_method_title', $method->label);
         }
 
