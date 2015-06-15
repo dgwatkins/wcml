@@ -871,7 +871,7 @@ class WCML_Products{
             if ( !$translation->original ) {
                 foreach( $gallery_ids as $image_id ){
                     $duplicated_id = apply_filters( 'translate_object_id', $image_id, 'attachment', false, $translation->language_code );
-                    if( is_null( $duplicated_id ) ){
+                    if( is_null( $duplicated_id ) && $image_id ){
                         global $WPML_media;
                         $duplicated_id = $WPML_media::create_duplicate_attachment( $image_id, wp_get_post_parent_id( $image_id ), $translation->language_code );
                     }
@@ -1261,7 +1261,7 @@ class WCML_Products{
         if( defined( 'WPML_MEDIA_VERSION' ) ){
             $thumbnail_id = get_post_meta( $orig_post_id, '_thumbnail_id', true );
             $trnsl_thumbnail = apply_filters( 'translate_object_id', $thumbnail_id, 'attachment', false, $lang );
-            if( is_null( $trnsl_thumbnail ) ){
+            if( is_null( $trnsl_thumbnail ) && $thumbnail_id ){
                 global $WPML_media;
                 $trnsl_thumbnail = $WPML_media::create_duplicate_attachment( $thumbnail_id, wp_get_post_parent_id( $thumbnail_id ), $lang );
             }
