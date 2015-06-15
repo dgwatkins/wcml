@@ -684,12 +684,11 @@ class woocommerce_wpml {
 
             $active_languages = $sitepress->get_active_languages();
             $current_language = $sitepress->get_current_language();
+            $repo = 'https://github.com/woothemes/woocommerce-language-packs/raw/v';
 
             foreach( $active_languages as $language ){
                 if( $language['code'] == 'en' )
                     continue;
-
-                $sitepress->switch_lang( $language['code'], true );
 
                 $locale = $sitepress->get_locale( $language['code'] );
 
@@ -701,15 +700,13 @@ class woocommerce_wpml {
                         'language'   => $locale,
                         'version'    => WC_VERSION,
                         'updated'    => date( 'Y-m-d H:i:s' ),
-                        'package'    => $wc_upgrader_class->get_language_package_uri(),
+                        'package'    => $repo . WC_VERSION . '/packages/' . $locale . '.zip',
                         'autoupdate' => 1
                     );
 
                 }
 
             }
-
-            $sitepress->switch_lang( $current_language, true );
 
         }
 
