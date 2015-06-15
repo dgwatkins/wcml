@@ -93,7 +93,7 @@ class woocommerce_wpml {
         add_filter('woocommerce_paypal_args', array($this, 'add_language_to_paypal'));
 
         //set translate product by default
-        $this->translate_product_slug();
+       $this->translate_product_slug();
 
         if(is_admin() &&
             (
@@ -559,9 +559,9 @@ class woocommerce_wpml {
             if (WPML_SUPPORT_STRINGS_IN_DIFF_LANG && isset($value['product_base']) && $value['product_base']) {
                 do_action('wpml_register_single_string', 'URL slugs', 'URL slug: ' . trim($value['product_base'], '/'), trim($value['product_base'], '/'));
                 // only register. it'll have to be translated via the string translation
-                // return translated base
-                $value['product_base'] = '/' . icl_t('URL slugs', 'URL slug: ' . trim($value['product_base'], '/'), trim($value['product_base'], '/'));
-            } else {
+            }
+
+            if( isset($value['product_base']) && $value['product_base'] ) {
                 // return translated base
                 $value['product_base'] = '/' . icl_t('WordPress', 'URL slug: ' . trim($value['product_base'], '/'), trim($value['product_base'], '/'));
             }
