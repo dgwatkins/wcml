@@ -90,6 +90,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fix: Fixed a problem with sanitize_title for variations in Danish and German
 * Moved the Tab manager settings to separate file from the WCML config
 * Duplicates for media are now being created, if missing, when product translations are created. 
+* Bug fix: Fixed a fatal error that was occurring when the WPML was not updated to version 3.2 while the WPML addons were updated to the latest versions.
 
 = 3.6.1 =
 * Updated the taxonomy translation synchronization to be compatible with WPML 3.2
