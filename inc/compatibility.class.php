@@ -99,6 +99,13 @@ class WCML_Compatibility {
             $this->wc_bulk_stock_management = new WCML_Bulk_Stock_Management();
 				}
 
+		// WooCommerce Advanced Ajax Layered Navigation
+		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		if ( is_plugin_active( 'woocommerce-ajax-layered-nav/ajax_layered_nav-widget.php' ) ) {
+			require_once WCML_PLUGIN_PATH . '/compatibility/wc_ajax_layered_nav_widget.class.php';
+			$this->wc_ajax_layered_nav_widget = new WCML_Ajax_Layered_Nav_Widget();
+		} 
+
     }
 
 }
