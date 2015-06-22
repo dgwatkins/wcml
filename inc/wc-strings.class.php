@@ -53,6 +53,7 @@ class WCML_WC_Strings{
         add_action( 'woocommerce_product_options_attributes', array ( $this, 'notice_after_woocommerce_product_options_attributes' ) );
 
         add_filter( 'woocommerce_attribute_taxonomies', array( $this, 'translate_attribute_taxonomies_labels') );
+        add_filter( 'woocommerce_product_categories_widget_dropdown_url_format', array( $this, 'woocommerce_product_categories_widget_dropdown_url_format') );
 
     }
 
@@ -544,5 +545,16 @@ class WCML_WC_Strings{
 
 
         return $attribute_taxonomies;
+    }
+
+    function woocommerce_product_categories_widget_dropdown_url_format( $url ){
+        global $sitepress_settings, $sitepress;
+
+        if( $sitepress_settings['language_negotiation_type'] == 3 && $sitepress->get_default_language() != $sitepress->get_current_language() ){
+            return home_url().'&product_cat=';
+        }
+
+        return $url;
+
     }
 }
