@@ -352,7 +352,7 @@ class WCML_Store_Pages{
         foreach ($check_pages as $page) {
             $page_id = get_option($page);
             $page_obj = get_post($page_id);
-                if(!$page_id || !$page_obj || $page_obj->post_status == 'publish' ){
+                if(!$page_id || !$page_obj || $page_obj->post_status != 'publish' ){
                     return 'non_exist';
                 }
         }
