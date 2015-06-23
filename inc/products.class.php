@@ -1149,8 +1149,11 @@ class WCML_Products{
                             if (taxonomy_exists($tax)) {
 
                                 $attid = $this->wcml_get_term_id_by_slug( $tax, $meta_value );
+
                                 if($attid){
-                                    $trid = $sitepress->get_element_trid($attid, 'tax_' . $tax);
+
+                                    $term_obj = $this->wcml_get_term_by_id( $attid, $tax );
+                                    $trid = $sitepress->get_element_trid( $term_obj->term_taxonomy_id, 'tax_' . $tax );
                                     if ($trid) {
                                         $translations = $sitepress->get_element_translations($trid,'tax_' . $tax);
                                         if (isset($translations[$lang])) {
