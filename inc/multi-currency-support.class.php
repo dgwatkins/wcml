@@ -1232,14 +1232,6 @@ class WCML_Multi_Currency_Support{
         return $args;
     }
 
-    function get_exchange_rates(){
-            
-        $exchange_rates = apply_filters('wcml_exchange_rates', $this->exchange_rates);
-        
-        return $exchange_rates;
-        
-    }
-
     function legacy_update_custom_rates(){
 
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
