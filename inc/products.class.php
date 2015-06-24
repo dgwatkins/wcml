@@ -2579,7 +2579,11 @@ class WCML_Products{
 
         foreach( $cart_contents as $key => $cart_content ){
 
-            $cart_contents = apply_filters( 'wcml_exception_duplicate_products_in_cart', $cart_contents, $key, $cart_content );
+            $cart_contents = apply_filters( 'wcml_check_on_duplicated_products_in_cart', $cart_contents, $key, $cart_content );
+
+            if( apply_filters( 'wcml_exception_duplicate_products_in_cart', false, $cart_content ) ){
+                continue;
+            }
 
             if( empty( $cart_content[ 'variation_id' ] ) ){
                 $search_key = $cart_content[ 'product_id' ];
