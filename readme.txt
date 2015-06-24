@@ -5,7 +5,7 @@ Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multili
 License: GPLv2
 Requires at least: 3.0
 Tested up to: 4.2.2
-Stable tag: 3.6.3
+Stable tag: 3.6.5
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
 
@@ -77,6 +77,11 @@ In order for the checkout and store pages to appear translated, you need to crea
 3. Multiple currencies
 
 == Changelog ==
+
+= 3.6.5 =
+* Bug fix: Fixed a bug that caused a wrong price to be displayed when adding a product in the cart from two different languages.
+* Bug fix: After a product translation was edited in the standard product editor, the WooCommerce custom attribute translations were lost.
+* Bug fix: The product variations failed to sync when the term_id was different than the term_taxonomy_id for the terms used to create the variations.
 
 = 3.6.4 =
 * Bug fix: Parse error: syntax error, unexpected T_PAAMAYIM_NEKUDOTAYIM (introduced in 3.6.1)
