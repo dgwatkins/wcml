@@ -140,8 +140,12 @@ class WCML_sensei{
 
     }
 
-    function log_activity_after ( $args, $data, $comment_id ){
+    function log_activity_after ( $args, $data, $comment_id = false ){
         global $sitepress;
+
+        if( !$comment_id ){
+            return false;
+        }
 
         $comment_post_id = $data['comment_post_ID'];
         $trid = $sitepress->get_element_trid( $comment_post_id, 'post_'.get_post_type( $comment_post_id ) );
