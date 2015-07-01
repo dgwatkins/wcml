@@ -13,6 +13,15 @@ class WCML_sensei{
         add_action( 'delete_comment', array( $this, 'delete_user_activity' ) );
 
         add_action( 'pre_get_comments', array( $this, 'pre_get_comments') );
+
+        if( is_admin() &&
+            (
+                ( isset($_GET['post_type']) && $_GET['post_type'] == 'sensei_message' ) ||
+                ( isset($_GET['page']) && $_GET['page'] == 'sensei_grading' )
+            ) ){
+            remove_action( 'wp_before_admin_bar_render', array($sitepress, 'admin_language_switcher') );
+        }
+
     }
 
     function save_post_actions( $post_id, $post ){
