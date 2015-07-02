@@ -83,7 +83,7 @@ class WCML_Compatibility {
         }
 
         // WooCommerce Bookings
-        if(defined( 'WC_BOOKINGS_VERSION' ) && version_compare(WC_BOOKINGS_VERSION, '2.0', '>') ){
+        if(defined( 'WC_BOOKINGS_VERSION' ) && version_compare(WC_BOOKINGS_VERSION, '1.7.8', '>=') ){
             require_once WCML_PLUGIN_PATH . '/compatibility/wc_bookings.class.php';
             $this->bookings = new WCML_Bookings();
         }
