@@ -1,4 +1,4 @@
-﻿=== WooCommerce Multilingual - run WooCommerce with WPML ===
+=== WooCommerce Multilingual - run WooCommerce with WPML ===
 Contributors: AmirHelzer, dominykasgel, dgwatkins, adelval
 Donate link: http://wpml.org/documentation/related-projects/woocommerce-multilingual/
 Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multilingual, e-shop, shop
@@ -82,6 +82,10 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fix: Fixed a bug that caused a wrong price to be displayed when adding a product in the cart from two different languages.
 * Bug fix: After a product translation was edited in the standard product editor, the WooCommerce custom attribute translations were lost.
 * Bug fix: The product variations failed to sync when the term_id was different than the term_taxonomy_id for the terms used to create the variations.
+* Bug fix: Some product translations were showing non existing discounted prices.
+* Fixed a couple of compatibility issues with WooCommerce Product Bundles (e.g. with using the Flatsome theme) 
+* Fixed a small usability issue related to Sensei
+
 
 = 3.6.4 =
 * Bug fix: Parse error: syntax error, unexpected T_PAAMAYIM_NEKUDOTAYIM (introduced in 3.6.1)
