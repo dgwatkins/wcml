@@ -426,6 +426,11 @@ class woocommerce_wpml {
                 wp_enqueue_script('wpml_tm');
             }
         }
+
+        if( !is_admin() ){
+            wp_register_script('cart-widget', WCML_PLUGIN_URL . '/assets/js/cart_widget.js', array('jquery'), WCML_VERSION);
+            wp_enqueue_script('cart-widget');
+        }
     }
 
     //load Tooltip js and styles from WC
