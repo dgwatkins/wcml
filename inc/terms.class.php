@@ -154,15 +154,6 @@ class WCML_Terms{
                                     WHERE t.language = %s AND t.status = %s AND s.name = %s AND s.value = %s
                                 ", $sitepress->get_current_language(), ICL_STRING_TRANSLATION_COMPLETE, 'URL ' . $taxonomy . ' slug: ' . $slug, $slug));
 
-                        if(!$slug_translation){
-                            // handle exception - default woocommerce category and tag bases used
-                            // get translation from WooCommerce mo files?
-                            unload_textdomain('woocommerce');
-                            $woocommerce->load_plugin_textdomain();
-                            $slug_translation = _x($slug, 'slug', 'woocommerce');
-                            $slug = $taxonomy == 'product_tag' ? 'product-tag' : 'product-category'; // strings language
-                        }
-
                         if($slug_translation){
                             $buff_value = array();
                             foreach((array)$value as $k=>$v){
@@ -331,7 +322,7 @@ class WCML_Terms{
                         $prepared[] = $term_language->language_code;
 
                         $base_translated = $wpdb->get_var( $wpdb->prepare( $sql,$prepared ) );
-                        
+
                     }else{
                         $base_translated = $base;
                     }
