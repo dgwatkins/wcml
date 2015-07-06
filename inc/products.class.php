@@ -56,7 +56,6 @@ class WCML_Products{
             add_filter( 'loop_shop_post_in', array( $this, 'filter_products_with_custom_prices' ), 100 );
             add_filter( 'woocommerce_related_products_args', array( $this, 'filter_related_products_args' ) );
         }
-        add_filter( 'woocommerce_restore_order_stock_quantity', array( $this, 'woocommerce_restore_order_stock_quantity' ), 10, 2 );
 
         add_action( 'woocommerce_email', array( $this, 'woocommerce_email_refresh_text_domain' ) );
         add_action( 'wp_ajax_woocommerce_update_shipping_method', array( $this, 'wcml_refresh_text_domain' ), 9 );
@@ -67,7 +66,8 @@ class WCML_Products{
 
         add_filter( 'icl_post_alternative_languages', array( $this, 'hide_post_translation_links' ) );
 
-        add_action( 'woocommerce_reduce_order_stock', array( $this, 'sync_product_stocks' ) );
+        add_action( 'woocommerce_reduce_order_stock', array( $this, 'sync_product_stocks_reduce' ) );
+        add_action( 'woocommerce_restore_order_stock', array( $this, 'sync_product_stocks_restore' ) );
 
         add_filter( 'wcml_custom_box_html', array( $this, 'downloadable_files_box' ), 10, 3 );
 
@@ -1437,15 +1437,15 @@ class WCML_Products{
         return $output;
     }
 
-    function sync_product_stocks($order) {
-        return $this->sync_product_stocks20($order);
+    function sync_product_stocks_reduce( $order ){
+        return $this->sync_product_stocks( $order, 'reduce' );
     }
 
-    /*
-      Only when translated products are ordered, force adjusting stock information for all translations
-      When a product in the default language is ordered stocks are adjusted automatically
-    */
-    function sync_product_stocks20($order){
+    function sync_product_stocks_restore( $order ){
+        return $this->sync_product_stocks( $order, 'restore' );
+    }
+
+    function sync_product_stocks( $order, $action ){
         global $sitepress;
         $order_id = $order->id;
 
@@ -1472,9 +1472,16 @@ class WCML_Products{
                     $_product = wc_get_product($translation->element_id);
 
                 if ( $_product && $_product->exists() && $_product->managing_stock() ) {
-                    $stock          = $_product->reduce_stock($item['qty']);
+
                     $total_sales    = get_post_meta($_product->id, 'total_sales', true);
-                    $total_sales   += $item['qty'];
+
+                    if( $action == 'reduce'){
+                        $stock  = $_product->reduce_stock($item['qty']);
+                        $total_sales   += $item['qty'];
+                    }else{
+                        $stock  = $_product->increase_stock( $item['qty'] );
+                        $total_sales   -= $item['qty'];
+                    }
                         update_post_meta($translation->element_id, 'total_sales', $total_sales);
                     }
                 }
@@ -2847,27 +2854,6 @@ class WCML_Products{
         }
 
     }
-
-    function woocommerce_restore_order_stock_quantity($stock_change,$item_id){
-        global $sitepress;
-
-        $order_id = absint( filter_input( INPUT_POST, 'order_id', FILTER_SANITIZE_NUMBER_INT ) );
-        $order = new WC_Order( $order_id );
-        $order_items = $order->get_items();
-        $_product = $order->get_product_from_item( $order_items[$item_id] );
-        $language_details = $sitepress->get_element_language_details($_product->post->ID, 'post_'.$_product->post->post_type);
-        $translations = $sitepress->get_element_translations($language_details->trid, 'post_'.$_product->post->post_type);
-
-        foreach ($translations as $translation) {
-            if($translation->element_id != $_product->post->ID){
-                $prod = get_product($translation->element_id);
-                $prod->increase_stock( $stock_change );
-            }
-        }
-
-        return $stock_change;
-    }
-
 
     function woocommerce_product_quick_edit_save($product){
         global $sitepress;
