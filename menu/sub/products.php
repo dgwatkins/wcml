@@ -81,7 +81,7 @@ $woocommerce_wpml->update_settings(); ?>
 
 <form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
 	<?php if ( ! isset( $_GET['prid'] ) && ! $translator_id ): ?>
-		<div class="tablenav top">
+		<div class="tablenav top clearfix">
 			<div class="alignleft">
 				<select>
 					<option
@@ -314,7 +314,7 @@ $woocommerce_wpml->update_settings(); ?>
 	//TODO Sergey: Test if pagination input works
 	?>
 	<?php if ( $products && ! isset( $_GET['prid'] ) ): ?>
-		<div class="tablenav bottom">
+		<div class="tablenav bottom clearfix">
 			<div class="tablenav-pages">
 				<span
 					class="displaying-num"><?php printf( __( '%d products', 'wpml-wcml' ), $products_count ); ?></span>
