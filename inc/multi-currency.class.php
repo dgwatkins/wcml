@@ -818,8 +818,8 @@ class WCML_WC_MultiCurrency{
     }
 
     function load_custom_prices_js_css(){
-        wp_register_style('wpml-wcml-prices', WCML_PLUGIN_URL . '/assets/css/wcml-prices.css', null, WCML_VERSION);
-        wp_register_script('wcml-tm-scripts-prices', WCML_PLUGIN_URL . '/assets/js/prices.js', array('jquery'), WCML_VERSION);
+	    wp_register_style( 'wpml-wcml-prices', WCML_PLUGIN_URL . '/res/css/wcml-prices.css', null, WCML_VERSION );
+	    wp_register_script( 'wcml-tm-scripts-prices', WCML_PLUGIN_URL . '/res/js/prices.js', array( 'jquery' ), WCML_VERSION );
 
         wp_enqueue_style('wpml-wcml-prices');
         wp_enqueue_script('wcml-tm-scripts-prices');

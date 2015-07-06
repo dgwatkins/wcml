@@ -901,8 +901,7 @@ class WCML_Products{
                 continue;
             }elseif (!$slang || ( ($slang != $language['code']) && (current_user_can('wpml_operate_woocommerce_multilingual') || wpml_check_user_is_translator($slang,$language['code'])) && (!isset($_POST['translation_status_lang']) || (isset($_POST['translation_status_lang']) && ($_POST['translation_status_lang'] == $language['code']) || $_POST['translation_status_lang']=='')))){
 
-                echo '<img src="'. $sitepress->get_flag_url($language['code']).'" width="18" height="12" class="flag_img" />';
-
+	            echo '<span title="' . $language['english_name'] . '"><img src="' . $sitepress->get_flag_url( $language['code'] ) . '"  alt="' . $language->english_name . '"/></span> ';
             }
         }
     }
@@ -912,32 +911,45 @@ class WCML_Products{
         global $wpdb,$sitepress;
 
         foreach ($active_languages as $language) {
+	        //print_r($language);
             if( $job_language && $language['code'] != $job_language ) {
                 continue;
-            }elseif(isset($product_translations[$language['code']]) && $product_translations[$language['code']]->original){
-                $alt = __('Original language','wpml-wcml');
-                echo '<i title="'. $alt .'" class="stat_img icon-minus"></i>';
-            }elseif ($slang != $language['code']  && (!isset($_POST['translation_status_lang']) || (isset($_POST['translation_status_lang']) && ($_POST['translation_status_lang'] == $language['code']) || $_POST['translation_status_lang']==''))) {
-
+            } elseif ( isset( $product_translations[ $language['code'] ] ) && $product_translations[ $language['code'] ]->original ) { ?>
+	            <span title="<?php echo $language['english_name'] . ': ' . __( 'Original language', 'wpml-wcml' );?>">
+	                <i class="icl-ico-original"></i>
+                </span>
+            <?php } elseif ( $slang != $language['code'] && ( ! isset( $_POST['translation_status_lang'] ) || ( isset( $_POST['translation_status_lang'] ) && ( $_POST['translation_status_lang'] == $language['code'] ) || $_POST['translation_status_lang'] == '' ) ) ) {
                 if (isset($product_translations[$language['code']])) {
                     $tr_status = $wpdb->get_row($wpdb->prepare("SELECT status,needs_update FROM " . $wpdb->prefix . "icl_translation_status WHERE translation_id = %d", $product_translations[$language['code']]->translation_id));
-                        if(!$tr_status){
-                                $alt = __('Not translated','wpml-wcml');
-                                echo '<i title="'. $alt .'" class="stat_img icon-warning-sign"></i>';
-                        }elseif($tr_status->needs_update){
-                            $alt = __('Not translated - needs update','wpml-wcml');
-                            echo '<i title="'. $alt .'" class="stat_img icon-repeat"></i>';
-                        }elseif($tr_status->status != ICL_TM_COMPLETE && $tr_status->status != ICL_TM_DUPLICATE) {
-                            $alt = __('In progress','wpml-wcml');
-                            echo '<i title="'. $alt .'" class="stat_img icon-spinner"></i>';
-                        }elseif($tr_status->status == ICL_TM_COMPLETE || $tr_status->status == ICL_TM_DUPLICATE){
-                            $alt = __('Complete','wpml-wcml');
-                            echo '<i title="'. $alt .'" class="stat_img icon-ok"></i>';
-                        }
-                } else {
-                    $alt = __('Not translated','wpml-wcml');
-                    echo '<i title="'. $alt .'" class="stat_img icon-warning-sign"></i>';
-                }
+	                if ( ! $tr_status ) { ?>
+		                <?php //TODO Sergey: Add product ID to A tag ids
+		                ?>
+		                <a id="<?php echo $language['code'];?>"
+		                   title="<?php echo $language['english_name'] . ': ' . __( 'Add translation', 'wpml-wcml' );?>">
+			                <i class="icl-ico-add"></i>
+		                </a>
+	                <?php } elseif ( $tr_status->needs_update ) { ?>
+		                <a id="<?php echo $language['code'];?>"
+		                   title="<?php echo $language['english_name'] . ': ' . __( 'Update translation', 'wpml-wcml' );?>">
+			                <i class="icl-ico-refresh"></i>
+		                </a>
+	                <?php } elseif ( $tr_status->status != ICL_TM_COMPLETE && $tr_status->status != ICL_TM_DUPLICATE ) { ?>
+		                <a id="<?php echo $language['code']; ?>"
+		                   title="<?php echo $language['english_name'] . ': ' . __( 'Finish translating', 'wpml-wcml' ); ?>">
+			                <i class="icl-ico-refresh"></i>
+		                </a>
+	                <?php } elseif ( $tr_status->status == ICL_TM_COMPLETE || $tr_status->status == ICL_TM_DUPLICATE ) { ?>
+		                <a id="<?php echo $language['code'];?>"
+		                   title="<?php echo $language['english_name'] . ': ' . __( 'Edit translation', 'wpml-wcml' );?>">
+			                <i class="icl-ico-edit"></i>
+		                </a>
+	                <?php }
+                } else { ?>
+	                <a id="<?php echo $language['code']; ?>"
+	                   title="<?php echo $language['english_name'] . ': ' . __( 'Add translation', 'wpml-wcml' ); ?>">
+		                <i class="icl-ico-add"></i>
+	                </a>
+                <?php }
             }
         }
     }
