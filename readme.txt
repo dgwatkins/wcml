@@ -79,12 +79,14 @@ In order for the checkout and store pages to appear translated, you need to crea
 == Changelog ==
 
 = 3.6.5 =
+* Enabled the WooCommerce Bookings compatibility support.
 * Bug fix: Fixed a bug that caused a wrong price to be displayed when adding a product in the cart from two different languages.
 * Bug fix: After a product translation was edited in the standard product editor, the WooCommerce custom attribute translations were lost.
 * Bug fix: The product variations failed to sync when the term_id was different than the term_taxonomy_id for the terms used to create the variations.
 * Bug fix: Some product translations were showing non existing discounted prices.
 * Fixed a couple of compatibility issues with WooCommerce Product Bundles (e.g. with using the Flatsome theme) 
 * Fixed a small usability issue related to Sensei
+* Bug fix: Stock quantity not synchronized when items were used in orders ßcreated in the backend.
 
 
 = 3.6.4 =
