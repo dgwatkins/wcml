@@ -105,6 +105,12 @@ class WCML_Compatibility {
 			require_once WCML_PLUGIN_PATH . '/compatibility/wc_ajax_layered_nav_widget.class.php';
 			$this->wc_ajax_layered_nav_widget = new WCML_Ajax_Layered_Nav_Widget();
 		} 
+		
+				// woocommerce composite products
+				if ( isset( $GLOBALS[ 'woocommerce_composite_products' ] ) ) {
+					require_once WCML_PLUGIN_PATH . '/compatibility/wc_composite_products.class.php';
+					$this->wc_composite_products = new WCML_Composite_Products();
+				}
 
     }
 
