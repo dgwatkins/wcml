@@ -103,7 +103,7 @@ class WCML_WC_Strings{
 
         }
 
-        $trnsl_label = apply_filters( 'wpml_translate_single_string', 'WordPress','taxonomy singular name: '.$label,$label);
+        $trnsl_label = apply_filters( 'wpml_translate_single_string', $label, 'WordPress','taxonomy singular name: '.$label );
 
         if( $label != $trnsl_label ){
             return $trnsl_label;
@@ -241,7 +241,7 @@ class WCML_WC_Strings{
     function register_shipping_methods($available_methods){
         foreach($available_methods as $key => $method){
             do_action('wpml_register_single_string', 'woocommerce', $key .'_shipping_method_title', $method->label );
-            $method->label = apply_filters( 'wpml_translate_single_string', 'woocommerce', $key .'_shipping_method_title', $method->label);
+            $method->label = apply_filters( 'wpml_translate_single_string', $method->label, 'woocommerce', $key .'_shipping_method_title');
         }
 
         return $available_methods;
@@ -251,7 +251,7 @@ class WCML_WC_Strings{
         if (!empty($rates)) {
             foreach ($rates as &$rate) {
                 do_action('wpml_register_single_string', 'woocommerce', 'tax_label_' . esc_url_raw($rate['label']), $rate['label'] );
-                $rate['label'] = apply_filters( 'wpml_translate_single_string', 'woocommerce', 'tax_label_' . esc_url_raw($rate['label']), $rate['label']);
+                $rate['label'] = apply_filters( 'wpml_translate_single_string', $rate['label'], 'woocommerce', 'tax_label_' . esc_url_raw($rate['label']) );
             }
         }
 
@@ -261,7 +261,7 @@ class WCML_WC_Strings{
     function translate_gateway_title($title, $gateway_title) {
 
         do_action('wpml_register_single_string', 'woocommerce', $gateway_title .'_gateway_title', $title  );
-        $title = apply_filters( 'wpml_translate_single_string', 'woocommerce', $gateway_title .'_gateway_title', $title );
+        $title = apply_filters( 'wpml_translate_single_string', $title, 'woocommerce', $gateway_title .'_gateway_title' );
 
         return $title;
     }
@@ -269,7 +269,7 @@ class WCML_WC_Strings{
     function translate_gateway_description($description, $gateway_title) {
 
         do_action('wpml_register_single_string', 'woocommerce', $gateway_title .'_gateway_description', $description  );
-        $description =apply_filters( 'wpml_translate_single_string', 'woocommerce', $gateway_title .'_gateway_description', $description );
+        $description =apply_filters( 'wpml_translate_single_string', $description, 'woocommerce', $gateway_title .'_gateway_description' );
 
         return $description;
     }
@@ -292,7 +292,7 @@ class WCML_WC_Strings{
         foreach($gateways->payment_gateways as $key => $gateway){
             if($gateway->id == $id && isset(WC_Payment_Gateways::instance()->payment_gateways[$key]->instructions)){
                 do_action('wpml_register_single_string', 'woocommerce', $gateway->id .'_gateway_instructions', $gateway->instructions  );
-                WC_Payment_Gateways::instance()->payment_gateways[$key]->instructions = apply_filters( 'wpml_translate_single_string', 'woocommerce', $gateway->id .'_gateway_instructions', $gateway->instructions );
+                WC_Payment_Gateways::instance()->payment_gateways[$key]->instructions = apply_filters( 'wpml_translate_single_string', $gateway->instructions, 'woocommerce', $gateway->id .'_gateway_instructions' );
                 break;
             }
         }
@@ -303,7 +303,7 @@ class WCML_WC_Strings{
         global $sitepress;
 
         do_action('wpml_register_single_string', 'woocommerce', 'VAT_tax_label', $label );
-        $label = apply_filters( 'wpml_translate_single_string', 'woocommerce', 'VAT_tax_label', $label );
+        $label = apply_filters( 'wpml_translate_single_string', $label, 'woocommerce', 'VAT_tax_label' );
 
         return $label;
     }
@@ -404,7 +404,7 @@ class WCML_WC_Strings{
     function translate_woocommerce_rate_label($label){
 
         do_action('wpml_register_single_string', 'woocommerce taxes', $label , $label );
-        $label = apply_filters( 'wpml_translate_single_string', 'woocommerce taxes', $label , $label );
+        $label = apply_filters( 'wpml_translate_single_string', $label, 'woocommerce taxes', $label );
 
         return $label;
     }

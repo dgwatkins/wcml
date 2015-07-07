@@ -54,7 +54,7 @@ class WCML_Endpoints{
         }
 
         if( function_exists('icl_t') ){
-            return apply_filters( 'wpml_translate_single_string', 'WordPress', 'Endpoint slug: '. $endpoint, $endpoint );
+            return apply_filters( 'wpml_translate_single_string', $endpoint, 'WordPress', 'Endpoint slug: '. $endpoint  );
         }else{
             return $endpoint;
         }
