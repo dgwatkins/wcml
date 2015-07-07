@@ -85,7 +85,9 @@ class WCML_Endpoints{
         global $wpdb;
         //add endpoints and flush rules
         foreach( $this->endpoints_strings as $string_id ){
-            $strings = $wpdb->get_results( $wpdb->prepare( "SELECT value FROM {$wpdb->prefix}icl_string_translations WHERE string_id = %s AND status = 1", $string_id ) );
+
+            $strings = $wpdb->get_results( $wpdb->prepare( "SELECT value FROM {$wpdb->prefix}icl_string_translations WHERE string_id = %s AND status = %s", $string_id , ICL_STRING_TRANSLATION_COMPLETE) );
+
             foreach( $strings as $string ){
                 add_rewrite_endpoint( $string->value, EP_ROOT | EP_PAGES );
             }
