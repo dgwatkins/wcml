@@ -103,7 +103,7 @@ class WCML_WC_Strings{
 
         }
 
-        $trnsl_label = apply_filters( 'wpml_translate_single_string', $label, 'WordPress','taxonomy singular name: '.$label );
+        $trnsl_label = apply_filters( 'wpml_translate_single_string', $label, 'WordPress','taxonomy singular name: '.$label, $lang );
 
         if( $label != $trnsl_label ){
             return $trnsl_label;
