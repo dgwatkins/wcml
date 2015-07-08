@@ -86,7 +86,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fix: Some product translations were showing non existing discounted prices.
 * Fixed a couple of compatibility issues with WooCommerce Product Bundles (e.g. with using the Flatsome theme) 
 * Fixed a small usability issue related to Sensei
-* Bug fix: Stock quantity not synchronized when items were used in orders ßcreated in the backend.
+* Bug fix: Stock quantity not synchronized when items were used in orders created in the backend.
 
 
 = 3.6.4 =
