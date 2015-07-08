@@ -161,7 +161,7 @@ $woocommerce_wpml->update_settings(); ?>
 	<input type="hidden" id="upd_product_nonce" value="<?php echo wp_create_nonce( 'update_product_actions' ); ?>"/>
 	<input type="hidden" id="get_product_data_nonce" value="<?php echo wp_create_nonce( 'wcml_product_data' ); ?>"/>
 
-	<table class="widefat fixed wcml-products wp-list-table striped" cellspacing="0">
+	<table class="widefat fixed wpml-list-table wp-list-table striped" cellspacing="0">
 		<thead>
 		<tr>
 			<?php //TODO Sergey: make Title and Date columns sortable ?>

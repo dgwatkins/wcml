@@ -1,4 +1,4 @@
-<table class="widefat wcml-products wp-list-table striped" cellspacing="0">
+<table class="widefat wpml-list-table wp-list-table striped" cellspacing="0">
 	<thead>
 	<tr>
 		<?php //TODO Sergey: make Title and Date columns sortable ?>

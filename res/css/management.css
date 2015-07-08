@@ -979,11 +979,6 @@ input[name="wcml_curr_template"] {
 .wcml-tip {
 	cursor: help;
 }
-
-.wcml-products a {
-	cursor: pointer;
-}
-
 @media (max-width: 782px) {
 	.column-product_cat,
 	.column-product_tag,
