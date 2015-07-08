@@ -189,11 +189,17 @@ class WCML_WC_Strings{
 
         global $wpdb;
 
-        $translated_slug = $wpdb->get_var($wpdb->prepare("
-                SELECT t.value FROM {$wpdb->prefix}icl_string_translations t
-                JOIN {$wpdb->prefix}icl_strings s ON t.string_id = s.id
-                WHERE s.name=%s AND s.value = %s AND t.language = %s AND t.status = %d",
-            'URL slug: ' . $product_permalink, $product_permalink, $language, ICL_STRING_TRANSLATION_COMPLETE ));
+        // Use new API for WPML >= 3.2.3
+        $translated_slug = apply_filters( 'wpml_get_translated_slug', $product_permalink, $language );
+        
+        if ( $translated_slug == $product_permalink ) {
+            // Try the old way.
+            $translated_slug = $wpdb->get_var($wpdb->prepare("
+                    SELECT t.value FROM {$wpdb->prefix}icl_string_translations t
+                    JOIN {$wpdb->prefix}icl_strings s ON t.string_id = s.id
+                    WHERE s.name=%s AND s.value = %s AND t.language = %s AND t.status = %d",
+                'URL slug: ' . $product_permalink, $product_permalink, $language, ICL_STRING_TRANSLATION_COMPLETE ));
+        }
 
         return $translated_slug;
     }
