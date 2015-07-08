@@ -292,10 +292,10 @@ $woocommerce_wpml->update_settings(); ?>
 						<?php if ( $product->post_status == "publish" ) { ?>
 							<?php echo $product->post_date; ?><br>
 							<?php //TODO Sergey: Consider using the same textdomain as WordPress or as WooCommerce (so not always "wpml-wcml") in proper places so that the translation do not have to be done more than once...?>
-							<?php _e( 'Published', '' ); ?>
+							<?php _e( 'Published', 'wpml-wcml' ); ?>
 						<?php } else { ?>
 							<?php echo $product->post_modified; ?><br>
-							<?php _e( 'Last Modified', '' ); ?>
+							<?php _e( 'Last Modified', 'wpml-wcml' ); ?>
 						<?php } ?>
 
 
