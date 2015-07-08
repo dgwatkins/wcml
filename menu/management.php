@@ -37,6 +37,7 @@ if(isset($_GET['tab'])){
     <a class="nav-tab <?php echo $current_tab == 'settings' ?'nav-tab-active':''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml'); ?>"><?php _e('General settings', 'wpml-wcml') ?></a>
     <?php endif; ?>
     <a class="nav-tab <?php echo $current_tab == 'products' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=products'); ?>"><?php _e('Products', 'wpml-wcml') ?></a>
+    <a class="nav-tab <?php echo $current_tab == 'slugs' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=slugs'); ?>"><?php _e('Store URLs', 'wpml-wcml') ?></a>
     <?php if( current_user_can('wpml_operate_woocommerce_multilingual')): ?>
     <?php foreach($products_and_variation_taxonomies as $tax_key => $tax): if(!$sitepress->is_translated_taxonomy($tax_key)) continue; ?>
         <a class="nav-tab <?php echo (isset($_GET['tab']) && $_GET['tab'] == $tax_key)?'nav-tab-active':''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab='.$tax_key); ?>" <?php if(!WCML_Terms::is_fully_translated($tax_key)): ?>title="<?php esc_attr_e('You have untranslated terms!', 'wpml-wcml'); ?>"<?php endif;?>>
@@ -63,6 +64,8 @@ if(isset($_GET['tab'])){
             <?php  include WCML_PLUGIN_PATH . '/menu/sub/settings.php'; ?>
         <?php elseif(isset($all_products_taxonomies[$current_tab]) || isset($products_and_variation_taxonomies[$current_tab]) && current_user_can('wpml_operate_woocommerce_multilingual')): ?>
             <?php include WCML_PLUGIN_PATH . '/menu/sub/product-taxonomy.php'; ?>
+        <?php elseif( isset($_GET['tab']) && $_GET['tab'] == 'slugs' && current_user_can('wpml_operate_woocommerce_multilingual') ): ?>
+            <?php include WCML_PLUGIN_PATH . '/menu/sub/slugs.php'; ?>
         <?php elseif((isset($_GET['tab']) && $_GET['tab'] == 'products') || !current_user_can('wpml_manage_woocommerce_multilingual')): ?>
             <?php include WCML_PLUGIN_PATH . '/menu/sub/products.php'; ?>
         <?php endif; ?>
