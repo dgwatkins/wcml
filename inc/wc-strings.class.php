@@ -103,7 +103,7 @@ class WCML_WC_Strings{
 
         }
 
-        $trnsl_label = icl_t('WordPress','taxonomy singular name: '.$label,$label);
+        $trnsl_label = apply_filters( 'wpml_translate_single_string', $label, 'WordPress','taxonomy singular name: '.$label, $lang );
 
         if( $label != $trnsl_label ){
             return $trnsl_label;
@@ -241,7 +241,7 @@ class WCML_WC_Strings{
     function register_shipping_methods($available_methods){
         foreach($available_methods as $key => $method){
             do_action('wpml_register_single_string', 'woocommerce', $key .'_shipping_method_title', $method->label );
-            $method->label = icl_t('woocommerce', $key .'_shipping_method_title', $method->label);
+            $method->label = apply_filters( 'wpml_translate_single_string', $method->label, 'woocommerce', $key .'_shipping_method_title');
         }
 
         return $available_methods;
@@ -250,7 +250,8 @@ class WCML_WC_Strings{
     function translate_tax_rates($rates){
         if (!empty($rates)) {
             foreach ($rates as &$rate) {
-                $rate['label'] = icl_translate('woocommerce', 'tax_label_' . esc_url_raw($rate['label']), $rate['label']);
+                do_action('wpml_register_single_string', 'woocommerce', 'tax_label_' . esc_url_raw($rate['label']), $rate['label'] );
+                $rate['label'] = apply_filters( 'wpml_translate_single_string', $rate['label'], 'woocommerce', 'tax_label_' . esc_url_raw($rate['label']) );
             }
         }
 
@@ -258,17 +259,17 @@ class WCML_WC_Strings{
     }
 
     function translate_gateway_title($title, $gateway_title) {
-        if (function_exists('icl_translate')) {
-            $title = icl_translate('woocommerce', $gateway_title .'_gateway_title', $title);
-        }
+
+        do_action('wpml_register_single_string', 'woocommerce', $gateway_title .'_gateway_title', $title  );
+        $title = apply_filters( 'wpml_translate_single_string', $title, 'woocommerce', $gateway_title .'_gateway_title' );
 
         return $title;
     }
 
     function translate_gateway_description($description, $gateway_title) {
-        if (function_exists('icl_translate')) {
-            $description = icl_translate('woocommerce', $gateway_title .'_gateway_description', $description);
-        }
+
+        do_action('wpml_register_single_string', 'woocommerce', $gateway_title .'_gateway_description', $description  );
+        $description =apply_filters( 'wpml_translate_single_string', $description, 'woocommerce', $gateway_title .'_gateway_description' );
 
         return $description;
     }
@@ -286,23 +287,23 @@ class WCML_WC_Strings{
     }
 
     function translate_payment_instructions($id){
-        if (function_exists('icl_translate')) {
-            $gateways = WC()->payment_gateways();
-            foreach($gateways->payment_gateways as $key => $gateway){
-                if($gateway->id == $id && isset(WC_Payment_Gateways::instance()->payment_gateways[$key]->instructions)){
-                    WC_Payment_Gateways::instance()->payment_gateways[$key]->instructions = icl_translate('woocommerce', $gateway->id .'_gateway_instructions', $gateway->instructions);
-                    break;
-                }
+
+        $gateways = WC()->payment_gateways();
+        foreach($gateways->payment_gateways as $key => $gateway){
+            if($gateway->id == $id && isset(WC_Payment_Gateways::instance()->payment_gateways[$key]->instructions)){
+                do_action('wpml_register_single_string', 'woocommerce', $gateway->id .'_gateway_instructions', $gateway->instructions  );
+                WC_Payment_Gateways::instance()->payment_gateways[$key]->instructions = apply_filters( 'wpml_translate_single_string', $gateway->instructions, 'woocommerce', $gateway->id .'_gateway_instructions' );
+                break;
             }
         }
+
     }
 
     function register_tax_label($label){
         global $sitepress;
 
-        if(function_exists('icl_translate')){
-            $label = icl_translate('woocommerce', 'VAT_tax_label', $label);
-        }
+        do_action('wpml_register_single_string', 'woocommerce', 'VAT_tax_label', $label );
+        $label = apply_filters( 'wpml_translate_single_string', $label, 'woocommerce', 'VAT_tax_label' );
 
         return $label;
     }
@@ -401,9 +402,10 @@ class WCML_WC_Strings{
 
 
     function translate_woocommerce_rate_label($label){
-        if (function_exists('icl_translate')) {
-            $label = icl_translate('woocommerce taxes', $label , $label);
-        }
+
+        do_action('wpml_register_single_string', 'woocommerce taxes', $label , $label );
+        $label = apply_filters( 'wpml_translate_single_string', $label, 'woocommerce taxes', $label );
+
         return $label;
     }
 
