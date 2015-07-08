@@ -916,7 +916,7 @@ class WCML_Products{
                 continue;
             } elseif ( isset( $product_translations[ $language['code'] ] ) && $product_translations[ $language['code'] ]->original ) { ?>
 	            <span title="<?php echo $language['english_name'] . ': ' . __( 'Original language', 'wpml-wcml' );?>">
-	                <i class="icl-ico-original"></i>
+	                <i class="otgs-ico-original"></i>
                 </span>
             <?php } elseif ( $slang != $language['code'] && ( ! isset( $_POST['translation_status_lang'] ) || ( isset( $_POST['translation_status_lang'] ) && ( $_POST['translation_status_lang'] == $language['code'] ) || $_POST['translation_status_lang'] == '' ) ) ) {
                 if (isset($product_translations[$language['code']])) {
@@ -926,28 +926,28 @@ class WCML_Products{
 		                ?>
 		                <a id="<?php echo $language['code'];?>"
 		                   title="<?php echo $language['english_name'] . ': ' . __( 'Add translation', 'wpml-wcml' );?>">
-			                <i class="icl-ico-add"></i>
+			                <i class="otgs-ico-add"></i>
 		                </a>
 	                <?php } elseif ( $tr_status->needs_update ) { ?>
 		                <a id="<?php echo $language['code'];?>"
 		                   title="<?php echo $language['english_name'] . ': ' . __( 'Update translation', 'wpml-wcml' );?>">
-			                <i class="icl-ico-refresh"></i>
+			                <i class="otgs-ico-refresh"></i>
 		                </a>
 	                <?php } elseif ( $tr_status->status != ICL_TM_COMPLETE && $tr_status->status != ICL_TM_DUPLICATE ) { ?>
 		                <a id="<?php echo $language['code']; ?>"
 		                   title="<?php echo $language['english_name'] . ': ' . __( 'Finish translating', 'wpml-wcml' ); ?>">
-			                <i class="icl-ico-refresh"></i>
+			                <i class="otgs-ico-refresh"></i>
 		                </a>
 	                <?php } elseif ( $tr_status->status == ICL_TM_COMPLETE || $tr_status->status == ICL_TM_DUPLICATE ) { ?>
 		                <a id="<?php echo $language['code'];?>"
 		                   title="<?php echo $language['english_name'] . ': ' . __( 'Edit translation', 'wpml-wcml' );?>">
-			                <i class="icl-ico-edit"></i>
+			                <i class="otgs-ico-edit"></i>
 		                </a>
 	                <?php }
                 } else { ?>
 	                <a id="<?php echo $language['code']; ?>"
 	                   title="<?php echo $language['english_name'] . ': ' . __( 'Add translation', 'wpml-wcml' ); ?>">
-		                <i class="icl-ico-add"></i>
+		                <i class="otgs-ico-add"></i>
 	                </a>
                 <?php }
             }

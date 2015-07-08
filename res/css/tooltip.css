@@ -1,18 +1,18 @@
-.wcml-section-header .icon-question-sign,
-.wcml-section-content .icon-question-sign,
-.wcml_tootlip_icon.icon-question-sign,
-th .icon-question-sign{
-    color: #ccc;
-    cursor: pointer;
-    vertical-align: middle;
-    font-size: 12px;
-}
+/*.wcml-section-header .icon-question-sign,*/
+/*.wcml-section-content .icon-question-sign,*/
+/*.wcml_tootlip_icon.icon-question-sign,*/
+/*th .icon-question-sign{*/
+/*color: #ccc;*/
+/*cursor: pointer;*/
+/*vertical-align: middle;*/
+/*font-size: 12px;*/
+/*}*/
 
-.wcml-section-header .icon-question-sign:hover,
-.wcml_tootlip_icon.icon-question-sign:hover,
-.wcml-section-content .icon-question-sign:hover,
-th .icon-question-sign:hover{
-    color: #007cbd;
-    transition: all 0.15s linear;
-    cursor: help;
-}
+/*.wcml-section-header .icon-question-sign:hover,*/
+/*.wcml_tootlip_icon.icon-question-sign:hover,*/
+/*.wcml-section-content .icon-question-sign:hover,*/
+/*th .icon-question-sign:hover{*/
+/*color: #007cbd;*/
+/*transition: all 0.15s linear;*/
+/*cursor: help;*/
+/*}*/

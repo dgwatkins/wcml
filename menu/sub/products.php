@@ -165,22 +165,27 @@ $woocommerce_wpml->update_settings(); ?>
 		<thead>
 		<tr>
 			<?php //TODO Sergey: make Title and Date columns sortable ?>
-			<th scope="col" id="thumb" class="manage-column column-thumb" style=""><span
-					class="wc-image tips"><?php _e( 'Image', 'wpml-wcml' ) ?></span></th>
-			<th scope="col" class="icl-col-title"><?php _e( 'Product', 'wpml-wcml' ) ?></th>
+			<th scope="col" class="manage-column column-thumb">
+				<span class="wc-image wcml-tip"
+				      data-tip="<?php _e( 'Image', 'wpml-wcml' ) ?>"><?php _e( 'Image', 'wpml-wcml' ) ?></span>
+			</th>
+			<th scope="col" class="wpml-col-title"><?php _e( 'Product', 'wpml-wcml' ) ?></th>
+			<th scope="col" class="wpml-col-languages">
+				<?php echo $woocommerce_wpml->products->get_translation_flags( $active_languages, $slang, $job_id ? $job_language : false ); ?>
+			</th>
 			<th scope="col"
-			    class="icl-col-languages"><?php echo $woocommerce_wpml->products->get_translation_flags( $active_languages, $slang, $job_id ? $job_language : false ); ?></th>
-			<th scope="col" id="product_cat column-categories"
-			    class="manage-column column-product_cat"><?php _e( 'Categories', 'wpml-wcml' ) ?></th>
-			<th scope="col" id="product_type" class="manage-column column-product_type"><span
-					class="wc-type parent-tips" data-tip="Type"><?php _e( 'Type', 'wpml-wcml' ) ?></span></th>
-			<th scope="col" id="date" class="manage-column column-date "><?php _e( 'Date', 'wpml-wcml' ) ?></th>
+			    class="manage-column column-categories column-product_cat"><?php _e( 'Categories', 'wpml-wcml' ) ?></th>
+			<th scope="col" class="manage-column column-product_type">
+				<span class="wc-type wcml-tip"
+				      data-tip="<?php _e( 'Type', 'wpml-wcml' ) ?>"><?php _e( 'Type', 'wpml-wcml' ) ?></span>
+			</th>
+			<th scope="col" id="date" class="manage-column column-date"><?php _e( 'Date', 'wpml-wcml' ) ?></th>
 		</tr>
 		</thead>
 		<tbody>
 		<?php if ( empty( $products ) ): ?>
 			<tr>
-				<td colspan="4"><h3 class="wcml_no_found_text"><?php _e( 'No products found', 'wpml-wcml' ); ?></h3>
+				<td colspan="6" class="text-center"><strong><?php _e( 'No products found', 'wpml-wcml' ); ?></strong>
 				</td>
 			</tr>
 		<?php else: ?>
@@ -211,7 +216,7 @@ $woocommerce_wpml->update_settings(); ?>
 					</td>
 
 
-					<td class="icl-col-title  icl-col-title-flag">
+					<td class="wpml-col-title  wpml-col-title-flag">
 						<?php echo $product->post_parent != 0 ? '&#8212; ' : ''; ?>
 						<strong>
 							<?php if ( ! $slang ): ?>
@@ -249,7 +254,7 @@ $woocommerce_wpml->update_settings(); ?>
 						</div>
 					</td>
 
-					<td class="icl-col-languages">
+					<td class="wpml-col-languages">
 						<?php
 						if ( isset( $current_translator ) ) {
 							$prod_lang = $woocommerce_wpml->products->get_original_product_language( $product->ID );
@@ -265,7 +270,7 @@ $woocommerce_wpml->update_settings(); ?>
 
 					<td class="column-product_type">
 						<?php
-						//TODO Sergey: Check on get_product function
+						//TODO Sergey: Check on get_product function (it seems to be deprecated)
 						$prod       = get_product( $product->ID );
 						$icon_class = $prod->product_type;
 
@@ -275,15 +280,14 @@ $woocommerce_wpml->update_settings(); ?>
 							$icon_class = 'downloadable';
 						}
 
-
-						//TODO Sergey: Add WC tips to icons
 						?>
-						<span class="product-type tips <?php echo $icon_class;?>"></span>
+						<span class="product-type wcml-tip <?php echo $icon_class;?>"
+						      data-tip="<?php echo $icon_class;?>"></span>
 					</td>
 
 
 					<td class="date column-date">
-						<?php //TODO Sergey: Put here this nice WP function that shows 13mins ago and knows about future posts etc. ;)
+						<?php //TODO Sergey: Put here this nice WP function that shows "13 mins ago" and knows about future posts etc. ;)
 						?>
 						<?php if ( $product->post_status == "publish" ) { ?>
 							<?php echo $product->post_date; ?><br>
@@ -347,5 +351,119 @@ $woocommerce_wpml->update_settings(); ?>
 		</div>
 	<?php endif; ?>
 </form>
+
+
+<div class="wpml-dialog wpml-dialog-translate wcml-pt-form">
+	<header class="wpml-dialog-header">
+		<?php //TODO Add title ?>
+		<h2 class="wpml-dialog-title"><?php printf( __( 'Product translation:  %s', 'wpml-wcml' ), "<strong>Product title</strong>" ); ?></h2>
+		<?php //TODO Add link and title ?>
+		<a href="#" class="view"
+		   title="<?php printf( __( 'View "%s"', 'wpml-wcml' ), "Product title" ); ?>"><?php _e( 'View Product', 'wpml-wcml' ); ?> </a>
+		<?php //TODO Sergey: close Dialog on wpml-dialog-close (not on icon classes) ?>
+		<i class="dashicons dashicons-no wpml-dialog-close"></i>
+	</header>
+	<form class="wpml-dialog-body"
+	      id="poststuff"> <?php //   IMpoRTANT This ID must stay like this if it is impossible -> create additional div ?>
+		<header class="wpml-translation-header">
+			<h3 class="wpml-header-original"><?php _e( 'Original', 'wpml-wcml' ); ?>: <span class="icl-title-flag"><img
+						src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/en.png"
+						alt="English"></span><strong>English</strong></h3>
+
+			<h3 class="wpml-header-translation"><?php _e( 'Translation to', 'wpml-wcml' ); ?>: <span
+					class="icl-title-flag"><img
+						src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/es.png"
+						alt="Spanish"></span><strong>Spanish</strong></h3>
+			<a class="button-copy" title="<?php _e( 'Copy from original' ); ?>"><i
+					class="otgs-ico-copy"></i> <?php _e( 'Copy all fields from original', 'wpml-wcml' ); ?></a>
+		</header>
+
+
+		<?php
+		//TODO Sergey: Do that... Right ;)
+		//TODO Sergey: I disabled possibility of moving boxes since I cannot force WP to remember where the boxes were moved to, but if you know how to do that feel free
+		wp_enqueue_script( 'postbox' );
+		//wp_enqueue_script( 'postbox-edit', WCML_PLUGIN_PATH.'res/js/postbox-edit.js', array('jquery', 'postbox') );
+
+		?>
+		<script type="text/javascript">
+			jQuery(document).on('ready', function ($) {
+				//TODO Sergey: I disabled remembering open/close state and order because it wasn't working anyway, bu if you know how to make it work feel free
+				postboxes.save_state = function () {
+					return;
+				};
+				postboxes.save_order = function () {
+					return;
+				};
+				postboxes.add_postbox_toggles();
+			});
+		</script>
+
+		<div class="wpml-form-row">
+			<label for="term-name"> Title </label>
+			<input disabled id="term-name-original" value="Children" type="text">
+			<a class="button-copy" title="<?php _e( 'Copy from original' ); ?>"><i
+					class="otgs-ico-copy otgs-ico-32"></i></a>
+			<input id="term-name" value="Niños" type="text">
+		</div>
+
+		<div class="wpml-form-row">
+			<label for="term-slug">Slug</label>
+			<input disabled id="term-slug-original" value="children" type="text">
+			<a class="button-copy" title="<?php _e( 'Copy from original' ); ?>" id=""><i
+					class="otgs-ico-copy otgs-ico-32"></i></a>
+			<input id="term-slug" value="ninos" type="text">
+		</div>
+
+		<div class="wpml-form-row">
+			<label for="term-description">Content /<br>Description</label>
+			<textarea disabled id="term-description-original" cols="22" rows="4"></textarea>
+			<a class="button-copy" title="<?php _e( 'Copy from original' ); ?>" id=""><i
+					class="otgs-ico-copy otgs-ico-32"></i></a>
+			<textarea id="term-description" cols="22" rows="4"></textarea>
+		</div>
+
+
+		<div class="postbox wpml-form-row wcml-row-excerpt">
+			<div title="<?php _e( 'Click to toggl' ); ?>" class="handlediv"><br></div>
+			<h3 class="hndle"><span>Excerpt</span></h3>
+
+			<div class="inside">
+				<textarea disabled id="term-description-original" cols="22" rows="4"></textarea>
+				<a class="button-copy" title="<?php _e( 'Copy from original' ); ?>" id=""><i
+						class="otgs-ico-copy otgs-ico-32"></i></a>
+				<textarea id="term-description" cols="22" rows="4"></textarea>
+			</div>
+		</div>
+		<?php //TODO Sergey: Add: IF no original THEN: class="postbox closed" and <em>(empty)</em> after title ?>
+		<div class="postbox wpml-form-row closed">
+			<div title="<?php _e( 'Click to toggle' ); ?>" class="handlediv"><br></div>
+			<h3 class="hndle"><span>Test 2 <em>(empty)</em> </span></h3>
+
+			<div class="inside">
+				testing content
+			</div>
+		</div>
+
+		<?php //TODO Sergey: Add here the rest of controls and I will style them properly. ?>
+
+
+		<div class="wpml-dialog-footer sticky">
+			<span class="errors icl_error_text"></span>
+
+			<div class="wcml-pt-progress"></div>
+			<div class="alignleft">
+				<input class="button-secondary cancel" value="Cancel" type="button">
+				<input class="button-secondary resign" value="Resign" type="button">
+			</div>
+			<div class="alignright">
+				<input class="button-primary" value="Save" type="submit">
+				<input class="button-primary" value="Save&Close" type="submit">
+			</div>
+		</div>
+
+	</form>
+</div>
+
 
 

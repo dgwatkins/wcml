@@ -51,13 +51,13 @@
 }
 
 .wcml_wrap {
-	@extend %icl-wrap;
+	@extend %wpml-wrap;
 	margin-bottom: 20px;
 	min-width: 900px;
 }
 
 .wcml_miss_lang {
-	@extend %icl-wrap;
+	@extend %wpml-wrap;
 	background-color: #efefef;
 	width: 350px;
 	margin-left: 20px;
@@ -513,10 +513,6 @@
 	border-style: solid;
 }
 
-textarea[disabled] {
-	background-color: #eee;
-}
-
 .wcml_variation_file_paths {
 	white-space: nowrap;
 	float: left;
@@ -751,30 +747,6 @@ table.widefat.currency_table {
 	height: 24px;
 	background-position: center center;
 	display: inline-block;
-}
-
-.wcml_products .icon-woo-simple {
-	background-image: url('../images/icon-woo-simple.png');
-}
-
-.wcml_products .icon-woo-downloadable {
-	background-image: url('../images/icon-woo-downloadable.png');
-}
-
-.wcml_products .icon-woo-external {
-	background-image: url('../images/icon-woo-external.png');
-}
-
-.wcml_products .icon-woo-grouped {
-	background-image: url('../images/icon-woo-grouped.png');
-}
-
-.wcml_products .icon-woo-variable {
-	background-image: url('../images/icon-woo-variable.png');
-}
-
-.wcml_products .icon-woo-virtual {
-	background-image: url('../images/icon-woo-virtual.png');
 }
 
 .wcml_products .children_icon {
@@ -1014,6 +986,9 @@ input[name="wcml_curr_template"] {
 }
 
 /*============================================================*/
+.wcml-tip {
+	cursor: help;
+}
 .wcml-products {
 	a {
 		cursor: pointer;
@@ -1030,4 +1005,14 @@ input[name="wcml_curr_template"] {
 
 .wcml-pt-form {
 
+
+}
+
+.wcml-row-excerpt {
+	textarea {
+		width: calc(60% - 96px);
+		&[disabled] {
+			width: calc(40% - 34px);
+		}
+	}
 }
