@@ -122,22 +122,23 @@ class WCML_WC_Strings{
     function translated_cart_item_name($title, $values, $cart_item_key){
 
         if($values){
+
             $parent = $values['data']->post->post_parent;
             $tr_product_id = apply_filters( 'translate_object_id', $values['product_id'], 'product', true );
-            $title = get_the_title($tr_product_id);    
+            $trnsl_title = get_the_title($tr_product_id);
             
             if($parent){
                 $tr_parent = apply_filters( 'translate_object_id', $parent, 'product', true );
-                $title = get_the_title( $tr_parent ) . ' &rarr; ' . $title;    
+                $trnsl_title = get_the_title( $tr_parent ) . ' &rarr; ' . $trnsl_title;
             }
 
-            if( wc_get_product( $tr_product_id )->is_visible() ){
-                $title = sprintf( '<a href="%s">%s</a>', $values['data']->get_permalink(), $title );
+            if( strstr( $title,'</a>' ) ){
+                $trnsl_title = sprintf( '<a href="%s">%s</a>', $values['data']->get_permalink(), $trnsl_title );
             }else{
-                $title = $title. '&nbsp;';
+                $trnsl_title = $trnsl_title. '&nbsp;';
             }
 
-                        
+              $title = $trnsl_title;
         }
 
         return $title;
