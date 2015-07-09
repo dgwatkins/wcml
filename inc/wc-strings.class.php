@@ -442,6 +442,7 @@ class WCML_WC_Strings{
         $default_language = $sitepress->get_default_language();
 
         if ( apply_filters( 'wpml_slug_translation_available', false) ) {
+            // Use new API for WPML >= 3.2.3
             $slug_translation_languages = apply_filters( 'wpml_get_slug_translation_languages', array(), $slug );
         } else {
             $slug_translation_languages = $wpdb->get_col($wpdb->prepare("SELECT tr.language FROM {$wpdb->prefix}icl_strings AS s LEFT JOIN {$wpdb->prefix}icl_string_translations AS tr ON s.id = tr.string_id WHERE s.name = %s AND s.value = %s AND tr.status = %s", 'URL slug: ' . $slug, $slug, ICL_STRING_TRANSLATION_COMPLETE));
