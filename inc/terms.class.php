@@ -141,53 +141,18 @@ class WCML_Terms{
                 $taxonomies = array('product_cat', 'product_tag');
                 
                 foreach($taxonomies as $taxonomy ){
-                    
-                    $permalinks     = get_option( 'woocommerce_permalinks' );
+                    $slug_details = $this->get_translated_tax_slug($taxonomy);
 
-                    switch($taxonomy){
-                        case 'product_tag':
-                            $slug = !empty( $permalinks['tag_base'] ) ? trim($permalinks['tag_base'],'/') : 'product-tag';
-                            break;
-
-                        case 'product_cat':
-                            $slug = !empty( $permalinks['category_base'] ) ? trim($permalinks['category_base'],'/') : 'product-category';
-                            break;
-
-                        default:
-                            $slug = trim( $permalinks['attribute_base'], '/' );
-                            break;
-                    }
-
-                    if($slug && $sitepress->get_current_language() != $strings_language){
-
-                        $slug_translation = $wpdb->get_var($wpdb->prepare("
-                                    SELECT t.value
-                                    FROM {$wpdb->prefix}icl_string_translations t
-                                        JOIN {$wpdb->prefix}icl_strings s ON t.string_id = s.id
-                                    WHERE t.language = %s AND t.status = %s AND s.name = %s AND s.value = %s
-                                ", $sitepress->get_current_language(), ICL_STRING_TRANSLATION_COMPLETE, 'URL ' . $taxonomy . ' slug: ' . $slug, $slug));
-
-                        if(!$slug_translation){
-                            // handle exception - default woocommerce category and tag bases used
-                            // get translation from WooCommerce mo files?
-                            unload_textdomain('woocommerce');
-                            $woocommerce->load_plugin_textdomain();
-                            $slug_translation = _x($slug, 'slug', 'woocommerce');
-                            $slug = $taxonomy == 'product_tag' ? 'product-tag' : 'product-category'; // strings language
-                        }
-
-                        if($slug_translation){
-                            $buff_value = array();
-                            foreach((array)$value as $k=>$v){
-                                if($slug != $slug_translation && preg_match('#^[^/]*/?' . $slug . '/#', $k)){
-                                    $k = preg_replace('#^([^/]*)(/?)' . $slug . '/#',  '$1$2' . $slug_translation . '/' , $k);
-                                }
-                                $buff_value[$k] = $v;
+                    if($slug_details) {
+                        $buff_value = array();
+                        foreach ((array)$value as $k => $v) {
+                            if ( $slug_details['slug'] != $slug_details['translated_slug'] && preg_match('#^[^/]*/?' . $slug_details['slug'] . '/#', $k)) {
+                                $k = preg_replace('#^([^/]*)(/?)' . $slug_details['slug'] . '/#', '$1$2' . $slug_details['translated_slug']  . '/', $k);
                             }
-                            $value = $buff_value;
-                            unset($buff_value);
+                            $buff_value[$k] = $v;
                         }
-
+                        $value = $buff_value;
+                        unset($buff_value);
                     }
                     
                 }
@@ -201,7 +166,7 @@ class WCML_Terms{
                 
                 foreach($wc_taxonomies_wc_format as $taxonomy ){
                     $taxonomy_obj  = get_taxonomy($taxonomy);
-                    
+
                     if(isset($taxonomy_obj->rewrite['slug'])){
                         $exp = explode('/', trim($taxonomy_obj->rewrite['slug'],'/'));
                         $slug = join('/', array_slice($exp, 0, count($exp) - 1));
@@ -279,6 +244,50 @@ class WCML_Terms{
         return $value;
     }
 
+
+    function get_translated_tax_slug( $taxonomy ){
+        global $sitepress, $woocommerce_wpml, $wpdb;
+
+        $strings_language = $woocommerce_wpml->strings->get_wc_context_language();
+
+        $permalinks     = get_option( 'woocommerce_permalinks' );
+
+        switch($taxonomy){
+            case 'product_tag':
+                $slug = !empty( $permalinks['tag_base'] ) ? trim($permalinks['tag_base'],'/') : 'product-tag';
+                break;
+
+            case 'product_cat':
+                $slug = !empty( $permalinks['category_base'] ) ? trim($permalinks['category_base'],'/') : 'product-category';
+                break;
+
+            default:
+                $slug = trim( $permalinks['attribute_base'], '/' );
+                break;
+        }
+
+        if($slug && $sitepress->get_current_language() != $strings_language) {
+
+            $slug_translation = $wpdb->get_var($wpdb->prepare("
+                                    SELECT t.value
+                                    FROM {$wpdb->prefix}icl_string_translations t
+                                        JOIN {$wpdb->prefix}icl_strings s ON t.string_id = s.id
+                                    WHERE t.language = %s AND t.status = %s AND s.name = %s AND s.value = %s
+                                ", $sitepress->get_current_language(), ICL_STRING_TRANSLATION_COMPLETE, 'URL ' . $taxonomy . ' slug: ' . $slug, $slug));
+
+            if (!$slug_translation) {
+                // handle exception - default woocommerce category and tag bases used
+                $taxonomy_obj = get_taxonomy($taxonomy);
+                $slug_translation = isset($taxonomy_obj->rewrite['slug']) ? trim($taxonomy_obj->rewrite['slug'], '/') : false;
+            }
+
+            return array( 'slug' => $slug, 'translated_slug' => $slug_translation );
+        }
+
+        return false;
+
+    }
+
     function _switch_wc_locale(){
         global $sitepress;
         $locale = !empty($this->_tmp_locale_val) ? $this->_tmp_locale_val : $sitepress->get_locale($sitepress->get_current_language());
@@ -299,7 +308,7 @@ class WCML_Terms{
         if(($taxonomy == 'product_cat' || $taxonomy == 'product_tag' || !empty($wc_taxonomies_wc_format) && in_array($taxonomy, $wc_taxonomies_wc_format)) && !$no_recursion_flag){
             
             $cache_key = 'termlink#' . $taxonomy .'#' . $term->term_id;
-            if($link = wp_cache_get($cache_key, 'terms')){
+            if( $link = wp_cache_get($cache_key, 'terms')){
                 $termlink = $link;
                 
             }else{               
@@ -311,42 +320,14 @@ class WCML_Terms{
                                 
                 if(!empty($term_language)){
 
-                    $taxonomy_obj  = get_taxonomy($taxonomy);
-                    $base = isset($taxonomy_obj->rewrite['slug']) ? trim($taxonomy_obj->rewrite['slug'] ,'/') : false;
-                        
+
+                    $taxonomy_obj = get_taxonomy($taxonomy);
+                    $base = isset($taxonomy_obj->rewrite['slug']) ? trim($taxonomy_obj->rewrite['slug'], '/') : false;
+
+                    $slug_details = $this->get_translated_tax_slug($taxonomy);
+                    $base_translated = $slug_details['translated_slug'];
+
                     $string_identifier = $taxonomy == 'product_tag' || $taxonomy == 'product_cat' ? $taxonomy : 'attribute';
-                    
-                    if($base === ''){
-                        $base = $taxonomy == 'product_tag' ? 'product-tag' : 'product-category'; // strings language
-                        do_action('wpml_register_single_string', 'URL ' . $taxonomy . ' slugs - ' . $base, 'Url ' . $string_identifier . ' slug: ' . $base, $base, array('language' => 'en'));
-                    }
-                    
-                    //
-                    if($term_language->language_code != $strings_language){
-
-                        $prepared = array();
-
-                        $sql = "SELECT t.value
-                                        FROM {$wpdb->prefix}icl_strings s    
-                                        JOIN {$wpdb->prefix}icl_string_translations t ON t.string_id = s.id
-                                    WHERE s.value=%s AND t.status = %s ";
-                        $prepared[] = esc_sql($base);
-                        $prepared[] = ICL_STRING_TRANSLATION_COMPLETE;
-
-                        if ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-                            $sql .= " AND s.language = %s ";
-                            $prepared[] = $strings_language;
-                        }
-
-                        $sql .= " AND s.name LIKE %s AND t.language = %s";
-                        $prepared[] = 'Url '.$string_identifier.' slug:%';
-                        $prepared[] = $term_language->language_code;
-
-                        $base_translated = $wpdb->get_var( $wpdb->prepare( $sql,$prepared ) );
-
-                    }else{
-                        $base_translated = $base;
-                    }
 
                     if(!empty($base_translated) && $base_translated != $base && isset( $wp_rewrite->extra_permastructs[$taxonomy] ) ){
 
