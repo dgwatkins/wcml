@@ -71,6 +71,7 @@ class WCML_Endpoints{
     function maybe_flush_rules(){
         if( get_option( 'flush_rules_for_endpoints_translations' ) ){
             flush_rewrite_rules();
+            delete_option( 'flush_rules_for_endpoints_translations' );
         }
     }
 
