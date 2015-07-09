@@ -190,11 +190,17 @@ class WCML_WC_Strings{
 
         global $wpdb;
 
-        $translated_slug = $wpdb->get_var($wpdb->prepare("
-                SELECT t.value FROM {$wpdb->prefix}icl_string_translations t
-                JOIN {$wpdb->prefix}icl_strings s ON t.string_id = s.id
-                WHERE s.name=%s AND s.value = %s AND t.language = %s AND t.status = %d",
-            'URL slug: ' . $product_permalink, $product_permalink, $language, ICL_STRING_TRANSLATION_COMPLETE ));
+        // Use new API for WPML >= 3.2.3
+        if ( apply_filters( 'wpml_slug_translation_available', false) ) {
+            $translated_slug = apply_filters( 'wpml_get_translated_slug', $product_permalink, $language );
+        } else {
+            // Try the old way.
+            $translated_slug = $wpdb->get_var($wpdb->prepare("
+                    SELECT t.value FROM {$wpdb->prefix}icl_string_translations t
+                    JOIN {$wpdb->prefix}icl_strings s ON t.string_id = s.id
+                    WHERE s.name=%s AND s.value = %s AND t.language = %s AND t.status = %d",
+                'URL slug: ' . $product_permalink, $product_permalink, $language, ICL_STRING_TRANSLATION_COMPLETE ));
+        }
 
         return $translated_slug;
     }
@@ -436,7 +442,12 @@ class WCML_WC_Strings{
         $slug = $this->product_permalink_slug();
         $default_language = $sitepress->get_default_language();
 
-        $slug_translation_languages = $wpdb->get_col($wpdb->prepare("SELECT tr.language FROM {$wpdb->prefix}icl_strings AS s LEFT JOIN {$wpdb->prefix}icl_string_translations AS tr ON s.id = tr.string_id WHERE s.name = %s AND s.value = %s AND tr.status = %s", 'URL slug: ' . $slug, $slug, ICL_STRING_TRANSLATION_COMPLETE));
+        if ( apply_filters( 'wpml_slug_translation_available', false) ) {
+            // Use new API for WPML >= 3.2.3
+            $slug_translation_languages = apply_filters( 'wpml_get_slug_translation_languages', array(), $slug );
+        } else {
+            $slug_translation_languages = $wpdb->get_col($wpdb->prepare("SELECT tr.language FROM {$wpdb->prefix}icl_strings AS s LEFT JOIN {$wpdb->prefix}icl_string_translations AS tr ON s.id = tr.string_id WHERE s.name = %s AND s.value = %s AND tr.status = %s", 'URL slug: ' . $slug, $slug, ICL_STRING_TRANSLATION_COMPLETE));
+        }
         $miss_slug_lang = array();
 
         if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
