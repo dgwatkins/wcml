@@ -155,12 +155,13 @@ class woocommerce_wpml {
                 do_action('wpml_register_single_string', 'WordPress', 'URL slug: ' . $slug, $slug);
                 $string = $wpdb->get_row($wpdb->prepare("SELECT id,status FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'URL slug: ' . $slug, $slug));
             }
-    
-            if(empty($sitepress_settings['posts_slug_translation']['on']) || empty($sitepress_settings['posts_slug_translation']['types']['product'])){
-                $iclsettings['posts_slug_translation']['on'] = 1;
-                $iclsettings['posts_slug_translation']['types']['product'] = 1;
-                $sitepress->save_settings($iclsettings);
-            }
+
+        }
+
+        if(empty($sitepress_settings['posts_slug_translation']['on']) || empty($sitepress_settings['posts_slug_translation']['types']['product'])){
+            $iclsettings['posts_slug_translation']['on'] = 1;
+            $iclsettings['posts_slug_translation']['types']['product'] = 1;
+            $sitepress->save_settings($iclsettings);
         }
 
     }
