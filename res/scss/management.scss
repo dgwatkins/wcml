@@ -50,7 +50,7 @@
 	vertical-align: baseline;
 }
 
-.wcml_wrap {
+.wcml-wrap {
 	@extend %wpml-wrap;
 	margin-bottom: 20px;
 	min-width: 900px;
@@ -988,6 +988,7 @@ input[name="wcml_curr_template"] {
 /*============================================================*/
 .wcml-tip {
 	cursor: help;
+	color: #555;
 }
 .wcml-products {
 	a {

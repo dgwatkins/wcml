@@ -5,7 +5,7 @@
 
 		<th scope="col"><?php _e( 'Slug type', 'wpml-wcml' ) ?></th>
 		<th scope="col" id="date" class="wpml-col-url">
-			<span class="icl-title-flag">
+			<span class="wpml-title-flag">
 				<img src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/en.png"/>
 			</span>
 			<?php _e( 'Original Slug', 'wpml-wcml' ) ?>

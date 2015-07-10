@@ -220,7 +220,7 @@ $woocommerce_wpml->update_settings(); ?>
 						<?php echo $product->post_parent != 0 ? '&#8212; ' : ''; ?>
 						<strong>
 							<?php if ( ! $slang ): ?>
-								<span class="icl-title-flag"><img
+								<span class="wpml-title-flag"><img
 										src="<?php echo $sitepress->get_flag_url( $original_lang ) ?>"/></span>
 							<?php endif; ?>
 							<?php //TODO Sergey: Add Edit post link
@@ -361,17 +361,17 @@ $woocommerce_wpml->update_settings(); ?>
 		<a href="#" class="view"
 		   title="<?php printf( __( 'View "%s"', 'wpml-wcml' ), "Product title" ); ?>"><?php _e( 'View Product', 'wpml-wcml' ); ?> </a>
 		<?php //TODO Sergey: close Dialog on wpml-dialog-close (not on icon classes) ?>
-		<i class="dashicons dashicons-no wpml-dialog-close"></i>
+		<i class="otgs-ico-close wpml-dialog-close"></i>
 	</header>
 	<form class="wpml-dialog-body"
 	      id="poststuff"> <?php //   IMpoRTANT This ID must stay like this if it is impossible -> create additional div ?>
 		<header class="wpml-translation-header">
-			<h3 class="wpml-header-original"><?php _e( 'Original', 'wpml-wcml' ); ?>: <span class="icl-title-flag"><img
+			<h3 class="wpml-header-original"><?php _e( 'Original', 'wpml-wcml' ); ?>: <span class="wpml-title-flag"><img
 						src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/en.png"
 						alt="English"></span><strong>English</strong></h3>
 
 			<h3 class="wpml-header-translation"><?php _e( 'Translation to', 'wpml-wcml' ); ?>: <span
-					class="icl-title-flag"><img
+					class="wpml-title-flag"><img
 						src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/es.png"
 						alt="Spanish"></span><strong>Spanish</strong></h3>
 			<a class="button-copy" title="<?php _e( 'Copy from original' ); ?>"><i

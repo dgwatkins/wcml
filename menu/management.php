@@ -59,7 +59,7 @@ if(isset($_GET['tab'])){
 
     <?php endforeach; ?>
     <?php endif; ?>
-    <div class="wcml_wrap">
+	<div class="wcml-wrap">
         <?php if(!isset($_GET['tab']) && current_user_can('wpml_manage_woocommerce_multilingual')): ?>
             <?php  include WCML_PLUGIN_PATH . '/menu/sub/settings.php'; ?>
         <?php elseif(isset($all_products_taxonomies[$current_tab]) || isset($products_and_variation_taxonomies[$current_tab]) && current_user_can('wpml_operate_woocommerce_multilingual')): ?>

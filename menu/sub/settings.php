@@ -6,7 +6,8 @@ $default_language = $sitepress->get_default_language();
     <div class="wcml-section-header">
         <h3>
             <?php _e('Plugins Status','wpml-wcml'); ?>
-            <i class="icon-question-sign" data-tip="<?php _e('WooCommerce Multilingual depends on several plugins to work. If any required plugin is missing, you should install and activate it.', 'wpml-wcml') ?>"></i>
+	        <i class="otgs-ico-help wcml-tip"
+	           data-tip="<?php _e( 'WooCommerce Multilingual depends on several plugins to work. If any required plugin is missing, you should install and activate it.', 'wpml-wcml' ) ?>"></i>
         </h3>
     </div>
     <div class="wcml-section-content">
@@ -48,7 +49,8 @@ if( ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty( 
         <div class="wcml-section-header">
             <h3>
                 <?php _e('Configuration warnings','wpml-wcml'); ?>
-                <i class="icon-question-sign" data-tip="<?php _e('Reporting miscelaneous configuration issues that can make WooCommerce Multilingual not run normally', 'wpml-wcml') ?>"></i>
+	            <i class="otgs-ico-help wcml-tip"
+	               data-tip="<?php _e( 'Reporting miscelaneous configuration issues that can make WooCommerce Multilingual not run normally', 'wpml-wcml' ) ?>"></i>
             </h3>
         </div>
 
@@ -119,7 +121,8 @@ if( ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty( 
     <div class="wcml-section-header">
         <h3>
             <?php _e('WooCommerce Store Pages','wpml-wcml'); ?>
-            <i class="icon-question-sign" data-tip="<?php _e('To run a multilingual e-commerce site, you need to have the WooCommerce shop pages translated in all the site\'s languages. Once all the pages are installed you can add the translations for them from this menu.', 'wpml-wcml') ?>"></i>
+	        <i class="otgs-ico-help wcml-tip"
+	           data-tip="<?php _e( 'To run a multilingual e-commerce site, you need to have the WooCommerce shop pages translated in all the site\'s languages. Once all the pages are installed you can add the translations for them from this menu.', 'wpml-wcml' ) ?>"></i>
         </h3>
     </div>
 
@@ -189,7 +192,8 @@ if( ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty( 
     <div class="wcml-section-header">
         <h3>
             <?php _e('Taxonomies missing translations','wpml-wcml'); ?>
-            <i class="icon-question-sign" data-tip="<?php esc_attr_e('To run a fully translated site, you should translate all taxonomy terms. Some store elements, such as variations, depend on taxonomy translation.', 'wpml-wcml') ?>"></i>
+	        <i class="otgs-ico-help wcml-tip"
+	           data-tip="<?php esc_attr_e( 'To run a fully translated site, you should translate all taxonomy terms. Some store elements, such as variations, depend on taxonomy translation.', 'wpml-wcml' ) ?>"></i>
         </h3>
     </div>
 
@@ -250,7 +254,8 @@ if( ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty( 
     <div class="wcml-section-header">
         <h3>
             <?php _e('Product Translation Interface','wpml-wcml'); ?>
-            <i class="icon-question-sign" data-tip="<?php _e('The recommended way to translate products is using the products translation table in the WooCommerce Multilingual admin. Choose to go to the native WooCommerce interface, if your products include custom sections that require direct access.', 'wpml-wcml') ?>"></i>
+	        <i class="otgs-ico-help wcml-tip"
+	           data-tip="<?php _e( 'The recommended way to translate products is using the products translation table in the WooCommerce Multilingual admin. Choose to go to the native WooCommerce interface, if your products include custom sections that require direct access.', 'wpml-wcml' ) ?>"></i>
         </h3>
     </div>
     <div class="wcml-section-content">
@@ -282,7 +287,8 @@ if( ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty( 
     <div class="wcml-section-header">
         <h3>
             <?php _e('Products synchronization', 'wpml-wcml'); ?>
-            <i class="icon-question-sign" data-tip="<?php _e('Configure specific product properties that should be synced to translations.', 'wpml-wcml') ?>"></i>
+	        <i class="otgs-ico-help wcml-tip"
+	           data-tip="<?php _e( 'Configure specific product properties that should be synced to translations.', 'wpml-wcml' ) ?>"></i>
         </h3>
     </div>
 
@@ -313,7 +319,8 @@ if( ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty( 
     <div class="wcml-section-header">
         <h3>
             <?php _e('File Paths Synchronization ', 'wpml-wcml'); ?>
-            <i class="icon-question-sign" data-tip="<?php _e('If you are using downloadable products, you can choose to have their paths synchronized, or seperate for each language.', 'wpml-wcml') ?>"></i>
+	        <i class="otgs-ico-help wcml-tip"
+	           data-tip="<?php _e( 'If you are using downloadable products, you can choose to have their paths synchronized, or seperate for each language.', 'wpml-wcml' ) ?>"></i>
         </h3>
     </div>
 
@@ -345,7 +352,8 @@ if( ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty( 
 <div class="wcml-section-header">
     <h3>
         <?php _e('Manage Currencies', 'wpml-wcml'); ?>
-        <i class="icon-question-sign" data-tip="<?php _e('This will let you enable the multi-currency mode where users can see prices according to their currency preference and configured exchange rate.', 'wpml-wcml') ?>"></i>
+	    <i class="otgs-ico-help wcml-tip"
+	       data-tip="<?php _e( 'This will let you enable the multi-currency mode where users can see prices according to their currency preference and configured exchange rate.', 'wpml-wcml' ) ?>"></i>
     </h3>
 </div>
 <form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>" id="wcml_mc_options">
@@ -359,13 +367,13 @@ if( ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty( 
             <li>
                 <input type="radio" name="multi_currency" id="multi_currency_disabled" value="<?php echo WCML_MULTI_CURRENCIES_DISABLED ?>" <?php
                 echo checked($woocommerce_wpml->settings['enable_multi_currency'], WCML_MULTI_CURRENCIES_DISABLED) ?> />
-                <label for="multi_currency_disabled"><?php _e("No multi-currency.",'wpml-wcml'); ?></label>
+	            <label for="multi_currency_disabled"><?php _e( "No multi-currency", 'wpml-wcml' ); ?></label>
             </li>
             <li>
                 <input type="radio" name="multi_currency" id="multi_currency_independent" value="<?php echo WCML_MULTI_CURRENCIES_INDEPENDENT ?>" <?php
                 echo checked($woocommerce_wpml->settings['enable_multi_currency'], WCML_MULTI_CURRENCIES_INDEPENDENT) ?> />
                 <label for="multi_currency_independent">
-                    <?php _e("Multiple currencies, independent of languages.",'wpml-wcml'); ?>
+	                <?php _e( "Multi-currency (independent of languages)", 'wpml-wcml' ); ?>
                     &nbsp;
                     <a href=" <?php echo $woocommerce_wpml->generate_tracking_link('http://wpml.org/documentation/related-projects/woocommerce-multilingual/multi-currency-support-woocommerce/','multi-currency-support-woocommerce','documentation') ?>"><?php _e('Learn more', 'wpl-wcml') ?></a>.
                 </label>
@@ -676,7 +684,8 @@ if($posts){
     <li>
         <input type="checkbox" name="display_custom_prices" id="display_custom_prices" value="1" <?php echo checked( 1, $woocommerce_wpml->settings['display_custom_prices']) ?> >
         <label for="display_custom_prices"><?php _e('Show only products with custom prices in secondary currencies', 'wpml-wcml'); ?></label>
-        <i class="icon-question-sign" data-tip="<?php _e('When this option is on, when you switch to a secondary currency on the front end, only the products with custom prices in that currency are being displayed. Products with prices determined based on the exchange rate are hidden.', 'wpml-wcml') ?>"></i>
+	    <i class="otgs-ico-help wcml-tip"
+	       data-tip="<?php _e( 'When this option is on, when you switch to a secondary currency on the front end, only the products with custom prices in that currency are being displayed. Products with prices determined based on the exchange rate are hidden.', 'wpml-wcml' ) ?>"></i>
     </li>
 </ul>
 <p class="button-wrap general_option_btn">

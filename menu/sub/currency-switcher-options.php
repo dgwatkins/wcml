@@ -9,11 +9,21 @@ $currency_switcher_style = isset($settings['currency_switcher_style'])?$settings
     <div class="wcml-section-header">
         <h3>
             <?php _e('Currency switcher options', 'wpml-wcml'); ?>
-            <i class="icon-question-sign" data-tip="<?php _e('You can customize currency switcher on front-end', 'wpml-wcml') ?>"></i>
+	        <i class="otgs-ico-help wcml-tip"
+	           data-tip="<?php _e( 'You can customize currency switcher on front-end', 'wpml-wcml' ) ?>"></i>
         </h3>
     </div>
 
     <div class="wcml-section-content">
+	    <div id="wcml_curr_sel_preview_wrap">
+		    <p><strong><?php _e( 'Currency switcher preview', 'wpml-wcml' ) ?></strong></p>
+		    <input type="hidden" id="wcml_currencies_switcher_preview_nonce"
+		           value="<?php echo wp_create_nonce( 'wcml_currencies_switcher_preview' ) ?>"/>
+
+		    <div id="wcml_curr_sel_preview">
+			    <?php echo $woocommerce_wpml->multi_currency_support->currency_switcher(); ?>
+		    </div>
+	    </div>
         <div class="wcml-section-content-inner">
             <h4><?php _e('Currency order', 'wpml-wcml'); ?></h4>
             <?php
@@ -73,13 +83,6 @@ $currency_switcher_style = isset($settings['currency_switcher_style'])?$settings
             <input type="text" name="wcml_curr_template" value="<?php echo isset($settings['wcml_curr_template'])?$settings['wcml_curr_template']:''; ?>" />
             <span class="explanation-text"><?php _e('Default: %name% (%symbol%) - %code%', 'wpml-wcml'); ?></span>
             <input type="hidden" id="currency_switcher_default" value="%name% (%symbol%) - %code%" />
-            <div id="wcml_curr_sel_preview_wrap">
-                <p><strong><?php _e('Currency switcher preview', 'wpml-wcml')?></strong></p>
-                <input type="hidden" id="wcml_currencies_switcher_preview_nonce" value="<?php echo wp_create_nonce('wcml_currencies_switcher_preview') ?>" />
-                <div id="wcml_curr_sel_preview">
-                    <?php echo $woocommerce_wpml->multi_currency_support->currency_switcher(); ?>
-                </div>
-            </div>
         </div>
     </div>
     <p class="button-wrap general_option_btn">
