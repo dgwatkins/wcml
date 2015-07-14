@@ -25,16 +25,16 @@ class WCML_Endpoints{
         if ( !empty( $wc_vars ) ){
             $query_vars = array(
                 // Checkout actions
-                'order-pay'          => $this->get_endpoint_translation( $wc_vars['order-pay'] ),
-                'order-received'     => $this->get_endpoint_translation( $wc_vars['order-received'] ),
+                'order-pay'          => $this->get_endpoint_translation( 'order-pay', $wc_vars['order-pay'] ),
+                'order-received'     => $this->get_endpoint_translation( 'order-received', $wc_vars['order-received'] ),
 
                 // My account actions
-                'view-order'         => $this->get_endpoint_translation( $wc_vars['view-order'] ),
-                'edit-account'       => $this->get_endpoint_translation( $wc_vars['edit-account'] ),
-                'edit-address'       => $this->get_endpoint_translation( $wc_vars['edit-address'] ),
-                'lost-password'      => $this->get_endpoint_translation( $wc_vars['lost-password'] ),
-                'customer-logout'    => $this->get_endpoint_translation( $wc_vars['customer-logout'] ),
-                'add-payment-method' => $this->get_endpoint_translation( $wc_vars['add-payment-method'] ),
+                'view-order'         => $this->get_endpoint_translation( 'view-order', $wc_vars['view-order'] ),
+                'edit-account'       => $this->get_endpoint_translation( 'edit-account', $wc_vars['edit-account'] ),
+                'edit-address'       => $this->get_endpoint_translation( 'edit-address', $wc_vars['edit-address'] ),
+                'lost-password'      => $this->get_endpoint_translation( 'lost-password', $wc_vars['lost-password'] ),
+                'customer-logout'    => $this->get_endpoint_translation( 'customer-logout', $wc_vars['customer-logout'] ),
+                'add-payment-method' => $this->get_endpoint_translation( 'add-payment-method', $wc_vars['add-payment-method'] ),
             );
 
             WC()->query->query_vars = $query_vars;
@@ -43,19 +43,19 @@ class WCML_Endpoints{
 
     }
 
-    function get_endpoint_translation( $endpoint ){
+    function get_endpoint_translation( $key, $endpoint, $language = null ){
         global $wpdb;
 
-        $string = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'Endpoint slug: ' . $endpoint, $endpoint ) );
+        $string = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'Endpoint slug: ' . $key, $endpoint ) );
 
         if( !$string && function_exists( 'icl_register_string' ) ){
-            do_action('wpml_register_single_string', 'WordPress', 'Endpoint slug: ' . $endpoint, $endpoint );
+            do_action('wpml_register_single_string', 'WordPress', 'Endpoint slug: ' . $key, $endpoint );
         }else{
             $this->endpoints_strings[] = $string;
         }
 
         if( function_exists('icl_t') ){
-            return apply_filters( 'wpml_translate_single_string', $endpoint, 'WordPress', 'Endpoint slug: '. $endpoint  );
+            return apply_filters( 'wpml_translate_single_string', $endpoint, 'WordPress', 'Endpoint slug: '. $key, $language );
         }else{
             return $endpoint;
         }
@@ -122,7 +122,7 @@ class WCML_Endpoints{
                         }else{
                             $endpoint = get_option( 'woocommerce_myaccount_'.str_replace( '-','_',$key).'_endpoint' );
                         }
-                        $p = $this->get_endpoint_url($this->get_endpoint_translation( $endpoint ),$wp->query_vars[ $key ],$p);
+                        $p = $this->get_endpoint_url($this->get_endpoint_translation( $key, $endpoint, $current_lang ),$wp->query_vars[ $key ],$p);
                     }
                 }
             }
