@@ -15,7 +15,12 @@ class WCML_Endpoints{
 
         add_filter( 'page_link', array( $this, 'endpoint_permalink_filter' ), 10, 2 ); //after WPML
 
+        if(!is_admin()){
+            add_filter('pre_get_posts', array($this, 'check_if_endpoint_exists'));
+        }
+
     }
+
 
     function register_endpoints_translations(){
         if( !class_exists( 'woocommerce' ) || !defined( 'ICL_SITEPRESS_VERSION' ) || ICL_PLUGIN_INACTIVE || version_compare( WOOCOMMERCE_VERSION, '2.2', '<' ) ) return false;
@@ -144,6 +149,32 @@ class WCML_Endpoints{
             $url = add_query_arg( $endpoint, $value, $permalink );
         }
         return $url;
+    }
+
+    /*
+     * We need check special case - when you manually put in URL default not translated endpoint it not generated 404 error
+     */
+    function check_if_endpoint_exists($q){
+        global $wp_query;
+
+        $my_account_id = wc_get_page_id('myaccount');
+        $checkout_id = wc_get_page_id('checkout');
+
+        if( !$q->is_404 && $q->queried_object_id == $my_account_id ){
+
+            $uri_vars = array_filter( explode( '/', $_SERVER['REQUEST_URI']) );
+            $endpoints =  WC()->query->get_query_vars();
+            $endpoint_in_url = end($uri_vars);
+
+            if( $q->get( 'pagename' ) != $endpoint_in_url && !in_array( $endpoint_in_url,$endpoints ) ){
+                $wp_query->set_404();
+                status_header(404);
+                include( get_query_template( '404' ) );
+                die();
+            }
+
+        }
+
     }
 
 

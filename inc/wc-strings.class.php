@@ -156,7 +156,7 @@ class WCML_WC_Strings{
     }
     
     
-    function translate_query_var_for_product($public_query_vars){ 
+    function translate_query_var_for_product($public_query_vars){
         global $wpdb, $sitepress, $sitepress_settings;
 
         $strings_language = $this->get_wc_context_language();
