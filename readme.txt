@@ -89,6 +89,10 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fix: Stock quantity not synchronized when items were used in orders created in the backend
 * Bug fix: Payment gateways strings were not registered for string translation
 * Bug fix: Global Attributes were not translated in the WooCommerce Mail
+* Bug fix: In some cases the WooCommerce endpoints were not translated correctly
+* Bug fix: An extra 'a' tag was added to products in the mini-cart
+* Bug fix: A 404 error was returned on the translated product category archive page
+
 
 = 3.6.4 =
 * Bug fix: Parse error: syntax error, unexpected T_PAAMAYIM_NEKUDOTAYIM (introduced in 3.6.1)
