@@ -538,7 +538,9 @@ class WCML_Products{
 
         }
 
-        do_action('wcml_update_extra_fields',$tr_product_id,$data,$language);
+        do_action( 'wcml_update_extra_fields', $tr_product_id, $data, $language );
+
+        do_action( 'wcml_before_sync_product_data', $original_product_id, $tr_product_id, $language );
 
         $this->sync_product_attr( $original_product_id, $tr_product_id, $language, $data );
 

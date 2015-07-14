@@ -327,14 +327,18 @@ class WCML_Bookings{
         $all_bookings_for_product = WC_Bookings_Controller::get_bookings_for_product( $original_product_id );
 
         foreach($all_bookings_for_product as $booking ){
-            $check_if_exists = $wpdb->get_var( $wpdb->prepare( "SELECT pm1.meta_id FROM {$wpdb->postmeta} AS pm1
+            $check_if_exists = $wpdb->get_row( $wpdb->prepare( "SELECT pm3.* FROM {$wpdb->postmeta} AS pm1
                                             LEFT JOIN {$wpdb->postmeta} AS pm2 ON pm1.post_id = pm2.post_id
-                                            WHERE pm1.meta_key = '_booking_duplicate_of' AND pm1.meta_value = %s AND pm2.meta_key = '_language_code' AND pm2.meta_value = %s"
+                                            LEFT JOIN {$wpdb->postmeta} AS pm3 ON pm1.post_id = pm3.post_id
+                                            WHERE pm1.meta_key = '_booking_duplicate_of' AND pm1.meta_value = %s AND pm2.meta_key = '_language_code' AND pm2.meta_value = %s AND pm3.meta_key = '_booking_product_id'"
                 , $booking->id, $lang ) );
 
             if( is_null( $check_if_exists ) ){
-
                 $this->duplicate_booking_for_translations( $booking->id, $lang );
+            }elseif( $check_if_exists->meta_value === '' ){
+                update_post_meta( $check_if_exists->post_id, '_booking_product_id', $this->get_translated_booking_product_id( $booking->id, $lang ) );
+                update_post_meta( $check_if_exists->post_id, '_booking_resource_id', $this->get_translated_booking_resource_id( $booking->id, $lang ) );
+                update_post_meta( $check_if_exists->post_id, '_booking_persons', $this->get_translated_booking_persons_ids( $booking->id, $lang ) );
             }
         }
 
@@ -1414,22 +1418,6 @@ class WCML_Bookings{
                 continue;
             }
 
-            if( $booking_product_id ){
-                $trnsl_booking_product_id = apply_filters( 'translate_object_id', $booking_product_id, 'product', false, $language['code'] );
-                if( is_null( $trnsl_booking_product_id ) ){
-                    $trnsl_booking_product_id = '';
-                }
-            }
-
-            $booking_resource_id = get_post_meta( $booking_id, '_booking_resource_id', true );
-            if( $booking_product_id ){
-                $trnsl_booking_resource_id = apply_filters( 'translate_object_id', $booking_resource_id, 'bookable_resource', false, $language['code'] );
-
-                if( is_null( $trnsl_booking_resource_id ) ){
-                    $trnsl_booking_resource_id = '';
-                }
-            }
-
             $booking_persons = maybe_unserialize( get_post_meta( $booking_id, '_booking_persons', true ) );
             $trnsl_booking_persons = array();
 
@@ -1449,9 +1437,9 @@ class WCML_Bookings{
 
             $meta_args = array(
                 '_booking_order_item_id' => get_post_meta( $booking_id, '_booking_order_item_id', true ),
-                '_booking_product_id'    => $trnsl_booking_product_id,
-                '_booking_resource_id'   => $trnsl_booking_resource_id,
-                '_booking_persons'       => $trnsl_booking_persons,
+                '_booking_product_id'    => $this->get_translated_booking_product_id( $booking_id, $language['code'] ),
+                '_booking_resource_id'   => $this->get_translated_booking_resource_id( $booking_id, $language['code'] ),
+                '_booking_persons'       => $this->get_translated_booking_persons_ids( $booking_id, $language['code'] ),
                 '_booking_cost'          => get_post_meta( $booking_id, '_booking_cost', true ),
                 '_booking_start'         => get_post_meta( $booking_id, '_booking_start', true ),
                 '_booking_end'           => get_post_meta( $booking_id, '_booking_end', true ),
@@ -1470,6 +1458,58 @@ class WCML_Bookings{
 
         }
 
+
+    }
+
+    function get_translated_booking_product_id( $booking_id, $language ){
+
+        $booking_product_id = get_post_meta( $booking_id, '_booking_product_id', true );
+
+        if( $booking_product_id ){
+            $trnsl_booking_product_id = apply_filters( 'translate_object_id', $booking_product_id, 'product', false, $language );
+            if( is_null( $trnsl_booking_product_id ) ){
+                $trnsl_booking_product_id = '';
+            }
+        }
+
+        return $trnsl_booking_product_id;
+
+    }
+
+    function get_translated_booking_resource_id( $booking_id, $language ){
+
+        $booking_resource_id = get_post_meta( $booking_id, '_booking_resource_id', true );
+        $trnsl_booking_resource_id = '';
+
+        if( $booking_resource_id ){
+            $trnsl_booking_resource_id = apply_filters( 'translate_object_id', $booking_resource_id, 'bookable_resource', false, $language );
+
+            if( is_null( $trnsl_booking_resource_id ) ){
+                $trnsl_booking_resource_id = '';
+            }
+        }
+
+        return $trnsl_booking_resource_id;
+    }
+
+    function get_translated_booking_persons_ids( $booking_id, $language ){
+
+        $booking_persons = maybe_unserialize( get_post_meta( $booking_id, '_booking_persons', true ) );
+        $trnsl_booking_persons = array();
+
+        foreach( $booking_persons as $person_id => $person_count ){
+
+            $trnsl_person_id = apply_filters( 'translate_object_id', $person_id, 'bookable_person', false, $language  );
+
+            if( is_null( $trnsl_person_id ) ){
+                $trnsl_booking_persons[] = $person_count;
+            }else{
+                $trnsl_booking_persons[ $trnsl_person_id ] = $person_count;
+            }
+
+        }
+
+        return $trnsl_booking_persons;
 
     }
 
