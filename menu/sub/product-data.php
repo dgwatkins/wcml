@@ -182,7 +182,7 @@ $button_labels = array(
                                                 <?php if($missing_translation): ?>
                                                     <span class="wcml_field_translation_<?php echo $product_content ?>_<?php echo $key ?>">
                                                         <p class="missing-translation">
-                                                            <i class="icon-warning-sign"></i>
+	                                                        <i class="otgs-ico-warning"></i>
                                                             <?php _e('Translation missing', 'wpml-wcml'); ?>
                                                         </p>
                                                     </span>

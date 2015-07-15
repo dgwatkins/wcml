@@ -65,9 +65,14 @@ $default_language = $sitepress->get_default_language();
 					}
 
 					?>
-					<p>
-						<?php printf( __( "Your store's base currency is %s (%s). To change it, go to the %s page.", 'wpml-wcml' ), $wc_currencies[ $wc_currency ], get_woocommerce_currency_symbol( $wc_currency ), '<a href="' . admin_url( sprintf( 'admin.php?page=%s&tab=general', version_compare( $woocommerce->version, '2.1', '<' ) ? 'woocommerce_settings' : 'wc-settings' ) ) . '">WooCommerce settings</a>' ); ?>
-					</p>
+
+
+					<div class="tablenav top clearfix">
+						<button type="button" class="button-secondary alignright">
+							<i class="otgs-ico-add otgs-ico-sm"></i>
+							<?php _e( 'Add currency', 'wpml-wcml' ); ?>
+						</button>
+					</div>
 					<input type="hidden" id="update_currency_lang_nonce"
 					       value="<?php echo wp_create_nonce( 'wcml_update_currency_lang' ); ?>"/>
 					<table class="widefat currency_table" id="currency-table">
@@ -127,7 +132,6 @@ $default_language = $sitepress->get_default_language();
 											<i class="icon-edit"
 											   title="<?php esc_attr( _e( 'Edit', 'wpml-wcml' ) ); ?>"></i>
 										</a>
-										<i class="icon-ok-circle save_currency"></i>
 									</div>
 									<div class="currency_action_delete">
 										<a href="javascript:void(0);"
@@ -136,16 +140,15 @@ $default_language = $sitepress->get_default_language();
 											<i class="icon-trash"
 											   title="<?php esc_attr( _e( 'Delete', 'wpml-wcml' ) ); ?>"></i>
 										</a>
-										<i class="icon-remove-circle cancel_currency"></i>
 									</div>
 								</td>
 							</tr>
 						<?php endforeach; ?>
 						<tr class="default_currency">
 							<td colspan="2">
-								<span class="cur_label"><?php _e( 'Default currency', 'wpml-wcml' ); ?></span>
-								<span
-									class="inf_message"><?php _e( 'Switch to this currency when switching language in the front-end', 'wpml-wcml' ); ?></span>
+								<?php _e( 'Default currency', 'wpml-wcml' ); ?>
+								<i class="wcml-tip otgs-ico-help"
+								   data-tip="<?php _e( 'Switch to this currency when switching language in the front-end', 'wpml-wcml' ); ?>"></i>
 							</td>
 						</tr>
 						</tbody>
@@ -264,7 +267,6 @@ $default_language = $sitepress->get_default_language();
 									   style="display:none">
 										<i class="icon-edit" title="Edit"></i>
 									</a>
-									<i class="icon-ok-circle save_currency" style="display:inline"></i>
 								</div>
 								<div class="currency_action_delete">
 									<a href="javascript:void(0);" title="Delete" class="delete_currency"
@@ -305,12 +307,7 @@ $default_language = $sitepress->get_default_language();
 					       value="<?php echo wp_create_nonce( 'wcml_currencies_list' ); ?>"/>
 				</div>
 
-				<p class="wcml_add_currency button-wrap">
-					<button type="button" class="button-secondary">
-						<i class="icon-plus"></i>
-						<?php _e( 'Add currency', 'wpml-wcml' ); ?>
-					</button>
-				</p>
+
 
 				<?php // backward compatibility ?>
 				<?php
@@ -406,24 +403,21 @@ $default_language = $sitepress->get_default_language();
 						   data-tip="<?php _e( 'When this option is on, when you switch to a secondary currency on the front end, only the products with custom prices in that currency are being displayed. Products with prices determined based on the exchange rate are hidden.', 'wpml-wcml' ) ?>"></i>
 					</li>
 				</ul>
-				<p class="button-wrap general_option_btn">
-					<input type='submit' name="wcml_mc_options" value='<?php _e( 'Save', 'wpml-wcml' ); ?>'
-					       class='button-secondary'/>
-					<?php wp_nonce_field( 'wcml_mc_options', 'wcml_mc_options_nonce' ); ?>
-				</p>
+
 			</div>
 		</div>
 		<!-- .wcml-section-content -->
-		<div class="wcml-section">
-			<?php include WCML_PLUGIN_PATH . '/menu/sub/currency-switcher-options.php'; ?>
-		</div>
+
 	</form>
 </div> <!-- .wcml-section -->
+<div class="wcml-section">
+	<?php include WCML_PLUGIN_PATH . '/menu/sub/currency-switcher-options.php'; ?>
+</div>
 <input type="hidden" id="wcml_warn_message"
        value="<?php esc_attr_e( 'The changes you made will be lost if you navigate away from this page.', 'wpml-wcml' ); ?>"/>
 <input type="hidden" id="wcml_warn_disable_language_massage"
        value="<?php esc_attr_e( 'At least one currency must be enabled for this language!', 'wpml-wcml' ); ?>"/>
-<div class="troubleshoot_link_block">
-	<a href="<?php echo admin_url( 'admin.php?page=' . basename( WCML_PLUGIN_PATH ) . '/menu/sub/troubleshooting.php' ); ?>"><?php _e( 'Troubleshooting page', 'wpml-wcml' ); ?></a>
-</div>
-<div class="clear"></div>
+
+<p class="wpml-margin-top-sm">
+	<input type='submit' value='<?php esc_attr( _e( 'Save changes', 'wpml-wcml' ) ); ?>' class='button-primary'/>
+</p>

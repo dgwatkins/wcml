@@ -34,7 +34,8 @@ if(isset($_GET['tab'])){
     <h2><?php _e('WooCommerce Multilingual', 'wpml-wcml') ?></h2>
 
     <?php if(current_user_can('wpml_manage_woocommerce_multilingual')): ?>
-        <a class="nav-tab <?php echo $current_tab == 'settings' ?'nav-tab-active':''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml'); ?>"><?php _e('General settings', 'wpml-wcml') ?></a>
+	    <a class="nav-tab <?php echo $current_tab == 'settings' ? 'nav-tab-active' : ''; ?>"
+	       href="<?php echo admin_url( 'admin.php?page=wpml-wcml' ); ?>"><?php _e( 'Settings', 'wpml-wcml' ) ?></a>
         <a class="nav-tab <?php echo $current_tab == 'currencies' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=currencies'); ?>"><?php _e('Multi-currency', 'wpml-wcml') ?></a>
     <?php endif; ?>
     <a class="nav-tab <?php echo $current_tab == 'products' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=products'); ?>"><?php _e('Products', 'wpml-wcml') ?></a>
@@ -44,7 +45,7 @@ if(isset($_GET['tab'])){
         <a class="nav-tab <?php echo (isset($_GET['tab']) && $_GET['tab'] == $tax_key)?'nav-tab-active':''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab='.$tax_key); ?>" <?php if(!WCML_Terms::is_fully_translated($tax_key)): ?>title="<?php esc_attr_e('You have untranslated terms!', 'wpml-wcml'); ?>"<?php endif;?>>
             <?php echo $tax->labels->name ?>
             <?php if(!WCML_Terms::is_fully_translated($tax_key)): ?>
-                &nbsp;<i class="icon-warning-sign"></i>
+	            &nbsp;<i class="otgs-ico-warning"></i>
             <?php endif; ?>
         </a>
     <?php endforeach; ?>
@@ -52,7 +53,7 @@ if(isset($_GET['tab'])){
     <a class="js-tax-tab-<?php echo $tax_key ?> nav-tab <?php echo (isset($_GET['tab']) && $_GET['tab'] == $tax_key)?'nav-tab-active':''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab='.$tax_key); ?>" <?php if(!WCML_Terms::is_fully_translated($tax_key)): ?>title="<?php esc_attr_e('You have untranslated terms!', 'wpml-wcml'); ?>"<?php endif;?>>
         <?php echo $tax->labels->name ?>
         <?php if(!WCML_Terms::is_fully_translated($tax_key)): ?>
-        &nbsp;<i class="icon-warning-sign"></i>
+	        &nbsp;<i class="otgs-ico-warning"></i>
         <?php endif; ?>
     </a>
 

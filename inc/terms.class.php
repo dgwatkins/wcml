@@ -578,7 +578,7 @@ class WCML_Terms{
         if($wcml_settings['untranstaled_terms'][$taxonomy]['count'] > 0){
             $wcml_settings['untranstaled_terms'][$taxonomy]['status'] = self::NEW_TAXONOMY_TERMS;
 
-            $ret['html']  = '<i class="icon-warning-sign"></i> ';
+	        $ret['html'] = '<i class="otgs-ico-warning-sign"></i> ';
             $ret['html'] .= sprintf(__('Some %s are missing translations (%d translations missing).', 'wpml-wcml'), get_taxonomy($taxonomy)->labels->name, $wcml_settings['untranstaled_terms'][$taxonomy]['count']);
             $ret['html'] .= '<div class="actions">';
             $ret['html'] .= '<a href="' . admin_url('admin.php?page=wpml-wcml&tab=' . $taxonomy) . '">' . __('Translate now', 'wpml-wcml') . '</a> | ';
@@ -590,7 +590,7 @@ class WCML_Terms{
         }else{
             $wcml_settings['untranstaled_terms'][$taxonomy]['status'] = self::ALL_TAXONOMY_TERMS_TRANSLATED;
 
-            $ret['html']  = '<i class="icon-ok"></i> ';
+	        $ret['html'] = '<i class="otgs-ico-ok"></i> ';
             $ret['html'] .= sprintf(__('All %s are translated.', 'wpml-wcml'), get_taxonomy($taxonomy)->labels->name);
 
             $ret['warn'] = 0;

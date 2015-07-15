@@ -1,6 +1,7 @@
 <?php global $sitepress_settings;
 $default_language = $sitepress->get_default_language();
 ?>
+<?php //TODO Sergey: Make this ONE form with one button or make this one button to work with all forms ?>
 
 <div class="wcml-section">
     <div class="wcml-section-header">
@@ -26,9 +27,6 @@ $default_language = $sitepress->get_default_language();
                     <label for="wcml_trsl_interface_native"><?php _e('Go to the native WooCommerce product editing screen', 'wpml-wcml'); ?></label>
                 </li>
             </ul>
-            <p class="button-wrap">
-                <input type='submit' name="wcml_trsl_interface_table" value='<?php esc_attr(_e('Save', 'wpml-wcml')); ?>' class='button-secondary' />
-            </p>
         </form>
     </div> <!-- .wcml-section-content -->
 
@@ -57,9 +55,6 @@ $default_language = $sitepress->get_default_language();
                     <label for="wcml_products_sync_order"><?php _e('Sync products and product taxonomies order.', 'wpml-wcml'); ?></label>
                 </li>
             </ul>
-            <p class="button-wrap">
-                <input type='submit' name="wcml_products_sync_prop" value='<?php esc_attr(_e('Save', 'wpml-wcml')); ?>' class='button-secondary' />
-            </p>
         </form>
     </div>
 
@@ -77,7 +72,7 @@ $default_language = $sitepress->get_default_language();
     </div>
 
     <div class="wcml-section-content">
-        <form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+
             <?php wp_nonce_field('wcml_file_path_options_table', 'wcml_nonce'); ?>
             <ul>
                 <li>
@@ -89,12 +84,15 @@ $default_language = $sitepress->get_default_language();
                     <label for="wcml_file_path_sync_self"><?php _e('Different file paths for each language', 'wpml-wcml'); ?></label>
                 </li>
             </ul>
-            <p class="button-wrap">
-                <input type='submit' name="wcml_file_path_options_table" value='<?php esc_attr(_e('Save', 'wpml-wcml')); ?>' class='button-secondary' />
-            </p>
-        </form>
+
+	    </form>
 
     </div> <!-- .wcml-section-content -->
 
 </div> <!-- .wcml-section -->
 
+<p class="wpml-margin-top-sm">
+	<input type='submit' value='<?php esc_attr( _e( 'Save changes', 'wpml-wcml' ) ); ?>' class='button-primary'/>
+</p>
+<a class="alignright"
+   href="<?php echo admin_url( 'admin.php?page=' . basename( WCML_PLUGIN_PATH ) . '/menu/sub/troubleshooting.php' ); ?>"><?php _e( 'Troubleshooting page', 'wpml-wcml' ); ?></a>

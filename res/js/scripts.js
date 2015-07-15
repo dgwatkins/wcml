@@ -218,8 +218,8 @@ jQuery(document).ready(function($){
    if(typeof WPML_Translate_taxonomy != 'undefined' && typeof WPML_Translate_taxonomy.callbacks != 'undefined'){
        
        WPML_Translate_taxonomy.callbacks.add(function(func, taxonomy){
-          
-          if($('.js-tax-tab-' + taxonomy + ' i.icon-warning-sign').length){
+
+		   if ($('.js-tax-tab-' + taxonomy + ' i.otgs-ico-warning').length) {
               
               $.ajax({
                  type : "post",
@@ -233,7 +233,7 @@ jQuery(document).ready(function($){
                  success: function(response) {
                      if(response.hide){
                         $('.js-tax-tab-' + taxonomy).removeAttr('title');
-                        $('.js-tax-tab-' + taxonomy + ' i.icon-warning-sign').remove();
+						 $('.js-tax-tab-' + taxonomy + ' i.otgs-ico-warning').remove();
                      }
                  }
               })       
@@ -295,7 +295,7 @@ jQuery(document).ready(function($){
                    $('.js-tax-translation li.js-tax-translation-' + taxonomy).html(response.html);
                    
                    $('.js-tax-tab-' + taxonomy).removeAttr('title');
-                   $('.js-tax-tab-' + taxonomy + ' i.icon-warning-sign').remove();
+				   $('.js-tax-tab-' + taxonomy + ' i.otgs-ico-warning').remove();
                    
                    
                }
@@ -323,7 +323,7 @@ jQuery(document).ready(function($){
                if(response.html){
                    $('.js-tax-translation li.js-tax-translation-' + taxonomy).html(response.html);
                    if(response.warn){
-                        $('.js-tax-tab-' + taxonomy).append('&nbsp;<i class="icon-warning-sign"></i>');
+					   $('.js-tax-tab-' + taxonomy).append('&nbsp;<i class="otgs-ico-warning"></i>');
                    }
                    
                }
