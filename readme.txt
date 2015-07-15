@@ -92,6 +92,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fix: In some cases the WooCommerce endpoints were not translated correctly
 * Bug fix: An extra 'a' tag was added to products in the mini-cart
 * Bug fix: A 404 error was returned on the translated product category archive page
+* Bug fix: Some shipping methods were displayed incorrectly on the cart page when using Table Rate Shipping
 
 
 = 3.6.4 =
