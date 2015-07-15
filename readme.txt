@@ -93,7 +93,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fix: An extra 'a' tag was added to products in the mini-cart
 * Bug fix: A 404 error was returned on the translated product category archive page
 * Bug fix: Some shipping methods were displayed incorrectly on the cart page when using Table Rate Shipping
-
+* Bug fix: In some cases prices showing the Paypal order summary included decimals even if the prices were supposed to be rounded to integers
 
 = 3.6.4 =
 * Bug fix: Parse error: syntax error, unexpected T_PAAMAYIM_NEKUDOTAYIM (introduced in 3.6.1)
