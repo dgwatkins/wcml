@@ -551,11 +551,11 @@ class WCML_Terms{
 
         $woocommerce_wpml->update_settings($wcml_settings);
 
-        $ret['html']  = '<i class="icon-ok"></i> ';
+	    $ret['html'] = '<i class="otgs-ico-ok"></i> ';
         $ret['html'] .= sprintf(__('%s do not require translation.', 'wpml-wcml'), get_taxonomy($taxonomy)->labels->name);
-        $ret['html'] .= '<div class="actions">';
-        $ret['html'] .= '<a href="#unignore-' . $taxonomy . '">' . __('Change', 'wpml-wcml') . '</a>';
-        $ret['html'] .= '</div>';
+	    $ret['html'] .= '<small class="actions">';
+	    $ret['html'] .= '<a href="#unignore-' . $taxonomy . '">' . __( 'Include to translation', 'wpml-wcml' ) . '</a>';
+	    $ret['html'] .= '</small>';
 
         echo json_encode($ret);
         exit;
@@ -579,11 +579,11 @@ class WCML_Terms{
             $wcml_settings['untranstaled_terms'][$taxonomy]['status'] = self::NEW_TAXONOMY_TERMS;
 
 	        $ret['html'] = '<i class="otgs-ico-warning-sign"></i> ';
-            $ret['html'] .= sprintf(__('Some %s are missing translations (%d translations missing).', 'wpml-wcml'), get_taxonomy($taxonomy)->labels->name, $wcml_settings['untranstaled_terms'][$taxonomy]['count']);
-            $ret['html'] .= '<div class="actions">';
-            $ret['html'] .= '<a href="' . admin_url('admin.php?page=wpml-wcml&tab=' . $taxonomy) . '">' . __('Translate now', 'wpml-wcml') . '</a> | ';
-            $ret['html'] .= '<a href="#ignore-' . $taxonomy . '">' . __('Change', 'wpml-wcml') . '</a>';
-            $ret['html'] .= '</div>';
+	        $ret['html'] .= sprintf( __( '%d %s are missing translations.', 'wpml-wcml' ), $wcml_settings['untranstaled_terms'][ $taxonomy ]['count'], get_taxonomy( $taxonomy )->labels->name );
+	        $ret['html'] .= '<a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=' . $taxonomy ) . '">' . printf( __( 'Translate %s', 'wpml-wcml' ), get_taxonomy( $taxonomy )->labels->name ) . '</a> | ';
+	        $ret['html'] .= '<small class="actions">';
+	        $ret['html'] .= '<a href="#ignore-' . $taxonomy . '">' . __( 'Exclude from translation', 'wpml-wcml' ) . '</a>';
+	        $ret['html'] .= '</small>';
 
             $ret['warn'] = 1;
 

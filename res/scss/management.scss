@@ -707,10 +707,6 @@ table.widefat.currency_table {
 	text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
 }
 
-.js-tax-translation li .actions {
-	margin: 3px 0 0 27px;
-}
-
 .wcml_duplicate_product_notice td {
 	border-bottom: none !important;
 }
@@ -996,10 +992,25 @@ input[name="wcml_curr_template"] {
 .wcml-status-list {
 	li {
 		padding-left: 25px;
+		margin-bottom: $margin-base;
+		ul li {
+			margin-bottom: $margin-xs*.5;
+		}
 	}
-	[class*="otgs-ico"] {
+	&.wcml-plugins-status-list li,
+	&.wcml-tax-translation-list li {
+		margin-bottom: $margin-sm;
+	}
+	[class*="otgs-ico"]:not(.otgs-ico-help) {
 		margin-left: -25px;
 		margin-right: 5px;
+		vertical-align: baseline;
+	}
+	.button-secondary {
+		vertical-align: middle;
+	}
+	small {
+		display: block;
 	}
 }
 
