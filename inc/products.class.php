@@ -2411,6 +2411,11 @@ class WCML_Products{
     }
 
     function translate_cart_subtotal($cart) {
+
+        if ( apply_filters( 'translate_cart_subtotal_exception', false, $cart ) ){
+            return;
+        }
+
         $cart->calculate_totals();
     }
 
