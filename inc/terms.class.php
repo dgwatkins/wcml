@@ -296,7 +296,12 @@ class WCML_Terms{
         global $sitepress;
 
         $mo = new MO();
-        $mo->import_from_file( WP_LANG_DIR . '/plugins/woocommerce-'  . $sitepress->get_locale( $language ) . '.mo'  );
+        $mo_file =  WP_LANG_DIR . '/plugins/woocommerce-'  . $sitepress->get_locale( $language ) . '.mo';
+        if( !file_exists( $mo_file ) ){
+            return $string;
+        }
+
+        $mo->import_from_file( $mo_file  );
         $translations = $mo->entries;
 
         if( in_array( $string, array( 'product','product-category','product-tag' ) ) ){
