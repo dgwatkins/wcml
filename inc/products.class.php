@@ -2599,6 +2599,9 @@ class WCML_Products{
                 $search_key = $cart_content[ 'product_id' ];
             }else{
                 $search_key = $cart_content[ 'product_id' ].'_'.$cart_content['variation_id'];
+                foreach( $cart_content['variation'] as $var_key => $value ){
+                    $search_key .= '_'.$var_key.'-'.$value;
+                }
             }
 
             if( array_key_exists( $search_key, $exists_products ) ){
