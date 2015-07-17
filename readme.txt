@@ -94,6 +94,10 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fix: A 404 error was returned on the translated product category archive page
 * Bug fix: Some shipping methods were displayed incorrectly on the cart page when using Table Rate Shipping
 * Bug fix: In some cases prices showing the Paypal order summary included decimals even if the prices were supposed to be rounded to integers
+* Bug fix: When adding different variations of a product, a single variation was added more times
+* Bug fix: Urls in the secondary languages were not working properly when using the deafault translations (from teh mo files) instead of translating tehm with string translation
+* Bug fix: In some cases some email notification strings were not registered
+* Fixed a compatibility problem with Dynamic Pricing: in a specific context, based on a price rule, the end price was multiplied by a factor with each page reload
 
 = 3.6.4 =
 * Bug fix: Parse error: syntax error, unexpected T_PAAMAYIM_NEKUDOTAYIM (introduced in 3.6.1)
