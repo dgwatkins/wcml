@@ -2,7 +2,7 @@
 $default_language = $sitepress->get_default_language();
 ?>
 
-<div class="wcml-section">
+<div class="wcml-section ">
 
 	<div class="wcml-section-header">
 		<h3>
@@ -12,7 +12,7 @@ $default_language = $sitepress->get_default_language();
 		</h3>
 	</div>
 	<form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>" id="wcml_mc_options">
-		<div class="wcml-section-content">
+		<div class="wcml-section-content wcml-section-content-wide">
 			<?php wp_nonce_field( 'wcml_mc_options', 'wcml_nonce' ); ?>
 
 			<ul id="wcml_mc_options_block">
@@ -77,22 +77,12 @@ $default_language = $sitepress->get_default_language();
 					       value="<?php echo wp_create_nonce( 'wcml_update_currency_lang' ); ?>"/>
 
 
-					<table class="widefat wcml-currency-table" id="currency-table">
+					<table class="widefat currency_table" id="currency-table">
 						<thead>
 						<tr>
 							<th class="wcml-col-currency"><?php _e( 'Currency', 'wpml-wcml' ); ?></th>
 							<th class="wcml-col-rate"><?php _e( 'Rate', 'wpml-wcml' ); ?></th>
 							<th class="wcml-col-edit"></th>
-
-							<?php foreach ( $active_languages as $language ): ?>
-								<th class="wcml-col-currency-switcher">
-									<img src="<?php echo $sitepress->get_flag_url( $language['code'] ) ?>" width="18"
-									     height="12"/>
-								</th>
-							<?php endforeach; ?>
-
-
-							<th class="wcml-col-delete"></th>
 						</tr>
 						</thead>
 						<tbody>
@@ -101,68 +91,16 @@ $default_language = $sitepress->get_default_language();
 								<?php echo $wc_currencies[ $wc_currency ]; ?>
 								<small><?php printf( __( ' (%s)', 'wpml-wcml' ), $positioned_price ); ?></small>
 							</td>
-							<td class="wcml-col-rate">
-								<?php _e( 'default', 'wpml-wcml' ); ?>
-							</td>
+							<td class="wcml-col-rate"><?php _e( 'default', 'wpml-wcml' ); ?></td>
 							<td class="wcml-col-edit">
-								<i class="otgs-ico-edit wcml-currency-edit"></i>
-							</td>
-							<?php foreach ( $active_languages as $language ): ?>
-								<td class="wcml-col-currency-switcher">
-									<i class="otgs-ico-yes wcml-currency-switch"></i>
-								</td>
-							<?php endforeach; ?>
-							<td class="wcml-col-delete">
-								<i class="otgs-ico-delete wcml-currency-delete"></i>
-							</td>
-						</tr>
-						</tbody>
-						<tfoot>
-						<td colspan="3">
-							<?php _e( "Default currency", 'wpml-wcml' ); ?>
-							<i class="otgs-ico-help wcml-tip"
-							   data-tip="<?php _e( 'Switch to this currency when switching language on the front-end.', 'wpml-wcml' ) ?>"></i>
-						</td>
+								<a
+									title="<?php esc_attr( _e( 'Edit', 'wpml-wcml' ) ); ?>" class="edit_currency"
+									data-currency="<?php echo $code ?>">
+									<i class="otgs-ico-edit"
+									   title="<?php esc_attr( _e( 'Edit', 'wpml-wcml' ) ); ?>"></i>
+								</a>
 
-						<?php foreach ( $active_languages as $language ): ?>
-							<td class="wcml-col-currency-switcher">
-								<select rel="<?php echo $language['code']; ?>">
-									<option
-										value="0" <?php selected( '0', $woocommerce_wpml->settings['default_currencies'][ $language['code'] ] ); ?>><?php _e( 'Keep', 'wpml-wcml' ); ?></option>
-									<?php if ( $woocommerce_wpml->settings['currency_options'][ $wc_currency ]['languages'][ $language['code'] ] == 1 ): ?>
-										<option
-											value="<?php echo $wc_currency; ?>" <?php selected( $wc_currency, $woocommerce_wpml->settings['default_currencies'][ $language['code'] ] ); ?>><?php echo $wc_currency; ?></option>
-									<?php endif; ?>
-									<?php foreach ( $currencies as $code2 => $currency2 ): ?>
-										<?php if ( $woocommerce_wpml->settings['currency_options'][ $code2 ]['languages'][ $language['code'] ] == 1 ): ?>
-											<option
-												value="<?php echo $code2; ?>" <?php selected( $code2, $woocommerce_wpml->settings['default_currencies'][ $language['code'] ] ); ?>><?php echo $code2; ?></option>
-										<?php endif; ?>
-									<?php endforeach; ?>
-								</select>
 							</td>
-						<?php endforeach; ?>
-						<td></td>
-						</tfoot>
-					</table>
-
-
-					<table class="widefat currency_table" id="currency-table">
-						<thead>
-						<tr>
-							<th><?php _e( 'Currency', 'wpml-wcml' ); ?></th>
-							<th></th>
-						</tr>
-						</thead>
-						<tbody>
-						<tr>
-							<td class="currency_code">
-								<span
-									class="code_val"><?php echo $wc_currencies[ $wc_currency ]; ?><?php printf( __( ' (%s)', 'wpml-wcml' ), $positioned_price ); ?></span>
-
-								<div class="currency_value"><span><?php _e( 'default', 'wpml-wcml' ); ?></span></div>
-							</td>
-							<td class="currency-actions"></td>
 
 						</tr>
 						<?php
@@ -185,39 +123,27 @@ $default_language = $sitepress->get_default_language();
 							}
 							?>
 							<tr id="currency_row_<?php echo $code ?>">
-								<td class="currency_code">
+								<td class="wcml-col-currency">
 									<?php include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php'; ?>
-									<span
-										class="code_val"><?php echo $wc_currencies[ $code ]; ?><?php printf( __( ' (%s)', 'wpml-wcml' ), $positioned_price ); ?></span>
-
-									<div class="currency_value">
-										<span><?php printf( '1 %s = %s %s', $wc_currency, $currency['rate'], $code ); ?></span>
-									</div>
-
+									<?php echo $wc_currencies[ $code ]; ?>
+									<small><?php printf( __( ' (%s)', 'wpml-wcml' ), $positioned_price ); ?></small>
+								</td>
+								<td class="wcml-col-rate">
+									<?php printf( '1 %s = %s %s', $wc_currency, $currency['rate'], $code ); ?>
 								</td>
 
-								<td class="currency-actions">
-									<div class="currency_action_update">
-										<a href="javascript:void(0);"
-										   title="<?php esc_attr( _e( 'Edit', 'wpml-wcml' ) ); ?>" class="edit_currency"
-										   data-currency="<?php echo $code ?>">
-											<i class="icon-edit"
-											   title="<?php esc_attr( _e( 'Edit', 'wpml-wcml' ) ); ?>"></i>
-										</a>
-									</div>
-									<div class="currency_action_delete">
-										<a href="javascript:void(0);"
-										   title="<?php esc_attr( _e( 'Delete', 'wpml-wcml' ) ); ?>"
-										   class="delete_currency" data-currency="<?php echo $code ?>">
-											<i class="icon-trash"
-											   title="<?php esc_attr( _e( 'Delete', 'wpml-wcml' ) ); ?>"></i>
-										</a>
-									</div>
+								<td class="wcml-col-edit">
+									<a
+										title="<?php esc_attr( _e( 'Edit', 'wpml-wcml' ) ); ?>" class="edit_currency"
+										data-currency="<?php echo $code ?>">
+										<i class="otgs-ico-edit"
+										   title="<?php esc_attr( _e( 'Edit', 'wpml-wcml' ) ); ?>"></i>
+									</a>
 								</td>
 							</tr>
 						<?php endforeach; ?>
 						<tr class="default_currency">
-							<td colspan="2">
+							<td colspan="3">
 								<?php _e( 'Default currency', 'wpml-wcml' ); ?>
 								<i class="wcml-tip otgs-ico-help"
 								   data-tip="<?php _e( 'Switch to this currency when switching language in the front-end', 'wpml-wcml' ); ?>"></i>
@@ -243,20 +169,18 @@ $default_language = $sitepress->get_default_language();
 								<tr>
 									<?php foreach ( $active_languages as $language ): ?>
 										<td class="currency_languages">
-											<div class="wcml_onof_buttons">
-												<ul>
-													<li <?php echo $woocommerce_wpml->settings['currency_options'][ $wc_currency ]['languages'][ $language['code'] ] == 0 ? 'class="on"' : ''; ?> >
-														<a class="off_btn" href="javascript:void(0);"
-														   data-language="<?php echo $language['code']; ?>"
-														   data-currency="<?php echo $wc_currency; ?>"><?php _e( 'OFF', 'wpml-wcml' ); ?></a>
-													</li>
-													<li <?php echo $woocommerce_wpml->settings['currency_options'][ $wc_currency ]['languages'][ $language['code'] ] == 1 ? 'class="on"' : ''; ?> >
-														<a class="on_btn" href="javascript:void(0);"
-														   data-language="<?php echo $language['code']; ?>"
-														   data-currency="<?php echo $wc_currency ?>"><?php _e( 'ON', 'wpml-wcml' ); ?></a>
-													</li>
-												</ul>
-											</div>
+											<ul>
+												<li <?php echo $woocommerce_wpml->settings['currency_options'][ $wc_currency ]['languages'][ $language['code'] ] == 0 ? 'class="on"' : ''; ?> >
+													<a class="off_btn otgs-ico-no"
+													   data-language="<?php echo $language['code']; ?>"
+													   data-currency="<?php echo $wc_currency; ?>"></a>
+												</li>
+												<li <?php echo $woocommerce_wpml->settings['currency_options'][ $wc_currency ]['languages'][ $language['code'] ] == 1 ? 'class="on"' : ''; ?> >
+													<a class="on_btn otgs-ico-yes"
+													   data-language="<?php echo $language['code']; ?>"
+													   data-currency="<?php echo $wc_currency ?>"></a>
+												</li>
+											</ul>
 										</td>
 									<?php endforeach; ?>
 								</tr>
@@ -264,27 +188,27 @@ $default_language = $sitepress->get_default_language();
 									<tr id="currency_row_langs_<?php echo $code ?>">
 										<?php foreach ( $active_languages as $language ): ?>
 											<td class="currency_languages">
-												<div class="wcml_onof_buttons">
-													<ul>
-														<li <?php echo $currency['languages'][ $language['code'] ] == 0 ? 'class="on"' : ''; ?> >
-															<a class="off_btn" href="javascript:void(0);"
-															   data-language="<?php echo $language['code']; ?>"
-															   data-currency="<?php echo $code; ?>"><?php _e( 'OFF', 'wpml-wcml' ); ?></a>
-														</li>
-														<li <?php echo $currency['languages'][ $language['code'] ] == 1 ? 'class="on"' : ''; ?> >
-															<a class="on_btn" href="javascript:void(0);"
-															   data-language="<?php echo $language['code']; ?>"
-															   data-currency="<?php echo $code; ?>"><?php _e( 'ON', 'wpml-wcml' ); ?></a>
-														</li>
-													</ul>
-												</div>
+
+												<ul>
+													<li <?php echo $currency['languages'][ $language['code'] ] == 0 ? 'class="on"' : ''; ?> >
+														<a class="off_btn otgs-ico-no"
+														   data-language="<?php echo $language['code']; ?>"
+														   data-currency="<?php echo $code; ?>"></a>
+													</li>
+													<li <?php echo $currency['languages'][ $language['code'] ] == 1 ? 'class="on"' : ''; ?> >
+														<a class="on_btn otgs-ico-yes"
+														   data-language="<?php echo $language['code']; ?>"
+														   data-currency="<?php echo $code; ?>"></a>
+													</li>
+												</ul>
+
 											</td>
 										<?php endforeach; ?>
 									</tr>
 								<?php endforeach; ?>
 								<tr class="default_currency">
 									<?php foreach ( $active_languages as $language ): ?>
-										<td class="currency_languages">
+										<td>
 											<select rel="<?php echo $language['code']; ?>">
 												<option
 													value="0" <?php selected( '0', $woocommerce_wpml->settings['default_currencies'][ $language['code'] ] ); ?>><?php _e( 'Keep', 'wpml-wcml' ); ?></option>
@@ -309,6 +233,43 @@ $default_language = $sitepress->get_default_language();
 
 						</div>
 					</div>
+					<table class="widefat currency_delete_table" id="currency-delete-table">
+						<thead>
+						<tr>
+							<th></th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr class="currency_default">
+							<td class="wcml-col-delete">
+								<a
+									title="<?php esc_attr( _e( 'Delete', 'wpml-wcml' ) ); ?>"
+									class="delete_currency" data-currency="<?php echo $code ?>">
+									<i class="otgs-ico-delete"
+									   title="<?php esc_attr( _e( 'Delete', 'wpml-wcml' ) ); ?>"></i>
+								</a>
+							</td>
+						</tr>
+
+
+						<?php foreach ( $currencies as $code => $currency ) : ?>
+							<tr>
+								<td class="wcml-col-delete">
+									<a
+										title="<?php esc_attr( _e( 'Delete', 'wpml-wcml' ) ); ?>"
+										class="delete_currency" data-currency="<?php echo $code ?>">
+										<i class="otgs-ico-delete"
+										   title="<?php esc_attr( _e( 'Delete', 'wpml-wcml' ) ); ?>"></i>
+									</a>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+						<tr class="default_currency">
+							<td></td>
+						</tr>
+						</tbody>
+					</table>
+
 
 					<?php // this is a template for scripts.js : jQuery('.wcml_add_currency button').click(function(); ?>
 					<table class="hidden js-table-row-wrapper">
@@ -343,7 +304,7 @@ $default_language = $sitepress->get_default_language();
 								<div class="currency_action_delete">
 									<a href="javascript:void(0);" title="Delete" class="delete_currency"
 									   data-currency="" style="display:none">
-										<i class="icon-trash" alt="Delete"></i>
+										<i class="otgs-ico-delete" alt="Delete"></i>
 									</a>
 									<i class="icon-remove-circle cancel_currency" style="display:inline"></i>
 								</div>
@@ -453,7 +414,7 @@ $default_language = $sitepress->get_default_language();
 							echo '</td>';
 						}
 
-						echo '<td align="right"><a href="#" onclick=" if(confirm(\'' . esc_js( __( 'Are you sure?', 'wpml-wcml' ) ) . '\')) wcml_remove_custom_rates(' . $post->post_id . ', jQuery(this));return false;"><i class="icon-trash" title="' . __( 'Delete', 'wpml-wcml' ) . '"></i></a></td>';
+						echo '<td align="right"><a href="#" onclick=" if(confirm(\'' . esc_js( __( 'Are you sure?', 'wpml-wcml' ) ) . '\')) wcml_remove_custom_rates(' . $post->post_id . ', jQuery(this));return false;"><i class="otgs-ico-delete" title="' . __( 'Delete', 'wpml-wcml' ) . '"></i></a></td>';
 						echo '<tr>';
 
 					}

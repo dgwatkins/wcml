@@ -31,14 +31,20 @@
 	@extend %wpml-wrap;
 	margin-bottom: 20px;
 	min-width: 900px;
+	.otgs-ico-yes,
 	.otgs-ico-ok {
 		color: #51a351;
 	}
-	.icon-refresh {
+	.otgs-ico-no,
+	.otgs-ico-warning,
+	.otgs-ico-delete {
+		color: #9d261d;
+	}
+	.otgs-ico-edit {
 		color: #3a87ad;
 	}
-	.otgs-ico-warning {
-		color: #9d261d;
+	.otgs-ico-in-progress {
+		color: rgb(255, 184, 0);
 	}
 }
 
@@ -47,7 +53,7 @@
 	padding: 0 0 $margin-sm 0;
 	margin: 0 0 $margin-sm 0;
 	border-bottom: 1px solid #ededed;
-	width: 900px;
+	min-width: 900px;
 	overflow: hidden;
 	&:last-of-type {
 		border: none;
@@ -61,6 +67,9 @@
 	border-bottom: 1px solid #ededed;
 	float: left;
 	width: 100%;
+	&.aligncenter {
+		text-align: center;
+	}
 }
 
 
@@ -78,6 +87,10 @@
 	float: left;
 	width: 570px;
 	margin-left: 30px;
+}
+
+.wcml-section-content-wide {
+	width: calc(100% - 360px);
 }
 
 .wcml_products {
@@ -553,17 +566,6 @@
 	}
 }
 
-.currency_value {
-	float: left;
-	margin-right: 3px;
-	input[type=text] {
-		width: 45px;
-	}
-}
-
-.currency-actions {
-	text-align: right;
-}
 
 .currency_action_update, .currency_action_delete {
 	display: inline-block;
@@ -592,63 +594,99 @@
 	margin-top: 0px;
 }
 
-.wcml_currency_options_popup {
+.wcml-co-dialog {
 	position: absolute;
-	background: #fff;
-	background-color: rgba(255, 255, 255, 0.9);
-	box-shadow: 10px 10px 5px #888888;
-	border: 1px solid #777;
-	border-radius: 5px;
-	z-index: 999;
 	min-width: 400px;
 	display: none;
 	margin-left: 230px;
-}
+	.wpml-form-row label {
+		width: 195px;
+		text-align: left;
+	}
+	input, select {
+		width: 100px;
+	}
 
-.currency_code {
-	.wcml_currency_options_popup {
-		tr {
-			height: auto;
+	.wcml-co-exchange-rate {
+		label {
+			width: 100px;
 		}
-		select {
-			display: inline;
+		input {
+			margin: 0;
+			width: 50px;
+		}
+		.wcml-co-set-rate {
+			display: inline-block;
+			margin-top: 4px;
+		}
+		small {
+			display: block;
 		}
 	}
-	.code_val {
-		display: block;
-	}
-}
 
-.currency-actions {
-	button {
-		margin: 0 0 4px 0;
+	.wcml-co-preview {
+		label {
+			width: 120px;
+			vertical-align: middle;
+		}
+
+		.wcml-co-preview-value {
+			display: inline-block;
+			padding: $margin-xs $margin-sm;
+			border: 1px solid #555;
+			font-size: 1.2em;
+			font-weight: bold;
+			vertical-align: middle;
+			margin: $margin-sm 0;
+		}
 	}
-	.spinner {
-		float: none;
-		display: inline-block;
-		vertical-align: middle;
-		margin: 0 5px 0 0;
-	}
+
 }
 
 table.widefat.currency_table {
 	float: left;
-	width: 250px;
+	width: 300px;
 	border-right: none;
+	@at-root {
+		td.wcml-col-currency,
+		td.wcml-col-rate {
+			padding-top: $margin-xs;
+			padding-bottom: 0;
+			vertical-align: top;
+		}
+
+		td.wcml-col-currency {
+			small {
+				display: block;
+			}
+		}
+
+		td.wcml-col-rate {
+			font-size: .85em;
+		}
+
+		td.wcml-col-edit {
+			vertical-align: middle;
+		}
+	}
 }
 
-.currency_table {
-	.icon-trash, .icon-edit {
-		font-size: 16px;
-		vertical-align: middle;
-	}
-	.icon-trash {
-		color: #d54e21;
-	}
-	.icon-edit {
-		color: #333;
+table.widefat.currency_delete_table {
+	float: left;
+	width: 50px;
+	border-left: none;
+
+	@at-root {
+		td.wcml-col-delete {
+			vertical-align: middle;
+			text-align: center;
+			&:first-child {
+				border-left: 1px solid #e5e5e5;
+			}
+		}
 	}
 }
+
 
 .prod_images, .prod_variations, .custom_fields_block {
 	display: none;
@@ -711,21 +749,6 @@ table.widefat.currency_table {
 	border-bottom: none !important;
 }
 
-/* Icons */
-
-.wcml_products {
-	[class^="icon-woo"] {
-		width: 24px;
-		height: 24px;
-		background-position: center center;
-		display: inline-block;
-	}
-	.children_icon {
-		margin-left: 20px;
-	}
-}
-
-/* Icons END */
 
 .wcml_product_status_text, .prod_parent_text {
 	font-style: italic;
@@ -744,71 +767,31 @@ table.widefat.currency_table {
 /* on/off buttons */
 
 .currency_languages {
+	&:first-child {
+		border-left: 1px solid #e5e5e5;
+	}
 	position: relative;
 	text-align: center;
 	ul {
-		list-style: none;
-		width: 43px;
-		height: 20px;
-		float: left;
-		display: block;
 		margin: 0;
-	}
-	.wcml_onof_buttons {
-		display: inline-block;
-	}
-	ul li {
-		float: left;
-		line-height: 16px;
-		font-size: 8px;
-		padding: 1px 3px 0;
-		background: #E5E5E5;
-		text-shadow: 0 1px 0 #FFF;
-		border-left: 1px solid #D5D5D5;
-		border-top: 1px solid #D5D5D5;
-		border-bottom: 1px solid #D5D5D5;
-		box-shadow: 0 1px 0 #FFF inset, 0 0 5px rgba(0, 0, 0, 0.1) inset, 0 1px 1px rgba(0, 0, 0, 0.3);
-		margin: 0;
-		&:first-child {
-			-webkit-border-radius: 5px 0 0 5px;
+		text-align: center;
+		li {
+			margin: 0;
+			display: none;
+			&.on {
+				display: inline-block;
+			}
 		}
-		&:last-child {
-			-webkit-border-radius: 0 5px 5px 0;
-		}
-		a {
-			text-decoration: none;
-			text-transform: uppercase;
-			color: #a1a1a1;
-		}
-	}
-	.on {
-		background: #21759b;
-		text-shadow: 0 -1px 0 #21759b, 0 0 7px #FFF;
-		border-right: 1px solid #21759b;
-		border-top: 1px solid #21759b;
-		border-bottom: 1px solid #21759b;
-		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.7) inset, 0 1px 0 #21759b;
-	}
-	ul li:not(.on):active {
-		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ddd), to(#f1f1f1));
 	}
 }
 
 table.widefat.currency_lang_table {
 	border-left: none;
-}
-
-.currency_languages ul li.on a {
-	color: #FFF;
-	cursor: default;
-}
-
-.currency_lang_table th {
-	text-align: center;
+	border-right: none;
 }
 
 .currency_wrap {
-	width: 320px;
+	width: calc(100% - 300px - 50px);
 	float: left;
 	margin-bottom: 10px;
 }
@@ -818,28 +801,20 @@ table.widefat.currency_lang_table {
 	overflow-y: visible;
 }
 
-.currency_table tr {
-	height: 64px;
-}
-
-.currency_lang_table tr {
-	height: 64px;
-	&.default_currency {
-		height: 64px;
+.currency_table,
+.currency_lang_table,
+.currency_delete_table {
+	clear: none;
+	tr {
+		height: 50px;
 	}
 }
 
-.currency_table {
-	tr td {
-		padding-top: 0;
-		padding-bottom: 0;
-	}
-	td {
-		vertical-align: middle;
-	}
-}
 
 .currency_lang_table {
+	th {
+		text-align: center;
+	}
 	td {
 		vertical-align: middle;
 	}
@@ -851,10 +826,11 @@ table.widefat.currency_lang_table {
 
 .default_currency {
 	select {
-		font-size: 10px;
+		font-size: 9px;
 		height: 24px;
 		margin: 0;
-		margin-right: 3px;
+		margin-right: 2px;
+		padding: 2px 0;
 	}
 	td {
 		border-top: 1px solid #e5e5e5;
@@ -874,14 +850,6 @@ table.widefat.currency_lang_table {
 	float: left;
 }
 
-.currency_table {
-	select, input {
-		font-size: 10px !important;
-		padding: 0px;
-		height: 20px;
-		line-height: 20px;
-	}
-}
 
 .ext_rate, .decimals_number, .abstract_amount, .currency_option_input {
 	width: 50px;
@@ -921,15 +889,9 @@ input[name="wcml_curr_template"] {
 	line-height: 30px;
 }
 
-#wcml_curr_sel_preview_wrap {
-	clear: both;
-	float: right;
-	padding: 15px 15px;
-	border: 1px solid #ccc;
-	margin-top: 20px;
-	p {
-		margin-top: 0;
-	}
+.wcml-currency-preview {
+	margin: $margin-sm 0 $margin-base;
+	display: inline-block;
 }
 
 .wcml_product_name {

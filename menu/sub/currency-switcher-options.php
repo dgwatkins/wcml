@@ -15,35 +15,18 @@ $currency_switcher_style = isset($settings['currency_switcher_style'])?$settings
     </div>
 
     <div class="wcml-section-content">
-	    <div id="wcml_curr_sel_preview_wrap">
+
+	    <div id="wcml_curr_sel_preview_wrap" class="wcml-section-content-inner aligncenter">
 		    <p><strong><?php _e( 'Currency switcher preview', 'wpml-wcml' ) ?></strong></p>
 		    <input type="hidden" id="wcml_currencies_switcher_preview_nonce"
 		           value="<?php echo wp_create_nonce( 'wcml_currencies_switcher_preview' ) ?>"/>
 
-		    <div id="wcml_curr_sel_preview">
+		    <div id="wcml_curr_sel_preview" class="wcml-currency-preview">
 			    <?php echo $woocommerce_wpml->multi_currency_support->currency_switcher(); ?>
 		    </div>
-	    </div>
-        <div class="wcml-section-content-inner">
-            <h4><?php _e('Currency order', 'wpml-wcml'); ?></h4>
-            <?php
-            $wc_currencies = get_woocommerce_currencies();
+		    </div>
 
-            if(!isset($settings['currencies_order'])){
-                $currencies = $woocommerce_wpml->multi_currency_support->get_currency_codes();
-            }else{
-                $currencies = $settings['currencies_order'];
-            }
-             ?>
-            <ul id="wcml_currencies_order">
-                <?php foreach($currencies as $currency): ?>
-                    <li class="wcml_currencies_order_<?php echo $currency ?>" cur="<?php echo $currency ?>" ><?php echo $wc_currencies[$currency].' ('.get_woocommerce_currency_symbol($currency).')'; ?></li>
-                <?php endforeach; ?>
-            </ul>
-            <span style="display:none;" class="wcml_currencies_order_ajx_resp"></span>
-            <input type="hidden" id="wcml_currencies_order_order_nonce" value="<?php echo wp_create_nonce('set_currencies_order_nonce') ?>" />
-            <p class="explanation-text"><?php _e('Drag the currencies to change their order', 'wpml-wcml') ?></p>
-        </div>
+
         <div class="wcml-section-content-inner">
             <h4><?php _e('Currency switcher style', 'wpml-wcml'); ?></h4>
             <ul class="wcml_curr_style">
@@ -65,6 +48,38 @@ $currency_switcher_style = isset($settings['currency_switcher_style'])?$settings
                 </li>
             </ul>
         </div>
+	    <div class="wcml-section-content-inner">
+		    <h4><?php _e( 'Currency order', 'wpml-wcml' ); ?></h4>
+		    <?php
+		    $wc_currencies = get_woocommerce_currencies();
+
+		    if ( ! isset( $settings['currencies_order'] ) ) {
+			    $currencies = $woocommerce_wpml->multi_currency_support->get_currency_codes();
+		    } else {
+			    $currencies = $settings['currencies_order'];
+		    }
+		    ?>
+		    <ul id="wcml_currencies_order">
+			    <?php foreach ( $currencies as $currency ): ?>
+				    <li class="wcml_currencies_order_<?php echo $currency ?>"
+				        cur="<?php echo $currency ?>"><?php echo $wc_currencies[ $currency ] . ' (' . get_woocommerce_currency_symbol( $currency ) . ')'; ?></li>
+			    <?php endforeach; ?>
+		    </ul>
+		    <span style="display:none;" class="wcml_currencies_order_ajx_resp"></span>
+		    <input type="hidden" id="wcml_currencies_order_order_nonce"
+		           value="<?php echo wp_create_nonce( 'set_currencies_order_nonce' ) ?>"/>
+
+		    <p class="explanation-text"><?php _e( 'Drag the currencies to change their order', 'wpml-wcml' ) ?></p>
+	    </div>
+	    <div class="wcml-section-content-inner">
+		    <h4><?php _e( 'Available parameters', 'wpml-wcml' ); ?></h4>
+		    <span class="explanation-text"><?php _e( '%name%, %symbol%, %code%', 'wpml-wcml' ); ?></span>
+		    <h4><?php _e( 'Template for currency switcher', 'wpml-wcml' ); ?></h4>
+		    <input type="text" name="wcml_curr_template"
+		           value="<?php echo isset( $settings['wcml_curr_template'] ) ? $settings['wcml_curr_template'] : ''; ?>"/>
+		    <span class="explanation-text"><?php _e( 'Default: %name% (%symbol%) - %code%', 'wpml-wcml' ); ?></span>
+		    <input type="hidden" id="currency_switcher_default" value="%name% (%symbol%) - %code%"/>
+	    </div>
         <div class="wcml-section-content-inner">
             <h4><?php _e('Visibility', 'wpml-wcml'); ?></h4>
             <ul class="wcml_curr_visibility">
@@ -76,18 +91,6 @@ $currency_switcher_style = isset($settings['currency_switcher_style'])?$settings
                 </li>
             </ul>
         </div>
-        <div class="wcml-section-content-inner">
-            <h4><?php _e('Available parameters', 'wpml-wcml'); ?></h4>
-            <span class="explanation-text"><?php _e('%name%, %symbol%, %code%', 'wpml-wcml'); ?></span>
-            <h4><?php _e('Template for currency switcher', 'wpml-wcml'); ?></h4>
-            <input type="text" name="wcml_curr_template" value="<?php echo isset($settings['wcml_curr_template'])?$settings['wcml_curr_template']:''; ?>" />
-            <span class="explanation-text"><?php _e('Default: %name% (%symbol%) - %code%', 'wpml-wcml'); ?></span>
-            <input type="hidden" id="currency_switcher_default" value="%name% (%symbol%) - %code%" />
-        </div>
-    </div>
-    <p class="button-wrap general_option_btn">
-        <input type='submit' name="currency_switcher_options" value='<?php _e('Save', 'wpml-wcml'); ?>' class='button-secondary' />
-        <?php wp_nonce_field('currency_switcher_options', 'currency_switcher_options_nonce'); ?>
-    </p>
 
+    </div>
 </div>

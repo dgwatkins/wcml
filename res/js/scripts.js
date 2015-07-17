@@ -891,7 +891,7 @@ jQuery(document).ready(function($){
     
     
     $(document).on('click', '.edit_currency', function(){
-        $('.wcml_currency_options_popup').hide();
+		$('.wcml-currency-options-dialog').hide();
         
         var popup = $('#wcml_currency_options_' + $(this).data('currency'));
         popup.fadeIn();
@@ -1143,9 +1143,9 @@ jQuery(document).ready(function($){
         return false;
     });
 
-    
-    $(document).on('click', '.wcml_currency_options_popup :submit', function(){
-        var parent = $(this).closest('.wcml_currency_options_popup');
+
+	$(document).on('click', '.wcml-currency-options-dialog :submit', function () {
+		var parent = $(this).closest('.wcml-currency-options-dialog');
 
         var chk_rate = check_on_numeric(parent,'.ext_rate');
         var chk_deci = check_on_numeric(parent,'.decimals_number');
@@ -1155,8 +1155,8 @@ jQuery(document).ready(function($){
             return false;
         }
 
-        
-        $('.wcml_currency_options_popup :submit, .wcml_currency_options_popup :button').prop('disabled', true);
+
+		$('.wcml-currency-options-dialog :submit, .wcml-currency-options-dialog :button').prop('disabled', true);
         var currency = $(this).data('currency');
 
         var ajaxLoader = $('<span class="spinner" style="position:absolute;margin-left:-30px;"></span>');
@@ -1169,10 +1169,10 @@ jQuery(document).ready(function($){
             type: 'POST',
             dataType: 'json',
             data: $('#wcml_mc_options').serialize() + '&action=wcml_save_currency&currency='+currency+'&wcml_nonce='+ $('#save_currency_nonce').val(),
-            success: function(response){                
-                $('.wcml_currency_options_popup').fadeOut(function(){
+            success: function(response){
+				$('.wcml-currency-options-dialog').fadeOut(function () {
                     ajaxLoader.remove();
-                    $('.wcml_currency_options_popup :submit, .wcml_currency_options_popup :button').prop('disabled', false);
+					$('.wcml-currency-options-dialog :submit, .wcml-currency-options-dialog :button').prop('disabled', false);
                     
                     $('#currency_row_' + currency + ' .currency_code .code_val').html(response.currency_name_formatted);
                     $('#currency_row_' + currency + ' .currency_value span').html(response.currency_meta_info);
@@ -1276,30 +1276,39 @@ jQuery(document).ready(function($){
         }).pointer('open');
     });
 
-    $(document).on('click','.currency_languages a.on_btn',function(e){
-        $(this).closest('ul').find('.on').removeClass('on');
-        $(this).parent().addClass('on');
+	//TODO Sergey: Seriously check on that
+	$(document).on('click', '.currency_languages a.off_btn', function (e) {
+		e.preventDefault();
+		$(this).closest('ul').children('li').toggleClass('on');
+
+
+
         var index = $(this).closest('tr')[0].rowIndex;
         $('.currency_languages select[rel="'+$(this).data('language')+'"]').append('<option value="'+$(this).data('currency')+'">'+$(this).data('currency')+'</option>');
         update_currency_lang($(this),1,0);
     });
 
-    $(document).on('click','.currency_languages a.off_btn',function(e){
-        var enbl_elem = $(this).closest('ul').find('.on').removeClass('on');
+	//TODO Sergey: Seriously check on that
+	$(document).on('click', '.currency_languages a.on_btn', function (e) {
+		e.preventDefault();
+
+		$(this).closest('ul').children('li').toggleClass('on');
+
+		//  var enbl_elem = $(this).closest('ul').find('.on').removeClass('on');
         var flag = true;
         var lang = $(this).data('language');
-        $('#currency-lang-table .on_btn[data-language="'+lang+'"]').each(function(){
-            if($(this).parent().hasClass('on'))
-                flag = false;
-        });
 
-        if(flag){
-            enbl_elem.addClass('on');
-            alert($('#wcml_warn_disable_language_massage').val());
-            return;
-        }
+		//$('#currency-lang-table .on_btn[data-language="'+lang+'"]').each(function(){
+		//    if($(this).parent().hasClass('on'))
+		//        flag = false;
+		//});
 
-        $(this).parent().addClass('on');
+		//if(flag){
+		//    enbl_elem.addClass('on');
+		//    alert($('#wcml_warn_disable_language_massage').val());
+		//    return;
+		//}
+		// $(this).parent().removeClass('on');
         var index = $(this).closest('tr')[0].rowIndex;
 
         if($('.currency_languages select[rel="'+$(this).data('language')+'"]').val() == $(this).data('currency')){

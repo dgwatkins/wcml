@@ -268,10 +268,10 @@ if ( ( ! WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty
 				<li class="js-tax-translation-<?php echo $taxonomy ?>">
 					<?php if ( $untranslated = WCML_Terms::get_untranslated_terms_number( $taxonomy ) ): ?>
 						<?php if ( WCML_Terms::is_fully_translated( $taxonomy ) ): // covers the 'ignore' case' ?>
-							<i class="otgs-ico-ok"></i> <?php printf( __( '%s does not require translation.', 'wpml-wcml' ), get_taxonomy( $taxonomy )->labels->name ); ?>
+							<i class="otgs-ico-ok"></i> <?php printf( __( '%s do not require translation.', 'wpml-wcml' ), get_taxonomy( $taxonomy )->labels->name ); ?>
 							<small class="actions">
 								<a href="#unignore-<?php echo $taxonomy ?>"
-								   title="<?php esc_attr_e( 'This taxonomy requires translation.', 'wpml-wcml' ) ?>"><?php _e( 'Include to translation', 'wpml-wcml' ) ?></a>
+								   title="<?php esc_attr_e( 'This taxonomy requires translation.', 'wpml-wcml' ) ?>"><?php _e( 'Include in translation', 'wpml-wcml' ) ?></a>
 							</small>
 						<?php else: ?>
 							<i class="otgs-ico-warning"></i>
