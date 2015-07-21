@@ -165,7 +165,7 @@ $woocommerce_wpml->update_settings(); ?>
 		<thead>
 		<tr>
 			<?php //TODO Sergey: make Title and Date columns sortable ?>
-			<th scope="col" class="manage-column column-thumb">
+			<th scope="col" class="column-thumb">
 				<span class="wc-image wcml-tip"
 				      data-tip="<?php _e( 'Image', 'wpml-wcml' ) ?>"><?php _e( 'Image', 'wpml-wcml' ) ?></span>
 			</th>
@@ -174,12 +174,12 @@ $woocommerce_wpml->update_settings(); ?>
 				<?php echo $woocommerce_wpml->products->get_translation_flags( $active_languages, $slang, $job_id ? $job_language : false ); ?>
 			</th>
 			<th scope="col"
-			    class="manage-column column-categories column-product_cat"><?php _e( 'Categories', 'wpml-wcml' ) ?></th>
-			<th scope="col" class="manage-column column-product_type">
+			    class="column-categories"><?php _e( 'Categories', 'wpml-wcml' ) ?></th>
+			<th scope="col" class="column-product_type">
 				<span class="wc-type wcml-tip"
 				      data-tip="<?php _e( 'Type', 'wpml-wcml' ) ?>"><?php _e( 'Type', 'wpml-wcml' ) ?></span>
 			</th>
-			<th scope="col" id="date" class="manage-column column-date"><?php _e( 'Date', 'wpml-wcml' ) ?></th>
+			<th scope="col" id="date" class="column-date"><?php _e( 'Date', 'wpml-wcml' ) ?></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -263,7 +263,7 @@ $woocommerce_wpml->update_settings(); ?>
 						}
 						echo $woocommerce_wpml->products->get_translation_statuses( $product_translations, $active_languages, $prod_lang, $trid, $job_id ? $job_language : false ); ?>
 					</td>
-					<td class="product_cat column-product_cat">
+					<td class="column-categories">
 						<?php //TODO Sergey Put here a nice Categories function (separated by comma)
 						?>
 					</td>
@@ -286,7 +286,7 @@ $woocommerce_wpml->update_settings(); ?>
 					</td>
 
 
-					<td class="date column-date">
+					<td class="column-date">
 						<?php //TODO Sergey: Put here this nice WP function that shows "13 mins ago" and knows about future posts etc. ;)
 						?>
 						<?php if ( $product->post_status == "publish" ) { ?>
