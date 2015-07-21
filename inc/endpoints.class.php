@@ -166,7 +166,7 @@ class WCML_Endpoints{
             $endpoints =  WC()->query->get_query_vars();
             $endpoint_in_url = end($uri_vars);
 
-            if( $q->get( 'pagename' ) != $endpoint_in_url && !in_array( $endpoint_in_url,$endpoints ) ){
+            if( $q->query['pagename']  != $endpoint_in_url && !in_array( $endpoint_in_url,$endpoints ) ){
                 $wp_query->set_404();
                 status_header(404);
                 include( get_query_template( '404' ) );
