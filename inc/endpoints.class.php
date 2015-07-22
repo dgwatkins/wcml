@@ -19,6 +19,9 @@ class WCML_Endpoints{
             add_filter('pre_get_posts', array($this, 'check_if_endpoint_exists'));
         }
 
+        add_filter( 'woocommerce_get_endpoint_url', array( $this, 'filter_get_endpoint_url' ), 10, 4 );
+
+
     }
 
 
@@ -127,7 +130,8 @@ class WCML_Endpoints{
                         }else{
                             $endpoint = get_option( 'woocommerce_myaccount_'.str_replace( '-','_',$key).'_endpoint' );
                         }
-                        $p = $this->get_endpoint_url($this->get_endpoint_translation( $key, $endpoint, $current_lang ),$wp->query_vars[ $key ],$p);
+
+                        $p = $this->get_endpoint_url( $this->get_endpoint_translation( $key, $endpoint, $current_lang ), $wp->query_vars[ $key ], $p, $page_lang );
                     }
                 }
             }
@@ -136,7 +140,22 @@ class WCML_Endpoints{
         return $p;
     }
 
-    function get_endpoint_url($endpoint, $value = '', $permalink = ''){
+    function get_endpoint_url($endpoint, $value = '', $permalink = '', $page_lang = false ){
+        global $sitepress;
+
+        if( $page_lang ){
+            $edit_address_shipping = $this->get_translated_edit_address_slug( 'shipping', $page_lang );
+            $edit_address_billing = $this->get_translated_edit_address_slug( 'billing', $page_lang );
+
+            if( $edit_address_shipping == urldecode( $value ) ){
+                $value = $this->get_translated_edit_address_slug( 'shipping', $sitepress->get_current_language() );
+            }elseif( $edit_address_billing == urldecode( $value ) ){
+                $value = $this->get_translated_edit_address_slug( 'billing', $sitepress->get_current_language() );
+            }
+
+        }
+
+
         if ( get_option( 'permalink_structure' ) ) {
             if ( strstr( $permalink, '?' ) ) {
                 $query_string = '?' . parse_url( $permalink, PHP_URL_QUERY );
@@ -158,15 +177,17 @@ class WCML_Endpoints{
         global $wp_query;
 
         $my_account_id = wc_get_page_id('myaccount');
-        $checkout_id = wc_get_page_id('checkout');
 
-        if( !$q->is_404 && $q->queried_object_id == $my_account_id ){
+        if( !$q->is_404 && $q->query_vars['page_id'] == $my_account_id ){
 
             $uri_vars = array_filter( explode( '/', $_SERVER['REQUEST_URI']) );
             $endpoints =  WC()->query->get_query_vars();
-            $endpoint_in_url = end($uri_vars);
+            $endpoint_in_url = urldecode( end( $uri_vars ) );
 
-            if( $q->get( 'pagename' ) != $endpoint_in_url && !in_array( $endpoint_in_url,$endpoints ) ){
+            $endpoints['shipping'] = urldecode( sanitize_title( $this->get_translated_edit_address_slug( 'shipping' ) ) );
+            $endpoints['billing'] = urldecode( sanitize_title( $this->get_translated_edit_address_slug( 'billing' ) ) );
+
+            if( urldecode( $q->query['pagename'] ) != $endpoint_in_url && !in_array( $endpoint_in_url,$endpoints ) ){
                 $wp_query->set_404();
                 status_header(404);
                 include( get_query_template( '404' ) );
@@ -175,6 +196,44 @@ class WCML_Endpoints{
 
         }
 
+    }
+
+    function get_translated_edit_address_slug( $slug, $language = false ){
+        global $woocommerce_wpml;
+
+        $strings_language = $woocommerce_wpml->strings->get_wc_context_language();
+
+        if( $strings_language == $language ){
+            return $slug;
+        }
+
+        $translated_slug = apply_filters( 'wpml_translate_single_string', $slug, 'woocommerce', 'edit-address-slug: '.$slug, $language );
+
+        if( $translated_slug == $slug ){
+
+            if( $language ){
+                $translated_slug = $woocommerce_wpml->terms->get_translation_from_woocommerce_mo_file( 'edit-address-slug'. chr(4) .$slug, $language );
+            }else{
+                $translated_slug = _x( $slug, 'edit-address-slug', 'woocommerce' );
+            }
+
+        }
+
+        return $translated_slug;
+    }
+
+    function filter_get_endpoint_url( $url, $endpoint, $value, $permalink ){
+
+        // return translated edit account slugs
+        if( isset( WC()->query->query_vars[ 'edit-address' ] ) && isset( WC()->query->query_vars[ 'edit-address' ] )  == $endpoint && in_array( $value, array('shipping','billing'))){
+            remove_filter('woocommerce_get_endpoint_url', array( $this, 'filter_get_endpoint_url'),10,4);
+            $url = wc_get_endpoint_url( 'edit-address', $this->get_translated_edit_address_slug( $value ) );
+            add_filter('woocommerce_get_endpoint_url', array( $this, 'filter_get_endpoint_url'),10,4);
+
+
+        }
+
+        return $url;
     }
 
 
