@@ -324,7 +324,7 @@ class WCML_Bookings{
     function sync_bookings( $original_product_id, $product_id, $lang ){
         global $wpdb;
 
-        $all_bookings_for_product = WC_Bookings_Controller::get_bookings_for_product( $original_product_id );
+        $all_bookings_for_product =  WC_Bookings_Controller::get_bookings_for_product( $original_product_id , array( 'in-cart', 'unpaid', 'confirmed', 'paid' ) );
 
         foreach($all_bookings_for_product as $booking ){
             $check_if_exists = $wpdb->get_row( $wpdb->prepare( "SELECT pm3.* FROM {$wpdb->postmeta} AS pm1
