@@ -8,13 +8,19 @@ class WCML_Endpoints{
 
         //endpoints hooks
         $this->register_endpoints_translations();
+        $this->maybe_flush_rules();
         add_action( 'icl_ajx_custom_call', array( $this, 'rewrite_rule_endpoints' ), 11, 2 );
         add_action( 'woocommerce_update_options', array( $this, 'update_endpoints_rules' ) );
         add_filter( 'pre_update_option_rewrite_rules', array( $this, 'update_rewrite_rules' ), 100, 2 );
 
         add_filter( 'page_link', array( $this, 'endpoint_permalink_filter' ), 10, 2 ); //after WPML
 
+        if(!is_admin()){
+            add_filter('pre_get_posts', array($this, 'check_if_endpoint_exists'));
+        }
+
     }
+
 
     function register_endpoints_translations(){
         if( !class_exists( 'woocommerce' ) || !defined( 'ICL_SITEPRESS_VERSION' ) || ICL_PLUGIN_INACTIVE || version_compare( WOOCOMMERCE_VERSION, '2.2', '<' ) ) return false;
@@ -24,16 +30,16 @@ class WCML_Endpoints{
         if ( !empty( $wc_vars ) ){
             $query_vars = array(
                 // Checkout actions
-                'order-pay'          => $this->get_endpoint_translation( $wc_vars['order-pay'] ),
-                'order-received'     => $this->get_endpoint_translation( $wc_vars['order-received'] ),
+                'order-pay'          => $this->get_endpoint_translation( 'order-pay', $wc_vars['order-pay'] ),
+                'order-received'     => $this->get_endpoint_translation( 'order-received', $wc_vars['order-received'] ),
 
                 // My account actions
-                'view-order'         => $this->get_endpoint_translation( $wc_vars['view-order'] ),
-                'edit-account'       => $this->get_endpoint_translation( $wc_vars['edit-account'] ),
-                'edit-address'       => $this->get_endpoint_translation( $wc_vars['edit-address'] ),
-                'lost-password'      => $this->get_endpoint_translation( $wc_vars['lost-password'] ),
-                'customer-logout'    => $this->get_endpoint_translation( $wc_vars['customer-logout'] ),
-                'add-payment-method' => $this->get_endpoint_translation( $wc_vars['add-payment-method'] ),
+                'view-order'         => $this->get_endpoint_translation( 'view-order', $wc_vars['view-order'] ),
+                'edit-account'       => $this->get_endpoint_translation( 'edit-account', $wc_vars['edit-account'] ),
+                'edit-address'       => $this->get_endpoint_translation( 'edit-address', $wc_vars['edit-address'] ),
+                'lost-password'      => $this->get_endpoint_translation( 'lost-password', $wc_vars['lost-password'] ),
+                'customer-logout'    => $this->get_endpoint_translation( 'customer-logout', $wc_vars['customer-logout'] ),
+                'add-payment-method' => $this->get_endpoint_translation( 'add-payment-method', $wc_vars['add-payment-method'] ),
             );
 
             WC()->query->query_vars = $query_vars;
@@ -42,19 +48,19 @@ class WCML_Endpoints{
 
     }
 
-    function get_endpoint_translation( $endpoint ){
+    function get_endpoint_translation( $key, $endpoint, $language = null ){
         global $wpdb;
 
-        $string = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'Endpoint slug: ' . $endpoint, $endpoint ) );
+        $string = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'Endpoint slug: ' . $key, $endpoint ) );
 
         if( !$string && function_exists( 'icl_register_string' ) ){
-            do_action('wpml_register_single_string', 'WordPress', 'Endpoint slug: ' . $endpoint, $endpoint );
+            do_action('wpml_register_single_string', 'WordPress', 'Endpoint slug: ' . $key, $endpoint );
         }else{
             $this->endpoints_strings[] = $string;
         }
 
         if( function_exists('icl_t') ){
-            return apply_filters( 'wpml_translate_single_string', $endpoint, 'WordPress', 'Endpoint slug: '. $endpoint  );
+            return apply_filters( 'wpml_translate_single_string', $endpoint, 'WordPress', 'Endpoint slug: '. $key, $language );
         }else{
             return $endpoint;
         }
@@ -63,7 +69,14 @@ class WCML_Endpoints{
     function rewrite_rule_endpoints( $call, $data ){
         if( $call == 'icl_st_save_translation' && in_array( $data['icl_st_string_id'], $this->endpoints_strings ) ){
             $this->add_endpoints();
+            add_option( 'flush_rules_for_endpoints_translations', true );
+        }
+    }
+
+    function maybe_flush_rules(){
+        if( get_option( 'flush_rules_for_endpoints_translations' ) ){
             flush_rewrite_rules();
+            delete_option( 'flush_rules_for_endpoints_translations' );
         }
     }
 
@@ -114,7 +127,7 @@ class WCML_Endpoints{
                         }else{
                             $endpoint = get_option( 'woocommerce_myaccount_'.str_replace( '-','_',$key).'_endpoint' );
                         }
-                        $p = $this->get_endpoint_url($this->get_endpoint_translation( $endpoint ),$wp->query_vars[ $key ],$p);
+                        $p = $this->get_endpoint_url($this->get_endpoint_translation( $key, $endpoint, $current_lang ),$wp->query_vars[ $key ],$p);
                     }
                 }
             }
@@ -136,6 +149,32 @@ class WCML_Endpoints{
             $url = add_query_arg( $endpoint, $value, $permalink );
         }
         return $url;
+    }
+
+    /*
+     * We need check special case - when you manually put in URL default not translated endpoint it not generated 404 error
+     */
+    function check_if_endpoint_exists($q){
+        global $wp_query;
+
+        $my_account_id = wc_get_page_id('myaccount');
+        $checkout_id = wc_get_page_id('checkout');
+
+        if( !$q->is_404 && $q->queried_object_id == $my_account_id ){
+
+            $uri_vars = array_filter( explode( '/', $_SERVER['REQUEST_URI']) );
+            $endpoints =  WC()->query->get_query_vars();
+            $endpoint_in_url = end($uri_vars);
+
+            if( $q->query['pagename']  != $endpoint_in_url && !in_array( $endpoint_in_url,$endpoints ) ){
+                $wp_query->set_404();
+                status_header(404);
+                include( get_query_template( '404' ) );
+                die();
+            }
+
+        }
+
     }
 
 

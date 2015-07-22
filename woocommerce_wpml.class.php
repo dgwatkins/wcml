@@ -143,11 +143,19 @@ class woocommerce_wpml {
 
         $slug = $this->get_woocommerce_product_slug();
 
-        $string = $wpdb->get_row($wpdb->prepare("SELECT id,status FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'URL slug: ' . $slug, $slug));
-
-        if(!$string){
-            do_action('wpml_register_single_string', 'WordPress', 'URL slug: ' . $slug, $slug);
+        if ( apply_filters( 'wpml_slug_translation_available', false) ) {
+            // Use new API for WPML >= 3.2.3
+            do_action( 'wpml_activate_slug_translation', $slug );
+            
+        } else {
+            // Pre WPML 3.2.3
             $string = $wpdb->get_row($wpdb->prepare("SELECT id,status FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'URL slug: ' . $slug, $slug));
+    
+            if(!$string){
+                do_action('wpml_register_single_string', 'WordPress', 'URL slug: ' . $slug, $slug);
+                $string = $wpdb->get_row($wpdb->prepare("SELECT id,status FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'URL slug: ' . $slug, $slug));
+            }
+
         }
 
         if(empty($sitepress_settings['posts_slug_translation']['on']) || empty($sitepress_settings['posts_slug_translation']['types']['product'])){

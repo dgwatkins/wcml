@@ -27,6 +27,9 @@ $default_language = $sitepress->get_default_language();
                     <label for="wcml_trsl_interface_native"><?php _e('Go to the native WooCommerce product editing screen', 'wpml-wcml'); ?></label>
                 </li>
             </ul>
+            <p class="button-wrap">
+                <input type='submit' name="wcml_trsl_interface_table" value='<?php esc_attr(_e('Save', 'wpml-wcml')); ?>' class='button-secondary' />
+            </p>
         </form>
     </div> <!-- .wcml-section-content -->
 
@@ -55,6 +58,9 @@ $default_language = $sitepress->get_default_language();
                     <label for="wcml_products_sync_order"><?php _e('Sync products and product taxonomies order.', 'wpml-wcml'); ?></label>
                 </li>
             </ul>
+            <p class="button-wrap">
+                <input type='submit' name="wcml_products_sync_prop" value='<?php esc_attr(_e('Save', 'wpml-wcml')); ?>' class='button-secondary' />
+            </p>
         </form>
     </div>
 

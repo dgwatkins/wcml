@@ -538,7 +538,9 @@ class WCML_Products{
 
         }
 
-        do_action('wcml_update_extra_fields',$tr_product_id,$data,$language);
+        do_action( 'wcml_update_extra_fields', $tr_product_id, $data, $language );
+
+        do_action( 'wcml_before_sync_product_data', $original_product_id, $tr_product_id, $language );
 
         $this->sync_product_attr( $original_product_id, $tr_product_id, $language, $data );
 
@@ -1186,7 +1188,7 @@ class WCML_Products{
                                         $values_arrs_tr = array_map('trim',explode('|',$tr_product_attr[$tax]['value']));
                                         foreach($values_arrs as $key=>$value){
                                             $value_sanitized = sanitize_title($value);
-                                            if($value_sanitized == urldecode($meta_value) && isset($values_arrs_tr[$key])){
+                                            if( ( $value_sanitized == urldecode($meta_value) || $value_sanitized == $meta_value ) && isset($values_arrs_tr[$key])){
                                                 $meta_value = $values_arrs_tr[$key];
                                             }
                                         }
@@ -1627,6 +1629,7 @@ class WCML_Products{
         foreach( $posts as $post_id => $translation ) {
             $lang = $translation->language_code;
 
+            do_action( 'wcml_before_sync_product_data', $duplicated_post_id, $post_id, $lang );
             // Filter upsell products, crosell products and default attributes for translations
             $this->duplicate_product_post_meta( $duplicated_post_id, $post_id );
 
@@ -2420,6 +2423,11 @@ class WCML_Products{
     }
 
     function translate_cart_subtotal($cart) {
+
+        if ( apply_filters( 'translate_cart_subtotal_exception', false, $cart ) ){
+            return;
+        }
+
         $cart->calculate_totals();
     }
 
@@ -2608,6 +2616,9 @@ class WCML_Products{
                 $search_key = $cart_content[ 'product_id' ];
             }else{
                 $search_key = $cart_content[ 'product_id' ].'_'.$cart_content['variation_id'];
+                foreach( $cart_content['variation'] as $var_key => $value ){
+                    $search_key .= '_'.$var_key.'-'.$value;
+                }
             }
 
             if( array_key_exists( $search_key, $exists_products ) ){
