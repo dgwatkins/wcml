@@ -184,8 +184,8 @@ class WCML_Endpoints{
             $endpoints =  WC()->query->get_query_vars();
             $endpoint_in_url = urldecode( end( $uri_vars ) );
 
-            $endpoints['shipping'] = urldecode( sanitize_title( $this->get_translated_edit_address_slug( 'shipping' ) ) );
-            $endpoints['billing'] = urldecode( sanitize_title( $this->get_translated_edit_address_slug( 'billing' ) ) );
+            $endpoints['shipping'] = urldecode(  $this->get_translated_edit_address_slug( 'shipping' ) );
+            $endpoints['billing'] = urldecode(  $this->get_translated_edit_address_slug( 'billing' )  );
 
             if( urldecode( $q->query['pagename'] ) != $endpoint_in_url && !in_array( $endpoint_in_url,$endpoints ) ){
                 $wp_query->set_404();
