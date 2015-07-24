@@ -167,12 +167,12 @@ class WCML_Terms{
                 foreach($wc_taxonomies_wc_format as $taxonomy ){
                     $taxonomy_obj  = get_taxonomy($taxonomy);
 
-                    if(isset($taxonomy_obj->rewrite['slug'])){
+                    if( isset($taxonomy_obj->rewrite['slug'] ) ){
                         $exp = explode('/', trim($taxonomy_obj->rewrite['slug'],'/'));
                         $slug = join('/', array_slice($exp, 0, count($exp) - 1));
                     }
 
-                    if($slug && $sitepress->get_current_language() != $strings_language){
+                    if( isset( $slug ) && $sitepress->get_current_language() != $strings_language){
                         
                         $slug_translation = $wpdb->get_var($wpdb->prepare("
                                     SELECT t.value 
