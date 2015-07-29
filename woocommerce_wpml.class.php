@@ -433,6 +433,12 @@ class woocommerce_wpml {
 
                 $this->load_tooltip_resources();
 
+                //@Todo: these should be loaded only when/if not loaded in WPML and also on specific pages
+                wp_register_style( 'wpml-dialogs', ICL_PLUGIN_URL . '/res/css/dialogs.css', null, ICL_SITEPRESS_VERSION );
+                wp_register_script( 'wpml-dialogs', ICL_PLUGIN_URL . '/res/js/dialogs.js', array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'), ICL_SITEPRESS_VERSION );
+                wp_enqueue_script( 'wpml-dialogs' );
+                wp_enqueue_style( 'wpml-dialogs' );
+
             }elseif( $_GET['page'] == WPML_TM_FOLDER.'/menu/main.php' ){
 	            wp_register_script( 'wpml_tm', WCML_PLUGIN_URL . '/res/js/wpml_tm.js', array( 'jquery' ), WCML_VERSION );
                 wp_enqueue_script('wpml_tm');

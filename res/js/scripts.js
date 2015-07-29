@@ -39,7 +39,11 @@ jQuery(document).ready(function($){
    });
 
    $('.wcml_search').click(function(){
-       window.location = $('.wcml_products_admin_url').val()+'&s='+$('.wcml_product_name').val()+'&cat='+$('.wcml_product_category').val()+'&trst='+$('.wcml_translation_status').val()+'&st='+$('.wcml_product_status').val()+'&slang='+$('.wcml_translation_status_lang').val();
+       window.location = $('.wcml_products_admin_url').val()+'&cat='+$('.wcml_product_category').val()+'&trst='+$('.wcml_translation_status').val()+'&st='+$('.wcml_product_status').val()+'&slang='+$('.wcml_translation_status_lang').val();
+   });
+
+   $('.wcml_search_by_title').click(function(){
+       window.location = $('.wcml_products_admin_url').val()+'&s='+$('.wcml_product_name').val();
    });
 
    $('.wcml_reset_search').click(function(){

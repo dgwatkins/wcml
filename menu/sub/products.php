@@ -4,6 +4,7 @@ $lm = ( isset( $_GET['lm'] ) && $_GET['lm'] > 0 ) ? $_GET['lm'] : 20;
 
 $search         = false;
 $pagination_url = admin_url( 'admin.php?page=wpml-wcml&tab=products&paged=' );
+$filter_url = admin_url( 'admin.php?page=wpml-wcml&tab=products' );
 $translator_id  = false;
 
 if ( isset( $_GET['prid'] ) ) {
@@ -53,14 +54,45 @@ if ( ! current_user_can( 'wpml_operate_woocommerce_multilingual' ) ) {
 
 $slang = isset( $_GET['slang'] ) && $_GET['slang'] != 'all' ? $_GET['slang'] : false;
 
-if ( ! isset( $products ) && isset( $_GET['s'] ) && isset( $_GET['cat'] ) && isset( $_GET['trst'] ) && isset( $_GET['st'] ) && isset( $_GET['slang'] ) ) {
-	$products_data  = $woocommerce_wpml->products->get_products_from_filter( $_GET['s'], $_GET['cat'], $_GET['trst'], $_GET['st'], $slang, $pn, $lm );
+if ( ! isset( $products ) && isset( $_GET['cat'] ) && isset( $_GET['trst'] ) && isset( $_GET['st'] ) && isset( $_GET['slang'] ) ) {
+	$products_data  = $woocommerce_wpml->products->get_products_from_filter( '', $_GET['cat'], $_GET['trst'], $_GET['st'], $slang, $pn, $lm );
 	$products       = $products_data['products'];
 	$products_count = $products_data['count'];
 	$search         = true;
-	$pagination_url = admin_url( 'admin.php?page=wpml-wcml&tab=products&s=' . $_GET['s'] . '&cat=' . $_GET['cat'] . '&trst=' . $_GET['trst'] . '&st=' . $_GET['st'] . '&slang=' . $_GET['slang'] . '&paged=' );
+	$pagination_url = admin_url( 'admin.php?page=wpml-wcml&tab=products&cat=' . $_GET['cat'] . '&trst=' . $_GET['trst'] . '&st=' . $_GET['st'] . '&slang=' . $_GET['slang'] . '&paged=' );
 }
 
+if( ! isset( $products ) && isset( $_GET['s'] ) ){
+    $products_data  = $woocommerce_wpml->products->get_products_from_filter( $_GET['s'], false, false, false, $slang, $pn, $lm );
+    $products       = $products_data['products'];
+    $products_count = $products_data['count'];
+    $pagination_url = admin_url( 'admin.php?page=wpml-wcml&tab=products&s=' . $_GET['s'] .'&paged=' );
+}
+
+if( ! isset( $products ) && isset( $_GET['cat'] ) ){
+    $products_data  = $woocommerce_wpml->products->get_products_from_filter( '', $_GET['cat'], false, false, $slang, $pn, $lm );
+    $products       = $products_data['products'];
+    $products_count = $products_data['count'];
+    $pagination_url = admin_url( 'admin.php?page=wpml-wcml&tab=products&cat=' . $_GET['cat'] .'&paged=' );
+}
+
+$title_sort = isset( $_GET['ts'] ) ? $_GET['ts'] == 'asc' ? 'desc' : 'asc' : 'asc';
+
+if( ! isset( $products ) && isset( $_GET['ts'] ) ){
+    $products_data  = $woocommerce_wpml->products->get_products_from_filter( '', false, false, false, $slang, $pn, $lm, $_GET['ts'] );
+    $products       = $products_data['products'];
+    $products_count = $products_data['count'];
+    $pagination_url = admin_url( 'admin.php?page=wpml-wcml&tab=products&ts=' . $_GET['ts'] .'&paged=' );
+}
+
+$date_sort = isset( $_GET['ds'] ) ? $_GET['ds'] == 'asc' ? 'desc' : 'asc' : 'asc';
+
+if( ! isset( $products ) && isset( $_GET['ds'] ) ){
+    $products_data  = $woocommerce_wpml->products->get_products_from_filter( '', false, false, false, $slang, $pn, $lm, false, $_GET['ds'] );
+    $products       = $products_data['products'];
+    $products_count = $products_data['count'];
+    $pagination_url = admin_url( 'admin.php?page=wpml-wcml&tab=products&ds=' . $_GET['ds'] .'&paged=' );
+}
 
 if ( ! isset( $products ) && current_user_can( 'wpml_operate_woocommerce_multilingual' ) ) {
 	$products       = $woocommerce_wpml->products->get_product_list( $pn, $lm, $slang );
@@ -83,7 +115,7 @@ $woocommerce_wpml->update_settings(); ?>
 	<?php if ( ! isset( $_GET['prid'] ) && ! $translator_id ): ?>
 		<div class="tablenav top clearfix">
 			<div class="alignleft">
-				<select>
+				<select class="wcml_translation_status_lang">
 					<option
 						value="all" <?php echo ! $slang ? 'selected="selected"' : ''; ?> ><?php _e( 'All languages', 'wpml-wcml' ); ?></option>
 					<?php foreach ( $active_languages as $lang ): ?>
@@ -92,7 +124,7 @@ $woocommerce_wpml->update_settings(); ?>
 					<?php endforeach; ?>
 				</select>
 
-				<select>
+				<select class="wcml_product_category">
 					<option value="0"><?php _e( 'All categories', 'wpml-wcml' ); ?></option>
 					<?php
 
@@ -115,7 +147,7 @@ $woocommerce_wpml->update_settings(); ?>
 					}
 					?>
 				</select>
-				<select>
+				<select class="wcml_translation_status">
 					<option value="all"><?php _e( 'All translation statuses', 'wpml-wcml' ); ?></option>
 					<option
 						value="not" <?php echo ( isset( $_GET['trst'] ) && $_GET['trst'] == 'not' ) ? 'selected="selected"' : ''; ?>><?php _e( 'Not translated or needs updating', 'wpml-wcml' ); ?></option>
@@ -139,37 +171,43 @@ $woocommerce_wpml->update_settings(); ?>
 							value="<?php echo $key; ?>" <?php echo ( isset( $_GET['st'] ) && $_GET['st'] == $key ) ? 'selected="selected"' : ''; ?> ><?php echo ucfirst( $status ); ?></option>
 					<?php endforeach; ?>
 				</select>
-				<?php //TODO Sergey: Make this button work ;) ?>
 				<button type="button" value="filter"
-				        class="button-secondary"><?php _e( 'Filter', 'wpml-wcml' ); ?></button>
+				        class="button-secondary wcml_search"><?php _e( 'Filter', 'wpml-wcml' ); ?></button>
+                <?php if($search): ?>
+                    <button type="button" value="reset"
+				        class="button-secondary wcml_reset_search"><?php _e( 'Reset', 'wpml-wcml' ); ?></button>
+                <?php endif; ?>
 			</div>
 
 			<div class="alignright">
-				<input type="text" class="wcml_product_name" placeholder="<?php _e( 'Search', 'wpml-wcml' ); ?>"
+				<input type="search" class="wcml_product_name" placeholder="<?php _e( 'Search', 'wpml-wcml' ); ?>"
 				       value="<?php echo isset( $_GET['s'] ) ? $_GET['s'] : ''; ?>"/>
 				<input type="hidden" value="<?php echo admin_url( 'admin.php?page=wpml-wcml&tab=products' ); ?>"
 				       class="wcml_products_admin_url"/>
 				<input type="hidden" value="<?php echo $pagination_url; ?>" class="wcml_pagination_url"/>
 
 				<button type="button" value="search"
-				        class="button-secondary"><?php _e( 'Search', 'wpml-wcml' ); ?></button>
+				        class="button-secondary wcml_search_by_title"><?php _e( 'Search', 'wpml-wcml' ); ?></button>
 			</div>
 		</div>
 	<?php endif; ?>
 
-
-	<input type="hidden" id="upd_product_nonce" value="<?php echo wp_create_nonce( 'update_product_actions' ); ?>"/>
-	<input type="hidden" id="get_product_data_nonce" value="<?php echo wp_create_nonce( 'wcml_product_data' ); ?>"/>
+    <input type="hidden" id="upd_product_nonce" value="<?php echo wp_create_nonce('update_product_actions'); ?>" />
+    <input type="hidden" id="get_product_data_nonce" value="<?php echo wp_create_nonce('wcml_product_data'); ?>" />
 
 	<table class="widefat fixed wpml-list-table wp-list-table striped" cellspacing="0">
 		<thead>
 		<tr>
-			<?php //TODO Sergey: make Title and Date columns sortable ?>
 			<th scope="col" class="column-thumb">
 				<span class="wc-image wcml-tip"
 				      data-tip="<?php _e( 'Image', 'wpml-wcml' ) ?>"><?php _e( 'Image', 'wpml-wcml' ) ?></span>
 			</th>
-			<th scope="col" class="wpml-col-title"><?php _e( 'Product', 'wpml-wcml' ) ?></th>
+			<th scope="col" class="wpml-col-title <?php echo isset( $_GET['ts']) ? ' sorted '.$_GET['ts'] : ''; ?>">
+                <a href="<?php echo $filter_url.'&ts='.$title_sort; ?>">
+                    <span><?php _e( 'Product', 'wpml-wcml' ) ?></span>
+                    <span class="sorting-indicator"></span>
+                </a>
+            </th>
 			<th scope="col" class="wpml-col-languages">
 				<?php echo $woocommerce_wpml->products->get_translation_flags( $active_languages, $slang, $job_id ? $job_language : false ); ?>
 			</th>
@@ -179,7 +217,12 @@ $woocommerce_wpml->update_settings(); ?>
 				<span class="wc-type wcml-tip"
 				      data-tip="<?php _e( 'Type', 'wpml-wcml' ) ?>"><?php _e( 'Type', 'wpml-wcml' ) ?></span>
 			</th>
-			<th scope="col" id="date" class="column-date"><?php _e( 'Date', 'wpml-wcml' ) ?></th>
+			<th scope="col" id="date" class="column-date <?php echo isset( $_GET['ds'] ) ? ' sorted '.$_GET['ds'] : ''; ?>">
+                <a href="<?php echo $filter_url.'&ds='.$date_sort; ?>">
+                    <span><?php _e( 'Date', 'wpml-wcml' ) ?></span>
+                    <span class="sorting-indicator"></span>
+                </a>
+            </th>
 		</tr>
 		</thead>
 		<tbody>
@@ -205,16 +248,24 @@ $woocommerce_wpml->update_settings(); ?>
 
 				?>
 				<tr>
-					<?php //TODO Sergey: Add image URL, product title in alt + a link to the product.
-					?>
 					<td class="thumb column-thumb">
-						<a href="http://localhost/wpml/wp-admin/post.php?post=11&amp;action=edit&amp;lang=en">
-							<img width="150" height="150"
-							     src="http://localhost/wpml/wp-content/uploads/2015/07/DeathtoStock_EnergyandSerenity7-150x150.jpg"
-							     alt="DeathtoStock_EnergyandSerenity7">
+						<a href="<?php echo get_edit_post_link( $product->ID ); ?>">
+                            <?php
+                            if( has_post_thumbnail( $product->ID ) ){
+                                echo get_the_post_thumbnail( $product->ID, 150, array( 'alt' => strip_tags( $product->post_title ) ) );
+                            }else{
+                                echo wc_placeholder_img( 150 );
+                            }
+							?>
 						</a>
-					</td>
+                    </td>
+					<?php /*
+                        <a href="#" data-action="product-translation-dialog" class="wpml-dialog" data-id="<?php echo $product->ID; ?>" data-job_id="<?php echo $job_id; ?>" data-language="fr"><?php _e('Pencil Icon', 'wpml-wcml') ?></a>
 
+                        <a href="#" id="test-dialog-button" data-content="static_dialog" class="wpml-dialog" data-id="<?php echo $product->ID; ?>" data-job_id="<?php echo $job_id; ?>" data-language="fr"><?php _e('Static Dialog', 'wpml-wcml') ?></a>
+
+                        <div id="static_dialog" style="display: none"><h3>Welcome</h3><p>This is a static dialog. Woot!</p></div>
+                    */ ?>
 
 					<td class="wpml-col-title  wpml-col-title-flag">
 						<?php echo $product->post_parent != 0 ? '&#8212; ' : ''; ?>
@@ -223,9 +274,7 @@ $woocommerce_wpml->update_settings(); ?>
 								<span class="wpml-title-flag"><img
 										src="<?php echo $sitepress->get_flag_url( $original_lang ) ?>"/></span>
 							<?php endif; ?>
-							<?php //TODO Sergey: Add Edit post link
-							?>
-							<a href="<?php echo '#' ?>" title="<?php echo strip_tags( $product->post_title );?>">
+							<a href="<?php echo get_edit_post_link( $product->ID ); ?>" title="<?php echo strip_tags( $product->post_title );?>">
 								<?php echo $product->post_title;?>
 							</a>
 							<?php if ( $product->post_status == 'draft' && ( ( isset( $_GET['st'] ) && $_GET['st'] != 'draft' ) || ! isset( $_GET['st'] ) ) ): ?>
@@ -240,15 +289,11 @@ $woocommerce_wpml->update_settings(); ?>
 
 						<div class="row-actions">
 		                    <span class="edit">
-			                    <?php //TODO Sergey: Add edit and View links
-			                    ?>
-			                    <a href=""
+			                    <a href="<?php echo get_edit_post_link( $product->ID ); ?>"
 			                       title="<?php _e( 'Edit this item', 'wpml-wcml' );?>"><?php _e( 'Edit', 'wpml-wcml' );?> </a>
 		                    </span> | <span class="view">
-			                    <?php //TODO Sergey: Add edit and View links
-			                    ?>
-								<a href=""
-								   title="<?php printf( __( 'View "%s"', 'wpml-wcml' ), $product->post_title );?>"><?php _e( 'View', 'wpml-wcml' );?> </a>
+								<a href="<?php echo get_post_permalink( $product->ID ); ?>"
+								   title="<?php printf( __( 'View "%s"', 'wpml-wcml' ), $product->post_title );?>" target="_blank"><?php _e( 'View', 'wpml-wcml' );?> </a>
 		                    </span>
 
 						</div>
@@ -261,17 +306,18 @@ $woocommerce_wpml->update_settings(); ?>
 						} else {
 							$prod_lang = $slang;
 						}
-						echo $woocommerce_wpml->products->get_translation_statuses( $product_translations, $active_languages, $prod_lang, $trid, $job_id ? $job_language : false ); ?>
+						echo $woocommerce_wpml->products->get_translation_statuses( $product->ID, $product_translations, $active_languages, $prod_lang, $trid, $job_id ? $job_language : false ); ?>
 					</td>
 					<td class="column-categories">
-						<?php //TODO Sergey Put here a nice Categories function (separated by comma)
-						?>
+                        <?php $product_categories = wp_get_object_terms( $product->ID, 'product_cat' );
+                        foreach( $product_categories as $key => $product_category ): ?>
+                            <a href="<?php echo $filter_url.'&cat='.$product_category->term_id ?>"><?php echo $product_category->name.( array_key_exists( $key+1, $product_categories ) ? ', ': '' ) ?></a>
+                        <?php endforeach; ?>
 					</td>
 
 					<td class="column-product_type">
 						<?php
-						//TODO Sergey: Check on get_product function (it seems to be deprecated)
-						$prod       = get_product( $product->ID );
+						$prod       = wc_get_product( $product->ID );
 						$icon_class = $prod->product_type;
 
 						if ( $prod->is_virtual() ) {
@@ -290,11 +336,11 @@ $woocommerce_wpml->update_settings(); ?>
 						<?php //TODO Sergey: Put here this nice WP function that shows "13 mins ago" and knows about future posts etc. ;)
 						?>
 						<?php if ( $product->post_status == "publish" ) { ?>
-							<?php echo $product->post_date; ?><br>
+							<?php echo date(' Y/m/d', strtotime( $product->post_date ) ); ?><br>
 							<?php //TODO Sergey: Consider using the same textdomain as WordPress or as WooCommerce (so not always "wpml-wcml") in proper places so that the translation do not have to be done more than once...?>
 							<?php _e( 'Published', 'wpml-wcml' ); ?>
 						<?php } else { ?>
-							<?php echo $product->post_modified; ?><br>
+							<?php echo date(' Y/m/d', strtotime( $product->post_modified ) ); ?><br>
 							<?php _e( 'Last Modified', 'wpml-wcml' ); ?>
 						<?php } ?>
 
@@ -304,24 +350,20 @@ $woocommerce_wpml->update_settings(); ?>
 
 				<?php
 				if ( isset( $_GET['prid'] ) ) {
-					$default_language = $sitepress->get_language_for_element( $_GET['prid'], 'post_product' );
-					$display_inline   = true;
-					include WCML_PLUGIN_PATH . '/menu/sub/product-data.php';
-				}
+                    $default_language = $sitepress->get_language_for_element($_GET['prid'], 'post_product');
+                    $display_inline = true;
+                    include WCML_PLUGIN_PATH . '/menu/sub/product-data.php';
+                }
 			endforeach; ?>
 		<?php endif; ?>
 		</tbody>
 	</table>
 
-
-	<?php //TODO Sergey: Add Screen option with number of displayed products
-	//TODO Sergey: Test if pagination input works
-	?>
 	<?php if ( $products && ! isset( $_GET['prid'] ) ): ?>
 		<div class="tablenav bottom clearfix">
 			<div class="tablenav-pages">
 				<span
-					class="displaying-num"><?php printf( __( '%d products', 'wpml-wcml' ), $products_count ); ?></span>
+					class="displaying-num"><?php printf( __( '%d items', 'wpml-wcml' ), $products_count ); ?></span>
 		        <span class="pagination-links">
 			    <?php if ( ! isset( $_GET['prid'] ) && isset( $last ) && $last > 1 ): ?>
 				    <a class="first-page <?php echo $pn == 1 ? 'disabled' : ''; ?>"
@@ -351,119 +393,3 @@ $woocommerce_wpml->update_settings(); ?>
 		</div>
 	<?php endif; ?>
 </form>
-
-
-<div class="wpml-dialog wpml-dialog-translate wcml-pt-form">
-	<header class="wpml-dialog-header">
-		<?php //TODO Add title ?>
-		<h2 class="wpml-dialog-title"><?php printf( __( 'Product translation:  %s', 'wpml-wcml' ), "<strong>Product title</strong>" ); ?></h2>
-		<?php //TODO Add link and title ?>
-		<a href="#" class="view"
-		   title="<?php printf( __( 'View "%s"', 'wpml-wcml' ), "Product title" ); ?>"><?php _e( 'View Product', 'wpml-wcml' ); ?> </a>
-		<?php //TODO Sergey: close Dialog on wpml-dialog-close (not on icon classes) ?>
-		<i class="otgs-ico-close wpml-dialog-close"></i>
-	</header>
-	<form class="wpml-dialog-body"
-	      id="poststuff"> <?php //   IMpoRTANT This ID must stay like this if it is impossible -> create additional div ?>
-		<header class="wpml-translation-header">
-			<h3 class="wpml-header-original"><?php _e( 'Original', 'wpml-wcml' ); ?>: <span class="wpml-title-flag"><img
-						src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/en.png"
-						alt="English"></span><strong>English</strong></h3>
-
-			<h3 class="wpml-header-translation"><?php _e( 'Translation to', 'wpml-wcml' ); ?>: <span
-					class="wpml-title-flag"><img
-						src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/es.png"
-						alt="Spanish"></span><strong>Spanish</strong></h3>
-			<a class="button-copy" title="<?php _e( 'Copy from original' ); ?>"><i
-					class="otgs-ico-copy"></i> <?php _e( 'Copy all fields from original', 'wpml-wcml' ); ?></a>
-		</header>
-
-
-		<?php
-		//TODO Sergey: Do that... Right ;)
-		//TODO Sergey: I disabled possibility of moving boxes since I cannot force WP to remember where the boxes were moved to, but if you know how to do that feel free
-		wp_enqueue_script( 'postbox' );
-		//wp_enqueue_script( 'postbox-edit', WCML_PLUGIN_PATH.'res/js/postbox-edit.js', array('jquery', 'postbox') );
-
-		?>
-		<script type="text/javascript">
-			jQuery(document).on('ready', function ($) {
-				//TODO Sergey: I disabled remembering open/close state and order because it wasn't working anyway, bu if you know how to make it work feel free
-				postboxes.save_state = function () {
-					return;
-				};
-				postboxes.save_order = function () {
-					return;
-				};
-				postboxes.add_postbox_toggles();
-			});
-		</script>
-
-		<div class="wpml-form-row">
-			<label for="term-name"> Title </label>
-			<input disabled id="term-name-original" value="Children" type="text">
-			<a class="button-copy" title="<?php _e( 'Copy from original' ); ?>"><i
-					class="otgs-ico-copy otgs-ico-32"></i></a>
-			<input id="term-name" value="Niños" type="text">
-		</div>
-
-		<div class="wpml-form-row">
-			<label for="term-slug">Slug</label>
-			<input disabled id="term-slug-original" value="children" type="text">
-			<a class="button-copy" title="<?php _e( 'Copy from original' ); ?>" id=""><i
-					class="otgs-ico-copy otgs-ico-32"></i></a>
-			<input id="term-slug" value="ninos" type="text">
-		</div>
-
-		<div class="wpml-form-row">
-			<label for="term-description">Content /<br>Description</label>
-			<textarea disabled id="term-description-original" cols="22" rows="4"></textarea>
-			<a class="button-copy" title="<?php _e( 'Copy from original' ); ?>" id=""><i
-					class="otgs-ico-copy otgs-ico-32"></i></a>
-			<textarea id="term-description" cols="22" rows="4"></textarea>
-		</div>
-
-
-		<div class="postbox wpml-form-row wcml-row-excerpt">
-			<div title="<?php _e( 'Click to toggl' ); ?>" class="handlediv"><br></div>
-			<h3 class="hndle"><span>Excerpt</span></h3>
-
-			<div class="inside">
-				<textarea disabled id="term-description-original" cols="22" rows="4"></textarea>
-				<a class="button-copy" title="<?php _e( 'Copy from original' ); ?>" id=""><i
-						class="otgs-ico-copy otgs-ico-32"></i></a>
-				<textarea id="term-description" cols="22" rows="4"></textarea>
-			</div>
-		</div>
-		<?php //TODO Sergey: Add: IF no original THEN: class="postbox closed" and <em>(empty)</em> after title ?>
-		<div class="postbox wpml-form-row closed">
-			<div title="<?php _e( 'Click to toggle' ); ?>" class="handlediv"><br></div>
-			<h3 class="hndle"><span>Test 2 <em>(empty)</em> </span></h3>
-
-			<div class="inside">
-				testing content
-			</div>
-		</div>
-
-		<?php //TODO Sergey: Add here the rest of controls and I will style them properly. ?>
-
-
-		<div class="wpml-dialog-footer sticky">
-			<span class="errors icl_error_text"></span>
-
-			<div class="wcml-pt-progress"></div>
-			<div class="alignleft">
-				<input class="button-secondary cancel" value="Cancel" type="button">
-				<input class="button-secondary resign" value="Resign" type="button">
-			</div>
-			<div class="alignright">
-				<input class="button-primary" value="Save" type="submit">
-				<input class="button-primary" value="Save&Close" type="submit">
-			</div>
-		</div>
-
-	</form>
-</div>
-
-
-

@@ -218,18 +218,14 @@
 }
 
 .wcml_editor {
-  display: none;
-  position: fixed;
-  top: 30px;
-  left: 30px;
-  right: 30px;
-  bottom: 30px;
-  z-index: 10000;
-  background-color: #f1f1f1;
-  padding: 10px;
-  padding-top: 35px;
-  border-radius: 3px;
-  overflow-y: scroll;
+    width: 50%;
+    margin: 7px 15px;
+    display: inline-block;
+    box-sizing: border-box;
+    vertical-align: middle;
+}
+.wpml-dialog-translate .wpml-form-row .wcml_editor input[type="button"]{
+    width: auto;
 }
 
 .wcml_fade {
@@ -655,10 +651,6 @@ td.wcml-col-delete {
 
 td.wcml-col-delete:first-child {
 	border-left: 1px solid #e5e5e5;
-}
-
-.prod_images, .prod_variations, .custom_fields_block {
-  display: none;
 }
 
 .prod_images img {

@@ -50,6 +50,8 @@ class WCML_Products{
             add_filter( 'post_row_actions', array( $this, 'filter_product_actions' ), 10, 2 );
 
             add_filter ( 'locale',array( $this, 'update_product_action_locale_check' ) );
+
+            add_action( 'wp_ajax_product_translation_dialog', array($this, 'product_translation_dialog') );
             
         }else{
             add_filter('woocommerce_json_search_found_products', array($this, 'filter_found_products_by_language'));
@@ -61,7 +63,7 @@ class WCML_Products{
         add_action( 'wp_ajax_woocommerce_update_shipping_method', array( $this, 'wcml_refresh_text_domain' ), 9 );
         add_action( 'wp_ajax_nopriv_woocommerce_update_shipping_method', array( $this, 'wcml_refresh_text_domain' ), 9 );
         add_filter( 'wpml_link_to_translation', array( $this, '_filter_link_to_translation' ), 100 );
-        
+
         add_filter( 'woocommerce_upsell_crosssell_search_products', array( $this, 'filter_woocommerce_upsell_crosssell_posts_by_language' ) );
 
         add_filter( 'icl_post_alternative_languages', array( $this, 'hide_post_translation_links' ) );
@@ -118,6 +120,54 @@ class WCML_Products{
         add_filter( 'icl_wpml_config_array', array( $this, 'set_taxonomies_config' ) );
 
         add_filter( 'manage_product_posts_columns', array( $this, 'add_languages_column' ), 100 );
+
+    }
+
+    function product_translation_dialog(){
+
+        //@Todo: TBD
+
+//        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+//        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_product_data')){
+//            echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
+//            die();
+//        }
+        global $woocommerce_wpml,$sitepress,$wpdb,$iclTranslationManagement;
+
+        $product_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
+        $language = filter_input( INPUT_POST, 'language', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        $job_id = filter_input( INPUT_POST, 'job_id', FILTER_SANITIZE_NUMBER_INT );
+        $job = $iclTranslationManagement->get_translation_job ( $job_id );
+
+        $product = get_post( $product_id );
+        $trn_product_id = apply_filters( 'translate_object_id', $product_id, 'product', false, $language );
+        $trn_product = false;
+        if( !is_null( $trn_product_id ) ){
+            $trn_product = get_post( $trn_product_id );
+        }
+
+        $original_language = $sitepress->get_language_for_element( $product_id,'post_product' );
+        $active_languages = $sitepress->get_active_languages();
+
+        if(ob_get_length()){
+            ob_clean();
+        }
+        ob_start();
+        $return = array();
+
+        include WCML_PLUGIN_PATH . '/menu/sub/product-data.php';
+
+        $return['html'] =  ob_get_clean();
+
+        echo json_encode($return);
+
+        die();
+
+        $dialog['html'] = "Translating this and that...<pre>" . print_r($_POST,1 ) . '</pre>' . '<br />' . $close;
+
+        echo json_encode($dialog);
+        exit;
+
 
     }
 
@@ -303,7 +353,7 @@ class WCML_Products{
      * $title - product name
      * $category - product category
      */
-    function get_products_from_filter( $title, $category, $translation_status, $product_status, $slang, $page, $limit ){
+    function get_products_from_filter( $title = '', $category = false, $translation_status = false, $product_status = false, $slang , $page, $limit, $title_sort = false, $date_sort = false ){
         global $wpdb, $sitepress;
 
         $current_language = $slang;
@@ -347,7 +397,7 @@ class WCML_Products{
             $sql .= " AND t.language_code = %s";
         }
 
-        if($product_status != 'all'){
+        if( $product_status && $product_status != 'all' ){
             $sql .= " AND p.post_status = %s ";
             $prepare_arg[] = $product_status;
         }else{
@@ -401,7 +451,15 @@ class WCML_Products{
             }
         }
 
-        $sql .= " ORDER BY p.id DESC LIMIT ".($page-1)*$limit.",".$limit;
+        if( $title_sort ){
+            $sql .= " ORDER BY p.post_title ".$title_sort ;
+        }elseif( $date_sort ){
+            $sql .= " ORDER BY p.post_date ".$date_sort ;
+        }else{
+            $sql .= " ORDER BY p.id DESC ";
+        }
+
+        $sql .= " LIMIT ".($page-1)*$limit.",".$limit;
 
         $data = array();
 
@@ -590,12 +648,12 @@ class WCML_Products{
         ob_start();
         $return = array();
 
-        $this->get_translation_statuses($translations,$languages,isset($_POST['slang']) && $_POST['slang'] != 'all'?$_POST['slang']:false, $product_trid, $job_id ? $language : false );
+        $this->get_translation_statuses( $original_product_id, $translations, $languages, isset($_POST['slang']) && $_POST['slang'] != 'all'?$_POST['slang']:false, $product_trid, $job_id ? $language : false );
         $return['status'] =  ob_get_clean();
 
 
         ob_start();
-        $this->product_images_box($tr_product_id,$language);
+        $this->product_images_box($original_product_id,$language);
         $return['images'][$language] =  ob_get_clean();
 
 
@@ -909,7 +967,7 @@ class WCML_Products{
     }
 
 
-    function get_translation_statuses($product_translations,$active_languages,$slang = false, $trid = false, $job_language = false ){
+    function get_translation_statuses( $original_product_id, $product_translations, $active_languages, $slang = false, $trid = false, $job_language = false ){
         global $wpdb,$sitepress;
 
         foreach ($active_languages as $language) {
@@ -921,39 +979,29 @@ class WCML_Products{
 	                <i class="otgs-ico-original"></i>
                 </span>
             <?php } elseif ( $slang != $language['code'] && ( ! isset( $_POST['translation_status_lang'] ) || ( isset( $_POST['translation_status_lang'] ) && ( $_POST['translation_status_lang'] == $language['code'] ) || $_POST['translation_status_lang'] == '' ) ) ) {
-                if (isset($product_translations[$language['code']])) {
-                    $tr_status = $wpdb->get_row($wpdb->prepare("SELECT status,needs_update FROM " . $wpdb->prefix . "icl_translation_status WHERE translation_id = %d", $product_translations[$language['code']]->translation_id));
-	                if ( ! $tr_status ) { ?>
-		                <?php //TODO Sergey: Add product ID to A tag ids
-		                ?>
-		                <a id="<?php echo $language['code'];?>"
-		                   title="<?php echo $language['english_name'] . ': ' . __( 'Add translation', 'wpml-wcml' );?>">
-			                <i class="otgs-ico-add"></i>
-		                </a>
-	                <?php } elseif ( $tr_status->needs_update ) { ?>
-		                <a id="<?php echo $language['code'];?>"
-		                   title="<?php echo $language['english_name'] . ': ' . __( 'Update translation', 'wpml-wcml' );?>">
-			                <i class="otgs-ico-refresh"></i>
-		                </a>
-	                <?php } elseif ( $tr_status->status != ICL_TM_COMPLETE && $tr_status->status != ICL_TM_DUPLICATE ) { ?>
-		                <a id="<?php echo $language['code']; ?>"
-		                   title="<?php echo $language['english_name'] . ': ' . __( 'Finish translating', 'wpml-wcml' ); ?>">
-			                <i class="otgs-ico-refresh"></i>
-		                </a>
-	                <?php } elseif ( $tr_status->status == ICL_TM_COMPLETE || $tr_status->status == ICL_TM_DUPLICATE ) { ?>
-		                <a id="<?php echo $language['code'];?>"
-		                   title="<?php echo $language['english_name'] . ': ' . __( 'Edit translation', 'wpml-wcml' );?>">
-			                <i class="otgs-ico-edit"></i>
-		                </a>
-	                <?php }
-                } else { ?>
-	                <a id="<?php echo $language['code']; ?>"
-	                   title="<?php echo $language['english_name'] . ': ' . __( 'Add translation', 'wpml-wcml' ); ?>">
-		                <i class="otgs-ico-add"></i>
-	                </a>
-                <?php }
-            }
-        }
+                $job_id = $job_id = $wpdb->get_var( $wpdb->prepare( "SELECT tj.job_id FROM {$wpdb->prefix}icl_translate_job  AS tj LEFT JOIN {$wpdb->prefix}icl_translation_status AS ts ON tj.rid = ts.rid WHERE tj.translation_id=%d", $product_translations[$language['code']]->translation_id ) ); ?>
+                <a data-action="product-translation-dialog" class="wpml-dialog" data-id="<?php echo $original_product_id; ?>" data-job_id="<?php echo $job_id; ?>" data-language="<?php echo $language['code'];?>"
+                   <?php if (isset($product_translations[$language['code']])) {
+                        $tr_status = $wpdb->get_row($wpdb->prepare("SELECT status,needs_update FROM " . $wpdb->prefix . "icl_translation_status WHERE translation_id = %d", $product_translations[$language['code']]->translation_id));
+                        if ( ! $tr_status ) { ?>
+                            title="<?php echo $language['english_name'] . ': ' . __( 'Add translation', 'wpml-wcl' );?>"><i class="otgs-ico-add"></i>
+                        <?php } elseif ( $tr_status->needs_update ) { ?>
+                            title="<?php echo $language['english_name'] . ': ' . __( 'Update translation', 'wpml-wcml' );?>">
+                                <i class="otgs-ico-refresh"></i>
+                        <?php } elseif ( $tr_status->status != ICL_TM_COMPLETE && $tr_status->status != ICL_TM_DUPLICATE ) { ?>
+                            title="<?php echo $language['english_name'] . ': ' . __( 'Finish translating', 'wpml-wcml' ); ?>">
+                                <i class="otgs-ico-refresh"></i>
+                        <?php } elseif ( $tr_status->status == ICL_TM_COMPLETE || $tr_status->status == ICL_TM_DUPLICATE ) { ?>
+                            title="<?php echo $language['english_name'] . ': ' . __( 'Edit translation', 'wpml-wcml' );?>">
+                                <i class="otgs-ico-edit"></i>
+                        <?php }
+                        } else { ?>
+                            title="<?php echo $language['english_name'] . ': ' . __( 'Add translation', 'wpml-wcml' ); ?>">
+                                <i class="otgs-ico-add"></i>
+                        <?php }
+                    } ?>
+                </a>
+        <?php }
     }
 
     /*
@@ -2152,45 +2200,19 @@ class WCML_Products{
         include WCML_PLUGIN_PATH . '/menu/sub/variations_box.php';
     }
 
-    function product_images_box($product_id,$lang, $is_duplicate_product = false ) {
+    function wcml_editor( $name, $value ){
+
+        include WCML_PLUGIN_PATH . '/menu/sub/wcml_editor_box.php';
+    }
+
+    function product_images_box( $orig_product_id, $lang, $is_duplicate_product = false ) {
         global $sitepress,$wpdb;
-        $original_language = $this->get_original_product_language($product_id);
-        if(!$this->is_original_product($product_id)){
-            $orig_product_id = apply_filters( 'translate_object_id',$product_id, 'product', false, $original_language);
-        }else{
-            $orig_product_id = $product_id;
-        }
 
-        $product_id = apply_filters( 'translate_object_id',$product_id, 'product', false, $lang);
-        $template_data = array();
+        $product_id = apply_filters( 'translate_object_id', $orig_product_id, 'product', false, $lang );
 
-        if($original_language == $lang){
-            $template_data['original'] = true;
-        }else{
-            $template_data['original'] = false;
-        }
-        if (!is_null($product_id)) {
-            $product_images = $this->product_images_ids($orig_product_id);
-            if (empty($product_images)) {
-                $template_data['empty_images'] = true;
-            } else {
-                if ($original_language == $lang) {
-                    $template_data['images_thumbnails'] = $product_images;
-                }
-                foreach ($product_images as $prod_image) {
-                    $prod_image = apply_filters( 'translate_object_id',$prod_image, 'attachment', false, $lang);
-                    $images_texs = array();
-                    if(!is_null($prod_image)){
-                        $attachment_data = $wpdb->get_row($wpdb->prepare("SELECT post_title,post_excerpt,post_content FROM $wpdb->posts WHERE ID = %d", $prod_image));
-                        $images_texs['title'] = $attachment_data->post_title;
-                        $images_texs['caption'] = $attachment_data->post_excerpt;
-                        $images_texs['description'] = $attachment_data->post_content;
-                    }
-                    $template_data['images_data'][$prod_image] = $images_texs;
-                }
-            }
-        } else {
-            $template_data['empty_translation'] = true;
+        $product_images = $this->product_images_ids( $orig_product_id );
+        if ( empty( $product_images ) ) {
+            $empty_images = true;
         }
 
         include WCML_PLUGIN_PATH . '/menu/sub/images-box.php';
@@ -3194,5 +3216,6 @@ class WCML_Products{
         return $wpdb->get_row($wpdb->prepare("
                             SELECT * FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} x ON x.term_id = t.term_id WHERE t.term_id = %d AND x.taxonomy = %s", $term_id, $taxonomy ) );
     }
+
 
 }
