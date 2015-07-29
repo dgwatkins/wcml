@@ -385,7 +385,7 @@ class woocommerce_wpml {
 //	                wp_register_style( 'toolset-font-awesome', WCML_PLUGIN_URL . '/res/css/font-awesome.min.css', null, WCML_VERSION ); // register if not
 //                }
 //
-//	            wp_register_style( 'wpml-wcml', WCML_PLUGIN_URL . '/res/css/management.css', array( 'toolset-font-awesome' ), WCML_VERSION );
+	            wp_register_style( 'wpml-wcml', WCML_PLUGIN_URL . '/res/css/management.css', array( ), WCML_VERSION );
 		        wp_register_style( 'cleditor', WCML_PLUGIN_URL . '/res/css/jquery.cleditor.css', null, WCML_VERSION );
 	            wp_register_script( 'wcml-tm-scripts', WCML_PLUGIN_URL . '/res/js/scripts.js', array(
 		            'jquery',
