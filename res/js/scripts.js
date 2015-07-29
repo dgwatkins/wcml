@@ -1231,8 +1231,8 @@ jQuery(document).ready(function($){
                 .text( textClosed );
             $(this)
                 .find('i')
-                .removeClass('icon-caret-up')
-                .addClass('icon-caret-down');
+                .removeClass('otgs-ico-caret-up')
+                .addClass('otgs-ico-caret-down');
             if($(this).hasClass('prod_images_link')){
                 $('#prod_images_' + product_id + '_' + language).hide();
             }else{
@@ -1252,8 +1252,8 @@ jQuery(document).ready(function($){
                 .text( textOpened );
             $(this)
                 .find('i')
-                .removeClass('icon-caret-down')
-                .addClass('icon-caret-up');
+                .removeClass('otgs-ico-caret-down')
+                .addClass('otgs-ico-caret-up');
         }
 
         return false;

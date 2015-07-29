@@ -81,7 +81,7 @@ $button_labels = array(
                                 <td>
                                     <?php echo $lang; ?>
                                     <?php if($default_language == $key && current_user_can('wpml_operate_woocommerce_multilingual') ): ?>
-                                        <a class="edit-translation-link" title="<?php __("edit product", "wpml-wcml") ?>" href="<?php echo get_edit_post_link($product_id); ?>"><i class="icon-edit"></i></a>
+                                        <a class="edit-translation-link" title="<?php __("edit product", "wpml-wcml") ?>" href="<?php echo get_edit_post_link($product_id); ?>"><i class="otgs-ico-edit"></i></a>
                                     <?php else: ?>
                                         <input type="hidden" name="icl_language" value="<?php echo $key ?>" />
                                         <input type="hidden" name="job_id" value="<?php echo $job_id ?>" />

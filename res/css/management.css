@@ -12,54 +12,28 @@
   clear: both;
 }
 
-#add_currency label {
-  width: 170px;
-  float: left;
-}
-
 .manage_table_th_width {
   width: 250px;
-}
-
-.lang_selector_width {
-  width: 195px;
-}
-
-#add_currency label.wcml-error {
-  display: block;
-  background: #ffd2d2;
-  padding: 0 10px;
-  margin-top: 2px;
-  margin-right: 43.5%;
-  float: right;
-}
-
-.none {
-  display: none;
 }
 
 .wcml-wrap {
   margin-bottom: 20px;
   min-width: 900px;
 }
-
 .wcml-wrap .otgs-ico-yes,
 .wcml-wrap .otgs-ico-ok {
   color: #51a351;
 }
-
 .wcml-wrap .otgs-ico-no,
 .wcml-wrap .otgs-ico-warning,
 .wcml-wrap .otgs-ico-delete {
-	color: #9d261d;
+  color: #9d261d;
 }
-
 .wcml-wrap .otgs-ico-edit {
   color: #3a87ad;
 }
-
 .wcml-wrap .otgs-ico-in-progress {
-	color: #ffb800;
+  color: #ffb800;
 }
 
 .wcml-section {
@@ -67,7 +41,7 @@
   padding: 0 0 15px 0;
   margin: 0 0 15px 0;
   border-bottom: 1px solid #ededed;
-	min-width: 900px;
+  min-width: 900px;
   overflow: hidden;
 }
 .wcml-section:last-of-type {
@@ -82,9 +56,8 @@
   float: left;
   width: 100%;
 }
-
 .wcml-section-content .wcml-section-content-inner.aligncenter {
-	text-align: center;
+  text-align: center;
 }
 
 .wcml-section-header {
@@ -104,29 +77,12 @@
 }
 
 .wcml-section-content-wide {
-	width: calc(100% - 360px);
+  width: calc(100% - 360px);
 }
 
 .wcml_products {
   margin: 20px 0;
   position: relative;
-}
-
-.clr {
-  clear: both;
-}
-
-.wcml_send_to_trnsl {
-  float: right;
-  border: none;
-  background-color: #FFF;
-  padding: 0;
-  text-decoration: underline;
-  color: #21759b;
-  cursor: pointer;
-}
-.wcml_send_to_trnsl:hover {
-  color: #d54e21;
 }
 
 .widefat th .wcml_check_all {
@@ -176,37 +132,6 @@
 .trbl_variables_products .spinner, .wcml_spinner {
   margin: 0;
   float: none;
-}
-
-.wcml_cat_block {
-  display: none;
-}
-
-.wcml_tag_remove {
-  vertical-align: middle;
-  position: relative;
-  margin-right: 2px;
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  background: transparent url("../images/xit.gif") no-repeat 0 0;
-  cursor: pointer;
-}
-.wcml_tag_remove:hover {
-  background-position: -10px 0;
-}
-
-.wcml_tag_search {
-  float: left;
-  width: 90px;
-}
-
-.wcml_tags {
-  clear: both;
-}
-
-.outer button.button-secondary.wcml_add_new_tag, .outer button.button-secondary.wcml_edit_content {
-  margin-top: 0px;
 }
 
 .wcml_price {
@@ -422,35 +347,6 @@
   cursor: pointer;
 }
 
-/*pagination block*/
-.wcml_product_pagination {
-  float: right;
-}
-
-.displaying-num {
-  margin-right: 10px;
-  font-size: 12px;
-  font-style: italic;
-  color: #777;
-  font-family: Georgia, "Times New Roman", "Bitstream Charter", Times, serif;
-}
-
-.wcml_product_pagination a, .wcml_product_title_block a {
-  border-color: #e3e3e3;
-  background: #eee;
-  box-shadow: inset 0 1px 0 #fff;
-  text-decoration: none;
-  padding: 3px 6px;
-  border-radius: 3px;
-  border-width: 1px;
-  border-style: solid;
-}
-
-.wcml_product_pagination a.disabled {
-  color: #aaa;
-  cursor: default;
-}
-
 .wcml_product_title_block a.disabled {
   color: #aaa;
   cursor: default;
@@ -458,16 +354,6 @@
 .wcml_product_title_block h3 {
   display: inline-block;
   margin-right: 20px;
-}
-
-.wcml_product_pagination input {
-  text-align: center;
-  border-color: #dfdfdf;
-  background-color: #fff;
-  color: #333;
-  border-radius: 3px;
-  border-width: 1px;
-  border-style: solid;
 }
 
 .wcml_variation_file_paths {
@@ -506,26 +392,13 @@
   margin: 10px 0;
 }
 
-.button-wrap [class^="icon-"] {
-  margin: 0 5px 0 0;
-}
-
-.wcml_languages_currency {
-  width: auto;
-}
-
-.languages_currencies_table input[type="submit"] {
-  margin-top: 10px;
+.currency_code select, .currency_value input {
+  display: none;
 }
 
 .wp-core-ui .save_currency, .wp-core-ui .cancel_currency {
   display: none;
 }
-
-.currency_code select, .currency_value input {
-  display: none;
-}
-
 .wp-core-ui .save_currency {
   color: #51a351;
   font-size: 18px;
@@ -574,60 +447,51 @@
   display: none;
   margin-left: 230px;
 }
-
 .wcml-co-dialog .wpml-form-row label {
-	width: 195px;
-	text-align: left;
+  width: 195px;
+  text-align: left;
 }
-
 .wcml-co-dialog input, .wcml-co-dialog select {
-	width: 100px;
+  width: 100px;
 }
-
 .wcml-co-dialog .wcml-co-exchange-rate label {
-	width: 100px;
+  width: 100px;
 }
-
 .wcml-co-dialog .wcml-co-exchange-rate input {
-	margin: 0;
-	width: 50px;
+  margin: 0;
+  width: 50px;
 }
-
 .wcml-co-dialog .wcml-co-exchange-rate .wcml-co-set-rate {
-	display: inline-block;
-	margin-top: 4px;
+  display: inline-block;
+  margin-top: 4px;
 }
-
 .wcml-co-dialog .wcml-co-exchange-rate small {
-	display: block;
+  display: block;
 }
-
 .wcml-co-dialog .wcml-co-preview label {
-	width: 120px;
-	vertical-align: middle;
+  width: 120px;
+  vertical-align: middle;
 }
-
 .wcml-co-dialog .wcml-co-preview .wcml-co-preview-value {
-	display: inline-block;
-	padding: 7px 15px;
-	border: 1px solid #555;
-	font-size: 1.2em;
-	font-weight: bold;
-	vertical-align: middle;
-	margin: 15px 0;
+  display: inline-block;
+  padding: 7px 15px;
+  border: 1px solid #555;
+  font-size: 1.2em;
+  font-weight: bold;
+  vertical-align: middle;
+  margin: 15px 0;
 }
 
 table.widefat.currency_table {
-	float: left;
-	width: 300px;
-	border-right: none;
+  float: left;
+  width: 300px;
+  border-right: none;
 }
-
 td.wcml-col-currency,
 td.wcml-col-rate {
-	padding-top: 7px;
-	padding-bottom: 0;
-	vertical-align: top;
+  padding-top: 7px;
+  padding-bottom: 0;
+  vertical-align: top;
 }
 
 td.wcml-col-currency small {
@@ -635,7 +499,7 @@ td.wcml-col-currency small {
 }
 
 td.wcml-col-rate {
-	font-size: .85em;
+  font-size: .85em;
 }
 
 td.wcml-col-edit {
@@ -644,17 +508,15 @@ td.wcml-col-edit {
 
 table.widefat.currency_delete_table {
   float: left;
-	width: 50px;
-	border-left: none;
+  width: 50px;
+  border-left: none;
 }
-
 td.wcml-col-delete {
   vertical-align: middle;
-	text-align: center;
+  text-align: center;
 }
-
 td.wcml-col-delete:first-child {
-	border-left: 1px solid #e5e5e5;
+  border-left: 1px solid #e5e5e5;
 }
 
 .prod_images, .prod_variations, .custom_fields_block {
@@ -673,11 +535,8 @@ td.wcml-col-delete:first-child {
   text-align: center;
 }
 
-.prod_image_show, .prod_image_hide, .prod_variations_show, .prod_variations_hide {
-  cursor: pointer;
-}
-
-.currency_value .wcml-error, .wcml-error {
+.currency_value .wcml-error,
+.wcml-error {
   font-size: 10px;
   color: red;
   display: inline-block;
@@ -716,7 +575,8 @@ td.wcml-col-delete:first-child {
   border-bottom: none !important;
 }
 
-.wcml_product_status_text, .prod_parent_text {
+.wcml_product_status_text,
+.prod_parent_text {
   font-style: italic;
   color: #9A9A9A;
 }
@@ -725,40 +585,33 @@ td.wcml-col-delete:first-child {
   text-align: center;
 }
 
-#multi-currency-per-language-details {
-  float: left;
-  width: 100%;
-}
-
 /* on/off buttons */
 .currency_languages {
   position: relative;
   text-align: center;
 }
-
 .currency_languages:first-child {
-	border-left: 1px solid #e5e5e5;
+  border-left: 1px solid #e5e5e5;
 }
 .currency_languages ul {
   margin: 0;
-	text-align: center;
+  text-align: center;
 }
 .currency_languages ul li {
   margin: 0;
-	display: none;
+  display: none;
 }
-
 .currency_languages ul li.on {
-	display: inline-block;
+  display: inline-block;
 }
 
 table.widefat.currency_lang_table {
   border-left: none;
-	border-right: none;
+  border-right: none;
 }
 
 .currency_wrap {
-	width: calc(100% - 300px - 50px);
+  width: calc(100% - 300px - 50px);
   float: left;
   margin-bottom: 10px;
 }
@@ -771,17 +624,16 @@ table.widefat.currency_lang_table {
 .currency_table,
 .currency_lang_table,
 .currency_delete_table {
-	clear: none;
+  clear: none;
 }
-
 .currency_table tr,
 .currency_lang_table tr,
 .currency_delete_table tr {
-	height: 50px;
+  height: 50px;
 }
 
 .currency_lang_table th {
-	text-align: center;
+  text-align: center;
 }
 .currency_lang_table td {
   vertical-align: middle;
@@ -792,31 +644,19 @@ table.widefat.currency_lang_table {
 }
 
 .default_currency select {
-	font-size: 9px;
+  font-size: 9px;
   height: 24px;
   margin: 0;
-	margin-right: 2px;
-	padding: 2px 0;
+  margin-right: 2px;
+  padding: 2px 0;
 }
 .default_currency td {
   border-top: 1px solid #e5e5e5;
-}
-.default_currency .cur_label {
-  display: block;
 }
 .default_currency .inf_message {
   font-size: 10px;
   font-style: italic;
   color: #9A9A9A;
-}
-
-.wcml_add_currency.button-wrap {
-  margin-top: 0;
-  float: left;
-}
-
-.ext_rate, .decimals_number, .abstract_amount, .currency_option_input {
-  width: 50px;
 }
 
 /* Currency switcher*/
@@ -853,8 +693,8 @@ input[name="wcml_curr_template"] {
 }
 
 .wcml-currency-preview {
-	margin: 15px 0 30px;
-	display: inline-block;
+  margin: 15px 0 30px;
+  display: inline-block;
 }
 
 .wcml_product_name {

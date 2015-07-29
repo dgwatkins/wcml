@@ -381,12 +381,12 @@ class woocommerce_wpml {
             if( in_array($_GET['page'], array('wpml-wcml',basename(WCML_PLUGIN_PATH).'/menu/sub/troubleshooting.php',basename(WCML_PLUGIN_PATH).'/menu/plugins.php'))) {
 
 
-                if ( !wp_style_is( 'toolset-font-awesome', 'registered' ) ) { // check if style are already registered
-	                wp_register_style( 'toolset-font-awesome', WCML_PLUGIN_URL . '/res/css/font-awesome.min.css', null, WCML_VERSION ); // register if not
-                }
-
-	            wp_register_style( 'wpml-wcml', WCML_PLUGIN_URL . '/res/css/management.css', array( 'toolset-font-awesome' ), WCML_VERSION );
-	            wp_register_style( 'cleditor', WCML_PLUGIN_URL . '/res/css/jquery.cleditor.css', null, WCML_VERSION );
+//                if ( !wp_style_is( 'toolset-font-awesome', 'registered' ) ) { // check if style are already registered
+//	                wp_register_style( 'toolset-font-awesome', WCML_PLUGIN_URL . '/res/css/font-awesome.min.css', null, WCML_VERSION ); // register if not
+//                }
+//
+//	            wp_register_style( 'wpml-wcml', WCML_PLUGIN_URL . '/res/css/management.css', array( 'toolset-font-awesome' ), WCML_VERSION );
+		        wp_register_style( 'cleditor', WCML_PLUGIN_URL . '/res/css/jquery.cleditor.css', null, WCML_VERSION );
 	            wp_register_script( 'wcml-tm-scripts', WCML_PLUGIN_URL . '/res/js/scripts.js', array(
 		            'jquery',
 		            'jquery-ui-core',
@@ -395,7 +395,7 @@ class woocommerce_wpml {
 	            wp_register_script( 'jquery-cookie', WCML_PLUGIN_URL . '/res/js/jquery.cookie.js', array( 'jquery' ), WCML_VERSION );
 	            wp_register_script( 'cleditor', WCML_PLUGIN_URL . '/res/js/jquery.cleditor.min.js', array( 'jquery' ), WCML_VERSION );
 
-                wp_enqueue_style('toolset-font-awesome'); // enqueue styles
+               // wp_enqueue_style('toolset-font-awesome'); // enqueue styles
                 wp_enqueue_style('wpml-wcml');
                 wp_enqueue_style('cleditor');
                 wp_enqueue_style('wp-pointer');
@@ -445,7 +445,6 @@ class woocommerce_wpml {
             wp_enqueue_script( 'jquery-tiptip' );
             wp_enqueue_script( 'wcml-tooltip-init' );
             wp_enqueue_style( 'woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION );
-	        // wp_enqueue_style( 'wcml_tooltip_styles', WCML_PLUGIN_URL . '/res/css/tooltip.css', null, WCML_VERSION );
         }
     }
 
