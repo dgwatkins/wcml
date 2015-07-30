@@ -975,7 +975,7 @@ class WCML_Products{
                 continue;
             }elseif (!$slang || ( ($slang != $language['code']) && (current_user_can('wpml_operate_woocommerce_multilingual') || wpml_check_user_is_translator($slang,$language['code'])) && (!isset($_POST['translation_status_lang']) || (isset($_POST['translation_status_lang']) && ($_POST['translation_status_lang'] == $language['code']) || $_POST['translation_status_lang']=='')))){
 
-	            echo '<span title="' . $language['english_name'] . '"><img src="' . $sitepress->get_flag_url( $language['code'] ) . '"  alt="' . $language->english_name . '"/></span> ';
+	            echo '<span title="' . $language['english_name'] . '"><img src="' . $sitepress->get_flag_url( $language['code'] ) . '"  alt="' . $language['english_name'] . '"/></span> ';
             }
         }
     }
@@ -993,7 +993,12 @@ class WCML_Products{
 	                <i class="otgs-ico-original"></i>
                 </span>
             <?php } elseif ( $slang != $language['code'] && ( ! isset( $_POST['translation_status_lang'] ) || ( isset( $_POST['translation_status_lang'] ) && ( $_POST['translation_status_lang'] == $language['code'] ) || $_POST['translation_status_lang'] == '' ) ) ) {
-                $job_id = $job_id = $wpdb->get_var( $wpdb->prepare( "SELECT tj.job_id FROM {$wpdb->prefix}icl_translate_job  AS tj LEFT JOIN {$wpdb->prefix}icl_translation_status AS ts ON tj.rid = ts.rid WHERE tj.translation_id=%d", $product_translations[$language['code']]->translation_id ) ); ?>
+
+                if( isset($product_translations[$language['code']]) ){
+                    $job_id  = $wpdb->get_var( $wpdb->prepare( "SELECT tj.job_id FROM {$wpdb->prefix}icl_translate_job  AS tj LEFT JOIN {$wpdb->prefix}icl_translation_status AS ts ON tj.rid = ts.rid WHERE tj.translation_id=%d", $product_translations[$language['code']]->translation_id ) );
+                }else{
+                    $job_id = false;
+                } ?>
                 <a data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="<?php echo $original_product_id; ?>" data-job_id="<?php echo $job_id; ?>" data-language="<?php echo $language['code'];?>"
                    <?php if (isset($product_translations[$language['code']])) {
                         $tr_status = $wpdb->get_row($wpdb->prepare("SELECT status,needs_update FROM " . $wpdb->prefix . "icl_translation_status WHERE translation_id = %d", $product_translations[$language['code']]->translation_id));
