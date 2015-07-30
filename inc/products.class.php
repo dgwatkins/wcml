@@ -121,6 +121,20 @@ class WCML_Products{
 
         add_filter( 'manage_product_posts_columns', array( $this, 'add_languages_column' ), 100 );
 
+        add_action( 'wp_ajax_generate_slug_by_title', array( $this, 'generate_slug_by_title' ) );
+
+    }
+
+    function generate_slug_by_title(){
+
+        $new_post_name = sanitize_title( isset($_POST['value'] )? $_POST['value'] :  '' );
+        $new_slug =$new_post_name; //wp_unique_post_slug( $new_post_name, $tr_product_id, $orig_product->post_status, $orig_product->post_type, $args['post_parent']);
+
+        echo json_encode(
+            array( 'val' => $new_slug )
+        );
+
+        die();
     }
 
     function product_translation_dialog(){
@@ -980,7 +994,7 @@ class WCML_Products{
                 </span>
             <?php } elseif ( $slang != $language['code'] && ( ! isset( $_POST['translation_status_lang'] ) || ( isset( $_POST['translation_status_lang'] ) && ( $_POST['translation_status_lang'] == $language['code'] ) || $_POST['translation_status_lang'] == '' ) ) ) {
                 $job_id = $job_id = $wpdb->get_var( $wpdb->prepare( "SELECT tj.job_id FROM {$wpdb->prefix}icl_translate_job  AS tj LEFT JOIN {$wpdb->prefix}icl_translation_status AS ts ON tj.rid = ts.rid WHERE tj.translation_id=%d", $product_translations[$language['code']]->translation_id ) ); ?>
-                <a data-action="product-translation-dialog" class="wpml-dialog" data-id="<?php echo $original_product_id; ?>" data-job_id="<?php echo $job_id; ?>" data-language="<?php echo $language['code'];?>"
+                <a data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="<?php echo $original_product_id; ?>" data-job_id="<?php echo $job_id; ?>" data-language="<?php echo $language['code'];?>"
                    <?php if (isset($product_translations[$language['code']])) {
                         $tr_status = $wpdb->get_row($wpdb->prepare("SELECT status,needs_update FROM " . $wpdb->prefix . "icl_translation_status WHERE translation_id = %d", $product_translations[$language['code']]->translation_id));
                         if ( ! $tr_status ) { ?>
@@ -2989,7 +3003,7 @@ class WCML_Products{
         $job = $iclTranslationManagement->get_translation_job ( $job_id );
 
         $product = get_post( $product_id );
-        $default_language = $sitepress->get_language_for_element($product_id,'post_product');
+        $original_language = $sitepress->get_language_for_element( $product_id, 'post_product' );
         $active_languages = $sitepress->get_active_languages();
 
         if(ob_get_length()){
