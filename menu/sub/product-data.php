@@ -86,7 +86,7 @@ if( isset( $product_translations[$language] ) && get_post_meta( $product_transla
 
                 <?php
                 //wp_editor(  $trn_product->post_content, 'content_'.$language, array( 'textarea_name'=> 'content_'.$language, 'textarea_rows'=>4,  'editor_class'=>'wcml_content_tr' ) );
-                echo $woocommerce_wpml->products->wcml_editor( 'content_'.$language, $trn_product->post_content ); ?>
+                echo $woocommerce_wpml->products->wcml_editor( 'content_'.$language, $trn_product ? $trn_product->post_content : ''); ?>
 
         </div>
 
@@ -102,7 +102,7 @@ if( isset( $product_translations[$language] ) && get_post_meta( $product_transla
 
                     <?php
                     //wp_editor(  $trn_product->post_excerpt, 'excerpt_'.$language, array( 'textarea_name'=> 'excerpt_'.$language, 'textarea_rows'=> 4,  'editor_class'=>'wcml_content_tr' ) );
-                    echo $woocommerce_wpml->products->wcml_editor( 'excerpt_'.$language, $trn_product->post_excerpt ); ?>
+                    echo $woocommerce_wpml->products->wcml_editor( 'excerpt_'.$language, $trn_product ? $trn_product->post_excerpt : '' ); ?>
 
             </div>
         </div>

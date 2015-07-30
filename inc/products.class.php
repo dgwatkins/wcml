@@ -2220,6 +2220,7 @@ class WCML_Products{
     }
 
     function wcml_editor( $name, $value ){
+        global $woocommerce_wpml;
 
         include WCML_PLUGIN_PATH . '/menu/sub/wcml_editor_box.php';
     }
