@@ -90,97 +90,6 @@
   margin-right: 5px;
 }
 
-.wcml_products_translation {
-  table-layout: fixed;
-  width: auto;
-  border: 1px solid #ededed;
-  border-collapse: collapse;
-}
-.wcml_products_translation th {
-  background: #f9f9f9;
-}
-.wcml_products_translation > thead > tr > th:first-child {
-  border-bottom: 0;
-  position: absolute;
-  left: 0;
-  width: 217px;
-}
-.wcml_products_translation > tbody > tr {
-  border-bottom: 1px solid #e1e1e1;
-}
-.wcml_products_translation > tbody > tr > td:first-child {
-  border-bottom: 0;
-  position: absolute;
-  left: 0;
-  width: 217px;
-}
-.wcml_products_translation .prod_images, .wcml_products_translation .prod_variations {
-  margin: 10px 0;
-}
-.wcml_products_translation .missing-translation {
-  margin: 10px 0 0 0;
-}
-.wcml_products_translation .edit-translation-link, .wcml_products_translation .wcml_update {
-  margin-left: 5px;
-}
-
-.wcml_details {
-  vertical-align: middle;
-  line-height: 20px;
-}
-
-.trbl_variables_products .spinner, .wcml_spinner {
-  margin: 0;
-  float: none;
-}
-
-.wcml_price {
-  width: 100px;
-}
-
-.wcml_single_price {
-  white-space: nowrap;
-}
-
-.wcml_editor {
-    width: 50%;
-    margin: 7px 15px;
-    display: inline-block;
-    box-sizing: border-box;
-    vertical-align: middle;
-}
-.wpml-dialog-translate .wpml-form-row .wcml_editor input[type="button"]{
-    width: auto;
-}
-
-.wcml_fade {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  min-height: 360px;
-  background: #000;
-  opacity: .7;
-  z-index: 9999;
-}
-
-.wp-editor-container {
-  background-color: #fff;
-}
-
-.wcml_editor_buttons {
-  float: left;
-  width: 100%;
-}
-.wcml_editor_buttons h3 {
-  float: left;
-}
-.wcml_editor_buttons .button-secondary {
-  margin-top: 15px;
-}
-
 /* Woocommerce styles*/
 .inside {
   margin: 0;
@@ -515,11 +424,14 @@ td.wcml-col-delete:first-child {
   border-left: 1px solid #e5e5e5;
 }
 
-.prod_images img {
+table.prod_images {
+  border: none;
+}
+table.prod_images img {
   width: 75px;
   height: 75px;
 }
-.prod_images th {
+table.prod_images th {
   text-align: center;
 }
 
@@ -771,4 +683,18 @@ input[name="wcml_curr_template"] {
 .wcml-lang-list .wpml-title-flag {
   margin-left: -25px;
   margin-right: 5px;
+}
+
+.wcml_editor {
+  width: calc(50% - 30px - 70px);
+  display: inline-block;
+  margin: 7px 15px 0;
+  vertical-align: middle;
+}
+
+.wcml-row-excerpt textarea[disabled] {
+  width: calc(50% - 30px - 70px);
+}
+.wcml-row-excerpt .wcml_editor {
+  width: calc(50% - 30px);
 }

@@ -28,7 +28,7 @@ if( isset( $product_translations[$language] ) && get_post_meta( $product_transla
         <a href="<?php echo get_post_permalink( $product_id ); ?>" class="view"
            title="<?php printf( __( 'View "%s"', 'wpml-wcml' ), $product->post_title ); ?>"><?php _e( 'View Product', 'wpml-wcml' ); ?> </a>
         <?php //TODO Sergey: close Dialog on wpml-dialog-close (not on icon classes) ?>
-        <i class="otgs-ico-close wpml-dialog-close"></i>
+        <i class="otgs-ico-close wpml-dialog-close cancel"></i>
     </header>
     <form class="wpml-dialog-body"
           id="poststuff"> <?php //   IMpoRTANT This ID must stay like this if it is impossible -> create additional div ?>
@@ -46,8 +46,8 @@ if( isset( $product_translations[$language] ) && get_post_meta( $product_transla
                 </span>
                 <strong><?php echo $active_languages[ $language ]['english_name'] ?></strong>
             </h3>
-            <a class="button-copy" title="<?php _e( 'Copy from original' ); ?>"><i
-                    class="otgs-ico-copy"></i> <?php _e( 'Copy all fields from original', 'wpml-wcml' ); ?></a>
+            <div class="wpml-copy-container"><a class="button-copy" title="<?php _e( 'Copy from original' ); ?>"><i
+                    class="otgs-ico-copy"></i> <?php _e( 'Copy all fields from original', 'wpml-wcml' ); ?></a></div>
         </header>
 
 
@@ -55,7 +55,7 @@ if( isset( $product_translations[$language] ) && get_post_meta( $product_transla
         //TODO Sergey: Do that... Right ;)
         //TODO Sergey: I disabled possibility of moving boxes since I cannot force WP to remember where the boxes were moved to, but if you know how to do that feel free
         wp_enqueue_script( 'postbox' );
-        //wp_enqueue_script( 'postbox-edit', WCML_PLUGIN_PATH.'res/js/postbox-edit.js', array('jquery', 'postbox') );
+       // wp_enqueue_script( 'postbox-edit', WCML_PLUGIN_PATH.'res/js/postbox-edit.js', array('jquery', 'postbox') );
 
         ?>
         <script type="text/javascript">
@@ -89,7 +89,7 @@ if( isset( $product_translations[$language] ) && get_post_meta( $product_transla
 
         <div class="wpml-form-row">
             <label for="term-description"><?php _e( 'Content', 'wpml-wcml' ); ?> /<br><?php _e( 'Description', 'wpml-wcml' ); ?></label>
-            <textarea disabled id="term-description-original" cols="22" rows="4"></textarea>
+            <textarea disabled id="term-description-original" cols="22" rows="10"></textarea>
             <a class="button-copy" title="<?php _e( 'Copy from original' ); ?>" id=""><i
                     class="otgs-ico-copy otgs-ico-32"></i></a>
             <?php echo $woocommerce_wpml->products->wcml_editor( 'content_'.$language, $trn_product->post_content ); ?>
@@ -101,7 +101,7 @@ if( isset( $product_translations[$language] ) && get_post_meta( $product_transla
             <h3 class="hndle"><span><?php _e( 'Excerpt', 'wpml-wcml' ); ?></span></h3>
 
             <div class="inside">
-                <textarea disabled id="term-description-original" cols="22" rows="4"></textarea>
+                <textarea disabled id="term-description-original" cols="22" rows="10"></textarea>
                 <a class="button-copy" title="<?php _e( 'Copy from original' ); ?>" id=""><i
                         class="otgs-ico-copy otgs-ico-32"></i></a>
                 <?php echo $woocommerce_wpml->products->wcml_editor( 'excerpt_'.$language, $trn_product->post_excerpt ); ?>
@@ -111,26 +111,24 @@ if( isset( $product_translations[$language] ) && get_post_meta( $product_transla
         <?php //TODO Sergey: Add: IF no original THEN: class="postbox closed" and <em>(empty)</em> after title ?>
         <div class="postbox wpml-form-row closed">
             <div title="<?php _e( 'Click to toggle' ); ?>" class="handlediv"><br></div>
-            <h3 class="hndle"><span><?php _e( 'Purchase note', 'wpml-wcml' ) ?><em><?php _e( '(empty)', 'wpml-wcml' ) ?></em> </span></h3>
+            <h3 class="hndle"><span><?php _e( 'Purchase note', 'wpml-wcml' ) ?> <em><?php _e( '(empty)', 'wpml-wcml' ) ?></em> </span></h3>
 
             <div class="inside">
-                <textarea disabled id="term-description-original" cols="22" rows="4"></textarea>
+                <textarea disabled id="term-description-original" cols="22" rows="10"></textarea>
                 <a class="button-copy" title="<?php _e( 'Copy from original' ); ?>" id=""><i
                         class="otgs-ico-copy otgs-ico-32"></i></a>
-                <textarea id="term-description-original" cols="22" rows="4"></textarea>
+                <textarea id="term-description-original" cols="22" rows="10"></textarea>
             </div>
         </div>
 
         <div class="postbox wpml-form-row">
-            <div title="<?php _e( 'Click to toggle' ); ?>" class="handlediv"><br></div>
-            <h3 class="hndle"><span><?php _e( 'Images', 'wpml-wcml' ) ?><em></span></h3>
+            <div title="<?php _e( 'Click to toggle' ); ?>" class="handlediv"></div>
+            <h3 class="hndle"><span><?php _e( 'Images', 'wpml-wcml' ) ?></span></h3>
                 <?php echo $woocommerce_wpml->products->product_images_box( $product_id, $language, $is_duplicate_product ); ?>
         </div>
-
     </form>
 </div>
-
-<div class="wpml-dialog-footer wpml-sticky">
+<div class="wpml-dialog-footer">
     <span class="errors icl_error_text"></span>
 
     <div class="wcml-pt-progress"></div>
@@ -142,7 +140,6 @@ if( isset( $product_translations[$language] ) && get_post_meta( $product_transla
         <input class="button-primary" value="Save" type="submit">
     </div>
 </div>
-
 <?php
 if(!$woocommerce_wpml->settings['first_editor_call']){
     //load editor js
