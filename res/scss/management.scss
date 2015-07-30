@@ -1,29 +1,9 @@
 @import "mixins";
 @import "variables";
-#add_currency label {
-	width: 170px;
-	float: left;
-}
+
 
 .manage_table_th_width {
 	width: 250px;
-}
-
-.lang_selector_width {
-	width: 195px;
-}
-
-#add_currency label.wcml-error {
-	display: block;
-	background: #ffd2d2;
-	padding: 0 10px;
-	margin-top: 2px;
-	margin-right: 43.5%;
-	float: right;
-}
-
-.none {
-	display: none;
 }
 
 
@@ -98,28 +78,12 @@
 	position: relative;
 }
 
-.clr {
-	clear: both;
-}
-
-.wcml_send_to_trnsl {
-	float: right;
-	border: none;
-	background-color: #FFF;
-	padding: 0;
-	text-decoration: underline;
-	color: #21759b;
-	cursor: pointer;
-	&:hover {
-		color: #d54e21;
-	}
-}
-
 .widefat th .wcml_check_all {
 	margin: 0;
 	margin-right: 5px;
 }
 
+//TODO Sergey: I guess this wont be used any more with the new translation system? (used in product-data.php
 .wcml_products_translation {
 	table-layout: fixed;
 	width: auto;
@@ -166,38 +130,6 @@
 	float: none;
 }
 
-.wcml_cat_block {
-	display: none;
-}
-
-.wcml_tag_remove {
-	vertical-align: middle;
-	position: relative;
-	margin-right: 2px;
-	display: inline-block;
-	width: 10px;
-	height: 10px;
-	background: transparent url("../images/xit.gif") no-repeat 0 0;
-	cursor: pointer;
-	&:hover {
-		background-position: -10px 0;
-	}
-}
-
-.wcml_tag_search {
-	float: left;
-	width: 90px;
-}
-
-.wcml_tags {
-	clear: both;
-}
-
-.outer button.button-secondary {
-	&.wcml_add_new_tag, &.wcml_edit_content {
-		margin-top: 0px;
-	}
-}
 
 .wcml_price {
 	width: 100px;
@@ -417,7 +349,6 @@
 
 .wcml_line {
 	border-bottom: 1px solid #555;
-	-moz-box-shadow: 1px 1px 3px #555;
 	box-shadow: 1px 1px 3px #555;
 }
 
@@ -435,36 +366,6 @@
 	cursor: pointer;
 }
 
-/*pagination block*/
-
-.wcml_product_pagination {
-	float: right;
-}
-
-.displaying-num {
-	margin-right: 10px;
-	font-size: 12px;
-	font-style: italic;
-	color: #777;
-	font-family: Georgia, "Times New Roman", "Bitstream Charter", Times, serif;
-}
-
-.wcml_product_pagination a, .wcml_product_title_block a {
-	border-color: #e3e3e3;
-	background: #eee;
-	box-shadow: inset 0 1px 0 #fff;
-	text-decoration: none;
-	padding: 3px 6px;
-	border-radius: 3px;
-	border-width: 1px;
-	border-style: solid;
-}
-
-.wcml_product_pagination a.disabled {
-	color: #aaa;
-	cursor: default;
-}
-
 .wcml_product_title_block {
 	a.disabled {
 		color: #aaa;
@@ -476,16 +377,6 @@
 	}
 }
 
-.wcml_product_pagination input {
-	text-align: center;
-	border-color: #dfdfdf;
-	background-color: #fff;
-	color: #333;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-	border-width: 1px;
-	border-style: solid;
-}
 
 .wcml_variation_file_paths {
 	white-space: nowrap;
@@ -525,29 +416,14 @@
 	margin: 10px 0;
 }
 
-.button-wrap [class^="icon-"] {
-	margin: 0 5px 0 0;
-}
-
-.wcml_languages_currency {
-	width: auto;
-}
-
-.languages_currencies_table input[type="submit"] {
-	margin-top: 10px;
+.currency_code select, .currency_value input {
+	display: none;
 }
 
 .wp-core-ui {
 	.save_currency, .cancel_currency {
 		display: none;
 	}
-}
-
-.currency_code select, .currency_value input {
-	display: none;
-}
-
-.wp-core-ui {
 	.save_currency {
 		color: #51a351;
 		font-size: 18px;
@@ -565,7 +441,6 @@
 		color: #fff;
 	}
 }
-
 
 .currency_action_update, .currency_action_delete {
 	display: inline-block;
@@ -586,12 +461,12 @@
 }
 
 .currency_position {
+	margin-top: 0px;
 	span {
 		font-size: 10px;
 		font-style: italic;
 		color: #9A9A9A;
 	}
-	margin-top: 0px;
 }
 
 .wcml-co-dialog {
@@ -687,7 +562,6 @@ table.widefat.currency_delete_table {
 	}
 }
 
-
 .prod_images, .prod_variations, .custom_fields_block {
 	display: none;
 }
@@ -706,11 +580,8 @@ table.widefat.currency_delete_table {
 	text-align: center;
 }
 
-.prod_image_show, .prod_image_hide, .prod_variations_show, .prod_variations_hide {
-	cursor: pointer;
-}
-
-.currency_value .wcml-error, .wcml-error {
+.currency_value .wcml-error,
+.wcml-error {
 	font-size: 10px;
 	color: red;
 	display: inline-block;
@@ -750,7 +621,8 @@ table.widefat.currency_delete_table {
 }
 
 
-.wcml_product_status_text, .prod_parent_text {
+.wcml_product_status_text,
+.prod_parent_text {
 	font-style: italic;
 	color: #9A9A9A;
 }
@@ -759,10 +631,6 @@ table.widefat.currency_delete_table {
 	text-align: center;
 }
 
-#multi-currency-per-language-details {
-	float: left;
-	width: 100%;
-}
 
 /* on/off buttons */
 
@@ -835,9 +703,6 @@ table.widefat.currency_lang_table {
 	td {
 		border-top: 1px solid #e5e5e5;
 	}
-	.cur_label {
-		display: block;
-	}
 	.inf_message {
 		font-size: 10px;
 		font-style: italic;
@@ -845,15 +710,6 @@ table.widefat.currency_lang_table {
 	}
 }
 
-.wcml_add_currency.button-wrap {
-	margin-top: 0;
-	float: left;
-}
-
-
-.ext_rate, .decimals_number, .abstract_amount, .currency_option_input {
-	width: 50px;
-}
 
 /* Currency switcher*/
 
