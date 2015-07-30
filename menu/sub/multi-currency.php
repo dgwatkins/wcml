@@ -298,7 +298,7 @@ $default_language = $sitepress->get_default_language();
 								<div class="currency_action_update">
 									<a href="javascript:void(0);" title="Edit" class="edit_currency"
 									   style="display:none">
-										<i class="icon-edit" title="Edit"></i>
+										<i class="otgs-ico-edit" title="Edit"></i>
 									</a>
 								</div>
 								<div class="currency_action_delete">
@@ -306,7 +306,6 @@ $default_language = $sitepress->get_default_language();
 									   data-currency="" style="display:none">
 										<i class="otgs-ico-delete" alt="Delete"></i>
 									</a>
-									<i class="icon-remove-circle cancel_currency" style="display:inline"></i>
 								</div>
 							</td>
 						</tr>
