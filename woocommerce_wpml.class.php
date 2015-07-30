@@ -415,7 +415,7 @@ class woocommerce_wpml {
                 wp_enqueue_script('suggest');
                 wp_enqueue_script('wp-pointer');
 
-
+                wp_enqueue_script( 'postbox' );
                 wp_localize_script('wcml-tm-scripts', 'wcml_settings',
                     array(
                         'nonce'             => wp_create_nonce( 'woocommerce_multilingual' )
