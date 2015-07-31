@@ -466,13 +466,46 @@ table.widefat.currency_delete_table {
 
 table.prod_images {
   border: none;
-	img {
-		width: 75px;
-		height: 75px;
-	}
+  width: 98%;
+  margin: 0 auto;
+
+
 	th {
-		text-align: center;
+		text-align: left;
+	  	font-weight: normal;
 	}
+  td:first-child {
+	padding-left: $margin-sm;
+	padding-bottom: $margin-sm;
+	width: 165px;
+  }
+  td:last-child {
+	padding-right: $margin-sm;
+  }
+  	input {
+	  width: calc(100% - 30px);
+	}
+  @at-root {
+	.prod_images-first-row {
+	  td, th {
+		padding-top: $margin-sm;
+		border-top: 1px solid #eee;
+	  }
+	  &:first-child {
+		td, th {
+		  border-top: none;
+		}
+	  }
+	}
+	.prod_images-last-row {
+	  td, th {
+		padding-bottom: $margin-sm
+	  }
+	}
+	.button-copy-cell {
+	  text-align: center;
+	}
+  }
 }
 
 .prod_variations th {
@@ -693,14 +726,7 @@ input[name="wcml_curr_template"] {
 	}
 }
 
-.wcml-row-excerpt {
-	textarea {
-		width: calc(60% - 96px);
-		&[disabled] {
-			width: calc(40% - 34px);
-		}
-	}
-}
+
 
 .wcml-link-troubleshooting {
 	margin-top: $margin-xs;
@@ -752,4 +778,13 @@ input[name="wcml_curr_template"] {
   .wcml_editor  {
 	width: calc(50% - 30px);
   }
+}
+.wcml-row-purchase-note {
+  textarea  {
+	width: calc(50% - 30px);
+  }
+  textarea[disabled] {
+	width: calc(50% - 30px - 70px);
+  }
+
 }

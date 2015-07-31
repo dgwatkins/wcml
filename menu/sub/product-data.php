@@ -110,7 +110,7 @@ if( isset( $product_translations[$language] ) && get_post_meta( $product_transla
         <?php //TODO Sergey: Add: IF no original THEN: class="postbox closed" and <em>(empty)</em> after title
         $purchase_note = get_post_meta( $product_id, '_purchase_note', true );
         ?>
-        <div class="postbox wpml-form-row <?php echo !$purchase_note ? 'closed':'' ?> ">
+        <div class="postbox wpml-form-row wcml-row-purchase-note <?php echo !$purchase_note ? 'closed':'' ?> ">
             <div title="<?php _e( 'Click to toggle' ); ?>" class="handlediv"><br></div>
             <h3 class="hndle"><span><?php _e( 'Purchase note', 'wpml-wcml' ) ?> <em><?php _e( '(empty)', 'wpml-wcml' ) ?></em> </span></h3>
 
