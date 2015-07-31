@@ -80,6 +80,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 
 = 3.6.7 =
 * Bug fix: Converted prices in secondary currencies were incorrect in some situations. e.g. For VND with an VND:EUR exchange rate of 30,000:1
+* Bug fix: Wrong urls were displayed in the  language switcher for product category or product tag urls
 
 = 3.6.6 =
 * Fixed a bug that was causing a PHP warning when using a WPML version prior 3.2
