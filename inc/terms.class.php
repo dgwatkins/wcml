@@ -281,7 +281,7 @@ class WCML_Terms{
 
             if ( is_null( $slug_translation ) ) {
                 // handle exception - default woocommerce category and tag bases used
-                $slug_translation = $this->get_translation_from_woocommerce_mo_file( 'product-category', $language );
+                $slug_translation = $this->get_translation_from_woocommerce_mo_file( $slug, $language );
 
             }
 
