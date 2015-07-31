@@ -344,9 +344,9 @@ class WCML_Terms{
                 $no_recursion_flag = false;
 
                 if( !is_null( $wpml_term_translations ) ){
-                    $term_language = $term->term_id ? $wpml_term_translations->get_element_lang_code($term->term_id) : false;
+                    $term_language = $term->term_id ? $wpml_term_translations->get_element_lang_code($term->term_taxonomy_id) : false;
                 }else{
-                    $term_language = $term->term_id ? $sitepress->get_language_for_element( $term->term_id, 'tax_'.$taxonomy ) : false;
+                    $term_language = $term->term_id ? $sitepress->get_language_for_element( $term->term_taxonomy_id, 'tax_'.$taxonomy ) : false;
                 }
 
                 if( $term_language ){
