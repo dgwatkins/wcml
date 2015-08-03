@@ -1,4 +1,4 @@
-<table id="prod_images_<?php echo $lang ?>" class="prod_images js-table">
+<table id="prod_images_<?php echo $lang ?>" class="widefat prod_images js-table">
     <tbody>
         <?php if ( isset( $empty_images ) ): ?>
             <tr>
@@ -33,7 +33,7 @@
                     </td>
 
                     <td>
-                        <input type="text" name="images[title]" value="<?php echo $images_texts['title']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
+                        <input type="text" name="images[<?php echo $trnsl_prod_image ?>][title]" value="<?php echo $images_texts['title']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
                     </td>
                     </tr>
                 <tr>
@@ -46,7 +46,7 @@
 
                     </td>
                     <td>
-                        <input type="text" name="images[caption]" value="<?php echo $images_texts['caption']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
+                        <input type="text" name="images[<?php echo $trnsl_prod_image ?>][caption]" value="<?php echo $images_texts['caption']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
                     </td>
                 </tr>
                 <tr class="prod_images-last-row">
@@ -57,7 +57,7 @@
                         <input type="text" value="<?php echo $attachment_data->post_content ?>" readonly="readonly"/>
                     </td>
                     <td>
-                        <input type="text" name="images[description]" value="<?php echo $images_texts['description']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
+                        <input type="text" name="images[<?php echo $trnsl_prod_image ?>][description]" value="<?php echo $images_texts['description']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
                     </td>
                 </tr>
 

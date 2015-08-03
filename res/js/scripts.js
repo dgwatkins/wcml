@@ -249,31 +249,24 @@ jQuery(document).ready(function($){
        });
    }
    
-   $(document).on('click', '.wcml_duplicate_product_notice a[href^=#edit-]', function(){
-       
-       var spl = $(this).attr('href').replace(/#edit-/, '').split('_');
-       var pid = spl[0];
-       var lng = spl[1];
-       
-       $('#prid_' + pid + ' tr[rel=' + lng + '] .js-dup-disabled').removeAttr('disabled');
-       $('#prid_' + pid + ' tr[rel=' + lng + '] input[name^=end_duplication]').val(1);
-       $('#prid_' + pid + ' .js-wcml_duplicate_product_notice_'+lng).hide();
-       $('#prid_' + pid + ' .js-wcml_duplicate_product_undo_'+lng).show();
+   $(document).on('click', '.duplicate_edit', function(){
+
+       $('.js-dup-disabled').removeAttr('disabled');
+       $('input[name^=end_duplication]').val(1);
+       $('.js-wcml_duplicate_product_notice').hide();
+       $('.js-wcml_duplicate_product_undo').show();
        
        return false;
        
    });
 
-   $(document).on('click', '.wcml_duplicate_product_notice a[href^=#undo-]', function(){
+   $(document).on('click', '.duplicate_cancel', function(){
        
-       var spl = $(this).attr('href').replace(/#undo-/, '').split('_');
-       var pid = spl[0];
-       var lng = spl[1];
-       
-       $('#prid_' + pid + ' tr[rel=' + lng + '] .js-dup-disabled').attr('disabled', 'disabled');
-       $('#prid_' + pid + ' tr[rel=' + lng + '] input[name^=end_duplication]').val(0);
-       $('#prid_' + pid + ' .js-wcml_duplicate_product_undo_'+lng).hide();
-       $('#prid_' + pid + ' .js-wcml_duplicate_product_notice_'+lng).show();
+
+       $('.js-dup-disabled').attr('disabled', 'disabled');
+       $('input[name^=end_duplication]').val(0);
+       $('.js-wcml_duplicate_product_undo').hide();
+       $('.js-wcml_duplicate_product_notice').show();
        
        return false;
        
@@ -489,24 +482,24 @@ jQuery(document).ready(function($){
     });
 
     $(document).on('click','.switch-tmce',function(){
-        var id = $(this).attr('id').replace(/-tmce/, '');
-        $(this).closest('.wp-editor-wrap').removeClass('html-active').addClass('tmce-active');
-        $(this).closest('.wp-editor-wrap').find('textarea.wcml_content_tr').hide();
-        if(  window.parent.tinyMCE.get(id)  == null ){
-            tinymce.execCommand( 'mceAddEditor', false, id);
-        }else{
-            $(this).closest('.wp-editor-wrap').find('.mce-tinymce').show();
-        }
+        //var id = $(this).attr('id').replace(/-tmce/, '');
+        //$(this).closest('.wp-editor-wrap').removeClass('html-active').addClass('tmce-active');
+        //$(this).closest('.wp-editor-wrap').find('textarea.wcml_content_tr').hide();
+        //if(  window.parent.tinyMCE.get(id)  == null ){
+        //    tinymce.execCommand( 'mceAddEditor', false, id);
+        //}else{
+        //    $(this).closest('.wp-editor-wrap').find('.mce-tinymce').show();
+        //}
     });
 
     $(document).on('click','.switch-html',function(){
-        var id = $(this).attr('id').replace(/-html/, '');
-        $(this).closest('.wp-editor-wrap').removeClass('tmce-active').addClass('html-active');
-        $('#qt_'+id+'_toolbar').remove();
-        QTags(id);
-        QTags._buttonsInit();
-        $(this).closest('.wp-editor-wrap').find('.mce-tinymce').hide();
-        $(this).closest('.wp-editor-wrap').find('textarea.wcml_content_tr').show();
+        //var id = $(this).attr('id').replace(/-html/, '');
+        //$(this).closest('.wp-editor-wrap').removeClass('tmce-active').addClass('html-active');
+        //$('#qt_'+id+'_toolbar').remove();
+        //QTags(id);
+        //QTags._buttonsInit();
+        //$(this).closest('.wp-editor-wrap').find('.mce-tinymce').hide();
+        //$(this).closest('.wp-editor-wrap').find('textarea.wcml_content_tr').show();
     });
 
     $(document).on('click','.wcml_popup_close',function(){
@@ -516,7 +509,7 @@ jQuery(document).ready(function($){
 
 
     $(document).on('click','.wcml_popup_ok',function(){
-        var text_area = $(this).closest('.wcml_editor').find('.wcml_editor_translation textarea');
+        var text_area = $(this).closest('.wcml_editor').find('textarea');
         $(".wcml_fade").hide();
 
         if(text_area.size()>0 && !text_area.is(':visible')){

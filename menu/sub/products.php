@@ -4,7 +4,7 @@ $lm = ( isset( $_GET['lm'] ) && $_GET['lm'] > 0 ) ? $_GET['lm'] : 20;
 
 $search         = false;
 $pagination_url = admin_url( 'admin.php?page=wpml-wcml&tab=products&paged=' );
-$filter_url = admin_url( 'admin.php?page=wpml-wcml&tab=products' );
+$filter_url = $filter_cat_url = admin_url( 'admin.php?page=wpml-wcml&tab=products' );
 $translator_id  = false;
 
 if ( isset( $_GET['prid'] ) ) {
@@ -54,45 +54,60 @@ if ( ! current_user_can( 'wpml_operate_woocommerce_multilingual' ) ) {
 
 $slang = isset( $_GET['slang'] ) && $_GET['slang'] != 'all' ? $_GET['slang'] : false;
 
-if ( ! isset( $products ) && isset( $_GET['cat'] ) && isset( $_GET['trst'] ) && isset( $_GET['st'] ) && isset( $_GET['slang'] ) ) {
-	$products_data  = $woocommerce_wpml->products->get_products_from_filter( '', $_GET['cat'], $_GET['trst'], $_GET['st'], $slang, $pn, $lm );
+if ( ! isset( $products ) &&
+    ( isset( $_GET['cat'] ) ||
+        isset( $_GET['trst'] ) ||
+        isset( $_GET['st'] ) ||
+        isset( $_GET['slang'] ) ||
+        isset( $_GET['s'] ) ||
+        isset( $_GET['cat'] ) ||
+        isset( $_GET['ts'] ) ||
+        isset( $_GET['ds'] ) ) ) {
+
+    if( isset( $_GET['s'] ) && $_GET['s'] == '' ){
+        unset( $_GET['s'] );
+    }
+
+	$products_data  = $woocommerce_wpml->products->get_products_from_filter(    isset( $_GET['s'] ) ? $_GET['s'] : '' ,
+                                                                                isset( $_GET['cat'] ) ? $_GET['cat'] : false,
+                                                                                isset( $_GET['trst'] ) ? $_GET['trst'] : false,
+                                                                                isset( $_GET['st'] ) ? $_GET['st'] : false,
+                                                                                $slang,
+                                                                                $pn,
+                                                                                $lm,
+                                                                                isset( $_GET['ts'] ) ? $_GET['ts'] : false,
+                                                                                isset( $_GET['ds'] ) ? $_GET['ds'] : false );
 	$products       = $products_data['products'];
 	$products_count = $products_data['count'];
-	$search         = true;
-	$pagination_url = admin_url( 'admin.php?page=wpml-wcml&tab=products&cat=' . $_GET['cat'] . '&trst=' . $_GET['trst'] . '&st=' . $_GET['st'] . '&slang=' . $_GET['slang'] . '&paged=' );
-}
 
-if( ! isset( $products ) && isset( $_GET['s'] ) ){
-    $products_data  = $woocommerce_wpml->products->get_products_from_filter( $_GET['s'], false, false, false, $slang, $pn, $lm );
-    $products       = $products_data['products'];
-    $products_count = $products_data['count'];
-    $pagination_url = admin_url( 'admin.php?page=wpml-wcml&tab=products&s=' . $_GET['s'] .'&paged=' );
-}
+    if( isset( $_GET['cat'] ) ){
+        $search         = true;
+    }
 
-if( ! isset( $products ) && isset( $_GET['cat'] ) ){
-    $products_data  = $woocommerce_wpml->products->get_products_from_filter( '', $_GET['cat'], false, false, $slang, $pn, $lm );
-    $products       = $products_data['products'];
-    $products_count = $products_data['count'];
-    $pagination_url = admin_url( 'admin.php?page=wpml-wcml&tab=products&cat=' . $_GET['cat'] .'&paged=' );
+	$pagination_url = admin_url( 'admin.php?'. http_build_query( $_GET ). '&paged=' );
+
+    $filters_array = $_GET;
+    if( isset($filters_array['ts'] ) ){
+        unset( $filters_array['ts'] );
+        unset( $filters_array['ds'] );
+    }elseif( isset($filters_array['ds'] ) ){
+        unset( $filters_array['ds'] );
+        unset( $filters_array['ts'] );
+    }
+
+    $filter_url = admin_url( 'admin.php?'. http_build_query( $filters_array ) );
+
+    $filters_array = $_GET;
+    if( isset($filters_array['cat'] ) ){
+        unset( $filters_array['cat'] );
+    }
+
+    $filter_cat_url = admin_url( 'admin.php?'. http_build_query( $filters_array ) );
 }
 
 $title_sort = isset( $_GET['ts'] ) ? $_GET['ts'] == 'asc' ? 'desc' : 'asc' : 'asc';
 
-if( ! isset( $products ) && isset( $_GET['ts'] ) ){
-    $products_data  = $woocommerce_wpml->products->get_products_from_filter( '', false, false, false, $slang, $pn, $lm, $_GET['ts'] );
-    $products       = $products_data['products'];
-    $products_count = $products_data['count'];
-    $pagination_url = admin_url( 'admin.php?page=wpml-wcml&tab=products&ts=' . $_GET['ts'] .'&paged=' );
-}
-
 $date_sort = isset( $_GET['ds'] ) ? $_GET['ds'] == 'asc' ? 'desc' : 'asc' : 'asc';
-
-if( ! isset( $products ) && isset( $_GET['ds'] ) ){
-    $products_data  = $woocommerce_wpml->products->get_products_from_filter( '', false, false, false, $slang, $pn, $lm, false, $_GET['ds'] );
-    $products       = $products_data['products'];
-    $products_count = $products_data['count'];
-    $pagination_url = admin_url( 'admin.php?page=wpml-wcml&tab=products&ds=' . $_GET['ds'] .'&paged=' );
-}
 
 if ( ! isset( $products ) && current_user_can( 'wpml_operate_woocommerce_multilingual' ) ) {
 	$products       = $woocommerce_wpml->products->get_product_list( $pn, $lm, $slang );
@@ -311,7 +326,7 @@ $woocommerce_wpml->update_settings(); ?>
 					<td class="column-categories">
                         <?php $product_categories = wp_get_object_terms( $product->ID, 'product_cat' );
                         foreach( $product_categories as $key => $product_category ): ?>
-                            <a href="<?php echo $filter_url.'&cat='.$product_category->term_id ?>"><?php echo $product_category->name.( array_key_exists( $key+1, $product_categories ) ? ', ': '' ) ?></a>
+                            <a href="<?php echo $filter_cat_url.'&cat='.$product_category->term_id; ?>"><?php echo $product_category->name.( array_key_exists( $key+1, $product_categories ) ? ', ': '' ) ?></a>
                         <?php endforeach; ?>
 					</td>
 

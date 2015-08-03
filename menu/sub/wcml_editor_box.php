@@ -1,7 +1,7 @@
-<div id="term-description" class="wcml_editor">
-    <?php if(!$woocommerce_wpml->settings['first_editor_call']):
-        wp_editor( $value, 'wcmleditor'.$name, array( 'textarea_name'=> $name, 'textarea_rows'=>4, 'editor_class'=>'wcml_content_tr' ) ); ?>
-    <?php else: ?>
+<div id="term-description" class="mce_editor">
+    <?php //if(!$woocommerce_wpml->settings['first_editor_call']):
+        wp_editor( $value, 'wcmleditor'.$name, array( 'textarea_name'=> $name, 'textarea_rows'=>4, 'editor_class'=>'wcml_content_tr translated_value' ) ); ?>
+    <?php /* else: ?>
         <div id="wp-wcmleditor<?php echo $name ?>-wrap" class="wp-core-ui wp-editor-wrap">
             <div id="wp-wcml<?php echo $name ?>-editor-tools" class="wp-editor-tools hide-if-no-js">
                 <div id="wp-wcmleditor<?php echo $name ?>-media-buttons" class="wp-media-buttons">
@@ -19,5 +19,5 @@
                 <textarea class="wp-editor-area" rows="4" autocomplete="off" cols="22" name="<?php echo $name ?>" id="wcmleditor<?php echo $name?>" aria-hidden="true"><?php echo $value ?></textarea>
             </div>
         </div>
-    <?php endif; ?>
+    <?php endif; */ ?>
 </div>
