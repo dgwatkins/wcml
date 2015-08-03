@@ -1,22 +1,22 @@
 <?php
 
-$product_images = $woocommerce_wpml->products->product_images_ids( $product_id );
-$product_contents = $woocommerce_wpml->products->get_product_contents( $product_id );
-$trid = $sitepress->get_element_trid( $product_id, 'post_'.$product->post_type );
-$product_translations = $sitepress->get_element_translations( $trid, 'post_'.$product->post_type, true, true );
+$product_images = $woocommerce_wpml->products->product_images_ids($product_id);
+$product_contents = $woocommerce_wpml->products->get_product_contents($product_id);
+$trid = $sitepress->get_element_trid($product_id, 'post_' . $product->post_type);
+$product_translations = $sitepress->get_element_translations($trid, 'post_' . $product->post_type, true, true);
 $check_on_permissions = false;
-if( !current_user_can( 'wpml_operate_woocommerce_multilingual' ) ){
+if (!current_user_can('wpml_operate_woocommerce_multilingual')) {
     $check_on_permissions = true;
 }
 
 $button_labels = array(
-    'save'      => esc_attr__('Save', 'wpml-wcml'),
-    'update'    => esc_attr__('Update', 'wpml-wcml'),
+    'save' => esc_attr__('Save', 'wpml-wcml'),
+    'update' => esc_attr__('Update', 'wpml-wcml'),
 );
 
 $is_duplicate_product = false;
 
-if( isset( $product_translations[$language] ) && get_post_meta( $product_translations[$language]->element_id, '_icl_lang_duplicate_of', true ) == $product_id ){
+if (isset($product_translations[$language]) && get_post_meta($product_translations[$language]->element_id, '_icl_lang_duplicate_of', true) == $product_id) {
     $is_duplicate_product = true;
 }
 
@@ -24,147 +24,201 @@ if( isset( $product_translations[$language] ) && get_post_meta( $product_transla
 <?php //var_dump($language); ?>
 <div class="wpml-dialog wpml-dialog-translate wcml-pt-form">
     <header class="wpml-dialog-header">
-        <h2 class="wpml-dialog-title"><?php printf( __( 'Product translation:  %s', 'wpml-wcml' ), '<strong>'.$product->post_title.'</strong>' ); ?></h2>
-        <a href="<?php echo get_post_permalink( $product_id ); ?>" class="view"
-           title="<?php printf( __( 'View "%s"', 'wpml-wcml' ), $product->post_title ); ?>"><?php _e( 'View Product', 'wpml-wcml' ); ?> </a>
-        <?php //TODO Sergey: close Dialog on wpml-dialog-close (not on icon classes) ?>
-        <i class="otgs-ico-close wpml-dialog-close"></i>
+        <h2 class="wpml-dialog-title"><?php printf(__('Product translation:  %s', 'wpml-wcml'), '<strong>' . $product->post_title . '</strong>'); ?></h2>
+        <a href="<?php echo get_post_permalink($product_id); ?>" class="view"
+           title="<?php printf(__('View "%s"', 'wpml-wcml'), $product->post_title); ?>"><?php _e('View Product', 'wpml-wcml'); ?> </a>
+        <i class="otgs-ico-close wpml-dialog-close-button"></i>
         <?php if( $is_duplicate_product ): ?>
             </br></br>
             <span class="js-wcml_duplicate_product_notice" >
                 <?php printf(__('This product is an exact duplicate of the %s product.', 'wcml-wpml'),
                     $active_languages[ $original_language ]['display_name'] ); ?>&nbsp;
-                <a href="javascript:void(0)" class="duplicate_edit" ><?php _e('Edit independently.', 'wpml-wcml') ?></a>
+                <a class="duplicate_edit" ><?php _e('Edit independently.', 'wpml-wcml') ?></a>
             </span>
             <span class="js-wcml_duplicate_product_undo" style="display: none;" >
-                <a href="javascript:void(0)" class="duplicate_cancel"><?php _e('Undo (keep this product as a duplicate)', 'wpml-wcml') ?></a>
+                <a class="duplicate_cancel"><?php _e('Undo (keep this product as a duplicate)', 'wpml-wcml') ?></a>
             </span>
         <?php endif; ?>
     </header>
     <form class="wpml-dialog-body"
           id="poststuff"> <?php //   IMpoRTANT This ID must stay like this if it is impossible -> create additional div ?>
         <header class="wpml-translation-header">
-            <h3 class="wpml-header-original"><?php _e( 'Original', 'wpml-wcml' ); ?>:
+            <h3 class="wpml-header-original"><?php _e('Original', 'wpml-wcml'); ?>:
                 <span class="wpml-title-flag">
-                    <img src="<?php echo $sitepress->get_flag_url( $original_language ) ?>"  alt="<?php echo $active_languages[ $original_language ]['english_name'] ?>"/>
+                    <img src="<?php echo $sitepress->get_flag_url($original_language) ?>"
+                         alt="<?php echo $active_languages[$original_language]['english_name'] ?>"/>
                 </span>
-                <strong><?php echo $active_languages[ $original_language ]['english_name'] ?></strong>
+                <strong><?php echo $active_languages[$original_language]['english_name'] ?></strong>
             </h3>
 
-            <h3 class="wpml-header-translation"><?php _e( 'Translation to', 'wpml-wcml' ); ?>:
+            <h3 class="wpml-header-translation"><?php _e('Translation to', 'wpml-wcml'); ?>:
                 <span class="wpml-title-flag">
-                    <img src="<?php echo $sitepress->get_flag_url( $language ) ?>"  alt="<?php echo $active_languages[ $language ]['english_name'] ?>"/>
+                    <img src="<?php echo $sitepress->get_flag_url($language) ?>"
+                         alt="<?php echo $active_languages[$language]['english_name'] ?>"/>
                 </span>
-                <strong><?php echo $active_languages[ $language ]['english_name'] ?></strong>
+                <strong><?php echo $active_languages[$language]['english_name'] ?></strong>
             </h3>
+
             <div class="wpml-copy-container">
-                <a class="button-copy button-copy-all" title="<?php _e( 'Copy from original' ); ?>">
+                <a class="button-secondary button-copy-all" title="<?php _e('Copy from original'); ?>">
                     <i class="otgs-ico-copy"></i>
-                    <?php _e( 'Copy all fields from original', 'wpml-wcml' ); ?>
+                    <?php _e('Copy all fields from original', 'wpml-wcml'); ?>
                 </a>
             </div>
         </header>
 
         <div class="wpml-form-row">
-            <label for="term-name"> <?php _e( 'Title', 'wpml-wcml' ); ?> </label>
-            <input disabled id="term-name-original" class="original_value" value="<?php echo $product->post_title  ?>" type="text">
-            <a class="button-copy" title="<?php _e( 'Copy from original' ); ?>">
-                <i class="otgs-ico-copy otgs-ico-32"></i>
+            <label for="term-name"> <?php _e('Title', 'wpml-wcml'); ?> </label>
+            <input readonly id="term-name-original" class="original_value" value="<?php echo $product->post_title ?>"
+                   type="text">
+            <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>">
+                <i class="otgs-ico-copy"></i>
             </a>
-            <input id="term-name" class="translated_value <?php if($is_duplicate_product): ?> js-dup-disabled<?php endif;?>"<?php if($is_duplicate_product): ?> disabled="disabled"<?php endif;?> name="title" value="<?php echo $trn_product ? $trn_product->post_title : '' ?>" type="text" />
+            <input id="term-name"
+                   class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?> readonly<?php endif; ?>
+                   name="title" value="<?php echo $trn_product ? $trn_product->post_title : '' ?>" type="text"/>
         </div>
 
         <div class="wpml-form-row">
-            <label for="term-slug"><?php _e( 'Slug', 'wpml-wcml' ); ?></label>
-            <input disabled id="term-slug-original" class="original_value" value="<?php echo $product->post_name  ?>" type="text">
-            <a class="button-copy" title="<?php _e( 'Copy from original' ); ?>" id="">
-                <i class="otgs-ico-copy otgs-ico-32"></i>
+            <label for="term-slug"><?php _e('Slug', 'wpml-wcml'); ?></label>
+            <input readonly id="term-slug-original" class="original_value" value="<?php echo $product->post_name ?>"
+                   type="text">
+            <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>" id="">
+                <i class="otgs-ico-copy"></i>
             </a>
-            <input id="term-slug" class="translated_value <?php if($is_duplicate_product): ?> js-dup-disabled<?php endif;?>"<?php if($is_duplicate_product): ?> disabled="disabled"<?php endif;?> name="post_name" <?php echo !$trn_product ? 'empty="true"' : ''; ?> value="<?php echo $trn_product ? $trn_product->post_name : '' ?>" type="text">
+            <input id="term-slug"
+                   class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?> readonly<?php endif; ?>
+                   name="post_name" <?php echo !$trn_product ? 'empty="true"' : ''; ?>
+                   value="<?php echo $trn_product ? $trn_product->post_name : '' ?>" type="text">
         </div>
 
         <div class="wpml-form-row">
-            <label for="term-description"><?php _e( 'Content', 'wpml-wcml' ); ?> /<br><?php _e( 'Description', 'wpml-wcml' ); ?></label>
-            <textarea disabled id="term-description-original" class="original_value" cols="22" rows="4"><?php echo apply_filters( 'the_content', $product->post_content ); ?></textarea>
-            <a class="button-copy" title="<?php _e( 'Copy from original' ); ?>" id="">
-                <i class="otgs-ico-copy otgs-ico-32"></i>
+            <label for="term-description"><?php _e('Content', 'wpml-wcml'); ?>
+                /<br><?php _e('Description', 'wpml-wcml'); ?></label>
+            <textarea readonly id="term-description-original" class="original_value" cols="22"
+                      rows="4"><?php echo apply_filters('the_content', $product->post_content); ?></textarea>
+            <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>" id="">
+                <i class="otgs-ico-copy"></i>
             </a>
-            <?php echo $woocommerce_wpml->products->wcml_editor( 'content', $trn_product ? $trn_product->post_content : ''); ?>
+            <?php echo $woocommerce_wpml->products->wcml_editor('content', $trn_product ? $trn_product->post_content : ''); ?>
         </div>
 
         <div class="postbox wpml-form-row wcml-row-excerpt">
-            <div title="<?php _e( 'Click to toggl' ); ?>" class="handlediv"><br></div>
+            <div title="<?php _e('Click to toggl'); ?>" class="handlediv"><br></div>
             <h3 class="hndle">
-                <span><?php _e( 'Excerpt', 'wpml-wcml' ); ?></span>
+                <span><?php _e('Excerpt', 'wpml-wcml'); ?></span>
             </h3>
+
             <div class="inside">
-                <textarea disabled id="term-excerpt-original" class="original_value" cols="22" rows="4"><?php echo apply_filters( 'the_content', $product->post_excerpt ); ?></textarea>
-                <a class="button-copy" title="<?php _e( 'Copy from original' ); ?>" id="">
-                    <i class="otgs-ico-copy otgs-ico-32"></i>
+                <textarea readonly id="term-excerpt-original" class="original_value" cols="22"
+                          rows="4"><?php echo apply_filters('the_content', $product->post_excerpt); ?></textarea>
+                <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>" id="">
+                    <i class="otgs-ico-copy"></i>
                 </a>
-                <?php echo $woocommerce_wpml->products->wcml_editor( 'excerpt', $trn_product ? $trn_product->post_excerpt : '' ); ?>
+                <?php echo $woocommerce_wpml->products->wcml_editor('excerpt', $trn_product ? $trn_product->post_excerpt : ''); ?>
             </div>
         </div>
 
         <?php
-        $purchase_note = get_post_meta( $product_id, '_purchase_note', true );
+        $purchase_note = get_post_meta($product_id, '_purchase_note', true);
         ?>
-        <div class="postbox wpml-form-row wcml-row-purchase-note <?php echo !$purchase_note ? 'closed':'' ?> ">
-            <div title="<?php _e( 'Click to toggle' ); ?>" class="handlediv"><br></div>
+        <div class="postbox wpml-form-row wcml-row-purchase-note <?php echo !$purchase_note ? 'closed' : '' ?> ">
+            <div title="<?php _e('Click to toggle'); ?>" class="handlediv"><br></div>
             <h3 class="hndle">
-                <span><?php _e( 'Purchase note', 'wpml-wcml' ) ?><?php echo !$purchase_note ? '&nbsp;<em>'. __( '(empty)', 'wpml-wcml' ) .'</em>' : '' ?> </span>
+                <span><?php _e('Purchase note', 'wpml-wcml') ?><?php echo !$purchase_note ? '&nbsp;<em>' . __('(empty)', 'wpml-wcml') . '</em>' : '' ?> </span>
             </h3>
 
             <div class="inside">
-                <textarea disabled id="term-description-original" class="original_value" cols="22" rows="10"><?php echo $purchase_note; ?></textarea>
-                <a class="button-copy" title="<?php _e( 'Copy from original' ); ?>" id="">
-                    <i class="otgs-ico-copy otgs-ico-32"></i>
+                <textarea readonly id="term-description-original" class="original_value" cols="22"
+                          rows="10"><?php echo $purchase_note; ?></textarea>
+                <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>" id="">
+                    <i class="otgs-ico-copy"></i>
                 </a>
-                <textarea id="term-description-original" class="translated_value <?php if($is_duplicate_product): ?> js-dup-disabled<?php endif;?>"<?php if($is_duplicate_product): ?> disabled="disabled"<?php endif;?> cols="22" rows="10"><?php echo $trn_product ? get_post_meta( $trn_product->ID , '_purchase_note', true ) : '' ?></textarea>
+                <textarea id="term-description-original"
+                          class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?> readonly<?php endif; ?>
+                          cols="22"
+                          rows="10"><?php echo $trn_product ? get_post_meta($trn_product->ID, '_purchase_note', true) : '' ?></textarea>
             </div>
         </div>
 
         <div class="postbox wpml-form-row wcml-row-images">
-            <div title="<?php _e( 'Click to toggle' ); ?>" class="handlediv"><br></div>
+            <div title="<?php _e('Click to toggle'); ?>" class="handlediv"><br></div>
             <h3 class="hndle">
-                <span><?php _e( 'Images', 'wpml-wcml' ) ?></span>
+                <span><?php _e('Images', 'wpml-wcml') ?></span>
             </h3>
+
             <div class="inside">
-                <?php echo $woocommerce_wpml->products->product_images_box( $product_id, $language, $is_duplicate_product ); ?>
+                <?php echo $woocommerce_wpml->products->product_images_box($product_id, $language, $is_duplicate_product); ?>
             </div>
         </div>
 
-        <?php $attributes = $woocommerce_wpml->products->get_product_atributes( $product_id ); ?>
-        <?php if( $attributes ): ?>
+        <?php $attributes = $woocommerce_wpml->products->get_product_atributes($product_id); ?>
+        <?php if ($attributes): ?>
             <div class="postbox wpml-form-row wcml-row-attributes">
-                <div title="<?php _e( 'Click to toggl' ); ?>" class="handlediv"><br></div>
+                <div title="<?php _e('Click to toggl'); ?>" class="handlediv"><br></div>
                 <h3 class="hndle">
-                    <span><?php _e( 'Custom Product attributes', 'wpml-wcml' ); ?></span>
+                    <span><?php _e('Custom Product attributes', 'wpml-wcml'); ?></span>
                 </h3>
+
                 <div class="inside">
-                    <?php
-                    foreach ( $attributes as $attr_key => $attribute ):  ?>
-                        <?php $trn_attribute = $woocommerce_wpml->products->get_custom_attribute_translation( $product_id, $attr_key, $attribute, $language ); ?>
-                        <label class="custom_attr_label"><?php _e('name','wpml-wcml'); ?></label>
-                        <input disabled class="original_value" value="<?php echo $attribute['name']  ?>" type="text" />
-                        <input class="translated_value <?php if($is_duplicate_product): ?> js-dup-disabled<?php endif;?>"<?php if($is_duplicate_product): ?> disabled="disabled"<?php endif;?> type="text" name="<?php echo $attr_key . '_name'; ?>" value="<?php echo $trn_attribute['name'] ? $trn_attribute['name'] : ''; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>" <?php if( $is_duplicate_product ): ?> disabled="disabled"<?php endif;?> />
-                        </br>
-                        <label class="custom_attr_label"><?php _e('values','wpml-wcml'); ?></label>
-                        <input disabled class="original_value" value="<?php echo $attribute['value']  ?>" type="text" />
-                        <a class="button-copy" title="<?php _e( 'Copy from original' ); ?>" id="">
-                            <i class="otgs-ico-copy otgs-ico-32"></i>
-                        </a>
-                        <input class="<?php if($is_duplicate_product): ?> js-dup-disabled<?php endif;?>"<?php if($is_duplicate_product): ?> disabled="disabled"<?php endif;?> type="text" name="<?php echo $attr_key; ?>" value="<?php echo $trn_attribute['value'] ? $trn_attribute['value'] : ''; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>" <?php if($is_duplicate_product): ?> disabled="disabled"<?php endif;?> />
-                    <?php endforeach; ?>
+                    <table id="prod_attributes_<?php echo $lang ?>" class="prod_attributes wcml-attr-table js-table">
+
+                        <?php
+                        foreach ($attributes as $attr_key => $attribute): ?>
+                            <tr class="wcml-first-row">
+                                <th>
+                                    <?php $trn_attribute = $woocommerce_wpml->products->get_custom_attribute_translation($product_id, $attr_key, $attribute, $language); ?>
+                                    <label class="custom_attr_label"><?php _e('Name', 'wpml-wcml'); ?></label>
+                                </th>
+                                <td>
+                                    <input readonly class="original_value" value="<?php echo $attribute['name'] ?>"
+                                           type="text"/>
+                                </td>
+                                <td rowspan="2" class="button-copy-cell">
+                                    <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>"
+                                       id="">
+                                        <i class="otgs-ico-copy"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <input
+                                        class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?> readonly<?php endif; ?>
+                                        type="text" name="<?php echo $attr_key . '_name'; ?>"
+                                        value="<?php echo $trn_attribute['name'] ? $trn_attribute['name'] : ''; ?>"
+                                        placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
+
+                                </td>
+                            </tr>
+                            <tr class="wcml-last-row">
+                                <th>
+                                    <label class="custom_attr_label"><?php _e('Value(s)', 'wpml-wcml'); ?></label>
+                                </th>
+                                <td>
+                                    <input readonly class="original_value" value="<?php echo $attribute['value'] ?>"
+                                           type="text"/>
+                                </td>
+                                <td>
+                                    <input
+                                        class="<?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?>
+                                        readonly"<?php endif; ?> type="text" name="<?php echo $attr_key; ?>"
+                                    value="<?php echo $trn_attribute['value'] ? $trn_attribute['value'] : ''; ?>"
+                                    placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>
+                                    " <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
+
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </table>
                 </div>
             </div>
         <?php endif; ?>
 
-        <input type="hidden" name="original_product_id" value="<?php echo $product_id; ?>" />
-        <input type="hidden" name="job_id" value="<?php echo $job_id; ?>" />
-        <input type="hidden" name="language" value="<?php echo $language; ?>" />
-        <input type="hidden" name="slang" value="<?php echo isset( $_GET['slang'] ) && $_GET['slang'] != 'all' ? $_GET['slang'] : false; ?>" />
-        <input type="hidden" name="end_duplication" value="<?php echo !intval($is_duplicate_product) ?>" />
+        <input type="hidden" name="original_product_id" value="<?php echo $product_id; ?>"/>
+        <input type="hidden" name="job_id" value="<?php echo $job_id; ?>"/>
+        <input type="hidden" name="language" value="<?php echo $language; ?>"/>
+        <input type="hidden" name="slang"
+               value="<?php echo isset($_GET['slang']) && $_GET['slang'] != 'all' ? $_GET['slang'] : false; ?>"/>
+        <input type="hidden" name="end_duplication" value="<?php echo !intval($is_duplicate_product) ?>"/>
     </form>
 </div>
 <div class="wpml-dialog-footer wpml-sticky">
@@ -172,21 +226,23 @@ if( isset( $product_translations[$language] ) && get_post_meta( $product_transla
 
     <div class="wcml-pt-progress"></div>
     <div class="alignleft">
-        <a class="button-secondary cancel wpml-dialog-close-button" href="javascript:void(0)"><?php _e( 'Cancel', 'wpml-wcml' ); ?></a>
+        <a class="button-secondary cancel wpml-dialog-close-button"><?php _e('Cancel', 'wpml-wcml'); ?></a>
     </div>
     <div class="alignright">
         <?php $nonce = wp_create_nonce('update_product_actions'); ?>
-        <a class="button-primary wpml-dialog-close-button" data-action="wcml_update_product" data-nonce="<?php echo $nonce; ?>" href="javascript:void(0)"><?php _e( 'Save &amp; Close', 'wpml-wcml' ); ?></a>
-        <a class="button-primary wpml-dialog-close-button" data-action="wcml_update_product" data-nonce="<?php echo $nonce; ?>" data-stay="true" href="javascript:void(0)"><?php _e( 'Save', 'wpml-wcml' ); ?></a>
+        <a class="button-primary wpml-dialog-close-button" data-action="wcml_update_product"
+           data-nonce="<?php echo $nonce; ?>"><?php _e('Save &amp; Close', 'wpml-wcml'); ?></a>
+        <a class="button-primary wpml-dialog-close-button" data-action="wcml_update_product"
+           data-nonce="<?php echo $nonce; ?>" data-stay="true"><?php _e('Save', 'wpml-wcml'); ?></a>
     </div>
 </div>
 
 <?php
-if(!$woocommerce_wpml->settings['first_editor_call']){
+if (!$woocommerce_wpml->settings['first_editor_call']) {
     //load editor js
-    if ( class_exists( '_WP_Editors' ) )
+    if (class_exists('_WP_Editors'))
         //_WP_Editors::editor_js();
-    $woocommerce_wpml->settings['first_editor_call'] = true;
+        $woocommerce_wpml->settings['first_editor_call'] = true;
     $woocommerce_wpml->update_settings();
 }
 

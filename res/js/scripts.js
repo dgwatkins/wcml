@@ -249,7 +249,8 @@ jQuery(document).ready(function($){
        });
    }
    
-   $(document).on('click', '.duplicate_edit', function(){
+   $(document).on('click', '.duplicate_edit', function(e){
+       e.preventDefault();
 
        $('.js-dup-disabled').removeAttr('disabled');
        $('input[name^=end_duplication]').val(1);
@@ -260,8 +261,8 @@ jQuery(document).ready(function($){
        
    });
 
-   $(document).on('click', '.duplicate_cancel', function(){
-       
+   $(document).on('click', '.duplicate_cancel', function(e){
+       e.preventDefault();
 
        $('.js-dup-disabled').attr('disabled', 'disabled');
        $('input[name^=end_duplication]').val(0);

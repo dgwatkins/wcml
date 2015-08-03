@@ -56,9 +56,6 @@
   float: left;
   width: 100%;
 }
-.wcml-section-content .wcml-section-content-inner.aligncenter {
-  text-align: center;
-}
 
 .wcml-section-header {
   width: 300px;
@@ -424,40 +421,49 @@ td.wcml-col-delete:first-child {
   border-left: 1px solid #e5e5e5;
 }
 
-table.prod_images {
+table.wcml-attr-table {
   border: none;
   width: 98%;
   margin: 0 auto;
 }
-table.prod_images th {
+table.wcml-attr-table th {
   text-align: left;
   font-weight: normal;
 }
-table.prod_images td:first-child {
+table.wcml-attr-table td:first-child {
   padding-left: 15px;
-  padding-bottom: 15px;
-  width: 165px;
 }
-table.prod_images td:last-child {
+table.wcml-attr-table td:last-child {
   padding-right: 15px;
 }
-table.prod_images input {
-  width: calc(100% - 30px);
+table.wcml-attr-table td[rowspan] {
+  padding-bottom: 15px;
+  padding-top: 15px;
 }
-.prod_images-first-row td, .prod_images-first-row th {
+table.wcml-attr-table input:not([type="submit"]):not([type="button"]) {
+  width: calc(100% - 30px);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.wcml-first-row td, .wcml-first-row th {
   padding-top: 15px;
   border-top: 1px solid #eee;
 }
-.prod_images-first-row:first-child td, .prod_images-first-row:first-child th {
+.wcml-first-row:first-child td, .wcml-first-row:first-child th {
   border-top: none;
 }
 
-.prod_images-last-row td, .prod_images-last-row th {
+.wcml-last-row td, .wcml-last-row th {
   padding-bottom: 15px;
+}
+
+.wcml-product-image-cell {
+  width: 115px;
 }
 
 .button-copy-cell {
   text-align: center;
+  vertical-align: middle;
 }
 
 .prod_variations th {
@@ -704,22 +710,23 @@ input[name="wcml_curr_template"] {
 }
 
 .mce_editor {
-  width: calc(50% - 30px - 70px);
   display: inline-block;
   margin: 7px 15px 0;
   vertical-align: middle;
 }
 
-.wcml-row-excerpt textarea[disabled] {
-  width: calc(50% - 30px - 70px);
+.wpml-form-row .cleditorMain {
+  width: calc(35% - 30px - 40px );
 }
-.wcml-row-excerpt .wcml_editor {
-  width: calc(50% - 30px);
+.wpml-form-row .mce_editor {
+  width: calc(55% - 30px - 80px);
 }
 
-.wcml-row-purchase-note textarea {
-  width: calc(50% - 30px);
+.wcml-row-excerpt .cleditorMain,
+.wcml-row-excerpt .mce_editor {
+  width: calc(50% - 30px - 40px);
 }
-.wcml-row-purchase-note textarea[disabled] {
-  width: calc(50% - 30px - 70px);
+
+.wcml-row-purchase-note .cleditorMain {
+  width: calc(50% - 30px - 40px );
 }
