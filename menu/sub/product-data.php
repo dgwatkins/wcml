@@ -219,6 +219,23 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
         <input type="hidden" name="slang"
                value="<?php echo isset($_GET['slang']) && $_GET['slang'] != 'all' ? $_GET['slang'] : false; ?>"/>
         <input type="hidden" name="end_duplication" value="<?php echo !intval($is_duplicate_product) ?>"/>
+        <div class="postbox wpml-form-row wcml-row-custom-fields">
+            <div title="<?php _e( 'Click to toggle' ); ?>" class="handlediv"><br></div>
+            <h3 class="hndle">
+                <span><?php _e( 'Custom Fields', 'wpml-wcml' ) ?></span>
+            </h3>
+            <div class="inside">
+
+            </div>
+        </div>
+
+        <?php //echo $woocommerce_wpml->products->custom_box($product_id,$product_content,$trn_contents,$key,$lang,$is_duplicate_product); ?>
+
+        <input type="hidden" name="original_product_id" value="<?php echo $product_id; ?>" />
+        <input type="hidden" name="job_id" value="<?php echo $job_id; ?>" />
+        <input type="hidden" name="language" value="<?php echo $language; ?>" />
+        <input type="hidden" name="slang" value="<?php echo isset( $_GET['slang'] ) && $_GET['slang'] != 'all' ? $_GET['slang'] : false; ?>" />
+        <input type="hidden" name="end_duplication" value="<?php echo !intval($is_duplicate_product) ?>" />
     </form>
 </div>
 <div class="wpml-dialog-footer wpml-sticky">
@@ -240,9 +257,9 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
 <?php
 if (!$woocommerce_wpml->settings['first_editor_call']) {
     //load editor js
-    if (class_exists('_WP_Editors'))
-        //_WP_Editors::editor_js();
-        $woocommerce_wpml->settings['first_editor_call'] = true;
+    if ( class_exists( '_WP_Editors' ) )
+        _WP_Editors::editor_js();
+    $woocommerce_wpml->settings['first_editor_call'] = true;
     $woocommerce_wpml->update_settings();
 }
 
