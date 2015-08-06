@@ -1176,7 +1176,8 @@ class WCML_Products{
                                         $values_arrs_tr = array_map('trim',explode('|',$tr_product_attr[$tax]['value']));
                                         foreach($values_arrs as $key=>$value){
                                             $value_sanitized = sanitize_title($value);
-                                            if( ( $value_sanitized == urldecode($meta_value) || $value_sanitized == $meta_value ) && isset($values_arrs_tr[$key])){
+
+                                            if( ( $value_sanitized == strtolower(urldecode($meta_value)) || strtolower($value_sanitized == $meta_value) ) && isset($values_arrs_tr[$key])){
                                                 $meta_value = $values_arrs_tr[$key];
                                             }
                                         }
