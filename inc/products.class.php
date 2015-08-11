@@ -2933,12 +2933,18 @@ class WCML_Products{
             $elements[ 'excerpt' ] ['editor_type'] = 'editor';
         }
 
-		if($_POST[ 'excerpt_type'] == 'rich'){
-            $elements[ 'excerpt' ] ['value'] = htmlspecialchars_decode(wp_richedit_pre($elements[ 'excerpt' ] ['value']));
-        }else{
-            $elements[ 'excerpt' ] ['value'] = htmlspecialchars_decode(wp_htmledit_pre($elements[ 'excerpt' ] ['value']));
+		if ( function_exists( 'format_for_editor' ) ) {
+			// WordPress 4.3 uses format_for_editor
+            $elements[ 'excerpt' ] ['value'] = htmlspecialchars_decode(format_for_editor($elements[ 'excerpt' ] ['value'], $_POST[ 'excerpt_type']));
+        } else {
+			// Backwards compatible for WordPress < 4.3
+            if($_POST[ 'excerpt_type'] == 'rich'){
+                $elements[ 'excerpt' ] ['value'] = htmlspecialchars_decode(wp_richedit_pre($elements[ 'excerpt' ] ['value']));
+            }else{
+                $elements[ 'excerpt' ] ['value'] = htmlspecialchars_decode(wp_htmledit_pre($elements[ 'excerpt' ] ['value']));
+            }
         }
-
+        
 		return $elements;
 	}
 
