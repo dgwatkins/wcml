@@ -415,7 +415,7 @@ class woocommerce_wpml {
                 wp_enqueue_script('suggest');
                 wp_enqueue_script('wp-pointer');
 
-                wp_enqueue_script( 'postbox' );
+
                 wp_localize_script('wcml-tm-scripts', 'wcml_settings',
                     array(
                         'nonce'             => wp_create_nonce( 'woocommerce_multilingual' )
@@ -423,27 +423,36 @@ class woocommerce_wpml {
                 );
 
                 if( $_GET['page'] == 'wpml-wcml' ){
-                    //load wp-editor scripts
-                    wp_enqueue_script('word-count');
-                    wp_enqueue_script('editor');
-                    wp_enqueue_script( 'quicktags' );
-                    wp_enqueue_script( 'wplink' );
-                    wp_enqueue_style( 'buttons' );
+
                 }
 
                 $this->load_tooltip_resources();
 
-                //@Todo: these should be loaded only when/if not loaded in WPML and also on specific pages
-                wp_register_style( 'wpml-dialogs', ICL_PLUGIN_URL . '/res/css/dialogs.css', null, ICL_SITEPRESS_VERSION );
-                wp_register_script( 'wpml-dialogs', ICL_PLUGIN_URL . '/res/js/dialogs.js', array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'), ICL_SITEPRESS_VERSION );
-                wp_enqueue_script( 'wpml-dialogs' );
-                wp_enqueue_style( 'wpml-dialogs' );
+
 
             }elseif( $_GET['page'] == WPML_TM_FOLDER.'/menu/main.php' ){
 	            wp_register_script( 'wpml_tm', WCML_PLUGIN_URL . '/res/js/wpml_tm.js', array( 'jquery' ), WCML_VERSION );
                 wp_enqueue_script('wpml_tm');
             }
         }
+
+        //@Todo: these should be loaded only when/if not loaded in WPML and also on specific pages
+
+        wp_register_style( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/css/dialogs.css', null, WCML_VERSION );
+        wp_register_style( 'wpml-dialogs', ICL_PLUGIN_URL . '/res/css/dialogs.css', null, ICL_SITEPRESS_VERSION );
+        wp_register_script( 'wpml-dialogs', ICL_PLUGIN_URL . '/res/js/dialogs.js', array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'), ICL_SITEPRESS_VERSION );
+        wp_enqueue_script( 'wpml-dialogs' );
+        wp_enqueue_style( 'wcml-dialogs' );
+        wp_enqueue_style( 'wpml-dialogs' );
+
+        wp_enqueue_script( 'postbox' );
+
+        //load wp-editor scripts
+        wp_enqueue_script('word-count');
+        wp_enqueue_script('editor');
+        wp_enqueue_script( 'quicktags' );
+        wp_enqueue_script( 'wplink' );
+        wp_enqueue_style( 'buttons' );
 
         if( !is_admin() ){
             wp_register_script('cart-widget', WCML_PLUGIN_URL . '/assets/js/cart_widget.js', array('jquery'), WCML_VERSION);
@@ -480,7 +489,14 @@ class woocommerce_wpml {
             $original_id = $sitepress->get_original_element_id_by_trid( $_GET['trid'] );
         }
 
-        echo '<h3 class="wcml_prod_hidden_notice">'.sprintf(__("This is a translation of %s. Some of the fields are not editable. It's recommended to use the %s for translating products.",'wpml-wcml'),'<a href="'.get_edit_post_link($original_id).'" >'.get_the_title($original_id).'</a>','<a href="'.admin_url('admin.php?page=wpml-wcml&tab=products&prid='.$original_id).'" >'.__('WooCommerce Multilingual products translator','wpml-wcml').'</a>').'</h3>';
+        if( isset($_GET['lang'])){
+            $language =  $_GET['lang'];
+        }else{
+            return;
+        }
+
+
+        echo '<h3 class="wcml_prod_hidden_notice">'.sprintf(__("This is a translation of %s. Some of the fields are not editable. It's recommended to use the %s for translating products.",'wpml-wcml'),'<a href="'.get_edit_post_link($original_id).'" >'.get_the_title($original_id).'</a>','<a data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="'.$original_id.'" data-job_id="" data-language="'. $language .'">'.__('WooCommerce Multilingual products translator','wpml-wcml').'</a>').'</h3>';
     }
 
     function generate_tracking_link($link,$term=false,$content = false, $id = false){

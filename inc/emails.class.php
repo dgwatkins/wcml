@@ -256,11 +256,12 @@ class WCML_Emails{
                 $job = $iclTranslationManagement->get_translation_job ( $job_id );
 
                 $needs_edit  = in_array( $job->status, array( ICL_TM_WAITING_FOR_TRANSLATOR, ICL_TM_IN_PROGRESS, ICL_TM_COMPLETE ) );
+                $language = $job->language_code;
                 $is_editable = $job->translator_id > 0 && $needs_edit;
                 if ( $is_editable ) {
-                    $link = admin_url('admin.php?page=wpml-wcml&tab=products&prid=' . $original_product_id);
+                    $link = '<a data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="'.$original_product_id.'" data-job_id="" data-language="'. $language .'">';
                 }else{
-                    $link = admin_url('admin.php?page=wpml-wcml&tab=products&prid=' . $original_product_id.'&job_id='.$job_id);
+                    $link = '<a data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="'.$original_product_id.'" data-job_id="'.$job_id.'" data-language="'. $language .'">';
                 }
             }
         }

@@ -1,0 +1,19 @@
+
+.mce_editor {
+    display: inline-block;
+    margin: 7px 15px 0;
+    vertical-align: middle;
+}
+
+.wcml_content_tr {
+    width: 100%;
+}
+
+.wpml-form-row .mce_editor {
+    width: calc(55% - 30px - 80px);
+}
+
+.wcml-row-excerpt .cleditorMain,
+.wcml-row-excerpt .mce_editor {
+    width: calc(50% - 30px - 40px);
+}

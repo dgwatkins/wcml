@@ -640,9 +640,7 @@ input[name="wcml_curr_template"] {
   float: left;
 }
 
-.wcml_content_tr {
-  width: 100%;
-}
+
 
 .wcml_miss_lang p:first-child {
   float: left;
@@ -709,24 +707,18 @@ input[name="wcml_curr_template"] {
   margin-right: 5px;
 }
 
-.mce_editor {
-  display: inline-block;
-  margin: 7px 15px 0;
-  vertical-align: middle;
-}
 
 .wpml-form-row .cleditorMain {
   width: calc(35% - 30px - 40px );
 }
-.wpml-form-row .mce_editor {
-  width: calc(55% - 30px - 80px);
-}
 
-.wcml-row-excerpt .cleditorMain,
-.wcml-row-excerpt .mce_editor {
-  width: calc(50% - 30px - 40px);
-}
 
 .wcml-row-purchase-note .cleditorMain {
   width: calc(50% - 30px - 40px );
+}
+
+#poststuff h3.js-wcml_duplicate_product_notice,
+#poststuff h3.js-wcml_duplicate_product_undo{
+    text-align: center;
+    margin-bottom: 30px;
 }

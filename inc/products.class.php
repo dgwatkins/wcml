@@ -62,7 +62,8 @@ class WCML_Products{
         add_action( 'woocommerce_email', array( $this, 'woocommerce_email_refresh_text_domain' ) );
         add_action( 'wp_ajax_woocommerce_update_shipping_method', array( $this, 'wcml_refresh_text_domain' ), 9 );
         add_action( 'wp_ajax_nopriv_woocommerce_update_shipping_method', array( $this, 'wcml_refresh_text_domain' ), 9 );
-        add_filter( 'wpml_link_to_translation', array( $this, '_filter_link_to_translation' ), 100 );
+        add_filter( 'wpml_link_to_translation', array( $this, '_filter_link_to_translation' ), 100,4 );
+        add_filter( 'wpml_post_translation_job_url', array( $this, '_filter_job_link_to_translation' ), 100,4 );
 
         add_filter( 'woocommerce_upsell_crosssell_search_products', array( $this, 'filter_woocommerce_upsell_crosssell_posts_by_language' ) );
 
@@ -177,7 +178,7 @@ class WCML_Products{
 
         die();
 
-        $dialog['html'] = "Translating this and that...<pre>" . print_r($_POST,1 ) . '</pre>' . '<br />' . $close;
+        $dialog['html'] = "Translating this and that...<pre>" . print_r($_POST,1 ) . '</pre>' . '<br />';
 
         echo json_encode($dialog);
         exit;
@@ -943,7 +944,7 @@ class WCML_Products{
             <?php } elseif ( $slang != $language['code'] && ( ! isset( $_POST['translation_status_lang'] ) || ( isset( $_POST['translation_status_lang'] ) && ( $_POST['translation_status_lang'] == $language['code'] ) || $_POST['translation_status_lang'] == '' ) ) ) {
 
                 if( isset($product_translations[$language['code']]) ){
-                    $job_id  = $wpdb->get_var( $wpdb->prepare( "SELECT tj.job_id FROM {$wpdb->prefix}icl_translate_job  AS tj LEFT JOIN {$wpdb->prefix}icl_translation_status AS ts ON tj.rid = ts.rid WHERE tj.translation_id=%d", $product_translations[$language['code']]->translation_id ) );
+                    $job_id  = $wpdb->get_var( $wpdb->prepare( "SELECT tj.job_id FROM {$wpdb->prefix}icl_translate_job  AS tj LEFT JOIN {$wpdb->prefix}icl_translation_status AS ts ON tj.rid = ts.rid WHERE ts.translation_id=%d", $product_translations[$language['code']]->translation_id ) );
                 }else{
                     $job_id = false;
                 } ?>
@@ -1317,21 +1318,30 @@ class WCML_Products{
     }
 
 
-    function _filter_link_to_translation($link){
-        global $id,$woocommerce_wpml;
+    function _filter_link_to_translation( $link, $post_id, $lang, $trid ){
+        global $woocommerce_wpml;
 
         if(!$woocommerce_wpml->settings['trnsl_interface']){
             return $link;
         }
-        if(isset($_GET['post'])){
-            $prod_id = $_GET['post'];
-        }else{
-            $prod_id = $id;
-        }
 
         if((isset($_GET['post_type']) && $_GET['post_type'] == 'product') || (isset($_GET['post']) && get_post_type($_GET['post']) == 'product')){
-            $link = admin_url('admin.php?page=wpml-wcml&tab=products&prid='.$prod_id);
+            $link = '#" data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="'.$post_id.'" data-job_id="" data-language="'. $lang;
         }
+        return $link;
+    }
+
+    function _filter_job_link_to_translation( $link, $post_id, $job_id, $lang ){
+        global $woocommerce_wpml;
+
+        if(!$woocommerce_wpml->settings['trnsl_interface']){
+            return $link;
+        }
+
+        if(  get_post_type($post_id) == 'product' ){
+            $link = '#" data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="'.$post_id.'" data-job_id="'.$job_id.'" data-language="'. $lang;
+        }
+
         return $link;
     }
 
@@ -1351,9 +1361,7 @@ class WCML_Products{
 
         if($woocommerce_wpml->settings['trnsl_interface'] && $pagenow == 'post.php' && !is_ajax() && isset($_GET['post']) && !$this->is_original_product($_GET['post']) && get_post_type($_GET['post'])=='product'){
             if((!isset($_GET['action'])) || (isset($_GET['action']) && !in_array($_GET['action'],array('trash','delete')))){
-                $orig_language = $this->get_original_product_language($_GET['post']);
-                $prid = apply_filters( 'translate_object_id',$_GET['post'],'product',true,$orig_language);
-                wp_redirect(admin_url('admin.php?page=wpml-wcml&tab=products&prid='.$prid)); exit;
+                wp_redirect(admin_url('admin.php?page=wpml-wcml&tab=products')); exit;
             }
         }
 

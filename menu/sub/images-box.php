@@ -33,7 +33,7 @@
                     </td>
 
                     <td>
-                        <input type="text" name="images[<?php echo $trnsl_prod_image ?>][title]" value="<?php echo $images_texts['title']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
+                        <input type="text" class="translated_value" name="images[<?php echo $trnsl_prod_image ?>][title]" value="<?php echo $images_texts['title']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
                     </td>
                     </tr>
                 <tr>
@@ -46,7 +46,7 @@
 
                     </td>
                     <td>
-                        <input  type="text" name="images[<?php echo $trnsl_prod_image ?>][caption]" value="<?php echo $images_texts['caption']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
+                        <input  type="text" class="translated_value" name="images[<?php echo $trnsl_prod_image ?>][caption]" value="<?php echo $images_texts['caption']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
                     </td>
                 </tr>
                 <tr class="wcml-last-row">
@@ -57,7 +57,7 @@
                         <input class="original_value" type="text" value="<?php echo $attachment_data->post_content ?>" readonly/>
                     </td>
                     <td>
-                        <input type="text" name="images[<?php echo $trnsl_prod_image ?>][description]" value="<?php echo $images_texts['description']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
+                        <input type="text" class="translated_value" name="images[<?php echo $trnsl_prod_image ?>][description]" value="<?php echo $images_texts['description']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
                     </td>
                 </tr>
 
