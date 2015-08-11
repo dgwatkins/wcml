@@ -33,7 +33,8 @@ class WCML_WC_MultiCurrency{
         add_action('woocommerce_product_meta_start', array($this, 'currency_switcher'));
         
         add_filter('wcml_get_client_currency', array($this, 'get_client_currency'));
-        
+        add_filter('woocommerce_paypal_args', array($this, 'filter_price_woocommerce_paypal_args'));
+
         
         // exchange rate GUI and logic
         if(defined('W3TC')){
@@ -107,9 +108,9 @@ class WCML_WC_MultiCurrency{
             $currency = $this->get_client_currency();
         }
         $price = $this->convert_price_amount($price, $currency);
-        
+
         $price = $this->apply_rounding_rules($price);
-        
+
         return $price;
         
     }
@@ -1058,7 +1059,23 @@ class WCML_WC_MultiCurrency{
 
         return $where;
     }
-    /* for WC 2.0.x - end */    
+    /* for WC 2.0.x - end */
+
+
+    function filter_price_woocommerce_paypal_args( $args ){
+        global $woocommerce_wpml;
+
+        foreach( $args as $key => $value ){
+            if( substr( $key, 0, 7 ) == 'amount_' ){
+
+                $currency_details = $woocommerce_wpml->multi_currency_support->get_currency_details_by_code( $args['currency_code'] );
+
+                $args[ $key ] =  number_format( $value, $currency_details['num_decimals'], $currency_details['decimal_sep'], $currency_details['thousand_sep'] );
+            }
+        }
+
+        return $args;
+    }
 
 }
 
