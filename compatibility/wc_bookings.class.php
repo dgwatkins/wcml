@@ -1528,9 +1528,23 @@ class WCML_Bookings{
 
         foreach( $translated_bookings as $booking ){
 
-            wp_update_post( array( 'ID' => $booking->post_id, 'post_status' => get_post_status( $booking_id ) , 'post_parent' => wp_get_post_parent_id( $booking_id ) ) );
+            $status = $wpdb->get_var( $wpdb->prepare( "SELECT post_status FROM {$wpdb->posts} WHERE ID = %d", $booking_id ) ); //get_post_status( $booking_id );
+            $language = get_post_meta( $booking->post_id, '_language_code', true );
 
-            update_post_meta( $booking->post_id, '_booking_order_item_id', get_post_meta( $booking_id, '_booking_order_item_id', true ) );
+            $wpdb->update(
+                $wpdb->posts,
+                array(
+                    'post_status' => $status,
+                    'post_parent' => wp_get_post_parent_id( $booking_id ),
+                ),
+                array(
+                    'ID' => $booking->post_id
+                )
+            );
+
+            update_post_meta( $booking->post_id, '_booking_product_id', $this->get_translated_booking_product_id( $booking_id, $language ) );
+            update_post_meta( $booking->post_id, '_booking_resource_id', $this->get_translated_booking_resource_id( $booking_id, $language ) );
+            update_post_meta( $booking->post_id, '_booking_persons', $this->get_translated_booking_persons_ids( $booking_id, $language ) );
 
         }
 
