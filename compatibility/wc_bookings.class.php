@@ -50,6 +50,12 @@ class WCML_Bookings{
         add_action( 'wcml_update_extra_fields', array( $this, 'wcml_products_tab_sync_resources_and_persons'), 10, 3 );
 
         add_action( 'woocommerce_new_booking', array( $this, 'duplicate_booking_for_translations') );
+
+        $bookings_statuses = array( 'unpaid', 'pending-confirmation', 'confirmed', 'paid', 'cancelled', 'complete', 'in-cart', 'was-in-cart' );
+        foreach( $bookings_statuses as $status ){
+            add_action('woocommerce_booking_' . $status, array( $this, 'update_status_for_translations' ) );
+        }
+
     }
 
     function wcml_price_field_after_booking_base_cost( $post_id ){
@@ -1510,6 +1516,21 @@ class WCML_Bookings{
         }
 
         return $trnsl_booking_persons;
+
+    }
+
+    function update_status_for_translations( $booking_id ){
+        global $wpdb;
+
+        $translated_bookings = $wpdb->get_results( $wpdb->prepare( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_booking_duplicate_of' AND meta_value = %d", $booking_id ) );
+
+        foreach( $translated_bookings as $booking ){
+
+            wp_update_post( array( 'ID' => $booking->post_id, 'post_status' => get_post_status( $booking_id ) , 'post_parent' => wp_get_post_parent_id( $booking_id ) ) );
+
+            update_post_meta( $booking->post_id, '_booking_order_item_id', get_post_meta( $booking_id, '_booking_order_item_id', true ) );
+
+        }
 
     }
 
