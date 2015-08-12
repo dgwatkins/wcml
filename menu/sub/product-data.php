@@ -96,7 +96,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                 /<br><?php _e('Description', 'wpml-wcml'); ?></label>
             <?php  //wp_editor( $product->post_content, 'wcmleditororigcont', array( 'textarea_name'=> 'wcmleditororigcont', 'textarea_rows'=>4, 'editor_class'=>'wcml_content_tr original_value' ) ); ?>
             <textarea readonly id="term-description-original" class="original_value" cols="22"
-                      rows="4"><?php echo apply_filters('the_content', $product->post_content); ?></textarea>
+                      rows="7"><?php echo apply_filters('the_content', $product->post_content); ?></textarea>
             <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>" id="">
                 <i class="otgs-ico-copy"></i>
             </a>
@@ -111,7 +111,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
 
             <div class="inside">
                 <textarea readonly id="term-excerpt-original" class="original_value" cols="22"
-                          rows="4"><?php echo apply_filters('the_content', $product->post_excerpt); ?></textarea>
+                          rows="7"><?php echo apply_filters('the_content', $product->post_excerpt); ?></textarea>
                 <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>" id="">
                     <i class="otgs-ico-copy"></i>
                 </a>
@@ -129,7 +129,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
             </h3>
 
             <div class="inside">
-                <textarea class="original_value" cols="22"
+                <textarea class="original_value" readonly cols="22"
                           rows="10"><?php echo $purchase_note; ?></textarea>
                 <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>" id="">
                     <i class="otgs-ico-copy"></i>

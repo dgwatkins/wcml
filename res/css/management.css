@@ -421,51 +421,6 @@ td.wcml-col-delete:first-child {
   border-left: 1px solid #e5e5e5;
 }
 
-table.wcml-attr-table {
-  border: none;
-  width: 98%;
-  margin: 0 auto;
-}
-table.wcml-attr-table th {
-  text-align: left;
-  font-weight: normal;
-}
-table.wcml-attr-table td:first-child {
-  padding-left: 15px;
-}
-table.wcml-attr-table td:last-child {
-  padding-right: 15px;
-}
-table.wcml-attr-table td[rowspan] {
-  padding-bottom: 15px;
-  padding-top: 15px;
-}
-table.wcml-attr-table input:not([type="submit"]):not([type="button"]) {
-  width: calc(100% - 30px);
-  margin-top: 0;
-  margin-bottom: 0;
-}
-.wcml-first-row td, .wcml-first-row th {
-  padding-top: 15px;
-  border-top: 1px solid #eee;
-}
-.wcml-first-row:first-child td, .wcml-first-row:first-child th {
-  border-top: none;
-}
-
-.wcml-last-row td, .wcml-last-row th {
-  padding-bottom: 15px;
-}
-
-.wcml-product-image-cell {
-  width: 115px;
-}
-
-.button-copy-cell {
-  text-align: center;
-  vertical-align: middle;
-}
-
 .prod_variations th {
   text-align: center;
 }
@@ -640,8 +595,6 @@ input[name="wcml_curr_template"] {
   float: left;
 }
 
-
-
 .wcml_miss_lang p:first-child {
   float: left;
 }
@@ -705,20 +658,4 @@ input[name="wcml_curr_template"] {
 .wcml-lang-list .wpml-title-flag {
   margin-left: -25px;
   margin-right: 5px;
-}
-
-
-.wpml-form-row .cleditorMain {
-  width: calc(35% - 30px - 40px );
-}
-
-
-.wcml-row-purchase-note .cleditorMain {
-  width: calc(50% - 30px - 40px );
-}
-
-#poststuff h3.js-wcml_duplicate_product_notice,
-#poststuff h3.js-wcml_duplicate_product_undo{
-    text-align: center;
-    margin-bottom: 30px;
 }

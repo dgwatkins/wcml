@@ -102,12 +102,8 @@
       border: 1px solid #d5d5d5;
       margin: 9px 9px 0 0;
       background: #f7f7f7;
-      -webkit-border-radius: 2px;
-      -moz-border-radius: 2px;
       border-radius: 2px;
       position: relative;
-      -webkit-box-sizing: border-box;
-      -moz-box-sizing: border-box;
       box-sizing: border-box;
     }
   }
@@ -196,8 +192,6 @@
     li {
       background: #eee;
       border: 1px solid #ddd;
-      -webkit-border-radius: 2px;
-      -moz-border-radius: 2px;
       border-radius: 2px;
       padding: 1px;
       float: right;
@@ -455,58 +449,6 @@ table.widefat.currency_delete_table {
   }
 }
 
-table.wcml-attr-table {
-  border: none;
-  width: 98%;
-  margin: 0 auto;
-  th {
-    text-align: left;
-    font-weight: normal;
-  }
-  td:first-child {
-    padding-left: $margin-sm;
-  }
-  td:last-child {
-    padding-right: $margin-sm;
-  }
-  td[rowspan] {
-    padding-bottom: $margin-sm;
-    padding-top: $margin-sm;
-  }
-  input:not([type="submit"]):not([type="button"]) {
-    width: calc(100% - 30px);
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-  @at-root {
-    .wcml-first-row {
-      td, th {
-        padding-top: $margin-sm;
-        border-top: 1px solid #eee;
-      }
-      &:first-child {
-        td, th {
-          border-top: none;
-        }
-      }
-    }
-
-    .wcml-last-row {
-      td, th {
-        padding-bottom: $margin-sm
-      }
-    }
-
-    .wcml-product-image-cell {
-      width: 115px;
-    }
-
-    .button-copy-cell {
-      text-align: center;
-      vertical-align: middle;
-    }
-  }
-}
 
 .prod_variations th {
   text-align: center;
@@ -686,10 +628,6 @@ input[name="wcml_curr_template"] {
   float: left;
 }
 
-.wcml_content_tr {
-  width: 100%;
-}
-
 .wcml_miss_lang p:first-child {
   float: left;
 }
@@ -757,34 +695,5 @@ input[name="wcml_curr_template"] {
   .wpml-title-flag {
     margin-left: -25px;
     margin-right: 5px;
-  }
-}
-
-.mce_editor {
-  display: inline-block;
-  margin: $margin-xs $margin-sm 0;
-  vertical-align: middle;
-}
-.wpml-form-row {
-  .cleditorMain {
-    width: calc(35% - 30px - 40px );
-  }
-  .mce_editor {
-    width: calc(55% - 30px - 80px);
-  }
-
-}
-
-
-.wcml-row-excerpt {
-  .cleditorMain,
-  .mce_editor {
-    width: calc(50% - 30px - 40px);
-  }
-}
-
-.wcml-row-purchase-note {
-  .cleditorMain {
-    width: calc(50% - 30px - 40px );
   }
 }
