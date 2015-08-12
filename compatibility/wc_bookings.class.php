@@ -56,6 +56,8 @@ class WCML_Bookings{
             add_action('woocommerce_booking_' . $status, array( $this, 'update_status_for_translations' ) );
         }
 
+        add_filter( 'parse_query', array( $this, 'booking_filters_query' ) );
+
     }
 
     function wcml_price_field_after_booking_base_cost( $post_id ){
@@ -1534,4 +1536,24 @@ class WCML_Bookings{
 
     }
 
+
+    public function booking_filters_query( $query ) {
+        global $typenow, $sitepress, $wpdb;
+
+        if ( $typenow == 'wc_booking' && isset( $_GET['post_type'] ) && $_GET['post_type'] == 'wc_booking' ) {
+
+            $product_ids = $wpdb->get_col( $wpdb->prepare(
+                "SELECT element_id
+					FROM {$wpdb->prefix}icl_translations
+					WHERE language_code = %s AND element_type = 'post_product'", $sitepress->get_current_language() ) );
+
+            $query->query_vars[ 'meta_query' ] = array(
+                array(
+                    'key'   => '_booking_product_id',
+                    'value' => $product_ids,
+                    'compare ' => 'IN'
+                )
+            );
+        }
+    }
 }
