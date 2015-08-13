@@ -146,7 +146,7 @@ class WCML_WC_MultiCurrency{
     
     function apply_rounding_rules($price, $currency = false ){
         global $woocommerce_wpml;
-        
+
         if( !$currency )
         $currency = $this->get_client_currency();
         $currency_options = $woocommerce_wpml->settings['currency_options'][$currency];
@@ -190,7 +190,7 @@ class WCML_WC_MultiCurrency{
         if($currency_options['auto_subtract'] && $currency_options['auto_subtract'] < $price){
             $price = $price - $currency_options['auto_subtract'];
         }
-        
+
         return $price;
         
     }
@@ -219,7 +219,7 @@ class WCML_WC_MultiCurrency{
     
     function shipping_price_filter($price) {
         
-        $price = $this->convert_price_amount($price, $this->get_client_currency());
+        $price = $this->raw_price_filter($price, $this->get_client_currency());
 
         return $price;
         
@@ -227,7 +227,7 @@ class WCML_WC_MultiCurrency{
     
     function shipping_free_min_amount($price) {
         
-        $price = $this->convert_price_amount($price, $this->get_client_currency());
+        $price = $this->raw_price_filter($price, $this->get_client_currency());
         
         return $price;
         
@@ -759,8 +759,8 @@ class WCML_WC_MultiCurrency{
             $item['line_subtotal'] = $custom_price;
             $item['line_total'] = $custom_price;
         }else{
-            $item['line_subtotal'] = $this->apply_rounding_rules( $this->convert_price_amount( $item['line_subtotal'], $order_currency ), $order_currency );
-            $item['line_total'] = $this->apply_rounding_rules( $this->convert_price_amount( $item['line_total'], $order_currency ), $order_currency );
+            $item['line_subtotal'] = $this->raw_price_filter( $item['line_subtotal'], $order_currency );
+            $item['line_total'] = $this->raw_price_filter( $item['line_total'], $order_currency );
         }
 
         wc_update_order_item_meta( $item_id, '_line_subtotal', $item['line_subtotal'] );
