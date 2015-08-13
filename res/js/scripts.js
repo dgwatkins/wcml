@@ -482,26 +482,6 @@ jQuery(document).ready(function($){
         $(this).closest('.wcml_editor').find('.wcml_editor_translation textarea').val($(this).closest('.wcml_editor').find('.wcml_editor_translation textarea').data('def'));
     });
 
-    $(document).on('click','.switch-tmce',function(){
-        //var id = $(this).attr('id').replace(/-tmce/, '');
-        //$(this).closest('.wp-editor-wrap').removeClass('html-active').addClass('tmce-active');
-        //$(this).closest('.wp-editor-wrap').find('textarea.wcml_content_tr').hide();
-        //if(  window.parent.tinyMCE.get(id)  == null ){
-        //    tinymce.execCommand( 'mceAddEditor', false, id);
-        //}else{
-        //    $(this).closest('.wp-editor-wrap').find('.mce-tinymce').show();
-        //}
-    });
-
-    $(document).on('click','.switch-html',function(){
-        //var id = $(this).attr('id').replace(/-html/, '');
-        //$(this).closest('.wp-editor-wrap').removeClass('tmce-active').addClass('html-active');
-        //$('#qt_'+id+'_toolbar').remove();
-        //QTags(id);
-        //QTags._buttonsInit();
-        //$(this).closest('.wp-editor-wrap').find('.mce-tinymce').hide();
-        //$(this).closest('.wp-editor-wrap').find('textarea.wcml_content_tr').show();
-    });
 
     $(document).on('click','.wcml_popup_close',function(){
         $(".wcml_fade").hide();

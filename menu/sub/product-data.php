@@ -100,7 +100,9 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
             <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>" id="">
                 <i class="otgs-ico-copy"></i>
             </a>
-            <?php echo $woocommerce_wpml->products->wcml_editor('content', $trn_product ? $trn_product->post_content : ''); ?>
+            <div class="mce_editor">
+                <?php wp_editor( $trn_product ? $trn_product->post_content : '', 'wcmleditorcontent', array( 'textarea_name'=> 'content', 'textarea_rows'=>4, 'editor_class'=>'wcml_content_tr translated_value' ) ); ?>
+            </div>
         </div>
 
         <div class="postbox wpml-form-row wcml-row-excerpt">
@@ -115,7 +117,9 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                 <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>" id="">
                     <i class="otgs-ico-copy"></i>
                 </a>
-                <?php echo $woocommerce_wpml->products->wcml_editor('excerpt', $trn_product ? $trn_product->post_excerpt : ''); ?>
+                <div class="mce_editor">
+                    <?php wp_editor( $trn_product ? $trn_product->post_excerpt : '', 'wcmleditorexcerpt', array( 'textarea_name'=> 'excerpt', 'textarea_rows'=>4, 'editor_class'=>'wcml_content_tr translated_value' ) ); ?>
+                </div>
             </div>
         </div>
 
@@ -278,13 +282,13 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
 </div>
 
 <?php
-if (!$woocommerce_wpml->settings['first_editor_call']) {
+//if (!$woocommerce_wpml->settings['first_editor_call']) {
     //load editor js
     if ( class_exists( '_WP_Editors' ) )
         _WP_Editors::editor_js();
     $woocommerce_wpml->settings['first_editor_call'] = true;
     $woocommerce_wpml->update_settings();
-}
+//}
 
 ?>
 <script type="text/javascript">
