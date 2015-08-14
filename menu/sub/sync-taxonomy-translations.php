@@ -1,6 +1,6 @@
 <div class="icl_tt_main_bottom" style="display: none;">
     <br/>
-    <?php if ( isset($attribute_taxonomies_arr) && in_array($taxonomy, $attribute_taxonomies_arr) ): ?>
+    <?php if ( $wcml_settings['sync_variations'] && isset($attribute_taxonomies_arr) && in_array($taxonomy, $attribute_taxonomies_arr) ): ?>
 
         <form id="wcml_tt_sync_variations" method="post">
             <input type="hidden" name="action" value="wcml_sync_product_variations" />
@@ -23,7 +23,7 @@
             <p><?php printf(__('Currently, there are %s variations that need to be created.', 'wpml-wcml'), '<strong>' . $wcml_settings['variations_needed'][$taxonomy] . '</strong>') ?></p>
         <?php endif; ?>
 
-    <?php else: ?>
+    <?php elseif( $wcml_settings['sync_terms'] ): ?>
 
         <form id="wcml_tt_sync_assignment">
             <input type="hidden" name="taxonomy" value="<?php echo $taxonomy ?>"/>

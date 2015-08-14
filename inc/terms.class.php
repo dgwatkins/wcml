@@ -60,6 +60,8 @@ class WCML_Terms{
 
 
         add_filter( 'woocommerce_get_product_terms', array( $this, 'get_product_terms_filter' ), 10, 4 );
+
+        add_action( 'created_term_translation', array( $this, 'set_flag_to_sync'), 10, 3 );
     }
     
     function admin_menu_setup(){
@@ -743,6 +745,11 @@ class WCML_Terms{
 
         if(is_admin() && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab'])){
             $wcml_settings = $woocommerce_wpml->get_settings();
+
+            if( !$wcml_settings['sync_variations'] ){
+                return;
+            }
+
             $attribute_taxonomies = wc_get_attribute_taxonomies();
             foreach($attribute_taxonomies as $a){
                 $attribute_taxonomies_arr[] = 'pa_' . $a->attribute_name;
@@ -896,6 +903,8 @@ class WCML_Terms{
                 $wcml_settings['variations_needed'][$taxonomy] = 0;    
             }            
         }
+        $wcml_settings['sync_variations'] = 0;
+
         $woocommerce_wpml->update_settings($wcml_settings);                       
         
         echo json_encode($response);
@@ -954,7 +963,7 @@ class WCML_Terms{
     }
 
     public static function render_assignment_status($object_type, $taxonomy, $preview = true){
-        global $sitepress, $wp_post_types, $wp_taxonomies,$wpdb;
+        global $sitepress, $wp_post_types, $wp_taxonomies,$wpdb, $woocommerce_wpml;
 
         $default_language = $sitepress->get_default_language();
 
@@ -1051,6 +1060,10 @@ class WCML_Terms{
             }
 
         }
+
+        $wcml_settings = $woocommerce_wpml->get_settings();
+        $wcml_settings['sync_terms'] = 0;
+        $woocommerce_wpml->update_settings($wcml_settings);
 
         $out = '';
 
@@ -1154,6 +1167,28 @@ class WCML_Terms{
         add_filter( 'woocommerce_get_product_terms', array( $this, 'get_product_terms_filter' ), 10, 4 );
 
         return $terms;
+    }
+
+    function set_flag_to_sync( $taxonomy, $el_id, $language_code ){
+        global $woocommerce_wpml;
+
+        if( in_array( $taxonomy, array( 'product_cat', 'product_tag', 'product_shipping_class' ) ) ){
+            $wcml_settings = $woocommerce_wpml->get_settings();
+            $wcml_settings['sync_terms'] = 1;
+            $woocommerce_wpml->update_settings($wcml_settings);
+        }
+
+        $attribute_taxonomies = wc_get_attribute_taxonomies();
+        foreach($attribute_taxonomies as $a){
+            $attribute_taxonomies_arr[] = 'pa_' . $a->attribute_name;
+        }
+
+        if( isset( $attribute_taxonomies_arr ) && in_array( $taxonomy, $attribute_taxonomies_arr ) ){
+            $wcml_settings = $woocommerce_wpml->get_settings();
+            $wcml_settings['sync_variations'] = 1;
+            $woocommerce_wpml->update_settings($wcml_settings);
+        }
+
     }
 
 }

@@ -10,7 +10,8 @@ class WCML_Upgrade{
         '3.3',
         '3.5',
         '3.5.4',
-        '3.6'
+        '3.6',
+        '3.7'
 
     );
     
@@ -307,6 +308,17 @@ class WCML_Upgrade{
 
         $wcml_settings['display_custom_prices'] = 0;
         $wcml_settings['currency_switcher_product_visibility'] = 1;
+
+        update_option('_wcml_settings', $wcml_settings);
+    }
+
+    function upgrade_3_7()
+    {
+        global $wpdb;
+        $wcml_settings = get_option('_wcml_settings');
+
+        $wcml_settings['sync_terms'] = 1;
+        $wcml_settings['sync_variations'] = 1;
 
         update_option('_wcml_settings', $wcml_settings);
     }

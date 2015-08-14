@@ -369,7 +369,7 @@ jQuery(document).ready(function($){
 
     $(document).on('submit', '#wcml_tt_sync_assignment', function(){
 
-        var this_form = $('#wcml_tt_sync_assignment');;
+        var this_form = $('#wcml_tt_sync_assignment');
         var parameters = this_form.serialize();
 
         this_form.find('.wpml_tt_spinner').fadeIn();
