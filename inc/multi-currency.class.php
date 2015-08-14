@@ -851,23 +851,6 @@ class WCML_WC_MultiCurrency{
 
 
     function woocommerce_product_after_variable_attributes_custom_pricing($loop, $variation_data, $variation){
-        global $sitepress,$woocommerce_wpml;
-
-        $product_id = false;
-        if( ( isset( $_GET['post'] ) && get_post_type( $_GET['post'] ) == 'product' ) ){
-            $product_id = $_GET['post'];
-        }elseif( isset( $_POST['action'] ) && $_POST['action'] == 'woocommerce_load_variations' && isset( $_POST['product_id'] ) ){
-            $product_id = $_POST['product_id'];
-        }
-
-        if( !$product_id ){
-            return;
-        }elseif( !$woocommerce_wpml->products->is_original_product( $_POST['product_id'] ) ){ ?>
-            <script type="text/javascript">
-                wcml_lock_variation_fields();
-            </script>
-        <?php return;
-        }
 
         echo '<tr><td>';
             $this->custom_pricing_output($variation->ID);

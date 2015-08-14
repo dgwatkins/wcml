@@ -118,6 +118,7 @@ class WCML_Products{
         add_filter( 'icl_wpml_config_array', array( $this, 'set_taxonomies_config' ) );
 
         add_filter( 'manage_product_posts_columns', array( $this, 'add_languages_column' ), 100 );
+        add_action( 'woocommerce_product_after_variable_attributes', array( $this, 'lock_variable_fields' ), 10, 3 );
 
     }
 
@@ -3188,6 +3189,27 @@ class WCML_Products{
         global $wpdb;
         return $wpdb->get_row($wpdb->prepare("
                             SELECT * FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} x ON x.term_id = t.term_id WHERE t.term_id = %d AND x.taxonomy = %s", $term_id, $taxonomy ) );
+    }
+
+    function lock_variable_fields( $loop, $variation_data, $variation ){
+        global $woocommerce_wpml;
+
+        $product_id = false;
+        if( ( isset( $_GET['post'] ) && get_post_type( $_GET['post'] ) == 'product' ) ){
+            $product_id = $_GET['post'];
+        }elseif( isset( $_POST['action'] ) && $_POST['action'] == 'woocommerce_load_variations' && isset( $_POST['product_id'] ) ){
+            $product_id = $_POST['product_id'];
+        }
+
+        if( !$product_id ){
+            return;
+        }elseif( !$woocommerce_wpml->products->is_original_product( $_POST['product_id'] ) ){ ?>
+            <script type="text/javascript">
+                wcml_lock_variation_fields();
+            </script>
+            <?php
+        }
+
     }
 
 }

@@ -74,14 +74,14 @@ var wcml_lock_variation_fields = function(){
         return;
     }
 
-    jQuery('.woocommerce_variation>h3 select, #variable_product_options .toolbar select').each(function(){
+    jQuery('.woocommerce_variation>h3 select, #variable_product_options .toolbar select, .show_if_variation_manage_stock select').each(function(){
 
         jQuery(this).attr('disabled','disabled');
         jQuery(this).after(jQuery('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
     });
 
     var i = 0;
-    var inpt_names = ['_width','_height','_sku','_length','_weight','product_length','_regular_price','_sale_price','_sale_price_dates_from','_sale_price_dates_to'];
+    var inpt_names = ['_width','_height','_sku','_length','_weight','product_length','_regular_price','_sale_price','_sale_price_dates_from','_sale_price_dates_to','_stock','_download_limit','_download_expiry'];
 
     for (i = 0; i < inpt_names.length; i++) {
 
@@ -96,7 +96,7 @@ var wcml_lock_variation_fields = function(){
     var var_checkboxes = ['_enabled','_is_downloadable','_is_virtual','_manage_stock'];
     for (i = 0; i < var_checkboxes.length; i++) {
         jQuery('input[name^="variable'+var_checkboxes[i]+'"]').each(function(){
-            jQuery(this).attr('readonly','readonly');
+            jQuery(this).attr('disabled','disabled');
             jQuery(this).after(jQuery('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
         });
     }
