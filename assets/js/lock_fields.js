@@ -68,12 +68,6 @@ jQuery(document).ready(function($){
 
 var wcml_lock_variation_fields = function(){
 
-    var check_attr = jQuery('.woocommerce_variation>h3 select').attr('disabled');
-
-    if (typeof check_attr !== typeof undefined && check_attr !== false) {
-        return;
-    }
-
     jQuery('.woocommerce_variation>h3 select, #variable_product_options .toolbar select, .show_if_variation_manage_stock select').each(function(){
 
         jQuery(this).attr('disabled','disabled');
