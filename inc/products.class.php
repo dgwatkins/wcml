@@ -3205,7 +3205,9 @@ class WCML_Products{
             return;
         }elseif( !$woocommerce_wpml->products->is_original_product( $_POST['product_id'] ) ){ ?>
             <script type="text/javascript">
-                wcml_lock_variation_fields();
+                jQuery(document).ready(function() {
+                    wcml_lock_variation_fields();
+                });
             </script>
             <?php
         }
