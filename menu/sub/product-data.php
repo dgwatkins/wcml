@@ -1,7 +1,7 @@
 <?php
 
 $product_images = $woocommerce_wpml->products->product_images_ids($product_id);
-$product_contents = $woocommerce_wpml->products->get_product_contents($product_id);
+
 $trid = $sitepress->get_element_trid($product_id, 'post_' . $product->post_type);
 $product_translations = $sitepress->get_element_translations($trid, 'post_' . $product->post_type, true, true);
 $check_on_permissions = false;
@@ -167,8 +167,9 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                     <table id="prod_attributes" class="prod_attributes wcml-attr-table js-table">
 
                         <?php
+                        $index = 0;
                         foreach ($attributes as $attr_key => $attribute): ?>
-                            <tr class="wcml-first-row">
+                            <tr class="wcml-first-row" row-index="<?php echo $index; ?>">
                                 <th>
                                     <?php $trn_attribute = $woocommerce_wpml->products->get_custom_attribute_translation($product_id, $attr_key, $attribute, $language); ?>
                                     <label class="custom_attr_label"><?php _e('Name', 'wpml-wcml'); ?></label>
@@ -192,7 +193,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
 
                                 </td>
                             </tr>
-                            <tr class="wcml-last-row">
+                            <tr class="wcml-last-row" row-index="<?php echo $index; ?>">
                                 <th>
                                     <label class="custom_attr_label"><?php _e('Value(s)', 'wpml-wcml'); ?></label>
                                 </th>
@@ -210,7 +211,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
 
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php $index++; endforeach; ?>
                     </table>
                 </div>
             </div>
@@ -237,24 +238,48 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
             </div>
         <?php endif; ?>
 
-        <div class="postbox wpml-form-row wcml-row-custom-fields">
-            <div title="<?php _e( 'Click to toggle' ); ?>" class="handlediv"><br></div>
-            <h3 class="hndle">
-                <span><?php _e( 'Custom Fields', 'wpml-wcml' ) ?></span>
-            </h3>
-            <div class="inside">
+        <?php
+        $custom_fields = $woocommerce_wpml->products->get_product_custom_fields_to_translate( $product_id );
+        $fields_to_translate_flag = true;
 
-            </div>
-        </div>
+        foreach( $custom_fields as $custom_field ){
+                if( $fields_to_translate_flag ){ ?>
+                    <div class="postbox wpml-form-row wcml-row-custom-fields">
+                        <div title="<?php _e( 'Click to toggle' ); ?>" class="handlediv"><br></div>
+                        <h3 class="hndle">
+                            <span><?php _e( 'Custom Fields', 'wpml-wcml' ) ?></span>
+                        </h3>
+                        <div class="inside">
+                            <table id="prod_custom_fields" class="prod_custom_fields wcml-attr-table js-table">
+                <?php $fields_to_translate_flag = false; } ?>
+                                <tr class="wcml-first-row">
+                                    <th>
+                        <label > <?php echo $woocommerce_wpml->products->get_product_custom_field_label( $product_id, $custom_field ); ?> </label>
+                                        </th><td>
+                        <input readonly class="original_value" value="<?php echo get_post_meta( $product_id, $custom_field, true ) ?>"
+                               type="text"></td>
+                        <td><a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>">
+                            <i class="otgs-ico-copy"></i>
+                        </a></td>
+                                    <td>
+                        <input class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?> readonly<?php endif; ?>
+                               name="<?php echo $custom_field; ?>" value="<?php echo $trn_product ? get_post_meta( $trn_product->ID, $custom_field, true) : '';  ?>" type="text"/></td></tr>
 
+            <?php } ?>
 
-    <?php /*
+            <?php  if( !$fields_to_translate_flag ){ ?>
+                                </table>
+                        </div>
+                    </div>
+            <?php }  ?>
+    <?php
+        /*
     elseif($product_content == '_file_paths'): ?>
     <textarea placeholder="<?php esc_attr_e('Upload file', 'wpml-wcml') ?>" value="" name='<?php echo $product_content.'_'.$key ?>' class="wcml_file_paths_textarea<?php if($is_duplicate_product): ?> js-dup-disabled<?php endif;?>"<?php if($is_duplicate_product): ?> disabled="disabled"<?php endif;?>></textarea>
     <button type="button" class="button-secondary wcml_file_paths<?php if($is_duplicate_product): ?> js-dup-disabled<?php endif;?>"<?php if($is_duplicate_product): ?> disabled="disabled"<?php endif;?>><?php _e('Choose a file', 'wpml-wcml') ?></button>
     */ ?>
 
-        <?php //echo $woocommerce_wpml->products->custom_box($product_id,$product_content,$trn_contents,$key,$lang,$is_duplicate_product); ?>
+        <?php //echo $woocommerce_wpml->products->custom_box( $product_id, $product_content, $trn_contents, $key, $lang, $is_duplicate_product ); ?>
 
         <?php do_action( 'wcml_gui_additional_box', $product_id, $language, $is_duplicate_product ); ?>
 

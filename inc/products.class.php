@@ -1893,25 +1893,8 @@ class WCML_Products{
     }
 
     //get product content
-    function get_product_contents($product_id){
-        global $woocommerce_wpml;
-        $contents = array();
-        $contents[] = 'title';
-        $contents[] = 'content';
-        $contents[] = 'excerpt';
-        $contents[] = 'images';
-
-        if(!isset($product_type)){
-            foreach(wp_get_post_terms($product_id, 'product_type', array("fields" => "names")) as $type){
-                $product_type = $type;
-            }
-        }
-
-        if(!$woocommerce_wpml->settings['file_path_sync'] && isset($product_type) && $product_type == 'variable'){
-            $contents[] = 'variations';
-        }
-
-        global $sitepress;
+    function get_product_custom_fields_to_translate($product_id){
+        global $woocommerce_wpml, $sitepress;
         $settings = $sitepress->get_settings();
 
         foreach(get_post_custom_keys($product_id) as $meta_key){
@@ -1934,60 +1917,45 @@ class WCML_Products{
     }
 
     //get product content labels
-    function get_product_contents_labels($product_id){
-        global $woocommerce_wpml;
-
-        $contents = array();
-        $contents[] = __('Title','wpml-wcml');
-        $contents[] = __('Content / Description','wpml-wcml');
-        $contents[] = __('Excerpt','wpml-wcml');
-        $contents[] = __('Images','wpml-wcml');
-
-        foreach(wp_get_post_terms($product_id, 'product_type', array("fields" => "names")) as $type){
-            $product_type = $type;
-        }
-
-        if(!$woocommerce_wpml->settings['file_path_sync'] && isset($product_type) && $product_type == 'variable'){
-            $contents[] = __('Variations','wpml-wcml');
-        }
-
-        global $sitepress,$wpseo_metabox;
+    function get_product_custom_field_label( $product_id, $field ){
+        global $woocommerce_wpml, $sitepress, $wpseo_metabox;
         $settings = $sitepress->get_settings();
-        foreach(get_post_custom_keys($product_id) as $meta_key){
-            if(isset($settings['translation-management']['custom_fields_translation'][$meta_key]) && $settings['translation-management']['custom_fields_translation'][$meta_key] == 2){
-                if(in_array($meta_key,$this->not_display_fields_for_variables_product)){
-                    continue;
-                }
+        $label = '';
+        if(isset($settings['translation-management']['custom_fields_translation'][$field]) && $settings['translation-management']['custom_fields_translation'][$field] == 2){
+            if(in_array($field,$this->not_display_fields_for_variables_product)){
+                return false;
+            }
 
-                if($this->check_custom_field_is_single_value($product_id,$meta_key)){
-                    if(defined('WPSEO_VERSION')){
-                        if(!is_null($wpseo_metabox) && in_array($meta_key,$this->yoast_seo_fields)){
-                            $wpseo_metabox_values = $wpseo_metabox->get_meta_boxes('product');
-                            $contents[] = $wpseo_metabox_values[str_replace('_yoast_wpseo_','',$meta_key)]['title'];
-                            continue;
-                        }
+            if($this->check_custom_field_is_single_value($product_id,$field)){
+                if(defined('WPSEO_VERSION')){
+                    if(!is_null($wpseo_metabox) && in_array($field,$this->yoast_seo_fields)){
+                        $wpseo_metabox_values = $wpseo_metabox->get_meta_boxes('product');
+                        $label = $wpseo_metabox_values[str_replace('_yoast_wpseo_','',$field)]['title'];
+                        return $label;
                     }
-                }else{
-                    $exception = apply_filters('wcml_product_content_exception',true,$product_id,$meta_key);
-                    if($exception){
-                        continue;
-                    }
-
                 }
-
-                $custom_key_label = apply_filters( 'wcml_product_content_label', $meta_key, $product_id );
-                if( $custom_key_label != $meta_key ){
-                    $contents[] = $custom_key_label;
-                    continue;
+            }else{
+                $exception = apply_filters('wcml_product_content_exception',true,$product_id,$field);
+                if(!$exception){
+                    return false;
                 }
-
-                $custom_key_label = str_replace('_',' ',$meta_key);
-                $contents[] = trim($custom_key_label[0]) ? ucfirst($custom_key_label) : ucfirst(substr($custom_key_label,1));
 
             }
+
+            $custom_key_label = apply_filters( 'wcml_product_content_label', $field, $product_id );
+            if( $custom_key_label != $field ){
+                $label = $custom_key_label;
+                return $label;
+            }
+
+            $custom_key_label = str_replace('_',' ',$field);
+            $label = trim($custom_key_label[0]) ? ucfirst($custom_key_label) : ucfirst(substr($custom_key_label,1));
+
         }
 
-        return apply_filters('wcml_product_content_fields_label', $contents, $product_id);
+        return $label;
+
+        //return apply_filters('wcml_product_content_fields_label', $contents, $product_id);
     }
 
     function check_custom_field_is_single_value($product_id,$meta_key){
@@ -2964,7 +2932,7 @@ class WCML_Products{
             echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
             die();
         }
-        global $woocommerce_wpml,$sitepress,$wpdb,$iclTranslationManagement;
+        global $woocommerce_wpml, $sitepress, $wpdb, $iclTranslationManagement;
 
         $product_id = filter_input( INPUT_POST, 'product_id', FILTER_SANITIZE_NUMBER_INT );
         $job_id = filter_input( INPUT_POST, 'job_id', FILTER_SANITIZE_NUMBER_INT );
