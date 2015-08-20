@@ -27,6 +27,8 @@ class WCML_WC_MultiCurrency{
         add_filter('wcml_raw_price_amount', array($this, 'raw_price_filter'), 10, 2);
 
         add_filter('wcml_formatted_price', array($this, 'formatted_price'), 10, 2);
+
+        add_filter( 'woocommerce_get_variation_prices_hash', array( $this, 'add_currency_to_variation_prices_hash' ) );
         
         add_filter('wcml_shipping_price_amount', array($this, 'shipping_price_filter'));
         add_filter('wcml_shipping_free_min_amount', array($this, 'shipping_free_min_amount'));
@@ -97,11 +99,11 @@ class WCML_WC_MultiCurrency{
         
 
         //custom prices for different currencies for products/variations [BACKEND]
-        add_action('woocommerce_product_options_pricing',array($this,'woocommerce_product_options_custom_pricing'));
-        add_action('woocommerce_product_after_variable_attributes',array($this,'woocommerce_product_after_variable_attributes_custom_pricing'),10,3);
+        add_action( 'woocommerce_product_options_pricing', array( $this, 'woocommerce_product_options_custom_pricing' ) );
+        add_action( 'woocommerce_product_after_variable_attributes', array( $this, 'woocommerce_product_after_variable_attributes_custom_pricing'), 10, 3 );
 
     }
-        
+
     function raw_price_filter($price, $currency = false) {
 
         if( $currency === false ){
@@ -316,7 +318,16 @@ class WCML_WC_MultiCurrency{
         
         return $currency;
     }
-    
+
+    function cache_variation_prices_by_currency($data){
+
+        $data['currency'] = $this->get_client_currency();
+
+        return $data;
+
+    }
+
+
     function get_exchange_rates(){
         global $woocommerce_wpml;
         if(empty($this->exchange_rates)){
