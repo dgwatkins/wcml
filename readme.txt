@@ -80,6 +80,8 @@ In order for the checkout and store pages to appear translated, you need to crea
 
 = 3.6.9 =
 * Bug fix: Prices for variable products were not converted correctly when using multiple currencies after the WooCommerce 2.4 update
+* Bug fix: Variations translations were not created when using custom attributes with space characters in them
+* Bug fix: When the option to show only products with custom prices in the secondary currencies was on, no products were displayed
 * Changed the order in which the products are displayed on the WooCommerce Multilingual products editor: chronological DESC
 
 = 3.6.8 =
