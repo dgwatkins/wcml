@@ -79,7 +79,8 @@ In order for the checkout and store pages to appear translated, you need to crea
 == Changelog ==
 
 = 3.6.9 =
-* Bug fix: Prices for variable products were not converted correctly when using multiple currencies after the WooCommerce 2.4 update.
+* Bug fix: Prices for variable products were not converted correctly when using multiple currencies after the WooCommerce 2.4 update
+* Changed the order in which the products are displayed on the WooCommerce Multilingual products editor: chronological DESC
 
 = 3.6.8 =
 * Added a series of compatibility fixes for WooCommerce 2.4.x (custom attributes, endpoints)
