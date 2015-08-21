@@ -322,6 +322,7 @@ class WCML_WC_MultiCurrency{
     function add_currency_to_variation_prices_hash($data){
 
         $data['currency'] = $this->get_client_currency();
+        $data['exchange_rates_hash'] = md5( json_encode( $this->exchange_rates ) );
 
         return $data;
 
