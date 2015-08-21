@@ -155,7 +155,7 @@ class WCML_Products{
 
         $sql = "SELECT p.ID,p.post_parent FROM $wpdb->posts AS p
                   LEFT JOIN {$wpdb->prefix}icl_translations AS icl ON icl.element_id = p.id
-                WHERE p.post_type = 'product' AND p.post_status IN ('publish','future','draft','pending','private') AND icl.element_type= 'post_product' AND icl.source_language_code IS NULL";
+                WHERE p.post_type = 'product' AND p.post_status IN ('publish','future','draft','pending','private') AND icl.element_type= 'post_product' AND icl.source_language_code IS NULL ORDER BY p.id DESC";
 
         if($slang){
             $sql .= " AND icl.language_code = %s ";
@@ -1178,7 +1178,7 @@ class WCML_Products{
                                         foreach($values_arrs as $key=>$value){
                                             $value_sanitized = sanitize_title($value);
 
-                                            if( ( $value_sanitized == strtolower(urldecode($meta_value)) || strtolower($value_sanitized == $meta_value) ) && isset($values_arrs_tr[$key])){
+                                            if( ( $value_sanitized == strtolower(urldecode($meta_value)) || strtolower($value_sanitized) == $meta_value || $value == $meta_value ) && isset($values_arrs_tr[$key])){
                                                 $meta_value = $values_arrs_tr[$key];
                                             }
                                         }
@@ -1803,15 +1803,19 @@ class WCML_Products{
                     if(isset($unserialized_orig_product_attributes[$attribute])){
                         $orig_attr_values = explode('|',$unserialized_orig_product_attributes[$attribute]['value']);
                         foreach($orig_attr_values as $key=>$orig_attr_value){
-                            $orig_attr_value = str_replace(' ','-',trim($orig_attr_value));
-                            $orig_attr_value = lcfirst($orig_attr_value);
-                            if($orig_attr_value == $default_term_slug){
+                            $orig_attr_value_sanitized = strtolower( sanitize_title ( $orig_attr_value ) );
+                            if( $orig_attr_value_sanitized == $default_term_slug || trim($orig_attr_value) == trim($default_term_slug) ){
                                 $tnsl_product_attributes = get_post_meta($transl_post_id, '_product_attributes', true);
                                 $unserialized_tnsl_product_attributes = maybe_unserialize($tnsl_product_attributes);
                                 if(isset($unserialized_tnsl_product_attributes[$attribute])){
                                     $trnsl_attr_values = explode('|',$unserialized_tnsl_product_attributes[$attribute]['value']);
-                                    $trnsl_attr_value = str_replace(' ','-',trim($trnsl_attr_values[$key]));
-                                    $trnsl_attr_value = lcfirst($trnsl_attr_value);
+
+                                    if( $orig_attr_value_sanitized == $default_term_slug ){
+                                        $trnsl_attr_value = strtolower( sanitize_title( trim( $trnsl_attr_values[$key] ) ) );
+                                    }else{
+                                        $trnsl_attr_value = trim($trnsl_attr_values[$key]);
+                                    }
+
                                     $unserialized_default_attributes[$attribute] = $trnsl_attr_value;
                                 }
                             }
@@ -3133,9 +3137,9 @@ class WCML_Products{
                 foreach ( $matched_products_query as $product ) {
                     if( !get_post_meta( $product->ID,'_price_'.$client_currency, true ) ) continue;
                     if ( $product->post_type == 'product' )
-                        $matched_products[] = apply_filters( 'translate_object_id', $product->ID, 'post_'.get_post_type($product->ID), true );
+                        $matched_products[] = apply_filters( 'translate_object_id', $product->ID, 'product', true );
                     if ( $product->post_parent > 0 && ! in_array( $product->post_parent, $matched_products ) )
-                        $matched_products[] = apply_filters( 'translate_object_id', $product->post_parent, 'post_'.get_post_type($product->post_parent), true );
+                        $matched_products[] = apply_filters( 'translate_object_id', $product->post_parent, get_post_type($product->post_parent), true );
                 }
 
                 add_filter('get_post_metadata', array($woocommerce_wpml->multi_currency_support, 'product_price_filter'), 10, 4);
@@ -3203,7 +3207,7 @@ class WCML_Products{
 
         if( !$product_id ){
             return;
-        }elseif( !$woocommerce_wpml->products->is_original_product( $_POST['product_id'] ) ){ ?>
+        }elseif( !$woocommerce_wpml->products->is_original_product( $product_id ) ){ ?>
             <script type="text/javascript">
                 jQuery(document).ready(function() {
                     wcml_lock_variation_fields();
