@@ -1178,7 +1178,7 @@ class WCML_Products{
                                         foreach($values_arrs as $key=>$value){
                                             $value_sanitized = sanitize_title($value);
 
-                                            if( ( $value_sanitized == strtolower(urldecode($meta_value)) || strtolower($value_sanitized == $meta_value) ) && isset($values_arrs_tr[$key])){
+                                            if( ( $value_sanitized == strtolower(urldecode($meta_value)) || strtolower($value_sanitized) == $meta_value || $value == $meta_value ) && isset($values_arrs_tr[$key])){
                                                 $meta_value = $values_arrs_tr[$key];
                                             }
                                         }
@@ -1803,15 +1803,19 @@ class WCML_Products{
                     if(isset($unserialized_orig_product_attributes[$attribute])){
                         $orig_attr_values = explode('|',$unserialized_orig_product_attributes[$attribute]['value']);
                         foreach($orig_attr_values as $key=>$orig_attr_value){
-                            $orig_attr_value = str_replace(' ','-',trim($orig_attr_value));
-                            $orig_attr_value = lcfirst($orig_attr_value);
-                            if($orig_attr_value == $default_term_slug){
+                            $orig_attr_value_sanitized = strtolower( sanitize_title ( $orig_attr_value ) );
+                            if( $orig_attr_value_sanitized == $default_term_slug || trim($orig_attr_value) == trim($default_term_slug) ){
                                 $tnsl_product_attributes = get_post_meta($transl_post_id, '_product_attributes', true);
                                 $unserialized_tnsl_product_attributes = maybe_unserialize($tnsl_product_attributes);
                                 if(isset($unserialized_tnsl_product_attributes[$attribute])){
                                     $trnsl_attr_values = explode('|',$unserialized_tnsl_product_attributes[$attribute]['value']);
-                                    $trnsl_attr_value = str_replace(' ','-',trim($trnsl_attr_values[$key]));
-                                    $trnsl_attr_value = lcfirst($trnsl_attr_value);
+
+                                    if( $orig_attr_value_sanitized == $default_term_slug ){
+                                        $trnsl_attr_value = strtolower( sanitize_title( trim( $trnsl_attr_values[$key] ) ) );
+                                    }else{
+                                        $trnsl_attr_value = trim($trnsl_attr_values[$key]);
+                                    }
+
                                     $unserialized_default_attributes[$attribute] = $trnsl_attr_value;
                                 }
                             }
@@ -3203,7 +3207,7 @@ class WCML_Products{
 
         if( !$product_id ){
             return;
-        }elseif( !$woocommerce_wpml->products->is_original_product( $_POST['product_id'] ) ){ ?>
+        }elseif( !$woocommerce_wpml->products->is_original_product( $product_id ) ){ ?>
             <script type="text/javascript">
                 jQuery(document).ready(function() {
                     wcml_lock_variation_fields();
