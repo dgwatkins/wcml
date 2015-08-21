@@ -319,7 +319,7 @@ class WCML_WC_MultiCurrency{
         return $currency;
     }
 
-    function cache_variation_prices_by_currency($data){
+    function add_currency_to_variation_prices_hash($data){
 
         $data['currency'] = $this->get_client_currency();
 
