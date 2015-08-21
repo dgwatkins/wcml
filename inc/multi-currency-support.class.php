@@ -194,10 +194,12 @@ class WCML_Multi_Currency_Support{
         }
 
         // add missing currencies to currencies_order
-        foreach($this->currency_codes as $currency){
-            if(!in_array($currency, $woocommerce_wpml->settings['currencies_order'])){
-                $woocommerce_wpml->settings['currencies_order'][] = $currency;
-                $save_to_db = true;
+        if(isset($woocommerce_wpml->settings['currencies_order'])){
+            foreach ($this->currency_codes as $currency) {
+                if (!in_array($currency, $woocommerce_wpml->settings['currencies_order'])) {
+                    $woocommerce_wpml->settings['currencies_order'][] = $currency;
+                    $save_to_db = true;
+                }
             }
         }
 
