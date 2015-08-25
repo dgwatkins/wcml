@@ -95,6 +95,8 @@ class WCML_WC_MultiCurrency{
                 //filter query to get order by status
                 add_filter( 'query', array( $this, 'filter_order_status_query' ) );
             }
+
+            add_action( 'woocommerce_variation_options', array( $this, 'add_individual_variation_nonce' ), 10, 3 );
         }
         
 
@@ -851,6 +853,12 @@ class WCML_WC_MultiCurrency{
             }
 
         include WCML_PLUGIN_PATH . '/menu/sub/custom-prices.php';
+    }
+
+    function add_individual_variation_nonce($loop, $variation_data, $variation){
+
+        wp_nonce_field('wcml_save_custom_prices_variation_' . $variation->ID, '_wcml_custom_prices_variation_' . $variation->ID . '_nonce');
+
     }
 
     function load_custom_prices_js_css(){
