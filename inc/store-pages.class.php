@@ -182,6 +182,7 @@ class WCML_Store_Pages{
 
         if (
             !empty($this->shop_page) &&
+            $this->shop_page->post_status == 'publish' &&
             !empty($this->front_page_id) &&
             $q->get('post_type') != 'product' &&
             ( $q->get('page_id') !== $this->front_page_id  &&
