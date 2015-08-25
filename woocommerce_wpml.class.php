@@ -789,7 +789,7 @@ class woocommerce_wpml {
         $notices = maybe_unserialize( get_option( 'wcml_translations_upgrade_notice' ) );
 
         if ( 'en_US' !== $locale && ( ! is_array( $version ) || version_compare( $version[0], WC_VERSION, '<' ) || $version[1] !== $locale ) ) {
-            if ( $wc_upgrader_class->check_if_language_pack_exists() ) {
+            if ( $wc_upgrader_class->check_if_language_pack_exists( $locale ) ) {
 
                 if( !$notices || !in_array( $locale, $notices )){
                     $notices[] = $locale;
