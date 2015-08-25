@@ -32,6 +32,7 @@ class WCML_Products{
             add_action( 'save_post', array( $this, 'sync_post_action' ), 11, 2 ); // After WPML
             //when save new attachment duplicate product gallery
             add_action( 'wpml_media_create_duplicate_attachment', array( $this, 'sync_product_gallery_duplicate_attachment' ), 11, 2 );
+            add_action( 'woocommerce_ajax_save_product_variations', array( $this, 'sync_product_variations_custom_prices' ), 11 );
 
             add_filter( 'icl_make_duplicate', array( $this, 'icl_make_duplicate'), 11, 4 );
 
@@ -1575,34 +1576,7 @@ class WCML_Products{
         }
 
         //save custom prices
-        $nonce = filter_input( INPUT_POST, '_wcml_custom_prices_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-
-        if( isset( $_POST[ '_wcml_custom_prices' ] ) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_custom_prices' )){
-
-            if( isset( $_POST[ '_wcml_custom_prices' ][ $post_id ] ) ) {
-                $wcml_custom_prices_option = $_POST[ '_wcml_custom_prices' ][ $post_id ];
-            }else{
-                $wcml_custom_prices_option = $_POST[ '_wcml_custom_prices' ][ 0 ];
-            }
-
-            update_post_meta( $post_id, '_wcml_custom_prices_status', $wcml_custom_prices_option );
-
-            if( $wcml_custom_prices_option == 1){
-
-            $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
-
-                foreach( $currencies as $code => $currency ){
-                    $sale_price = $_POST[ '_custom_sale_price' ][ $code ];
-                    $regular_price = $_POST[ '_custom_regular_price' ][ $code ];
-
-                    $date_from = strtotime( $_POST[ '_custom_sale_price_dates_from' ][ $code ] );
-                    $date_to = strtotime( $_POST[ '_custom_sale_price_dates_to' ][ $code ] );
-                    $schedule = $_POST[ '_wcml_schedule' ][ $code ];
-
-                    $pr_price = $this->update_custom_prices( $post_id, $regular_price, $sale_price, $schedule, $date_from, $date_to, $code );
-                }
-            }
-        }
+        $this->save_custom_prices($post_id);
 
         // pick posts to sync
         $posts = array();
@@ -1642,6 +1616,39 @@ class WCML_Products{
         }
 
         $this->sync_product_variations_custom_prices( $duplicated_post_id );
+    }
+
+    function save_custom_prices($post_id){
+        global $woocommerce_wpml;
+
+        $nonce = filter_input( INPUT_POST, '_wcml_custom_prices_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+        if( isset( $_POST[ '_wcml_custom_prices' ] ) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_custom_prices' )){
+
+            if( isset( $_POST[ '_wcml_custom_prices' ][ $post_id ] ) ) {
+                $wcml_custom_prices_option = $_POST[ '_wcml_custom_prices' ][ $post_id ];
+            }else{
+                $wcml_custom_prices_option = $_POST[ '_wcml_custom_prices' ][ 0 ];
+            }
+
+            update_post_meta( $post_id, '_wcml_custom_prices_status', $wcml_custom_prices_option );
+
+            if( $wcml_custom_prices_option == 1){
+
+                $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
+
+                foreach( $currencies as $code => $currency ){
+                    $sale_price = $_POST[ '_custom_sale_price' ][ $code ];
+                    $regular_price = $_POST[ '_custom_regular_price' ][ $code ];
+
+                    $date_from = strtotime( $_POST[ '_custom_sale_price_dates_from' ][ $code ] );
+                    $date_to = strtotime( $_POST[ '_custom_sale_price_dates_to' ][ $code ] );
+                    $schedule = $_POST[ '_wcml_schedule' ][ $code ];
+
+                    $this->update_custom_prices( $post_id, $regular_price, $sale_price, $schedule, $date_from, $date_to, $code );
+                }
+            }
+        }
     }
 
     //sync product parent & post_status
@@ -1727,10 +1734,14 @@ class WCML_Products{
             foreach($get_all_post_variations as $k => $post_data){
                 $duplicated_post_variation_ids[] = $post_data->ID;
 
-                //save custom prices for variation
-                $nonce = filter_input( INPUT_POST, '_wcml_custom_prices_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
-                if(isset( $_POST['_wcml_custom_prices'][$post_data->ID]) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_custom_prices' )){
+                if( !isset( $_POST['_wcml_custom_prices'][$post_data->ID] ) ){
+                    continue; // save changes for individual variation
+                }
+
+                //save custom prices for variation
+                $nonce = filter_input( INPUT_POST, '_wcml_custom_prices_variation_' . $post_data->ID . '_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+                if(isset( $_POST['_wcml_custom_prices'][$post_data->ID]) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_custom_prices_variation_' . $post_data->ID )){
 
                     update_post_meta($post_data->ID,'_wcml_custom_prices_status',$_POST['_wcml_custom_prices'][$post_data->ID]);
 
