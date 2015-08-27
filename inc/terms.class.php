@@ -33,7 +33,6 @@ class WCML_Terms{
         
         add_action('created_term', array($this, 'translated_terms_status_update'), 10,3);
         add_action('edit_term', array($this, 'translated_terms_status_update'), 10,3);
-        add_action('edit_term', array($this, 'recount_terms'), 10,3);
         add_action('wp_ajax_wcml_update_term_translated_warnings', array('WCML_Terms', 'wcml_update_term_translated_warnings'));
         add_action('wp_ajax_wcml_ingore_taxonomy_translation', array('WCML_Terms', 'wcml_ingore_taxonomy_translation'));
         add_action('wp_ajax_wcml_uningore_taxonomy_translation', array('WCML_Terms', 'wcml_uningore_taxonomy_translation'));
@@ -523,28 +522,6 @@ class WCML_Terms{
         global $wp_taxonomies;
         if(in_array('product', $wp_taxonomies[$taxonomy]->object_type) || in_array('product_variation', $wp_taxonomies[$taxonomy]->object_type)){
             self::update_terms_translated_status($taxonomy);    
-        }
-
-    }
-
-    function recount_terms( $term_id, $tt_id, $taxonomy ){
-
-        if( in_array( $taxonomy, array( 'product_cat', 'product_tag' ) ) ){
-            global $wpdb, $sitepress;
-
-            foreach( $sitepress->get_active_languages() as $language ){
-                $terms = $wpdb->get_results( $wpdb->prepare( "SELECT tt.term_id, tt.parent FROM $wpdb->term_taxonomy AS tt
-                                          LEFT JOIN {$wpdb->prefix}icl_translations AS icl ON tt.term_taxonomy_id = icl.element_id
-                                          WHERE tt.taxonomy = %s AND icl.element_type = %s AND icl.language_code = %s", $taxonomy, 'tax_'.$taxonomy, $language['code'] )  );
-                $formatted_terms = array();
-                foreach( $terms as $term ){
-                    $formatted_terms[ $term->term_id ] = $term->parent;
-                }
-
-                _wc_term_recount( $formatted_terms, get_taxonomy( $taxonomy ), false, false );
-
-            }
-
         }
 
     }
