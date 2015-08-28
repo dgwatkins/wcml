@@ -39,7 +39,11 @@ jQuery(document).ready(function($){
    });
 
    $('.wcml_search').click(function(){
-       window.location = $('.wcml_products_admin_url').val()+'&s='+$('.wcml_product_name').val()+'&cat='+$('.wcml_product_category').val()+'&trst='+$('.wcml_translation_status').val()+'&st='+$('.wcml_product_status').val()+'&slang='+$('.wcml_translation_status_lang').val();
+       window.location = $('.wcml_products_admin_url').val()+'&cat='+$('.wcml_product_category').val()+'&trst='+$('.wcml_translation_status').val()+'&st='+$('.wcml_product_status').val()+'&slang='+$('.wcml_translation_status_lang').val();
+   });
+
+   $('.wcml_search_by_title').click(function(){
+       window.location = $('.wcml_products_admin_url').val()+'&s='+$('.wcml_product_name').val();
    });
 
    $('.wcml_reset_search').click(function(){
@@ -218,8 +222,8 @@ jQuery(document).ready(function($){
    if(typeof WPML_Translate_taxonomy != 'undefined' && typeof WPML_Translate_taxonomy.callbacks != 'undefined'){
        
        WPML_Translate_taxonomy.callbacks.add(function(func, taxonomy){
-          
-          if($('.js-tax-tab-' + taxonomy + ' i.icon-warning-sign').length){
+
+		   if ($('.js-tax-tab-' + taxonomy + ' i.otgs-ico-warning').length) {
               
               $.ajax({
                  type : "post",
@@ -233,7 +237,7 @@ jQuery(document).ready(function($){
                  success: function(response) {
                      if(response.hide){
                         $('.js-tax-tab-' + taxonomy).removeAttr('title');
-                        $('.js-tax-tab-' + taxonomy + ' i.icon-warning-sign').remove();
+						 $('.js-tax-tab-' + taxonomy + ' i.otgs-ico-warning').remove();
                      }
                  }
               })       
@@ -245,31 +249,25 @@ jQuery(document).ready(function($){
        });
    }
    
-   $(document).on('click', '.wcml_duplicate_product_notice a[href^=#edit-]', function(){
-       
-       var spl = $(this).attr('href').replace(/#edit-/, '').split('_');
-       var pid = spl[0];
-       var lng = spl[1];
-       
-       $('#prid_' + pid + ' tr[rel=' + lng + '] .js-dup-disabled').removeAttr('disabled');
-       $('#prid_' + pid + ' tr[rel=' + lng + '] input[name^=end_duplication]').val(1);
-       $('#prid_' + pid + ' .js-wcml_duplicate_product_notice_'+lng).hide();
-       $('#prid_' + pid + ' .js-wcml_duplicate_product_undo_'+lng).show();
+   $(document).on('click', '.duplicate_edit', function(e){
+       e.preventDefault();
+
+       $('.js-dup-disabled').removeAttr('disabled');
+       $('input[name^=end_duplication]').val(1);
+       $('.js-wcml_duplicate_product_notice').hide();
+       $('.js-wcml_duplicate_product_undo').show();
        
        return false;
        
    });
 
-   $(document).on('click', '.wcml_duplicate_product_notice a[href^=#undo-]', function(){
-       
-       var spl = $(this).attr('href').replace(/#undo-/, '').split('_');
-       var pid = spl[0];
-       var lng = spl[1];
-       
-       $('#prid_' + pid + ' tr[rel=' + lng + '] .js-dup-disabled').attr('disabled', 'disabled');
-       $('#prid_' + pid + ' tr[rel=' + lng + '] input[name^=end_duplication]').val(0);
-       $('#prid_' + pid + ' .js-wcml_duplicate_product_undo_'+lng).hide();
-       $('#prid_' + pid + ' .js-wcml_duplicate_product_notice_'+lng).show();
+   $(document).on('click', '.duplicate_cancel', function(e){
+       e.preventDefault();
+
+       $('.js-dup-disabled').attr('disabled', 'disabled');
+       $('input[name^=end_duplication]').val(0);
+       $('.js-wcml_duplicate_product_undo').hide();
+       $('.js-wcml_duplicate_product_notice').show();
        
        return false;
        
@@ -295,7 +293,7 @@ jQuery(document).ready(function($){
                    $('.js-tax-translation li.js-tax-translation-' + taxonomy).html(response.html);
                    
                    $('.js-tax-tab-' + taxonomy).removeAttr('title');
-                   $('.js-tax-tab-' + taxonomy + ' i.icon-warning-sign').remove();
+				   $('.js-tax-tab-' + taxonomy + ' i.otgs-ico-warning').remove();
                    
                    
                }
@@ -323,7 +321,7 @@ jQuery(document).ready(function($){
                if(response.html){
                    $('.js-tax-translation li.js-tax-translation-' + taxonomy).html(response.html);
                    if(response.warn){
-                        $('.js-tax-tab-' + taxonomy).append('&nbsp;<i class="icon-warning-sign"></i>');
+					   $('.js-tax-tab-' + taxonomy).append('&nbsp;<i class="otgs-ico-warning"></i>');
                    }
                    
                }
@@ -471,43 +469,7 @@ jQuery(document).ready(function($){
            
        }
 
-   })
-
-    $(document).on('click','.wcml_edit_content',function(){
-        $(".wcml_fade").show();
-        $(this).parent().find('.wcml_editor').show();
-
-        var txt_height = '90%';
-        $(this).parent().find('.wcml_original_content').cleditor({
-                    height: txt_height,
-                    controls:     // controls to add to the toolbar
-                    " | source "
-                    });
-        $(this).parent().find('.wcml_original_content').cleditor()[0].disable(true);
-
-        if( !$(this).hasClass('origin_content') ){
-            $(this).parent().find('textarea.wcml_content_tr').data('def',$(this).parent().find('textarea.wcml_content_tr').val());
-            $(this).parent().find('.wcml_editor table.mceLayout').css('height','auto');
-            $(this).parent().find('.wcml_editor table.mceLayout iframe').css('min-height','150px');
-            var id = $(this).parent().find('.switch-tmce').attr('id').replace(/-tmce/, '');
-            $(this).parent().find('.wp-editor-wrap').removeClass('html-active').addClass('tmce-active');
-
-            if(  window.parent.tinyMCE.get(id)  == null ){
-                tinymce.execCommand( 'mceAddEditor', false, id);
-            }
-        }
-
-    });
-
-    $(document).on('click','.cleditorButton',function(){
-        if($(this).closest('.cleditorMain').find('textarea').is(':visible')){
-            $(this).closest('.cleditorMain').find('textarea').hide();
-            $(this).closest('.cleditorMain').find('iframe').show();
-        }else{
-            $(this).closest('.cleditorMain').find('textarea').show();
-            $(this).closest('.cleditorMain').find('iframe').hide();
-        }
-    });
+   });
 
     $(document).on('click','.wcml_close_cross,.wcml_popup_cancel',function(){
         $(".wcml_fade").hide();
@@ -520,26 +482,6 @@ jQuery(document).ready(function($){
         $(this).closest('.wcml_editor').find('.wcml_editor_translation textarea').val($(this).closest('.wcml_editor').find('.wcml_editor_translation textarea').data('def'));
     });
 
-    $(document).on('click','.switch-tmce',function(){
-        var id = $(this).attr('id').replace(/-tmce/, '');
-        $(this).closest('.wp-editor-wrap').removeClass('html-active').addClass('tmce-active');
-        $(this).closest('.wp-editor-wrap').find('textarea.wcml_content_tr').hide();
-        if(  window.parent.tinyMCE.get(id)  == null ){
-            tinymce.execCommand( 'mceAddEditor', false, id);
-        }else{
-            $(this).closest('.wp-editor-wrap').find('.mce-tinymce').show();
-        }
-    });
-
-    $(document).on('click','.switch-html',function(){
-        var id = $(this).attr('id').replace(/-html/, '');
-        $(this).closest('.wp-editor-wrap').removeClass('tmce-active').addClass('html-active');
-        $('#qt_'+id+'_toolbar').remove();
-        QTags(id);
-        QTags._buttonsInit();
-        $(this).closest('.wp-editor-wrap').find('.mce-tinymce').hide();
-        $(this).closest('.wp-editor-wrap').find('textarea.wcml_content_tr').show();
-    });
 
     $(document).on('click','.wcml_popup_close',function(){
         $(".wcml_fade").hide();
@@ -548,7 +490,7 @@ jQuery(document).ready(function($){
 
 
     $(document).on('click','.wcml_popup_ok',function(){
-        var text_area = $(this).closest('.wcml_editor').find('.wcml_editor_translation textarea');
+        var text_area = $(this).closest('.wcml_editor').find('textarea');
         $(".wcml_fade").hide();
 
         if(text_area.size()>0 && !text_area.is(':visible')){
@@ -891,7 +833,7 @@ jQuery(document).ready(function($){
     
     
     $(document).on('click', '.edit_currency', function(){
-        $('.wcml_currency_options_popup').hide();
+		$('.wcml-currency-options-dialog').hide();
         
         var popup = $('#wcml_currency_options_' + $(this).data('currency'));
         popup.fadeIn();
@@ -1143,9 +1085,9 @@ jQuery(document).ready(function($){
         return false;
     });
 
-    
-    $(document).on('click', '.wcml_currency_options_popup :submit', function(){
-        var parent = $(this).closest('.wcml_currency_options_popup');
+
+	$(document).on('click', '.wcml-currency-options-dialog :submit', function () {
+		var parent = $(this).closest('.wcml-currency-options-dialog');
 
         var chk_rate = check_on_numeric(parent,'.ext_rate');
         var chk_deci = check_on_numeric(parent,'.decimals_number');
@@ -1155,8 +1097,8 @@ jQuery(document).ready(function($){
             return false;
         }
 
-        
-        $('.wcml_currency_options_popup :submit, .wcml_currency_options_popup :button').prop('disabled', true);
+
+		$('.wcml-currency-options-dialog :submit, .wcml-currency-options-dialog :button').prop('disabled', true);
         var currency = $(this).data('currency');
 
         var ajaxLoader = $('<span class="spinner" style="position:absolute;margin-left:-30px;"></span>');
@@ -1169,10 +1111,10 @@ jQuery(document).ready(function($){
             type: 'POST',
             dataType: 'json',
             data: $('#wcml_mc_options').serialize() + '&action=wcml_save_currency&currency='+currency+'&wcml_nonce='+ $('#save_currency_nonce').val(),
-            success: function(response){                
-                $('.wcml_currency_options_popup').fadeOut(function(){
+            success: function(response){
+				$('.wcml-currency-options-dialog').fadeOut(function () {
                     ajaxLoader.remove();
-                    $('.wcml_currency_options_popup :submit, .wcml_currency_options_popup :button').prop('disabled', false);
+					$('.wcml-currency-options-dialog :submit, .wcml-currency-options-dialog :button').prop('disabled', false);
                     
                     $('#currency_row_' + currency + ' .currency_code .code_val').html(response.currency_name_formatted);
                     $('#currency_row_' + currency + ' .currency_value span').html(response.currency_meta_info);
@@ -1231,8 +1173,8 @@ jQuery(document).ready(function($){
                 .text( textClosed );
             $(this)
                 .find('i')
-                .removeClass('icon-caret-up')
-                .addClass('icon-caret-down');
+                .removeClass('otgs-ico-caret-up')
+                .addClass('otgs-ico-caret-down');
             if($(this).hasClass('prod_images_link')){
                 $('#prod_images_' + product_id + '_' + language).hide();
             }else{
@@ -1252,8 +1194,8 @@ jQuery(document).ready(function($){
                 .text( textOpened );
             $(this)
                 .find('i')
-                .removeClass('icon-caret-down')
-                .addClass('icon-caret-up');
+                .removeClass('otgs-ico-caret-down')
+                .addClass('otgs-ico-caret-up');
         }
 
         return false;
@@ -1276,30 +1218,39 @@ jQuery(document).ready(function($){
         }).pointer('open');
     });
 
-    $(document).on('click','.currency_languages a.on_btn',function(e){
-        $(this).closest('ul').find('.on').removeClass('on');
-        $(this).parent().addClass('on');
+	//TODO Sergey: Seriously check on that
+	$(document).on('click', '.currency_languages a.off_btn', function (e) {
+		e.preventDefault();
+		$(this).closest('ul').children('li').toggleClass('on');
+
+
+
         var index = $(this).closest('tr')[0].rowIndex;
         $('.currency_languages select[rel="'+$(this).data('language')+'"]').append('<option value="'+$(this).data('currency')+'">'+$(this).data('currency')+'</option>');
         update_currency_lang($(this),1,0);
     });
 
-    $(document).on('click','.currency_languages a.off_btn',function(e){
-        var enbl_elem = $(this).closest('ul').find('.on').removeClass('on');
+	//TODO Sergey: Seriously check on that
+	$(document).on('click', '.currency_languages a.on_btn', function (e) {
+		e.preventDefault();
+
+		$(this).closest('ul').children('li').toggleClass('on');
+
+		//  var enbl_elem = $(this).closest('ul').find('.on').removeClass('on');
         var flag = true;
         var lang = $(this).data('language');
-        $('#currency-lang-table .on_btn[data-language="'+lang+'"]').each(function(){
-            if($(this).parent().hasClass('on'))
-                flag = false;
-        });
 
-        if(flag){
-            enbl_elem.addClass('on');
-            alert($('#wcml_warn_disable_language_massage').val());
-            return;
-        }
+		//$('#currency-lang-table .on_btn[data-language="'+lang+'"]').each(function(){
+		//    if($(this).parent().hasClass('on'))
+		//        flag = false;
+		//});
 
-        $(this).parent().addClass('on');
+		//if(flag){
+		//    enbl_elem.addClass('on');
+		//    alert($('#wcml_warn_disable_language_massage').val());
+		//    return;
+		//}
+		// $(this).parent().removeClass('on');
         var index = $(this).closest('tr')[0].rowIndex;
 
         if($('.currency_languages select[rel="'+$(this).data('language')+'"]').val() == $(this).data('currency')){
@@ -1450,6 +1401,25 @@ jQuery(document).ready(function($){
             }
         });
     }
+
+    function wpml_after_load_dialog_data(){
+
+
+
+        //if( !$(this).hasClass('origin_content') ){
+        //    $(this).parent().find('textarea.wcml_content_tr').data('def',$(this).parent().find('textarea.wcml_content_tr').val());
+        //    $(this).parent().find('.wcml_editor table.mceLayout').css('height','auto');
+        //    $(this).parent().find('.wcml_editor table.mceLayout iframe').css('min-height','150px');
+        //    var id = $(this).parent().find('.switch-tmce').attr('id').replace(/-tmce/, '');
+        //    $(this).parent().find('.wp-editor-wrap').removeClass('html-active').addClass('tmce-active');
+        //
+        //    if(  window.parent.tinyMCE.get(id)  == null ){
+        //        tinymce.execCommand( 'mceAddEditor', false, id);
+        //    }
+        //}
+
+    }
+
 
 });
 

@@ -1,0 +1,76 @@
+/*===================================================================*/
+.wcml_content_tr {
+  width: 100%;
+}
+
+.mce_editor {
+  display: inline-block;
+  margin: 7px 15px 0;
+  vertical-align: middle;
+}
+
+.wpml-form-row .cleditorMain {
+  width: calc(35% - 30px - 40px );
+}
+.wpml-form-row .mce_editor {
+  width: calc(55% - 30px - 80px);
+}
+
+.wcml-row-excerpt .original_value {
+  width: calc(40% - 30px - 40px );
+}
+.wcml-row-excerpt .mce_editor {
+  width: calc(60% - 30px - 40px );
+}
+
+.wcml-row-purchase-note .original_value {
+  width: calc(40% - 30px - 40px );
+}
+.wcml-row-purchase-note .translated_value {
+  width: calc(60% - 30px - 40px );
+}
+
+table.wcml-attr-table {
+  border: none;
+  width: 98%;
+  margin: 0 auto;
+}
+table.wcml-attr-table th {
+  text-align: left;
+  font-weight: normal;
+}
+table.wcml-attr-table td:first-child {
+  padding-left: 15px;
+}
+table.wcml-attr-table td:last-child {
+  padding-right: 15px;
+}
+table.wcml-attr-table td[rowspan] {
+  padding-bottom: 15px;
+  padding-top: 15px;
+}
+table.wcml-attr-table input:not([type="submit"]):not([type="button"]) {
+  width: calc(100% - 30px);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.wcml-first-row td, .wcml-first-row th {
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+.wcml-first-row:first-child td, .wcml-first-row:first-child th {
+  border-top: none;
+}
+
+.wcml-last-row td, .wcml-last-row th {
+  padding-bottom: 15px;
+}
+
+.wcml-product-image-cell {
+  width: 115px;
+}
+
+.button-copy-cell {
+  text-align: center;
+  vertical-align: middle;
+}

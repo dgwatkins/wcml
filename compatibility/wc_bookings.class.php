@@ -932,10 +932,10 @@ class WCML_Bookings{
 
         if( $pagenow == 'post.php' || $pagenow == 'post-new.php' ){
 
-            wp_register_style( 'wcml-bookings-css', WCML_PLUGIN_URL . '/compatibility/assets/css/wcml-bookings.css', array(), WCML_VERSION );
+	        wp_register_style( 'wcml-bookings-css', WCML_PLUGIN_URL . '/compatibility/res/css/wcml-bookings.css', array(), WCML_VERSION );
             wp_enqueue_style( 'wcml-bookings-css' );
 
-            wp_register_script( 'wcml-bookings-js' , WCML_PLUGIN_URL . '/compatibility/assets/js/wcml-bookings.js', array('jquery'), WCML_VERSION);
+	        wp_register_script( 'wcml-bookings-js', WCML_PLUGIN_URL . '/compatibility/res/js/wcml-bookings.js', array( 'jquery' ), WCML_VERSION );
             wp_enqueue_script( 'wcml-bookings-js' );
             wp_localize_script( 'wcml-bookings-js', 'lock_fields',  ( isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) == 'product' && !$woocommerce_wpml->products->is_original_product( $_GET[ 'post' ] ) ) ||
             ( $pagenow == 'post-new.php' && isset( $_GET[ 'source_lang' ] ) ) ? 1 : false );

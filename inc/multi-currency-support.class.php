@@ -422,8 +422,8 @@ class WCML_Multi_Currency_Support{
         global $woocommerce_wpml;
         
         if($woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT && count($this->currencies) > 1 && isset($_GET['page']) && $_GET['page'] == 'wc-settings' && (!isset($_GET['tab']) || (isset($_GET['tab']) && $_GET['tab'] == 'general'))){
-            
-            wp_enqueue_style('wcml_wc', WCML_PLUGIN_URL . '/assets/css/wcml-wc-integration.css', array(), WCML_VERSION);
+
+	        wp_enqueue_style( 'wcml_wc', WCML_PLUGIN_URL . '/res/css/wcml-wc-integration.css', array(), WCML_VERSION );
             
             $wc_currencies = get_woocommerce_currencies();
             $wc_currency = get_option('woocommerce_currency');
@@ -671,7 +671,7 @@ class WCML_Multi_Currency_Support{
 
 
             function load_currency(currency){
-                var ajax_loader = jQuery('<img style=\"margin-left:10px;\" width=\"16\" heigth=\"16\" src=\"" . WCML_PLUGIN_URL . "/assets/images/ajax-loader.gif\" />')
+                var ajax_loader = jQuery('<img style=\"margin-left:10px;\" width=\"16\" heigth=\"16\" src=\"" . WCML_PLUGIN_URL . "/res/images/ajax-loader.gif\" />')
                     jQuery('.wcml_currency_switcher').attr('disabled', 'disabled');
                     jQuery('.wcml_currency_switcher').after();
                     ajax_loader.insertAfter(jQuery('.wcml_currency_switcher'));
@@ -1363,7 +1363,7 @@ class WCML_Multi_Currency_Support{
     }        
     
     function register_styles(){
-        wp_register_style('currency-switcher', WCML_PLUGIN_URL . '/assets/css/currency-switcher.css', null, WCML_VERSION);
+	    wp_register_style( 'currency-switcher', WCML_PLUGIN_URL . '/res/css/currency-switcher.css', null, WCML_VERSION );
         wp_enqueue_style('currency-switcher');
     }    
     

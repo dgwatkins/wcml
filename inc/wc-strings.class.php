@@ -374,7 +374,7 @@ class WCML_WC_Strings{
         if(  !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $sitepress_settings['st']['strings_language'] != $sitepress->get_default_language() ){
             $strings_language = $sitepress->get_language_details($sitepress_settings['st']['strings_language']);
             echo sprintf(__('Please enter this text in %s', 'wpml-wcml'), '<strong>' . $strings_language['display_name'] . '</strong>');
-            echo '</i>&nbsp;<i class="icon-question-sign wcml_tootlip_icon" data-tip="';
+	        echo '</i>&nbsp;<i class="otgs-ico-help wcml-tip" data-tip="';
             echo sprintf(__('You have to enter this text in the strings language ( %s ) so you can translate it using the WPML String Translation.', 'wpml-wcml'), $strings_language['display_name'] ).'">';
         }
         echo '</i></div></div>';

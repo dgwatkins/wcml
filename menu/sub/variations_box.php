@@ -1,6 +1,6 @@
 <button id="prod_variations_link_<?php echo $product_id ?>_<?php echo $lang ?>" class="button-secondary js-table-toggle<?php if($is_duplicate_product): ?> js-dup-disabled<?php endif;?>" data-text-opened="<?php esc_attr_e('Collapse','wpml-wcml'); ?>" data-text-closed="<?php esc_attr_e('Expand','wpml-wcml'); ?>"<?php if($is_duplicate_product): ?> disabled="disabled"<?php endif;?>>
     <span><?php _e('Expand','wpml-wcml'); ?></span>
-    <i class="icon-caret-down"></i>
+    <i class="otgs-ico-caret-down"></i>
 </button>
 
 <table id="prod_variations_<?php echo $product_id ?>_<?php echo $lang ?>" class="widefat prod_variations js-table">

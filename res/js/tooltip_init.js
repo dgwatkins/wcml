@@ -6,6 +6,6 @@ jQuery(document).ready(function($){
         'fadeOut' : 50,
         'delay' : 200
     };
-    $(".icon-question-sign").tipTip( tiptip_args );
+	$(".wcml-tip").tipTip(tiptip_args);
 });
 
