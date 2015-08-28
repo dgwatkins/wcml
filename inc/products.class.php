@@ -32,7 +32,8 @@ class WCML_Products{
             add_action( 'save_post', array( $this, 'sync_post_action' ), 11, 2 ); // After WPML
             //when save new attachment duplicate product gallery
             add_action( 'wpml_media_create_duplicate_attachment', array( $this, 'sync_product_gallery_duplicate_attachment' ), 11, 2 );
-            add_action( 'woocommerce_ajax_save_product_variations', array( $this, 'sync_product_variations_custom_prices' ), 11 );
+            add_action( 'woocommerce_ajax_save_product_variations', array( $this, 'sync_product_variations_action' ), 11 );
+            add_action( 'wp_ajax_woocommerce_remove_variations', array( $this, 'remove_translations_for_variations' ), 9 );
 
             add_filter( 'icl_make_duplicate', array( $this, 'icl_make_duplicate'), 11, 4 );
 
@@ -1620,6 +1621,52 @@ class WCML_Products{
         $this->sync_product_variations_custom_prices( $duplicated_post_id );
     }
 
+
+    function sync_product_variations_action( $product_id ){
+        global $sitepress, $wpdb;
+
+        $this->sync_product_variations_custom_prices( $product_id );
+
+        $trid = $sitepress->get_element_trid( $product_id, 'post_product' );
+        if ( empty( $trid ) ) {
+            $trid = $wpdb->get_var( $wpdb->prepare( "SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id = %d AND element_type = 'post_product'", $product_id ) );
+        }
+
+        $translations = $sitepress->get_element_translations( $trid, 'post_product' );
+        foreach ( $translations as $translation ) {
+            if ( !$translation->original ) {
+                $this->sync_product_variations($product_id, $translation->element_id, $translation->language_code);
+            }
+        }
+
+    }
+
+    function remove_translations_for_variations(){
+        check_ajax_referer( 'delete-variations', 'security' );
+
+        if ( ! current_user_can( 'edit_products' ) ) {
+            die(-1);
+        }
+
+        global $sitepress;
+
+        $variation_ids = (array) $_POST['variation_ids'];
+
+        foreach ( $variation_ids as $variation_id ) {
+
+            $trid = $sitepress->get_element_trid( $variation_id, 'post_product_variation' );
+            $translations = $sitepress->get_element_translations( $trid, 'post_product_variation' );
+
+            foreach ( $translations as $translation ) {
+                if ( !$translation->original ) {
+                    wp_delete_post( $translation->element_id );
+                }
+            }
+
+        }
+
+    }
+
     function save_custom_prices($post_id){
         global $woocommerce_wpml;
 
@@ -1723,7 +1770,7 @@ class WCML_Products{
         return $price;
     }
 
-    function sync_product_variations_custom_prices($product_id){
+    function sync_product_variations_custom_prices( $product_id ){
         global $wpdb,$woocommerce_wpml;
         $is_variable_product = $this->is_variable_product($product_id);
 
