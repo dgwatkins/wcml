@@ -111,7 +111,7 @@ class WCML_Products{
         add_filter( 'woocommerce_cached_widget_id', array( $this, 'override_cached_widget_id' ) );
 
         //update menu_order fro translations after ordering original products
-        add_action( 'woocommerce_after_product_ordering', array( $this, 'update_translations_product_ordering' ) );
+        add_action( 'woocommerce_after_product_ordering', array( $this, 'update_all_products_translations_ordering' ) );
 
         //filter to copy excerpt value
         add_filter( 'wpml_copy_from_original_custom_fields', array( $this, 'filter_excerpt_field_content_copy' ) );
@@ -1609,6 +1609,8 @@ class WCML_Products{
             $this->sync_default_product_attr( $duplicated_post_id, $post_id, $lang );
 
             $this->sync_product_attr( $duplicated_post_id, $post_id );
+            
+            $this->update_order_for_product_translations( $duplicated_post_id );
 
             // synchronize post variations
             $this->sync_product_variations( $duplicated_post_id, $post_id, $lang );
@@ -2916,7 +2918,7 @@ class WCML_Products{
 
 
     //update menu_order fro translations after ordering original products
-    function update_translations_product_ordering(){
+    function update_all_products_translations_ordering(){
         global $wpdb, $sitepress, $woocommerce_wpml;
 
         if( $woocommerce_wpml->settings['products_sync_order'] ) {
@@ -2924,21 +2926,37 @@ class WCML_Products{
             $current_language = $sitepress->get_current_language();
 
             if ($current_language == $sitepress->get_default_language()) {
-                $products = $wpdb->get_results($wpdb->prepare("SELECT p.ID, p.menu_order FROM $wpdb->posts AS p LEFT JOIN {$wpdb->prefix}icl_translations AS icl ON icl.element_id = p.id WHERE p.post_type = 'product' AND p.post_status IN ( 'publish', 'future', 'draft', 'pending', 'private' ) AND icl.element_type= 'post_product' AND icl.language_code = %s", $current_language));
+                $products = $wpdb->get_results($wpdb->prepare("SELECT p.ID FROM $wpdb->posts AS p LEFT JOIN {$wpdb->prefix}icl_translations AS icl ON icl.element_id = p.id WHERE p.post_type = 'product' AND p.post_status IN ( 'publish', 'future', 'draft', 'pending', 'private' ) AND icl.element_type= 'post_product' AND icl.language_code = %s", $current_language));
 
                 foreach ($products as $product) {
+                    $this->update_order_for_product_translations( $product->ID );
+                }
+            }
+        }
+    }
 
-                    $trid = $sitepress->get_element_trid($product->ID, 'post_product');
+    //update menu_order fro translations after ordering original products
+    function update_order_for_product_translations( $product_id ){
+        global $wpdb, $sitepress, $woocommerce_wpml;
+
+        if( $woocommerce_wpml->settings['products_sync_order'] ) {
+
+            $current_language = $sitepress->get_current_language();
+
+            if ( $current_language == $sitepress->get_default_language() ) {
+                $menu_order = $wpdb->get_var($wpdb->prepare("SELECT menu_order FROM $wpdb->posts WHERE ID = %d", $product_id ) );
+
+                $trid = $sitepress->get_element_trid($product_id, 'post_product');
                     $translations = $sitepress->get_element_translations($trid, 'post_product');
 
                     foreach ($translations as $translation) {
 
-                        if ($translation->element_id != $product->ID) {
-                            $wpdb->update($wpdb->posts, array('menu_order' => $product->menu_order), array('ID' => $translation->element_id));
-                        }
+                    if ($translation->element_id != $product_id) {
+                        $wpdb->update( $wpdb->posts, array('menu_order' => $menu_order), array('ID' => $translation->element_id));
                     }
                 }
             }
+
         }
     }
 
