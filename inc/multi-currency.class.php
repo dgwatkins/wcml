@@ -821,6 +821,8 @@ class WCML_WC_MultiCurrency{
     function woocommerce_product_options_custom_pricing(){
         global $pagenow,$sitepress,$woocommerce_wpml;
 
+        $this->load_custom_prices_js_css();
+
         if( ( isset($_GET['post'] ) && ( get_post_type($_GET['post']) != 'product' || !$woocommerce_wpml->products->is_original_product( $_GET['post'] ) ) ) ||
             ( isset($_GET['post_type'] ) && $_GET['post_type'] == 'product' && isset( $_GET['source_lang'] ) ) ){
             return;
@@ -836,7 +838,6 @@ class WCML_WC_MultiCurrency{
 
         wp_nonce_field('wcml_save_custom_prices','_wcml_custom_prices_nonce');
 
-        $this->load_custom_prices_js_css();
     }
 
     function custom_pricing_output($post_id = false){
