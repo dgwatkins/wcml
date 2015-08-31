@@ -82,6 +82,9 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fix: Custom prices for variations were not saved when clicking the 'Save changes' button
 * Bug fix: Pagination was not working for a category having the term id equal to the id of the account page
 * Bug fix: 'Shop' was appearing two times in the breadcrumbs when using the shop base + category for a product url base
+* Bug fix: Fixed one issue with WooCommerce Bookings - adding two separate bookings to the cart showed as one item instead of two
+* Bug fix: The products menu order was not synced in some situations
+* Fixed a compatibility issue with the Peddlar theme
 
 = 3.6.9 =
 * Bug fix: Prices for variable products were not converted correctly when using multiple currencies after the WooCommerce 2.4 update
