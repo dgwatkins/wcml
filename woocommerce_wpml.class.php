@@ -136,7 +136,7 @@ class woocommerce_wpml {
     }
 
     function translate_product_slug(){
-        global $sitepress, $wpdb,$woocommerce, $sitepress_settings;
+        global $sitepress, $wpdb, $woocommerce;
 
         if(!defined('WOOCOMMERCE_VERSION') || (!isset($GLOBALS['ICL_Pro_Translation']) || is_null($GLOBALS['ICL_Pro_Translation']))){
             return;
@@ -147,19 +147,19 @@ class woocommerce_wpml {
         if ( apply_filters( 'wpml_slug_translation_available', false) ) {
             // Use new API for WPML >= 3.2.3
             do_action( 'wpml_activate_slug_translation', $slug );
-            
+
         } else {
             // Pre WPML 3.2.3
             $string = $wpdb->get_row($wpdb->prepare("SELECT id,status FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'URL slug: ' . $slug, $slug));
-    
+
             if(!$string){
                 do_action('wpml_register_single_string', 'WordPress', 'URL slug: ' . $slug, $slug);
                 $string = $wpdb->get_row($wpdb->prepare("SELECT id,status FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'URL slug: ' . $slug, $slug));
             }
 
         }
-
-        if(empty($sitepress_settings['posts_slug_translation']['on']) || empty($sitepress_settings['posts_slug_translation']['types']['product'])){
+        $iclsettings = $sitepress->get_settings();
+        if(empty($iclsettings['posts_slug_translation']['on']) || empty($iclsettings['posts_slug_translation']['types']['product'])){
             $iclsettings['posts_slug_translation']['on'] = 1;
             $iclsettings['posts_slug_translation']['types']['product'] = 1;
             $sitepress->save_settings($iclsettings);
