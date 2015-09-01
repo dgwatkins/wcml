@@ -105,6 +105,7 @@ var wcml_lock_variation_fields = function(){
     for (i = 0; i < var_selectboxes.length; i++) {
         jQuery('select[name^="variable'+var_selectboxes[i]+'"]').each(function(){
             jQuery(this).attr('disabled','disabled');
+            jQuery(this).parent().append('<input type="hidden" name="'+jQuery(this).attr('name')+'" value="'+jQuery(this).val()+'" />');
             jQuery(this).after(jQuery('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
         });
     }
