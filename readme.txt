@@ -85,6 +85,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fix: Fixed one issue with WooCommerce Bookings - adding two separate bookings to the cart showed as one item instead of two
 * Bug fix: The products menu order was not synced in some situations
 * Fixed a compatibility issue with the Peddlar theme
+* Fixed a styling issue on the custom prices section for product variations
 
 = 3.6.9 =
 * Bug fix: Prices for variable products were not converted correctly when using multiple currencies after the WooCommerce 2.4 update
