@@ -234,7 +234,7 @@ class WCML_Emails{
     
 
     function icl_job_edit_url($link,$job_id){
-        global $wpdb,$sitepress,$iclTranslationManagement;
+        global $wpdb, $iclTranslationManagement;
 
         $trid = $wpdb->get_var($wpdb->prepare("
                     SELECT t.trid
