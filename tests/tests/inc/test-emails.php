@@ -3,7 +3,9 @@
 class Test_WCML_Emails extends WCML_UnitTestCase {
 
 	function test_icl_job_edit_url() {
-		$subject = new WCML_Emails();
+		global $sitepress;
+
+		$subject = new WCML_Emails( $sitepress );
 
 		$link_missing_job = 'http://' . rand_str( 10 );
 
@@ -11,7 +13,9 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 	}
 
 	function test_set_locale_for_emails() {
-		$subject = new WCML_Emails();
+		global $sitepress;
+
+		$subject = new WCML_Emails( $sitepress );
 
 		$locale_dummy = rand_str( 5 );
 		$domain_dummy = rand_str( 20 );
@@ -19,5 +23,15 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 
 		$subject->change_email_language( 'fr' );
 		$this->assertEquals( 'fr_FR', $subject->set_locale_for_emails( $locale_dummy, 'woocommerce' ) );
+	}
+
+	function test_email_footer() {
+		$sitepress_mock    = $this->get_sitepress_mock();
+		$test_lang_default = 'foo';
+		$subject           = new WCML_Emails( $sitepress_mock );
+
+		$sitepress_mock->method( 'get_default_language' )->willReturn( $test_lang_default );
+		$sitepress_mock->expects( $this->once() )->method( 'switch_lang' )->with( $test_lang_default, false );
+		$subject->email_footer();
 	}
 }
