@@ -77,6 +77,7 @@ var wcml_lock_variation_fields = function(){
     jQuery('.woocommerce_variation>h3 select, #variable_product_options .toolbar select, .show_if_variation_manage_stock select').each(function(){
 
         jQuery(this).attr('disabled','disabled');
+        jQuery(this).parent().append('<input type="hidden" name="'+jQuery(this).attr('name')+'" value="'+jQuery(this).val()+'" />');
         jQuery(this).after(jQuery('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
     });
 

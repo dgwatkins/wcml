@@ -1625,20 +1625,23 @@ class WCML_Products{
     function sync_product_variations_action( $product_id ){
         global $sitepress, $wpdb;
 
-        $this->sync_product_variations_custom_prices( $product_id );
+        if( $this->is_original_product( $product_id ) ){
 
-        $trid = $sitepress->get_element_trid( $product_id, 'post_product' );
-        if ( empty( $trid ) ) {
-            $trid = $wpdb->get_var( $wpdb->prepare( "SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id = %d AND element_type = 'post_product'", $product_id ) );
-        }
+            $this->sync_product_variations_custom_prices( $product_id );
 
-        $translations = $sitepress->get_element_translations( $trid, 'post_product' );
-        foreach ( $translations as $translation ) {
-            if ( !$translation->original ) {
-                $this->sync_product_variations($product_id, $translation->element_id, $translation->language_code);
+            $trid = $sitepress->get_element_trid( $product_id, 'post_product' );
+            if ( empty( $trid ) ) {
+                $trid = $wpdb->get_var( $wpdb->prepare( "SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id = %d AND element_type = 'post_product'", $product_id ) );
             }
-        }
 
+            $translations = $sitepress->get_element_translations( $trid, 'post_product' );
+            foreach ( $translations as $translation ) {
+                if ( !$translation->original ) {
+                    $this->sync_product_variations($product_id, $translation->element_id, $translation->language_code);
+                }
+            }
+
+        }
     }
 
     function remove_translations_for_variations(){

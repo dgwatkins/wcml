@@ -493,7 +493,11 @@ class WCML_WC_Strings{
         }else{
             global $sitepress_settings;
 
-            return $sitepress_settings['st']['strings_language'];
+            if ( isset($sitepress_settings['st']['strings_language']) ){
+                return $sitepress_settings['st']['strings_language'];
+            }
+
+            return false;
         }
 
     }
