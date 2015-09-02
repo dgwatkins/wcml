@@ -1,0 +1,28 @@
+<phpunit
+        bootstrap="./tests/bootstrap.php"
+        backupGlobals="false"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        >
+    <php>
+        <const name="WPML_CORE_PATH" value="./../sitepress-multilingual-cms"/>
+    </php>
+    <testsuites>
+        <testsuite>
+            <directory prefix="test-" suffix=".php">./tests/tests/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./</directory>
+            <exclude>
+                <directory>./tests/</directory>
+                <directory>./vendor/</directory>
+                <directory>./tmp/</directory>
+                <directory>./build/</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>

@@ -45,15 +45,15 @@ class woocommerce_wpml {
             add_shortcode('currency_switcher', '__return_empty_string');
         }
 
-        $this->endpoints        = new WCML_Endpoints;
-        $this->products         = new WCML_Products;
-        $this->store            = new WCML_Store_Pages;
-        $this->emails           = new WCML_Emails;
-        $this->terms            = new WCML_Terms;
-        $this->orders           = new WCML_Orders;
-        $this->troubleshooting  = new WCML_Troubleshooting();
-        $this->compatibility    = new WCML_Compatibility();
-        $this->strings          = new WCML_WC_Strings;
+        $this->endpoints         = new WCML_Endpoints;
+        $this->products          = new WCML_Products;
+        $this->store             = new WCML_Store_Pages;
+        $this->emails            = new WCML_Emails( $sitepress );
+        $this->terms             = new WCML_Terms;
+        $this->orders            = new WCML_Orders;
+        $this->troubleshooting   = new WCML_Troubleshooting();
+        $this->compatibility     = new WCML_Compatibility();
+        $this->strings           = new WCML_WC_Strings;
         $this->currency_switcher = new WCML_CurrencySwitcher;
         $this->xdomain_data      = new xDomain_Data;
 
