@@ -314,11 +314,12 @@ class WCML_Upgrade{
 
     function upgrade_3_7()
     {
-        global $wpdb;
+        global $woocommerce_wpml;
+        $woocommerce_wpml->terms->check_if_sync_terms_needed();
+
         $wcml_settings = get_option('_wcml_settings');
 
-        $wcml_settings['sync_terms'] = 1;
-        $wcml_settings['sync_variations'] = 1;
+        $wcml_settings['sync_taxonomies_checked'] = 1;
 
         update_option('_wcml_settings', $wcml_settings);
     }

@@ -1062,7 +1062,7 @@ class WCML_Terms{
         }
 
         $wcml_settings = $woocommerce_wpml->get_settings();
-        $wcml_settings['sync_terms'] = 0;
+        $wcml_settings['sync_'.$taxonomy] = 0;
         $woocommerce_wpml->update_settings($wcml_settings);
 
         $out = '';
@@ -1170,23 +1170,101 @@ class WCML_Terms{
     }
 
     function set_flag_to_sync( $taxonomy, $el_id, $language_code ){
+        global $woocommerce_wpml, $sitepress;
+
+        $elem_details = $sitepress->get_element_language_details( $el_id, 'tax_'.$taxonomy );
+        if( is_null( $elem_details->source_language_code ) )
+            return;
+
+        $this->check_if_sync_term_translation_needed( $el_id, $taxonomy );
+
+    }
+
+    function check_if_sync_terms_needed(){
         global $woocommerce_wpml;
 
-        if( in_array( $taxonomy, array( 'product_cat', 'product_tag', 'product_shipping_class' ) ) ){
-            $wcml_settings = $woocommerce_wpml->get_settings();
-            $wcml_settings['sync_terms'] = 1;
-            $woocommerce_wpml->update_settings($wcml_settings);
+        $wcml_settings = $woocommerce_wpml->get_settings();
+        $wcml_settings['sync_variations'] = 0;
+        $wcml_settings['sync_product_cat'] = 0;
+        $wcml_settings['sync_product_tag'] = 0;
+        $wcml_settings['sync_product_shipping_class'] = 0;
+        $woocommerce_wpml->update_settings( $wcml_settings );
+
+        $taxonomies_to_check = array( 'product_cat', 'product_tag', 'product_shipping_class' );
+
+        foreach( $taxonomies_to_check as $check_taxonomy ){
+            $terms = get_terms( $check_taxonomy, array( 'hide_empty' => false, 'fields' => 'ids' ) );
+
+            foreach( $terms as $term ){
+                if( $this->check_if_sync_term_translation_needed( $term[ 'term_taxonomy_id' ], $check_taxonomy ) ){
+                    break;
+                }
+            }
+
         }
+
+        $attribute_taxonomies = wc_get_attribute_taxonomies();
+        foreach( $attribute_taxonomies as $a ){
+
+            $terms = get_terms( 'pa_' . $a->attribute_name, array( 'hide_empty' => false, 'fields' => 'ids' ) );
+
+            foreach( $terms as $term ){
+                $flag_set = $this->check_if_sync_term_translation_needed( $term[ 'term_taxonomy_id' ], 'pa_' . $a->attribute_name );
+                if( $flag_set ){
+                    break;
+                }
+            }
+
+            if( $flag_set ){
+                break;
+            }
+
+        }
+
+    }
+
+    function check_if_sync_term_translation_needed( $t_id, $taxonomy ){
+        global $woocommerce_wpml, $wpdb;
+
+        $wcml_settings = $woocommerce_wpml->get_settings();
 
         $attribute_taxonomies = wc_get_attribute_taxonomies();
         foreach($attribute_taxonomies as $a){
             $attribute_taxonomies_arr[] = 'pa_' . $a->attribute_name;
         }
 
-        if( isset( $attribute_taxonomies_arr ) && in_array( $taxonomy, $attribute_taxonomies_arr ) ){
-            $wcml_settings = $woocommerce_wpml->get_settings();
-            $wcml_settings['sync_variations'] = 1;
-            $woocommerce_wpml->update_settings($wcml_settings);
+        if( ( isset( $wcml_settings[ 'sync_'.$taxonomy ]) && $wcml_settings[ 'sync_'.$taxonomy ] ) || ( in_array( $taxonomy, $attribute_taxonomies_arr ) && $wcml_settings['sync_variations'] ) ){
+            return true;
+        }
+
+        $translations = $wpdb->get_results( $wpdb->prepare( "SELECT t2.element_id, t2.source_language_code FROM {$wpdb->prefix}icl_translations AS t1 LEFT JOIN {$wpdb->prefix}icl_translations AS t2 ON t1.trid = t2.trid WHERE t1.element_id = %d AND t1.element_type = %s ", $t_id, 'tax_'.$taxonomy ) );
+
+        foreach( $translations as $key => $translation ){
+            if ( is_null( $translation->source_language_code ) ) {
+                $original_count = $wpdb->get_var( $wpdb->prepare( "SELECT count( object_id ) FROM $wpdb->term_relationships WHERE term_taxonomy_id = %d ", $translation->element_id ) );
+                unset( $translations[ $key ] );
+            }
+        }
+
+        foreach( $translations as $translation ){
+
+            $count = $wpdb->get_var( $wpdb->prepare( "SELECT count( object_id ) FROM $wpdb->term_relationships WHERE term_taxonomy_id = %d ", $translation->element_id ) );
+            if( $original_count != $count ){
+
+                if( in_array( $taxonomy, array( 'product_cat', 'product_tag', 'product_shipping_class' ) ) ){
+                    $wcml_settings[ 'sync_'.$taxonomy ] = 1;
+                    $woocommerce_wpml->update_settings($wcml_settings);
+                    return true;
+                }
+
+                if( isset( $attribute_taxonomies_arr ) && in_array( $taxonomy, $attribute_taxonomies_arr ) ){
+                    $wcml_settings['sync_variations'] = 1;
+                    $woocommerce_wpml->update_settings($wcml_settings);
+                    return true;
+                }
+
+            }
+
         }
 
     }

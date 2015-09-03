@@ -1,8 +1,10 @@
 <div class="icl_tt_main_bottom" style="display: none;">
     <br/>
-    <?php if ( $wcml_settings['sync_variations'] && isset($attribute_taxonomies_arr) && in_array($taxonomy, $attribute_taxonomies_arr) ): ?>
+    <?php if ( isset($attribute_taxonomies_arr) && in_array($taxonomy, $attribute_taxonomies_arr) ):
+        $display = isset($wcml_settings['sync_variations']) && $wcml_settings['sync_variations'] ? '' : 'display: none';
+        ?>
 
-        <form id="wcml_tt_sync_variations" method="post">
+        <form id="wcml_tt_sync_variations" method="post" style="<?php echo $display; ?>">
             <input type="hidden" name="action" value="wcml_sync_product_variations" />
             <input type="hidden" name="taxonomy" value="<?php echo $taxonomy ?>" />
             <input type="hidden" name="wcml_nonce" value="<?php echo wp_create_nonce('wcml_sync_product_variations') ?>" />
@@ -17,16 +19,18 @@
             <div class="wcml_tt_sycn_preview"></div>
         </form>
 
-        <div id="wcml_tt_sync_desc">
+        <div id="wcml_tt_sync_desc" style="<?php echo $display; ?>">
             <p><?php _e('This will automatically generate variations for translated products corresponding to recently translated attributes.','wpml-wcml'); ?></p>
             <?php if(!empty($wcml_settings['variations_needed'][$taxonomy])): ?>
                 <p><?php printf(__('Currently, there are %s variations that need to be created.', 'wpml-wcml'), '<strong>' . $wcml_settings['variations_needed'][$taxonomy] . '</strong>') ?></p>
         </div>
         <?php endif; ?>
 
-    <?php elseif( $wcml_settings['sync_terms'] ): ?>
+    <?php else:
+        $display = ( isset($wcml_settings[ 'sync_'.$taxonomy ]) && $wcml_settings[ 'sync_'.$taxonomy ] ) ? '' : 'display: none';
+        ?>
 
-        <form id="wcml_tt_sync_assignment">
+        <form id="wcml_tt_sync_assignment" style="<?php echo $display; ?>">
             <input type="hidden" name="taxonomy" value="<?php echo $taxonomy ?>"/>
             <?php wp_nonce_field('wcml_sync_taxonomies_in_content_preview', 'wcml_sync_taxonomies_in_content_preview_nonce'); ?>
             <p>
@@ -38,7 +42,7 @@
         <div id="wcml_tt_sync_preview"></div>
 
 
-        <p id="wcml_tt_sync_desc"><?php printf( __( 'This action lets you automatically apply the %s taxonomy to your content in different  languages. It will scan the original content and apply the same taxonomy to translated content.', 'wpml-wcml' ), '<i>' . $taxonomy_obj->labels->singular_name . '</i>' ); ?></p>
+        <p id="wcml_tt_sync_desc" style="<?php echo $display; ?>"><?php printf( __( 'This action lets you automatically apply the %s taxonomy to your content in different  languages. It will scan the original content and apply the same taxonomy to translated content.', 'wpml-wcml' ), '<i>' . $taxonomy_obj->labels->singular_name . '</i>' ); ?></p>
 
 
     <?php endif; ?>

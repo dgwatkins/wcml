@@ -251,6 +251,11 @@ class woocommerce_wpml {
                 $this->settings['display_custom_prices'] = 0;
             }
 
+            if(!isset($this->settings['sync_taxonomies_checked'])){
+                $this->terms->check_if_sync_terms_needed();
+                $this->settings['sync_taxonomies_checked'] = 1;
+            }
+
             self::set_up_capabilities();
 
             $this->set_language_information();

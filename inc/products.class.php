@@ -2297,7 +2297,7 @@ class WCML_Products{
 
     //update taxonomy in variations
     function update_taxonomy_in_variations(){
-        global $wpdb;
+        global $wpdb, $woocommerce_wpml;
         $original_element   = filter_input( INPUT_POST, 'translation_of', FILTER_SANITIZE_NUMBER_INT );
         $taxonomy           = filter_input( INPUT_POST, 'taxonomy', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         $language           = filter_input( INPUT_POST, 'language', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
@@ -2320,6 +2320,13 @@ class WCML_Products{
                 update_post_meta($trnsl_variation_id,'attribute_'.$taxonomy,$slug);
            }
         }
+
+        $wcml_settings = $woocommerce_wpml->get_settings();
+        $attribute_taxonomies = wc_get_attribute_taxonomies();
+        foreach($attribute_taxonomies as $a){
+            $attribute_taxonomies_arr[] = 'pa_' . $a->attribute_name;
+        }
+
     }
 
     function product_page_add_language_info_to_term($lang){
