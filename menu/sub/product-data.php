@@ -34,8 +34,8 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
         <header class="wpml-translation-header">
             <?php if( $is_duplicate_product ): ?>
                 <h3 class="js-wcml_duplicate_product_notice" >
-                <?php printf(__('This product is an exact duplicate of the %s product.', 'wcml-wpml'),
-                    $active_languages[ $original_language ]['display_name'] ); ?>&nbsp;
+                <span style="height: 38px"><?php printf(__('This product is an exact duplicate of the %s product.', 'wcml-wpml'),
+                    $active_languages[ $original_language ]['display_name'] ); ?></span>
                     <a class="button-primary duplicate_edit" ><?php _e('Edit independently', 'wpml-wcml') ?></a>
                 </h3>
                 <h3 class="js-wcml_duplicate_product_undo" style="display: none;" >

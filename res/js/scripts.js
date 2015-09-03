@@ -252,7 +252,7 @@ jQuery(document).ready(function($){
    $(document).on('click', '.duplicate_edit', function(e){
        e.preventDefault();
 
-       $('.js-dup-disabled').removeAttr('disabled');
+       $('.js-dup-disabled').removeAttr('readonly');
        $('input[name^=end_duplication]').val(1);
        $('.js-wcml_duplicate_product_notice').hide();
        $('.js-wcml_duplicate_product_undo').show();
@@ -264,7 +264,7 @@ jQuery(document).ready(function($){
    $(document).on('click', '.duplicate_cancel', function(e){
        e.preventDefault();
 
-       $('.js-dup-disabled').attr('disabled', 'disabled');
+       $('.js-dup-disabled').attr('readonly', 'readonly');
        $('input[name^=end_duplication]').val(0);
        $('.js-wcml_duplicate_product_undo').hide();
        $('.js-wcml_duplicate_product_notice').show();
