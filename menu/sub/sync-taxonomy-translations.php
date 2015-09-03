@@ -9,7 +9,7 @@
             <input type="hidden" name="last_post_id" value="" />
             <input type="hidden" name="languages_processed" value="0" />
 
-            <p>
+            <p id="wcml_tt_sync_assignment" >
                 <input class="button-secondary" type="submit" value="<?php esc_attr_e("Synchronize attributes and update product variations", 'wpml-wcml') ?>" />
                 <img src="<?php echo ICL_PLUGIN_URL . '/res/img/ajax-loader.gif' ?>" alt="loading" height="16" width="16" class="wpml_tt_spinner" />
             </p>
@@ -17,10 +17,11 @@
             <div class="wcml_tt_sycn_preview"></div>
         </form>
 
-
-        <p><?php _e('This will automatically generate variations for translated products corresponding to recently translated attributes.','wpml-wcml'); ?></p>
-        <?php if(!empty($wcml_settings['variations_needed'][$taxonomy])): ?>
-            <p><?php printf(__('Currently, there are %s variations that need to be created.', 'wpml-wcml'), '<strong>' . $wcml_settings['variations_needed'][$taxonomy] . '</strong>') ?></p>
+        <div id="wcml_tt_sync_desc">
+            <p><?php _e('This will automatically generate variations for translated products corresponding to recently translated attributes.','wpml-wcml'); ?></p>
+            <?php if(!empty($wcml_settings['variations_needed'][$taxonomy])): ?>
+                <p><?php printf(__('Currently, there are %s variations that need to be created.', 'wpml-wcml'), '<strong>' . $wcml_settings['variations_needed'][$taxonomy] . '</strong>') ?></p>
+        </div>
         <?php endif; ?>
 
     <?php elseif( $wcml_settings['sync_terms'] ): ?>
@@ -37,7 +38,7 @@
         <div id="wcml_tt_sync_preview"></div>
 
 
-        <p><?php printf( __( 'This action lets you automatically apply the %s taxonomy to your content in different  languages. It will scan the original content and apply the same taxonomy to translated content.', 'wpml-wcml' ), '<i>' . $taxonomy_obj->labels->singular_name . '</i>' ); ?></p>
+        <p id="wcml_tt_sync_desc"><?php printf( __( 'This action lets you automatically apply the %s taxonomy to your content in different  languages. It will scan the original content and apply the same taxonomy to translated content.', 'wpml-wcml' ), '<i>' . $taxonomy_obj->labels->singular_name . '</i>' ); ?></p>
 
 
     <?php endif; ?>

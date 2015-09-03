@@ -353,7 +353,9 @@ jQuery(document).ready(function($){
                }else{
                    this_form.find('input[name=last_post_id]').val(0);
                    this_form.find('.wpml_tt_spinner').fadeOut();
-                   this_form.find('input').removeAttr('disabled');               
+                   this_form.find('input').removeAttr('disabled');
+                   jQuery('#wcml_tt_sync_assignment').fadeOut();
+                   jQuery('#wcml_tt_sync_desc').fadeOut();
                }
                
            }
@@ -391,7 +393,7 @@ jQuery(document).ready(function($){
                     }else{
                         jQuery('#wcml_tt_sync_preview').html(ret.html);
                         jQuery('#wcml_tt_sync_assignment').fadeOut();
-                        jQuery('#wcml_tt_sync_preview').fadeOut();
+                        jQuery('#wcml_tt_sync_desc').fadeOut();
                     }
 
                 }
