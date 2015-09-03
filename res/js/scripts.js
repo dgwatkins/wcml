@@ -390,6 +390,8 @@ jQuery(document).ready(function($){
                         this_form.find('.errors').html(ret.errors);
                     }else{
                         jQuery('#wcml_tt_sync_preview').html(ret.html);
+                        jQuery('#wcml_tt_sync_assignment').fadeOut();
+                        jQuery('#wcml_tt_sync_preview').fadeOut();
                     }
 
                 }
