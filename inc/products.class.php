@@ -2320,13 +2320,6 @@ class WCML_Products{
                 update_post_meta($trnsl_variation_id,'attribute_'.$taxonomy,$slug);
            }
         }
-
-        $wcml_settings = $woocommerce_wpml->get_settings();
-        $attribute_taxonomies = wc_get_attribute_taxonomies();
-        foreach($attribute_taxonomies as $a){
-            $attribute_taxonomies_arr[] = 'pa_' . $a->attribute_name;
-        }
-
     }
 
     function product_page_add_language_info_to_term($lang){

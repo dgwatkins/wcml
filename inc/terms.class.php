@@ -541,7 +541,20 @@ class WCML_Terms{
             $ret['hide'] = 0;
         }
 
-        
+        if( isset( $wcml_settings['sync_'.$taxonomy ]) ){
+            $ret['show_button'] = $wcml_settings['sync_'.$taxonomy ];
+        }else{
+
+            $attribute_taxonomies = wc_get_attribute_taxonomies();
+            foreach($attribute_taxonomies as $a){
+                $attribute_taxonomies_arr[] = 'pa_' . $a->attribute_name;
+            }
+
+            if( in_array( $taxonomy, $attribute_taxonomies_arr ) ) {
+                $ret['show_button'] = $wcml_settings['sync_variations'];
+            }
+        }
+
         echo json_encode($ret);
         exit;
         

@@ -239,6 +239,11 @@ jQuery(document).ready(function($){
                         $('.js-tax-tab-' + taxonomy).removeAttr('title');
 						 $('.js-tax-tab-' + taxonomy + ' i.otgs-ico-warning').remove();
                      }
+
+                     if(response.show_button){
+                         $('#wcml_tt_sync_assignment').fadeIn();
+                         $('#wcml_tt_sync_desc').fadeIn();
+                     }
                  }
               })       
               
