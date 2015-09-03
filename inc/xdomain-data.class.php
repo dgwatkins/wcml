@@ -39,11 +39,19 @@ class xDomain_Data{
 
     function check_request(){
 
-        if( isset($_GET['xdomain_data']) ){
-            $xdomain_data = json_decode( base64_decode( $_GET['xdomain_data'] ), JSON_OBJECT_AS_ARRAY );
-            if(isset($xdomain_data[ 'wcsid' ])){
-                $this->set_session_data( $xdomain_data[ 'wcsid' ] );
+        if( has_filter( 'WPML_get_cross_domain_language_data' ) ){ // After WPML 3.2.7
+
+            $xdomain_data = apply_filters('WPML_get_cross_domain_language_data', array());
+
+        } else {
+            if (isset($_GET['xdomain_data'])) {
+                $xdomain_data = json_decode(base64_decode($_GET['xdomain_data']), JSON_OBJECT_AS_ARRAY);
+
             }
+        }
+
+        if (isset($xdomain_data['wcsid'])) {
+            $this->set_session_data($xdomain_data['wcsid']);
         }
 
     }
