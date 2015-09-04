@@ -4,7 +4,7 @@ class xDomain_Data{
     
     function __construct(){
 
-        add_filter( 'WPML_cross_domain_language_data', array( $this, 'pass_data_to_domain' ) );
+        add_filter( 'wpml_cross_domain_language_data', array( $this, 'pass_data_to_domain' ) );
 
         add_action( 'init', array( $this, 'check_request' ) );
     }
@@ -39,9 +39,9 @@ class xDomain_Data{
 
     function check_request(){
 
-        if( has_filter( 'WPML_get_cross_domain_language_data' ) ){ // After WPML 3.2.7
+        if( has_filter( 'wpml_get_cross_domain_language_data' ) ){ // After WPML 3.2.7
 
-            $xdomain_data = apply_filters('WPML_get_cross_domain_language_data', array());
+            $xdomain_data = apply_filters('wpml_get_cross_domain_language_data', array());
 
         } else {
             if (isset($_GET['xdomain_data'])) {
