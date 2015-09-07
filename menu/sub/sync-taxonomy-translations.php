@@ -4,18 +4,19 @@
         $display = isset($wcml_settings['sync_variations']) && $wcml_settings['sync_variations'] ? '' : 'display: none';
         ?>
 
-        <form id="wcml_tt_sync_variations" method="post" style="<?php echo $display; ?>">
+        <form id="wcml_tt_sync_variations" method="post">
             <input type="hidden" name="action" value="wcml_sync_product_variations" />
             <input type="hidden" name="taxonomy" value="<?php echo $taxonomy ?>" />
             <input type="hidden" name="wcml_nonce" value="<?php echo wp_create_nonce('wcml_sync_product_variations') ?>" />
             <input type="hidden" name="last_post_id" value="" />
             <input type="hidden" name="languages_processed" value="0" />
-
-            <p id="wcml_tt_sync_assignment" >
-                <input class="button-secondary" type="submit" value="<?php esc_attr_e("Synchronize attributes and update product variations", 'wpml-wcml') ?>" />
-                <img src="<?php echo ICL_PLUGIN_URL . '/res/img/ajax-loader.gif' ?>" alt="loading" height="16" width="16" class="wpml_tt_spinner" />
-            </p>
-            <span class="errors icl_error_text"></span>
+            <div id="wcml_tt_sync_assignment" style="<?php echo $display; ?>" >
+                <p>
+                    <input class="button-secondary" type="submit" value="<?php esc_attr_e("Synchronize attributes and update product variations", 'wpml-wcml') ?>" />
+                    <img src="<?php echo ICL_PLUGIN_URL . '/res/img/ajax-loader.gif' ?>" alt="loading" height="16" width="16" class="wpml_tt_spinner" />
+                </p>
+                <span class="errors icl_error_text"></span>
+            </div>
             <div class="wcml_tt_sycn_preview"></div>
         </form>
 
