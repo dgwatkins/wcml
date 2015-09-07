@@ -872,10 +872,15 @@ class WCML_WC_MultiCurrency{
 
 
     function woocommerce_product_after_variable_attributes_custom_pricing($loop, $variation_data, $variation){
+        global $woocommerce_wpml;
 
-        echo '<tr><td>';
-            $this->custom_pricing_output($variation->ID);
-        echo '</td></tr>';
+        if( $woocommerce_wpml->products->is_original_product( $variation->post_parent ) ) {
+
+            echo '<tr><td>';
+            $this->custom_pricing_output( $variation->ID );
+            echo '</td></tr>';
+
+        }
 
     }
 
