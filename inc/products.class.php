@@ -664,8 +664,8 @@ class WCML_Products{
         ob_start();
         $return = array();
 
-        $this->get_translation_statuses( $original_product_id, $translations, $languages, isset( $data['slang'] ) && $data['slang'] != 'all' ? $data['slang'] : false, $product_trid, $job_id ? $language : false );
-        $return['status'] =  ob_get_clean();
+        $this->get_translation_statuses( $original_product_id, $translations, $languages, isset( $data['slang'] ) && $data['slang'] != 'all' ? $data['slang'] : false, $product_trid, $data['language'] );
+        $return['status_link'] =  ob_get_clean();
 
 
         ob_start();
