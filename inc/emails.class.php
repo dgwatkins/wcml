@@ -258,11 +258,21 @@ class WCML_Emails{
                 $needs_edit  = in_array( $job->status, array( ICL_TM_WAITING_FOR_TRANSLATOR, ICL_TM_IN_PROGRESS, ICL_TM_COMPLETE ) );
                 $language = $job->language_code;
                 $is_editable = $job->translator_id > 0 && $needs_edit;
+
+                $link = 'data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="'.$original_product_id.'" data-language="'.$language.'"';
+
                 if ( $is_editable ) {
-                    $link = '<a data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="'.$original_product_id.'" data-job_id="" data-language="'. $language .'">';
+                    $link .= ' data-job_id="';
                 }else{
-                    $link = '<a data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="'.$original_product_id.'" data-job_id="'.$job_id.'" data-language="'. $language .'">';
+                    $link .= ' data-job_id="'.$job_id;
                 }
+
+                if( strstr( $link, '<a ') ){
+                    $link = '<a '.$link.'" >';
+                }else{
+                    $link = '#" '.$link;
+                }
+
             }
         }
 
