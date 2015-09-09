@@ -96,13 +96,10 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                 /<br><?php _e('Description', 'wpml-wcml'); ?></label>
             <div class="mce_editor_origin">
             </div>
-            <?php  //wp_editor( $product->post_content, 'wcmleditororigcont', array( 'textarea_name'=> 'wcmleditororigcont', 'textarea_rows'=>4, 'editor_class'=>'wcml_content_tr original_value' ) ); ?>
-
             <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>" id="">
                 <i class="otgs-ico-copy"></i>
             </a>
             <div class="mce_editor">
-                <?php //wp_editor( $trn_product ? $trn_product->post_content : '', 'wcmleditorcontent', array( 'textarea_name'=> 'content', 'textarea_rows'=>4, 'editor_class'=>'wcml_content_tr translated_value', 'tinymce' => false ) ); ?>
             </div>
             <textarea id="hidden_original_description_value" ><?php echo  $product->post_content ?></textarea>
             <textarea id="hidden_translated_description_value" ><?php echo $trn_product ? $trn_product->post_content : '' ?></textarea>
@@ -121,7 +118,6 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                     <i class="otgs-ico-copy"></i>
                 </a>
                 <div class="mce_editor">
-                    <?php //wp_editor( $trn_product ? $trn_product->post_excerpt : '', 'wcmleditorexcerpt', array( 'textarea_name'=> 'excerpt', 'textarea_rows'=>4, 'editor_class'=>'wcml_content_tr translated_value' ) ); ?>
                 </div>
             </div>
 
@@ -312,18 +308,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
     </div>
 </div>
 
-<?php
-//if (!$woocommerce_wpml->settings['first_editor_call']) {
-    //load editor js
-    if ( class_exists( '_WP_Editors' ) )
-        _WP_Editors::editor_js();
-    $woocommerce_wpml->settings['first_editor_call'] = true;
-    $woocommerce_wpml->update_settings();
-//}
-
-?>
 <script type="text/javascript">
-    //TODO Sergey: I disabled remembering open/close state and order because it wasn't working anyway, bu if you know how to make it work feel free
     postboxes.save_state = function () {
         return;
     };
@@ -375,17 +360,6 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
     jQuery('.original_description .mce_editor .wcml_content_tr').trigger( 'setdefault' );
     jQuery('.wcml-row-excerpt .mce_editor_origin .wcml_content_tr').trigger( 'setdefault' );
     jQuery('.wcml-row-excerpt .mce_editor .wcml_content_tr').trigger( 'setdefault' );
-
-    //window.parent.tinyMCE.get('original_description_value').setContent('sdsd');
-//    var editor_width = (jQuery('.wpml-dialog-body').width * 0.3) - 30;
-//    jQuery('#term-description-original,#term-excerpt-original').cleditor({
-//        width: editor_width,
-//        height: 195,
-//        controls:     // controls to add to the toolbar
-//            " | source "
-//    });
-//    jQuery('#term-description-original').cleditor()[0].disable(true);
-//    jQuery('#term-excerpt-original').cleditor()[0].disable(true);
 
 </script>
 
