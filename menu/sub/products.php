@@ -407,4 +407,21 @@ $woocommerce_wpml->update_settings(); ?>
 			</div>
 		</div>
 	<?php endif; ?>
+
+	<div class="hidden_original_description">
+		<?php wp_editor( '', 'original_description_value', array( 'textarea_rows' => 4, 'editor_class' => 'wcml_content_tr original_value', 'media_buttons' => false, 'tinymce' => array( 'readonly' => true ), 'quicktags' => array( 'buttons' => 'empty' ) ) ); ?>
+	</div>
+
+	<div class="hidden_original_excerpt">
+		<?php wp_editor( '', 'original_excerpt_value', array( 'textarea_rows' => 4, 'editor_class' => 'wcml_content_tr original_value', 'media_buttons' => false, 'quicktags' => array( 'buttons' => 'empty' ) ) ); ?>
+	</div>
+
+	<div class="hidden_translated_description">
+		<?php wp_editor( '', 'translated_description_value', array( 'textarea_rows' => 4, 'editor_class' => 'wcml_content_tr translated_value' ) ); ?>
+	</div>
+
+	<div class="hidden_translated_excerpt">
+		<?php wp_editor( '', 'translated_excerpt_value', array( 'textarea_rows' => 4, 'editor_class' => 'wcml_content_tr translated_value' ) ); ?>
+	</div>
+
 </form>

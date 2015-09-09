@@ -2,12 +2,23 @@
 .wcml_content_tr {
   width: 100%;
 }
-
+.mce_editor_origin,
 .mce_editor {
   display: inline-block;
   margin: 7px 15px 0;
   vertical-align: middle;
 }
+
+.mce_editor_origin .mce-toolbar-grp,
+.mce_editor_origin .quicktags-toolbar,
+#hidden_original_description_value,
+#hidden_original_excerpt_value,
+#hidden_translated_description_value,
+#hidden_translated_excerpt_value{
+  display: none;
+}
+
+
 
 .wpml-form-row .cleditorMain {
   width: calc(35% - 30px - 40px );
@@ -15,12 +26,18 @@
 .wpml-form-row .mce_editor {
   width: calc(55% - 30px - 80px);
 }
+.wpml-form-row .mce_editor_origin {
+  width: calc(35% - 30px - 80px);
+}
 
 .wcml-row-excerpt .original_value {
   width: calc(40% - 30px - 40px );
 }
 .wcml-row-excerpt .mce_editor {
   width: calc(60% - 30px - 40px );
+}
+.wcml-row-excerpt .mce_editor_origin {
+  width: calc(40% - 30px - 40px );
 }
 
 .wcml-row-purchase-note .original_value {

@@ -91,18 +91,21 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                    value="<?php echo $trn_product ? $trn_product->post_name : '' ?>" type="text">
         </div>
 
-        <div class="wpml-form-row">
+        <div class="wpml-form-row original_description">
             <label for="term-description"><?php _e('Content', 'wpml-wcml'); ?>
                 /<br><?php _e('Description', 'wpml-wcml'); ?></label>
+            <div class="mce_editor_origin">
+            </div>
             <?php  //wp_editor( $product->post_content, 'wcmleditororigcont', array( 'textarea_name'=> 'wcmleditororigcont', 'textarea_rows'=>4, 'editor_class'=>'wcml_content_tr original_value' ) ); ?>
-            <textarea readonly id="term-description-original" class="original_value" cols="22"
-                      rows="7"><?php echo apply_filters('the_content', $product->post_content); ?></textarea>
+
             <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>" id="">
                 <i class="otgs-ico-copy"></i>
             </a>
             <div class="mce_editor">
-                <?php wp_editor( $trn_product ? $trn_product->post_content : '', 'wcmleditorcontent', array( 'textarea_name'=> 'content', 'textarea_rows'=>4, 'editor_class'=>'wcml_content_tr translated_value' ) ); ?>
+                <?php //wp_editor( $trn_product ? $trn_product->post_content : '', 'wcmleditorcontent', array( 'textarea_name'=> 'content', 'textarea_rows'=>4, 'editor_class'=>'wcml_content_tr translated_value', 'tinymce' => false ) ); ?>
             </div>
+            <textarea id="hidden_original_description_value" ><?php echo  $product->post_content ?></textarea>
+            <textarea id="hidden_translated_description_value" ><?php echo $trn_product ? $trn_product->post_content : '' ?></textarea>
         </div>
 
         <div class="postbox wpml-form-row wcml-row-excerpt">
@@ -112,15 +115,18 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
             </h3>
 
             <div class="inside">
-                <textarea readonly id="term-excerpt-original" class="original_value" cols="22"
-                          rows="7"><?php echo apply_filters('the_content', $product->post_excerpt); ?></textarea>
+                <div class="mce_editor_origin">
+                </div>
                 <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>" id="">
                     <i class="otgs-ico-copy"></i>
                 </a>
                 <div class="mce_editor">
-                    <?php wp_editor( $trn_product ? $trn_product->post_excerpt : '', 'wcmleditorexcerpt', array( 'textarea_name'=> 'excerpt', 'textarea_rows'=>4, 'editor_class'=>'wcml_content_tr translated_value' ) ); ?>
+                    <?php //wp_editor( $trn_product ? $trn_product->post_excerpt : '', 'wcmleditorexcerpt', array( 'textarea_name'=> 'excerpt', 'textarea_rows'=>4, 'editor_class'=>'wcml_content_tr translated_value' ) ); ?>
                 </div>
             </div>
+
+            <textarea id="hidden_original_excerpt_value" ><?php echo  $product->post_excerpt?></textarea>
+            <textarea id="hidden_translated_excerpt_value" ><?php echo $trn_product ? $trn_product->post_excerpt : '' ?></textarea>
         </div>
 
         <?php
@@ -326,6 +332,51 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
     };
     postboxes.add_postbox_toggles();
 
+    jQuery('.hidden_original_description>div').appendTo('.original_description .mce_editor_origin');
+    jQuery('.hidden_translated_description>div').appendTo('.original_description .mce_editor');
+    jQuery('.hidden_original_excerpt>div').appendTo('.wcml-row-excerpt .mce_editor_origin');
+    jQuery('.hidden_translated_excerpt>div').appendTo('.wcml-row-excerpt .mce_editor');
+
+    if( typeof tinyMCE !== 'undefined' ) {
+
+        if(  tinyMCE.get('original_description_value') )
+            tinyMCE.get('original_description_value').remove();
+
+        if(  tinyMCE.get('original_excerpt_value') )
+            tinyMCE.get('original_excerpt_value').remove();
+
+        if(  tinyMCE.get('translated_description_value') )
+            tinyMCE.get('translated_description_value').remove();
+
+        if(  tinyMCE.get('translated_excerpt_value') )
+            tinyMCE.get('translated_excerpt_value').remove();
+    }
+
+    if( jQuery('.original_description .mce_editor_origin > div').hasClass( 'tmce-active' ) ){
+        jQuery('.original_description .mce_editor_origin .switch-tmce').trigger( 'click' );
+    }
+
+    if( jQuery('.wcml-row-excerpt .mce_editor_origin > div').hasClass( 'tmce-active' ) ){
+        jQuery('.wcml-row-excerpt .mce_editor_origin .switch-tmce').click();
+    }
+
+    if( jQuery('.original_description .mce_editor > div').hasClass( 'tmce-active' ) ){
+        jQuery('.original_description .mce_editor .switch-tmce').click();
+    }
+
+    if( jQuery('.wcml-row-excerpt .mce_editor > div').hasClass( 'tmce-active' ) ){
+        jQuery('.wcml-row-excerpt .mce_editor .switch-tmce').click();
+    }
+
+    jQuery('#original_description_value').attr('readonly','readonly');
+    jQuery('#original_excerpt_value').attr('readonly','readonly');
+
+    jQuery('.original_description .mce_editor_origin .wcml_content_tr').trigger( 'setdefault' );
+    jQuery('.original_description .mce_editor .wcml_content_tr').trigger( 'setdefault' );
+    jQuery('.wcml-row-excerpt .mce_editor_origin .wcml_content_tr').trigger( 'setdefault' );
+    jQuery('.wcml-row-excerpt .mce_editor .wcml_content_tr').trigger( 'setdefault' );
+
+    //window.parent.tinyMCE.get('original_description_value').setContent('sdsd');
 //    var editor_width = (jQuery('.wpml-dialog-body').width * 0.3) - 30;
 //    jQuery('#term-description-original,#term-excerpt-original').cleditor({
 //        width: editor_width,

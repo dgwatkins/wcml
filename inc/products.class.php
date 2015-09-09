@@ -529,8 +529,8 @@ class WCML_Products{
             $args = array();
             $args['post_title'] = $data['title'];
             $args['post_type'] = $orig_product->post_type;
-            $args['post_content'] = $data['content'];
-            $args['post_excerpt'] = $data['excerpt'];
+            $args['post_content'] = $data['translated_description_value'];
+            $args['post_excerpt'] = $data['translated_excerpt_value'];
             $args['post_status'] = $orig_product->post_status;
             $args['menu_order'] = $orig_product->menu_order;
             $args['ping_status'] = $orig_product->ping_status;
@@ -584,8 +584,8 @@ class WCML_Products{
             $args = array();
             $args['ID'] = $tr_product_id;
             $args['post_title'] = $data['title'];
-            $args['post_content'] = $data['content'];
-            $args['post_excerpt'] = $data['excerpt'];
+            $args['post_content'] = $data['translated_description_value'];
+            $args['post_excerpt'] = $data['translated_excerpt_value'];
             $args['post_status'] = $orig_product->post_status;
             $args['ping_status'] = $orig_product->ping_status;
             $args['comment_status'] = $orig_product->comment_status;
@@ -3169,6 +3169,4 @@ class WCML_Products{
         return $wpdb->get_row($wpdb->prepare("
                             SELECT * FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} x ON x.term_id = t.term_id WHERE t.term_id = %d AND x.taxonomy = %s", $term_id, $taxonomy ) );
     }
-
-
 }

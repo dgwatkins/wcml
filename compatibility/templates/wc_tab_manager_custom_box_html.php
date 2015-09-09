@@ -40,7 +40,7 @@
                                 }
 
                                 wp_editor($content, 'wcmleditor'.$template_data['product_content'].$key.$template_data['lang'], array('textarea_name'=>$template_data['product_content'] .
-                                '_'.$template_data['lang'].'[content][]','textarea_rows'=>20,'editor_class'=>'wcml_content_tr')); ?>
+                                '_'.$template_data['lang'].'[content][]','textarea_rows'=>20,'editor_class'=>'wcml_content_tr','tinymce' => false)); ?>
                             <?php endif; ?>
                         </div>
                         <div class="wcml_editor_buttons">
