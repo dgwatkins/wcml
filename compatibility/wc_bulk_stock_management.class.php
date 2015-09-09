@@ -20,14 +20,20 @@ class WCML_Bulk_Stock_Management {
 		
 		$new_quantity = get_post_meta($id, '_stock', true);
 		
-		$trid = $sitepress->get_element_trid( $id, 'post_product' );
-		$translations = $sitepress->get_element_translations( $trid, 'post_product' );
+		if (is_numeric($new_quantity)) {
+			$trid = $sitepress->get_element_trid( $id, 'post_product' );
+			if (is_numeric($trid)) {
+				$translations = $sitepress->get_element_translations( $trid, 'post_product' );
 		
-		foreach ($translations as $translation) {
-			if ($translation->element_id == $id) {
-				continue;
+				if (is_array($translations)) {
+					foreach ($translations as $translation) {
+						if ( !isset($translation->element_id) || $translation->element_id == $id) {
+							continue;
+						}
+						update_post_meta($translation->element_id, '_stock', $new_quantity);
+					}
+				}
 			}
-			update_post_meta($translation->element_id, '_stock', $new_quantity);
 		}
 		
 	}
