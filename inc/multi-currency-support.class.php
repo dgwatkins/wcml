@@ -33,9 +33,9 @@ class WCML_Multi_Currency_Support{
         }
         
         if(is_admin()){
-            add_action('admin_footer', array($this, 'currency_options_wc_integration'));            
-            add_action('woocommerce_settings_save_general', array($this, 'currency_options_wc_integration_save_hook'));
+            add_action( 'woocommerce_settings_save_general', array( $this, 'currency_options_update_default_currency' ), 5); // below 10
         }
+
         
         add_action( 'wp_enqueue_scripts', array( $this, 'register_styles' ) );
         add_action( 'init', array( $this, 'register_styles' ) );
@@ -417,163 +417,30 @@ class WCML_Multi_Currency_Support{
         
         exit;
     }
-    
-    function currency_options_wc_integration(){
-        global $woocommerce_wpml;
-        
-        if($woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT && count($this->currencies) > 1 && isset($_GET['page']) && $_GET['page'] == 'wc-settings' && (!isset($_GET['tab']) || (isset($_GET['tab']) && $_GET['tab'] == 'general'))){
 
-	        wp_enqueue_style( 'wcml_wc', WCML_PLUGIN_URL . '/res/css/wcml-wc-integration.css', array(), WCML_VERSION );
-            
-            $wc_currencies = get_woocommerce_currencies();
-            $wc_currency = get_option('woocommerce_currency');
-                                     
-            foreach($this->currencies as $code => $currency){
-                $selected = $code == $wc_currency ? ' selected' : '';
-                $menu[] = '<a class="wcml_currency_options_menu_item' . $selected . '" href="#" data-currency="' . $code . '">' . 
-                    sprintf('%s (%s)', $wc_currencies[$code], get_woocommerce_currency_symbol($code)) . '</a>';
-                
-                if($code != $wc_currency){
-                    $symbols[] = get_woocommerce_currency_symbol($code);
-                    
-                    $options_currency_pos[] = $currency['position'];
-                    $options_thousand_sep[] = $currency['thousand_sep'];
-                    $options_decimal_sep[] = $currency['decimal_sep'];
-                    $options_num_decimals[] = $currency['num_decimals'];
-                }
-                
-            }
-            
-            $menu = '<p>' . esc_js(__('Select the currency you want to set the options for:', 'wpml-wcml')) . '</p><br />' . join (' | ', $menu);
-            
-            $codes = "['" . join("', '", array_keys($this->get_currencies())) . "']";            
-            $symbols = "['" . join("', '", $symbols) . "']";            
-            $symbol_default =  get_woocommerce_currency_symbol($wc_currency);
-            $symbol_default = html_entity_decode($symbol_default);
-            
-            $options_currency_pos = "['" . join("', '", $options_currency_pos) . "']";            
-            $options_thousand_sep = "['" . join("', '", $options_thousand_sep) . "']";            
-            $options_decimal_sep = "['" . join("', '", $options_decimal_sep) . "']";            
-            $options_num_decimals = "['" . join("', '", $options_num_decimals) . "']";            
-            
-            wc_enqueue_js( "
-                var wcml_wc_currency_options_integration = {
-                    
-                    init: function(){  
-                        
-                        var table = jQuery('.form-table').eq(1);                         
-                        var currencies = {$codes};
-                        var symbols = {$symbols};
-                        var symbol_default = '{$symbol_default}';
-                        
-                        var options_currency_pos = {$options_currency_pos};
-                        var options_thousand_sep = {$options_thousand_sep};
-                        var options_decimal_sep = {$options_decimal_sep};
-                        var options_num_decimals = {$options_num_decimals};
-                        
-                        table.find('tr').each(function( index ){
-                            if(index > 0){
-                                jQuery(this).addClass('wcml_co_row');
-                                jQuery(this).addClass('wcml_co_row_{$wc_currency}');
-                            }
-                        });
-                                                
-                        table.find('tr').each(function( index ){
-                            if(index > 0){
-                                for(var i in currencies){
-                                    var currency_option_row = jQuery(this).clone();    
-                                    currency_option_row.removeClass('wcml_co_row_{$wc_currency}');
-                                    currency_option_row.addClass('wcml_co_row_' + currencies[i]);
-                                    currency_option_row.addClass('hidden');
-                                    
-                                    var html = currency_option_row.html();
-                                    
-                                    html = html.replace(/woocommerce_currency_pos/g, 'woocommerce_currency_pos_' + currencies[i]);
-                                    html = html.replace(/woocommerce_price_thousand_sep/g, 'woocommerce_price_thousand_sep_' + currencies[i]);
-                                    html = html.replace(/woocommerce_price_decimal_sep/g, 'woocommerce_price_decimal_sep_' + currencies[i]);
-                                    html = html.replace(/woocommerce_price_num_decimals/g, 'woocommerce_price_num_decimals_' + currencies[i]);
-                                    
-                                    html = html.replace(new RegExp(symbol_default, 'g'), symbols[i]);
-                                    
-                                    currency_option_row.html(html);
-                                    
-                                    currency_option_row.find('select[name=woocommerce_currency_pos_' + currencies[i] + ']').val(options_currency_pos[i]);
-                                    currency_option_row.find('input[name=woocommerce_price_thousand_sep_' + currencies[i] + ']').val(options_thousand_sep[i]);
-                                    currency_option_row.find('input[name=woocommerce_price_decimal_sep_' + currencies[i] + ']').val(options_decimal_sep[i]);
-                                    currency_option_row.find('input[name=woocommerce_price_num_decimals_' + currencies[i] + ']').val(options_num_decimals[i]);
-                                    
-                                    jQuery(this).after(currency_option_row);
-                                }
-                            }
-                        });
+    function currency_options_update_default_currency(){
 
-                        table.find('tr').eq(0).after('<tr valign=\"top\"><td>&nbsp;</td><td>{$menu}</td></tr>');                
-                        jQuery(document).on('click', '.wcml_currency_options_menu_item', function(){
-                            jQuery('.wcml_currency_options_menu_item').removeClass('selected');
-                            jQuery(this).addClass('selected');
-                            
-                            jQuery('.wcml_co_row').hide();
-                            jQuery('.wcml_co_row_' + jQuery(this).data('currency')).show();
-                            
-                            return false;
-                        });
-                        
-                        
-                    }                        
-                    
-                }
-                
-                wcml_wc_currency_options_integration.init();
-                
-                
-            " );                     
+        $current_currency = get_option('woocommerce_currency');
+        $new_currency = $_POST['woocommerce_currency'];
 
-        }
-    }
-    
-    function currency_options_wc_integration_save_hook(){
-        global $woocommerce_wpml;
-        
-        if( $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
-            
-            $save = false;
-            
-            $options = array(
-                'woocommerce_currency_pos' => 'position',
-                'woocommerce_price_thousand_sep' => 'thousand_sep',
-                'woocommerce_price_decimal_sep' => 'decimal_sep',
-                'woocommerce_price_num_decimals' => 'num_decimals'
+        if($new_currency != $current_currency) {
+
+            $message_args = array(
+                'id' => 'wcml-default-currency-changed-' . rand(1, 1000),
+                'text' => sprintf(__('The default currency was changed. In order to show accurate prices in all currencies, you need to update the exchange rates under the %sMulti-currency%s configuration.',
+                    'wpml-wcml'), '<a href="' . admin_url('admin.php?page=wpml-wcml&tab=currencies') . '">', '</a>'),
+                'type' => 'warning',
+                'group' => 'wcml-multi-currency',
+                'admin_notice' => true,
+                'hide' => true
             );
 
-            $woocommerce_currency = get_option('woocommerce_currency', true); 
+            ICL_AdminNotifier::add_message($message_args);
 
-            foreach($options as $wc_key => $key){
-                foreach($this->get_currencies() as $code => $currency){
-                    if(isset($_POST[$wc_key.'_'. $code]) && $_POST[$wc_key.'_'. $code] != $this->currencies[$code][$key]){
-                        $save = true;
-                        $this->currencies[$code][$key] = $_POST[$wc_key.'_'. $code];
-                    }
-                }
-
-                //update default currency
-                if(isset($_POST[$wc_key]) && $_POST[$wc_key] != $this->currencies[$woocommerce_currency][$key]){
-                    $save = true;
-                    $this->currencies[$woocommerce_currency][$key] = $_POST[$wc_key];
-                }
-
-            }
-
-            if($save){
-                $woocommerce_wpml->settings['currency_options'] = $this->currencies;
-                $woocommerce_wpml->update_settings();
-                
-                $this->init_currencies();
-            }
-            
         }
-        
+
     }
-    
+
     function filter_currency_position_option($value){
 
         $currency_code = $this->check_admin_order_currency_code();
