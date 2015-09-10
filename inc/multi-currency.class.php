@@ -105,7 +105,7 @@ class WCML_WC_MultiCurrency{
         }
         $price = $this->convert_price_amount($price, $currency);
 
-        $price = $this->apply_rounding_rules($price);
+        $price = $this->apply_rounding_rules($price, $currency);
 
         return $price;
         
@@ -125,12 +125,28 @@ class WCML_WC_MultiCurrency{
 
         $currency_details = $woocommerce_wpml->multi_currency_support->get_currency_details_by_code( $currency );
 
+        switch ( $currency_details[ 'position' ] ) {
+            case 'left' :
+                $format = '%1$s%2$s';
+                break;
+            case 'right' :
+                $format = '%2$s%1$s';
+                break;
+            case 'left_space' :
+                $format = '%1$s&nbsp;%2$s';
+                break;
+            case 'right_space' :
+                $format = '%2$s&nbsp;%1$s';
+                break;
+        }
+
         $wc_price_args = array(
 
             'currency'              => $currency,
             'decimal_separator'     => $currency_details['decimal_sep'],
             'thousand_separator'    => $currency_details['thousand_sep'],
-            'decimals'              => $currency_details['num_decimals']
+            'decimals'              => $currency_details['num_decimals'],
+            'price_format'          => $format,
 
 
         );
@@ -139,7 +155,7 @@ class WCML_WC_MultiCurrency{
 
         return $price;
     }
-    
+
     function apply_rounding_rules($price, $currency = false ){
         global $woocommerce_wpml;
 
