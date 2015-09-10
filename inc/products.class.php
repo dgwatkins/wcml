@@ -1127,6 +1127,11 @@ class WCML_Products{
                     }
                 }
 
+                //sync description
+                if( isset( $data['variation_desc'][$variation_id] ) ){
+                    update_post_meta( $variation_id, '_variation_description', $data['variation_desc'][$variation_id] );
+                }
+
                 // sync taxonomies
                 if ( !empty( $all_taxs ) ) {
                     foreach ( $all_taxs as $tt ) {
@@ -2128,6 +2133,8 @@ class WCML_Products{
             $template_data['original'] = false;
         }
 
+        $variations = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'product_variation'",$product_id));
+
         //file path
         if (!$woocommerce_wpml->settings['file_path_sync']) {
             global $wpdb;
@@ -2135,7 +2142,6 @@ class WCML_Products{
             $template_data['all_file_paths'] = $this->get_product_content_translation($product_id, 'variations_file_paths', $lang);
 
             if(version_compare(preg_replace('#-(.+)$#', '', $woocommerce->version), '2.1', '>')){
-                $variations = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'product_variation'",is_null($trn_product_id)?$product_id:$trn_product_id));
 
                 foreach($variations as $variation){
                     $files = maybe_unserialize(get_post_meta($variation->ID,'_downloadable_files',true));
@@ -2159,15 +2165,16 @@ class WCML_Products{
 
         $is_product_has_variations = $wpdb->get_var($wpdb->prepare("SELECT count(id) FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'product_variation'",$product_id));
 
-        foreach ($template_data['all_file_paths'] as $key => $price) {
-                $template_data['all_variations_ids'][] = $key;
+        foreach ($variations as $variation) {
+
+                $template_data['all_variations_ids'][] = $variation->ID;
         }
 
         if (!$is_product_has_variations){
             $template_data['empty_variations'] = true;
         } elseif($original_language != $lang && is_null($trn_product_id)){
             $template_data['empty_translation'] = true;
-        }elseif (!$is_downloable){
+        }elseif (!isset($is_downloable) || !$is_downloable){
             $template_data['not_downloaded'] = true;
         }
 
@@ -3196,5 +3203,12 @@ class WCML_Products{
         global $wpdb;
         return $wpdb->get_row($wpdb->prepare("
                             SELECT * FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} x ON x.term_id = t.term_id WHERE t.term_id = %d AND x.taxonomy = %s", $term_id, $taxonomy ) );
+    }
+
+    function wcml_get_translated_variation( $variation_id, $language ){
+
+        global $wpdb;
+        return $wpdb->get_var( $wpdb->prepare( "SELECT tt.element_id FROM {$wpdb->prefix}icl_translations AS t INNER JOIN {$wpdb->prefix}icl_translations AS tt ON t.trid = tt.trid WHERE t.element_type = 'post_product_variation' AND t.element_id = %s AND tt.language_code = %s", $variation_id, $language ) );
+
     }
 }

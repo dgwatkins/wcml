@@ -226,16 +226,16 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
             }
         }
 
-        if(!$woocommerce_wpml->settings['file_path_sync'] && isset( $product_type ) && $product_type == 'variable'): ?>
+        if(isset( $product_type ) && $product_type == 'variable'): ?>
 
             <div class="postbox wpml-form-row wcml-row-images">
                 <div title="<?php _e('Click to toggle'); ?>" class="handlediv"><br></div>
                 <h3 class="hndle">
-                    <span><?php _e('Variations files', 'wpml-wcml') ?></span>
+                    <span><?php _e('Variations', 'wpml-wcml') ?></span>
                 </h3>
 
                 <div class="inside">
-                    <?php echo $woocommerce_wpml->products->product_variations_box($product_id,$language,$is_duplicate_product); ?> ?>
+                    <?php echo $woocommerce_wpml->products->product_variations_box( $product_id, $language, $is_duplicate_product ); ?>
                 </div>
             </div>
         <?php endif; ?>
