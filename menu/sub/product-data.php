@@ -297,7 +297,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
 
     <div class="wcml-pt-progress"></div>
     <div class="alignleft">
-        <a class="button-secondary cancel wpml-dialog-close-button"><?php _e('Cancel', 'wpml-wcml'); ?></a>
+        <a class="button-secondary cancel wpml-dialog-close-button" ><?php _e('Cancel', 'wpml-wcml'); ?></a>
     </div>
     <div class="alignright">
         <?php $nonce = wp_create_nonce('update_product_actions'); ?>

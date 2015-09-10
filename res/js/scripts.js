@@ -55,168 +55,7 @@ jQuery(document).ready(function($){
             return false;
         }
     });
-   
-   $('.wcml_details').click(function(e){
-        e.preventDefault();
-        var element = $(this),
-        textClosed = element.data('text-closed'),
-        textOpened = element.data('text-opened'),
-        $table = $(element.attr('href')),
-        parent = element.closest('tr');
 
-        if ( $table.is(':visible') ){
-            $table.find('input').each(function(){
-                element.val(element.data('def'));
-            });
-            $table.closest('.outer').hide();
-            element.text(textClosed);
-        }else {
-            if($table.size() > 0){
-            //set def data
-            $table.find('input').each(function(){
-                    element.data('def',element.val());
-            });
-            $table.closest('.outer').show();
-                element.text(textOpened);
-            }else{
-                //load product data
-                var id = $(this).attr('href').replace(/#prid_/, '');
-                var job_id = $(this).attr('job_id');
-                element.parent().find('.spinner').show();
-                $.ajax({
-                    type : "post",
-                    url : ajaxurl,
-                    dataType: 'json',
-                    data : {
-                        action: "wcml_product_data",
-                        product_id : id,
-                        job_id : job_id,
-                        wcml_nonce: $('#get_product_data_nonce').val()
-                    },
-                    success: function(response) {
-                        if(typeof response.error !== "undefined"){
-                            alert(response.error);
-                        }else{
-                            //update status block
-                            $(response.html).insertAfter(parent).css('display','table-row');
-
-                            //set def data
-                            $table.find('input').each(function(){
-                                element.data('def',element.val());
-                            });
-                            element.text(textOpened);
-                            element.parent().find('.spinner').hide();
-                            wpLink.init();
-                        }
-                    }
-                });
-            }
-
-        }
-        return false;
-   });
-
-    $(document).on('click', 'button[name="cancel"]', function(){
-       var $outer = $(this).closest('.outer');
-
-       $outer.find('input').each(function(){
-           $(this).val($(this).data('def'));
-       });
-
-       var prid = $outer.data('prid');
-       $outer.hide('fast', function(){
-            var $closeButton = $('#wcml_details_' + prid);
-            $closeButton.text( $closeButton.data('text-closed') );
-       });
-
-       $(this).parent().find('input').each(function(){
-           $(this).val($(this).data('def'));
-       });
-       $(this).closest('.outer').slideUp('3000');
-
-   });
-
-    $(document).on('click','.wcml_update', function() {
-      var field = $(this);
-
-      var spl = $(this).attr('name').split('#');
-
-      var product_id = spl[1];
-      var language   = spl[2];
-
-      var records = '';
-       field.closest('tr').find("input").each(function(){
-          records += $(this).serialize()+"&";
-      });
-       field.closest('tr').find("textarea").each(function(){
-           records += $(this).serialize()+"&";
-       });
-       field.hide();
-       field.parent().find('.wcml_spinner').css('display','inline-block');
-
-      $.ajax({
-         type : "post",
-         url : ajaxurl,
-         dataType: 'json',
-         data : {
-             action: "wcml_update_product",
-             product_id : product_id,
-             language   : language,
-             job_id     : field.closest('tr').find('input[name="job_id"]').val(),
-             records    : records,
-             slang      : $('.wcml_translation_status_lang').val(),
-             wcml_nonce: $('#upd_product_nonce').val()
-         },
-         success: function(response) {
-             if(typeof response.error !== "undefined"){
-                 alert(response.error);
-             }else{
-             //update status block
-             $('.translations_statuses.prid_'+product_id).html(response.status);
-
-             //update slug
-             if( field.closest('.outer').find('.edit_slug_warning').size() >0 ){
-                 field.closest('.outer').find('input[name="post_name_'+language+'"]').removeAttr('disabled').removeClass('hidden');
-                 field.closest('.outer').find('.edit_slug_show_link').removeClass('hidden');
-                 field.closest('.outer').find('.edit_slug_hide_link').removeClass('hidden');
-                 field.closest('.outer').find('.edit_slug_warning').remove();
-             }
-             field.closest('.outer').find('input[name="post_name_'+language+'"]').val(response.slug);
-
-             //update images block
-             if(language in response.images){
-                 var value = response.images[language];
-                 field.closest('.outer').find('tr[rel="'+language+'"] .prod_images').closest('td').html(value).find('.prod_images').css('display','none');
-                 }
-
-                 //update variations block
-
-                 if(typeof response.variations !== "undefined" && (language in response.variations)){
-                 var value = response.variations[language];
-                 field.closest('.outer').find('tr[rel="'+language+'"] .prod_variations').closest('td').html(value).find('.prod_variations').css('display','none');
-                 }
-
-                 //set def data
-                 field.closest('.outer').find('input').each(function(){
-                     $(this).data('def',$(this).val());
-                 });
-
-
-
-                 field.val($('#wcml_product_update_button_label').html());
-
-             }
-             field.parent().find('.wcml_spinner').hide();
-             field.prop('disabled', true).removeClass('button-primary').addClass('button-secondary');
-             field.show();
-             
-             $('#prid_' + product_id + ' .js-wcml_duplicate_product_undo_' + language).fadeOut();
-             
-         }
-      });
-
-      return false;
-   });
    
    if(typeof WPML_Translate_taxonomy != 'undefined' && typeof WPML_Translate_taxonomy.callbacks != 'undefined'){
        
@@ -651,26 +490,6 @@ jQuery(document).ready(function($){
 
             // Finally, open the modal.
             downloadable_file_frame.open();
-        });
-    }
-
-    if($(".wcml_editor_original").size() > 0 ){
-        $(".wcml_editor_original").resizable({
-            handles: 'n, s',
-            resize: function( event, ui ) {
-                $(this).find('.cleditorMain').css('height',$(this).height() - 60)
-            },
-            start: function(event, ui) {
-                $('<div class="ui-resizable-iframeFix" style="background: #FFF;"></div>')
-                    .css({
-                        width:'100%', height: '100%',
-                        position: "absolute", opacity: "0.001", zIndex: 160001
-                    })
-                    .prependTo(".wcml_editor_original");
-            },
-            stop: function(event, ui) {
-                $('.ui-resizable-iframeFix').remove()
-            }
         });
     }
 
@@ -1387,45 +1206,50 @@ jQuery(document).ready(function($){
 
     $(document).on( 'before_close_dialog', '.wpml-dialog-close-button', function(e) {
         var data = $(this).data();
-        if(!data.stay){
-            $('.original_description .mce_editor_origin>div').appendTo('.hidden_original_description');
-            $('.original_description .mce_editor>div').appendTo('.hidden_translated_description');
-            $('.wcml-row-excerpt .mce_editor_origin>div').appendTo('.hidden_original_excerpt');
-            $('.wcml-row-excerpt .mce_editor>div').appendTo('.hidden_translated_excerpt');
-
-
-            if( typeof tinyMCE !== 'undefined' ) {
-
-                if(  tinyMCE.get('original_description_value') )
-                    tinyMCE.get('original_description_value').remove();
-
-                if(  tinyMCE.get('original_excerpt_value') )
-                    tinyMCE.get('original_excerpt_value').remove();
-
-                if(  tinyMCE.get('translated_description_value') )
-                    tinyMCE.get('translated_description_value').remove();
-
-                if(  tinyMCE.get('translated_excerpt_value') )
-                    tinyMCE.get('translated_excerpt_value').remove();
-            }
-
-            if( $('.hidden_original_description > div').hasClass( 'tmce-active' ) ){
-                $('.hidden_original_description .switch-tmce').trigger( 'click' );
-            }
-
-            if( $('.hidden_translated_description > div').hasClass( 'tmce-active' ) ){
-                $('.hidden_translated_description .switch-tmce').click();
-            }
-
-            if( $('.hidden_original_excerpt > div').hasClass( 'tmce-active' ) ){
-                $('.hidden_original_excerpt .switch-tmce').click();
-            }
-
-            if( $('.hidden_translated_excerpt > div').hasClass( 'tmce-active' ) ){
-                $('.hidden_translated_excerpt .switch-tmce').click();
-            }
-
+        if (!data.action) {
+            //reset link object
+            var elem = jQuery('a[data-id="' + jQuery('input[name="original_product_id"]').val() + '"]').filter('[data-language="' + jQuery('input[name="language"]').val() + '"]');
+            elem.replaceWith('<a data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="' + elem.attr('data-id') + '" data-job_id="' + elem.attr('data-job_id') + '" data-language="' + elem.attr('data-language') + '" title="' + elem.attr('title') + '">' + elem.html() + '</a>');
         }
+
+        $('.original_description .mce_editor_origin>div').appendTo('.hidden_original_description');
+        $('.original_description .mce_editor>div').appendTo('.hidden_translated_description');
+        $('.wcml-row-excerpt .mce_editor_origin>div').appendTo('.hidden_original_excerpt');
+        $('.wcml-row-excerpt .mce_editor>div').appendTo('.hidden_translated_excerpt');
+
+
+        if( typeof tinyMCE !== 'undefined' ) {
+
+            if(  tinyMCE.get('original_description_value') )
+                tinyMCE.get('original_description_value').remove();
+
+            if(  tinyMCE.get('original_excerpt_value') )
+                tinyMCE.get('original_excerpt_value').remove();
+
+            if(  tinyMCE.get('translated_description_value') )
+                tinyMCE.get('translated_description_value').remove();
+
+            if(  tinyMCE.get('translated_excerpt_value') )
+                tinyMCE.get('translated_excerpt_value').remove();
+        }
+
+        //if( $('.hidden_original_description > div').hasClass( 'tmce-active' ) ){
+        //    $('.hidden_original_description .switch-tmce').trigger( 'click' );
+        //}
+        //
+        //if( $('.hidden_translated_description > div').hasClass( 'tmce-active' ) ){
+        //    $('.hidden_translated_description .switch-tmce').click();
+        //}
+        //
+        //if( $('.hidden_original_excerpt > div').hasClass( 'tmce-active' ) ){
+        //    $('.hidden_original_excerpt .switch-tmce').click();
+        //}
+        //
+        //if( $('.hidden_translated_excerpt > div').hasClass( 'tmce-active' ) ){
+        //    $('.hidden_translated_excerpt .switch-tmce').click();
+        //}
+
+
 
     });
 
