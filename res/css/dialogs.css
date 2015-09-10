@@ -28,10 +28,10 @@
   width: calc(35% - 30px - 40px );
 }
 .wpml-form-row .mce_editor {
-  width: calc(55% - 30px - 80px);
+  width: calc(40% - 30px - 40px);
 }
 .wpml-form-row .mce_editor_origin {
-  width: calc(35% - 30px - 80px);
+  width: calc(35% - 30px - 40px);
 }
 
 .wcml-row-excerpt .original_value {
