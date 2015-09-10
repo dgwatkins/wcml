@@ -21,7 +21,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
 }
 
 ?>
-<?php //var_dump($language); ?>
+
 <div class="wpml-dialog wpml-dialog-translate wcml-pt-form">
     <header class="wpml-dialog-header">
         <h2 class="wpml-dialog-title"><?php printf(__('Product translation:  %s', 'wpml-wcml'), '<strong>' . $product->post_title . '</strong>'); ?></h2>

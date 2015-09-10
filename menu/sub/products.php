@@ -274,14 +274,6 @@ $woocommerce_wpml->update_settings(); ?>
 							?>
 						</a>
                     </td>
-					<?php /*
-                        <a href="#" data-action="product-translation-dialog" class="wpml-dialog" data-id="<?php echo $product->ID; ?>" data-job_id="<?php echo $job_id; ?>" data-language="fr"><?php _e('Pencil Icon', 'wpml-wcml') ?></a>
-
-                        <a href="#" id="test-dialog-button" data-content="static_dialog" class="wpml-dialog" data-id="<?php echo $product->ID; ?>" data-job_id="<?php echo $job_id; ?>" data-language="fr"><?php _e('Static Dialog', 'wpml-wcml') ?></a>
-
-                        <div id="static_dialog" style="display: none"><h3>Welcome</h3><p>This is a static dialog. Woot!</p></div>
-                    */ ?>
-
 					<td class="wpml-col-title  wpml-col-title-flag">
 						<?php echo $product->post_parent != 0 ? '&#8212; ' : ''; ?>
 						<strong>
@@ -348,11 +340,8 @@ $woocommerce_wpml->update_settings(); ?>
 
 
 					<td class="column-date">
-						<?php //TODO Sergey: Put here this nice WP function that shows "13 mins ago" and knows about future posts etc. ;)
-						?>
 						<?php if ( $product->post_status == "publish" ) { ?>
 							<?php echo date(' Y/m/d', strtotime( $product->post_date ) ); ?><br>
-							<?php //TODO Sergey: Consider using the same textdomain as WordPress or as WooCommerce (so not always "wpml-wcml") in proper places so that the translation do not have to be done more than once...?>
 							<?php _e( 'Published', 'wpml-wcml' ); ?>
 						<?php } else { ?>
 							<?php echo date(' Y/m/d', strtotime( $product->post_modified ) ); ?><br>

@@ -947,6 +947,34 @@ class WCML_Products{
                     $job_id  = $wpdb->get_var( $wpdb->prepare( "SELECT tj.job_id FROM {$wpdb->prefix}icl_translate_job  AS tj LEFT JOIN {$wpdb->prefix}icl_translation_status AS ts ON tj.rid = ts.rid WHERE ts.translation_id=%d", $product_translations[$language['code']]->translation_id ) );
                 }else{
                     $job_id = false;
+                }
+
+                if( !current_user_can('wpml_manage_woocommerce_multilingual') && isset($product_translations[$language['code']])){
+                    $tr_status = $wpdb->get_row($wpdb->prepare("SELECT status,translator_id FROM ". $wpdb->prefix ."icl_translation_status WHERE translation_id = %d",$product_translations[$language['code']]->translation_id));
+
+                    if(!is_null($tr_status) && get_current_user_id() != $tr_status->translator_id ){
+                        if($tr_status->status == ICL_TM_IN_PROGRESS){ ?>
+                            <a title="<?php _e( 'Translation in progress', 'wpml-wcl' ); ?>"><i class="otgs-ico-in-progress"></i></a>
+                            <?php continue;
+                        }elseif($tr_status->status == ICL_TM_WAITING_FOR_TRANSLATOR && !$job_id ){
+                            $tr_job_id = $wpdb->get_var($wpdb->prepare("
+                                                                    SELECT j.job_id
+                                                                        FROM {$wpdb->prefix}icl_translate_job j
+                                                                        JOIN {$wpdb->prefix}icl_translation_status s ON j.rid = s.rid
+                                                                    WHERE s.translation_id = %d
+                                                                ", $product_translations[$language['code']]->translation_id ) );
+                            ?>
+                            <a data-action="product-translation-dialog" class="js-wpml-dialog-trigger"
+                               data-id="<?php echo $original_product_id; ?>"
+                               data-job_id="<?php echo $tr_job_id; ?>"
+                               data-language="<?php echo $language['code'];?>"
+                               title="<?php echo $language['english_name'] . ': ' . __( 'Take this and edit', 'wpml-wcl' );?>">
+                                <i class="otgs-ico-add"></i>
+                            </a>
+
+                            <?php continue;
+                        }
+                    }
                 } ?>
                 <a data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="<?php echo $original_product_id; ?>" data-job_id="<?php echo $job_id; ?>" data-language="<?php echo $language['code'];?>"
                    <?php if (isset($product_translations[$language['code']])) {
