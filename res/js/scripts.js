@@ -927,61 +927,6 @@ jQuery(document).ready(function($){
             return false;
         }
     }
-    
-    
-    // expand|collapse for product images and product variations tables
-    $(document).on('click','.js-table-toggle',function(e){
-
-        e.preventDefault();
-
-        var textOpened = $(this).data('text-opened');
-        var textClosed = $(this).data('text-closed');
-        var $table = $(this).next('.js-table');
-        
-        var this_id = $(this).attr('id');
-        if($(this).hasClass('prod_images_link')){
-            var id_and_language = this_id.replace(/^prod_images_link_/, '');
-        }else{
-            var id_and_language = this_id.replace(/^prod_variations_link_/, '');
-        }
-        var spl = id_and_language.split('_');
-        var language    = spl[1];
-        var product_id  = spl[0];
-        
-        if ( $table.is(':visible') ) {
-            $table.hide();
-            $(this)
-                .find('span')
-                .text( textClosed );
-            $(this)
-                .find('i')
-                .removeClass('otgs-ico-caret-up')
-                .addClass('otgs-ico-caret-down');
-            if($(this).hasClass('prod_images_link')){
-                $('#prod_images_' + product_id + '_' + language).hide();
-            }else{
-                $('#prod_variations_' + product_id  + language).hide();
-            }
-
-        }
-        else {
-            $table.show();
-            if($(this).hasClass('prod_images_link')){
-                $('#prod_images' + product_id  + language).show();
-            }else{
-                $('#prod_variations_' + product_id  + language).show();
-            }
-            $(this)
-                .find('span')
-                .text( textOpened );
-            $(this)
-                .find('i')
-                .removeClass('otgs-ico-caret-down')
-                .addClass('otgs-ico-caret-up');
-        }
-
-        return false;
-    });
 
     // wp-pointers
     $('.js-display-tooltip').click(function(){

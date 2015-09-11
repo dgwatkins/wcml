@@ -820,10 +820,25 @@ class WCML_Products{
     }
 
     function get_product_atributes($product_id){
+        $attributes = maybe_unserialize( get_post_meta($product_id,'_product_attributes',true) );
+        if(!is_array($attributes)){
+            $attributes = array();
+        }
+        return $attributes;
+    }
+
+    function get_custom_product_atributes($product_id){
         $attributes = get_post_meta($product_id,'_product_attributes',true);
         if(!is_array($attributes)){
             $attributes = array();
         }
+
+        foreach( $attributes as $key => $attribute ){
+            if( $attribute['is_taxonomy'] ){
+                unset( $attributes[$key] );
+            }
+        }
+
         return $attributes;
     }
 
@@ -2187,12 +2202,15 @@ class WCML_Products{
         include WCML_PLUGIN_PATH . '/menu/sub/wcml_editor_box.php';
     }
 
-    function product_images_box( $orig_product_id, $lang, $is_duplicate_product = false ) {
+    function product_images_box( $orig_product_id, $lang, $is_duplicate_product = false, $product_images = false ) {
         global $sitepress,$wpdb;
 
         $product_id = apply_filters( 'translate_object_id', $orig_product_id, 'product', false, $lang );
 
-        $product_images = $this->product_images_ids( $orig_product_id );
+        if( !$product_images ){
+            $product_images = $this->product_images_ids( $orig_product_id );
+        }
+
         if ( empty( $product_images ) ) {
             $empty_images = true;
         }
