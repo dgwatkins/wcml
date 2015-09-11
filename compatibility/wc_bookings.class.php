@@ -58,6 +58,9 @@ class WCML_Bookings{
 
         add_filter( 'parse_query', array( $this, 'booking_filters_query' ) );
         add_filter('wcml_exception_duplicate_products_in_cart', array($this, 'check_on_bookable_product_in_cart'), 10, 2 );
+        add_filter('woocommerce_bookings_in_date_range_query', array($this, 'bookings_in_date_range_query'));
+
+        $this->clear_transient_fields();
 
     }
 
@@ -1581,4 +1584,38 @@ class WCML_Bookings{
         return false;
 
     }
+
+    function bookings_in_date_range_query($booking_ids){
+        global $sitepress;
+
+        foreach ( $booking_ids as $key => $booking_id ) {
+
+            $language_code = $sitepress->get_language_for_element( get_post_meta( $booking_id, '_booking_product_id', true ) , 'post_product' );
+            $current_language = $sitepress->get_current_language();
+
+            if( $language_code != $current_language ){
+                unset( $booking_ids[$key] );
+            }
+
+        }
+
+        return $booking_ids;
+
+    }
+
+    function clear_transient_fields(){
+
+        if ( isset( $_GET['post_type'] ) && $_GET['post_type'] == 'wc_booking' && isset( $_GET['page'] ) && $_GET['page'] == 'booking_calendar' ) {
+
+            global $wpdb;
+            //delete transient fields
+            $wpdb->query("
+                DELETE FROM $wpdb->options
+		        WHERE option_name LIKE '%book_dr_%'
+		    ");
+
+        }
+
+    }
+
 }
