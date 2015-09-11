@@ -101,8 +101,8 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
             </a>
             <div class="mce_editor">
             </div>
-            <textarea id="hidden_original_description_value" ><?php echo  $product->post_content ?></textarea>
-            <textarea id="hidden_translated_description_value" ><?php echo $trn_product ? $trn_product->post_content : '' ?></textarea>
+            <textarea id="hidden_original_description_value" ><?php echo apply_filters( 'the_content', $product->post_content )?></textarea>
+            <textarea id="hidden_translated_description_value" ><?php echo apply_filters( 'the_content', $trn_product ? $trn_product->post_content : '' ) ?></textarea>
         </div>
 
         <div class="postbox wpml-form-row wcml-row-excerpt">
@@ -121,8 +121,8 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                 </div>
             </div>
 
-            <textarea id="hidden_original_excerpt_value" ><?php echo  $product->post_excerpt?></textarea>
-            <textarea id="hidden_translated_excerpt_value" ><?php echo $trn_product ? $trn_product->post_excerpt : '' ?></textarea>
+            <textarea id="hidden_original_excerpt_value" ><?php echo apply_filters( 'the_content', $product->post_excerpt ) ?></textarea>
+            <textarea id="hidden_translated_excerpt_value" ><?php echo apply_filters( 'the_content', $trn_product ? $trn_product->post_excerpt : '' ) ?></textarea>
         </div>
 
         <?php
