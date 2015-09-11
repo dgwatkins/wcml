@@ -1186,24 +1186,6 @@ jQuery(document).ready(function($){
 
 
     //dialog actions
-    $(document).on( 'mousedown', '.wpml-dialog-close-button', function(e) {
-
-        var data = $(this).data();
-        if (data.action) {
-            $('.wcml_content_tr').each(function () {
-                var editor_id = $(this).attr('id');
-                var editor_area = $(this);
-                if (editor_id in tinyMCE.editors) {
-                    var tinymce_editor = tinyMCE.get(editor_id);
-                    if (!tinymce_editor.isHidden()) {
-                        editor_area.val(tinymce_editor.getContent());
-                    }
-                }
-            });
-        }
-
-    });
-
     $(document).on( 'before_close_dialog', '.wpml-dialog-close-button', function(e) {
         var data = $(this).data();
         if (!data.action) {
@@ -1232,24 +1214,6 @@ jQuery(document).ready(function($){
             if(  tinyMCE.get('translated_excerpt_value') )
                 tinyMCE.get('translated_excerpt_value').remove();
         }
-
-        //if( $('.hidden_original_description > div').hasClass( 'tmce-active' ) ){
-        //    $('.hidden_original_description .switch-tmce').trigger( 'click' );
-        //}
-        //
-        //if( $('.hidden_translated_description > div').hasClass( 'tmce-active' ) ){
-        //    $('.hidden_translated_description .switch-tmce').click();
-        //}
-        //
-        //if( $('.hidden_original_excerpt > div').hasClass( 'tmce-active' ) ){
-        //    $('.hidden_original_excerpt .switch-tmce').click();
-        //}
-        //
-        //if( $('.hidden_translated_excerpt > div').hasClass( 'tmce-active' ) ){
-        //    $('.hidden_translated_excerpt .switch-tmce').click();
-        //}
-
-
 
     });
 
