@@ -251,6 +251,13 @@ class WCML_Terms{
     function get_translated_tax_slug( $taxonomy, $language = false ){
         global $sitepress, $woocommerce_wpml, $wpdb;
 
+        $cache_key_slug = $taxonomy.'_'.$language.'_slug';
+        $cache_key_trnsl_slug = $taxonomy.'_'.$language.'_translated_slug';
+
+        if( $slug = wp_cache_get( $cache_key_slug ) ){
+            return array( 'slug' => $slug, 'translated_slug' =>  wp_cache_get( $cache_key_trnsl_slug ) );
+        }
+
         $strings_language = $woocommerce_wpml->strings->get_wc_context_language();
 
         $permalinks     = get_option( 'woocommerce_permalinks' );
@@ -288,11 +295,14 @@ class WCML_Terms{
 
             }
 
+            wp_cache_add( $cache_key_slug, $slug );
+            wp_cache_add( $cache_key_trnsl_slug, $slug_translation );
             return array( 'slug' => $slug, 'translated_slug' => $slug_translation );
         }
 
+        wp_cache_add( $cache_key_slug, $slug );
+        wp_cache_add( $cache_key_trnsl_slug, $slug );
         return array( 'slug' => $slug, 'translated_slug' => $slug );
-
     }
 
     function get_translation_from_woocommerce_mo_file( $string, $language ){
