@@ -549,9 +549,9 @@ class WCML_Bookings{
 
         }
 
-        foreach ($trnsl_persons as $trnsl_persons) {
+        foreach ($trnsl_persons as $trnsl_person) {
 
-            wp_delete_post( $trnsl_persons );
+            wp_delete_post( $trnsl_person );
 
         }
 
@@ -1637,6 +1637,18 @@ class WCML_Bookings{
             remove_action( 'before_delete_post', array( $this, 'delete_bookings' ) );
 
             foreach( $translated_bookings as $booking ){
+
+                global $wpdb;
+
+                $wpdb->update(
+                    $wpdb->posts,
+                    array(
+                        'post_parent' => 0
+                    ),
+                    array(
+                        'ID' => $booking->post_id
+                    )
+                );
 
                 wp_delete_post( $booking->post_id );
 
