@@ -3,46 +3,36 @@ $default_language = $sitepress->get_default_language();
 ?>
 
 <div class="wcml-section ">
+	<div class="wcml-section-header">
+		<h3>
+			<?php _e( 'Enable/disable', 'wpml-wcml' ); ?>
+		</h3>
+	</div>
+	<div class="wcml-section-content wcml-section-content-wide">
+		<p>
+			<input type="checkbox" name="multi_currency" id="multi_currency_independent"
+				   value="<?php echo WCML_MULTI_CURRENCIES_INDEPENDENT ?>" <?php
+			echo checked( $woocommerce_wpml->settings['enable_multi_currency'], WCML_MULTI_CURRENCIES_INDEPENDENT ) ?> />
+			<label for="multi_currency_independent">
+				<?php _e( "Enable the multi-currency mode", 'wpml-wcml' ); ?>
+				&nbsp;
+				<a href=" <?php echo $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/documentation/related-projects/woocommerce-multilingual/multi-currency-support-woocommerce/', 'multi-currency-support-woocommerce', 'documentation' ) ?>"><?php _e( 'Learn more', 'wpl-wcml' ) ?></a>.
+			</label>
+		</p>
+	</div>
+</div>
+<div class="wcml-section" id="multi-currency-per-language-details" <?php if ($woocommerce_wpml->settings['enable_multi_currency'] != WCML_MULTI_CURRENCIES_INDEPENDENT): ?>style="display:none"<?php endif; ?>>
 
 	<div class="wcml-section-header">
 		<h3>
-			<?php _e( 'Manage Currencies', 'wpml-wcml' ); ?>
-			<i class="otgs-ico-help wcml-tip"
-			   data-tip="<?php _e( 'This will let you enable the multi-currency mode where users can see prices according to their currency preference and configured exchange rate.', 'wpml-wcml' ) ?>"></i>
+			<?php _e( 'Currencies', 'wpml-wcml' ); ?>
 		</h3>
 	</div>
 	<form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>" id="wcml_mc_options">
+		<?php wp_nonce_field( 'wcml_mc_options', 'wcml_nonce' ); ?>
 		<div class="wcml-section-content wcml-section-content-wide">
-			<?php wp_nonce_field( 'wcml_mc_options', 'wcml_nonce' ); ?>
 
-			<ul id="wcml_mc_options_block">
-
-				<li>
-					<ul id="multi_currency_option_select">
-						<li>
-							<input type="radio" name="multi_currency" id="multi_currency_disabled"
-							       value="<?php echo WCML_MULTI_CURRENCIES_DISABLED ?>" <?php
-							echo checked( $woocommerce_wpml->settings['enable_multi_currency'], WCML_MULTI_CURRENCIES_DISABLED ) ?> />
-							<label
-								for="multi_currency_disabled"><?php _e( "No multi-currency", 'wpml-wcml' ); ?></label>
-						</li>
-						<li>
-							<input type="radio" name="multi_currency" id="multi_currency_independent"
-							       value="<?php echo WCML_MULTI_CURRENCIES_INDEPENDENT ?>" <?php
-							echo checked( $woocommerce_wpml->settings['enable_multi_currency'], WCML_MULTI_CURRENCIES_INDEPENDENT ) ?> />
-							<label for="multi_currency_independent">
-								<?php _e( "Multi-currency (independent of languages)", 'wpml-wcml' ); ?>
-								&nbsp;
-								<a href=" <?php echo $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/documentation/related-projects/woocommerce-multilingual/multi-currency-support-woocommerce/', 'multi-currency-support-woocommerce', 'documentation' ) ?>"><?php _e( 'Learn more', 'wpl-wcml' ) ?></a>.
-							</label>
-						</li>
-					</ul>
-				</li>
-			</ul>
-
-
-			<div id="multi-currency-per-language-details"
-			     <?php if ($woocommerce_wpml->settings['enable_multi_currency'] != WCML_MULTI_CURRENCIES_INDEPENDENT): ?>style="display:none"<?php endif; ?>>
+			<div>
 				<div class="currencies-table-content">
 					<?php
 					$wc_currencies    = get_woocommerce_currencies();
@@ -68,7 +58,7 @@ $default_language = $sitepress->get_default_language();
 
 
 					<div class="tablenav top clearfix">
-						<button type="button" class="button-secondary alignright">
+						<button type="button" class="button-secondary wcml_add_currency alignright">
 							<i class="otgs-ico-add otgs-ico-sm"></i>
 							<?php _e( 'Add currency', 'wpml-wcml' ); ?>
 						</button>

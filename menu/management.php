@@ -36,7 +36,7 @@ if(isset($_GET['tab'])){
     <?php if(current_user_can('wpml_manage_woocommerce_multilingual')): ?>
 	    <a class="nav-tab <?php echo $current_tab == 'settings' ? 'nav-tab-active' : ''; ?>"
 	       href="<?php echo admin_url( 'admin.php?page=wpml-wcml' ); ?>"><?php _e( 'Settings', 'wpml-wcml' ) ?></a>
-        <a class="nav-tab <?php echo $current_tab == 'currencies' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=currencies'); ?>"><?php _e('Multi-currency', 'wpml-wcml') ?></a>
+        <a class="nav-tab <?php echo $current_tab == 'multi-currency' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=multi-currency'); ?>"><?php _e('Multi-currency', 'wpml-wcml') ?></a>
     <?php endif; ?>
     <a class="nav-tab <?php echo $current_tab == 'products' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=products'); ?>"><?php _e('Products', 'wpml-wcml') ?></a>
     <?php if( current_user_can('wpml_operate_woocommerce_multilingual')): ?>
@@ -65,7 +65,7 @@ if(isset($_GET['tab'])){
 	<div class="wcml-wrap">
         <?php if(!isset($_GET['tab']) && current_user_can('wpml_manage_woocommerce_multilingual')): ?>
             <?php  include WCML_PLUGIN_PATH . '/menu/sub/settings.php'; ?>
-        <?php elseif( isset($_GET['tab']) && $_GET['tab'] == 'currencies' && current_user_can('wpml_manage_woocommerce_multilingual') ): ?>
+        <?php elseif( isset($_GET['tab']) && $_GET['tab'] == 'multi-currency' && current_user_can('wpml_manage_woocommerce_multilingual') ): ?>
             <?php include WCML_PLUGIN_PATH . '/menu/sub/multi-currency.php'; ?>
         <?php elseif(isset($all_products_taxonomies[$current_tab]) || isset($products_and_variation_taxonomies[$current_tab]) && current_user_can('wpml_operate_woocommerce_multilingual')): ?>
             <?php include WCML_PLUGIN_PATH . '/menu/sub/product-taxonomy.php'; ?>

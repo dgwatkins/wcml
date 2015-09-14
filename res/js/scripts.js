@@ -493,19 +493,14 @@ jQuery(document).ready(function($){
         });
     }
 
-    $('#multi_currency_option_select input[name=multi_currency]').change(function(){
-        
-        if($(this).attr('id') != 'multi_currency_independent'){
-            $('.currencies-table-content').fadeOut();
-            $('.wcml_add_currency').fadeOut();
-            $('#currency-switcher').fadeOut();
-            $('#display_custom_prices_select').fadeOut();
-        }else{
-            $('.currencies-table-content').fadeIn();
-            $('.wcml_add_currency').fadeIn();
+    $('#multi_currency_independent').change(function(){
+
+        if($(this).attr('checked') == 'checked'){
             $('#currency-switcher').fadeIn();
             $('#multi-currency-per-language-details').fadeIn();
-            $('#display_custom_prices_select').fadeIn();
+        }else{
+            $('#multi-currency-per-language-details').fadeOut();
+            $('#currency-switcher').fadeOut();
         }
         
     })
@@ -596,24 +591,7 @@ jQuery(document).ready(function($){
         })
         
     });
-          
-    /*           
-    $(document).on('click','.edit_currency',function(){
-        var $tableRow = $(this).closest('tr');
-        $tableRow.addClass('edit-mode');
-        $tableRow.find('.currency_code .code_val').hide();
-        $tableRow.find('.currency_code select').show();
-        $tableRow.find('.currency_value span.curr_val').hide();
-        $tableRow.find('.currency_value input').show();
-        $tableRow.find('.currency_changed').hide();
-        $tableRow.find('.edit_currency').hide();
-        $tableRow.find('.delete_currency').hide();
-        $tableRow.find('.save_currency').show();
-        $tableRow.find('.cancel_currency').show();
-    });
-    */
-    
-    
+
     $(document).on('click', '.edit_currency', function(){
 		$('.wcml-currency-options-dialog').hide();
         
