@@ -314,7 +314,7 @@ class WCML_Upgrade{
 
     function upgrade_3_7()
     {
-        global $woocommerce_wpml;
+        global $woocommerce_wpml,$wpdb;
         $woocommerce_wpml->terms->check_if_sync_terms_needed();
 
         $wcml_settings = get_option('_wcml_settings');
@@ -322,6 +322,20 @@ class WCML_Upgrade{
         $wcml_settings['sync_taxonomies_checked'] = 1;
 
         update_option('_wcml_settings', $wcml_settings);
+
+
+        //update custom fields for bookings
+        $bookable_resources = $wpdb->get_results( "SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type = 'post_bookable_resource' AND source_language_code IS NOT NULL");
+
+        foreach( $bookable_resources AS $bookable_resource ){
+            update_post_meta( $bookable_resource->element_id, 'wcml_is_translated', true );
+        }
+
+        $bookable_persons = $wpdb->get_results( "SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type = 'post_bookable_person' AND source_language_code IS NOT NULL");
+
+        foreach( $bookable_persons AS $bookable_person ){
+            update_post_meta( $bookable_person->element_id, 'wcml_is_translated', true );
+        }
     }
 
 }

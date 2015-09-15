@@ -4,8 +4,8 @@ class WCML_Tab_Manager{
 
     function __construct(){
         add_action( 'wcml_after_duplicate_product_post_meta', array( $this, 'sync_tabs' ), 10, 3 );
-        add_filter( 'wcml_product_content_exception', array( $this, 'is_have_custom_product_tab' ), 10, 3 );
-        add_filter( 'wcml_custom_box_html', array( $this, 'custom_box_html'), 10, 3 );
+       // add_filter( 'wcml_product_content_exception', array( $this, 'is_have_custom_product_tab' ), 10, 3 );
+        add_filter( 'wcml_gui_additional_box', array( $this, 'custom_box_html'), 10, 3 );
         add_filter( 'wpml_duplicate_custom_fields_exceptions', array( $this, 'duplicate_custom_fields_exceptions' ) );
         add_action( 'wcml_after_duplicate_product', array( $this, 'duplicate_product_tabs') , 10, 2 );
     }
@@ -194,80 +194,83 @@ class WCML_Tab_Manager{
     }
 
 
-    function custom_box_html($html,$template_data,$lang){
-        if($template_data['product_content'] == '_product_tabs'){
-            global $wc_tab_manager;
-                $orig_prod_tabs = $wc_tab_manager->get_product_tabs($template_data['product_id']);
-                if(!$orig_prod_tabs) return '';
-                if($template_data['tr_product_id']){
-                    $tr_prod_tabs = $wc_tab_manager->get_product_tabs($template_data['tr_product_id']);
+    function custom_box_html($product_id, $lang, $is_duplicate_product = false){
 
-                    if(!is_array($tr_prod_tabs)){
-                        return __('Please update original product','wpml-wcml');
-                    }
+        if( get_post_meta( $product_id, '_override_tab_layout', true ) != 'yes' ){
+            return;
+        }
+        $tr_product_id = apply_filters('translate_object_id', $product_id, 'product', false, $lang);
 
-                    foreach($tr_prod_tabs as $key=>$prod_tab){
-                        if(in_array($prod_tab['type'],array('product','core'))){
-                            if($prod_tab['type'] == 'core'){
-                                $template_data['tr_tabs'][$prod_tab['id']]['id'] = $prod_tab['id'];
-                                $template_data['tr_tabs'][$prod_tab['id']]['type'] = $prod_tab['type'];
-                                $template_data['tr_tabs'][$prod_tab['id']]['title'] = $prod_tab['title'];
-                                $template_data['tr_tabs'][$prod_tab['id']]['heading'] = isset ($prod_tab['heading']) ? $prod_tab['heading'] : '';
-                            }else{
-                                $template_data['tr_tabs'][$prod_tab['position']]['id'] = $prod_tab['id'];
-                                $template_data['tr_tabs'][$prod_tab['position']]['type'] = $prod_tab['type'];
-                            }
-                        }
-                    }
-                }else{
-                    global $sitepress,$woocommerce;
-                    $current_language = $sitepress->get_current_language();
-                    foreach($orig_prod_tabs as $key=>$prod_tab){
-                        if($prod_tab['type'] == 'core'){
-                            unload_textdomain('woocommerce');
-                            $sitepress->switch_lang($lang);
-                            $woocommerce->load_plugin_textdomain();
-                            $title = __( $prod_tab['title'], 'woocommerce' );
-                            if($prod_tab['title'] != $title){
-                                $template_data['tr_tabs'][$prod_tab['id']]['title'] = $title;
+        global $wc_tab_manager;
+        $orig_prod_tabs = $wc_tab_manager->get_product_tabs($product_id);
+        if(!$orig_prod_tabs) return '';
+        if($tr_product_id){
+            $tr_prod_tabs = $wc_tab_manager->get_product_tabs($tr_product_id);
 
-                            }
+            if(!is_array($tr_prod_tabs)){
+                return __('Please update original product','wpml-wcml');
+            }
 
-                            if(!isset($prod_tab['heading'])){
-                                $template_data['tr_tabs'][$prod_tab['id']]['heading'] = '';
-                            }else{
-                                $heading = __( $prod_tab['heading'], 'woocommerce' );
-                                if($prod_tab['heading'] != $heading){
-                                    $template_data['tr_tabs'][$prod_tab['id']]['heading'] = $heading;
-                                }
-                            }
-
-                            unload_textdomain('woocommerce');
-                            $sitepress->switch_lang($current_language);
-                            $woocommerce->load_plugin_textdomain();
-                        }
+            foreach($tr_prod_tabs as $key=>$prod_tab){
+                if(in_array($prod_tab['type'],array('product','core'))){
+                    if($prod_tab['type'] == 'core'){
+                        $template_data['tr_tabs'][$prod_tab['id']]['id'] = $prod_tab['id'];
+                        $template_data['tr_tabs'][$prod_tab['id']]['type'] = $prod_tab['type'];
+                        $template_data['tr_tabs'][$prod_tab['id']]['title'] = $prod_tab['title'];
+                        $template_data['tr_tabs'][$prod_tab['id']]['heading'] = isset ($prod_tab['heading']) ? $prod_tab['heading'] : '';
+                    }else{
+                        $template_data['tr_tabs'][$prod_tab['position']]['id'] = $prod_tab['id'];
+                        $template_data['tr_tabs'][$prod_tab['position']]['type'] = $prod_tab['type'];
                     }
                 }
-
-                foreach($orig_prod_tabs as $key=>$prod_tab){
-                    if(in_array($prod_tab['type'],array('product','core'))){
-                        if($prod_tab['type'] == 'core'){
-                            $template_data['orig_tabs'][$prod_tab['id']]['id'] = $prod_tab['id'];
-                            $template_data['orig_tabs'][$prod_tab['id']]['type'] = $prod_tab['type'];
-                        }else{
-                            $template_data['orig_tabs'][$prod_tab['position']]['id'] = $prod_tab['id'];
-                            $template_data['orig_tabs'][$prod_tab['position']]['type'] = $prod_tab['type'];
-                        }
+            }
+        }else{
+            global $sitepress,$woocommerce;
+            $current_language = $sitepress->get_current_language();
+            foreach($orig_prod_tabs as $key=>$prod_tab){
+                if($prod_tab['type'] == 'core'){
+                    unload_textdomain('woocommerce');
+                    $sitepress->switch_lang($lang);
+                    $woocommerce->load_plugin_textdomain();
+                    $title = __( $prod_tab['title'], 'woocommerce' );
+                    if($prod_tab['title'] != $title){
+                        $template_data['tr_tabs'][$prod_tab['id']]['title'] = $title;
 
                     }
+
+                    if(!isset($prod_tab['heading'])){
+                        $template_data['tr_tabs'][$prod_tab['id']]['heading'] = '';
+                    }else{
+                        $heading = __( $prod_tab['heading'], 'woocommerce' );
+                        if($prod_tab['heading'] != $heading){
+                            $template_data['tr_tabs'][$prod_tab['id']]['heading'] = $heading;
+                        }
+                    }
+
+                    unload_textdomain('woocommerce');
+                    $sitepress->switch_lang($current_language);
+                    $woocommerce->load_plugin_textdomain();
                 }
-
-
-
-             return include WCML_PLUGIN_PATH . '/compatibility/templates/wc_tab_manager_custom_box_html.php';
+            }
         }
 
-        return $html;
+        foreach($orig_prod_tabs as $key=>$prod_tab){
+            if(in_array($prod_tab['type'],array('product','core'))){
+                if($prod_tab['type'] == 'core'){
+                    $template_data['orig_tabs'][$prod_tab['id']]['id'] = $prod_tab['id'];
+                    $template_data['orig_tabs'][$prod_tab['id']]['type'] = $prod_tab['type'];
+                    $template_data['orig_tabs'][$prod_tab['id']]['title'] = $prod_tab['title'];
+                    $template_data['orig_tabs'][$prod_tab['id']]['heading'] = isset ($prod_tab['heading']) ? $prod_tab['heading'] : '';
+                }else{
+                    $template_data['orig_tabs'][$prod_tab['position']]['id'] = $prod_tab['id'];
+                    $template_data['orig_tabs'][$prod_tab['position']]['type'] = $prod_tab['type'];
+                }
+
+            }
+        }
+
+         return include WCML_PLUGIN_PATH . '/compatibility/templates/wc_tab_manager_custom_box_html.php';
+
     }
 
     function duplicate_product_tabs( $new_id, $original_post ){

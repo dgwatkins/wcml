@@ -208,7 +208,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                                 <td>
                                     <input
                                         class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?>
-                                        readonly"<?php endif; ?> type="text" name="<?php echo $attr_key; ?>"
+                                        readonly<?php endif; ?> type="text" name="<?php echo $attr_key; ?>"
                                     value="<?php echo $trn_attribute['value'] ? $trn_attribute['value'] : ''; ?>"
                                     placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>
                                     " <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
@@ -258,8 +258,9 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
             <?php $fields_to_translate_flag = false; } ?>
                             <tr class="wcml-first-row">
                                 <th>
-                    <label > <?php echo $woocommerce_wpml->products->get_product_custom_field_label( $product_id, $custom_field ); ?> </label>
-                                    </th><td>
+                                    <label > <?php echo $woocommerce_wpml->products->get_product_custom_field_label( $product_id, $custom_field ); ?> </label>
+                                    </th>
+                                <td>
                     <input readonly class="original_value" value="<?php echo get_post_meta( $product_id, $custom_field, true ) ?>"
                            type="text"></td>
                     <td><a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>">

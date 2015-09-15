@@ -1948,7 +1948,7 @@ class WCML_Products{
         foreach(get_post_custom_keys($product_id) as $meta_key){
             if(isset($settings['translation-management']['custom_fields_translation'][$meta_key]) && $settings['translation-management']['custom_fields_translation'][$meta_key] == 2){
                 if($this->check_custom_field_is_single_value($product_id,$meta_key)){
-                    if(in_array($meta_key,$this->not_display_fields_for_variables_product)){
+                    if(in_array($meta_key, apply_filters( 'wcml_not_display_single_fields_to_translate', $this->not_display_fields_for_variables_product ) ) ){
                         continue;
                     }
                 }else{

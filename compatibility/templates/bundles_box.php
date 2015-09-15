@@ -1,61 +1,88 @@
 <?php if(!isset($template_data['empty_bundles'])){  ?>
-    <td>
-        <button id="prod_bundles_link_<?php echo $lang ?>" class="button-secondary js-table-toggle prod_bundles_link<?php if($is_duplicate_product): ?> js-dup-disabled<?php endif;?>" data-text-opened="<?php _e('Collapse','wpml-wcml'); ?>" data-text-closed="<?php _e('Expand','wpml-wcml'); ?>"<?php if($is_duplicate_product): ?> disabled="disabled"<?php endif;?>>
-            <span><?php _e('Expand','wpml-wcml'); ?></span>
-            <i class="otgs-ico-caret-down"></i>
-        </button>
-        <?php 	$bundles_ids = $template_data['product_bundles']; ?>
+    <div class="postbox wpml-form-row wcml-row-bundles">
+        <div title="<?php _e('Click to toggle'); ?>" class="handlediv"><br></div>
+        <h3 class="hndle">
+            <span><?php _e('Product Bundles', 'wpml-wcml') ?></span>
+        </h3>
 
-        <table id="prod_bundles_<?php echo $lang ?>" class="widefat prod_variations js-table">
-            <tbody>
-            <tr>
-                <td></td>
-                <?php if(!isset($template_data['empty_bundles']) && isset( $template_data['bundles_data'] )): ?>
-                    <?php foreach($template_data['bundles_data'] as $bundle_original_title=>$bundle_opts): ?>
-                        <td>
-                            <?php echo $bundle_original_title; ?>
-                        </td>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tr>
-            <?php if(isset($template_data['empty_bundles'])): ?>
-                <tr>
-                    <td><?php _e('Please set bundles for product','wpml-wcml'); ?></td>
-                </tr>
-            <?php elseif(isset($template_data['empty_translation'])): ?>
-                <tr>
-                    <td><?php _e('Please save translation before translate bundles texts','wpml-wcml'); ?></td>
-                </tr>
-            <?php else: ?>
-                <?php $texts = array('bundle_title','bundle_desc'); ?>
-                <?php foreach($texts as $text): ?>
-                    <tr>
-                        <td>
-                            <?php if($text == 'bundle_title'): ?>
-                                <?php _e('Title','wpml-wcml');  ?>
-                            <?php else: ?>
-                                <?php _e('Description','wpml-wcml'); ?>
-                            <?php endif; ?>
-                        </td>
-                        <?php $i = 0; ?>
-                        <?php foreach($template_data['bundles_data'] as $bundle_id=>$bundle_opts): ?>
-                            <?php if(!empty($bundle_opts)): ?>
+        <div class="inside">
+            <table id="prod_bundles" class="wcml-attr-table prod_bundles js-table">
+                <tbody>
+                    <?php
+                    $i = 0;
+
+                    foreach( $template_data['bundles_data'] as $key => $bundle ) :
+                        $index = '';
+                        if( $bundle['original']['override_bundle_title'] == 'yes' && $bundle['original']['override_bundle_desc'] == 'yes' ){
+                            $index = $i;
+                            $i++;
+                        }
+                        ?>
+
+                        <tr class="wcml-line-row" >
+                            <th>
+                                <label class="custom_attr_label"><?php echo $bundle['bundle_name']; ?></label>
+                            </th>
+
+                        </tr>
+
+                        <?php if( isset( $bundle['empty_bundles'] ) ) : ?>
+                            <tr class="wcml-first-row" row-index="<?php echo $index; ?>">
+                                <th>
+                                    <label class="custom_attr_label"><?php _e('You need translate bundled product first', 'wpml-wcml'); ?></label>
+                                </th>
+                            </tr>
+                        <?php continue; endif; ?>
+
+                        <?php if( $bundle['original']['override_bundle_title']  == 'yes' ): ?>
+
+                            <tr class="wcml-first-row" row-index="<?php echo $index; ?>">
+                                <th>
+                                    <label class="custom_attr_label"><?php _e('Name', 'wpml-wcml'); ?></label>
+                                </th>
                                 <td>
-                                    <?php if($template_data['original']): ?>
-                                        <input type="text" value="<?php echo $bundle_opts[$text]?>" readonly="readonly"/>
-                                    <?php else: ?>
-                                        <input type="text" name="bundles[<?php echo $bundles_ids[$i] ?>][<?php echo $text; ?>]" value="<?php echo $bundle_opts[$text]?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
-                                    <?php endif; ?>
+                                    <input readonly class="original_value" value="<?php echo $bundle['original']['bundle_title'] ?>"
+                                           type="text"/>
                                 </td>
+                                <td <?php echo $index ? 'rowspan="2"' : '' ?> class="button-copy-cell">
+                                    <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>"
+                                       id="">
+                                        <i class="otgs-ico-copy"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <input
+                                        class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?> readonly<?php endif; ?>
+                                        type="text" name="<?php echo  'bundles['.$bundle['bundle_id']. '][title]'; ?>"
+                                        value="<?php echo $bundle['translated']['bundle_title']; ?>"
+                                        placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
 
-                            <?php endif; ?>
-                            <?php $i++; ?>
-                        <?php endforeach; ?>
-                    </tr>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
 
-                <?php endforeach; ?>
-            <?php endif; ?>
-            </tbody>
-        </table>
-    </td>
+                        <?php if( $bundle['original']['override_bundle_desc']  == 'yes' ): ?>
+                            <tr class="wcml-last-row" row-index="<?php echo $index; ?>">
+                                <th>
+                                    <label class="custom_attr_label"><?php _e('Description', 'wpml-wcml'); ?></label>
+                                </th>
+                                <td>
+                                    <input readonly class="original_value" value="<?php echo $bundle['original']['bundle_desc'] ?>"
+                                           type="text"/>
+                                </td>
+                                <td>
+                                    <input
+                                        class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?> readonly<?php endif; ?>
+                                    type="text" name="<?php echo 'bundles['.$bundle['bundle_id'].'][desc]'; ?>"
+                                    value="<?php echo $bundle['translated']['bundle_desc']; ?>"
+                                    placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>
+                                    " <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 <?php } ?>
