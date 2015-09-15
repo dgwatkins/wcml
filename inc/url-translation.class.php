@@ -5,27 +5,28 @@ class WCML_Url_Translation{
     function __construct(){
 
         //set translate product by default
-        $this->translate_product_slug();
+        $this->translate_product_base();
         $this->force_product_slug_translation_on();
 
-        add_filter('option_woocommerce_permalinks', array($this, 'filter_woocommerce_permalinks_option'));
+        add_filter('option_woocommerce_permalinks', array($this, 'register_product_and_taxonomy_bases'));
 
         add_filter('pre_update_option_rewrite_rules', array($this, 'pre_update_rewrite_rules'), 1, 1); // high priority
 
         remove_filter('option_rewrite_rules', array('WPML_Slug_Translation', 'rewrite_rules_filter'), 1, 1); //remove filter from WPML and use WCML filter first
         add_filter('option_rewrite_rules', array($this, 'rewrite_rules_filter'), 3, 1); // high priority
-        add_filter('term_link', array($this, 'translate_category_base'), 0, 3); // high priority
+
+        add_filter('term_link', array($this, 'translate_taxonomy_base'), 0, 3); // high priority
 
     }
 
-    function translate_product_slug(){
+    function translate_product_base(){
         global $wpdb;
 
         if(!defined('WOOCOMMERCE_VERSION') || (!isset($GLOBALS['ICL_Pro_Translation']) || is_null($GLOBALS['ICL_Pro_Translation']))){
             return;
         }
 
-        $slug = $this->get_woocommerce_product_slug();
+        $slug = $this->get_woocommerce_product_base();
 
         if ( apply_filters( 'wpml_slug_translation_available', false) ) {
             // Use new API for WPML >= 3.2.3
@@ -42,7 +43,7 @@ class WCML_Url_Translation{
 
     }
 
-    function get_woocommerce_product_slug(){
+    function get_woocommerce_product_base(){
 
         $woocommerce_permalinks = maybe_unserialize( get_option('woocommerce_permalinks') );
 
@@ -68,7 +69,7 @@ class WCML_Url_Translation{
 
     }
 
-    function filter_woocommerce_permalinks_option($value){
+    function register_product_and_taxonomy_bases($value){
 
         if (WPML_SUPPORT_STRINGS_IN_DIFF_LANG && isset($value['product_base']) && $value['product_base']) {
             do_action('wpml_register_single_string', 'URL slugs', 'URL slug: ' . trim($value['product_base'], '/'), trim($value['product_base'], '/'));
@@ -254,7 +255,7 @@ class WCML_Url_Translation{
         return $value;
     }
 
-    function translate_category_base($termlink, $term, $taxonomy){
+    function translate_taxonomy_base($termlink, $term, $taxonomy){
         global $wp_rewrite, $wpml_term_translations, $sitepress;
         static $no_recursion_flag;
 
