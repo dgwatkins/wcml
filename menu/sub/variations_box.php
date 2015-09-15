@@ -4,7 +4,7 @@
             <tr>
                 <td><?php _e('Please add variations to product','wpml-wcml'); ?></td>
             <tr>
-        <?php elseif(isset($template_data['empty_translation'])): ?>
+        <?php elseif(!$woocommerce_wpml->settings['file_path_sync'] && isset($template_data['empty_translation'])): ?>
             <tr>
                 <td><?php _e('Please save translation before translate variations file paths','wpml-wcml'); ?></td>
             </tr>

@@ -1944,6 +1944,7 @@ class WCML_Products{
     function get_product_custom_fields_to_translate($product_id){
         global $woocommerce_wpml, $sitepress;
         $settings = $sitepress->get_settings();
+        $contents = array();
 
         foreach(get_post_custom_keys($product_id) as $meta_key){
             if(isset($settings['translation-management']['custom_fields_translation'][$meta_key]) && $settings['translation-management']['custom_fields_translation'][$meta_key] == 2){
