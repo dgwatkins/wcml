@@ -9,6 +9,7 @@
                 <tr class="wcml-first-row">
                     <?php
                     $attachment_data = $wpdb->get_row( $wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM $wpdb->posts WHERE ID = %d", $prod_image ) );
+                    if( !$attachment_data ) continue;
                     $trnsl_prod_image = apply_filters( 'translate_object_id', $prod_image, 'attachment', false, $lang );
                     $images_texts = array( 'title' => '', 'caption' => '', 'description' => '' );
                     if ( !is_null( $trnsl_prod_image ) ){
