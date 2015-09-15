@@ -212,7 +212,7 @@ class WCML_WC_Strings{
         global $sitepress_settings, $sitepress, $woocommerce_wpml;
 
         if ($context == 'slug' || $context == 'default-slug') {
-            $wc_slug = $woocommerce_wpml->get_woocommerce_product_slug();
+            $wc_slug = $woocommerce_wpml->url_translation->get_woocommerce_product_base();
             if(is_admin()){
                 $admin_language = $sitepress->get_admin_language();
             }

@@ -5,7 +5,7 @@ class WCML_Url_Translation{
     function __construct(){
 
         //set translate product by default
-        $this->translate_product_slug();
+        $this->translate_product_base();
         $this->force_product_slug_translation_on();
 
         add_filter('option_woocommerce_permalinks', array($this, 'filter_woocommerce_permalinks_option'));
@@ -18,14 +18,14 @@ class WCML_Url_Translation{
 
     }
 
-    function translate_product_slug(){
+    function translate_product_base(){
         global $wpdb;
 
         if(!defined('WOOCOMMERCE_VERSION') || (!isset($GLOBALS['ICL_Pro_Translation']) || is_null($GLOBALS['ICL_Pro_Translation']))){
             return;
         }
 
-        $slug = $this->get_woocommerce_product_slug();
+        $slug = $this->get_woocommerce_product_base();
 
         if ( apply_filters( 'wpml_slug_translation_available', false) ) {
             // Use new API for WPML >= 3.2.3
@@ -42,7 +42,7 @@ class WCML_Url_Translation{
 
     }
 
-    function get_woocommerce_product_slug(){
+    function get_woocommerce_product_base(){
 
         $woocommerce_permalinks = maybe_unserialize( get_option('woocommerce_permalinks') );
 
