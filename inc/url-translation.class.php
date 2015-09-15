@@ -76,14 +76,14 @@ class WCML_Url_Translation{
         }
 
         $category_base = !empty($value['category_base']) ? $value['category_base'] : 'product-category';
-        do_action('wpml_register_single_string', 'URL product_cat slugs - ' . $category_base, 'Url product_cat slug: ' . $category_base, $category_base);
+        do_action('wpml_register_single_string', 'WordPress', 'Url product_cat slug: ' . $category_base, $category_base);
 
         $tag_base = !empty($value['tag_base']) ? $value['tag_base'] : 'product-tag';
-        do_action('wpml_register_single_string', 'URL product_tag slugs - ' . $tag_base, 'Url product_tag slug: ' . $tag_base, $tag_base);
+        do_action('wpml_register_single_string', 'WordPress', 'Url product_tag slug: ' . $tag_base, $tag_base);
 
         if (isset($value['attribute_base']) && $value['attribute_base']) {
             $attr_base = trim($value['attribute_base'], '/');
-            do_action('wpml_register_single_string', 'URL attribute slugs - ' . $attr_base, 'Url attribute slug: ' . $attr_base, $attr_base);
+            do_action('wpml_register_single_string', 'WordPress', 'Url attribute slug: ' . $attr_base, $attr_base);
         }
 
         return $value;
