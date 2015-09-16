@@ -52,7 +52,7 @@ class WCML_Url_Translation{
         }elseif(get_option('woocommerce_product_slug') != false ){
             return trim( get_option('woocommerce_product_slug'), '/');
         }else{
-            return 'product';
+            return _x('product', 'slug', 'woocommerce'); // the default WooCommerce value. Before permalinks options are saved
         }
 
     }
@@ -76,10 +76,10 @@ class WCML_Url_Translation{
             // only register. it'll have to be translated via the string translation
         }
 
-        $category_base = !empty($value['category_base']) ? $value['category_base'] : 'product-category';
+        $category_base = !empty($value['category_base']) ? $value['category_base'] : _x( 'product-category', 'slug', 'woocommerce' );
         do_action('wpml_register_single_string', 'WordPress', 'Url product_cat slug: ' . $category_base, $category_base);
 
-        $tag_base = !empty($value['tag_base']) ? $value['tag_base'] : 'product-tag';
+        $tag_base = !empty($value['tag_base']) ? $value['tag_base'] : _x( 'product-tag', 'slug', 'woocommerce' );
         do_action('wpml_register_single_string', 'WordPress', 'Url product_tag slug: ' . $tag_base, $tag_base);
 
         if (isset($value['attribute_base']) && $value['attribute_base']) {
@@ -351,7 +351,7 @@ class WCML_Url_Translation{
 
             if ( is_null( $slug_translation ) ) {
                 // handle exception - default woocommerce category and tag bases used
-                $slug_translation = $woocommerce_wpml->get_translation_from_woocommerce_mo_file( $slug, $language );
+                $slug_translation = $woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( $slug, $language );
 
             }
 
