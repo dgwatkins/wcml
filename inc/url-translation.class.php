@@ -2,7 +2,15 @@
 
 class WCML_Url_Translation{
 
+    public $default_product_base;
+    public $default_product_category_base;
+    public $default_product_tag_base;
+
     function __construct(){
+
+        $this->default_product_base = _x( 'product', 'slug', 'woocommerce' );
+        $this->default_product_category_base = _x( 'product-category', 'slug', 'woocommerce' );
+        $this->default_product_tag_base = _x( 'product-tag', 'slug', 'woocommerce' );
 
         //set translate product by default
         $this->translate_product_base();
@@ -10,7 +18,9 @@ class WCML_Url_Translation{
 
         add_filter('option_woocommerce_permalinks', array($this, 'register_product_and_taxonomy_bases'));
 
-        add_filter('pre_update_option_rewrite_rules', array($this, 'pre_update_rewrite_rules'), 1, 1); // high priority
+        if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
+            add_filter('pre_update_option_rewrite_rules', array($this, 'pre_update_rewrite_rules'), 1, 1); // high priority
+        }
 
         remove_filter('option_rewrite_rules', array('WPML_Slug_Translation', 'rewrite_rules_filter'), 1, 1); //remove filter from WPML and use WCML filter first
         add_filter('option_rewrite_rules', array($this, 'rewrite_rules_filter'), 3, 1); // high priority
@@ -52,7 +62,7 @@ class WCML_Url_Translation{
         }elseif(get_option('woocommerce_product_slug') != false ){
             return trim( get_option('woocommerce_product_slug'), '/');
         }else{
-            return _x('product', 'slug', 'woocommerce'); // the default WooCommerce value. Before permalinks options are saved
+            return $this->default_product_base; // the default WooCommerce value. Before permalinks options are saved
         }
 
     }
@@ -76,10 +86,10 @@ class WCML_Url_Translation{
             // only register. it'll have to be translated via the string translation
         }
 
-        $category_base = !empty($value['category_base']) ? $value['category_base'] : _x( 'product-category', 'slug', 'woocommerce' );
+        $category_base = !empty($value['category_base']) ? $value['category_base'] : $this->default_product_category_base;
         do_action('wpml_register_single_string', 'WordPress', 'Url product_cat slug: ' . $category_base, $category_base);
 
-        $tag_base = !empty($value['tag_base']) ? $value['tag_base'] : _x( 'product-tag', 'slug', 'woocommerce' );
+        $tag_base = !empty($value['tag_base']) ? $value['tag_base'] : $this->default_product_tag_base;
         do_action('wpml_register_single_string', 'WordPress', 'Url product_tag slug: ' . $tag_base, $tag_base);
 
         if (isset($value['attribute_base']) && $value['attribute_base']) {
