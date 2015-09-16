@@ -72,7 +72,7 @@ class WCML_Url_Translation{
     function register_product_and_taxonomy_bases($value){
 
         if (WPML_SUPPORT_STRINGS_IN_DIFF_LANG && isset($value['product_base']) && $value['product_base']) {
-            do_action('wpml_register_single_string', 'URL slugs', 'URL slug: ' . trim($value['product_base'], '/'), trim($value['product_base'], '/'));
+            do_action('wpml_register_single_string', 'WordPress', 'URL slug: ' . trim($value['product_base'], '/'), trim($value['product_base'], '/'));
             // only register. it'll have to be translated via the string translation
         }
 
@@ -95,7 +95,7 @@ class WCML_Url_Translation{
         global $sitepress, $sitepress_settings, $woocommerce, $woocommerce_wpml;
 
         // force saving in strings language
-        $strings_language = $woocommerce_wpml->strings->get_wc_context_language();
+        $strings_language = $woocommerce_wpml->strings->get_domain_language( 'woocommerce' );
 
         if($sitepress->get_current_language() != $strings_language  && is_array( $value ) ){
 
@@ -137,7 +137,7 @@ class WCML_Url_Translation{
             add_filter('option_rewrite_rules', array('WPML_Slug_Translation', 'rewrite_rules_filter'), 1, 1);
         }
 
-        $strings_language = $woocommerce_wpml->strings->get_wc_context_language();
+        $strings_language = $woocommerce_wpml->strings->get_domain_language( 'woocommerce' );
 
         if($sitepress->get_current_language() != $strings_language){
 
@@ -318,7 +318,7 @@ class WCML_Url_Translation{
     function get_translated_tax_slug( $taxonomy, $language = false ){
         global $sitepress, $woocommerce_wpml, $wpdb;
 
-        $strings_language = $woocommerce_wpml->strings->get_wc_context_language();
+        $strings_language = $woocommerce_wpml->strings->get_domain_language( 'woocommerce' );
 
         $permalinks     = get_option( 'woocommerce_permalinks' );
 

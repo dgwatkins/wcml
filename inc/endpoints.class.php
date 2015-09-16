@@ -208,7 +208,7 @@ class WCML_Endpoints{
     function get_translated_edit_address_slug( $slug, $language = false ){
         global $woocommerce_wpml;
 
-        $strings_language = $woocommerce_wpml->strings->get_wc_context_language();
+        $strings_language = $woocommerce_wpml->strings->get_domain_language( 'woocommerce' );
 
         if( $strings_language == $language ){
             return $slug;

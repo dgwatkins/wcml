@@ -37,15 +37,12 @@ class WCML_Orders{
 
     function filtered_woocommerce_new_order_note_data($translations, $text, $domain ){
         if(in_array($text,$this->standart_order_notes)){
-            global $sitepress_settings,$wpdb;
+            global $sitepress_settings, $wpdb, $woocommerce_wpml;
 
-            if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-                $string_id = $wpdb->get_var($wpdb->prepare("SELECT st.id FROM {$wpdb->prefix}icl_strings as st LEFT JOIN {$wpdb->prefix}icl_string_contexts as cn ON st.context_id = cn.id WHERE cn.context = %s AND st.value = %s ", $domain, $text ));
-                $language = icl_st_get_string_language( $string_id );
-            }else{
-                $string_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}icl_strings WHERE language = %s AND value = %s ", $sitepress_settings['st']['strings_language'], $text));
-                $language = $sitepress_settings['st']['strings_language'];
-            }
+            $language = $woocommerce_wpml->strings->get_domain_language( 'woocommerce' );
+
+            $string_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}icl_strings WHERE language = %s AND value = %s ", $language, $text));
+
 
             if( $string_id && $sitepress_settings['admin_default_language'] != $language ){
                 $string = $wpdb->get_var($wpdb->prepare("SELECT value FROM {$wpdb->prefix}icl_string_translations WHERE string_id = %s and language = %s", $string_id, $sitepress_settings['admin_default_language']));
@@ -66,21 +63,19 @@ class WCML_Orders{
 
         if( $user_id ){
 
-            global $sitepress_settings, $wpdb;
+            global $wpdb, $woocommerce_wpml;
+
+            $language = $woocommerce_wpml->strings->get_domain_language( 'woocommerce' );
             
             $user_language    = get_user_meta( $user_id, 'icl_admin_language', true );
 
             foreach($comments as $key=>$comment){
 
-                if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-                    $comment_string_id = $wpdb->get_var($wpdb->prepare("SELECT st.id FROM {$wpdb->prefix}icl_strings as st LEFT JOIN {$wpdb->prefix}icl_string_contexts as cn ON st.context_id = cn.id WHERE st.value = %s ", $comment->comment_content));
-                }else{
-                    $comment_string_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}icl_strings WHERE language = %s AND value = %s ", $sitepress_settings['st']['strings_language'], $comment->comment_content));
-                }
+                $comment_string_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}icl_strings WHERE language = %s AND value = %s ", $language, $comment->comment_content));
 
                 if($comment_string_id){
                     $comment_string = $wpdb->get_var($wpdb->prepare("SELECT value FROM {$wpdb->prefix}icl_string_translations WHERE string_id = %s and language = %s", $comment_string_id, $user_language));
-                if($comment_string){
+                    if($comment_string){
                         $comments[$key]->comment_content = $comment_string;
                     }
                 }

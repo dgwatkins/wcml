@@ -88,11 +88,7 @@ class WCML_WC_Strings{
 
             $string_id = icl_get_string_id('taxonomy singular name: '.$label,'WordPress');
 
-            if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-                $strings_language = icl_st_get_string_language( $string_id );
-            }else{
-                $strings_language = $sitepress_settings['st']['strings_language'];
-            }
+            $strings_language = $this->get_domain_language('WordPress');
 
             if($string_id && $sitepress_settings['admin_default_language'] != $strings_language){
                 $string = $wpdb->get_var($wpdb->prepare("SELECT value FROM {$wpdb->prefix}icl_string_translations WHERE string_id = %s and language = %s", $string_id, $sitepress_settings['admin_default_language']));
@@ -161,7 +157,7 @@ class WCML_WC_Strings{
     function translate_query_var_for_product($public_query_vars){
         global $wpdb, $sitepress, $sitepress_settings;
 
-        $strings_language = $this->get_wc_context_language();
+        $strings_language = $this->get_domain_language( 'woocommerce' );
 
         if($sitepress->get_current_language() != $strings_language){
             $product_permalink  = $this->product_permalink_slug();
@@ -218,14 +214,8 @@ class WCML_WC_Strings{
             }
             $current_language = $sitepress->get_current_language();
             $strings_language = false;
-            if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-                $context_ob = icl_st_get_context( 'WordPress' );
-                if($context_ob){
-                    $strings_language = $context_ob->language;
-                }
-            }elseif(isset($sitepress_settings['st'])){
-                $strings_language = $sitepress_settings['st']['strings_language'];
-            }
+
+            $strings_language = $this->get_domain_language('WordPress');
 
             if ($text == $wc_slug && $domain == 'woocommerce' && $strings_language) {
                 $sitepress->switch_lang($strings_language);
@@ -452,17 +442,7 @@ class WCML_WC_Strings{
         }
         $miss_slug_lang = array();
 
-        if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-
-            $context_ob = icl_st_get_context( 'WordPress' );
-            if($context_ob){
-                $strings_language = $context_ob->language;
-            }else{
-                $strings_language = false;
-            }
-        }else{
-            $strings_language = $sitepress_settings['st']['strings_language'];
-        }
+        $strings_language = $this->get_domain_language('WordPress');
 
         foreach( $sitepress->get_active_languages() as $lang_info ){
             if( !in_array( $lang_info['code'], $slug_translation_languages ) && $lang_info['code'] != $strings_language ){
@@ -481,18 +461,20 @@ class WCML_WC_Strings{
         return $slug;
     }
 
-    function get_wc_context_language(){
+    function get_domain_language( $domain ){
 
         if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
+            global $sitepress;
 
-            $context_ob = icl_st_get_context( 'woocommerce' );
-            if($context_ob){
-                $context_language = $context_ob->language;
+            $lang_of_domain = new WPML_Language_Of_Domain( $sitepress );
+            $domain_lang = $lang_of_domain->get_language( $domain );
+            if ( $domain_lang ) {
+                $source_lang = $domain_lang;
             }else{
-                $context_language = false;
+                $source_lang = 'en';
             }
 
-            return $context_language;
+            return $source_lang;
         }else{
             global $sitepress_settings;
 
@@ -500,7 +482,7 @@ class WCML_WC_Strings{
                 return $sitepress_settings['st']['strings_language'];
             }
 
-            return false;
+            return 'en';
         }
 
     }
@@ -512,11 +494,11 @@ class WCML_WC_Strings{
     function filter_woocommerce_breadcrumbs( $breadcrumbs, $object ){
         global $sitepress;
 
-        if( $sitepress->get_current_language() != $this->get_wc_context_language() ){
+        if( $sitepress->get_current_language() != $this->get_domain_language( 'woocommerce' ) ){
 
             $permalinks   = get_option( 'woocommerce_permalinks' );
             $shop_page_id = wc_get_page_id( 'shop' );
-            $orig_shop_page = get_post( apply_filters( 'translate_object_id', $shop_page_id, 'page', true, $this->get_wc_context_language() ) );
+            $orig_shop_page = get_post( apply_filters( 'translate_object_id', $shop_page_id, 'page', true, $this->get_domain_language( 'woocommerce' ) ) );
 
             // If permalinks contain the shop page in the URI prepend the breadcrumb with shop
             // Similar to WC_Breadcrumb::prepend_shop_page

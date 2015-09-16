@@ -113,16 +113,9 @@ class WCML_Emails{
     }    
 
     function comments_language(){
-        global $sitepress_settings;
+        global $woocommerce_wpml;
 
-        if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-            $context_ob = icl_st_get_context( 'woocommerce' );
-            if($context_ob){
-                $this->change_email_language($context_ob->language);
-            }
-        }else{
-            $this->change_email_language($sitepress_settings['st']['strings_language']);
-        }
+        $this->change_email_language( $woocommerce_wpml->strings->get_domain_language( 'woocommerce' ) );
 
     }
 
@@ -275,15 +268,11 @@ class WCML_Emails{
     }
 
     function wcml_get_email_string_info( $name ){
-        global $wpdb;
+        global $wpdb, $woocommerce_wpml;
 
-        if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-            $result = $wpdb->get_results( $wpdb->prepare( "SELECT st.value,cn.context FROM {$wpdb->prefix}icl_strings as st LEFT JOIN {$wpdb->prefix}icl_string_contexts as cn ON st.context_id = cn.id WHERE st.name = %s ", $name ) );
-        }else{
-            global $sitepress_settings;
-            $language =  $sitepress_settings['st']['strings_language'];
-            $result = $wpdb->get_results( $wpdb->prepare( "SELECT value,context FROM {$wpdb->prefix}icl_strings WHERE language = %s AND name = %s ", $language, $name ) );
-        }
+        $language = $woocommerce_wpml->strings->get_domain_language( 'woocommerce' );
+
+        $result = $wpdb->get_results( $wpdb->prepare( "SELECT value,context FROM {$wpdb->prefix}icl_strings WHERE language = %s AND name = %s ", $language, $name ) );
 
         return $result;
 
