@@ -28,11 +28,14 @@ class WCML_Dependencies{
             add_action('admin_notices', array($this, '_old_wpml_warning'));
             $allok = false;
         }else{
-            if( version_compare(ICL_SITEPRESS_VERSION, '3.2.7', '>=')){
-                define('WPML_SUPPORT_STRINGS_IN_DIFF_LANG', true );
-            }else{
-                define('WPML_SUPPORT_STRINGS_IN_DIFF_LANG', false);
+            if( !defined('WPML_SUPPORT_STRINGS_IN_DIFF_LANG') ){
+                if( version_compare(ICL_SITEPRESS_VERSION, '3.2.7', '>=')){
+                    define('WPML_SUPPORT_STRINGS_IN_DIFF_LANG', true );
+                }else{
+                    define('WPML_SUPPORT_STRINGS_IN_DIFF_LANG', false);
+                }
             }
+
 
         }
 
