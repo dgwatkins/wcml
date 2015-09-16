@@ -52,7 +52,7 @@ class WCML_Url_Translation{
         }elseif(get_option('woocommerce_product_slug') != false ){
             return trim( get_option('woocommerce_product_slug'), '/');
         }else{
-            return 'product';
+            return _x('product', 'slug', 'woocommerce'); // the default WooCommerce value. Before permalinks options are saved
         }
 
     }
