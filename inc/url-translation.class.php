@@ -102,7 +102,7 @@ class WCML_Url_Translation{
     }
 
     function pre_update_rewrite_rules($value){
-        global $sitepress, $sitepress_settings, $woocommerce, $woocommerce_wpml;
+        global $sitepress, $woocommerce_wpml;
 
         // force saving in strings language
         $strings_language = $woocommerce_wpml->strings->get_domain_language( 'woocommerce' );
@@ -147,7 +147,7 @@ class WCML_Url_Translation{
             add_filter('option_rewrite_rules', array('WPML_Slug_Translation', 'rewrite_rules_filter'), 1, 1);
         }
 
-        $strings_language = $woocommerce_wpml->strings->get_domain_language( 'woocommerce' );
+        $strings_language = $woocommerce_wpml->strings->get_domain_language( 'WordPress' );
 
         if($sitepress->get_current_language() != $strings_language){
 
@@ -300,8 +300,6 @@ class WCML_Url_Translation{
                     $slug_details = $this->get_translated_tax_slug( $taxonomy, $term_language );
                     $base_translated = $slug_details['translated_slug'];
 
-                    $string_identifier = $taxonomy == 'product_tag' || $taxonomy == 'product_cat' ? $taxonomy : 'attribute';
-
                     if(!empty($base_translated) && $base_translated != $base && isset( $wp_rewrite->extra_permastructs[$taxonomy] ) ){
 
                         $buff = $wp_rewrite->extra_permastructs[$taxonomy]['struct'];
@@ -328,7 +326,7 @@ class WCML_Url_Translation{
     function get_translated_tax_slug( $taxonomy, $language = false ){
         global $sitepress, $woocommerce_wpml, $wpdb;
 
-        $strings_language = $woocommerce_wpml->strings->get_domain_language( 'woocommerce' );
+        $strings_language = $woocommerce_wpml->strings->get_domain_language( 'WordPress' );
 
         $permalinks     = get_option( 'woocommerce_permalinks' );
 
@@ -352,18 +350,33 @@ class WCML_Url_Translation{
 
         if($slug && $language != $strings_language) {
 
-            $slug_translation = $wpdb->get_var($wpdb->prepare("
+            if(  !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ){
+
+                $slug_translation = $wpdb->get_var($wpdb->prepare("
                                     SELECT t.value
                                     FROM {$wpdb->prefix}icl_string_translations t
                                         JOIN {$wpdb->prefix}icl_strings s ON t.string_id = s.id
                                     WHERE t.language = %s AND t.status = %s AND s.name = %s AND s.value = %s
                                 ", $language, ICL_STRING_TRANSLATION_COMPLETE, 'URL ' . $taxonomy . ' slug: ' . $slug, $slug));
 
-            if ( is_null( $slug_translation ) ) {
-                // handle exception - default woocommerce category and tag bases used
-                $slug_translation = $woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( $slug, $language );
+                if ( is_null( $slug_translation ) ) {
+                    // handle exception - default woocommerce category and tag bases used
+                    $slug_translation = $woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( $slug, $language );
+                }
+
+            } else {
+
+                $has_translation = false;
+                $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, 'WordPress', 'Url ' . $taxonomy . ' slug: ' . $slug, $language, $has_translation);
+
+                if ( !$has_translation ) {
+                    // handle exception - default woocommerce category and tag bases used
+                    $slug_translation = $woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( $slug, $language );
+                }
+
 
             }
+
 
             return array( 'slug' => $slug, 'translated_slug' => $slug_translation );
         }
