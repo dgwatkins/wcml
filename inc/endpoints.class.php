@@ -219,7 +219,7 @@ class WCML_Endpoints{
         if( $translated_slug == $slug ){
 
             if( $language ){
-                $translated_slug = $woocommerce_wpml->terms->get_translation_from_woocommerce_mo_file( 'edit-address-slug'. chr(4) .$slug, $language );
+                $translated_slug = $woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( 'edit-address-slug'. chr(4) .$slug, $language );
             }else{
                 $translated_slug = _x( $slug, 'edit-address-slug', 'woocommerce' );
             }
