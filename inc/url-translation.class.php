@@ -76,10 +76,10 @@ class WCML_Url_Translation{
             // only register. it'll have to be translated via the string translation
         }
 
-        $category_base = !empty($value['category_base']) ? $value['category_base'] : 'product-category';
+        $category_base = !empty($value['category_base']) ? $value['category_base'] : _x( 'product-category', 'slug', 'woocommerce' );
         do_action('wpml_register_single_string', 'WordPress', 'Url product_cat slug: ' . $category_base, $category_base);
 
-        $tag_base = !empty($value['tag_base']) ? $value['tag_base'] : 'product-tag';
+        $tag_base = !empty($value['tag_base']) ? $value['tag_base'] : _x( 'product-tag', 'slug', 'woocommerce' );
         do_action('wpml_register_single_string', 'WordPress', 'Url product_tag slug: ' . $tag_base, $tag_base);
 
         if (isset($value['attribute_base']) && $value['attribute_base']) {
