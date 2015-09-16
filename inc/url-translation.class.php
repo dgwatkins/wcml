@@ -351,7 +351,7 @@ class WCML_Url_Translation{
 
             if ( is_null( $slug_translation ) ) {
                 // handle exception - default woocommerce category and tag bases used
-                $slug_translation = $woocommerce_wpml->get_translation_from_woocommerce_mo_file( $slug, $language );
+                $slug_translation = $woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( $slug, $language );
 
             }
 

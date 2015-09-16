@@ -71,8 +71,8 @@ class WCML_Store_Pages{
                 }
 
                 if( $sitepress->get_default_language() != 'en' ){
-                    $page['name'] = $woocommerce_wpml->terms->get_translation_from_woocommerce_mo_file( 'Page slug'.$page['name'], $default_language );
-                    $page['title'] = $woocommerce_wpml->terms->get_translation_from_woocommerce_mo_file( 'Page title'.$page['title'], $default_language );
+                    $page['name'] = $woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( 'Page slug'.$page['name'], $default_language );
+                    $page['title'] = $woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( 'Page title'.$page['title'], $default_language );
                 }
             }
         }
