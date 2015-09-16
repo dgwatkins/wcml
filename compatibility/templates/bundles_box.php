@@ -9,7 +9,7 @@
             <table id="prod_bundles" class="wcml-attr-table prod_bundles js-table">
                 <tbody>
                     <?php
-                    $i = 0;
+                    $i = 1;
 
                     foreach( $template_data['bundles_data'] as $key => $bundle ) :
                         $index = '';

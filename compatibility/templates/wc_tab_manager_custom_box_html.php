@@ -6,7 +6,7 @@
 
     <div class="inside">
         <table id="prod_tabs" class="wcml-attr-table js-table">
-            <?php $index = 0;
+            <?php $index = 1;
             foreach( $template_data['orig_tabs'] as $key => $values ):
             $trnsl_tab_id = isset($template_data['tr_tabs'][$key]['id'])?$template_data['tr_tabs'][$key]['id']:'';
             $orig_tab_id = $template_data['orig_tabs'][$key]['id'];

@@ -201,6 +201,7 @@ class WCML_Product_Bundles{
 
                 $template_data['bundles_data'][$i][$bundle_key]['bundle_title'] = $bundle_title;
                 $template_data['bundles_data'][$i][$bundle_key]['bundle_desc'] = $bundle_desc;
+                $i++;
             }
 
         }

@@ -70,7 +70,7 @@
             <?php endforeach; ?>
 
             <?php
-            $index = 0;
+            $index = 1;
             foreach( $template_data[ 'persons' ] as $original_person_id => $trnsl_person_id ): ?>
                 <?php if( !$index ) :?>
                     <tr class="wcml-line-row">
