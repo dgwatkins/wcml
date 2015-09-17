@@ -494,7 +494,7 @@ class woocommerce_wpml {
         $get_post_type = get_post_type(@$post->ID);
 
         if($get_post_type == 'product' && $pagenow == 'edit.php'){
-            $prot_link = '<span class="button" style="padding:4px;margin-top:10px;"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="'. $this->generate_tracking_link('http://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation','#4') .'" target="_blank">' .
+            $prot_link = '<span class="button"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="'. $this->generate_tracking_link('http://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation','#4') .'" target="_blank">' .
                     __('How to translate products', 'sitepress') . '<\/a>' . '<\/span>';
             $quick_edit_notice = '<div id="quick_edit_notice" style="display:none;"><p>'. sprintf(__("Quick edit is disabled for product translations. It\'s recommended to use the %s for editing products translations. %s",'wpml-wcml'), '<a href="'.admin_url('admin.php?page=wpml-wcml&tab=products').'" >'.__('WooCommerce Multilingual products editor','wpml-wcml').'</a>','<a href="" class="quick_product_trnsl_link" >'.__('Edit this product translation','wpml-wcml').'</a>').'</p></div>';
             $quick_edit_notice_prod_link = '<input type="hidden" id="wcml_product_trnsl_link" value="'.admin_url('admin.php?page=wpml-wcml&tab=products&prid=').'">';
