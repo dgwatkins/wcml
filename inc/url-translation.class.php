@@ -436,20 +436,10 @@ class WCML_Url_Translation{
                                     WHERE t.language = %s AND t.status = %s AND s.name = %s AND s.value = %s
                                 ", $language, ICL_STRING_TRANSLATION_COMPLETE, 'URL ' . $taxonomy . ' slug: ' . $slug, $slug));
 
-                if ( is_null( $slug_translation ) ) {
-                    // handle exception - default woocommerce category and tag bases used
-                    $slug_translation = $woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( $slug, $language );
-                }
-
             } else {
 
                 $has_translation = false;
                 $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, 'WordPress', 'Url ' . $taxonomy . ' slug: ' . $slug, $language, $has_translation);
-
-                if ( !$has_translation ) {
-                    // handle exception - default woocommerce category and tag bases used
-                    $slug_translation = $woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( $slug, $language );
-                }
 
 
             }
