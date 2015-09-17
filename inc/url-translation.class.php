@@ -43,6 +43,28 @@ class WCML_Url_Translation{
 
     }
 
+    function url_strings_context(){
+        return 'WordPress';
+    }
+
+    function url_string_name($type, $slug = null){
+
+        $name = '';
+
+        switch($type){
+            case 'product':
+                $name = sprintf('Url slug: %s', $slug) ;
+                break;
+            case 'product_cat':
+            case 'product_tag':
+            case 'attribute':
+                $name = sprintf('Url %s slug: %s', $type, $slug) ;
+                break;
+        }
+
+        return $name;
+    }
+
     function translate_product_base(){
         global $wpdb;
 
@@ -68,9 +90,9 @@ class WCML_Url_Translation{
                 $sitepress->save_settings($iclsettings);
             }
 
-            $string = icl_get_string_id( $slug, 'WordPress', 'URL slug: ' . $slug );
+            $string = icl_get_string_id( $slug, $this->url_strings_context(), $this->url_string_name('product', $slug) );
             if(!$string){
-                do_action('wpml_register_single_string', 'WordPress', 'URL slug: ' . $slug, $slug);
+                do_action('wpml_register_single_string', $this->url_strings_context(), $this->url_string_name('product', $slug), $slug);
             }
 
         }
@@ -98,8 +120,8 @@ class WCML_Url_Translation{
         // products
         if ( version_compare(WPML_ST_VERSION, '2.2.6', '<=') ) {
             $product_base = !empty($permalink_options['product_base']) ? $permalink_options['product_base'] : $this->default_product_base;
-            $name = 'Url slug: ' . $product_base;
-            do_action('wpml_register_single_string', 'WordPress', $name , $product_base);
+            $name = $this->url_string_name('product', $product_base);
+            do_action('wpml_register_single_string', $this->url_strings_context(), $name , $product_base);
         }
 
         if($product_base == $this->default_product_base){
@@ -108,8 +130,8 @@ class WCML_Url_Translation{
 
         // categories
         $category_base = !empty($permalink_options['category_base']) ? $permalink_options['category_base'] : $this->default_product_category_base;
-        $name = 'Url product_cat slug: ' . $category_base;
-        do_action('wpml_register_single_string', 'WordPress', $name, $category_base);
+        $name = $this->url_string_name('product_cat', $category_base);
+        do_action('wpml_register_single_string', $this->url_strings_context(), $name, $category_base);
 
         if($category_base == $this->default_product_category_base){
             $this->add_default_slug_translations($category_base, $name);
@@ -117,8 +139,8 @@ class WCML_Url_Translation{
 
         // tags
         $tag_base = !empty($permalink_options['tag_base']) ? $permalink_options['tag_base'] : $this->default_product_tag_base;
-        $name = 'Url product_tag slug: ' . $tag_base;
-        do_action('wpml_register_single_string', 'WordPress', $name, $tag_base);
+        $name = $this->url_string_name('product_tag', $tag_base);
+        do_action('wpml_register_single_string', $this->url_strings_context(), $name, $tag_base);
 
         if($tag_base == $this->default_product_tag_base){
             $this->add_default_slug_translations($tag_base, $name);
@@ -127,7 +149,7 @@ class WCML_Url_Translation{
 
         if (isset($permalink_options['attribute_base']) && $permalink_options['attribute_base']) {
             $attr_base = trim($permalink_options['attribute_base'], '/');
-            do_action('wpml_register_single_string', 'WordPress', 'Url attribute slug: ' . $attr_base, $attr_base);
+            do_action('wpml_register_single_string', $this->url_strings_context(), $this->url_string_name('attribute', $attr_base), $attr_base);
         }
 
     }
@@ -135,7 +157,7 @@ class WCML_Url_Translation{
     function add_default_slug_translations($slug, $name){
         global $woocommerce_wpml, $sitepress, $wpdb;
 
-        $string_id = icl_get_string_id($slug, 'WordPress', $name);
+        $string_id = icl_get_string_id($slug, $this->url_strings_context(), $name);
 
         if( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ){
 
@@ -224,7 +246,7 @@ class WCML_Url_Translation{
             add_filter('option_rewrite_rules', array('WPML_Slug_Translation', 'rewrite_rules_filter'), 1, 1);
         }
 
-        $strings_language = $woocommerce_wpml->strings->get_domain_language( 'WordPress' );
+        $strings_language = $woocommerce_wpml->strings->get_domain_language( $this->url_strings_context() );
 
         if($sitepress->get_current_language() != $strings_language){
 
@@ -272,8 +294,7 @@ class WCML_Url_Translation{
 
                     if( isset( $slug ) && $sitepress->get_current_language() != $strings_language){
 
-                        $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, 'WordPress', 'URL attribute slug: ' . $slug );
-
+                        $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, $this->url_strings_context(), $this->url_string_name('attribute', $slug) );
                         if($slug_translation){
 
                             $buff_value = array();
@@ -405,7 +426,7 @@ class WCML_Url_Translation{
                 $slug = !empty( $permalinks['tag_base'] ) ? trim($permalinks['tag_base'],'/') : 'product-tag';
 
                 if( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ){
-                    $string_id = icl_get_string_id($slug, 'WordPress', 'Url ' . $taxonomy . ' slug: ' . $slug);
+                    $string_id = icl_get_string_id( $slug, $this->url_strings_context(), $this->url_string_name($taxonomy, $slug) );
                     // will use a filter in the future wpmlst-529
                     $string_object                  = new WPML_ST_String($string_id, $wpdb);
                     $string_language                = $string_object->get_language();
@@ -417,7 +438,7 @@ class WCML_Url_Translation{
                 $slug = !empty( $permalinks['category_base'] ) ? trim($permalinks['category_base'],'/') : 'product-category';
 
                 if( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ){
-                    $string_id = icl_get_string_id($slug, 'WordPress', 'Url ' . $taxonomy . ' slug: ' . $slug);
+                    $string_id = icl_get_string_id( $slug, $this->url_strings_context(), $this->url_string_name($taxonomy, $slug) );
                     // will use a filter in the future wpmlst-529
                     $string_object                  = new WPML_ST_String($string_id, $wpdb);
                     $string_language                = $string_object->get_language();
@@ -429,7 +450,7 @@ class WCML_Url_Translation{
                 $slug = trim( $permalinks['attribute_base'], '/' );
 
                 if( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ){
-                    $string_id = icl_get_string_id($slug, 'WordPress', 'Url attribute slug: ' . $slug);
+                    $string_id = icl_get_string_id( $slug, $this->url_strings_context(), $this->url_string_name('attribute', $slug) );
                     // will use a filter in the future wpmlst-529
                     $string_object                  = new WPML_ST_String($string_id, $wpdb);
                     $string_language                = $string_object->get_language();
@@ -443,16 +464,16 @@ class WCML_Url_Translation{
         }
 
         if( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-            $string_language = $woocommerce_wpml->strings->get_domain_language( 'WordPress' );
+            $string_language = $woocommerce_wpml->strings->get_domain_language( $this->url_strings_context() );
         }
 
         if($slug && $language != $string_language) {
 
             if(  !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ){
-                $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, 'WordPress', 'URL ' . $taxonomy . ' slug: ' . $slug );
+                $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, $this->url_strings_context(), $this->url_string_name($taxonomy, $slug) );
             } else {
                 $has_translation = false;
-                $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, 'WordPress', 'Url ' . $taxonomy . ' slug: ' . $slug, $language, $has_translation);
+                $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, $this->url_strings_context(), $this->url_string_name($taxonomy, $slug), $language, $has_translation);
             }
 
 
