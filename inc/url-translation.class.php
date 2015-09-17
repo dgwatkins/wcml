@@ -23,7 +23,7 @@ class WCML_Url_Translation{
         }
 
         remove_filter('option_rewrite_rules', array('WPML_Slug_Translation', 'rewrite_rules_filter'), 1, 1); //remove filter from WPML and use WCML filter first
-        add_filter('option_rewrite_rules', array($this, 'rewrite_rules_filter'), 3, 1); // high priority
+        add_filter('option_rewrite_rules', array($this, 'translate_bases_in_rewrite_rules'), 3, 1); // high priority
 
         add_filter('term_link', array($this, 'translate_taxonomy_base'), 0, 3); // high priority
 
@@ -219,7 +219,7 @@ class WCML_Url_Translation{
         return $value;
     }
 
-    function rewrite_rules_filter($value){
+    function translate_bases_in_rewrite_rules($value){
         global $sitepress, $sitepress_settings, $wpdb, $wp_taxonomies,$woocommerce,$woocommerce_wpml;
 
         if(!empty($sitepress_settings['posts_slug_translation']['on'])){
