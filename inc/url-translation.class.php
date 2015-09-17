@@ -37,19 +37,19 @@ class WCML_Url_Translation{
 
         $slug = $this->get_woocommerce_product_base();
 
-        if ( apply_filters( 'wpml_slug_translation_available', false) ) {
+        if ( version_compare(WPML_ST_VERSION, '2.2.6', '>') ) {
+
             // Use new API for WPML >= 3.2.3
-            do_action( 'wpml_activate_slug_translation', $slug );
+            do_action( 'wpml_activate_slug_translation', 'product', $slug );
 
         } else {
-            // Pre WPML 3.2.3
 
             // force_product_slug_translation_on
             global $sitepress;
             $iclsettings = $sitepress->get_settings();
-            if(empty($iclsettings['posts_slug_translation']['on']) || empty($iclsettings['posts_slug_translation']['types'][$slug])){
+            if(empty($iclsettings['posts_slug_translation']['on']) || empty($iclsettings['posts_slug_translation']['types']['product'])){
                 $iclsettings['posts_slug_translation']['on'] = 1;
-                $iclsettings['posts_slug_translation']['types'][$slug] = 1;
+                $iclsettings['posts_slug_translation']['types']['product'] = 1;
                 $sitepress->save_settings($iclsettings);
             }
 
