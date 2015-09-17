@@ -14,11 +14,9 @@ class WCML_Url_Translation{
 
         $this->set_up(); //initialization
 
-        // @TODO - ADD filter for reading permalink options
-
         add_action('update_option_permalink_structure', array($this, 'register_product_and_taxonomy_bases'));
 
-        if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
+        if ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
             add_filter('pre_update_option_rewrite_rules', array($this, 'pre_update_rewrite_rules'), 1, 1); // high priority
         }
 
