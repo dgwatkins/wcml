@@ -91,9 +91,9 @@ class WCML_WC_Strings{
             $strings_language = $this->get_domain_language('WordPress');
 
             if($string_id && $sitepress_settings['admin_default_language'] != $strings_language){
-                $string = $wpdb->get_var($wpdb->prepare("SELECT value FROM {$wpdb->prefix}icl_string_translations WHERE string_id = %s and language = %s", $string_id, $sitepress_settings['admin_default_language']));
-                if($string){
-                    return $string;
+                $strings = icl_get_string_translations_by_id($string_id);
+                if($strings){
+                    return $strings[$sitepress_settings['admin_default_language']]['value'];
                 }
             }else{
                 return $label;
@@ -193,11 +193,7 @@ class WCML_WC_Strings{
             $translated_slug = apply_filters( 'wpml_get_translated_slug', $product_permalink, $language );
         } else {
             // Try the old way.
-            $translated_slug = $wpdb->get_var($wpdb->prepare("
-                    SELECT t.value FROM {$wpdb->prefix}icl_string_translations t
-                    JOIN {$wpdb->prefix}icl_strings s ON t.string_id = s.id
-                    WHERE s.name=%s AND s.value = %s AND t.language = %s AND t.status = %d",
-                'URL slug: ' . $product_permalink, $product_permalink, $language, ICL_STRING_TRANSLATION_COMPLETE ));
+            $translated_slug = apply_filters( 'wpml_translate_single_string', $product_permalink, 'WordPress', 'URL slug: ' . $product_permalink );
         }
 
         return $translated_slug;
@@ -438,14 +434,15 @@ class WCML_WC_Strings{
             // Use new API for WPML >= 3.2.3
             $slug_translation_languages = apply_filters( 'wpml_get_slug_translation_languages', array(), $slug );
         } else {
-            $slug_translation_languages = $wpdb->get_col($wpdb->prepare("SELECT tr.language FROM {$wpdb->prefix}icl_strings AS s LEFT JOIN {$wpdb->prefix}icl_string_translations AS tr ON s.id = tr.string_id WHERE s.name = %s AND s.value = %s AND tr.status = %s", 'URL slug: ' . $slug, $slug, ICL_STRING_TRANSLATION_COMPLETE));
+            $string_id = icl_get_string_id( $slug, 'WordPress', 'URL slug: ' . $slug );
+            $slug_translations = icl_get_string_translations_by_id( $string_id );
         }
         $miss_slug_lang = array();
 
         $strings_language = $this->get_domain_language('WordPress');
 
         foreach( $sitepress->get_active_languages() as $lang_info ){
-            if( !in_array( $lang_info['code'], $slug_translation_languages ) && $lang_info['code'] != $strings_language ){
+            if( ( ( isset( $slug_translations ) && !array_key_exists( $lang_info['code'], $slug_translations ) ) || ( isset( $slug_translation_languages ) && !in_array( $lang_info['code'], $slug_translation_languages ) ) ) && $lang_info['code'] != $strings_language ){
                 $miss_slug_lang[] = ucfirst($lang_info['display_name']);
             }
         }
@@ -546,9 +543,10 @@ class WCML_WC_Strings{
             global $wpdb,$sitepress;
 
             foreach( $attribute_taxonomies as $key => $attribute_taxonomy ){
-                $string = $wpdb->get_var($wpdb->prepare("SELECT st.value FROM {$wpdb->prefix}icl_string_translations AS st JOIN {$wpdb->prefix}icl_strings AS s ON s.id = st.string_id WHERE s.context = %s AND s.name = %s AND st.language = %s", 'WordPress', 'taxonomy singular name: '.$attribute_taxonomy->attribute_name, $sitepress->get_current_language() ) );
-                if($string) {
-                    $attribute_taxonomies[$key]->attribute_label = $string;
+                $string_id = icl_get_string_id( $attribute_taxonomy->attribute_name, 'WordPress', 'taxonomy singular name: '.$attribute_taxonomy->attribute_name );
+                $strings = icl_get_string_translations_by_id( $string_id );
+                if($strings) {
+                    $attribute_taxonomies[$key]->attribute_label = $strings[$sitepress->get_current_language()]['value'];
                 }
             }
 

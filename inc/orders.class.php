@@ -41,13 +41,12 @@ class WCML_Orders{
 
             $language = $woocommerce_wpml->strings->get_domain_language( 'woocommerce' );
 
-            $string_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}icl_strings WHERE language = %s AND value = %s ", $language, $text));
-
+            $string_id = icl_get_string_id( $text, 'woocommerce');
 
             if( $string_id && $sitepress_settings['admin_default_language'] != $language ){
-                $string = $wpdb->get_var($wpdb->prepare("SELECT value FROM {$wpdb->prefix}icl_string_translations WHERE string_id = %s and language = %s", $string_id, $sitepress_settings['admin_default_language']));
-                if($string){
-                    $translations = $string;
+                $strings = icl_get_string_translations_by_id( $string_id );
+                if($strings){
+                    $translations = $strings[ $sitepress_settings['admin_default_language'] ];
                 }
             }else{
                 return $text;
@@ -71,12 +70,12 @@ class WCML_Orders{
 
             foreach($comments as $key=>$comment){
 
-                $comment_string_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}icl_strings WHERE language = %s AND value = %s ", $language, $comment->comment_content));
+                $comment_string_id = icl_get_string_id( $comment->comment_content, 'woocommerce');
 
                 if($comment_string_id){
-                    $comment_string = $wpdb->get_var($wpdb->prepare("SELECT value FROM {$wpdb->prefix}icl_string_translations WHERE string_id = %s and language = %s", $comment_string_id, $user_language));
-                    if($comment_string){
-                        $comments[$key]->comment_content = $comment_string;
+                    $comment_strings = icl_get_string_translations_by_id( $comment_string_id );
+                    if($comment_strings){
+                        $comments[$key]->comment_content = $comment_strings[$user_language]['value'];
                     }
                 }
             }        

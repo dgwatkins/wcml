@@ -54,7 +54,7 @@ class WCML_Endpoints{
     function get_endpoint_translation( $key, $endpoint, $language = null ){
         global $wpdb;
 
-        $string = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'Endpoint slug: ' . $key, $endpoint ) );
+        $string = icl_get_string_id( $endpoint, 'WordPress', 'Endpoint slug: ' . $key );
 
         if( !$string && function_exists( 'icl_register_string' ) ){
             do_action('wpml_register_single_string', 'WordPress', 'Endpoint slug: ' . $key, $endpoint );
@@ -104,10 +104,10 @@ class WCML_Endpoints{
         //add endpoints and flush rules
         foreach( $this->endpoints_strings as $string_id ){
 
-            $strings = $wpdb->get_results( $wpdb->prepare( "SELECT value FROM {$wpdb->prefix}icl_string_translations WHERE string_id = %s AND status = %s", $string_id , ICL_STRING_TRANSLATION_COMPLETE) );
+            $string_translations = icl_get_string_translations_by_id( $string_id );
 
-            foreach( $strings as $string ){
-                add_rewrite_endpoint( $string->value, EP_ROOT | EP_PAGES );
+            foreach( $string_translations as $string ){
+                add_rewrite_endpoint( $string['value'], EP_ROOT | EP_PAGES );
             }
         }
 

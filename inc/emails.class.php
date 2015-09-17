@@ -272,6 +272,7 @@ class WCML_Emails{
 
         $language = $woocommerce_wpml->strings->get_domain_language( 'woocommerce' );
 
+        //TODO use WPML function isntead of query
         $result = $wpdb->get_results( $wpdb->prepare( "SELECT value,context FROM {$wpdb->prefix}icl_strings WHERE language = %s AND name = %s ", $language, $name ) );
 
         return $result;

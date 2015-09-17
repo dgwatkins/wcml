@@ -70,7 +70,7 @@ class WCML_Url_Translation{
                 $sitepress->save_settings($iclsettings);
             }
 
-            $string = $wpdb->get_row($wpdb->prepare("SELECT id,status FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'URL slug: ' . $slug, $slug));
+            $string = icl_get_string_id( $slug, 'WordPress', 'URL slug: ' . $slug );
             if(!$string){
                 do_action('wpml_register_single_string', 'WordPress', 'URL slug: ' . $slug, $slug);
             }
@@ -207,12 +207,7 @@ class WCML_Url_Translation{
 
                     if( isset( $slug ) && $sitepress->get_current_language() != $strings_language){
 
-                        $slug_translation = $wpdb->get_var($wpdb->prepare("
-                                    SELECT t.value
-                                    FROM {$wpdb->prefix}icl_string_translations t
-                                        JOIN {$wpdb->prefix}icl_strings s ON t.string_id = s.id
-                                    WHERE t.language = %s AND t.status = %s AND s.name = %s AND s.value = %s
-                                ", $sitepress->get_current_language(), ICL_STRING_TRANSLATION_COMPLETE, 'URL attribute slug: ' . $slug, $slug));
+                        $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, 'WordPress', 'URL attribute slug: ' . $slug );
 
                         if($slug_translation){
 
@@ -364,12 +359,7 @@ class WCML_Url_Translation{
 
             if(  !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ){
 
-                $slug_translation = $wpdb->get_var($wpdb->prepare("
-                                    SELECT t.value
-                                    FROM {$wpdb->prefix}icl_string_translations t
-                                        JOIN {$wpdb->prefix}icl_strings s ON t.string_id = s.id
-                                    WHERE t.language = %s AND t.status = %s AND s.name = %s AND s.value = %s
-                                ", $language, ICL_STRING_TRANSLATION_COMPLETE, 'URL ' . $taxonomy . ' slug: ' . $slug, $slug));
+                $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, 'WordPress', 'URL ' . $taxonomy . ' slug: ' . $slug );
 
                 if ( is_null( $slug_translation ) ) {
                     // handle exception - default woocommerce category and tag bases used
