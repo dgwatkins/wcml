@@ -14,7 +14,6 @@ class WCML_Url_Translation{
 
         //set translate product by default
         $this->translate_product_base();
-        $this->force_product_slug_translation_on();
 
         add_filter('option_woocommerce_permalinks', array($this, 'register_product_and_taxonomy_bases'));
 
@@ -44,6 +43,16 @@ class WCML_Url_Translation{
 
         } else {
             // Pre WPML 3.2.3
+
+            // force_product_slug_translation_on
+            global $sitepress;
+            $iclsettings = $sitepress->get_settings();
+            if(empty($iclsettings['posts_slug_translation']['on']) || empty($iclsettings['posts_slug_translation']['types'][$slug])){
+                $iclsettings['posts_slug_translation']['on'] = 1;
+                $iclsettings['posts_slug_translation']['types'][$slug] = 1;
+                $sitepress->save_settings($iclsettings);
+            }
+
             $string = $wpdb->get_row($wpdb->prepare("SELECT id,status FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'URL slug: ' . $slug, $slug));
             if(!$string){
                 do_action('wpml_register_single_string', 'WordPress', 'URL slug: ' . $slug, $slug);
@@ -63,18 +72,6 @@ class WCML_Url_Translation{
             return trim( get_option('woocommerce_product_slug'), '/');
         }else{
             return $this->default_product_base; // the default WooCommerce value. Before permalinks options are saved
-        }
-
-    }
-
-    function force_product_slug_translation_on(){
-        global $sitepress;
-
-        $iclsettings = $sitepress->get_settings();
-        if(empty($iclsettings['posts_slug_translation']['on']) || empty($iclsettings['posts_slug_translation']['types']['product'])){
-            $iclsettings['posts_slug_translation']['on'] = 1;
-            $iclsettings['posts_slug_translation']['types']['product'] = 1;
-            $sitepress->save_settings($iclsettings);
         }
 
     }
