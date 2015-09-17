@@ -398,21 +398,43 @@ class WCML_Url_Translation{
     function get_translated_tax_slug( $taxonomy, $language = false ){
         global $sitepress, $woocommerce_wpml, $wpdb;
 
-        $strings_language = $woocommerce_wpml->strings->get_domain_language( 'WordPress' );
-
         $permalinks     = get_option( 'woocommerce_permalinks' );
 
         switch($taxonomy){
             case 'product_tag':
                 $slug = !empty( $permalinks['tag_base'] ) ? trim($permalinks['tag_base'],'/') : 'product-tag';
+
+                if( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ){
+                    $string_id = icl_get_string_id($slug, 'WordPress', 'Url ' . $taxonomy . ' slug: ' . $slug);
+                    // will use a filter in the future wpmlst-529
+                    $string_object                  = new WPML_ST_String($string_id, $wpdb);
+                    $string_language                = $string_object->get_language();
+                }
+
                 break;
 
             case 'product_cat':
                 $slug = !empty( $permalinks['category_base'] ) ? trim($permalinks['category_base'],'/') : 'product-category';
+
+                if( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ){
+                    $string_id = icl_get_string_id($slug, 'WordPress', 'Url ' . $taxonomy . ' slug: ' . $slug);
+                    // will use a filter in the future wpmlst-529
+                    $string_object                  = new WPML_ST_String($string_id, $wpdb);
+                    $string_language                = $string_object->get_language();
+                }
+
                 break;
 
             default:
                 $slug = trim( $permalinks['attribute_base'], '/' );
+
+                if( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ){
+                    $string_id = icl_get_string_id($slug, 'WordPress', 'Url attribute slug: ' . $slug);
+                    // will use a filter in the future wpmlst-529
+                    $string_object                  = new WPML_ST_String($string_id, $wpdb);
+                    $string_language                = $string_object->get_language();
+                }
+
                 break;
         }
 
@@ -420,16 +442,17 @@ class WCML_Url_Translation{
             $language = $sitepress->get_current_language();
         }
 
-        if($slug && $language != $strings_language) {
+        if( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
+            $string_language = $woocommerce_wpml->strings->get_domain_language( 'WordPress' );
+        }
+
+        if($slug && $language != $string_language) {
 
             if(  !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ){
-
                 $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, 'WordPress', 'URL ' . $taxonomy . ' slug: ' . $slug );
-
             } else {
-
+                $has_translation = false;
                 $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, 'WordPress', 'Url ' . $taxonomy . ' slug: ' . $slug, $language, $has_translation);
-
             }
 
 
