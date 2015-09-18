@@ -29,7 +29,7 @@ class WCML_Dependencies{
             $allok = false;
         }else{
             if( !defined('WPML_SUPPORT_STRINGS_IN_DIFF_LANG') ){
-                if( version_compare(ICL_SITEPRESS_VERSION, '3.2.7', '>=')){
+                if( class_exists('WPML_Language_Of_Domain') ){
                     define('WPML_SUPPORT_STRINGS_IN_DIFF_LANG', true );
                 }else{
                     define('WPML_SUPPORT_STRINGS_IN_DIFF_LANG', false);
