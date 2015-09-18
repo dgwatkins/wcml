@@ -38,7 +38,8 @@ class WCML_WC_Strings{
         
         if(is_admin() && $pagenow == 'options-permalink.php'){
             add_filter('gettext_with_context', array($this, 'category_base_in_strings_language'), 99, 3);
-            add_action('admin_footer', array($this, 'show_custom_url_base_notices'));
+            add_action('admin_footer', array($this, 'show_custom_url_base_translation_links'));
+            add_action('admin_footer', array($this, 'show_custom_url_base_language_requirement'));
         }
 
         if(is_admin() && $pagenow == 'admin.php' && isset($_GET['page']) && $_GET['page'] == 'wc-settings'){
@@ -301,32 +302,48 @@ class WCML_WC_Strings{
         return $label;
     }
 
-    function show_custom_url_base_notices(){
+    function show_custom_url_base_language_requirement(){
         $this->string_language_notice();
         $this->links_to_translate_bases();
+        $category_base = ($c = get_option('category_base') ) ? $c : 'category';
         ?>
         <script>
             if(jQuery('#woocommerce_permalink_structure').length){
                 jQuery('#woocommerce_permalink_structure').parent().append(jQuery('#wpml_wcml_custom_base_req').html());
             }
-            if(jQuery('input[name="woocommerce_product_category_slug"]').length){
-                jQuery('input[name="woocommerce_product_category_slug"]').parent().append('<br><i><?php _e('Please use a different product category base than "category"', 'wpml-wcml') ?></i>');
-            }
-
-            if(jQuery('input[name="woocommerce_product_category_slug"]').length){
-                jQuery('input[name="woocommerce_product_category_slug"]').parent().append(jQuery('#wpml_wcml_link_to_translate_bases').html());
-            }
-
-            if(jQuery('input[name="woocommerce_product_tag_slug"]').length){
-                jQuery('input[name="woocommerce_product_tag_slug"]').parent().append(jQuery('#wpml_wcml_link_to_translate_bases').html());
-            }
-
-            if(jQuery('input[name="product_permalink_structure"]').length){
-                jQuery('input[name="product_permalink_structure"]').parent().append(jQuery('#wpml_wcml_link_to_translate_bases').html());
+            if(jQuery('input[name="woocommerce_product_category_slug"]').length && jQuery('input[name="woocommerce_product_category_slug"]').val() == '<?php echo $category_base ?>'){
+                jQuery('input[name="woocommerce_product_category_slug"]').parent().append('<br><i class="icon-warning-sign"><?php
+                    _e('You are using the same value as for the regular category base. This is known to create conflicts resulting in urls not working properly.', 'wpml-wcml') ?></i>');
             }
         </script>
         <?php
 
+    }
+
+    function show_custom_url_base_translation_links(){
+        ?>
+        <script>
+            var inputs = ['woocommerce_product_category_slug', 'woocommerce_product_tag_slug', 'woocommerce_product_attribute_slug', 'product_permalink_structure'];
+
+            for(i in inputs){
+                var input = jQuery('input[name="' + inputs[i] + '"]');
+                if(input.length){
+
+                    if(inputs[i] == 'woocommerce_product_attribute_slug' && input.val() == '' ) continue;
+
+                    if(inputs[i] == 'product_permalink_structure' && jQuery('input[name="product_permalink"]:checked').val() == '' ){
+
+                        input = jQuery('input[name="product_permalink"]:checked').closest('.form-table').find('code').eq(0);
+                        console.log(input);
+                    }
+
+                    input.parent().append('<div clsas="description" style="margin-top:4px;">&raquo;&nbsp;<a href="<?php
+                            echo admin_url('admin.php?page=wpml-string-translation/menu/string-translation.php&context=WordPress')
+                             ?>"><?php _e('edit translations', 'wpml-wcml') ?></a></div>');
+                }
+            }
+        </script>
+        <?php
     }
 
     function show_language_notice_for_wc_settings(){
