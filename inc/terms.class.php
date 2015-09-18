@@ -1207,20 +1207,20 @@ class WCML_Terms{
 
         foreach( $taxonomies_to_check as $check_taxonomy ){
             $terms = get_terms( $check_taxonomy, array( 'hide_empty' => false, 'fields' => 'ids' ) );
-
+            if (is_array($terms)){
             foreach( $terms as $term ){
                 if( $this->check_if_sync_term_translation_needed( $term[ 'term_taxonomy_id' ], $check_taxonomy ) ){
                     break;
                 }
             }
-
+            }
         }
 
         $attribute_taxonomies = wc_get_attribute_taxonomies();
         foreach( $attribute_taxonomies as $a ){
 
             $terms = get_terms( 'pa_' . $a->attribute_name, array( 'hide_empty' => false, 'fields' => 'ids' ) );
-
+            if (is_array($terms)){
             foreach( $terms as $term ){
                 $flag_set = $this->check_if_sync_term_translation_needed( $term[ 'term_taxonomy_id' ], 'pa_' . $a->attribute_name );
                 if( $flag_set ){
@@ -1231,7 +1231,7 @@ class WCML_Terms{
             if( $flag_set ){
                 break;
             }
-
+            }
         }
 
     }
