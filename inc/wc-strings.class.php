@@ -38,7 +38,7 @@ class WCML_WC_Strings{
         
         if(is_admin() && $pagenow == 'options-permalink.php'){
             add_filter('gettext_with_context', array($this, 'category_base_in_strings_language'), 99, 3);
-            add_action('admin_footer', array($this, 'show_custom_url_base_language_requirement'));    
+            add_action('admin_footer', array($this, 'show_custom_url_base_notices'));
         }
 
         if(is_admin() && $pagenow == 'admin.php' && isset($_GET['page']) && $_GET['page'] == 'wc-settings'){
@@ -301,8 +301,9 @@ class WCML_WC_Strings{
         return $label;
     }
 
-    function show_custom_url_base_language_requirement(){
+    function show_custom_url_base_notices(){
         $this->string_language_notice();
+        $this->links_to_translate_bases();
         ?>
         <script>
             if(jQuery('#woocommerce_permalink_structure').length){
@@ -310,6 +311,18 @@ class WCML_WC_Strings{
             }
             if(jQuery('input[name="woocommerce_product_category_slug"]').length){
                 jQuery('input[name="woocommerce_product_category_slug"]').parent().append('<br><i><?php _e('Please use a different product category base than "category"', 'wpml-wcml') ?></i>');
+            }
+
+            if(jQuery('input[name="woocommerce_product_category_slug"]').length){
+                jQuery('input[name="woocommerce_product_category_slug"]').parent().append(jQuery('#wpml_wcml_link_to_translate_bases').html());
+            }
+
+            if(jQuery('input[name="woocommerce_product_tag_slug"]').length){
+                jQuery('input[name="woocommerce_product_tag_slug"]').parent().append(jQuery('#wpml_wcml_link_to_translate_bases').html());
+            }
+
+            if(jQuery('input[name="product_permalink_structure"]').length){
+                jQuery('input[name="product_permalink_structure"]').parent().append(jQuery('#wpml_wcml_link_to_translate_bases').html());
             }
         </script>
         <?php
@@ -367,6 +380,12 @@ class WCML_WC_Strings{
         echo '</i></div></div>';
 
         $woocommerce_wpml->load_tooltip_resources();
+    }
+
+    function links_to_translate_bases(){
+        echo '<div id="wpml_wcml_link_to_translate_bases" style="display:none"><br>';
+        echo sprintf('<a href="%s">'.__('Edit translations', 'wpml-wcml').'</a>', admin_url('admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context=WordPress') );
+        echo '</div>';
     }
 
     function show_attribute_label_language_warning(){
