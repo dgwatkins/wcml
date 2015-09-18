@@ -39,11 +39,11 @@ class WCML_Orders{
         if(in_array($text,$this->standart_order_notes)){
             global $sitepress_settings, $wpdb, $woocommerce_wpml;
 
-            $language = $woocommerce_wpml->strings->get_domain_language( 'woocommerce' );
+            $language = $woocommerce_wpml->strings->get_string_language( $text, 'woocommerce' );
 
-            $string_id = icl_get_string_id( $text, 'woocommerce');
+            if( $sitepress_settings['admin_default_language'] != $language ){
 
-            if( $string_id && $sitepress_settings['admin_default_language'] != $language ){
+                $string_id = icl_get_string_id( $text, 'woocommerce');
                 $strings = icl_get_string_translations_by_id( $string_id );
                 if($strings){
                     $translations = $strings[ $sitepress_settings['admin_default_language'] ];
@@ -63,8 +63,6 @@ class WCML_Orders{
         if( $user_id ){
 
             global $wpdb, $woocommerce_wpml;
-
-            $language = $woocommerce_wpml->strings->get_domain_language( 'woocommerce' );
             
             $user_language    = get_user_meta( $user_id, 'icl_admin_language', true );
 

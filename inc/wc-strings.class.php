@@ -86,11 +86,10 @@ class WCML_WC_Strings{
         if(is_admin() && !wpml_is_ajax()){
             global $wpdb,$sitepress_settings;
 
-            $string_id = icl_get_string_id('taxonomy singular name: '.$label,'WordPress');
+            $string_language = $this->get_string_language('taxonomy singular name: '.$label,'WordPress');
 
-            $strings_language = $this->get_domain_language('WordPress');
-
-            if($string_id && $sitepress_settings['admin_default_language'] != $strings_language){
+            if($sitepress_settings['admin_default_language'] != $string_language){
+                $string_id = icl_get_string_id('taxonomy singular name: '.$label,'WordPress');
                 $strings = icl_get_string_translations_by_id($string_id);
                 if($strings){
                     return $strings[$sitepress_settings['admin_default_language']]['value'];
@@ -157,12 +156,11 @@ class WCML_WC_Strings{
     function translate_query_var_for_product($public_query_vars){
         global $wpdb, $sitepress, $sitepress_settings;
 
-        $strings_language = $this->get_domain_language( 'woocommerce' );
+        $product_permalink  = $this->product_permalink_slug();
+        $string_language = $this->get_string_language( $product_permalink, 'WordPress', 'URL slug: ' . $product_permalink );
 
-        if($sitepress->get_current_language() != $strings_language){
-            $product_permalink  = $this->product_permalink_slug();
-
-            $translated_slug = $this->get_translated_product_base_by_lang(false,$product_permalink);
+        if($sitepress->get_current_language() != $string_language){
+            $translated_slug = $this->get_translated_product_base_by_lang( false,$product_permalink );
             
             if(isset($_GET[$translated_slug])){
                 $buff = $_GET[$translated_slug];
@@ -211,7 +209,7 @@ class WCML_WC_Strings{
             $current_language = $sitepress->get_current_language();
             $strings_language = false;
 
-            $strings_language = $this->get_domain_language('WordPress');
+            $strings_language = $this->get_domain_language('woocommerce');
 
             if ($text == $wc_slug && $domain == 'woocommerce' && $strings_language) {
                 $sitepress->switch_lang($strings_language);
@@ -439,7 +437,7 @@ class WCML_WC_Strings{
         }
         $miss_slug_lang = array();
 
-        $strings_language = $this->get_domain_language('WordPress');
+        $string_language = $this->get_string_language( $slug, 'WordPress', 'URL slug: ' . $slug );
 
         foreach( $sitepress->get_active_languages() as $lang_info ){
             if( ( ( isset( $slug_translations ) && !array_key_exists( $lang_info['code'], $slug_translations ) ) || ( isset( $slug_translation_languages ) && !in_array( $lang_info['code'], $slug_translation_languages ) ) ) && $lang_info['code'] != $strings_language ){
@@ -484,6 +482,31 @@ class WCML_WC_Strings{
 
     }
 
+    // TODO will use a filter in the future wpmlst-529
+    function get_string_language( $value, $context, $name = false ){
+
+        if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
+            global $wpdb;
+
+            $string_id = icl_get_string_id( $value, $context, $name );
+
+            $string_object                  = new WPML_ST_String($string_id, $wpdb);
+            $string_language                = $string_object->get_language();
+
+            return $string_language;
+        }else{
+            global $sitepress_settings;
+
+            if ( isset($sitepress_settings['st']['strings_language']) ){
+                return $sitepress_settings['st']['strings_language'];
+            }
+
+            return 'en';
+        }
+
+    }
+
+
     /*
      * Filter breadcrumbs
      *
@@ -491,11 +514,12 @@ class WCML_WC_Strings{
     function filter_woocommerce_breadcrumbs( $breadcrumbs, $object ){
         global $sitepress;
 
-        if( $sitepress->get_current_language() != $this->get_domain_language( 'woocommerce' ) ){
+        if( $sitepress->get_current_language() != $sitepress->get_default_language() ){
 
             $permalinks   = get_option( 'woocommerce_permalinks' );
+
             $shop_page_id = wc_get_page_id( 'shop' );
-            $orig_shop_page = get_post( apply_filters( 'translate_object_id', $shop_page_id, 'page', true, $this->get_domain_language( 'woocommerce' ) ) );
+            $orig_shop_page = get_post( apply_filters( 'translate_object_id', $shop_page_id, 'page', true, $sitepress->get_default_language() ) );
 
             // If permalinks contain the shop page in the URI prepend the breadcrumb with shop
             // Similar to WC_Breadcrumb::prepend_shop_page
