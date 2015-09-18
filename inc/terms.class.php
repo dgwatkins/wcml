@@ -1217,6 +1217,7 @@ class WCML_Terms{
         }
 
         $attribute_taxonomies = wc_get_attribute_taxonomies();
+        $flag_set = false;
         foreach( $attribute_taxonomies as $a ){
 
             $terms = get_terms( 'pa_' . $a->attribute_name, array( 'hide_empty' => false, 'fields' => 'ids' ) );
