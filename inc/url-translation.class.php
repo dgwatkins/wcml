@@ -44,7 +44,7 @@ class WCML_Url_Translation {
     }
 
     function url_strings_context() {
-        return 'WordPress';
+        return 'WooCommerce Urls';
     }
 
     function url_string_name( $type, $slug = null ) {
@@ -77,7 +77,7 @@ class WCML_Url_Translation {
         if ( version_compare( WPML_ST_VERSION, '2.2.6', '>' ) ) {
 
             // Use new API for WPML ST > 2.2.6
-            do_action( 'wpml_activate_slug_translation', 'product', $slug );
+            do_action( 'wpml_activate_slug_translation', 'product', $slug, $this->url_strings_context() );
 
         } else {
 

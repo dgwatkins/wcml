@@ -321,6 +321,7 @@ class WCML_WC_Strings{
     }
 
     function show_custom_url_base_translation_links(){
+        global $woocommerce_wpml;
         ?>
         <script>
             var inputs = ['woocommerce_product_category_slug', 'woocommerce_product_tag_slug', 'woocommerce_product_attribute_slug', 'product_permalink_structure'];
@@ -338,7 +339,7 @@ class WCML_WC_Strings{
                     }
 
                     input.parent().append('<div clsas="description" style="margin-top:4px;">&raquo;&nbsp;<a href="<?php
-                            echo admin_url('admin.php?page=wpml-string-translation/menu/string-translation.php&context=WordPress')
+                            echo admin_url( 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context='. urlencode($woocommerce_wpml->url_translation->url_strings_context()) )
                              ?>"><?php _e('edit translations', 'wpml-wcml') ?></a></div>');
                 }
             }
