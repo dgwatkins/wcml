@@ -1087,7 +1087,7 @@ class WCML_WC_MultiCurrency{
 
                 $currency_details = $woocommerce_wpml->multi_currency_support->get_currency_details_by_code( $args['currency_code'] );
 
-                $args[ $key ] =  number_format( $value, $currency_details['num_decimals'], $currency_details['decimal_sep'], $currency_details['thousand_sep'] );
+                $args[ $key ] =  number_format( $value, $currency_details['num_decimals'], '.', '' );
             }
         }
 
