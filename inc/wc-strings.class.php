@@ -477,7 +477,7 @@ class WCML_WC_Strings{
         $string_language = $this->get_string_language( $slug, 'WordPress', 'URL slug: ' . $slug );
 
         foreach( $sitepress->get_active_languages() as $lang_info ){
-            if( ( ( isset( $slug_translations ) && !array_key_exists( $lang_info['code'], $slug_translations ) ) || ( isset( $slug_translation_languages ) && !in_array( $lang_info['code'], $slug_translation_languages ) ) ) && $lang_info['code'] != $strings_language ){
+            if( ( ( isset( $slug_translations ) && !array_key_exists( $lang_info['code'], $slug_translations ) ) || ( isset( $slug_translation_languages ) && !in_array( $lang_info['code'], $slug_translation_languages ) ) ) && $lang_info['code'] != $string_language ){
                 $miss_slug_lang[] = ucfirst($lang_info['display_name']);
             }
         }
