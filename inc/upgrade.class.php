@@ -332,10 +332,13 @@ class WCML_Upgrade{
                 if($taxonomy) {
                     $wpdb->update(
                         $wpdb->prefix . 'icl_strings',
-                        array('context' => 'WordPress'),
                         array(
-                            'context' => sprintf('URL %s slugs - %s', $taxonomy, $base),
-                            'name' => sprintf('Url %s slug: %s', $taxonomy, $base)
+                            'context'   => 'WordPress',
+                            'name'      => sprintf('URL %s slug: %s', $taxonomy, $base)
+                        ),
+                        array(
+                            'context'   => sprintf('URL %s slugs - %s', $taxonomy, $base),
+                            'name'      => sprintf('Url %s slug: %s', $taxonomy, $base)
                         )
                     );
 

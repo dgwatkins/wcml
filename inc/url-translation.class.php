@@ -53,12 +53,12 @@ class WCML_Url_Translation {
 
         switch ( $type ) {
             case 'product':
-                $name = sprintf( 'Url slug: %s', $slug );
+                $name = sprintf( 'URL slug: %s', $slug );
                 break;
             case 'product_cat':
             case 'product_tag':
             case 'attribute':
-                $name = sprintf( 'Url %s slug: %s', $type, $slug );
+                $name = sprintf( 'URL %s slug: %s', $type, $slug );
                 break;
         }
 
