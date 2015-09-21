@@ -8,9 +8,9 @@ class WCML_Url_Translation {
 
     function __construct() {
 
-        $this->default_product_base = _x( 'product', 'slug', 'woocommerce' );
-        $this->default_product_category_base = _x( 'product-category', 'slug', 'woocommerce' );
-        $this->default_product_tag_base = _x( 'product-tag', 'slug', 'woocommerce' );
+        $this->default_product_base             = _x( 'product', 'slug', 'woocommerce' );
+        $this->default_product_category_base    = _x( 'product-category', 'slug', 'woocommerce' );
+        $this->default_product_tag_base         = _x( 'product-tag', 'slug', 'woocommerce' );
 
         $this->set_up(); //initialization
 
@@ -44,7 +44,8 @@ class WCML_Url_Translation {
     }
 
     function url_strings_context() {
-        return 'WooCommerce Urls';
+        //return 'WooCommerce Urls';
+        return 'WordPress';
     }
 
     function url_string_name( $type, $slug = null ) {
@@ -115,7 +116,7 @@ class WCML_Url_Translation {
 
     function register_product_and_taxonomy_bases( $value, $old_value ) {
 
-        $permalink_options = get_option( 'woocommerce_permalinks' );
+        $permalink_options = $value;
 
         // products
         if ( version_compare( WPML_ST_VERSION, '2.2.6', '<=' ) ) {
@@ -241,7 +242,7 @@ class WCML_Url_Translation {
     }
 
     function translate_bases_in_rewrite_rules( $value ) {
-        global $sitepress, $sitepress_settings, $wpdb, $wp_taxonomies, $woocommerce, $woocommerce_wpml;
+        global $sitepress, $sitepress_settings, $woocommerce_wpml;
 
         if ( !empty( $sitepress_settings['posts_slug_translation']['on'] ) ) {
             add_filter( 'option_rewrite_rules', array( 'WPML_Slug_Translation', 'rewrite_rules_filter' ), 1, 1 );

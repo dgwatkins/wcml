@@ -316,6 +316,7 @@ class WCML_Upgrade{
 
         $woocommerce_permalinks = maybe_unserialize( get_option('woocommerce_permalinks') );
 
+        /*
         $product_base = trim( $woocommerce_permalinks['product_base'], '/' );
         if( empty( $product_base ) ) {
             $product_base = 'product';
@@ -331,6 +332,7 @@ class WCML_Upgrade{
                 'name'      => sprintf('URL slug: %s', $product_base )
             )
         );
+        */
 
         foreach($woocommerce_permalinks as $base_key => $base){
 
@@ -349,7 +351,8 @@ class WCML_Upgrade{
                     $wpdb->update(
                         $wpdb->prefix . 'icl_strings',
                         array(
-                            'context'   => 'WooCommerce Urls',
+                            //'context'   => 'WooCommerce Urls',
+                            'context'   => 'WordPress',
                             'name'      => sprintf('URL %s slug: %s', $taxonomy, $base)
                         ),
                         array(
