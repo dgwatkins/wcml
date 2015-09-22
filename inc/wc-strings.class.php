@@ -321,8 +321,44 @@ class WCML_WC_Strings{
     }
 
     function show_custom_url_base_translation_links(){
-        global $woocommerce_wpml;
-        ?>
+        global $woocommerce_wpml,$sitepress;
+
+        $lang_selector = new WPML_Simple_Language_Selector( $sitepress );
+
+        $inputs = array();
+
+        $wc_permalinks = get_option( 'woocommerce_permalinks' );
+
+        $bases = array( 'tag_base' => 'product_tag', 'category_base' => 'product_cat', 'attribute_base' => 'attribute', 'product_base' => 'product' );
+
+        foreach( $bases as $key => $base ){
+            if( empty( $wc_permalinks[$key] )) continue;
+
+            $language = $this->get_string_language( trim( $wc_permalinks[ $key ], '/' ), $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_string_name( $base, trim($wc_permalinks[ $key ], '/' ) ) );
+
+            switch($base){
+                case 'product_tag':
+                    $input_name = 'woocommerce_product_tag_slug';
+                    break;
+                case 'product_cat':
+                    $input_name = 'woocommerce_product_category_slug';
+                    break;
+                case 'attribute':
+                    $input_name = 'woocommerce_product_attribute_slug';
+                    break;
+                case 'product':
+                    $input_name = 'product_permalink_structure';
+                    break;
+            }
+
+            echo $lang_selector->render( array( 'id' => $key.'_language_selector', 'name' => $key.'_language', 'selected' => $language ) ); ?>
+
+            <script>
+                var input = jQuery('input[name="<?php echo $input_name ?>"]');
+                jQuery('#<?php echo $key ?>_language_selector').appendTo( input.parent() );
+            </script>
+        <?php } ?>
+
         <script>
             var inputs = ['woocommerce_product_category_slug', 'woocommerce_product_tag_slug', 'woocommerce_product_attribute_slug', 'product_permalink_structure'];
 
@@ -335,7 +371,6 @@ class WCML_WC_Strings{
                     if(inputs[i] == 'product_permalink_structure' && jQuery('input[name="product_permalink"]:checked').val() == '' ){
 
                         input = jQuery('input[name="product_permalink"]:checked').closest('.form-table').find('code').eq(0);
-                        console.log(input);
                     }
 
                     input.parent().append('<div clsas="description" style="margin-top:4px;">&raquo;&nbsp;<a href="<?php
@@ -345,6 +380,10 @@ class WCML_WC_Strings{
             }
         </script>
         <?php
+
+
+
+
     }
 
     function show_language_notice_for_wc_settings(){
@@ -539,6 +578,24 @@ class WCML_WC_Strings{
             }
 
             return 'en';
+        }
+
+    }
+
+    function set_string_language( $value, $context, $name , $language ){
+
+        if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
+            global $wpdb;
+
+            $string_id = icl_get_string_id( $value, $context, $name );
+
+            $string_object                  = new WPML_ST_String( $string_id, $wpdb );
+            $string_language                = $string_object->set_language( $language );
+
+            return $string_language;
+        }else{
+
+            return false;
         }
 
     }

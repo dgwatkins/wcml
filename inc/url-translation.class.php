@@ -127,6 +127,7 @@ class WCML_Url_Translation {
     }
 
     function register_product_and_taxonomy_bases( $value = false, $old_value = false ) {
+        global $woocommerce_wpml;
 
         if( empty( $value ) ){
             $permalink_options = $this->wc_permalinks;
@@ -141,6 +142,10 @@ class WCML_Url_Translation {
             do_action( 'wpml_register_single_string', $this->url_strings_context(), $name, $product_base );
         }
 
+        if( isset($_POST['product_base_language'])){
+            $woocommerce_wpml->strings->set_string_language( $product_base, $this->url_strings_context(), $name, $_POST['product_base_language']);
+        }
+
         if ( $product_base == $this->default_product_base ) {
             $this->add_default_slug_translations( $product_base, $name );
         }
@@ -149,6 +154,10 @@ class WCML_Url_Translation {
         $category_base = !empty( $permalink_options['category_base'] ) ? $permalink_options['category_base'] : $this->default_product_category_base;
         $name = $this->url_string_name( 'product_cat', $category_base );
         do_action( 'wpml_register_single_string', $this->url_strings_context(), $name, $category_base );
+
+        if( isset($_POST['category_base_language'])){
+            $woocommerce_wpml->strings->set_string_language( $product_base, $this->url_strings_context(), $name, $_POST['category_base_language']);
+        }
 
         if ( $category_base == $this->default_product_category_base ) {
             $this->add_default_slug_translations( $category_base, $name );
@@ -159,6 +168,10 @@ class WCML_Url_Translation {
         $name = $this->url_string_name( 'product_tag', $tag_base );
         do_action( 'wpml_register_single_string', $this->url_strings_context(), $name, $tag_base );
 
+        if( isset($_POST['tag_base_language'])){
+            $woocommerce_wpml->strings->set_string_language( $product_base, $this->url_strings_context(), $name, $_POST['tag_base_language']);
+        }
+
         if ( $tag_base == $this->default_product_tag_base ) {
             $this->add_default_slug_translations( $tag_base, $name );
         }
@@ -167,6 +180,9 @@ class WCML_Url_Translation {
         if ( isset( $permalink_options['attribute_base'] ) && $permalink_options['attribute_base'] ) {
             $attr_base = trim( $permalink_options['attribute_base'], '/' );
             do_action( 'wpml_register_single_string', $this->url_strings_context(), $this->url_string_name( 'attribute', $attr_base ), $attr_base );
+            if( isset($_POST['attribute_base_language'])){
+                $woocommerce_wpml->strings->set_string_language( $product_base, $this->url_strings_context(), $name, $_POST['attribute_base_language']);
+            }
         }
 
         return $value;
