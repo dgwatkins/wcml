@@ -304,7 +304,6 @@ class WCML_WC_Strings{
 
     function show_custom_url_base_language_requirement(){
         $this->string_language_notice();
-        $this->links_to_translate_bases();
         $category_base = ($c = get_option('category_base') ) ? $c : 'category';
         ?>
         <script>
@@ -381,9 +380,6 @@ class WCML_WC_Strings{
         </script>
         <?php
 
-
-
-
     }
 
     function show_language_notice_for_wc_settings(){
@@ -437,12 +433,6 @@ class WCML_WC_Strings{
         echo '</i></div></div>';
 
         $woocommerce_wpml->load_tooltip_resources();
-    }
-
-    function links_to_translate_bases(){
-        echo '<div id="wpml_wcml_link_to_translate_bases" style="display:none"><br>';
-        echo sprintf('<a href="%s">'.__('Edit translations', 'wpml-wcml').'</a>', admin_url('admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context=WordPress') );
-        echo '</div>';
     }
 
     function show_attribute_label_language_warning(){
