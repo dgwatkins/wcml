@@ -44,7 +44,6 @@ class WCML_Url_Translation {
     }
 
     function url_strings_context() {
-        //return 'WooCommerce Urls';
         return 'WordPress';
     }
 
