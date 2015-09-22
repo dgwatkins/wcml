@@ -38,7 +38,7 @@ class WCML_WC_Strings{
         
         if(is_admin() && $pagenow == 'options-permalink.php'){
             add_filter('gettext_with_context', array($this, 'category_base_in_strings_language'), 99, 3);
-            if( version_compare(WPML_ST_VERSION, '2.2.7', '>=') ) {
+            if( version_compare(WPML_ST_VERSION, '2.2.6', '>=') ) {
                 add_action( 'admin_footer', array( $this, 'show_custom_url_base_translation_links' ) );
             }
 
