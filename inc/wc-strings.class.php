@@ -327,29 +327,32 @@ class WCML_WC_Strings{
 
         $inputs = array();
 
-        $wc_permalinks = get_option( 'woocommerce_permalinks' );
+        $permalink_options = get_option( 'woocommerce_permalinks' );
 
         $bases = array( 'tag_base' => 'product_tag', 'category_base' => 'product_cat', 'attribute_base' => 'attribute', 'product_base' => 'product' );
 
         foreach( $bases as $key => $base ){
-            if( empty( $wc_permalinks[$key] )) continue;
-
-            $language = $this->get_string_language( trim( $wc_permalinks[ $key ], '/' ), $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_string_name( $base, trim($wc_permalinks[ $key ], '/' ) ) );
 
             switch($base){
                 case 'product_tag':
                     $input_name = 'woocommerce_product_tag_slug';
+                    $value = !empty( $permalink_options['tag_base'] ) ? $permalink_options['tag_base'] : $woocommerce_wpml->url_translation->default_product_tag_base;
                     break;
                 case 'product_cat':
                     $input_name = 'woocommerce_product_category_slug';
+                    $value = !empty( $permalink_options['category_base'] ) ? $permalink_options['category_base'] : $woocommerce_wpml->url_translation->default_product_category_base;
                     break;
                 case 'attribute':
                     $input_name = 'woocommerce_product_attribute_slug';
+                    $value = !empty( $permalink_options['attribute_base'] ) ? $permalink_options['attribute_base'] : '';
                     break;
                 case 'product':
                     $input_name = 'product_permalink_structure';
+                    $value = !empty( $permalink_options['product_base'] ) ? trim( $permalink_options['product_base'], '/' ) : $woocommerce_wpml->url_translation->default_product_base;
                     break;
             }
+
+            $language = $this->get_string_language( trim( $value, '/' ), $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_string_name( $base, trim($value, '/' ) ) );
 
             echo $lang_selector->render( array( 'id' => $key.'_language_selector', 'name' => $key.'_language', 'selected' => $language ) ); ?>
 

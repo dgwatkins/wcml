@@ -156,7 +156,7 @@ class WCML_Url_Translation {
         do_action( 'wpml_register_single_string', $this->url_strings_context(), $name, $category_base );
 
         if( isset($_POST['category_base_language'])){
-            $woocommerce_wpml->strings->set_string_language( $product_base, $this->url_strings_context(), $name, $_POST['category_base_language']);
+            $woocommerce_wpml->strings->set_string_language( $category_base, $this->url_strings_context(), $name, $_POST['category_base_language']);
         }
 
         if ( $category_base == $this->default_product_category_base ) {
@@ -169,7 +169,7 @@ class WCML_Url_Translation {
         do_action( 'wpml_register_single_string', $this->url_strings_context(), $name, $tag_base );
 
         if( isset($_POST['tag_base_language'])){
-            $woocommerce_wpml->strings->set_string_language( $product_base, $this->url_strings_context(), $name, $_POST['tag_base_language']);
+            $woocommerce_wpml->strings->set_string_language( $tag_base, $this->url_strings_context(), $name, $_POST['tag_base_language']);
         }
 
         if ( $tag_base == $this->default_product_tag_base ) {
@@ -181,7 +181,7 @@ class WCML_Url_Translation {
             $attr_base = trim( $permalink_options['attribute_base'], '/' );
             do_action( 'wpml_register_single_string', $this->url_strings_context(), $this->url_string_name( 'attribute', $attr_base ), $attr_base );
             if( isset($_POST['attribute_base_language'])){
-                $woocommerce_wpml->strings->set_string_language( $product_base, $this->url_strings_context(), $name, $_POST['attribute_base_language']);
+                $woocommerce_wpml->strings->set_string_language( $attr_base, $this->url_strings_context(), $name, $_POST['attribute_base_language']);
             }
         }
 
