@@ -323,54 +323,58 @@ class WCML_WC_Strings{
     function show_custom_url_base_translation_links(){
         global $woocommerce_wpml,$sitepress;
 
-        $lang_selector = new WPML_Simple_Language_Selector( $sitepress );
+        if( version_compare(WPML_ST_VERSION, '2.2.7', '>=') ) {
 
-        $inputs = array();
+            $lang_selector = new WPML_Simple_Language_Selector($sitepress);
 
-        $permalink_options = get_option( 'woocommerce_permalinks' );
+            $inputs = array();
 
-        $bases = array( 'tag_base' => 'product_tag', 'category_base' => 'product_cat', 'attribute_base' => 'attribute', 'product_base' => 'product' );
+            $permalink_options = get_option('woocommerce_permalinks');
 
-        foreach( $bases as $key => $base ){
+            $bases = array('tag_base' => 'product_tag', 'category_base' => 'product_cat', 'attribute_base' => 'attribute', 'product_base' => 'product');
 
-            switch($base){
-                case 'product_tag':
-                    $input_name = 'woocommerce_product_tag_slug';
-                    $value = !empty( $permalink_options['tag_base'] ) ? $permalink_options['tag_base'] : $woocommerce_wpml->url_translation->default_product_tag_base;
-                    break;
-                case 'product_cat':
-                    $input_name = 'woocommerce_product_category_slug';
-                    $value = !empty( $permalink_options['category_base'] ) ? $permalink_options['category_base'] : $woocommerce_wpml->url_translation->default_product_category_base;
-                    break;
-                case 'attribute':
-                    $input_name = 'woocommerce_product_attribute_slug';
-                    $value = !empty( $permalink_options['attribute_base'] ) ? $permalink_options['attribute_base'] : '';
-                    break;
-                case 'product':
-                    $input_name = 'product_permalink_structure';
-                    $value = !empty( $permalink_options['product_base'] ) ? trim( $permalink_options['product_base'], '/' ) : $woocommerce_wpml->url_translation->default_product_base;
-                    break;
-            }
+            foreach ($bases as $key => $base) {
 
-            $language = $this->get_string_language( trim( $value, '/' ), $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_string_name( $base, trim($value, '/' ) ) );
-
-            if( is_null($language) ){
-                $language = $sitepress->get_default_language();
-            }
-
-            echo $lang_selector->render( array( 'id' => $key.'_language_selector', 'name' => $key.'_language', 'selected' => $language, 'show_please_select' => false  ) ); ?>
-
-            <script>
-                var input = jQuery('input[name="<?php echo $input_name ?>"]');
-
-                if( '<?php echo $input_name ?>' == 'product_permalink_structure' && jQuery('input[name="product_permalink"]:checked').val() == '' ){
-
-                    input = jQuery('input[name="product_permalink"]:checked').closest('.form-table').find('code').eq(0);
+                switch ($base) {
+                    case 'product_tag':
+                        $input_name = 'woocommerce_product_tag_slug';
+                        $value = !empty($permalink_options['tag_base']) ? $permalink_options['tag_base'] : $woocommerce_wpml->url_translation->default_product_tag_base;
+                        break;
+                    case 'product_cat':
+                        $input_name = 'woocommerce_product_category_slug';
+                        $value = !empty($permalink_options['category_base']) ? $permalink_options['category_base'] : $woocommerce_wpml->url_translation->default_product_category_base;
+                        break;
+                    case 'attribute':
+                        $input_name = 'woocommerce_product_attribute_slug';
+                        $value = !empty($permalink_options['attribute_base']) ? $permalink_options['attribute_base'] : '';
+                        break;
+                    case 'product':
+                        $input_name = 'product_permalink_structure';
+                        $value = !empty($permalink_options['product_base']) ? trim($permalink_options['product_base'], '/') : $woocommerce_wpml->url_translation->default_product_base;
+                        break;
                 }
 
-                jQuery('#<?php echo $key ?>_language_selector').appendTo( input.parent() );
-            </script>
-        <?php } ?>
+                $language = $this->get_string_language(trim($value, '/'), $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_string_name($base, trim($value, '/')));
+
+                if (is_null($language)) {
+                    $language = $sitepress->get_default_language();
+                }
+
+                echo $lang_selector->render(array('id' => $key . '_language_selector', 'name' => $key . '_language', 'selected' => $language, 'show_please_select' => false)); ?>
+
+                <script>
+                    var input = jQuery('input[name="<?php echo $input_name ?>"]');
+
+                    if ('<?php echo $input_name ?>' == 'product_permalink_structure' && jQuery('input[name="product_permalink"]:checked').val() == '') {
+
+                        input = jQuery('input[name="product_permalink"]:checked').closest('.form-table').find('code').eq(0);
+                    }
+
+                    jQuery('#<?php echo $key ?>_language_selector').appendTo(input.parent());
+                </script>
+            <?php }
+
+        }?>
 
         <script>
             var inputs = ['woocommerce_product_category_slug', 'woocommerce_product_tag_slug', 'woocommerce_product_attribute_slug', 'product_permalink_structure'];
