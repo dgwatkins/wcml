@@ -44,7 +44,6 @@ class WCML_Url_Translation {
     }
 
     function url_strings_context() {
-        //return 'WooCommerce Urls';
         return 'WordPress';
     }
 
@@ -102,7 +101,7 @@ class WCML_Url_Translation {
 
     function get_woocommerce_product_base() {
 
-        $woocommerce_permalinks = maybe_unserialize( get_option( 'woocommerce_permalinks' ) );
+        $woocommerce_permalinks = get_option( 'woocommerce_permalinks' );
 
         if ( isset( $woocommerce_permalinks['product_base'] ) && !empty( $woocommerce_permalinks['product_base'] ) ) {
             return trim( $woocommerce_permalinks['product_base'], '/' );
@@ -114,9 +113,13 @@ class WCML_Url_Translation {
 
     }
 
-    function register_product_and_taxonomy_bases( $value, $old_value ) {
+    function register_product_and_taxonomy_bases( $value = false, $old_value = false ) {
 
-        $permalink_options = $value;
+        if( empty( $value ) ){
+            $permalink_options = get_option( 'woocommerce_permalinks' );
+        }else{
+            $permalink_options = $value;
+        }
 
         // products
         if ( version_compare( WPML_ST_VERSION, '2.2.6', '<=' ) ) {
