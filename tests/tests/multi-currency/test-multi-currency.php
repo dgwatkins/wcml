@@ -108,6 +108,20 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 	}
 
 
+	function test_filter_price_woocommerce_paypal_args(){
 
+		$arg = array( 'amount_1' => '12.78', 'currency_code' =>  'RON' );
+
+		$arg = $this->multi_currency->filter_price_woocommerce_paypal_args( $arg );
+
+		$this->assertEquals( 13, $arg['amount_1'] );
+
+		$arg = array( 'amount_1' => '12.78', 'currency_code' =>  'AUD' );
+
+		$arg = $this->multi_currency->filter_price_woocommerce_paypal_args( $arg );
+
+		$this->assertEquals( 12.8, $arg['amount_1'] );
+
+	}
 
 }
