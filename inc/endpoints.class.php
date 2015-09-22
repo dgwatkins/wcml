@@ -54,16 +54,16 @@ class WCML_Endpoints{
     function get_endpoint_translation( $key, $endpoint, $language = null ){
         global $wpdb;
 
-        $string = icl_get_string_id( $endpoint, 'WordPress', 'Endpoint slug: ' . $key );
+        $string = icl_get_string_id( $endpoint, 'WooCommerce Endpoints', $key );
 
         if( !$string && function_exists( 'icl_register_string' ) ){
-            do_action('wpml_register_single_string', 'WordPress', 'Endpoint slug: ' . $key, $endpoint );
+            do_action('wpml_register_single_string', 'WooCommerce Endpoints', $key, $endpoint );
         }else{
             $this->endpoints_strings[] = $string;
         }
 
         if( function_exists('icl_t') ){
-            return apply_filters( 'wpml_translate_single_string', $endpoint, 'WordPress', 'Endpoint slug: '. $key, $language );
+            return apply_filters( 'wpml_translate_single_string', $endpoint, 'WooCommerce Endpoints', $key, $language );
         }else{
             return $endpoint;
         }

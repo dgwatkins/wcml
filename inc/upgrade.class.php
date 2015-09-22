@@ -366,6 +366,19 @@ class WCML_Upgrade{
 
         }
 
+        $endpoint_keys = array( 'order-pay', 'order-received', 'view-order', 'edit-account', 'edit-address', 'lost-password', 'customer-logout', 'add-payment-method' );
+
+        foreach( $endpoint_keys as $endpoint_key ){
+
+            $wpdb->query(
+                $wpdb->prepare( "UPDATE {$wpdb->prefix}icl_strings
+                                  SET context = 'WooCommerce Endpoints', name = %s,
+                                  WHERE context = 'WordPress' AND name = %s",
+                    $endpoint_key, 'Endpoint slug: '. $endpoint_key )
+            );
+
+        }
+
     }
 
 }
