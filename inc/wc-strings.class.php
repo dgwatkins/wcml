@@ -354,7 +354,7 @@ class WCML_WC_Strings{
 
             $language = $this->get_string_language( trim( $value, '/' ), $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_string_name( $base, trim($value, '/' ) ) );
 
-            echo $lang_selector->render( array( 'id' => $key.'_language_selector', 'name' => $key.'_language', 'selected' => $language ) ); ?>
+            echo $lang_selector->render( array( 'id' => $key.'_language_selector', 'name' => $key.'_language', 'selected' => $language, 'please_select_text' => __( 'Select language' , 'wpml-wcml' )  ) ); ?>
 
             <script>
                 var input = jQuery('input[name="<?php echo $input_name ?>"]');
