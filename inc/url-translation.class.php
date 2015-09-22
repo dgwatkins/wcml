@@ -293,26 +293,28 @@ class WCML_Url_Translation {
                     $slug = join( '/', array_slice( $exp, 0, count( $exp ) - 1 ) );
                 }
 
-                $string_language = $woocommerce_wpml->strings->get_string_language( $slug, $this->url_strings_context(), $this->url_string_name( 'attribute', $slug ) );
+                if ( isset( $slug ) ) {
+                    $string_language = $woocommerce_wpml->strings->get_string_language($slug, $this->url_strings_context(), $this->url_string_name('attribute', $slug));
 
-                if ( isset( $slug ) && $sitepress->get_current_language() != $string_language ) {
+                    if ($sitepress->get_current_language() != $string_language) {
 
-                    $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, $this->url_strings_context(), $this->url_string_name( 'attribute', $slug ) );
-                    if ( $slug_translation ) {
+                        $slug_translation = apply_filters('wpml_translate_single_string', $slug, $this->url_strings_context(), $this->url_string_name('attribute', $slug));
+                        if ($slug_translation) {
 
-                        $buff_value = array();
-                        foreach ( (array)$value as $k => $v ) {
-                            if ( $slug != $slug_translation && preg_match( '#^' . $slug . '/(.*)#', $k ) ) {
-                                $k = preg_replace( '#^' . $slug . '/(.*)#', $slug_translation . '/$1', $k );
+                            $buff_value = array();
+                            foreach ((array)$value as $k => $v) {
+                                if ($slug != $slug_translation && preg_match('#^' . $slug . '/(.*)#', $k)) {
+                                    $k = preg_replace('#^' . $slug . '/(.*)#', $slug_translation . '/$1', $k);
+                                }
+                                $buff_value[$k] = $v;
                             }
-                            $buff_value[$k] = $v;
+
+                            $value = $buff_value;
+                            unset($buff_value);
+
                         }
 
-                        $value = $buff_value;
-                        unset( $buff_value );
-
                     }
-
                 }
 
             }
