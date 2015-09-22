@@ -181,7 +181,7 @@ class WCML_Url_Translation {
             $attr_base = trim( $permalink_options['attribute_base'], '/' );
             do_action( 'wpml_register_single_string', $this->url_strings_context(), $this->url_string_name( 'attribute' ), $attr_base );
             if( isset($_POST['attribute_base_language'])){
-                $woocommerce_wpml->strings->set_string_language( $attr_base, $this->url_strings_context(), $name, $_POST['attribute_base_language']);
+                $woocommerce_wpml->strings->set_string_language( $attr_base, $this->url_strings_context(),  $this->url_string_name( 'attribute' ), $_POST['attribute_base_language']);
             }
         }
 
