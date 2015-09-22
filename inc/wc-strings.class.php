@@ -354,10 +354,20 @@ class WCML_WC_Strings{
 
             $language = $this->get_string_language( trim( $value, '/' ), $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_string_name( $base, trim($value, '/' ) ) );
 
-            echo $lang_selector->render( array( 'id' => $key.'_language_selector', 'name' => $key.'_language', 'selected' => $language, 'please_select_text' => __( 'Select language' , 'wpml-wcml' )  ) ); ?>
+            if( is_null($language) ){
+                $language = $sitepress->get_default_language();
+            }
+
+            echo $lang_selector->render( array( 'id' => $key.'_language_selector', 'name' => $key.'_language', 'selected' => $language, 'show_please_select' => false  ) ); ?>
 
             <script>
                 var input = jQuery('input[name="<?php echo $input_name ?>"]');
+
+                if( '<?php echo $input_name ?>' == 'product_permalink_structure' && jQuery('input[name="product_permalink"]:checked').val() == '' ){
+
+                    input = jQuery('input[name="product_permalink"]:checked').closest('.form-table').find('code').eq(0);
+                }
+
                 jQuery('#<?php echo $key ?>_language_selector').appendTo( input.parent() );
             </script>
         <?php } ?>
