@@ -322,9 +322,29 @@ class WCML_WC_Strings{
     function show_custom_url_base_translation_links(){
         global $woocommerce_wpml,$sitepress;
 
-        $lang_selector = new WPML_Simple_Language_Selector( $sitepress );
+        ?>
+        <script>
+            var inputs = ['woocommerce_product_category_slug', 'woocommerce_product_tag_slug', 'woocommerce_product_attribute_slug', 'product_permalink_structure'];
 
-        $inputs = array();
+            for(i in inputs){
+                var input = jQuery('input[name="' + inputs[i] + '"]');
+                if(input.length){
+
+                    if(inputs[i] == 'woocommerce_product_attribute_slug' && input.val() == '' ) continue;
+
+                    if(inputs[i] == 'product_permalink_structure' && jQuery('input[name="product_permalink"]:checked').val() == '' ){
+
+                        input = jQuery('input[name="product_permalink"]:checked').closest('.form-table').find('code').eq(0);
+                    }
+                    input.parent().append('<div class="translation_controls"><a href="<?php
+                            echo admin_url( 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context='. urlencode($woocommerce_wpml->url_translation->url_strings_context()) )
+                             ?>"><?php _e('translations', 'wpml-wcml') ?></a></div>');
+                }
+            }
+        </script>
+        <?php
+
+        $lang_selector = new WPML_Simple_Language_Selector( $sitepress );
 
         $permalink_options = get_option( 'woocommerce_permalinks' );
 
@@ -367,31 +387,9 @@ class WCML_WC_Strings{
                     input = jQuery('input[name="product_permalink"]:checked').closest('.form-table').find('code').eq(0);
                 }
 
-                jQuery('#<?php echo $key ?>_language_selector').appendTo( input.parent() );
+                jQuery('#<?php echo $key ?>_language_selector').appendTo( input.parent().find('.translation_controls') );
             </script>
-        <?php } ?>
-
-        <script>
-            var inputs = ['woocommerce_product_category_slug', 'woocommerce_product_tag_slug', 'woocommerce_product_attribute_slug', 'product_permalink_structure'];
-
-            for(i in inputs){
-                var input = jQuery('input[name="' + inputs[i] + '"]');
-                if(input.length){
-
-                    if(inputs[i] == 'woocommerce_product_attribute_slug' && input.val() == '' ) continue;
-
-                    if(inputs[i] == 'product_permalink_structure' && jQuery('input[name="product_permalink"]:checked').val() == '' ){
-
-                        input = jQuery('input[name="product_permalink"]:checked').closest('.form-table').find('code').eq(0);
-                    }
-
-                    input.parent().append('<div clsas="description" style="margin-top:4px;">&raquo;&nbsp;<a href="<?php
-                            echo admin_url( 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context='. urlencode($woocommerce_wpml->url_translation->url_strings_context()) )
-                             ?>"><?php _e('edit translations', 'wpml-wcml') ?></a></div>');
-                }
-            }
-        </script>
-        <?php
+        <?php }
 
     }
 

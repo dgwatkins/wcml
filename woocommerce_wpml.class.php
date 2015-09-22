@@ -352,6 +352,8 @@ class woocommerce_wpml {
     }
 
     function load_css_and_js() {
+        global $pagenow;
+
         if(isset($_GET['page'])){
 
             if( in_array($_GET['page'], array('wpml-wcml',basename(WCML_PLUGIN_PATH).'/menu/sub/troubleshooting.php',basename(WCML_PLUGIN_PATH).'/menu/plugins.php'))) {
@@ -401,6 +403,11 @@ class woocommerce_wpml {
                 wp_register_script('wpml_tm', WCML_PLUGIN_URL . '/assets/js/wpml_tm.js', array('jquery'), WCML_VERSION);
                 wp_enqueue_script('wpml_tm');
             }
+        }
+
+        if( $pagenow == 'options-permalink.php' ){
+            wp_register_style('wcml_op', WCML_PLUGIN_URL . '/assets/css/options-permalink.css', null, WCML_VERSION);
+            wp_enqueue_style('wcml_op');
         }
 
         if( !is_admin() ){
