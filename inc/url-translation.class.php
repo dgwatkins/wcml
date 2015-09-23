@@ -8,9 +8,9 @@ class WCML_Url_Translation {
 
     function __construct() {
 
-        $this->default_product_base             = _x( 'product', 'slug', 'woocommerce' );
-        $this->default_product_category_base    = _x( 'product-category', 'slug', 'woocommerce' );
-        $this->default_product_tag_base         = _x( 'product-tag', 'slug', 'woocommerce' );
+        $this->default_product_base             = 'product';
+        $this->default_product_category_base    = 'product-category';
+        $this->default_product_tag_base         = 'product-tag';
 
         $this->wc_permalinks = get_option( 'woocommerce_permalinks' );
 
