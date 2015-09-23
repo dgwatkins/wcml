@@ -18,9 +18,7 @@ class WCML_Url_Translation {
 
         add_filter( 'pre_update_option_woocommerce_permalinks', array( $this, 'register_product_and_taxonomy_bases' ), 10, 2 );
 
-        if ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-            add_filter( 'pre_update_option_rewrite_rules', array( $this, 'pre_update_rewrite_rules' ), 1, 1 ); // high priority
-        }
+        add_filter( 'pre_update_option_rewrite_rules', array( $this, 'pre_update_rewrite_rules' ), 1, 1 ); // high priority
 
         remove_filter( 'option_rewrite_rules', array( 'WPML_Slug_Translation', 'rewrite_rules_filter' ), 1, 1 ); //remove filter from WPML and use WCML filter first
         add_filter( 'option_rewrite_rules', array( $this, 'translate_bases_in_rewrite_rules' ), 3, 1 ); // high priority
@@ -235,41 +233,45 @@ class WCML_Url_Translation {
     }
 
     function pre_update_rewrite_rules( $value ) {
-        global $sitepress, $woocommerce_wpml;
+        global $sitepress;
+
 
         // force saving in strings language
-        $strings_language = $woocommerce_wpml->strings->get_domain_language( 'woocommerce' );
+        if( $value && $sitepress->get_current_language() != 'en' ) {
 
-        if ( $sitepress->get_current_language() != $strings_language && is_array( $value ) ) {
+            $taxonomies = array(
+                'product_cat' => array(
+                    'base'              => 'category_base',
+                    'base_translated'   => _x( 'product-category', 'slug', 'woocommerce' ),
+                    'default'           => $this->default_product_category_base
+                ),
+                'product_tag' => array(
+                    'base'              => 'tag_base',
+                    'base_translated'   => _x( 'product-tag', 'slug', 'woocommerce' ),
+                    'default'           => $this->default_product_tag_base
+                ),
+            );
 
-            if ( empty( $this->wc_permalinks['category_base'] ) && $value ) {
-                remove_filter( 'gettext_with_context', array( $woocommerce_wpml->strings, 'category_base_in_strings_language' ), 99, 3 );
-                $base_translated = _x( 'product-category', 'slug', 'woocommerce' );
-                add_filter( 'gettext_with_context', array( $woocommerce_wpml->strings, 'category_base_in_strings_language' ), 99, 3 );
-                $new_value = array();
-                foreach ( $value as $k => $v ) {
-                    $k = preg_replace( "#$base_translated/#", _x( 'product-category', 'slug', 'woocommerce' ) . '/', $k );
-                    $new_value[$k] = $v;
+            foreach ( $taxonomies as $taxonomy => $taxonomy_details ) {
+
+                if ( empty( $this->wc_permalinks[$taxonomy_details['base']] ) && $value ) {
+
+                    $new_value = array();
+                    foreach ( $value as $k => $v ) {
+                        $k = preg_replace( "#" . $taxonomy_details['base_translated'] . "/#", $taxonomy_details['default'] . '/', $k );
+                        $new_value[$k] = $v;
+                    }
+                    $value = $new_value;
+                    unset( $new_value );
+
                 }
-                $value = $new_value;
-                unset( $new_value );
-            }
-            if ( empty( $this->wc_permalinks['tag_base'] ) && $value ) {
-                remove_filter( 'gettext_with_context', array( $woocommerce_wpml->strings, 'category_base_in_strings_language' ), 99, 3 );
-                $base_translated = _x( 'product-tag', 'slug', 'woocommerce' );
-                add_filter( 'gettext_with_context', array( $woocommerce_wpml->strings, 'category_base_in_strings_language' ), 99, 3 );
-                $new_value = array();
-                foreach ( $value as $k => $v ) {
-                    $k = preg_replace( "#$base_translated/#", _x( 'product-tag', 'slug', 'woocommerce' ) . '/', $k );
-                    $new_value[$k] = $v;
-                }
-                $value = $new_value;
-                unset( $new_value );
+
             }
 
         }
 
         return $value;
+
     }
 
     function translate_bases_in_rewrite_rules( $value ) {
