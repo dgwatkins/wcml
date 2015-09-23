@@ -40,10 +40,9 @@ class WCML_WC_Strings{
         add_filter('woocommerce_countries_tax_or_vat', array($this, 'register_tax_label'));
         
         if(is_admin() && $pagenow == 'options-permalink.php'){
+            add_filter( 'gettext_with_context', array( $this, 'category_base_in_strings_language' ), 99, 3 );
 
-            if( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-                add_filter( 'gettext_with_context', array( $this, 'category_base_in_strings_language' ), 99, 3 );
-            } else {
+            if( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
                 add_action( 'admin_footer', array( $this, 'show_custom_url_base_translation_links' ) );
             }
 
