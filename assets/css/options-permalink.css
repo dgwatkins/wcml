@@ -7,3 +7,7 @@
     margin-top:-18px;
     text-align:left;
 }
+
+.options-permalink-php .select2-container .select2-choice .select2-arrow b:after{
+    display: none;
+}
