@@ -18,7 +18,7 @@ class WCML_Url_Translation {
 
         add_filter( 'pre_update_option_woocommerce_permalinks', array( $this, 'register_product_and_taxonomy_bases' ), 10, 2 );
 
-        add_filter( 'pre_update_option_rewrite_rules', array( $this, 'pre_update_rewrite_rules' ), 1, 1 ); // high priority
+        add_filter( 'pre_update_option_rewrite_rules', array( $this, 'force_bases_in_strings_languages' ), 1, 1 ); // high priority
 
         remove_filter( 'option_rewrite_rules', array( 'WPML_Slug_Translation', 'rewrite_rules_filter' ), 1, 1 ); //remove filter from WPML and use WCML filter first
         add_filter( 'option_rewrite_rules', array( $this, 'translate_bases_in_rewrite_rules' ), 3, 1 ); // high priority
@@ -232,13 +232,12 @@ class WCML_Url_Translation {
 
     }
 
-    function pre_update_rewrite_rules( $value ) {
-        global $sitepress;
+    function force_bases_in_strings_languages( $value ) {
+        global $sitepress, $woocommerce_wpml;
 
-
-        // force saving in strings language
         if( $value && $sitepress->get_current_language() != 'en' ) {
 
+            remove_filter( 'gettext_with_context', array( $woocommerce_wpml->strings, 'category_base_in_strings_language' ), 99, 3 );
             $taxonomies = array(
                 'product_cat' => array(
                     'base'              => 'category_base',
@@ -251,6 +250,7 @@ class WCML_Url_Translation {
                     'default'           => $this->default_product_tag_base
                 ),
             );
+            add_filter( 'gettext_with_context', array( $woocommerce_wpml->strings, 'category_base_in_strings_language' ), 99, 3 );
 
             foreach ( $taxonomies as $taxonomy => $taxonomy_details ) {
 
