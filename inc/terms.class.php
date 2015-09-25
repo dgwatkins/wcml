@@ -54,6 +54,8 @@ class WCML_Terms{
 
 
         add_filter( 'woocommerce_get_product_terms', array( $this, 'get_product_terms_filter' ), 10, 4 );
+
+        add_filter( 'pre_update_option_woocommerce_flat_rate_settings', array( $this, 'update_woocommerce_flat_rate_settings' ) );
     }
     
     function admin_menu_setup(){
@@ -71,6 +73,14 @@ class WCML_Terms{
             $wc_original_metakey = $wc_meta->meta_key;
             $wc_original_metavalue = $wc_meta->meta_value;
             update_woocommerce_term_meta($result['term_id'], $wc_original_metakey, $wc_original_metavalue);
+        }
+
+        //update flat rate options for shipping classes
+        if( $original_tax->taxonomy == 'product_shipping_class' ){
+
+            $settings = get_option( 'woocommerce_flat_rate_settings' );
+            update_option( 'woocommerce_flat_rate_settings', $this->update_woocommerce_flat_rate_settings( $settings ) );
+
         }
     }
 
@@ -852,6 +862,39 @@ class WCML_Terms{
         add_filter( 'woocommerce_get_product_terms', array( $this, 'get_product_terms_filter' ), 10, 4 );
 
         return $terms;
+    }
+
+    function update_woocommerce_flat_rate_settings( $settings ){
+
+        foreach( $settings as $setting_key => $value ){
+
+            if(  substr($setting_key, 0, 11) == 'class_cost_' ){
+
+                global $sitepress;
+
+                $shipp_class = get_term_by( 'slug', substr($setting_key, 11 ), 'product_shipping_class' );
+
+                $trid = $sitepress->get_element_trid( $shipp_class->term_taxonomy_id, 'tax_product_shipping_class' );
+
+                $translations = $sitepress->get_element_translations( $trid, 'tax_product_shipping_class' );
+
+                foreach( $translations as $translation ){
+
+                    if( !$translation->original ){
+
+                        $tr_shipp_class = get_term( $translation->element_id, 'product_shipping_class' );
+
+                        $settings[ 'class_cost_'.$tr_shipp_class->slug ] = $value;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        return $settings;
     }
 
 }
