@@ -17,4 +17,13 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 		$this->assertTrue( $response_result );
 	}
 
+	function test_url_string_name(){
+		global $woocommerce_wpml;
+
+		$this->assertEquals( 'URL product_cat tax slug', $woocommerce_wpml->url_translation->url_string_name( 'product_cat' ) );
+
+		$this->assertEquals( 'URL slug: product', $woocommerce_wpml->url_translation->url_string_name( 'product', 'product' ) );
+
+	}
+
 }

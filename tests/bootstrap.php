@@ -24,11 +24,31 @@ function _manually_load_plugin() {
 	require WPML_CORE_ST_PATH . '/plugin.php';
 	require WPML_CORE_TM_PATH . '/plugin.php';
 	require WPML_CORE_MT_PATH . '/plugin.php';
+	require WC_PATH. '/woocommerce.php';
 	require dirname( __FILE__ ) . '/../wpml-woocommerce.php';
+
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
+function _install_wc(){
+
+	WC_Install::install();
+	update_option( 'woocommerce_calc_shipping', 'yes' ); // Needed for tests cart and shipping methods
+
+	// reload capabilities after install, see https://core.trac.wordpress.org/ticket/28374
+	$GLOBALS['wp_roles']->reinit();
+}
+
+// install WC
+tests_add_filter( 'muplugins_loaded', array( '_install_wc' ) );
+
 require $_tests_dir . '/includes/bootstrap.php';
 require WPML_CORE_PATH . '/tests/util/wpml-unittestcase.class.php';
+require WC_PATH . '/tests/framework/class-wc-unit-test-case.php';
+require WC_PATH . '/tests/framework/class-wc-unit-test-factory.php';
+require WC_PATH . '/tests/framework/factories/class-wc-unit-test-factory-for-webhook.php';
+require WC_PATH . '/tests/framework/factories/class-wc-unit-test-factory-for-webhook-delivery.php';
 require dirname( __FILE__ ) . '/util/wcml-unittestcase.class.php';
+
+

@@ -9,5 +9,8 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 	function setUp() {
 		parent::setUp();
 		require_once WC_PATH . '/woocommerce.php';
+
+		$wc_unit = new WC_Unit_Test_Case();
+		$wc_unit->setUp();
 	}
 }
