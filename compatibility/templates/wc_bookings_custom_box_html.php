@@ -1,7 +1,7 @@
 <div class="postbox wpml-form-row wcml-row-attributes">
     <div title="<?php _e('Click to toggl'); ?>" class="handlediv"><br></div>
     <h3 class="hndle">
-        <span><?php _e('Bookings', 'wpml-wcml'); ?></span>
+        <span><?php _e('Bookings', 'woocommerce-multilingual'); ?></span>
     </h3>
 
     <div class="inside">
@@ -11,7 +11,7 @@
 
                 <tr class="wcml-first-row" >
                     <th>
-                        <label class="custom_attr_label"><?php _e('Resources Label', 'wpml-wcml'); ?></label>
+                        <label class="custom_attr_label"><?php _e('Resources Label', 'woocommerce-multilingual'); ?></label>
                     </th>
                     <td>
                         <input readonly class="original_value" value="<?php echo get_post_meta( $product_id,'_wc_booking_resouce_label',true) ?>" type="text"/>
@@ -27,7 +27,7 @@
                             class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?> readonly<?php endif; ?>
                             type="text" name="<?php echo '_wc_booking_resouce_label'; ?>"
                             value="<?php echo $tr_product_id ? get_post_meta( $tr_product_id,'_wc_booking_resouce_label',true) : ''; ?>"
-                            placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
+                            placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
 
                     </td>
                 </tr>
@@ -37,13 +37,13 @@
             <?php foreach( $template_data[ 'resources' ] as $original_resource_id => $trnsl_resource_id ): ?>
                 <tr class="wcml-line-row" >
                     <th colspan="4">
-                        <label class="custom_attr_label"><?php _e('Resources', 'wpml-wcml'); ?></label>
+                        <label class="custom_attr_label"><?php _e('Resources', 'woocommerce-multilingual'); ?></label>
                     </th>
 
                 </tr>
                 <tr class="wcml-first-row">
                     <th>
-                        <label class="custom_attr_label"><?php _e('Title', 'wpml-wcml'); ?></label>
+                        <label class="custom_attr_label"><?php _e('Title', 'woocommerce-multilingual'); ?></label>
                     </th>
                     <td>
                         <input readonly class="original_value" value="<?php echo get_the_title( $original_resource_id ) ?>" type="text"/>
@@ -63,7 +63,7 @@
                             class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?> readonly<?php endif; ?>
                             type="text" name="<?php echo 'wc_booking_resources_'.$lang.'[title][]';; ?>"
                             value="<?php echo $res_translation_exist ? get_the_title( $trnsl_resource_id ) : ''; ?>"
-                            placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
+                            placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
 
                     </td>
                 </tr>
@@ -75,14 +75,14 @@
                 <?php if( !$index ) :?>
                     <tr class="wcml-line-row">
                         <th colspan="4">
-                            <label class="custom_attr_label"><?php _e('Person Types', 'wpml-wcml'); ?></label>
+                            <label class="custom_attr_label"><?php _e('Person Types', 'woocommerce-multilingual'); ?></label>
                         </th>
 
                     </tr>
                 <?php endif; ?>
                 <tr class="wcml-first-row" row-index="<?php echo $index; ?>">
                     <th>
-                        <label class="custom_attr_label"><?php _e('Person Type Name', 'wpml-wcml'); ?></label>
+                        <label class="custom_attr_label"><?php _e('Person Type Name', 'woocommerce-multilingual'); ?></label>
                     </th>
                     <td>
                         <input readonly class="original_value" value="<?php echo get_the_title( $original_person_id ) ?>"
@@ -103,13 +103,13 @@
                             class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?> readonly<?php endif; ?>
                             type="text" name="<?php echo 'wc_booking_persons_'.$lang.'[title][]'; ?>"
                             value="<?php echo $per_translation_exist  ? get_the_title( $trnsl_person_id ) : ''; ?>"
-                            placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
+                            placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
 
                     </td>
                 </tr>
                 <tr class="wcml-last-row" row-index="<?php echo $index; ?>">
                     <th>
-                        <label class="custom_attr_label"><?php _e('Description', 'wpml-wcml'); ?></label>
+                        <label class="custom_attr_label"><?php _e('Description', 'woocommerce-multilingual'); ?></label>
                     </th>
                     <td>
                         <input readonly class="original_value" value="<?php echo get_post( $original_person_id )->post_excerpt ?>"
@@ -120,7 +120,7 @@
                             class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?>
                             readonly<?php endif; ?> type="text" name="<?php echo 'wc_booking_persons_'.$lang.'[description][]'; ?>"
                             value="<?php echo $per_translation_exist ? get_post( $trnsl_person_id )->post_excerpt : ''; ?>"
-                            placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>
+                            placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>
                 " <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
 
                     </td>

@@ -2,7 +2,7 @@
     <tbody>
         <?php if ( isset( $empty_images ) ): ?>
             <tr>
-                <td><?php _e('Please set images for product','wpml-wcml'); ?></td>
+                <td><?php _e('Please set images for product','woocommerce-multilingual'); ?></td>
             </tr>
         <?php else: ?>
             <?php foreach ( $product_images as $prod_image ) : ?>
@@ -23,7 +23,7 @@
                         <?php echo wp_get_attachment_image( $prod_image , array(100, 100)); ?>
                     </td>
                     <th>
-                        <?php _e('Title','wpml-wcml');  ?>
+                        <?php _e('Title','woocommerce-multilingual');  ?>
                     </th>
                     <td>
                         <input type="text" class="original_value" value="<?php echo $attachment_data->post_title ?>" readonly/>
@@ -34,12 +34,12 @@
                     </td>
 
                     <td>
-                        <input type="text" class="translated_value" name="images[<?php echo $trnsl_prod_image ?>][title]" value="<?php echo $images_texts['title']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
+                        <input type="text" class="translated_value" name="images[<?php echo $trnsl_prod_image ?>][title]" value="<?php echo $images_texts['title']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>"/>
                     </td>
                     </tr>
                 <tr>
                     <th>
-                        <?php _e('Caption','wpml-wcml');  ?>
+                        <?php _e('Caption','woocommerce-multilingual');  ?>
                     </th>
                     <td>
 
@@ -47,18 +47,18 @@
 
                     </td>
                     <td>
-                        <input  type="text" class="translated_value" name="images[<?php echo $trnsl_prod_image ?>][caption]" value="<?php echo $images_texts['caption']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
+                        <input  type="text" class="translated_value" name="images[<?php echo $trnsl_prod_image ?>][caption]" value="<?php echo $images_texts['caption']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>"/>
                     </td>
                 </tr>
                 <tr class="wcml-last-row">
                     <th>
-                        <?php _e('Description','wpml-wcml');  ?>
+                        <?php _e('Description','woocommerce-multilingual');  ?>
                     </th>
                     <td>
                         <input class="original_value" type="text" value="<?php echo $attachment_data->post_content ?>" readonly/>
                     </td>
                     <td>
-                        <input type="text" class="translated_value" name="images[<?php echo $trnsl_prod_image ?>][description]" value="<?php echo $images_texts['description']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
+                        <input type="text" class="translated_value" name="images[<?php echo $trnsl_prod_image ?>][description]" value="<?php echo $images_texts['description']; ?>" placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>"/>
                     </td>
                 </tr>
 

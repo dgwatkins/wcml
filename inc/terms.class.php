@@ -286,9 +286,9 @@ class WCML_Terms{
         $woocommerce_wpml->update_settings($wcml_settings);
 
 	    $ret['html'] = '<i class="otgs-ico-ok"></i> ';
-        $ret['html'] .= sprintf(__('%s do not require translation.', 'wpml-wcml'), get_taxonomy($taxonomy)->labels->name);
+        $ret['html'] .= sprintf(__('%s do not require translation.', 'woocommerce-multilingual'), get_taxonomy($taxonomy)->labels->name);
 	    $ret['html'] .= '<small class="actions">';
-	    $ret['html'] .= '<a href="#unignore-' . $taxonomy . '">' . __( 'Include to translation', 'wpml-wcml' ) . '</a>';
+	    $ret['html'] .= '<a href="#unignore-' . $taxonomy . '">' . __( 'Include to translation', 'woocommerce-multilingual' ) . '</a>';
 	    $ret['html'] .= '</small>';
 
         echo json_encode($ret);
@@ -313,10 +313,10 @@ class WCML_Terms{
             $wcml_settings['untranstaled_terms'][$taxonomy]['status'] = self::NEW_TAXONOMY_TERMS;
 
 	        $ret['html'] = '<i class="otgs-ico-warning-sign"></i> ';
-	        $ret['html'] .= sprintf( __( '%d %s are missing translations.', 'wpml-wcml' ), $wcml_settings['untranstaled_terms'][ $taxonomy ]['count'], get_taxonomy( $taxonomy )->labels->name );
-	        $ret['html'] .= '<a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=' . $taxonomy ) . '">' . printf( __( 'Translate %s', 'wpml-wcml' ), get_taxonomy( $taxonomy )->labels->name ) . '</a> | ';
+	        $ret['html'] .= sprintf( __( '%d %s are missing translations.', 'woocommerce-multilingual' ), $wcml_settings['untranstaled_terms'][ $taxonomy ]['count'], get_taxonomy( $taxonomy )->labels->name );
+	        $ret['html'] .= '<a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=' . $taxonomy ) . '">' . printf( __( 'Translate %s', 'woocommerce-multilingual' ), get_taxonomy( $taxonomy )->labels->name ) . '</a> | ';
 	        $ret['html'] .= '<small class="actions">';
-	        $ret['html'] .= '<a href="#ignore-' . $taxonomy . '">' . __( 'Exclude from translation', 'wpml-wcml' ) . '</a>';
+	        $ret['html'] .= '<a href="#ignore-' . $taxonomy . '">' . __( 'Exclude from translation', 'woocommerce-multilingual' ) . '</a>';
 	        $ret['html'] .= '</small>';
 
             $ret['warn'] = 1;
@@ -325,7 +325,7 @@ class WCML_Terms{
             $wcml_settings['untranstaled_terms'][$taxonomy]['status'] = self::ALL_TAXONOMY_TERMS_TRANSLATED;
 
 	        $ret['html'] = '<i class="otgs-ico-ok"></i> ';
-            $ret['html'] .= sprintf(__('All %s are translated.', 'wpml-wcml'), get_taxonomy($taxonomy)->labels->name);
+            $ret['html'] .= sprintf(__('All %s are translated.', 'woocommerce-multilingual'), get_taxonomy($taxonomy)->labels->name);
 
             $ret['warn'] = 0;
         }

@@ -311,7 +311,7 @@ class woocommerce_wpml {
 
             if(current_user_can('wpml_manage_woocommerce_multilingual')){
                 add_submenu_page($top_page, __('WooCommerce Multilingual', 'woocommerce-multilingual'),
-                __('WooCommerce Multilingual', 'woocommerce-multilingual'), 'wpml_manage_woocommerce_multilingual', 'wpml-wcml', array($this, 'menu_content'));
+                __('WooCommerce Multilingual', 'woocommerce-multilingual'), 'wpml_manage_woocommerce_multilingual', 'woocommerce-multilingual', array($this, 'menu_content'));
 
                 if(isset($_GET['page']) && $_GET['page'] == basename(WCML_PLUGIN_PATH).'/menu/sub/troubleshooting.php'){
                     add_submenu_page($top_page,
@@ -331,7 +331,7 @@ class woocommerce_wpml {
 
         }elseif(current_user_can('wpml_manage_woocommerce_multilingual')){
             if(!defined('ICL_SITEPRESS_VERSION')){
-                add_menu_page( __( 'WooCommerce Multilingual', 'wpml-wcml' ), __( 'WooCommerce Multilingual', 'wpml-wcml' ),
+                add_menu_page( __( 'WooCommerce Multilingual', 'woocommerce-multilingual' ), __( 'WooCommerce Multilingual', 'woocommerce-multilingual' ),
 	                'wpml_manage_woocommerce_multilingual', WCML_PLUGIN_PATH . '/menu/plugins.php', null, WCML_PLUGIN_URL . '/res/images/icon16.png' );
             }else{
                 $top_page = apply_filters('icl_menu_main_page', basename(ICL_PLUGIN_PATH) .'/menu/languages.php');
@@ -396,10 +396,6 @@ class woocommerce_wpml {
                     )
                 );
 
-                if( $_GET['page'] == 'wpml-wcml' ){
-
-                }
-
                 $this->load_tooltip_resources();
 
             }elseif( $_GET['page'] == WPML_TM_FOLDER.'/menu/main.php' ){
@@ -456,7 +452,7 @@ class woocommerce_wpml {
     }
 
     function hidden_label(){
-	    echo '<img src="' . WCML_PLUGIN_URL . '/res/images/locked.png" class="wcml_lock_img" alt="' . __( 'This field is locked for editing because WPML will copy its value from the original language.', 'wpml-wcml' ) . '" title="' . __( 'This field is locked for editing because WPML will copy its value from the original language.', 'wpml-wcml' ) . '" style="display: none;position:relative;left:2px;top:2px;">';
+	    echo '<img src="' . WCML_PLUGIN_URL . '/res/images/locked.png" class="wcml_lock_img" alt="' . __( 'This field is locked for editing because WPML will copy its value from the original language.', 'woocommerce-multilingual' ) . '" title="' . __( 'This field is locked for editing because WPML will copy its value from the original language.', 'woocommerce-multilingual' ) . '" style="display: none;position:relative;left:2px;top:2px;">';
 
         if( isset($_GET['post']) ){
             $original_language = $this->products->get_original_product_language($_GET['post']);
@@ -473,7 +469,7 @@ class woocommerce_wpml {
         }
 
 
-        echo '<h3 class="wcml_prod_hidden_notice">'.sprintf(__("This is a translation of %s. Some of the fields are not editable. It's recommended to use the %s for translating products.",'wpml-wcml'),'<a href="'.get_edit_post_link($original_id).'" >'.get_the_title($original_id).'</a>','<a data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="'.$original_id.'" data-job_id="" data-language="'. $language .'">'.__('WooCommerce Multilingual products translator','wpml-wcml').'</a>').'</h3>';
+        echo '<h3 class="wcml_prod_hidden_notice">'.sprintf(__("This is a translation of %s. Some of the fields are not editable. It's recommended to use the %s for translating products.",'woocommerce-multilingual'),'<a href="'.get_edit_post_link($original_id).'" >'.get_the_title($original_id).'</a>','<a data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="'.$original_id.'" data-job_id="" data-language="'. $language .'">'.__('WooCommerce Multilingual products translator','woocommerce-multilingual').'</a>').'</h3>';
     }
 
     function generate_tracking_link($link,$term=false,$content = false, $id = false){

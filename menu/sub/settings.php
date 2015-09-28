@@ -6,9 +6,9 @@ $default_language = $sitepress->get_default_language();
 <div class="wcml-section">
     <div class="wcml-section-header">
         <h3>
-            <?php _e('Product Translation Interface','wpml-wcml'); ?>
+            <?php _e('Product Translation Interface','woocommerce-multilingual'); ?>
 	        <i class="otgs-ico-help wcml-tip"
-	           data-tip="<?php _e( 'The recommended way to translate products is using the products translation table in the WooCommerce Multilingual admin. Choose to go to the native WooCommerce interface, if your products include custom sections that require direct access.', 'wpml-wcml' ) ?>"></i>
+	           data-tip="<?php _e( 'The recommended way to translate products is using the products translation table in the WooCommerce Multilingual admin. Choose to go to the native WooCommerce interface, if your products include custom sections that require direct access.', 'woocommerce-multilingual' ) ?>"></i>
         </h3>
     </div>
     <div class="wcml-section-content">
@@ -39,9 +39,9 @@ $default_language = $sitepress->get_default_language();
 
     <div class="wcml-section-header">
         <h3>
-            <?php _e('Products synchronization', 'wpml-wcml'); ?>
+            <?php _e('Products synchronization', 'woocommerce-multilingual'); ?>
 	        <i class="otgs-ico-help wcml-tip"
-	           data-tip="<?php _e( 'Configure specific product properties that should be synced to translations.', 'wpml-wcml' ) ?>"></i>
+	           data-tip="<?php _e( 'Configure specific product properties that should be synced to translations.', 'woocommerce-multilingual' ) ?>"></i>
         </h3>
     </div>
 
@@ -71,9 +71,9 @@ $default_language = $sitepress->get_default_language();
 
     <div class="wcml-section-header">
         <h3>
-            <?php _e('File Paths Synchronization ', 'wpml-wcml'); ?>
+            <?php _e('File Paths Synchronization ', 'woocommerce-multilingual'); ?>
 	        <i class="otgs-ico-help wcml-tip"
-	           data-tip="<?php _e( 'If you are using downloadable products, you can choose to have their paths synchronized, or seperate for each language.', 'wpml-wcml' ) ?>"></i>
+	           data-tip="<?php _e( 'If you are using downloadable products, you can choose to have their paths synchronized, or seperate for each language.', 'woocommerce-multilingual' ) ?>"></i>
         </h3>
     </div>
 
@@ -98,7 +98,7 @@ $default_language = $sitepress->get_default_language();
 </div> <!-- .wcml-section -->
 
 <p class="wpml-margin-top-sm">
-	<input type='submit' value='<?php esc_attr( _e( 'Save changes', 'wpml-wcml' ) ); ?>' class='button-primary'/>
+	<input type='submit' value='<?php esc_attr( _e( 'Save changes', 'woocommerce-multilingual' ) ); ?>' class='button-primary'/>
 </p>
 <a class="alignright"
-   href="<?php echo admin_url( 'admin.php?page=' . basename( WCML_PLUGIN_PATH ) . '/menu/sub/troubleshooting.php' ); ?>"><?php _e( 'Troubleshooting page', 'wpml-wcml' ); ?></a>
+   href="<?php echo admin_url( 'admin.php?page=' . basename( WCML_PLUGIN_PATH ) . '/menu/sub/troubleshooting.php' ); ?>"><?php _e( 'Troubleshooting page', 'woocommerce-multilingual' ); ?></a>

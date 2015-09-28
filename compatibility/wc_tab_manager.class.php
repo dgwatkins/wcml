@@ -208,7 +208,7 @@ class WCML_Tab_Manager{
             $tr_prod_tabs = $wc_tab_manager->get_product_tabs($tr_product_id);
 
             if(!is_array($tr_prod_tabs)){
-                return __('Please update original product','wpml-wcml');
+                return __('Please update original product','woocommerce-multilingual');
             }
 
             foreach($tr_prod_tabs as $key=>$prod_tab){

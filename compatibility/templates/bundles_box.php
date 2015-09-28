@@ -2,7 +2,7 @@
     <div class="postbox wpml-form-row wcml-row-bundles">
         <div title="<?php _e('Click to toggle'); ?>" class="handlediv"><br></div>
         <h3 class="hndle">
-            <span><?php _e('Product Bundles', 'wpml-wcml') ?></span>
+            <span><?php _e('Product Bundles', 'woocommerce-multilingual') ?></span>
         </h3>
 
         <div class="inside">
@@ -29,7 +29,7 @@
                         <?php if( isset( $bundle['empty_bundles'] ) ) : ?>
                             <tr class="wcml-first-row" row-index="<?php echo $index; ?>">
                                 <th>
-                                    <label class="custom_attr_label"><?php _e('You need translate bundled product first', 'wpml-wcml'); ?></label>
+                                    <label class="custom_attr_label"><?php _e('You need translate bundled product first', 'woocommerce-multilingual'); ?></label>
                                 </th>
                             </tr>
                         <?php continue; endif; ?>
@@ -38,7 +38,7 @@
 
                             <tr class="wcml-first-row" row-index="<?php echo $index; ?>">
                                 <th>
-                                    <label class="custom_attr_label"><?php _e('Name', 'wpml-wcml'); ?></label>
+                                    <label class="custom_attr_label"><?php _e('Name', 'woocommerce-multilingual'); ?></label>
                                 </th>
                                 <td>
                                     <input readonly class="original_value" value="<?php echo $bundle['original']['bundle_title'] ?>"
@@ -55,7 +55,7 @@
                                         class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?> readonly<?php endif; ?>
                                         type="text" name="<?php echo  'bundles['.$bundle['bundle_id']. '][title]'; ?>"
                                         value="<?php echo $bundle['translated']['bundle_title']; ?>"
-                                        placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
+                                        placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
 
                                 </td>
                             </tr>
@@ -64,7 +64,7 @@
                         <?php if( $bundle['original']['override_bundle_desc']  == 'yes' ): ?>
                             <tr class="wcml-last-row" row-index="<?php echo $index; ?>">
                                 <th>
-                                    <label class="custom_attr_label"><?php _e('Description', 'wpml-wcml'); ?></label>
+                                    <label class="custom_attr_label"><?php _e('Description', 'woocommerce-multilingual'); ?></label>
                                 </th>
                                 <td>
                                     <input readonly class="original_value" value="<?php echo $bundle['original']['bundle_desc'] ?>"
@@ -75,7 +75,7 @@
                                         class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?> readonly<?php endif; ?>
                                     type="text" name="<?php echo 'bundles['.$bundle['bundle_id'].'][desc]'; ?>"
                                     value="<?php echo $bundle['translated']['bundle_desc']; ?>"
-                                    placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>
+                                    placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>
                                     " <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
                                 </td>
                             </tr>

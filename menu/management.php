@@ -35,14 +35,14 @@ if(isset($_GET['tab'])){
 
     <?php if(current_user_can('wpml_manage_woocommerce_multilingual')): ?>
 	    <a class="nav-tab <?php echo $current_tab == 'settings' ? 'nav-tab-active' : ''; ?>"
-	       href="<?php echo admin_url( 'admin.php?page=wpml-wcml' ); ?>"><?php _e( 'Settings', 'wpml-wcml' ) ?></a>
-        <a class="nav-tab <?php echo $current_tab == 'multi-currency' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=multi-currency'); ?>"><?php _e('Multi-currency', 'wpml-wcml') ?></a>
+	       href="<?php echo admin_url( 'admin.php?page=wpml-wcml' ); ?>"><?php _e( 'Settings', 'woocommerce-multilingual' ) ?></a>
+        <a class="nav-tab <?php echo $current_tab == 'multi-currency' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=multi-currency'); ?>"><?php _e('Multi-currency', 'woocommerce-multilingual') ?></a>
     <?php endif; ?>
-    <a class="nav-tab <?php echo $current_tab == 'products' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=products'); ?>"><?php _e('Products', 'wpml-wcml') ?></a>
+    <a class="nav-tab <?php echo $current_tab == 'products' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=products'); ?>"><?php _e('Products', 'woocommerce-multilingual') ?></a>
     <?php if( current_user_can('wpml_operate_woocommerce_multilingual')): ?>
-        <a class="nav-tab <?php echo $current_tab == 'slugs' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=slugs'); ?>"><?php _e('Store URLs', 'wpml-wcml') ?></a>
+        <a class="nav-tab <?php echo $current_tab == 'slugs' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=slugs'); ?>"><?php _e('Store URLs', 'woocommerce-multilingual') ?></a>
     <?php foreach($products_and_variation_taxonomies as $tax_key => $tax): if(!$sitepress->is_translated_taxonomy($tax_key)) continue; ?>
-        <a class="nav-tab <?php echo (isset($_GET['tab']) && $_GET['tab'] == $tax_key)?'nav-tab-active':''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab='.$tax_key); ?>" <?php if(!WCML_Terms::is_fully_translated($tax_key)): ?>title="<?php esc_attr_e('You have untranslated terms!', 'wpml-wcml'); ?>"<?php endif;?>>
+        <a class="nav-tab <?php echo (isset($_GET['tab']) && $_GET['tab'] == $tax_key)?'nav-tab-active':''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab='.$tax_key); ?>" <?php if(!WCML_Terms::is_fully_translated($tax_key)): ?>title="<?php esc_attr_e('You have untranslated terms!', 'woocommerce-multilingual'); ?>"<?php endif;?>>
             <?php echo $tax->labels->name ?>
             <?php if(!WCML_Terms::is_fully_translated($tax_key)): ?>
 	            &nbsp;<i class="otgs-ico-warning"></i>
@@ -50,7 +50,7 @@ if(isset($_GET['tab'])){
         </a>
     <?php endforeach; ?>
     <?php foreach($all_products_taxonomies as $tax_key => $tax): if(!$sitepress->is_translated_taxonomy($tax_key) || $tax_key == 'product_type') continue; ?>
-    <a class="js-tax-tab-<?php echo $tax_key ?> nav-tab <?php echo (isset($_GET['tab']) && $_GET['tab'] == $tax_key)?'nav-tab-active':''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab='.$tax_key); ?>" <?php if(!WCML_Terms::is_fully_translated($tax_key)): ?>title="<?php esc_attr_e('You have untranslated terms!', 'wpml-wcml'); ?>"<?php endif;?>>
+    <a class="js-tax-tab-<?php echo $tax_key ?> nav-tab <?php echo (isset($_GET['tab']) && $_GET['tab'] == $tax_key)?'nav-tab-active':''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab='.$tax_key); ?>" <?php if(!WCML_Terms::is_fully_translated($tax_key)): ?>title="<?php esc_attr_e('You have untranslated terms!', 'woocommerce-multilingual'); ?>"<?php endif;?>>
         <?php echo $tax->labels->name ?>
         <?php if(!WCML_Terms::is_fully_translated($tax_key)): ?>
 	        &nbsp;<i class="otgs-ico-warning"></i>
@@ -60,7 +60,7 @@ if(isset($_GET['tab'])){
     <input type="hidden" id="wcml_update_term_translated_warnings_nonce" value="<?php echo wp_create_nonce('wcml_update_term_translated_warnings_nonce') ?>" />
 
     <?php endforeach; ?>
-        <a class="nav-tab <?php echo $current_tab == 'status' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=status'); ?>"><?php _e('Status', 'wpml-wcml') ?></a>
+        <a class="nav-tab <?php echo $current_tab == 'status' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=status'); ?>"><?php _e('Status', 'woocommerce-multilingual') ?></a>
     <?php endif; ?>
 	<div class="wcml-wrap">
         <?php if(!isset($_GET['tab']) && current_user_can('wpml_manage_woocommerce_multilingual')): ?>

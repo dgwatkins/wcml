@@ -10,8 +10,8 @@ if (!current_user_can('wpml_operate_woocommerce_multilingual')) {
 }
 
 $button_labels = array(
-    'save' => esc_attr__('Save', 'wpml-wcml'),
-    'update' => esc_attr__('Update', 'wpml-wcml'),
+    'save' => esc_attr__('Save', 'woocommerce-multilingual'),
+    'update' => esc_attr__('Update', 'woocommerce-multilingual'),
 );
 
 $is_duplicate_product = false;
@@ -24,9 +24,9 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
 
 <div class="wpml-dialog wpml-dialog-translate wcml-pt-form">
     <header class="wpml-dialog-header">
-        <h2 class="wpml-dialog-title"><?php printf(__('Product translation:  %s', 'wpml-wcml'), '<strong>' . $product->post_title . '</strong>'); ?></h2>
+        <h2 class="wpml-dialog-title"><?php printf(__('Product translation:  %s', 'woocommerce-multilingual'), '<strong>' . $product->post_title . '</strong>'); ?></h2>
         <a href="<?php echo get_post_permalink($product_id); ?>" class="view"
-           title="<?php printf(__('View "%s"', 'wpml-wcml'), $product->post_title); ?>"><?php _e('View Product', 'wpml-wcml'); ?> </a>
+           title="<?php printf(__('View "%s"', 'woocommerce-multilingual'), $product->post_title); ?>"><?php _e('View Product', 'woocommerce-multilingual'); ?> </a>
         <i class="otgs-ico-close wpml-dialog-close-button"></i>
     </header>
     <form class="wpml-dialog-body"
@@ -36,13 +36,13 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                 <h3 class="js-wcml_duplicate_product_notice" >
                 <span style="height: 38px"><?php printf(__('This product is an exact duplicate of the %s product.', 'wcml-wpml'),
                     $active_languages[ $original_language ]['display_name'] ); ?></span>
-                    <a class="button-primary duplicate_edit" ><?php _e('Edit independently', 'wpml-wcml') ?></a>
+                    <a class="button-primary duplicate_edit" ><?php _e('Edit independently', 'woocommerce-multilingual') ?></a>
                 </h3>
                 <h3 class="js-wcml_duplicate_product_undo" style="display: none;" >
-                    <a class="button-secondary duplicate_cancel"><?php _e('Undo (keep this product as a duplicate)', 'wpml-wcml') ?></a>
+                    <a class="button-secondary duplicate_cancel"><?php _e('Undo (keep this product as a duplicate)', 'woocommerce-multilingual') ?></a>
                 </h3>
             <?php endif; ?>
-            <h3 class="wpml-header-original"><?php _e('Original', 'wpml-wcml'); ?>:
+            <h3 class="wpml-header-original"><?php _e('Original', 'woocommerce-multilingual'); ?>:
                 <span class="wpml-title-flag">
                     <img src="<?php echo $sitepress->get_flag_url($original_language) ?>"
                          alt="<?php echo $active_languages[$original_language]['english_name'] ?>"/>
@@ -50,7 +50,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                 <strong><?php echo $active_languages[$original_language]['english_name'] ?></strong>
             </h3>
 
-            <h3 class="wpml-header-translation"><?php _e('Translation to', 'wpml-wcml'); ?>:
+            <h3 class="wpml-header-translation"><?php _e('Translation to', 'woocommerce-multilingual'); ?>:
                 <span class="wpml-title-flag">
                     <img src="<?php echo $sitepress->get_flag_url($language) ?>"
                          alt="<?php echo $active_languages[$language]['english_name'] ?>"/>
@@ -61,13 +61,13 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
             <div class="wpml-copy-container">
                 <a class="button-secondary button-copy-all" title="<?php _e('Copy from original'); ?>">
                     <i class="otgs-ico-copy"></i>
-                    <?php _e('Copy all fields from original', 'wpml-wcml'); ?>
+                    <?php _e('Copy all fields from original', 'woocommerce-multilingual'); ?>
                 </a>
             </div>
         </header>
 
         <div class="wpml-form-row">
-            <label for="term-name"> <?php _e('Title', 'wpml-wcml'); ?> </label>
+            <label for="term-name"> <?php _e('Title', 'woocommerce-multilingual'); ?> </label>
             <input readonly id="term-name-original" class="original_value" value="<?php echo $product->post_title ?>"
                    type="text">
             <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>">
@@ -79,7 +79,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
         </div>
 
         <div class="wpml-form-row">
-            <label for="term-slug"><?php _e('Slug', 'wpml-wcml'); ?></label>
+            <label for="term-slug"><?php _e('Slug', 'woocommerce-multilingual'); ?></label>
             <input readonly id="term-slug-original" class="original_value" value="<?php echo $product->post_name ?>"
                    type="text">
             <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>" id="">
@@ -92,8 +92,8 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
         </div>
 
         <div class="wpml-form-row original_description">
-            <label for="term-description"><?php _e('Content', 'wpml-wcml'); ?>
-                /<br><?php _e('Description', 'wpml-wcml'); ?></label>
+            <label for="term-description"><?php _e('Content', 'woocommerce-multilingual'); ?>
+                /<br><?php _e('Description', 'woocommerce-multilingual'); ?></label>
             <div class="mce_editor_origin">
             </div>
             <a class="button-copy button-secondary" title="<?php _e('Copy from original'); ?>" id="">
@@ -108,7 +108,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
         <div class="postbox wpml-form-row wcml-row-excerpt">
             <div title="<?php _e('Click to toggl'); ?>" class="handlediv"><br></div>
             <h3 class="hndle">
-                <span><?php _e('Excerpt', 'wpml-wcml'); ?></span>
+                <span><?php _e('Excerpt', 'woocommerce-multilingual'); ?></span>
             </h3>
 
             <div class="inside">
@@ -131,7 +131,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
         <div class="postbox wpml-form-row wcml-row-purchase-note <?php echo !$purchase_note ? 'closed' : '' ?> ">
             <div title="<?php _e('Click to toggle'); ?>" class="handlediv"><br></div>
             <h3 class="hndle">
-                <span><?php _e('Purchase note', 'wpml-wcml') ?><?php echo !$purchase_note ? '&nbsp;<em>' . __('(empty)', 'wpml-wcml') . '</em>' : '' ?> </span>
+                <span><?php _e('Purchase note', 'woocommerce-multilingual') ?><?php echo !$purchase_note ? '&nbsp;<em>' . __('(empty)', 'woocommerce-multilingual') . '</em>' : '' ?> </span>
             </h3>
 
             <div class="inside">
@@ -151,7 +151,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
         <div class="postbox wpml-form-row wcml-row-images <?php echo empty( $product_images ) ? 'closed' : '' ?>">
             <div title="<?php _e('Click to toggle'); ?>" class="handlediv"><br></div>
             <h3 class="hndle">
-                <span><?php _e('Images', 'wpml-wcml') ?></span>
+                <span><?php _e('Images', 'woocommerce-multilingual') ?></span>
             </h3>
 
             <div class="inside">
@@ -164,7 +164,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
             <div class="postbox wpml-form-row wcml-row-attributes">
                 <div title="<?php _e('Click to toggl'); ?>" class="handlediv"><br></div>
                 <h3 class="hndle">
-                    <span><?php _e('Custom Product attributes', 'wpml-wcml'); ?></span>
+                    <span><?php _e('Custom Product attributes', 'woocommerce-multilingual'); ?></span>
                 </h3>
 
                 <div class="inside">
@@ -176,7 +176,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                             <tr class="wcml-first-row" row-index="<?php echo $index; ?>">
                                 <th>
                                     <?php $trn_attribute = $woocommerce_wpml->products->get_custom_attribute_translation($product_id, $attr_key, $attribute, $language); ?>
-                                    <label class="custom_attr_label"><?php _e('Name', 'wpml-wcml'); ?></label>
+                                    <label class="custom_attr_label"><?php _e('Name', 'woocommerce-multilingual'); ?></label>
                                 </th>
                                 <td>
                                     <input readonly class="original_value" value="<?php echo $attribute['name'] ?>"
@@ -193,11 +193,11 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                                         class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?> readonly<?php endif; ?>
                                         type="text" name="<?php echo $attr_key . '_name'; ?>"
                                         value="<?php echo $trn_attribute['name'] ? $trn_attribute['name'] : ''; ?>"
-                                        placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
+                                        placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
 
-                                    if(!is_null($tr_status) && get_current_user_id() != $tr_status->translator_id ){
+                                    <?php if(!is_null($tr_status) && get_current_user_id() != $tr_status->translator_id ){
                                         if($tr_status->status == ICL_TM_IN_PROGRESS){ ?>
-                                            <td><?php _e('Translation in progress', 'wpml-wcml'); ?><br>&nbsp;</td>
+                                            <td><?php _e('Translation in progress', 'woocommerce-multilingual'); ?><br>&nbsp;</td>
                                             <?php continue;
                                         }elseif($tr_status->status == ICL_TM_WAITING_FOR_TRANSLATOR && !$job_id ){
                                             $tr_job_id = $wpdb->get_var($wpdb->prepare("
@@ -207,11 +207,10 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                                                                     WHERE s.translation_id = %d
                                                                 ", $product_translations[$key]->translation_id ) );
                                             ?>
-                                            <td><?php printf('<a href="%s" class="button-secondary">'.__('Take this and edit', 'wpml-wcml').'</a>', admin_url('admin.php?page=wpml-wcml&tab=products&prid=' . $product->ID.'&job_id='.$tr_job_id)); ?><br>&nbsp;</td>
+                                            <td><?php printf('<a href="%s" class="button-secondary">'.__('Take this and edit', 'woocommerce-multilingual').'</a>', admin_url('admin.php?page=wpml-wcml&tab=products&prid=' . $product->ID.'&job_id='.$tr_job_id)); ?><br>&nbsp;</td>
                                             <?php continue;
                                         }
-                                    }
-                                }
+                                } ?>
 
                                 </td>
                             </tr>
@@ -233,7 +232,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
             <div class="postbox wpml-form-row wcml-row-images">
                 <div title="<?php _e('Click to toggle'); ?>" class="handlediv"><br></div>
                 <h3 class="hndle">
-                    <span><?php _e('Variations', 'wpml-wcml') ?></span>
+                    <span><?php _e('Variations', 'woocommerce-multilingual') ?></span>
                 </h3>
 
                 <div class="inside">
@@ -251,7 +250,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                 <div class="postbox wpml-form-row wcml-row-custom-fields">
                     <div title="<?php _e( 'Click to toggle' ); ?>" class="handlediv"><br></div>
                     <h3 class="hndle">
-                        <span><?php _e( 'Custom Fields', 'wpml-wcml' ) ?></span>
+                        <span><?php _e( 'Custom Fields', 'woocommerce-multilingual' ) ?></span>
                     </h3>
                     <div class="inside">
                         <table id="prod_custom_fields" class="prod_custom_fields wcml-attr-table js-table">
@@ -292,14 +291,14 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
 
     <div class="wcml-pt-progress"></div>
     <div class="alignleft">
-        <a class="button-secondary cancel wpml-dialog-close-button" ><?php _e('Cancel', 'wpml-wcml'); ?></a>
+        <a class="button-secondary cancel wpml-dialog-close-button" ><?php _e('Cancel', 'woocommerce-multilingual'); ?></a>
     </div>
     <div class="alignright">
         <?php $nonce = wp_create_nonce('update_product_actions'); ?>
         <a class="button-primary wpml-dialog-close-button" data-action="wcml_update_product"
-           data-nonce="<?php echo $nonce; ?>"><?php _e('Save &amp; Close', 'wpml-wcml'); ?></a>
+           data-nonce="<?php echo $nonce; ?>"><?php _e('Save &amp; Close', 'woocommerce-multilingual'); ?></a>
         <a class="button-primary wpml-dialog-close-button" data-action="wcml_update_product"
-           data-nonce="<?php echo $nonce; ?>" data-stay="true"><?php _e('Save', 'wpml-wcml'); ?></a>
+           data-nonce="<?php echo $nonce; ?>" data-stay="true"><?php _e('Save', 'woocommerce-multilingual'); ?></a>
     </div>
 </div>
 

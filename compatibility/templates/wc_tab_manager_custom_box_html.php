@@ -1,7 +1,7 @@
 <div class="postbox wpml-form-row wcml-row-attributes">
     <div title="<?php _e('Click to toggl'); ?>" class="handlediv"><br></div>
     <h3 class="hndle">
-        <span><?php _e('Product tabs', 'wpml-wcml'); ?></span>
+        <span><?php _e('Product tabs', 'woocommerce-multilingual'); ?></span>
     </h3>
 
     <div class="inside">
@@ -45,7 +45,7 @@
 
                 <tr class="wcml-first-row" row-index="<?php echo $index; ?>">
                     <th>
-                        <label class="custom_attr_label"><?php _e('Title', 'wpml-wcml'); ?></label>
+                        <label class="custom_attr_label"><?php _e('Title', 'woocommerce-multilingual'); ?></label>
                     </th>
                     <td>
                         <input readonly class="original_value" value="<?php echo $orig_title ?>" type="text"/>
@@ -64,14 +64,14 @@
                             class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?> readonly<?php endif; ?>
                             type="text" name="<?php echo $title_input_name; ?>"
                             value="<?php echo $trnsl_title ?>"
-                            placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
+                            placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
 
                     </td>
                 </tr>
                 <?php if( $orig_heading ): ?>
                     <tr class="wcml-last-row" row-index="<?php echo $index; ?>">
                         <th>
-                            <label class="custom_attr_label"><?php _e('Heading', 'wpml-wcml'); ?></label>
+                            <label class="custom_attr_label"><?php _e('Heading', 'woocommerce-multilingual'); ?></label>
                         </th>
                         <td>
                             <?php if( $values['type'] == 'product' ): ?>
@@ -82,11 +82,11 @@
                         </div>
                         <div class="wcml_editor_buttons">
                             <?php if($template_data['original']): ?>
-                                <button type="button" class="button-secondary wcml_popup_close"><?php _e('Close', 'wpml-wcml') ?></button>
+                                <button type="button" class="button-secondary wcml_popup_close"><?php _e('Close', 'woocommerce-multilingual') ?></button>
                             <?php else: ?>
-                                <h3><?php printf(__('%s translation', 'wpml-wcml'),$template_data['lang_name']); ?></h3>
-                                <button type="button" class="button-secondary wcml_popup_cancel"><?php _e('Cancel', 'wpml-wcml') ?></button>
-                                <button type="button" class="button-secondary wcml_popup_ok"><?php _e('Ok', 'wpml-wcml') ?></button>
+                                <h3><?php printf(__('%s translation', 'woocommerce-multilingual'),$template_data['lang_name']); ?></h3>
+                                <button type="button" class="button-secondary wcml_popup_cancel"><?php _e('Cancel', 'woocommerce-multilingual') ?></button>
+                                <button type="button" class="button-secondary wcml_popup_ok"><?php _e('Ok', 'woocommerce-multilingual') ?></button>
                             <?php endif; ?>
 
                         </td>

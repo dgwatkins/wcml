@@ -3,12 +3,12 @@
 	<tr>
 		<?php //TODO Sergey: make Title and Date columns sortable ?>
 
-		<th scope="col"><?php _e( 'Slug type', 'wpml-wcml' ) ?></th>
+		<th scope="col"><?php _e( 'Slug type', 'woocommerce-multilingual' ) ?></th>
 		<th scope="col" id="date" class="wpml-col-url">
 			<span class="wpml-title-flag">
 				<img src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/en.png"/>
 			</span>
-			<?php _e( 'Original Slug', 'wpml-wcml' ) ?>
+			<?php _e( 'Original Slug', 'woocommerce-multilingual' ) ?>
 		</th>
 		<th scope="col" class="wpml-col-languages">
 			<span title="Spanish"><img
@@ -27,7 +27,7 @@
 	<tr>
 		<td>
 			<strong>
-				<?php _e( 'Shop page', 'wpml-wcml' ); ?>
+				<?php _e( 'Shop page', 'woocommerce-multilingual' ); ?>
 			</strong>
 		</td>
 
@@ -52,7 +52,7 @@
 	<tr>
 		<td>
 			<strong>
-				<?php _e( 'Product(s) page(s) base', 'wpml-wcml' ); ?>
+				<?php _e( 'Product(s) page(s) base', 'woocommerce-multilingual' ); ?>
 			</strong>
 		</td>
 
@@ -78,7 +78,7 @@
 	<tr>
 		<td>
 			<strong>
-				<?php _e( 'Product category base', 'wpml-wcml' ); ?>
+				<?php _e( 'Product category base', 'woocommerce-multilingual' ); ?>
 			</strong>
 		</td>
 
@@ -104,7 +104,7 @@
 	<tr>
 		<td>
 			<strong>
-				<?php _e( 'Product tag base', 'wpml-wcml' ); ?>
+				<?php _e( 'Product tag base', 'woocommerce-multilingual' ); ?>
 			</strong>
 		</td>
 
@@ -129,7 +129,7 @@
 	<tr>
 		<td>
 			<strong>
-				<?php _e( 'Product attribute base', 'wpml-wcml' ); ?>
+				<?php _e( 'Product attribute base', 'woocommerce-multilingual' ); ?>
 			</strong>
 		</td>
 

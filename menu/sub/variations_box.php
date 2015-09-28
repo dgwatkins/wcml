@@ -2,11 +2,11 @@
     <tbody>
         <?php if(isset($template_data['empty_variations'])): ?>
             <tr>
-                <td><?php _e('Please add variations to product','wpml-wcml'); ?></td>
+                <td><?php _e('Please add variations to product','woocommerce-multilingual'); ?></td>
             <tr>
         <?php elseif(!$woocommerce_wpml->settings['file_path_sync'] && isset($template_data['empty_translation'])): ?>
             <tr>
-                <td><?php _e('Please save translation before translate variations file paths','wpml-wcml'); ?></td>
+                <td><?php _e('Please save translation before translate variations file paths','woocommerce-multilingual'); ?></td>
             </tr>
         <?php endif;?>
 
@@ -18,7 +18,7 @@
 
                 <tr class="wcml-first-row" row-index="<?php //echo $index; ?>">
                     <th>
-                        <label class="custom_attr_label"><?php printf(__('%s Description', 'wpml-wcml'),'<strong>#' . $variation_id . ':</strong>'); ?></label>
+                        <label class="custom_attr_label"><?php printf(__('%s Description', 'woocommerce-multilingual'),'<strong>#' . $variation_id . ':</strong>'); ?></label>
                     </th>
                     <td>
                         <input readonly class="original_value" value="<?php echo get_post_meta( $variation_id, '_variation_description', true) ?>" type="text"/>
@@ -33,7 +33,7 @@
                             class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?> readonly<?php endif; ?>
                             type="text" name="<?php echo 'variation_desc['.$tr_variation_id . ']'; ?>"
                             value="<?php echo get_post_meta( $tr_variation_id, '_variation_description', true) ?>"
-                            placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
+                            placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
 
                     </td>
                 </tr>
@@ -51,14 +51,14 @@
                                 class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?>
                                 readonly"<?php endif; ?> type="text" name="<?php echo $attr_key; ?>"
                             value="<?php echo $trn_attribute['value'] ? $trn_attribute['value'] : ''; ?>"
-                            placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>
+                            placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>
                             " <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
 
                         </td>
                     </tr>
 
                     <tr>
-                        <td><?php _e('Download URL','wpml-wcml'); ?></td>
+                        <td><?php _e('Download URL','woocommerce-multilingual'); ?></td>
                         <?php foreach($template_data['all_variations_ids'] as $variation_id): $file_paths = ''; ?>
                             <?php if(isset($template_data['all_file_paths'][$variation_id]['not_translated'])){
                                 echo '<td></td>';
@@ -75,8 +75,8 @@
                                         if($template_data['original']): ?>
                                             <textarea value="<?php echo $file_paths; ?>" class="wcml_file_paths_textarea" disabled="disabled"><?php echo $file_paths; ?></textarea>
                                         <?php else: ?>
-                                            <textarea value="<?php echo $file_paths; ?>" name='<?php echo 'variations_file_paths['.$variation_id.']'; ?>' class="wcml_file_paths_textarea" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"><?php echo $file_paths; ?></textarea>
-                                            <button type="button" class="button-secondary wcml_file_paths"><?php _e('Choose a file', 'wpml-wcml') ?></button>
+                                            <textarea value="<?php echo $file_paths; ?>" name='<?php echo 'variations_file_paths['.$variation_id.']'; ?>' class="wcml_file_paths_textarea" placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>"><?php echo $file_paths; ?></textarea>
+                                            <button type="button" class="button-secondary wcml_file_paths"><?php _e('Choose a file', 'woocommerce-multilingual') ?></button>
                                         <?php endif;
                                     }else{
                                         for($i=0;$i<$template_data['all_file_paths']['count'];$i++): ?>
@@ -85,9 +85,9 @@
                                                 <input type="text" value="<?php echo $template_data['all_file_paths'][$variation_id][$i]['value']; ?>" class="" disabled="disabled">
                                             <?php else: ?>
                                                 <div>
-                                                    <input type="text" value="<?php echo isset($template_data['all_file_paths'][$variation_id][$i])?$template_data['all_file_paths'][$variation_id][$i]['label']:''; ?>" name='<?php echo 'variations_file_paths['.$variation_id.']['.$i.'][name]'; ?>' class="wcml_file_paths_name" placeholder="<?php esc_attr_e('Enter translation for name', 'wpml-wcml') ?>">
-                                                    <input type="text" value="<?php echo isset($template_data['all_file_paths'][$variation_id][$i])?$template_data['all_file_paths'][$variation_id][$i]['value']:''; ?>" name='<?php echo 'variations_file_paths['.$variation_id.']['.$i.'][file]'; ?>' class="wcml_file_paths_file" placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>"/>
-                                                    <button type="button" class="button-secondary wcml_file_paths_button"><?php _e('Choose a file', 'wpml-wcml') ?></button>
+                                                    <input type="text" value="<?php echo isset($template_data['all_file_paths'][$variation_id][$i])?$template_data['all_file_paths'][$variation_id][$i]['label']:''; ?>" name='<?php echo 'variations_file_paths['.$variation_id.']['.$i.'][name]'; ?>' class="wcml_file_paths_name" placeholder="<?php esc_attr_e('Enter translation for name', 'woocommerce-multilingual') ?>">
+                                                    <input type="text" value="<?php echo isset($template_data['all_file_paths'][$variation_id][$i])?$template_data['all_file_paths'][$variation_id][$i]['value']:''; ?>" name='<?php echo 'variations_file_paths['.$variation_id.']['.$i.'][file]'; ?>' class="wcml_file_paths_file" placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>"/>
+                                                    <button type="button" class="button-secondary wcml_file_paths_button"><?php _e('Choose a file', 'woocommerce-multilingual') ?></button>
                                                 </div>
                                             <?php endif; ?>
                                         <?php endfor; ?>
@@ -95,7 +95,7 @@
                                     ?>
                                 </td>
                             <?php else: ?>
-                                <td><?php _e('Variation is not downloadable','wpml-wcml'); ?></td>
+                                <td><?php _e('Variation is not downloadable','woocommerce-multilingual'); ?></td>
                             <?php endif; ?>
                         <?php endforeach; ?>
                     </tr>
