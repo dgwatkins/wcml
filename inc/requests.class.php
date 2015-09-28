@@ -80,28 +80,26 @@ class WCML_Requests{
 
 
         if(isset($_POST['wcml_file_path_options_table']) && wp_verify_nonce($nonce, 'wcml_file_path_options_table')){
+
+            }
+      
+        if(isset($_POST['wcml_save_settings']) && wp_verify_nonce($nonce, 'wcml_save_settings_nonce')){
             global $sitepress,$sitepress_settings;
+
+            $woocommerce_wpml->settings['trnsl_interface'] = filter_input( INPUT_POST, 'trnsl_interface', FILTER_SANITIZE_NUMBER_INT );
+
+            $woocommerce_wpml->settings['products_sync_date'] = empty($_POST['products_sync_date']) ? 0 : 1;
+            $woocommerce_wpml->settings['products_sync_order'] = empty($_POST['products_sync_order']) ? 0 : 1;
 
             $wcml_file_path_sync = filter_input( INPUT_POST, 'wcml_file_path_sync', FILTER_SANITIZE_NUMBER_INT );
 
             $woocommerce_wpml->settings['file_path_sync'] = $wcml_file_path_sync;
             $woocommerce_wpml->update_settings();
-            
+
             $new_value =$wcml_file_path_sync == 0?2:$wcml_file_path_sync;
             $sitepress_settings['translation-management']['custom_fields_translation']['_downloadable_files'] = $new_value;
             $sitepress_settings['translation-management']['custom_fields_translation']['_file_paths'] = $new_value;
             $sitepress->save_settings($sitepress_settings);
-            }
-      
-        if(isset($_POST['wcml_trsl_interface_table']) && wp_verify_nonce($nonce, 'wcml_trsl_interface_table')){
-            $woocommerce_wpml->settings['trnsl_interface'] = filter_input( INPUT_POST, 'trnsl_interface', FILTER_SANITIZE_NUMBER_INT );
-            $woocommerce_wpml->update_settings();
-        }
-        
-        if(isset($_POST['wcml_products_sync_prop']) && wp_verify_nonce($nonce, 'wcml_products_sync_prop')){
-            $woocommerce_wpml->settings['products_sync_date'] = empty($_POST['products_sync_date']) ? 0 : 1;
-            $woocommerce_wpml->settings['products_sync_order'] = empty($_POST['products_sync_order']) ? 0 : 1;
-            $woocommerce_wpml->update_settings();
         }
 
         if(isset($_GET['wcml_action']) && $_GET['wcml_action'] = 'dismiss'){

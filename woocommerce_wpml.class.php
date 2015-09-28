@@ -311,7 +311,7 @@ class woocommerce_wpml {
 
             if(current_user_can('wpml_manage_woocommerce_multilingual')){
                 add_submenu_page($top_page, __('WooCommerce Multilingual', 'woocommerce-multilingual'),
-                __('WooCommerce Multilingual', 'woocommerce-multilingual'), 'wpml_manage_woocommerce_multilingual', 'woocommerce-multilingual', array($this, 'menu_content'));
+                __('WooCommerce Multilingual', 'woocommerce-multilingual'), 'wpml_manage_woocommerce_multilingual', 'wpml-wcml', array($this, 'menu_content'));
 
                 if(isset($_GET['page']) && $_GET['page'] == basename(WCML_PLUGIN_PATH).'/menu/sub/troubleshooting.php'){
                     add_submenu_page($top_page,
