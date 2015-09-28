@@ -196,7 +196,7 @@ class WCML_WC_Strings{
 
         // Use new API for WPML >= 3.2.3
         if ( apply_filters( 'wpml_slug_translation_available', false) ) {
-            $translated_slug = apply_filters( 'wpml_get_translated_slug', $product_permalink, $language );
+            $translated_slug = apply_filters( 'wpml_get_translated_slug', $product_permalink, 'product' , $language );
         } else {
             // Try the old way.
             $translated_slug = apply_filters( 'wpml_translate_single_string', $product_permalink, 'WordPress', 'URL slug: ' . $product_permalink );
