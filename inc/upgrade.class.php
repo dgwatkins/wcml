@@ -22,7 +22,7 @@ class WCML_Upgrade{
         add_action('admin_notices',  array($this, 'show_upgrade_notices'));
         
         add_action('wp_ajax_wcml_hide_notice', array($this, 'hide_upgrade_notice'));
-        
+
     }   
     
     function setup_upgrade_notices(){
@@ -303,7 +303,6 @@ class WCML_Upgrade{
 
     function upgrade_3_6()
     {
-        global $wpdb;
         $wcml_settings = get_option('_wcml_settings');
 
         $wcml_settings['display_custom_prices'] = 0;
@@ -312,9 +311,71 @@ class WCML_Upgrade{
         update_option('_wcml_settings', $wcml_settings);
     }
 
-    function upgrade_3_7()
-    {
+    function upgrade_3_7(){
         global $woocommerce_wpml,$wpdb;
+
+        $woocommerce_permalinks = maybe_unserialize( get_option('woocommerce_permalinks') );
+
+        foreach($woocommerce_permalinks as $base_key => $base){
+
+            $base_key = trim($base_key, '/');
+
+            if($base) {
+                $taxonomy = false;
+
+                switch( $base_key ){
+                    case 'category_base': $taxonomy = 'product_cat'; break;
+                    case 'tag_base':      $taxonomy = 'product_tag'; break;
+                    case 'attribute_base':$taxonomy = 'attribute'; break;
+                }
+
+                if($taxonomy) {
+                    $wpdb->update(
+                        $wpdb->prefix . 'icl_strings',
+                        array(
+                            'context'   => 'WordPress',
+                            'name'      => sprintf('URL %s tax slug', $taxonomy)
+                        ),
+                        array(
+                            'context'   => sprintf('URL %s slugs - %s', $taxonomy, $base),
+                            'name'      => sprintf('Url %s slug: %s', $taxonomy, $base)
+                        )
+                    );
+
+                }
+            }
+
+        }
+
+        $endpoint_keys = array( 'order-pay', 'order-received', 'view-order', 'edit-account', 'edit-address', 'lost-password', 'customer-logout', 'add-payment-method' );
+
+        foreach( $endpoint_keys as $endpoint_key ){
+
+            $wpdb->query(
+                $wpdb->prepare( "UPDATE {$wpdb->prefix}icl_strings
+                                  SET context = 'WooCommerce Endpoints', name = %s
+                                  WHERE context = 'WordPress' AND name = %s",
+                    $endpoint_key, 'Endpoint slug: '. $endpoint_key )
+            );
+
+
+            if( version_compare(ICL_SITEPRESS_VERSION, '3.2.3', '>=')){
+                // update domain_name_context_md5 value
+                $string_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}icl_strings WHERE context = 'WooCommerce Endpoints' AND name = %s", $endpoint_key ) );
+
+                if( $string_id ){
+                    $wpdb->query(
+                        $wpdb->prepare( "UPDATE {$wpdb->prefix}icl_strings
+                                  SET domain_name_context_md5 = %s
+                                  WHERE id = %d",
+                            md5( 'WooCommerce Endpoints' . $endpoint_key ), $string_id )
+                    );
+                }
+
+            }
+
+        }
+
         $woocommerce_wpml->terms->check_if_sync_terms_needed();
 
         $wcml_settings = get_option('_wcml_settings');
@@ -336,6 +397,7 @@ class WCML_Upgrade{
         foreach( $bookable_persons AS $bookable_person ){
             update_post_meta( $bookable_person->element_id, 'wcml_is_translated', true );
         }
+
     }
 
 }

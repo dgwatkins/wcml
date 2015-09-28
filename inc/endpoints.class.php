@@ -26,6 +26,7 @@ class WCML_Endpoints{
 
 
     function register_endpoints_translations(){
+
         if( !class_exists( 'woocommerce' ) || !defined( 'ICL_SITEPRESS_VERSION' ) || ICL_PLUGIN_INACTIVE || version_compare( WOOCOMMERCE_VERSION, '2.2', '<' ) ) return false;
 
         $wc_vars = WC()->query->query_vars;
@@ -54,16 +55,16 @@ class WCML_Endpoints{
     function get_endpoint_translation( $key, $endpoint, $language = null ){
         global $wpdb;
 
-        $string = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}icl_strings WHERE name = %s AND value = %s ", 'Endpoint slug: ' . $key, $endpoint ) );
+        $string = icl_get_string_id( $endpoint, 'WooCommerce Endpoints', $key );
 
         if( !$string && function_exists( 'icl_register_string' ) ){
-            do_action('wpml_register_single_string', 'WordPress', 'Endpoint slug: ' . $key, $endpoint );
+            do_action('wpml_register_single_string', 'WooCommerce Endpoints', $key, $endpoint );
         }else{
             $this->endpoints_strings[] = $string;
         }
 
         if( function_exists('icl_t') ){
-            return apply_filters( 'wpml_translate_single_string', $endpoint, 'WordPress', 'Endpoint slug: '. $key, $language );
+            return apply_filters( 'wpml_translate_single_string', $endpoint, 'WooCommerce Endpoints', $key, $language );
         }else{
             return $endpoint;
         }
@@ -78,6 +79,8 @@ class WCML_Endpoints{
 
     function maybe_flush_rules(){
         if( get_option( 'flush_rules_for_endpoints_translations' ) ){
+            WC()->query->init_query_vars();
+            WC()->query->add_endpoints();
             flush_rewrite_rules();
             delete_option( 'flush_rules_for_endpoints_translations' );
         }
@@ -102,10 +105,10 @@ class WCML_Endpoints{
         //add endpoints and flush rules
         foreach( $this->endpoints_strings as $string_id ){
 
-            $strings = $wpdb->get_results( $wpdb->prepare( "SELECT value FROM {$wpdb->prefix}icl_string_translations WHERE string_id = %s AND status = %s", $string_id , ICL_STRING_TRANSLATION_COMPLETE) );
+            $string_translations = icl_get_string_translations_by_id( $string_id );
 
-            foreach( $strings as $string ){
-                add_rewrite_endpoint( $string->value, EP_ROOT | EP_PAGES );
+            foreach( $string_translations as $string ){
+                add_rewrite_endpoint( $string['value'], EP_ROOT | EP_PAGES );
             }
         }
 
@@ -183,7 +186,7 @@ class WCML_Endpoints{
             $current_id = $q->queried_object_id;
         }
 
-        if( !$q->is_404 && $current_id == $my_account_id ){
+        if( !$q->is_404 && $current_id == $my_account_id && $q->is_page ){
 
             $uri_vars = array_filter( explode( '/', $_SERVER['REQUEST_URI']) );
             $endpoints =  WC()->query->get_query_vars();
@@ -206,7 +209,7 @@ class WCML_Endpoints{
     function get_translated_edit_address_slug( $slug, $language = false ){
         global $woocommerce_wpml;
 
-        $strings_language = $woocommerce_wpml->strings->get_wc_context_language();
+        $strings_language = $woocommerce_wpml->strings->get_string_language( $slug, 'woocommerce', 'edit-address-slug: '.$slug );
 
         if( $strings_language == $language ){
             return $slug;
@@ -217,7 +220,7 @@ class WCML_Endpoints{
         if( $translated_slug == $slug ){
 
             if( $language ){
-                $translated_slug = $woocommerce_wpml->terms->get_translation_from_woocommerce_mo_file( 'edit-address-slug'. chr(4) .$slug, $language );
+                $translated_slug = $woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( 'edit-address-slug'. chr(4) .$slug, $language );
             }else{
                 $translated_slug = _x( $slug, 'edit-address-slug', 'woocommerce' );
             }

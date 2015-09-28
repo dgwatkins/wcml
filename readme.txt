@@ -4,8 +4,8 @@ Donate link: http://wpml.org/documentation/related-projects/woocommerce-multilin
 Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multilingual, e-shop, shop
 License: GPLv2
 Requires at least: 3.0
-Tested up to: 4.2.3
-Stable tag: 3.6.7
+Tested up to: 4.3
+Stable tag: 3.6.11
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
 
@@ -77,6 +77,35 @@ In order for the checkout and store pages to appear translated, you need to crea
 3. Multiple currencies
 
 == Changelog ==
+
+= 3.6.11 =
+* Fixed one issue that was causing a fatal error when an older version WPML was used (3.1.9.7)
+
+= 3.6.10 =
+* Bug fix: Custom prices for variations were not saved when clicking the 'Save changes' button
+* Bug fix: Pagination was not working for a category having the term id equal to the id of the account page
+* Bug fix: 'Shop' was appearing two times in the breadcrumbs when using the shop base + category for a product url base
+* Bug fix: Fixed one issue with WooCommerce Bookings - adding two separate bookings to the cart showed as one item instead of two
+* Bug fix: The products menu order was not synced in some situations
+* Fixed a compatibility issue with the Peddlar theme
+* Fixed a styling issue on the custom prices section for product variations
+* Updates for the compatibility with WooCommerce Product Bundles from the plugin author
+* Bug fix: Sometimes it was not possible to enable the slug translation for a custom post when WooCommerce Multilingual was active
+
+= 3.6.9 =
+* Bug fix: Prices for variable products were not converted correctly when using multiple currencies after the WooCommerce 2.4 update
+* Bug fix: Variations translations were not created when using custom attributes with space characters in them
+* Bug fix: When the option to show only products with custom prices in the secondary currencies was on, no products were displayed
+* Changed the order in which the products are displayed on the WooCommerce Multilingual products editor: chronological DESC
+
+= 3.6.8 =
+* Added a series of compatibility fixes for WooCommerce 2.4.x (custom attributes, endpoints)
+* Bug fix: Incorrect prices were calculated for Table Rate Shipping (bug originally fixed in version 3.6.5)
+* Bug fix: WooCommerce Bookings - when you deleted a booking from the backend, the calendar on the front end did not update
+* Bug fix: WooCommerce Bookings - translations of a booking post were not deleted when the original post was deleted
+* Bug fix: WooCommerce Bookings - booking product appeared multiple times in the cart in some cases
+* Bug fix: WooCommerce Bookings - when a booking product was created from the backend, multiple posts were created in some cases
+* Bug fix: 'Stock Qty' field was not locked in the translated variations section
 
 = 3.6.7 =
 * Bug fix: Converted prices in secondary currencies were incorrect in some situations. e.g. For VND with an VND:EUR exchange rate of 30,000:1

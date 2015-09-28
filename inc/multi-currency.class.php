@@ -27,21 +27,16 @@ class WCML_WC_MultiCurrency{
         add_filter('wcml_raw_price_amount', array($this, 'raw_price_filter'), 10, 2);
 
         add_filter('wcml_formatted_price', array($this, 'formatted_price'), 10, 2);
+
+        add_filter( 'woocommerce_get_variation_prices_hash', array( $this, 'add_currency_to_variation_prices_hash' ) );
         
         add_filter('wcml_shipping_price_amount', array($this, 'shipping_price_filter'));
         add_filter('wcml_shipping_free_min_amount', array($this, 'shipping_free_min_amount'));
         add_action('woocommerce_product_meta_start', array($this, 'currency_switcher'));
         
         add_filter('wcml_get_client_currency', array($this, 'get_client_currency'));
-        
-        
-        // exchange rate GUI and logic
-        if(defined('W3TC')){
-            
-            $WCML_WC_MultiCurrency_W3TC = new WCML_WC_MultiCurrency_W3TC;    
-            
-        }
-        
+        add_filter('woocommerce_paypal_args', array($this, 'filter_price_woocommerce_paypal_args'));
+
         add_action('woocommerce_email_before_order_table', array($this, 'fix_currency_before_order_email'));
         add_action('woocommerce_email_after_order_table', array($this, 'fix_currency_after_order_email'));
         
@@ -92,24 +87,26 @@ class WCML_WC_MultiCurrency{
                 //filter query to get order by status
                 add_filter( 'query', array( $this, 'filter_order_status_query' ) );
             }
+
+            add_action( 'woocommerce_variation_options', array( $this, 'add_individual_variation_nonce' ), 10, 3 );
         }
         
 
         //custom prices for different currencies for products/variations [BACKEND]
-        add_action('woocommerce_product_options_pricing',array($this,'woocommerce_product_options_custom_pricing'));
-        add_action('woocommerce_product_after_variable_attributes',array($this,'woocommerce_product_after_variable_attributes_custom_pricing'),10,3);
+        add_action( 'woocommerce_product_options_pricing', array( $this, 'woocommerce_product_options_custom_pricing' ) );
+        add_action( 'woocommerce_product_after_variable_attributes', array( $this, 'woocommerce_product_after_variable_attributes_custom_pricing'), 10, 3 );
 
     }
-        
+
     function raw_price_filter($price, $currency = false) {
 
         if( $currency === false ){
             $currency = $this->get_client_currency();
         }
         $price = $this->convert_price_amount($price, $currency);
-        
-        $price = $this->apply_rounding_rules($price);
-        
+
+        $price = $this->apply_rounding_rules($price, $currency);
+
         return $price;
         
     }
@@ -128,12 +125,28 @@ class WCML_WC_MultiCurrency{
 
         $currency_details = $woocommerce_wpml->multi_currency_support->get_currency_details_by_code( $currency );
 
+        switch ( $currency_details[ 'position' ] ) {
+            case 'left' :
+                $format = '%1$s%2$s';
+                break;
+            case 'right' :
+                $format = '%2$s%1$s';
+                break;
+            case 'left_space' :
+                $format = '%1$s&nbsp;%2$s';
+                break;
+            case 'right_space' :
+                $format = '%2$s&nbsp;%1$s';
+                break;
+        }
+
         $wc_price_args = array(
 
             'currency'              => $currency,
             'decimal_separator'     => $currency_details['decimal_sep'],
             'thousand_separator'    => $currency_details['thousand_sep'],
-            'decimals'              => $currency_details['num_decimals']
+            'decimals'              => $currency_details['num_decimals'],
+            'price_format'          => $format,
 
 
         );
@@ -142,10 +155,10 @@ class WCML_WC_MultiCurrency{
 
         return $price;
     }
-    
+
     function apply_rounding_rules($price, $currency = false ){
         global $woocommerce_wpml;
-        
+
         if( !$currency )
         $currency = $this->get_client_currency();
         $currency_options = $woocommerce_wpml->settings['currency_options'][$currency];
@@ -189,7 +202,7 @@ class WCML_WC_MultiCurrency{
         if($currency_options['auto_subtract'] && $currency_options['auto_subtract'] < $price){
             $price = $price - $currency_options['auto_subtract'];
         }
-        
+
         return $price;
         
     }
@@ -218,7 +231,7 @@ class WCML_WC_MultiCurrency{
     
     function shipping_price_filter($price) {
         
-        $price = $this->convert_price_amount($price, $this->get_client_currency());
+        $price = $this->raw_price_filter($price, $this->get_client_currency());
 
         return $price;
         
@@ -226,7 +239,7 @@ class WCML_WC_MultiCurrency{
     
     function shipping_free_min_amount($price) {
         
-        $price = $this->convert_price_amount($price, $this->get_client_currency());
+        $price = $this->raw_price_filter($price, $this->get_client_currency());
         
         return $price;
         
@@ -315,7 +328,17 @@ class WCML_WC_MultiCurrency{
         
         return $currency;
     }
-    
+
+    function add_currency_to_variation_prices_hash($data){
+
+        $data['currency'] = $this->get_client_currency();
+        $data['exchange_rates_hash'] = md5( json_encode( $this->exchange_rates ) );
+
+        return $data;
+
+    }
+
+
     function get_exchange_rates(){
         global $woocommerce_wpml;
         if(empty($this->exchange_rates)){
@@ -405,7 +428,7 @@ class WCML_WC_MultiCurrency{
         $currencies = get_woocommerce_currencies(); 
         ?>        
         <select id="dropdown_shop_order_currency" name="_order_currency">
-            <option value=""><?php _e( 'Show all currencies', 'wpml-wcml' ) ?></option>
+            <option value=""><?php _e( 'Show all currencies', 'woocommerce-multilingual' ) ?></option>
             <?php foreach($order_currencies as $currency => $count): ?>            
             <option value="<?php echo $currency ?>" <?php 
                 if ( isset( $wp_query->query['_order_currency'] ) ) selected( $currency, $wp_query->query['_order_currency'] ); 
@@ -609,7 +632,7 @@ class WCML_WC_MultiCurrency{
 
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         if(!$nonce || !wp_verify_nonce($nonce, 'reports_set_currency')){
-            echo json_encode( array('error' => __('Invalid nonce', 'wpml-wcml') ) );
+            echo json_encode( array('error' => __('Invalid nonce', 'woocommerce-multilingual') ) );
             die();
         }
         
@@ -631,7 +654,7 @@ class WCML_WC_MultiCurrency{
         
         <select id="dropdown_shop_report_currency">
             <?php if(empty($orders_currencies)): ?>
-                <option value=""><?php _e('Currency - no orders found', 'wpml-wcml') ?></option>
+                <option value=""><?php _e('Currency - no orders found', 'woocommerce-multilingual') ?></option>
             <?php else: ?>                
                 <?php foreach($orders_currencies as $currency => $count): ?>
                     <option value="<?php echo $currency ?>" <?php selected( $currency, $this->reports_currency ); ?>>
@@ -679,7 +702,7 @@ class WCML_WC_MultiCurrency{
 
                 jQuery('#dropdown_shop_order_currency').on('change', function(){
 
-                    if(confirm('" . esc_js(__("All the products will be removed from the current order in order to change the currency", 'wpml-wcml')). "')){
+                    if(confirm('" . esc_js(__("All the products will be removed from the current order in order to change the currency", 'woocommerce-multilingual')). "')){
                         jQuery.ajax({
                             url: ajaxurl,
                             type: 'post',
@@ -713,7 +736,7 @@ class WCML_WC_MultiCurrency{
     function set_order_currency(){
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         if(!$nonce || !wp_verify_nonce($nonce, 'set_order_currency')){
-            echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
+            echo json_encode(array('error' => __('Invalid nonce', 'woocommerce-multilingual')));
             die();
         }
         $currency = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
@@ -758,8 +781,8 @@ class WCML_WC_MultiCurrency{
             $item['line_subtotal'] = $custom_price;
             $item['line_total'] = $custom_price;
         }else{
-            $item['line_subtotal'] = $this->apply_rounding_rules( $this->convert_price_amount( $item['line_subtotal'], $order_currency ), $order_currency );
-            $item['line_total'] = $this->apply_rounding_rules( $this->convert_price_amount( $item['line_total'], $order_currency ), $order_currency );
+            $item['line_subtotal'] = $this->raw_price_filter( $item['line_subtotal'], $order_currency );
+            $item['line_total'] = $this->raw_price_filter( $item['line_total'], $order_currency );
         }
 
         wc_update_order_item_meta( $item_id, '_line_subtotal', $item['line_subtotal'] );
@@ -806,6 +829,8 @@ class WCML_WC_MultiCurrency{
     function woocommerce_product_options_custom_pricing(){
         global $pagenow,$sitepress,$woocommerce_wpml;
 
+        $this->load_custom_prices_js_css();
+
         if( ( isset($_GET['post'] ) && ( get_post_type($_GET['post']) != 'product' || !$woocommerce_wpml->products->is_original_product( $_GET['post'] ) ) ) ||
             ( isset($_GET['post_type'] ) && $_GET['post_type'] == 'product' && isset( $_GET['source_lang'] ) ) ){
             return;
@@ -821,7 +846,6 @@ class WCML_WC_MultiCurrency{
 
         wp_nonce_field('wcml_save_custom_prices','_wcml_custom_prices_nonce');
 
-        $this->load_custom_prices_js_css();
     }
 
     function custom_pricing_output($post_id = false){
@@ -840,6 +864,12 @@ class WCML_WC_MultiCurrency{
         include WCML_PLUGIN_PATH . '/menu/sub/custom-prices.php';
     }
 
+    function add_individual_variation_nonce($loop, $variation_data, $variation){
+
+        wp_nonce_field('wcml_save_custom_prices_variation_' . $variation->ID, '_wcml_custom_prices_variation_' . $variation->ID . '_nonce');
+
+    }
+
     function load_custom_prices_js_css(){
 	    wp_register_style( 'wpml-wcml-prices', WCML_PLUGIN_URL . '/res/css/wcml-prices.css', null, WCML_VERSION );
 	    wp_register_script( 'wcml-tm-scripts-prices', WCML_PLUGIN_URL . '/res/js/prices.js', array( 'jquery' ), WCML_VERSION );
@@ -850,27 +880,15 @@ class WCML_WC_MultiCurrency{
 
 
     function woocommerce_product_after_variable_attributes_custom_pricing($loop, $variation_data, $variation){
-        global $sitepress,$woocommerce_wpml;
+        global $woocommerce_wpml;
 
-        $product_id = false;
-        if( ( isset( $_GET['post'] ) && get_post_type( $_GET['post'] ) == 'product' ) ){
-            $product_id = $_GET['post'];
-        }elseif( isset( $_POST['action'] ) && $_POST['action'] == 'woocommerce_load_variations' && isset( $_POST['product_id'] ) ){
-            $product_id = $_POST['product_id'];
+        if( $woocommerce_wpml->products->is_original_product( $variation->post_parent ) ) {
+
+            echo '<tr><td>';
+            $this->custom_pricing_output( $variation->ID );
+            echo '</td></tr>';
+
         }
-
-        if( !$product_id ){
-            return;
-        }elseif( !$woocommerce_wpml->products->is_original_product( $_POST['product_id'] ) ){ ?>
-            <script type="text/javascript">
-                wcml_lock_variation_fields();
-            </script>
-        <?php return;
-        }
-
-        echo '<tr><td>';
-            $this->custom_pricing_output($variation->ID);
-        echo '</td></tr>';
 
     }
 
@@ -950,7 +968,7 @@ class WCML_WC_MultiCurrency{
 
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         if(!$nonce || !wp_verify_nonce($nonce, 'dashboard_set_currency')){
-            echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
+            echo json_encode(array('error' => __('Invalid nonce', 'woocommerce-multilingual')));
             die();
         }
 
@@ -1058,29 +1076,23 @@ class WCML_WC_MultiCurrency{
 
         return $where;
     }
-    /* for WC 2.0.x - end */    
+    /* for WC 2.0.x - end */
+
+
+    function filter_price_woocommerce_paypal_args( $args ){
+        global $woocommerce_wpml;
+
+        foreach( $args as $key => $value ){
+            if( substr( $key, 0, 7 ) == 'amount_' ){
+
+                $currency_details = $woocommerce_wpml->multi_currency_support->get_currency_details_by_code( $args['currency_code'] );
+
+                $args[ $key ] =  number_format( $value, $currency_details['num_decimals'], '.', '' );
+            }
+        }
+
+        return $args;
+    }
 
 }
 
-//@todo Move to separate file
-class WCML_WC_MultiCurrency_W3TC{
-    
-    function __construct(){
-        
-        add_filter('init', array($this, 'init'), 15);
-        
-    }
-    
-    function init(){
-        
-        add_action('wcml_switch_currency', array($this, 'flush_page_cache'));
-        
-    }
-    
-    function flush_page_cache(){
-        w3_require_once(W3TC_LIB_W3_DIR . '/AdminActions/FlushActionsAdmin.php');
-        $flush = new W3_AdminActions_FlushActionsAdmin();
-        $flush->flush_pgcache(); 
-    }
-    
-}

@@ -397,9 +397,22 @@ $woocommerce_wpml->update_settings(); ?>
 		</div>
 	<?php endif; ?>
 
-	<div class="hidden_original_description">
-		<?php wp_editor( '', 'original_description_value', array( 'textarea_rows' => 4, 'editor_class' => 'wcml_content_tr original_value', 'media_buttons' => false, 'tinymce' => array( 'readonly' => true ), 'quicktags' => array( 'buttons' => 'empty' ) ) ); ?>
-	</div>
+    <?php if( $products && !isset( $_GET['prid'] )): ?>
+        <div class="wcml_product_pagination">
+        <span class="displaying-num"><?php printf(__('%d products', 'wpml-wcml'), $products_count); ?></span>
+        <?php if(!isset($_GET['prid']) && isset($last) && $last > 1): ?>
+            <a class="first-page <?php echo $pn==1?'disabled':''; ?>" href="<?php echo $pagination_url; ?>1" title="<?php _e('Go to the first page', 'wpml-wcml'); ?>">&laquo;</a>
+            <a class="prev-page <?php echo $pn==1?'disabled':''; ?>" href="<?php echo $pagination_url.((int)$pn > 1?$pn - 1:$pn); ?>" title="<?php _e('Go to the previous page', 'wpml-wcml'); ?>">&lsaquo;</a>
+            <span><?php echo $pn;?>&nbsp;<?php _e('of', 'wpml-wcml'); ?>&nbsp;<?php echo $last; ?><span>
+            <a class="next-page <?php echo $pn==$last?'disabled':''; ?>" href="<?php echo $pagination_url.((int)$pn<$last?$pn + 1:$last); ?>" title="<?php _e('Go to the next page', 'wpml-wcml'); ?>">&rsaquo;</a>
+            <a class="last-page <?php echo $pn==$last?'disabled':''; ?>" href="<?php echo $pagination_url.$last; ?>" title="<?php _e('Go to the last page', 'wpml-wcml'); ?>">&raquo;</a>
+        <?php endif; ?>
+    <?php if(isset($_GET['prid']) || ($lm && isset($last)) && $last > 1): ?>
+        <a href="<?php echo $pagination_url; ?>1"><?php _e('Show all products', 'wpml-wcml'); ?></a>
+    <?php endif; ?>
+        </div>
+        <div class="clr"></div>
+    <?php endif;?>
 
 	<div class="hidden_original_excerpt">
 		<?php wp_editor( '', 'original_excerpt_value', array( 'textarea_rows' => 4, 'editor_class' => 'wcml_content_tr original_value', 'media_buttons' => false, 'quicktags' => array( 'buttons' => 'empty' ) ) ); ?>

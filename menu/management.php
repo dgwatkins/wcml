@@ -31,7 +31,7 @@ if(isset($_GET['tab'])){
 
 <div class="wrap">
     <div id="icon-wpml" class="icon32"><br /></div>
-    <h2><?php _e('WooCommerce Multilingual', 'wpml-wcml') ?></h2>
+    <h2><?php _e('WooCommerce Multilingual', 'woocommerce-multilingual') ?></h2>
 
     <?php if(current_user_can('wpml_manage_woocommerce_multilingual')): ?>
 	    <a class="nav-tab <?php echo $current_tab == 'settings' ? 'nav-tab-active' : ''; ?>"

@@ -16,19 +16,19 @@ $default_language = $sitepress->get_default_language();
             <?php wp_nonce_field('wcml_trsl_interface_table', 'wcml_nonce'); ?>
             <ul>
                 <li>
-                    <p><?php _e('Choose what to do when clicking on the translation controls for products:','wpml-wcml'); ?></p>
+                    <p><?php _e('Choose what to do when clicking on the translation controls for products:', 'woocommerce-multilingual'); ?></p>
                 </li>
                 <li>
                     <input type="radio" name="trnsl_interface" value="1" <?php echo $woocommerce_wpml->settings['trnsl_interface'] == '1'?'checked':''; ?> id="wcml_trsl_interface_wcml" />
-                    <label for="wcml_trsl_interface_wcml"><?php _e('Go to the product translation table in WooCommerce Multilingual', 'wpml-wcml'); ?></label>
+                    <label for="wcml_trsl_interface_wcml"><?php _e('Go to the product translation table in WooCommerce Multilingual', 'woocommerce-multilingual'); ?></label>
                 </li>
                 <li>
                     <input type="radio" name="trnsl_interface" value="0" <?php echo $woocommerce_wpml->settings['trnsl_interface'] == '0'?'checked':''; ?> id="wcml_trsl_interface_native" />
-                    <label for="wcml_trsl_interface_native"><?php _e('Go to the native WooCommerce product editing screen', 'wpml-wcml'); ?></label>
+                    <label for="wcml_trsl_interface_native"><?php _e('Go to the native WooCommerce product editing screen', 'woocommerce-multilingual'); ?></label>
                 </li>
             </ul>
             <p class="button-wrap">
-                <input type='submit' name="wcml_trsl_interface_table" value='<?php esc_attr(_e('Save', 'wpml-wcml')); ?>' class='button-secondary' />
+                <input type='submit' name="wcml_trsl_interface_table" value='<?php esc_attr(_e('Save', 'woocommerce-multilingual')); ?>' class='button-secondary' />
             </p>
         </form>
     </div> <!-- .wcml-section-content -->
@@ -51,15 +51,15 @@ $default_language = $sitepress->get_default_language();
             <ul>
                 <li>
                     <input type="checkbox" name="products_sync_date" value="1" <?php echo checked(1, $woocommerce_wpml->settings['products_sync_date']) ?> id="wcml_products_sync_date" />
-                    <label for="wcml_products_sync_date"><?php _e('Sync publishing date for translated products.', 'wpml-wcml'); ?></label>
+                    <label for="wcml_products_sync_date"><?php _e('Sync publishing date for translated products.', 'woocommerce-multilingual'); ?></label>
                 </li>
                 <li>
                     <input type="checkbox" name="products_sync_order" value="1" <?php echo checked(1, $woocommerce_wpml->settings['products_sync_order']) ?> id="wcml_products_sync_order" />
-                    <label for="wcml_products_sync_order"><?php _e('Sync products and product taxonomies order.', 'wpml-wcml'); ?></label>
+                    <label for="wcml_products_sync_order"><?php _e('Sync products and product taxonomies order.', 'woocommerce-multilingual'); ?></label>
                 </li>
             </ul>
             <p class="button-wrap">
-                <input type='submit' name="wcml_products_sync_prop" value='<?php esc_attr(_e('Save', 'wpml-wcml')); ?>' class='button-secondary' />
+                <input type='submit' name="wcml_products_sync_prop" value='<?php esc_attr(_e('Save', 'woocommerce-multilingual')); ?>' class='button-secondary' />
             </p>
         </form>
     </div>
@@ -83,11 +83,11 @@ $default_language = $sitepress->get_default_language();
             <ul>
                 <li>
                     <input type="radio" name="wcml_file_path_sync" value="1" <?php echo $woocommerce_wpml->settings['file_path_sync'] == '1'?'checked':''; ?> id="wcml_file_path_sync_auto" />
-                    <label for="wcml_file_path_sync_auto"><?php _e('Use the same file paths in all languages', 'wpml-wcml'); ?></label>
+                    <label for="wcml_file_path_sync_auto"><?php _e('Use the same file paths in all languages', 'woocommerce-multilingual'); ?></label>
                 </li>
                 <li>
                     <input type="radio" name="wcml_file_path_sync" value="0" <?php echo $woocommerce_wpml->settings['file_path_sync'] == '0'?'checked':''; ?> id="wcml_file_path_sync_self" />
-                    <label for="wcml_file_path_sync_self"><?php _e('Different file paths for each language', 'wpml-wcml'); ?></label>
+                    <label for="wcml_file_path_sync_self"><?php _e('Different file paths for each language', 'woocommerce-multilingual'); ?></label>
                 </li>
             </ul>
 

@@ -113,6 +113,11 @@ class WCML_Multi_Currency_Support{
 
         add_filter( 'wc_price_args', array( $this, 'filter_wc_price_args') );
 
+        if(defined('W3TC')){
+            require WCML_PLUGIN_PATH . '/inc/w3tc-compatibility.class.php';
+            $this->WCML_WC_MultiCurrency_W3TC = new WCML_WC_MultiCurrency_W3TC;
+        }
+
         if(!is_admin()) $this->load_inline_js();
         
     }
@@ -189,7 +194,17 @@ class WCML_Multi_Currency_Support{
                 }
             }
         }
-        
+
+        // add missing currencies to currencies_order
+        if(isset($woocommerce_wpml->settings['currencies_order'])){
+            foreach ($this->currency_codes as $currency) {
+                if (!in_array($currency, $woocommerce_wpml->settings['currencies_order'])) {
+                    $woocommerce_wpml->settings['currencies_order'][] = $currency;
+                    $save_to_db = true;
+                }
+            }
+        }
+
         if($save_to_db){
             $woocommerce_wpml->update_settings();                
         }
@@ -521,53 +536,24 @@ class WCML_Multi_Currency_Support{
     
     function load_inline_js(){
 
-        $wcml_switch_currency_nonce = wp_create_nonce('switch_currency');
-        
-        wc_enqueue_js( "
-            jQuery('.wcml_currency_switcher').on('change', function(){                   
-                    var currency = jQuery(this).val(); 
-                load_currency(currency);
-            });
-            jQuery('.wcml_currency_switcher li').on('click', function(){
-                if(jQuery(this).hasClass('wcml-active-currency')){
-                    return;
-                }
-                var currency = jQuery(this).attr('rel');
-                load_currency(currency);
-            });
+        wp_register_script('wcml-mc-scripts', WCML_PLUGIN_URL . '/assets/js/wcml-multi-currency.js', array('jquery'), WCML_VERSION, true);
 
+        wp_enqueue_script('wcml-mc-scripts');
 
-            function load_currency(currency){
-                var ajax_loader = jQuery('<img style=\"margin-left:10px;\" width=\"16\" heigth=\"16\" src=\"" . WCML_PLUGIN_URL . "/res/images/ajax-loader.gif\" />')
-                    jQuery('.wcml_currency_switcher').attr('disabled', 'disabled');
-                    jQuery('.wcml_currency_switcher').after();
-                    ajax_loader.insertAfter(jQuery('.wcml_currency_switcher'));
-                    jQuery.ajax({
-                        type : 'post',
-                        url : woocommerce_params.ajax_url,
-                        data : {
-                            action: 'wcml_switch_currency',
-                            currency : currency,
-                            wcml_nonce: '".$wcml_switch_currency_nonce."'
-                        },
-                        success: function(response) {
-                            if(typeof response.error !== 'undefined'){
-                                alert(response.error);
-                            }else{
-                                jQuery('.wcml_currency_switcher').removeAttr('disabled');
-                                ajax_loader.remove();
-                                window.location = window.location.href;
-                            }
-                        }
-                    });
-            }
-        " );                
-        
+        $script_vars['wcml_mc_nonce'] = wp_create_nonce( 'switch_currency' );
+        $script_vars['wcml_spinner'] = WCML_PLUGIN_URL . '/assets/images/ajax-loader.gif';
+
+        if(isset($this->WCML_WC_MultiCurrency_W3TC)){
+            $script_vars['w3tc'] = 1;
+        }
+
+        wp_localize_script('wcml-mc-scripts', 'wcml_mc_settings', $script_vars );
+
     }
     
     function product_price_filter($null, $object_id, $meta_key, $single){
         global $sitepress;
-        
+
         static $no_filter = false;
                 
         if(empty($no_filter) && in_array(get_post_type($object_id), array('product', 'product_variation'))){
@@ -1031,19 +1017,19 @@ class WCML_Multi_Currency_Support{
         
         global $woocommerce,$sitepress;
         $this->client_currency = $currency;
-        
-        $woocommerce->session->set('client_currency', $currency);    
+
+        $woocommerce->session->set('client_currency', $currency);
         $woocommerce->session->set('client_currency_language', $sitepress->get_current_language());
-        
-                
+
+
         do_action('wcml_set_client_currency', $currency);
-        
+
     }
     
     function switch_currency(){
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         if(!$nonce || !wp_verify_nonce($nonce, 'switch_currency')){
-            echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
+            echo json_encode(array('error' => __('Invalid nonce', 'woocommerce-multilingual')));
             die();
         }
 
@@ -1056,7 +1042,7 @@ class WCML_Multi_Currency_Support{
         if(empty($woocommerce->session->data) && empty($current_user->ID)){
             $woocommerce->session->set_customer_session_cookie(true);    
         }
-        
+
         do_action('wcml_switch_currency', $currency );
         
         exit;
@@ -1130,7 +1116,7 @@ class WCML_Multi_Currency_Support{
 
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         if(!$nonce || !wp_verify_nonce($nonce, 'legacy_remove_custom_rates')){
-            echo json_encode(array('error' => __('Invalid nonce', 'wpml-wcml')));
+            echo json_encode(array('error' => __('Invalid nonce', 'woocommerce-multilingual')));
             die();
         }
 

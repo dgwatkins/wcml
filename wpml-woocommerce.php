@@ -5,7 +5,8 @@
   Description: Allows running fully multilingual e-Commerce sites with WooCommerce and WPML. <a href="http://wpml.org/documentation/related-projects/woocommerce-multilingual/">Documentation</a>.
   Author: OnTheGoSystems
   Author URI: http://www.onthegosystems.com/
-  Version: 3.7-beta1
+  Text Domain: woocommerce-multilingual
+  Version: 3.7-dev
 */
 
 
@@ -16,7 +17,6 @@ define('WCML_PLUGIN_FOLDER', basename(WCML_PLUGIN_PATH));
 define('WCML_PLUGIN_URL', plugins_url() . '/' . WCML_PLUGIN_FOLDER);
 define('WCML_LOCALE_PATH',WCML_PLUGIN_PATH.'/locale');
 define('WPML_LOAD_API_SUPPORT',true);
-define('WPML_SUPPORT_STRINGS_IN_DIFF_LANG', false);
 
 define('WCML_MULTI_CURRENCIES_DISABLED', 0);
 define('WCML_MULTI_CURRENCIES_PER_LANGUAGE', 1); //obsolete - migrate to 2
@@ -39,6 +39,7 @@ require WCML_PLUGIN_PATH . '/inc/compatibility.class.php';
 require WCML_PLUGIN_PATH . '/inc/endpoints.class.php';
 require WCML_PLUGIN_PATH . '/inc/currency-switcher.class.php';
 require WCML_PLUGIN_PATH . '/inc/xdomain-data.class.php';
+require WCML_PLUGIN_PATH . '/inc/url-translation.class.php';
 
 require WCML_PLUGIN_PATH . '/woocommerce_wpml.class.php';
 

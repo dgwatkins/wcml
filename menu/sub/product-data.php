@@ -195,23 +195,23 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                                         value="<?php echo $trn_attribute['name'] ? $trn_attribute['name'] : ''; ?>"
                                         placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
 
-                                </td>
-                            </tr>
-                            <tr class="wcml-last-row" row-index="<?php echo $index; ?>">
-                                <th>
-                                    <label class="custom_attr_label"><?php _e('Value(s)', 'wpml-wcml'); ?></label>
-                                </th>
-                                <td>
-                                    <input readonly class="original_value" value="<?php echo $attribute['value'] ?>"
-                                           type="text"/>
-                                </td>
-                                <td>
-                                    <input
-                                        class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?>
-                                        readonly<?php endif; ?> type="text" name="<?php echo $attr_key; ?>"
-                                    value="<?php echo $trn_attribute['value'] ? $trn_attribute['value'] : ''; ?>"
-                                    placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>
-                                    " <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
+                                    if(!is_null($tr_status) && get_current_user_id() != $tr_status->translator_id ){
+                                        if($tr_status->status == ICL_TM_IN_PROGRESS){ ?>
+                                            <td><?php _e('Translation in progress', 'wpml-wcml'); ?><br>&nbsp;</td>
+                                            <?php continue;
+                                        }elseif($tr_status->status == ICL_TM_WAITING_FOR_TRANSLATOR && !$job_id ){
+                                            $tr_job_id = $wpdb->get_var($wpdb->prepare("
+                                                                    SELECT j.job_id
+                                                                        FROM {$wpdb->prefix}icl_translate_job j
+                                                                        JOIN {$wpdb->prefix}icl_translation_status s ON j.rid = s.rid
+                                                                    WHERE s.translation_id = %d
+                                                                ", $product_translations[$key]->translation_id ) );
+                                            ?>
+                                            <td><?php printf('<a href="%s" class="button-secondary">'.__('Take this and edit', 'wpml-wcml').'</a>', admin_url('admin.php?page=wpml-wcml&tab=products&prid=' . $product->ID.'&job_id='.$tr_job_id)); ?><br>&nbsp;</td>
+                                            <?php continue;
+                                        }
+                                    }
+                                }
 
                                 </td>
                             </tr>

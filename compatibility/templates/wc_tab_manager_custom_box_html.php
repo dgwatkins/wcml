@@ -79,27 +79,14 @@
                             <?php else: ?>
                                 <input readonly class="original_value" value="<?php echo $orig_heading ?>" type="text"/>
                             <?php endif; ?>
-                        </td>
-                        <td>
-                            <?php if( $values['type'] == 'product' ): ?>
-                                <div class="mce_editor">
-                                    <?php
-                                    wp_editor( $trnsl_heading, 'wcmleditor'.$key, array( 'textarea_name' => $heading_input_name, 'textarea_rows'=>4, 'editor_class' => 'wcml_content_tr translated_value', 'tinymce' => false)); ?>
-                                    <script>
-                                       var editor_id = 'wcmleditor<?php echo $key ?>';
-                                       var editor = {id: editor_id, buttons: "strong,em,link,block,del,ins,img,ul,ol,li,code,more,close"};
-
-                                       quicktags(editor);
-                                       QTags._buttonsInit();
-
-                                    </script>
-                                </div>
+                        </div>
+                        <div class="wcml_editor_buttons">
+                            <?php if($template_data['original']): ?>
+                                <button type="button" class="button-secondary wcml_popup_close"><?php _e('Close', 'wpml-wcml') ?></button>
                             <?php else: ?>
-                                <input
-                                    class="translated_value <?php if ($is_duplicate_product): ?> js-dup-disabled<?php endif; ?>"<?php if ($is_duplicate_product): ?>
-                                    readonly<?php endif; ?> type="text" name="<?php echo $heading_input_name; ?>"
-                                    value="<?php echo $trnsl_heading; ?>"
-                                    placeholder="<?php esc_attr_e('Enter translation', 'wpml-wcml') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
+                                <h3><?php printf(__('%s translation', 'wpml-wcml'),$template_data['lang_name']); ?></h3>
+                                <button type="button" class="button-secondary wcml_popup_cancel"><?php _e('Cancel', 'wpml-wcml') ?></button>
+                                <button type="button" class="button-secondary wcml_popup_ok"><?php _e('Ok', 'wpml-wcml') ?></button>
                             <?php endif; ?>
 
                         </td>

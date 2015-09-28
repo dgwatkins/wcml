@@ -12,6 +12,9 @@ class WCML_Product_Bundles{
         add_filter('wcml_filter_cart_item_data', array($this, 'filter_cart_item_data') );
         add_filter('wcml_check_on_duplicated_products_in_cart', array($this, 'removeduplicated_bundle_product_in_cart'), 10, 3 );
         add_filter('wcml_exception_duplicate_products_in_cart', array($this, 'check_on_bundle_product_in_cart'), 10, 2 );
+        add_action('woocommerce_get_cart_item_from_session', array( $this, 'resync_bundle'),5,3);
+        add_filter('woocommerce_cart_loaded_from_session', array($this, 'resync_bundle_clean'),10);
+        add_filter('wcml_exception_duplicate_products_in_cart', array($this, 'bundles_duplicate_exception'),10,2);
     }
     
     // Sync Bundled product '_bundle_data' with translated values when the product is duplicated
@@ -108,8 +111,8 @@ class WCML_Product_Bundles{
     	if(!empty($data['bundles'])){
 	    	foreach($data['bundles'] as $bundle_id => $bundle_data){
 	    		if(isset($tr_bundle_data[$bundle_id])){
-	    			$tr_bundle_data[$bundle_id]['product_title'] = $bundle_data['title'];
-	    			$tr_bundle_data[$bundle_id]['product_description'] = $bundle_data['desc'];
+	    			$tr_bundle_data[$bundle_id]['product_title'] = $bundle_data['bundle_title'];
+	    			$tr_bundle_data[$bundle_id]['product_description'] = $bundle_data['bundle_desc'];
 	    		}
 	    	}
 		    update_post_meta( $tr_id, '_bundle_data', $tr_bundle_data ); 
@@ -307,6 +310,59 @@ class WCML_Product_Bundles{
 
      }
 
+    function resync_bundle( $cart_item, $session_values, $cart_item_key ) {
+        if ( isset( $cart_item[ 'bundled_items' ] ) && $cart_item[ 'data' ]->product_type === 'bundle' ) {
+            $current_bundle_id = apply_filters( 'translate_object_id', $cart_item[ 'product_id' ], 'product', true );
+            if ( $cart_item[ 'product_id' ] != $current_bundle_id ) {
+                $old_bundled_item_ids      = array_keys( $cart_item[ 'data' ]->bundle_data );
+                $cart_item[ 'data' ]       = wc_get_product( $current_bundle_id );
+                $new_bundled_item_ids      = array_keys( $cart_item[ 'data' ]->bundle_data );
+                $remapped_bundled_item_ids = array();
+                foreach ( $old_bundled_item_ids as $old_item_id_index => $old_item_id ) {
+                    $remapped_bundled_item_ids[ $old_item_id ] = $new_bundled_item_ids[ $old_item_id_index ];
+                }
+                $cart_item[ 'remapped_bundled_item_ids' ] = $remapped_bundled_item_ids;
+                if ( isset( $cart_item[ 'stamp' ] ) ) {
+                    $new_stamp = array();
+                    foreach ( $cart_item[ 'stamp' ] as $bundled_item_id => $stamp_data ) {
+                        $new_stamp[ $remapped_bundled_item_ids[ $bundled_item_id ] ] = $stamp_data;
+                    }
+                    $cart_item[ 'stamp' ] = $new_stamp;
+                }
+            }
+        }
+        if ( isset( $cart_item[ 'bundled_by' ] ) && isset( WC()->cart->cart_contents[ $cart_item[ 'bundled_by' ] ] ) ) {
+            $bundle_cart_item = WC()->cart->cart_contents[ $cart_item[ 'bundled_by' ] ];
+            if ( isset( $bundle_cart_item[ 'remapped_bundled_item_ids' ] ) && isset( $cart_item[ 'bundled_item_id' ] ) && isset( $bundle_cart_item[ 'remapped_bundled_item_ids' ][ $cart_item[ 'bundled_item_id' ] ] ) ) {
+                $old_id                         = $cart_item[ 'bundled_item_id' ];
+                $remapped_bundled_item_ids      = $bundle_cart_item[ 'remapped_bundled_item_ids' ];
+                $cart_item[ 'bundled_item_id' ] = $remapped_bundled_item_ids[ $cart_item[ 'bundled_item_id' ] ];
+                if ( isset( $cart_item[ 'stamp' ] ) ) {
+                    $new_stamp = array();
+                    foreach ( $cart_item[ 'stamp' ] as $bundled_item_id => $stamp_data ) {
+                        $new_stamp[ $remapped_bundled_item_ids[ $bundled_item_id ] ] = $stamp_data;
+                    }
+                    $cart_item[ 'stamp' ] = $new_stamp;
+                }
+            }
+        }
+        return $cart_item;
+    }
+    function resync_bundle_clean( $cart ) {
+        foreach ( $cart->cart_contents as $cart_item_key => $cart_item ) {
+            if ( isset( $cart_item[ 'bundled_items' ] ) && $cart_item[ 'data' ]->product_type === 'bundle' ) {
+                if ( isset( $cart_item[ 'remapped_bundled_item_ids' ] ) ) {
+                    unset( WC()->cart->cart_contents[ $cart_item_key ][ 'remapped_bundled_item_ids' ] );
+                }
+            }
+        }
+    }
+    function bundles_duplicate_exception( $exclude, $cart_item ) {
+        if ( isset( $cart_item[ 'bundled_items' ] ) || isset( $cart_item[ 'bundled_by' ] ) ) {
+            $exclude = true;
+        }
+        return $exclude;
+    }
+
 
 }
-
