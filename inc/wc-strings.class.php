@@ -683,7 +683,7 @@ class WCML_WC_Strings{
                 $string_id = icl_get_string_id( $attribute_taxonomy->attribute_name, 'WordPress', 'taxonomy singular name: '.$attribute_taxonomy->attribute_name );
                 $strings = icl_get_string_translations_by_id( $string_id );
 
-                if($strings) {
+                if($strings && isset($strings[$sitepress->get_current_language()])) {
                     $attribute_taxonomies[$key]->attribute_label = $strings[$sitepress->get_current_language()]['value'];
                 }
             }
