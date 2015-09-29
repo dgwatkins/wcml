@@ -23,7 +23,7 @@ class WCML_Url_Translation {
         remove_filter( 'option_rewrite_rules', array( 'WPML_Slug_Translation', 'rewrite_rules_filter' ), 1, 1 ); //remove filter from WPML and use WCML filter first
         add_filter( 'option_rewrite_rules', array( $this, 'translate_bases_in_rewrite_rules' ), 3, 1 ); // high priority
 
-        //add_filter( 'term_link', array( $this, 'translate_taxonomy_base' ), 0, 3 ); // high priority
+        add_filter( 'term_link', array( $this, 'translate_taxonomy_base' ), 0, 3 ); // high priority
 
         add_action( 'init', array( $this, 'fix_post_object_rewrite_slug' ), 6 ); // handle the particular case of the default product base: wpmlst-540
 
