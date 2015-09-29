@@ -23,7 +23,7 @@ class WCML_Url_Translation {
         remove_filter( 'option_rewrite_rules', array( 'WPML_Slug_Translation', 'rewrite_rules_filter' ), 1, 1 ); //remove filter from WPML and use WCML filter first
         add_filter( 'option_rewrite_rules', array( $this, 'translate_bases_in_rewrite_rules' ), 3, 1 ); // high priority
 
-        add_filter( 'term_link', array( $this, 'translate_taxonomy_base' ), 0, 3 ); // high priority
+        //add_filter( 'term_link', array( $this, 'translate_taxonomy_base' ), 0, 3 ); // high priority
 
         add_action( 'init', array( $this, 'fix_post_object_rewrite_slug' ), 6 ); // handle the particular case of the default product base: wpmlst-540
 
@@ -136,9 +136,7 @@ class WCML_Url_Translation {
         // products
         $product_base = !empty( $permalink_options['product_base'] ) ? trim( $permalink_options['product_base'], '/' ) : $this->default_product_base;
         $name = $this->url_string_name( 'product', $product_base );
-        if ( version_compare( WPML_ST_VERSION, '2.2.6', '<=' ) ) {           
-            do_action( 'wpml_register_single_string', $this->url_strings_context(), $name, $product_base );
-        }
+        do_action( 'wpml_register_single_string', $this->url_strings_context(), $name, $product_base );
 
         if( isset($_POST['product_base_language'])){
             $woocommerce_wpml->strings->set_string_language( $product_base, $this->url_strings_context(), $name, $_POST['product_base_language']);
