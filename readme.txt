@@ -81,7 +81,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 
 = 3.6.7 =
 * Added support for strings in different languages. Translated strings are not required to be in English (Requires WPML 3.3+)
-* Fixed a issue related to the Flar Rate Shipping extension
+* Fixed a issue related to the Flat Rate Shipping extension
 * Fixed a compatibility issue with WooCommerce Bookings: bookings in all languages showing on calendar (requires WooCommerce Bookings 1.8+)
 * Fixed a compatibility issue with WooCommerce Bookings: deleting a reservation did not delete translations too (requires WooCommerce Bookings 1.8+)
 * Fixed a PayPal checkout issue when multi-currency was enabled and the decimal separator was set to comma and thousands separator was set to dot
