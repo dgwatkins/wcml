@@ -673,11 +673,16 @@ class WCML_WC_Strings{
 
         if( is_admin() && !wpml_is_ajax() ){
 
-            global $wpdb,$sitepress;
+            global $wpdb, $sitepress;
 
             foreach( $attribute_taxonomies as $key => $attribute_taxonomy ){
+                $string_language = $this->get_string_language( $attribute_taxonomy->attribute_name, 'WordPress', 'taxonomy singular name: '.$attribute_taxonomy->attribute_name );
+
+                if( $sitepress->get_current_language() == $string_language ) continue;
+
                 $string_id = icl_get_string_id( $attribute_taxonomy->attribute_name, 'WordPress', 'taxonomy singular name: '.$attribute_taxonomy->attribute_name );
                 $strings = icl_get_string_translations_by_id( $string_id );
+
                 if($strings) {
                     $attribute_taxonomies[$key]->attribute_label = $strings[$sitepress->get_current_language()]['value'];
                 }
