@@ -136,9 +136,7 @@ class WCML_Url_Translation {
         // products
         $product_base = !empty( $permalink_options['product_base'] ) ? trim( $permalink_options['product_base'], '/' ) : $this->default_product_base;
         $name = $this->url_string_name( 'product', $product_base );
-        if ( version_compare( WPML_ST_VERSION, '2.2.6', '<=' ) ) {           
-            do_action( 'wpml_register_single_string', $this->url_strings_context(), $name, $product_base );
-        }
+        do_action( 'wpml_register_single_string', $this->url_strings_context(), $name, $product_base );
 
         if( isset($_POST['product_base_language'])){
             $woocommerce_wpml->strings->set_string_language( $product_base, $this->url_strings_context(), $name, $_POST['product_base_language']);
