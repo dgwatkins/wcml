@@ -69,11 +69,15 @@ class WCML_Dependencies{
         }
 
         if ($this->missing) {
-            add_action('admin_notices', array($this, '_missing_plugins_warning'));
+
         }
         
         if($allok){
-            $this->check_for_incompatible_permalinks();    
+            $this->check_for_incompatible_permalinks();
+        }
+
+        if( !isset( $woocommerce_wpml->settings['first_setup_warning'] ) ){
+            add_action('admin_notices', array($this, '_first_setup_warning'));
         }
         
         if(isset($sitepress)){
@@ -204,10 +208,17 @@ class WCML_Dependencies{
         }
 
         if (!$compatible && ($pagenow == 'options-permalink.php' || (isset($_GET['page']) && $_GET['page'] == 'wpml-wcml'))) {
-            $this->err_message = '<div class="message error"><p>'.$message.'</p></div>';
+            $this->err_message = '<div class="message error"><p>'.$message.'    </p></div>';
             add_action('admin_notices', array($this,'plugin_notice_message'));
         }
-    }      
+    }
+
+    function _first_setup_warning(){ ?>
+
+        <div class="message error"><p><?php printf(__('WooCommerce Multilingual configuration is not complete. <a href="%s" class="button-primary">Configure settings</a>', 'woocommerce-multilingual'),
+                admin_url("admin.php?page=wpml-wcml&tab=status")) ?> <a class="alignright wcml_ignore_link" data-setting="first_setup_warning" ><?php _e('Ignore','woocommerce-multilingual' ) ?></a><?php wp_nonce_field('wcml_ignore_warning', 'wcml_ignore_warning_nonce'); ?></p></div>
+        <?php
+    }
 
     function plugin_notice_message(){
         echo $this->err_message;

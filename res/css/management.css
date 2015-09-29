@@ -659,3 +659,8 @@ input[name="wcml_curr_template"] {
   margin-left: -25px;
   margin-right: 5px;
 }
+
+.error .wcml_ignore_link{
+  cursor: pointer;
+  text-decoration: none;
+}

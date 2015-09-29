@@ -106,6 +106,21 @@ class WCML_Requests{
             $woocommerce_wpml->settings['dismiss_doc_main'] = 'yes';
             $woocommerce_wpml->update_settings();
         }
+
+
+        add_action('wp_ajax_wcml_ignore_warning', array( $this, 'update_settings_from_warning') );
+    }
+
+    function update_settings_from_warning(){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_ignore_warning')){
+            die('Invalid nonce');
+        }
+        global $woocommerce_wpml;
+
+        $woocommerce_wpml->settings[$_POST['setting']] = 1;
+        $woocommerce_wpml->update_settings();
+
     }
 
 }
