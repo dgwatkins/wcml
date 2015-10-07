@@ -3,7 +3,8 @@
 class Test_WCML_Slugs extends WCML_UnitTestCase {
 
 
-	function __construct(){
+	function setUp(){
+		parent::setUp();
 		global $woocommerce_wpml;
 
 		require_once WCML_PLUGIN_PATH . '/inc/wc-strings.class.php';
@@ -20,7 +21,7 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 	function test_translate_product_slug() {
 		global $sitepress;
 
-		$icl_settings = $sitepress->get_settings();
+		$iclsettings = $sitepress->get_settings();
 
 		$iclsettings['posts_slug_translation']['on'] = 1;
 		$iclsettings['posts_slug_translation']['types']['test_type'] = 1;
