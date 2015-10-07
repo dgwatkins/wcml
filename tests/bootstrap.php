@@ -41,7 +41,7 @@ function _install_wc(){
 }
 
 // install WC
-tests_add_filter( 'muplugins_loaded', array( '_install_wc' ) );
+tests_add_filter( 'init', array( '_install_wc' ) );
 
 require $_tests_dir . '/includes/bootstrap.php';
 require WPML_CORE_PATH . '/tests/util/wpml-unittestcase.class.php';

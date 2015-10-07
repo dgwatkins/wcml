@@ -18,7 +18,7 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 	}
 
 	function test_translate_product_slug() {
-		global $woocommerce_wpml, $sitepress;
+		global $sitepress;
 
 		$icl_settings = $sitepress->get_settings();
 
@@ -35,8 +35,6 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 	}
 
 	function test_get_woocommerce_product_base(){
-
-		global $woocommerce_wpml;
 
 		$this->url_translation->wc_permalinks['product_base'] = '/test_slug';
 
@@ -57,7 +55,6 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 	}
 
 	function test_get_translated_tax_slug(){
-		global $woocommerce_wpml;
 
 		$category_base = !empty( $this->wc_permalinks['category_base'] ) ? trim( $this->wc_permalinks['category_base'], '/' ) : 'product-category';
 		$name = $this->url_translation->url_string_name( 'product_cat' );
@@ -71,7 +68,7 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 	}
 
 	function test_translate_taxonomy_base(){
-		global $woocommerce_wpml, $sitepress, $wpml_term_translations;
+		global $sitepress, $wpml_term_translations;
 
 		$taxonomy = 'product_cat';
 
@@ -93,7 +90,6 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 
 	// note - make sure you have .mo files in wp-content->languages directory in your wordpress test folder
 	function test_add_default_slug_translations(){
-		global $woocommerce_wpml;
 
 		$category_base = !empty( $this->wc_permalinks['category_base'] ) ? $this->wc_permalinks['category_base'] : $this->url_translation->default_product_category_base;
 		$name = $this->url_translation->url_string_name( 'product_cat' );
