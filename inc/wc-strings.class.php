@@ -385,7 +385,7 @@ class WCML_WC_Strings{
                     break;
             }
 
-            $language = $this->get_string_language( trim( $value, '/' ), $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_string_name( $base, trim($value, '/' ) ) );
+            $language = $this->get_string_language( trim( $value, '/' ), $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_string_name( $base ) );
 
             if( is_null($language) ){
                 $language = $sitepress->get_default_language();
