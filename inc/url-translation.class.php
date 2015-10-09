@@ -61,13 +61,13 @@ class WCML_Url_Translation {
         return 'WordPress';
     }
 
-    function url_string_name( $type, $slug = null ) {
+    function url_string_name( $type ) {
 
         $name = '';
 
         switch ( $type ) {
             case 'product':
-                $name = sprintf( 'URL slug: %s', $slug );
+                $name = sprintf( 'URL slug: %s', $type );
                 break;
             case 'product_cat':
             case 'product_tag':
@@ -103,9 +103,9 @@ class WCML_Url_Translation {
                 $sitepress->save_settings( $iclsettings );
             }
 
-            $string = icl_get_string_id( $slug, $this->url_strings_context(), $this->url_string_name( 'product', $slug ) );
+            $string = icl_get_string_id( $slug, $this->url_strings_context(), $this->url_string_name( 'product' ) );
             if ( !$string ) {
-                do_action( 'wpml_register_single_string', $this->url_strings_context(), $this->url_string_name( 'product', $slug ), $slug );
+                do_action( 'wpml_register_single_string', $this->url_strings_context(), $this->url_string_name( 'product' ), $slug );
             }
 
         }
@@ -135,7 +135,7 @@ class WCML_Url_Translation {
 
         // products
         $product_base = !empty( $permalink_options['product_base'] ) ? trim( $permalink_options['product_base'], '/' ) : $this->default_product_base;
-        $name = $this->url_string_name( 'product', $product_base );
+        $name = $this->url_string_name( 'product' );
         do_action( 'wpml_register_single_string', $this->url_strings_context(), $name, $product_base );
 
         if( isset($_POST['product_base_language'])){
