@@ -181,25 +181,23 @@ class WCML_WC_Strings{
         return $public_query_vars;
     }
     
-    function get_translated_product_base_by_lang($language = false, $product_permalink = false){
+    function get_translated_product_base_by_lang($language = false, $product_slug = false){
         if(!$language){
             global $sitepress;
             $language = $sitepress->get_current_language();
 
         }
 
-        if(!$product_permalink){
-            $product_permalink  = $this->product_permalink_slug();
+        if(!$product_slug){
+            $product_slug  = $this->product_permalink_slug();
         }
 
-        global $wpdb;
-
-        // Use new API for WPML >= 3.2.3
-        if ( apply_filters( 'wpml_slug_translation_available', false) ) {
-            $translated_slug = apply_filters( 'wpml_get_translated_slug', $product_permalink, 'product' , $language );
+        if ( version_compare( WPML_ST_VERSION, '2.3', '>=' ) ) {
+            $translated_slug = apply_filters( 'wpml_get_translated_slug', $product_slug, 'product' , $language );
+        }elseif ( apply_filters( 'wpml_slug_translation_available', false) ) {
+            $translated_slug = apply_filters( 'wpml_get_translated_slug', 'product' , $language );
         } else {
-            // Try the old way.
-            $translated_slug = apply_filters( 'wpml_translate_single_string', $product_permalink, 'WordPress', 'URL slug: ' . $product_permalink );
+            $translated_slug = apply_filters( 'wpml_translate_single_string', $product_slug, 'WordPress', 'URL slug: ' . $product_slug );
         }
 
         return $translated_slug;
