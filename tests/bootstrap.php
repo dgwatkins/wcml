@@ -41,7 +41,18 @@ function _install_wc(){
 }
 
 // install WC
-tests_add_filter( 'init', array( '_install_wc' ) );
+tests_add_filter( 'init', '_install_wc' );
+
+// Temporary workaround for missing WP_REST_Server class missing
+tests_add_filter( 'init', 'WP_REST_Server_placeholder' );
+function WP_REST_Server_placeholder(){
+	if( !class_exists( 'WP_REST_Server' ) ) {
+		class WP_REST_Server{}
+	}
+}
+
+
+
 
 require $_tests_dir . '/includes/bootstrap.php';
 require WPML_CORE_PATH . '/tests/util/wpml-unittestcase.class.php';
@@ -50,5 +61,4 @@ require WC_PATH . '/tests/framework/class-wc-unit-test-factory.php';
 require WC_PATH . '/tests/framework/factories/class-wc-unit-test-factory-for-webhook.php';
 require WC_PATH . '/tests/framework/factories/class-wc-unit-test-factory-for-webhook-delivery.php';
 require dirname( __FILE__ ) . '/util/wcml-unittestcase.class.php';
-
 
