@@ -646,8 +646,9 @@ class WCML_WC_Strings{
                     $i++;
                 }
                 $breadcrumbs = $breadcrumbs_buff;
-            }
 
+                $breadcrumbs = array_values($breadcrumbs);
+            }
 
         }
 
