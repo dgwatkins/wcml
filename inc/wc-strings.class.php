@@ -349,7 +349,7 @@ class WCML_WC_Strings{
 
                     }else{
                         input.parent().find('.translation_controls').append('<a href="<?php
-                            echo admin_url( 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context='. urlencode($woocommerce_wpml->url_translation->url_strings_context()) )
+                            echo admin_url( 'admin.php?page=wpml-wcml&tab=slugs' )
                              ?>"><?php _e('translations', 'woocommerce-multilingual') ?></a>');
                     }
 
