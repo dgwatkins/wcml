@@ -56,6 +56,8 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 	}
 
 	function test_get_translated_tax_slug(){
+		global $WPML_String_Translation;
+		$WPML_String_Translation->init_active_languages();
 
 		$category_base = !empty( $this->wc_permalinks['category_base'] ) ? trim( $this->wc_permalinks['category_base'], '/' ) : 'product-category';
 		$name = $this->url_translation->url_string_name( 'product_cat' );
@@ -64,6 +66,8 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 
 		icl_add_string_translation( $string_id, 'es', 'categoria-producto', ICL_STRING_TRANSLATION_COMPLETE);
 		$translated_tax = $this->url_translation->get_translated_tax_slug('product_cat','es');
+
+		$this->assertTrue( (bool) has_filter('wpml_translate_single_string') );
 		$this->assertEquals( 'categoria-producto', $translated_tax['translated_slug'] );
 
 	}
