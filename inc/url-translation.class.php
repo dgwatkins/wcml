@@ -34,6 +34,8 @@ class WCML_Url_Translation {
 
         if ( empty( $woocommerce_wpml->settings['url_translation_set_up'] ) ) {
 
+            $this->clean_up_product_bases();
+
             //set translate product by default
             $this->translate_product_base();
 
@@ -42,6 +44,30 @@ class WCML_Url_Translation {
             $woocommerce_wpml->settings['url_translation_set_up'] = 1;
             $woocommerce_wpml->update_settings();
         }
+
+    }
+
+    function clean_up_product_bases(){
+        global $wpdb;
+
+        $base = $this->get_woocommerce_product_base();
+
+        //delete other old product bases
+        $wpdb->query( "DELETE FROM {$wpdb->prefix}icl_strings WHERE context = 'WordPress' AND value != '".trim( $base,'/' )."' AND name LIKE 'URL slug:%' " );
+
+        //update name for current base
+
+        $wpdb->update(
+            $wpdb->prefix . 'icl_strings',
+            array(
+                'context'   => 'WordPress',
+                'name'      => 'URL slug: product'
+            ),
+            array(
+                'context'   => 'WordPress',
+                'name'      => sprintf('Url slug: %s', trim( $base,'/' ))
+            )
+        );
 
     }
 
