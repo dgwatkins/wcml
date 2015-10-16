@@ -525,13 +525,13 @@ class WCML_WC_Strings{
             }
 
         } else {
-            $string_id = icl_get_string_id( $slug, $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_strings_name('product') );
+            $string_id = icl_get_string_id( $slug, $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_string_name('product') );
             $slug_translations = icl_get_string_translations_by_id( $string_id );
         }
 
         $miss_slug_lang = array();
 
-        $string_language = $this->get_string_language( $slug, $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_strings_name('product') );
+        $string_language = $this->get_string_language( $slug, $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_string_name('product') );
 
         foreach( $sitepress->get_active_languages() as $lang_info ){
             if(
