@@ -882,7 +882,7 @@ class WCML_Terms{
 
                     if( !$translation->original ){
 
-                        $tr_shipp_class = get_term( $translation->element_id, 'product_shipping_class' );
+                        $tr_shipp_class = get_term_by( 'term_taxonomy_id', $translation->element_id, 'product_shipping_class' );
 
                         $settings[ 'class_cost_'.$tr_shipp_class->slug ] = $value;
 
