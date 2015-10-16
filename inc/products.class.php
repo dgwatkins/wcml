@@ -93,8 +93,6 @@ class WCML_Products{
         add_action( 'wp_ajax_wpml_tt_save_term_translation', array( $this, 'update_taxonomy_in_variations' ), 7 );
 
         add_action( 'wp_ajax_woocommerce_remove_variation', array( $this, 'remove_variation_ajax' ), 9 );
-        //WooCommerce subscription
-        add_filter( 'woocommerce_users_subscriptions', array( $this, 'woocommerce_users_subscriptions' ), 10, 2 );
 
         // cart functions
         add_action( 'woocommerce_get_cart_item_from_session', array( $this, 'translate_cart_contents' ), 10, 3 );
@@ -2575,20 +2573,6 @@ class WCML_Products{
             }
         }
         return $settings;
-    }
-
-
-    /*
-     * Filter for WooCommerce subscriptions
-     */
-    function woocommerce_users_subscriptions($subscriptions, $user_id){
-        global $sitepress;
-
-        foreach($subscriptions as $key=>$subscription){
-            $subscriptions[$key]['product_id'] = apply_filters( 'translate_object_id',$subscriptions[$key]['product_id'],get_post_type($subscriptions[$key]['product_id']),true,$sitepress->get_current_language());
-        }
-
-        return $subscriptions;
     }
 
     /*
