@@ -540,7 +540,7 @@ class WCML_WC_Strings{
                     ( isset( $slug_translation_languages ) && !in_array( $lang_info['code'], $slug_translation_languages ) )
                 ) && $lang_info['code'] != $string_language
             ){
-                $miss_slug_lang[] = ucfirst($lang_info['display_name']);
+                $miss_slug_lang[] = $lang_info;
             }
         }
 

@@ -55,7 +55,7 @@ $default_language = $sitepress->get_default_language();
 
 
 <?php
-$miss_slug_lang = $woocommerce_wpml->strings->get_missed_product_slag_translations_languages();
+$miss_slug_lang = $woocommerce_wpml->strings->get_missed_product_slug_translations_languages();
 $prod_slug      = $woocommerce_wpml->strings->product_permalink_slug();
 
 if ( ( ! WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty( $woocommerce_wpml->settings['dismiss_non_default_language_warning'] ) ) || ! empty( $woocommerce_wpml->dependencies->xml_config_errors ) || ! empty( $miss_slug_lang ) ): ?>
@@ -69,28 +69,23 @@ if ( ( ! WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty
 		</div>
 		<div class="wcml-section-content">
 			<ul class="wcml-status-list">
-
 				<?php if ( ! empty( $miss_slug_lang ) ): ?>
-
 					<li>
 						<i class="otgs-ico-warning"></i> <?php _e( "Your product permalink base is not translated to:", 'woocommerce-multilingual' ); ?>
-						<?php //TODO Sergey: Make it work ?>
-						<ul class="wcml-lang-list">
-						<li>
-						<span class="wpml-title-flag"><img
-								src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/en.png"
-								alt="Polish"></span> Polish
-						</li>
-						<li>
-						<span class="wpml-title-flag"><img
-								src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/en.png"
-								alt="Spanish"></span> Spanish
-						</li>
-						</ul>
+							<ul class="wcml-lang-list">
+								<?php foreach( $miss_slug_lang as $miss_lang): ?>
 
+									<li>
+									<span class="wpml-title-flag"><img
+											src="<?php echo $sitepress->get_flag_url( $miss_lang['code'] ); ?>"
+											alt="<?php echo $miss_lang['code'] ?>"></span> <?php echo ucfirst( $miss_lang['display_name'] ) ?>
+									</li>
+
+								<?php endforeach; ?>
+							</ul>
 						<?php _e( "The urls for the translated products will not work.", 'woocommerce-multilingual' ); ?>
 						<a class="button-secondary"
-						   href="<?php echo admin_url( 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&search=' . $prod_slug . '&context=WordPress&em=1' ); ?>">
+						   href="<?php echo admin_url( 'admin.php?page=wpml-wcml&tab=slugs' ) ?>">
 							<?php _e( "Translate URLs", 'woocommerce-multilingual' ); ?>
 						</a>
 					</li>
