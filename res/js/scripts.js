@@ -83,7 +83,7 @@ jQuery(document).ready(function($){
                          $('#wcml_tt_sync_desc').fadeIn();
                      }
                  }
-              })       
+              })
               
           }
           

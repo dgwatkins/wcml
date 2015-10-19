@@ -58,6 +58,7 @@ class WCML_Terms{
         add_filter( 'pre_update_option_woocommerce_flat_rate_settings', array( $this, 'update_woocommerce_flat_rate_settings' ) );
 
         add_action( 'created_term_translation', array( $this, 'set_flag_to_sync'), 10, 3 );
+
     }
     
     function admin_menu_setup(){
@@ -1022,6 +1023,17 @@ class WCML_Terms{
 
         }
 
+    }
+
+    function get_table_taxonomies( $taxonomies ){
+
+        foreach( $taxonomies as $key => $taxonomy ){
+            if (substr($key, 0, 3) != 'pa_') {
+                unset( $taxonomies[$key]);
+            }
+        }
+
+        return $taxonomies;
     }
 
 }

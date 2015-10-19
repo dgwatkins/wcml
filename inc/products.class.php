@@ -1082,6 +1082,7 @@ class WCML_Products{
         <?php }
     }
 
+
     /*
  * sync product variations
  * $product_id - original product id

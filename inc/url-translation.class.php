@@ -526,4 +526,76 @@ class WCML_Url_Translation {
         return array( 'slug' => $slug, 'translated_slug' => $slug );
 
     }
+
+    function get_base_translations_statuses( $base, $active_languages ){
+        global $woocommerce_wpml, $sitepress;
+
+        if( $base == 'shop' ){
+            $source_language = $sitepress->get_language_for_element( get_option('woocommerce_shop_page_id' ) , 'post_page' );
+        }else{
+            $source_language = $woocommerce_wpml->strings->get_string_language( $base, $this->url_strings_context(), $this->url_string_name( $base ) );
+
+            switch ( $base ) {
+                case 'product':
+                    $slug = $this->get_woocommerce_product_base();
+                    break;
+
+                case 'product_tag':
+                    $slug = !empty( $this->wc_permalinks['tag_base'] ) ? trim( $this->wc_permalinks['tag_base'], '/' ) : 'product-tag';
+                    break;
+
+                case 'product_cat':
+                    $slug = !empty( $this->wc_permalinks['category_base'] ) ? trim( $this->wc_permalinks['category_base'], '/' ) : 'product-category';
+                    break;
+
+                case 'attribute':
+                    $slug = trim( $this->wc_permalinks['attribute_base'], '/' );
+                    break;
+            }
+
+            $string_id = icl_get_string_id( $slug, $this->url_strings_context(), $this->url_string_name( $base ) );
+            $base_translations = icl_get_string_translations_by_id( $string_id );
+        }
+
+        foreach( $active_languages as $language ){
+            if ( $language['code'] == $source_language ) { ?>
+                <span
+                    title="<?php echo $language['english_name'] . ': ' . __('Original language', 'woocommerce-multilingual'); ?>">
+                    <i class="otgs-ico-original"></i>
+                </span>
+            <?php } else{
+
+                if( $base == 'shop' ){
+                    $translated_base = apply_filters( 'translate_object_id', get_option('woocommerce_shop_page_id' ), 'page', false, $language['code'] );
+                }else{
+
+                    $translated_base = false;
+
+                    if( isset($base_translations[$language['code']])){
+                        if( $base_translations[$language['code']]['status'] == ICL_TM_COMPLETE ){
+                            $translated_base = true;
+                        }elseif($base_translations[$language['code']]['status'] == ICL_TM_NEEDS_UPDATE){
+                            $needs_update = true;
+                        }
+                    }
+
+                }
+
+                ?>
+                <a class=""
+                    <?php if( isset( $needs_update ) ): ?>
+                      title="<?php echo $language['english_name'] . ': ' . __('Update translation', 'woocommerce-multilingual'); ?>">
+                        <i class="otgs-ico-refresh"></i>
+                   <?php elseif( !$translated_base ): ?>
+                      title="<?php echo $language['english_name'] . ': ' . __('Add translation', 'woocommerce-multilingual'); ?>">
+                        <i class="otgs-ico-add"></i>
+                    <?php else: ?>
+                      title="<?php echo $language['english_name'] . ': ' . __('Edit translation', 'woocommerce-multilingual'); ?>">
+                        <i class="otgs-ico-edit"></i>
+                    <?php endif; ?>
+                </a>
+            <?php }
+        }
+
+    }
 }

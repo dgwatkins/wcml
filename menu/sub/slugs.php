@@ -1,158 +1,94 @@
 <table class="widefat wpml-list-table wp-list-table striped" cellspacing="0">
 	<thead>
-	<tr>
-		<?php //TODO Sergey: make Title and Date columns sortable ?>
-
-		<th scope="col"><?php _e( 'Slug type', 'woocommerce-multilingual' ) ?></th>
-		<th scope="col" id="date" class="wpml-col-url">
-			<span class="wpml-title-flag">
-				<img src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/en.png"/>
-			</span>
-			<?php _e( 'Original Slug', 'woocommerce-multilingual' ) ?>
-		</th>
-		<th scope="col" class="wpml-col-languages">
-			<span title="Spanish"><img
-					src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/es.png" alt=""></span>
-			<span title="Polish"><img
-					src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/pl.png" alt=""></span>
-			<span title="Ukrainian"><img
-					src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/uk.png" alt=""></span>
-		</th>
-
-
-	</tr>
+		<tr>
+			<th scope="col"><?php _e( 'Slug type', 'woocommerce-multilingual' ) ?></th>
+			<th scope="col" id="date" class="wpml-col-url">
+				<?php _e( 'Original Slug', 'woocommerce-multilingual' ) ?>
+			</th>
+			<th scope="col" class="wpml-col-languages">
+				<?php echo $woocommerce_wpml->products->get_translation_flags( $active_languages, false, false ); ?>
+			</th>
+		</tr>
 	</thead>
 	<tbody>
+		<tr>
+			<td>
+				<strong>
+					<?php _e( 'Shop page', 'woocommerce-multilingual' ); ?>
+				</strong>
+			</td>
 
-	<tr>
-		<td>
-			<strong>
-				<?php _e( 'Shop page', 'woocommerce-multilingual' ); ?>
-			</strong>
-		</td>
+			<td class="wpml-col-url">
+				<strong><?php echo get_post( get_option('woocommerce_shop_page_id' ) )->post_name ?></strong>
+			</td>
 
-		<td class="wpml-col-url">
-			<?php bloginfo( 'url' ); ?>/<strong>shop</strong>
-		</td>
+			<td class="wpml-col-languages">
+				<?php echo $woocommerce_wpml->url_translation->get_base_translations_statuses( 'shop', $active_languages ); ?>
+			</td>
 
+		</tr>
+		<tr>
+			<td>
+				<strong>
+					<?php _e( 'Product(s) page(s) base', 'woocommerce-multilingual' ); ?>
+				</strong>
+			</td>
 
-		<td class="wpml-col-languages">
-			<a id="es" title="Spanish: Add translation">
-				<i class="otgs-ico-add"></i>
-			</a>
-			<a id="pl" title="Polish: Add translation">
-				<i class="otgs-ico-edit"></i>
-			</a>
-			<a id="uk" title="Ukrainian: Add translation">
-				<i class="otgs-ico-refresh"></i>
-			</a>
-		</td>
+			<td class="wpml-col-url">
+				<strong><?php echo $woocommerce_wpml->url_translation->get_woocommerce_product_base(); ?></strong>
+			</td>
 
-	</tr>
-	<tr>
-		<td>
-			<strong>
-				<?php _e( 'Product(s) page(s) base', 'woocommerce-multilingual' ); ?>
-			</strong>
-		</td>
+			<td class="wpml-col-languages">
+				<?php echo $woocommerce_wpml->url_translation->get_base_translations_statuses( 'product', $active_languages ); ?>
+			</td>
 
-		<td class="wpml-col-url">
-			<?php bloginfo( 'url' ); ?>/<strong>product</strong>/blue-box
-		</td>
+		</tr>
+		<tr>
+			<td>
+				<strong>
+					<?php _e( 'Product category base', 'woocommerce-multilingual' ); ?>
+				</strong>
+			</td>
 
+			<td class="wpml-col-url">
+				<strong><?php echo !empty( $woocommerce_wpml->url_translation->wc_permalinks['category_base'] ) ? trim( $woocommerce_wpml->url_translation->wc_permalinks['category_base'], '/' ) : 'product-category' ?></strong>
+			</td>
 
-		<td class="wpml-col-languages">
-			<a id="es" title="Spanish: Add translation">
-				<i class="otgs-ico-add"></i>
-			</a>
-			<a id="pl" title="Polish: Add translation">
-				<i class="otgs-ico-add"></i>
-			</a>
-			<a id="uk" title="Ukrainian: Add translation">
-				<i class="otgs-ico-refresh"></i>
-			</a>
-		</td>
+			<td class="wpml-col-languages">
+				<?php echo $woocommerce_wpml->url_translation->get_base_translations_statuses( 'product_cat', $active_languages ); ?>
+			</td>
 
+		</tr>
+		<tr>
+			<td>
+				<strong>
+					<?php _e( 'Product tag base', 'woocommerce-multilingual' ); ?>
+				</strong>
+			</td>
 
-	</tr>
-	<tr>
-		<td>
-			<strong>
-				<?php _e( 'Product category base', 'woocommerce-multilingual' ); ?>
-			</strong>
-		</td>
+			<td class="wpml-col-url">
+				<strong><?php echo !empty( $woocommerce_wpml->url_translation->wc_permalinks['tag_base'] ) ? trim( $woocommerce_wpml->url_translation->wc_permalinks['tag_base'], '/' ) : 'product-tag' ?></strong>
+			</td>
 
-		<td class="wpml-col-url">
-			<?php bloginfo( 'url' ); ?>/<strong>product-category</strong>/time-lords
-		</td>
+			<td class="wpml-col-languages">
+				<?php echo $woocommerce_wpml->url_translation->get_base_translations_statuses( 'product_tag', $active_languages ); ?>
+			</td>
 
+		</tr>
+		<tr>
+			<td>
+				<strong>
+					<?php _e( 'Product attribute base', 'woocommerce-multilingual' ); ?>
+				</strong>
+			</td>
 
-		<td class="wpml-col-languages">
-			<a id="es" title="Spanish: Add translation">
-				<i class="otgs-ico-edit"></i>
-			</a>
-			<a id="pl" title="Polish: Add translation">
-				<i class="otgs-ico-edit"></i>
-			</a>
-			<a id="uk" title="Ukrainian: Add translation">
-				<i class="otgs-ico-add"></i>
-			</a>
-		</td>
+			<td class="wpml-col-url">
+				<strong><?php echo trim( $woocommerce_wpml->url_translation->wc_permalinks['attribute_base'], '/' ) ?></strong>
+			</td>
 
-
-	</tr>
-	<tr>
-		<td>
-			<strong>
-				<?php _e( 'Product tag base', 'woocommerce-multilingual' ); ?>
-			</strong>
-		</td>
-
-		<td class="wpml-col-url">
-			<?php bloginfo( 'url' ); ?>/<strong>product-tag</strong>/doctor
-		</td>
-
-
-		<td class="wpml-col-languages">
-			<a id="es" title="Spanish: Add translation">
-				<i class="otgs-ico-add"></i>
-			</a>
-			<a id="pl" title="Polish: Add translation">
-				<i class="otgs-ico-add"></i>
-			</a>
-			<a id="uk" title="Ukrainian: Add translation">
-				<i class="otgs-ico-edit"></i>
-			</a>
-		</td>
-
-	</tr>
-	<tr>
-		<td>
-			<strong>
-				<?php _e( 'Product attribute base', 'woocommerce-multilingual' ); ?>
-			</strong>
-		</td>
-
-		<td class="wpml-col-url">
-			<?php bloginfo( 'url' ); ?>/<strong>product-attribute</strong>/atrribute-name/timeless
-		</td>
-
-
-		<td class="wpml-col-languages">
-			<a id="es" title="Spanish: Add translation">
-				<i class="otgs-ico-edit"></i>
-			</a>
-			<a id="pl" title="Polish: Add translation">
-				<i class="otgs-ico-edit"></i>
-			</a>
-			<a id="uk" title="Ukrainian: Add translation">
-				<i class="otgs-ico-edit"></i>
-			</a>
-		</td>
-
-
-	</tr>
-
-
+			<td class="wpml-col-languages">
+				<?php echo $woocommerce_wpml->url_translation->get_base_translations_statuses( 'attribute', $active_languages ); ?>
+			</td>
+		</tr>
 	</tbody>
 </table>
