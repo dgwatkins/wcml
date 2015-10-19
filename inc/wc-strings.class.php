@@ -67,7 +67,7 @@ class WCML_WC_Strings{
     }
 
     function translated_attribute_label($label, $name, $product_obj = false){
-        global $sitepress,$product,$woocommerce;
+        global $sitepress,$product;
 
         $product_id = false;
         $lang = $sitepress->get_current_language();
@@ -92,12 +92,12 @@ class WCML_WC_Strings{
         }
 
         if(is_admin() && !wpml_is_ajax()){
-            global $wpdb,$sitepress_settings;
+            global $sitepress_settings;
 
-            $string_language = $this->get_string_language('taxonomy singular name: '.$label,'WordPress');
+            $string_language = $this->get_string_language( 'taxonomy singular name: '.$label, 'WordPress' );
 
             if($sitepress_settings['admin_default_language'] != $string_language){
-                $string_id = icl_get_string_id('taxonomy singular name: '.$label,'WordPress');
+                $string_id = icl_get_string_id( 'taxonomy singular name: '.$label, 'WordPress' );
                 $strings = icl_get_string_translations_by_id($string_id);
                 if($strings){
                     return $strings[$sitepress_settings['admin_default_language']]['value'];
@@ -108,7 +108,7 @@ class WCML_WC_Strings{
 
         }
 
-        $trnsl_label = apply_filters( 'wpml_translate_single_string', $label, 'WordPress','taxonomy singular name: '.$label, $lang );
+        $trnsl_label = apply_filters( 'wpml_translate_single_string', $label, 'WordPress', 'taxonomy singular name: '.$label, $lang );
 
         if( $label != $trnsl_label ){
             return $trnsl_label;
@@ -162,10 +162,10 @@ class WCML_WC_Strings{
     
     
     function translate_query_var_for_product($public_query_vars){
-        global $wpdb, $sitepress, $sitepress_settings;
+        global $woocommerce_wpml, $sitepress;
 
         $product_permalink  = $this->product_permalink_slug();
-        $string_language = $this->get_string_language( $product_permalink, 'WordPress', 'URL slug: ' . $product_permalink );
+        $string_language = $this->get_string_language( $product_permalink, $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_string_name('product') );
 
         if($sitepress->get_current_language() != $string_language){
             $translated_slug = $this->get_translated_product_base_by_lang( false,$product_permalink );
@@ -182,6 +182,8 @@ class WCML_WC_Strings{
     }
     
     function get_translated_product_base_by_lang($language = false, $product_slug = false){
+        global $woocommerce_wpml;
+
         if(!$language){
             global $sitepress;
             $language = $sitepress->get_current_language();
@@ -197,7 +199,7 @@ class WCML_WC_Strings{
         }elseif ( apply_filters( 'wpml_slug_translation_available', false) ) {
             $translated_slug = apply_filters( 'wpml_get_translated_slug', 'product' , $language );
         } else {
-            $translated_slug = apply_filters( 'wpml_translate_single_string', $product_slug, 'WordPress', 'URL slug: ' . $product_slug );
+            $translated_slug = apply_filters( 'wpml_translate_single_string', $product_slug, $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_string_namet( 'product' ) );
         }
 
         return $translated_slug;
@@ -205,7 +207,7 @@ class WCML_WC_Strings{
 
     // Catch the default slugs for translation
     function translate_default_slug($translation, $text, $context, $domain) {
-        global $sitepress_settings, $sitepress, $woocommerce_wpml;
+        global $sitepress, $woocommerce_wpml;
 
         if ($context == 'slug' || $context == 'default-slug') {
             $wc_slug = $woocommerce_wpml->url_translation->get_woocommerce_product_base();
@@ -213,7 +215,6 @@ class WCML_WC_Strings{
                 $admin_language = $sitepress->get_admin_language();
             }
             $current_language = $sitepress->get_current_language();
-            $strings_language = false;
 
             $strings_language = $this->get_domain_language('woocommerce');
 
@@ -299,7 +300,6 @@ class WCML_WC_Strings{
     }
 
     function register_tax_label($label){
-        global $sitepress;
 
         do_action('wpml_register_single_string', 'woocommerce', 'VAT_tax_label', $label );
         $label = apply_filters( 'wpml_translate_single_string', $label, 'woocommerce', 'VAT_tax_label' );
@@ -679,10 +679,9 @@ class WCML_WC_Strings{
     }
 
     function translate_attribute_taxonomies_labels( $attribute_taxonomies ){
+        global $sitepress;
 
         if( is_admin() && !wpml_is_ajax() ){
-
-            global $wpdb, $sitepress;
 
             foreach( $attribute_taxonomies as $key => $attribute_taxonomy ){
                 $string_language = $this->get_string_language( $attribute_taxonomy->attribute_name, 'WordPress', 'taxonomy singular name: '.$attribute_taxonomy->attribute_name );
