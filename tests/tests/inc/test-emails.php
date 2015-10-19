@@ -21,13 +21,4 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 		$this->assertEquals( 'fr_FR', $subject->set_locale_for_emails( $locale_dummy, 'woocommerce' ) );
 	}
 
-	function test_email_footer() {
-		$sitepress_mock    = $this->get_sitepress_mock();
-		$test_lang_default = 'foo';
-		$subject           = new WCML_Emails();
-
-		$sitepress_mock->method( 'get_default_language' )->willReturn( $test_lang_default );
-		$sitepress_mock->expects( $this->once() )->method( 'switch_lang' )->with( $test_lang_default, false );
-		$subject->email_footer();
-	}
 }

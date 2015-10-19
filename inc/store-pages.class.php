@@ -250,10 +250,10 @@ class WCML_Store_Pages{
         global $sitepress;
         if ($sitepress->get_default_language() != $sitepress->get_current_language()) {
             if (!empty($q->query_vars['pagename'])) {
-                $shop_page = get_post( woocommerce_get_page_id('shop') );
+                $shop_page = get_post( wc_get_page_id('shop') );
                 // we should explode by / for children page
                 $query_var_page = explode('/',$q->query_vars['pagename']);
-                if (isset($shop_page->post_name) && $shop_page->post_name == $query_var_page[count($query_var_page)-1]) {
+                if (isset($shop_page->post_name) && ( ( $shop_page->post_name == $query_var_page[count($query_var_page)-1]) || (  $shop_page->post_name == strtolower($query_var_page[count($query_var_page)-1]) ) ) ) {
                     unset($q->query_vars['page']);
                     unset($q->query_vars['pagename']);
                     $q->query_vars['post_type'] = 'product';

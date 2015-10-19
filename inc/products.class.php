@@ -96,8 +96,6 @@ class WCML_Products{
         add_action( 'wp_ajax_wpml_tt_save_term_translation', array( $this, 'update_taxonomy_in_variations' ), 7 );
 
         add_action( 'wp_ajax_woocommerce_remove_variation', array( $this, 'remove_variation_ajax' ), 9 );
-        //WooCommerce subscription
-        add_filter( 'woocommerce_users_subscriptions', array( $this, 'woocommerce_users_subscriptions' ), 10, 2 );
 
         // cart functions
         add_action( 'woocommerce_get_cart_item_from_session', array( $this, 'translate_cart_contents' ), 10, 3 );
@@ -2735,26 +2733,10 @@ class WCML_Products{
         return $settings;
     }
 
-
     /*
- * Filter for WooCommerce subscriptions
- */
-    function woocommerce_users_subscriptions($subscriptions, $user_id)
-    {
-        global $sitepress;
-
-        foreach ($subscriptions as $key => $subscription) {
-            $subscriptions[$key]['product_id'] = apply_filters('translate_object_id', $subscriptions[$key]['product_id'], get_post_type($subscriptions[$key]['product_id']), true, $sitepress->get_current_language());
-        }
-
-        return $subscriptions;
-    }
-
-    /*
- *  Update cart and cart session when switch language
- */
-    function woocommerce_calculate_totals($cart)
-    {
+     *  Update cart and cart session when switch language
+     */
+    function woocommerce_calculate_totals($cart){
         global $sitepress, $woocommerce, $woocommerce_wpml;
         $current_language = $sitepress->get_current_language();
         $new_cart_data = array();
@@ -3071,17 +3053,20 @@ class WCML_Products{
 
         if ($orig_id == $post->ID) {
             $sitepress->set_element_language_details($new_id, 'post_' . $post->post_type, false, $orig_lang);
-            $new_trid = $sitepress->get_element_trid($new_id, 'post_' . $post->post_type);
-        } else {
-            $post_to_duplicate = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE ID=%d", $orig_id));
+            $new_trid = $sitepress->get_element_trid( $new_id, 'post_' . $post->post_type );
+
+            $new_orig_id = $new_id;
+        }else{
+            $post_to_duplicate = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->posts WHERE ID=%d", $orig_id ));
 
             if (!empty($post_to_duplicate)) {
                 $new_orig_id = $wc_admin->duplicate_product($post_to_duplicate);
 
                 do_action('wcml_after_duplicate_product', $new_id, $post_to_duplicate);
 
-                $sitepress->set_element_language_details($new_orig_id, 'post_' . $post->post_type, false, $orig_lang);
-                $new_trid = $sitepress->get_element_trid($new_orig_id, 'post_' . $post->post_type);
+                $sitepress->set_element_language_details( $new_orig_id, 'post_' . $post->post_type, false, $orig_lang );
+                $new_trid = $sitepress->get_element_trid( $new_orig_id, 'post_' . $post->post_type );
+                update_post_meta( $new_id, '_icl_lang_duplicate_of', $new_orig_id );
 
                 $sitepress->set_element_language_details($new_id, 'post_' . $post->post_type, $new_trid, $sitepress->get_current_language());
             }
@@ -3099,9 +3084,15 @@ class WCML_Products{
                     if (!empty($post_to_duplicate)) {
                         $new_id = $wc_admin->duplicate_product($post_to_duplicate);
 
-                        do_action('wcml_after_duplicate_product', $new_id, $post_to_duplicate);
+                        $new_id_obj = get_post( $new_id );
+                        $new_slug = wp_unique_post_slug( sanitize_title( $new_id_obj->post_title ), $new_id, $post_to_duplicate->post_status, $post_to_duplicate->post_type, $new_id_obj->post_parent );
+                        $wpdb->update( $wpdb->posts, array( 'post_name' => $new_slug ), array( 'ID' => $new_id ) );
 
-                        $sitepress->set_element_language_details($new_id, 'post_' . $post->post_type, $new_trid, $translation->language_code);
+                        do_action( 'wcml_after_duplicate_product' , $new_id, $post_to_duplicate );
+
+                        $sitepress->set_element_language_details( $new_id, 'post_' . $post->post_type, $new_trid, $translation->language_code );
+
+                        update_post_meta( $new_id, '_icl_lang_duplicate_of', $new_orig_id );
                     }
                 }
             }

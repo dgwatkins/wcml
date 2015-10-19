@@ -5,7 +5,7 @@ Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multili
 License: GPLv2
 Requires at least: 3.0
 Tested up to: 4.3
-Stable tag: 3.6.11
+Stable tag: 3.7
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
 
@@ -77,6 +77,16 @@ In order for the checkout and store pages to appear translated, you need to crea
 3. Multiple currencies
 
 == Changelog ==
+
+
+= 3.6.7 =
+* Added support for strings in different languages. Translated strings are not required to be in English (Requires WPML 3.3+)
+* Fixed a compatibility issue with WooCommerce Bookings: bookings in all languages showing on calendar (requires WooCommerce Bookings 1.8+)
+* Fixed a compatibility issue with WooCommerce Bookings: deleting a reservation did not delete translations too (requires WooCommerce Bookings 1.8+)
+* Fixed a PayPal checkout issue when multi-currency was enabled and the decimal separator was set to comma and thousands separator was set to dot
+* Fixed a compatibility issue with WooCommerce Product Addons: adding a second item for the same product added the first product again too
+* Bug fix: a slash character was missing the in product breadcrumb when the translated page slug was identical to the one in the default language
+* Bug fix: incorrect cost for the flat rate shipping was displayed in certain circumstances
 
 = 3.6.11 =
 * Fixed one issue that was causing a fatal error when an older version WPML was used (3.1.9.7)
