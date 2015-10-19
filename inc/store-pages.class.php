@@ -144,7 +144,7 @@ class WCML_Store_Pages{
     
     function translate_pages_in_settings($id) {
         global $pagenow;
-        if( $pagenow == 'options-permalink.php' ){
+        if( $pagenow == 'options-permalink.php' || ( isset( $_GET['page'] ) && $_GET['page'] == 'wpml-wcml' ) ){
             return $id;
         }
 
@@ -394,43 +394,30 @@ class WCML_Store_Pages{
 
                         $missing_lang_codes[] = $language['code'];
 
-                        if (!empty($missing_lang)) {
-                            $missing_lang .= ', ' . $language['display_name'];
-                        } else {
-                            $missing_lang .= $language['display_name'];
-                        }
+                        $missing_lang[] = $language;
 
                         continue;
                     }
 
                     if ( isset($translations[$language['code']] ) && is_null( $translations[$language['code']]->element_id ) ) {
 
-                        if (!empty($pages_in_progress_miss_lang)) {
-                            $pages_in_progress_miss_lang .= ', ' . $language['display_name'];
-                        } else {
-                            $pages_in_progress_miss_lang .= $language['display_name'];
-                        }
-
-                        $pages_in_progress[$store_page_id] = $pages_in_progress_miss_lang;
+                        $pages_in_progress[$store_page_id][] = $language;
 
                     }
             }
         }
 
-         $pages_in_progress_notice = '';
+
         foreach( $pages_in_progress as $key => $page_in_progress ){
-            if (!empty($pages_in_progress_notice)) {
-                $pages_in_progress_notice .= ', ' . get_the_title( $key ) .' ('.$page_in_progress.')';
-            } else {
-                $pages_in_progress_notice .= get_the_title( $key ) .' ('.$page_in_progress.')';
-            }
+            $pages_in_progress_notice[$key]['page'] = get_the_title( $key ).' :';
+            $pages_in_progress_notice[$key]['lang'] = $page_in_progress;
+
         }
 
          $status = array();
 
         if (!empty($missing_lang)) {
             $status['lang'] = $missing_lang;
-            $status['codes'] = $missing_lang_codes;
         }
 
          if (!empty($pages_in_progress_notice)) {

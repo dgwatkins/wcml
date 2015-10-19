@@ -78,7 +78,7 @@ if ( ( ! WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty
 									<li>
 									<span class="wpml-title-flag"><img
 											src="<?php echo $sitepress->get_flag_url( $miss_lang['code'] ); ?>"
-											alt="<?php echo $miss_lang['code'] ?>"></span> <?php echo ucfirst( $miss_lang['display_name'] ) ?>
+											alt="<?php echo $miss_lang['english_name'] ?>"></span> <?php echo ucfirst( $miss_lang['display_name'] ) ?>
 									</li>
 
 								<?php endforeach; ?>
@@ -173,47 +173,44 @@ if ( ( ! WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty
 					<input type="hidden" name="create_missing_pages" value="1"/>
 					<li>
 						<?php
-						if ( isset( $miss_lang['codes'] ) ): ?>
+						if ( isset( $miss_lang['lang'] ) ): ?>
 							<i class="otgs-ico-warning"></i> <?php _e( "WooCommerce store pages do not exist for these languages:", 'woocommerce-multilingual' ); ?>
-						<?php endif; ?>
-						<?php //TODO Sergey: Make it work ?>
-						<ul class="wcml-lang-list">
-							<li>
-						<span class="wpml-title-flag"><img
-								src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/en.png"
-								alt="Polish"></span> Polish
-							</li>
-							<li>
-						<span class="wpml-title-flag"><img
-								src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/en.png"
-								alt="Spanish"></span> Spanish
-							</li>
-						</ul>
-						<button class="button-secondary aligncenter" type="submit" name="create_pages">
-							<?php _e( 'Create missing translations', 'woocommerce-multilingual' ); ?>
-						</button>
-						<?php /*
-					if ( isset( $miss_lang['lang'] ) ): ?>
-						<p>
-							<strong><?php echo $miss_lang['lang'] ?></strong>
 
-						</p>
-					<?php endif; */ ?>
+							<ul class="wcml-lang-list">
+								<?php foreach( $miss_lang['lang'] as $missed_lang ): ?>
+									<li>
+										<span class="wpml-title-flag"><img
+										src="<?php echo $sitepress->get_flag_url( $missed_lang['code'] ); ?>"
+										alt="<?php echo $missed_lang['english_name'] ?>"></span> <?php echo ucfirst( $missed_lang['display_name'] ) ?>
+									</li>
+								<?php endforeach; ?>
+							</ul>
+
+							<button class="button-secondary aligncenter" type="submit" name="create_pages">
+								<?php _e( 'Create missing translations', 'woocommerce-multilingual' ); ?>
+							</button>
+						<?php endif; ?>
 					</li>
 					<?php
 					if ( isset( $miss_lang['in_progress'] ) ): ?>
 						<li>
 							<i class="otgs-ico-in-progress"></i> <?php _e( "These pages are currently being translated by translators via WPML: ", 'woocommerce-multilingual' ); ?>
-							<?php //TODO Sergey: Make it work ?>
 							<ul class="wcml-lang-list">
-								<li>
-						<span class="wpml-title-flag"><img
-								src="https://wpml.org/wp-content/plugins/sitepress-multilingual-cms/res/flags/en.png"
-								alt="Ukraininan"></span> Ukraininan
-								</li>
+								<?php foreach( $miss_lang['in_progress'] as $in_progress_pages ): ?>
+									<li>
+										<span class="wpml-title-flag"><?php echo $in_progress_pages['page']; ?></span>
+										<ul class="wcml-lang-list">
+											<?php foreach( $in_progress_pages['lang'] as $miss_in_progress ): ?>
+												<li>
+													<span class="wpml-title-flag"><img
+													src="<?php echo $sitepress->get_flag_url( $miss_in_progress['code'] ); ?>"
+													alt="<?php echo $miss_in_progress['english_name'] ?>"></span> <?php echo ucfirst( $miss_in_progress['display_name'] ) ?>
+												</li>
+											<?php endforeach; ?>
+										</ul>
+									</li>
+								<?php endforeach; ?>
 							</ul>
-							<!--							<strong>-->
-							<?php //echo $miss_lang['in_progress'] ?><!--</strong>-->
 						</li>
 					<?php endif; ?>
 				</form>

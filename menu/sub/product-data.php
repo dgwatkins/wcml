@@ -195,7 +195,10 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                                         value="<?php echo $trn_attribute['name'] ? $trn_attribute['name'] : ''; ?>"
                                         placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>" <?php if ($is_duplicate_product): ?> readonly<?php endif; ?> />
 
-                                    <?php if(!is_null($tr_status) && get_current_user_id() != $tr_status->translator_id ){
+                                    <?php
+                                    $tr_status = $wpdb->get_row($wpdb->prepare("SELECT status,translator_id FROM ". $wpdb->prefix ."icl_translation_status WHERE translation_id = %d",$product_translations[$language]->translation_id));
+
+                                    if(!is_null($tr_status) && get_current_user_id() != $tr_status->translator_id ){
                                         if($tr_status->status == ICL_TM_IN_PROGRESS){ ?>
                                             <td><?php _e('Translation in progress', 'woocommerce-multilingual'); ?><br>&nbsp;</td>
                                             <?php continue;
@@ -205,7 +208,7 @@ if (isset($product_translations[$language]) && get_post_meta($product_translatio
                                                                         FROM {$wpdb->prefix}icl_translate_job j
                                                                         JOIN {$wpdb->prefix}icl_translation_status s ON j.rid = s.rid
                                                                     WHERE s.translation_id = %d
-                                                                ", $product_translations[$key]->translation_id ) );
+                                                                ", $product_translations[$language]->translation_id ) );
                                             ?>
                                             <td><?php printf('<a href="%s" class="button-secondary">'.__('Take this and edit', 'woocommerce-multilingual').'</a>', admin_url('admin.php?page=wpml-wcml&tab=products&prid=' . $product->ID.'&job_id='.$tr_job_id)); ?><br>&nbsp;</td>
                                             <?php continue;
