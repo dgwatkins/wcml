@@ -414,6 +414,10 @@ $woocommerce_wpml->update_settings(); ?>
         <div class="clr"></div>
     <?php endif;?>
 
+	<div class="hidden_original_description">
+		<?php wp_editor( '', 'original_description_value', array( 'textarea_rows' => 4, 'editor_class' => 'wcml_content_tr original_value', 'media_buttons' => false, 'quicktags' => array( 'buttons' => 'empty' ) ) ); ?>
+	</div>
+
 	<div class="hidden_original_excerpt">
 		<?php wp_editor( '', 'original_excerpt_value', array( 'textarea_rows' => 4, 'editor_class' => 'wcml_content_tr original_value', 'media_buttons' => false, 'quicktags' => array( 'buttons' => 'empty' ) ) ); ?>
 	</div>
