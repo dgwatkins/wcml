@@ -66,7 +66,6 @@ $default_language = $sitepress->get_default_language();
 					<input type="hidden" id="update_currency_lang_nonce"
 					       value="<?php echo wp_create_nonce( 'wcml_update_currency_lang' ); ?>"/>
 
-
 					<table class="widefat currency_table" id="currency-table">
 						<thead>
 						<tr>
@@ -82,15 +81,7 @@ $default_language = $sitepress->get_default_language();
 								<small><?php printf( __( ' (%s)', 'woocommerce-multilingual' ), $positioned_price ); ?></small>
 							</td>
 							<td class="wcml-col-rate"><?php _e( 'default', 'woocommerce-multilingual' ); ?></td>
-							<td class="wcml-col-edit">
-								<a
-									title="<?php esc_attr( _e( 'Edit', 'woocommerce-multilingual' ) ); ?>" class="edit_currency"
-									data-currency="<?php echo $code ?>">
-									<i class="otgs-ico-edit"
-									   title="<?php esc_attr( _e( 'Edit', 'woocommerce-multilingual' ) ); ?>"></i>
-								</a>
-
-							</td>
+							<td class="wcml-col-edit">&nbsp;</td>
 
 						</tr>
 						<?php
@@ -124,8 +115,9 @@ $default_language = $sitepress->get_default_language();
 
 								<td class="wcml-col-edit">
 									<a
-										title="<?php esc_attr( _e( 'Edit', 'woocommerce-multilingual' ) ); ?>" class="edit_currency"
-										data-currency="<?php echo $code ?>">
+										href="#" title="<?php esc_attr( _e( 'Edit', 'woocommerce-multilingual' ) ); ?>" class="edit_currency js-wpml-dialog-trigger"
+										data-currency="<?php echo $code ?>" data-content="wcml_currency_options_<?php echo $code ?>"  id="wcml_currency_options_<?php echo $code ?>"
+										data-height="530" data-width="450">
 										<i class="otgs-ico-edit"
 										   title="<?php esc_attr( _e( 'Edit', 'woocommerce-multilingual' ) ); ?>"></i>
 									</a>

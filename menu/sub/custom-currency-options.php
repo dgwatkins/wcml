@@ -9,7 +9,7 @@ $currency_symbol = get_woocommerce_currency_symbol( $code );
 			<?php printf( __( 'Currency options for %s', 'woocommerce-multilingual' ), '<strong>' . $currency_name . ' (' . $currency_symbol . ')</strong>' ) ?>
 		</h3>
 		<?php //TODO Sergey: close Dialog on wpml-dialog-close (not on icon classes) ?>
-		<i class="otgs-ico-close wpml-dialog-close"></i>
+		<i class="otgs-ico-close wpml-dialog-close-button"></i>
 	</header>
 
 
@@ -121,10 +121,10 @@ $currency_symbol = get_woocommerce_currency_symbol( $code );
 
 
 	<footer class="wpml-dialog-footer">
-		<input type="button" class="button-secondary currency_options_cancel alignleft"
+		<input type="button" class="button-secondary wpml-dialog-close-button alignleft"
 		       value="<?php esc_attr_e( 'Cancel', 'woocommerce-multilingual' ) ?>" data-currency="<?php echo $code ?>"/>&nbsp;
 		<input type="submit" class="button-primary currency_options_save alignright"
-		       value="<?php esc_attr_e( 'Save', 'woocommerce-multilingual' ) ?>" data-currency="<?php echo $code ?>"/>
+		       value="<?php esc_attr_e( 'Save', 'woocommerce-multilingual' ) ?>" data-currency="<?php echo $code ?>" data-action="" />
 		<input type="hidden" id="save_currency_nonce" value="<?php echo wp_create_nonce( 'save_currency' ); ?>"/>
 	</footer>
 </div>

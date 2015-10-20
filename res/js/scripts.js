@@ -592,58 +592,6 @@ jQuery(document).ready(function($){
         
     });
 
-    $(document).on('click', '.edit_currency', function(){
-		$('.wcml-currency-options-dialog').hide();
-        
-        var popup = $('#wcml_currency_options_' + $(this).data('currency'));
-        popup.fadeIn();
-        
-        var win = $(window);
-        var viewport = {
-            top : win.scrollTop(),
-            left : win.scrollLeft()
-        };
-        //viewport.right = viewport.left + win.width();
-        viewport.bottom = viewport.top + win.height();
-
-        var bounds = popup.offset();
-        //bounds.right = bounds.left + popup.outerWidth();
-        bounds.bottom = bounds.top + popup.outerHeight();
-        
-        var incr = 0;
-        while(viewport.bottom < bounds.bottom){            
-            
-            var top = popup.css('top');
-            if(top == 'auto'){
-                top = parseInt(viewport.bottom) - parseInt(popup.outerHeight()) - 50;
-            }else{
-                top = parseInt(top) - 50;
-            }
-            popup.css({'top': top + 'px'});
-            
-            
-            var bounds = popup.offset();
-            //bounds.right = bounds.left + popup.outerWidth();
-            bounds.bottom = bounds.top + popup.outerHeight();
-            
-            
-            incr++;
-            if(incr == 10) break;
-            
-        }
-        
-    });
-    
-    $(document).on('click', '.currency_options_cancel', function(){
-        var currency = $(this).data('currency');
-        $('#wcml_currency_options_' + currency).fadeOut(function(){
-            
-            $('#wcml_currency_options_' + currency).css('top', 'auto');
-            
-        });
-        
-    });
-
 
     $(document).on('click','.cancel_currency',function(){
         var $tableRow = $(this).closest('tr');
@@ -846,7 +794,14 @@ jQuery(document).ready(function($){
     });
 
 
-	$(document).on('click', '.wcml-currency-options-dialog :submit', function () {
+    function save_currency_extra_options(dialog){
+
+    }
+
+	$(document).on('click', '.wcml-co-dialog .currency_options_save', function () {
+
+        alert('CLIC');
+
 		var parent = $(this).closest('.wcml-currency-options-dialog');
 
         var chk_rate = check_on_numeric(parent,'.ext_rate');
