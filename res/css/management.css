@@ -384,6 +384,20 @@
   margin: 15px 0;
 }
 
+.wcml-base-dialog{
+  z-index: 999999;
+  background-color: #FFF;
+}
+
+.wcml-base-dialog .wpml-dialog-body {
+  margin: 15px 0;
+}
+
+.wcml-base-dialog .wpml-dialog-body h3,
+.wcml-base-dialog .wpml-form-row input{
+  width: 200px;
+}
+
 table.widefat.currency_table {
   float: left;
   width: 300px;

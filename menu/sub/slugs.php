@@ -92,3 +92,5 @@
 		</tr>
 	</tbody>
 </table>
+<?php wp_nonce_field('wcml_edit_base', 'wcml_edit_base_nonce'); ?>
+

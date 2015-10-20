@@ -1108,6 +1108,66 @@ jQuery(document).ready(function($){
     }
 
 
+    $(document).on('click', '.edit_base_slug', function(e) {
+        e.preventDefault();
+
+        var elem = $(this);
+
+        $.ajax({
+            type : "post",
+            url : ajaxurl,
+            dataType: 'json',
+            data : {
+                action: "wcml_edit_base",
+                base: elem.attr('data-base'),
+                language: elem.attr('data-language'),
+                wcml_nonce: $('#wcml_edit_base_nonce').val()
+            },
+            success: function(response) {
+                $('body').prepend(response);
+
+                var height = $(window).height()/2 + 90;
+                var width = $(window).width()/2 + 220;
+                $('.wcml-base-dialog').css('top' , height+ 'px');
+                $('.wcml-base-dialog').css('left' , height+ 'px');
+                $('.wcml-base-dialog').fadeIn();
+            }
+        })
+    });
+
+
+    $(document).on('click', '.wcml_save_base', function(e) {
+        e.preventDefault();
+
+        var elem = $(this);
+        var icon = '.'+elem.attr('data-base')+'_'+elem.attr('data-language');
+        $.ajax({
+            type : "post",
+            url : ajaxurl,
+            dataType: 'json',
+            data : {
+                action: "wcml_update_base_translation",
+                base: elem.attr('data-base'),
+                base_value: $('#base-original').val(),
+                base_translation: $('#base-translation').val(),
+                language: elem.attr('data-language'),
+                wcml_nonce: $('#wcml_update_base_nonce').val()
+            },
+            success: function(response) {
+                $(icon).find('i').remove();
+                $(icon).append('<i class="otgs-ico-edit" >');
+                $('.wcml-base-dialog').remove();
+            }
+        })
+    });
+
+    $(document).on('click', '.wcml_cancel_base', function(e) {
+        e.preventDefault();
+        $('.wcml-base-dialog').remove();
+
+    });
+
+
     //dialog actions
     $(document).on( 'before_close_dialog', '.wpml-dialog-close-button', function(e) {
         var data = $(this).data();

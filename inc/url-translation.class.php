@@ -27,6 +27,9 @@ class WCML_Url_Translation {
 
         add_action( 'init', array( $this, 'fix_post_object_rewrite_slug' ), 6 ); // handle the particular case of the default product base: wpmlst-540
 
+        add_action( 'wp_ajax_wcml_edit_base', array( $this, 'wcml_edit_base_html' ) );
+        add_action( 'wp_ajax_wcml_update_base_translation', array( $this, 'wcml_update_base_translation' ) );
+
     }
 
     function set_up() {
@@ -534,27 +537,6 @@ class WCML_Url_Translation {
             $source_language = $sitepress->get_language_for_element( get_option('woocommerce_shop_page_id' ) , 'post_page' );
         }else{
             $source_language = $woocommerce_wpml->strings->get_string_language( $base, $this->url_strings_context(), $this->url_string_name( $base ) );
-
-            switch ( $base ) {
-                case 'product':
-                    $slug = $this->get_woocommerce_product_base();
-                    break;
-
-                case 'product_tag':
-                    $slug = !empty( $this->wc_permalinks['tag_base'] ) ? trim( $this->wc_permalinks['tag_base'], '/' ) : 'product-tag';
-                    break;
-
-                case 'product_cat':
-                    $slug = !empty( $this->wc_permalinks['category_base'] ) ? trim( $this->wc_permalinks['category_base'], '/' ) : 'product-category';
-                    break;
-
-                case 'attribute':
-                    $slug = trim( $this->wc_permalinks['attribute_base'], '/' );
-                    break;
-            }
-
-            $string_id = icl_get_string_id( $slug, $this->url_strings_context(), $this->url_string_name( $base ) );
-            $base_translations = icl_get_string_translations_by_id( $string_id );
         }
 
         foreach( $active_languages as $language ){
@@ -569,20 +551,21 @@ class WCML_Url_Translation {
                     $translated_base = apply_filters( 'translate_object_id', get_option('woocommerce_shop_page_id' ), 'page', false, $language['code'] );
                 }else{
 
-                    $translated_base = false;
+                    $translated_base = $this->get_base_translation( $base,$language['code'] );
 
-                    if( isset($base_translations[$language['code']])){
-                        if( $base_translations[$language['code']]['status'] == ICL_TM_COMPLETE ){
-                            $translated_base = true;
-                        }elseif($base_translations[$language['code']]['status'] == ICL_TM_NEEDS_UPDATE){
+                    if( $translated_base['translated_base'] ){
+                        $translated_base = true;
+                        if(isset($translated_base['needs_update'])){
                             $needs_update = true;
                         }
+                    }else{
+                        $translated_base = false;
                     }
 
                 }
 
                 ?>
-                <a class=""
+                <a class="edit_base_slug <?php echo $base.'_'.$language['code']; ?>" data-base="<?php echo $base; ?>" data-language="<?php echo $language['code']; ?>"
                     <?php if( isset( $needs_update ) ): ?>
                       title="<?php echo $language['english_name'] . ': ' . __('Update translation', 'woocommerce-multilingual'); ?>">
                         <i class="otgs-ico-refresh"></i>
@@ -596,6 +579,132 @@ class WCML_Url_Translation {
                 </a>
             <?php }
         }
+
+    }
+
+
+    function get_base_translation ( $base, $language ){
+        global $woocommerce_wpml;
+
+        switch ( $base ) {
+            case 'product':
+                $slug = $this->get_woocommerce_product_base();
+                $return['name'] = __('Product Base', 'woocommerce-multilingual');
+                break;
+
+            case 'product_tag':
+                $slug = !empty( $this->wc_permalinks['tag_base'] ) ? trim( $this->wc_permalinks['tag_base'], '/' ) : 'product-tag';
+                $return['name'] = __('Product Tag Base', 'woocommerce-multilingual');
+                break;
+
+            case 'product_cat':
+                $slug = !empty( $this->wc_permalinks['category_base'] ) ? trim( $this->wc_permalinks['category_base'], '/' ) : 'product-category';
+                $return['name'] = __('Product Category Base', 'woocommerce-multilingual');
+                break;
+
+            case 'attribute':
+                $slug = trim( $this->wc_permalinks['attribute_base'], '/' );
+                $return['name'] = __('Product Attribute Base', 'woocommerce-multilingual');
+                break;
+        }
+
+        $return['original_value'] =  $slug;
+        $string_id = icl_get_string_id( $slug, $this->url_strings_context(), $this->url_string_name( $base ) );
+        $base_translations = icl_get_string_translations_by_id( $string_id );
+
+        $return['translated_base'] = '';
+        if( isset($base_translations[$language])){
+            if( $base_translations[$language]['status'] == ICL_TM_COMPLETE ){
+                $return['translated_base'] = $base_translations[$language]['value'];
+            }elseif($base_translations[$language]['status'] == ICL_TM_NEEDS_UPDATE){
+                $return['translated_base'] = $base_translations[$language]['value'];
+                $return['needs_update '] = true;
+            }
+        }
+
+        return $return;
+
+    }
+
+    function wcml_edit_base_html(){
+        global $sitepress,$woocommerce_wpml;
+
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_edit_base')){
+            die('Invalid nonce');
+        }
+
+        $original_base = $_POST['base'];
+        $language = $_POST['language'];
+        $translated_base_value = '';
+
+        if( $original_base == 'shop' ){
+            $original_shop_id = get_option('woocommerce_shop_page_id' );
+            $translated_base = apply_filters( 'translate_object_id',$original_shop_id , 'page', false, $language );
+            if( !is_null($translated_base)){
+                $translated_base_value = get_post($translated_base)->post_name;
+            }
+            $source_language = $sitepress->get_language_for_element( $original_shop_id , 'post_page' );
+            $original_base_value = get_post($original_shop_id)->post_name;
+            $label_name = __('Product Shop Base', 'woocommerce-multilingual');
+        }else{
+
+            $translated_base = $this->get_base_translation( $original_base, $language );
+
+            $translated_base_value = $translated_base['translated_base'];
+
+            $source_language = $woocommerce_wpml->strings->get_string_language( $original_base, $this->url_strings_context(), $this->url_string_name( $original_base ) );
+            $original_base_value = $translated_base['original_value'];
+            $label_name = $translated_base['name'];
+        }
+
+        $active_languages = $sitepress->get_active_languages();
+
+        ob_start();
+        include WCML_PLUGIN_PATH . '/menu/sub/edit-slug.php';
+        $html = ob_get_contents();
+        ob_end_clean();
+
+        echo json_encode($html);
+        die();
+
+    }
+
+    function wcml_update_base_translation(){
+
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_update_base_translation')){
+            die('Invalid nonce');
+        }
+
+        global $wpdb;
+
+        $original_base = $_POST['base'];
+        $original_base_value = $_POST['base_value'];
+        $base_translation = $_POST['base_translation'];
+        $language = $_POST['language'];
+
+        if( $original_base == 'shop' ){
+            $original_shop_id = get_option('woocommerce_shop_page_id' );
+            $translated_shop_id = apply_filters( 'translate_object_id', $original_shop_id , 'page', false, $language );
+
+            if( !is_null( $translated_shop_id ) ){
+
+                $trnsl_shop_obj = get_post( $translated_shop_id );
+                $new_slug = wp_unique_post_slug( sanitize_title( $_POST['base_translation'] ), $translated_shop_id, $trnsl_shop_obj->post_status, $trnsl_shop_obj->post_type, $trnsl_shop_obj->post_parent );
+                $wpdb->update( $wpdb->posts, array( 'post_name' => $new_slug ), array( 'ID' => $translated_shop_id ) );
+
+            }
+
+        }else{
+
+            $string_id = icl_get_string_id( $original_base_value, $this->url_strings_context(), $this->url_string_name( $original_base ) );
+
+            icl_add_string_translation( $string_id, $language, $base_translation, ICL_STRING_TRANSLATION_COMPLETE );
+
+        }
+
+        die();
 
     }
 }
