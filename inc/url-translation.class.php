@@ -642,10 +642,10 @@ class WCML_Url_Translation {
             $original_shop_id = get_option('woocommerce_shop_page_id' );
             $translated_base = apply_filters( 'translate_object_id',$original_shop_id , 'page', false, $language );
             if( !is_null($translated_base)){
-                $translated_base_value = get_post($translated_base)->post_name;
+                $translated_base_value = urldecode(get_post($translated_base)->post_name);
             }
             $source_language = $sitepress->get_language_for_element( $original_shop_id , 'post_page' );
-            $original_base_value = get_post($original_shop_id)->post_name;
+            $original_base_value = urldecode(get_post($original_shop_id)->post_name);
             $label_name = __('Product Shop Base', 'woocommerce-multilingual');
         }else{
 
