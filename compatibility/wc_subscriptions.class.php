@@ -7,8 +7,6 @@ class WCML_WC_Subscriptions{
         add_action('init', array($this, 'init'),9);
         add_filter('wcml_variation_term_taxonomy_ids',array($this,'wcml_variation_term_taxonomy_ids'));
 
-        add_filter( 'wcs_get_users_subscriptions', array( $this, 'woocommerce_users_subscriptions' ), 10, 2 );
-
     }
 
     function init(){
@@ -33,17 +31,6 @@ class WCML_WC_Subscriptions{
         }
         
         return $get_variation_term_taxonomy_ids;
-    }
-
-
-    function woocommerce_users_subscriptions($subscriptions, $user_id){
-        global $sitepress;
-
-        foreach($subscriptions as $key=>$subscription){
-            $subscriptions[$key]['product_id'] = apply_filters( 'translate_object_id',$subscriptions[$key]['product_id'],get_post_type($subscriptions[$key]['product_id']),true,$sitepress->get_current_language());
-        }
-
-        return $subscriptions;
     }
 
 }
