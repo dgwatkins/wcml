@@ -242,7 +242,7 @@ class WCML_Url_Translation {
                 // check if there's an existing translation
                 if ( !isset( $string_translations[$language] ) ) {
 
-                    $slug_translation = $woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( $slug, $language );
+                    $slug_translation = $woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( $slug, $language, false );
 
                     if ( $slug_translation ) {
                         // add string translation
