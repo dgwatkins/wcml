@@ -368,7 +368,7 @@ class WCML_Upgrade{
                         $wpdb->prepare( "UPDATE {$wpdb->prefix}icl_strings
                                   SET domain_name_context_md5 = %s
                                   WHERE id = %d",
-                            md5( 'WooCommerce Endpoints' . $endpoint_key ), $string_id )
+                            md5( $endpoint_key,'WooCommerce Endpoints' ), $string_id )
                     );
                 }
 
