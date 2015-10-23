@@ -702,7 +702,7 @@ class WCML_WC_Strings{
         return $attribute_taxonomies;
     }
 
-    function get_translation_from_woocommerce_mo_file( $string, $language ){
+    function get_translation_from_woocommerce_mo_file( $string, $language, $return_original = true ){
         global $sitepress;
 
         $original_string = $string;
@@ -717,7 +717,7 @@ class WCML_WC_Strings{
                 $mo = new MO();
                 $mo_file =  WP_LANG_DIR . '/plugins/woocommerce-'  . $sitepress->get_locale( $language ) . '.mo';
                 if( !file_exists( $mo_file ) ){
-                    return $string;
+                    return $return_original ? $string : null;
                 }
 
                 $mo->import_from_file( $mo_file  );
@@ -731,7 +731,7 @@ class WCML_WC_Strings{
             if( isset( $this->mo_files[ $language ][$string] ) ){
                 $this->translations_from_mo_file[ $original_string ][ $language ] = $this->mo_files[ $language ][$string]->translations[0];
             } else {
-                $this->translations_from_mo_file[ $original_string ][ $language ] = $original_string;
+                $this->translations_from_mo_file[ $original_string ][ $language ] = $return_original ? $original_string : null;
             }
         }
 

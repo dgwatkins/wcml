@@ -87,6 +87,8 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Fixed a compatibility issue with WooCommerce Product Addons: adding a second item for the same product added the first product again too
 * Bug fix: a slash character was missing the in product breadcrumb when the translated page slug was identical to the one in the default language
 * Bug fix: incorrect cost for the flat rate shipping was displayed in certain circumstances
+* Improved compatibility with Gravity Forms Product Addons for translating the cart data
+* Removed a deprecated hook used for the compatibility with WooCommerce Subscriptions
 
 = 3.6.11 =
 * Fixed one issue that was causing a fatal error when an older version WPML was used (3.1.9.7)
