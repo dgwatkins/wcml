@@ -14,7 +14,6 @@ if(defined('WCML_VERSION')) return;
 define('WCML_VERSION', '3.7');
 define('WCML_PLUGIN_PATH', dirname(__FILE__));
 define('WCML_PLUGIN_FOLDER', basename(WCML_PLUGIN_PATH));
-define('WCML_PLUGIN_URL', plugins_url() . '/' . WCML_PLUGIN_FOLDER);
 define('WCML_LOCALE_PATH',WCML_PLUGIN_PATH.'/locale');
 define('WPML_LOAD_API_SUPPORT',true);
 
@@ -43,6 +42,7 @@ require WCML_PLUGIN_PATH . '/inc/url-translation.class.php';
 
 require WCML_PLUGIN_PATH . '/woocommerce_wpml.class.php';
 
+define('WCML_PLUGIN_URL', wpml_filter_include_url( untrailingslashit( plugin_dir_url( __FILE__ ) ) ));
 
 function wpml_wcml_startup() {
     global $woocommerce_wpml;
