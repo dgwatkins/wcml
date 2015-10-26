@@ -465,7 +465,10 @@ class woocommerce_wpml {
     function documentation_links(){
         global $post, $pagenow;
 
-        $get_post_type = get_post_type(@$post->ID);
+        if( is_null( $post ) )
+            return;
+
+        $get_post_type = get_post_type($post->ID);
 
         if($get_post_type == 'product' && $pagenow == 'edit.php'){
             $prot_link = '<span class="button"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="'. $this->generate_tracking_link('http://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation','#4') .'" target="_blank">' .
