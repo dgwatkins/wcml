@@ -3263,7 +3263,7 @@ class WCML_Products{
     function filter_product_attributes_for_translation( $translated, $key ){
 
         $translated = $translated
-            ? preg_match('#^(?!field-_product_attributes-(.+)-(.+)-(?!value))#', $key) : 0;
+            ? preg_match('#^(?!field-_product_attributes-(.+)-(.+)-(?!value|name))#', $key) : 0;
 
         return $translated;
 
