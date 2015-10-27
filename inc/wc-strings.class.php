@@ -587,10 +587,19 @@ class WCML_WC_Strings{
         if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
             global $wpdb;
 
-            $string_id = icl_get_string_id( $value, $context, $name );
+            if( $name !== false ){
 
-            $string_object                  = new WPML_ST_String($string_id, $wpdb);
-            $string_language                = $string_object->get_language();
+                $string_language = apply_filters( 'wpml_get_string_language', null, $context, $name );
+
+            }else{
+
+                $string_id = icl_get_string_id( $value, $context, $name );
+
+                $string_object                  = new WPML_ST_String($string_id, $wpdb);
+                $string_language                = $string_object->get_language();
+
+            }
+
 
             return $string_language;
         }else{
