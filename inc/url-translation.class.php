@@ -71,7 +71,7 @@ class WCML_Url_Translation {
 
         $woocommerce_permalinks = maybe_unserialize( get_option('woocommerce_permalinks') );
 
-        foreach($woocommerce_permalinks as $base_key => $base){
+        foreach ( (array) $woocommerce_permalinks as $base_key => $base ) {
 
             $base_key = trim($base_key, '/');
 
