@@ -34,7 +34,7 @@ class WCML_Url_Translation {
 
         if ( empty( $woocommerce_wpml->settings['url_translation_set_up'] ) ) {
 
-            $this->clean_up_product_bases();
+            $this->clean_up_product_and_taxonomy_bases();
 
             //set translate product by default
             $this->translate_product_base();
@@ -47,7 +47,7 @@ class WCML_Url_Translation {
 
     }
 
-    function clean_up_product_bases(){
+    function clean_up_product_and_taxonomy_bases(){
         global $wpdb;
 
         $base = $this->get_woocommerce_product_base();
@@ -68,6 +68,26 @@ class WCML_Url_Translation {
                 'name'      => sprintf('Url slug: %s', trim( $base,'/' ))
             )
         );
+
+        $woocommerce_permalinks = maybe_unserialize( get_option('woocommerce_permalinks') );
+
+        foreach($woocommerce_permalinks as $base_key => $base){
+
+            $base_key = trim($base_key, '/');
+
+            $taxonomy = false;
+
+            switch( $base_key ){
+                case 'category_base': $taxonomy = 'product_cat'; break;
+                case 'tag_base':      $taxonomy = 'product_tag'; break;
+                case 'attribute_base':$taxonomy = 'attribute'; break;
+            }
+
+            if( $taxonomy ) {
+                $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}icl_strings WHERE context = %s AND name != %s' ", sprintf('URL %s slugs - %s', $taxonomy, $base), sprintf('Url %s slug: %s', $taxonomy, $base) ) );
+            }
+
+        }
 
     }
 
