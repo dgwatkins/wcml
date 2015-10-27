@@ -84,7 +84,7 @@ class WCML_Url_Translation {
             }
 
             if( $taxonomy ) {
-                $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}icl_strings WHERE context = %s AND name != %s", sprintf('URL %s slugs - %s', $taxonomy, $base), sprintf('Url %s slug: %s', $taxonomy, $base) ) );
+                $wpdb->query( "DELETE FROM {$wpdb->prefix}icl_strings WHERE context LIKE '".sprintf('URL %s slugs - ', $taxonomy)."%'" );
             }
 
         }
