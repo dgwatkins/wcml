@@ -96,12 +96,13 @@ class WCML_Multi_Currency_Support{
             //filters for wc-widget-price-filter
             add_filter( 'woocommerce_price_filter_results', array( $this, 'filter_price_filter_results' ), 10, 3 );
             add_filter( 'woocommerce_price_filter_widget_amount', array( $this, 'filter_price_filter_widget_amount' ) );
+
+            add_filter('option_woocommerce_price_thousand_sep', array($this, 'filter_currency_thousand_sep_option'));
+            add_filter('option_woocommerce_price_decimal_sep', array($this, 'filter_currency_decimal_sep_option'));
+            add_filter('option_woocommerce_price_num_decimals', array($this, 'filter_currency_num_decimals_option'));
             
         }
 
-        add_filter('option_woocommerce_price_thousand_sep', array($this, 'filter_currency_thousand_sep_option'));
-        add_filter('option_woocommerce_price_decimal_sep', array($this, 'filter_currency_decimal_sep_option'));
-        add_filter('option_woocommerce_price_num_decimals', array($this, 'filter_currency_num_decimals_option'));
 
         add_filter('option_woocommerce_currency_pos', array($this, 'filter_currency_position_option'));
         add_filter( 'woocommerce_get_formatted_order_total', array( $this, 'filter_get_formatted_order_total' ), 10, 2 );
