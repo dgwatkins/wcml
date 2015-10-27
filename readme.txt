@@ -89,6 +89,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fix: incorrect cost for the flat rate shipping was displayed in certain circumstances
 * Improved compatibility with Gravity Forms Product Addons for translating the cart data
 * Removed a deprecated hook used for the compatibility with WooCommerce Subscriptions
+* Bug fix: cart_widget.js code was loaded in places that it wasn't needed
 
 = 3.6.11 =
 * Fixed one issue that was causing a fatal error when an older version WPML was used (3.1.9.7)
