@@ -52,7 +52,9 @@ class WCML_Products{
             add_filter( 'post_row_actions', array( $this, 'filter_product_actions' ), 10, 2 );
 
             add_filter ( 'locale',array( $this, 'update_product_action_locale_check' ) );
-            
+
+            add_filter( 'wpml_translation_job_post_meta_value_translated', array($this, 'filter_product_attributes_for_translation'), 10, 2 );
+
         }else{
             add_filter('woocommerce_json_search_found_products', array($this, 'filter_found_products_by_language'));
             add_filter( 'loop_shop_post_in', array( $this, 'filter_products_with_custom_prices' ), 100 );
@@ -3256,6 +3258,15 @@ class WCML_Products{
         }
 
         return $args;
+    }
+
+    function filter_product_attributes_for_translation( $translated, $key ){
+
+        $translated = $translated
+            ? preg_match('#^(?!field-_product_attributes-(.+)-(.+)-(?!value))#', $key) : 0;
+
+        return $translated;
+
     }
 
     /*
