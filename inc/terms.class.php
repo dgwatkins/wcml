@@ -854,14 +854,18 @@ class WCML_Terms{
 
     function get_product_terms_filter( $terms, $product_id, $taxonomy, $args ){
         global $sitepress;
-        remove_filter( 'woocommerce_get_product_terms', array( $this, 'get_product_terms_filter' ), 10, 4 );
-        $current_language = $sitepress->get_current_language();
-        $sitepress->switch_lang( $sitepress->get_language_for_element( $product_id, 'post_'.get_post_type( $product_id ) ) );
-        $terms = wc_get_product_terms( $product_id, $taxonomy, $args );
-        $sitepress->switch_lang( $current_language );
-        add_filter( 'woocommerce_get_product_terms', array( $this, 'get_product_terms_filter' ), 10, 4 );
 
-        return $terms;
+        $language = $sitepress->get_language_for_element( $product_id, 'post_'.get_post_type( $product_id ) );
+
+        $filtered_terms = array();
+
+        foreach( $terms as $term_name ){
+            $term = get_term_by( 'name', $term_name, $taxonomy );
+            $trnsl_term_id = apply_filters( 'translate_object_id', $term->term_id, $taxonomy, true, $language );
+            $filtered_terms[] = get_term( $trnsl_term_id )->name;
+        }
+
+        return $filtered_terms;
     }
 
     function update_woocommerce_flat_rate_settings( $settings ){
