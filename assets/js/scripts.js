@@ -529,6 +529,9 @@ jQuery(document).ready(function($){
         }else{
             $(this).closest('.wp-editor-wrap').find('.mce-tinymce').show();
         }
+
+        window.parent.tinyMCE.get(id).setContent( $(this).closest('.wp-editor-wrap').find('textarea.wcml_content_tr').val() );
+
     });
 
     $(document).on('click','.switch-html',function(){
@@ -538,6 +541,9 @@ jQuery(document).ready(function($){
         QTags(id);
         QTags._buttonsInit();
         $(this).closest('.wp-editor-wrap').find('.mce-tinymce').hide();
+
+        $(this).closest('.wp-editor-wrap').find('textarea.wcml_content_tr').val( window.parent.tinyMCE.get(id).getContent() );
+
         $(this).closest('.wp-editor-wrap').find('textarea.wcml_content_tr').show();
     });
 
