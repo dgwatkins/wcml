@@ -862,7 +862,7 @@ class WCML_Terms{
         foreach( $terms as $term_name ){
             $term = get_term_by( 'name', $term_name, $taxonomy );
             $trnsl_term_id = apply_filters( 'translate_object_id', $term->term_id, $taxonomy, true, $language );
-            $filtered_terms[] = get_term( $trnsl_term_id )->name;
+            $filtered_terms[] = get_term( $trnsl_term_id, $taxonomy )->name;
         }
 
         return $filtered_terms;
