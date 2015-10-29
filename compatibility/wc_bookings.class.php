@@ -1568,7 +1568,7 @@ class WCML_Bookings{
     public function booking_filters_query( $query ) {
         global $typenow, $sitepress, $wpdb;
 
-        if ( $query->query_vars['post_type'] == 'wc_booking' || ( $typenow == 'wc_booking' && isset( $_GET['post_type'] ) && $_GET['post_type'] == 'wc_booking' && !isset( $_GET['page'] ) ) ) {
+        if ( ( isset( $query->query_vars['post_type'] ) && $query->query_vars['post_type'] == 'wc_booking' ) || ( $typenow == 'wc_booking' && isset( $_GET['post_type'] ) && $_GET['post_type'] == 'wc_booking' && !isset( $_GET['page'] ) ) ) {
 
             $product_ids = $wpdb->get_col( $wpdb->prepare(
                 "SELECT element_id
