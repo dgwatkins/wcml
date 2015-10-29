@@ -495,6 +495,9 @@ jQuery(document).ready(function($){
             if(  window.parent.tinyMCE.get(id)  == null ){
                 tinymce.execCommand( 'mceAddEditor', false, id);
             }
+
+            $(this).parent().find('.wp-editor-wrap').find('.mce-tinymce').show();
+            $(this).parent().find('textarea.wcml_content_tr').hide();
         }
 
     });
@@ -542,7 +545,9 @@ jQuery(document).ready(function($){
         QTags._buttonsInit();
         $(this).closest('.wp-editor-wrap').find('.mce-tinymce').hide();
 
-        $(this).closest('.wp-editor-wrap').find('textarea.wcml_content_tr').val( window.parent.tinyMCE.get(id).getContent() );
+        if(  window.parent.tinyMCE.get(id)  != null ){
+            $(this).closest('.wp-editor-wrap').find('textarea.wcml_content_tr').val( window.parent.tinyMCE.get(id).getContent() );
+        }
 
         $(this).closest('.wp-editor-wrap').find('textarea.wcml_content_tr').show();
     });
@@ -561,7 +566,7 @@ jQuery(document).ready(function($){
             text_area.val(window.parent.tinyMCE.get(text_area.attr('id')).getContent());
         }
         $(this).closest('.wcml_editor').css('display','none');
-
+        window.parent.tinyMCE.get(text_area.attr('id')).setContent( text_area.val() );
 
         var row_lang = $(this).closest('tr[rel]').attr('rel');
         var prod_id  = $(this).closest('div.wcml_product_row').attr('id');
