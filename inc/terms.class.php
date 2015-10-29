@@ -857,12 +857,19 @@ class WCML_Terms{
 
         $language = $sitepress->get_language_for_element( $product_id, 'post_'.get_post_type( $product_id ) );
 
+        $is_objects_array = is_object( current ( $terms ) );
+
         $filtered_terms = array();
 
-        foreach( $terms as $term_name ){
-            $term = get_term_by( 'name', $term_name, $taxonomy );
+        foreach( $terms as $term ){
+
+            if( !$is_objects_array ){
+                $term = get_term_by( 'name', $term, $taxonomy );
+            }
+
             $trnsl_term_id = apply_filters( 'translate_object_id', $term->term_id, $taxonomy, true, $language );
-            $filtered_terms[] = get_term( $trnsl_term_id, $taxonomy )->name;
+
+            $filtered_terms[] = !$is_objects_array ? get_term( $trnsl_term_id, $taxonomy )->name : get_term( $trnsl_term_id, $taxonomy );
         }
 
         return $filtered_terms;
