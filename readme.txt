@@ -90,6 +90,9 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Improved compatibility with Gravity Forms Product Addons for translating the cart data
 * Removed a deprecated hook used for the compatibility with WooCommerce Subscriptions
 * Bug fix: cart_widget.js code was loaded in places that it wasn't needed
+* Bug fix: in a specific case, the price in a secondary currency was not displayed correctly (the amount in the original currency was displayed)
+* Bug fix: content was disappearing when switching between the visual and text editors on the product translation editor
+* Bug fix: when using attributes that were numeric values a catchable fatal error was triggered
 
 = 3.6.11 =
 * Fixed one issue that was causing a fatal error when an older version WPML was used (3.1.9.7)
