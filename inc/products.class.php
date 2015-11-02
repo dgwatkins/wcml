@@ -55,6 +55,8 @@ class WCML_Products{
 
             add_filter( 'wpml_translation_job_post_meta_value_translated', array($this, 'filter_product_attributes_for_translation'), 10, 2 );
 
+            add_action( 'wp_ajax_woocommerce_feature_product' , array( $this, 'sync_feature_product_meta' ), 9 );
+
         }else{
             add_filter('woocommerce_json_search_found_products', array($this, 'filter_found_products_by_language'));
             add_filter( 'loop_shop_post_in', array( $this, 'filter_products_with_custom_prices' ), 100 );
@@ -3301,6 +3303,31 @@ class WCML_Products{
                 });
             </script>
             <?php
+        }
+
+    }
+
+    function sync_feature_product_meta(){
+
+        if ( current_user_can( 'edit_products' ) && check_admin_referer( 'woocommerce-feature-product' ) ) {
+            $product_id = absint( $_GET['product_id'] );
+
+            if ( 'product' === get_post_type( $product_id ) && $this->is_original_product( $product_id ) ) {
+                global $sitepress;
+
+                $value = get_post_meta( $product_id, '_featured', true ) === 'yes' ? 'no' : 'yes';
+
+                $trid = $sitepress->get_element_trid( $product_id, 'post_product' );
+                $translations = $sitepress->get_element_translations( $trid, 'post_product', true );
+                foreach( $translations as $translation ){
+
+                    if ( !$translation->original ) {
+
+                        update_post_meta( $translation->element_id, '_featured', $value );
+                    }
+                }
+
+            }
         }
 
     }
