@@ -853,7 +853,11 @@ class WCML_Terms{
     }
 
     function get_product_terms_filter( $terms, $product_id, $taxonomy, $args ){
-        global $sitepress;
+        global $sitepress, $woocommerce_wpml;
+
+        if( $woocommerce_wpml->products->is_original_product( $product_id ) ){
+            return $terms;
+        }
 
         $language = $sitepress->get_language_for_element( $product_id, 'post_'.get_post_type( $product_id ) );
 
@@ -864,12 +868,12 @@ class WCML_Terms{
         foreach( $terms as $term ){
 
             if( !$is_objects_array ){
-                $term = get_term_by( 'name', $term, $taxonomy );
+                $term = get_term_by( 'name', urldecode( $term ), $taxonomy );
             }
 
             $trnsl_term_id = apply_filters( 'translate_object_id', $term->term_id, $taxonomy, true, $language );
 
-            $filtered_terms[] = !$is_objects_array ? get_term( $trnsl_term_id, $taxonomy )->name : get_term( $trnsl_term_id, $taxonomy );
+            $filtered_terms[] = !$is_objects_array ? urlencode( get_term( $trnsl_term_id, $taxonomy )->name ) : get_term( $trnsl_term_id, $taxonomy );
         }
 
         return $filtered_terms;
