@@ -853,11 +853,7 @@ class WCML_Terms{
     }
 
     function get_product_terms_filter( $terms, $product_id, $taxonomy, $args ){
-        global $sitepress, $woocommerce_wpml;
-
-        if( $woocommerce_wpml->products->is_original_product( $product_id ) ){
-            return $terms;
-        }
+        global $sitepress;
 
         $language = $sitepress->get_language_for_element( $product_id, 'post_'.get_post_type( $product_id ) );
 
