@@ -562,6 +562,7 @@ class WCML_WC_Strings{
 
             $lang_of_domain = new WPML_Language_Of_Domain( $sitepress );
             $domain_lang = $lang_of_domain->get_language( $domain );
+
             if ( $domain_lang ) {
                 $source_lang = $domain_lang;
             }else{
@@ -581,18 +582,10 @@ class WCML_WC_Strings{
 
     }
 
-    // TODO will use a filter in the future wpmlst-529
     function get_string_language( $value, $context, $name = false ){
 
         if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-            global $wpdb;
-
-            $string_id = icl_get_string_id( $value, $context, $name );
-
-            $string_object                  = new WPML_ST_String($string_id, $wpdb);
-            $string_language                = $string_object->get_language();
-
-            return $string_language;
+            return apply_filters( 'wpml_get_string_language', null, $context, $name );
         }else{
             global $sitepress_settings;
 
