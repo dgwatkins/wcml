@@ -1046,6 +1046,10 @@ jQuery(document).ready(function($){
         if(!template){
             template = $('#currency_switcher_default').val();
         }
+
+        var ajaxLoader = $('<span class="spinner" style="visibility: visible;">');
+        $('#wcml_curr_sel_preview').html(ajaxLoader);
+
         $.ajax({
             type: "POST",
             url: ajaxurl,
