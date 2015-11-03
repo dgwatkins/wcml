@@ -369,7 +369,7 @@ class WCML_Store_Pages{
 
         $missing_lang = '';
         $pages_in_progress = array();
-        
+
         foreach ($check_pages as $page) {
             $page_id = get_option($page);
             $page_obj = get_post($page_id);
@@ -418,6 +418,7 @@ class WCML_Store_Pages{
 
         if (!empty($missing_lang)) {
             $status['lang'] = $missing_lang;
+            $status['codes'] = $missing_lang_codes;
         }
 
          if (!empty($pages_in_progress_notice)) {
