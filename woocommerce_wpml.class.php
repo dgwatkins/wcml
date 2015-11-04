@@ -483,6 +483,18 @@ class woocommerce_wpml {
                     jQuery(".quick_hide a").on('click',function(){
                         jQuery(".quick_product_trnsl_link").attr('href',jQuery("#wcml_product_trnsl_link").val()+jQuery(this).closest('tr').attr('id').replace(/post-/,''));
                     });
+
+                    //lock feautured for translations
+                    jQuery(document).on('click', '.featured a', function(){
+
+                        if( jQuery(this).closest('tr').find('.quick_hide').size() > 0 ){
+
+                            return false;
+
+                        }
+
+                    });
+
                 </script>
         <?php
         }
