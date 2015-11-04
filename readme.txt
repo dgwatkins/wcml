@@ -5,7 +5,7 @@ Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multili
 License: GPLv2
 Requires at least: 3.0
 Tested up to: 4.3
-Stable tag: 3.7.1
+Stable tag: 3.7.2
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
 
@@ -77,6 +77,12 @@ In order for the checkout and store pages to appear translated, you need to crea
 3. Multiple currencies
 
 == Changelog ==
+
+= 3.7.2 =
+* Fixed one compatibility problem with WooCommerce Bookings: bookings were not filtered by language on the front end
+* Fixed one compatibility problem with WooCommerce Composite Products (causing a fatal error when viewing a composite product)
+* Bug fix: in some cases the cart total in a secondary currency was wrongfully rounded instead of showing the decimals
+* Bug fix: translated products were not published on the same schedule when using the future publishing
 
 = 3.7.1 =
 * Compatibility fixes for WooCommerce Bookings and WooCommerce Composite Products
