@@ -76,7 +76,7 @@ class WCML_Dependencies{
             $this->check_for_incompatible_permalinks();
         }
 
-        if( !isset( $woocommerce_wpml->settings['first_setup_warning'] ) ){
+        if( !isset( $woocommerce_wpml->settings['first_setup_warning'] ) && ( !isset( $_GET['tab'] ) || ( isset( $_GET['tab'] ) && $_GET['tab'] != 'status' ) ) ){
             add_action('admin_notices', array($this, '_first_setup_warning'));
         }
         
