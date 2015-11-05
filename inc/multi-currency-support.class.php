@@ -1023,6 +1023,11 @@ class WCML_Multi_Currency_Support{
             }
 
             if($methods[$k]->cost){
+
+                if( isset($shipping_methods[$method->id]) && preg_match('/percent/', $shipping_methods[$method->id]->settings['cost']) ){
+                    continue;
+                }
+
                 $methods[$k]->cost = apply_filters('wcml_shipping_price_amount', $methods[$k]->cost);
             }
 
