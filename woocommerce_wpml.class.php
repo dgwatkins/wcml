@@ -14,7 +14,7 @@ class woocommerce_wpml {
     function __construct(){
 
         add_action('init', array($this, 'init'),2);
-        add_action('init', array($this, 'load_css_and_js'));
+
         add_action('widgets_init', array($this, 'register_widget'));
 
     }
@@ -32,6 +32,8 @@ class woocommerce_wpml {
         }
 
         global $sitepress,$pagenow;
+
+        $this->load_css_and_js();
 
         if($this->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT
             || ( isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && !isset($_GET['tab']) )
