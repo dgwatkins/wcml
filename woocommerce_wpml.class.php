@@ -71,7 +71,7 @@ class woocommerce_wpml {
 
         new WCML_Ajax_Setup;
 
-        new WCML_Requests;
+        $this->requests = new WCML_Requests;
 
         new WCML_WooCommerce_Rest_API_Support;
 

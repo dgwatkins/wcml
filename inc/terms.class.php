@@ -264,6 +264,9 @@ class WCML_Terms{
             }
         }
 
+        //update first setup warning if all setup
+        $woocommerce_wpml->requests->update_first_setup_warning();
+
         echo json_encode($ret);
         exit;
         
@@ -985,6 +988,7 @@ class WCML_Terms{
         $wcml_settings = $woocommerce_wpml->get_settings();
 
         $attribute_taxonomies = wc_get_attribute_taxonomies();
+        $attribute_taxonomies_arr = array();
         foreach($attribute_taxonomies as $a){
             $attribute_taxonomies_arr[] = 'pa_' . $a->attribute_name;
         }
@@ -1034,6 +1038,39 @@ class WCML_Terms{
         }
 
         return $taxonomies;
+    }
+
+    function get_wc_taxonomies(){
+
+        global $wp_taxonomies;
+        $taxonomies = array();
+
+        //don't use get_taxonomies for product, because when one more post type registered for product taxonomy functions returned taxonomies only for product type
+        foreach ( $wp_taxonomies as $key => $taxonomy ) {
+            if ( ( in_array( 'product', $taxonomy->object_type ) || in_array( 'product_variation', $taxonomy->object_type ) ) && ! in_array( $key, $taxonomies ) ) {
+                $taxonomies[] = $key;
+            }
+        }
+
+        return $taxonomies;
+
+    }
+
+    function has_wc_taxonomies_to_translate(){
+
+        $taxonomies = $this->get_wc_taxonomies();
+
+        $no_tax_to_trnls = false;
+        foreach ( $taxonomies as $taxonomy ){
+            if ( $taxonomy == 'product_type' || WCML_Terms::get_untranslated_terms_number( $taxonomy ) == 0 ) {
+                continue;
+            } else {
+                $no_tax_to_trnls = true;
+            }
+        }
+
+        return $no_tax_to_trnls;
+
     }
 
 }

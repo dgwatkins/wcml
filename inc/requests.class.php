@@ -123,4 +123,13 @@ class WCML_Requests{
 
     }
 
+    function update_first_setup_warning( $check_tax_only = false ){
+        global $woocommerce_wpml;
+
+        if( ( $check_tax_only && !$woocommerce_wpml->terms->has_wc_taxonomies_to_translate() )  || ( !$woocommerce_wpml->terms->has_wc_taxonomies_to_translate() && !$woocommerce_wpml->store->get_missing_store_pages() ) ){
+            $woocommerce_wpml->settings['first_setup_warning'] = 1;
+            $woocommerce_wpml->update_settings();
+        }
+    }
+
 }

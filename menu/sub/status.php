@@ -237,15 +237,7 @@ if ( ( ! WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty
 		<input type="hidden" id="wcml_ingore_taxonomy_translation_nonce"
 		       value="<?php echo wp_create_nonce( 'wcml_ingore_taxonomy_translation_nonce' ) ?>"/>
 		<?php
-		global $wp_taxonomies;
-		$taxonomies = array();
-
-		//don't use get_taxonomies for product, because when one more post type registered for product taxonomy functions returned taxonomies only for product type
-		foreach ( $wp_taxonomies as $key => $taxonomy ) {
-			if ( ( in_array( 'product', $taxonomy->object_type ) || in_array( 'product_variation', $taxonomy->object_type ) ) && ! in_array( $key, $taxonomies ) ) {
-				$taxonomies[] = $key;
-			}
-		}
+		$taxonomies = $woocommerce_wpml->terms->get_wc_taxonomies();
 
 		?>
 		<ul class="wcml-status-list wcml-tax-translation-list">

@@ -354,8 +354,12 @@ class WCML_Store_Pages{
                 $sitepress->switch_lang($default_language);
                 load_textdomain( 'woocommerce-multilingual', WCML_LOCALE_PATH . '/woocommerce-multilingual-' . $sitepress->get_locale( $default_language ) . '.mo' );
             }
+
+            //update first setup warning if all setup
+            $woocommerce_wpml->requests->update_first_setup_warning( true );
+
             
-            wp_redirect(admin_url('admin.php?page=wpml-wcml')); exit;
+            wp_redirect(admin_url('admin.php?page=wpml-wcml&tab=status')); exit;
         }
     }
     
