@@ -2,16 +2,17 @@
 
 class WCML_TP_Support{
 
+    public $tp;
+
     function __construct(){
+
+        $this->tp = new WPML_Element_Translation_Package;
 
         add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_custom_attributes_to_translation_package' ), 10, 2 );
         add_action( 'wpml_translation_job_saved', array( $this, 'save_custom_attribute_translations' ), 10, 2 );
 
         add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_variation_descriptions_translation_package' ), 10, 2 );
-        add_action( 'icl_pro_translation_completed', array( $this, 'save_variation_descriptions_translations' ), 20, 3 ); //after WCML_Products
-
-
-
+        add_action( 'wpml_pro_translation_completed', array( $this, 'save_variation_descriptions_translations' ), 20, 3 ); //after WCML_Products
     }
 
 
@@ -28,7 +29,7 @@ class WCML_TP_Support{
 
                     $package['contents']['wc_attribute_name:' . $attribute_key] = array(
                         'translate' => 1,
-                        'data'      => base64_encode( $attribute['name'] ),
+                        'data'      => $this->tp->encode_field_data( $attribute['name'], 'base64' ),
                         'encoding'  => 'base64'
                     );
 
@@ -36,11 +37,20 @@ class WCML_TP_Support{
                     $values = array_map('trim', $values);
 
 
+                    /* // csv_base64 option
+                    $package['contents']['wc_attribute_values:' . $attribute_key] = array(
+                        'translate' => 1,
+                        'data'      => $this->tp->encode_field_data( $values, 'csv_base64' ),
+                        'encoding'  => 'csv_base64'
+                    );
+                    */
+
+
                     foreach( $values as $value_key => $value ){
 
                         $package['contents']['wc_attribute_value:' . $value_key . ':' . $attribute_key] = array(
                             'translate' => 1,
-                            'data'      => base64_encode( $value ),
+                            'data'      => $this->tp->encode_field_data( $value, 'base64' ),
                             'encoding'  => 'base64'
                         );
 
@@ -68,7 +78,7 @@ class WCML_TP_Support{
                     $exp = explode( ':', $value['field_type'], 2 );
                     $attribute_key = $exp[1];
 
-                    //$translated_attributes[$attribute_key]['name'] = base64_decode( $value['data'] );
+                    //$translated_attributes[$attribute_key]['name'] = $this->tp->decode_field_data( $value['data'], 'base64; );
                     $translated_attributes[$attribute_key]['name'] =  $value['data'];
 
                 } else if( strpos( $value['field_type'], 'wc_attribute_value:' ) === 0 ){
@@ -77,7 +87,7 @@ class WCML_TP_Support{
                     $value_key = $exp[1];
                     $attribute_key = $exp[2];
 
-                    //$translated_attributes[$attribute_key]['values'][$value_key] = base64_decode( $value['data'] );
+                    //$translated_attributes[$attribute_key]['values'][$value_key] = $this->tp->decode_field_data( $value['data'], 'base64' );
                     $translated_attributes[$attribute_key]['values'][$value_key] = $value['data'];
 
                 }
@@ -89,7 +99,6 @@ class WCML_TP_Support{
         if( $translated_attributes ) {
 
             $product_attributes = get_post_meta( $post_id, '_product_attributes', true );
-
 
             $original_post_language = $woocommerce_wpml->products->get_original_product_language( $post_id );
             $original_post_id = apply_filters( 'translate_object_id', $post_id, 'product', false, $original_post_language );
@@ -129,7 +138,7 @@ class WCML_TP_Support{
 
                     $package['contents']['wc_variation_description:' . $variation['variation_id']] = array(
                         'translate' => 1,
-                        'data'      => base64_encode( $variation['variation_description'] ),
+                        'data'      => $this->tp->encode_field_data( $variation['variation_description'], 'base64' ),
                         'encoding'  => 'base64'
                     );
 
@@ -144,7 +153,9 @@ class WCML_TP_Support{
 
     }
 
-    function save_variation_descriptions_translations($post_id, $data, $language){
+    function save_variation_descriptions_translations($post_id, $data, $job){
+
+        $language = $job->language_code;
 
         foreach( $data as $data_key => $value){
 
@@ -166,7 +177,7 @@ class WCML_TP_Support{
                 }
 
                 if($translated_variation_id){
-                    //update_post_meta($translated_variation_id, '_variation_description', base64_decode( $value['data'] ) );
+                    //update_post_meta($translated_variation_id, '_variation_description', $this->tp->decode_field_data( $value['data'], 'base64' ) );
                     update_post_meta($translated_variation_id, '_variation_description',  $value['data'] );
                 }
 
