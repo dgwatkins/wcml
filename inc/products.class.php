@@ -6,6 +6,8 @@ class WCML_Products{
     private $tinymce_plugins_for_rtl = '';
     private $yoast_seo_fields = array( '_yoast_wpseo_focuskw', '_yoast_wpseo_title', '_yoast_wpseo_metadesc' );
 
+    public $tp_support;
+
     function __construct(){
 
         add_action( 'init', array( $this, 'init' ) );
@@ -15,6 +17,7 @@ class WCML_Products{
         add_action( 'woocommerce_coupon_loaded', array( $this, 'wcml_coupon_loaded' ) );
 
         add_action( 'init', array( $this, 'set_prices_config' ), 9999 ); // After TM
+
     }
 
     function init(){
@@ -58,6 +61,9 @@ class WCML_Products{
             add_filter( 'wpml_translation_job_post_meta_value_translated', array($this, 'filter_product_attributes_for_translation'), 10, 2 );
 
             add_action( 'wp_ajax_woocommerce_feature_product' , array( $this, 'sync_feature_product_meta' ), 9 );
+
+            $this->tp_support = new WCML_TP_Support();
+
         }else{
             add_filter('woocommerce_json_search_found_products', array($this, 'filter_found_products_by_language'));
             add_filter( 'loop_shop_post_in', array( $this, 'filter_products_with_custom_prices' ), 100 );
@@ -631,6 +637,7 @@ class WCML_Products{
         //get "_product_attributes" from original product
         $orig_product_attrs = $this->get_product_atributes( $original_product_id );
         $trnsl_product_attrs = $this->get_product_atributes( $tr_product_id );
+
         $trnsl_labels = get_post_meta( $tr_product_id, 'attr_label_translations', true );
 
         foreach ( $orig_product_attrs as $key => $orig_product_attr ) {
@@ -654,7 +661,12 @@ class WCML_Products{
                     $orig_product_attrs[ $key_to_save ][ 'value' ] = '';
                 }
             }elseif( !$orig_product_attr[ 'is_taxonomy' ] ){
-                $orig_product_attrs[ $key_to_save ][ 'value' ] = $trnsl_product_attrs[ $key ][ 'value' ];
+
+                if( isset( $trnsl_product_attrs[ $key ] ) ){
+                    $orig_product_attrs[ $key_to_save ][ 'value' ] = $trnsl_product_attrs[ $key ][ 'value' ];
+                }else{
+                    unset ( $orig_product_attrs[ $key_to_save ] );
+                }
             }
 
         }
