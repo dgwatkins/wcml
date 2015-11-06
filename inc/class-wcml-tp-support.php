@@ -8,7 +8,9 @@ class WCML_TP_Support{
         add_action( 'wpml_translation_job_saved', array( $this, 'save_custom_attribute_translations' ), 10, 2 );
 
         add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_variation_descriptions_translation_package' ), 10, 2 );
-        add_action( 'wpml_translation_job_saved', array( $this, 'save_variation_descriptions_translations' ), 10, 2 );
+        add_action( 'icl_pro_translation_completed', array( $this, 'save_variation_descriptions_translations' ), 20, 3 ); //after WCML_Products
+
+
 
     }
 
@@ -123,11 +125,11 @@ class WCML_TP_Support{
 
             foreach( $variations as $variation ){
 
-                if( !empty($variation['description']) ){
+                if( !empty($variation['variation_description']) ){
 
                     $package['contents']['wc_variation_description:' . $variation['variation_id']] = array(
                         'translate' => 1,
-                        'data'      => base64_encode( $variation['description'] ),
+                        'data'      => base64_encode( $variation['variation_description'] ),
                         'encoding'  => 'base64'
                     );
 
@@ -142,20 +144,32 @@ class WCML_TP_Support{
 
     }
 
-    function save_variation_descriptions_translations($post_id, $data){
-        global $woocommerce_wpml;
+    function save_variation_descriptions_translations($post_id, $data, $language){
 
         foreach( $data as $data_key => $value){
 
             if( $value['finished'] && strpos( $value['field_type'], 'wc_variation_description:' ) === 0 ){
 
-                $variation_id = substr( $value['field_type'], strpos($value['field_type']) + 1 );
+                $variation_id = substr( $value['field_type'], strpos($value['field_type'], ':') + 1 );
 
-                $language = $woocommerce_wpml->products->get_original_product_language( $post_id );
+                if( is_post_type_translated( 'product_variation' ) ){
 
-                $translated_variation_id = apply_filters( 'translate_object_id', $variation_id, 'product', false, $language );
+                    $translated_variation_id = apply_filters( 'translate_object_id', $variation_id, 'product_variation', false, $language );
 
-                update_post_meta($translated_variation_id, '_variation_description', base64_decode( $value['data'] ) );
+                }else{
+                    global $sitepress;
+                    $trid = $sitepress->get_element_trid($variation_id, 'post_product_variation');
+                    $translations = $sitepress->get_element_translations($trid, 'post_product_variation', true, true, true);
+
+                    $translated_variation_id = isset( $translations[$language] ) ? $translations[$language]->element_id : false;
+
+                }
+
+                if($translated_variation_id){
+                    //update_post_meta($translated_variation_id, '_variation_description', base64_decode( $value['data'] ) );
+                    update_post_meta($translated_variation_id, '_variation_description',  $value['data'] );
+                }
+
 
             }
 
