@@ -10,6 +10,11 @@ class WCML_Variation_Swatches_and_Photos{
         global $sitepress, $wpdb;
         
         $atts = maybe_unserialize(get_post_meta($original_product_id, '_swatch_type_options', true));
+				
+				if (!is_array($atts)) {
+					return;
+				}
+				
         $lang = $sitepress->get_language_for_element($trnsl_product_id,'post_product');
         $tr_atts = $atts;
         
