@@ -4,6 +4,8 @@ class WCML_TP_Support{
 
     public $tp;
 
+    public $tp;
+
     function __construct(){
 
         $this->tp = new WPML_Element_Translation_Package;
