@@ -68,7 +68,7 @@ class WCML_TP_Support{
                     $exp = explode( ':', $value['field_type'], 2 );
                     $attribute_key = $exp[1];
 
-                    $translated_attributes[$attribute_key]['name'] = $this->tp->decode_field_data( $value['data'], 'base64' );
+                    $translated_attributes[$attribute_key]['name'] = $value['data'];
 
                 } else if( strpos( $value['field_type'], 'wc_attribute_value:' ) === 0 ){
 
@@ -76,7 +76,7 @@ class WCML_TP_Support{
                     $value_key = $exp[1];
                     $attribute_key = $exp[2];
 
-                    $translated_attributes[$attribute_key]['values'][$value_key] = $this->tp->decode_field_data( $value['data'], 'base64' );
+                    $translated_attributes[$attribute_key]['values'][$value_key] = $value['data'];
 
                 }
 
@@ -165,7 +165,7 @@ class WCML_TP_Support{
                 }
 
                 if($translated_variation_id){
-                    update_post_meta($translated_variation_id, '_variation_description', $this->tp->decode_field_data( $value['data'], 'base64' ) );
+                    update_post_meta($translated_variation_id, '_variation_description', $value['data'] );
                 }
 
 
