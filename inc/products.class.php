@@ -29,7 +29,7 @@ class WCML_Products{
             add_action( 'woocommerce_attribute_added', array( $this, 'make_new_attribute_translatable' ), 10, 2 );
 
             // filters to sync variable products
-            add_action( 'save_post', array( $this, 'sync_post_action' ), 11, 2 ); // After WPML
+            add_action( 'save_post', array( $this, 'sync_post_action' ), 110, 2 ); // After WPML
 
             add_filter( 'future_product', array( $this, 'set_schedule_for_translations'), 10, 2 );
             //when save new attachment duplicate product gallery
@@ -1553,7 +1553,7 @@ class WCML_Products{
 
         // If we reach this point, we go ahead with sync.
         // Remove filter to avoid double sync
-        remove_action( 'save_post', array( $this, 'sync_post_action' ), 11, 2 );
+        remove_action( 'save_post', array( $this, 'sync_post_action' ), 110, 2 );
 
         do_action( 'wcml_before_sync_product', $duplicated_post_id, $post_id );
 
