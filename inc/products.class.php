@@ -1613,7 +1613,7 @@ class WCML_Products{
             $this->sync_default_product_attr( $duplicated_post_id, $post_id, $lang );
 
             $this->sync_product_attr( $duplicated_post_id, $post_id );
-            
+
             $this->update_order_for_product_translations( $duplicated_post_id );
 
             // synchronize post variations
