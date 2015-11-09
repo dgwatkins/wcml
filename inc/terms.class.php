@@ -871,7 +871,7 @@ class WCML_Terms{
                 }
             }
 
-            if( !$term_obj ){
+            if( empty($term_obj) ){
                 $filtered_terms[] = $term;
                 continue;
             }
