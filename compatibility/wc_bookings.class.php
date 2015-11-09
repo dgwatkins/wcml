@@ -6,8 +6,6 @@ class WCML_Bookings{
 
     function __construct(){
 
-        $this->tp = new WPML_Element_Translation_Package;
-
         add_action( 'woocommerce_bookings_after_booking_base_cost' , array( $this, 'wcml_price_field_after_booking_base_cost' ) );
         add_action( 'woocommerce_bookings_after_booking_block_cost' , array( $this, 'wcml_price_field_after_booking_block_cost' ) );
         add_action( 'woocommerce_bookings_after_display_cost' , array( $this, 'wcml_price_field_after_display_cost' ) );
@@ -67,12 +65,14 @@ class WCML_Bookings{
         add_action( 'wp_trash_post', array( $this, 'trash_bookings' ) );
 
         if( is_admin() ){
+
+            $this->tp = new WPML_Element_Translation_Package;
+
             add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_persons_to_translation_package' ), 10, 2 );
             add_action( 'wpml_translation_job_saved',   array( $this, 'save_person_translation' ), 10, 3 );
 
             add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_resources_to_translation_package' ), 10, 2 );
             add_action( 'wpml_translation_job_saved',   array( $this, 'save_resource_translation' ), 10, 3 );
-
         }
 
         $this->clear_transient_fields();
@@ -269,15 +269,15 @@ class WCML_Bookings{
 
             echo '<div class="wcml_custom_costs">';
 
-                echo '<input type="radio" name="_wcml_custom_costs" id="wcml_custom_costs_auto" value="0" class="wcml_custom_costs_input" '. $checked .' />';
-                echo '<label for="wcml_custom_costs_auto">'. __('Calculate costs in other currencies automatically', 'woocommerce-multilingual') .'</label>';
+            echo '<input type="radio" name="_wcml_custom_costs" id="wcml_custom_costs_auto" value="0" class="wcml_custom_costs_input" '. $checked .' />';
+            echo '<label for="wcml_custom_costs_auto">'. __('Calculate costs in other currencies automatically', 'woocommerce-multilingual') .'</label>';
 
-                $checked = $custom_costs_status == 1 ? 'checked="checked"' : ' ';
+            $checked = $custom_costs_status == 1 ? 'checked="checked"' : ' ';
 
-                echo '<input type="radio" name="_wcml_custom_costs" value="1" id="wcml_custom_costs_manually" class="wcml_custom_costs_input" '. $checked .' />';
-                echo '<label for="wcml_custom_costs_manually">'. __('Set costs in other currencies manually', 'woocommerce-multilingual') .'</label>';
+            echo '<input type="radio" name="_wcml_custom_costs" value="1" id="wcml_custom_costs_manually" class="wcml_custom_costs_input" '. $checked .' />';
+            echo '<label for="wcml_custom_costs_manually">'. __('Set costs in other currencies manually', 'woocommerce-multilingual') .'</label>';
 
-                wp_nonce_field( 'wcml_save_custom_costs', '_wcml_custom_costs_nonce' );
+            wp_nonce_field( 'wcml_save_custom_costs', '_wcml_custom_costs_nonce' );
 
             echo '</div>';
         }
@@ -1740,7 +1740,7 @@ class WCML_Bookings{
                 $person_id  = $exp[2];
                 $field      = $exp[3];
 
-                $person_translations[$person_id][$field] = $this->tp->decode_field_data( $value['data'], 'base64' );
+                $person_translations[$person_id][$field] = $value['data'];
 
             }
 
@@ -1819,7 +1819,7 @@ class WCML_Bookings{
 
     }
 
-    function save_resource_translation($post_id, $data, $job ){
+    function save_resource_translation( $post_id, $data, $job ){
         global $sitepress, $wpdb;
 
         $resource_translations = array();
@@ -1833,7 +1833,7 @@ class WCML_Bookings{
                 $resource_id  = $exp[2];
                 $field        = $exp[3];
 
-                $resource_translations[$resource_id][$field] = $this->tp->decode_field_data( $value['data'], 'base64' );
+                $resource_translations[$resource_id][$field] = $value['data'];
 
             }
 
