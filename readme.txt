@@ -86,6 +86,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fix: translated products were not published on the same schedule when using the future publishing
 * Bug fix: in some situations variations could not be created for a variable product with global attributes that contained special characters
 * Bug fix: wrong currency was used in an order when the currency was changed while placing the order and checkingout with Paypal
+* Bug fix: the relationship of a duplicate product with the original was lost when the original was updated.
 
 = 3.7.1 =
 * Compatibility fixes for WooCommerce Bookings and WooCommerce Composite Products
