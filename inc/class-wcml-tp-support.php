@@ -30,28 +30,18 @@ class WCML_TP_Support{
                     $package['contents']['wc_attribute_name:' . $attribute_key] = array(
                         'translate' => 1,
                         'data'      => $this->tp->encode_field_data( $attribute['name'], 'base64' ),
-                        'encoding'  => 'base64'
+                        'format'    => 'base64'
                     );
 
                     $values = explode( '|', $attribute['value'] );
                     $values = array_map('trim', $values);
-
-
-                    /* // csv_base64 option
-                    $package['contents']['wc_attribute_values:' . $attribute_key] = array(
-                        'translate' => 1,
-                        'data'      => $this->tp->encode_field_data( $values, 'csv_base64' ),
-                        'encoding'  => 'csv_base64'
-                    );
-                    */
-
 
                     foreach( $values as $value_key => $value ){
 
                         $package['contents']['wc_attribute_value:' . $value_key . ':' . $attribute_key] = array(
                             'translate' => 1,
                             'data'      => $this->tp->encode_field_data( $value, 'base64' ),
-                            'encoding'  => 'base64'
+                            'format'    => 'base64'
                         );
 
                     }
@@ -78,8 +68,7 @@ class WCML_TP_Support{
                     $exp = explode( ':', $value['field_type'], 2 );
                     $attribute_key = $exp[1];
 
-                    //$translated_attributes[$attribute_key]['name'] = $this->tp->decode_field_data( $value['data'], 'base64; );
-                    $translated_attributes[$attribute_key]['name'] =  $value['data'];
+                    $translated_attributes[$attribute_key]['name'] = $this->tp->decode_field_data( $value['data'], 'base64' );
 
                 } else if( strpos( $value['field_type'], 'wc_attribute_value:' ) === 0 ){
 
@@ -87,8 +76,7 @@ class WCML_TP_Support{
                     $value_key = $exp[1];
                     $attribute_key = $exp[2];
 
-                    //$translated_attributes[$attribute_key]['values'][$value_key] = $this->tp->decode_field_data( $value['data'], 'base64' );
-                    $translated_attributes[$attribute_key]['values'][$value_key] = $value['data'];
+                    $translated_attributes[$attribute_key]['values'][$value_key] = $this->tp->decode_field_data( $value['data'], 'base64' );
 
                 }
 
@@ -139,7 +127,7 @@ class WCML_TP_Support{
                     $package['contents']['wc_variation_description:' . $variation['variation_id']] = array(
                         'translate' => 1,
                         'data'      => $this->tp->encode_field_data( $variation['variation_description'], 'base64' ),
-                        'encoding'  => 'base64'
+                        'format'    => 'base64'
                     );
 
                 }
@@ -177,8 +165,7 @@ class WCML_TP_Support{
                 }
 
                 if($translated_variation_id){
-                    //update_post_meta($translated_variation_id, '_variation_description', $this->tp->decode_field_data( $value['data'], 'base64' ) );
-                    update_post_meta($translated_variation_id, '_variation_description',  $value['data'] );
+                    update_post_meta($translated_variation_id, '_variation_description', $this->tp->decode_field_data( $value['data'], 'base64' ) );
                 }
 
 

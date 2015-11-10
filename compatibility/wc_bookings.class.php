@@ -1707,13 +1707,13 @@ class WCML_Bookings{
                     $package['contents']['wc_bookings:person:' . $person_type->ID . ':name'] = array(
                         'translate' => 1,
                         'data' => $this->tp->encode_field_data( $person_type->post_title, 'base64' ),
-                        'encoding' => 'base64'
+                        'format'    => 'base64'
                     );
 
                     $package['contents']['wc_bookings:person:' . $person_type->ID . ':description'] = array(
                         'translate' => 1,
                         'data' => $this->tp->encode_field_data( $person_type->post_excerpt, 'base64' ),
-                        'encoding' => 'base64'
+                        'format'    => 'base64'
                     );
 
                 }
@@ -1740,8 +1740,7 @@ class WCML_Bookings{
                 $person_id  = $exp[2];
                 $field      = $exp[3];
 
-                //$person_translations[$person_id][$field] = $this->tp->decode_field_data( $value['data'], 'base64' );
-                $person_translations[$person_id][$field] = $value['data'];
+                $person_translations[$person_id][$field] = $this->tp->decode_field_data( $value['data'], 'base64' );
 
             }
 
@@ -1807,7 +1806,7 @@ class WCML_Bookings{
                     $package['contents']['wc_bookings:resource:' . $resource->ID . ':name'] = array(
                         'translate' => 1,
                         'data' => $this->tp->encode_field_data( $resource->post_title, 'base64' ),
-                        'encoding' => 'base64'
+                        'format'    => 'base64'
                     );
 
                 }
@@ -1834,8 +1833,7 @@ class WCML_Bookings{
                 $resource_id  = $exp[2];
                 $field        = $exp[3];
 
-                //$resource_translations[$resource_id][$field] = $this->tp->decode_field_data( $value['data'], 'base64' );
-                $resource_translations[$resource_id][$field] = $value['data'];
+                $resource_translations[$resource_id][$field] = $this->tp->decode_field_data( $value['data'], 'base64' );
 
             }
 
