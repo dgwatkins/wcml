@@ -2,12 +2,26 @@
 
 class WCML_Tab_Manager{
 
+    public $tp;
+
     function __construct(){
         add_action( 'wcml_after_duplicate_product_post_meta', array( $this, 'sync_tabs' ), 10, 3 );
         add_filter( 'wcml_product_content_exception', array( $this, 'is_have_custom_product_tab' ), 10, 3 );
         add_filter( 'wcml_custom_box_html', array( $this, 'custom_box_html'), 10, 3 );
         add_filter( 'wpml_duplicate_custom_fields_exceptions', array( $this, 'duplicate_custom_fields_exceptions' ) );
         add_action( 'wcml_after_duplicate_product', array( $this, 'duplicate_product_tabs') , 10, 2 );
+
+        if( is_admin() ){
+
+            $this->tp = new WPML_Element_Translation_Package;
+
+            add_action( 'save_post', array($this, 'force_set_language_information_on_product_tabs'), 10, 2);
+
+            add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_custom_tabs_to_translation_package' ), 10, 2 );
+            add_action( 'wpml_translation_job_saved',   array( $this, 'save_custom_tabs_translation' ), 10, 3 );
+
+        }
+
     }
 
     function sync_tabs( $original_product_id, $trnsl_product_id, $data = false ){
@@ -193,7 +207,6 @@ class WCML_Tab_Manager{
         return $exception;
     }
 
-
     function custom_box_html($html,$template_data,$lang){
         if($template_data['product_content'] == '_product_tabs'){
             global $wc_tab_manager;
@@ -274,6 +287,181 @@ class WCML_Tab_Manager{
 
         wc_tab_manager_duplicate_product( $new_id, $original_post );
 
+    }
+
+    function force_set_language_information_on_product_tabs($post_id, $post){
+        global $sitepress;
+
+        if( $post->post_type == 'wc_product_tab' ){
+
+            $language = $sitepress->get_language_for_element($post->ID, 'post_wc_product_tab');
+            if( empty ($language) && $post->post_parent ) {
+                $parent_language = $sitepress->get_language_for_element($post->post_parent, 'post_product');
+                if( $parent_language ){
+                    $sitepress->set_element_language_details($post->ID, 'post_wc_product_tab', null, $parent_language);
+                }
+            }
+
+        }
+
+    }
+
+    function append_custom_tabs_to_translation_package($package, $post){
+
+        if( $post->post_type == 'product' ) {
+
+            $meta = get_post_meta( $post->ID, '_product_tabs', true );
+
+            foreach ( (array)$meta as $key => $value ) {
+
+                if ( preg_match( '/product_tab_([0-9]+)/', $key, $matches ) ) {
+
+                    $wc_product_tab_id = $matches[1];
+                    $wc_product_tab = get_post( $wc_product_tab_id );
+
+                    $package['contents']['product_tabs:product_tab:' . $wc_product_tab_id . ':title'] = array(
+                        'translate' => 1,
+                        'data' => $this->tp->encode_field_data( $wc_product_tab->post_title, 'base64' ),
+                        'format' => 'base64'
+                    );
+
+                    $package['contents']['product_tabs:product_tab:' . $wc_product_tab_id . ':description'] = array(
+                        'translate' => 1,
+                        'data' => $this->tp->encode_field_data( $wc_product_tab->post_content, 'base64' ),
+                        'format' => 'base64'
+                    );
+
+
+                } elseif ( preg_match( '/^core_tab_(.+)$/', $key, $matches ) ){
+
+                    $package['contents']['product_tabs:core_tab_title:' . $matches[1]] = array(
+                        'translate' => 1,
+                        'data' => $this->tp->encode_field_data( $value['title'], 'base64' ),
+                        'format' => 'base64'
+                    );
+
+                    if(isset( $value['heading'] )) {
+                        $package['contents']['product_tabs:core_tab_heading:' . $matches[1]] = array(
+                            'translate' => 1,
+                            'data' => $this->tp->encode_field_data( $value['heading'], 'base64' ),
+                            'format' => 'base64'
+                        );
+                    }
+
+
+                }
+
+            }
+
+        }
+
+        return $package;
+    }
+
+    function save_custom_tabs_translation( $post_id, $data, $job ){
+        global $sitepress;
+
+
+        $translated_product_tabs_updated    = false;
+
+        $original_product_tabs = get_post_meta($job->original_doc_id, '_product_tabs', true);
+
+        if( $original_product_tabs ) {
+
+            // custom tabs
+            $product_tab_translations  = array();
+
+            foreach ( $data as $value ) {
+
+                if ( preg_match( '/product_tabs:product_tab:([0-9]+):(.+)/', $value['field_type'], $matches ) ) {
+
+                    $wc_product_tab_id = $matches[1];
+                    $field = $matches[2];
+
+                    $product_tab_translations[$wc_product_tab_id][$field] = $value['data'];
+                }
+
+            }
+
+            if ( $product_tab_translations ) {
+
+                $translated_product_tabs = get_post_meta( $post_id, '_product_tabs', true );
+
+                foreach ( $product_tab_translations as $wc_product_tab_id => $value ) {
+
+                    $new_wc_product_tab = array(
+                        'post_type' => 'wp_product_tab',
+                        'post_title' => $value['title'],
+                        'post_content' => $value['description'],
+                        'post_status' => 'publish'
+                    );
+
+                    $wc_product_tab_id_translated = wp_insert_post( $new_wc_product_tab );
+
+                    if ( $wc_product_tab_id_translated ) {
+
+                        $wc_product_tab_trid = $sitepress->get_element_trid( $wc_product_tab_id, 'post_wc_product_tab' );
+                        $sitepress->set_element_language_details( $wc_product_tab_id_translated, 'post_wc_product_tab', $wc_product_tab_trid, $job->language_code );
+
+                        $wc_product_tab_translated = get_post( $wc_product_tab_id_translated );
+
+                        $translated_product_tabs['product_tab_' . $wc_product_tab_id_translated] = array(
+
+                            'position' => $original_product_tabs['product_tab_' . $wc_product_tab_id]['position'],
+                            'type' => 'product',
+                            'id' => $wc_product_tab_id_translated,
+                            'name' => $wc_product_tab_translated->post_name
+
+                        );
+
+                    }
+
+                }
+
+
+                $translated_product_tabs_updated = true;
+            }
+
+            // the other tabs
+            $product_tab_translations  = array();
+
+            foreach ( $data as $value ) {
+
+                if ( preg_match( '/product_tabs:core_tab_(.+):(.+)/', $value['field_type'], $matches ) ) {
+
+                    $tab_field  = $matches[1];
+                    $tab_id     = $matches[2];
+
+                    $product_tab_translations[$tab_id][$tab_field] = $value['data'];
+
+                }
+
+            }
+
+            if( $product_tab_translations){
+                foreach( $product_tab_translations as $id => $tab ){
+
+                    $translated_product_tabs['core_tab_' . $id] = array(
+                        'type'      => 'core',
+                        'position'  => $original_product_tabs['core_tab_' . $id]['position'],
+                        'id'        => $id,
+                        'title'     => $tab['title']
+                    );
+
+                    if( isset( $tab['heading'] ) ){
+                        $translated_product_tabs['core_tab_' . $id]['heading'] = $tab['heading'];
+                    }
+
+                }
+
+                $translated_product_tabs_updated = true;
+            }
+
+            if ( $translated_product_tabs_updated ) {
+                update_post_meta( $post_id, '_product_tabs', $translated_product_tabs );
+            }
+
+        }
     }
 
 }
