@@ -310,48 +310,54 @@ class WCML_Tab_Manager{
 
         if( $post->post_type == 'product' ) {
 
-            $meta = get_post_meta( $post->ID, '_product_tabs', true );
+            $override_tab_layout = get_post_meta( $post->ID , '_override_tab_layout', true);
 
-            foreach ( (array)$meta as $key => $value ) {
+            if( $override_tab_layout == 'yes' ){
 
-                if ( preg_match( '/product_tab_([0-9]+)/', $key, $matches ) ) {
+                $meta = get_post_meta( $post->ID, '_product_tabs', true );
 
-                    $wc_product_tab_id = $matches[1];
-                    $wc_product_tab = get_post( $wc_product_tab_id );
+                foreach ( (array)$meta as $key => $value ) {
 
-                    $package['contents']['product_tabs:product_tab:' . $wc_product_tab_id . ':title'] = array(
-                        'translate' => 1,
-                        'data' => $this->tp->encode_field_data( $wc_product_tab->post_title, 'base64' ),
-                        'format' => 'base64'
-                    );
+                    if ( preg_match( '/product_tab_([0-9]+)/', $key, $matches ) ) {
 
-                    $package['contents']['product_tabs:product_tab:' . $wc_product_tab_id . ':description'] = array(
-                        'translate' => 1,
-                        'data' => $this->tp->encode_field_data( $wc_product_tab->post_content, 'base64' ),
-                        'format' => 'base64'
-                    );
+                        $wc_product_tab_id = $matches[1];
+                        $wc_product_tab = get_post( $wc_product_tab_id );
 
-
-                } elseif ( preg_match( '/^core_tab_(.+)$/', $key, $matches ) ){
-
-                    $package['contents']['product_tabs:core_tab_title:' . $matches[1]] = array(
-                        'translate' => 1,
-                        'data' => $this->tp->encode_field_data( $value['title'], 'base64' ),
-                        'format' => 'base64'
-                    );
-
-                    if(isset( $value['heading'] )) {
-                        $package['contents']['product_tabs:core_tab_heading:' . $matches[1]] = array(
+                        $package['contents']['product_tabs:product_tab:' . $wc_product_tab_id . ':title'] = array(
                             'translate' => 1,
-                            'data' => $this->tp->encode_field_data( $value['heading'], 'base64' ),
+                            'data' => $this->tp->encode_field_data( $wc_product_tab->post_title, 'base64' ),
                             'format' => 'base64'
                         );
+
+                        $package['contents']['product_tabs:product_tab:' . $wc_product_tab_id . ':description'] = array(
+                            'translate' => 1,
+                            'data' => $this->tp->encode_field_data( $wc_product_tab->post_content, 'base64' ),
+                            'format' => 'base64'
+                        );
+
+
+                    } elseif ( preg_match( '/^core_tab_(.+)$/', $key, $matches ) ){
+
+                        $package['contents']['product_tabs:core_tab_title:' . $matches[1]] = array(
+                            'translate' => 1,
+                            'data' => $this->tp->encode_field_data( $value['title'], 'base64' ),
+                            'format' => 'base64'
+                        );
+
+                        if(isset( $value['heading'] )) {
+                            $package['contents']['product_tabs:core_tab_heading:' . $matches[1]] = array(
+                                'translate' => 1,
+                                'data' => $this->tp->encode_field_data( $value['heading'], 'base64' ),
+                                'format' => 'base64'
+                            );
+                        }
+
+
                     }
 
-
                 }
-
             }
+
 
         }
 
