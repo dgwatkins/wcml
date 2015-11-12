@@ -20,6 +20,8 @@ class WCML_Tab_Manager{
             add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_custom_tabs_to_translation_package' ), 10, 2 );
             add_action( 'wpml_translation_job_saved',   array( $this, 'save_custom_tabs_translation' ), 10, 3 );
 
+            add_filter( 'wcml_product_content_fields', array( $this, 'make_tabs_manually_translatable' ) );
+            add_filter( 'wcml_translatable_custom_fields',  array ($this, 'make_tabs_manually_translatable') );
         }
 
     }
@@ -468,6 +470,16 @@ class WCML_Tab_Manager{
             }
 
         }
+    }
+
+    function make_tabs_manually_translatable( $content ){
+
+        if( !in_array( '_product_tabs', $content ) ){
+            $content[] = '_product_tabs';
+        }
+
+        return $content;
+
     }
 
 }

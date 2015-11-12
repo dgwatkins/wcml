@@ -2002,38 +2002,52 @@ class WCML_Products{
 
         global $sitepress,$wpseo_metabox;
         $settings = $sitepress->get_settings();
-        foreach(get_post_custom_keys($product_id) as $meta_key){
-            if(isset($settings['translation-management']['custom_fields_translation'][$meta_key]) && $settings['translation-management']['custom_fields_translation'][$meta_key] == 2){
-                if(in_array($meta_key,$this->not_display_fields_for_variables_product)){
-                    continue;
-                }
 
-                if($this->check_custom_field_is_single_value($product_id,$meta_key)){
-                    if(defined('WPSEO_VERSION')){
-                        if(!is_null($wpseo_metabox) && in_array($meta_key,$this->yoast_seo_fields)){
-                            $wpseo_metabox_values = $wpseo_metabox->get_meta_boxes('product');
-                            $contents[] = $wpseo_metabox_values[str_replace('_yoast_wpseo_','',$meta_key)]['title'];
-                            continue;
-                        }
-                    }
-                }else{
-                    $exception = apply_filters('wcml_product_content_exception',true,$product_id,$meta_key);
-                    if($exception){
+
+        $all_post_custom_keys = get_post_custom_keys($product_id) ;
+
+        // filter out not translatable custom fields
+        $post_custom_keys = array();
+        foreach( $all_post_custom_keys as $meta_key ){
+            if(isset($settings['translation-management']['custom_fields_translation'][$meta_key]) && $settings['translation-management']['custom_fields_translation'][$meta_key] == 2){
+                $post_custom_keys[] = $meta_key;
+            }
+        }
+
+        $post_custom_keys = apply_filters ( 'wcml_translatable_custom_fields',  $post_custom_keys );
+
+        foreach( $post_custom_keys as $meta_key ){
+
+            if(in_array($meta_key,$this->not_display_fields_for_variables_product)){
+                continue;
+            }
+
+            if($this->check_custom_field_is_single_value($product_id,$meta_key)){
+                if(defined('WPSEO_VERSION')){
+                    if(!is_null($wpseo_metabox) && in_array($meta_key,$this->yoast_seo_fields)){
+                        $wpseo_metabox_values = $wpseo_metabox->get_meta_boxes('product');
+                        $contents[] = $wpseo_metabox_values[str_replace('_yoast_wpseo_','',$meta_key)]['title'];
                         continue;
                     }
-
                 }
-
-                $custom_key_label = apply_filters( 'wcml_product_content_label', $meta_key, $product_id );
-                if( $custom_key_label != $meta_key ){
-                    $contents[] = $custom_key_label;
+            }else{
+                $exception = apply_filters('wcml_product_content_exception',true,$product_id,$meta_key);
+                if($exception){
                     continue;
                 }
 
-                $custom_key_label = str_replace('_',' ',$meta_key);
-                $contents[] = trim($custom_key_label[0]) ? ucfirst($custom_key_label) : ucfirst(substr($custom_key_label,1));
-
             }
+
+            $custom_key_label = apply_filters( 'wcml_product_content_label', $meta_key, $product_id );
+            if( $custom_key_label != $meta_key ){
+                $contents[] = $custom_key_label;
+                continue;
+            }
+
+            $custom_key_label = str_replace('_',' ',$meta_key);
+            $contents[] = trim($custom_key_label[0]) ? ucfirst($custom_key_label) : ucfirst(substr($custom_key_label,1));
+
+
         }
 
         return apply_filters('wcml_product_content_fields_label', $contents, $product_id);
