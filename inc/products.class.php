@@ -1561,7 +1561,7 @@ class WCML_Products{
         if (!$woocommerce_wpml->settings['trnsl_interface'] && $original_language != $current_language ) {
 
             if( !isset( $_POST[ 'wp-preview' ] ) || empty( $_POST[ 'wp-preview' ] ) ){
-                $this->sync_status_and_parent( $duplicated_post_id, $post_id, $current_language );
+                $this->sync_date_and_parent( $duplicated_post_id, $post_id, $current_language );
                 $this->sync_product_data( $duplicated_post_id, $post_id, $current_language );
             }
 
@@ -1606,7 +1606,7 @@ class WCML_Products{
                 $this->sync_thumbnail_id( $duplicated_post_id, $post_id, $lang );
             }
 
-            $this->sync_status_and_parent( $duplicated_post_id, $post_id, $lang );
+            $this->sync_date_and_parent( $duplicated_post_id, $post_id, $lang );
 
             $this->sync_product_taxonomies( $duplicated_post_id, $post_id, $lang );
 
@@ -1709,7 +1709,7 @@ class WCML_Products{
     }
 
     //sync product parent & post_status
-    function sync_status_and_parent( $duplicated_post_id, $post_id, $lang ){
+    function sync_date_and_parent( $duplicated_post_id, $post_id, $lang ){
         global $wpdb,$woocommerce_wpml;
 
         $tr_parent_id = apply_filters( 'translate_object_id', wp_get_post_parent_id( $duplicated_post_id ), 'product', false, $lang );
@@ -1717,8 +1717,6 @@ class WCML_Products{
         $orig_product = get_post( $duplicated_post_id );
         $args = array();
         $args[ 'post_parent' ] = is_null( $tr_parent_id )? 0 : $tr_parent_id;
-        $args[ 'post_status' ] = $orig_product->post_status;
-        $args[ 'comment_status' ] = $orig_product->comment_status;
 
         //sync product date
         if( $woocommerce_wpml->settings[ 'products_sync_date' ] ){
