@@ -527,6 +527,7 @@ class WCML_Products{
 
             $sitepress->switch_lang( $language );
             wp_update_post($args);
+            $sitepress->switch_lang();
 
             $post_name = $wpdb->get_var( $wpdb->prepare( "SELECT post_name FROM {$wpdb->posts} WHERE ID=%d", $tr_product_id ));
             if(isset( $data['post_name_' . $language]) && $post_name != $data['post_name_' . $language]){
@@ -748,6 +749,7 @@ class WCML_Products{
 
                 $sitepress->switch_lang( $lang );
                 wp_set_post_terms($tr_product_id, $terms_array, $taxonomy);
+                $sitepress->switch_lang();
 
             }
         }
