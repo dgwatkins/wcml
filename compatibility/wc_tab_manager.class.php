@@ -11,6 +11,10 @@ class WCML_Tab_Manager{
         add_filter( 'wpml_duplicate_custom_fields_exceptions', array( $this, 'duplicate_custom_fields_exceptions' ) );
         add_action( 'wcml_after_duplicate_product', array( $this, 'duplicate_product_tabs') , 10, 2 );
 
+        if( version_compare( WCML_VERSION, '3.7.2', '>') ){
+            add_filter( 'option_wpml_config_files_arr', array($this, 'make__product_tabs_not_translatable_by_default'), 0 );
+        }
+
         if( is_admin() ){
 
             $this->tp = new WPML_Element_Translation_Package;
@@ -23,6 +27,17 @@ class WCML_Tab_Manager{
             add_filter( 'wcml_product_content_fields', array( $this, 'make_tabs_manually_translatable' ) );
             add_filter( 'wcml_translatable_custom_fields',  array ($this, 'make_tabs_manually_translatable') );
         }
+
+    }
+
+    function make__product_tabs_not_translatable_by_default($wpml_config_array){
+
+        if( isset( $wpml_config_array->plugins['WooCommerce Tab Manager'] ) ){
+            $wpml_config_array->plugins['WooCommerce Product Bundles'] =
+                str_replace('<custom-field action="translate">_bundle_data</custom-field>', '<custom-field action="nothing">_bundle_data</custom-field>', $wpml_config_array->plugins['WooCommerce Product Bundles']);
+        }
+
+        return $wpml_config_array;
 
     }
 
