@@ -531,7 +531,9 @@ class WCML_Products{
             $args['post_parent'] = is_null($product_parent) ? 0 : $product_parent;
             $_POST['to_lang'] = $language;
 
+            $sitepress->switch_lang( $language );
             wp_update_post($args);
+            $sitepress->switch_lang();
 
             $post_name = $wpdb->get_var( $wpdb->prepare( "SELECT post_name FROM {$wpdb->posts} WHERE ID=%d", $tr_product_id ));
             if(isset( $data['post_name_' . $language]) && $post_name != $data['post_name_' . $language]){
@@ -757,7 +759,9 @@ class WCML_Products{
                     $terms_array = array_unique( array_map( 'intval', $terms_array ) );
                 }
 
+                $sitepress->switch_lang( $lang );
                 wp_set_post_terms($tr_product_id, $terms_array, $taxonomy);
+                $sitepress->switch_lang();
 
             }
         }
