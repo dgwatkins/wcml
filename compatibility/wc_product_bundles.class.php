@@ -15,6 +15,7 @@ class WCML_Product_Bundles{
         $atts = maybe_unserialize(get_post_meta($original_product_id, '_bundle_data', true));
         if( $atts ){
             $lang = $sitepress->get_language_for_element($trnsl_product_id,'post_product');
+            $tr_bundle_meta = maybe_unserialize(get_post_meta($trnsl_product_id, '_bundle_data', true));
             $tr_ids = array();
             $i = 2;
             foreach($atts as $id=>$bundle_data){
@@ -28,8 +29,8 @@ class WCML_Product_Bundles{
                 $tr_bundle[$bundle_key] = $bundle_data;
                 $tr_bundle[$bundle_key]['product_id'] = $tr_id;
                 if(isset($bundle_data['product_title'])){
-                    if($bundle_data['override_title']=='yes'){
-                        $tr_bundle[$bundle_key]['product_title'] =  '';
+                    if($bundle_data['override_title'] == 'yes'){
+                        $tr_bundle[$bundle_key]['product_title'] = $tr_bundle_meta[$bundle_key]['product_title'];
                     }else{
                         $tr_title= get_the_title($tr_id);
                         $tr_bundle[$bundle_key]['product_title'] =  $tr_title;
@@ -37,7 +38,7 @@ class WCML_Product_Bundles{
                 }
                 if(isset($bundle_data['product_description'])){
                     if($bundle_data['override_description']=='yes'){
-                        $tr_bundle[$bundle_key]['product_description'] =  '';
+                        $tr_bundle[$bundle_key]['product_description'] = $tr_bundle_meta[$bundle_key]['product_description'];
                     }else{
                         $tr_prod = get_post($tr_id);
                         $tr_desc = $tr_prod->post_excerpt;
