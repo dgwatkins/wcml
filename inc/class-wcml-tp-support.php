@@ -31,7 +31,6 @@ class WCML_TP_Support{
                         'translate' => 1,
                         'data'      => $this->tp->encode_field_data( $attribute['name'], 'base64' ),
                         'format'    => 'base64'
-format'    => 'base64'
                     );
 
                     $values = explode( '|', $attribute['value'] );
