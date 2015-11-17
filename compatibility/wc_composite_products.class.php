@@ -2,11 +2,28 @@
 
 
 class WCML_Composite_Products {
+
+	private $tp;
+
 	function __construct() {
-		add_filter('woocommerce_composite_component_default_option', array($this, 'woocommerce_composite_component_default_option'), 10, 3);
+		add_filter( 'woocommerce_composite_component_default_option', array($this, 'woocommerce_composite_component_default_option'), 10, 3 );
 		add_filter( 'wcml_cart_contents', array($this, 'wpml_composites_compat'), 11, 4 );
 		add_filter( 'wcml_exception_duplicate_products_in_cart', array($this, 'wpml_composites_dupicate_exception'), 10, 2 );
 		add_filter( 'woocommerce_composite_component_options_query_args', array($this, 'wpml_composites_transients_cache_per_language'), 10, 3 );
+
+		if( is_admin() ){
+			add_action( 'save_post', array( $this, 'sync_composite_data_across_translations'), 10, 2 );
+
+			add_filter( 'wcml_gui_additional_box', array( $this, 'custom_box_html'), 10, 3 );
+			add_action('wcml_extra_titles',array($this,'product_editor_title'),10,1);
+			add_action('wcml_update_extra_fields',array($this,'components_update'),10,2);
+
+			$this->tp = new WPML_Element_Translation_Package();
+
+			add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_composite_data_translation_package' ), 10, 2 );
+			add_action( 'wpml_translation_job_saved',   array( $this, 'save_composite_data_translation' ), 10, 3 );
+
+		}
 	}
 	
 	function woocommerce_composite_component_default_option($selected_value, $component_id, $object) {
@@ -48,4 +65,208 @@ class WCML_Composite_Products {
 		return $args;
 	}
 
+	function sync_composite_data_across_translations($product_id, $post){
+		global $sitepress, $woocommerce_wpml;
+
+		// skip auto-drafts // skip autosave
+		if ( $post->post_status == 'auto-draft' || isset( $_POST[ 'autosave' ] ) ) {
+			return;
+		}
+
+		if( $post->post_type == 'product' ) {
+
+			$product = wc_get_product( $product_id );
+
+			if( $product && $product->get_type() == 'composite' ) {
+
+				if ( $woocommerce_wpml->products->is_original_product( $product_id ) ) {
+
+					$original_product_id = $product_id;
+
+				} else {
+
+					$original_product_language = $woocommerce_wpml->products->get_original_product_language( $product_id );
+					$original_product_id = apply_filters( 'translate_object_id', $product_id, 'product', true, $original_product_language );
+
+				}
+
+				$product = new WC_Product_Composite( $original_product_id );
+
+				$product_trid = $sitepress->get_element_trid( $original_product_id, 'post_product' );
+				$product_translations = $sitepress->get_element_translations( $product_trid, 'post_product' );
+
+				$composite_data = $product->get_composite_data();
+
+				foreach ( $product_translations as $product_translation ) {
+
+					if ( empty($product_translation->original) ) {
+
+						foreach ( $composite_data as $component_id => $component ) {
+
+							if( isset( $composite_data[$component_id]['assigned_ids'] ) ) {
+								foreach ( $component['assigned_ids'] as $idx => $assigned_id ) {
+
+									if ( $component['query_type'] == 'product_ids' ) {
+
+										$composite_data[$component_id]['assigned_ids'][$idx] =
+											apply_filters( 'translate_object_id', $assigned_id, 'product', true, $product_translation->language_code );
+
+									} elseif ( $component['query_type'] == 'category_ids' ) {
+
+										$composite_data[$component_id]['assigned_ids'][$idx] =
+											apply_filters( 'translate_object_id', $assigned_id, 'product_cat', true, $product_translation->language_code );
+
+									}
+
+								}
+							}
+
+						}
+
+						update_post_meta( $product_translation->element_id, '_bto_data', $composite_data );
+
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+
+	function custom_box_html($product_id,$lang, $is_duplicate_product = false){
+		global $woocommerce_wpml, $sitepress;
+
+		$original_product_language = $woocommerce_wpml->products->get_original_product_language( $product_id );
+
+		$product = wc_get_product( $product_id );
+
+		if( $product->get_type() == 'composite' ){
+
+			$product = new WC_Product_Composite( $product_id );
+			$composite_data = $product->get_composite_data();
+
+			if( $original_product_language != $lang ){
+				$product_trid = $sitepress->get_element_trid( $product_id, 'post_product' );
+				$product_translations = $sitepress->get_element_translations( $product_trid, 'post_product' );
+				if( isset($product_translations[$lang]) ){
+					$translated_product = new WC_Product_Composite( $product_translations[$lang]->element_id );
+					$translated_composite_data = $translated_product->get_composite_data();
+				}
+
+				foreach( $composite_data as $component_id => $component ){
+
+					$template_data['wc_composite_components']['components'][$component_id]['title'] =
+						isset( $translated_composite_data[$component_id]['title'] ) ? $translated_composite_data[$component_id]['title'] : '';
+
+					$template_data['wc_composite_components']['components'][$component_id]['description'] =
+						isset( $translated_composite_data[$component_id]['description'] ) ? $translated_composite_data[$component_id]['description'] : '';
+
+				}
+
+			}else{
+
+				foreach( $composite_data as $component_id => $component ) {
+
+					$template_data['wc_composite_components']['components'][$component_id]['title'] =
+						isset( $composite_data[$component_id]['title'] ) ? $composite_data[$component_id]['title'] : '';
+
+					$template_data['wc_composite_components']['components'][$component_id]['description'] =
+						isset( $composite_data[$component_id]['description'] ) ? $composite_data[$component_id]['description'] : '';
+
+				}
+
+			}
+
+			$template_data['wc_composite_components']['_is_original'] = $original_product_language == $lang;
+
+			include WCML_PLUGIN_PATH . '/compatibility/templates/woocommerce-composite-products.php';
+		}
+
+	}
+
+	function product_editor_title( $product_id ){
+		$product = wc_get_product( $product_id );
+		if( !empty($product) && $product->get_type() == 'composite' ){ ?>
+			<th scope="col"><?php _e('Components', 'woocommerce-multilingual'); ?></th>
+		<?php }
+
+	}
+
+    function components_update($product_id, $data){
+
+		$product = new WC_Product_Composite( $product_id );
+
+		$composite_data = $product->get_composite_data();
+
+		if(!empty($data['wc_composite_component'])){
+			foreach($data['wc_composite_component'] as $component_id => $component){
+
+				$composite_data[$component_id]['title'] = $component['title'];
+				$composite_data[$component_id]['description'] = $component['description'];
+
+
+			}
+			update_post_meta( $product_id, '_bto_data', $composite_data );
+
+		}
+	}
+
+	function append_composite_data_translation_package( $package, $post ){
+
+		if( $post->post_type == 'product' ) {
+
+			$composite_data = get_post_meta( $post->ID, '_bto_data', true );
+
+			if( $composite_data ){
+
+				$fields = array( 'title', 'description' );
+
+				foreach( $composite_data as $component_id => $component ){
+
+					foreach( $fields as $field ) {
+						if ( !empty($component[$field]) ) {
+
+							$package['contents']['wc_composite:' . $component_id . ':' . $field] = array(
+								'translate' => 1,
+								'data' => $this->tp->encode_field_data( $component[$field], 'base64' ),
+								'format' => 'base64'
+							);
+
+						}
+					}
+
+				}
+
+			}
+
+		}
+
+		return $package;
+
+	}
+
+	function save_composite_data_translation( $post_id, $data, $job ){
+
+		remove_action('wcml_after_duplicate_product_post_meta',array($this,'sync_bundled_ids'),10,3);
+
+		$composite_data = get_post_meta( $post_id, '_bto_data', true );
+
+		foreach( $data as $value){
+
+			if( preg_match( '/wc_composite:([0-9]+):(.+)/', $value['field_type'], $matches ) ){
+
+				$component_id = $matches[1];
+				$field        = $matches[2];
+
+				$composite_data[$component_id][$field] = $value['data'];
+
+			}
+
+		}
+
+		update_post_meta( $post_id, '_bto_data', $composite_data );
+
+	}
 }

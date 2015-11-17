@@ -211,14 +211,9 @@ class WCML_Tab_Manager{
     }
 
     function is_have_custom_product_tab($exception,$product_id,$meta_key){
+
         if( $meta_key == '_product_tabs'){
-            $prod_tabs = maybe_unserialize(get_post_meta($product_id,'_product_tabs',true));
-            foreach($prod_tabs as $prod_tab){
-                if(in_array($prod_tab['type'],array('product','core'))){
-                    $exception = false;
-                    break;
-                }
-            }
+            $exception = get_post_meta($product_id, '_override_tab_layout', true) != 'yes';
         }
 
         return $exception;
