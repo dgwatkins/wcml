@@ -790,7 +790,7 @@ class WCML_Products{
         }
 
         foreach ($all_meta as $key => $meta) {
-            if( !isset($settings['translation-management']['custom_fields_translation'][$key]) || ( isset($settings['translation-management']['custom_fields_translation'][$key]) && $settings['translation-management']['custom_fields_translation'][$key] == 0 ) ){
+            if( !isset($settings['translation-management']['custom_fields_translation'][$key]) || $settings['translation-management']['custom_fields_translation'][$key] == 0 ){
                 continue;
             }
             foreach ($meta as $meta_value) {
