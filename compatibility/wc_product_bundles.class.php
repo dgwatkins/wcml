@@ -128,7 +128,7 @@ class WCML_Product_Bundles{
     function product_bundles_title($product_id){
     	$bundle_data = maybe_unserialize(get_post_meta($product_id,'_bundle_data', true));
     	if(!empty($bundle_data) && $bundle_data!=false){ ?>
-	        <th scope="col"><?php _e('Product Bundles', 'wcml_product_bundles'); ?></th>
+	        <th scope="col"><?php _e('Product Bundles', 'woocommerce-multilingual'); ?></th>
         <?php }
     }
 
