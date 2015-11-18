@@ -69,8 +69,6 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 		if( $post->post_type == 'product' ) {
 
-			global $woocommerce_wpml;
-
 			if( $this->get_product_type( $product_id ) == 'composite' ) {
 
 				if ( $woocommerce_wpml->products->is_original_product( $product_id ) ) {
