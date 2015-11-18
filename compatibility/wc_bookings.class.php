@@ -59,7 +59,6 @@ class WCML_Bookings{
         }
 
         add_filter( 'parse_query', array( $this, 'booking_filters_query' ) );
-        add_filter('wcml_exception_duplicate_products_in_cart', array($this, 'check_on_bookable_product_in_cart'), 10, 2 );
         add_filter('woocommerce_bookings_in_date_range_query', array($this, 'bookings_in_date_range_query'));
         add_action( 'before_delete_post', array( $this, 'delete_bookings' ) );
         add_action( 'wp_trash_post', array( $this, 'trash_bookings' ) );
@@ -1590,16 +1589,6 @@ class WCML_Bookings{
                 )
             );
         }
-    }
-
-    function check_on_bookable_product_in_cart( $flag, $cart_item ){
-
-        if( $cart_item[ 'data' ] instanceof WC_Product_Booking ) {
-            return true;
-        }
-
-        return false;
-
     }
 
     function bookings_in_date_range_query($booking_ids){

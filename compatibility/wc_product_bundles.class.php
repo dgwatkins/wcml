@@ -11,8 +11,6 @@ class WCML_Product_Bundles{
 		add_action('wcml_update_extra_fields',array($this,'bundle_update'),10,2);
 		add_action('woocommerce_get_cart_item_from_session', array( $this, 'resync_bundle'),5,3);
 		add_filter('woocommerce_cart_loaded_from_session', array($this, 'resync_bundle_clean'),10);
-		add_filter('wcml_exception_duplicate_products_in_cart', array($this, 'bundles_duplicate_exception'),10,2);
-
 
         if( version_compare( WCML_VERSION, '3.7.2', '>') ){
             add_filter( 'option_wpml_config_files_arr', array($this, 'make__bundle_data_not_translatable_by_default'), 0 );
@@ -250,13 +248,6 @@ class WCML_Product_Bundles{
 	    	}
     	}
     }
-
-    function bundles_duplicate_exception( $exclude, $cart_item ) {
-		if ( isset( $cart_item[ 'bundled_items' ] ) || isset( $cart_item[ 'bundled_by' ] ) ) {
-			$exclude = true;
-		}
-		return $exclude;
-	}
 
     function append_bundle_data_translation_package( $package, $post ){
 

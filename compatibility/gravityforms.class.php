@@ -6,8 +6,6 @@ class WCML_gravityforms{
         add_filter('gform_formatted_money',array($this,'wcml_convert_price'),10,2);
         add_filter('wcml_multi_currency_is_ajax',array($this,'add_ajax_action'));
 
-        add_filter('wcml_exception_duplicate_products_in_cart', array($this, 'addons_duplicate_exception'),10,2);
-
         add_action( 'wcml_after_duplicate_product_post_meta', array( $this, 'sync_gf_data'), 10, 3 );
     }
     
@@ -24,13 +22,6 @@ class WCML_gravityforms{
 		$actions[] = 'get_updated_price';
 		return $actions;
 	}
-
-    function addons_duplicate_exception( $exclude, $cart_item ) {
-        if ( isset( $cart_item[ '_gravity_form_data' ] ) ) {
-            $exclude = true;
-        }
-        return $exclude;
-    }
 
     function sync_gf_data($original_product_id, $trnsl_product_id, $data){
         $orig_gf = maybe_unserialize( get_post_meta( $original_product_id, '_gravity_form_data' , true ) );

@@ -8,7 +8,6 @@ class WCML_Composite_Products {
 	function __construct() {
 		add_filter( 'woocommerce_composite_component_default_option', array($this, 'woocommerce_composite_component_default_option'), 10, 3 );
 		add_filter( 'wcml_cart_contents', array($this, 'wpml_composites_compat'), 11, 4 );
-		add_filter( 'wcml_exception_duplicate_products_in_cart', array($this, 'wpml_composites_dupicate_exception'), 10, 2 );
 		add_filter( 'woocommerce_composite_component_options_query_args', array($this, 'wpml_composites_transients_cache_per_language'), 10, 3 );
 
 		if( is_admin() ){
@@ -47,15 +46,6 @@ class WCML_Composite_Products {
 		}
 
 		return $new_cart_data;
-	}
-
-	function wpml_composites_dupicate_exception( $exclude, $cart_item ) {
-
-		if ( isset( $cart_item[ 'composite_parent' ] ) || isset( $cart_item[ 'composite_children' ] ) ) {
-			$exclude = true;
-		}
-
-		return $exclude;
 	}
 
 	function wpml_composites_transients_cache_per_language( $args, $query_args, $component_data ) {

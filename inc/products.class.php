@@ -2692,14 +2692,7 @@ class WCML_Products{
                 continue;
             }
 
-            if( empty( $cart_content[ 'variation_id' ] ) ){
-                $search_key = $cart_content[ 'product_id' ];
-            }else{
-                $search_key = $cart_content[ 'product_id' ].'_'.$cart_content['variation_id'];
-                foreach( $cart_content['variation'] as $var_key => $value ){
-                    $search_key .= '_'.$var_key.'-'.$value;
-                }
-            }
+            $search_key = md5(serialize($cart_content));
 
             if( array_key_exists( $search_key, $exists_products ) ){
                 unset( $cart_contents[ $key ] );
