@@ -114,7 +114,11 @@ class WCML_Products{
         add_action( 'woocommerce_before_checkout_process', array( $this, 'wcml_refresh_cart_total' ) );
 
         if(defined('WPSEO_VERSION') && defined('WPSEO_PATH') && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) && $_GET['tab'] == 'products'){
-            require_once WPSEO_PATH . 'admin/class-metabox.php';
+            if(version_compare(WPSEO_VERSION, '3', '<' )) {
+                require_once WPSEO_PATH . 'admin/class-metabox.php';
+            } else {
+                require_once WPSEO_PATH . 'admin/metabox/class-metabox.php';
+            }
         }
 
         // Override cached widget id
