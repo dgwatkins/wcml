@@ -552,6 +552,9 @@ class WCML_Products{
 
         }
 
+        //sync taxonomies
+        $this->sync_product_taxonomies($original_product_id, $tr_product_id, $language);
+
         do_action( 'wcml_update_extra_fields', $tr_product_id, $data, $language );
 
         do_action( 'wcml_before_sync_product_data', $original_product_id, $tr_product_id, $language );
@@ -571,9 +574,6 @@ class WCML_Products{
             //sync product gallery
             $this->sync_product_gallery($original_product_id);
         }
-
-        //sync taxonomies
-        $this->sync_product_taxonomies($original_product_id, $tr_product_id, $language);
 
         // synchronize post variations
         $this->sync_product_variations($original_product_id, $tr_product_id, $language, $data);
@@ -2290,7 +2290,8 @@ class WCML_Products{
         include WCML_PLUGIN_PATH . '/menu/sub/images-box.php';
     }
 
-    function custom_box($product_id,$product_content,$trn_contents,$lang,$lang_name,$is_duplicate_product){
+    function custom_box( $product_id, $product_content, $trn_contents, $lang, $lang_name, $is_duplicate_product ){
+
         global $sitepress;
         $original_language = $sitepress->get_language_for_element($product_id,'post_product');
         $tr_product_id = apply_filters( 'translate_object_id',$product_id, 'product', false, $lang);

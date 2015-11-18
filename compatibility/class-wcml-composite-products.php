@@ -1,7 +1,7 @@
 <?php
 
 
-class WCML_Composite_Products {
+class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 	private $tp;
 
@@ -24,7 +24,7 @@ class WCML_Composite_Products {
 
 		}
 	}
-	
+
 	function woocommerce_composite_component_default_option($selected_value, $component_id, $object) {
 
 		if( !empty( $selected_value ) )
@@ -55,8 +55,12 @@ class WCML_Composite_Products {
 		return $args;
 	}
 
-	function sync_composite_data_across_translations($product_id, $post){
+	function sync_composite_data_across_translations( $product_id, $post = null ){
 		global $sitepress, $woocommerce_wpml;
+
+		if( is_null( $post ) ){
+			$post = get_post( $product_id );
+		}
 
 		// skip auto-drafts // skip autosave
 		if ( $post->post_status == 'auto-draft' || isset( $_POST[ 'autosave' ] ) ) {
@@ -65,9 +69,9 @@ class WCML_Composite_Products {
 
 		if( $post->post_type == 'product' ) {
 
-			$product = wc_get_product( $product_id );
+			global $woocommerce_wpml;
 
-			if( $product && $product->get_type() == 'composite' ) {
+			if( $this->get_product_type( $product_id ) == 'composite' ) {
 
 				if ( $woocommerce_wpml->products->is_original_product( $product_id ) ) {
 
@@ -91,24 +95,34 @@ class WCML_Composite_Products {
 
 					if ( empty($product_translation->original) ) {
 
+						$translated_product = new WC_Product_Composite( $product_translation->element_id );
+						$translated_composite_data = $translated_product->get_composite_data();
+
 						foreach ( $composite_data as $component_id => $component ) {
 
-							if( isset( $composite_data[$component_id]['assigned_ids'] ) ) {
+							if( isset( $translated_composite_data[$component_id]['title'] ) ){
+								$composite_data[$component_id]['title'] =  $translated_composite_data[$component_id]['title'];
+							}
+
+							if( isset( $translated_composite_data[$component_id]['description'] ) ){
+								$composite_data[$component_id]['description'] =  $translated_composite_data[$component_id]['description'];
+							}
+
+							if ( $component['query_type'] == 'product_ids' ) {
+
 								foreach ( $component['assigned_ids'] as $idx => $assigned_id ) {
+									$composite_data[$component_id]['assigned_ids'][$idx] =
+										apply_filters( 'translate_object_id', $assigned_id, 'product', true, $product_translation->language_code );
+								}
 
-									if ( $component['query_type'] == 'product_ids' ) {
+							} elseif( $component['query_type'] == 'category_ids' ){
 
-										$composite_data[$component_id]['assigned_ids'][$idx] =
-											apply_filters( 'translate_object_id', $assigned_id, 'product', true, $product_translation->language_code );
-
-									} elseif ( $component['query_type'] == 'category_ids' ) {
-
-										$composite_data[$component_id]['assigned_ids'][$idx] =
-											apply_filters( 'translate_object_id', $assigned_id, 'product_cat', true, $product_translation->language_code );
-
-									}
+								foreach ( $component['assigned_category_ids'] as $idx => $assigned_id ) {
+									$composite_data[$component_id]['assigned_category_ids'][$idx] =
+										apply_filters( 'translate_object_id', $assigned_id, 'product_cat', true, $product_translation->language_code );
 
 								}
+
 							}
 
 						}
@@ -130,9 +144,7 @@ class WCML_Composite_Products {
 
 		$original_product_language = $woocommerce_wpml->products->get_original_product_language( $product_id );
 
-		$product = wc_get_product( $product_id );
-
-		if( $product->get_type() == 'composite' ){
+		if( $this->get_product_type( $product_id ) == 'composite' ){
 
 			$product = new WC_Product_Composite( $product_id );
 			$composite_data = $product->get_composite_data();
@@ -177,14 +189,16 @@ class WCML_Composite_Products {
 	}
 
 	function product_editor_title( $product_id ){
-		$product = wc_get_product( $product_id );
-		if( !empty($product) && $product->get_type() == 'composite' ){ ?>
-			<th scope="col"><?php _e('Components', 'woocommerce-multilingual'); ?></th>
-		<?php }
+
+		if( $this->get_product_type( $product_id ) == 'composite' ) {
+			printf( '<th scope="col">%s</h>', __( 'Components', 'woocommerce-multilingual' ) );
+		}
 
 	}
 
-    function components_update($product_id, $data){
+    function components_update( $product_id, $data ){
+
+		$this->sync_composite_data_across_translations( $product_id );
 
 		$product = new WC_Product_Composite( $product_id );
 
@@ -193,11 +207,17 @@ class WCML_Composite_Products {
 		if(!empty($data['wc_composite_component'])){
 			foreach($data['wc_composite_component'] as $component_id => $component){
 
-				$composite_data[$component_id]['title'] = $component['title'];
-				$composite_data[$component_id]['description'] = $component['description'];
+				if(!empty($component['title'])){
+					$composite_data[$component_id]['title'] = $component['title'];
+				}
+
+				if(!empty($component['description'])) {
+					$composite_data[$component_id]['description'] = $component['description'];
+				}
 
 
 			}
+
 			update_post_meta( $product_id, '_bto_data', $composite_data );
 
 		}
@@ -239,10 +259,8 @@ class WCML_Composite_Products {
 
 	function save_composite_data_translation( $post_id, $data, $job ){
 
-		remove_action('wcml_after_duplicate_product_post_meta',array($this,'sync_bundled_ids'),10,3);
 
-		$composite_data = get_post_meta( $post_id, '_bto_data', true );
-
+		$translated_composite_data = array();
 		foreach( $data as $value){
 
 			if( preg_match( '/wc_composite:([0-9]+):(.+)/', $value['field_type'], $matches ) ){
@@ -250,7 +268,43 @@ class WCML_Composite_Products {
 				$component_id = $matches[1];
 				$field        = $matches[2];
 
-				$composite_data[$component_id][$field] = $value['data'];
+				$translated_composite_data[$component_id][$field] = $value['data'];
+
+			}
+
+		}
+
+		if( $translated_composite_data ){
+
+			$composite_data = get_post_meta( $job->original_doc_id, '_bto_data', true );
+
+
+			foreach ( $composite_data as $component_id => $component ) {
+
+				if( isset( $translated_composite_data[$component_id]['title'] ) ){
+					$composite_data[$component_id]['title'] =  $translated_composite_data[$component_id]['title'];
+				}
+
+				if( isset( $translated_composite_data[$component_id]['description'] ) ){
+					$composite_data[$component_id]['description'] =  $translated_composite_data[$component_id]['description'];
+				}
+
+				if ( $component['query_type'] == 'product_ids' ) {
+
+					foreach ( $component['assigned_ids'] as $idx => $assigned_id ) {
+						$composite_data[$component_id]['assigned_ids'][$idx] =
+							apply_filters( 'translate_object_id', $assigned_id, 'product', true, $job->language_code );
+					}
+
+				} elseif( $component['query_type'] == 'category_ids' ){
+
+					foreach ( $component['assigned_category_ids'] as $idx => $assigned_id ) {
+						$composite_data[$component_id]['assigned_category_ids'][$idx] =
+							apply_filters( 'translate_object_id', $assigned_id, 'product_cat', true, $job->language_code );
+
+					}
+
+				}
 
 			}
 
