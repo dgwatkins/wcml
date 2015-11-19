@@ -479,7 +479,11 @@ class WCML_Products{
             $args['comment_status'] = $orig_product->comment_status;
             $product_parent = apply_filters( 'translate_object_id',$orig_product->post_parent, 'product', false, $language);
             $args['post_parent'] = is_null($product_parent) ? 0 : $product_parent;
+
+            //TODO: remove after change required WPML version > 3.3
             $_POST['to_lang'] = $language;
+            // for WPML > 3.3
+            $_POST['icl_post_language'] = $language;
 
             if($woocommerce_wpml->settings['products_sync_date']){
                 $args['post_date'] = $orig_product->post_date;
