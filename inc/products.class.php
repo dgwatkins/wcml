@@ -116,7 +116,7 @@ class WCML_Products{
         if(defined('WPSEO_VERSION') && defined('WPSEO_PATH') && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) && $_GET['tab'] == 'products'){
             if(version_compare(WPSEO_VERSION, '3', '<' )) {
                 require_once WPSEO_PATH . 'admin/class-metabox.php';
-            } else {
+            } elseif( file_exists( WPSEO_PATH . 'admin/metabox/class-metabox.php' ) ) {
                 require_once WPSEO_PATH . 'admin/metabox/class-metabox.php';
             }
         }
