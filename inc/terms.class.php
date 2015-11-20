@@ -878,7 +878,7 @@ class WCML_Terms{
 
             $trnsl_term_id = apply_filters( 'translate_object_id', $term_obj->term_id, $taxonomy, true, $language );
 
-            $filtered_terms[] = !$is_objects_array ? ( isset( $is_slug ) ? get_term( $trnsl_term_id, $taxonomy )->slug : get_term( $trnsl_term_id, $taxonomy )->name ) : get_term( $trnsl_term_id, $taxonomy );
+            $filtered_terms[] = !$is_objects_array ? ( isset( $is_slug ) ? get_term( $trnsl_term_id, $taxonomy )->slug : strtolower( get_term( $trnsl_term_id, $taxonomy )->name ) ) : get_term( $trnsl_term_id, $taxonomy );
         }
 
         return $filtered_terms;
