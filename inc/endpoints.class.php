@@ -195,7 +195,7 @@ class WCML_Endpoints{
             $endpoints['shipping'] = urldecode(  $this->get_translated_edit_address_slug( 'shipping' ) );
             $endpoints['billing'] = urldecode(  $this->get_translated_edit_address_slug( 'billing' )  );
 
-            if( urldecode( $q->query['pagename'] ) != $endpoint_in_url && !in_array( $endpoint_in_url,$endpoints ) && is_numeric( $endpoint_in_url ) && !in_array( urldecode( prev( $uri_vars ) ) ,$endpoints ) ){
+            if( urldecode( $q->query['pagename'] ) != $endpoint_in_url && !in_array( $endpoint_in_url,$endpoints ) && is_numeric( $endpoint_in_url ) && !in_array( urldecode( prev( $uri_vars ) ) ,$q->query_vars ) ){
                 $wp_query->set_404();
                 status_header(404);
                 include( get_query_template( '404' ) );

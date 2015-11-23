@@ -199,7 +199,7 @@ class WCML_WC_Strings{
         }elseif ( apply_filters( 'wpml_slug_translation_available', false) ) {
             $translated_slug = apply_filters( 'wpml_get_translated_slug', 'product' , $language );
         } else {
-            $translated_slug = apply_filters( 'wpml_translate_single_string', $product_slug, $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_string_namet( 'product' ) );
+            $translated_slug = apply_filters( 'wpml_translate_single_string', $product_slug, $woocommerce_wpml->url_translation->url_strings_context(), $woocommerce_wpml->url_translation->url_string_name( 'product' ) );
         }
 
         return $translated_slug;
@@ -585,7 +585,23 @@ class WCML_WC_Strings{
     function get_string_language( $value, $context, $name = false ){
 
         if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-            return apply_filters( 'wpml_get_string_language', null, $context, $name );
+            global $wpdb;
+
+            if( $name !== false ){
+
+                $string_language = apply_filters( 'wpml_get_string_language', null, $context, $name );
+
+            }else{
+
+                $string_id = icl_get_string_id( $value, $context, $name );
+
+                $string_object                  = new WPML_ST_String($string_id, $wpdb);
+                $string_language                = $string_object->get_language();
+
+            }
+
+
+            return $string_language;
         }else{
             global $sitepress_settings;
 
@@ -695,7 +711,7 @@ class WCML_WC_Strings{
         return $attribute_taxonomies;
     }
 
-    function get_translation_from_woocommerce_mo_file( $string, $language ){
+    function get_translation_from_woocommerce_mo_file( $string, $language, $return_original = true ){
         global $sitepress;
 
         $original_string = $string;
@@ -710,7 +726,7 @@ class WCML_WC_Strings{
                 $mo = new MO();
                 $mo_file =  WP_LANG_DIR . '/plugins/woocommerce-'  . $sitepress->get_locale( $language ) . '.mo';
                 if( !file_exists( $mo_file ) ){
-                    return $string;
+                    return $return_original ? $string : null;
                 }
 
                 $mo->import_from_file( $mo_file  );
@@ -724,7 +740,7 @@ class WCML_WC_Strings{
             if( isset( $this->mo_files[ $language ][$string] ) ){
                 $this->translations_from_mo_file[ $original_string ][ $language ] = $this->mo_files[ $language ][$string]->translations[0];
             } else {
-                $this->translations_from_mo_file[ $original_string ][ $language ] = $original_string;
+                $this->translations_from_mo_file[ $original_string ][ $language ] = $return_original ? $original_string : null;
             }
         }
 

@@ -14,7 +14,7 @@ class woocommerce_wpml {
     function __construct(){
 
         add_action('init', array($this, 'init'),2);
-        add_action('init', array($this, 'load_css_and_js'));
+
         add_action('widgets_init', array($this, 'register_widget'));
 
     }
@@ -32,6 +32,8 @@ class woocommerce_wpml {
         }
 
         global $sitepress,$pagenow;
+
+        $this->load_css_and_js();
 
         if($this->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT
             || ( isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) && $_GET['tab'] == 'multi-currency' )
@@ -488,7 +490,10 @@ class woocommerce_wpml {
     function documentation_links(){
         global $post, $pagenow;
 
-        $get_post_type = get_post_type(@$post->ID);
+        if( is_null( $post ) )
+            return;
+
+        $get_post_type = get_post_type($post->ID);
 
         if($get_post_type == 'product' && $pagenow == 'edit.php'){
             $prot_link = '<span class="button"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="'. $this->generate_tracking_link('http://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation','#4') .'" target="_blank">' .
@@ -503,6 +508,18 @@ class woocommerce_wpml {
                     jQuery(".quick_hide a").on('click',function(){
                         jQuery(".quick_product_trnsl_link").attr('href',jQuery("#wcml_product_trnsl_link").val()+jQuery(this).closest('tr').attr('id').replace(/post-/,''));
                     });
+
+                    //lock feautured for translations
+                    jQuery(document).on('click', '.featured a', function(){
+
+                        if( jQuery(this).closest('tr').find('.quick_hide').size() > 0 ){
+
+                            return false;
+
+                        }
+
+                    });
+
                 </script>
         <?php
         }

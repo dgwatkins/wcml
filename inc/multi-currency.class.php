@@ -252,7 +252,7 @@ class WCML_WC_MultiCurrency{
         }
         
         $exchange_rates = $this->get_exchange_rates();
-        
+
         if(isset($exchange_rates[$currency]) && is_numeric($amount)){
             $amount = $amount * $exchange_rates[$currency];
             

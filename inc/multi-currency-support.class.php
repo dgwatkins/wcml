@@ -35,7 +35,6 @@ class WCML_Multi_Currency_Support{
         if(is_admin()){
             add_action( 'woocommerce_settings_save_general', array( $this, 'currency_options_update_default_currency' ), 5); // below 10
         }
-
         
         add_action( 'wp_enqueue_scripts', array( $this, 'register_styles' ) );
         add_action( 'init', array( $this, 'register_styles' ) );
@@ -44,6 +43,7 @@ class WCML_Multi_Currency_Support{
         add_filter( 'woocommerce_cart_subtotal', array( $this, 'filter_woocommerce_cart_subtotal'), 100, 3 );
 
         add_action( 'update_option_woocommerce_currency', array( $this, 'set_default_currencies_languages' ), 10, 2 );
+
     }
     
     function _load_filters(){
@@ -93,12 +93,15 @@ class WCML_Multi_Currency_Support{
             //filters for wc-widget-price-filter
             add_filter( 'woocommerce_price_filter_results', array( $this, 'filter_price_filter_results' ), 10, 3 );
             add_filter( 'woocommerce_price_filter_widget_amount', array( $this, 'filter_price_filter_widget_amount' ) );
+
+            add_filter('option_woocommerce_price_thousand_sep', array($this, 'filter_currency_thousand_sep_option'));
+            add_filter('option_woocommerce_price_decimal_sep', array($this, 'filter_currency_decimal_sep_option'));
+            add_filter('option_woocommerce_price_num_decimals', array($this, 'filter_currency_num_decimals_option'));
+
+            add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'filter_currency_num_decimals_in_cart' ) );
             
         }
 
-        add_filter('option_woocommerce_price_thousand_sep', array($this, 'filter_currency_thousand_sep_option'));
-        add_filter('option_woocommerce_price_decimal_sep', array($this, 'filter_currency_decimal_sep_option'));
-        add_filter('option_woocommerce_price_num_decimals', array($this, 'filter_currency_num_decimals_option'));
 
         add_filter('option_woocommerce_currency_pos', array($this, 'filter_currency_position_option'));
         add_filter( 'woocommerce_get_formatted_order_total', array( $this, 'filter_get_formatted_order_total' ), 10, 2 );
@@ -119,6 +122,8 @@ class WCML_Multi_Currency_Support{
         }
 
         if(!is_admin()) $this->load_inline_js();
+
+        add_action( 'woocommerce_get_children', array( $this, 'filter_product_variations_with_custom_prices' ), 10 );
         
     }
 
@@ -171,8 +176,8 @@ class WCML_Multi_Currency_Support{
             }
         }
         
-        $this->currency_codes = array_keys($this->currencies); 
-        
+        $this->currency_codes = array_keys($this->currencies);
+
         // default language currencies
         foreach($active_languages as $language){
             if(!isset($woocommerce_wpml->settings['default_currencies'][$language['code']])){
@@ -382,7 +387,7 @@ class WCML_Multi_Currency_Support{
         
         exit;
     }
-    
+
     function currencies_list(){
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         if(!$nonce || !wp_verify_nonce($nonce, 'wcml_currencies_list')){
@@ -514,6 +519,10 @@ class WCML_Multi_Currency_Support{
             $value = $this->currencies[$currency_code]['num_decimals'];
         }
         return $value;
+    }
+
+    function filter_currency_num_decimals_in_cart( $cart ){
+        $cart->dp = wc_get_price_decimals();
     }
 
 
@@ -880,6 +889,11 @@ class WCML_Multi_Currency_Support{
             }
 
             if($methods[$k]->cost){
+
+                if( isset($shipping_methods[$method->id]) && preg_match('/percent/', $shipping_methods[$method->id]->settings['cost']) ){
+                    continue;
+                }
+
                 $methods[$k]->cost = apply_filters('wcml_shipping_price_amount', $methods[$k]->cost);
             }
 
@@ -943,10 +957,23 @@ class WCML_Multi_Currency_Support{
             isset($woocommerce_wpml->settings['display_custom_prices']) &&
             $woocommerce_wpml->settings['display_custom_prices'] ){
 
-            $current_product_id = wc_get_product()->id;
+            $product_obj = wc_get_product();
+            $current_product_id = $product_obj->id;
             $original_product_language = $woocommerce_wpml->products->get_original_product_language( $current_product_id );
+            $default = false;
 
-            if( !get_post_meta( apply_filters( 'translate_object_id', $current_product_id , get_post_type( $current_product_id ), true, $original_product_language ), '_wcml_custom_prices_status', true ) ){
+            if( $product_obj->is_type( 'variable' ) ){
+                foreach( $product_obj->get_children() as $child ){
+                    if( !get_post_meta( apply_filters( 'translate_object_id', $child , get_post_type( $child ), true, $original_product_language ), '_wcml_custom_prices_status', true ) ){
+                        $default = true;
+                        break;
+                    }
+                }
+            }elseif( !get_post_meta( apply_filters( 'translate_object_id', $current_product_id , get_post_type( $current_product_id ), true, $original_product_language ), '_wcml_custom_prices_status', true ) ){
+                $default = true;
+            }
+
+            if( $default ){
                 $this->client_currency = get_option('woocommerce_currency');
             }
 
@@ -1275,6 +1302,27 @@ class WCML_Multi_Currency_Support{
         add_filter( 'woocommerce_cart_subtotal', array( $this, 'filter_woocommerce_cart_subtotal'), 100, 3 );
 
         return $cart_subtotal;
+    }
+
+    //display variations with custom prices when "Show only products with custom prices in secondary currencies" enabled
+    function filter_product_variations_with_custom_prices( $children ){
+        global $woocommerce_wpml;
+
+        if( is_product() && $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT &&
+            isset($woocommerce_wpml->settings['display_custom_prices']) &&
+            $woocommerce_wpml->settings['display_custom_prices'] ){
+
+            foreach( $children as $key => $child ){
+                if( !get_post_meta( $child, '_wcml_custom_prices_status', true ) ){
+                    unset( $children[ $key ] );
+                }
+            }
+
+
+        }
+
+        return $children;
+
     }
     
 }
