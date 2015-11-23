@@ -56,41 +56,35 @@ jQuery(document).ready(function($){
         }
     });
 
-   
-   if(typeof WPML_Translate_taxonomy != 'undefined' && typeof WPML_Translate_taxonomy.callbacks != 'undefined'){
-       
-       WPML_Translate_taxonomy.callbacks.add(function(func, taxonomy){
 
-		   if ($('.js-tax-tab-' + taxonomy + ' i.otgs-ico-warning').length) {
-              
-              $.ajax({
-                 type : "post",
-                 url : ajaxurl,
-                 dataType: 'json',
-                 data : {
-                     action: "wcml_update_term_translated_warnings",
-                     taxonomy: taxonomy, 
-                     wcml_nonce: $('#wcml_update_term_translated_warnings_nonce').val()
-                 },
-                 success: function(response) {
-                     if(response.hide){
-                        $('.js-tax-tab-' + taxonomy).removeAttr('title');
-						 $('.js-tax-tab-' + taxonomy + ' i.otgs-ico-warning').remove();
-                     }
+    if (typeof TaxonomyTranslation != 'undefined') {
+        TaxonomyTranslation.views.TermView = TaxonomyTranslation.views.TermView.extend({
+            initialize: function () {
+                TaxonomyTranslation.views.TermView.__super__.initialize.apply(this, arguments);
+                this.listenTo(this.model, 'translationSaved', this.render_overlay);
+            },
+            render_overlay: function () {
+                var taxonomy = TaxonomyTranslation.classes.taxonomy.get("taxonomy");
+                $.ajax({
+                    type: "post",
+                    url: ajaxurl,
+                    dataType: 'json',
+                    data: {
+                        action: "wcml_update_term_translated_warnings",
+                        taxonomy: taxonomy,
+                        wcml_nonce: $('#wcml_update_term_translated_warnings_nonce').val()
+                    },
+                    success: function (response) {
+                        if (response.hide) {
+                            $('.js-tax-tab-' + taxonomy).removeAttr('title');
+                            $('.js-tax-tab-' + taxonomy + ' i.icon-warning-sign').remove();
+                        }
+                    }
+                })
+            }
+        });
 
-                     if(response.show_button){
-                         $('#wcml_tt_sync_assignment').fadeIn();
-                         $('#wcml_tt_sync_desc').fadeIn();
-                     }
-                 }
-              })
-              
-          }
-          
-          return false;
-           
-       });
-   }
+    }
    
    $(document).on('click', '.duplicate_edit', function(e){
        e.preventDefault();

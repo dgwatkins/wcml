@@ -622,6 +622,12 @@ input[name="wcml_curr_template"] {
   display: none;
 }
 
+.wcml-wrap .nav-tab{
+  float: none;
+  font-size: 12px;
+  line-height: 26px;
+}
+
 /*============================================================*/
 .wcml-tip {
   cursor: help;
