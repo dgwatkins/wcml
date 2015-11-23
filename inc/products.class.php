@@ -912,12 +912,14 @@ class WCML_Products{
             $duplicated_ids = '';
             if ( !$translation->original ) {
                 foreach( $gallery_ids as $image_id ){
-                    $duplicated_id = apply_filters( 'translate_object_id', $image_id, 'attachment', false, $translation->language_code );
-                    if( is_null( $duplicated_id ) && $image_id ){
+                    if( get_post( $image_id ) ) {
+                        $duplicated_id = apply_filters( 'translate_object_id', $image_id, 'attachment', false, $translation->language_code );
+                        if ( is_null( $duplicated_id ) && $image_id ) {
 
-                        $duplicated_id = WPML_media::create_duplicate_attachment( $image_id, wp_get_post_parent_id( $image_id ), $translation->language_code );
+                            $duplicated_id = WPML_media::create_duplicate_attachment( $image_id, wp_get_post_parent_id( $image_id ), $translation->language_code );
+                        }
+                        $duplicated_ids .= $duplicated_id . ',';
                     }
-                    $duplicated_ids .= $duplicated_id.',';
                 }
                 $duplicated_ids = substr( $duplicated_ids, 0, strlen( $duplicated_ids )-1 );
                 update_post_meta( $translation->element_id, '_product_image_gallery', $duplicated_ids );
