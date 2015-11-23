@@ -559,6 +559,13 @@ class woocommerce_wpml {
     function add_language_to_paypal($args) {
         global $sitepress;
         $args['lc'] = $sitepress->get_current_language();
+
+        //filter URL when default permalinks uses
+        $wpml_settings = $sitepress->get_settings();
+        if( $wpml_settings[ 'language_negotiation_type' ] == 3 ){
+            $args[ 'notify_url' ] = str_replace( '%2F&', '&', $args[ 'notify_url' ] );
+        }
+
         return $args;
     }
 
