@@ -1713,7 +1713,8 @@ class WCML_Products{
             if( isset( $_POST[ '_wcml_custom_prices' ][ $post_id ] ) ) {
                 $wcml_custom_prices_option = $_POST[ '_wcml_custom_prices' ][ $post_id ];
             }else{
-                $wcml_custom_prices_option = $_POST[ '_wcml_custom_prices' ][ 0 ];
+                $current_option = get_post_meta( $post_id, '_wcml_custom_prices_status', true );
+                $wcml_custom_prices_option = $current_option ? $current_option : 0;
             }
 
             update_post_meta( $post_id, '_wcml_custom_prices_status', $wcml_custom_prices_option );
