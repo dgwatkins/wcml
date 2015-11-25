@@ -839,4 +839,25 @@ class woocommerce_wpml {
 
     }
 
+    function get_supported_wp_version(){
+        $file = WCML_PLUGIN_PATH. '\readme.txt';
+
+        $values = file($file);
+
+        $version = explode( ':', $values[6] );
+
+        if( $version[0] == 'Tested up to' ){
+            return $version[1];
+        }
+
+        foreach( $values as $value ){
+            $version = explode( ':', $value );
+
+            if( $version[0] == 'Tested up to' ){
+                return $version[1];
+            }
+        }
+
+    }
+
 }

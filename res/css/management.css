@@ -36,6 +36,15 @@
   color: #ffb800;
 }
 
+.wcml-wrap a{
+  text-decoration: none;
+}
+
+.hide-rate-block{
+  float: right;
+  cursor: pointer;
+}
+
 .wcml-section {
   clear: both;
   padding: 0 0 15px 0;

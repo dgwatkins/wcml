@@ -967,9 +967,10 @@ jQuery(document).ready(function($){
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
     
-    $(document).on('click', '#wcml_dimiss_non_default_language_warning', function(){
+    $(document).on('click', '.wcml-dismiss-warning', function(){
         $(this).attr('disabled', 'disabled');   
         var ajaxLoader = $('<span class="spinner">');
+        var setting = jQuery(this).data('setting');
         $(this).parent().append(ajaxLoader);
         ajaxLoader.show();
         $.ajax({
@@ -978,7 +979,7 @@ jQuery(document).ready(function($){
             dataType:'json',
             data: {
                 action: 'wcml_update_setting_ajx',
-                setting: 'dismiss_non_default_language_warning',
+                setting: setting,
                 value: 1,
                 nonce: $('#wcml_settings_nonce').val()
             },
@@ -987,7 +988,6 @@ jQuery(document).ready(function($){
             }
         });
     });
-
 
     $('#wcml_currencies_order').sortable({
         update: function(){

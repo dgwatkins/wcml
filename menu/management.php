@@ -50,10 +50,6 @@ if(isset($_GET['tab'])){
         <a class="nav-tab <?php echo $current_tab == 'status' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=status'); ?>"><?php _e('Status', 'woocommerce-multilingual') ?></a>
     <?php endif; ?>
 
-
-
-
-
 	<div class="wcml-wrap">
         <?php if(!isset($_GET['tab']) && current_user_can('wpml_manage_woocommerce_multilingual')): ?>
             <?php  include WCML_PLUGIN_PATH . '/menu/sub/products.php'; ?>
@@ -71,5 +67,17 @@ if(isset($_GET['tab'])){
             <?php include WCML_PLUGIN_PATH . '/menu/sub/settings.php'; ?>
         <?php endif; ?>
     </div>
+
 </div>
 
+<?php if( !isset( $woocommerce_wpml->settings['rate-block'] ) ): ?>
+    <div class="wrap wcml-wrap">
+            <span>
+                <?php echo sprintf(__('Thank you for using %s! You can express your love and support by %s rating our plugin and say that %s for you', 'woocommerce-multilingual'),'<strong>WooCommerce Multilingual</strong>', '<a href="https://wordpress.org/support/view/plugin-reviews/woocommerce-multilingual?filter=5#postform" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>', '<a href="https://wordpress.org/plugins/woocommerce-multilingual/?compatibility[version]='.$woocommerce_wpml->get_supported_wp_version().'&compatibility[topic_version]='.WCML_VERSION.'&compatibility[compatible]=1#compatibility" target="_blank">'.__('it works','woocommerce-multilingual').'</a>')?>
+            </span>
+            <span>
+                <a class="wcml-dismiss-warning hide-rate-block" data-setting="rate-block" ><?php _e('Done! Hide this','woocommerce-multilingual') ?></a>
+                <?php wp_nonce_field('wcml_settings', 'wcml_settings_nonce'); ?>
+            </span>
+    </div>
+<?php endif; ?>
