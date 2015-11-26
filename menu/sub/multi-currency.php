@@ -4,7 +4,7 @@ $default_language = $sitepress->get_default_language();
 
 <form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>" id="wcml_mc_options">
 	<?php wp_nonce_field( 'wcml_mc_options', 'wcml_nonce' ); ?>
-
+	<input type="hidden" name="action" value="save-mc-options" />
 	<div class="wcml-section ">
 		<div class="wcml-section-header">
 			<h3>

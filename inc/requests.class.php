@@ -13,42 +13,7 @@ class WCML_Requests{
 
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
-        if(isset($_POST['wcml_mc_options']) && check_admin_referer('wcml_mc_options', 'wcml_mc_options_nonce') && wp_verify_nonce($nonce, 'wcml_mc_options')){
-            
-            $woocommerce_wpml->settings['enable_multi_currency'] = $_POST['multi_currency'];  
-            $woocommerce_wpml->settings['display_custom_prices'] =  empty($_POST['display_custom_prices']) ? 0 : 1;
-            
-            //update default currency settings
-            if( $_POST['multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
-                $options = array(
-                    'woocommerce_currency_pos' => 'position',
-                    'woocommerce_price_thousand_sep' => 'thousand_sep',
-                    'woocommerce_price_decimal_sep' => 'decimal_sep',
-                    'woocommerce_price_num_decimals' => 'num_decimals'
-                );
-
-                $woocommerce_currency = get_option('woocommerce_currency', true);
-
-                foreach($options as $wc_key => $key){
-                    $woocommerce_wpml->settings['currency_options'][$woocommerce_currency][$key] = get_option( $wc_key,true );
-                }
-            }
-
-            $woocommerce_wpml->update_settings();
-            
-        }
-
-        if(isset($_POST['currency_switcher_options']) && check_admin_referer('currency_switcher_options', 'currency_switcher_options_nonce') && wp_verify_nonce($nonce, 'wcml_mc_options')){
-
-            if(isset($_POST['currency_switcher_style'])) $woocommerce_wpml->settings['currency_switcher_style'] = $_POST['currency_switcher_style'];  
-            if(isset($_POST['wcml_curr_sel_orientation'])) $woocommerce_wpml->settings['wcml_curr_sel_orientation'] = $_POST['wcml_curr_sel_orientation'];
-            if(isset($_POST['wcml_curr_template'])) $woocommerce_wpml->settings['wcml_curr_template'] = $_POST['wcml_curr_template'];
-            $woocommerce_wpml->settings['currency_switcher_product_visibility'] = empty($_POST['currency_switcher_product_visibility']) ? 0 : 1;
-
-            $woocommerce_wpml->update_settings();
-            
-        }
-
+        //@Todo move to multi-currency.class.php
         if(isset($_POST['wcml_update_languages_currencies']) && isset($_POST['currency_for']) && wp_verify_nonce($nonce, 'wcml_update_languages_currencies')){
             global $wpdb;
             $currencies = $_POST['currency_for'];

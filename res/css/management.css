@@ -697,3 +697,5 @@ input[name="wcml_curr_template"] {
   cursor: pointer;
   text-decoration: none;
 }
+
+.wcml-wrap .icl-admin-message .icl-admin-message-wrapper{padding:1em}
