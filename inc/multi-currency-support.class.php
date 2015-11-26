@@ -550,7 +550,7 @@ class WCML_Multi_Currency_Support{
         wp_enqueue_script('wcml-mc-scripts');
 
         $script_vars['wcml_mc_nonce'] = wp_create_nonce( 'switch_currency' );
-        $script_vars['wcml_spinner'] = WCML_PLUGIN_URL . '/assets/images/ajax-loader.gif';
+        $script_vars['wcml_spinner'] = WCML_PLUGIN_URL . '/res/images/ajax-loader.gif';
 
         if(isset($this->WCML_WC_MultiCurrency_W3TC)){
             $script_vars['w3tc'] = 1;
