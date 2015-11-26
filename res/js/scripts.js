@@ -569,12 +569,14 @@ jQuery(document).ready(function($){
                 wcml_nonce: $('#wcml_edit_base_nonce').val()
             },
             success: function(response) {
-                $('body').prepend(response);
+                jQuery(document.body).append(response);
 
-                var height = $(window).height()/2 + 90;
-                var width = $(window).width()/2 + 220;
-                $('.wcml-base-dialog').css('top' , height+ 'px');
-                $('.wcml-base-dialog').css('left' , height+ 'px');
+                $('.wcml-base-dialog').css( 'top', $(document).height()/2 );
+
+                $('body').animate({
+                    scrollTop: $('.wcml-base-dialog').offset().top - $(window).height()/2
+                },0);
+
                 $('.wcml-base-dialog').fadeIn();
             }
         })
@@ -606,9 +608,10 @@ jQuery(document).ready(function($){
         })
     });
 
-    $(document).on('click', '.wcml_cancel_base', function(e) {
+    $(document).on('click', '.wcml_cancel_base,.wcml_fade_block', function(e) {
         e.preventDefault();
         $('.wcml-base-dialog').remove();
+        $('.wcml_fade_block').remove();
 
     });
 

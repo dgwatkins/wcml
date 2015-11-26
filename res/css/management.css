@@ -357,7 +357,6 @@
 }
 
 .wcml-co-dialog {
-  position: absolute;
   min-width: 400px;
   display: none;
   margin-left: 230px;
@@ -398,8 +397,21 @@
 }
 
 .wcml-base-dialog{
-  z-index: 999999;
-  background-color: #FFF;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  background: #fff;
+  position: absolute;
+  z-index: 9999;
+}
+.wcml_fade_block{
+  background:rgba(0,0,0,0.75);
+  z-index: 9998;
+  width:100%;
+  height:100%;
+  top: 0;
+  left: 0;
+  position: fixed;
 }
 
 .wcml-base-dialog .wpml-dialog-body {

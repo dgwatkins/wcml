@@ -576,8 +576,10 @@ class WCML_Url_Translation {
 
         if( $base == 'shop' ){
             $source_language = $sitepress->get_language_for_element( get_option('woocommerce_shop_page_id' ) , 'post_page' );
-        }else{
+        }elseif( in_array( $base, array( 'product','product_cat','product_tag','attribute') ) ){
             $source_language = $woocommerce_wpml->strings->get_string_language( $base, $this->url_strings_context(), $this->url_string_name( $base ) );
+        }else{
+            $source_language = $woocommerce_wpml->strings->get_string_language( $base, 'WooCommerce Endpoints', $base );
         }
 
         foreach( $active_languages as $language ){
@@ -591,7 +593,6 @@ class WCML_Url_Translation {
                 if( $base == 'shop' ){
                     $translated_base = apply_filters( 'translate_object_id', get_option('woocommerce_shop_page_id' ), 'page', false, $language['code'] );
                 }else{
-
                     $translated_base = $this->get_base_translation( $base,$language['code'] );
 
                     if( $translated_base['translated_base'] ){
@@ -602,7 +603,6 @@ class WCML_Url_Translation {
                     }else{
                         $translated_base = false;
                     }
-
                 }
 
                 ?>
@@ -647,10 +647,19 @@ class WCML_Url_Translation {
                 $slug = trim( $this->wc_permalinks['attribute_base'], '/' );
                 $return['name'] = __('Product Attribute Base', 'woocommerce-multilingual');
                 break;
+
+            default:
+                $endpoints = WC()->query->query_vars;
+                $slug = isset( $endpoints[ $base ] ) ? $endpoints[ $base ] : false ;
+                $return['name'] = sprintf( __('Endpoint: %s', 'woocommerce-multilingual'), $base);
+                $string_id = icl_get_string_id( $slug, 'WooCommerce Endpoints', $base );
+                break;
         }
 
         $return['original_value'] =  $slug;
-        $string_id = icl_get_string_id( $slug, $this->url_strings_context(), $this->url_string_name( $base ) );
+        if( !isset( $string_id ) ){
+            $string_id = icl_get_string_id( $slug, $this->url_strings_context(), $this->url_string_name( $base ) );
+        }
         $base_translations = icl_get_string_translations_by_id( $string_id );
 
         $return['translated_base'] = '';
@@ -694,11 +703,15 @@ class WCML_Url_Translation {
 
             $translated_base_value = $translated_base['translated_base'];
 
-            $source_language = $woocommerce_wpml->strings->get_string_language( $original_base, $this->url_strings_context(), $this->url_string_name( $original_base ) );
+            if( in_array( $original_base, array( 'product','product_cat','product_tag','attribute') ) ){
+                $source_language = $woocommerce_wpml->strings->get_string_language( $original_base, $this->url_strings_context(), $this->url_string_name( $original_base ) );
+            }else{
+                $source_language = $woocommerce_wpml->strings->get_string_language( $translated_base['original_value'], 'WooCommerce Endpoints', $original_base );
+            }
+
             $original_base_value = $translated_base['original_value'];
             $label_name = $translated_base['name'];
         }
-
         $active_languages = $sitepress->get_active_languages();
 
         ob_start();
@@ -738,8 +751,11 @@ class WCML_Url_Translation {
             }
 
         }else{
-
-            $string_id = icl_get_string_id( $original_base_value, $this->url_strings_context(), $this->url_string_name( $original_base ) );
+            if( in_array( $original_base, array( 'product','product_cat','product_tag','attribute') ) ){
+                $string_id = icl_get_string_id( $original_base_value, $this->url_strings_context(), $this->url_string_name( $original_base ) );
+            }else{
+                $string_id = icl_get_string_id( $original_base_value, 'WooCommerce Endpoints', $original_base );
+            }
 
             icl_add_string_translation( $string_id, $language, $base_translation, ICL_STRING_TRANSLATION_COMPLETE );
 
