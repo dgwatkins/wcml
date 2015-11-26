@@ -49,8 +49,9 @@ class WCML_Orders{
                 $string_id = icl_get_string_id( $text, 'woocommerce');
                 $strings = icl_get_string_translations_by_id( $string_id );
                 if($strings){
-                    $translations = $strings[ $sitepress_settings['admin_default_language'] ];
+                    $translations = $strings[ $sitepress_settings['admin_default_language'] ]['value'];
                 }
+
             }else{
                 return $text;
             }
