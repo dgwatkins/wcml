@@ -78,6 +78,11 @@ In order for the checkout and store pages to appear translated, you need to crea
 
 == Changelog ==
 
+3.8
+* Bug fix: in some specific cases variations were not created correctly - 'Any %name%' instead of term value
+* Bug fix: updating a product for which attached media had been deteled caused a warning (WooCommerce issue: 9681)
+
+
 = 3.7.4 =
 * Fixed a problem with the previous version that caused a fatal error when upgrading
 
