@@ -22,7 +22,7 @@ class WCML_Multi_Currency_Support{
             add_action('wp_ajax_legacy_update_custom_rates', array($this, 'legacy_update_custom_rates'));
             add_action('wp_ajax_legacy_remove_custom_rates', array($this, 'legacy_remove_custom_rates'));
 
-            add_action('wp_ajax_wcml_new_currency', array($this,'add_currency')); 
+            add_action('wp_ajax_wcml_new_currency', array($this,'edit_currency'));
             add_action('wp_ajax_wcml_save_currency', array($this,'save_currency'));
             add_action('wp_ajax_wcml_delete_currency', array($this,'delete_currency'));
             add_action('wp_ajax_wcml_currencies_list', array($this,'currencies_list'));
@@ -262,58 +262,95 @@ class WCML_Multi_Currency_Support{
         $woocommerce_wpml->update_settings($settings);
 
     }
-    
-    function add_currency(){
+
+    function edit_currency(){
+
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_new_currency')){
-            die('Invalid nonce');
-        }
+        if( wp_verify_nonce( $nonce, 'wcml_edit_currency' ) ) {
 
-        global $sitepress, $woocommerce_wpml;;
-        $settings = $woocommerce_wpml->get_settings();
-        
-        $return = array();
-        
-        if(!empty($_POST['currency_code'])){
-            
-            $currency_code = filter_input( INPUT_POST, 'currency_code', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-            
-            $active_languages = $sitepress->get_active_languages();
-            $return['languages'] ='';
-            foreach($active_languages as $language){
-                if(!isset($settings['currency_options'][$currency_code]['languages'][$language['code']])){
-                    $settings['currency_options'][$currency_code]['languages'][$language['code']] = 1;
-                }
-            }
-            $settings['currency_options'][$currency_code]['rate'] = (double) filter_input( INPUT_POST, 'currency_value', FILTER_VALIDATE_FLOAT , FILTER_FLAG_ALLOW_FRACTION);
-            $settings['currency_options'][$currency_code]['updated'] = date('Y-m-d H:i:s');        
-
-            $wc_currency = get_option('woocommerce_currency'); 
-            if(!isset($settings['currencies_order']))
-                $settings['currencies_order'][] = $wc_currency;
-
-            $settings['currencies_order'][] = $currency_code;
-
-            $woocommerce_wpml->update_settings($settings);
-
-            $wc_currencies = get_woocommerce_currencies();
-            $return['currency_name_formatted'] = sprintf('%s (%s)', $wc_currencies[$currency_code], sprintf('%s 99.99', get_woocommerce_currency_symbol($currency_code)));
-            $return['currency_name_formatted_without_rate'] = sprintf('%s (%s)', $wc_currencies[$currency_code], get_woocommerce_currency_symbol($currency_code));
-            $return['currency_meta_info'] = sprintf('1 %s = %s %s', $wc_currency, $settings['currency_options'][$currency_code]['rate'], $currency_code);
-            
-
-            $code = $currency_code;
             $this->init_currencies();
-            $currency = $this->currencies[$currency_code];
+            $args['currencies']     = $this->get_currencies();
+            $args['wc_currencies']  = get_woocommerce_currencies();
+
             ob_start();
-            include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php'; 
-            $return['currency_options'] = ob_get_contents();
+
+            if( empty( $_POST['currency'] )  ){
+
+                $args['title'] = empty($_POST['currency']) ? __('Add new currency', 'woocommerce-multingual') : __('Update currency', 'woocommerce-multingual');
+
+            }else{
+
+                $args['currency_code']   = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+                $args['currency_name']   = $args['wc_currencies'][ $args['currency_code'] ];
+                $args['currency_symbol'] = get_woocommerce_currency_symbol( $args['currency_code'] );
+
+                $args['title'] = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ), '<strong>' . $args['currency_name'] . ' (' . $args['currency_symbol'] . ')</strong>' );
+
+            }
+
+            include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php';
+            $return['html'] = ob_get_contents();
             ob_end_clean();
 
+            echo json_encode( $return );
+
         }
 
-        echo json_encode($return);
-        die();
+        exit;
+    }
+
+    function add_currency(){
+
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if( wp_verify_nonce( $nonce, 'wcml_new_currency' ) ) {
+
+            global $sitepress, $woocommerce_wpml;;
+            $settings = $woocommerce_wpml->get_settings();
+
+            $return = array();
+
+            if ( !empty($_POST['currency_code']) ) {
+
+                $currency_code = filter_input( INPUT_POST, 'currency_code', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+                $active_languages = $sitepress->get_active_languages();
+                $return['languages'] = '';
+                foreach ( $active_languages as $language ) {
+                    if ( !isset($settings['currency_options'][$currency_code]['languages'][$language['code']]) ) {
+                        $settings['currency_options'][$currency_code]['languages'][$language['code']] = 1;
+                    }
+                }
+                $settings['currency_options'][$currency_code]['rate'] = (double)filter_input( INPUT_POST, 'currency_value', FILTER_VALIDATE_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
+                $settings['currency_options'][$currency_code]['updated'] = date( 'Y-m-d H:i:s' );
+
+                $wc_currency = get_option( 'woocommerce_currency' );
+                if ( !isset($settings['currencies_order']) )
+                    $settings['currencies_order'][] = $wc_currency;
+
+                $settings['currencies_order'][] = $currency_code;
+
+                $woocommerce_wpml->update_settings( $settings );
+
+                $wc_currencies = get_woocommerce_currencies();
+                $return['currency_name_formatted'] = sprintf( '%s (%s)', $wc_currencies[$currency_code], sprintf( '%s 99.99', get_woocommerce_currency_symbol( $currency_code ) ) );
+                $return['currency_name_formatted_without_rate'] = sprintf( '%s (%s)', $wc_currencies[$currency_code], get_woocommerce_currency_symbol( $currency_code ) );
+                $return['currency_meta_info'] = sprintf( '1 %s = %s %s', $wc_currency, $settings['currency_options'][$currency_code]['rate'], $currency_code );
+
+
+                $code = $currency_code;
+                $this->init_currencies();
+                $currency = $this->currencies[$currency_code];
+                ob_start();
+                include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php';
+                $return['currency_options'] = ob_get_contents();
+                ob_end_clean();
+
+            }
+
+            echo json_encode( $return );
+
+        }
+        exit;
     }    
     
     function save_currency(){

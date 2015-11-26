@@ -59,7 +59,7 @@ $default_language = $sitepress->get_default_language();
 
 
 					<div class="tablenav top clearfix">
-						<button type="button" class="button-secondary wcml_add_currency alignright js-wpml-dialog-trigger">
+						<button type="button" class="button-secondary wcml_add_currency alignright js-wpml-dialog-trigger" data-action="wcml_new_currency" data-wcml_nonce="<?php echo wp_create_nonce('wcml_edit_currency') ?>" data-width="460" data-heigh="600">
 							<i class="otgs-ico-add otgs-ico-sm"></i>
 							<?php _e( 'Add currency', 'woocommerce-multilingual' ); ?>
 						</button>
@@ -253,76 +253,7 @@ $default_language = $sitepress->get_default_language();
 						</tbody>
 					</table>
 
-
-					<?php // this is a template for scripts.js : jQuery('.wcml_add_currency button').click(function(); ?>
-					<table class="hidden js-table-row-wrapper">
-						<tr class="edit-mode js-table-row">
-							<td class="currency_code" data-message="<?php _e( 'Please fill field', 'woocommerce-multilingual' ); ?>" nowrap="nowrap">
-								<span class="code_val"></span>
-								<select name="code" style="display: inline">
-									<?php foreach ( $wc_currencies as $wc_code => $currency_name ): ?>
-										<?php if ( empty( $currencies[ $wc_code ] ) ): ?>
-											<option
-												value="<?php echo $wc_code; ?>"><?php echo $currency_name; ?></option>
-										<?php endif; ?>
-									<?php endforeach; ?>
-								</select>
-
-								<span class="currency_value" data-message="<?php _e( 'Only numeric', 'woocommerce-multilingual' ); ?>">
-									<span>
-										<?php printf( '1 %s = ', $wc_currency ); ?>
-										<span class="curr_val"></span>
-										<input size="5" type="text" value="" style="display: inline-block;">
-										<span class="curr_val_code"></span>
-									</span>
-								</span>
-							</td>
-							<td class="currency-actions">
-								<div class="currency_action_update">
-									<a href="javascript:void(0);" title="Edit" class="edit_currency"
-									   style="display:none">
-										<i class="otgs-ico-edit" title="Edit"></i>
-									</a>
-								</div>
-								<div class="currency_action_delete">
-									<a href="javascript:void(0);" title="Delete" class="delete_currency"
-									   data-currency="" style="display:none">
-										<i class="otgs-ico-delete" alt="Delete"></i>
-									</a>
-								</div>
-							</td>
-						</tr>
-					</table>
-
-					<table class="hidden js-currency_lang_table">
-						<tr>
-							<?php foreach ( $active_languages as $language ): ?>
-								<td class="currency_languages">
-									<div class="wcml_onof_buttons">
-										<ul>
-											<li><a class="off_btn otgs-ico-no" href="javascript:void(0);"
-												   data-language="<?php echo $language['code']; ?>"></a>
-											</li>
-											<li class="on"><a class="on_btn otgs-ico-yes" href="javascript:void(0);"
-															  data-language="<?php echo $language['code']; ?>"></a>
-											</li>
-										</ul>
-									</div>
-								</td>
-							<?php endforeach; ?>
-						</tr>
-					</table>
-
-					<input type="hidden" value="<?php echo WCML_PLUGIN_URL; ?>" class="wcml_plugin_url"/>
-					<input type="hidden" id="new_currency_nonce"
-						   value="<?php echo wp_create_nonce( 'wcml_new_currency' ); ?>"/>
-					<input type="hidden" id="del_currency_nonce"
-						   value="<?php echo wp_create_nonce( 'wcml_delete_currency' ); ?>"/>
-					<input type="hidden" id="currencies_list_nonce"
-						   value="<?php echo wp_create_nonce( 'wcml_currencies_list' ); ?>"/>
 				</div>
-
-
 
 				<?php // backward compatibility ?>
 				<?php
