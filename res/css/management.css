@@ -307,6 +307,10 @@
   display: none;
 }
 
+.currency_code select{
+  font-size: 13px;
+}
+
 .wp-core-ui .save_currency, .wp-core-ui .cancel_currency {
   display: none;
 }
@@ -409,7 +413,7 @@
 
 table.widefat.currency_table {
   float: left;
-  width: 300px;
+  width: 400px;
   border-right: none;
 }
 td.wcml-col-currency,
@@ -524,7 +528,7 @@ table.widefat.currency_lang_table {
 }
 
 .currency_wrap {
-  width: calc(100% - 300px - 50px);
+  width: calc(100% - 400px - 50px);
   float: left;
   margin-bottom: 10px;
 }
