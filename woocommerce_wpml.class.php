@@ -420,12 +420,12 @@ class woocommerce_wpml {
         wp_enqueue_style( 'buttons' );
 
         if( $pagenow == 'options-permalink.php' ){
-            wp_register_style('wcml_op', WCML_PLUGIN_URL . '/assets/css/options-permalink.css', null, WCML_VERSION);
+            wp_register_style('wcml_op', WCML_PLUGIN_URL . '/res/css/options-permalink.css', null, WCML_VERSION);
             wp_enqueue_style('wcml_op');
         }
 
         if( !is_admin() ){
-            wp_register_script('cart-widget', WCML_PLUGIN_URL . '/assets/js/cart_widget.js', array('jquery'), WCML_VERSION);
+            wp_register_script('cart-widget', WCML_PLUGIN_URL . '/res/js/cart_widget.js', array('jquery'), WCML_VERSION);
             wp_enqueue_script('cart-widget');
         }
 
