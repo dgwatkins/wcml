@@ -840,7 +840,7 @@ class woocommerce_wpml {
     }
 
     function get_supported_wp_version(){
-        $file = WCML_PLUGIN_PATH. '\readme.txt';
+        $file = WCML_PLUGIN_PATH. '/readme.txt';
 
         $values = file($file);
 
