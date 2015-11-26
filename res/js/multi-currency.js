@@ -62,6 +62,10 @@ jQuery( function($){
 
         add_currency: function(){
 
+
+
+
+
             discard = true;
             $('.js-table-row-wrapper .curr_val_code').html($('.js-table-row-wrapper select').val());
             var $tableRow = $('.js-table-row-wrapper .js-table-row').clone();

@@ -1,18 +1,46 @@
-<?php
-$currency_name   = $wc_currencies[ $code ];
-$currency_symbol = get_woocommerce_currency_symbol( $code );
-?>
 
-<div class="wpml-dialog wcml-co-dialog" id="wcml_currency_options_<?php echo $code ?>">
 	<header class="wpml-dialog-header">
 		<h3>
-			<?php printf( __( 'Currency options for %s', 'woocommerce-multilingual' ), '<strong>' . $currency_name . ' (' . $currency_symbol . ')</strong>' ) ?>
+			<?php echo $args['title'] ?>
 		</h3>
 		<?php //TODO Sergey: close Dialog on wpml-dialog-close (not on icon classes) ?>
 		<i class="otgs-ico-close wpml-dialog-close-button"></i>
 	</header>
 
+	<div class="wpml-dialog-body">
 
+		<div class="wpml-form-row wcml-co-exchange-rate">
+			<label><?php _e( 'Select currency', 'woocommerce-multilingual' ) ?></label>
+
+			<select name="code" style="display:block">
+				<?php foreach($args['wc_currencies'] as $currency_code => $currency_name): ?>
+					<?php if(empty( $args['currencies'][$currency_code]) ): ?>
+						<option value="<?php echo $currency_code; ?>" <?php if( isset( $args['currency_code'] ) ) selected($currency_code,  $args['currency_code'] , true) ?> ><?php echo $currency_name; ?></option>
+					<?php endif; ?>
+				<?php endforeach; ?>
+			</select>
+
+		</div>
+
+		<hr />
+
+		<?php $wc_currency = '2'; $code='23'; $currency['rate'] = '3'; $currency['updated'] = '0'; ?>
+		<div class="wpml-form-row wcml-co-exchange-rate">
+			<label><?php _e( 'Exchange Rate', 'woocommerce-multilingual' ) ?></label>
+
+			<p class="wcml-co-set-rate">
+				<?php printf( "1 %s = %s %s", $wc_currency, '<input name="currency_options[' . $code . '][rate]" size="5" type="number" class="ext_rate" step="0.01" value="' . $currency['rate'] . '" data-message="' . __( 'Only numeric', 'woocommerce-multilingual' ) . '" />', $code ) ?>
+				<small>
+					<i><?php printf( __( 'Set on %s', 'woocommerce-multilingual' ), date( 'F j, Y, H:i', strtotime( isset( $currency['updated'] ) ? $currency['updated'] : time() ) ) ); ?></i>
+				</small>
+			</p>
+
+		</div>
+
+	</div>
+
+
+	<?php /*
 	<div class="wpml-dialog-body">
 
 		<div class="wpml-form-row wcml-co-exchange-rate">
@@ -119,7 +147,6 @@ $currency_symbol = get_woocommerce_currency_symbol( $code );
 		</div>
 	</div>
 
-
 	<footer class="wpml-dialog-footer">
 		<input type="button" class="button-secondary wpml-dialog-close-button alignleft"
 		       value="<?php esc_attr_e( 'Cancel', 'woocommerce-multilingual' ) ?>" data-currency="<?php echo $code ?>"/>&nbsp;
@@ -127,4 +154,6 @@ $currency_symbol = get_woocommerce_currency_symbol( $code );
 		       value="<?php esc_attr_e( 'Save', 'woocommerce-multilingual' ) ?>" data-currency="<?php echo $code ?>" data-action="" />
 		<input type="hidden" id="save_currency_nonce" value="<?php echo wp_create_nonce( 'save_currency' ); ?>"/>
 	</footer>
-</div>
+
+ 	*/ ?>
+

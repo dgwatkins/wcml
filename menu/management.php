@@ -24,7 +24,7 @@ if(isset($_GET['tab'])){
 
 <div class="wrap wcml-wrap">
     <div id="icon-wpml" class="icon32"><br /></div>
-    <h2><?php _e('WooCommerce Multilingual', 'woocommerce-multilingual') ?></h2>
+    <h1><?php _e('WooCommerce Multilingual', 'woocommerce-multilingual') ?></h1>
     <a class="nav-tab <?php echo $current_tab == 'products' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml'); ?>"><?php _e('Products', 'woocommerce-multilingual') ?></a>
 
     <?php if( current_user_can('wpml_operate_woocommerce_multilingual')): ?>
