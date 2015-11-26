@@ -364,11 +364,6 @@ class woocommerce_wpml {
 
             if( in_array($_GET['page'], array('wpml-wcml',basename(WCML_PLUGIN_PATH).'/menu/sub/troubleshooting.php',basename(WCML_PLUGIN_PATH).'/menu/plugins.php'))) {
 
-
-//                if ( !wp_style_is( 'toolset-font-awesome', 'registered' ) ) { // check if style are already registered
-//	                wp_register_style( 'toolset-font-awesome', WCML_PLUGIN_URL . '/res/css/font-awesome.min.css', null, WCML_VERSION ); // register if not
-//                }
-//
 	            wp_register_style( 'wpml-wcml', WCML_PLUGIN_URL . '/res/css/management.css', array( ), WCML_VERSION );
 		        wp_register_style( 'cleditor', WCML_PLUGIN_URL . '/res/css/jquery.cleditor.css', null, WCML_VERSION );
 	            wp_register_script( 'wcml-tm-scripts', WCML_PLUGIN_URL . '/res/js/scripts.js', array(
@@ -425,13 +420,18 @@ class woocommerce_wpml {
         wp_enqueue_style( 'buttons' );
 
         if( $pagenow == 'options-permalink.php' ){
-            wp_register_style('wcml_op', WCML_PLUGIN_URL . '/assets/css/options-permalink.css', null, WCML_VERSION);
+            wp_register_style('wcml_op', WCML_PLUGIN_URL . '/res/css/options-permalink.css', null, WCML_VERSION);
             wp_enqueue_style('wcml_op');
         }
 
         if( !is_admin() ){
-            wp_register_script('cart-widget', WCML_PLUGIN_URL . '/assets/js/cart_widget.js', array('jquery'), WCML_VERSION);
+            wp_register_script('cart-widget', WCML_PLUGIN_URL . '/res/js/cart_widget.js', array('jquery'), WCML_VERSION);
             wp_enqueue_script('cart-widget');
+        }
+
+        if( is_admin() && isset( $_GET['page'] ) && $_GET['page'] == 'wpml-wcml' && isset( $_GET['tab'] ) && $_GET['tab'] == 'multi-currency' ){
+            wp_register_script( 'multi-currency', WCML_PLUGIN_URL . '/res/js/multi-currency.js', array('jquery'), WCML_VERSION, true );
+            wp_enqueue_script( 'multi-currency' );
         }
     }
 

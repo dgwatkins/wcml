@@ -545,7 +545,7 @@ class WCML_Multi_Currency_Support{
     
     function load_inline_js(){
 
-        wp_register_script('wcml-mc-scripts', WCML_PLUGIN_URL . '/assets/js/wcml-multi-currency.js', array('jquery'), WCML_VERSION, true);
+        wp_register_script('wcml-mc-scripts', WCML_PLUGIN_URL . '/res/js/wcml-multi-currency.js', array('jquery'), WCML_VERSION, true);
 
         wp_enqueue_script('wcml-mc-scripts');
 
