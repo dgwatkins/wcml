@@ -40,6 +40,8 @@ $default_language = $sitepress->get_default_language();
 					$wc_currency      = get_option( 'woocommerce_currency' );
 					$active_languages = $sitepress->get_active_languages();
 
+					$currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
+
 					switch ( get_option( 'woocommerce_currency_pos' ) ) {
 						case 'left':
 							$positioned_price = sprintf( '%s99.99', get_woocommerce_currency_symbol( $wc_currency ) );
@@ -55,11 +57,30 @@ $default_language = $sitepress->get_default_language();
 							break;
 					}
 
+					// new currency popup
+					$args['default_currency']   = get_woocommerce_currency();
+					$args['currencies']     	= $currencies;
+					$args['wc_currencies']  	= $wc_currencies;
+					$args['currency_code'] 		= '';
+					$args['currency_name'] 		= '';
+					$args['currency_symbol'] 	= '';
+					$args['currency']			= array(
+													'rate'                  => 1,
+													'position'              => 'left',
+													'thousand_sep'          => ',',
+													'decimal_sep'           => '.',
+													'num_decimals'          => 2,
+													'rounding'              => 'disabled',
+													'rounding_increment'    => 1,
+													'auto_subtract'         => 0
+												);
+					$args['title'] = __('Add new currency', 'woocommerce-multingual');
+					include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php';
+
+
 					?>
-
-
 					<div class="tablenav top clearfix">
-						<button type="button" class="button-secondary wcml_add_currency alignright js-wpml-dialog-trigger" data-action="wcml_new_currency" data-wcml_nonce="<?php echo wp_create_nonce('wcml_edit_currency') ?>" data-width="460" data-heigh="600">
+						<button type="button" class="button-secondary wcml_add_currency alignright js-wpml-dialog-trigger" id="wcml_currency_options_" data-content="wcml_currency_options_" data-width="480" data-height="530">
 							<i class="otgs-ico-add otgs-ico-sm"></i>
 							<?php _e( 'Add currency', 'woocommerce-multilingual' ); ?>
 						</button>
@@ -87,7 +108,6 @@ $default_language = $sitepress->get_default_language();
 						</tr>
 						<?php
 						unset( $wc_currencies[ $wc_currency ] );
-						$currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
 						foreach ( $currencies as $code => $currency ) :
 							switch ( $currency['position'] ) {
 								case 'left':
@@ -106,7 +126,16 @@ $default_language = $sitepress->get_default_language();
 							?>
 							<tr id="currency_row_<?php echo $code ?>">
 								<td class="wcml-col-currency">
-									<?php include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php'; ?>
+									<?php
+										$args['currencies']     	= $currencies;
+										$args['wc_currencies']  	= $wc_currencies;
+										$args['currency_code'] 		= $code;
+										$args['currency_name'] 		= $args['wc_currencies'][$args['currency_code']];
+										$args['currency_symbol'] 	= get_woocommerce_currency_symbol( $args['currency_code'] );
+										$args['currency']			= $currency;
+										$args['title'] = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ), '<strong>' . $args['currency_name'] . ' (' . $args['currency_symbol'] . ')</strong>' );
+										include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php';
+									?>
 									<?php echo $wc_currencies[ $code ]; ?>
 									<small><?php printf( __( ' (%s)', 'woocommerce-multilingual' ), $positioned_price ); ?></small>
 								</td>
@@ -118,7 +147,7 @@ $default_language = $sitepress->get_default_language();
 									<a
 										href="#" title="<?php esc_attr( _e( 'Edit', 'woocommerce-multilingual' ) ); ?>" class="edit_currency js-wpml-dialog-trigger"
 										data-currency="<?php echo $code ?>" data-content="wcml_currency_options_<?php echo $code ?>"  id="wcml_currency_options_<?php echo $code ?>"
-										data-height="530" data-width="450">
+										data-height="530" data-width="480">
 										<i class="otgs-ico-edit"
 										   title="<?php esc_attr( _e( 'Edit', 'woocommerce-multilingual' ) ); ?>"></i>
 									</a>

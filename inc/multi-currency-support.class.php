@@ -361,8 +361,8 @@ class WCML_Multi_Currency_Support{
 
         global $woocommerce_wpml;
         
-        $currency_code = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-        $options = $_POST['currency_options'][$currency_code];
+        $currency_code = filter_input( INPUT_POST, 'code', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        $options = $_POST['currency_options'];
         
         $changed = false;
         $rate_changed = false;

@@ -9,15 +9,15 @@ jQuery( function($){
 
                 WCML_Multi_Currency.setup_multi_currency_toggle();
 
-                $(document).on('click','.wcml_add_currency', WCML_Multi_Currency.add_currency);
-                $(document).on('click','.cancel_currency', WCML_Multi_Currency.cancel_add_currency);
+                //$(document).on('click','.wcml_add_currency', WCML_Multi_Currency.add_currency);
+                //$(document).on('click','.cancel_currency', WCML_Multi_Currency.cancel_add_currency);
 
                 $(document).on('change','.currency_code select', WCML_Multi_Currency.select_currency);
 
                 $(document).on('click','.save_currency', WCML_Multi_Currency.save_currency);
                 $(document).on('click','.delete_currency', WCML_Multi_Currency.delete_currency);
 
-                $(document).on('click', '.wcml-co-dialog .currency_options_save', WCML_Multi_Currency.save_currency_options);
+                $(document).on('click', '.wpml-dialog-container .currency_options_save', WCML_Multi_Currency.save_currency_options);
 
                 $(document).on('click','.js-display-tooltip', WCML_Multi_Currency.tooltip);
 
@@ -60,11 +60,8 @@ jQuery( function($){
 
         },
 
+        /*
         add_currency: function(){
-
-
-
-
 
             discard = true;
             $('.js-table-row-wrapper .curr_val_code').html($('.js-table-row-wrapper select').val());
@@ -76,7 +73,9 @@ jQuery( function($){
             $('#currency-delete-table tr.currency_default:last').after( $DelTableRow );
 
         },
+        */
 
+        /*
         cancel_add_currency: function(){
             var $tableRow = $(this).closest('tr');
             $tableRow.removeClass('edit-mode');
@@ -97,6 +96,7 @@ jQuery( function($){
                 $tableRow.remove();
             }
         },
+        */
 
         select_currency: function(){
             $(this).parent().find('.curr_val_code').html($(this).val());
@@ -272,7 +272,7 @@ jQuery( function($){
 
         save_currency_options: function(){
 
-            var parent = $(this).closest('.wcml-currency-options-dialog');
+            var parent = $(this).closest('.wpml-dialog-container');
 
             var chk_rate = WCML_Multi_Currency.check_on_numeric(parent,'.ext_rate');
             var chk_deci = WCML_Multi_Currency.check_on_numeric(parent,'.decimals_number');
@@ -281,7 +281,6 @@ jQuery( function($){
             if(chk_rate || chk_deci || chk_autosub){
                 return false;
             }
-
 
             $('.wcml-currency-options-dialog :submit, .wcml-currency-options-dialog :button').prop('disabled', true);
             var currency = $(this).data('currency');
@@ -295,7 +294,7 @@ jQuery( function($){
                 url: ajaxurl,
                 type: 'POST',
                 dataType: 'json',
-                data: $('#wcml_mc_options').serialize() + '&action=wcml_save_currency&currency='+currency+'&wcml_nonce='+ $('#save_currency_nonce').val(),
+                data: parent.find('[name^="currency_options"]').serialize(),
                 success: function(response){
                     $('.wcml-currency-options-dialog').fadeOut(function () {
                         ajaxLoader.remove();
