@@ -134,9 +134,6 @@
 				   value="<?php esc_attr_e( 'Cancel', 'woocommerce-multilingual' ) ?>" data-currency="<?php echo $args['currency_code'] ?>"/>&nbsp;
 			<input type="submit" class="wpml-dialog-close-button button-primary currency_options_save alignright"
 				   value="<?php esc_attr_e( 'Save', 'woocommerce-multilingual' ) ?>" data-currency="<?php echo $args['currency_code'] ?>" data-action="" />
-			<input type="hidden" name="wcml_nonce" value="<?php echo wp_create_nonce( 'save_currency' ); ?>"/>
-			<input type="hidden" name="action" value="wcml_save_currency"/>
-
 		</footer>
 
 	</form>

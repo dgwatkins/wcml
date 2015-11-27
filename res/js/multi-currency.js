@@ -294,7 +294,7 @@ jQuery( function($){
                 url: ajaxurl,
                 type: 'POST',
                 dataType: 'json',
-                data: parent.find('[name^="currency_options"]').serialize(),
+                data: parent.find('[name^="currency_options"]').serialize() + '&action=wcml_save_currency&wcml_nonce=' + jQuery('#wcml_save_currency_nonce').val(),
                 success: function(response){
                     $('.wcml-currency-options-dialog').fadeOut(function () {
                         ajaxLoader.remove();
