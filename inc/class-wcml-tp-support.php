@@ -1,7 +1,5 @@
 <?php
 
-if ( defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSION, '3.2', '>=' ) ):
-
 class WCML_TP_Support{
 
     public $tp;
@@ -177,5 +175,3 @@ class WCML_TP_Support{
 
     }
 }
-
-endif;
