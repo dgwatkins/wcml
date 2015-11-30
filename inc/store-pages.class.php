@@ -248,7 +248,7 @@ class WCML_Store_Pages{
 
     function adjust_shop_page($q) {
         global $sitepress;
-        if ($sitepress->get_default_language() != $sitepress->get_current_language()) {
+        if ( version_compare( ICL_SITEPRESS_VERSION, '3.3', '<=' ) && $sitepress->get_default_language() != $sitepress->get_current_language()) {
             if (!empty($q->query_vars['pagename'])) {
                 $shop_page = get_post( wc_get_page_id('shop') );
                 // we should explode by / for children page
