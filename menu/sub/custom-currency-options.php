@@ -1,5 +1,5 @@
 
-<div class="wpml-dialog wcml-co-dialog" id="wcml_currency_options_<?php echo $args['currency_code'] ?>">
+<div class="wcml-co-dialog hidden" id="wcml_currency_options_<?php echo $args['currency_code'] ?>">
 
 	<form class="wcml_currency_options" action="" method="">
 
@@ -14,35 +14,36 @@
 
 			<div class="wpml-form-row wcml-co-exchange-rate">
 
-				<label><?php _e( 'Select currency', 'woocommerce-multilingual' ) ?></label>
+				<?php //TODO Even if I make this ID/for unique it is not unique because this dialog is present 2 times in the code ?>
+				<label for="currency_options[code]<?php echo $args['currency_code']?>"><?php _e( 'Select currency', 'woocommerce-multilingual' ) ?></label>
 
-				<select name="currency_options[code]" >
+				<select name="currency_options[code]" id="currency_options[code]<?php echo $args['currency_code']?>">
 					<?php foreach($args['wc_currencies'] as $currency_code => $currency_name): ?>
 						<?php if(empty( $args['currencies'][$currency_code]) ): ?>
 							<option value="<?php echo $currency_code; ?>" <?php if( isset( $args['currency_code'] ) ) selected($currency_code,  $args['currency_code'] , true) ?> ><?php echo $currency_name; ?></option>
 						<?php endif; ?>
 					<?php endforeach; ?>
 				</select>
-
 			</div>
 
-			<hr />
+
 
 			<div class="wpml-form-row wcml-co-exchange-rate">
 				<label><?php _e( 'Exchange Rate', 'woocommerce-multilingual' ) ?></label>
 
-				<p class="wcml-co-set-rate">
+				<div class="wcml-co-set-rate">
+					<?php //TODO make the currency code at the end change on input[name="currency_options[code]"] change ?>
 					<?php printf( "1 %s = %s %s", $args['default_currency'], '<input name="currency_options[rate]" size="5" type="number" class="ext_rate" step="0.01" value="' . $args['currency']['rate'] . '" data-message="' . __( 'Only numeric', 'woocommerce-multilingual' ) . '" />', $args['currency_code'] ) ?>
 					<?php if( isset($args['currency']['updated']) ): ?>
 					<small>
 						<i><?php printf( __( 'Set on %s', 'woocommerce-multilingual' ), date( 'F j, Y, H:i', strtotime( $args['currency']['updated'] ) ) ) ; ?></i>
 					</small>
 					<?php endif; ?>
-				</p>
+				</div>
 
 			</div>
 
-			</hr>
+			<hr>
 
 			<div class="wpml-form-row wcml-co-preview">
 				<label><strong><?php _e( 'Currency Preview', 'woocommerce-multilingual' ) ?></strong></label>

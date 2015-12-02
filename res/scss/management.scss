@@ -357,16 +357,18 @@
 }
 
 .wcml-co-dialog {
-  position: absolute;
-  min-width: 400px;
-  display: none;
-  margin-left: 230px;
+  &.hidden {
+    display: none;
+  }
   .wpml-form-row label {
     width: 195px;
     text-align: left;
   }
   input, select {
-    width: 100px;
+    width: 145px;
+  }
+  select[name="currency_options[code]"] {
+    width: auto;
   }
 
   .wcml-co-exchange-rate {
@@ -374,12 +376,12 @@
       width: 100px;
     }
     input {
-      margin: 0;
-      width: 50px;
+      margin: 0 !important ;
+      width: 70px;
     }
     .wcml-co-set-rate {
       display: inline-block;
-      margin-top: 4px;
+      padding: 4px $margin-sm $margin-xs $margin-sm;
     }
     small {
       display: block;
@@ -396,7 +398,7 @@
       display: inline-block;
       padding: $margin-xs $margin-sm;
       border: 1px solid #555;
-      font-size: 1.2em;
+      font-size: 1.4em;
       font-weight: bold;
       vertical-align: middle;
       margin: $margin-sm 0;
