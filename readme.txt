@@ -78,7 +78,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 
 == Changelog ==
 
-3.7.5
+= 3.7.5 =
 * Fixed a backward compatibility with WPML versions prior 3.2 (causing fatal error)
 * Bug fix: in some specific cases variations were not created correctly - 'Any %name%' instead of term value
 * Bug fix: updating a product for which attached media had been deleted caused a warning (WooCommerce issue: 9681)
