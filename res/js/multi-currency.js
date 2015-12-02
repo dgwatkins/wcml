@@ -9,15 +9,11 @@ jQuery( function($){
 
                 WCML_Multi_Currency.setup_multi_currency_toggle();
 
-                //$(document).on('click','.wcml_add_currency', WCML_Multi_Currency.add_currency);
-                //$(document).on('click','.cancel_currency', WCML_Multi_Currency.cancel_add_currency);
-
                 $(document).on('change','.currency_code select', WCML_Multi_Currency.select_currency);
 
-                $(document).on('click','.save_currency', WCML_Multi_Currency.save_currency);
                 $(document).on('click','.delete_currency', WCML_Multi_Currency.delete_currency);
 
-                $(document).on('click', '.wpml-dialog-container .currency_options_save', WCML_Multi_Currency.save_currency_options);
+                $(document).on('click', '.wcml_currency_options .currency_options_save', WCML_Multi_Currency.save_currency);
 
                 $(document).on('click','.js-display-tooltip', WCML_Multi_Currency.tooltip);
 
@@ -36,6 +32,12 @@ jQuery( function($){
 
                 $(document).on('keyup','input[name="wcml_curr_template"]', WCML_Multi_Currency.setup_currency_switcher_template_keyup);
                 $(document).on('change','input[name="wcml_curr_template"]', WCML_Multi_Currency.setup_currency_switcher_template_change);
+
+                $(document).on('change','.currency_option_position', WCML_Multi_Currency.price_preview);
+                $(document).on('change','.currency_option_thousand_sep', WCML_Multi_Currency.price_preview);
+                $(document).on('change','.currency_option_decimal_sep', WCML_Multi_Currency.price_preview);
+                $(document).on('change','.currency_option_decimals', WCML_Multi_Currency.price_preview);
+                $(document).on('change','.currency_code select', WCML_Multi_Currency.price_preview);
 
             } );
 
@@ -60,168 +62,8 @@ jQuery( function($){
 
         },
 
-        /*
-        add_currency: function(){
-
-            discard = true;
-            $('.js-table-row-wrapper .curr_val_code').html($('.js-table-row-wrapper select').val());
-            var $tableRow = $('.js-table-row-wrapper .js-table-row').clone();
-            var $LangTableRow = $('.js-currency_lang_table tr').clone();
-            var $DelTableRow = $('#currency-delete-table tr.currency_default').clone();
-            $('#currency-table').find('tr.default_currency').before( $tableRow );
-            $('#currency-lang-table').find('tr.default_currency').before( $LangTableRow );
-            $('#currency-delete-table tr.currency_default:last').after( $DelTableRow );
-
-        },
-        */
-
-        /*
-        cancel_add_currency: function(){
-            var $tableRow = $(this).closest('tr');
-            $tableRow.removeClass('edit-mode');
-            if($tableRow.find('.currency_current_code').val()){
-                $tableRow.find('.currency_code .code_val').show();
-                $tableRow.find('.currency_code select').hide();
-                $tableRow.find('.currency_value span.curr_val').show();
-                $tableRow.find('.currency_value input').hide();
-                $tableRow.find('.currency_changed').show();
-                $tableRow.find('.edit_currency').show();
-                $tableRow.find('.delete_currency').show();
-                $tableRow.find('.save_currency').hide();
-                $tableRow.find('.cancel_currency').hide();
-                $tableRow.find('.wcml-error').remove();
-            }else{
-                var index = $tableRow[0].rowIndex;
-                $('#currency-lang-table tr').eq(index).remove();
-                $tableRow.remove();
-            }
-        },
-        */
-
         select_currency: function(){
-            $(this).parent().find('.curr_val_code').html($(this).val());
-        },
-
-        save_currency: function(e){
-
-            discard = false;
-            e.preventDefault();
-
-            var $this = $(this);
-            var $ajaxLoader = $('<span class="spinner">');
-            var $messageContainer = $('<span class="wcml-error">');
-
-            $this.prop('disabled',true);
-
-            var parent = $(this).closest('tr');
-
-            parent.find('.save_currency').hide();
-            parent.find('.cancel_currency').hide();
-            $ajaxLoader.insertBefore($this).show();
-
-            $currencyCodeWraper = parent.find('.currency_code');
-            $currencyValueWraper = parent.find('.currency_value');
-
-            var currency_code = $currencyCodeWraper.find('select[name=code]').val();
-            var currency_value = $currencyValueWraper.find('input').val();
-            var flag = false;
-
-            if(currency_code == ''){
-                if(parent.find('.currency_code .wcml-error').size() == 0){
-                    parent.find('.currency_code').append( $messageContainer );
-                    $messageContainer.text( $currencyCodeWraper.data('message') );
-                    // empty
-                }
-                flag = true;
-            }else{
-                if(parent.find('.currency_code .wcml-error').size() > 0){
-                    parent.find('.currency_code .wcml-error').remove();
-                }
-            }
-
-            if(currency_value == ''){
-                if(parent.find('.currency_value .wcml-error').size() == 0){
-
-                    parent.find('.currency_value').append( $messageContainer );
-                    $messageContainer.text( $currencyCodeWraper.data('message') );
-                    // empty
-                }
-                flag = true;
-            }else{
-                if(parent.find('.currency_value .wcml-error').size() > 0){
-                    parent.find('.currency_value .wcml-error').remove();
-                }
-            }
-
-            if(!WCML_Multi_Currency.is_number(currency_value)){
-                if(parent.find('.currency_value .wcml-error').size() == 0){
-                    parent.find('.currency_value').append( $messageContainer );
-                    $messageContainer.text( $currencyValueWraper.data('message') );
-                    // numeric
-                }
-                flag = true;
-            }else{
-                if(parent.find('.currency_value .wcml-error').size() > 0){
-                    parent.find('.currency_value .wcml-error').remove();
-                }
-            }
-
-            if(flag){
-                $ajaxLoader.remove();
-                $this.prop('disabled',false);
-                parent.find('.save_currency').show();
-                parent.find('.cancel_currency').show();
-                return false;
-            }
-
-            $.ajax({
-                type : "post",
-                url : ajaxurl,
-                dataType: 'json',
-                data : {
-                    action: "wcml_new_currency",
-                    wcml_nonce: $('#new_currency_nonce').val(),
-                    currency_code : currency_code,
-                    currency_value : currency_value
-                },
-                error: function(respnse) {
-                    // TODO: add error handling
-                },
-                success: function(response) {
-
-                    parent.closest('tr').attr('id', 'currency_row_' + currency_code);
-                    $('#currency-lang-table tr:last').prev().attr('id', 'currency_row_langs_' + currency_code);
-
-                    $('#currency_row_langs_' + currency_code + ' .off_btn').attr('data-currency', currency_code);
-                    $('#currency_row_langs_' + currency_code + ' .on_btn').attr('data-currency', currency_code);
-
-                    parent.find('.currency_code .code_val').html(response.currency_name_formatted);
-                    parent.find('.currency_code .currency_value span').html(response.currency_meta_info);
-
-                    parent.find('.currency_code').prepend(response.currency_options);
-
-                    parent.find('.currency_code select[name="code"]').remove();
-                    parent.find('.currency_value input').remove();
-
-                    parent.find('.edit_currency').data('currency', currency_code).show();
-                    parent.find('.delete_currency').data('currency', currency_code).show();
-
-                    $('.js-table-row-wrapper select option[value="'+currency_code+'"]').remove();
-                    $('.currency_languages select').each(function(){
-                        $(this).append('<option value="'+currency_code+'">'+currency_code+'</option>');
-                    });
-
-                    $('#wcml_currencies_order').append('<li class="wcml_currencies_order_'+currency_code+'" cur="'+currency_code+'>'+response.currency_name_formatted_without_rate+'</li>');
-                    currency_switcher_preview();
-                },
-                complete: function() {
-                    $ajaxLoader.remove();
-                    $this.prop('disabled',false);
-                }
-            });
-
-            return false;
-
+            $(this).closest('.wcml_currency_options').find('.wpml-dialog-close-button').attr('data-currency', $(this).val());
         },
 
         delete_currency: function(e){
@@ -231,7 +73,7 @@ jQuery( function($){
             var currency = $(this).data('currency');
 
             $('#currency_row_' + currency + ' .currency_action_update').hide();
-            var ajaxLoader = $('<span class="spinner">');
+            var ajaxLoader = $('<span class="spinner" style="visibility: visible;margin:0;">');
             $(this).hide();
             $(this).parent().append(ajaxLoader).show();
 
@@ -246,6 +88,8 @@ jQuery( function($){
                 success: function(response) {
                     $('#currency_row_' + currency).remove();
                     $('#currency_row_langs_' + currency).remove();
+                    $('#currency_row_del_' + currency).remove();
+
                     $('#wcml_currencies_order .wcml_currencies_order_'+ currency).remove();
 
                     $.ajax({
@@ -259,7 +103,7 @@ jQuery( function($){
                             $('.js-table-row-wrapper select').html(response);
                         }
                     });
-                    currency_switcher_preview();
+                    WCML_Multi_Currency.currency_switcher_preview();
                 },
                 done: function() {
                     ajaxLoader.remove();
@@ -270,12 +114,12 @@ jQuery( function($){
 
         },
 
-        save_currency_options: function(){
+        save_currency: function(){
 
             var parent = $(this).closest('.wpml-dialog-container');
 
             var chk_rate = WCML_Multi_Currency.check_on_numeric(parent,'.ext_rate');
-            var chk_deci = WCML_Multi_Currency.check_on_numeric(parent,'.decimals_number');
+            var chk_deci = WCML_Multi_Currency.check_on_numeric(parent,'.currency_option_decimals');
             var chk_autosub = WCML_Multi_Currency.check_on_numeric(parent,'.abstract_amount');
 
             if(chk_rate || chk_deci || chk_autosub){
@@ -283,9 +127,9 @@ jQuery( function($){
             }
 
             $('.wcml-currency-options-dialog :submit, .wcml-currency-options-dialog :button').prop('disabled', true);
-            var currency = $(this).data('currency');
+            var currency = parent.find('[name="currency_options[code]"]').val();
 
-            var ajaxLoader = $('<span class="spinner" style="position:absolute;margin-left:-30px;"></span>');
+            var ajaxLoader = $('<span class="spinner" style="visibility:visible;position:absolute;margin-left:10px;"></span>');
 
             ajaxLoader.show();
             $(this).parent().prepend(ajaxLoader);
@@ -296,15 +140,34 @@ jQuery( function($){
                 dataType: 'json',
                 data: parent.find('[name^="currency_options"]').serialize() + '&action=wcml_save_currency&wcml_nonce=' + jQuery('#wcml_save_currency_nonce').val(),
                 success: function(response){
-                    $('.wcml-currency-options-dialog').fadeOut(function () {
-                        ajaxLoader.remove();
-                        $('.wcml-currency-options-dialog :submit, .wcml-currency-options-dialog :button').prop('disabled', false);
+                    parent.dialog('close');
 
-                        $('#currency_row_' + currency + ' .currency_code .code_val').html(response.currency_name_formatted);
-                        $('#currency_row_' + currency + ' .currency_value span').html(response.currency_meta_info);
+                    if( $('#currency_row_' + currency).length == 0 ) {
 
+                        var tr = $('#currency-table tr.wcml-row-currency:last').clone();
+                        tr.attr('id', 'currency_row_' + currency);
+                        tr.find('.wcml-col-edit a').attr('id', 'wcml_currency_options_' + currency);
+                        tr.find('.wcml-col-edit a').attr('data-content', 'wcml_currency_options_' + currency);
+                        tr.find('.wcml-col-edit a').attr('data-currency', currency);
+                        $('#currency-table').find('tr.default_currency').before( tr );
 
-                    });
+                        var tr = $('#currency-lang-table tr.wcml-row-currency-lang:last').clone();
+                        tr.attr('id', 'currency_row_langs_' + currency);
+                        $('#currency-lang-table').find('tr.default_currency').before( tr );
+
+                        var tr = $('#currency-delete-table tr.wcml-row-currency-del:last').clone();
+                        tr.attr('id', 'currency_row_del_' + currency);
+                        tr.find('.delete_currency').removeClass('hidden');
+                        tr.find('.delete_currency').attr('data-currency', currency);
+                        $('#currency-delete-table').find('tr.default_currency').before( tr );
+
+                    }
+
+                    $('#currency_row_' + currency + ' .wcml-col-currency').html(response.currency_name_formatted);
+                    $('#currency_row_' + currency + ' .wcml-col-rate').html(response.currency_meta_info);
+
+                    $('.currencies-table-content').prepend(response.currency_options)
+
                 }
 
             })
@@ -540,9 +403,36 @@ jQuery( function($){
             if(!$(this).val()){
                 $('input[name="wcml_curr_template"]').val($('#currency_switcher_default').val())
             }
+        },
+
+        price_preview: function(){
+
+            var parent = $(this).closest('.wcml_currency_options');
+
+            var data = 'currency_options[position]=' + parent.find('.currency_option_position').val();
+            data += '&currency_options[thousand_sep]=' + parent.find('.currency_option_thousand_sep').val();
+            data += '&currency_options[decimal_sep]=' + parent.find('.currency_option_decimal_sep').val();
+            data += '&currency_options[decimals]=' + parent.find('.currency_option_decimals').val();
+            data += '&currency_options[code]=' + parent.find(':submit').data('currency');
+
+            if(!parent.find('.spinner').length){
+                parent.find('.wcml-co-preview-value').append('<span class="spinner" style="visibility: visible"></span>');
+            }
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                dataType: 'json',
+                data: data + '&action=wcml_price_preview',
+                success: function(response){
+                            $('.wcml-co-preview-value').html(response.html);
+                }
+
+            })
+
+            return false;
+
         }
-
-
 
 
 

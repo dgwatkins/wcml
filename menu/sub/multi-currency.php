@@ -5,6 +5,7 @@ $default_language = $sitepress->get_default_language();
 <form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>" id="wcml_mc_options">
 	<?php wp_nonce_field( 'wcml_mc_options', 'wcml_nonce' ); ?>
 	<input type="hidden" id="wcml_save_currency_nonce" value="<?php echo wp_create_nonce( 'save_currency' ); ?>"/>
+	<input type="hidden" id="del_currency_nonce" value="<?php echo wp_create_nonce('wcml_delete_currency'); ?>" />
 	<input type="hidden" name="action" value="save-mc-options" />
 	<div class="wcml-section ">
 		<div class="wcml-section-header">
@@ -59,6 +60,7 @@ $default_language = $sitepress->get_default_language();
 					}
 
 					// new currency popup
+					$args = array();
 					$args['default_currency']   = get_woocommerce_currency();
 					$args['currencies']     	= $currencies;
 					$args['wc_currencies']  	= $wc_currencies;
@@ -78,6 +80,15 @@ $default_language = $sitepress->get_default_language();
 					$args['title'] = __('Add new currency', 'woocommerce-multingual');
 					include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php';
 
+					// Other currencies options
+					foreach($currencies as $code => $currency){
+						$args['currency_code'] 		= $code;
+						$args['currency_name'] 		= $args['wc_currencies'][$args['currency_code']];
+						$args['currency_symbol'] 	= get_woocommerce_currency_symbol( $args['currency_code'] );
+						$args['currency']			= $currency;
+						$args['title'] = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ), '<strong>' . $args['currency_name'] . ' (' . $args['currency_symbol'] . ')</strong>' );
+						include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php';
+					}
 
 					?>
 					<div class="tablenav top clearfix">
@@ -98,7 +109,7 @@ $default_language = $sitepress->get_default_language();
 						</tr>
 						</thead>
 						<tbody>
-						<tr>
+						<tr class="wcml-row-currency">
 							<td class="wcml-col-currency">
 								<?php echo $wc_currencies[ $wc_currency ]; ?>
 								<small><?php printf( __( ' (%s)', 'woocommerce-multilingual' ), $positioned_price ); ?></small>
@@ -125,18 +136,8 @@ $default_language = $sitepress->get_default_language();
 									break;
 							}
 							?>
-							<tr id="currency_row_<?php echo $code ?>">
+							<tr id="currency_row_<?php echo $code ?>" class="wcml-row-currency">
 								<td class="wcml-col-currency">
-									<?php
-										$args['currencies']     	= $currencies;
-										$args['wc_currencies']  	= $wc_currencies;
-										$args['currency_code'] 		= $code;
-										$args['currency_name'] 		= $args['wc_currencies'][$args['currency_code']];
-										$args['currency_symbol'] 	= get_woocommerce_currency_symbol( $args['currency_code'] );
-										$args['currency']			= $currency;
-										$args['title'] = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ), '<strong>' . $args['currency_name'] . ' (' . $args['currency_symbol'] . ')</strong>' );
-										include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php';
-									?>
 									<?php echo $wc_currencies[ $code ]; ?>
 									<small><?php printf( __( ' (%s)', 'woocommerce-multilingual' ), $positioned_price ); ?></small>
 								</td>
@@ -179,7 +180,7 @@ $default_language = $sitepress->get_default_language();
 								</tr>
 								</thead>
 								<tbody>
-								<tr>
+								<tr class="wcml-row-currency-lang">
 									<?php foreach ( $active_languages as $language ): ?>
 										<td class="currency_languages">
 											<ul>
@@ -198,7 +199,7 @@ $default_language = $sitepress->get_default_language();
 									<?php endforeach; ?>
 								</tr>
 								<?php foreach ( $currencies as $code => $currency ) : ?>
-									<tr id="currency_row_langs_<?php echo $code ?>">
+									<tr id="currency_row_langs_<?php echo $code ?>" class="wcml-row-currency-lang">
 										<?php foreach ( $active_languages as $language ): ?>
 											<td class="currency_languages">
 
@@ -253,11 +254,11 @@ $default_language = $sitepress->get_default_language();
 						</tr>
 						</thead>
 						<tbody>
-						<tr class="currency_default">
+						<tr class="currency_default wcml-row-currency-del">
 							<td class="wcml-col-delete">
 								<a
 									title="<?php esc_attr( _e( 'Delete', 'woocommerce-multilingual' ) ); ?>"
-									class="delete_currency" data-currency="<?php echo $code ?>">
+									class="delete_currency hidden">
 									<i class="otgs-ico-delete"
 									   title="<?php esc_attr( _e( 'Delete', 'woocommerce-multilingual' ) ); ?>"></i>
 								</a>
@@ -266,7 +267,7 @@ $default_language = $sitepress->get_default_language();
 
 
 						<?php foreach ( $currencies as $code => $currency ) : ?>
-							<tr>
+							<tr id="currency_row_del_<?php echo $code ?>" class="wcml-row-currency-del">
 								<td class="wcml-col-delete">
 									<a
 										title="<?php esc_attr( _e( 'Delete', 'woocommerce-multilingual' ) ); ?>"
