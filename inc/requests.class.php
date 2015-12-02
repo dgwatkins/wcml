@@ -13,41 +13,6 @@ class WCML_Requests{
 
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
-        //@Todo move to multi-currency.class.php
-        if(isset($_POST['wcml_update_languages_currencies']) && isset($_POST['currency_for']) && wp_verify_nonce($nonce, 'wcml_update_languages_currencies')){
-            global $wpdb;
-            $currencies = $_POST['currency_for'];
-            foreach($currencies as $key=>$language_currency){
-                $exist_currency = $wpdb->get_var($wpdb->prepare("SELECT currency_id FROM " . $wpdb->prefix . "icl_languages_currencies WHERE language_code = %s",$key));
-                if($language_currency != get_woocommerce_currency()){
-                    if(!$exist_currency){
-                        $wpdb->insert($wpdb->prefix .'icl_languages_currencies', array(
-                                'currency_id' => $language_currency,
-                                'language_code' => $key
-                            )
-                        );
-                    } else {
-                        $wpdb->update(
-                            $wpdb->prefix .'icl_languages_currencies',
-                            array(
-                                'currency_id' => $language_currency
-                            ),
-                            array( 'language_code' => $key )
-                        );
-
-                        wp_safe_redirect(admin_url('admin.php?page=wpml-wcml'));
-                    }
-                }elseif($exist_currency){
-                    $wpdb->delete($wpdb->prefix .'icl_languages_currencies', array('language_code' => $key) );
-                }
-            }
-        }
-
-
-        if(isset($_POST['wcml_file_path_options_table']) && wp_verify_nonce($nonce, 'wcml_file_path_options_table')){
-
-            }
-      
         if(isset($_POST['wcml_save_settings']) && wp_verify_nonce($nonce, 'wcml_save_settings_nonce')){
             global $sitepress,$sitepress_settings;
 

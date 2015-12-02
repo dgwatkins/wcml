@@ -18,7 +18,7 @@ jQuery( function($){
                 $(document).on('click','.js-display-tooltip', WCML_Multi_Currency.tooltip);
 
                 $(document).on('click', '.currency_languages a.off_btn', WCML_Multi_Currency.enable_currency_for_language);
-                $(document).on('click', '.currency_languages a.off_btn', WCML_Multi_Currency.disable_currency_for_language);
+                $(document).on('click', '.currency_languages a.on_btn', WCML_Multi_Currency.disable_currency_for_language);
 
                 $(document).on('change', '.default_currency select', WCML_Multi_Currency.change_default_currency);
 
@@ -211,7 +211,7 @@ jQuery( function($){
         },
 
         enable_currency_for_language: function(e){
-            //TODO Sergey: Seriously check on that
+
             e.preventDefault();
             $(this).closest('ul').children('li').toggleClass('on');
 
@@ -222,26 +222,29 @@ jQuery( function($){
         },
 
         disable_currency_for_language: function(e){
-            //TODO Sergey: Seriously check on that
+
             e.preventDefault();
 
             $(this).closest('ul').children('li').toggleClass('on');
 
-            //  var enbl_elem = $(this).closest('ul').find('.on').removeClass('on');
-            var flag = true;
+            var no_lang_set = true;
             var lang = $(this).data('language');
+            var li = $(this).parent();
 
-            //$('#currency-lang-table .on_btn[data-language="'+lang+'"]').each(function(){
-            //    if($(this).parent().hasClass('on'))
-            //        flag = false;
-            //});
+            $('#currency-lang-table .on_btn[data-language="'+lang+'"]').each(function(){
 
-            //if(flag){
-            //    enbl_elem.addClass('on');
-            //    alert($('#wcml_warn_disable_language_massage').val());
-            //    return;
-            //}
-            // $(this).parent().removeClass('on');
+                if($(this).parent().hasClass('on')){
+                    no_lang_set = false;
+                }
+
+            });
+
+            if(no_lang_set){
+                $(this).closest('ul').children('li').toggleClass('on');
+                alert($('#wcml_warn_disable_language_massage').val());
+                return;
+            }
+
             var index = $(this).closest('tr')[0].rowIndex;
 
             if($('.currency_languages select[rel="'+$(this).data('language')+'"]').val() == $(this).data('currency')){

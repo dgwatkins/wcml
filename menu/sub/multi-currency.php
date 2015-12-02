@@ -187,12 +187,12 @@ $default_language = $sitepress->get_default_language();
 												<li <?php echo $woocommerce_wpml->settings['currency_options'][ $wc_currency ]['languages'][ $language['code'] ] == 0 ? 'class="on"' : ''; ?> >
 													<a class="off_btn otgs-ico-no"
 													   data-language="<?php echo $language['code']; ?>"
-													   data-currency="<?php echo $wc_currency; ?>"></a>
+													   data-currency="<?php echo $wc_currency; ?>" href="#"></a>
 												</li>
 												<li <?php echo $woocommerce_wpml->settings['currency_options'][ $wc_currency ]['languages'][ $language['code'] ] == 1 ? 'class="on"' : ''; ?> >
 													<a class="on_btn otgs-ico-yes"
 													   data-language="<?php echo $language['code']; ?>"
-													   data-currency="<?php echo $wc_currency ?>"></a>
+													   data-currency="<?php echo $wc_currency ?>" href="#"></a>
 												</li>
 											</ul>
 										</td>
@@ -207,12 +207,12 @@ $default_language = $sitepress->get_default_language();
 													<li <?php echo $currency['languages'][ $language['code'] ] == 0 ? 'class="on"' : ''; ?> >
 														<a class="off_btn otgs-ico-no"
 														   data-language="<?php echo $language['code']; ?>"
-														   data-currency="<?php echo $code; ?>"></a>
+														   data-currency="<?php echo $code; ?>" href="#"></a>
 													</li>
 													<li <?php echo $currency['languages'][ $language['code'] ] == 1 ? 'class="on"' : ''; ?> >
 														<a class="on_btn otgs-ico-yes"
 														   data-language="<?php echo $language['code']; ?>"
-														   data-currency="<?php echo $code; ?>"></a>
+														   data-currency="<?php echo $code; ?>" href="#"></a>
 													</li>
 												</ul>
 
@@ -271,7 +271,7 @@ $default_language = $sitepress->get_default_language();
 								<td class="wcml-col-delete">
 									<a
 										title="<?php esc_attr( _e( 'Delete', 'woocommerce-multilingual' ) ); ?>"
-										class="delete_currency" data-currency="<?php echo $code ?>">
+										class="delete_currency" data-currency="<?php echo $code ?>" href="#">
 										<i class="otgs-ico-delete"
 										   title="<?php esc_attr( _e( 'Delete', 'woocommerce-multilingual' ) ); ?>"></i>
 									</a>
