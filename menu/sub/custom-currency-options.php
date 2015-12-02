@@ -1,7 +1,7 @@
 
-<div class="wpml-dialog wcml-co-dialog" id="wcml_currency_options_<?php echo $args['currency_code'] ?>">
+<div class="wpml-dialog hidden" id="wcml_currency_options_<?php echo $args['currency_code'] ?>">
 
-	<div class="wcml_currency_options">
+	<div class="wcml_currency_options wcml-co-dialog">
 		<header class="wpml-dialog-header">
 			<h3>
 				<?php echo $args['title'] ?>
