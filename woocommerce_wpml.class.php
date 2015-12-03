@@ -376,7 +376,6 @@ class woocommerce_wpml {
 	            ), WCML_VERSION );
 	            wp_register_script( 'jquery-cookie', WCML_PLUGIN_URL . '/res/js/jquery.cookie.js', array( 'jquery' ), WCML_VERSION );
 	            wp_register_script( 'cleditor', WCML_PLUGIN_URL . '/res/js/jquery.cleditor.min.js', array( 'jquery' ), WCML_VERSION );
-                wp_register_script( 'wcml-editor', WCML_PLUGIN_URL . '/res/js/wcml-translation-editor.js', array( 'jquery', 'jquery-ui-core' ), WCML_VERSION );
 
                // wp_enqueue_style('toolset-font-awesome'); // enqueue styles
                 wp_enqueue_style('wpml-wcml');
@@ -389,7 +388,6 @@ class woocommerce_wpml {
                 wp_enqueue_script('cleditor');
                 wp_enqueue_script('suggest');
                 wp_enqueue_script('wp-pointer');
-                wp_enqueue_script( 'wcml-editor' );
 
 
                 wp_localize_script('wcml-tm-scripts', 'wcml_settings',
