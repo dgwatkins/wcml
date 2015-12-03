@@ -35,6 +35,16 @@
 .wcml-wrap .otgs-ico-in-progress {
   color: #ffb800;
 }
+@media (max-width: 1199px) {
+  .wcml-wrap .tablenav.top {
+    height: auto;
+  }
+  .wcml-wrap .tablenav.top .alignright,
+  .wcml-wrap .tablenav.top .alignleft {
+    float: none;
+    margin-bottom: 5px;
+  }
+}
 
 .wcml-section {
   clear: both;
@@ -294,7 +304,8 @@
   margin: 10px 0;
 }
 
-.currency_code select, .currency_value input {
+.currency_code select,
+.currency_value input {
   display: none;
 }
 
@@ -353,7 +364,10 @@
 .wcml-co-dialog input, .wcml-co-dialog select {
   width: 145px;
 }
-.wcml-co-dialog select[name="currency_options[code]"] {
+.wcml-co-dialog .currency_code label {
+  width: 100px;
+}
+.wcml-co-dialog .currency_code select {
   width: auto;
 }
 .wcml-co-dialog .wcml-co-exchange-rate label {
@@ -396,6 +410,10 @@ td.wcml-col-rate {
   vertical-align: top;
 }
 
+td.wcml-col-currency .truncate {
+  max-width: 145px;
+  display: block;
+}
 td.wcml-col-currency small {
   display: block;
 }

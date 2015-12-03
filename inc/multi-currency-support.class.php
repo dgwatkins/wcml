@@ -375,7 +375,7 @@ class WCML_Multi_Currency_Support{
             case 'right_space': $price = sprintf('99.99 %s', get_woocommerce_currency_symbol($currency_code)); break;
         }
 
-        $return['currency_name_formatted'] = sprintf('%s <small>(%s)</small>', $wc_currencies[$currency_code], $price);
+        $return['currency_name_formatted'] = sprintf('<span class="truncate">%s</span> <small>(%s)</small>', $wc_currencies[$currency_code], $price);
         
         $return['currency_meta_info'] = sprintf('1 %s = %s %s', $wc_currency, $this->currencies[$currency_code]['rate'], $currency_code);
 

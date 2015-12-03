@@ -111,7 +111,7 @@ $default_language = $sitepress->get_default_language();
 						<tbody>
 						<tr class="wcml-row-currency">
 							<td class="wcml-col-currency">
-								<?php echo $wc_currencies[ $wc_currency ]; ?>
+								<span class="truncate"><?php echo $wc_currencies[ $wc_currency ]; ?></span>
 								<small><?php printf( __( ' (%s)', 'woocommerce-multilingual' ), $positioned_price ); ?></small>
 							</td>
 							<td class="wcml-col-rate"><?php _e( 'default', 'woocommerce-multilingual' ); ?></td>
@@ -138,7 +138,7 @@ $default_language = $sitepress->get_default_language();
 							?>
 							<tr id="currency_row_<?php echo $code ?>" class="wcml-row-currency">
 								<td class="wcml-col-currency">
-									<?php echo $wc_currencies[ $code ]; ?>
+									<span class="truncate"><?php echo $wc_currencies[ $code ]; ?></span>
 									<small><?php printf( __( ' (%s)', 'woocommerce-multilingual' ), $positioned_price ); ?></small>
 								</td>
 								<td class="wcml-col-rate">

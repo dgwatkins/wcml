@@ -24,6 +24,16 @@
   .otgs-ico-in-progress {
     color: rgb(255, 184, 0);
   }
+  .tablenav.top {
+    @media (max-width: 1199px) {
+      height: auto;
+    .alignright,
+    .alignleft {
+      float: none;
+      margin-bottom: 5px;
+      }
+  }
+  }
 }
 
 .wcml-section {
@@ -303,7 +313,8 @@
   margin: 10px 0;
 }
 
-.currency_code select, .currency_value input {
+.currency_code select,
+.currency_value input {
   display: none;
 }
 
@@ -367,9 +378,15 @@
   input, select {
     width: 145px;
   }
-  select[name="currency_options[code]"] {
-    width: auto;
+  .currency_code {
+    label {
+      width: 100px;
+    }
+    select {
+      width: auto;
+    }
   }
+
 
   .wcml-co-exchange-rate {
     label {
@@ -420,6 +437,10 @@ table.widefat.currency_table {
     }
 
     td.wcml-col-currency {
+      .truncate {
+        max-width: 145px;
+        display: block;
+      }
       small {
         display: block;
       }
