@@ -1,5 +1,45 @@
-<?php global $sitepress_settings;
+<?php
+
+global $sitepress_settings;
 $default_language = $sitepress->get_default_language();
+
+$wc_currencies    = get_woocommerce_currencies();
+$wc_currency      = get_option( 'woocommerce_currency' );
+$active_languages = $sitepress->get_active_languages();
+
+$currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
+
+// new currency popup
+$args = array();
+$args['default_currency']   = get_woocommerce_currency();
+$args['currencies']     	= $currencies;
+$args['wc_currencies']  	= $wc_currencies;
+$args['currency_code'] 		= '';
+$args['currency_name'] 		= '';
+$args['currency_symbol'] 	= '';
+$args['currency']			= array(
+	'rate'                  => 1,
+	'position'              => 'left',
+	'thousand_sep'          => ',',
+	'decimal_sep'           => '.',
+	'num_decimals'          => 2,
+	'rounding'              => 'disabled',
+	'rounding_increment'    => 1,
+	'auto_subtract'         => 0
+);
+$args['title'] = __('Add new currency', 'woocommerce-multingual');
+include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php';
+
+// Other currencies options
+foreach($currencies as $code => $currency){
+	$args['currency_code'] 		= $code;
+	$args['currency_name'] 		= $args['wc_currencies'][$args['currency_code']];
+	$args['currency_symbol'] 	= get_woocommerce_currency_symbol( $args['currency_code'] );
+	$args['currency']			= $currency;
+	$args['title'] = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ), '<strong>' . $args['currency_name'] . ' (' . $args['currency_symbol'] . ')</strong>' );
+	include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php';
+}
+
 ?>
 
 <form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>" id="wcml_mc_options">
@@ -38,11 +78,6 @@ $default_language = $sitepress->get_default_language();
 			<div>
 				<div class="currencies-table-content">
 					<?php
-					$wc_currencies    = get_woocommerce_currencies();
-					$wc_currency      = get_option( 'woocommerce_currency' );
-					$active_languages = $sitepress->get_active_languages();
-
-					$currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
 
 					switch ( get_option( 'woocommerce_currency_pos' ) ) {
 						case 'left':
@@ -57,37 +92,6 @@ $default_language = $sitepress->get_default_language();
 						case 'right_space':
 							$positioned_price = sprintf( '99.99 %s', get_woocommerce_currency_symbol( $wc_currency ) );
 							break;
-					}
-
-					// new currency popup
-					$args = array();
-					$args['default_currency']   = get_woocommerce_currency();
-					$args['currencies']     	= $currencies;
-					$args['wc_currencies']  	= $wc_currencies;
-					$args['currency_code'] 		= '';
-					$args['currency_name'] 		= '';
-					$args['currency_symbol'] 	= '';
-					$args['currency']			= array(
-													'rate'                  => 1,
-													'position'              => 'left',
-													'thousand_sep'          => ',',
-													'decimal_sep'           => '.',
-													'num_decimals'          => 2,
-													'rounding'              => 'disabled',
-													'rounding_increment'    => 1,
-													'auto_subtract'         => 0
-												);
-					$args['title'] = __('Add new currency', 'woocommerce-multingual');
-					include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php';
-
-					// Other currencies options
-					foreach($currencies as $code => $currency){
-						$args['currency_code'] 		= $code;
-						$args['currency_name'] 		= $args['wc_currencies'][$args['currency_code']];
-						$args['currency_symbol'] 	= get_woocommerce_currency_symbol( $args['currency_code'] );
-						$args['currency']			= $currency;
-						$args['title'] = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ), '<strong>' . $args['currency_name'] . ' (' . $args['currency_symbol'] . ')</strong>' );
-						include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php';
 					}
 
 					?>
