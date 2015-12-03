@@ -28,11 +28,15 @@
 				<input type="hidden" name="currency_options[code]" value="<?php echo $args['currency_code'] ?>" />
 			<?php endif; ?>
 
+			<?php $cur_cur = empty($args['currency_code']) ? current(array_keys($args['wc_currencies'])) : $args['currency_code']; ?>
+
 			<div class="wpml-form-row wcml-co-exchange-rate">
 				<label><?php _e( 'Exchange Rate', 'woocommerce-multilingual' ) ?></label>
 
 				<p class="wcml-co-set-rate">
-					<?php printf( "1 %s = %s %s", $args['default_currency'], '<input name="currency_options[rate]" size="5" type="number" class="ext_rate" step="0.01" value="' . $args['currency']['rate'] . '" data-message="' . __( 'Only numeric', 'woocommerce-multilingual' ) . '" />', $args['currency_code'] ) ?>
+					<?php printf( "1 %s = %s %s", $args['default_currency'], '<input name="currency_options[rate]" size="5" type="number" class="ext_rate" step="0.01" value="' .
+						$args['currency']['rate'] . '" data-message="' . __( 'Only numeric', 'woocommerce-multilingual' ) . '" />',
+						'<span class="this-currency">' . $cur_cur . '</span>' ) ?>
 					<?php if( isset($args['currency']['updated']) ): ?>
 					<small>
 						<i><?php printf( __( 'Set on %s', 'woocommerce-multilingual' ), date( 'F j, Y, H:i', strtotime( $args['currency']['updated'] ) ) ) ; ?></i>
@@ -47,7 +51,6 @@
 			<div class="wpml-form-row wcml-co-preview">
 				<label><strong><?php _e( 'Currency Preview', 'woocommerce-multilingual' ) ?></strong></label>
 				<p class="wcml-co-preview-value">
-					<?php $cur_cur = empty($args['currency_code']) ? current(array_keys($args['wc_currencies'])) : $args['currency_code']; ?>
 					<?php
 					$price = apply_filters( 'formatted_woocommerce_price', number_format( '1234.56', 2, '.', ',' ), '1234.56', 2, '.', ',' );
 					printf( '%1$s%2$s', get_woocommerce_currency_symbol($cur_cur), $price );

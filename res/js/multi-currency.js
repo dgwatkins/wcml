@@ -64,6 +64,8 @@ jQuery( function($){
 
         select_currency: function(){
             $(this).closest('.wcml_currency_options').find('.wpml-dialog-close-button').attr('data-currency', $(this).val());
+            $('.wcml-co-set-rate .this-currency').html( $(this).val() );
+
         },
 
         delete_currency: function(e){
