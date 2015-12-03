@@ -30,7 +30,9 @@
 					<input type="hidden" name="currency_options[code]" value="<?php echo $args['currency_code'] ?>" />
 				<?php endif; ?>
 
-				<?php $cur_cur = empty($args['currency_code']) ? current(array_keys($args['wc_currencies'])) : $args['currency_code']; ?>
+				<?php
+					$cur_cur = empty($args['currency_code']) ? current( array_diff( array_keys( $args['wc_currencies'] ), array_keys( $args['currencies'] ) ) ) : $args['currency_code'];
+				?>
 
 				<div class="wpml-form-row wcml-co-exchange-rate">
 					<label for="wcml_currency_options_rate_<?php echo $args['currency_code'] ?>"><?php _e( 'Exchange Rate', 'woocommerce-multilingual' ) ?></label>
