@@ -51,7 +51,7 @@ if(isset($_GET['tab'])){
     <?php endif; ?>
 
 	<div class="wcml-wrap">
-        <?php if(!isset($_GET['tab']) && current_user_can('wpml_manage_woocommerce_multilingual')): ?>
+        <?php if( ( !isset( $_GET['tab'] ) || ( isset( $_GET['tab'] ) && $_GET['tab'] == 'products' ) ) && current_user_can('wpml_manage_woocommerce_multilingual')): ?>
             <?php  include WCML_PLUGIN_PATH . '/menu/sub/products.php'; ?>
         <?php elseif( isset($_GET['tab']) && $_GET['tab'] == 'multi-currency' && current_user_can('wpml_manage_woocommerce_multilingual') ): ?>
             <?php include WCML_PLUGIN_PATH . '/menu/sub/multi-currency.php'; ?>
