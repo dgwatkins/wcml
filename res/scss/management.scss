@@ -1,8 +1,19 @@
 @import "mixins";
 @import "variables";
 
+
 .manage_table_th_width {
   width: 250px;
+}
+.wcml-tabs {
+  margin-top: $margin-base;
+  min-width: 900px; //same as .wcml-wrap
+  .nav-tab {
+    @media (max-width: 1199px) {
+      padding: 4px 6px 6px 6px;
+      margin: 0 0 -1px;
+    }
+  }
 }
 
 .wcml-wrap {
@@ -450,8 +461,9 @@ table.widefat.currency_table {
       font-size: .85em;
     }
 
-    td.wcml-col-edit {
-      vertical-align: middle;
+    td.wcml-col-edit a {
+      position: relative;
+      top: -3px;
     }
   }
 }
