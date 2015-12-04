@@ -3,6 +3,8 @@ jQuery( function($){
 
     WCML_Multi_Currency = {
 
+         _currency_languages_saving : 0,
+
         init:  function(){
 
             $(document).ready( function(){
@@ -215,7 +217,7 @@ jQuery( function($){
         enable_currency_for_language: function(e){
 
             e.preventDefault();
-            $(this).closest('ul').children('li').toggleClass('on');
+            $(this).addClass('spinner').removeClass('otgs-ico-no').css('visibility', 'visible');
 
             var index = $(this).closest('tr')[0].rowIndex;
             $('.currency_languages select[rel="'+$(this).data('language')+'"]').append('<option value="'+$(this).data('currency')+'">'+$(this).data('currency')+'</option>');
@@ -224,10 +226,9 @@ jQuery( function($){
         },
 
         disable_currency_for_language: function(e){
-
             e.preventDefault();
 
-            $(this).closest('ul').children('li').toggleClass('on');
+            $(this).addClass('spinner').removeClass('otgs-ico-yes').css('visibility', 'visible');
 
             var no_lang_set = true;
             var lang = $(this).data('language');
@@ -242,6 +243,7 @@ jQuery( function($){
             });
 
             if(no_lang_set){
+                $(this).removeClass('spinner');
                 $(this).closest('ul').children('li').toggleClass('on');
                 alert($('#wcml_warn_disable_language_massage').val());
                 return;
@@ -260,7 +262,11 @@ jQuery( function($){
 
         update_currency_lang: function(elem, value, upd_def){
 
+            WCML_Multi_Currency._currency_languages_saving++;
+            $('#wcml_mc_options :submit').attr('disabled','disabled');
+
             $('input[name="wcml_mc_options"]').attr('disabled','disabled');
+
             var lang = elem.data('language');
             var code = elem.data('currency');
             discard = true;
@@ -282,6 +288,14 @@ jQuery( function($){
                 complete: function() {
                     $('input[name="wcml_mc_options"]').removeAttr('disabled');
                     discard = false;
+
+                    elem.removeClass('spinner').css('visibility', 'visible');
+                    elem.closest('ul').children('li').toggleClass('on');
+
+                    WCML_Multi_Currency._currency_languages_saving--;
+                    if(WCML_Multi_Currency._currency_languages_saving == 0){
+                        $('#wcml_mc_options :submit').removeAttr('disabled');
+                    }
                 }
             });
 
