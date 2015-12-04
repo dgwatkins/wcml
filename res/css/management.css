@@ -677,7 +677,7 @@ input[name="wcml_curr_template"] {
   margin-left: -25px;
   margin-right: 5px;
 }
-.wcml-wrap .nav-tab{
+.wcml-tabs .nav-tab{
   float: none;
   font-size: 12px;
   line-height: 26px;
