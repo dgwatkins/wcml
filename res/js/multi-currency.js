@@ -230,22 +230,23 @@ jQuery( function($){
 
             $(this).addClass('spinner').removeClass('otgs-ico-yes').css('visibility', 'visible');
 
-            var no_lang_set = true;
             var lang = $(this).data('language');
             var li = $(this).parent();
 
+            var ons = 0;
             $('#currency-lang-table .on_btn[data-language="'+lang+'"]').each(function(){
 
                 if($(this).parent().hasClass('on')){
                     no_lang_set = false;
+                    ons++;
                 }
 
             });
 
-            if(no_lang_set){
-                $(this).removeClass('spinner');
-                $(this).closest('ul').children('li').toggleClass('on');
+            if(ons <= 1){
                 alert($('#wcml_warn_disable_language_massage').val());
+                $(this).addClass('otgs-ico-yes');
+                $(this).removeClass('spinner');
                 return;
             }
 
