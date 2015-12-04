@@ -11,9 +11,9 @@
 			<h3 class="wpml-header-original"><?php _e('Original', 'woocommerce-multilingual'); ?>:
 				<span class="wpml-title-flag">
 					<img src="<?php echo $sitepress->get_flag_url($source_language) ?>"
-						 alt="<?php echo $active_languages[$source_language]['english_name'] ?>"/>
+						 alt="<?php echo $sitepress->get_display_language_name( $source_language, 'en' ); ?>"/>
 				</span>
-				<strong><?php echo $active_languages[$source_language]['english_name'] ?></strong>
+				<strong><?php echo $sitepress->get_display_language_name( $source_language, 'en' ); ?></strong>
 			</h3>
 
 			<h3 class="wpml-header-translation"><?php _e('Translation to', 'woocommerce-multilingual'); ?>:
