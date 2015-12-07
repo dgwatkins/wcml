@@ -231,18 +231,23 @@ class WCML_Store_Pages{
         global $sitepress;
         $shop_id = $this->shop_page_id;
         $front_id = apply_filters( 'translate_object_id',$this->front_page_id, 'page');
-        foreach ($languages as &$language) {
+
+        foreach ($languages as $language) {
             // shop page
             // obsolete?
             if (is_post_type_archive('product')) {
                 if ($front_id == $shop_id) {
                     $url = $sitepress->language_url($language['language_code']);
                 } else {
-                    $url = get_permalink(apply_filters( 'translate_object_id',$shop_id, 'page', true, $language['language_code']));
+                    $sitepress->switch_lang($language['language_code']);
+                    $url = get_permalink( apply_filters( 'translate_object_id', $shop_id, 'page', true, $language['language_code']) );
+                    $sitepress->switch_lang();
                 }
-                $language['url'] = $url;
+
+                $languages[$language['language_code']]['url'] = $url;
             }
         }
+
         return $languages;
     }
 
