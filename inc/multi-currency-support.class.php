@@ -522,7 +522,7 @@ class WCML_Multi_Currency_Support{
             $message_args = array(
                 'id' => 'wcml-default-currency-changed-' . rand(1, 1000),
                 'text' => sprintf(__('The default currency was changed. In order to show accurate prices in all currencies, you need to update the exchange rates under the %sMulti-currency%s configuration.',
-                    'woocommerce-multilingual'), '<a href="' . admin_url('admin.php?page=wpml-wcml&tab=currencies') . '">', '</a>'),
+                    'woocommerce-multilingual'), '<a href="' . admin_url('admin.php?page=wpml-wcml&tab=multi-currency') . '">', '</a>'),
                 'type' => 'warning',
                 'group' => 'wcml-multi-currency',
                 'admin_notice' => true,
