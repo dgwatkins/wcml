@@ -71,7 +71,7 @@ class WCML_Multi_Currency_Support{
     }
     
     function init(){
-        
+
         if($this->_load_filters()){    
             
             add_filter('woocommerce_currency', array($this, 'currency_filter'));
@@ -79,7 +79,7 @@ class WCML_Multi_Currency_Support{
             
             add_filter('get_post_metadata', array($this, 'product_price_filter'), 10, 4);            
             add_filter('get_post_metadata', array($this, 'variation_prices_filter'), 12, 4); // second
-             
+
             add_filter('woocommerce_package_rates', array($this, 'shipping_taxes_filter'));
             
             add_action('woocommerce_coupon_loaded', array($this, 'filter_coupon_data'));
@@ -126,6 +126,7 @@ class WCML_Multi_Currency_Support{
         if(!is_admin()) $this->load_inline_js();
 
         add_action( 'woocommerce_get_children', array( $this, 'filter_product_variations_with_custom_prices' ), 10 );
+
         
     }
 
@@ -930,7 +931,7 @@ class WCML_Multi_Currency_Support{
         return $custom_prices; 
         
     }
-    
+
     function currency_filter($currency){
         
         $currency = apply_filters('wcml_price_currency', $currency);
@@ -1012,10 +1013,12 @@ class WCML_Multi_Currency_Support{
     function filter_coupon_data($coupon){
         
         if($coupon->type == 'fixed_cart' || $coupon->type == 'fixed_product'){
-            $coupon->amount = apply_filters('wcml_raw_price_amount', $coupon->amount);        
+            $coupon->amount = apply_filters('wcml_raw_price_amount', $coupon->amount);
         }
-        
-        
+
+        $coupon->minimum_amount = apply_filters('wcml_raw_price_amount',  $coupon->minimum_amount);
+        $coupon->maximum_amount = apply_filters('wcml_raw_price_amount',  $coupon->maximum_amount);
+
     }
     
     function get_client_currency(){
