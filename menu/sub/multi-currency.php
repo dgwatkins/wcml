@@ -188,15 +188,10 @@ foreach($currencies as $code => $currency){
 									<?php foreach ( $active_languages as $language ): ?>
 										<td class="currency_languages">
 											<ul>
-												<li <?php echo $woocommerce_wpml->settings['currency_options'][ $wc_currency ]['languages'][ $language['code'] ] == 0 ? 'class="on"' : ''; ?> >
-													<a class="off_btn otgs-ico-no"
+												<li class="on">
+													<a class="<?php echo $woocommerce_wpml->settings['currency_options'][ $wc_currency ]['languages'][ $language['code'] ] == 0 ? 'otgs-ico-no' : 'otgs-ico-yes'; ?>"
 													   data-language="<?php echo $language['code']; ?>"
 													   data-currency="<?php echo $wc_currency; ?>" href="#"></a>
-												</li>
-												<li <?php echo $woocommerce_wpml->settings['currency_options'][ $wc_currency ]['languages'][ $language['code'] ] == 1 ? 'class="on"' : ''; ?> >
-													<a class="on_btn otgs-ico-yes"
-													   data-language="<?php echo $language['code']; ?>"
-													   data-currency="<?php echo $wc_currency ?>" href="#"></a>
 												</li>
 											</ul>
 										</td>
@@ -208,13 +203,8 @@ foreach($currencies as $code => $currency){
 											<td class="currency_languages">
 
 												<ul>
-													<li <?php echo $currency['languages'][ $language['code'] ] == 0 ? 'class="on"' : ''; ?> >
-														<a class="off_btn otgs-ico-no"
-														   data-language="<?php echo $language['code']; ?>"
-														   data-currency="<?php echo $code; ?>" href="#"></a>
-													</li>
-													<li <?php echo $currency['languages'][ $language['code'] ] == 1 ? 'class="on"' : ''; ?> >
-														<a class="on_btn otgs-ico-yes"
+													<li class="on">
+														<a class="<?php echo $currency['languages'][ $language['code'] ] == 0 ? 'otgs-ico-no' : 'otgs-ico-yes'; ?>"
 														   data-language="<?php echo $language['code']; ?>"
 														   data-currency="<?php echo $code; ?>" href="#"></a>
 													</li>

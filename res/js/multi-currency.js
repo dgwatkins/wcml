@@ -19,8 +19,8 @@ jQuery( function($){
 
                 $(document).on('click','.js-display-tooltip', WCML_Multi_Currency.tooltip);
 
-                $(document).on('click', '.currency_languages a.off_btn', WCML_Multi_Currency.enable_currency_for_language);
-                $(document).on('click', '.currency_languages a.on_btn', WCML_Multi_Currency.disable_currency_for_language);
+                $(document).on('click', '.currency_languages a.otgs-ico-no', WCML_Multi_Currency.enable_currency_for_language);
+                $(document).on('click', '.currency_languages a.otgs-ico-yes', WCML_Multi_Currency.disable_currency_for_language);
 
                 $(document).on('change', '.default_currency select', WCML_Multi_Currency.change_default_currency);
 
@@ -231,22 +231,10 @@ jQuery( function($){
             $(this).addClass('spinner').removeClass('otgs-ico-yes').css('visibility', 'visible');
 
             var lang = $(this).data('language');
-            var li = $(this).parent();
 
-            var ons = 0;
-            $('#currency-lang-table .on_btn[data-language="'+lang+'"]').each(function(){
-
-                if($(this).parent().hasClass('on')){
-                    no_lang_set = false;
-                    ons++;
-                }
-
-            });
-
-            if(ons <= 1){
+            if($('#currency-lang-table a.otgs-ico-yes[data-language="'+lang+'"]').length == 0){
                 alert($('#wcml_warn_disable_language_massage').val());
-                $(this).addClass('otgs-ico-yes');
-                $(this).removeClass('spinner');
+                $(this).removeClass('spinner').addClass('otgs-ico-yes');
                 return;
             }
 
@@ -291,7 +279,11 @@ jQuery( function($){
                     discard = false;
 
                     elem.removeClass('spinner').css('visibility', 'visible');
-                    elem.closest('ul').children('li').toggleClass('on');
+                    if(value){
+                        elem.addClass('otgs-ico-yes');
+                    }else{
+                        elem.addClass('otgs-ico-no');
+                    }
 
                     WCML_Multi_Currency._currency_languages_saving--;
                     if(WCML_Multi_Currency._currency_languages_saving == 0){
