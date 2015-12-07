@@ -2,7 +2,7 @@
 
 class WCML_Products{
 
-    private $not_display_fields_for_variables_product = array( '_regular_price', '_sale_price', '_price', '_min_variation_price', '_max_variation_price', '_min_variation_regular_price', '_max_variation_regular_price', '_min_variation_sale_price', '_max_variation_sale_price' );
+    private $not_display_fields_for_variables_product = array( '_purchase_note', '_regular_price', '_sale_price', '_price', '_min_variation_price', '_max_variation_price', '_min_variation_regular_price', '_max_variation_regular_price', '_min_variation_sale_price', '_max_variation_sale_price' );
     private $tinymce_plugins_for_rtl = '';
     private $yoast_seo_fields = array( '_yoast_wpseo_focuskw', '_yoast_wpseo_title', '_yoast_wpseo_metadesc' );
 
@@ -179,7 +179,7 @@ class WCML_Products{
     
             $original_language = $sitepress->get_language_for_element( $product_id,'post_product' );
     
-            $job = new WCML_Editor_UI_Product_Job( $product, $trn_product, $original_language, $language );
+            $job = new WCML_Editor_UI_Product_Job( $job_details[ 'job_id' ], $product, $trn_product, $original_language, $language );
         }
 
         return $job;
@@ -768,10 +768,10 @@ class WCML_Products{
             }
 
             if ( $data ){
-                if ( isset( $data[ $key . '_' . $language ] ) && !empty( $data[ $key . '_' . $language ] ) && !is_array( $data[ $key . '_' . $language ] ) ) {
+                if ( isset( $data[ md5( $key ) ] ) && !empty( $data[ md5( $key ) ] ) && !is_array( $data[ md5( $key ) ] ) ) {
                     //get translation values from $data
-                    $trnsl_labels[ $language ][ $key_to_save ] = stripslashes( $data[ $key . '_name_' . $language ] );
-                    $orig_product_attrs[ $key_to_save ][ 'value' ] = $data[ $key . '_' . $language ];
+                    $trnsl_labels[ $language ][ $key_to_save ] = stripslashes( $data[ md5( $key . '_name' ) ] );
+                    $orig_product_attrs[ $key_to_save ][ 'value' ] = $data[ md5( $key ) ];
                 } else {
                     $orig_product_attrs[ $key_to_save ][ 'value' ] = '';
                 }
@@ -919,96 +919,36 @@ class WCML_Products{
         }
 
         foreach ($all_meta as $key => $meta) {
-            if( !isset($settings['translation-management']['custom_fields_translation'][$key]) || $settings['translation-management']['custom_fields_translation'][$key] == 0 ){
+            if (!isset($settings['translation-management']['custom_fields_translation'][$key]) || $settings['translation-management']['custom_fields_translation'][$key] == 0) {
                 continue;
             }
             foreach ($meta as $meta_value) {
                 $meta_value = maybe_unserialize($meta_value);
-                if($data){
-                    if(isset($data[$key.'_'.$lang]) && isset($settings['translation-management']['custom_fields_translation'][$key]) && $settings['translation-management']['custom_fields_translation'][$key] == 2){
-                        if($key == '_file_paths'){
-                            $file_paths = explode("\n",$data[$key.'_'.$lang]);
+                if ($data) {
+                    if (isset($data[md5($key)]) && isset($settings['translation-management']['custom_fields_translation'][$key]) && $settings['translation-management']['custom_fields_translation'][$key] == 2) {
+                        if ($key == '_file_paths') {
+                            $file_paths = explode("\n", $data[md5($key)]);
                             $file_paths_array = array();
-                            foreach($file_paths as $file_path){
+                            foreach ($file_paths as $file_path) {
                                 $file_paths_array[md5($file_path)] = $file_path;
                             }
                             $meta_value = $file_paths_array;
-                        }elseif($key == '_downloadable_files'){
+                        } elseif ($key == '_downloadable_files') {
                             $file_paths_array = array();
-                            foreach($data[$key.'_'.$lang] as $file_path){
-                                $key_file = md5($file_path['file'].$file_path['name']);
+                            foreach ($data[md5($key)] as $file_path) {
+                                $key_file = md5($file_path['file'] . $file_path['name']);
                                 $file_paths_array[$key_file]['name'] = $file_path['name'];
                                 $file_paths_array[$key_file]['file'] = $file_path['file'];
                             }
                             $meta_value = $file_paths_array;
 
-                        }else{
-                            $meta_value = $data[$key.'_'.$lang];
+                        } else {
+                            $meta_value = $data[md5($key)];
                         }
                     }
 
-                    if (isset($data['regular_price_' . $lang]) && isset($data['sale_price_' . $lang]) && $product_type == 'variable') {
-                        switch ($key) {
-                            case '_min_variation_sale_price':
-                                $meta_value = count(array_filter($data['sale_price_' . $lang])) ? min(array_filter($data['sale_price_' . $lang])) : '';
-                                break;
-                            case '_max_variation_sale_price':
-                                $meta_value = count(array_filter($data['sale_price_' . $lang])) ? max(array_filter($data['sale_price_' . $lang])) : '';
-                                break;
-                            case '_min_variation_regular_price':
-                                $meta_value = count(array_filter($data['regular_price_' . $lang])) ? min(array_filter($data['regular_price_' . $lang])) : '';
-                                break;
-                            case '_max_variation_regular_price':
-                                $meta_value = count(array_filter($data['regular_price_' . $lang])) ? max(array_filter($data['regular_price_' . $lang])) : '';
-                                break;
-                            case '_min_variation_price':
-                                if (count(array_filter($data['sale_price_' . $lang])) && min(array_filter($data['sale_price_' . $lang])) < min(array_filter($data['regular_price_' . $lang]))) {
-                                    $meta_value = min(array_filter($data['sale_price_' . $lang]));
-                                } elseif (count(array_filter($data['regular_price_' . $lang]))) {
-                                    $meta_value = min(array_filter($data['regular_price_' . $lang]));
-                                } else {
-                                    $meta_value = '';
-                                }
-                                break;
-                            case '_max_variation_price':
-                                if (count(array_filter($data['sale_price_' . $lang])) && max(array_filter($data['sale_price_' . $lang])) > max(array_filter($data['regular_price_' . $lang]))) {
-                                    $meta_value = max(array_filter($data['sale_price_' . $lang]));
-                                } elseif (count(array_filter($data['regular_price_' . $lang]))) {
-                                    $meta_value = max(array_filter($data['regular_price_' . $lang]));
-                                } else {
-                                    $meta_value = '';
-                                }
-                                break;
-                            case '_price':
-                                if (count(array_filter($data['sale_price_' . $lang])) && min(array_filter($data['sale_price_' . $lang])) < min(array_filter($data['regular_price_' . $lang]))) {
-                                    $meta_value = min(array_filter($data['sale_price_' . $lang]));
-                                } elseif (count(array_filter($data['regular_price_' . $lang]))) {
-                                    $meta_value = min(array_filter($data['regular_price_' . $lang]));
-                                } else {
-                                    $meta_value = '';
-                                }
-                                break;
-                        }
-
-                    }else{
-                        if($key == '_price' && isset($data['sale_price_'.$lang]) && isset($data['regular_price_'.$lang])){
-                            if($data['sale_price_'.$lang]){
-                                $meta_value = $data['sale_price_'.$lang];
-                            }else{
-                                $meta_value = $data['regular_price_'.$lang];
-                            }
-                        }
-                    }
-
-                    $meta_value = apply_filters('wcml_meta_value_before_add',$meta_value,$key);
-                    if($add){
-                        add_post_meta($trnsl_product_id, $key, $meta_value, true);
-                    }else{
-                        update_post_meta($trnsl_product_id,$key,$meta_value);
-                    }
-                }else{
-                    if(isset($settings['translation-management']['custom_fields_translation'][$key]) && $settings['translation-management']['custom_fields_translation'][$key] == 1){
-                        $meta_value = apply_filters('wcml_meta_value_before_add',$meta_value,$key);
+                    if (isset($settings['translation-management']['custom_fields_translation'][$key]) && $settings['translation-management']['custom_fields_translation'][$key] == 1) {
+                        $meta_value = apply_filters('wcml_meta_value_before_add', $meta_value, $key);
                         update_post_meta($trnsl_product_id, $key, $meta_value);
                     }
                 }
@@ -1142,7 +1082,7 @@ class WCML_Products{
      * */
 
     //sync product variations
-    function sync_product_variations($product_id,$tr_product_id,$lang,$data = false,$trbl = false){
+    function sync_product_variations( $product_id, $tr_product_id, $lang, $data = false, $trbl = false ){
         global $wpdb,$sitepress,$sitepress_settings, $woocommerce_wpml,$woocommerce;
 
         $is_variable_product = $this->is_variable_product($product_id);
@@ -1232,17 +1172,17 @@ class WCML_Products{
                 $this->sync_thumbnail_id($post_data->ID,$variation_id,$lang);
 
                 //sync file_paths
-                if(!$woocommerce_wpml->settings['file_path_sync']  && isset($data['variations_file_paths'][$variation_id])){
+                if(!$woocommerce_wpml->settings['file_path_sync']  && isset( $data[  md5( 'variations_file_paths_'.$variation_id ) ])){
                     $file_paths_array = array();
                     if(version_compare(preg_replace('#-(.+)$#', '', $woocommerce->version), '2.1', '<')){
-                        $file_paths = explode("\n",$data['variations_file_paths'][$variation_id]);
+                        $file_paths = explode("\n",$data[ md5( 'variations_file_paths_'.$variation_id ) ] );
                         foreach($file_paths as $file_path){
                             $file_paths_array[md5($file_path)] = $file_path;
                         }
                         update_post_meta($variation_id,'_file_paths',$file_paths_array);
                     }else{
 
-                        foreach($data['variations_file_paths'][$variation_id] as $file_path){
+                        foreach($data[ md5( 'variations_file_paths_'.$variation_id ) ] as $file_path){
                             $key = md5($file_path['file'].$file_path['name']);
                             $file_paths_array[$key]['name'] = $file_path['name'];
                             $file_paths_array[$key]['file'] = $file_path['file'];
@@ -1261,8 +1201,8 @@ class WCML_Products{
                 }
 
                 //sync description
-                if (isset($data['variation_desc'][$variation_id])) {
-                    update_post_meta($variation_id, '_variation_description', $data['variation_desc'][$variation_id]);
+                if (isset($data[ md5( 'variation_desc'.$variation_id ) ])) {
+                    update_post_meta($variation_id, '_variation_description', $data[md5( 'variation_desc'.$variation_id ) ]);
                 }
 
                 // sync taxonomies
@@ -1402,13 +1342,10 @@ class WCML_Products{
     /* Change locale to saving language - needs for sanitize_title exception wcml-390 */
     function update_product_action_locale_check( $locale ){
 
-        if( isset($_POST['action']) && $_POST['action'] == 'wcml_update_product' ){
+        if( isset($_POST['action']) && $_POST['action'] == 'wpml_translation_dialog_save_job' ){
             global $sitepress;
-            $data = array();
-            $records = $_POST['fields'];
-            parse_str($records, $data);
 
-            return $sitepress->get_locale($data['language']);
+            return $sitepress->get_locale( $_POST[ 'job_details' ][ 'language' ] );
         }
 
         return $locale;
@@ -2513,16 +2450,17 @@ class WCML_Products{
 
     // translation-management $trid filter
     function wpml_tm_save_post_trid_value($trid,$post_id){
-        if(isset($_POST['action']) && $_POST['action'] == 'wcml_update_product'){
+        if(isset($_POST['action']) && $_POST['action'] == 'wpml_translation_dialog_save_job'){
             global $sitepress;
-            $trid = $sitepress->get_element_trid($post_id, 'post_product');
+            $job_details = apply_filters( 'wpml_get_translation_job',  $_POST[ 'job_details' ][ 'job_id' ], false, false );
+            return $job_details->trid;
         }
         return $trid;
     }
 
     // translation-management $lang filter
     function wpml_tm_save_post_lang_value($lang,$post_id){
-        if(isset($_POST['action']) &&  $_POST['action'] == 'wcml_update_product'){
+        if(isset($_POST['action']) &&  $_POST['action'] == 'wpml_translation_dialog_save_job'){
             global $sitepress;
             $lang = $sitepress->get_language_for_element($post_id,'post_product');
         }
@@ -2531,17 +2469,18 @@ class WCML_Products{
 
     // sitepress $trid filter
     function wpml_save_post_trid_value($trid,$post_status){
-        if(isset($_POST['action']) && $_POST['action'] == 'wcml_update_product' && $post_status != 'auto-draft'){
+        if(isset($_POST['action']) && $_POST['action'] == 'wpml_translation_dialog_save_job' && $post_status != 'auto-draft'){
             global $sitepress;
-            $trid = $sitepress->get_element_trid($_POST['product_id'], 'post_product');
+            $job_details = apply_filters( 'wpml_get_translation_job',  $_POST[ 'job_details' ][ 'job_id' ], false, false );
+            return $job_details->trid;
         }
         return $trid;
     }
 
     // sitepress $lang filter
     function wpml_save_post_lang_value($lang){
-        if(isset($_POST['action']) &&  $_POST['action'] == 'wcml_update_product' && isset($_POST['to_lang'])){
-            $lang = filter_input( INPUT_POST, 'to_lang', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if(isset($_POST['action']) &&  $_POST['action'] == 'wpml_translation_dialog_save_job' && isset($_POST['to_lang'])){
+            $lang = $_POST[ 'job_details' ][ 'language' ];
         }
         return $lang;
     }

@@ -122,9 +122,7 @@ $button_labels = array(
 	'save'   => esc_attr__( 'Save', 'woocommerce-multilingual' ),
 	'update' => esc_attr__( 'Update', 'woocommerce-multilingual' ),
 );
-
-$woocommerce_wpml->settings['first_editor_call'] = false;
-$woocommerce_wpml->update_settings(); ?>
+?>
 
 <form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
 	<?php if ( ! isset( $_GET['prid'] ) && ! $translator_id ): ?>
@@ -396,38 +394,5 @@ $woocommerce_wpml->update_settings(); ?>
 			</div>
 		</div>
 	<?php endif; ?>
-
-    <?php if( $products && !isset( $_GET['prid'] )): ?>
-        <div class="wcml_product_pagination">
-        <span class="displaying-num"><?php printf(__('%d products', 'woocommerce-multilingual'), $products_count); ?></span>
-        <?php if(!isset($_GET['prid']) && isset($last) && $last > 1): ?>
-            <a class="first-page <?php echo $pn==1?'disabled':''; ?>" href="<?php echo $pagination_url; ?>1" title="<?php _e('Go to the first page', 'woocommerce-multilingual'); ?>">&laquo;</a>
-            <a class="prev-page <?php echo $pn==1?'disabled':''; ?>" href="<?php echo $pagination_url.((int)$pn > 1?$pn - 1:$pn); ?>" title="<?php _e('Go to the previous page', 'woocommerce-multilingual'); ?>">&lsaquo;</a>
-            <span><?php echo $pn;?>&nbsp;<?php _e('of', 'woocommerce-multilingual'); ?>&nbsp;<?php echo $last; ?><span>
-            <a class="next-page <?php echo $pn==$last?'disabled':''; ?>" href="<?php echo $pagination_url.((int)$pn<$last?$pn + 1:$last); ?>" title="<?php _e('Go to the next page', 'woocommerce-multilingual'); ?>">&rsaquo;</a>
-            <a class="last-page <?php echo $pn==$last?'disabled':''; ?>" href="<?php echo $pagination_url.$last; ?>" title="<?php _e('Go to the last page', 'woocommerce-multilingual'); ?>">&raquo;</a>
-        <?php endif; ?>
-    <?php if(isset($_GET['prid']) || ($lm && isset($last)) && $last > 1): ?>
-        <a href="<?php echo $pagination_url; ?>1"><?php _e('Show all products', 'woocommerce-multilingual'); ?></a>
-    <?php endif; ?>
-        </div>
-        <div class="clr"></div>
-    <?php endif;?>
-
-	<div class="hidden_original_description">
-		<?php wp_editor( '', 'original_description_value', array( 'textarea_rows' => 4, 'editor_class' => 'wcml_content_tr original_value', 'media_buttons' => false, 'quicktags' => array( 'buttons' => 'empty' ) ) ); ?>
-	</div>
-
-	<div class="hidden_original_excerpt">
-		<?php wp_editor( '', 'original_excerpt_value', array( 'textarea_rows' => 4, 'editor_class' => 'wcml_content_tr original_value', 'media_buttons' => false, 'quicktags' => array( 'buttons' => 'empty' ) ) ); ?>
-	</div>
-
-	<div class="hidden_translated_description">
-		<?php wp_editor( '', 'translated_description_value', array( 'textarea_rows' => 4, 'editor_class' => 'wcml_content_tr translated_value' ) ); ?>
-	</div>
-
-	<div class="hidden_translated_excerpt">
-		<?php wp_editor( '', 'translated_excerpt_value', array( 'textarea_rows' => 4, 'editor_class' => 'wcml_content_tr translated_value' ) ); ?>
-	</div>
 
 </form>

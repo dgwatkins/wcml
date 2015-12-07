@@ -104,7 +104,7 @@ class WCML_Ajax_Setup{
     }
     
     function localize_woocommerce_on_ajax(){
-        if( isset($_POST['action']) && in_array( $_POST['action'], array('wcml_product_data','wcml_update_product') ) ){
+        if( isset($_POST['action']) && in_array( $_POST['action'], array( 'wcml_product_data', 'wpml_translation_dialog_save_job' ) ) ){
             return;
         }
 

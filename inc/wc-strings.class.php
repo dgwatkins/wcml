@@ -247,7 +247,7 @@ class WCML_WC_Strings{
         return $available_methods;
     }
 
-    function translate_tax_rates($rates){
+    function translate_tax_rates($rates){ var_dump($rates);die;
         if (!empty($rates)) {
             foreach ($rates as &$rate) {
                 do_action('wpml_register_single_string', 'woocommerce', 'tax_label_' . esc_url_raw($rate['label']), $rate['label'] );

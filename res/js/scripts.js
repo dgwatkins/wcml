@@ -623,46 +623,46 @@ jQuery(document).ready(function($){
 
 
     //dialog actions
-    $(document).on( 'before_close_dialog', '.wpml-dialog-close-button', function(e) {
-        var data = $(this).data();
-        if (!data.action) {
-            //reset link object
-            var elem = jQuery('a[data-id="' + jQuery('input[name="original_product_id"]').val() + '"]').filter('[data-language="' + jQuery('input[name="language"]').val() + '"]');
-            elem.replaceWith('<a data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="' + elem.attr('data-id') + '" data-job_id="' + elem.attr('data-job_id') + '" data-language="' + elem.attr('data-language') + '" title="' + elem.attr('title') + '">' + elem.html() + '</a>');
-        }
-
-        $('.original_description .mce_editor_origin>div').appendTo('.hidden_original_description');
-        $('.original_description .mce_editor>div').appendTo('.hidden_translated_description');
-        $('.wcml-row-excerpt .mce_editor_origin>div').appendTo('.hidden_original_excerpt');
-        $('.wcml-row-excerpt .mce_editor>div').appendTo('.hidden_translated_excerpt');
-
-
-        if( typeof tinyMCE !== 'undefined' ) {
-
-            if(  tinyMCE.get('original_description_value') )
-                tinyMCE.get('original_description_value').remove();
-
-            if(  tinyMCE.get('original_excerpt_value') )
-                tinyMCE.get('original_excerpt_value').remove();
-
-            if(  tinyMCE.get('translated_description_value') )
-                tinyMCE.get('translated_description_value').remove();
-
-            if(  tinyMCE.get('translated_excerpt_value') )
-                tinyMCE.get('translated_excerpt_value').remove();
-        }
-
-    });
-
-    $(document).on( 'setdefault', '.wcml_content_tr', function(e){
-        var editor_id = $(this).attr('id');
-        if( editor_id in tinyMCE.editors ){
-            var tinymce_editor = tinyMCE.get( editor_id );
-            tinymce_editor.setContent( $( '#hidden_' + editor_id ).val() );
-        }else{
-            jQuery( '#'+editor_id ).val( $( '#hidden_' + editor_id ).val() );
-        }
-    });
+    //$(document).on( 'before_close_dialog', '.wpml-dialog-close-button', function(e) {
+    //    var data = $(this).data();
+    //    if (!data.action) {
+    //        //reset link object
+    //        var elem = jQuery('a[data-id="' + jQuery('input[name="original_product_id"]').val() + '"]').filter('[data-language="' + jQuery('input[name="language"]').val() + '"]');
+    //        elem.replaceWith('<a data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="' + elem.attr('data-id') + '" data-job_id="' + elem.attr('data-job_id') + '" data-language="' + elem.attr('data-language') + '" title="' + elem.attr('title') + '">' + elem.html() + '</a>');
+    //    }
+    //
+    //    $('.original_description .mce_editor_origin>div').appendTo('.hidden_original_description');
+    //    $('.original_description .mce_editor>div').appendTo('.hidden_translated_description');
+    //    $('.wcml-row-excerpt .mce_editor_origin>div').appendTo('.hidden_original_excerpt');
+    //    $('.wcml-row-excerpt .mce_editor>div').appendTo('.hidden_translated_excerpt');
+    //
+    //
+    //    if( typeof tinyMCE !== 'undefined' ) {
+    //
+    //        if(  tinyMCE.get('original_description_value') )
+    //            tinyMCE.get('original_description_value').remove();
+    //
+    //        if(  tinyMCE.get('original_excerpt_value') )
+    //            tinyMCE.get('original_excerpt_value').remove();
+    //
+    //        if(  tinyMCE.get('translated_description_value') )
+    //            tinyMCE.get('translated_description_value').remove();
+    //
+    //        if(  tinyMCE.get('translated_excerpt_value') )
+    //            tinyMCE.get('translated_excerpt_value').remove();
+    //    }
+    //
+    //});
+    //
+    //$(document).on( 'setdefault', '.wcml_content_tr', function(e){
+    //    var editor_id = $(this).attr('id');
+    //    if( editor_id in tinyMCE.editors ){
+    //        var tinymce_editor = tinyMCE.get( editor_id );
+    //        tinymce_editor.setContent( $( '#hidden_' + editor_id ).val() );
+    //    }else{
+    //        jQuery( '#'+editor_id ).val( $( '#hidden_' + editor_id ).val() );
+    //    }
+    //});
 
     $(document).on('click', '.wcml_ignore_link', function(e){
         e.preventDefault();
