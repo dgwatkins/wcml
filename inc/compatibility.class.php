@@ -106,6 +106,12 @@ class WCML_Compatibility {
             $this->wc_checkout_addons = new WCML_Checkout_Addons();
         }
 
+        // woocommerce checkout addons
+        if ( wp_get_theme() == 'Flatsome' ) {
+            $this->flatsome = new WCML_Flatsome();
+        }
+
+
     }
 
     function autoload( $class ){
