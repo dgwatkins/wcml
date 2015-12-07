@@ -113,7 +113,10 @@ jQuery(document).ready(function($){
    $(document).on('click', '.js-tax-translation li a[href^=#ignore-]', function(){
                 
        var taxonomy = $(this).attr('href').replace(/#ignore-/, '');
-                
+
+       var spinner = '<span class="spinner" style="visibility: visible; position: absolute" />';
+       $(this).append(spinner);
+
        $.ajax({
            type : "post",
            url : ajaxurl,
@@ -144,7 +147,10 @@ jQuery(document).ready(function($){
    $(document).on('click', '.js-tax-translation li a[href^=#unignore-]', function(){
                 
        var taxonomy = $(this).attr('href').replace(/#unignore-/, '');
-                
+
+       var spinner = '<span class="spinner" style="visibility: visible; position: absolute" />';
+       $(this).append(spinner);
+
        $.ajax({
            type : "post",
            url : ajaxurl,

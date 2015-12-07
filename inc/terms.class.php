@@ -318,7 +318,7 @@ class WCML_Terms{
 
 	        $ret['html'] = '<i class="otgs-ico-warning-sign"></i> ';
 	        $ret['html'] .= sprintf( __( '%d %s are missing translations.', 'woocommerce-multilingual' ), $wcml_settings['untranstaled_terms'][ $taxonomy ]['count'], get_taxonomy( $taxonomy )->labels->name );
-	        $ret['html'] .= '<a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=' . $taxonomy ) . '">' . printf( __( 'Translate %s', 'woocommerce-multilingual' ), get_taxonomy( $taxonomy )->labels->name ) . '</a> | ';
+	        $ret['html'] .= ' <a class="button-secondary" href="' . admin_url( 'admin.php?page=wpml-wcml&tab=' . $taxonomy ) . '">' . sprintf( __( 'Translate %s', 'woocommerce-multilingual' ), get_taxonomy( $taxonomy )->labels->name ) . '</a>';
 	        $ret['html'] .= '<small class="actions">';
 	        $ret['html'] .= '<a href="#ignore-' . $taxonomy . '">' . __( 'Exclude from translation', 'woocommerce-multilingual' ) . '</a>';
 	        $ret['html'] .= '</small>';
