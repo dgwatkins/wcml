@@ -20,8 +20,7 @@ class WCML_Url_Translation {
 
         add_filter( 'pre_update_option_rewrite_rules', array( $this, 'force_bases_in_strings_languages' ), 1, 1 ); // high priority
 
-        remove_filter( 'option_rewrite_rules', array( 'WPML_Slug_Translation', 'rewrite_rules_filter' ), 1, 1 ); //remove filter from WPML and use WCML filter first
-        add_filter( 'option_rewrite_rules', array( $this, 'translate_bases_in_rewrite_rules' ), 3, 1 ); // high priority
+        add_filter( 'option_rewrite_rules', array( $this, 'translate_bases_in_rewrite_rules' ), 0, 1 ); // high priority
 
         add_filter( 'term_link', array( $this, 'translate_taxonomy_base' ), 0, 3 ); // high priority
 
@@ -342,10 +341,6 @@ class WCML_Url_Translation {
     function translate_bases_in_rewrite_rules( $value ) {
         global $sitepress, $sitepress_settings, $woocommerce_wpml;
 
-        if ( !empty( $sitepress_settings['posts_slug_translation']['on'] ) ) {
-            add_filter( 'option_rewrite_rules', array( 'WPML_Slug_Translation', 'rewrite_rules_filter' ), 1, 1 );
-        }
-
         $cache_key = 'wcml_rewrite_filters_translate_taxonomies';
 
         if ( $val = wp_cache_get( $cache_key ) ) {
@@ -358,6 +353,7 @@ class WCML_Url_Translation {
 
             foreach ( $taxonomies as $taxonomy ) {
                 $slug_details = $this->get_translated_tax_slug( $taxonomy );
+
                 $string_language = $woocommerce_wpml->strings->get_string_language( $slug_details['slug'], $this->url_strings_context(), $this->url_string_name( $taxonomy ) );
                 if ( $sitepress->get_current_language() == $string_language ) {
                     continue;
@@ -366,8 +362,8 @@ class WCML_Url_Translation {
                 if ( $slug_details ) {
                     $buff_value = array();
                     foreach ( (array)$value as $k => $v ) {
-                        if ( $slug_details['slug'] != $slug_details['translated_slug'] && preg_match( '#^[^/]*/?' . $slug_details['slug'] . '/#', $k ) ) {
-                            $k = preg_replace( '#^([^/]*)(/?)' . $slug_details['slug'] . '/#', '$1$2' . $slug_details['translated_slug'] . '/', $k );
+                        if ( $slug_details['slug'] != $slug_details['translated_slug'] && preg_match( '#^[^/]*/?' . addslashes($slug_details['slug']) . '/#', $k ) ) {
+                            $k = preg_replace( '#^([^/]*)(/?)' . addslashes($slug_details['slug']) . '/#', '$1$2' . $slug_details['translated_slug'] . '/', $k );
                         }
                         $buff_value[$k] = $v;
                     }
@@ -440,7 +436,6 @@ class WCML_Url_Translation {
 
             $current_slug = get_post( $current_shop_id )->post_name;
             $default_slug = get_post( $default_shop_id )->post_name;
-
 
             if ( $current_slug != $default_slug ) {
                 $buff_value = array();
