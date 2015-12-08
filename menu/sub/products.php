@@ -354,7 +354,7 @@ $button_labels = array(
 				if ( isset( $_GET['prid'] ) ) {
                     $default_language = $sitepress->get_language_for_element($_GET['prid'], 'post_product');
                     $display_inline = true;
-                    include WCML_PLUGIN_PATH . '/menu/sub/product-data.php';
+
                 }
 			endforeach; ?>
 		<?php endif; ?>
