@@ -428,7 +428,7 @@ class WCML_Url_Translation {
 
         } else {
 
-            $current_shop_id = woocommerce_get_page_id( 'shop' );
+            $current_shop_id = wc_get_page_id( 'shop' );
             $default_shop_id = apply_filters( 'translate_object_id', $current_shop_id, 'page', true, $sitepress->get_default_language() );
 
             if ( is_null( get_post( $current_shop_id ) ) || is_null( get_post( $default_shop_id ) ) )
@@ -440,9 +440,14 @@ class WCML_Url_Translation {
             if ( $current_slug != $default_slug ) {
                 $buff_value = array();
                 foreach ( (array)$value as $k => $v ) {
-                    if ( $current_slug != $default_slug && preg_match( '#^[^/]*/?' . $default_slug . '/page/#', $k ) ) {
-                        $k = preg_replace( '#^([^/]*)(/?)' . $default_slug . '/#', '$1$2' . $current_slug . '/', $k );
+
+                    if( preg_match( '#^' . $default_slug . '/\?\$$#', $k ) ||
+                        preg_match( '#^' . $default_slug . '/\(?feed#', $k ) ||
+                        preg_match( '#^' . $default_slug . '/page#', $k )){
+
+                        $k = preg_replace( '#^' . $default_slug . '/#', $current_slug . '/', $k );
                     }
+
                     $buff_value[$k] = $v;
                 }
 
