@@ -26,6 +26,7 @@ This page allows you to translate all strings that are being used by WooCommerce
 			</td>
 
 			<td class="wpml-col-url">
+				<img src="<?php echo $sitepress->get_flag_url( $woocommerce_wpml->url_translation->get_source_slug_language( 'shop' ) ); ?>" />
 				<strong><?php echo get_post( get_option('woocommerce_shop_page_id' ) )->post_name ?></strong>
 			</td>
 
@@ -42,6 +43,7 @@ This page allows you to translate all strings that are being used by WooCommerce
 			</td>
 
 			<td class="wpml-col-url">
+				<img src="<?php echo $sitepress->get_flag_url( $woocommerce_wpml->url_translation->get_source_slug_language( 'product' ) ); ?>" />
 				<strong><?php echo $woocommerce_wpml->url_translation->get_woocommerce_product_base(); ?></strong>
 			</td>
 
@@ -58,6 +60,7 @@ This page allows you to translate all strings that are being used by WooCommerce
 			</td>
 
 			<td class="wpml-col-url">
+				<img src="<?php echo $sitepress->get_flag_url( $woocommerce_wpml->url_translation->get_source_slug_language( 'product_cat' ) ); ?>" />
 				<strong><?php echo !empty( $woocommerce_wpml->url_translation->wc_permalinks['category_base'] ) ? trim( $woocommerce_wpml->url_translation->wc_permalinks['category_base'], '/' ) : 'product-category' ?></strong>
 			</td>
 
@@ -74,6 +77,7 @@ This page allows you to translate all strings that are being used by WooCommerce
 			</td>
 
 			<td class="wpml-col-url">
+				<img src="<?php echo $sitepress->get_flag_url( $woocommerce_wpml->url_translation->get_source_slug_language( 'product_tag' ) ); ?>" />
 				<strong><?php echo !empty( $woocommerce_wpml->url_translation->wc_permalinks['tag_base'] ) ? trim( $woocommerce_wpml->url_translation->wc_permalinks['tag_base'], '/' ) : 'product-tag' ?></strong>
 			</td>
 
@@ -90,11 +94,12 @@ This page allows you to translate all strings that are being used by WooCommerce
 			</td>
 
 			<td class="wpml-col-url">
+				<img src="<?php echo $sitepress->get_flag_url( $woocommerce_wpml->url_translation->get_source_slug_language( 'attribute' ) ); ?>" />
 				<strong><?php echo trim( $woocommerce_wpml->url_translation->wc_permalinks['attribute_base'], '/' ) ?></strong>
 			</td>
 
 			<td class="wpml-col-languages">
-				<?php echo $woocommerce_wpml->url_translation->get_base_translations_statuses( 'attribute', $active_languages ); ?>
+				<?php echo $woocommerce_wpml->url_translation->get_base_translations_statuses( 'attribute', $active_languages, $woocommerce_wpml->url_translation->wc_permalinks['attribute_base'] ); ?>
 			</td>
 		</tr>
 		<?php $endpoints = WC()->query->query_vars;
@@ -107,11 +112,12 @@ This page allows you to translate all strings that are being used by WooCommerce
 				</td>
 
 				<td class="wpml-col-url">
+					<img src="<?php echo $sitepress->get_flag_url( $woocommerce_wpml->url_translation->get_source_slug_language( $key ) ); ?>" />
 					<strong><?php echo $endpoint ?></strong>
 				</td>
 
 				<td class="wpml-col-languages">
-					<?php echo $woocommerce_wpml->url_translation->get_base_translations_statuses( $key, $active_languages ); ?>
+					<?php echo $woocommerce_wpml->url_translation->get_base_translations_statuses( $key, $active_languages, $endpoint ); ?>
 				</td>
 			</tr>
 		<?php endforeach; ?>

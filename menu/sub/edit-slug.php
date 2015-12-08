@@ -10,7 +10,7 @@
 		<div class="wpml-dialog-body">
 			<h3 class="wpml-header-original"><?php _e('Original', 'woocommerce-multilingual'); ?>:
 				<span class="wpml-title-flag">
-					<img src="<?php echo $sitepress->get_flag_url($source_language) ?>"
+					<img src="<?php echo $sitepress->get_flag_url( $source_language ) ?>"
 						 alt="<?php echo $sitepress->get_display_language_name( $source_language, 'en' ); ?>"/>
 				</span>
 				<strong><?php echo $sitepress->get_display_language_name( $source_language, 'en' ); ?></strong>

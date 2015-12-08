@@ -19,6 +19,10 @@
   }
 }
 
+.dis_base{
+  opacity: 0.5;
+}
+
 .wcml-wrap {
   @extend %wpml-wrap;
   margin-bottom: 20px;

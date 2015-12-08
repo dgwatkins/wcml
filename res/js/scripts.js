@@ -463,30 +463,35 @@ jQuery(document).ready(function($){
     $(document).on('click', '.edit_base_slug', function(e) {
         e.preventDefault();
 
-        var elem = $(this);
+        if( !$(this).hasClass('dis_base') ){
 
-        $.ajax({
-            type : "post",
-            url : ajaxurl,
-            dataType: 'json',
-            data : {
-                action: "wcml_edit_base",
-                base: elem.attr('data-base'),
-                language: elem.attr('data-language'),
-                wcml_nonce: $('#wcml_edit_base_nonce').val()
-            },
-            success: function(response) {
-                jQuery(document.body).append(response);
+            var elem = $(this);
 
-                $('.wcml-base-dialog').css( 'top', $(document).height()/2 );
+            $.ajax({
+                type : "post",
+                url : ajaxurl,
+                dataType: 'json',
+                data : {
+                    action: "wcml_edit_base",
+                    base: elem.attr('data-base'),
+                    language: elem.attr('data-language'),
+                    wcml_nonce: $('#wcml_edit_base_nonce').val()
+                },
+                success: function(response) {
+                    jQuery(document.body).append(response);
 
-                $('body').animate({
-                    scrollTop: $('.wcml-base-dialog').offset().top - $(window).height()/2
-                },0);
+                    $('.wcml-base-dialog').css( 'top', $(document).height()/2 );
 
-                $('.wcml-base-dialog').fadeIn();
-            }
-        })
+                    $('body').animate({
+                        scrollTop: $('.wcml-base-dialog').offset().top - $(window).height()/2
+                    },0);
+
+                    $('.wcml-base-dialog').fadeIn();
+                }
+            })
+
+        }
+
     });
 
 

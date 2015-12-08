@@ -571,16 +571,10 @@ class WCML_Url_Translation {
 
     }
 
-    function get_base_translations_statuses( $base, $active_languages ){
+    function get_base_translations_statuses( $base, $active_languages, $value = true ){
         global $woocommerce_wpml, $sitepress;
 
-        if( $base == 'shop' ){
-            $source_language = $sitepress->get_language_for_element( get_option('woocommerce_shop_page_id' ) , 'post_page' );
-        }elseif( in_array( $base, array( 'product','product_cat','product_tag','attribute') ) ){
-            $source_language = $woocommerce_wpml->strings->get_string_language( $base, $this->url_strings_context(), $this->url_string_name( $base ) );
-        }else{
-            $source_language = $woocommerce_wpml->strings->get_string_language( $base, 'WooCommerce Endpoints', $base );
-        }
+        $source_language = $this->get_source_slug_language( $base );
 
         foreach( $active_languages as $language ){
             if ( $language['code'] == $source_language ) { ?>
@@ -606,7 +600,8 @@ class WCML_Url_Translation {
                 }
 
                 ?>
-                <a class="edit_base_slug <?php echo $base.'_'.$language['code']; ?>" data-base="<?php echo $base; ?>" data-language="<?php echo $language['code']; ?>"
+                <a class="edit_base_slug <?php if( !$value ): ?>dis_base<?php endif; ?>" data-base="<?php echo $base; ?>" data-language="<?php echo $language['code']; ?>"
+
                     <?php if( isset( $needs_update ) ): ?>
                       title="<?php echo $language['english_name'] . ': ' . __('Update translation', 'woocommerce-multilingual'); ?>">
                         <i class="otgs-ico-refresh"></i>
@@ -676,6 +671,20 @@ class WCML_Url_Translation {
 
     }
 
+    function get_source_slug_language( $base ){
+        global $sitepress, $woocommerce_wpml;
+
+        if( $base == 'shop' ){
+            $source_language = $sitepress->get_language_for_element( get_option('woocommerce_shop_page_id' ) , 'post_page' );
+        }elseif( in_array( $base, array( 'product','product_cat','product_tag','attribute') ) ){
+            $source_language = $woocommerce_wpml->strings->get_string_language( $base, $this->url_strings_context(), $this->url_string_name( $base ) );
+        }else{
+            $source_language = $woocommerce_wpml->strings->get_string_language( $base, 'WooCommerce Endpoints', $base );
+        }
+
+        return $source_language;
+    }
+
     function wcml_edit_base_html(){
         global $sitepress,$woocommerce_wpml;
 
@@ -688,27 +697,20 @@ class WCML_Url_Translation {
         $language = $_POST['language'];
         $translated_base_value = '';
 
+        $source_language = $this->get_source_slug_language( $original_base );
+
         if( $original_base == 'shop' ){
             $original_shop_id = get_option('woocommerce_shop_page_id' );
             $translated_base = apply_filters( 'translate_object_id',$original_shop_id , 'page', false, $language );
             if( !is_null($translated_base)){
                 $translated_base_value = urldecode(get_post($translated_base)->post_name);
             }
-            $source_language = $sitepress->get_language_for_element( $original_shop_id , 'post_page' );
+
             $original_base_value = urldecode(get_post($original_shop_id)->post_name);
             $label_name = __('Product Shop Base', 'woocommerce-multilingual');
         }else{
-
             $translated_base = $this->get_base_translation( $original_base, $language );
-
             $translated_base_value = $translated_base['translated_base'];
-
-            if( in_array( $original_base, array( 'product','product_cat','product_tag','attribute') ) ){
-                $source_language = $woocommerce_wpml->strings->get_string_language( $original_base, $this->url_strings_context(), $this->url_string_name( $original_base ) );
-            }else{
-                $source_language = $woocommerce_wpml->strings->get_string_language( $translated_base['original_value'], 'WooCommerce Endpoints', $original_base );
-            }
-
             $original_base_value = $translated_base['original_value'];
             $label_name = $translated_base['name'];
         }
