@@ -376,10 +376,15 @@ class woocommerce_wpml {
 		            'jquery-ui-resizable'
 	            ), WCML_VERSION );
 	            wp_register_script( 'jquery-cookie', WCML_PLUGIN_URL . '/res/js/jquery.cookie.js', array( 'jquery' ), WCML_VERSION );
+                wp_register_script( 'wcml-editor', WCML_PLUGIN_URL . '/res/js/wcml-translation-editor.js', array( 'jquery', 'jquery-ui-core' ), WCML_VERSION );
+                wp_register_script( 'wpml-dialogs', ICL_PLUGIN_URL . '/res/js/dialogs.js', array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'), ICL_SITEPRESS_VERSION );
+                wp_register_style( 'wpml-dialogs', ICL_PLUGIN_URL . '/res/css/dialogs.css', null, ICL_SITEPRESS_VERSION );
 
-
+                wp_enqueue_script( 'wpml-dialogs' );
+                wp_enqueue_script( 'wcml-editor' );
                 wp_enqueue_script( 'wcml-tm-scripts' );
                 wp_enqueue_script( 'jquery-cookie' );
+                wp_enqueue_style( 'wcml-dialogs' );
 
                 wp_localize_script( 'wcml-tm-scripts', 'wcml_settings',
                     array(
@@ -398,10 +403,6 @@ class woocommerce_wpml {
             if( $_GET[ 'page' ] == 'wpml-wcml' || ( isset( $_GET[ 'tab' ] ) && $_GET[ 'tab' ] == 'products' ) ) {
                 wp_register_style( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/css/dialogs.css', null, WCML_VERSION );
                 wp_enqueue_style( 'wcml-dialogs' );
-
-                wp_register_script( 'wcml-editor', WCML_PLUGIN_URL . '/res/js/wcml-translation-editor.js', array( 'jquery', 'jquery-ui-core' ), WCML_VERSION );
-                wp_enqueue_script( 'wcml-editor' );
-
             }
 
             if( $_GET[ 'page' ] == 'wpml-wcml' && isset( $_GET[ 'tab' ] ) && $_GET[ 'tab' ] == 'multi-currency' ){
