@@ -135,7 +135,7 @@
 			</div>
 
 			<footer class="wpml-dialog-footer">
-				<input type="button" class="button-secondary wpml-dialog-close-button alignleft"
+				<input type="button" class="wpml-dialog-close-button alignleft"
 					   value="<?php esc_attr_e( 'Cancel', 'woocommerce-multilingual' ) ?>" data-currency="<?php echo $cur_cur ?>"/>&nbsp;
 				<input type="submit" class="wpml-dialog-close-button button-primary currency_options_save alignright"
 					   value="<?php esc_attr_e( 'Save', 'woocommerce-multilingual' ) ?>" data-currency="<?php echo $cur_cur; ?>" data-stay="1" />
