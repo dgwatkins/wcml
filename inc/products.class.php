@@ -918,12 +918,12 @@ class WCML_Products{
                         $duplicated_id = apply_filters( 'translate_object_id', $image_id, 'attachment', false, $translation->language_code );
                         if ( is_null( $duplicated_id ) && $image_id ) {
 
-                            $duplicated_id = WPML_media::create_duplicate_attachment( $image_id, wp_get_post_parent_id( $image_id ), $translation->language_code );
+                            $duplicated_id = WPML_Media::create_duplicate_attachment( $image_id, wp_get_post_parent_id( $image_id ), $translation->language_code );
                         }
                         $duplicated_ids .= $duplicated_id . ',';
                     }
                 }
-                $duplicated_ids = substr( $duplicated_ids, 0, strlen( $duplicated_ids )-1 );
+                $duplicated_ids = substr( $duplicated_ids, 0, strlen( $duplicated_ids ) - 1 );
                 update_post_meta( $translation->element_id, '_product_image_gallery', $duplicated_ids );
             }
         }
@@ -1312,7 +1312,7 @@ class WCML_Products{
             $thumbnail_id = get_post_meta( $orig_post_id, '_thumbnail_id', true );
             $trnsl_thumbnail = apply_filters( 'translate_object_id', $thumbnail_id, 'attachment', false, $lang );
             if( is_null( $trnsl_thumbnail ) && $thumbnail_id ){
-                $trnsl_thumbnail = WPML_media::create_duplicate_attachment( $thumbnail_id, wp_get_post_parent_id( $thumbnail_id ), $lang );
+                $trnsl_thumbnail = WPML_Media::create_duplicate_attachment( $thumbnail_id, wp_get_post_parent_id( $thumbnail_id ), $lang );
             }
 
             update_post_meta( $trnsl_post_id, '_thumbnail_id', $trnsl_thumbnail );
@@ -2480,7 +2480,7 @@ class WCML_Products{
     function remove_language_options(){
         global $WPML_media,$typenow;
         if(defined('WPML_MEDIA_VERSION') && $typenow == 'product'){
-            remove_action('icl_post_languages_options_after',array($WPML_media,'language_options'));
+            remove_action('icl_post_languages_options_after',array($WPML_Media,'language_options'));
             add_action( 'icl_post_languages_options_after', array( $this, 'media_inputs' ) );
         }
     }
