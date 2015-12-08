@@ -5,7 +5,8 @@ class WCML_Dependencies{
       
     private $missing = array();
     private $err_message = '';
-            
+    private $allok = true;
+
     function __construct(){
         
         if(is_admin()){
@@ -19,14 +20,13 @@ class WCML_Dependencies{
       
     function check(){
         global $woocommerce_wpml, $sitepress;
-        $allok = true;
 
         if(!defined('ICL_SITEPRESS_VERSION') || ICL_PLUGIN_INACTIVE || is_null( $sitepress ) || !class_exists('SitePress')){
              $this->missing['WPML'] = $woocommerce_wpml->generate_tracking_link('http://wpml.org/');
-             $allok = false;
+             $this->allok = false;
         } elseif(version_compare(ICL_SITEPRESS_VERSION, '3.1.5', '<')){
             add_action('admin_notices', array($this, '_old_wpml_warning'));
-            $allok = false;
+            $this->allok = false;
         }else{
             if( !defined('WPML_SUPPORT_STRINGS_IN_DIFF_LANG') ){
                 if( class_exists('WPML_Language_Of_Domain') ){
@@ -41,38 +41,38 @@ class WCML_Dependencies{
 
         if(!class_exists('woocommerce')){
             $this->missing['WooCommerce'] = 'http://www.woothemes.com/woocommerce/';
-            $allok = false;
+            $this->allok = false;
         }
 
         if(!defined('WPML_TM_VERSION')){
             $this->missing['WPML Translation Management'] = $woocommerce_wpml->generate_tracking_link('http://wpml.org/');
-            $allok = false;
+            $this->allok = false;
         }elseif(version_compare(WPML_TM_VERSION, '1.9', '<')){
             add_action('admin_notices', array($this, '_old_wpml_tm_warning'));
-            $allok = false;
+            $this->allok = false;
         }
 
         if(!defined('WPML_ST_VERSION')){
             $this->missing['WPML String Translation'] = $woocommerce_wpml->generate_tracking_link('http://wpml.org/');
-            $allok = false;
+            $this->allok = false;
         }elseif(version_compare(WPML_ST_VERSION, '2.0', '<')){
             add_action('admin_notices', array($this, '_old_wpml_st_warning'));
-            $allok = false;
+            $this->allok = false;
         }
 
         if(!defined('WPML_MEDIA_VERSION')){
             $this->missing['WPML Media'] = $woocommerce_wpml->generate_tracking_link('http://wpml.org/');
-            $allok = false;
+            $this->allok = false;
         }elseif(version_compare(WPML_MEDIA_VERSION, '2.1', '<')){
             add_action('admin_notices', array($this, '_old_wpml_media_warning'));
-            $allok = false;
+            $this->allok = false;
         }
 
         if ($this->missing) {
 
         }
         
-        if($allok){
+        if($this->allok){
             $this->check_for_incompatible_permalinks();
         }
 
@@ -81,11 +81,11 @@ class WCML_Dependencies{
         }
         
         if(isset($sitepress)){
-            $allok = $allok & $sitepress->setup();    
+            $this->allok = $this->allok & $sitepress->setup();
         }
         
         
-        return $allok;
+        return $this->allok;
     }
       
     /**
@@ -216,7 +216,7 @@ class WCML_Dependencies{
     function _first_setup_warning(){ ?>
 
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual configuration is not complete. <a href="%s" class="button-primary">Configure settings</a>', 'woocommerce-multilingual'),
-                admin_url("admin.php?page=wpml-wcml&tab=status")) ?> <a class="alignright wcml_ignore_link" data-setting="first_setup_warning" ><?php _e('Ignore','woocommerce-multilingual' ) ?></a><?php wp_nonce_field('wcml_ignore_warning', 'wcml_ignore_warning_nonce'); ?></p></div>
+                    $this->allok ? admin_url("admin.php?page=wpml-wcml&tab=status") : admin_url("admin.php?page=wpml-wcml") ) ?> <a class="alignright wcml_ignore_link" data-setting="first_setup_warning" ><?php _e('Ignore','woocommerce-multilingual' ) ?></a><?php wp_nonce_field('wcml_ignore_warning', 'wcml_ignore_warning_nonce'); ?></p></div>
         <?php
     }
 

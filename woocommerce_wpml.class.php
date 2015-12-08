@@ -28,6 +28,7 @@ class woocommerce_wpml {
         add_action('admin_menu', array($this, 'menu'));
 
         if(!$this->dependencies->check()){
+            $this->load_managment_css();
             return false;
         }
 
@@ -363,11 +364,12 @@ class woocommerce_wpml {
     function load_css_and_js() {
         global $pagenow;
 
+        $this->load_managment_css();
+
         if(isset($_GET['page'])){
 
             if( in_array($_GET['page'], array('wpml-wcml',basename(WCML_PLUGIN_PATH).'/menu/sub/troubleshooting.php',basename(WCML_PLUGIN_PATH).'/menu/plugins.php'))) {
 
-	            wp_register_style( 'wpml-wcml', WCML_PLUGIN_URL . '/res/css/management.css', array( ), WCML_VERSION );
 		        wp_register_style( 'cleditor', WCML_PLUGIN_URL . '/res/css/jquery.cleditor.css', null, WCML_VERSION );
 	            wp_register_script( 'wcml-tm-scripts', WCML_PLUGIN_URL . '/res/js/scripts.js', array(
 		            'jquery',
@@ -379,7 +381,7 @@ class woocommerce_wpml {
                 wp_register_script( 'wcml-editor', WCML_PLUGIN_URL . '/res/js/wcml-translation-editor.js', array( 'jquery', 'jquery-ui-core' ), WCML_VERSION );
 
                // wp_enqueue_style('toolset-font-awesome'); // enqueue styles
-                wp_enqueue_style('wpml-wcml');
+
                 wp_enqueue_style('cleditor');
                 wp_enqueue_style('wp-pointer');
 
@@ -438,6 +440,17 @@ class woocommerce_wpml {
             wp_register_script( 'multi-currency', WCML_PLUGIN_URL . '/res/js/multi-currency.js', array('jquery'), WCML_VERSION, true );
             wp_enqueue_script( 'multi-currency' );
         }
+    }
+
+    function load_managment_css(){
+
+        if( isset($_GET['page']) && in_array($_GET['page'], array('wpml-wcml',basename(WCML_PLUGIN_PATH).'/menu/sub/troubleshooting.php',basename(WCML_PLUGIN_PATH).'/menu/plugins.php'))) {
+
+            wp_register_style('wpml-wcml', WCML_PLUGIN_URL . '/res/css/management.css', array(), WCML_VERSION);
+            wp_enqueue_style('wpml-wcml');
+
+        }
+
     }
 
     //load Tooltip js and styles from WC
