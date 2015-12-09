@@ -36,7 +36,7 @@ foreach($currencies as $code => $currency){
 	$args['currency_name'] 		= $args['wc_currencies'][$args['currency_code']];
 	$args['currency_symbol'] 	= get_woocommerce_currency_symbol( $args['currency_code'] );
 	$args['currency']			= $currency;
-	$args['title'] = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ), '<strong>' . $args['currency_name'] . ' (' . $args['currency_symbol'] . ')</strong>' );
+	$args['title'] = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ), $args['currency_name'] . ' (' . $args['currency_symbol'] . ')' );
 	include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php';
 }
 

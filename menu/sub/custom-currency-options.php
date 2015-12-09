@@ -1,16 +1,9 @@
 
-<div class="wpml-dialog hidden" id="wcml_currency_options_<?php echo $args['currency_code'] ?>">
+<div class="wpml-dialog hidden" id="wcml_currency_options_<?php echo $args['currency_code'] ?>" title="<?php echo esc_attr($args['title']) ?>">
 
 	<div class="wcml_currency_options wcml-co-dialog">
 
 		<form id="wcml_currency_options_form_<?php echo $args['currency_code'] ?>" method="post" action="">
-
-			<header class="wpml-dialog-header">
-				<h3>
-					<?php echo $args['title'] ?>
-				</h3>
-				<i class="otgs-ico-close wpml-dialog-close-button"></i>
-			</header>
 
 			<div class="wpml-dialog-body">
 
