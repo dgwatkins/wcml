@@ -21,3 +21,8 @@
 	background-color: #ffffff;
 	@include clearfix();
 }
+%truncate {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+}
