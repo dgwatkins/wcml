@@ -6,7 +6,6 @@ $current_language = $sitepress->get_current_language();
 $active_languages = $sitepress->get_active_languages();
 
 $all_products_taxonomies = array();
-$all_products_taxonomies['product_shipping_class'] = 'Shipping Classes';
 $all_products_taxonomies['product_cat'] = 'Product Categories';
 $all_products_taxonomies['product_tag'] = 'Product Tags';
 
@@ -29,7 +28,7 @@ if(isset($_GET['tab'])){
 
         <?php if( current_user_can('wpml_operate_woocommerce_multilingual')): ?>
             <?php foreach($all_products_taxonomies as $tax_key => $tax): ?>
-                <a class="js-tax-tab-<?php echo $tax_key ?> nav-tab <?php echo (isset($_GET['tab']) && $_GET['tab'] == $tax_key)?'nav-tab-active':''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab='.$tax_key); ?>" <?php if(!WCML_Terms::is_fully_translated($tax_key)): ?>title="<?php esc_attr_e('You have untranslated terms!', 'woocommerce-multilingual'); ?>"<?php endif;?>>
+                <a class="js-tax-tab-<?php echo $tax_key ?> nav-tab <?php echo $current_tab == $tax_key?'nav-tab-active':''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab='.$tax_key); ?>" <?php if(!WCML_Terms::is_fully_translated($tax_key)): ?>title="<?php esc_attr_e('You have untranslated terms!', 'woocommerce-multilingual'); ?>"<?php endif;?>>
                     <?php echo $tax ?>
                     <?php if(!WCML_Terms::is_fully_translated($tax_key)): ?>
                         &nbsp;<i class="otgs-ico-warning"></i>
@@ -38,8 +37,16 @@ if(isset($_GET['tab'])){
 
                 <input type="hidden" id="wcml_update_term_translated_warnings_nonce" value="<?php echo wp_create_nonce('wcml_update_term_translated_warnings_nonce') ?>" />
 
-            <?php endforeach; ?>
+            <?php endforeach;
+            $all_products_taxonomies['product_shipping_class'] = 'Shipping Classes';
+            ?>
             <a class="nav-tab <?php echo $current_tab == 'product-attributes' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=product-attributes'); ?>"><?php _e('Product Attributes', 'woocommerce-multilingual') ?></a>
+            <a class="js-tax-tab-product_shipping_class nav-tab <?php echo $current_tab == 'product_shipping_class' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=product_shipping_class'); ?>" <?php if(!WCML_Terms::is_fully_translated('product_shipping_class')): ?>title="<?php esc_attr_e('You have untranslated terms!', 'woocommerce-multilingual'); ?>"<?php endif;?>>
+                <?php _e('Shipping Classes', 'woocommerce-multilingual') ?>
+                <?php if(!WCML_Terms::is_fully_translated('product_shipping_class')): ?>
+                    &nbsp;<i class="otgs-ico-warning"></i>
+                <?php endif; ?>
+            </a>
         <?php endif; ?>
 
         <?php if(current_user_can('wpml_manage_woocommerce_multilingual')): ?>
