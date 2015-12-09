@@ -360,11 +360,17 @@ class WCML_Url_Translation {
                 }
 
                 if ( $slug_details ) {
+
+                    $slug_match = addslashes( ltrim($slug_details['slug'], '/') );
+                    $slug_translation_match = ltrim($slug_details['translated_slug'], '/');
+
                     $buff_value = array();
                     foreach ( (array)$value as $k => $v ) {
-                        if ( $slug_details['slug'] != $slug_details['translated_slug'] && preg_match( '#^[^/]*/?' . addslashes($slug_details['slug']) . '/#', $k ) ) {
-                            $k = preg_replace( '#^([^/]*)(/?)' . addslashes($slug_details['slug']) . '/#', '$1$2' . $slug_details['translated_slug'] . '/', $k );
+
+                        if ( $slug_details['slug'] != $slug_details['translated_slug'] && preg_match( '#^[^/]*/?' . $slug_match . '/#', $k ) ) {
+                            $k = preg_replace( '#^([^/]*)(/?)' . $slug_match . '/#', '$1$2' . $slug_translation_match . '/', $k );
                         }
+
                         $buff_value[$k] = $v;
                     }
                     $value = $buff_value;
