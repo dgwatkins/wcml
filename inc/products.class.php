@@ -2479,8 +2479,8 @@ class WCML_Products{
 
     function remove_language_options(){
         global $WPML_media,$typenow;
-        if(defined('WPML_MEDIA_VERSION') && $typenow == 'product'){
-            remove_action('icl_post_languages_options_after',array($WPML_Media,'language_options'));
+        if( defined('WPML_MEDIA_VERSION') && $typenow == 'product'){
+            remove_action('icl_post_languages_options_after',array( $WPML_media,'language_options'));
             add_action( 'icl_post_languages_options_after', array( $this, 'media_inputs' ) );
         }
     }
