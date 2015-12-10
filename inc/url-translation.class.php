@@ -402,10 +402,13 @@ class WCML_Url_Translation {
                         $slug_translation = apply_filters('wpml_translate_single_string', $slug, $this->url_strings_context(), $this->url_string_name( 'attribute' ) );
                         if ($slug_translation) {
 
+                            $slug_match = addslashes( ltrim($slug, '/') );
+                            $slug_translation_match = ltrim($slug_translation, '/');
+
                             $buff_value = array();
                             foreach ((array)$value as $k => $v) {
-                                if ($slug != $slug_translation && preg_match('#^' . $slug . '/(.*)#', $k)) {
-                                    $k = preg_replace('#^' . $slug . '/(.*)#', $slug_translation . '/$1', $k);
+                                if ($slug != $slug_translation && preg_match('#^' . $slug_match . '/(.*)#', $k)) {
+                                    $k = preg_replace('#^' . $slug_match . '/(.*)#', $slug_translation_match . '/$1', $k);
                                 }
                                 $buff_value[$k] = $v;
                             }
