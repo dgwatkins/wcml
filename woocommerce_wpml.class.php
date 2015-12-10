@@ -97,7 +97,7 @@ class woocommerce_wpml {
         add_filter('woocommerce_get_return_url', array($this, 'filter_woocommerce_redirect_location'));
         //add_filter('woocommerce_redirect', array($this, 'filter_woocommerce_redirect_location'));
 
-        add_filter('woocommerce_paypal_args', array($this, 'add_language_to_paypal'));
+        add_filter('woocommerce_paypal_args', array($this, 'filter_paypal_args'));
 
 
         if(is_admin() &&
@@ -579,9 +579,16 @@ class woocommerce_wpml {
         return html_entity_decode($sitepress->convert_url($link));
     }
 
-    function add_language_to_paypal($args) {
+    function filter_paypal_args($args) {
         global $sitepress;
         $args['lc'] = $sitepress->get_current_language();
+
+        //filter URL when default permalinks uses
+        $wpml_settings = $sitepress->get_settings();
+        if( $wpml_settings[ 'language_negotiation_type' ] == 3 ){
+            $args[ 'notify_url' ] = str_replace( '%2F&', '&', $args[ 'notify_url' ] );
+        }
+
         return $args;
     }
 

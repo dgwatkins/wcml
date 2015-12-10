@@ -2,7 +2,7 @@
 class WCML_Orders{
     
     private $standart_order_notes = array('Order status changed from %s to %s.',
-        'Order item stock reduced successfully.','Item #%s stock reduced from %s to %s.','Awaiting BACS payment','Awaiting cheque payment','Payment to be made upon delivery.',
+        'Order item stock reduced successfully.','Item #%s stock reduced from %s to %s.','Item #%s stock increased from %s to %s.','Awaiting BACS payment','Awaiting cheque payment','Payment to be made upon delivery.',
         'Validation error: PayPal amounts do not match (gross %s).','Validation error: PayPal IPN response from a different email address (%s).','Payment pending: %s',
         'Payment %s via IPN.','Validation error: PayPal amounts do not match (amt %s).','IPN payment completed','PDT payment completed'
     );
@@ -49,8 +49,9 @@ class WCML_Orders{
                 $string_id = icl_get_string_id( $text, 'woocommerce');
                 $strings = icl_get_string_translations_by_id( $string_id );
                 if($strings){
-                    $translations = $strings[ $sitepress_settings['admin_default_language'] ];
+                    $translations = $strings[ $sitepress_settings['admin_default_language'] ]['value'];
                 }
+
             }else{
                 return $text;
             }

@@ -82,7 +82,9 @@ class WCML_Terms{
         if( $original_tax->taxonomy == 'product_shipping_class' ){
 
             $settings = get_option( 'woocommerce_flat_rate_settings' );
-            update_option( 'woocommerce_flat_rate_settings', $this->update_woocommerce_flat_rate_settings( $settings ) );
+            if( is_array( $settings ) ){
+                update_option( 'woocommerce_flat_rate_settings', $this->update_woocommerce_flat_rate_settings( $settings ) );
+            }
 
         }
     }

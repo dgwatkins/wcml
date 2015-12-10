@@ -62,6 +62,9 @@ class WCML_Products{
             add_filter( 'wpml-translation-editor-fetch-job', array( $this, 'fetch_translation_job_for_editor' ), 10, 2 );
             
             $this->tp_support = new WCML_TP_Support();
+            if ( defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSION, '3.2', '>=' ) ) {
+                $this->tp_support = new WCML_TP_Support();
+            }
 
         }else{
             add_filter('woocommerce_json_search_found_products', array($this, 'filter_found_products_by_language'));
@@ -679,14 +682,16 @@ class WCML_Products{
             $duplicated_ids = '';
             if ( !$translation->original ) {
                 foreach( $gallery_ids as $image_id ){
-                    $duplicated_id = apply_filters( 'translate_object_id', $image_id, 'attachment', false, $translation->language_code );
-                    if( is_null( $duplicated_id ) && $image_id ){
+                    if( get_post( $image_id ) ) {
+                        $duplicated_id = apply_filters( 'translate_object_id', $image_id, 'attachment', false, $translation->language_code );
+                        if ( is_null( $duplicated_id ) && $image_id ) {
 
-                        $duplicated_id = WPML_media::create_duplicate_attachment( $image_id, wp_get_post_parent_id( $image_id ), $translation->language_code );
+                            $duplicated_id = WPML_Media::create_duplicate_attachment( $image_id, wp_get_post_parent_id( $image_id ), $translation->language_code );
+                        }
+                        $duplicated_ids .= $duplicated_id . ',';
                     }
-                    $duplicated_ids .= $duplicated_id.',';
                 }
-                $duplicated_ids = substr( $duplicated_ids, 0, strlen( $duplicated_ids )-1 );
+                $duplicated_ids = substr( $duplicated_ids, 0, strlen( $duplicated_ids ) - 1 );
                 update_post_meta( $translation->element_id, '_product_image_gallery', $duplicated_ids );
             }
         }
@@ -1118,7 +1123,7 @@ class WCML_Products{
             $thumbnail_id = get_post_meta( $orig_post_id, '_thumbnail_id', true );
             $trnsl_thumbnail = apply_filters( 'translate_object_id', $thumbnail_id, 'attachment', false, $lang );
             if( is_null( $trnsl_thumbnail ) && $thumbnail_id ){
-                $trnsl_thumbnail = WPML_media::create_duplicate_attachment( $thumbnail_id, wp_get_post_parent_id( $thumbnail_id ), $lang );
+                $trnsl_thumbnail = WPML_Media::create_duplicate_attachment( $thumbnail_id, wp_get_post_parent_id( $thumbnail_id ), $lang );
             }
 
             update_post_meta( $trnsl_post_id, '_thumbnail_id', $trnsl_thumbnail );
@@ -1531,7 +1536,8 @@ class WCML_Products{
             if( isset( $_POST[ '_wcml_custom_prices' ][ $post_id ] ) ) {
                 $wcml_custom_prices_option = $_POST[ '_wcml_custom_prices' ][ $post_id ];
             }else{
-                $wcml_custom_prices_option = $_POST[ '_wcml_custom_prices' ][ 0 ];
+                $current_option = get_post_meta( $post_id, '_wcml_custom_prices_status', true );
+                $wcml_custom_prices_option = $current_option ? $current_option : 0;
             }
 
             update_post_meta( $post_id, '_wcml_custom_prices_status', $wcml_custom_prices_option );
@@ -1581,31 +1587,31 @@ class WCML_Products{
 
     function update_custom_prices($post_id,$regular_price,$sale_price,$schedule,$date_from,$date_to,$code){
         $price = '';
-        update_post_meta($post_id, '_regular_price_' . $code, $regular_price);
-        update_post_meta($post_id, '_sale_price_' . $code, $sale_price);
+        update_post_meta($post_id,'_regular_price_'.$code,$regular_price);
+        update_post_meta($post_id,'_sale_price_'.$code,$sale_price);
 
         // Dates
-        update_post_meta($post_id, '_wcml_schedule_' . $code, $schedule);
-        if ($date_from)
-            update_post_meta($post_id, '_sale_price_dates_from_' . $code, $date_from);
+        update_post_meta($post_id,'_wcml_schedule_'.$code,$schedule);
+        if ( $date_from )
+            update_post_meta( $post_id, '_sale_price_dates_from_'.$code,  $date_from  );
         else
-            update_post_meta($post_id, '_sale_price_dates_from_' . $code, '');
+            update_post_meta( $post_id, '_sale_price_dates_from_'.$code, '' );
 
-        if ($date_to)
-            update_post_meta($post_id, '_sale_price_dates_to_' . $code, $date_to);
+        if ( $date_to )
+            update_post_meta( $post_id, '_sale_price_dates_to_'.$code,  $date_to );
         else
-            update_post_meta($post_id, '_sale_price_dates_to_' . $code, '');
+            update_post_meta( $post_id, '_sale_price_dates_to_'.$code, '' );
 
-        if ($date_to && !$date_from)
-            update_post_meta($post_id, '_sale_price_dates_from_' . $code, strtotime('NOW', current_time('timestamp')));
+        if ( $date_to && ! $date_from )
+            update_post_meta( $post_id, '_sale_price_dates_from_'.$code, strtotime( 'NOW', current_time( 'timestamp' ) ) );
 
         // Update price if on sale
-        if ($sale_price != '' && $date_to == '' && $date_from == '') {
-            $price = stripslashes($sale_price);
-            update_post_meta($post_id, '_price_' . $code, stripslashes($sale_price));
-        } else {
-            $price = stripslashes($regular_price);
-            update_post_meta($post_id, '_price_' . $code, stripslashes($regular_price));
+        if ( $sale_price != '' && $date_to == '' && $date_from == '' ){
+            $price = stripslashes( $sale_price );
+            update_post_meta( $post_id, '_price_'.$code, stripslashes( $sale_price ) );
+        }else{
+            $price = stripslashes( $regular_price );
+            update_post_meta( $post_id, '_price_'.$code, stripslashes( $regular_price ) );
         }
 
         if ( $sale_price != '' && $date_from < strtotime( 'NOW', current_time( 'timestamp' ) ) ){
@@ -2184,8 +2190,8 @@ class WCML_Products{
 
     function remove_language_options(){
         global $WPML_media,$typenow;
-        if(defined('WPML_MEDIA_VERSION') && $typenow == 'product'){
-            remove_action('icl_post_languages_options_after',array($WPML_media,'language_options'));
+        if( defined('WPML_MEDIA_VERSION') && $typenow == 'product'){
+            remove_action('icl_post_languages_options_after',array( $WPML_media,'language_options'));
             add_action( 'icl_post_languages_options_after', array( $this, 'media_inputs' ) );
         }
     }
@@ -2595,30 +2601,28 @@ class WCML_Products{
         foreach ($keys as $key) {
             $iclTranslationManagement->settings['custom_fields_readonly_config'][] = $key;
             if (!isset($sitepress_settings['translation-management']['custom_fields_translation'][$key]) ||
-                $wpml_settings['translation-management']['custom_fields_translation'][$key] != 1
-            ) {
+                $wpml_settings['translation-management']['custom_fields_translation'][$key] != 1) {
                 $wpml_settings['translation-management']['custom_fields_translation'][$key] = 1;
                 $save = true;
             }
 
-            if (!empty($woocommerce_wpml->multi_currency_support)) {
-                foreach ($woocommerce_wpml->multi_currency_support->get_currency_codes() as $code) {
-                    $new_key = $key . '_' . $code;
+            if(!empty($woocommerce_wpml->multi_currency_support)){
+                foreach($woocommerce_wpml->multi_currency_support->get_currency_codes() as $code){
+                    $new_key = $key.'_'.$code;
                     $iclTranslationManagement->settings['custom_fields_readonly_config'][] = $new_key;
                     if (!isset($sitepress_settings['translation-management']['custom_fields_translation'][$new_key]) ||
-                        $wpml_settings['translation-management']['custom_fields_translation'][$new_key] != 0
-                    ) {
+                        $wpml_settings['translation-management']['custom_fields_translation'][$new_key] != 0) {
                         $wpml_settings['translation-management']['custom_fields_translation'][$new_key] = 0;
                         $save = true;
                     }
                 }
             }
 
-         }
+        }
 
-         if ($save) {
-             $sitepress->save_settings($wpml_settings);
-         }
+        if ($save) {
+            $sitepress->save_settings($wpml_settings);
+        }
     }
 
     function woocommerce_duplicate_product($new_id, $post){
@@ -2710,7 +2714,7 @@ class WCML_Products{
         }
 
         return $widget_id;
-     }
+    }
 
 
     //update menu_order fro translations after ordering original products
@@ -2743,9 +2747,9 @@ class WCML_Products{
                 $menu_order = $wpdb->get_var($wpdb->prepare("SELECT menu_order FROM $wpdb->posts WHERE ID = %d", $product_id ) );
 
                 $trid = $sitepress->get_element_trid($product_id, 'post_product');
-                    $translations = $sitepress->get_element_translations($trid, 'post_product');
+                $translations = $sitepress->get_element_translations($trid, 'post_product');
 
-                    foreach ($translations as $translation) {
+                foreach ($translations as $translation) {
 
                     if ($translation->element_id != $product_id) {
                         $wpdb->update( $wpdb->posts, array('menu_order' => $menu_order), array('ID' => $translation->element_id));
@@ -2763,11 +2767,11 @@ class WCML_Products{
             $elements[ 'excerpt' ] ['editor_type'] = 'editor';
         }
 
-		if ( function_exists( 'format_for_editor' ) ) {
-			// WordPress 4.3 uses format_for_editor
+        if ( function_exists( 'format_for_editor' ) ) {
+            // WordPress 4.3 uses format_for_editor
             $elements[ 'excerpt' ] ['value'] = htmlspecialchars_decode(format_for_editor($elements[ 'excerpt' ] ['value'], $_POST[ 'excerpt_type']));
         } else {
-			// Backwards compatible for WordPress < 4.3
+            // Backwards compatible for WordPress < 4.3
             if($_POST[ 'excerpt_type'] == 'rich'){
                 $elements[ 'excerpt' ] ['value'] = htmlspecialchars_decode(wp_richedit_pre($elements[ 'excerpt' ] ['value']));
             }else{
