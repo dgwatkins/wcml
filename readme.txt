@@ -5,7 +5,7 @@ Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multili
 License: GPLv2
 Requires at least: 3.0
 Tested up to: 4.3.1
-Stable tag: 3.7.5
+Stable tag: 3.7.6
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
 
@@ -77,6 +77,13 @@ In order for the checkout and store pages to appear translated, you need to crea
 3. Multiple currencies
 
 == Changelog ==
+
+
+= 3.7.6 =
+* Fixed several problems with the permalinks when using the slash character in the bases
+* Fixed an issue with coupons: the coupons were not applied according to the minimum amount of the cart in the current currency
+* Fixed one compatibility issue with the Flatsome theme
+* Fixed a bug preventing the shop page link to be translated correctly to the other languages (when using WPML 3.3.1+)
 
 = 3.7.5 =
 * Fixed a backward compatibility with WPML versions prior 3.2 (causing fatal error)
