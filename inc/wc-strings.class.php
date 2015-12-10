@@ -595,11 +595,18 @@ class WCML_WC_Strings{
 
                 $string_id = icl_get_string_id( $value, $context, $name );
 
+                if( !$string_id ){
+                    return 'en';
+                }
+
                 $string_object                  = new WPML_ST_String($string_id, $wpdb);
                 $string_language                = $string_object->get_language();
 
             }
 
+            if( !$string_language ){
+                return 'en';
+            }
 
             return $string_language;
         }else{
