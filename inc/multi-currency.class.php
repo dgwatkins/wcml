@@ -106,11 +106,11 @@ class WCML_WC_MultiCurrency{
 
         if( check_admin_referer( 'wcml_mc_options', 'wcml_nonce' ) ){
 
-            $woocommerce_wpml->settings['enable_multi_currency'] = $_POST['multi_currency'];
-            $woocommerce_wpml->settings['display_custom_prices'] =  empty($_POST['display_custom_prices']) ? 0 : 1;
+            $woocommerce_wpml->settings['enable_multi_currency'] = isset($_POST['multi_currency']) ? intval($_POST['multi_currency']) : 0;
+            $woocommerce_wpml->settings['display_custom_prices'] = isset($_POST['display_custom_prices']) ? intval($_POST['display_custom_prices']) : 0;
 
             //update default currency settings
-            if( $_POST['multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
+            if( $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
 
                 $options = array(
                     'woocommerce_currency_pos'          => 'position',
@@ -126,10 +126,10 @@ class WCML_WC_MultiCurrency{
                 }
             }
 
-            $woocommerce_wpml->settings['currency_switcher_style']              = $_POST['currency_switcher_style'];
-            $woocommerce_wpml->settings['wcml_curr_sel_orientation']            = $_POST['wcml_curr_sel_orientation'];
-            $woocommerce_wpml->settings['wcml_curr_template']                   = $_POST['wcml_curr_template'];
-            $woocommerce_wpml->settings['currency_switcher_product_visibility'] = empty($_POST['currency_switcher_product_visibility']) ? 0 : 1;
+            $woocommerce_wpml->settings['currency_switcher_style']              = sanitize_text_field( $_POST['currency_switcher_style'] );
+            $woocommerce_wpml->settings['wcml_curr_sel_orientation']            = sanitize_text_field( $_POST['wcml_curr_sel_orientation'] );
+            $woocommerce_wpml->settings['wcml_curr_template']                   = sanitize_text_field( $_POST['wcml_curr_template'] );
+            $woocommerce_wpml->settings['currency_switcher_product_visibility'] = isset($_POST['currency_switcher_product_visibility']) ? intval( $_POST['currency_switcher_product_visibility'] ) : 0;
 
             $woocommerce_wpml->update_settings();
 
