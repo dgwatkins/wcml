@@ -1685,7 +1685,10 @@ class WCML_Bookings{
         if( $post->post_type == 'product' ){
             $product = wc_get_product( $post->ID );
 
-            if( $product->get_type() == 'booking' ){
+            //WC_Product::get_type() available from WooCommerce 2.4.0
+            $product_type = method_exists($product, 'get_type') ? $product->get_type() : $product->product_type;
+
+            if( $product_type == 'booking' ){
 
                 $bookable_product = new WC_Product_Booking( $post->ID );
 
@@ -1783,12 +1786,12 @@ class WCML_Bookings{
         if( $post->post_type == 'product' ){
             $product = wc_get_product( $post->ID );
 
-            if( $product->get_type() == 'booking' && $product->has_resources() ){
+            //WC_Product::get_type() available from WooCommerce 2.4.0
+            $product_type = method_exists($product, 'get_type') ? $product->get_type() : $product->product_type;
 
-
+            if( $product_type == 'booking' && $product->has_resources() ){
 
                 $resources = $product->get_resources();
-
 
                 foreach( $resources as $resource ) {
 
