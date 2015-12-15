@@ -698,6 +698,6 @@ if($posts){
 <input type="hidden" id="wcml_warn_message" value="<?php esc_attr_e('The changes you made will be lost if you navigate away from this page.', 'woocommerce-multilingual');?>"/>
 <input type="hidden" id="wcml_warn_disable_language_massage" value="<?php esc_attr_e('At least one currency must be enabled for this language!', 'woocommerce-multilingual');?>"/>
 <div class="troubleshoot_link_block">
-    <a href="<?php echo admin_url('admin.php?page='.basename(WCML_PLUGIN_PATH) .'/menu/sub/troubleshooting.php'); ?>"><?php  _e('Troubleshooting page', 'woocommerce-multilingual'); ?></a>
+    <a href="<?php echo admin_url('admin.php?page='.basename(WCML_PLUGIN_PATH) .'/menu/sub/troubleshooting.php'); ?>"><?php  _e('Troubleshooting', 'woocommerce-multilingual'); ?></a>
 </div>
 <div class="clear"></div>

@@ -92,7 +92,7 @@ unset($all_products_taxonomies['product_type'],$all_products_taxonomies['product
         jQuery('#wcml_trbl').on('click',function(){
             var field = jQuery(this);
             field.attr('disabled', 'disabled');
-            jQuery('.spinner').css('display','inline-block');
+            jQuery('.spinner').css('display','inline-block').css('visibility','visible');
 
             if(jQuery('#wcml_sync_update_product_count').is(':checked')){
                 update_product_count();
