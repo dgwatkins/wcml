@@ -22,6 +22,8 @@ class WCML_Url_Translation {
 
         add_filter( 'option_rewrite_rules', array( $this, 'translate_bases_in_rewrite_rules' ), 0, 1 ); // high priority
 
+        add_filter( 'option_rewrite_rules', array( $this, 'fix_shop_page_names_exception' ), 999 );
+
         add_filter( 'term_link', array( $this, 'translate_taxonomy_base' ), 0, 3 ); // high priority
 
         add_action( 'init', array( $this, 'fix_post_object_rewrite_slug' ), 6 ); // handle the particular case of the default product base: wpmlst-540
@@ -465,6 +467,54 @@ class WCML_Url_Translation {
             }
 
             wp_cache_add( $cache_key, $value );
+        }
+
+        return $value;
+    }
+
+    /*
+     * Handles the case when WPML overrides the shop page rewrite rules wcml-802
+     */
+    function fix_shop_page_names_exception( $value ){
+
+        $cache_key = 'wcml_rewrite_filters_shop_names_exception';
+
+        if ( $val = wp_cache_get( $cache_key ) ) {
+
+            $value = $val;
+
+        } else {
+
+            $product_base = $this->get_woocommerce_product_base();
+            $product_base_translation = apply_filters( 'wpml_translate_single_string', $product_base,
+                $this->url_strings_context(), $this->url_string_name( 'product' ) );
+
+            $current_shop_id = wc_get_page_id( 'shop' );
+            $current_slug = get_post( $current_shop_id )->post_name;
+            if( $current_slug == $product_base ) {
+
+                $buff_value = array();
+                foreach ( (array)$value as $k => $v ) {
+
+                    if ( preg_match( '#^' . $product_base_translation . '/\?\$$#', $k ) ||
+                        preg_match( '#^' . $product_base_translation . '/\(?feed#', $k ) ||
+                        preg_match( '#^' . $product_base_translation . '/page#', $k )
+                    ) {
+
+                        $k = preg_replace( '#^' . $product_base_translation . '/#', $product_base . '/', $k );
+                    }
+
+                    $buff_value[$k] = $v;
+
+                }
+
+                $value = $buff_value;
+                unset($buff_value);
+            }
+
+
+            wp_cache_add( $cache_key, $value );
+
         }
 
         return $value;
