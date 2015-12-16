@@ -215,6 +215,12 @@ class WCML_Multi_Currency_Support{
         if($save_to_db){
             $woocommerce_wpml->update_settings();                
         }
+
+        // force disable multi-currency when the default currency is empty
+        $wc_currency    = get_option('woocommerce_currency');
+        if(empty($wc_currency)){
+            $woocommerce_wpml->settings['enable_multi_currency'] = WCML_MULTI_CURRENCIES_DISABLED;
+        }
         
     }
     
