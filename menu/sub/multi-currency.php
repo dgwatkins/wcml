@@ -57,15 +57,28 @@ foreach($currencies as $code => $currency){
 			<p>
 				<input type="checkbox" name="multi_currency" id="multi_currency_independent"
 					   value="<?php echo WCML_MULTI_CURRENCIES_INDEPENDENT ?>" <?php
-				echo checked( $woocommerce_wpml->settings['enable_multi_currency'], WCML_MULTI_CURRENCIES_INDEPENDENT ) ?> />
+				echo checked( $woocommerce_wpml->settings['enable_multi_currency'], WCML_MULTI_CURRENCIES_INDEPENDENT ) ?><?php
+				if(empty($wc_currency)) echo ' disabled="disabled"' ?> />
 				<label for="multi_currency_independent">
 					<?php _e( "Enable the multi-currency mode", 'woocommerce-multilingual' ); ?>
 					&nbsp;
 					<a href=" <?php echo $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/documentation/related-projects/woocommerce-multilingual/multi-currency-support-woocommerce/', 'multi-currency-support-woocommerce', 'documentation' ) ?>"><?php _e( 'Learn more', 'wpl-wcml' ) ?></a>.
 				</label>
 			</p>
+
+			<?php if(empty($wc_currency)): ?>
+				<p>
+					<i class="icon-warning-sign"></i>
+					<?php printf(__('The multi-currency mode cannot be enabled as a specific currency was not set. Go to the %sWooCommerce settings%s page and select the default currency for your store.',
+						'woocommerce-multilingual'), '<a href="' . admin_url('admin.php?page=wc-settings') . '">', '</a>') ?>
+				</p>
+			<?php endif; ?>
+
 		</div>
+
 	</div>
+
+	<?php if(!empty($wc_currency)): ?>
 	<div class="wcml-section" id="multi-currency-per-language-details" <?php if ($woocommerce_wpml->settings['enable_multi_currency'] != WCML_MULTI_CURRENCIES_INDEPENDENT): ?>style="display:none"<?php endif; ?>>
 
 		<div class="wcml-section-header">
@@ -391,5 +404,7 @@ foreach($currencies as $code => $currency){
 	<p class="wpml-margin-top-sm">
 		<input type='submit' value='<?php esc_attr( _e( 'Save changes', 'woocommerce-multilingual' ) ); ?>' class='button-primary'/>
 	</p>
+
+	<?php endif; //if(!empty($wc_currency)) ?>
 
 </form>
