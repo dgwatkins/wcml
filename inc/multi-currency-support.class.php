@@ -66,7 +66,7 @@ class WCML_Multi_Currency_Support{
             }
         }
         
-        return $load;
+        return apply_filters('wcml_load_multi_currency', $load);
     }
     
     function init(){
