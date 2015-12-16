@@ -8,7 +8,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         
         global $woocommerce_wpml, $wpdb;
 
-		parent::__construct( $job_id, 'product', $product->post_title,  get_post_permalink( $product->ID ), $source_lang, $target_lang );
+		parent::__construct( $job_id, 'wc_product', $product->post_title,  get_post_permalink( $product->ID ), $source_lang, $target_lang );
 
 		$data = $this->get_data( $product, $translation, $target_lang );
         $this->data = array_keys ( $data );
@@ -26,14 +26,16 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 		$this->add_field( $purchase_note_section );
 
         $product_images = $woocommerce_wpml->products->product_images_ids( $product->ID );
-		$images_section = new WPML_Editor_UI_Field_Section( 'Images' );
-        foreach( $product_images as $image_id ) {
-            $attachment_data = $wpdb->get_row( $wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM $wpdb->posts WHERE ID = %d", $image_id ) );
-            if( !$attachment_data ) continue;
-    		$image = new WPML_Editor_UI_Field_Image( 'image-id-' . $image_id, $image_id, $data, true );
-    		$images_section->add_field( $image );
-        }
-        $this->add_field( $images_section );
+		if ( !empty( $product_images ) ) {
+			$images_section = new WPML_Editor_UI_Field_Section( 'Images' );
+			foreach( $product_images as $image_id ) {
+				$attachment_data = $wpdb->get_row( $wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM $wpdb->posts WHERE ID = %d", $image_id ) );
+				if( !$attachment_data ) continue;
+				$image = new WPML_Editor_UI_Field_Image( 'image-id-' . $image_id, $image_id, $data, true );
+				$images_section->add_field( $image );
+			}
+			$this->add_field( $images_section );
+		}
 
         $attributes = $woocommerce_wpml->products->get_custom_product_atributes( $product->ID );
         if ( $attributes ){
@@ -136,21 +138,20 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
     
     public function save_translations( $translations ) {
         global $woocommerce_wpml, $sitepress, $wpdb, $sitepress_settings, $iclTranslationManagement;
+		
 
-        $job_details = apply_filters( 'wpml_get_translation_job',  intval( $_POST[ 'job_details' ][ 'job_id' ] ), true );
-        $original_product_id = $sitepress->get_original_element_id_by_trid( $job_details->trid );
-
-       // $data = array_keys ( $this->get_data( get_post( $original_product_id ), false, $_POST['job_details']['language']) );
-
-        $job_id = $_POST[ 'job_details' ][ 'job_id' ];
-        $language = $_POST[ 'job_details' ][ 'language' ];
+        $original_product_id = $this->job_id;
         $orig_product = get_post( $original_product_id );
+        $language = $this->get_target_language();
 
         $languages = $sitepress->get_active_languages();
 
         $product_trid = $sitepress->get_element_trid( $original_product_id, 'post_' . $orig_product->post_type );
         $tr_product_id = apply_filters( 'translate_object_id', $original_product_id, 'product', false, $language );
 
+		
+		$save_filters = new WCML_editor_save_filters( $product_trid, $language );
+		
         if ( get_magic_quotes_gpc() ) {
             foreach ( $translations as $key => $data_item ) {
                 if ( !is_array( $data_item ) ) {
@@ -316,9 +317,59 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
         }
 
-        echo json_encode( $return );
-        die();
+        return $return;
 
     }
     
+}
+
+class WCML_editor_save_filters {
+
+	private $trid;
+	private $language;
+	
+	public function __construct( $trid, $language ) {
+		$this->trid     = $trid;
+		$this->language = $language;
+
+        add_filter( 'wpml_tm_save_post_trid_value', array( $this, 'wpml_tm_save_post_trid_value' ), 10, 2 );
+        add_filter( 'wpml_tm_save_post_lang_value', array( $this, 'wpml_tm_save_post_lang_value' ), 10, 2 );
+        add_filter( 'wpml_save_post_trid_value', array( $this, 'wpml_save_post_trid_value' ), 10, 3 );
+        add_filter( 'wpml_save_post_lang', array( $this, 'wpml_save_post_lang_value' ), 10 );
+	}
+	
+	public function __destruct() {
+        remove_filter( 'wpml_tm_save_post_trid_value', array( $this, 'wpml_tm_save_post_trid_value' ), 10, 2 );
+        remove_filter( 'wpml_tm_save_post_lang_value', array( $this, 'wpml_tm_save_post_lang_value' ), 10, 2 );
+        remove_filter( 'wpml_save_post_trid_value', array( $this, 'wpml_save_post_trid_value' ), 10, 3 );
+        remove_filter( 'wpml_save_post_lang', array( $this, 'wpml_save_post_lang_value' ), 10 );
+	}
+
+    // translation-management $trid filter
+    function wpml_tm_save_post_trid_value( $trid, $post_id ) {
+		$trid = $this->trid ? $this->trid : $trid;
+        return $trid;
+    }
+
+    // translation-management $lang filter
+    function wpml_tm_save_post_lang_value( $lang,$post_id ) {
+        if(isset($_POST['action']) &&  $_POST['action'] == 'wpml_translation_dialog_save_job'){
+            $lang = $this->language ? $this->language : $lang;
+        }
+        return $lang;
+    }
+
+    // sitepress $trid filter
+    function wpml_save_post_trid_value( $trid,$post_status ) {
+        if( $post_status != 'auto-draft' ){
+			$trid = $this->trid ? $this->trid : $trid;
+        }
+        return $trid;
+    }
+
+    // sitepress $lang filter
+    function wpml_save_post_lang_value( $lang ) {
+        $lang = $this->language ? $this->language : $lang;
+        return $lang;
+    }
 }

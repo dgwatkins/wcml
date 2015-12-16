@@ -87,15 +87,8 @@ class WCML_Products{
 
         add_filter( 'wcml_custom_box_html', array( $this, 'downloadable_files_box' ), 10, 3 );
 
-        //add translation manager filters
-        add_filter( 'wpml_tm_save_post_trid_value', array( $this, 'wpml_tm_save_post_trid_value' ), 10, 2 );
-        add_filter( 'wpml_tm_save_post_lang_value', array( $this, 'wpml_tm_save_post_lang_value' ), 10, 2 );
-
         add_action( 'icl_pro_translation_completed', array( $this, 'icl_pro_translation_completed' ) );
 
-        //add sitepress filters
-        add_filter( 'wpml_save_post_trid_value', array( $this, 'wpml_save_post_trid_value' ), 10, 3 );
-        add_filter( 'wpml_save_post_lang', array( $this, 'wpml_save_post_lang_value' ), 10 );
         //add filter when add term on product page
         add_filter( 'wpml_create_term_lang', array( $this, 'product_page_add_language_info_to_term' ) );
 
@@ -141,16 +134,16 @@ class WCML_Products{
 
     function fetch_translation_job_for_editor( $job, $job_details ) {
         
-        if ( $job_details[ 'type' ] == 'product' ) {
+        if ( $job_details[ 'job_type' ] == 'wc_product' ) {
             require_once WCML_PLUGIN_PATH . '/inc/class-wcml-editor-ui-product-job.php';
             
             global $iclTranslationManagement, $sitepress;
             
-            $product_id = filter_var( $job_details[ 'id' ], FILTER_SANITIZE_NUMBER_INT );
-            $language = filter_var( $job_details[ 'language'], FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-            $job_id = filter_var( $job_details[ 'job_id' ], FILTER_SANITIZE_NUMBER_INT );
-            
-            $tm_job = $iclTranslationManagement->get_translation_job ( $job_id );
+            $product_id = filter_var( $job_details[ 'job_id' ], FILTER_SANITIZE_NUMBER_INT );
+            $language = filter_var( $job_details[ 'target'], FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+            //$job_id = filter_var( $job_details[ 'job_id' ], FILTER_SANITIZE_NUMBER_INT );
+            //
+            //$tm_job = $iclTranslationManagement->get_translation_job ( $job_id );
     
             $product = get_post( $product_id );
             $trn_product_id = apply_filters( 'translate_object_id', $product_id, 'product', false, $language );
@@ -1056,7 +1049,7 @@ class WCML_Products{
         if( isset($_POST['action']) && $_POST['action'] == 'wpml_translation_dialog_save_job' ){
             global $sitepress;
 
-            return $sitepress->get_locale( $_POST[ 'job_details' ][ 'language' ] );
+            return $sitepress->get_locale( $_POST[ 'job_details' ][ 'target' ] );
         }
 
         return $locale;
@@ -2103,43 +2096,6 @@ class WCML_Products{
         }
 
         return $product_images_ids;
-    }
-
-    // translation-management $trid filter
-    function wpml_tm_save_post_trid_value($trid,$post_id){
-        if(isset($_POST['action']) && $_POST['action'] == 'wpml_translation_dialog_save_job'){
-            global $sitepress;
-            $job_details = apply_filters( 'wpml_get_translation_job',  $_POST[ 'job_details' ][ 'job_id' ], false, false );
-            return $job_details->trid;
-        }
-        return $trid;
-    }
-
-    // translation-management $lang filter
-    function wpml_tm_save_post_lang_value($lang,$post_id){
-        if(isset($_POST['action']) &&  $_POST['action'] == 'wpml_translation_dialog_save_job'){
-            global $sitepress;
-            $lang = $sitepress->get_language_for_element($post_id,'post_product');
-        }
-        return $lang;
-    }
-
-    // sitepress $trid filter
-    function wpml_save_post_trid_value($trid,$post_status){
-        if(isset($_POST['action']) && $_POST['action'] == 'wpml_translation_dialog_save_job' && $post_status != 'auto-draft'){
-            global $sitepress;
-            $job_details = apply_filters( 'wpml_get_translation_job',  $_POST[ 'job_details' ][ 'job_id' ], false, false );
-            return $job_details->trid;
-        }
-        return $trid;
-    }
-
-    // sitepress $lang filter
-    function wpml_save_post_lang_value($lang){
-        if(isset($_POST['action']) &&  $_POST['action'] == 'wpml_translation_dialog_save_job' && isset($_POST['to_lang'])){
-            $lang = $_POST[ 'job_details' ][ 'language' ];
-        }
-        return $lang;
     }
 
     //update taxonomy in variations
