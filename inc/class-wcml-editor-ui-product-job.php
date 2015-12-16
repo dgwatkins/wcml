@@ -89,16 +89,16 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         foreach( $product_images as $image_id ) {
             $attachment_data = $wpdb->get_row( $wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM $wpdb->posts WHERE ID = %d", $image_id ) );
             if( !$attachment_data ) continue;
-            $data[ 'image-id-' . $image_id ][ 'title' ]       = array( 'original' => $attachment_data->post_title );
-            $data[ 'image-id-' . $image_id ][ 'caption' ]     = array( 'original' => $attachment_data->post_excerpt );
-            $data[ 'image-id-' . $image_id ][ 'description' ] = array( 'original' => $attachment_data->post_content );
+            $data[ 'image-id-' . $image_id . '-title' ]       = array( 'original' => $attachment_data->post_title );
+            $data[ 'image-id-' . $image_id . '-caption' ]     = array( 'original' => $attachment_data->post_excerpt );
+            $data[ 'image-id-' . $image_id . '-description' ] = array( 'original' => $attachment_data->post_content );
             
             $trnsl_prod_image = apply_filters( 'translate_object_id', $image_id, 'attachment', false, $target_lang );
             if ( !is_null( $trnsl_prod_image ) ){
                 $trnsl_attachment_data = $wpdb->get_row( $wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM $wpdb->posts WHERE ID = %d", $trnsl_prod_image ) );
-                $data[ 'image-id-' . $image_id ][ 'title' ][ 'translation' ]       = $attachment_data->post_title;
-                $data[ 'image-id-' . $image_id ][ 'caption' ][ 'translation' ]     = $attachment_data->post_excerpt;
-                $data[ 'image-id-' . $image_id ][ 'description' ][ 'translation' ] = $attachment_data->post_content;
+                $data[ 'image-id-' . $image_id . '-title' ][ 'translation' ]       = $trnsl_attachment_data->post_title;
+                $data[ 'image-id-' . $image_id . '-caption' ][ 'translation' ]     = $trnsl_attachment_data->post_excerpt;
+                $data[ 'image-id-' . $image_id . '-description' ][ 'translation' ] = $trnsl_attachment_data->post_content;
             }
         }
 

@@ -3,3 +3,6 @@ tmp
 tests/wordpress-tests-lib
 tests/wordpress
 !tests/install-wp-tests.sh
+res/scss/.sass-cache
+.gitignore~
+
