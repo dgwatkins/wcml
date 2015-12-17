@@ -133,6 +133,7 @@ class WCML_Products{
     }
 
     function fetch_translation_job_for_editor( $job, $job_details ) {
+        global $wpdb;
         
         if ( $job_details[ 'job_type' ] == 'wc_product' ) {
             require_once WCML_PLUGIN_PATH . '/inc/class-wcml-editor-ui-product-job.php';
@@ -152,9 +153,19 @@ class WCML_Products{
                 $trn_product = get_post( $trn_product_id );
             }
     
-            $original_language = $sitepress->get_language_for_element( $product_id,'post_product' );
-    
-            $job = new WCML_Editor_UI_Product_Job( $job_details[ 'job_id' ], $product, $trn_product, $original_language, $language );
+            $translation_complete = false;
+            
+            $original_language    = $sitepress->get_language_for_element( $product_id, 'post_product' );
+            $product_trid         = $sitepress->get_element_trid( $product_id, 'post_product' );
+            $product_translations = $sitepress->get_element_translations( $product_trid, 'post_product', false, false, true );
+            if ( isset( $job_details[ 'translation_complete' ] ) ) {
+                $translation_complete = $job_details[ 'translation_complete' ] == 'true';
+            } else if ( isset( $product_translations[ $language ] ) ) {
+                $tr_status = $wpdb->get_var($wpdb->prepare("SELECT status FROM " . $wpdb->prefix . "icl_translation_status WHERE translation_id = %d", $product_translations[ $language ]->translation_id) );
+                $translation_complete = $tr_status == ICL_TM_COMPLETE;
+            }
+
+            $job = new WCML_Editor_UI_Product_Job( $job_details[ 'job_id' ], $product, $trn_product, $original_language, $language, $translation_complete );
         }
 
         return $job;

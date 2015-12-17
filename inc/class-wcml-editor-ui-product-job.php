@@ -4,11 +4,11 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
     
     private $data = array();
     
-	function __construct( $job_id, $product, $translation, $source_lang, $target_lang ) {
+	function __construct( $job_id, $product, $translation, $source_lang, $target_lang, $translation_complete ) {
         
         global $woocommerce_wpml, $wpdb;
 
-		parent::__construct( $job_id, 'wc_product', $product->post_title,  get_post_permalink( $product->ID ), $source_lang, $target_lang );
+		parent::__construct( $job_id, 'wc_product', $product->post_title,  get_post_permalink( $product->ID ), $source_lang, $target_lang, $translation_complete );
 
 		$data = $this->get_data( $product, $translation, $target_lang );
         $this->data = array_keys ( $data );
@@ -202,14 +202,6 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
                 $wpdb->update( $wpdb->prefix . 'icl_translations', array( 'element_id' => $tr_product_id ), array( 'translation_id' => $translation_id ) );
 
-                $iclTranslationManagement->update_translation_status(
-                    array(
-                        'status' => ICL_TM_COMPLETE,
-                        'needs_update' => 0,
-                        'translation_id' => $translation_id,
-                        'translator_id' => get_current_user_id()
-                    ));
-
             } else {
 
                 $sitepress->set_element_language_details( $tr_product_id, 'post_' . $orig_product->post_type, $product_trid, $language );
@@ -301,6 +293,14 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
 
         $product_translations = $sitepress->get_element_translations( $product_trid, 'post_product', false, false, true );
+		$iclTranslationManagement->update_translation_status(
+			array(
+				'status' => $this->is_translation_complete() ? ICL_TM_COMPLETE : ICL_TM_IN_PROGRESS,
+				'needs_update' => 0,
+				'translation_id' => $product_translations[ $language ]->translation_id,
+				'translator_id' => get_current_user_id()
+			));
+		
         if ( ob_get_length() ) {
             ob_clean();
         }
@@ -309,7 +309,6 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
         $woocommerce_wpml->products->get_translation_statuses( $original_product_id, $product_translations, $languages, isset( $translations[ 'slang' ] ) && $translations[ 'slang' ] != 'all' ? $translations[ 'slang' ] : false, $product_trid, $language );
         $return[ 'status_link' ] = ob_get_clean();
-
 
         // no longer a duplicate
         if ( !empty( $translations[ 'end_duplication' ][ $original_product_id ][ $language ] ) ) {
