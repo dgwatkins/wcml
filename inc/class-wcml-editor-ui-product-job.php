@@ -13,7 +13,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 		$data = $this->get_data( $product, $translation, $target_lang );
         $this->data = array_keys ( $data );
 
-		$this->add_field( new WPML_Editor_UI_Single_Line_Field( 'title', 'Title', $data, true ) );
+		$this->add_field( new WPML_Editor_UI_Auto_Slug_Title_Field( 'title', 'Title', $data, true ) );
 		$this->add_field( new WPML_Editor_UI_Single_Line_Field( 'slug', 'Slug', $data, true ) );
 		$this->add_field( new WPML_Editor_UI_WYSIWYG_Field( 'content', 'Content / Description', $data, true ) );
         
