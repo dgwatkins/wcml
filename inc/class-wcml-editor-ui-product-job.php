@@ -125,7 +125,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
             foreach( $custom_fields as $custom_field ) {
                 $data[ $custom_field ]       = array( 'original' => get_post_meta( $product->ID, $custom_field, true ) );
-                $data[ $custom_field ][ 'translation' ]       =  $translation->ID ? get_post_meta( $translation->ID, $custom_field, true) : '';
+                $data[ $custom_field ][ 'translation' ]       =  ( isset( $translation->ID ) && $translation->ID ) ? get_post_meta( $translation->ID, $custom_field, true) : '';
 
             }
 
