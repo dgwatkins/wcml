@@ -945,7 +945,7 @@ class WCML_Products{
 
 
     function get_translation_statuses($product_translations,$active_languages,$slang = false, $trid = false, $job_language = false ){
-        global $wpdb,$sitepress;
+        global $wpdb, $sitepress, $wpml_post_translations;
 
         foreach ($active_languages as $language) {
             if( $job_language && $language['code'] != $job_language ) {
@@ -955,24 +955,21 @@ class WCML_Products{
                 echo '<i title="'. $alt .'" class="stat_img icon-minus"></i>';
             }elseif ($slang != $language['code']  && (!isset($_POST['translation_status_lang']) || (isset($_POST['translation_status_lang']) && ($_POST['translation_status_lang'] == $language['code']) || $_POST['translation_status_lang']==''))) {
 
-                if (isset($product_translations[$language['code']])) {
-                    $tr_status = $wpdb->get_row($wpdb->prepare("SELECT status,needs_update FROM " . $wpdb->prefix . "icl_translation_status WHERE translation_id = %d", $product_translations[$language['code']]->translation_id));
-                    if(!$tr_status){
-                        $alt = __('Not translated', 'woocommerce-multilingual');
-                        echo '<i title="'. $alt .'" class="stat_img icon-warning-sign"></i>';
-                    }elseif($tr_status->needs_update){
-                        $alt = __('Not translated - needs update', 'woocommerce-multilingual');
-                        echo '<i title="'. $alt .'" class="stat_img icon-repeat"></i>';
-                    }elseif($tr_status->status != ICL_TM_COMPLETE && $tr_status->status != ICL_TM_DUPLICATE) {
-                        $alt = __('In progress', 'woocommerce-multilingual');
-                        echo '<i title="'. $alt .'" class="stat_img icon-spinner"></i>';
-                    }elseif($tr_status->status == ICL_TM_COMPLETE || $tr_status->status == ICL_TM_DUPLICATE){
-                        $alt = __('Complete', 'woocommerce-multilingual');
-                        echo '<i title="'. $alt .'" class="stat_img icon-ok"></i>';
-                    }
-                } else {
+                $status_helper = wpml_get_post_status_helper ();
+                $status = $status_helper->get_status( false, $trid, $language['code'] );
+
+                if(!$status){
                     $alt = __('Not translated', 'woocommerce-multilingual');
                     echo '<i title="'. $alt .'" class="stat_img icon-warning-sign"></i>';
+                }elseif($status == ICL_TM_NEEDS_UPDATE){
+                    $alt = __('Not translated - needs update', 'woocommerce-multilingual');
+                    echo '<i title="'. $alt .'" class="stat_img icon-repeat"></i>';
+                }elseif($status != ICL_TM_COMPLETE && $status != ICL_TM_DUPLICATE) {
+                    $alt = __('In progress', 'woocommerce-multilingual');
+                    echo '<i title="'. $alt .'" class="stat_img icon-spinner"></i>';
+                }elseif($status == ICL_TM_COMPLETE || $status == ICL_TM_DUPLICATE){
+                    $alt = __('Complete', 'woocommerce-multilingual');
+                    echo '<i title="'. $alt .'" class="stat_img icon-ok"></i>';
                 }
             }
         }
