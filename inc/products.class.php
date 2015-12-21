@@ -818,7 +818,8 @@ class WCML_Products{
 
     //sync product variations
     function sync_product_variations( $product_id, $tr_product_id, $lang, $data = false, $trbl = false ){
-        global $wpdb,$sitepress,$sitepress_settings, $woocommerce_wpml,$woocommerce;
+        global $wpdb,$sitepress,$sitepress_settings, $woocommerce_wpml,$woocommerce, $wpml_post_translations;
+        remove_action ( 'save_post', array( $wpml_post_translations, 'save_post_actions' ), 100, 2 );
 
         $is_variable_product = $this->is_variable_product($product_id);
         if($is_variable_product){
@@ -1072,6 +1073,7 @@ class WCML_Products{
                 }
             }
         }
+        add_action ( 'save_post', array( $wpml_post_translations, 'save_post_actions' ), 100, 2 );
     }
 
     /* Change locale to saving language - needs for sanitize_title exception wcml-390 */

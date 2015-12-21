@@ -127,6 +127,8 @@ class woocommerce_wpml {
         add_action( 'admin_notices', array( $this, 'translation_upgrade_notice' ) );
         add_action( 'wp_ajax_hide_wcml_translations_message', array($this, 'hide_wcml_translations_message') );
 
+        add_filter( 'wpml_tm_dashboard_translatable_types', array( $this, 'hide_variation_type_on_tm_dashboard') );
+
     }
 
     function register_widget(){
@@ -865,6 +867,11 @@ class woocommerce_wpml {
             }
         }
 
+    }
+
+    function hide_variation_type_on_tm_dashboard( $types ){
+        unset( $types['product_variation'] );
+        return $types;
     }
 
 }
