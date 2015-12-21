@@ -4,11 +4,11 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
     
     private $data = array();
     
-	function __construct( $job_id, $product, $translation, $source_lang, $target_lang, $translation_complete ) {
+	function __construct( $job_id, $product, $translation, $source_lang, $target_lang, $translation_complete, $duplicate ) {
         
         global $woocommerce_wpml, $wpdb;
 
-		parent::__construct( $job_id, 'wc_product', $product->post_title,  get_post_permalink( $product->ID ), $source_lang, $target_lang, $translation_complete );
+		parent::__construct( $job_id, 'wc_product', $product->post_title,  get_post_permalink( $product->ID ), $source_lang, $target_lang, $translation_complete, $duplicate );
 
 		$data = $this->get_data( $product, $translation, $target_lang );
         $this->data = array_keys ( $data );
@@ -311,10 +311,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $return[ 'status_link' ] = ob_get_clean();
 
         // no longer a duplicate
-        if ( !empty( $translations[ 'end_duplication' ][ $original_product_id ][ $language ] ) ) {
-            delete_post_meta( $tr_product_id, '_icl_lang_duplicate_of', $original_product_id );
-
-        }
+        delete_post_meta( $tr_product_id, '_icl_lang_duplicate_of', $original_product_id );
 
         return $return;
 

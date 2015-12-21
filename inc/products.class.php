@@ -164,8 +164,14 @@ class WCML_Products{
                 $tr_status = $wpdb->get_var($wpdb->prepare("SELECT status FROM " . $wpdb->prefix . "icl_translation_status WHERE translation_id = %d", $product_translations[ $language ]->translation_id) );
                 $translation_complete = $tr_status == ICL_TM_COMPLETE;
             }
+            
+            $is_duplicate_product = false;
 
-            $job = new WCML_Editor_UI_Product_Job( $job_details[ 'job_id' ], $product, $trn_product, $original_language, $language, $translation_complete );
+            if ( isset( $product_translations[ $language ] ) && get_post_meta( $product_translations[ $language ]->element_id, '_icl_lang_duplicate_of', true) == $product_id ) {
+                $is_duplicate_product = true;
+            }
+
+            $job = new WCML_Editor_UI_Product_Job( $job_details[ 'job_id' ], $product, $trn_product, $original_language, $language, $translation_complete, $is_duplicate_product );
         }
 
         return $job;
