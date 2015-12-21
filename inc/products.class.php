@@ -60,6 +60,7 @@ class WCML_Products{
             add_action( 'wp_ajax_woocommerce_feature_product' , array( $this, 'sync_feature_product_meta' ), 9 );
 
             add_filter( 'wpml-translation-editor-fetch-job', array( $this, 'fetch_translation_job_for_editor' ), 10, 2 );
+            add_filter( 'wpml-translation-editor-job-data', array( $this, 'get_translation_job_data_for_editor' ), 10, 2 );
             
             $this->tp_support = new WCML_TP_Support();
             if ( defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSION, '3.2', '>=' ) ) {
@@ -177,6 +178,19 @@ class WCML_Products{
         return $job;
     }
 
+    function get_translation_job_data_for_editor( $job_data ) {
+        global $iclTranslationManagement, $sitepress;
+        
+        // See if it's a WooCommerce product.
+        $job = $iclTranslationManagement->get_translation_job ( $job_data['job_id'] );
+        if ( $job && $job->original_post_type == 'post_product' ) {
+            $job_data['job_type'] = 'wc_product';
+            $job_data['job_id']   = $job->original_doc_id;
+        }
+        
+        return $job_data;
+    }
+    
     function hide_multilingual_content_setup_box(){
         remove_meta_box('icl_div_config', convert_to_screen('shop_order'), 'normal');
         remove_meta_box('icl_div_config', convert_to_screen('shop_coupon'), 'normal');
