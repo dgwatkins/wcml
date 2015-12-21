@@ -70,7 +70,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         global $woocommerce_wpml, $wpdb;
 
 		$data = array( 'title'    => array( 'original' => $product->post_title ),
-					   'slug'     => array( 'original' => $product->post_name ),
+					   'slug'     => array( 'original' => urldecode( $product->post_name ) ),
 					   'content'  => array( 'original' => $product->post_content ),
                        'excerpt'  => array( 'original' => $product->post_excerpt ),
                         'purchase-note' => array( 'original' => get_post_meta( $product->ID, '_purchase_note', true ) )
@@ -78,7 +78,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
         if ( $translation ) {
     		$data[ 'title' ][ 'translation' ]   = $translation->post_title;
-			$data[ 'slug' ][ 'translation' ]    = $translation->post_name;
+			$data[ 'slug' ][ 'translation' ]    = urldecode( $translation->post_name );
 			$data[ 'content' ][ 'translation' ] = $translation->post_content;
             $data[ 'excerpt' ][ 'translation' ] = $translation->post_excerpt;
             $data[ 'purchase-note' ][ 'translation' ] = get_post_meta( $translation->ID, '_purchase_note', true );
