@@ -137,6 +137,8 @@ class WCML_Products{
         add_filter( 'manage_product_posts_columns', array( $this, 'add_languages_column' ), 100 );
         add_action( 'woocommerce_product_after_variable_attributes', array( $this, 'lock_variable_fields' ), 10, 3 );
 
+        add_action( 'woocommerce_product_set_stock_status', array( $this, 'sync_stock_status_for_translations'), 10, 2 );
+
     }
 
     function hide_multilingual_content_setup_box(){
@@ -3381,7 +3383,19 @@ class WCML_Products{
                 }
             }
         }
+    }
 
+    function sync_stock_status_for_translations( $id, $status ){
+        global $sitepress;
+
+        $type = get_post_type( $id );
+        $trid = $sitepress->get_element_trid( $id, 'post_'.$type );
+        $translations = $sitepress->get_element_translations( $trid, 'post_'.$type, true);
+        foreach ($translations as $translation) {
+            if ( $translation->element_id != $id ) {
+                update_post_meta( $translation->element_id, '_stock_status', $status );
+            }
+        }
 
     }
 
