@@ -74,6 +74,8 @@ class WCML_WC_Strings{
 
         if( isset($product->id) ){
             $product_id = $product->id;
+        }elseif( is_numeric( $product_obj ) ){
+            $product_id = $product_obj;
         }elseif( isset($product_obj->id) ){
             $product_id = $product_obj->id;
         }

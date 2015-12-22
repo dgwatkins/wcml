@@ -2625,61 +2625,58 @@ class WCML_Products{
     /*
      *  Update cart and cart session when switch language
      */
-    function woocommerce_calculate_totals($cart){
+    function woocommerce_calculate_totals( $cart ){
         global $sitepress, $woocommerce, $woocommerce_wpml;
         $current_language = $sitepress->get_current_language();
         $new_cart_data = array();
 
-        foreach($cart->cart_contents as $key=>$cart_item){
-            $tr_product_id = apply_filters( 'translate_object_id',$cart_item['product_id'],'product',false,$current_language);
+        foreach( $cart->cart_contents as $key => $cart_item ){
+            $tr_product_id = apply_filters( 'translate_object_id',$cart_item[ 'product_id' ], 'product', false, $current_language );
 
             //translate custom attr labels in cart object
-            if(isset($cart_item['data']->product_attributes)){
-                foreach($cart_item['data']->product_attributes as $attr_key => $product_attribute){
-                    if(!$product_attribute['is_taxonomy']){
-                        $cart->cart_contents[$key]['data']->product_attributes[$attr_key]['name'] =  $woocommerce_wpml->strings->translated_attribute_label( $product_attribute['name'], $product_attribute['name'], $cart_item['data']->parent);
+            if( isset( $cart_item[ 'data' ]->product_attributes ) ){
+                foreach( $cart_item[ 'data' ]->product_attributes as $attr_key => $product_attribute ){
+                    if( !$product_attribute[ 'is_taxonomy' ] ){
+                        $cart->cart_contents[ $key ][ 'data' ]->product_attributes[ $attr_key ][ 'name' ] = $woocommerce_wpml->strings->translated_attribute_label( $product_attribute[ 'name' ], $product_attribute[ 'name' ], $tr_product_id );
+
                     }
                 }
             }
 
-            if( $cart_item['product_id'] == $tr_product_id ){
-                $new_cart_data[$key] = apply_filters( 'wcml_cart_contents_not_changed', $cart->cart_contents[$key], $key, $current_language );
+            //translate custom attr value in cart object
+            if( isset( $cart_item[ 'variation' ] ) ){
+                foreach( $cart_item[ 'variation' ] as $attr_key => $attribute ){
+                    $cart->cart_contents[ $key ][ 'variation' ][ $attr_key ] = $this->get_cart_attribute_translation( $attr_key, $attribute, $cart_item['variation_id'], $current_language );
+                }
+            }
+            if( $cart_item[ 'product_id' ] == $tr_product_id ){
+                $new_cart_data[ $key ] = apply_filters( 'wcml_cart_contents_not_changed', $cart->cart_contents[$key], $key, $current_language );
                 continue;
             }
 
-            if(isset($cart->cart_contents[$key]['variation_id']) && $cart->cart_contents[$key]['variation_id']){
-                $tr_variation_id = apply_filters( 'translate_object_id',$cart_item['variation_id'],'product_variation',false,$current_language);
-                if(!is_null($tr_variation_id)){
-                    $cart->cart_contents[$key]['product_id'] = intval($tr_product_id);
-                    $cart->cart_contents[$key]['variation_id'] = intval($tr_variation_id);
-                    $cart->cart_contents[$key]['data']->id = intval($tr_product_id);
-                    $cart->cart_contents[$key]['data']->post = get_post( $tr_product_id );
-                    if($cart_item['variation']){
-                        foreach($cart_item['variation'] as $attr_key=>$attribute){
-                            if(version_compare(preg_replace('#-(.+)$#', '', $woocommerce->version), '2.1', '<')){
-                                $taxonomy = $attr_key;
-                            }else{
-                                //delete 'attribute_' at the beginning
-                                $taxonomy = substr($attr_key, 10, strlen($attr_key)-1 );
-                            }
-                            $cart->cart_contents[$key]['variation'][$attr_key] = $this->get_cart_attribute_translation($taxonomy,$attribute,$cart_item['product_id'],$tr_product_id,$current_language);
-                        }
-                    }
+
+            if( isset( $cart->cart_contents[ $key ][ 'variation_id' ] ) && $cart->cart_contents[ $key ][ 'variation_id' ] ){
+                $tr_variation_id = apply_filters( 'translate_object_id', $cart_item[ 'variation_id' ], 'product_variation', false, $current_language );
+                if( !is_null( $tr_variation_id ) ){
+                    $cart->cart_contents[ $key ][ 'product_id' ] = intval( $tr_product_id );
+                    $cart->cart_contents[ $key ][ 'variation_id' ] = intval( $tr_variation_id );
+                    $cart->cart_contents[ $key ][ 'data' ]->id = intval( $tr_product_id );
+                    $cart->cart_contents[ $key ][ 'data' ]->post = get_post( $tr_product_id );
                 }
             }else{
-                if(!is_null($tr_product_id)){
-                    $cart->cart_contents[$key]['product_id'] = intval($tr_product_id);
-                    $cart->cart_contents[$key]['data']->id = intval($tr_product_id);
-                    $cart->cart_contents[$key]['data']->post = get_post( $tr_product_id );
+                if( !is_null( $tr_product_id ) ){
+                    $cart->cart_contents[ $key ][ 'product_id' ] = intval( $tr_product_id );
+                    $cart->cart_contents[ $key ][ 'data' ]->id = intval( $tr_product_id );
+                    $cart->cart_contents[ $key ][ 'data' ]->post = get_post( $tr_product_id );
                 }
             }
 
-            if(!is_null($tr_product_id)){
-                $cart_item_data = $this->get_cart_item_data_from_cart($cart->cart_contents[$key]);
-                $new_key = $woocommerce->cart->generate_cart_id( $cart->cart_contents[$key]['product_id'], $cart->cart_contents[$key]['variation_id'], $cart->cart_contents[$key]['variation'], $cart_item_data );
-                $cart->cart_contents = apply_filters('wcml_update_cart_contents_lang_switch',$cart->cart_contents,$key, $new_key,$current_language);
-                $new_cart_data[$new_key] = $cart->cart_contents[$key];
-                $new_cart_data = apply_filters('wcml_cart_contents', $new_cart_data, $cart->cart_contents,$key, $new_key);
+            if( !is_null( $tr_product_id ) ){
+                $cart_item_data = $this->get_cart_item_data_from_cart( $cart->cart_contents[ $key ] );
+                $new_key = $woocommerce->cart->generate_cart_id( $cart->cart_contents[ $key ][ 'product_id' ], $cart->cart_contents[ $key ][ 'variation_id' ], $cart->cart_contents[ $key ][ 'variation' ], $cart_item_data );
+                $cart->cart_contents = apply_filters( 'wcml_update_cart_contents_lang_switch', $cart->cart_contents, $key, $new_key, $current_language );
+                $new_cart_data[ $new_key ] = $cart->cart_contents[ $key ];
+                $new_cart_data = apply_filters( 'wcml_cart_contents', $new_cart_data, $cart->cart_contents, $key, $new_key );
             }
 
         }
@@ -2722,16 +2719,23 @@ class WCML_Products{
 
     }
 
-    function get_cart_attribute_translation($taxonomy,$attribute,$product_id,$tr_product_id,$current_language){
+    function get_cart_attribute_translation( $attr_key, $attribute, $variation_id, $current_language ){
+        global $woocommerce;
 
-        if(taxonomy_exists($taxonomy)){
+        if( version_compare( preg_replace( '#-(.+)$#', '', $woocommerce->version ), '2.1', '>=' ) ){
+            //delete 'attribute_' at the beginning
+            $taxonomy = substr( $attr_key, 10, strlen( $attr_key ) - 1 );
+        }
+
+        if( taxonomy_exists( $taxonomy ) ){
 
             $term_id = $this->wcml_get_term_id_by_slug( $taxonomy, $attribute );
             $trnsl_term_id = apply_filters( 'translate_object_id',$term_id,$taxonomy,true,$current_language);
             $term = $this->wcml_get_term_by_id( $trnsl_term_id, $taxonomy );
             return $term->slug;
         }else{
-            return $this->get_custom_attr_translation( $product_id, $tr_product_id, $taxonomy, $attribute );
+
+            return get_post_meta( $variation_id, $attr_key, true );
         }
     }
 
