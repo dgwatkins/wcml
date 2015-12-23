@@ -138,6 +138,7 @@ class WCML_Products{
         add_action( 'woocommerce_product_after_variable_attributes', array( $this, 'lock_variable_fields' ), 10, 3 );
 
         add_action( 'woocommerce_product_set_stock_status', array( $this, 'sync_stock_status_for_translations'), 10, 2 );
+        add_action( 'woocommerce_variation_set_stock_status', array( $this, 'sync_stock_status_for_translations'), 10, 2 );
 
     }
 
