@@ -8,7 +8,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         
         global $woocommerce_wpml, $wpdb;
 
-		parent::__construct( $job_id, 'wc_product', $product->post_title,  get_post_permalink( $product->ID ), $source_lang, $target_lang, $translation_complete, $duplicate );
+		parent::__construct( $job_id, 'wc_product', __( 'Product', 'woocommerce-multilingual' ), $product->post_title,  get_post_permalink( $product->ID ), $source_lang, $target_lang, $translation_complete, $duplicate );
 
 		$data = $this->get_data( $product, $translation, $target_lang );
         $this->data = array_keys ( $data );
