@@ -104,7 +104,7 @@ jQuery( function($){
                             wcml_nonce: $('#currencies_list_nonce').val()
                         },
                         success: function(response) {
-                            $('.js-table-row-wrapper select').html(response);
+                            $('#wcml_currency_options_code_').html(response);
                         }
                     });
                     WCML_Multi_Currency.currency_switcher_preview();
@@ -172,6 +172,7 @@ jQuery( function($){
 
                     $('.currencies-table-content').prepend(response.currency_options)
 
+                    $('#wcml_currency_options_code_ option[value="'+currency+'"]').remove();
                 }
 
             })

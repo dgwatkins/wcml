@@ -46,6 +46,7 @@ foreach($currencies as $code => $currency){
 	<?php wp_nonce_field( 'wcml_mc_options', 'wcml_nonce' ); ?>
 	<input type="hidden" id="wcml_save_currency_nonce" value="<?php echo wp_create_nonce( 'save_currency' ); ?>"/>
 	<input type="hidden" id="del_currency_nonce" value="<?php echo wp_create_nonce('wcml_delete_currency'); ?>" />
+	<input type="hidden" id="currencies_list_nonce" value="<?php echo wp_create_nonce('wcml_currencies_list'); ?>" />
 	<input type="hidden" name="action" value="save-mc-options" />
 	<div class="wcml-section ">
 		<div class="wcml-section-header">
