@@ -124,6 +124,7 @@ class woocommerce_wpml {
         add_action( 'wp_ajax_hide_wcml_translations_message', array($this, 'hide_wcml_translations_message') );
         add_action( 'woocommerce_settings_save_general', array( $this, 'currency_options_update_default_currency'));
 
+        add_filter( 'wpml_tm_dashboard_translatable_types', array( $this, 'hide_variation_type_on_tm_dashboard') );
     }
 
     function register_widget(){
@@ -820,7 +821,12 @@ class woocommerce_wpml {
             $this->settings['currency_options'][$new_currency] = $currency_settings;
             $this->update_settings();
         }
+    }
 
+    function hide_variation_type_on_tm_dashboard( $types ){
+        unset( $types['product_variation'] );
+
+        return $types;
     }
 
 }
