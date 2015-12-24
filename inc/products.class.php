@@ -2564,8 +2564,20 @@ class WCML_Products{
     }
 
     function icl_make_duplicate($master_post_id, $lang, $postarr, $id){
-        if(get_post_type($master_post_id)=='product'){
+        if( get_post_type( $master_post_id ) == 'product' ){
             $this->sync_product_data($master_post_id, $id, $lang);
+
+            // recount terms only first time
+            if( !get_post_meta( $id, '_wcml_terms_recount' ) ){
+                $product_cats = wp_get_post_terms( $id, 'product_cat' );
+
+                foreach( $product_cats as $product_cat ){
+                    $cats_to_recount[ $product_cat->term_id ] = $product_cat->parent;
+                }
+                _wc_term_recount( $cats_to_recount, get_taxonomy( 'product_cat' ), true, false );
+                add_post_meta( $id, '_wcml_terms_recount', 'yes' );
+            }
+
         }
     }
 
