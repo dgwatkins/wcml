@@ -13,21 +13,21 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 		$data = $this->get_data( $product, $translation, $target_lang );
         $this->data = array_keys ( $data );
 
-		$this->add_field( new WPML_Editor_UI_Auto_Slug_Title_Field( 'title', 'Title', $data, true ) );
-		$this->add_field( new WPML_Editor_UI_Single_Line_Field( 'slug', 'Slug', $data, true ) );
-		$this->add_field( new WPML_Editor_UI_WYSIWYG_Field( 'content', 'Content / Description', $data, true ) );
+		$this->add_field( new WPML_Editor_UI_Auto_Slug_Title_Field( 'title', __( 'Title', 'woocommerce-multilingual' ), $data, true ) );
+		$this->add_field( new WPML_Editor_UI_Single_Line_Field( 'slug', __( 'Slug', 'woocommerce-multilingual' ), $data, true ) );
+		$this->add_field( new WPML_Editor_UI_WYSIWYG_Field( 'content', __( 'Content / Description', 'woocommerce-multilingual' ), $data, true ) );
         
-		$excerpt_section = new WPML_Editor_UI_Field_Section( 'Excerpt' );
+		$excerpt_section = new WPML_Editor_UI_Field_Section( __( 'Excerpt', 'woocommerce-multilingual' ) );
 		$excerpt_section->add_field( new WPML_Editor_UI_WYSIWYG_Field( 'excerpt', null, $data, true ) );
 		$this->add_field( $excerpt_section );
         
-		$purchase_note_section = new WPML_Editor_UI_Field_Section( 'Purchase note' );
+		$purchase_note_section = new WPML_Editor_UI_Field_Section( __( 'Purchase note', 'woocommerce-multilingual' ) );
 		$purchase_note_section->add_field( new WPML_Editor_UI_TextArea_Field( 'purchase-note', null, $data, true ) );
 		$this->add_field( $purchase_note_section );
 
         $product_images = $woocommerce_wpml->products->product_images_ids( $product->ID );
 		if ( !empty( $product_images ) ) {
-			$images_section = new WPML_Editor_UI_Field_Section( 'Images' );
+			$images_section = new WPML_Editor_UI_Field_Section( __( 'Images', 'woocommerce-multilingual' ) );
 			foreach( $product_images as $image_id ) {
 				$attachment_data = $wpdb->get_row( $wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM $wpdb->posts WHERE ID = %d", $image_id ) );
 				if( !$attachment_data ) continue;
@@ -39,12 +39,12 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
         $attributes = $woocommerce_wpml->products->get_custom_product_atributes( $product->ID );
         if ( $attributes ){
-            $attributes_section = new WPML_Editor_UI_Field_Section( 'Custom Product attributes' );
+            $attributes_section = new WPML_Editor_UI_Field_Section( __( 'Custom Product attributes', 'woocommerce-multilingual' ) );
             foreach( $attributes as $attr_key => $attribute ) {
                 $group = new WPML_Editor_UI_Field_Group( '', true );
-                $attribute_field = new WPML_Editor_UI_Single_Line_Field( $attr_key . '_name', 'Name', $data, false );
+                $attribute_field = new WPML_Editor_UI_Single_Line_Field( $attr_key . '_name', __( 'Name', 'woocommerce-multilingual' ), $data, false );
                 $group->add_field( $attribute_field );
-                $attribute_field = new WPML_Editor_UI_Single_Line_Field( $attr_key , 'Value(s)', $data, false );
+                $attribute_field = new WPML_Editor_UI_Single_Line_Field( $attr_key , __( 'Value(s)', 'woocommerce-multilingual' ), $data, false );
                 $group->add_field( $attribute_field );
                 $attributes_section->add_field( $group );
             }
@@ -54,7 +54,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $custom_fields = $woocommerce_wpml->products->get_product_custom_fields_to_translate( $product->ID );
 
         if( $custom_fields ) {
-            $custom_fields_section = new WPML_Editor_UI_Field_Section( 'Custom Fields' );
+            $custom_fields_section = new WPML_Editor_UI_Field_Section( __( 'Custom Fields', 'woocommerce-multilingual' ) );
             foreach( $custom_fields as $custom_field ) {
                 $custom_field_input = new WPML_Editor_UI_Single_Line_Field( $custom_field, $woocommerce_wpml->products->get_product_custom_field_label(  $product->ID, $custom_field ), $data, true );
                 $custom_fields_section->add_field( $custom_field_input );

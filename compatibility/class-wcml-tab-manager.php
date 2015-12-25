@@ -210,7 +210,7 @@ class WCML_Tab_Manager{
         $orig_prod_tabs = $wc_tab_manager->get_product_tabs( $product_id );
         if( !$orig_prod_tabs ) return false;
 
-        $tabs_section = new WPML_Editor_UI_Field_Section( 'Product tabs' );
+        $tabs_section = new WPML_Editor_UI_Field_Section( __( 'Product tabs', 'woocommerce-multilingual' ) );
         end( $orig_prod_tabs );
         $last_key = key( $orig_prod_tabs );
         $divider = true;
@@ -222,14 +222,14 @@ class WCML_Tab_Manager{
             if( in_array( $prod_tab['type'], array( 'product', 'core' ) ) ){
                 if( $prod_tab['type'] == 'core' ){
                     $group = new WPML_Editor_UI_Field_Group( $prod_tab[ 'title' ], $divider );
-                    $tab_field = new WPML_Editor_UI_Single_Line_Field( 'coretab_'.$prod_tab['id'].'_title', 'Title', $data, false );
+                    $tab_field = new WPML_Editor_UI_Single_Line_Field( 'coretab_'.$prod_tab['id'].'_title', __( 'Title', 'woocommerce-multilingual' ), $data, false );
                     $group->add_field( $tab_field );
-                    $tab_field = new WPML_Editor_UI_Single_Line_Field( 'coretab_'.$prod_tab['id'].'_heading' , 'Heading', $data, false );
+                    $tab_field = new WPML_Editor_UI_Single_Line_Field( 'coretab_'.$prod_tab['id'].'_heading' , __( 'Heading', 'woocommerce-multilingual' ), $data, false );
                     $group->add_field( $tab_field );
                     $tabs_section->add_field( $group );
                 }else{
                     $group = new WPML_Editor_UI_Field_Group( ucfirst( str_replace( '-', ' ', $prod_tab[ 'name' ] ) ), $divider );
-                    $tab_field = new WPML_Editor_UI_Single_Line_Field( 'tab_'.$prod_tab['position'].'_title', 'Title', $data, false );
+                    $tab_field = new WPML_Editor_UI_Single_Line_Field( 'tab_'.$prod_tab['position'].'_title', __( 'Title', 'woocommerce-multilingual' ), $data, false );
                     $group->add_field( $tab_field );
                     $tab_field = new WPML_Editor_UI_WYSIWYG_Field( 'tab_'.$prod_tab['position'].'_heading' , null, $data, false );
                     $group->add_field( $tab_field );

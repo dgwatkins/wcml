@@ -141,7 +141,7 @@ class WCML_Product_Bundles{
 
         $product_bundles = array_keys( $bundle_data );
 
-        $bundles_section = new WPML_Editor_UI_Field_Section( 'Product Bundles' );
+        $bundles_section = new WPML_Editor_UI_Field_Section( __( 'Product Bundles', 'woocommerce-multilingual' ) );
         end( $product_bundles );
         $last_key = key( $product_bundles );
         $divider = true;
@@ -150,9 +150,9 @@ class WCML_Product_Bundles{
                 $divider = false;
             }
             $group = new WPML_Editor_UI_Field_Group( get_the_title( $bundle_id ), $divider );
-            $bundle_field = new WPML_Editor_UI_Single_Line_Field( 'bundle_'.$bundle_id.'_title', 'Name', $data, false );
+            $bundle_field = new WPML_Editor_UI_Single_Line_Field( 'bundle_'.$bundle_id.'_title', __( 'Name', 'woocommerce-multilingual' ), $data, false );
             $group->add_field( $bundle_field );
-            $bundle_field = new WPML_Editor_UI_Single_Line_Field( 'bundle_'.$bundle_id.'_desc' , 'Description', $data, false );
+            $bundle_field = new WPML_Editor_UI_Single_Line_Field( 'bundle_'.$bundle_id.'_desc' , __( 'Description', 'woocommerce-multilingual' ), $data, false );
             $group->add_field( $bundle_field );
             $bundles_section->add_field( $group );
 

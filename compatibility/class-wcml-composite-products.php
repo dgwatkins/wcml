@@ -145,7 +145,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 			$product = new WC_Product_Composite( $product_id );
 			$composite_data = $product->get_composite_data();
 
-			$composite_section = new WPML_Editor_UI_Field_Section( 'Composite Products' );
+			$composite_section = new WPML_Editor_UI_Field_Section( __( 'Composite Products', 'woocommerce-multilingual' ) );
 			end( $composite_data );
 			$last_key = key( $composite_data );
 			$divider = true;
@@ -154,9 +154,9 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 					$divider = false;
 				}
 				$group = new WPML_Editor_UI_Field_Group( '', $divider );
-				$composite_field = new WPML_Editor_UI_Single_Line_Field( 'composite_'.$component_id.'_title', 'Name', $data, false );
+				$composite_field = new WPML_Editor_UI_Single_Line_Field( 'composite_'.$component_id.'_title', __( 'Name', 'woocommerce-multilingual' ), $data, false );
 				$group->add_field( $composite_field );
-				$composite_field = new WPML_Editor_UI_Single_Line_Field( 'composite_'.$component_id.'_description' , 'Description', $data, false );
+				$composite_field = new WPML_Editor_UI_Single_Line_Field( 'composite_'.$component_id.'_description' , __( 'Description', 'woocommerce-multilingual' ), $data, false );
 				$group->add_field( $composite_field );
 				$composite_section->add_field( $group );
 

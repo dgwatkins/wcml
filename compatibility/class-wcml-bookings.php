@@ -1179,11 +1179,11 @@ class WCML_Bookings{
             return;
         }
 
-        $bookings_section = new WPML_Editor_UI_Field_Section( 'Bookings' );
+        $bookings_section = new WPML_Editor_UI_Field_Section( __( 'Bookings', 'woocommerce-multilingual' ) );
 
         if( get_post_meta( $product_id,'_wc_booking_has_resources',true) == 'yes' ){
             $group = new WPML_Editor_UI_Field_Group( '', true );
-            $booking_field = new WPML_Editor_UI_Single_Line_Field( 'bookings-resources-label', 'Resources Label', $data, true );
+            $booking_field = new WPML_Editor_UI_Single_Line_Field( 'bookings-resources-label', __( 'Resources Label', 'woocommerce-multilingual' ), $data, true );
             $group->add_field( $booking_field );
             $bookings_section->add_field( $group );
         }
@@ -1191,12 +1191,12 @@ class WCML_Bookings{
         $orig_resources = maybe_unserialize( get_post_meta( $product_id, '_resource_base_costs', true ) );
 
         if( $orig_resources ){
-            $group = new WPML_Editor_UI_Field_Group( 'Resources', true );
+            $group = new WPML_Editor_UI_Field_Group( __( 'Resources', 'woocommerce-multilingual' ), true );
             foreach ( $orig_resources as $resource_id => $cost) {
 
                 if ($resource_id == 'custom_costs') continue;
 
-                $booking_field = new WPML_Editor_UI_Single_Line_Field( 'bookings-resource_'.$resource_id.'_title', 'Title', $data, true );
+                $booking_field = new WPML_Editor_UI_Single_Line_Field( 'bookings-resource_'.$resource_id.'_title', __( 'Title', 'woocommerce-multilingual' ), $data, true );
                 $group->add_field( $booking_field );
 
             }
@@ -1204,7 +1204,7 @@ class WCML_Bookings{
         }
 
         $original_persons = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'bookable_person' AND post_status = 'publish'", $product_id ) );
-        $group = new WPML_Editor_UI_Field_Group( 'Person Types', false );
+        $group = new WPML_Editor_UI_Field_Group( __( 'Person Types', 'woocommerce-multilingual' ), false );
         end( $original_persons );
         $last_key = key( $original_persons );
         $divider = true;
@@ -1213,9 +1213,9 @@ class WCML_Bookings{
                 $divider = false;
             }
             $sub_group = new WPML_Editor_UI_Field_Group( '', $divider );
-            $booking_field = new WPML_Editor_UI_Single_Line_Field( 'bookings-person_'.$resource_id.'_title', 'Person Type Name', $data, false );
+            $booking_field = new WPML_Editor_UI_Single_Line_Field( 'bookings-person_'.$resource_id.'_title', __( 'Person Type Name', 'woocommerce-multilingual' ), $data, false );
             $sub_group->add_field( $booking_field );
-            $booking_field = new WPML_Editor_UI_Single_Line_Field( 'bookings-person_'.$resource_id.'_description', 'Description', $data, false );
+            $booking_field = new WPML_Editor_UI_Single_Line_Field( 'bookings-person_'.$resource_id.'_description', __( 'Description', 'woocommerce-multilingual' ), $data, false );
             $sub_group->add_field( $booking_field );
             $group->add_field( $sub_group );
 
