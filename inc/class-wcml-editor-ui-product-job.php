@@ -138,9 +138,13 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
     
     public function save_translations( $translations ) {
         global $woocommerce_wpml, $sitepress, $wpdb, $sitepress_settings, $iclTranslationManagement;
-		
 
         $original_product_id = $this->job_id;
+
+        if ( get_post_type( $original_product_id ) != 'product' ) {
+            return;
+        }
+
         $orig_product = get_post( $original_product_id );
         $language = $this->get_target_language();
 
