@@ -305,7 +305,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 				'translator_id' => get_current_user_id()
 			));
 		
-        if ( ob_get_length() ) {
+        if ( ob_get_length() > 0 ) {
             ob_clean();
         }
         ob_start();

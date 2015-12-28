@@ -454,7 +454,11 @@ class WCML_Multi_Currency_Support{
             }
         }
         $html .= '</select>';
-        ob_clean();
+
+        if ( ob_get_length() > 0 ) {
+            ob_clean();
+        }
+
         echo $html;
 
         die();
