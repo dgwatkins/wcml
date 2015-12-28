@@ -80,6 +80,11 @@ In order for the checkout and store pages to appear translated, you need to crea
 
 = 3.7.7 =
 * Fixed an issue that was causing a fatal error for sites using the Flatsome theme
+* Fixed an issue with translating standard tax rate name
+* Fixed an issue with product categories widget
+* Fixed issue with variable products in cart ( local attributes not translated after switching language )
+* Added filter for _load_filters function in multi-currency class
+* Set variations as translatable post type
 
 = 3.7.6 =
 * Fixed several problems with the permalinks when using the slash character in the bases
