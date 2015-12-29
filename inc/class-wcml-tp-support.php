@@ -20,7 +20,10 @@ class WCML_TP_Support{
 
         $product = wc_get_product( $post->ID );
 
-        if( !empty($product) && $product->get_type() == 'variable' ){
+        //WC_Product::get_type() available from WooCommerce 2.4.0
+        $product_type = method_exists($product, 'get_type') ? $product->get_type() : $product->product_type;
+
+        if( !empty($product) && $product_type == 'variable' ){
 
             $attributes = $product->get_attributes();
 
@@ -116,7 +119,10 @@ class WCML_TP_Support{
 
         $product = wc_get_product( $post->ID );
 
-        if( !empty($product) && $product->get_type() == 'variable' ) {
+        //WC_Product::get_type() available from WooCommerce 2.4.0
+        $product_type = method_exists($product, 'get_type') ? $product->get_type() : $product->product_type;
+
+        if( !empty($product) && $product_type == 'variable' ) {
 
             $variations = $product->get_available_variations();
 

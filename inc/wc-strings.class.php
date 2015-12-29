@@ -26,8 +26,9 @@ class WCML_WC_Strings{
         global $pagenow;
          
         add_filter('woocommerce_package_rates', array($this, 'register_shipping_methods'));
-        add_action('option_woocommerce_tax_rates', array($this, 'translate_tax_rates'));
-        
+        add_action('woocommerce_tax_rate_added', array($this, 'register_tax_rate_label_string'), 10, 2 );
+        add_filter('woocommerce_rate_label',array($this,'translate_woocommerce_rate_label'));
+
         add_filter('woocommerce_gateway_title', array($this, 'translate_gateway_title'), 10, 2);
         add_filter('woocommerce_gateway_description', array($this, 'translate_gateway_description'), 10, 2);
         add_action( 'woocommerce_thankyou_bacs', array( $this, 'translate_bacs_instructions' ),9 );
@@ -56,9 +57,7 @@ class WCML_WC_Strings{
         if(is_admin() && $pagenow == 'edit.php' && isset($_GET['page']) && $_GET['page'] == 'woocommerce_attributes'){
             add_action('admin_footer', array($this, 'show_attribute_label_language_warning'));    
         }
-        
-        add_filter('woocommerce_rate_label',array($this,'translate_woocommerce_rate_label'));
-        
+
         add_action( 'woocommerce_product_options_attributes', array ( $this, 'notice_after_woocommerce_product_options_attributes' ) );
 
         add_filter( 'woocommerce_attribute_taxonomies', array( $this, 'translate_attribute_taxonomies_labels') );
@@ -75,6 +74,8 @@ class WCML_WC_Strings{
 
         if( isset($product->id) ){
             $product_id = $product->id;
+        }elseif( is_numeric( $product_obj ) ){
+            $product_id = $product_obj;
         }elseif( isset($product_obj->id) ){
             $product_id = $product_obj->id;
         }
@@ -247,15 +248,19 @@ class WCML_WC_Strings{
         return $available_methods;
     }
 
-    function translate_tax_rates($rates){ var_dump($rates);die;
-        if (!empty($rates)) {
-            foreach ($rates as &$rate) {
-                do_action('wpml_register_single_string', 'woocommerce', 'tax_label_' . esc_url_raw($rate['label']), $rate['label'] );
-                $rate['label'] = apply_filters( 'wpml_translate_single_string', $rate['label'], 'woocommerce', 'tax_label_' . esc_url_raw($rate['label']) );
-            }
+    function translate_woocommerce_rate_label( $label ){
+
+        $label = apply_filters( 'wpml_translate_single_string', $label, 'woocommerce taxes', $label );
+
+        return $label;
+    }
+
+    function register_tax_rate_label_string( $id, $tax_rate ){
+
+        if( !empty( $tax_rate['tax_rate_name'] ) ){
+            do_action('wpml_register_single_string', 'woocommerce taxes', $tax_rate['tax_rate_name'] , $tax_rate['tax_rate_name'] );
         }
 
-        return $rates;
     }
 
     function translate_gateway_title($title, $gateway_title) {
@@ -480,15 +485,6 @@ class WCML_WC_Strings{
 
         }
 
-    }
-
-
-    function translate_woocommerce_rate_label($label){
-
-        do_action('wpml_register_single_string', 'woocommerce taxes', $label , $label );
-        $label = apply_filters( 'wpml_translate_single_string', $label, 'woocommerce taxes', $label );
-
-        return $label;
     }
 
     function category_base_in_strings_language($text, $original_value, $context){
