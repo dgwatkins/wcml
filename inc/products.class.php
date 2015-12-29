@@ -1168,7 +1168,7 @@ class WCML_Products{
         }
 
         if ((isset($_GET['post_type']) && $_GET['post_type'] == 'product') || (isset($_GET['post']) && get_post_type($_GET['post']) == 'product')) {
-            $link = '#" data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="' . $post_id . '" data-job_id="" data-language="' . $lang;
+            $link = admin_url('admin.php?page=wpml-wcml&tab=products&post_id=' . $post_id . '&lang=' . $lang );
         }
         return $link;
     }
