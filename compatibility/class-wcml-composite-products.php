@@ -161,7 +161,11 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 				$composite_section->add_field( $group );
 
 			}
-			$obj->add_field( $composite_section );
+
+			if( $composite_data ){
+				$obj->add_field( $composite_section );
+			}
+
 		}
 
 	}

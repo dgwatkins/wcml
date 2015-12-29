@@ -1222,7 +1222,10 @@ class WCML_Bookings{
         }
         $bookings_section->add_field( $group );
 
-        $obj->add_field( $bookings_section );
+        if( $orig_resources ||  $original_persons ){
+            $obj->add_field( $bookings_section );
+        }
+
     }
 
 

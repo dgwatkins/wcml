@@ -133,31 +133,48 @@ class WCML_Product_Bundles{
     // Add Bundles Box to WCML Translation GUI
     function custom_box_html( $obj, $product_id, $data ){
 
-        $bundle_data = maybe_unserialize( get_post_meta( $product_id, '_bundle_data', true ) );
+        $product_bundles = maybe_unserialize( get_post_meta( $product_id, '_bundle_data', true ) );
 
-        if( empty( $bundle_data ) || $bundle_data == false ){
+        if( empty( $product_bundles ) || $product_bundles == false ){
             return false;
         }
-
-        $product_bundles = array_keys( $bundle_data );
 
         $bundles_section = new WPML_Editor_UI_Field_Section( __( 'Product Bundles', 'woocommerce-multilingual' ) );
         end( $product_bundles );
         $last_key = key( $product_bundles );
         $divider = true;
-        foreach ( $product_bundles as $key => $bundle_id ) {
-            if( $key ==  $last_key ){
+        $flag = false;
+
+        foreach ( $product_bundles as $bundle_id => $product_bundle ) {
+            $add_group = false;
+            if( $bundle_id == $last_key ){
                 $divider = false;
             }
+
             $group = new WPML_Editor_UI_Field_Group( get_the_title( $bundle_id ), $divider );
-            $bundle_field = new WPML_Editor_UI_Single_Line_Field( 'bundle_'.$bundle_id.'_title', __( 'Name', 'woocommerce-multilingual' ), $data, false );
-            $group->add_field( $bundle_field );
-            $bundle_field = new WPML_Editor_UI_Single_Line_Field( 'bundle_'.$bundle_id.'_desc' , __( 'Description', 'woocommerce-multilingual' ), $data, false );
-            $group->add_field( $bundle_field );
-            $bundles_section->add_field( $group );
+
+            if( $product_bundle['override_title'] == 'yes') {
+                $bundle_field = new WPML_Editor_UI_Single_Line_Field('bundle_' . $bundle_id . '_title', __('Name', 'woocommerce-multilingual'), $data, false);
+                $group->add_field($bundle_field);
+                $add_group = true;
+            }
+
+            if( $product_bundle['override_description'] == 'yes'){
+                $bundle_field = new WPML_Editor_UI_Single_Line_Field( 'bundle_'.$bundle_id.'_desc' , __( 'Description', 'woocommerce-multilingual' ), $data, false );
+                $group->add_field( $bundle_field );
+                $add_group = true;
+            }
+
+            if( $add_group ){
+                $bundles_section->add_field( $group );
+                $flag = true;
+            }
 
         }
-        $obj->add_field( $bundles_section );
+
+        if( $flag ){
+            $obj->add_field( $bundles_section );
+        }
 
     }
 
