@@ -19,9 +19,18 @@
                 <ul>
                      <?php if (defined('ICL_SITEPRESS_VERSION') && version_compare(ICL_SITEPRESS_VERSION, '2.0.5', '<')) : ?>
 	                     <li>
-		                     <i class="otgs-ico-warning"></i> <?php printf( __( 'WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML</a> versions prior 2.0.5.', 'woocommerce-multilingual' ), $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/' ) ); ?>
+		                     <i class="otgs-ico-warning"></i>
+							 <?php printf( __( 'WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML</a> versions prior 2.0.5.', 'woocommerce-multilingual' ), $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/' ) ); ?>
 		                     <a href="<?php echo $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/shop/account/', false, 'account' ) ?>"
-		                        target="_blank"><?php _e( 'Update WPML', 'woocommerce-multilingual' ); ?></a></li>
+		                        target="_blank"><?php _e( 'Update WPML', 'woocommerce-multilingual' ); ?></a>
+						 </li>
+					 <?php elseif ( !$woocommerce_wpml->check_design_update ) : ?>
+	                     <li>
+		                     <i class="otgs-ico-warning"></i>
+							 <?php printf( __( 'WooCommerce Multilingual is enabled but WCML GUI is blocked, it required <a href="%s">WPML</a> 3.4 and higher.', 'woocommerce-multilingual' ), $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/' ) ); ?>
+		                     <a href="<?php echo $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/shop/account/', false, 'account' ) ?>"
+		                        target="_blank"><?php _e( 'Update WPML', 'woocommerce-multilingual' ); ?></a>
+						 </li>
                     <?php elseif (defined('ICL_SITEPRESS_VERSION')) : ?>
 	                     <li>
 		                     <i class="otgs-ico-ok"></i> <?php printf( __( '%s plugin is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML</strong>' ); ?>

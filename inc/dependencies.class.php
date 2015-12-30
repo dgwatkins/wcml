@@ -35,8 +35,6 @@ class WCML_Dependencies{
                     define('WPML_SUPPORT_STRINGS_IN_DIFF_LANG', false);
                 }
             }
-
-
         }
 
         if(!class_exists('woocommerce')){
@@ -87,6 +85,16 @@ class WCML_Dependencies{
         
         return $this->allok;
     }
+
+    function check_design_update(){
+
+        if( version_compare( ICL_SITEPRESS_VERSION, '3.4-dev', '<' ) ){
+            add_action( 'admin_notices', array( $this, '_old_backend_wpml_warning' ) );
+            return false;
+        }
+
+        return true;
+    }
       
     /**
     * Adds admin notice.
@@ -95,6 +103,12 @@ class WCML_Dependencies{
         global $woocommerce_wpml;?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML</a> versions prior %s.',
                     'woocommerce-multilingual'), $woocommerce_wpml->generate_tracking_link('http://wpml.org/'), '3.1.5'); ?></p></div>
+    <?php }
+
+    function _old_backend_wpml_warning(){
+        global $woocommerce_wpml;?>
+        <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but WCML GUI is blocked, it required <a href="%s">WPML</a> %s and higher.',
+                    'woocommerce-multilingual'), $woocommerce_wpml->generate_tracking_link('http://wpml.org/'), '3.4'); ?></p></div>
     <?php }
     
     function _old_wpml_tm_warning(){

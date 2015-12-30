@@ -25,9 +25,12 @@ class woocommerce_wpml {
         $this->settings = $this->get_settings();
 
         $this->dependencies = new WCML_Dependencies;
-        add_action('admin_menu', array($this, 'menu'));
+        add_action('admin_menu', array( $this, 'menu' ) );
 
-        if(!$this->dependencies->check()){
+        $this->check_dependencies = $this->dependencies->check();
+        $this->check_design_update = $this->dependencies->check_design_update();
+
+        if( !$this->check_dependencies ){
             $this->load_managment_css();
             return false;
         }
@@ -313,7 +316,7 @@ class woocommerce_wpml {
     }
 
     function menu(){
-        if($this->dependencies->check()){
+        if( $this->check_dependencies && $this->check_design_update){
             $top_page = apply_filters('icl_menu_main_page', basename(ICL_PLUGIN_PATH) .'/menu/languages.php');
 
             if(current_user_can('wpml_manage_woocommerce_multilingual')){
@@ -336,7 +339,7 @@ class woocommerce_wpml {
                 }
             }
 
-        }elseif(current_user_can('wpml_manage_woocommerce_multilingual')){
+        }elseif( current_user_can('wpml_manage_woocommerce_multilingual') ){
             if(!defined('ICL_SITEPRESS_VERSION')){
                 add_menu_page( __( 'WooCommerce Multilingual', 'woocommerce-multilingual' ), __( 'WooCommerce Multilingual', 'woocommerce-multilingual' ),
 	                'wpml_manage_woocommerce_multilingual', WCML_PLUGIN_PATH . '/menu/plugins.php', null, WCML_PLUGIN_URL . '/res/images/icon16.png' );
@@ -350,7 +353,7 @@ class woocommerce_wpml {
     }
 
     function menu_content(){
-        if($this->dependencies->check()){
+        if( $this->check_dependencies && $this->check_design_update ){
             include WCML_PLUGIN_PATH . '/menu/management.php';
         }else{
             include WCML_PLUGIN_PATH . '/menu/plugins.php';
