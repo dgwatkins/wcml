@@ -1183,7 +1183,7 @@ class WCML_Bookings{
 
         if( get_post_meta( $product_id,'_wc_booking_has_resources',true) == 'yes' ){
             $group = new WPML_Editor_UI_Field_Group( '', true );
-            $booking_field = new WPML_Editor_UI_Single_Line_Field( 'bookings-resources-label', __( 'Resources Label', 'woocommerce-multilingual' ), $data, true );
+            $booking_field = new WPML_Editor_UI_Single_Line_Field( '_wc_booking_resouce_label', __( 'Resources Label', 'woocommerce-multilingual' ), $data, true );
             $group->add_field( $booking_field );
             $bookings_section->add_field( $group );
         }
@@ -1203,24 +1203,25 @@ class WCML_Bookings{
             $bookings_section->add_field( $group );
         }
 
-        $original_persons = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'bookable_person' AND post_status = 'publish'", $product_id ) );
-        $group = new WPML_Editor_UI_Field_Group( __( 'Person Types', 'woocommerce-multilingual' ), false );
+        $original_persons = $this->get_original_persons( $product_id );
         end( $original_persons );
         $last_key = key( $original_persons );
         $divider = true;
-        foreach( $original_persons as $key => $person ){
-            if( $key ==  $last_key ){
+        $group_title = __( 'Person Types', 'woocommerce-multilingual' );
+        foreach( $original_persons as $person_id ){
+            if( $person_id == $last_key ){
                 $divider = false;
             }
-            $sub_group = new WPML_Editor_UI_Field_Group( '', $divider );
-            $booking_field = new WPML_Editor_UI_Single_Line_Field( 'bookings-person_'.$resource_id.'_title', __( 'Person Type Name', 'woocommerce-multilingual' ), $data, false );
-            $sub_group->add_field( $booking_field );
-            $booking_field = new WPML_Editor_UI_Single_Line_Field( 'bookings-person_'.$resource_id.'_description', __( 'Description', 'woocommerce-multilingual' ), $data, false );
-            $sub_group->add_field( $booking_field );
-            $group->add_field( $sub_group );
+            $group = new WPML_Editor_UI_Field_Group( $group_title , $divider );
+            $group_title = '';
+
+            $booking_field = new WPML_Editor_UI_Single_Line_Field( 'bookings-person_'.$person_id.'_title', __( 'Person Type Name', 'woocommerce-multilingual' ), $data, false );
+            $group->add_field( $booking_field );
+            $booking_field = new WPML_Editor_UI_Single_Line_Field( 'bookings-person_'.$person_id.'_description', __( 'Description', 'woocommerce-multilingual' ), $data, false );
+            $group->add_field( $booking_field );
+            $bookings_section->add_field( $group );
 
         }
-        $bookings_section->add_field( $group );
 
         if( $orig_resources ||  $original_persons ){
             $obj->add_field( $bookings_section );
@@ -1237,8 +1238,8 @@ class WCML_Bookings{
 
         if( get_post_meta( $product_id,'_wc_booking_has_resources',true) == 'yes' ){
 
-            $data[ 'bookings-resources-label' ] = array( 'original' => get_post_meta( $product_id,'_wc_booking_resouce_label',true) );
-            $data[ 'bookings-resources-label' ][ 'translation' ] = get_post_meta( $translation->ID,'_wc_booking_resouce_label',true);
+            $data[ '_wc_booking_resouce_label' ] = array( 'original' => get_post_meta( $product_id,'_wc_booking_resouce_label',true) );
+            $data[ '_wc_booking_resouce_label' ][ 'translation' ] = $translation ? get_post_meta( $translation->ID,'_wc_booking_resouce_label',true) : '';
         }
 
         $orig_resources = $this->get_original_resources( $product_id );
@@ -1257,12 +1258,12 @@ class WCML_Bookings{
 
         $original_persons = $this->get_original_persons( $product_id );
 
-        foreach( $original_persons as $person_id => $person ){
+        foreach( $original_persons as $person_id ){
 
-            $data[ 'bookings-person_'.$person_id.'_title' ] = array( 'original' => get_the_title( $person ) );
-            $data[ 'bookings-person_'.$person_id.'_description' ] = array( 'original' => get_post( $person )->post_excerpt );
+            $data[ 'bookings-person_'.$person_id.'_title' ] = array( 'original' => get_the_title( $person_id ) );
+            $data[ 'bookings-person_'.$person_id.'_description' ] = array( 'original' => get_post( $person_id )->post_excerpt );
 
-            $trnsl_person_id = apply_filters( 'translate_object_id', $person, 'bookable_person', false, $lang );
+            $trnsl_person_id = apply_filters( 'translate_object_id', $person_id, 'bookable_person', false, $lang );
             $data[ 'bookings-person_'.$person_id.'_title' ][ 'translation' ] = $trnsl_person_id ? get_the_title( $trnsl_person_id ) : '';
             $data[ 'bookings-person_'.$person_id.'_description' ][ 'translation' ] = $trnsl_person_id ? get_post( $trnsl_person_id )->post_excerpt : '';
 
@@ -1385,13 +1386,13 @@ class WCML_Bookings{
         //sync persons
         if( $original_persons ){
 
-            foreach( $original_persons as $original_person_id => $person ){
+            foreach( $original_persons as $original_person_id ){
 
                 $person_id = apply_filters( 'translate_object_id', $original_person_id, 'bookable_person', false, $language );
 
                 if( is_null( $person_id ) ){
 
-                    $person_id = $this->duplicate_person( $tr_product_id,$original_person_id, $language);
+                    $person_id = $this->duplicate_person( $tr_product_id, $original_person_id, $language);
 
                 }else{
 

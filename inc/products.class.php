@@ -684,10 +684,8 @@ class WCML_Products{
                         }
                     }
 
-                    if (isset($settings['translation-management']['custom_fields_translation'][$key]) && $settings['translation-management']['custom_fields_translation'][$key] == 1) {
-                        $meta_value = apply_filters('wcml_meta_value_before_add', $meta_value, $key);
-                        update_post_meta($trnsl_product_id, $key, $meta_value);
-                    }
+                    $meta_value = apply_filters('wcml_meta_value_before_add', $meta_value, $key);
+                    update_post_meta($trnsl_product_id, $key, $meta_value);
                 }
             }
         }
