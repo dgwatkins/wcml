@@ -9,7 +9,7 @@ class WCML_Product_Bundles{
         add_filter( 'wcml_gui_additional_box_data', array( $this, 'custom_box_html_data'), 10, 4 );
 		add_action('wcml_after_duplicate_product_post_meta',array($this,'sync_bundled_ids'),10,3);
 		add_action('wcml_extra_titles',array($this,'product_bundles_title'),10,1);
-		add_action('wcml_update_extra_fields',array($this,'bundle_update'),10,3);
+		add_action('wcml_update_extra_fields',array($this,'bundle_update'),10,4);
 		add_action('woocommerce_get_cart_item_from_session', array( $this, 'resync_bundle'),5,3);
 		add_filter('woocommerce_cart_loaded_from_session', array($this, 'resync_bundle_clean'),10);
 
@@ -106,18 +106,25 @@ class WCML_Product_Bundles{
         }
     }
     // Update Bundled products title and descritpion after saving the translation
-    function bundle_update( $original_product_id, $tr_id, $data ){
+    function bundle_update( $original_product_id, $tr_id, $data, $lang ){
     	global $sitepress;
     	$tr_bundle_data = array();
     	$tr_bundle_data = maybe_unserialize(get_post_meta($tr_id,'_bundle_data', true));
 
         $bundle_data = maybe_unserialize( get_post_meta( $original_product_id, '_bundle_data', true ) );
+
+        if( empty( $bundle_data ) || $bundle_data == false ){
+            return false;
+        }
+
         $product_bundles = array_keys( $bundle_data );
 
         foreach ( $product_bundles as $key => $bundle_id ) {
-            if(isset($tr_bundle_data[$bundle_id])){
-                $tr_bundle_data[$bundle_id]['product_title'] = $data[ md5( 'bundle_'.$bundle_id.'_title' )];
-                $tr_bundle_data[$bundle_id]['product_description'] = $data[ md5( 'bundle_'.$bundle_id.'_desc' )];
+            $curr_bundle_id = apply_filters( 'translate_object_id', $bundle_id, 'product', false, $lang );
+
+            if(isset($tr_bundle_data[$curr_bundle_id])){
+                $tr_bundle_data[$curr_bundle_id]['product_title'] = $data[ md5( 'bundle_'.$bundle_id.'_title' )];
+                $tr_bundle_data[$curr_bundle_id]['product_description'] = $data[ md5( 'bundle_'.$bundle_id.'_desc' )];
             }
         }
         update_post_meta( $tr_id, '_bundle_data', $tr_bundle_data );
@@ -182,6 +189,11 @@ class WCML_Product_Bundles{
     function custom_box_html_data( $data, $product_id, $translation, $lang ){
         $bundle_data = maybe_unserialize( get_post_meta( $product_id, '_bundle_data', true ) );
 
+        if( $translation ) {
+            $tr_product_id = $translation->ID;
+            $tr_bundle_data = maybe_unserialize( get_post_meta( $tr_product_id, '_bundle_data', true ) );
+        }
+
         if( empty( $bundle_data ) || $bundle_data == false ){
             return $data;
         }
@@ -197,15 +209,18 @@ class WCML_Product_Bundles{
             $data[ 'bundle_'.$bundle_id.'_title' ] = array( 'original' => $bundle_data[$bundle_id]['product_title'] );
             $data[ 'bundle_'.$bundle_id.'_desc' ] = array( 'original' => $bundle_data[$bundle_id]['product_description'] );
 
-
             $curr_bundle_id = apply_filters( 'translate_object_id', $bundle_id, 'product', false, $lang );
 
-            if( is_null( $curr_bundle_id ) ){
-                $data[ 'bundle_'.$bundle_id.'_title' ][ 'translation' ] = '';
-                $data[ 'bundle_'.$bundle_id.'_desc' ][ 'translation' ] = '';
+            if( !is_null( $tr_bundle_data ) && isset($tr_bundle_data[$curr_bundle_id]['override_title']) && $tr_bundle_data[$curr_bundle_id]['override_title']=='yes'  ){
+                $data[ 'bundle_'.$bundle_id.'_title' ][ 'translation' ] = $tr_bundle_data[$curr_bundle_id]['product_title'];
             }else {
-                $data[ 'bundle_'.$bundle_id.'_title' ][ 'translation' ] = get_the_title( $curr_bundle_id );
-                $data[ 'bundle_'.$bundle_id.'_desc' ][ 'translation' ] = get_post( $curr_bundle_id )->post_excerpt;
+                $data[ 'bundle_'.$bundle_id.'_title' ][ 'translation' ] = '';
+            }
+
+            if( !is_null( $tr_bundle_data ) && isset($tr_bundle_data[$curr_bundle_id]['override_description']) && $tr_bundle_data[$curr_bundle_id]['override_description']=='yes'  ){
+                $data[ 'bundle_'.$bundle_id.'_desc' ][ 'translation' ] = $tr_bundle_data[$curr_bundle_id]['product_description'];
+            }else {
+                $data[ 'bundle_'.$bundle_id.'_desc' ][ 'translation' ] = '';
             }
         }
 
