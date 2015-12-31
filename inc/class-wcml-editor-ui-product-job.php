@@ -297,13 +297,16 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
 
         $product_translations = $sitepress->get_element_translations( $product_trid, 'post_product', false, false, true );
-		$iclTranslationManagement->update_translation_status(
-			array(
-				'status' => $this->is_translation_complete() ? ICL_TM_COMPLETE : ICL_TM_IN_PROGRESS,
-				'needs_update' => 0,
-				'translation_id' => $product_translations[ $language ]->translation_id,
-				'translator_id' => get_current_user_id()
-			));
+
+        if( $product_translations ){
+            $iclTranslationManagement->update_translation_status(
+                array(
+                    'status' => $this->is_translation_complete() ? ICL_TM_COMPLETE : ICL_TM_IN_PROGRESS,
+                    'needs_update' => 0,
+                    'translation_id' => $product_translations[ $language ]->translation_id,
+                    'translator_id' => get_current_user_id()
+                ));
+        }
 		
         if ( ob_get_length() > 0 ) {
             ob_clean();

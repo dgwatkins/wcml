@@ -109,9 +109,14 @@ class WCML_Product_Bundles{
     function bundle_update( $original_product_id, $tr_id, $data ){
     	global $sitepress;
     	$tr_bundle_data = array();
-    	$tr_bundle_data = maybe_unserialize(get_post_meta($tr_id,'_bundle_data', true));
+    	$tr_bundle_data = maybe_unserialize( get_post_meta($tr_id,'_bundle_data', true) );
 
         $bundle_data = maybe_unserialize( get_post_meta( $original_product_id, '_bundle_data', true ) );
+
+        if( empty( $bundle_data ) ){
+            return;
+        }
+
         $product_bundles = array_keys( $bundle_data );
 
         foreach ( $product_bundles as $key => $bundle_id ) {
