@@ -245,9 +245,11 @@ class WCML_Tab_Manager{
     function custom_box_html_data( $data, $product_id, $translation, $lang ){
         global $wc_tab_manager;
         $orig_prod_tabs = $wc_tab_manager->get_product_tabs( $product_id );
+
         if( empty($orig_prod_tabs) ){
             return $data;
         }
+
         foreach( $orig_prod_tabs as $key => $prod_tab ){
             if( in_array( $prod_tab['type'], array( 'product', 'core' ) ) ){
                 if( $prod_tab['type'] == 'core' ){
