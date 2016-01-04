@@ -107,8 +107,7 @@ class WCML_Dependencies{
 
     function _old_backend_wpml_warning(){
         global $woocommerce_wpml;?>
-        <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but WCML GUI is blocked, it required <a href="%s">WPML</a> %s and higher.',
-                    'woocommerce-multilingual'), $woocommerce_wpml->generate_tracking_link('http://wpml.org/'), '3.4'); ?></p></div>
+        <div class="message error"><p><?php printf(__( 'You are using WooCommerce Multilingual %s. This version includes an important UI redesign for the configuration screens and it requires <a href="%s">WPML</a> %s and higher. Everything still works on the front end but in order to configure options for WooCommerce Multilingual you need to upgrade WPML.', 'woocommerce-multilingual' ), WCML_VERSION, $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/' ), '3.4'); ?></p></div>
     <?php }
     
     function _old_wpml_tm_warning(){
