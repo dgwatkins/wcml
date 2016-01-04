@@ -1023,7 +1023,7 @@ class WCML_Terms{
             $attribute_taxonomies_arr[] = 'pa_' . $a->attribute_name;
         }
 
-        if( ( isset( $wcml_settings[ 'sync_'.$taxonomy ]) && $wcml_settings[ 'sync_'.$taxonomy ] ) || ( in_array( $taxonomy, $attribute_taxonomies_arr ) && $wcml_settings['sync_variations'] ) ){
+        if( ( isset( $wcml_settings[ 'sync_'.$taxonomy ]) && $wcml_settings[ 'sync_'.$taxonomy ] ) || ( in_array( $taxonomy, $attribute_taxonomies_arr ) && isset( $wcml_settings[ 'sync_variations' ]) && $wcml_settings['sync_variations'] ) ){
             return true;
         }
 
