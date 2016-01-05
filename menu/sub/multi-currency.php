@@ -27,7 +27,7 @@ $args['currency']			= array(
 	'rounding_increment'    => 1,
 	'auto_subtract'         => 0
 );
-$args['title'] = __('Add new currency', 'woocommerce-multingual');
+$args['title'] = __('Add new currency', 'woocommerce-multilingual');
 include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php';
 
 // Other currencies options
