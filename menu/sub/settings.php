@@ -20,7 +20,7 @@ $default_language = $sitepress->get_default_language();
                 </li>
                 <li>
                     <input type="radio" name="trnsl_interface" value="1" <?php echo $woocommerce_wpml->settings['trnsl_interface'] == '1'?'checked':''; ?> id="wcml_trsl_interface_wcml" />
-                    <label for="wcml_trsl_interface_wcml"><?php _e('Go to the product translation table in WooCommerce Multilingual', 'woocommerce-multilingual'); ?></label>
+                    <label for="wcml_trsl_interface_wcml"><?php _e('Open the WooCommerce Multilingual product translation interface', 'woocommerce-multilingual'); ?></label>
                 </li>
                 <li>
                     <input type="radio" name="trnsl_interface" value="0" <?php echo $woocommerce_wpml->settings['trnsl_interface'] == '0'?'checked':''; ?> id="wcml_trsl_interface_native" />
