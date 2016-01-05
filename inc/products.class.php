@@ -147,9 +147,6 @@ class WCML_Products{
             
             $product_id = filter_var( $job_details[ 'job_id' ], FILTER_SANITIZE_NUMBER_INT );
             $language = filter_var( $job_details[ 'target'], FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-            //$job_id = filter_var( $job_details[ 'job_id' ], FILTER_SANITIZE_NUMBER_INT );
-            //
-            //$tm_job = $iclTranslationManagement->get_translation_job ( $job_id );
     
             $product = get_post( $product_id );
             $trn_product_id = apply_filters( 'translate_object_id', $product_id, 'product', false, $language );
