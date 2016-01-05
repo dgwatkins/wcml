@@ -1,8 +1,5 @@
 <div>
-	<p><?php _e( '
- Instructions text:
-
-This page allows you to translate all strings that are being used by WooCommerce in building different type of urls. Translating them enables you to have fully localized urls that match the language of the pages.', 'woocommerce-multilingual'); ?></p>
+	<p><?php _e( 'This page allows you to translate all strings that are being used by WooCommerce in building different type of urls. Translating them enables you to have fully localized urls that match the language of the pages.', 'woocommerce-multilingual'); ?></p>
 	<p><?php echo sprintf( __('You can enter or edit your default values on the %s page or, for the endpoints, on the WooCommerce %s page.', 'woocommerce-multilingual' ), '<a href="'.admin_url('options-permalink.php').'" >'. __( 'permalinks settings', 'woocommerce-multilingual').'</a>', '<a href="admin.php?page=wc-settings&tab=account" >'. __( 'Account settings', 'woocommerce-multilingual').'</a>' ); ?></p>
 </div>
 <table class="widefat wpml-list-table wp-list-table striped" cellspacing="0">
