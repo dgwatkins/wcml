@@ -41,9 +41,23 @@ jQuery( function($){
                 $(document).on('change','.currency_option_decimals', WCML_Multi_Currency.price_preview);
                 $(document).on('change','.currency_code select', WCML_Multi_Currency.price_preview);
 
+                if($('#wcml_mc_options').length){
+                    WCML_Multi_Currency.wcml_mc_form_submitted = false;
+                    WCML_Multi_Currency.read_form_fields_status();
+
+                    window.onbeforeunload = function(e) {
+                        if(!WCML_Multi_Currency.wcml_mc_form_submitted && WCML_Multi_Currency.form_fields_changed() ){
+                            return $('#wcml_warn_message').val();
+                        }
+                    }
+
+                    $('#wcml_mc_options').on('submit', function(){
+                        WCML_Multi_Currency.wcml_mc_form_submitted = true;
+                    })
+                }
+
+
             } );
-
-
 
         },
 
@@ -445,9 +459,15 @@ jQuery( function($){
 
             return false;
 
+        },
+
+        read_form_fields_status: function(){
+            this.mc_form_status = $('#wcml_mc_options').serialize();
+        },
+
+        form_fields_changed: function(){
+            return this.mc_form_status != $('#wcml_mc_options').serialize();
         }
-
-
 
     }
 
