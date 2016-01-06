@@ -723,3 +723,8 @@ input[name="wcml_curr_template"] {
   margin-left: -25px;
   margin-right: 5px;
 }
+
+.wcml-dismiss-warning{
+  position:relative;float:right;padding:0;text-decoration: none;outline: none;
+}
+.wcml-dismiss-warning:active{outline: none}

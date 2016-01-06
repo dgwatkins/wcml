@@ -551,5 +551,34 @@ jQuery(document).ready(function($){
 
     });
 
+    $(document).on('click', '.wcml-dismiss-warning', function(){
+
+
+        var wrap = $(this).closest('.wcml-wrap');
+
+        $(this).attr('disabled', 'disabled');
+        var ajaxLoader = $('<span class="spinner" style="visibility: visible;margin: 0">');
+        var setting = jQuery(this).data('setting');
+        $(this).parent().append(ajaxLoader);
+        $(this).remove();
+
+        $.ajax({
+            type: 'post',
+            url: ajaxurl,
+            dataType:'json',
+            data: {
+                action: 'wcml_update_setting_ajx',
+                setting: setting,
+                value: 1,
+                nonce: $('#wcml_settings_nonce').val()
+            },
+            success: function(response){
+                wrap.hide();
+            }
+        });
+        return false;
+    });
+
 
 });
+
