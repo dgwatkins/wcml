@@ -285,7 +285,7 @@ class WCML_Multi_Currency_Support{
 
             if( empty( $_POST['currency'] )  ){
 
-                $args['title'] = empty($_POST['currency']) ? __('Add new currency', 'woocommerce-multingual') : __('Update currency', 'woocommerce-multingual');
+                $args['title'] = empty($_POST['currency']) ? __('Add new currency', 'woocommerce-multilingual') : __('Update currency', 'woocommerce-multilingual');
 
             }else{
 
