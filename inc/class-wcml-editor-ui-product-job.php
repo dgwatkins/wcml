@@ -251,6 +251,8 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
         }
 
+        $product_translations = $sitepress->get_element_translations( $product_trid , 'post_product', false, false, true );
+
         //sync taxonomies
         $woocommerce_wpml->products->sync_product_taxonomies( $original_product_id, $tr_product_id, $language );
 
@@ -294,9 +296,6 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                 );
             }
         }
-
-
-        $product_translations = $sitepress->get_element_translations( $product_trid, 'post_product', false, false, true );
 
         if( $product_translations ){
             $iclTranslationManagement->update_translation_status(
