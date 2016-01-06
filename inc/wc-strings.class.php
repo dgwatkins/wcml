@@ -11,6 +11,7 @@ class WCML_WC_Strings{
         add_action('init', array($this, 'pre_init'));
         add_filter('query_vars', array($this, 'translate_query_var_for_product'));
         add_filter('wp_redirect', array($this, 'encode_shop_slug'),10,2);
+        add_action( 'registered_taxonomy', array ( $this, 'translate_attributes_label_in_wp_taxonomies' ), 100, 3 );
 
     }
 
@@ -63,6 +64,8 @@ class WCML_WC_Strings{
         add_filter( 'woocommerce_attribute_taxonomies', array( $this, 'translate_attribute_taxonomies_labels') );
 
         add_filter('woocommerce_get_breadcrumb', array($this, 'filter_woocommerce_breadcrumbs' ), 10, 2 );
+
+
     }
 
     function translated_attribute_label($label, $name, $product_obj = false){
@@ -748,6 +751,15 @@ class WCML_WC_Strings{
         }
 
         return $this->translations_from_mo_file[ $original_string ][ $language ];
+
+    }
+
+    function translate_attributes_label_in_wp_taxonomies( $taxonomy, $obj_type, $args ){
+        global $wp_taxonomies;
+
+        if( in_array('product', $obj_type ) && substr( $taxonomy, 0, 3) == 'pa_' && isset( $wp_taxonomies[ $taxonomy ] )){
+            $wp_taxonomies[$taxonomy]->labels->name = apply_filters( 'wpml_translate_single_string', $args['labels']->name, 'WordPress', 'taxonomy singular name: '.$args['labels']->name );
+        }
 
     }
 
