@@ -166,12 +166,8 @@
   float: left;
   border: 1px solid #d5d5d5;
   background: #f7f7f7;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
   border-radius: 2px;
   position: relative;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 .product_variations_images .upload_image_button .overlay {
@@ -725,6 +721,12 @@ input[name="wcml_curr_template"] {
 }
 
 .wcml-dismiss-warning{
-  position:relative;float:right;padding:0;text-decoration: none;outline: none;
+  position:relative;
+  float:right;
+  padding:0;
+  text-decoration: none;
+  outline: none;
 }
-.wcml-dismiss-warning:active{outline: none}
+.wcml-dismiss-warning:active{
+  outline: none
+}
