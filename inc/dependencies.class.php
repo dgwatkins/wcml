@@ -228,8 +228,18 @@ class WCML_Dependencies{
 
     function _first_setup_warning(){ ?>
 
-        <div class="message error"><p><?php printf(__('WooCommerce Multilingual configuration is not complete. <a href="%s" class="button-primary">Configure settings</a>', 'woocommerce-multilingual'),
-                    $this->allok ? admin_url("admin.php?page=wpml-wcml&tab=status") : admin_url("admin.php?page=wpml-wcml") ) ?> <a class="alignright wcml_ignore_link" data-setting="first_setup_warning" ><?php _e('Ignore','woocommerce-multilingual' ) ?></a><?php wp_nonce_field('wcml_ignore_warning', 'wcml_ignore_warning_nonce'); ?></p></div>
+        <div class="message error wpml-is-dismissible">
+            <p><?php printf(__('WooCommerce Multilingual configuration is not complete. <a href="%s" class="button-primary">Configure settings</a>',
+                    'woocommerce-multilingual'),
+                    $this->allok ? admin_url("admin.php?page=wpml-wcml&tab=status") : admin_url("admin.php?page=wpml-wcml") ) ?>
+                <button class="notice-dismiss wcml_ignore_link" data-setting="first_setup_warning">
+                    <span class="screen-reader-text">
+                        <?php _e('Ignore','woocommerce-multilingual' ) ?>
+                    </span>
+                </button>
+                <?php wp_nonce_field('wcml_ignore_warning', 'wcml_ignore_warning_nonce'); ?>
+            </p>
+        </div>
         <?php
     }
 

@@ -78,13 +78,16 @@ if(isset($_GET['tab'])){
 </div>
 
 <?php if( !isset( $woocommerce_wpml->settings['rate-block'] ) ): ?>
-    <div class="wrap wcml-wrap">
-            <span>
-                <?php echo sprintf(__('Thank you for using %s! You can express your love and support by %s rating our plugin and saying that %s for you.', 'woocommerce-multilingual'),'<strong>WooCommerce Multilingual</strong>', '<a href="https://wordpress.org/support/view/plugin-reviews/woocommerce-multilingual?filter=5#postform" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>', '<a href="https://wordpress.org/plugins/woocommerce-multilingual/?compatibility[version]='.$woocommerce_wpml->get_supported_wp_version().'&compatibility[topic_version]='.WCML_VERSION.'&compatibility[compatible]=1#compatibility" target="_blank">'.__('it works','woocommerce-multilingual').'</a>')?>
-            </span>
-            <span>
-                <button class="wcml-dismiss-warning hide-rate-block notice-dismiss" data-setting="rate-block" title="<?php _e('Hide','woocommerce-multilingual') ?>"></button>
-                <?php wp_nonce_field('wcml_settings', 'wcml_settings_nonce'); ?>
-            </span>
+    <div class="wrap wcml-wrap wpml-is-dismissible">
+
+            <?php echo sprintf(__('Thank you for using %s! You can express your love and support by %s rating our plugin and saying that %s for you.', 'woocommerce-multilingual'),'<strong>WooCommerce Multilingual</strong>', '<a href="https://wordpress.org/support/view/plugin-reviews/woocommerce-multilingual?filter=5#postform" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>', '<a href="https://wordpress.org/plugins/woocommerce-multilingual/?compatibility[version]='.$woocommerce_wpml->get_supported_wp_version().'&compatibility[topic_version]='.WCML_VERSION.'&compatibility[compatible]=1#compatibility" target="_blank">'.__('it works','woocommerce-multilingual').'</a>')?>
+
+            <button class="notice-dismiss wcml_ignore_link hide-rate-block" data-setting="rate-block">
+                <span class="screen-reader-text">
+                    <?php _e('Hide','woocommerce-multilingual') ?>
+                </span>
+            </button>
+            <?php wp_nonce_field('wcml_settings', 'wcml_settings_nonce'); ?>
+
     </div>
 <?php endif; ?>

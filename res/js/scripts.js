@@ -551,7 +551,7 @@ jQuery(document).ready(function($){
 
     });
 
-    $(document).on('click', '.wcml-dismiss-warning', function(){
+    $(document).on('click', '.hide-rate-block', function(){
 
 
         var wrap = $(this).closest('.wcml-wrap');
