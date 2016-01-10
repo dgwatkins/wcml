@@ -2,7 +2,7 @@
 <div class="wrap">
     <div id="icon-wpml" class="icon32"><br /></div>
     <h2><?php _e('WooCommerce Multilingual', 'woocommerce-multilingual') ?></h2>
-	<div class="wcml-tabs">
+	<div class="wcml-tabs wpml-tabs">
     	<a class="nav-tab nav-tab-active" href="<?php echo admin_url('admin.php?page=wpml-wcml'); ?>"><?php _e('Required plugins', 'woocommerce-multilingual') ?></a>
 	</div>
 
@@ -15,7 +15,7 @@
 	                   data-tip="<?php _e( 'WooCommerce Multilingual depends on several plugins to work. If any required plugin is missing, you should install and activate it.', 'woocommerce-multilingual' ) ?>"></i>
                 </h3>
             </div>
-            <div class="wcml-section-content">
+            <div class="wcml-section-content wcml-section-content-wide">
                 <ul>
                      <?php if (defined('ICL_SITEPRESS_VERSION') && version_compare(ICL_SITEPRESS_VERSION, '2.0.5', '<')) : ?>
 	                     <li>

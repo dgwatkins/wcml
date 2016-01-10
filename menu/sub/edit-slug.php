@@ -4,6 +4,7 @@
 			<h3>
 				<?php echo $label_name; ?>
 			</h3>
+			<i class="otgs-ico-close wpml-dialog-close-button wcml_cancel_base"></i>
 		</header>
 
 
@@ -37,8 +38,8 @@
 
 
 		<footer class="wpml-dialog-footer">
-			<input type="button" class="button-secondary wcml_cancel_base alignleft"
-				   value="<?php esc_attr_e( 'Cancel', 'woocommerce-multilingual' ) ?>" />&nbsp;
+			<input type="button" class="cancel wpml-dialog-close-button wcml_cancel_base alignleft"
+				   value="<?php esc_attr_e( 'Cancel', 'woocommerce-multilingual' ) ?>" />
 			<input type="button" class="button-primary wcml_save_base alignright"
 				   value="<?php esc_attr_e( 'Save', 'woocommerce-multilingual' ) ?>" data-base="<?php echo $original_base ?>" data-language="<?php echo $language ?>"/>
 			<input type="hidden" id="wcml_update_base_nonce" value="<?php echo wp_create_nonce( 'wcml_update_base_translation' ); ?>"/>

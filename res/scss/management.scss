@@ -6,17 +6,7 @@
   width: 250px;
 }
 .wcml-tabs {
-  margin-top: $margin-base;
-  min-width: 900px; //same as .wcml-wrap
-  .nav-tab {
-    float: none;
-    font-size: 12px;
-    line-height: 26px;
-    @media (max-width: 1199px) {
-      padding: 4px 6px 6px 6px;
-      margin: 0 0 -1px;
-    }
-  }
+  min-width: 930px; //same as .wcml-wrap
 }
 
 .dis_base{
@@ -708,6 +698,9 @@ input[name="wcml_curr_template"] {
 .wcml-tip {
   cursor: help;
   color: #555;
+  &:before {
+    vertical-align: top;
+  }
 }
 
 .wcml-products {

@@ -23,7 +23,7 @@ if(isset($_GET['tab'])){
 <div class="wrap">
     <div id="icon-wpml" class="icon32"><br /></div>
     <h1><?php _e('WooCommerce Multilingual', 'woocommerce-multilingual') ?></h1>
-    <div class="wcml-tabs">
+    <nav class="wcml-tabs wpml-tabs">
         <a class="nav-tab <?php echo $current_tab == 'products' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml'); ?>"><?php _e('Products', 'woocommerce-multilingual') ?></a>
 
         <?php if( current_user_can('wpml_operate_woocommerce_multilingual')): ?>
@@ -56,7 +56,7 @@ if(isset($_GET['tab'])){
             <a class="nav-tab <?php echo $current_tab == 'slugs' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=slugs'); ?>"><?php _e('Store URLs', 'woocommerce-multilingual') ?></a>
             <a class="nav-tab <?php echo $current_tab == 'status' ? 'nav-tab-active' : ''; ?>" href="<?php echo admin_url('admin.php?page=wpml-wcml&tab=status'); ?>"><?php _e('Status', 'woocommerce-multilingual') ?></a>
         <?php endif; ?>
-    </div>
+    </nav>
 	<div class="wcml-wrap">
         <?php if( ( !isset( $_GET['tab'] ) || ( isset( $_GET['tab'] ) && $_GET['tab'] == 'products' ) ) && current_user_can('wpml_manage_woocommerce_multilingual')): ?>
             <?php  include WCML_PLUGIN_PATH . '/menu/sub/products.php'; ?>
