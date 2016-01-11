@@ -474,6 +474,11 @@ class WCML_Bookings{
 
         }
 
+        remove_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
+        $this->sync_resource_costs( $original_product_id, $trnsl_product_id, '_resource_base_costs', $lang_code );
+        $this->sync_resource_costs( $original_product_id, $trnsl_product_id, '_resource_block_costs', $lang_code );
+        add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
+
     }
 
     function duplicate_resource( $tr_product_id, $resource, $lang_code){
@@ -1341,11 +1346,6 @@ class WCML_Bookings{
 
             //sync resources data
             $this->sync_resources( $original_product_id, $tr_product_id, $language, false );
-
-            remove_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
-            $this->sync_resource_costs( $original_product_id, $tr_product_id, '_resource_base_costs', $language );
-            $this->sync_resource_costs( $original_product_id, $tr_product_id, '_resource_block_costs', $language );
-            add_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
 
         }
 

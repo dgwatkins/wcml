@@ -1630,6 +1630,7 @@ class WCML_Products{
             $lang = $translation->language_code;
 
             do_action( 'wcml_before_sync_product_data', $duplicated_post_id, $post_id, $lang );
+
             // Filter upsell products, crosell products and default attributes for translations
             $this->duplicate_product_post_meta( $duplicated_post_id, $post_id );
 
