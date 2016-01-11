@@ -15,7 +15,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
 		$this->add_field( new WPML_Editor_UI_Auto_Slug_Title_Field( 'title', __( 'Title', 'woocommerce-multilingual' ), $data, true ) );
 		$this->add_field( new WPML_Editor_UI_Single_Line_Field( 'slug', __( 'Slug', 'woocommerce-multilingual' ), $data, true ) );
-		$this->add_field( new WPML_Editor_UI_WYSIWYG_Field( 'content', __( 'Content', 'woocommerce-multilingual' ), $data, true ) );
+		$this->add_field( new WPML_Editor_UI_WYSIWYG_Field( 'content', __( 'Content / Description', 'woocommerce-multilingual' ), $data, true ) );
         
 		$excerpt_section = new WPML_Editor_UI_Field_Section( __( 'Excerpt', 'woocommerce-multilingual' ) );
 		$excerpt_section->add_field( new WPML_Editor_UI_WYSIWYG_Field( 'excerpt', null, $data, true ) );
