@@ -6,6 +6,7 @@ class WCML_WC_Subscriptions{
 
         add_action('init', array($this, 'init'),9);
         add_filter('wcml_variation_term_taxonomy_ids',array($this,'wcml_variation_term_taxonomy_ids'));
+        add_filter('woocommerce_subscription_lengths', array($this, 'woocommerce_subscription_lengths'), 10, 2);
 
     }
 
@@ -31,6 +32,24 @@ class WCML_WC_Subscriptions{
         }
         
         return $get_variation_term_taxonomy_ids;
+    }
+    
+    public function woocommerce_subscription_lengths($subscription_ranges, $subscription_period) {
+        
+        if (is_array($subscription_ranges)) {
+            foreach ($subscription_ranges as $period => $ranges) {
+                if (is_array($ranges)) {
+                    foreach ($ranges as $range) {
+                        if ($range == "9 months") {
+                            $breakpoint = true;
+                        }
+                        $new_subscription_ranges[$period][] = apply_filters( 'wpml_translate_single_string', $range, 'wc_subscription_ranges', $range); 
+                    }
+                }
+            }
+        }
+        
+        return isset($new_subscription_ranges) ? $new_subscription_ranges : $subscription_ranges;
     }
 
 }
