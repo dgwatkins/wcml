@@ -1593,6 +1593,8 @@ class WCML_Products{
             if( !isset( $_POST[ 'wp-preview' ] ) || empty( $_POST[ 'wp-preview' ] ) ){
                 $this->sync_date_and_parent( $duplicated_post_id, $post_id, $current_language );
                 $this->sync_product_data( $duplicated_post_id, $post_id, $current_language );
+
+                do_action( 'wcml_before_sync_product_data', $duplicated_post_id, $post_id, $current_language );
             }
 
             return;

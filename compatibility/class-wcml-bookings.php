@@ -349,7 +349,7 @@ class WCML_Bookings{
     function sync_bookings( $original_product_id, $product_id, $lang ){
         global $wpdb;
 
-        $all_bookings_for_product =  WC_Bookings_Controller::get_bookings_for_product( $original_product_id , array( 'in-cart', 'unpaid', 'confirmed', 'paid' ) );
+        $all_bookings_for_product = $wpdb->get_results( $wpdb->prepare( "SELECT post_id as id FROM $wpdb->postmeta WHERE meta_key = '_booking_product_id' AND meta_value = %d", $original_product_id ) );
 
         foreach($all_bookings_for_product as $booking ){
             $check_if_exists = $wpdb->get_row( $wpdb->prepare( "SELECT pm3.* FROM {$wpdb->postmeta} AS pm1
@@ -366,6 +366,7 @@ class WCML_Bookings{
                 update_post_meta( $check_if_exists->post_id, '_booking_persons', $this->get_translated_booking_persons_ids( $booking->id, $lang ) );
             }
         }
+
 
     }
 
