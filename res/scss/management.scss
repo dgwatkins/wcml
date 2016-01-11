@@ -765,3 +765,15 @@ input[name="wcml_curr_template"] {
 .wcml-dismiss-warning:active{
   outline: none;
 }
+.wcml-notice {
+  // Styling copied from WordPress - on this class WP's JS won't trigger
+  background: #fff;
+  border-left: 4px solid #fff;
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+  margin: 5px 0 15px;
+  padding: 1px 12px;
+  p {
+    margin: .5em 0;
+    padding: 2px;
+  }
+}
