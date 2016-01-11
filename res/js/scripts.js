@@ -527,29 +527,7 @@ jQuery(document).ready(function($){
 
     });
 
-    $(document).on('click', '.wcml_ignore_link', function(e){
-        e.preventDefault();
 
-        var elem = $(this);
-        var setting = elem.attr('data-setting');
-
-        $.ajax({
-            type : "post",
-            url : ajaxurl,
-            dataType: 'json',
-            data : {
-                action: "wcml_ignore_warning",
-                setting: setting,
-                wcml_nonce: $('#wcml_ignore_warning_nonce').val()
-            },
-            success: function(response) {
-                elem.closest('.error').remove();
-            }
-        })
-
-        return false;
-
-    });
 
     $(document).on('click', '.hide-rate-block', function(){
 

@@ -424,6 +424,11 @@ class woocommerce_wpml {
         if( !is_admin() ){
             wp_register_script( 'cart-widget', WCML_PLUGIN_URL . '/res/js/cart_widget.js', array( 'jquery' ), WCML_VERSION );
             wp_enqueue_script( 'cart-widget' );
+        }else{
+
+            wp_register_script( 'wcml-messages', WCML_PLUGIN_URL . '/res/js/wcml-messages.js', array( 'jquery' ), WCML_VERSION );
+            wp_enqueue_script( 'wcml-messages' );
+
         }
 
     }
