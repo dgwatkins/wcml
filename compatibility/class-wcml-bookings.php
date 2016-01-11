@@ -23,7 +23,7 @@ class WCML_Bookings{
         add_action( 'wcml_before_sync_product_data', array( $this, 'sync_bookings' ), 10, 3 );
         add_action( 'wcml_before_sync_product', array( $this, 'sync_booking_data' ), 10, 2 );
 
-        add_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
+        add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
 
         add_filter( 'get_post_metadata', array( $this, 'filter_wc_booking_cost' ), 10, 4 );
         add_filter( 'woocommerce_bookings_process_cost_rules_cost', array( $this, 'wc_bookings_process_cost_rules_cost' ), 10, 3 );
@@ -714,13 +714,13 @@ class WCML_Bookings{
         return $check;
     }
 
-    function update_wc_booking_costs(  $check, $object_id, $meta_key, $meta_value, $prev_value ){
+    function update_wc_booking_costs(  $check, $object_id, $meta_key, $meta_value ){
 
         if( in_array( $meta_key, array( '_wc_booking_pricing', '_resource_base_costs', '_resource_block_costs' ) ) ){
 
             global $woocommerce_wpml;
 
-            remove_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
+            remove_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
 
             $nonce = filter_input( INPUT_POST, '_wcml_custom_costs_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
@@ -801,29 +801,19 @@ class WCML_Bookings{
 
                 }
 
-                add_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
+                add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
 
-                return true;
-
-            }elseif(in_array( $meta_key, array( '_resource_base_costs', '_resource_block_costs' ) ) ){
+            }elseif( in_array( $meta_key, array( '_resource_base_costs', '_resource_block_costs' ) ) ){
 
                 $return = $this->sync_resource_costs_with_translations( $object_id, $meta_key, $check );
 
-                add_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
-
-                return $return;
+                add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
 
             }else{
 
-                add_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
-
-                return $check;
+                add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
 
             }
-
-        }else{
-
-            return $check;
 
         }
 
