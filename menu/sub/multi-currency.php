@@ -110,7 +110,7 @@ foreach($currencies as $code => $currency){
 
 					?>
 					<div class="tablenav top clearfix">
-						<button type="button" class="button-secondary wcml_add_currency alignright js-wpml-dialog-trigger" id="wcml_currency_options_" data-content="wcml_currency_options_" data-width="480" data-height="530">
+						<button type="button" class="button-secondary wcml_add_currency alignright js-wpml-dialog-trigger" id="wcml_currency_options_" data-content="wcml_currency_options_" data-width="480" data-height="540">
 							<i class="otgs-ico-add otgs-ico-sm"></i>
 							<?php _e( 'Add currency', 'woocommerce-multilingual' ); ?>
 						</button>
