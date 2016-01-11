@@ -47,7 +47,7 @@ jQuery( document ).ready( function( $ ){
     //lock fields
     if( lock_fields == 1 ){
 
-        $('#bookings_pricing input[type="number"], #bookings_resources input[type="number"], #bookings_availability input[type="number"], #bookings_availability input[type="text"], #bookings_persons input[type="number"]').each(function(){
+        $('#bookings_pricing input[type="number"],#accommodation_bookings_rates input[type="number"], #bookings_resources input[type="number"], #bookings_availability input[type="number"], #bookings_availability input[type="text"], #bookings_persons input[type="number"]').each(function(){
             $(this).attr('readonly','readonly');
             $(this).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
         });
@@ -58,7 +58,12 @@ jQuery( document ).ready( function( $ ){
             $(this).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
         });
 
-        var ids = [ '_wc_booking_has_resources', '_wc_booking_has_persons', '_wc_booking_duration_type', '_wc_booking_duration', '_wc_booking_duration_unit', '_wc_booking_calendar_display_mode', '_wc_booking_requires_confirmation', '_wc_booking_user_can_cancel'];
+        var ids = [ '_wc_booking_has_resources', '_wc_booking_has_persons', '_wc_booking_duration_type', '_wc_booking_duration',
+            '_wc_booking_duration_unit', '_wc_booking_calendar_display_mode', '_wc_booking_requires_confirmation', '_wc_booking_user_can_cancel',
+            '_wc_accommodation_booking_min_duration', '_wc_accommodation_booking_max_duration', '_wc_accommodation_booking_max_duration', '_wc_accommodation_booking_calendar_display_mode',
+            '_wc_accommodation_booking_requires_confirmation', '_wc_accommodation_booking_user_can_cancel', '_wc_accommodation_booking_cancel_limit', '_wc_accommodation_booking_cancel_limit_unit',
+            '_wc_accommodation_booking_qty', '_wc_accommodation_booking_min_date', '_wc_accommodation_booking_min_date_unit', '_wc_accommodation_booking_max_date', '_wc_accommodation_booking_max_date_unit'
+        ];
 
         for (i = 0; i < ids.length; i++) {
             $('#'+ids[i]).attr('disabled','disabled');
