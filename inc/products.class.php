@@ -2571,11 +2571,15 @@ class WCML_Products{
             if( !get_post_meta( $id, '_wcml_terms_recount' ) ){
                 $product_cats = wp_get_post_terms( $id, 'product_cat' );
 
-                foreach( $product_cats as $product_cat ){
-                    $cats_to_recount[ $product_cat->term_id ] = $product_cat->parent;
+                if(!empty($product_cats)) {
+
+                    foreach ($product_cats as $product_cat) {
+                        $cats_to_recount[$product_cat->term_id] = $product_cat->parent;
+                    }
+                    _wc_term_recount($cats_to_recount, get_taxonomy('product_cat'), true, false);
+                    add_post_meta($id, '_wcml_terms_recount', 'yes');
+
                 }
-                _wc_term_recount( $cats_to_recount, get_taxonomy( 'product_cat' ), true, false );
-                add_post_meta( $id, '_wcml_terms_recount', 'yes' );
             }
 
         }
