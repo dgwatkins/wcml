@@ -433,14 +433,11 @@
 }
 
 .wcml-base-dialog{
-  z-index: 999999;
+  z-index: 9999;
   background-color: #FFF;
   left: 50%;
-  -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-  background: #fff;
   position: absolute;
-  z-index: 9999;
 }
 
 .wcml_fade_block{
