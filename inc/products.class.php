@@ -1612,7 +1612,7 @@ class WCML_Products{
         }
 
         //save custom prices
-        $this->save_custom_prices($post_id);
+        $this->save_custom_prices( $duplicated_post_id );
 
         // pick posts to sync
         $posts = array();
