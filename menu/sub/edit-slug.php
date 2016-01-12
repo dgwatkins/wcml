@@ -4,7 +4,7 @@
 			<h3>
 				<?php echo $label_name; ?>
 			</h3>
-			<i class="otgs-ico-close wpml-dialog-close-button wcml_cancel_base"></i>
+			<i class="ui-button ui-dialog-titlebar-close wcml_cancel_base"></i>
 		</header>
 
 
