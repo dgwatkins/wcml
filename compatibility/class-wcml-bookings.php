@@ -28,6 +28,7 @@ class WCML_Bookings{
         add_filter( 'get_post_metadata', array( $this, 'filter_wc_booking_cost' ), 10, 4 );
         add_filter( 'woocommerce_bookings_process_cost_rules_cost', array( $this, 'wc_bookings_process_cost_rules_cost' ), 10, 3 );
         add_filter( 'woocommerce_bookings_process_cost_rules_base_cost', array( $this, 'wc_bookings_process_cost_rules_base_cost' ), 10, 3 );
+        add_filter( 'woocommerce_bookings_process_cost_rules_override_block', array( $this, 'wc_bookings_process_cost_rules_override_block_cost' ), 10, 3 );
 
         add_filter( 'wcml_multi_currency_is_ajax', array( $this, 'wcml_multi_currency_is_ajax' ) );
 
@@ -900,6 +901,10 @@ class WCML_Bookings{
 
     function wc_bookings_process_cost_rules_base_cost( $base_cost, $fields, $key ){
         return $this->filter_pricing_cost( $base_cost, $fields, 'base_cost_', $key );
+    }
+
+    function wc_bookings_process_cost_rules_override_block_cost( $override_cost, $fields, $key ){
+        return $this->filter_pricing_cost( $override_cost, $fields, 'override_cost_', $key );
     }
 
     function filter_pricing_cost( $cost, $fields, $name, $key ){
