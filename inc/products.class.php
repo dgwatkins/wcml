@@ -2666,11 +2666,12 @@ class WCML_Products{
             }
 
             //translate custom attr value in cart object
-            if( isset( $cart_item[ 'variation' ] ) ){
+            if( isset( $cart_item[ 'variation' ] ) && is_array( $cart_item[ 'variation' ] ) ){
                 foreach( $cart_item[ 'variation' ] as $attr_key => $attribute ){
                     $cart->cart_contents[ $key ][ 'variation' ][ $attr_key ] = $this->get_cart_attribute_translation( $attr_key, $attribute, $cart_item['variation_id'], $current_language );
                 }
             }
+
             if( $cart_item[ 'product_id' ] == $tr_product_id ){
                 $new_cart_data[ $key ] = apply_filters( 'wcml_cart_contents_not_changed', $cart->cart_contents[$key], $key, $current_language );
                 continue;
