@@ -83,13 +83,13 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 		$sitepress->set_element_language_details( $ttid, 'tax_'.$taxonomy , false, $sitepress->get_default_language() );
 		$trid = $wpml_term_translations->get_element_trid( $ttid );
 
-		$translated_language = 'uk';
-		$tr_tax_term = wp_insert_term( 'test_cat1_ua', $taxonomy );
+		$translated_language = 'es';
+		$tr_tax_term = wp_insert_term( 'test_cat1_es', $taxonomy );
 		$tr_ttid = $tr_tax_term[ 'term_taxonomy_id' ];
 
 		$sitepress->set_element_language_details( $tr_ttid, 'tax_'.$taxonomy, $trid, $translated_language );
 
-		$this->assertEquals( 'http://'.WP_TESTS_DOMAIN.'/?product_cat=test_cat1_ua&lang=uk' , $this->url_translation->translate_taxonomy_base(  get_term_link( $tr_tax_term['term_id'], $taxonomy ), get_term( $tr_tax_term['term_id'], $taxonomy ), $taxonomy ) );
+		$this->assertEquals( 'http://'.WP_TESTS_DOMAIN.'/?product_cat=test_cat1_es&lang=es' , $this->url_translation->translate_taxonomy_base(  get_term_link( $tr_tax_term['term_id'], $taxonomy ), get_term( $tr_tax_term['term_id'], $taxonomy ), $taxonomy ) );
 
 	}
 

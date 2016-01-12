@@ -27,11 +27,17 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 	}
 
 	function test_filter_paypal_args(){
-		global $woocommerce_wpml, $sitepress, $sitepress_settings, $wpml_url_filters, $wpml_url_converter, $wpml_post_translations;
+		global $woocommerce_wpml, $sitepress, $sitepress_settings, $wpml_post_translations;
 
 		$sitepress->switch_lang( 'de' );
-		$wpml_url_converter = wpml_test_get_url_converter_for_test( $sitepress_settings, "", $sitepress->get_default_language() );
-		$wpml_url_filters   = new WPML_URL_Filters( $wpml_post_translations, $wpml_url_converter, $sitepress );
+
+		$wpml_url_converter = load_wpml_url_converter(
+			$sitepress_settings,
+			3,
+			$sitepress->get_default_language()
+		);
+
+		$wpml_url_filters = new WPML_URL_Filters( $wpml_post_translations, $wpml_url_converter, $sitepress );
 
 		$_SERVER['SERVER_NAME'] = $sitepress->convert_url( get_home_url() );
 
