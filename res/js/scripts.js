@@ -459,47 +459,12 @@ jQuery(document).ready(function($){
         });
     });
 
-
-    $(document).on('click', '.edit_base_slug', function(e) {
-        e.preventDefault();
-
-        if( !$(this).hasClass('dis_base') ){
-
-            var elem = $(this);
-
-            $.ajax({
-                type : "post",
-                url : ajaxurl,
-                dataType: 'json',
-                data : {
-                    action: "wcml_edit_base",
-                    base: elem.attr('data-base'),
-                    language: elem.attr('data-language'),
-                    wcml_nonce: $('#wcml_edit_base_nonce').val()
-                },
-                success: function(response) {
-                    jQuery(document.body).append(response);
-
-                    $('.wcml-base-dialog').css( 'top', $(document).height()/2 );
-
-                    $('body').animate({
-                        scrollTop: $('.wcml-base-dialog').offset().top - $(window).height()/2
-                    },0);
-
-                    $('.wcml-base-dialog').fadeIn();
-                }
-            })
-
-        }
-
-    });
-
-
     $(document).on('click', '.wcml_save_base', function(e) {
         e.preventDefault();
 
         var elem = $(this);
-        var icon = '.'+elem.attr('data-base')+'_'+elem.attr('data-language');
+        var dialog_container = $(this).closest('.wpml-dialog-container');
+        var icon = '#wcml-edit-base-slug-'+elem.attr('data-base')+'-'+elem.attr('data-language');
         $.ajax({
             type : "post",
             url : ajaxurl,
@@ -507,27 +472,19 @@ jQuery(document).ready(function($){
             data : {
                 action: "wcml_update_base_translation",
                 base: elem.attr('data-base'),
-                base_value: $('#base-original').val(),
-                base_translation: $('#base-translation').val(),
+                base_value: dialog_container.find('#base-original').val(),
+                base_translation: dialog_container.find('#base-translation').val(),
                 language: elem.attr('data-language'),
                 wcml_nonce: $('#wcml_update_base_nonce').val()
             },
             success: function(response) {
+                $(icon).remove();
                 $(icon).find('i').remove();
                 $(icon).append('<i class="otgs-ico-edit" >');
-                $('.wcml-base-dialog').remove();
+                $(icon).parent().prepend(response);
             }
         })
     });
-
-    $(document).on('click', '.wcml_cancel_base,.wcml_fade_block', function(e) {
-        e.preventDefault();
-        $('.wcml-base-dialog').remove();
-        $('.wcml_fade_block').remove();
-
-    });
-
-
 
     $(document).on('click', '.hide-rate-block', function(){
 

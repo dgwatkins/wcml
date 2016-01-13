@@ -1,19 +1,2 @@
 @import "mixins";
 @import "variables";
-
-.wcml-base-dialog {
-	.wpml-dialog-body {
-		padding: $margin-sm;
-	}
-	.wpml-header-original,
-	.wpml-header-translation	{
-		margin: $margin-xs $margin-sm ;
-
-	}
-	.translated_value,
-	.original_value,
-	.wpml-header-original,
-	.wpml-header-translation	{
-		width: 250px;
-	}
-}

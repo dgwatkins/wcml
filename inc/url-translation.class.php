@@ -26,7 +26,6 @@ class WCML_Url_Translation {
 
         add_action( 'init', array( $this, 'fix_post_object_rewrite_slug' ), 6 ); // handle the particular case of the default product base: wpmlst-540
 
-        add_action( 'wp_ajax_wcml_edit_base', array( $this, 'wcml_edit_base_html' ) );
         add_action( 'wp_ajax_wcml_update_base_translation', array( $this, 'wcml_update_base_translation' ) );
 
     }
@@ -607,9 +606,9 @@ class WCML_Url_Translation {
                         $translated_base = false;
                     }
                 }
-
+                $this->wcml_edit_base_html( $base, $language['code'] );
                 ?>
-                <a class="edit_base_slug <?php if( !$value ): ?>dis_base<?php endif; ?>" data-base="<?php echo $base; ?>" data-language="<?php echo $language['code']; ?>"
+                <a class="js-wpml-dialog-trigger <?php if( !$value ): ?>dis_base<?php endif; ?>" id="wcml-edit-base-slug-<?php echo $base.'-'.$language['code'] ?>" data-content="wcml-edit-base-slug-<?php echo $base.'-'.$language['code'] ?>"  data-width="450" data-height="200"
 
                     <?php if( isset( $needs_update ) ): ?>
                       title="<?php echo $language['english_name'] . ': ' . __('Update translation', 'woocommerce-multilingual'); ?>">
@@ -622,7 +621,11 @@ class WCML_Url_Translation {
                         <i class="otgs-ico-edit"></i>
                     <?php endif; ?>
                 </a>
-            <?php }
+            <?php
+
+
+
+            }
         }
 
     }
@@ -694,45 +697,34 @@ class WCML_Url_Translation {
         return $source_language;
     }
 
-    function wcml_edit_base_html(){
+    function wcml_edit_base_html( $original_base, $language ){
         global $sitepress,$woocommerce_wpml;
 
-        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_edit_base')){
-            die('Invalid nonce');
-        }
+        $args = array();
+        $args['original_base'] = $original_base;
+        $args['language'] = $language;
+        $args['translated_base_value'] = '';
 
-        $original_base = $_POST['base'];
-        $language = $_POST['language'];
-        $translated_base_value = '';
-
-        $source_language = $this->get_source_slug_language( $original_base );
+        $args['source_language'] = $this->get_source_slug_language( $original_base );
 
         if( $original_base == 'shop' ){
             $original_shop_id = get_option('woocommerce_shop_page_id' );
             $translated_base = apply_filters( 'translate_object_id',$original_shop_id , 'page', false, $language );
             if( !is_null($translated_base)){
-                $translated_base_value = urldecode(get_post($translated_base)->post_name);
+                $args['translated_base_value'] = urldecode(get_post($translated_base)->post_name);
             }
 
-            $original_base_value = urldecode(get_post($original_shop_id)->post_name);
-            $label_name = __('Product Shop Base', 'woocommerce-multilingual');
+            $args['original_base_value'] = urldecode(get_post($original_shop_id)->post_name);
+            $args['label_name'] = __('Product Shop Base', 'woocommerce-multilingual');
         }else{
             $translated_base = $this->get_base_translation( $original_base, $language );
-            $translated_base_value = $translated_base['translated_base'];
-            $original_base_value = $translated_base['original_value'];
-            $label_name = $translated_base['name'];
+            $args['translated_base_value'] = $translated_base['translated_base'];
+            $args['original_base_value'] = $translated_base['original_value'];
+            $args['label_name'] = $translated_base['name'];
         }
         $active_languages = $sitepress->get_active_languages();
 
-        ob_start();
         include WCML_PLUGIN_PATH . '/menu/sub/edit-slug.php';
-        $html = ob_get_contents();
-        ob_end_clean();
-
-        echo json_encode($html);
-        die();
-
     }
 
     function wcml_update_base_translation(){
@@ -744,6 +736,7 @@ class WCML_Url_Translation {
 
         global $wpdb;
 
+        $args = array();
         $original_base = $_POST['base'];
         $original_base_value = $_POST['base_value'];
         $base_translation = $_POST['base_translation'];
@@ -772,7 +765,14 @@ class WCML_Url_Translation {
 
         }
 
+        ob_start();
+        $this->wcml_edit_base_html( $original_base, $language );
+        $html = ob_get_contents();
+        ob_end_clean();
+
+        echo json_encode($html);
         die();
+
 
     }
 }

@@ -121,4 +121,4 @@
 	</tbody>
 </table>
 <?php wp_nonce_field('wcml_edit_base', 'wcml_edit_base_nonce'); ?>
-
+<?php wp_nonce_field('wcml_update_base_translation', 'wcml_update_base_nonce'); ?>
