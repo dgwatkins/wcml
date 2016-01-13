@@ -12,7 +12,6 @@ $all_products_taxonomies = get_taxonomies(array('object_type'=>array('product'))
 unset($all_products_taxonomies['product_type'],$all_products_taxonomies['product_cat'],$all_products_taxonomies['product_tag']);
 ?>
 <div class="wrap wcml_trblsh">
-    <div id="icon-wpml" class="icon32"><br /></div>
     <h2><?php _e('Troubleshooting', 'woocommerce-multilingual') ?></h2>
     <div class="wcml_trbl_warning">
         <h3><?php _e('Please make a backup of your database before you start the synchronization', 'woocommerce-multilingual') ?></h3>
