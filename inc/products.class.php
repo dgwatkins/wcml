@@ -11,7 +11,7 @@ class WCML_Products{
     function __construct(){
 
         add_action( 'init', array( $this, 'init' ) );
-        add_action( 'init', array( $this, 'wc_cart_widget_actions' ) );        
+        add_action( 'init', array( $this, 'wc_cart_widget_actions' ) );
 
         //add action for coupons data from WC_Coupon construct
         add_action( 'woocommerce_coupon_loaded', array( $this, 'wcml_coupon_loaded' ) );
@@ -20,45 +20,47 @@ class WCML_Products{
 
     }
 
-    function init()
-    {
+    function init(){
 
-        if (is_admin()) {
-            add_filter('wpml_post_edit_page_link_to_translation', array($this, '_filter_link_to_translation'));
-            add_action('admin_init', array($this, 'restrict_admin_with_redirect'));
+        if(is_admin()){
+            add_action( 'wp_ajax_wcml_update_product', array( $this, 'update_product_actions' ) );
+            add_action( 'wp_ajax_wcml_product_data', array( $this, 'product_data_html' ) );
 
-            add_action('woocommerce_attribute_added', array($this, 'make_new_attribute_translatable'), 10, 2);
+            add_filter( 'wpml_post_edit_page_link_to_translation', array( $this,'_filter_link_to_translation' ) );
+            add_action( 'admin_init', array( $this, 'restrict_admin_with_redirect' ) );
+
+            add_action( 'woocommerce_attribute_added', array( $this, 'make_new_attribute_translatable' ), 10, 2 );
 
             // filters to sync variable products
-            add_action('save_post', array($this, 'sync_post_action'), 110, 2); // After WPML
+            add_action( 'save_post', array( $this, 'sync_post_action' ), 110, 2 ); // After WPML
 
-            add_filter('future_product', array($this, 'set_schedule_for_translations'), 10, 2);
+            add_filter( 'future_product', array( $this, 'set_schedule_for_translations'), 10, 2 );
             //when save new attachment duplicate product gallery
-            add_action('wpml_media_create_duplicate_attachment', array($this, 'sync_product_gallery_duplicate_attachment'), 11, 2);
-            add_action('woocommerce_ajax_save_product_variations', array($this, 'sync_product_variations_action'), 11);
-            add_action('wp_ajax_woocommerce_remove_variations', array($this, 'remove_translations_for_variations'), 9);
+            add_action( 'wpml_media_create_duplicate_attachment', array( $this, 'sync_product_gallery_duplicate_attachment' ), 11, 2 );
+            add_action( 'woocommerce_ajax_save_product_variations', array( $this, 'sync_product_variations_action' ), 11 );
+            add_action( 'wp_ajax_woocommerce_remove_variations', array( $this, 'remove_translations_for_variations' ), 9 );
 
-            add_filter('icl_make_duplicate', array($this, 'icl_make_duplicate'), 11, 4);
+            add_filter( 'icl_make_duplicate', array( $this, 'icl_make_duplicate'), 11, 4 );
 
             //remove media sync on product page
-            add_action('admin_head', array($this, 'remove_language_options'), 11);
+            add_action( 'admin_head', array( $this, 'remove_language_options' ), 11 );
 
-            add_action('admin_print_scripts', array($this, 'preselect_product_type_in_admin_screen'), 11);
+            add_action( 'admin_print_scripts', array( $this, 'preselect_product_type_in_admin_screen' ), 11 );
 
-            add_filter('woocommerce_json_search_found_products', array($this, 'woocommerce_json_search_found_products'));
-            add_filter('tiny_mce_before_init', array($this, '_mce_set_plugins'), 9);
+            add_filter( 'woocommerce_json_search_found_products', array( $this, 'woocommerce_json_search_found_products' ) );
+            add_filter( 'tiny_mce_before_init', array( $this, '_mce_set_plugins' ), 9 );
 
-            add_action('admin_head', array($this, 'hide_multilingual_content_setup_box'));
+            add_action( 'admin_head', array( $this, 'hide_multilingual_content_setup_box' ) );
 
-            add_action('woocommerce_duplicate_product', array($this, 'woocommerce_duplicate_product'), 10, 2);
+            add_action( 'woocommerce_duplicate_product', array( $this, 'woocommerce_duplicate_product' ), 10, 2 );
 
-            add_filter('post_row_actions', array($this, 'filter_product_actions'), 10, 2);
+            add_filter( 'post_row_actions', array( $this, 'filter_product_actions' ), 10, 2 );
 
-            add_filter('locale', array($this, 'update_product_action_locale_check'));
+            add_filter ( 'locale',array( $this, 'update_product_action_locale_check' ) );
 
-            add_filter('wpml_translation_job_post_meta_value_translated', array($this, 'filter_product_attributes_for_translation'), 10, 2);
+            add_filter( 'wpml_translation_job_post_meta_value_translated', array($this, 'filter_product_attributes_for_translation'), 10, 2 );
 
-            add_action('wp_ajax_woocommerce_feature_product', array($this, 'sync_feature_product_meta'), 9);
+            add_action( 'wp_ajax_woocommerce_feature_product' , array( $this, 'sync_feature_product_meta' ), 9 );
 
             add_filter('wpml-translation-editor-fetch-job', array($this, 'fetch_translation_job_for_editor'), 10, 2);
             add_filter('wpml-translation-editor-job-data', array($this, 'get_translation_job_data_for_editor'), 10, 2);
@@ -67,10 +69,10 @@ class WCML_Products{
                 $this->tp_support = new WCML_TP_Support();
             }
 
-        } else {
+        }else{
             add_filter('woocommerce_json_search_found_products', array($this, 'filter_found_products_by_language'));
-            add_filter('loop_shop_post_in', array($this, 'filter_products_with_custom_prices'), 100);
-            add_filter('woocommerce_related_products_args', array($this, 'filter_related_products_args'));
+            add_filter( 'loop_shop_post_in', array( $this, 'filter_products_with_custom_prices' ), 100 );
+            add_filter( 'woocommerce_related_products_args', array( $this, 'filter_related_products_args' ) );
         }
 
         add_action('woocommerce_email', array($this, 'woocommerce_email_refresh_text_domain'));
@@ -79,61 +81,61 @@ class WCML_Products{
         add_filter('wpml_link_to_translation', array($this, '_filter_link_to_translation'), 100, 4);
         add_filter('wpml_post_translation_job_url', array($this, '_filter_job_link_to_translation'), 100, 4);
 
-        add_filter('woocommerce_upsell_crosssell_search_products', array($this, 'filter_woocommerce_upsell_crosssell_posts_by_language'));
+        add_filter( 'woocommerce_upsell_crosssell_search_products', array( $this, 'filter_woocommerce_upsell_crosssell_posts_by_language' ) );
 
-        add_filter('icl_post_alternative_languages', array($this, 'hide_post_translation_links'));
+        add_filter( 'icl_post_alternative_languages', array( $this, 'hide_post_translation_links' ) );
 
-        add_action('woocommerce_reduce_order_stock', array($this, 'sync_product_stocks_reduce'));
-        add_action('woocommerce_restore_order_stock', array($this, 'sync_product_stocks_restore'));
+        add_action( 'woocommerce_reduce_order_stock', array( $this, 'sync_product_stocks_reduce' ) );
+        add_action( 'woocommerce_restore_order_stock', array( $this, 'sync_product_stocks_restore' ) );
 
-        add_filter('wcml_custom_box_html', array($this, 'downloadable_files_box'), 10, 3);
+        add_filter( 'wcml_custom_box_html', array( $this, 'downloadable_files_box' ), 10, 3 );
 
         add_action('icl_pro_translation_completed', array($this, 'icl_pro_translation_completed'));
 
         //add filter when add term on product page
-        add_filter('wpml_create_term_lang', array($this, 'product_page_add_language_info_to_term'));
+        add_filter( 'wpml_create_term_lang', array( $this, 'product_page_add_language_info_to_term' ) );
 
         //quick & bulk edit
-        add_action('woocommerce_product_quick_edit_save', array($this, 'woocommerce_product_quick_edit_save'));
-        add_action('woocommerce_product_bulk_edit_save', array($this, 'woocommerce_product_quick_edit_save'));
+        add_action( 'woocommerce_product_quick_edit_save', array( $this, 'woocommerce_product_quick_edit_save' ) );
+        add_action( 'woocommerce_product_bulk_edit_save', array( $this, 'woocommerce_product_quick_edit_save' ) );
 
         //save taxonomy in WPML interface
-        add_action('wp_ajax_wpml_tt_save_term_translation', array($this, 'update_taxonomy_in_variations'), 7);
+        add_action( 'wp_ajax_wpml_tt_save_term_translation', array( $this, 'update_taxonomy_in_variations' ), 7 );
 
-        add_action('wp_ajax_woocommerce_remove_variation', array($this, 'remove_variation_ajax'), 9);
+        add_action( 'wp_ajax_woocommerce_remove_variation', array( $this, 'remove_variation_ajax' ), 9 );
 
         // cart functions
-        add_action('woocommerce_get_cart_item_from_session', array($this, 'translate_cart_contents'), 10, 3);
-        add_action('woocommerce_cart_loaded_from_session', array($this, 'translate_cart_subtotal'));
-        add_action('woocommerce_before_calculate_totals', array($this, 'woocommerce_calculate_totals'));
+        add_action( 'woocommerce_get_cart_item_from_session', array( $this, 'translate_cart_contents' ), 10, 3 );
+        add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'translate_cart_subtotal' ) );
+        add_action( 'woocommerce_before_calculate_totals', array( $this, 'woocommerce_calculate_totals' ) );
 
         //refresh cart total on submit checkout action
-        add_action('woocommerce_before_checkout_process', array($this, 'wcml_refresh_cart_total'));
+        add_action( 'woocommerce_before_checkout_process', array( $this, 'wcml_refresh_cart_total' ) );
 
-        if (defined('WPSEO_VERSION') && defined('WPSEO_PATH') && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) && $_GET['tab'] == 'products') {
-            if (version_compare(WPSEO_VERSION, '3', '<')) {
+        if(defined('WPSEO_VERSION') && defined('WPSEO_PATH') && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) && $_GET['tab'] == 'products'){
+            if(version_compare(WPSEO_VERSION, '3', '<' )) {
                 require_once WPSEO_PATH . 'admin/class-metabox.php';
-            } elseif (file_exists(WPSEO_PATH . 'admin/metabox/class-metabox.php')) {
+            } elseif( file_exists( WPSEO_PATH . 'admin/metabox/class-metabox.php' ) ) {
                 require_once WPSEO_PATH . 'admin/metabox/class-metabox.php';
             }
         }
 
         // Override cached widget id
-        add_filter('woocommerce_cached_widget_id', array($this, 'override_cached_widget_id'));
+        add_filter( 'woocommerce_cached_widget_id', array( $this, 'override_cached_widget_id' ) );
 
         //update menu_order fro translations after ordering original products
-        add_action('woocommerce_after_product_ordering', array($this, 'update_all_products_translations_ordering'));
+        add_action( 'woocommerce_after_product_ordering', array( $this, 'update_all_products_translations_ordering' ) );
 
         //filter to copy excerpt value
-        add_filter('wpml_copy_from_original_custom_fields', array($this, 'filter_excerpt_field_content_copy'));
+        add_filter( 'wpml_copy_from_original_custom_fields', array( $this, 'filter_excerpt_field_content_copy' ) );
 
-        add_filter('icl_wpml_config_array', array($this, 'set_taxonomies_config'));
+        add_filter( 'icl_wpml_config_array', array( $this, 'set_taxonomies_config' ) );
 
-        add_filter('manage_product_posts_columns', array($this, 'add_languages_column'), 100);
-        add_action('woocommerce_product_after_variable_attributes', array($this, 'lock_variable_fields'), 10, 3);
+        add_filter( 'manage_product_posts_columns', array( $this, 'add_languages_column' ), 100 );
+        add_action( 'woocommerce_product_after_variable_attributes', array( $this, 'lock_variable_fields' ), 10, 3 );
 
-        add_action('woocommerce_product_set_stock_status', array($this, 'sync_stock_status_for_translations'), 10, 2);
-        add_action('woocommerce_variation_set_stock_status', array($this, 'sync_stock_status_for_translations'), 10, 2);
+        add_action( 'woocommerce_product_set_stock_status', array($this, 'sync_stock_status_for_translations'), 10, 2);
+        add_action( 'woocommerce_variation_set_stock_status', array($this, 'sync_stock_status_for_translations'), 10, 2);
         
     }
     
@@ -739,7 +741,7 @@ class WCML_Products{
         global $wpdb, $sitepress;
 
         foreach ($active_languages as $language) {
-            if ($job_language && $language['code'] != $job_language) {
+            if( $job_language && $language['code'] != $job_language ) {
                 continue;
             } elseif (isset($product_translations[$language['code']]) && $product_translations[$language['code']]->original) { ?>
                 <span
@@ -1439,6 +1441,8 @@ class WCML_Products{
             if( !isset( $_POST[ 'wp-preview' ] ) || empty( $_POST[ 'wp-preview' ] ) ){
                 $this->sync_date_and_parent( $duplicated_post_id, $post_id, $current_language );
                 $this->sync_product_data( $duplicated_post_id, $post_id, $current_language );
+
+                do_action( 'wcml_before_sync_product_data', $duplicated_post_id, $post_id, $current_language );
             }
 
             return;
@@ -1456,7 +1460,7 @@ class WCML_Products{
         }
 
         //save custom prices
-        $this->save_custom_prices($post_id);
+        $this->save_custom_prices( $duplicated_post_id );
 
         // pick posts to sync
         $posts = array();
@@ -1474,6 +1478,7 @@ class WCML_Products{
             $lang = $translation->language_code;
 
             do_action( 'wcml_before_sync_product_data', $duplicated_post_id, $post_id, $lang );
+
             // Filter upsell products, crosell products and default attributes for translations
             $this->duplicate_product_post_meta( $duplicated_post_id, $post_id );
 
@@ -2267,12 +2272,16 @@ class WCML_Products{
             // recount terms only first time
             if( !get_post_meta( $id, '_wcml_terms_recount' ) ){
                 $product_cats = wp_get_post_terms( $id, 'product_cat' );
-                $cats_to_recount = array();
-                foreach( $product_cats as $product_cat ){
-                    $cats_to_recount[ $product_cat->term_id ] = $product_cat->parent;
+
+                if(!empty($product_cats)) {
+
+                    foreach ($product_cats as $product_cat) {
+                        $cats_to_recount[$product_cat->term_id] = $product_cat->parent;
+                    }
+                    _wc_term_recount($cats_to_recount, get_taxonomy('product_cat'), true, false);
+                    add_post_meta($id, '_wcml_terms_recount', 'yes');
+
                 }
-                _wc_term_recount( $cats_to_recount, get_taxonomy( 'product_cat' ), true, false );
-                add_post_meta( $id, '_wcml_terms_recount', 'yes' );
             }
 
         }
@@ -2356,7 +2365,7 @@ class WCML_Products{
             }
 
             //translate custom attr value in cart object
-            if( isset( $cart_item[ 'variation' ] ) ){
+            if( isset( $cart_item[ 'variation' ] ) && is_array( $cart_item[ 'variation' ] ) ){
                 foreach( $cart_item[ 'variation' ] as $attr_key => $attribute ){
                     $cart->cart_contents[ $key ][ 'variation' ][ $attr_key ] = $this->get_cart_attribute_translation( $attr_key, $attribute, $cart_item['variation_id'], $current_language );
                 }
@@ -2743,7 +2752,7 @@ class WCML_Products{
     function update_order_for_product_translations( $product_id ){
         global $wpdb, $sitepress, $woocommerce_wpml;
 
-        if( $woocommerce_wpml->settings['products_sync_order'] ) {
+        if( isset($woocommerce_wpml->settings['products_sync_order']) && $woocommerce_wpml->settings['products_sync_order'] ) {
 
             $current_language = $sitepress->get_current_language();
 

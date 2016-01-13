@@ -23,11 +23,12 @@ class WCML_Bookings{
         add_action( 'wcml_before_sync_product_data', array( $this, 'sync_bookings' ), 10, 3 );
         add_action( 'wcml_before_sync_product', array( $this, 'sync_booking_data' ), 10, 2 );
 
-        add_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
+        add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
 
         add_filter( 'get_post_metadata', array( $this, 'filter_wc_booking_cost' ), 10, 4 );
         add_filter( 'woocommerce_bookings_process_cost_rules_cost', array( $this, 'wc_bookings_process_cost_rules_cost' ), 10, 3 );
         add_filter( 'woocommerce_bookings_process_cost_rules_base_cost', array( $this, 'wc_bookings_process_cost_rules_base_cost' ), 10, 3 );
+        add_filter( 'woocommerce_bookings_process_cost_rules_override_block', array( $this, 'wc_bookings_process_cost_rules_override_block_cost' ), 10, 3 );
 
         add_filter( 'wcml_multi_currency_is_ajax', array( $this, 'wcml_multi_currency_is_ajax' ) );
 
@@ -350,7 +351,7 @@ class WCML_Bookings{
     function sync_bookings( $original_product_id, $product_id, $lang ){
         global $wpdb;
 
-        $all_bookings_for_product =  WC_Bookings_Controller::get_bookings_for_product( $original_product_id , array( 'in-cart', 'unpaid', 'confirmed', 'paid' ) );
+        $all_bookings_for_product = $wpdb->get_results( $wpdb->prepare( "SELECT post_id as id FROM $wpdb->postmeta WHERE meta_key = '_booking_product_id' AND meta_value = %d", $original_product_id ) );
 
         foreach($all_bookings_for_product as $booking ){
             $check_if_exists = $wpdb->get_row( $wpdb->prepare( "SELECT pm3.* FROM {$wpdb->postmeta} AS pm1
@@ -367,6 +368,7 @@ class WCML_Bookings{
                 update_post_meta( $check_if_exists->post_id, '_booking_persons', $this->get_translated_booking_persons_ids( $booking->id, $lang ) );
             }
         }
+
 
     }
 
@@ -473,6 +475,11 @@ class WCML_Bookings{
             wp_delete_post( $trnsl_product_resource );
 
         }
+
+        remove_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
+        $this->sync_resource_costs( $original_product_id, $trnsl_product_id, '_resource_base_costs', $lang_code );
+        $this->sync_resource_costs( $original_product_id, $trnsl_product_id, '_resource_block_costs', $lang_code );
+        add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
 
     }
 
@@ -715,13 +722,13 @@ class WCML_Bookings{
         return $check;
     }
 
-    function update_wc_booking_costs(  $check, $object_id, $meta_key, $meta_value, $prev_value ){
+    function update_wc_booking_costs(  $check, $object_id, $meta_key, $meta_value ){
 
         if( in_array( $meta_key, array( '_wc_booking_pricing', '_resource_base_costs', '_resource_block_costs' ) ) ){
 
             global $woocommerce_wpml;
 
-            remove_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
+            remove_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
 
             $nonce = filter_input( INPUT_POST, '_wcml_custom_costs_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
@@ -802,29 +809,19 @@ class WCML_Bookings{
 
                 }
 
-                add_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
+                add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
 
-                return true;
-
-            }elseif(in_array( $meta_key, array( '_resource_base_costs', '_resource_block_costs' ) ) ){
+            }elseif( in_array( $meta_key, array( '_resource_base_costs', '_resource_block_costs' ) ) ){
 
                 $return = $this->sync_resource_costs_with_translations( $object_id, $meta_key, $check );
 
-                add_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
-
-                return $return;
+                add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
 
             }else{
 
-                add_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
-
-                return $check;
+                add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
 
             }
-
-        }else{
-
-            return $check;
 
         }
 
@@ -905,6 +902,10 @@ class WCML_Bookings{
 
     function wc_bookings_process_cost_rules_base_cost( $base_cost, $fields, $key ){
         return $this->filter_pricing_cost( $base_cost, $fields, 'base_cost_', $key );
+    }
+
+    function wc_bookings_process_cost_rules_override_block_cost( $override_cost, $fields, $key ){
+        return $this->filter_pricing_cost( $override_cost, $fields, 'override_cost_', $key );
     }
 
     function filter_pricing_cost( $cost, $fields, $name, $key ){
@@ -1375,11 +1376,6 @@ class WCML_Bookings{
             //sync resources data
             $this->sync_resources( $original_product_id, $tr_product_id, $language, false );
 
-            remove_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
-            $this->sync_resource_costs( $original_product_id, $tr_product_id, '_resource_base_costs', $language );
-            $this->sync_resource_costs( $original_product_id, $tr_product_id, '_resource_block_costs', $language );
-            add_filter( 'update_post_metadata', array( $this, 'update_wc_booking_costs' ), 10, 5 );
-
         }
 
         $original_persons = $this->get_original_persons( $original_product_id );
@@ -1594,7 +1590,7 @@ class WCML_Bookings{
     public function booking_filters_query( $query ) {
         global $typenow, $sitepress, $wpdb;
 
-        if ( ( isset( $query->query_vars['post_type'] ) && $query->query_vars['post_type'] == 'wc_booking' ) || ( $typenow == 'wc_booking' && isset( $_GET['post_type'] ) && $_GET['post_type'] == 'wc_booking' && !isset( $_GET['page'] ) ) ) {
+        if ( ( isset( $query->query_vars['post_type'] ) && $query->query_vars['post_type'] == 'wc_booking' ) ) {
 
             $product_ids = $wpdb->get_col( $wpdb->prepare(
                 "SELECT element_id

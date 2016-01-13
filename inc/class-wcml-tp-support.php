@@ -64,7 +64,7 @@ class WCML_TP_Support{
 
         foreach( $data as $data_key => $value){
 
-            if( $value['finished'] && strpos( $value['field_type'], 'wc_attribute_' ) === 0 ){
+            if( $value['finished'] && isset( $value['field_type'] ) && strpos( $value['field_type'], 'wc_attribute_' ) === 0 ){
 
                 if( strpos( $value['field_type'], 'wc_attribute_name:' ) === 0 ){
 
@@ -147,13 +147,13 @@ class WCML_TP_Support{
 
     }
 
-    function save_variation_descriptions_translations($post_id, $data, $job){
+    function save_variation_descriptions_translations( $post_id, $data, $job ){
 
         $language = $job->language_code;
 
         foreach( $data as $data_key => $value){
 
-            if( $value['finished'] && strpos( $value['field_type'], 'wc_variation_description:' ) === 0 ){
+            if( $value['finished'] && isset( $value['field_type'] ) && strpos( $value['field_type'], 'wc_variation_description:' ) === 0 ){
 
                 $variation_id = substr( $value['field_type'], strpos($value['field_type'], ':') + 1 );
 

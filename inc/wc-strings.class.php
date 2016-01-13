@@ -762,5 +762,5 @@ class WCML_WC_Strings{
         }
 
     }
-
+    
 }
