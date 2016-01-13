@@ -2267,7 +2267,7 @@ class WCML_Products{
             // recount terms only first time
             if( !get_post_meta( $id, '_wcml_terms_recount' ) ){
                 $product_cats = wp_get_post_terms( $id, 'product_cat' );
-
+                $cats_to_recount = array();
                 foreach( $product_cats as $product_cat ){
                     $cats_to_recount[ $product_cat->term_id ] = $product_cat->parent;
                 }
