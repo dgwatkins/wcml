@@ -3054,7 +3054,7 @@ class WCML_Products{
     function update_order_for_product_translations( $product_id ){
         global $wpdb, $sitepress, $woocommerce_wpml;
 
-        if( $woocommerce_wpml->settings['products_sync_order'] ) {
+        if( isset($woocommerce_wpml->settings['products_sync_order']) && $woocommerce_wpml->settings['products_sync_order'] ) {
 
             $current_language = $sitepress->get_current_language();
 
