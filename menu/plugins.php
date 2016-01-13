@@ -1,6 +1,5 @@
 <?php global $woocommerce_wpml, $sitepress; ?>
 <div class="wrap">
-    <div id="icon-wpml" class="icon32"><br /></div>
     <h2><?php _e('WooCommerce Multilingual', 'woocommerce-multilingual') ?></h2>
 	<div class="wcml-tabs wpml-tabs">
     	<a class="nav-tab nav-tab-active" href="<?php echo admin_url('admin.php?page=wpml-wcml'); ?>"><?php _e('Required plugins', 'woocommerce-multilingual') ?></a>
