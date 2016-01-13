@@ -440,7 +440,7 @@ jQuery( function($){
             data += '&currency_options[thousand_sep]=' + parent.find('.currency_option_thousand_sep').val();
             data += '&currency_options[decimal_sep]=' + parent.find('.currency_option_decimal_sep').val();
             data += '&currency_options[decimals]=' + parent.find('.currency_option_decimals').val();
-            data += '&currency_options[code]=' + parent.find(':submit').data('currency');
+            data += '&currency_options[code]=' + parent.find(':submit').attr('data-currency');
 
             if(!parent.find('.spinner').length){
                 parent.find('.wcml-co-preview-value').append('<span class="spinner" style="visibility: visible"></span>');
