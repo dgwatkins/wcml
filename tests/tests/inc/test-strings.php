@@ -62,7 +62,9 @@ class Test_WCML_Strings extends WCML_UnitTestCase {
 
 		$string_id = icl_get_string_id( $label, 'WordPress', 'taxonomy singular name: '.$label );
 
-		icl_add_string_translation( $string_id, 'es', 'Test attr es', ICL_STRING_TRANSLATION_COMPLETE );
+		icl_add_string_translation( $string_id, 'es', 'Test attr es', ICL_TM_COMPLETE );
+
+		$WPML_String_Translation->clear_string_filter( 'es' );
 
 		$sitepress->switch_lang( 'es' );
 		register_taxonomy( $name, apply_filters( "woocommerce_taxonomy_objects_{$name}", array( 'product' ) ), apply_filters( "woocommerce_taxonomy_args_{$name}", $taxonomy_data ) );

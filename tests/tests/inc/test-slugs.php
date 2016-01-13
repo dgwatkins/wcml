@@ -64,7 +64,7 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 		do_action( 'wpml_register_single_string', $this->url_translation->url_strings_context(), $name, $category_base );
 		$string_id = icl_get_string_id( $category_base, $this->url_translation->url_strings_context(), $name );
 
-		icl_add_string_translation( $string_id, 'es', 'categoria-producto', ICL_STRING_TRANSLATION_COMPLETE);
+		icl_add_string_translation( $string_id, 'es', 'categoria-producto', ICL_TM_COMPLETE );
 		$translated_tax = $this->url_translation->get_translated_tax_slug('product_cat','es');
 
 		$this->assertTrue( (bool) has_filter('wpml_translate_single_string') );

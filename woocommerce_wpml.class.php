@@ -694,10 +694,14 @@ class woocommerce_wpml {
     }
 
 
-    function get_language_pack_uri( $locale ){
+    function get_language_pack_uri( $locale, $version = false ){
         $repo = 'https://github.com/woothemes/woocommerce-language-packs/raw/v';
 
-        return $repo . WC_VERSION . '/packages/' . $locale . '.zip';
+        if( !$version ){
+            $version = WC_VERSION;
+        }
+
+        return $repo . $version . '/packages/' . $locale . '.zip';
 
     }
 
