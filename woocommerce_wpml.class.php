@@ -41,7 +41,7 @@ class woocommerce_wpml {
 
 
         $actions_that_need_mc = array( 'save-mc-options', 'wcml_new_currency', 'wcml_save_currency', 'wcml_delete_currency',
-            'wcml_currencies_list', 'wcml_update_currency_lang', 'wcml_update_default_currency');
+            'wcml_currencies_list', 'wcml_update_currency_lang', 'wcml_update_default_currency', 'wcml_price_preview');
         if($this->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT
             || ( isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) && $_GET['tab'] == 'multi-currency' )
             || ( isset( $_POST[ 'action' ] ) && in_array( $_POST[ 'action' ], $actions_that_need_mc ) )
