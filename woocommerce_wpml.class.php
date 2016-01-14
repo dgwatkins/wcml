@@ -40,6 +40,7 @@ class woocommerce_wpml {
         $this->load_css_and_js();
 
 
+
         $actions_that_need_mc = array( 'save-mc-options', 'wcml_new_currency', 'wcml_save_currency', 'wcml_delete_currency',
             'wcml_currencies_list', 'wcml_update_currency_lang', 'wcml_update_default_currency', 'wcml_price_preview');
         if($this->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT
@@ -372,6 +373,8 @@ class woocommerce_wpml {
 
             $this->load_managment_css();
 
+
+
             if( in_array( $_GET[ 'page' ], array( 'wpml-wcml', basename( WCML_PLUGIN_PATH ). '/menu/sub/troubleshooting.php' ) ) ) {
 
 	            wp_register_script( 'wcml-tm-scripts', WCML_PLUGIN_URL . '/res/js/scripts.js', array(
@@ -439,6 +442,8 @@ class woocommerce_wpml {
 
             wp_register_style( 'wpml-wcml', WCML_PLUGIN_URL . '/res/css/management.css', array(), WCML_VERSION );
             wp_enqueue_style( 'wpml-wcml' );
+            wp_enqueue_style( 'onthegosystems-icon', WCML_PLUGIN_URL . '/res/css/otgs-ico.css' );
+
 
         }
 
