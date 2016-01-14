@@ -6,22 +6,7 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 		global $woocommerce_wpml, $woocommerce;
 
 		//use stable version to test
-		$file = $woocommerce->plugin_path(). '/readme.txt';
-		$values = file($file);
-		$wc_info = explode( ':', $values[5] );
-		if( $wc_info[0] == 'Stable tag' ){
-			$version =  trim( $wc_info[1] );
-		}else{
-			foreach( $values as $value ){
-				$wc_info = explode( ':', $value );
-
-				if( $wc_info[0] == 'Stable tag' ){
-					$version = trim( $wc_info[1] );
-				}
-			}
-		}
-
-		$pack_uri = $woocommerce_wpml->get_language_pack_uri( 'uk_UA', $version );
+		$pack_uri = $woocommerce_wpml->get_language_pack_uri( 'uk_UA', $woocommerce_wpml->get_stable_wc_version() );
 
 		$response = wp_safe_remote_get( $pack_uri, array( 'timeout' => 60 ) );
 		$response_result = false;

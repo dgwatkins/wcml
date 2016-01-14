@@ -590,7 +590,7 @@ class woocommerce_wpml {
      * @param  string $lang_code Language code
      *
      */
-    function download_woocommerce_translations( $lang_code ){
+    function download_woocommerce_translations( $lang_code, $wc_version ){
         global $sitepress;
 
         $locale = $sitepress->get_locale( $lang_code );
@@ -615,14 +615,14 @@ class woocommerce_wpml {
             $upgr_object[0]->type = 'plugin';
             $upgr_object[0]->slug = 'woocommerce';
             $upgr_object[0]->language = $locale;
-            $upgr_object[0]->version = WC_VERSION;
+            $upgr_object[0]->version = $wc_version ? $wc_version : WC_VERSION;
             $upgr_object[0]->updated = date('Y-m-d H:i:s');
-            $upgr_object[0]->package = $this->get_language_pack_uri( $locale );
+            $upgr_object[0]->package = $this->get_language_pack_uri( $locale, $wc_version );
             $upgr_object[0]->autoupdate = 1;
 
             $upgrader->bulk_upgrade( $upgr_object );
 
-            $this->save_translation_version( $locale );
+            $this->save_translation_version( $locale, false, $wc_version );
         }
 
     }
@@ -632,7 +632,7 @@ class woocommerce_wpml {
      * Automatically download translations for WC for active languages
      *
      */
-    function download_woocommerce_translations_for_active_languages(){
+    function download_woocommerce_translations_for_active_languages( $wc_version = false ){
         global $sitepress;
 
         $active_languages = $sitepress->get_active_languages();
@@ -641,7 +641,7 @@ class woocommerce_wpml {
 
         foreach( $active_languages as $language ){
 
-            $this->download_woocommerce_translations( $language['code'] );
+            $this->download_woocommerce_translations( $language['code'], $wc_version );
 
         }
 
@@ -734,12 +734,12 @@ class woocommerce_wpml {
     }
 
 
-    function save_translation_version( $locale, $key = false ){
+    function save_translation_version( $locale, $key = false, $wc_version = false ){
 
         $notices = maybe_unserialize( get_option( 'wcml_translations_upgrade_notice' ) );
 
         // Update the language pack version
-        update_option( 'woocommerce_language_pack_version_'.$locale, array( WC_VERSION, $locale ) );
+        update_option( 'woocommerce_language_pack_version_'.$locale, array( $wc_version ? $wc_version : WC_VERSION, $locale ) );
 
         if( is_array( $notices ) ){
 
@@ -831,6 +831,28 @@ class woocommerce_wpml {
         unset( $types['product_variation'] );
 
         return $types;
+    }
+
+    //get latest stable version from WC readme.txt
+    function get_stable_wc_version(){
+        global $woocommerce;
+
+        $file = $woocommerce->plugin_path(). '/readme.txt';
+        $values = file($file);
+        $wc_info = explode( ':', $values[5] );
+        if( $wc_info[0] == 'Stable tag' ){
+            $version =  trim( $wc_info[1] );
+        }else{
+            foreach( $values as $value ){
+                $wc_info = explode( ':', $value );
+
+                if( $wc_info[0] == 'Stable tag' ){
+                    $version = trim( $wc_info[1] );
+                }
+            }
+        }
+
+        return $version;
     }
 
 }
