@@ -63,7 +63,7 @@ foreach($currencies as $code => $currency){
 				<label for="multi_currency_independent">
 					<?php _e( "Enable the multi-currency mode", 'woocommerce-multilingual' ); ?>
 					&nbsp;
-					<a href=" <?php echo $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/documentation/related-projects/woocommerce-multilingual/multi-currency-support-woocommerce/', 'multi-currency-support-woocommerce', 'documentation' ) ?>"><?php _e( 'Learn more', 'wpl-wcml' ) ?></a>.
+					<a href=" <?php echo $woocommerce_wpml->generate_tracking_link( 'https://wpml.org/documentation/related-projects/woocommerce-multilingual/multi-currency-support-woocommerce/', 'multi-currency-support-woocommerce', 'documentation' ) ?>"><?php _e( 'Learn more', 'wpl-wcml' ) ?></a>.
 				</label>
 			</p>
 

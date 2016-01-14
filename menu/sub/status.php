@@ -14,7 +14,7 @@ $default_language = $sitepress->get_default_language();
 		<ul class="wcml-status-list wcml-plugins-status-list">
 			<?php if ( defined( 'ICL_SITEPRESS_VERSION' ) ) : ?>
 				<li>
-					<i class="otgs-ico-ok"></i> <?php printf( __( '%s plugin is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML</strong>' ); ?>
+					<i class="otgs-ico-ok"></i> <?php printf( __( '%s is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML</strong>' ); ?>
 				</li>
 				<?php if ( $sitepress->setup() ): ?>
 					<li>
@@ -28,24 +28,24 @@ $default_language = $sitepress->get_default_language();
 			<?php endif; ?>
 			<?php if ( defined( 'WPML_MEDIA_VERSION' ) ) : ?>
 				<li>
-					<i class="otgs-ico-ok"></i> <?php printf( __( '%s plugin is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML Media</strong>' ); ?>
+					<i class="otgs-ico-ok"></i> <?php printf( __( '%s is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML Media</strong>' ); ?>
 				</li>
 			<?php endif; ?>
 			<?php if ( defined( 'WPML_TM_VERSION' ) ) : ?>
 				<li>
-					<i class="otgs-ico-ok"></i> <?php printf( __( '%s plugin is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML Translation Management</strong>' ); ?>
+					<i class="otgs-ico-ok"></i> <?php printf( __( '%s is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML Translation Management</strong>' ); ?>
 				</li>
 			<?php endif; ?>
 			<?php if ( defined( 'WPML_ST_VERSION' ) ) : ?>
 				<li>
-					<i class="otgs-ico-ok"></i> <?php printf( __( '%s plugin is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML String Translation</strong>' ); ?>
+					<i class="otgs-ico-ok"></i> <?php printf( __( '%s is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML String Translation</strong>' ); ?>
 				</li>
 			<?php endif; ?>
 			<?php
 			global $woocommerce;
 			if ( class_exists( 'Woocommerce' ) ) : ?>
 				<li>
-					<i class="otgs-ico-ok"></i> <?php printf( __( '%s plugin is installed and active.', 'woocommerce-multilingual' ), '<strong>WooCommerce</strong>' ); ?>
+					<i class="otgs-ico-ok"></i> <?php printf( __( '%s is installed and active.', 'woocommerce-multilingual' ), '<strong>WooCommerce</strong>' ); ?>
 				</li>
 			<?php endif; ?>
 		</ul>
@@ -97,7 +97,7 @@ if ( ( ! WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty
 							<i class="otgs-ico-warning"></i> <?php _e( "Your site's default language is not English and the strings language is also not English.", 'woocommerce-multilingual' ) ?>
 							<small>
 								<i class="otgs-ico-help"></i>
-								<a href="http://wpml.org/?page_id=355545">
+								<a href="https://wpml.org/?page_id=355545">
 									<?php _e( "Running WooCommerce multilingual with default language other than English.", 'woocommerce-multilingual' ); ?>
 								</a>
 							</small>
@@ -115,7 +115,7 @@ if ( ( ! WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty
 							<i class="otgs-ico-warning"></i> <?php _e( "Your site's default language is not English.", 'woocommerce-multilingual' ) ?>
 							<small>
 								<i class="otgs-ico-help"></i>
-								<a href="http://wpml.org/?page_id=355545">
+								<a href="https://wpml.org/?page_id=355545">
 									<?php _e( "Running WooCommerce multilingual with default language other than English.", 'woocommerce-multilingual' ); ?>
 								</a>
 							</small>

@@ -1,9 +1,11 @@
 <?php global $woocommerce_wpml, $sitepress; ?>
 <div class="wrap">
-    <h2><?php _e('WooCommerce Multilingual', 'woocommerce-multilingual') ?></h2>
-	<div class="wcml-tabs wpml-tabs">
-    	<a class="nav-tab nav-tab-active" href="<?php echo admin_url('admin.php?page=wpml-wcml'); ?>"><?php _e('Required plugins', 'woocommerce-multilingual') ?></a>
-	</div>
+
+    <h1><?php _e('WooCommerce Multilingual', 'woocommerce-multilingual') ?></h1>
+
+	<nav class="wcml-tabs wpml-tabs" style="display:table;margin-top:30px;">
+    	<a class="nav-tab nav-tab-active" href="<?php echo admin_url('admin.php?page=wpml-wcml'); ?>" ><?php _e('Required plugins', 'woocommerce-multilingual') ?></a>
+	</nav>
 
 	<div class="wcml-wrap">
         <div class="wcml-section">
@@ -19,20 +21,22 @@
                      <?php if (defined('ICL_SITEPRESS_VERSION') && version_compare(ICL_SITEPRESS_VERSION, '2.0.5', '<')) : ?>
 	                     <li>
 		                     <i class="otgs-ico-warning"></i>
-							 <?php printf( __( 'WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML</a> versions prior 2.0.5.', 'woocommerce-multilingual' ), $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/' ) ); ?>
-		                     <a href="<?php echo $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/shop/account/', false, 'account' ) ?>"
+							 <?php printf( __( 'WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML</a> versions prior 2.0.5.', 'woocommerce-multilingual' ), $woocommerce_wpml->generate_tracking_link( 'https://wpml.org/' ) ); ?>
+		                     <a href="<?php echo $woocommerce_wpml->generate_tracking_link( 'https://wpml.org/shop/account/', false, 'account' ) ?>"
 		                        target="_blank"><?php _e( 'Update WPML', 'woocommerce-multilingual' ); ?></a>
 						 </li>
 					 <?php elseif ( !$woocommerce_wpml->check_design_update ) : ?>
 	                     <li>
 		                     <i class="otgs-ico-warning"></i>
-							 <?php printf( __( 'You are using WooCommerce Multilingual %s. This version includes an important UI redesign for the configuration screens and it requires <a href="%s">WPML</a> %s and higher. Everything still works on the front end but in order to configure options for WooCommerce Multilingual you need to upgrade WPML.', 'woocommerce-multilingual' ), WCML_VERSION, $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/' ), '3.4' ); ?>
-		                     <a href="<?php echo $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/shop/account/', false, 'account' ) ?>"
-		                        target="_blank"><?php _e( 'Update WPML', 'woocommerce-multilingual' ); ?></a>
+							 <?php printf( __( 'You are using WooCommerce Multilingual %s. This version includes an important UI redesign for the configuration screens and it requires <a href="%s">WPML %s</a> or higher. Everything still works on the front end now but, in order to configure options for WooCommerce Multilingual, you need to upgrade WPML.', 'woocommerce-multilingual' ), WCML_VERSION, $woocommerce_wpml->generate_tracking_link( 'https://wpml.org/' ), '3.4' ); ?>
+		                     <p>
+								 <a class="button-primary" href="<?php echo $woocommerce_wpml->dependencies->required_plugin_install_link( 'wpml' ) ?>"
+		                        target="_blank"><?php _e( 'Upgrade WPML', 'woocommerce-multilingual' ); ?></a>
+							 </p>
 						 </li>
                     <?php elseif (defined('ICL_SITEPRESS_VERSION')) : ?>
 	                     <li>
-		                     <i class="otgs-ico-ok"></i> <?php printf( __( '%s plugin is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML</strong>' ); ?>
+		                     <i class="otgs-ico-ok"></i> <?php printf( __( '%s is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML</strong>' ); ?>
 	                     </li>
                         <?php if($sitepress->setup()): ?>
 		                     <li>
@@ -45,38 +49,40 @@
                         <?php endif; ?>
                     <?php else : ?>
 	                     <li>
-		                     <i class="otgs-ico-warning"></i> <?php printf( __( '%s plugin is either not installed or not active.', 'woocommerce-multilingual' ), '<strong>WPML</strong>' ); ?>
-		                     <a href="<?php echo $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/' ) ?>"
+		                     <i class="otgs-ico-warning"></i> <?php printf( __( '%s is either not installed or not active.', 'woocommerce-multilingual' ),
+								 '<strong><a title="' . esc_attr__('The WordPress Multilingual Plugin', 'woocommerce-multilingual') .
+								 '" href="' . $woocommerce_wpml->generate_tracking_link( 'https://wpml.org/' ) . '">WPML</a></strong>' ); ?>
+		                     <a href="<?php echo $woocommerce_wpml->dependencies->required_plugin_install_link( 'wpml' ) ?>"
 		                        target="_blank"><?php _e( 'Get WPML', 'woocommerce-multilingual' ); ?></a></li>
                     <?php endif; ?>
                     <?php if (defined('WPML_MEDIA_VERSION')) : ?>
 	                    <li>
-		                    <i class="otgs-ico-ok"></i> <?php printf( __( '%s plugin is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML Media</strong>' ); ?>
+		                    <i class="otgs-ico-ok"></i> <?php printf( __( '%s is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML Media</strong>' ); ?>
 	                    </li>
                     <?php else : ?>
 	                    <li>
-		                    <i class="otgs-ico-warning"></i> <?php printf( __( '%s plugin is either not installed or not active.', 'woocommerce-multilingual' ), '<strong>WPML Media</strong>' ); ?>
-		                    <a href="<?php echo $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/' ) ?>"
+		                    <i class="otgs-ico-warning"></i> <?php printf( __( '%s is either not installed or not active.', 'woocommerce-multilingual' ), '<strong>WPML Media</strong>' ); ?>
+		                    <a href="<?php echo $woocommerce_wpml->dependencies->required_plugin_install_link( 'wpml' ) ?>"
 		                       target="_blank"><?php _e( 'Get WPML Media', 'woocommerce-multilingual' ); ?></a></li>
                     <?php endif; ?>
                     <?php if (defined('WPML_TM_VERSION')) : ?>
 	                    <li>
-		                    <i class="otgs-ico-ok"></i> <?php printf( __( '%s plugin is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML Translation Management</strong>' ); ?>
+		                    <i class="otgs-ico-ok"></i> <?php printf( __( '%s is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML Translation Management</strong>' ); ?>
 	                    </li>
                     <?php else : ?>
 	                    <li>
-		                    <i class="otgs-ico-warning"></i> <?php printf( __( '%s plugin is either not installed or not active.', 'woocommerce-multilingual' ), '<strong>WPML Translation Management</strong>' ); ?>
-		                    <a href="<?php echo $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/' ) ?>"
+		                    <i class="otgs-ico-warning"></i> <?php printf( __( '%s is either not installed or not active.', 'woocommerce-multilingual' ), '<strong>WPML Translation Management</strong>' ); ?>
+		                    <a href="<?php echo $woocommerce_wpml->dependencies->required_plugin_install_link( 'wpml' ) ?>"
 		                       target="_blank"><?php _e( 'Get WPML Translation Management', 'woocommerce-multilingual' ); ?></a></li>
                     <?php endif; ?>
                     <?php if (defined('WPML_ST_VERSION')) : ?>
 	                    <li>
-		                    <i class="otgs-ico-ok"></i> <?php printf( __( '%s plugin is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML String Translation</strong>' ); ?>
+		                    <i class="otgs-ico-ok"></i> <?php printf( __( '%s is installed and active.', 'woocommerce-multilingual' ), '<strong>WPML String Translation</strong>' ); ?>
 	                    </li>
                     <?php else : ?>
 	                    <li>
-		                    <i class="otgs-ico-warning"></i> <?php printf( __( '%s plugin is either not installed or not active.', 'woocommerce-multilingual' ), '<strong>WPML String Translation</strong>' ); ?>
-		                    <a href="<?php echo $woocommerce_wpml->generate_tracking_link( 'http://wpml.org/' ) ?>"
+		                    <i class="otgs-ico-warning"></i> <?php printf( __( '%s is either not installed or not active.', 'woocommerce-multilingual' ), '<strong>WPML String Translation</strong>' ); ?>
+		                    <a href="<?php echo $woocommerce_wpml->dependencies->required_plugin_install_link( 'wpml' ) ?>"
 		                       target="_blank"><?php _e( 'Get WPML String Translation', 'woocommerce-multilingual' ); ?></a></li>
                     <?php endif; ?>
                     <?php
@@ -89,11 +95,11 @@
 		                       target="_blank"><?php _e( 'Download WooCommerce', 'woocommerce-multilingual' ); ?></a></li>
                     <?php elseif (class_exists('Woocommerce')) : ?>
 	                    <li>
-		                    <i class="otgs-ico-ok"></i> <?php printf( __( '%s plugin is installed and active.', 'woocommerce-multilingual' ), '<strong>WooCommerce</strong>' ); ?>
+		                    <i class="otgs-ico-ok"></i> <?php printf( __( '%s is installed and active.', 'woocommerce-multilingual' ), '<strong>WooCommerce</strong>' ); ?>
 	                    </li>
                     <?php else : ?>
 	                    <li>
-		                    <i class="otgs-ico-warning"></i> <?php printf( __( '%s plugin is either not installed or not active.', 'woocommerce-multilingual' ), '<strong>WooCommerce</strong>' ); ?>
+		                    <i class="otgs-ico-warning"></i> <?php printf( __( '%s is either not installed or not active.', 'woocommerce-multilingual' ), '<strong>WooCommerce</strong>' ); ?>
 		                    <a href="http://wordpress.org/extend/plugins/woocommerce/"
 		                       target="_blank"><?php _e( 'Download WooCommerce', 'woocommerce-multilingual' ); ?></a></li>
                     <?php endif; ?>

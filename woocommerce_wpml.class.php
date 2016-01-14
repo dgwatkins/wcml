@@ -505,7 +505,7 @@ class woocommerce_wpml {
         $get_post_type = get_post_type($post->ID);
 
         if($get_post_type == 'product' && $pagenow == 'edit.php'){
-            $prot_link = '<span class="button"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="'. $this->generate_tracking_link('http://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation','#4') .'" target="_blank">' .
+            $prot_link = '<span class="button"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="'. $this->generate_tracking_link('https://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation','#4') .'" target="_blank">' .
                     __('How to translate products', 'sitepress') . '<\/a>' . '<\/span>';
             $quick_edit_notice = '<div id="quick_edit_notice" style="display:none;"><p>'. sprintf(__("Quick edit is disabled for product translations. It\'s recommended to use the %s for editing products translations. %s", 'woocommerce-multilingual'), '<a href="'.admin_url('admin.php?page=wpml-wcml&tab=products').'" >'.__('WooCommerce Multilingual products editor', 'woocommerce-multilingual').'</a>','<a href="" class="quick_product_trnsl_link" >'.__('Edit this product translation', 'woocommerce-multilingual').'</a>').'</p></div>';
             $quick_edit_notice_prod_link = '<input type="hidden" id="wcml_product_trnsl_link" value="'.admin_url('admin.php?page=wpml-wcml&tab=products&prid=').'">';
@@ -537,7 +537,7 @@ class woocommerce_wpml {
             $pos = strpos($_GET['taxonomy'], 'pa_');
 
             if($pos !== false && $pagenow == 'edit-tags.php'){
-                $prot_link = '<span class="button" style="padding:4px;margin-top:0px; float: left;"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="'. $this->generate_tracking_link('http://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation','#3') .'" target="_blank" style="text-decoration: none;">' .
+                $prot_link = '<span class="button" style="padding:4px;margin-top:0px; float: left;"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="'. $this->generate_tracking_link('https://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation','#3') .'" target="_blank" style="text-decoration: none;">' .
                             __('How to translate attributes', 'sitepress') . '<\/a>' . '<\/span><br \/><br \/>';
                 ?>
                         <script type="text/javascript">
@@ -549,7 +549,7 @@ class woocommerce_wpml {
 
         if(isset($_GET['taxonomy']) && $_GET['taxonomy'] == 'product_cat'){
 
-                $prot_link = '<span class="button" style="padding:4px;margin-top:0px; float: left;"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="'. $this->generate_tracking_link('http://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation','#3') .'" target="_blank" style="text-decoration: none;">' .
+                $prot_link = '<span class="button" style="padding:4px;margin-top:0px; float: left;"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="'. $this->generate_tracking_link('https://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation','#3') .'" target="_blank" style="text-decoration: none;">' .
                             __('How to translate product categories', 'sitepress') . '<\/a>' . '<\/span><br \/><br \/>';
                 ?>
                         <script type="text/javascript">
@@ -575,7 +575,7 @@ class woocommerce_wpml {
                 <?php _e('Would you like to see a quick overview?', 'woocommerce-multilingual'); ?>
                 </p>
                 <p>
-                <a class="button-primary" href="<?php echo $this->generate_tracking_link('http://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation'); ?>" target="_blank"><?php _e('Learn how to turn your e-commerce site multilingual', 'woocommerce-multilingual') ?></a>
+                <a class="button-primary" href="<?php echo $this->generate_tracking_link('https://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation'); ?>" target="_blank"><?php _e('Learn how to turn your e-commerce site multilingual', 'woocommerce-multilingual') ?></a>
                 <a class="button-secondary" href="<?php echo $url; ?>"><?php _e('Dismiss', 'woocommerce-multilingual') ?></a>
                 </p>
             </div>
