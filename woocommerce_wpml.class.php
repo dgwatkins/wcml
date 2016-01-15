@@ -31,6 +31,7 @@ class woocommerce_wpml {
         $this->check_design_update = $this->dependencies->check_design_update();
 
         if( !$this->check_dependencies ){
+            wp_enqueue_style( 'onthegosystems-icon', WCML_PLUGIN_URL . '/res/css/otgs-ico.css' );
             $this->load_managment_css();
             return false;
         }
@@ -38,8 +39,6 @@ class woocommerce_wpml {
         global $sitepress,$pagenow;
 
         $this->load_css_and_js();
-
-
 
         $actions_that_need_mc = array( 'save-mc-options', 'wcml_new_currency', 'wcml_save_currency', 'wcml_delete_currency',
             'wcml_currencies_list', 'wcml_update_currency_lang', 'wcml_update_default_currency', 'wcml_price_preview');
@@ -439,12 +438,8 @@ class woocommerce_wpml {
     function load_managment_css(){
 
         if( isset( $_GET[ 'page' ] ) && in_array( $_GET[ 'page' ], array( 'wpml-wcml', basename( WCML_PLUGIN_PATH ).'/menu/sub/troubleshooting.php', basename( WCML_PLUGIN_PATH ).'/menu/plugins.php' ) ) ) {
-
             wp_register_style( 'wpml-wcml', WCML_PLUGIN_URL . '/res/css/management.css', array(), WCML_VERSION );
             wp_enqueue_style( 'wpml-wcml' );
-            wp_enqueue_style( 'onthegosystems-icon', WCML_PLUGIN_URL . '/res/css/otgs-ico.css' );
-
-
         }
 
     }
