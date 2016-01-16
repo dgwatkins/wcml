@@ -2668,7 +2668,7 @@ class WCML_Products{
             //translate custom attr value in cart object
             if( isset( $cart_item[ 'variation' ] ) && is_array( $cart_item[ 'variation' ] ) ){
                 foreach( $cart_item[ 'variation' ] as $attr_key => $attribute ){
-                    $cart->cart_contents[ $key ][ 'variation' ][ $attr_key ] = $this->get_cart_attribute_translation( $attr_key, $attribute, $cart_item['variation_id'], $current_language );
+                    $cart->cart_contents[ $key ][ 'variation' ][ $attr_key ] = $this->get_cart_attribute_translation( $attr_key, $attribute, $cart_item['variation_id'], $current_language, $cart_item[ 'data' ]->parent->id, $tr_product_id );
                 }
             }
 
@@ -2742,7 +2742,7 @@ class WCML_Products{
 
     }
 
-    function get_cart_attribute_translation( $attr_key, $attribute, $variation_id, $current_language ){
+    function get_cart_attribute_translation( $attr_key, $attribute, $variation_id, $current_language, $product_id, $tr_product_id ){
         global $woocommerce;
 
         if( version_compare( preg_replace( '#-(.+)$#', '', $woocommerce->version ), '2.1', '>=' ) ){
@@ -2758,7 +2758,13 @@ class WCML_Products{
             return $term->slug;
         }else{
 
-            return get_post_meta( $variation_id, $attr_key, true );
+            $trnsl_attr = get_post_meta( $variation_id, $attr_key, true );
+
+            if( $trnsl_attr ){
+                return $trnsl_attr;
+            }else{
+                return $this->get_custom_attr_translation( $product_id, $tr_product_id, $taxonomy, $attribute );
+            }
         }
     }
 
