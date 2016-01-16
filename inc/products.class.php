@@ -796,9 +796,12 @@ class WCML_Products{
                     <?php } elseif ($tr_status->status != ICL_TM_COMPLETE && $tr_status->status != ICL_TM_DUPLICATE) { ?>
                         title="<?php echo $language['english_name'] . ': ' . __('Finish translating', 'woocommerce-multilingual'); ?>">
                         <i class="otgs-ico-refresh"></i>
-                    <?php } elseif ($tr_status->status == ICL_TM_COMPLETE || $tr_status->status == ICL_TM_DUPLICATE) { ?>
+                    <?php } elseif ($tr_status->status == ICL_TM_COMPLETE) { ?>
                         title="<?php echo $language['english_name'] . ': ' . __('Edit translation', 'woocommerce-multilingual'); ?>">
                         <i class="otgs-ico-edit"></i>
+                    <?php } elseif ($tr_status->status == ICL_TM_DUPLICATE) { ?>
+                        title="<?php echo $language['english_name'] . ': ' . __('Edit translation', 'woocommerce-multilingual'); ?>">
+                        <i class="otgs-ico-duplicate"></i>
                     <?php }
                 } else { ?>
                     title="<?php echo $language['english_name'] . ': ' . __('Add translation', 'woocommerce-multilingual'); ?>">
