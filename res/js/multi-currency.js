@@ -79,8 +79,11 @@ jQuery( function($){
         },
 
         select_currency: function(){
-            $(this).closest('.wcml_currency_options').find('.wpml-dialog-close-button').attr('data-currency', $(this).val());
-            $('.wcml-co-set-rate .this-currency').html( $(this).val() );
+            var parent = $(this).closest('.wcml_currency_options');
+            var close_button = parent.find('.wpml-dialog-close-button');
+            close_button.attr('data-currency', $(this).val());
+            close_button.attr('data-symbol', $(this).find('option:selected').attr('data-symbol'));
+            parent.find('.this-currency').html( $(this).val() );
 
         },
 
@@ -436,26 +439,38 @@ jQuery( function($){
 
             var parent = $(this).closest('.wcml_currency_options');
 
-            var data = 'currency_options[position]=' + parent.find('.currency_option_position').val();
-            data += '&currency_options[thousand_sep]=' + parent.find('.currency_option_thousand_sep').val();
-            data += '&currency_options[decimal_sep]=' + parent.find('.currency_option_decimal_sep').val();
-            data += '&currency_options[decimals]=' + parent.find('.currency_option_decimals').val();
-            data += '&currency_options[code]=' + parent.find(':submit').attr('data-currency');
-
-            if(!parent.find('.spinner').length){
-                parent.find('.wcml-co-preview-value').append('<span class="spinner" style="visibility: visible"></span>');
+            var position = parent.find('.currency_option_position').val();
+            var thousand_sep = parent.find('.currency_option_thousand_sep').val();
+            var thousand_sep = parent.find('.currency_option_thousand_sep').val();
+            var decimal_sep  = parent.find('.currency_option_decimal_sep').val();
+            var symbol       = $(this).closest('.wcml_currency_options').find('.wpml-dialog-close-button').attr('data-symbol');
+            var decimals     = '56789'.substr(0, parent.find('.currency_option_decimals').val());
+            if(decimals == ''){
+                decimal_sep = '';
             }
 
-            $.ajax({
-                url: ajaxurl,
-                type: 'POST',
-                dataType: 'json',
-                data: data + '&action=wcml_price_preview',
-                success: function(response){
-                            $('.wcml-co-preview-value').html(response.html);
-                }
+            var format   = '';
 
-            })
+            switch(position){
+                case 'left':
+                    format = '{symbol}1{thousand_sep}234{decimal_sep}{decimals}';
+                    break;
+                case 'right':
+                    format = '1{thousand_sep}234{decimal_sep}{decimals}{symbol}';
+                    break;
+                case 'left_space':
+                    format = '{symbol}&nbsp;1{thousand_sep}234{decimal_sep}{decimals}';
+                    break;
+                case 'right_space':
+                    format = '1{thousand_sep}234{decimal_sep}{decimals}&nbsp;{symbol}';
+                    break;
+
+            }
+
+            var preview = format.replace(/\{symbol\}/, symbol).replace(/\{thousand_sep\}/, thousand_sep).replace(
+                                        /\{decimal_sep\}/, decimal_sep).replace(/\{decimals\}/, decimals);
+
+            parent.find('.wcml-co-preview-value').html( preview );
 
             return false;
 

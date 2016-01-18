@@ -1,4 +1,3 @@
-
 <div class="wpml-dialog hidden" id="wcml_currency_options_<?php echo $args['currency_code'] ?>" title="<?php echo esc_attr($args['title']) ?>">
 
 	<div class="wcml_currency_options wcml-co-dialog">
@@ -13,7 +12,9 @@
 					<select name="currency_options[code]" id="wcml_currency_options_code_<?php echo $args['currency_code'] ?>">
 						<?php foreach($args['wc_currencies'] as $currency_code => $currency_name): ?>
 							<?php if( empty( $args['currencies'][$currency_code]) && $currency_code != $args['default_currency'] ): ?>
-								<option value="<?php echo $currency_code; ?>" <?php if( isset( $args['currency_code'] ) ) selected($currency_code,  $args['currency_code'] , true) ?> ><?php echo $currency_name; ?></option>
+								<option value="<?php echo $currency_code; ?>" <?php if( isset( $args['currency_code'] ) )
+									selected($currency_code,  $args['currency_code'] , true) ?> data-symbol="<?php
+								echo get_woocommerce_currency_symbol($currency_code) ?>" ><?php echo $currency_name; ?></option>
 							<?php endif; ?>
 						<?php endforeach; ?>
 					</select>
@@ -87,7 +88,7 @@
 				<div class="wpml-form-row">
 					<label id="wcml_currency_options_decimals_<?php echo $args['currency_code'] ?>"><?php _e( 'Number of Decimals', 'woocommerce-multilingual' ) ?></label>
 					<input name="currency_options[num_decimals]" type="number" class="currency_option_decimals"
-						   value="<?php echo esc_attr( $args['currency']['num_decimals'] ) ?>" min="0" step="1"
+						   value="<?php echo esc_attr( $args['currency']['num_decimals'] ) ?>" min="0" step="1" max="5"
 						   data-message="<?php _e( 'Only numeric', 'woocommerce-multilingual' ); ?>"
 						   for="wcml_currency_options_decimals_<?php echo $args['currency_code'] ?>" />
 				</div>
@@ -129,9 +130,11 @@
 
 			<footer class="wpml-dialog-footer">
 				<input type="button" class="cancel wpml-dialog-close-button alignleft"
-					   value="<?php esc_attr_e( 'Cancel', 'woocommerce-multilingual' ) ?>" data-currency="<?php echo $cur_cur ?>"/>&nbsp;
+					   value="<?php esc_attr_e( 'Cancel', 'woocommerce-multilingual' ) ?>" data-currency="<?php echo $cur_cur
+						?>" data-symbol="<?php echo get_woocommerce_currency_symbol($cur_cur) ?>" />&nbsp;
 				<input type="submit" class="wpml-dialog-close-button button-primary currency_options_save alignright"
-					   value="<?php esc_attr_e( 'Save', 'woocommerce-multilingual' ) ?>" data-currency="<?php echo $cur_cur; ?>" data-stay="1" />
+					   value="<?php esc_attr_e( 'Save', 'woocommerce-multilingual' ) ?>" data-currency="<?php echo $cur_cur;
+						?>" data-symbol="<?php echo get_woocommerce_currency_symbol($cur_cur) ?>" data-stay="1" />
 			</footer>
 
 		</form>

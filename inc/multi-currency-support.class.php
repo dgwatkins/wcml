@@ -27,8 +27,6 @@ class WCML_Multi_Currency_Support{
             add_action('wp_ajax_wcml_delete_currency', array($this,'delete_currency'));
             add_action('wp_ajax_wcml_currencies_list', array($this,'currencies_list'));
 
-            add_action('wp_ajax_wcml_price_preview', array($this,'price_preview'));
-            
             add_action('wp_ajax_wcml_update_currency_lang', array($this,'update_currency_lang'));
             add_action('wp_ajax_wcml_update_default_currency', array($this,'update_default_currency'));
             
@@ -462,38 +460,6 @@ class WCML_Multi_Currency_Support{
         echo $html;
 
         die();
-    }
-
-    function price_preview(){
-
-        global $woocommerce_wpml;
-        $woocommerce_wpml->multi_currency->init();
-
-        $currency_details = array_map( 'sanitize_text_field', $_POST['currency_options'] );
-
-        switch ( $currency_details[ 'position' ] ) {
-            case 'left' :
-                $format = '%1$s%2$s';
-                break;
-            case 'right' :
-                $format = '%2$s%1$s';
-                break;
-            case 'left_space' :
-                $format = '%1$s&nbsp;%2$s';
-                break;
-            case 'right_space' :
-                $format = '%2$s&nbsp;%1$s';
-                break;
-        }
-
-        $price = apply_filters( 'formatted_woocommerce_price',
-            number_format( '1234.56', $currency_details['decimals'], $currency_details['decimal_sep'], $currency_details['thousand_sep'] ),
-            '1234.56', $currency_details['decimals'], $currency_details['decimal_sep'], $currency_details['thousand_sep'] );
-
-        $return['html'] = sprintf( $format, get_woocommerce_currency_symbol( $currency_details['code'] ), $price );
-
-        echo json_encode( $return );
-        exit;
     }
 
     function update_currency_lang(){
