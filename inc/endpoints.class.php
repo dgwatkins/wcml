@@ -64,7 +64,13 @@ class WCML_Endpoints{
         }
 
         if( function_exists('icl_t') ){
-            return apply_filters( 'wpml_translate_single_string', $endpoint, 'WooCommerce Endpoints', $key, $language );
+            $trnsl = apply_filters( 'wpml_translate_single_string', $endpoint, 'WooCommerce Endpoints', $key, $language );
+
+            if( !empty( $trnsl ) ){
+                return $trnsl;
+            }else{
+                return $endpoint;
+            }
         }else{
             return $endpoint;
         }
