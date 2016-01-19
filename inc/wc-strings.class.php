@@ -781,8 +781,9 @@ class WCML_WC_Strings{
 
     function translate_attributes_label_in_wp_taxonomies( $taxonomy, $obj_type, $args ){
         global $wp_taxonomies, $sitepress;
+        $obj_type = array_unique( (array) $obj_type );
 
-        if( in_array('product', $obj_type ) && substr( $taxonomy, 0, 3) == 'pa_' && isset( $wp_taxonomies[ $taxonomy ] )){
+        if( in_array( 'product', $obj_type ) && substr( $taxonomy, 0, 3) == 'pa_' && isset( $wp_taxonomies[ $taxonomy ] )){
             $wp_taxonomies[$taxonomy]->labels->name = apply_filters( 'wpml_translate_single_string', $args['labels']->name, 'WordPress', 'taxonomy singular name: '.$args['labels']->name, $sitepress->get_current_language() );
         }
 
