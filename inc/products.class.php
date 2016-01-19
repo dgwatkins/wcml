@@ -175,7 +175,8 @@ class WCML_Products{
 
         $sql = "SELECT p.ID,p.post_parent FROM $wpdb->posts AS p
                   LEFT JOIN {$wpdb->prefix}icl_translations AS icl ON icl.element_id = p.id
-                WHERE p.post_type = 'product' AND p.post_status IN ('publish','future','draft','pending','private') AND icl.element_type= 'post_product' AND icl.source_language_code IS NULL";
+                WHERE p.post_type = 'product' AND p.post_status IN ('publish','future','draft','pending','private')
+                AND icl.element_type= 'post_product' AND icl.source_language_code IS NULL";
 
         if($slang){
             $sql .= " AND icl.language_code = %s ";
@@ -281,7 +282,8 @@ class WCML_Products{
 
         $sql = "SELECT count(p.id) FROM $wpdb->posts AS p
                 LEFT JOIN {$wpdb->prefix}icl_translations AS icl ON icl.element_id = p.id
-                WHERE p.post_type = 'product' AND p.post_status IN ('publish','future','draft','pending','private') AND icl.element_type= 'post_product' AND icl.source_language_code IS NULL";
+                WHERE p.post_type = 'product' AND p.post_status IN ('publish','future','draft','pending','private')
+                    AND icl.element_type= 'post_product' AND icl.source_language_code IS NULL";
 
         if( $slang ){
             $sql .= " AND icl.language_code = %s ";

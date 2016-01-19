@@ -569,7 +569,6 @@ class WCML_Url_Translation {
                 $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, $this->url_strings_context(), $this->url_string_name( $taxonomy ), $language, $has_translation );
             }
 
-
             return array( 'slug' => $slug, 'translated_slug' => $slug_translation );
         }
 
