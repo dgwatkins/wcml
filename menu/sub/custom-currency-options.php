@@ -4,7 +4,7 @@
 
 		<form id="wcml_currency_options_form_<?php echo $args['currency_code'] ?>" method="post" action="">
 
-			<div class="wpml-dialog-body">
+
 
 				<?php if( empty($args['currency_code']) ): ?>
 				<div class="wpml-form-row currency_code">
@@ -126,7 +126,6 @@
 						   id="wcml_currency_options_subtract_<?php echo $args['currency_code'] ?>"/>
 				</div>
 
-			</div>
 
 			<footer class="wpml-dialog-footer">
 				<input type="button" class="cancel wpml-dialog-close-button alignleft"

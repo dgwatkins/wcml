@@ -607,7 +607,7 @@ class WCML_Url_Translation {
                 }
                 $this->wcml_edit_base_html( $base, $language['code'] );
                 ?>
-                <a class="js-wpml-dialog-trigger <?php if( !$value ): ?>dis_base<?php endif; ?>" id="wcml-edit-base-slug-<?php echo $base.'-'.$language['code'] ?>" data-content="wcml-edit-base-slug-<?php echo $base.'-'.$language['code'] ?>"  data-width="450" data-height="200"
+                <a class="js-wpml-dialog-trigger <?php if( !$value ): ?>dis_base<?php endif; ?>" id="wcml-edit-base-slug-<?php echo $base.'-'.$language['code'] ?>" data-content="wcml-edit-base-slug-<?php echo $base.'-'.$language['code'] ?>"  data-width="600" data-height="150"
 
                     <?php if( isset( $needs_update ) ): ?>
                       title="<?php echo $language['english_name'] . ': ' . __('Update translation', 'woocommerce-multilingual'); ?>">

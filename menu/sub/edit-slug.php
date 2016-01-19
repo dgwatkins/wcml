@@ -1,6 +1,6 @@
 <div class="wpml-dialog hidden" id="wcml-edit-base-slug-<?php echo $args['original_base'].'-'.$args['language'] ?>" title="<?php echo esc_attr( $args['label_name'] ) ?>">
-	<div class="wcml-co-dialog" >
-		<div class="wpml-dialog-body">
+	<div class="wcml-slug-dialog" >
+
 			<h3 class="wpml-header-original"><?php _e('Original', 'woocommerce-multilingual'); ?>:
 				<span class="wpml-title-flag">
 					<img src="<?php echo $sitepress->get_flag_url( $args['source_language'] ) ?>"
@@ -26,7 +26,6 @@
 					   name="base_translation" value="<?php echo $args['translated_base_value'] ?>" type="text"/>
 			</div>
 
-		</div>
 
 
 		<footer class="wpml-dialog-footer">
