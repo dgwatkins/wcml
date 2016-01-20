@@ -4,8 +4,8 @@ Donate link: http://wpml.org/documentation/related-projects/woocommerce-multilin
 Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multilingual, e-shop, shop
 License: GPLv2
 Requires at least: 3.0
-Tested up to: 4.4
-Stable tag: 3.7.7
+Tested up to: 4.4.1
+Stable tag: 3.7.8
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
 
@@ -77,6 +77,13 @@ In order for the checkout and store pages to appear translated, you need to crea
 3. Multiple currencies
 
 == Changelog ==
+
+= 3.7.8 =
+* Compatibility with WooCommerce Bookings 1.9 (and fixed othe small compatibility issues with older versions)
+* Fixed a compatibility issue with WooCommerce Subscriptions: the sign-up fee was not correct in the 2nd currency
+* Fixed a compatibility issue with WooCommerce Payment Gateways: some strings were registered/changed when on checkout
+* Bug fix: variations created with Any were not showing the user selected attribute when added to the cart
+* Bug fix: it was not possible to changeor or set the "Set prices in other currencies manually" option for a duplicate product
 
 = 3.7.7 =
 * Fixed an issue that was causing a fatal error for sites using the Flatsome theme
