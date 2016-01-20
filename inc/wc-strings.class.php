@@ -293,9 +293,9 @@ class WCML_WC_Strings{
     }
 
 
-    function translate_gateway_strings( $value, $option ){
+    function translate_gateway_strings( $value, $option = false ){
 
-        if( isset( $value['enabled']) && $value['enabled'] == 'no' ){
+        if( $option && isset( $value['enabled']) && $value['enabled'] == 'no' ){
             return $value;
         }
 
