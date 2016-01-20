@@ -78,6 +78,13 @@ In order for the checkout and store pages to appear translated, you need to crea
 
 == Changelog ==
 
+= 3.7.8 =
+* Compatibility with WooCommerce Bookings 1.9 (and fixed othe small compatibility issues with older versions)
+* Fixed a compatibility issue with WooCommerce Subscriptions: the sign-up fee was not correct in the 2nd currency
+* Fixed a compatibility issue with WooCommerce Payment Gateways: some strings were registered/changed when on checkout
+* Bug fix: variations created with Any were not showing the user selected attribute when added to the cart
+* Bug fix: it was not possible to changeor or set the "Set prices in other currencies manually" option for a duplicate product
+
 = 3.7.7 =
 * Fixed an issue that was causing a fatal error for sites using the Flatsome theme
 * Fixed an issue with translating standard tax rate name

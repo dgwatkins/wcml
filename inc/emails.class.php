@@ -25,7 +25,6 @@ class WCML_Emails{
         //wrappers for email's body
         add_action('woocommerce_before_resend_order_emails', array($this, 'email_header'));
         add_action('woocommerce_after_resend_order_email', array($this, 'email_footer'));
-        add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 9, 3 );
 
         //WPML job link
         add_filter('icl_job_edit_url',array($this,'icl_job_edit_url'),10 ,2);
@@ -254,11 +253,6 @@ class WCML_Emails{
         }
 
         return $link;
-    }
-
-    function email_instructions($order, $sent_to_admin, $plain_text = false){
-        global $woocommerce_wpml;
-        $woocommerce_wpml->strings->translate_payment_instructions($order->payment_method);
     }
 
     function admin_string_return_cached( $value, $option ){

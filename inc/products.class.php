@@ -218,16 +218,19 @@ class WCML_Products{
 
         $sql = "SELECT p.ID,p.post_parent FROM $wpdb->posts AS p
                   LEFT JOIN {$wpdb->prefix}icl_translations AS icl ON icl.element_id = p.id
-                WHERE p.post_type = 'product' AND p.post_status IN ('publish','future','draft','pending','private') AND icl.element_type= 'post_product' AND icl.source_language_code IS NULL ORDER BY p.id DESC";
+                WHERE p.post_type = 'product' AND p.post_status IN ('publish','future','draft','pending','private')
+                AND icl.element_type= 'post_product' AND icl.source_language_code IS NULL";
 
         if($slang){
             $sql .= " AND icl.language_code = %s ";
-            $products = $wpdb->get_results( $wpdb->prepare( $sql, $slang ) );
-        }else{
-            $products = $wpdb->get_results( $sql );
+            $sql = $wpdb->prepare( $sql, $slang );
         }
 
-        return $this->display_hierarchical($products,$page,$limit);
+        $sql .= ' ORDER BY p.id DESC';
+
+        $products = $wpdb->get_results( $sql );
+
+        return $this->display_hierarchical( $products, $page, $limit);
     }
 
     function display_hierarchical($products, $pagenum, $per_page){
@@ -322,7 +325,8 @@ class WCML_Products{
 
         $sql = "SELECT count(p.id) FROM $wpdb->posts AS p
                 LEFT JOIN {$wpdb->prefix}icl_translations AS icl ON icl.element_id = p.id
-                WHERE p.post_type = 'product' AND p.post_status IN ('publish','future','draft','pending','private') AND icl.element_type= 'post_product' AND icl.source_language_code IS NULL";
+                WHERE p.post_type = 'product' AND p.post_status IN ('publish','future','draft','pending','private')
+                    AND icl.element_type= 'post_product' AND icl.source_language_code IS NULL";
 
         if( $slang ){
             $sql .= " AND icl.language_code = %s ";
@@ -2370,7 +2374,7 @@ class WCML_Products{
             //translate custom attr value in cart object
             if( isset( $cart_item[ 'variation' ] ) && is_array( $cart_item[ 'variation' ] ) ){
                 foreach( $cart_item[ 'variation' ] as $attr_key => $attribute ){
-                    $cart->cart_contents[ $key ][ 'variation' ][ $attr_key ] = $this->get_cart_attribute_translation( $attr_key, $attribute, $cart_item['variation_id'], $current_language );
+                    $cart->cart_contents[ $key ][ 'variation' ][ $attr_key ] = $this->get_cart_attribute_translation( $attr_key, $attribute, $cart_item['variation_id'], $current_language, $cart_item[ 'data' ]->parent->id, $tr_product_id );
                 }
             }
             if( $cart_item[ 'product_id' ] == $tr_product_id ){
@@ -2443,7 +2447,7 @@ class WCML_Products{
 
     }
 
-    function get_cart_attribute_translation( $attr_key, $attribute, $variation_id, $current_language ){
+    function get_cart_attribute_translation( $attr_key, $attribute, $variation_id, $current_language, $product_id, $tr_product_id ){
         global $woocommerce;
 
         if( version_compare( preg_replace( '#-(.+)$#', '', $woocommerce->version ), '2.1', '>=' ) ){
@@ -2459,7 +2463,13 @@ class WCML_Products{
             return $term->slug;
         }else{
 
-            return get_post_meta( $variation_id, $attr_key, true );
+            $trnsl_attr = get_post_meta( $variation_id, $attr_key, true );
+
+            if( $trnsl_attr ){
+                return $trnsl_attr;
+            }else{
+                return $this->get_custom_attr_translation( $product_id, $tr_product_id, $taxonomy, $attribute );
+            }
         }
     }
 

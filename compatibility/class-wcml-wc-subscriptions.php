@@ -11,7 +11,7 @@ class WCML_WC_Subscriptions{
     }
 
     function init(){
-        if(!is_admin() && version_compare( WOOCOMMERCE_VERSION, '2.1', '<' )){
+        if( !is_admin() ){
             add_filter('woocommerce_subscriptions_product_sign_up_fee', array($this, 'product_price_filter'), 10, 2);                
         }
     }

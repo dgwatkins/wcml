@@ -5,7 +5,8 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 
 	function setUp(){
 		parent::setUp();
-		global $woocommerce_wpml;
+		global $woocommerce_wpml, $WPML_String_Translation;
+		$WPML_String_Translation->init_active_languages();
 
 		require_once WCML_PLUGIN_PATH . '/inc/wc-strings.class.php';
 		$woocommerce_wpml->strings           = new WCML_WC_Strings;
@@ -16,6 +17,19 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 		$this->url_translation =& $woocommerce_wpml->url_translation;
 
 		$this->wc_permalinks = get_option( 'woocommerce_permalinks' );
+	}
+
+	function test_download_woocommerce_translations_for_active_languages() {
+		global $woocommerce_wpml;
+
+		//use stable version to test
+		$wc_version = $woocommerce_wpml->get_stable_wc_version();
+		$woocommerce_wpml->download_woocommerce_translations_for_active_languages( $wc_version );
+
+		$downloaded_translation_info = get_option('woocommerce_language_pack_version_fr_FR');
+
+		$this->assertEquals( $downloaded_translation_info[0], $wc_version );
+		$this->assertEquals( $downloaded_translation_info[1], 'fr_FR' );
 	}
 
 	function test_translate_product_slug() {
@@ -56,9 +70,6 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 	}
 
 	function test_get_translated_tax_slug(){
-		global $WPML_String_Translation;
-		$WPML_String_Translation->init_active_languages();
-
 		$category_base = !empty( $this->wc_permalinks['category_base'] ) ? trim( $this->wc_permalinks['category_base'], '/' ) : 'product-category';
 		$name = $this->url_translation->url_string_name( 'product_cat' );
 		do_action( 'wpml_register_single_string', $this->url_translation->url_strings_context(), $name, $category_base );
@@ -98,6 +109,7 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 
 		$category_base = !empty( $this->wc_permalinks['category_base'] ) ? $this->wc_permalinks['category_base'] : $this->url_translation->default_product_category_base;
 		$name = $this->url_translation->url_string_name( 'product_cat' );
+
 		$this->url_translation->add_default_slug_translations($category_base, $name);
 		$string_id = icl_get_string_id( $category_base, $this->url_translation->url_strings_context(), $name );
 		$translations = icl_get_string_translations_by_id($string_id);

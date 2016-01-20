@@ -45,7 +45,7 @@ class WCML_Endpoints{
                 'customer-logout'    => $this->get_endpoint_translation( 'customer-logout', $wc_vars['customer-logout'] ),
                 'add-payment-method' => $this->get_endpoint_translation( 'add-payment-method', $wc_vars['add-payment-method'] ),
             );
-
+            $query_vars = array_merge( $wc_vars , $query_vars );
             WC()->query->query_vars = $query_vars;
 
         }
@@ -64,7 +64,13 @@ class WCML_Endpoints{
         }
 
         if( function_exists('icl_t') ){
-            return apply_filters( 'wpml_translate_single_string', $endpoint, 'WooCommerce Endpoints', $key, $language );
+            $trnsl = apply_filters( 'wpml_translate_single_string', $endpoint, 'WooCommerce Endpoints', $key, $language );
+
+            if( !empty( $trnsl ) ){
+                return $trnsl;
+            }else{
+                return $endpoint;
+            }
         }else{
             return $endpoint;
         }

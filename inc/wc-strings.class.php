@@ -4,6 +4,7 @@ class WCML_WC_Strings{
 
     private $translations_from_mo_file = array();
     private $mo_files = array();
+    private $wc_payment_gateways = array();
 
     function __construct(){
         
@@ -30,11 +31,17 @@ class WCML_WC_Strings{
         add_action('woocommerce_tax_rate_added', array($this, 'register_tax_rate_label_string'), 10, 2 );
         add_filter('woocommerce_rate_label',array($this,'translate_woocommerce_rate_label'));
 
+
+        $payment_gateways = WC_Payment_Gateways::instance();
+        foreach ( $this->wc_payment_gateways = $payment_gateways->payment_gateways() as $gateway ) {
+            add_filter( 'woocommerce_settings_api_sanitized_fields_'.$gateway->id, array( $this, 'register_gateway_strings' ) );
+            add_filter( 'option_woocommerce_'.$gateway->id.'_settings', array( $this, 'translate_gateway_strings' ), 100, 2 );
+        }
+
         add_filter('woocommerce_gateway_title', array($this, 'translate_gateway_title'), 10, 2);
         add_filter('woocommerce_gateway_description', array($this, 'translate_gateway_description'), 10, 2);
-        add_action( 'woocommerce_thankyou_bacs', array( $this, 'translate_bacs_instructions' ),9 );
-        add_action( 'woocommerce_thankyou_cheque', array( $this, 'translate_cheque_instructions' ),9 );
-        add_action( 'woocommerce_thankyou_cod', array( $this, 'translate_cod_instructions' ),9 );
+
+
         //translate attribute label
         add_filter('woocommerce_attribute_label',array($this,'translated_attribute_label'),10,3);
         add_filter('woocommerce_cart_item_name',array($this,'translated_cart_item_name'),10,3);
@@ -266,44 +273,71 @@ class WCML_WC_Strings{
 
     }
 
-    function translate_gateway_title($title, $gateway_title) {
+    function register_gateway_strings( $fields ){
 
-        do_action('wpml_register_single_string', 'woocommerce', $gateway_title .'_gateway_title', $title  );
-        $title = apply_filters( 'wpml_translate_single_string', $title, 'woocommerce', $gateway_title .'_gateway_title' );
+        foreach( $this->wc_payment_gateways as $gateway ){
+            if( isset( $_POST['woocommerce_'.$gateway->id.'_enabled'] ) ){
+                $gateway_id = $gateway->id;
+                break;
+            }
+        }
+
+        if( isset( $gateway_id ) ){
+            do_action('wpml_register_single_string', 'woocommerce', $gateway_id .'_gateway_title', $fields['title'] );
+            do_action('wpml_register_single_string', 'woocommerce', $gateway_id .'_gateway_description', $fields['description'] );
+
+            if( isset( $fields['instructions'] ) ){
+                do_action('wpml_register_single_string', 'woocommerce', $gateway_id .'_gateway_instructions', $fields['instructions']  );
+            }
+        }
+
+        return $fields;
+    }
+
+
+    function translate_gateway_strings( $value, $option = false ){
+
+        if( $option && isset( $value['enabled']) && $value['enabled'] == 'no' ){
+            return $value;
+        }
+
+        $gateway_id = str_replace( 'woocommerce_', '', $option );
+        $gateway_id = str_replace( '_settings', '', $gateway_id );
+
+        if( isset( $value['instructions'] ) ){
+            $value['instructions'] = $this->translate_gateway_instructions( $gateway_id, $value['instructions'] );
+        }
+
+        if( isset( $value['description'] ) ){
+            $value['description'] = $this->translate_gateway_description( $value['description'], $gateway_id );
+        }
+
+        if( isset( $value['title'] ) ){
+            $value['title'] = $this->translate_gateway_title( $value['title'], $gateway_id );
+        }
+
+        return $value;
+
+    }
+
+    function translate_gateway_title($title, $gateway_title) {
+        global $sitepress;
+
+        $title = apply_filters( 'wpml_translate_single_string', $title, 'woocommerce', $gateway_title .'_gateway_title', $sitepress->get_current_language() );
 
         return $title;
     }
 
-    function translate_gateway_description($description, $gateway_title) {
-
-        do_action('wpml_register_single_string', 'woocommerce', $gateway_title .'_gateway_description', $description  );
-        $description =apply_filters( 'wpml_translate_single_string', $description, 'woocommerce', $gateway_title .'_gateway_description' );
+    function translate_gateway_description( $description, $gateway_title) {
+        global $sitepress;
+        $description = apply_filters( 'wpml_translate_single_string', $description, 'woocommerce', $gateway_title .'_gateway_description', $sitepress->get_current_language() );
 
         return $description;
     }
 
-    function translate_bacs_instructions(){
-        $this->translate_payment_instructions('bacs');
-    }
-
-    function translate_cheque_instructions(){
-        $this->translate_payment_instructions('cheque');
-    }
-
-    function translate_cod_instructions(){
-        $this->translate_payment_instructions('cod');
-    }
-
-    function translate_payment_instructions($id){
-
-        $gateways = WC()->payment_gateways();
-        foreach($gateways->payment_gateways as $key => $gateway){
-            if($gateway->id == $id && isset(WC_Payment_Gateways::instance()->payment_gateways[$key]->instructions)){
-                do_action('wpml_register_single_string', 'woocommerce', $gateway->id .'_gateway_instructions', $gateway->instructions  );
-                WC_Payment_Gateways::instance()->payment_gateways[$key]->instructions = apply_filters( 'wpml_translate_single_string', $gateway->instructions, 'woocommerce', $gateway->id .'_gateway_instructions' );
-                break;
-            }
-        }
+    function translate_gateway_instructions( $id, $instructions){
+        global $sitepress;
+        apply_filters( 'wpml_translate_single_string', $instructions, 'woocommerce', $id .'_gateway_instructions', $sitepress->get_current_language() );
 
     }
 
@@ -755,12 +789,13 @@ class WCML_WC_Strings{
     }
 
     function translate_attributes_label_in_wp_taxonomies( $taxonomy, $obj_type, $args ){
-        global $wp_taxonomies;
+        global $wp_taxonomies, $sitepress;
+        $obj_type = array_unique( (array) $obj_type );
 
-        if( in_array('product', $obj_type ) && substr( $taxonomy, 0, 3) == 'pa_' && isset( $wp_taxonomies[ $taxonomy ] )){
-            $wp_taxonomies[$taxonomy]->labels->name = apply_filters( 'wpml_translate_single_string', $args['labels']->name, 'WordPress', 'taxonomy singular name: '.$args['labels']->name );
+        if( in_array( 'product', $obj_type ) && substr( $taxonomy, 0, 3) == 'pa_' && isset( $wp_taxonomies[ $taxonomy ] )){
+            $wp_taxonomies[$taxonomy]->labels->name = apply_filters( 'wpml_translate_single_string', $args['labels']->name, 'WordPress', 'taxonomy singular name: '.$args['labels']->name, $sitepress->get_current_language() );
         }
 
     }
-    
+
 }
