@@ -1,7 +1,6 @@
 <?php global $sitepress_settings;
 $default_language = $sitepress->get_default_language();
 ?>
-<?php //TODO Sergey: Make this ONE form with one button or make this one button to work with all forms ?>
 <form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 
     <div class="wcml-section">
