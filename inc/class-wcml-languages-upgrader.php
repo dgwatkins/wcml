@@ -245,7 +245,7 @@ class WCML_Languages_Upgrader{
         $notices = maybe_unserialize( get_option( 'wcml_translations_upgrade_notice' ) );
 
         if ( 'update-core' !== $screen->id && !empty ( $notices ) && !get_option( 'hide_wcml_translations_message' ) ) {
-            include( 'menu/sub/notice-translation-upgrade.php' );
+            include( WCML_PLUGIN_PATH.'/menu/sub/notice-translation-upgrade.php' );
         }
     }
 
