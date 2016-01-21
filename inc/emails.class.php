@@ -38,6 +38,10 @@ class WCML_Emails{
         add_action('woocommerce_new_customer_note',array($this,'refresh_email_lang'),9);
 
 
+        add_action('woocommerce_order_partially_refunded_notification', array($this,'email_heading_refund'), 9);
+        add_action('woocommerce_order_partially_refunded_notification', array($this,'refresh_email_lang'), 9);
+
+
         //admin emails
         add_action( 'woocommerce_order_status_pending_to_processing_notification', array( $this, 'admin_email' ), 9 );
         add_action( 'woocommerce_order_status_pending_to_completed_notification', array( $this, 'admin_email' ), 9 );
@@ -50,6 +54,7 @@ class WCML_Emails{
 
         add_filter( 'plugin_locale', array( $this, 'set_locale_for_emails' ), 10, 2 );
     }
+
     function email_refresh_in_ajax(){
         if(isset($_GET['order_id'])){
             $this->refresh_email_lang($_GET['order_id']);
@@ -63,7 +68,7 @@ class WCML_Emails{
         $this->refresh_email_lang($order_id);
         $this->email_heading_completed($order_id,true);
 
-   }
+    }
 
     /**
      * Translate WooCommerce emails.
@@ -88,12 +93,12 @@ class WCML_Emails{
 
     function refresh_email_lang($order_id){
 
-        if(is_array($order_id)){
-           if(isset($order_id['order_id'])){
-               $order_id = $order_id['order_id'];
-           }else{
-           return;
-        }
+        if ( is_array( $order_id ) ) {
+            if ( isset($order_id['order_id']) ) {
+                $order_id = $order_id['order_id'];
+            } else {
+                return;
+            }
 
         }
 
@@ -153,7 +158,7 @@ class WCML_Emails{
     }
 
     function email_heading_note($args){
-        global $woocommerce,$sitepress;
+        global $woocommerce;
 
         if(class_exists('WC_Email_Customer_Note')){
 
@@ -165,6 +170,25 @@ class WCML_Emails{
             $woocommerce->mailer()->emails['WC_Email_Customer_Note']->enabled = false;
             $woocommerce->mailer()->emails['WC_Email_Customer_Note']->trigger($args);
             $woocommerce->mailer()->emails['WC_Email_Customer_Note']->enabled = $enabled;
+        }
+    }
+
+    function email_heading_refund( $order_id ){
+        global $woocommerce;
+        if(class_exists('WC_Email_Customer_Refunded_Order')){
+
+            $woocommerce->mailer()->emails['WC_Email_Customer_Refunded_Order']->heading =
+                $this->wcml_get_translated_email_string( 'admin_texts_woocommerce_customer_refunded_order_settings',
+                    '[woocommerce_customer_refunded_order_settings]heading_partial' );
+            $woocommerce->mailer()->emails['WC_Email_Customer_Refunded_Order']->subject =
+                $this->wcml_get_translated_email_string( 'admin_texts_woocommerce_customer_refunded_order_settings',
+                    '[woocommerce_customer_refunded_order_settings]subject_partial' );
+
+            $enabled = $woocommerce->mailer()->emails['WC_Email_Customer_Refunded_Order']->enabled;
+            $woocommerce->mailer()->emails['WC_Email_Customer_Refunded_Order']->enabled = false;
+            $woocommerce->mailer()->emails['WC_Email_Customer_Refunded_Order']->trigger($order_id);
+            $woocommerce->mailer()->emails['WC_Email_Customer_Refunded_Order']->enabled = $enabled;
+
         }
     }
 

@@ -15,7 +15,9 @@ foreach($wp_taxonomies as $key=>$taxonomy){
     }
 }
 
-
+$sitepress->switch_lang('fr');
+echo wpml_translate_single_string_filter( false, 'admin_texts_woocommerce_customer_refunded_order_settings',
+    '[woocommerce_customer_refunded_order_settings]heading_partial' );
 
 if(isset($_GET['tab'])){
     $current_tab = $_GET['tab'];
