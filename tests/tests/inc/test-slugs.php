@@ -14,6 +14,9 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 		require_once WCML_PLUGIN_PATH . '/inc/url-translation.class.php';
 		$woocommerce_wpml->url_translation = new WCML_Url_Translation();
 
+		require_once WCML_PLUGIN_PATH . '/inc/class-wcml-languages-upgrader.php';
+		$woocommerce_wpml->languages_upgrader = new WCML_Languages_Upgrader;
+
 		$this->url_translation =& $woocommerce_wpml->url_translation;
 
 		$this->wc_permalinks = get_option( 'woocommerce_permalinks' );
@@ -24,7 +27,7 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 
 		//use stable version to test
 		$wc_version = $woocommerce_wpml->get_stable_wc_version();
-		$woocommerce_wpml->download_woocommerce_translations_for_active_languages( $wc_version );
+		$woocommerce_wpml->languages_upgrader->download_woocommerce_translations_for_active_languages( $wc_version );
 
 		$downloaded_translation_info = get_option('woocommerce_language_pack_version_fr_FR');
 
