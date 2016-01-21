@@ -2,11 +2,19 @@
 
 class Test_WCML_URLS extends WCML_UnitTestCase {
 
+	function setUp(){
+		parent::setUp();
+		global $woocommerce_wpml;
+
+		require_once WCML_PLUGIN_PATH . '/inc/class-wcml-languages-upgrader.php';
+		$woocommerce_wpml->languages_upgrader = new WCML_Languages_Upgrader;
+	}
+
 	function test_get_language_pack_uri(){
 		global $woocommerce_wpml, $woocommerce;
 
 		//use stable version to test
-		$pack_uri = $woocommerce_wpml->get_language_pack_uri( 'uk_UA', $woocommerce_wpml->get_stable_wc_version() );
+		$pack_uri = $woocommerce_wpml->languages_upgrader->get_language_pack_uri( 'uk_UA', $woocommerce_wpml->get_stable_wc_version() );
 
 		$response = wp_safe_remote_get( $pack_uri, array( 'timeout' => 60 ) );
 		$response_result = false;
