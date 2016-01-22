@@ -1097,7 +1097,7 @@ class WCML_Products{
 
     }
 
-    function sync_linked_products($product_id,$tr_product_id,$lang){
+    function sync_linked_products( $product_id, $translated_product_id, $lang ){
         global $wpdb;
 
         //sync up-sells
@@ -1109,7 +1109,7 @@ class WCML_Products{
             }
         }
 
-        update_post_meta( $tr_product_id, '_upsell_ids', $trnsl_up_sells );
+        update_post_meta( $translated_product_id, '_upsell_ids', $trnsl_up_sells );
 
         //sync cross-sells
         $original_cross_sells = maybe_unserialize( get_post_meta( $product_id, '_crosssell_ids', true ) );
@@ -1118,7 +1118,14 @@ class WCML_Products{
             foreach( $original_cross_sells as $original_cross_sell_product ){
                 $trnsl_cross_sells[] = apply_filters( 'translate_object_id', $original_cross_sell_product, get_post_type( $original_cross_sell_product ), false, $lang );
             }
-        update_post_meta( $tr_product_id, '_crosssell_ids', $trnsl_cross_sells );
+        update_post_meta( $translated_product_id, '_crosssell_ids', $trnsl_cross_sells );
+
+
+        // refresh parent-children transients (e.g. this child goes to private or draft)
+        $translated_product_parent_id = wp_get_post_parent_id( $translated_product_id );
+        if( $translated_product_parent_id ){
+            delete_transient('wc_product_children_' . $translated_product_parent_id);
+        }
 
         //sync grouped products
         $parent_id = wp_get_post_parent_id($product_id);
@@ -1470,46 +1477,47 @@ class WCML_Products{
         $this->save_custom_prices( $duplicated_post_id );
 
         // pick posts to sync
-        $posts = array();
+        $traslated_products = array();
         $translations = $sitepress->get_element_translations( $language_details->trid, 'post_product' );
         foreach ( $translations as $translation ) {
             if ( $translation->original ) {
-                $duplicated_post_id = $translation->element_id;
+                $original_product_id = $translation->element_id;
             } else {
-                $posts[ $translation->element_id ] = $translation;
+                $traslated_products[ $translation->element_id ] = $translation;
             }
         }
 
 
-        foreach( $posts as $post_id => $translation ) {
+        foreach( $traslated_products as $translated_product_id => $translation ) {
             $lang = $translation->language_code;
 
-            do_action( 'wcml_before_sync_product_data', $duplicated_post_id, $post_id, $lang );
+            do_action( 'wcml_before_sync_product_data', $original_product_id, $translated_product_id, $lang );
 
             // Filter upsell products, crosell products and default attributes for translations
-            $this->duplicate_product_post_meta( $duplicated_post_id, $post_id );
+            $this->duplicate_product_post_meta( $original_product_id, $translated_product_id );
 
             if( $wpml_media_options[ 'new_content_settings' ][ 'duplicate_featured' ] ){
                 //sync feature image
-                $this->sync_thumbnail_id( $duplicated_post_id, $post_id, $lang );
+                $this->sync_thumbnail_id( $original_product_id, $translated_product_id, $lang );
             }
 
-            $this->sync_date_and_parent( $duplicated_post_id, $post_id, $lang );
+            $this->sync_date_and_parent( $original_product_id, $translated_product_id, $lang );
 
-            $this->sync_product_taxonomies( $duplicated_post_id, $post_id, $lang );
+            $this->sync_product_taxonomies( $original_product_id, $translated_product_id, $lang );
 
-            $this->sync_default_product_attr( $duplicated_post_id, $post_id, $lang );
+            $this->sync_default_product_attr( $original_product_id, $translated_product_id, $lang );
 
-            $this->sync_product_attr( $duplicated_post_id, $post_id );
+            $this->sync_product_attr( $original_product_id, $translated_product_id );
 
-            $this->update_order_for_product_translations( $duplicated_post_id );
+            $this->update_order_for_product_translations( $original_product_id );
 
             // synchronize post variations
-            $this->sync_product_variations( $duplicated_post_id, $post_id, $lang );
-            $this->sync_linked_products( $duplicated_post_id, $post_id, $lang );
+            $this->sync_product_variations( $original_product_id, $translated_product_id, $lang );
+            $this->sync_linked_products( $original_product_id, $translated_product_id, $lang );
+
         }
 
-        $this->sync_product_variations_custom_prices( $duplicated_post_id );
+        $this->sync_product_variations_custom_prices( $original_product_id );
     }
 
 
