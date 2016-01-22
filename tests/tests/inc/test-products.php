@@ -77,4 +77,55 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 
 	}
 
+	function test_sync_parent_products_transients(){
+		global $woocommerce_wpml, $pagenow;
+
+		$pagenow = 'post-new.php';
+
+		add_action( 'save_post', array( $woocommerce_wpml->products, 'sync_post_action' ), 110, 2 );
+
+		$parent_product = WCML_Helper::add_product('Parent Product EN' , 'en');
+		$child = array(
+			'post_title' 	=> 'Child Product EN',
+			'post_status'	=> 'publish',
+			'post_parent'	=> $parent_product->product_id
+		);
+		$child_product = WCML_Helper::add_product( $child , 'en');
+
+
+		$parent_product_es = WCML_Helper::add_product('Parent Product ES' , 'es', $parent_product->trid);
+		$child_es = array(
+			'post_title' 	=> 'Child Product ES',
+			'post_status'	=> 'publish',
+			'post_parent'	=> $parent_product_es->product_id
+		);
+		$child_product_es = WCML_Helper::add_product( $child_es , 'es', $child_product->trid);
+
+
+		$grouped_es = new WC_Product_Grouped($parent_product_es->product_id);
+		$this->assertEquals(array( $child_product_es->product_id ), $grouped_es->get_children());
+
+
+		// Setting the child status to private should reset the children list transient for translated parent
+		$child = array(
+			'ID'			=> $child_product->product_id,
+			'post_title' 	=> 'Child Product EN MADE PRIVATE',
+			'post_status'	=> 'private',
+		);
+		WCML_Helper::update_product( $child );
+
+		// FORCE status on translated child - should be synced autoamtically
+		$child_es = array(
+			'ID'			=> $child_product_es->product_id,
+			'post_title' 	=> 'Child Product ES MADE PRIVATE',
+			'post_status'	=> 'private',
+		);
+		WCML_Helper::update_product( $child_es );
+
+		$grouped_es = new WC_Product_Grouped($parent_product_es->product_id); //need to reinstantiate
+
+		$this->assertEquals(array(), $grouped_es->get_children());
+
+	}
+
 }

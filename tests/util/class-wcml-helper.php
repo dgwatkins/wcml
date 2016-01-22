@@ -38,4 +38,13 @@ class WCML_Helper {
 
     }
 
+    public static function update_product( $product_data ) {
+        global $wpml_post_translations;
+
+        wp_update_post( $product_data );
+
+        //$wpml_post_translations->save_post_actions($product_data['ID'], $product_data);
+
+    }
+
 }

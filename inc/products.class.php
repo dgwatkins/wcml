@@ -1589,6 +1589,7 @@ class WCML_Products{
             global $wpdb;
             $language_details = $wpdb->get_row( $wpdb->prepare( "SELECT element_id, trid, language_code, source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_id = %d AND element_type = 'post_product'", $post_id ) );
         }
+
         if ( empty( $language_details ) ) {
             return;
         }
@@ -1598,7 +1599,7 @@ class WCML_Products{
 
         // pick posts to sync
         $traslated_products = array();
-        $translations = $sitepress->get_element_translations( $language_details->trid, 'post_product' );
+        $translations = $sitepress->get_element_translations( $language_details->trid, 'post_product', false, true );
         foreach ( $translations as $translation ) {
             if ( $translation->original ) {
                 $original_product_id = $translation->element_id;
@@ -1606,7 +1607,6 @@ class WCML_Products{
                 $traslated_products[ $translation->element_id ] = $translation;
             }
         }
-
 
         foreach( $traslated_products as $translated_product_id => $translation ) {
             $lang = $translation->language_code;
@@ -1737,7 +1737,7 @@ class WCML_Products{
         $args[ 'post_parent' ] = is_null( $tr_parent_id )? 0 : $tr_parent_id;
 
         //sync product date
-        if( $woocommerce_wpml->settings[ 'products_sync_date' ] ){
+        if( !empty($woocommerce_wpml->settings[ 'products_sync_date' ]) ){
             $args[ 'post_date' ] = $orig_product->post_date;
         }
 
