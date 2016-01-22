@@ -46,8 +46,7 @@ class WCML_WC_Strings{
         add_filter('woocommerce_attribute_label',array($this,'translated_attribute_label'),10,3);
         add_filter('woocommerce_cart_item_name',array($this,'translated_cart_item_name'),10,3);
         add_filter('woocommerce_checkout_product_title',array($this,'translated_checkout_product_title'),10,2);
-        add_filter('woocommerce_countries_tax_or_vat', array($this, 'register_tax_label'));
-        
+
         if(is_admin() && $pagenow == 'options-permalink.php'){
             add_filter( 'gettext_with_context', array( $this, 'category_base_in_strings_language' ), 99, 3 );
 
@@ -339,14 +338,6 @@ class WCML_WC_Strings{
         global $sitepress;
         apply_filters( 'wpml_translate_single_string', $instructions, 'woocommerce', $id .'_gateway_instructions', $sitepress->get_current_language() );
 
-    }
-
-    function register_tax_label($label){
-
-        do_action('wpml_register_single_string', 'woocommerce', 'VAT_tax_label', $label );
-        $label = apply_filters( 'wpml_translate_single_string', $label, 'woocommerce', 'VAT_tax_label' );
-
-        return $label;
     }
 
     function show_custom_url_base_language_requirement(){
