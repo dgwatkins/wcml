@@ -97,6 +97,12 @@
             <key name="subject" />
             <key name="heading" />
         </key>
+		<key name="woocommerce_customer_refunded_order_settings">
+			<key name="subject_full" />
+			<key name="heading_full" />
+			<key name="subject_partial" />
+			<key name="heading_partial" />
+		</key>
         <key name="woocommerce_demo_store_notice"/>
         <key name="woocommerce_price_thousand_sep"/>
         <key name="woocommerce_price_decimal_sep"/>
