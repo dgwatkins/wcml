@@ -8,15 +8,26 @@ class OneCest
     {
         $I->wantTo('Install WPML');
 
-        $I->loginAsAdmin();
+        // Login Procedure
+        $I->wp_login('admin', '123456');
+
+        ////////////////////////
+        // WPML Installation  //
+        ///////////////////////
 
         $I->amGoingTo('Activate WPML Plugins');
-        $I->amOnPluginsPage(); //In order that the activatePlugin() works, the webdriver needs to be in Plugins page
 
-        $I->activatePlugin('wpml-multilingual-cms');
+        $I->amOnPage('/wp-admin/plugins.php');
+
+        $I->see('Plugins');
+
+        $I->click('Activate', '#wpml-multilingual-cms');
+
 
         $I->amGoingTo('Configure WPML');
+
         $I->click('No thanks, I will configure myself');
+
         $I->click('Next'); //Let's English as Default language
 
         $I->checkOption('Greek');

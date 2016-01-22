@@ -8,16 +8,24 @@ class TwoCest
     {
         $I->wantTo('Enable the ST, TM, MT Plugins');
 
-        $I->loginAsAdmin();//Only if Run this test Seperately
+        // Login Procedure
+        $I->wp_login('admin', '123456');
 
-        $I->amGoingTo('ST, TM, Media');
-        $I->amOnPluginsPage(); //In order that the activatePlugin() works, the webdriver needs to be in Plugins page
+        ///////////////////////////////////
+        // Other WPML PLugin Activation  //
+        //////////////////////////////////
 
-        $I->activatePlugin('wpml-string-translation');
+        $I->amGoingTo('enable ST, TM, Media');
+
+        $I->amOnPage('/wp-admin/plugins.php');
+
+        $I->see('Plugins');
+
+        $I->click('Activate', '#wpml-string-translation');
         $I->wait(1);
-        $I->activatePlugin('wpml-translation-management');
+        $I->click('Activate', '#wpml-translation-management');
         $I->wait(1);
-        $I->activatePlugin('wpml-media'); //to be checked because it shows error
+        $I->click('Activate', '#wpml-media'); //to be checked because it shows error
 
 
     }

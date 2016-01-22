@@ -8,9 +8,12 @@ class FourCest
     {
         $I->wantTo('Further Configure WC');
 
-        $I->loginAsAdmin();//Only if Run this test Seperately
+        // Login Procedure
+        $I->wp_login('admin', '123456');
 
-        //////////////////////
+        ///////////////////////////////////
+        // Woocommerce Configuration     //
+        //////////////////////////////////
 
         $I->amGoingTo('Configure the Selling Country');
 
