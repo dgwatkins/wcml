@@ -1122,40 +1122,13 @@ class WCML_Products{
 
 
         // refresh parent-children transients (e.g. this child goes to private or draft)
+
         $translated_product_parent_id = wp_get_post_parent_id( $translated_product_id );
-        if( $translated_product_parent_id ){
-            delete_transient('wc_product_children_' . $translated_product_parent_id);
+        if ( $translated_product_parent_id ) {
+            delete_transient( 'wc_product_children_' . $translated_product_parent_id );
+            delete_transient( '_transient_wc_product_children_ids_' . $translated_product_parent_id );
         }
 
-        //sync grouped products
-        $parent_id = wp_get_post_parent_id($product_id);
-        if($this->is_grouped_product($product_id)){
-            $grouped_ids = get_posts( 'post_parent=' . $product_id . '&post_type=product&orderby=menu_order&order=ASC&fields=ids&post_status=publish&numberposts=-1' );
-            $trnsl_grouped_ids = array();
-            foreach($grouped_ids as $id){
-                $tr_id = apply_filters( 'translate_object_id',$id,get_post_type($id),false,$lang);
-                if(!is_null($tr_id)){
-                    $trnsl_grouped_ids[] =$tr_id;
-                    $wpdb->update(
-                        $wpdb->posts,
-                        array(
-                            'post_parent' => $tr_product_id
-                        ),
-                        array( 'id' => $tr_id )
-                    );
-                }
-            }
-            update_option('_transient_wc_product_children_ids_'.$tr_product_id,$trnsl_grouped_ids);
-        }elseif($parent_id && get_post_type($product_id) == 'product'){
-            $tr_parent_id = apply_filters( 'translate_object_id',$parent_id,'product',false,$lang);
-            if(!is_null($tr_parent_id)){
-                $grouped_ids = maybe_unserialize(get_option('_transient_wc_product_children_ids_'.$tr_parent_id));
-                if($grouped_ids && !in_array($tr_product_id,$grouped_ids)){
-                    $grouped_ids[] = $tr_product_id;
-                    update_option('_transient_wc_product_children_ids_'.$tr_parent_id,$grouped_ids);
-                }
-            }
-        }
 
     }
 
