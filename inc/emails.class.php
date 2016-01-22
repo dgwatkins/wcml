@@ -173,7 +173,7 @@ class WCML_Emails{
         }
     }
 
-    function email_heading_refund( $order_id ){
+    function email_heading_refund( $order_id, $refund_id = null ){
         global $woocommerce;
         if(class_exists('WC_Email_Customer_Refunded_Order')){
 
@@ -186,7 +186,7 @@ class WCML_Emails{
 
             $enabled = $woocommerce->mailer()->emails['WC_Email_Customer_Refunded_Order']->enabled;
             $woocommerce->mailer()->emails['WC_Email_Customer_Refunded_Order']->enabled = false;
-            $woocommerce->mailer()->emails['WC_Email_Customer_Refunded_Order']->trigger($order_id);
+            $woocommerce->mailer()->emails['WC_Email_Customer_Refunded_Order']->trigger($order_id, true, $refund_id);
             $woocommerce->mailer()->emails['WC_Email_Customer_Refunded_Order']->enabled = $enabled;
 
         }
@@ -302,6 +302,8 @@ class WCML_Emails{
             $order_id = filter_input( INPUT_GET, 'order_id', FILTER_SANITIZE_NUMBER_INT );
         }elseif(isset($_GET['action']) && $_GET['action'] == 'mark_completed' && $this->order_id){
             $order_id = $this->order_id;
+        }elseif(isset($_POST['action']) && $_POST['action'] == 'woocommerce_refund_line_items'){
+            $order_id = filter_input( INPUT_POST, 'order_id', FILTER_SANITIZE_NUMBER_INT );
         }
 
         if( $order_id ){
