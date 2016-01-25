@@ -1320,7 +1320,7 @@ class WCML_Products{
                 $post_id = $_GET['post'];
             }
 
-            if( !$this->is_original_product( $post_id ) ){
+            if( isset( $_GET[ 'post' ] ) || !$this->is_original_product( $post_id ) ){
                 $link = admin_url( 'admin.php?page=wpml-wcml&tab=products&prid='.$post_id );
             }
 
