@@ -1,17 +1,17 @@
 === WooCommerce Multilingual - run WooCommerce with WPML ===
 Contributors: AmirHelzer, dominykasgel, dgwatkins, adelval
-Donate link: https://wpml.org/documentation/related-projects/woocommerce-multilingual/
+Donate link: http://wpml.org/documentation/related-projects/woocommerce-multilingual/
 Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multilingual, e-shop, shop
 License: GPLv2
 Requires at least: 3.0
-Tested up to: 4.4
-Stable tag: 3.8
+Tested up to: 4.4.1
+Stable tag: 3.7.8
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
 
 == Description ==
 
-This 'glue' plugin makes it possible to run fully multilingual e-commerce sites using [WooCommerce](http://wordpress.org/extend/plugins/woocommerce/) and [WPML](https://wpml.org). It makes products and store pages translatable, lets visitors switch languages and order products in their language.
+This 'glue' plugin makes it possible to run fully multilingual e-commerce sites using [WooCommerce](http://wordpress.org/extend/plugins/woocommerce/) and [WPML](http://wpml.org). It makes products and store pages translatable, lets visitors switch languages and order products in their language.
 
 = Features =
 
@@ -25,19 +25,19 @@ This 'glue' plugin makes it possible to run fully multilingual e-commerce sites 
 
 = Usage Instructions =
 
-For step by step instructions on setting up a multilingual shop, please go to [WooCommerce Multilingual Manual](https://wpml.org/documentation/related-projects/woocommerce-multilingual/) page.
+For step by step instructions on setting up a multilingual shop, please go to [WooCommerce Multilingual Manual](http://wpml.org/documentation/related-projects/woocommerce-multilingual/) page.
 
 After installing, go to WPML->WooCommerce Multilingual. The 'General settings' tab will let you translate the store pages and report what taxonomy requires translation.
 
 Then, continue to the 'Products' and any categories, tags and custom taxonomy that you use.
 
-When you need help, go to [WooCommerce Multilingual support forum](https://wpml.org/forums/topic-tag/woocommerce/).
+When you need help, go to [WooCommerce Multilingual support forum](http://wpml.org/forums/topic-tag/woocommerce/).
 
 = Downloads =
 
 This version of WooCommerce Multilingual works with WooCommerce 2.x.
 
-You will also need [WPML](https://wpml.org), together with the String Translation and the Translation Management modules, which are part of the [Multilingual CMS](https://wpml.org/purchase/) package.
+You will also need [WPML](http://wpml.org), together with the String Translation and the Translation Management modules, which are part of the [Multilingual CMS](http://wpml.org/purchase/) package.
 
 = Minimum versions for WPML and modules =
 
@@ -68,7 +68,7 @@ Make sure that your theme is not hard-coding any URL. Always use API calls to re
 
 = My checkout page displays in the same language =
 
-In order for the checkout and store pages to appear translated, you need to create several WordPress pages and insert the WooCommerce shortcodes into them. You'll have to go over the [documentation](https://wpml.org/documentation/related-projects/woocommerce-multilingual/) and see that you performed all steps on the way.
+In order for the checkout and store pages to appear translated, you need to create several WordPress pages and insert the WooCommerce shortcodes into them. You'll have to go over the [documentation](http://wpml.org/documentation/related-projects/woocommerce-multilingual/) and see that you performed all steps on the way.
 
 == Screenshots ==
 
@@ -85,7 +85,6 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Fixed a compatibility issue with WooCommerce Subscriptions: a fatal error was triggered during the checkout process in some circumstances
 * Fixed other compatibility issues with WooCommerce Subscriptions: endpoints, incorrect signup fee in secondary currency
 * Fixed a compatibility issue with WooCommerce Payment Gateways: some strings were registered/changed when on checkout
-* Fixed a compatibility issue with Gravity Forms Product Add-ons: some strings were not showing as translated on the product summary on the cart page
 * Bug fix: variations created with Any were not showing the user selected attribute when added to the cart
 * Bug fix: it was not possible to changeor or set the "Set prices in other currencies manually" option for a duplicate product
 * Fixed a compatibiilty issue with WooCommerce Bulk Stock Management (the 'out of stock' flag was not synced)
