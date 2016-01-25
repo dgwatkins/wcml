@@ -109,6 +109,12 @@ class WCML_Compatibility {
         if ( wp_get_theme() == 'Flatsome' ) {
             $this->flatsome = new WCML_Flatsome();
         }
+        
+        // Plugin Name: WooCommerce - Gravity Forms Product Add-Ons
+        if (class_exists('woocommerce_gravityforms')) {
+            $this->gravityforms_product_addons = new WCML_Gravityforms_Product_Addons();
+        }
+       
 
 
     }
