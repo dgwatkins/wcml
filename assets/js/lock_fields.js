@@ -32,13 +32,13 @@ jQuery(document).ready(function($){
 
     }
 
-    $('.woocommerce_attribute_data td textarea,.attribute_values,.attribute_name').each(function(){
+    $('#product_attributes td textarea,#product_attributes input[type="text"]').each(function(){
        $(this).attr('readonly','readonly');
        $(this).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
     });
 
 
-    $('.woocommerce_attribute_data input[type="checkbox"]').each(function(){
+    $('#product_attributes input[type="checkbox"]').each(function(){
         $(this).attr('disabled','disabled');
         $(this).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
     });
@@ -47,7 +47,7 @@ jQuery(document).ready(function($){
         for (i = 0; i < ids.length; i++) {
             $('#'+ids[i]).removeAttr('disabled');
         }
-        $('.woocommerce_variation select,#variable_product_options .toolbar select,.woocommerce_variation input[type="checkbox"],.woocommerce_attribute_data input[type="checkbox"]').each(function(){
+        $('.woocommerce_variation select,#variable_product_options .toolbar select,.woocommerce_variation input[type="checkbox"],#product_attributes input[type="checkbox"]').each(function(){
             $(this).removeAttr('disabled');
         });
     });
