@@ -75,7 +75,7 @@ class WCML_Products{
         add_action( 'woocommerce_email', array( $this, 'woocommerce_email_refresh_text_domain' ) );
         add_action( 'wp_ajax_woocommerce_update_shipping_method', array( $this, 'wcml_refresh_text_domain' ), 9 );
         add_action( 'wp_ajax_nopriv_woocommerce_update_shipping_method', array( $this, 'wcml_refresh_text_domain' ), 9 );
-        add_filter( 'wpml_link_to_translation', array( $this, '_filter_link_to_translation' ), 100 );
+        add_filter( 'wpml_link_to_translation', array( $this, '_filter_link_to_translation' ), 100, 2 );
 
         add_filter( 'woocommerce_upsell_crosssell_search_products', array( $this, 'filter_woocommerce_upsell_crosssell_posts_by_language' ) );
 
@@ -1306,21 +1306,26 @@ class WCML_Products{
     }
 
 
-    function _filter_link_to_translation($link){
-        global $id,$woocommerce_wpml;
+    function _filter_link_to_translation( $link, $post_id ){
+        global $woocommerce_wpml;
 
-        if(!$woocommerce_wpml->settings['trnsl_interface']){
-            return $link;
-        }
-        if(isset($_GET['post'])){
-            $prod_id = $_GET['post'];
-        }else{
-            $prod_id = $id;
+        if( $woocommerce_wpml->settings[ 'trnsl_interface' ] &&
+            (
+                ( isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'product' ) ||
+                ( isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) == 'product' )
+            )
+        ){
+
+            if( empty( $post_id ) && isset( $_GET['post'] ) ){
+                $post_id = $_GET['post'];
+            }
+
+            if( !$this->is_original_product( $post_id ) ){
+                $link = admin_url( 'admin.php?page=wpml-wcml&tab=products&prid='.$post_id );
+            }
+
         }
 
-        if((isset($_GET['post_type']) && $_GET['post_type'] == 'product') || (isset($_GET['post']) && get_post_type($_GET['post']) == 'product')){
-            $link = admin_url('admin.php?page=wpml-wcml&tab=products&prid='.$prod_id);
-        }
         return $link;
     }
 
