@@ -85,6 +85,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Fixed a compatibility issue with WooCommerce Subscriptions: a fatal error was triggered during the checkout process in some circumstances
 * Fixed other compatibility issues with WooCommerce Subscriptions: endpoints, incorrect signup fee in secondary currency
 * Fixed a compatibility issue with WooCommerce Payment Gateways: some strings were registered/changed when on checkout
+* Fixed a compatibility issue with Gravity Forms Product Add-ons: some strings were not showing as translated on the product summary on the cart page
 * Bug fix: variations created with Any were not showing the user selected attribute when added to the cart
 * Bug fix: it was not possible to changeor or set the "Set prices in other currencies manually" option for a duplicate product
 * Fixed a compatibiilty issue with WooCommerce Bulk Stock Management (the 'out of stock' flag was not synced)
