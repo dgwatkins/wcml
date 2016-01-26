@@ -561,7 +561,7 @@ class WCML_Url_Translation {
             $language = $sitepress->get_current_language();
         }
 
-        if ( $language != 'all' && $slug && $language != $string_language ) {
+        if ( $slug && $language != 'all' && $language != $string_language ) {
 
             if ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
                 $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, $this->url_strings_context(), $this->url_string_name( $taxonomy ), $language );
