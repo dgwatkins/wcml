@@ -987,9 +987,18 @@ class WCML_Multi_Currency_Support{
     }    
         
     function filter_coupon_data($coupon){
-        
-        if($coupon->type == 'fixed_cart' || $coupon->type == 'fixed_product'){
-            $coupon->amount = apply_filters('wcml_raw_price_amount', $coupon->amount);
+
+        // Alias compatibility
+        if( isset( $coupon->amount ) && !isset( $coupon->coupon_amount ) ){
+            $coupon->coupon_amount = $coupon->amount;
+        }
+        if( isset( $coupon->type ) && !isset( $coupon->discount_type ) ){
+            $coupon->discount_type = $coupon->type;
+        }
+        //
+
+        if($coupon->discount_type == 'fixed_cart' || $coupon->discount_type == 'fixed_product'){
+            $coupon->coupon_amount = apply_filters('wcml_raw_price_amount', $coupon->coupon_amount);
         }
 
         $coupon->minimum_amount = apply_filters('wcml_raw_price_amount',  $coupon->minimum_amount);
