@@ -52,7 +52,7 @@ jQuery(document).ready(function($){
 
     }
 
-   $(document).on('click', '.js-tax-translation li a[href^=#ignore-]', function(){
+   $(document).on('click', '.js-tax-translation li a[href^="#ignore-"]', function(){
                 
        var taxonomy = $(this).attr('href').replace(/#ignore-/, '');
 
@@ -86,7 +86,7 @@ jQuery(document).ready(function($){
        return false;
    })
    
-   $(document).on('click', '.js-tax-translation li a[href^=#unignore-]', function(){
+   $(document).on('click', '.js-tax-translation li a[href^="#unignore-"]', function(){
                 
        var taxonomy = $(this).attr('href').replace(/#unignore-/, '');
 
