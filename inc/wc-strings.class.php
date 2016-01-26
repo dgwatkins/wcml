@@ -4,7 +4,6 @@ class WCML_WC_Strings{
 
     private $translations_from_mo_file = array();
     private $mo_files = array();
-    private $wc_payment_gateways = array();
 
     function __construct(){
 
@@ -19,7 +18,7 @@ class WCML_WC_Strings{
 
     function payment_gateways_filters( $payment_gateways ){
 
-        foreach ( $this->wc_payment_gateways = $payment_gateways as $gateway ) {
+        foreach ( $payment_gateways as $gateway ) {
             $gateway_id = strtolower( str_replace( 'WC_Gateway_', '', $gateway ) );
 
             add_filter( 'woocommerce_settings_api_sanitized_fields_'.$gateway_id, array( $this, 'register_gateway_strings' ) );
@@ -277,7 +276,9 @@ class WCML_WC_Strings{
 
     function register_gateway_strings( $fields ){
 
-        foreach( $this->wc_payment_gateways as $gateway ){
+        $wc_payment_gateways = WC_Payment_Gateways::instance();
+
+        foreach( $wc_payment_gateways->payment_gateways() as $gateway ){
             if( isset( $_POST['woocommerce_'.$gateway->id.'_enabled'] ) ){
                 $gateway_id = $gateway->id;
                 break;
