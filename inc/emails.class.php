@@ -320,14 +320,14 @@ class WCML_Emails{
         if( $order_id ){
             $order_language = get_post_meta( $order_id, 'wpml_language', true );
             if( $order_language ){
-                return $order_language;
+                $current_language = $order_language;
             }else{
                 global $sitepress;
-                return $sitepress->get_current_language();
+                $current_language = $sitepress->get_current_language();
             }
         }
 
-        return $current_language;
+        return apply_filters( 'wcml_email_language', $current_language, $order_id );
     }
 
     // set correct locale code for emails
