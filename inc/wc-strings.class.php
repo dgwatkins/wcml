@@ -7,13 +7,26 @@ class WCML_WC_Strings{
     private $wc_payment_gateways = array();
 
     function __construct(){
-        
+
         add_action('init', array($this, 'init'));
         add_action('init', array($this, 'pre_init'));
         add_filter('query_vars', array($this, 'translate_query_var_for_product'));
         add_filter('wp_redirect', array($this, 'encode_shop_slug'),10,2);
         add_action( 'registered_taxonomy', array ( $this, 'translate_attributes_label_in_wp_taxonomies' ), 100, 3 );
+        add_filter( 'woocommerce_payment_gateways', array( $this, 'payment_gateways_filters' ), 100 );
 
+    }
+
+    function payment_gateways_filters( $payment_gateways ){
+
+        foreach ( $this->wc_payment_gateways = $payment_gateways as $gateway ) {
+            $gateway_id = strtolower( str_replace( 'WC_Gateway_', '', $gateway ) );
+
+            add_filter( 'woocommerce_settings_api_sanitized_fields_'.$gateway_id, array( $this, 'register_gateway_strings' ) );
+            add_filter( 'option_woocommerce_'.$gateway_id.'_settings', array( $this, 'translate_gateway_strings' ), 9, 2 );
+        }
+
+        return $payment_gateways;
     }
 
     function pre_init(){
@@ -31,16 +44,8 @@ class WCML_WC_Strings{
         add_action('woocommerce_tax_rate_added', array($this, 'register_tax_rate_label_string'), 10, 2 );
         add_filter('woocommerce_rate_label',array($this,'translate_woocommerce_rate_label'));
 
-
-        $payment_gateways = WC_Payment_Gateways::instance();
-        foreach ( $this->wc_payment_gateways = $payment_gateways->payment_gateways() as $gateway ) {
-            add_filter( 'woocommerce_settings_api_sanitized_fields_'.$gateway->id, array( $this, 'register_gateway_strings' ) );
-            add_filter( 'option_woocommerce_'.$gateway->id.'_settings', array( $this, 'translate_gateway_strings' ), 100, 2 );
-        }
-
         add_filter('woocommerce_gateway_title', array($this, 'translate_gateway_title'), 10, 2);
         add_filter('woocommerce_gateway_description', array($this, 'translate_gateway_description'), 10, 2);
-
 
         //translate attribute label
         add_filter('woocommerce_attribute_label',array($this,'translated_attribute_label'),10,3);
@@ -334,8 +339,9 @@ class WCML_WC_Strings{
 
     function translate_gateway_instructions( $id, $instructions){
         global $sitepress;
-        apply_filters( 'wpml_translate_single_string', $instructions, 'woocommerce', $id .'_gateway_instructions', $sitepress->get_current_language() );
+        $instruction = apply_filters( 'wpml_translate_single_string', $instructions, 'woocommerce', $id .'_gateway_instructions', $sitepress->get_current_language() );
 
+        return $instruction;
     }
 
     function show_custom_url_base_language_requirement(){
