@@ -54,6 +54,22 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
 		);
 
+		$settings['currency_options']['CHF'] = array(
+
+			'rate' 				=> 55,
+			'position'			=> 'right',
+			'thousand_sep'		=> '.',
+			'decimal_sep'		=> ',',
+			'num_decimals'		=> 2,
+			'rounding'			=> 'disabled',
+			'rounding_increment'=> 0,
+			'auto_subtract'		=> 0
+
+		);
+
+		$this->settings =& $settings;
+
+
 		$woocommerce_wpml->update_settings( $settings );
 
 		// Multi currency objects
@@ -121,6 +137,29 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 		$arg = $this->multi_currency->filter_price_woocommerce_paypal_args( $arg );
 
 		$this->assertEquals( 12.8, $arg['amount_1'] );
+
+	}
+
+	// test converting the coupon amount when using the multi currency mode
+	function test_filter_coupon_data(){
+		global $woocommerce;
+
+		$coupon = WCML_Helper_Coupon::create_coupon();
+
+		$coupon_amount  = $coupon->coupon_amount;
+		$minimum_amount  = $coupon->minimum_amount;
+		$maximum_amount  = $coupon->maximum_amount;
+
+		add_filter('wcml_raw_price_amount', array($this->multi_currency, 'raw_price_filter'), 10, 2);
+		$this->multi_currency_support->set_client_currency('CHF');
+
+		$this->multi_currency_support->filter_coupon_data($coupon);
+
+		$rate = $this->settings['currency_options']['CHF']['rate'];
+
+		$this->assertEquals( $coupon->coupon_amount,  $rate * $coupon_amount );
+		$this->assertEquals( $coupon->minimum_amount, $rate * $minimum_amount );
+		$this->assertEquals( $coupon->maximum_amount, $rate * $maximum_amount );
 
 	}
 
