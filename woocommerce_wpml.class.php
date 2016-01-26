@@ -128,7 +128,6 @@ class woocommerce_wpml {
         add_action( 'icl_update_active_languages', array( $this, 'download_woocommerce_translations_for_active_languages' ) );
         add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_for_update' ), 11 );
         add_filter( 'upgrader_pre_download', array( $this, 'version_update' ), 10, 2 );
-        add_action( 'admin_notices', array( $this, 'translation_upgrade_notice' ) );
         add_action( 'wp_ajax_hide_wcml_translations_message', array($this, 'hide_wcml_translations_message') );
 
         add_action( 'woocommerce_settings_save_general', array( $this, 'currency_options_update_default_currency'));
