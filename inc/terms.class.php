@@ -904,6 +904,10 @@ class WCML_Terms{
 
                 $shipp_class = get_term_by( 'slug', substr($setting_key, 11 ), 'product_shipping_class' );
 
+                if( empty( $shipp_class ) ){
+                    return $settings;
+                }
+
                 $trid = $sitepress->get_element_trid( $shipp_class->term_taxonomy_id, 'tax_product_shipping_class' );
 
                 $translations = $sitepress->get_element_translations( $trid, 'tax_product_shipping_class' );
