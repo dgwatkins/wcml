@@ -932,10 +932,12 @@ class WCML_Terms{
 
                 global $sitepress;
 
-                $shipp_class = get_term_by( 'slug', substr($setting_key, 11 ), 'product_shipping_class' );
+                $shipp_class_key = substr($setting_key, 11 );
 
-                if( empty( $shipp_class ) ){
-                    return $settings;
+                if( is_numeric( $shipp_class_key ) ){
+                    $shipp_class = get_term( $shipp_class_key, 'product_shipping_class' );
+                }else{
+                    $shipp_class = get_term_by( 'slug', $shipp_class_key, 'product_shipping_class' );
                 }
 
                 $trid = $sitepress->get_element_trid( $shipp_class->term_taxonomy_id, 'tax_product_shipping_class' );
@@ -948,7 +950,11 @@ class WCML_Terms{
 
                         $tr_shipp_class = get_term_by( 'term_taxonomy_id', $translation->element_id, 'product_shipping_class' );
 
-                        $settings[ 'class_cost_'.$tr_shipp_class->slug ] = $value;
+                        if( is_numeric( $shipp_class_key ) ){
+                            $settings[ 'class_cost_'.$tr_shipp_class->term_id ] = $value;
+                        }else{
+                            $settings[ 'class_cost_'.$tr_shipp_class->slug ] = $value;
+                        }
 
                     }
 
