@@ -1,0 +1,30 @@
+{
+  "name": "wcml/woocommerce-multilingual",
+  "description": "Allows running fully multilingual e-commerce sites using WooCommerce and WPML.",
+  "license": "GPLv2",
+  "homepage" : "https://wpml.org/documentation/related-projects/woocommerce-multilingual/",
+  "type": "wordpress-plugin",
+  "authors": [
+    {
+      "name": "Mihai Grigori",
+      "email": "mihai@wpml.org"
+    }
+  ],
+  "config": {
+    "vendor-dir": "composer/"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@git.onthegosystems.com:installer/installer.git"
+    }
+  ],
+  "require": {
+    "otgs/installer" : "1.7.3"
+  },
+  "extra": {
+    "installer-paths": {
+      "inc/installer/": ["otgs/installer"]
+    }
+  }
+}
