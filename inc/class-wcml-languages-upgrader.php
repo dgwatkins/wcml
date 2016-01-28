@@ -65,7 +65,7 @@ class WCML_Languages_Upgrader{
      *
      */
     function download_woocommerce_translations_for_active_languages( $wc_version = false ){
-        global $sitepress;
+        global $sitepress, $woocommerce_wpml;
 
         $active_languages = $sitepress->get_active_languages();
 
@@ -78,6 +78,11 @@ class WCML_Languages_Upgrader{
         }
 
         $sitepress->switch_lang( $current_language );
+
+        if( isset( $woocommerce_wpml->url_translation ) ){
+            $woocommerce_wpml->url_translation->register_product_and_taxonomy_bases();
+        }
+
     }
 
 
