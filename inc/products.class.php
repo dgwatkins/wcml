@@ -2959,7 +2959,10 @@ class WCML_Products{
 
                 $sitepress->set_element_language_details( $new_orig_id, 'post_' . $post->post_type, false, $orig_lang );
                 $new_trid = $sitepress->get_element_trid( $new_orig_id, 'post_' . $post->post_type );
-                update_post_meta( $new_id, '_icl_lang_duplicate_of', $new_orig_id );
+                if( get_post_meta( $orig_id, '_icl_lang_duplicate_of' ) ){
+                    update_post_meta( $new_id, '_icl_lang_duplicate_of', $new_orig_id );
+                }
+
 
                 $sitepress->set_element_language_details( $new_id, 'post_' . $post->post_type, $new_trid, $sitepress->get_current_language() );
             }
@@ -2979,13 +2982,16 @@ class WCML_Products{
 
                         $new_id_obj = get_post( $new_id );
                         $new_slug = wp_unique_post_slug( sanitize_title( $new_id_obj->post_title ), $new_id, $post_to_duplicate->post_status, $post_to_duplicate->post_type, $new_id_obj->post_parent );
-                        $wpdb->update( $wpdb->posts, array( 'post_name' => $new_slug ), array( 'ID' => $new_id ) );
+                        $wpdb->update( $wpdb->posts, array( 'post_name' => $new_slug, 'post_status' => $post_to_duplicate->post_status ), array( 'ID' => $new_id ) );
 
                         do_action( 'wcml_after_duplicate_product' , $new_id, $post_to_duplicate );
 
                         $sitepress->set_element_language_details( $new_id, 'post_' . $post->post_type, $new_trid, $translation->language_code );
 
-                        update_post_meta( $new_id, '_icl_lang_duplicate_of', $new_orig_id );
+                        if( get_post_meta( $translation->element_id, '_icl_lang_duplicate_of' ) ){
+                            update_post_meta( $new_id, '_icl_lang_duplicate_of', $new_orig_id );
+                        }
+
                     }
                 }
             }
