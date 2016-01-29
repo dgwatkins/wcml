@@ -7,7 +7,9 @@ class WCML_WC_Subscriptions{
         add_action('init', array($this, 'init'),9);
         add_filter('wcml_variation_term_taxonomy_ids',array($this,'wcml_variation_term_taxonomy_ids'));
         add_filter('woocommerce_subscription_lengths', array($this, 'woocommerce_subscription_lengths'), 10, 2);
-
+        
+        // reenable coupons for subscriptions when multicurrency is on
+        add_action('woocommerce_subscription_cart_after_grouping', array($this, 'woocommerce_subscription_cart_after_grouping'));
     }
 
     function init(){
@@ -51,5 +53,13 @@ class WCML_WC_Subscriptions{
         
         return isset($new_subscription_ranges) ? $new_subscription_ranges : $subscription_ranges;
     }
-
+    
+    public function woocommerce_subscription_cart_after_grouping() {
+        global $woocommerce_wpml;
+        
+        if( $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
+            remove_action('woocommerce_before_calculate_totals', 'WC_Subscriptions_Coupon::remove_coupons', 10);
+        }
+        
+    }
 }
