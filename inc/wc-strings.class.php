@@ -20,7 +20,15 @@ class WCML_WC_Strings{
     function payment_gateways_filters( $payment_gateways ){
 
         foreach ( $payment_gateways as $gateway ) {
-            $gateway_id = strtolower( str_replace( 'WC_Gateway_', '', $gateway ) );
+
+            if( is_string( $gateway ) ){
+                $gateway_id = strtolower( str_replace( 'WC_Gateway_', '', $gateway ) ) ;
+            }elseif( isset( $gateway->id ) ){
+                $gateway_id = $gateway->id;
+            }else{
+                continue;
+            }
+
 
             add_filter( 'woocommerce_settings_api_sanitized_fields_'.$gateway_id, array( $this, 'register_gateway_strings' ) );
             add_filter( 'option_woocommerce_'.$gateway_id.'_settings', array( $this, 'translate_gateway_strings' ), 9, 2 );
@@ -32,7 +40,14 @@ class WCML_WC_Strings{
     function shipping_methods_filters( $shipping_methods ){
 
         foreach ( $shipping_methods as $shipping_method ) {
-            $shipping_method_id = strtolower( str_replace( 'WC_Shipping_', '', $shipping_method ) );
+
+            if( is_string( $shipping_method ) ){
+                $shipping_method_id = strtolower( str_replace( 'WC_Shipping_', '', $shipping_method ) );
+            }elseif( isset( $shipping_method->id ) ){
+                $shipping_method_id = $shipping_method->id;
+            }else{
+                continue;
+            }
 
             add_filter( 'woocommerce_settings_api_sanitized_fields_'.$shipping_method_id, array( $this, 'register_shipping_strings' ) );
             add_filter( 'option_woocommerce_'.$shipping_method_id.'_settings', array( $this, 'translate_shipping_strings' ), 9, 2 );
