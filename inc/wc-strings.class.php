@@ -356,7 +356,10 @@ class WCML_WC_Strings{
 
         if( isset( $gateway_id ) ){
             do_action('wpml_register_single_string', 'woocommerce', $gateway_id .'_gateway_title', $fields['title'] );
-            do_action('wpml_register_single_string', 'woocommerce', $gateway_id .'_gateway_description', $fields['description'] );
+
+            if( isset( $fields['description'] ) ) {
+                do_action('wpml_register_single_string', 'woocommerce', $gateway_id . '_gateway_description', $fields['description']);
+            }
 
             if( isset( $fields['instructions'] ) ){
                 do_action('wpml_register_single_string', 'woocommerce', $gateway_id .'_gateway_instructions', $fields['instructions']  );
