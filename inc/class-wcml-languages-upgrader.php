@@ -26,7 +26,7 @@ class WCML_Languages_Upgrader{
 
         $locale = $sitepress->get_locale( $lang_code );
 
-        if( $locale != 'en_US' ){
+        if( $locale != 'en_US' && $this->has_available_update( $locale ) ){
 
             $wc_version = $wc_version ? $wc_version : WC_VERSION;
 
@@ -231,9 +231,10 @@ class WCML_Languages_Upgrader{
      * @return bool
      */
     function check_if_language_pack_exists( $locale ) {
+
         $response = wp_safe_remote_get( $this->get_language_pack_uri( $locale ), array( 'timeout' => 60 ) );
 
-        if ( ! is_wp_error( $response ) && $response['response']['code'] >= 200 && $response['response']['code'] < 300 ) {
+        if ( ! is_wp_error( $response ) && $response['response']['code'] >= 200 && $response['response']['code'] < 300 && $response['body'] != '404 File not found' ) {
             return true;
         } else {
             return false;

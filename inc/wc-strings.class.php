@@ -7,25 +7,53 @@ class WCML_WC_Strings{
 
     function __construct(){
 
-        add_action('init', array($this, 'init'));
-        add_action('init', array($this, 'pre_init'));
-        add_filter('query_vars', array($this, 'translate_query_var_for_product'));
-        add_filter('wp_redirect', array($this, 'encode_shop_slug'),10,2);
+        add_action( 'init', array( $this, 'init' ) );
+        add_action( 'init', array( $this, 'pre_init' ) );
+        add_filter( 'query_vars', array( $this, 'translate_query_var_for_product' ) );
+        add_filter( 'wp_redirect', array( $this, 'encode_shop_slug' ), 10, 2 );
         add_action( 'registered_taxonomy', array ( $this, 'translate_attributes_label_in_wp_taxonomies' ), 100, 3 );
         add_filter( 'woocommerce_payment_gateways', array( $this, 'payment_gateways_filters' ), 100 );
+        add_filter( 'woocommerce_shipping_methods', array( $this, 'shipping_methods_filters' ), 100 );
 
     }
 
     function payment_gateways_filters( $payment_gateways ){
 
         foreach ( $payment_gateways as $gateway ) {
-            $gateway_id = strtolower( str_replace( 'WC_Gateway_', '', $gateway ) );
+
+            if( is_string( $gateway ) ){
+                $gateway_id = strtolower( str_replace( 'WC_Gateway_', '', $gateway ) ) ;
+            }elseif( isset( $gateway->id ) ){
+                $gateway_id = $gateway->id;
+            }else{
+                continue;
+            }
+
 
             add_filter( 'woocommerce_settings_api_sanitized_fields_'.$gateway_id, array( $this, 'register_gateway_strings' ) );
             add_filter( 'option_woocommerce_'.$gateway_id.'_settings', array( $this, 'translate_gateway_strings' ), 9, 2 );
         }
 
         return $payment_gateways;
+    }
+
+    function shipping_methods_filters( $shipping_methods ){
+
+        foreach ( $shipping_methods as $shipping_method ) {
+
+            if( is_string( $shipping_method ) ){
+                $shipping_method_id = strtolower( str_replace( 'WC_Shipping_', '', $shipping_method ) );
+            }elseif( isset( $shipping_method->id ) ){
+                $shipping_method_id = $shipping_method->id;
+            }else{
+                continue;
+            }
+
+            add_filter( 'woocommerce_settings_api_sanitized_fields_'.$shipping_method_id, array( $this, 'register_shipping_strings' ) );
+            add_filter( 'option_woocommerce_'.$shipping_method_id.'_settings', array( $this, 'translate_shipping_strings' ), 9, 2 );
+        }
+
+        return $shipping_methods;
     }
 
     function pre_init(){
@@ -39,7 +67,7 @@ class WCML_WC_Strings{
     function init(){
         global $pagenow;
          
-        add_filter('woocommerce_package_rates', array($this, 'register_shipping_methods'));
+        add_filter('woocommerce_package_rates', array($this, 'translate_shipping_methods_in_package'));
         add_action('woocommerce_tax_rate_added', array($this, 'register_tax_rate_label_string'), 10, 2 );
         add_filter('woocommerce_rate_label',array($this,'translate_woocommerce_rate_label'));
 
@@ -252,13 +280,54 @@ class WCML_WC_Strings{
 
     }
 
-    function register_shipping_methods($available_methods){
+    function register_shipping_strings( $fields ){
+        $shipping = WC_Shipping::instance();
+
+        foreach( $shipping->get_shipping_methods() as $shipping_method ){
+            if( isset( $_POST['woocommerce_'.$shipping_method->id.'_enabled'] ) ){
+                $shipping_method_id = $shipping_method->id;
+                break;
+            }
+        }
+
+        if( isset( $shipping_method_id ) ){
+            do_action( 'wpml_register_single_string', 'woocommerce', $shipping_method_id .'_shipping_method_title', $fields['title'] );
+        }
+
+        return $fields;
+    }
+
+    function translate_shipping_strings( $value, $option = false ){
+
+        if( $option && isset( $value['enabled']) && $value['enabled'] == 'no' ){
+            return $value;
+        }
+
+        $shipping_id = str_replace( 'woocommerce_', '', $option );
+        $shipping_id = str_replace( '_settings', '', $shipping_id );
+
+        if( isset( $value['title'] ) ){
+            $value['title'] = $this->translate_shipping_method_title( $value['title'], $shipping_id );
+        }
+
+        return $value;
+    }
+
+    function translate_shipping_methods_in_package( $available_methods ){
+
         foreach($available_methods as $key => $method){
-            do_action('wpml_register_single_string', 'woocommerce', $key .'_shipping_method_title', $method->label );
-            $method->label = apply_filters( 'wpml_translate_single_string', $method->label, 'woocommerce', $key .'_shipping_method_title');
+            $method->label =  $this->translate_shipping_method_title( $method->label, $key );
         }
 
         return $available_methods;
+    }
+
+    function translate_shipping_method_title( $title, $shipping_id ) {
+        global $sitepress;
+
+        $title = apply_filters( 'wpml_translate_single_string', $title, 'woocommerce', $shipping_id .'_shipping_method_title', $sitepress->get_current_language() );
+
+        return $title;
     }
 
     function translate_woocommerce_rate_label( $label ){
