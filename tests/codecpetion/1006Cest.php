@@ -1,5 +1,5 @@
 <?php
-//Enable and configure WCML
+//Create a Simple Product
 
 
 class SixCest
@@ -7,19 +7,13 @@ class SixCest
     public function _before(AcceptanceTester $I)
     {
         // Login Procedure
-        $I->wantTo('Further Configure WC');
+        $I->wp_login('admin', '123456');
 
-        $I->amOnPage('/wp-admin/');
+        ////////////////////////////
+        // Create  Simple Product //
+        ////////////////////////////
 
-        $I->fillField('#user_login', 'admin');
-        $I->fillField('#user_pass', '123456');
-
-        $I->click('Log In');
-
-        $I->see('Dashboard');
-
-        //////////////////////
-        // Create Product
+        $I->amGoingTo('Create a Simple WC Product');
 
         $I->amOnPage('/wp-admin/post-new.php?post_type=product');
 
@@ -27,11 +21,15 @@ class SixCest
 
         $I->fillField('Product name', 'Test Product');
 
-        $I->fillField('.mce-edit-arear', 'Test Product');
+        $I->click('#content-html');
+
+        $I->fillField('#content', 'Test Product');
 
         $I->fillField('_regular_price', '10');
 
         $I->click('#publish');
+
+        $I->expect('submitted product was added to a list');
 
         $I->wait(2);
 

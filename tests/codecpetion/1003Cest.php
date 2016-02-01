@@ -8,12 +8,18 @@ class ThreeCest
     {
         $I->wantTo('Install and Configure WC');
 
-        $I->loginAsAdmin();//Only if Run this test Seperately
+        // Login Procedure
+        $I->wp_login('admin', '123456');
+
+        ///////////////////////////////////
+        // Woocommerce Installation      //
+        //////////////////////////////////
 
         $I->amGoingTo('Activate Woocommerce Plugin');
-        $I->amOnPluginsPage(); //In order that the activatePlugin() works, the webdriver needs to be in Plugins page
 
-        $I->activatePlugin('woocommerce');
+        $I->amOnPage('/wp-admin/plugins.php');
+
+        $I->click('Activate', '#woocommerce');
 
         $I->amGoingTo('Run Woocommerce Setup');
 
