@@ -78,6 +78,11 @@ class WCML_Compatibility {
         // WooCommerce Bookings
         if(defined( 'WC_BOOKINGS_VERSION' ) && version_compare(WC_BOOKINGS_VERSION, '1.7.8', '>=') ){
             $this->bookings = new WCML_Bookings();
+
+            // WooCommerce Accommodation Bookings
+            if( defined( 'WC_ACCOMMODATION_BOOKINGS_VERSION' ) ){
+                $this->bookings = new WCML_Accommodation_Bookings();
+            }
         }
 
         // WooCommerce Checkout Field Editor
