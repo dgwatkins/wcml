@@ -91,7 +91,9 @@ jQuery( function($){
 
             e.preventDefault();
 
-            var currency = $(this).data('currency');
+            var currency        = $(this).data('currency');
+            var currency_name   = $(this).data('currency_name');
+            var currency_symbol = $(this).data('currency_symbol');
 
             $('#currency_row_' + currency + ' .currency_action_update').hide();
             var ajaxLoader = $('<span class="spinner" style="visibility: visible;margin:0;">');
@@ -113,17 +115,9 @@ jQuery( function($){
 
                     $('#wcml_currencies_order .wcml_currencies_order_'+ currency).remove();
 
-                    $.ajax({
-                        type : "post",
-                        url : ajaxurl,
-                        data : {
-                            action: "wcml_currencies_list",
-                            wcml_nonce: $('#currencies_list_nonce').val()
-                        },
-                        success: function(response) {
-                            $('#wcml_currency_options_code_').html(response);
-                        }
-                    });
+                    $('#wcml_currency_options_code_').prepend('<option data-symbol="' + currency_symbol + '" value="' + currency + '">' + currency_name + '</option>');
+                    $('#wcml_currency_options_code_').val(currency).trigger('change');
+
                     WCML_Multi_Currency.currency_switcher_preview();
                 },
                 done: function() {
@@ -167,9 +161,13 @@ jQuery( function($){
 
                         var tr = $('#currency-table tr.wcml-row-currency:last').clone();
                         tr.attr('id', 'currency_row_' + currency);
-                        tr.find('.wcml-col-edit a').attr('id', 'wcml_currency_options_' + currency);
-                        tr.find('.wcml-col-edit a').attr('data-content', 'wcml_currency_options_' + currency);
-                        tr.find('.wcml-col-edit a').attr('data-currency', currency);
+
+                        var edit_link = tr.find('.wcml-col-edit a');
+                        edit_link.attr('data-content', 'wcml_currency_options_' + currency);
+                        edit_link.attr('data-currency', currency);
+                        edit_link.data('dialog', 'wcml_currency_options_' + currency);
+                        edit_link.removeClass('hidden');
+
                         $('#currency-table').find('tr.default_currency').before( tr );
 
                         var tr = $('#currency-lang-table tr.wcml-row-currency-lang:last').clone();
@@ -178,8 +176,11 @@ jQuery( function($){
 
                         var tr = $('#currency-delete-table tr.wcml-row-currency-del:last').clone();
                         tr.attr('id', 'currency_row_del_' + currency);
-                        tr.find('.delete_currency').removeClass('hidden');
-                        tr.find('.delete_currency').attr('data-currency', currency);
+                        var del_link = tr.find('.delete_currency');
+                        del_link.removeClass('hidden');
+                        del_link.attr('data-currency', currency);
+                        del_link.attr('data-currency_name', response.currency_name);
+                        del_link.attr('data-currency_symbol', response.currency_symbol);
                         $('#currency-delete-table').find('tr.default_currency').before( tr );
 
                     }
@@ -187,7 +188,8 @@ jQuery( function($){
                     $('#currency_row_' + currency + ' .wcml-col-currency').html(response.currency_name_formatted);
                     $('#currency_row_' + currency + ' .wcml-col-rate').html(response.currency_meta_info);
 
-                    $('.currencies-table-content').prepend(response.currency_options)
+                    $('#wcml_currency_options_' + currency).remove();
+                    $('#wcml_mc_options').before(response.currency_options);
 
                     $('#wcml_currency_options_code_ option[value="'+currency+'"]').remove();
                 }

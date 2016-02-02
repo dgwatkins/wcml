@@ -41,7 +41,7 @@ class woocommerce_wpml {
         $this->load_css_and_js();
 
         $actions_that_need_mc = array( 'save-mc-options', 'wcml_new_currency', 'wcml_save_currency', 'wcml_delete_currency',
-            'wcml_currencies_list', 'wcml_update_currency_lang', 'wcml_update_default_currency', 'wcml_price_preview');
+                'wcml_update_currency_lang', 'wcml_update_default_currency', 'wcml_price_preview');
         if($this->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT
             || ( isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) && $_GET['tab'] == 'multi-currency' )
             || ( isset( $_POST[ 'action' ] ) && in_array( $_POST[ 'action' ], $actions_that_need_mc ) )
@@ -354,7 +354,8 @@ class woocommerce_wpml {
 
     function menu_content(){
         if( $this->check_dependencies && $this->check_design_update ){
-            include WCML_PLUGIN_PATH . '/menu/management.php';
+            $menus_wrap = new WCML_Menus_Wrap( $this );
+            $menus_wrap->show();
         }else{
             include WCML_PLUGIN_PATH . '/menu/plugins.php';
         }
@@ -412,7 +413,7 @@ class woocommerce_wpml {
             }
 
             if( $_GET[ 'page' ] == 'wpml-wcml' && isset( $_GET[ 'tab' ] ) && $_GET[ 'tab' ] == 'multi-currency' ){
-                wp_register_script( 'multi-currency', WCML_PLUGIN_URL . '/res/js/multi-currency.js', array( 'jquery' ), WCML_VERSION, true );
+                wp_register_script( 'multi-currency', WCML_PLUGIN_URL . '/res/js/multi-currency.js', array( 'jquery', 'jquery-ui-sortable' ), WCML_VERSION, true );
                 wp_enqueue_script( 'multi-currency' );
             }
 

@@ -4,10 +4,6 @@ class WCML_Compatibility {
     
     function __construct(){
 
-        spl_autoload_register( array( $this, 'autoload' ) );
-
-        $this->include_path = WCML_PLUGIN_PATH . '/compatibility/';
-
         $this->init();
 
     }
@@ -126,19 +122,6 @@ class WCML_Compatibility {
         }
        
 
-
-    }
-
-    function autoload( $class ){
-
-        $class = strtolower( $class );
-        $file = 'class-' . str_replace( '_', '-', $class ) . '.php';
-        $path  = $this->include_path . $file;
-
-        if ( $path && is_readable( $path ) ) {
-            include_once( $path );
-            return true;
-        }
 
     }
 

@@ -25,7 +25,6 @@ class WCML_Multi_Currency_Support{
             add_action('wp_ajax_wcml_new_currency', array($this,'edit_currency'));
             add_action('wp_ajax_wcml_save_currency', array($this,'save_currency'));
             add_action('wp_ajax_wcml_delete_currency', array($this,'delete_currency'));
-            add_action('wp_ajax_wcml_currencies_list', array($this,'currencies_list'));
 
             add_action('wp_ajax_wcml_update_currency_lang', array($this,'update_currency_lang'));
             add_action('wp_ajax_wcml_update_default_currency', array($this,'update_default_currency'));
@@ -271,6 +270,7 @@ class WCML_Multi_Currency_Support{
     }
 
     function edit_currency(){
+        global $woocommerce_wpml;
 
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         if( wp_verify_nonce( $nonce, 'wcml_edit_currency' ) ) {
@@ -278,8 +278,6 @@ class WCML_Multi_Currency_Support{
             $this->init_currencies();
             $args['currencies']     = $this->get_currencies();
             $args['wc_currencies']  = get_woocommerce_currencies();
-
-            ob_start();
 
             if( empty( $_POST['currency'] )  ){
 
@@ -291,13 +289,13 @@ class WCML_Multi_Currency_Support{
                 $args['currency_name']   = $args['wc_currencies'][ $args['currency_code'] ];
                 $args['currency_symbol'] = get_woocommerce_currency_symbol( $args['currency_code'] );
 
-                $args['title'] = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ), '<strong>' . $args['currency_name'] . ' (' . $args['currency_symbol'] . ')</strong>' );
+                $args['title'] = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ),
+                                '<strong>' . $args['currency_name'] . ' (' . $args['currency_symbol'] . ')</strong>' );
 
             }
 
-            include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php';
-            $return['html'] = ob_get_contents();
-            ob_end_clean();
+            $custom_currency_options = new WCML_Custom_Currency_Options($args, $woocommerce_wpml);
+            $return['html'] = $custom_currency_options->get_view();
 
             echo json_encode( $return );
 
@@ -368,9 +366,8 @@ class WCML_Multi_Currency_Support{
             $woocommerce_wpml->settings['currency_options'] = $this->currencies;
             $woocommerce_wpml->update_settings();
         }
-        
-        
-        $wc_currency = get_option('woocommerce_currency'); 
+
+        $wc_currency = get_option('woocommerce_currency');
         $wc_currencies = get_woocommerce_currencies();
         
         switch($this->currencies[$currency_code]['position']){
@@ -384,8 +381,6 @@ class WCML_Multi_Currency_Support{
         
         $return['currency_meta_info'] = sprintf('1 %s = %s %s', $wc_currency, $this->currencies[$currency_code]['rate'], $currency_code);
 
-        ob_start();
-
         $args = array();
         $args['default_currency']   = get_woocommerce_currency();
         $args['currencies']     	= $this->currencies;
@@ -393,22 +388,14 @@ class WCML_Multi_Currency_Support{
         $args['currency_code'] 		= $currency_code;
         $args['currency_name'] 		= $wc_currencies[$currency_code];
         $args['currency_symbol'] 	= get_woocommerce_currency_symbol($currency_code);
-        $args['currency']			= array(
-            'rate'                  => $this->currencies[$currency_code]['rate'],
-            'position'              => $this->currencies[$currency_code]['position'],
-            'thousand_sep'          => $this->currencies[$currency_code]['thousand_sep'],
-            'decimal_sep'           => $this->currencies[$currency_code]['decimal_sep'],
-            'num_decimals'          => $this->currencies[$currency_code]['num_decimals'],
-            'rounding'              => $this->currencies[$currency_code]['rounding'],
-            'rounding_increment'    => $this->currencies[$currency_code]['rounding_increment'],
-            'auto_subtract'         => $this->currencies[$currency_code]['auto_subtract'],
-        );
-        $args['title'] = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ), '<strong>' . $args['currency_name'] . ' (' . $args['currency_symbol'] . ')</strong>' );
-        include WCML_PLUGIN_PATH . '/menu/sub/custom-currency-options.php';
+        $args['currency']			= $this->currencies[$currency_code];
+        $args['title'] = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ),  $args['currency_name'] . ' (' . $args['currency_symbol'] . ')' );
 
-        $return['currency_options'] = ob_get_contents();
-        ob_end_clean();
-        
+        $custom_currency_options = new WCML_Custom_Currency_Options($args, $woocommerce_wpml);
+        $return['currency_options'] = $custom_currency_options->get_view();
+        $return['currency_name']    = $wc_currencies[$currency_code];
+        $return['currency_symbol']  = get_woocommerce_currency_symbol($currency_code);
+
         echo json_encode($return);
         exit;
     }
@@ -432,34 +419,6 @@ class WCML_Multi_Currency_Support{
         $woocommerce_wpml->update_settings($settings);
         
         exit;
-    }
-
-    function currencies_list(){
-        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_currencies_list')){
-            die('Invalid nonce');
-        }
-
-        global $woocommerce_wpml;
-        $wc_currencies = get_woocommerce_currencies();
-        $wc_currency = get_option('woocommerce_currency');
-        unset($wc_currencies[$wc_currency]);
-        $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
-        $html = '<select name="code">';
-        foreach($wc_currencies as $wc_code=>$currency_name){
-            if(empty($currencies[$wc_code])){
-                $html .= '<option value="'.$wc_code.'">'.$currency_name.'</option>';
-            }
-        }
-        $html .= '</select>';
-
-        if ( ob_get_length() > 0 ) {
-            ob_clean();
-        }
-
-        echo $html;
-
-        die();
     }
 
     function update_currency_lang(){
@@ -1234,6 +1193,8 @@ class WCML_Multi_Currency_Support{
 
         $settings = $woocommerce_wpml->get_settings();
 
+        $preview = '';
+
         if( isset($settings['display_custom_prices']) && $settings['display_custom_prices'] ){
 
             if( is_page( wc_get_page_id('cart') ) ||
@@ -1272,10 +1233,10 @@ class WCML_Multi_Currency_Support{
         }
         
         if($args['switcher_style'] == 'dropdown'){
-            echo '<select class="wcml_currency_switcher">';
+            $preview .= '<select class="wcml_currency_switcher">';
         }else{
             $args['orientation'] = $args['orientation'] == 'horizontal'?'curr_list_horizontal':'curr_list_vertical';
-            echo '<ul class="wcml_currency_switcher '.$args['orientation'].'">';
+            $preview .= '<ul class="wcml_currency_switcher '.$args['orientation'].'">';
         }
 
         foreach($currencies as $currency){
@@ -1286,18 +1247,24 @@ class WCML_Multi_Currency_Support{
 
                 if($args['switcher_style'] == 'dropdown'){
                     $selected = $currency == $this->get_client_currency() ? ' selected="selected"' : '';
-                    echo '<option value="' . $currency . '"' . $selected . '>' . $currency_format . '</option>';
+                    $preview .= '<option value="' . $currency . '"' . $selected . '>' . $currency_format . '</option>';
                 }else{
                     $selected = $currency == $this->get_client_currency() ? ' class="wcml-active-currency"' : '';
-                    echo '<li rel="' . $currency . '" '.$selected.' >' . $currency_format . '</li>';
+                    $preview .= '<li rel="' . $currency . '" '.$selected.' >' . $currency_format . '</li>';
                 }
             }
         }
 
         if($args['switcher_style'] == 'dropdown'){
-            echo '</select>';
+            $preview .= '</select>';
         }else{
-            echo '</ul>';
+            $preview .= '</ul>';
+        }
+
+        if( !isset($args['echo']) || $args['echo'] ){
+            echo $preview;
+        }else{
+            return $preview;
         }
 
     }        

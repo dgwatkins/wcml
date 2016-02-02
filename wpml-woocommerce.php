@@ -21,6 +21,7 @@ define('WCML_MULTI_CURRENCIES_DISABLED', 0);
 define('WCML_MULTI_CURRENCIES_PER_LANGUAGE', 1); //obsolete - migrate to 2
 define('WCML_MULTI_CURRENCIES_INDEPENDENT', 2);
 
+require WCML_PLUGIN_PATH . '/inc/class-wcml-autoloader.php';
 
 require WCML_PLUGIN_PATH . '/inc/missing-php-functions.php';
 require WCML_PLUGIN_PATH . '/inc/dependencies.class.php';
