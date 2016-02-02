@@ -254,7 +254,7 @@ if ( ( ! WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty
 						<?php if ( WCML_Terms::is_fully_translated( $taxonomy ) ): // covers the 'ignore' case' ?>
 							<i class="otgs-ico-ok"></i> <?php printf( __( '%s do not require translation.', 'woocommerce-multilingual' ), get_taxonomy( $taxonomy )->labels->name ); ?>
 							<small class="actions">
-								<a href="#unignore-<?php echo $taxonomy ?>"
+								<a class="unignore-<?php echo $taxonomy ?>" href="#unignore-<?php echo $taxonomy ?>"
 								   title="<?php esc_attr_e( 'This taxonomy requires translation.', 'woocommerce-multilingual' ) ?>"><?php _e( 'Include in translation', 'woocommerce-multilingual' ) ?></a>
 							</small>
 						<?php else: ?>
@@ -265,7 +265,7 @@ if ( ( ! WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty
 								<?php printf( __( 'Translate %s', 'woocommerce-multilingual' ), get_taxonomy( $taxonomy )->labels->name ); ?>
 							</a>
 							<small class="actions">
-								<a href="#ignore-<?php echo $taxonomy ?>"
+								<a class="ignore-<?php echo $taxonomy ?>" href="#ignore-<?php echo $taxonomy ?>"
 								   title="<?php esc_attr_e( 'This taxonomy does not require translation.', 'woocommerce-multilingual' ) ?>"><?php _e( 'Exclude from translation', 'woocommerce-multilingual' ) ?></a>
 							</small>
 						<?php endif; ?>
