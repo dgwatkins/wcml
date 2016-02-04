@@ -177,83 +177,6 @@ class WCML_Products{
         add_action('wp_ajax_nopriv_woocommerce_add_to_cart',array($this,'wcml_refresh_fragments'),0);
     }
 
-    /*
-     * get list of products
-     * $page - number of page;
-     * $limit - limit product on one page;
-     * if($page = 0 && $limit=0) return all products;
-     * return array;
-    */
-    function get_product_list( $page = 1, $limit = 20, $slang ){
-        global $wpdb,$sitepress;
-
-        $sql = "SELECT p.ID,p.post_parent FROM $wpdb->posts AS p
-                  LEFT JOIN {$wpdb->prefix}icl_translations AS icl ON icl.element_id = p.id
-                WHERE p.post_type = 'product' AND p.post_status IN ('publish','future','draft','pending','private')
-                AND icl.element_type= 'post_product' AND icl.source_language_code IS NULL";
-
-        if($slang){
-            $sql .= " AND icl.language_code = %s ";
-            $sql = $wpdb->prepare( $sql, $slang );
-        }
-
-        $sql .= ' ORDER BY p.id DESC';
-
-        $products = $wpdb->get_results( $sql );
-
-        return $this->display_hierarchical( $products, $page, $limit);
-    }
-
-    function display_hierarchical($products, $pagenum, $per_page){
-        global $wpdb;
-
-        if (!$products ){
-            return false;
-        }
-
-        $output_products = array();
-        $top_level_products = array();
-        $children_products = array();
-
-        foreach ( $products as $product ) {
-            // catch and repair bad products
-            if ( $product->post_parent == $product->ID ) {
-                $product->post_parent = 0;
-                $wpdb->update( $wpdb->posts, array( 'post_parent' => 0 ), array( 'ID' => $product->ID ) );
-            }
-
-            if ( 0 == $product->post_parent ){
-                $top_level_products[] = $product->ID;
-            }else{
-                $children_products[$product->post_parent][] = $product->ID;
-            }
-        }
-
-        $count = 0;
-        $start = ( $pagenum - 1 ) * $per_page;
-        $end = $start + $per_page;
-
-        foreach ( $top_level_products as $product_id ) {
-            if ( $count >= $end )
-                break;
-
-            if ( $count >= $start ) {
-                $output_products[] = get_post($product_id);
-
-                if ( isset( $children_products[$product_id] ) ){
-                    foreach($children_products[$product_id] as $children){
-                        $output_products[] = get_post($children);
-                        $count++;
-                    }
-                    unset($children_products[$product_id]);
-                }
-            }
-
-            $count++;
-        }
-
-        return $output_products;
-    }
 
     function preselect_product_type_in_admin_screen(){
         global $pagenow, $sitepress;
@@ -288,27 +211,6 @@ class WCML_Products{
         return (int)$last;
     }
 
-    /*
-     * get products count
-     */
-    function get_products_count( $slang ){
-        global $sitepress,$wpdb;
-
-        $sql = "SELECT count(p.id) FROM $wpdb->posts AS p
-                LEFT JOIN {$wpdb->prefix}icl_translations AS icl ON icl.element_id = p.id
-                WHERE p.post_type = 'product' AND p.post_status IN ('publish','future','draft','pending','private')
-                    AND icl.element_type= 'post_product' AND icl.source_language_code IS NULL";
-
-        if( $slang ){
-            $sql .= " AND icl.language_code = %s ";
-            $count = $wpdb->get_var( $wpdb->prepare( $sql, $slang ) );
-        }else{
-            $count = $wpdb->get_var( $sql );
-        }
-
-        return (int)$count;
-    }
-
     function create_product_translation_package($product_id,$trid,$language,$status){
         global $sitepress,$wpdb,$current_user,$iclTranslationManagement;
         //create translation package
@@ -336,126 +238,6 @@ class WCML_Products{
             $job_id = $iclTranslationManagement->add_translation_job($rid, $user_id , $translation_package);
         }
 
-    }
-    /*
-     * get products from search
-     * $title - product name
-     * $category - product category
-     */
-    function get_products_from_filter( $title = '', $category = false, $translation_status = false, $product_status = false, $slang , $page, $limit, $title_sort = false, $date_sort = false ){
-        global $wpdb, $sitepress;
-
-        $current_language = $slang;
-        $prepare_arg = array();
-        $prepare_arg[] = '%'.$title.'%';
-        if( $slang ) {
-            $prepare_arg[] = $current_language;
-        }
-
-        $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM $wpdb->posts AS p";
-
-        if($category){
-           $sql .= " LEFT JOIN $wpdb->term_relationships AS tx ON tx.object_id = p.id";
-        }
-
-        $sql .= " LEFT JOIN {$wpdb->prefix}icl_translations AS t ON t.element_id = p.id";
-
-        if(in_array($translation_status,array('not','need_update','in_progress','complete'))){
-            foreach($sitepress->get_active_languages() as $lang){
-
-                if( $lang['code'] == $slang ) continue;
-
-                $tbl_alias_suffix = str_replace('-','_',$lang['code']);
-                $sql .= " LEFT JOIN {$wpdb->prefix}icl_translations iclt_{$tbl_alias_suffix}
-                        ON iclt_{$tbl_alias_suffix}.trid=t.trid ";
-
-                if( $slang ){
-                    $sql .= " AND iclt_{$tbl_alias_suffix}.language_code='{$lang['code']}'\n";
-                }else{
-                    $sql .= " AND iclt_{$tbl_alias_suffix}.source_language_code IS NULL ";
-                }
-
-                $sql   .= " LEFT JOIN {$wpdb->prefix}icl_translation_status iclts_{$tbl_alias_suffix}
-                                ON iclts_{$tbl_alias_suffix}.translation_id=iclt_{$tbl_alias_suffix}.translation_id\n";
-            }
-        }
-
-        $sql .= " WHERE p.post_title LIKE '%s' AND p.post_type = 'product' AND t.element_type = 'post_product' AND t.source_language_code IS NULL";
-
-        if( $slang ){
-            $sql .= " AND t.language_code = %s";
-        }
-
-        if( $product_status && $product_status != 'all' ){
-            $sql .= " AND p.post_status = %s ";
-            $prepare_arg[] = $product_status;
-        }else{
-            $sql .= " AND p.post_status NOT IN ('trash','auto-draft','inherit') ";
-        }
-
-        if($category){
-            $sql .= " AND tx.term_taxonomy_id = %d ";
-            $prepare_arg[] = $category;
-        }
-
-        if(in_array($translation_status,array('not','need_update','in_progress','complete'))){
-            switch($translation_status){
-                case 'not':
-                    $sql .= " AND (";
-                    $wheres = array();
-                    foreach($sitepress->get_active_languages() as $lang){
-                        if($lang['code'] == $slang) continue;
-                        $tbl_alias_suffix = str_replace('-','_',$lang['code']);
-                        $wheres[] = "iclts_{$tbl_alias_suffix}.status IS NULL OR iclts_{$tbl_alias_suffix}.status = ".ICL_TM_WAITING_FOR_TRANSLATOR." OR iclts_{$tbl_alias_suffix}.needs_update = 1\n";
-                    }
-                    $sql .= join(' OR ', $wheres) . ")";
-                    break;
-                case 'need_update':
-                    $sql .= " AND (";
-                    $wheres = array();
-                    foreach($sitepress->get_active_languages() as $lang){
-                        if($lang['code'] == $slang) continue;
-                        $tbl_alias_suffix = str_replace('-','_',$lang['code']);
-                        $wheres[] = "iclts_{$tbl_alias_suffix}.needs_update = 1\n";
-                    }
-                    $sql .= join(' OR ', $wheres) . ")";
-                    break;
-                case 'in_progress':
-                    $sql .= " AND (";
-                    $wheres = array();
-                    foreach($sitepress->get_active_languages() as $lang){
-                        if($lang['code'] == $slang) continue;
-                        $tbl_alias_suffix = str_replace('-','_',$lang['code']);
-                        $wheres[] = "iclts_{$tbl_alias_suffix}.status = ".ICL_TM_IN_PROGRESS."\n";
-                    }
-                    $sql .= join(' OR ', $wheres)  . ")";
-                    break;
-                case 'complete':
-                    foreach($sitepress->get_active_languages() as $lang){
-                        if($lang['code'] == $slang) continue;
-                        $tbl_alias_suffix = str_replace('-','_',$lang['code']);
-                        $sql .= " AND (iclts_{$tbl_alias_suffix}.status = ".ICL_TM_COMPLETE." OR iclts_{$tbl_alias_suffix}.status = ".ICL_TM_DUPLICATE.") AND iclts_{$tbl_alias_suffix}.needs_update = 0\n";
-                    }
-                    break;
-            }
-        }
-
-        if( $title_sort ){
-            $sql .= " ORDER BY p.post_title ".$title_sort ;
-        }elseif( $date_sort ){
-            $sql .= " ORDER BY p.post_date ".$date_sort ;
-        }else{
-            $sql .= " ORDER BY p.id DESC ";
-        }
-
-        $sql .= " LIMIT ".($page-1)*$limit.",".$limit;
-
-        $data = array();
-
-        $data['products'] = $wpdb->get_results($wpdb->prepare($sql,$prepare_arg));
-        $data['count'] = $wpdb->get_var("SELECT FOUND_ROWS()");
-
-        return $data;
     }
 
     function sync_product_attr( $original_product_id, $tr_product_id, $language = false, $data = false ){
@@ -697,17 +479,32 @@ class WCML_Products{
         }
     }
 
-    function get_translation_flags($active_languages,$slang = false,$job_language =false){
+    function get_translation_flags( $active_languages, $slang = false, $job_language = false ){
         global $sitepress;
 
-        foreach($active_languages as $language){
-            if( $job_language && $language['code'] != $job_language ) {
-                continue;
-            }elseif (!$slang || ( ($slang != $language['code']) && (current_user_can('wpml_operate_woocommerce_multilingual') || wpml_check_user_is_translator($slang,$language['code'])) && (!isset($_POST['translation_status_lang']) || (isset($_POST['translation_status_lang']) && ($_POST['translation_status_lang'] == $language['code']) || $_POST['translation_status_lang']=='')))){
+        $available_languages = array();
 
-                echo '<span title="' . $language['english_name'] . '"><img src="' . $sitepress->get_flag_url($language['code']) . '"  alt="' . $language['english_name'] . '"/></span> ';
+        foreach( $active_languages as $key => $language ){
+            if( $job_language && $language[ 'code' ] != $job_language ) {
+                continue;
+            }elseif ( !$slang ||
+                (
+                    ( $slang != $language[ 'code' ] ) &&
+                    ( current_user_can( 'wpml_operate_woocommerce_multilingual' ) ||
+                        wpml_check_user_is_translator( $slang, $language[ 'code' ] ) ) &&
+                    ( !isset( $_POST[ 'translation_status_lang' ] ) ||
+                        ( isset( $_POST[ 'translation_status_lang' ] ) &&
+                            ( $_POST[ 'translation_status_lang' ] == $language[ 'code' ] ) ||
+                            $_POST[ 'translation_status_lang' ]=='' )
+                    )
+                )
+            ){
+                $available_languages[ $key ][ 'name' ] = $language[ 'english_name' ];
+                $available_languages[ $key ][ 'flag_url' ] = $sitepress->get_flag_url( $language[ 'code' ] );
             }
         }
+
+        return $available_languages;
     }
 
 

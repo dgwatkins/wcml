@@ -135,13 +135,12 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
             case 'products':
                 if( current_user_can('wpml_manage_woocommerce_multilingual') ) {
                     global $wpdb;
+
                     $current_language = $sitepress->get_current_language();
                     $active_languages = $sitepress->get_active_languages();
 
-                    ob_start();
-                    include WCML_PLUGIN_PATH . '/menu/sub/products.php';
-                    $content = ob_get_contents();
-                    ob_end_clean();
+                    $wcml_products_ui = new WCML_Products_UI();
+                    $content = $wcml_products_ui->get_view();
                 }
                 break;
 

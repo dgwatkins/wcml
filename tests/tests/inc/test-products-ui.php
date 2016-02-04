@@ -10,6 +10,7 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
 
 
         $this->wcml_products = new WCML_Products();
+        $this->wcml_products_ui = new WCML_Products_UI();
 
         // create 10 dummy products
         for($i = 0; $i < 10; $i++){
@@ -34,8 +35,8 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
     function test_wcml_products_get_product_list() {
         global $sitepress;
 
-        $en_products = $this->wcml_products->get_product_list(1, 5, 'en');
-        $es_products = $this->wcml_products->get_product_list(3, 4, 'es');
+        $en_products = $this->wcml_products_ui->get_product_list(1, 5, 'en');
+        $es_products = $this->wcml_products_ui->get_product_list(3, 4, 'es');
 
         if($es_products){
             $lang_info = $sitepress->get_element_language_details($es_products[0]->ID, 'post_product');
