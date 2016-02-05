@@ -202,15 +202,6 @@ class WCML_Products{
         }
     }
 
-    /*
-     * get pages count
-     * $limit - limit product on one page;
-     */
-    function get_product_last_page($count,$limit){
-        $last = ceil((int)$count/(int)$limit);
-        return (int)$last;
-    }
-
     function create_product_translation_package($product_id,$trid,$language,$status){
         global $sitepress,$wpdb,$current_user,$iclTranslationManagement;
         //create translation package

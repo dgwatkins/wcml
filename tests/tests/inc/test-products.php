@@ -8,27 +8,20 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 
 		require_once WCML_PLUGIN_PATH . '/inc/products.class.php';
 		$woocommerce_wpml->products           = new WCML_Products;
+		$this->wcml_helper = new WCML_Helper();
 
-		//add products for tests
-		wpml_test_reg_custom_post_type( 'product' );
-		$settings_helper = wpml_load_settings_helper();
-		$settings_helper->set_post_type_translatable( 'product'  );
-		$this->orig_product = wpml_test_insert_post( 'en', 'product', false, 'product 1' );
+		//add product for tests
+		$orig_product = $this->wcml_helper->add_product( 'en', false, 'product 1' );
+		$this->orig_product_id = $orig_product->id;
 
-		$trid = $wpml_post_translations->get_element_trid( $this->orig_product  );
-		$this->es_product = wpml_test_insert_post( 'es', 'product', $trid, 'producto 1' );
+		$es_product = $this->wcml_helper->add_product( 'es', $orig_product->trid, 'producto 1' );
+		$this->es_product_id = $es_product->id;
 
 		//add global attribute for tests
-		$taxonomy   = 'pa_color';
-		wpml_test_reg_custom_taxonomy( $taxonomy );
-		$settings_helper = wpml_load_settings_helper();
-		$settings_helper->set_taxonomy_translatable( $taxonomy );
-		$this->orig_term = wpml_test_insert_term( 'en', $taxonomy, false, 'white' );
-
-		$ttid_org = $this->orig_term[ 'term_taxonomy_id' ];
-		$trid     = $wpml_term_translations->get_element_trid( $ttid_org );
-		$this->es_term = wpml_test_insert_term( 'es', $taxonomy, $trid, 'blanco' );
-
+		$attr = 'color';
+		$this->wcml_helper->register_attribute( $attr );
+		$term = $this->wcml_helper->add_attribute_term( 'white', $attr, 'en' );
+		$es_term = $this->wcml_helper->add_attribute_term( 'blanco', $attr, 'es', $term['trid'] );
 
 	}
 
@@ -41,7 +34,8 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 		$this->assertEquals( 'blanco', $trnsl_attr );
 
 		//test local attribute
-		$variation_id = wpml_test_insert_post( 'es', 'product_variation', false, 'variation 1' );
+		$variation = $this->wcml_helper->add_product_variation( 'es', false );
+		$variation_id = $variation->id;
 
 		add_post_meta( $variation_id, 'attribute_pa_size', 'medio' );
 		$trnsl_attr = $woocommerce_wpml->products->get_cart_attribute_translation( 'attribute_pa_size', 'medio', $variation_id, 'es', false, false );
@@ -50,28 +44,15 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 
 		//test local attribute with variation set to any
 
-		$orig_attrs = array(
-			'size' =>
-				array(
-					'name' => 'Size' ,
-					'value' => 'small | medium',
-					'is_taxonomy' => 0
-				));
-		add_post_meta( $this->orig_product , '_product_attributes', $orig_attrs );
+		$this->wcml_helper->add_local_attribute( $this->orig_product_id, 'Size', 'small | medium' );
 
-		$trnsl_attrs = array(
-			'size' =>
-				array(
-					'name' => 'Size' ,
-					'value' => 'pequena | medio',
-					'is_taxonomy' => 0
-			));
-		add_post_meta( $this->es_product , '_product_attributes', $trnsl_attrs );
+		$this->wcml_helper->add_local_attribute( $this->es_product_id, 'Size', 'pequena | medio' );
 
-		$variation_id = wpml_test_insert_post( 'es', 'product_variation', false, 'variation 1' );
+		$variation = $this->wcml_helper->add_product_variation( 'es', false );
+		$variation_id = $variation->id;
 		add_post_meta( $variation_id, 'attribute_size', '' );
 
-		$trnsl_attr = $woocommerce_wpml->products->get_cart_attribute_translation( 'attribute_size', 'small', $variation_id, 'es', $this->orig_product , $this->es_product );
+		$trnsl_attr = $woocommerce_wpml->products->get_cart_attribute_translation( 'attribute_size', 'small', $variation_id, 'es', $this->orig_product_id , $this->es_product_id );
 
 		$this->assertEquals( 'pequena', $trnsl_attr );
 
@@ -84,45 +65,35 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 
 		add_action( 'save_post', array( $woocommerce_wpml->products, 'sync_post_action' ), 110, 2 );
 
-		$parent_product = WCML_Helper::add_product('Parent Product EN' , 'en');
-		$child = array(
-			'post_title' 	=> 'Child Product EN',
-			'post_status'	=> 'publish',
-			'post_parent'	=> $parent_product->product_id
-		);
-		$child_product = WCML_Helper::add_product( $child , 'en');
+		$parent_product = $this->wcml_helper->add_product( 'en', false, 'Parent Product EN' );
+		$child_product = $this->wcml_helper->add_product( 'en', false, 'Child Product EN', $parent_product->id );
 
 
-		$parent_product_es = WCML_Helper::add_product('Parent Product ES' , 'es', $parent_product->trid);
-		$child_es = array(
-			'post_title' 	=> 'Child Product ES',
-			'post_status'	=> 'publish',
-			'post_parent'	=> $parent_product_es->product_id
-		);
-		$child_product_es = WCML_Helper::add_product( $child_es , 'es', $child_product->trid);
+		$parent_product_es = $this->wcml_helper->add_product( 'es', $parent_product->trid, 'Parent Product ES' );
+		$child_product_es = $this->wcml_helper->add_product( 'es', $child_product->trid, 'Child Product ES', $parent_product_es->id );
 
 
-		$grouped_es = new WC_Product_Grouped($parent_product_es->product_id);
-		$this->assertEquals(array( $child_product_es->product_id ), $grouped_es->get_children());
+		$grouped_es = new WC_Product_Grouped($parent_product_es->id);
+		$this->assertEquals(array( $child_product_es->id ), $grouped_es->get_children());
 
 
 		// Setting the child status to private should reset the children list transient for translated parent
 		$child = array(
-			'ID'			=> $child_product->product_id,
+			'ID'			=> $child_product->id,
 			'post_title' 	=> 'Child Product EN MADE PRIVATE',
 			'post_status'	=> 'private',
 		);
-		WCML_Helper::update_product( $child );
+		$this->wcml_helper->update_product( $child );
 
 		// FORCE status on translated child - should be synced autoamtically
 		$child_es = array(
-			'ID'			=> $child_product_es->product_id,
+			'ID'			=> $child_product_es->id,
 			'post_title' 	=> 'Child Product ES MADE PRIVATE',
 			'post_status'	=> 'private',
 		);
-		WCML_Helper::update_product( $child_es );
+		$this->wcml_helper->update_product( $child_es );
 
-		$grouped_es = new WC_Product_Grouped($parent_product_es->product_id); //need to reinstantiate
+		$grouped_es = new WC_Product_Grouped($parent_product_es->id); //need to reinstantiate
 
 		$this->assertEquals(array(), $grouped_es->get_children());
 

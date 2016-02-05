@@ -9,7 +9,6 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 		parent::__construct();
 	}
 
-
 	public function get_model() {
 		global $woocommerce_wpml, $sitepress;
 
@@ -271,7 +270,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 		return $this->display_hierarchical( $products, $page, $limit);
 	}
 
-	public function display_hierarchical($products, $pagenum, $per_page){
+	public function display_hierarchical( $products, $pagenum, $per_page ){
 		global $wpdb;
 
 		if (!$products ){
@@ -352,7 +351,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 		global $wpdb, $sitepress;
 
 		$title = isset( $_GET['s'] ) ? $_GET['s'] : '';
-		$category =	isset( $_GET['cat'] ) ? $_GET['cat'] : false;
+		$category =	isset( $_GET['cat'] ) ? $_GET['cat'] : null;
 		$translation_status = isset( $_GET['trst'] ) ? $_GET['trst'] : false;
 		$product_status = isset( $_GET['st'] ) ? $_GET['st'] : false;
 		$slang = $this->get_source_language();
@@ -361,7 +360,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 		$title_sort = isset( $_GET['ts'] ) ? $_GET['ts'] : false;
 		$date_sort = isset( $_GET['ds'] ) ? $_GET['ds'] : false;
 
-		if( !$category || !$title_sort || !$date_sort ){
+		if( is_null( $category ) && !$title_sort && !$date_sort ){
 			return false;
 		}
 
@@ -559,10 +558,20 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 		$last = 1;
 
 		if ( $this->get_page_limit() ) {
-			$last = $woocommerce_wpml->products->get_product_last_page( $products_count, $this->get_page_limit() );
+			$last = $this->get_product_last_page( $products_count, $this->get_page_limit() );
 		}
 
 		return $last;
+	}
+
+
+	/*
+     * get pages count
+     * $limit - limit product on one page;
+     */
+	public function get_product_last_page($count,$limit){
+		$last = ceil((int)$count/(int)$limit);
+		return (int)$last;
 	}
 
 	public function get_current_translator_id(){
@@ -589,7 +598,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 		return $categories_list;
 	}
 
-	public function get_products_categories( $slang ){
+	public function get_products_categories( $slang = false ){
 		global $wpdb;
 
 		$sql = "SELECT tt.term_taxonomy_id,tt.term_id,t.name FROM $wpdb->term_taxonomy AS tt
