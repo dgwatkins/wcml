@@ -2,7 +2,9 @@
 
 class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
-	function __construct(){
+	function setUp(){
+
+		parent::setUp();
 
 		// set up
 		global $woocommerce_wpml;

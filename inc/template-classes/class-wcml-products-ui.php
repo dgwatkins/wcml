@@ -5,10 +5,6 @@
  */
 class WCML_Products_UI extends WPML_Templates_Factory {
 
-	function __construct( ) {
-		parent::__construct();
-	}
-
 	public function get_model() {
 		global $woocommerce_wpml, $sitepress;
 

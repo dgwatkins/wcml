@@ -7,7 +7,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
     function __construct( &$woocommerce_wpml ){
         parent::__construct();
 
-        $this->woocommerce_wpml = $woocommerce_wpml;
+        $this->woocommerce_wpml = &$woocommerce_wpml;
     }
 
     public function get_model(){
@@ -77,7 +77,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
             ),
             'can_manage_options' => current_user_can('wpml_manage_woocommerce_multilingual'),
             'rate' => array(
-                'on'        => !isset( $woocommerce_wpml->settings['rate-block'] ),
+                'on'        => !isset( $this->woocommerce_wpml->settings['rate-block'] ),
                 'message'   => sprintf(__('Thank you for using %sWooCommerce Multilingual%s! You can express your love and
                                     support by %s rating our plugin and saying that %sit works%s for you.', 'woocommerce_wpml'),
                     '<strong>',
@@ -131,7 +131,6 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
 
         switch ( $current_tab ) {
 
-            // TBD
             case 'products':
                 if( current_user_can('wpml_manage_woocommerce_multilingual') ) {
                     global $wpdb;
