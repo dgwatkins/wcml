@@ -7,19 +7,11 @@ class FiveCest
     public function _before(AcceptanceTester $I)
     {
         // Login Procedure
-        $I->wantTo('Further Configure WC');
-
-        $I->amOnPage('/wp-admin/');
-
-        $I->fillField('#user_login', 'admin');
-        $I->fillField('#user_pass', '123456');
-
-        $I->click('Log In');
-
-        $I->see('Dashboard');
+        $I->wp_login('admin', '123456');
 
         //////////////////////
-        // WCML Activation
+        // WCML Activation  //
+        //////////////////////
 
         $I->amOnPage('/wp-admin/plugins.php');
 
@@ -29,8 +21,11 @@ class FiveCest
 
         $I->wait(2);
 
-        //////////////////////
-        // WCML configuration
+        ////////////////////////
+        // WCML configuration//
+        ///////////////////////
+
+        $I->amGoingTo('');
 
         $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml&tab=status');
 
@@ -40,8 +35,13 @@ class FiveCest
 
         $I->click('Translate URLs');
 
+        $I->click('[data-base=product]');
 
+        $I->wait(2);
 
+        $I->fillField('#base-translation', 'προϊόν');
+
+        $I->click('Save');
 
 
     }

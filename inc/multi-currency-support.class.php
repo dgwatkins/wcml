@@ -75,7 +75,7 @@ class WCML_Multi_Currency_Support{
             add_filter('woocommerce_currency', array($this, 'currency_filter'));
             //add_filter('option_woocommerce_currency', array($this, 'currency_filter'));
             
-            add_filter('get_post_metadata', array($this, 'product_price_filter'), 10, 4);            
+            add_filter('get_post_metadata', array($this, 'product_price_filter'), 10, 4);
             add_filter('get_post_metadata', array($this, 'variation_prices_filter'), 12, 4); // second
 
             add_filter('woocommerce_package_rates', array($this, 'shipping_taxes_filter'));
