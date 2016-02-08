@@ -96,6 +96,9 @@ class WCML_WC_MultiCurrency{
         add_action( 'woocommerce_product_options_pricing', array( $this, 'woocommerce_product_options_custom_pricing' ) );
         add_action( 'woocommerce_product_after_variable_attributes', array( $this, 'woocommerce_product_after_variable_attributes_custom_pricing'), 10, 3 );
 
+        add_filter('woocommerce_price_filter_widget_max_amount', array($this, 'raw_price_filter'), 99);
+        add_filter('woocommerce_price_filter_widget_min_amount', array($this, 'raw_price_filter'), 99);
+
     }
 
     function raw_price_filter($price, $currency = false) {
