@@ -462,6 +462,10 @@ class WCML_Terms{
                 $attribute_taxonomies_arr[] = 'pa_' . $a->attribute_name;
             }
 
+            if( empty( $taxonomy_obj ) && isset( $_GET['taxonomy'] ) ){
+                $taxonomy_obj = get_taxonomy( $_GET['taxonomy'] );
+            }
+
             ob_start();
             include WCML_PLUGIN_PATH . '/menu/sub/sync-taxonomy-translations.php';
             $html = ob_get_contents();

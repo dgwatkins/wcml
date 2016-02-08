@@ -261,7 +261,7 @@ if ( ( ! WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty
 							<i class="otgs-ico-warning"></i>
 							<?php printf( __( '%d %s are missing translations.', 'woocommerce-multilingual' ), $untranslated, get_taxonomy( $taxonomy )->labels->name ); ?>
 							<a class="button-secondary"
-							   href="<?php echo admin_url( 'admin.php?page=wpml-wcml&tab=' . $taxonomy ) ?>">
+							   href="<?php echo admin_url( 'admin.php?page=wpml-wcml&tab=product-attributes&taxonomy=' . $taxonomy ) ?>">
 								<?php printf( __( 'Translate %s', 'woocommerce-multilingual' ), get_taxonomy( $taxonomy )->labels->name ); ?>
 							</a>
 							<small class="actions">
