@@ -339,17 +339,17 @@ class WCML_Terms{
 
         $not_translated_count = 0;
         foreach($active_languages as $language){
-                
+
                 $terms = $wpdb->get_results($wpdb->prepare("
-                    SELECT t1.element_id AS e1, t2.element_id AS e2 FROM {$wpdb->term_taxonomy} x 
-                    JOIN {$wpdb->prefix}icl_translations t1 ON x.term_taxonomy_id = t1.element_id AND t1.element_type = %s
-                    LEFT JOIN {$wpdb->prefix}icl_translations t2 ON t2.trid = t1.trid AND t2.language_code = %s
-                ", 'tax_' . $taxonomy, $language['code']));
+                        SELECT t1.element_id AS e1, t2.element_id AS e2 FROM {$wpdb->term_taxonomy} x
+                        JOIN {$wpdb->prefix}icl_translations t1 ON x.term_taxonomy_id = t1.element_id AND t1.element_type = %s AND t1.source_language_code IS NULL
+                        LEFT JOIN {$wpdb->prefix}icl_translations t2 ON t2.trid = t1.trid AND t2.language_code = %s
+                    ", 'tax_' . $taxonomy, $language['code']));
                 foreach($terms as $term){
-                    if(empty($term->e2)){
+                    if( empty( $term->e2 ) ){
                         $not_translated_count ++;
                     }
-                    
+
                 }
             }
         
