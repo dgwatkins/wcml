@@ -454,16 +454,12 @@ class WCML_Terms{
 
     static function sync_taxonomy_translations( $html, $taxonomy, $taxonomy_obj ){
         global $woocommerce_wpml;
-        
-        if(is_admin() && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab'])){
+
+        if(is_admin() && $taxonomy && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab'])){
             $wcml_settings = $woocommerce_wpml->get_settings();
             $attribute_taxonomies = wc_get_attribute_taxonomies();        
             foreach($attribute_taxonomies as $a){
                 $attribute_taxonomies_arr[] = 'pa_' . $a->attribute_name;
-            }
-
-            if( empty( $taxonomy_obj ) && isset( $_GET['taxonomy'] ) ){
-                $taxonomy_obj = get_taxonomy( $_GET['taxonomy'] );
             }
 
             ob_start();
