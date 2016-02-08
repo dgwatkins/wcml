@@ -9,6 +9,7 @@
     padding: 5px 0;
     display: -webkit-flex;
     display: flex;
+    display: -moz-box;
     -webkit-flex-direction: row;
     flex-direction: row;
 }

@@ -19,7 +19,7 @@ class WCML_Bookings{
 
         add_action( 'admin_footer', array( $this, 'load_assets' ) );
 
-        add_action( 'save_post', array( $this, 'save_custom_costs' ), 11, 2 );
+        add_action( 'save_post', array( $this, 'save_custom_costs' ), 110, 2 );
         add_action( 'wcml_before_sync_product_data', array( $this, 'sync_bookings' ), 10, 3 );
         add_action( 'wcml_before_sync_product', array( $this, 'sync_booking_data' ), 10, 2 );
 
@@ -261,7 +261,7 @@ class WCML_Bookings{
     function after_bookings_pricing( $post_id ){
         global $woocommerce_wpml;
 
-        if( $woocommerce_wpml->products->is_original_product( $post_id ) && $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
+        if( in_array( 'booking', wp_get_post_terms( $post_id, 'product_type', array( "fields" => "names" ) ) ) && $woocommerce_wpml->products->is_original_product( $post_id ) && $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
 
             $custom_costs_status = get_post_meta( $post_id, '_wcml_custom_costs_status', true );
 
@@ -290,6 +290,7 @@ class WCML_Bookings{
         $nonce = filter_input( INPUT_POST, '_wcml_custom_costs_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
         if( isset( $_POST['_wcml_custom_costs'] ) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_custom_costs' ) ){
+            var_dump('asd');die;
 
             update_post_meta( $post_id, '_wcml_custom_costs_status', $_POST['_wcml_custom_costs'] );
 
@@ -904,7 +905,7 @@ class WCML_Bookings{
     }
 
     function wc_bookings_process_cost_rules_override_block_cost( $override_cost, $fields, $key ){
-        return $this->filter_pricing_cost( $override_cost, $fields, 'override_cost_', $key );
+        return $this->filter_pricing_cost( $override_cost, $fields, 'override_block_', $key );
     }
 
     function filter_pricing_cost( $cost, $fields, $name, $key ){
