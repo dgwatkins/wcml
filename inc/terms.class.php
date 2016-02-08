@@ -55,7 +55,8 @@ class WCML_Terms{
 
         add_filter( 'woocommerce_get_product_terms', array( $this, 'get_product_terms_filter' ), 10, 4 );
 
-        add_filter( 'pre_update_option_woocommerce_flat_rate_settings', array( $this, 'update_woocommerce_flat_rate_settings' ) );
+        add_filter( 'pre_update_option_woocommerce_flat_rate_settings', array( $this, 'update_woocommerce_shipping_settings_for_class_costs' ) );
+        add_filter( 'pre_update_option_woocommerce_international_delivery_settings', array( $this, 'update_woocommerce_shipping_settings_for_class_costs' ) );
     }
     
     function admin_menu_setup(){
@@ -80,7 +81,12 @@ class WCML_Terms{
 
             $settings = get_option( 'woocommerce_flat_rate_settings' );
             if( is_array( $settings ) ){
-                update_option( 'woocommerce_flat_rate_settings', $this->update_woocommerce_flat_rate_settings( $settings ) );
+                update_option( 'woocommerce_flat_rate_settings', $this->update_woocommerce_shipping_settings_for_class_costs( $settings ) );
+            }
+
+            $settings = get_option( 'woocommerce_international_delivery_settings' );
+            if( is_array( $settings ) ){
+                update_option( 'woocommerce_international_delivery_settings', $this->update_woocommerce_shipping_settings_for_class_costs( $settings ) );
             }
 
         }
@@ -894,7 +900,7 @@ class WCML_Terms{
         return $filtered_terms;
     }
 
-    function update_woocommerce_flat_rate_settings( $settings ){
+    function update_woocommerce_shipping_settings_for_class_costs( $settings ){
 
         foreach( $settings as $setting_key => $value ){
 
