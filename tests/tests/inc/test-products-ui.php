@@ -174,13 +174,48 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
 
         $products_info = $this->wcml_products_ui->get_product_info_from_self_edit_mode();
         $this->assertEquals( 1, $products_info[ 'products_count' ] );
+    }
 
-        $trnsl_product = $this->wcml_helper->add_product( 'es' , $product->trid, 'Test Product by id ES' );
+    function test_wcml_check_rendered_table(){
 
-        $_GET[ 'prid' ] = $trnsl_product->id;
+        $this->make_current_user_wcml_admin();
 
-        $products_info = $this->wcml_products_ui->get_product_info_from_self_edit_mode();
-        $this->assertEquals( $product->id, $products_info[ 'products' ][0]->ID );
+        $content = $this->wcml_products_ui->get_view();
+        $dom = new DOMDocument();
+
+        $dom->loadHTML( $content );
+
+        //check drop-downs from filter at top
+        $selectors  = $dom->getElementsByTagName( 'select' );
+
+        $status_lang = $selectors->item(0);
+        $this->assertNotEmpty( $status_lang );
+        $this->assertTrue( $status_lang->hasChildNodes() );
+
+        $product_categories = $selectors->item(1);
+        $this->assertNotEmpty( $product_categories );
+        $this->assertTrue( $product_categories->hasChildNodes() );
+
+        $translation_statuses = $selectors->item(2);
+        $this->assertNotEmpty( $translation_statuses );
+        $this->assertTrue( $translation_statuses->hasChildNodes() );
+
+        $product_statuses = $selectors->item(3);
+        $this->assertNotEmpty( $product_statuses );
+        $this->assertTrue( $product_statuses->hasChildNodes() );
+
+        //check products table
+        $img  = $dom->getElementsByTagName( 'img' );
+        $this->assertNotEmpty( $img );
+
+        $products  = $dom->getElementsByTagName( 'tr' );
+        // 1 tr uses for filter drop-downs
+        $this->assertEquals( 21, $products->length );
+
+        //check pagination
+        $current_page  = $dom->getElementById( 'current-page-selector' );
+        $this->assertNotEmpty( $current_page );
+        $this->assertEquals( 1, $current_page->getAttribute('value') );
 
     }
 

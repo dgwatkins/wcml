@@ -507,10 +507,9 @@ class WCML_Products{
             if( $job_language && $language['code'] != $job_language ) {
                 continue;
             } elseif (isset($product_translations[$language['code']]) && $product_translations[$language['code']]->original) { ?>
-                <span
-                    title="<?php echo $language['english_name'] . ': ' . __('Original language', 'woocommerce-multilingual'); ?>">
-                <i class="otgs-ico-original"></i>
-            </span>
+                <span title="<?php echo $language['english_name'] . ': ' . __('Original language', 'woocommerce-multilingual'); ?>">
+                    <i class="otgs-ico-original"></i>
+                </span>
             <?php } elseif ($slang != $language['code'] && (!isset($_POST['translation_status_lang']) || (isset($_POST['translation_status_lang']) && ($_POST['translation_status_lang'] == $language['code']) || $_POST['translation_status_lang'] == ''))) {
 
                 if (isset($product_translations[$language['code']])) {
@@ -548,30 +547,30 @@ class WCML_Products{
                     }
                 } ?>
                 <a class="js-wcml-translation-dialog-trigger" data-id="<?php echo $original_product_id; ?>" data-job_id="<?php echo $job_id; ?>" data-language="<?php echo $language['code']; ?>"
-                <?php if (isset($product_translations[$language['code']])) {
-                    $tr_status = $wpdb->get_row($wpdb->prepare("SELECT status,needs_update FROM " . $wpdb->prefix . "icl_translation_status WHERE translation_id = %d", $product_translations[$language['code']]->translation_id));
-                    if (!$tr_status) { ?>
+                    <?php if (isset($product_translations[$language['code']])) {
+                        $tr_status = $wpdb->get_row($wpdb->prepare("SELECT status,needs_update FROM " . $wpdb->prefix . "icl_translation_status WHERE translation_id = %d", $product_translations[$language['code']]->translation_id));
+                        if (!$tr_status) { ?>
+                            title="<?php echo $language['english_name'] . ': ' . __('Add translation', 'woocommerce-multilingual'); ?>">
+                            <i class="otgs-ico-add"></i>
+                        <?php } elseif ($tr_status->needs_update) { ?>
+                            title="<?php echo $language['english_name'] . ': ' . __('Update translation', 'woocommerce-multilingual'); ?>">
+                            <i class="otgs-ico-refresh"></i>
+                        <?php } elseif ($tr_status->status != ICL_TM_COMPLETE && $tr_status->status != ICL_TM_DUPLICATE) { ?>
+                            title="<?php echo $language['english_name'] . ': ' . __('Finish translating', 'woocommerce-multilingual'); ?>">
+                            <i class="otgs-ico-refresh"></i>
+                        <?php } elseif ($tr_status->status == ICL_TM_COMPLETE) { ?>
+                            title="<?php echo $language['english_name'] . ': ' . __('Edit translation', 'woocommerce-multilingual'); ?>">
+                            <i class="otgs-ico-edit"></i>
+                        <?php } elseif ($tr_status->status == ICL_TM_DUPLICATE) { ?>
+                            title="<?php echo $language['english_name'] . ': ' . __('Edit translation', 'woocommerce-multilingual'); ?>">
+                            <i class="otgs-ico-duplicate"></i>
+                        <?php }
+                    } else { ?>
                         title="<?php echo $language['english_name'] . ': ' . __('Add translation', 'woocommerce-multilingual'); ?>">
                         <i class="otgs-ico-add"></i>
-                    <?php } elseif ($tr_status->needs_update) { ?>
-                        title="<?php echo $language['english_name'] . ': ' . __('Update translation', 'woocommerce-multilingual'); ?>">
-                        <i class="otgs-ico-refresh"></i>
-                    <?php } elseif ($tr_status->status != ICL_TM_COMPLETE && $tr_status->status != ICL_TM_DUPLICATE) { ?>
-                        title="<?php echo $language['english_name'] . ': ' . __('Finish translating', 'woocommerce-multilingual'); ?>">
-                        <i class="otgs-ico-refresh"></i>
-                    <?php } elseif ($tr_status->status == ICL_TM_COMPLETE) { ?>
-                        title="<?php echo $language['english_name'] . ': ' . __('Edit translation', 'woocommerce-multilingual'); ?>">
-                        <i class="otgs-ico-edit"></i>
-                    <?php } elseif ($tr_status->status == ICL_TM_DUPLICATE) { ?>
-                        title="<?php echo $language['english_name'] . ': ' . __('Edit translation', 'woocommerce-multilingual'); ?>">
-                        <i class="otgs-ico-duplicate"></i>
-                    <?php }
-                } else { ?>
-                    title="<?php echo $language['english_name'] . ': ' . __('Add translation', 'woocommerce-multilingual'); ?>">
-                    <i class="otgs-ico-add"></i>
-                <?php }
-            } ?>
-            </a>
+                    <?php } ?>
+                </a>
+            <?php } ?>
         <?php }
     }
 
