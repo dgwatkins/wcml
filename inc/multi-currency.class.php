@@ -151,6 +151,9 @@ class WCML_WC_MultiCurrency{
 
         }
 
+        add_filter('woocommerce_price_filter_widget_max_amount', array($this, 'raw_price_filter'), 99);
+        add_filter('woocommerce_price_filter_widget_min_amount', array($this, 'raw_price_filter'), 99);
+
     }
 
     function raw_price_filter($price, $currency = false) {
