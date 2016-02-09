@@ -141,31 +141,31 @@ class WCML_Accommodation_Bookings{
 
     }
 
-    function product_price_filter( $null, $object_id, $meta_key, $single ){
+    function product_price_filter( $value, $object_id, $meta_key, $single ){
         global $woocommerce_wpml;
 
         if(
-            get_post_type( $object_id ) != 'product' ||
-            $meta_key != '_price' ||
-            $woocommerce_wpml->settings['enable_multi_currency'] != WCML_MULTI_CURRENCIES_INDEPENDENT
-             ){
+            get_post_type( $object_id ) == 'product' &&
+            $meta_key == '_price' &&
+            $woocommerce_wpml->settings[ 'enable_multi_currency' ] == WCML_MULTI_CURRENCIES_INDEPENDENT &&
+            !is_admin() &&
+            ( $currency = $woocommerce_wpml->multi_currency_support->get_client_currency() ) != get_option( 'woocommerce_currency' )
+        ) {
 
-            return $null;
+            remove_filter( 'get_post_metadata', array( $this, 'product_price_filter' ), 9, 4 );
+
+            $original_language = $woocommerce_wpml->products->get_original_product_language( $object_id );
+            $original_product = apply_filters( 'translate_object_id', $object_id, 'product', true, $original_language );
+
+            if ( get_post_meta( $original_product, '_wcml_custom_costs_status' ) ) {
+
+                $price = get_post_meta( $object_id, '_price_' . $currency , true );
+            }
+
+            add_filter( 'get_post_metadata', array( $this, 'product_price_filter' ), 9, 4 );
         }
 
-        remove_filter( 'get_post_metadata', array( $this, 'product_price_filter'), 9, 4);
-
-        $original_language = $woocommerce_wpml->products->get_original_product_language( $object_id );
-        $original_product = apply_filters( 'translate_object_id', $object_id, 'product', true, $original_language );
-
-        if( get_post_meta( $original_product, '_wcml_custom_costs_status' ) ){
-
-            $price = get_post_meta( $object_id, '_price_'.$woocommerce_wpml->multi_currency_support->get_client_currency() );
-        }
-
-        add_filter( 'get_post_metadata', array( $this, 'product_price_filter'), 9, 4);
-
-        return isset( $price) ? $price : $null;
+        return isset( $price) ? $price : $value;
     }
 
 }
