@@ -179,24 +179,17 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
                 ob_end_clean();
                 break;
 
-            // TBD
             case 'settings':
                 if( current_user_can('wpml_operate_woocommerce_multilingual') ) {
-                    ob_start();
-                    include WCML_PLUGIN_PATH . '/menu/sub/settings.php';
-                    $content = ob_get_contents();
-                    ob_end_clean();
+                    $wcml_settings_ui = new WCML_Settings_UI( $woocommerce_wpml, $sitepress );
+                    $content = $wcml_settings_ui->get_view();
                 }
                 break;
 
-            // TBD
             default:
                 if( current_user_can('wpml_operate_woocommerce_multilingual') && in_array( $current_tab, array( 'product_cat', 'product_tag', 'product_shipping_class' ) ) ){
-                    ob_start();
-                    include WCML_PLUGIN_PATH . '/menu/sub/product-taxonomy.php';
-                    $content = ob_get_contents();
-                    ob_end_clean();
-                    break;
+                    $WPML_Translate_Taxonomy = new WPML_Taxonomy_Translation($current_tab, array( 'taxonomy_selector'=> false, 'status'=> WPML_TT_TAXONOMIES_ALL ) );
+                    $WPML_Translate_Taxonomy->render();
                 }
 
         }
