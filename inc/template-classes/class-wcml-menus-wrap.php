@@ -152,6 +152,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
 
             // TBD
             case 'product-attributes':
+
                 if( current_user_can('wpml_operate_woocommerce_multilingual') ) {
                     ob_start();
                     include WCML_PLUGIN_PATH . '/menu/sub/product-attributes.php';
@@ -187,7 +188,10 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
             default:
                 if( current_user_can('wpml_operate_woocommerce_multilingual') && in_array( $current_tab, array( 'product_cat', 'product_tag', 'product_shipping_class' ) ) ){
                     $WPML_Translate_Taxonomy = new WPML_Taxonomy_Translation($current_tab, array( 'taxonomy_selector'=> false, 'status'=> WPML_TT_TAXONOMIES_ALL ) );
+                    ob_start();
                     $WPML_Translate_Taxonomy->render();
+                    $content = ob_get_contents();
+                    ob_end_clean();
                 }
 
         }
