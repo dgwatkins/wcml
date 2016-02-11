@@ -290,8 +290,7 @@ class WCML_Bookings{
         $nonce = filter_input( INPUT_POST, '_wcml_custom_costs_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
         if( isset( $_POST['_wcml_custom_costs'] ) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_custom_costs' ) ){
-            var_dump('asd');die;
-
+            
             update_post_meta( $post_id, '_wcml_custom_costs_status', $_POST['_wcml_custom_costs'] );
 
             if( $_POST['_wcml_custom_costs'] == 1 ){
