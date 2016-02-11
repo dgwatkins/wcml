@@ -6,10 +6,10 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
     function setUp(){
         parent::setUp();
 
-        global $sitepress;
+        global $woocommerce_wpml,$sitepress;
 
         $this->wcml_products = new WCML_Products();
-        $this->wcml_products_ui = new WCML_Products_UI();
+        $this->wcml_products_ui = new WCML_Products_UI( $woocommerce_wpml, $sitepress );
         $this->wcml_helper = new WCML_Helper();
 
         // create 100 dummy products

@@ -5,10 +5,19 @@
  */
 class WCML_Products_UI extends WPML_Templates_Factory {
 
-	public function get_model() {
-		global $woocommerce_wpml, $sitepress;
+	private $woocommerce_wpml;
+	private $sitepress;
 
-		$active_languages = $sitepress->get_active_languages();
+	function __construct( &$woocommerce_wpml, &$sitepress ){
+		parent::__construct();
+
+		$this->woocommerce_wpml = $woocommerce_wpml;
+		$this->sitepress = $sitepress;
+	}
+
+	public function get_model() {
+
+		$active_languages = $this->sitepress->get_active_languages();
 		$product_data = $this->get_products_data();
 		$pagination_url = $this->get_pagination_url();
 		$filter_url = $this->get_filter_url();
@@ -74,7 +83,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 					'search' => __( 'Search', 'woocommerce-multilingual' ),
 				),
 			),
-			'languages_flags' => $woocommerce_wpml->products->get_translation_flags( $active_languages, $slang, $this->get_current_job_language() ),
+			'languages_flags' => $this->woocommerce_wpml->products->get_translation_flags( $active_languages, $slang, $this->get_current_job_language() ),
 			'request_uri' => $_SERVER["REQUEST_URI"],
 			'nonces'  => array(
 				'upd_product' => wp_create_nonce( 'update_product_actions' ),
@@ -108,9 +117,9 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 	}
 
 	public function get_products_data(){
-		global $sitepress, $woocommerce_wpml, $iclTranslationManagement;
+		global $iclTranslationManagement;
 
-		$active_languages = $sitepress->get_active_languages();
+		$active_languages = $this->sitepress->get_active_languages();
 
 		$products_info = $this->get_product_info_from_self_edit_mode();
 
@@ -141,7 +150,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 				$products[ $key ]->post_thumbnail = wc_placeholder_img_src();
 			}
 
-			$original_product_lang = $woocommerce_wpml->products->get_original_product_language( $product->ID );
+			$original_product_lang = $this->woocommerce_wpml->products->get_original_product_language( $product->ID );
 
 			if ( ! $slang ) {
 				$original_lang = $original_product_lang;
@@ -149,7 +158,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 				$original_lang = $slang;
 			}
 
-			$products[ $key ]->orig_flag_url = $sitepress->get_flag_url( $original_lang );
+			$products[ $key ]->orig_flag_url = $this->sitepress->get_flag_url( $original_lang );
 
 			if( $product->post_parent != 0 ){
 				$products[ $key ]->parent_title = get_the_title( $product->post_parent );
@@ -164,11 +173,11 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 				$prod_lang = $slang;
 			}
 
-			$trid       = $sitepress->get_element_trid( $product->ID, 'post_' . $product->post_type );
-			$product_translations = $sitepress->get_element_translations( $trid, 'post_' . $product->post_type, true, true );
+			$trid       = $this->sitepress->get_element_trid( $product->ID, 'post_' . $product->post_type );
+			$product_translations = $this->sitepress->get_element_translations( $trid, 'post_' . $product->post_type, true, true );
 
 			ob_start();
-			$woocommerce_wpml->products->get_translation_statuses( $product->ID, $product_translations, $active_languages, $prod_lang, $trid, $this->get_current_job_language() );
+			$this->woocommerce_wpml->products->get_translation_statuses( $product->ID, $product_translations, $active_languages, $prod_lang, $trid, $this->get_current_job_language() );
 			$products[ $key ]->translation_statuses = ob_get_contents();
 			ob_end_clean();
 
@@ -195,12 +204,11 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 	}
 
 	public function get_product_info_from_self_edit_mode(){
-		global $woocommerce_wpml;
 
 		if ( isset( $_GET[ 'prid' ] ) ) {
 
-			if ( ! $woocommerce_wpml->products->is_original_product( $_GET[ 'prid' ] ) ) {
-				$original_language = $woocommerce_wpml->products->get_original_product_language( $_GET[ 'prid' ] );
+			if ( ! $this->woocommerce_wpml->products->is_original_product( $_GET[ 'prid' ] ) ) {
+				$original_language = $this->woocommerce_wpml->products->get_original_product_language( $_GET[ 'prid' ] );
 				$products[]        = get_post( apply_filters( 'translate_object_id', $_GET[ 'prid' ], 'product', true, $original_language ) );
 			} else {
 				$products[] = get_post( $_GET[ 'prid' ] );
@@ -247,7 +255,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
      * return array;
     */
 	public function get_product_list( $page = 1, $limit = 20, $slang ){
-		global $wpdb,$sitepress;
+		global $wpdb;
 
 		$sql = "SELECT p.ID,p.post_parent FROM $wpdb->posts AS p
                   LEFT JOIN {$wpdb->prefix}icl_translations AS icl ON icl.element_id = p.id
@@ -321,7 +329,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
      * get products count
      */
 	public function get_products_count( $slang ){
-		global $sitepress,$wpdb;
+		global $wpdb;
 
 		$sql = "SELECT count(p.id) FROM $wpdb->posts AS p
                 LEFT JOIN {$wpdb->prefix}icl_translations AS icl ON icl.element_id = p.id
@@ -344,7 +352,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
      * $category - product category
      */
 	public function get_products_from_filter( ){
-		global $wpdb, $sitepress;
+		global $wpdb;
 
 		$title = isset( $_GET['s'] ) ? $_GET['s'] : '';
 		$category =	isset( $_GET['cat'] ) ? $_GET['cat'] : null;
@@ -376,7 +384,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 		$sql .= " LEFT JOIN {$wpdb->prefix}icl_translations AS t ON t.element_id = p.id";
 
 		if(in_array($translation_status,array('not','need_update','in_progress','complete'))){
-			foreach($sitepress->get_active_languages() as $lang){
+			foreach($this->sitepress->get_active_languages() as $lang){
 
 				if( $lang['code'] == $slang ) continue;
 
@@ -418,7 +426,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 				case 'not':
 					$sql .= " AND (";
 					$wheres = array();
-					foreach($sitepress->get_active_languages() as $lang){
+					foreach($this->sitepress->get_active_languages() as $lang){
 						if($lang['code'] == $slang) continue;
 						$tbl_alias_suffix = str_replace('-','_',$lang['code']);
 						$wheres[] = "iclts_{$tbl_alias_suffix}.status IS NULL OR iclts_{$tbl_alias_suffix}.status = ".ICL_TM_WAITING_FOR_TRANSLATOR." OR iclts_{$tbl_alias_suffix}.needs_update = 1\n";
@@ -428,7 +436,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 				case 'need_update':
 					$sql .= " AND (";
 					$wheres = array();
-					foreach($sitepress->get_active_languages() as $lang){
+					foreach($this->sitepress->get_active_languages() as $lang){
 						if($lang['code'] == $slang) continue;
 						$tbl_alias_suffix = str_replace('-','_',$lang['code']);
 						$wheres[] = "iclts_{$tbl_alias_suffix}.needs_update = 1\n";
@@ -438,7 +446,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 				case 'in_progress':
 					$sql .= " AND (";
 					$wheres = array();
-					foreach($sitepress->get_active_languages() as $lang){
+					foreach($this->sitepress->get_active_languages() as $lang){
 						if($lang['code'] == $slang) continue;
 						$tbl_alias_suffix = str_replace('-','_',$lang['code']);
 						$wheres[] = "iclts_{$tbl_alias_suffix}.status = ".ICL_TM_IN_PROGRESS."\n";
@@ -446,7 +454,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 					$sql .= join(' OR ', $wheres)  . ")";
 					break;
 				case 'complete':
-					foreach($sitepress->get_active_languages() as $lang){
+					foreach($this->sitepress->get_active_languages() as $lang){
 						if($lang['code'] == $slang) continue;
 						$tbl_alias_suffix = str_replace('-','_',$lang['code']);
 						$sql .= " AND (iclts_{$tbl_alias_suffix}.status = ".ICL_TM_COMPLETE." OR iclts_{$tbl_alias_suffix}.status = ".ICL_TM_DUPLICATE.") AND iclts_{$tbl_alias_suffix}.needs_update = 0\n";
@@ -549,7 +557,6 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 	}
 
 	public function get_last_page_num( $products_count ){
-		global $woocommerce_wpml;
 
 		$last = 1;
 

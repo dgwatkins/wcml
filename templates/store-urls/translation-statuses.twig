@@ -1,0 +1,24 @@
+{% for language in active_languages %}
+    {% if language.code == source_language %}
+        <span title="{{ language.english_name|e }}: {{ strings.orig_lang|e }}">
+                    <i class="otgs-ico-original"></i>
+        </span>
+    {% else %}
+        {{ wcml_base_edit_dialog( base, language.code )|raw }}
+
+        <a class="js-wpml-dialog-trigger {% if not value %}dis_base{% endif %}" id="wcml-edit-base-slug-{{ base|e }}-{{ language.code|e }}"
+           data-content="wcml-edit-base-slug-{{ base|e }}-{{ language.code|e }}"  data-width="600" data-height="150"
+
+            {% if language.status == 'upd' %}
+                title="<?php echo $language['english_name'] . ': ' . __('Update translation', 'woocommerce-multilingual'); ?>">
+                    <i class="otgs-ico-refresh"></i>
+            {% elseif language.status == 'add' %}
+                title="<?php echo $language['english_name'] . ': ' . __('Add translation', 'woocommerce-multilingual'); ?>">
+                    <i class="otgs-ico-add"></i>
+            {% elseif language.status == 'edit' %}
+                title="<?php echo $language['english_name'] . ': ' . __('Edit translation', 'woocommerce-multilingual'); ?>">
+                <i class="otgs-ico-edit"></i>
+            {% endif %}
+        </a>
+    {% endif %}
+{% endfor %}
