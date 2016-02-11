@@ -38,7 +38,7 @@ class WCML_Upgrade{
                     'show' => 1, 
                     'text' => __('Looks like you are upgrading from a previous version of WooCommerce Multilingual. Would you like to automatically create translated variations and images?', 'wcml').
                             '<br /><strong>' .
-                            ' <a href="' .  admin_url('admin.php?page=' . basename(WCML_PLUGIN_PATH) . '/menu/sub/troubleshooting.php') . '">' . __('Yes, go to the troubleshooting page', 'wcml') . '</a> |' . 
+                            ' <a href="' .  admin_url('admin.php?page=wpml-wcml&tab=troubleshooting') . '">' . __('Yes, go to the troubleshooting page', 'wcml') . '</a> |' .
                             ' <a href="#" onclick="jQuery.ajax({type:\'POST\',url: ajaxurl,data:\'action=wcml_hide_notice&notice='.$n.'\',success:function(){jQuery(\'#' . $n . '\').fadeOut()}});return false;">'  . __('No - dismiss', 'wcml') . '</a>' . 
                             '</strong>'
                 );
@@ -53,7 +53,7 @@ class WCML_Upgrade{
             foreach($wcml_settings['notifications'] as $k => $notification){
                 
                 // exceptions
-                if(isset($_GET['page']) && $_GET['page'] == basename(WCML_PLUGIN_PATH) . '/menu/sub/troubleshooting.php' && $k == 'varimages') continue;
+                if(isset($_GET['tab']) && $_GET['tab'] == 'troubleshooting' && $k == 'varimages') continue;
                 
                 if($notification['show']){
                     ?>

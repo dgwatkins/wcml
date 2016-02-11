@@ -74,6 +74,11 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
                     'active'    => $current_tab == 'status' ? 'nav-tab-active':'',
                     'url'       => admin_url( 'admin.php?page=wpml-wcml&tab=status' )
                 ),
+                'troubleshooting' => array(
+                    'name'      => __( 'Troubleshooting', 'woocommerce-multilingual' ),
+                    'active'    => $current_tab == 'troubleshooting' ? 'nav-tab-active':'',
+                    'url'       => admin_url( 'admin.php?page=wpml-wcml&tab=troubleshooting' )
+                )
             ),
             'can_manage_options' => current_user_can('wpml_manage_woocommerce_multilingual'),
             'rate' => array(
@@ -174,6 +179,11 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
             case 'status':
                 $wcml_status = new WCML_Status_UI( $woocommerce_wpml, $sitepress, $sitepress_settings );
                 $content = $wcml_status->get_view();
+                break;
+
+            case 'troubleshooting':
+                $wcml_troubleshooting = new WCML_Troubleshooting_UI( $woocommerce_wpml );
+                $content = $wcml_troubleshooting->get_view();
                 break;
 
             case 'settings':

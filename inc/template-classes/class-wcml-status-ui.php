@@ -116,7 +116,7 @@ class WCML_Status_UI extends WPML_Templates_Factory {
 					'ignore_tax' => wp_create_nonce( 'wcml_ingore_taxonomy_translation_nonce' )
 				)
 			),
-			'troubl_url' => admin_url( 'admin.php?page=' . basename( WCML_PLUGIN_PATH ) . '/menu/sub/troubleshooting.php' ),
+			'troubl_url' => admin_url( 'admin.php?page=wpml-wcml&tab=troubleshooting' ),
 			'strings' => array(
 				'troubl' => __( 'Troubleshooting page', 'woocommerce-multilingual' )
 			)
