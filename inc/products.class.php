@@ -1844,10 +1844,7 @@ class WCML_Products{
                 $data['files_data'] = array();
             }
 
-            ob_start();
-            include WCML_PLUGIN_PATH . '/menu/sub/downloadable-files-box.php';
-
-            return ob_get_clean();
+            return '';
         }
     }
 

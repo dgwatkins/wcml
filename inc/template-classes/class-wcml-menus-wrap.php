@@ -123,7 +123,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
     }
 
     protected function get_current_menu_content( $current_tab ){
-        global $sitepress;
+        global $sitepress, $sitepress_settings;
 
         $woocommerce_wpml = $this->woocommerce_wpml;
 
@@ -171,12 +171,9 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
                 }
                 break;
 
-            // TBD
             case 'status':
-                ob_start();
-                include WCML_PLUGIN_PATH . '/menu/sub/status.php';
-                $content = ob_get_contents();
-                ob_end_clean();
+                $wcml_status = new WCML_Status_UI( $woocommerce_wpml, $sitepress, $sitepress_settings );
+                $content = $wcml_status->get_view();
                 break;
 
             case 'settings':
