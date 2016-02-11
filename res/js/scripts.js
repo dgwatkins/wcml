@@ -488,13 +488,12 @@ jQuery(document).ready(function($){
 
     $(document).on('click', '.hide-rate-block', function(){
 
-
         var wrap = $(this).closest('.wcml-wrap');
 
         $(this).attr('disabled', 'disabled');
-        var ajaxLoader = $('<span class="spinner" style="visibility: visible;margin: 0">');
+        var ajaxLoader = $('<span class="spinner" style="visibility: visible;">');
         var setting = jQuery(this).data('setting');
-        $(this).parent().append(ajaxLoader);
+        $(this).parent().prepend(ajaxLoader);
         $(this).remove();
 
         $.ajax({
