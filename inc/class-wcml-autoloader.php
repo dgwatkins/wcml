@@ -13,10 +13,32 @@ class WCML_Autoloader {
 
         $this->include_paths = array(
             WCML_PLUGIN_PATH . '/inc/',
-            WCML_PLUGIN_PATH . '/inc/template-classes',
-            WCML_PLUGIN_PATH . '/inc/template-classes/store-urls',
+            WCML_PLUGIN_PATH . '/inc/template-classes/*',
             WCML_PLUGIN_PATH . '/compatibility/'
         );
+
+        $this->set_real_include_paths();
+    }
+
+    public function set_real_include_paths(){
+        $paths = array();
+
+        foreach( $this->include_paths as $path ){
+            if( preg_match('#/\*$#', $path) ){
+                $path = preg_replace( '#/\*$#', '', $path );
+                $paths[] = $path;
+                $folders = scandir( $path );
+                foreach( $folders as $folder ){
+                    if ( $folder != '.' && $folder != '..' && is_dir( $path . '/' . $folder)){
+                        $paths[] = $path . '/' . $folder;
+                    }
+                }
+            }else{
+                $paths[] = $path;
+            }
+        }
+
+        $this->include_paths = $paths;
     }
 
     private function get_file_name_from_class( $class ) {
@@ -37,6 +59,7 @@ class WCML_Autoloader {
         $path  = '';
 
         foreach( $this->include_paths as $path ){
+
             if( $this->load_file( $path . '/' . $file) ){
                 break;
             }
