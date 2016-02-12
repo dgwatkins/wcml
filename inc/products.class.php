@@ -1573,8 +1573,8 @@ class WCML_Products{
                 $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
 
                 foreach( $currencies as $code => $currency ){
-                    $sale_price = $_POST[ '_custom_sale_price' ][ $code ];
-                    $regular_price = $_POST[ '_custom_regular_price' ][ $code ];
+                    $sale_price = wc_format_decimal( $_POST[ '_custom_sale_price' ][ $code ] );
+                    $regular_price = wc_format_decimal( $_POST[ '_custom_regular_price' ][ $code ] );
 
                     $date_from = strtotime( $_POST[ '_custom_sale_price_dates_from' ][ $code ] );
                     $date_to = strtotime( $_POST[ '_custom_sale_price_dates_to' ][ $code ] );
