@@ -30,6 +30,11 @@ class WCML_Compatibility {
         if(class_exists('WC_Subscriptions')){
             $this->wp_subscriptions = new WCML_WC_Subscriptions();
         }
+
+        //WooCommerce Name Your Price
+        if(class_exists('WC_Name_Your_Price')){
+            $this->name_your_price = new WCML_WC_Name_Your_Price();
+        }
         
         //Product Bundle
         if(class_exists('WC_Product_Bundle')){
