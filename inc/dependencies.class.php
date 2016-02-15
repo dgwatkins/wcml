@@ -67,7 +67,7 @@ class WCML_Dependencies{
         }
 
         if ($this->missing) {
-
+            add_action('admin_notices', array($this, '_missing_plugins_warning'));
         }
         
         if($this->allok){

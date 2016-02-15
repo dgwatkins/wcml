@@ -86,14 +86,14 @@
                                        name="_custom_sale_price_dates_from{{ currency.custom_id }}"
                                        id="_custom_sale_price_dates_from{{ currency.custom_id }}"
                                        value="{{ currency.custom_sale_price_dates_from|e }}"
-                                       placeholder="{{ strings.from|e }} YYYY-MM-DD"
+                                       placeholder="{{ strings.from|raw }} YYYY-MM-DD"
                                        maxlength="10" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" />
 
                                 <input type="text" class="short custom_sale_price_dates_to"
                                        name="_custom_sale_price_dates_to{{ currency.custom_id }}"
                                        id="_custom_sale_price_dates_to{{ currency.custom_id }}"
                                        value="{{ currency.custom_sale_price_dates_to|e }}"
-                                       placeholder="{{ strings.to|e }}  YYYY-MM-DD"
+                                       placeholder="{{ strings.to|raw }}  YYYY-MM-DD"
                                        maxlength="10" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" />
 
                             </div>

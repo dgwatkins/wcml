@@ -1337,8 +1337,8 @@ class WCML_Products{
                     $sale_price = wc_format_decimal( $_POST[ '_custom_sale_price' ][ $code ] );
                     $regular_price = wc_format_decimal( $_POST[ '_custom_regular_price' ][ $code ] );
 
-                    $date_from = strtotime( $_POST[ '_custom_sale_price_dates_from' ][ $code ] );
-                    $date_to = strtotime( $_POST[ '_custom_sale_price_dates_to' ][ $code ] );
+                    $date_from = isset( $_POST[ '_custom_sale_price_dates_from' ][ $code ] ) ? strtotime( $_POST[ '_custom_sale_price_dates_from' ][ $code ] ) : false;
+                    $date_to = isset( $_POST[ '_custom_sale_price_dates_to' ][ $code ] ) ? strtotime( $_POST[ '_custom_sale_price_dates_to' ][ $code ] ) : false;
                     $schedule = $_POST[ '_wcml_schedule' ][ $code ];
 
                     $this->update_custom_prices( $post_id, $regular_price, $sale_price, $schedule, $date_from, $date_to, $code );
