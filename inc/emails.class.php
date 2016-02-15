@@ -230,6 +230,9 @@ class WCML_Emails{
         load_default_textdomain();
         global $wp_locale;
         $wp_locale = new WP_Locale();
+
+        unset ($woocommerce->countries );
+        $woocommerce->countries = new WC_Countries();
     }    
     
 
