@@ -24,23 +24,23 @@ class WCML_Terms{
         
         add_action('created_term', array($this, 'translated_terms_status_update'), 10,3);
         add_action('edit_term', array($this, 'translated_terms_status_update'), 10,3);
-        add_action('wp_ajax_wcml_update_term_translated_warnings', array('WCML_Terms', 'wcml_update_term_translated_warnings'));
-        add_action('wp_ajax_wcml_ingore_taxonomy_translation', array('WCML_Terms', 'wcml_ingore_taxonomy_translation'));
-        add_action('wp_ajax_wcml_uningore_taxonomy_translation', array('WCML_Terms', 'wcml_uningore_taxonomy_translation'));
+        add_action('wp_ajax_wcml_update_term_translated_warnings', array( $this, 'wcml_update_term_translated_warnings'));
+        add_action('wp_ajax_wcml_ingore_taxonomy_translation', array( $this, 'wcml_ingore_taxonomy_translation'));
+        add_action('wp_ajax_wcml_uningore_taxonomy_translation', array( $this, 'wcml_uningore_taxonomy_translation'));
 
-        add_action('created_term', array('WCML_Terms', 'set_flag_for_variation_on_attribute_update'), 10, 3);
+        add_action('created_term', array( $this, 'set_flag_for_variation_on_attribute_update'), 10, 3);
 
         if ( defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSION, '3.1.8.2', '<=' ) ) {
             // Backward compatibillity for WPML <= 3.1.8.2
-            add_action('wpml_taxonomy_translation_bottom', array('WCML_Terms', 'show_variations_sync_button'), 10, 1);
-            add_filter('wpml_taxonomy_show_tax_sync_button', array('WCML_Terms', 'hide_tax_sync_button_for_attributes'));
+            add_action('wpml_taxonomy_translation_bottom', array( $this, 'show_variations_sync_button'), 10, 1);
+            add_filter('wpml_taxonomy_show_tax_sync_button', array( $this, 'hide_tax_sync_button_for_attributes'));
         }else{
-            add_filter('wpml_taxonomy_translation_bottom', array('WCML_Terms', 'sync_taxonomy_translations'), 10, 3 );
+            add_filter('wpml_taxonomy_translation_bottom', array( $this, 'sync_taxonomy_translations'), 10, 3 );
         }
 
-        add_action('wp_ajax_wcml_sync_product_variations', array('WCML_Terms', 'wcml_sync_product_variations'));
-        add_action('wp_ajax_wcml_tt_sync_taxonomies_in_content', array('WCML_Terms', 'wcml_sync_taxonomies_in_content'));
-        add_action('wp_ajax_wcml_tt_sync_taxonomies_in_content_preview', array('WCML_Terms', 'wcml_sync_taxonomies_in_content_preview'));
+        add_action('wp_ajax_wcml_sync_product_variations', array( $this, 'wcml_sync_product_variations'));
+        add_action('wp_ajax_wcml_tt_sync_taxonomies_in_content', array( $this, 'wcml_sync_taxonomies_in_content'));
+        add_action('wp_ajax_wcml_tt_sync_taxonomies_in_content_preview', array( $this, 'wcml_sync_taxonomies_in_content_preview'));
         
         if(is_admin()){
             add_action('admin_menu', array($this, 'admin_menu_setup'));    
@@ -456,16 +456,9 @@ class WCML_Terms{
         global $woocommerce_wpml;
 
         if(is_admin() && $taxonomy && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab'])){
-            $wcml_settings = $woocommerce_wpml->get_settings();
-            $attribute_taxonomies = wc_get_attribute_taxonomies();        
-            foreach($attribute_taxonomies as $a){
-                $attribute_taxonomies_arr[] = 'pa_' . $a->attribute_name;
-            }
 
-            ob_start();
-            include WCML_PLUGIN_PATH . '/menu/sub/sync-taxonomy-translations.php';
-            $html = ob_get_contents();
-            ob_end_clean();
+            $sync_tax = new WCML_Sync_Taxonomy( $woocommerce_wpml, $taxonomy, $taxonomy_obj );
+            $html = $sync_tax->get_view();
 
         }
 

@@ -16,8 +16,8 @@ class WCML_Custom_Prices_UI extends WPML_Templates_Factory {
 
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->product_id = $product_id;
-		$this->is_variation = get_post_type( $this->product_id ) == 'product_variation' ? true : false;
-		$this->custom_prices = get_post_custom( $this->product_id );
+		$this->is_variation = get_post_type( $product_id) == 'product_variation' ? true : false;
+		$this->custom_prices = get_post_custom( $product_id );
 
 	}
 
