@@ -906,20 +906,12 @@ class WCML_WC_MultiCurrency{
 
     }
 
-    function custom_pricing_output($post_id = false){
-        global $woocommerce,$woocommerce_wpml;
+    function custom_pricing_output( $post_id = false){
+        global $woocommerce_wpml;
 
-        $custom_prices = array();
-        $is_variation = false;
+        $custom_prices_ui = new WCML_Custom_Prices_UI( $woocommerce_wpml, $post_id );
+        $custom_prices_ui->show();
 
-        if($post_id){
-            $custom_prices = get_post_custom($post_id);
-            if(get_post_type($post_id) == 'product_variation'){
-                $is_variation = true;
-                }
-            }
-
-        include WCML_PLUGIN_PATH . '/menu/sub/custom-prices.php';
     }
 
     function add_individual_variation_nonce($loop, $variation_data, $variation){

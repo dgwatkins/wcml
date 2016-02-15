@@ -33,7 +33,8 @@ jQuery(document).ready(function($){
         }
     });
 
-    $(document).on('click','.wcml_custom_prices_auto_block_show', function(){
+    $(document).on('click','.wcml_custom_prices_auto_block_show', function( e ){
+        e.preventDefault();
         if($(this).closest('.wcml_custom_prices_block').find('.wcml_custom_prices_input:checked').val() == 0){
             if(!$(this).closest('.wcml_custom_prices_block').find('.wcml_automaticaly_prices_block').is(':visible')){
                 $(this).hide();
@@ -43,7 +44,8 @@ jQuery(document).ready(function($){
         }
     });
 
-    $(document).on('click','.wcml_custom_prices_auto_block_hide', function(){
+    $(document).on('click','.wcml_custom_prices_auto_block_hide', function( e ){
+        e.preventDefault();
         if($(this).closest('.wcml_custom_prices_block').find('.wcml_custom_prices_input:checked').val() == 0){
             if($(this).closest('.wcml_custom_prices_block').find('.wcml_automaticaly_prices_block').is(':visible')){
                 $(this).hide();
@@ -53,7 +55,9 @@ jQuery(document).ready(function($){
         }
     });
 
-    $(document).on('click','.wcml_custom_prices_manually_block_hide', function(){
+    $(document).on('click','.wcml_custom_prices_manually_block_hide', function( e ){
+        e.preventDefault();
+
         if($(this).closest('.wcml_custom_prices_block').find('.wcml_custom_prices_input:checked').val() == 1){
             $(this).closest('.wcml_custom_prices_block').find('.wcml_custom_prices_manually_block').hide();
             $(this).closest('.wcml_custom_prices_block').find('.wcml_custom_prices_manually_block_hide').hide();
@@ -61,7 +65,8 @@ jQuery(document).ready(function($){
         }
     });
 
-    $(document).on('click','.wcml_custom_prices_manually_block_show', function(){
+    $(document).on('click','.wcml_custom_prices_manually_block_show', function( e ){
+        e.preventDefault();
         if($(this).closest('.wcml_custom_prices_block').find('.wcml_custom_prices_input:checked').val() == 1){
             $(this).closest('.wcml_custom_prices_block').find('.wcml_custom_prices_manually_block').show();
             $(this).closest('.wcml_custom_prices_block').find('.wcml_custom_prices_manually_block_hide').show();
@@ -118,7 +123,8 @@ jQuery(document).ready(function($){
         }
     });
 
-    $(document).on('click','.wcml_schedule_manually_block_hide', function(){
+    $(document).on('click','.wcml_schedule_manually_block_hide', function( e ){
+        e.preventDefault();
         if($(this).closest('div').find('.wcml_schedule_input:checked').val() == 1){
             $(this).closest('div').find('.wcml_schedule_dates').hide();
             $(this).closest('div').find('.wcml_schedule_manually_block_show').show();
@@ -126,7 +132,8 @@ jQuery(document).ready(function($){
         }
     });
 
-    $(document).on('click','.wcml_schedule_manually_block_show', function(){
+    $(document).on('click','.wcml_schedule_manually_block_show', function( e ){
+        e.preventDefault();
         if($(this).closest('div').find('.wcml_schedule_input:checked').val() == 1){
             datepick();
             $(this).closest('div').find('.wcml_schedule_dates').show();
