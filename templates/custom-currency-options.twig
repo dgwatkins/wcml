@@ -88,7 +88,7 @@
 
             <div class="wpml-form-row">
                 <label for="wcml_currency_options_increment_{{ args.currency_code }}">{{ form.rounding.increment}}</label>
-                <select name="currency_options[rounding_increment]" id="wcml_currency_options_increment_<?php echo $args['currency_code'] ?>">
+                <select name="currency_options[rounding_increment]" id="wcml_currency_options_increment_{{ args.currency_code }}">
                     <option value="1" {% if args.currency.rounding_increment == '1' %}selecetd="selected"{% endif %}>1</option>
                     <option value="10" {% if args.currency.rounding_increment == '10' %}selecetd="selected"{% endif %}>10</option>
                     <option value="100" {% if args.currency.rounding_increment == '100' %}selecetd="selected"{% endif %}>100</option>

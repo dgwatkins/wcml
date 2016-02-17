@@ -27,7 +27,7 @@
         </div>
     {% else %}
         <form id="wcml_tt_sync_assignment" style="{{ display_tax|e }}">
-            <input type="hidden" name="taxonomy" value="<?php echo $taxonomy ?>"/>
+            <input type="hidden" name="taxonomy" value="{{ taxonomy }}"/>
             {{ nonces.sync_taxonomies|raw }}
             <p>
                 <input class="button-secondary" type="submit" value="{{ strings.sync_in_cont|format( tax_name )|e }}"/>
