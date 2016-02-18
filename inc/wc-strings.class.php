@@ -4,6 +4,7 @@ class WCML_WC_Strings{
 
     private $translations_from_mo_file = array();
     private $mo_files = array();
+    private $current_language;
 
     function __construct(){
 
@@ -65,8 +66,13 @@ class WCML_WC_Strings{
     }
     
     function init(){
-        global $pagenow;
-         
+        global $pagenow, $sitepress;
+
+        $this->current_language = $sitepress->get_current_language();
+        if( $this->current_language == 'all' ){
+            $this->current_language = $sitepress->get_default_language();
+        }
+
         add_filter('woocommerce_package_rates', array($this, 'translate_shipping_methods_in_package'));
         add_action('woocommerce_tax_rate_added', array($this, 'register_tax_rate_label_string'), 10, 2 );
         add_filter('woocommerce_rate_label',array($this,'translate_woocommerce_rate_label'));
@@ -192,10 +198,9 @@ class WCML_WC_Strings{
     }
 
     function translated_checkout_product_title($title,$product){
-        global $sitepress;
 
         if(isset($product->id)){
-            $tr_product_id = apply_filters( 'translate_object_id',$product->id,'product',true,$sitepress->get_current_language());
+            $tr_product_id = apply_filters( 'translate_object_id', $product->id, 'product', true, $this->current_language );
             $title = get_the_title($tr_product_id);
         }
 
@@ -323,9 +328,8 @@ class WCML_WC_Strings{
     }
 
     function translate_shipping_method_title( $title, $shipping_id ) {
-        global $sitepress;
 
-        $title = apply_filters( 'wpml_translate_single_string', $title, 'woocommerce', $shipping_id .'_shipping_method_title', $sitepress->get_current_language() );
+        $title = apply_filters( 'wpml_translate_single_string', $title, 'woocommerce', $shipping_id .'_shipping_method_title', $this->current_language );
 
         return $title;
     }
@@ -398,25 +402,18 @@ class WCML_WC_Strings{
     }
 
     function translate_gateway_title($title, $gateway_title) {
-        global $sitepress;
-
-        $title = apply_filters( 'wpml_translate_single_string', $title, 'woocommerce', $gateway_title .'_gateway_title', $sitepress->get_current_language() );
-
+        $title = apply_filters( 'wpml_translate_single_string', $title, 'woocommerce', $gateway_title .'_gateway_title', $this->current_language );
         return $title;
     }
 
     function translate_gateway_description( $description, $gateway_title) {
-        global $sitepress;
-        $description = apply_filters( 'wpml_translate_single_string', $description, 'woocommerce', $gateway_title .'_gateway_description', $sitepress->get_current_language() );
-
+        $description = apply_filters( 'wpml_translate_single_string', $description, 'woocommerce', $gateway_title . '_gateway_description', $this->current_language );
         return $description;
     }
 
     function translate_gateway_instructions( $id, $instructions){
-        global $sitepress;
-        $instruction = apply_filters( 'wpml_translate_single_string', $instructions, 'woocommerce', $id .'_gateway_instructions', $sitepress->get_current_language() );
-
-        return $instruction;
+        $instructions = apply_filters( 'wpml_translate_single_string', $instructions, 'woocommerce', $id . '_gateway_instructions', $this->current_language );
+        return $instructions;
     }
 
     function show_custom_url_base_language_requirement(){
