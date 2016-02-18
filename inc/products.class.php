@@ -1154,8 +1154,11 @@ class WCML_Products{
             foreach($get_current_post_variations as $k => $post_data){
                 $current_post_variation_ids[] = $post_data->ID;
             }
-            //update product variations option
-            update_option('_transient_wc_product_children_ids_'.$tr_product_id,$current_post_variation_ids);
+
+            // refresh parent-children transients
+            delete_transient( 'wc_product_children_' . $tr_product_id );
+            delete_transient( '_transient_wc_product_children_ids_' . $tr_product_id );
+
 
             $original_product_attr = get_post_meta($product_id,'_product_attributes',true);
             $tr_product_attr = get_post_meta($tr_product_id,'_product_attributes',true);
