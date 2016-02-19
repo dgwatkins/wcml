@@ -5,7 +5,7 @@ Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multili
 License: GPLv2
 Requires at least: 3.0
 Tested up to: 4.4.1
-Stable tag: 3.7.9
+Stable tag: 3.7.10
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
 
@@ -77,6 +77,15 @@ In order for the checkout and store pages to appear translated, you need to crea
 3. Multiple currencies
 
 == Changelog ==
+
+= 3.7.10 =
+* Fixed a small issue with the product translations editor (additional toolbar showing)
+* Fixed a compatibility issue with Memcached on Siteground: product category archive pages were returning 404
+* Bug fix: the price widget was not using the correct values with multi-currency mode on
+* Bug fix: in some cases the costs for International Shipping were not calculated correctly in the secondary languages
+* Bug fix: When using comma for a decimal separator, for custom prices, the rounded values were not determined correctly
+* Bug fix: In some cases, translated product variations were displayed as 'out of stock' on the front end.
+* Fixed a fatal error occurring when selecting the WPML admin language to 'All languages' on the WooCommerce settings page
 
 = 3.7.9 =
 * Fixed an issue prevent the correct plugin activation in some cases
