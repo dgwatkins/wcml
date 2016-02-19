@@ -40,11 +40,10 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 
 		$sitepress->switch_lang( 'de' );
 
-		$wpml_url_converter = load_wpml_url_converter(
-			$sitepress_settings,
-			3,
-			$sitepress->get_default_language()
-		);
+		$default_lang_code	= $sitepress->get_default_language();
+		$wpml_wp_api        = new WPML_WP_API();
+		$hidden_langs 		= array();
+		$wpml_url_converter = new WPML_Lang_Parameter_Converter( $default_lang_code, $hidden_langs, $wpml_wp_api );
 
 		$wpml_url_filters = new WPML_URL_Filters( $wpml_post_translations, $wpml_url_converter, $sitepress );
 
