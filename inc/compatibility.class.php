@@ -120,9 +120,10 @@ class WCML_Compatibility {
         if (class_exists('woocommerce_gravityforms')) {
             $this->gravityforms_product_addons = new WCML_Gravityforms_Product_Addons();
         }
-       
 
-
+        if (class_exists('WC_Mix_and_Match')) {
+            $this->mix_and_match_products = new WCML_Mix_and_Match_Products();
+        }
     }
 
 }
