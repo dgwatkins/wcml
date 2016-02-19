@@ -106,7 +106,7 @@ jQuery(document).ready(function($){
                if(response.html){
                    $('.js-tax-translation li.js-tax-translation-' + taxonomy).html(response.html);
                    if(response.warn){
-					   $('.js-tax-tab-' + taxonomy).append('&nbsp;<i class="otgs-ico-warning"></i>');
+					   $('.js-tax-tab-' + taxonomy).append('<i class="otgs-ico-warning"></i>');
                    }
                    
                }

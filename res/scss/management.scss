@@ -8,6 +8,12 @@
 .wcml-tabs {
   min-width: 930px; //same as .wcml-wrap
   @include clearfix();
+  .nav-tab {
+  @media (max-width: 1350px) {
+      margin-left: .2em;
+      font-size: 1em;
+    }
+  }
 }
 
 .dis_base{
@@ -371,7 +377,7 @@
 }
 
 .currency_position {
-  margin-top: 0px;
+  margin-top: 0;
   span {
     font-size: 10px;
     font-style: italic;
