@@ -9,12 +9,27 @@
   min-width: 930px; //same as .wcml-wrap
   @include clearfix();
   .nav-tab {
+    margin-top: 5px;
   @media (max-width: 1350px) {
       margin-left: .2em;
       font-size: 1em;
     }
   }
+  @at-root {
+    .nav-tab-active.troubleshooting {
+      float: right;
+      font-size: .9em;
+      font-weight: normal;
+      padding-left: 5px;
+      padding-right: 5px;
+      margin-right: .5em;
+      @media (max-width: 1350px) {
+        margin-right: .2em;
+      }
+    }
+  }
 }
+
 
 .dis_base{
   opacity: 0.5;
@@ -507,7 +522,7 @@ table.widefat.currency_delete_table {
   padding: 10px;
   border: 1px solid #8cceea;
   background-color: #eff8fc;
-  border-radius: 5px;
+  border-radius: 4px;
   label span {
     font-weight: bold;
   }
@@ -518,7 +533,7 @@ table.widefat.currency_delete_table {
   margin-bottom: 10px;
   border: 1px solid #f00;
   background-color: #ffb7b7;
-  border-radius: 5px 5px;
+  border-radius: 4px;
 }
 
 #wcml_sync_variations {

@@ -21,7 +21,7 @@
         <a class="nav-tab {{ menu.slugs.active }}" href="{{ menu.slugs.url }}">{{ menu.slugs.name }}</a>
         <a class="nav-tab {{ menu.status.active }}" href="{{ menu.status.url }}">{{ menu.status.name }}</a>
         {% if menu.troubleshooting.active %}
-            <a class="nav-tab {{ menu.troubleshooting.active }}" href="{{ menu.troubleshooting.url }}">{{ menu.troubleshooting.name }}</a>
+            <a class="nav-tab troubleshooting {{ menu.troubleshooting.active }}" href="{{ menu.troubleshooting.url }}">{{ menu.troubleshooting.name }}</a>
         {% endif %}
         {% endif %}
     </nav>
