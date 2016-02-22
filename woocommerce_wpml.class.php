@@ -126,7 +126,6 @@ class woocommerce_wpml {
 
         //load WC translations
         add_action( 'icl_update_active_languages', array( $this, 'download_woocommerce_translations_for_active_languages' ) );
-        add_filter( 'upgrader_pre_download', array( $this, 'version_update' ), 10, 2 );
         add_action( 'wp_ajax_hide_wcml_translations_message', array($this, 'hide_wcml_translations_message') );
 
         add_action( 'woocommerce_settings_save_general', array( $this, 'currency_options_update_default_currency'));
