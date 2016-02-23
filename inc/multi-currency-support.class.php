@@ -103,7 +103,6 @@ class WCML_Multi_Currency_Support{
 
 
         add_filter('option_woocommerce_currency_pos', array($this, 'filter_currency_position_option'));
-        add_filter( 'woocommerce_get_formatted_order_total', array( $this, 'filter_get_formatted_order_total' ), 10, 2 );
         add_action( 'woocommerce_view_order', array( $this, 'filter_view_order' ), 9 );
 
         add_action('currency_switcher', array($this, 'currency_switcher'));        
@@ -479,17 +478,6 @@ class WCML_Multi_Currency_Support{
             $value = $this->currencies[$currency_code]['position'];
         }
         return $value;
-    }
-    
-    function filter_get_formatted_order_total($formatted_total, $object ){
-        $client_currency_buff = $this->client_currency;
-        $this->client_currency = $object->get_order_currency();
-
-        $formatted_total = wc_price( $object->order_total , array('currency' => $object->get_order_currency()));
-
-        $this->client_currency = $client_currency_buff;
-
-        return $formatted_total;
     }
     
     function filter_view_order( $order_id ){
