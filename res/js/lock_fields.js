@@ -10,6 +10,19 @@ jQuery(document).ready(function($){
     }
 
     var buttons = ['add_variation','link_all_variations','attribute_taxonomy','save_attributes','add_new_attribute','product_attributes .remove_row','add_attribute','select_all_attributes','select_no_attributes'];
+
+
+    if( unlock_fields.files_sync == 1 ){
+        buttons.push('upload_file_button');
+        buttons.push('insert');
+        buttons.push('delete');
+        $('.upload_file_button,.insert,.delete').bind({
+            click: function(e) {
+                return false;
+            }
+        });
+    }
+
     for (i = 0; i < buttons.length; i++) {
         $('.'+buttons[i]).attr('disabled','disabled');
         $('.'+buttons[i]).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show().css('float','right'));
@@ -24,6 +37,11 @@ jQuery(document).ready(function($){
 
     if( unlock_fields.menu_order == 1 ){
         inpt_names.push('menu_order');
+    }
+
+    if( unlock_fields.files_sync == 1 ){
+        inpt_names.push('_wc_file_names[]');
+        inpt_names.push('_wc_file_urls[]');
     }
 
     for (i = 0; i < inpt_names.length; i++) {

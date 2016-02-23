@@ -2,9 +2,9 @@
 
 class WCML_Products{
 
-    private $not_display_fields_for_variables_product = array( '_purchase_note', '_regular_price', '_sale_price', '_price', '_min_variation_price', '_max_variation_price', '_min_variation_regular_price', '_max_variation_regular_price', '_min_variation_sale_price', '_max_variation_sale_price' );
+    public $not_display_fields_for_variables_product = array( '_purchase_note', '_regular_price', '_sale_price', '_price', '_min_variation_price', '_max_variation_price', '_min_variation_regular_price', '_max_variation_regular_price', '_min_variation_sale_price', '_max_variation_sale_price' );
     private $tinymce_plugins_for_rtl = '';
-    private $yoast_seo_fields = array( '_yoast_wpseo_focuskw', '_yoast_wpseo_title', '_yoast_wpseo_metadesc' );
+    public $yoast_seo_fields = array( '_yoast_wpseo_focuskw', '_yoast_wpseo_title', '_yoast_wpseo_metadesc' );
 
     public $tp_support;
 
@@ -69,6 +69,10 @@ class WCML_Products{
                 $this->tp_support = new WCML_TP_Support();
             }
 
+            //downloadable files custom
+            add_action( 'woocommerce_product_options_downloads', array( $this, 'product_options_downloads_custom_option' ) );
+            add_action( 'woocommerce_variation_options_download', array( $this, 'product_options_downloads_custom_option' ), 10, 3 );
+
         }else{
             add_filter('woocommerce_json_search_found_products', array($this, 'filter_found_products_by_language'));
             add_filter( 'loop_shop_post_in', array( $this, 'filter_products_with_custom_prices' ), 100 );
@@ -87,8 +91,6 @@ class WCML_Products{
 
         add_action( 'woocommerce_reduce_order_stock', array( $this, 'sync_product_stocks_reduce' ) );
         add_action( 'woocommerce_restore_order_stock', array( $this, 'sync_product_stocks_restore' ) );
-
-        add_filter( 'wcml_custom_box_html', array( $this, 'downloadable_files_box' ), 10, 3 );
 
         add_action('icl_pro_translation_completed', array($this, 'icl_pro_translation_completed'));
 
@@ -143,9 +145,6 @@ class WCML_Products{
         global $woocommerce_wpml, $sitepress, $wpdb;
         
         if ( $job_details[ 'job_type' ] == 'wc_product' ) {
-            //TODO: delete after merge with Twig branch
-            require_once WCML_PLUGIN_PATH . '/inc/class-wcml-editor-ui-product-job.php';
-            require_once WCML_PLUGIN_PATH . '/inc/class-wcml-editor-save-filters.php';
             $job = new WCML_Editor_UI_Product_Job( $job_details, $woocommerce_wpml, $sitepress, $wpdb );
         }
 
@@ -372,22 +371,6 @@ class WCML_Products{
         return $attributes;
     }
 
-    function get_custom_product_atributes($product_id)
-    {
-        $attributes = get_post_meta($product_id, '_product_attributes', true);
-        if (!is_array($attributes)) {
-            $attributes = array();
-        }
-
-        foreach ($attributes as $key => $attribute) {
-            if ($attribute['is_taxonomy']) {
-                unset($attributes[$key]);
-            }
-        }
-
-        return $attributes;
-    }
-
     //duplicate product post meta
     function duplicate_product_post_meta($original_product_id, $trnsl_product_id, $data = false , $add = false ){
         global $sitepress;
@@ -410,19 +393,13 @@ class WCML_Products{
                 $meta_value = maybe_unserialize($meta_value);
                 if ($data) {
                     if (isset($data[md5($key)]) && isset($settings['translation-management']['custom_fields_translation'][$key]) && $settings['translation-management']['custom_fields_translation'][$key] == 2) {
-                        if ($key == '_file_paths') {
-                            $file_paths = explode("\n", $data[md5($key)]);
+                        if ($key == '_downloadable_files') {
+                            $orig_files = $this->get_files_data( $original_product_id );
                             $file_paths_array = array();
-                            foreach ($file_paths as $file_path) {
-                                $file_paths_array[md5($file_path)] = $file_path;
-                            }
-                            $meta_value = $file_paths_array;
-                        } elseif ($key == '_downloadable_files') {
-                            $file_paths_array = array();
-                            foreach ($data[md5($key)] as $file_path) {
-                                $key_file = md5($file_path['file'] . $file_path['name']);
-                                $file_paths_array[$key_file]['name'] = $file_path['name'];
-                                $file_paths_array[$key_file]['file'] = $file_path['file'];
+                            foreach ( $orig_files as $key => $product_file) {
+                                $key_file = md5( $data[ md5( 'file-url'.$key.$original_product_id ) ] . $data[ md5( 'file-name'.$key.$original_product_id ) ] );
+                                $file_paths_array[$key_file]['name'] = $data[ md5( 'file-name'.$key.$original_product_id ) ];
+                                $file_paths_array[$key_file]['file'] = $data[ md5( 'file-url'.$key.$original_product_id ) ];
                             }
                             $meta_value = $file_paths_array;
 
@@ -671,35 +648,23 @@ class WCML_Products{
                 }
 
                 //sync media
-                $this->sync_thumbnail_id($post_data->ID,$variation_id,$lang);
+                $this->sync_thumbnail_id( $post_data->ID,$variation_id,$lang);
 
                 //sync file_paths
-                if(!$woocommerce_wpml->settings['file_path_sync']  && isset( $data[  md5( 'variations_file_paths_'.$variation_id ) ])){
+                $custom_product_sync = get_post_meta( $post_data->ID, 'wcml_sync_files', true );
+                if( ( !$custom_product_sync || $custom_product_sync == 'self' || !$woocommerce_wpml->settings['file_path_sync'] ) ){
+                    $orig_var_files = $this->get_files_data( $post_data->ID );
                     $file_paths_array = array();
-                    if(version_compare(preg_replace('#-(.+)$#', '', $woocommerce->version), '2.1', '<')){
-                        $file_paths = explode("\n",$data[ md5( 'variations_file_paths_'.$variation_id ) ] );
-                        foreach($file_paths as $file_path){
-                            $file_paths_array[md5($file_path)] = $file_path;
-                        }
-                        update_post_meta($variation_id,'_file_paths',$file_paths_array);
-                    }else{
-
-                        foreach($data[ md5( 'variations_file_paths_'.$variation_id ) ] as $file_path){
-                            $key = md5($file_path['file'].$file_path['name']);
-                            $file_paths_array[$key]['name'] = $file_path['name'];
-                            $file_paths_array[$key]['file'] = $file_path['file'];
-                        }
-                        update_post_meta($variation_id,'_downloadable_files',$file_paths_array);
-
+                    foreach( $orig_var_files as $key => $var_file ){
+                        $key_file = md5( $data[ md5( 'file-url'.$key.$post_data->ID ) ].$data[ md5( 'file-name'.$key.$post_data->ID ) ] );
+                        $file_paths_array[$key_file]['name'] = $data[ md5( 'file-name'.$key.$post_data->ID ) ];
+                        $file_paths_array[$key_file]['file'] = $data[ md5( 'file-url'.$key.$post_data->ID ) ];
                     }
+                    update_post_meta( $variation_id,'_downloadable_files',$file_paths_array );
+
                 }elseif($woocommerce_wpml->settings['file_path_sync']){
-                    if(version_compare(preg_replace('#-(.+)$#', '', $woocommerce->version), '2.1', '<')){
-                        $orig_file_path = maybe_unserialize(get_post_meta($post_data->ID,'_file_paths',true));
-                        update_post_meta($variation_id,'_file_paths',$orig_file_path);
-                    }else{
-                        $orig_file_path = maybe_unserialize(get_post_meta($post_data->ID,'_downloadable_files',true));
-                        update_post_meta($variation_id,'_downloadable_files',$orig_file_path);
-                    }
+                    $orig_file_path = maybe_unserialize(get_post_meta($post_data->ID,'_downloadable_files',true));
+                    update_post_meta($variation_id,'_downloadable_files',$orig_file_path);
                 }
 
                 //sync description
@@ -1219,6 +1184,9 @@ class WCML_Products{
         //save custom prices
         $this->save_custom_prices( $duplicated_post_id );
 
+        //save files option
+        $this->save_files_option( $duplicated_post_id );
+
         // pick posts to sync
         $traslated_products = array();
         $translations = $sitepress->get_element_translations( $language_details->trid, 'post_product', false, true );
@@ -1347,6 +1315,24 @@ class WCML_Products{
         }
     }
 
+    function save_files_option( $post_id ){
+        global $woocommerce_wpml;
+
+        $nonce = filter_input( INPUT_POST, 'wcml_save_files_option_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+        if( isset( $_POST[ 'wcml_file_path_option' ] ) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_files_option' )){
+
+            if( isset( $_POST[ 'wcml_file_path_option' ][ $post_id ] ) ) {
+
+                if( $_POST[ 'wcml_file_path_option' ][ $post_id ] == 'on' ){
+                    update_post_meta( $post_id, 'wcml_sync_files', $_POST[ 'wcml_file_path_sync' ][ $post_id ] );
+                }else{
+                    delete_post_meta( $post_id, 'wcml_sync_files' );
+                }
+            }
+        }
+    }
+
     //sync product parent & post_status
     function sync_date_and_parent( $duplicated_post_id, $post_id, $lang ){
         global $wpdb,$woocommerce_wpml;
@@ -1429,6 +1415,8 @@ class WCML_Products{
             foreach($get_all_post_variations as $k => $post_data){
                 $duplicated_post_variation_ids[] = $post_data->ID;
 
+                //save files option
+                $this->save_files_option( $post_data->ID );
 
                 if( !isset( $_POST['_wcml_custom_prices'][$post_data->ID] ) ){
                     continue; // save changes for individual variation
@@ -1595,49 +1583,6 @@ class WCML_Products{
         return apply_filters('wcml_product_content_fields', $contents, $product_id);
     }
 
-    //get product content labels
-    function get_product_custom_field_label($product_id, $field)
-    {
-        global $woocommerce_wpml, $sitepress, $wpseo_metabox;
-        $settings = $sitepress->get_settings();
-        $label = '';
-        if (isset($settings['translation-management']['custom_fields_translation'][$field]) && $settings['translation-management']['custom_fields_translation'][$field] == 2) {
-            if (in_array($field, $this->not_display_fields_for_variables_product)) {
-                return false;
-            }
-
-            if ($this->check_custom_field_is_single_value($product_id, $field)) {
-                if (defined('WPSEO_VERSION')) {
-                    if (!is_null($wpseo_metabox) && in_array($field, $this->yoast_seo_fields)) {
-                        $wpseo_metabox_values = $wpseo_metabox->get_meta_boxes('product');
-                        $label = $wpseo_metabox_values[str_replace('_yoast_wpseo_', '', $field)]['title'];
-                        return $label;
-                    }
-                }
-            } else {
-                $exception = apply_filters('wcml_product_content_exception', true, $product_id, $field);
-                if (!$exception) {
-                    return false;
-                }
-
-            }
-
-            $custom_key_label = apply_filters('wcml_product_content_label', $field, $product_id);
-            if ($custom_key_label != $field) {
-                $label = $custom_key_label;
-                return $label;
-            }
-
-            $custom_key_label = str_replace('_', ' ', $field);
-            $label = trim($custom_key_label[0]) ? ucfirst($custom_key_label) : ucfirst(substr($custom_key_label, 1));
-
-        }
-
-        return $label;
-
-        //return apply_filters('wcml_product_content_fields_label', $contents, $product_id);
-    }
-
     function check_custom_field_is_single_value($product_id, $meta_key)
     {
 
@@ -1650,204 +1595,40 @@ class WCML_Products{
 
     }
 
-    //get product content translation
-    function get_product_content_translation($product_id,$content,$lang_code){
-        global $woocommerce_wpml;
+    function product_options_downloads_custom_option( $loop = false, $variation_data = false, $variation = false ){
+        global $pagenow, $woocommerce_wpml;
 
-        $tr_post_id = apply_filters( 'translate_object_id',$product_id, 'product', false, $lang_code);
-
-        if (is_null($tr_post_id) && (in_array($content, array('title','content','excerpt','variations','images'))))
-            return false;
-
-        switch ($content) {
-            case 'title':
-                $tr_post = get_post($tr_post_id);
-                $tr_post_content['title'] = $tr_post->post_title;
-                $tr_post_content['name'] = $tr_post->post_name;
-                return $tr_post_content;
-                break;
-            case 'content':
-                $tr_post = get_post($tr_post_id);
-                return $tr_post->post_content;
-                break;
-            case 'excerpt':
-                $tr_post = get_post($tr_post_id);
-                return $tr_post->post_excerpt;
-                break;
-            default:
-                global $wpdb,$sitepress;
-
-                foreach(wp_get_post_terms($product_id, 'product_type', array("fields" => "names")) as $type){
-                    $product_type = $type;
-                }
-
-                if($content == 'regular_price'){
-                    $var_key = '_regular_price';
-                }elseif($content == 'sale_price'){
-                    $var_key = '_sale_price';
-                }elseif($content == 'variations_file_paths' && $product_type == 'variable' && !$woocommerce_wpml->settings['file_path_sync']){
-                    $var_key =  '_file_paths';
-                }else{
-                    return get_post_meta($tr_post_id,$content,true);
-                }
-
-                if($product_type == 'simple'  || $product_type == 'external'){
-                    return get_post_meta($tr_post_id, $var_key, true);
-                }
-
-                if($product_type == 'variable'){
-                    $variables = array();
-                    $variables_all = array();
-                    $variations = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'product_variation'",$tr_post_id));
-
-                    foreach($variations as $variation){
-
-                        $variation_values = $wpdb->get_results($wpdb->prepare("SELECT meta_key,meta_value FROM $wpdb->postmeta WHERE (meta_key = %s OR meta_key LIKE 'attribute_%%') AND post_id = %d",$var_key,$variation->ID));
-                        $variables = array();
-                        $variables['value'] = '';
-                        $variables['label'] = '';
-                        $variables['variation'] = $variation->ID;
-                        foreach($variation_values as $variation_value){
-                            if($variation_value->meta_key == $var_key){
-                                $variables['value'] = $variation_value->meta_value;
-                            }else{
-                                //get attribute name
-                                $attribute = str_replace('attribute_','',$variation_value->meta_key);
-                                $tr_product_attr  = maybe_unserialize(get_post_meta($tr_post_id,'_product_attributes',true));
-                                $term_id = $this->wcml_get_term_id_by_slug( $tr_product_attr[$attribute]['name'], $variation_value->meta_value );
-                                $term_name = $this->wcml_get_term_by_id( $term_id, $tr_product_attr[$attribute]['name'] );
-                                if($term_name){
-                                    //if attribute is taxonomy
-                                    $term_name = $term_name->name;
-                                }else{
-                                    //if attribute isn't taxonomy
-                                    if(isset($tr_product_attr[$attribute]) && !$tr_product_attr[$attribute]['is_taxonomy']){
-                                        $term_name = $variation_value->meta_value;
-                                    }
-
-                                    if(!$term_name){
-                                        $original_language = $sitepress->get_language_for_element($variation->ID,'post_product_variation');
-                                        $orig_variation_id = apply_filters( 'translate_object_id',$variation->ID,'product_variation',true,$original_language);
-
-                                        if(get_post_meta($orig_variation_id,$var_key,true) == ''){
-                                            if(substr($tr_product_attr[$attribute]['name'], 0, 3) == 'pa_'){
-                                                $attr_name =  str_replace('pa_','',$tr_product_attr[$attribute]['name']);
-                                                $attr_name =  str_replace('_','',$attr_name);
-                                            }else{
-                                                $attr_name =  str_replace('_','',$tr_product_attr[$attribute]['name']);
-                                            }
-
-                                            $label = sprintf(__('Any %s', 'woocommerce-multilingual'),$attr_name);
-                                            $variables['label'] .= $label.' & ';
-                                            continue;
-                                        }else{
-                                            $label = __('Please translate all attributes', 'woocommerce-multilingual');
-                                            $variables['label'] .= $label.' & ';
-                                            $variables['not_translated'] = true;
-                                            continue;
-                                        }
-                                    }
-                                }
-                                $variables['label'] .= urldecode($term_name).' & ';
-                            }
-                        }
-
-                        $variables['label'] = substr($variables['label'],0,strlen($variables['label'])-3);
-                        $variables_all[$variation->ID] = $variables;
-
-                    }
-                    return $variables_all;
-                }
-                break;
+        if( ( isset($_GET['post'] ) && ( get_post_type($_GET['post']) != 'product' || !$this->is_original_product( $_GET['post'] ) ) ) ||
+            ( isset($_GET['post_type'] ) && $_GET['post_type'] == 'product' && isset( $_GET['source_lang'] ) ) ){
+            return;
         }
+
+        $this->load_custom_files_js_css();
+
+        $product_id = false;
+        $is_variation = false;
+
+        if( $pagenow == 'post.php' && isset( $_GET['post'] ) ){
+            $product_id = $_GET['post'];
+        }
+
+        if( $variation ) {
+            $product_id = $variation->ID;
+            $is_variation = true;
+        }
+
+        $download_options = new WCML_Custom_Files_UI( $woocommerce_wpml, $product_id, $is_variation );
+        $download_options->show();
+
     }
 
-    function product_variations_box($product_id, $lang, $is_duplicate_product = false)
-    {
-        global $sitepress, $woocommerce_wpml, $wpdb, $woocommerce;
+    function load_custom_files_js_css(){
+        wp_register_style( 'wpml-wcml-files', WCML_PLUGIN_URL . '/res/css/wcml-files.css', null, WCML_VERSION );
+        wp_register_script( 'wcml-scripts-files', WCML_PLUGIN_URL . '/res/js/files.js', array( 'jquery' ), WCML_VERSION );
 
-        $original_language = $sitepress->get_language_for_element($product_id,'post_product');
-        $template_data = array();
-        $template_data['all_variations_ids'] = array();
-
-        $trn_product_id = null;
-        if ($original_language != $lang) {
-            $trn_product_id = apply_filters( 'translate_object_id',$product_id, 'product', false, $lang);
-        }
-
-        if ($original_language == $lang) {
-            $template_data['original'] = true;
-        } else {
-            $template_data['original'] = false;
-        }
-
-        $variations = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'product_variation'", $product_id));
-
-        //file path
-        if (!$woocommerce_wpml->settings['file_path_sync']) {
-            global $wpdb;
-            $is_downloable = $wpdb->get_results($wpdb->prepare("SELECT pm.meta_value FROM $wpdb->posts AS p LEFT JOIN $wpdb->postmeta AS pm ON p.id=pm.post_id WHERE p.post_parent = %d AND p.post_type = 'product_variation' AND pm.meta_key='_downloadable' AND pm.meta_value = 'yes'", $product_id));
-            $template_data['all_file_paths'] = $this->get_product_content_translation($product_id, 'variations_file_paths', $lang);
-
-            if (version_compare(preg_replace('#-(.+)$#', '', $woocommerce->version), '2.1', '>')) {
-                foreach ($variations as $variation) {
-                    $files = maybe_unserialize(get_post_meta($variation->ID, '_downloadable_files', true));
-
-                    if ($files) {
-                        if (is_null($trn_product_id)) {
-                            $template_data['all_file_paths']['count'] = count($files);
-                        } else {
-                            $template_data['all_file_paths']['count'] = count(maybe_unserialize(get_post_meta(apply_filters('translate_object_id', $variation->ID, 'product_variation', false, $original_language), '_downloadable_files', true)));
-                        }
-                        foreach ($files as $file) {
-                            $variables = array();
-                            $variables['value'] = $file['file'];
-                            $variables['label'] = $file['name'];
-                            $template_data['all_file_paths'][$variation->ID][] = $variables;
-                        }
-                    }
-                }
-            }
-        }
-
-        $is_product_has_variations = $wpdb->get_var($wpdb->prepare("SELECT count(id) FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'product_variation'", $product_id));
-
-        foreach ($variations as $variation) {
-
-            $template_data['all_variations_ids'][] = $variation->ID;
-        }
-
-        if (!$is_product_has_variations){
-            $template_data['empty_variations'] = true;
-        } elseif($original_language != $lang && is_null($trn_product_id)){
-            $template_data['empty_translation'] = true;
-        } elseif (!isset($is_downloable) || !$is_downloable) {
-            $template_data['not_downloaded'] = true;
-        }
-
-        include WCML_PLUGIN_PATH . '/menu/sub/variations_box.php';
+        wp_enqueue_style('wpml-wcml-files');
+        wp_enqueue_script('wcml-scripts-files');
     }
-
-    function downloadable_files_box($html, $data, $lang)
-    {
-        if ($data['product_content'] == '_downloadable_files') {
-            $files = maybe_unserialize(get_post_meta($data['tr_product_id'], '_downloadable_files', true));
-            $data['count'] = count(maybe_unserialize(get_post_meta($data['product_id'], '_downloadable_files', true)));
-            if ($files) {
-                foreach ($files as $file) {
-                    $variables = array();
-                    $variables['value'] = $file['file'];
-                    $variables['label'] = $file['name'];
-                    $data['files_data'][] = $variables;
-                }
-            } else {
-                $data['files_data'] = array();
-            }
-
-            return '';
-        }
-    }
-
 
     function product_images_ids($product_id)
     {
@@ -2863,6 +2644,25 @@ class WCML_Products{
                 update_post_meta( $translation->element_id, '_stock_status', $status );
             }
         }
+
+    }
+
+    public function get_files_data( $product_id ){
+
+        $files = maybe_unserialize( get_post_meta( $product_id, '_downloadable_files', true ) );
+
+        if ( $files ) {
+            foreach ($files as $file) {
+                $files_info = array();
+                $files_info['value'] = $file['file'];
+                $files_info['label'] = $file['name'];
+                $files_data[] = $files_info;
+            }
+        } else {
+            $files_data = array( );
+        }
+
+        return $files_data;
 
     }
 

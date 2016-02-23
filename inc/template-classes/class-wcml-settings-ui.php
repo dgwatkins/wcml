@@ -48,12 +48,12 @@ class WCML_Settings_UI extends WPML_Templates_Factory {
                 ),
 
                 'file_sync' => array(
-                    'heading'   => __('File Paths Synchronization ', 'woocommerce-multilingual'),
+                    'heading'   => __('Products Download Files', 'woocommerce-multilingual'),
                     'tip'       => __( 'If you are using downloadable products, you can choose to have their paths
                                             synchronized, or seperate for each language.', 'woocommerce-multilingual' ),
                     'value'         => $this->woocommerce_wpml->settings['file_path_sync'],
-                    'label_same'    => __('Use the same file paths in all languages', 'woocommerce-multilingual'),
-                    'label_diff'    => __('Different file paths for each language', 'woocommerce-multilingual'),
+                    'label_same'    => __('Use the same files for translations', 'woocommerce-multilingual'),
+                    'label_diff'    => __('Add separate download files for translations', 'woocommerce-multilingual'),
                 ),
 
 
