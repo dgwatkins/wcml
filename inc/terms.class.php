@@ -803,12 +803,16 @@ class WCML_Terms{
     }
 
     function shipping_terms($terms, $post_id, $taxonomy){
-        global $pagenow;
+        global $pagenow, $woocommerce_wpml;
+
+        if( isset( $_POST['action'] ) && $_POST['action'] == 'woocommerce_load_variations' ){
+            return $terms;
+        }
 
         if( $pagenow != 'post.php' && ( get_post_type($post_id) == 'product' || get_post_type($post_id) == 'product_variation' ) && $taxonomy == 'product_shipping_class'){
             global $sitepress;
             remove_filter('get_the_terms',array($this,'shipping_terms'), 10, 3);
-            $terms = get_the_terms(apply_filters( 'translate_object_id',$post_id,get_post_type($post_id),true,$sitepress->get_default_language()),'product_shipping_class');
+            $terms = get_the_terms( apply_filters( 'translate_object_id', $post_id, get_post_type($post_id), true, $woocommerce_wpml->products->get_original_product_language( $post_id ) ),'product_shipping_class');
             add_filter('get_the_terms',array($this,'shipping_terms'), 10, 3);
             return $terms;
         }
