@@ -6,8 +6,9 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 		parent::setUp();
 		global $woocommerce_wpml, $wpml_post_translations, $wpml_term_translations;
 
+		$this->woocommerce_wpml = &$woocommerce_wpml;
 		require_once WCML_PLUGIN_PATH . '/inc/products.class.php';
-		$woocommerce_wpml->products           = new WCML_Products;
+		$this->woocommerce_wpml->products           = new WCML_Products;
 		$this->wcml_helper = new WCML_Helper();
 
 		//add product for tests
@@ -26,10 +27,10 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 	}
 
 	function test_get_cart_attribute_translation(){
-		global $woocommerce_wpml, $wpml_term_translations;
+		global $wpml_term_translations;
 
 		//test global attribute
-		$trnsl_attr = $woocommerce_wpml->products->get_cart_attribute_translation( 'attribute_pa_color', 'white', false, 'es', false, false );
+		$trnsl_attr = $this->woocommerce_wpml->products->get_cart_attribute_translation( 'attribute_pa_color', 'white', false, 'es', false, false );
 
 		$this->assertEquals( 'blanco', $trnsl_attr );
 
@@ -38,7 +39,7 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 		$variation_id = $variation->id;
 
 		add_post_meta( $variation_id, 'attribute_pa_size', 'medio' );
-		$trnsl_attr = $woocommerce_wpml->products->get_cart_attribute_translation( 'attribute_pa_size', 'medio', $variation_id, 'es', false, false );
+		$trnsl_attr = $this->woocommerce_wpml->products->get_cart_attribute_translation( 'attribute_pa_size', 'medio', $variation_id, 'es', false, false );
 
 		$this->assertEquals( 'medio', $trnsl_attr );
 
@@ -52,18 +53,16 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 		$variation_id = $variation->id;
 		add_post_meta( $variation_id, 'attribute_size', '' );
 
-		$trnsl_attr = $woocommerce_wpml->products->get_cart_attribute_translation( 'attribute_size', 'small', $variation_id, 'es', $this->orig_product_id , $this->es_product_id );
+		$trnsl_attr = $this->woocommerce_wpml->products->get_cart_attribute_translation( 'attribute_size', 'small', $variation_id, 'es', $this->orig_product_id , $this->es_product_id );
 
 		$this->assertEquals( 'pequena', $trnsl_attr );
 
 	}
 
 	function test_sync_parent_products_transients(){
-		global $woocommerce_wpml, $pagenow;
+		global $pagenow;
 
 		$pagenow = 'post-new.php';
-
-		add_action( 'save_post', array( $woocommerce_wpml->products, 'sync_post_action' ), 110, 2 );
 
 		$parent_product = $this->wcml_helper->add_product( 'en', false, 'Parent Product EN' );
 		$child_product = $this->wcml_helper->add_product( 'en', false, 'Child Product EN', $parent_product->id );
@@ -93,9 +92,11 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 		);
 		$this->wcml_helper->update_product( $child_es );
 
-		$grouped_es = new WC_Product_Grouped($parent_product_es->id); //need to reinstantiate
+		$this->woocommerce_wpml->products->sync_linked_products( $child_product->id, $child_product_es->id, 'es' );
 
-		$this->assertEquals(array(), $grouped_es->get_children());
+		$grouped_es = new WC_Product_Grouped( $parent_product_es->id ); //need to reinstantiate
+
+		$this->assertEquals( array(), $grouped_es->get_children() );
 
 	}
 

@@ -6,15 +6,17 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 		parent::setUp();
 		global $woocommerce_wpml;
 
+		$this->woocommerce_wpml = &$woocommerce_wpml;
 		require_once WCML_PLUGIN_PATH . '/inc/class-wcml-languages-upgrader.php';
-		$woocommerce_wpml->languages_upgrader = new WCML_Languages_Upgrader;
+		$this->woocommerce_wpml->languages_upgrader = new WCML_Languages_Upgrader;
+
 	}
 
 	function test_get_language_pack_uri(){
-		global $woocommerce_wpml, $woocommerce;
+		global $woocommerce;
 
 		//use stable version to test
-		$pack_uri = $woocommerce_wpml->languages_upgrader->get_language_pack_uri( 'uk_UA', $woocommerce_wpml->get_stable_wc_version() );
+		$pack_uri = $this->woocommerce_wpml->languages_upgrader->get_language_pack_uri( 'uk_UA', $this->woocommerce_wpml->get_stable_wc_version() );
 
 		$response = wp_safe_remote_get( $pack_uri, array( 'timeout' => 60 ) );
 		$response_result = false;
@@ -27,16 +29,15 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 	}
 
 	function test_url_string_name(){
-		global $woocommerce_wpml;
 
-		$this->assertEquals( 'URL product_cat tax slug', $woocommerce_wpml->url_translation->url_string_name( 'product_cat' ) );
+		$this->assertEquals( 'URL product_cat tax slug', WCML_Url_Translation::url_string_name( 'product_cat' ) );
 
-		$this->assertEquals( 'URL slug: product', $woocommerce_wpml->url_translation->url_string_name( 'product' ) );
+		$this->assertEquals( 'URL slug: product', WCML_Url_Translation::url_string_name( 'product' ) );
 
 	}
 
 	function test_filter_paypal_args(){
-		global $woocommerce_wpml, $sitepress, $sitepress_settings, $wpml_post_translations;
+		global $sitepress, $sitepress_settings, $wpml_post_translations;
 
 		$sitepress->switch_lang( 'de' );
 
@@ -51,7 +52,7 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 
 		$args['notify_url'] = WC()->api_request_url( 'WC_Gateway_Paypal' );
 
-		$filtered_args = $woocommerce_wpml->filter_paypal_args( $args ) ;
+		$filtered_args = $this->woocommerce_wpml->filter_paypal_args( $args ) ;
 
 		$this->assertEquals( $sitepress->convert_url( get_home_url() ).'&wc-api=WC_Gateway_Paypal', $filtered_args['notify_url'] );
 	}

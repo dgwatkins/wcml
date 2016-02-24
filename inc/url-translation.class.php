@@ -108,7 +108,7 @@ class WCML_Url_Translation {
         return 'WordPress';
     }
 
-    function url_string_name( $type ) {
+    public static function url_string_name( $type ) {
 
         $name = '';
 
