@@ -511,7 +511,7 @@ class WCML_Products{
                                                                 WHERE s.translation_id = %d
                                                             ", $product_translations[$language['code']]->translation_id));
                             ?>
-                            <a data-action="product-translation-dialog" class="js-wpml-dialog-trigger"
+                            <a data-action="product-translation-dialog" class="js-wcml-dialog-trigger"
                                data-id="<?php echo $original_product_id; ?>"
                                data-job_id="<?php echo $tr_job_id; ?>"
                                data-language="<?php echo $language['code']; ?>"
@@ -904,7 +904,7 @@ class WCML_Products{
 
 
         if (get_post_type($post_id) == 'product') {
-            $link = '#" data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="' . $post_id . '" data-job_id="' . $job_id . '" data-language="' . $lang;
+            $link = '#" data-action="product-translation-dialog" class="js-wcml-dialog-trigger" data-id="' . $post_id . '" data-job_id="' . $job_id . '" data-language="' . $lang;
         }
 
         return $link;

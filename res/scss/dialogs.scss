@@ -14,3 +14,10 @@
 		width: 250px;
 	}
 }
+
+.ui-dialog.wcml-dialog-dialog {
+	.ui-dialog-title {
+		@extend %truncate;
+		display: block;
+	}
+}

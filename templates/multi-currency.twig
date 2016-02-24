@@ -46,7 +46,7 @@
                 <div class="currencies-table-content">
 
                     <div class="tablenav top clearfix">
-                        <button type="button" class="button-secondary wcml_add_currency alignright js-wpml-dialog-trigger"
+                        <button type="button" class="button-secondary wcml_add_currency alignright js-wcml-dialog-trigger"
                                 data-dialog="wcml_currency_options_" data-content="wcml_currency_options_" data-width="480" data-height="540">
                             <i class="otgs-ico-add otgs-ico-sm"></i>
                             {{ strings.add_currency_button }}
@@ -70,7 +70,7 @@
                                 </td>
                                 <td class="wcml-col-rate">{{ strings.currencies_table.default }}</td>
                                 <td class="wcml-col-edit">
-                                    <a href="#" title="{{ strings.currencies_table.edit }}" class="edit_currency js-wpml-dialog-trigger hidden" data-height="530" data-width="480">
+                                    <a href="#" title="{{ strings.currencies_table.edit }}" class="edit_currency js-wcml-dialog-trigger hidden" data-height="530" data-width="480">
                                         <i class="otgs-ico-edit" title="{{ strings.currencies_table.edit }}"></i>
                                     </a>
 
@@ -86,7 +86,7 @@
                                 <td class="wcml-col-rate">{{ get_rate(wc_currency, currency.rate, code) }}</td>
 
                                 <td class="wcml-col-edit">
-                                    <a href="#" title="{{ strings.currencies_table.edit }}" class="edit_currency js-wpml-dialog-trigger"
+                                    <a href="#" title="{{ strings.currencies_table.edit }}" class="edit_currency js-wcml-dialog-trigger"
                                             data-currency="{{ code }}" data-content="wcml_currency_options_{{ code }}"  data-dialog="wcml_currency_options_{{ code }}"
                                             data-height="530" data-width="480">
                                         <i class="otgs-ico-edit" title="{{ strings.currencies_table.edit }}"></i>

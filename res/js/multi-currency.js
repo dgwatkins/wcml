@@ -80,7 +80,7 @@ jQuery( function($){
 
         select_currency: function(){
             var parent = $(this).closest('.wcml_currency_options');
-            var close_button = parent.find('.wpml-dialog-close-button');
+            var close_button = parent.find('.wcml-dialog-close-button');
             close_button.attr('data-currency', $(this).val());
             close_button.attr('data-symbol', $(this).find('option:selected').attr('data-symbol'));
             parent.find('.this-currency').html( $(this).val() );
@@ -131,7 +131,7 @@ jQuery( function($){
 
         save_currency: function(){
 
-            var parent = $(this).closest('.wpml-dialog-container');
+            var parent = $(this).closest('.wcml-dialog-container');
 
             var chk_rate = WCML_Multi_Currency.check_on_numeric(parent,'.ext_rate');
             var chk_deci = WCML_Multi_Currency.check_on_numeric(parent,'.currency_option_decimals');
@@ -445,7 +445,7 @@ jQuery( function($){
             var thousand_sep = parent.find('.currency_option_thousand_sep').val();
             var thousand_sep = parent.find('.currency_option_thousand_sep').val();
             var decimal_sep  = parent.find('.currency_option_decimal_sep').val();
-            var symbol       = $(this).closest('.wcml_currency_options').find('.wpml-dialog-close-button').attr('data-symbol');
+            var symbol       = $(this).closest('.wcml_currency_options').find('.wcml-dialog-close-button').attr('data-symbol');
             var decimals     = '56789'.substr(0, parent.find('.currency_option_decimals').val());
             if(decimals == ''){
                 decimal_sep = '';

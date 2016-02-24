@@ -1,4 +1,4 @@
-<div class="wpml-dialog hidden" id="wcml_currency_options_{{ args.currency_code }}" title="{{ args.title }}">
+<div class="wcml-dialog hidden" id="wcml_currency_options_{{ args.currency_code }}" title="{{ args.title }}">
 
     <div class="wcml_currency_options wcml-co-dialog">
 
@@ -106,9 +106,9 @@
 
 
             <footer class="wpml-dialog-footer">
-                <input type="button" class="cancel wpml-dialog-close-button alignleft"
+                <input type="button" class="cancel wcml-dialog-close-button wpml-dialog-close-button alignleft"
                     value="{{ form.cancel }}" data-currency="{{ current_currency }}" data-symbol="{{ get_currency_symbol(current_currency) }}" />&nbsp;
-                <input type="submit" class="wpml-dialog-close-button button-primary currency_options_save alignright"
+                <input type="submit" class="wcml-dialog-close-button wpml-dialog-close-button button-primary currency_options_save alignright"
                     value="{{ form.save }}" data-currency="{{ current_currency }}" data-symbol="{{ get_currency_symbol(current_currency) }}" data-stay="1" />
             </footer>
 

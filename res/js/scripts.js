@@ -303,7 +303,7 @@ jQuery(document).ready(function($){
         e.preventDefault();
 
         var elem = $(this);
-        var dialog_container = $(this).closest('.wpml-dialog-container');
+        var dialog_container = $(this).closest('.wcml-dialog-container');
         var icon = '#wcml-edit-base-slug-'+elem.attr('data-base')+'-'+elem.attr('data-language');
         $.ajax({
             type : "post",

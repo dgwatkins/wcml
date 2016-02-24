@@ -380,11 +380,11 @@ class woocommerce_wpml {
 	            ), WCML_VERSION );
 	            wp_register_script( 'jquery-cookie', WCML_PLUGIN_URL . '/res/js/jquery.cookie.js', array( 'jquery' ), WCML_VERSION );
                 wp_register_script( 'wcml-editor', WCML_PLUGIN_URL . '/res/js/wcml-translation-editor.js', array( 'jquery', 'jquery-ui-core' ), WCML_VERSION );
-                wp_register_script( 'wpml-dialogs', ICL_PLUGIN_URL . '/res/js/dialogs.js', array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'), ICL_SITEPRESS_VERSION );
+                wp_register_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs.js', array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'), WCML_VERSION );
                 wp_register_script( 'wcml-troubleshooting', WCML_PLUGIN_URL . '/res/js/troubleshooting.js', array( 'jquery' ), WCML_VERSION );
                 wp_register_style( 'wpml-dialogs', ICL_PLUGIN_URL . '/res/css/dialogs.css', null, ICL_SITEPRESS_VERSION );
 
-                wp_enqueue_script( 'wpml-dialogs' );
+                wp_enqueue_script( 'wcml-dialogs' );
                 wp_enqueue_script( 'wcml-editor' );
                 wp_enqueue_script( 'wcml-tm-scripts' );
                 wp_enqueue_script( 'jquery-cookie' );
@@ -479,7 +479,7 @@ class woocommerce_wpml {
         }
 
 
-        echo '<h3 class="wcml_prod_hidden_notice">'.sprintf(__("This is a translation of %s. Some of the fields are not editable. It's recommended to use the %s for translating products.",'woocommerce-multilingual'),'<a href="'.get_edit_post_link($original_id).'" >'.get_the_title($original_id).'</a>','<a data-action="product-translation-dialog" class="js-wpml-dialog-trigger" data-id="'.$original_id.'" data-job_id="" data-language="'. $language .'">'.__('WooCommerce Multilingual products translator','woocommerce-multilingual').'</a>').'</h3>';
+        echo '<h3 class="wcml_prod_hidden_notice">'.sprintf(__("This is a translation of %s. Some of the fields are not editable. It's recommended to use the %s for translating products.",'woocommerce-multilingual'),'<a href="'.get_edit_post_link($original_id).'" >'.get_the_title($original_id).'</a>','<a data-action="product-translation-dialog" class="js-wcml-dialog-trigger" data-id="'.$original_id.'" data-job_id="" data-language="'. $language .'">'.__('WooCommerce Multilingual products translator','woocommerce-multilingual').'</a>').'</h3>';
     }
 
     function generate_tracking_link($link,$term=false,$content = false, $id = false){
