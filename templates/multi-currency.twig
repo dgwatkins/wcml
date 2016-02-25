@@ -121,7 +121,7 @@
                                         {% for language in active_languages %}
                                         <td class="currency_languages">
                                             <ul>
-                                                <li class="on">
+                                                <li class="on" data-lang="{{ language.code }}">
                                                     <a class="{% if is_currency_on(wc_currency, language.code) %}otgs-ico-yes{% else %} otgs-ico-no{% endif %}"
                                                        data-language="{{ language.code }}" data-currency="{{ wc_currency }}" href="#"></a>
                                                 </li>
@@ -135,7 +135,7 @@
                                         {% for language in active_languages %}
                                         <td class="currency_languages">
                                             <ul>
-                                                <li class="on">
+                                                <li class="on" data-lang="{{ language.code }}">
                                                     <a class="{% if is_currency_on(code, language.code) %}otgs-ico-yes{% else %} otgs-ico-no{% endif %}"
                                                        data-language="{{ language.code }}" data-currency="{{ code }}" href="#"></a>
                                                 </li>
