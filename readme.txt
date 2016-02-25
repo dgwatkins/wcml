@@ -4,7 +4,7 @@ Donate link: http://wpml.org/documentation/related-projects/woocommerce-multilin
 Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multilingual, e-shop, shop
 License: GPLv2
 Requires at least: 3.0
-Tested up to: 4.4.1
+Tested up to: 4.4.2
 Stable tag: 3.7.10
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
@@ -86,6 +86,10 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fix: When using comma for a decimal separator, for custom prices, the rounded values were not determined correctly
 * Bug fix: In some cases, translated product variations were displayed as 'out of stock' on the front end.
 * Fixed a fatal error occurring when selecting the WPML admin language to 'All languages' on the WooCommerce settings page
+* Compatibility with WooThemes Mix and Match Products
+* Fixed a bug preventing a shipping to be set to a variation when the default language of the product was not English
+* Fixed a bug that was sometimes preventing the 'incl. vat' suffix to be displayed on prices
+* Fixed a compatibility issue with Gravity Forms Product Add-Ons
 
 = 3.7.9 =
 * Fixed an issue prevent the correct plugin activation in some cases
