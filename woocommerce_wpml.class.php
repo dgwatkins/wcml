@@ -69,7 +69,7 @@ class woocommerce_wpml {
 
         $this->url_translation   = new WCML_Url_Translation;
 
-
+        $this->attributes = new WCML_Attributes;
 
         if(isset($_GET['page']) && $_GET['page'] == 'wc-reports'){
             require_once WCML_PLUGIN_PATH . '/inc/reports.class.php';
@@ -368,8 +368,6 @@ class woocommerce_wpml {
         if( isset( $_GET[ 'page' ] ) ){
 
             $this->load_managment_css();
-
-
 
             if( in_array( $_GET[ 'page' ], array( 'wpml-wcml' ) ) ) {
 

@@ -29,8 +29,6 @@ class WCML_Products{
             add_filter( 'wpml_post_edit_page_link_to_translation', array( $this,'_filter_link_to_translation' ) );
             add_action( 'admin_init', array( $this, 'restrict_admin_with_redirect' ) );
 
-            add_action( 'woocommerce_attribute_added', array( $this, 'make_new_attribute_translatable' ), 10, 2 );
-
             // filters to sync variable products
             add_action( 'save_post', array( $this, 'sync_post_action' ), 110, 2 ); // After WPML
 
@@ -756,7 +754,7 @@ class WCML_Products{
 
                                 $attid = $this->wcml_get_term_id_by_slug( $tax, $meta_value );
 
-                                if($attid){
+                                if( $woocommerce_wpml->attributes->is_translatable_attribute( $tax ) && $attid ){
 
                                     $term_obj = $this->wcml_get_term_by_id( $attid, $tax );
                                     $trid = $sitepress->get_element_trid( $term_obj->term_taxonomy_id, 'tax_' . $tax );
@@ -962,24 +960,6 @@ class WCML_Products{
             return $new_actions;
         }
         return $actions;
-    }
-
-
-    /**
-     * Makes new attribute translatable.
-     */
-    function make_new_attribute_translatable( $id, $attribute ){
-        global $sitepress;
-        $wpml_settings = $sitepress->get_settings();
-
-        $wpml_settings['taxonomies_sync_option'][wc_attribute_taxonomy_name($attribute['attribute_name'])] = 1;
-
-        if( isset($wpml_settings['translation-management'])){
-            $wpml_settings['translation-management']['taxonomies_readonly_config'][wc_attribute_taxonomy_name( $attribute['attribute_name'] )] = 1;
-        }
-
-        $sitepress->save_settings($wpml_settings);
-
     }
 
     /**
@@ -1477,7 +1457,7 @@ class WCML_Products{
 
 
     function sync_default_product_attr( $orig_post_id, $transl_post_id, $lang ){
-        global $wpdb;
+        global $wpdb, $woocommerce_wpml;
         $original_default_attributes = get_post_meta( $orig_post_id, '_default_attributes', true );
         if( !empty( $original_default_attributes ) ){
             $unserialized_default_attributes = array();
@@ -1485,12 +1465,16 @@ class WCML_Products{
                 // get the correct language
                 if ( substr( $attribute, 0, 3 ) == 'pa_' ) {
                     //attr is taxonomy
-                    $default_term_id = $this->wcml_get_term_id_by_slug( $attribute, $default_term_slug );
-                    $tr_id = apply_filters( 'translate_object_id', $default_term_id, $attribute, false, $lang );
+                    if( $woocommerce_wpml->attributes->is_translatable_attribute( $attribute ) ){
+                        $default_term_id = $this->wcml_get_term_id_by_slug( $attribute, $default_term_slug );
+                        $tr_id = apply_filters( 'translate_object_id', $default_term_id, $attribute, false, $lang );
 
-                    if( $tr_id ){
-                        $translated_term = $this->wcml_get_term_by_id( $tr_id, $attribute );
-                        $unserialized_default_attributes[$attribute] = $translated_term->slug;
+                        if( $tr_id ){
+                            $translated_term = $this->wcml_get_term_by_id( $tr_id, $attribute );
+                            $unserialized_default_attributes[$attribute] = $translated_term->slug;
+                        }
+                    }else{
+                        $unserialized_default_attributes[$attribute] = $default_term_slug;
                     }
                 }else{
                     //custom attr
@@ -1978,7 +1962,7 @@ class WCML_Products{
     }
 
     function get_cart_attribute_translation( $attr_key, $attribute, $variation_id, $current_language, $product_id, $tr_product_id ){
-        global $woocommerce;
+        global $woocommerce, $woocommerce_wpml;
 
         if( version_compare( preg_replace( '#-(.+)$#', '', $woocommerce->version ), '2.1', '>=' ) ){
             //delete 'attribute_' at the beginning
@@ -1987,10 +1971,15 @@ class WCML_Products{
 
         if( taxonomy_exists( $taxonomy ) ){
 
-            $term_id = $this->wcml_get_term_id_by_slug( $taxonomy, $attribute );
-            $trnsl_term_id = apply_filters( 'translate_object_id',$term_id,$taxonomy,true,$current_language);
-            $term = $this->wcml_get_term_by_id( $trnsl_term_id, $taxonomy );
-            return $term->slug;
+            if( $woocommerce_wpml->attributes->is_translatable_attribute( $taxonomy ) ){
+                $term_id = $this->wcml_get_term_id_by_slug( $taxonomy, $attribute );
+                $trnsl_term_id = apply_filters( 'translate_object_id',$term_id,$taxonomy,true,$current_language);
+                $term = $this->wcml_get_term_by_id( $trnsl_term_id, $taxonomy );
+                return $term->slug;
+            }else{
+                return $attribute;
+            }
+
         }else{
 
             $trnsl_attr = get_post_meta( $variation_id, $attr_key, true );
@@ -2105,21 +2094,22 @@ class WCML_Products{
         $all_products_taxonomies = get_taxonomies( array( 'object_type' => array( 'product' ) ), 'objects' );
 
         foreach($all_products_taxonomies as $tax_key => $tax) {
-            if($tax_key == 'product_type' ) continue;
+            if( $tax_key == 'product_type' ) continue;
 
             $found = false;
+            $att_sett = $woocommerce_wpml->attributes->is_translatable_attribute( $tax_key );
 
             foreach( $config_all['wpml-config']['taxonomies']['taxonomy'] as $key => $taxonomy ){
 
                 if( $tax_key == $taxonomy['value'] ){
-                    $config_all['wpml-config']['taxonomies']['taxonomy'][$key]['attr']['translate'] = 1;
+                    $config_all['wpml-config']['taxonomies']['taxonomy'][$key]['attr']['translate'] = $att_sett;
                     $found = true;
                 }
 
             }
 
             if( !$found ){
-                $config_all['wpml-config']['taxonomies']['taxonomy'][] = array( 'value' => $tax_key, 'attr' => array( 'translate' => 1 ) );
+                $config_all['wpml-config']['taxonomies']['taxonomy'][] = array( 'value' => $tax_key, 'attr' => array( 'translate' => $att_sett ) );
             }
 
         }
