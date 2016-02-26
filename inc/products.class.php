@@ -873,25 +873,27 @@ class WCML_Products{
     }
 
 
-    function _filter_link_to_translation( $link, $post_id )
+    function _filter_link_to_translation( $link, $post_id, $lang, $trid )
     {
         global $woocommerce_wpml;
 
-        if ($woocommerce_wpml->settings['trnsl_interface'] &&
+        if ( $woocommerce_wpml->settings[ 'trnsl_interface' ] &&
             (
-                (isset($_GET['post_type']) && $_GET['post_type'] == 'product') ||
-                (isset($_GET['post']) && get_post_type($_GET['post']) == 'product')
+                ( isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'product' ) ||
+                ( isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) == 'product' )
             )
         ) {
 
-            if (empty($post_id) && isset($_GET['post'])) {
-                $post_id = $_GET['post'];
+            if ( empty( $post_id ) && isset( $_GET[ 'post' ] ) ) {
+                $post_id = $_GET[ 'post' ];
             }
 
-            if (isset($_GET['post']) || !$this->is_original_product($post_id)) {
-                $link = admin_url('admin.php?page=wpml-wcml&tab=products&prid=' . $post_id);
+            if ( isset( $_GET[ 'post' ] ) || $this->get_original_product_language( $post_id ) != $lang ) {
+                $link = admin_url( 'admin.php?page=wpml-wcml&tab=products&prid=' . $post_id );
             }
         }
+
+        return $link;
     }
 
     function _filter_job_link_to_translation($link, $post_id, $job_id, $lang)
