@@ -10,7 +10,7 @@
 							  data-tip="{{ strings.image|e }}">{{ strings.image }}</span>
 				</th>
 				<th scope="col" class="wpml-col-title {{ filter_urls.product_sorted }}">
-					<a href="{{ filter_urls.product }}">
+					<a href="{{ filter_urls.product|raw }}">
 						<span>{{ strings.product }}</span>
 						<span class="sorting-indicator"></span>
 					</a>
@@ -29,7 +29,7 @@
 							  data-tip="{{ strings.type|e }}">{{ strings.type }}</span>
 				</th>
 				<th scope="col" id="date" class="column-date {{ filter_urls.date_sorted }}">
-					<a href="{{ filter_urls.date }}">
+					<a href="{{ filter_urls.date|raw }}">
 						<span>{{ strings.date }}</span>
 						<span class="sorting-indicator"></span>
 					</a>
@@ -48,7 +48,7 @@
 				{% for product in data.products %}
 					<tr>
 						<td class="thumb column-thumb">
-							<a href="{{ product.edit_post_link }}">
+							<a href="{{ product.edit_post_link|raw }}">
 								<img width="150" height="150" src="{{ product.post_thumbnail }}" class="wp-post-image" >
 							</a>
 						</td>
@@ -61,7 +61,7 @@
 									</span>
 								{% endif %}
 
-								<a href="{{ product.edit_post_link }}" title="{{ product.post_title|striptags  }}">
+								<a href="{{ product.edit_post_link|raw }}" title="{{ product.post_title|striptags  }}">
 									{{ product.post_title }}
 								</a>
 
@@ -78,10 +78,10 @@
 
 							<div class="row-actions">
 								<span class="edit">
-									<a href="{{ product.edit_post_link }}"
+									<a href="{{ product.edit_post_link|raw }}"
 									   title="{{ strings.edit_item|e }}">{{ strings.edit }}</a>
 								</span> | <span class="view">
-									<a href="{{ product.view_link }}"
+									<a href="{{ product.view_link|raw }}"
 									   title="{{ strings.view_link|format( product.post_title )|e }}" target="_blank">{{ strings.view }}</a>
 								</span>
 							</div>
@@ -93,7 +93,7 @@
 						</td>
 						<td class="column-categories">
 							{% for category in product.categories_list %}
-								<a href="{{ category.href }}">{{ category.name }}</a>
+								<a href="{{ category.href|raw }}">{{ category.name }}</a>
 							{% endfor %}
 						</td>
 

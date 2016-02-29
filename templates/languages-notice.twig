@@ -3,11 +3,11 @@
 
     <p>
         {% if is_multisite %}
-            <a href="{{ nonces.debug_action|e }}" class="button-primary">
+            <a href="{{ nonces.debug_action|raw }}" class="button-primary">
                 {{ strings.update_trnsl }}
             </a>
         {% else %}
-            <a href="{{ nonces.upgrade_translations|e }}" class="button-primary">
+            <a href="{{ nonces.upgrade_translations|raw }}" class="button-primary">
                 {{ strings.update_trnsl }}
             </a>
         {% endif %}
