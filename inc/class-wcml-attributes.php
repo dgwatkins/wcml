@@ -95,24 +95,22 @@ class WCML_Attributes{
         $terms = $this->get_attribute_terms( 'pa_'.$attribute );
 
         foreach( $terms as $term ){
+            $term_language_details = $sitepress->get_element_language_details( $term->term_id, 'tax_pa_'.$attribute );
+            if( $term_language_details && is_null( $term_language_details->source_language_code ) ){
+                $variations = $wpdb->get_results( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key=%s AND meta_value = %s",  'attribute_pa_'.$attribute, $term->slug ) );
 
-            $variations = $wpdb->get_results( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key=%s AND meta_value = %s",  'attribute_pa_'.$attribute, $term->slug ) );
+                foreach( $variations as $variation ){
+                    //update taxonomy in translation of variation
+                    foreach( $sitepress->get_active_languages() as $language ){
 
-            foreach( $variations as $variation ){
-                //update taxonomy in translation of variation
-                foreach( $sitepress->get_active_languages() as $language ){
-
-                    $trnsl_variation_id = apply_filters( 'translate_object_id', $variation->post_id, 'product_variation', false, $language['code'] );
-                    if( !is_null( $trnsl_variation_id ) ){
-                        update_post_meta( $trnsl_variation_id, 'attribute_pa_'.$attribute, $term->slug );
+                        $trnsl_variation_id = apply_filters( 'translate_object_id', $variation->post_id, 'product_variation', false, $language['code'] );
+                        if( !is_null( $trnsl_variation_id ) ){
+                            update_post_meta( $trnsl_variation_id, 'attribute_pa_'.$attribute, $term->slug );
+                        }
                     }
-
                 }
-
             }
-
         }
-
     }
 
     function set_original_attributes_for_products( $attribute ){
@@ -120,30 +118,33 @@ class WCML_Attributes{
         $terms = $this->get_attribute_terms( 'pa_'.$attribute );
         $cleared_products = array();
         foreach( $terms as $term ) {
-            $args = array(
-                'tax_query' => array(
-                    array(
-                        'taxonomy' => 'pa_'.$attribute,
-                        'field' => 'slug',
-                        'terms' => $term->slug
+            $term_language_details = $sitepress->get_element_language_details( $term->term_id, 'tax_pa_'.$attribute );
+            if( $term_language_details && is_null( $term_language_details->source_language_code ) ){
+                $args = array(
+                    'tax_query' => array(
+                        array(
+                            'taxonomy' => 'pa_'.$attribute,
+                            'field' => 'slug',
+                            'terms' => $term->slug
+                        )
                     )
-                )
-            );
+                );
 
-            $products = get_posts($args);
+                $products = get_posts($args);
 
-            foreach( $products as $product ){
+                foreach( $products as $product ){
 
-                foreach( $sitepress->get_active_languages() as $language ) {
+                    foreach( $sitepress->get_active_languages() as $language ) {
 
-                    $trnsl_product_id = apply_filters( 'translate_object_id', $product->ID, 'product_variation', false, $language['code'] );
+                        $trnsl_product_id = apply_filters( 'translate_object_id', $product->ID, 'product', false, $language['code'] );
 
-                    if ( !is_null( $trnsl_product_id ) ) {
-                        if( !in_array( $trnsl_product_id, $trnsl_product_id ) ){
-                            wp_delete_object_term_relationships( $trnsl_product_id, 'pa_'.$attribute );
-                            $cleared_products[] = $trnsl_product_id;
+                        if ( !is_null( $trnsl_product_id ) ) {
+                            if( !in_array( $trnsl_product_id, $trnsl_product_id ) ){
+                                wp_delete_object_term_relationships( $trnsl_product_id, 'pa_'.$attribute );
+                                $cleared_products[] = $trnsl_product_id;
+                            }
+                            wp_set_object_terms( $trnsl_product_id, $term->slug, 'pa_'.$attribute, true );
                         }
-                        wp_set_object_terms( $trnsl_product_id, $term->slug, 'pa_'.$attribute, true );
                     }
                 }
             }
