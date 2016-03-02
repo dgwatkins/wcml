@@ -8,8 +8,10 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
 
         global $woocommerce_wpml,$sitepress;
 
+        $this->sitepress = &$sitepress;
+        $this->woocommerce_wpml = &$woocommerce_wpml;
         $this->wcml_products = new WCML_Products();
-        $this->wcml_products_ui = new WCML_Products_UI( $woocommerce_wpml, $sitepress );
+        $this->wcml_products_ui = new WCML_Products_UI( $this->woocommerce_wpml, $this->sitepress );
         $this->wcml_helper = new WCML_Helper();
 
         // create 100 dummy products
@@ -39,14 +41,118 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
     }
 
 
+    function test_products_ui(){
+        global $wpml_post_translations;
+
+        //set some data for products
+        $products = $this->wcml_products_ui->get_product_list(1, 3, 'en');
+        foreach( $products as $key => $product ){
+            $child_product = $this->wcml_helper->add_product( 'en', false, 'Child Product EN'.$key, $product->ID );
+            if( $key == 2 ){
+                $child = array(
+                    'ID'			=> $child_product->id,
+                    'post_title' 	=> 'Child Product EN MADE PRIVATE',
+                    'post_status'	=> 'private'
+                );
+                $this->wcml_helper->update_product( $child );
+            }
+        }
+
+        $products = $this->wcml_products_ui->get_product_list( 2, 3, 'en' );
+        foreach( $products as $key => $product ){
+            $draft = array(
+                'ID'			=> $product->ID,
+                'post_status'	=> 'draft'
+            );
+            $this->wcml_helper->update_product( $draft );
+        }
+
+        $cat = $this->wcml_helper->add_term( 'Category 1', 'product_cat', 'en' );
+        $cat2 = $this->wcml_helper->add_term( 'Category 2', 'product_cat', 'en' );
+
+        $products = $this->wcml_products_ui->get_product_list( 3, 3, 'en' );
+        foreach( $products as $key => $product ){
+            $this->wcml_helper->add_term( false, 'product_cat', 'en', $product->ID, false, $cat->term_id );
+        }
+
+        $products = $this->wcml_products_ui->get_product_list( 4, 3, 'en' );
+        foreach( $products as $key => $product ){
+            $this->wcml_helper->add_term( false, 'product_cat', 'en', $product->ID, false, $cat->term_id );
+            $this->wcml_helper->add_term( false, 'product_cat', 'en', $product->ID, false, $cat2->term_id );
+        }
+
+        //check list
+
+        //user not a translator
+        $products = $this->wcml_products_ui->get_products_data();
+        $this->assertEquals( 0, $products['products_count'] );
+
+        //make current user as admin
+        $this->make_current_user_wcml_admin();
+
+        $products = $this->wcml_products_ui->get_products_data();
+
+        $active_languages = $this->sitepress->get_active_languages();
+        foreach( $products['products'] as $key => $product ){
+
+            foreach ( $active_languages as $active_language ) {
+                if( $active_language['code'] != $this->wcml_products->get_original_product_language( $product->ID ) ){
+                    $this->assertContains( 'data-language="'.$active_language['code'].'"', $product->translation_statuses );
+                }
+            }
+        }
+
+        //test products from filter
+
+        //test source language filter
+        $_GET['cat'] = 0;
+        $_GET['trst'] = 'all';
+        $_GET['st'] = 'all';
+        $active_languages = $this->sitepress->get_active_languages();
+
+        foreach ( $active_languages as $active_language ) {
+            $_GET['slang'] = $active_language['code'];
+            $products = $this->wcml_products_ui->get_products_data();
+
+            if( $active_language['code'] == 'en' ){
+                $this->assertEquals( 20, count( $products['products'] ) );
+            }elseif( $active_language['code'] == 'es' ){
+                $this->assertEquals( 10, count( $products['products'] ) );
+            }else{
+                $this->assertEquals( 0, $products['products_count'] );
+            }
+
+        }
+
+        //test categories filter
+        $_GET['slang'] = 'all';
+        $_GET['cat'] = $cat->term_id;
+        $products = $this->wcml_products_ui->get_products_data();
+        $this->assertEquals( 6, $products['products_count'] );
+
+        $_GET['cat'] = $cat2->term_id;
+        $products = $this->wcml_products_ui->get_products_data();
+        $this->assertEquals( 3, $products['products_count'] );
+
+        //test
+        $_GET['cat'] = 0;
+        $_GET['st'] = 'draft';
+        $products = $this->wcml_products_ui->get_products_data();
+        $this->assertEquals( 3, $products['products_count'] );
+
+        $_GET['st'] = 'private';
+        $products = $this->wcml_products_ui->get_products_data();
+        $this->assertEquals( 1, $products['products_count'] );
+    }
+
+
     function test_wcml_products_get_product_list() {
-        global $sitepress;
 
         $en_products = $this->wcml_products_ui->get_product_list(1, 5, 'en');
         $es_products = $this->wcml_products_ui->get_product_list(3, 4, 'es');
 
         if($es_products){
-            $lang_info = $sitepress->get_element_language_details($es_products[0]->ID, 'post_product');
+            $lang_info = $this->sitepress->get_element_language_details($es_products[0]->ID, 'post_product');
             $es_product_0_lang = $lang_info->language_code;
         }
 

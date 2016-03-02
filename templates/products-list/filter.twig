@@ -38,7 +38,7 @@
 			<select class="wcml_product_status">
 				<option value="all">{{ strings.all_stats }}</option>
 				{% for status in all_statuses %}
-					<option value="{{ loop.index }}" {% if st == loop.index %} selected="selected" {% endif %}>
+					<option value="{{ status|e }}" {% if st == status %} selected="selected" {% endif %}>
 						{{ status|capitalize }}
 					</option>
 				{% endfor %}
