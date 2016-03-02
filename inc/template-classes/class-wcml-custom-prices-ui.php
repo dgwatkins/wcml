@@ -200,7 +200,7 @@ class WCML_Custom_Prices_UI extends WPML_Templates_Factory {
 
 	public function init_template_base_dir() {
 		$this->template_paths = array(
-			WCML_PLUGIN_PATH . '/templates/',
+			WCML_PLUGIN_PATH . '/templates/multi-currency/',
 		);
 	}
 

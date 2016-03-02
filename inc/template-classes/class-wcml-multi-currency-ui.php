@@ -137,7 +137,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
 
     protected function init_template_base_dir() {
         $this->template_paths = array(
-            WCML_PLUGIN_PATH . '/templates/',
+            WCML_PLUGIN_PATH . '/templates/multi-currency/',
         );
     }
 
@@ -233,7 +233,6 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
                 'updated'               => 0
             ),
             'current_currency'  => current( array_diff( array_keys( $this->wc_currencies ), array_keys( $this->currencies ), array ( $this->wc_currency ) ) )
-            //'current_currency'  => current( array_diff( array_keys( $this->wc_currencies ), array_keys( $this->currencies ) ) )
         );
 
         new WCML_Custom_Currency_Options($args, $this->woocommerce_wpml);

@@ -90,7 +90,7 @@ class WCML_Custom_Currency_Options extends WPML_Templates_Factory {
 
     protected function init_template_base_dir() {
         $this->template_paths = array(
-            WCML_PLUGIN_PATH . '/templates/',
+            WCML_PLUGIN_PATH . '/templates/multi-currency/',
         );
     }
 
