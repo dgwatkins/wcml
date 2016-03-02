@@ -1287,11 +1287,20 @@ class WCML_Products{
                     $sale_price = wc_format_decimal( $_POST[ '_custom_sale_price' ][ $code ] );
                     $regular_price = wc_format_decimal( $_POST[ '_custom_regular_price' ][ $code ] );
 
-                    $date_from = isset( $_POST[ '_custom_sale_price_dates_from' ][ $code ] ) ? strtotime( $_POST[ '_custom_sale_price_dates_from' ][ $code ] ) : false;
-                    $date_to = isset( $_POST[ '_custom_sale_price_dates_to' ][ $code ] ) ? strtotime( $_POST[ '_custom_sale_price_dates_to' ][ $code ] ) : false;
+                    $date_from = isset( $_POST[ '_custom_sale_price_dates_from' ][ $code ] ) ? strtotime( $_POST[ '_custom_sale_price_dates_from' ][ $code ] ) : '';
+                    $date_to = isset( $_POST[ '_custom_sale_price_dates_to' ][ $code ] ) ? strtotime( $_POST[ '_custom_sale_price_dates_to' ][ $code ] ) : '';
                     $schedule = $_POST[ '_wcml_schedule' ][ $code ];
 
-                    $this->update_custom_prices( $post_id, $regular_price, $sale_price, $schedule, $date_from, $date_to, $code );
+                    $custom_prices = apply_filters( 'wcml_update_custom_prices_values',
+                        array( '_regular_price' => $regular_price,
+                            '_sale_price' => $sale_price,
+                            '_wcml_schedule_' => $schedule,
+                            '_sale_price_dates_from' => $date_from,
+                            '_sale_price_dates_to' => $date_to ),
+                        $code
+                    );
+
+                    $this->update_custom_prices( $post_id, $custom_prices , $code );
                 }
             }
         }
@@ -1340,43 +1349,33 @@ class WCML_Products{
 
     }
 
-    function update_custom_prices($post_id,$regular_price,$sale_price,$schedule,$date_from,$date_to,$code){
+    function update_custom_prices( $post_id, $custom_prices, $code ){
         $price = '';
-        update_post_meta($post_id,'_regular_price_'.$code,$regular_price);
-        update_post_meta($post_id,'_sale_price_'.$code,$sale_price);
 
-        // Dates
-        update_post_meta($post_id,'_wcml_schedule_'.$code,$schedule);
-        if ( $date_from )
-            update_post_meta( $post_id, '_sale_price_dates_from_'.$code,  $date_from  );
-        else
-            update_post_meta( $post_id, '_sale_price_dates_from_'.$code, '' );
+        foreach( $custom_prices as $custom_price_key => $custom_price_value ){
+            update_post_meta( $post_id, $custom_price_key.'_'.$code, $custom_price_value );
+        }
 
-        if ( $date_to )
-            update_post_meta( $post_id, '_sale_price_dates_to_'.$code,  $date_to );
-        else
-            update_post_meta( $post_id, '_sale_price_dates_to_'.$code, '' );
-
-        if ( $date_to && ! $date_from )
+        if ( $custom_prices['_sale_price_dates_to']  && ! $custom_prices['_sale_price_dates_from'] )
             update_post_meta( $post_id, '_sale_price_dates_from_'.$code, strtotime( 'NOW', current_time( 'timestamp' ) ) );
 
         // Update price if on sale
-        if ( $sale_price != '' && $date_to == '' && $date_from == '' ){
-            $price = stripslashes( $sale_price );
-            update_post_meta( $post_id, '_price_'.$code, stripslashes( $sale_price ) );
+        if (  $custom_prices['_sale_price'] != '' && $custom_prices['_sale_price_dates_to'] == '' &&  $custom_prices['_sale_price_dates_from'] == '' ){
+            $price = stripslashes( $custom_prices['_sale_price'] );
+            update_post_meta( $post_id, '_price_'.$code, stripslashes( $custom_prices['_sale_price'] ) );
         }else{
-            $price = stripslashes( $regular_price );
-            update_post_meta( $post_id, '_price_'.$code, stripslashes( $regular_price ) );
+            $price = stripslashes( $custom_prices['_regular_price'] );
+            update_post_meta( $post_id, '_price_'.$code, stripslashes( $custom_prices['_regular_price'] ) );
         }
 
-        if ( $sale_price != '' && $date_from < strtotime( 'NOW', current_time( 'timestamp' ) ) ){
-            update_post_meta( $post_id, '_price_'.$code, stripslashes($sale_price) );
-            $price = stripslashes( $sale_price );
+        if ( $custom_prices['_sale_price'] != '' && $custom_prices['_sale_price_dates_from'] < strtotime( 'NOW', current_time( 'timestamp' ) ) ){
+            update_post_meta( $post_id, '_price_'.$code, stripslashes($custom_prices['_sale_price']) );
+            $price = stripslashes( $custom_prices['_sale_price'] );
         }
 
-        if ( $date_to && $date_to < strtotime( 'NOW', current_time( 'timestamp' ) ) ) {
-            update_post_meta( $post_id, '_price_'.$code, stripslashes($regular_price) );
-            $price = stripslashes( $regular_price );
+        if ( $custom_prices['_sale_price_dates_to'] && $custom_prices['_sale_price_dates_to'] < strtotime( 'NOW', current_time( 'timestamp' ) ) ) {
+            update_post_meta( $post_id, '_price_'.$code, stripslashes($custom_prices['_regular_price']) );
+            $price = stripslashes( $custom_prices['_regular_price'] );
             update_post_meta( $post_id, '_sale_price_dates_from_'.$code, '');
             update_post_meta( $post_id, '_sale_price_dates_to_'.$code, '');
         }
@@ -1421,7 +1420,17 @@ class WCML_Products{
                             $date_to = strtotime($_POST['_custom_sale_price_dates_to'][$code][$post_data->ID]);
                             $schedule = $_POST['_wcml_schedule'][$code][$post_data->ID];
 
-                            $price = $this->update_custom_prices($post_data->ID,$regular_price,$sale_price,$schedule,$date_from,$date_to,$code);
+                            $custom_prices = apply_filters( 'wcml_update_custom_prices_values',
+                                array( '_regular_price' => $regular_price,
+                                    '_sale_price' => $sale_price,
+                                    '_wcml_schedule_' => $schedule,
+                                    '_sale_price_dates_from' => $date_from,
+                                    '_sale_price_dates_to' => $date_to ),
+                                $code,
+                                $post_data->ID
+                            );
+
+                            $price = $this->update_custom_prices( $post_data->ID, $custom_prices, $code );
 
                             if(!isset($min_max_prices['_min_variation_price_'.$code]) || ($price && $price < $min_max_prices['_min_variation_price_'.$code])){
                                 $min_max_prices['_min_variation_price_'.$code] = $price;
