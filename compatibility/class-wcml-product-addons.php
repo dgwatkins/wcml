@@ -41,18 +41,9 @@ class WCML_Product_Addons{
     }
 
     function product_addons_filter($addons, $object_id){
-        global $sitepress;
-
-        $addon_type = get_post_type($object_id);
-        if( $addon_type != 'global_product_addon' )
-            $object_id = $sitepress->get_original_element_id( $object_id , 'post_'.$addon_type );
 
         foreach($addons as $add_id => $addon){
-            $addons[$add_id]['name'] = apply_filters( 'wpml_translate_single_string', $addon['name'], 'wc_product_addons_strings', $object_id.'_addon_'.$addon['type'].'_'.$addon['position'].'_name' );
-            $addons[$add_id]['description'] = apply_filters( 'wpml_translate_single_string', $addon['description'], 'wc_product_addons_strings', $object_id.'_addon_'.$addon['type'].'_'.$addon['position'].'_description');
             foreach($addon['options'] as $key=>$option){
-                $addons[$add_id]['options'][$key]['label'] = apply_filters( 'wpml_translate_single_string', $option['label'], 'wc_product_addons_strings', $object_id.'_addon_'.$addon['type'].'_'.$addon['position'].'_option_label_'.$key);
-
                 //price filter
                 $addons[$add_id]['options'][$key]['price']  = apply_filters('wcml_raw_price_amount', $option['price']);
             }
