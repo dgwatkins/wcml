@@ -10,7 +10,7 @@
 							  data-tip="{{ strings.image|e }}">{{ strings.image }}</span>
 				</th>
 				<th scope="col" class="wpml-col-title {{ filter_urls.product_sorted }}">
-					<a href="{{ filter_urls.product|raw }}">
+					<a href="{{ filter_urls.product|e }}">
 						<span>{{ strings.product }}</span>
 						<span class="sorting-indicator"></span>
 					</a>
@@ -29,7 +29,7 @@
 							  data-tip="{{ strings.type|e }}">{{ strings.type }}</span>
 				</th>
 				<th scope="col" id="date" class="column-date {{ filter_urls.date_sorted }}">
-					<a href="{{ filter_urls.date|raw }}">
+					<a href="{{ filter_urls.date|e }}">
 						<span>{{ strings.date }}</span>
 						<span class="sorting-indicator"></span>
 					</a>
@@ -81,7 +81,7 @@
 									<a href="{{ product.edit_post_link|raw }}"
 									   title="{{ strings.edit_item|e }}">{{ strings.edit }}</a>
 								</span> | <span class="view">
-									<a href="{{ product.view_link|raw }}"
+									<a href="{{ product.view_link|e }}"
 									   title="{{ strings.view_link|format( product.post_title )|e }}" target="_blank">{{ strings.view }}</a>
 								</span>
 							</div>
@@ -93,7 +93,7 @@
 						</td>
 						<td class="column-categories">
 							{% for category in product.categories_list %}
-								<a href="{{ category.href|raw }}">{{ category.name }}</a>
+								<a href="{{ category.href|e }}">{{ category.name }}</a>
 							{% endfor %}
 						</td>
 
