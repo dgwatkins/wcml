@@ -296,7 +296,7 @@ class WCML_Products{
     }
 
     function create_product_translation_package($product_id,$trid,$language,$status){
-        global $sitepress,$wpdb,$current_user,$iclTranslationManagement;
+        global $sitepress,$wpdb,$iclTranslationManagement;
         //create translation package
         $translation_id = $wpdb->get_var($wpdb->prepare("
                                 SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND language_code='%s'
@@ -305,7 +305,7 @@ class WCML_Products{
         $md5 = $iclTranslationManagement->post_md5(get_post($product_id));
         $translation_package = $iclTranslationManagement->create_translation_package($product_id);
 
-        get_currentuserinfo();
+        $current_user = wp_get_current_user();
         $user_id = $current_user->ID;
 
         list($rid, $update) = $iclTranslationManagement->update_translation_status(array(
