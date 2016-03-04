@@ -12,13 +12,9 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
 		// settings
 		$settings = $woocommerce_wpml->settings;
-
 		$settings['enable_multi_currency'] = 2;
-
 		$settings['default_currencies'] = array( 'en' => 'USD', 'de' => 'RON', 'it' => 'AUD'  );
-
 		$settings['currency_options']['USD'] = array(
-
 			'rate' 				=> 1.55,
 			'position'			=> 'left',
 			'thousand_sep'		=> '#',
@@ -27,11 +23,8 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 			'rounding'			=> 'down',
 			'rounding_increment'=> 10,
 			'auto_subtract'		=> 3
-
 		);
-
 		$settings['currency_options']['RON'] = array(
-
 			'rate' 				=> 1.64,
 			'position'			=> 'right',
 			'thousand_sep'		=> '.',
@@ -42,9 +35,7 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 			'auto_subtract'		=> 1
 
 		);
-
 		$settings['currency_options']['AUD'] = array(
-
 			'rate' 				=> 2.45,
 			'position'			=> 'right',
 			'thousand_sep'		=> '.',
@@ -55,7 +46,6 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 			'auto_subtract'		=> 0
 
 		);
-
 		$settings['currency_options']['CHF'] = array(
 
 			'rate' 				=> 55,
@@ -66,11 +56,9 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 			'rounding'			=> 'disabled',
 			'rounding_increment'=> 0,
 			'auto_subtract'		=> 0
-
 		);
 
 		$this->settings =& $settings;
-
 
 		$woocommerce_wpml->update_settings( $settings );
 
@@ -90,12 +78,12 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 	function test_raw_price_filter() {
 
 		//AUD No rounding, exch rate: 2.45, 1 decimal
-		$this->assertEquals( 7.35, $this->multi_currency->raw_price_filter(3, 'AUD') );
+		$this->assertEquals( 7.3, $this->multi_currency->raw_price_filter(3, 'AUD') );
 
 		//RON Round up, exch rate: 1.64, 0 decimals
 		$this->assertEquals( 799, $this->multi_currency->raw_price_filter(434, 'RON') );
 
-		//USD Round down, exch rate: 1.5.5, 0 decimals, round incr 10, rond subt 3
+		//USD Round down, exch rate: 1.5.5, 0 decimals, round incr 10, round subt 3
 		$this->assertEquals( 697, $this->multi_currency->raw_price_filter(456, 'USD') );
 
 	}
@@ -106,7 +94,7 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
 		$this->assertEquals( 12399, $this->multi_currency->apply_rounding_rules(12345, 'RON') );
 
-		$this->assertEquals( 123.37, $this->multi_currency->apply_rounding_rules(123.37, 'AUD') ); //disabled
+		$this->assertEquals( 123.3, $this->multi_currency->apply_rounding_rules(123.37, 'AUD') ); //disabled
 	}
 
 
@@ -148,7 +136,7 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
 		$coupon = WCML_Helper_Coupon::create_coupon();
 
-		$coupon_amount  = $coupon->coupon_amount;
+		$coupon_amount	 = $coupon->coupon_amount;
 		$minimum_amount  = $coupon->minimum_amount;
 		$maximum_amount  = $coupon->maximum_amount;
 

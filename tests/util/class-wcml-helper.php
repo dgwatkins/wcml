@@ -12,7 +12,7 @@ class WCML_Helper {
     }
 
 
-    public static function add_product( $language, $trid = false, $title = false, $parent = 0 ) {
+    public static function add_product( $language, $trid = false, $title = false, $parent = 0, $meta = array() ) {
         global $wpml_post_translations;
 
         if( !$title ){
@@ -20,6 +20,23 @@ class WCML_Helper {
         }
 
         $product_id = wpml_test_insert_post( $language, 'product', $trid, $title, $parent );
+
+        $default_meta = array(
+            '_price'            => 10,
+            '_regular_price'    => 10,
+            '_sale_price'       => '',
+            '_sku'              => 'DUMMY SKU',
+            '_manage-stock'     => 'no',
+            '_tax_status'       => 'taxable',
+            '_downloadable'     => 'no',
+            '_virtual'          => 'taxable',
+            '_visibility'       => 'visible',
+            '_stock_status'     => 'instock'
+        );
+
+        foreach( $default_meta as $key => $value){
+            update_post_meta( $product_id, $key, isset( $meta[$key] ) ? $meta[$key] : $default_meta[$key] );
+        }
 
         $ret = new stdClass();
 

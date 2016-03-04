@@ -253,13 +253,19 @@ class WCML_WC_MultiCurrency{
             
             if($currency_options['rounding_increment'] > 1){
                 $price  = $price * $currency_options['rounding_increment'];    
-            }   
+            }
+
+            if($currency_options['auto_subtract'] && $currency_options['auto_subtract'] < $price){
+                $price = $price - $currency_options['auto_subtract'];
+            }
+
+        } else {
+
+            // Use configured number of decimals
+            $price = floor( $price * pow( 10, $currency_options['num_decimals']) ) / pow( 10, $currency_options['num_decimals'] );
+
         }
-        
-        
-        if($currency_options['auto_subtract'] && $currency_options['auto_subtract'] < $price){
-            $price = $price - $currency_options['auto_subtract'];
-        }
+
 
         return $price;
         

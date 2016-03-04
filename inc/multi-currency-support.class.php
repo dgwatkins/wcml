@@ -63,14 +63,14 @@ class WCML_Multi_Currency_Support{
 
             }
         }
-        
+
         return apply_filters('wcml_load_multi_currency', $load);
     }
     
     function init(){
 
-        if($this->_load_filters()){    
-            
+        if($this->_load_filters()){
+
             add_filter('woocommerce_currency', array($this, 'currency_filter'));
             //add_filter('option_woocommerce_currency', array($this, 'currency_filter'));
             
@@ -97,6 +97,8 @@ class WCML_Multi_Currency_Support{
             add_filter('option_woocommerce_price_decimal_sep', array($this, 'filter_currency_decimal_sep_option'));
             add_filter('option_woocommerce_price_num_decimals', array($this, 'filter_currency_num_decimals_option'));
 
+            add_filter( 'wc_price_args', array( $this, 'filter_wc_price_args') );
+
             add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'filter_currency_num_decimals_in_cart' ) );
             
         }
@@ -111,8 +113,6 @@ class WCML_Multi_Currency_Support{
         if( version_compare( WOOCOMMERCE_VERSION, '2.3', '<' ) ){
             add_filter( 'wc_price', array( $this, 'price_in_specific_currency' ), 10, 3 );
         }
-
-        add_filter( 'wc_price_args', array( $this, 'filter_wc_price_args') );
 
         if(defined('W3TC')){
             require WCML_PLUGIN_PATH . '/inc/w3tc-compatibility.class.php';
@@ -1003,8 +1003,7 @@ class WCML_Multi_Currency_Support{
             $this->client_currency = $default_currencies[$current_language];
         }
 
-            // client currency in general / if enabled for this language
-
+        // client currency in general / if enabled for this language
         if(is_null($this->client_currency) && !empty($woocommerce->session) ){
                 $session_currency = $woocommerce->session->get('client_currency');
                 if($session_currency && !empty($this->currencies[$session_currency]['languages'][$current_language])){
