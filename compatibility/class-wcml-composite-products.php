@@ -22,6 +22,8 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 			add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_composite_data_translation_package' ), 10, 2 );
 			add_action( 'wpml_translation_job_saved',   array( $this, 'save_composite_data_translation' ), 10, 3 );
+			//lock fields on translations pages
+			add_filter( 'wcml_js_lock_fields_input_names', array( $this, 'wcml_js_lock_fields_input_names' ) );
 
 		}
 	}
@@ -336,4 +338,16 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 		update_post_meta( $post_id, '_bto_data', $composite_data );
 
 	}
+
+	function wcml_js_lock_fields_input_names( $names ){
+
+		$names[] = '_per_product_pricing_bto';
+		$names[] = '_per_product_shipping_bto';
+		$names[] = '_base_regular_price';
+		$names[] = '_base_sale_price';
+		$names[] = '_bto_hide_shop_price';
+
+		return $names;
+	}
+
 }

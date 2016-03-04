@@ -1,6 +1,7 @@
 jQuery(document).ready(function($){
     var i;
     var ids = ['_virtual','_downloadable','product-type','_backorders','_manage_stock','_stock','_sold_individually','comment_status','_tax_status','_tax_class','parent_id','crosssell_ids','upsell_ids'];
+    ids = ids.concat( non_standard_fields.ids );
 
     $('.wcml_prod_hidden_notice').prependTo('#woocommerce-product-data');
 
@@ -10,7 +11,7 @@ jQuery(document).ready(function($){
     }
 
     var buttons = ['add_variation','link_all_variations','attribute_taxonomy','save_attributes','add_new_attribute','product_attributes .remove_row','add_attribute','select_all_attributes','select_no_attributes'];
-
+    buttons = buttons.concat( non_standard_fields.classes );
 
     if( unlock_fields.files_sync == 1 ){
         buttons.push('upload_file_button');
@@ -34,6 +35,7 @@ jQuery(document).ready(function($){
     });
 
     var inpt_names = ['_width','_height','_sku','_length','_weight','product_length','_regular_price','_sale_price','_sale_price_dates_from','_sale_price_dates_to'];
+    inpt_names = inpt_names.concat( non_standard_fields.input_names );
 
     if( unlock_fields.menu_order == 1 ){
         inpt_names.push('menu_order');
@@ -69,18 +71,6 @@ jQuery(document).ready(function($){
             $(this).removeAttr('disabled');
         });
     });
-
-
-    //quick edit fields
-    for (i = 0; i < ids.length; i++) {
-        $('.inline-edit-product [name="'+ids[i]+'"]').attr('disabled','disabled');
-        $('.inline-edit-product [name="'+ids[i]+'"]').after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
-    }
-
-    for (i = 0; i < inpt_names.length; i++) {
-        $('.inline-edit-product [name="'+inpt_names[i]+'"]').attr('readonly','readonly');
-        $('.inline-edit-product [name="'+inpt_names[i]+'"]').after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
-    }
 
 });
 
