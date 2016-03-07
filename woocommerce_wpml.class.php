@@ -46,10 +46,8 @@ class woocommerce_wpml {
             || ( isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) && $_GET['tab'] == 'multi-currency' )
             || ( isset( $_POST[ 'action' ] ) && in_array( $_POST[ 'action' ], $actions_that_need_mc ) )
         ){
-            require_once WCML_PLUGIN_PATH . '/inc/multi-currency-support.class.php';
             $this->multi_currency_support = new WCML_Multi_Currency_Support;
-            require_once WCML_PLUGIN_PATH . '/inc/multi-currency.class.php';
-            $this->multi_currency = new WCML_WC_MultiCurrency;
+            $this->multi_currency = new WCML_Multi_Currency;
         }else{
             add_shortcode('currency_switcher', '__return_empty_string');
         }

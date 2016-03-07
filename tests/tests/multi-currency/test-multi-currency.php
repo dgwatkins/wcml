@@ -63,14 +63,10 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 		$woocommerce_wpml->update_settings( $settings );
 
 		// Multi currency objects
-		require_once WCML_PLUGIN_PATH . '/inc/multi-currency-support.class.php';
 		$woocommerce_wpml->multi_currency_support = new WCML_Multi_Currency_Support;
-
 		$this->multi_currency_support =& $woocommerce_wpml->multi_currency_support;
 
-		require_once WCML_PLUGIN_PATH . '/inc/multi-currency.class.php';
-		$woocommerce_wpml->multi_currency = new WCML_WC_MultiCurrency();
-
+		$woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
 		$this->multi_currency =& $woocommerce_wpml->multi_currency;
 	}
 

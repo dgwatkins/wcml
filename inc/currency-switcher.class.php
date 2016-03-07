@@ -39,7 +39,6 @@ class WCML_CurrencySwitcher{
         global $woocommerce_wpml;
 
         if( !isset($woocommerce_wpml->multi_currency_support) ){
-            require_once WCML_PLUGIN_PATH . '/inc/multi-currency-support.class.php';
             $woocommerce_wpml->multi_currency_support = new WCML_Multi_Currency_Support;
         }
 

@@ -1,6 +1,6 @@
 <?php
 
-class WCML_WC_MultiCurrency_W3TC{
+class WCML_W3TC_Multi_Currency{
 
     function __construct(){
 

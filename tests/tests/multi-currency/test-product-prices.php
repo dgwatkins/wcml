@@ -15,10 +15,8 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 		$this->woocommerce_wpml =& $woocommerce_wpml;
 
 		// Multi currency objects
-		require_once WCML_PLUGIN_PATH . '/inc/multi-currency-support.class.php';
 		$woocommerce_wpml->multi_currency_support = new WCML_Multi_Currency_Support;
-		require_once WCML_PLUGIN_PATH . '/inc/multi-currency.class.php';
-		$woocommerce_wpml->multi_currency = new WCML_WC_MultiCurrency();
+		$woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
 
 		$woocommerce_wpml->multi_currency_support->init();
 		$woocommerce_wpml->multi_currency->init();
