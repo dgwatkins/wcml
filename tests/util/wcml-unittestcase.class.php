@@ -12,6 +12,7 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 		global $woocommerce_wpml;
 
 		$woocommerce_wpml = new woocommerce_wpml();
+
 		$woocommerce_wpml->products = new WCML_Products;
 
 		require_once WC_PATH . '/woocommerce.php';

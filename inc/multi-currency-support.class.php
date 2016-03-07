@@ -563,7 +563,7 @@ class WCML_Multi_Currency_Support{
         static $no_filter = false;
                 
         if(empty($no_filter) && in_array(get_post_type($object_id), array('product', 'product_variation'))){
-            
+
             $price_keys = array(
                 '_price', '_regular_price', '_sale_price', 
                 '_min_variation_price', '_max_variation_price',                
@@ -580,7 +580,7 @@ class WCML_Multi_Currency_Support{
                 if(in_array($meta_key, array('_price', '_regular_price', '_sale_price')) && !empty($ccr) && isset($ccr[$meta_key][$this->get_client_currency()])){                    
                     $price_original = get_post_meta($original_object_id, $meta_key, $single);
                     $price = $price_original * $ccr[$meta_key][$this->get_client_currency()];
-                    
+
                 }else{
                         
                     // normal filtering                    
@@ -955,7 +955,7 @@ class WCML_Multi_Currency_Support{
     
     function get_client_currency(){
         global $woocommerce, $woocommerce_wpml, $sitepress, $wp_query, $wpdb;
-        
+
         $default_currencies   = $woocommerce_wpml->settings['default_currencies'];
         $current_language     = $sitepress->get_current_language();
         $current_language     = ( $current_language != 'all' && !is_null( $current_language ) ) ? $current_language : $sitepress->get_default_language();
