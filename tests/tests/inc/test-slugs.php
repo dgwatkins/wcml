@@ -11,7 +11,6 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 		require_once WCML_PLUGIN_PATH . '/inc/wc-strings.class.php';
 		$woocommerce_wpml->strings           = new WCML_WC_Strings;
 
-		require_once WCML_PLUGIN_PATH . '/inc/url-translation.class.php';
 		$woocommerce_wpml->url_translation = new WCML_Url_Translation();
 
 		require_once WCML_PLUGIN_PATH . '/inc/class-wcml-languages-upgrader.php';

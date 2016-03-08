@@ -61,7 +61,7 @@ class woocommerce_wpml {
         $this->troubleshooting   = new WCML_Troubleshooting();
         $this->compatibility     = new WCML_Compatibility();
         $this->strings           = new WCML_WC_Strings;
-        $this->currency_switcher = new WCML_CurrencySwitcher;
+        $this->currency_switcher = new WCML_Currency_Switcher;
         $this->xdomain_data      = new xDomain_Data;
         $this->languages_upgrader = new WCML_Languages_Upgrader;
 
@@ -70,12 +70,10 @@ class woocommerce_wpml {
         $this->attributes = new WCML_Attributes;
 
         if(isset($_GET['page']) && $_GET['page'] == 'wc-reports'){
-            require_once WCML_PLUGIN_PATH . '/inc/reports.class.php';
             $this->reports          = new WCML_Reports;
         }
 
         include WCML_PLUGIN_PATH . '/inc/woocommerce-2.0-backward-compatibility.php';
-        include WCML_PLUGIN_PATH . '/inc/wc-rest-api-support.php';
 
         new WCML_Ajax_Setup;
 

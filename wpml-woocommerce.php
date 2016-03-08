@@ -24,26 +24,7 @@ define('WCML_MULTI_CURRENCIES_INDEPENDENT', 2);
 require WCML_PLUGIN_PATH . '/inc/class-wcml-autoloader.php';
 
 require WCML_PLUGIN_PATH . '/inc/missing-php-functions.php';
-require WCML_PLUGIN_PATH . '/inc/dependencies.class.php';
-require WCML_PLUGIN_PATH . '/inc/store-pages.class.php';
-require WCML_PLUGIN_PATH . '/inc/products.class.php';
-require WCML_PLUGIN_PATH . '/inc/emails.class.php';
-require WCML_PLUGIN_PATH . '/inc/upgrade.class.php';
-require WCML_PLUGIN_PATH . '/inc/ajax-setup.class.php';
-require WCML_PLUGIN_PATH . '/inc/wc-strings.class.php';
-require WCML_PLUGIN_PATH . '/inc/terms.class.php';
-require WCML_PLUGIN_PATH . '/inc/orders.class.php';
-require WCML_PLUGIN_PATH . '/inc/requests.class.php';
-require WCML_PLUGIN_PATH . '/inc/functions-troubleshooting.class.php';
-require WCML_PLUGIN_PATH . '/inc/endpoints.class.php';
-require WCML_PLUGIN_PATH . '/inc/currency-switcher.class.php';
-require WCML_PLUGIN_PATH . '/inc/xdomain-data.class.php';
-require WCML_PLUGIN_PATH . '/inc/url-translation.class.php';
-require WCML_PLUGIN_PATH . '/inc/class-wcml-tp-support.php';
-require WCML_PLUGIN_PATH . '/inc/class-wcml-languages-upgrader.php';
 include WCML_PLUGIN_PATH . '/inc/installer-loader.php';
-
-require WCML_PLUGIN_PATH . '/woocommerce_wpml.class.php';
 
 define('WCML_PLUGIN_URL', wpml_filter_include_url( untrailingslashit( plugin_dir_url( __FILE__ ) ) ));
 
