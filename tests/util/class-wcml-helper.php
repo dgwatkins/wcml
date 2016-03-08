@@ -15,7 +15,7 @@ class WCML_Helper {
      * $arg - array of data to add:
      * 'count' -> count of products to add, 'translations' - language code for translations to add
      */
-    public function add_dummy_products( $args ){
+    public function add_products( $args ){
 
         $dummy_data = array();
 
