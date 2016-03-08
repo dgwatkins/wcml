@@ -1,9 +1,5 @@
 <?php
   
-// Our case:
-// customize display currencies
-//     
-  
 class WCML_Currency_Switcher{
 
     function __construct(){
