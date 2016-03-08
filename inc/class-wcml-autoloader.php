@@ -14,6 +14,7 @@ class WCML_Autoloader {
         $this->include_paths = array(
             WCML_PLUGIN_PATH . '/inc/',
             WCML_PLUGIN_PATH . '/inc/template-classes/*',
+            WCML_PLUGIN_PATH . '/inc/currencies/',
             WCML_PLUGIN_PATH . '/compatibility/'
         );
 

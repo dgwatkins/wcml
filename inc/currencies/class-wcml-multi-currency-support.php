@@ -451,9 +451,9 @@ class WCML_Multi_Currency_Support{
         $new_currency = $_POST['woocommerce_currency'];
 
         if($new_currency != $current_currency) {
-
+            $message_id = 'wcml-woocommerce-default-currency-changed';
             $message_args = array(
-                'id' => 'wcml-default-currency-changed-' . rand(1, 1000),
+                'id' => $message_id,
                 'text' => sprintf(__('The default currency was changed. In order to show accurate prices in all currencies, you need to update the exchange rates under the %sMulti-currency%s configuration.',
                     'woocommerce-multilingual'), '<a href="' . admin_url('admin.php?page=wpml-wcml&tab=multi-currency') . '">', '</a>'),
                 'type' => 'warning',
@@ -462,6 +462,7 @@ class WCML_Multi_Currency_Support{
                 'hide' => true
             );
 
+            ICL_AdminNotifier::remove_message($message_id); // clear any previous instances
             ICL_AdminNotifier::add_message($message_args);
 
         }

@@ -1,15 +1,30 @@
 <?php
 class woocommerce_wpml {
 
-    var $settings;
+    public $settings;
 
-    var $currencies;
-    var $products;
-    var $store;
-    var $emails;
-    var $terms;
-    var $orders;
-    var $missing;
+    private $troubleshooting;
+    private $compatibility;
+
+    public $endpoints;
+    public $products;
+    public $store;
+    public $emails;
+    public $terms;
+    public $attributes;
+    public $orders;
+    public $currencies;
+    public $multi_currency_support;
+    public $multi_currency;
+
+    private $xdomain_data;
+    public $languages_upgrader;
+
+    public $url_translation;
+
+    private $reports;
+    private $requests;
+
 
     function __construct(){
 
@@ -20,6 +35,8 @@ class woocommerce_wpml {
     }
 
     function init(){
+        global $sitepress,$pagenow;
+
         new WCML_Upgrade;
 
         $this->settings = $this->get_settings();
@@ -36,8 +53,6 @@ class woocommerce_wpml {
             return false;
         }
 
-        global $sitepress,$pagenow;
-
         $this->load_css_and_js();
 
         $actions_that_need_mc = array( 'save-mc-options', 'wcml_new_currency', 'wcml_save_currency', 'wcml_delete_currency',
@@ -52,22 +67,25 @@ class woocommerce_wpml {
             add_shortcode('currency_switcher', '__return_empty_string');
         }
 
+        $this->troubleshooting   = new WCML_Troubleshooting();
+        $this->compatibility     = new WCML_Compatibility();
+
         $this->endpoints         = new WCML_Endpoints;
         $this->products          = new WCML_Products;
         $this->store             = new WCML_Store_Pages;
         $this->emails            = new WCML_Emails;
         $this->terms             = new WCML_Terms;
+        $this->attributes        = new WCML_Attributes;
         $this->orders            = new WCML_Orders;
-        $this->troubleshooting   = new WCML_Troubleshooting();
-        $this->compatibility     = new WCML_Compatibility();
         $this->strings           = new WCML_WC_Strings;
+        $this->currencies        = new WCML_Currencies( $this );
         $this->currency_switcher = new WCML_Currency_Switcher;
         $this->xdomain_data      = new xDomain_Data;
         $this->languages_upgrader = new WCML_Languages_Upgrader;
 
         $this->url_translation   = new WCML_Url_Translation;
 
-        $this->attributes = new WCML_Attributes;
+        $this->requests          = new WCML_Requests;
 
         if(isset($_GET['page']) && $_GET['page'] == 'wc-reports'){
             $this->reports          = new WCML_Reports;
@@ -75,10 +93,8 @@ class woocommerce_wpml {
 
         include WCML_PLUGIN_PATH . '/inc/woocommerce-2.0-backward-compatibility.php';
 
+
         new WCML_Ajax_Setup;
-
-        $this->requests = new WCML_Requests;
-
         new WCML_WooCommerce_Rest_API_Support;
 
         $this->install();
@@ -124,7 +140,6 @@ class woocommerce_wpml {
         add_action( 'icl_update_active_languages', array( $this, 'download_woocommerce_translations_for_active_languages' ) );
         add_action( 'wp_ajax_hide_wcml_translations_message', array($this, 'hide_wcml_translations_message') );
 
-        add_action( 'woocommerce_settings_save_general', array( $this, 'currency_options_update_default_currency'));
         add_filter( 'wpml_tm_dashboard_translatable_types', array( $this, 'hide_variation_type_on_tm_dashboard') );
     }
 
@@ -599,7 +614,6 @@ class woocommerce_wpml {
         return $args;
     }
 
-
     function handle_admin_texts(){
         if(class_exists('woocommerce')){
             //emails texts
@@ -610,18 +624,6 @@ class woocommerce_wpml {
                     add_option($option_name,$email->settings);
                 }
             }
-        }
-    }
-
-    function currency_options_update_default_currency(){
-        $current_currency = get_option('woocommerce_currency');
-        $new_currency = $_POST['woocommerce_currency'];
-
-        if( isset( $this->settings['currency_options'][ $current_currency ] )){
-            $currency_settings =  $this->settings['currency_options'][ $current_currency ];
-            unset( $this->settings['currency_options'][ $current_currency ] );
-            $this->settings['currency_options'][$new_currency] = $currency_settings;
-            $this->update_settings();
         }
     }
 
