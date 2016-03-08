@@ -13,75 +13,93 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         $this->wcml_products = new WCML_Products();
         $this->wcml_products_ui = new WCML_Products_UI( $this->woocommerce_wpml, $this->sitepress );
         $this->wcml_helper = new WCML_Helper();
+        $this->languages = array_map('trim', explode(',', WPML_TEST_LANGUAGE_CODES));
+        $this->dummy_data = array();
 
-        // create 100 dummy products
-        for($i = 0; $i < 100; $i++){
-            $product = $this->wcml_helper->add_product( 'en' , false, sprintf('Test Product: %d', $i) );
-            $trid_map[$i] = $product->trid;
+
+        $args = array();
+        $this->dummy_data[ 'original_products_count' ] = 0;
+
+        //add 100 products in EN with ES translations
+        $this->dummy_data[ 'products_count' ][ 'en' ] = 100;
+        $this->dummy_data[ 'original_products_count' ] += $this->dummy_data[ 'products_count' ][ 'en' ];
+
+        $args[ 'en' ] = array( 'count' => $this->dummy_data[ 'products_count' ][ 'en' ], 'translations' => array( 'es' ) );
+
+        //add 10 products in ES with EN translations
+        $this->dummy_data[ 'products_count' ][ 'es' ] = 10;
+        $this->dummy_data[ 'original_products_count' ] += $this->dummy_data[ 'products_count' ][ 'es' ];
+        $args[ 'es' ] = array( 'count' => $this->dummy_data[ 'products_count' ][ 'es' ], 'translations' => array( 'en' ) );
+        $this->dummy_data[ 'products' ] = $this->wcml_helper->add_dummy_products( $args );
+
+        $args = array();
+        //add 2 product categories
+        $this->dummy_data[ 'categories_count' ][ 'en' ] = 2;
+        $args[ 'en' ] = array( 'count' => $this->dummy_data[ 'categories_count' ][ 'en' ], 'taxonomy' => 'product_cat', 'translations' => array( 'es' ) );
+        $this->dummy_data[ 'terms' ] = $this->wcml_helper->add_dummy_terms( $args );
+
+        //add 5 draft products in EN
+        $this->dummy_data[ 'draft_products' ][ 'count' ] = 5;
+        $this->dummy_data[ 'original_products_count' ] += $this->dummy_data[ 'draft_products' ][ 'count' ];
+        for( $i=0; $i<$this->dummy_data[ 'draft_products' ][ 'count' ]; $i++ ){
+            $product = $this->wcml_helper->add_product( 'en', false, 'TEST Draft product '.$i );
+            $draft = array(
+                'ID'			=> $product->id,
+                'post_status'	=> 'draft'
+            );
+            $this->wcml_helper->update_product( $draft );
+
+            $this->dummy_data[ 'draft_products' ][ 'ids' ][] = $product->id;
         }
 
-        //add translations
-        for($i = 0; $i<100; $i++) {
-            $product = $this->wcml_helper->add_product( 'es', $trid_map[$i], sprintf('Test Product ES: %d', $i) );
+        //add 3 products with child's in EN
+        $this->dummy_data[ 'products_with_childs' ][ 'count' ] = 3;
+        $this->dummy_data[ 'original_products_count' ] += $this->dummy_data[ 'products_with_childs' ][ 'count' ];
+        for( $i=0; $i<$this->dummy_data[ 'products_with_childs' ][ 'count' ]; $i++ ){
+            $product = $this->wcml_helper->add_product( 'en', false, 'TEST Product with Child '.$i );
+            $this->dummy_data[ 'products' ][ $product->id ] = array( 'id' => $product->id, 'trid' => $product->trid, 'language' => 'en', 'translations' => array() );
+            $child_product = $this->wcml_helper->add_product( 'en', false, 'Child Product for '.$product->id, $product->id );
+            $this->dummy_data[ 'products' ][ $product->id ] = array( 'id' => $child_product->id, 'trid' => $child_product->trid, 'language' => 'en', 'translations' => array() );
+
+            $this->dummy_data[ 'products_with_childs' ][ 'ids' ][] = $product->id;
         }
 
-        //add 10 dummy products in ES
-        $trid_map = array();
-        for($i = 0; $i<10; $i++) {
-            $product = $this->wcml_helper->add_product( 'es', false, sprintf( 'Test Product ES ORIGINAL: %d', $i ) );
-            $trid_map[$i] = $product->trid;
+        //add 3 products with category 1
+        $cat = $this->wcml_helper->add_term( 'Category 1', 'product_cat', 'en' );
+        $this->dummy_data[ 'terms' ][ 'product_cat' ][ $cat->term_id ] = array( 'id' => $cat->term_id, 'trid' => $cat->trid, 'language' => 'en' );
+        $this->dummy_data[ 'products_with_categories' ][ $cat->term_id ][ 'count' ] = 3;
+        $this->dummy_data[ 'original_products_count' ] += $this->dummy_data[ 'products_with_categories' ][ $cat->term_id ][ 'count' ];
+        for( $i=0; $i<$this->dummy_data[ 'products_with_categories' ][ $cat->term_id ][ 'count' ]; $i++ ){
+            $product = $this->wcml_helper->add_product( 'en', false, 'TEST Product with Category '.$cat->term_id );
+            $this->dummy_data[ 'products' ][ $product->id ] = array( 'id' => $product->id, 'trid' => $product->trid, 'language' => 'en', 'translations' => array() );
+            $this->wcml_helper->add_term( false, 'product_cat', 'en', $product->id, false, $cat->term_id );
+            $this->dummy_data[ 'products_with_categories' ][ $cat->term_id ][ 'ids' ][] = $product->id;
         }
 
-        //add translations
-        for($i = 0; $i<10; $i++) {
-            $product = $this->wcml_helper->add_product( 'en', $trid_map[$i], sprintf( 'Test Product ES ORIGINAL EN: %d', $i ) );
+        //set filter values
+        $this->dummy_data[ 'filters' ][ 'source_languages' ] = array_merge( array( 'all' ), $this->languages );
+        $this->dummy_data[ 'filters' ][ 'categories' ] = array_merge( array( 0 ), array_keys( $this->dummy_data[ 'terms' ][ 'product_cat' ] ) );
+        $this->dummy_data[ 'filters' ][ 'translation_statuses' ] = array( 'all', 'not', 'need_update', 'in_progress', 'complete' );
+        $this->dummy_data[ 'filters' ][ 'product_statuses' ] = array( 'all', 'publish', 'future', 'draft', 'pending', 'private' );
+
+        //set filter combinations to check ( key structure - *source_language*_*category*_*translation_status*_*product_status* )
+        $this->dummy_data[ 'filters' ][ 'combinations' ] = array();
+        $this->dummy_data[ 'filters' ][ 'combinations' ][ 'all_all_all_all' ] = $this->dummy_data[ 'original_products_count' ];
+        $this->dummy_data[ 'filters' ][ 'combinations' ][ 'en_all_all_all' ] = $this->dummy_data[ 'products_count' ][ 'en' ];
+        $this->dummy_data[ 'filters' ][ 'combinations' ][ 'en_all_all_publish' ] = $this->dummy_data[ 'original_products_count' ] - $this->dummy_data[ 'draft_products' ][ 'count' ] - $this->dummy_data[ 'products_count' ][ 'es' ];
+        $this->dummy_data[ 'filters' ][ 'combinations' ][ 'es_all_all_all' ] = $this->dummy_data[ 'products_count' ][ 'es' ];
+        foreach( $this->dummy_data[ 'products_with_categories' ] as $cat_id => $cat_wit_products ){
+            $this->dummy_data[ 'filters' ][ 'combinations' ][ 'all_'.$cat_id.'_all_all' ] = $cat_wit_products[ 'count' ];
         }
+        $this->dummy_data[ 'filters' ][ 'combinations' ][ 'all_all_all_draft' ] = $this->dummy_data[ 'draft_products' ][ 'count' ];
+        $this->dummy_data[ 'filters' ][ 'combinations' ][ 'en_all_all_draft' ] = $this->dummy_data[ 'draft_products' ][ 'count' ];
+        $this->dummy_data[ 'filters' ][ 'combinations' ][ 'es_all_all_draft' ] = 0;
+        $this->dummy_data[ 'filters' ][ 'combinations' ][ 'all_all_all_publish' ] = $this->dummy_data[ 'original_products_count' ] - $this->dummy_data[ 'draft_products' ][ 'count' ];
 
 
     }
 
-
-    function test_products_ui(){
-        global $wpml_post_translations;
-
-        //set some data for products
-        $products = $this->wcml_products_ui->get_product_list(1, 3, 'en');
-        foreach( $products as $key => $product ){
-            $child_product = $this->wcml_helper->add_product( 'en', false, 'Child Product EN'.$key, $product->ID );
-            if( $key == 2 ){
-                $child = array(
-                    'ID'			=> $child_product->id,
-                    'post_title' 	=> 'Child Product EN MADE PRIVATE',
-                    'post_status'	=> 'private'
-                );
-                $this->wcml_helper->update_product( $child );
-            }
-        }
-
-        $products = $this->wcml_products_ui->get_product_list( 2, 3, 'en' );
-        foreach( $products as $key => $product ){
-            $draft = array(
-                'ID'			=> $product->ID,
-                'post_status'	=> 'draft'
-            );
-            $this->wcml_helper->update_product( $draft );
-        }
-
-        $cat = $this->wcml_helper->add_term( 'Category 1', 'product_cat', 'en' );
-        $cat2 = $this->wcml_helper->add_term( 'Category 2', 'product_cat', 'en' );
-
-        $products = $this->wcml_products_ui->get_product_list( 3, 3, 'en' );
-        foreach( $products as $key => $product ){
-            $this->wcml_helper->add_term( false, 'product_cat', 'en', $product->ID, false, $cat->term_id );
-        }
-
-        $products = $this->wcml_products_ui->get_product_list( 4, 3, 'en' );
-        foreach( $products as $key => $product ){
-            $this->wcml_helper->add_term( false, 'product_cat', 'en', $product->ID, false, $cat->term_id );
-            $this->wcml_helper->add_term( false, 'product_cat', 'en', $product->ID, false, $cat2->term_id );
-        }
-
-        //check list
+    function test_products_list(){
 
         //user not a translator
         $products = $this->wcml_products_ui->get_products_data();
@@ -92,57 +110,43 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
 
         $products = $this->wcml_products_ui->get_products_data();
 
-        $active_languages = $this->sitepress->get_active_languages();
-        foreach( $products['products'] as $key => $product ){
 
-            foreach ( $active_languages as $active_language ) {
-                if( $active_language['code'] != $this->wcml_products->get_original_product_language( $product->ID ) ){
-                    $this->assertContains( 'data-language="'.$active_language['code'].'"', $product->translation_statuses );
+        foreach( $products['products'] as $key => $product ){
+            //check data language in links to translations
+            foreach ( $this->languages as $language ) {
+                if( $language != $this->wcml_products->get_original_product_language( $product->ID ) ){
+                    $this->assertContains( 'data-language="'.$language.'"', $product->translation_statuses );
                 }
+            }
+
+            //check products ID's
+            $i = 1;
+            $dummy_products_array = end( $this->dummy_data[ 'products' ] );
+            while( $dummy_product = prev( $dummy_products_array ) ) {
+                $this->assertEquals( $dummy_product['id'], $product->ID );
+                if( $i == 20 ) break;
+                $i++;
             }
         }
 
         //test products from filter
-
-        //test source language filter
-        $_GET['cat'] = 0;
-        $_GET['trst'] = 'all';
-        $_GET['st'] = 'all';
-        $active_languages = $this->sitepress->get_active_languages();
-
-        foreach ( $active_languages as $active_language ) {
-            $_GET['slang'] = $active_language['code'];
-            $products = $this->wcml_products_ui->get_products_data();
-
-            if( $active_language['code'] == 'en' ){
-                $this->assertEquals( 20, count( $products['products'] ) );
-            }elseif( $active_language['code'] == 'es' ){
-                $this->assertEquals( 10, count( $products['products'] ) );
-            }else{
-                $this->assertEquals( 0, $products['products_count'] );
+        foreach( $this->dummy_data[ 'filters' ][ 'source_languages' ] as $source_language ){
+            foreach( $this->dummy_data[ 'filters' ][ 'categories' ] as $category ){
+                foreach( $this->dummy_data[ 'filters' ][ 'translation_statuses' ] as $translation_status ){
+                    foreach( $this->dummy_data[ 'filters' ][ 'product_statuses' ] as $product_status ){
+                        if( isset( $this->dummy_data[ 'filters' ][ 'combinations' ][ $source_language.'_'.$category.'_'.$translation_status.'_'.$product_status ] ) ){
+                            $_GET['slang'] = $source_language;
+                            $_GET['cat'] = $category;
+                            $_GET['trst'] = $translation_status;
+                            $_GET['st'] = $product_status;
+                            $products = $this->wcml_products_ui->get_products_data();
+                            $this->assertEquals( $this->dummy_data[ 'filters' ][ 'combinations' ][ $source_language.'_'.$category.'_'.$translation_status.'_'.$product_status ], count( $products['products'] ) );
+                        }
+                    }
+                }
             }
-
         }
 
-        //test categories filter
-        $_GET['slang'] = 'all';
-        $_GET['cat'] = $cat->term_id;
-        $products = $this->wcml_products_ui->get_products_data();
-        $this->assertEquals( 6, $products['products_count'] );
-
-        $_GET['cat'] = $cat2->term_id;
-        $products = $this->wcml_products_ui->get_products_data();
-        $this->assertEquals( 3, $products['products_count'] );
-
-        //test
-        $_GET['cat'] = 0;
-        $_GET['st'] = 'draft';
-        $products = $this->wcml_products_ui->get_products_data();
-        $this->assertEquals( 3, $products['products_count'] );
-
-        $_GET['st'] = 'private';
-        $products = $this->wcml_products_ui->get_products_data();
-        $this->assertEquals( 1, $products['products_count'] );
     }
 
 
@@ -173,14 +177,14 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         $products = $this->wcml_products_ui->get_product_list( 1, 20, 'en');
 
         foreach( $products as $key => $product ){
-            $this->wcml_helper->add_term( 'Category '.$key, 'product_cat', 'en', $product->ID );
+            $this->wcml_helper->add_term( 'Categories test '.$key, 'product_cat', 'en', $product->ID );
         }
-        $this->assertEquals( 20, count( $this->wcml_products_ui->get_products_categories() ) );
+        $this->assertEquals( 23, count( $this->wcml_products_ui->get_products_categories() ) );
 
         $products = $this->wcml_products_ui->get_product_list( 1, 10, 'es');
 
         foreach( $products as $key => $product ){
-            $this->wcml_helper->add_term( 'Category ES '.$key, 'product_cat', 'es', $product->ID );
+            $this->wcml_helper->add_term( 'Categories test ES '.$key, 'product_cat', 'es', $product->ID );
         }
         $this->assertEquals( 10, count( $this->wcml_products_ui->get_products_categories( 'es' ) ) );
     }
@@ -188,46 +192,20 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
     function test_wcml_get_categories_list(){
 
         $product = $this->wcml_helper->add_product( 'en' , false, 'Test Product cat' );
-        $this->wcml_helper->add_term( 'Category 1', 'product_cat', 'en', $product->id );
-        $this->wcml_helper->add_term( 'Category 2', 'product_cat', 'en', $product->id );
+        $this->wcml_helper->add_term( 'Category list 1', 'product_cat', 'en', $product->id );
+        $this->wcml_helper->add_term( 'Category list 2', 'product_cat', 'en', $product->id );
 
 
         $cat_list = $this->wcml_products_ui->get_categories_list( $product->id, $this->wcml_products_ui->get_cat_url() );
         $this->assertEquals( 2, count( $cat_list ) );
-        $this->assertEquals( 'Category 1, ', $cat_list[0]['name'] );
-        $this->assertEquals( 'Category 2', $cat_list[1]['name'] );
-
-    }
-
-    function test_wcml_get_products_from_filter(){
-
-        $this->assertEquals( false, $this->wcml_products_ui->get_products_from_filter() );
-
-        $_GET['cat'] = 0;
-        $products_info = $this->wcml_products_ui->get_products_from_filter();
-
-        $this->assertEquals( 20, count( $products_info[ 'products' ] ) );
-        //we set 110 original products in SetUp method above
-        $this->assertEquals( 110, $products_info[ 'products_count' ] );
-
-
-        $term = $this->wcml_helper->add_term( 'Category 1', 'product_cat', 'en' );
-
-        $product = $this->wcml_helper->add_product( 'en' , false, 'Test Product cat' );
-        $this->wcml_helper->add_term( false, 'product_cat', 'en', $product->id, false, $term->term_id );
-
-        $product = $this->wcml_helper->add_product( 'en' , false, 'Test Product cat 2' );
-        $this->wcml_helper->add_term( false, 'product_cat', 'en', $product->id, false, $term->term_id );
-        $_GET['cat'] = $term->term_id;
-        $products_info = $this->wcml_products_ui->get_products_from_filter();
-        $this->assertEquals( 2, $products_info[ 'products_count' ] );
-
+        $this->assertEquals( 'Category list 1, ', $cat_list[0]['name'] );
+        $this->assertEquals( 'Category list 2', $cat_list[1]['name'] );
 
     }
 
     function test_wcml_get_products_count(){
         //we set 110 original products in SetUp method above
-        $this->assertEquals( 110, $this->wcml_products_ui->get_products_count( $this->wcml_products_ui->get_source_language() ) );
+        $this->assertEquals( 124, $this->wcml_products_ui->get_products_count( $this->wcml_products_ui->get_source_language() ) );
         //we set 10 ES original products in SetUp method above
         $this->assertEquals( 10, $this->wcml_products_ui->get_products_count( 'es' ) );
     }
@@ -311,12 +289,44 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         $this->assertTrue( $product_statuses->hasChildNodes() );
 
         //check products table
-        $img  = $dom->getElementsByTagName( 'img' );
-        $this->assertNotEmpty( $img );
-
         $products  = $dom->getElementsByTagName( 'tr' );
-        // 1 tr uses for filter drop-downs
+        // 1 tr uses for filter drop-downs and 20 products per page by default
         $this->assertEquals( 21, $products->length );
+
+        $i = 0;
+        foreach( $products as $product ){ $i++;
+            //skip filters tr
+            if( $i == 1 ) continue;
+
+            $cols = $product->getElementsByTagName( 'td' );
+
+            //test products tr row
+            $imgs = $cols->item(0)->getElementsByTagName( 'img' );
+            $this->assertNotEmpty( $imgs );
+            $this->assertContains( '.png', $imgs->item(0)->getAttribute( 'src' ) );
+
+            //check edit and view links
+            $links = $cols->item(1)->getElementsByTagName('a');
+            $this->assertNotEmpty( $links );
+            //$this->assertContains( 'action=edit', $links->item(1)->getAttribute( 'href' ) );
+            $this->assertContains( 'product', $links->item(2)->getAttribute( 'href' ) );
+
+            //links to translation editor pop-up
+            $editor_links = $cols->item(2)->getElementsByTagName('a');
+            $this->assertNotEmpty( $editor_links );
+            // note for original language we don't have a link
+            $this->assertEquals( count( $this->languages )-1, $editor_links->length );
+            foreach( $editor_links as $editor_link ){
+                $this->assertTrue( in_array( $editor_link->getAttribute( 'data-language' ), $this->languages ) );
+            }
+
+            //categories list
+            $this->assertNotEmpty( $cols->item(3) );
+            //product type
+            $this->assertNotEmpty( $cols->item(4) );
+            //product date
+            $this->assertNotEmpty( $cols->item(5) );
+        }
 
         //check pagination
         $current_page  = $dom->getElementById( 'current-page-selector' );
@@ -324,6 +334,5 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         $this->assertEquals( 1, $current_page->getAttribute('value') );
 
     }
-
 
 }

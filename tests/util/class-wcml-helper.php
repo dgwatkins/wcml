@@ -11,7 +11,68 @@ class WCML_Helper {
 
     }
 
+    /*
+     * $arg - array of data to add:
+     * 'count' -> count of products to add, 'translations' - language code for translations to add
+     */
+    public function add_dummy_products( $args ){
 
+        $dummy_data = array();
+
+        if( is_array( $args ) ){
+            foreach( $args as $lang_code => $data ){
+                for( $i = 0; $i < $data[ 'count' ]; $i++){
+                    $product = $this->add_product( $lang_code , false, sprintf('Test Product: %d', $i) );
+
+                    $dummy_data[ $product->id ][ 'id' ] = $product->id;
+                    $dummy_data[ $product->id ][ 'trid' ] = $product->trid;
+                    $dummy_data[ $product->id ][ 'language' ] = $lang_code;
+
+                    if( isset( $data[ 'translations' ] ) ){
+                        foreach( $data[ 'translations' ] as $trnsl_lang ){
+                            $trnsl_product = $this->add_product( $trnsl_lang, $product->trid, sprintf('Test Product %s: %d', $trnsl_lang, $i ) );
+                            $dummy_data[ $product->id ][ 'translations' ] = array( $trnsl_lang => $trnsl_product->id );
+                        }
+                    }
+                }
+            }
+        }
+
+        return $dummy_data;
+    }
+
+    /*
+    * $arg - array of data to add:
+    * 'count' -> count of products to add, 'translations' - language code for translations to add
+    */
+    public function add_dummy_terms( $args ){
+
+        $dummy_data = array();
+
+        if( is_array( $args ) ){
+            foreach( $args as $lang_code => $data ){
+                for( $i = 0; $i < $data[ 'count' ]; $i++){
+                    $term = $this->add_term( sprintf('Test terms for %s: %d', $data[ 'taxonomy' ], $i ), $data[ 'taxonomy' ], $lang_code );
+
+                    $dummy_data[ $data[ 'taxonomy' ] ][ $term->term_id ][ 'id' ] = $term->term_id;
+                    $dummy_data[ $data[ 'taxonomy' ] ][ $term->term_id ][ 'trid' ] = $term->trid;
+                    $dummy_data[ $data[ 'taxonomy' ] ][ $term->term_id ][ 'language' ] = $lang_code;
+
+                    if( isset( $data[ 'translations' ] ) ){
+                        foreach( $data[ 'translations' ] as $trnsl_lang ){
+                            $trnsl_term = $this->add_term( sprintf('Test terms for %s %d: %d', $data[ 'taxonomy' ], $trnsl_lang, $i ), $data[ 'taxonomy' ], $lang_code, false, $term->trid );
+                            $dummy_data[ $data[ 'taxonomy' ] ][ $term->term_id ][ 'translations' ] = array( $trnsl_lang => $trnsl_term->term_id );
+                        }
+                    }
+                }
+            }
+        }
+
+        return $dummy_data;
+
+    }
+
+    
     public static function add_product( $language, $trid = false, $title = false, $parent = 0, $meta = array() ) {
         global $wpml_post_translations;
 
