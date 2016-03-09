@@ -8,13 +8,9 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 		global $woocommerce_wpml, $WPML_String_Translation;
 		$WPML_String_Translation->init_active_languages();
 
-		require_once WCML_PLUGIN_PATH . '/inc/wc-strings.class.php';
-		$woocommerce_wpml->strings           = new WCML_WC_Strings;
-
-		$woocommerce_wpml->url_translation = new WCML_Url_Translation();
-
-		require_once WCML_PLUGIN_PATH . '/inc/class-wcml-languages-upgrader.php';
-		$woocommerce_wpml->languages_upgrader = new WCML_Languages_Upgrader;
+		$woocommerce_wpml->strings           	= new WCML_WC_Strings;
+		$woocommerce_wpml->url_translation 		= new WCML_Url_Translation();
+		$woocommerce_wpml->languages_upgrader 	= new WCML_Languages_Upgrader;
 
 		$this->url_translation =& $woocommerce_wpml->url_translation;
 
