@@ -29,7 +29,6 @@ function _manually_load_plugin() {
 	require WPML_CORE_MT_PATH . '/plugin.php';
 	require WC_PATH. '/woocommerce.php';
 	require dirname( __FILE__ ) . '/../wpml-woocommerce.php';
-
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
@@ -43,8 +42,13 @@ function _install_wc(){
 	$GLOBALS['wp_roles']->reinit();
 }
 
+// Install WPML
+tests_add_filter( 'wpml_loaded', 'wpml_test_install_setup' );
+// Launch WCML
+tests_add_filter( 'wpml_loaded', 'wpml_wcml_startup' );
 // install WC
 tests_add_filter( 'init', '_install_wc' );
+
 
 // Temporary workaround for missing WP_REST_Server class missing
 tests_add_filter( 'init', 'WP_REST_Server_placeholder' );
