@@ -428,7 +428,7 @@ class woocommerce_wpml {
         wp_register_script('wcml-lock-script', WCML_PLUGIN_URL . '/assets/js/lock_fields.js', array('jquery'), WCML_VERSION);
         wp_enqueue_script('wcml-lock-script');
 
-        wp_localize_script( 'wcml-lock-script', 'unlock_fields', array( 'menu_order' => $this->settings['products_sync_order']) );
+        wp_localize_script( 'wcml-lock-script', 'unlock_fields', array( 'menu_order' => $this->settings['products_sync_order'], 'file_paths' => $this->settings['file_path_sync'] ) );
     }
 
     function hidden_label(){
