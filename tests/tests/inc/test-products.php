@@ -7,7 +7,6 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 		global $woocommerce_wpml, $wpml_post_translations, $wpml_term_translations;
 
 		$this->woocommerce_wpml = &$woocommerce_wpml;
-		require_once WCML_PLUGIN_PATH . '/inc/products.class.php';
 		$this->woocommerce_wpml->products = new WCML_Products;
 		$this->woocommerce_wpml->attributes = new WCML_Attributes();
 		$this->wcml_helper = new WCML_Helper();

@@ -6,10 +6,7 @@ class Test_WCML_Strings extends WCML_UnitTestCase {
 	function setUp(){
 		parent::setUp();
 		global $woocommerce_wpml;
-
-		require_once WCML_PLUGIN_PATH . '/inc/wc-strings.class.php';
 		$woocommerce_wpml->strings           = new WCML_WC_Strings;
-
 	}
 
 	function test_translate_attributes_label_in_wp_taxonomies() {
