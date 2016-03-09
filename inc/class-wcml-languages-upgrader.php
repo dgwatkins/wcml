@@ -160,7 +160,7 @@ class WCML_Languages_Upgrader{
         }
 
         foreach( $notices as $key => $locale){
-            if( strstr( $package, 'woocommerce-language-packs') && strstr( $package, $locale) ){
+            if( strstr( $package, 'woocommerce') && strstr( $package, $locale) ){
 
                 $this->save_translation_version( $locale, $key );
 
