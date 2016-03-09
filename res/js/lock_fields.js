@@ -1,6 +1,9 @@
 jQuery(document).ready(function($){
     var i;
     var ids = ['_virtual','_downloadable','product-type','_backorders','_manage_stock','_stock','_sold_individually','comment_status','_tax_status','_tax_class','parent_id','crosssell_ids','upsell_ids'];
+    if( unlock_fields.file_paths == 1 ){
+        ids.push('_download_type');
+    }
     ids = ids.concat( non_standard_fields.ids );
 
     $('.wcml_prod_hidden_notice').prependTo('#woocommerce-product-data');
@@ -11,6 +14,11 @@ jQuery(document).ready(function($){
     }
 
     var buttons = ['add_variation','link_all_variations','attribute_taxonomy','save_attributes','add_new_attribute','product_attributes .remove_row','add_attribute','select_all_attributes','select_no_attributes'];
+    if( unlock_fields.file_paths == 1 ){
+        buttons.push('upload_file_button');
+        buttons.push('insert');
+        buttons.push('delete');
+    }
     buttons = buttons.concat( non_standard_fields.classes );
 
     if( unlock_fields.files_sync == 1 ){
@@ -35,6 +43,12 @@ jQuery(document).ready(function($){
     });
 
     var inpt_names = ['_width','_height','_sku','_length','_weight','product_length','_regular_price','_sale_price','_sale_price_dates_from','_sale_price_dates_to'];
+    if( unlock_fields.file_paths == 1 ){
+        inpt_names.push('_download_limit');
+        inpt_names.push('_download_expiry');
+        inpt_names.push('_wc_file_names[]');
+        inpt_names.push('_wc_file_urls[]');
+    }
     inpt_names = inpt_names.concat( non_standard_fields.input_names );
 
     if( unlock_fields.menu_order == 1 ){
@@ -117,6 +131,21 @@ var wcml_lock_variation_fields = function(){
             jQuery(this).parent().append('<input type="hidden" name="'+jQuery(this).attr('name')+'" value="'+jQuery(this).val()+'" />');
             jQuery(this).after(jQuery('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
         });
+    }
+
+    if( unlock_fields.file_paths == 1 ){
+        var file_path_inputs = ['_wc_variation_file_names','_wc_variation_file_urls'];
+        for (i = 0; i < file_path_inputs.length; i++) {
+            jQuery('input[name^="'+file_path_inputs[i]+'"]').each(function(){
+                jQuery(this).attr('readonly','readonly');
+                jQuery(this).after(jQuery('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
+            });
+        }
+        var file_path_buttons = ['upload_file_button','insert','delete'];
+        for (i = 0; i < file_path_buttons.length; i++) {
+            jQuery('.'+file_path_buttons[i]).attr('disabled','disabled');
+            jQuery('.'+file_path_buttons[i]).after(jQuery('.wcml_lock_img').clone().removeClass('wcml_lock_img').show().css('float','right'));
+        }
     }
 
 }
