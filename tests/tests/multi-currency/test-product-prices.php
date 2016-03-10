@@ -4,29 +4,23 @@
 class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 	function setUp(){
-		global $woocommerce_wpml, $sitepress;
 
 		add_filter('wcml_load_multi_currency', '__return_true');
 		set_current_screen( 'front' );
 
 		parent::setUp();
 
-		$this->sitepress        =& $sitepress;
-		$this->woocommerce_wpml =& $woocommerce_wpml;
-
 		// Multi currency objects
-		$woocommerce_wpml->multi_currency_support = new WCML_Multi_Currency_Support;
-		$woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
+		$this->woocommerce_wpml->multi_currency_support = new WCML_Multi_Currency_Support;
+		$this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
 
-		$woocommerce_wpml->multi_currency_support->init();
-		$woocommerce_wpml->multi_currency->init();
+		$this->woocommerce_wpml->multi_currency_support->init();
+		$this->woocommerce_wpml->multi_currency->init();
 
 		// settings
-		$this->settings 				=& $woocommerce_wpml->settings;
-		$this->multi_currency 			=& $woocommerce_wpml->multi_currency;
-		$this->multi_currency_support 	=& $woocommerce_wpml->multi_currency_support;
-
-		$this->wcml_helper = new WCML_Helper();
+		$this->settings 				=& $this->woocommerce_wpml->settings;
+		$this->multi_currency 			=& $this->woocommerce_wpml->multi_currency;
+		$this->multi_currency_support 	=& $this->woocommerce_wpml->multi_currency_support;
 
 		// LANGUAGE AND CURRENCIES
 		$this->default_currency 	= 'GBP';

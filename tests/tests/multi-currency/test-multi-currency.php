@@ -6,12 +6,8 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
 		parent::setUp();
 
-		// set up
-		global $woocommerce_wpml;
-
-
 		// settings
-		$settings = $woocommerce_wpml->settings;
+		$settings = $this->woocommerce_wpml->settings;
 		$settings['enable_multi_currency'] = 2;
 		$settings['default_currencies'] = array( 'en' => 'USD', 'de' => 'RON', 'it' => 'AUD'  );
 		$settings['currency_options']['USD'] = array(
@@ -60,14 +56,14 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
 		$this->settings =& $settings;
 
-		$woocommerce_wpml->update_settings( $settings );
+		$this->woocommerce_wpml->update_settings( $settings );
 
 		// Multi currency objects
-		$woocommerce_wpml->multi_currency_support = new WCML_Multi_Currency_Support;
-		$this->multi_currency_support =& $woocommerce_wpml->multi_currency_support;
+		$this->woocommerce_wpml->multi_currency_support = new WCML_Multi_Currency_Support;
+		$this->multi_currency_support =& $this->woocommerce_wpml->multi_currency_support;
 
-		$woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
-		$this->multi_currency =& $woocommerce_wpml->multi_currency;
+		$this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
+		$this->multi_currency =& $this->woocommerce_wpml->multi_currency;
 	}
 
 
@@ -128,7 +124,6 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
 	// test converting the coupon amount when using the multi currency mode
 	function test_filter_coupon_data(){
-		global $woocommerce;
 
 		$coupon = WCML_Helper_Coupon::create_coupon();
 

@@ -44,10 +44,10 @@ function _install_wc(){
 
 // Install WPML
 tests_add_filter( 'wpml_loaded', 'wpml_test_install_setup' );
-// Launch WCML
-tests_add_filter( 'wpml_loaded', 'wpml_wcml_startup' );
 // install WC
 tests_add_filter( 'init', '_install_wc' );
+// Launch WCML
+tests_add_filter( 'wpml_loaded', 'wpml_wcml_startup' );
 
 
 // Temporary workaround for missing WP_REST_Server class missing

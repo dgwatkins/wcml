@@ -2,22 +2,18 @@
 
 class Test_WCML_Currencies extends WCML_UnitTestCase {
 
-    private $woocommerce_wpml;
     private $settings_backup;
 
     function setUp(){
-        global $woocommerce_wpml;
 
         parent::setUp();
 
-        $this->woocommerce_wpml =& $woocommerce_wpml;
-
         set_current_screen( 'dashboard' );
-        $woocommerce_wpml->currencies = new WCML_Currencies( $woocommerce_wpml );
-        $woocommerce_wpml->currencies->init();
+        $this->woocommerce_wpml->currencies = new WCML_Currencies( $this->woocommerce_wpml );
+        $this->woocommerce_wpml->currencies->init();
 
         // settings
-        $settings = $woocommerce_wpml->settings;
+        $settings = $this->woocommerce_wpml->settings;
         $settings['enable_multi_currency'] = 2;
         $settings['default_currencies'] = array( 'en' => 'USD', 'de' => 'RON'  );
         $settings['currency_options']['USD'] = array(
@@ -46,7 +42,7 @@ class Test_WCML_Currencies extends WCML_UnitTestCase {
         $this->settings =& $settings;
 
 
-        $woocommerce_wpml->update_settings( $settings );
+        $this->woocommerce_wpml->update_settings( $settings );
 
 
     }
