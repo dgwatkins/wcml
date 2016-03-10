@@ -794,7 +794,7 @@ class WCML_Products{
 
     //duplicate product post meta
     function duplicate_product_post_meta($original_product_id, $trnsl_product_id, $data = false , $add = false ){
-        global $sitepress;
+        global $sitepress, $woocommerce_wpml;
         $settings = $sitepress->get_settings();
         $lang = $sitepress->get_language_for_element($trnsl_product_id,'post_product');
 
@@ -815,21 +815,25 @@ class WCML_Products{
                 if($data){
                     if(isset($data[$key.'_'.$lang]) && isset($settings['translation-management']['custom_fields_translation'][$key]) && $settings['translation-management']['custom_fields_translation'][$key] == 2){
                         if($key == '_file_paths'){
-                            $file_paths = explode("\n",$data[$key.'_'.$lang]);
-                            $file_paths_array = array();
-                            foreach($file_paths as $file_path){
-                                $file_paths_array[md5($file_path)] = $file_path;
+                            if( !$woocommerce_wpml->settings['file_path_sync'] ){
+                                $file_paths = explode("\n",$data[$key.'_'.$lang]);
+                                $file_paths_array = array();
+                                foreach($file_paths as $file_path){
+                                    $file_paths_array[md5($file_path)] = $file_path;
+                                }
+                                $meta_value = $file_paths_array;
                             }
-                            $meta_value = $file_paths_array;
-                        }elseif($key == '_downloadable_files'){
-                            $file_paths_array = array();
-                            foreach($data[$key.'_'.$lang] as $file_path){
-                                $key_file = md5($file_path['file'].$file_path['name']);
-                                $file_paths_array[$key_file]['name'] = $file_path['name'];
-                                $file_paths_array[$key_file]['file'] = $file_path['file'];
-                            }
-                            $meta_value = $file_paths_array;
 
+                        }elseif($key == '_downloadable_files'){
+                            if( !$woocommerce_wpml->settings['file_path_sync'] ) {
+                                $file_paths_array = array();
+                                    foreach ($data[$key . '_' . $lang] as $file_path) {
+                                        $key_file = md5($file_path['file'] . $file_path['name']);
+                                    $file_paths_array[$key_file]['name'] = $file_path['name'];
+                                    $file_paths_array[$key_file]['file'] = $file_path['file'];
+                                }
+                                $meta_value = $file_paths_array;
+                            }
                         }else{
                             $meta_value = $data[$key.'_'.$lang];
                         }
@@ -895,7 +899,7 @@ class WCML_Products{
                         update_post_meta($trnsl_product_id,$key,$meta_value);
                     }
                 }else{
-                    if(isset($settings['translation-management']['custom_fields_translation'][$key]) && $settings['translation-management']['custom_fields_translation'][$key] == 1){
+                    if( in_array( $key ,array( '_file_paths', '_downloadable_files' )) || ( isset($settings['translation-management']['custom_fields_translation'][$key]) && $settings['translation-management']['custom_fields_translation'][$key] == 1 ) ){
                         $meta_value = apply_filters('wcml_meta_value_before_add',$meta_value,$key);
                         update_post_meta($trnsl_product_id, $key, $meta_value);
                     }
