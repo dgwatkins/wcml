@@ -42,11 +42,9 @@ class woocommerce_wpml {
 
         if( !$this->check_dependencies ){
             wp_enqueue_style( 'onthegosystems-icon', WCML_PLUGIN_URL . '/res/css/otgs-ico.css' );
-            $this->load_managment_css();
+            WCML_Resources::load_managment_css();
             return false;
         }
-
-        $this->load_css_and_js();
 
         $actions_that_need_mc = array( 'save-mc-options', 'wcml_new_currency', 'wcml_save_currency', 'wcml_delete_currency',
                 'wcml_update_currency_lang', 'wcml_update_default_currency', 'wcml_price_preview');
@@ -90,6 +88,8 @@ class woocommerce_wpml {
 
         WCML_Install::initialize( $this, $sitepress );
 
+        WCML_Resources::set_up_resources( $this );
+
         add_action('init', array($this,'load_locale'));
 
         register_deactivation_hook(__FILE__, array($this, 'deactivation_actions'));
@@ -104,13 +104,6 @@ class woocommerce_wpml {
         //add_filter('woocommerce_redirect', array($this, 'filter_woocommerce_redirect_location'));
 
         add_filter('woocommerce_paypal_args', array($this, 'filter_paypal_args'));
-
-        if( ($pagenow == 'post.php' && isset($_GET['post']) && get_post_type($_GET['post']) == 'product' && !$this->products->is_original_product($_GET['post'])) ||
-            ($pagenow == 'post-new.php' && isset($_GET['source_lang']) && isset($_GET['post_type']) && $_GET['post_type'] == 'product')
-            && !$this->settings['trnsl_interface']){
-            add_action('init', array($this, 'load_lock_fields_js'));
-            add_action( 'admin_footer', array($this,'hidden_label'));
-        }
 
         add_action('wp_ajax_wcml_update_setting_ajx', array($this, 'update_setting_ajx'));
 
@@ -176,129 +169,6 @@ class woocommerce_wpml {
 
     function deactivation_actions(){
         delete_option('wpml_dismiss_doc_main');
-    }
-
-    function load_css_and_js() {
-        global $pagenow;
-
-        if( isset( $_GET[ 'page' ] ) ){
-
-            $this->load_managment_css();
-
-            if( in_array( $_GET[ 'page' ], array( 'wpml-wcml' ) ) ) {
-
-	            wp_register_script( 'wcml-tm-scripts', WCML_PLUGIN_URL . '/res/js/scripts.js', array(
-		            'jquery',
-		            'jquery-ui-core',
-		            'jquery-ui-resizable'
-	            ), WCML_VERSION );
-	            wp_register_script( 'jquery-cookie', WCML_PLUGIN_URL . '/res/js/jquery.cookie.js', array( 'jquery' ), WCML_VERSION );
-                wp_register_script( 'wcml-editor', WCML_PLUGIN_URL . '/res/js/wcml-translation-editor.js', array( 'jquery', 'jquery-ui-core' ), WCML_VERSION );
-                wp_register_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs.js', array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'), WCML_VERSION );
-                wp_register_script( 'wcml-troubleshooting', WCML_PLUGIN_URL . '/res/js/troubleshooting.js', array( 'jquery' ), WCML_VERSION );
-                wp_register_style( 'wpml-dialogs', ICL_PLUGIN_URL . '/res/css/dialogs.css', null, ICL_SITEPRESS_VERSION );
-
-                wp_enqueue_script( 'wcml-dialogs' );
-                wp_enqueue_script( 'wcml-editor' );
-                wp_enqueue_script( 'wcml-tm-scripts' );
-                wp_enqueue_script( 'jquery-cookie' );
-                wp_enqueue_script( 'wcml-troubleshooting' );
-                wp_enqueue_style( 'wcml-dialogs' );
-
-                wp_localize_script( 'wcml-tm-scripts', 'wcml_settings',
-                    array(
-                        'nonce'             => wp_create_nonce( 'woocommerce_multilingual' )
-                    )
-                );
-
-                $this->load_tooltip_resources();
-            }
-
-            if( $_GET[ 'page' ] == WPML_TM_FOLDER.'/menu/main.php' ){
-	            wp_register_script( 'wpml_tm', WCML_PLUGIN_URL . '/res/js/wpml_tm.js', array( 'jquery' ), WCML_VERSION );
-                wp_enqueue_script( 'wpml_tm' );
-            }
-
-            if( $_GET[ 'page' ] == 'wpml-wcml' || ( isset( $_GET[ 'tab' ] ) && $_GET[ 'tab' ] == 'products' ) ) {
-                wp_register_style( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/css/dialogs.css', null, WCML_VERSION );
-                wp_enqueue_style( 'wcml-dialogs' );
-            }
-
-            if( $_GET[ 'page' ] == 'wpml-wcml' && isset( $_GET[ 'tab' ] ) && $_GET[ 'tab' ] == 'multi-currency' ){
-                wp_register_script( 'multi-currency', WCML_PLUGIN_URL . '/res/js/multi-currency.js', array( 'jquery', 'jquery-ui-sortable' ), WCML_VERSION, true );
-                wp_enqueue_script( 'multi-currency' );
-            }
-
-        }
-
-        if( $pagenow == 'options-permalink.php' ){
-            wp_register_style( 'wcml_op', WCML_PLUGIN_URL . '/res/css/options-permalink.css', null, WCML_VERSION );
-            wp_enqueue_style( 'wcml_op' );
-        }
-
-        if( !is_admin() ){
-            wp_register_script( 'cart-widget', WCML_PLUGIN_URL . '/res/js/cart_widget.js', array( 'jquery' ), WCML_VERSION );
-            wp_enqueue_script( 'cart-widget' );
-        }else{
-
-            wp_register_script( 'wcml-messages', WCML_PLUGIN_URL . '/res/js/wcml-messages.js', array( 'jquery' ), WCML_VERSION );
-            wp_enqueue_script( 'wcml-messages' );
-
-        }
-
-    }
-
-    function load_managment_css(){
-
-        if( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == 'wpml-wcml' ) {
-            wp_register_style( 'wpml-wcml', WCML_PLUGIN_URL . '/res/css/management.css', array(), WCML_VERSION );
-            wp_enqueue_style( 'wpml-wcml' );
-        }
-
-    }
-
-    //load Tooltip js and styles from WC
-    function load_tooltip_resources(){
-        if( class_exists( 'woocommerce' ) ){
-            wp_register_script( 'jquery-tiptip', WC()->plugin_url() . '/assets/js/jquery-tiptip/jquery.tipTip.min.js', array( 'jquery' ), WC_VERSION, true );
-	        wp_register_script( 'wcml-tooltip-init', WCML_PLUGIN_URL . '/res/js/tooltip_init.js', array( 'jquery' ), WCML_VERSION );
-            wp_enqueue_script( 'jquery-tiptip' );
-            wp_enqueue_script( 'wcml-tooltip-init' );
-            wp_enqueue_style( 'woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION );
-        }
-    }
-
-    function load_lock_fields_js(){
-	    wp_register_script( 'wcml-lock-script', WCML_PLUGIN_URL . '/res/js/lock_fields.js', array( 'jquery' ), WCML_VERSION );
-        wp_enqueue_script('wcml-lock-script');
-
-        wp_localize_script( 'wcml-lock-script', 'unlock_fields', array( 'menu_order' => $this->settings['products_sync_order'], 'file_paths' => $this->settings['file_path_sync'] ) );
-        wp_localize_script( 'wcml-lock-script', 'non_standard_fields', array(
-            'ids' => apply_filters( 'wcml_js_lock_fields_ids', array() ),
-            'classes' => apply_filters( 'wcml_js_lock_fields_classes', array() ),
-            'input_names' => apply_filters( 'wcml_js_lock_fields_input_names', array() )
-        ) );
-    }
-
-    function hidden_label(){
-	    echo '<img src="' . WCML_PLUGIN_URL . '/res/images/locked.png" class="wcml_lock_img" alt="' . __( 'This field is locked for editing because WPML will copy its value from the original language.', 'woocommerce-multilingual' ) . '" title="' . __( 'This field is locked for editing because WPML will copy its value from the original language.', 'woocommerce-multilingual' ) . '" style="display: none;position:relative;left:2px;top:2px;">';
-
-        if( isset($_GET['post']) ){
-            $original_language = $this->products->get_original_product_language($_GET['post']);
-            $original_id = apply_filters( 'translate_object_id',$_GET['post'],'product',true,$original_language);
-        }elseif( isset($_GET['trid']) ){
-            global $sitepress;
-            $original_id = $sitepress->get_original_element_id_by_trid( $_GET['trid'] );
-        }
-
-        if( isset($_GET['lang'])){
-            $language =  $_GET['lang'];
-        }else{
-            return;
-        }
-
-
-        echo '<h3 class="wcml_prod_hidden_notice">'.sprintf(__("This is a translation of %s. Some of the fields are not editable. It's recommended to use the %s for translating products.",'woocommerce-multilingual'),'<a href="'.get_edit_post_link($original_id).'" >'.get_the_title($original_id).'</a>','<a data-action="product-translation-dialog" class="js-wcml-dialog-trigger" data-id="'.$original_id.'" data-job_id="" data-language="'. $language .'">'.__('WooCommerce Multilingual products translator','woocommerce-multilingual').'</a>').'</h3>';
     }
 
     function generate_tracking_link($link,$term=false,$content = false, $id = false){
