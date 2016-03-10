@@ -2,7 +2,9 @@
 class woocommerce_wpml {
 
     public $settings;
+
     public $troubleshooting;
+    private $compatibility;
     public $endpoints;
     public $products;
     public $store;
@@ -13,11 +15,9 @@ class woocommerce_wpml {
     public $currencies;
     public $multi_currency_support;
     public $multi_currency;
+    private $xdomain_data;
     public $languages_upgrader;
     public $url_translation;
-
-    private $compatibility;
-    private $xdomain_data;
     private $reports;
     private $requests;
 
@@ -62,25 +62,22 @@ class woocommerce_wpml {
 
         WCML_Admin_Menus::set_up_menus( $this, $sitepress );
 
-        $this->troubleshooting   = new WCML_Troubleshooting();
-        $this->compatibility     = new WCML_Compatibility();
-
-        $this->endpoints         = new WCML_Endpoints;
-        $this->products          = new WCML_Products;
-        $this->store             = new WCML_Store_Pages;
-        $this->emails            = new WCML_Emails;
-        $this->terms             = new WCML_Terms;
-        $this->attributes        = new WCML_Attributes;
-        $this->orders            = new WCML_Orders;
-        $this->strings           = new WCML_WC_Strings;
-        $this->currencies        = new WCML_Currencies( $this );
-        $this->currency_switcher = new WCML_Currency_Switcher;
-        $this->xdomain_data      = new xDomain_Data;
-        $this->languages_upgrader = new WCML_Languages_Upgrader;
-
-        $this->url_translation   = new WCML_Url_Translation;
-
-        $this->requests          = new WCML_Requests;
+        $this->troubleshooting      = new WCML_Troubleshooting();
+        $this->compatibility        = new WCML_Compatibility();
+        $this->endpoints            = new WCML_Endpoints;
+        $this->products             = new WCML_Products;
+        $this->store                = new WCML_Store_Pages;
+        $this->emails               = new WCML_Emails;
+        $this->terms                = new WCML_Terms;
+        $this->attributes           = new WCML_Attributes;
+        $this->orders               = new WCML_Orders;
+        $this->strings              = new WCML_WC_Strings;
+        $this->currencies           = new WCML_Currencies( $this );
+        $this->currency_switcher    = new WCML_Currency_Switcher;
+        $this->xdomain_data         = new WCML_xDomain_Data;
+        $this->languages_upgrader   = new WCML_Languages_Upgrader;
+        $this->url_translation      = new WCML_Url_Translation;
+        $this->requests             = new WCML_Requests;
 
         if(isset($_GET['page']) && $_GET['page'] == 'wc-reports'){
             $this->reports          = new WCML_Reports;
@@ -88,11 +85,10 @@ class woocommerce_wpml {
 
         include WCML_PLUGIN_PATH . '/inc/woocommerce-2.0-backward-compatibility.php';
 
-
         new WCML_Ajax_Setup;
         new WCML_WooCommerce_Rest_API_Support;
 
-        $this->install();
+        WCML_Install::initialize( $this, $sitepress );
 
         add_action('init', array($this,'load_locale'));
 
@@ -100,7 +96,6 @@ class woocommerce_wpml {
 
         if(is_admin()){
             add_action('admin_footer', array($this, 'documentation_links'));
-            add_action('admin_notices', array($this, 'admin_notice_after_install'));
         }
 
         add_filter('woocommerce_get_checkout_payment_url', array($this, 'filter_woocommerce_redirect_location'));
@@ -177,96 +172,6 @@ class woocommerce_wpml {
 
     function load_locale(){
         load_plugin_textdomain('woocommerce-multilingual', false, WCML_LOCALE_PATH);
-    }
-
-    function install(){
-
-        if(empty($this->settings['set_up'])){ // from 3.2     
-
-            if ($this->settings['is_term_order_synced'] !== 'yes') {
-                //global term ordering resync when moving to >= 3.3.x
-                add_action('init', array($this->terms, 'sync_term_order_globally'), 20);
-            }
-
-            if(!isset($this->settings['wc_admin_options_saved'])){
-                $this->handle_admin_texts();
-                $this->settings['wc_admin_options_saved'] = 1;
-            }
-
-            if(!isset($this->settings['trnsl_interface'])){
-                $this->settings['trnsl_interface'] = 1;
-            }
-
-            if(!isset($this->settings['products_sync_date'])){
-                $this->settings['products_sync_date'] = 1;
-            }
-
-            if(!isset($this->settings['products_sync_order'])){
-                $this->settings['products_sync_order'] = 1;
-            }
-
-            if(!isset($this->settings['display_custom_prices'])){
-                $this->settings['display_custom_prices'] = 0;
-            }
-
-            if(!isset($this->settings['sync_taxonomies_checked'])){
-                $this->terms->check_if_sync_terms_needed();
-                $this->settings['sync_taxonomies_checked'] = 1;
-            }
-
-            WCML_Capabilities::set_up_capabilities();
-
-            $this->set_language_information();
-
-            $this->settings['set_up'] = 1;
-            $this->update_settings();
-
-
-        }
-
-        if(empty($this->settings['downloaded_translations_for_wc'])){ //from 3.3.3
-            $this->languages_upgrader->download_woocommerce_translations_for_active_languages();
-            $this->settings['downloaded_translations_for_wc'] = 1;
-            $this->update_settings();
-        }
-    }
-
-    function set_language_information(){
-        global $sitepress,$wpdb;
-
-        $def_lang = $sitepress->get_default_language();
-        //set language info for products
-        $products = $wpdb->get_results("SELECT ID FROM $wpdb->posts WHERE post_type = 'product' AND post_status <> 'auto-draft'");
-        foreach($products as $product){
-            $exist = $sitepress->get_language_for_element($product->ID,'post_product');
-            if(!$exist){
-            $sitepress->set_element_language_details($product->ID, 'post_product',false,$def_lang);
-            }
-        }
-
-        //set language info for taxonomies
-        $terms = $wpdb->get_results("SELECT term_taxonomy_id FROM $wpdb->term_taxonomy WHERE taxonomy = 'product_cat'");
-        foreach($terms as $term){
-            $exist = $sitepress->get_language_for_element($term->term_taxonomy_id, 'tax_product_cat');
-            if(!$exist){
-            $sitepress->set_element_language_details($term->term_taxonomy_id, 'tax_product_cat',false,$def_lang);
-            }
-        }
-        $terms = $wpdb->get_results("SELECT term_taxonomy_id FROM $wpdb->term_taxonomy WHERE taxonomy = 'product_tag'");
-        foreach($terms as $term){
-            $exist = $sitepress->get_language_for_element($term->term_taxonomy_id, 'tax_product_tag');
-            if(!$exist){
-            $sitepress->set_element_language_details($term->term_taxonomy_id, 'tax_product_tag',false,$def_lang);
-            }
-        }
-
-        $terms = $wpdb->get_results("SELECT term_taxonomy_id FROM $wpdb->term_taxonomy WHERE taxonomy = 'product_shipping_class'");
-        foreach($terms as $term){
-            $exist = $sitepress->get_language_for_element($term->term_taxonomy_id, 'tax_product_shipping_class');
-            if(!$exist){
-            $sitepress->set_element_language_details($term->term_taxonomy_id, 'tax_product_shipping_class',false,$def_lang);
-            }
-        }
     }
 
     function deactivation_actions(){
@@ -472,30 +377,6 @@ class woocommerce_wpml {
         }
     }
 
-    function admin_notice_after_install(){
-        if($this->settings['dismiss_doc_main'] != 'yes'){
-
-            $url = $_SERVER['REQUEST_URI'];
-            $pos = strpos($url, '?');
-
-            if($pos !== false){
-                $url .= '&wcml_action=dismiss';
-            } else {
-                $url .= '?wcml_action=dismiss';
-            }
-    ?>
-            <div id="message" class="updated message fade" style="clear:both;margin-top:5px;"><p>
-                <?php _e('Would you like to see a quick overview?', 'woocommerce-multilingual'); ?>
-                </p>
-                <p>
-                <a class="button-primary" href="<?php echo $this->generate_tracking_link('https://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation'); ?>" target="_blank"><?php _e('Learn how to turn your e-commerce site multilingual', 'woocommerce-multilingual') ?></a>
-                <a class="button-secondary" href="<?php echo $url; ?>"><?php _e('Dismiss', 'woocommerce-multilingual') ?></a>
-                </p>
-            </div>
-    <?php
-        }
-    }
-
     function filter_woocommerce_redirect_location($link){
         global $sitepress;
         return html_entity_decode($sitepress->convert_url($link));
@@ -512,19 +393,6 @@ class woocommerce_wpml {
         }
 
         return $args;
-    }
-
-    function handle_admin_texts(){
-        if(class_exists('woocommerce')){
-            //emails texts
-            $emails = new WC_Emails();
-            foreach($emails->emails as $email){
-                $option_name  = $email->plugin_id.$email->id.'_settings';
-                if(!get_option($option_name)){
-                    add_option($option_name,$email->settings);
-                }
-            }
-        }
     }
 
     function hide_variation_type_on_tm_dashboard( $types ){

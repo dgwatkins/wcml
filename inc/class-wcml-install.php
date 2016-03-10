@@ -1,0 +1,138 @@
+<?php
+
+class WCML_Install{
+
+    public static function initialize( &$woocommerce_wpml, &$sitepress ) {
+
+        add_action( 'admin_notices', array(__CLASS__, 'admin_notice_after_install') );
+
+        // Install routine
+        if ( empty($woocommerce_wpml->settings['set_up']) ) { // from 3.2
+
+            if ( $woocommerce_wpml->settings['is_term_order_synced'] !== 'yes' ) {
+                //global term ordering resync when moving to >= 3.3.x
+                add_action( 'init', array($woocommerce_wpml->terms, 'sync_term_order_globally'), 20 );
+            }
+
+            if ( !isset($woocommerce_wpml->settings['wc_admin_options_saved']) ) {
+                self::handle_admin_texts();
+                $woocommerce_wpml->settings['wc_admin_options_saved'] = 1;
+            }
+
+            if ( !$woocommerce_wpml( $woocommerce_wpml->settings['trnsl_interface'] ) ) {
+                $woocommerce_wpml->settings['trnsl_interface'] = 1;
+            }
+
+            if ( !isset($woocommerce_wpml->settings['products_sync_date']) ) {
+                $woocommerce_wpml->settings['products_sync_date'] = 1;
+            }
+
+            if ( !isset($woocommerce_wpml->settings['products_sync_order']) ) {
+                $woocommerce_wpml->settings['products_sync_order'] = 1;
+            }
+
+            if ( !isset($woocommerce_wpml->settings['display_custom_prices']) ) {
+                $woocommerce_wpml->settings['display_custom_prices'] = 0;
+            }
+
+            if ( !isset($woocommerce_wpml->settings['sync_taxonomies_checked']) ) {
+                $woocommerce_wpml->terms->check_if_sync_terms_needed();
+                $woocommerce_wpml->settings['sync_taxonomies_checked'] = 1;
+            }
+
+            WCML_Capabilities::set_up_capabilities();
+
+            self:: set_language_information( $sitepress );
+
+            $woocommerce_wpml->settings['set_up'] = 1;
+            $woocommerce_wpml->update_settings();
+
+        }
+
+        if(empty($woocommerce_wpml->settings['downloaded_translations_for_wc'])){ //from 3.3.3
+            $woocommerce_wpml->languages_upgrader->download_woocommerce_translations_for_active_languages();
+            $woocommerce_wpml->settings['downloaded_translations_for_wc'] = 1;
+            $woocommerce_wpml->update_settings();
+        }
+
+    }
+
+    private static function set_language_information( &$sitepress ){
+        global $wpdb;
+
+        $def_lang = $sitepress->get_default_language();
+        //set language info for products
+        $products = $wpdb->get_results("SELECT ID FROM $wpdb->posts WHERE post_type = 'product' AND post_status <> 'auto-draft'");
+        foreach($products as $product){
+            $exist = $sitepress->get_language_for_element($product->ID,'post_product');
+            if(!$exist){
+                $sitepress->set_element_language_details($product->ID, 'post_product',false,$def_lang);
+            }
+        }
+
+        //set language info for taxonomies
+        $terms = $wpdb->get_results("SELECT term_taxonomy_id FROM $wpdb->term_taxonomy WHERE taxonomy = 'product_cat'");
+        foreach($terms as $term){
+            $exist = $sitepress->get_language_for_element($term->term_taxonomy_id, 'tax_product_cat');
+            if(!$exist){
+                $sitepress->set_element_language_details($term->term_taxonomy_id, 'tax_product_cat',false,$def_lang);
+            }
+        }
+        $terms = $wpdb->get_results("SELECT term_taxonomy_id FROM $wpdb->term_taxonomy WHERE taxonomy = 'product_tag'");
+        foreach($terms as $term){
+            $exist = $sitepress->get_language_for_element($term->term_taxonomy_id, 'tax_product_tag');
+            if(!$exist){
+                $sitepress->set_element_language_details($term->term_taxonomy_id, 'tax_product_tag',false,$def_lang);
+            }
+        }
+
+        $terms = $wpdb->get_results("SELECT term_taxonomy_id FROM $wpdb->term_taxonomy WHERE taxonomy = 'product_shipping_class'");
+        foreach($terms as $term){
+            $exist = $sitepress->get_language_for_element($term->term_taxonomy_id, 'tax_product_shipping_class');
+            if(!$exist){
+                $sitepress->set_element_language_details($term->term_taxonomy_id, 'tax_product_shipping_class',false,$def_lang);
+            }
+        }
+    }
+
+    private static function handle_admin_texts(){
+        if(class_exists('woocommerce')){
+            //emails texts
+            $emails = new WC_Emails();
+            foreach($emails->emails as $email){
+                $option_name  = $email->plugin_id.$email->id.'_settings';
+                if(!get_option($option_name)){
+                    add_option($option_name,$email->settings);
+                }
+            }
+        }
+    }
+
+    public static function admin_notice_after_install(){
+        global $woocommerce_wpml;
+
+        if( $woocommerce_wpml->settings['dismiss_doc_main'] != 'yes' ){
+
+            $url = $_SERVER['REQUEST_URI'];
+            $pos = strpos($url, '?');
+
+            if($pos !== false){
+                $url .= '&wcml_action=dismiss';
+            } else {
+                $url .= '?wcml_action=dismiss';
+            }
+            ?>
+            <div id="message" class="updated message fade" style="clear:both;margin-top:5px;"><p>
+                    <?php _e('Would you like to see a quick overview?', 'woocommerce-multilingual'); ?>
+                </p>
+                <p>
+                    <a class="button-primary" href="<?php echo $woocommerce_wpml->generate_tracking_link('https://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation'); ?>" target="_blank"><?php _e('Learn how to turn your e-commerce site multilingual', 'woocommerce-multilingual') ?></a>
+                    <a class="button-secondary" href="<?php echo $url; ?>"><?php _e('Dismiss', 'woocommerce-multilingual') ?></a>
+                </p>
+            </div>
+            <?php
+        }
+    }
+
+
+}

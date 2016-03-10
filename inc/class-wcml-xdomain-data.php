@@ -5,7 +5,7 @@
  * https://wpml.org/?page_id=693147
  *
  */
-class xDomain_Data {
+class WCML_xDomain_Data {
 
     /**
      * xDomain_Data constructor.
