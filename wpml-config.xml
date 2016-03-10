@@ -4,7 +4,11 @@
 		<custom-field action="translate">_crosssell_ids</custom-field>
 		<custom-field action="copy">_default_attributes</custom-field>
 		<custom-field action="copy">_download_limit</custom-field>
+		<custom-field action="copy">_download_expiry</custom-field>
+		<custom-field action="copy">_download_type</custom-field>
 		<custom-field action="copy">_downloadable</custom-field>
+		<custom-field action="translate">_file_paths</custom-field>
+		<custom-field action="translate">_downloadable_files</custom-field>
 		<custom-field action="copy">_featured</custom-field>
 		<custom-field action="copy">_manage_stock</custom-field>
 		<custom-field action="copy">_sale_price_dates_from</custom-field>
