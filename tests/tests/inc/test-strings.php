@@ -5,12 +5,10 @@ class Test_WCML_Strings extends WCML_UnitTestCase {
 
 	function setUp(){
 		parent::setUp();
-		global $woocommerce_wpml;
-		$woocommerce_wpml->strings           = new WCML_WC_Strings;
 	}
 
 	function test_translate_attributes_label_in_wp_taxonomies() {
-		global $wp_taxonomies, $sitepress, $WPML_String_Translation;
+		global $wp_taxonomies, $WPML_String_Translation;
 		$WPML_String_Translation->init_active_languages();
 
 		$label = 'Test attr';
@@ -63,7 +61,7 @@ class Test_WCML_Strings extends WCML_UnitTestCase {
 
 		$WPML_String_Translation->clear_string_filter( 'es' );
 
-		$sitepress->switch_lang( 'es' );
+		$this->sitepress->switch_lang( 'es' );
 		register_taxonomy( $name, apply_filters( "woocommerce_taxonomy_objects_{$name}", array( 'product' ) ), apply_filters( "woocommerce_taxonomy_args_{$name}", $taxonomy_data ) );
 
 		$this->assertTrue( (bool) has_filter('wpml_translate_single_string') );

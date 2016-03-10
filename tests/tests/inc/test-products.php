@@ -4,12 +4,7 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 
 	function setUp(){
 		parent::setUp();
-		global $woocommerce_wpml, $wpml_post_translations, $wpml_term_translations;
-
-		$this->woocommerce_wpml = &$woocommerce_wpml;
-		$this->woocommerce_wpml->products = new WCML_Products;
-		$this->woocommerce_wpml->attributes = new WCML_Attributes();
-		$this->wcml_helper = new WCML_Helper();
+		global $wpml_post_translations, $wpml_term_translations;
 
 		//add product for tests
 		$orig_product = $this->wcml_helper->add_product( 'en', false, 'product 1' );
@@ -19,10 +14,10 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 		$this->es_product_id = $es_product->id;
 
 		//add global attribute for tests
-		$attr = 'color';
+		$attr = 'size';
 		$this->wcml_helper->register_attribute( $attr );
-		$term = $this->wcml_helper->add_attribute_term( 'white', $attr, 'en' );
-		$es_term = $this->wcml_helper->add_attribute_term( 'blanco', $attr, 'es', $term['trid'] );
+		$term = $this->wcml_helper->add_attribute_term( 'medium', $attr, 'en' );
+		$es_term = $this->wcml_helper->add_attribute_term( 'medio', $attr, 'es', $term['trid'] );
 
 	}
 
@@ -30,11 +25,11 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 		global $wpml_term_translations;
 
 		//test global attribute
-		$trnsl_attr = $this->woocommerce_wpml->products->get_cart_attribute_translation( 'attribute_pa_color', 'white', false, 'es', false, false );
+		$trnsl_attr = $this->woocommerce_wpml->products->get_cart_attribute_translation( 'attribute_pa_size', 'medium', false, 'es', false, false );
 
-		$this->assertEquals( 'blanco', $trnsl_attr );
+		$this->assertEquals( 'medio', $trnsl_attr );
 
-		//test local attribute
+		//test variation global attribute
 		$variation = $this->wcml_helper->add_product_variation( 'es', false );
 		$variation_id = $variation->id;
 

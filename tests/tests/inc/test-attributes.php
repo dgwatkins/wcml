@@ -4,12 +4,6 @@ class Test_WCML_Attributes extends WCML_UnitTestCase {
 
 	function setUp(){
 		parent::setUp();
-		global $woocommerce_wpml;
-
-		$this->woocommerce_wpml = &$woocommerce_wpml;
-		$this->woocommerce_wpml->attributes = new WCML_Attributes();
-		$this->wcml_helper = new WCML_Helper();
-
 	}
 
 	function test_attributes_config(){

@@ -60,7 +60,7 @@ class WCML_Helper {
 
                     if( isset( $data[ 'translations' ] ) ){
                         foreach( $data[ 'translations' ] as $trnsl_lang ){
-                            $trnsl_term = $this->add_term( sprintf('Test terms for %s %d: %d', $data[ 'taxonomy' ], $trnsl_lang, $i ), $data[ 'taxonomy' ], $lang_code, false, $term->trid );
+                            $trnsl_term = $this->add_term( sprintf('Test terms for %s %d: %d', $data[ 'taxonomy' ], $trnsl_lang, $i ), $data[ 'taxonomy' ], $trnsl_lang, false, $term->trid );
                             $dummy_data[ $data[ 'taxonomy' ] ][ $term->term_id ][ 'translations' ] = array( $trnsl_lang => $trnsl_term->term_id );
                         }
                     }
@@ -314,13 +314,12 @@ class WCML_Helper {
 
     }
 
-    public static function register_attribute( $name) {
+    public static function register_attribute( $name ) {
 
         $taxonomy   = 'pa_'.$name;
         wpml_test_reg_custom_taxonomy( $taxonomy );
         $settings_helper = wpml_load_settings_helper();
         $settings_helper->set_taxonomy_translatable( $taxonomy );
-
     }
 
     public static function add_attribute_term( $term, $attr_name, $language, $trid = false ) {

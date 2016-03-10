@@ -4,12 +4,6 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 
 	function setUp(){
 		parent::setUp();
-		global $woocommerce_wpml;
-
-		$this->woocommerce_wpml = &$woocommerce_wpml;
-		require_once WCML_PLUGIN_PATH . '/inc/class-wcml-languages-upgrader.php';
-		$this->woocommerce_wpml->languages_upgrader = new WCML_Languages_Upgrader;
-
 	}
 
 	function test_get_language_pack_uri(){
@@ -37,24 +31,24 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 	}
 
 	function test_filter_paypal_args(){
-		global $sitepress, $sitepress_settings, $wpml_post_translations;
+		global $sitepress_settings, $wpml_post_translations;
 
-		$sitepress->switch_lang( 'de' );
+		$this->sitepress->switch_lang( 'de' );
 
-		$default_lang_code	= $sitepress->get_default_language();
+		$default_lang_code	= $this->sitepress->get_default_language();
 		$wpml_wp_api        = new WPML_WP_API();
 		$hidden_langs 		= array();
 		$wpml_url_converter = new WPML_Lang_Parameter_Converter( $default_lang_code, $hidden_langs, $wpml_wp_api );
 
-		$wpml_url_filters = new WPML_URL_Filters( $wpml_post_translations, $wpml_url_converter, $sitepress );
+		$wpml_url_filters = new WPML_URL_Filters( $wpml_post_translations, $wpml_url_converter, $this->sitepress );
 
-		$_SERVER['SERVER_NAME'] = $sitepress->convert_url( get_home_url() );
+		$_SERVER['SERVER_NAME'] = $this->sitepress->convert_url( get_home_url() );
 
 		$args['notify_url'] = WC()->api_request_url( 'WC_Gateway_Paypal' );
 
 		$filtered_args = $this->woocommerce_wpml->filter_paypal_args( $args ) ;
 
-		$this->assertEquals( $sitepress->convert_url( get_home_url() ).'&wc-api=WC_Gateway_Paypal', $filtered_args['notify_url'] );
+		$this->assertEquals( $this->sitepress->convert_url( get_home_url() ).'&wc-api=WC_Gateway_Paypal', $filtered_args['notify_url'] );
 	}
 
 }

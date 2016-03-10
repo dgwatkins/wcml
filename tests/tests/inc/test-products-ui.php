@@ -6,11 +6,6 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
     function setUp(){
         parent::setUp();
 
-        global $woocommerce_wpml,$sitepress;
-
-        $this->sitepress = &$sitepress;
-        $this->woocommerce_wpml = &$woocommerce_wpml;
-        $this->wcml_products = new WCML_Products();
         $this->wcml_products_ui = new WCML_Products_UI( $this->woocommerce_wpml, $this->sitepress );
         $this->languages = array_map('trim', explode(',', WPML_TEST_LANGUAGE_CODES));
         $this->test_data = array();
@@ -49,7 +44,7 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         foreach( $products['products'] as $key => $product ){
             //check data language in links to translations
             foreach ( $this->languages as $language ) {
-                if( $language != $this->wcml_products->get_original_product_language( $product->ID ) ){
+                if( $language != $this->woocommerce_wpml->products->get_original_product_language( $product->ID ) ){
                     $this->assertContains( 'data-language="'.$language.'"', $product->translation_statuses );
                 }
             }
@@ -119,9 +114,9 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         $products = $this->wcml_products_ui->get_product_list( 1, 10, 'es');
 
         foreach( $products as $key => $product ){
-            $this->wcml_helper->add_term( 'Categories test ES '.$key, 'product_cat', 'es', $product->ID );
+            $this->wcml_helper->add_term( 'Categories test FR '.$key, 'product_cat', 'fr', $product->ID );
         }
-        $this->assertEquals( 10, count( $this->wcml_products_ui->get_products_categories( 'es' ) ) );
+        $this->assertEquals( 10, count( $this->wcml_products_ui->get_products_categories( 'fr' ) ) );
     }
 
     function test_wcml_get_categories_list(){
