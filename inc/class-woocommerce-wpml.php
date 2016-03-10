@@ -28,18 +28,17 @@ class woocommerce_wpml {
 
     function __construct(){
 
+        $this->settings = $this->get_settings();
+
+        $this->currencies = new WCML_Currencies( $this );
+
         add_action('init', array($this, 'init'),2);
-
-        add_action('widgets_init', array($this, 'register_widget'));
-
     }
 
     function init(){
         global $sitepress,$pagenow;
 
         new WCML_Upgrade;
-
-        $this->settings = $this->get_settings();
 
         $this->dependencies = new WCML_Dependencies;
         add_action('admin_menu', array($this, 'menu'));
@@ -141,16 +140,6 @@ class woocommerce_wpml {
         add_action( 'wp_ajax_hide_wcml_translations_message', array($this, 'hide_wcml_translations_message') );
 
         add_filter( 'wpml_tm_dashboard_translatable_types', array( $this, 'hide_variation_type_on_tm_dashboard') );
-    }
-
-    function register_widget(){
-
-        $settings = $this->get_settings();
-        if($settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT){
-            require_once WCML_PLUGIN_PATH . '/inc/currency-switcher-widget.class.php';
-            register_widget('WC_Currency_Switcher_Widget');
-        }
-
     }
 
     function get_settings(){
