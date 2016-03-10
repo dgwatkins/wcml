@@ -2,10 +2,7 @@
 class woocommerce_wpml {
 
     public $settings;
-
-    private $troubleshooting;
-    private $compatibility;
-
+    public $troubleshooting;
     public $endpoints;
     public $products;
     public $store;
@@ -16,12 +13,11 @@ class woocommerce_wpml {
     public $currencies;
     public $multi_currency_support;
     public $multi_currency;
-
-    private $xdomain_data;
     public $languages_upgrader;
-
     public $url_translation;
 
+    private $compatibility;
+    private $xdomain_data;
     private $reports;
     private $requests;
 
