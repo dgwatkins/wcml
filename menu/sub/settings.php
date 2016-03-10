@@ -136,7 +136,7 @@ if( ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $default_language != 'en' && empty( 
                 <li>
                     <i class="icon-warning-sign"></i><span><?php _e("One or more WooCommerce pages have not been created.", 'woocommerce-multilingual'); ?></span>
                 </li>
-                <li><a href="<?php echo version_compare($woocommerce->version, '2.1', '<') ? admin_url('admin.php?page=woocommerce_settings&tab=pages') : admin_url('admin.php?page=wc-status&tab=tools'); ?>"><?php _e('Install WooCommerce Pages') ?></a></li>
+                <li><a href="<?php echo admin_url('admin.php?page=wc-status&tab=tools'); ?>"><?php _e('Install WooCommerce Pages') ?></a></li>
             </ul>
         <?php elseif($miss_lang): ?>
             <form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
@@ -410,7 +410,7 @@ switch(get_option('woocommerce_currency_pos')){
     <div class="currencies-table-content">
 
         <p>
-            <?php printf(__("Your store's base currency is %s (%s). To change it, go to the %s page.", 'woocommerce-multilingual'), $wc_currencies[$wc_currency],get_woocommerce_currency_symbol($wc_currency),'<a href="'. admin_url(sprintf('admin.php?page=%s&tab=general', version_compare($woocommerce->version, '2.1', '<') ? 'woocommerce_settings' : 'wc-settings')) .'">WooCommerce settings</a>'); ?>
+            <?php printf(__("Your store's base currency is %s (%s). To change it, go to the %s page.", 'woocommerce-multilingual'), $wc_currencies[$wc_currency],get_woocommerce_currency_symbol($wc_currency),'<a href="'. admin_url(sprintf('admin.php?page=%s&tab=general', 'wc-settings')) .'">WooCommerce settings</a>'); ?>
         </p>
         <input type="hidden" id="update_currency_lang_nonce" value="<?php echo wp_create_nonce('wcml_update_currency_lang'); ?>"/>
         <table class="widefat currency_table" id="currency-table">

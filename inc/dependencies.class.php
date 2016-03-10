@@ -42,6 +42,9 @@ class WCML_Dependencies{
         if(!class_exists('woocommerce')){
             $this->missing['WooCommerce'] = 'http://www.woothemes.com/woocommerce/';
             $allok = false;
+        }elseif( version_compare( WC_VERSION , '2.1', '<') ){
+            add_action('admin_notices', array($this, '_old_wc_warning'));
+            $allok = false;
         }
 
         if(!defined('WPML_TM_VERSION')){
@@ -92,6 +95,12 @@ class WCML_Dependencies{
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML</a> versions prior %s.',
                     'woocommerce-multilingual'), $woocommerce_wpml->generate_tracking_link('http://wpml.org/'), '3.1.5'); ?></p></div>
     <?php }
+
+    function _old_wc_warning(){
+        global $woocommerce_wpml;?>
+       <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">Woocommerce</a> versions prior %s.',
+                    'woocommerce-multilingual'), 'http://www.woothemes.com/woocommerce/', '2.1' ); ?></p></div>
+        <?php }
     
     function _old_wpml_tm_warning(){
         global $woocommerce_wpml;?>

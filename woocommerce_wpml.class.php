@@ -69,7 +69,6 @@ class woocommerce_wpml {
             $this->reports          = new WCML_Reports;
         }
 
-        include WCML_PLUGIN_PATH . '/inc/woocommerce-2.0-backward-compatibility.php';
         include WCML_PLUGIN_PATH . '/inc/wc-rest-api-support.php';
 
         new WCML_Ajax_Setup;

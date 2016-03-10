@@ -68,12 +68,7 @@ $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
 
                 <?php if($is_variation){
                     $custom_id = '['.$currency_code.']['.$post_id.']';
-
-                    if(version_compare(preg_replace('#-(.+)$#', '', $woocommerce->version), '2.1', '<')){
-                        $wc_input_type = 'number';
-                    }else{
-                        $wc_input_type = 'text';
-                    }
+                    $wc_input_type = 'text';
                     ?>
                     <p>
                         <label><?php echo __( 'Regular Price', 'woocommerce-multilingual' ) . ' ('.get_woocommerce_currency_symbol($currency_code).')' ?></label>
@@ -89,15 +84,9 @@ $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
 
                     $wc_input = array();
 
-                    if(version_compare(preg_replace('#-(.+)$#', '', $woocommerce->version), '2.1', '<')){
-                        $wc_input['custom_attributes'] = array('step' 	=> 'any','min'	=> '0') ;
-                        $wc_input['type_name'] = 'type';
-                        $wc_input['type_val'] = 'number';
-                    }else{
-                        $wc_input['custom_attributes'] = array() ;
-                        $wc_input['type_name'] = 'data_type';
-                        $wc_input['type_val'] = 'price';
-                    }
+                    $wc_input['custom_attributes'] = array() ;
+                    $wc_input['type_name'] = 'data_type';
+                    $wc_input['type_val'] = 'price';
 
                     woocommerce_wp_text_input( array( 'id' => '_custom_regular_price'.$custom_id, 'value'=>$regular_price ,'class' => 'wc_input_price wcml_input_price short wcml_regular_price', 'label' => __( 'Regular Price', 'woocommerce-multilingual' ) . ' ('.get_woocommerce_currency_symbol($currency_code).')', $wc_input['type_name'] => $wc_input['type_val'], 'custom_attributes' => $wc_input['custom_attributes'] ) );
 

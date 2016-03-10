@@ -40,20 +40,7 @@
                         }
                         if(get_post_meta($variation_id,'_downloadable',true) == 'yes'): ?>
                             <td>
-                            <?php if(version_compare(preg_replace('#-(.+)$#', '', $woocommerce->version), '2.1', '<')){
-                                $file_paths_array = maybe_unserialize($template_data['all_file_paths'][$variation_id]['value']);
-                            if($file_paths_array)
-                            foreach($file_paths_array as $trn_file_paths){
-                                $file_paths = $file_paths ? $file_paths . "\n" .$trn_file_paths : $trn_file_paths;
-                            }
-                                 if($template_data['original']): ?>
-                                    <textarea value="<?php echo $file_paths; ?>" class="wcml_file_paths_textarea" disabled="disabled"><?php echo $file_paths; ?></textarea>
-                                <?php else: ?>
-                                    <textarea value="<?php echo $file_paths; ?>" name='<?php echo 'variations_file_paths['.$variation_id.']'; ?>' class="wcml_file_paths_textarea" placeholder="<?php esc_attr_e('Enter translation', 'woocommerce-multilingual') ?>"><?php echo $file_paths; ?></textarea>
-                                    <button type="button" class="button-secondary wcml_file_paths"><?php _e('Choose a file', 'woocommerce-multilingual') ?></button>
-                                <?php endif;
-                            }else{
-                                for($i=0;$i<$template_data['all_file_paths']['count'];$i++): ?>
+                                <?php for($i=0;$i<$template_data['all_file_paths']['count'];$i++): ?>
                                     <?php if($template_data['original']): ?>
                                         <input type="text" value="<?php echo $template_data['all_file_paths'][$variation_id][$i]['label']; ?>" class="" disabled="disabled">
                                         <input type="text" value="<?php echo $template_data['all_file_paths'][$variation_id][$i]['value']; ?>" class="" disabled="disabled">
@@ -65,8 +52,6 @@
                                         </div>
                                 <?php endif; ?>
                                 <?php endfor; ?>
-                            <?php }
-                            ?>
                             </td>
                         <?php else: ?>
                             <td><?php _e('Variation is not downloadable', 'woocommerce-multilingual'); ?></td>

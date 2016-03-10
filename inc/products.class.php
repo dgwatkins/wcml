@@ -1088,30 +1088,16 @@ class WCML_Products{
                 //sync file_paths
                 if(!$woocommerce_wpml->settings['file_path_sync']  && isset($data['variations_file_paths'][$variation_id])){
                     $file_paths_array = array();
-                    if(version_compare(preg_replace('#-(.+)$#', '', $woocommerce->version), '2.1', '<')){
-                        $file_paths = explode("\n",$data['variations_file_paths'][$variation_id]);
-                        foreach($file_paths as $file_path){
-                            $file_paths_array[md5($file_path)] = $file_path;
-                        }
-                        update_post_meta($variation_id,'_file_paths',$file_paths_array);
-                    }else{
-
-                        foreach($data['variations_file_paths'][$variation_id] as $file_path){
-                            $key = md5($file_path['file'].$file_path['name']);
-                            $file_paths_array[$key]['name'] = $file_path['name'];
-                            $file_paths_array[$key]['file'] = $file_path['file'];
-                        }
-                        update_post_meta($variation_id,'_downloadable_files',$file_paths_array);
-
+                    foreach($data['variations_file_paths'][$variation_id] as $file_path){
+                        $key = md5($file_path['file'].$file_path['name']);
+                        $file_paths_array[$key]['name'] = $file_path['name'];
+                        $file_paths_array[$key]['file'] = $file_path['file'];
                     }
+                    update_post_meta($variation_id,'_downloadable_files',$file_paths_array);
+
                 }elseif($woocommerce_wpml->settings['file_path_sync']){
-                    if(version_compare(preg_replace('#-(.+)$#', '', $woocommerce->version), '2.1', '<')){
-                        $orig_file_path = maybe_unserialize(get_post_meta($post_data->ID,'_file_paths',true));
-                        update_post_meta($variation_id,'_file_paths',$orig_file_path);
-                    }else{
-                        $orig_file_path = maybe_unserialize(get_post_meta($post_data->ID,'_downloadable_files',true));
-                        update_post_meta($variation_id,'_downloadable_files',$orig_file_path);
-                    }
+                    $orig_file_path = maybe_unserialize(get_post_meta($post_data->ID,'_downloadable_files',true));
+                    update_post_meta($variation_id,'_downloadable_files',$orig_file_path);
                 }
 
                 // sync taxonomies
@@ -2219,24 +2205,22 @@ class WCML_Products{
             $is_downloable = $wpdb->get_results($wpdb->prepare("SELECT pm.meta_value FROM $wpdb->posts AS p LEFT JOIN $wpdb->postmeta AS pm ON p.id=pm.post_id WHERE p.post_parent = %d AND p.post_type = 'product_variation' AND pm.meta_key='_downloadable' AND pm.meta_value = 'yes'", $product_id));
             $template_data['all_file_paths'] = $this->get_product_content_translation($product_id, 'variations_file_paths', $lang);
 
-            if(version_compare(preg_replace('#-(.+)$#', '', $woocommerce->version), '2.1', '>')){
-                $variations = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'product_variation'",is_null($trn_product_id)?$product_id:$trn_product_id));
+            $variations = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'product_variation'",is_null($trn_product_id)?$product_id:$trn_product_id));
 
-                foreach($variations as $variation){
-                    $files = maybe_unserialize(get_post_meta($variation->ID,'_downloadable_files',true));
+            foreach($variations as $variation){
+                $files = maybe_unserialize(get_post_meta($variation->ID,'_downloadable_files',true));
 
-                    if($files){
-                        if(is_null($trn_product_id)){
-                            $template_data['all_file_paths']['count'] = count($files);
-                        }else{
-                            $template_data['all_file_paths']['count'] = count(maybe_unserialize(get_post_meta(apply_filters( 'translate_object_id',$variation->ID, 'product_variation', false, $original_language),'_downloadable_files',true)));
-                        }
-                        foreach($files as $file){
-                            $variables = array();
-                            $variables['value'] = $file['file'];
-                            $variables['label'] = $file['name'];
-                            $template_data['all_file_paths'][$variation->ID][] = $variables;
-                        }
+                if($files){
+                    if(is_null($trn_product_id)){
+                        $template_data['all_file_paths']['count'] = count($files);
+                    }else{
+                        $template_data['all_file_paths']['count'] = count(maybe_unserialize(get_post_meta(apply_filters( 'translate_object_id',$variation->ID, 'product_variation', false, $original_language),'_downloadable_files',true)));
+                    }
+                    foreach($files as $file){
+                        $variables = array();
+                        $variables['value'] = $file['file'];
+                        $variables['label'] = $file['name'];
+                        $template_data['all_file_paths'][$variation->ID][] = $variables;
                     }
                 }
             }
@@ -2740,10 +2724,8 @@ class WCML_Products{
     function get_cart_attribute_translation( $attr_key, $attribute, $variation_id, $current_language, $product_id, $tr_product_id ){
         global $woocommerce;
 
-        if( version_compare( preg_replace( '#-(.+)$#', '', $woocommerce->version ), '2.1', '>=' ) ){
-            //delete 'attribute_' at the beginning
-            $taxonomy = substr( $attr_key, 10, strlen( $attr_key ) - 1 );
-        }
+        //delete 'attribute_' at the beginning
+        $taxonomy = substr( $attr_key, 10, strlen( $attr_key ) - 1 );
 
         if( taxonomy_exists( $taxonomy ) ){
 
