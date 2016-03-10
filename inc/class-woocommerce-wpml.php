@@ -41,8 +41,6 @@ class woocommerce_wpml {
         new WCML_Upgrade;
 
         $this->dependencies = new WCML_Dependencies;
-        add_action('admin_menu', array($this, 'menu'));
-
         $this->check_dependencies = $this->dependencies->check();
         $this->check_design_update = $this->dependencies->check_design_update();
 
@@ -65,6 +63,8 @@ class woocommerce_wpml {
         }else{
             add_shortcode('currency_switcher', '__return_empty_string');
         }
+
+        WCML_Admin_Menus::set_up_menus( $this, $sitepress );
 
         $this->troubleshooting   = new WCML_Troubleshooting();
         $this->compatibility     = new WCML_Compatibility();
@@ -113,18 +113,6 @@ class woocommerce_wpml {
         //add_filter('woocommerce_redirect', array($this, 'filter_woocommerce_redirect_location'));
 
         add_filter('woocommerce_paypal_args', array($this, 'filter_paypal_args'));
-
-
-        if(is_admin() &&
-            (
-                (isset($_GET['page']) && $_GET['page'] == 'wpml-wcml') ||
-                (($pagenow == 'edit.php' || $pagenow == 'post-new.php') && isset($_GET['post_type']) && ($_GET['post_type'] == 'shop_coupon' || $_GET['post_type'] == 'shop_order')) ||
-                ($pagenow == 'post.php' && isset($_GET['post']) && (get_post_type($_GET['post']) == 'shop_coupon' || get_post_type($_GET['post']) == 'shop_order')) ||
-                (isset($_GET['page']) && $_GET['page'] == 'shipping_zones') || ( isset($_GET['page']) && $_GET['page'] == 'product_attributes')
-            )
-        ){
-            remove_action( 'wp_before_admin_bar_render', array($sitepress, 'admin_language_switcher') );
-        }
 
         if( ($pagenow == 'post.php' && isset($_GET['post']) && get_post_type($_GET['post']) == 'product' && !$this->products->is_original_product($_GET['post'])) ||
             ($pagenow == 'post-new.php' && isset($_GET['source_lang']) && isset($_GET['post_type']) && $_GET['post_type'] == 'product')
@@ -196,7 +184,6 @@ class woocommerce_wpml {
     }
 
     function install(){
-        global $wpdb;
 
         if(empty($this->settings['set_up'])){ // from 3.2     
 
@@ -231,7 +218,7 @@ class woocommerce_wpml {
                 $this->settings['sync_taxonomies_checked'] = 1;
             }
 
-            self::set_up_capabilities();
+            WCML_Capabilities::set_up_capabilities();
 
             $this->set_language_information();
 
@@ -248,34 +235,6 @@ class woocommerce_wpml {
         }
     }
 
-    public static function set_up_capabilities(){
-
-        $role = get_role( 'administrator' );
-        if($role){
-            $role->add_cap( 'wpml_manage_woocommerce_multilingual' );
-            $role->add_cap( 'wpml_operate_woocommerce_multilingual' );
-        }
-
-        $role = get_role( 'super_admin' );
-        if($role){
-            $role->add_cap( 'wpml_manage_woocommerce_multilingual' );
-            $role->add_cap( 'wpml_operate_woocommerce_multilingual' );
-        }
-
-        $super_admins = get_super_admins();
-        foreach ($super_admins as $admin) {
-            $user = new WP_User( $admin );
-            $user->add_cap( 'wpml_manage_woocommerce_multilingual' );
-            $user->add_cap( 'wpml_operate_woocommerce_multilingual' );
-        }
-
-        $role = get_role( 'shop_manager' );
-        if($role){
-            $role->add_cap( 'wpml_operate_woocommerce_multilingual' );
-        }
-
-    }
-
     function set_language_information(){
         global $sitepress,$wpdb;
 
@@ -286,7 +245,7 @@ class woocommerce_wpml {
             $exist = $sitepress->get_language_for_element($product->ID,'post_product');
             if(!$exist){
             $sitepress->set_element_language_details($product->ID, 'post_product',false,$def_lang);
-        }
+            }
         }
 
         //set language info for taxonomies
@@ -295,14 +254,14 @@ class woocommerce_wpml {
             $exist = $sitepress->get_language_for_element($term->term_taxonomy_id, 'tax_product_cat');
             if(!$exist){
             $sitepress->set_element_language_details($term->term_taxonomy_id, 'tax_product_cat',false,$def_lang);
-        }
+            }
         }
         $terms = $wpdb->get_results("SELECT term_taxonomy_id FROM $wpdb->term_taxonomy WHERE taxonomy = 'product_tag'");
         foreach($terms as $term){
             $exist = $sitepress->get_language_for_element($term->term_taxonomy_id, 'tax_product_tag');
             if(!$exist){
             $sitepress->set_element_language_details($term->term_taxonomy_id, 'tax_product_tag',false,$def_lang);
-        }
+            }
         }
 
         $terms = $wpdb->get_results("SELECT term_taxonomy_id FROM $wpdb->term_taxonomy WHERE taxonomy = 'product_shipping_class'");
@@ -310,52 +269,8 @@ class woocommerce_wpml {
             $exist = $sitepress->get_language_for_element($term->term_taxonomy_id, 'tax_product_shipping_class');
             if(!$exist){
             $sitepress->set_element_language_details($term->term_taxonomy_id, 'tax_product_shipping_class',false,$def_lang);
-        }
-    }
-    }
-
-    function menu(){
-        if( $this->check_dependencies && $this->check_design_update){
-            $top_page = apply_filters('icl_menu_main_page', basename(ICL_PLUGIN_PATH) .'/menu/languages.php');
-
-            if(current_user_can('wpml_manage_woocommerce_multilingual')){
-                add_submenu_page($top_page, __('WooCommerce Multilingual', 'woocommerce-multilingual'),
-                __('WooCommerce Multilingual', 'woocommerce-multilingual'), 'wpml_manage_woocommerce_multilingual', 'wpml-wcml', array($this, 'menu_content'));
-
-            }else{
-                global $wpdb,$sitepress_settings,$sitepress;
-                $user_lang_pairs = get_user_meta(get_current_user_id(), $wpdb->prefix.'language_pairs', true);
-                if( !empty( $user_lang_pairs[$sitepress->get_default_language()] ) ){
-                    add_menu_page(__('WooCommerce Multilingual', 'woocommerce-multilingual'),
-                        __('WooCommerce Multilingual', 'woocommerce-multilingual'), 'translate',
-                        'wpml-wcml', array($this, 'menu_content'), ICL_PLUGIN_URL . '/res/img/icon16.png');
-                }
             }
-
-        }elseif( current_user_can('wpml_manage_woocommerce_multilingual') ){
-            if(!defined('ICL_SITEPRESS_VERSION')){
-                add_menu_page( __( 'WooCommerce Multilingual', 'woocommerce-multilingual' ), __( 'WooCommerce Multilingual', 'woocommerce-multilingual' ),
-	                'wpml_manage_woocommerce_multilingual', 'wpml-wcml', array($this, 'menu_content'), WCML_PLUGIN_URL . '/res/images/icon16.png' );
-            }else{
-                $top_page = apply_filters('icl_menu_main_page', basename(ICL_PLUGIN_PATH) .'/menu/languages.php');
-                add_submenu_page($top_page, __('WooCommerce Multilingual', 'woocommerce-multilingual'),
-                    __('WooCommerce Multilingual', 'woocommerce-multilingual'), 'wpml_manage_woocommerce_multilingual', 'wpml-wcml', array($this, 'menu_content'));
-            }
-
         }
-    }
-
-    function menu_content(){
-
-        if( $this->check_dependencies && $this->check_design_update ){
-            $menus_wrap = new WCML_Menus_Wrap( $this );
-            $menus_wrap->show();
-        }else{
-            global $sitepress;
-            $plugins_wrap = new WCML_Plugins_Wrap( $this, $sitepress );
-            $plugins_wrap->show();
-        }
-
     }
 
     function deactivation_actions(){
