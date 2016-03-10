@@ -126,7 +126,7 @@ class WCML_Install{
                     <?php _e('Would you like to see a quick overview?', 'woocommerce-multilingual'); ?>
                 </p>
                 <p>
-                    <a class="button-primary" href="<?php echo $woocommerce_wpml->generate_tracking_link('https://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation'); ?>" target="_blank"><?php _e('Learn how to turn your e-commerce site multilingual', 'woocommerce-multilingual') ?></a>
+                    <a class="button-primary" href="<?php echo WCML_Links::generate_tracking_link('https://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation'); ?>" target="_blank"><?php _e('Learn how to turn your e-commerce site multilingual', 'woocommerce-multilingual') ?></a>
                     <a class="button-secondary" href="<?php echo $url; ?>"><?php _e('Dismiss', 'woocommerce-multilingual') ?></a>
                 </p>
             </div>

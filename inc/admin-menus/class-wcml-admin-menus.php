@@ -14,6 +14,11 @@ class WCML_Admin_Menus{
         if( self::is_page_without_admin_language_switcher() ){
             self::remove_wpml_admin_language_switcher();
         }
+
+        if(is_admin()){
+            add_action('admin_footer', array(__CLASS__, 'documentation_links'));
+        }
+
     }
 
     public static function register_menus(){
@@ -91,6 +96,73 @@ class WCML_Admin_Menus{
 
         remove_action( 'wp_before_admin_bar_render', array(self::$sitepress, 'admin_language_switcher') );
 
+    }
+
+    public static function documentation_links() {
+        global $post, $pagenow;
+
+        if ( is_null( $post ) )
+            return;
+
+        $get_post_type = get_post_type( $post->ID );
+
+        if ( $get_post_type == 'product' && $pagenow == 'edit.php' ) {
+            $prot_link = '<span class="button"><img align="baseline" src="' . ICL_PLUGIN_URL . '/res/img/icon.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="' . WCML_Links::generate_tracking_link( 'https://wpml.org/documentation/related-projects/woocommerce-multilingual/', 'woocommerce-multilingual', 'documentation', '#4' ) . '" target="_blank">' .
+                __( 'How to translate products', 'sitepress' ) . '<\/a>' . '<\/span>';
+            $quick_edit_notice = '<div id="quick_edit_notice" style="display:none;"><p>' .
+                sprintf( __( "Quick edit is disabled for product translations. It\'s recommended to use the %s for editing products translations. %s",
+                    'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=products' ) . '" >' .
+                    __( 'WooCommerce Multilingual products editor', 'woocommerce-multilingual' ) . '</a>',
+                    '<a href="" class="quick_product_trnsl_link" >' . __( 'Edit this product translation', 'woocommerce-multilingual' ) . '</a>'
+                ) . '</p></div>';
+            $quick_edit_notice_prod_link = '<input type="hidden" id="wcml_product_trnsl_link" value="' . admin_url( 'admin.php?page=wpml-wcml&tab=products&prid=' ) . '">';
+            ?>
+            <script type="text/javascript">
+                jQuery(".subsubsub").append('<?php echo $prot_link ?>');
+                jQuery(".subsubsub").append('<?php echo $quick_edit_notice ?>');
+                jQuery(".subsubsub").append('<?php echo $quick_edit_notice_prod_link ?>');
+                jQuery(".quick_hide a").on('click', function () {
+                    jQuery(".quick_product_trnsl_link").attr('href', jQuery("#wcml_product_trnsl_link").val() + jQuery(this).closest('tr').attr('id').replace(/post-/, ''));
+                });
+
+                //lock feautured for translations
+                jQuery(document).on('click', '.featured a', function () {
+
+                    if (jQuery(this).closest('tr').find('.quick_hide').size() > 0) {
+
+                        return false;
+
+                    }
+
+                });
+            </script>
+            <?php
+        }
+
+        if ( isset($_GET['taxonomy']) ) {
+            $pos = strpos( $_GET['taxonomy'], 'pa_' );
+
+            if ( $pos !== false && $pagenow == 'edit-tags.php' ) {
+                $prot_link = '<span class="button" style="padding:4px;margin-top:0px; float: left;"><img align="baseline" src="' . ICL_PLUGIN_URL . '/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="' . WCML_Links::generate_tracking_link( 'https://wpml.org/documentation/related-projects/woocommerce-multilingual/', 'woocommerce-multilingual', 'documentation', '#3' ) . '" target="_blank" style="text-decoration: none;">' .
+                    __( 'How to translate attributes', 'sitepress' ) . '<\/a>' . '<\/span><br \/><br \/>';
+                ?>
+                <script type="text/javascript">
+                    jQuery("table.widefat").before('<?php echo $prot_link ?>');
+                </script>
+                <?php
+            }
+        }
+
+        if ( isset($_GET['taxonomy']) && $_GET['taxonomy'] == 'product_cat' ) {
+
+            $prot_link = '<span class="button" style="padding:4px;margin-top:0px; float: left;"><img align="baseline" src="' . ICL_PLUGIN_URL . '/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="' . WCML_Links::generate_tracking_link( 'https://wpml.org/documentation/related-projects/woocommerce-multilingual/', 'woocommerce-multilingual', 'documentation', '#3' ) . '" target="_blank" style="text-decoration: none;">' .
+                __( 'How to translate product categories', 'sitepress' ) . '<\/a>' . '<\/span><br \/><br \/>';
+            ?>
+            <script type="text/javascript">
+                jQuery("table.widefat").before('<?php echo $prot_link ?>');
+            </script>
+            <?php
+        }
     }
 
 }

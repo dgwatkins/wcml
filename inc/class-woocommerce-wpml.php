@@ -94,14 +94,9 @@ class woocommerce_wpml {
 
         register_deactivation_hook(__FILE__, array($this, 'deactivation_actions'));
 
-        if(is_admin()){
-            add_action('admin_footer', array($this, 'documentation_links'));
-        }
-
-        add_filter('woocommerce_get_checkout_payment_url', array($this, 'filter_woocommerce_redirect_location'));
-        add_filter('woocommerce_get_cancel_order_url', array($this, 'filter_woocommerce_redirect_location'));
-        add_filter('woocommerce_get_return_url', array($this, 'filter_woocommerce_redirect_location'));
-        //add_filter('woocommerce_redirect', array($this, 'filter_woocommerce_redirect_location'));
+        add_filter('woocommerce_get_checkout_payment_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
+        add_filter('woocommerce_get_cancel_order_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
+        add_filter('woocommerce_get_return_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
 
         add_filter('woocommerce_paypal_args', array($this, 'filter_paypal_args'));
 
@@ -169,87 +164,6 @@ class woocommerce_wpml {
 
     function deactivation_actions(){
         delete_option('wpml_dismiss_doc_main');
-    }
-
-    function generate_tracking_link($link,$term=false,$content = false, $id = false){
-        $params = '?utm_source=wcml-admin&utm_medium=plugin&utm_term=';
-        $params .= $term?$term:'WPML';
-        $params .= '&utm_content=';
-        $params .= $content?$content:'required-plugins';
-        $params .= '&utm_campaign=WCML';
-
-        if($id){
-            $params .= $id;
-        }
-        return $link.$params;
-    }
-
-    function documentation_links(){
-        global $post, $pagenow;
-
-        if( is_null( $post ) )
-            return;
-
-        $get_post_type = get_post_type($post->ID);
-
-        if($get_post_type == 'product' && $pagenow == 'edit.php'){
-            $prot_link = '<span class="button"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="'. $this->generate_tracking_link('https://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation','#4') .'" target="_blank">' .
-                    __('How to translate products', 'sitepress') . '<\/a>' . '<\/span>';
-            $quick_edit_notice = '<div id="quick_edit_notice" style="display:none;"><p>'. sprintf(__("Quick edit is disabled for product translations. It\'s recommended to use the %s for editing products translations. %s", 'woocommerce-multilingual'), '<a href="'.admin_url('admin.php?page=wpml-wcml&tab=products').'" >'.__('WooCommerce Multilingual products editor', 'woocommerce-multilingual').'</a>','<a href="" class="quick_product_trnsl_link" >'.__('Edit this product translation', 'woocommerce-multilingual').'</a>').'</p></div>';
-            $quick_edit_notice_prod_link = '<input type="hidden" id="wcml_product_trnsl_link" value="'.admin_url('admin.php?page=wpml-wcml&tab=products&prid=').'">';
-        ?>
-                <script type="text/javascript">
-                    jQuery(".subsubsub").append('<?php echo $prot_link ?>');
-                    jQuery(".subsubsub").append('<?php echo $quick_edit_notice ?>');
-                    jQuery(".subsubsub").append('<?php echo $quick_edit_notice_prod_link ?>');
-                    jQuery(".quick_hide a").on('click',function(){
-                        jQuery(".quick_product_trnsl_link").attr('href',jQuery("#wcml_product_trnsl_link").val()+jQuery(this).closest('tr').attr('id').replace(/post-/,''));
-                    });
-
-                    //lock feautured for translations
-                    jQuery(document).on('click', '.featured a', function(){
-
-                        if( jQuery(this).closest('tr').find('.quick_hide').size() > 0 ){
-
-                            return false;
-
-                        }
-
-                    });
-
-                </script>
-        <?php
-        }
-
-        if(isset($_GET['taxonomy'])){
-            $pos = strpos($_GET['taxonomy'], 'pa_');
-
-            if($pos !== false && $pagenow == 'edit-tags.php'){
-                $prot_link = '<span class="button" style="padding:4px;margin-top:0px; float: left;"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="'. $this->generate_tracking_link('https://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation','#3') .'" target="_blank" style="text-decoration: none;">' .
-                            __('How to translate attributes', 'sitepress') . '<\/a>' . '<\/span><br \/><br \/>';
-                ?>
-                        <script type="text/javascript">
-                            jQuery("table.widefat").before('<?php echo $prot_link ?>');
-                        </script>
-                <?php
-            }
-        }
-
-        if(isset($_GET['taxonomy']) && $_GET['taxonomy'] == 'product_cat'){
-
-                $prot_link = '<span class="button" style="padding:4px;margin-top:0px; float: left;"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="'. $this->generate_tracking_link('https://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation','#3') .'" target="_blank" style="text-decoration: none;">' .
-                            __('How to translate product categories', 'sitepress') . '<\/a>' . '<\/span><br \/><br \/>';
-                ?>
-                        <script type="text/javascript">
-                            jQuery("table.widefat").before('<?php echo $prot_link ?>');
-                        </script>
-                <?php
-        }
-    }
-
-    function filter_woocommerce_redirect_location($link){
-        global $sitepress;
-        return html_entity_decode($sitepress->convert_url($link));
     }
 
     function filter_paypal_args($args) {

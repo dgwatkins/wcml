@@ -22,7 +22,7 @@ class WCML_Dependencies{
         global $woocommerce_wpml, $sitepress;
 
         if(!defined('ICL_SITEPRESS_VERSION') || ICL_PLUGIN_INACTIVE || is_null( $sitepress ) || !class_exists('SitePress')){
-             $this->missing['WPML'] = $woocommerce_wpml->generate_tracking_link('https://wpml.org/');
+             $this->missing['WPML'] = WCML_Links::generate_tracking_link('https://wpml.org/');
              $this->allok = false;
         } elseif(version_compare(ICL_SITEPRESS_VERSION, '3.1.5', '<')){
             add_action('admin_notices', array($this, '_old_wpml_warning'));
@@ -43,7 +43,7 @@ class WCML_Dependencies{
         }
 
         if(!defined('WPML_TM_VERSION')){
-            $this->missing['WPML Translation Management'] = $woocommerce_wpml->generate_tracking_link('https://wpml.org/');
+            $this->missing['WPML Translation Management'] = WCML_Links::generate_tracking_link('https://wpml.org/');
             $this->allok = false;
         }elseif(version_compare(WPML_TM_VERSION, '1.9', '<')){
             add_action('admin_notices', array($this, '_old_wpml_tm_warning'));
@@ -51,7 +51,7 @@ class WCML_Dependencies{
         }
 
         if(!defined('WPML_ST_VERSION')){
-            $this->missing['WPML String Translation'] = $woocommerce_wpml->generate_tracking_link('https://wpml.org/');
+            $this->missing['WPML String Translation'] = WCML_Links::generate_tracking_link('https://wpml.org/');
             $this->allok = false;
         }elseif(version_compare(WPML_ST_VERSION, '2.0', '<')){
             add_action('admin_notices', array($this, '_old_wpml_st_warning'));
@@ -59,7 +59,7 @@ class WCML_Dependencies{
         }
 
         if(!defined('WPML_MEDIA_VERSION')){
-            $this->missing['WPML Media'] = $woocommerce_wpml->generate_tracking_link('https://wpml.org/');
+            $this->missing['WPML Media'] = WCML_Links::generate_tracking_link('https://wpml.org/');
             $this->allok = false;
         }elseif(version_compare(WPML_MEDIA_VERSION, '2.1', '<')){
             add_action('admin_notices', array($this, '_old_wpml_media_warning'));
@@ -102,14 +102,14 @@ class WCML_Dependencies{
     function _old_wpml_warning(){
         global $woocommerce_wpml;?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML</a> versions prior %s.',
-                    'woocommerce-multilingual'), $woocommerce_wpml->generate_tracking_link('https://wpml.org/'), '3.1.5'); ?></p></div>
+                    'woocommerce-multilingual'), WCML_Links::generate_tracking_link('https://wpml.org/'), '3.1.5'); ?></p></div>
     <?php }
 
     function _old_backend_wpml_warning(){
         global $woocommerce_wpml;?>
         <?php if( !isset($_GET['page']) || $_GET['page'] != 'wpml-wcml'): ?>
         <div class="message error">
-            <p><?php printf(__( 'You are using WooCommerce Multilingual %s. This version includes an important UI redesign for the configuration screens and it requires <a href="%s">WPML %s</a> or higher. Everything still works on the front end now but, in order to configure options for WooCommerce Multilingual, you need to upgrade WPML.', 'woocommerce-multilingual' ), WCML_VERSION, $woocommerce_wpml->generate_tracking_link( 'https://wpml.org/' ), '3.4'); ?></p>
+            <p><?php printf(__( 'You are using WooCommerce Multilingual %s. This version includes an important UI redesign for the configuration screens and it requires <a href="%s">WPML %s</a> or higher. Everything still works on the front end now but, in order to configure options for WooCommerce Multilingual, you need to upgrade WPML.', 'woocommerce-multilingual' ), WCML_VERSION, WCML_Links::generate_tracking_link( 'https://wpml.org/' ), '3.4'); ?></p>
             <p>
                 <a class="button-primary" href="<?php echo $woocommerce_wpml->dependencies->required_plugin_install_link( 'wpml' ) ?>"
                    target="_blank"><?php _e( 'Upgrade WPML', 'woocommerce-multilingual' ); ?></a>
@@ -121,19 +121,19 @@ class WCML_Dependencies{
     function _old_wpml_tm_warning(){
         global $woocommerce_wpml;?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML Translation Management</a> versions prior %s.',
-                    'woocommerce-multilingual'), $woocommerce_wpml->generate_tracking_link('https://wpml.org/'), '1.9'); ?></p></div>
+                    'woocommerce-multilingual'), WCML_Links::generate_tracking_link('https://wpml.org/'), '1.9'); ?></p></div>
     <?php }
 
     function _old_wpml_st_warning(){
         global $woocommerce_wpml;?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML String Translation</a> versions prior %s.',
-                    'woocommerce-multilingual'), $woocommerce_wpml->generate_tracking_link('https://wpml.org/'), '2.0'); ?></p></div>
+                    'woocommerce-multilingual'), WCML_Links::generate_tracking_link('https://wpml.org/'), '2.0'); ?></p></div>
     <?php }
 
     function _old_wpml_media_warning(){
         global $woocommerce_wpml;?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML Media</a> versions prior %s.',
-                    'woocommerce-multilingual'), $woocommerce_wpml->generate_tracking_link('https://wpml.org/'), '2.1'); ?></p></div>
+                    'woocommerce-multilingual'), WCML_Links::generate_tracking_link('https://wpml.org/'), '2.1'); ?></p></div>
     <?php }
     
       
@@ -367,7 +367,7 @@ class WCML_Dependencies{
         if( class_exists('WP_Installer_API') ){
             $url = WP_Installer_API::get_product_installer_link($repository);
         }else{
-            $url = $woocommerce_wpml->generate_tracking_link('https://wpml.org/');
+            $url = WCML_Links::generate_tracking_link('https://wpml.org/');
         }
 
         return $url;
