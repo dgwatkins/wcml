@@ -6,13 +6,13 @@
         {% for key, taxonomy in menu.taxonomies %}
         <a class="js-tax-tab-{{ key }} nav-tab {{ taxonomy.active }}" href="{{ taxonomy.url }}" title="{{ taxonomy.title }}">
         {{ taxonomy.name }}
-        {% if taxonomy.translated == false %}&nbsp;<i class="otgs-ico-warning"></i>{% endif %}
+        {% if taxonomy.translated == false %}<i class="otgs-ico-warning"></i>{% endif %}
         </a>
         {% endfor %}
         <a class="nav-tab {{ menu.attributes.active }}" href="{{ menu.attributes.url }}">{{ menu.attributes.name }}</a>
         <a class="js-tax-tab-product_shipping_class nav-tab {{ menu.shipping_classes.active }}" href="{{ menu.shipping_classes.url }}"
            title="{{ menu.shipping_classes.title }}">{{ menu.shipping_classes.name }}
-           {% if taxonomy.translated == false %}&nbsp;<i class="otgs-ico-warning"></i>{% endif %}
+           {% if taxonomy.translated == false %}<i class="otgs-ico-warning"></i>{% endif %}
         </a>
 
         {% if can_manage_options %}
@@ -21,7 +21,7 @@
         <a class="nav-tab {{ menu.slugs.active }}" href="{{ menu.slugs.url }}">{{ menu.slugs.name }}</a>
         <a class="nav-tab {{ menu.status.active }}" href="{{ menu.status.url }}">{{ menu.status.name }}</a>
         {% if menu.troubleshooting.active %}
-            <a class="nav-tab {{ menu.troubleshooting.active }}" href="{{ menu.troubleshooting.url }}">{{ menu.troubleshooting.name }}</a>
+            <a class="nav-tab troubleshooting {{ menu.troubleshooting.active }}" href="{{ menu.troubleshooting.url }}">{{ menu.troubleshooting.name }}</a>
         {% endif %}
         {% endif %}
     </nav>

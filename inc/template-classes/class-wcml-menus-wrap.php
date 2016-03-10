@@ -28,14 +28,14 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
                 ),
                 'taxonomies' => array(
                     'product_cat' => array(
-                        'name'      => __('Product Categories', 'woocommerce-multilingual'),
+                        'name'      => __('Categories', 'woocommerce-multilingual'),
                         'title'     => !WCML_Terms::is_fully_translated( 'product_cat' ) ? __('You have untranslated terms!', 'woocommerce-multilingual') : '',
                         'active'    => $current_tab == 'product_cat' ? 'nav-tab-active':'',
                         'url'       => admin_url('admin.php?page=wpml-wcml&tab=product_cat'),
                         'translated'=> WCML_Terms::is_fully_translated( 'product_cat' )
                     ),
                     'product_tag' => array(
-                        'name'      => __('Product Tags', 'woocommerce-multilingual'),
+                        'name'      => __('Tags', 'woocommerce-multilingual'),
                         'title'     => !WCML_Terms::is_fully_translated( 'product_tag' ) ? __('You have untranslated terms!', 'woocommerce-multilingual') : '',
                         'active'    => $current_tab == 'product_tag' ? 'nav-tab-active':'',
                         'url'       => admin_url('admin.php?page=wpml-wcml&tab=product_tag'),
@@ -43,7 +43,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
                     )
                 ),
                 'attributes' => array(
-                    'name'      => __('Product Attributes', 'woocommerce-multilingual'),
+                    'name'      => __('Attributes', 'woocommerce-multilingual'),
                     'active'    => $current_tab == 'product-attributes' ? 'nav-tab-active':'',
                     'url'       => admin_url('admin.php?page=wpml-wcml&tab=product-attributes'),
                 ),
