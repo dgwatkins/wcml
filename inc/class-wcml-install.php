@@ -111,7 +111,7 @@ class WCML_Install{
     public static function admin_notice_after_install(){
         global $woocommerce_wpml;
 
-        if( $woocommerce_wpml->settings['dismiss_doc_main'] != 'yes' ){
+        if( !$woocommerce_wpml->settings['dismiss_doc_main'] ){
 
             $url = $_SERVER['REQUEST_URI'];
             $pos = strpos($url, '?');

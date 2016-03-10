@@ -92,8 +92,6 @@ class woocommerce_wpml {
 
         add_action('init', array($this,'load_locale'));
 
-        register_deactivation_hook(__FILE__, array($this, 'deactivation_actions'));
-
         add_filter('woocommerce_get_checkout_payment_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
         add_filter('woocommerce_get_cancel_order_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
         add_filter('woocommerce_get_return_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
@@ -160,10 +158,6 @@ class woocommerce_wpml {
 
     function load_locale(){
         load_plugin_textdomain('woocommerce-multilingual', false, WCML_LOCALE_PATH);
-    }
-
-    function deactivation_actions(){
-        delete_option('wpml_dismiss_doc_main');
     }
 
     function filter_paypal_args($args) {
