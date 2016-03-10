@@ -80,7 +80,7 @@ class WCML_Status_UI extends WPML_Templates_Factory {
 			),
 			'store_page' => array(
 				'miss_lang' => $this->woocommerce_wpml->store->get_missing_store_pages(),
-				'install_link' => version_compare( WOOCOMMERCE_VERSION, '2.1', '<' ) ? admin_url( 'admin.php?page=woocommerce_settings&tab=pages' ) : admin_url( 'admin.php?page=wc-status&tab=tools' ),
+				'install_link' => admin_url( 'admin.php?page=wc-status&tab=tools' ),
 				'request_uri' => $_SERVER["REQUEST_URI"],
 				'strings' => array(
 					'store_pages' => __( 'WooCommerce Store Pages', 'woocommerce-multilingual' ),

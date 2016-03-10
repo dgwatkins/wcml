@@ -99,26 +99,15 @@ class WCML_Custom_Prices_UI extends WPML_Templates_Factory {
 
 			if( $this->is_variation ){
 				$currencies[ $key ][ 'custom_id' ] = '['.$key.']['.$this->product_id.']';
-
-				if(version_compare(preg_replace( '#-(.+)$#', '', WC_VERSION ), '2.1', '<' ) ){
-					$currencies[ $key ][ 'wc_input_type' ] = 'number';
-				}else{
-					$currencies[ $key ][ 'wc_input_type' ] = 'text';
-				}
+				$currencies[ $key ][ 'wc_input_type' ] = 'text';
 
 			}else{
 
 				$wc_input = array();
 
-				if(version_compare(preg_replace('#-(.+)$#', '', WC_VERSION ), '2.1', '<')){
-					$wc_input['custom_attributes'] = array('step' 	=> 'any','min'	=> '0') ;
-					$wc_input['type_name'] = 'type';
-					$wc_input['type_val'] = 'number';
-				}else{
-					$wc_input['custom_attributes'] = array() ;
-					$wc_input['type_name'] = 'data_type';
-					$wc_input['type_val'] = 'price';
-				}
+				$wc_input['custom_attributes'] = array() ;
+				$wc_input['type_name'] = 'data_type';
+				$wc_input['type_val'] = 'price';
 
 				foreach( $this->custom_prices_fields as $price_field ){
 					ob_start();

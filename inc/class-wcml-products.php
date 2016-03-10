@@ -1951,10 +1951,8 @@ class WCML_Products{
     function get_cart_attribute_translation( $attr_key, $attribute, $variation_id, $current_language, $product_id, $tr_product_id ){
         global $woocommerce, $woocommerce_wpml;
 
-        if( version_compare( preg_replace( '#-(.+)$#', '', $woocommerce->version ), '2.1', '>=' ) ){
-            //delete 'attribute_' at the beginning
-            $taxonomy = substr( $attr_key, 10, strlen( $attr_key ) - 1 );
-        }
+        //delete 'attribute_' at the beginning
+        $taxonomy = substr( $attr_key, 10, strlen( $attr_key ) - 1 );
 
         if( taxonomy_exists( $taxonomy ) ){
 

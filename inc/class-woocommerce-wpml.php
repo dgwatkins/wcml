@@ -39,10 +39,11 @@ class woocommerce_wpml {
         $this->dependencies = new WCML_Dependencies;
         $this->check_dependencies = $this->dependencies->check();
         $this->check_design_update = $this->dependencies->check_design_update();
+        WCML_Admin_Menus::set_up_menus( $this, $sitepress );
 
         if( !$this->check_dependencies ){
             wp_enqueue_style( 'onthegosystems-icon', WCML_PLUGIN_URL . '/res/css/otgs-ico.css' );
-            WCML_Resources::load_managment_css();
+            WCML_Resources::load_management_css();
             return false;
         }
 
@@ -57,8 +58,6 @@ class woocommerce_wpml {
         }else{
             add_shortcode('currency_switcher', '__return_empty_string');
         }
-
-        WCML_Admin_Menus::set_up_menus( $this, $sitepress );
 
         $this->troubleshooting      = new WCML_Troubleshooting();
         $this->compatibility        = new WCML_Compatibility();
@@ -80,8 +79,6 @@ class woocommerce_wpml {
         if(isset($_GET['page']) && $_GET['page'] == 'wc-reports'){
             $this->reports          = new WCML_Reports;
         }
-
-        include WCML_PLUGIN_PATH . '/inc/woocommerce-2.0-backward-compatibility.php';
 
         new WCML_Ajax_Setup;
         new WCML_WooCommerce_Rest_API_Support;

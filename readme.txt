@@ -35,7 +35,7 @@ When you need help, go to [WooCommerce Multilingual support forum](http://wpml.o
 
 = Downloads =
 
-This version of WooCommerce Multilingual works with WooCommerce 2.x.
+This version of WooCommerce Multilingual works with WooCommerce > 2.1
 
 You will also need [WPML](http://wpml.org), together with the String Translation and the Translation Management modules, which are part of the [Multilingual CMS](http://wpml.org/purchase/) package.
 
