@@ -105,7 +105,7 @@ class WCML_Requests{
         }
 
         if(isset($_GET['wcml_action']) && $_GET['wcml_action'] = 'dismiss'){
-            $woocommerce_wpml->settings['dismiss_doc_main'] = 'yes';
+            $woocommerce_wpml->settings['dismiss_doc_main'] = 1;
             $woocommerce_wpml->update_settings();
         }
     }

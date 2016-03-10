@@ -82,8 +82,6 @@ class woocommerce_wpml {
 
         add_action('init', array($this,'load_locale'));
 
-        register_deactivation_hook(__FILE__, array($this, 'deactivation_actions'));
-
         if(is_admin()){
             add_action('admin_footer', array($this, 'documentation_links'));
             add_action('admin_notices', array($this, 'admin_notice_after_install'));
@@ -343,10 +341,6 @@ class woocommerce_wpml {
 
     }
 
-    function deactivation_actions(){
-        delete_option('wpml_dismiss_doc_main');
-    }
-
     function load_css_and_js() {
         global $pagenow;
 
@@ -522,7 +516,7 @@ class woocommerce_wpml {
     }
 
     function admin_notice_after_install(){
-        if($this->settings['dismiss_doc_main'] != 'yes'){
+        if( !$this->settings['dismiss_doc_main'] ){
 
             $url = $_SERVER['REQUEST_URI'];
             $pos = strpos($url, '?');
