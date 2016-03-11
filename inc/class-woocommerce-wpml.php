@@ -62,11 +62,11 @@ class woocommerce_wpml {
         $this->troubleshooting      = new WCML_Troubleshooting();
         $this->compatibility        = new WCML_Compatibility();
         $this->endpoints            = new WCML_Endpoints;
-        $this->products             = new WCML_Products;
+        $this->products             = new WCML_Products( $this, $sitepress );
         $this->store                = new WCML_Store_Pages;
         $this->emails               = new WCML_Emails;
         $this->terms                = new WCML_Terms;
-        $this->attributes           = new WCML_Attributes;
+        $this->attributes           = new WCML_Attributes( $this, $sitepress );
         $this->orders               = new WCML_Orders;
         $this->strings              = new WCML_WC_Strings;
         $this->currencies           = new WCML_Currencies( $this );
@@ -75,6 +75,9 @@ class woocommerce_wpml {
         $this->languages_upgrader   = new WCML_Languages_Upgrader;
         $this->url_translation      = new WCML_Url_Translation;
         $this->requests             = new WCML_Requests;
+        $this->translation_editor   = new WCML_Translation_Editor( $this, $sitepress );
+        $this->cart                 = new WCML_Cart( $this, $sitepress );
+        $this->links                = new WCML_Links( $this, $sitepress );
 
         if(isset($_GET['page']) && $_GET['page'] == 'wc-reports'){
             $this->reports          = new WCML_Reports;

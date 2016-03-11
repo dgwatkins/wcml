@@ -16,6 +16,7 @@ class WCML_Autoloader {
             WCML_PLUGIN_PATH . '/inc/template-classes/*',
             WCML_PLUGIN_PATH . '/inc/currencies/',
             WCML_PLUGIN_PATH . '/inc/admin-menus/',
+            WCML_PLUGIN_PATH . '/inc/translation-editor/',
             WCML_PLUGIN_PATH . '/compatibility/'
         );
 

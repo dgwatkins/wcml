@@ -15,8 +15,10 @@ class WCML_Admin_Menus{
             self::remove_wpml_admin_language_switcher();
         }
 
-        if(is_admin()){
+        if( is_admin() ){
             add_action('admin_footer', array(__CLASS__, 'documentation_links'));
+            add_action( 'admin_head', array( __CLASS__, 'hide_multilingual_content_setup_box' ) );
+            add_action( 'admin_init', array( __CLASS__, 'restrict_admin_with_redirect' ) );
         }
 
     }
@@ -163,6 +165,80 @@ class WCML_Admin_Menus{
             </script>
             <?php
         }
+    }
+
+    public static function hide_multilingual_content_setup_box(){
+        remove_meta_box('icl_div_config', convert_to_screen('shop_order'), 'normal');
+        remove_meta_box('icl_div_config', convert_to_screen('shop_coupon'), 'normal');
+    }
+
+    public static function restrict_admin_with_redirect() {
+        global $pagenow;
+
+        $default_lang = self::$sitepress->get_default_language();
+        $current_lang = self::$sitepress->get_current_language();
+
+        if(
+            ( $pagenow == 'post.php' && isset( $_GET[ 'post' ] ) ) ||
+            ( $pagenow == 'admin.php' &&
+                isset( $_GET[ 'action' ] ) &&
+                $_GET[ 'action'] == 'duplicate_product' &&
+                isset( $_GET[ 'post' ] )
+            )
+        ){
+            $prod_lang = self::$sitepress->get_language_for_element( $_GET[ 'post' ], 'post_product' );
+        }
+
+        if(
+            !self::$woocommerce_wpml->settings[ 'trnsl_interface' ] &&
+            $pagenow == 'post.php' &&
+            isset( $_GET[ 'post' ] )&&
+            get_post_type( $_GET[ 'post' ] ) == 'product' &&
+            !self::$woocommerce_wpml->products->is_original_product(  $_GET[ 'post' ] ) )
+        {
+            add_action( 'admin_notices', array( __CLASS__, 'inf_editing_product_in_non_default_lang' ) );
+        }
+
+        if(
+            self::$woocommerce_wpml->settings[ 'trnsl_interface' ] &&
+            $pagenow == 'post.php' &&
+            !is_ajax() &&
+            isset( $_GET[ 'post' ] ) &&
+            !self::$woocommerce_wpml->products->is_original_product( $_GET[ 'post' ] ) &&
+            get_post_type( $_GET[ 'post' ] ) == 'product'
+        ) {
+            if(
+                !isset( $_GET[ 'action' ] ) ||
+                ( isset( $_GET[ 'action' ] ) && !in_array( $_GET[ 'action' ], array( 'trash', 'delete' ) ) )
+            ) {
+                wp_redirect( admin_url( 'admin.php?page=wpml-wcml&tab=products' ) );
+                exit;
+            }
+        }
+
+        if(
+            self::$woocommerce_wpml->settings[ 'trnsl_interface' ] &&
+            $pagenow == 'admin.php' &&
+            isset( $_GET[ 'action' ] ) &&
+            $_GET[ 'action' ] == 'duplicate_product' &&
+            $default_lang != $prod_lang )
+        {
+            wp_redirect( admin_url( 'admin.php?page=wpml-wcml&tab=products' ) );
+            exit;
+        }
+    }
+
+    public static function inf_editing_product_in_non_default_lang(){
+        $message = '<div class="message error"><p>';
+        $message .= sprintf(
+                        __( 'The recommended way to translate WooCommerce products is using the <b>
+                             <a href="%s">WooCommerce Multilingual products translation</a></b> page.
+                             Please use this page only for translating elements that are not available in the WooCommerce Multilingual products translation table.',
+                            'woocommerce-multilingual' ),
+                    admin_url( 'admin.php?page=wpml-wcml&tab=products' ) );
+        $message .= '</p></div>';
+
+        echo $message;
     }
 
 }
