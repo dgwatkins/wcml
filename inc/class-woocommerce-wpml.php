@@ -32,7 +32,7 @@ class woocommerce_wpml {
     }
 
     function init(){
-        global $sitepress,$pagenow;
+        global $sitepress;
 
         new WCML_Upgrade;
 
@@ -93,15 +93,13 @@ class woocommerce_wpml {
         add_filter('woocommerce_get_cancel_order_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
         add_filter('woocommerce_get_return_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
 
-        add_filter('woocommerce_paypal_args', array($this, 'filter_paypal_args'));
-
         add_action('wp_ajax_wcml_update_setting_ajx', array($this, 'update_setting_ajx'));
 
         //load WC translations
         add_action( 'icl_update_active_languages', array( $this, 'download_woocommerce_translations_for_active_languages' ) );
         add_action( 'wp_ajax_hide_wcml_translations_message', array($this, 'hide_wcml_translations_message') );
 
-        add_filter( 'wpml_tm_dashboard_translatable_types', array( $this, 'hide_variation_type_on_tm_dashboard') );
+
     }
 
     function get_settings(){
@@ -155,25 +153,6 @@ class woocommerce_wpml {
 
     function load_locale(){
         load_plugin_textdomain('woocommerce-multilingual', false, WCML_LOCALE_PATH);
-    }
-
-    function filter_paypal_args($args) {
-        global $sitepress;
-        $args['lc'] = $sitepress->get_current_language();
-
-        //filter URL when default permalinks uses
-        $wpml_settings = $sitepress->get_settings();
-        if( $wpml_settings[ 'language_negotiation_type' ] == 3 ){
-            $args[ 'notify_url' ] = str_replace( '%2F&', '&', $args[ 'notify_url' ] );
-        }
-
-        return $args;
-    }
-
-    function hide_variation_type_on_tm_dashboard( $types ){
-        unset( $types['product_variation'] );
-
-        return $types;
     }
 
     //get latest stable version from WC readme.txt

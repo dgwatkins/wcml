@@ -55,6 +55,7 @@ class WCML_Install{
             $woocommerce_wpml->update_settings();
         }
 
+        add_filter( 'wpml_tm_dashboard_translatable_types', array( __CLASS__, 'hide_variation_type_on_tm_dashboard') );
     }
 
     private static function set_language_information( &$sitepress ){
@@ -134,5 +135,9 @@ class WCML_Install{
         }
     }
 
+    public static function hide_variation_type_on_tm_dashboard( $types ){
+        unset( $types['product_variation'] );
+        return $types;
+    }
 
 }

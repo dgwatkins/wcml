@@ -37,9 +37,10 @@ class WCML_Store_Pages{
         $this->front_page_id = get_option('page_on_front');
         $this->shop_page_id =  wc_get_page_id('shop');
         $this->shop_page = get_post( $this->shop_page_id );
-        
-        
+
         $this->localize_flat_rates_shipping_classes();
+
+        add_filter('woocommerce_paypal_args', array($this, 'filter_paypal_args'));
         
     }   
     
@@ -582,6 +583,19 @@ class WCML_Store_Pages{
 
         return $template;
 
+    }
+
+    function filter_paypal_args($args) {
+        global $sitepress;
+        $args['lc'] = $sitepress->get_current_language();
+
+        //filter URL when default permalinks uses
+        $wpml_settings = $sitepress->get_settings();
+        if( $wpml_settings[ 'language_negotiation_type' ] == 3 ){
+            $args[ 'notify_url' ] = str_replace( '%2F&', '&', $args[ 'notify_url' ] );
+        }
+
+        return $args;
     }
     
 }
