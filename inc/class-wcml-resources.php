@@ -27,7 +27,7 @@ class WCML_Resources {
         $is_original_product = isset( $_GET['post'] ) && self::$woocommerce_wcml->products->is_original_product( $_GET['post'] );
         $is_new_product = self::$pagenow == 'post-new.php' && isset($_GET['source_lang']) && isset($_GET['post_type']) && $_GET['post_type'] == 'product';
 
-        if ( ($is_edit_product && $is_original_product) || $is_new_product && !self::$woocommerce_wcml->settings['trnsl_interface'] ) {
+        if ( ($is_edit_product && !$is_original_product) || $is_new_product && !self::$woocommerce_wcml->settings['trnsl_interface'] ) {
             add_action( 'init', array(__CLASS__, 'load_lock_fields_js') );
             add_action( 'admin_footer', array(__CLASS__, 'hidden_label') );
         }

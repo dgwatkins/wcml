@@ -21,7 +21,7 @@ jQuery(document).ready(function($){
     }
     buttons = buttons.concat( non_standard_fields.classes );
 
-    if( unlock_fields.files_sync == 1 ){
+    if( unlock_fields.file_paths == 1 ){
         buttons.push('upload_file_button');
         buttons.push('insert');
         buttons.push('delete');
@@ -36,6 +36,7 @@ jQuery(document).ready(function($){
         $('.'+buttons[i]).attr('disabled','disabled');
         $('.'+buttons[i]).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show().css('float','right'));
     }
+
 
     $('.remove_variation').each(function(){
         $(this).attr('disabled','disabled');
@@ -55,7 +56,7 @@ jQuery(document).ready(function($){
         inpt_names.push('menu_order');
     }
 
-    if( unlock_fields.files_sync == 1 ){
+    if( unlock_fields.file_paths == 1 ){
         inpt_names.push('_wc_file_names[]');
         inpt_names.push('_wc_file_urls[]');
     }

@@ -26,7 +26,7 @@ class WCML_Custom_Files_UI extends WPML_Templates_Factory {
 			'is_variation' => $this->is_variation,
 			'nonce' => wp_nonce_field('wcml_save_files_option','wcml_save_files_option_nonce'),
 			'sync_custom' => get_post_meta( $this->product_id, 'wcml_sync_files', true ),
-				'strings' => array(
+			'strings' => array(
 				'use_custom' => __( 'Use custom settings for this product', 'woocommerce-multilingual' ),
 				'use_same' => __( 'Use the same files for translations', 'woocommerce-multilingual' ),
 				'separate' => __( 'Add separate download files for translations', 'woocommerce-multilingual' )
