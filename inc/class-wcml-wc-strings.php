@@ -564,7 +564,7 @@ class WCML_WC_Strings{
         }
         echo '</i></div></div>';
 
-        $woocommerce_wpml->load_tooltip_resources();
+        WCML_Resources::load_tooltip_resources();
     }
 
     function show_attribute_label_language_warning(){

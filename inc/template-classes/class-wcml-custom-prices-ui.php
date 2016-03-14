@@ -61,7 +61,7 @@ class WCML_Custom_Prices_UI extends WPML_Templates_Factory {
 
 	public function get_currencies_info( ){
 
-		$currencies = $this->woocommerce_wpml->multi_currency_support->get_currencies();
+		$currencies = $this->woocommerce_wpml->multi_currency->get_currencies();
 		$wc_currencies = get_woocommerce_currencies();
 
 		foreach( $currencies as $key => $currency ){

@@ -23,7 +23,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
         $this->woocommerce_wpml = $woocommerce_wpml;
         $this->sitepress = $sitepress;
 
-        $this->currencies       = $this->woocommerce_wpml->multi_currency_support->get_currencies();
+        $this->currencies       = $this->woocommerce_wpml->multi_currency->get_currencies();
         $this->wc_currencies    = get_woocommerce_currencies();
         $this->wc_currency      = get_option( 'woocommerce_currency' );
 
@@ -104,7 +104,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
                     'visibility'=> __('Visibility', 'woocommerce-multilingual')
                 ),
                 'preview_nonce' => wp_create_nonce( 'wcml_currencies_switcher_preview' ),
-                    'preview'       => $this->woocommerce_wpml->multi_currency_support->currency_switcher( array('echo' => false) ),
+                    'preview'       => $this->woocommerce_wpml->multi_currency->currency_switcher->currency_switcher( array('echo' => false) ),
                 'preview_text'  => __( 'Currency switcher preview', 'woocommerce-multilingual' ),
                 'style'         => isset($this->woocommerce_wpml->settings['currency_switcher_style']) ? $this->woocommerce_wpml->settings['currency_switcher_style'] : false,
                 'options' => array(
@@ -116,7 +116,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
                 'orientation'       => isset($this->woocommerce_wpml->settings['wcml_curr_sel_orientation']) ?
                                         $this->woocommerce_wpml->settings['wcml_curr_sel_orientation'] : 'vertical',
                 'order'             => !isset( $this->woocommerce_wpml->settings['currencies_order'] ) ?
-                                        $this->woocommerce_wpml->multi_currency_support->get_currency_codes() :
+                                        $this->woocommerce_wpml->multi_currency->get_currency_codes() :
                                         $this->woocommerce_wpml->settings['currencies_order'],
                 'order_nonce'       => wp_create_nonce( 'set_currencies_order_nonce' ),
                 'order_tip'         => __( 'Drag the currencies to change their order', 'woocommerce-multilingual' ),

@@ -14,7 +14,6 @@ class woocommerce_wpml {
     public $attributes;
     public $orders;
     public $currencies;
-    public $multi_currency_support;
     public $multi_currency;
     public $languages_upgrader;
     public $url_translation;
@@ -24,9 +23,10 @@ class woocommerce_wpml {
     public $downloadable;
 
     private $reports;
-    private $requests;
+    public $requests;
     private $compatibility;
     private $xdomain_data;
+
 
     function __construct(){
 
@@ -59,7 +59,6 @@ class woocommerce_wpml {
             || ( isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) && $_GET['tab'] == 'multi-currency' )
             || ( isset( $_POST[ 'action' ] ) && in_array( $_POST[ 'action' ], $actions_that_need_mc ) )
         ){
-            $this->multi_currency_support = new WCML_Multi_Currency_Support;
             $this->multi_currency = new WCML_Multi_Currency;
         }else{
             add_shortcode('currency_switcher', '__return_empty_string');
@@ -79,7 +78,6 @@ class woocommerce_wpml {
         $this->orders               = new WCML_Orders;
         $this->strings              = new WCML_WC_Strings;
         $this->currencies           = new WCML_Currencies( $this );
-        $this->currency_switcher    = new WCML_Currency_Switcher;
         $this->xdomain_data         = new WCML_xDomain_Data;
         $this->languages_upgrader   = new WCML_Languages_Upgrader;
         $this->url_translation      = new WCML_Url_Translation;

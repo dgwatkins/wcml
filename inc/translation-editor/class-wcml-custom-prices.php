@@ -25,7 +25,7 @@ class WCML_Custom_Prices{
             update_post_meta( $post_id, '_wcml_custom_prices_status', $wcml_custom_prices_option );
 
             if( $wcml_custom_prices_option == 1){
-                $currencies = $this->woocommerce_wpml->multi_currency_support->get_currencies();
+                $currencies = $this->woocommerce_wpml->multi_currency->get_currencies();
                 foreach( $currencies as $code => $currency ){
                     $sale_price = wc_format_decimal( $_POST[ '_custom_sale_price' ][ $code ] );
                     $regular_price = wc_format_decimal( $_POST[ '_custom_regular_price' ][ $code ] );
@@ -105,7 +105,7 @@ class WCML_Custom_Prices{
                 $nonce = filter_input( INPUT_POST, '_wcml_custom_prices_variation_' . $post_data->ID . '_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
                 if( isset( $_POST['_wcml_custom_prices'][$post_data->ID]) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_custom_prices_variation_' . $post_data->ID ) ){
                     update_post_meta( $post_data->ID, '_wcml_custom_prices_status', $_POST[ '_wcml_custom_prices' ][ $post_data->ID ] );
-                    $currencies = $this->woocommerce_wpml->multi_currency_support->get_currencies();
+                    $currencies = $this->woocommerce_wpml->multi_currency->get_currencies();
 
                     if( $_POST[ '_wcml_custom_prices' ][ $post_data->ID ] == 1 ){
                         foreach( $currencies as $code => $currency ){

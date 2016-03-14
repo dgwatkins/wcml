@@ -19,7 +19,7 @@ class WCML_Install{
                 $woocommerce_wpml->settings['wc_admin_options_saved'] = 1;
             }
 
-            if ( !$woocommerce_wpml( $woocommerce_wpml->settings['trnsl_interface'] ) ) {
+            if ( !isset( $woocommerce_wpml->settings['trnsl_interface'] ) ) {
                 $woocommerce_wpml->settings['trnsl_interface'] = 1;
             }
 

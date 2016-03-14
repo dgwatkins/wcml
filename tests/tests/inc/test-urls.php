@@ -46,7 +46,7 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 
 		$args['notify_url'] = WC()->api_request_url( 'WC_Gateway_Paypal' );
 
-		$filtered_args = $this->woocommerce_wpml->filter_paypal_args( $args ) ;
+		$filtered_args = $this->woocommerce_wpml->store->filter_paypal_args( $args ) ;
 
 		$this->assertEquals( $this->sitepress->convert_url( get_home_url() ).'&wc-api=WC_Gateway_Paypal', $filtered_args['notify_url'] );
 	}
