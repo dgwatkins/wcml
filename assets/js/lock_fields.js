@@ -18,6 +18,11 @@ jQuery(document).ready(function($){
         buttons.push('upload_file_button');
         buttons.push('insert');
         buttons.push('delete');
+        $('.upload_file_button,.insert,.delete').bind({
+            click: function(e) {
+                return false;
+            }
+        });
     }
 
     for (i = 0; i < buttons.length; i++) {
