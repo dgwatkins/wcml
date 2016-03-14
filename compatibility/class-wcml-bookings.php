@@ -142,7 +142,7 @@ class WCML_Bookings{
 
         if( ( !$check || $woocommerce_wpml->products->is_original_product( $post_id ) ) && $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
 
-            $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
+            $currencies = $woocommerce_wpml->multi_currency->get_currencies();
 
             $wc_currencies = get_woocommerce_currencies();
 
@@ -299,7 +299,7 @@ class WCML_Bookings{
 
             if( $_POST['_wcml_custom_costs'] == 1 ){
 
-                $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
+                $currencies = $woocommerce_wpml->multi_currency->get_currencies();
 
                 foreach( $currencies as $code => $currency ){
 
@@ -542,7 +542,7 @@ class WCML_Bookings{
 
 
                     if( get_post_meta( $person, '_wcml_custom_costs_status', true ) && $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT){
-                        $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
+                        $currencies = $woocommerce_wpml->multi_currency->get_currencies();
 
                         foreach( $currencies as $code => $currency ){
 
@@ -622,7 +622,7 @@ class WCML_Bookings{
 
                 $cost_status = get_post_meta( $original_id, '_wcml_custom_costs_status', true );
 
-                $currency = $woocommerce_wpml->multi_currency_support->get_client_currency();
+                $currency = $woocommerce_wpml->multi_currency->get_client_currency();
 
                 if ( $currency == get_option('woocommerce_currency') ){
                     return $check;
@@ -737,7 +737,7 @@ class WCML_Bookings{
 
             if( isset( $_POST['_wcml_custom_costs'] ) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_custom_costs' ) && $_POST['_wcml_custom_costs'] == 1 ) {
 
-                $currencies = $woocommerce_wpml->multi_currency_support->get_currencies();
+                $currencies = $woocommerce_wpml->multi_currency->get_currencies();
 
                 $updated_meta = array();
 
@@ -916,7 +916,7 @@ class WCML_Bookings{
 
         if( $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
 
-            $currency = $woocommerce_wpml->multi_currency_support->get_client_currency();
+            $currency = $woocommerce_wpml->multi_currency->get_client_currency();
 
             if ( $currency == get_option('woocommerce_currency') ) {
                 return $cost;

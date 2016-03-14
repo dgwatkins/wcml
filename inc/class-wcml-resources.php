@@ -112,7 +112,7 @@ class WCML_Resources {
 
     }
 
-    private static function load_tooltip_resources() {
+    public static function load_tooltip_resources() {
 
         if ( class_exists( 'woocommerce' ) ) {
             wp_register_script( 'jquery-tiptip', WC()->plugin_url() . '/assets/js/jquery-tiptip/jquery.tipTip.min.js', array('jquery'), WC_VERSION, true );

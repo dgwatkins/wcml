@@ -59,34 +59,33 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 		$this->woocommerce_wpml->update_settings( $settings );
 
 		// Multi currency objects
-		$this->woocommerce_wpml->multi_currency_support = new WCML_Multi_Currency_Support;
-		$this->multi_currency_support =& $this->woocommerce_wpml->multi_currency_support;
-
 		$this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
 		$this->multi_currency =& $this->woocommerce_wpml->multi_currency;
+
+		$this->multi_currency->prices->prices_init();
 	}
 
 
 	function test_raw_price_filter() {
 
 		//AUD No rounding, exch rate: 2.45, 1 decimal
-		$this->assertEquals( 7.3, $this->multi_currency->raw_price_filter(3, 'AUD') );
+		$this->assertEquals( 7.3, $this->multi_currency->prices->raw_price_filter(3, 'AUD') );
 
 		//RON Round up, exch rate: 1.64, 0 decimals
-		$this->assertEquals( 799, $this->multi_currency->raw_price_filter(434, 'RON') );
+		$this->assertEquals( 799, $this->multi_currency->prices->raw_price_filter(434, 'RON') );
 
 		//USD Round down, exch rate: 1.5.5, 0 decimals, round incr 10, round subt 3
-		$this->assertEquals( 697, $this->multi_currency->raw_price_filter(456, 'USD') );
+		$this->assertEquals( 697, $this->multi_currency->prices->raw_price_filter(456, 'USD') );
 
 	}
 
 	function test_apply_rounding_rules() {
 
-		$this->assertEquals( 12337, $this->multi_currency->apply_rounding_rules(12345, 'USD') );
+		$this->assertEquals( 12337, $this->multi_currency->prices->apply_rounding_rules(12345, 'USD') );
 
-		$this->assertEquals( 12399, $this->multi_currency->apply_rounding_rules(12345, 'RON') );
+		$this->assertEquals( 12399, $this->multi_currency->prices->apply_rounding_rules(12345, 'RON') );
 
-		$this->assertEquals( 123.3, $this->multi_currency->apply_rounding_rules(123.37, 'AUD') ); //disabled
+		$this->assertEquals( 123.3, $this->multi_currency->prices->apply_rounding_rules(123.37, 'AUD') ); //disabled
 	}
 
 
@@ -95,13 +94,13 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 		//convert + round + decimals
 
 		$this->assertEquals( '<span class="amount">&#36;1#907@0000</span>',
-				$this->multi_currency->formatted_price(1234.137, 'USD') );
+				$this->multi_currency->prices->formatted_price(1234.137, 'USD') );
 
 		$this->assertEquals( '<span class="amount">2.099lei</span>',
-			$this->multi_currency->formatted_price(1234.137, 'RON') );
+			$this->multi_currency->prices->formatted_price(1234.137, 'RON') );
 
 		$this->assertEquals( '<span class="amount">3.023,6&#36;</span>',
-			$this->multi_currency->formatted_price(1234.137, 'AUD') );
+			$this->multi_currency->prices->formatted_price(1234.137, 'AUD') );
 
 	}
 
@@ -110,13 +109,13 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
 		$arg = array( 'amount_1' => '12.78', 'currency_code' =>  'RON' );
 
-		$arg = $this->multi_currency->filter_price_woocommerce_paypal_args( $arg );
+		$arg = $this->multi_currency->prices->filter_price_woocommerce_paypal_args( $arg );
 
 		$this->assertEquals( 13, $arg['amount_1'] );
 
 		$arg = array( 'amount_1' => '12.78', 'currency_code' =>  'AUD' );
 
-		$arg = $this->multi_currency->filter_price_woocommerce_paypal_args( $arg );
+		$arg = $this->multi_currency->prices->filter_price_woocommerce_paypal_args( $arg );
 
 		$this->assertEquals( 12.8, $arg['amount_1'] );
 
@@ -131,10 +130,10 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 		$minimum_amount  = $coupon->minimum_amount;
 		$maximum_amount  = $coupon->maximum_amount;
 
-		add_filter('wcml_raw_price_amount', array($this->multi_currency, 'raw_price_filter'), 10, 2);
-		$this->multi_currency_support->set_client_currency('CHF');
+		add_filter('wcml_raw_price_amount', array($this->multi_currency->prices, 'raw_price_filter'), 10, 2);
+		$this->multi_currency->set_client_currency('CHF');
 
-		$this->multi_currency_support->filter_coupon_data($coupon);
+		$this->multi_currency->coupons->filter_coupon_data($coupon);
 
 		$rate = $this->settings['currency_options']['CHF']['rate'];
 

@@ -392,7 +392,7 @@ class WCML_Products{
             $this->woocommerce_wpml->settings[ 'display_custom_prices' ] )
         {
 
-            $client_currency = $this->woocommerce_wpml->multi_currency_support->get_client_currency();
+            $client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
             $woocommerce_currency = get_option('woocommerce_currency');
 
             if( $client_currency != $woocommerce_currency ){
@@ -414,7 +414,7 @@ class WCML_Products{
             isset( $this->woocommerce_wpml->settings[ 'display_custom_prices' ]  ) &&
             $this->woocommerce_wpml->settings[ 'display_custom_prices' ] ){
 
-            $client_currency = $this->woocommerce_wpml->multi_currency_support->get_client_currency();
+            $client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
             $woocommerce_currency = get_option( 'woocommerce_currency' );
 
             if( $client_currency == $woocommerce_currency ){
@@ -428,7 +428,7 @@ class WCML_Products{
 			", OBJECT_K );
 
             if ( $matched_products_query ) {
-                remove_filter( 'get_post_metadata', array( $this->woocommerce_wpml->multi_currency_support, 'product_price_filter' ), 10, 4);
+                remove_filter( 'get_post_metadata', array( $this->woocommerce_wpml->multi_currency->prices, 'product_price_filter' ), 10, 4);
                 foreach ( $matched_products_query as $product ) {
                     if( !get_post_meta( $product->ID,'_price_'.$client_currency, true ) ) continue;
                     if ( $product->post_type == 'product' )
@@ -436,7 +436,7 @@ class WCML_Products{
                     if ( $product->post_parent > 0 && ! in_array( $product->post_parent, $matched_products ) )
                         $matched_products[] = apply_filters( 'translate_object_id', $product->post_parent, get_post_type( $product->post_parent ), true );
                 }
-                add_filter('get_post_metadata', array( $this->woocommerce_wpml->multi_currency_support, 'product_price_filter' ), 10, 4);
+                add_filter('get_post_metadata', array( $this->woocommerce_wpml->multi_currency->prices, 'product_price_filter' ), 10, 4);
             }
 
             // Filter the id's
@@ -487,8 +487,8 @@ class WCML_Products{
                 $save = true;
             }
 
-            if( !empty( $this->woocommerce_wpml->multi_currency_support ) ){
-                foreach( $this->woocommerce_wpml->multi_currency_support->get_currency_codes() as $code ){
+            if( !empty( $this->woocommerce_wpml->multi_currency ) ){
+                foreach( $this->woocommerce_wpml->multi_currency->get_currency_codes() as $code ){
                     $new_key = $key.'_'.$code;
                     $iclTranslationManagement->settings[ 'custom_fields_readonly_config' ][] = $new_key;
 

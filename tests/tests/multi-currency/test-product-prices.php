@@ -11,16 +11,14 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 		parent::setUp();
 
 		// Multi currency objects
-		$this->woocommerce_wpml->multi_currency_support = new WCML_Multi_Currency_Support;
 		$this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
-
-		$this->woocommerce_wpml->multi_currency_support->init();
 		$this->woocommerce_wpml->multi_currency->init();
 
 		// settings
 		$this->settings 				=& $this->woocommerce_wpml->settings;
 		$this->multi_currency 			=& $this->woocommerce_wpml->multi_currency;
-		$this->multi_currency_support 	=& $this->woocommerce_wpml->multi_currency_support;
+
+		$this->multi_currency->prices->prices_init();
 
 		// LANGUAGE AND CURRENCIES
 		$this->default_currency 	= 'GBP';
@@ -426,7 +424,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 		foreach( $currencies as $currency){
 
-			$this->multi_currency_support->set_client_currency( $currency );
+			$this->multi_currency->set_client_currency( $currency );
 			$wc_product = new $wc_product_type( $product['post']->id );
 
 			// Compare amount with expected amounts
@@ -455,7 +453,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 			foreach( $currencies as $currency){
 
-				$this->multi_currency_support->set_client_currency( $currency );
+				$this->multi_currency->set_client_currency( $currency );
 				$wc_product = new $wc_product_type( $product['post']->id );
 
 				// Compare amount with expected amounts
@@ -503,14 +501,14 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 		$this->sitepress->switch_lang( $language );
 
-		$client_currency = $this->multi_currency_support->get_client_currency();
-		$this->multi_currency_support->set_client_currency(null);
+		$client_currency = $this->multi_currency->get_client_currency();
+		$this->multi_currency->set_client_currency(null);
 
 		$woocommerce->session->set('client_currency_language', '');
 		$woocommerce->session->save_data();
 
 		if( empty( $this->settings['default_currencies'][$language] ) ){
-			$this->multi_currency_support->set_client_currency( $client_currency );
+			$this->multi_currency->set_client_currency( $client_currency );
 		}
 
 	}
