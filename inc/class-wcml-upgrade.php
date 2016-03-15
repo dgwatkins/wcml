@@ -12,7 +12,8 @@ class WCML_Upgrade{
         '3.5.4',
         '3.6',
         '3.7',
-        '3.7.3'
+        '3.7.3',
+        '3.7.11'
 
     );
     
@@ -425,5 +426,12 @@ class WCML_Upgrade{
         $sitepress->switch_lang( $current_language );
 
     }
+
+    function upgrade_3_7_11(){
+
+        $wcml_settings = get_option('_wcml_settings');
+        $wcml_settings['dismiss_doc_main'] = 1;
+        update_option('_wcml_settings', $wcml_settings);
+ 	}
 
 }
