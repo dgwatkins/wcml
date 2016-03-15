@@ -5,8 +5,6 @@ class WCML_Terms{
     const ALL_TAXONOMY_TERMS_TRANSLATED = 0;
     const NEW_TAXONOMY_TERMS = 1;
     const NEW_TAXONOMY_IGNORED = 2;
-    
-    private $_tmp_locale_val = false;
 
     function __construct(){
         
@@ -60,6 +58,7 @@ class WCML_Terms{
 
         add_action( 'created_term_translation', array( $this, 'set_flag_to_sync'), 10, 3 );
 
+        add_filter( 'icl_wpml_config_array', array( $this, 'set_taxonomies_config' ) );
     }
     
     function admin_menu_setup(){
@@ -93,12 +92,6 @@ class WCML_Terms{
             }
 
         }
-    }
-
-    function _switch_wc_locale(){
-        global $sitepress;
-        $locale = !empty($this->_tmp_locale_val) ? $this->_tmp_locale_val : $sitepress->get_locale($sitepress->get_current_language());
-        return $locale;
     }
 
     function show_term_translation_screen_notices(){
@@ -586,9 +579,9 @@ class WCML_Terms{
                 foreach($translations as $translation){
 
                     if($i > $languages_processed && $translation->element_id != $post_id){
-                        $woocommerce_wpml->products->sync_product_taxonomies($post_id, $translation->element_id, $translation->language_code);
-                        $woocommerce_wpml->products->sync_product_variations($post_id, $translation->element_id, $translation->language_code, false, true);
-                        $woocommerce_wpml->products->create_product_translation_package($post_id,$trid, $translation->language_code,ICL_TM_COMPLETE);
+                        $woocommerce_wpml->sync_product_data->sync_product_taxonomies($post_id, $translation->element_id, $translation->language_code);
+                        $woocommerce_wpml->sync_variations_data->sync_product_variations($post_id, $translation->element_id, $translation->language_code, false, true);
+                        $woocommerce_wpml->translation_editor->create_product_translation_package($post_id,$trid, $translation->language_code,ICL_TM_COMPLETE);
                         $variations_processed += $terms_count*2;
                         $response['languages_processed'] = $i;
                         $i++;
@@ -1114,6 +1107,57 @@ class WCML_Terms{
 
         return $no_tax_to_trnls;
 
+    }
+
+    /*
+    * Use custom query, because get_term_by function return false for terms with "0" slug      *
+    */
+    public function wcml_get_term_id_by_slug( $taxonomy, $slug ){
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT tt.term_id FROM $wpdb->terms AS t
+                        INNER JOIN $wpdb->term_taxonomy AS tt
+                        ON t.term_id = tt.term_id
+                        WHERE tt.taxonomy = %s AND t.slug = %s LIMIT 1",
+                $taxonomy, $slug )
+        );
+    }
+
+    public function wcml_get_term_by_id( $term_id, $taxonomy ){
+        global $wpdb;
+
+        return $wpdb->get_row(
+            $wpdb->prepare("
+                        SELECT * FROM {$wpdb->terms} t
+                        JOIN {$wpdb->term_taxonomy} x
+                        ON x.term_id = t.term_id
+                        WHERE t.term_id = %d AND x.taxonomy = %s",
+                $term_id, $taxonomy )
+        );
+    }
+
+    public function set_taxonomies_config( $config_all ){
+        $all_products_taxonomies = get_taxonomies( array( 'object_type' => array( 'product' ) ), 'objects' );
+
+        foreach( $all_products_taxonomies as $tax_key => $tax ) {
+            if( $tax_key == 'product_type' ) continue;
+            $found = false;
+            $att_sett = $this->woocommerce_wpml->attributes->is_translatable_attribute( $tax_key );
+
+            foreach( $config_all[ 'wpml-config' ][ 'taxonomies' ][ 'taxonomy' ] as $key => $taxonomy ){
+                if( $tax_key == $taxonomy[ 'value' ] ){
+                    $config_all[ 'wpml-config' ][ 'taxonomies' ][ 'taxonomy' ][ $key ][ 'attr' ][ 'translate' ] = $att_sett;
+                    $found = true;
+                }
+            }
+
+            if( !$found ){
+                $config_all[ 'wpml-config' ][ 'taxonomies' ][ 'taxonomy' ][] = array( 'value' => $tax_key, 'attr' => array( 'translate' => $att_sett ) );
+            }
+        }
+
+        return $config_all;
     }
 
 }

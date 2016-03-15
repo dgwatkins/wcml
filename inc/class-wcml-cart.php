@@ -27,7 +27,7 @@ class WCML_Cart
 
     public function wcml_refresh_fragments(){
         WC()->cart->calculate_totals();
-        $this->woocommerce_wpml->products->wcml_refresh_text_domain();
+        $this->woocommerce_wpml->locale->wcml_refresh_text_domain();
     }
 
     /*
@@ -138,9 +138,9 @@ class WCML_Cart
 
         if( taxonomy_exists( $taxonomy ) ){
             if( $this->woocommerce_wpml->attributes->is_translatable_attribute( $taxonomy ) ){
-                $term_id = $this->woocommerce_wpml->products->wcml_get_term_id_by_slug( $taxonomy, $attribute );
+                $term_id = $this->woocommerce_wpml->terms->wcml_get_term_id_by_slug( $taxonomy, $attribute );
                 $trnsl_term_id = apply_filters( 'translate_object_id', $term_id, $taxonomy, true, $current_language );
-                $term = $this->woocommerce_wpml->products->wcml_get_term_by_id( $trnsl_term_id, $taxonomy );
+                $term = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $trnsl_term_id, $taxonomy );
                 return $term->slug;
             }else{
                 return $attribute;
@@ -150,7 +150,7 @@ class WCML_Cart
             if( $trnsl_attr ){
                 return $trnsl_attr;
             }else{
-                return $this->woocommerce_wpml->products->get_custom_attr_translation( $product_id, $tr_product_id, $taxonomy, $attribute );
+                return $this->woocommerce_wpml->attributes->get_custom_attr_translation( $product_id, $tr_product_id, $taxonomy, $attribute );
             }
         }
     }

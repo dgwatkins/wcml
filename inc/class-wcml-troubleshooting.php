@@ -95,7 +95,7 @@ class WCML_Troubleshooting{
                     $tr_product_id = apply_filters( 'translate_object_id',$product['id'],'product',false,$language['code']);
 
                     if(!is_null($tr_product_id)){
-                        $woocommerce_wpml->products->sync_product_variations($product['id'],$tr_product_id,$language['code'],false,true);
+                        $woocommerce_wpml->sync_variations_data->sync_product_variations($product['id'],$tr_product_id,$language['code'],false,true);
                     }
                     if(!in_array($key,$unset_keys)){
                         $unset_keys[] = $key;
@@ -136,7 +136,7 @@ class WCML_Troubleshooting{
 
         foreach($all_products as $product){
             if(!get_post_meta($product->ID,'gallery_sync',true)){
-                $woocommerce_wpml->products->sync_product_gallery($product->ID);
+                $woocommerce_wpml->media->sync_product_gallery($product->ID);
                 add_post_meta($product->ID,'gallery_sync',true);
             }
         }

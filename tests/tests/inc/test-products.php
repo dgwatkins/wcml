@@ -54,7 +54,7 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 		);
 		$this->wcml_helper->update_product( $child_es );
 
-		$this->woocommerce_wpml->products->sync_linked_products( $child_product->id, $child_product_es->id, 'es' );
+		$this->woocommerce_wpml->sync_product_data->sync_linked_products( $child_product->id, $child_product_es->id, 'es' );
 
 		$grouped_es = new WC_Product_Grouped( $parent_product_es->id ); //need to reinstantiate
 

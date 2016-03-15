@@ -39,6 +39,9 @@ class WCML_Requests{
 
 
         add_action('wp_ajax_wcml_ignore_warning', array( $this, 'update_settings_from_warning') );
+
+        // Override cached widget id
+        add_filter( 'woocommerce_cached_widget_id', array( $this, 'override_cached_widget_id' ) );
     }
 
     function update_settings_from_warning(){
@@ -60,6 +63,15 @@ class WCML_Requests{
             $woocommerce_wpml->settings['first_setup_warning'] = 1;
             $woocommerce_wpml->update_settings();
         }
+    }
+
+    public function override_cached_widget_id( $widget_id ){
+
+        if( defined( 'ICL_LANGUAGE_CODE' ) ){
+            $widget_id .= ':' . ICL_LANGUAGE_CODE;
+        }
+
+        return $widget_id;
     }
 
 }

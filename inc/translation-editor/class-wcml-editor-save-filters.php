@@ -49,4 +49,5 @@ class WCML_Editor_Save_Filters {
         $lang = $this->language ? $this->language : $lang;
         return $lang;
     }
+
 }

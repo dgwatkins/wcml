@@ -4,16 +4,12 @@ class WCML_Attributes{
 
     private $woocommerce_wpml;
     private $sitepress;
+    private $wpdb;
 
-    public function __construct( &$woocommerce_wpml, &$sitepress ){
+    public function __construct( &$woocommerce_wpml, &$sitepress, &$wpdb ){
         $this->woocommerce_wpml = $woocommerce_wpml;
         $this->sitepress = $sitepress;
-
-        add_action( 'init', array( $this, 'init' ) );
-
-    }
-
-    public function init(){
+        $this->wpdb = $wpdb;
 
         if( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == 'product_attributes' && isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'product' ){
             $this->load_js_and_css();
@@ -26,6 +22,10 @@ class WCML_Attributes{
 
         add_action( 'woocommerce_attribute_added', array( $this, 'set_attribute_readonly_config' ), 10, 2 );
 
+        //add filter when add term on product page
+        add_filter( 'wpml_create_term_lang', array( $this, 'product_page_add_language_info_to_term' ) );
+
+        add_filter( 'wpml_translation_job_post_meta_value_translated', array($this, 'filter_product_attributes_for_translation'), 10, 2 );
     }
 
     public function not_translatable_html(){
@@ -43,10 +43,9 @@ class WCML_Attributes{
     }
 
     public function get_attribute_terms( $attribute ){
-        global $wpdb;
 
-        return $wpdb->get_results($wpdb->prepare("
-                        SELECT * FROM {$wpdb->term_taxonomy} x JOIN {$wpdb->terms} t ON x.term_id = t.term_id WHERE x.taxonomy = %s", $attribute ) );
+        return $this->wpdb->get_results($this->wpdb->prepare("
+                        SELECT * FROM {$this->wpdb->term_taxonomy} x JOIN {$this->wpdb->terms} t ON x.term_id = t.term_id WHERE x.taxonomy = %s", $attribute ) );
 
     }
 
@@ -89,13 +88,12 @@ class WCML_Attributes{
     }
 
     public function set_variations_to_use_original_attributes( $attribute ){
-        global $wpdb;
         $terms = $this->get_attribute_terms( 'pa_'.$attribute );
 
         foreach( $terms as $term ){
             $term_language_details = $this->sitepress->get_element_language_details( $term->term_id, 'tax_pa_'.$attribute );
             if( $term_language_details && is_null( $term_language_details->source_language_code ) ){
-                $variations = $wpdb->get_results( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key=%s AND meta_value = %s",  'attribute_pa_'.$attribute, $term->slug ) );
+                $variations = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id FROM $this->wpdb->postmeta WHERE meta_key=%s AND meta_value = %s",  'attribute_pa_'.$attribute, $term->slug ) );
 
                 foreach( $variations as $variation ){
                     //update taxonomy in translation of variation
@@ -200,6 +198,142 @@ class WCML_Attributes{
             $attributes = array();
         }
         return $attributes;
+    }
+
+    public function sync_default_product_attr( $orig_post_id, $transl_post_id, $lang ){
+        $original_default_attributes = get_post_meta( $orig_post_id, '_default_attributes', true );
+        if( !empty( $original_default_attributes ) ){
+            $unserialized_default_attributes = array();
+            foreach(maybe_unserialize( $original_default_attributes ) as $attribute => $default_term_slug ){
+                // get the correct language
+                if ( substr( $attribute, 0, 3 ) == 'pa_' ) {
+                    //attr is taxonomy
+                    if( $this->is_translatable_attribute( $attribute ) ){
+                        $default_term_id = $this->woocommerce_wpml->terms->wcml_get_term_id_by_slug( $attribute, $default_term_slug );
+                        $tr_id = apply_filters( 'translate_object_id', $default_term_id, $attribute, false, $lang );
+
+                        if( $tr_id ){
+                            $translated_term = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $tr_id, $attribute );
+                            $unserialized_default_attributes[ $attribute ] = $translated_term->slug;
+                        }
+                    }else{
+                        $unserialized_default_attributes[ $attribute ] = $default_term_slug;
+                    }
+                }else{
+                    //custom attr
+                    $orig_product_attributes = get_post_meta( $orig_post_id, '_product_attributes', true );
+                    $unserialized_orig_product_attributes = maybe_unserialize( $orig_product_attributes );
+
+                    if( isset( $unserialized_orig_product_attributes[ $attribute ] ) ){
+                        $orig_attr_values = explode( '|', $unserialized_orig_product_attributes[ $attribute ][ 'value' ] );
+
+                        foreach( $orig_attr_values as $key => $orig_attr_value ){
+                            $orig_attr_value_sanitized = strtolower( sanitize_title ( $orig_attr_value ) );
+
+                            if( $orig_attr_value_sanitized == $default_term_slug || trim( $orig_attr_value ) == trim( $default_term_slug ) ){
+                                $tnsl_product_attributes = get_post_meta( $transl_post_id, '_product_attributes', true );
+                                $unserialized_tnsl_product_attributes = maybe_unserialize( $tnsl_product_attributes );
+
+                                if( isset( $unserialized_tnsl_product_attributes[ $attribute ] ) ){
+                                    $trnsl_attr_values = explode( '|', $unserialized_tnsl_product_attributes[ $attribute ][ 'value' ] );
+
+                                    if( $orig_attr_value_sanitized == $default_term_slug ){
+                                        $trnsl_attr_value = strtolower( sanitize_title( trim( $trnsl_attr_values[ $key ] ) ) );
+                                    }else{
+                                        $trnsl_attr_value = trim( $trnsl_attr_values[ $key ] );
+                                    }
+                                    $unserialized_default_attributes[ $attribute ] = $trnsl_attr_value;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            $data = array( 'meta_value' => maybe_serialize( $unserialized_default_attributes ) );
+        }else{
+            $data = array( 'meta_value' => maybe_serialize( array() ) );
+        }
+
+        $where = array( 'post_id' => $transl_post_id, 'meta_key' => '_default_attributes' );
+        $this->wpdb->update( $this->wpdb->postmeta, $data, $where );
+    }
+
+    /*
+     * get attribute translation
+     */
+    public function get_custom_attribute_translation( $product_id, $attribute_key, $attribute, $lang_code ){
+        $tr_post_id = apply_filters( 'translate_object_id', $product_id, 'product', false, $lang_code );
+        $transl = array();
+        if( $tr_post_id ){
+            if( !$attribute[ 'is_taxonomy' ] ){
+                $tr_attrs = get_post_meta($tr_post_id, '_product_attributes', true);
+                if( $tr_attrs ){
+                    foreach( $tr_attrs as $key => $tr_attr ) {
+                        if( $attribute_key == $key ){
+                            $transl[ 'value' ] = $tr_attr[ 'value' ];
+                            $trnsl_labels = maybe_unserialize( get_post_meta( $tr_post_id, 'attr_label_translations', true ) );
+
+                            if( isset( $trnsl_labels[ $lang_code ][ $attribute_key ] ) ){
+                                $transl[ 'name' ] = $trnsl_labels[ $lang_code ][ $attribute_key ];
+                            }else{
+                                $transl[ 'name' ] = $tr_attr[ 'name' ];
+                            }
+                            return $transl;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /*
+    * Get custom attribute translation
+    * Returned translated attribute or original if missed
+    */
+    public function get_custom_attr_translation( $product_id, $tr_product_id, $taxonomy, $attribute ){
+        $orig_product_attributes = get_post_meta( $product_id, '_product_attributes', true );
+        $unserialized_orig_product_attributes = maybe_unserialize( $orig_product_attributes );
+
+        foreach( $unserialized_orig_product_attributes as $orig_attr_key => $orig_product_attribute ){
+            $orig_attr_key = urldecode( $orig_attr_key );
+            if( strtolower( $taxonomy ) == $orig_attr_key ){
+                $values = explode( '|', $orig_product_attribute[ 'value' ] );
+
+                foreach( $values as $key_id => $value ){
+                    if( trim( $value," " ) == $attribute ){
+                        $attr_key_id = $key_id;
+                    }
+                }
+            }
+        }
+
+        $trnsl_product_attributes = get_post_meta( $tr_product_id, '_product_attributes', true );
+        $unserialized_trnsl_product_attributes = maybe_unserialize( $trnsl_product_attributes );
+        $taxonomy = sanitize_title( $taxonomy );
+        $trnsl_attr_values = explode( '|', $unserialized_trnsl_product_attributes[ $taxonomy ][ 'value' ] );
+
+        if( isset( $attr_key_id ) && isset( $trnsl_attr_values[ $attr_key_id ] ) ){
+            return trim( $trnsl_attr_values[ $attr_key_id ] );
+        }
+
+        return $attribute;
+    }
+
+    public function product_page_add_language_info_to_term( $lang ){
+        if( isset( $_POST[ 'action' ] ) && $_POST[ 'action' ] == 'woocommerce_add_new_attribute' ){
+            $lang = $this->sitepress->get_default_language();
+        }
+        return $lang;
+    }
+
+    public function filter_product_attributes_for_translation( $translated, $key ){
+        $translated = $translated
+            ? preg_match('#^(?!field-_product_attributes-(.+)-(.+)-(?!value|name))#', $key) : 0;
+
+        return $translated;
     }
 
 }

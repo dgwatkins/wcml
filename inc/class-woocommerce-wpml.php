@@ -2,11 +2,12 @@
 class woocommerce_wpml {
 
     public $settings;
-
     public $troubleshooting;
-    private $compatibility;
     public $endpoints;
     public $products;
+    public $sync_product_data;
+    public $sync_variations_data;
+    public $custom_prices;
     public $store;
     public $emails;
     public $terms;
@@ -15,12 +16,17 @@ class woocommerce_wpml {
     public $currencies;
     public $multi_currency_support;
     public $multi_currency;
-    private $xdomain_data;
     public $languages_upgrader;
     public $url_translation;
+    public $coupons;
+    public $locale;
+    public $media;
+    public $downloadable;
+
     private $reports;
     private $requests;
-
+    private $compatibility;
+    private $xdomain_data;
 
     function __construct(){
 
@@ -32,7 +38,7 @@ class woocommerce_wpml {
     }
 
     function init(){
-        global $sitepress;
+        global $sitepress, $wpdb;
 
         new WCML_Upgrade;
 
@@ -62,11 +68,14 @@ class woocommerce_wpml {
         $this->troubleshooting      = new WCML_Troubleshooting();
         $this->compatibility        = new WCML_Compatibility();
         $this->endpoints            = new WCML_Endpoints;
-        $this->products             = new WCML_Products( $this, $sitepress );
+        $this->products             = new WCML_Products( $this, $sitepress, $wpdb );
+        $this->sync_product_data    = new WCML_Synchronize_Product_Data( $this, $sitepress, $wpdb );
+        $this->sync_variations_data = new WCML_Synchronize_Variations_Data( $this, $sitepress, $wpdb );
+        $this->custom_prices        = new WCML_Custom_Prices( $this, $sitepress, $wpdb );
         $this->store                = new WCML_Store_Pages;
         $this->emails               = new WCML_Emails;
         $this->terms                = new WCML_Terms;
-        $this->attributes           = new WCML_Attributes( $this, $sitepress );
+        $this->attributes           = new WCML_Attributes( $this, $sitepress, $wpdb );
         $this->orders               = new WCML_Orders;
         $this->strings              = new WCML_WC_Strings;
         $this->currencies           = new WCML_Currencies( $this );
@@ -78,6 +87,10 @@ class woocommerce_wpml {
         $this->translation_editor   = new WCML_Translation_Editor( $this, $sitepress );
         $this->cart                 = new WCML_Cart( $this, $sitepress );
         $this->links                = new WCML_Links( $this, $sitepress );
+        $this->coupons              = new WCML_Coupons( $this, $sitepress );
+        $this->locale               = new WCML_Locale( $this, $sitepress );
+        $this->media                = new WCML_Media( $this, $sitepress );
+        $this->downloadable         = new WCML_Downloadable_Products( $this, $sitepress );
 
         if(isset($_GET['page']) && $_GET['page'] == 'wc-reports'){
             $this->reports          = new WCML_Reports;
@@ -89,8 +102,6 @@ class woocommerce_wpml {
         WCML_Install::initialize( $this, $sitepress );
 
         WCML_Resources::set_up_resources( $this );
-
-        add_action('init', array($this,'load_locale'));
 
         add_filter('woocommerce_get_checkout_payment_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
         add_filter('woocommerce_get_cancel_order_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
@@ -152,10 +163,6 @@ class woocommerce_wpml {
 
         echo json_encode(array('html' => $html, 'error'=> $error));
         exit;
-    }
-
-    function load_locale(){
-        load_plugin_textdomain('woocommerce-multilingual', false, WCML_LOCALE_PATH);
     }
 
     //get latest stable version from WC readme.txt

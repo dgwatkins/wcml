@@ -12,6 +12,8 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
     private $target_lang;
     private $translation_complete;
     private $duplicate;
+    private $yoast_seo_fields;
+    private $not_display_fields_for_variables_product;
 
 	function __construct( $job_details, &$woocommerce_wpml, &$sitepress, &$wpdb  ) {
 
@@ -19,6 +21,11 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $this->sitepress = $sitepress;
         $this->wpdb = $wpdb;
         $this->set_private_variables( $job_details );
+        $this->yoast_seo_fields = array( '_yoast_wpseo_focuskw', '_yoast_wpseo_title', '_yoast_wpseo_metadesc' );
+        $this->not_display_fields_for_variables_product = array( '_purchase_note', '_regular_price', '_sale_price',
+                                                                 '_price', '_min_variation_price', '_max_variation_price',
+                                                                 '_min_variation_regular_price', '_max_variation_regular_price',
+                                                                 '_min_variation_sale_price', '_max_variation_sale_price' );
 
 		parent::__construct(
             $job_details[ 'job_id' ],
@@ -95,7 +102,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $purchase_note_section->add_field( new WPML_Editor_UI_TextArea_Field( 'purchase-note', null, $this->data, true ) );
         $this->add_field( $purchase_note_section );
 
-        $product_images = $this->woocommerce_wpml->products->product_images_ids( $this->product->ID );
+        $product_images = $this->woocommerce_wpml->media->product_images_ids( $this->product->ID );
         if ( !empty( $product_images ) ) {
             $images_section = new WPML_Editor_UI_Field_Section( __( 'Images', 'woocommerce-multilingual' ) );
             foreach( $product_images as $image_id ) {
@@ -121,7 +128,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             $this->add_field( $attributes_section );
         }
 
-        $custom_fields = $this->woocommerce_wpml->products->get_product_custom_fields_to_translate( $this->product->ID );
+        $custom_fields = $this->get_product_custom_fields_to_translate( $this->product->ID );
 
         if( $custom_fields ) {
             $custom_fields_section = new WPML_Editor_UI_Field_Section( __( 'Custom Fields', 'woocommerce-multilingual' ) );
@@ -137,7 +144,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             $files_data = $this->get_files_for_variations();
             $is_variable = true;
         }else{
-            $files_data = array( $this->product->ID => $this->woocommerce_wpml->products->get_files_data( $this->product->ID ) );
+            $files_data = array( $this->product->ID => $this->woocommerce_wpml->downloadable->get_files_data( $this->product->ID ) );
             if( !empty( $files_data ) ){
                 $files_section = new WPML_Editor_UI_Field_Section( __( 'Download Files', 'woocommerce-multilingual' ) );
             }
@@ -198,7 +205,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             $element_data[ 'purchase-note' ][ 'translation' ] = get_post_meta( $translation->ID, '_purchase_note', true );
         }
 
-        $product_images = $this->woocommerce_wpml->products->product_images_ids( $this->product->ID );
+        $product_images = $this->woocommerce_wpml->media->product_images_ids( $this->product->ID );
         foreach( $product_images as $image_id ) {
             $attachment_data = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM $this->wpdb->posts WHERE ID = %d", $image_id ) );
             if( !$attachment_data ) continue;
@@ -221,14 +228,14 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                 $element_data[ $attr_key.'_name' ]       = array( 'original' => $attribute['name'] );
                 $element_data[ $attr_key ]       = array( 'original' => $attribute['value'] );
 
-                $trn_attribute = $this->woocommerce_wpml->products->get_custom_attribute_translation( $this->product->ID, $attr_key, $attribute, $this->target_lang );
+                $trn_attribute = $this->woocommerce_wpml->attributes->get_custom_attribute_translation( $this->product->ID, $attr_key, $attribute, $this->target_lang );
 
                 $element_data[ $attr_key.'_name' ][ 'translation' ]       = $trn_attribute['name'] ? $trn_attribute['name'] : '';
                 $element_data[ $attr_key ][ 'translation' ]       = $trn_attribute['value'] ? $trn_attribute['value'] : '';
             }
         }
 
-        $custom_fields = $this->woocommerce_wpml->products->get_product_custom_fields_to_translate( $this->product->ID );
+        $custom_fields = $this->get_product_custom_fields_to_translate( $this->product->ID );
         if( $custom_fields ){
             foreach( $custom_fields as $custom_field ) {
                 $element_data[ $custom_field ]       = array( 'original' => get_post_meta( $this->product->ID, $custom_field, true ) );
@@ -240,7 +247,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         if( $this->woocommerce_wpml->products->is_variable_product( $this->product->ID ) ){
             $files_data = $this->get_files_for_variations();
         }else{
-            $files_data = array( $this->product->ID => $this->woocommerce_wpml->products->get_files_data( $this->product->ID ) );
+            $files_data = array( $this->product->ID => $this->woocommerce_wpml->downloadable->get_files_data( $this->product->ID ) );
         }
 
         foreach( $files_data as $post_id => $file_data ) {
@@ -251,7 +258,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                 $orig_product_files = $file_data;
                 $trnsl_product_files = array();
                 if (isset($translation->ID) && $translation->ID) {
-                    $trnsl_product_files = $this->woocommerce_wpml->products->get_files_data( $translation->ID );
+                    $trnsl_product_files = $this->woocommerce_wpml->downloadable->get_files_data( $translation->ID );
                 }
 
                 foreach ($orig_product_files as $key => $product_file) {
@@ -335,7 +342,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                 $this->sitepress->set_element_language_details( $tr_product_id, 'post_' . $this->product->post_type, $product_trid, $this->target_lang );
             }
 
-            $this->woocommerce_wpml->products->duplicate_product_post_meta( $this->product->ID, $tr_product_id, $translations, true );
+            $this->woocommerce_wpml->sync_product_data->duplicate_product_post_meta( $this->product->ID, $tr_product_id, $translations, true );
         } else {
             //update post
             $args = array();
@@ -367,12 +374,12 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             }
 
             $this->sitepress->set_element_language_details( $tr_product_id, 'post_' . $this->product->post_type, $product_trid, $this->target_lang );
-            $this->woocommerce_wpml->products->duplicate_product_post_meta( $this->product->ID, $tr_product_id, $translations );
+            $this->woocommerce_wpml->sync_product_data->duplicate_product_post_meta( $this->product->ID, $tr_product_id, $translations );
         }
 
         $product_translations = $this->sitepress->get_element_translations( $product_trid , 'post_product', false, false, true );
         //sync taxonomies
-        $this->woocommerce_wpml->products->sync_product_taxonomies( $this->product->ID, $tr_product_id, $this->target_lang );
+        $this->woocommerce_wpml->sync_product_data->sync_product_taxonomies( $this->product->ID, $tr_product_id, $this->target_lang );
 
         do_action( 'wcml_update_extra_fields', $this->product->ID, $tr_product_id, $translations, $this->target_lang );
 
@@ -380,24 +387,24 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
         $this->woocommerce_wpml->attributes->sync_product_attr( $this->product->ID, $tr_product_id, $this->target_lang, $translations );
 
-        $this->woocommerce_wpml->products->sync_default_product_attr( $this->product->ID, $tr_product_id, $this->target_lang );
+        $this->woocommerce_wpml->attributes->sync_default_product_attr( $this->product->ID, $tr_product_id, $this->target_lang );
 
         $wpml_media_options = maybe_unserialize( get_option( '_wpml_media' ) );
         //sync media
         if ( $wpml_media_options[ 'new_content_settings' ][ 'duplicate_featured' ] ) {
             //sync feature image
-            $this->woocommerce_wpml->products->sync_thumbnail_id( $this->product->ID, $tr_product_id, $this->target_lang );
+            $this->woocommerce_wpml->media->sync_thumbnail_id( $this->product->ID, $tr_product_id, $this->target_lang );
         }
 
         if ( $wpml_media_options[ 'new_content_settings' ][ 'duplicate_media' ] ) {
             //sync product gallery
-            $this->woocommerce_wpml->products->sync_product_gallery( $this->product->ID );
+            $this->woocommerce_wpml->media->sync_product_gallery( $this->product->ID );
         }
 
         // synchronize post variations
-        $this->woocommerce_wpml->products->sync_product_variations( $this->product->ID, $tr_product_id, $this->target_lang, $translations );
+        $this->woocommerce_wpml->sync_variations_data->sync_product_variations( $this->product->ID, $tr_product_id, $this->target_lang, $translations );
 
-        $this->woocommerce_wpml->products->sync_linked_products( $this->product->ID, $tr_product_id, $this->target_lang );
+        $this->woocommerce_wpml->sync_product_data->sync_linked_products( $this->product->ID, $tr_product_id, $this->target_lang );
 
         //save images texts
         if ( isset( $translations[ 'images' ] ) ) {
@@ -468,9 +475,9 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                 return false;
             }
 
-            if ($this->woocommerce_wpml->products->check_custom_field_is_single_value( $this->product->ID, $field)) {
+            if ( $this->check_custom_field_is_single_value( $this->product->ID, $field ) ) {
                 if (defined('WPSEO_VERSION')) {
-                    if (!is_null($wpseo_metabox) && in_array($field, $this->woocommerce_wpml->products->yoast_seo_fields)) {
+                    if (!is_null($wpseo_metabox) && in_array( $field, $this->yoast_seo_fields ) ) {
                         $wpseo_metabox_values = $wpseo_metabox->get_meta_boxes('product');
                         $label = $wpseo_metabox_values[str_replace('_yoast_wpseo_', '', $field)]['title'];
                         return $label;
@@ -509,7 +516,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
             if( get_post_meta( $variation->ID, '_downloadable', true ) == 'yes' ){
 
-                $variation_files = $this->woocommerce_wpml->products->get_files_data( $variation->ID );
+                $variation_files = $this->woocommerce_wpml->downloadable->get_files_data( $variation->ID );
 
                 if( !empty( $variation_files ) ){
                     $variations_files[ $variation->ID ] = $variation_files;
@@ -522,5 +529,38 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         return $variations_files;
 
     }
-    
+
+    //get product content
+    public function get_product_custom_fields_to_translate( $product_id ){
+        $settings = $this->sitepress->get_settings();
+        $contents = array();
+
+        foreach( get_post_custom_keys( $product_id ) as $meta_key ) {
+            if( isset( $settings[ 'translation-management' ][ 'custom_fields_translation' ][ $meta_key ] ) && $settings[ 'translation-management' ][ 'custom_fields_translation' ][ $meta_key ] == 2 ){
+                if( $this->check_custom_field_is_single_value( $product_id, $meta_key ) ){
+                    if( in_array( $meta_key, apply_filters( 'wcml_not_display_single_fields_to_translate', $this->not_display_fields_for_variables_product ) ) ){
+                        continue;
+                    }
+                }else{
+                    $exception = apply_filters( 'wcml_product_content_exception', true, $product_id, $meta_key );
+                    if( $exception ) {
+                        continue;
+                    }
+                }
+                $contents[] = $meta_key;
+            }
+        }
+        return apply_filters('wcml_product_content_fields', $contents, $product_id);
+    }
+
+    public function check_custom_field_is_single_value( $product_id, $meta_key ){
+        $meta_value = maybe_unserialize( get_post_meta( $product_id, $meta_key, true ) );
+
+        if( is_array( $meta_value ) ){
+            return false;
+        } else {
+            return apply_filters( 'wcml_check_is_single', true, $product_id, $meta_key );
+        }
+    }
+
 }

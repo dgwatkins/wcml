@@ -170,6 +170,4 @@ class WCML_Resources {
                 '<a data-action="product-translation-dialog" class="js-wcml-dialog-trigger" data-id="' . $original_id . '" data-job_id="" data-language="' . $language . '">' .
                 __( 'WooCommerce Multilingual products translator', 'woocommerce-multilingual' ) . '</a>' ) . '</h3>';
     }
-
-
 }

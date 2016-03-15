@@ -471,12 +471,12 @@ class WCML_Store_Pages{
         if(is_array($rates)){
             foreach($rates as $shipping_class => $value){
                 global $woocommerce_wpml;
-                $term_id = $woocommerce_wpml->products->wcml_get_term_id_by_slug('product_shipping_class', $shipping_class );
+                $term_id = $woocommerce_wpml->terms->wcml_get_term_id_by_slug('product_shipping_class', $shipping_class );
 
                 if($term_id && !is_wp_error($term_id)){
                     $translated_term_id = apply_filters( 'translate_object_id', $term_id, 'product_shipping_class', true);
                     if($translated_term_id != $term_id){
-                        $term = $woocommerce_wpml->products->wcml_get_term_by_id( $translated_term_id, 'product_shipping_class' );
+                        $term = $woocommerce_wpml->terms->wcml_get_term_by_id( $translated_term_id, 'product_shipping_class' );
                         unset($rates[$shipping_class]);
                         $rates[$term->slug] = $value;
                         
@@ -543,7 +543,7 @@ class WCML_Store_Pages{
                 $taxonomy = $term->taxonomy;
                 $prefix = 'taxonomy-'.$taxonomy;
                 $original_term_id = icl_object_id($term->term_id, $taxonomy, true, $default_language);
-                $original_term = $woocommerce_wpml->products->wcml_get_term_by_id( $original_term_id, $taxonomy );
+                $original_term = $woocommerce_wpml->terms->wcml_get_term_by_id( $original_term_id, $taxonomy );
 
 
                 $terms_to_check = array( $term->term_id => $term->slug );
