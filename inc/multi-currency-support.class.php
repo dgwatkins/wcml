@@ -1451,11 +1451,14 @@ class WCML_Multi_Currency_Support{
             $woocommerce_wpml->settings['display_custom_prices'] ){
 
             foreach( $children as $key => $child ){
-                if( !get_post_meta( $child, '_wcml_custom_prices_status', true ) ){
+
+                $orig_lang = $woocommerce_wpml->products->get_original_product_language( $child );
+                $orig_child_id = apply_filters( 'translate_object_id', $child, get_post_type( $child ), true, $orig_lang );
+
+                if( !get_post_meta( $orig_child_id, '_wcml_custom_prices_status', true ) ){
                     unset( $children[ $key ] );
                 }
             }
-
 
         }
 
