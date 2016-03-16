@@ -23,7 +23,7 @@ class WCML_Synchronize_Variations_Data{
     public function sync_product_variations_action( $product_id ){
 
         if( $this->woocommerce_wpml->products->is_original_product( $product_id ) ){
-            $this->woocommerce_wpml->custom_prices->sync_product_variations_custom_prices( $product_id );
+            $this->woocommerce_wpml->multi_currency->custom_prices->sync_product_variations_custom_prices( $product_id );
             $trid = $this->sitepress->get_element_trid( $product_id, 'post_product' );
 
             if ( empty( $trid ) ) {

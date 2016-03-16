@@ -7,7 +7,6 @@ class woocommerce_wpml {
     public $products;
     public $sync_product_data;
     public $sync_variations_data;
-    public $custom_prices;
     public $store;
     public $emails;
     public $terms;
@@ -70,7 +69,6 @@ class woocommerce_wpml {
         $this->products             = new WCML_Products( $this, $sitepress, $wpdb );
         $this->sync_product_data    = new WCML_Synchronize_Product_Data( $this, $sitepress, $wpdb );
         $this->sync_variations_data = new WCML_Synchronize_Variations_Data( $this, $sitepress, $wpdb );
-        $this->custom_prices        = new WCML_Custom_Prices( $this, $sitepress, $wpdb );
         $this->store                = new WCML_Store_Pages;
         $this->emails               = new WCML_Emails;
         $this->terms                = new WCML_Terms;
