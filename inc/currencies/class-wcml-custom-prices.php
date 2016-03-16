@@ -243,7 +243,7 @@ class WCML_Custom_Prices{
             return;
         }
 
-        $product_id = false;
+        $product_id = 'new';
 
         if($pagenow == 'post.php' && isset($_GET['post']) && get_post_type($_GET['post']) == 'product'){
             $product_id = $_GET['post'];
@@ -353,8 +353,8 @@ class WCML_Custom_Prices{
         $nonce = filter_input( INPUT_POST, '_wcml_custom_prices_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
         if( isset( $_POST[ '_wcml_custom_prices' ] ) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_custom_prices' ) ){
-            if( isset( $_POST[ '_wcml_custom_prices' ][ $post_id ] ) ) {
-                $wcml_custom_prices_option = $_POST[ '_wcml_custom_prices' ][ $post_id ];
+            if( isset( $_POST[ '_wcml_custom_prices' ][ $post_id ] ) || isset( $_POST[ '_wcml_custom_prices' ][ 'new' ] ) ) {
+                $wcml_custom_prices_option = isset( $_POST[ '_wcml_custom_prices' ][ $post_id ] ) ? $_POST[ '_wcml_custom_prices' ][ $post_id ] : isset( $_POST[ '_wcml_custom_prices' ][ 'new' ] );
             }else{
                 $current_option = get_post_meta( $post_id, '_wcml_custom_prices_status', true );
                 $wcml_custom_prices_option = $current_option ? $current_option : 0;
@@ -416,11 +416,13 @@ class WCML_Custom_Prices{
     }
 
     public function sync_product_variations_custom_prices( $product_id ){
+        global $wpdb;
+
         $is_variable_product = $this->woocommerce_wpml->products->is_variable_product( $product_id );
         if( $is_variable_product ){
-            $get_all_post_variations = $this->wpdb->get_results(
-                $this->wpdb->prepare(
-                    "SELECT * FROM {$this->wpdb->posts}
+            $get_all_post_variations = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT * FROM {$wpdb->posts}
                                                 WHERE post_status IN ('publish','private')
                                                   AND post_type = 'product_variation'
                                                   AND post_parent = %d
