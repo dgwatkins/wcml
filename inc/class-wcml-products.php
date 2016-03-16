@@ -27,7 +27,6 @@ class WCML_Products{
 
         }else{
             add_filter( 'woocommerce_json_search_found_products', array( $this, 'filter_found_products_by_language' ) );
-            add_filter( 'loop_shop_post_in', array( $this, 'filter_products_with_custom_prices' ), 100 );
             add_filter( 'woocommerce_related_products_args', array( $this, 'filter_related_products_args' ) );
         }
 
@@ -36,8 +35,6 @@ class WCML_Products{
         add_action( 'woocommerce_after_product_ordering', array( $this, 'update_all_products_translations_ordering' ) );
         //filter to copy excerpt value
         add_filter( 'wpml_copy_from_original_custom_fields', array( $this, 'filter_excerpt_field_content_copy' ) );
-
-        $this->set_prices_config();
     }
 
     // Check if original product
@@ -405,105 +402,6 @@ class WCML_Products{
 
         }
         return $args;
-    }
-
-    // display products with custom prices only if enabled "Show only products with custom prices in secondary currencies" option on settings page
-    public function filter_products_with_custom_prices( $filtered_posts ) {
-
-        if( $this->woocommerce_wpml->settings[ 'enable_multi_currency' ] == WCML_MULTI_CURRENCIES_INDEPENDENT &&
-            isset( $this->woocommerce_wpml->settings[ 'display_custom_prices' ]  ) &&
-            $this->woocommerce_wpml->settings[ 'display_custom_prices' ] ){
-
-            $client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
-            $woocommerce_currency = get_option( 'woocommerce_currency' );
-
-            if( $client_currency == $woocommerce_currency ){
-                return $filtered_posts;
-            }
-            $matched_products = array();
-            $matched_products_query = $this->wpdb->get_results( "
-	        	SELECT DISTINCT ID, post_parent, post_type FROM {$this->wpdb->posts}
-				INNER JOIN {$this->wpdb->postmeta} ON ID = post_id
-				WHERE post_type IN ( 'product', 'product_variation' ) AND post_status = 'publish' AND meta_key = '_wcml_custom_prices_status' AND meta_value = 1
-			", OBJECT_K );
-
-            if ( $matched_products_query ) {
-                remove_filter( 'get_post_metadata', array( $this->woocommerce_wpml->multi_currency->prices, 'product_price_filter' ), 10, 4);
-                foreach ( $matched_products_query as $product ) {
-                    if( !get_post_meta( $product->ID,'_price_'.$client_currency, true ) ) continue;
-                    if ( $product->post_type == 'product' )
-                        $matched_products[] = apply_filters( 'translate_object_id', $product->ID, 'product', true );
-                    if ( $product->post_parent > 0 && ! in_array( $product->post_parent, $matched_products ) )
-                        $matched_products[] = apply_filters( 'translate_object_id', $product->post_parent, get_post_type( $product->post_parent ), true );
-                }
-                add_filter('get_post_metadata', array( $this->woocommerce_wpml->multi_currency->prices, 'product_price_filter' ), 10, 4);
-            }
-
-            // Filter the id's
-            if ( sizeof( $filtered_posts ) == 0) {
-                $filtered_posts = $matched_products;
-                $filtered_posts[] = 0;
-            } else {
-                $filtered_posts = array_intersect( $filtered_posts, $matched_products );
-                $filtered_posts[] = 0;
-            }
-        }
-
-        return $filtered_posts;
-    }
-
-    public function set_prices_config(){
-        global $iclTranslationManagement, $sitepress_settings;
-
-        $wpml_settings = $this->sitepress->get_settings();
-
-        if( !isset ( $wpml_settings[ 'translation-management' ] ) ||
-            !isset( $iclTranslationManagement ) ||
-            !( $iclTranslationManagement instanceof TranslationManagement ) ) {
-            return;
-        }
-
-        $keys = array(
-            '_regular_price',
-            '_sale_price',
-            '_price',
-            '_min_variation_regular_price',
-            '_min_variation_sale_price',
-            '_min_variation_price',
-            '_max_variation_regular_price',
-            '_max_variation_sale_price',
-            '_max_variation_price',
-            '_sale_price_dates_from',
-            '_sale_price_dates_to',
-            '_wcml_schedule'
-        );
-        $save = false;
-
-        foreach( $keys as $key ){
-            $iclTranslationManagement->settings[ 'custom_fields_readonly_config' ][] = $key;
-            if( !isset( $sitepress_settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] ) ||
-                $wpml_settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] != 1 ) {
-                $wpml_settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] = 1;
-                $save = true;
-            }
-
-            if( !empty( $this->woocommerce_wpml->multi_currency ) ){
-                foreach( $this->woocommerce_wpml->multi_currency->get_currency_codes() as $code ){
-                    $new_key = $key.'_'.$code;
-                    $iclTranslationManagement->settings[ 'custom_fields_readonly_config' ][] = $new_key;
-
-                    if( !isset( $sitepress_settings[ 'translation-management' ][ 'custom_fields_translation' ][ $new_key ] ) ||
-                        $wpml_settings[ 'translation-management' ][ 'custom_fields_translation' ][ $new_key ] != 0) {
-                        $wpml_settings[ 'translation-management' ][ 'custom_fields_translation' ][ $new_key ] = 0;
-                        $save = true;
-                    }
-                }
-            }
-        }
-
-        if ($save) {
-            $this->sitepress->save_settings( $wpml_settings );
-        }
     }
 
 }

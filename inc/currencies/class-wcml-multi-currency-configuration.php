@@ -14,6 +14,8 @@ class WCML_Multi_Currency_Configuration{
             self::save_configuration();
         }
 
+        self::set_prices_config();
+
         if(is_ajax()){
 
             add_action('wp_ajax_legacy_update_custom_rates', array(__CLASS__, 'legacy_update_custom_rates'));
@@ -33,6 +35,8 @@ class WCML_Multi_Currency_Configuration{
         }
 
         add_action( 'update_option_woocommerce_currency', array( 'WCML_Multi_Currency_Install', 'set_default_currencies_languages' ), 10, 2 );
+
+
 
     }
 
@@ -308,6 +312,60 @@ class WCML_Multi_Currency_Configuration{
         echo json_encode(array());
         
         exit;
+    }
+
+    public static function set_prices_config(){
+        global $iclTranslationManagement, $sitepress_settings, $sitepress;
+
+        $wpml_settings = $sitepress->get_settings();
+
+        if( !isset ( $wpml_settings[ 'translation-management' ] ) ||
+            !isset( $iclTranslationManagement ) ||
+            !( $iclTranslationManagement instanceof TranslationManagement ) ) {
+            return;
+        }
+
+        $keys = array(
+            '_regular_price',
+            '_sale_price',
+            '_price',
+            '_min_variation_regular_price',
+            '_min_variation_sale_price',
+            '_min_variation_price',
+            '_max_variation_regular_price',
+            '_max_variation_sale_price',
+            '_max_variation_price',
+            '_sale_price_dates_from',
+            '_sale_price_dates_to',
+            '_wcml_schedule'
+        );
+        $save = false;
+
+        foreach( $keys as $key ){
+            $iclTranslationManagement->settings[ 'custom_fields_readonly_config' ][] = $key;
+            if( !isset( $sitepress_settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] ) ||
+                $wpml_settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] != 1 ) {
+                $wpml_settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] = 1;
+                $save = true;
+            }
+
+            if( !empty( self::$multi_currency ) ){
+                foreach( self::$multi_currency->get_currency_codes() as $code ){
+                    $new_key = $key.'_'.$code;
+                    $iclTranslationManagement->settings[ 'custom_fields_readonly_config' ][] = $new_key;
+
+                    if( !isset( $sitepress_settings[ 'translation-management' ][ 'custom_fields_translation' ][ $new_key ] ) ||
+                        $wpml_settings[ 'translation-management' ][ 'custom_fields_translation' ][ $new_key ] != 0) {
+                        $wpml_settings[ 'translation-management' ][ 'custom_fields_translation' ][ $new_key ] = 0;
+                        $save = true;
+                    }
+                }
+            }
+        }
+
+        if ($save) {
+            $sitepress->save_settings( $wpml_settings );
+        }
     }
 
 

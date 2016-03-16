@@ -23,6 +23,7 @@ class WCML_Custom_Prices{
         }
 
         add_action( 'woocommerce_get_children', array( $this, 'filter_product_variations_with_custom_prices' ), 10 );
+        add_filter( 'loop_shop_post_in', array( $this, 'filter_products_with_custom_prices' ), 100 );
 
     }
 
@@ -301,6 +302,53 @@ class WCML_Custom_Prices{
         return $children;
 
     }
+
+    // display products with custom prices only if enabled "Show only products with custom prices in secondary currencies" option on settings page
+    public function filter_products_with_custom_prices( $filtered_posts ) {
+        global $wpdb;
+
+        if( $this->woocommerce_wpml->settings[ 'enable_multi_currency' ] == WCML_MULTI_CURRENCIES_INDEPENDENT &&
+            isset( $this->woocommerce_wpml->settings[ 'display_custom_prices' ]  ) &&
+            $this->woocommerce_wpml->settings[ 'display_custom_prices' ] ){
+
+            $client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
+            $woocommerce_currency = get_option( 'woocommerce_currency' );
+
+            if( $client_currency == $woocommerce_currency ){
+                return $filtered_posts;
+            }
+            $matched_products = array();
+            $matched_products_query = $wpdb->get_results( "
+	        	SELECT DISTINCT ID, post_parent, post_type FROM {$wpdb->posts}
+				INNER JOIN {$wpdb->postmeta} ON ID = post_id
+				WHERE post_type IN ( 'product', 'product_variation' ) AND post_status = 'publish' AND meta_key = '_wcml_custom_prices_status' AND meta_value = 1
+			", OBJECT_K );
+
+            if ( $matched_products_query ) {
+                remove_filter( 'get_post_metadata', array( $this->woocommerce_wpml->multi_currency->prices, 'product_price_filter' ), 10, 4);
+                foreach ( $matched_products_query as $product ) {
+                    if( !get_post_meta( $product->ID,'_price_'.$client_currency, true ) ) continue;
+                    if ( $product->post_type == 'product' )
+                        $matched_products[] = apply_filters( 'translate_object_id', $product->ID, 'product', true );
+                    if ( $product->post_parent > 0 && ! in_array( $product->post_parent, $matched_products ) )
+                        $matched_products[] = apply_filters( 'translate_object_id', $product->post_parent, get_post_type( $product->post_parent ), true );
+                }
+                add_filter('get_post_metadata', array( $this->woocommerce_wpml->multi_currency->prices, 'product_price_filter' ), 10, 4);
+            }
+
+            // Filter the id's
+            if ( sizeof( $filtered_posts ) == 0) {
+                $filtered_posts = $matched_products;
+                $filtered_posts[] = 0;
+            } else {
+                $filtered_posts = array_intersect( $filtered_posts, $matched_products );
+                $filtered_posts[] = 0;
+            }
+        }
+
+        return $filtered_posts;
+    }
+
 
 
 }
