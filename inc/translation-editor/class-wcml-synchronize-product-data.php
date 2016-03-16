@@ -423,7 +423,7 @@ class WCML_Synchronize_Product_Data{
             $new_trid = $this->sitepress->get_element_trid( $new_id, 'post_' . $post->post_type );
             $new_orig_id = $new_id;
         }else{
-            $post_to_duplicate = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT * FROM $this->wpdb->posts WHERE ID=%d", $orig_id ) );
+            $post_to_duplicate = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT * FROM {$this->wpdb->posts} WHERE ID=%d", $orig_id ) );
             if ( ! empty( $post_to_duplicate ) ) {
                 $new_orig_id = $wc_admin->duplicate_product( $post_to_duplicate );
                 do_action( 'wcml_after_duplicate_product' , $new_id, $post_to_duplicate );
@@ -440,7 +440,7 @@ class WCML_Synchronize_Product_Data{
         if( $translations ){
             foreach( $translations as $translation ){
                 if( !$translation->original && $translation->element_id != $post->ID ){
-                    $post_to_duplicate = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT * FROM $this->wpdb->posts WHERE ID=%d", $translation->element_id ) );
+                    $post_to_duplicate = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT * FROM {$this->wpdb->posts} WHERE ID=%d", $translation->element_id ) );
 
                     if( ! empty( $post_to_duplicate ) ) {
                         $new_id = $wc_admin->duplicate_product( $post_to_duplicate );

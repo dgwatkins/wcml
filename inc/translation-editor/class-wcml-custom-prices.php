@@ -83,7 +83,7 @@ class WCML_Custom_Prices{
         if( $is_variable_product ){
             $get_all_post_variations = $this->wpdb->get_results(
                 $this->wpdb->prepare(
-                    "SELECT * FROM $this->wpdb->posts
+                    "SELECT * FROM {$this->wpdb->posts}
                                                 WHERE post_status IN ('publish','private')
                                                   AND post_type = 'product_variation'
                                                   AND post_parent = %d

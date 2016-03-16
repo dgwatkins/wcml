@@ -112,8 +112,8 @@ class WCML_Media{
         if( isset( $product_type ) && $product_type == 'variable' ){
             $get_post_variations_image = $this->wpdb->get_col(
                 $this->wpdb->prepare(
-                    "SELECT pm.meta_value FROM $this->wpdb->posts AS p
-                                                LEFT JOIN $this->wpdb->postmeta AS pm ON p.ID = pm.post_id
+                    "SELECT pm.meta_value FROM {$this->wpdb->posts} AS p
+                                                LEFT JOIN {$this->wpdb->postmeta} AS pm ON p.ID = pm.post_id
                                                 WHERE pm.meta_key='_thumbnail_id'
                                                   AND p.post_status IN ('publish','private')
                                                   AND p.post_type = 'product_variation'

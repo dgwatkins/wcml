@@ -64,7 +64,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         } else if ( isset( $product_translations[ $this->target_lang ] ) ) {
             $tr_status = $this->wpdb->get_var(
                             $this->wpdb->prepare("
-                                SELECT status FROM " . $this->wpdb->prefix . "icl_translation_status
+                                SELECT status FROM {$this->wpdb->prefix}icl_translation_status
                                 WHERE translation_id = %d", $product_translations[ $this->target_lang ]->translation_id
                             )
             );
@@ -207,7 +207,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
         $product_images = $this->woocommerce_wpml->media->product_images_ids( $this->product->ID );
         foreach( $product_images as $image_id ) {
-            $attachment_data = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM $this->wpdb->posts WHERE ID = %d", $image_id ) );
+            $attachment_data = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM {$this->wpdb->posts} WHERE ID = %d", $image_id ) );
             if( !$attachment_data ) continue;
             $element_data[ 'image-id-' . $image_id . '-title' ]       = array( 'original' => $attachment_data->post_title );
             $element_data[ 'image-id-' . $image_id . '-caption' ]     = array( 'original' => $attachment_data->post_excerpt );
@@ -215,7 +215,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             
             $trnsl_prod_image = apply_filters( 'translate_object_id', $image_id, 'attachment', false, $this->target_lang );
             if ( !is_null( $trnsl_prod_image ) ){
-                $trnsl_attachment_data = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM $this->wpdb->posts WHERE ID = %d", $trnsl_prod_image ) );
+                $trnsl_attachment_data = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM {$this->wpdb->posts} WHERE ID = %d", $trnsl_prod_image ) );
                 $element_data[ 'image-id-' . $image_id . '-title' ][ 'translation' ]       = $trnsl_attachment_data->post_title;
                 $element_data[ 'image-id-' . $image_id . '-caption' ][ 'translation' ]     = $trnsl_attachment_data->post_excerpt;
                 $element_data[ 'image-id-' . $image_id . '-description' ][ 'translation' ] = $trnsl_attachment_data->post_content;

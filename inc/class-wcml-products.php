@@ -9,7 +9,7 @@ class WCML_Products{
     private $wpdb;
 
 
-    public function __construct( &$woocommerce_wpml, &$sitepress, &$wpdb )
+    public function __construct( &$woocommerce_wpml, &$sitepress, &$wpdb  )
     {
         $this->woocommerce_wpml = $woocommerce_wpml;
         $this->sitepress = $sitepress;
@@ -78,16 +78,16 @@ class WCML_Products{
     }
 
     public function is_variable_product( $product_id ){
-        $get_variation_term_taxonomy_ids = $this->wpdb->get_col( "SELECT tt.term_taxonomy_id FROM $this->wpdb->terms AS t LEFT JOIN $this->wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id WHERE t.name = 'variable' AND tt.taxonomy = 'product_type'" );
+        $get_variation_term_taxonomy_ids = $this->wpdb->get_col( "SELECT tt.term_taxonomy_id FROM {$this->wpdb->terms} AS t LEFT JOIN {$this->wpdb->term_taxonomy} AS tt ON t.term_id = tt.term_id WHERE t.name = 'variable' AND tt.taxonomy = 'product_type'" );
         $get_variation_term_taxonomy_ids = apply_filters( 'wcml_variation_term_taxonomy_ids',(array)$get_variation_term_taxonomy_ids );
 
-        $is_variable_product = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT count(object_id) FROM $this->wpdb->term_relationships WHERE object_id = %d AND term_taxonomy_id IN (".join(',',$get_variation_term_taxonomy_ids).")",$product_id ) );
+        $is_variable_product = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT count(object_id) FROM {$this->wpdb->term_relationships} WHERE object_id = %d AND term_taxonomy_id IN (".join(',',$get_variation_term_taxonomy_ids).")",$product_id ) );
         return $is_variable_product;
     }
 
     public function is_grouped_product($product_id){
-        $get_variation_term_taxonomy_id = $this->wpdb->get_var( "SELECT tt.term_taxonomy_id FROM $this->wpdb->terms AS t LEFT JOIN $this->wpdb->term_taxonomy AS tt ON t.term_id = tt.term_id WHERE t.name = 'grouped'" );
-        $is_grouped_product = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT count(object_id) FROM $this->wpdb->term_relationships WHERE object_id = %d AND term_taxonomy_id = %d ",$product_id,$get_variation_term_taxonomy_id ) );
+        $get_variation_term_taxonomy_id = $this->wpdb->get_var( "SELECT tt.term_taxonomy_id FROM {$this->wpdb->terms} AS t LEFT JOIN {$this->wpdb->term_taxonomy} AS tt ON t.term_id = tt.term_id WHERE t.name = 'grouped'" );
+        $is_grouped_product = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT count(object_id) FROM {$this->wpdb->term_relationships} WHERE object_id = %d AND term_taxonomy_id = %d ",$product_id,$get_variation_term_taxonomy_id ) );
 
         return $is_grouped_product;
     }
@@ -150,7 +150,7 @@ class WCML_Products{
                     if( !current_user_can( 'wpml_manage_woocommerce_multilingual' ) && isset( $product_translations[ $language[ 'code' ] ] ) ) {
                         $tr_status = $this->wpdb->get_row(
                                         $this->wpdb->prepare(
-                                            "SELECT status,translator_id FROM " . $this->wpdb->prefix . "icl_translation_status
+                                            "SELECT status,translator_id FROM {$this->wpdb->prefix}icl_translation_status
                                             WHERE translation_id = %d",
                                             $product_translations[ $language[ 'code' ] ]->translation_id )
                                         );
@@ -188,7 +188,7 @@ class WCML_Products{
                         <?php if( isset( $product_translations[ $language[ 'code' ] ] ) ){
                             $tr_status = $this->wpdb->get_row(
                                             $this->wpdb->prepare(
-                                                "SELECT status,needs_update FROM " . $this->wpdb->prefix . "icl_translation_status
+                                                "SELECT status,needs_update FROM {$this->wpdb->prefix}icl_translation_status
                                                 WHERE translation_id = %d",
                                                 $product_translations[ $language[ 'code' ] ]->translation_id )
                                             );
@@ -248,7 +248,7 @@ class WCML_Products{
         foreach( $found_products as $product_id => $output_v ){
             $post_data = $this->wpdb->get_row(
                             $this->wpdb->prepare(
-                                "SELECT * FROM ". $this->wpdb->prefix ."icl_translations
+                                "SELECT * FROM {$this->wpdb->prefix}icl_translations
                                 WHERE element_id = %d AND element_type LIKE 'post_%'", $product_id
                             )
                         );
@@ -271,7 +271,7 @@ class WCML_Products{
             $post_id = $posts[ $key ]->ID;
             $post_data = $this->wpdb->get_row(
                             $this->wpdb->prepare(
-                                "SELECT * FROM ". $this->wpdb->prefix ."icl_translations
+                                "SELECT * FROM {$this->wpdb->prefix}icl_translations
                                 WHERE element_id = %d ", $post_id
                             ),
                         ARRAY_A );
@@ -312,7 +312,7 @@ class WCML_Products{
             if( $current_language == $this->sitepress->get_default_language() ){
                 $products = $this->wpdb->get_results(
                                 $this->wpdb->prepare(
-                                    "SELECT p.ID FROM $this->wpdb->posts AS p
+                                    "SELECT p.ID FROM {$this->wpdb->posts} AS p
                                     LEFT JOIN {$this->wpdb->prefix}icl_translations AS icl
                                     ON icl.element_id = p.id
                                     WHERE p.post_type = 'product'
@@ -335,7 +335,7 @@ class WCML_Products{
             $current_language = $this->sitepress->get_current_language();
 
             if ( $current_language == $this->sitepress->get_default_language() ) {
-                $menu_order = $this->wpdb->get_var( $this->wpdb->prepare("SELECT menu_order FROM $this->wpdb->posts WHERE ID = %d", $product_id ) );
+                $menu_order = $this->wpdb->get_var( $this->wpdb->prepare("SELECT {$this->wpdb->posts} FROM %s WHERE ID = %d", $product_id ) );
                 $trid = $this->sitepress->get_element_trid($product_id, 'post_product');
                 $translations = $this->sitepress->get_element_translations($trid, 'post_product');
 
@@ -422,8 +422,8 @@ class WCML_Products{
             }
             $matched_products = array();
             $matched_products_query = $this->wpdb->get_results( "
-	        	SELECT DISTINCT ID, post_parent, post_type FROM $this->wpdb->posts
-				INNER JOIN $this->wpdb->postmeta ON ID = post_id
+	        	SELECT DISTINCT ID, post_parent, post_type FROM {$this->wpdb->posts}
+				INNER JOIN {$this->wpdb->postmeta} ON ID = post_id
 				WHERE post_type IN ( 'product', 'product_variation' ) AND post_status = 'publish' AND meta_key = '_wcml_custom_prices_status' AND meta_value = 1
 			", OBJECT_K );
 

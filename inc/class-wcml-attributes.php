@@ -93,7 +93,7 @@ class WCML_Attributes{
         foreach( $terms as $term ){
             $term_language_details = $this->sitepress->get_element_language_details( $term->term_id, 'tax_pa_'.$attribute );
             if( $term_language_details && is_null( $term_language_details->source_language_code ) ){
-                $variations = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id FROM $this->wpdb->postmeta WHERE meta_key=%s AND meta_value = %s",  'attribute_pa_'.$attribute, $term->slug ) );
+                $variations = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id FROM {$this->wpdb->postmeta} WHERE meta_key=%s AND meta_value = %s",  'attribute_pa_'.$attribute, $term->slug ) );
 
                 foreach( $variations as $variation ){
                     //update taxonomy in translation of variation

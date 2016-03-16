@@ -60,7 +60,7 @@ class WCML_Synchronize_Variations_Data{
         if( $is_variable_product ){
             $get_all_post_variations = $this->wpdb->get_results(
                 $this->wpdb->prepare(
-                    "SELECT * FROM $this->wpdb->posts
+                    "SELECT * FROM {$this->wpdb->posts}
                                                 WHERE post_status IN ('publish','private')
                                                   AND post_type = 'product_variation'
                                                   AND post_parent = %d ORDER BY ID",
@@ -82,7 +82,7 @@ class WCML_Synchronize_Variations_Data{
                 // Find if this has already been duplicated
                 $variation_id = $this->wpdb->get_var(
                     $this->wpdb->prepare(
-                        "SELECT post_id FROM $this->wpdb->postmeta AS pm
+                        "SELECT post_id FROM {$this->wpdb->postmeta} AS pm
                                         JOIN {$this->wpdb->prefix}icl_translations AS tr ON tr.element_id = pm.post_id
                                         WHERE tr.element_type = 'post_product_variation'
                                           AND tr.language_code = %s
@@ -180,7 +180,7 @@ class WCML_Synchronize_Variations_Data{
             }
             $get_current_post_variations = $this->wpdb->get_results(
                 $this->wpdb->prepare(
-                    "SELECT * FROM $this->wpdb->posts
+                    "SELECT * FROM {$this->wpdb->posts}
                                                     WHERE post_status IN ('publish','private')
                                                     AND post_type = 'product_variation'
                                                     AND post_parent = %d ORDER BY ID",
@@ -210,13 +210,13 @@ class WCML_Synchronize_Variations_Data{
             foreach( $duplicated_post_variation_ids as $dp_key => $duplicated_post_variation_id ){
                 $get_all_post_meta = $this->wpdb->get_results(
                     $this->wpdb->prepare(
-                        "SELECT * FROM $this->wpdb->postmeta WHERE post_id = %d",
+                        "SELECT * FROM {$this->wpdb->postmeta} WHERE post_id = %d",
                         $duplicated_post_variation_id )
                 );
                 //delete non exists attributes
                 $get_all_variation_attributes = $this->wpdb->get_results(
                     $this->wpdb->prepare(
-                        "SELECT * FROM $this->wpdb->postmeta
+                        "SELECT * FROM {$this->wpdb->postmeta}
                                                         WHERE post_id = %d
                                                           AND meta_key LIKE 'attribute_%%' ",
                         $current_post_variation_ids[ $dp_key ] )
@@ -247,7 +247,7 @@ class WCML_Synchronize_Variations_Data{
                                         if( isset( $translations[ $lang ] ) ){
                                             $meta_value = $this->wpdb->get_var(
                                                 $this->wpdb->prepare(
-                                                    "SELECT slug FROM $this->wpdb->terms WHERE term_id = %s",
+                                                    "SELECT slug FROM {$this->wpdb->terms} WHERE term_id = %s",
                                                     $translations[ $lang ]->term_id )
                                             );
                                         }else{
@@ -326,7 +326,7 @@ class WCML_Synchronize_Variations_Data{
         $name               = filter_input( INPUT_POST, 'name', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         $term_id = $this->wpdb->get_var(
             $this->wpdb->prepare(
-                "SELECT term_id FROM $this->wpdb->term_taxonomy WHERE term_taxonomy_id = %d"
+                "SELECT term_id FROM {$this->wpdb->term_taxonomy} WHERE term_taxonomy_id = %d"
                 ,$original_element )
         );
         $original_term = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $term_id, $taxonomy );
@@ -334,7 +334,7 @@ class WCML_Synchronize_Variations_Data{
         //get variations with original slug
         $variations = $this->wpdb->get_results(
             $this->wpdb->prepare(
-                "SELECT post_id FROM $this->wpdb->postmeta WHERE meta_key=%s AND meta_value = %s",
+                "SELECT post_id FROM {$this->wpdb->postmeta} WHERE meta_key=%s AND meta_value = %s",
                 'attribute_'.$taxonomy, $original_slug
             )
         );
