@@ -24,7 +24,7 @@ class WCML_Resources {
         self::load_tooltip_resources();
 
         $is_edit_product = self::$pagenow == 'post.php' && isset($_GET['post']) && get_post_type( $_GET['post'] ) == 'product';
-        $is_original_product = isset( $_GET['post'] ) && self::$woocommerce_wcml->products->is_original_product( $_GET['post'] );
+        $is_original_product = isset( $_GET['post'] ) && !is_array( $_GET['post'] ) && self::$woocommerce_wcml->products->is_original_product( $_GET['post'] );
         $is_new_product = self::$pagenow == 'post-new.php' && isset($_GET['source_lang']) && isset($_GET['post_type']) && $_GET['post_type'] == 'product';
 
         if ( ($is_edit_product && !$is_original_product) || $is_new_product && !self::$woocommerce_wcml->settings['trnsl_interface'] ) {
