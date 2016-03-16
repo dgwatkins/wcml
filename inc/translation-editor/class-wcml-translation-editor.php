@@ -220,7 +220,7 @@ class WCML_Translation_Editor{
 
         if( !$product_id ){
             return;
-        }elseif( !$this->is_original_product( $product_id ) ){ ?>
+        }elseif( ! $this->woocommerce_wpml->products->is_original_product( $product_id ) ){ ?>
             <script type="text/javascript">
                 jQuery(document).ready(function() {
                     wcml_lock_variation_fields();
