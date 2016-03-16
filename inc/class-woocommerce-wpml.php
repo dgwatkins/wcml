@@ -71,7 +71,7 @@ class woocommerce_wpml {
         $this->sync_variations_data = new WCML_Synchronize_Variations_Data( $this, $sitepress, $wpdb );
         $this->store                = new WCML_Store_Pages;
         $this->emails               = new WCML_Emails;
-        $this->terms                = new WCML_Terms;
+        $this->terms                = new WCML_Terms( $this, $sitepress, $wpdb );
         $this->attributes           = new WCML_Attributes( $this, $sitepress, $wpdb );
         $this->orders               = new WCML_Orders;
         $this->strings              = new WCML_WC_Strings;
