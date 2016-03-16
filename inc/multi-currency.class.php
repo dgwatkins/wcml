@@ -839,7 +839,7 @@ class WCML_WC_MultiCurrency{
             return;
         }
 
-        $product_id = false;
+        $product_id = 'new';
 
         if($pagenow == 'post.php' && isset($_GET['post']) && get_post_type($_GET['post']) == 'product'){
             $product_id = $_GET['post'];
