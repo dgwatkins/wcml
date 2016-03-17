@@ -26,8 +26,6 @@ class WCML_Emails{
         add_action('woocommerce_before_resend_order_emails', array($this, 'email_header'));
         add_action('woocommerce_after_resend_order_email', array($this, 'email_footer'));
 
-        //WPML job link
-        add_filter('icl_job_edit_url',array($this,'icl_job_edit_url'),10 ,2);
         //filter string language before for emails
         add_filter('icl_current_string_language',array($this,'icl_current_string_language'),10 ,2);
 
@@ -232,53 +230,6 @@ class WCML_Emails{
         $wp_locale = new WP_Locale();
     }    
     
-
-    function icl_job_edit_url($link,$job_id){
-        global $wpdb, $iclTranslationManagement;
-
-        $trid = $wpdb->get_var($wpdb->prepare("
-                    SELECT t.trid
-                        FROM {$wpdb->prefix}icl_translate_job j
-                        JOIN {$wpdb->prefix}icl_translation_status s ON j.rid = s.rid
-                        JOIN {$wpdb->prefix}icl_translations t ON s.translation_id = t.translation_id
-                    WHERE j.job_id = %d
-                ", $job_id));
-
-        if($trid){
-            $original_product_id = $wpdb->get_var($wpdb->prepare("
-                    SELECT element_id
-                        FROM {$wpdb->prefix}icl_translations
-                    WHERE trid = %d AND element_type = 'post_product' AND source_language_code IS NULL
-                ", $trid ));
-
-            if($original_product_id){
-
-                $job = $iclTranslationManagement->get_translation_job ( $job_id );
-
-                $needs_edit  = in_array( $job->status, array( ICL_TM_WAITING_FOR_TRANSLATOR, ICL_TM_IN_PROGRESS, ICL_TM_COMPLETE ) );
-                $language = $job->language_code;
-                $is_editable = $job->translator_id > 0 && $needs_edit;
-
-                $link = 'data-action="product-translation-dialog" data-id="'.$original_product_id.'" data-language="'.$language.'"';
-
-                if ( $is_editable ) {
-                    $link .= ' data-job_id="';
-                }else{
-                    $link .= ' data-job_id="'.$job_id;
-                }
-
-                if( strstr( $link, '<a ') ){
-                    $link = '<a '.$link.'" >';
-                }else{
-                    $link = '#" '.$link;
-                }
-
-            }
-        }
-
-        return $link;
-    }
-
     function admin_string_return_cached( $value, $option ){
         if( in_array( $option, array ( 'woocommerce_email_from_address', 'woocommerce_email_from_name' ) ) )
             return false;

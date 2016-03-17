@@ -58,8 +58,8 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
         $product_trid         = $this->sitepress->get_element_trid( $this->product->ID, 'post_product' );
         $product_translations = $this->sitepress->get_element_translations( $product_trid, 'post_product', false, false, true );
-        if ( isset( $job_details[ 'translation_complete' ] ) ) {
-            $translation_complete = $job_details[ 'translation_complete' ] == 'true';
+        if ( isset( $this->job_details[ 'translation_complete' ] ) ) {
+            $translation_complete = $this->job_details[ 'translation_complete' ];
         } else if ( isset( $product_translations[ $this->target_lang ] ) ) {
             $tr_status = $this->wpdb->get_var(
                             $this->wpdb->prepare("
@@ -105,7 +105,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         if ( !empty( $product_images ) ) {
             $images_section = new WPML_Editor_UI_Field_Section( __( 'Images', 'woocommerce-multilingual' ) );
             foreach( $product_images as $image_id ) {
-                $attachment_data = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM $this>wpdb->posts WHERE ID = %d", $image_id ) );
+                $attachment_data = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM {$this->wpdb->posts} WHERE ID = %d", $image_id ) );
                 if( !$attachment_data ) continue;
                 $image = new WPML_Editor_UI_Field_Image( 'image-id-' . $image_id, $image_id, $this->data, true );
                 $images_section->add_field( $image );
@@ -551,4 +551,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         }
     }
 
+	public function requires_translation_complete_for_each_field() {
+		return false;
+	}
 }

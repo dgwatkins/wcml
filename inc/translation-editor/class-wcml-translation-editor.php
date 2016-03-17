@@ -13,8 +13,6 @@ class WCML_Translation_Editor{
         add_filter( 'wpml-translation-editor-job-data', array( $this, 'get_translation_job_data_for_editor' ), 10, 2 );
         add_action( 'admin_print_scripts', array( $this, 'preselect_product_type_in_admin_screen' ), 11 );
 
-        add_filter( 'wpml_link_to_translation', array( $this, '_filter_link_to_translation' ), 100, 4 );
-        add_filter( 'wpml_post_edit_page_link_to_translation', array( $this,'_filter_link_to_translation' ) );
         add_filter( 'wpml_post_translation_job_url', array( $this, '_filter_job_link_to_translation' ), 100, 4 );
         add_filter( 'icl_post_alternative_languages', array( $this, 'hide_post_translation_links' ) );
 
@@ -26,7 +24,7 @@ class WCML_Translation_Editor{
     public function fetch_translation_job_for_editor( $job, $job_details ) {
         global $wpdb;
 
-        if ( $job_details[ 'job_type' ] == 'wc_product' ) {
+        if ( $job_details[ 'job_type' ] == 'post_product' ) {
             $job = new WCML_Editor_UI_Product_Job( $job_details, $this->woocommerce_wpml, $this->sitepress, $wpdb );
         }
 
@@ -70,26 +68,6 @@ class WCML_Translation_Editor{
                 echo '</script>';
             }
         }
-    }
-
-    public function _filter_link_to_translation( $link, $post_id, $lang, $trid ){
-
-        if ( $this->woocommerce_wpml->settings[ 'trnsl_interface' ] &&
-            (
-                ( isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'product' ) ||
-                ( isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) == 'product' )
-            )
-        ) {
-            if( empty( $post_id ) && isset( $_GET[ 'post' ] ) ){
-                $post_id = $_GET[ 'post' ];
-            }
-
-            if ( isset( $_GET[ 'post' ] ) || $this->woocommerce_wpml->products->get_original_product_language( $post_id ) != $lang ) {
-                $link = admin_url( 'admin.php?page=wpml-wcml&tab=products&prid=' . $post_id );
-            }
-        }
-        return $link;
-
     }
 
     /**
