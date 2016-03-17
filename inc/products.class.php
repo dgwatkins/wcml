@@ -233,6 +233,10 @@ class WCML_Products{
                     }
                     unset($children_products[$product_id]);
                 }
+            }else{
+                if ( isset( $children_products[$product_id] ) ){
+                    $count += count( $children_products[ $product_id ] );
+                }
             }
 
             $count++;
