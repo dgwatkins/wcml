@@ -277,8 +277,8 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 	public function display_hierarchical( $products, $pagenum, $per_page ){
 		global $wpdb;
 
-		if (!$products ){
-			return false;
+		if ( !$products ){
+			return array();
 		}
 
 		$output_products = array();
