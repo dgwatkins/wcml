@@ -31,8 +31,9 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 	}
 
 	function test_filter_paypal_args(){
-		global $sitepress_settings, $wpml_post_translations;
+		global $sitepress_settings, $wpml_post_translations, $WPML_String_Translation;
 
+		$WPML_String_Translation->init_active_languages();
 		$this->sitepress->switch_lang( 'de' );
 
 		$default_lang_code	= $this->sitepress->get_default_language();
