@@ -78,6 +78,28 @@ In order for the checkout and store pages to appear translated, you need to crea
 
 == Changelog ==
 
+= 3.7.11 =
+* Bug fix: the downloadable products were not synced properly with their translations
+* Bug fix: the confirmation for installing WooCommerce translations for the secondary languages was not saved
+* Bug fix: The option to "Show only products with custom prices in secondary currencies" was not working well for variable products
+* Bug fix: saving custom prices when creating a new product didn't work
+* Removed backward compatibility with WooCommerce versions older than 2.1
+* Small compatibility fixes for the upcoming WordPress 4.5
+* Fixed a problem with the pagination on the products list page under the WooCommerce Multilingual section
+
+= 3.7.10 =
+* Fixed a small issue with the product translations editor (additional toolbar showing)
+* Fixed a compatibility issue with Memcached on Siteground: product category archive pages were returning 404
+* Bug fix: the price widget was not using the correct values with multi-currency mode on
+* Bug fix: in some cases the costs for International Shipping were not calculated correctly in the secondary languages
+* Bug fix: When using comma for a decimal separator, for custom prices, the rounded values were not determined correctly
+* Bug fix: In some cases, translated product variations were displayed as 'out of stock' on the front end.
+* Fixed a fatal error occurring when selecting the WPML admin language to 'All languages' on the WooCommerce settings page
+* Compatibility with WooThemes Mix and Match Products
+* Fixed a bug preventing a shipping to be set to a variation when the default language of the product was not English
+* Fixed a bug that was sometimes preventing the 'incl. vat' suffix to be displayed on prices
+* Fixed a compatibility issue with Gravity Forms Product Add-Ons
+
 = 3.7.9 =
 * Fixed an issue prevent the correct plugin activation in some cases
 * Fixed an issue potentially causing  uncatched errors when using some specific payment gateways
