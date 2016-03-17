@@ -85,6 +85,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Bug fix: saving custom prices when creating a new product didn't work
 * Removed backward compatibility with WooCommerce versions older than 2.1
 * Small compatibility fixes for the upcoming WordPress 4.5
+* Fixed a problem with the pagination on the products list page under the WooCommerce Multilingual section
 
 = 3.7.10 =
 * Fixed a small issue with the product translations editor (additional toolbar showing)
