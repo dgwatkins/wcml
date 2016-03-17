@@ -78,6 +78,14 @@ In order for the checkout and store pages to appear translated, you need to crea
 
 == Changelog ==
 
+= 3.7.11 =
+* Bug fix: the downloadable products were not synced properly with their translations
+* Bug fix: the confirmation for installing WooCommerce translations for the secondary languages was not saved
+* Bug fix: The option to "Show only products with custom prices in secondary currencies" was not working well for variable products
+* Bug fix: saving custom prices when creating a new product didn't work
+* Removed backward compatibility with WooCommerce versions older than 2.1
+* Small compatibility fixes for the upcoming WordPress 4.5
+
 = 3.7.10 =
 * Fixed a small issue with the product translations editor (additional toolbar showing)
 * Fixed a compatibility issue with Memcached on Siteground: product category archive pages were returning 404
