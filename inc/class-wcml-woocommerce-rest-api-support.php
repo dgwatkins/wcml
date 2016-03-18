@@ -7,6 +7,10 @@ class WCML_WooCommerce_Rest_API_Support{
         add_action( 'parse_request', array( $this, 'use_canonical_home_url' ), -10 );
         add_action( 'init', array( $this, 'init' ) );
 
+        add_filter( 'woocommerce_api_query_args', array($this, 'add_lang_parameter'), 10, 2 );
+
+        add_filter( 'woocommerce_api_dispatch_args', array($this, 'dispatch_args_filter'), 10, 2 );
+
     }
 
     function init(){
@@ -29,7 +33,145 @@ class WCML_WooCommerce_Rest_API_Support{
 
         }
 
+    }
 
+    public function add_lang_parameter( $args, $request_args ){
+
+        if( isset( $request_args['lang'] ) ) {
+            $args['lang'] = $request_args['lang'];
+        }
+
+        return $args;
+    }
+
+    public function dispatch_args_filter( $args, $callback ){
+        global $sitepress, $wp;
+
+        $route = $wp->query_vars['wc-api-route'];
+
+
+        if( isset( $args['filter']['lang'] ) ){
+
+            $lang = $args['filter']['lang'];
+
+            $active_languages = $sitepress->get_active_languages();
+
+            if ( !isset($active_languages[$lang]) && $lang != 'all' ) {
+                throw new WC_API_Exception( '404', sprintf( __( 'Invalid language parameter: %s' ), $lang ), '404' );
+            }
+
+            if ( $lang != $sitepress->get_default_language() ) {
+                if ( $lang != 'all' ) {
+
+                    $sitepress->switch_lang( $lang  );
+
+                }else{
+
+                    switch($route){
+                        case '/products':
+                            // Remove filters for the post query
+                            remove_action( 'query_vars', array( $sitepress, 'query_vars' ) );
+                            global $wpml_query_filter;
+                            remove_filter( 'posts_join', array( $wpml_query_filter, 'posts_join_filter' ), 10 );
+                            remove_filter( 'posts_where', array( $wpml_query_filter, 'posts_where_filter' ), 10 );
+                            break;
+
+                        case '/products/categories':
+                            // Remove WPML language filters for the terms query
+                            remove_filter('terms_clauses', array($sitepress,'terms_clauses'));
+                            remove_filter( 'get_term', array( $sitepress, 'get_term_adjust_id' ), 1 );
+                            break;
+
+                    }
+
+                }
+            }
+
+            if( $route == '/orders'){
+                add_filter( 'woocommerce_order_get_items', array( $this, 'get_order_items_in_the_current_language' ) );
+            }
+
+
+
+        }
+
+
+        return $args;
+
+    }
+
+    /*
+     * Filter orders content in the current language
+     */
+    function get_order_items_in_the_current_language($items){
+
+        $lang = get_query_var('lang');
+        $wc_taxonomies = wc_get_attribute_taxonomies();
+        $attributes = array();
+        foreach( $wc_taxonomies as $taxonomy ){
+            $attributes[] = 'pa_' . $taxonomy->attribute_name;
+        }
+
+        foreach( $items as $key => $item ){
+
+            if( isset( $item['product_id'] ) ) {
+                $translated_product_id = apply_filters( 'translate_object_id', $item['product_id'], 'product', true, $lang );
+                $items[$key]['product_id'] = $translated_product_id;
+                $items[$key]['item_meta']['_product_id'] = $translated_product_id;
+                $items[$key]['name'] = get_post_field( 'post_title', $translated_product_id );
+                foreach ( $item['item_meta_array'] as $k => $m ) {
+                    if ( $m->key == '_product_id' ) {
+                        $items[$key]['item_meta_array'][$k]->value = $translated_product_id;
+                    }
+                }
+            }
+
+            // Variations included
+            if( !empty( $item['variation_id'] ) ){
+                $translated_variation_id = apply_filters('translate_object_id', $item['variation_id'], 'product_variation', true, $lang);
+                $items[$key]['variation_id'] = $translated_variation_id;
+                $items[$key]['item_meta']['_variation_id'] = $translated_variation_id;
+                foreach( $attributes as $attribute_name ){
+                    if( isset( $item['item_meta'][$attribute_name] ) ){
+
+                        foreach( $item['item_meta'][$attribute_name] as $idx => $attr ){
+                            $term = get_term_by('slug',  $attr, $attribute_name);
+                            $translated_term_id = apply_filters('translate_object_id', $term->term_id, $attribute_name, true, $lang);
+                            $translated_term = get_term_by('id',  $translated_term_id, $attribute_name);
+                            $items[$key]['item_meta'][$attribute_name][$idx] = $translated_term->slug;
+                        }
+
+                    }
+
+                    if( isset( $item[$attribute_name] ) ){
+                        $term = get_term_by('slug',  $item[$attribute_name], $attribute_name);
+                        $translated_term_id = apply_filters('translate_object_id', $term->term_id, $attribute_name, true, $lang);
+                        $translated_term = get_term_by('id',  $translated_term_id, $attribute_name);
+                        $items[$key][$attribute_name] = $translated_term->slug;
+                    }
+                }
+
+                foreach( $item['item_meta_array'] as $k => $m){
+                    if($m->key == '_variation_id'){
+
+                        $items[$key]['item_meta_array'][$k]->value = $translated_variation_id;
+
+                    } elseif( in_array( $m->key, $attributes ) ){
+
+                        $term = get_term_by('slug',  $m->value, $m->key);
+                        $translated_term_id = apply_filters('translate_object_id', $term->term_id, $m->key, true, $lang);
+                        $translated_term = get_term_by('id',  $translated_term_id, $m->key);
+                        $items[$key]['item_meta_array'][$k]->value = $translated_term->slug;
+
+                    }
+                }
+
+
+            }
+
+        }
+
+        return $items;
 
     }
 

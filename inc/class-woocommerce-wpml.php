@@ -26,6 +26,8 @@ class woocommerce_wpml {
     private $compatibility;
     private $xdomain_data;
 
+    private $wc_rest_api;
+
 
     function __construct(){
 
@@ -93,7 +95,10 @@ class woocommerce_wpml {
         }
 
         new WCML_Ajax_Setup;
-        new WCML_WooCommerce_Rest_API_Support;
+
+        if ( 'yes' == get_option( 'woocommerce_api_enabled' ) ){
+            $this->wc_rest_api = new WCML_WooCommerce_Rest_API_Support;
+        }
 
         WCML_Install::initialize( $this, $sitepress );
 
