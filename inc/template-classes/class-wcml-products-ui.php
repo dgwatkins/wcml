@@ -278,54 +278,51 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 		global $wpdb;
 
 		$output_products = array();
-
-		if ( !$products ){
-			return $output_products;
-		}
-
-
 		$top_level_products = array();
 		$children_products = array();
 
-		foreach ( $products as $product ) {
-			// catch and repair bad products
-			if ( $product->post_parent == $product->ID ) {
-				$product->post_parent = 0;
-				$wpdb->update( $wpdb->posts, array( 'post_parent' => 0 ), array( 'ID' => $product->ID ) );
+		if( !empty( $products ) ) {
+
+			foreach ($products as $product) {
+				// catch and repair bad products
+				if ($product->post_parent == $product->ID) {
+					$product->post_parent = 0;
+					$wpdb->update($wpdb->posts, array('post_parent' => 0), array('ID' => $product->ID));
+				}
+
+				if (0 == $product->post_parent) {
+					$top_level_products[] = $product->ID;
+				} else {
+					$children_products[$product->post_parent][] = $product->ID;
+				}
 			}
 
-			if ( 0 == $product->post_parent ){
-				$top_level_products[] = $product->ID;
-			}else{
-				$children_products[$product->post_parent][] = $product->ID;
-			}
-		}
+			$count = 0;
+			$start = ($pagenum - 1) * $per_page;
+			$end = $start + $per_page;
 
-		$count = 0;
-		$start = ( $pagenum - 1 ) * $per_page;
-		$end = $start + $per_page;
+			foreach ($top_level_products as $product_id) {
+				if ($count >= $end)
+					break;
 
-		foreach ( $top_level_products as $product_id ) {
-			if ( $count >= $end )
-				break;
+				if ($count >= $start) {
+					$output_products[] = get_post($product_id);
 
-			if ( $count >= $start ) {
-				$output_products[] = get_post($product_id);
-
-				if ( isset( $children_products[$product_id] ) ){
-					foreach($children_products[$product_id] as $children){
-						$output_products[] = get_post($children);
-						$count++;
+					if (isset($children_products[$product_id])) {
+						foreach ($children_products[$product_id] as $children) {
+							$output_products[] = get_post($children);
+							$count++;
+						}
+						unset($children_products[$product_id]);
 					}
-					unset($children_products[$product_id]);
+				} else {
+					if (isset($children_products[$product_id])) {
+						$count += count($children_products[$product_id]);
+					}
 				}
-			}else{
-				if ( isset( $children_products[$product_id] ) ){
-					$count += count( $children_products[ $product_id ] );
-				}
-			}
 
-			$count++;
+				$count++;
+			}
 		}
 
 		return $output_products;
