@@ -414,7 +414,7 @@ class WCML_Terms{
 				// get term language
 				$term_language = $this->sitepress->get_element_language_details($tt_id, 'tax_' . $taxonomy);
 
-				if($term_language->language_code != $this->sitepress->get_default_language()){
+				if( isset( $term_language->language_code ) && $term_language->language_code != $this->sitepress->get_default_language()){
 					// get term in the default language
 					$term_id = apply_filters( 'translate_object_id',$term_id, $taxonomy, false, $this->sitepress->get_default_language());
 
