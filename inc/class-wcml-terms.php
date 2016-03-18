@@ -199,7 +199,7 @@ class WCML_Terms{
         if ( isset( $_POST['product_cat_thumbnail_id'] ) ){
             global $sitepress_settings;
 
-            if($this->sitepress_settings['sync_taxonomy_parents'] && $this->is_original_category($tt_id,'tax_'.$taxonomy) ){
+            if($sitepress_settings['sync_taxonomy_parents'] && $this->is_original_category($tt_id,'tax_'.$taxonomy) ){
                 $trid = $this->sitepress->get_element_trid($tt_id,'tax_'.$taxonomy);
                 $translations = $this->sitepress->get_element_translations($trid,'tax_'.$taxonomy);
                 
