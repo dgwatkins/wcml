@@ -21,13 +21,6 @@ class WCML_Translation_Editor{
         add_filter( 'manage_product_posts_columns', array( $this, 'add_languages_column' ), 100 );
         add_action( 'woocommerce_product_after_variable_attributes', array( $this, 'lock_variable_fields' ), 10, 3 );
 
-        if( defined( 'WPSEO_VERSION') && defined( 'WPSEO_PATH' ) && isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == 'wpml-wcml' && isset( $_GET[ 'tab' ] ) && $_GET[ 'tab' ] == 'products' ){
-            if( version_compare( WPSEO_VERSION, '3', '<' ) ) {
-                require_once WPSEO_PATH . 'admin/class-metabox.php';
-            } elseif( file_exists( WPSEO_PATH . 'admin/metabox/class-metabox.php' ) ) {
-                require_once WPSEO_PATH . 'admin/metabox/class-metabox.php';
-            }
-        }
     }
 
     public function fetch_translation_job_for_editor( $job, $job_details ) {

@@ -12,7 +12,6 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
     private $target_lang;
     private $translation_complete;
     private $duplicate;
-    private $yoast_seo_fields;
     private $not_display_fields_for_variables_product;
 
 	function __construct( $job_details, &$woocommerce_wpml, &$sitepress, &$wpdb  ) {
@@ -21,7 +20,6 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $this->sitepress = $sitepress;
         $this->wpdb = $wpdb;
         $this->set_private_variables( $job_details );
-        $this->yoast_seo_fields = array( '_yoast_wpseo_focuskw', '_yoast_wpseo_title', '_yoast_wpseo_metadesc' );
         $this->not_display_fields_for_variables_product = array( '_purchase_note', '_regular_price', '_sale_price',
                                                                  '_price', '_min_variation_price', '_max_variation_price',
                                                                  '_min_variation_regular_price', '_max_variation_regular_price',
@@ -467,7 +465,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
     //get product content labels
     public function get_product_custom_field_label( $field )
     {
-        global $woocommerce_wpml, $sitepress, $wpseo_metabox;
+        global $woocommerce_wpml, $sitepress;
         $settings = $sitepress->get_settings();
         $label = '';
         if (isset($settings['translation-management']['custom_fields_translation'][$field]) && $settings['translation-management']['custom_fields_translation'][$field] == 2) {
@@ -475,20 +473,9 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                 return false;
             }
 
-            if ( $this->check_custom_field_is_single_value( $this->product->ID, $field ) ) {
-                if (defined('WPSEO_VERSION')) {
-                    if (!is_null($wpseo_metabox) && in_array( $field, $this->yoast_seo_fields ) ) {
-                        $wpseo_metabox_values = $wpseo_metabox->get_meta_boxes('product');
-                        $label = $wpseo_metabox_values[str_replace('_yoast_wpseo_', '', $field)]['title'];
-                        return $label;
-                    }
-                }
-            } else {
-                $exception = apply_filters('wcml_product_content_exception', true, $this->product->ID, $field);
-                if (!$exception) {
-                    return false;
-                }
-
+            $exception = apply_filters('wcml_product_content_exception', true, $this->product->ID, $field);
+            if ( !$exception ) {
+                return false;
             }
 
             $custom_key_label = apply_filters('wcml_product_content_label', $field, $this->product->ID);
