@@ -158,6 +158,7 @@ class WCML_Currency_Switcher {
 
         if ( is_product() && isset($settings['currency_switcher_product_visibility']) && $settings['currency_switcher_product_visibility'] === 1 ) {
             echo(do_shortcode( '[currency_switcher]' ));
+            echo '<br />';
         }
 
     }

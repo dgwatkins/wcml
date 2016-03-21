@@ -21,7 +21,6 @@ class WCML_Resources {
 
         self::load_css();
         self::load_js();
-        self::load_tooltip_resources();
 
         $is_edit_product = self::$pagenow == 'post.php' && isset($_GET['post']) && get_post_type( $_GET['post'] ) == 'product';
         $is_original_product = isset( $_GET['post'] ) && !is_array( $_GET['post'] ) && self::$woocommerce_wcml->products->is_original_product( $_GET['post'] );
