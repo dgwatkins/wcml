@@ -8,8 +8,14 @@ class WCML_WooCommerce_Rest_API_Support{
         add_action( 'init', array( $this, 'init' ) );
 
         add_filter( 'woocommerce_api_query_args', array($this, 'add_lang_parameter'), 10, 2 );
-
         add_filter( 'woocommerce_api_dispatch_args', array($this, 'dispatch_args_filter'), 10, 2 );
+
+        add_filter( 'woocommerce_api_order_response' , array( $this, 'filter_order_items_by_language' ), 10, 4 );
+        add_action( 'woocommerce_api_create_order' , array( $this, 'set_order_language' ), 10, 2 );
+
+
+        add_action( 'woocommerce_api_create_product', array( $this, 'set_product_language' ), 10 , 2 );
+
 
     }
 
@@ -92,7 +98,6 @@ class WCML_WooCommerce_Rest_API_Support{
             }
 
 
-
         }
 
 
@@ -100,10 +105,10 @@ class WCML_WooCommerce_Rest_API_Support{
 
     }
 
-    /*
+    /**
      * Filter orders content in the current language
      */
-    function get_order_items_in_the_current_language($items){
+    public function get_order_items_in_the_current_language( $items ){
 
         $lang = get_query_var('lang');
         $wc_taxonomies = wc_get_attribute_taxonomies();
@@ -172,6 +177,103 @@ class WCML_WooCommerce_Rest_API_Support{
         }
 
         return $items;
+
+    }
+
+    /**
+     * Filters the items of an order according to a given languages
+     *
+     * @param $order_data
+     * @param $order
+     * @param $fields
+     * @param $server
+     * @return mixed
+     */
+    public function filter_order_items_by_language( $order_data, $order, $fields, $server ){
+
+
+        $lang = get_query_var('lang');
+
+        $order_lang = get_post_meta($order->ID, 'wpml_language');
+
+        if( $order_lang != $lang ){
+
+            foreach( $order_data['line_items'] as $k => $item ){
+
+                if( isset( $item['product_id'] ) ){
+
+                    $translated_product_id = apply_filters( 'translate_object_id', $item['product_id'], 'product', true, $lang );
+                    if( $translated_product_id ){
+                        $translated_product = new WC_Product( $translated_product_id );
+                        $order_data['line_items'][$k]['product_id'] = $translated_product_id;
+                        if( $translated_product->post->post_type == 'product_variation' ){
+                            $post_parent = get_post( $translated_product->post->post_parent );
+                            $post_name = $post_parent->post_title;
+                        } else {
+                            $post_name = $translated_product->post->post_title;
+                        }
+                        $order_data['line_items'][$k]['name'] = $post_name;
+                    }
+
+                }
+
+            }
+
+        }
+
+        return $order_data;
+    }
+
+
+    /**
+     * Sets the language for a new order
+     *
+     * @param $order_id
+     * @param $data
+     */
+    public function set_order_language( $order_id, $data ){
+        global $sitepress;
+
+        if( isset( $data['lang'] ) ){
+
+            $active_languages = $sitepress->get_active_languages();
+            if( !isset( $active_languages[$data['lang']] ) ){
+                throw new WC_API_Exception( '404', sprintf( __( 'Invalid language parameter: %s' ), $data['lang'] ), '404' );
+            }
+
+            update_post_meta( $order_id, 'wpml_language', $data['lang']);
+
+        }
+
+    }
+
+    /**
+     * Sets the product information according to the provided language
+     *
+     * @param $id
+     * @param $data
+     *
+     * @throws WC_API_Exception
+     *
+     */
+    public function set_product_language( $id, $data ){
+        global $sitepress;
+
+        if( isset( $data['lang'] )){
+            $active_languages = $sitepress->get_active_languages();
+            if( !isset( $active_languages[$data['lang']] ) ){
+                throw new WC_API_Exception( '404', sprintf( __( 'Invalid language parameter: %s' ), $data['lang'] ), '404' );
+            }
+            if( isset( $data['translation_of'] ) ){
+                $trid = $sitepress->get_element_trid( $data['translation_of'], 'post_product' );
+                if( empty($trid) ){
+                    throw new WC_API_Exception( '404', sprintf( __( 'Source product id not found: %s' ), $data['translation_of'] ), '404' );
+                }
+            }else{
+                $trid = null;
+            }
+            $sitepress->set_element_language_details( $id, 'post_product', $trid, $data['lang'] );
+        }
 
     }
 
