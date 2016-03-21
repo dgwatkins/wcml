@@ -175,7 +175,13 @@ class WCML_Status_UI extends WPML_Templates_Factory {
 			$taxonomies_data[$key]['untranslated'] = $this->woocommerce_wpml->terms->get_untranslated_terms_number($taxonomy);
 			$taxonomies_data[$key]['fully_trans'] = $this->woocommerce_wpml->terms->is_fully_translated($taxonomy);
 			$taxonomies_data[$key]['name'] = get_taxonomy($taxonomy)->labels->name;
-			$taxonomies_data[$key]['url'] = admin_url( 'admin.php?page=wpml-wcml&tab=product-attributes&taxonomy=' . $taxonomy );
+
+			if( substr( $taxonomy, 0, 3 ) == 'pa_' ){
+				$taxonomies_data[$key]['url'] = admin_url( 'admin.php?page=wpml-wcml&tab=product-attributes&taxonomy=' . $taxonomy );
+			}else{
+				$taxonomies_data[$key]['url'] = admin_url( 'admin.php?page=wpml-wcml&tab=' . $taxonomy );
+			}
+
 		}
 
 		return $taxonomies_data;
