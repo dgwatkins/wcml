@@ -39,7 +39,7 @@ class WCML_Multi_Currency{
             $this->shipping = new WCML_Multi_Currency_Shipping( $this );
         }
         $this->reports                  = new WCML_Multi_Currency_Reports();
-        $this->orders                   = new WCML_Multi_Currency_Orders();
+        $this->orders                   = new WCML_Multi_Currency_Orders( $this );
         $this->admin_currency_selector  = new WCML_Admin_Currency_Selector();
         $this->custom_prices            = new WCML_Custom_Prices();
         $this->currency_switcher        = new WCML_Currency_Switcher;

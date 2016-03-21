@@ -1,9 +1,10 @@
 <?php
 
 class WCML_Multi_Currency_Orders{
-    private $woocommerce_wpml;
+    private $multi_currency;
 
-    public function __construct(){
+    public function __construct( &$multi_currency ){
+        $this->multi_currency =& $multi_currency;
 
         if( is_admin() ){
 
@@ -14,13 +15,10 @@ class WCML_Multi_Currency_Orders{
         }
 
         add_action( 'woocommerce_view_order', array( $this, 'show_price_in_clienst_currency' ), 9 );
-
     }
 
     public function orders_init(){
-        global $wp, $woocommerce_wpml;
-
-        $this->woocommerce_wpml =& $woocommerce_wpml;
+        global $wp;
 
         add_action( 'restrict_manage_posts', array($this, 'show_orders_currencies_selector') );
         $wp->add_query_var( '_order_currency' );
@@ -158,7 +156,7 @@ class WCML_Multi_Currency_Orders{
             $current_order_currency = $this->get_order_currency_cookie();
 
             $wc_currencies = get_woocommerce_currencies();
-            $currencies = $this->woocommerce_wpml->multi_currency->get_currency_codes();
+            $currencies = $this->multi_currency->get_currency_codes();
 
             ?>
             <li class="wide">
@@ -282,7 +280,7 @@ class WCML_Multi_Currency_Orders{
 
             if( $query == $sql){
 
-                $currency = $this->get_cookie_dashboard_currency();
+                $currency = $this->multi_currency->admin_currency_selector->get_cookie_dashboard_currency();
                 $query = "SELECT post_status, COUNT( * ) AS num_posts FROM {$wpdb->posts}
                           WHERE post_type = 'shop_order' AND ID IN
                             ( SELECT order_currency.post_id FROM {$wpdb->postmeta} AS order_currency
