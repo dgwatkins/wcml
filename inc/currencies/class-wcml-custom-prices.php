@@ -385,6 +385,17 @@ class WCML_Custom_Prices{
 
     public function update_custom_prices( $post_id, $custom_prices, $code ){
         $price = '';
+
+        // initialization
+        $keys = array(
+            '_sale_price_dates_to', '_sale_price_dates_from',
+            '_sale_price', '_sale_price_dates_to', '_sale_price_dates_from',
+
+        );
+        foreach( $keys as $key ){
+            if( !isset( $custom_prices[$key] ) ){ $custom_prices[$key] = ''; }
+        }
+
         foreach( $custom_prices as $custom_price_key => $custom_price_value ){
             update_post_meta( $post_id, $custom_price_key.'_'.$code, $custom_price_value );
         }

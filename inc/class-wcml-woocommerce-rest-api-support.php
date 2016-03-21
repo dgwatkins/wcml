@@ -15,11 +15,13 @@ class WCML_WooCommerce_Rest_API_Support{
 
 
         add_action( 'woocommerce_api_create_product', array( $this, 'set_product_language' ), 10 , 2 );
-
+        add_action( 'woocommerce_api_create_product', array( $this, 'set_product_custom_prices' ), 10 , 2 );
+        add_action( 'woocommerce_api_product_response', array( $this, 'append_product_language_and_translations' ) );
+        add_action( 'woocommerce_api_product_response', array( $this, 'append_product_secondary_prices' ) );
 
     }
 
-    function init(){
+    public function init(){
         global $sitepress,$sitepress_settings;
 
         //remove rewrite rules filtering for PayPal IPN url
@@ -275,6 +277,103 @@ class WCML_WooCommerce_Rest_API_Support{
             $sitepress->set_element_language_details( $id, 'post_product', $trid, $data['lang'] );
         }
 
+    }
+
+    /**
+     * Sets custom prices in secondary currencies for products
+     */
+    public function set_product_custom_prices( $id, $data ){
+        global $woocommerce_wpml;
+
+        if( !empty($woocommerce_wpml->multi_currency)  ){
+
+            if( $data['custom_prices'] ){
+                update_post_meta( $id, '_wcml_custom_prices_status', 1);
+
+                foreach( $data['custom_prices'] as $currency => $prices ){
+
+                    $prices_uscore = array();
+                    foreach( $prices as $k => $p){
+                        $prices_uscore['_' . $k] = $p;
+                    }
+
+                    $woocommerce_wpml->multi_currency->custom_prices->update_custom_prices( $id, $prices_uscore, $currency );
+
+                }
+
+            }
+        }
+
+    }
+
+    /**
+     * Appends the language and translation information to the get_product response
+     *
+     * @param $product_data
+     */
+    public function append_product_language_and_translations( $product_data ){
+        global $sitepress;
+
+        $product_data['translations'] = array();
+
+        $trid = $sitepress->get_element_trid( $product_data['id'], 'post_product' );
+        $translations = $sitepress->get_element_translations( $trid, 'post_product');
+        foreach( $translations as $translation ){
+            if( $translation->element_id == $product_data['id'] ){
+                $product_language = $translation->language_code;
+            }else{
+                $product_data['translations'][$translation->language_code] = $translation->element_id;
+            }
+        }
+
+        $product_data['lang'] = $product_language;
+
+        return $product_data;
+    }
+
+    /**
+     * Appends the secondary prices information to the get_product response
+     *
+     * @param $product_data
+     */
+    public function append_product_secondary_prices( $product_data ){
+        global $woocommerce_wpml;
+
+
+        if( !empty($woocommerce_wpml->multi_currency) && !empty($woocommerce_wpml->settings['currencies_order']) ){
+
+            $product_data['multi-currency-prices'] = array();
+
+            $custom_prices_on = get_post_meta( $product_data['id'], '_wcml_custom_prices_status', true);
+
+            foreach( $woocommerce_wpml->settings['currencies_order'] as $currency ){
+
+                if( $currency != get_option('woocommerce_currency') ){
+
+                    if( $custom_prices_on ){
+
+                        $custom_prices = $woocommerce_wpml->multi_currency->custom_prices->get_product_custom_prices( $product_data['id'], $currency );
+                        foreach( $custom_prices as $key => $price){
+                            $product_data['multi-currency-prices'][$currency][ preg_replace('#^_#', '', $key) ] = $price;
+
+                        }
+
+                    } else {
+                        $product_data['multi-currency-prices'][$currency]['regular_price'] =
+                            $woocommerce_wpml->multi_currency->prices->raw_price_filter( $product_data['regular_price'], $currency );
+                        if( !empty($product_data['sale_price']) ){
+                            $product_data['multi-currency-prices'][$currency]['sale_price'] =
+                                $woocommerce_wpml->multi_currency->prices->raw_price_filter( $product_data['sale_price'], $currency );
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+        return $product_data;
     }
 
 }
