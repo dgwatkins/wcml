@@ -34,7 +34,7 @@
                         {{ currency.currency_format|raw }}
                     </label>
 
-                    {% if currency.custom_regular_price is empty %}
+                    {% if currency.custom_price['_regular_price'] is empty %}
                         <span class="wcml_no_price_message">{{ strings.det_auto }}</span>
                     {% endif %}
 
