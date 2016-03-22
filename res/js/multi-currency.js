@@ -315,10 +315,16 @@ jQuery( function($){
         },
 
         change_default_currency: function(){
-            WCML_Multi_Currency.update_default_currency($(this).attr('rel'), $(this).val());
+            WCML_Multi_Currency.update_default_currency($(this).attr('rel'), $(this).val(), $(this) );
         },
 
-        update_default_currency: function(lang, code){
+        update_default_currency: function(lang, code, select){
+            $('#wcml_mc_options_submit').attr('disabled', 'disabled');
+            if( select ){
+                var ajaxLoader = $('<span class="spinner" style="visibility: visible;float:none;position: absolute">');
+                select.parent().append(ajaxLoader);
+            }
+
             discard = true;
             $.ajax({
                 type: 'post',
@@ -331,6 +337,10 @@ jQuery( function($){
                 },
                 complete: function(){
                     discard = false;
+                    $('#wcml_mc_options_submit').removeAttr('disabled');
+                    if( select ) {
+                        select.parent().find('.spinner').remove();
+                    }
                 }
             });
         },

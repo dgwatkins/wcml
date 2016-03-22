@@ -170,7 +170,7 @@ class WCML_Multi_Currency_Reports{
     */
     public function filter_dashboard_status_widget_sales_query( $query ){
         global $wpdb;
-        $currency = $this->get_cookie_dashboard_currency();
+        $currency = $this->woocommerce_wpml->multi_currency->admin_currency_selector->get_cookie_dashboard_currency();
         $query['where'] .= " AND posts.ID IN  ( SELECT order_currency.post_id FROM {$wpdb->postmeta} AS order_currency
                             WHERE order_currency.meta_key = '_order_currency' AND order_currency.meta_value = '{$currency}' ) ";
 
