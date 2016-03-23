@@ -32,14 +32,14 @@ class WCML_Troubleshooting{
         $get_variation_term_taxonomy_ids = apply_filters('wcml_variation_term_taxonomy_ids',(array)$get_variation_term_taxonomy_ids);
 
         $get_variables_products = $wpdb->get_results($wpdb->prepare("SELECT tr.element_id as id,tr.language_code as lang FROM {$wpdb->prefix}icl_translations AS tr LEFT JOIN $wpdb->term_relationships as t ON tr.element_id = t.object_id LEFT JOIN $wpdb->posts AS p ON tr.element_id = p.ID
-                                WHERE p.post_status = 'publish' AND tr.source_language_code is NULL AND tr.element_type = 'post_product' AND t.term_taxonomy_id IN (%s) ORDER BY tr.element_id",join(',',$get_variation_term_taxonomy_ids)),ARRAY_A);
+                                WHERE p.post_status IN ('publish','future','draft','pending','private') AND tr.source_language_code is NULL AND tr.element_type = 'post_product' AND t.term_taxonomy_id IN (%s) ORDER BY tr.element_id",join(',',$get_variation_term_taxonomy_ids)),ARRAY_A);
 
         update_option('wcml_variable_products_to_sync',$get_variables_products);
     }
 
     function wcml_count_products_for_gallery_sync(){
         global $wpdb;
-        $all_products = $wpdb->get_results("SELECT p.ID FROM $wpdb->posts AS p LEFT JOIN {$wpdb->prefix}icl_translations AS tr ON tr.element_id = p.ID WHERE p.post_status = 'publish' AND p.post_type =  'product' AND tr.source_language_code is NULL");
+        $all_products = $wpdb->get_results("SELECT p.ID FROM $wpdb->posts AS p LEFT JOIN {$wpdb->prefix}icl_translations AS tr ON tr.element_id = p.ID WHERE p.post_status IN ('publish','future','draft','pending','private') AND p.post_type =  'product' AND tr.source_language_code is NULL");
         foreach($all_products as $key=>$product){
             if(get_post_meta($product->ID,'gallery_sync',true)){
                 unset($all_products[$key]);
@@ -336,7 +336,7 @@ class WCML_Troubleshooting{
 
         global $woocommerce_wpml,$wpdb;
 
-        $all_products = $wpdb->get_results($wpdb->prepare("SELECT p.* FROM $wpdb->posts AS p LEFT JOIN {$wpdb->prefix}icl_translations AS tr ON tr.element_id = p.ID WHERE p.post_status = 'publish' AND p.post_type =  'product' AND tr.source_language_code is NULL ORDER BY p.ID LIMIT %d,5",$page*5));
+        $all_products = $wpdb->get_results($wpdb->prepare("SELECT p.* FROM $wpdb->posts AS p LEFT JOIN {$wpdb->prefix}icl_translations AS tr ON tr.element_id = p.ID WHERE p.post_status IN ('publish','future','draft','pending','private') AND p.post_type =  'product' AND tr.source_language_code is NULL ORDER BY p.ID LIMIT %d,5",$page*5));
 
         foreach($all_products as $product){
             if(!get_post_meta($product->ID,'gallery_sync',true)){
