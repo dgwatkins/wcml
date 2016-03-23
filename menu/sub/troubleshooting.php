@@ -1,15 +1,14 @@
 <?php
 global $woocommerce_wpml;
-if(get_option('wcml_products_to_sync') === false ){
-    $woocommerce_wpml->troubleshooting->wcml_sync_variations_update_option();
-}
 
+$woocommerce_wpml->troubleshooting->wcml_sync_variations_update_option();
 $prod_with_variations = $woocommerce_wpml->troubleshooting->wcml_count_products_with_variations();
 $prod_count = $woocommerce_wpml->troubleshooting->wcml_count_products_for_gallery_sync();
 $prod_categories_count = $woocommerce_wpml->troubleshooting->wcml_count_product_categories();
+$products = $woocommerce_wpml->troubleshooting->wcml_count_products();
 
 $all_products_taxonomies = get_taxonomies(array('object_type'=>array('product')),'objects');
-unset($all_products_taxonomies['product_type'],$all_products_taxonomies['product_cat'],$all_products_taxonomies['product_tag']);
+unset( $all_products_taxonomies['product_type'], $all_products_taxonomies['product_cat'], $all_products_taxonomies['product_tag'] );
 ?>
 <div class="wrap wcml_trblsh">
     <div id="icon-wpml" class="icon32"><br /></div>
@@ -18,28 +17,40 @@ unset($all_products_taxonomies['product_type'],$all_products_taxonomies['product
         <h3><?php _e('Please make a backup of your database before you start the synchronization', 'woocommerce-multilingual') ?></h3>
     </div>
     <div class="trbl_variables_products">
-        <h3><?php _e('Sync variables products', 'woocommerce-multilingual') ?></h3>
         <ul>
             <li>
                 <label>
-                    <input type="checkbox" id="wcml_sync_update_product_count" />
-                    <?php _e('Update products count:', 'woocommerce-multilingual') ?>
-                    <span class="var_status"><?php echo $prod_with_variations; ?></span>&nbsp;<span><?php  _e('products with variations', 'woocommerce-multilingual'); ?></span>
+                    <input type="checkbox" id="wcml_sync_products_data" />
+                    <?php _e('Synchronize products translations data ( copy meta information from the original product ):', 'woocommerce-multilingual') ?>
+                    <span class="prod_status"><?php echo $products; ?></span>&nbsp;<span><?php _e('left', 'woocommerce-multilingual') ?></span>
                 </label>
             </li>
             <li>
                 <label>
-                    <input type="checkbox" id="wcml_sync_product_variations" checked="checked" />
-                    <?php _e('Sync products variations:', 'woocommerce-multilingual') ?>
+                    <input type="checkbox" id="wcml_sync_product_variations_data" checked="checked" />
+                    <?php _e('Synchronize variation translations data ( copy meta information from the original variation ):', 'woocommerce-multilingual') ?>
                     <span class="var_status"><?php echo $prod_with_variations; ?></span>&nbsp;<span><?php _e('left', 'woocommerce-multilingual') ?></span>
                 </label>
-
+            </li>
+            <li>
+                <label>
+                    <input type="checkbox" id="wcml_sync_product_variations_new" checked="checked" />
+                    <?php _e('Create missing variation translations:', 'woocommerce-multilingual') ?>
+                    <span class="var_status"><?php echo $prod_with_variations; ?></span>&nbsp;<span><?php _e('left', 'woocommerce-multilingual') ?></span>
+                </label>
+            </li>
+            <li>
+                <label>
+                    <input type="checkbox" id="wcml_sync_product_variations_icl" checked="checked" />
+                    <?php _e('Update variations translation relationships ( mark variations in the translated products as translations of corresponding variations in the original products ):', 'woocommerce-multilingual') ?>
+                    <span class="var_status"><?php echo $prod_with_variations; ?></span>&nbsp;<span><?php _e('left', 'woocommerce-multilingual') ?></span>
+                </label>
             </li>
             <?php if(defined('WPML_MEDIA_VERSION')): ?>
             <li>
                 <label>
                     <input type="checkbox" id="wcml_sync_gallery_images" />
-                    <?php _e('Sync products "gallery images"', 'woocommerce-multilingual') ?>
+                    <?php _e('Synchronize products "gallery images":', 'woocommerce-multilingual') ?>
                     <span class="gallery_status"><?php echo $prod_count; ?></span>&nbsp;<span><?php _e('left', 'woocommerce-multilingual') ?></span>
                 </label>
             </li>
@@ -47,7 +58,7 @@ unset($all_products_taxonomies['product_type'],$all_products_taxonomies['product
             <li>
                 <label>
                     <input type="checkbox" id="wcml_sync_categories" />
-                    <?php _e('Sync products categories (display type, thumbnail):', 'woocommerce-multilingual') ?>
+                    <?php _e('Synchronize product categories fields: display type, thumbnail:', 'woocommerce-multilingual') ?>
                     <span class="cat_status"><?php echo $prod_categories_count; ?></span>&nbsp;<span><?php _e('left', 'woocommerce-multilingual') ?></span>
                 </label>
 
@@ -56,7 +67,7 @@ unset($all_products_taxonomies['product_type'],$all_products_taxonomies['product
             <li>
                 <label>
                     <input type="checkbox" id="wcml_duplicate_terms" <?php echo !count($all_products_taxonomies)?'disabled="disabled"':''; ?> />
-                    <?php _e('Duplicate terms ( please select attribute ):', 'woocommerce-multilingual') ?>
+                    <?php _e('Duplicate terms in secondary language ( please select attribute ):', 'woocommerce-multilingual') ?>
                     <select id="attr_to_duplicate" <?php echo !count($all_products_taxonomies)?'disabled="disabled"':''; ?>>
                         <?php
                         $terms_count = false;
@@ -74,19 +85,21 @@ unset($all_products_taxonomies['product_type'],$all_products_taxonomies['product
             </li>
             <li>
                 <button type="button" class="button-secondary" id="wcml_trbl"><?php _e('Start', 'woocommerce-multilingual') ?></button>
-        <input id="count_prod_variat" type="hidden" value="<?php echo $prod_with_variations; ?>"/>
-        <input id="count_prod" type="hidden" value="<?php echo $prod_count; ?>"/>
-        <input id="count_categories" type="hidden" value="<?php echo $prod_categories_count; ?>"/>
-        <input id="count_terms" type="hidden" value="<?php echo $terms_count; ?>"/>
-        <input id="sync_galerry_page" type="hidden" value="0"/>
-        <input id="sync_category_page" type="hidden" value="0"/>
-        <span class="spinner"></span>
+                <input id="count_prod_variat" type="hidden" value="<?php echo $prod_with_variations; ?>"/>
+                <input id="count_products" type="hidden" value="<?php echo $products; ?>"/>
+                <input id="count_prod" type="hidden" value="<?php echo $prod_count; ?>"/>
+                <input id="count_categories" type="hidden" value="<?php echo $prod_categories_count; ?>"/>
+                <input id="count_terms" type="hidden" value="<?php echo $terms_count; ?>"/>
+                <input id="sync_galerry_page" type="hidden" value="0"/>
+                <input id="sync_category_page" type="hidden" value="0"/>
+                <span class="spinner"></span>
             </li>
         </ul>
     </div>
 </div>
 
 <script type="text/javascript">
+
     jQuery(document).ready(function(){
         //troubleshooting page
         jQuery('#wcml_trbl').on('click',function(){
@@ -94,16 +107,19 @@ unset($all_products_taxonomies['product_type'],$all_products_taxonomies['product
             field.attr('disabled', 'disabled');
             jQuery('.spinner').css('display','inline-block').css('visibility','visible');
 
-            if(jQuery('#wcml_sync_update_product_count').is(':checked')){
-                update_product_count();
-            }else if(jQuery('#wcml_sync_product_variations').is(':checked')){
-            sync_variations();
+            if( jQuery('#wcml_sync_products_data').is(':checked') ){
+                sync_products();
+            }else if( jQuery('#wcml_sync_product_variations_data').is(':checked') || jQuery('#wcml_sync_product_variations_new').is(':checked') || jQuery('#wcml_sync_product_variations_icl').is(':checked') ){
+                sync_variations();
             }else if(jQuery('#wcml_sync_gallery_images').is(':checked')){
                 sync_product_gallery();
             }else if(jQuery('#wcml_sync_categories').is(':checked')){
                 sync_product_categories();
             }else if(jQuery('#wcml_duplicate_terms').is(':checked')){
                 duplicate_terms();
+            }else{
+                jQuery('#wcml_trbl').removeAttr('disabled');
+                jQuery('.spinner').hide();
             }
         });
 
@@ -112,33 +128,47 @@ unset($all_products_taxonomies['product_type'],$all_products_taxonomies['product
            jQuery('#count_terms').val(jQuery(this).find('option:selected').attr('rel'))
         });
 
-        });
+    });
 
-    function update_product_count(){
+    function sync_products(){
         jQuery.ajax({
             type : "post",
             url : ajaxurl,
             data : {
-                action: "trbl_update_count",
-                wcml_nonce: "<?php echo wp_create_nonce('trbl_update_count'); ?>"
+                action: "trbl_sync_products",
+                wcml_nonce: "<?php echo wp_create_nonce('trbl_sync_products'); ?>"
             },
             success: function(response) {
-                    jQuery('.var_status').each(function(){
-                        jQuery(this).html(response);
-                    })
-                    jQuery('#count_prod_variat').val(response);
-                    if(jQuery('#wcml_sync_product_variations').is(':checked')){
-                    sync_variations();
+                if(jQuery('#count_products').val() == 0){
+                    jQuery('.prod_status').html(0);
+                    if( jQuery('#wcml_sync_product_variations_data').is(':checked') || jQuery('#wcml_sync_product_variations_new').is(':checked') || jQuery('#wcml_sync_product_variations_icl').is(':checked') ){
+                        sync_variations();
                     }else if(jQuery('#wcml_sync_gallery_images').is(':checked')){
                         sync_product_gallery();
                     }else if(jQuery('#wcml_sync_categories').is(':checked')){
                         sync_product_categories();
                     }else if(jQuery('#wcml_duplicate_terms').is(':checked')){
                         duplicate_terms();
+                    }else{
+                        jQuery('#wcml_trbl').removeAttr('disabled');
+                        jQuery('.spinner').hide();
+                        jQuery('#wcml_trbl').next().fadeOut();
                     }
+
+                }else{
+                    var left = jQuery('#count_products').val() - 3;
+                    if( left < 0 ){
+                        left = 0;
+                    }
+                    jQuery('.prod_status').html(left);
+
+                    jQuery('#count_products').val(left);
+                    sync_products();
+                }
             }
-    });
+        });
     }
+
 
     function sync_variations(){
         jQuery.ajax({
@@ -146,12 +176,17 @@ unset($all_products_taxonomies['product_type'],$all_products_taxonomies['product
             url : ajaxurl,
             data : {
                 action: "trbl_sync_variations",
+                sync_data: jQuery('#wcml_sync_product_variations_data').is(':checked'),
+                sync_new: jQuery('#wcml_sync_product_variations_new').is(':checked'),
+                sync_icl: jQuery('#wcml_sync_product_variations_icl').is(':checked'),
                 wcml_nonce: "<?php echo wp_create_nonce('trbl_sync_variations'); ?>"
             },
             success: function(response) {
                 if(jQuery('#count_prod_variat').val() == 0){
                     jQuery('.var_status').each(function(){
-                        jQuery(this).html(0);
+                        if( jQuery(this).parent().find('input').is(':checked') ){
+                            jQuery(this).html(0);
+                        }
                     });
                     if(jQuery('#wcml_sync_gallery_images').is(':checked')){
                         sync_product_gallery();
@@ -171,7 +206,9 @@ unset($all_products_taxonomies['product_type'],$all_products_taxonomies['product
                         left = 0;
                     }
                     jQuery('.var_status').each(function(){
-                        jQuery(this).html(left);
+                        if( jQuery(this).parent().find('input').is(':checked') ){
+                            jQuery(this).html(left);
+                        }
                     });
                     jQuery('#count_prod_variat').val(left);
                     sync_variations();

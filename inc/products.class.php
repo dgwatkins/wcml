@@ -999,7 +999,7 @@ class WCML_Products{
      * */
 
     //sync product variations
-    function sync_product_variations($product_id,$tr_product_id,$lang,$data = false,$trbl = false){
+    function sync_product_variations( $product_id, $tr_product_id, $lang, $data = false, $trbl = false, $add_new = true, $sync_existing = true ){
         global $wpdb,$sitepress,$sitepress_settings, $woocommerce_wpml,$woocommerce, $wpml_post_translations;
         remove_action ( 'save_post', array( $wpml_post_translations, 'save_post_actions' ), 100, 2 );
 
@@ -1028,6 +1028,9 @@ class WCML_Products{
                                     WHERE tr.element_type = 'post_product_variation' AND tr.language_code = %s AND pm.meta_key = '_wcml_duplicate_of_variation' AND pm.meta_value = %d",$lang,$post_data->ID));
                 $trid = $sitepress->get_element_trid($post_data->ID, 'post_product_variation');
                 if (!empty($variation_id) && !is_null($variation_id)) {
+                    if( !$sync_existing ){
+                        return;
+                    }
                     // Update variation
                     wp_update_post(array(
                         'ID' => $variation_id,
@@ -1053,6 +1056,9 @@ class WCML_Products{
                         'comment_count' => $post_data->comment_count
                     ));
                 } else {
+                    if( !$add_new ){
+                        return;
+                    }
                     // Add new variation
                     $guid = $post_data->guid;
                     $replaced_guid = str_replace($product_id, $tr_product_id, $guid);
