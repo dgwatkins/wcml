@@ -6,7 +6,7 @@
   Author: OnTheGoSystems
   Author URI: http://www.onthegosystems.com/
   Text Domain: woocommerce-multilingual
-  Version: 3.7.11-beta1
+  Version: 3.7.11
 */
 
 
