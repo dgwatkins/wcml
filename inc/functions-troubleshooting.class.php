@@ -23,7 +23,7 @@ class WCML_Troubleshooting{
 
     function wcml_count_products(){
         global $woocommerce_wpml;
-        return $woocommerce_wpml->products->get_products_count();
+        return $woocommerce_wpml->products->get_products_count( false );
     }
 
     function wcml_sync_variations_update_option(){
