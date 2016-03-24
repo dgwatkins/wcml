@@ -21,7 +21,7 @@
                 <li>
                     <input type="radio" name="trnsl_interface" value="0"
                         {% if form.translation_interface.controls_value == 0 %} checked="checked"{% endif %} id="wcml_trsl_interface_native" />
-                    <label for="wcml_trsl_interface_native">{{ form.translation_interface.native.label }}</label>
+                    <label for="wcml_trsl_interface_native">{{ form.translation_interface.native.label|raw }}</label>
                 </li>
             </ul>
 

@@ -3,11 +3,14 @@
 class WCML_Settings_UI extends WPML_Templates_Factory {
 
     private $woocommerce_wpml;
+    private $sitepress;
 
-    function __construct( &$woocommerce_wpml ){
+    function __construct( &$woocommerce_wpml, &$sitepress ){
         parent::__construct();
 
         $this->woocommerce_wpml = &$woocommerce_wpml;
+        $this->sitepress = &$sitepress;
+
     }
 
     public function get_model(){
@@ -24,11 +27,11 @@ class WCML_Settings_UI extends WPML_Templates_Factory {
                                     'woocommerce-multilingual' ),
                     'controls'  => __('Choose what to do when clicking on the translation controls for products:', 'woocommerce-multilingual'),
                     'wcml'      => array(
-                        'label' => __('Open the WooCommerce Multilingual product translation interface', 'woocommerce-multilingual'),
+                        'label' => __('Open the WPML Translation Editor', 'woocommerce-multilingual'),
 
                     ),
                     'native'      => array(
-                        'label' => __('Go to the native WooCommerce product editing screen', 'woocommerce-multilingual'),
+                        'label' => __('Go to the native WooCommerce product editing screen' , 'woocommerce-multilingual'),
 
                     ),
                     'controls_value' => $this->woocommerce_wpml->settings['trnsl_interface'],
