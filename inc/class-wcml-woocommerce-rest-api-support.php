@@ -287,7 +287,7 @@ class WCML_WooCommerce_Rest_API_Support{
 
         if( !empty($woocommerce_wpml->multi_currency)  ){
 
-            if( $data['custom_prices'] ){
+            if( (!empty($data['custom_prices'])) && (empty($data['translation_of']))){
                 update_post_meta( $id, '_wcml_custom_prices_status', 1);
 
                 foreach( $data['custom_prices'] as $currency => $prices ){
