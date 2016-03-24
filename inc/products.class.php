@@ -2857,7 +2857,7 @@ class WCML_Products{
         $all_products_taxonomies = get_taxonomies( array( 'object_type' => array( 'product' ) ), 'objects' );
 
         foreach($all_products_taxonomies as $tax_key => $tax) {
-            if($tax_key == 'product_type' ) continue;
+            if( substr( $tax_key, 0 , 3 ) != 'pa_' || !in_array( $tax_key, array( 'product_cat', 'product_tag', 'product_shipping_class' ) ) ) continue;
 
             $found = false;
 
