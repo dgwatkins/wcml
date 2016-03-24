@@ -223,4 +223,21 @@ class WCML_Translation_Editor{
         }
     }
 
+    public function _filter_job_link_to_translation( $link, $post_id, $job_id, $lang ){
+
+        if ( !$this->woocommerce_wpml->settings[ 'trnsl_interface' ] ) {
+            return $link;
+        }
+
+        if ( get_post_type( $post_id ) == 'product' ) {
+            $link = '#" data-action="product-translation-dialog"
+                    class="js-wcml-dialog-trigger"
+                    data-id="' . $post_id . '"
+                    data-job_id="' . $job_id . '"
+                    data-language="' . $lang;
+        }
+
+        return $link;
+    }
+
 }
