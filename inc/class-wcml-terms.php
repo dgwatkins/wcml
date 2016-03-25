@@ -58,8 +58,6 @@ class WCML_Terms{
         add_filter( 'pre_update_option_woocommerce_international_delivery_settings', array( $this, 'update_woocommerce_shipping_settings_for_class_costs' ) );
 
         add_action( 'created_term_translation', array( $this, 'set_flag_to_sync'), 10, 3 );
-
-        add_filter( 'icl_wpml_config_array', array( $this, 'set_taxonomies_config' ) );
     }
     
     function admin_menu_setup(){
@@ -1114,29 +1112,6 @@ class WCML_Terms{
                         WHERE t.term_id = %d AND x.taxonomy = %s",
                 $term_id, $taxonomy )
         );
-    }
-
-    public function set_taxonomies_config( $config_all ){
-        $all_products_taxonomies = get_taxonomies( array( 'object_type' => array( 'product' ) ), 'objects' );
-
-        foreach( $all_products_taxonomies as $tax_key => $tax ) {
-            if( $tax_key == 'product_type' ) continue;
-            $found = false;
-            $att_sett = $this->woocommerce_wpml->attributes->is_translatable_attribute( $tax_key );
-
-            foreach( $config_all[ 'wpml-config' ][ 'taxonomies' ][ 'taxonomy' ] as $key => $taxonomy ){
-                if( $tax_key == $taxonomy[ 'value' ] ){
-                    $config_all[ 'wpml-config' ][ 'taxonomies' ][ 'taxonomy' ][ $key ][ 'attr' ][ 'translate' ] = $att_sett;
-                    $found = true;
-                }
-            }
-
-            if( !$found ){
-                $config_all[ 'wpml-config' ][ 'taxonomies' ][ 'taxonomy' ][] = array( 'value' => $tax_key, 'attr' => array( 'translate' => $att_sett ) );
-            }
-        }
-
-        return $config_all;
     }
 
 }
