@@ -41,8 +41,17 @@ class WCML_Resources {
             wp_register_style( 'wpml-dialogs', ICL_PLUGIN_URL . '/res/css/dialogs.css', null, ICL_SITEPRESS_VERSION );
             wp_enqueue_style( 'wcml-dialogs' );
 
+            if ( in_array( self::$tab, array('multi-currency', 'slugs') ) ) {
+                wp_register_style( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/css/dialogs.css', null, WCML_VERSION );
+                wp_enqueue_style( 'wcml-dialogs' );
+            }
+
         }
 
+        if ( self::$pagenow == 'options-permalink.php' ) {
+            wp_register_style( 'wcml_op', WCML_PLUGIN_URL . '/res/css/options-permalink.css', null, WCML_VERSION );
+            wp_enqueue_style( 'wcml_op' );
+        }
 
     }
 
@@ -86,19 +95,14 @@ class WCML_Resources {
             wp_enqueue_script( 'wpml_tm' );
         }
 
-        if ( self::$page == 'wpml-wcml' && in_array( self::$tab, array('multi-currency', 'slugs') ) ) {
-            wp_register_style( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/css/dialogs.css', null, WCML_VERSION );
-            wp_enqueue_style( 'wcml-dialogs' );
-        }
-
         if ( self::$page == 'wpml-wcml' && self::$tab == 'multi-currency' ) {
             wp_register_script( 'multi-currency', WCML_PLUGIN_URL . '/res/js/multi-currency.js', array('jquery', 'jquery-ui-sortable'), WCML_VERSION, true );
             wp_enqueue_script( 'multi-currency' );
         }
 
-        if ( self::$pagenow == 'options-permalink.php' ) {
-            wp_register_style( 'wcml_op', WCML_PLUGIN_URL . '/res/css/options-permalink.css', null, WCML_VERSION );
-            wp_enqueue_style( 'wcml_op' );
+        if ( self::$page == 'wpml-wcml' && self::$tab == 'product-attributes' ) {
+            wp_register_script( 'multi-currency', WCML_PLUGIN_URL . '/res/js/product-attributes.js', array('jquery'), WCML_VERSION, true );
+            wp_enqueue_script( 'multi-currency' );
         }
 
         if ( !is_admin() ) {
@@ -108,6 +112,12 @@ class WCML_Resources {
             wp_register_script( 'wcml-messages', WCML_PLUGIN_URL . '/res/js/wcml-messages.js', array('jquery'), WCML_VERSION );
             wp_enqueue_script( 'wcml-messages' );
         }
+
+        if( self::$page == 'product_attributes' && isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'product' ){
+            wp_register_script( 'wcml-attributes', WCML_PLUGIN_URL . '/res/js/wcml-attributes.js', array( 'jquery' ), WCML_VERSION );
+            wp_enqueue_script( 'wcml-attributes' );
+        }
+
 
     }
 

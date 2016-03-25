@@ -69,11 +69,11 @@
                         <i class="otgs-ico-warning"></i>
                         <strong>{{ strings.over_sett }}</strong>
                         <p>
-                            {{ strings.check_conf|format( strings.cont_set )|raw }}
+                            {{ strings.check_conf|raw|format( strings.cont_set )|raw }}
                         </p>
                         <ul>
                             {% for error in xml_config_errors %}
-                                <li>{{ error }}</li>
+                                <li>{{ error|raw }}</li>
                             {% endfor %}
                         </ul>
                     </li>

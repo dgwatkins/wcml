@@ -12,7 +12,7 @@ class WCML_Attributes{
         $this->wpdb = $wpdb;
 
         if( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == 'product_attributes' && isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'product' ){
-            $this->load_js_and_css();
+
             add_action( 'admin_footer', array( $this, 'not_translatable_html' ) );
 
             if( isset( $_POST[ 'save_attribute' ] ) && isset( $_GET[ 'edit' ] ) ){
@@ -26,6 +26,7 @@ class WCML_Attributes{
         add_filter( 'wpml_create_term_lang', array( $this, 'product_page_add_language_info_to_term' ) );
 
         add_filter( 'wpml_translation_job_post_meta_value_translated', array($this, 'filter_product_attributes_for_translation'), 10, 2 );
+
     }
 
     public function not_translatable_html(){
@@ -33,13 +34,6 @@ class WCML_Attributes{
 
         $attr_is_tnaslt = new WCML_Not_Translatable_Attributes( $attr_id, $this->woocommerce_wpml );
         $attr_is_tnaslt->show();
-    }
-
-    public function load_js_and_css(){
-
-        wp_register_script( 'wcml-attributes', WCML_PLUGIN_URL . '/res/js/wcml-attributes.js', array( 'jquery' ), WCML_VERSION );
-        wp_enqueue_script( 'wcml-attributes' );
-
     }
 
     public function get_attribute_terms( $attribute ){

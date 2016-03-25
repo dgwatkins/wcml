@@ -37,6 +37,7 @@ class WCML_Sync_Taxonomy extends WPML_Templates_Factory {
                 'vars_to_create' => __('Currently, there are %s variations that need to be created.', 'woocommerce-multilingual'),
                 'sync_in_cont' => __('Synchronize %s assignment in content', 'woocommerce-multilingual'),
                 'auto_apply' => __('This action lets you automatically apply the %s taxonomy to your content in different  languages. It will scan the original content and apply the same taxonomy to translated content.', 'woocommerce-multilingual'),
+                'untranslated_warn' => __( 'You have untranslated terms!', 'woocommerce-multilingual' )
             ),
             'nonces' => array(
                 'sync_product_variations' => wp_nonce_field('wcml_sync_product_variations', 'wcml_nonce' ),

@@ -24,6 +24,7 @@ jQuery(document).ready(function($){
    });
    
     if (typeof TaxonomyTranslation != 'undefined') {
+
         TaxonomyTranslation.views.TermView = TaxonomyTranslation.views.TermView.extend({
             initialize: function () {
                 TaxonomyTranslation.views.TermView.__super__.initialize.apply(this, arguments);
@@ -42,8 +43,13 @@ jQuery(document).ready(function($){
                     },
                     success: function (response) {
                         if (response.hide) {
-                            $('.js-tax-tab-' + taxonomy).removeAttr('title');
-                            $('.js-tax-tab-' + taxonomy + ' i.icon-warning-sign').remove();
+                            if( response.is_attribute ){
+                                $('.tax-product-attributes').removeAttr('title');
+                                $('.tax-product-attributes i.otgs-ico-warning').remove();
+                            }else{
+                                $('.js-tax-tab-' + taxonomy).removeAttr('title');
+                                $('.js-tax-tab-' + taxonomy + ' i.otgs-ico-warning').remove();
+                            }
                         }
                     }
                 })

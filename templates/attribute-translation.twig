@@ -1,0 +1,16 @@
+{% if attributes is empty %}
+
+    <p>{{ strings.no_attributes }}</p>
+
+{% else %}
+
+    <label>{{ strings.select_label }}</label>
+    <select id="wcml_product_attributes">
+    {% for attribute in attributes %}
+        <option value="pa_{{ attribute.attribute_name }}" {% if attribute.attribute_name == selected_attribute.attribute_name  %}selected="selected"{% endif %}>{{ attribute.attribute_label }}</option>
+    {% endfor %}
+    </select>
+
+    {{ translation_ui|raw }}
+
+{% endif %}

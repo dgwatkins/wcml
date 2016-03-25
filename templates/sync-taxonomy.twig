@@ -3,6 +3,7 @@
     {% if attribute_taxonomies %}
         <form id="wcml_tt_sync_variations" method="post">
             <input type="hidden" name="action" value="wcml_sync_product_variations" />
+            <input type="hidden" id="warn_title" value="{{ strings.untranstaled_warn }}" />
             <input type="hidden" name="taxonomy" value="{{ taxonomy }}" />
             {{ nonces.sync_product_variations|raw }}
             <input type="hidden" name="last_post_id" value="" />

@@ -13,6 +13,23 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
     public function get_model(){
 
         $current_tab = $this->get_current_tab();
+        $product_attributes = wc_get_attribute_taxonomies();
+
+        $taxonomy = isset( $_GET['taxonomy'] ) ? $_GET['taxonomy'] : false;
+        if( $product_attributes ){
+            if( !empty($taxonomy) ){
+                foreach( $product_attributes as $attribute ){
+                    if( $attribute->attribute_name == $taxonomy ){
+                        $selected_attribute = $attribute;
+                        break;
+                    }
+                }
+            }
+            if( empty( $selected_attribute ) ){
+                $selected_attribute = current( $product_attributes );
+            }
+        }
+
 
         $model = array(
 
@@ -46,6 +63,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
                     'name'      => __('Attributes', 'woocommerce-multilingual'),
                     'active'    => $current_tab == 'product-attributes' ? 'nav-tab-active':'',
                     'url'       => admin_url('admin.php?page=wpml-wcml&tab=product-attributes'),
+                    'translated'=> isset( $selected_attribute ) && $this->woocommerce_wpml->terms->is_fully_translated( 'pa_' . $selected_attribute->attribute_name)
                 ),
                 'shipping_classes' => array(
                     'name'      => __('Shipping Classes', 'woocommerce-multilingual'),
@@ -154,10 +172,8 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
             case 'product-attributes':
 
                 if( current_user_can('wpml_operate_woocommerce_multilingual') ) {
-                    ob_start();
-                    include WCML_PLUGIN_PATH . '/menu/sub/product-attributes.php';
-                    $content = ob_get_contents();
-                    ob_end_clean();
+                    $attribute_translation_ui = new WCML_Attribute_Translation_UI( $woocommerce_wpml );
+                    $content = $attribute_translation_ui->get_view();
                 }
                 break;
 

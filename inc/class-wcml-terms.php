@@ -224,17 +224,18 @@ class WCML_Terms{
     }
     
     public function wcml_update_term_translated_warnings(){
-
-        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_update_term_translated_warnings_nonce')){
-            die('Invalid nonce');
-        }
-        
         $ret = array();
 
         $taxonomy = filter_input( INPUT_POST, 'taxonomy', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
         $wcml_settings = $this->woocommerce_wpml->get_settings();
+
+        $attribute_taxonomies = wc_get_attribute_taxonomies();
+        foreach($attribute_taxonomies as $a){
+            $attribute_taxonomies_arr[] = 'pa_' . $a->attribute_name;
+        }
+
+        $ret['is_attribute'] = intval( in_array( $taxonomy, $attribute_taxonomies_arr ) );
 
         if($wcml_settings['untranstaled_terms'][$taxonomy]['status'] == $this->ALL_TAXONOMY_TERMS_TRANSLATED ||
             $wcml_settings['untranstaled_terms'][$taxonomy]['status'] == $this->NEW_TAXONOMY_IGNORED){
@@ -243,19 +244,22 @@ class WCML_Terms{
 
         }else{
             $ret['hide'] = 0;
-        }
 
-        if( isset( $wcml_settings['sync_'.$taxonomy ]) ){
-            $ret['show_button'] = $wcml_settings['sync_'.$taxonomy ];
-        }else{
+            if( isset( $wcml_settings['sync_'.$taxonomy ]) ){
+                $ret['show_button'] = $wcml_settings['sync_'.$taxonomy ];
+            }else{
 
-            $attribute_taxonomies = wc_get_attribute_taxonomies();
-            foreach($attribute_taxonomies as $a){
-                $attribute_taxonomies_arr[] = 'pa_' . $a->attribute_name;
-            }
+                if( in_array( $taxonomy, $attribute_taxonomies_arr ) ) {
+                    $ret['show_button'] = $wcml_settings['sync_variations'];
 
-            if( in_array( $taxonomy, $attribute_taxonomies_arr ) ) {
-                $ret['show_button'] = $wcml_settings['sync_variations'];
+                    if( isset( $_POST[ 'show_sync' ] ) ){
+                        ob_start();
+                        $this->show_variations_sync_button( $taxonomy, true );
+                        $ret['bottom_html'] = ob_get_contents();
+                        ob_end_clean();
+                    }
+
+                }
             }
         }
 
@@ -266,7 +270,7 @@ class WCML_Terms{
         exit;
         
     }
-    
+
     public function wcml_ingore_taxonomy_translation(){
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         if(!$nonce || !wp_verify_nonce($nonce, 'wcml_ingore_taxonomy_translation_nonce')){
@@ -446,7 +450,7 @@ class WCML_Terms{
     // Backward compatibillity for WPML <= 3.1.8.2
     public function show_variations_sync_button($taxonomy){
 
-        if(is_admin() && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab'])){
+        if( is_ajax() || is_admin() && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) ){
             $wcml_settings = $this->woocommerce_wpml->get_settings();
 
             if( !$wcml_settings['sync_variations'] ){
