@@ -19,11 +19,12 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $this->woocommerce_wpml = $woocommerce_wpml;
         $this->sitepress = $sitepress;
         $this->wpdb = $wpdb;
-        $this->set_private_variables( $job_details );
         $this->not_display_fields_for_variables_product = array( '_purchase_note', '_regular_price', '_sale_price',
                                                                  '_price', '_min_variation_price', '_max_variation_price',
                                                                  '_min_variation_regular_price', '_max_variation_regular_price',
                                                                  '_min_variation_sale_price', '_max_variation_sale_price' );
+
+        $this->set_private_variables( $job_details );
 
 		parent::__construct(
             $job_details[ 'job_id' ],
@@ -469,7 +470,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $settings = $sitepress->get_settings();
         $label = '';
         if (isset($settings['translation-management']['custom_fields_translation'][$field]) && $settings['translation-management']['custom_fields_translation'][$field] == 2) {
-            if (in_array($field, $this->woocommerce_wpml->products->not_display_fields_for_variables_product)) {
+            if (in_array($field, $this->not_display_fields_for_variables_product)) {
                 return false;
             }
 
