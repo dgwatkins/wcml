@@ -46,6 +46,7 @@ class ThreeCest
         $I->wait(1);
         $I->click("Return to the WordPress Dashboard");
 
+        $I->wait(2);
 
     }
 
@@ -57,6 +58,6 @@ class ThreeCest
     // tests
     public function tryToTest(AcceptanceTester $I)
     {
-		
+
     }
 }
