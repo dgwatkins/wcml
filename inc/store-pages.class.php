@@ -578,9 +578,9 @@ class WCML_Store_Pages{
 
                 $loaded_template = locate_template( array_unique( $templates ) );
 
-                if ( !$loaded_template || WC_TEMPLATE_DEBUG_MODE ) {
+                if ( $loaded_template ) {
 
-                    $loaded_template = $template;
+                    $template = $loaded_template;
 
                 }
 
@@ -588,7 +588,7 @@ class WCML_Store_Pages{
 
         }
 
-        return $loaded_template;
+        return $template;
 
     }
     
