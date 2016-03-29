@@ -43,4 +43,8 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 		return $current_user->ID;
 	}
 
+	function get_wcml_mock() {
+		return $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
+	}
+
 }

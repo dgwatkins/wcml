@@ -2,6 +2,9 @@
 
 class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
+	private $settings;
+	private $multi_currency;
+
 	function setUp(){
 
 		parent::setUp();

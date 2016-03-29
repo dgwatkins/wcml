@@ -80,7 +80,7 @@ class woocommerce_wpml {
         $this->currencies           = new WCML_Currencies( $this );
         $this->xdomain_data         = new WCML_xDomain_Data;
         $this->languages_upgrader   = new WCML_Languages_Upgrader;
-        $this->url_translation      = new WCML_Url_Translation;
+        $this->url_translation      = new WCML_Url_Translation ( $this, $sitepress );
         $this->requests             = new WCML_Requests;
         $this->translation_editor   = new WCML_Translation_Editor( $this, $sitepress );
         $this->cart                 = new WCML_Cart( $this, $sitepress );
