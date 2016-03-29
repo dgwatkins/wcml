@@ -569,11 +569,11 @@ class WCML_Store_Pages{
                     $templates[] = $path.$file;
                 }
 
-                $template = locate_template( array_unique($templates) );
+                $loaded_template = locate_template( array_unique( $templates ) );
 
-                if (!$template || WC_TEMPLATE_DEBUG_MODE) {
+                if ( $loaded_template ) {
 
-                    $template = WC()->plugin_path() . '/templates/' . $file;
+                    $template = $loaded_template;
 
                 }
 
