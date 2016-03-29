@@ -60,7 +60,7 @@ class woocommerce_wpml {
         $this->xdomain_data      = new xDomain_Data;
         $this->languages_upgrader = new WCML_Languages_Upgrader;
 
-        $this->url_translation   = new WCML_Url_Translation;
+        $this->url_translation   = new WCML_Url_Translation( $this, $sitepress );
 
 
 

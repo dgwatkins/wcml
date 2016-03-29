@@ -5,14 +5,14 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 
 	function setUp(){
 		parent::setUp();
-		global $woocommerce_wpml, $WPML_String_Translation;
+		global $woocommerce_wpml, $WPML_String_Translation, $sitepress;
 		$WPML_String_Translation->init_active_languages();
 
 		require_once WCML_PLUGIN_PATH . '/inc/wc-strings.class.php';
 		$woocommerce_wpml->strings           = new WCML_WC_Strings;
 
 		require_once WCML_PLUGIN_PATH . '/inc/url-translation.class.php';
-		$woocommerce_wpml->url_translation = new WCML_Url_Translation();
+		$woocommerce_wpml->url_translation = new WCML_Url_Translation( $woocommerce_wpml, $sitepress );
 
 		require_once WCML_PLUGIN_PATH . '/inc/class-wcml-languages-upgrader.php';
 		$woocommerce_wpml->languages_upgrader = new WCML_Languages_Upgrader;

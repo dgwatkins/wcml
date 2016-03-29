@@ -56,5 +56,24 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 
 		$this->assertEquals( $sitepress->convert_url( get_home_url() ).'&wc-api=WC_Gateway_Paypal', $filtered_args['notify_url'] );
 	}
+	
+	/**
+	 * @link https://onthegosystems.myjetbrains.com/youtrack/issue/wcml-1033
+	 */
+	
+	function test_translate_bases_in_rewrite_rules_with_empty_string() {
+		$woocommerce_wpml_mock          = $this->get_wcml_mock();
+		$woocommerce_wpml_mock->strings = new WCML_WC_Strings;
+		
+		$sitepress_mock                 = $this->get_sitepress_mock();
+		$sitepress_mock->method( 'get_current_language' )->willReturn( 'de' );
+		$sitepress_mock->method( 'get_active_languages' )->willReturn( array() );
+
+		$url_translation = new WCML_Url_Translation( $woocommerce_wpml_mock, $sitepress_mock );
+		
+		$empty_string = '';
+		$filtered_values = $url_translation->translate_bases_in_rewrite_rules( $empty_string );
+		$this->assertEquals( $empty_string, $filtered_values );
+	}
 
 }

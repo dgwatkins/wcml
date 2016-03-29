@@ -13,4 +13,9 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 		$wc_unit = new WC_Unit_Test_Case();
 		$wc_unit->setUp();
 	}
+
+	function get_wcml_mock() {
+		return $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
+	}
+
 }

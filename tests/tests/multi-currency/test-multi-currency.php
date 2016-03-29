@@ -1,6 +1,10 @@
 <?php
 
 class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
+	
+	private $settings;
+	private $multi_currency_support;
+	private $multi_currency;
 
 	function __construct(){
 
