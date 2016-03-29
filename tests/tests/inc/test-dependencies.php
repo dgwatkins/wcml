@@ -7,10 +7,11 @@ class Test_WCML_Dependencies extends WCML_UnitTestCase {
 	}
 
 	function test_check_versions(){
+		global $woocommerce_wpml;
 
-		$check = $this->woocommerce_wpml->dependencies->check();
+		$check = $woocommerce_wpml->dependencies->check();
 
-		$this->assertTrue( $check );
+		$this->assertTrue( (bool)$check );
 
 
 	}
