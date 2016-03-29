@@ -2981,7 +2981,14 @@ class WCML_Products{
 
                         $new_id_obj = get_post( $new_id );
                         $new_slug = wp_unique_post_slug( sanitize_title( $new_id_obj->post_title ), $new_id, $post_to_duplicate->post_status, $post_to_duplicate->post_type, $new_id_obj->post_parent );
-                        $wpdb->update( $wpdb->posts, array( 'post_name' => $new_slug, 'post_status' => $post_to_duplicate->post_status ), array( 'ID' => $new_id ) );
+                        $wpdb->update(
+                            $wpdb->posts,
+                            array(
+                                'post_name' => $new_slug,
+                                'post_status' => 'draft'
+                            ),
+                            array( 'ID' => $new_id )
+                        );
 
                         do_action( 'wcml_after_duplicate_product' , $new_id, $post_to_duplicate );
 
