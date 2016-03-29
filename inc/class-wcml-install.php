@@ -43,6 +43,7 @@ class WCML_Install{
             WCML_Capabilities::set_up_capabilities();
 
             self:: set_language_information( $sitepress );
+            self:: check_product_type_terms( );
 
             $woocommerce_wpml->settings['set_up'] = 1;
             $woocommerce_wpml->update_settings();
@@ -92,6 +93,49 @@ class WCML_Install{
             $exist = $sitepress->get_language_for_element($term->term_taxonomy_id, 'tax_product_shipping_class');
             if(!$exist){
                 $sitepress->set_element_language_details($term->term_taxonomy_id, 'tax_product_shipping_class',false,$def_lang);
+            }
+        }
+    }
+
+    //handle situation when product_type terms translated before activating WCML
+    private static function check_product_type_terms(){
+        global $wpdb;
+        //check if terms were translated
+        $translations = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}icl_translations WHERE element_type = 'tax_product_type'" );
+
+        if( $translations ){
+            foreach( $translations as $translation ){
+                if( !is_null( $translation->source_language_code ) ){
+                    //check relationships
+                    $term_relationships = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->term_relationships} WHERE term_taxonomy_id = %d", $translation->element_id  ) );
+                    if( $term_relationships ){
+                        $orig_term = $wpdb->get_var( $wpdb->prepare( "SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type = 'tax_product_type' AND trid = %d AND source_language_code IS NULL", $translation->trid ) );
+                        if( $orig_term ){
+                            foreach( $term_relationships as $term_relationship ){
+                                $wpdb->update(
+                                    $wpdb->term_relationships,
+                                    array(
+                                        'term_taxonomy_id' => $orig_term
+                                    ),
+                                    array(
+                                        'object_id' => $term_relationship->object_id,
+                                        'term_taxonomy_id' => $translation->element_id
+                                    )
+                                );
+                            }
+                        }
+                    }
+                    wp_delete_term( $translation->element_id, 'product_type' );
+                }
+            }
+
+            foreach( $translations as $translation ){
+                $wpdb->delete(
+                    $wpdb->prefix . 'icl_translations',
+                    array(
+                        'translation_id' => $translation->translation_id
+                    )
+                );
             }
         }
     }
