@@ -184,7 +184,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 			$products[ $key ]->categories_list = $this->get_categories_list( $product->ID, $this->get_cat_url() );
 
 			$prod = wc_get_product( $product->ID );
-			$icon_class = $prod->product_type;
+			$products[ $key ]->icon_class = $prod->product_type;
 
 			if ( $prod->is_virtual() ) {
 				$products[ $key ]->icon_class = 'virtual';

@@ -6,18 +6,19 @@ class WCML_Translation_Editor{
     private $sitepress;
 
     public function __construct( &$woocommerce_wpml, &$sitepress ) {
-        $this->woocommerce_wpml = $woocommerce_wpml;
-        $this->sitepress = $sitepress;
+        $this->woocommerce_wpml =& $woocommerce_wpml;
+        $this->sitepress =& $sitepress;
 
         add_filter( 'wpml-translation-editor-fetch-job', array( $this, 'fetch_translation_job_for_editor' ), 10, 2 );
         add_filter( 'wpml-translation-editor-job-data', array( $this, 'get_translation_job_data_for_editor' ), 10, 2 );
         add_action( 'admin_print_scripts', array( $this, 'preselect_product_type_in_admin_screen' ), 11 );
 
-        add_filter( 'wpml_post_translation_job_url', array( $this, '_filter_job_link_to_translation' ), 100, 4 );
         add_filter( 'icl_post_alternative_languages', array( $this, 'hide_post_translation_links' ) );
 
         add_filter( 'manage_product_posts_columns', array( $this, 'add_languages_column' ), 100 );
         add_action( 'woocommerce_product_after_variable_attributes', array( $this, 'lock_variable_fields' ), 10, 3 );
+
+        add_filter( 'wpml_use_tm_editor', array( $this, 'force_woocommerce_native_editor'), 100 );
 
     }
 
@@ -43,8 +44,6 @@ class WCML_Translation_Editor{
 
         return $job_data;
     }
-
-
 
     public function preselect_product_type_in_admin_screen(){
         global $pagenow;
@@ -201,21 +200,25 @@ class WCML_Translation_Editor{
         }
     }
 
-    public function _filter_job_link_to_translation( $link, $post_id, $job_id, $lang ){
+    /**
+     * Forces the translation editor to be used for products when enabled in WCML
+     * @param $use_tm_editor
+     * @return int
+     */
+    public function force_woocommerce_native_editor( $use_tm_editor ){
+        $current_screen  = get_current_screen();
 
-        if ( !$this->woocommerce_wpml->settings[ 'trnsl_interface' ] ) {
-            return $link;
+        if( $current_screen->id == 'edit-product' || $current_screen->id == 'product' ){
+
+            if ( !$this->woocommerce_wpml->settings[ 'trnsl_interface' ] ) {
+                $use_tm_editor = 0;
+            }else{
+                $use_tm_editor = 1;
+            }
+
         }
 
-        if ( get_post_type( $post_id ) == 'product' ) {
-            $link = '#" data-action="product-translation-dialog"
-                    class="js-wcml-dialog-trigger"
-                    data-id="' . $post_id . '"
-                    data-job_id="' . $job_id . '"
-                    data-language="' . $lang;
-        }
-
-        return $link;
+        return $use_tm_editor;
     }
 
 }

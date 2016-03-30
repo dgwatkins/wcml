@@ -165,23 +165,17 @@ class WCML_Products{
                                                     WHERE s.translation_id = %d",
                                                     $product_translations[ $language[ 'code' ] ]->translation_id )
                                                 );
+                                $translation_queue_page = admin_url( 'admin.php?page=' . WPML_TM_FOLDER . '/menu/translations-queue.php&job_id=' . $tr_job_id );
+                                $edit_url               = apply_filters( 'icl_job_edit_url', $translation_queue_page, $tr_job_id );
                                 ?>
-                                <a data-action="product-translation-dialog" class="js-wcml-dialog-trigger"
-                                   data-id="<?php echo $original_product_id; ?>"
-                                   data-job_id="<?php echo $tr_job_id; ?>"
-                                   data-language="<?php echo $language[ 'code' ]; ?>"
-                                   title="<?php echo $language[ 'english_name' ] . ': ' . __( 'Take this and edit', 'woocommerce-multilingual' ); ?>">
+                                <a href="<?php echo $edit_url ?>" title="<?php echo $language[ 'english_name' ] . ': ' . __( 'Take this and edit', 'woocommerce-multilingual' ); ?>">
                                     <i class="otgs-ico-add"></i>
                                 </a>
                                 <?php continue;
                             }
                         }
                     } ?>
-                    <a class="js-wcml-translation-dialog-trigger"
-                       data-id="<?php echo $original_product_id; ?>"
-                       data-job_id="<?php echo $job_id; ?>"
-                       data-language="<?php echo $language[ 'code' ]; ?>"
-
+                    <a href="<?php echo apply_filters( 'wpml_link_to_translation', '', $original_product_id, $language[ 'code' ], $trid ) ?>"
                         <?php if( isset( $product_translations[ $language[ 'code' ] ] ) ){
                             $tr_status = $this->wpdb->get_row(
                                             $this->wpdb->prepare(
