@@ -177,7 +177,22 @@ class woocommerce_wpml {
     }
 
     function load_locale(){
-        load_plugin_textdomain('woocommerce-multilingual', false, WCML_LOCALE_PATH);
+        return load_plugin_textdomain('woocommerce-multilingual', false, WCML_LOCALE_PATH);
+    }
+
+    public function switch_locale( $lang_code = false ){
+        global $l10n, $sitepress;
+        static $original_l10n;
+        if (!empty($lang_code)) {
+            $original_l10n = isset($l10n['woocommerce-multilingual']) ? $l10n['woocommerce-multilingual'] : null;
+            if ($original_l10n !== null) {
+                unset($l10n['woocommerce-multilingual']);
+            }
+            return load_textdomain('woocommerce-multilingual',
+                WCML_LOCALE_PATH . '/woocommerce-multilingual-' . $sitepress->get_locale($lang_code) . '.mo');
+        } else { // switch back
+            $l10n['woocommerce-multilingual'] = $original_l10n;
+        }
     }
 
     function install(){

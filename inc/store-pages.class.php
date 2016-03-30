@@ -299,9 +299,7 @@ class WCML_Store_Pages{
             foreach ($miss_lang['codes'] as $mis_lang) {
                 $args = array();
 
-                unload_textdomain('woocommerce-multilingual');
-                $sitepress->switch_lang($mis_lang);
-                load_textdomain( 'woocommerce-multilingual', WCML_LOCALE_PATH . '/woocommerce-multilingual-' . $sitepress->get_locale( $mis_lang ) . '.mo' );
+                $woocommerce_wpml->switch_locale( $mis_lang );
                     
                 foreach ($check_pages as $page) {
                     $orig_id = get_option($page);
@@ -355,9 +353,7 @@ class WCML_Store_Pages{
 
                     }
                 }
-                unload_textdomain('woocommerce-multilingual');
-                $sitepress->switch_lang($default_language);
-                load_textdomain( 'woocommerce-multilingual', WCML_LOCALE_PATH . '/woocommerce-multilingual-' . $sitepress->get_locale( $default_language ) . '.mo' );
+                $woocommerce_wpml->switch_locale();
             }
             
             wp_redirect(admin_url('admin.php?page=wpml-wcml')); exit;
