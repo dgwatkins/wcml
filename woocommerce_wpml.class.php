@@ -338,7 +338,24 @@ class woocommerce_wpml {
                             }
                         }
                     }
-                    wp_delete_term( $translation->element_id, 'product_type' );
+
+                    $term_id = $wpdb->get_var( $wpdb->prepare( "SELECT term_id FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id = %d", $translation->element_id  ) );
+
+                    if( $term_id ){
+                        $wpdb->delete(
+                            $wpdb->terms,
+                            array(
+                                'term_id' => $term_id
+                            )
+                        );
+
+                        $wpdb->delete(
+                            $wpdb->term_taxonomy,
+                            array(
+                                'term_taxonomy_id' => $translation->element_id
+                            )
+                        );
+                    }
                 }
             }
 
