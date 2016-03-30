@@ -14,7 +14,7 @@ if(defined('WCML_VERSION')) return;
 define('WCML_VERSION', '3.8');
 define('WCML_PLUGIN_PATH', dirname(__FILE__));
 define('WCML_PLUGIN_FOLDER', basename(WCML_PLUGIN_PATH));
-define('WCML_LOCALE_PATH', WCML_PLUGIN_FOLDER.'/locale');
+define('WCML_LOCALE_PATH', WCML_PLUGIN_PATH.'/locale' );
 define('WPML_LOAD_API_SUPPORT', true);
 
 define('WCML_MULTI_CURRENCIES_DISABLED', 0);
