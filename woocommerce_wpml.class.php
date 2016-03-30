@@ -177,7 +177,7 @@ class woocommerce_wpml {
     }
 
     function load_locale(){
-        return load_plugin_textdomain('woocommerce-multilingual', false, WCML_LOCALE_PATH);
+        return load_plugin_textdomain('woocommerce-multilingual', false, WCML_PLUGIN_FOLDER.'/locale' );
     }
 
     public function switch_locale( $lang_code = false ){
