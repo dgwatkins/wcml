@@ -5,9 +5,11 @@ class WCML_Media{
     private $woocommerce_wpml;
     private $sitepress;
 
-    public function __construct( &$woocommerce_wpml, &$sitepress ){
-        $this->woocommerce_wpml = $woocommerce_wpml;
-        $this->sitepress = $sitepress;
+    public function __construct( &$woocommerce_wpml, &$sitepress, &$wpdb ){
+
+        $this->woocommerce_wpml =& $woocommerce_wpml;
+        $this->sitepress        =& $sitepress;
+        $this->wpdb             =& $wpdb;
 
         //remove media sync on product page
         add_action( 'admin_head', array( $this, 'remove_language_options' ), 11 );

@@ -87,7 +87,7 @@ class woocommerce_wpml {
         $this->links                = new WCML_Links( $this, $sitepress );
         $this->coupons              = new WCML_Coupons( $this, $sitepress );
         $this->locale               = new WCML_Locale( $this, $sitepress );
-        $this->media                = new WCML_Media( $this, $sitepress );
+        $this->media                = new WCML_Media( $this, $sitepress, $wpdb );
         $this->downloadable         = new WCML_Downloadable_Products( $this, $sitepress );
 
         if(isset($_GET['page']) && $_GET['page'] == 'wc-reports'){
