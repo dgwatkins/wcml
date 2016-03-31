@@ -6,12 +6,6 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 		parent::setUp();
 	}
 
-	function test_icl_job_edit_url() {
-		$link_missing_job = 'http://' . rand_str( 10 );
-
-		$this->assertEquals( $link_missing_job, $this->woocommerce_wpml->emails->icl_job_edit_url( $link_missing_job, 0 ) );
-	}
-
 	function test_set_locale_for_emails() {
 		$locale_dummy = rand_str( 5 );
 		$domain_dummy = rand_str( 20 );
