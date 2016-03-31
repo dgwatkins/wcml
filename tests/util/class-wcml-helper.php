@@ -108,7 +108,7 @@ class WCML_Helper {
 
     }
 
-    public static function add_variable_product( $variation_data = array(), $trid= false ) {
+    public static function add_variable_product( $variation_data = array(), $trid= false, $language = false ) {
         global $wpdb, $sitepress, $wpml_post_translations;;
 
         if( empty($variation_data) ) {
@@ -131,6 +131,10 @@ class WCML_Helper {
                     )
                 )
             );
+        }
+
+        if( !$language ){
+            $language =  $sitepress->get_default_language();
         }
 
         foreach( $variation_data['variations'] as $vp ){
@@ -160,11 +164,7 @@ class WCML_Helper {
         }
 
         // Create the product
-        $product_id = wp_insert_post( array(
-            'post_title'  => $variation_data['product_title'],
-            'post_type'   => 'product',
-            'post_status' => 'publish'
-        ) );
+        $product_id = wpml_test_insert_post( $language, 'product', $trid, $variation_data['product_title'] );
 
         // Price related meta
         update_post_meta( $product_id, '_price', $min_variation_price );
@@ -215,12 +215,7 @@ class WCML_Helper {
         foreach( $variation_data['variations'] as $attribute => $variation ) {
 
             // Create the variation
-            $variation_id = wp_insert_post( array(
-                'post_title'  => 'Variation #' . $attribute . ' of Dummy Product',
-                'post_type'   => 'product_variation',
-                'post_parent' => $product_id,
-                'post_status' => 'publish'
-            ) );
+            $variation_id = wpml_test_insert_post( $language, 'product_variation', false, 'Variation #' . $attribute . ' of Dummy Product', $product_id );
 
             // Price related meta
             update_post_meta( $variation_id, '_price', $variation['price'] );

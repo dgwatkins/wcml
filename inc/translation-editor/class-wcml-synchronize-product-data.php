@@ -414,6 +414,8 @@ class WCML_Synchronize_Product_Data{
     }
 
     public function woocommerce_duplicate_product( $new_id, $post ){
+        $duplicated_products = array();
+
         //duplicate original first
         $trid = $this->sitepress->get_element_trid( $post->ID, 'post_' . $post->post_type );
         $orig_id = $this->sitepress->get_original_element_id_by_trid( $trid );
@@ -439,7 +441,7 @@ class WCML_Synchronize_Product_Data{
             }
         }
         $translations = $this->sitepress->get_element_translations( $trid, 'post_' . $post->post_type );
-
+        $duplicated_products[ 'translations' ] = array();
         if( $translations ){
             foreach( $translations as $translation ){
                 if( !$translation->original && $translation->element_id != $post->ID ){
@@ -464,10 +466,15 @@ class WCML_Synchronize_Product_Data{
                         if( get_post_meta( $translation->element_id, '_icl_lang_duplicate_of' ) ){
                             update_post_meta( $new_id, '_icl_lang_duplicate_of', $new_orig_id );
                         }
+                        $duplicated_products[ 'translations' ][] = $new_id;
                     }
                 }
             }
         }
+
+        $duplicated_products[ 'original' ] = $new_orig_id;
+
+        return $duplicated_products;
     }
 
 }
