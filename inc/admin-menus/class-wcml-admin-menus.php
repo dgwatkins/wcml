@@ -15,7 +15,7 @@ class WCML_Admin_Menus{
             self::remove_wpml_admin_language_switcher();
         }
 
-        if( is_admin() ){
+        if( is_admin() && !is_null( $sitepress ) ){
             add_action('admin_footer', array(__CLASS__, 'documentation_links'));
             add_action( 'admin_head', array( __CLASS__, 'hide_multilingual_content_setup_box' ) );
             add_action( 'admin_init', array( __CLASS__, 'restrict_admin_with_redirect' ) );

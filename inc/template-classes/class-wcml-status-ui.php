@@ -133,33 +133,39 @@ class WCML_Status_UI extends WPML_Templates_Factory {
 
 	public function get_missed_product_slug_translations_languages(){
 
-		$slug = $this->woocommerce_wpml->strings->product_permalink_slug();
-
-		if ( has_filter( 'wpml_slug_translation_available') ) {
-
-			if( version_compare( WPML_ST_VERSION, '2.2.6', '>' ) ){
-				$slug_translation_languages = apply_filters( 'wpml_get_slug_translation_languages', array(), 'product' );
-			} else {
-				$slug_translation_languages = apply_filters( 'wpml_get_slug_translation_languages', array(), $slug );
-			}
-
-		} else {
-			$string_id = icl_get_string_id( $slug, $this->woocommerce_wpml->url_translation->url_strings_context(), $this->woocommerce_wpml->url_translation->url_string_name('product') );
-			$slug_translations = icl_get_string_translations_by_id( $string_id );
-		}
-
+		$slug_settings = $this->sitepress->get_setting( 'posts_slug_translation' );
 		$miss_slug_lang = array();
 
-		$string_language = $this->woocommerce_wpml->strings->get_string_language( $slug, $this->woocommerce_wpml->url_translation->url_strings_context(), $this->woocommerce_wpml->url_translation->url_string_name('product') );
+		if ( ! empty( $slug_settings['on'] ) ) {
+			$slug = $this->woocommerce_wpml->strings->product_permalink_slug();
 
-		foreach( $this->sitepress->get_active_languages() as $lang_info ){
-			if(
-				(
-					( isset( $slug_translations ) && !array_key_exists( $lang_info['code'], $slug_translations ) ) ||
-					( isset( $slug_translation_languages ) && !in_array( $lang_info['code'], $slug_translation_languages ) )
-				) && $lang_info['code'] != $string_language
-			){
-				$miss_slug_lang[] = $lang_info;
+			if (has_filter('wpml_slug_translation_available')) {
+
+				if (version_compare(WPML_ST_VERSION, '2.2.6', '>')) {
+					$slug_translation_languages = apply_filters('wpml_get_slug_translation_languages', array(), 'product');
+
+
+				} else {
+					$slug_translation_languages = apply_filters('wpml_get_slug_translation_languages', array(), $slug);
+				}
+
+			} else {
+				$string_id = icl_get_string_id($slug, $this->woocommerce_wpml->url_translation->url_strings_context(), $this->woocommerce_wpml->url_translation->url_string_name('product'));
+				$slug_translations = icl_get_string_translations_by_id($string_id);
+			}
+
+
+			$string_language = $this->woocommerce_wpml->strings->get_string_language($slug, $this->woocommerce_wpml->url_translation->url_strings_context(), $this->woocommerce_wpml->url_translation->url_string_name('product'));
+
+			foreach ($this->sitepress->get_active_languages() as $lang_info) {
+				if (
+					(
+						(isset($slug_translations) && !array_key_exists($lang_info['code'], $slug_translations)) ||
+						(isset($slug_translation_languages) && !in_array($lang_info['code'], $slug_translation_languages))
+					) && $lang_info['code'] != $string_language
+				) {
+					$miss_slug_lang[] = $lang_info;
+				}
 			}
 		}
 
