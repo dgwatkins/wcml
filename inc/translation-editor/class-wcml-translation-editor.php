@@ -5,9 +5,11 @@ class WCML_Translation_Editor{
     private $woocommerce_wpml;
     private $sitepress;
 
-    public function __construct( &$woocommerce_wpml, &$sitepress ) {
+    public function __construct( &$woocommerce_wpml, &$sitepress, &$wpdb ) {
+
         $this->woocommerce_wpml =& $woocommerce_wpml;
-        $this->sitepress =& $sitepress;
+        $this->sitepress        =& $sitepress;
+        $this->wpdb             =& $wpdb;
 
         add_filter( 'wpml-translation-editor-fetch-job', array( $this, 'fetch_translation_job_for_editor' ), 10, 2 );
         add_filter( 'wpml-translation-editor-job-data', array( $this, 'get_translation_job_data_for_editor' ), 10, 2 );
@@ -23,10 +25,9 @@ class WCML_Translation_Editor{
     }
 
     public function fetch_translation_job_for_editor( $job, $job_details ) {
-        global $wpdb;
 
         if ( $job_details[ 'job_type' ] == 'post_product' ) {
-            $job = new WCML_Editor_UI_Product_Job( $job_details, $this->woocommerce_wpml, $this->sitepress, $wpdb );
+            $job = new WCML_Editor_UI_Product_Job( $job_details, $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
         }
 
         return $job;
@@ -93,9 +94,9 @@ class WCML_Translation_Editor{
     }
 
     public function create_product_translation_package( $product_id, $trid, $language, $status ){
-        global $wpdb, $iclTranslationManagement;
+        global $iclTranslationManagement;
         //create translation package
-        $translation_id = $wpdb->get_var( $wpdb->prepare("
+        $translation_id = $this->wpdb->get_var( $wpdb->prepare("
                                 SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND language_code='%s'
                             ", $trid, $language));
 
