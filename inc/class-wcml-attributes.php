@@ -146,6 +146,19 @@ class WCML_Attributes{
         return isset( $this->woocommerce_wpml->settings[ 'attributes_settings' ][ str_replace( 'pa_', '', $attr_name ) ] ) ? $this->woocommerce_wpml->settings[ 'attributes_settings' ][ str_replace( 'pa_', '', $attr_name ) ] : 1;
     }
 
+    public function get_translatable_attributes(){
+        $attributes = wc_get_attribute_taxonomies();
+
+        $translatable_attributes = array();
+        foreach( $attributes as $attribute ){
+            if( $this->is_translatable_attribute( $attribute->attribute_name) ){
+                $translatable_attributes[] = $attribute;
+            }
+        }
+
+        return $translatable_attributes;
+    }
+
     public function sync_product_attr( $original_product_id, $tr_product_id, $language = false, $data = false ){
 
         //get "_product_attributes" from original product

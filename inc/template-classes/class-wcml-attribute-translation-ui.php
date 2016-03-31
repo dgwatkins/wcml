@@ -13,7 +13,7 @@ class WCML_Attribute_Translation_UI extends WPML_Templates_Factory {
 
 	public function get_model() {
 
-		$product_attributes = wc_get_attribute_taxonomies();
+		$product_attributes = $this->woocommerce_wpml->attributes->get_translatable_attributes();
 		$taxonomy = isset( $_GET['taxonomy'] ) ? $_GET['taxonomy'] : false;
 
 		if( $product_attributes ){
@@ -51,7 +51,7 @@ class WCML_Attribute_Translation_UI extends WPML_Templates_Factory {
 			'attributes' => $product_attributes,
 			'selected_attribute' => $selected_attribute,
 			'strings' => array(
-				'no_attributes' => __( 'There are no product attributes defined', 'woocommerce-multilingual' ),
+				'no_attributes' => __( 'There are no translatable product attributes defined', 'woocommerce-multilingual' ),
 				'select_label'	=> __('Select the attribute to translate: ', 'woocommerce-multilingual')
 			),
 			'translation_ui' => $translation_ui
