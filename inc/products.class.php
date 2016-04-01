@@ -75,7 +75,7 @@ class WCML_Products{
         add_action( 'woocommerce_email', array( $this, 'woocommerce_email_refresh_text_domain' ) );
         add_action( 'wp_ajax_woocommerce_update_shipping_method', array( $this, 'wcml_refresh_text_domain' ), 9 );
         add_action( 'wp_ajax_nopriv_woocommerce_update_shipping_method', array( $this, 'wcml_refresh_text_domain' ), 9 );
-        add_filter( 'wpml_link_to_translation', array( $this, '_filter_link_to_translation' ), 100, 2 );
+        add_filter( 'wpml_link_to_translation', array( $this, '_filter_link_to_translation' ), 100, 3 );
 
         add_filter( 'woocommerce_upsell_crosssell_search_products', array( $this, 'filter_woocommerce_upsell_crosssell_posts_by_language' ) );
 
@@ -1309,7 +1309,7 @@ class WCML_Products{
     }
 
 
-    function _filter_link_to_translation( $link, $post_id ){
+    function _filter_link_to_translation( $link, $post_id, $lang ){
         global $woocommerce_wpml;
 
         if( $woocommerce_wpml->settings[ 'trnsl_interface' ] &&
@@ -1321,9 +1321,13 @@ class WCML_Products{
 
             if( empty( $post_id ) && isset( $_GET['post'] ) ){
                 $post_id = $_GET['post'];
+                $is_original_post = $this->is_original_product( $post_id );
+            }else{
+                $post_language = wpml_get_language_information($post_id);
+                $is_original_post = $post_language['language_code'] == $lang;
             }
 
-            if( isset( $_GET[ 'post' ] ) || !$this->is_original_product( $post_id ) ){
+            if( isset( $_GET[ 'post' ] ) || !$is_original_post ){
                 $link = admin_url( 'admin.php?page=wpml-wcml&tab=products&prid='.$post_id );
             }
 
