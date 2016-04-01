@@ -217,6 +217,8 @@ class WCML_Translation_Editor{
                 $use_tm_editor = 1;
             }
 
+        } elseif( $current_screen->id == 'wpml_page_wpml-wcml' ) {
+            $use_tm_editor = 1;
         }
 
         return $use_tm_editor;
