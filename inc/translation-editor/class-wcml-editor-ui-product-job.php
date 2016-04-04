@@ -98,7 +98,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $this->add_field( $excerpt_section );
 
         $purchase_note_section = new WPML_Editor_UI_Field_Section( __( 'Purchase note', 'woocommerce-multilingual' ) );
-        $purchase_note_section->add_field( new WPML_Editor_UI_TextArea_Field( 'purchase-note', null, $this->data, true ) );
+        $purchase_note_section->add_field( new WPML_Editor_UI_TextArea_Field( '_purchase_note', null, $this->data, true ) );
         $this->add_field( $purchase_note_section );
 
         $product_images = $this->woocommerce_wpml->media->product_images_ids( $this->product->ID );
@@ -144,7 +144,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             $is_variable = true;
         }else{
             $files_data = array( $this->product->ID => $this->woocommerce_wpml->downloadable->get_files_data( $this->product->ID ) );
-            if( !empty( $files_data ) ){
+            if( !empty( $files_data[ $this->product->ID ] ) ){
                 $files_section = new WPML_Editor_UI_Field_Section( __( 'Download Files', 'woocommerce-multilingual' ) );
             }
         }
@@ -193,7 +193,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 					   'slug'     => array( 'original' => urldecode( $this->product->post_name ) ),
 					   'product_content'  => array( 'original' => $this->product->post_content ),
                        'product_excerpt'  => array( 'original' => $this->product->post_excerpt ),
-                        'purchase-note' => array( 'original' => get_post_meta( $this->product->ID, '_purchase_note', true ) )
+                        '_purchase_note' => array( 'original' => get_post_meta( $this->product->ID, '_purchase_note', true ) )
                      );
 
         if ( $translation ) {
@@ -201,7 +201,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             $element_data[ 'slug' ][ 'translation' ]    = urldecode( $translation->post_name );
             $element_data[ 'product_content' ][ 'translation' ] = $translation->post_content;
             $element_data[ 'product_excerpt' ][ 'translation' ] = $translation->post_excerpt;
-            $element_data[ 'purchase-note' ][ 'translation' ] = get_post_meta( $translation->ID, '_purchase_note', true );
+            $element_data[ '_purchase_note' ][ 'translation' ] = get_post_meta( $translation->ID, '_purchase_note', true );
         }
 
         $product_images = $this->woocommerce_wpml->media->product_images_ids( $this->product->ID );
@@ -404,19 +404,21 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $this->woocommerce_wpml->sync_variations_data->sync_product_variations( $this->product->ID, $tr_product_id, $this->target_lang, $translations );
 
         $this->woocommerce_wpml->sync_product_data->sync_linked_products( $this->product->ID, $tr_product_id, $this->target_lang );
-
         //save images texts
-        if ( isset( $translations[ 'images' ] ) ) {
-            foreach ( $translations[ 'images' ] as $key => $image ) {
+        $product_images = $this->woocommerce_wpml->media->product_images_ids( $this->product->ID );
+
+        if ( $product_images ) {
+            foreach ( $product_images as $image_id ) {
+                $trnsl_prod_image = apply_filters( 'translate_object_id', $image_id, 'attachment', false, $this->target_lang );
                 //update image texts
                 $this->wpdb->update(
                     $this->wpdb->posts,
                     array(
-                        'post_title' => $image[ 'title' ],
-                        'post_content' => $image[ 'description' ],
-                        'post_excerpt' => $image[ 'caption' ]
+                        'post_title' => $translations[ md5( 'image-id-' . $image_id . '-title' ) ],
+                        'post_content' => $translations[ md5( 'image-id-' . $image_id . '-description' ) ],
+                        'post_excerpt' => $translations[ md5( 'image-id-' . $image_id . '-caption' ) ]
                     ),
-                    array('id' => $key)
+                    array( 'id' => $trnsl_prod_image )
                 );
             }
         }
