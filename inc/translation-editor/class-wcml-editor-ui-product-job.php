@@ -91,10 +91,10 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
         $this->add_field( new WPML_Editor_UI_Auto_Slug_Title_Field( 'title', __( 'Title', 'woocommerce-multilingual' ), $this->data, true ) );
         $this->add_field( new WPML_Editor_UI_Single_Line_Field( 'slug', __( 'Slug', 'woocommerce-multilingual' ), $this->data, true ) );
-        $this->add_field( new WPML_Editor_UI_WYSIWYG_Field( 'content', __( 'Content / Description', 'woocommerce-multilingual' ), $this->data, true ) );
+        $this->add_field( new WPML_Editor_UI_WYSIWYG_Field( 'product_content', __( 'Content / Description', 'woocommerce-multilingual' ), $this->data, true ) );
 
         $excerpt_section = new WPML_Editor_UI_Field_Section( __( 'Excerpt', 'woocommerce-multilingual' ) );
-        $excerpt_section->add_field( new WPML_Editor_UI_WYSIWYG_Field( 'excerpt', null, $this->data, true ) );
+        $excerpt_section->add_field( new WPML_Editor_UI_WYSIWYG_Field( 'product_excerpt', null, $this->data, true ) );
         $this->add_field( $excerpt_section );
 
         $purchase_note_section = new WPML_Editor_UI_Field_Section( __( 'Purchase note', 'woocommerce-multilingual' ) );
@@ -191,16 +191,16 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
 		$element_data = array( 'title'    => array( 'original' => $this->product->post_title ),
 					   'slug'     => array( 'original' => urldecode( $this->product->post_name ) ),
-					   'content'  => array( 'original' => $this->product->post_content ),
-                       'excerpt'  => array( 'original' => $this->product->post_excerpt ),
+					   'product_content'  => array( 'original' => $this->product->post_content ),
+                       'product_excerpt'  => array( 'original' => $this->product->post_excerpt ),
                         'purchase-note' => array( 'original' => get_post_meta( $this->product->ID, '_purchase_note', true ) )
                      );
 
         if ( $translation ) {
             $element_data[ 'title' ][ 'translation' ]   = $translation->post_title;
             $element_data[ 'slug' ][ 'translation' ]    = urldecode( $translation->post_name );
-            $element_data[ 'content' ][ 'translation' ] = $translation->post_content;
-            $element_data[ 'excerpt' ][ 'translation' ] = $translation->post_excerpt;
+            $element_data[ 'product_content' ][ 'translation' ] = $translation->post_content;
+            $element_data[ 'product_excerpt' ][ 'translation' ] = $translation->post_excerpt;
             $element_data[ 'purchase-note' ][ 'translation' ] = get_post_meta( $translation->ID, '_purchase_note', true );
         }
 
@@ -303,8 +303,8 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             $args = array();
             $args[ 'post_title' ] = $translations[ md5( 'title' ) ];
             $args[ 'post_type' ] = $this->product->post_type;
-            $args[ 'post_content' ] = $translations[ md5( 'content' ) ];
-            $args[ 'post_excerpt' ] = $translations[ md5( 'excerpt' ) ];
+            $args[ 'post_content' ] = $translations[ md5( 'product_content' ) ];
+            $args[ 'post_excerpt' ] = $translations[ md5( 'product_excerpt' ) ];
             $args[ 'post_status' ] = $this->product->post_status;
             $args[ 'menu_order '] = $this->product->menu_order;
             $args[ 'ping_status' ] = $this->product->ping_status;
@@ -347,8 +347,8 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             $args = array();
             $args[ 'ID' ] = $tr_product_id;
             $args[ 'post_title' ] = $translations[ md5( 'title' ) ];
-            $args[ 'post_content' ] = $translations[ md5( 'content' ) ];
-            $args[ 'post_excerpt' ] = $translations[ md5( 'excerpt' ) ];
+            $args[ 'post_content' ] = $translations[ md5( 'product_content' ) ];
+            $args[ 'post_excerpt' ] = $translations[ md5( 'product_excerpt' ) ];
             $args[ 'post_status' ] = $this->product->post_status;
             $args[ 'ping_status' ] = $this->product->ping_status;
             $args[ 'comment_status' ] = $this->product->comment_status;
