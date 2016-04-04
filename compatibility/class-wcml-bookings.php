@@ -646,7 +646,7 @@ class WCML_Bookings{
 
                             add_filter( 'get_post_metadata', array( $this, 'filter_wc_booking_cost' ), 10, 4 );
 
-                            return $woocommerce_wpml->multi_currency->convert_price_amount( $cost, $currency );
+                            return $woocommerce_wpml->multi_currency->prices->convert_price_amount( $cost, $currency );
                         }
 
                     } else {
@@ -684,7 +684,7 @@ class WCML_Bookings{
                             $converted_values = array();
 
                             foreach( $costs as $resource_id => $cost ){
-                                $converted_values[0][ $resource_id ] = $woocommerce_wpml->multi_currency->convert_price_amount( $cost, $currency );
+                                $converted_values[0][ $resource_id ] = $woocommerce_wpml->multi_currency->prices->convert_price_amount( $cost, $currency );
                             }
 
                             $value = $converted_values;
@@ -710,7 +710,7 @@ class WCML_Bookings{
 
                     $value = get_post_meta( $original_id, $meta_key, true );
 
-                    $value = $woocommerce_wpml->multi_currency->convert_price_amount( $value, $currency );
+                    $value = $woocommerce_wpml->multi_currency->prices->convert_price_amount( $value, $currency );
 
                     add_filter( 'get_post_metadata', array( $this, 'filter_wc_booking_cost' ), 10, 4 );
 
@@ -945,7 +945,7 @@ class WCML_Bookings{
             if( isset( $fields[ $name.$currency ] ) ){
                 return $fields[ $name.$currency ];
             }else{
-                return $woocommerce_wpml->multi_currency->convert_price_amount( $cost, $currency );
+                return $woocommerce_wpml->multi_currency->prices->convert_price_amount( $cost, $currency );
             }
 
         }
@@ -1038,7 +1038,7 @@ class WCML_Bookings{
             $current_booking_currency = $this->get_cookie_booking_currency();
 
             $wc_currencies = get_woocommerce_currencies();
-            $order_currencies = $woocommerce_wpml->multi_currency->get_orders_currencies();
+            $order_currencies = $woocommerce_wpml->multi_currency->orders->get_orders_currencies();
             ?>
             <tr valign="top">
                 <th scope="row"><?php _e( 'Booking currency', 'woocommerce-multilingual' ); ?></th>
@@ -1106,7 +1106,7 @@ class WCML_Bookings{
             $currency_code = get_woocommerce_currency();
 
             if ( $woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
-                $order_currencies = $woocommerce_wpml->multi_currency->get_orders_currencies();
+                $order_currencies = $woocommerce_wpml->multi_currency->orders->get_orders_currencies();
 
                 if (!isset($order_currencies[$currency_code])) {
                     foreach ($order_currencies as $currency_code => $count) {
