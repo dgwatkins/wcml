@@ -150,7 +150,10 @@ class WCML_Dependencies{
     * Adds admin notice.
     */
     function _missing_plugins_warning(){
-        
+
+        require_once WCML_PLUGIN_PATH . '/lib/Twig/Autoloader.php';
+        Twig_Autoloader::register();
+
         $missing = '';
         $counter = 0;
         foreach ($this->missing as $title => $url) {

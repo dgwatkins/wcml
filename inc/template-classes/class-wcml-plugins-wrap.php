@@ -21,7 +21,7 @@ class WCML_Plugins_Wrap extends WPML_Templates_Factory {
             'check_design_update' => $this->woocommerce_wpml->check_design_update,
             'install_wpml_link' => $this->woocommerce_wpml->dependencies->required_plugin_install_link( 'wpml' ),
             'icl_version' => defined('ICL_SITEPRESS_VERSION'),
-            'icl_setup' => $this->sitepress->setup(),
+            'icl_setup' => $this->sitepress ? $this->sitepress->setup() : false,
             'media_version' => defined( 'WPML_MEDIA_VERSION' ),
             'tm_version' => defined( 'WPML_TM_VERSION' ),
             'st_version' => defined( 'WPML_ST_VERSION' ),

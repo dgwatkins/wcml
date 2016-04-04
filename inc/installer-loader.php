@@ -1,8 +1,8 @@
 <?php
 
-if( file_exists( WCML_PLUGIN_PATH . '/inc/installer/loader.php' ) ){
+if( file_exists( WCML_PLUGIN_PATH . '/embedded/installer/loader.php' ) ){
 
-    include WCML_PLUGIN_PATH . '/inc/installer/loader.php' ;
+    include WCML_PLUGIN_PATH . '/embedded/installer/loader.php' ;
     $args = array(
         'plugins_install_tab' => 1
     );

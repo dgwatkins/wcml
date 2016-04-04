@@ -11,20 +11,20 @@
     }
   ],
   "config": {
-    "vendor-dir": "composer/"
+    "vendor-dir": "embedded/"
   },
   "repositories": [
     {
       "type": "vcs",
-      "url": "git@git.onthegosystems.com:installer/installer.git"
+      "url": "ssh://git@git.onthegosystems.com:10022/installer/installer.git"
     }
   ],
   "require": {
-    "otgs/installer" : "1.7.3"
+    "otgs/installer" : "1.7.6"
   },
   "extra": {
     "installer-paths": {
-      "inc/installer/": ["otgs/installer"]
+      "embedded/installer": ["otgs/installer"]
     }
   }
 }

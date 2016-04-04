@@ -12,12 +12,12 @@ class WCML_Autoloader {
         spl_autoload_register( array( $this, 'autoload' ) );
 
         $this->include_paths = array(
-            WCML_PLUGIN_PATH . '/inc/',
+            WCML_PLUGIN_PATH . '/inc',
             WCML_PLUGIN_PATH . '/inc/template-classes/*',
-            WCML_PLUGIN_PATH . '/inc/currencies/',
-            WCML_PLUGIN_PATH . '/inc/admin-menus/',
-            WCML_PLUGIN_PATH . '/inc/translation-editor/',
-            WCML_PLUGIN_PATH . '/compatibility/'
+            WCML_PLUGIN_PATH . '/inc/currencies',
+            WCML_PLUGIN_PATH . '/inc/admin-menus',
+            WCML_PLUGIN_PATH . '/inc/translation-editor',
+            WCML_PLUGIN_PATH . '/compatibility'
         );
 
         $this->set_real_include_paths();
@@ -59,10 +59,8 @@ class WCML_Autoloader {
     public function autoload( $class ) {
         $class = strtolower( $class );
         $file  = $this->get_file_name_from_class( $class );
-        $path  = '';
 
         foreach( $this->include_paths as $path ){
-
             if( $this->load_file( $path . '/' . $file) ){
                 break;
             }
