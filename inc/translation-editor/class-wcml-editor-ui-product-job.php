@@ -562,4 +562,8 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 		return false;
 	}
 	
+	public function show_media_button() {
+		return true;
+	}
+	
 }
