@@ -144,17 +144,16 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             $is_variable = true;
         }else{
             $files_data = array( $this->product->ID => $this->woocommerce_wpml->downloadable->get_files_data( $this->product->ID ) );
-            if( !empty( $files_data[ $this->product->ID ] ) ){
-                $files_section = new WPML_Editor_UI_Field_Section( __( 'Download Files', 'woocommerce-multilingual' ) );
-
-            }
         }
 
         foreach( $files_data as $post_id => $file_data ){
             $custom_product_sync = get_post_meta( $post_id, 'wcml_sync_files', true );
             if( ( !$custom_product_sync && !$this->woocommerce_wpml->settings['file_path_sync'] ) || ( $custom_product_sync && $custom_product_sync == 'self' ) ) {
+
                 if( $is_variable ){
                     $files_section = new WPML_Editor_UI_Field_Section( sprintf( __( 'Download Files for Variation #%s', 'woocommerce-multilingual' ), $post_id ) );
+                }else{
+                    $files_section = new WPML_Editor_UI_Field_Section( __( 'Download Files', 'woocommerce-multilingual' ) );
                 }
 
                 foreach( $file_data as $key => $file ) {
