@@ -1,5 +1,6 @@
 jQuery(document).ready(function($){
 
+
     $(document).on('click','#wcml_file_path_option', function( e ){
 
         if($(this).is(':checked')){

@@ -70,12 +70,10 @@ class WCML_Resources {
                 'jquery-ui-resizable'
             ), WCML_VERSION );
             wp_register_script( 'jquery-cookie', WCML_PLUGIN_URL . '/res/js/jquery.cookie.js', array('jquery'), WCML_VERSION );
-            wp_register_script( 'wcml-editor', WCML_PLUGIN_URL . '/res/js/wcml-translation-editor.js', array('jquery', 'jquery-ui-core'), WCML_VERSION );
             wp_register_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs.js', array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'), WCML_VERSION );
             wp_register_script( 'wcml-troubleshooting', WCML_PLUGIN_URL . '/res/js/troubleshooting.js', array('jquery'), WCML_VERSION );
 
             wp_enqueue_script( 'wcml-dialogs' );
-            wp_enqueue_script( 'wcml-editor' );
             wp_enqueue_script( 'wcml-tm-scripts' );
             wp_enqueue_script( 'jquery-cookie' );
             wp_enqueue_script( 'wcml-troubleshooting' );
@@ -118,6 +116,16 @@ class WCML_Resources {
             wp_enqueue_script( 'wcml-attributes' );
         }
 
+        if( self::$page == WPML_TM_FOLDER . '/menu/translations-queue.php' && isset( $_GET[ 'job_id' ] ) ) {
+            wp_enqueue_media();
+            wp_register_script( 'wcml-editor', WCML_PLUGIN_URL . '/res/js/wcml-translation-editor.js', array('jquery', 'jquery-ui-core'), WCML_VERSION);
+            wp_enqueue_script( 'wcml-editor' );
+            wp_localize_script( 'wcml-editor', 'strings',
+                array(
+                    'choose' => __( 'Choose a file', 'woocommerce_multilingual' )
+                )
+            );
+        }
 
     }
 

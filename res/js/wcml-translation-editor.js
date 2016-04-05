@@ -1,152 +1,82 @@
-/*jshint devel:true */
-/*global jQuery, document, WPML_translation_editor, window, _ */
+jQuery(document).ready(function () {
 
-var WCML = WCML || {};
+	jQuery(document).on( 'WPML_TM.editor.view_ready', function( event, view ) {
+		if ( view.field.field_type.substr( 0, 8 ) === 'file-url' ) {
+			view.$el.append(
+				'<div style="display: inline-block;width: 100%;">' +
+					'<button type="button" class="button-secondary wcml_file_paths_button" style="float: right;margin-right: 17px;">'+strings.choose+'</button>' +
+				'</div>' );
+		}
+	});
 
-WCML.Translation_Editor = function () {
-	"use strict";
+	jQuery(document).on( 'click', '.wcml_file_paths_button', function( event ){
+		var downloadable_file_frame;
+		var file_path_field;
+		var file_paths;
 
-	var init = function () {
-		
-		jQuery(document).ready(function () {
-            jQuery('.js-wcml-translation-dialog-trigger').on('click', editProduct);
-			jQuery(document).on('WPML_translation_editor.translation_saved', translationSaved );
+		var el = jQuery(this);
 
-			// See if we should open a translation job from query params
-			var post_id = getURLParameter('post_id');
-			if (post_id) {
-				var lang = getURLParameter('lang');
-				if (lang) {
-					jQuery( 'a[data-id="' + post_id + '"]').each( function() {
-						if (jQuery(this).data('language') === lang) {
-							var link = jQuery(this);
-							_.defer( function() {
-								link.trigger('click');
-							});
-							
-						}
-					});
-				}
-			}
+		file_path_field = el.closest('.wpml-form-row').find('.translated_value');
+		file_paths      = file_path_field.val();
 
-			jQuery(document).on( 'click', '.wcml_file_paths_button', function( event ){
-				var downloadable_file_frame;
-				var file_path_field;
-				var file_paths;
+		event.preventDefault();
 
-				var el = jQuery(this);
+		// If the media frame already exists, reopen it.
+		if ( downloadable_file_frame ) {
+			downloadable_file_frame.open();
+			return;
+		}
 
-				file_path_field = el.parent().find('.translated_value');
-				file_paths      = file_path_field.val();
+		var downloadable_file_states = [
+			// Main states.
+			new wp.media.controller.Library({
+				library:   wp.media.query(),
+				multiple:  true,
+				title:     el.data('choose'),
+				priority:  20,
+				filterable: 'uploaded'
+			})
+		];
 
-				event.preventDefault();
-
-				// If the media frame already exists, reopen it.
-				if ( downloadable_file_frame ) {
-					downloadable_file_frame.open();
-					return;
-				}
-
-				var downloadable_file_states = [
-					// Main states.
-					new wp.media.controller.Library({
-						library:   wp.media.query(),
-						multiple:  true,
-						title:     el.data('choose'),
-						priority:  20,
-						filterable: 'uploaded'
-					})
-				];
-
-				// Create the media frame.
-				downloadable_file_frame = wp.media.frames.downloadable_file = wp.media({
-					// Set the title of the modal.
-					title: el.data('choose'),
-					library: {
-						type: ''
-					},
-					button: {
-						text: el.data('update')
-					},
-					multiple: true,
-					states: downloadable_file_states
-				});
-
-				// When an image is selected, run a callback.
-				downloadable_file_frame.on( 'select', function() {
-
-					var selection = downloadable_file_frame.state().get('selection');
-
-					selection.map( function( attachment ) {
-
-						attachment = attachment.toJSON();
-
-						if ( attachment.url )
-							file_paths = attachment.url
-
-					} );
-
-					file_path_field.val( file_paths );
-				});
-
-				// Set post to 0 and set our custom type
-				downloadable_file_frame.on( 'ready', function() {
-					downloadable_file_frame.uploader.options.uploader.params = {
-						type: 'downloadable_product'
-					};
-				});
-
-				downloadable_file_frame.on( 'close', function() {
-					jQuery.removeCookie('_icl_current_language', { path: '/wp-admin' });
-				});
-
-				// Finally, open the modal.
-				downloadable_file_frame.open();
-			});
+		// Create the media frame.
+		downloadable_file_frame = wp.media.frames.downloadable_file = wp.media({
+			// Set the title of the modal.
+			title: el.data('choose'),
+			library: {
+				type: ''
+			},
+			button: {
+				text: el.data('update')
+			},
+			multiple: true,
+			states: downloadable_file_states
 		});
-	};
 
-	var getURLParameter = function(sParam) {
-		var sPageURL = window.location.search.substring(1);
-		var sURLVariables = sPageURL.split('&');
-		for (var i = 0; i < sURLVariables.length; i++) 
-		{
-			var sParameterName = sURLVariables[i].split('=');
-			if (sParameterName[0] == sParam) 
-			{
-				return sParameterName[1];
-			}
-		}
-		return '';
-	};
-	
-	var editProduct = function() {
-        if (typeof WPML_translation_editor !== 'undefined') {
-            WPML_translation_editor.mainEditor.showDialog( {job_type : 'wc_product',
-															id       : jQuery(this).data('id'),
-															job_id   : jQuery(this).data('id'),
-															target   : jQuery(this).data('language')});
-        }
-    };
-	
-	var translationSaved = function (e, data) {
-		if ( data.job_details.job_type == 'wc_product' ) {
-			var id = data.job_details.job_id;
-			var links = jQuery('.js-wcml-translation-dialog-trigger[data-id="' + id + '"]');
-			links.each( function () {
-				if (jQuery(this).data('language') == data.job_details.target) {
-					jQuery(this).after(data.response.status_link);
-					jQuery(this).remove();
-					jQuery('.js-wcml-translation-dialog-trigger').off('click');
-					jQuery('.js-wcml-translation-dialog-trigger').on('click', editProduct);
-				}
-			});
-		}
-	};
+		// When an image is selected, run a callback.
+		downloadable_file_frame.on( 'select', function() {
 
-	init();
+			var selection = downloadable_file_frame.state().get('selection');
 
-};
+			selection.map( function( attachment ) {
 
-WCML.translationEditor = new WCML.Translation_Editor();
+				attachment = attachment.toJSON();
 
+				if ( attachment.url )
+					file_paths = attachment.url
+
+			} );
+
+			file_path_field.val( file_paths );
+		});
+
+		// Set post to 0 and set our custom type
+		downloadable_file_frame.on( 'ready', function() {
+			downloadable_file_frame.uploader.options.uploader.params = {
+				type: 'downloadable_product'
+			};
+		});
+
+		// Finally, open the modal.
+		downloadable_file_frame.open();
+	});
+});

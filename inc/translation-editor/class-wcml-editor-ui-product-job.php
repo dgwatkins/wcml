@@ -146,6 +146,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             $files_data = array( $this->product->ID => $this->woocommerce_wpml->downloadable->get_files_data( $this->product->ID ) );
             if( !empty( $files_data[ $this->product->ID ] ) ){
                 $files_section = new WPML_Editor_UI_Field_Section( __( 'Download Files', 'woocommerce-multilingual' ) );
+
             }
         }
 
