@@ -131,28 +131,33 @@ class WCML_Cart
     }
 
     public function get_cart_attribute_translation( $attr_key, $attribute, $variation_id, $current_language, $product_id, $tr_product_id ){
-        global $woocommerce;
 
-        //delete 'attribute_' at the beginning
-        $taxonomy = substr( $attr_key, 10, strlen( $attr_key ) - 1 );
+        $attr_translation = $attribute;
 
-        if( taxonomy_exists( $taxonomy ) ){
-            if( $this->woocommerce_wpml->attributes->is_translatable_attribute( $taxonomy ) ){
-                $term_id = $this->woocommerce_wpml->terms->wcml_get_term_id_by_slug( $taxonomy, $attribute );
-                $trnsl_term_id = apply_filters( 'translate_object_id', $term_id, $taxonomy, true, $current_language );
-                $term = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $trnsl_term_id, $taxonomy );
-                return $term->slug;
+        if( !empty( $attribute ) ){
+            //delete 'attribute_' at the beginning
+            $taxonomy = substr( $attr_key, 10, strlen( $attr_key ) - 1 );
+
+            if( taxonomy_exists( $taxonomy ) ){
+                if( $this->woocommerce_wpml->attributes->is_translatable_attribute( $taxonomy ) ) {
+                    $term_id = $this->woocommerce_wpml->terms->wcml_get_term_id_by_slug( $taxonomy, $attribute );
+                    $trnsl_term_id = apply_filters( 'translate_object_id', $term_id, $taxonomy, true, $current_language );
+                    $term = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $trnsl_term_id, $taxonomy );
+                    $attr_translation = $term->slug;
+                }
             }else{
-                return $attribute;
-            }
-        }else{
-            $trnsl_attr = get_post_meta( $variation_id, $attr_key, true );
-            if( $trnsl_attr ){
-                return $trnsl_attr;
-            }else{
-                return $this->woocommerce_wpml->attributes->get_custom_attr_translation( $product_id, $tr_product_id, $taxonomy, $attribute );
+
+                $trnsl_attr = get_post_meta( $variation_id, $attr_key, true );
+
+                if( $trnsl_attr ){
+                    $attr_translation = $trnsl_attr;
+                }else{
+                    $attr_translation = $this->woocommerce_wpml->attributes->get_custom_attr_translation( $product_id, $tr_product_id, $taxonomy, $attribute );
+                }
             }
         }
+
+        return $attr_translation;
     }
 
     //get cart_item_data from existing cart array ( from session )
