@@ -83,9 +83,10 @@ class WCML_Dependencies{
         
         if(isset($sitepress)){
             $this->allok = $this->allok & $sitepress->setup();
+        }else{
+            $this->load_twig_support();
         }
-        
-        
+
         return $this->allok;
     }
 
@@ -102,45 +103,45 @@ class WCML_Dependencies{
     /**
     * Adds admin notice.
     */
-    function _old_wpml_warning(){
-        global $woocommerce_wpml;?>
+    public function _old_wpml_warning(){
+        ?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML</a> versions prior %s.',
                     'woocommerce-multilingual'), WCML_Links::generate_tracking_link('https://wpml.org/'), '3.1.5'); ?></p></div>
     <?php }
 
     function _old_wc_warning(){
-        global $woocommerce_wpml;?>
+        ?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">Woocommerce</a> versions prior %s.',
                     'woocommerce-multilingual'), 'http://www.woothemes.com/woocommerce/', '2.1' ); ?></p></div>
     <?php }
 
-    function _old_backend_wpml_warning(){
-        global $woocommerce_wpml;?>
+    public function _old_backend_wpml_warning(){
+        ?>
         <?php if( !isset($_GET['page']) || $_GET['page'] != 'wpml-wcml'): ?>
         <div class="message error">
             <p><?php printf(__( 'You are using WooCommerce Multilingual %s. This version includes an important UI redesign for the configuration screens and it requires <a href="%s">WPML %s</a> or higher. Everything still works on the front end now but, in order to configure options for WooCommerce Multilingual, you need to upgrade WPML.', 'woocommerce-multilingual' ), WCML_VERSION, WCML_Links::generate_tracking_link( 'https://wpml.org/' ), '3.4'); ?></p>
             <p>
-                <a class="button-primary" href="<?php echo $woocommerce_wpml->dependencies->required_plugin_install_link( 'wpml' ) ?>"
+                <a class="button-primary" href="<?php echo $this->required_plugin_install_link( 'wpml' ) ?>"
                    target="_blank"><?php _e( 'Upgrade WPML', 'woocommerce-multilingual' ); ?></a>
             </p>
         </div>
         <?php endif; ?>
     <?php }
     
-    function _old_wpml_tm_warning(){
-        global $woocommerce_wpml;?>
+    public function _old_wpml_tm_warning(){
+        ?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML Translation Management</a> versions prior %s.',
                     'woocommerce-multilingual'), WCML_Links::generate_tracking_link('https://wpml.org/'), '1.9'); ?></p></div>
     <?php }
 
-    function _old_wpml_st_warning(){
-        global $woocommerce_wpml;?>
+    public function _old_wpml_st_warning(){
+        ?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML String Translation</a> versions prior %s.',
                     'woocommerce-multilingual'), WCML_Links::generate_tracking_link('https://wpml.org/'), '2.0'); ?></p></div>
     <?php }
 
-    function _old_wpml_media_warning(){
-        global $woocommerce_wpml;?>
+    public function _old_wpml_media_warning(){
+        ?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML Media</a> versions prior %s.',
                     'woocommerce-multilingual'), WCML_Links::generate_tracking_link('https://wpml.org/'), '2.1'); ?></p></div>
     <?php }
@@ -149,10 +150,7 @@ class WCML_Dependencies{
     /**
     * Adds admin notice.
     */
-    function _missing_plugins_warning(){
-
-        require_once WCML_PLUGIN_PATH . '/lib/Twig/Autoloader.php';
-        Twig_Autoloader::register();
+    public function _missing_plugins_warning(){
 
         $missing = '';
         $counter = 0;
@@ -246,7 +244,7 @@ class WCML_Dependencies{
         }
     }
 
-    function _first_setup_warning(){ ?>
+    public function _first_setup_warning(){ ?>
 
         <div class="message error wpml-is-dismissible">
             <p><?php printf(__('WooCommerce Multilingual configuration is not complete. <a href="%s" class="button-primary">Configure settings</a>',
@@ -263,11 +261,11 @@ class WCML_Dependencies{
         <?php
     }
 
-    function plugin_notice_message(){
+    public function plugin_notice_message(){
         echo $this->err_message;
     }
     
-    function fix_strings_language(){
+    public function fix_strings_language(){
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         if(!$nonce || !wp_verify_nonce($nonce, 'wcml_fix_strings_language')){
             die('Invalid nonce');
@@ -286,7 +284,7 @@ class WCML_Dependencies{
         
     }
     
-    function check_wpml_config(){
+    public function check_wpml_config(){
         global $sitepress_settings;
         
         if(empty($sitepress_settings)) return;
@@ -373,8 +371,7 @@ class WCML_Dependencies{
         
     }
 
-    function required_plugin_install_link($repository = 'wpml'){
-        global $woocommerce_wpml;
+    public function required_plugin_install_link($repository = 'wpml'){
 
         if( class_exists('WP_Installer_API') ){
             $url = WP_Installer_API::get_product_installer_link($repository);
@@ -383,6 +380,19 @@ class WCML_Dependencies{
         }
 
         return $url;
+    }
+
+    /**
+     * The support for the Twig templates comes from WPML by default
+     * When WPML is not active, WCML will load it
+     */
+    private function load_twig_support(){
+
+        if (!class_exists( 'Twig_Autoloader' )){
+            require_once WCML_PLUGIN_PATH . '/lib/Twig/Autoloader.php';
+            Twig_Autoloader::register();
+        }
+
     }
     
 }
