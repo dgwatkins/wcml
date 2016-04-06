@@ -2736,27 +2736,32 @@ class WCML_Products{
     }
 
     function get_cart_attribute_translation( $attr_key, $attribute, $variation_id, $current_language, $product_id, $tr_product_id ){
-        global $woocommerce;
 
-        //delete 'attribute_' at the beginning
-        $taxonomy = substr( $attr_key, 10, strlen( $attr_key ) - 1 );
+        $attr_translation = $attribute;
 
-        if( taxonomy_exists( $taxonomy ) ){
+        if( !empty( $attribute ) ){
+            //delete 'attribute_' at the beginning
+            $taxonomy = substr( $attr_key, 10, strlen( $attr_key ) - 1 );
 
-            $term_id = $this->wcml_get_term_id_by_slug( $taxonomy, $attribute );
-            $trnsl_term_id = apply_filters( 'translate_object_id',$term_id,$taxonomy,true,$current_language);
-            $term = $this->wcml_get_term_by_id( $trnsl_term_id, $taxonomy );
-            return $term->slug;
-        }else{
+            if( taxonomy_exists( $taxonomy ) ){
 
-            $trnsl_attr = get_post_meta( $variation_id, $attr_key, true );
-
-            if( $trnsl_attr ){
-                return $trnsl_attr;
+                $term_id = $this->wcml_get_term_id_by_slug( $taxonomy, $attribute );
+                $trnsl_term_id = apply_filters( 'translate_object_id',$term_id,$taxonomy,true,$current_language);
+                $term = $this->wcml_get_term_by_id( $trnsl_term_id, $taxonomy );
+                $attr_translation = $term->slug;
             }else{
-                return $this->get_custom_attr_translation( $product_id, $tr_product_id, $taxonomy, $attribute );
+
+                $trnsl_attr = get_post_meta( $variation_id, $attr_key, true );
+
+                if( $trnsl_attr ){
+                    $attr_translation = $trnsl_attr;
+                }else{
+                    $attr_translation = $this->get_custom_attr_translation( $product_id, $tr_product_id, $taxonomy, $attribute );
+                }
             }
         }
+
+        return $attr_translation;
     }
 
     //get cart_item_data from existing cart array ( from session )
