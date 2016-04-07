@@ -26,17 +26,16 @@ class WCML_Product_Addons{
     }
 
     function register_addons_strings( $meta_id, $id, $meta_key, $addons){
-        if( $meta_key != '_product_addons' || get_post_type( $id ) != 'global_product_addon')
-            return false;
-
-        foreach($addons as $addon){
-            //register name
-            do_action('wpml_register_single_string', 'wc_product_addons_strings', $id.'_addon_'.$addon['type'].'_'.$addon['position'].'_name', $addon['name']);
-            //register description
-            do_action('wpml_register_single_string', 'wc_product_addons_strings', $id.'_addon_'.$addon['type'].'_'.$addon['position'].'_description', $addon['description']);
-            //register options labels
-            foreach($addon['options'] as $key=>$option){
-                do_action('wpml_register_single_string', 'wc_product_addons_strings', $id.'_addon_'.$addon['type'].'_'.$addon['position'].'_option_label_'.$key, $option['label']);
+        if( $meta_key == '_product_addons' && get_post_type( $id ) == 'global_product_addon') {
+            foreach ($addons as $addon) {
+                //register name
+                do_action('wpml_register_single_string', 'wc_product_addons_strings', $id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_name', $addon['name']);
+                //register description
+                do_action('wpml_register_single_string', 'wc_product_addons_strings', $id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_description', $addon['description']);
+                //register options labels
+                foreach ($addon['options'] as $key => $option) {
+                    do_action('wpml_register_single_string', 'wc_product_addons_strings', $id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_option_label_' . $key, $option['label']);
+                }
             }
         }
     }
