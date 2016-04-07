@@ -8,6 +8,7 @@ class WCML_Product_Addons{
         add_filter('get_product_addons_fields',array($this,'product_addons_filter'),10,2);
 
         add_action('updated_post_meta',array($this,'register_addons_strings'),10,4);
+        add_action('added_post_meta',array($this,'register_addons_strings'),10,4);
 
         global $pagenow;
         if($pagenow == 'edit.php' && isset($_GET['post_type']) && $_GET['post_type']=='product' && isset($_GET['page']) && $_GET['page']=='global_addons' && !isset($_GET['edit'])){
@@ -25,7 +26,7 @@ class WCML_Product_Addons{
     }
 
     function register_addons_strings( $meta_id, $id, $meta_key, $addons){
-        if( $meta_key != '_product_addons' )
+        if( $meta_key != '_product_addons' || get_post_type( $id ) != 'global_product_addon')
             return false;
 
         foreach($addons as $addon){
