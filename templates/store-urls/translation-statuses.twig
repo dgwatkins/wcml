@@ -6,7 +6,8 @@
     {% else %}
         {{ wcml_base_edit_dialog( base, language.code )|raw }}
 
-        <a class="js-wcml-dialog-trigger {% if not value %}dis_base{% endif %}" data-dialog="wcml-edit-base-slug-{{ base|e }}-{{ language.code|e }}"
+        <a class="js-wcml-dialog-trigger {% if not value %}dis_base{% endif %}" id="wcml-edit-base-slug-{{ base|e }}-{{ language.code|e }}-link"
+           data-dialog="wcml-edit-base-slug-{{ base|e }}-{{ language.code|e }}"
            data-content="wcml-edit-base-slug-{{ base|e }}-{{ language.code|e }}"  data-width="600" data-height="150"
 
             {% if language.status == 'upd' %}

@@ -309,8 +309,9 @@ jQuery(document).ready(function($){
         e.preventDefault();
 
         var elem = $(this);
-        var dialog_container = $(this).closest('.wcml-dialog-container');
-        var icon = '#wcml-edit-base-slug-'+elem.attr('data-base')+'-'+elem.attr('data-language');
+        var dialog_saving_data = $(this).closest('.wcml-dialog-container');
+        var link = '#wcml-edit-base-slug-'+elem.attr('data-base')+'-'+elem.attr('data-language')+'-link';
+        var dialog_container = '#wcml-edit-base-slug-'+elem.attr('data-base')+'-'+elem.attr('data-language');
         $.ajax({
             type : "post",
             url : ajaxurl,
@@ -318,16 +319,16 @@ jQuery(document).ready(function($){
             data : {
                 action: "wcml_update_base_translation",
                 base: elem.attr('data-base'),
-                base_value: dialog_container.find('#base-original').val(),
-                base_translation: dialog_container.find('#base-translation').val(),
+                base_value: dialog_saving_data.find('#base-original').val(),
+                base_translation: dialog_saving_data.find('#base-translation').val(),
                 language: elem.attr('data-language'),
                 wcml_nonce: $('#wcml_update_base_nonce').val()
             },
             success: function(response) {
-                $(icon).remove();
-                $(icon).find('i').remove();
-                $(icon).append('<i class="otgs-ico-edit" >');
-                $(icon).parent().prepend(response);
+                $(dialog_container).remove();
+                $(link).find('i').remove();
+                $(link).append('<i class="otgs-ico-edit" >');
+                $(link).parent().prepend(response);
             }
         })
     });
