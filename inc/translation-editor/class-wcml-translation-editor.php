@@ -23,6 +23,7 @@ class WCML_Translation_Editor{
         if( is_admin() ){
             add_filter( 'wpml_use_tm_editor', array( $this, 'force_woocommerce_native_editor'), 100 );
             add_action( 'wpml_pre_status_icon_display', array( $this, 'force_remove_wpml_translation_editor_links'), 100 );
+            add_action( 'wp_ajax_wcml_editor_auto_slug', array( $this, 'auto_generate_slug' ) );
         }
 
     }
@@ -241,4 +242,16 @@ class WCML_Translation_Editor{
 
     }
 
+    public function auto_generate_slug(){
+        $title = filter_input( INPUT_POST, 'title');
+
+        $post_name = sanitize_title( $title );
+
+        $slug = wp_unique_post_slug($post_name, 0, 'draft', 'product', 0);
+
+        echo json_encode( array('slug' => $slug) );
+        exit;
+
+
+    }
 }

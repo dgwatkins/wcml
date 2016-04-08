@@ -116,7 +116,7 @@ class WCML_Resources {
             wp_enqueue_script( 'wcml-attributes' );
         }
 
-        if( self::$page == WPML_TM_FOLDER . '/menu/translations-queue.php' && isset( $_GET[ 'job_id' ] ) ) {
+        if( self::$page == WPML_TM_FOLDER . '/menu/translations-queue.php' ) {
             wp_enqueue_media();
             wp_register_script( 'wcml-editor', WCML_PLUGIN_URL . '/res/js/wcml-translation-editor.js', array('jquery', 'jquery-ui-core'), WCML_VERSION);
             wp_enqueue_script( 'wcml-editor' );
