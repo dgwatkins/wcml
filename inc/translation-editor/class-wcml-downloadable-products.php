@@ -52,7 +52,7 @@ class WCML_Downloadable_Products{
     public function sync_files_to_translations( $original_id, $trnsl_id, $data ){
 
         $custom_product_sync = get_post_meta( $original_id, 'wcml_sync_files', true );
-        if( ( $custom_product_sync && $custom_product_sync == 'self' ) || !$this->woocommerce_wpml->settings[ 'file_path_sync' ] ){
+        if( ( $custom_product_sync && $custom_product_sync == 'self' ) || ( !$custom_product_sync && !$this->woocommerce_wpml->settings[ 'file_path_sync' ] ) ){
             if( $data ){
                 $orig_var_files = $this->get_files_data( $original_id );
                 $file_paths_array = array();
@@ -63,7 +63,7 @@ class WCML_Downloadable_Products{
                 }
                 update_post_meta( $trnsl_id,'_downloadable_files',$file_paths_array );
             }
-        }elseif( $this->woocommerce_wpml->settings[ 'file_path_sync' ] ){
+        }elseif( ( $custom_product_sync && $custom_product_sync == 'auto' ) || $this->woocommerce_wpml->settings[ 'file_path_sync' ] ){
             $orig_file_path = maybe_unserialize( get_post_meta( $original_id, '_downloadable_files', true ) );
             update_post_meta( $trnsl_id, '_downloadable_files', $orig_file_path );
         }
@@ -80,6 +80,8 @@ class WCML_Downloadable_Products{
                     delete_post_meta( $post_id, 'wcml_sync_files' );
                 }
             }
+        }else{
+            delete_post_meta( $post_id, 'wcml_sync_files' );
         }
     }
 
