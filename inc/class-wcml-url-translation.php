@@ -660,6 +660,9 @@ class WCML_Url_Translation {
                 $string_id = icl_get_string_id( $original_base_value, $this->url_strings_context(), $this->url_string_name( $original_base ) );
             }else{
                 $string_id = icl_get_string_id( $original_base_value, 'WooCommerce Endpoints', $original_base );
+                if( !$string_id && function_exists( 'icl_register_string' ) ){
+                    $string_id = icl_register_string( 'WooCommerce Endpoints', $original_base, $original_base_value );
+                }
             }
 
             icl_add_string_translation( $string_id, $language, $base_translation, ICL_STRING_TRANSLATION_COMPLETE );
