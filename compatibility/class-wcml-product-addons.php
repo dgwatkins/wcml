@@ -116,41 +116,30 @@ class WCML_Product_Addons{
         $product_addons = maybe_unserialize( get_post_meta( $product_id, '_product_addons', true ) );
 
         if( !empty( $product_addons ) ){
-
             foreach( $product_addons as $addon_id => $product_addon ) {
-
                 $data[ 'addon_'.$addon_id.'_name' ] = array( 'original' => $product_addon[ 'name' ] );
                 $data[ 'addon_'.$addon_id.'_description' ] = array( 'original' => $product_addon['description'] );
-
                 if( !empty( $product_addon['options'] ) ){
-
                     foreach( $product_addon['options'] as $option_id => $option ){
                         $data[ 'addon_'.$addon_id.'_option_'.$option_id.'_label' ] = array( 'original' => $option[ 'label' ] );
                     }
-
                 }
-
             }
 
             if( $translation ){
                 $transalted_product_addons = maybe_unserialize( get_post_meta( $translation->ID, '_product_addons', true ) );
-
-                foreach( $transalted_product_addons as $addon_id => $transalted_product_addon ) {
-
-                    $data[ 'addon_'.$addon_id.'_name' ][ 'translation' ] = $transalted_product_addon[ 'name' ];
-                    $data[ 'addon_'.$addon_id.'_description' ][ 'translation' ] = $transalted_product_addon['description'];
-
-                    if( !empty( $transalted_product_addon['options'] ) ){
-
-                        foreach( $transalted_product_addon['options'] as $option_id => $option ){
-                            $data[ 'addon_'.$addon_id.'_option_'.$option_id.'_label' ][ 'translation' ] = $option[ 'label' ];
+                if( !empty( $transalted_product_addons ) ){
+                    foreach( $transalted_product_addons as $addon_id => $transalted_product_addon ) {
+                        $data[ 'addon_'.$addon_id.'_name' ][ 'translation' ] = $transalted_product_addon[ 'name' ];
+                        $data[ 'addon_'.$addon_id.'_description' ][ 'translation' ] = $transalted_product_addon['description'];
+                        if( !empty( $transalted_product_addon['options'] ) ){
+                            foreach( $transalted_product_addon['options'] as $option_id => $option ){
+                                $data[ 'addon_'.$addon_id.'_option_'.$option_id.'_label' ][ 'translation' ] = $option[ 'label' ];
+                            }
                         }
-
                     }
-
                 }
             }
-
         }
 
         return $data;

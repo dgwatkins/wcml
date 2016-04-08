@@ -8,7 +8,6 @@ class WCML_Product_Bundles{
         add_action( 'wcml_gui_additional_box_html', array( $this, 'custom_box_html'), 10, 3 );
         add_filter( 'wcml_gui_additional_box_data', array( $this, 'custom_box_html_data'), 10, 4 );
 		add_action('wcml_after_duplicate_product_post_meta',array($this,'sync_bundled_ids'),10,3);
-		add_action('wcml_extra_titles',array($this,'product_bundles_title'),10,1);
 		add_action('wcml_update_extra_fields',array($this,'bundle_update'),10,4);
 		add_action('woocommerce_get_cart_item_from_session', array( $this, 'resync_bundle'),5,3);
 		add_filter('woocommerce_cart_loaded_from_session', array($this, 'resync_bundle_clean'),10);
@@ -129,13 +128,7 @@ class WCML_Product_Bundles{
         update_post_meta( $tr_id, '_bundle_data', $tr_bundle_data );
 
     }
-    // Add 'Product Bundles' title to the WCML Product GUI if the current product is a bundled product
-    function product_bundles_title($product_id){
-    	$bundle_data = maybe_unserialize(get_post_meta($product_id,'_bundle_data', true));
-    	if(!empty($bundle_data) && $bundle_data!=false){ ?>
-	        <th scope="col"><?php _e('Product Bundles', 'woocommerce-multilingual'); ?></th>
-        <?php }
-    }
+
     // Add Bundles Box to WCML Translation GUI
     function custom_box_html( $obj, $product_id, $data ){
 

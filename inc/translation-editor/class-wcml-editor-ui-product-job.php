@@ -299,12 +299,18 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         }
 
         if ( is_null( $tr_product_id ) ) {
+
             //insert new post
             $args = array();
             $args[ 'post_title' ] = $translations[ md5( 'title' ) ];
             $args[ 'post_type' ] = $this->product->post_type;
             $args[ 'post_content' ] = $translations[ md5( 'product_content' ) ];
             $args[ 'post_excerpt' ] = $translations[ md5( 'product_excerpt' ) ];
+
+            if ( !$args[ 'post_title' ] && !$args[ 'post_content' ] && !$args[ 'post_excerpt' ] ){
+                return new WP_Error( 'empty_content', __( 'Content, title, and excerpt are empty.' ) );
+            }
+
             $args[ 'post_status' ] = $this->product->post_status;
             $args[ 'menu_order '] = $this->product->menu_order;
             $args[ 'ping_status' ] = $this->product->ping_status;

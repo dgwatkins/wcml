@@ -13,10 +13,9 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 		if( is_admin() ){		
 
-			add_action( 'wcml_gui_additional_box_html', array( $this, 'custom_box_html'), 10, 3 );
-			add_filter( 'wcml_gui_additional_box_data', array( $this, 'custom_box_html_data'), 10, 4 );
-			add_action('wcml_extra_titles',array($this,'product_editor_title'),10,1);
-			add_action('wcml_update_extra_fields',array($this,'components_update'),10,3);
+			add_action( 'wcml_gui_additional_box_html', array( $this, 'custom_box_html' ), 10, 3 );
+			add_filter( 'wcml_gui_additional_box_data', array( $this, 'custom_box_html_data' ), 10, 4 );
+			add_action( 'wcml_update_extra_fields', array( $this, 'components_update' ), 10, 3 );
 
 			$this->tp = new WPML_Element_Translation_Package();
 
@@ -213,14 +212,6 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 		}
 
 		return $data;
-	}
-
-	function product_editor_title( $product_id ){
-
-		if( $this->get_product_type( $product_id ) == 'composite' ) {
-			printf( '<th scope="col">%s</h>', __( 'Components', 'woocommerce-multilingual' ) );
-		}
-
 	}
 
     function components_update( $original_product_id, $product_id, $data ){
