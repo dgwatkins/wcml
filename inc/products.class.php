@@ -903,7 +903,7 @@ class WCML_Products{
                         update_post_meta($trnsl_product_id,$key,$meta_value);
                     }
                 }else{
-                    if( in_array( $key ,array( '_file_paths', '_downloadable_files' )) || ( isset($settings['translation-management']['custom_fields_translation'][$key]) && $settings['translation-management']['custom_fields_translation'][$key] == 1 ) ){
+                    if( ( $woocommerce_wpml->settings['file_path_sync']  && in_array( $key ,array( '_file_paths', '_downloadable_files' ) ) ) || ( isset($settings['translation-management']['custom_fields_translation'][$key]) && $settings['translation-management']['custom_fields_translation'][$key] == 1 ) ){
                         $meta_value = apply_filters('wcml_meta_value_before_add',$meta_value,$key);
                         update_post_meta($trnsl_product_id, $key, $meta_value);
                     }
