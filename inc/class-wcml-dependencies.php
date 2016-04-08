@@ -246,7 +246,7 @@ class WCML_Dependencies{
 
     public function _first_setup_warning(){ ?>
 
-        <div class="message error wpml-is-dismissible">
+        <div class="message error otgs-is-dismissible">
             <p><?php printf(__('WooCommerce Multilingual configuration is not complete. <a href="%s" class="button-primary">Configure settings</a>',
                     'woocommerce-multilingual'),
                     $this->allok ? admin_url("admin.php?page=wpml-wcml&tab=status") : admin_url("admin.php?page=wpml-wcml") ) ?>

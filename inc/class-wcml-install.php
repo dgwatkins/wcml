@@ -183,13 +183,14 @@ class WCML_Install{
                 $url .= '?wcml_action=dismiss';
             }
             ?>
-            <div id="message" class="updated message fade" style="clear:both;margin-top:5px;"><p>
+            <div id="message" class="updated message fade otgs-is-dismissible"><p>
                     <?php _e('Would you like to see a quick overview?', 'woocommerce-multilingual'); ?>
                 </p>
                 <p>
                     <a class="button-primary" href="<?php echo WCML_Links::generate_tracking_link('https://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation'); ?>" target="_blank"><?php _e('Learn how to turn your e-commerce site multilingual', 'woocommerce-multilingual') ?></a>
-                    <a class="button-secondary" href="<?php echo $url; ?>"><?php _e('Dismiss', 'woocommerce-multilingual') ?></a>
+                    <a class="button-secondary" href="<?php echo $url; ?>"><?php _e('Skip this', 'woocommerce-multilingual') ?></a>
                 </p>
+                <a class="notice-dismiss" href="<?php echo $url; ?>"><span class="screen-reader-text"><?php _e('Dismiss', 'woocommerce-multilingual') ?></span></a>
             </div>
             <?php
         }
