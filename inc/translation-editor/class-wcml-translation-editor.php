@@ -248,6 +248,7 @@ class WCML_Translation_Editor{
         $post_name = sanitize_title( $title );
 
         $slug = wp_unique_post_slug($post_name, 0, 'draft', 'product', 0);
+        $slug = urldecode( $slug );
 
         echo json_encode( array('slug' => $slug) );
         exit;
