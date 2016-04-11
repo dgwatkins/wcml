@@ -168,7 +168,6 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
                 $content = $wcml_mc_ui->get_view();
                 break;
 
-            // TBD
             case 'product-attributes':
 
                 if( current_user_can('wpml_operate_woocommerce_multilingual') ) {

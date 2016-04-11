@@ -4,8 +4,6 @@ class WCML_Install{
 
     public static function initialize( &$woocommerce_wpml, &$sitepress ) {
 
-        add_action( 'admin_notices', array(__CLASS__, 'admin_notice_after_install') );
-
         // Install routine
         if ( empty($woocommerce_wpml->settings['set_up']) ) { // from 3.2
 
@@ -57,6 +55,12 @@ class WCML_Install{
         }
 
         add_filter( 'wpml_tm_dashboard_translatable_types', array( __CLASS__, 'hide_variation_type_on_tm_dashboard') );
+
+        new WCML_Setup( $woocommerce_wpml, $sitepress );
+        if ( !empty($woocommerce_wpml->settings['set_up_wizard_run']) ) {
+            add_action( 'admin_notices', array(__CLASS__, 'admin_notice_after_install') );
+        }
+
     }
 
     private static function set_language_information( &$sitepress ){
@@ -183,12 +187,14 @@ class WCML_Install{
                 $url .= '?wcml_action=dismiss';
             }
             ?>
-            <div id="message" class="updated message fade otgs-is-dismissible"><p>
-                    <?php _e('Would you like to see a quick overview?', 'woocommerce-multilingual'); ?>
+            <div id="message" class="updated message fade otgs-is-dismissible">
+                <p>
+                    <?php printf(__("You've successfully installed %sWooCommerce Multilingual%s. Would you like to see a quick overview?", 'woocommerce-multilingual'), '<strong>', '</strong>'); ?>
                 </p>
                 <p>
-                    <a class="button-primary" href="<?php echo WCML_Links::generate_tracking_link('https://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation'); ?>" target="_blank"><?php _e('Learn how to turn your e-commerce site multilingual', 'woocommerce-multilingual') ?></a>
-                    <a class="button-secondary" href="<?php echo $url; ?>"><?php _e('Skip this', 'woocommerce-multilingual') ?></a>
+                    <a class="button-primary align-right" href="<?php echo WCML_Links::generate_tracking_link('https://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation'); ?>" target="_blank">
+                        <?php _e('Learn how to turn your e-commerce site multilingual', 'woocommerce-multilingual') ?>
+                    </a>
                 </p>
                 <a class="notice-dismiss" href="<?php echo $url; ?>"><span class="screen-reader-text"><?php _e('Dismiss', 'woocommerce-multilingual') ?></span></a>
             </div>

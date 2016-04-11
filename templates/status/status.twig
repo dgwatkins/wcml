@@ -1,10 +1,10 @@
-{% include 'plugins-status.twig' with plugins_status %}
+{{ plugins_status|raw }}
 
-{% include 'conf-warn.twig' with conf_warnings %}
+{{ conf_warnings|raw }}
 
-{% include 'store-pages.twig' with store_page %}
+{{ store_pages|raw }}
 
-{% include 'taxonomies.twig' with taxonomies %}
+{{ taxonomies|raw }}
 
 <a class="alignright wpml-margin-top-sm" href="{{ troubl_url }}">
     {{ strings.troubl }}

@@ -69,10 +69,6 @@ class WCML_Dependencies{
             $this->check_for_incompatible_permalinks();
         }
 
-        if( $this->allok && !isset( $woocommerce_wpml->settings['first_setup_warning'] ) && ( !isset( $_GET['tab'] ) || ( isset( $_GET['tab'] ) && $_GET['tab'] != 'status' ) ) ){
-            add_action('admin_notices', array($this, '_first_setup_warning'));
-        }
-        
         if(isset($sitepress)){
             $this->allok = $this->allok & $sitepress->setup();
         }else{
@@ -234,23 +230,6 @@ class WCML_Dependencies{
             $this->err_message = '<div class="message error"><p>'.$message.'    </p></div>';
             add_action('admin_notices', array($this,'plugin_notice_message'));
         }
-    }
-
-    public function _first_setup_warning(){ ?>
-
-        <div class="message error otgs-is-dismissible">
-            <p><?php printf(__('WooCommerce Multilingual configuration is not complete. <a href="%s" class="button-primary">Configure settings</a>',
-                    'woocommerce-multilingual'),
-                    $this->allok ? admin_url("admin.php?page=wpml-wcml&tab=status") : admin_url("admin.php?page=wpml-wcml") ) ?>
-                <button class="notice-dismiss wcml_ignore_link" data-setting="first_setup_warning">
-                    <span class="screen-reader-text">
-                        <?php _e('Ignore','woocommerce-multilingual' ) ?>
-                    </span>
-                </button>
-                <?php wp_nonce_field('wcml_ignore_warning', 'wcml_ignore_warning_nonce'); ?>
-            </p>
-        </div>
-        <?php
     }
 
     public function plugin_notice_message(){

@@ -357,10 +357,6 @@ class WCML_Store_Pages{
                 $woocommerce_wpml->locale->switch_locale();
             }
 
-            //update first setup warning if all setup
-            $woocommerce_wpml->requests->update_first_setup_warning( true );
-
-            
             wp_redirect(admin_url('admin.php?page=wpml-wcml&tab=status')); exit;
         }
     }

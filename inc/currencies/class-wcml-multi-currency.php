@@ -99,6 +99,16 @@ class WCML_Multi_Currency{
 
     }
 
+    public function enable(){
+        $this->woocommerce_wpml->settings['enable_multi_currency'] = WCML_MULTI_CURRENCIES_INDEPENDENT;
+        $this->woocommerce_wpml->update_settings();
+    }
+
+    public function disable(){
+        $this->woocommerce_wpml->settings['enable_multi_currency'] = WCML_MULTI_CURRENCIES_DISABLED;
+        $this->woocommerce_wpml->update_settings();
+    }
+
     public function init_currencies(){
         global $sitepress;
 

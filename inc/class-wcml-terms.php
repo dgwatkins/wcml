@@ -290,9 +290,6 @@ class WCML_Terms{
             }
         }
 
-        //update first setup warning if all setup
-        $this->woocommerce_wpml->requests->update_first_setup_warning();
-
         echo json_encode($ret);
         exit;
         

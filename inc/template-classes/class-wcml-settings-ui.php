@@ -21,20 +21,18 @@ class WCML_Settings_UI extends WPML_Templates_Factory {
 
                 'translation_interface' => array(
                     'heading'   => __('Product Translation Interface','woocommerce-multilingual'),
-                    'tip'       => __( 'The recommended way to translate products is using the products translation table
-                                    in the WooCommerce Multilingual admin. Choose to go to the native WooCommerce interface,
-                                    if your products include custom sections that require direct access.',
+                    'tip'       => __( 'The recommended way is using the WPML Translation Editor. It is streamlined for making the translation process much easier while also providing a much better integration with various WooCommerce extensions.',
                                     'woocommerce-multilingual' ),
-                    'controls'  => __('Choose what to do when clicking on the translation controls for products:', 'woocommerce-multilingual'),
                     'wcml'      => array(
-                        'label' => __('Open the WPML Translation Editor', 'woocommerce-multilingual'),
+                        'label' => __('WPML Translation Editor', 'woocommerce-multilingual'),
 
                     ),
                     'native'      => array(
-                        'label' => __('Go to the native WooCommerce product editing screen' , 'woocommerce-multilingual'),
+                        'label' => __('Native WooCommerce product editing screen' , 'woocommerce-multilingual'),
 
                     ),
                     'controls_value' => $this->woocommerce_wpml->settings['trnsl_interface'],
+
                 ),
 
                 'synchronization' => array(
@@ -64,6 +62,9 @@ class WCML_Settings_UI extends WPML_Templates_Factory {
                 'save_label'        => __( 'Save changes', 'woocommerce-multilingual' ),
 
             ),
+
+            'native_translation'  => WCML_TRANSLATION_METHOD_MANUAL,
+            'wpml_translation'    => WCML_TRANSLATION_METHOD_EDITOR,
 
             'troubleshooting' => array(
                 'url'   => admin_url( 'admin.php?page=wpml-wcml&tab=troubleshooting' ),

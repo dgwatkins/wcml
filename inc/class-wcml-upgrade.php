@@ -13,7 +13,8 @@ class WCML_Upgrade{
         '3.6',
         '3.7',
         '3.7.3',
-        '3.7.11'
+        '3.7.11',
+        '3.8'
 
     );
     
@@ -433,5 +434,13 @@ class WCML_Upgrade{
         $wcml_settings['dismiss_doc_main'] = 1;
         update_option('_wcml_settings', $wcml_settings);
  	}
+
+    function upgrade_3_8(){
+
+        $wcml_settings = get_option('_wcml_settings');
+        $wcml_settings['set_up_wizard_run'] = 1;
+        update_option('_wcml_settings', $wcml_settings);
+
+    }
 
 }

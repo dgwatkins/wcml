@@ -80,7 +80,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
                 'mco_disabled'              => empty($wc_currency),
                 'label_mco'                 => __( "Enable the multi-currency mode", 'woocommerce-multilingual' ),
                 'label_mco_learn_url'       => WCML_Links::generate_tracking_link( 'https://wpml.org/documentation/related-projects/woocommerce-multilingual/multi-currency-support-woocommerce/', 'multi-currency-support-woocommerce', 'documentation' ),
-                'label_mco_learn_txt'       => __( 'Learn more', 'wpl-wcml' ),
+                'label_mco_learn_txt'       => __( 'Learn more', 'woocommerce-multilingual' ),
                 'update_currency_lang_nonce'=> wp_create_nonce( 'wcml_update_currency_lang' ),
                 'wpdate_default_cur_nonce'  => wp_create_nonce( 'wcml_update_default_currency' ),
                 'custom_prices_select'      => array(
