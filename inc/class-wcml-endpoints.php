@@ -10,7 +10,7 @@ class WCML_Endpoints{
         $this->register_endpoints_translations();
         $this->maybe_flush_rules();
         add_action( 'icl_ajx_custom_call', array( $this, 'rewrite_rule_endpoints' ), 11, 2 );
-        add_action( 'woocommerce_update_options', array( $this, 'update_endpoints_rules' ) );
+        add_action( 'woocommerce_update_options', array( $this, 'add_endpoints' ) );
         add_filter( 'pre_update_option_rewrite_rules', array( $this, 'update_rewrite_rules' ), 100, 2 );
 
         add_filter( 'page_link', array( $this, 'endpoint_permalink_filter' ), 10, 2 ); //after WPML
@@ -86,8 +86,12 @@ class WCML_Endpoints{
     function rewrite_rule_endpoints( $call, $data ){
         if( $call == 'icl_st_save_translation' && in_array( $data['icl_st_string_id'], $this->endpoints_strings ) ){
             $this->add_endpoints();
-            add_option( 'flush_rules_for_endpoints_translations', true );
+            $this->flush_rules_for_endpoints_translations();
         }
+    }
+
+    function flush_rules_for_endpoints_translations( $call, $data ){
+        add_option( 'flush_rules_for_endpoints_translations', true );
     }
 
     function maybe_flush_rules(){
@@ -104,10 +108,6 @@ class WCML_Endpoints{
         $this->add_endpoints();
         flush_rewrite_rules();
         return $value;
-    }
-
-    function update_endpoints_rules(){
-        $this->add_endpoints();
     }
 
     function add_endpoints(){
