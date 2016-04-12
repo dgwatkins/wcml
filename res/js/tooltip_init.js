@@ -20,7 +20,7 @@ var WCML_Tooltip = {
     },
 
     add_tip_before_elem: function ( elem_class, text, style ){
-        jQuery( '<i class="otgs-ico-help wcml-tip" data-tip="'+text+'" style="'+style+'"></i>' ).insertBefore( elem_class );
+        jQuery( '<i class="otgs-ico-help wcml-tip" data-tip="'+text+'" style="cursor:help;'+style+'"></i>' ).insertBefore( elem_class );
         WCML_Tooltip.load_tip();
     },
 
