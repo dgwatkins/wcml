@@ -20,7 +20,7 @@ jQuery( function($){
 					$(document).on( 'blur', '#job_field_title .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
 					$(document).on( 'focus', '#job_field_slug .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
 					$(document).on( 'blur', '#job_field_slug .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
-					WCML_Tooltip.add_tip_before_elem( '.js-save-and-close', strings.save_tooltip, 'line-height: 28px; margin-right: 3px;' );
+					WCML_Tooltip.add_tip_before_elem( '.js-save-and-close', strings.save_tooltip, 'line-height: 28px; margin-right: 3px; cursor:pointer;' );
 				}
 
 			});
