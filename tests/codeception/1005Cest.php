@@ -17,7 +17,7 @@ class FiveCest
 
         $I->see('Plugins');
 
-        $I->click('Activate', '#woocommerce-multilingual');
+        $I->activatePlugin('woocommerce-multilingual');
 
         $I->wait(2);
 
@@ -33,7 +33,8 @@ class FiveCest
 
         $I->click('Create missing translations');
 
-        $I->click('Translate URLs');
+        // This is the code for translating URL's if they are
+        /*$I->click('Translate URLs');
 
         $I->click('[data-base=product]');
 
@@ -42,6 +43,12 @@ class FiveCest
         $I->fillField('#base-translation', 'προϊόν');
 
         $I->click('Save');
+
+        $I->wait(2);*/
+
+        $I->seeElement('.wcml-tax-translation-list .otgs-ico-ok');
+
+        $I->wait(2);
 
 
     }
@@ -54,6 +61,6 @@ class FiveCest
     // tests
     public function tryToTest(AcceptanceTester $I)
     {
-		
+
     }
 }

@@ -19,7 +19,7 @@ class ThreeCest
 
         $I->amOnPage('/wp-admin/plugins.php');
 
-        $I->click('Activate', '#woocommerce');
+        $I->activatePlugin('woocommerce');
 
         $I->amGoingTo('Run Woocommerce Setup');
 

@@ -21,7 +21,7 @@ class OneCest
 
         $I->see('Plugins');
 
-        $I->click('Activate', '#wpml-multilingual-cms');
+        $I->activatePlugin('wpml-multilingual-cms');
 
 
         $I->amGoingTo('Configure WPML');

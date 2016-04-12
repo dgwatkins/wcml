@@ -29,9 +29,9 @@ class FourCest
 
         $I->amGoingTo('Configure the Default Currency');
 
-        $I->click('#select2-chosen-7');
+        $I->click('#s2id_woocommerce_currency');
 
-        $I->fillField('#s2id_autogen7_search', 'Euro');
+        $I->fillField('#s2id_autogen10_search', 'Euro');
 
         $I->click('.select2-result-label');
 

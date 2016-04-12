@@ -21,12 +21,11 @@ class TwoCest
 
         $I->see('Plugins');
 
-        $I->click('Activate', '#wpml-string-translation');
-        $I->wait(1);
-        $I->click('Activate', '#wpml-translation-management');
-        $I->wait(1);
-        $I->click('Activate', '#wpml-media'); //to be checked because it shows error
-
+        $I->activatePlugin('wpml-string-translation');
+        $I->wait(2);
+        $I->activatePlugin('wpml-translation-management');
+        $I->wait(2);
+        $I->activatePlugin('wpml-media');
 
     }
 
