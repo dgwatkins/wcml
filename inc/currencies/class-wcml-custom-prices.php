@@ -251,6 +251,8 @@ class WCML_Custom_Prices{
 
         $this->custom_pricing_output($product_id);
 
+        do_action( 'wcml_after_custom_prices_block', $product_id );
+
         wp_nonce_field('wcml_save_custom_prices','_wcml_custom_prices_nonce');
 
     }
@@ -378,6 +380,8 @@ class WCML_Custom_Prices{
                         $code
                     );
                     $this->update_custom_prices( $post_id, $custom_prices , $code );
+
+                    do_action( 'wcml_after_save_custom_prices', $post_id );
                 }
             }
         }

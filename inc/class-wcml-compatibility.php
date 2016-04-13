@@ -123,6 +123,11 @@ class WCML_Compatibility {
         if ( defined( 'WPSEO_VERSION') ) {
             $this->wpseo = new WCML_WPSEO();
         }
+
+        //Adventure Tours theme
+        if( function_exists( 'adventure_tours_check' ) ){
+            $this->adventure_tours = new WCML_Adventure_tours();
+        }
     }
 
 }
