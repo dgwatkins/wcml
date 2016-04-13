@@ -326,7 +326,7 @@ class WCML_Products{
             $current_language = $this->sitepress->get_current_language();
 
             if ( $current_language == $this->sitepress->get_default_language() ) {
-                $menu_order = $this->wpdb->get_var( $this->wpdb->prepare("SELECT {$this->wpdb->posts} FROM %s WHERE ID = %d", $product_id ) );
+                $menu_order = $this->wpdb->get_var( $this->wpdb->prepare("SELECT menu_order FROM {$this->wpdb->posts} WHERE ID = %d", $product_id ) );
                 $trid = $this->sitepress->get_element_trid($product_id, 'post_product');
                 $translations = $this->sitepress->get_element_translations($trid, 'post_product');
 
