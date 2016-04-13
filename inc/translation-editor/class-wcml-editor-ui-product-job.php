@@ -81,7 +81,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
     public function add_elements( ){
 
-        $this->add_field( new WPML_Editor_UI_Auto_Slug_Title_Field( 'title', __( 'Title', 'woocommerce-multilingual' ), $this->data, true ) );
+        $this->add_field( new WPML_Editor_UI_Single_Line_Field( 'title', __( 'Title', 'woocommerce-multilingual' ), $this->data, true ) );
         $this->add_field( new WPML_Editor_UI_Single_Line_Field( 'slug', __( 'Slug', 'woocommerce-multilingual' ), $this->data, true ) );
         $this->add_field( new WPML_Editor_UI_WYSIWYG_Field( 'product_content', __( 'Content / Description', 'woocommerce-multilingual' ), $this->data, true ) );
 
