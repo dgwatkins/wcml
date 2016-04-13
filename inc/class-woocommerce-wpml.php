@@ -51,6 +51,7 @@ class woocommerce_wpml {
         if( !$this->check_dependencies ){
             wp_enqueue_style( 'onthegosystems-icon', WCML_PLUGIN_URL . '/res/css/otgs-ico.css' );
             WCML_Resources::load_management_css();
+            WCML_Resources::load_tooltip_resources();
             return false;
         }
 
