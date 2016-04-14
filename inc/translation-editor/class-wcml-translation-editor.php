@@ -24,6 +24,8 @@ class WCML_Translation_Editor{
             add_filter( 'wpml_use_tm_editor', array( $this, 'force_woocommerce_native_editor'), 100 );
             add_action( 'wpml_pre_status_icon_display', array( $this, 'force_remove_wpml_translation_editor_links'), 100 );
             add_action( 'wp_ajax_wcml_editor_auto_slug', array( $this, 'auto_generate_slug' ) );
+
+            add_action('wpml_how_to_translate_posts_and_pages', array( $this, 'wpml_translation_editor_override_notice') );
         }
 
     }
@@ -253,6 +255,20 @@ class WCML_Translation_Editor{
         echo json_encode( array('slug' => $slug) );
         exit;
 
+
+    }
+
+    /**
+     * Shows a note on the WPML Multilingual Setup screen explaining that WCML overrides those settings for products
+     */
+    public function wpml_translation_editor_override_notice(){
+
+        ?>
+        <p class="icl-admin-message" style="margin-top: 0">
+            <?php printf( __('To configure how the %sWooCommerce products%s are translated, visit the WooCommerce Multiligual %ssettings%s page.',
+                'woocommerce-multilingual'), '<strong>', '</strong>', '<a href="' . admin_url('admin.php?page=wpml-wcml&tab=settings') . '">', '</a>' ); ?>
+        </p>
+        <?php
 
     }
 }
