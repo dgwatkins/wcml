@@ -21,10 +21,6 @@ class WCML_Attributes{
         }
 
         add_action( 'woocommerce_attribute_added', array( $this, 'set_attribute_readonly_config' ), 10, 2 );
-
-        //add filter when add term on product page
-        add_filter( 'wpml_create_term_lang', array( $this, 'product_page_add_language_info_to_term' ) );
-
         add_filter( 'wpml_translation_job_post_meta_value_translated', array($this, 'filter_product_attributes_for_translation'), 10, 2 );
 
     }
@@ -327,13 +323,6 @@ class WCML_Attributes{
         }
 
         return $attribute;
-    }
-
-    public function product_page_add_language_info_to_term( $lang ){
-        if( isset( $_POST[ 'action' ] ) && $_POST[ 'action' ] == 'woocommerce_add_new_attribute' ){
-            $lang = $this->sitepress->get_default_language();
-        }
-        return $lang;
     }
 
     public function filter_product_attributes_for_translation( $translated, $key ){
