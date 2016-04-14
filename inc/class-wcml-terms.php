@@ -68,13 +68,29 @@ class WCML_Terms{
         
     }
             
-    function save_wc_term_meta($original_tax,$result){
+    function save_wc_term_meta($original_tax, $result){
 
-        $term_wc_meta = $this->wpdb->get_results($this->wpdb->prepare("SELECT * FROM {$this->wpdb->woocommerce_termmeta} WHERE woocommerce_term_id=%s", $original_tax->term_id));
-        foreach ( $term_wc_meta as $wc_meta ){
-            $wc_original_metakey = $wc_meta->meta_key;
-            $wc_original_metavalue = $wc_meta->meta_value;
-            update_woocommerce_term_meta($result['term_id'], $wc_original_metakey, $wc_original_metavalue);
+
+        // WooCommerce before termmeta table migration
+        $wc_before_term_meta = get_option( 'db_version' ) < 34370;
+
+        // backwards compatibility - before the termmeta table was added
+        if( $wc_before_term_meta ){
+
+            $term_wc_meta = $this->wpdb->get_results($this->wpdb->prepare("SELECT * FROM {$this->wpdb->woocommerce_termmeta} WHERE woocommerce_term_id=%s", $original_tax->term_id));
+            foreach ( $term_wc_meta as $wc_meta ){
+                $wc_original_metakey = $wc_meta->meta_key;
+                $wc_original_metavalue = $wc_meta->meta_value;
+                update_woocommerce_term_meta($result['term_id'], $wc_original_metakey, $wc_original_metavalue);
+            }
+        // End of backwards compatibility - before the termmeta table was added
+        }else{
+
+            $term_wc_meta = get_term_meta($original_tax->term_id, false, 1);
+            foreach ( $term_wc_meta as $key => $values ) {
+                update_term_meta( $result['term_id'], $key, array_pop( $values ) );
+            }
+
         }
 
         //update flat rate options for shipping classes
@@ -173,7 +189,10 @@ class WCML_Terms{
     }    
     
     function sync_term_order($meta_id, $object_id, $meta_key, $meta_value) {
-        
+
+        // WooCommerce before termmeta table migration
+        $wc_before_term_meta = get_option( 'db_version' ) < 34370;
+
         if (!isset($_POST['thetaxonomy']) || !taxonomy_exists($_POST['thetaxonomy']) || substr($meta_key,0,5) != 'order') 
             return;
         
@@ -184,9 +203,17 @@ class WCML_Terms{
         $translations = $this->sitepress->get_element_translations($trid,'tax_' . $tax);
         if ($translations) foreach ($translations as $trans) {
             if ($trans->element_id != $term_taxonomy_id) {
-                $this->wpdb->update($this->wpdb->prefix.'woocommerce_termmeta', 
-                    array('meta_value' => $meta_value),
-                    array('woocommerce_term_id' => $trans->term_id,'meta_key' => $meta_key));
+
+                // Backwards compatibility - WooCommerce termmeta table
+                if( $wc_before_term_meta ) {
+                    $this->wpdb->update( $this->wpdb->prefix . 'woocommerce_termmeta',
+                        array('meta_value' => $meta_value),
+                        array('woocommerce_term_id' => $trans->term_id, 'meta_key' => $meta_key) );
+                // END Backwards compatibility - WooCommerce termmeta table
+                } else{
+                    update_term_meta( $trans->term_id, $meta_key, $meta_value);
+                }
+
             }
         }
         
