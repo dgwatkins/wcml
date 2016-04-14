@@ -95,8 +95,6 @@ class WCML_Products{
         //add sitepress filters
         add_filter( 'wpml_save_post_trid_value', array( $this, 'wpml_save_post_trid_value' ), 10, 3 );
         add_filter( 'wpml_save_post_lang', array( $this, 'wpml_save_post_lang_value' ), 10 );
-        //add filter when add term on product page
-        add_filter( 'wpml_create_term_lang', array( $this, 'product_page_add_language_info_to_term' ) );
 
         //quick & bulk edit
         add_action( 'woocommerce_product_quick_edit_save', array( $this, 'woocommerce_product_quick_edit_save' ) );
@@ -2454,15 +2452,6 @@ class WCML_Products{
                 update_post_meta($trnsl_variation_id,'attribute_'.$taxonomy,$slug);
             }
         }
-    }
-
-    function product_page_add_language_info_to_term($lang){
-        if(isset($_POST['action']) && $_POST['action'] == 'woocommerce_add_new_attribute'){
-            global $sitepress;
-            $lang = $sitepress->get_default_language();
-        }
-        return $lang;
-
     }
 
     function sync_product_gallery_duplicate_attachment($att_id, $dup_att_id){
