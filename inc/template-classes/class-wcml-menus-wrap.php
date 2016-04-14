@@ -63,7 +63,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
                     'name'      => __('Attributes', 'woocommerce-multilingual'),
                     'active'    => $current_tab == 'product-attributes' ? 'nav-tab-active':'',
                     'url'       => admin_url('admin.php?page=wpml-wcml&tab=product-attributes'),
-                    'translated'=> isset( $selected_attribute ) && $this->woocommerce_wpml->terms->is_fully_translated( 'pa_' . $selected_attribute->attribute_name)
+                    'translated'=> !$product_attributes || ( isset( $selected_attribute ) && $this->woocommerce_wpml->terms->is_fully_translated( 'pa_' . $selected_attribute->attribute_name) )
                 ),
                 'shipping_classes' => array(
                     'name'      => __('Shipping Classes', 'woocommerce-multilingual'),

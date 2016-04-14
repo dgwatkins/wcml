@@ -16,7 +16,7 @@
 
         <a class="js-tax-tab-product_shipping_class nav-tab {{ menu.shipping_classes.active }}" href="{{ menu.shipping_classes.url }}"
            title="{{ menu.shipping_classes.title }}">{{ menu.shipping_classes.name }}
-           {% if taxonomy.translated == false %}<i class="otgs-ico-warning"></i>{% endif %}
+           {% if menu.shipping_classes.translated == false %}<i class="otgs-ico-warning"></i>{% endif %}
         </a>
 
         {% if can_manage_options %}

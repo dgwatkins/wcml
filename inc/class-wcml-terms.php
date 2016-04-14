@@ -404,8 +404,8 @@ class WCML_Terms{
         $wcml_settings = $this->woocommerce_wpml->get_settings();
         
         $return = true;
-        
-        if(!isset($wcml_settings['untranstaled_terms'][$taxonomy])){
+
+        if( !isset($wcml_settings['untranstaled_terms'][$taxonomy]) ){
             $wcml_settings['untranstaled_terms'][$taxonomy] = $this->update_terms_translated_status($taxonomy);
         }
 
