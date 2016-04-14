@@ -1,17 +1,6 @@
 @import "mixins";
 @import "variables";
 
-.wcml-tabs {
-	min-width: 930px; //same as .wcml-wrap
-	@include clearfix();
-	.nav-tab {
-		margin-top: 5px;
-		@media (max-width: 1350px) {
-			margin-left: .2em;
-		}
-	}
-}
-
 .dis_base {
 	opacity: 0.5;
 }
@@ -49,6 +38,20 @@
 
 [class*="otgs-ico"]:before {
 	font-size: 16px;
+}
+
+.wcml-tabs {
+	min-width: 930px; //same as .wcml-wrap
+	@include clearfix();
+	.nav-tab {
+		margin-top: 5px;
+		@media (max-width: 1350px) {
+			margin-left: .2em;
+		}
+		[class*="otgs-ico"]:before {
+			font-size: 18px;
+		}
+	}
 }
 
 .wcml-section {
