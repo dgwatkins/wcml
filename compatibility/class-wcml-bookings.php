@@ -25,7 +25,6 @@ class WCML_Bookings{
 
         add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
 
-        add_filter( 'get_post_metadata', array( $this, 'filter_wc_booking_cost' ), 10, 4 );
         add_filter( 'woocommerce_bookings_process_cost_rules_cost', array( $this, 'wc_bookings_process_cost_rules_cost' ), 10, 3 );
         add_filter( 'woocommerce_bookings_process_cost_rules_base_cost', array( $this, 'wc_bookings_process_cost_rules_base_cost' ), 10, 3 );
         add_filter( 'woocommerce_bookings_process_cost_rules_override_block', array( $this, 'wc_bookings_process_cost_rules_override_block_cost' ), 10, 3 );
@@ -77,6 +76,8 @@ class WCML_Bookings{
 
             //lock fields on translations pages
             add_filter( 'wcml_js_lock_fields_ids', array( $this, 'wcml_js_lock_fields_ids' ) );
+        }else{
+            add_filter( 'get_post_metadata', array( $this, 'filter_wc_booking_cost' ), 10, 4 );
         }
 
         $this->clear_transient_fields();
