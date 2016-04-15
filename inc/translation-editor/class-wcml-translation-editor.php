@@ -3,7 +3,10 @@
 class WCML_Translation_Editor{
 
     private $woocommerce_wpml;
-    private $sitepress;
+	/**
+	 * @var SitePress
+	 */
+	private $sitepress;
 
     public function __construct( &$woocommerce_wpml, &$sitepress, &$wpdb ) {
 
@@ -32,7 +35,7 @@ class WCML_Translation_Editor{
 
     public function fetch_translation_job_for_editor( $job, $job_details ) {
 
-        if ( $job_details[ 'job_type' ] == 'post_product' ) {
+	    if ( $job_details['job_type'] === 'post_product' ) {
             $job = new WCML_Editor_UI_Product_Job( $job_details, $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
         }
 
@@ -40,11 +43,12 @@ class WCML_Translation_Editor{
     }
 
     public function get_translation_job_data_for_editor( $job_data ) {
+	    /** @var TranslationManagement $iclTranslationManagement */
         global $iclTranslationManagement;
 
         // See if it's a WooCommerce product.
         $job = $iclTranslationManagement->get_translation_job ( $job_data['job_id'] );
-        if ( $job && $job->original_post_type == 'post_product' ) {
+	    if ( $job && $job->original_post_type === 'post_product' ) {
             $job_data['job_type'] = 'wc_product';
             $job_data['job_id']   = $job->original_doc_id;
         }
@@ -54,8 +58,7 @@ class WCML_Translation_Editor{
 
     public function preselect_product_type_in_admin_screen(){
         global $pagenow;
-        if( 'post-new.php' == $pagenow ){
-            if( isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'product' && isset( $_GET[ 'trid' ] ) ){
+	    if ( 'post-new.php' === $pagenow && isset( $_GET['post_type'], $_GET['trid'] ) && $_GET['post_type'] === 'product'  ) {
                 $translations = $this->sitepress->get_element_translations( $_GET[ 'trid' ], 'post_product_type' );
                 foreach( $translations as $translation ){
                     if( $translation->original ) {
@@ -73,34 +76,35 @@ class WCML_Translation_Editor{
                 echo PHP_EOL . '// ]]>' . PHP_EOL;
                 echo '</script>';
             }
-        }
     }
 
-    /**
-     * Avoids the post translation links on the product post type.
-     *
-     * @global type $post
-     * @return type
-     */
+	/**
+	 * Avoids the post translation links on the product post type.
+	 *
+	 * @param string $output
+	 *
+	 * @return string
+	 */
     public function hide_post_translation_links($output){
         global $post;
 
-        if( is_null( $post ) ){
+	    if ( null === $post ){
             return $output;
         }
 
         $post_type = get_post_type( $post->ID );
         $checkout_page_id = get_option( 'woocommerce_checkout_page_id' );
 
-        if( $post_type == 'product' || is_page( $checkout_page_id ) ){
+	    if ( $post_type === 'product' || is_page( $checkout_page_id ) ){
             $output = '';
         }
 
         return $output;
     }
 
-    public function create_product_translation_package( $product_id, $trid, $language, $status ){
-        global $iclTranslationManagement;
+    public function create_product_translation_package( $product_id, $trid, $language, $status ) {
+	    /** @var TranslationManagement $iclTranslationManagement */
+	    global $iclTranslationManagement;
         //create translation package
         $translation_id = $this->wpdb->get_var( $this->wpdb->prepare("
                                 SELECT translation_id FROM {$this->wpdb->prefix}icl_translations WHERE trid=%d AND language_code='%s'
@@ -130,18 +134,18 @@ class WCML_Translation_Editor{
 
     public function add_languages_column( $columns ){
 
-        if ( ( version_compare(ICL_SITEPRESS_VERSION, '3.2', '<') && version_compare( WOOCOMMERCE_VERSION, '2.3', '<' ) ) || array_key_exists( 'icl_translations', $columns ) ){
+	    if ( array_key_exists( 'icl_translations', $columns ) || ( version_compare( ICL_SITEPRESS_VERSION, '3.2', '<' ) && version_compare( WOOCOMMERCE_VERSION, '2.3', '<' ) ) ){
             return $columns;
         }
         $active_languages = $this->sitepress->get_active_languages();
 
-        if ( count( $active_languages ) <= 1 || get_query_var( 'post_status' ) == 'trash') {
+	    if ( count( $active_languages ) <= 1 || get_query_var( 'post_status' ) === 'trash' ) {
             return $columns;
         }
         $languages = array();
 
         foreach ( $active_languages as $v ) {
-            if ( $v[ 'code' ] == $this->sitepress->get_current_language() )
+	        if ( $v['code'] === $this->sitepress->get_current_language() )
                 continue;
             $languages[ ] = $v[ 'code' ];
         }
@@ -150,7 +154,7 @@ class WCML_Translation_Editor{
 			FROM {$this->wpdb->prefix}icl_flags f
 				JOIN {$this->wpdb->prefix}icl_languages_translations l ON f.lang_code = l.language_code
 			WHERE l.display_language_code = %s AND f.lang_code IN (%s)
-		", $this->sitepress->get_admin_language(), join( "','", $languages ) ) );
+		", $this->sitepress->get_admin_language(), implode( "','", $languages ) ) );
 
         foreach ( $res as $r ) {
             if ( $r->from_template ) {
@@ -172,7 +176,7 @@ class WCML_Translation_Editor{
         $added = false;
         foreach ( $columns as $k => $v ) {
             $new_columns[ $k ] = $v;
-            if ( $k == 'name' ) {
+	        if ( $k === 'name' ) {
                 $new_columns[ 'icl_translations' ] = $flags_column;
                 $added = true;
             }
@@ -189,9 +193,9 @@ class WCML_Translation_Editor{
 
         $product_id = false;
 
-        if( ( isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) == 'product' ) ){
+	    if ( isset( $_GET['post'] ) && get_post_type( $_GET['post'] ) === 'product' ){
             $product_id = $_GET[ 'post' ];
-        }elseif( isset( $_POST[ 'action' ] ) && $_POST[ 'action' ] == 'woocommerce_load_variations' && isset( $_POST[ 'product_id' ] ) ){
+	    } elseif ( isset( $_POST['action'], $_POST['product_id'] ) && $_POST['action'] === 'woocommerce_load_variations' ){
             $product_id = $_POST[ 'product_id' ];
         }
 
@@ -216,15 +220,13 @@ class WCML_Translation_Editor{
     public function force_woocommerce_native_editor( $use_tm_editor ){
         $current_screen  = get_current_screen();
 
-        if( $current_screen->id == 'edit-product' || $current_screen->id == 'product' ){
+	    if ( $current_screen->id === 'edit-product' || $current_screen->id === 'product' ){
 
+		    $use_tm_editor = 1;
             if ( !$this->woocommerce_wpml->settings[ 'trnsl_interface' ] ) {
                 $use_tm_editor = 0;
-            }else{
-                $use_tm_editor = 1;
             }
-
-        } elseif( $current_screen->id == 'wpml_page_wpml-wcml' ) {
+	    } elseif ( $current_screen->id === 'wpml_page_wpml-wcml' ) {
             $use_tm_editor = 1;
         }
 
@@ -238,8 +240,8 @@ class WCML_Translation_Editor{
         global $wpml_tm_status_display_filter;
         $current_screen  = get_current_screen();
 
-        if ( !$this->woocommerce_wpml->settings[ 'trnsl_interface' ] && ( $current_screen->id == 'edit-product' || $current_screen->id == 'product' ) ) {
-            remove_filter( 'wpml_link_to_translation', array( $wpml_tm_status_display_filter, 'filter_status_link' ), 10, 4 );
+	    if ( ( $current_screen->id === 'edit-product' || $current_screen->id === 'product' ) && ! $this->woocommerce_wpml->settings['trnsl_interface'] ) {
+		    remove_filter( 'wpml_link_to_translation', array( $wpml_tm_status_display_filter, 'filter_status_link' ), 10 );
         }
 
     }
