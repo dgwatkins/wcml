@@ -12,9 +12,9 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
 	function __construct( $job_details, &$woocommerce_wpml, &$sitepress, &$wpdb  ) {
 
-        $this->woocommerce_wpml = $woocommerce_wpml;
-        $this->sitepress = $sitepress;
-        $this->wpdb = $wpdb;
+        $this->woocommerce_wpml =& $woocommerce_wpml;
+        $this->sitepress        =& $sitepress;
+        $this->wpdb             =& $wpdb;
         $this->not_display_fields_for_variables_product = array( '_purchase_note', '_regular_price', '_sale_price',
                                                                  '_price', '_min_variation_price', '_max_variation_price',
                                                                  '_min_variation_regular_price', '_max_variation_regular_price',
