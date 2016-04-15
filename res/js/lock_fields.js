@@ -14,11 +14,6 @@ jQuery(document).ready(function($){
     }
 
     var buttons = ['add_variation','link_all_variations','attribute_taxonomy','save_attributes','add_new_attribute','product_attributes .remove_row','add_attribute','select_all_attributes','select_no_attributes'];
-    if( unlock_fields.file_paths == 1 ){
-        buttons.push('upload_file_button');
-        buttons.push('insert');
-        buttons.push('delete');
-    }
     buttons = buttons.concat( non_standard_fields.classes );
 
     if( unlock_fields.file_paths == 1 ){
@@ -34,7 +29,7 @@ jQuery(document).ready(function($){
 
     for (i = 0; i < buttons.length; i++) {
         $('.'+buttons[i]).attr('disabled','disabled');
-        $('.'+buttons[i]).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show().css('float','right'));
+        $('.'+buttons[i]).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
     }
 
 
@@ -56,14 +51,17 @@ jQuery(document).ready(function($){
         inpt_names.push('menu_order');
     }
 
-    if( unlock_fields.file_paths == 1 ){
-        inpt_names.push('_wc_file_names[]');
-        inpt_names.push('_wc_file_urls[]');
-    }
-
     for (i = 0; i < inpt_names.length; i++) {
         $('input[name="'+inpt_names[i]+'"]').attr('readonly','readonly');
-        $('input[name="'+inpt_names[i]+'"]').after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
+
+        $('.dimensions_field span.wrap').css('float','left');
+        if( inpt_names[i] == '_width' || inpt_names[i] == '_height' || inpt_names[i] == '_length' ){
+            $('input[name="'+inpt_names[i]+'"]').css('margin-right',0);
+            $('input[name="'+inpt_names[i]+'"]').css('float','none');
+            $('input[name="'+inpt_names[i]+'"]').css('width','29%');
+
+        }
+            $('input[name="'+inpt_names[i]+'"]').after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
 
     }
 
