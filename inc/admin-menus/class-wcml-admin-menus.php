@@ -231,11 +231,11 @@ class WCML_Admin_Menus{
     public static function inf_editing_product_in_non_default_lang(){
         $message = '<div class="message error"><p>';
         $message .= sprintf(
-                        __( 'The recommended way to translate WooCommerce products is using the <b>
-                             <a href="%s">WooCommerce Multilingual products translation</a></b> page.
+                        __( 'The recommended way to translate WooCommerce products is using the
+                             %sWooCommerce Multilingual products translation%s page.
                              Please use this page only for translating elements that are not available in the WooCommerce Multilingual products translation table.',
                             'woocommerce-multilingual' ),
-                    admin_url( 'admin.php?page=wpml-wcml&tab=products' ) );
+                    '<strong><a href="' .admin_url( 'admin.php?page=wpml-wcml&tab=products' ) . '">', '</a></strong>' );
         $message .= '</p></div>';
 
         echo $message;

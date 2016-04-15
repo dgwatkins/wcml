@@ -98,7 +98,7 @@ class woocommerce_wpml {
         new WCML_Ajax_Setup;
 
         if ( 'yes' == get_option( 'woocommerce_api_enabled' ) ){
-            $this->wc_rest_api = new WCML_WooCommerce_Rest_API_Support;
+            $this->wc_rest_api = new WCML_WooCommerce_Rest_API_Support( $this, $sitepress );
         }
 
         WCML_Install::initialize( $this, $sitepress );

@@ -3,6 +3,9 @@
 class WCML_Synchronize_Product_Data{
 
     private $woocommerce_wpml;
+    /**
+     * @var SitePress
+     */
     private $sitepress;
     private $wpdb;
 
@@ -35,9 +38,10 @@ class WCML_Synchronize_Product_Data{
      * This function takes care of synchronizing original product
      */
     public function sync_post_action( $post_id, $post ){
-        global $pagenow, $sitepress_settings;
-        $original_language = $this->woocommerce_wpml->products->get_original_product_language( $post_id );
-        $current_language = $this->sitepress->get_current_language();
+        global $pagenow;
+
+        $original_language  = $this->woocommerce_wpml->products->get_original_product_language( $post_id );
+        $current_language   = $this->sitepress->get_current_language();
         $duplicated_post_id = apply_filters( 'translate_object_id', $post_id, 'product', false, $original_language );
         $wpml_media_options = maybe_unserialize( get_option( '_wpml_media' ) );
 
@@ -230,6 +234,10 @@ class WCML_Synchronize_Product_Data{
         return $this->sync_product_stocks( $order, 'restore' );
     }
 
+    /**
+     * @param $order WC_Order
+     * @param $action
+     */
     public function sync_product_stocks( $order, $action ){
         $order_id = $order->id;
 

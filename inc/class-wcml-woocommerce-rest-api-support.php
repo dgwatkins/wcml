@@ -2,8 +2,19 @@
 
 class WCML_WooCommerce_Rest_API_Support{
 
+    private $woocommerce_wpml;
+    /**
+     * @var SitePress
+     */
+    private $sitepress;
+    private $sitepress_settings;
 
-    function __construct(){
+    function __construct( &$woocommerce_wpml, &$sitepress ){
+
+        $this->woocommerce_wpml     =& $woocommerce_wpml;
+        $this->sitepress            =& $sitepress;
+        $this->sitepress_settings   =  $this->sitepress->get_settings();
+
         add_action( 'parse_request', array( $this, 'use_canonical_home_url' ), -10 );
         add_action( 'init', array( $this, 'init' ) );
 
@@ -19,14 +30,14 @@ class WCML_WooCommerce_Rest_API_Support{
         add_action( 'woocommerce_api_product_response', array( $this, 'append_product_language_and_translations' ) );
         add_action( 'woocommerce_api_product_response', array( $this, 'append_product_secondary_prices' ) );
 
+        add_action( 'woocommerce_api_edit_product', array( $this, 'sync_product_with_translations' ), 10, 2 );
     }
 
     public function init(){
-        global $sitepress,$sitepress_settings;
 
         //remove rewrite rules filtering for PayPal IPN url
-        if( strstr($_SERVER['REQUEST_URI'],'WC_Gateway_Paypal') && $sitepress_settings[ 'urls' ][ 'directory_for_default_language' ] ) {
-            remove_filter('option_rewrite_rules', array($sitepress, 'rewrite_rules_filter'));
+        if( strstr($_SERVER['REQUEST_URI'],'WC_Gateway_Paypal') && $this->sitepress_settings[ 'urls' ][ 'directory_for_default_language' ] ) {
+            remove_filter('option_rewrite_rules', array($this->sitepress, 'rewrite_rules_filter'));
         }
 
     }
@@ -53,7 +64,7 @@ class WCML_WooCommerce_Rest_API_Support{
     }
 
     public function dispatch_args_filter( $args, $callback ){
-        global $sitepress, $wp;
+        global $wp;
 
         $route = $wp->query_vars['wc-api-route'];
 
@@ -62,23 +73,23 @@ class WCML_WooCommerce_Rest_API_Support{
 
             $lang = $args['filter']['lang'];
 
-            $active_languages = $sitepress->get_active_languages();
+            $active_languages = $this->sitepress->get_active_languages();
 
             if ( !isset($active_languages[$lang]) && $lang != 'all' ) {
                 throw new WC_API_Exception( '404', sprintf( __( 'Invalid language parameter: %s' ), $lang ), '404' );
             }
 
-            if ( $lang != $sitepress->get_default_language() ) {
+            if ( $lang != $this->sitepress->get_default_language() ) {
                 if ( $lang != 'all' ) {
 
-                    $sitepress->switch_lang( $lang  );
+                    $this->sitepress->switch_lang( $lang  );
 
                 }else{
 
                     switch($route){
                         case '/products':
                             // Remove filters for the post query
-                            remove_action( 'query_vars', array( $sitepress, 'query_vars' ) );
+                            remove_action( 'query_vars', array( $this->sitepress, 'query_vars' ) );
                             global $wpml_query_filter;
                             remove_filter( 'posts_join', array( $wpml_query_filter, 'posts_join_filter' ), 10 );
                             remove_filter( 'posts_where', array( $wpml_query_filter, 'posts_where_filter' ), 10 );
@@ -86,8 +97,8 @@ class WCML_WooCommerce_Rest_API_Support{
 
                         case '/products/categories':
                             // Remove WPML language filters for the terms query
-                            remove_filter('terms_clauses', array($sitepress,'terms_clauses'));
-                            remove_filter( 'get_term', array( $sitepress, 'get_term_adjust_id' ), 1 );
+                            remove_filter('terms_clauses', array($this->sitepress,'terms_clauses'));
+                            remove_filter( 'get_term', array( $this->sitepress, 'get_term_adjust_id' ), 1 );
                             break;
 
                     }
@@ -193,7 +204,6 @@ class WCML_WooCommerce_Rest_API_Support{
      */
     public function filter_order_items_by_language( $order_data, $order, $fields, $server ){
 
-
         $lang = get_query_var('lang');
 
         $order_lang = get_post_meta($order->ID, 'wpml_language');
@@ -232,13 +242,14 @@ class WCML_WooCommerce_Rest_API_Support{
      *
      * @param $order_id
      * @param $data
+     *
+     * @throws WC_API_Exception
      */
     public function set_order_language( $order_id, $data ){
-        global $sitepress;
 
         if( isset( $data['lang'] ) ){
 
-            $active_languages = $sitepress->get_active_languages();
+            $active_languages = $this->sitepress->get_active_languages();
             if( !isset( $active_languages[$data['lang']] ) ){
                 throw new WC_API_Exception( '404', sprintf( __( 'Invalid language parameter: %s' ), $data['lang'] ), '404' );
             }
@@ -259,33 +270,35 @@ class WCML_WooCommerce_Rest_API_Support{
      *
      */
     public function set_product_language( $id, $data ){
-        global $sitepress;
 
         if( isset( $data['lang'] )){
-            $active_languages = $sitepress->get_active_languages();
+            $active_languages = $this->sitepress->get_active_languages();
             if( !isset( $active_languages[$data['lang']] ) ){
                 throw new WC_API_Exception( '404', sprintf( __( 'Invalid language parameter: %s' ), $data['lang'] ), '404' );
             }
             if( isset( $data['translation_of'] ) ){
-                $trid = $sitepress->get_element_trid( $data['translation_of'], 'post_product' );
+                $trid = $this->sitepress->get_element_trid( $data['translation_of'], 'post_product' );
                 if( empty($trid) ){
                     throw new WC_API_Exception( '404', sprintf( __( 'Source product id not found: %s' ), $data['translation_of'] ), '404' );
                 }
             }else{
                 $trid = null;
             }
-            $sitepress->set_element_language_details( $id, 'post_product', $trid, $data['lang'] );
+            $this->sitepress->set_element_language_details( $id, 'post_product', $trid, $data['lang'] );
         }
 
     }
 
     /**
      * Sets custom prices in secondary currencies for products
+     *
+     * @param $id
+     * @param @data
+     *
      */
     public function set_product_custom_prices( $id, $data ){
-        global $woocommerce_wpml;
 
-        if( !empty($woocommerce_wpml->multi_currency)  ){
+        if( !empty($this->woocommerce_wpml->multi_currency)  ){
 
             if( (!empty($data['custom_prices'])) && (empty($data['translation_of']))){
                 update_post_meta( $id, '_wcml_custom_prices_status', 1);
@@ -297,7 +310,7 @@ class WCML_WooCommerce_Rest_API_Support{
                         $prices_uscore['_' . $k] = $p;
                     }
 
-                    $woocommerce_wpml->multi_currency->custom_prices->update_custom_prices( $id, $prices_uscore, $currency );
+                    $this->woocommerce_wpml->multi_currency->custom_prices->update_custom_prices( $id, $prices_uscore, $currency );
 
                 }
 
@@ -307,17 +320,28 @@ class WCML_WooCommerce_Rest_API_Support{
     }
 
     /**
+     * Synchronizes product fields with its translations
+     *
+     * @param $id
+     * @param $data
+     */
+    public function sync_product_with_translations( $id, $data ){
+
+        $this->woocommerce_wpml->sync_product_data->sync_post_action( $id, $data );
+
+    }
+
+    /**
      * Appends the language and translation information to the get_product response
      *
      * @param $product_data
      */
     public function append_product_language_and_translations( $product_data ){
-        global $sitepress;
 
         $product_data['translations'] = array();
 
-        $trid = $sitepress->get_element_trid( $product_data['id'], 'post_product' );
-        $translations = $sitepress->get_element_translations( $trid, 'post_product');
+        $trid = $this->sitepress->get_element_trid( $product_data['id'], 'post_product' );
+        $translations = $this->sitepress->get_element_translations( $trid, 'post_product');
         foreach( $translations as $translation ){
             if( $translation->element_id == $product_data['id'] ){
                 $product_language = $translation->language_code;
@@ -337,22 +361,20 @@ class WCML_WooCommerce_Rest_API_Support{
      * @param $product_data
      */
     public function append_product_secondary_prices( $product_data ){
-        global $woocommerce_wpml;
 
-
-        if( !empty($woocommerce_wpml->multi_currency) && !empty($woocommerce_wpml->settings['currencies_order']) ){
+        if( !empty($this->woocommerce_wpml->multi_currency) && !empty($this->woocommerce_wpml->settings['currencies_order']) ){
 
             $product_data['multi-currency-prices'] = array();
 
             $custom_prices_on = get_post_meta( $product_data['id'], '_wcml_custom_prices_status', true);
 
-            foreach( $woocommerce_wpml->settings['currencies_order'] as $currency ){
+            foreach( $this->woocommerce_wpml->settings['currencies_order'] as $currency ){
 
                 if( $currency != get_option('woocommerce_currency') ){
 
                     if( $custom_prices_on ){
 
-                        $custom_prices = $woocommerce_wpml->multi_currency->custom_prices->get_product_custom_prices( $product_data['id'], $currency );
+                        $custom_prices = $this->woocommerce_wpml->multi_currency->custom_prices->get_product_custom_prices( $product_data['id'], $currency );
                         foreach( $custom_prices as $key => $price){
                             $product_data['multi-currency-prices'][$currency][ preg_replace('#^_#', '', $key) ] = $price;
 
@@ -360,10 +382,10 @@ class WCML_WooCommerce_Rest_API_Support{
 
                     } else {
                         $product_data['multi-currency-prices'][$currency]['regular_price'] =
-                            $woocommerce_wpml->multi_currency->prices->raw_price_filter( $product_data['regular_price'], $currency );
+                            $this->woocommerce_wpml->multi_currency->prices->raw_price_filter( $product_data['regular_price'], $currency );
                         if( !empty($product_data['sale_price']) ){
                             $product_data['multi-currency-prices'][$currency]['sale_price'] =
-                                $woocommerce_wpml->multi_currency->prices->raw_price_filter( $product_data['sale_price'], $currency );
+                                $this->woocommerce_wpml->multi_currency->prices->raw_price_filter( $product_data['sale_price'], $currency );
                         }
                     }
 
