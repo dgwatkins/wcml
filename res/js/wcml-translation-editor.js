@@ -2,9 +2,11 @@ jQuery( function($){
 
 	var WCML_WPML_Translation_Editor = {
 
-		is_wcml_product: false,
-		field_views: null,
-		footer_view: null,
+		is_wcml_product: 	false,
+		field_views: 		null,
+		footer_view: 		null,
+		save_buttons_tip:	null,
+
 		
 		init: function(){
 
@@ -20,7 +22,7 @@ jQuery( function($){
 					$(document).on( 'blur', '#job_field_title .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
 					$(document).on( 'focus', '#job_field_slug .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
 					$(document).on( 'blur', '#job_field_slug .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
-					WCML_Tooltip.add_tip_before_elem( '.js-save-and-close', strings.save_tooltip, 'line-height: 28px; margin-right: 3px;' );
+
 				}
 
 			});
@@ -135,10 +137,15 @@ jQuery( function($){
 		do_editor_ready : function( event, job_type, field_views, footer_view ) {
 			WCML_WPML_Translation_Editor.is_wcml_product = job_type === 'post_product';
 			if ( WCML_WPML_Translation_Editor.is_wcml_product ) {
+
+				WCML_WPML_Translation_Editor.save_buttons_tip = WCML_Tooltip.add_before( '.js-save-and-close', strings.save_tooltip, 'margin-right: 3px;' );
+
 				WCML_WPML_Translation_Editor.field_views = field_views;
 				WCML_WPML_Translation_Editor.footer_view = footer_view;
 				
 				WCML_WPML_Translation_Editor.update_save_button_state();
+
+				WCML_Tooltip.add_after( '.js-resign', strings.resign_tooltip, 'margin-left:-10px;line-height:28px;' );
 			}
 		},
 		
@@ -150,12 +157,14 @@ jQuery( function($){
 				var translation = view.getTranslation();
 				if ( translation !== '' && jQuery.inArray( view.getFieldType(), one_of_these_fields_is_required ) !== -1 ) {
 					disable_buttons = false;
-					WCML_Tooltip.hide();
+					if( WCML_WPML_Translation_Editor.save_buttons_tip ){
+						WCML_WPML_Translation_Editor.save_buttons_tip.hide();
+					}
 				}
 			});
 
 			if( disable_buttons ){
-				WCML_Tooltip.show();
+				WCML_WPML_Translation_Editor.save_buttons_tip.show();
 			}
 
 			WCML_WPML_Translation_Editor.footer_view.disableSaveButtons( disable_buttons );

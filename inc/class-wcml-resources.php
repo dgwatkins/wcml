@@ -34,7 +34,7 @@ class WCML_Resources {
 
     private static function load_css() {
 
-        if ( self::$is_wpml_wcml_page ) {
+        if ( self::$is_wpml_wcml_page || self::$page == WPML_TM_FOLDER . '/menu/translations-queue.php' ) {
 
             self::load_management_css();
 
@@ -123,8 +123,9 @@ class WCML_Resources {
             wp_enqueue_script( 'wcml-editor' );
             wp_localize_script( 'wcml-editor', 'strings',
                 array(
-                    'choose' => __( 'Choose a file', 'woocommerce_multilingual' ),
-                    'save_tooltip' => __( 'At least one of these fields is required: title, content or excerpt', 'woocommerce_multilingual' ),
+                    'choose'        => __( 'Choose a file', 'woocommerce_multilingual' ),
+                    'save_tooltip'  => __( 'At least one of these fields is required: title, content or excerpt', 'woocommerce_multilingual' ),
+                    'resign_tooltip'=> __( 'This translation job will no longer be assigned to you. Other translators will be able take it and continue the translation.', 'woocommerce-multilingual')
                 )
             );
         }
