@@ -42,14 +42,14 @@ class WCML_Tab_Manager{
     }
 
     function sync_tabs( $original_product_id, $trnsl_product_id, $data, $lang ){
-        global $wc_tab_manager, $sitepress, $woocommerce, $woocommerce_wpml;
+        global $sitepress, $woocommerce, $woocommerce_wpml;
 
         //check if "duplicate" product
         if( ( isset( $_POST['icl_ajx_action'] ) && ( $_POST['icl_ajx_action'] == 'make_duplicates' ) ) || ( get_post_meta( $trnsl_product_id , '_icl_lang_duplicate_of', true ) ) ){
             $this->duplicate_tabs( $original_product_id, $trnsl_product_id, $lang );
         }
 
-        $orig_prod_tabs = $wc_tab_manager->get_product_tabs( $original_product_id );
+        $orig_prod_tabs = $this->get_product_tabs( $original_product_id );
 
         if( $orig_prod_tabs ){
             $trnsl_product_tabs = array();
@@ -206,8 +206,7 @@ class WCML_Tab_Manager{
             return false;
         }
 
-        global $wc_tab_manager;
-        $orig_prod_tabs = $wc_tab_manager->get_product_tabs( $product_id );
+        $orig_prod_tabs = $this->get_product_tabs( $product_id );
         if( !$orig_prod_tabs ) return false;
 
         $tabs_section = new WPML_Editor_UI_Field_Section( __( 'Product tabs', 'woocommerce-multilingual' ) );
@@ -243,8 +242,8 @@ class WCML_Tab_Manager{
 
 
     function custom_box_html_data( $data, $product_id, $translation, $lang ){
-        global $wc_tab_manager;
-        $orig_prod_tabs = $wc_tab_manager->get_product_tabs( $product_id );
+
+        $orig_prod_tabs = $this->get_product_tabs( $product_id );
 
         if( empty($orig_prod_tabs) ){
             return $data;
@@ -265,7 +264,7 @@ class WCML_Tab_Manager{
         if( $translation ){
             $tr_product_id = $translation->ID;
 
-            $tr_prod_tabs = $wc_tab_manager->get_product_tabs( $translation->ID );
+            $tr_prod_tabs = $this->get_product_tabs( $translation->ID );
 
             if( !is_array( $tr_prod_tabs ) ){
                 return $data; // __('Please update original product','woocommerce-multilingual');
@@ -501,6 +500,21 @@ class WCML_Tab_Manager{
             }
 
         }
+    }
+
+    public function get_product_tabs( $product_id ) {
+
+        $override_tab_layout = get_post_meta( $product_id, '_override_tab_layout', true );
+
+        if ( 'yes' == $override_tab_layout ) {
+            // product defines its own tab layout?
+            $product_tabs = get_post_meta( $product_id, '_product_tabs', true );
+        } else {
+            // otherwise, get the default layout if any
+            $product_tabs = get_option( 'wc_tab_manager_default_layout', false );
+        }
+
+        return $product_tabs;
     }
 
 }
