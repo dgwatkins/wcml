@@ -25,7 +25,7 @@ class WCML_Translation_Editor{
             add_action( 'wpml_pre_status_icon_display', array( $this, 'force_remove_wpml_translation_editor_links'), 100 );
             add_action( 'wp_ajax_wcml_editor_auto_slug', array( $this, 'auto_generate_slug' ) );
 
-            add_action('wpml_how_to_translate_posts_and_pages', array( $this, 'wpml_translation_editor_override_notice') );
+            add_action('wpml_doc_translation_method_below', array( $this, 'wpml_translation_editor_override_notice') );
         }
 
     }
@@ -102,8 +102,8 @@ class WCML_Translation_Editor{
     public function create_product_translation_package( $product_id, $trid, $language, $status ){
         global $iclTranslationManagement;
         //create translation package
-        $translation_id = $this->wpdb->get_var( $wpdb->prepare("
-                                SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND language_code='%s'
+        $translation_id = $this->wpdb->get_var( $this->wpdb->prepare("
+                                SELECT translation_id FROM {$this->wpdb->prefix}icl_translations WHERE trid=%d AND language_code='%s'
                             ", $trid, $language));
 
         $md5 = $iclTranslationManagement->post_md5( get_post( $product_id ) );
