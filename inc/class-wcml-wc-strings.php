@@ -87,17 +87,11 @@ class WCML_WC_Strings{
 
         if(is_admin() && $pagenow == 'options-permalink.php'){
             add_filter( 'gettext_with_context', array( $this, 'category_base_in_strings_language' ), 99, 3 );
-
-            if( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-                add_action( 'admin_footer', array( $this, 'show_custom_url_base_translation_links' ) );
-            }
-
+            add_action( 'admin_footer', array( $this, 'show_custom_url_base_translation_links' ) );
             add_action('admin_footer', array($this, 'show_custom_url_base_language_requirement'));
         }
 
-        if(is_admin() && $pagenow == 'admin.php' && isset($_GET['page']) && $_GET['page'] == 'wc-settings'){
-            add_action('admin_footer', array($this, 'show_language_notice_for_wc_settings'));
-        }
+
         
         if(is_admin() && $pagenow == 'edit.php' && isset($_GET['page']) && $_GET['page'] == 'woocommerce_attributes'){
             add_action('admin_footer', array($this, 'show_attribute_label_language_warning'));    
@@ -417,7 +411,6 @@ class WCML_WC_Strings{
     }
 
     function show_custom_url_base_language_requirement(){
-        $this->string_language_notice();
         $category_base = ($c = get_option('category_base') ) ? $c : 'category';
         ?>
         <script>
@@ -512,59 +505,6 @@ class WCML_WC_Strings{
             </script>
         <?php }
 
-    }
-
-    function show_language_notice_for_wc_settings(){
-        $this->string_language_notice();
-        ?>
-        <script>
-            var notice_ids = ['woocommerce_new_order_subject','woocommerce_new_order_heading',
-                            'woocommerce_cancelled_order_subject','woocommerce_cancelled_order_heading',
-                            'woocommerce_customer_processing_order_subject','woocommerce_customer_processing_order_heading',
-                            'woocommerce_customer_completed_order_subject','woocommerce_customer_completed_order_heading',
-                            'woocommerce_customer_invoice_subject','woocommerce_customer_invoice_heading',
-                            'woocommerce_customer_note_subject','woocommerce_customer_note_heading',
-                            'woocommerce_customer_reset_password_subject','woocommerce_customer_reset_password_heading',
-                            'woocommerce_customer_new_account_subject','woocommerce_customer_new_account_heading',
-                            'woocommerce_bacs_title','woocommerce_bacs_description','woocommerce_bacs_instructions',
-                            'woocommerce_cheque_title','woocommerce_cheque_description','woocommerce_cheque_instructions',
-                            'woocommerce_cod_title','woocommerce_cod_description','woocommerce_cod_instructions',
-                            'woocommerce_paypal_title','woocommerce_paypal_description',
-                            'woocommerce_checkout_pay_endpoint',
-                            'woocommerce_checkout_order_received_endpoint',
-                            'woocommerce_myaccount_add_payment_method_endpoint',
-                            'woocommerce_myaccount_view_order_endpoint',
-                            'woocommerce_myaccount_edit_account_endpoint',
-                            'woocommerce_myaccount_edit_address_endpoint',
-                            'woocommerce_myaccount_lost_password_endpoint',
-                            'woocommerce_logout_endpoint'
-            ];
-
-            for (i = 0; i < notice_ids.length; i++) {
-
-                if( jQuery('#'+notice_ids[i]).length ){
-                    jQuery('#'+notice_ids[i]).after(jQuery('#wpml_wcml_custom_base_req').html());
-                }
-
-            }
-
-        </script>
-    <?php
-    }
-
-    function string_language_notice(){
-        global $sitepress_settings, $sitepress,$woocommerce_wpml;
-
-        echo '<div id="wpml_wcml_custom_base_req" style="display:none"><div><i>';
-        if(  !WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $sitepress_settings['st']['strings_language'] != $sitepress->get_default_language() ){
-            $strings_language = $sitepress->get_language_details($sitepress_settings['st']['strings_language']);
-            echo sprintf(__('Please enter this text in %s', 'woocommerce-multilingual'), '<strong>' . $strings_language['display_name'] . '</strong>');
-            echo '</i>&nbsp;<i class="icon-question-sign wcml_tootlip_icon" data-tip="';
-            echo sprintf(__('You have to enter this text in the strings language ( %s ) so you can translate it using the WPML String Translation.', 'woocommerce-multilingual'), $strings_language['display_name'] ).'">';
-        }
-        echo '</i></div></div>';
-
-        WCML_Resources::load_tooltip_resources();
     }
 
     function show_attribute_label_language_warning(){
