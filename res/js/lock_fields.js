@@ -61,7 +61,13 @@ jQuery(document).ready(function($){
             $('input[name="'+inpt_names[i]+'"]').css('width','29%');
 
         }
+
+        if( inpt_names[i] == '_sale_price_dates_to' ){
+            $('input[name="'+inpt_names[i]+'"]').after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').css('float','left').show());
+        }else{
             $('input[name="'+inpt_names[i]+'"]').after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
+        }
+
 
     }
 
