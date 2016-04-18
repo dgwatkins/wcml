@@ -284,27 +284,6 @@ jQuery(document).ready(function($){
         
     }
 
-    $(document).on('click', '#wcml_dimiss_non_default_language_warning', function(){
-        $(this).attr('disabled', 'disabled');   
-        var ajaxLoader = $('<span class="spinner">');
-        $(this).parent().append(ajaxLoader);
-        ajaxLoader.show();
-        $.ajax({
-            type: 'post',
-            url: ajaxurl,
-            dataType:'json',
-            data: {
-                action: 'wcml_update_setting_ajx',
-                setting: 'dismiss_non_default_language_warning',
-                value: 1,
-                nonce: $('#wcml_settings_nonce').val()
-            },
-            success: function(response){
-                location.reload();
-            }
-        });
-    });
-
     $(document).on('click', '.wcml_save_base', function(e) {
         e.preventDefault();
 

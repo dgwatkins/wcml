@@ -24,8 +24,6 @@ jQuery( function($){
 
                 $(document).on('change', '.default_currency select', WCML_Multi_Currency.change_default_currency);
 
-                $(document).on('click', '#wcml_dimiss_non_default_language_warning', WCML_Multi_Currency.dismiss_non_default_language_warning);
-
                 WCML_Multi_Currency.setup_currencies_sorting();
 
                 $(document).on('click','input[name="currency_switcher_style"]', WCML_Multi_Currency.update_currency_switcher_style);
@@ -347,29 +345,6 @@ jQuery( function($){
 
         is_number: function(n){
             return !isNaN(parseFloat(n)) && isFinite(n);
-        },
-
-        dismiss_non_default_language_warning: function(){
-
-            $(this).attr('disabled', 'disabled');
-            var ajaxLoader = $('<span class="spinner">');
-            $(this).parent().append(ajaxLoader);
-            ajaxLoader.show();
-            $.ajax({
-                type: 'post',
-                url: ajaxurl,
-                dataType:'json',
-                data: {
-                    action: 'wcml_update_setting_ajx',
-                    setting: 'dismiss_non_default_language_warning',
-                    value: 1,
-                    nonce: $('#wcml_settings_nonce').val()
-                },
-                success: function(response){
-                    location.reload();
-                }
-            });
-
         },
 
         setup_currencies_sorting: function(){

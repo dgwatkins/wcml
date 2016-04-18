@@ -9,7 +9,6 @@ class WCML_WC_Strings{
     function __construct(){
 
         add_action( 'init', array( $this, 'init' ) );
-        add_action( 'init', array( $this, 'pre_init' ) );
         add_filter( 'query_vars', array( $this, 'translate_query_var_for_product' ) );
         add_filter( 'wp_redirect', array( $this, 'encode_shop_slug' ), 10, 2 );
         add_action( 'registered_taxonomy', array ( $this, 'translate_attributes_label_in_wp_taxonomies' ), 100, 3 );
@@ -57,14 +56,6 @@ class WCML_WC_Strings{
         return $shipping_methods;
     }
 
-    function pre_init(){
-        // Slug translation
-        if( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ){
-            add_filter('gettext_with_context', array($this, 'translate_default_slug'), 2, 4);
-        }
-
-    }
-    
     function init(){
         global $pagenow, $sitepress;
 
@@ -90,13 +81,6 @@ class WCML_WC_Strings{
             add_action( 'admin_footer', array( $this, 'show_custom_url_base_translation_links' ) );
             add_action('admin_footer', array($this, 'show_custom_url_base_language_requirement'));
         }
-
-
-        
-        if(is_admin() && $pagenow == 'edit.php' && isset($_GET['page']) && $_GET['page'] == 'woocommerce_attributes'){
-            add_action('admin_footer', array($this, 'show_attribute_label_language_warning'));    
-        }
-
         add_action( 'woocommerce_product_options_attributes', array ( $this, 'notice_after_woocommerce_product_options_attributes' ) );
 
         add_filter( 'woocommerce_attribute_taxonomies', array( $this, 'translate_attribute_taxonomies_labels') );
@@ -507,30 +491,6 @@ class WCML_WC_Strings{
 
     }
 
-    function show_attribute_label_language_warning(){
-        global $sitepress_settings, $sitepress;
-
-        if(!WPML_SUPPORT_STRINGS_IN_DIFF_LANG && $sitepress_settings['st']['strings_language'] != $sitepress->get_default_language()){
-            $default_language = $sitepress->get_language_details($sitepress->get_default_language());
-            $strings_language = $sitepress->get_language_details($sitepress_settings['st']['strings_language']);
-            echo '<div id="wpml_wcml_attr_language" style="display:none"><div class="icl_cyan_box"><i>';
-            echo sprintf(__("You need to enter attribute names in %s (even though your site's default language is %s). Then, translate it to %s and the rest of the site's languages using in the %sWooCommerce Multlingual admin%s.", 'woocommerce-multilingual'),
-                 $strings_language['display_name'],
-                 $default_language['display_name'],  $default_language['display_name'],
-                '<strong><a href="' . admin_url('admin.php?page=wpml-wcml') . '">', '</a></strong>');
-            echo '</i></div><br /></div>';
-            ?>
-            <script>
-                if(jQuery('#attribute_label').length){
-                    jQuery('#attribute_label').parent().prepend(jQuery('#wpml_wcml_attr_language').html());
-                }
-            </script>
-            <?php
-
-        }
-
-    }
-
     function category_base_in_strings_language($text, $original_value, $context){
         if($context == 'slug' && ($original_value == 'product-category' || $original_value == 'product-tag')){
             $text = $original_value;
@@ -562,87 +522,57 @@ class WCML_WC_Strings{
     }
 
     function get_domain_language( $domain ){
+        global $sitepress;
 
-        if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-            global $sitepress;
+        $lang_of_domain = new WPML_Language_Of_Domain( $sitepress );
+        $domain_lang = $lang_of_domain->get_language( $domain );
 
-            $lang_of_domain = new WPML_Language_Of_Domain( $sitepress );
-            $domain_lang = $lang_of_domain->get_language( $domain );
-
-            if ( $domain_lang ) {
-                $source_lang = $domain_lang;
-            }else{
-                $source_lang = 'en';
-            }
-
-            return $source_lang;
+        if ( $domain_lang ) {
+            $source_lang = $domain_lang;
         }else{
-            global $sitepress_settings;
-
-            if ( isset($sitepress_settings['st']['strings_language']) ){
-                return $sitepress_settings['st']['strings_language'];
-            }
-
-            return 'en';
+            $source_lang = 'en';
         }
 
+        return $source_lang;
     }
 
     function get_string_language( $value, $context, $name = false ){
+        global $wpdb;
 
-        if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-            global $wpdb;
+        if( $name !== false ){
 
-            if( $name !== false ){
+            $string_language = apply_filters( 'wpml_get_string_language', null, $context, $name );
 
-                $string_language = apply_filters( 'wpml_get_string_language', null, $context, $name );
+        }else{
 
-            }else{
+            $string_id = icl_get_string_id( $value, $context, $name );
 
-                $string_id = icl_get_string_id( $value, $context, $name );
-
-                if( !$string_id ){
-                    return 'en';
-                }
-
-                $string_object                  = new WPML_ST_String($string_id, $wpdb);
-                $string_language                = $string_object->get_language();
-
-            }
-
-            if( !$string_language ){
+            if( !$string_id ){
                 return 'en';
             }
 
-            return $string_language;
-        }else{
-            global $sitepress_settings;
+            $string_object                  = new WPML_ST_String($string_id, $wpdb);
+            $string_language                = $string_object->get_language();
 
-            if ( isset($sitepress_settings['st']['strings_language']) ){
-                return $sitepress_settings['st']['strings_language'];
-            }
+        }
 
+        if( !$string_language ){
             return 'en';
         }
+
+        return $string_language;
 
     }
 
     function set_string_language( $value, $context, $name , $language ){
+        global $wpdb;
 
-        if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-            global $wpdb;
+        $string_id = icl_get_string_id( $value, $context, $name );
 
-            $string_id = icl_get_string_id( $value, $context, $name );
+        $string_object                  = new WPML_ST_String( $string_id, $wpdb );
+        $string_language                = $string_object->set_language( $language );
 
-            $string_object                  = new WPML_ST_String( $string_id, $wpdb );
-            $string_language                = $string_object->set_language( $language );
-
-            return $string_language;
-        }else{
-
-            return false;
-        }
-
+        return $string_language;
     }
 
 

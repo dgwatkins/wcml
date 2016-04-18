@@ -1,4 +1,4 @@
-{% if( ( not support_st and default_language != 'en' and ( dismiss_non_default is empty ) ) or ( xml_config_errors is not empty  ) or ( miss_slug_lang is not empty ) ) %}
+{% if( ( xml_config_errors is not empty  ) or ( miss_slug_lang is not empty ) ) %}
     <div class="wcml-section">
         <div class="wcml-section-header">
             <h3>
@@ -29,41 +29,6 @@
                     </li>
                 {% endif %}
 
-                {% if( not support_st and default_language != 'en' ) %}
-                    {% if st_lang != 'en' %}
-                        <li>
-                            <i class="otgs-ico-warning"></i>
-                            {{ strings.def_and_st_not_en }}
-                            <small>
-                                <i class="otgs-ico-help"></i>
-                                <a href="{{ not_en_doc_page }}">
-                                    {{ strings.run_not_en }}
-                                </a>
-                            </small>
-                            <p>
-                                {{ strings.url_problems }}
-                                <input type="hidden" id="wcml_fix_strings_language_nonce" value="{{ nonces.fix_strings }}" />
-                                <button id="wcml_fix_strings_language" type="button" class="button-secondary">
-                                    {{ strings.change_def_lang|e }}
-                                </button>
-                            </p>
-                        </li>
-                    {% elseif( dismiss_non_default is empty ) %}
-                        <li>
-                            <i class="otgs-ico-warning"></i>
-                            {{ strings.def_not_en }}
-                            <small>
-                                <i class="otgs-ico-help"></i>
-                                <a href="{{ not_en_doc_page }}">
-                                    {{ strings.run_not_en }}
-                                </a>
-                            </small>
-                            <p>
-                                {{ strings.attent_sett }}
-                            </p>
-                        </li>
-                    {% endif %}
-                {% endif %}
                 {% if xml_config_errors is not empty %}
                     <li>
                         <i class="otgs-ico-warning"></i>

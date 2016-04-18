@@ -27,14 +27,6 @@ class WCML_Dependencies{
         } elseif(version_compare(ICL_SITEPRESS_VERSION, '3.1.5', '<')){
             add_action('admin_notices', array($this, '_old_wpml_warning'));
             $this->allok = false;
-        }else{
-            if( !defined('WPML_SUPPORT_STRINGS_IN_DIFF_LANG') ){
-                if( class_exists('WPML_Language_Of_Domain') ){
-                    define('WPML_SUPPORT_STRINGS_IN_DIFF_LANG', true );
-                }else{
-                    define('WPML_SUPPORT_STRINGS_IN_DIFF_LANG', false);
-                }
-            }
         }
 
         if(!class_exists('woocommerce')){

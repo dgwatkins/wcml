@@ -256,20 +256,11 @@ class WCML_Url_Translation {
         global $woocommerce_wpml, $sitepress, $wpdb;
 
         $string_id = icl_get_string_id( $slug, $this->url_strings_context(), $name );
+        $string_language = $woocommerce_wpml->strings->get_string_language( $slug, $this->url_strings_context(), $name );
 
-        if ( WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-
-            $string_language = $woocommerce_wpml->strings->get_string_language( $slug, $this->url_strings_context(), $name );
-
-            // will use a filter in the future wpmlst-529
-            $string_object = new WPML_ST_String( $string_id, $wpdb );
-            $string_translation_statuses = $string_object->get_translation_statuses();
-
-        } else {
-
-            $string_language = $wpdb->get_var( $wpdb->prepare( "SELECT language FROM {$wpdb->prefix}icl_strings WHERE id=%d", $string_id ) );
-            $string_translation_statuses = $wpdb->get_results( $wpdb->prepare( "SELECT language, status FROM {$wpdb->prefix}icl_string_translations WHERE string_id=%d", $string_id ) );
-        }
+        // will use a filter in the future wpmlst-529
+        $string_object = new WPML_ST_String( $string_id, $wpdb );
+        $string_translation_statuses = $string_object->get_translation_statuses();
 
         foreach ( $string_translation_statuses as $s ) {
             $string_translations[$s->language] = $s->status;
@@ -544,12 +535,7 @@ class WCML_Url_Translation {
 
         if ( $slug && $language != 'all' && $language != $string_language ) {
 
-            if ( !WPML_SUPPORT_STRINGS_IN_DIFF_LANG ) {
-                $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, $this->url_strings_context(), $this->url_string_name( $taxonomy ), $language );
-            } else {
-                $has_translation = false;
-                $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, $this->url_strings_context(), $this->url_string_name( $taxonomy ), $language, $has_translation );
-            }
+            $slug_translation = apply_filters( 'wpml_translate_single_string', $slug, $this->url_strings_context(), $this->url_string_name( $taxonomy ), $language, false );
 
             return array( 'slug' => $slug, 'translated_slug' => $slug_translation );
         }
