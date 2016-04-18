@@ -249,14 +249,11 @@ class WCML_Translation_Editor{
     public function auto_generate_slug(){
         $title = filter_input( INPUT_POST, 'title');
 
-        $post_name = sanitize_title( $title );
-
-        $slug = wp_unique_post_slug($post_name, 0, 'draft', 'product', 0);
-        $slug = urldecode( $slug );
+        $post_name = urldecode( sanitize_title( $title ) );
+        $slug = wp_unique_post_slug( $post_name, 0, 'draft', 'product', 0);
 
         echo json_encode( array('slug' => $slug) );
         exit;
-
 
     }
 
