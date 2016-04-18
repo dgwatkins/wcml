@@ -18,38 +18,42 @@ class WCML_TP_Support{
 
     function append_custom_attributes_to_translation_package( $package, $post ){
 
-        $product = wc_get_product( $post->ID );
+        if( $post->post_type == 'product' ) {
 
-        //WC_Product::get_type() available from WooCommerce 2.4.0
-        $product_type = method_exists($product, 'get_type') ? $product->get_type() : $product->product_type;
+            $product = wc_get_product( $post->ID );
 
-        if( !empty($product) && $product_type == 'variable' ){
+            //WC_Product::get_type() available from WooCommerce 2.4.0
+            $product_type = method_exists( $product, 'get_type' ) ? $product->get_type() : $product->product_type;
 
-            $attributes = $product->get_attributes();
+            if ( !empty($product) && $product_type == 'variable' ) {
 
-            foreach( $attributes as $attribute_key => $attribute ){
-                if( !$attribute['is_taxonomy'] ){
+                $attributes = $product->get_attributes();
 
-                    $package['contents']['wc_attribute_name:' . $attribute_key] = array(
-                        'translate' => 1,
-                        'data'      => $this->tp->encode_field_data( $attribute['name'], 'base64' ),
-                        'format'    => 'base64'
-                    );
+                foreach ( $attributes as $attribute_key => $attribute ) {
+                    if ( !$attribute['is_taxonomy'] ) {
 
-                    $values = explode( '|', $attribute['value'] );
-                    $values = array_map('trim', $values);
-
-                    foreach( $values as $value_key => $value ){
-
-                        $package['contents']['wc_attribute_value:' . $value_key . ':' . $attribute_key] = array(
+                        $package['contents']['wc_attribute_name:' . $attribute_key] = array(
                             'translate' => 1,
-                            'data'      => $this->tp->encode_field_data( $value, 'base64' ),
-                            'format'    => 'base64'
+                            'data' => $this->tp->encode_field_data( $attribute['name'], 'base64' ),
+                            'format' => 'base64'
                         );
 
-                    }
+                        $values = explode( '|', $attribute['value'] );
+                        $values = array_map( 'trim', $values );
 
+                        foreach ( $values as $value_key => $value ) {
+
+                            $package['contents']['wc_attribute_value:' . $value_key . ':' . $attribute_key] = array(
+                                'translate' => 1,
+                                'data' => $this->tp->encode_field_data( $value, 'base64' ),
+                                'format' => 'base64'
+                            );
+
+                        }
+
+                    }
                 }
+
             }
 
         }
@@ -117,29 +121,32 @@ class WCML_TP_Support{
 
     function append_variation_descriptions_translation_package($package, $post){
 
-        $product = wc_get_product( $post->ID );
+        if( $post->post_type == 'product' ) {
 
-        //WC_Product::get_type() available from WooCommerce 2.4.0
-        $product_type = method_exists($product, 'get_type') ? $product->get_type() : $product->product_type;
+            $product = wc_get_product( $post->ID );
 
-        if( !empty($product) && $product_type == 'variable' ) {
+            //WC_Product::get_type() available from WooCommerce 2.4.0
+            $product_type = method_exists($product, 'get_type') ? $product->get_type() : $product->product_type;
 
-            $variations = $product->get_available_variations();
+            if( !empty($product) && $product_type == 'variable' ) {
 
-            foreach( $variations as $variation ){
+                $variations = $product->get_available_variations();
 
-                if( !empty($variation['variation_description']) ){
+                foreach( $variations as $variation ){
 
-                    $package['contents']['wc_variation_description:' . $variation['variation_id']] = array(
-                        'translate' => 1,
-                        'data'      => $this->tp->encode_field_data( $variation['variation_description'], 'base64' ),
-                        'format'    => 'base64'
-                    );
+                    if( !empty($variation['variation_description']) ){
+
+                        $package['contents']['wc_variation_description:' . $variation['variation_id']] = array(
+                            'translate' => 1,
+                            'data'      => $this->tp->encode_field_data( $variation['variation_description'], 'base64' ),
+                            'format'    => 'base64'
+                        );
+
+                    }
 
                 }
 
             }
-
 
         }
 
