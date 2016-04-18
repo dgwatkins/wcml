@@ -37,7 +37,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         parent::__construct(
             $job_details[ 'job_id' ],
             'wc_product', __( 'Product', 'woocommerce-multilingual' ),
-            $this->product->post_title,
+            $this->product->post->post_title,
             get_post_permalink( $this->product->id ),
             $source_lang,
             $target_lang,
@@ -189,10 +189,10 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             $translation = get_post( $trn_product_id );
         }
 
-		$element_data = array( 'title'    => array( 'original' => $this->product->post_title ),
-					   'slug'     => array( 'original' => urldecode( $this->product->post_name ) ),
-					   'product_content'  => array( 'original' => $this->product->post_content ),
-                       'product_excerpt'  => array( 'original' => $this->product->post_excerpt ),
+		$element_data = array( 'title'    => array( 'original' => $this->product->post->post_title ),
+					   'slug'     => array( 'original' => urldecode( $this->product->post->post_name ) ),
+					   'product_content'  => array( 'original' => $this->product->post->post_content ),
+                       'product_excerpt'  => array( 'original' => $this->product->post->post_excerpt ),
                         '_purchase_note' => array( 'original' => get_post_meta( $this->product->id, '_purchase_note', true ) )
                      );
 
@@ -282,13 +282,13 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
 	    $return = array();
 
-	    if ( $this->product->post_type !== 'product' ) {
+	    if ( $this->product->post->post_type !== 'product' ) {
 		    return $return;
         }
 
         $languages = $this->sitepress->get_active_languages();
 
-        $product_trid                 = $this->sitepress->get_element_trid( $this->product->id, 'post_' . $this->product->post_type );
+        $product_trid                 = $this->sitepress->get_element_trid( $this->product->id, 'post_' . $this->product->post->post_type );
         $tr_product_id                = apply_filters( 'translate_object_id', $this->product->id, 'product', false, $this->get_target_language() );
 
 	    new WCML_Editor_Save_Filters( $product_trid, $this->get_target_language() );
@@ -305,7 +305,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             //insert new post
             $args = array();
             $args[ 'post_title' ] = $translations[ md5( 'title' ) ];
-            $args[ 'post_type' ] = $this->product->post_type;
+            $args[ 'post_type' ] = $this->product->post->post_type;
             $args[ 'post_content' ] = $translations[ md5( 'product_content' ) ];
             $args[ 'post_excerpt' ] = $translations[ md5( 'product_excerpt' ) ];
 
@@ -313,11 +313,11 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                 return new WP_Error( 'empty_content', __( 'Content, title, and excerpt are empty.' ) );
             }
 
-            $args[ 'post_status' ]    = $this->product->post_status;
-            $args[ 'menu_order ']     = $this->product->menu_order;
-            $args[ 'ping_status' ]    = $this->product->ping_status;
-            $args[ 'comment_status' ] = $this->product->comment_status;
-            $product_parent           = apply_filters( 'translate_object_id', $this->product->post_parent, 'product', false, $this->get_target_language() );
+            $args[ 'post_status' ]    = $this->product->post->post_status;
+            $args[ 'menu_order ']     = $this->product->post->menu_order;
+            $args[ 'ping_status' ]    = $this->product->post->ping_status;
+            $args[ 'comment_status' ] = $this->product->post->comment_status;
+            $product_parent           = apply_filters( 'translate_object_id', $this->product->post->post_parent, 'product', false, $this->get_target_language() );
 		    $args['post_parent']      = null === $product_parent ? 0 : $product_parent;
 
             //TODO: remove after change required WPML version > 3.3
@@ -326,7 +326,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             $_POST[ 'icl_post_language' ] = $this->get_target_language();
 
             if ( $this->woocommerce_wpml->settings[ 'products_sync_date' ] ) {
-                $args[ 'post_date' ] = $this->product->post_date;
+                $args[ 'post_date' ] = $this->product->post->post_date;
             }
 
             $tr_product_id = wp_insert_post( $args );
@@ -345,7 +345,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
                 $this->wpdb->update( $this->wpdb->prefix . 'icl_translations', array( 'element_id' => $tr_product_id ), array( 'translation_id' => $translation_id ) );
             } else {
-                $this->sitepress->set_element_language_details( $tr_product_id, 'post_' . $this->product->post_type, $product_trid, $this->get_target_language() );
+                $this->sitepress->set_element_language_details( $tr_product_id, 'post_' . $this->product->post->post_type, $product_trid, $this->get_target_language() );
             }
 
             $this->woocommerce_wpml->sync_product_data->duplicate_product_post_meta( $this->product->id, $tr_product_id, $translations, true );
@@ -356,10 +356,10 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             $args[ 'post_title' ] = $translations[ md5( 'title' ) ];
             $args[ 'post_content' ]   = $translations[ md5( 'product_content' ) ];
             $args[ 'post_excerpt' ]   = $translations[ md5( 'product_excerpt' ) ];
-            $args[ 'post_status' ]    = $this->product->post_status;
-            $args[ 'ping_status' ]    = $this->product->ping_status;
-            $args[ 'comment_status' ] = $this->product->comment_status;
-            $product_parent           = apply_filters( 'translate_object_id', $this->product->post_parent, 'product', false, $this->get_target_language() );
+            $args[ 'post_status' ]    = $this->product->post->post_status;
+            $args[ 'ping_status' ]    = $this->product->post->ping_status;
+            $args[ 'comment_status' ] = $this->product->post->comment_status;
+            $product_parent           = apply_filters( 'translate_object_id', $this->product->post->post_parent, 'product', false, $this->get_target_language() );
 		    $args['post_parent']      = null === $product_parent ? 0 : $product_parent;
             $_POST[ 'to_lang' ]       = $this->get_target_language();
 
@@ -375,11 +375,11 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                 $new_post_name = sanitize_title( $translations[ md5( 'slug' ) ] ? $translations[ md5( 'slug' ) ] : $translations[ md5( 'title' ) ]);
                 $_POST[ 'new_title' ] = $translations[ md5( 'title' ) ];
                 $_POST[ 'new_slug' ] = $new_post_name;
-                $new_slug = wp_unique_post_slug( $new_post_name, $tr_product_id, $this->product->post_status, $this->product->post_type, $args[ 'post_parent' ] );
+                $new_slug = wp_unique_post_slug( $new_post_name, $tr_product_id, $this->product->post->post_status, $this->product->post->post_type, $args[ 'post_parent' ] );
                 $this->wpdb->update( $this->wpdb->posts, array( 'post_name' => $new_slug ), array( 'ID' => $tr_product_id ) );
             }
 
-            $this->sitepress->set_element_language_details( $tr_product_id, 'post_' . $this->product->post_type, $product_trid, $this->get_target_language() );
+            $this->sitepress->set_element_language_details( $tr_product_id, 'post_' . $this->product->post->post_type, $product_trid, $this->get_target_language() );
             $this->woocommerce_wpml->sync_product_data->duplicate_product_post_meta( $this->product->id, $tr_product_id, $translations );
         }
 
