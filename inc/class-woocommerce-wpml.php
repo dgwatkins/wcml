@@ -46,7 +46,7 @@ class woocommerce_wpml {
         $this->dependencies = new WCML_Dependencies;
         $this->check_dependencies = $this->dependencies->check();
         $this->check_design_update = $this->dependencies->check_design_update();
-        WCML_Admin_Menus::set_up_menus( $this, $sitepress );
+        WCML_Admin_Menus::set_up_menus( $this, $sitepress, $this->check_dependencies );
 
         if( !$this->check_dependencies ){
             wp_enqueue_style( 'onthegosystems-icon', WCML_PLUGIN_URL . '/res/css/otgs-ico.css' );
