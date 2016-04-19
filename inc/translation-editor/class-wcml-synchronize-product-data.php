@@ -38,7 +38,7 @@ class WCML_Synchronize_Product_Data{
      * This function takes care of synchronizing original product
      */
     public function sync_post_action( $post_id, $post ){
-        global $pagenow;
+        global $pagenow, $wp;
 
         $original_language  = $this->woocommerce_wpml->products->get_original_product_language( $post_id );
         $current_language   = $this->sitepress->get_current_language();
@@ -58,13 +58,16 @@ class WCML_Synchronize_Product_Data{
                 $this->sitepress->set_element_language_details( $post_id, 'post_product_variation', false, $var_lang );
             }
         }
+
         if ( $post_type != 'product' ) {
             return;
         }
+
         // exceptions
         $ajax_call = ( !empty( $_POST[ 'icl_ajx_action' ] ) && $_POST[ 'icl_ajx_action' ] == 'make_duplicates' );
+        $api_call  = !empty( $wp->query_vars['wc-api-version'] );
         if ( ( empty( $duplicated_post_id ) || isset( $_POST[ 'autosave' ] ) ) ||
-            ( $pagenow != 'post.php' && $pagenow != 'post-new.php' && $pagenow != 'admin.php' && !$ajax_call ) ||
+            ( $pagenow != 'post.php' && $pagenow != 'post-new.php' && $pagenow != 'admin.php' && !$ajax_call && !$api_call ) ||
             ( isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] == 'trash' )
         ) {
             return;
@@ -73,6 +76,8 @@ class WCML_Synchronize_Product_Data{
         // Remove filter to avoid double sync
         remove_action( 'save_post', array( $this, 'sync_post_action' ), 110, 2 );
         do_action( 'wcml_before_sync_product', $duplicated_post_id, $post_id );
+
+
         //trnsl_interface option
         if ( !$this->woocommerce_wpml->settings['trnsl_interface'] && $original_language != $current_language ) {
             if( !isset( $_POST[ 'wp-preview' ] ) || empty( $_POST[ 'wp-preview' ] ) ){
@@ -82,6 +87,7 @@ class WCML_Synchronize_Product_Data{
             }
             return;
         }
+
         // get language code
         $language_details = $this->sitepress->get_element_language_details( $post_id, 'post_product' );
         if ( $pagenow == 'admin.php' && empty( $language_details ) ) {

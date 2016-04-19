@@ -327,8 +327,18 @@ class WCML_WooCommerce_Rest_API_Support{
      */
     public function sync_product_with_translations( $id, $data ){
 
-        $this->woocommerce_wpml->sync_product_data->sync_post_action( $id, $data );
-
+        // Force the WPML sync on post update for the changes
+        // that don't trigger wp_save_post. e.g. stock
+        if(
+            !isset( $data['title']) ||
+            !isset( $data['name']) ||
+            !isset( $data['status']) ||
+            !isset( $data['short_description']) ||
+            !isset( $data['description'])
+        ){
+            $post = get_post( $id );
+            wp_update_post( array( 'ID' => $id, 'post_title' => wc_clean( $post->post_title ) ) ); // triggers WPML sync
+        }
     }
 
     /**
@@ -374,7 +384,7 @@ class WCML_WooCommerce_Rest_API_Support{
 
                     if( $custom_prices_on ){
 
-                        $custom_prices = $this->woocommerce_wpml->multi_currency->custom_prices->get_product_custom_prices( $product_data['id'], $currency );
+                        $custom_prices = (array) $this->woocommerce_wpml->multi_currency->custom_prices->get_product_custom_prices( $product_data['id'], $currency );
                         foreach( $custom_prices as $key => $price){
                             $product_data['multi-currency-prices'][$currency][ preg_replace('#^_#', '', $key) ] = $price;
 
