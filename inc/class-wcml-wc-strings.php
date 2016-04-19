@@ -417,7 +417,7 @@ class WCML_WC_Strings{
         <script>
             var inputs = ['woocommerce_product_category_slug', 'woocommerce_product_tag_slug', 'woocommerce_product_attribute_slug'];
 
-            <?php if( !empty( $permalink_options['attribute_base'] ) ) { ?> inputs.push( 'product_permalink_structure' ); <?php } ?>
+            <?php if( !empty( $permalink_options['product_base'] ) ) { ?> inputs.push( 'product_permalink_structure' ); <?php } ?>
 
             for(i in inputs){
                 var input = jQuery('input[name="' + inputs[i] + '"]');
