@@ -10,6 +10,8 @@ class WCML_Tab_Manager{
         add_filter( 'wcml_custom_box_html', array( $this, 'custom_box_html'), 10, 3 );
         add_filter( 'wpml_duplicate_custom_fields_exceptions', array( $this, 'duplicate_custom_fields_exceptions' ) );
         add_action( 'wcml_after_duplicate_product', array( $this, 'duplicate_product_tabs') , 10, 2 );
+		
+		add_filter('wc_tab_manager_tab_id', array($this, 'wc_tab_manager_tab_id'), 10, 1);
 
         if( version_compare( WCML_VERSION, '3.7.2', '>') ){
             add_filter( 'option_wpml_config_files_arr', array($this, 'make__product_tabs_not_translatable_by_default'), 0 );
@@ -495,5 +497,12 @@ class WCML_Tab_Manager{
 
         return $product_tabs;
     }
+	
+	
+	function wc_tab_manager_tab_id($tab_id) {
+		$tab_id = apply_filters('wpml_object_id', $tab_id, 'wc_product_tab', true);
+		
+		return $tab_id;
+	}
 
 }
