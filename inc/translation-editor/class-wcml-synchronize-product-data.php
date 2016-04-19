@@ -387,13 +387,8 @@ class WCML_Synchronize_Product_Data{
     //duplicate product post meta
     public function duplicate_product_post_meta( $original_product_id, $trnsl_product_id, $data = false , $add = false ){
         $settings = $this->sitepress->get_settings();
-        $lang = $this->sitepress->get_language_for_element( $trnsl_product_id,'post_product' );
         $all_meta = get_post_custom( $original_product_id );
         unset( $all_meta[ '_thumbnail_id' ] );
-
-        foreach( wp_get_post_terms( $original_product_id, 'product_type', array( "fields" => "names" ) ) as $type ){
-            $product_type = $type;
-        }
 
         foreach ( $all_meta as $key => $meta ) {
             if (
