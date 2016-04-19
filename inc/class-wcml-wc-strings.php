@@ -510,10 +510,6 @@ class WCML_WC_Strings{
         return $location;
     }
 
-
-
-
-
     function product_permalink_slug(){
         $permalinks         = get_option( 'woocommerce_permalinks' );
         $slug = empty( $permalinks['product_base'] ) ? 'product' : trim($permalinks['product_base'],'/');

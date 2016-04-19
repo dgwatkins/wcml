@@ -55,6 +55,7 @@ class WCML_Emails{
 
         if( is_admin() && $pagenow == 'admin.php' && isset($_GET['page']) && $_GET['page'] == 'wc-settings' && isset($_GET['tab']) && $_GET['tab'] == 'email' ){
             add_action('admin_footer', array($this, 'show_language_links_for_wc_emails'));
+            $this->set_emails_string_lamguage();
         }
     }
 
@@ -346,10 +347,11 @@ class WCML_Emails{
 
                         $lang_selector->render( array(
                                                     'id' => $emails_option.'_'.$setting_key.'_language_selector',
-                                                    'name' => $emails_option.'_'.$setting_key.'_language',
+                                                    'name' => 'wcml_lang-'.$emails_option.'-'.$setting_key,
                                                     'selected' => $language,
                                                     'show_please_select' => false,
-                                                    'echo' => true
+                                                    'echo' => true,
+                                                    'style' => 'width: 18%;float: left'
                                                 )
                                             );
 
@@ -359,11 +361,27 @@ class WCML_Emails{
                             var input = jQuery('input[name="<?php echo $input_name  ?>"]');
                             if (input.length) {
                                 input.parent().append('<div class="translation_controls"></div>');
-                                input.parent().find('.translation_controls').append('<a href="<?php echo $st_page ?>"><?php _e('translations', 'woocommerce-multilingual') ?></a>');
-                                jQuery('#<?php echo $emails_option.'_'.$setting_key ?>_language_selector').appendTo(input.parent().find('.translation_controls'));
+                                input.parent().find('.translation_controls').append('<a href="<?php echo $st_page ?>" style="margin-left: 10px"><?php _e('translations', 'woocommerce-multilingual') ?></a>');
+                                jQuery('#<?php echo $emails_option.'_'.$setting_key.'_language_selector' ?>').appendTo(input.parent().find('.translation_controls'));
                             }
                         </script>
                     <?php }
+                }
+            }
+        }
+    }
+
+    function set_emails_string_lamguage(){
+        global $woocommerce_wpml;
+
+        foreach( $_POST as $key => $post_value ){
+            if( substr( $key, 0, 9 ) == 'wcml_lang' ){
+
+                $email_string = explode( '-', $key );
+                $email_settings = get_option( $email_string[1], true );
+
+                if( isset( $email_string[2] ) ){
+                    $woocommerce_wpml->strings->set_string_language( $email_settings[ $email_string[2] ], 'admin_texts_'.$email_string[1] ,  '['.$email_string[1].']'.$email_string[2], $post_value );
                 }
             }
         }
