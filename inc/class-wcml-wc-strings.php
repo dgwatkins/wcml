@@ -412,10 +412,12 @@ class WCML_WC_Strings{
 
     function show_custom_url_base_translation_links(){
         global $woocommerce_wpml,$sitepress;
-
+        $permalink_options = get_option( 'woocommerce_permalinks' );
         ?>
         <script>
-            var inputs = ['woocommerce_product_category_slug', 'woocommerce_product_tag_slug', 'woocommerce_product_attribute_slug', 'product_permalink_structure'];
+            var inputs = ['woocommerce_product_category_slug', 'woocommerce_product_tag_slug', 'woocommerce_product_attribute_slug'];
+
+            <?php if( !empty( $permalink_options['attribute_base'] ) ) { ?> inputs.push( 'product_permalink_structure' ); <?php } ?>
 
             for(i in inputs){
                 var input = jQuery('input[name="' + inputs[i] + '"]');
@@ -444,8 +446,6 @@ class WCML_WC_Strings{
 
         $lang_selector = new WPML_Simple_Language_Selector( $sitepress );
 
-        $permalink_options = get_option( 'woocommerce_permalinks' );
-
         $bases = array( 'tag_base' => 'product_tag', 'category_base' => 'product_cat', 'attribute_base' => 'attribute', 'product_base' => 'product' );
 
         foreach( $bases as $key => $base ){
@@ -465,7 +465,12 @@ class WCML_WC_Strings{
                     break;
                 case 'product':
                     $input_name = 'product_permalink_structure';
-                    $value = !empty( $permalink_options['product_base'] ) ? trim( $permalink_options['product_base'], '/' ) : $woocommerce_wpml->url_translation->default_product_base;
+                    if( empty( $permalink_options['product_base'] ) ){
+                        continue 2;
+                    }else{
+                        $value = trim( $permalink_options['product_base'], '/' );
+                    }
+
                     break;
             }
 
