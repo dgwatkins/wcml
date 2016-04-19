@@ -250,16 +250,17 @@ class WCML_Adventure_tours{
             $currencies = $woocommerce_wpml->multi_currency->get_currencies();
             $tour_booking_periods = get_post_meta( $product_id, 'tour_booking_periods', true );
             $custom_periods_prices = get_post_meta( $product_id, 'custom_booking_periods_prices', true );
+            if( $tour_booking_periods ){
+                foreach( $tour_booking_periods as $per_key => $tour_booking_period ){
+                    foreach( $currencies as $key => $currency ){
 
-            foreach( $tour_booking_periods as $per_key => $tour_booking_period ){
-                foreach( $currencies as $key => $currency ){
+                        $value = isset($custom_periods_prices[ $per_key ][ $key ]) ? $custom_periods_prices[ $per_key ][ $key ]: '';
 
-                    $value = isset($custom_periods_prices[ $per_key ][ $key ]) ? $custom_periods_prices[ $per_key ][ $key ]: '';
-
-                    echo '<div class="wcml_custom_cost_field" data-tour="'.$per_key.'" style="display: none;">';
+                        echo '<div class="wcml_custom_cost_field" data-tour="'.$per_key.'" style="display: none;">';
                         echo '<div>'.get_woocommerce_currency_symbol($key).'</div>';
                         echo '<input type="text" class="wc_input_price" style="width: 60px;" name="tour_spec_price['.$per_key.']['.$key.']" value="'.$value.'" />';
-                    echo '</div>';
+                        echo '</div>';
+                    }
                 }
             }
 
@@ -276,7 +277,7 @@ class WCML_Adventure_tours{
         $tour_spec_price = array();
         $currencies = $woocommerce_wpml->multi_currency->get_currencies();
 
-        if( isset( $_POST[ 'tour_spec_price' ] ) ) {
+        if( isset( $_POST[ 'tour_spec_price' ] ) && is_array( $_POST[ 'tour_spec_price' ] ) ) {
 
             foreach( $_POST[ 'tour_spec_price' ] as $per_key => $costs ) {
 
@@ -310,15 +311,19 @@ class WCML_Adventure_tours{
             if ( get_post_meta( $original_product, '_wcml_custom_prices_status' ) ) {
                 $custom_periods_prices = get_post_meta( $object_id, 'custom_booking_periods_prices', true );
                 $tours_data = get_post_meta( $object_id, 'tour_booking_periods', true );
-                foreach( $tours_data as $key => $periods ){
-                    if( isset( $custom_periods_prices[ $key ][ $currency ] ) ){
-                        $tours_data[ $key ][ 'spec_price' ] = $custom_periods_prices[ $key ][ $currency ];
+                if( $tours_data ){
+                    foreach( $tours_data as $key => $periods ){
+                        if( isset( $custom_periods_prices[ $key ][ $currency ] ) ){
+                            $tours_data[ $key ][ 'spec_price' ] = $custom_periods_prices[ $key ][ $currency ];
+                        }
                     }
-                }
-                if( $single ){
-                    $value[0] = $tours_data;
-                }else{
-                    $value = $tours_data;
+
+                    if( $single ){
+                        $value[0] = $tours_data;
+                    }else{
+                        $value = $tours_data;
+                    }
+
                 }
             }
             add_filter( 'get_post_metadata', array( $this, 'product_price_filter' ), 9, 4 );

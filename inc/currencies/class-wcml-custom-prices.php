@@ -465,8 +465,8 @@ class WCML_Custom_Prices{
                         foreach( $currencies as $code => $currency ){
                             $sale_price = $_POST[ '_custom_variation_sale_price' ][ $code ][ $post_data->ID ];
                             $regular_price = $_POST[ '_custom_variation_regular_price' ][ $code ][ $post_data->ID ];
-                            $date_from = strtotime( $_POST[ '_custom_sale_price_dates_from' ][ $code ][ $post_data->ID ] );
-                            $date_to = strtotime( $_POST[ '_custom_sale_price_dates_to' ][ $code ][ $post_data->ID ] );
+                            $date_from = strtotime( $_POST[ '_custom_variation_sale_price_dates_from' ][ $code ][ $post_data->ID ] );
+                            $date_to = strtotime( $_POST[ '_custom_variation_sale_price_dates_to' ][ $code ][ $post_data->ID ] );
                             $schedule = $_POST[ '_wcml_schedule' ][ $code ][ $post_data->ID ];
                             $custom_prices = apply_filters( 'wcml_update_custom_prices_values',
                                 array( '_regular_price' => $regular_price,
