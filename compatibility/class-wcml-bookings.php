@@ -76,6 +76,7 @@ class WCML_Bookings{
 
             //lock fields on translations pages
             add_filter( 'wcml_js_lock_fields_ids', array( $this, 'wcml_js_lock_fields_ids' ) );
+            add_filter( 'wcml_after_load_lock_fields_js', array( $this, 'localize_lock_fields_js' ) );
         }else{
             add_filter( 'get_post_metadata', array( $this, 'filter_wc_booking_cost' ), 10, 4 );
         }
@@ -965,10 +966,13 @@ class WCML_Bookings{
 
 	        wp_register_script( 'wcml-bookings-js', WCML_PLUGIN_URL . '/compatibility/res/js/wcml-bookings.js', array( 'jquery' ), WCML_VERSION );
             wp_enqueue_script( 'wcml-bookings-js' );
-            wp_localize_script( 'wcml-bookings-js', 'lock_fields',  ( isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) == 'product' && !$woocommerce_wpml->products->is_original_product( $_GET[ 'post' ] ) ) ||
-            ( $pagenow == 'post-new.php' && isset( $_GET[ 'source_lang' ] ) ) ? 1 : false );
+
         }
 
+    }
+
+    function localize_lock_fields_js(){
+        wp_localize_script( 'wcml-bookings-js', 'wcml_settings' , array( 'lock_fields',  1 ) );
     }
 
     function wcml_multi_currency_is_ajax( $actions ){

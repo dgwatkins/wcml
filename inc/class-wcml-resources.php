@@ -172,6 +172,7 @@ class WCML_Resources {
             'input_names' => apply_filters( 'wcml_js_lock_fields_input_names', array() )
         ) );
 
+        do_action( 'wcml_after_load_lock_fields_js' );
 
     }
 

@@ -45,7 +45,7 @@ jQuery( document ).ready( function( $ ){
 
 
     //lock fields
-    if( lock_fields == 1 ){
+    if( typeof wcml_settings.lock_fields != 'undefined' && wcml_settings.lock_fields == 1 ){
 
         $('#bookings_pricing input[type="number"],#accommodation_bookings_rates input[type="number"], #bookings_resources input[type="number"], #bookings_availability input[type="number"], #bookings_availability input[type="text"], #bookings_persons input[type="number"]').each(function(){
             $(this).attr('readonly','readonly');
