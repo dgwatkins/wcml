@@ -96,6 +96,7 @@ class WCML_Setup {
 
     public function complete_setup(){
         $this->woocommerce_wpml->settings['set_up_wizard_run'] = 1;
+        $this->woocommerce_wpml->settings['set_up_wizard_splash'] = 1;
         $this->woocommerce_wpml->update_settings();
     }
 
