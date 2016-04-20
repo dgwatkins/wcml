@@ -282,7 +282,9 @@ class WCML_Setup {
      */
     public function save_attributes( $data ){
 
-        $this->woocommerce_wpml->attributes->set_translatable_attributes( $data['attributes'] );
+        if ( isset( $data['attributes'] ) ) {
+            $this->woocommerce_wpml->attributes->set_translatable_attributes( $data['attributes'] );
+        }
 
     }
 
