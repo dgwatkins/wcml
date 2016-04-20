@@ -34,6 +34,8 @@ class ZeroCest
 
         $I->click('Log In');
 
+        $I->wait(1);
+
         $I->fillField('#user_login', 'admin');
 
         $I->fillField('#user_pass', '123456');

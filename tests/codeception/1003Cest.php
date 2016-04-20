@@ -38,7 +38,7 @@ class ThreeCest
         $I->click("Continue");
 
         $I->wait(1);
-        $I->checkOption('#woocommerce_enable_cod');
+        $I->checkOption('.wc-wizard-gateway-bacs');
         $I->click("Continue");
 
         $I->waitForElement(".button-secondary", 15);
