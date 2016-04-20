@@ -142,20 +142,20 @@ class WCML_Adventure_tours{
 
         $tour_tabs_meta = get_post_meta( $product_id, 'tour_tabs_meta', true );
 
-        foreach ( $tour_tabs_meta['tabs'] as $tour_tab_id => $tour_tab_meta ) {
+        if( isset( $tour_tabs_meta['tabs'] ) && is_array( $tour_tabs_meta['tabs'] ) ){
+            foreach ( $tour_tabs_meta['tabs'] as $tour_tab_id => $tour_tab_meta ) {
 
-            if (!empty($data[md5('adventure_tour_' . $tour_tab_id . '_title')])) {
-                $tour_tabs_meta['tabs'][$tour_tab_id]['title'] = $data[md5('adventure_tour_' . $tour_tab_id . '_title')];
+                if (!empty($data[md5('adventure_tour_' . $tour_tab_id . '_title')])) {
+                    $tour_tabs_meta['tabs'][$tour_tab_id]['title'] = $data[md5('adventure_tour_' . $tour_tab_id . '_title')];
+                }
+
+                if (!empty($data[md5('adventure_tour_' . $tour_tab_id . '_content')])) {
+                    $tour_tabs_meta['tabs'][$tour_tab_id]['content'] = $data[md5('adventure_tour_' . $tour_tab_id . '_content')];
+                }
             }
 
-            if (!empty($data[md5('adventure_tour_' . $tour_tab_id . '_content')])) {
-                $tour_tabs_meta['tabs'][$tour_tab_id]['content'] = $data[md5('adventure_tour_' . $tour_tab_id . '_content')];
-            }
-
+            update_post_meta($product_id, 'tour_tabs_meta', $tour_tabs_meta);
         }
-
-        update_post_meta($product_id, 'tour_tabs_meta', $tour_tabs_meta);
-
 
     }
 
