@@ -52,4 +52,12 @@ class AcceptanceTester extends \Codeception\Actor
         $this->click( "table.plugins tr[data-slug='{$pluginSlug}'] span.deactivate > a:first-of-type" );
     }
 
+    public function seeActivatePlugin( $pluginSlug ) {
+        $this->see( "table.plugins tr[data-slug='{$pluginSlug}'] span.activate" );
+    }
+
+    public function seeDeactivatePlugin( $pluginSlug ) {
+        $this->see( "table.plugins tr[data-slug='{$pluginSlug}'] span.deactivate" );
+    }
+
 }

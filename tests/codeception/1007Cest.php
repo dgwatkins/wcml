@@ -21,7 +21,7 @@ class SevenCest
 
         $I->see('Plugins');
 
-        $I->click('Deactivate', '#woocommerce-multilingual');
+        $I->deactivatePlugin('woocommerce-multilingual');
 
         $I->wait(1);
 
@@ -47,7 +47,7 @@ class SevenCest
 
         $I->executeJS('window.scrollTo(0,0);');
 
-        $I->wait(15);
+        $I->wait(10);
 
         $I->expect('French added in WPML');
 
@@ -57,7 +57,7 @@ class SevenCest
 
         $I->amOnPage('/wp-admin/plugins.php');
 
-        $I->click('Activate', '#woocommerce-multilingual');
+        $I->activatePlugin('woocommerce-multilingual');
 
         $I->wait(1);
 
@@ -107,7 +107,7 @@ class SevenCest
 
         $I->executeJS('window.scrollTo(0,0);');
 
-        $I->wait(15);
+        $I->wait(10);
 
         $I->expect('French removed in WPML');
 

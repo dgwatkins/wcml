@@ -26,13 +26,13 @@ class TenCest
 
         $I->click('Add New Product Category');
 
-        $I->wait(1);
+        $I->wait(2);
 
         $I->fillField('tag-name','Bags');
 
         $I->click('Add New Product Category');
 
-        $I->wait(1);
+        $I->wait(2);
 
         $I->amGoingTo('Create 3 Product Tags');
 
@@ -44,31 +44,63 @@ class TenCest
 
         $I->click('Add New Product Tag');
 
-        $I->wait(1);
+        $I->wait(2);
 
         $I->fillField('tag-name','Adidas');
 
         $I->click('Add New Product Tag');
 
-        $I->wait(1);
+        $I->wait(2);
 
         $I->fillField('tag-name','Reebok');
 
         $I->click('Add New Product Tag');
 
-        $I->wait(1);
+        $I->wait(2);
+
+        // Create Shipping Zone - Not need it no
+
+        /*$I->amGoingTo('Create 1 Shipping Class');
+
+        $I->amOnPage('/wp-admin/admin.php?page=wc-settings&tab=shipping');
+
+        $I->see('Shipping Zones');
+
+        $I->click('Add shipping zone');
+
+        $I->fillField('input[data-attribute="zone_name"]','Shippo Classy');
+
+        $I->click('.wc-shipping-zone-region .select2-search-field');
+
+        $I->pressKey('#s2id_autogen2','Europe',WebDriverKeys::ENTER);
+
+        $I->click('.wc-shipping-zone-save');
+
+        $I->wait(5);
+
+        $I->click('.wc-shipping-zone-methods-add-row .add_shipping_method');
+
+        $I->click('.wc-backbone-modal-content .button-large');
+
+        $I->wait(2);
+
+        $I->click('.wc-shipping-zone-edit');
+
+        $I->fillField('input[data-attribute="zone_name"]','Shippo Classy');
+
+        $I->click('.wc-shipping-zone-save');*/
 
         $I->amGoingTo('Create 1 Shipping Class');
 
-        $I->amOnPage('/wp-admin/edit-tags.php?taxonomy=product_shipping_class&post_type=product');
+        $I->amOnPage('/wp-admin/admin.php?page=wc-settings&tab=shipping&section=classes');
 
-        $I->see('Shipping Classes');
+        $I->click('Add Shipping Class');
 
-        $I->fillField('tag-name','Shippo Classy');
+        $I->fillField('.wc-shipping-class-name div.edit input[data-attribute="name"]','Shippo Classy');
 
-        $I->click('Add New Shipping Class');
+        $I->click('Save Shipping Classes');
 
-        $I->wait(1);
+        $I->wait(5);
 
         $I->amGoingTo('to  check warnings in WCML');
 
@@ -80,13 +112,13 @@ class TenCest
 
         $I->seeElement('.js-tax-tab-product_cat>.otgs-ico-warning');
 
-        $I->wait(1);
+        $I->wait(2);
 
         $I->seeElement('.js-tax-tab-product_tag', ['title' => 'You have untranslated terms!']);
 
         $I->seeElement('.js-tax-tab-product_tag>.otgs-ico-warning');
 
-        $I->wait(1);
+        $I->wait(2);
 
         $I->seeElement('.js-tax-tab-product_shipping_class', ['title' => 'You have untranslated terms!']);
 
@@ -232,6 +264,8 @@ class TenCest
 
         /*  End Check Shipping Classes Section */
 
+        $I->wait(3);
+
     }
 
     public function _after(AcceptanceTester $I)
@@ -242,6 +276,6 @@ class TenCest
     // tests
     public function tryToTest(AcceptanceTester $I)
     {
-		
+
     }
 }

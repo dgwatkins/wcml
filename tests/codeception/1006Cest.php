@@ -6,6 +6,9 @@ class SixCest
 {
     public function _before(AcceptanceTester $I)
     {
+
+        $I->wantTo('Create a product');
+
         // Login Procedure
         $I->wp_login('admin', '123456');
 

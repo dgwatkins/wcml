@@ -6,7 +6,7 @@ class EightCest
 {
     public function _before(AcceptanceTester $I)
     {
-        $I->wantTo('check if have any warning messages and status');
+        $I->wantTo('check if have warning dependencies messages');
 
         // Login Procedure
         $I->wp_login('admin', '123456');
@@ -22,11 +22,11 @@ class EightCest
 
         $I->see('Plugins');
 
-        $I->click('Deactivate', '#wpml-media');
+        $I->deactivatePlugin('wpml-media');
 
         $I->wait(1);
 
-        $I->see('Activate', '#wpml-media');
+        $I->seeDeactivatePlugin('wpml-media');
 
         $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml');
 
@@ -42,15 +42,17 @@ class EightCest
 
         $I->amOnPage('/wp-admin/plugins.php');
 
-        $I->click('Activate', '#wpml-media');
+        $I->activatePlugin('wpml-media');
 
         $I->wait(1);
+
+        $I->seeActivatePlugin('wpml-media');
 
         $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml');
 
         $I->see('WooCommerce Multilingual');
 
-        $I->dontsee('Required plugins');
+        $I->dontSee('Required plugins');
 
     }
 
