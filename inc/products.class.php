@@ -1319,11 +1319,9 @@ class WCML_Products{
 
             if( empty( $post_id ) && isset( $_GET['post'] ) ){
                 $post_id = $_GET['post'];
-                $is_original_post = $this->is_original_product( $post_id );
-            }else{
-                $post_language = wpml_get_language_information($post_id);
-                $is_original_post = $post_language['language_code'] == $lang;
             }
+
+            $is_original_post = $this->is_original_product( $post_id );
 
             if( isset( $_GET[ 'post' ] ) || !$is_original_post ){
                 $link = admin_url( 'admin.php?page=wpml-wcml&tab=products&prid='.$post_id );
