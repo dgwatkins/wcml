@@ -12,10 +12,11 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 	function setUp() {
 		parent::setUp();
 
-		global $woocommerce_wpml, $sitepress;
+		global $woocommerce_wpml, $sitepress, $wpdb;
 
 		$this->sitepress 		=& $sitepress;
 		$this->woocommerce_wpml	=& $woocommerce_wpml;
+		$this->wpdb	=& $wpdb;
 		$this->wcml_helper = new WCML_Helper();
 
 		require_once WC_PATH . '/woocommerce.php';

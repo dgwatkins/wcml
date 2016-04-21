@@ -28,7 +28,7 @@ class Test_WCML_Product_Translation_Edit_Links extends WCML_UnitTestCase {
 		$this->test_data['es_product_id'] = $es_product->id;
 
 		$this->test_data['expected'] = array(
-			'manual_translation_url' => sprintf('http://example.org/wp-admin/post.php?post=%d&amp;action=edit&amp;lang=es', $this->test_data['es_product_id']),
+			'manual_translation_url' => sprintf(home_url('/wp-admin/post.php?post=%d&amp;action=edit&amp;lang=es'), $this->test_data['es_product_id']),
 			'translation_editor_url' => sprintf('admin.php?page=wpml-translation-management/menu/translations-queue.php&trid=%d&language_code=es&source_language_code=en', $this->test_data['trid'])
 		);
 

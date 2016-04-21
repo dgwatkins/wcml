@@ -6,6 +6,12 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
     function setUp(){
         parent::setUp();
 
+        set_current_screen( 'admin' );
+        set_current_screen( 'wpml_page_wpml-wcml' );
+        wpml_tm_load_status_display_filter();
+
+        $this->woocommerce_wpml->translation_editor = new WCML_Translation_Editor( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
+
         $this->wcml_products_ui = new WCML_Products_UI( $this->woocommerce_wpml, $this->sitepress );
         $this->languages = array_map('trim', explode(',', WPML_TEST_LANGUAGE_CODES));
         $this->test_data = array();
@@ -40,12 +46,11 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
 
         $products = $this->wcml_products_ui->get_products_data();
 
-
         foreach( $products['products'] as $key => $product ){
             //check data language in links to translations
             foreach ( $this->languages as $language ) {
                 if( $language != $this->woocommerce_wpml->products->get_original_product_language( $product->ID ) ){
-                    $this->assertContains( 'data-language="'.$language.'"', $product->translation_statuses );
+                    $this->assertContains( 'language_code='.$language.'', $product->translation_statuses );
                 }
             }
 
@@ -195,15 +200,16 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         $this->make_current_user_wcml_admin();
 
         $content = $this->wcml_products_ui->get_view();
+        $content = str_replace('&','%26',$content);
         $dom = new DOMDocument();
 
         $dom->loadHTML( $content );
-        
-        $this->check_filter_drop_downs( $dom );        
+
+        $this->check_filter_drop_downs( $dom );
 
         $this->check_products_rows( $dom );
 
-        $this->check_pagination( $dom );       
+        $this->check_pagination( $dom );
 
     }
 
@@ -376,7 +382,11 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         // note for original language we don't have a link
         $this->assertEquals( count( $this->languages )-1, $editor_links->length );
         foreach( $editor_links as $editor_link ){
-            $this->assertTrue( in_array( $editor_link->getAttribute( 'data-language' ), $this->languages ) );
+
+            $link_args = parse_url( $editor_link->getAttribute('href') );
+            parse_str( $link_args['query'], $link_args );
+            parse_str( $link_args['page'], $link_args );
+            $this->assertTrue( in_array( $link_args['language_code'], $this->languages ) );
         }
     }
     
