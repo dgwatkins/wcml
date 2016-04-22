@@ -13,8 +13,7 @@ class WCML_WC_Strings{
         add_filter( 'wp_redirect', array( $this, 'encode_shop_slug' ), 10, 2 );
         add_action( 'registered_taxonomy', array ( $this, 'translate_attributes_label_in_wp_taxonomies' ), 100, 3 );
         add_filter( 'woocommerce_payment_gateways', array( $this, 'payment_gateways_filters' ), 100 );
-        add_filter( 'woocommerce_shipping_methods', array( $this, 'shipping_methods_filters' ), 100 );
-
+        $this->shipping_methods_filters();
     }
 
     function payment_gateways_filters( $payment_gateways ){
@@ -39,11 +38,11 @@ class WCML_WC_Strings{
 
     function shipping_methods_filters( $shipping_methods ){
 
+        $shipping_methods = WC()->shipping->get_shipping_methods();
+
         foreach ( $shipping_methods as $shipping_method ) {
 
-            if( is_string( $shipping_method ) ){
-                $shipping_method_id = strtolower( str_replace( 'WC_Shipping_', '', $shipping_method ) );
-            }elseif( isset( $shipping_method->id ) ){
+            if( isset( $shipping_method->id ) ){
                 $shipping_method_id = $shipping_method->id;
             }else{
                 continue;
@@ -52,8 +51,6 @@ class WCML_WC_Strings{
             add_filter( 'woocommerce_settings_api_sanitized_fields_'.$shipping_method_id, array( $this, 'register_shipping_strings' ) );
             add_filter( 'option_woocommerce_'.$shipping_method_id.'_settings', array( $this, 'translate_shipping_strings' ), 9, 2 );
         }
-
-        return $shipping_methods;
     }
 
     function init(){
