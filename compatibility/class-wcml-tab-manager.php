@@ -53,10 +53,6 @@ class WCML_Tab_Manager{
             $this->duplicate_tabs( $original_product_id, $trnsl_product_id, $lang );
         }
 
-        if( !isset( $data[ '_product_tabs_'.$lang ] ) ){
-            return;
-        }
-
         $orig_prod_tabs = $this->get_product_tabs( $original_product_id );
 
         if( $orig_prod_tabs ){
