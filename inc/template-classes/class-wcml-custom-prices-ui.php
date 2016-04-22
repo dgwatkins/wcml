@@ -167,4 +167,5 @@ class WCML_Custom_Prices_UI extends WPML_Templates_Factory {
 	public function get_template() {
 		return 'custom-prices.twig';
 	}
+
 }

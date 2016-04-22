@@ -2,6 +2,8 @@
 
 class WCML_WC_Subscriptions{
 
+    private $new_subscription = false;
+
     function __construct(){
 
         add_action('init', array($this, 'init'),9);
@@ -13,6 +15,7 @@ class WCML_WC_Subscriptions{
         add_filter( 'wcml_custom_prices_strings', array( $this, 'set_labels_for_prices_fields' ), 10, 2 );
         add_filter( 'wcml_custom_prices_fields_labels', array( $this, 'set_labels_for_prices_fields' ), 10, 2 );
         add_filter( 'wcml_update_custom_prices_values', array( $this, 'update_custom_prices_values' ), 10 ,3 );
+        add_action( 'wcml_after_custom_prices_block', array( $this, 'new_subscription_prices_block') );
 
         // reenable coupons for subscriptions when multicurrency is on
         add_action('woocommerce_subscription_cart_after_grouping', array($this, 'woocommerce_subscription_cart_after_grouping'));
@@ -70,8 +73,7 @@ class WCML_WC_Subscriptions{
     }
 
     function set_prices_fields( $fields, $product_id ){
-
-        if( $this->is_subscriptions_product( $product_id ) ){
+        if( $this->is_subscriptions_product( $product_id ) || $this->new_subscription ){
             $fields[] = '_subscription_sign_up_fee';
         }
 
@@ -81,7 +83,7 @@ class WCML_WC_Subscriptions{
 
     function set_labels_for_prices_fields( $labels, $product_id ){
 
-        if( $this->is_subscriptions_product( $product_id ) ){
+        if( $this->is_subscriptions_product( $product_id ) || $this->new_subscription ){
             $labels[ '_regular_price' ] = __( 'Subscription Price', 'woocommerce-multilingual' );
             $labels[ '_subscription_sign_up_fee' ] = __( 'Sign-up Fee', 'woocommerce-multilingual' );
         }
@@ -114,5 +116,52 @@ class WCML_WC_Subscriptions{
 
         $is_subscriptions_product = $wpdb->get_var($wpdb->prepare("SELECT count(object_id) FROM $wpdb->term_relationships WHERE object_id = %d AND term_taxonomy_id IN (".join(',',$get_variation_term_taxonomy_ids).")",$product_id));
         return $is_subscriptions_product;
+    }
+
+    function new_subscription_prices_block( $product_id ){
+        global $woocommerce_wpml;
+        if( $product_id == 'new' ){
+            $this->new_subscription = true;
+            echo '<div class="wcml_prices_if_subscription" style="display: none">';
+            $custom_prices_ui = new WCML_Custom_Prices_UI( $woocommerce_wpml, 'new' );
+            $custom_prices_ui->show();
+            echo '</div>';
+            ?>
+            <script>
+                jQuery(document).ready(function($) {
+                    jQuery('.wcml_prices_if_subscription .wcml_custom_prices_input').attr('name', '_wcml_custom_prices[new_subscription]').attr( 'id', '_wcml_custom_prices[new_subscription]');
+                    jQuery('.wcml_prices_if_subscription .wcml_custom_prices_options_block>label').attr('for', '_wcml_custom_prices[new_subscription]');
+                    jQuery('.wcml_prices_if_subscription .wcml_schedule_input').each( function(){
+                        jQuery(this).attr('name', jQuery(this).attr('name')+'_subscription');
+                    });
+
+                    jQuery('.options_group>.wcml_custom_prices_block .wcml_custom_prices_input:first-child').click();
+                    jQuery('.options_group>.wcml_custom_prices_block .wcml_schedule_options .wcml_schedule_input:first-child').click();
+
+                    jQuery(document).on('change', 'select#product-type', function () {
+                        if (jQuery(this).val() == 'subscription') {
+                            jQuery('.wcml_prices_if_subscription').show();
+                            jQuery('.options_group>.wcml_custom_prices_block').hide();
+                        } else if (jQuery(this).val() != 'variable-subscription') {
+                            jQuery('.wcml_prices_if_subscription').hide();
+                            jQuery('.options_group>.wcml_custom_prices_block').show();
+                        }
+                    });
+
+                    jQuery(document).on('click', '#publish', function () {
+                        if ( jQuery('.wcml_prices_if_subscription').is( ':visible' ) ) {
+                            jQuery('.options_group>.wcml_custom_prices_block').remove();
+                            jQuery('.wcml_prices_if_subscription .wcml_custom_prices_input').attr('name', '_wcml_custom_prices[new]');
+                            jQuery('.wcml_prices_if_subscription .wcml_schedule_input').each( function(){
+                                jQuery(this).attr('name', jQuery(this).attr('name').replace('_subscription','') );
+                            });
+                        }else{
+                            jQuery('.wcml_prices_if_subscription').remove();
+                        }
+                    });
+                });
+            </script>
+        <?php
+        }
     }
 }
