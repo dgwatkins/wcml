@@ -20,7 +20,7 @@ class WCML_WC_Strings{
 
     function payment_gateways_filters( ){
 
-        $payment_gateways = WC()->payment_gateways();
+        $payment_gateways = WC()->payment_gateways()->payment_gateways;
 
         foreach ( $payment_gateways as $gateway ) {
             if( isset( $gateway->id ) ){
