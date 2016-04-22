@@ -156,8 +156,8 @@ class WCML_Synchronize_Variations_Data{
                 //sync file_paths
                 $this->woocommerce_wpml->downloadable->sync_files_to_translations( $post_data->ID, $variation_id, $data );
                 //sync description
-                if( isset( $data[ md5( 'variation_desc'.$variation_id ) ] ) ){
-                    update_post_meta( $variation_id, '_variation_description', $data[ md5( 'variation_desc'.$variation_id ) ] );
+                if( isset( $data[ md5( 'variation_desc'.$post_data->ID ) ] ) ){
+                    update_post_meta( $variation_id, '_variation_description', $data[ md5( 'variation_desc'.$post_data->ID ) ] );
                 }
                 // sync taxonomies
                 if ( !empty( $all_taxs ) ) {

@@ -136,6 +136,19 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             $this->add_field( $custom_fields_section );
         }
 
+        if( $this->woocommerce_wpml->products->is_variable_product( $this->product->id ) ){
+            $variations = $this->product->get_available_variations();
+
+            if( !empty( $variations ) ){
+                $variations_data_section = new WPML_Editor_UI_Field_Section( __( 'Variations data', 'woocommerce-multilingual' ) );
+                foreach( $variations as $variation ){
+                    $var_desc_field_input = new WPML_Editor_UI_Single_Line_Field( 'variation_desc'.$variation['variation_id'], 'Variation description #'.$variation['variation_id'], $this->data, true );
+                    $variations_data_section->add_field( $var_desc_field_input );
+                }
+                $this->add_field( $variations_data_section );
+            }
+        }
+
         if( $this->product->is_downloadable() ){
             $is_variable = false;
             if( $this->woocommerce_wpml->products->is_variable_product( $this->product->id ) ){
@@ -242,6 +255,19 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
             }
         }
+
+        if( $this->woocommerce_wpml->products->is_variable_product( $this->product->id ) ){
+            $variations = $this->product->get_available_variations();
+
+            if( !empty( $variations ) ){
+                foreach( $variations as $variation ){
+                    $element_data[ 'variation_desc'.$variation['variation_id'] ]       = array( 'original' => strip_tags( $variation['variation_description'] ) );
+                    $translated_variation_id = apply_filters( 'translate_object_id', $variation['variation_id'], 'product_variation', false, $this->get_target_language() );
+                    $element_data[ 'variation_desc'.$variation['variation_id'] ][ 'translation' ]  =   $translated_variation_id  ?get_post_meta( $translated_variation_id, '_variation_description', true ) : '';
+                }
+            }
+        }
+
 
 	    $files_data = array( $this->product->id => $this->woocommerce_wpml->downloadable->get_files_data( $this->product->id ) );
         if( $this->woocommerce_wpml->products->is_variable_product( $this->product->id ) ){
