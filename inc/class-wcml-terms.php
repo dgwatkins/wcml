@@ -173,7 +173,7 @@ class WCML_Terms{
         if ($terms) foreach($terms as $term) {
             $term_order = get_woocommerce_term_meta($term->term_id,'order');
             $trid = $this->sitepress->get_element_trid($term->term_taxonomy_id,'tax_product_cat');
-            $translations = $this->sitepress->get_element_translations($trid,'tax_product_cat');
+            $translations = $this->sitepress->get_element_translations($trid,'tax_product_cat'); var_dump($translations);
             if ($translations) foreach ($translations as $trans) {
                 if ($trans->language_code != $lang) {
                     update_woocommerce_term_meta( $trans->term_id, 'order', $term_order);
@@ -195,7 +195,7 @@ class WCML_Terms{
 
         if (!isset($_POST['thetaxonomy']) || !taxonomy_exists($_POST['thetaxonomy']) || substr($meta_key,0,5) != 'order') 
             return;
-        
+
         $tax = filter_input( INPUT_POST, 'thetaxonomy', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         
         $term_taxonomy_id = $this->wpdb->get_var($this->wpdb->prepare("SELECT term_taxonomy_id FROM {$this->wpdb->term_taxonomy} WHERE term_id=%d AND taxonomy=%s", $object_id, $tax));

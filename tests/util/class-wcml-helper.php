@@ -2,10 +2,11 @@
 
 class WCML_Helper {
 
-    function _construct(){
+    function init(){
 
         wpml_test_reg_custom_post_type( 'product' );
         $settings_helper = wpml_load_settings_helper();
+
         $settings_helper->set_post_type_translatable( 'product' );
         $settings_helper->set_post_type_translatable( 'product_variation' );
 

@@ -26,22 +26,12 @@ class WCML_Store_Pages{
 
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         if (isset($_POST['create_pages']) && wp_verify_nonce($nonce, 'create_pages')) {
-            $this->create_missing_store_pages();
-        }
-        
-        // table rate shipping support        
-        if(defined('TABLE_RATE_SHIPPING_VERSION')){
-            add_filter('woocommerce_table_rate_query_rates_args', array($this, 'default_shipping_class_id'));
+            $this->create_missing_store_pages_with_redirect();
         }
         
         $this->front_page_id = get_option('page_on_front');
         $this->shop_page_id =  wc_get_page_id('shop');
         $this->shop_page = get_post( $this->shop_page_id );
-
-        $this->localize_flat_rates_shipping_classes();
-
-        add_filter('woocommerce_paypal_args', array($this, 'filter_paypal_args'));
-        
     }   
     
     function switch_pages_language( $pages ){
@@ -151,23 +141,7 @@ class WCML_Store_Pages{
 
         return apply_filters( 'translate_object_id',$id, 'page', true);
     }
-    
-    function default_shipping_class_id($args){
-        global $sitepress, $woocommerce_wpml;
-        if($sitepress->get_current_language() != $sitepress->get_default_language() && !empty($args['shipping_class_id'])){
-            
-            $args['shipping_class_id'] = apply_filters( 'translate_object_id',$args['shipping_class_id'], 'product_shipping_class', false, $sitepress->get_default_language());
-            
-            if($woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT){
-            // use unfiltred cart price to compare against limits of different shipping methods
-            $args['price'] = $woocommerce_wpml->multi_currency->prices->unconvert_price_amount($args['price']);
-            }
-            
-        }
-        
-        return $args;
-    }
-    
+
     /**
      * Filters WooCommerce query for translated shop page
      * 
@@ -228,7 +202,7 @@ class WCML_Store_Pages{
     /**
      * Translate shop url
      */
-    function translate_ls_shop_url($languages) {
+    function translate_ls_shop_url($languages, $debug_mode = false) {
         global $sitepress;
         $shop_id = $this->shop_page_id;
         $front_id = apply_filters( 'translate_object_id',$this->front_page_id, 'page');
@@ -236,7 +210,7 @@ class WCML_Store_Pages{
         foreach ($languages as $language) {
             // shop page
             // obsolete?
-            if (is_post_type_archive('product')) {
+            if (is_post_type_archive('product') || $debug_mode ) {
                 if ($front_id == $shop_id) {
                     $url = $sitepress->language_url($language['language_code']);
                 } else {
@@ -266,6 +240,13 @@ class WCML_Store_Pages{
                 }
             }
         }
+    }
+
+    function create_missing_store_pages_with_redirect(){
+        $this->create_missing_store_pages();
+
+        wp_redirect(admin_url('admin.php?page=wpml-wcml&tab=status')); exit;
+
     }
     
     /**
@@ -350,14 +331,10 @@ class WCML_Store_Pages{
 
                         $trid = $sitepress->get_element_trid($orig_id, 'post_page');
                         $sitepress->set_element_language_details($new_page_id, 'post_page', $trid, $mis_lang);
-
-
                     }
                 }
                 $woocommerce_wpml->locale->switch_locale();
             }
-
-            wp_redirect(admin_url('admin.php?page=wpml-wcml&tab=status')); exit;
         }
     }
     
@@ -440,44 +417,6 @@ class WCML_Store_Pages{
     function get_checkout_page_url(){
         return get_permalink(apply_filters( 'translate_object_id',get_option('woocommerce_checkout_page_id'), 'page', true));
     }
-    
-    function localize_flat_rates_shipping_classes(){
-        global $woocommerce;
-        
-        if(is_ajax() && isset($_POST['action']) && $_POST['action'] == 'woocommerce_update_order_review'){
-            $woocommerce->shipping->load_shipping_methods();
-            $shipping_methods = $woocommerce->shipping->get_shipping_methods();
-            foreach($shipping_methods as $method){
-                if(isset($method->flat_rate_option)){
-                    add_filter('option_' . $method->flat_rate_option, array($this, 'translate_shipping_classs'));
-                }
-            }
-            
-        }
-        
-        
-    }
-    
-    function translate_shipping_classs($rates){
-        
-        if(is_array($rates)){
-            foreach($rates as $shipping_class => $value){
-                global $woocommerce_wpml;
-                $term_id = $woocommerce_wpml->terms->wcml_get_term_id_by_slug('product_shipping_class', $shipping_class );
-
-                if($term_id && !is_wp_error($term_id)){
-                    $translated_term_id = apply_filters( 'translate_object_id', $term_id, 'product_shipping_class', true);
-                    if($translated_term_id != $term_id){
-                        $term = $woocommerce_wpml->terms->wcml_get_term_by_id( $translated_term_id, 'product_shipping_class' );
-                        unset($rates[$shipping_class]);
-                        $rates[$term->slug] = $value;
-                        
-                    }
-                }
-            }
-        }   
-        return $rates;    
-    }
             
     function get_wc_pages(){
         return apply_filters('wcml_wc_installed_pages', array(
@@ -490,7 +429,7 @@ class WCML_Store_Pages{
 
     function after_set_default_language( $code, $previous_code ){
         global $wpdb;
-        $this->create_missing_store_pages();
+        $this->create_missing_store_pages_with_redirect();
 
         $pages = $this->get_wc_pages();
 
@@ -575,19 +514,6 @@ class WCML_Store_Pages{
 
         return $template;
 
-    }
-
-    function filter_paypal_args($args) {
-        global $sitepress;
-        $args['lc'] = $sitepress->get_current_language();
-
-        //filter URL when default permalinks uses
-        $wpml_settings = $sitepress->get_settings();
-        if( $wpml_settings[ 'language_negotiation_type' ] == 3 ){
-            $args[ 'notify_url' ] = str_replace( '%2F&', '&', $args[ 'notify_url' ] );
-        }
-
-        return $args;
     }
     
 }

@@ -322,10 +322,10 @@ class WCML_Setup {
     public function install_store_pages( $data ){
 
         if( !empty( $data['create_pages'] ) ) {
-            $this->woocommerce_wpml->store->create_missing_store_pages();
+            $this->woocommerce_wpml->store->create_missing_store_pages_with_redirect();
         }elseif( !empty( $data['install_missing_pages'] ) ){
             WC_Install::create_pages();
-            $this->woocommerce_wpml->store->create_missing_store_pages();
+            $this->woocommerce_wpml->store->create_missing_store_pages_with_redirect();
         }
 
     }

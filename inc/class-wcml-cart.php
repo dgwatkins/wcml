@@ -22,7 +22,9 @@ class WCML_Cart
         add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'translate_cart_subtotal' ) );
         add_action( 'woocommerce_before_checkout_process', array( $this, 'wcml_refresh_cart_total' ) );
 
+        add_filter('woocommerce_paypal_args', array($this, 'filter_paypal_args'));
 
+        $this->localize_flat_rates_shipping_classes();
     }
 
     public function wcml_refresh_fragments(){
@@ -195,4 +197,51 @@ class WCML_Cart
         WC()->cart->calculate_totals();
     }
 
+
+    public function localize_flat_rates_shipping_classes(){
+        global $woocommerce;
+
+        if(is_ajax() && isset($_POST['action']) && $_POST['action'] == 'woocommerce_update_order_review'){
+            $woocommerce->shipping->load_shipping_methods();
+            $shipping_methods = $woocommerce->shipping->get_shipping_methods();
+            foreach($shipping_methods as $method){
+                if(isset($method->flat_rate_option)){
+                    add_filter('option_' . $method->flat_rate_option, array($this, 'translate_shipping_class'));
+                }
+            }
+
+        }
+    }
+
+    public function translate_shipping_class($rates){
+
+        if(is_array($rates)){
+            foreach($rates as $shipping_class => $value){
+                $term_id = $this->woocommerce_wpml->terms->wcml_get_term_id_by_slug('product_shipping_class', $shipping_class );
+
+                if($term_id && !is_wp_error($term_id)){
+                    $translated_term_id = apply_filters( 'translate_object_id', $term_id, 'product_shipping_class', true);
+                    if($translated_term_id != $term_id){
+                        $term = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $translated_term_id, 'product_shipping_class' );
+                        unset($rates[$shipping_class]);
+                        $rates[$term->slug] = $value;
+
+                    }
+                }
+            }
+        }
+        return $rates;
+    }
+
+    public function filter_paypal_args( $args ) {
+        $args['lc'] = $this->sitepress->get_current_language();
+
+        //filter URL when default permalinks uses
+        $wpml_settings = $this->sitepress->get_settings();
+        if( $wpml_settings[ 'language_negotiation_type' ] == 3 ){
+            $args[ 'notify_url' ] = str_replace( '%2F&', '&', $args[ 'notify_url' ] );
+        }
+
+        return $args;
+    }
 }
