@@ -426,34 +426,6 @@ class WCML_WC_Strings{
     function show_custom_url_base_translation_links(){
         global $woocommerce_wpml,$sitepress;
         $permalink_options = get_option( 'woocommerce_permalinks' );
-        ?>
-        <script>
-            var inputs = ['woocommerce_product_category_slug', 'woocommerce_product_tag_slug', 'woocommerce_product_attribute_slug' ];
-            <?php if( !empty( $permalink_options['product_base'] ) ) { ?>inputs.push( 'product_permalink_structure' ); <?php } ?>
-            for(i in inputs){
-                var input = jQuery('input[name="' + inputs[i] + '"]');
-                if(input.length){
-
-                    if(inputs[i] == 'product_permalink_structure' && jQuery('input[name="product_permalink"]:checked').val() == '' ){
-                        input = jQuery('input[name="product_permalink"]:checked').closest('.form-table').find('code').eq(0);
-                    }
-
-                    input.parent().append('<div class="translation_controls"></div>');
-
-                    if(inputs[i] == 'woocommerce_product_attribute_slug' && input.val() == '' ){
-
-                        input.parent().find('.translation_controls').append('&nbsp;');
-
-                    }else{
-                        input.parent().find('.translation_controls').append('<a href="<?php
-                            echo admin_url( 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context='. urlencode($woocommerce_wpml->url_translation->url_strings_context()) )
-                             ?>"><?php _e('translations', 'woocommerce-multilingual') ?></a>');
-                    }
-
-                }
-            }
-        </script>
-        <?php
 
         $lang_selector = new WPML_Simple_Language_Selector( $sitepress );
 
@@ -477,7 +449,7 @@ class WCML_WC_Strings{
                 case 'product':
                     $input_name = 'product_permalink_structure';
                     if( empty( $permalink_options['product_base'] ) ){
-                        continue 2;
+                        $value = _x( 'product', 'default-slug', 'woocommerce' );
 	  	            }else{
                         $value = trim( $permalink_options['product_base'], '/' );
                     }
@@ -494,6 +466,26 @@ class WCML_WC_Strings{
 
             <script>
                 var input = jQuery('input[name="<?php echo $input_name ?>"]');
+
+                if(input.length){
+
+                    if( '<?php echo $input_name ?>' == 'product_permalink_structure' && jQuery('input[name="product_permalink"]:checked').val() == '' ){
+                        input = jQuery('input[name="product_permalink"]:checked').closest('.form-table').find('code').eq(0);
+                    }
+
+                    input.parent().append('<div class="translation_controls"></div>');
+
+                    if( '<?php echo $input_name ?>' == 'woocommerce_product_attribute_slug' && input.val() == '' ){
+
+                        input.parent().find('.translation_controls').append('&nbsp;');
+
+                    }else{
+                        input.parent().find('.translation_controls').append('<a href="<?php
+                            echo admin_url( 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context='. urlencode($woocommerce_wpml->url_translation->url_strings_context() ).'&search='.$value.'&em=1' )
+                             ?>"><?php _e('translations', 'woocommerce-multilingual') ?></a>');
+                    }
+
+                }
 
                 if( '<?php echo $input_name ?>' == 'product_permalink_structure' && jQuery('input[name="product_permalink"]:checked').val() == '' ){
 
