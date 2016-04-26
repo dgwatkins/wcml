@@ -20,6 +20,8 @@ class woocommerce_wpml {
     public $locale;
     public $media;
     public $downloadable;
+    public $strings;
+    public $shipping;
 
     private $reports;
     public $requests;
@@ -78,6 +80,7 @@ class woocommerce_wpml {
         $this->attributes           = new WCML_Attributes( $this, $sitepress, $wpdb );
         $this->orders               = new WCML_Orders;
         $this->strings              = new WCML_WC_Strings;
+        $this->shipping             = new WCML_WC_Shipping( $sitepress );
         $this->currencies           = new WCML_Currencies( $this );
         $this->xdomain_data         = new WCML_xDomain_Data;
         $this->languages_upgrader   = new WCML_Languages_Upgrader;
