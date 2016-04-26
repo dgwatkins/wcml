@@ -33,10 +33,11 @@ class WCML_WC_Shipping{
 
             if( ( defined('WC_VERSION') && version_compare( WC_VERSION , '2.6', '<' ) ) ){
                 add_filter( 'woocommerce_settings_api_sanitized_fields_'.$shipping_method_id, array( $this, 'register_shipping_strings' ) );
-                add_filter( 'option_woocommerce_'.$shipping_method_id.'_settings', array( $this, 'translate_shipping_strings' ), 9, 2 );
             }else{
                 add_filter( 'woocommerce_shipping_' . $shipping_method_id . '_instance_settings_values', array( $this, 'register_zone_shipping_strings' ),9,2 );
             }
+
+            add_filter( 'option_woocommerce_'.$shipping_method_id.'_settings', array( $this, 'translate_shipping_strings' ), 9, 2 );
         }
     }
 
@@ -55,6 +56,8 @@ class WCML_WC_Shipping{
         if( !empty( $instance_settings['title'] ) ){
             $this->register_shipping_title( $object->id.$object->instance_id, $instance_settings['title'] );
         }
+
+        return $instance_settings;
     }
 
     function register_shipping_strings( $fields ){
