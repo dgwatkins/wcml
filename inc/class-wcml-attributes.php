@@ -181,10 +181,16 @@ class WCML_Attributes{
             if ( $data ){
                 if ( isset( $data[ md5( $key ) ] ) && !empty( $data[ md5( $key ) ] ) && !is_array( $data[ md5( $key ) ] ) ) {
                     //get translation values from $data
-                    $trnsl_labels[ $language ][ $key_to_save ] = stripslashes( $data[ md5( $key . '_name' ) ] );
                     $orig_product_attrs[ $key_to_save ][ 'value' ] = $data[ md5( $key ) ];
                 } else {
                     $orig_product_attrs[ $key_to_save ][ 'value' ] = '';
+                }
+
+                if ( isset( $data[ md5( $key . '_name' ) ] ) && !empty( $data[ md5( $key . '_name' ) ] ) && !is_array( $data[ md5( $key . '_name' ) ] ) ) {
+                    //get translation values from $data
+                    $trnsl_labels[ $language ][ $key_to_save ] = stripslashes( $data[ md5( $key . '_name' ) ] );
+                } else {
+                    $trnsl_labels[ $language ][ $key_to_save ] = '';
                 }
             }elseif( !$orig_product_attr[ 'is_taxonomy' ] ){
                 if( isset( $trnsl_product_attrs[ $key ] ) ){
