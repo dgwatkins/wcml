@@ -5,7 +5,7 @@ Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multili
 License: GPLv2
 Requires at least: 3.0
 Tested up to: 4.4.1
-Stable tag: 3.7.9
+Stable tag: 3.8
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
 
@@ -77,6 +77,33 @@ In order for the checkout and store pages to appear translated, you need to crea
 3. Multiple currencies
 
 == Changelog ==
+
+= 3.7.8 =
+* A new design, a new look and feel complementing the new WPML 3.4
+* A new translation editor for the products
+* New options for translating product attributes
+* An enhanced and dedicated configuration screen for multi-currency
+* Easier translation of URLs
+* Immediate attention to configuration issues on the Status page
+* Improved support for the WooCommerce REST API
+* Straightforward setup wizard to run WooCommerce Multilingual
+* Bundled Installer makes it effortless to add in the required plugins
+* Option for downloadable products to share files under each product
+* Other price types can be set custom values for secondary currencies
+* Translating WooCommerce email strings also got simpler
+* Numerous bug fixes and enhancements
+
+= 3.7.13 =
+* Bug fix: When adding a global attribute inline while creating a product in a secondary language, the term was created in the wrong language
+* Fixed a compatibility issues with WooCommerce Tab Manager: fatal error when trying to translate a product
+* Fixed another compatibility issues with WooCommerce Tab Manager: when a product had only a global tab, the translated tab didn't show up on the translated product
+* Improvements for how the gateways strings are registered for translation
+* Updated logic for registering and translating Shipping zones and methods according to changes in WooCommerce 2.6
+
+= 3.7.12 =
+* Fixed a bug that made the shop pages return 404 errors on WordPress 4.5
+* Fixed warnings caused by terms translated before the WooCommerce Multilingual activation
+* Bug fix: WooCommerce Multilingual locales for secondary languages were not loaded correctly
 
 = 3.7.11 =
 * Bug fix: the downloadable products were not synced properly with their translations
