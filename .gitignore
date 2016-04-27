@@ -1,6 +1,7 @@
 .idea
 build
 tmp
+composer.lock
 tests/wordpress-tests-lib
 tests/wordpress
 !tests/install-wp-tests.sh
