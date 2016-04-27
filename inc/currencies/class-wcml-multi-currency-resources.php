@@ -12,7 +12,13 @@ class WCML_Multi_Currency_Resources{
             self::load_inline_js();
         }
 
-        self::register_css();
+        $is_multi_currency = is_admin() && isset ($_GET['page'] ) && $_GET['page'] == 'wpml-wcml'
+                             && isset( $_GET['tab'] ) && $_GET['tab'] == 'multi-currency';
+
+        if( !is_admin() || $is_multi_currency ){
+            self::register_css();
+        }
+
     }
 
     private static function load_inline_js(){
