@@ -15,7 +15,7 @@ class ElevenCest
         // Check if product translation interface is working correct //
         ///////////////////////////////////////////////////////////////
 
-        /*$I->amGoingTo('Check WCML produt interface');
+        $I->amGoingTo('Check WCML produt interface');
 
         $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml&tab=settings');
 
@@ -27,54 +27,51 @@ class ElevenCest
 
         $I->click('Save changes');
 
-        $I->wait(1);*/
+        $I->wait(1);
 
         $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml');
 
         $I->see('Products', '.nav-tab-active');
 
-        $I->seeElement('.js-wcml-translation-dialog-trigger', ['data-id' => '12']);
+        $I->seeElement('td.wpml-col-languages span i.otgs-ico-original');
 
-        $I->click('.js-wcml-translation-dialog-trigger');
+        $I->seeElement('td.wpml-col-languages a');
 
-        $I->seeElement('.ui-dialog');
+        //$I->seeElement('.js-wcml-translation-dialog-trigger', ['data-id' => '12']);
 
-        $I->seeElement('.ui-dialog>#wpml-translation-editor-dialog');
+        $I->click('td.wpml-col-languages a');
 
-        $I->waitForElement('.wpml-dialog-close-button', 10);
+        $I->seeInCurrentUrl('/wp-admin/admin.php?page=wpml-translation-management%2Fmenu%2Ftranslations-queue.php');
 
-        $I->wait(2);
+        $I->see('Product translation:');
 
-        $I->click('Save & Close');
+        $I->click('.wpml-translation-action-buttons div.alignleft button.cancel');
 
-        $I->wait(2);
+        $I->wait(3);
 
-        // Doesn't work Need to wait for final version of WPML
-        /*$I->click('Test Product');
+        $I->see('WooCommerce Multilingual');
 
-        $I->seeInCurrentUrl('/wp-admin/post.php?post=12&action=edit&lang=en');
+        $I->click('Test Product');
+
+        $I->seeInCurrentUrl('/wp-admin/post.php?post=');
 
         $I->see('Edit Product');
 
-        $I->waitForElement('.otgs-ico-add',10);
+        $I->waitForElement('.icl_odd_row',10);
 
-        $I->click('.otgs-ico-add');
+        $I->click('.icl_odd_row a');
 
-        $I->waitForElement('.ui-dialog',10);
+        $I->seeInCurrentUrl('/wp-admin/admin.php?page=wpml-translation-management%2Fmenu%2Ftranslations-queue.php');
 
-        $I->seeElement('.ui-dialog');
+        $I->see('Product translation:');
 
-        $I->seeElement('.ui-dialog>#wpml-translation-editor-dialog');
+        $I->click('.wpml-translation-action-buttons div.alignleft button.cancel');
 
-        $I->waitForElement('.wpml-dialog-close-button', 10);
-
-        $I->wait(2);
-
-        $I->click('Save & Close');*/
+        $I->wait(3);
 
         /* Check with native screen */
-        /* It is not ready we should wait for final version of wpml */
-        /*$I->amGoingTo('change translation method');
+
+        $I->amGoingTo('change translation method');
 
         $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml&tab=settings');
 
@@ -92,26 +89,23 @@ class ElevenCest
 
         $I->see('Products');
 
-        $I->click('.otgs-ico-add');
-
-        $I->seeInCurrentUrl('/wp-admin/post.php?post=12&action=edit&lang=en');
-
-        $I->see('Edit Product');
-
-        $I->wait(1);
-
-        $I->amOnPage('/wp-admin/edit.php?post_type=product');
-
-        $I->see('Products');
+        // I am here
 
         $I->click('Test Product');
 
+        $I->seeInCurrentUrl('/wp-admin/post.php?post=');
+
+        $I->see('Edit Product');
+
+        $I->click('.icl_translations_table .icl_odd_row a');
+
+        $I->see('Add New Product');
+
+        $I->seeElement('.error');
+
         //NOT FINISHED
+        // I should test if the locks are correct
         // I should change the translation interface again after the tests
-        */
-
-
-
 
     }
 
