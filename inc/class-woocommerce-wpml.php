@@ -70,7 +70,10 @@ class woocommerce_wpml {
         WCML_Admin_Menus::set_up_menus( $this, $sitepress, $this->check_dependencies );
 
         if( !$this->check_dependencies ){
-            wp_enqueue_style( 'onthegosystems-icon', WCML_PLUGIN_URL . '/res/css/otgs-ico.css' );
+
+            wp_register_style( 'otgs-ico', WCML_PLUGIN_URL . '/res/css/otgs-ico.css', null, WCML_VERSION );
+            wp_enqueue_style( 'otgs-ico');
+
             WCML_Resources::load_management_css();
             WCML_Resources::load_tooltip_resources();
             return false;

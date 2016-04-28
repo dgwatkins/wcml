@@ -1,23 +1,8 @@
-@import "mixins";
-@import "variables";
-
 .wcml-slug-dialog {
-	.wpml-header-original,
-	.wpml-header-translation	{
-		margin: $margin-xs $margin-sm ;
-
-	}
 	.translated_value,
 	.original_value,
 	.wpml-header-original,
 	.wpml-header-translation	{
-		width: 250px;
-	}
-}
-
-.ui-dialog.wcml-dialog-dialog {
-	.ui-dialog-title {
-		@extend %truncate;
-		display: block;
+		width: calc(50% - 30px - 5px);
 	}
 }

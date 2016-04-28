@@ -82,6 +82,9 @@
 		font-weight: normal;
 		font-size: 1.4em;
 		margin-top: 0.7em;
+		.wcml-tip:before {
+			vertical-align: top;
+		}
 	}
 }
 
@@ -407,9 +410,6 @@ input[name="wcml_curr_template"] {
 .wcml-tip {
 	cursor: help;
 	color: #555;
-	&[class*="otgs-ico"]:before {
-		vertical-align: top;
-	}
 }
 
 .wcml-products {
