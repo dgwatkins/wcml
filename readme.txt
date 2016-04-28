@@ -72,9 +72,12 @@ In order for the checkout and store pages to appear translated, you need to crea
 
 == Screenshots ==
 
-1. Translation controls for products
-2. Product categories translations
-3. Multiple currencies
+1. Products translation screen
+2. Product translation editor
+3. Global attributes translation
+4. Multiple currencies
+5. Status Page
+6. Shop URLs translation screen
 
 == Changelog ==
 
