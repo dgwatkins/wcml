@@ -1,17 +1,17 @@
 === WooCommerce Multilingual - run WooCommerce with WPML ===
-Contributors: AmirHelzer, dominykasgel, dgwatkins, adelval
+Contributors: AmirHelzer, dominykasgel, dgwatkins, adelval, sergey.r, mihaimihai
 Donate link: http://wpml.org/documentation/related-projects/woocommerce-multilingual/
 Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multilingual, e-shop, shop
 License: GPLv2
-Requires at least: 3.0
-Tested up to: 4.4.1
+Requires at least: 3.9
+Tested up to: 4.5.1
 Stable tag: 3.8
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
 
 == Description ==
 
-This 'glue' plugin makes it possible to run fully multilingual e-commerce sites using [WooCommerce](http://wordpress.org/extend/plugins/woocommerce/) and [WPML](http://wpml.org). It makes products and store pages translatable, lets visitors switch languages and order products in their language.
+This 'glue' plugin makes it possible to run fully multilingual e-commerce sites using [WooCommerce](https://wordpress.org/plugins/woocommerce/) and [WPML](http://wpml.org). It makes products and store pages translatable, lets visitors switch languages and order products in their language.
 
 = Features =
 
@@ -27,9 +27,9 @@ This 'glue' plugin makes it possible to run fully multilingual e-commerce sites 
 
 For step by step instructions on setting up a multilingual shop, please go to [WooCommerce Multilingual Manual](http://wpml.org/documentation/related-projects/woocommerce-multilingual/) page.
 
-After installing, go to WPML->WooCommerce Multilingual. The 'General settings' tab will let you translate the store pages and report what taxonomy requires translation.
+After installing, follow the steps of the setup wizard to translate the store pages, configure what attributes should be translated, enable the multi-currency mode and other settings.
 
-Then, continue to the 'Products' and any categories, tags and custom taxonomy that you use.
+Then, continue to the 'Products' and any categories, tags and attributes that you use.
 
 When you need help, go to [WooCommerce Multilingual support forum](http://wpml.org/forums/topic-tag/woocommerce/).
 
@@ -43,18 +43,46 @@ You will also need [WPML](http://wpml.org), together with the String Translation
 
 WooCommerce Multilingual checks that the following versions of WPML and their components are active:
 
-* WPML Multilingual CMS       - 3.1.5
+* WPML Multilingual CMS       - 3.4
 * WPML String Translation     - 2.0
-* WPML Translation Management - 1.9
+* WPML Translation Management - 2.2
 * WPML Media                  - 2.1
 
 Without having all these running, WooCommerce Multilingual will not be able to run.
 
 == Installation ==
 
+= Minimum Requirements =
+
+* WordPress 3.9 or later
+* PHP version 5.6 or later
+* MySQL version 5.6 or later
+
+* WooCommerce 2.1 or later
+* WPML Multilingual CMS 3.4 or later
+* WPML String Translation 2.0 or later
+* WPML Translation Management 2.2 or later
+* WPML Media 2.1 or later
+
+= WordPress automatic installation =
+In your WordPress dashboard, go to the Plugins section and click 'Add new'.
+
+= WPML Installer =
+If you're already using WPML on your site, in your WordPress dashboard, go to the Plugins section, click 'Add new' and go to the 'Commercial' tab.
+
+= Manual Installation =
 1. Upload 'woocommerce-multilingual' to the '/wp-content/plugins/' directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Translate the shop pages
+
+= Setup =
+After installing the plugin either automatically or manually:
+
+1. Follow the steps of the setup wizard for the basic required configuration
+2. Translate existing content: products, attributes, permalink bases
+3. Optionally, add secondary currencies
+
+= Updating =
+Once you installer WooCommerce Multilingual, the built in Installer works together with the WordPress automatic update built in logic to make the updating process as easy as it can be.
 
 == Frequently Asked Questions ==
 
@@ -81,7 +109,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 
 == Changelog ==
 
-= 3.7.8 =
+= 3.8 =
 * A new design, a new look and feel complementing the new WPML 3.4
 * A new translation editor for the products
 * New options for translating product attributes
