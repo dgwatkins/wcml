@@ -38,12 +38,9 @@ class WCML_Resources {
 
             self::load_management_css();
 
-            wp_register_style( 'wpml-dialogs', ICL_PLUGIN_URL . '/res/css/dialogs.css', null, ICL_SITEPRESS_VERSION );
-            wp_enqueue_style( 'wcml-dialogs' );
-
             if ( in_array( self::$tab, array('multi-currency', 'slugs') ) ) {
-                wp_register_style( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/css/dialogs.css', null, WCML_VERSION );
-                wp_enqueue_style( 'wcml-dialogs' );
+                wp_register_style( 'wpml-dialogs', ICL_PLUGIN_URL . '/res/css/dialogs.css', null, ICL_SITEPRESS_VERSION );
+                wp_enqueue_style( 'wpml-dialogs' );
             }
 
         }
