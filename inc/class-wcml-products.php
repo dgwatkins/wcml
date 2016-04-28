@@ -79,7 +79,7 @@ class WCML_Products{
         $get_variation_term_taxonomy_ids = apply_filters( 'wcml_variation_term_taxonomy_ids',(array)$get_variation_term_taxonomy_ids );
 
         $is_variable_product = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT count(object_id) FROM {$this->wpdb->term_relationships} WHERE object_id = %d AND term_taxonomy_id IN (".join(',',$get_variation_term_taxonomy_ids).")",$product_id ) );
-        return $is_variable_product;
+        return apply_filters( 'wcml_is_variable_product', $is_variable_product, $product_id );
     }
 
     public function is_grouped_product($product_id){

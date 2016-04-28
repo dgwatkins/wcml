@@ -22,6 +22,9 @@ class WCML_Adventure_tours{
             add_action( 'admin_footer', array( $this, 'load_assets' ) );
             add_action( 'wcml_after_custom_prices_block', array( $this, 'add_custom_prices_block' ) );
             add_action( 'wcml_after_save_custom_prices', array( $this, 'save_custom_costs' ) );
+
+            add_filter( 'wcml_is_variable_product', array( $this, 'is_variable_tour' ), 10, 2 );
+            add_filter( 'wcml_variation_term_taxonomy_ids', array( $this, 'add_tour_tax_id' ) );
         }
     }
 
@@ -107,28 +110,23 @@ class WCML_Adventure_tours{
 
     }
 
-    function custom_box_html_data($data, $product_id, $translation, $lang)
-    {
+    function custom_box_html_data($data, $product_id, $translation, $lang){
 
         if ( $tour_tabs_meta = get_post_meta( $product_id, 'tour_tabs_meta', true ) ) {
 
             foreach ( $tour_tabs_meta['tabs'] as $tour_tab_id => $tour_tab_meta ) {
-
                 $data['adventure_tour_' . $tour_tab_id . '_title'] = array('original' => $tour_tab_meta['title'] );
-
                 $data['adventure_tour_' . $tour_tab_id . '_content'] = array('original' => $tour_tab_meta['content'] );
-
             }
 
             if ($translation) {
                 $translated_tour_tabs_meta = get_post_meta(  $translation->ID, 'tour_tabs_meta', true );
 
-                foreach ( $translated_tour_tabs_meta['tabs'] as $tour_tab_id => $tour_tab_meta) {
-
-                    $data['adventure_tour_' . $tour_tab_id . '_title']['translation'] = $tour_tab_meta['title'];
-
-                    $data['adventure_tour_' . $tour_tab_id . '_content']['translation'] = $tour_tab_meta['content'];
-
+                if( $translated_tour_tabs_meta ){
+                    foreach ( $translated_tour_tabs_meta['tabs'] as $tour_tab_id => $tour_tab_meta) {
+                        $data['adventure_tour_' . $tour_tab_id . '_title']['translation'] = $tour_tab_meta['title'];
+                        $data['adventure_tour_' . $tour_tab_id . '_content']['translation'] = $tour_tab_meta['content'];
+                    }
                 }
             }
 
@@ -140,7 +138,7 @@ class WCML_Adventure_tours{
     function tour_data_update( $original_product_id, $product_id, $data)
     {
 
-        $tour_tabs_meta = get_post_meta( $product_id, 'tour_tabs_meta', true );
+        $tour_tabs_meta = get_post_meta( $original_product_id, 'tour_tabs_meta', true );
 
         if( isset( $tour_tabs_meta['tabs'] ) && is_array( $tour_tabs_meta['tabs'] ) ){
             foreach ( $tour_tabs_meta['tabs'] as $tour_tab_id => $tour_tab_meta ) {
@@ -153,8 +151,11 @@ class WCML_Adventure_tours{
                     $tour_tabs_meta['tabs'][$tour_tab_id]['content'] = $data[md5('adventure_tour_' . $tour_tab_id . '_content')];
                 }
             }
+            remove_action('updated_post_meta', array($this, 'sync_tour_data_across_translations'), 10, 4);
 
             update_post_meta($product_id, 'tour_tabs_meta', $tour_tabs_meta);
+
+            add_action('updated_post_meta', array($this, 'sync_tour_data_across_translations'), 10, 4);
         }
 
     }
@@ -229,8 +230,9 @@ class WCML_Adventure_tours{
             }
 
         }
-
+        remove_action('updated_post_meta', array($this, 'sync_tour_data_across_translations'), 10, 4);
         update_post_meta($post_id, 'tour_tabs_meta', $tour_tabs_meta);
+        add_action('updated_post_meta', array($this, 'sync_tour_data_across_translations'), 10, 4);
 
     }
 
@@ -330,6 +332,24 @@ class WCML_Adventure_tours{
         }
 
         return $value;
+    }
+
+    function add_tour_tax_id( $variation_term_taxonomy_ids ){
+        global $wpdb;
+        $tour_taxonomy_id = $wpdb->get_var( "SELECT tt.term_taxonomy_id FROM {$wpdb->terms} AS t LEFT JOIN {$wpdb->term_taxonomy} AS tt ON t.term_id = tt.term_id WHERE t.name = 'tour' AND tt.taxonomy = 'product_type'" );
+        $variation_term_taxonomy_ids[] = $tour_taxonomy_id;
+
+        return $variation_term_taxonomy_ids;
+
+    }
+
+    function is_variable_tour( $is_variable, $product_id ){
+
+        if( $is_variable && get_post_meta( $product_id, '_variable_tour', true ) == 'yes' ){
+            $is_variable = true;
+        }
+
+        return $is_variable;
     }
 
 }
