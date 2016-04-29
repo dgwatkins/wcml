@@ -172,8 +172,13 @@ jQuery( function($){
                         tr.attr('id', 'currency_row_langs_' + currency);
                         $('#currency-lang-table').find('tr.default_currency').before( tr );
 
+                        tr.find('.on a').each( function(){
+                            $(this).attr('data-currency', currency);
+                        });
+
                         var tr = $('#currency-delete-table tr.wcml-row-currency-del:last').clone();
                         tr.attr('id', 'currency_row_del_' + currency);
+
                         var del_link = tr.find('.delete_currency');
                         del_link.removeClass('hidden');
                         del_link.attr('data-currency', currency);

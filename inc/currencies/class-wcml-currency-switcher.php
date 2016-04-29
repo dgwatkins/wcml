@@ -114,18 +114,22 @@ class WCML_Currency_Switcher {
             $currencies = $wcml_settings['currencies_order'];
         }
 
-
-
-        if ( $args['switcher_style'] == 'dropdown' ) {
-            $preview .= '<select class="wcml_currency_switcher">';
-        } else {
-            $args['orientation'] = $args['orientation'] == 'horizontal' ? 'curr_list_horizontal' : 'curr_list_vertical';
-            $preview .= '<ul class="wcml_currency_switcher ' . $args['orientation'] . '">';
+        foreach ( $currencies as $k => $currency ) {
+            if ( $wcml_settings['currency_options'][$currency]['languages'][$sitepress->get_current_language()] != 1 ) {
+                unset( $currencies[$k] );
+            }
         }
 
-        foreach ( $currencies as $currency ) {
-            if ( $wcml_settings['currency_options'][$currency]['languages'][$sitepress->get_current_language()] == 1 ) {
+        if( count( $currencies ) > 1 ) {
 
+            if ( $args['switcher_style'] == 'dropdown' ) {
+                $preview .= '<select class="wcml_currency_switcher">';
+            } else {
+                $args['orientation'] = $args['orientation'] == 'horizontal' ? 'curr_list_horizontal' : 'curr_list_vertical';
+                $preview .= '<ul class="wcml_currency_switcher ' . $args['orientation'] . '">';
+            }
+
+            foreach ( $currencies as $currency ) {
                 $currency_format = preg_replace( array('#%name%#', '#%symbol%#', '#%code%#'),
                     array($wc_currencies[$currency], get_woocommerce_currency_symbol( $currency ), $currency), $args['format'] );
 
@@ -137,12 +141,13 @@ class WCML_Currency_Switcher {
                     $preview .= '<li rel="' . $currency . '" ' . $selected . ' >' . $currency_format . '</li>';
                 }
             }
-        }
 
-        if ( $args['switcher_style'] == 'dropdown' ) {
-            $preview .= '</select>';
-        } else {
-            $preview .= '</ul>';
+            if ( $args['switcher_style'] == 'dropdown' ) {
+                $preview .= '</select>';
+            } else {
+                $preview .= '</ul>';
+            }
+
         }
 
         if ( !isset($args['echo']) || $args['echo'] ) {
