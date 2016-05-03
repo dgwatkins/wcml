@@ -42,12 +42,14 @@ function _install_wc(){
 	$GLOBALS['wp_roles']->reinit();
 }
 
+
 // Install WPML
 tests_add_filter( 'wpml_loaded', 'wpml_test_install_setup' );
 // install WC
 tests_add_filter( 'init', '_install_wc' );
 // Launch WCML
-tests_add_filter( 'wpml_loaded', 'wpml_wcml_startup' );
+tests_add_filter( 'wpml_loaded', array( 'woocommerce_wpml', 'instance' ) );
+
 
 
 // Temporary workaround for missing WP_REST_Server class missing

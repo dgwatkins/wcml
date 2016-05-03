@@ -1,6 +1,8 @@
 <?php
 class woocommerce_wpml {
 
+    protected static $_instance = null;
+
     public $settings;
     public $troubleshooting;
     public $endpoints;
@@ -31,7 +33,7 @@ class woocommerce_wpml {
     private $wc_rest_api;
 
 
-    function __construct(){
+    public function __construct(){
 
         $this->settings = $this->get_settings();
 
@@ -40,7 +42,24 @@ class woocommerce_wpml {
         add_action('init', array($this, 'init'),2);
     }
 
-    function init(){
+    /**
+     * Main instance.
+     *
+     * @since 3.8
+     * @static
+     * @return woocommerce_wpml
+     */
+    public static function instance() {
+        global $woocommerce_wpml;
+
+        if ( is_null( self::$_instance ) ) {
+            self::$_instance = new self();
+            $woocommerce_wpml = self::$_instance;
+        }
+
+        return self::$_instance;
+    }
+    public function init(){
         global $sitepress, $wpdb;
 
         new WCML_Upgrade;
@@ -115,7 +134,7 @@ class woocommerce_wpml {
         add_action('wp_ajax_wcml_update_setting_ajx', array($this, 'update_setting_ajx'));
     }
 
-    function get_settings(){
+    public function get_settings(){
 
         $defaults = array(
             'file_path_sync'               => 1,
@@ -140,14 +159,14 @@ class woocommerce_wpml {
         return $this->settings;
     }
 
-    function update_settings($settings = null){
+    public function update_settings($settings = null){
         if(!is_null($settings)){
             $this->settings = $settings;
         }
         update_option('_wcml_settings', $this->settings);
     }
 
-    function update_setting_ajx(){
+    public function update_setting_ajx(){
         $nonce = filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         if(!$nonce || !wp_verify_nonce($nonce, 'wcml_settings')){
             die('Invalid nonce');
@@ -165,7 +184,7 @@ class woocommerce_wpml {
     }
 
     //get latest stable version from WC readme.txt
-    function get_stable_wc_version(){
+    public function get_stable_wc_version(){
         global $woocommerce;
 
         $file = $woocommerce->plugin_path(). '/readme.txt';
@@ -186,7 +205,7 @@ class woocommerce_wpml {
         return $version;
     }
 
-    function get_supported_wp_version(){
+    public function get_supported_wp_version(){
         $file = WCML_PLUGIN_PATH. '/readme.txt';
 
         $values = file($file);

@@ -26,14 +26,5 @@ include WCML_PLUGIN_PATH . '/inc/installer-loader.php';
 
 define('WCML_PLUGIN_URL', wpml_filter_include_url( untrailingslashit( plugin_dir_url( __FILE__ ) ) ));
 
-function wpml_wcml_startup() {
-    global $woocommerce_wpml;
-    $woocommerce_wpml = new woocommerce_wpml();
-}
+add_action( 'wpml_loaded', array( 'woocommerce_wpml', 'instance' ) );
 
-if ( defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSION, '3.2', '>=' ) ) {
-    //@since WPML 3.2 using dependencies hook
-    add_action( 'wpml_loaded', 'wpml_wcml_startup' );
-} else {
-    add_action('plugins_loaded', 'wpml_wcml_startup', 10000);
-}
