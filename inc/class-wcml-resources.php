@@ -33,16 +33,15 @@ class WCML_Resources {
     }
 
     private static function load_css() {
-
+        
         if ( self::$is_wpml_wcml_page || self::$page == WPML_TM_FOLDER . '/menu/translations-queue.php' ) {
 
             self::load_management_css();
 
             if ( in_array( self::$tab, array('multi-currency', 'slugs') ) ) {
-                wp_register_style( 'wpml-dialogs', ICL_PLUGIN_URL . '/res/css/dialogs.css', null, ICL_SITEPRESS_VERSION );
-                wp_enqueue_style( 'wpml-dialogs' );
+                wp_register_style( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/css/dialogs.css', array('wpml-dialog'), WCML_VERSION );
+                wp_enqueue_style( 'wcml-dialogs' );
             }
-
         }
 
         if ( self::$pagenow == 'options-permalink.php' ) {

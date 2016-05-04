@@ -34,7 +34,7 @@ jQuery( function($){
                 title: '',
                 autoOpen:false,
                 show:true,
-                dialogClass:'wcml-dialog-dialog',
+                dialogClass:'wcml-ui-dialog otgs-ui-dialog',
                 position:{ my: 'center top', at: 'center top+' + window_h*0.17, of: window },
                 modal:true,
                 width: "90%",

@@ -145,7 +145,7 @@ jQuery( function($){
 				
 				WCML_WPML_Translation_Editor.update_save_button_state();
 
-				WCML_Tooltip.add_after( '.js-resign', strings.resign_tooltip, 'margin-left:-10px;line-height:28px;' );
+				WCML_Tooltip.add_after( '.js-resign', strings.resign_tooltip, 'margin-left:-12px;' );
 			}
 		},
 		
