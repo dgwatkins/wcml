@@ -3,6 +3,12 @@
 
 class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
+	private $settings;
+	private $multi_currency;
+	private $products;
+	private $default_currency;
+	private $secondary_currencies;
+
 	function setUp(){
 
 		add_filter('wcml_load_multi_currency', '__return_true');

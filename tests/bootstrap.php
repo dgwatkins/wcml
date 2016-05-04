@@ -43,6 +43,9 @@ function _install_wc(){
 }
 
 
+require_once 'wordpress/wp-includes/locale.php';
+
+
 // Install WPML
 tests_add_filter( 'wpml_loaded', 'wpml_test_install_setup' );
 // install WC
@@ -59,8 +62,6 @@ function WP_REST_Server_placeholder(){
 		class WP_REST_Server{}
 	}
 }
-
-
 
 
 require $_tests_dir . '/includes/bootstrap.php';

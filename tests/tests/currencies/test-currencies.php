@@ -3,6 +3,7 @@
 class Test_WCML_Currencies extends WCML_UnitTestCase {
 
     private $settings_backup;
+    private $settings;
 
     function setUp(){
 

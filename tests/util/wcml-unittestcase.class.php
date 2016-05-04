@@ -5,6 +5,8 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 	public $sitepress;
 	public $woocommerce_wpml;
 
+	public $wpdb;
+
 	/**
 	 * @uses \WPML_UnitTestCase::setUp to setup a WPML installation and remove query filters added by WP core unit tests
 	 *                                 that interfere with WPML's unit tests
@@ -16,7 +18,7 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 
 		$this->sitepress 		=& $sitepress;
 		$this->woocommerce_wpml	=& $woocommerce_wpml;
-		$this->wpdb	=& $wpdb;
+		$this->wpdb				=& $wpdb;
 		$this->wcml_helper = new WCML_Helper();
 		$this->wcml_helper->init();
 		require_once WC_PATH . '/woocommerce.php';
