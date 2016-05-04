@@ -88,8 +88,8 @@ class WCML_Setup {
                 wp_die( __( 'Cheatin&#8217; huh?', 'woocommerce' ) );
             }
 
-            $this->woocommerce_wpml->settings['set_up_wizard_run'] = 1;
-            $this->woocommerce_wpml->update_settings();
+            $this->complete_setup();
+            remove_filter( 'admin_notices', array( $this, 'setup_wizard_notice') );
         }
 
     }
@@ -113,7 +113,7 @@ class WCML_Setup {
             $this->woocommerce_wpml->update_settings();
         }
 
-        if( isset( $_GET['page'] ) && $_GET['page'] == 'wpml-wcml' && empty( $this->woocommerce_wpml->settings['set_up_wizard_splash'] )){
+        if( isset( $_GET['page'] ) && $_GET['page'] == 'wpml-wcml' && !$this->has_completed() && empty( $this->woocommerce_wpml->settings['set_up_wizard_splash'] )){
             wp_redirect('admin.php?page=wcml-setup');
             exit;
         }
