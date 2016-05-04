@@ -389,7 +389,7 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
             $this->assertTrue( in_array( $link_args['language_code'], $this->languages ) );
         }
     }
-    
+
     //check pagination
     private function check_pagination( $dom ){
         $current_page  = $dom->getElementById( 'current-page-selector' );

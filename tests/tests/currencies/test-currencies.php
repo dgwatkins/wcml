@@ -14,6 +14,7 @@ class Test_WCML_Currencies extends WCML_UnitTestCase {
 
         // settings
         $settings = $this->woocommerce_wpml->settings;
+        $this->settings_backup = $settings;
         $settings['enable_multi_currency'] = 2;
         $settings['default_currencies'] = array( 'en' => 'USD', 'de' => 'RON'  );
         $settings['currency_options']['USD'] = array(
@@ -38,7 +39,7 @@ class Test_WCML_Currencies extends WCML_UnitTestCase {
 
         );
 
-        $this->settings_backup = $settings;
+
         $this->settings =& $settings;
 
 

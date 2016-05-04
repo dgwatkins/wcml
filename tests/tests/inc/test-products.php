@@ -46,6 +46,7 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 			'post_title' 	=> 'Child Product EN MADE PRIVATE',
 			'post_status'	=> 'private',
 		);
+
 		$this->wcml_helper->update_product( $child );
 
 		// FORCE status on translated child - should be synced autoamtically

@@ -173,7 +173,7 @@ class WCML_Terms{
         if ($terms) foreach($terms as $term) {
             $term_order = get_woocommerce_term_meta($term->term_id,'order');
             $trid = $this->sitepress->get_element_trid($term->term_taxonomy_id,'tax_product_cat');
-            $translations = $this->sitepress->get_element_translations($trid,'tax_product_cat'); var_dump($translations);
+            $translations = $this->sitepress->get_element_translations($trid,'tax_product_cat');
             if ($translations) foreach ($translations as $trans) {
                 if ($trans->language_code != $lang) {
                     update_woocommerce_term_meta( $trans->term_id, 'order', $term_order);
