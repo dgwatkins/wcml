@@ -29,7 +29,7 @@ class Test_WCML_Product_Translation_Edit_Links extends WCML_UnitTestCase {
 
 		$this->test_data['expected'] = array(
 			'manual_translation_url' => sprintf(home_url('/wp-admin/post.php?post=%d&amp;action=edit&amp;lang=es'), $this->test_data['es_product_id']),
-			'translation_editor_url' => sprintf('admin.php?page=wpml-translation-management/menu/translations-queue.php&trid=%d&language_code=es&source_language_code=en', $this->test_data['trid'])
+			'translation_editor_url' => sprintf('admin.php?page=wpml-translation-management%%2Fmenu%%2Ftranslations-queue.php&return_url&trid=%d&language_code=es&source_language_code=en', $this->test_data['trid'])
 		);
 
 		wp_set_current_user( 1 );
@@ -46,7 +46,16 @@ class Test_WCML_Product_Translation_Edit_Links extends WCML_UnitTestCase {
 	private function set_wcml_translation_method( $method ){
 		$this->woocommerce_wpml->settings[ 'trnsl_interface' ] = $method;
 		$this->woocommerce_wpml->update_settings();
-		//$this->woocommerce_wpml->translation_editor = new WCML_Translation_Editor( $this->woocommerce_wpml, $this->sitepress );
+
+		// Run this again to load the is_admin() filters
+		if( $method == WCML_TRANSLATION_METHOD_EDITOR ){
+			global $wpml_tm_status_display_filter;
+			add_filter( 'wpml_link_to_translation', array( $wpml_tm_status_display_filter, 'filter_status_link' ), 10, 4 );
+		}else{
+			remove_filter( 'wpml_use_tm_editor', array( $this->woocommerce_wpml->translation_editor, 'force_woocommerce_native_editor'), 100 );
+			remove_action( 'wpml_pre_status_icon_display', array( $this->woocommerce_wpml->translation_editor, 'force_remove_wpml_translation_editor_links'), 100 );
+			$this->woocommerce_wpml->translation_editor = new WCML_Translation_Editor( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
+		}
 	}
 
 	private function get_translation_link( $post_id, $language, $trid ){
@@ -71,6 +80,9 @@ class Test_WCML_Product_Translation_Edit_Links extends WCML_UnitTestCase {
 			$this->get_translation_link( $this->test_data['orig_product_id'], 'es',  $this->test_data['trid'])
 		);
 
+		//add_filter( 'wpml_use_tm_editor', array( $this->woocommerce_wpml->translation_editor, 'force_woocommerce_native_editor'), 100 );
+		//add_action( 'wpml_pre_status_icon_display', array( $this->woocommerce_wpml->translation_editor, 'force_remove_wpml_translation_editor_links'), 100 );
+
 		// WPML editor and WCML manual
 		$this->set_wpml_translation_method( ICL_TM_TMETHOD_EDITOR );
 		$this->set_wcml_translation_method( WCML_TRANSLATION_METHOD_MANUAL );
@@ -79,7 +91,6 @@ class Test_WCML_Product_Translation_Edit_Links extends WCML_UnitTestCase {
 			$this->get_translation_link( $this->test_data['orig_product_id'], 'es',  $this->test_data['trid'])
 		);
 
-
 		// WPML manual and WCML editor
 		$this->set_wpml_translation_method( ICL_TM_TMETHOD_MANUAL );
 		$this->set_wcml_translation_method( WCML_TRANSLATION_METHOD_EDITOR );
@@ -87,7 +98,6 @@ class Test_WCML_Product_Translation_Edit_Links extends WCML_UnitTestCase {
 			$this->test_data['expected']['translation_editor_url'],
 			$this->get_translation_link( $this->test_data['orig_product_id'], 'es',  $this->test_data['trid'])
 		);
-
 
 		// WPML and WCML translation method set to editor
 		$this->set_wpml_translation_method( ICL_TM_TMETHOD_EDITOR );
