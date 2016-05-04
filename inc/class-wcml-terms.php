@@ -499,7 +499,7 @@ class WCML_Terms{
 
                     <p>
                         <input class="button-secondary" type="submit" value="<?php esc_attr_e("Synchronize attributes and update product variations", 'woocommerce-multilingual') ?>" />
-                        <img src="<?php echo ICL_PLUGIN_URL . '/res/img/ajax-loader.gif' ?>" alt="loading" height="16" width="16" class="wpml_tt_spinner" />
+                        <img src="<?php echo ICL_PLUGIN_URL . '/res/img/ajax-loader.gif' ?>" alt="loading" height="16" width="16" class="wcml_tt_spinner" />
                     </p>
                     <span class="errors icl_error_text"></span>
                     <div class="wcml_tt_sycn_preview"></div>
@@ -809,7 +809,7 @@ class WCML_Terms{
                 $out .= '&nbsp;<a class="submit button-secondary" href="#">' . sprintf(__('Update %s for all translated %s', 'woocommerce-multilingual'),
                         '<strong>' . mb_strtolower($wp_taxonomies[$taxonomy]->labels->name) . '</strong>',
                         '<strong>' . mb_strtolower($wp_post_types[$object_type]->labels->name) . '</strong>') . '</a>' .
-                    '&nbsp;<img src="'. ICL_PLUGIN_URL . '/res/img/ajax-loader.gif" alt="loading" height="16" width="16" class="wpml_tt_spinner" />';
+                    '&nbsp;<img src="'. ICL_PLUGIN_URL . '/res/img/ajax-loader.gif" alt="loading" height="16" width="16" class="wcml_tt_spinner" />';
                 $out .= "</form>";
             }else{
                 $out .= sprintf(__('All %s have the same %s assignments.', 'woocommerce-multilingual'),

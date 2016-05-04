@@ -127,7 +127,7 @@ jQuery(document).ready(function($){
 
        var this_form = $('#wcml_tt_sync_variations');
        var data = this_form.serialize();
-       this_form.find('.wpml_tt_spinner').fadeIn();
+       this_form.find('.wcml_tt_spinner').fadeIn();
        this_form.find('input[type=submit]').attr('disabled', 'disabled');
        
        $.ajax({
@@ -143,7 +143,7 @@ jQuery(document).ready(function($){
                    this_form.trigger('submit');
                }else{
                    this_form.find('input[name=last_post_id]').val(0);
-                   this_form.find('.wpml_tt_spinner').fadeOut();
+                   this_form.find('.wcml_tt_spinner').fadeOut();
                    this_form.find('input').removeAttr('disabled');
                    jQuery('#wcml_tt_sync_assignment').fadeOut();
                    jQuery('#wcml_tt_sync_desc').fadeOut();
@@ -162,7 +162,7 @@ jQuery(document).ready(function($){
         var this_form = $('#wcml_tt_sync_assignment');
         var parameters = this_form.serialize();
 
-        this_form.find('.wpml_tt_spinner').fadeIn();
+        this_form.find('.wcml_tt_spinner').fadeIn();
         this_form.find('input').attr('disabled', 'disabled');
 
         $('.wcml_tt_sync_row').remove();
@@ -175,7 +175,7 @@ jQuery(document).ready(function($){
             success:
                 function(ret){
 
-                    this_form.find('.wpml_tt_spinner').fadeOut();
+                    this_form.find('.wcml_tt_spinner').fadeOut();
                     this_form.find('input').removeAttr('disabled');
 
                     if(ret.errors){
@@ -199,7 +199,7 @@ jQuery(document).ready(function($){
         var this_form = $('form.wcml_tt_do_sync');
         var parameters = this_form.serialize();
 
-        this_form.find('.wpml_tt_spinner').fadeIn();
+        this_form.find('.wcml_tt_spinner').fadeIn();
         this_form.find('input').attr('disabled', 'disabled');
 
         jQuery.ajax({
@@ -210,7 +210,7 @@ jQuery(document).ready(function($){
             success:
                 function(ret){
 
-                    this_form.find('.wpml_tt_spinner').fadeOut();
+                    this_form.find('.wcml_tt_spinner').fadeOut();
                     this_form.find('input').removeAttr('disabled');
 
                     if(ret.errors){
