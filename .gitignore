@@ -10,4 +10,4 @@ res/scss/.sass-cache
 composer/
 composer.lock
 inc/installer
-.idea
+embedded/*
