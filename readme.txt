@@ -98,6 +98,28 @@ Make sure that your theme is not hard-coding any URL. Always use API calls to re
 
 In order for the checkout and store pages to appear translated, you need to create several WordPress pages and insert the WooCommerce shortcodes into them. You'll have to go over the [documentation](http://wpml.org/documentation/related-projects/woocommerce-multilingual/) and see that you performed all steps on the way.
 
+= Can I have different urls for the store in the different languages =
+
+Yes. You can translate the product permalink base, product category base, product tag base and the product attribute base on the Store URLs section.
+
+= Why do my product category pages return a 404 error? =
+
+In this case, you may need to translate the product category base. You can do that on the Store URLs section.
+
+= Can I set the prices in the secondary currencies? =
+
+By default, the prices in the secondary currencies are determined using the exchange rates that you fill in when you add or edit a currency. On individual products, however, you can override this and set prices manually for the secondary currencies.
+
+= Can I have separate currencies for each language? =
+
+Yes. By default, each currency will be available for all languages, but you can customize this and disable certain currencies on certain languages.
+
+= Is this plugin compatible with other WooCommerce extensions? =
+
+WooCommerce Multilingual is compatible with all major WooCommerce extensions. We're continuously work on checking and maintaining compatibility and collaborate closely with the authors of these extensions.
+
+
+
 == Screenshots ==
 
 1. Products translation screen
