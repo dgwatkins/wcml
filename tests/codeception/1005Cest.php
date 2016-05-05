@@ -9,6 +9,8 @@ class FiveCest
 
         $I->wantTo('Install and Configure WCML');
 
+        $I->wait(3);
+
         // Login Procedure
         $I->wp_login('admin', '123456');
 
@@ -23,6 +25,8 @@ class FiveCest
         $I->see('Plugins');
 
         $I->activatePlugin('woocommerce-multilingual');
+        
+        $I->seeDeactivatePlugin('woocommerce-multilingual');
 
         $I->wait(2);
 
@@ -69,7 +73,7 @@ class FiveCest
         $I->wait(2);
 
 
-        //Old code without installation wizard
+        //Old code without installation wizard -- To be removed
         /*$I->amGoingTo('configure WCML');
 
         $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml&tab=status');

@@ -25,8 +25,8 @@ class EightCest
         $I->deactivatePlugin('wpml-media');
 
         $I->wait(1);
-
-        $I->seeDeactivatePlugin('wpml-media');
+        
+        $I->seeActivatePlugin('wpml-media');
 
         $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml');
 
@@ -46,7 +46,7 @@ class EightCest
 
         $I->wait(1);
 
-        $I->seeActivatePlugin('wpml-media');
+        $I->seeDeactivatePlugin('wpml-media');
 
         $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml');
 

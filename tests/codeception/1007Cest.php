@@ -25,9 +25,13 @@ class SevenCest
 
         $I->wait(1);
 
-        $I->amGoingTo('add 2 more languages in WPML');
+        $I->seeActivatePlugin('woocommerce-multilingual');
+
+        $I->amGoingTo('add one more languages in WPML');
 
         $I->amOnPage('/wp-admin/admin.php?page=sitepress-multilingual-cms%2Fmenu%2Flanguages.php');
+
+        $I->wait(3);
 
         $I->see('Setup WPML');
 
@@ -60,6 +64,8 @@ class SevenCest
         $I->activatePlugin('woocommerce-multilingual');
 
         $I->wait(1);
+
+        $I->seeDeactivatePlugin('woocommerce-multilingual');
 
         $I->amOnPage('wp-admin/admin.php?page=wpml-wcml&tab=slugs');
 

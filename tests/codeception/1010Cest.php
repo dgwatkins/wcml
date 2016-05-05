@@ -94,9 +94,13 @@ class TenCest
 
         $I->amOnPage('/wp-admin/admin.php?page=wc-settings&tab=shipping&section=classes');
 
+        $I->waitForElementVisible('.wc-shipping-class-add',10);
+
         $I->click('Add Shipping Class');
 
         $I->fillField('.wc-shipping-class-name div.edit input[data-attribute="name"]','Shippo Classy');
+
+        $I->wait(5);
 
         $I->click('Save Shipping Classes');
 

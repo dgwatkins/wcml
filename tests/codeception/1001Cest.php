@@ -23,6 +23,7 @@ class OneCest
 
         $I->activatePlugin('wpml-multilingual-cms');
 
+        $I->seeDeactivatePlugin('wpml-multilingual-cms');
 
         $I->amGoingTo('Configure WPML');
 

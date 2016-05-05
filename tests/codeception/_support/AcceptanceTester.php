@@ -53,11 +53,13 @@ class AcceptanceTester extends \Codeception\Actor
     }
 
     public function seeActivatePlugin( $pluginSlug ) {
-        $this->see( "table.plugins tr[data-slug='{$pluginSlug}'] span.activate" );
+        $this->waitForElementVisible( "table.plugins tr[data-slug='{$pluginSlug}'] span.activate",10);
+        $this->seeElement( "table.plugins tr[data-slug='{$pluginSlug}'] span.activate" );
     }
 
     public function seeDeactivatePlugin( $pluginSlug ) {
-        $this->see( "table.plugins tr[data-slug='{$pluginSlug}'] span.deactivate" );
+        $this->waitForElementVisible( "table.plugins tr[data-slug='{$pluginSlug}'] span.deactivate",10);
+        $this->seeElement( "table.plugins tr[data-slug='{$pluginSlug}'] span.deactivate" );
     }
 
 }

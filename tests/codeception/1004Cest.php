@@ -31,14 +31,13 @@ class FourCest
 
         $I->click('#s2id_woocommerce_currency');
 
-        $I->fillField('#s2id_autogen10_search', 'Euro');
+        $I->fillField('#s2id_autogen12_search', 'Euro');
 
         $I->click('.select2-result-label');
 
         $I->click('Save changes');
 
         //////////////////////
-
 
         $I->wait(3);
 

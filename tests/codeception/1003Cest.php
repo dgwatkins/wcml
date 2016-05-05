@@ -21,6 +21,8 @@ class ThreeCest
 
         $I->activatePlugin('woocommerce');
 
+        $I->seeDeactivatePlugin('woocommerce');
+        
         $I->amGoingTo('Run Woocommerce Setup');
 
         $I->waitForElement(".button-primary", 20);
@@ -28,6 +30,7 @@ class ThreeCest
         $I->click("Let's Go!");
 
         $I->waitForElement(".button-primary", 15);
+        
         $I->click("Continue");
 
         $I->wait(1);
@@ -35,15 +38,21 @@ class ThreeCest
         $I->click("Continue");
 
         $I->wait(1);
+        
         $I->click("Continue");
 
         $I->wait(1);
+        
         $I->checkOption('.wc-wizard-gateway-bacs');
+        
         $I->click("Continue");
 
         $I->waitForElement(".button-secondary", 15);
+        
         $I->click("No thanks");
+        
         $I->wait(1);
+        
         $I->click("Return to the WordPress Dashboard");
 
         $I->wait(2);

@@ -22,10 +22,19 @@ class TwoCest
         $I->see('Plugins');
 
         $I->activatePlugin('wpml-string-translation');
-        $I->wait(2);
+
+        $I->seeDeactivatePlugin('wpml-string-translation');
+        
+        $I->wait(1);
+        
         $I->activatePlugin('wpml-translation-management');
-        $I->wait(2);
+
+        $I->seeDeactivatePlugin('wpml-translation-management');
+        
+        $I->wait(1);
+        
         $I->activatePlugin('wpml-media');
+        
         $I->wait(2);
 
     }
