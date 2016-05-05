@@ -175,7 +175,7 @@ class WCML_Resources {
     public static function hidden_label() {
         global $sitepress;
 
-        echo '<img src="' . WCML_PLUGIN_URL . '/res/images/locked.png" class="wcml_lock_img" alt="' .
+        echo '<img src="' . WCML_PLUGIN_URL . '/res/images/locked.png" class="wcml_lock_img wcml_lock_icon" alt="' .
             __( 'This field is locked for editing because WPML will copy its value from the original language.', 'woocommerce-multilingual' ) .
             '" title="' . __( 'This field is locked for editing because WPML will copy its value from the original language.', 'woocommerce-multilingual' ) .
             '" style="display: none;position:relative;left:2px;top:2px;">';
