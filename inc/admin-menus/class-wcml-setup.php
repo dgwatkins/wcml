@@ -187,12 +187,9 @@ class WCML_Setup {
 
     private function setup_steps() {
 
-        foreach( $this->steps as $step_key => $step ){
-            if( $this->step == $step_key ){
-                break;
-            }
-        }
-        $this->next_step = key( $this->steps );
+        $steps = array_keys( $this->steps );
+        $step_index = array_search( $this->step, $steps );
+        $this->next_step = isset( $steps[$step_index + 1] ) ? $steps[$step_index + 1] : '';
 
         $ouput_steps = $this->steps;
         array_shift( $ouput_steps );
