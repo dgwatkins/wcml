@@ -52,7 +52,8 @@ class WCML_Attribute_Translation_UI extends WPML_Templates_Factory {
 			'selected_attribute' => $selected_attribute,
 			'strings' => array(
 				'no_attributes' => __( 'There are no translatable product attributes defined', 'woocommerce-multilingual' ),
-				'select_label'	=> __('Select the attribute to translate: ', 'woocommerce-multilingual')
+				'select_label'	=> __('Select the attribute to translate: ', 'woocommerce-multilingual'),
+				'loading'       => __( 'Loading...', 'woocommerce-multilingual' )
 			),
 			'translation_ui' => $translation_ui
 

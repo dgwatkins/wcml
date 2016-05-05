@@ -204,9 +204,18 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
                 if( current_user_can('wpml_operate_woocommerce_multilingual') && in_array( $current_tab, array( 'product_cat', 'product_tag', 'product_shipping_class' ) ) ){
                     $WPML_Translate_Taxonomy = new WPML_Taxonomy_Translation($current_tab, array( 'taxonomy_selector'=> false, 'status'=> WPML_TT_TAXONOMIES_ALL ) );
                     ob_start();
-                    $WPML_Translate_Taxonomy->render();
-                    $content = ob_get_contents();
-                    ob_end_clean();
+					?>
+					<h2 class="wpml_taxonomy_loading"><span class="spinner"></span><?php echo __( 'Loading...', 'woocommerce-multilingual' ) ?></h2>
+					<div class="wpml_taxonomy_loaded" style="display:none">
+						<?php
+						$WPML_Translate_Taxonomy->render();
+					?>
+					</div>
+					<?php
+					
+					$content = ob_get_contents();
+					ob_end_clean();
+
                 }
 
         }
