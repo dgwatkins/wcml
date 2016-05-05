@@ -9,6 +9,9 @@
 	@extend %wpml-wrap;
 	margin-bottom: 20px;
 	min-width: 900px;
+	.wpml-tabs {
+		margin-top: 0;
+	}
 	.otgs-ico-yes,
 	.otgs-ico-ok {
 		color: #51a351;
