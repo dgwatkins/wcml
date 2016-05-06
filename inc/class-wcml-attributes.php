@@ -53,16 +53,18 @@ class WCML_Attributes{
         $wcml_settings = $this->woocommerce_wpml->get_settings();
         $wcml_settings[ 'attributes_settings' ][ $attribute['attribute_name'] ] = $is_translatable;
         $this->woocommerce_wpml->update_settings( $wcml_settings );
+        $this->set_attribute_config_in_wpml_settings( $attribute['attribute_name'], $is_translatable );
+    }
 
+    public function set_attribute_config_in_wpml_settings( $attribute_name, $is_translatable ){
         $wpml_settings = $this->sitepress->get_settings();
-        $wpml_settings['taxonomies_sync_option'][wc_attribute_taxonomy_name($attribute['attribute_name'])] = $is_translatable;
+        $wpml_settings['taxonomies_sync_option'][wc_attribute_taxonomy_name( $attribute_name )] = $is_translatable;
 
         if( isset($wpml_settings['translation-management'])){
-            $wpml_settings['translation-management']['taxonomies_readonly_config'][wc_attribute_taxonomy_name( $attribute['attribute_name'] )] = $is_translatable;
+            $wpml_settings['translation-management']['taxonomies_readonly_config'][wc_attribute_taxonomy_name( $attribute_name )] = $is_translatable;
         }
 
         $this->sitepress->save_settings($wpml_settings);
-
     }
 
     public function delete_translated_attribute_terms( $attribute ){
@@ -139,6 +141,11 @@ class WCML_Attributes{
 
 
     public function is_translatable_attribute( $attr_name ){
+
+        if( !isset( $this->woocommerce_wpml->settings[ 'attributes_settings' ][ str_replace( 'pa_', '', $attr_name ) ] ) ){
+            $this->set_attribute_config_in_wpml_settings( str_replace( 'pa_', '', $attr_name ), 1 );
+        }
+
         return isset( $this->woocommerce_wpml->settings[ 'attributes_settings' ][ str_replace( 'pa_', '', $attr_name ) ] ) ? $this->woocommerce_wpml->settings[ 'attributes_settings' ][ str_replace( 'pa_', '', $attr_name ) ] : 1;
     }
 
