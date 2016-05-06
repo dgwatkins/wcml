@@ -52,6 +52,8 @@ class WCML_Endpoints{
             if( isset( $wc_vars['delete-payment-method'] ) ) $query_vars[ 'delete-payment-method' ] = $this->get_endpoint_translation( 'delete-payment-method', $wc_vars['delete-payment-method'] );
             if( isset( $wc_vars['set-default-payment-method'] ) ) $query_vars[ 'set-default-payment-method' ] = $this->get_endpoint_translation( 'set-default-payment-method', $wc_vars['set-default-payment-method'] );
 
+            $query_vars = apply_filters( 'wcml_register_endpoints_query_vars', $query_vars, $wc_vars, $this );
+
             $query_vars = array_merge( $wc_vars , $query_vars );
             WC()->query->query_vars = $query_vars;
 
@@ -90,7 +92,7 @@ class WCML_Endpoints{
         }
     }
 
-    function flush_rules_for_endpoints_translations( $call, $data ){
+    function flush_rules_for_endpoints_translations( ){
         add_option( 'flush_rules_for_endpoints_translations', true );
     }
 
@@ -146,6 +148,8 @@ class WCML_Endpoints{
                         }else{
                             $endpoint = get_option( 'woocommerce_myaccount_'.str_replace( '-','_',$key).'_endpoint' );
                         }
+
+                        $endpoint = apply_filters( 'wcml_endpoint_permalink_filter', $endpoint, $key );
 
                         $p = $this->get_endpoint_url( $this->get_endpoint_translation( $key, $endpoint, $current_lang ), $wp->query_vars[ $key ], $p, $page_lang );
                     }

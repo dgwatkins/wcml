@@ -10,6 +10,9 @@ class WCML_WC_Subscriptions{
         add_filter('wcml_variation_term_taxonomy_ids',array($this,'wcml_variation_term_taxonomy_ids'));
         add_filter('woocommerce_subscription_lengths', array($this, 'woocommerce_subscription_lengths'), 10, 2);
 
+        add_filter('wcml_register_endpoints_query_vars', array($this, 'register_endpoint' ), 10, 3 );
+        add_filter('wcml_endpoint_permalink_filter', array($this, 'endpoint_permalink_filter'), 10, 2);
+
         //custom prices
         add_filter( 'wcml_custom_prices_fields', array( $this, 'set_prices_fields' ), 10, 2 );
         add_filter( 'wcml_custom_prices_strings', array( $this, 'set_labels_for_prices_fields' ), 10, 2 );
@@ -163,5 +166,20 @@ class WCML_WC_Subscriptions{
             </script>
         <?php
         }
+    }
+
+    function register_endpoint( $query_vars, $wc_vars, $obj ){
+
+        $query_vars[ 'view-subscription' ] = $obj->get_endpoint_translation( 'view-subscription',  isset( $wc_vars['view-subscription'] ) ? $wc_vars['view-subscription'] : 'view-subscription' );
+        return $query_vars;
+    }
+
+    function endpoint_permalink_filter( $endpoint, $key ){
+
+        if( $key == 'view-subscription' ){
+            return 'view-subscription';
+        }
+
+        return $endpoint;
     }
 }
