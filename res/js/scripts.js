@@ -339,6 +339,16 @@ jQuery(document).ready(function($){
         return false;
     });
 
+    $(document).on('click','#term-table-sync-header',function(){
+        $('#wcml_tt_sync_assignment').hide();
+        $('#wcml_tt_sync_desc').hide();
+    });
+
+    $(document).on('click','#term-table-header',function(){
+        $('#wcml_tt_sync_assignment').show();
+        $('#wcml_tt_sync_desc').show();
+    });
+
 
 });
 
