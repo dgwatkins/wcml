@@ -18,7 +18,7 @@ class WCML_Setup_Introduction_UI extends WPML_Templates_Factory {
         $model = array(
             'strings' => array(
                 'heading'       => __('Welcome to WooCommerce Multilingual!', 'woocommerce-multilingual'),
-                'description1'   => __('Configure the multilingual support for your e-commerce site in less than 3 minutes.', 'woocommerce-multilingual'),
+                'description1'   => __('Configure the multilingual support for your e-commerce site in just a couple of minutes.', 'woocommerce-multilingual'),
                 'description2'  => __('By default, the products are translatable just like product categories, product tags and attributes. So you can start translating these right away.', 'woocommerce-multilingual'),
                 'description3'  => __('You can configure, however, which attributes you want to translate, install the translated shop pages or enable the multi-currency mode.', 'woocommerce-multilingual'),
                 'continue'      => __('Start', 'woocommerce-multilingual'),
