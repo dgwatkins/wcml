@@ -82,6 +82,8 @@ class WCML_Synchronize_Product_Data{
         //trnsl_interface option
         if ( !$this->woocommerce_wpml->settings['trnsl_interface'] && $original_language != $current_language ) {
             if( !isset( $_POST[ 'wp-preview' ] ) || empty( $_POST[ 'wp-preview' ] ) ){
+                //make sure we sync post in current language
+                $post_id = apply_filters( 'translate_object_id', $post_id, 'product', false, $current_language );
                 $this->sync_date_and_parent( $duplicated_post_id, $post_id, $current_language );
                 $this->sync_product_data( $duplicated_post_id, $post_id, $current_language );
                 do_action( 'wcml_before_sync_product_data', $duplicated_post_id, $post_id, $current_language );
@@ -357,7 +359,6 @@ class WCML_Synchronize_Product_Data{
 
             $original_language  = $this->woocommerce_wpml->products->get_original_product_language( $master_post_id );
             $master_post_id = apply_filters( 'translate_object_id', $master_post_id, 'product', false, $original_language );
-            update_post_meta( $id, '_icl_lang_duplicate_of', $master_post_id );
 
             $this->sync_product_data( $master_post_id, $id, $lang );
             // recount terms only first time
