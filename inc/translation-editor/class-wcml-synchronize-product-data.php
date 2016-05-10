@@ -43,6 +43,7 @@ class WCML_Synchronize_Product_Data{
         $original_language  = $this->woocommerce_wpml->products->get_original_product_language( $post_id );
         $current_language   = $this->sitepress->get_current_language();
         $duplicated_post_id = apply_filters( 'translate_object_id', $post_id, 'product', false, $original_language );
+
         $wpml_media_options = maybe_unserialize( get_option( '_wpml_media' ) );
 
         if( $wpml_media_options[ 'new_content_settings' ][ 'duplicate_media' ] ){
@@ -167,6 +168,7 @@ class WCML_Synchronize_Product_Data{
         $this->sync_product_taxonomies( $original_product_id, $tr_product_id, $lang );
 
         //duplicate variations
+
         $this->woocommerce_wpml->sync_variations_data->sync_product_variations( $original_product_id, $tr_product_id, $lang );
 
         $this->sync_linked_products( $original_product_id, $tr_product_id, $lang );
@@ -352,6 +354,11 @@ class WCML_Synchronize_Product_Data{
 
     public function icl_make_duplicate( $master_post_id, $lang, $postarr, $id ){
         if( get_post_type( $master_post_id ) == 'product' ){
+
+            $original_language  = $this->woocommerce_wpml->products->get_original_product_language( $master_post_id );
+            $master_post_id = apply_filters( 'translate_object_id', $master_post_id, 'product', false, $original_language );
+            update_post_meta( $id, '_icl_lang_duplicate_of', $master_post_id );
+
             $this->sync_product_data( $master_post_id, $id, $lang );
             // recount terms only first time
             if( !get_post_meta( $id, '_wcml_terms_recount' ) ){
