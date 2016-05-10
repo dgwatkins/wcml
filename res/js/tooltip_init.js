@@ -8,6 +8,9 @@ var WCML_Tooltip = {
     },
 
     init: function(){
+        jQuery(document).ready(function () {
+            jQuery('.wcml-tip').tipTip( WCML_Tooltip.default_args );
+        });
     },
 
     create_tip: function( text, style, args ){
