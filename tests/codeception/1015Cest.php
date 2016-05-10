@@ -62,6 +62,8 @@ class FifteenCest
         $I->uncheckOption('#display_custom_prices');
 
         $I->click('Save changes');
+        
+        $I->wait(3);
 
 
     }

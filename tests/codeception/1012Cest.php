@@ -6,7 +6,7 @@ class TwelveCest
 {
     public function _before(AcceptanceTester $I)
     {
-        $I->wantTo('check if product translation interface is working correct');
+        $I->wantTo('check if product synchronization is working correct');
 
         // Login Procedure
         $I->wp_login('admin', '123456');
@@ -35,7 +35,11 @@ class TwelveCest
 
         $I->click('Test Product');
 
-        $I->waitForElement('#wpbody-content', 10);
+        $I->see('Edit Product');
+
+        $I->seeElement('.edit-timestamp');
+
+        $I->executeJS('window.scrollTo(0,-40);');
 
         $I->click('.edit-timestamp');
 
@@ -47,13 +51,15 @@ class TwelveCest
 
         $I->click('.save-timestamp');
 
-        $I->click('#publish');
+        $I->executeJS('window.scrollTo(0,-40);');
+
+        $I->click('#publishing-action #publish');
 
         $I->amOnPage('/wp-admin/edit.php?post_type=product&lang=el');
 
         $I->see('Products');
 
-        $I->see('2015/11/30', '.column-date');
+        $I->see('2015/11/30', 'td.column-date');
 
         // Check Translation Date UnSync
 
@@ -101,7 +107,23 @@ class TwelveCest
 
         $I->see('Products');
 
-        $I->see('2015/11/30', '.column-date');
+        $I->see('2015/11/30', 'td.column-date');
+
+        $I->wait(1);
+
+        $I->amGoingTo('Re-enable Translation Date Sync');
+
+        $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml&tab=settings');
+
+        $I->see('WooCommerce Multilingual');
+
+        $I->see('Settings', '.nav-tab-active');
+
+        $I->checkOption('#wcml_products_sync_date');
+
+        $I->click('Save changes');
+
+        $I->wait(3);
 
     }
 
@@ -113,6 +135,6 @@ class TwelveCest
     // tests
     public function tryToTest(AcceptanceTester $I)
     {
-		
+
     }
 }

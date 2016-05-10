@@ -15,7 +15,7 @@ class SixteenCest
         // Check currency switcher options are working ok //
         ///////////////////////////////////////////////////////////////
 
-        //$I->amGoingTo('Check currency switcher options are working ok');
+        $I->amGoingTo('Check currency switcher options are working ok');
 
         $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml&tab=multi-currency');
 
@@ -27,31 +27,23 @@ class SixteenCest
 
         $I->amGoingTo('check if the drop-down style meu is working ok');
 
-        $I->seeElement('div#wcml_curr_sel_preview.wcml-currency-preview select.wcml_currency_switcher option#wcml_currency_switcher-EUR');
+        $I->seeElement('div#wcml_curr_sel_preview.wcml-currency-preview select.wcml_currency_switcher option[value="EUR"]');
 
-        $I->seeElement('div#wcml_curr_sel_preview.wcml-currency-preview select.wcml_currency_switcher option#wcml_currency_switcher-USD');
+        $I->seeElement('div#wcml_curr_sel_preview.wcml-currency-preview select.wcml_currency_switcher option[value="USD"]');
 
-        $I->wait(1);
+        $I->seeElement('div#wcml_curr_sel_preview.wcml-currency-preview select.wcml_currency_switcher option[value="AED"]');
 
-        $I->seeElement('div#wcml_curr_sel_preview.wcml-currency-preview select.wcml_currency_switcher option#wcml_currency_switcher-AED');
-
-        $I->dragAndDrop('.wcml_currencies_order_EUR','#wcml_currencies_order:nth-child(2)');
+        $I->dragAndDrop('.wcml_currencies_order_USD','#wcml_currencies_order li.wcml_currencies_order_EUR');
 
         $I->wait(2);
 
         $I->waitForElement('#wcml_curr_sel_preview.wcml-currency-preview select.wcml_currency_switcher',10);
 
-        $I->seeOptionIsSelected('div#wcml_curr_sel_preview.wcml-currency-preview select.wcml_currency_switcher','US Dollars ($) - USD');
-
-        $I->dragAndDrop('.wcml_currencies_order_USD','#wcml_currencies_order:nth-child(2)');
+        $I->seeOptionIsSelected('div#wcml_curr_sel_preview.wcml-currency-preview select.wcml_currency_switcher','United States dollar ($) - USD');
 
         $I->wait(2);
 
-        $I->dragAndDrop('.wcml_currencies_order_AED','#wcml_currencies_order:nth-child(2)');
-
-        $I->wait(2);
-
-        $I->dragAndDrop('.wcml_currencies_order_EUR','.wcml_currencies_order_USD');
+        $I->dragAndDrop('.wcml_currencies_order_USD','#wcml_currencies_order li.wcml_currencies_order_AED');
 
         $I->wait(2);
 
@@ -59,11 +51,11 @@ class SixteenCest
 
         $I->amOnPage('product/test-product/');
 
-        $I->seeElement('div.product_meta select.wcml_currency_switcher option#wcml_currency_switcher-USD');
+        $I->seeElement('div.product_meta select.wcml_currency_switcher option[value="EUR"]:nth-child(1)');
 
-        $I->seeElement('div.product_meta select.wcml_currency_switcher option#wcml_currency_switcher-AED');
+        $I->seeElement('div.product_meta select.wcml_currency_switcher option[value="USD"]:nth-child(3)');
 
-        $I->seeElement('div.product_meta select.wcml_currency_switcher option#wcml_currency_switcher-EUR');
+        $I->seeElement('div.product_meta select.wcml_currency_switcher option[value="AED"]:nth-child(2)');
 
         // Check list of currencies menu style - Vertical
 
@@ -87,17 +79,17 @@ class SixteenCest
 
         $I->seeElement('div#wcml_curr_sel_preview.wcml-currency-preview ul.wcml_currency_switcher.curr_list_vertical li[rel=AED]');
 
-        $I->see('US Dollars ($) - USD','ul.wcml_currency_switcher.curr_list_vertical .wcml-active-currency');
+        $I->see('United States dollar ($) - USD','ul.wcml_currency_switcher.curr_list_vertical .wcml-active-currency');
 
         $I->click('Save changes');
 
         $I->amOnPage('product/test-product/');
 
-        $I->seeElement('div.product_meta ul.wcml_currency_switcher.curr_list_vertical li[rel=EUR]');
+        $I->seeElement('div.product_meta ul.wcml_currency_switcher.curr_list_vertical li[rel=EUR]:nth-child(1)');
 
-        $I->seeElement('div.product_meta ul.wcml_currency_switcher.curr_list_vertical li[rel=USD]');
+        $I->seeElement('div.product_meta ul.wcml_currency_switcher.curr_list_vertical li[rel=USD]:nth-child(3)');
 
-        $I->seeElement('div.product_meta ul.wcml_currency_switcher.curr_list_vertical li[rel=AED]');
+        $I->seeElement('div.product_meta ul.wcml_currency_switcher.curr_list_vertical li[rel=AED]:nth-child(2)');
 
         // Check list of currencies menu style - Horizontal
 
@@ -117,17 +109,17 @@ class SixteenCest
 
         $I->seeElement('div#wcml_curr_sel_preview.wcml-currency-preview ul.wcml_currency_switcher.curr_list_horizontal li[rel=AED]');
 
-        $I->see('US Dollars ($) - USD','ul.wcml_currency_switcher.curr_list_horizontal .wcml-active-currency');
+        $I->see('United States dollar ($) - USD','ul.wcml_currency_switcher.curr_list_horizontal .wcml-active-currency');
 
         $I->click('Save changes');
 
         $I->amOnPage('product/test-product/');
 
-        $I->seeElement('div.product_meta ul.wcml_currency_switcher.curr_list_horizontal li[rel=EUR]');
+        $I->seeElement('div.product_meta ul.wcml_currency_switcher.curr_list_horizontal li[rel=EUR]:nth-child(1)');
 
-        $I->seeElement('div.product_meta ul.wcml_currency_switcher.curr_list_horizontal li[rel=USD]');
+        $I->seeElement('div.product_meta ul.wcml_currency_switcher.curr_list_horizontal li[rel=USD]:nth-child(3)');
 
-        $I->seeElement('div.product_meta ul.wcml_currency_switcher.curr_list_horizontal li[rel=AED]');
+        $I->seeElement('div.product_meta ul.wcml_currency_switcher.curr_list_horizontal li[rel=AED]:nth-child(2)');
 
         // Check different template parameters for currencies
 
@@ -143,11 +135,11 @@ class SixteenCest
 
         $I->executeJS('window.scrollTo(0,500);');
 
-        $I->see('EUR - € - Euros','.wcml-currency-preview ul.wcml_currency_switcher.curr_list_horizontal li[rel=EUR]');
+        $I->see('EUR - € - Euro','.wcml-currency-preview ul.wcml_currency_switcher.curr_list_horizontal li[rel=EUR]');
 
         $I->amOnPage('product/test-product/');
 
-        $I->see('EUR - € - Euros', 'div.product_meta ul.wcml_currency_switcher.curr_list_horizontal li[rel=EUR]');
+        $I->see('EUR - € - Euro', 'div.product_meta ul.wcml_currency_switcher.curr_list_horizontal li[rel=EUR]');
 
         // Change switcher to default
 
@@ -196,6 +188,6 @@ class SixteenCest
     // tests
     public function tryToTest(AcceptanceTester $I)
     {
-		
+
     }
 }

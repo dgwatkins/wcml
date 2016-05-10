@@ -23,15 +23,15 @@ class FourteenCest
 
         // Enable and Disable Multi Currency
 
-        /*$I->see('Enable/disable', '.wcml-section-header');
+        $I->see('Enable/disable', '.wcml-section-header');
 
         $I->checkOption('#multi_currency_independent');
 
         $I->click('Save changes');
 
-        $I->SeeElement('#multi-currency-per-language-details');
+        $I->seeElement('#multi-currency-per-language-details');
 
-        $I->SeeElement('#currency-switcher');
+        $I->seeElement('#currency-switcher');
 
         $I->uncheckOption('#multi_currency_independent');
 
@@ -45,9 +45,9 @@ class FourteenCest
 
         $I->click('Save changes');
 
-        $I->SeeElement('#multi-currency-per-language-details');
+        $I->seeElement('#multi-currency-per-language-details');
 
-        $I->SeeElement('#currency-switcher');
+        $I->seeElement('#currency-switcher');
 
         // Add and Delete Currency
 
@@ -57,7 +57,7 @@ class FourteenCest
 
         $I->see('Add new currency', '.ui-dialog-title');
 
-        $I->pressKey('.ui-dialog #wcml_currency_options_code_','US',WebDriverKeys::ENTER);
+        $I->pressKey('.ui-dialog #wcml_currency_options_code_','UNITEDS',WebDriverKeys::ENTER);
 
         $I->click('.ui-dialog .currency_options_save');
 
@@ -77,11 +77,13 @@ class FourteenCest
 
         $I->amGoingTo('Add New Currency');
 
+        $I->reloadPage();
+
         $I->click('.wcml_add_currency');
 
         $I->see('Add new currency', '.ui-dialog-title');
 
-        $I->pressKey('.ui-dialog #wcml_currency_options_code_','US',WebDriverKeys::ENTER);
+        $I->pressKey('.ui-dialog #wcml_currency_options_code_','UNITEDS',WebDriverKeys::ENTER);
 
         $I->fillField('.ui-dialog-content input#wcml_currency_options_rate_.ext_rate', '1.2');
 
@@ -97,15 +99,17 @@ class FourteenCest
 
         $I->click('.ui-dialog .currency_options_save');
 
-        $I->wait(3);
+        $I->wait(4);
 
         // Edit new Currency
 
         $I->amGoingTo('Edit Currency');
 
-        $I->click('#wcml_currency_options_USD .otgs-ico-edit');
+        $I->reloadPage();
 
-        $I->see('Update settings for US Dollars ($)','.ui-dialog-title');
+        $I->click('#currency_row_USD .otgs-ico-edit');
+
+        $I->see('Update settings for United States dollar ($)','.ui-dialog-title');
 
         $I->fillField('.ui-dialog-content input#wcml_currency_options_rate_USD.ext_rate', '2');
 
@@ -125,60 +129,103 @@ class FourteenCest
 
         $I->amGoingTo('Add one more Currency');
 
+        $I->reloadPage();
+
         $I->click('.wcml_add_currency');
 
         $I->see('Add new currency', '.ui-dialog-title');
 
-        $I->pressKey('.ui-dialog #wcml_currency_options_code_','UN',WebDriverKeys::ENTER);
+        $I->pressKey('.ui-dialog #wcml_currency_options_code_','UNITEDA',WebDriverKeys::ENTER);
 
         $I->fillField('.ui-dialog-content input#wcml_currency_options_rate_.ext_rate', '3');
 
         $I->click('.ui-dialog .currency_options_save');
 
-        $I->wait(3);*/
+        $I->wait(3);
+
+        //Check Frontend
+
+        $I->amGoingTo('Check Prices in frontend for all currencies');
+
+        $I->amOnPage('/product/test-product/');
+
+        $I->selectOption('.product_meta .wcml_currency_switcher','Euro (€) - EUR');
+
+        $I->wait(2);
+
+        $I->see('€10.00','.product div.summary div p.price span.amount');
+
+        $I->selectOption('.product_meta .wcml_currency_switcher','United States dollar ($) - USD');
+
+        $I->wait(2);
+
+        $I->see('$20,00','.product div.summary div p.price span.amount');
+
+        $I->selectOption('.product_meta .wcml_currency_switcher','United Arab Emirates dirham (د.إ) - AED');
+
+        $I->wait(2);
+
+        $I->see('د.إ30.00','.product div.summary div p.price span.amount');
+
+        $I->wait(2);
 
         // Disable Currency for language
 
-        //edw eimai
-        /*$I->amGoingTo('Disable one Currency per Language');
+        $I->amGoingTo('Disable one Currency per Language');
 
         $I->click('#currency_row_langs_AED .currency_languages .on [data-language=en]');
 
         $I->waitForElementVisible('#currency_row_langs_AED .currency_languages [data-lang=en] .otgs-ico-no',10);
 
-        $I->click('#currency_row_langs_USD .currency_languages #currency_languages-el .otgs-ico-yes');
+        $I->click('#currency_row_langs_USD .currency_languages .on [data-language=el]');
 
-        $I->waitForElementVisible('#currency_row_langs_USD .currency_languages #currency_languages-el .otgs-ico-no',10);
+        $I->waitForElementVisible('#currency_row_langs_USD .currency_languages [data-lang=el] .otgs-ico-no',10);
 
         $I->click('Save changes');
 
         // Check in the frontend
 
-        /*$I->amGoingTo('Frontend if the Currencies are correct');
+        $I->amGoingTo('Frontend if the Currencies are correct');
 
         $I->amOnPage('/product/test-product/');
 
-        $I->seeElement('.product .product_meta .wcml_currency_switcher option',['value' => 'EUR']);
+        $I->seeElement('.product .product_meta .wcml_currency_switcher option[value = "EUR"]');
 
-        $I->seeElement('.product .product_meta .wcml_currency_switcher option',['value' => 'USD']);
+        $I->seeElement('.product .product_meta .wcml_currency_switcher option[value = "USD"]');
 
-        $I->dontSeeElement('.product .product_meta .wcml_currency_switcher option',['value' => 'AED']);
+        $I->dontSeeElement('.product .product_meta .wcml_currency_switcher option[value = "AED"]');
 
         $I->amOnPage('/προϊόν/δοκιμαστικό-προϊόν/?lang=el');
 
-        $I->seeElement('.product .product_meta .wcml_currency_switcher option',['value' => 'EUR']);
+        $I->seeElement('.product .product_meta .wcml_currency_switcher option[value = "EUR"]');
 
-        $I->seeElement('.product .product_meta .wcml_currency_switcher option',['value' => 'AED']);
+        $I->seeElement('.product .product_meta .wcml_currency_switcher option[value = "AED"]');
 
-        $I->dontSeeElement('.product .product_meta .wcml_currency_switcher option',['value' => 'USD']);
+        $I->dontSeeElement('.product .product_meta .wcml_currency_switcher option[value = "USD"]');
 
-        /*$I->selectOption('.wcml_currency_switcher','USD');
+        $I->selectOption('.wcml_currency_switcher','AED');
 
-        $I->wait(2);*/
+        $I->wait(2);
 
-        /*$I->amGoingTo('if default curency is working');
+        // Disable Currency for language
 
-        //$I->amOnPage('/wp-admin/admin.php?page=wpml-wcml&tab=multi-currency');
+        $I->amGoingTo('Disable one Currency per Language');
+
+        $I->click('#currency_row_langs_AED .currency_languages .on [data-language=en]');
+
+        $I->waitForElementVisible('#currency_row_langs_AED .currency_languages [data-lang=en] .otgs-ico-yes',10);
+
+        $I->click('#currency_row_langs_USD .currency_languages .on [data-language=el]');
+
+        $I->waitForElementVisible('#currency_row_langs_USD .currency_languages [data-lang=el] .otgs-ico-yes',10);
+
+        $I->click('Save changes');
+        
+        // Check default currency
+
+        $I->amGoingTo('if default currency is working');
+
+        $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml&tab=multi-currency');
 
         $I->selectOption('.default_currency select[rel=en]','USD');
 
@@ -188,18 +235,19 @@ class FourteenCest
 
         $I->wait(1);
 
+        $I->waitForElementVisible('#wcml_mc_options_submit');
+
         $I->click('Save changes');
 
         $I->amOnPage('/product/test-product/');
 
-        $I->seeOptionIsSelected('.product .product_meta .wcml_currency_switcher option','US Dollars ($) - USD');
+        $I->seeOptionIsSelected('.product .product_meta .wcml_currency_switcher option','United States dollar ($) - USD');
 
         $I->amOnPage('/προϊόν/δοκιμαστικό-προϊόν/?lang=el');
 
         $I->seeOptionIsSelected('.product .product_meta .wcml_currency_switcher option','Euros (€) - EUR');
 
-        $I->wait(3);*/
-
+        $I->wait(3);
 
         $I->amGoingTo('see if prevent window apperas if not save options');
 
@@ -209,9 +257,9 @@ class FourteenCest
 
         $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml&tab=multi-currency');
 
-        //$I->reloadPage();
+        $I->acceptPopup();
 
-        //$I->acceptPopup();
+        $I->wait(3);
 
 
     }
@@ -224,6 +272,6 @@ class FourteenCest
     // tests
     public function tryToTest(AcceptanceTester $I)
     {
-		
+
     }
 }
