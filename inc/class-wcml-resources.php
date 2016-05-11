@@ -58,24 +58,24 @@ class WCML_Resources {
 
     private static function load_js() {
 
+        wp_register_script( 'wcml-scripts', WCML_PLUGIN_URL . '/res/js/scripts.js', array(
+            'jquery',
+            'jquery-ui-core',
+            'jquery-ui-resizable'
+        ), WCML_VERSION );
+
         if ( self::$is_wpml_wcml_page ) {
 
-            wp_register_script( 'wcml-tm-scripts', WCML_PLUGIN_URL . '/res/js/scripts.js', array(
-                'jquery',
-                'jquery-ui-core',
-                'jquery-ui-resizable'
-            ), WCML_VERSION );
             wp_register_script( 'jquery-cookie', WCML_PLUGIN_URL . '/res/js/jquery.cookie.js', array('jquery'), WCML_VERSION );
             wp_register_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs.js', array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'), WCML_VERSION );
             wp_register_script( 'wcml-troubleshooting', WCML_PLUGIN_URL . '/res/js/troubleshooting.js', array('jquery'), WCML_VERSION );
 
             wp_enqueue_script( 'wcml-dialogs' );
-            wp_enqueue_script( 'wcml-tm-scripts' );
+            wp_enqueue_script( 'wcml-scripts' );
             wp_enqueue_script( 'jquery-cookie' );
             wp_enqueue_script( 'wcml-troubleshooting' );
 
-
-            wp_localize_script( 'wcml-tm-scripts', 'wcml_settings',
+            wp_localize_script( 'wcml-scripts', 'wcml_settings',
                 array(
                     'nonce' => wp_create_nonce( 'woocommerce_multilingual' )
                 )
@@ -95,8 +95,8 @@ class WCML_Resources {
         }
 
         if ( self::$page == 'wpml-wcml' && self::$tab == 'product-attributes' ) {
-            wp_register_script( 'multi-currency', WCML_PLUGIN_URL . '/res/js/product-attributes.js', array('jquery'), WCML_VERSION, true );
-            wp_enqueue_script( 'multi-currency' );
+            wp_register_script( 'product-attributes', WCML_PLUGIN_URL . '/res/js/product-attributes.js', array('jquery'), WCML_VERSION, true );
+            wp_enqueue_script( 'product-attributes' );
         }
 
         if ( !is_admin() ) {

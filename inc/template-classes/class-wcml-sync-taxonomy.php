@@ -40,8 +40,8 @@ class WCML_Sync_Taxonomy extends WPML_Templates_Factory {
                 'untranslated_warn' => __( 'You have untranslated terms!', 'woocommerce-multilingual' )
             ),
             'nonces' => array(
-                'sync_product_variations' => wp_nonce_field('wcml_sync_product_variations', 'wcml_nonce' ),
-                'sync_taxonomies' => wp_nonce_field('wcml_sync_taxonomies_in_content_preview', 'wcml_sync_taxonomies_in_content_preview_nonce'),
+                'sync_product_variations' => wp_nonce_field('wcml_sync_product_variations', 'wcml_nonce', $referrer = false, $echo = false ),
+                'sync_taxonomies' => wp_nonce_field('wcml_sync_taxonomies_in_content_preview', 'wcml_sync_taxonomies_in_content_preview_nonce', $referrer = false, $echo = false),
             )
         );
 

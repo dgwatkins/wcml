@@ -65,6 +65,12 @@ class WCML_Terms{
         if($pagenow == 'edit-tags.php' && isset($_GET['action']) && $_GET['action'] == 'edit'){
             add_action('admin_notices', array($this, 'show_term_translation_screen_notices'));    
         }
+
+        $page = isset( $_GET['page'] )? $_GET['page'] : '';
+        if ( $page === ICL_PLUGIN_FOLDER . '/menu/taxonomy-translation.php' ) {
+            WCML_Resources::load_management_css();
+            wp_enqueue_script( 'wcml-scripts' );
+        }
         
     }
             
@@ -461,17 +467,18 @@ class WCML_Terms{
 
     public function sync_taxonomy_translations( $html, $taxonomy, $taxonomy_obj ){
 
-        if(is_admin() && $taxonomy && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab'])){
+        $is_wcml = is_admin() && $taxonomy && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']);
+        $is_ajax = is_ajax() && $taxonomy && isset( $_POST['action'] ) && $_POST['action'] === 'wpml_get_terms_and_labels_for_taxonomy_table';
+        if( $is_wcml || $is_ajax ){
 
             $sync_tax = new WCML_Sync_Taxonomy( $this->woocommerce_wpml, $taxonomy, $taxonomy_obj );
             $html = $sync_tax->get_view();
-
         }
 
         return $html;
     }
 
-    // Backward compatibillity for WPML <= 3.1.8.2
+    // Backward compatibility for WPML <= 3.1.8.2
     public function show_variations_sync_button($taxonomy){
 
         if( is_ajax() || is_admin() && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) ){
@@ -520,7 +527,7 @@ class WCML_Terms{
 
     }
     
-    // Backward compatibillity for WPML <= 3.1.8.2
+    // Backward compatibility for WPML <= 3.1.8.2
     public function hide_tax_sync_button_for_attributes($value){
 
         if(is_admin() && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab'])){
