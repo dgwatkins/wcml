@@ -81,7 +81,7 @@ class WCML_Admin_Menus{
         $is_edit_order_or_coupon    = $pagenow == 'post.php' && $get_post &&
                                         in_array( get_post_type( $get_post ), array( 'shop_coupon', 'shop_order' ) );
         $is_shipping_zones          = $get_page == 'shipping_zones';
-        $is_attributes_page          = $get_page == 'product_attributes';
+        $is_attributes_page          =  apply_filters( 'wcml_is_attributes_page', $get_page == 'product_attributes' );
 
 
         return is_admin() && (

@@ -11,9 +11,11 @@ class WCML_Attributes{
         $this->sitepress = $sitepress;
         $this->wpdb = $wpdb;
 
-        if( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == 'product_attributes' && isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'product' ){
+        $is_attr_page = apply_filters( 'wcml_is_attributes_page', isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == 'product_attributes' && isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'product' );
 
-            add_action( 'admin_footer', array( $this, 'not_translatable_html' ) );
+        if( $is_attr_page ){
+
+            add_action( 'admin_init', array( $this, 'not_translatable_html' ) );
 
             if( isset( $_POST[ 'save_attribute' ] ) && isset( $_GET[ 'edit' ] ) ){
                 $this->set_attribute_readonly_config( $_GET[ 'edit' ], $_POST );

@@ -25,6 +25,7 @@ class WCML_Adventure_tours{
 
             add_filter( 'wcml_is_variable_product', array( $this, 'is_variable_tour' ), 10, 2 );
             add_filter( 'wcml_variation_term_taxonomy_ids', array( $this, 'add_tour_tax_id' ) );
+            add_filter( 'wcml_is_attributes_page', array( $this, 'is_attributes_page' ) );
         }
     }
 
@@ -350,6 +351,15 @@ class WCML_Adventure_tours{
         }
 
         return $is_variable;
+    }
+
+    function is_attributes_page( $is_attributes_page ){
+
+        if( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == 'product_attributes_extended' && isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'product' ){
+            $is_attributes_page = true;
+        }
+
+        return $is_attributes_page;
     }
 
 }

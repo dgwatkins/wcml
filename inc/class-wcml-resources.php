@@ -107,7 +107,9 @@ class WCML_Resources {
             wp_enqueue_script( 'wcml-messages' );
         }
 
-        if( self::$page == 'product_attributes' && isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'product' ){
+        $is_attr_page = apply_filters( 'wcml_is_attributes_page', self::$page == 'product_attributes' && isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'product' );
+
+        if( $is_attr_page ){
             wp_register_script( 'wcml-attributes', WCML_PLUGIN_URL . '/res/js/wcml-attributes.js', array( 'jquery' ), WCML_VERSION );
             wp_enqueue_script( 'wcml-attributes' );
         }
