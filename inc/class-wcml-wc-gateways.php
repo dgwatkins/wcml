@@ -6,15 +6,19 @@ class WCML_WC_Gateways{
 
     function __construct( &$sitepress ){
 
-        $this->payment_gateways_filters();
-
-        add_filter('woocommerce_gateway_title', array($this, 'translate_gateway_title'), 10, 2);
-        add_filter('woocommerce_gateway_description', array($this, 'translate_gateway_description'), 10, 2);
+        add_action( 'init', array( $this, 'init' ) );
 
         $this->current_language = $sitepress->get_current_language();
         if( $this->current_language == 'all' ){
             $this->current_language = $sitepress->get_default_language();
         }
+    }
+
+    function init(){
+        $this->payment_gateways_filters();
+
+        add_filter('woocommerce_gateway_title', array($this, 'translate_gateway_title'), 10, 2);
+        add_filter('woocommerce_gateway_description', array($this, 'translate_gateway_description'), 10, 2);
     }
 
     function payment_gateways_filters(){
@@ -38,7 +42,7 @@ class WCML_WC_Gateways{
         $wc_payment_gateways = WC_Payment_Gateways::instance();
 
         foreach( $wc_payment_gateways->payment_gateways() as $gateway ){
-            if( isset( $_POST['woocommerce_'.$gateway->id.'_enabled'] ) ){
+            if( isset( $_POST['woocommerce_'.$gateway->id.'_enabled'] ) || isset( $_POST[ $gateway->id.'_enabled'] ) ){
                 $gateway_id = $gateway->id;
                 break;
             }
