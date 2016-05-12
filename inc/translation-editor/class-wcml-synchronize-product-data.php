@@ -26,7 +26,7 @@ class WCML_Synchronize_Product_Data{
 
         add_action( 'icl_pro_translation_completed', array( $this, 'icl_pro_translation_completed' ) );
 
-        add_filter( 'icl_make_duplicate', array( $this, 'icl_make_duplicate'), 11, 4 );
+        add_filter( 'icl_make_duplicate', array( $this, 'icl_make_duplicate'), 110, 4 );
         add_action( 'woocommerce_duplicate_product', array( $this, 'woocommerce_duplicate_product' ), 10, 2 );
 
         //quick & bulk edit

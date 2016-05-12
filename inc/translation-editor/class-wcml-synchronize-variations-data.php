@@ -283,6 +283,7 @@ class WCML_Synchronize_Variations_Data{
                                 }
                                 $meta_key = 'attribute_'.$tax;
                             }
+
                         }
                         update_post_meta( $current_post_variation_ids[ $dp_key ], $meta_key, $meta_value );
                     }
