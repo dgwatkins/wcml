@@ -165,8 +165,14 @@ class WCML_Attributes{
     }
 
     public function set_translatable_attributes( $attributes ){
-        $this->woocommerce_wpml->settings[ 'attributes_settings' ] = $attributes;
-        $this->woocommerce_wpml->update_settings();
+
+        $wcml_settings = $this->woocommerce_wpml->get_settings();
+        $wcml_settings[ 'attributes_settings' ] = $attributes;
+        $this->woocommerce_wpml->update_settings( $wcml_settings );
+
+        foreach( $attributes as $name => $is_translatable ){
+            $this->set_attribute_config_in_wpml_settings( $name, $is_translatable );
+        }
     }
 
     public function sync_product_attr( $original_product_id, $tr_product_id, $language = false, $data = false ){
