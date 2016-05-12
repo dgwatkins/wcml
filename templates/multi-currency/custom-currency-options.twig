@@ -50,7 +50,7 @@
                     <option value="left" {% if args.currency.position == 'left' %}selected="selected"{% endif %}>{{ form.position.left }}</option>
                     <option value="right" {% if args.currency.position == 'right' %}selected="selected"{% endif %}>{{ form.position.right }}</option>
                     <option value="left_space" {% if args.currency.position == 'left_space' %}selected="selected"{% endif %}>{{ form.position.left_space }}</option>
-                    <option value="left_space" {% if args.currency.position == 'right_space' %}selected="selected"{% endif %}>{{ form.position.right_space }}</option>
+                    <option value="right_space" {% if args.currency.position == 'right_space' %}selected="selected"{% endif %}>{{ form.position.right_space }}</option>
                 </select>
             </div>
 
@@ -79,20 +79,20 @@
             <div class="wpml-form-row">
                 <label for="wcml_currency_options_rounding_{{ args.currency_code }}">{{ form.rounding.label }}</label>
                 <select name="currency_options[rounding]" id="wcml_currency_options_rounding_{{ args.currency_code }}">
-                    <option value="disabled" {% if args.currency.rounding == 'disabled' %}selecetd="selected"{% endif %}>{{ form.rounding.disabled}}</option>
-                    <option value="up" {% if args.currency.rounding == 'up' %}selecetd="selected"{% endif %}>{{ form.rounding.up}}</option>
-                    <option value="down" {% if args.currency.rounding == 'down' %}selecetd="selected"{% endif %}>{{ form.rounding.down}}</option>
-                    <option value="nearest" {% if args.currency.rounding == 'disabled' %}selecetd="nearest"{% endif %}>{{ form.rounding.nearest}}</option>
+                    <option value="disabled" {% if args.currency.rounding == 'disabled' %}selected="selected"{% endif %}>{{ form.rounding.disabled}}</option>
+                    <option value="up" {% if args.currency.rounding == 'up' %}selected="selected"{% endif %}>{{ form.rounding.up}}</option>
+                    <option value="down" {% if args.currency.rounding == 'down' %}selected="selected"{% endif %}>{{ form.rounding.down}}</option>
+                    <option value="nearest" {% if args.currency.rounding == 'disabled' %}selected="nearest"{% endif %}>{{ form.rounding.nearest}}</option>
                 </select>
             </div>
 
             <div class="wpml-form-row">
                 <label for="wcml_currency_options_increment_{{ args.currency_code }}">{{ form.rounding.increment}}</label>
                 <select name="currency_options[rounding_increment]" id="wcml_currency_options_increment_{{ args.currency_code }}">
-                    <option value="1" {% if args.currency.rounding_increment == '1' %}selecetd="selected"{% endif %}>1</option>
-                    <option value="10" {% if args.currency.rounding_increment == '10' %}selecetd="selected"{% endif %}>10</option>
-                    <option value="100" {% if args.currency.rounding_increment == '100' %}selecetd="selected"{% endif %}>100</option>
-                    <option value="1000" {% if args.currency.rounding_increment == '1000' %}selecetd="selected"{% endif %}>1000</option>
+                    <option value="1" {% if args.currency.rounding_increment == '1' %}selected="selected"{% endif %}>1</option>
+                    <option value="10" {% if args.currency.rounding_increment == '10' %}selected="selected"{% endif %}>10</option>
+                    <option value="100" {% if args.currency.rounding_increment == '100' %}selected="selected"{% endif %}>100</option>
+                    <option value="1000" {% if args.currency.rounding_increment == '1000' %}selected="selected"{% endif %}>1000</option>
                 </select>
             </div>
 
