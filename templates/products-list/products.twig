@@ -69,6 +69,10 @@
 									- <span class="post-state">{{ strings.draft }}</span>
 								{% endif %}
 
+								{% if product.post_status == 'private' %}
+									- <span class="post-state">{{ strings.private }}</span>
+								{% endif %}
+
 								{% if data.search and product.post_parent != 0 %}
 									| <span class="prod_parent_text">
 										{{ strings.parent|format( product.parent_title ) }}

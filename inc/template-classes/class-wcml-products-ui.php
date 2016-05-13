@@ -42,6 +42,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 				'categories' => __( 'Categories', 'woocommerce-multilingual' ),
 				'no_products' => __( 'No products found', 'woocommerce-multilingual' ),
 				'draft' => __( 'Draft', 'woocommerce-multilingual' ),
+				'private' => __( 'Private', 'woocommerce-multilingual' ),
 				'parent' => __( 'Parent product: %s', 'woocommerce-multilingual' ),
 				'edit_item' => __( 'Edit this item', 'woocommerce-multilingual' ),
 				'edit' => __( 'Edit', 'woocommerce-multilingual' ),
