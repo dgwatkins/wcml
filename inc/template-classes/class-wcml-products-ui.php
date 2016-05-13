@@ -533,7 +533,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 	public function get_wc_statuses(){
 		$all_statuses = get_post_stati();
 		//unset unnecessary statuses
-		unset( $all_statuses['trash'], $all_statuses['auto-draft'], $all_statuses['inherit'], $all_statuses['wc-pending'], $all_statuses['wc-processing'], $all_statuses['wc-on-hold'], $all_statuses['wc-completed'], $all_statuses['wc-cancelled'], $all_statuses['wc-refunded'], $all_statuses['wc-failed'] );
+		unset( $all_statuses['trash'], $all_statuses['auto-draft'], $all_statuses['inherit'], $all_statuses['wc-pending'], $all_statuses['wc-processing'], $all_statuses['wc-on-hold'], $all_statuses['wc-completed'], $all_statuses['wc-cancelled'], $all_statuses['wc-refunded'], $all_statuses['wc-failed'], $all_statuses['wc-active'], $all_statuses['wc-switched'], $all_statuses['wc-expired'], $all_statuses['wc-pending-cancel'] );
 
 		return $all_statuses;
 	}
