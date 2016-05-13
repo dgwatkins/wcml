@@ -25,6 +25,10 @@ class WCML_Attributes{
         add_action( 'woocommerce_attribute_added', array( $this, 'set_attribute_readonly_config' ), 10, 2 );
         add_filter( 'wpml_translation_job_post_meta_value_translated', array($this, 'filter_product_attributes_for_translation'), 10, 2 );
 
+        if( isset( $_POST['icl_ajx_action'] ) && $_POST['icl_ajx_action'] == 'icl_custom_tax_sync_options' ){
+            $this->icl_custom_tax_sync_options();
+        }
+
     }
 
     public function not_translatable_html(){
@@ -52,10 +56,14 @@ class WCML_Attributes{
             $this->set_original_attributes_for_products( $attribute['attribute_name'] );
         }
 
-        $wcml_settings = $this->woocommerce_wpml->get_settings();
-        $wcml_settings[ 'attributes_settings' ][ $attribute['attribute_name'] ] = $is_translatable;
-        $this->woocommerce_wpml->update_settings( $wcml_settings );
         $this->set_attribute_config_in_wpml_settings( $attribute['attribute_name'], $is_translatable );
+        $this->set_attribute_config_in_wpml_settings( $attribute['attribute_name'], $is_translatable );
+    }
+
+    public function set_attribute_config_in_wcml_settings( $attribute_name, $is_translatable ){
+        $wcml_settings = $this->woocommerce_wpml->get_settings();
+        $wcml_settings[ 'attributes_settings' ][ $attribute_name ] = $is_translatable;
+        $this->woocommerce_wpml->update_settings( $wcml_settings );
     }
 
     public function set_attribute_config_in_wpml_settings( $attribute_name, $is_translatable ){
@@ -356,6 +364,15 @@ class WCML_Attributes{
             ? preg_match('#^(?!field-_product_attributes-(.+)-(.+)-(?!value|name))#', $key) : 0;
 
         return $translated;
+    }
+
+    public function icl_custom_tax_sync_options(){
+        foreach( $_POST['icl_sync_tax'] as $taxonomy => $value){
+            if ( substr( $taxonomy, 0, 3 ) == 'pa_' ) {
+                $this->set_attribute_config_in_wcml_settings( substr( $taxonomy, 3 ), $value);
+            }
+        }
+
     }
 
 }
