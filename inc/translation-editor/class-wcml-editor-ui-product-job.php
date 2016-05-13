@@ -221,16 +221,22 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         foreach( $product_images as $image_id ) {
             $attachment_data = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM {$this->wpdb->posts} WHERE ID = %d", $image_id ) );
             if( !$attachment_data ) continue;
+			$alt_text                                                 = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
+			$alt_text                                                 = $alt_text ? $alt_text : '';
             $element_data[ 'image-id-' . $image_id . '-title' ]       = array( 'original' => $attachment_data->post_title );
             $element_data[ 'image-id-' . $image_id . '-caption' ]     = array( 'original' => $attachment_data->post_excerpt );
             $element_data[ 'image-id-' . $image_id . '-description' ] = array( 'original' => $attachment_data->post_content );
+            $element_data[ 'image-id-' . $image_id . '-alt-text' ]    = array( 'original' => $alt_text );
             
             $trnsl_prod_image = apply_filters( 'translate_object_id', $image_id, 'attachment', false, $this->get_target_language() );
 	        if ( null !== $trnsl_prod_image ) {
                 $trnsl_attachment_data = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM {$this->wpdb->posts} WHERE ID = %d", $trnsl_prod_image ) );
+				$alt_text                                                                  = get_post_meta( $trnsl_prod_image, '_wp_attachment_image_alt', true );
+				$alt_text                                                                  = $alt_text ? $alt_text : '';
                 $element_data[ 'image-id-' . $image_id . '-title' ][ 'translation' ]       = $trnsl_attachment_data->post_title;
                 $element_data[ 'image-id-' . $image_id . '-caption' ][ 'translation' ]     = $trnsl_attachment_data->post_excerpt;
                 $element_data[ 'image-id-' . $image_id . '-description' ][ 'translation' ] = $trnsl_attachment_data->post_content;
+                $element_data[ 'image-id-' . $image_id . '-alt-text' ][ 'translation' ]    = $alt_text;
             }
         }
 
@@ -453,7 +459,10 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                     ),
                     array( 'id' => $trnsl_prod_image )
                 );
-            }
+				if ( isset( $translations[ md5( 'image-id-' . $image_id . '-alt-text' ) ] ) ) {
+					update_post_meta( $trnsl_prod_image, '_wp_attachment_image_alt', $translations[ md5( 'image-id-' . $image_id . '-alt-text' ) ] );
+				}
+			}
         }
 
         if( $product_translations ){
