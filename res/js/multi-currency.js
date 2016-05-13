@@ -243,7 +243,7 @@ jQuery( function($){
             $(this).addClass('spinner').removeClass('otgs-ico-no').css('visibility', 'visible');
 
             var index = $(this).closest('tr')[0].rowIndex;
-            $('.currency_languages select[rel="'+$(this).data('language')+'"]').append('<option value="'+$(this).data('currency')+'">'+$(this).data('currency')+'</option>');
+            $('.default_currency select[rel="'+$(this).data('language')+'"]').append('<option value="'+$(this).data('currency')+'">'+$(this).data('currency')+'</option>');
             WCML_Multi_Currency.update_currency_lang($(this),1,0);
 
         },
@@ -268,7 +268,7 @@ jQuery( function($){
             }else{
                 WCML_Multi_Currency.update_currency_lang($(this),0,0);
             }
-            $('.currency_languages select[rel="'+$(this).data('language')+'"] option[value="'+$(this).data('currency')+'"]').remove();
+            $('.default_currency select[rel="'+$(this).data('language')+'"] option[value="'+$(this).data('currency')+'"]').remove();
 
         },
 
