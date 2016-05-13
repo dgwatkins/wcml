@@ -73,6 +73,14 @@
 									- <span class="post-state">{{ strings.private }}</span>
 								{% endif %}
 
+								{% if product.post_status == 'pending' %}
+									- <span class="post-state">{{ strings.pending }}</span>
+								{% endif %}
+
+								{% if product.post_status == 'future' %}
+									- <span class="post-state">{{ strings.future }}</span>
+								{% endif %}
+
 								{% if data.search and product.post_parent != 0 %}
 									| <span class="prod_parent_text">
 										{{ strings.parent|format( product.parent_title ) }}
