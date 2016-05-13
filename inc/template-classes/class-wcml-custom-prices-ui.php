@@ -102,6 +102,7 @@ class WCML_Custom_Prices_UI extends WPML_Templates_Factory {
 				$currencies[ $key ][ 'wc_input_type' ] = 'text';
 
 			}else{
+				$currencies[ $key ][ 'custom_id' ] = '['.$key.']';
 
 				$wc_input = array();
 

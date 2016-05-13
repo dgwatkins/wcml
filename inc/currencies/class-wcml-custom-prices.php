@@ -371,10 +371,11 @@ class WCML_Custom_Prices{
                     $date_from = isset( $_POST[ '_custom_sale_price_dates_from' ][ $code ] ) ? strtotime( $_POST[ '_custom_sale_price_dates_from' ][ $code ] ) : '';
                     $date_to = isset( $_POST[ '_custom_sale_price_dates_to' ][ $code ] ) ? strtotime( $_POST[ '_custom_sale_price_dates_to' ][ $code ] ) : '';
                     $schedule = $_POST[ '_wcml_schedule' ][ $code ];
+
                     $custom_prices = apply_filters( 'wcml_update_custom_prices_values',
                         array( '_regular_price' => $regular_price,
                             '_sale_price' => $sale_price,
-                            '_wcml_schedule_' => $schedule,
+                            '_wcml_schedule' => $schedule,
                             '_sale_price_dates_from' => $date_from,
                             '_sale_price_dates_to' => $date_to ),
                         $code
