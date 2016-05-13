@@ -38,8 +38,7 @@ class WCML_Custom_Currency_Options extends WPML_Templates_Factory {
                 ),
                 'preview' => array(
                     'label' => __( 'Currency Preview', 'woocommerce-multilingual' ),
-                    'value' => sprintf( '%1$s%2$s', get_woocommerce_currency_symbol($current_currency),
-                        apply_filters( 'formatted_woocommerce_price', number_format( '1234.56', 2, '.', ',' ), '1234.56', 2, '.', ',' ) )
+                    'value' => $this->get_price_preview( $current_currency )
                 ),
                 'position' => array(
                     'label'         => __( 'Currency Position', 'woocommerce-multilingual' ),
@@ -100,6 +99,48 @@ class WCML_Custom_Currency_Options extends WPML_Templates_Factory {
 
     public function get_currency_symbol( $code ) {
         return get_woocommerce_currency_symbol( $code );
+    }
+
+    public function get_price_preview( $currency ){
+
+        if( isset( $this->args['currencies'][$currency] ) ) {
+
+            $this->current_currency_for_preview =& $currency;
+
+            add_filter( 'option_woocommerce_currency_pos', array($this, 'filter_currency_pos') );
+
+            $args = array(
+                'currency' => $currency,
+                'decimal_separator' => $this->args['currencies'][$currency]['decimal_sep'],
+                'thousand_separator' => $this->args['currencies'][$currency]['thousand_sep'],
+                'decimals' => $this->args['currencies'][$currency]['num_decimals'],
+                'price_format' => get_woocommerce_price_format()
+            );
+            $price = wc_price( '1234.56', $args );
+
+            remove_filter( 'option_woocommerce_currency_pos', array($this, 'filter_currency_pos') );
+
+            unset($this->current_currency_for_preview);
+
+        } else {
+            $args = array(
+                'currency' => $currency,
+                'price_format' => get_woocommerce_price_format()
+            );
+            $price = wc_price( '1234.56', $args );
+        }
+
+        return $price;
+    }
+
+    public function filter_currency_pos( $value ){
+
+        if( isset( $this->args['currencies'][ $this->current_currency_for_preview ]['position'] ) ){
+            $value = $this->args['currencies'][ $this->current_currency_for_preview ]['position'];
+        }
+
+        return $value;
+
     }
 
 
