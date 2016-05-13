@@ -367,7 +367,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 		$title_sort = isset( $_GET['ts'] ) ? $_GET['ts'] : false;
 		$date_sort = isset( $_GET['ds'] ) ? $_GET['ds'] : false;
 
-		if( is_null( $category ) && !$title_sort && !$date_sort ){
+		if( empty($title) && is_null( $category ) && !$title_sort && !$date_sort ){
 			return false;
 		}
 
