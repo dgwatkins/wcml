@@ -1,4 +1,7 @@
+/*globals jQuery, document, TaxonomyTranslation, window, ajaxurl */
+
 (function () {
+    "use strict";
 
     var attributeSelector = jQuery('#wcml_product_attributes');
 
@@ -10,13 +13,14 @@
     });
 
     function switchAttribute(){
-        "use strict";
         var attributeName = jQuery(this).val();
 
         var wrap        = jQuery('#taxonomy-translation');
-        var spinner     = '<div class="loading-content"><span class="spinner loading-content" style="visibility: visible;"></span></div>';
+        var spinner     = jQuery('.wpml-loading-taxonomy:first').clone();
 
-        wrap.html(spinner);
+		wrap.html('');
+        wrap.append(spinner);
+		wrap.find('.wpml-loading-taxonomy:first').show();
 
         updateAttributeInfo( attributeName );
 
@@ -27,7 +31,6 @@
     }
 
     function isSyncTab(){
-        "use strict";
 
         return  window.location.search.substring(1).indexOf('&sync=1') > -1;
     }

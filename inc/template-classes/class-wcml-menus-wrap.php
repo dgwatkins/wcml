@@ -205,7 +205,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
                     $WPML_Translate_Taxonomy = new WPML_Taxonomy_Translation($current_tab, array( 'taxonomy_selector'=> false, 'status'=> WPML_TT_TAXONOMIES_ALL ) );
                     ob_start();
 					?>
-					<h2 class="wpml_taxonomy_loading"><span class="spinner"></span><?php echo __( 'Loading...', 'woocommerce-multilingual' ) ?></h2>
+					<div class="wpml-loading-taxonomy"><span class="spinner is-active"></span><?php echo __( 'Loading ...', 'woocommerce-multilingual' ) ?></div>
 					<div class="wpml_taxonomy_loaded" style="display:none">
 						<?php
 						$WPML_Translate_Taxonomy->render();
