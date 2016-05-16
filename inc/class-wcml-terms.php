@@ -227,7 +227,7 @@ class WCML_Terms{
     
     function translated_terms_status_update($term_id, $tt_id, $taxonomy){
 
-        if ( isset( $_POST['product_cat_thumbnail_id'] ) ){
+        if ( isset( $_POST['product_cat_thumbnail_id'] ) || isset( $_POST['display_type'] ) ){
             global $sitepress_settings;
 
             if( $this->is_original_category($tt_id,'tax_'.$taxonomy) ){
@@ -237,7 +237,7 @@ class WCML_Terms{
                 foreach($translations as $translation){
                     if(!$translation->original){
                         if(isset($_POST['display_type'])){
-                        update_woocommerce_term_meta( $translation->term_id, 'display_type', esc_attr( $_POST['display_type'] ) );
+                            update_woocommerce_term_meta( $translation->term_id, 'display_type', esc_attr( $_POST['display_type'] ) );
                         }
                         update_woocommerce_term_meta( $translation->term_id, 'thumbnail_id', apply_filters( 'translate_object_id',esc_attr( $_POST['product_cat_thumbnail_id'] ),'attachment',true,$translation->language_code));
                     }
@@ -254,6 +254,7 @@ class WCML_Terms{
 
     function is_original_category( $tt_id, $taxonomy ){
         $is_original = $this->wpdb->get_var($this->wpdb->prepare("SELECT source_language_code IS NULL FROM {$this->wpdb->prefix}icl_translations WHERE element_id=%d AND element_type=%s", $tt_id, $taxonomy ));
+        return $is_original ? true : false;
     }
     
     public function wcml_update_term_translated_warnings(){
