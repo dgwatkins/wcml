@@ -22,7 +22,7 @@ class WCML_Attributes{
             }
         }
 
-        add_action( 'woocommerce_attribute_added', array( $this, 'set_attribute_readonly_config' ), 10, 2 );
+        add_action( 'woocommerce_attribute_added', array( $this, 'set_attribute_readonly_config' ), 100, 2 );
         add_filter( 'wpml_translation_job_post_meta_value_translated', array($this, 'filter_product_attributes_for_translation'), 10, 2 );
 
         if( isset( $_POST['icl_ajx_action'] ) && $_POST['icl_ajx_action'] == 'icl_custom_tax_sync_options' ){
@@ -56,7 +56,7 @@ class WCML_Attributes{
             $this->set_original_attributes_for_products( $attribute['attribute_name'] );
         }
 
-        $this->set_attribute_config_in_wpml_settings( $attribute['attribute_name'], $is_translatable );
+        $this->set_attribute_config_in_wcml_settings( $attribute['attribute_name'], $is_translatable );
         $this->set_attribute_config_in_wpml_settings( $attribute['attribute_name'], $is_translatable );
     }
 
