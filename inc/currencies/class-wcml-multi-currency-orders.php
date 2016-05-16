@@ -1,6 +1,10 @@
 <?php
 
 class WCML_Multi_Currency_Orders{
+
+    /**
+     * @var WCML_Multi_Currency
+     */
     private $multi_currency;
 
     public function __construct( &$multi_currency ){
@@ -212,26 +216,31 @@ class WCML_Multi_Currency_Orders{
 
     public function filter_ajax_order_item( $item, $item_id ){
         if( !get_post_meta( $_POST['order_id'], '_order_currency') ){
-            $order_currency = $this->get_cookie_order_currency();
+            $order_currency = $this->get_order_currency_cookie();
         }else{
             $order_currency = get_post_meta( $_POST['order_id'], '_order_currency', true);
         }
 
         $custom_price = get_post_meta( $_POST['item_to_add'], '_price_'.$order_currency, true );
 
+        if( !isset( $this->multi_currency->prices ) ){
+            $this->multi_currency->prices = new WCML_Multi_Currency_Prices( $this->multi_currency );
+            $this->multi_currency->prices->prices_init();
+        }
+
         if( $custom_price ){
             $item['line_subtotal'] = $custom_price;
             $item['line_total'] = $custom_price;
         }else{
-            $item['line_subtotal'] = $this->woocommece_wpml->multi_currency->prices->raw_price_filter( $item['line_subtotal'], $order_currency );
-            $item['line_total'] = $this->woocommece_wpml->multi_currency->prices->raw_price_filter( $item['line_total'], $order_currency );
+            $item['line_subtotal'] = $this->multi_currency->prices->raw_price_filter( $item['line_subtotal'], $order_currency );
+            $item['line_total'] = $this->multi_currency->prices->raw_price_filter( $item['line_total'], $order_currency );
         }
 
         wc_update_order_item_meta( $item_id, '_line_subtotal', $item['line_subtotal'] );
-        $item['line_subtotal_tax'] = $this->woocommece_wpml->multi_currency->prices->convert_price_amount( $item['line_subtotal_tax'], $order_currency );
+        $item['line_subtotal_tax'] = $this->multi_currency->prices->convert_price_amount( $item['line_subtotal_tax'], $order_currency );
         wc_update_order_item_meta( $item_id, '_line_subtotal_tax', $item['line_subtotal_tax'] );
         wc_update_order_item_meta( $item_id, '_line_total', $item['line_total'] );
-        $item['line_tax'] = $this->woocommece_wpml->multi_currency->prices->convert_price_amount( $item['line_tax'], $order_currency );
+        $item['line_tax'] = $this->multi_currency->prices->convert_price_amount( $item['line_tax'], $order_currency );
         wc_update_order_item_meta( $item_id, '_line_tax', $item['line_tax'] );
 
         return $item;
