@@ -11,6 +11,19 @@ class WCML_Attributes{
         $this->sitepress = $sitepress;
         $this->wpdb = $wpdb;
 
+        add_action( 'init', array( $this, 'init' ) );
+
+        add_action( 'woocommerce_attribute_added', array( $this, 'set_attribute_readonly_config' ), 100, 2 );
+        add_filter( 'wpml_translation_job_post_meta_value_translated', array($this, 'filter_product_attributes_for_translation'), 10, 2 );
+
+        if( isset( $_POST['icl_ajx_action'] ) && $_POST['icl_ajx_action'] == 'icl_custom_tax_sync_options' ){
+            $this->icl_custom_tax_sync_options();
+        }
+
+    }
+
+    public function init(){
+
         $is_attr_page = apply_filters( 'wcml_is_attributes_page', isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == 'product_attributes' && isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'product' );
 
         if( $is_attr_page ){
@@ -20,13 +33,6 @@ class WCML_Attributes{
             if( isset( $_POST[ 'save_attribute' ] ) && isset( $_GET[ 'edit' ] ) ){
                 $this->set_attribute_readonly_config( $_GET[ 'edit' ], $_POST );
             }
-        }
-
-        add_action( 'woocommerce_attribute_added', array( $this, 'set_attribute_readonly_config' ), 100, 2 );
-        add_filter( 'wpml_translation_job_post_meta_value_translated', array($this, 'filter_product_attributes_for_translation'), 10, 2 );
-
-        if( isset( $_POST['icl_ajx_action'] ) && $_POST['icl_ajx_action'] == 'icl_custom_tax_sync_options' ){
-            $this->icl_custom_tax_sync_options();
         }
 
     }
