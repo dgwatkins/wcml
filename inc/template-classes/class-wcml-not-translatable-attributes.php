@@ -35,7 +35,7 @@ class WCML_Not_Translatable_Attributes extends WPML_Templates_Factory {
 
 		$attribute_to_edit = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "woocommerce_attribute_taxonomies WHERE attribute_id = %d", $this->attr_id ) );
 		if( $attribute_to_edit ){
-			$att_name    = $attribute_to_edit->attribute_name;
+			$att_name    = wc_attribute_taxonomy_name( $attribute_to_edit->attribute_name );
 
 			$wcml_settings = $this->woocommerce_wpml->get_settings();
 

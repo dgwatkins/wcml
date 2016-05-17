@@ -54,16 +54,18 @@ class WCML_Attributes{
     public function set_attribute_readonly_config( $id, $attribute ){
 
         $is_translatable = isset( $_POST[ 'wcml-is-translatable-attr' ] ) ? 1 : 0;
-
+        $attribute_name = wc_attribute_taxonomy_name( $attribute['attribute_name'] );
         if( $is_translatable === 0 ){
             //delete all translated attributes terms if "Translatable?" option un-checked
-            $this->delete_translated_attribute_terms( $attribute['attribute_name'] );
-            $this->set_variations_to_use_original_attributes( $attribute['attribute_name'] );
-            $this->set_original_attributes_for_products( $attribute['attribute_name'] );
+            $this->delete_translated_attribute_terms( $attribute_name );
+            $this->set_variations_to_use_original_attributes( $attribute_name );
+            $this->set_original_attributes_for_products( $attribute_name );
         }
 
-        $this->set_attribute_config_in_wcml_settings( $attribute['attribute_name'], $is_translatable );
-        $this->set_attribute_config_in_wpml_settings( $attribute['attribute_name'], $is_translatable );
+        $this->set_attribute_config_in_wcml_settings( $attribute_name, $is_translatable );
+        $this->set_attribute_config_in_wpml_settings( $attribute_name, $is_translatable );
+
+        $this->woocommerce_wpml->terms->update_terms_translated_status( $attribute_name );
     }
 
     public function set_attribute_config_in_wcml_settings( $attribute_name, $is_translatable ){
@@ -74,34 +76,34 @@ class WCML_Attributes{
 
     public function set_attribute_config_in_wpml_settings( $attribute_name, $is_translatable ){
         $wpml_settings = $this->sitepress->get_settings();
-        $wpml_settings['taxonomies_sync_option'][wc_attribute_taxonomy_name( $attribute_name )] = $is_translatable;
+        $wpml_settings['taxonomies_sync_option'][ $attribute_name ] = $is_translatable;
 
         if( isset($wpml_settings['translation-management'])){
-            $wpml_settings['translation-management']['taxonomies_readonly_config'][wc_attribute_taxonomy_name( $attribute_name )] = $is_translatable;
+            $wpml_settings['translation-management']['taxonomies_readonly_config'][  $attribute_name ] = $is_translatable;
         }
 
         $this->sitepress->save_settings($wpml_settings);
     }
 
     public function delete_translated_attribute_terms( $attribute ){
-        $terms = $this->get_attribute_terms( 'pa_'.$attribute );
+        $terms = $this->get_attribute_terms( $attribute );
 
         foreach( $terms as $term ){
-            $term_language_details = $this->sitepress->get_element_language_details( $term->term_id, 'tax_pa_'.$attribute );
+            $term_language_details = $this->sitepress->get_element_language_details( $term->term_id, 'tax_'.$attribute );
             if( $term_language_details && $term_language_details->source_language_code ){
-                wp_delete_term( $term->term_id, 'pa_'.$attribute );
+                wp_delete_term( $term->term_id, $attribute );
             }
         }
 
     }
 
     public function set_variations_to_use_original_attributes( $attribute ){
-        $terms = $this->get_attribute_terms( 'pa_'.$attribute );
+        $terms = $this->get_attribute_terms( $attribute );
 
         foreach( $terms as $term ){
-            $term_language_details = $this->sitepress->get_element_language_details( $term->term_id, 'tax_pa_'.$attribute );
+            $term_language_details = $this->sitepress->get_element_language_details( $term->term_id, 'tax_'.$attribute );
             if( $term_language_details && is_null( $term_language_details->source_language_code ) ){
-                $variations = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id FROM {$this->wpdb->postmeta} WHERE meta_key=%s AND meta_value = %s",  'attribute_pa_'.$attribute, $term->slug ) );
+                $variations = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id FROM {$this->wpdb->postmeta} WHERE meta_key=%s AND meta_value = %s",  'attribute_'.$attribute, $term->slug ) );
 
                 foreach( $variations as $variation ){
                     //update taxonomy in translation of variation
@@ -109,7 +111,7 @@ class WCML_Attributes{
 
                         $trnsl_variation_id = apply_filters( 'translate_object_id', $variation->post_id, 'product_variation', false, $language['code'] );
                         if( !is_null( $trnsl_variation_id ) ){
-                            update_post_meta( $trnsl_variation_id, 'attribute_pa_'.$attribute, $term->slug );
+                            update_post_meta( $trnsl_variation_id, 'attribute_'.$attribute, $term->slug );
                         }
                     }
                 }
@@ -119,15 +121,15 @@ class WCML_Attributes{
 
     public function set_original_attributes_for_products( $attribute ){
 
-        $terms = $this->get_attribute_terms( 'pa_'.$attribute );
+        $terms = $this->get_attribute_terms( $attribute );
         $cleared_products = array();
         foreach( $terms as $term ) {
-            $term_language_details = $this->sitepress->get_element_language_details( $term->term_id, 'tax_pa_'.$attribute );
+            $term_language_details = $this->sitepress->get_element_language_details( $term->term_id, 'tax_'.$attribute );
             if( $term_language_details && is_null( $term_language_details->source_language_code ) ){
                 $args = array(
                     'tax_query' => array(
                         array(
-                            'taxonomy' => 'pa_'.$attribute,
+                            'taxonomy' => $attribute,
                             'field' => 'slug',
                             'terms' => $term->slug
                         )
@@ -144,10 +146,10 @@ class WCML_Attributes{
 
                         if ( !is_null( $trnsl_product_id ) ) {
                             if( !in_array( $trnsl_product_id, $trnsl_product_id ) ){
-                                wp_delete_object_term_relationships( $trnsl_product_id, 'pa_'.$attribute );
+                                wp_delete_object_term_relationships( $trnsl_product_id, $attribute );
                                 $cleared_products[] = $trnsl_product_id;
                             }
-                            wp_set_object_terms( $trnsl_product_id, $term->slug, 'pa_'.$attribute, true );
+                            wp_set_object_terms( $trnsl_product_id, $term->slug, $attribute, true );
                         }
                     }
                 }
@@ -158,11 +160,11 @@ class WCML_Attributes{
 
     public function is_translatable_attribute( $attr_name ){
 
-        if( !isset( $this->woocommerce_wpml->settings[ 'attributes_settings' ][ str_replace( 'pa_', '', $attr_name ) ] ) ){
-            $this->set_attribute_config_in_wpml_settings( str_replace( 'pa_', '', $attr_name ), 1 );
+        if( !isset( $this->woocommerce_wpml->settings[ 'attributes_settings' ][ $attr_name ] ) ){
+            $this->set_attribute_config_in_wpml_settings( $attr_name, 1 );
         }
 
-        return isset( $this->woocommerce_wpml->settings[ 'attributes_settings' ][ str_replace( 'pa_', '', $attr_name ) ] ) ? $this->woocommerce_wpml->settings[ 'attributes_settings' ][ str_replace( 'pa_', '', $attr_name ) ] : 1;
+        return isset( $this->woocommerce_wpml->settings[ 'attributes_settings' ][ $attr_name ] ) ? $this->woocommerce_wpml->settings[ 'attributes_settings' ][ $attr_name ] : 1;
     }
 
     public function get_translatable_attributes(){
@@ -170,7 +172,7 @@ class WCML_Attributes{
 
         $translatable_attributes = array();
         foreach( $attributes as $attribute ){
-            if( $this->is_translatable_attribute( $attribute->attribute_name) ){
+            if( $this->is_translatable_attribute( wc_attribute_taxonomy_name( $attribute->attribute_name ) ) ){
                 $translatable_attributes[] = $attribute;
             }
         }
@@ -180,12 +182,12 @@ class WCML_Attributes{
 
     public function set_translatable_attributes( $attributes ){
 
-        $wcml_settings = $this->woocommerce_wpml->get_settings();
-        $wcml_settings[ 'attributes_settings' ] = $attributes;
-        $this->woocommerce_wpml->update_settings( $wcml_settings );
-
         foreach( $attributes as $name => $is_translatable ){
-            $this->set_attribute_config_in_wpml_settings( $name, $is_translatable );
+
+            $attribute_name = wc_attribute_taxonomy_name( $name );
+            $this->set_attribute_config_in_wcml_settings( $attribute_name, $is_translatable );
+            $this->set_attribute_config_in_wpml_settings( $attribute_name, $is_translatable );
+
         }
     }
 
@@ -375,7 +377,7 @@ class WCML_Attributes{
     public function icl_custom_tax_sync_options(){
         foreach( $_POST['icl_sync_tax'] as $taxonomy => $value){
             if ( substr( $taxonomy, 0, 3 ) == 'pa_' ) {
-                $this->set_attribute_config_in_wcml_settings( substr( $taxonomy, 3 ), $value);
+                $this->set_attribute_config_in_wcml_settings( $taxonomy , $value);
             }
         }
 
