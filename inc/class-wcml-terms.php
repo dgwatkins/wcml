@@ -579,7 +579,7 @@ class WCML_Terms{
                 ORDER BY ID ASC
                 
         ", $taxonomy, $this->sitepress->get_default_language()));
-        
+
         if($post_ids){
             
             $variations_processed = 0;

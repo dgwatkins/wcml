@@ -239,7 +239,7 @@ class WCML_Synchronize_Variations_Data{
                         // adjust the global attribute slug in the custom field
                         $attid = null;
                         if( substr( $meta_key, 0, 10 ) == 'attribute_' ) {
-                            $tax = substr( $meta_key, 10 );
+                            $tax = wc_sanitize_taxonomy_name ( substr( $meta_key, 10 ) );
                             if( taxonomy_exists( $tax ) ){
                                 $attid = $this->woocommerce_wpml->terms->wcml_get_term_id_by_slug( $tax, $meta_value );
                                 if( $this->woocommerce_wpml->attributes->is_translatable_attribute( $tax ) && $attid ){
