@@ -10,6 +10,7 @@ class WCML_Coupons{
         $this->sitepress = $sitepress;
 
         add_action( 'woocommerce_coupon_loaded', array( $this, 'wcml_coupon_loaded' ) );
+        add_action( 'admin_init', array( $this, 'icl_adjust_terms_filtering' ) );
     }
 
     public function wcml_coupon_loaded( $coupons_data ){
@@ -60,6 +61,13 @@ class WCML_Coupons{
         $coupons_data->exclude_product_categories = $exclude_product_categories_ids;
 
         return $coupons_data;
+    }
+
+    public function icl_adjust_terms_filtering(){
+        if( is_admin() && isset( $_GET[ 'action' ] ) && $_GET['action'] == 'woocommerce_json_search_products_and_variations' ){
+            global $icl_adjust_id_url_filter_off;
+            $icl_adjust_id_url_filter_off = true;
+        }
     }
 
 }

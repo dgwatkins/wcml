@@ -289,6 +289,7 @@ class WCML_Products{
                         || ( $parent && $this->is_original_product($parent) ) )
                 )
             ) {
+
                 $new_found_products[$post] = $formatted_product_name;
             }
         }
