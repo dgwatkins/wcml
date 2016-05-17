@@ -259,13 +259,15 @@ class WCML_Synchronize_Variations_Data{
                                     }
                                 }
                             }else{
-                                if( isset( $original_product_attr[ $tax ] ) ){
-                                    $tax = sanitize_title( $original_product_attr[ $tax ][ 'name' ] );
+                                if( !isset( $original_product_attr[ $tax ] ) ){
+                                    $tax = sanitize_title( $tax );
                                 }
+
                                 if( isset( $original_product_attr[ $tax ] ) ){
                                     if( isset( $tr_product_attr[ $tax ] ) ){
                                         $values_arrs = array_map( 'trim', explode( '|', $original_product_attr[ $tax ][ 'value' ] ) );
                                         $values_arrs_tr = array_map( 'trim', explode( '|', $tr_product_attr[ $tax ][ 'value' ] ) );
+
                                         foreach( $values_arrs as $key => $value ){
                                             $value_sanitized = sanitize_title( $value );
                                             if(
