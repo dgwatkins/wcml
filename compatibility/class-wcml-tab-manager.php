@@ -10,7 +10,7 @@ class WCML_Tab_Manager{
         add_filter( 'wcml_custom_box_html', array( $this, 'custom_box_html'), 10, 3 );
         add_filter( 'wpml_duplicate_custom_fields_exceptions', array( $this, 'duplicate_custom_fields_exceptions' ) );
         add_action( 'wcml_after_duplicate_product', array( $this, 'duplicate_product_tabs') , 10, 2 );
-		
+
 		add_filter('wc_tab_manager_tab_id', array($this, 'wc_tab_manager_tab_id'), 10, 1);
 
         if( version_compare( WCML_VERSION, '3.7.2', '>') ){
@@ -64,6 +64,8 @@ class WCML_Tab_Manager{
                         $default_language = $woocommerce_wpml->products->get_original_product_language( $original_product_id );
                         $current_language = $sitepress->get_current_language();
                         $trnsl_product_tabs[ $key ] = $orig_prod_tabs[ $key ];
+                        $title = '';
+                        $heading = '';
                         if( isset( $data[ '_product_tabs_'.$lang ] ) ){
                             $title = $data[ '_product_tabs_'.$lang ][ 'core_title' ][ $orig_prod_tab[ 'id' ] ];
                             $heading = $data[ '_product_tabs_'.$lang ][ 'core_heading' ][ $orig_prod_tab[ 'id' ] ];
@@ -71,14 +73,17 @@ class WCML_Tab_Manager{
 
                         if( $default_language != $lang ){
                             $this->refresh_text_domain( $lang );
-                            if( !$title ) $title = $orig_prod_tabs[ $key ][ 'title' ];
-                            $title = __( $title, 'woocommerce' );
-                            if( !isset( $heading ) ){
-                                $heading = '';
-                            }elseif( !$heading && isset( $orig_prod_tabs[ $key ][ 'heading' ] ) ){
-                                $heading = $orig_prod_tabs[ $key ][ 'heading' ];
+
+                            if( !$title ){
+                                $title = isset( $_POST['product_tab_title'][ $orig_prod_tab['position'] ] ) ?  $_POST['product_tab_title'][ $orig_prod_tab['position'] ] : $orig_prod_tabs[ $key ][ 'title' ];
+                                $title = __( $title, 'woocommerce' );
                             }
-                            $heading = __( $heading, 'woocommerce' );
+
+                            if( !$heading && isset( $orig_prod_tabs[ $key ][ 'heading' ] ) ){
+                                $heading = isset( $_POST['product_tab_heading'][ $orig_prod_tab['position'] ]) ?  $_POST['product_tab_heading'][ $orig_prod_tab['position'] ] : $orig_prod_tabs[ $key ][ 'heading' ];
+                                $heading = __( $heading, 'woocommerce' );
+                            }
+
                             $this->refresh_text_domain( $current_language );
                         }
 
