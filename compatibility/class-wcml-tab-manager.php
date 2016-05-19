@@ -62,21 +62,27 @@ class WCML_Tab_Manager{
                         $default_language = $woocommerce_wpml->products->get_original_product_language( $original_product_id );
                         $current_language = $sitepress->get_current_language();
                         $trnsl_product_tabs[ $key ] = $orig_prod_tabs[ $key ];
+                        $title = '';
+                        $heading = '';
 
                         $title = $data[ md5( 'coretab_'.$orig_prod_tab['id'].'_title' ) ] ? $data[ md5( 'coretab_'.$orig_prod_tab['id'].'_title' ) ] : '';
                         $heading = $data[ md5( 'coretab_'.$orig_prod_tab['id'].'_heading' ) ] ? $data[ md5( 'coretab_'.$orig_prod_tab['id'].'_heading' ) ] : '';
 
 
                         if( $default_language != $lang ){
+
                             $this->refresh_text_domain( $lang );
-                            if( !$title ) $title = $orig_prod_tabs[ $key ][ 'title' ];
-                            $title = __( $title, 'woocommerce' );
-                            if( !isset( $heading ) ){
-                                $heading = '';
-                            }elseif( !$heading && isset( $orig_prod_tabs[ $key ][ 'heading' ] ) ){
-                                $heading = $orig_prod_tabs[ $key ][ 'heading' ];
+
+                            if( !$title ){
+                                $title = isset( $_POST['product_tab_title'][ $orig_prod_tab['position'] ] ) ?  $_POST['product_tab_title'][ $orig_prod_tab['position'] ] : $orig_prod_tabs[ $key ][ 'title' ];
+                                $title = __( $title, 'woocommerce' );
                             }
-                            $heading = __( $heading, 'woocommerce' );
+
+                            if( !$heading && ( isset( $orig_prod_tabs[ $key ][ 'heading' ] ) || isset( $_POST['product_tab_heading'][ $orig_prod_tab['position'] ] ) ) ){
+                                $heading = isset( $_POST['product_tab_heading'][ $orig_prod_tab['position'] ] ) ?  $_POST['product_tab_heading'][ $orig_prod_tab['position'] ] : $orig_prod_tabs[ $key ][ 'heading' ];
+                                $heading = __( $heading, 'woocommerce' );
+                            }
+
                             $this->refresh_text_domain( $current_language );
                         }
 
