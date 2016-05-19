@@ -162,6 +162,7 @@ class WCML_Attributes{
 
         if( !isset( $this->woocommerce_wpml->settings[ 'attributes_settings' ][ $attr_name ] ) ){
             $this->set_attribute_config_in_wpml_settings( $attr_name, 1 );
+            $this->set_attribute_config_in_wcml_settings( $attr_name, 1 );
         }
 
         return isset( $this->woocommerce_wpml->settings[ 'attributes_settings' ][ $attr_name ] ) ? $this->woocommerce_wpml->settings[ 'attributes_settings' ][ $attr_name ] : 1;
