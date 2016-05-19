@@ -34,7 +34,7 @@ class WCML_Reports{
         
         $current_language = $sitepress->get_current_language();
         $active_languages = $sitepress->get_active_languages();
-        
+
         if($this->tab == 'orders' && $this->report == 'sales_by_product'){
             
             $sparkline_query = strpos( $query[ 'select'], 'sparkline_value' ) !== false;
@@ -75,7 +75,8 @@ class WCML_Reports{
                     $query[ 'where' ] = str_replace("order_item_meta__product_id.meta_value = '{$product_id}'", "order_item_meta__product_id.meta_value IN(" . join(',', $product_ids) . ")", $query[ 'where' ]);
                     
                 }
-                
+
+                $query[ 'select' ] .= ', translations.language_code AS language_code_' . esc_sql( $current_language ); // user for per-language caching
                 
             }elseif(
                 $query[ 'select' ] == 'SELECT SUM( order_item_meta__line_total.meta_value) as order_item_amount' || //sales for the selected items
@@ -107,7 +108,7 @@ class WCML_Reports{
             }
                 
         }
-        
+
         return $query;
     }
     
@@ -128,7 +129,7 @@ class WCML_Reports{
         if(!isset($results['0']->trid)) return $results;
         
         $current_language = $sitepress->get_current_language();
-        
+
         $combined_results = array();
         
         foreach($results as $k => $row){
@@ -150,7 +151,7 @@ class WCML_Reports{
             }
             
         }
-        
+
         foreach($results as $k => $row){
             
             if($row->order_language != $current_language){
@@ -209,7 +210,7 @@ class WCML_Reports{
             }
             
         }
-        
+
         switch($mode){
             case 'top_sellers':
                 usort($combined_results, array(__CLASS__, '_order_by_quantity'));
