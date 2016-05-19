@@ -13,10 +13,6 @@ class WCML_Tab_Manager{
 
 		add_filter('wc_tab_manager_tab_id', array($this, 'wc_tab_manager_tab_id'), 10, 1);
 
-        if( version_compare( WCML_VERSION, '3.7.2', '>') ){
-            add_filter( 'option_wpml_config_files_arr', array($this, 'make__product_tabs_not_translatable_by_default'), 0 );
-        }
-
         if( is_admin() ){
 
             $this->tp = new WPML_Element_Translation_Package;
@@ -27,19 +23,6 @@ class WCML_Tab_Manager{
             add_action( 'wpml_translation_job_saved',   array( $this, 'save_custom_tabs_translation' ), 10, 3 );
 
         }
-
-    }
-
-    function make__product_tabs_not_translatable_by_default($wpml_config_array){
-
-        if( isset( $wpml_config_array->plugins['WooCommerce Tab Manager'] ) ){
-            $wpml_config_array->plugins['WooCommerce Tab Manager'] =
-                str_replace('<custom-field action="translate">_product_tabs</custom-field>',
-                            '<custom-field action="nothing">_product_tabs</custom-field>',
-                            $wpml_config_array->plugins['WooCommerce Tab Manager'] );
-        }
-
-        return $wpml_config_array;
 
     }
 
