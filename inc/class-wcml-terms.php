@@ -404,7 +404,7 @@ class WCML_Terms{
         $wcml_settings[ 'untranstaled_terms' ][ $taxonomy ] = array( 'count' => $not_translated_count , 'status' => $status );
                 
         $this->woocommerce_wpml->update_settings( $wcml_settings );
-        
+
         return $wcml_settings[ 'untranstaled_terms' ][ $taxonomy ];
         
     }

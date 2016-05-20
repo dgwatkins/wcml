@@ -13,7 +13,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
     public function get_model(){
 
         $current_tab = $this->get_current_tab();
-        $product_attributes = wc_get_attribute_taxonomies();
+        $product_attributes = $this->woocommerce_wpml->attributes->get_translatable_attributes();
 
         $taxonomy = isset( $_GET['taxonomy'] ) ? $_GET['taxonomy'] : false;
         if( $product_attributes ){

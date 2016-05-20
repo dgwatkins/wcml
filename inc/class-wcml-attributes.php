@@ -61,7 +61,10 @@ class WCML_Attributes{
             $this->set_variations_to_use_original_attributes( $attribute_name );
             $this->set_original_attributes_for_products( $attribute_name );
         }
+        $this->set_attribute_config_in_settings( $attribute_name, $is_translatable );
+    }
 
+    public function set_attribute_config_in_settings( $attribute_name, $is_translatable ){
         $this->set_attribute_config_in_wcml_settings( $attribute_name, $is_translatable );
         $this->set_attribute_config_in_wpml_settings( $attribute_name, $is_translatable );
 
@@ -75,14 +78,11 @@ class WCML_Attributes{
     }
 
     public function set_attribute_config_in_wpml_settings( $attribute_name, $is_translatable ){
-        $wpml_settings = $this->sitepress->get_settings();
-        $wpml_settings['taxonomies_sync_option'][ $attribute_name ] = $is_translatable;
 
-        if( isset($wpml_settings['translation-management'])){
-            $wpml_settings['translation-management']['taxonomies_readonly_config'][  $attribute_name ] = $is_translatable;
-        }
-
-        $this->sitepress->save_settings($wpml_settings);
+        $this->sitepress->get_setting( 'taxonomies_sync_option', array() );
+        $sync_settings[ $attribute_name ] = $is_translatable;
+        $this->sitepress->set_setting( 'taxonomies_sync_option', $sync_settings, true );
+        $this->sitepress->verify_taxonomy_translations( $attribute_name );
     }
 
     public function delete_translated_attribute_terms( $attribute ){
@@ -161,8 +161,7 @@ class WCML_Attributes{
     public function is_translatable_attribute( $attr_name ){
 
         if( !isset( $this->woocommerce_wpml->settings[ 'attributes_settings' ][ $attr_name ] ) ){
-            $this->set_attribute_config_in_wpml_settings( $attr_name, 1 );
-            $this->set_attribute_config_in_wcml_settings( $attr_name, 1 );
+            $this->set_attribute_config_in_settings( $attr_name, 1 );
         }
 
         return isset( $this->woocommerce_wpml->settings[ 'attributes_settings' ][ $attr_name ] ) ? $this->woocommerce_wpml->settings[ 'attributes_settings' ][ $attr_name ] : 1;
@@ -186,8 +185,7 @@ class WCML_Attributes{
         foreach( $attributes as $name => $is_translatable ){
 
             $attribute_name = wc_attribute_taxonomy_name( $name );
-            $this->set_attribute_config_in_wcml_settings( $attribute_name, $is_translatable );
-            $this->set_attribute_config_in_wpml_settings( $attribute_name, $is_translatable );
+            $this->set_attribute_config_in_settings( $attribute_name, $is_translatable );
 
         }
     }
