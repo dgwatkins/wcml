@@ -121,7 +121,7 @@ class WCML_Multi_Currency_Orders{
         $current_screen = get_current_screen();
 
         remove_filter('woocommerce_currency_symbol', array($this, '_use_order_currency_symbol'));
-        if(!empty($current_screen) && $current_screen->id == 'shop_order'){
+        if( !empty($current_screen) && $current_screen->id == 'shop_order' ){
 
             $the_order = new WC_Order( get_the_ID() );
             if($the_order && method_exists($the_order, 'get_order_currency')){
@@ -132,12 +132,20 @@ class WCML_Multi_Currency_Orders{
                 }
             }
 
-        }elseif( isset( $_POST['action'] ) &&  in_array( $_POST['action'], array( 'woocommerce_add_order_item', 'woocommerce_calc_line_taxes', 'woocommerce_save_order_items' ) ) ){
+        }elseif( ( isset( $_POST['action'] ) &&  in_array( $_POST['action'], array( 'woocommerce_add_order_item', 'woocommerce_calc_line_taxes', 'woocommerce_save_order_items' ) ) ) || ( isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] == 'woocommerce_json_search_products_and_variations' )){
 
             if( isset( $_COOKIE[ '_wcml_order_currency' ] ) ){
                 $currency =  get_woocommerce_currency_symbol($_COOKIE[ '_wcml_order_currency' ]);
             }elseif( get_post_meta( $_POST['order_id'], '_order_currency' ) ){
                 $currency = get_woocommerce_currency_symbol( get_post_meta( $_POST['order_id'], '_order_currency', true ) );
+            }
+
+            if( isset( $_SERVER[ 'HTTP_REFERER' ] ) ){
+                $arg = parse_url( $_SERVER[ 'HTTP_REFERER' ] );
+                parse_str( $arg[ 'query' ], $arg );
+                if( isset( $arg[ 'post' ] ) && get_post_type( $arg[ 'post' ] ) == 'shop_order' ){
+                    $currency = get_woocommerce_currency_symbol( get_post_meta( $arg[ 'post' ], '_order_currency', true ) );
+                }
             }
         }
 

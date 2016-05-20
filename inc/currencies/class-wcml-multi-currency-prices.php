@@ -467,7 +467,7 @@ class WCML_Multi_Currency_Prices{
         global $pagenow;
 
         $actions = array('woocommerce_add_order_item','woocommerce_save_order_items','woocommerce_calc_line_taxes');
-        $is_ajax_order_action = is_ajax() && isset($_POST['action']) && in_array($_POST['action'], $actions);
+        $is_ajax_order_action = is_ajax() && ( ( isset($_POST['action']) && in_array($_POST['action'], $actions)  || ( isset($_GET['action']) && $_GET['action'] == 'woocommerce_json_search_products_and_variations')));
         $is_shop_order_new = $pagenow == 'post-new.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] == 'shop_order';
 
         if( ( $is_ajax_order_action || $is_shop_order_new ) && isset( $_COOKIE[ '_wcml_order_currency' ] ) ){

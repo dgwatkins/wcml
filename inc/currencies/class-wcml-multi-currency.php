@@ -78,7 +78,8 @@ class WCML_Multi_Currency{
                         'woocommerce-checkout',
                         'woocommerce_checkout',
                         'woocommerce_add_to_cart',
-                        'woocommerce_update_shipping_method'
+                        'woocommerce_update_shipping_method',
+                        'woocommerce_json_search_products_and_variations'
                     )
                 );
 
@@ -285,6 +286,15 @@ class WCML_Multi_Currency{
             $this->client_currency = $default_currencies[$current_language];
         }
 
+        //edit order page
+        if( isset( $_SERVER[ 'HTTP_REFERER' ] ) ){
+            $arg = parse_url( $_SERVER[ 'HTTP_REFERER' ] );
+            parse_str( $arg[ 'query' ], $arg );
+            if( isset( $arg[ 'post' ] ) && get_post_type( $arg[ 'post' ] ) == 'shop_order' ){
+                $this->client_currency = get_post_meta( $arg[ 'post' ], '_order_currency', true );
+            }
+        }
+
         // client currency in general / if enabled for this language
         if(is_null($this->client_currency) && !empty($woocommerce->session) ){
             $session_currency = $woocommerce->session->get('client_currency');
@@ -315,7 +325,6 @@ class WCML_Multi_Currency{
             $woocommerce->session->set('client_currency', $this->client_currency);
             $woocommerce->session->set('client_currency_language',$current_language);
         }
-
 
         return apply_filters('wcml_client_currency', $this->client_currency);
     }
