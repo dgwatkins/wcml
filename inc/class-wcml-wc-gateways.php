@@ -6,7 +6,7 @@ class WCML_WC_Gateways{
 
     function __construct( &$sitepress ){
 
-        add_action( 'init', array( $this, 'init' ) );
+        add_action( 'init', array( $this, 'init' ), 11 );
 
         $this->current_language = $sitepress->get_current_language();
         if( $this->current_language == 'all' ){
