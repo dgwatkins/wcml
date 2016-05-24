@@ -142,9 +142,11 @@ class WCML_Multi_Currency_Orders{
 
             if( isset( $_SERVER[ 'HTTP_REFERER' ] ) ){
                 $arg = parse_url( $_SERVER[ 'HTTP_REFERER' ] );
-                parse_str( $arg[ 'query' ], $arg );
-                if( isset( $arg[ 'post' ] ) && get_post_type( $arg[ 'post' ] ) == 'shop_order' ){
-                    $currency = get_woocommerce_currency_symbol( get_post_meta( $arg[ 'post' ], '_order_currency', true ) );
+                if( isset( $arg[ 'query' ] ) ){
+                    parse_str( $arg[ 'query' ], $arg );
+                    if( isset( $arg[ 'post' ] ) && get_post_type( $arg[ 'post' ] ) == 'shop_order' ){
+                        $currency = get_woocommerce_currency_symbol( get_post_meta( $arg[ 'post' ], '_order_currency', true ) );
+                    }
                 }
             }
         }
