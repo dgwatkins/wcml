@@ -45,7 +45,7 @@ class WCML_Currency_Switcher {
             die('Invalid nonce');
         }
 
-        echo $this->woocommerce_wpml->multi_currency->currency_switcher->currency_switcher(
+        echo $this->currency_switcher(
             array(
                 'format'         => $_POST['template'] ? $_POST['template'] : '%name% (%symbol%) - %code%',
                 'switcher_style' => $_POST['switcher_type'],
@@ -114,9 +114,11 @@ class WCML_Currency_Switcher {
             $currencies = $wcml_settings['currencies_order'];
         }
 
-        foreach ( $currencies as $k => $currency ) {
-            if ( $wcml_settings['currency_options'][$currency]['languages'][$sitepress->get_current_language()] != 1 ) {
-                unset( $currencies[$k] );
+        if( !is_admin() ){
+            foreach ( $currencies as $k => $currency ) {
+                if ( $wcml_settings['currency_options'][$currency]['languages'][$sitepress->get_current_language()] != 1 ) {
+                    unset( $currencies[$k] );
+                }
             }
         }
 
