@@ -1,0 +1,18 @@
+# Codeception Test Suite Configuration
+
+# suite for WordPress acceptance tests.
+# perform tests in browser using WPBrowser or WPWebDriver modules.
+class_name: AcceptanceTester
+
+modules:
+   enabled:
+      - WebDriver:
+         url: 'http://kostas/'
+         #browser: firefox
+         browser: phantomjs
+         wait: 0
+         window_size: maximize
+         capabilities:
+           unexpectedAlertBehaviour: 'accept'
+      - \Helper\Acceptance
+      - CheckDebug
