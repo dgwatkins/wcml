@@ -137,7 +137,7 @@ class WCML_Url_Translation {
         if ( version_compare( WPML_ST_VERSION, '2.2.6', '>' ) ) {
 
             // Use new API for WPML ST > 2.2.6
-            do_action( 'wpml_activate_slug_translation', 'product', $slug, $this->url_strings_context() );
+            do_action( 'wpml_activate_slug_translation', 'product', $slug );
 
         } else {
 
