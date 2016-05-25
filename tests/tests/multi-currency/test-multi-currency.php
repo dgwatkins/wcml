@@ -69,6 +69,17 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 	}
 
 
+	function test_get_client_currency(){
+
+		//test order currency when add product to order on order edit page
+		$order = wp_insert_post( array( 'title'=> 'TEST Order', 'post_type' => 'shop_order' ) );
+		update_post_meta( $order, '_order_currency','CHF' );
+		$_SERVER['HTTP_REFERER'] = 'wp-admin/post.php?post='.$order.'&action=edit';
+		$curr = $this->multi_currency->get_client_currency();
+		$this->assertEquals( 'CHF', $curr );
+
+	}
+
 	function test_raw_price_filter() {
 
 		//AUD No rounding, exch rate: 2.45, 1 decimal
