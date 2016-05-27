@@ -174,6 +174,7 @@ class WCML_Products{
                                 <?php continue;
                             }
                         }
+                        wpml_tm_load_status_display_filter();
                     } ?>
                     <a href="<?php echo apply_filters( 'wpml_link_to_translation', '', $original_product_id, $language[ 'code' ], $trid ) ?>"
                         <?php if( isset( $product_translations[ $language[ 'code' ] ] ) ){
