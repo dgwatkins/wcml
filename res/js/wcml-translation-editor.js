@@ -116,7 +116,7 @@ jQuery( function($){
 
 			if( title != '' && slug_field.val() == '' ){
 
-				slug_field.prop('disabled', 'on');
+				slug_field.prop('readonly', 'on');
 				$.ajax({
 					url: ajaxurl,
 					type: 'POST',
@@ -124,7 +124,7 @@ jQuery( function($){
 					data: { action: 'wcml_editor_auto_slug', title: title },
 					success: function(response) {
 						slug_field.val( response.slug );
-						slug_field.removeAttr('disabled');
+						slug_field.removeAttr('readonly');
 						$('#icl_tm_copy_link_slug').prop('disabled', 'on');
 					}
 
