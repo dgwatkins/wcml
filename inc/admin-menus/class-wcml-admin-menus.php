@@ -34,7 +34,7 @@ class WCML_Admin_Menus{
             }else{
                 global $wpdb, $sitepress;
                 $user_lang_pairs = get_user_meta(get_current_user_id(), $wpdb->prefix.'language_pairs', true);
-                if( !empty( $user_lang_pairs[$sitepress->get_default_language()] ) ){
+                if( !empty( $user_lang_pairs ) ){
                     add_menu_page(__('WooCommerce Multilingual', 'woocommerce-multilingual'),
                         __('WooCommerce Multilingual', 'woocommerce-multilingual'), 'translate',
                         'wpml-wcml', array(__CLASS__, 'render_menus'), ICL_PLUGIN_URL . '/res/img/icon16.png');

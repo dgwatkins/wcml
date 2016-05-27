@@ -99,6 +99,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
                 )
             ),
             'can_manage_options' => current_user_can('wpml_manage_woocommerce_multilingual'),
+            'can_operate_options' => current_user_can('wpml_operate_woocommerce_multilingual'),
             'rate' => array(
                 'on'        => !isset( $this->woocommerce_wpml->settings['rate-block'] ),
                 'message'   => sprintf(__('Thank you for using %sWooCommerce Multilingual%s! You can express your love and
@@ -134,7 +135,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
 
         if(isset($_GET['tab'])){
             $current_tab = $_GET['tab'];
-            if( !current_user_can('wpml_manage_woocommerce_multilingual') ){
+            if( !current_user_can('wpml_manage_woocommerce_multilingual') && !current_user_can('wpml_operate_woocommerce_multilingual') ){
                 $current_tab = 'products';
             }
         }else{
@@ -155,17 +156,17 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
         switch ( $current_tab ) {
 
             case 'products':
-                if( current_user_can('wpml_manage_woocommerce_multilingual') ) {
+                $wcml_products_ui = new WCML_Products_UI( $woocommerce_wpml, $sitepress );
+                $content = $wcml_products_ui->get_view();
 
-                    $wcml_products_ui = new WCML_Products_UI( $woocommerce_wpml, $sitepress );
-                    $content = $wcml_products_ui->get_view();
-                }
                 break;
 
             case 'multi-currency':
+                if( current_user_can('wpml_manage_woocommerce_multilingual') ){
+                    $wcml_mc_ui = new WCML_Multi_Currency_UI( $woocommerce_wpml, $sitepress );
+                    $content = $wcml_mc_ui->get_view();
+                }
 
-                $wcml_mc_ui = new WCML_Multi_Currency_UI( $woocommerce_wpml, $sitepress );
-                $content = $wcml_mc_ui->get_view();
                 break;
 
             case 'product-attributes':
@@ -184,17 +185,21 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
                 break;
 
             case 'status':
-                $wcml_status = new WCML_Status_UI( $woocommerce_wpml, $sitepress, $sitepress_settings );
-                $content = $wcml_status->get_view();
+                if( current_user_can('wpml_manage_woocommerce_multilingual') ) {
+                    $wcml_status = new WCML_Status_UI($woocommerce_wpml, $sitepress, $sitepress_settings);
+                    $content = $wcml_status->get_view();
+                }
                 break;
 
             case 'troubleshooting':
-                $wcml_troubleshooting = new WCML_Troubleshooting_UI( $woocommerce_wpml );
-                $content = $wcml_troubleshooting->get_view();
+                if( current_user_can('wpml_manage_woocommerce_multilingual') ) {
+                    $wcml_troubleshooting = new WCML_Troubleshooting_UI($woocommerce_wpml);
+                    $content = $wcml_troubleshooting->get_view();
+                }
                 break;
 
             case 'settings':
-                if( current_user_can('wpml_operate_woocommerce_multilingual') ) {
+                if( current_user_can('wpml_manage_woocommerce_multilingual') ) {
                     $wcml_settings_ui = new WCML_Settings_UI( $woocommerce_wpml, $sitepress );
                     $content = $wcml_settings_ui->get_view();
                 }
