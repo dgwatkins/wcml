@@ -57,6 +57,8 @@ class WCML_Terms{
 
         add_filter( 'pre_update_option_woocommerce_flat_rate_settings', array( $this, 'update_woocommerce_shipping_settings_for_class_costs' ) );
         add_filter( 'pre_update_option_woocommerce_international_delivery_settings', array( $this, 'update_woocommerce_shipping_settings_for_class_costs' ) );
+
+        add_action('wp_ajax_woocommerce_shipping_zone_methods_save_settings', array( $this, 'update_woocommerce_shipping_settings_for_class_costs_from_ajax'), 9);
     }
     
     function admin_menu_setup(){
@@ -927,9 +929,9 @@ class WCML_Terms{
                 foreach( $translations as $translation ){
 
                     if( !$translation->original ){
-
+                        remove_filter( 'get_term', array( $sitepress, 'get_term_adjust_id' ), 1 );
                         $tr_shipp_class = get_term_by( 'term_taxonomy_id', $translation->element_id, 'product_shipping_class' );
-
+                        add_filter( 'get_term', array( $sitepress, 'get_term_adjust_id' ), 1 );
                         if( is_numeric( $shipp_class_key ) ){
                             $settings[ 'class_cost_'.$tr_shipp_class->term_id ] = $value;
                         }else{
@@ -945,6 +947,20 @@ class WCML_Terms{
         }
 
         return $settings;
+    }
+
+
+    function update_woocommerce_shipping_settings_for_class_costs_from_ajax(){
+
+        if( isset( $_POST['data']['woocommerce_flat_rate_type'] ) && $_POST['data']['woocommerce_flat_rate_type'] == 'class' ){
+            $flat_rate_setting_id = 'woocommerce_flat_rate_'.$_POST['data']['instance_id'].'_settings';
+
+            $settings = get_option( $flat_rate_setting_id );
+
+            if( is_array( $settings ) ){
+                update_option( $flat_rate_setting_id, $this->update_woocommerce_shipping_settings_for_class_costs( $settings ) );
+            }
+        }
     }
 
 }
