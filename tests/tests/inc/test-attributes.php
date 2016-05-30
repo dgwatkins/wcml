@@ -29,4 +29,16 @@ class Test_WCML_Attributes extends WCML_UnitTestCase {
 		$this->assertEquals( 1, count( $attr_terms ) );
 	}
 
+	function test_set_attribute_config_in_wpml_settings(){
+
+		$sync_settings = $this->sitepress->get_setting( 'taxonomies_sync_option', array() );
+		$this->woocommerce_wpml->attributes->set_attribute_config_in_wpml_settings( 'pa_size', 1 );
+		$updated_sync_settings = $this->sitepress->get_setting( 'taxonomies_sync_option', array() );
+
+		$this->assertEquals( 1, $updated_sync_settings['pa_size'] );
+		$this->assertEquals( count( $sync_settings ) + 1, count( $updated_sync_settings ) );
+
+
+	}
+
 }

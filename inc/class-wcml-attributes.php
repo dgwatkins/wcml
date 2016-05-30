@@ -79,7 +79,7 @@ class WCML_Attributes{
 
     public function set_attribute_config_in_wpml_settings( $attribute_name, $is_translatable ){
 
-        $this->sitepress->get_setting( 'taxonomies_sync_option', array() );
+        $sync_settings = $this->sitepress->get_setting( 'taxonomies_sync_option', array() );
         $sync_settings[ $attribute_name ] = $is_translatable;
         $this->sitepress->set_setting( 'taxonomies_sync_option', $sync_settings, true );
         $this->sitepress->verify_taxonomy_translations( $attribute_name );
