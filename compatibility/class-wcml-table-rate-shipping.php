@@ -5,10 +5,12 @@ class WCML_Table_Rate_Shipping{
     function __construct(){
 
         add_action('init', array($this, 'init'),9);
+
         add_filter('woocommerce_table_rate_query_rates_args', array($this, 'default_shipping_class_id'));
+        add_filter('get_the_terms',array( $this, 'shipping_class_id_in_default_language'), 10, 3 );
     }
 
-    function init(){
+    public function init(){
         global $pagenow;
 
         //register shipping label
@@ -22,7 +24,7 @@ class WCML_Table_Rate_Shipping{
         
     }
 
-    function default_shipping_class_id($args){
+    public function default_shipping_class_id($args){
         global $sitepress, $woocommerce_wpml;
         if($sitepress->get_current_language() != $sitepress->get_default_language() && !empty($args['shipping_class_id'])){
 
@@ -36,6 +38,28 @@ class WCML_Table_Rate_Shipping{
         }
 
         return $args;
+    }
+
+    public function shipping_class_id_in_default_language( $terms, $post_id, $taxonomy ) {
+        global $sitepress, $icl_adjust_id_url_filter_off;
+        if ( isset( $_POST['calc_shipping'] ) && $taxonomy == 'product_shipping_class' ) {
+
+            foreach( $terms as $k => $term ){
+                $shipping_class_id = apply_filters( 'translate_object_id', $term->term_id, 'product_shipping_class', false, $sitepress->get_default_language());
+
+                $icl_adjust_id_url_filter = $icl_adjust_id_url_filter_off;
+                $icl_adjust_id_url_filter_off = true;
+
+                $terms[$k] = get_term( $shipping_class_id,  'product_shipping_class');
+
+                $icl_adjust_id_url_filter_off = $icl_adjust_id_url_filter;
+
+            }
+
+        }
+
+        return $terms;
+
     }
 
 }
