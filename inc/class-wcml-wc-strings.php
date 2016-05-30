@@ -398,14 +398,13 @@ class WCML_WC_Strings{
 
             $permalinks   = get_option( 'woocommerce_permalinks' );
 
-            $shop_page_id = wc_get_page_id( 'shop' );
-            $orig_shop_page = get_post( apply_filters( 'translate_object_id', $shop_page_id, 'page', true, $sitepress->get_default_language() ) );
+            $shop_page = get_post( wc_get_page_id( 'shop' ) );
 
             // If permalinks contain the shop page in the URI prepend the breadcrumb with shop
             // Similar to WC_Breadcrumb::prepend_shop_page
             $trnsl_base = $woocommerce_wpml->url_translation->get_base_translation( 'product', $sitepress->get_current_language() );
 
-            if ( $shop_page_id && $orig_shop_page && strstr( $trnsl_base['translated_base'], urldecode( $orig_shop_page->post_name ) ) && get_option( 'page_on_front' ) != $shop_page_id ) {
+            if ( $shop_page->ID && strstr( $trnsl_base['translated_base'], urldecode( $shop_page->post_name ) ) && get_option( 'page_on_front' ) != $shop_page->ID ) {
                 $breadcrumbs_buff = array();
                 $i = 0;
                 foreach( $breadcrumbs as $key => $breadcrumb ){
@@ -414,9 +413,9 @@ class WCML_WC_Strings{
                         $breadcrumbs_buff[ $i ] = $breadcrumb;
                     }
 
-                    if( $key === 0 ){
+                    if( $key === 0 && $breadcrumbs[ 1 ][ 1 ] != get_post_type_archive_link( 'product' ) ){
                         $i++;
-                        $breadcrumbs_buff[ $i ] = array( get_the_title( $shop_page_id ), get_permalink( $shop_page_id ) );
+                        $breadcrumbs_buff[ $i ] = array( $shop_page->post_title, get_post_type_archive_link( 'product' ) );
                     }
                     $i++;
                 }
