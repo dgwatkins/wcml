@@ -1005,12 +1005,17 @@ class WCML_Bookings{
                     'wc_bookings_field_start_date_year' => $cart_item[ 'booking' ][ '_year' ],
                     'wc_bookings_field_start_date_month' => $cart_item[ 'booking' ][ '_month' ],
                     'wc_bookings_field_start_date_day' => $cart_item[ 'booking' ][ '_day' ],
-                    'add-to-cart' => $current_id,
-                    '_persons' => isset( $cart_item[ 'booking' ][ '_persons' ] ) ? isset( $cart_item[ 'booking' ][ '_persons' ] ) : array()
+                    'add-to-cart' => $current_id
                 );
 
+                if( isset( $cart_item[ 'booking' ][ '_persons' ] ) ){
+                    foreach( $cart_item[ 'booking' ][ '_persons' ] as $person_id => $value ){
+                        $booking_info[  'wc_bookings_field_persons_' . apply_filters( 'translate_object_id', $person_id, 'bookable_person', false, $current_language ) ] = $value;
+                    }
+                }
+
                 if( isset( $cart_item[ 'booking' ][ '_resource_id' ]  ) ){
-                    $booking_info[ 'wc_bookings_field_resource' ] = $cart_item[ 'booking' ][ '_resource_id' ];
+                    $booking_info[ 'wc_bookings_field_resource' ] = apply_filters( 'translate_object_id', $cart_item[ 'booking' ][ '_resource_id' ], 'bookable_resource', false, $current_language);
                 }
 
                 if( isset( $cart_item[ 'booking' ][ '_duration' ]  ) ){
