@@ -103,8 +103,6 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 	    if ( count( $product_images ) ) {
             $images_section = new WPML_Editor_UI_Field_Section( __( 'Images', 'woocommerce-multilingual' ) );
             foreach( $product_images as $image_id ) {
-                $attachment_data = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM {$this->wpdb->posts} WHERE ID = %d", $image_id ) );
-                if( !$attachment_data ) continue;
                 $image = new WPML_Editor_UI_Field_Image( 'image-id-' . $image_id, $image_id, $this->data, true );
                 $images_section->add_field( $image );
             }

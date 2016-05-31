@@ -128,6 +128,13 @@ class WCML_Media{
                 }
             }
         }
+
+        foreach( $product_images_ids as $key => $image ){
+            if( ! get_post_status ( $image ) ){
+                unset( $product_images_ids[ $key ] );
+            }
+        }
+
         return $product_images_ids;
     }
 
