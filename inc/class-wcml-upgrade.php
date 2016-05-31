@@ -440,11 +440,13 @@ class WCML_Upgrade{
         $wcml_settings = get_option('_wcml_settings');
         $wcml_settings['set_up_wizard_run'] = 1;
 
-        $attributes_settings = $wcml_settings[ 'attributes_settings' ];
-        foreach( $attributes_settings as $name => $value ){
-            if( substr( $name, 0, 3 ) != 'pa_'){
-                unset( $wcml_settings[ 'attributes_settings' ] [ $name ] );
-                $wcml_settings[ 'attributes_settings' ] [ 'pa_'.$name ] = $value;
+        if( isset($wcml_settings[ 'attributes_settings' ]) ) {
+            $attributes_settings = $wcml_settings['attributes_settings'];
+            foreach ( $attributes_settings as $name => $value ) {
+                if ( substr( $name, 0, 3 ) != 'pa_' ) {
+                    unset( $wcml_settings['attributes_settings'] [$name] );
+                    $wcml_settings['attributes_settings'] ['pa_' . $name] = $value;
+                }
             }
         }
 
