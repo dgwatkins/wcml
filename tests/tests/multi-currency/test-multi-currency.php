@@ -156,5 +156,50 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 		$this->assertEquals( $coupon->maximum_amount, $rate * $maximum_amount );
 
 	}
+	
+	// test converting a price
+	public function test_convert_price_amount(){
+
+		// Using the currency explicitly
+		$amount = 100;
+		$currency = 'RON';
+		$converted = $this->multi_currency->prices->convert_price_amount( $amount, $currency);
+		$expected  = $amount * $this->settings['currency_options'][$currency]['rate'];
+
+		$this->assertEquals( $expected , $converted );
+
+		// Not using the currency explicitly
+
+		$amount = 100;
+		$currency = 'AUD';
+		$this->multi_currency->set_client_currency( $currency );
+		$converted = $this->multi_currency->prices->convert_price_amount( $amount );
+		$expected  = $amount * $this->settings['currency_options'][$currency]['rate'];
+
+		$this->assertEquals( $expected , $converted );
+
+	}
+
+	// test unconverting a price
+	public function test_unconvert_price_amount(){
+
+		// Using the currency explicitly
+		$amount = 164;
+		$currency = 'RON';
+		$converted = $this->multi_currency->prices->unconvert_price_amount( $amount, $currency);
+		$expected  = $amount / $this->settings['currency_options'][$currency]['rate'];
+
+		$this->assertEquals( $expected , $converted );
+
+		// Not using the currency explicitly
+		$amount = 730;
+		$currency = 'AUD';
+		$this->multi_currency->set_client_currency( $currency );
+		$converted = $this->multi_currency->prices->unconvert_price_amount( $amount );
+		$expected  = $amount / $this->settings['currency_options'][$currency]['rate'];
+
+		$this->assertEquals( $expected , $converted );
+
+	}
 
 }

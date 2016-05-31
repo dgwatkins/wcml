@@ -226,12 +226,12 @@ class WCML_Multi_Currency_Prices{
     public function unconvert_price_amount($amount, $currency = false){
 
         if(empty($currency)){
-            $currency = $this->get_client_currency();
+            $currency = $this->multi_currency->get_client_currency();
         }
 
         if($currency != get_option('woocommerce_currency')){
 
-            $exchange_rates = $this->get_exchange_rates();
+            $exchange_rates = $this->multi_currency->get_exchange_rates();
 
             if(isset($exchange_rates[$currency]) && is_numeric($amount)){
                 $amount = $amount / $exchange_rates[$currency];
