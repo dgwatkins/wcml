@@ -58,7 +58,7 @@ jQuery( document ).ready( function( $ ){
             $(this).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
         });
 
-        var buttons = [ 'add_resource', 'add_row' ];
+        var buttons = [ 'add_resource', 'add_row','remove_booking_resource','remove_booking_person','add_person' ];
 
         for (i = 0; i < buttons.length; i++) {
             $('.'+buttons[i]).attr('disabled','disabled');
