@@ -17,7 +17,7 @@ class WCML_Bookings{
         add_action( 'woocommerce_bookings_after_resource_block_cost' , array( $this, 'wcml_price_field_after_resource_block_cost' ), 10, 2 );
         add_action( 'woocommerce_bookings_after_bookings_pricing' , array( $this, 'after_bookings_pricing' ) );
 
-        add_action( 'admin_footer', array( $this, 'load_assets' ) );
+        add_action( 'init', array( $this, 'load_assets' ) );
 
         add_action( 'save_post', array( $this, 'save_custom_costs' ), 110, 2 );
         add_action( 'wcml_before_sync_product_data', array( $this, 'sync_bookings' ), 10, 3 );
@@ -972,7 +972,7 @@ class WCML_Bookings{
     }
 
     function localize_lock_fields_js(){
-        wp_localize_script( 'wcml-bookings-js', 'wcml_settings' , array( 'lock_fields',  1 ) );
+        wp_localize_script( 'wcml-bookings-js', 'lock_settings' , array( 'lock_fields' => 1 ) );
     }
 
     function wcml_multi_currency_is_ajax( $actions ){
