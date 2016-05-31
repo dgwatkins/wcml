@@ -12,29 +12,41 @@ class WCML_WC_Gateways{
         if( $this->current_language == 'all' ){
             $this->current_language = $sitepress->get_default_language();
         }
+
+        add_filter( 'woocommerce_payment_gateways', array( $this, 'loaded_woocommerce_payment_gateways' ) );
+
     }
 
     function init(){
-        $this->payment_gateways_filters();
 
         add_filter('woocommerce_gateway_title', array($this, 'translate_gateway_title'), 10, 2);
         add_filter('woocommerce_gateway_description', array($this, 'translate_gateway_description'), 10, 2);
+
     }
 
-    function payment_gateways_filters(){
 
-        $payment_gateways = WC()->payment_gateways()->payment_gateways;
+    function loaded_woocommerce_payment_gateways( $load_gateways ){
 
-        foreach ( $payment_gateways as $gateway ) {
+        foreach( $load_gateways as $key => $gateway ){
 
-            if( isset( $gateway->id ) ){
-                $gateway_id = $gateway->id;
-            }else{
-                continue;
-            }
+            $load_gateway = is_string( $gateway ) ? new $gateway() : $gateway;
+            $this->payment_gateways_filters( $load_gateway );
+            $load_gateways[ $key ] = $load_gateway;
+
+        }
+
+        return $load_gateways;
+    }
+
+    function payment_gateways_filters( $gateway ){
+
+        if( isset( $gateway->id ) ){
+            $gateway_id = $gateway->id;
+
             add_filter( 'woocommerce_settings_api_sanitized_fields_'.$gateway_id, array( $this, 'register_gateway_strings' ) );
             $this->translate_gateway_strings( $gateway );
         }
+
     }
 
     function register_gateway_strings( $fields ){
@@ -80,6 +92,8 @@ class WCML_WC_Gateways{
                 $gateway->title = $this->translate_gateway_title( $gateway->title, $gateway->id );
             }
         }
+
+        return $gateway;
 
     }
 
