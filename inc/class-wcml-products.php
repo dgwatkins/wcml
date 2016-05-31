@@ -2,10 +2,22 @@
 
 class WCML_Products{
 
+    /**
+     * @var WCML_TP_Support
+     */
     public $tp_support;
 
+    /**
+     * @var woocommerce_wpml
+     */
     private $woocommerce_wpml;
+    /**
+     * @var SitePress
+     */
     private $sitepress;
+    /**
+     * @var wpdb
+     */
     private $wpdb;
 
 

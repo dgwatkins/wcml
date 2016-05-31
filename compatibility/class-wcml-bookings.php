@@ -60,7 +60,7 @@ class WCML_Bookings{
         }
 
         add_filter( 'parse_query', array( $this, 'booking_filters_query' ) );
-        add_filter('woocommerce_bookings_in_date_range_query', array($this, 'bookings_in_date_range_query'));
+        add_filter( 'woocommerce_bookings_in_date_range_query', array( $this, 'bookings_in_date_range_query') );
         add_action( 'before_delete_post', array( $this, 'delete_bookings' ) );
         add_action( 'wp_trash_post', array( $this, 'trash_bookings' ) );
 
@@ -77,9 +77,12 @@ class WCML_Bookings{
             //lock fields on translations pages
             add_filter( 'wcml_js_lock_fields_ids', array( $this, 'wcml_js_lock_fields_ids' ) );
             add_filter( 'wcml_after_load_lock_fields_js', array( $this, 'localize_lock_fields_js' ) );
-        }else{
+        }
+
+        if( !is_admin() || isset( $_POST['action'] ) && $_POST['action'] == 'wc_bookings_calculate_costs' ){
             add_filter( 'get_post_metadata', array( $this, 'filter_wc_booking_cost' ), 10, 4 );
         }
+
 
         $this->clear_transient_fields();
 

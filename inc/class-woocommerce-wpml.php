@@ -1,36 +1,63 @@
 <?php
 class woocommerce_wpml {
 
+    /** @var woocommerce_wpml */
     protected static $_instance = null;
 
     public $settings;
+    /** @var  WCML_Troubleshooting */
     public $troubleshooting;
+    /** @var  WCML_Endpoints */
     public $endpoints;
+    /** @var WCML_Products */
     public $products;
+    /** @var  WCML_Synchronize_Product_Data */
     public $sync_product_data;
+    /** @var  WCML_Synchronize_Variations_Data */
     public $sync_variations_data;
+    /** @var WCML_Store_Pages */
     public $store;
+    /** @var WCML_Emails */
     public $emails;
+    /** @var WCML_Terms */
     public $terms;
+    /** @var WCML_Attributes */
     public $attributes;
+    /** @var WCML_Orders */
     public $orders;
+    /** @var WCML_Currencies */
     public $currencies;
+    /** @var WCML_Multi_Currency */
     public $multi_currency;
+    /** @var WCML_Languages_Upgrader */
     public $languages_upgrader;
+    /** @var WCML_Url_Translation */
     public $url_translation;
+    /** @var WCML_Coupons */
     public $coupons;
+    /** @var WCML_Locale */
     public $locale;
+    /** @var WCML_Media */
     public $media;
+    /** @var WCML_Downloadable_Products */
     public $downloadable;
+    /** @var WCML_WC_Strings */
     public $strings;
+    /** @var WCML_Reports */
     public $shipping;
+    /** @var  WCML_WC_Gateways */
     public $gateways;
 
+    /** @var  WCML_Reports */
     private $reports;
+    /** @var  WCML_Requests */
     public $requests;
+    /** @var  WCML_Compatibility */
     private $compatibility;
+    /** @var  WCML_xDomain_Data */
     private $xdomain_data;
 
+    /** @var  WCML_WooCommerce_Rest_API_Support */
     private $wc_rest_api;
 
 
@@ -80,8 +107,17 @@ class woocommerce_wpml {
             return false;
         }
 
-        $actions_that_need_mc = array( 'save-mc-options', 'wcml_new_currency', 'wcml_save_currency', 'wcml_delete_currency',
-                'wcml_update_currency_lang', 'wcml_update_default_currency', 'wcml_price_preview');
+        $this->compatibility        = new WCML_Compatibility();
+
+        $actions_that_need_mc = array(
+                'save-mc-options',
+                'wcml_new_currency',
+                'wcml_save_currency',
+                'wcml_delete_currency',
+                'wcml_update_currency_lang',
+                'wcml_update_default_currency',
+                'wcml_price_preview'
+        );
         if($this->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT
             || ( isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) && $_GET['tab'] == 'multi-currency' )
             || ( isset( $_POST[ 'action' ] ) && in_array( $_POST[ 'action' ], $actions_that_need_mc ) )
@@ -92,7 +128,6 @@ class woocommerce_wpml {
         }
 
         $this->troubleshooting      = new WCML_Troubleshooting();
-        $this->compatibility        = new WCML_Compatibility();
         $this->endpoints            = new WCML_Endpoints;
         $this->products             = new WCML_Products( $this, $sitepress, $wpdb );
         $this->sync_product_data    = new WCML_Synchronize_Product_Data( $this, $sitepress, $wpdb );

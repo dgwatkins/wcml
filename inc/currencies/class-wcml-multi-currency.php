@@ -16,14 +16,45 @@ class WCML_Multi_Currency{
     
     public $currencies_without_cents = array('JPY', 'TWD', 'KRW', 'BIF', 'BYR', 'CLP', 'GNF', 'ISK', 'KMF', 'PYG', 'RWF', 'VUV', 'XAF', 'XOF', 'XPF');
 
+    /**
+     * @var WCML_Multi_Currency_Prices
+     */
+    public $prices;
+    /**
+     * @var WCML_Multi_Currency_Coupons
+     */
+    public $coupons;
+    /**
+     * @var WCML_Multi_Currency_Shipping
+     */
+    public $shipping;
+
+    /**
+     * @var WCML_Multi_Currency_Reports
+     */
     public $reports;
+    /**
+     * @var WCML_Multi_Currency_Orders
+     */
     public $orders;
+    /**
+     * @var WCML_Admin_Currency_Selector
+     */
     public $admin_currency_selector;
+    /**
+     * @var WCML_Custom_Prices
+     */
     public $custom_prices;
+    /**
+     * @var WCML_Currency_Switcher
+     */
     public $currency_switcher;
 
     public $W3TC = false;
 
+    /**
+     * @var woocommerce_wpml
+     */
     public $woocommerce_wpml;
     
     public function __construct(){
@@ -239,12 +270,11 @@ class WCML_Multi_Currency{
     }
 
     public function get_client_currency(){
-        global $woocommerce, $sitepress, $wp_query, $wpdb;
+        global $woocommerce, $sitepress, $wpdb;
 
         $default_currencies   = $this->woocommerce_wpml->settings['default_currencies'];
         $current_language     = $sitepress->get_current_language();
         $current_language     = ( $current_language != 'all' && !is_null( $current_language ) ) ? $current_language : $sitepress->get_default_language();
-        $active_languages     = $sitepress->get_active_languages();
 
         if( is_product() &&
             isset($this->woocommerce_wpml->settings['display_custom_prices']) &&
