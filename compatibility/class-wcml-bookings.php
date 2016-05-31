@@ -1043,14 +1043,14 @@ class WCML_Bookings{
             $current_booking_currency = $this->get_cookie_booking_currency();
 
             $wc_currencies = get_woocommerce_currencies();
-            $order_currencies = $woocommerce_wpml->multi_currency->orders->get_orders_currencies();
+            $currencies = $woocommerce_wpml->multi_currency->get_currencies( $include_default = true );
             ?>
             <tr valign="top">
                 <th scope="row"><?php _e( 'Booking currency', 'woocommerce-multilingual' ); ?></th>
                 <td>
                     <select id="dropdown_booking_currency">
 
-                        <?php foreach($order_currencies as $currency => $count ): ?>
+                        <?php foreach($currencies as $currency => $count ): ?>
 
                             <option value="<?php echo $currency ?>" <?php echo $current_booking_currency == $currency ? 'selected="selected"':''; ?>><?php echo $wc_currencies[$currency]; ?></option>
 

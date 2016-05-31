@@ -192,12 +192,14 @@ class WCML_Multi_Currency{
 
     }
 
-    public function get_currencies(){
+    public function get_currencies( $include_default = false ){
 
         // by default, exclude default currency
         $currencies = array();
+        $default_currency = get_option('woocommerce_currency');
+
         foreach($this->currencies as $key => $value){
-            if(get_option('woocommerce_currency') != $key){
+            if( $default_currency != $key || $include_default ){
                 $currencies[$key] = $value;
             }
         }
