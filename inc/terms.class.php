@@ -940,6 +940,7 @@ class WCML_Terms{
             if(  substr($setting_key, 0, 11) == 'class_cost_' ){
 
                 global $sitepress;
+                remove_filter( 'get_term', array( $sitepress, 'get_term_adjust_id' ), 1 );
 
                 $shipp_class_key = substr($setting_key, 11 );
 
@@ -955,19 +956,17 @@ class WCML_Terms{
 
                 foreach( $translations as $translation ){
 
-                    if( !$translation->original ){
-                        remove_filter( 'get_term', array( $sitepress, 'get_term_adjust_id' ), 1 );
-                        $tr_shipp_class = get_term_by( 'term_taxonomy_id', $translation->element_id, 'product_shipping_class' );
-                        add_filter( 'get_term', array( $sitepress, 'get_term_adjust_id' ), 1 );
-                        if( is_numeric( $shipp_class_key ) ){
-                            $settings[ 'class_cost_'.$tr_shipp_class->term_id ] = $value;
-                        }else{
-                            $settings[ 'class_cost_'.$tr_shipp_class->slug ] = $value;
-                        }
+                    $tr_shipp_class = get_term_by( 'term_taxonomy_id', $translation->element_id, 'product_shipping_class' );
 
+                    if( is_numeric( $shipp_class_key ) ){
+                        $settings[ 'class_cost_'.$tr_shipp_class->term_id ] = $value;
+                    }else{
+                        $settings[ 'class_cost_'.$tr_shipp_class->slug ] = $value;
                     }
 
                 }
+
+                add_filter( 'get_term', array( $sitepress, 'get_term_adjust_id' ), 1 );
 
             }
 
@@ -980,13 +979,22 @@ class WCML_Terms{
     function update_woocommerce_shipping_settings_for_class_costs_from_ajax(){
 
         if( isset( $_POST['data']['woocommerce_flat_rate_type'] ) && $_POST['data']['woocommerce_flat_rate_type'] == 'class' ){
-            $flat_rate_setting_id = 'woocommerce_flat_rate_'.$_POST['data']['instance_id'].'_settings';
 
-            $settings = get_option( $flat_rate_setting_id );
-
-            if( is_array( $settings ) ){
-                update_option( $flat_rate_setting_id, $this->update_woocommerce_shipping_settings_for_class_costs( $settings ) );
+            $settings = array();
+            foreach( $_POST['data'] as $key => $value ){
+                if( substr( $key, 0, 33 ) ==  'woocommerce_flat_rate_class_cost_'){
+                    $settings[ substr( $key, 22 ) ] = $value;
+                }
             }
+
+            $updated_costs_settings = $this->update_woocommerce_shipping_settings_for_class_costs( $settings );
+
+            $flat_rate_setting_id = 'woocommerce_flat_rate_'.$_POST['data']['instance_id'].'_settings';
+            $settings = get_option( $flat_rate_setting_id , true );
+
+            $settings = array_replace( $settings, $updated_costs_settings );
+
+            update_option( $flat_rate_setting_id, $settings );
         }
     }
 
