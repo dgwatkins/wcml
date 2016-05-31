@@ -45,7 +45,7 @@ jQuery( document ).ready( function( $ ){
 
 
     //lock fields
-    if( typeof lock_settings.lock_fields != 'undefined' && lock_settings.lock_fields == 1 ){
+    if( typeof lock_settings != 'undefined'  && typeof lock_settings.lock_fields != 'undefined' && lock_settings.lock_fields == 1 ){
 
         $('#bookings_pricing input[type="number"],' +
             '#accommodation_bookings_rates input[type="number"], ' +
