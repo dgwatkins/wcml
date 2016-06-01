@@ -146,6 +146,20 @@ WooCommerce Multilingual is compatible with all major WooCommerce extensions. We
 * Translating WooCommerce email strings also got simpler
 * Numerous bug fixes and enhancements
 
+= 3.7.16 =
+* Compatibility with WooCommerce 2.6 (woocommerce_term_meta tables removed)
+* Fixed a compatibility issue with WooCommerce Table Rate Shipping (shipping class not showing on secondary language)
+* Bug fix: Translated shipping classes were sometimes not displayed for secondary languages
+* Bug fix: WooCommerce Booking & Appointments causes Fatal Error when Translation Management
+* Bug fix: Yoast custom fields were not shown in the translation editor
+
+= 3.7.15 =
+* Fixed a problem with BACS payment gateway strings not being translated in order confirmation page
+* Fixed some compatibility issues with WooCommerce Tab Manager
+
+= 3.7.14 =
+* Fixed a problem introduced in the previous version: Mollie payment methods not working when using the 'Mollie Payments for WooCommerce' plugin
+
 = 3.7.13 =
 * Bug fix: When adding a global attribute inline while creating a product in a secondary language, the term was created in the wrong language
 * Fixed a compatibility issues with WooCommerce Tab Manager: fatal error when trying to translate a product
