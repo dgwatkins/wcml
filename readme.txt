@@ -83,6 +83,7 @@ In order for the checkout and store pages to appear translated, you need to crea
 * Fixed a compatibility issue with WooCommerce Table Rate Shipping (shipping class not showing on secondary language)
 * Bug fix: Translated shipping classes were sometimes not displayed for secondary languages
 * Bug fix: WooCommerce Booking & Appointments causes Fatal Error when Translation Management
+* Bug fix: Yoast custom fields were not shown in the translation editor
 
 = 3.7.15 =
 * Fixed a problem with BACS payment gateway strings not being translated in order confirmation page
