@@ -1333,8 +1333,9 @@ class WCML_Bookings{
     }
 
     function wcml_products_tab_sync_resources_and_persons( $original_product_id, $tr_product_id, $data, $language ){
-        global $wpdb, $woocommerce_wpml;
+        global $wpdb, $woocommerce_wpml, $wpml_post_translations;
 
+        remove_action ( 'save_post', array( $wpml_post_translations, 'save_post_actions' ), 100, 2 );
 
         $orig_resources = $orig_resources = $this->get_original_resources( $original_product_id );;
 
@@ -1440,6 +1441,8 @@ class WCML_Bookings{
             $this->sync_persons(  $original_product_id, $tr_product_id, $language, false );
 
         }
+
+        add_action ( 'save_post', array( $wpml_post_translations, 'save_post_actions' ), 100, 2 );
 
     }
 
@@ -1867,7 +1870,7 @@ class WCML_Bookings{
 
             foreach( $resource_translations as $resource_id => $rt ){
 
-                $resource_trid = $sitepress->get_element_trid( $resource_id, 'post_bookable_person');
+                $resource_trid = $sitepress->get_element_trid( $resource_id, 'post_bookable_resource');
 
                 $resource_id_translated = apply_filters( 'translate_object_id', $resource_id, 'bookable_resource', false, $job->language_code );
 
@@ -1883,7 +1886,7 @@ class WCML_Bookings{
 
                     $resource_id_translated = wp_insert_post( $resource_post );
 
-                    $sitepress->set_element_language_details( $resource_id_translated, 'post_bookable_person', $resource_trid, $job->language_code );
+                    $sitepress->set_element_language_details( $resource_id_translated, 'post_bookable_resource', $resource_trid, $job->language_code );
 
                     $sort_order = $wpdb->get_var( $wpdb->prepare( "SELECT sort_order FROM {$wpdb->prefix}wc_booking_relationships WHERE resource_id=%d", $resource_id ) );
                     $relationship = array(
