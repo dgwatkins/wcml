@@ -53,7 +53,8 @@ class woocommerce_wpml {
     /** @var  WCML_Requests */
     public $requests;
     /** @var  WCML_Compatibility */
-    private $compatibility;
+    // NOTE: revert back to private after wcml-1218
+    public $compatibility;
     /** @var  WCML_xDomain_Data */
     private $xdomain_data;
 
