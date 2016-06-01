@@ -873,31 +873,32 @@ class WCML_Bookings{
         $original_costs = maybe_unserialize( get_post_meta( $original_product_id, $meta_key, true ) );
 
         $wc_booking_resource_costs = array();
+        if( !empty( $original_costs ) ) {
+            foreach ($original_costs as $resource_id => $costs) {
 
-        foreach ( $original_costs as $resource_id => $costs ) {
+                if ($resource_id == 'custom_costs' && isset($costs['custom_costs'])) {
 
-            if ( $resource_id == 'custom_costs' && isset($costs[ 'custom_costs']) ){
+                    foreach ($costs['custom_costs'] as $code => $currencies) {
 
-                foreach ( $costs[ 'custom_costs'] as $code => $currencies ) {
+                        foreach ($currencies as $custom_costs_resource_id => $custom_cost) {
 
-                    foreach( $currencies as $custom_costs_resource_id => $custom_cost ){
+                            $trns_resource_id = apply_filters('translate_object_id', $custom_costs_resource_id, 'bookable_resource', true, $language_code);
 
-                        $trns_resource_id = apply_filters( 'translate_object_id', $custom_costs_resource_id, 'bookable_resource', true, $language_code );
+                            $wc_booking_resource_costs['custom_costs'][$code][$trns_resource_id] = $custom_cost;
 
-                        $wc_booking_resource_costs[ 'custom_costs' ][ $code ][ $trns_resource_id ] = $custom_cost;
+                        }
 
                     }
 
+                } else {
+
+                    $trns_resource_id = apply_filters('translate_object_id', $resource_id, 'bookable_resource', true, $language_code);
+
+                    $wc_booking_resource_costs[$trns_resource_id] = $costs;
+
                 }
 
-            }else{
-
-                $trns_resource_id = apply_filters( 'translate_object_id', $resource_id, 'bookable_resource', true, $language_code );
-
-                $wc_booking_resource_costs[ $trns_resource_id ] = $costs;
-
             }
-
         }
 
         update_post_meta( $object_id, $meta_key, $wc_booking_resource_costs );
