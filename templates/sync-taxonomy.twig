@@ -27,7 +27,7 @@
             {% endif %}
         </div>
     {% else %}
-        <form id="wcml_tt_sync_assignment" style="{{ display_tax|e }}">
+        <form id="wcml_tt_sync_assignment" style="{{ display_tax|e }}" data-sync="{% if display_tax %}0{% else %}1{% endif %}">
             <input type="hidden" name="taxonomy" value="{{ taxonomy }}"/>
             {{ nonces.sync_taxonomies|raw }}
             <p>
