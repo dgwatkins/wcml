@@ -429,8 +429,8 @@ class WCML_Store_Pages{
 
     function after_set_default_language( $code, $previous_code ){
         global $wpdb;
-        $this->create_missing_store_pages_with_redirect();
 
+        $this->create_missing_store_pages();
         $pages = $this->get_wc_pages();
 
         foreach( $pages as $page ){
