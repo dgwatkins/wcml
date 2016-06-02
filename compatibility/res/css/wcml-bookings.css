@@ -35,9 +35,9 @@
     width: 100%;
 }
 
-.wcml_custom_costs label{
+#bookings_pricing .wcml_custom_costs label{
     width: auto;
-    margin: 0;
+    margin: 0 0 0 5px;
     float: left;
 }
 
