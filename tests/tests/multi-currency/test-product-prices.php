@@ -120,6 +120,21 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 	}
 
+	private function wc_format_price( $price ){
+
+		$price_formatted = '<span class="woocommerce-Price-amount amount">';
+
+		$price_formatted .= str_replace(
+			array( '<cur>', '</cur>' ),
+			array( '<span class="woocommerce-Price-currencySymbol">', '</span>' ),
+			$price
+		);
+
+		$price_formatted .= '</span>';
+
+		return $price_formatted;
+	}
+
 	private function add_simple_product($title){
 
 		$product['title'] = $title;
@@ -143,19 +158,19 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 		$expected['formatted'] = array(
 			// according to default woocommerce settings: symbol left (no space), ',' thousands separator, '.' decimal separator
-			'GBP' => '<span class="amount">&pound;1,234.56</span>',
+			'GBP' => $this->wc_format_price('<cur>&pound;</cur>1,234.56'),
 			// according to settings defined in self::set_up_currencies ->
 			// symbol left (no space), '#' thousands separator, '@' decimal separator, 4 decimals
-			'USD' => '<span class="amount">&#36;1#907@0000</span>',
+			'USD' => $this->wc_format_price('<cur>&#36;</cur>1#907@0000'),
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w/ space), '.' thousands separator, ',' decimal separator, 0 decimals
-			'RON' => '<span class="amount">2.099lei</span>',
+			'RON' => $this->wc_format_price('2.099<cur>lei</cur>'),
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w space), '.' thousands separator, ',' decimal separator, 1 decimals
-			'AUD' => '<span class="amount">3,024.6&nbsp;&#36;</span>',
+			'AUD' => $this->wc_format_price('3,024.6&nbsp;<cur>&#36;</cur>'),
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w/ space), '.' thousands separator, ',' decimal separator, 2 decimals
-			'CHF' => '<span class="amount">67.900,80&#67;&#72;&#70;</span>'
+			'CHF' => $this->wc_format_price('67.900,80<cur>&#67;&#72;&#70;</cur>'),
 	);
 
 		$expected['price_on_language'] = array(
@@ -200,19 +215,19 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 		$expected['formatted'] = array(
 			// according to default woocommerce settings: symbol left (no space), ',' thousands separator, '.' decimal separator
-			'GBP' => '<del><span class="amount">&pound;1,234.56</span></del> <ins><span class="amount">&pound;1,002.34</span></ins>',
+			'GBP' => '<del>' . $this->wc_format_price('<cur>&pound;</cur>1,234.56') . '</del> <ins>' . $this->wc_format_price('<cur>&pound;</cur>1,002.34') . '</ins>',
 			// according to settings defined in self::set_up_currencies ->
 			// symbol left (no space), '#' thousands separator, '@' decimal separator, 4 decimals
-			'USD' => '<del><span class="amount">&#36;1#907@0000</span></del> <ins><span class="amount">&#36;1#547@0000</span></ins>',
+			'USD' => '<del>' . $this->wc_format_price('<cur>&#36;</cur>1#907@0000') . '</del> <ins>' . $this->wc_format_price('<cur>&#36;</cur>1#547@0000') . '</ins>',
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w/ space), '.' thousands separator, ',' decimal separator, 0 decimals
-			'RON' => '<del><span class="amount">2.099lei</span></del> <ins><span class="amount">1.699lei</span></ins>',
+			'RON' => '<del>' . $this->wc_format_price('2.099<cur>lei</cur>') .'</del> <ins>' . $this->wc_format_price('1.699<cur>lei</cur>') . '</ins>',
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w space), '.' thousands separator, ',' decimal separator, 1 decimals
-			'AUD' => '<del><span class="amount">3,024.6&nbsp;&#36;</span></del> <ins><span class="amount">2,455.7&nbsp;&#36;</span></ins>',
+			'AUD' => '<del>' . $this->wc_format_price('3,024.6&nbsp;<cur>&#36;</cur>') . '</del> <ins>' . $this->wc_format_price('2,455.7&nbsp;<cur>&#36;</cur>') . '</ins>',
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w/ space), '.' thousands separator, ',' decimal separator, 2 decimals
-			'CHF' => '<del><span class="amount">67.900,80&#67;&#72;&#70;</span></del> <ins><span class="amount">55.128,70&#67;&#72;&#70;</span></ins>'
+			'CHF' => '<del>' . $this->wc_format_price('67.900,80<cur>&#67;&#72;&#70;</cur>') .'</del> <ins>' . $this->wc_format_price('55.128,70<cur>&#67;&#72;&#70;</cur>') .'</ins>'
 		);
 
 		$expected['price_on_language'] = array(
@@ -301,19 +316,19 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 		$expected['formatted'] = array(
 			// according to default woocommerce settings: symbol left (no space), ',' thousands separator, '.' decimal separator
-			'GBP' => '<span class="amount">&pound;10.06</span>&ndash;<span class="amount">&pound;15.99</span>',
+			'GBP' => $this->wc_format_price( '<cur>&pound;</cur>10.06' ) . '&ndash;' . $this->wc_format_price( '<cur>&pound;</cur>15.99' ) ,
 			// according to settings defined in self::set_up_currencies ->
 			// symbol left (no space), '#' thousands separator, '@' decimal separator, 4 decimals
-			'USD' => '<span class="amount">&#36;7@0000</span>&ndash;<span class="amount">&#36;17@0000</span>',
+			'USD' => $this->wc_format_price( '<cur>&#36;</cur>7@0000' ) . '&ndash;' . $this->wc_format_price( '<cur>&#36;</cur>17@0000' ) ,
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w/ space), '.' thousands separator, ',' decimal separator, 0 decimals
-			'RON' => '<span class="amount">99lei</span>',
+			'RON' => $this->wc_format_price( '99<cur>lei</cur>' ),
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w space), '.' thousands separator, ',' decimal separator, 1 decimals
-			'AUD' => '<span class="amount">24.6&nbsp;&#36;</span>&ndash;<span class="amount">39.1&nbsp;&#36;</span>',
+			'AUD' => $this->wc_format_price( '24.6&nbsp;<cur>&#36;</cur>' ) . '&ndash;' . $this->wc_format_price( '39.1&nbsp;<cur>&#36;</cur>' ),
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w/ space), '.' thousands separator, ',' decimal separator, 2 decimals
-			'CHF' => '<span class="amount">553,30&#67;&#72;&#70;</span>&ndash;<span class="amount">879,45&#67;&#72;&#70;</span>'
+			'CHF' => $this->wc_format_price( '553,30<cur>&#67;&#72;&#70;</cur>' ) . '&ndash;' . $this->wc_format_price( '879,45<cur>&#67;&#72;&#70;</cur>' ),
 		);
 
 		$expected['price_on_language'] = array(
@@ -392,21 +407,42 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 			'CHF'	=> round( $min_variation_price * $this->settings['currency_options']['CHF']['rate'], 2 )
 		);
 
+
 		$expected['formatted'] = array(
 			// according to default woocommerce settings: symbol left (no space), ',' thousands separator, '.' decimal separator
-			'GBP' => '<del><span class="amount">&pound;1,100.33</span>&ndash;<span class="amount">&pound;2,100.44</span></del> <ins><span class="amount">&pound;1,000.00</span>&ndash;<span class="amount">&pound;2,000.00</span></ins>',
+			'GBP' => '<del>' .
+				$this->wc_format_price('<cur>&pound;</cur>1,100.33') . '&ndash;' .
+				$this->wc_format_price('<cur>&pound;</cur>2,100.44') . '</del> <ins>' .
+				$this->wc_format_price('<cur>&pound;</cur>1,000.00') . '&ndash;' .
+				$this->wc_format_price('<cur>&pound;</cur>2,000.00') . '</ins>',
 			// according to settings defined in self::set_up_currencies ->
 			// symbol left (no space), '#' thousands separator, '@' decimal separator, 4 decimals
-			'USD' => '<del><span class="amount">&#36;1#697@0000</span>&ndash;<span class="amount">&#36;3#247@0000</span></del> <ins><span class="amount">&#36;1#547@0000</span>&ndash;<span class="amount">&#36;3#097@0000</span></ins>',
+			'USD' => '<del>' .
+				$this->wc_format_price('<cur>&#36;</cur>1#697@0000') . '&ndash;' .
+				$this->wc_format_price('<cur>&#36;</cur>3#247@0000') . '</del> <ins>' .
+				$this->wc_format_price('<cur>&#36;</cur>1#547@0000') . '&ndash;' .
+				$this->wc_format_price('<cur>&#36;</cur>3#097@0000') . '</ins>',
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w/ space), '.' thousands separator, ',' decimal separator, 0 decimals
-			'RON' => '<del><span class="amount">1.899lei</span>&ndash;<span class="amount">3.499lei</span></del> <ins><span class="amount">1.699lei</span>&ndash;<span class="amount">3.299lei</span></ins>',
+			'RON' => '<del>' .
+				$this->wc_format_price('1.899<cur>lei</cur>') . '&ndash;' .
+				$this->wc_format_price('3.499<cur>lei</cur>') . '</del> <ins>' .
+				$this->wc_format_price('1.699<cur>lei</cur>') . '&ndash;' .
+				$this->wc_format_price('3.299<cur>lei</cur>') . '</ins>',
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w space), '.' thousands separator, ',' decimal separator, 1 decimals
-			'AUD' => '<del><span class="amount">2,695.8&nbsp;&#36;</span>&ndash;<span class="amount">5,146.0&nbsp;&#36;</span></del> <ins><span class="amount">2,450.0&nbsp;&#36;</span>&ndash;<span class="amount">4,900.0&nbsp;&#36;</span></ins>',
+			'AUD' => '<del>' .
+				$this->wc_format_price('2,695.8&nbsp;<cur>&#36;</cur>') . '&ndash;' .
+				$this->wc_format_price('5,146.0&nbsp;<cur>&#36;</cur>') . '</del> <ins>' .
+				$this->wc_format_price('2,450.0&nbsp;<cur>&#36;</cur>') . '&ndash;' .
+				$this->wc_format_price('4,900.0&nbsp;<cur>&#36;</cur>') . '</ins>',
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w/ space), '.' thousands separator, ',' decimal separator, 2 decimals
-			'CHF' => '<del><span class="amount">60.518,14&#67;&#72;&#70;</span>&ndash;<span class="amount">115.524,20&#67;&#72;&#70;</span></del> <ins><span class="amount">55.000,00&#67;&#72;&#70;</span>&ndash;<span class="amount">110.000,00&#67;&#72;&#70;</span></ins>'
+			'CHF' => '<del>' .
+				$this->wc_format_price('60.518,14<cur>&#67;&#72;&#70;</cur>') . '&ndash;' .
+				$this->wc_format_price('115.524,20<cur>&#67;&#72;&#70;</cur>') . '</del> <ins>' .
+				$this->wc_format_price('55.000,00<cur>&#67;&#72;&#70;</cur>') . '&ndash;' .
+				$this->wc_format_price('110.000,00<cur>&#67;&#72;&#70;</cur>') . '</ins>'
 		);
 
 		$expected['price_on_language'] = array(

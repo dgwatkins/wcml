@@ -95,6 +95,7 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 	}
 
 	// note - make sure you have .mo files in wp-content->languages directory in your wordpress test folder
+	// the unit tests use a custom WP_LANG_DIR value wordpress-tests-lib/data/languages
 	function test_add_default_slug_translations(){
 
 		$category_base = !empty( $this->wc_permalinks['category_base'] ) ? $this->wc_permalinks['category_base'] : $this->woocommerce_wpml->url_translation->default_product_category_base;
