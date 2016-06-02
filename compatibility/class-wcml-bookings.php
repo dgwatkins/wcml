@@ -23,8 +23,6 @@ class WCML_Bookings{
         add_action( 'wcml_before_sync_product_data', array( $this, 'sync_bookings' ), 10, 3 );
         add_action( 'wcml_before_sync_product', array( $this, 'sync_booking_data' ), 10, 2 );
 
-        add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
-
         add_filter( 'woocommerce_bookings_process_cost_rules_cost', array( $this, 'wc_bookings_process_cost_rules_cost' ), 10, 3 );
         add_filter( 'woocommerce_bookings_process_cost_rules_base_cost', array( $this, 'wc_bookings_process_cost_rules_base_cost' ), 10, 3 );
         add_filter( 'woocommerce_bookings_process_cost_rules_override_block', array( $this, 'wc_bookings_process_cost_rules_override_block_cost' ), 10, 3 );
@@ -319,6 +317,22 @@ class WCML_Bookings{
 
                 }
 
+                $booking_pricing = get_post_meta( $post_id, '_wc_booking_pricing', true );
+                foreach ( $booking_pricing  as $key => $prices) {
+
+                    $updated_meta[$key] = $prices;
+
+                    foreach ($currencies as $code => $currency) {
+
+                        $updated_meta[$key]['base_cost_' . $code] = $_POST['wcml_wc_booking_pricing_base_cost'][$code][$key];
+                        $updated_meta[$key]['cost_' . $code] = $_POST['wcml_wc_booking_pricing_cost'][$code][$key];
+
+                    }
+
+                }
+
+                update_post_meta($post_id, '_wc_booking_pricing', $updated_meta);
+
                 //person costs
                 if( isset( $_POST[ 'wcml_wc_booking_person_cost' ] ) ) {
 
@@ -533,10 +547,8 @@ class WCML_Bookings{
 
         }
 
-        remove_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
         $this->sync_resource_costs( $original_product_id, $trnsl_product_id, '_resource_base_costs', $lang_code );
         $this->sync_resource_costs( $original_product_id, $trnsl_product_id, '_resource_block_costs', $lang_code );
-        add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
 
     }
 
@@ -777,50 +789,6 @@ class WCML_Bookings{
         }
 
         return $check;
-    }
-
-    function update_wc_booking_costs(  $check, $object_id, $meta_key, $meta_value ){
-
-        if( in_array( $meta_key, array( '_wc_booking_pricing', '_resource_base_costs', '_resource_block_costs' ) ) ){
-
-            global $woocommerce_wpml;
-
-            remove_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
-
-            $nonce = filter_input( INPUT_POST, '_wcml_custom_costs_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-
-            if( isset( $_POST['_wcml_custom_costs'] ) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_custom_costs' ) && $_POST['_wcml_custom_costs'] == 1 ) {
-
-                $currencies = $woocommerce_wpml->multi_currency->get_currencies();
-
-                $updated_meta = array();
-
-                if ($meta_key == '_wc_booking_pricing') {
-
-                    foreach (maybe_unserialize($meta_value) as $key => $prices) {
-
-                        $updated_meta[$key] = $prices;
-
-                        foreach ($currencies as $code => $currency) {
-
-                            $updated_meta[$key]['base_cost_' . $code] = $_POST['wcml_wc_booking_pricing_base_cost'][$code][$key];
-                            $updated_meta[$key]['cost_' . $code] = $_POST['wcml_wc_booking_pricing_cost'][$code][$key];
-
-                        }
-
-                    }
-
-                    update_post_meta($object_id, '_wc_booking_pricing', $updated_meta);
-                }elseif( in_array( $meta_key, array( '_resource_base_costs', '_resource_block_costs' ) ) ) {
-
-                $return = $this->sync_resource_costs_with_translations($object_id, $meta_key, $check);
-
-                }
-            }
-
-            add_action('updated_post_meta', array($this, 'update_wc_booking_costs'), 10, 4);
-
-        }
     }
 
     function sync_resource_costs_with_translations( $object_id, $meta_key, $check = false ){
