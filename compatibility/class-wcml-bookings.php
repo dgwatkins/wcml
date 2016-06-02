@@ -350,6 +350,55 @@ class WCML_Bookings{
 
                 }
 
+                if( isset( $_POST[ 'wcml_wc_booking_resource_cost' ] ) ) {
+
+                    $updated_meta = get_post_meta( $post_id, '_resource_base_costs', true );
+
+                    $wc_booking_resource_costs = array();
+
+                    foreach ( $_POST['wcml_wc_booking_resource_cost'] as $resource_id => $costs) {
+
+                        foreach ($currencies as $code => $currency) {
+
+                            $wc_booking_resource_costs[ $code ][ $resource_id ] = $costs[ $code ];
+
+                        }
+
+                    }
+
+                    $updated_meta[ 'custom_costs' ] = $wc_booking_resource_costs;
+
+                    update_post_meta( $post_id, '_resource_base_costs', $updated_meta );
+
+                    $this->sync_resource_costs_with_translations( $post_id, '_resource_base_costs' );
+
+                }
+
+                if( isset( $_POST[ 'wcml_wc_booking_resource_block_cost' ] ) ){
+
+                    $updated_meta = get_post_meta( $post_id, '_resource_block_costs', true );
+
+                    $wc_booking_resource_block_costs = array();
+
+                    foreach( $_POST[ 'wcml_wc_booking_resource_block_cost' ] as $resource_id => $costs ){
+
+                        foreach( $currencies as $code => $currency ){
+
+                            $wc_booking_resource_block_costs[ $code ][ $resource_id ] = $costs[ $code ];
+
+                        }
+
+                    }
+
+                    $updated_meta[ 'custom_costs' ] = $wc_booking_resource_block_costs;
+
+                    update_post_meta( $post_id, '_resource_block_costs', $updated_meta );
+
+                    $this->sync_resource_costs_with_translations( $post_id, '_resource_block_costs' );
+
+                }
+
+
             }
         }
 
@@ -746,93 +795,32 @@ class WCML_Bookings{
 
                 $updated_meta = array();
 
-                if( $meta_key == '_wc_booking_pricing' ){
+                if ($meta_key == '_wc_booking_pricing') {
 
                     foreach (maybe_unserialize($meta_value) as $key => $prices) {
 
-                        $updated_meta[ $key ] = $prices;
+                        $updated_meta[$key] = $prices;
 
                         foreach ($currencies as $code => $currency) {
 
-                            $updated_meta[ $key ][ 'base_cost_'.$code ] = $_POST[ 'wcml_wc_booking_pricing_base_cost' ][ $code ][ $key ];
-                            $updated_meta[ $key ][ 'cost_'.$code ] = $_POST[ 'wcml_wc_booking_pricing_cost' ][ $code ][ $key ];
+                            $updated_meta[$key]['base_cost_' . $code] = $_POST['wcml_wc_booking_pricing_base_cost'][$code][$key];
+                            $updated_meta[$key]['cost_' . $code] = $_POST['wcml_wc_booking_pricing_cost'][$code][$key];
 
                         }
 
                     }
 
-                    update_post_meta( $object_id, '_wc_booking_pricing', $updated_meta );
+                    update_post_meta($object_id, '_wc_booking_pricing', $updated_meta);
+                }elseif( in_array( $meta_key, array( '_resource_base_costs', '_resource_block_costs' ) ) ) {
 
-                }elseif( $meta_key == '_resource_base_costs' ){
-
-                    if( isset( $_POST[ 'wcml_wc_booking_resource_cost' ] ) ) {
-
-                        $updated_meta = $meta_value;
-
-                        $wc_booking_resource_costs = array();
-
-                        foreach ( $_POST['wcml_wc_booking_resource_cost'] as $resource_id => $costs) {
-
-                            foreach ($currencies as $code => $currency) {
-
-                                $wc_booking_resource_costs[ $code ][ $resource_id ] = $costs[ $code ];
-
-                            }
-
-                        }
-
-                        $updated_meta[ 'custom_costs' ] = $wc_booking_resource_costs;
-
-                        update_post_meta( $object_id, '_resource_base_costs', $updated_meta );
-
-                        $this->sync_resource_costs_with_translations( $object_id, $meta_key );
-
-                    }
-
-                }elseif( $meta_key == '_resource_block_costs' ){
-
-                    if( isset( $_POST[ 'wcml_wc_booking_resource_block_cost' ] ) ){
-
-                        $updated_meta = $meta_value;
-
-                        $wc_booking_resource_block_costs = array();
-
-                        foreach( $_POST[ 'wcml_wc_booking_resource_block_cost' ] as $resource_id => $costs ){
-
-                            foreach( $currencies as $code => $currency ){
-
-                                $wc_booking_resource_block_costs[ $code ][ $resource_id ] = $costs[ $code ];
-
-                            }
-
-                        }
-
-                        $updated_meta[ 'custom_costs' ] = $wc_booking_resource_block_costs;
-
-                        update_post_meta( $object_id, '_resource_block_costs', $updated_meta );
-
-                        $this->sync_resource_costs_with_translations( $object_id, $meta_key );
-
-                    }
+                $return = $this->sync_resource_costs_with_translations($object_id, $meta_key, $check);
 
                 }
-
-                add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
-
-            }elseif( in_array( $meta_key, array( '_resource_base_costs', '_resource_block_costs' ) ) ){
-
-                $return = $this->sync_resource_costs_with_translations( $object_id, $meta_key, $check );
-
-                add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
-
-            }else{
-
-                add_action( 'updated_post_meta', array( $this, 'update_wc_booking_costs' ), 10, 4 );
-
             }
 
-        }
+            add_action('updated_post_meta', array($this, 'update_wc_booking_costs'), 10, 4);
 
+        }
     }
 
     function sync_resource_costs_with_translations( $object_id, $meta_key, $check = false ){

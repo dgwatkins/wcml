@@ -41,7 +41,8 @@
     float: left;
 }
 
-#bookings_pricing .wcml_custom_cost_field label{
+#bookings_pricing .wcml_custom_cost_field label,
+#bookings_resources .woocommerce_booking_resource .wcml_bookings_resource_block label{
     width: 20px;
     margin: 0 5px;
     float: left;
