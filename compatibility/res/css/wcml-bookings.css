@@ -37,7 +37,13 @@
 
 #bookings_pricing .wcml_custom_costs label{
     width: auto;
-    margin: 0 0 0 5px;
+    margin: 0 5px;
+    float: left;
+}
+
+#bookings_pricing .wcml_custom_cost_field label{
+    width: 20px;
+    margin: 0 5px;
     float: left;
 }
 
