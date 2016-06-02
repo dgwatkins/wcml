@@ -8,7 +8,7 @@ class WCML_Admin_Menus{
     public static function set_up_menus( &$woocommerce_wpml, &$sitepress, $check_dependencies ){
         self::$woocommerce_wpml =& $woocommerce_wpml;
         self::$sitepress =& $sitepress;
-
+        
         add_action('admin_menu', array(__CLASS__, 'register_menus'));
 
         if( self::is_page_without_admin_language_switcher() ){

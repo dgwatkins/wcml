@@ -26,5 +26,17 @@ include WCML_PLUGIN_PATH . '/inc/installer-loader.php';
 
 define('WCML_PLUGIN_URL', wpml_filter_include_url( untrailingslashit( plugin_dir_url( __FILE__ ) ) ));
 
+
+// Load WooCommerce Multilingual when WPML is active
 add_action( 'wpml_loaded', array( 'woocommerce_wpml', 'instance' ) );
+
+// Load WooCommerce Multilingual when WPML is NOT active
+add_action('plugins_loaded', 'wpml_wcml_startup', 10000);
+function wpml_wcml_startup(){
+    if( !did_action( 'wpml_loaded' ) ){
+        global $woocommerce_wpml;
+        $woocommerce_wpml = new woocommerce_wpml();
+    }
+}
+
 
