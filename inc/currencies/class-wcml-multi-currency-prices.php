@@ -454,7 +454,7 @@ class WCML_Multi_Currency_Prices{
 
     public function filter_price_filter_widget_amount( $amount ){
 
-        $current_currency = $this->get_client_currency();
+        $current_currency = $this->multi_currency->get_client_currency();
         if( $current_currency != get_option('woocommerce_currency') ){
             $amount = apply_filters('wcml_raw_price_amount', $amount );
         }

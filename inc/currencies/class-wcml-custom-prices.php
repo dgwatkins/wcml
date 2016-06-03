@@ -37,7 +37,7 @@ class WCML_Custom_Prices{
         global $wpdb, $sitepress;
 
         if(empty($currency)){
-            $currency = $this->get_client_currency();
+            $currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
         }
 
         $original_product_id = $product_id;
