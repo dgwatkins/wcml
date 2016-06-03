@@ -7,25 +7,24 @@ jQuery( function($){
 		footer_view: 		null,
 		save_buttons_tip:	null,
 
-		
+
 		init: function(){
 
+			var job_type = jQuery('input[name="job_post_type"]').val();
+			WCML_WPML_Translation_Editor.is_wcml_product = job_type === 'post_product';
+
 			$(document).on( 'WPML_TM.editor.ready', WCML_WPML_Translation_Editor.do_editor_ready );
-		
-			$(document).ready(function () {
 
-				if ( WCML_WPML_Translation_Editor.is_wcml_product ) {
-					$(document).on( 'WPML_TM.editor.field_view_ready', WCML_WPML_Translation_Editor.show_file_paths_button );
-					$(document).on( 'WPML_TM.editor.field_update_ui', WCML_WPML_Translation_Editor.field_update_ui );
-					$(document).on( 'click', '.wcml_file_paths_button', WCML_WPML_Translation_Editor.show_downloadable_files_frame );
-	
-					$(document).on( 'blur', '#job_field_title .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
-					$(document).on( 'focus', '#job_field_slug .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
-					$(document).on( 'blur', '#job_field_slug .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
+			if ( WCML_WPML_Translation_Editor.is_wcml_product ) {
+				$(document).on( 'WPML_TM.editor.field_view_ready', WCML_WPML_Translation_Editor.show_file_paths_button );
+				$(document).on( 'WPML_TM.editor.field_update_ui', WCML_WPML_Translation_Editor.field_update_ui );
+				$(document).on( 'click', '.wcml_file_paths_button', WCML_WPML_Translation_Editor.show_downloadable_files_frame );
 
-				}
+				$(document).on( 'blur', '#job_field_title .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
+				$(document).on( 'focus', '#job_field_slug .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
+				$(document).on( 'blur', '#job_field_slug .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
 
-			});
+			}
 
 		},
 
@@ -133,22 +132,22 @@ jQuery( function($){
 			}
 
 		},
-		
+
 		do_editor_ready : function( event, job_type, field_views, footer_view ) {
-			WCML_WPML_Translation_Editor.is_wcml_product = job_type === 'post_product';
+
 			if ( WCML_WPML_Translation_Editor.is_wcml_product ) {
 
 				WCML_WPML_Translation_Editor.save_buttons_tip = WCML_Tooltip.add_before( '.js-save-and-close', strings.save_tooltip, 'margin-right: 3px;' );
 
 				WCML_WPML_Translation_Editor.field_views = field_views;
 				WCML_WPML_Translation_Editor.footer_view = footer_view;
-				
+
 				WCML_WPML_Translation_Editor.update_save_button_state();
 
 				WCML_Tooltip.add_after( '.js-resign', strings.resign_tooltip, 'margin-left:-12px;' );
 			}
 		},
-		
+
 		update_save_button_state: function() {
 			var one_of_these_fields_is_required = [ 'title', 'product_content', 'product_excerpt' ];
 			var disable_buttons = true;
@@ -169,7 +168,7 @@ jQuery( function($){
 
 			WCML_WPML_Translation_Editor.footer_view.disableSaveButtons( disable_buttons );
 		},
-		
+
 		field_update_ui: function( event, view ) {
 			WCML_WPML_Translation_Editor.update_save_button_state();
 		}
