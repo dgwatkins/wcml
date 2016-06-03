@@ -266,14 +266,19 @@ class WCML_Terms{
         $wcml_settings = $this->woocommerce_wpml->get_settings();
 
         $attribute_taxonomies = wc_get_attribute_taxonomies();
+        $attribute_taxonomies_arr = array();
         foreach($attribute_taxonomies as $a){
             $attribute_taxonomies_arr[] = 'pa_' . $a->attribute_name;
         }
 
         $ret['is_attribute'] = intval( in_array( $taxonomy, $attribute_taxonomies_arr ) );
 
-        if($wcml_settings['untranstaled_terms'][$taxonomy]['status'] == $this->ALL_TAXONOMY_TERMS_TRANSLATED ||
-            $wcml_settings['untranstaled_terms'][$taxonomy]['status'] == $this->NEW_TAXONOMY_IGNORED){
+        if( isset( $wcml_settings['untranstaled_terms'][$taxonomy] ) &&
+            (
+                $wcml_settings['untranstaled_terms'][$taxonomy]['status'] == $this->ALL_TAXONOMY_TERMS_TRANSLATED ||
+                $wcml_settings['untranstaled_terms'][$taxonomy]['status'] == $this->NEW_TAXONOMY_IGNORED
+            )
+        ){
 
             $ret['hide'] = 1;
 
