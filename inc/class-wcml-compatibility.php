@@ -10,8 +10,6 @@ class WCML_Compatibility {
 
     function init(){
 
-        
-
         //hardcoded list of extensions and check which ones the user has and then include the corresponding file from the ‘compatibility’ folder
 
         //WooCommerce Tab Manager plugin
@@ -74,8 +72,7 @@ class WCML_Compatibility {
         }
 
         // Dynamic Pricing
-        
-        if(class_exists('WC_Dynamic_Pricing') || $this->is_dynamic_pricing_active()){
+        if(class_exists( 'WC_Dynamic_Pricing' )){
             $this->dynamic_pricing = new WCML_Dynamic_Pricing();
         }
 
@@ -131,18 +128,6 @@ class WCML_Compatibility {
         if( function_exists( 'adventure_tours_check' ) ){
             $this->adventure_tours = new WCML_Adventure_tours();
         }
-    }
-
-    private function is_dynamic_pricing_active() {
-        $active_plugins = get_option('active_plugins');
-        $dynamic_pricing_active = false;
-        foreach ($active_plugins as $active_plugin) {
-            if (strpos($active_plugin, 'woocommerce-dynamic-pricing.php') !== false) {
-                $dynamic_pricing_active = true;
-                break;
-            }
-        }
-        return $dynamic_pricing_active;
     }
 
 }

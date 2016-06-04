@@ -171,6 +171,106 @@ class woocommerce_wpml {
         add_filter('woocommerce_get_return_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
 
         add_action('wp_ajax_wcml_update_setting_ajx', array($this, 'update_setting_ajx'));
+
+
+        add_filter( 'default_hidden_columns', array( $this, 'filter_screen_options' ), 10, 2 );
+        add_filter( 'admin_init', array( $this, 'save_translation_controls' ), 10, 1 );
+        add_action( 'admin_notices', array( $this, 'product_page_admin_notices' ), 10 );
+    }
+
+    /**
+     * Display admin notice for translation management column.
+     */
+    public function product_page_admin_notices() {
+        global $sitepress;
+        $current_screen = get_current_screen();
+        if ( 'edit-product' === $current_screen->id ) {
+            $translate_url = admin_url( 'admin.php?page=wpml-wcml' );
+            $nonce = wp_create_nonce('enable_translation_controls');
+            if ( $sitepress->show_management_column_content( 'product' ) ) {
+                ?>
+                <div class="notice notice-info">
+                    <p>
+                        <?php _e( 'You have translation controls enabled.', 'woocommerce-multilingual' ); ?>
+                        <br>
+                        <?php
+                        echo sprintf( __( 'Disabling the translation controls will make this page load faster. The best place to translate products is in %sWPML-&gt;WooCommerce Multilingual%s.', 'woocommerce-multilingual' ), '<a href="' . $translate_url . '">', '</a>' );
+                        ?>
+                    </p>
+                    <p>
+                        <a id="translations_control" class="translations_control button-secondary" href="<?php echo admin_url( 'edit.php?post_type=product&translation_controls=0&nonce=' . $nonce ); ?>">
+                            <?php _e( 'Disable translation controls',  'woocommerce-multilingual' ); ?>
+                        </a>
+                    </p>
+                    <p>
+                        <small><?php _e( 'P.S. You can also do that using Screen Options',  'woocommerce-multilingual' ); ?></small>
+                    </p>
+                </div>
+                <?php
+            } else {
+                ?>
+                <div class="notice notice-info">
+                    <p>
+                        <?php _e( 'We disabled translation controls here.', 'woocommerce-multilingual' ); ?>
+                        <br>
+                        <?php
+                        echo sprintf( __( "Enabling the translation controls in this page can increase the load time for this admin screen.\n The best place to translate products is in %sWPML-&gt;WooCommerce Multilingual%s.", 'woocommerce-multilingual' ), '<a href="' . $translate_url . '">', '</a>' );
+                        ?>
+                    </p>
+                    <p>
+                        <a id="translations_control" class="translations_control button-secondary" href="<?php echo admin_url( 'edit.php?post_type=product&translation_controls=1&nonce=' . $nonce ); ?>">
+                            <?php _e( 'Enable translation controls anyway',  'woocommerce-multilingual' ); ?>
+                        </a>
+                    </p>
+                    <p>
+                        <small><?php _e( 'P.S. You can also do that using Screen Options',  'woocommerce-multilingual' ); ?></small>
+                    </p>
+                </div>
+                <?php
+            }
+        }
+    }
+
+    /**
+     * Set default option for translations management column.
+     *
+     * @param $hidden
+     * @param $screen
+     *
+     * @return array
+     */
+    public function filter_screen_options( $hidden, $screen ) {
+        if ( 'edit-product' === $screen->id ) {
+            $hidden[] = 'icl_translations';
+        }
+        return $hidden;
+    }
+
+    /**
+     * Save user options for management column.
+     */
+    public function save_translation_controls() {
+        if ( isset( $_GET['translation_controls'] )
+             && isset( $_GET['nonce'] )
+             && wp_verify_nonce( $_GET['nonce'], 'enable_translation_controls' )
+        ) {
+            $user = get_current_user_id();
+            $hidden_columns = get_user_meta( $user, 'manageedit-productcolumnshidden', true );
+            if ( ! is_array( $hidden_columns ) ) {
+                $hidden_columns = array();
+            }
+            if ( 0 === (int) $_GET['translation_controls'] ) {
+                $hidden_columns[] = 'icl_translations';
+            } else {
+                $tr_control_index = array_search( 'icl_translations', $hidden_columns );
+                if ( false !== $tr_control_index ) {
+                    unset( $hidden_columns[ $tr_control_index ] );
+                }
+            }
+
+            update_user_meta( $user, 'manageedit-productcolumnshidden', $hidden_columns );
+            wp_safe_redirect( admin_url( 'edit.php?post_type=product' ) );
+        }
     }
 
     public function get_settings(){
