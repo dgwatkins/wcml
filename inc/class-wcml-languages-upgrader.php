@@ -204,9 +204,12 @@ class WCML_Languages_Upgrader{
 
         $version = get_option( 'woocommerce_language_pack_version_'.$locale, array( '0', $locale ) );
 
+        $is_new_version = !is_array( $version ) || version_compare( $version[0], $wc_version, '<' ) || $version[1] !== $locale;
+        $mo_file_absent = !file_exists( sprintf( WP_LANG_DIR . '/plugins/woocommerce-%s.mo', $locale ) );
+
         $notices = maybe_unserialize( get_option( 'wcml_translations_upgrade_notice' ) );
 
-        if ( 'en_US' !== $locale && ( ! is_array( $version ) || version_compare( $version[0], $wc_version, '<' ) || $version[1] !== $locale ) ) {
+        if ( 'en_US' !== $locale && ( $is_new_version || $mo_file_absent ) ) {
             if ( $this->check_if_language_pack_exists( $locale, $wc_version ) ){
 
                 if( !$notices || !in_array( $locale, $notices )){
