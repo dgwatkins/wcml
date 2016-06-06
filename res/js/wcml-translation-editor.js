@@ -10,21 +10,8 @@ jQuery( function($){
 
 		init: function(){
 
-			var job_type = jQuery('input[name="job_post_type"]').val();
-			WCML_WPML_Translation_Editor.is_wcml_product = job_type === 'post_product';
-
+			$(document).on( 'WPML_TM.editor.before_render', WCML_WPML_Translation_Editor.do_editor_before_render );
 			$(document).on( 'WPML_TM.editor.ready', WCML_WPML_Translation_Editor.do_editor_ready );
-
-			if ( WCML_WPML_Translation_Editor.is_wcml_product ) {
-				$(document).on( 'WPML_TM.editor.field_view_ready', WCML_WPML_Translation_Editor.show_file_paths_button );
-				$(document).on( 'WPML_TM.editor.field_update_ui', WCML_WPML_Translation_Editor.field_update_ui );
-				$(document).on( 'click', '.wcml_file_paths_button', WCML_WPML_Translation_Editor.show_downloadable_files_frame );
-
-				$(document).on( 'blur', '#job_field_title .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
-				$(document).on( 'focus', '#job_field_slug .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
-				$(document).on( 'blur', '#job_field_slug .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
-
-			}
 
 		},
 
@@ -131,6 +118,21 @@ jQuery( function($){
 
 			}
 
+		},
+
+		do_editor_before_render : function( event, job_type ) {
+			WCML_WPML_Translation_Editor.is_wcml_product = job_type === 'post_product';
+
+			if ( WCML_WPML_Translation_Editor.is_wcml_product ) {
+				$(document).on( 'WPML_TM.editor.field_view_ready', WCML_WPML_Translation_Editor.show_file_paths_button );
+				$(document).on( 'WPML_TM.editor.field_update_ui', WCML_WPML_Translation_Editor.field_update_ui );
+				$(document).on( 'click', '.wcml_file_paths_button', WCML_WPML_Translation_Editor.show_downloadable_files_frame );
+
+				$(document).on( 'blur', '#job_field_title .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
+				$(document).on( 'focus', '#job_field_slug .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
+				$(document).on( 'blur', '#job_field_slug .js-translated-value', WCML_WPML_Translation_Editor.update_slug );
+
+			}
 		},
 
 		do_editor_ready : function( event, job_type, field_views, footer_view ) {
