@@ -314,6 +314,12 @@ class WCML_Multi_Currency{
             $this->client_currency = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         }
 
+        if( isset( $_GET['action'] ) &&
+            $_GET['action'] === 'woocommerce_json_search_products_and_variations' &&
+            !empty( $_COOKIE['_wcml_order_currency'] ) ) {
+            $this->client_currency = $_COOKIE['_wcml_order_currency'];
+        }
+
         if( is_null($this->client_currency) && isset($default_currencies[$current_language]) && $default_currencies[$current_language] && !empty($woocommerce->session) && $current_language != $woocommerce->session->get('client_currency_language') ){
             $this->client_currency = $default_currencies[$current_language];
         }

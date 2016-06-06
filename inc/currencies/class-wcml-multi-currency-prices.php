@@ -2,7 +2,13 @@
 
 class WCML_Multi_Currency_Prices{
 
+    /**
+     * @var woocommerce_wpml
+     */
     private $woocommerce_wpml;
+    /**
+     * @var WCML_Multi_Currency
+     */
     private $multi_currency;
 
     public function __construct( &$multi_currency ){
