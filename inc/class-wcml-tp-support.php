@@ -2,6 +2,7 @@
 
 class WCML_TP_Support {
 
+    /** @var WPML_Element_Translation_Package */
     public $tp;
 
     function __construct() {
@@ -145,6 +146,7 @@ class WCML_TP_Support {
 
         if ( $post->post_type == 'product' ) {
 
+            /** @var WC_Product_Variable $product */
             $product = wc_get_product( $post->ID );
 
             //WC_Product::get_type() available from WooCommerce 2.4.0
@@ -228,7 +230,7 @@ class WCML_TP_Support {
             if ( $value['finished'] && isset( $value['field_type'] ) && 'slug' === $value['field_type'] ) {
                 $product = wc_get_product( $post_id );
                 if ( $product->post->post_type == 'product' ) {
-                    $new_slug = wp_unique_post_slug( $value['data'], $post_id, $product->post->post_status, $product->post->post_type );
+                    $new_slug = wp_unique_post_slug( $value['data'], $post_id, $product->post->post_status, $product->post->post_type,  $product->post->post_parent );
                     $wpdb->update( $wpdb->posts, array( 'post_name' => $new_slug ), array( 'ID' => $post_id ) );
                     break;
                 }
