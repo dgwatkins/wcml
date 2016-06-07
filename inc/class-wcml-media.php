@@ -2,8 +2,12 @@
 
 class WCML_Media{
 
+    /** @var woocommerce_wpml */
     private $woocommerce_wpml;
+    /** @var  SitePress */
     private $sitepress;
+    /** @var  wpdb */
+    private $wpdb;
 
     public function __construct( &$woocommerce_wpml, &$sitepress, &$wpdb ){
 

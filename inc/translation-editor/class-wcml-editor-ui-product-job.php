@@ -99,8 +99,31 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $purchase_note_section->add_field( new WPML_Editor_UI_TextArea_Field( '_purchase_note', null, $this->data, true ) );
         $this->add_field( $purchase_note_section );
 
+        /*
+         * Images
+         */
         $product_images = $this->woocommerce_wpml->media->product_images_ids( $this->product->id );
+
+        // Exclude not-duplicated attachments and featured
+        if ( count( $product_images ) ) {
+
+            $wpml_media_options = maybe_unserialize( get_option( '_wpml_media' ) );
+
+            $thumbnail_id = get_post_meta(  $this->product->id, '_thumbnail_id', true );
+
+            if ( empty( $wpml_media_options[ 'new_content_settings' ][ 'duplicate_media' ] ) ) {
+                $product_images = $thumbnail_id ? array( $thumbnail_id ) : array();
+            }
+
+            $key = $thumbnail_id ? array_search( $thumbnail_id, $product_images ) : false;
+            if( false !== $key && empty( $wpml_media_options[ 'new_content_settings' ][ 'duplicate_featured' ]) ){
+                unset( $product_images[$key] );
+            }
+
+        }
+
 	    if ( count( $product_images ) ) {
+
             $images_section = new WPML_Editor_UI_Field_Section( __( 'Images', 'woocommerce-multilingual' ) );
             foreach( $product_images as $image_id ) {
                 $image = new WPML_Editor_UI_Field_Image( 'image-id-' . $image_id, $image_id, $this->data, true );
