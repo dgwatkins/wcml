@@ -9,11 +9,18 @@ class WCML_Media{
     /** @var  wpdb */
     private $wpdb;
 
+    public $settings = array();
+
     public function __construct( &$woocommerce_wpml, &$sitepress, &$wpdb ){
 
         $this->woocommerce_wpml =& $woocommerce_wpml;
         $this->sitepress        =& $sitepress;
         $this->wpdb             =& $wpdb;
+
+        $wpml_media_options = maybe_unserialize( get_option( '_wpml_media' ) );
+        $this->settings['translate_media']    = $wpml_media_options['new_content_settings']['always_translate_media'];
+        $this->settings['duplicate_media']    = $wpml_media_options['new_content_settings']['duplicate_media'];
+        $this->settings['duplicate_featured'] = $wpml_media_options['new_content_settings']['duplicate_featured'];
 
         //remove media sync on product page
         add_action( 'admin_head', array( $this, 'remove_language_options' ), 11 );
@@ -140,6 +147,22 @@ class WCML_Media{
         }
 
         return $product_images_ids;
+    }
+
+    public function exclude_not_duplicated_attachments( &$product_images, $product_id ){
+
+        $thumbnail_id = get_post_meta(  $product_id, '_thumbnail_id', true );
+
+        if ( empty( $this->settings[ 'duplicate_media' ] ) ) {
+            $product_images = $thumbnail_id ? array( $thumbnail_id ) : array();
+        }
+
+        $key = $thumbnail_id ? array_search( $thumbnail_id, $product_images ) : false;
+        if( false !== $key && empty( $this->settings[ 'duplicate_featured' ] ) ){
+            unset( $product_images[$key] );
+        }
+
+        return $product_images;
     }
 
     public function remove_language_options(){
