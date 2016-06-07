@@ -43,7 +43,7 @@ class woocommerce_wpml {
     public $downloadable;
     /** @var WCML_WC_Strings */
     public $strings;
-    /** @var WCML_Reports */
+    /** @var WCML_WC_Shipping */
     public $shipping;
     /** @var  WCML_WC_Gateways */
     public $gateways;
@@ -154,10 +154,7 @@ class woocommerce_wpml {
         $this->locale               = new WCML_Locale( $this, $sitepress );
         $this->media                = new WCML_Media( $this, $sitepress, $wpdb );
         $this->downloadable         = new WCML_Downloadable_Products( $this, $sitepress );
-
-        if(isset($_GET['page']) && $_GET['page'] == 'wc-reports'){
-            $this->reports          = new WCML_Reports;
-        }
+        $this->reports              = new WCML_Reports;
 
         new WCML_Ajax_Setup;
 

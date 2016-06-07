@@ -20,11 +20,18 @@ class WCML_Multi_Currency_Reports{
 
                 add_filter( 'woocommerce_dashboard_status_widget_sales_query', array($this, 'filter_dashboard_status_widget_sales_query') );
                 add_filter( 'woocommerce_dashboard_status_widget_top_seller_query', array($this, 'filter_dashboard_status_widget_sales_query') );
-
             }
 
+            add_action( 'current_screen', array($this, 'admin_screen_loaded'), 10, 1 );
         }
 
+    }
+
+    public function admin_screen_loaded(  $screen ){
+
+        if( $screen->id === 'dashboard'){
+            add_filter( 'woocommerce_reports_get_order_report_query', array($this, 'filter_dashboard_status_widget_sales_query') ); // woocommerce 2.6
+        }
 
     }
 
@@ -141,7 +148,7 @@ class WCML_Multi_Currency_Reports{
 
         ?>
 
-        <select id="dropdown_shop_report_currency">
+        <select id="dropdown_shop_report_currency" style="margin-left:5px;">
             <?php if(empty($orders_currencies)): ?>
                 <option value=""><?php _e('Currency - no orders found', 'woocommerce-multilingual') ?></option>
             <?php else: ?>
@@ -154,8 +161,6 @@ class WCML_Multi_Currency_Reports{
         </select>
 
         <?php
-        wc_enqueue_js( "jQuery('select#dropdown_shop_report_currency, select[name=m]').css('width', '180px').chosen();");
-
         // add back
         add_filter('woocommerce_currency_symbol', array($this, '_set_reports_currency_symbol'));
 

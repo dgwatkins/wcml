@@ -6,30 +6,34 @@ class WCML_Reports{
     public $tab;
     public $report;
     
-    function __construct(){
+    public function __construct(){
         
         add_action('init', array($this, 'init'));
         
     }
-    
-    function init(){
-        
-        $this->tab = isset($_GET['tab']) ? $_GET['tab'] : 'orders';        
-        $this->report = isset($_GET['report']) ? $_GET['report'] : '';
-        
-        add_filter('woocommerce_reports_get_order_report_query', array($this, 'filter_reports_query'), 0);
-        
-        if($this->tab == 'orders' && $this->report == 'sales_by_product'){
-            add_filter('woocommerce_reports_get_order_report_data', array($this, 'combine_report_by_languages'));
-        }
 
-        add_filter( 'woocommerce_report_most_stocked_query_from', array( $this, 'filter_reports_stock_query') );
-        add_filter( 'woocommerce_report_out_of_stock_query_from', array( $this, 'filter_reports_stock_query') );
-        add_filter( 'woocommerce_report_low_in_stock_query_from', array( $this, 'filter_reports_stock_query') );
+    public function init(){
+
+        if( isset($_GET['page']) && $_GET['page'] == 'wc-reports' ) {
+
+            $this->tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'orders';
+            $this->report = isset( $_GET['report'] ) ? $_GET['report'] : '';
+
+            add_filter( 'woocommerce_reports_get_order_report_query', array( $this, 'filter_reports_query' ), 0 );
+
+            if ( $this->tab == 'orders' && $this->report == 'sales_by_product' ) {
+                add_filter( 'woocommerce_reports_get_order_report_data', array( $this, 'combine_report_by_languages' ) );
+            }
+
+            add_filter( 'woocommerce_report_most_stocked_query_from', array( $this, 'filter_reports_stock_query' ) );
+            add_filter( 'woocommerce_report_out_of_stock_query_from', array( $this, 'filter_reports_stock_query' ) );
+            add_filter( 'woocommerce_report_low_in_stock_query_from', array( $this, 'filter_reports_stock_query' ) );
+
+        }
 
     }
 
-    function filter_reports_query($query){
+    public function filter_reports_query($query){
         global $wpdb, $sitepress;
         
         $current_language = $sitepress->get_current_language();
@@ -111,9 +115,9 @@ class WCML_Reports{
 
         return $query;
     }
-    
-    
-    function combine_report_by_languages($results){
+
+
+    public function combine_report_by_languages($results){
         global $sitepress, $wpdb;
         
         if(is_array($results) && isset($results['0']->order_item_qty)){
@@ -233,16 +237,16 @@ class WCML_Reports{
         
         return $combined_results;
     }
-    
-    static function _order_by_quantity($a, $b){
+
+    private static function _order_by_quantity($a, $b){
         return $a->order_item_qty < $b->order_item_qty;
     }
-    
-    static function _order_by_total($a, $b){
+
+    private static function _order_by_total($a, $b){
         return $a->order_item_total < $b->order_item_total;
     }
 
-    function filter_reports_stock_query( $query_from ){
+    public function filter_reports_stock_query( $query_from ){
         global $wpdb, $sitepress;
 
         $query_from = preg_replace("/WHERE/", "LEFT JOIN {$wpdb->prefix}icl_translations AS t ON posts.ID = t.element_id WHERE", $query_from);
