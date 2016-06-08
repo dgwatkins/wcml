@@ -394,15 +394,19 @@ class WCML_WC_Strings{
     function filter_woocommerce_breadcrumbs( $breadcrumbs, $object ){
         global $sitepress,$woocommerce_wpml;
 
-        if( $sitepress->get_current_language() != $sitepress->get_default_language() || $sitepress->get_default_language() != 'en' ){
+        $current_language = $sitepress->get_current_language();
+        $default_language = $sitepress->get_default_language();
 
-            $permalinks   = get_option( 'woocommerce_permalinks' );
+        if( $current_language != $default_language || $default_language != 'en' ){
 
             $shop_page = get_post( wc_get_page_id( 'shop' ) );
 
             // If permalinks contain the shop page in the URI prepend the breadcrumb with shop
             // Similar to WC_Breadcrumb::prepend_shop_page
-            $trnsl_base = $woocommerce_wpml->url_translation->get_base_translation( 'product', $sitepress->get_current_language() );
+            $trnsl_base = $woocommerce_wpml->url_translation->get_base_translation( 'product', $current_language );
+            if( $trnsl_base['translated_base'] === '' ){
+                $trnsl_base['translated_base'] = $trnsl_base['original_value'];
+            }
 
             if ( $shop_page->ID && strstr( $trnsl_base['translated_base'], urldecode( $shop_page->post_name ) ) && get_option( 'page_on_front' ) != $shop_page->ID ) {
                 $breadcrumbs_buff = array();
