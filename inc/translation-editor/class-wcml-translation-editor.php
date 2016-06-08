@@ -218,17 +218,21 @@ class WCML_Translation_Editor{
      * @return int
      */
     public function force_woocommerce_native_editor( $use_tm_editor ){
-        $current_screen  = get_current_screen();
 
-        if( !is_null($current_screen) ) {
-            if ( $current_screen->id === 'edit-product' || $current_screen->id === 'product' ) {
-                $use_tm_editor = 1;
-                if ( !$this->woocommerce_wpml->settings['trnsl_interface'] ) {
-                    $use_tm_editor = 0;
+        if( function_exists('get_current_screen') ) {
+
+            $current_screen = get_current_screen();
+            if ( !is_null( $current_screen ) ) {
+                if ( $current_screen->id === 'edit-product' || $current_screen->id === 'product' ) {
+                    $use_tm_editor = 1;
+                    if ( !$this->woocommerce_wpml->settings['trnsl_interface'] ) {
+                        $use_tm_editor = 0;
+                    }
+                } elseif ( $current_screen->id === 'wpml_page_wpml-wcml' ) {
+                    $use_tm_editor = 1;
                 }
-            } elseif ( $current_screen->id === 'wpml_page_wpml-wcml' ) {
-                $use_tm_editor = 1;
             }
+            
         }
 
         return $use_tm_editor;
@@ -239,12 +243,15 @@ class WCML_Translation_Editor{
      */
     public function force_remove_wpml_translation_editor_links(){
         global $wpml_tm_status_display_filter;
-        $current_screen  = get_current_screen();
 
-        $is_edit_product = !is_null($current_screen) && ( $current_screen->id === 'edit-product' || $current_screen->id === 'product' );
+        if( function_exists('get_current_screen') ) {
+            $current_screen = get_current_screen();
 
-	    if ( $is_edit_product && ! $this->woocommerce_wpml->settings['trnsl_interface'] ) {
-		    remove_filter( 'wpml_link_to_translation', array( $wpml_tm_status_display_filter, 'filter_status_link' ), 10 );
+            $is_edit_product = !is_null( $current_screen ) && ( $current_screen->id === 'edit-product' || $current_screen->id === 'product' );
+
+            if ( $is_edit_product && !$this->woocommerce_wpml->settings['trnsl_interface'] ) {
+                remove_filter( 'wpml_link_to_translation', array( $wpml_tm_status_display_filter, 'filter_status_link' ), 10 );
+            }
         }
 
     }
