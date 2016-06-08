@@ -69,8 +69,8 @@ jQuery( document ).ready( function( $ ){
 
         $('form#post input[type="submit"]').click(function(){
 
-            for (i = 0; i < ids.length; i++) {
-                $('#'+ids[i]).removeAttr('disabled');
+            for (i = 0; i < non_standard_fields.ids.length; i++) {
+                $('#'+non_standard_fields.ids[i]).removeAttr('disabled');
             }
 
             $('#bookings_pricing select, #bookings_resources select, #bookings_availability select,#bookings_persons input[type="checkbox"]').each(function(){
