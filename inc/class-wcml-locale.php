@@ -31,7 +31,7 @@ class WCML_Locale{
                 unset( $l10n[ 'woocommerce-multilingual' ] );
             }
             return load_textdomain( 'woocommerce-multilingual',
-                WCML_LOCALE_PATH . '/' . $this->sitepress->get_locale( $lang_code ) . '.mo' );
+                WCML_LOCALE_PATH . '/woocommerce-multilingual-' . $this->sitepress->get_locale( $lang_code ) . '.mo' );
 
         } else { // switch back
             $l10n[ 'woocommerce-multilingual' ] = $original_l10n;
