@@ -11,7 +11,13 @@ class CheckDebug extends \Codeception\Module
         // I will clean the debug.log before test starts
 
         // I will change folder where debug.log is located. This setting will be stored until test is finished
-        chdir('wp-content');
+        $directory = getcwd() . "\n";
+
+        if (strpos($directory, 'wp-content') == false) {
+
+            chdir('wp-content');
+            
+        }
 
         // I will clear debug.log
         file_put_contents("debug.log", "");
