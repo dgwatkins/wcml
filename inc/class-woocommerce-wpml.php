@@ -61,6 +61,11 @@ class woocommerce_wpml {
     /** @var  WCML_WooCommerce_Rest_API_Support */
     private $wc_rest_api;
 
+    /**
+     * @var WCML_Screen_Options
+     */
+    private $wcml_products_screen;
+
 
     public function __construct(){
 
@@ -155,7 +160,8 @@ class woocommerce_wpml {
         $this->media                = new WCML_Media( $this, $sitepress, $wpdb );
         $this->downloadable         = new WCML_Downloadable_Products( $this, $sitepress );
         $this->reports              = new WCML_Reports;
-        $this->init_screen_options_handler();
+        $this->wcml_products_screen = new WCML_Products_Screen_Options( $sitepress );
+        $this->wcml_products_screen->init();
 
         new WCML_Ajax_Setup;
 
@@ -264,14 +270,5 @@ class woocommerce_wpml {
             }
         }
 
-    }
-
-    /**
-     *
-     */
-    public function init_screen_options_handler() {
-        global $sitepress;
-        $screen_option = new WCML_Screen_Options( $sitepress );
-        $screen_option->init();
     }
 }

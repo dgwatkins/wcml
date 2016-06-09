@@ -3,7 +3,7 @@
 /**
  * Class WCML_Screen_Options
  */
-class WCML_Screen_Options extends WPML_Templates_Factory {
+class WCML_Products_Screen_Options extends WPML_Templates_Factory {
 
 	/**
 	 * @var SitePress
@@ -25,7 +25,7 @@ class WCML_Screen_Options extends WPML_Templates_Factory {
 	 */
 	public function init() {
 		add_filter( 'default_hidden_columns', array( $this, 'filter_screen_options' ), 10, 2 );
-		add_filter( 'admin_init', array( $this, 'save_translation_controls' ), 10, 1 );
+		add_action( 'admin_init', array( $this, 'save_translation_controls' ), 10, 1 );
 		add_action( 'admin_notices', array( $this, 'product_page_admin_notices' ), 10 );
 	}
 
@@ -67,7 +67,7 @@ class WCML_Screen_Options extends WPML_Templates_Factory {
 			}
 
 			update_user_meta( $user, 'manageedit-productcolumnshidden', $hidden_columns );
-			wp_safe_redirect( admin_url( 'edit.php?post_type=product' ) );
+			$this->sitepress->get_wp_api()->wp_safe_redirect( admin_url( 'edit.php?post_type=product' ), 301 );
 		}
 	}
 
@@ -81,6 +81,11 @@ class WCML_Screen_Options extends WPML_Templates_Factory {
 		}
 	}
 
+	/**
+	 * Get model for view.
+	 *
+	 * @return array
+	 */
 	public function get_model() {
 		$translate_url = esc_url_raw( admin_url( 'admin.php?page=wpml-wcml' ) );
 		$nonce         = wp_create_nonce( 'enable_translation_controls' );
@@ -105,12 +110,20 @@ class WCML_Screen_Options extends WPML_Templates_Factory {
 		return $model;
 	}
 
+	/**
+	 * Get template directory path.
+	 */
 	protected function init_template_base_dir() {
 		$this->template_paths = array(
 			WCML_PLUGIN_PATH . '/templates/products-list/',
 		);
 	}
 
+	/**
+	 * Get template file name.
+	 *
+	 * @return string
+	 */
 	public function get_template() {
 		return 'admin-notice.twig';
 	}
