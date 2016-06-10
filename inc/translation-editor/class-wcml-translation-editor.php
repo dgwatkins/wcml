@@ -2,6 +2,9 @@
 
 class WCML_Translation_Editor{
 
+    /**
+     * @var woocommerce_wpml
+     */
     private $woocommerce_wpml;
 	/**
 	 * @var SitePress
@@ -257,10 +260,25 @@ class WCML_Translation_Editor{
     }
 
     public function auto_generate_slug(){
+        global $wpdb;
+
         $title = filter_input( INPUT_POST, 'title');
 
         $post_name = urldecode( sanitize_title( $title ) );
-        $slug = wp_unique_post_slug( $post_name, 0, 'draft', 'product', 0);
+        $job_id    = intval( $_POST['job_id'] );
+
+        $post_id_sql = "
+            SELECT t.element_id
+            FROM {$wpdb->prefix}icl_translations t
+                LEFT JOIN {$wpdb->prefix}icl_translation_status s ON t.translation_id = s.translation_id
+                LEFT JOIN {$wpdb->prefix}icl_translate_job j ON s.rid = j.rid
+            WHERE j.job_id = %d
+        ";
+        $post_id = $wpdb->get_var( $wpdb->prepare( $post_id_sql, $job_id ) );
+
+        if( $post_id ) {
+            $slug = wp_unique_post_slug( $post_name, $post_id, 'publish', 'product', 0 );
+        }
 
         echo json_encode( array('slug' => $slug) );
         exit;
