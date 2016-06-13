@@ -57,6 +57,28 @@ class Test_WCML_Screen_Options extends WCML_UnitTestCase {
 		delete_user_meta( $user_id, 'manageedit-productcolumnshidden' );
 	}
 
+	/**
+	 * Test \WCML_Screen_Options::dismiss_notice_permanently()
+	 * @test
+	 */
+	public function saving_dismiss_notice() {
+		$user_id = $this->get_current_user_id();
+		$subject = $this->get_test_subject( $this->get_sitepress_mock() );
+		if ( ! defined( 'DOING_AJAX' ) ) {
+			define( 'DOING_AJAX', true );
+		}
+		$subject->dismiss_notice_permanently();
+		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-notice-dismissed', true ) );
+
+		$_POST['dismiss_notice'] = true;
+		$subject->dismiss_notice_permanently();
+		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-notice-dismissed', true ) );
+
+		$_POST['nonce'] = wp_create_nonce( 'products-screen-option-action' );
+		$subject->dismiss_notice_permanently();
+		$this->assertEquals( 1, (int) get_user_meta( $user_id, 'screen-option-notice-dismissed', true ) );
+	}
+
 	private function get_test_sitepress_mock() {
 		$wp_api_mock = $this->get_wp_api_mock();
 		$wp_api_mock
