@@ -426,7 +426,9 @@ class WCML_Multi_Currency_Prices{
     public function filter_woocommerce_cart_subtotal( $cart_subtotal, $compound, $obj ){
         global $woocommerce;
         remove_filter( 'woocommerce_cart_subtotal', array( $this, 'filter_woocommerce_cart_subtotal'), 100, 3 );
-        $woocommerce->cart->calculate_totals();
+        if( apply_filters( 'wcml_calculate_totals_exception', true ) ) {
+            $woocommerce->cart->calculate_totals();
+        }
         $cart_subtotal = $woocommerce->cart->get_cart_subtotal( $compound );
         add_filter( 'woocommerce_cart_subtotal', array( $this, 'filter_woocommerce_cart_subtotal'), 100, 3 );
 
