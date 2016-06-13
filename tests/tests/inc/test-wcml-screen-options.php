@@ -68,15 +68,25 @@ class Test_WCML_Screen_Options extends WCML_UnitTestCase {
 			define( 'DOING_AJAX', true );
 		}
 		$subject->dismiss_notice_permanently();
-		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-notice-dismissed', true ) );
+		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-disabled-notice-dismissed', true ) );
+		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-enabled-notice-dismissed', true ) );
 
-		$_POST['dismiss_notice'] = true;
-		$subject->dismiss_notice_permanently();
-		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-notice-dismissed', true ) );
 
 		$_POST['nonce'] = wp_create_nonce( 'products-screen-option-action' );
 		$subject->dismiss_notice_permanently();
-		$this->assertEquals( 1, (int) get_user_meta( $user_id, 'screen-option-notice-dismissed', true ) );
+		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-notice-dismissed', true ) );
+
+		$_POST['dismiss_notice'] = 'enabled';
+		$subject->dismiss_notice_permanently();
+		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-disabled-notice-dismissed', true ) );
+		$this->assertEquals( 1, (int) get_user_meta( $user_id, 'screen-option-enabled-notice-dismissed', true ) );
+
+		$_POST['dismiss_notice'] = 'disabled';
+		$subject->dismiss_notice_permanently();
+		$this->assertEquals( 1, (int) get_user_meta( $user_id, 'screen-option-disabled-notice-dismissed', true ) );
+		$this->assertEquals( 1, (int) get_user_meta( $user_id, 'screen-option-enabled-notice-dismissed', true ) );
+		delete_user_meta( $user_id, 'screen-option-disabled-notice-dismissed' );
+		delete_user_meta( $user_id, 'screen-option-enabled-notice-dismissed' );
 	}
 
 	private function get_test_sitepress_mock() {
