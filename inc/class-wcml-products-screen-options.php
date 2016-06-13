@@ -111,19 +111,23 @@ class WCML_Products_Screen_Options extends WPML_Templates_Factory {
 		$button_text   = __( 'Disable translation controls',  'woocommerce-multilingual' );
 		$first_line    = __( 'Translation controls are enabled.', 'woocommerce-multilingual' );
 		$second_line   = sprintf( __( "Disabling the translation controls will make this page load faster.\nThe best place to translate products is in WPML-&gt;WooCommerce Multilingual %sproducts translation dashboard%s.", 'woocommerce-multilingual' ), '<a href="' . $translate_url . '">', '</a>' );
-		$show_notice   = ( 1 === (int) get_user_meta( get_current_user_id(), 'screen-option-notice-dismissed', true ) ) ? false : true;
+		$show_notice   = ( 1 === (int) get_user_meta( get_current_user_id(), 'screen-option-enabled-notice-dismissed', true ) ) ? false : true;
+		$div_id        = 'enabled';
 		if ( false === $this->sitepress->show_management_column_content( 'product' ) ) {
 			$button_url = admin_url( 'edit.php?post_type=product&translation_controls=1&nonce=' . $nonce );
 			$button_text = __( 'Enable translation controls anyway',  'woocommerce-multilingual' );
 			$first_line    = __( 'Translation controls are disabled.', 'woocommerce-multilingual' );
 			$second_line   = sprintf( __( "Enabling the translation controls in this page can increase the load time for this admin screen.\n The best place to translate products is in WPML-&gt;WooCommerce Multilingual %sproducts translation dashboard%s.", 'woocommerce-multilingual' ), '<a href="' . $translate_url . '">', '</a>' );
+			$show_notice   = ( 1 === (int) get_user_meta( get_current_user_id(), 'screen-option-disabled-notice-dismissed', true ) ) ? false : true;
+			$div_id        = 'disabled';
 		}
 		$model = array(
 			'first_line'   => $first_line,
 			'second_line'  => $second_line,
 			'button_url'   => $button_url,
 			'button_text'  => $button_text,
-			'show_notice'  => $show_notice
+			'show_notice'  => $show_notice,
+			'div_id'       => $div_id,
 		);
 
 		return $model;
@@ -153,10 +157,15 @@ class WCML_Products_Screen_Options extends WPML_Templates_Factory {
 		     && isset( $_POST['nonce'] )
 		     && wp_verify_nonce( $_POST['nonce'], 'products-screen-option-action' )
 		     && isset( $_POST['dismiss_notice'] )
-		     && true === (bool) $_POST['dismiss_notice']
 		) {
 			$user = get_current_user_id();
-			update_user_meta( $user, 'screen-option-notice-dismissed', 1 );
+			if ( 'enabled' === $_POST['dismiss_notice'] ) {
+				update_user_meta( $user, 'screen-option-enabled-notice-dismissed', 1 );
+			}
+
+			if ( 'disabled' === $_POST['dismiss_notice'] ) {
+				update_user_meta( $user, 'screen-option-disabled-notice-dismissed', 1 );
+			}
 		}
 	}
 }
