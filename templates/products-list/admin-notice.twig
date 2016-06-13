@@ -1,9 +1,10 @@
-<div class="notice notice-info">
+{% if show_notice %}
+<div class="notice notice-info is-dismissible">
     <p>{{ first_line }}<br>{{ second_line | raw }}</p>
     <p>
         <a id="translations_control" class="translations_control button-secondary" href="{{ button_url | raw }}">
             {{ button_text }}
         </a>
     </p>
-    <p><small>{{ ps_message }}</small></p>
 </div>
+{% endif %}

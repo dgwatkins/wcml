@@ -24,10 +24,11 @@ class WCML_Products_Screen_Options extends WPML_Templates_Factory {
 	 * Setup hooks.
 	 */
 	public function init() {
-		add_filter( 'default_hidden_columns', array( $this, 'filter_screen_options' ), 10, 2 );
+		add_filter( 'default_hidden_columns',      array( $this, 'filter_screen_options' ), 10, 2 );
 		add_filter( 'wpml_hide_management_column', array( $this, 'sitepress_screen_option_filter' ), 10, 2 );
-		add_action( 'admin_init', array( $this, 'save_translation_controls' ), 10, 1 );
-		add_action( 'admin_notices', array( $this, 'product_page_admin_notices' ), 10 );
+		add_action( 'admin_init',                  array( $this, 'save_translation_controls' ), 10, 1 );
+		add_action( 'admin_notices',               array( $this, 'product_page_admin_notices' ), 10 );
+		add_action( 'wp_ajax_dismiss-notice',      array( $this, 'dismiss_notice_permanently' ), 10 );
 	}
 
 	/**
@@ -108,20 +109,21 @@ class WCML_Products_Screen_Options extends WPML_Templates_Factory {
 		$nonce         = wp_create_nonce( 'enable_translation_controls' );
 		$button_url    = esc_url_raw( admin_url( 'edit.php?post_type=product&translation_controls=0&nonce=' . $nonce ) );
 		$button_text   = __( 'Disable translation controls',  'woocommerce-multilingual' );
-		$first_line    = __( 'You have translation controls enabled.', 'woocommerce-multilingual' );
-		$second_line   = sprintf( __( "Disabling the translation controls will make this page load faster.\nThe best place to translate products is in %sWPML-&gt;WooCommerce Multilingual%s.", 'woocommerce-multilingual' ), '<a href="' . $translate_url . '">', '</a>' );
+		$first_line    = __( 'Translation controls are enabled.', 'woocommerce-multilingual' );
+		$second_line   = sprintf( __( "Disabling the translation controls will make this page load faster.\nThe best place to translate products is in WPML-&gt;WooCommerce Multilingual %sproducts translation dashboard%s.", 'woocommerce-multilingual' ), '<a href="' . $translate_url . '">', '</a>' );
+		$show_notice   = ( 1 === (int) get_user_meta( get_current_user_id(), 'screen-option-notice-dismissed', true ) ) ? false : true;
 		if ( false === $this->sitepress->show_management_column_content( 'product' ) ) {
 			$button_url = admin_url( 'edit.php?post_type=product&translation_controls=1&nonce=' . $nonce );
 			$button_text = __( 'Enable translation controls anyway',  'woocommerce-multilingual' );
-			$first_line    = __( 'We disabled translation controls here.', 'woocommerce-multilingual' );
-			$second_line   = sprintf( __( "Enabling the translation controls in this page can increase the load time for this admin screen.\n The best place to translate products is in %sWPML-&gt;WooCommerce Multilingual%s.", 'woocommerce-multilingual' ), '<a href="' . $translate_url . '">', '</a>' );
+			$first_line    = __( 'Translation controls are disabled.', 'woocommerce-multilingual' );
+			$second_line   = sprintf( __( "Enabling the translation controls in this page can increase the load time for this admin screen.\n The best place to translate products is in WPML-&gt;WooCommerce Multilingual %sproducts translation dashboard%s.", 'woocommerce-multilingual' ), '<a href="' . $translate_url . '">', '</a>' );
 		}
 		$model = array(
 			'first_line'   => $first_line,
 			'second_line'  => $second_line,
 			'button_url'   => $button_url,
 			'button_text'  => $button_text,
-			'ps_message'   => __( 'P.S. You can also do that using Screen Options',  'woocommerce-multilingual' ),
+			'show_notice'  => $show_notice
 		);
 
 		return $model;
@@ -143,5 +145,18 @@ class WCML_Products_Screen_Options extends WPML_Templates_Factory {
 	 */
 	public function get_template() {
 		return 'admin-notice.twig';
+	}
+
+	public function dismiss_notice_permanently() {
+		if ( defined( 'DOING_AJAX' )
+		     && DOING_AJAX
+		     && isset( $_POST['nonce'] )
+		     && wp_verify_nonce( $_POST['nonce'], 'products-screen-option-action' )
+		     && isset( $_POST['dismiss_notice'] )
+		     && true === (bool) $_POST['dismiss_notice']
+		) {
+			$user = get_current_user_id();
+			update_user_meta( $user, 'screen-option-notice-dismissed', 1 );
+		}
 	}
 }
