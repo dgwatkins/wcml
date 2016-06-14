@@ -98,6 +98,7 @@ class woocommerce_wpml {
         $this->check_design_update = $this->dependencies->check_design_update();
 
         WCML_Admin_Menus::set_up_menus( $this, $sitepress, $this->check_dependencies );
+        $this->js_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
         if( !$this->check_dependencies ){
 
