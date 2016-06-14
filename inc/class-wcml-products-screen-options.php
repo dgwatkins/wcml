@@ -113,7 +113,7 @@ class WCML_Products_Screen_Options extends WPML_Templates_Factory {
 		$second_line   = sprintf( __( "Disabling the translation controls will make this page load faster.\nThe best place to translate products is in WPML-&gt;WooCommerce Multilingual %sproducts translation dashboard%s.", 'woocommerce-multilingual' ), '<a href="' . $translate_url . '">', '</a>' );
 		$show_notice   = ( 1 === (int) get_user_meta( get_current_user_id(), 'screen-option-enabled-notice-dismissed', true ) ) ? false : true;
 		$div_id        = 'enabled';
-		if ( false === $this->sitepress->show_management_column_content( 'product' ) ) {
+		if ( method_exists( $this->sitepress, 'show_management_column_content' ) && false === $this->sitepress->show_management_column_content( 'product' ) ) {
 			$button_url = admin_url( 'edit.php?post_type=product&translation_controls=1&nonce=' . $nonce );
 			$button_text = __( 'Enable translation controls anyway',  'woocommerce-multilingual' );
 			$first_line    = __( 'Translation controls are disabled.', 'woocommerce-multilingual' );
