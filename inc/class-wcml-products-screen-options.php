@@ -29,6 +29,7 @@ class WCML_Products_Screen_Options extends WPML_Templates_Factory {
 		add_action( 'admin_init',                  array( $this, 'save_translation_controls' ), 10, 1 );
 		add_action( 'admin_notices',               array( $this, 'product_page_admin_notices' ), 10 );
 		add_action( 'wp_ajax_dismiss-notice',      array( $this, 'dismiss_notice_permanently' ), 10 );
+		add_action( 'wp_ajax_hidden-columns',      array( $this, 'dismiss_notice_on_screen_option_change' ), 0 );
 	}
 
 	/**
@@ -166,6 +167,23 @@ class WCML_Products_Screen_Options extends WPML_Templates_Factory {
 			if ( 'disabled' === $_POST['dismiss_notice'] ) {
 				update_user_meta( $user, 'screen-option-disabled-notice-dismissed', 1 );
 			}
+		}
+	}
+
+	/**
+	 * Dismiss notices when screen option is updated manually.`
+	 */
+	public function dismiss_notice_on_screen_option_change() {
+		if ( defined( 'DOING_AJAX' )
+		     && DOING_AJAX
+		     && isset( $_POST['page'] )
+		     && 'edit-product' === $_POST['page']
+		     && check_ajax_referer( 'screen-options-nonce', 'screenoptionnonce' )
+		     && '' === $_POST['hidden']
+		) {
+			$user = get_current_user_id();
+			update_user_meta( $user, 'screen-option-enabled-notice-dismissed', 1 );
+			update_user_meta( $user, 'screen-option-disabled-notice-dismissed', 1 );
 		}
 	}
 }
