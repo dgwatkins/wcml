@@ -278,6 +278,40 @@ class WCML_Translation_Editor{
 
         if( $post_id ) {
             $slug = wp_unique_post_slug( $post_name, $post_id, 'publish', 'product', 0 );
+        }else{
+            // handle the special case when the post for this slug has not been created yet
+            $lang_sql = "
+                SELECT t.language_code
+                FROM {$wpdb->prefix}icl_translations t
+                    LEFT JOIN {$wpdb->prefix}icl_translation_status s ON t.translation_id = s.translation_id
+                    LEFT JOIN {$wpdb->prefix}icl_translate_job j ON s.rid = j.rid
+                WHERE j.job_id = %d
+            ";
+            $lang = $wpdb->get_var( $wpdb->prepare( $lang_sql, $job_id ) );
+
+            $check_sql = "
+                SELECT p.post_name 
+                FROM {$wpdb->posts} p 
+                    LEFT JOIN {$wpdb->prefix}icl_translations t 
+                        ON t.element_id = p.ID AND t.element_type='post_product'   
+                WHERE p.post_name = %s AND t.language_code = %s LIMIT 1
+            ";
+            $post_name_check = $wpdb->get_var( $wpdb->prepare( $check_sql, $post_name, $lang) );
+
+            if( $post_name_check ) {
+                $suffix = 2;
+                do {
+
+                    $alt_post_name = _truncate_post_slug( $post_name, 200 - ( strlen( $suffix ) + 1 ) ) . "-$suffix";
+                    $post_name_check = $wpdb->get_var( $wpdb->prepare( $check_sql, $alt_post_name, $lang ) );
+                    $suffix++;
+
+                } while ( $post_name_check );
+                $slug = $alt_post_name;
+            } else{
+                $slug = $post_name;
+            }
+
         }
 
         echo json_encode( array('slug' => $slug) );
