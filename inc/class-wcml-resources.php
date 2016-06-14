@@ -128,6 +128,12 @@ class WCML_Resources {
             );
         }
 
+
+        if ( isset( $_GET['post_type'] ) && 'product' === $_GET['post_type'] && 'edit.php' === self::$pagenow ) {
+            self::load_tooltip_resources();
+            wp_enqueue_script( 'products-screen-options', WCML_PLUGIN_URL . '/res/js/products-screen-option.js', array( 'jquery', 'wcml-tooltip-init' ), WCML_VERSION );
+            wp_localize_script( 'products-screen-options', 'products_screen_option', array( 'nonce' => wp_create_nonce( 'products-screen-option-action' ) ) );
+        }
     }
 
     public static function load_tooltip_resources() {
