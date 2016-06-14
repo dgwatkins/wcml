@@ -179,6 +179,7 @@ class WCML_Products_Screen_Options extends WPML_Templates_Factory {
 		     && isset( $_POST['page'] )
 		     && 'edit-product' === $_POST['page']
 		     && check_ajax_referer( 'screen-options-nonce', 'screenoptionnonce' )
+		     && isset( $_POST['hidden'] )
 		     && '' === $_POST['hidden']
 		) {
 			$user = get_current_user_id();

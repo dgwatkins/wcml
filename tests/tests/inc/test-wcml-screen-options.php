@@ -90,6 +90,46 @@ class Test_WCML_Screen_Options extends WCML_UnitTestCase {
 		delete_user_meta( $user_id, 'screen-option-enabled-notice-dismissed' );
 	}
 
+	/**
+	 * Test \WCML_Screen_Options::dismiss_notice_on_screen_option_change()
+	 * @test
+	 */
+	public function check_dismiss_notice_on_screen_option_change() {
+		$user_id = $this->get_current_user_id();
+		$subject = $this->get_test_subject( $this->get_sitepress_mock() );
+		if ( ! defined( 'DOING_AJAX' ) ) {
+			define( 'DOING_AJAX', true );
+		}
+
+		$subject->dismiss_notice_on_screen_option_change();
+		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-disabled-notice-dismissed', true ) );
+		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-enabled-notice-dismissed', true ) );
+
+
+		$_REQUEST['screenoptionnonce'] = wp_create_nonce( 'screen-options-nonce' );
+		$subject->dismiss_notice_on_screen_option_change();
+		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-disabled-notice-dismissed', true ) );
+		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-enabled-notice-dismissed', true ) );
+
+		$_POST['page'] = 'edit-product';
+		$subject->dismiss_notice_on_screen_option_change();
+		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-disabled-notice-dismissed', true ) );
+		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-enabled-notice-dismissed', true ) );
+
+		$_POST['hidden'] = 'icl-translations';
+		$subject->dismiss_notice_on_screen_option_change();
+		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-disabled-notice-dismissed', true ) );
+		$this->assertEquals( 0, (int) get_user_meta( $user_id, 'screen-option-enabled-notice-dismissed', true ) );
+
+		$_POST['hidden'] = '';
+		$subject->dismiss_notice_on_screen_option_change();
+		$this->assertEquals( 1, (int) get_user_meta( $user_id, 'screen-option-disabled-notice-dismissed', true ) );
+		$this->assertEquals( 1, (int) get_user_meta( $user_id, 'screen-option-enabled-notice-dismissed', true ) );
+
+		delete_user_meta( $user_id, 'screen-option-disabled-notice-dismissed' );
+		delete_user_meta( $user_id, 'screen-option-enabled-notice-dismissed' );
+	}
+
 	private function get_test_sitepress_mock() {
 		$wp_api_mock = $this->get_wp_api_mock();
 		$wp_api_mock
