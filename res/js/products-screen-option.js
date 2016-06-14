@@ -3,7 +3,6 @@
     $(function(){
         $('body').on('click', 'button.notice-dismiss', function(e) {
             var $div_id = $(this).parent('.notice').attr('id');
-            console.log( $div_id );
             $.ajax({
                 url:    ajaxurl,
                 method: 'POST',
