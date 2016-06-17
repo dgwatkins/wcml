@@ -130,6 +130,18 @@ class Test_WCML_Screen_Options extends WCML_UnitTestCase {
 		delete_user_meta( $user_id, 'screen-option-enabled-notice-dismissed' );
 	}
 
+	/**
+	 * Test \WCML_Screen_Options::has_products()
+	 *
+	 * @test
+	 */
+	public function check_has_products() {
+		$subject = $this->get_test_subject( $this->get_sitepress_mock() );
+		$this->assertFalse( $subject->has_products() );
+		wpml_test_insert_post( 'en', 'product', null );
+		$this->assertTrue( $subject->has_products() );
+	}
+
 	private function get_test_sitepress_mock() {
 		$wp_api_mock = $this->get_wp_api_mock();
 		$wp_api_mock
