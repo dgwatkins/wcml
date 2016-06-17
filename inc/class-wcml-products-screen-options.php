@@ -33,7 +33,7 @@ class WCML_Products_Screen_Options extends WPML_Templates_Factory {
 	}
 
 	/**
-	 * Hide management column by defaul for products.
+	 * Hide management column by default for products.
 	 *
 	 * @param $is_visible
 	 * @param $post_type
@@ -95,7 +95,7 @@ class WCML_Products_Screen_Options extends WPML_Templates_Factory {
 	 */
 	public function product_page_admin_notices() {
 		$current_screen = get_current_screen();
-		if ( 'edit-product' === $current_screen->id ) {
+		if ( 'edit-product' === $current_screen->id && $this->has_products() ) {
 			$this->show();
 		}
 	}
@@ -186,5 +186,30 @@ class WCML_Products_Screen_Options extends WPML_Templates_Factory {
 			update_user_meta( $user, 'screen-option-enabled-notice-dismissed', 1 );
 			update_user_meta( $user, 'screen-option-disabled-notice-dismissed', 1 );
 		}
+	}
+
+	/**
+	 * Check if there is at least on product added.
+	 *
+	 * @return bool
+	 */
+	public function has_products() {
+		$has_products = false;
+		$args = array(
+			'post_type'              => 'product',
+			'posts_per_page'         => 1,
+			'no_found_rows'          => true,
+			'fields'                 => 'ids',
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+			'suppress_filters'       => false,
+		);
+		$query = new WP_Query( $args );
+		if ( $query->have_posts() ) {
+			$has_products = true;
+		}
+		wp_reset_postdata();
+
+		return $has_products;
 	}
 }
