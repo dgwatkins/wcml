@@ -132,6 +132,12 @@ class WCML_Compatibility {
         if( function_exists( 'adventure_tours_check' ) ){
             $this->adventure_tours = new WCML_Adventure_tours();
         }
+
+        //Aurum Theme
+        if( wp_get_theme() == 'Aurum' ){
+            new WCML_Aurum();
+        }
+
     }
 
 }
