@@ -16,6 +16,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 			add_action( 'wcml_gui_additional_box_html', array( $this, 'custom_box_html' ), 10, 3 );
 			add_filter( 'wcml_gui_additional_box_data', array( $this, 'custom_box_html_data' ), 10, 4 );
 			add_action( 'wcml_update_extra_fields', array( $this, 'components_update' ), 10, 3 );
+			add_filter( 'woocommerce_json_search_found_products', array( $this, 'woocommerce_json_search_found_products' ) );
 
 			$this->tp = new WPML_Element_Translation_Package();
 
@@ -331,4 +332,15 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 	}
 
+	function woocommerce_json_search_found_products( $found_products ){
+		global $wpml_post_translations, $sitepress;
+
+		foreach( $found_products as $id => $product_name ){
+			if( $wpml_post_translations->get_element_lang_code ( $id ) != $sitepress->get_current_language() ){
+				unset( $found_products[ $id ] );
+			}
+		}
+
+		return $found_products;
+	}
 }
