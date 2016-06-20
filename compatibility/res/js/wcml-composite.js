@@ -7,13 +7,23 @@ jQuery( document ).ready( function( $ ){
             $(this).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
         });
 
-        $('#bto_product_data .close_all,#bto_product_data .expand_all,#bto_product_data li,#bto_config_group_inner .handlediv').bind({
+        $('#bto_product_data li,#bto_config_group_inner .subsubsub li a').bind({
             click: function(e) {
                 return false;
             }
         });
 
 
+        //components fields
+        jQuery('input.group_quantity_min,input.group_quantity_max,input.group_discount,.bto_query_type_selector .wc-product-search').each(function(){
+            jQuery(this).attr('readonly','readonly');
+            jQuery(this).after(jQuery('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
+        });
+
+        jQuery('select.bto_query_type,.component_options_style select,.group_optional input').each(function(){
+            jQuery(this).attr('disabled','disabled');
+            jQuery(this).after(jQuery('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
+        });
     }
 
 });
