@@ -402,8 +402,8 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 			// according to settings defined in self::set_up_currencies -> round up, rounding increment 100, subtract 1
 			// 1000 * 55 = 55000 (num decimals 2, rounding disabled)
 			'AUD'	=> 2450,
-			// according to settings defined in self::set_up_currencies -> round up, rounding increment 100, subtract 1
-			// 10.06 * 55 = 553.3 (num decimals 2, rounding disabled)
+			// according to settings defined in self::set_up_currencies -> rounding disabled
+			// 1100.33 * 55 = 60518.15 (num decimals 2, rounding disabled)
 			'CHF'	=> round( $min_variation_price * $this->settings['currency_options']['CHF']['rate'], 2 )
 		);
 
@@ -439,7 +439,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w/ space), '.' thousands separator, ',' decimal separator, 2 decimals
 			'CHF' => '<del>' .
-				$this->wc_format_price('60.518,14<cur>&#67;&#72;&#70;</cur>') . '&ndash;' .
+				$this->wc_format_price('60.518,15<cur>&#67;&#72;&#70;</cur>') . '&ndash;' .
 				$this->wc_format_price('115.524,20<cur>&#67;&#72;&#70;</cur>') . '</del> <ins>' .
 				$this->wc_format_price('55.000,00<cur>&#67;&#72;&#70;</cur>') . '&ndash;' .
 				$this->wc_format_price('110.000,00<cur>&#67;&#72;&#70;</cur>') . '</ins>'
