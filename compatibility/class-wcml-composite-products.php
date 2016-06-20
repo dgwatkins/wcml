@@ -9,7 +9,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 		add_filter( 'woocommerce_composite_component_default_option', array($this, 'woocommerce_composite_component_default_option'), 10, 3 );
 		add_filter( 'wcml_cart_contents', array($this, 'wpml_composites_compat'), 11, 4 );
 		add_filter( 'woocommerce_composite_component_options_query_args', array($this, 'wpml_composites_transients_cache_per_language'), 10, 3 );
-		add_action( 'wcml_before_sync_product', array( $this, 'sync_composite_data_across_translations'), 10, 3 );
+		add_action( 'wcml_before_sync_product', array( $this, 'sync_composite_data_across_translations'), 10, 2 );
 
 		if( is_admin() ){		
 
@@ -59,7 +59,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 		return $args;
 	}
 
-	function sync_composite_data_across_translations(  $original_product_id, $current_product_id, $lang ){
+	function sync_composite_data_across_translations(  $original_product_id, $current_product_id ){
 		global $woocommerce_wpml, $sitepress;
 
 		if( $this->get_product_type( $original_product_id ) == 'composite' ){
