@@ -184,7 +184,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 		return $data;
 	}
 
-    function components_update( $original_product_id, $product_id, $data, $lang ){
+    function components_update( $original_product_id, $product_id, $data ){
 
 		$product = new WC_Product_Composite( $original_product_id );
 
