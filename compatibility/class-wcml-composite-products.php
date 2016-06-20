@@ -302,7 +302,6 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 		$names[] = '_base_regular_price';
 		$names[] = '_base_sale_price';
-		$names[] = '_bto_hide_shop_price';
 		$names[] = 'bto_style';
 
 		return $names;
@@ -312,6 +311,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 		$names[] = '_per_product_pricing_bto';
 		$names[] = '_per_product_shipping_bto';
+		$names[] = '_bto_hide_shop_price';
 
 		return $names;
 	}
