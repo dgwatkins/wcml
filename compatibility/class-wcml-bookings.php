@@ -352,7 +352,7 @@ class WCML_Bookings {
     }
 
     // sync existing product bookings for translations
-    function sync_bookings( $original_product_id, $lang ){
+    function sync_bookings( $original_product_id, $product_id, $lang ){
         global $wpdb;
 
         $all_bookings_for_product = $wpdb->get_results( $wpdb->prepare( "SELECT post_id as id FROM $wpdb->postmeta WHERE meta_key = '_booking_product_id' AND meta_value = %d", $original_product_id ) );
