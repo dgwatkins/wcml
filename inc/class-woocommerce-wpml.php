@@ -114,7 +114,7 @@ class woocommerce_wpml {
             return false;
         }
 
-        $this->compatibility        = new WCML_Compatibility( $sitepress, $this );
+        $this->compatibility        = new WCML_Compatibility( $sitepress, $this, $wpdb );
 
         $actions_that_need_mc = array(
                 'save-mc-options',

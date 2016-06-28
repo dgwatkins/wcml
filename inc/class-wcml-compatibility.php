@@ -12,9 +12,15 @@ class WCML_Compatibility {
      */
     public $woocommerce_wpml;
 
-    function __construct( &$sitepress, &$woocommerce_wpml ) {
+    /**
+     * @var wpdb
+     */
+    public $wpdb;
+
+    function __construct( &$sitepress, &$woocommerce_wpml, &$wpdb ) {
         $this->sitepress = $sitepress;
         $this->woocommerce_wpml = $woocommerce_wpml;
+        $this->wpdb = $wpdb;
         $this->init();
 
     }
@@ -88,7 +94,7 @@ class WCML_Compatibility {
 
         // WooCommerce Bookings
         if(defined( 'WC_BOOKINGS_VERSION' ) && version_compare(WC_BOOKINGS_VERSION, '1.7.8', '>=') ){
-            $this->bookings = new WCML_Bookings( $this->sitepress, $this->woocommerce_wpml );
+            $this->bookings = new WCML_Bookings( $this->sitepress, $this->woocommerce_wpml, $this->wpdb );
 
             // WooCommerce Accommodation Bookings
             if( defined( 'WC_ACCOMMODATION_BOOKINGS_VERSION' ) ){

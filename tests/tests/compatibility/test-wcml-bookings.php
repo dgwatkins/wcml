@@ -29,13 +29,12 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function save_custom_costs() {
-		global $sitepress;
+		global $sitepress, $wpdb;
 
 		$woocommerce_wpml = $this->get_test_subject();
-
 		$product_id = wpml_test_insert_post( 'en', 'product', false, random_string() );
 		$_POST['_wcml_custom_costs_nonce'] = wp_create_nonce( 'wcml_save_custom_costs' );
-		$this->bookings = new WCML_Bookings( $sitepress, $woocommerce_wpml );
+		$this->bookings = new WCML_Bookings( $sitepress, $woocommerce_wpml, $wpdb );
 
 		// Check bail out.
 		$_POST['_wcml_custom_costs'] = 1;
@@ -213,9 +212,22 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	}
 
 	/**
+	 * In progress.
 	 * @test
 	 */
 	public function sync_bookings() {
+		global $sitepress, $wpdb;
+		$woocommerce_wpml = $this->get_test_subject();
+		$this->bookings = new WCML_Bookings( $sitepress, $woocommerce_wpml, $wpdb );
+		$product = wpml_test_insert_post( 'en', 'product', false, random_string() );
+		$booking1 = wpml_test_insert_post( 'en', 'wc_booking', false, random_string() );
+		$booking2 = wpml_test_insert_post( 'en', 'wc_booking', false, random_string() );
+		update_post_meta( $booking1, '_booking_product_id', $product );
+		update_post_meta( $booking2, '_booking_product_id', $product );
 
+		$this->bookings->sync_bookings( $product, null, 'de' );
+
+		$duplicated1 = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id as id FROM {$this->wpdb->postmeta} WHERE meta_key = '_booking_duplicate_of' AND meta_value = %d", $booking1 ) );
+		$duplicated2 = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id as id FROM {$this->wpdb->postmeta} WHERE meta_key = '_booking_duplicate_of' AND meta_value = %d", $booking2 ) );
 	}
 }

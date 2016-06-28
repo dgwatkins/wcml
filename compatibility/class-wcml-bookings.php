@@ -21,11 +21,17 @@ class WCML_Bookings {
 	public $woocommerce_wpml;
 
 	/**
+	 * @var wpdb
+	 */
+	public $wpdb;
+
+	/**
 	 * WCML_Bookings constructor.
 	 */
-    function __construct( &$sitepress, &$woocommerce_wpml ) {
+    function __construct( &$sitepress, &$woocommerce_wpml, &$wpdb ) {
 	    $this->sitepress = $sitepress;
 	    $this->woocommerce_wpml = $woocommerce_wpml;
+	    $this->wpdb = $wpdb;
 		add_action( 'woocommerce_bookings_after_booking_base_cost', array( $this, 'wcml_price_field_after_booking_base_cost' ) );
         add_action( 'woocommerce_bookings_after_booking_block_cost' , array( $this, 'wcml_price_field_after_booking_block_cost' ) );
         add_action( 'woocommerce_bookings_after_display_cost' , array( $this, 'wcml_price_field_after_display_cost' ) );
@@ -353,20 +359,18 @@ class WCML_Bookings {
 
     // sync existing product bookings for translations
     function sync_bookings( $original_product_id, $product_id, $lang ){
-        global $wpdb;
-
-        $all_bookings_for_product = $wpdb->get_results( $wpdb->prepare( "SELECT post_id as id FROM $wpdb->postmeta WHERE meta_key = '_booking_product_id' AND meta_value = %d", $original_product_id ) );
+        $all_bookings_for_product = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id as id FROM {$this->wpdb->postmeta} WHERE meta_key = '_booking_product_id' AND meta_value = %d", $original_product_id ) );
 
         foreach($all_bookings_for_product as $booking ){
-            $check_if_exists = $wpdb->get_row( $wpdb->prepare( "SELECT pm3.* FROM {$wpdb->postmeta} AS pm1
-                                            LEFT JOIN {$wpdb->postmeta} AS pm2 ON pm1.post_id = pm2.post_id
-                                            LEFT JOIN {$wpdb->postmeta} AS pm3 ON pm1.post_id = pm3.post_id
+            $check_if_exists = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT pm3.* FROM {$this->wpdb->postmeta} AS pm1
+                                            LEFT JOIN {$this->wpdb->postmeta} AS pm2 ON pm1.post_id = pm2.post_id
+                                            LEFT JOIN {$this->wpdb->postmeta} AS pm3 ON pm1.post_id = pm3.post_id
                                             WHERE pm1.meta_key = '_booking_duplicate_of' AND pm1.meta_value = %s AND pm2.meta_key = '_language_code' AND pm2.meta_value = %s AND pm3.meta_key = '_booking_product_id'"
                 , $booking->id, $lang ) );
 
-            if( is_null( $check_if_exists ) ){
+            if( is_null( $check_if_exists ) ) {
                 $this->duplicate_booking_for_translations( $booking->id, $lang );
-            }elseif( $check_if_exists->meta_value === '' ){
+            } elseif ( '' === $check_if_exists->meta_value ) {
                 update_post_meta( $check_if_exists->post_id, '_booking_product_id', $this->get_translated_booking_product_id( $booking->id, $lang ) );
                 update_post_meta( $check_if_exists->post_id, '_booking_resource_id', $this->get_translated_booking_resource_id( $booking->id, $lang ) );
                 update_post_meta( $check_if_exists->post_id, '_booking_persons', $this->get_translated_booking_persons_ids( $booking->id, $lang ) );
@@ -377,13 +381,13 @@ class WCML_Bookings {
     function sync_booking_data( $original_product_id, $current_product_id ){
 
         if( has_term( 'booking', 'product_type', $original_product_id ) ){
-            global $wpdb, $pagenow, $iclTranslationManagement;
+            global $pagenow, $iclTranslationManagement;
 
             // get language code
             $language_details = $this->sitepress->get_element_language_details( $original_product_id, 'post_product' );
             if ( $pagenow == 'admin.php' && empty( $language_details ) ) {
                 //translation editor support: sidestep icl_translations_cache
-                $language_details = $wpdb->get_row( $wpdb->prepare( "SELECT element_id, trid, language_code, source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_id = %d AND element_type = 'post_product'", $original_product_id ) );
+                $language_details = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT element_id, trid, language_code, source_language_code FROM {$this->wpdb->prefix}icl_translations WHERE element_id = %d AND element_type = 'post_product'", $original_product_id ) );
             }
             if ( empty( $language_details ) ) {
                 return;
@@ -415,11 +419,9 @@ class WCML_Bookings {
     }
 
     function sync_resources( $original_product_id, $trnsl_product_id, $lang_code, $duplicate = true ){
-        global $wpdb;
+        $orig_resources = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT resource_id, sort_order FROM {$this->wpdb->prefix}wc_booking_relationships WHERE product_id = %d", $original_product_id ) );
 
-        $orig_resources = $wpdb->get_results( $wpdb->prepare( "SELECT resource_id, sort_order FROM {$wpdb->prefix}wc_booking_relationships WHERE product_id = %d", $original_product_id ) );
-
-        $trnsl_product_resources = $wpdb->get_col( $wpdb->prepare( "SELECT resource_id FROM {$wpdb->prefix}wc_booking_relationships WHERE product_id = %d", $trnsl_product_id ) );
+        $trnsl_product_resources = $this->wpdb->get_col( $this->wpdb->prepare( "SELECT resource_id FROM {$this->wpdb->prefix}wc_booking_relationships WHERE product_id = %d", $trnsl_product_id ) );
 
         foreach ($orig_resources as $resource) {
 
@@ -431,8 +433,8 @@ class WCML_Bookings {
 
                     unset($trnsl_product_resources[$key]);
 
-                    $wpdb->update(
-                        $wpdb->prefix . 'wc_booking_relationships',
+                    $this->wpdb->update(
+                        $this->wpdb->prefix . 'wc_booking_relationships',
                         array(
                             'sort_order' => $resource->sort_order
                         ),
@@ -466,8 +468,8 @@ class WCML_Bookings {
 
         foreach ($trnsl_product_resources as $trnsl_product_resource) {
 
-            $wpdb->delete(
-                $wpdb->prefix . 'wc_booking_relationships',
+            $this->wpdb->delete(
+                $this->wpdb->prefix . 'wc_booking_relationships',
                 array(
                     'product_id' => $trnsl_product_id,
                     'resource_id' => $trnsl_product_resource
@@ -484,7 +486,7 @@ class WCML_Bookings {
     }
 
     function duplicate_resource( $tr_product_id, $resource, $lang_code){
-        global $wpdb, $iclTranslationManagement;
+        global $iclTranslationManagement;
 
         if( method_exists( $this->sitepress, 'make_duplicate' ) ){
 
@@ -500,8 +502,8 @@ class WCML_Bookings {
 
         }
 
-        $wpdb->insert(
-            $wpdb->prefix . 'wc_booking_relationships',
+        $this->wpdb->insert(
+            $this->wpdb->prefix . 'wc_booking_relationships',
             array(
                 'product_id' => $tr_product_id,
                 'resource_id' => $trns_resource_id,
@@ -515,11 +517,9 @@ class WCML_Bookings {
     }
 
     function sync_persons( $original_product_id, $tr_product_id, $lang_code, $duplicate = true ){
-        global $wpdb;
+        $orig_persons = $this->wpdb->get_col( $this->wpdb->prepare( "SELECT ID FROM {$this->wpdb->posts} WHERE post_parent = %d AND post_type = 'bookable_person'", $original_product_id ) );
 
-        $orig_persons = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'bookable_person'", $original_product_id ) );
-
-        $trnsl_persons = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'bookable_person'", $tr_product_id ) );
+        $trnsl_persons = $this->wpdb->get_col( $this->wpdb->prepare( "SELECT ID FROM {$this->wpdb->posts} WHERE post_parent = %d AND post_type = 'bookable_person'", $tr_product_id ) );
 
 
         foreach ($orig_persons as $person) {
@@ -576,7 +576,7 @@ class WCML_Bookings {
     }
 
     function duplicate_person( $tr_product_id, $person_id, $lang_code ){
-        global $wpdb, $iclTranslationManagement;
+        global $iclTranslationManagement;
 
         if( method_exists( $this->sitepress, 'make_duplicate' ) ){
 
@@ -592,8 +592,8 @@ class WCML_Bookings {
 
         }
 
-        $wpdb->update(
-            $wpdb->posts,
+        $this->wpdb->update(
+            $this->wpdb->posts,
             array(
                 'post_parent' => $tr_product_id
             ),
@@ -1076,8 +1076,6 @@ class WCML_Bookings {
     }
 
     function custom_box_html( $obj, $product_id, $data ){
-        global $wpdb;
-
         if( wc_get_product($product_id)->product_type != 'booking' ){
             return;
         }
@@ -1186,8 +1184,7 @@ class WCML_Bookings {
     }
 
     function get_original_persons( $product_id ){
-        global $wpdb;
-        $original_persons = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'bookable_person' AND post_status = 'publish'", $product_id ) );
+        $original_persons = $this->wpdb->get_col( $this->wpdb->prepare( "SELECT ID FROM {$this->wpdb->posts} WHERE post_parent = %d AND post_type = 'bookable_person' AND post_status = 'publish'", $product_id ) );
         return $original_persons;
     }
 
@@ -1219,7 +1216,7 @@ class WCML_Bookings {
     }
 
     function wcml_products_tab_sync_resources_and_persons( $original_product_id, $tr_product_id, $data, $language ){
-        global $wpdb, $wpml_post_translations;
+        global $wpml_post_translations;
 
         remove_action ( 'save_post', array( $wpml_post_translations, 'save_post_actions' ), 100, 2 );
 
@@ -1230,7 +1227,7 @@ class WCML_Bookings {
             foreach( $orig_resources as $orig_resource_id => $cost ){
 
                 $resource_id = apply_filters( 'translate_object_id', $orig_resource_id, 'bookable_resource', false, $language );
-                $orig_resource = $wpdb->get_row( $wpdb->prepare( "SELECT resource_id, sort_order FROM {$wpdb->prefix}wc_booking_relationships WHERE resource_id = %d AND product_id = %d", $orig_resource_id, $original_product_id ), OBJECT );
+                $orig_resource = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT resource_id, sort_order FROM {$this->wpdb->prefix}wc_booking_relationships WHERE resource_id = %d AND product_id = %d", $orig_resource_id, $original_product_id ), OBJECT );
 
                 if( is_null( $resource_id ) ){
 
@@ -1243,12 +1240,12 @@ class WCML_Bookings {
                 }else{
                     //update_relationship
 
-                    $exist = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->prefix}wc_booking_relationships WHERE resource_id = %d AND product_id = %d", $resource_id, $tr_product_id ) );
+                    $exist = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT ID FROM {$this->wpdb->prefix}wc_booking_relationships WHERE resource_id = %d AND product_id = %d", $resource_id, $tr_product_id ) );
 
                     if( !$exist ){
 
-                        $wpdb->insert(
-                            $wpdb->prefix . 'wc_booking_relationships',
+                        $this->wpdb->insert(
+                            $this->wpdb->prefix . 'wc_booking_relationships',
                             array(
                                 'product_id' => $tr_product_id,
                                 'resource_id' => $resource_id,
@@ -1262,8 +1259,8 @@ class WCML_Bookings {
 
 
 
-                $wpdb->update(
-                    $wpdb->posts,
+                $this->wpdb->update(
+                    $this->wpdb->posts,
                     array(
                         'post_title' => $data[ md5( 'bookings-resource_'.$orig_resource_id.'_title')  ]
                     ),
@@ -1296,8 +1293,8 @@ class WCML_Bookings {
 
                 }else{
 
-                    $wpdb->update(
-                        $wpdb->posts,
+                    $this->wpdb->update(
+                        $this->wpdb->posts,
                         array(
                             'post_parent' => $tr_product_id
                         ),
@@ -1308,8 +1305,8 @@ class WCML_Bookings {
 
                 }
 
-                $wpdb->update(
-                    $wpdb->posts,
+                $this->wpdb->update(
+                    $this->wpdb->posts,
                     array(
                         'post_title' => $data[ md5 ( 'bookings-person_'.$original_person_id.'_title' ) ],
                         'post_excerpt' => $data[ md5( 'bookings-person_'.$original_person_id.'_description' ) ],
@@ -1361,17 +1358,19 @@ class WCML_Bookings {
             $booking_persons = maybe_unserialize( get_post_meta( $booking_id, '_booking_persons', true ) );
             $trnsl_booking_persons = array();
 
-            foreach( $booking_persons as $person_id => $person_count ){
+	        if ( is_array( $booking_persons ) && ! empty( $booking_persons ) ) {
+		        foreach( $booking_persons as $person_id => $person_count ){
 
-                $trnsl_person_id = apply_filters( 'translate_object_id', $person_id, 'bookable_person', false, $language['code']  );
+			        $trnsl_person_id = apply_filters( 'translate_object_id', $person_id, 'bookable_person', false, $language['code']  );
 
-                if( is_null( $trnsl_person_id ) ){
-                    $trnsl_booking_persons[] = $person_count;
-                }else{
-                    $trnsl_booking_persons[ $trnsl_person_id ] = $person_count;
-                }
+			        if( is_null( $trnsl_person_id ) ){
+				        $trnsl_booking_persons[] = $person_count;
+			        }else{
+				        $trnsl_booking_persons[ $trnsl_person_id ] = $person_count;
+			        }
 
-            }
+		        }
+	        }
 
             $trnsl_booking_id = wp_insert_post( $booking_data );
 
@@ -1386,8 +1385,8 @@ class WCML_Bookings {
                 '_booking_all_day'       => intval( get_post_meta( $booking_id, '_booking_all_day', true ) ),
                 '_booking_parent_id'     => get_post_meta( $booking_id, '_booking_parent_id', true ),
                 '_booking_customer_id'   => get_post_meta( $booking_id, '_booking_customer_id', true ),
-                '_booking_duplicate_of'   => $booking_id,
-                '_language_code'   => $language['code'],
+                '_booking_duplicate_of'  => $booking_id,
+                '_language_code'         => $language['code'],
             );
 
             foreach ( $meta_args as $key => $value ) {
@@ -1437,34 +1436,33 @@ class WCML_Bookings {
         $booking_persons = maybe_unserialize( get_post_meta( $booking_id, '_booking_persons', true ) );
         $trnsl_booking_persons = array();
 
-        foreach( $booking_persons as $person_id => $person_count ){
+	    if ( is_array( $booking_persons ) && ! empty( $booking_persons ) ) {
+		    foreach( $booking_persons as $person_id => $person_count ){
 
-            $trnsl_person_id = apply_filters( 'translate_object_id', $person_id, 'bookable_person', false, $language  );
+			    $trnsl_person_id = apply_filters( 'translate_object_id', $person_id, 'bookable_person', false, $language  );
 
-            if( is_null( $trnsl_person_id ) ){
-                $trnsl_booking_persons[] = $person_count;
-            }else{
-                $trnsl_booking_persons[ $trnsl_person_id ] = $person_count;
-            }
+			    if( is_null( $trnsl_person_id ) ){
+				    $trnsl_booking_persons[] = $person_count;
+			    }else{
+				    $trnsl_booking_persons[ $trnsl_person_id ] = $person_count;
+			    }
 
-        }
-
+		    }
+	    }
         return $trnsl_booking_persons;
 
     }
 
     function update_status_for_translations( $booking_id ){
-        global $wpdb;
-
         $translated_bookings = $this->get_translated_bookings( $booking_id );
 
         foreach( $translated_bookings as $booking ){
 
-            $status = $wpdb->get_var( $wpdb->prepare( "SELECT post_status FROM {$wpdb->posts} WHERE ID = %d", $booking_id ) ); //get_post_status( $booking_id );
+            $status = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT post_status FROM {$this->wpdb->posts} WHERE ID = %d", $booking_id ) ); //get_post_status( $booking_id );
             $language = get_post_meta( $booking->post_id, '_language_code', true );
 
-            $wpdb->update(
-                $wpdb->posts,
+            $this->wpdb->update(
+                $this->wpdb->posts,
                 array(
                     'post_status' => $status,
                     'post_parent' => wp_get_post_parent_id( $booking_id ),
@@ -1483,23 +1481,21 @@ class WCML_Bookings {
     }
 
     function get_translated_bookings($booking_id){
-        global $wpdb;
-
-        $translated_bookings = $wpdb->get_results( $wpdb->prepare( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_booking_duplicate_of' AND meta_value = %d", $booking_id ) );
+        $translated_bookings = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id FROM {$this->wpdb->postmeta} WHERE meta_key = '_booking_duplicate_of' AND meta_value = %d", $booking_id ) );
 
         return $translated_bookings;
     }
 
     public function booking_filters_query( $query ) {
-        global $typenow, $wpdb;
+        global $typenow;
 
         if ( ( isset( $query->query_vars['post_type'] ) && $query->query_vars['post_type'] == 'wc_booking' ) ) {
 
             $current_lang = $this->sitepress->get_current_language();
 
-            $product_ids = $wpdb->get_col( $wpdb->prepare(
+            $product_ids = $this->wpdb->get_col( $this->wpdb->prepare(
                 "SELECT element_id
-					FROM {$wpdb->prefix}icl_translations
+					FROM {$this->wpdb->prefix}icl_translations
 					WHERE language_code = %s AND element_type = 'post_product'", $current_lang ) );
 
             $product_ids = array_diff( $product_ids, array( NULL ) );
@@ -1542,10 +1538,9 @@ class WCML_Bookings {
 
         if ( isset( $_GET['post_type'] ) && $_GET['post_type'] == 'wc_booking' && isset( $_GET['page'] ) && $_GET['page'] == 'booking_calendar' ) {
 
-            global $wpdb;
             //delete transient fields
-            $wpdb->query("
-                DELETE FROM $wpdb->options
+            $this->wpdb->query("
+                DELETE FROM {$this->wpdb->options}
 		        WHERE option_name LIKE '%book_dr_%'
 		    ");
 
@@ -1562,11 +1557,8 @@ class WCML_Bookings {
             remove_action( 'before_delete_post', array( $this, 'delete_bookings' ) );
 
             foreach( $translated_bookings as $booking ){
-
-                global $wpdb;
-
-                $wpdb->update(
-                    $wpdb->posts,
+                $this->wpdb->update(
+                    $this->wpdb->posts,
                     array(
                         'post_parent' => 0
                     ),
@@ -1591,10 +1583,9 @@ class WCML_Bookings {
             $translated_bookings = $this->get_translated_bookings( $booking_id );
 
             foreach( $translated_bookings as $booking ){
-                global $wpdb;
 
-                $wpdb->update(
-                    $wpdb->posts,
+                $this->wpdb->update(
+                    $this->wpdb->posts,
                     array(
                         'post_status' => 'trash'
                     ),
@@ -1739,8 +1730,6 @@ class WCML_Bookings {
     }
 
     function save_resource_translation( $post_id, $data, $job ){
-        global $wpdb;
-
         $resource_translations = array();
 
         foreach($data as $value){
@@ -1780,13 +1769,13 @@ class WCML_Bookings {
 
                     $this->sitepress->set_element_language_details( $resource_id_translated, 'post_bookable_resource', $resource_trid, $job->language_code );
 
-                    $sort_order = $wpdb->get_var( $wpdb->prepare( "SELECT sort_order FROM {$wpdb->prefix}wc_booking_relationships WHERE resource_id=%d", $resource_id ) );
+                    $sort_order = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT sort_order FROM {$this->wpdb->prefix}wc_booking_relationships WHERE resource_id=%d", $resource_id ) );
                     $relationship = array(
                         'product_id'    => $post_id,
                         'resource_id'   => $resource_id_translated,
                         'sort_order'    => $sort_order
                     );
-                    $wpdb->insert( $wpdb->prefix . 'wc_booking_relationships',  $relationship);
+                    $this->wpdb->insert( $this->wpdb->prefix . 'wc_booking_relationships',  $relationship);
 
                 } else {
 
@@ -1797,8 +1786,8 @@ class WCML_Bookings {
 
                     wp_update_post( $resource_post );
 
-                    $sort_order = $wpdb->get_var( $wpdb->prepare( "SELECT sort_order FROM {$wpdb->prefix}wc_booking_relationships WHERE resource_id=%d", $resource_id ) );
-                    $wpdb->update( $wpdb->prefix . 'wc_booking_relationships', array( 'sort_order' => $sort_order ),
+                    $sort_order = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT sort_order FROM {$this->wpdb->prefix}wc_booking_relationships WHERE resource_id=%d", $resource_id ) );
+                    $this->wpdb->update( $this->wpdb->prefix . 'wc_booking_relationships', array( 'sort_order' => $sort_order ),
                         array ( 'product_id' => $post_id, 'resource_id' => $resource_id_translated) );
 
 
