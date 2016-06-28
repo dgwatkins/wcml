@@ -50,4 +50,18 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 		return $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
 	}
 
+	/**
+	 * @return mixed
+	 */
+	function get_wcml_multi_currency_mock() {
+		return $this->getMockBuilder( 'WCML_Multi_Currency' )->disableOriginalConstructor()->getMock();
+	}
+
+	function get_wcml_products_mock() {
+		return $this->getMockBuilder( 'WCML_Products' )->disableOriginalConstructor()->getMock();
+	}
+
+	function get_wcml_multi_currency_prices_mock() {
+		return $this->getMockBuilder( 'WCML_Multi_Currency_Prices' )->disableOriginalConstructor()->getMock();
+	}
 }
