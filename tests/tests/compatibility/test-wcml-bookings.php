@@ -212,22 +212,75 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	}
 
 	/**
-	 * In progress.
+	 * Requires bookings plugin integration to avoid SQL issues.
 	 * @test
 	 */
-	public function sync_bookings() {
+	public function save_resource_translation() {
 		global $sitepress, $wpdb;
+		$post_name = random_string();
+		$product = wpml_test_insert_post( 'en', 'product', false, random_string() );
+		$bookable_resource = wpml_test_insert_post( 'en', 'bookable_resource', false, random_string() );
+		$data = array(
+			array(
+				'finished'   => true,
+				'field_type' => 'wc_bookings:resource:' . $bookable_resource . ':name',
+				'data'       => $post_name,
+			),
+		);
+		$job = new stdClass();
+		$job->language_code = 'de';
 		$woocommerce_wpml = $this->get_test_subject();
 		$this->bookings = new WCML_Bookings( $sitepress, $woocommerce_wpml, $wpdb );
-		$product = wpml_test_insert_post( 'en', 'product', false, random_string() );
-		$booking1 = wpml_test_insert_post( 'en', 'wc_booking', false, random_string() );
-		$booking2 = wpml_test_insert_post( 'en', 'wc_booking', false, random_string() );
-		update_post_meta( $booking1, '_booking_product_id', $product );
-		update_post_meta( $booking2, '_booking_product_id', $product );
+		$this->bookings->save_resource_translation( $product, $data, $job );
+	}
 
-		$this->bookings->sync_bookings( $product, null, 'de' );
+	/**
+	 * @test
+	 */
+	public function sync_resource_costs() {
+		global $sitepress, $wpdb;
+		$product1 = wpml_test_insert_post( 'en', 'product', false, random_string() );
+		$product2 = wpml_test_insert_post( 'de', 'product', false, random_string() );
+		$bookable_resource1 = wpml_test_insert_post( 'en', 'bookable_resource', false, random_string() );
+		$woocommerce_wpml = $this->get_test_subject();
+		$this->bookings = new WCML_Bookings( $sitepress, $woocommerce_wpml, $wpdb );
+		$expected = array(
+			'custom_costs' => array(
+				'custom_costs' => array(
+					'en' => array(
+						$bookable_resource1 => array(
+							$this->usd_code  => 100,
+							$this->euro_code => 101,
+						),
+					),
+				),
+			),
+			$bookable_resource1 => array(
+				$this->usd_code  => 100,
+				$this->euro_code => 101,
+			),
+		);
+		add_post_meta( $product1, 'base_cost', $expected );
 
-		$duplicated1 = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id as id FROM {$this->wpdb->postmeta} WHERE meta_key = '_booking_duplicate_of' AND meta_value = %d", $booking1 ) );
-		$duplicated2 = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id as id FROM {$this->wpdb->postmeta} WHERE meta_key = '_booking_duplicate_of' AND meta_value = %d", $booking2 ) );
+		$this->bookings->sync_resource_costs( $product1, $product2, 'base_cost', 'de' );
+
+		$output = get_post_meta( $product2, 'base_cost', true );
+		$trns_resource_id = apply_filters( 'translate_object_id', $bookable_resource1, 'bookable_resource', true, 'de' );
+		$this->assertTrue( isset( $output['custom_costs'] ) );
+		$this->assertTrue( isset( $output['custom_costs']['en'] ) );
+		$this->assertTrue( isset( $output['custom_costs']['en'][ $trns_resource_id ] ) );
+		$this->assertEquals( 100, $output['custom_costs']['en'][ $trns_resource_id ][ $this->usd_code ] );
+		$this->assertEquals( 101, $output['custom_costs']['en'][ $trns_resource_id ][ $this->euro_code ] );
+
+		$this->assertTrue( isset( $output[ $trns_resource_id ] ) );
+		$this->assertEquals( 100, $output[ $trns_resource_id ][ $this->usd_code ] );
+		$this->assertEquals( 101, $output[ $trns_resource_id ][ $this->euro_code ] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function duplicate_resource() {
+
 	}
 }
