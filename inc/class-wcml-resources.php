@@ -106,7 +106,7 @@ class WCML_Resources {
 
             wp_register_script( 'cart-widget', WCML_PLUGIN_URL . '/res/js/cart_widget' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION );
             wp_enqueue_script( 'cart-widget' );
-            wp_localize_script( 'cart-widget', 'is_lang_switched', self::$sitepress->get_language_from_url( $referer ) !=  self::$sitepress->get_current_language() ? 1 : 0 );
+            wp_localize_script( 'cart-widget', 'is_lang_switched', array( 'flag' => self::$sitepress->get_language_from_url( $referer ) !=  self::$sitepress->get_current_language() ? 1 : 0 ) );
         } else {
             wp_register_script( 'wcml-messages', WCML_PLUGIN_URL . '/res/js/wcml-messages' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION );
             wp_enqueue_script( 'wcml-messages' );
