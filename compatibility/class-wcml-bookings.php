@@ -544,7 +544,7 @@ class WCML_Bookings {
                         foreach( $currencies as $code => $currency ){
 
                             update_post_meta( $trnsl_person_id, 'block_cost_'.$code, get_post_meta( $person, 'block_cost_'.$code, true ) );
-                            update_post_meta( $trnsl_person_id, 'block_cost_'.$code, get_post_meta( $person, 'cost_'.$code, true ) );
+                            update_post_meta( $trnsl_person_id, 'cost_'.$code, get_post_meta( $person, 'cost_'.$code, true ) );
 
                         }
                     }
@@ -1149,13 +1149,15 @@ class WCML_Bookings {
 
         $orig_resources = $this->get_original_resources( $product_id );
 
-        if( $orig_resources ){
+        if( $orig_resources && is_array( $orig_resources ) ){
 
             foreach ( $orig_resources as $resource_id => $cost) {
 
-                if ($resource_id == 'custom_costs') continue;
+                if ( 'custom_costs' === $resource_id ){
+                    continue;
+                }
                 $data[ 'bookings-resource_'.$resource_id.'_title' ] = array( 'original' => get_the_title( $resource_id ) );
-
+                global $sitepress;
                 $trns_resource_id = apply_filters('translate_object_id', $resource_id, 'bookable_resource', false, $lang);
                 $data[ 'bookings-resource_'.$resource_id.'_title' ][ 'translation' ] = $trns_resource_id ? get_the_title( $trns_resource_id ) : '';
             }
@@ -1373,6 +1375,8 @@ class WCML_Bookings {
 	        }
 
             $trnsl_booking_id = wp_insert_post( $booking_data );
+            $trid = $this->sitepress->get_element_trid( $booking_id );
+            $this->sitepress->set_element_language_details( $trnsl_booking_id, 'post_wc_booking', $trid, $language['code'] );
 
             $meta_args = array(
                 '_booking_order_item_id' => get_post_meta( $booking_id, '_booking_order_item_id', true ),
@@ -1403,6 +1407,7 @@ class WCML_Bookings {
     function get_translated_booking_product_id( $booking_id, $language ){
 
         $booking_product_id = get_post_meta( $booking_id, '_booking_product_id', true );
+        $trnsl_booking_product_id = '';
 
         if( $booking_product_id ){
             $trnsl_booking_product_id = apply_filters( 'translate_object_id', $booking_product_id, 'product', false, $language );
@@ -1516,6 +1521,8 @@ class WCML_Bookings {
                 );
             }
         }
+
+        return $query;
     }
 
     function bookings_in_date_range_query($booking_ids){

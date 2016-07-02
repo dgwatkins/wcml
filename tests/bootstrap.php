@@ -18,6 +18,10 @@ if ( ! defined( 'WC_PATH' ) ) {
 	define( 'WC_PATH', dirname( __FILE__ ) . '/../../woocommerce' );
 }
 
+if ( ! defined( 'WC_BOOKING_PATH' ) ) {
+	define( 'WC_BOOKING_PATH', dirname( __FILE__ ) . '/../../woocommerce-bookings' );
+}
+
 $_tests_dir = isset( $_ENV['WP_TEST_DIR'] ) ? $_ENV['WP_TEST_DIR'] : 'wordpress-tests-lib';
 require_once $_tests_dir . '/includes/functions.php';
 
@@ -40,6 +44,12 @@ function _install_wc(){
 
 	// reload capabilities after install, see https://core.trac.wordpress.org/ticket/28374
 	$GLOBALS['wp_roles']->reinit();
+	function is_woocommerce_active() {
+		return true;
+	}
+	require WC_BOOKING_PATH . '/woocommmerce-bookings.php';
+	$GLOBALS['wc_bookings']->includes();
+	$GLOBALS['wc_bookings']->delayed_install();
 }
 
 
@@ -63,7 +73,6 @@ function WP_REST_Server_placeholder(){
 	}
 }
 
-
 require $_tests_dir . '/includes/bootstrap.php';
 require WPML_CORE_PATH . '/tests/util/wpml-unittestcase.class.php';
 require WC_PATH . '/tests/framework/class-wc-unit-test-case.php';
@@ -74,5 +83,3 @@ require WC_PATH . '/tests/framework/factories/class-wc-unit-test-factory-for-web
 require WCML_CORE_TM_PATH . '/tests/util/wcml-unittestcase.class.php';
 require WCML_CORE_TM_PATH . '/tests/util/class-wcml-helper.php';
 require WCML_CORE_TM_PATH . '/tests/util/class-wcml-helper-coupon.php';
-
-
