@@ -26,7 +26,7 @@ class WCML_Table_Rate_Shipping{
 
     public function default_shipping_class_id($args){
         global $sitepress, $woocommerce_wpml;
-        if($sitepress->get_current_language() != $sitepress->get_default_language() && !empty($args['shipping_class_id'])){
+        if( !empty($args['shipping_class_id'])){
 
             $args['shipping_class_id'] = apply_filters( 'translate_object_id',$args['shipping_class_id'], 'product_shipping_class', false, $sitepress->get_default_language());
 
