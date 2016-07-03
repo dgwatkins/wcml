@@ -51,10 +51,9 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function save_custom_costs() {
-		$woocommerce_wpml = $this->get_test_subject();
 		$product_id = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
 		$_POST['_wcml_custom_costs_nonce'] = wp_create_nonce( 'wcml_save_custom_costs' );
-		$this->bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$this->bookings = $this->get_wcml_booking_object();
 
 		// Check bail out.
 		$_POST['_wcml_custom_costs'] = 1;
@@ -243,9 +242,8 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			),
 		);
 		$job = new stdClass();
-		$job->language_code = 'de';
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$job->language_code = $this->second_language;
+		$bookings = $this->get_wcml_booking_object();
 		$bookings->save_resource_translation( $product, $data, $job );
 	}
 
@@ -254,10 +252,9 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 */
 	public function sync_resource_costs() {
 		$product1 = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
-		$product2 = wpml_test_insert_post( 'de', 'product', false, random_string() );
+		$product2 = wpml_test_insert_post( $this->second_language, 'product', false, random_string() );
 		$bookable_resource1 = wpml_test_insert_post( $this->default_language, 'bookable_resource', false, random_string() );
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $bookings = $this->get_wcml_booking_object();
 		$expected = array(
 			'custom_costs' => array(
 				'custom_costs' => array(
@@ -276,10 +273,10 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		);
 		add_post_meta( $product1, 'base_cost', $expected );
 
-		$bookings->sync_resource_costs( $product1, $product2, 'base_cost', 'de' );
+		$bookings->sync_resource_costs( $product1, $product2, 'base_cost', $this->second_language );
 
 		$output = get_post_meta( $product2, 'base_cost', true );
-		$trns_resource_id = apply_filters( 'translate_object_id', $bookable_resource1, 'bookable_resource', true, 'de' );
+		$trns_resource_id = apply_filters( 'translate_object_id', $bookable_resource1, 'bookable_resource', true, $this->second_language );
 		$this->assertTrue( isset( $output['custom_costs'] ) );
 		$this->assertTrue( isset( $output['custom_costs'][ $this->default_language ] ) );
 		$this->assertTrue( isset( $output['custom_costs'][ $this->default_language ][ $trns_resource_id ] ) );
@@ -386,8 +383,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function get_cookie_booking_currency() {
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $bookings = $this->get_wcml_booking_object();
 		$_COOKIE['_wcml_booking_currency'] = 'USD';
 		$backup = get_option( 'woocommerce_currency', '' );
 		update_option( 'woocommerce_currency', 'EUR', 'no' );
@@ -405,8 +401,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$_COOKIE['_wcml_booking_currency'] = 'USD';
 		$_GET['page'] = 'create_booking';
 		$pagenow = 'edit.php';
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $bookings = $this->get_wcml_booking_object();
 		$this->assertEquals( 10, has_filter( 'woocommerce_currency_symbol', array( $bookings, 'filter_booking_currency_symbol' ) ) );
 		$this->assertEquals( '&#36;', $bookings->filter_booking_currency_symbol( $_COOKIE['_wcml_booking_currency'] ) );
 		unset( $_COOKIE['_wcml_booking_currency'] );
@@ -419,8 +414,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function custom_box_html_data() {
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object();
 		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
 		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
 		$translation = wpml_test_insert_post( $this->second_language, 'product', $trid, random_string() );
@@ -515,12 +509,12 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 
 		$bookable_person = wpml_test_insert_post( $this->default_language, 'bookable_person', false, random_string() );
 
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object();
 		$tr_person = $bookings->duplicate_person( $tr_product, $bookable_person, $this->second_language );
 		$this->duplicate_person_checks( $tr_person, $tr_product );
 
 		$empty_class = new stdClass();
+		$woocommerce_wpml = $this->get_test_subject();
 		$bookings = new WCML_Bookings( $empty_class, $woocommerce_wpml, $this->wpdb );
 		$tr_person = $bookings->duplicate_person( $tr_product, $bookable_person, $this->second_language );
 		$this->duplicate_person_checks( $tr_person, $tr_product );
@@ -581,14 +575,12 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$this->assertEquals( $cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $cost, array(), 'name', 'name_key' ) );
 		$this->assertEquals( $block_cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $block_cost, array(), 'name', 'name_key' ) );
 
-		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
+		$product = $this->create_bookable_product( $this->default_language );
 		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
-		$translation = wpml_test_insert_post( $this->second_language, 'product', $trid, random_string() );
+		$translation = $this->create_bookable_product( $this->second_language, $trid );
 
 		update_post_meta( $product, '_wc_booking_pricing', array( 'name_key' => array( 'nameUSD' => $cost * 1.1 ) ) );
-		// Add booking term
-		wp_set_post_terms( $product, array( (int) $this->booking_term['term_id'] ), 'product_type' );
-		wp_set_post_terms( $translation, array( (int) $this->booking_term_tranlsation['term_id'] ), 'product_type' );
+
 		$_POST['add-to-cart'] = $translation;
 		$this->assertEquals( $cost * 1.1, $bookings->filter_pricing_cost( $cost, array(), 'name', 'name_key' ) );
 	}
@@ -597,18 +589,15 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function get_translated_booking_product_id() {
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object();
 
 		$wc_booking = wpml_test_insert_post( $this->default_language, 'wc_booking', false, random_string() );
-		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
-		wp_set_post_terms( $product, array( (int) $this->booking_term['term_id'] ), 'product_type' );
+		$product = $this->create_bookable_product( $this->default_language );
 		update_post_meta( $wc_booking, '_booking_product_id', $product );
 
 		$this->assertEquals( '', $bookings->get_translated_booking_product_id( $wc_booking, $this->second_language ) );
 		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
-		$translation = wpml_test_insert_post( $this->second_language, 'product', $trid, random_string() );
-		wp_set_post_terms( $translation, array( (int) $this->booking_term_tranlsation['term_id'] ), 'product_type' );
+		$translation = $this->create_bookable_product( $this->second_language, $trid );
 		$this->assertEquals( $translation, $bookings->get_translated_booking_product_id( $wc_booking, $this->second_language ) );
 	}
 
@@ -616,8 +605,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function get_translated_booking_resource_id() {
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object();
 
 		$wc_booking = wpml_test_insert_post( $this->default_language, 'wc_booking', false, random_string() );
 		$bookable_resource = wpml_test_insert_post( $this->default_language, 'bookable_resource', false, random_string() );
@@ -633,8 +621,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function get_translated_booking_persons_ids() {
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object();
 
 		$wc_booking = wpml_test_insert_post( $this->default_language, 'wc_booking', false, random_string() );
 		$bookable_person1 = wpml_test_insert_post( $this->default_language, 'bookable_person', false, random_string() );
@@ -656,8 +643,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function update_status_for_translations() {
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object();
 
 		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
 		$wc_booking = wpml_test_insert_post( $this->default_language, 'wc_booking', false, random_string(), $product );
@@ -685,8 +671,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$query->query_vars = array();
 		$query->query_vars['post_type'] = 'wc_booking';
 
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object();
 
 		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
 		$product1 = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
@@ -722,8 +707,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$wc_booking1  = wpml_test_insert_post( $this->default_language, 'wc_booking', false, random_string(), $product );
 		update_post_meta( $wc_booking1, '_booking_product_id', $tr_product );
 
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object();
 		$output = $bookings->bookings_in_date_range_query( array( $wc_booking, $wc_booking1 ) );
 		$expected = array( $wc_booking );
 
@@ -734,8 +718,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function delete_bookings() {
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object();
 
 		$wc_booking = wpml_test_insert_post( $this->default_language, 'wc_booking', false, random_string() );
 		$trid = $this->sitepress->get_element_trid( $wc_booking, 'post_wc_booking' );
@@ -756,8 +739,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function trash_bookings() {
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object();
 
 		$wc_booking = wpml_test_insert_post( $this->default_language, 'wc_booking', false, random_string() );
 		$trid = $this->sitepress->get_element_trid( $wc_booking, 'post_wc_booking' );
@@ -810,8 +792,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		);
 		$job = new stdClass();
 		$job->language_code = $this->second_language;
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object();
 		$bookings->save_person_translation( $product, $data, $job );
 		wp_cache_init();
 		$this->assertEquals( $name, get_the_title( $tr_bookable_person1 ) );
@@ -829,8 +810,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
 		$wc_booking = wpml_test_insert_post( $this->default_language, 'wc_booking', false, $booking_title, $product );
 		update_post_meta( $wc_booking, '_booking_product_id', $product );
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object();
 		$meta_data = array(
 			'_booking_order_item_id' => random_int( 1, 999 ),
 			'_booking_cost'          => random_int( 1, 999 ),
@@ -885,8 +865,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			'bookings_availability select',
 			'bookings_persons input[type="checkbox"]',
 		);
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object();
 		$this->assertEquals( $expected, $bookings->wcml_js_lock_fields_ids( array() ) );
 	}
 
@@ -896,12 +875,10 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	public function append_persons_to_translation_package() {
 		$this->switch_to_admin();
 		$tp = new WPML_Element_Translation_Package;
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object();
 
-		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
+		$product = $product = $this->create_bookable_product( $this->default_language );
 		$product_obj = get_post( $product );
-		wp_set_post_terms( $product, array( (int) $this->booking_term['term_id'] ), 'product_type' );
 
 		$this->assertEquals( array(), $bookings->append_persons_to_translation_package( array(), $product_obj ) );
 		$person_title = random_string();
@@ -931,8 +908,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	public function append_resources_to_translation_package() {
 		$this->switch_to_admin();
 		$tp = new WPML_Element_Translation_Package;
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object();
 
 		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
 		$product_obj = get_post( $product );
@@ -968,4 +944,166 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$this->assertEquals( $expected, $bookings->append_resources_to_translation_package( array(), $product_obj ) );
 		$this->switch_to_front();
 	}
+
+	/**
+	 * @tests
+	 */
+	public function sync_bookings() {
+		$wc_booking = wpml_test_insert_post( $this->default_language, 'wc_booking', false, random_string() );
+		$product = $this->create_bookable_product( $this->default_language );
+		update_post_meta( $wc_booking, '_booking_product_id', $product );
+
+		$bookings = $this->get_wcml_booking_object();
+
+		$meta_data = array(
+			'_booking_order_item_id' => random_int( 1, 999 ),
+			'_booking_cost'          => random_int( 1, 999 ),
+			'_booking_start'         => random_int( 1, 999 ),
+			'_booking_end'           => random_int( 1, 999 ),
+			'_booking_all_day'       => random_int( 1, 999 ),
+			'_booking_parent_id'     => $product,
+			'_booking_customer_id'   => random_int( 1, 999 ),
+			'_language_code'         => $this->second_language,
+		);
+
+		foreach ( $meta_data as $key => $value ) {
+			update_post_meta( $wc_booking, $key, $value );
+		}
+
+		$bookings->sync_bookings( $product, null, $this->second_language );
+
+		$tr_wc_booking = apply_filters( 'translate_object_id', $wc_booking, 'wc_booking', false, $this->second_language );
+
+		foreach ( $meta_data as $key => $value ) {
+			$this->assertEquals( $value, get_post_meta( $tr_wc_booking, $key, true ) );
+		}
+
+		$this->assertEquals( $wc_booking, get_post_meta( $tr_wc_booking, '_booking_duplicate_of', true ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function sync_booking_data() {
+		$product = $this->create_bookable_product( $this->default_language );
+		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
+		$translation = $this->create_bookable_product( $this->second_language, $trid );
+		$bookings = $this->get_wcml_booking_object();
+
+		// Add resource.
+		$person_title = random_string();
+		$bookable_resource = wpml_test_insert_post( $this->default_language, 'bookable_resource', false, $person_title, $product );
+		$trid = $this->sitepress->get_element_trid( $bookable_resource, 'post_bookable_resource' );
+		$resource_translation = wpml_test_insert_post( $this->second_language, 'bookable_resource', $trid, $person_title, $translation );
+		$bookable_resource1 = wpml_test_insert_post( $this->default_language, 'bookable_resource', false, $person_title, $product );
+		update_post_meta( $bookable_resource1, 'dummy_key', 'dummy_value' );
+
+		$qty = random_int( 1, 999 );
+		$available = random_int( 1, 999 );
+		update_post_meta( $bookable_resource, 'qty', $qty );
+		update_post_meta( $bookable_resource, '_wc_booking_availability', $available );
+		$this->wpdb->insert(
+			$this->wpdb->prefix . 'wc_booking_relationships',
+			array( 'resource_id' => $bookable_resource, 'product_id'  => $product, 'sort_order'  => '1', ),
+			array( '%d', '%d', '%s', )
+		);
+		$this->wpdb->insert(
+			$this->wpdb->prefix . 'wc_booking_relationships',
+			array( 'resource_id' => $resource_translation, 'product_id'  => $translation, 'sort_order'  => '0', ),
+			array( '%d', '%d', '%s', )
+		);
+		$this->wpdb->insert(
+			$this->wpdb->prefix . 'wc_booking_relationships',
+			array( 'resource_id' => $bookable_resource1, 'product_id'  => $product, 'sort_order'  => '0', ),
+			array( '%d', '%d', '%s', )
+		);
+		update_post_meta( $product, '_wc_booking_has_resources', 'yes' );
+
+		$bookings->sync_booking_data( $product, null );
+
+		$this->assertEquals( $qty, get_post_meta( $resource_translation, 'qty', true ) );
+		$this->assertEquals( $available, get_post_meta( $resource_translation, '_wc_booking_availability', true ) );
+		$sort_order = $this->wpdb->get_results(
+			$this->wpdb->prepare(
+				"SELECT sort_order FROM {$this->wpdb->prefix}wc_booking_relationships WHERE resource_id = %d AND product_id = %d",
+				$resource_translation,
+				$translation
+			)
+		);
+		$this->assertEquals( '1', $sort_order[0]->sort_order );
+
+		// Check if resource duplicated.
+		$trns_resource_id = apply_filters( 'translate_object_id', $bookable_resource1, 'bookable_resource', true, $this->second_language );
+		$sort_order = $this->wpdb->get_results(
+			$this->wpdb->prepare(
+				"SELECT sort_order, resource_id FROM {$this->wpdb->prefix}wc_booking_relationships WHERE product_id = %d",
+				$translation
+			)
+		);
+		$this->assertEquals( $trns_resource_id, $sort_order[1]->resource_id );
+		$this->assertEquals( 'dummy_value', get_post_meta( $trns_resource_id, 'dummy_key', true ) );
+	}
+
+	private function create_bookable_product( $lang, $trid = false ) {
+		$product = wpml_test_insert_post( $lang, 'product', $trid, random_string() );
+		wp_set_post_terms( $product, array( (int) $this->booking_term['term_id'] ), 'product_type' );
+		return $product;
+	}
+
+	private function get_wcml_booking_object() {
+		$woocommerce_wpml = $this->get_test_subject();
+		return  new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+	}
+
+	/**
+	 * @test
+	 */
+	public function filter_wc_booking_cost() {
+		$block_cost = random_int( 1, 99999 );
+		$cost = random_int( 1, 99999 );
+		$check = random_int( 1, 9999 );
+		$base_costs = random_int( 1, 9999 );
+		$rates = array(
+			$this->usd_code  => random_int( 1, 9 ),
+			$this->euro_code => random_int( 1, 9 ),
+		);
+		$woocommerce_wpml = $this->get_test_subject();
+		$woocommerce_wpml->settings['enable_multi_currency'] = 2;
+
+		$woocommerce_wpml->multi_currency->prices
+			->method( 'convert_price_amount' )
+			->willReturnMap( array(
+				array(
+					$block_cost,
+					$this->usd_code,
+					$block_cost,
+				),
+				array(
+					$base_costs,
+					$this->usd_code,
+					$base_costs,
+				),
+				array(
+					(string) $base_costs,
+					$this->usd_code,
+					$base_costs,
+				),
+			) );
+
+		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
+		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
+		$translation = wpml_test_insert_post( $this->second_language, 'product', $trid, random_string() );
+		update_post_meta( $product, '_resource_base_costs', array( 1 => $block_cost ) );
+		update_post_meta( $product, '_wc_booking_base_cost', $base_costs );
+		$output = $bookings->filter_wc_booking_cost( $check, $product, '_resource_base_costs', true );
+		$this->assertEquals( $block_cost, $output[0][1] );
+		$this->assertEquals( $check, $bookings->filter_wc_booking_cost( $check, $translation, '_resource_base_costs', true ) );
+		$this->assertEquals( $base_costs, $bookings->filter_wc_booking_cost( $check, $product, '_wc_booking_base_cost', true ) );
+		update_post_meta( $product, '_wc_display_cost_' . $this->usd_code, $base_costs );
+		update_post_meta( $product, '_wcml_custom_costs_status', true );
+		$this->assertEquals( $base_costs, $bookings->filter_wc_booking_cost( $check, $product, '_wc_display_cost', true ) );
+	}
+
+	
 }
