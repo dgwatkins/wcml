@@ -250,6 +250,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 
 	/**
 	 * Requires bookings plugin integration to avoid SQL issues.
+	 * @test
 	 */
 	public function save_resource_translation() {
 		$post_name = random_string();
@@ -896,7 +897,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function append_persons_to_translation_package() {
-		$this->switch_to_admin();
+		set_current_screen( 'admin' );
 		$tp = new WPML_Element_Translation_Package;
 		$bookings = $this->get_wcml_booking_object();
 
@@ -922,14 +923,14 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			),
 		);
 		$this->assertEquals( $expected, $bookings->append_persons_to_translation_package( array(), $product_obj ) );
-		$this->switch_to_front();
+		set_current_screen( 'front' );
 	}
 
 	/**
 	 * @test
 	 */
 	public function append_resources_to_translation_package() {
-		$this->switch_to_admin();
+		set_current_screen( 'admin' );
 		$tp = new WPML_Element_Translation_Package;
 		$bookings = $this->get_wcml_booking_object();
 
@@ -965,11 +966,11 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			),
 		);
 		$this->assertEquals( $expected, $bookings->append_resources_to_translation_package( array(), $product_obj ) );
-		$this->switch_to_front();
+		set_current_screen( 'front' );
 	}
 
 	/**
-	 * @tests
+	 * @test
 	 */
 	public function sync_bookings() {
 		$wc_booking = wpml_test_insert_post( $this->default_language, 'wc_booking', false, random_string() );
