@@ -144,6 +144,9 @@ class WCML_Synchronize_Product_Data{
             $this->woocommerce_wpml->multi_currency->custom_prices->sync_product_variations_custom_prices($original_product_id);
         }
 
+        // Clear any unwanted data
+        wc_delete_product_transients( $translated_product_id );
+
     }
 
     public function sync_product_data( $original_product_id, $tr_product_id, $lang ){
@@ -174,6 +177,9 @@ class WCML_Synchronize_Product_Data{
         $this->woocommerce_wpml->sync_variations_data->sync_product_variations( $original_product_id, $tr_product_id, $lang );
 
         $this->sync_linked_products( $original_product_id, $tr_product_id, $lang );
+
+        // Clear any unwanted data
+        wc_delete_product_transients( $tr_product_id );
     }
 
     public function sync_product_taxonomies( $original_product_id, $tr_product_id, $lang ){
