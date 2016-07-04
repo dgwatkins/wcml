@@ -613,7 +613,7 @@ class WCML_Bookings{
                         foreach( $currencies as $code => $currency ){
 
                             update_post_meta( $trnsl_person_id, 'block_cost_'.$code, get_post_meta( $person, 'block_cost_'.$code, true ) );
-                            update_post_meta( $trnsl_person_id, 'block_cost_'.$code, get_post_meta( $person, 'cost_'.$code, true ) );
+                            update_post_meta( $trnsl_person_id, 'cost_'.$code, get_post_meta( $person, 'cost_'.$code, true ) );
 
                         }
                     }
