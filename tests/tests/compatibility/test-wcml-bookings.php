@@ -1105,5 +1105,32 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$this->assertEquals( $base_costs, $bookings->filter_wc_booking_cost( $check, $product, '_wc_display_cost', true ) );
 	}
 
-	
+	/**
+	 * @test
+	 */
+	public function filter_bundled_product_in_cart_contents() {
+		$prod_qty = random_int( 1, 9000 );
+		$booking = $this->create_bookable_product( $this->default_language );
+		$trid = $this->sitepress->get_element_trid( $booking, 'post_product' );
+		$translation = $this->create_bookable_product( $this->second_language, $trid );
+
+		update_post_meta( $booking, '_wc_booking_pricing', array( 'base_cost' => random_int( 1, 999 ) ) );
+		update_post_meta( $translation, '_wc_booking_pricing', array( 'base_cost' => random_int( 1, 999 ) ) );
+		update_post_meta( $booking, '_wc_booking_qty', $prod_qty );
+		$cart_item = array(
+			'data'    => new WC_Product_Booking( $booking ),
+			'booking' => array(
+				'_year'  => random_int( 1900, 2016 ),
+				'_month' => random_int( 1, 12 ),
+				'_day'   => random_int( 1, 30 ),
+				'_qty'   => random_int( 1, 900 ),
+			),
+		);
+
+		$woocommerce_wpml = $this->get_test_subject();
+		$woocommerce_wpml->settings['enable_multi_currency'] = 2;
+
+		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$output = $bookings->filter_bundled_product_in_cart_contents( $cart_item, null, $this->second_language );
+	}
 }
