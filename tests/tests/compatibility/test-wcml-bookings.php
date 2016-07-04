@@ -20,6 +20,11 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 
 	function setUp() {
 		global $sitepress, $wpdb;
+		if ( ! class_exists( 'WC_Bookings' ) ) {
+			$this->markTestSkipped(
+				'The WC Bookings extension is not loaded.'
+			);
+		}
 		parent::setUp();
 		$this->usd_code  = 'USD';
 		$this->euro_code = 'EUR';
@@ -34,6 +39,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			$this->usd_code  => array( 'languages' => array( $this->default_language, $this->second_language ) ),
 			$this->euro_code => array( 'languages' => array( $this->default_language, $this->second_language ) ),
 		);
+
 
 		wpml_test_reg_custom_post_type( 'bookable_person', true );
 		wpml_test_reg_custom_post_type( 'bookable_resource', true );
@@ -74,6 +80,8 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$this->check_update_booking_person_block_cost( $product_id );
 		$this->check_update_booking_resource_cost( $product_id );
 		$this->check_update_booking_resource_block_cost( $product_id );
+		unset( $_POST['_wcml_custom_costs'] );
+		unset( $_POST['_wcml_custom_costs_nonce'] );
 	}
 
 	/**
@@ -95,6 +103,9 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			$this->assertEquals( '101', get_post_meta( $product_id, '_wc_booking_base_cost_' . $currency_code, true ) );
 			$this->assertEquals( '102', get_post_meta( $product_id, '_wc_display_cost_' . $currency_code, true ) );
 		}
+		unset( $_POST['wcml_wc_booking_cost'] );
+		unset( $_POST['wcml_wc_booking_base_cost'] );
+		unset( $_POST['wcml_wc_display_cost'] );
 	}
 
 	/**
@@ -125,6 +136,8 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			$this->assertEquals( 900, $result['test_booking_key'][ 'base_cost_' . $currency_code ] );
 			$this->assertEquals( 901, $result['test_booking_key'][ 'cost_' . $currency_code ] );
 		}
+		unset( $_POST['wcml_wc_booking_pricing_base_cost'] );
+		unset( $_POST['wcml_wc_booking_pricing_cost'] );
 	}
 
 	/**
@@ -143,6 +156,8 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 
 		$this->assertEquals( $this->usd_price, get_post_meta( $bookable_person, 'cost_' . $this->usd_code, true ) );
 		$this->assertEquals( $this->eur_price, get_post_meta( $bookable_person, 'cost_' . $this->euro_code, true ) );
+
+		unset( $_POST['wcml_wc_booking_person_cost'] );
 	}
 
 	/**
@@ -161,6 +176,8 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 
 		$this->assertEquals( $this->usd_price, get_post_meta( $bookable_person, 'block_cost_' . $this->usd_code, true ) );
 		$this->assertEquals( $this->eur_price, get_post_meta( $bookable_person, 'block_cost_' . $this->euro_code, true ) );
+
+		unset( $_POST['wcml_wc_booking_person_block_cost'] );
 	}
 
 	/**
@@ -182,6 +199,8 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 
 		$this->assertEquals( $this->usd_price, $custom_costs['custom_costs'][ $this->usd_code ][ $resource_id ] );
 		$this->assertEquals( $this->eur_price, $custom_costs['custom_costs'][ $this->euro_code ][ $resource_id ] );
+
+		unset( $_POST['wcml_wc_booking_resource_cost'] );
 	}
 
 	/**
@@ -203,6 +222,8 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 
 		$this->assertEquals( 100, $custom_costs['custom_costs'][ $this->usd_code ][ $resource_id ] );
 		$this->assertEquals( 101, $custom_costs['custom_costs'][ $this->euro_code ][ $resource_id ] );
+
+		unset( $_POST['wcml_wc_booking_resource_block_cost'] );
 	}
 
 	private function get_test_subject() {
@@ -408,6 +429,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$this->assertEquals( 'test', $bookings->filter_booking_currency_symbol( 'test' ) );
 		$_COOKIE['_wcml_booking_currency'] = random_string();
 		$this->assertEquals( '', $bookings->filter_booking_currency_symbol( $_COOKIE['_wcml_booking_currency'] ) );
+		unset( $_GET['page'] );
 	}
 
 	/**
@@ -583,6 +605,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 
 		$_POST['add-to-cart'] = $translation;
 		$this->assertEquals( $cost * 1.1, $bookings->filter_pricing_cost( $cost, array(), 'name', 'name_key' ) );
+		unset( $_POST['add-to-cart'] );
 	}
 
 	/**
@@ -1117,6 +1140,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		update_post_meta( $booking, '_wc_booking_pricing', array( 'base_cost' => random_int( 1, 999 ) ) );
 		update_post_meta( $translation, '_wc_booking_pricing', array( 'base_cost' => random_int( 1, 999 ) ) );
 		update_post_meta( $booking, '_wc_booking_qty', $prod_qty );
+		update_post_meta( $translation, '_wc_booking_qty', $prod_qty );
 		$cart_item = array(
 			'data'    => new WC_Product_Booking( $booking ),
 			'booking' => array(
@@ -1132,5 +1156,11 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 
 		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
 		$output = $bookings->filter_bundled_product_in_cart_contents( $cart_item, null, $this->second_language );
+		$this->assertEquals( $translation, $output['data']->id );
+		$this->assertEquals( 'booking', $output['data']->product_type );
+		$this->assertEquals( $cart_item['booking']['_year'], $output['booking']['_year'] );
+		$this->assertEquals( $cart_item['booking']['_month'], $output['booking']['_month'] );
+		$this->assertEquals( $cart_item['booking']['_qty'], $output['booking']['_qty'] );
+		$this->assertEquals( $prod_qty, get_post_meta( $output['data']->id, '_wc_booking_qty', true ) );
 	}
 }

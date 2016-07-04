@@ -47,9 +47,11 @@ function _install_wc(){
 	function is_woocommerce_active() {
 		return true;
 	}
-	require WC_BOOKING_PATH . '/woocommmerce-bookings.php';
-	$GLOBALS['wc_bookings']->includes();
-	$GLOBALS['wc_bookings']->delayed_install();
+	if ( file_exists( WC_BOOKING_PATH . '/woocommmerce-bookings.php' ) ) {
+		require WC_BOOKING_PATH . '/woocommmerce-bookings.php';
+		$GLOBALS['wc_bookings']->includes();
+		$GLOBALS['wc_bookings']->delayed_install();
+	}
 }
 
 
