@@ -319,7 +319,7 @@ class WCML_Upgrade{
 
         $woocommerce_permalinks = maybe_unserialize( get_option('woocommerce_permalinks') );
 
-        if( is_array() ) {
+        if( is_array( $woocommerce_permalinks ) ) {
             foreach ( $woocommerce_permalinks as $base_key => $base ) {
 
                 $base_key = trim( $base_key, '/' );
