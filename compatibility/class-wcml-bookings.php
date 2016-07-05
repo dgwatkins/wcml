@@ -919,7 +919,9 @@ class WCML_Bookings{
     function load_assets( ){
         global $pagenow, $woocommerce_wpml;
 
-        if( ( $pagenow == 'post.php' && isset( $_GET[ 'post' ] ) && wc_get_product( $_GET[ 'post' ] )->product_type == 'booking' ) || $pagenow == 'post-new.php' ){
+        $product = $pagenow == 'post.php' && isset( $_GET[ 'post' ] ) ? wc_get_product( $_GET[ 'post' ] ) : false;
+
+        if( ( $product && $product->product_type == 'booking' ) || $pagenow == 'post-new.php' ){
 
 	        wp_register_style( 'wcml-bookings-css', WCML_PLUGIN_URL . '/compatibility/res/css/wcml-bookings.css', array(), WCML_VERSION );
             wp_enqueue_style( 'wcml-bookings-css' );
