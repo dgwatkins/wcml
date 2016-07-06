@@ -508,7 +508,7 @@ class WCML_Url_Translation {
             case 'product_tag':
 
                 if( !empty( $this->wc_permalinks['tag_base'] ) ) {
-                    $slug = trim($this->wc_permalinks['tag_base'], '/');
+                    $slug = $gettext_slug = trim($this->wc_permalinks['tag_base'], '/');
                 }else{
                     $slug = 'product-tag';
                     if( $return_gettext_slug ){
@@ -523,7 +523,7 @@ class WCML_Url_Translation {
             case 'product_cat':
 
                 if( !empty( $this->wc_permalinks['category_base'] ) ) {
-                    $slug = trim( $this->wc_permalinks['category_base'], '/' );
+                    $slug = $gettext_slug = trim( $this->wc_permalinks['category_base'], '/' );
                 }else{
                     $slug = 'product-category';
                     if( $return_gettext_slug ){
