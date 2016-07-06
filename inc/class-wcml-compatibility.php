@@ -30,7 +30,8 @@ class WCML_Compatibility {
 
         //WooCommerce Tab Manager plugin
         if(class_exists('WC_Tab_Manager')){
-            $this->tab_manager = new WCML_Tab_Manager();
+            global $woocommerce;
+            $this->tab_manager = new WCML_Tab_Manager( $this->sitepress, $woocommerce, $this->woocommerce_wpml, $this->wpdb );
         }
 
         //WooCommerce Table Rate Shipping plugin
