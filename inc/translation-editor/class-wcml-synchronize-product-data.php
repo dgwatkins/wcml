@@ -300,8 +300,8 @@ class WCML_Synchronize_Product_Data{
         $trid = $this->sitepress->get_element_trid( $id, 'post_'.$type );
         $translations = $this->sitepress->get_element_translations( $trid, 'post_'.$type, true);
 
-        foreach ($translations as $translation) {
-            if ( $translation->element_id != $id ) {
+        foreach ( $translations as $translation ) {
+            if ( !$translation->original ) {
                 update_post_meta( $translation->element_id, '_stock_status', $status );
             }
         }
