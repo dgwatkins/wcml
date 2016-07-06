@@ -266,6 +266,12 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$job = new stdClass();
 		$job->language_code = $this->second_language;
 		$bookings = $this->get_wcml_booking_object();
+		$relationship = array(
+			'product_id'    => $product,
+			'resource_id'   => $bookable_resource,
+			'sort_order'    => 'ASC',
+		);
+		$this->wpdb->insert( $this->wpdb->prefix . 'wc_booking_relationships',  $relationship );
 		$bookings->save_resource_translation( $product, $data, $job );
 	}
 

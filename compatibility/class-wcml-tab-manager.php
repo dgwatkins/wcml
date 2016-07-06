@@ -90,6 +90,8 @@ class WCML_Tab_Manager {
 	 * @param $trnsl_product_id
 	 * @param $data
 	 * @param $lang
+	 *
+	 * @return bool
 	 */
 	function sync_tabs( $original_product_id, $trnsl_product_id, $data, $lang ) {
 		//check if "duplicate" product
@@ -108,8 +110,8 @@ class WCML_Tab_Manager {
 						$default_language = $this->woocommerce_wpml->products->get_original_product_language( $original_product_id );
 						$current_language = $this->sitepress->get_current_language();
 						$trnsl_product_tabs[ $key ] = $orig_prod_tabs[ $key ];
-						$title = $data[ md5( 'coretab_'.$orig_prod_tab['id'].'_title' ) ] ? $data[ md5( 'coretab_'.$orig_prod_tab['id'].'_title' ) ] : '';
-						$heading = $data[ md5( 'coretab_'.$orig_prod_tab['id'].'_heading' ) ] ? $data[ md5( 'coretab_'.$orig_prod_tab['id'].'_heading' ) ] : '';
+						$title = isset( $data[ md5( 'coretab_'.$orig_prod_tab['id'].'_title' ) ] ) ? $data[ md5( 'coretab_'.$orig_prod_tab['id'].'_title' ) ] : '';
+						$heading = isset( $data[ md5( 'coretab_'.$orig_prod_tab['id'].'_heading' ) ] ) ? $data[ md5( 'coretab_'.$orig_prod_tab['id'].'_heading' ) ] : '';
 
 						if ( $default_language !== $lang ) {
 
@@ -136,9 +138,10 @@ class WCML_Tab_Manager {
 						break;
 					case 'product':
 						$tab_id = false;
-
-						$title = $data[ md5( 'tab_'.$orig_prod_tab['position'].'_title' ) ];
-						$content = $data[ md5( 'tab_'.$orig_prod_tab['position'].'_heading' ) ];
+						$title_key = md5( 'tab_' . $orig_prod_tab['position'] . '_title' );
+						$heading_key = md5( 'tab_' . $orig_prod_tab['position'] . '_heading' );
+						$title = isset( $data[ $title_key ] ) ? sanitize_text_field( $data[ $title_key ] ) : '';
+						$content = isset( $data[ $heading_key ] ) ? sanitize_text_field( $data[ $heading_key ] ) : '';
 
 						$trnsl_product_tabs = $this->set_product_tab( $orig_prod_tab, $trnsl_product_tabs, $lang, $trnsl_product_id, $tab_id, $title, $content );
 
@@ -147,7 +150,11 @@ class WCML_Tab_Manager {
 				}
 			}
 			update_post_meta( $trnsl_product_id, '_product_tabs', $trnsl_product_tabs );
+
+			return true;
 		}
+
+		return false;
 	}
 
 	/**
@@ -616,8 +623,6 @@ class WCML_Tab_Manager {
 	 * @return mixed|void
 	 */
 	function wc_tab_manager_tab_id( $tab_id ) {
-		$tab_id = apply_filters( 'wpml_object_id', $tab_id, 'wc_product_tab', true );
-
-		return $tab_id;
+		return apply_filters( 'wpml_object_id', $tab_id, 'wc_product_tab', true );
 	}
 }
