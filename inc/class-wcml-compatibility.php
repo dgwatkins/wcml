@@ -1,15 +1,31 @@
 <?php
 
 class WCML_Compatibility {
-    
-    function __construct(){
 
+    /**
+     * @var SitePress
+     */
+    public $sitepress;
+
+    /**
+     * @var woocommerce_wpml
+     */
+    public $woocommerce_wpml;
+
+    /**
+     * @var wpdb
+     */
+    public $wpdb;
+
+    function __construct( &$sitepress, &$woocommerce_wpml, &$wpdb ) {
+        $this->sitepress = $sitepress;
+        $this->woocommerce_wpml = $woocommerce_wpml;
+        $this->wpdb = $wpdb;
         $this->init();
 
     }
 
     function init(){
-
         //hardcoded list of extensions and check which ones the user has and then include the corresponding file from the ‘compatibility’ folder
 
         //WooCommerce Tab Manager plugin
@@ -78,7 +94,7 @@ class WCML_Compatibility {
 
         // WooCommerce Bookings
         if(defined( 'WC_BOOKINGS_VERSION' ) && version_compare(WC_BOOKINGS_VERSION, '1.7.8', '>=') ){
-            $this->bookings = new WCML_Bookings();
+            $this->bookings = new WCML_Bookings( $this->sitepress, $this->woocommerce_wpml, $this->wpdb );
 
             // WooCommerce Accommodation Bookings
             if( defined( 'WC_ACCOMMODATION_BOOKINGS_VERSION' ) ){
