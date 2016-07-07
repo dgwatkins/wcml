@@ -4,13 +4,17 @@ class WCML_Url_Translation {
 
     public $default_product_base;
     public $default_product_category_base;
+    public $default_product_category_gettext_base;
     public $default_product_tag_base;
+    public $default_product_tag_gettext_base;
 
     function __construct() {
 
         $this->default_product_base             = 'product';
         $this->default_product_category_base    = 'product-category';
         $this->default_product_tag_base         = 'product-tag';
+        $this->default_product_category_gettext_base = _x( 'product-category', 'slug', 'woocommerce' );
+        $this->default_product_tag_gettext_base = _x( 'product-tag', 'slug', 'woocommerce' );
 
         $this->wc_permalinks = get_option( 'woocommerce_permalinks' );
 
@@ -512,7 +516,7 @@ class WCML_Url_Translation {
                 }else{
                     $slug = 'product-tag';
                     if( $return_gettext_slug ){
-                        $gettext_slug = _x( 'product-tag', 'slug', 'woocommerce' );
+                        $gettext_slug = $this->default_product_tag_gettext_base;
                     }
                 }
 
@@ -527,7 +531,7 @@ class WCML_Url_Translation {
                 }else{
                     $slug = 'product-category';
                     if( $return_gettext_slug ){
-                        $gettext_slug = _x( 'product-category', 'slug', 'woocommerce' );
+                        $gettext_slug = $this->default_product_category_gettext_base;
                     }
                 }
 
