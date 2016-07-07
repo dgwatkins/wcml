@@ -1,0 +1,45 @@
+---
+image: wptest
+variables:
+  # Configure mysql service (https://hub.docker.com/_/mysql/)
+  WORDPRESS_DB_NAME: wp_test_db
+  WORDPRESS_DB_USER: root
+  MYSQL_ROOT_PASSWORD: mysql_strong_password
+
+before_script:
+- if ! service mysql status; then service mysql start; fi
+- mysqladmin -u root password $MYSQL_ROOT_PASSWORD
+- 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+- eval $(ssh-agent -s)
+- ssh-add <(echo "$SSH_PRIVATE_KEY")
+- mkdir -p ~/.ssh
+- '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+stages:
+- build
+- test
+- deploy
+UnitTestJob:
+  image: wptest
+  tags:
+  - docker
+  script:
+  - cd ../
+  - rm -rf wpml-translation-management
+  - git clone ssh://git@git.onthegosystems.com:10022/wpml/wpml-translation-management.git
+  - cd wpml-translation-management
+  - php /composer.phar update
+  - cd ../
+  - rm -rf wpml-string-translation
+  - git clone ssh://git@git.onthegosystems.com:10022/wpml/wpml-string-translation.git
+  - cd wpml-string-translation
+  - php /composer.phar update
+  - cd ../sitepress-multilingual-cms
+  - php /composer.phar update
+  - tests/install-wp-tests.sh $WORDPRESS_DB_NAME $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost latest
+  - phpunit
+  - cd ../wpml-translation-management
+  - tests/install-wp-tests.sh wp_tm_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost latest
+  - phpunit
+  - cd ../wpml-string-translation
+  - tests/install-wp-tests.sh wp_st_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost latest
+  - phpunit
