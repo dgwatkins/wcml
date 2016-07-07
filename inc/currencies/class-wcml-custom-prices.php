@@ -225,6 +225,8 @@ class WCML_Custom_Prices{
 
         }
 
+        $custom_prices = apply_filters( 'wcml_product_custom_prices', $custom_prices, $product_id, $currency );
+
         return $custom_prices;
     }
 
