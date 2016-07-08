@@ -2,7 +2,7 @@
 
 class Test_WCML_Products extends WCML_UnitTestCase {
 
-	function setUp(){
+	function setUp() {
 		parent::setUp();
 		global $wpml_post_translations, $wpml_term_translations;
 
@@ -23,7 +23,7 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 
 	}
 
-	function test_sync_parent_products_transients(){
+	function test_sync_parent_products_transients() {
 		global $pagenow;
 
 		$pagenow = 'post-new.php';
