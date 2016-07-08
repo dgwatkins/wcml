@@ -55,7 +55,7 @@ UnitTestJob:
   # Install WooCommerce
   - cd ../
   - rm -rf woocommerce
-  - git clone git@github.com:woothemes/woocommerce.git
+  - git clone https://github.com/woothemes/woocommerce.git
   - cd woocommerce
 
   # Run WPML core unit tests install script
