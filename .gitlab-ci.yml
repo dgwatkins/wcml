@@ -24,6 +24,9 @@ UnitTestJob:
   - docker
   script:
 
+  # Run composer update for WCML
+  - php /composer.phar update
+
   # Install WPML Core
   - cd ../
   - rm -rf sitepress-multilingual-cms
