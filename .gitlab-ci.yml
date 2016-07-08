@@ -31,7 +31,7 @@ UnitTestJob:
   - cd ../
   - rm -rf sitepress-multilingual-cms
   - git clone ssh://git@git.onthegosystems.com:10022/wpml/sitepress-multilingual-cms.git
-  - cd wpml-translation-management
+  - cd sitepress-multilingual-cms
   - php /composer.phar update
 
   # Install WPML TM
