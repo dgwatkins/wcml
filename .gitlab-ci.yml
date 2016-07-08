@@ -23,23 +23,55 @@ UnitTestJob:
   tags:
   - docker
   script:
+
+  # Install WPML Core
+  - cd ../
+  - rm -rf sitepress-multilingual-cms
+  - git clone ssh://git@git.onthegosystems.com:10022/wpml/sitepress-multilingual-cms.git
+  - cd wpml-translation-management
+  - php /composer.phar update
+
+  # Install WPML TM
   - cd ../
   - rm -rf wpml-translation-management
   - git clone ssh://git@git.onthegosystems.com:10022/wpml/wpml-translation-management.git
   - cd wpml-translation-management
   - php /composer.phar update
+
+  # Install WPML ST
   - cd ../
   - rm -rf wpml-string-translation
   - git clone ssh://git@git.onthegosystems.com:10022/wpml/wpml-string-translation.git
   - cd wpml-string-translation
   - php /composer.phar update
-  - cd ../sitepress-multilingual-cms
+
+  # Install WPML Media
+  - cd ../
+  - rm -rf wpml-media-translation
+  - git clone ssh://git@git.onthegosystems.com:10022/wpml/wpml-media-translation.git
+  - cd wpml-media-translation
   - php /composer.phar update
+
+  # Install WooCommerce
+  - cd ../
+  - rm -rf woocommerce
+  - git clone git@github.com:woothemes/woocommerce.git
+  - cd woocommerce
+
+  # Run WPML core unit tests install script
+  - cd ../sitepress-multilingual-cms
+  - tests/install-wp-tests.sh $WORDPRESS_DB_NAME $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost latest
+  # No need to run unit tests for WPML Core or the other plugins for now
+  #- phpunit
+  #- cd ../wpml-translation-management
+  #- tests/install-wp-tests.sh wp_tm_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost latest
+  #- phpunit
+  #- cd ../wpml-string-translation
+  #- tests/install-wp-tests.sh wp_st_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost latest
+  #- phpunit
+
+  # Run WCML unit tests install script and unit tests
+  - cd ../woocommerce-multilingual
   - tests/install-wp-tests.sh $WORDPRESS_DB_NAME $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost latest
   - phpunit
-  - cd ../wpml-translation-management
-  - tests/install-wp-tests.sh wp_tm_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost latest
-  - phpunit
-  - cd ../wpml-string-translation
-  - tests/install-wp-tests.sh wp_st_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost latest
-  - phpunit
+
