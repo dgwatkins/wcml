@@ -36,7 +36,7 @@ class WCML_Compatibility {
 
         //WooCommerce Table Rate Shipping plugin
         if(defined('TABLE_RATE_SHIPPING_VERSION')){
-            $this->table_rate_shipping = new WCML_Table_Rate_Shipping();
+            $this->table_rate_shipping = new WCML_Table_Rate_Shipping( $this->sitepress, $this->woocommerce_wpml );
         }
         
         //WooCommerce Subscriptions
