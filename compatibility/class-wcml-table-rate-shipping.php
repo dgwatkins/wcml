@@ -38,7 +38,7 @@ class WCML_Table_Rate_Shipping {
 			do_action( 'wpml_register_single_string', 'woocommerce', sanitize_text_field( $_POST['woocommerce_table_rate_title'] ) . '_shipping_method_title', sanitize_text_field( $_POST['woocommerce_table_rate_title'] ) );
 			$shipping_labels = array_map( 'woocommerce_clean', $_POST['shipping_label'] );
 			foreach ( $shipping_labels as $shipping_label ) {
-				do_action( 'wpml_register_single_string', 'woocommerce', $shipping_label .'_shipping_method_title', $shipping_label );
+				do_action( 'wpml_register_single_string', 'woocommerce', $shipping_label . '_shipping_method_title', $shipping_label );
 			}
 		}
 	}
@@ -51,7 +51,7 @@ class WCML_Table_Rate_Shipping {
 	public function default_shipping_class_id( $args ) {
 		if ( ! empty( $args['shipping_class_id'] ) ) {
 
-			$args['shipping_class_id'] = apply_filters( 'translate_object_id',$args['shipping_class_id'], 'product_shipping_class', false, $this->sitepress->get_default_language() );
+			$args['shipping_class_id'] = apply_filters( 'translate_object_id', $args['shipping_class_id'], 'product_shipping_class', false, $this->sitepress->get_default_language() );
 
 			if ( WCML_MULTI_CURRENCIES_INDEPENDENT === $this->woocommerce_wpml->settings['enable_multi_currency'] ) {
 				// use unfiltered cart price to compare against limits of different shipping methods
