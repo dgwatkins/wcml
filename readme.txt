@@ -140,6 +140,7 @@ WooCommerce Multilingual is compatible with all major WooCommerce extensions. We
 * Bug fix: when using the default category base the language switcher did not show translated urls on the front end
 * Updated the cart cache hashes logic according to new WooCommerce logic
 * Added a new filter: 'wcml_product_custom_prices'
+* Added separate section for translatable fields for external products in the translations editor
 * Fixed compatibility issues with WooCommerce Table Rate Shipping 3.0+
 * Fixed one compatibility issue with WooCommerce Dynamic Pricing: the discount was not shown on the mini-cart
 * Fixed compatibility with Product Add-ons: strings were not translated
