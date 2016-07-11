@@ -16,6 +16,10 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 
 		global $woocommerce_wpml, $sitepress, $wpdb;
 
+		parent::setUp();
+		$this->clear_db();
+		icl_cache_clear();
+
 		$this->sitepress 		=& $sitepress;
 		$this->woocommerce_wpml	=& $woocommerce_wpml;
 		$this->wpdb				=& $wpdb;
@@ -27,6 +31,30 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 		$wc_unit->setUp();
 
 
+	}
+
+	private function clear_db(){
+		global $wpdb;
+
+		$tables_to_empty = array(
+			"{$wpdb->prefix}woocommerce_api_keys",
+			"{$wpdb->prefix}woocommerce_attribute_taxonomies",
+			"{$wpdb->prefix}woocommerce_downloadable_product_permissions",
+			"{$wpdb->prefix}woocommerce_order_itemmeta",
+			"{$wpdb->prefix}woocommerce_order_items",
+			"{$wpdb->prefix}woocommerce_payment_tokenmeta",
+			"{$wpdb->prefix}woocommerce_payment_tokens",
+			"{$wpdb->prefix}woocommerce_sessions",
+			"{$wpdb->prefix}woocommerce_shipping_zone_locations",
+			"{$wpdb->prefix}woocommerce_shipping_zone_methods",
+			"{$wpdb->prefix}woocommerce_shipping_zones",
+			"{$wpdb->prefix}woocommerce_tax_rate_locations",
+			"{$wpdb->prefix}woocommerce_tax_rates",
+		);
+		foreach ( $tables_to_empty as $table_name ) {
+			$wpdb->query( "DELETE FROM {$table_name}" );
+
+		}
 	}
 
 	protected function make_current_user_wcml_admin( ) {
