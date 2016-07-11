@@ -8,7 +8,7 @@
   Text Domain: woocommerce-multilingual
   Version: 3.8.2
 */
-//TESTING
+
 if( defined( 'WCML_VERSION' ) ) return;
 
 define( 'WCML_VERSION', '3.8.2' );
