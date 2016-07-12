@@ -145,6 +145,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @param $product_id
 	 */
 	private function check_update_booking_person_cost( $product_id ) {
+		unset( $_POST['_wcml_custom_costs'] );
 		$bookable_person = wpml_test_insert_post( $this->default_language, 'bookable_person', false, random_string() );
 		$_POST['wcml_wc_booking_person_cost'] = array(
 			$bookable_person => array(
@@ -152,6 +153,8 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 				$this->euro_code => $this->eur_price,
 			),
 		);
+
+		$_POST['_wcml_custom_costs'] = 1;
 		$this->bookings->save_custom_costs( $product_id );
 
 		$this->assertEquals( $this->usd_price, get_post_meta( $bookable_person, 'cost_' . $this->usd_code, true ) );
@@ -165,6 +168,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @param $product_id
 	 */
 	private function check_update_booking_person_block_cost( $product_id ) {
+		unset( $_POST['_wcml_custom_costs'] );
 		$bookable_person = wpml_test_insert_post( $this->default_language, 'bookable_person', false, random_string() );
 		$_POST['wcml_wc_booking_person_block_cost'] = array(
 			$bookable_person => array(
@@ -172,6 +176,10 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 				$this->euro_code => $this->eur_price,
 			),
 		);
+
+		// Enable custom costs.
+		$_POST['_wcml_custom_costs'] = 1;
+
 		$this->bookings->save_custom_costs( $product_id );
 
 		$this->assertEquals( $this->usd_price, get_post_meta( $bookable_person, 'block_cost_' . $this->usd_code, true ) );
@@ -1082,7 +1090,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 
 	private function get_wcml_booking_object() {
 		$woocommerce_wpml = $this->get_test_subject();
-		return  new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		return new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
 	}
 
 	/**
