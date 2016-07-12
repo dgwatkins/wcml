@@ -59,10 +59,13 @@ UnitTestJob:
   - cd ../
   - rm -rf woocommerce
   - git clone https://github.com/woothemes/woocommerce.git
-  - cd woocommerce
+
+  # Install WooCommerce Bookings
+  - rm -rf woocommerce-bookings
+  - git clone https://git.onthegosystems.com/mihai/woocommerce-bookings-mirror.git
 
   # Run WPML core unit tests install script
-  - cd ../sitepress-multilingual-cms
+  - cd sitepress-multilingual-cms
   - tests/install-wp-tests.sh wpml_core_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost
   # No need to run unit tests for WPML Core or the other plugins for now
   #- phpunit
