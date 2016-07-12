@@ -62,7 +62,7 @@ UnitTestJob:
 
   # Install WooCommerce Bookings
   - rm -rf woocommerce-bookings
-  - git clone https://git.onthegosystems.com/mihai/woocommerce-bookings-mirror.git
+  - git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-bookings-mirror.git woocommerce-bookings
 
   # Run WPML core unit tests install script
   - cd sitepress-multilingual-cms
