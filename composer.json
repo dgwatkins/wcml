@@ -20,7 +20,7 @@
     }
   ],
   "require": {
-    "otgs/installer" : "1.7.9",
+    "otgs/installer" : "dev-master",
     "xrstf/composer-php52": "1.*"
   },
   "scripts": {
@@ -40,9 +40,9 @@
       "compatibility"
     ]
   },
-  "extra": {
-    "installer-paths": {
-      "embedded/installer": ["otgs/installer"]
+  "extra" : {
+    "installer-paths" : {
+      "embedded/{$vendor}/{$name}/": ["type:wordpress-plugin"]
     }
   }
 }
