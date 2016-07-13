@@ -20,7 +20,7 @@ class WCML_Dynamic_Pricing {
 			$this->sitepress = $sitepress;
 			add_filter( 'wc_dynamic_pricing_load_modules', array( $this, 'filter_price' ) );
 			add_filter( 'woocommerce_dynamic_pricing_is_applied_to', array( $this, 'woocommerce_dynamic_pricing_is_applied_to' ), 10, 5 );
-			add_filter( 'woocommerce_dynamic_pricing_get_rule_amount', array( $this, 'woocommerce_dynamic_pricing_get_rule_amount' ), 10, 4 );
+			add_filter( 'woocommerce_dynamic_pricing_get_rule_amount', array( $this, 'woocommerce_dynamic_pricing_get_rule_amount' ), 10, 2 );
 			add_filter( 'dynamic_pricing_product_rules', array( $this, 'dynamic_pricing_product_rules' ) );
 			add_filter( 'wcml_calculate_totals_exception', array( $this, 'calculate_totals_exception' ) );
 		}
@@ -76,15 +76,13 @@ class WCML_Dynamic_Pricing {
 	/**
 	 * @param $amount
 	 * @param $rule
-	 * @param $cart_item
-	 * @param $obj
 	 *
 	 * @return mixed|void
 	 */
-	function woocommerce_dynamic_pricing_get_rule_amount( $amount, $rule, $cart_item, $obj ) {
+	function woocommerce_dynamic_pricing_get_rule_amount( $amount, $rule ) {
 
 		if ( 'price_discount' === $rule['type'] || 'fixed_price' === $rule['type'] ) {
-			$amount = apply_filters( 'wcml_raw_price_amount',$amount );
+			$amount = apply_filters( 'wcml_raw_price_amount', $amount );
 		}
 
 		return $amount;
