@@ -9,6 +9,7 @@ class Test_WCML_Dynamic_Pricing extends WCML_UnitTestCase {
 	private $default_language;
 	private $second_language;
 	private $rate;
+	private $settings_helper;
 
 	function setUp() {
 		global $sitepress;
@@ -20,7 +21,8 @@ class Test_WCML_Dynamic_Pricing extends WCML_UnitTestCase {
 		unset( $active_languages[ $this->default_language ] );
 		$this->second_language = array_rand( $active_languages );
 		add_filter( 'wcml_raw_price_amount', array( $this, 'raw_price_amount' ) );
-		wpml_test_reg_custom_taxonomy( 'product_cat', false, true );
+		$this->settings_helper = wpml_load_settings_helper();
+		$this->settings_helper->set_taxonomy_translatable( 'product_cat' );
 	}
 
 	/**
@@ -172,5 +174,10 @@ class Test_WCML_Dynamic_Pricing extends WCML_UnitTestCase {
 	public function calculate_totals_exception() {
 		$dynamic_pricing = new WCML_Dynamic_Pricing( $this->sitepress );
 		$this->assertFalse( $dynamic_pricing->calculate_totals_exception() );
+	}
+
+	function tearDown() {
+		parent::tearDown();
+		$this->settings_helper->set_taxonomy_not_translatable( 'product_cat' );
 	}
 }
