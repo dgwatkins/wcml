@@ -6,10 +6,15 @@
 class WCML_Product_Addons {
 
 	/**
+	 * @var SitePress
+	 */
+	public $sitepress;
+
+	/**
 	 * WCML_Product_Addons constructor.
 	 */
-	function __construct() {
-
+	function __construct( &$sitepress ) {
+		$this->sitepress = $sitepress;
 		add_filter( 'get_product_addons_product_terms', array( $this, 'addons_product_terms' ) );
 		add_filter( 'get_product_addons_fields', array( $this, 'product_addons_filter' ), 10, 2 );
 
@@ -118,10 +123,8 @@ class WCML_Product_Addons {
 	 * @return mixed
 	 */
 	function addons_product_terms( $product_terms ) {
-		global $sitepress;
-
 		foreach ( $product_terms as $key => $product_term ) {
-			$product_terms[ $key ] = apply_filters( 'translate_object_id', $product_term, 'product_cat', true, $sitepress->get_default_language() );
+			$product_terms[ $key ] = apply_filters( 'translate_object_id', $product_term, 'product_cat', true, $this->sitepress->get_default_language() );
 		}
 
 		return $product_terms;
