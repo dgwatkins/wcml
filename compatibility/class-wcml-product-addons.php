@@ -16,7 +16,7 @@ class WCML_Product_Addons {
 	function __construct( &$sitepress ) {
 		$this->sitepress = $sitepress;
 		add_filter( 'get_product_addons_product_terms', array( $this, 'addons_product_terms' ) );
-		add_filter( 'get_product_addons_fields', array( $this, 'product_addons_filter' ), 10, 2 );
+		add_filter( 'get_product_addons_fields', array( $this, 'product_addons_filter' ), 10, 1 );
 
 		add_action( 'updated_post_meta', array( $this, 'register_addons_strings' ), 10, 4 );
 		add_action( 'added_post_meta', array( $this, 'register_addons_strings' ), 10, 4 );
@@ -38,7 +38,7 @@ class WCML_Product_Addons {
 		if ( is_admin() ) {
 
 			add_action( 'wcml_gui_additional_box_html', array( $this, 'custom_box_html' ), 10, 3 );
-			add_filter( 'wcml_gui_additional_box_data', array( $this, 'custom_box_html_data' ), 10, 4 );
+			add_filter( 'wcml_gui_additional_box_data', array( $this, 'custom_box_html_data' ), 10, 3 );
 			add_action( 'wcml_update_extra_fields', array( $this, 'addons_update' ), 10, 3 );
 		}
 	}
@@ -88,7 +88,7 @@ class WCML_Product_Addons {
 					$addons[ $key ]['description'] = apply_filters( 'wpml_translate_single_string', $addon['description'], 'wc_product_addons_strings', $object_id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_description' );
 					//register options labels
 					foreach ( $addon['options'] as $opt_key => $option ) {
-						$addons[ $key ]['options'][ $opt_key ]['label'] = apply_filters( 'wpml_translate_single_string', $option['label'], 'wc_product_addons_strings', $object_id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_option_label_' . $key );
+						$addons[ $key ]['options'][ $opt_key ]['label'] = apply_filters( 'wpml_translate_single_string', $option['label'], 'wc_product_addons_strings', $object_id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_option_label_' . $opt_key );
 					}
 				}
 			}
@@ -102,11 +102,10 @@ class WCML_Product_Addons {
 
 	/**
 	 * @param $addons
-	 * @param $object_id
 	 *
 	 * @return mixed
 	 */
-	function product_addons_filter( $addons, $object_id ) {
+	function product_addons_filter( $addons ) {
 
 		foreach ( $addons as $add_id => $addon ) {
 			foreach ( $addon['options'] as $key => $option ) {
@@ -122,7 +121,7 @@ class WCML_Product_Addons {
 	/**
 	 * @param $product_terms
 	 *
-	 * @return mixed
+	 * @return array
 	 */
 	function addons_product_terms( $product_terms ) {
 		foreach ( $product_terms as $key => $product_term ) {
@@ -181,11 +180,10 @@ class WCML_Product_Addons {
 	 * @param $data
 	 * @param $product_id
 	 * @param $translation
-	 * @param $lang
 	 *
 	 * @return mixed
 	 */
-	function custom_box_html_data( $data, $product_id, $translation, $lang ) {
+	function custom_box_html_data( $data, $product_id, $translation ) {
 
 		$product_addons = maybe_unserialize( get_post_meta( $product_id, '_product_addons', true ) );
 
@@ -243,6 +241,7 @@ class WCML_Product_Addons {
 				}
 			}
 		}
+
 		update_post_meta( $product_id, '_product_addons', $product_addons );
 	}
 }
