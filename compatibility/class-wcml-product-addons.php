@@ -80,14 +80,16 @@ class WCML_Product_Addons {
 			$addons = get_post_meta( $object_id, $meta_key, true );
 			add_filter( 'get_post_metadata', array( $this, 'translate_addons_strings' ), 10, 4 );
 
-			foreach ( $addons as $key => $addon ) {
-				//register name
-				$addons[ $key ]['name'] = apply_filters( 'wpml_translate_single_string', $addon['name'], 'wc_product_addons_strings', $object_id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_name' );
-				//register description
-				$addons[ $key ]['description'] = apply_filters( 'wpml_translate_single_string', $addon['description'], 'wc_product_addons_strings', $object_id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_description' );
-				//register options labels
-				foreach ( $addon['options'] as $opt_key => $option ) {
-					$addons[ $key ]['options'][ $opt_key ]['label'] = apply_filters( 'wpml_translate_single_string', $option['label'], 'wc_product_addons_strings', $object_id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_option_label_' . $key );
+			if ( is_array( $addons ) ) {
+				foreach ( $addons as $key => $addon ) {
+					//register name
+					$addons[ $key ]['name'] = apply_filters( 'wpml_translate_single_string', $addon['name'], 'wc_product_addons_strings', $object_id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_name' );
+					//register description
+					$addons[ $key ]['description'] = apply_filters( 'wpml_translate_single_string', $addon['description'], 'wc_product_addons_strings', $object_id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_description' );
+					//register options labels
+					foreach ( $addon['options'] as $opt_key => $option ) {
+						$addons[ $key ]['options'][ $opt_key ]['label'] = apply_filters( 'wpml_translate_single_string', $option['label'], 'wc_product_addons_strings', $object_id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_option_label_' . $key );
+					}
 				}
 			}
 
