@@ -348,4 +348,9 @@ class WCML_Helper {
 
     }
 
+    public static function icl_clear_and_init_cache(){
+        icl_cache_clear();
+        wp_cache_init();
+    }
+
 }

@@ -15,11 +15,15 @@ SCRIPTPATH=`pwd -P`
 
 WP_TESTS_DIR=${SCRIPTPATH}/wordpress-tests-lib/
 WP_CORE_DIR=${SCRIPTPATH}/wordpress/
+WP_CORE_LANG_DIR=${SCRIPTPATH}/wordpress/wp-content/languages/
+WP_CORE_LANG_PLUGINS_DIR=${SCRIPTPATH}/wordpress/wp-content/languages/plugins/
 
 set -ex
 
 install_wp() {
 	mkdir -p $WP_CORE_DIR
+
+	local WC_VERSION_FOR_MO_FILES='2.6.2'
 
 	if [ $WP_VERSION == 'latest' ]; then 
 		local ARCHIVE_NAME='latest'
@@ -29,6 +33,21 @@ install_wp() {
 
 	wget -nv -O /tmp/wordpress.tar.gz http://wordpress.org/${ARCHIVE_NAME}.tar.gz
 	tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C $WP_CORE_DIR
+
+	# Create languages directory
+  	mkdir $WP_CORE_LANG_DIR
+  	mkdir $WP_CORE_LANG_PLUGINS_DIR
+  	#WC lang packs
+  	wget -P $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/fr_FR.zip
+  	wget -P $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/de_DE.zip
+  	wget -P $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/ru_RU.zip
+  	wget -P $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/es_ES.zip
+
+  	cd $WP_CORE_LANG_PLUGINS_DIR
+  	unzip fr_FR.zip
+  	unzip de_DE.zip
+  	unzip ru_RU.zip
+  	unzip es_ES.zip
 
 	wget -nv -O $WP_CORE_DIR/wp-content/db.php https://raw.github.com/markoheijnen/wp-mysqli/master/db.php
 }
@@ -45,6 +64,8 @@ install_test_suite() {
 	mkdir -p $WP_TESTS_DIR
 	cd $WP_TESTS_DIR
 	svn co --quiet http://develop.svn.wordpress.org/trunk/tests/phpunit/includes/
+
+	sed $ioption "s:DIR_TESTDATA . '/languages': '$WP_CORE_LANG_DIR':" includes/bootstrap.php
 
 	wget -nv -O wp-tests-config.php http://develop.svn.wordpress.org/trunk/wp-tests-config-sample.php
 	sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR':" wp-tests-config.php
