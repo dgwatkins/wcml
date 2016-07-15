@@ -62,7 +62,7 @@ class WCML_Product_Addons{
                 $addons[ $key ][ 'description' ] = apply_filters( 'wpml_translate_single_string', $addon['description'], 'wc_product_addons_strings', $object_id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_description' );
                 //register options labels
                 foreach ($addon['options'] as $opt_key => $option) {
-                    $addons[ $key ][ 'options' ][ $opt_key ][ 'label' ] = apply_filters( 'wpml_translate_single_string', $option['label'], 'wc_product_addons_strings', $object_id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_option_label_' . $key );
+                    $addons[ $key ][ 'options' ][ $opt_key ][ 'label' ] = apply_filters( 'wpml_translate_single_string', $option['label'], 'wc_product_addons_strings', $object_id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_option_label_' . $opt_key );
                 }
             }
 
