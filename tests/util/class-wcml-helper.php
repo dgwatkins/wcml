@@ -349,6 +349,9 @@ class WCML_Helper {
     }
 
     public static function icl_clear_and_init_cache(){
+        global $WPML_String_Translation;
+        $WPML_String_Translation->clear_string_filter( 'es' );
+
         icl_cache_clear();
         wp_cache_init();
     }
