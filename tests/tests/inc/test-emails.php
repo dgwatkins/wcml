@@ -47,12 +47,14 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 
 	function test_filter_payment_method_string(){
 
+		$this->sitepress->switch_lang('es');
+
 		$_POST['bacs_enabled'] = 1;
 		$this->woocommerce_wpml->gateways->register_gateway_strings( $this->payment_gateways['bacs']->settings );
 		$string_id = icl_get_string_id( $this->payment_gateways['bacs']->settings['title'], 'woocommerce', 'bacs_gateway_title' );
 		icl_add_string_translation( $string_id, 'es', 'Direct Bank Transfer ES', ICL_TM_COMPLETE );
 
-		$this->sitepress->switch_lang('es');
+		$this->wcml_helper->icl_clear_and_init_cache();
 
 		$trnsl_title = $this->woocommerce_wpml->emails->filter_payment_method_string( null, $this->order->id, '_payment_method_title', true );
 
@@ -82,6 +84,7 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 		foreach( $order_shippings as $order_shipping ){
 			$this->assertEquals( 'FLAT RATE ES', $order_shipping['name'] );
 		}
+		$this->sitepress->switch_lang( $this->sitepress->get_default_language() );
 	}
 
 	function test_set_locale_for_emails() {
