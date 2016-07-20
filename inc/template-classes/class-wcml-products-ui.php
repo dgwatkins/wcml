@@ -200,7 +200,9 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 			}else{
 				$products[ $key ]->formated_date = date(' Y/m/d', strtotime( $product->post_modified ) );
 			}
-
+			
+			// Added extra variable to check if the product has an image or not
+			$products[ $key ]->product_has_image = has_post_thumbnail($product->ID);
 		}
 
 		return array( 'products' => $products, 'products_count' => $products_info[ 'products_count' ] );
