@@ -61,7 +61,7 @@ class WCML_Compatibility {
      
         // Product Add-ons
         if(class_exists( 'Product_Addon_Display' )){
-            $this->product_addons = new WCML_Product_Addons();
+            $this->product_addons = new WCML_Product_Addons( $this->sitepress );
         }
 
         // Product Per Product Shipping
