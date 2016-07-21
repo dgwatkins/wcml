@@ -847,12 +847,12 @@ class WCML_Bookings {
 
     }
 
-    function load_assets( ){
+    function load_assets( $external_product_type = false ){
         global $pagenow;
 
         $product = $pagenow == 'post.php' && isset( $_GET[ 'post' ] ) ? wc_get_product( $_GET[ 'post' ] ) : false;
 
-        if( ( $product && $product->product_type == 'booking' ) || $pagenow == 'post-new.php' ){
+        if( ( $product && ( $product->product_type == 'booking' || $product->product_type == $external_product_type ) ) || $pagenow == 'post-new.php' ){
 
 	        wp_register_style( 'wcml-bookings-css', WCML_PLUGIN_URL . '/compatibility/res/css/wcml-bookings.css', array(), WCML_VERSION );
             wp_enqueue_style( 'wcml-bookings-css' );
