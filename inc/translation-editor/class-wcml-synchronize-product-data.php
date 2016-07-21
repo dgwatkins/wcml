@@ -415,7 +415,7 @@ class WCML_Synchronize_Product_Data{
         foreach ( $all_meta as $key => $meta ) {
             if (
                 !isset( $settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] ) ||
-                $settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] == 0
+                $settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] == WPML_IGNORE_CUSTOM_FIELD
             ) {
                 continue;
             }
@@ -426,7 +426,7 @@ class WCML_Synchronize_Product_Data{
                     if (
                         isset( $data[ md5( $key ) ] ) &&
                         isset( $settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] ) &&
-                        $settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] == 2 ) {
+                        $settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] == WPML_TRANSLATE_CUSTOM_FIELD ) {
                         $meta_value = $data[ md5( $key ) ];
                         $meta_value = apply_filters( 'wcml_meta_value_before_add', $meta_value, $key );
                         update_post_meta( $trnsl_product_id, $key, $meta_value );

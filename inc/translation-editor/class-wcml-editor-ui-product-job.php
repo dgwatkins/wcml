@@ -528,7 +528,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 	    global $sitepress;
         $settings = $sitepress->get_settings();
         $label = '';
-	    if ( isset( $settings['translation-management']['custom_fields_translation'][ $field ] ) && $settings['translation-management']['custom_fields_translation'][ $field ] === 2 ) {
+	    if ( isset( $settings['translation-management']['custom_fields_translation'][ $field ] ) && $settings['translation-management']['custom_fields_translation'][ $field ] == WPML_TRANSLATE_CUSTOM_FIELD ) {
 		    if ( in_array( $field, $this->not_display_fields_for_variables_product, true ) ) {
                 return false;
             }
@@ -583,7 +583,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $contents = array();
 
         foreach( get_post_custom_keys( $product_id ) as $meta_key ) {
-	        if ( isset( $settings['translation-management']['custom_fields_translation'][ $meta_key ] ) && $settings['translation-management']['custom_fields_translation'][ $meta_key ] === 2 ) {
+	        if ( isset( $settings['translation-management']['custom_fields_translation'][ $meta_key ] ) && $settings['translation-management']['custom_fields_translation'][ $meta_key ] == WPML_TRANSLATE_CUSTOM_FIELD ) {
                 if( $this->check_custom_field_is_single_value( $product_id, $meta_key ) ){
 	                if ( in_array( $meta_key, apply_filters( 'wcml_not_display_single_fields_to_translate', $this->not_display_fields_for_variables_product ), true ) ) {
                         continue;
