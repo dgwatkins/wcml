@@ -269,19 +269,21 @@ class WCML_Product_Bundles{
 			if ( $cart_item[ 'product_id' ] != $current_bundle_id ) {
 				$old_bundled_item_ids      = array_keys( $cart_item[ 'data' ]->bundle_data );
 				$cart_item[ 'data' ]       = wc_get_product( $current_bundle_id );
-				$new_bundled_item_ids      = array_keys( $cart_item[ 'data' ]->bundle_data );
-				$remapped_bundled_item_ids = array();
-				foreach ( $old_bundled_item_ids as $old_item_id_index => $old_item_id ) {
-    				$remapped_bundled_item_ids[ $old_item_id ] = $new_bundled_item_ids[ $old_item_id_index ];
-    			}
-    			$cart_item[ 'remapped_bundled_item_ids' ] = $remapped_bundled_item_ids;
-    			if ( isset( $cart_item[ 'stamp' ] ) ) {
-    				$new_stamp = array();
-    				foreach ( $cart_item[ 'stamp' ] as $bundled_item_id => $stamp_data ) {
-    					$new_stamp[ $remapped_bundled_item_ids[ $bundled_item_id ] ] = $stamp_data;
-    				}
-    				$cart_item[ 'stamp' ] = $new_stamp;
-    			}
+                if( is_array( $cart_item[ 'data' ]->bundle_data ) ){
+                    $new_bundled_item_ids      = array_keys( $cart_item[ 'data' ]->bundle_data );
+                    $remapped_bundled_item_ids = array();
+                    foreach ( $old_bundled_item_ids as $old_item_id_index => $old_item_id ) {
+                        $remapped_bundled_item_ids[ $old_item_id ] = $new_bundled_item_ids[ $old_item_id_index ];
+                    }
+                    $cart_item[ 'remapped_bundled_item_ids' ] = $remapped_bundled_item_ids;
+                    if ( isset( $cart_item[ 'stamp' ] ) ) {
+                        $new_stamp = array();
+                        foreach ( $cart_item[ 'stamp' ] as $bundled_item_id => $stamp_data ) {
+                            $new_stamp[ $remapped_bundled_item_ids[ $bundled_item_id ] ] = $stamp_data;
+                        }
+                        $cart_item[ 'stamp' ] = $new_stamp;
+                    }
+                }
 			}
     	}
     	if ( isset( $cart_item[ 'bundled_by' ] ) && isset( WC()->cart->cart_contents[ $cart_item[ 'bundled_by' ] ] ) ) {

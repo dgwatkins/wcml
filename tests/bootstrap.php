@@ -22,10 +22,6 @@ if ( ! defined( 'WC_BOOKING_PATH' ) ) {
 	define( 'WC_BOOKING_PATH', dirname( __FILE__ ) . '/../../woocommerce-bookings' );
 }
 
-if ( ! defined( 'WC_BUNDLES_PATH' ) ) {
-	define( 'WC_BUNDLES_PATH', dirname( __FILE__ ) . '/../../woocommerce-product-bundles' );
-}
-
 $_tests_dir = isset( $_ENV['WP_TEST_DIR'] ) ? $_ENV['WP_TEST_DIR'] : 'wordpress-tests-lib';
 require_once $_tests_dir . '/includes/functions.php';
 
@@ -37,7 +33,6 @@ function _manually_load_plugin() {
 	require WPML_CORE_MT_PATH . '/plugin.php';
 	require WC_PATH. '/woocommerce.php';
 	require dirname( __FILE__ ) . '/../wpml-woocommerce.php';
-	require WC_BUNDLES_PATH. '/woocommerce-product-bundles.php';
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );

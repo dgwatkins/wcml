@@ -10,12 +10,6 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 
 	function setUp() {
 
-		if ( ! class_exists( 'WC_Bundles' ) ) {
-			$this->markTestSkipped(
-				'The WC Bundles extension is not loaded.'
-			);
-		}
-
 		parent::setUp();
 
 		$this->default_language = $this->sitepress->get_default_language();
@@ -323,6 +317,29 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 
 		$output = get_post_meta( $this->translated_bundle_product->id, '_bundle_data', true );
 		$this->assertEquals( $expected, $output );
+	}
+
+	public function test_resync_bundle(){
+
+		$cart_item_data = new stdClass();
+		$cart_item_data->product_type = 'bundle';
+		$cart_item_data->bundle_data = array();
+
+		$cart_item = array(
+			'bundled_items' => array(),
+			'data' => $cart_item_data,
+			'product_id' => $this->bundle_product->id,
+		);
+
+		$product_bundles = $this->get_test_subject();
+
+		$this->sitepress->switch_lang( $this->second_language );
+
+		$new_cart_item = $product_bundles->resync_bundle( $cart_item, false, false );
+
+		$this->assertEquals( $this->translated_bundle_product->id, $new_cart_item[ 'data' ]->id );
+
+		$this->sitepress->switch_lang( $this->default_language );
 	}
 
 }
