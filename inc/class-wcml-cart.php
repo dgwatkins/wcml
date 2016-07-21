@@ -186,7 +186,7 @@ class WCML_Cart
 
     public function translate_cart_subtotal( $cart ) {
 
-        if( apply_filters( 'wcml_calculate_totals_exception', true ) ){
+        if( apply_filters( 'wcml_calculate_totals_exception', true, $cart ) ){
             $cart->calculate_totals();
         }
 

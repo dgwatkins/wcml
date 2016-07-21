@@ -155,6 +155,11 @@ class WCML_Compatibility {
             new WCML_Aurum();
         }
 
+        // Visual Products Configurator
+        if( class_exists( 'Vpc' ) ){
+            $this->vpc = new WCML_Vpc();
+        }
+
     }
 
 }

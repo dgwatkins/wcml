@@ -84,6 +84,10 @@ UnitTestJob:
   - rm -rf woocommerce-product-addons
   - git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-product-addons-mirror.git woocommerce-product-addons
 
+  # Install Visual Products Configurator
+  - rm -rf visual-product-configurator
+  - git clone ssh://git@git.onthegosystems.com:10022/wcml/visual-product-configurator-mirror.git visual-product-configurator
+
   # Run WPML core unit tests install script
   - cd sitepress-multilingual-cms
   - tests/install-wp-tests.sh wpml_core_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost
