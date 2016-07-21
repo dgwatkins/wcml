@@ -6,12 +6,6 @@
 class Test_WCML_Vpc extends WCML_UnitTestCase {
 
 	function setUp() {
-
-		if ( ! class_exists( 'Vpc' ) ) {
-			$this->markTestSkipped(
-				'The Visual Products Configurator extension is not loaded.'
-			);
-		}
 		parent::setUp();
 
 	}
