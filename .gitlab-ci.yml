@@ -65,28 +65,28 @@ UnitTestJob:
   - git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-bookings-mirror.git woocommerce-bookings
 
   # Install WooCommerce Table Rate Shipping
-  - rm -rf woocommerce-table-rate-shipping
-  - git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-table-rate-shipping-mirror.git woocommerce-table-rate-shipping
+  #- rm -rf woocommerce-table-rate-shipping
+  #- git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-table-rate-shipping-mirror.git woocommerce-table-rate-shipping
 
   # Install WooCommerce Tab Manager
-  - rm -rf woocommerce-tab-manager
-  - git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-tab-manager-mirror.git woocommerce-tab-manager
+  #- rm -rf woocommerce-tab-manager
+  #- git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-tab-manager-mirror.git woocommerce-tab-manager
 
   # Install WooCommerce Dynamic Pricing
-  - rm -rf woocommerce-dynamic-pricing
-  - git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-dynamic-pricing-mirror.git woocommerce-dynamic-pricing
+  #- rm -rf woocommerce-dynamic-pricing
+  #- git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-dynamic-pricing-mirror.git woocommerce-dynamic-pricing
 
   # Install WooCommerce Product Bundles
-  - rm -rf woocommerce-product-bundles
-  - git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-product-bundles-mirror.git woocommerce-product-bundles
+  #- rm -rf woocommerce-product-bundles
+  #- git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-product-bundles-mirror.git woocommerce-product-bundles
 
   # Install WooCommerce Product Addons
-  - rm -rf woocommerce-product-addons
-  - git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-product-addons-mirror.git woocommerce-product-addons
+  #- rm -rf woocommerce-product-addons
+  #- git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-product-addons-mirror.git woocommerce-product-addons
 
   # Install Visual Products Configurator
-  - rm -rf visual-product-configurator
-  - git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-visual-product-configurator-mirror.git woocommerce-visual-product-configurator
+  #- rm -rf woocommerce-visual-product-configurator
+  #- git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-visual-product-configurator-mirror.git woocommerce-visual-product-configurator
 
   # Run WPML core unit tests install script
   - cd sitepress-multilingual-cms
