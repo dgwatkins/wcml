@@ -138,8 +138,18 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         if( $custom_fields ) {
             $custom_fields_section = new WPML_Editor_UI_Field_Section( __( 'Custom Fields', 'woocommerce-multilingual' ) );
             foreach( $custom_fields as $custom_field ) {
-                $custom_field_input = new WPML_Editor_UI_Single_Line_Field( $custom_field, $this->get_product_custom_field_label( $custom_field ), $this->data, true );
-                $custom_fields_section->add_field( $custom_field_input );
+                if( key( $this->data[ $custom_field ] ) != 'original' ){
+                    $group = new WPML_Editor_UI_Field_Group(  $this->get_product_custom_field_label( $custom_field ), true );
+                    foreach( $this->data[ $custom_field ] as $custom_field_key => $custom_field_array ){
+                        $custom_field_input = new WPML_Editor_UI_Single_Line_Field( $custom_field_key, '', $this->data[ $custom_field ], false );
+
+                        $group->add_field( $custom_field_input );
+                    }
+                    $custom_fields_section->add_field( $group );
+                }else{
+                    $custom_field_input = new WPML_Editor_UI_Single_Line_Field( $custom_field, $this->get_product_custom_field_label( $custom_field ), $this->data, true );
+                    $custom_fields_section->add_field( $custom_field_input );
+                }
             }
             $this->add_field( $custom_fields_section );
         }
@@ -271,9 +281,25 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $custom_fields = $this->get_product_custom_fields_to_translate( $this->product->id );
         if( $custom_fields ){
             foreach( $custom_fields as $custom_field ) {
-                $element_data[ $custom_field ]       = array( 'original' => get_post_meta( $this->product->id, $custom_field, true ) );
-                $element_data[ $custom_field ][ 'translation' ]       =  ( isset( $translation->ID ) && $translation->ID ) ? get_post_meta( $translation->ID, $custom_field, true) : '';
+                $orig_custom_field_values = get_post_meta( $this->product->id, $custom_field );
+                $trnsl_custom_field_values = array();
+                $trnsl_mid_ids = array();
+                if ( $translation ) {
+                    $trnsl_custom_field_values = get_post_meta($translation->ID, $custom_field);
+                    $trnsl_mid_ids = $this->get_mid_ids_by_key($translation->ID, $custom_field);
+                }
+                foreach( $orig_custom_field_values as $val_key => $orig_custom_field_value ){
+                    if( count( $orig_custom_field_values ) == 1 ){
+                        $element_data[ $custom_field ] = array( 'original' => $orig_custom_field_value );
+                        $element_data[ $custom_field ][ 'translation' ] = ( isset( $translation->ID ) && $translation->ID && isset( $trnsl_custom_field_values[ $val_key ] ) ) ? $trnsl_custom_field_values[ $val_key ] : '';
+                    }else{
 
+                        $custom_field_key = $custom_field.':'. ( isset( $trnsl_mid_ids[ $val_key ] ) ? $trnsl_mid_ids[ $val_key ] : 'new_'. $val_key );
+
+                        $element_data[ $custom_field ][ $custom_field_key ] = array( 'original' => $orig_custom_field_value );
+                        $element_data[ $custom_field ][ $custom_field_key ][ 'translation' ] = ( isset( $translation->ID ) && $translation->ID && isset( $trnsl_custom_field_values[ $val_key ] ) ) ? $trnsl_custom_field_values[ $val_key ] : '';
+                    }
+                }
             }
         }
 
@@ -321,6 +347,17 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $element_data = apply_filters( 'wcml_gui_additional_box_data', $element_data, $this->product->id, $translation, $this->get_target_language() );
 
         return $element_data;
+    }
+
+    /*
+     * get meta ids for multiple values post meta key
+     */
+    public function get_mid_ids_by_key( $post_id, $meta_key ) {
+        $ids = $this->wpdb->get_col( $this->wpdb->prepare( "SELECT meta_id FROM {$this->wpdb->postmeta} WHERE post_id = %d AND meta_key = %s", $post_id, $meta_key ) );
+        if( $ids )
+            return $ids;
+
+        return false;
     }
     
     public function save_translations( $translations ) {
