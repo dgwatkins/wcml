@@ -410,8 +410,12 @@ class WCML_Synchronize_Product_Data{
     public function duplicate_product_post_meta( $original_product_id, $trnsl_product_id, $data = false , $add = false ){
         $settings = $this->sitepress->get_settings();
         $all_meta = get_post_custom( $original_product_id );
-        $post_args = wp_parse_args( $_POST['data'] );
-        $post_fields = $post_args[ 'fields' ];
+        $post_fields = array();
+        if( isset( $_POST['data'] ) ){
+            $post_args = wp_parse_args( $_POST['data'] );
+            $post_fields = $post_args[ 'fields' ];
+        }
+
         unset( $all_meta[ '_thumbnail_id' ] );
 
         foreach ( $all_meta as $key => $meta ) {
