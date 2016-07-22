@@ -22,13 +22,6 @@
     padding: 6px 7px;
 }
 
-.wcml_wc_booking_cost_field label,
-.wcml_wc_booking_base_cost_field label,
-.wcml_wc_display_cost_field label{
-    text-align: right;
-    margin-left: -160px;
-}
-
 .wcml_custom_costs{
     padding: 9px 9px 0;
     display: inline-block;
