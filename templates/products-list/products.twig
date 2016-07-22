@@ -55,7 +55,7 @@
 
 						{# Contintion to check if we have thumbnail. If true the larger image appears #}
 						{% if product.product_has_image == true %}
-						<img id="{{ product.ID }}" src="{{ product.post_thumbnail }}" class="mouse-hovered" style="display: none; width: auto; max-width: 350px; height:auto; max-height:250px; position: absolute; z-index:10; border-style:solid; border-width:3px;">
+						<img id="{{ product.ID }}" src="{{ product.post_thumbnail }}" class="mouse-hovered" style="display: none; width: auto; max-width: 350px; height:auto; max-height:250px; position: absolute; z-index:10; border: solid 4px #999; background: #fff; ">
 						{% endif %}
 
 						<td class="wpml-col-title  wpml-col-title-flag">
