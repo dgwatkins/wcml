@@ -286,7 +286,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                 $trnsl_mid_ids = array();
                 if ( $translation ) {
                     $trnsl_custom_field_values = get_post_meta($translation->ID, $custom_field);
-                    $trnsl_mid_ids = $this->get_mid_ids_by_key($translation->ID, $custom_field);
+                    $trnsl_mid_ids = $this->woocommerce_wpml->products->get_mid_ids_by_key($translation->ID, $custom_field);
                 }
                 foreach( $orig_custom_field_values as $val_key => $orig_custom_field_value ){
                     if( count( $orig_custom_field_values ) == 1 ){
@@ -349,16 +349,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         return $element_data;
     }
 
-    /*
-     * get meta ids for multiple values post meta key
-     */
-    public function get_mid_ids_by_key( $post_id, $meta_key ) {
-        $ids = $this->wpdb->get_col( $this->wpdb->prepare( "SELECT meta_id FROM {$this->wpdb->postmeta} WHERE post_id = %d AND meta_key = %s", $post_id, $meta_key ) );
-        if( $ids )
-            return $ids;
 
-        return false;
-    }
     
     public function save_translations( $translations ) {
 	    /** @var TranslationManagement $iclTranslationManagement */

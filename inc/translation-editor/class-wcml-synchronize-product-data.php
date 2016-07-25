@@ -408,7 +408,8 @@ class WCML_Synchronize_Product_Data{
 
     //duplicate product post meta
     public function duplicate_product_post_meta( $original_product_id, $trnsl_product_id, $data = false , $add = false ){
-        $settings = $this->sitepress->get_settings();
+        global $iclTranslationManagement;
+        $settings = $iclTranslationManagement->settings[ 'custom_fields_translation' ];
         $all_meta = get_post_custom( $original_product_id );
         $post_fields = array();
         if( isset( $_POST['data'] ) ){
@@ -419,19 +420,14 @@ class WCML_Synchronize_Product_Data{
         unset( $all_meta[ '_thumbnail_id' ] );
 
         foreach ( $all_meta as $key => $meta ) {
-            if (
-                !isset( $settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] ) ||
-                $settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] == 0
-            ) {
+            if ( !isset( $settings[ $key ] ) || $settings[ $key ] == 0 ) {
                 continue;
             }
             foreach ( $meta as $meta_value ) {
                 if( $key == '_downloadable_files' ){
                     $this->woocommerce_wpml->downloadable->sync_files_to_translations( $original_product_id, $trnsl_product_id, $data );
                 }elseif ( $data ) {
-                    if (
-                        isset( $settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] ) &&
-                        $settings[ 'translation-management' ][ 'custom_fields_translation' ][ $key ] == 2 ) {
+                    if ( isset( $settings[ $key ] ) && $settings[ $key ] == 2 ) {
 
                         if( isset( $data[ md5( $key ) ] ) ){
                             $meta_value = $data[ md5( $key ) ];
@@ -441,6 +437,7 @@ class WCML_Synchronize_Product_Data{
                         }else{
                             foreach( $post_fields as $post_field_key => $post_field ){
                                 $meta_value = $data[ md5( $post_field_key ) ];
+                                unset( $post_fields[ $post_field_key ] );
                                 $post_field_key = explode( ':', $post_field_key );
                                 if( $post_field_key[0] == $key ){
                                     if( substr( $post_field_key[1], 0, 3 ) == 'new' ){

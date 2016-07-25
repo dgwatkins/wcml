@@ -356,4 +356,14 @@ class WCML_Helper {
         wp_cache_init();
     }
 
+    public static function set_custom_field_to_translate( $name ){
+        global $iclTranslationManagement;
+
+        $setting_factory = new WPML_Custom_Field_Setting_Factory( $iclTranslationManagement );
+        $setting = $setting_factory->post_meta_setting( $name );
+        $setting->set_to_translatable();
+
+        $iclTranslationManagement->settings['custom_fields_translation'][ $name ] = WPML_TRANSLATE_CUSTOM_FIELD;
+    }
+
 }
