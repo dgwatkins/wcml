@@ -6,6 +6,10 @@
 class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 
 	private $bundles;
+	private $default_language;
+	private $second_language;
+	private $tp;
+	private $test_data;
 
 
 	function setUp() {
@@ -16,11 +20,13 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 		$this->second_language = 'es';
 		$this->tp = new WPML_Element_Translation_Package;
 
+
+		$this->test_data = new stdClass();
 		//add bundle product
-		$this->bundle_product = $this->wcml_helper->add_product( $this->default_language, false, random_string() );
-		wp_set_object_terms( $this->bundle_product->id, 'bundle', 'product_type', true );
-		$this->translated_bundle_product = $this->wcml_helper->add_product( $this->second_language, $this->bundle_product->trid, random_string() );
-		wp_set_object_terms( $this->translated_bundle_product->id, 'bundle', 'product_type', true );
+		$this->test_data->bundle_product = $this->wcml_helper->add_product( $this->default_language, false, random_string() );
+		wp_set_object_terms( $this->test_data->bundle_product->id, 'bundle', 'product_type', true );
+		$this->test_data->translated_bundle_product = $this->wcml_helper->add_product( $this->second_language, $this->test_data->bundle_product->trid, random_string() );
+		wp_set_object_terms( $this->test_data->translated_bundle_product->id, 'bundle', 'product_type', true );
 	}
 
 	/**
@@ -46,21 +52,39 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 		$product_bundles = $this->get_test_subject();
 
 		//test sync without override title and desc
-		$this->setup_product_in_bundle( $this->bundle_product->id, false, false );
-		$tr_bundle_data = $product_bundles->sync_bundled_ids( $this->bundle_product->id, $this->translated_bundle_product->id );
+		$this->setup_product_in_bundle( $this->test_data->bundle_product->id, false, false );
+		$tr_bundle_data = $product_bundles->sync_bundled_ids( $this->test_data->bundle_product->id, $this->test_data->translated_bundle_product->id );
 		$this->assertTrue( !empty( $tr_bundle_data ) );
-		$this->assertTrue( isset( $tr_bundle_data[ $this->translated_product_in_bundle->id ] ) );
-		$this->assertEquals( $this->translated_product_in_bundle->id, $tr_bundle_data[ $this->translated_product_in_bundle->id ][ 'product_id' ] );
-		$this->assertEquals( 'no', $tr_bundle_data[ $this->translated_product_in_bundle->id ][ 'override_title' ] );
+		$this->assertTrue( isset( $tr_bundle_data[ $this->test_data->translated_product_in_bundle->id ] ) );
+		$this->assertEquals( $this->test_data->translated_product_in_bundle->id, $tr_bundle_data[ $this->test_data->translated_product_in_bundle->id ][ 'product_id' ] );
+		$this->assertEquals( 'no', $tr_bundle_data[ $this->test_data->translated_product_in_bundle->id ][ 'override_title' ] );
 
 		//test sync with override title and desc
-		$this->setup_product_in_bundle( $this->bundle_product->id, true, true );
-		$tr_bundle_data = $product_bundles->sync_bundled_ids( $this->bundle_product->id, $this->translated_bundle_product->id );
+		$this->setup_product_in_bundle( $this->test_data->bundle_product->id, true, true );
+		$tr_bundle_data = $product_bundles->sync_bundled_ids( $this->test_data->bundle_product->id, $this->test_data->translated_bundle_product->id );
 		$this->assertTrue( !empty( $tr_bundle_data ) );
-		$this->assertTrue( isset( $tr_bundle_data[ $this->translated_product_in_bundle->id ] ) );
-		$this->assertEquals( $this->translated_product_in_bundle->id, $tr_bundle_data[ $this->translated_product_in_bundle->id ][ 'product_id' ] );
-		$this->assertTrue( empty( $tr_bundle_data[ $this->translated_product_in_bundle->id ][ 'product_title' ] ) );
-		$this->assertTrue( empty( $tr_bundle_data[ $this->translated_product_in_bundle->id ][ 'product_description' ] ) );
+		$this->assertTrue( isset( $tr_bundle_data[ $this->test_data->translated_product_in_bundle->id ] ) );
+		$this->assertEquals( $this->test_data->translated_product_in_bundle->id, $tr_bundle_data[ $this->test_data->translated_product_in_bundle->id ][ 'product_id' ] );
+		$this->assertTrue( empty( $tr_bundle_data[ $this->test_data->translated_product_in_bundle->id ][ 'product_title' ] ) );
+		$this->assertTrue( empty( $tr_bundle_data[ $this->test_data->translated_product_in_bundle->id ][ 'product_description' ] ) );
+
+
+		//test sync variable products in bundle
+		$this->setup_variable_product_in_bundle( $this->test_data->bundle_product->id, true, true );
+		$tr_bundle_data = $product_bundles->sync_bundled_ids( $this->test_data->bundle_product->id, $this->test_data->translated_bundle_product->id );
+		$allowed_variations = array();
+		foreach( wc_get_product( $this->test_data->translated_variable_product_in_bundle->id )->get_available_variations() as $variation_data ){
+			$allowed_variations[] = $variation_data[ 'variation_id' ];
+		}
+
+		$this->assertTrue( !empty( $tr_bundle_data ) );
+		$this->assertTrue( isset( $tr_bundle_data[ $this->test_data->translated_variable_product_in_bundle->id ] ) );
+		$this->assertEquals( $this->test_data->translated_variable_product_in_bundle->id, $tr_bundle_data[ $this->test_data->translated_variable_product_in_bundle->id ][ 'product_id' ] );
+		$this->assertTrue( empty( $tr_bundle_data[ $this->test_data->translated_variable_product_in_bundle->id ][ 'product_title' ] ) );
+		$this->assertTrue( empty( $tr_bundle_data[ $this->test_data->translated_variable_product_in_bundle->id ][ 'product_description' ] ) );
+		$this->assertEquals( $allowed_variations, $tr_bundle_data[ $this->test_data->translated_variable_product_in_bundle->id ][ 'allowed_variations' ] );
+		$this->assertEquals( array( $this->test_data->attr_name => $this->test_data->attr_values[ 'medium' ][ 'translated' ] ), $tr_bundle_data[ $this->test_data->translated_variable_product_in_bundle->id ][ 'bundle_defaults' ] );
+
 	}
 
 	private function setup_product_in_bundle( $bundle_product_id, $override_title = false, $override_description = false ){
@@ -69,12 +93,12 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 
 		//insert simple product to bundle
 		$product_title = random_string();
-		$this->product_in_bundle = $this->wcml_helper->add_product( $this->default_language, false, $product_title );
+		$this->test_data->product_in_bundle = $product_in_bundle = $this->wcml_helper->add_product( $this->default_language, false, $product_title );
 		$translated_product_title = random_string();
-		$this->translated_product_in_bundle = $this->wcml_helper->add_product( $this->second_language, $this->product_in_bundle->trid, $translated_product_title );
+		$this->test_data->translated_product_in_bundle = $this->wcml_helper->add_product( $this->second_language, $product_in_bundle->trid, $translated_product_title );
 
-		$bundle_data[ $this->product_in_bundle->id ] = array(
-			'product_id' => $this->product_in_bundle->id,
+		$bundle_data[ $product_in_bundle->id ] = array(
+			'product_id' => $product_in_bundle->id,
 			'override_title' => 'no',
 			'override_description' => 'no',
 			'hide_thumbnail' => 'no',
@@ -90,12 +114,111 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 		);
 
 		if( $override_title ){
-			$bundle_data[ $this->product_in_bundle->id ][ 'override_title' ] = 'yes';
-			$bundle_data[ $this->product_in_bundle->id ][ 'product_title' ] = random_string();
+			$bundle_data[ $product_in_bundle->id ][ 'override_title' ] = 'yes';
+			$bundle_data[ $product_in_bundle->id ][ 'product_title' ] = random_string();
 		}
 		if( $override_description ){
-			$bundle_data[ $this->product_in_bundle->id ][ 'override_description' ] = 'yes';
-			$bundle_data[ $this->product_in_bundle->id ][ 'product_description' ] = random_string();
+			$bundle_data[ $product_in_bundle->id ][ 'override_description' ] = 'yes';
+			$bundle_data[ $product_in_bundle->id ][ 'product_description' ] = random_string();
+		}
+
+		update_post_meta( $bundle_product_id, '_bundle_data', $bundle_data );
+
+		return $bundle_data;
+	}
+
+	private function setup_variable_product_in_bundle( $bundle_product_id, $override_title = false, $override_description = false ){
+		$bundle_data = array();
+
+		$attr = 'size_test';
+		$this->test_data->attr_name = $attr_name = 'pa_size_test';
+		$attr_values = array();
+
+		$attr_values[ 'medium' ] = array(
+			'original' => 'medium',
+			'translated' => 'medio'
+		);
+
+		$this->test_data->attr_default = 'medium';
+
+		$this->test_data->attr_values = $attr_values;
+
+		$this->wcml_helper->register_attribute( $attr );
+		$attr_variations_data = array();
+
+		foreach( $attr_values as $attr_value ){
+			$term = $this->wcml_helper->add_attribute_term( $attr_value['original'], $attr, $this->default_language );
+			$this->wcml_helper->add_attribute_term( $attr_value['translated'], $attr, $this->second_language, $term['trid'] );
+			$attr_variations_data[ $attr_value['original'] ] = array(
+				'price'     => 10,
+				'regular'   => 10
+			);
+		}
+
+		//insert variable product to bundle
+		$variation_data = array(
+			'product_title' => rand_str(),
+			'attribute' => array(
+				'name' => $attr_name
+			),
+			'variations' => $attr_variations_data
+		);
+		$this->test_data->variable_product_in_bundle = $variable_product_in_bundle = $this->wcml_helper->add_variable_product( $variation_data, false);
+
+		$attr_variations_data = array();
+
+		foreach( $variable_product_in_bundle->variations as $product_variations ){
+			$attr_variations_data[ $attr_values[ $product_variations[ 'attr_value' ] ][ 'translated' ] ] = array(
+				'original_variation_id' => $product_variations[ 'variation_id' ],
+				'price'     => 10,
+				'regular'   => 10
+			);
+		}
+
+		$variation_data = array(
+			'product_title' => rand_str(),
+			'attribute' => array(
+				'name' => $attr_name
+			),
+			'variations' => $attr_variations_data
+		);
+		$this->test_data->translated_variable_product_in_bundle = $this->wcml_helper->add_variable_product( $variation_data, $variable_product_in_bundle->trid, $this->second_language );
+
+		$allowed_variations = array();
+		foreach( wc_get_product( $variable_product_in_bundle->id )->get_available_variations() as $variation_data ){
+			$allowed_variations[] = $variation_data[ 'variation_id' ];
+		}
+
+		$bundle_data[ $variable_product_in_bundle->id ] = array(
+			'product_id' => $variable_product_in_bundle->id,
+			'override_title' => 'no',
+			'override_description' => 'no',
+			'hide_thumbnail' => 'no',
+			'optional' => 'no',
+			'bundle_quantity' => 1,
+			'bundle_quantity_max' => 1,
+			'bundle_discount' => '',
+			'visibility' => array(
+				'product' => 'visible',
+				'cart' => 'visible',
+				'order' => 'visible'
+			),
+			'filter_variations' => 'yes',
+			'allowed_variations' => $allowed_variations,
+			'hide_filtered_variations' => 'no',
+			'bundle_defaults' => array(
+				$attr_name => $this->test_data->attr_default
+			),
+			'override_defaults' => 'yes'
+		);
+
+		if( $override_title ){
+			$bundle_data[ $variable_product_in_bundle->id ][ 'override_title' ] = 'yes';
+			$bundle_data[ $variable_product_in_bundle->id ][ 'product_title' ] = random_string();
+		}
+		if( $override_description ){
+			$bundle_data[ $variable_product_in_bundle->id ][ 'override_description' ] = 'yes';
+			$bundle_data[ $variable_product_in_bundle->id ][ 'product_description' ] = random_string();
 		}
 
 		update_post_meta( $bundle_product_id, '_bundle_data', $bundle_data );
@@ -107,21 +230,21 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 
 		$product_bundles = $this->get_test_subject();
 
-		$this->setup_product_in_bundle( $this->bundle_product->id, true, true );
-		$product_bundles->sync_bundled_ids( $this->bundle_product->id, $this->translated_bundle_product->id );
+		$this->setup_product_in_bundle( $this->test_data->bundle_product->id, true, true );
+		$product_bundles->sync_bundled_ids( $this->test_data->bundle_product->id, $this->test_data->translated_bundle_product->id );
 
 		$trnsl_title = random_string();
 		$trnsl_desc = random_string();
 
 		$data = array(
-			md5( 'bundle_'.$this->product_in_bundle->id.'_title' ) => $trnsl_title,
-			md5( 'bundle_'.$this->product_in_bundle->id.'_desc' ) => $trnsl_desc
+			md5( 'bundle_'.$this->test_data->product_in_bundle->id.'_title' ) => $trnsl_title,
+			md5( 'bundle_'.$this->test_data->product_in_bundle->id.'_desc' ) => $trnsl_desc
 		);
 
-		$tr_bundle_data = $product_bundles->bundle_update( $this->bundle_product->id, $this->translated_bundle_product->id, $data, $this->second_language );
+		$tr_bundle_data = $product_bundles->bundle_update( $this->test_data->bundle_product->id, $this->test_data->translated_bundle_product->id, $data, $this->second_language );
 
-		$this->assertEquals( $trnsl_title, $tr_bundle_data[ $this->translated_product_in_bundle->id ][ 'product_title' ] );
-		$this->assertEquals( $trnsl_desc, $tr_bundle_data[ $this->translated_product_in_bundle->id ][ 'product_description' ] );
+		$this->assertEquals( $trnsl_title, $tr_bundle_data[ $this->test_data->translated_product_in_bundle->id ][ 'product_title' ] );
+		$this->assertEquals( $trnsl_desc, $tr_bundle_data[ $this->test_data->translated_product_in_bundle->id ][ 'product_description' ] );
 
 	}
 
@@ -130,27 +253,27 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 		$product_bundles = $this->get_test_subject();
 
 		//test custom box without override title and desc
-		$bundle_data = $this->setup_product_in_bundle( $this->bundle_product->id, false, false );
-		$product_bundles->sync_bundled_ids( $this->bundle_product->id, $this->translated_bundle_product->id );
+		$bundle_data = $this->setup_product_in_bundle( $this->test_data->bundle_product->id, false, false );
+		$product_bundles->sync_bundled_ids( $this->test_data->bundle_product->id, $this->test_data->translated_bundle_product->id );
 
-		$this->assertEquals( array(), $product_bundles->custom_box_html_data( array(), $this->bundle_product->id, get_post( $this->translated_bundle_product->id ), $this->second_language ) );
+		$this->assertEquals( array(), $product_bundles->custom_box_html_data( array(), $this->test_data->bundle_product->id, get_post( $this->test_data->translated_bundle_product->id ), $this->second_language ) );
 
 		//test custom box with override title and desc
-		$bundle_data = $this->setup_product_in_bundle( $this->bundle_product->id, true, true );
-		$product_bundles->sync_bundled_ids( $this->bundle_product->id, $this->translated_bundle_product->id );
+		$bundle_data = $this->setup_product_in_bundle( $this->test_data->bundle_product->id, true, true );
+		$product_bundles->sync_bundled_ids( $this->test_data->bundle_product->id, $this->test_data->translated_bundle_product->id );
 
 		$expected = array(
-			'bundle_'.$this->product_in_bundle->id.'_title' => array(
-				'original'    => $bundle_data[ $this->product_in_bundle->id ][ 'product_title' ],
+			'bundle_'.$this->test_data->product_in_bundle->id.'_title' => array(
+				'original'    => $bundle_data[ $this->test_data->product_in_bundle->id ][ 'product_title' ],
 				'translation' => '',
 			),
-			'bundle_'.$this->product_in_bundle->id.'_desc' => array(
-				'original'    => $bundle_data[ $this->product_in_bundle->id ][ 'product_description' ],
+			'bundle_'.$this->test_data->product_in_bundle->id.'_desc' => array(
+				'original'    => $bundle_data[ $this->test_data->product_in_bundle->id ][ 'product_description' ],
 				'translation' => '',
 			)
 		);
 
-		$this->assertEquals( $expected, $product_bundles->custom_box_html_data( array(), $this->bundle_product->id, get_post( $this->translated_bundle_product->id ), $this->second_language ) );
+		$this->assertEquals( $expected, $product_bundles->custom_box_html_data( array(), $this->test_data->bundle_product->id, get_post( $this->test_data->translated_bundle_product->id ), $this->second_language ) );
 	}
 
 	public function test_custom_box_html() {
@@ -224,8 +347,8 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 				'title'                 => 'Name',
 				'tid'                   => '0',
 				'field_style'           => '0',
-				'field_type'            => 'bundle_'.$this->product_in_bundle->id.'_title',
-				'field_data'            => $bundle_data[ $this->product_in_bundle->id ][ 'product_title' ],
+				'field_type'            => 'bundle_'.$this->test_data->product_in_bundle->id.'_title',
+				'field_data'            => $bundle_data[ $this->test_data->product_in_bundle->id ][ 'product_title' ],
 				'field_data_translated' => '',
 				'field_finished'        => '0',
 			),
@@ -233,8 +356,8 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 				'title'                 => 'Description',
 				'tid'                   => '0',
 				'field_style'           => '0',
-				'field_type'            => 'bundle_'.$this->product_in_bundle->id.'_desc',
-				'field_data'            => $bundle_data[ $this->product_in_bundle->id ][ 'product_description' ],
+				'field_type'            => 'bundle_'.$this->test_data->product_in_bundle->id.'_desc',
+				'field_data'            => $bundle_data[ $this->test_data->product_in_bundle->id ][ 'product_description' ],
 				'field_data_translated' => '',
 				'field_finished'        => '0',
 			)
@@ -248,20 +371,20 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 
 		set_current_screen( 'admin' );
 		$product_bundles = $this->get_test_subject();
-		$product = get_post( $this->bundle_product->id );
+		$product = get_post( $this->test_data->bundle_product->id );
 
-		$bundle_data = $this->setup_product_in_bundle( $this->bundle_product->id, true, true );
+		$bundle_data = $this->setup_product_in_bundle( $this->test_data->bundle_product->id, true, true );
 
 		$expected = array(
 			'contents' => array(
-				'product_bundles:'.$this->product_in_bundle->id.':title' => array(
+				'product_bundles:'.$this->test_data->product_in_bundle->id.':title' => array(
 					'translate' => 1,
-					'data'    	=> $this->tp->encode_field_data( $bundle_data[ $this->product_in_bundle->id ][ 'product_title' ], 'base64' ),
+					'data'    	=> $this->tp->encode_field_data( $bundle_data[ $this->test_data->product_in_bundle->id ][ 'product_title' ], 'base64' ),
 					'format'	=> 'base64',
 				),
-				'product_bundles:'.$this->product_in_bundle->id.':description' => array(
+				'product_bundles:'.$this->test_data->product_in_bundle->id.':description' => array(
 					'translate' => 1,
-					'data'    	=> $this->tp->encode_field_data( $bundle_data[ $this->product_in_bundle->id ][ 'product_description' ], 'base64' ),
+					'data'    	=> $this->tp->encode_field_data( $bundle_data[ $this->test_data->product_in_bundle->id ][ 'product_description' ], 'base64' ),
 					'format' 	=> 'base64',
 				)
 			)
@@ -274,30 +397,30 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 	public function test_save_bundle_data_translation() {
 
 		$product_bundles = $this->get_test_subject();
-		$product = get_post( $this->bundle_product->id );
+		$product = get_post( $this->test_data->bundle_product->id );
 
-		$bundle_data = $this->setup_product_in_bundle( $this->bundle_product->id, true, true );
+		$bundle_data = $this->setup_product_in_bundle( $this->test_data->bundle_product->id, true, true );
 		$data = array(
 			'title' => array(
-				'field_type' => 'product_bundles:'.$this->product_in_bundle->id.':title',
+				'field_type' => 'product_bundles:'.$this->test_data->product_in_bundle->id.':title',
 				'data'	=> random_string()
 			),
 			'description' => array(
-				'field_type' => 'product_bundles:'.$this->product_in_bundle->id.':description',
+				'field_type' => 'product_bundles:'.$this->test_data->product_in_bundle->id.':description',
 				'data'	=> random_string()
 			)
 		);
 
 		$job = new stdClass();
-		$job->original_doc_id = $this->bundle_product->id;
+		$job->original_doc_id = $this->test_data->bundle_product->id;
 		$job->language_code = $this->second_language;
 
-		$product_bundles->save_bundle_data_translation( $this->translated_bundle_product->id, $data, $job );
+		$product_bundles->save_bundle_data_translation( $this->test_data->translated_bundle_product->id, $data, $job );
 		$this->wcml_helper->icl_clear_and_init_cache();
 
 		$expected = array(
-			$this->translated_product_in_bundle->id => array(
-				'product_id' => $this->translated_product_in_bundle->id,
+			$this->test_data->translated_product_in_bundle->id => array(
+				'product_id' => $this->test_data->translated_product_in_bundle->id,
 				'override_title' => 'yes',
 				'product_title' => $data[ 'title' ][ 'data' ],
 				'override_description' => 'yes',
@@ -315,7 +438,7 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 				)
 			);
 
-		$output = get_post_meta( $this->translated_bundle_product->id, '_bundle_data', true );
+		$output = get_post_meta( $this->test_data->translated_bundle_product->id, '_bundle_data', true );
 		$this->assertEquals( $expected, $output );
 	}
 
@@ -328,7 +451,7 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 		$cart_item = array(
 			'bundled_items' => array(),
 			'data' => $cart_item_data,
-			'product_id' => $this->bundle_product->id,
+			'product_id' => $this->test_data->bundle_product->id,
 		);
 
 		$product_bundles = $this->get_test_subject();
@@ -337,7 +460,7 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 
 		$new_cart_item = $product_bundles->resync_bundle( $cart_item, false, false );
 
-		$this->assertEquals( $this->translated_bundle_product->id, $new_cart_item[ 'data' ]->id );
+		$this->assertEquals( $this->test_data->translated_bundle_product->id, $new_cart_item[ 'data' ]->id );
 
 		$this->sitepress->switch_lang( $this->default_language );
 	}
