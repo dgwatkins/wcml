@@ -357,13 +357,10 @@ class WCML_Helper {
     }
 
     public static function set_custom_field_to_translate( $name ){
-        global $iclTranslationManagement;
+        global $sitepress;
 
-        $setting_factory = new WPML_Custom_Field_Setting_Factory( $iclTranslationManagement );
-        $setting = $setting_factory->post_meta_setting( $name );
-        $setting->set_to_translatable();
-
-        $iclTranslationManagement->settings['custom_fields_translation'][ $name ] = WPML_TRANSLATE_CUSTOM_FIELD;
+        $sitepress->core_tm()->settings['custom_fields_translation'][ $name ] = WPML_TRANSLATE_CUSTOM_FIELD;
+        $sitepress->core_tm()->save_settings();
     }
 
 }

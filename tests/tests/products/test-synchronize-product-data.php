@@ -2,15 +2,15 @@
 
 class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 
+	private $test_data;
+
 	function setUp() {
 		parent::setUp();
 
+		$this->test_data = new stdClass();
 		//add product for tests
-		$orig_product = $this->wcml_helper->add_product( 'en', false, 'product 1' );
-		$this->orig_product_id = $orig_product->id;
-
-		$es_product = $this->wcml_helper->add_product( 'es', $orig_product->trid, 'producto 1' );
-		$this->es_product_id = $es_product->id;
+		$this->test_data->orig_product = $this->wcml_helper->add_product( 'en', false, 'product 1' );
+		$this->test_data->es_product = $this->wcml_helper->add_product( 'es', $this->test_data->orig_product->trid, 'producto 1' );
 	}
 
 	function test_duplicate_product_post_meta() {
@@ -18,8 +18,8 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 
 		$this->wcml_helper->set_custom_field_to_translate( $custom_field );
 		//add values to original product
-		add_post_meta( $this->orig_product_id, $custom_field, rand_str() );
-		add_post_meta( $this->orig_product_id, $custom_field, rand_str() );
+		add_post_meta( $this->test_data->orig_product->id, $custom_field, rand_str() );
+		add_post_meta( $this->test_data->orig_product->id, $custom_field, rand_str() );
 
 		$translated_value_for_first_field = rand_str();
 		$translated_value_for_second_field = rand_str();
@@ -38,14 +38,14 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 			)
 		);
 
-		$this->woocommerce_wpml->sync_product_data->duplicate_product_post_meta( $this->orig_product_id, $this->es_product_id, $data );
-		$translated_meta = get_post_meta( $this->es_product_id, $custom_field );
-		$this->assertEquals( count( $data ), count( $translated_meta ) );
+		$this->woocommerce_wpml->sync_product_data->duplicate_product_post_meta( $this->test_data->orig_product->id, $this->test_data->es_product->id, $data );
+		$translated_meta = get_post_meta( $this->test_data->es_product->id, $custom_field );
+		$this->assertCount( count( $data ), $translated_meta );
 		$this->assertEquals( $translated_value_for_first_field, $translated_meta[ 0 ] );
 		$this->assertEquals( $translated_value_for_second_field, $translated_meta[ 1 ] );
 
 		//test updating values
-		$translated_mid_ids = $this->woocommerce_wpml->products->get_mid_ids_by_key( $this->es_product_id, $custom_field );
+		$translated_mid_ids = $this->woocommerce_wpml->products->get_mid_ids_by_key( $this->test_data->es_product->id, $custom_field );
 		$values_to_update = array();
 		$data = array();
 		$_POST = array();
@@ -59,9 +59,9 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 			$_POST['data'][ 'fields' ][ $custom_field.':'.$mid_id ] = $value ;
 		}
 
-		$this->woocommerce_wpml->sync_product_data->duplicate_product_post_meta( $this->orig_product_id, $this->es_product_id, $data );
-		$translated_meta = get_post_meta( $this->es_product_id, $custom_field );
-		$this->assertEquals( count( $data ), count( $translated_meta ) );
+		$this->woocommerce_wpml->sync_product_data->duplicate_product_post_meta( $this->test_data->orig_product->id, $this->test_data->es_product->id, $data );
+		$translated_meta = get_post_meta( $this->test_data->es_product->id, $custom_field );
+		$this->assertCount( count( $data ), $translated_meta );
 		$this->assertEquals( $values_to_update[ 0 ], $translated_meta[ 0 ] );
 		$this->assertEquals( $values_to_update[ 1 ], $translated_meta[ 1 ] );
 
