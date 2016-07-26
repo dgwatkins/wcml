@@ -368,4 +368,11 @@ class WCML_Helper {
         wp_cache_init();
     }
 
+    public static function set_custom_field_to_translate( $name ){
+        global $sitepress;
+
+        $sitepress->core_tm()->settings['custom_fields_translation'][ $name ] = WPML_TRANSLATE_CUSTOM_FIELD;
+        $sitepress->core_tm()->save_settings();
+    }
+
 }
