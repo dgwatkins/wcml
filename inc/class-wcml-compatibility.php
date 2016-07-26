@@ -51,7 +51,7 @@ class WCML_Compatibility {
 
         //Product Bundle
         if(class_exists('WC_Product_Bundle')){
-            $this->product_bundles = new WCML_Product_Bundles();
+            $this->product_bundles = new WCML_Product_Bundles( $this->sitepress, $this->woocommerce_wpml );
         }
         
          // WooCommerce Variation Swatches and Photos
