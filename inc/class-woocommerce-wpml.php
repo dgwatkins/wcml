@@ -73,6 +73,8 @@ class woocommerce_wpml {
 
         $this->currencies = new WCML_Currencies( $this );
 
+        $this->xdomain_data = new WCML_xDomain_Data;
+
         add_action('init', array($this, 'init'),2);
     }
 
@@ -148,7 +150,6 @@ class woocommerce_wpml {
         $this->shipping             = new WCML_WC_Shipping( $sitepress );
         $this->gateways             = new WCML_WC_Gateways( $sitepress );
         $this->currencies           = new WCML_Currencies( $this );
-        $this->xdomain_data         = new WCML_xDomain_Data;
         $this->languages_upgrader   = new WCML_Languages_Upgrader;
         $this->url_translation      = new WCML_Url_Translation ( $this, $sitepress );
         $this->requests             = new WCML_Requests;
