@@ -112,6 +112,8 @@ class WCML_Helper {
     public static function add_variable_product( $variation_data = array(), $trid= false, $language = false ) {
         global $wpdb, $sitepress, $wpml_post_translations;;
 
+        $ret = new stdClass();
+
         if( empty($variation_data) ) {
             self::register_attribute( 'color' );
             $white = self::add_attribute_term( 'White', 'color', $sitepress->get_default_language() );
@@ -192,7 +194,7 @@ class WCML_Helper {
         // Attributes
         update_post_meta( $product_id, '_default_attributes', array() );
         update_post_meta( $product_id, '_product_attributes', array(
-            'pa_color' => array(
+            $variation_data['attribute']['name'] => array(
                 'name'         => $variation_data['attribute']['name'],
                 'value'        => '',
                 'position'     => '1',
@@ -211,12 +213,23 @@ class WCML_Helper {
         ) );
         $return['term_taxonomy_id'] = $wpdb->insert_id;
 
-
+        $ret->variations = array();
         // VARIATIONS
-        foreach( $variation_data['variations'] as $attribute => $variation ) {
+        foreach( $variation_data['variations'] as $attribute_value => $variation ) {
+
+            //get original variation trid to set relationship
+            $var_trid = false;
+            if( $trid && isset( $variation[ 'original_variation_id' ] ) ){
+                $var_trid = $wpml_post_translations->get_element_trid( $variation[ 'original_variation_id' ], 'product_variation' );
+            }
 
             // Create the variation
-            $variation_id = wpml_test_insert_post( $language, 'product_variation', false, 'Variation #' . $attribute . ' of Dummy Product', $product_id );
+            $variation_id = wpml_test_insert_post( $language, 'product_variation', $var_trid, 'Variation #' . $attribute_value . ' of Dummy Product', $product_id );
+            $ret->variations[ $variation_id ] = array(
+                'variation_id' => $variation_id,
+                'attr' => $variation_data['attribute']['name'],
+                'attr_value' => $attribute_value
+            );
 
             // Price related meta
             update_post_meta( $variation_id, '_price', $variation['price'] );
@@ -226,14 +239,14 @@ class WCML_Helper {
             }
 
             // General meta
-            update_post_meta( $variation_id, '_sku', 'DUMMY SKU VARIABLE ' . $attribute );
+            update_post_meta( $variation_id, '_sku', 'DUMMY SKU VARIABLE ' . $attribute_value );
             update_post_meta( $variation_id, '_manage_stock', 'no' );
             update_post_meta( $variation_id, '_downloadable', 'no' );
             update_post_meta( $variation_id, '_virtual', 'taxable' );
             update_post_meta( $variation_id, '_stock_status', 'instock' );
 
             // Attribute meta
-            update_post_meta( $variation_id, 'attribute_' . $variation_data['attribute']['name'], $attribute );
+            update_post_meta( $variation_id, 'attribute_' . $variation_data['attribute']['name'], $attribute_value );
 
             // Add the variation meta to the main product
             if( $variation['price'] == $max_variation_price ){
@@ -253,7 +266,7 @@ class WCML_Helper {
             }
 
             // Link the product to the attribute
-            $attribute_data = get_term_by('name', $attribute, $variation_data['attribute']['name']);
+            $attribute_data = get_term_by('name', $attribute_value, $variation_data['attribute']['name']);
             $wpdb->insert( $wpdb->prefix . 'term_relationships', array(
                 'object_id'        => $product_id,
                 'term_taxonomy_id' => $attribute_data->term_taxonomy_id,
@@ -262,11 +275,10 @@ class WCML_Helper {
 
         }
 
-        $ret = new stdClass();
+
 
         $ret->id    = $product_id;
         $ret->trid  = !$trid ? $wpml_post_translations->get_element_trid( $product_id, 'post_product' ) : $trid;
-
 
         return $ret;
     }

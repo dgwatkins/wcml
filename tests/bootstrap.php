@@ -55,9 +55,7 @@ function _install_wc() {
 	}
 }
 
-
 require_once 'wordpress/wp-includes/locale.php';
-
 
 // Install WPML
 tests_add_filter( 'wpml_loaded', 'wpml_test_install_setup' );
@@ -65,8 +63,6 @@ tests_add_filter( 'wpml_loaded', 'wpml_test_install_setup' );
 tests_add_filter( 'init', '_install_wc', -1 );
 // Launch WCML
 tests_add_filter( 'wpml_loaded', array( 'woocommerce_wpml', 'instance' ) );
-
-
 
 // Temporary workaround for missing WP_REST_Server class missing
 tests_add_filter( 'init', 'WP_REST_Server_placeholder' );
