@@ -21,6 +21,7 @@ define( 'WCML_PLUGIN_URL', untrailingslashit( plugin_dir_url( __FILE__ ) ) );
 include WCML_PLUGIN_PATH . '/inc/constants.php';
 require WCML_PLUGIN_PATH . '/inc/missing-php-functions.php';
 include WCML_PLUGIN_PATH . '/inc/installer-loader.php';
+include WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
 
 if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
     require WCML_PLUGIN_PATH . '/embedded/autoload.php';

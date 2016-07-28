@@ -5,57 +5,30 @@ class WCML_Multi_Currency_Shipping{
     private $multi_currency;
 
     public function __construct( &$multi_currency ) {
+        global $wpdb;
 
         $this->multi_currency =& $multi_currency;
 
-        add_filter('woocommerce_package_rates', array($this, 'shipping_taxes_filter'));
+        $rates = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE method_id IN('flat_rate', 'local_pickup')" );
+        foreach( $rates as $method ){
+            $option_name = sprintf('woocommerce_%s_%d_settings', $method->method_id, $method->instance_id );
+            add_filter('option_' . $option_name, array($this, 'convert_shipping_cost'));
+        }
 
         add_filter( 'wcml_shipping_price_amount', array($this, 'shipping_price_filter') ); // WCML filters
         add_filter( 'wcml_shipping_free_min_amount', array($this, 'shipping_free_min_amount') ); // WCML filters
 
         add_filter('option_woocommerce_free_shipping_settings', array($this, 'adjust_min_amount_required'));
+
     }
 
-    public function shipping_taxes_filter($methods){
+    public function convert_shipping_cost( $settings ){
 
-        global $woocommerce;
-        $woocommerce->shipping->load_shipping_methods();
-        $shipping_methods = $woocommerce->shipping->get_shipping_methods();
-
-        foreach($methods as $k => $method){
-
-            // exceptions
-            $is_old_table_rate = defined('TABLE_RATE_SHIPPING_VERSION' ) &&
-                                 version_compare( TABLE_RATE_SHIPPING_VERSION, '3.0', '<' ) &&
-                                 preg_match('/^table_rate-[0-9]+ : [0-9]+$/', $k);
-
-            if(
-                isset($shipping_methods[$method->id]) &&
-                isset($shipping_methods[$method->id]->settings['type']) &&
-                $shipping_methods[$method->id]->settings['type'] == 'percent'
-                || $is_old_table_rate
-            ){
-                continue;
-            }
-
-            foreach($method->taxes as $j => $tax){
-
-                $methods[$k]->taxes[$j] = apply_filters('wcml_shipping_price_amount', $methods[$k]->taxes[$j]);
-
-            }
-
-            if($methods[$k]->cost){
-
-                if( isset($shipping_methods[$method->id]) && preg_match('/percent/', $shipping_methods[$method->id]->settings['cost']) ){
-                    continue;
-                }
-
-                $methods[$k]->cost = apply_filters('wcml_shipping_price_amount', $methods[$k]->cost);
-            }
-
+        if( isset($settings['cost']) ){
+            $settings['cost'] = $this->multi_currency->prices->raw_price_filter($settings['cost'], $this->multi_currency->get_client_currency());
         }
 
-        return $methods;
+        return $settings;
     }
 
     public function shipping_price_filter($price) {
