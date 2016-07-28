@@ -1034,6 +1034,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$trid = $this->sitepress->get_element_trid( $bookable_resource, 'post_bookable_resource' );
 		$resource_translation = wpml_test_insert_post( $this->second_language, 'bookable_resource', $trid, $person_title, $translation );
 		$bookable_resource1 = wpml_test_insert_post( $this->default_language, 'bookable_resource', false, $person_title, $product );
+
 		update_post_meta( $bookable_resource1, 'dummy_key', 'dummy_value' );
 
 		$qty = random_int( 1, 999 );
@@ -1080,6 +1081,69 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		);
 		$this->assertEquals( $trns_resource_id, $sort_order[1]->resource_id );
 		$this->assertEquals( 'dummy_value', get_post_meta( $trns_resource_id, 'dummy_key', true ) );
+	}
+
+	/**
+	 * @test
+	 *
+	 * Given a product in the default language with a resource, add a translated resources to the product translations
+	 */
+	public function add_product_resource(){
+
+		// products
+		$product = $this->create_bookable_product( $this->default_language );
+		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
+		$product_translation = $this->create_bookable_product( $this->second_language, $trid );
+
+		// resources
+		$resource_title = random_string();
+		$resource = wpml_test_insert_post( $this->default_language, 'bookable_resource', false, $resource_title, $product );
+
+		$relationship['sort_order'] = random_int(1, 999);
+		$relationship['resource_id'] = $resource;
+		$relationship['product_id'] = $product;
+		$this->wpdb->insert( $this->wpdb->prefix . 'wc_booking_relationships', $relationship );
+
+		$qty = random_int( 1, 999 );
+		$available = random_int( 1, 999 );
+		update_post_meta( $resource, 'qty', $qty );
+		update_post_meta( $resource, '_wc_booking_availability', $available );
+
+		$trid = $this->sitepress->get_element_trid( $resource, 'post_bookable_resource' );
+		$resource_translation = wpml_test_insert_post( $this->second_language, 'bookable_resource', $trid, $resource_title );
+
+		$resource_data = new stdClass();
+		$resource_data->resource_id = $resource;
+		$resource_data->sort_order = $relationship['sort_order'];
+		$wcml_bookings_object = $this->get_wcml_booking_object();
+		$wcml_bookings_object->add_product_resource( $product_translation, $resource_translation, $resource_data );
+
+
+		$translation_relationship = $this->wpdb->get_row(
+			$this->wpdb->prepare(
+				"SELECT sort_order, resource_id FROM {$this->wpdb->prefix}wc_booking_relationships WHERE product_id = %d",
+				$product_translation
+			)
+		);
+
+		$this->assertEquals( $translation_relationship->sort_order, $relationship['sort_order'] );
+		$this->assertEquals( $translation_relationship->resource_id, $resource_translation );
+
+		$this->assertEquals( $qty, get_post_meta( $resource_translation, 'qty', true ) );
+		$this->assertEquals( $available, get_post_meta( $resource_translation, '_wc_booking_availability', true ) );
+
+		$wcml_bookings_object->remove_resource_from_product( $product_translation, $resource_translation );
+
+		$translation_relationship = $this->wpdb->get_row(
+			$this->wpdb->prepare(
+				"SELECT sort_order, resource_id FROM {$this->wpdb->prefix}wc_booking_relationships WHERE product_id = %d",
+				$product_translation
+			)
+		);
+		$this->assertNull( $translation_relationship );
+
+
+
 	}
 
 	private function create_bookable_product( $lang, $trid = false ) {
