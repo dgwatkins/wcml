@@ -411,11 +411,7 @@ class WCML_Synchronize_Product_Data{
         global $iclTranslationManagement;
         $settings = $iclTranslationManagement->settings[ 'custom_fields_translation' ];
         $all_meta = get_post_custom( $original_product_id );
-        $post_fields = array();
-        if( isset( $_POST['data'] ) ){
-            $post_args = wp_parse_args( $_POST['data'] );
-            $post_fields = $post_args[ 'fields' ];
-        }
+        $post_fields = null;
 
         unset( $all_meta[ '_thumbnail_id' ] );
 
@@ -429,31 +425,49 @@ class WCML_Synchronize_Product_Data{
                 }elseif ( $data ) {
                     if ( isset( $settings[ $key ] ) && $settings[ $key ] == WPML_TRANSLATE_CUSTOM_FIELD ) {
 
-                        if( isset( $data[ md5( $key ) ] ) ){
-                            $meta_value = $data[ md5( $key ) ];
-                            $meta_value = apply_filters( 'wcml_meta_value_before_add', $meta_value, $key );
-                            update_post_meta( $trnsl_product_id, $key, $meta_value );
-                            unset( $post_fields[ $key ] );
-                        }else{
-                            foreach( $post_fields as $post_field_key => $post_field ){
-                                $meta_value = $data[ md5( $post_field_key ) ];
-                                unset( $post_fields[ $post_field_key ] );
-                                $post_field_key = explode( ':', $post_field_key );
-                                if( $post_field_key[0] == $key ){
-                                    if( substr( $post_field_key[1], 0, 3 ) == 'new' ){
-                                        add_post_meta( $trnsl_product_id, $key, $meta_value );
-                                    }else{
-                                        update_meta( $post_field_key[1], $key, $meta_value );
-                                    }
-                                }
-                            }
-                        }
+                        $post_fields = $this->sync_custom_field_value( $key, $data, $trnsl_product_id, $post_fields );
                     }
                 }
             }
         }
 
         do_action( 'wcml_after_duplicate_product_post_meta', $original_product_id, $trnsl_product_id, $data );
+    }
+
+    public function sync_custom_field_value( $custom_field, $translation_data, $trnsl_product_id, $post_fields,  $original_product_id = false, $is_variation = false ){
+
+        if( is_null( $post_fields ) ){
+            $post_fields = array();
+            if( isset( $_POST['data'] ) ){
+                $post_args = wp_parse_args( $_POST['data'] );
+                $post_fields = $post_args[ 'fields' ];
+            }
+        }
+
+
+        $custom_filed_key = $is_variation && $original_product_id ? $custom_field.$original_product_id : $custom_field;
+
+        if( isset( $translation_data[ md5( $custom_filed_key ) ] ) ){
+            $meta_value = $translation_data[ md5( $custom_filed_key ) ];
+            $meta_value = apply_filters( 'wcml_meta_value_before_add', $meta_value, $custom_filed_key );
+            update_post_meta( $trnsl_product_id, $custom_field, $meta_value );
+            unset( $post_fields[ $custom_filed_key ] );
+        }else{
+            foreach( $post_fields as $post_field_key => $post_field ){
+                $meta_value = $translation_data[ md5( $post_field_key ) ];
+                $field_key = explode( ':', $post_field_key );
+                if( $field_key[0] == $custom_filed_key ){
+                    if( substr( $field_key[1], 0, 3 ) == 'new' ){
+                        add_post_meta( $trnsl_product_id, $custom_field, $meta_value );
+                    }else{
+                        update_meta( $field_key[1], $custom_field, $meta_value );
+                    }
+                    unset( $post_fields[ $post_field_key ] );
+                }
+            }
+        }
+
+        return $post_fields;
     }
 
     public function woocommerce_duplicate_product( $new_id, $post ){
