@@ -483,6 +483,14 @@ class WCML_Synchronize_Product_Data{
                 $this->sitepress->set_element_language_details( $new_id, 'post_' . $post->post_type, $new_trid, $this->sitepress->get_current_language() );
             }
         }
+
+        // Set language info for variations
+        if ( $children_products = get_children( 'post_parent=' . $new_orig_id . '&post_type=product_variation' ) ) {
+            foreach ( $children_products as $child ) {
+                $this->sitepress->set_element_language_details( $child->ID, 'post_product_variation', false, $orig_lang );
+            }
+        }
+
         $translations = $this->sitepress->get_element_translations( $trid, 'post_' . $post->post_type );
         $duplicated_products[ 'translations' ] = array();
         if( $translations ){
