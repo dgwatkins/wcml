@@ -420,14 +420,14 @@ class WCML_Synchronize_Product_Data{
         unset( $all_meta[ '_thumbnail_id' ] );
 
         foreach ( $all_meta as $key => $meta ) {
-            if ( !isset( $settings[ $key ] ) || $settings[ $key ] == 0 ) {
+            if ( !isset( $settings[ $key ] ) || $settings[ $key ] == WPML_IGNORE_CUSTOM_FIELD ) {
                 continue;
             }
             foreach ( $meta as $meta_value ) {
                 if( $key == '_downloadable_files' ){
                     $this->woocommerce_wpml->downloadable->sync_files_to_translations( $original_product_id, $trnsl_product_id, $data );
                 }elseif ( $data ) {
-                    if ( isset( $settings[ $key ] ) && $settings[ $key ] == 2 ) {
+                    if ( isset( $settings[ $key ] ) && $settings[ $key ] == WPML_TRANSLATE_CUSTOM_FIELD ) {
 
                         if( isset( $data[ md5( $key ) ] ) ){
                             $meta_value = $data[ md5( $key ) ];
