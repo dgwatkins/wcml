@@ -74,6 +74,22 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 		return $current_user->ID;
 	}
 
+	protected function make_current_user_wcml_manager() {
+		global $current_user;
+
+		if ( ! isset( $current_user ) || (bool) get_current_user_id() === false ) {
+			$user_factory = new WP_UnitTest_Factory_For_User();
+			$current_user = $user_factory->create_and_get();
+		}
+
+		$current_user->add_cap( 'shop_manager' );
+		$current_user->add_cap( 'wpml_manage_woocommerce_multilingual' );
+		$current_user->get_role_caps();
+		$current_user->update_user_level_from_caps();
+
+		return $current_user->ID;
+	}
+
 	function get_wcml_mock() {
 		return $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
 	}

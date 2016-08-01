@@ -30,6 +30,14 @@ class Test_WCML_Admin_Menus extends WCML_UnitTestCase {
 		$prevent_access = WCML_Admin_Menus::check_user_admin_access( true );
 		$this->assertFalse( $prevent_access );
 
+		$user_factory = new WP_UnitTest_Factory_For_User();
+		$user = $user_factory->create_and_get();
+
+		$this->make_current_user_wcml_manager();
+		$prevent_access = WCML_Admin_Menus::check_user_admin_access( true );
+		$this->assertFalse( $prevent_access );
+		wp_delete_user( $user->ID );
+
 		//switch user back
 		wp_set_current_user( $current_user_id );
 
