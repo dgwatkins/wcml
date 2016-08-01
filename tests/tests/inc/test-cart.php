@@ -1,9 +1,14 @@
 <?php
 
 class Test_WCML_Cart extends WCML_UnitTestCase {
+    private $multi_currency;
+    private $currencies = array();
 
 	function setUp(){
 		parent::setUp();
+
+        add_filter('wcml_load_multi_currency', '__return_true');
+        set_current_screen( 'front' );
 
 		//add product for tests
 		$orig_product = $this->wcml_helper->add_product( 'en', false, 'product 1' );
@@ -17,7 +22,76 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
 		$this->wcml_helper->register_attribute( $attr );
 		$term = $this->wcml_helper->add_attribute_term( 'medium', $attr, 'en' );
 		$es_term = $this->wcml_helper->add_attribute_term( 'medio', $attr, 'es', $term['trid'] );
-	}
+
+        $this->multi_currency_helper = new WCML_Helper_Multi_Currency( $this->woocommerce_wpml );
+        $this->multi_currency_helper->enable_multi_currency();
+
+        //
+        // THE MULTI CURRENCY CONTEXT
+        //
+        $this->products = array(
+            '0' => array(
+                'title' => 'Test Shipping Costs',
+                'price' => 50
+            )
+        );
+
+        $this->flat_rate_cost = 10;
+
+        $this->currencies = array(
+            'USD' => array(
+                'rate'      => 1.34,
+                'options'   => array(
+                    'position' => 'left',
+                    'thousand_sep' => ',',
+                    'decimal_sep' => '.',
+                    'num_decimals' => 2,
+                    'rounding' => 'disabled',
+                    'rounding_increment' => 0,
+                    'auto_subtract' => 0
+                )
+            ),
+            'JPY' => array(
+                'rate'      => 137,
+                'options'   => array(
+                    'position' => 'left',
+                    'thousand_sep' => ',',
+                    'decimal_sep' => '.',
+                    'num_decimals' => 0,
+                    'rounding' => 'disabled',
+                    'rounding_increment' => 0,
+                    'auto_subtract' => 0
+                )
+            ),
+            'BTC' => array(
+                'rate'      => 0.0020,
+                'options'   => array(
+                    'position' => 'left',
+                    'thousand_sep' => ',',
+                    'decimal_sep' => '.',
+                    'num_decimals' => 4,
+                    'rounding' => 'disabled',
+                    'rounding_increment' => 0,
+                    'auto_subtract' => 0
+                )
+            )
+
+        );
+
+        foreach( $this->currencies as $code => $currency ){
+            $this->multi_currency_helper->add_currency( $code, $currency['rate'], $currency['options'] );
+        }
+
+
+        // Multi currency objects
+        $this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
+        $this->multi_currency =& $this->woocommerce_wpml->multi_currency;
+
+        $this->multi_currency->prices->prices_init();
+
+
+
+    }
 
 	function test_get_cart_attribute_translation(){
 
@@ -72,5 +146,61 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
 
 		$this->assertEquals( $this->sitepress->convert_url( get_home_url() ).'&wc-api=WC_Gateway_Paypal', $filtered_args['notify_url'] );
 	}
+
+    /**
+     * woocommerce_calculate_totals is used to filter the cart data when WooCommerce calculates the totals
+     */
+    function test_woocommerce_calculate_totals(){
+
+        // We need this to have the calculate_totals() method calculate totals
+        if ( ! defined( 'WOOCOMMERCE_CHECKOUT' ) ) {
+            define( 'WOOCOMMERCE_CHECKOUT', true );
+        }
+
+        WC()->cart->empty_cart();
+        $this->multi_currency->set_client_currency( 'GBP' );
+
+        // Add the product to the cart
+        $product = $this->wcml_helper->add_product(
+            $this->sitepress->get_default_language(),
+            false,
+            $this->products[0]['title'],
+            0,
+            array(
+                '_price' => $this->products[0]['price'],
+                '_regular_price' => $this->products[0]['price']
+            )
+        );
+
+        // DEFAULT CURRENCY
+        $items = random_int(1, 10);
+        WC()->cart->add_to_cart( $product->id, $items );
+        WC()->cart->calculate_totals();
+        // Cost without shipping
+        $this->assertEquals( $items * $this->products[0]['price'],  WC()->cart->cart_contents_total );
+
+        foreach( $this->currencies as $code => $currency ){
+
+            // Clean up the cart
+            WC()->cart->empty_cart();
+            $this->multi_currency->set_client_currency( $code );
+            $items = random_int(1, 10);
+            WC()->cart->add_to_cart( $product->id, $items );
+            WC()->cart->calculate_totals();
+
+            //The cost of the cart in the SECONDARY currency (without shipping)
+            $this->assertEquals(
+                $items * $this->currencies[$code]['rate'] * $this->products[0]['price'],
+                WC()->cart->cart_contents_total
+            );
+
+        }
+
+        // Delete the product
+        wp_delete_post( $product->id, true );
+
+        $this->multi_currency->set_client_currency( 'GBP' );
+    }
+
 
 }

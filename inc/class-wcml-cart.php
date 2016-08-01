@@ -35,8 +35,9 @@ class WCML_Cart
     /*
      *  Update cart and cart session when switch language
      */
-    public function woocommerce_calculate_totals( $cart ){
+    public function woocommerce_calculate_totals( $cart, $currency = false ){
         global $woocommerce;
+
         $current_language = $this->sitepress->get_current_language();
         $new_cart_data = array();
 
@@ -66,6 +67,10 @@ class WCML_Cart
                                                                                     $tr_product_id
                                                                                 );
                 }
+            }
+
+            if( $currency !== false ){
+                $cart->cart_contents[ $key ][ 'data' ]->price = get_post_meta( $cart_item['product_id'], '_price', 1 );
             }
 
             if( $cart_item[ 'product_id' ] == $tr_product_id ){

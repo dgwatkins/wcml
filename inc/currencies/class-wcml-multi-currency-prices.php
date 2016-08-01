@@ -93,9 +93,11 @@ class WCML_Multi_Currency_Prices{
         if( $currency === false ){
             $currency = $this->multi_currency->get_client_currency();
         }
-        $price = $this->convert_price_amount($price, $currency);
 
-        $price = $this->apply_rounding_rules($price, $currency);
+        if( $currency != get_option('woocommerce_currency')) {
+            $price = $this->convert_price_amount( $price, $currency );
+            $price = $this->apply_rounding_rules( $price, $currency );
+        }
 
         return $price;
 
@@ -196,32 +198,36 @@ class WCML_Multi_Currency_Prices{
 
     public function convert_price_amount($amount, $currency = false){
 
-        if(empty($currency)){
+        if( empty( $currency ) ){
             $currency = $this->multi_currency->get_client_currency();
         }
 
-        $exchange_rates = $this->multi_currency->get_exchange_rates();
+        if( $currency != get_option('woocommerce_currency')){
 
-        if(isset($exchange_rates[$currency]) && is_numeric($amount)){
-            $amount = $amount * $exchange_rates[$currency];
+            $exchange_rates = $this->multi_currency->get_exchange_rates();
 
-            // exception - currencies_without_cents
-            if(in_array($currency, $this->multi_currency->currencies_without_cents)){
+            if(isset($exchange_rates[$currency]) && is_numeric($amount)){
+                $amount = $amount * $exchange_rates[$currency];
 
-                if(version_compare(PHP_VERSION, '5.3.0') >= 0){
-                    $amount = round($amount, 0, PHP_ROUND_HALF_UP);
-                }else{
-                    if($amount - floor($amount) < 0.5){
-                        $amount = floor($amount);
+                // exception - currencies_without_cents
+                if(in_array($currency, $this->multi_currency->currencies_without_cents)){
+
+                    if(version_compare(PHP_VERSION, '5.3.0') >= 0){
+                        $amount = round($amount, 0, PHP_ROUND_HALF_UP);
                     }else{
-                        $amount = ceil($amount);
+                        if($amount - floor($amount) < 0.5){
+                            $amount = floor($amount);
+                        }else{
+                            $amount = ceil($amount);
+                        }
                     }
+
                 }
 
+            }else{
+                $amount = 0;
             }
 
-        }else{
-            $amount = 0;
         }
 
         return $amount;
@@ -555,7 +561,6 @@ class WCML_Multi_Currency_Prices{
         $cart->dp = wc_get_price_decimals();
     }
 
-
     /*
      * Limitation: If the default currency is configured to display more decimals than the other currencies,
      * the prices in the secondary currencies would be approximated to the number of decimals that they have more.
@@ -600,12 +605,5 @@ class WCML_Multi_Currency_Prices{
 
         return $args;
     }
-
-
-
-
-
-
-
 
 }

@@ -96,12 +96,13 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
 
             'currency_switcher' => array(
                 'headers' => array(
-                    'main'      => __('Currency switcher options', 'woocommerce-multilingual'),
-                    'style'     => __('Currency switcher style', 'woocommerce-multilingual'),
-                    'order'     => __( 'Currency order', 'woocommerce-multilingual' ),
-                    'parameters'=> __( 'Available parameters', 'woocommerce-multilingual' ),
-                    'template'  => __( 'Template for currency switcher', 'woocommerce-multilingual' ),
-                    'visibility'=> __('Visibility', 'woocommerce-multilingual')
+                    'main'            => __('Currency switcher options', 'woocommerce-multilingual'),
+                    'style'           => __('Currency switcher style', 'woocommerce-multilingual'),
+                    'order'           => __( 'Currency order', 'woocommerce-multilingual' ),
+                    'parameters'      => __( 'Available parameters', 'woocommerce-multilingual' ),
+                    'parameters_list' => '%code%, %symbol%, %name, %subtotal%',
+                    'template'        => __( 'Template for currency switcher', 'woocommerce-multilingual' ),
+                    'visibility'      => __('Visibility', 'woocommerce-multilingual')
                 ),
                 'preview_nonce' => wp_create_nonce( 'wcml_currencies_switcher_preview' ),
                     'preview'       => $this->woocommerce_wpml->multi_currency->currency_switcher->currency_switcher( array('echo' => false) ),

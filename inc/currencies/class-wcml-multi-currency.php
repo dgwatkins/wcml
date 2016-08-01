@@ -66,8 +66,10 @@ class WCML_Multi_Currency{
 
         $this->init_currencies();
 
-        if( $this->_load_filters()) {
+        if( !is_admin() ){
             $this->prices   = new WCML_Multi_Currency_Prices( $this );
+        }
+        if( $this->_load_filters()) {
             $this->coupons  = new WCML_Multi_Currency_Coupons();
             $this->shipping = new WCML_Multi_Currency_Shipping( $this );
         }
@@ -76,7 +78,6 @@ class WCML_Multi_Currency{
         $this->admin_currency_selector  = new WCML_Admin_Currency_Selector();
         $this->custom_prices            = new WCML_Custom_Prices( $woocommerce_wpml );
         $this->currency_switcher        = new WCML_Currency_Switcher;
-
 
         if( defined('W3TC') ){
             $this->W3TC = new WCML_W3TC_Multi_Currency();
