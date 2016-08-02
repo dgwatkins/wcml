@@ -416,7 +416,7 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 		$job->language_code = $this->second_language;
 
 		$product_bundles->save_bundle_data_translation( $this->test_data->translated_bundle_product->id, $data, $job );
-		$this->wcml_helper->icl_clear_and_init_cache();
+		$this->wcml_helper->icl_clear_and_init_cache( $this->second_language );
 
 		$expected = array(
 			$this->test_data->translated_product_in_bundle->id => array(

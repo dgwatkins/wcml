@@ -54,7 +54,7 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 		$string_id = icl_get_string_id( $this->payment_gateways['bacs']->settings['title'], 'woocommerce', 'bacs_gateway_title' );
 		icl_add_string_translation( $string_id, 'es', 'Direct Bank Transfer ES', ICL_TM_COMPLETE );
 
-		$this->wcml_helper->icl_clear_and_init_cache();
+		$this->wcml_helper->icl_clear_and_init_cache( 'es' );
 
 		$trnsl_title = $this->woocommerce_wpml->emails->filter_payment_method_string( null, $this->order->id, '_payment_method_title', true );
 
@@ -78,7 +78,7 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 		$ship_string_id = icl_get_string_id( $this->shipping->label, 'woocommerce', $this->shipping->method_id.'_shipping_method_title' );
 		icl_add_string_translation( $ship_string_id, 'es', 'FLAT RATE ES', ICL_TM_COMPLETE );
 
-		$this->wcml_helper->icl_clear_and_init_cache();
+		$this->wcml_helper->icl_clear_and_init_cache( 'es' );
 
 		$order_shippings = $this->order->get_items( 'shipping' );
 		foreach( $order_shippings as $order_shipping ){

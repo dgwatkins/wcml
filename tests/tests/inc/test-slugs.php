@@ -66,7 +66,7 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 		$string_id = icl_get_string_id( $category_base, $this->woocommerce_wpml->url_translation->url_strings_context(), $name );
 
 		icl_add_string_translation( $string_id, 'es', 'categoria-producto', ICL_TM_COMPLETE );
-		$this->wcml_helper->icl_clear_and_init_cache();
+		$this->wcml_helper->icl_clear_and_init_cache( 'es' );
 		$translated_tax = $this->woocommerce_wpml->url_translation->get_translated_tax_slug('product_cat','es');
 
 		$this->assertTrue( (bool) has_filter('wpml_translate_single_string') );
@@ -104,7 +104,7 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 
 		$this->woocommerce_wpml->url_translation->add_default_slug_translations($category_base, $name);
 		$string_id = icl_get_string_id( $category_base, $this->woocommerce_wpml->url_translation->url_strings_context(), $name );
-		$this->wcml_helper->icl_clear_and_init_cache();
+		$this->wcml_helper->icl_clear_and_init_cache( 'es' );
 		$translations = icl_get_string_translations_by_id($string_id);
 
 		$this->assertEquals( 'categorie-produit', $translations['fr']['value']);

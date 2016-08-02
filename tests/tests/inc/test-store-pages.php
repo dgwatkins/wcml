@@ -41,7 +41,7 @@ class Test_WCML_Store_Pages extends WCML_UnitTestCase {
 	function test_create_missing_pages(){
 
 		$this->woocommerce_wpml->store->create_missing_store_pages();
-		$this->wcml_helper->icl_clear_and_init_cache();
+		$this->wcml_helper->icl_clear_and_init_cache( 'es' );
 		$missed_pages = $this->woocommerce_wpml->store->get_missing_store_pages();
 
 		$this->assertFalse( $missed_pages );
@@ -51,7 +51,7 @@ class Test_WCML_Store_Pages extends WCML_UnitTestCase {
 	function test_get_page_id(){
 		$this->woocommerce_wpml->store->add_filter_to_get_shop_translated_page_id();
 		$this->woocommerce_wpml->store->create_missing_store_pages();
-		$this->wcml_helper->icl_clear_and_init_cache();
+		$this->wcml_helper->icl_clear_and_init_cache( 'es' );
 		$this->sitepress->switch_lang( 'es' );
 		$page_id = wc_get_page_id( 'shop' );
 
@@ -68,7 +68,7 @@ class Test_WCML_Store_Pages extends WCML_UnitTestCase {
 
 	function test_get_checkout_url(){
 		$this->woocommerce_wpml->store->create_missing_store_pages();
-		$this->wcml_helper->icl_clear_and_init_cache();
+		$this->wcml_helper->icl_clear_and_init_cache( 'es' );
 		$this->sitepress->switch_lang( 'fr' );
 
 		$checkout_url = $this->woocommerce_wpml->store->get_checkout_page_url();
@@ -95,7 +95,7 @@ class Test_WCML_Store_Pages extends WCML_UnitTestCase {
 			if( $key !=  $this->sitepress->get_default_language() )
 				$this->assertContains( 'lang='.$key, $shop_url['url'] );
 		}
-		$this->wcml_helper->icl_clear_and_init_cache();
+		$this->wcml_helper->icl_clear_and_init_cache( 'es' );
 
 		// normal post as front
 		update_option( 'page_on_front', 1 );

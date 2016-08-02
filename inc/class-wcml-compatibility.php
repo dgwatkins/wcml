@@ -124,7 +124,7 @@ class WCML_Compatibility {
 
         // woocommerce composite products
         if ( isset( $GLOBALS[ 'woocommerce_composite_products' ] ) ) {
-            $this->wc_composite_products = new WCML_Composite_Products();
+            $this->wc_composite_products = new WCML_Composite_Products(  $this->sitepress, $this->woocommerce_wpml );
         }
 				
         // woocommerce checkout addons
