@@ -90,9 +90,9 @@ class WCML_Synchronize_Product_Data{
             if( !isset( $_POST[ 'wp-preview' ] ) || empty( $_POST[ 'wp-preview' ] ) ){
                 //make sure we sync post in current language
                 $post_id = apply_filters( 'translate_object_id', $post_id, 'product', false, $current_language );
+                do_action( 'wcml_before_sync_product_data', $duplicated_post_id, $post_id, $current_language );
                 $this->sync_date_and_parent( $duplicated_post_id, $post_id, $current_language );
                 $this->sync_product_data( $duplicated_post_id, $post_id, $current_language );
-                do_action( 'wcml_before_sync_product_data', $duplicated_post_id, $post_id, $current_language );
             }
             return;
         }
@@ -413,7 +413,7 @@ class WCML_Synchronize_Product_Data{
 
 
     //duplicate product post meta
-    public function duplicate_product_post_meta( $original_product_id, $trnsl_product_id, $data = false , $add = false ){
+    public function duplicate_product_post_meta( $original_product_id, $trnsl_product_id, $data = false ){
         global $iclTranslationManagement;
         $settings = $iclTranslationManagement->settings[ 'custom_fields_translation' ];
         $all_meta = get_post_custom( $original_product_id );
