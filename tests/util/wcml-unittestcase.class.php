@@ -50,6 +50,7 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 			"{$wpdb->prefix}woocommerce_shipping_zones",
 			"{$wpdb->prefix}woocommerce_tax_rate_locations",
 			"{$wpdb->prefix}woocommerce_tax_rates",
+			"{$wpdb->prefix}wc_booking_relationships",
 		);
 		foreach ( $tables_to_empty as $table_name ) {
 			$wpdb->query( "DELETE FROM {$table_name}" );
