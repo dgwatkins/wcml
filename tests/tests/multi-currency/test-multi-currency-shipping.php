@@ -97,6 +97,7 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
         WCML_Helper_Shipping::create_simple_flat_rate( array( 'cost' => $this->flat_rate_cost ) );
 
 
+
     }
 
     public function test_convert_shipping_cost(){
@@ -105,6 +106,8 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
         if ( ! defined( 'WOOCOMMERCE_CHECKOUT' ) ) {
             define( 'WOOCOMMERCE_CHECKOUT', true );
         }
+
+        add_filter('option_woocommerce_flat_rate_settings', array($this->multi_currency->shipping, 'convert_shipping_cost'));
 
         WC()->cart->empty_cart();
         $this->multi_currency->set_client_currency( 'GBP' );
@@ -121,9 +124,6 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
         //The cost of the cart in the DEFAULT currency: 50 product + 10 shipping
         $this->assertEquals( $this->expected_costs['GBP']['total'],  WC()->cart->total );
 
-
-
-        add_filter('option_woocommerce_flat_rate_settings', array($this->multi_currency->shipping, 'convert_shipping_cost'));
         foreach( $this->currencies as $code => $currency ){
 
             // Clean up the cart
@@ -142,6 +142,66 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
 
         // Delete the product
         wp_delete_post( $product->id, true );
+
+    }
+
+    public function test_free_shipping_eligibiltiy(){
+
+        // We need this to have the calculate_totals() method calculate totals
+        if ( ! defined( 'WOOCOMMERCE_CHECKOUT' ) ) {
+            define( 'WOOCOMMERCE_CHECKOUT', true );
+        }
+
+        $instance_id = WCML_Helper_Shipping::add_free_shipping( array( 'min_amount' => 90 ) );  // will add a 50 GBP product first
+
+        // the filter for the newly added free shipping
+        add_filter('option_woocommerce_free_shipping_' . $instance_id . '_settings', array($this->multi_currency->shipping, 'convert_shipping_cost'));
+
+        WC()->cart->empty_cart();
+        $this->multi_currency->set_client_currency( 'GBP' );
+
+        // Add the product to the cart
+        $product = $this->wcml_helper->add_product(
+                            $this->sitepress->get_default_language() ,
+                            false,
+                            $this->products[0]['title'], 0,
+                            array(
+                                '_price' => $this->products[0]['price'],
+                                '_regular_price' => $this->products[0]['price']
+                        )
+                    );
+
+        // DEFAULT CURRENCY
+        WC()->cart->add_to_cart( $product->id, 1 );
+        WC()->cart->calculate_totals();
+        $packages = WC()->shipping->get_packages();
+        $this->assertTrue( isset( $packages[0]['rates'] ) && !isset( $packages[0]['rates']['free_shipping:' .  $instance_id ] ) );
+
+        // Add one more product to match min_amount required
+        WC()->cart->add_to_cart( $product->id, 1 );
+        WC()->cart->calculate_totals();
+        $packages = WC()->shipping->get_packages();
+        $this->assertTrue( isset( $packages[0]['rates']['free_shipping:' .  $instance_id ] ) );
+
+        // SECONDARY CURRENCIES
+        foreach( $this->currencies as $code => $currency ){
+
+            // Clean up the cart
+            WC()->cart->empty_cart();
+            $this->multi_currency->set_client_currency( $code );
+
+            WC()->cart->add_to_cart( $product->id, 1 );
+            WC()->cart->calculate_totals();
+            $packages = WC()->shipping->get_packages();
+            $this->assertFalse( isset( $packages[0]['rates']['free_shipping:' .  $instance_id ] ) );
+
+            // Add one more product to match min_amount required
+            WC()->cart->add_to_cart( $product->id, 1 );
+            WC()->cart->calculate_totals();
+            $packages = WC()->shipping->get_packages();
+            $this->assertTrue( isset( $packages[0]['rates']['free_shipping:' .  $instance_id ] ) );
+
+        }
 
     }
 

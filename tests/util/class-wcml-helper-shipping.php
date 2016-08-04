@@ -66,6 +66,13 @@ class WCML_Helper_Shipping {
         update_option( 'woocommerce_flat_rate_settings', $flat_rate_settings );
         update_option( 'woocommerce_flat_rate', array() );
         WC_Cache_Helper::get_transient_version( 'shipping', true );
+
+        /*
+        $zone        = WC_Shipping_Zones::get_zone( 2 );
+        $instance_id = $zone->add_shipping_method( 'flat_rate' );
+        update_option( 'woocommerce_flat_rate_' . $instance_id . '_settings', $flat_rate_settings );
+        */
+
         WC()->shipping->unregister_shipping_methods();
     }
 
@@ -79,6 +86,28 @@ class WCML_Helper_Shipping {
         WC_Cache_Helper::get_transient_version( 'shipping', true );
         WC()->shipping->unregister_shipping_methods();
     }
+
+    /**
+     * Adds free shipping
+     *
+     */
+    public static function add_free_shipping( $args = array() ) {
+
+        $zone        = WC_Shipping_Zones::get_zone( 2 );
+        $instance_id = $zone->add_shipping_method( 'free_shipping' );
+
+        $free_shipping_settings['title'] = 'Free Shipping One';
+        if( isset( $args['min_amount'] ) ){
+            $free_shipping_settings['requires'] = 'min_amount';
+            $free_shipping_settings['min_amount'] = $args['min_amount'];
+        }
+
+        update_option( 'woocommerce_free_shipping_' . $instance_id . '_settings', $free_shipping_settings );
+
+        return $instance_id;
+
+    }
+
 
 
 }
