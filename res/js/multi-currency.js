@@ -3,7 +3,7 @@ jQuery( function($){
 
     WCML_Multi_Currency = {
 
-         _currency_languages_saving : 0,
+        _currency_languages_saving : 0,
 
         init:  function(){
 
@@ -158,6 +158,8 @@ jQuery( function($){
                 success: function(response){
                     parent.dialog('close');
 
+                    WCML_Multi_Currency.currency_switcher_preview();
+
                     if( $('#currency_row_' + currency).length == 0 ) {
 
                         var tr = $('#currency-table tr.wcml-row-currency:last').clone();
@@ -240,7 +242,7 @@ jQuery( function($){
             }).pointer('open');
         },
 
-         enable_currency_for_language: function(e){
+        enable_currency_for_language: function(e){
 
             if( WCML_Multi_Currency.is_update_currency_lang_in_progress() ) return false;
 
@@ -282,7 +284,7 @@ jQuery( function($){
 
         is_update_currency_lang_in_progress: function(){
             var is =
-              ( typeof WCML_Multi_Currency._update_currency_lang_sync_flag != 'undefined' )
+                ( typeof WCML_Multi_Currency._update_currency_lang_sync_flag != 'undefined' )
                 && WCML_Multi_Currency._update_currency_lang_sync_flag == 1;
 
             return is;
@@ -484,7 +486,7 @@ jQuery( function($){
             }
 
             var preview = format.replace(/\{symbol\}/, symbol).replace(/\{thousand_sep\}/, thousand_sep).replace(
-                                        /\{decimal_sep\}/, decimal_sep).replace(/\{decimals\}/, decimals);
+                /\{decimal_sep\}/, decimal_sep).replace(/\{decimals\}/, decimals);
 
             parent.find('.wcml-co-preview-value').html( preview );
 
