@@ -11,3 +11,4 @@ composer/
 composer.lock
 inc/installer
 embedded/*
+node_modules/*
