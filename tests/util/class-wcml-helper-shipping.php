@@ -108,6 +108,41 @@ class WCML_Helper_Shipping {
 
     }
 
+    /**
+     * Adds flat rate shipping
+     *
+     */
+    public static function add_flat_rate_shipping( $args = array() ) {
+
+        $zone        = WC_Shipping_Zones::get_zone( 2 );
+        $instance_id = $zone->add_shipping_method( 'flat_rate' );
+
+        $settings['title'] = 'Flat Rate One';
+        $settings['cost'] = isset( $args['cost'] ) ? $args['cost'] : 10;
+
+        update_option( 'woocommerce_flat_rate_' . $instance_id . '_settings', $settings );
+
+        return $instance_id;
+
+    }
+
+    /**
+     * Adds local pickup
+     *
+     */
+    public static function add_local_pickup_shipping( $args = array() ) {
+
+        $zone        = WC_Shipping_Zones::get_zone( 2 );
+        $instance_id = $zone->add_shipping_method( 'local_picku' );
+
+        $settings['title'] = 'Local Pickup One';
+        $settings['cost'] = isset( $args['cost'] ) ? $args['cost'] : 3;
+
+        update_option( 'woocommerce_local_pickup_' . $instance_id . '_settings', $settings );
+
+        return $instance_id;
+
+    }
 
 
 }
