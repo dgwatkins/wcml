@@ -130,6 +130,11 @@ jQuery( function($){
                     $('#wcml_currency_options_code_').prepend('<option data-symbol="' + currency_symbol + '" value="' + currency + '">' + currency_name + '</option>');
                     $('#wcml_currency_options_code_').val(currency).trigger('change');
 
+                    //remove from default currency list
+                    $('#currency-lang-table').find('tr.default_currency select').each( function(){
+                        $(this).find("option[value='"+currency+"']").remove();
+                    });
+
                     WCML_Multi_Currency.currency_switcher_preview();
                 },
                 done: function() {
@@ -188,6 +193,11 @@ jQuery( function($){
 
                         tr.find('.on a').each( function(){
                             $(this).attr('data-currency', currency);
+                        });
+
+                        //add to default currency list
+                        $('#currency-lang-table').find('tr.default_currency select').each( function(){
+                            $(this).append('<option value="'+currency+'">'+currency+'</option>');
                         });
 
                         var tr = $('#currency-delete-table tr.wcml-row-currency-del:last').clone();
