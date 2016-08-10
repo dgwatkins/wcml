@@ -8,8 +8,8 @@ modules:
    enabled:
       - WebDriver:
          url: 'http://kostas/'
-         #browser: firefox
-         browser: phantomjs
+         browser: firefox
+         #browser: phantomjs
          wait: 0
          window_size: maximize
          capabilities:

@@ -1,6 +1,10 @@
 <?php
 //Check Custom options in Multi Currency
 
+/**
+ * @group currency
+ */
+
 
 class SixteenCest
 {
@@ -22,6 +26,38 @@ class SixteenCest
         $I->see('WooCommerce Multilingual');
 
         $I->executeJS('window.scrollTo(0,500);');
+
+        // Check real time change of the cureency preview
+
+        $I->amGoingTo('Check if the reaatime preview is working well');
+
+        $I->amGoingTo('Add Bitcoin Currency');
+
+        $I->click('.wcml_add_currency');
+
+        $I->see('Add new currency', '.ui-dialog-title');
+
+        $I->pressKey('.ui-dialog #wcml_currency_options_code_','Bitcoin',WebDriverKeys::ENTER);
+
+        $I->click('.ui-dialog .currency_options_save');
+
+        $I->waitForElementNotVisible('.ui-dialog','10');
+
+        $I->wait(3);
+
+        $I->seeElement('.currency_table tbody tr#currency_row_BTC.wcml-row-currency');
+
+        $I->seeElement('#wcml_curr_sel_preview.wcml-currency-preview select.wcml_currency_switcher option[value=BTC]');
+
+        $I->amGoingTo('Delete Bitcoin Currency');
+
+        $I->click('#currency_row_del_USD .wcml-col-delete');
+
+        $I->waitForElementNotVisible('#currency_row_del_BTC .wcml-col-delete','10');
+
+        $I->dontSeeElement('.currency_table tbody tr#currency_row_BTC.wcml-row-currency');
+
+        $I->dontSeeElement('#wcml_curr_sel_preview.wcml-currency-preview select.wcml_currency_switcher option[value=BTC]');
 
         // Check Drop-down menu style
 
