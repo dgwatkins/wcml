@@ -147,6 +147,7 @@ jQuery( function($){
 				WCML_WPML_Translation_Editor.footer_view = footer_view;
 
 				WCML_WPML_Translation_Editor.update_save_button_state();
+				WCML_WPML_Translation_Editor.check_variations_fields();
 
 				WCML_Tooltip.add_after( '.js-resign', strings.resign_tooltip, 'margin-left:-12px;' );
 			}
@@ -175,6 +176,23 @@ jQuery( function($){
 
 		field_update_ui: function( event, view ) {
 			WCML_WPML_Translation_Editor.update_save_button_state();
+		},
+
+		check_variations_fields: function(){
+
+			var elem = false;
+			jQuery('[id^="job_field_variation_desc"]').closest('.postbox').find('.original_value').each(function(){
+				if( jQuery(this).val() === '' ) {
+					elem = jQuery(this);
+				}else{
+					return false;
+				}
+			});
+
+			if( elem ){
+				elem.closest('.postbox').find('.button-link').click();
+			}
+
 		}
 
 	};
