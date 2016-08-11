@@ -37,17 +37,6 @@ if (get_magic_quotes_gpc()) {
 add_action('plugins_loaded', 'wcml_check_wpml_functions');
 
 function wcml_check_wpml_functions(){
-    if(defined('ICL_SITEPRESS_VERSION') && version_compare(preg_replace('#-(.+)$#', '', ICL_SITEPRESS_VERSION), '3.1.5', '<')){
-        
-        function wpml_is_ajax() {
-            if ( defined( 'DOING_AJAX' ) ) {
-                return true;
-            }
-
-            return ( isset( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) && strtolower( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) == 'xmlhttprequest' ) ? true : false;
-        }
-        
-    }
 
     if( !has_filter( 'translate_object_id' ) ){
         add_filter( 'translate_object_id', 'icl_object_id', 10, 4 );

@@ -369,20 +369,16 @@ class WCML_Upgrade{
                     $endpoint_key, 'Endpoint slug: '. $endpoint_key )
             );
 
+            // update domain_name_context_md5 value
+            $string_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}icl_strings WHERE context = 'WooCommerce Endpoints' AND name = %s", $endpoint_key ) );
 
-            if( version_compare(ICL_SITEPRESS_VERSION, '3.2.3', '>=')){
-                // update domain_name_context_md5 value
-                $string_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}icl_strings WHERE context = 'WooCommerce Endpoints' AND name = %s", $endpoint_key ) );
-
-                if( $string_id ){
-                    $wpdb->query(
-                        $wpdb->prepare( "UPDATE {$wpdb->prefix}icl_strings
-                                  SET domain_name_context_md5 = %s
-                                  WHERE id = %d",
-                            md5( $endpoint_key,'WooCommerce Endpoints' ), $string_id )
-                    );
-                }
-
+            if( $string_id ){
+                $wpdb->query(
+                    $wpdb->prepare( "UPDATE {$wpdb->prefix}icl_strings
+                              SET domain_name_context_md5 = %s
+                              WHERE id = %d",
+                        md5( $endpoint_key,'WooCommerce Endpoints' ), $string_id )
+                );
             }
 
         }

@@ -33,9 +33,7 @@ class WCML_Products{
 
             add_filter( 'post_row_actions', array( $this, 'filter_product_actions' ), 10, 2 );
 
-            if( defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSION, '3.2', '>=' ) ){
-                $this->tp_support = new WCML_TP_Support();
-            }
+            $this->tp_support = new WCML_TP_Support();
 
         }else{
             add_filter( 'woocommerce_json_search_found_products', array( $this, 'filter_found_products_by_language' ) );

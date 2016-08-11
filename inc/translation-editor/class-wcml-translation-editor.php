@@ -137,7 +137,7 @@ class WCML_Translation_Editor{
 
     public function add_languages_column( $columns ){
 
-	    if ( array_key_exists( 'icl_translations', $columns ) || ( version_compare( ICL_SITEPRESS_VERSION, '3.2', '<' ) && version_compare( WOOCOMMERCE_VERSION, '2.3', '<' ) ) ){
+	    if ( array_key_exists( 'icl_translations', $columns ) || ( version_compare( WOOCOMMERCE_VERSION, '2.3', '<' ) ) ){
             return $columns;
         }
         $active_languages = $this->sitepress->get_active_languages();
