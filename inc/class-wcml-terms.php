@@ -343,6 +343,7 @@ class WCML_Terms{
         $wcml_settings = $this->woocommerce_wpml->get_settings();
         $is_translatable= 1;
         $not_translated_count = 0;
+        $original_terms = array();
 
         if( isset( $wcml_settings[ 'attributes_settings' ][ $taxonomy ] ) && !$wcml_settings[ 'attributes_settings' ][ $taxonomy ] ){
             $is_translatable = 0;
@@ -359,7 +360,8 @@ class WCML_Terms{
                     LEFT JOIN {$this->wpdb->prefix}icl_translations t2 ON t2.trid = t1.trid AND t2.language_code = %s
                 ", 'tax_' . $taxonomy, $language['code']));
                 foreach($terms as $term){
-                    if( empty( $term->e2 ) ){
+                    if( empty( $term->e2 ) && !in_array( $term->e1, $original_terms ) ){
+                        $original_terms[] = $term->e1;
                         $not_translated_count ++;
                     }
                 }
@@ -398,11 +400,11 @@ class WCML_Terms{
         return $return;
     }
     
-    public function get_untranslated_terms_number($taxonomy){
+    public function get_untranslated_terms_number( $taxonomy, $force_update = false ){
         
         $wcml_settings = $this->woocommerce_wpml->get_settings();
-        
-        if(!isset($wcml_settings['untranstaled_terms'][$taxonomy])){
+
+        if( $force_update || !isset($wcml_settings['untranstaled_terms'][$taxonomy] ) ){
             $wcml_settings['untranstaled_terms'][$taxonomy] = $this->update_terms_translated_status($taxonomy);
         }
         

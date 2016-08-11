@@ -65,4 +65,26 @@ class Test_WCML_Terms extends WCML_UnitTestCase {
 
 	}
 
+	function test_get_untranslated_terms_number(){
+
+		$args = array();
+		//add 4 product tags
+		$args[ 'en' ] = array( 'count' => 4, 'taxonomy' => 'product_tag' );
+		$terms = $this->wcml_helper->add_dummy_terms( $args );
+		$this->assertEquals( $args[ 'en' ][ 'count' ], $this->woocommerce_wpml->terms->get_untranslated_terms_number( 'product_tag', true ) );
+
+		$active_languages = $this->sitepress->get_active_languages();
+
+		//fully translate one tag
+		foreach( $terms[ 'product_tag' ] as $term ){
+			foreach( $active_languages as $language ){
+				if( $language['code'] == 'en' ) continue;
+				$this->wcml_helper->add_term( rand_str(), 'product_tag', $language['code'], false, $term[ 'trid' ] );
+			}
+			break;
+		}
+
+		$this->assertEquals( $args[ 'en' ][ 'count' ]-1, $this->woocommerce_wpml->terms->get_untranslated_terms_number( 'product_tag', true ) );
+	}
+
 }
