@@ -469,8 +469,12 @@ jQuery( function($){
         },
 
         update_currency_switcher_style: function(e){
-            $(this).closest('ul').find('select').hide();
-            $(this).closest('li').find('select').show();
+
+            if( $(this).val() == 'list' ){
+                $('#wcml_curr_sel_orientation_list_wrap').show();
+            }else{
+                $('#wcml_curr_sel_orientation_list_wrap').hide();
+            }
             WCML_Multi_Currency.currency_switcher_preview();
         },
 

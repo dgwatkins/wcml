@@ -50,7 +50,7 @@ class WCML_Currency_Switcher {
 
         echo $this->wcml_currency_switcher(
             array(
-                'format'         => $_POST['template'] ? $_POST['template'] : '%name% (%symbol%) - %code%',
+                'format'         => $_POST['template'] ? stripslashes_deep( $_POST['template'] ) : '%name% (%symbol%) - %code%',
                 'switcher_style' => $_POST['switcher_type'],
                 'orientation'    => $_POST['orientation']
             )

@@ -112,7 +112,8 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
                     'dropdown'      => __('Drop-down menu', 'woocommerce-multilingual'),
                     'list'          => __('List of currencies', 'woocommerce-multilingual'),
                     'vertical'      => __('Vertical', 'woocommerce-multilingual'),
-                    'horizontal'    => __('Horizontal', 'woocommerce-multilingual')
+                    'horizontal'    => __('Horizontal', 'woocommerce-multilingual'),
+                    'allowed_tags'  => __('Allowed HTML tags: <img> <span> <u> <strong> <em>', 'woocommerce-multilingual')
                 ),
                 'orientation'       => isset($this->woocommerce_wpml->settings['wcml_curr_sel_orientation']) ?
                                         $this->woocommerce_wpml->settings['wcml_curr_sel_orientation'] : 'vertical',

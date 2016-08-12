@@ -58,9 +58,15 @@ class WCML_Multi_Currency_Configuration{
                 }
             }
 
+            // Allow some HTML in the currency switcher
+            $currency_switcher_format = strip_tags( stripslashes_deep( $_POST['wcml_curr_template'] ), '<img><span><u><strong><em>');
+            $currency_switcher_format = htmlentities( $currency_switcher_format );
+            $currency_switcher_format = sanitize_text_field( $currency_switcher_format );
+            $currency_switcher_format = html_entity_decode( $currency_switcher_format );
+
             self::$woocommerce_wpml->settings['currency_switcher_style']              = sanitize_text_field( $_POST['currency_switcher_style'] );
             self::$woocommerce_wpml->settings['wcml_curr_sel_orientation']            = sanitize_text_field( $_POST['wcml_curr_sel_orientation'] );
-            self::$woocommerce_wpml->settings['wcml_curr_template']                   = sanitize_text_field( $_POST['wcml_curr_template'] );
+            self::$woocommerce_wpml->settings['wcml_curr_template']                   = $currency_switcher_format;
             self::$woocommerce_wpml->settings['currency_switcher_product_visibility'] = isset($_POST['currency_switcher_product_visibility']) ? intval( $_POST['currency_switcher_product_visibility'] ) : 0;
 
             self::$woocommerce_wpml->update_settings();
