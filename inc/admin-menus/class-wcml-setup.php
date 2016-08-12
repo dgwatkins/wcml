@@ -34,11 +34,6 @@ class WCML_Setup {
                 'view'    => array( $this, 'setup_multi_currency' ),
                 'handler' => array( $this, 'save_multi_currency' )
             ),
-            'translation-interface' => array(
-                'name'    =>  __( 'Translation Interface', 'woocommerce-multilingual' ),
-                'view'    => array( $this, 'setup_translation_interface' ),
-                'handler' => array( $this, 'save_translation_interface' )
-            ),
             'ready' => array(
                 'name'    =>  __( 'Ready!', 'woocommerce-multilingual' ),
                 'view'    => array( $this, 'setup_ready' ),
@@ -237,11 +232,6 @@ class WCML_Setup {
         echo $ui->get_view();
     }
 
-    public function setup_translation_interface(){
-        $ui = new WCML_Setup_Translation_Interface_UI( $this->woocommerce_wpml, $this->next_step_url() );
-        echo $ui->get_view();
-    }
-
     public function setup_ready(){
         $ui = new WCML_Setup_Ready_UI( $this->woocommerce_wpml );
         echo $ui->get_view();
@@ -303,16 +293,6 @@ class WCML_Setup {
         } else{
             $this->woocommerce_wpml->multi_currency->disable();
         }
-
-    }
-
-    /**
-     * handler
-     */
-    public function save_translation_interface( $data ){
-
-        $this->woocommerce_wpml->settings['trnsl_interface'] = intval( $data['translation_interface'] );
-        $this->woocommerce_wpml->update_settings();
 
     }
 
