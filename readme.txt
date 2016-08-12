@@ -131,6 +131,11 @@ WooCommerce Multilingual is compatible with all major WooCommerce extensions. We
 
 == Changelog ==
 
+= 3.8.5 =
+* Fixed more problems related to converting shipping costs in secondary currencies
+* Fixed one compatibility problem with WooCommerce Show Single Variations
+* Other small fixes for the admin interface
+
 = 3.8.4 =
 * Bug fix: minimum required amount was not calculated correctly for secondary currencies (not included in the previous version)
 
