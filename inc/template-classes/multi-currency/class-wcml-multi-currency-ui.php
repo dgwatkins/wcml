@@ -2,10 +2,25 @@
 
 class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
 
+    /**
+     * @var woocommerce_wpml
+     */
     private $woocommerce_wpml;
+    /**
+     * @var SitePress
+     */
     private $sitepress;
+    /**
+     * @var array
+     */
     private $currencies;
+    /**
+     * @var array
+     */
     private $wc_currencies;
+    /**
+     * @var string
+     */
     private $wc_currency;
 
     function __construct( &$woocommerce_wpml, &$sitepress ){
@@ -16,6 +31,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
             new Twig_SimpleFunction( 'is_currency_on', array( $this, 'is_currency_on' ) ),
             new Twig_SimpleFunction( 'get_language_currency', array( $this, 'get_language_currency' ) ),
             new Twig_SimpleFunction( 'get_currency_symbol', array( $this, 'get_currency_symbol' ) ),
+            new Twig_SimpleFunction( 'get_currency_name', array( $this, 'get_currency_name' ) ),
             new Twig_SimpleFunction( 'wp_do_action', array( $this, 'wp_do_action' ) )
         );
 
@@ -55,6 +71,9 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
                     'default_cur_tip'   => __( 'Switch to this currency when switching language in the front-end', 'woocommerce-multilingual' ),
                     'keep_currency'     => __( 'Keep', 'woocommerce-multilingual' ),
                     'delete'            => __( 'Delete', 'woocommerce-multilingual' ),
+                    'help_title'        => __( 'Currencies to display for each language', 'woocommerce-multilingual' ),
+                    'enable_for'        => __('Enable %s for %s', 'woocommerce-multilingual'),
+                    'disable_for'       => __('Disable %s for %s', 'woocommerce-multilingual')
                 )
 
             ),
@@ -212,6 +231,10 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
     public function get_currency_symbol( $code ) {
         return get_woocommerce_currency_symbol( $code );
     }
+    public function get_currency_name( $code ){
+        return $this->wc_currencies[$code];
+    }
+
 
     public function load_custom_currency_option_boxes(){
 
@@ -258,6 +281,5 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
     public function wp_do_action( $hook ){
         do_action( $hook );
     }
-
 
 }
