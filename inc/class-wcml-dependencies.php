@@ -84,7 +84,7 @@ class WCML_Dependencies{
     public function _old_wpml_warning(){
         ?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML</a> versions prior %s.',
-                    'woocommerce-multilingual'), WCML_Links::generate_tracking_link('https://wpml.org/'), '3.1.5'); ?></p></div>
+                    'woocommerce-multilingual'), WCML_Links::generate_tracking_link('https://wpml.org/'), '3.4'); ?></p></div>
     <?php }
 
     function _old_wc_warning(){
