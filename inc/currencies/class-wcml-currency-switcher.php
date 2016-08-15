@@ -18,7 +18,7 @@ class WCML_Currency_Switcher {
         add_action( 'wp_ajax_wcml_currencies_order', array($this, 'wcml_currencies_order') );
         add_action( 'wp_ajax_wcml_currencies_switcher_preview', array($this, 'wcml_currencies_switcher_preview') );
 
-        add_action( 'currency_switcher', array($this, 'currency_switcher') );
+        add_action( 'wcml_currency_switcher', array($this, 'currency_switcher') );
         add_shortcode( 'currency_switcher', array($this, 'currency_switcher_shortcode') );
 
         // Built in currency switcher

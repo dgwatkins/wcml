@@ -6,13 +6,13 @@ class WCML_Ajax_Setup{
     function __construct(){
         
         add_action('init', array($this, 'init'));
-        add_action('localize_woocommerce_on_ajax', array($this, 'localize_woocommerce_on_ajax'));
+        add_action('wcml_localize_woocommerce_on_ajax', array($this, 'localize_woocommerce_on_ajax'));
         
     }
     
     function init(){
         if (wpml_is_ajax()){
-           do_action('localize_woocommerce_on_ajax');
+           do_action('wcml_localize_woocommerce_on_ajax');
         }
         
         add_filter('woocommerce_params', array($this, 'filter_woocommerce_ajax_params'));
