@@ -420,7 +420,7 @@ class WCML_Emails{
             $section_name = str_replace( '_settings', '', $section_name );
             if( isset( $_GET['section'] ) && $_GET['section'] == $section_name ){
 
-                $option_settings = get_option($emails_option);
+                $option_settings = get_option( $emails_option );
                 foreach ($option_settings as $setting_key => $setting_value) {
                     if ( in_array( $setting_key, $text_keys ) ) {
                         $input_name = str_replace( '_settings', '', $emails_option ).'_'.$setting_key;
@@ -448,7 +448,7 @@ class WCML_Emails{
                             if (input.length) {
                                 input.parent().append('<div class="translation_controls"></div>');
                                 input.parent().find('.translation_controls').append('<a href="<?php echo $st_page ?>" style="margin-left: 10px"><?php _e('translations', 'woocommerce-multilingual') ?></a>');
-                                jQuery('#<?php echo $emails_option.'_'.$setting_key.'_language_selector' ?>').appendTo(input.parent().find('.translation_controls'));
+                                jQuery('#<?php echo $emails_option.'_'.$setting_key.'_language_selector' ?>').prependTo(input.parent().find('.translation_controls'));
                             }
                         </script>
                     <?php }
