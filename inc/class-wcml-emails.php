@@ -278,7 +278,7 @@ class WCML_Emails{
 
     function filter_formatted_items( $formatted_meta, $object ){
 
-        if(  $object->product->variation_id ){
+        if( ( !isset( $_GET['post_type'] ) || $_GET['post_type'] != 'shop_order' ) && $object->product->variation_id ){
 
             $current_prod_variation_id = apply_filters( 'translate_object_id', $object->product->variation_id, 'product_variation', false );
 
