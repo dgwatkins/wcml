@@ -28,7 +28,6 @@ class WCML_Table_Rate_Shipping {
 		add_filter( 'get_the_terms',array( $this, 'shipping_class_id_in_default_language' ), 10, 3 );
 
 		if( wcml_is_multi_currency_on() ) {
-			add_filter( 'woocommerce_table_rate_query_rates_args', array( $this, 'default_shipping_class_id' ) );
 			add_filter( 'woocommerce_table_rate_query_rates', array( $this, 'convert_costs' ) );
 		}
 
@@ -46,25 +45,6 @@ class WCML_Table_Rate_Shipping {
 				do_action( 'wpml_register_single_string', 'woocommerce', $shipping_label . '_shipping_method_title', $shipping_label );
 			}
 		}
-	}
-
-	/**
-	 * @param $args
-	 *
-	 * @return mixed
-	 */
-	public function default_shipping_class_id( $args ) {
-		if ( ! empty( $args['shipping_class_id'] ) ) {
-
-			$args['shipping_class_id'] = apply_filters( 'translate_object_id', $args['shipping_class_id'], 'product_shipping_class', false, $this->sitepress->get_default_language() );
-
-			if ( WCML_MULTI_CURRENCIES_INDEPENDENT === $this->woocommerce_wpml->settings['enable_multi_currency'] ) {
-				// use unfiltered cart price to compare against limits of different shipping methods
-				$args['price'] = $this->woocommerce_wpml->multi_currency->prices->unconvert_price_amount( $args['price'] );
-			}
-		}
-
-		return $args;
 	}
 
 	/**
