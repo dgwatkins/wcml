@@ -63,8 +63,11 @@ class WCML_Emails{
         }
 
         add_filter( 'get_post_metadata', array( $this, 'filter_payment_method_string' ), 10, 4 );
-        add_filter( 'woocommerce_order_get_items', array( $this, 'filter_order_items' ), 10, 2 );
-        add_filter( 'woocommerce_order_items_meta_get_formatted', array( $this, 'filter_formatted_items' ), 10, 2 );
+
+        if( !isset( $_GET['post_type'] ) || $_GET['post_type'] != 'shop_order' ){
+            add_filter( 'woocommerce_order_get_items', array( $this, 'filter_order_items' ), 10, 2 );
+            add_filter( 'woocommerce_order_items_meta_get_formatted', array( $this, 'filter_formatted_items' ), 10, 2 );
+        }
     }
 
     function email_refresh_in_ajax(){
@@ -278,7 +281,7 @@ class WCML_Emails{
 
     function filter_formatted_items( $formatted_meta, $object ){
 
-        if( ( !isset( $_GET['post_type'] ) || $_GET['post_type'] != 'shop_order' ) && $object->product->variation_id ){
+        if( $object->product->variation_id ){
 
             $current_prod_variation_id = apply_filters( 'translate_object_id', $object->product->variation_id, 'product_variation', false );
 
