@@ -295,7 +295,7 @@ class WCML_WC_Strings{
                              ?>"><?php _e('translations', 'woocommerce-multilingual') ?></a>');
                     }
 
-                    jQuery('#<?php echo $key ?>_language_selector').appendTo( input.parent().find('.translation_controls') );
+                    jQuery('#<?php echo $key ?>_language_selector').prependTo( input.parent().find('.translation_controls') );
                 }
             </script>
         <?php }
