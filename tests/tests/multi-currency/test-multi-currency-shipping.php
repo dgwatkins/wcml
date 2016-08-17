@@ -6,10 +6,11 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
     private $multi_currency_helper;
 
     private $currencies = array();
-    private $flat_rate_cost = 0;
     private $products = array();
 
-    private $expected_costs = array();
+    private $method_instances = array();
+
+    private $expected_rates = array();
 
     public function setUp() {
 
@@ -31,8 +32,6 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
             )
         );
 
-        $this->flat_rate_cost = 10;
-
         $this->currencies = array(
             'USD' => array(
                 'rate'      => 1.34,
@@ -44,7 +43,7 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
                     'rounding' => 'disabled',
                     'rounding_increment' => 0,
                     'auto_subtract' => 0
-                )
+                ),
             ),
             'JPY' => array(
                 'rate'      => 137,
@@ -73,18 +72,6 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
 
         );
 
-        $this->expected_costs['GBP'] = array( 'contents' => 50 , 'total' => '60' );
-        foreach( $this->currencies as $code => $currency ){
-            $this->multi_currency_helper->add_currency( $code, $currency['rate'], $currency['options'] );
-
-            $this->expected_costs[ $code ] = array(
-                'contents' => $this->currencies[$code]['rate'] * $this->products[0]['price'],
-                'total'    => $this->currencies[$code]['rate'] *
-                                ($this->products[0]['price'] + $this->flat_rate_cost )
-            );
-        }
-
-
         // Multi currency objects
         $this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
         $this->multi_currency =& $this->woocommerce_wpml->multi_currency;
@@ -94,9 +81,35 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
         // Create Zones
         WCML_Helper_Shipping::create_mock_zones();
         // Create a flat rate method (cost will be 10)
-        WCML_Helper_Shipping::create_simple_flat_rate( array( 'cost' => $this->flat_rate_cost ) );
+        $legacy_flat_rate_cost = 10;
+        WCML_Helper_Shipping::create_simple_flat_rate( array( 'cost' => $legacy_flat_rate_cost ) );
+
+        $free_shipping_cost = 0;
+        $this->method_instances['free_shipping'] =
+            WCML_Helper_Shipping::add_free_shipping( array( 'min_amount' => 90 ) );  // will add a 50 GBP product first
+
+        $flat_rate_cost = 5;
+        $this->method_instances['flat_rate'] =
+            WCML_Helper_Shipping::add_flat_rate_shipping( array( 'cost' => $flat_rate_cost ) );
+
+        $local_pickup_cost = 3.5;
+        $this->method_instances['local_pickup'] =
+            WCML_Helper_Shipping::add_local_pickup_shipping( array( 'cost' => $local_pickup_cost ) );
 
 
+        $this->expected_rates['legacy_flat_rate']['GBP'] = $legacy_flat_rate_cost;
+        $this->expected_rates['flat_rate:' . $this->method_instances['flat_rate']]['GBP'] = $flat_rate_cost;
+
+        foreach( $this->currencies as $code => $currency ){
+            $this->multi_currency_helper->add_currency( $code, $currency['rate'], $currency['options'] );
+
+            $this->expected_rates['legacy_flat_rate'][ $code ]
+                = $this->currencies[$code]['rate'] * $legacy_flat_rate_cost;
+            $this->expected_rates['flat_rate:' . $this->method_instances['flat_rate']][$code]
+                = $this->currencies[$code]['rate'] * $flat_rate_cost;
+            $this->expected_rates['local_pickup:' . $this->method_instances['flat_rate']][$code]
+                = $this->currencies[$code]['rate'] * $local_pickup_cost;
+        }
 
     }
 
@@ -107,7 +120,7 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
             define( 'WOOCOMMERCE_CHECKOUT', true );
         }
 
-        add_filter('option_woocommerce_flat_rate_settings', array($this->multi_currency->shipping, 'convert_shipping_cost'));
+        add_filter('woocommerce_cart_shipping_method_full_label', array( $this->multi_currency->shipping, 'convert_shipping_cost'), 10, 2 );
 
         WC()->cart->empty_cart();
         $this->multi_currency->set_client_currency( 'GBP' );
@@ -119,31 +132,46 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
         // DEFAULT CURRENCY
         WC()->cart->add_to_cart( $product->id, 1 );
         WC()->cart->calculate_totals();
-        // Cost without shipping
-        $this->assertEquals( $this->expected_costs['GBP']['contents'],  WC()->cart->cart_contents_total );
-        //The cost of the cart in the DEFAULT currency: 50 product + 10 shipping
-        $this->assertEquals( $this->expected_costs['GBP']['total'],  WC()->cart->total );
+
+        $packages = WC()->shipping->get_packages();
+
+        foreach( $packages as $package ){
+            $available_methods = $package['rates'];
+            foreach( $available_methods as $method ){
+                $this->assertEquals( $this->expected_rates[$method->id]['GBP'],  $method->cost );
+            }
+        }
 
         foreach( $this->currencies as $code => $currency ){
 
             // Clean up the cart
             WC()->cart->empty_cart();
             $this->multi_currency->set_client_currency( $code );
-            WC()->cart->add_to_cart( $product->id, 1 );
 
+            WC()->cart->add_to_cart( $product->id, 1 );
             WC()->cart->calculate_totals();
 
-            //The cost of the cart in the SECONDARY currency (without shipping)
-            $this->assertEquals( $this->expected_costs[$code]['contents'], WC()->cart->cart_contents_total );
-            //The cost of the cart in the SECONDARY currency (with shipping)
-            $this->assertEquals( $this->expected_costs[$code]['total'], WC()->cart->total );
+            $packages = WC()->shipping->get_packages();
+            foreach( $packages as $package ){
+                $available_methods = $package['rates'];
+                foreach( $available_methods as $method ){
 
+                    if( strpos( $method->id, 'free_shipping') === 0 ) continue;
+
+                    $label = wc_cart_totals_shipping_method_label( $method );
+                    $cost = preg_replace('#[^<]+<span[^>]+><span[^>]+>[^<]+</span>(.+)</span>#', '$1', $label);
+                    $cost = str_replace(',', '', $cost);
+                    $this->assertEquals( $this->expected_rates[$method->id][$code],  $cost );
+                }
+            }
         }
 
         // Delete the product
         wp_delete_post( $product->id, true );
 
+
     }
+
 
     public function test_free_shipping_eligibiltiy(){
 
@@ -152,24 +180,22 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
             define( 'WOOCOMMERCE_CHECKOUT', true );
         }
 
-        $instance_id = WCML_Helper_Shipping::add_free_shipping( array( 'min_amount' => 90 ) );  // will add a 50 GBP product first
+        $instance_id = $this->method_instances['free_shipping'];
 
         // the filter for the newly added free shipping
-        add_filter('option_woocommerce_free_shipping_' . $instance_id . '_settings', array($this->multi_currency->shipping, 'convert_shipping_cost'));
-
-        WC()->cart->empty_cart();
-        $this->multi_currency->set_client_currency( 'GBP' );
+        add_filter('option_woocommerce_free_shipping_' . $instance_id . '_settings',
+            array($this->multi_currency->shipping, 'convert_shipping_method_cost_settings'));
 
         // Add the product to the cart
         $product = $this->wcml_helper->add_product(
-                            $this->sitepress->get_default_language() ,
-                            false,
-                            $this->products[0]['title'], 0,
-                            array(
-                                '_price' => $this->products[0]['price'],
-                                '_regular_price' => $this->products[0]['price']
-                        )
-                    );
+            $this->sitepress->get_default_language() ,
+            false,
+            $this->products[0]['title'], 0,
+            array(
+                '_price' => $this->products[0]['price'],
+                '_regular_price' => $this->products[0]['price']
+            )
+        );
 
         // DEFAULT CURRENCY
         WC()->cart->add_to_cart( $product->id, 1 );
@@ -203,6 +229,10 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
 
         }
 
+        WC()->cart->empty_cart();
+        $this->multi_currency->set_client_currency( 'GBP' );
+
     }
+
 
 }

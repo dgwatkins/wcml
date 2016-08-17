@@ -27,10 +27,6 @@ class WCML_Table_Rate_Shipping {
 		add_action( 'init', array( $this, 'init' ), 9 );
 		add_filter( 'get_the_terms',array( $this, 'shipping_class_id_in_default_language' ), 10, 3 );
 
-		if( wcml_is_multi_currency_on() ) {
-			add_filter( 'woocommerce_table_rate_query_rates', array( $this, 'convert_costs' ) );
-		}
-
 	}
 
 	/**
@@ -73,29 +69,4 @@ class WCML_Table_Rate_Shipping {
 		return $terms;
 	}
 
-	/**
-	 * @param $rates
-	 * @return mixed
-	 *
-	 * Converts shipping costs in secondary currencies
-	 */
-	public function convert_costs( $rates ){
-
-		$client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
-
-		if( $client_currency != get_option('woocommerce_currency') ){
-
-			$multi_currency_prices = $this->woocommerce_wpml->multi_currency->prices;
-
-			foreach( $rates as $key => $rate ){
-
-				$rates[$key]->rate_cost 			= $multi_currency_prices->raw_price_filter( $rates[$key]->rate_cost, $client_currency );
-				$rates[$key]->rate_cost_per_item 	= $multi_currency_prices->raw_price_filter( $rates[$key]->rate_cost_per_item, $client_currency );
-
-			}
-
-		}
-
-		return $rates;
-	}
 }
