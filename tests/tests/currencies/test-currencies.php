@@ -10,8 +10,8 @@ class Test_WCML_Currencies extends WCML_UnitTestCase {
         parent::setUp();
 
         set_current_screen( 'dashboard' );
-        $this->woocommerce_wpml->currencies = new WCML_Currencies( $this->woocommerce_wpml );
-        $this->woocommerce_wpml->currencies->init();
+        $this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
+        WCML_Multi_Currency_Configuration::set_up( $this->woocommerce_wpml->multi_currency, $this->woocommerce_wpml );
 
         // settings
         $settings = $this->woocommerce_wpml->settings;
@@ -59,14 +59,13 @@ class Test_WCML_Currencies extends WCML_UnitTestCase {
         // It means that only USD will be a secondary currency
         $_POST['woocommerce_currency'] = 'RON';
 
-        do_action('woocommerce_settings_save_general');
+        update_option( 'woocommerce_currency', 'RON' );
 
         // Read WCML settings again from the DB
         $this->settings = $this->woocommerce_wpml->get_settings();
 
         // RON is no longer a secondary currency sice it was configured to be the default
-        $this->assertEquals( array( 'USD' ), array_keys( $this->settings['currency_options'] ) );
-
+        $this->assertEquals( array( 'USD', 'RON' ), array_keys( $this->settings['currency_options'] ) );
 
     }
 
