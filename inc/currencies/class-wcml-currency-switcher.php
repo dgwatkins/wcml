@@ -18,7 +18,10 @@ class WCML_Currency_Switcher {
         add_action( 'wp_ajax_wcml_currencies_order', array($this, 'wcml_currencies_order') );
         add_action( 'wp_ajax_wcml_currencies_switcher_preview', array($this, 'wcml_currencies_switcher_preview') );
 
-        add_action( 'wcml_currency_switcher', array($this, 'currency_switcher') );
+        add_action( 'wcml_currency_switcher', array($this, 'wcml_currency_switcher') );
+        //@deprecated 3.9
+        add_action( 'currency_switcher', array($this, 'currency_switcher') );
+
         add_shortcode( 'currency_switcher', array($this, 'currency_switcher_shortcode') );
 
         // Built in currency switcher
@@ -45,7 +48,7 @@ class WCML_Currency_Switcher {
             die('Invalid nonce');
         }
 
-        echo $this->currency_switcher(
+        echo $this->wcml_currency_switcher(
             array(
                 'format'         => $_POST['template'] ? $_POST['template'] : '%name% (%symbol%) - %code%',
                 'switcher_style' => $_POST['switcher_type'],
@@ -60,14 +63,14 @@ class WCML_Currency_Switcher {
         extract( shortcode_atts( array(), $atts ) );
 
         ob_start();
-        $this->currency_switcher( $atts );
+        $this->wcml_currency_switcher( $atts );
         $html = ob_get_contents();
         ob_end_clean();
 
         return $html;
     }
 
-    public function currency_switcher( $args = array() ) {
+    public function wcml_currency_switcher( $args = array() ) {
         global $sitepress;
 
         if ( is_page( wc_get_page_id( 'myaccount' ) ) ) {
@@ -153,6 +156,13 @@ class WCML_Currency_Switcher {
             echo '<br />';
         }
 
+    }
+
+    /**
+     * @deprecated 3.9
+     */
+    public function currency_switcher( $args = array() ){
+        $this->wcml_currency_switcher( $args );
     }
 
 

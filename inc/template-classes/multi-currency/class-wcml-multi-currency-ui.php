@@ -105,7 +105,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
                     'visibility'      => __('Visibility', 'woocommerce-multilingual')
                 ),
                 'preview_nonce' => wp_create_nonce( 'wcml_currencies_switcher_preview' ),
-                    'preview'       => $this->woocommerce_wpml->multi_currency->currency_switcher->currency_switcher( array('echo' => false) ),
+                    'preview'       => $this->woocommerce_wpml->multi_currency->currency_switcher->wcml_currency_switcher( array('echo' => false) ),
                 'preview_text'  => __( 'Currency switcher preview', 'woocommerce-multilingual' ),
                 'style'         => isset($this->woocommerce_wpml->settings['currency_switcher_style']) ? $this->woocommerce_wpml->settings['currency_switcher_style'] : false,
                 'options' => array(
