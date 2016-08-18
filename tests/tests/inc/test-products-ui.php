@@ -7,7 +7,7 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         parent::setUp();
 
         set_current_screen( 'admin' );
-        set_current_screen( 'wpml_page_wpml-wcml' );
+        set_current_screen( 'woocommerce_page_wpml-wcml' );
         wpml_tm_load_status_display_filter();
 
         $this->woocommerce_wpml->translation_editor = new WCML_Translation_Editor( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
