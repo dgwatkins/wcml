@@ -61,9 +61,10 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
 		$wpml_wp_api        = new WPML_WP_API();
 		$hidden_langs 		= array();
 		$wpml_url_converter = new WPML_Lang_Parameter_Converter( $default_lang_code, $hidden_langs, $wpml_wp_api );
+		$canonicals = new WPML_Canonicals( $this->sitepress );
 
 		$_SERVER['SERVER_NAME'] = $this->sitepress->convert_url( get_home_url() );
-		$wpml_url_filters = new WPML_URL_Filters( $wpml_post_translations, $wpml_url_converter, $this->sitepress );
+		$wpml_url_filters = new WPML_URL_Filters( $wpml_post_translations, $wpml_url_converter, $canonicals, $this->sitepress );
 
 		$args['notify_url'] =  WC()->api_request_url( 'WC_Gateway_Paypal' );
 

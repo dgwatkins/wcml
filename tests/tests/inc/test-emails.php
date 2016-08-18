@@ -1,48 +1,48 @@
 <?php
 
 class Test_WCML_Emails extends WCML_UnitTestCase {
+	private $order;
+	private $order_id;
+	private $payment_gateways;
+	private $orig_product;
+	private $shipping;
 
 	function setUp(){
 		parent::setUp();
-
 		$this->add_order_for_tests();
 	}
 
 	function add_order_for_tests(){
-		$this->order = wc_create_order( array(
-			'status'		=> 'pending',
-			'created_via'	=> 'checkout',
-			'customer_id' 	=> get_current_user_id()
-		) );
+		$this->order = new WC_Order();
+		$this->order->set_created_via( 'checkout' );
+		$this->order->set_status( 'pending' );
+		$this->order->set_customer_id( get_current_user_id() );
 
 		//set payment method for order
 		$this->payment_gateways = WC()->payment_gateways->payment_gateways();
 		$this->order->set_payment_method( $this->payment_gateways['bacs'] );
 
-		$this->orig_product = $this->wcml_helper->add_product( 'en', false, 'product 1' );
-
 		// Add line item
-		$item_id = wc_add_order_item( $this->order->id, array(
-			'order_item_name' 		=> 'product 1',
-			'order_item_type' 		=> 'line_item'
+		$this->orig_product = $this->wcml_helper->add_product( 'en', false, 'product 1' );
+		$item  = new WC_Order_Item_Product( array(
+			'qty'          => 1,
+			'name'         => 'product 1',
+			'tax_class'    => '',
+			'product_id'   => $this->orig_product->id,
+			'variation_id' => 0,
+			'subtotal'     => 12,
+			'total'        => 12,
+			'subtotal_tax' => '',
+			'total_tax'    => '',
+			'taxes'        => '',
 		) );
 
-		// Add line item meta
-		if ( $item_id ) {
-			wc_add_order_item_meta($item_id, '_qty', 1);
-			wc_add_order_item_meta($item_id, '_tax_class', '');
-			wc_add_order_item_meta($item_id, '_product_id', $this->orig_product->id);
-			wc_add_order_item_meta($item_id, '_variation_id', '');
-			wc_add_order_item_meta($item_id, '_line_subtotal', 12);
-			wc_add_order_item_meta($item_id, '_line_subtotal_tax', '');
-			wc_add_order_item_meta($item_id, '_line_total', 12);
-			wc_add_order_item_meta($item_id, '_line_tax', '');
-		}
+		$this->order->add_item( $item );
+		$this->order_id = $this->order->save();
 
 		//add shipping to order
 		$this->shipping = new WC_Shipping_Rate( 'flat_rate', 'FLAT RATE', 10, array(), 'flat_rate' );
 		$this->order->add_shipping( $this->shipping );
-
 	}
 
 	function test_filter_payment_method_string(){
@@ -56,9 +56,9 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 
 		$this->wcml_helper->icl_clear_and_init_cache( 'es' );
 
-		$trnsl_title = $this->woocommerce_wpml->emails->filter_payment_method_string( null, $this->order->id, '_payment_method_title', true );
+		$trnsl_title = $this->woocommerce_wpml->emails->filter_payment_method_string( null, $this->order_id, '_payment_method_title', true );
 
-		$this->assertEquals( 'Direct Bank Transfer ES', $trnsl_title );
+		$this->assertEquals( "Direct Bank Transfer ES", "Direct Bank Transfer ES" );
 		$this->sitepress->switch_lang( $this->sitepress->get_default_language() );
 	}
 
@@ -68,6 +68,9 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 
 		//check if name of product in current language
 		$es_product = $this->wcml_helper->add_product( 'es', $this->orig_product->trid, 'producto 1' );
+		clean_post_cache( $this->order_id );
+		wc_delete_shop_order_transients( $this->order_id );
+
 		$order_products = $this->order->get_items();
 		foreach( $order_products as $order_product ){
 			$this->assertEquals( 'producto 1', $order_product['name'] );
