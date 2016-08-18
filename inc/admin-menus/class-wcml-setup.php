@@ -63,9 +63,10 @@ class WCML_Setup {
     }
 
     public function setup_wizard_notice(){
+        wp_enqueue_style( 'wcml-setup-wizard-notice', WCML_PLUGIN_URL . '/res/css/wcml-setup-wizard-notice.css' );
         ?>
-        <div id="wcml-setup-wizard" class="updated message fade otgs-is-dismissible">
-            <p><?php printf( __('Welcome to %sWooCommerce Multilingual!%s Please take a moment to configure the main settings and then you are ready to start translating your products.', 'woocommerce-multilingual'), '<strong>', '</strong>') ?></p>
+        <div id="wcml-setup-wizard" class="updated message wpml-message">
+            <p><?php printf( __('%sWelcome to WooCommerce Multilingual!%s Please take a moment to configure the main settings and then you are ready to start translating your products.', 'woocommerce-multilingual'), '<strong>', '</strong><br>') ?></p>
             <p class="submit">
                 <a href="<?php echo esc_url( admin_url('admin.php?page=wcml-setup') ); ?>" class="button-primary"><?php _e('Run the Setup Wizard', 'woocommerce-multilingual') ?></a>
                 <a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'wcml-setup-skip', 1 ), 'wcml_setup_skip_nonce', '_wcml_setup_nonce' ) ); ?>" class="button-secondary skip"><?php _e('Skip Setup', 'woocommerce-multilingual') ?></a>

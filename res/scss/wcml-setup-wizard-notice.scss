@@ -1,0 +1,9 @@
+@import "mixins";
+@import "variables";
+
+div.wpml-message {
+	border-left-color: $wpml-blue;
+	.button-primary {
+		@extend %wpml-button;
+	}
+}
