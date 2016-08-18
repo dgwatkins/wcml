@@ -524,7 +524,10 @@ class WCML_Multi_Currency_Prices{
     public function filter_currency_num_decimals_option($value){
 
         $db = debug_backtrace();
-        if( $db['7']['function'] == 'calculate_shipping_for_package' && $db['4']['function'] == 'add_rate' ){
+        if(
+            $db['8']['function'] == 'calculate_shipping_for_package' && $db['5']['function'] == 'add_rate' ||
+            $db['7']['function'] == 'calculate_shipping_for_package' && $db['4']['function'] == 'add_rate'
+        ){
             $currency_code = get_option( 'woocommerce_currency' );
         }else{
             $currency_code = $this->check_admin_order_currency_code();
