@@ -119,8 +119,6 @@ class WCML_Admin_Menus{
         $get_post_type = get_post_type( $post->ID );
 
         if ( $get_post_type == 'product' && $pagenow == 'edit.php' ) {
-            $prot_link = '<span class="button"><img align="baseline" src="' . ICL_PLUGIN_URL . '/res/img/icon.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="' . WCML_Links::generate_tracking_link( 'https://wpml.org/documentation/related-projects/woocommerce-multilingual/', 'woocommerce-multilingual', 'documentation', '#4' ) . '" target="_blank">' .
-                __( 'How to translate products', 'sitepress' ) . '<\/a>' . '<\/span>';
             $quick_edit_notice = '<div id="quick_edit_notice" style="display:none;"><p>' .
                 sprintf( __( "Quick edit is disabled for product translations. It\'s recommended to use the %s for editing products translations. %s",
                     'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=products' ) . '" >' .
@@ -130,20 +128,16 @@ class WCML_Admin_Menus{
             $quick_edit_notice_prod_link = '<input type="hidden" id="wcml_product_trnsl_link" value="' . admin_url( 'admin.php?page=wpml-wcml&tab=products&prid=' ) . '">';
             ?>
             <script type="text/javascript">
-                jQuery(".subsubsub").append('<?php echo $prot_link ?>');
                 jQuery(".subsubsub").append('<?php echo $quick_edit_notice ?>');
                 jQuery(".subsubsub").append('<?php echo $quick_edit_notice_prod_link ?>');
                 jQuery(".quick_hide a").on('click', function () {
                     jQuery(".quick_product_trnsl_link").attr('href', jQuery("#wcml_product_trnsl_link").val() + jQuery(this).closest('tr').attr('id').replace(/post-/, ''));
                 });
 
-                //lock feautured for translations
+                //lock feature for translations
                 jQuery(document).on('click', '.featured a', function () {
-
                     if (jQuery(this).closest('tr').find('.quick_hide').size() > 0) {
-
                         return false;
-
                     }
 
                 });

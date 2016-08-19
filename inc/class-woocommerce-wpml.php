@@ -135,11 +135,19 @@ class woocommerce_wpml {
             add_shortcode('currency_switcher', '__return_empty_string');
         }
 
-        $this->troubleshooting      = new WCML_Troubleshooting();
+        if( is_admin() ){
+	        $this->troubleshooting      = new WCML_Troubleshooting();
+	        $this->links                = new WCML_Links( $this, $sitepress );
+	        $this->translation_editor   = new WCML_Translation_Editor( $this, $sitepress, $wpdb );
+	        $this->languages_upgrader   = new WCML_Languages_Upgrader;
+	        $this->sync_variations_data = new WCML_Synchronize_Variations_Data( $this, $sitepress, $wpdb );
+	        $this->sync_product_data    = new WCML_Synchronize_Product_Data( $this, $sitepress, $wpdb );
+	        $this->wcml_products_screen = new WCML_Products_Screen_Options( $sitepress );
+	        $this->wcml_products_screen->init();
+	        new WCML_Pointers();
+        }
         $this->endpoints            = new WCML_Endpoints;
         $this->products             = new WCML_Products( $this, $sitepress, $wpdb );
-        $this->sync_product_data    = new WCML_Synchronize_Product_Data( $this, $sitepress, $wpdb );
-        $this->sync_variations_data = new WCML_Synchronize_Variations_Data( $this, $sitepress, $wpdb );
         $this->store                = new WCML_Store_Pages;
         $this->emails               = new WCML_Emails( $this, $sitepress );
         $this->terms                = new WCML_Terms( $this, $sitepress, $wpdb );
@@ -149,12 +157,9 @@ class woocommerce_wpml {
         $this->shipping             = new WCML_WC_Shipping( $sitepress );
         $this->gateways             = new WCML_WC_Gateways( $sitepress );
         $this->currencies           = new WCML_Currencies( $this );
-        $this->languages_upgrader   = new WCML_Languages_Upgrader;
         $this->url_translation      = new WCML_Url_Translation ( $this, $sitepress );
         $this->requests             = new WCML_Requests;
-        $this->translation_editor   = new WCML_Translation_Editor( $this, $sitepress, $wpdb );
         $this->cart                 = new WCML_Cart( $this, $sitepress );
-        $this->links                = new WCML_Links( $this, $sitepress );
         $this->coupons              = new WCML_Coupons( $this, $sitepress );
         $this->locale               = new WCML_Locale( $this, $sitepress );
         $this->media                = new WCML_Media( $this, $sitepress, $wpdb );
