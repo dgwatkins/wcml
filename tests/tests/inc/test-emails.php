@@ -7,6 +7,12 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 	private $orig_product;
 	private $shipping;
 
+	private $order;
+	private $order_id;
+	private $payment_gateways;
+	private $orig_product;
+	private $shipping;
+
 	function setUp(){
 		parent::setUp();
 		$this->add_order_for_tests();
