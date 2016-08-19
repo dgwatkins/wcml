@@ -353,6 +353,8 @@ class WCML_Bookings {
 	            if( isset( $_POST['wcml_wc_booking_resource_block_cost'] ) && is_array( $_POST['wcml_wc_booking_resource_block_cost'] ) ) {
 		            $this->update_booking_resource_block_cost( $currencies, $post_id, $_POST[ 'wcml_wc_booking_resource_block_cost' ] );
 	            }
+
+                update_post_meta( $post_id, '_price', '' );
             } else {
 	            return false;
             }
@@ -634,8 +636,6 @@ class WCML_Bookings {
     function filter_wc_booking_cost( $check, $object_id, $meta_key, $single ){
 
         if( in_array( $meta_key, array( '_wc_booking_cost', '_wc_booking_base_cost', '_wc_display_cost', '_wc_booking_pricing', 'cost', 'block_cost', '_resource_base_costs', '_resource_block_costs' ) ) ){
-
-
 
             if( $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
 
