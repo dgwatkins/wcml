@@ -8,12 +8,13 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 	private $url_translation;
 
 	function setUp(){
+
 		parent::setUp();
 
+		$this->url_translation =& $this->woocommerce_wpml->url_translation;
 		$this->default_language = $this->sitepress->get_default_language();
 		$this->second_language = 'es';
 
-		$this->url_translation =& $this->woocommerce_wpml->url_translation;
 	}
 
 
@@ -30,7 +31,7 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 	function test_translate_bases_in_rewrite_rules_with_empty_string() {
 
 		$empty_string = '';
-		$filtered_values = $this->woocommerce_wpml->url_translation->translate_bases_in_rewrite_rules( $empty_string );
+		$filtered_values = $this->url_translation->translate_bases_in_rewrite_rules( $empty_string );
 		$this->assertEquals( $empty_string, $filtered_values );
 	}
 
@@ -163,10 +164,6 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 		$rewrite['categorie-produit/(.+?)/?$'] = 'index.php?product_cat=$matches[1]';
 		$rewrite['etiquette-produit/(.+?)/?$'] = 'index.php?product_tag=$matches[1]';
 
-		// reset WooCommerce translations
-		global $l10n;
-		unset( $l10n[ 'woocommerce' ] );
-
 		$rewrite = $this->url_translation->force_bases_in_strings_languages( $rewrite );
 
 		$this->assertTrue( !isset( $rewrite['categorie-produit/(.+?)/?$'] ) );
@@ -175,10 +172,6 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 		$this->assertTrue( isset( $rewrite['product-tag/(.+?)/?$'] ) );
 
 		$this->sitepress->switch_lang( 'en' );
-
-		// reset WooCommerce translations
-		unset( $l10n[ 'woocommerce' ] );
-
 
 	}
 
@@ -253,14 +246,6 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 
 		$this->assertEquals( 'http://example.org/etiquette-produit/some-french-tag/?lang=fr', get_term_link( $term_fr->term_id ) );
 
-
-		// Attribute slug
-		$attr = 'color';
-		$this->wcml_helper->register_attribute( $attr );
-		$term = $this->wcml_helper->add_attribute_term( 'white', $attr, 'en' );
-		$fr_term = $this->wcml_helper->add_attribute_term( 'blanc', $attr, 'fr', $term['trid'] );
-
-		$this->assertEquals( 'http://example.org/colour-slug/blanc/?lang=fr', get_term_link( $fr_term['term_id'] ) );
 
 	}
 
