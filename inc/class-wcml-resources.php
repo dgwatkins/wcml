@@ -101,6 +101,11 @@ class WCML_Resources {
             wp_enqueue_script( 'product-attributes' );
         }
 
+	    if ( self::$page == 'wpml-wcml' && self::$tab == 'custom-taxonomies' ) {
+		    wp_register_script( 'custom-taxonomies', WCML_PLUGIN_URL . '/res/js/product-custom-taxonomies' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION, true );
+		    wp_enqueue_script( 'custom-taxonomies' );
+	    }
+
         if ( !is_admin() ) {
             $referer = isset( $_SERVER[ 'HTTP_REFERER' ] ) ? $_SERVER[ 'HTTP_REFERER' ] : '';
 

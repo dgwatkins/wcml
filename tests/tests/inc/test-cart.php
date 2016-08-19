@@ -135,7 +135,6 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
 		$wpml_wp_api        = new WPML_WP_API();
 		$hidden_langs 		= array();
 		$wpml_url_converter = new WPML_Lang_Parameter_Converter( $default_lang_code, $hidden_langs, $wpml_wp_api );
-		$canonicals = new WPML_Canonicals( $this->sitepress );
 
 		$canonicals = new WPML_Canonicals( $this->sitepress );
 

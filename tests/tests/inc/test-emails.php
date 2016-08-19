@@ -73,23 +73,25 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 		$this->payment_gateways = WC()->payment_gateways->payment_gateways();
 		$this->order->set_payment_method( $this->payment_gateways['bacs'] );
 
-		// Add line item
 		$this->orig_product = $this->wcml_helper->add_product( 'en', false, 'product 1' );
-		$item  = new WC_Order_Item_Product( array(
-			'qty'          => 1,
-			'name'         => 'product 1',
-			'tax_class'    => '',
-			'product_id'   => $this->orig_product->id,
-			'variation_id' => 0,
-			'subtotal'     => 12,
-			'total'        => 12,
-			'subtotal_tax' => '',
-			'total_tax'    => '',
-			'taxes'        => '',
+
+		// Add line item
+		$item_id = wc_add_order_item( $this->order->id, array(
+			'order_item_name' 		=> 'product 1',
+			'order_item_type' 		=> 'line_item'
 		) );
 
-		$this->order->add_item( $item );
-		$this->order_id = $this->order->save();
+		// Add line item meta
+		if ( $item_id ) {
+			wc_add_order_item_meta($item_id, '_qty', 1);
+			wc_add_order_item_meta($item_id, '_tax_class', '');
+			wc_add_order_item_meta($item_id, '_product_id', $this->orig_product->id);
+			wc_add_order_item_meta($item_id, '_variation_id', '');
+			wc_add_order_item_meta($item_id, '_line_subtotal', 12);
+			wc_add_order_item_meta($item_id, '_line_subtotal_tax', '');
+			wc_add_order_item_meta($item_id, '_line_total', 12);
+			wc_add_order_item_meta($item_id, '_line_tax', '');
+		}
 
 		//add shipping to order
 		$this->shipping = new WC_Shipping_Rate( 'flat_rate', 'FLAT RATE', 10, array(), 'flat_rate' );
