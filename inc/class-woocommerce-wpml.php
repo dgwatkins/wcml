@@ -160,7 +160,7 @@ class woocommerce_wpml {
         $this->media                = new WCML_Media( $this, $sitepress, $wpdb );
         $this->downloadable         = new WCML_Downloadable_Products( $this, $sitepress );
         $this->reports              = new WCML_Reports;
-        $this->wcml_products_screen = new WCML_Products_Screen_Options( $sitepress );
+        $this->wcml_products_screen = new WCML_Products_Screen_Options();
         $this->wcml_products_screen->init();
 
         new WCML_Ajax_Setup;
