@@ -7,18 +7,68 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 	private $orig_product;
 	private $shipping;
 
-
 	function setUp(){
 		parent::setUp();
 		$this->add_order_for_tests();
 	}
 
 	function add_order_for_tests(){
-		$this->order = new WC_Order();
-		$this->order->set_created_via( 'checkout' );
-		$this->order->set_status( 'pending' );
-		$this->order->set_customer_id( get_current_user_id() );
 
+		if( method_exists( new WC_Order() , 'set_created_via' ) ) {
+			$this->order = new WC_Order();
+
+			$this->order->set_created_via('checkout');
+			$this->order->set_status('pending');
+			$this->order->set_customer_id(get_current_user_id());
+
+			//set payment method for order
+			$this->payment_gateways = WC()->payment_gateways->payment_gateways();
+			$this->order->set_payment_method($this->payment_gateways['bacs']);
+
+			// Add line item
+			$this->orig_product = $this->wcml_helper->add_product('en', false, 'product 1');
+			$item = new WC_Order_Item_Product(array(
+				'qty' => 1,
+				'name' => 'product 1',
+				'tax_class' => '',
+				'product_id' => $this->orig_product->id,
+				'variation_id' => 0,
+				'subtotal' => 12,
+				'total' => 12,
+				'subtotal_tax' => '',
+				'total_tax' => '',
+				'taxes' => '',
+			));
+
+			$this->order->add_item($item);
+			$this->order_id = $this->order->save();
+
+			//add shipping to order
+			$this->shipping = new WC_Shipping_Rate('flat_rate', 'FLAT RATE', 10, array(), 'flat_rate');
+			$item = new WC_Order_Item_Shipping(array(
+				'method_title' => $this->shipping->label,
+				'method_id' => $this->shipping->id,
+				'total' => wc_format_decimal($this->shipping->cost),
+				'taxes' => $this->shipping->taxes,
+				'meta_data' => $this->shipping->get_meta_data(),
+				'order_id' => $this->order_id,
+			));
+			$item->save();
+			$this->order->add_item($item);
+		}else{
+			$this->add_order_for_tests_before_2_7();
+		}
+
+	}
+
+	public function add_order_for_tests_before_2_7(){
+
+		$this->order = wc_create_order( array(
+			'status'		=> 'pending',
+			'created_via'	=> 'checkout',
+			'customer_id' 	=> get_current_user_id()
+		) );
+		$this->order_id = $this->order->id;
 		//set payment method for order
 		$this->payment_gateways = WC()->payment_gateways->payment_gateways();
 		$this->order->set_payment_method( $this->payment_gateways['bacs'] );
@@ -43,16 +93,8 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 
 		//add shipping to order
 		$this->shipping = new WC_Shipping_Rate( 'flat_rate', 'FLAT RATE', 10, array(), 'flat_rate' );
-		$item = new WC_Order_Item_Shipping( array(
-			'method_title' => $this->shipping->label,
-			'method_id'    => $this->shipping->id,
-			'total'        => wc_format_decimal( $this->shipping->cost ),
-			'taxes'        => $this->shipping->taxes,
-			'meta_data'    => $this->shipping->get_meta_data(),
-			'order_id'     => $this->order_id,
-		) );
-		$item->save();
-		$this->order->add_item( $item );
+		$this->order->add_shipping( $this->shipping );
+
 	}
 
 	function test_filter_payment_method_string(){
@@ -68,7 +110,7 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 
 		$trnsl_title = $this->woocommerce_wpml->emails->filter_payment_method_string( null, $this->order_id, '_payment_method_title', true );
 
-		$this->assertEquals( "Direct Bank Transfer ES", "Direct Bank Transfer ES" );
+		$this->assertEquals( "Direct Bank Transfer ES", $trnsl_title );
 		$this->sitepress->switch_lang( $this->sitepress->get_default_language() );
 	}
 
@@ -116,6 +158,14 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 		$this->assertEquals( 'fr_FR', $this->woocommerce_wpml->emails->set_locale_for_emails( $locale_dummy, 'woocommerce' ) );
 	}
 
+	public function tearDown() {
+		//parent::tearDown();
+
+		// reset WooCommerce translations
+		global $l10n;
+		unset( $l10n[ 'woocommerce' ] );
+
+	}
 
 
 }

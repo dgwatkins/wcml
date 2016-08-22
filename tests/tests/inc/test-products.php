@@ -9,6 +9,13 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 		parent::setUp();
 		global $wpml_post_translations, $wpml_term_translations;
 
+		set_current_screen( 'admin' );
+
+		$this->woocommerce_wpml->sync_product_data =
+			new WCML_Synchronize_Product_Data( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
+		$this->woocommerce_wpml->sync_variations_data =
+			new WCML_Synchronize_Variations_Data( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
+
 		$this->default_language = $this->sitepress->get_default_language();
 		$this->second_language = 'es';
 		//add product for tests

@@ -13,10 +13,12 @@ class Test_WCML_Product_Translation_Edit_Links extends WCML_UnitTestCase {
 	private $test_data = array();
 
 	function setUp(){
-
 		set_current_screen( 'admin' );
 
 		parent::setUp();
+
+		$this->woocommerce_wpml->translation_editor = new WCML_Translation_Editor( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
+
 
 		//add product for tests
 		$orig_product = $this->wcml_helper->add_product( 'en', false, 'product 1' );

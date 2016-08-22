@@ -61,7 +61,7 @@ class WCML_Multi_Currency_Orders{
         ");
 
         foreach($results as $row){
-            $currencies[$row->currency] = $row->c;
+            $currencies[$row->currency] = intval($row->c);
         }
 
         return $currencies;

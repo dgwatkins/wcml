@@ -25,7 +25,8 @@ class Test_WCML_Orders extends WCML_UnitTestCase {
 
 		$order = wc_create_order( $order_data );
 
-		$item_id = wc_add_order_item( $order->get_id(), array(
+		$order_id = method_exists( 'WC_Order', 'get_id' ) ? $order->get_id() : $order->id;
+		$item_id = wc_add_order_item( $order_id, array(
 			'order_item_name' 		=> 'product 1',
 			'order_item_type' 		=> 'line_item'
 		) );
@@ -35,7 +36,7 @@ class Test_WCML_Orders extends WCML_UnitTestCase {
 		wc_add_order_item_meta( $item_id, '_line_subtotal', 10 );
 		wc_add_order_item_meta( $item_id, 'wpml_language', 'en' );
 
-		$_GET['post'] = $order->get_id();
+		$_GET['post'] = $order_id;
 
 		$iclsettings = $this->sitepress->get_settings();
 

@@ -142,22 +142,36 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 	// test converting the coupon amount when using the multi currency mode
 	function test_filter_coupon_data(){
 
-		$coupon = WCML_Helper_Coupon::create_coupon();
+		$args = array(
+			'code'              => 'dummycoupon',
+			'amount'            => 1,
+			'minimum_amount'    => 3,
+			'maximum_amount'    => 17,
+		);
 
-		$coupon_amount	 = $coupon->coupon_amount;
-		$minimum_amount  = $coupon->minimum_amount;
-		$maximum_amount  = $coupon->maximum_amount;
+		remove_action('woocommerce_coupon_loaded', array($this->multi_currency->coupons, 'filter_coupon_data'));
+		$coupon = WCML_Helper_Coupon::create_coupon( $args );
 
-		add_filter('wcml_raw_price_amount', array($this->multi_currency->prices, 'raw_price_filter'), 10, 2);
 		$this->multi_currency->set_client_currency('CHF');
 
-		$this->multi_currency->coupons->filter_coupon_data($coupon);
+		add_action('woocommerce_coupon_loaded', array($this->multi_currency->coupons, 'filter_coupon_data'));
+		$coupon_converted = new WC_Coupon( $args['code'] );
+
+		if( method_exists( $coupon, 'get_amount') ){ // WC 2.7+
+			$coupon_amount_converted   = $coupon_converted->get_amount();
+			$minimum_amount_converted  = $coupon_converted->get_minimum_amount();
+			$maximum_amount_converted  = $coupon_converted->get_maximum_amount();
+		} else {
+			$coupon_amount_converted   = $coupon_converted->coupon_amount;
+			$minimum_amount_converted  = $coupon_converted->minimum_amount;
+			$maximum_amount_converted  = $coupon_converted->maximum_amount;
+		}
 
 		$rate = $this->settings['currency_options']['CHF']['rate'];
 
-		$this->assertEquals( $coupon->coupon_amount,  $rate * $coupon_amount );
-		$this->assertEquals( $coupon->minimum_amount, $rate * $minimum_amount );
-		$this->assertEquals( $coupon->maximum_amount, $rate * $maximum_amount );
+		$this->assertEquals( $rate * $args['amount'],           $coupon_amount_converted );
+		$this->assertEquals( $rate * $args['minimum_amount'],   $minimum_amount_converted );
+		$this->assertEquals( $rate * $args['maximum_amount'],   $maximum_amount_converted );
 
 	}
 	

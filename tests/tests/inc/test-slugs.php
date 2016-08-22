@@ -5,10 +5,15 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 
 	function setUp(){
 		parent::setUp();
+
+		set_current_screen( 'admin' );
+
 		global $WPML_String_Translation;
 		$WPML_String_Translation->init_active_languages();
 
 		$this->wc_permalinks = get_option( 'woocommerce_permalinks' );
+
+		$this->woocommerce_wpml->languages_upgrader   = new WCML_Languages_Upgrader;
 	}
 
 	function test_download_woocommerce_translations_for_active_languages() {

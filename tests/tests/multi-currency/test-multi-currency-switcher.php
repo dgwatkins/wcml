@@ -162,6 +162,10 @@ class Test_WCML_Multi_Currency_Switcher extends WCML_UnitTestCase {
 
     public function test_get_formatted_price(){
 
+	    // reset WooCommerce translations
+	    global $l10n;
+	    unset( $l10n[ 'woocommerce' ] );
+
         $currencies = isset($wcml_settings['currencies_order']) ?
             $wcml_settings['currencies_order'] :
             $this->multi_currency->get_currency_codes();

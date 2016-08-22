@@ -137,6 +137,8 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
 		$wpml_url_converter = new WPML_Lang_Parameter_Converter( $default_lang_code, $hidden_langs, $wpml_wp_api );
 		$canonicals = new WPML_Canonicals( $this->sitepress );
 
+		$canonicals = new WPML_Canonicals( $this->sitepress );
+
 		$_SERVER['SERVER_NAME'] = $this->sitepress->convert_url( get_home_url() );
 		$wpml_url_filters = new WPML_URL_Filters( $wpml_post_translations, $wpml_url_converter, $canonicals, $this->sitepress );
 

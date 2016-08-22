@@ -11,10 +11,9 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 	function setUp(){
 
+		parent::setUp();
 		add_filter('wcml_load_multi_currency', '__return_true');
 		set_current_screen( 'front' );
-
-		parent::setUp();
 
 		// Multi currency objects
 		$this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
@@ -38,6 +37,8 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 		$this->products['simple_sale'] 	= $this->add_simple_sale_product('Test Product Simple');
 		$this->products['variable'] 	= $this->add_variable_product('Test Product Variable');
 		$this->products['variable_sale']= $this->add_variable_sale_product('Test Product Variable Sale');
+
+		$this->multi_currency->set_client_currency( $this->default_currency );
 
 	}
 

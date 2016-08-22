@@ -134,7 +134,7 @@ class WCML_Orders{
 
                     if( $key == 'type' && $item_data == 'shipping' && isset( $item[ 'method_id' ] ) ){
 
-                        $items[ $key ][ 'name' ] = $this->woocommerce_wpml->shipping->translate_shipping_method_title( $item[ 'name' ], $item[ 'method_id' ], $language_to_filter );
+                        $items[ $index ][ 'name' ] = $this->woocommerce_wpml->shipping->translate_shipping_method_title( $item[ 'name' ], $item[ 'method_id' ], $language_to_filter );
 
                     }
                 }

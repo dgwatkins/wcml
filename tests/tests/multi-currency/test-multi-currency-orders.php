@@ -42,13 +42,12 @@ class Test_WCML_Multi_Currency_Orders extends WCML_UnitTestCase {
         $this->orders[0] = WC_Helper_Order::create_order();
 
         $this->orders[1] = WC_Helper_Order::create_order();
-        update_post_meta( $this->orders[1]->get_id(), '_order_currency', 'EUR');
+	    $order_id = method_exists( $this->orders[1], 'get_id' ) ? $this->orders[1]->get_id() : $this->orders[1]->id;
+        update_post_meta( $order_id, '_order_currency', 'EUR');
 
         $this->orders[2] = WC_Helper_Order::create_order();
-        update_post_meta( $this->orders[2]->get_id(), '_order_currency', 'EUR');
-
-
-
+	    $order_id = method_exists( $this->orders[2], 'get_id' ) ? $this->orders[2]->get_id() : $this->orders[2]->id;
+        update_post_meta( $order_id, '_order_currency', 'EUR');
 
     }
 
@@ -56,7 +55,9 @@ class Test_WCML_Multi_Currency_Orders extends WCML_UnitTestCase {
 
         $currencies = $this->multi_currency->orders->get_orders_currencies();
 
-        $this->assertEquals( array(  'EUR' => 2, 'USD' => 1 ), $currencies );
+	    $default_currency = get_option('woocommerce_currency');
+
+        $this->assertEquals( array(  'EUR' => 2, $default_currency => 1 ), $currencies );
 
 
     }
