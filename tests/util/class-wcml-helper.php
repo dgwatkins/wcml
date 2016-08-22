@@ -375,4 +375,11 @@ class WCML_Helper {
         $sitepress->core_tm()->save_settings();
     }
 
+    public static function set_custom_field_to_copy( $name ){
+        global $sitepress;
+
+        $sitepress->core_tm()->settings['custom_fields_translation'][ $name ] = WPML_COPY_CUSTOM_FIELD;
+        $sitepress->core_tm()->save_settings();
+    }
+
 }

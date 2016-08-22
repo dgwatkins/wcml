@@ -132,4 +132,37 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 
 	}
 
+	public function test_icl_connect_translations_action(){
+
+		$custom_field = 'test_custom_1';
+
+		$en_product = $this->wcml_helper->add_product( $this->default_language, false, rand_str() );
+		update_post_meta( $en_product->id, '_regular_price', 100 );
+		update_post_meta( $en_product->id, $custom_field, 'custom_value' );
+		$this->wcml_helper->set_custom_field_to_copy( $custom_field );
+
+		$es_product = $this->wcml_helper->add_product( $this->second_language, false, rand_str() );
+
+		$_POST['new_trid'] = $es_product->trid;
+		$_POST['post_type'] = 'product';
+		$_POST['post_id'] = $en_product->id;
+		$_POST['set_as_source'] = true;
+
+		$this->woocommerce_wpml->sync_product_data->icl_connect_translations_action();
+
+		$this->assertEquals( 'custom_value', get_post_meta( $es_product->id, $custom_field, true ) );
+
+		update_post_meta( $es_product->id, $custom_field, 'custom_value_es' );
+
+		$_POST['new_trid'] = $es_product->trid;
+		$_POST['post_type'] = 'product';
+		$_POST['post_id'] = $en_product->id;
+		$_POST['set_as_source'] = false;
+
+		$this->woocommerce_wpml->sync_product_data->icl_connect_translations_action();
+
+		$this->assertEquals( 'custom_value_es', get_post_meta( $en_product->id, $custom_field, true ) );
+
+	}
+
 }
