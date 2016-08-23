@@ -15,7 +15,7 @@ class WCML_Orders{
         $this->sitepress = $sitepress;
         
         add_action('init', array($this, 'init'));
-        
+
         //checkout page
         add_action( 'wp_ajax_woocommerce_checkout',array($this,'switch_to_current'),9);
         add_action( 'wp_ajax_nopriv_woocommerce_checkout',array($this,'switch_to_current'),9);
@@ -110,7 +110,7 @@ class WCML_Orders{
                         $tr_product_id = apply_filters( 'translate_object_id', $item_data, 'product', false, $language_to_filter );
                         if( !is_null( $tr_product_id ) ){
                             $items[ $index ][ $key ] = $tr_product_id;
-                            $items[ $index ][ 'name '] = get_the_title( $tr_product_id );
+                            $items[ $index ][ 'name'] = get_the_title( $tr_product_id );
                         }
                     }
                     if( $key == 'variation_id' ){
