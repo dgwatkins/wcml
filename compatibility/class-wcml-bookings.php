@@ -653,7 +653,10 @@ class WCML_Bookings {
 
                     if ( get_post_type($object_id) == 'bookable_person' ) {
 
-                        $value = get_post_meta($object_id, $meta_key . '_' . $currency, true);
+                        $original_id = apply_filters( 'translate_object_id', wp_get_post_parent_id( $object_id ), 'product', true, $this->woocommerce_wpml->products->get_original_product_language(  wp_get_post_parent_id( $object_id ) ) );
+                        $cost_status = get_post_meta( $original_id, '_wcml_custom_costs_status', true );
+
+                        $value = get_post_meta( $object_id, $meta_key . '_' . $currency, true );
 
                         if ( $cost_status && $value ) {
 
@@ -1897,7 +1900,7 @@ class WCML_Bookings {
 
 		foreach( $currencies as $code => $currency ) {
 			foreach( $booking_options as $booking_options_post_key => $booking_options_meta_key_prefix ) {
-				if ( isset( $_POST[ $booking_options_post_key ][ $code ] ) && '' !== $_POST[ $booking_options_post_key ][ $code ] ) {
+				if ( isset( $_POST[ $booking_options_post_key ][ $code ] ) ) {
 					update_post_meta( $post_id, $booking_options_meta_key_prefix . $code, sanitize_text_field( $_POST[ $booking_options_post_key ][ $code ] ) );
 				}
 			}
