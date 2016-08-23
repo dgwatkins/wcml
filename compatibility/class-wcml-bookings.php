@@ -700,7 +700,13 @@ class WCML_Bookings {
                         if( !$costs ){
                             $value = $check;
                         }elseif( $cost_status && isset( $costs[ 'custom_costs' ][ $currency ] ) ){
-                            $value = array( 0 => $costs[ 'custom_costs' ][ $currency ] );
+
+                            $res_costs = array();
+                            foreach( $costs[ 'custom_costs' ][ $currency ] as $resource_id => $cost ){
+                                $trns_resource_id = apply_filters('translate_object_id', $resource_id, 'bookable_resource', true, $this->sitepress->get_current_language() );
+                                $res_costs[ $trns_resource_id ] = $cost;
+                            }
+                            $value = array( 0 => $res_costs );
                         }elseif( $cost_status && isset( $costs[ 0 ][ 'custom_costs' ][ $currency ] )){
                             $value = array( 0 => $costs[ 0 ][ 'custom_costs' ][ $currency ] );
                         }else{
