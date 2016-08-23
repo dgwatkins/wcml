@@ -7,11 +7,6 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 	private $orig_product;
 	private $shipping;
 
-	private $order;
-	private $order_id;
-	private $payment_gateways;
-	private $orig_product;
-	private $shipping;
 
 	function setUp(){
 		parent::setUp();
@@ -48,7 +43,16 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 
 		//add shipping to order
 		$this->shipping = new WC_Shipping_Rate( 'flat_rate', 'FLAT RATE', 10, array(), 'flat_rate' );
-		$this->order->add_shipping( $this->shipping );
+		$item = new WC_Order_Item_Shipping( array(
+			'method_title' => $this->shipping->label,
+			'method_id'    => $this->shipping->id,
+			'total'        => wc_format_decimal( $this->shipping->cost ),
+			'taxes'        => $this->shipping->taxes,
+			'meta_data'    => $this->shipping->get_meta_data(),
+			'order_id'     => $this->order_id,
+		) );
+		$item->save();
+		$this->order->add_item( $item );
 	}
 
 	function test_filter_payment_method_string(){
@@ -91,8 +95,15 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 
 		$order_shippings = $this->order->get_items( 'shipping' );
 		foreach( $order_shippings as $order_shipping ){
-			$this->assertEquals( 'FLAT RATE ES', $order_shipping['name'] );
+			if( $order_shipping instanceof WC_Order_Item_Shipping  ){
+				//WC >= 2.7
+				$this->assertEquals( 'FLAT RATE ES', $order_shipping->get_method_title() );
+			}else{
+				$this->assertEquals( 'FLAT RATE ES', $order_shipping['name'] );
+			}
+
 		}
+
 		$this->sitepress->switch_lang( $this->sitepress->get_default_language() );
 	}
 

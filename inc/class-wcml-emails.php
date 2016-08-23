@@ -65,7 +65,6 @@ class WCML_Emails{
         add_filter( 'get_post_metadata', array( $this, 'filter_payment_method_string' ), 10, 4 );
 
         if( !isset( $_GET['post_type'] ) || $_GET['post_type'] != 'shop_order' ){
-            add_filter( 'woocommerce_order_get_items', array( $this, 'filter_order_items' ), 10, 2 );
             add_filter( 'woocommerce_order_items_meta_get_formatted', array( $this, 'filter_formatted_items' ), 10, 2 );
         }
     }
@@ -256,33 +255,6 @@ class WCML_Emails{
 
         }
         return $check;
-    }
-
-    function filter_order_items( $items, $object){
-
-        foreach( $items as $item_key => $item ){
-
-            foreach( $item as $key => $item_meta ){
-
-                if( $key == 'type' &&  $item_meta == 'line_item' ){
-
-                    $current_prod_id = apply_filters( 'translate_object_id', $item[ 'product_id' ], 'product', false, $this->sitepress->get_current_language() );
-                    if( !is_null( $current_prod_id ) ){
-                        $items[ $item_key ][ 'name' ] = wc_get_product( $current_prod_id )->get_title();
-                    }
-
-                } elseif( $key == 'type' &&  $item_meta == 'shipping' && isset( $item[ 'method_id' ] ) ){
-
-                    $items[ $item_key ][ 'name' ] = $this->woocommerce_wpml->shipping->translate_shipping_method_title( $item[ 'name' ], $item[ 'method_id' ], $this->sitepress->get_current_language() );
-
-                }
-
-            }
-
-        }
-
-
-        return $items;
     }
 
     function filter_formatted_items( $formatted_meta, $object ){

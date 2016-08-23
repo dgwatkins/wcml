@@ -152,7 +152,7 @@ class woocommerce_wpml {
         $this->emails               = new WCML_Emails( $this, $sitepress );
         $this->terms                = new WCML_Terms( $this, $sitepress, $wpdb );
         $this->attributes           = new WCML_Attributes( $this, $sitepress, $wpdb );
-        $this->orders               = new WCML_Orders;
+        $this->orders               = new WCML_Orders( $this, $sitepress );
         $this->strings              = new WCML_WC_Strings;
         $this->shipping             = new WCML_WC_Shipping( $sitepress );
         $this->gateways             = new WCML_WC_Gateways( $sitepress );
