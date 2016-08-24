@@ -110,7 +110,6 @@ class Test_Adding_New_Products extends WCML_UnitTestCase {
 		$translation = $this->add_simple_product( $second_lang, $orig_product['post']->trid );
 
 		$woocommerce_wpml->sync_product_data->sync_product_data( $orig_product['post']->trid, $translation['post']->id, $second_lang );
-
 		$this->assertFalse( (bool) $woocommerce_wpml->products->is_variable_product( $orig_product['post']->id ) );
 		$this->assertFalse( (bool) $woocommerce_wpml->products->is_grouped_product( $orig_product['post']->id ) );
 
@@ -126,8 +125,11 @@ class Test_Adding_New_Products extends WCML_UnitTestCase {
 	 */
 	private function common_checks( $original_id, $translation_id, $lang ) {
 		global $woocommerce_wpml;
+		$cache_group = 'original_product_language';
 		$this->assertEquals( $lang, $woocommerce_wpml->products->get_original_product_language( $original_id ) );
+		wp_cache_delete( $original_id, $cache_group );
 		$this->assertEquals( $lang, $woocommerce_wpml->products->get_original_product_language( $translation_id ) );
+		wp_cache_delete( $translation_id, $cache_group );
 		$this->assertTrue( (bool) $woocommerce_wpml->products->is_original_product( $original_id ) );
 		$this->assertFalse( (bool) $woocommerce_wpml->products->is_original_product( $translation_id ) );
 	}
