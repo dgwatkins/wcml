@@ -105,3 +105,9 @@ UnitTestJob:
   - tests/install-wp-tests.sh wcml_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost
   - phpunit
 
+  # Run tests with WooCommerce 2.6.4
+  # Install WooCommerce
+  - cd ../woocommerce
+  - git checkout tags/2.6.4
+  - phpunit
+
