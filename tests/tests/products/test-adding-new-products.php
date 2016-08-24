@@ -25,13 +25,14 @@ class Test_Adding_New_Products extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function product_scenarios() {
+		$this->switch_to_admin();
 		$default_language = $this->sitepress->get_default_language();
 		$random = $this->sitepress->get_active_languages();
 		unset( $random[ $default_language ] );
 		$random = array_keys( $random );
 
 		$second_language = $random[ mt_rand( 0, count( $random ) - 1 ) ];
-		$third_language = $random[ mt_rand( 0, count( $random ) - 2 ) ];
+		$third_language = $random[ mt_rand( 0, count( $random ) - 1 ) ];
 
 		foreach ( array(
 			array( $default_language, $second_language ),
@@ -106,15 +107,14 @@ class Test_Adding_New_Products extends WCML_UnitTestCase {
 	private function add_and_check_simple_product( $orig_lang, $second_lang ) {
 		global $woocommerce_wpml;
 		$orig_product = $this->add_simple_product( $orig_lang );
-		$translation = wpml_test_insert_post( $second_lang, 'product', $orig_product['post']->trid, random_string() );
-		wp_cache_init();
+		$translation = $this->add_simple_product( $second_lang, $orig_product['post']->trid );
 
-		$woocommerce_wpml->sync_product_data->sync_product_data( $orig_product['post']->trid, $translation, $second_lang );
+		$woocommerce_wpml->sync_product_data->sync_product_data( $orig_product['post']->trid, $translation['post']->id, $second_lang );
 
 		$this->assertFalse( (bool) $woocommerce_wpml->products->is_variable_product( $orig_product['post']->id ) );
 		$this->assertFalse( (bool) $woocommerce_wpml->products->is_grouped_product( $orig_product['post']->id ) );
 
-		$this->common_checks( $orig_product['post']->id, $translation, $orig_lang );
+		$this->common_checks( $orig_product['post']->id, $translation['post']->id, $orig_lang );
 	}
 
 	/**
