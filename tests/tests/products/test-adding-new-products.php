@@ -27,12 +27,9 @@ class Test_Adding_New_Products extends WCML_UnitTestCase {
 	public function product_scenarios() {
 		$this->switch_to_admin();
 		$default_language = $this->sitepress->get_default_language();
-		$random = $this->sitepress->get_active_languages();
-		unset( $random[ $default_language ] );
-		$random = array_keys( $random );
 
-		$second_language = $random[ mt_rand( 0, count( $random ) - 1 ) ];
-		$third_language = $random[ mt_rand( 0, count( $random ) - 1 ) ];
+		$second_language = 'de';
+		$third_language = 'it';
 
 		foreach ( array(
 			array( $default_language, $second_language ),
