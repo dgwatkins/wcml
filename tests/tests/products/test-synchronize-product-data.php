@@ -149,7 +149,8 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		$_POST['set_as_source'] = true;
 
 		$this->woocommerce_wpml->sync_product_data->icl_connect_translations_action();
-
+		//need clear cache for product because WPML uses direct query to insert meta
+		wp_cache_delete($es_product->id, 'post_meta');
 		$this->assertEquals( 'custom_value', get_post_meta( $es_product->id, $custom_field, true ) );
 
 		update_post_meta( $es_product->id, $custom_field, 'custom_value_es' );
@@ -160,7 +161,8 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		$_POST['set_as_source'] = false;
 
 		$this->woocommerce_wpml->sync_product_data->icl_connect_translations_action();
-
+		//need clear cache for product because WPML uses direct query to insert meta
+		wp_cache_delete($en_product->id, 'post_meta');
 		$this->assertEquals( 'custom_value_es', get_post_meta( $en_product->id, $custom_field, true ) );
 
 	}
