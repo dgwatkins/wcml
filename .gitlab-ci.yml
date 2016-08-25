@@ -109,5 +109,6 @@ UnitTestJob:
   # Install WooCommerce
   - cd ../woocommerce
   - git checkout tags/2.6.4
+  - cd ../woocommerce-multilingual
   - phpunit
 
