@@ -30,9 +30,9 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 
 	function test_url_string_name(){
 
-		$this->assertEquals( 'URL product_cat tax slug', WCML_Url_Translation::url_string_name( 'product_cat' ) );
+		$this->assertEquals( 'URL product_cat tax slug', $this->woocommerce_wpml->url_translation->url_string_name( 'product_cat' ) );
 
-		$this->assertEquals( 'URL slug: product', WCML_Url_Translation::url_string_name( 'product' ) );
+		$this->assertEquals( 'URL slug: product', $this->woocommerce_wpml->url_translation->url_string_name( 'product' ) );
 
 	}
 
@@ -41,12 +41,6 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 	 */
 
 	function test_translate_bases_in_rewrite_rules_with_empty_string() {
-		$woocommerce_wpml_mock          = $this->get_wcml_mock();
-		$woocommerce_wpml_mock->strings = new WCML_WC_Strings;
-
-		$sitepress_mock                 = $this->get_sitepress_mock();
-		$sitepress_mock->method( 'get_current_language' )->willReturn( $this->second_language );
-		$sitepress_mock->method( 'get_active_languages' )->willReturn( array() );
 
 		$empty_string = '';
 		$filtered_values = $this->woocommerce_wpml->url_translation->translate_bases_in_rewrite_rules( $empty_string );
