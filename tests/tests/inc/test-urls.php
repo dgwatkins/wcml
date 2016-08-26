@@ -12,21 +12,6 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 		$this->second_language = 'es';
 	}
 
-	function test_get_language_pack_uri(){
-		global $woocommerce;
-
-		//use stable version to test
-		$pack_uri = $this->woocommerce_wpml->languages_upgrader->get_language_pack_uri( 'uk_UA', $this->woocommerce_wpml->get_stable_wc_version() );
-
-		$response = wp_safe_remote_get( $pack_uri, array( 'timeout' => 60 ) );
-		$response_result = false;
-
-		if ( ! is_wp_error( $response ) && $response['response']['code'] >= 200 && $response['response']['code'] < 300 ) {
-			$response_result = true;
-		}
-
-		$this->assertTrue( $response_result );
-	}
 
 	function test_url_string_name(){
 

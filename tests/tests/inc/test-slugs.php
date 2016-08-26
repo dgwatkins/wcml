@@ -6,26 +6,11 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 	function setUp(){
 		parent::setUp();
 
-		set_current_screen( 'admin' );
-
 		global $WPML_String_Translation;
 		$WPML_String_Translation->init_active_languages();
 
 		$this->wc_permalinks = get_option( 'woocommerce_permalinks' );
 
-		$this->woocommerce_wpml->languages_upgrader   = new WCML_Languages_Upgrader;
-	}
-
-	function test_download_woocommerce_translations_for_active_languages() {
-		//use stable version to test
-		$wc_version = $this->woocommerce_wpml->get_stable_wc_version();
-		delete_option('woocommerce_language_pack_version_fr_FR');
-		$this->woocommerce_wpml->languages_upgrader->download_woocommerce_translations_for_active_languages( $wc_version );
-
-		$downloaded_translation_info = get_option('woocommerce_language_pack_version_fr_FR');
-
-		$this->assertEquals( $downloaded_translation_info[0], $wc_version );
-		$this->assertEquals( $downloaded_translation_info[1], 'fr_FR' );
 	}
 
 	function test_translate_product_slug() {
