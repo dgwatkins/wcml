@@ -167,6 +167,23 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 
 	}
 
+	function test_check_if_product_fields_sync_needed(){
+
+		$sync_needed = $this->woocommerce_wpml->sync_product_data->check_if_product_fields_sync_needed( $this->test_data->orig_product->id, 'postmeta_fields' );
+		$this->assertTrue( $sync_needed );
+		wp_cache_init();
+
+		$sync_needed = $this->woocommerce_wpml->sync_product_data->check_if_product_fields_sync_needed( $this->test_data->orig_product->id, 'postmeta_fields' );
+		$this->assertFalse( $sync_needed );
+		wp_cache_init();
+
+		update_post_meta( $this->test_data->orig_product->id, '_regular_price', 100 );
+		$sync_needed = $this->woocommerce_wpml->sync_product_data->check_if_product_fields_sync_needed( $this->test_data->orig_product->id, 'postmeta_fields' );
+		$this->assertTrue( $sync_needed );
+
+	}
+
+}
 	public function test_sync_product_taxonomies(){
 
 		$default_product = $this->wcml_helper->add_product( $this->default_language, false, rand_str() );
