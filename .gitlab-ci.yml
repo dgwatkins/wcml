@@ -25,35 +25,35 @@ UnitTestJob:
   script:
 
   # Run composer update for WCML
-  - php /composer.phar update
+  - composer update
 
   # Install WPML Core
   - cd ../
   - rm -rf sitepress-multilingual-cms
   - git clone ssh://git@git.onthegosystems.com:10022/wpml/sitepress-multilingual-cms.git
   - cd sitepress-multilingual-cms
-  - php /composer.phar update
+  - composer update
 
   # Install WPML TM
   - cd ../
   - rm -rf wpml-translation-management
   - git clone ssh://git@git.onthegosystems.com:10022/wpml/wpml-translation-management.git
   - cd wpml-translation-management
-  - php /composer.phar update
+  - composer update
 
   # Install WPML ST
   - cd ../
   - rm -rf wpml-string-translation
   - git clone ssh://git@git.onthegosystems.com:10022/wpml/wpml-string-translation.git
   - cd wpml-string-translation
-  - php /composer.phar update
+  - composer update
 
   # Install WPML Media
   - cd ../
   - rm -rf wpml-media-translation
   - git clone ssh://git@git.onthegosystems.com:10022/wpml/wpml-media-translation.git
   - cd wpml-media-translation
-  - php /composer.phar update
+  - composer update
 
   # Install WooCommerce
   - cd ../
