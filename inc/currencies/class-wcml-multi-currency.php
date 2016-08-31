@@ -357,8 +357,17 @@ class WCML_Multi_Currency{
             }
         }
 
-
-        if(isset($_POST['action']) && $_POST['action'] == 'wcml_switch_currency' && !empty($_POST['currency'])){
+        if(
+            isset( $_POST[ 'action' ] ) &&
+            $_POST[ 'action' ] == 'wcml_switch_currency' &&
+            !empty( $_POST[ 'currency' ] ) &&
+            isset( $_POST[ 'force_switch' ] ) &&
+            !$_POST[ 'force_switch' ] &&
+            (
+                $this->woocommerce_wpml->settings[ 'cart_sync' ][ 'currency_switch' ] == WCML_CART_SYNC ||
+                $this->woocommerce_wpml->settings[ 'cart_sync' ][ 'currency_switch' ] == WCML_CART_SYNC
+            )
+        ){
             $this->client_currency = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         }
 
@@ -443,6 +452,13 @@ class WCML_Multi_Currency{
         }
 
         $currency = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        $force_switch = filter_input( INPUT_POST, 'force_switch', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+        do_action( 'wcml_before_switch_currency', $currency, $force_switch );
+
+        if( !$force_switch && apply_filters( 'wcml_switch_currency_exception', false, $this->client_currency, $currency ) ){
+            die();
+        }
 
         $this->set_client_currency($currency);
 
@@ -454,7 +470,8 @@ class WCML_Multi_Currency{
 
         do_action('wcml_switch_currency', $currency );
 
-        exit;
+        echo json_encode( array() );
+        die();
 
     }
 

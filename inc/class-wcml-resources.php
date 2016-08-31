@@ -68,6 +68,11 @@ class WCML_Resources {
             'jquery-ui-resizable'
         ), WCML_VERSION );
 
+        wp_register_script( 'wcml-front-scripts', WCML_PLUGIN_URL . '/res/js/front-scripts' . WCML_JS_MIN . '.js', array(
+            'jquery'
+        ), WCML_VERSION );
+        wp_enqueue_script( 'wcml-front-scripts' );
+
         if ( self::$is_wpml_wcml_page ) {
 
             wp_register_script( 'jquery-cookie', WCML_PLUGIN_URL . '/res/js/jquery.cookie' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION );

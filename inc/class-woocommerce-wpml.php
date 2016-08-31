@@ -75,6 +75,8 @@ class woocommerce_wpml {
 
         $this->xdomain_data = new WCML_xDomain_Data;
 
+        new WCML_Widgets( $this );
+
         add_action('init', array($this, 'init'),2);
 
     }
@@ -199,7 +201,11 @@ class woocommerce_wpml {
             'trnsl_interface'              => 1,
             'currency_options'             => array(),
             'currency_switcher_product_visibility' => 1,
-            'dismiss_tm_warning'             => 0
+            'dismiss_tm_warning'           => 0,
+            'cart_sync'                    => array(
+                'lang_switch' => WCML_CART_SYNC,
+                'currency_switch' => WCML_CART_SYNC
+            )
         );
 
         if(empty($this->settings)){
