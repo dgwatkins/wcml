@@ -62,7 +62,7 @@ UnitTestJob:
 
   # Install WooCommerce Bookings
   - rm -rf woocommerce-bookings
-  - git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-bookings-mirror.git woocommerce-bookings
+  - git clone -b 1.9.10 ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-bookings-mirror.git woocommerce-bookings
 
   # Install WooCommerce Table Rate Shipping
   #- rm -rf woocommerce-table-rate-shipping
