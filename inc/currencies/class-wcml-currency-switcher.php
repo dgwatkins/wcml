@@ -134,6 +134,10 @@ class WCML_Currency_Switcher {
 
                     $preview = '<i>' . __("You haven't added any secondary currencies.", 'woocommerce-multilingual') . '</i>';
 
+                }else{
+
+                    $preview = '';
+
                 }
 
             }
