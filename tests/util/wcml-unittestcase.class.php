@@ -23,8 +23,8 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 		$this->sitepress 		=& $sitepress;
 		$this->woocommerce_wpml	=& $woocommerce_wpml;
 		$this->wpdb				=& $wpdb;
-		$this->wcml_helper = new WCML_Helper();
-		$this->wcml_helper->init();
+		$this->wcml_helper = new WCML_Helper( );
+		$this->wcml_helper->init( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
 		require_once WC_PATH . '/woocommerce.php';
 
 		$wc_unit = new WC_Unit_Test_Case();

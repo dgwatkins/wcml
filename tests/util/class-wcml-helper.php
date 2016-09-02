@@ -2,7 +2,15 @@
 
 class WCML_Helper {
 
-    function init(){
+    private static $sitepress;
+    private static $woocommerce_wpml;
+    private static $wpdb;
+
+    static function init( &$woocommerce_wpml, &$sitepress, &$wpdb ){
+
+        self::$sitepress 		= $sitepress;
+        self::$woocommerce_wpml	= $woocommerce_wpml;
+        self::$wpdb				= $wpdb;
 
         wpml_test_reg_custom_post_type( 'product' );
         $settings_helper = wpml_load_settings_helper();
@@ -110,14 +118,14 @@ class WCML_Helper {
     }
 
     public static function add_variable_product( $variation_data = array(), $trid= false, $language = false ) {
-        global $wpdb, $sitepress, $wpml_post_translations;;
+        global $wpml_post_translations;;
 
         $ret = new stdClass();
 
         if( empty($variation_data) ) {
             self::register_attribute( 'color' );
-            $white = self::add_attribute_term( 'White', 'color', $sitepress->get_default_language() );
-            $black = self::add_attribute_term( 'Black', 'color', $sitepress->get_default_language() );
+            $white = self::add_attribute_term( 'White', 'color', self::$sitepress->get_default_language() );
+            $black = self::add_attribute_term( 'Black', 'color', self::$sitepress->get_default_language() );
             $variation_data = array(
                 'product_title' => 'Dummy Variable Product',
                 'attribute' => array(
@@ -137,7 +145,7 @@ class WCML_Helper {
         }
 
         if( !$language ){
-            $language =  $sitepress->get_default_language();
+            $language =  self::$sitepress->get_default_language();
         }
 
         foreach( $variation_data['variations'] as $vp ){
@@ -206,12 +214,12 @@ class WCML_Helper {
 
         // Set Product Type
         $variable_type = get_term_by('name', 'variable', 'product_type');
-        $wpdb->insert( $wpdb->prefix . 'term_relationships', array(
+        self::$wpdb->insert( self::$wpdb->prefix . 'term_relationships', array(
             'object_id'        => $product_id,
             'term_taxonomy_id' => $variable_type->term_taxonomy_id,
             'term_order'       => 0
         ) );
-        $return['term_taxonomy_id'] = $wpdb->insert_id;
+        $return['term_taxonomy_id'] = self::$wpdb->insert_id;
 
         $ret->variations = array();
         // VARIATIONS
@@ -267,7 +275,7 @@ class WCML_Helper {
 
             // Link the product to the attribute
             $attribute_data = get_term_by('name', $attribute_value, $variation_data['attribute']['name']);
-            $wpdb->insert( $wpdb->prefix . 'term_relationships', array(
+            self::$wpdb->insert( self::$wpdb->prefix . 'term_relationships', array(
                 'object_id'        => $product_id,
                 'term_taxonomy_id' => $attribute_data->term_taxonomy_id,
                 'term_order'       => 0
@@ -326,6 +334,17 @@ class WCML_Helper {
 
         $taxonomy   = 'pa_'.$name;
         wpml_test_reg_custom_taxonomy( $taxonomy );
+
+        // Create attribute
+        $attribute = array(
+            'attribute_label'   => $name,
+            'attribute_name'    => $name,
+            'attribute_type'    => 'select',
+            'attribute_orderby' => 'menu_order',
+            'attribute_public'  => 0,
+        );
+        self::$wpdb->insert( self::$wpdb->prefix . 'woocommerce_attribute_taxonomies', $attribute );
+
         $settings_helper = wpml_load_settings_helper();
         $settings_helper->set_taxonomy_translatable( $taxonomy );
     }
@@ -369,17 +388,15 @@ class WCML_Helper {
     }
 
     public static function set_custom_field_to_translate( $name ){
-        global $sitepress;
 
-        $sitepress->core_tm()->settings['custom_fields_translation'][ $name ] = WPML_TRANSLATE_CUSTOM_FIELD;
-        $sitepress->core_tm()->save_settings();
+        self::$sitepress->core_tm()->settings['custom_fields_translation'][ $name ] = WPML_TRANSLATE_CUSTOM_FIELD;
+        self::$sitepress->core_tm()->save_settings();
     }
 
     public static function set_custom_field_to_copy( $name ){
-        global $sitepress;
 
-        $sitepress->core_tm()->settings['custom_fields_translation'][ $name ] = WPML_COPY_CUSTOM_FIELD;
-        $sitepress->core_tm()->save_settings();
+        self::$sitepress->core_tm()->settings['custom_fields_translation'][ $name ] = WPML_COPY_CUSTOM_FIELD;
+        self::$sitepress->core_tm()->save_settings();
     }
 
 }

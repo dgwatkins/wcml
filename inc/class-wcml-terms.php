@@ -238,7 +238,8 @@ class WCML_Terms{
 
         $wcml_settings = $this->woocommerce_wpml->get_settings();
 
-        $attribute_taxonomies = wc_get_attribute_taxonomies();
+        $attribute_taxonomies = $this->woocommerce_wpml->attributes->get_translatable_attributes();
+
         $attribute_taxonomies_arr = array();
         foreach($attribute_taxonomies as $a){
             $attribute_taxonomies_arr[] = 'pa_' . $a->attribute_name;
@@ -254,18 +255,19 @@ class WCML_Terms{
         ){
 
             $ret['hide'] = 1;
-
         }else{
+
             $ret['hide'] = 0;
 
-            if( isset( $wcml_settings['sync_'.$taxonomy ]) ){
-                $ret['show_button'] = $wcml_settings['sync_'.$taxonomy ];
-            }else{
-
-                if( in_array( $taxonomy, $attribute_taxonomies_arr ) ) {
-                    $ret['show_button'] = $wcml_settings['sync_variations'];
-                }
+            if( isset( $wcml_settings[ 'sync_'.$taxonomy ]) ){
+                $ret[ 'show_button' ] = $wcml_settings[ 'sync_'.$taxonomy ];
+            }elseif( in_array( $taxonomy, $attribute_taxonomies_arr ) ) {
+                $ret[ 'show_button' ] = $wcml_settings[ 'sync_variations' ];
             }
+        }
+
+        if( $ret[ 'is_attribute' ] ){
+            $ret['hide'] = $this->woocommerce_wpml->attributes->is_attributes_fully_translated();
         }
 
         echo json_encode($ret);

@@ -13,23 +13,6 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
     public function get_model(){
 
         $current_tab = $this->get_current_tab();
-        $product_attributes = $this->woocommerce_wpml->attributes->get_translatable_attributes();
-
-        $taxonomy = isset( $_GET['taxonomy'] ) ? $_GET['taxonomy'] : false;
-        if( $product_attributes ){
-            if( !empty($taxonomy) ){
-                foreach( $product_attributes as $attribute ){
-                    if( $attribute->attribute_name == $taxonomy ){
-                        $selected_attribute = $attribute;
-                        break;
-                    }
-                }
-            }
-            if( empty( $selected_attribute ) ){
-                $selected_attribute = current( $product_attributes );
-            }
-        }
-
 
         $model = array(
 
@@ -63,7 +46,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
                     'name'      => __('Attributes', 'woocommerce-multilingual'),
                     'active'    => $current_tab == 'product-attributes' ? 'nav-tab-active':'',
                     'url'       => admin_url('admin.php?page=wpml-wcml&tab=product-attributes'),
-                    'translated'=> !$product_attributes || ( isset( $selected_attribute ) && $this->woocommerce_wpml->terms->is_fully_translated( 'pa_' . $selected_attribute->attribute_name) )
+                    'translated'=> $this->woocommerce_wpml->attributes->is_attributes_fully_translated()
                 ),
                 'shipping_classes' => array(
                     'name'      => __('Shipping Classes', 'woocommerce-multilingual'),
