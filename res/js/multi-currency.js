@@ -202,6 +202,9 @@ jQuery( function($){
                             $(this).append('<option value="'+currency+'">'+currency+'</option>');
                         });
 
+                        //add to orders list
+                        $('#wcml_currencies_order').append('<li class="wcml_currencies_order_'+currency+' ui-sortable-handle" cur="'+currency+'">'+response.currency_name_formatted+'</li>');
+
                         var tr = $('#currency-delete-table tr.wcml-row-currency-del:last').clone();
                         tr.attr('id', 'currency_row_del_' + currency);
 
