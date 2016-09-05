@@ -42,11 +42,15 @@ class WCML_WC_Strings{
     }
 
     function translated_attribute_label($label, $name, $product_obj = false){
-        global $sitepress,$product;
+        global $sitepress, $product, $sitepress_settings;
 
         $product_id = false;
         $lang = $sitepress->get_current_language();
         $name = sanitize_title($name);
+
+        if( $sitepress_settings[ 'admin_default_language' ] != '_default_' && isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) == 'shop_order' ){
+            $lang = $sitepress_settings[ 'admin_default_language' ];
+        }
 
         if( isset($product->id) ){
             $product_id = $product->id;
@@ -69,7 +73,6 @@ class WCML_WC_Strings{
         }
 
         if(is_admin() && !wpml_is_ajax()){
-            global $sitepress_settings;
 
             $string_language = $this->get_string_language( 'taxonomy singular name: '.$label, 'WordPress' );
 

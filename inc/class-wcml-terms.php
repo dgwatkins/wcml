@@ -1018,4 +1018,15 @@ class WCML_Terms{
         );
     }
 
+    public function wcml_get_translated_term( $term_id, $taxonomy, $language ){
+
+        $tr_id = apply_filters( 'translate_object_id', $term_id, $taxonomy, false, $language );
+
+        if( !is_null( $tr_id ) ) {
+            $term_id = $tr_id;
+        }
+
+        return $this->wcml_get_term_by_id( $term_id, $taxonomy );
+    }
+
 }

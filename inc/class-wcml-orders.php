@@ -36,6 +36,9 @@ class WCML_Orders{
         //special case for wcml-741
         add_action('updated_post_meta', array($this,'update_order_currency'), 100,4);
 
+        add_action( 'woocommerce_before_order_itemmeta', array( $this, 'backend_before_order_itemmeta' ), 100, 3 );
+        add_action( 'woocommerce_after_order_itemmeta', array( $this, 'backend_after_order_itemmeta' ), 100, 3 );
+
     }
 
     function filtered_woocommerce_new_order_note_data($translations, $text, $domain ){
@@ -89,8 +92,10 @@ class WCML_Orders{
     }
     
     function woocommerce_order_get_items($items){
-        if(isset($_GET['post']) && get_post_type($_GET['post']) == 'shop_order'){
-            global $sitepress_settings;
+        global $sitepress_settings;
+
+        if( $sitepress_settings[ 'admin_default_language' ] != '_default_' && isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) == 'shop_order' ){
+
             foreach($items as $index=>$item){
                 foreach($item as $key=>$item_data){
                     if($key == 'product_id'){
@@ -110,20 +115,65 @@ class WCML_Orders{
                     if (substr($key, 0, 3) == 'pa_') {
                         global $wpdb, $woocommerce_wpml;
                         //attr is taxonomy
-
                         $term_id = $woocommerce_wpml->terms->wcml_get_term_id_by_slug( $key, $item_data );
-                        $tr_id = apply_filters( 'translate_object_id', $term_id, $key, false, $sitepress_settings['admin_default_language']);
+                        $translated_term = $woocommerce_wpml->terms->wcml_get_translated_term( $term_id, $item_data, $sitepress_settings[ 'admin_default_language' ] );
 
-                        if(!is_null($tr_id)){
-                            $translated_slug = $wpdb->get_var($wpdb->prepare("
-                                    SELECT t.slug FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} x ON x.term_id = t.term_id WHERE t.term_id = %d AND x.taxonomy = %s", $tr_id, $key));
-                            $items[$index][$key] = $translated_slug;
-                        }
+                        $items[$index][$key] = $translated_term->slug;
                     }
                 }
             }
         }
         return $items;
+    }
+
+    public function backend_before_order_itemmeta( $item_id, $item, $product ){
+        global $sitepress_settings;
+
+        if( $sitepress_settings[ 'admin_default_language' ] != '_default_' &&  $this->get_order_language_by_item_id( $item_id ) != $sitepress_settings[ 'admin_default_language' ] ){
+            foreach( $item[ 'item_meta' ] as $key => $item_meta ){
+                if ( substr( $key, 0, 3 ) == 'pa_' ) {
+                    foreach( $item_meta as $value ){
+                        $this->force_update_itemmeta( $item_id, $key, $value, $sitepress_settings[ 'admin_default_language' ] );
+                    }
+                }
+            }
+        }
+    }
+
+    public function backend_after_order_itemmeta( $item_id, $item, $product ){
+        global $sitepress_settings;
+
+        $order_languge = $this->get_order_language_by_item_id( $item_id );
+        if( $sitepress_settings[ 'admin_default_language' ] != '_default_' &&  $order_languge != $sitepress_settings[ 'admin_default_language' ] ){
+            foreach( $item[ 'item_meta' ] as $key => $item_meta ){
+                if ( substr( $key, 0, 3 ) == 'pa_' ) {
+                    foreach( $item_meta as $value ){
+                        $this->force_update_itemmeta( $item_id, $key, $value, $order_languge );
+                    }
+                }
+            }
+        }
+    }
+
+    public function get_order_language_by_item_id( $item_id ){
+        global $wpdb;
+
+        $order_id = $wpdb->get_var( $wpdb->prepare( "SELECT order_id FROM {$wpdb->prefix}woocommerce_order_items WHERE order_item_id = %d", $item_id ) );
+
+        return get_post_meta( $order_id, 'wpml_language', true );
+    }
+
+    //force update to display attribute in correct language on edit order page
+    public function force_update_itemmeta( $item_id, $key, $value, $languge ){
+        global $wpdb, $woocommerce_wpml;
+
+        $term_id = $woocommerce_wpml->terms->wcml_get_term_id_by_slug( $key, $value );
+        $translated_term = $woocommerce_wpml->terms->wcml_get_translated_term( $term_id, $key, $languge );
+
+        if( $translated_term ){
+            $value = $translated_term->slug;
+            $wpdb->update( $wpdb->prefix.'woocommerce_order_itemmeta', array( 'meta_value' => $value ), array( 'order_item_id' => $item_id, 'meta_key' => $key ) );
+        }
     }
     
     // Fix for shipping update on the checkout page.
