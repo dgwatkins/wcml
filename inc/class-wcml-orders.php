@@ -43,16 +43,16 @@ class WCML_Orders{
 
     function filtered_woocommerce_new_order_note_data($translations, $text, $domain ){
         if(in_array($text,$this->standart_order_notes)){
-            global $sitepress_settings, $wpdb, $woocommerce_wpml;
+            global $sitepress, $wpdb, $woocommerce_wpml;
 
             $language = $woocommerce_wpml->strings->get_string_language( $text, 'woocommerce' );
 
-            if( $sitepress_settings['admin_default_language'] != $language ){
+            if( $sitepress->get_user_admin_language( get_current_user_id(), true ) != $language ){
 
                 $string_id = icl_get_string_id( $text, 'woocommerce');
                 $strings = icl_get_string_translations_by_id( $string_id );
                 if($strings){
-                    $translations = $strings[ $sitepress_settings['admin_default_language'] ]['value'];
+                    $translations = $strings[ $sitepress->get_user_admin_language( get_current_user_id(), true ) ]['value'];
                 }
 
             }else{
@@ -92,21 +92,21 @@ class WCML_Orders{
     }
     
     function woocommerce_order_get_items($items){
-        global $sitepress_settings;
+        global $sitepress;
 
-        if( $sitepress_settings[ 'admin_default_language' ] != '_default_' && isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) == 'shop_order' ){
+        if( isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) == 'shop_order' ){
 
             foreach($items as $index=>$item){
                 foreach($item as $key=>$item_data){
                     if($key == 'product_id'){
-                        $tr_product_id = apply_filters( 'translate_object_id',$item_data,'product',false,$sitepress_settings['admin_default_language']);
+                        $tr_product_id = apply_filters( 'translate_object_id',$item_data,'product',false,$sitepress->get_user_admin_language( get_current_user_id(), true ) );
                         if(!is_null($tr_product_id)){
                             $items[$index][$key] = $tr_product_id;
                             $items[$index]['name'] = get_the_title($tr_product_id);
                         }
                     }
                     if($key == 'variation_id'){
-                        $tr_variation_id = apply_filters( 'translate_object_id',$item_data,'product_variation',false,$sitepress_settings['admin_default_language']);
+                        $tr_variation_id = apply_filters( 'translate_object_id',$item_data,'product_variation',false,$sitepress->get_user_admin_language( get_current_user_id(), true ) );
                         if(!is_null($tr_variation_id)){
                             $items[$index][$key] = $tr_variation_id;
                         }
@@ -116,7 +116,7 @@ class WCML_Orders{
                         global $wpdb, $woocommerce_wpml;
                         //attr is taxonomy
                         $term_id = $woocommerce_wpml->terms->wcml_get_term_id_by_slug( $key, $item_data );
-                        $translated_term = $woocommerce_wpml->terms->wcml_get_translated_term( $term_id, $item_data, $sitepress_settings[ 'admin_default_language' ] );
+                        $translated_term = $woocommerce_wpml->terms->wcml_get_translated_term( $term_id, $item_data, $sitepress->get_user_admin_language( get_current_user_id(), true ) );
 
                         $items[$index][$key] = $translated_term->slug;
                     }
@@ -127,13 +127,13 @@ class WCML_Orders{
     }
 
     public function backend_before_order_itemmeta( $item_id, $item, $product ){
-        global $sitepress_settings;
+        global $sitepress;
 
-        if( $sitepress_settings[ 'admin_default_language' ] != '_default_' &&  $this->get_order_language_by_item_id( $item_id ) != $sitepress_settings[ 'admin_default_language' ] ){
+        if( $this->get_order_language_by_item_id( $item_id ) != $sitepress->get_user_admin_language( get_current_user_id(), true ) ){
             foreach( $item[ 'item_meta' ] as $key => $item_meta ){
-                if ( substr( $key, 0, 3 ) == 'pa_' ) {
+                if ( taxonomy_exists( wc_attribute_taxonomy_name( $key ) ) || substr( $key, 0, 3 ) == 'pa_' ) {
                     foreach( $item_meta as $value ){
-                        $this->force_update_itemmeta( $item_id, $key, $value, $sitepress_settings[ 'admin_default_language' ] );
+                        $this->force_update_itemmeta( $item_id, $key, $value, $sitepress->get_user_admin_language( get_current_user_id(), true ) );
                     }
                 }
             }
@@ -141,12 +141,12 @@ class WCML_Orders{
     }
 
     public function backend_after_order_itemmeta( $item_id, $item, $product ){
-        global $sitepress_settings;
+        global $sitepress;
 
         $order_languge = $this->get_order_language_by_item_id( $item_id );
-        if( $sitepress_settings[ 'admin_default_language' ] != '_default_' &&  $order_languge != $sitepress_settings[ 'admin_default_language' ] ){
+        if( $order_languge != $sitepress->get_user_admin_language( get_current_user_id(), true ) ){
             foreach( $item[ 'item_meta' ] as $key => $item_meta ){
-                if ( substr( $key, 0, 3 ) == 'pa_' ) {
+                if ( taxonomy_exists( wc_attribute_taxonomy_name( $key ) ) || substr( $key, 0, 3 ) == 'pa_' ) {
                     foreach( $item_meta as $value ){
                         $this->force_update_itemmeta( $item_id, $key, $value, $order_languge );
                     }
@@ -167,8 +167,10 @@ class WCML_Orders{
     public function force_update_itemmeta( $item_id, $key, $value, $languge ){
         global $wpdb, $woocommerce_wpml;
 
-        $term_id = $woocommerce_wpml->terms->wcml_get_term_id_by_slug( $key, $value );
-        $translated_term = $woocommerce_wpml->terms->wcml_get_translated_term( $term_id, $key, $languge );
+        $taxonomy = substr( $key, 0, 3 ) != 'pa_' ? wc_attribute_taxonomy_name( $key ) : $key;
+        $term_id = $woocommerce_wpml->terms->wcml_get_term_id_by_slug( $taxonomy, $value );
+        $translated_term = $woocommerce_wpml->terms->wcml_get_translated_term( $term_id, $taxonomy, $languge );
+        $translated_term = $woocommerce_wpml->terms->wcml_get_translated_term( $term_id, $taxonomy, $languge );
 
         if( $translated_term ){
             $value = $translated_term->slug;

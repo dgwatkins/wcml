@@ -1002,7 +1002,7 @@ class WCML_Terms{
                         INNER JOIN {$this->wpdb->term_taxonomy} AS tt
                         ON t.term_id = tt.term_id
                         WHERE tt.taxonomy = %s AND t.slug = %s LIMIT 1",
-                $taxonomy, $slug )
+                $taxonomy, sanitize_title( $slug ) )
         );
     }
 
