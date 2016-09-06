@@ -27,6 +27,10 @@ class WCML_Table_Rate_Shipping {
 		add_action( 'init', array( $this, 'init' ), 9 );
 		add_filter( 'get_the_terms',array( $this, 'shipping_class_id_in_default_language' ), 10, 3 );
 
+		if( wcml_is_multi_currency_on() ){
+			add_filter( 'woocommerce_table_rate_query_rates_args', array( $this, 'filter_query_rates_args' ) );
+		}
+
 	}
 
 	/**
@@ -68,5 +72,18 @@ class WCML_Table_Rate_Shipping {
 
 		return $terms;
 	}
+
+	/**
+	 * It's not possible to filter rate_min and rate_max so we use the original price to compare against these values
+	 */
+	public function filter_query_rates_args( $args ){
+
+		if( isset( $args['price'] ) && get_option( 'woocommerce_currency') != $this->woocommerce_wpml->multi_currency->get_client_currency() ){
+			$args['price'] = $this->woocommerce_wpml->multi_currency->prices->unconvert_price_amount( $args['price'] );
+		}
+
+		return $args;
+	}
+
 
 }

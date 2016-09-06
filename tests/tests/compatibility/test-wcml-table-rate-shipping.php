@@ -75,4 +75,24 @@ class Test_WCML_Table_Rate_Shipping extends WCML_UnitTestCase {
 		);
 		$this->assertEquals( $expected, $table_rate->shipping_class_id_in_default_language( $terms, null, 'product_shipping_class' ) );
 	}
+
+	/**
+	 * @test
+	 */
+	public function filter_query_rates_args(){
+
+		$this->multi_currency_helper = new WCML_Helper_Multi_Currency( $this->woocommerce_wpml );
+		$this->multi_currency_helper->enable_multi_currency();
+		$this->multi_currency_helper->setup_3_currencies();
+
+		$this->woocommerce_wpml->multi_currency->set_client_currency('USD');
+
+		$args['price'] = 134;
+		$table_rate = new WCML_Table_Rate_Shipping( $this->sitepress, $this->woocommerce_wpml );
+		// will unconvert the price (exchange rate of 1.34)
+		$args = $table_rate->filter_query_rates_args( $args );
+
+		$this->assertEquals( 100, $args['price'] );
+
+	}
 }

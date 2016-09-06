@@ -66,4 +66,59 @@ class WCML_Helper_Multi_Currency {
         $this->woocommerce_wpml->update_settings();
     }
 
+    public function setup_3_currencies(){
+
+	    $this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
+	    $this->woocommerce_wpml->multi_currency->prices = new WCML_Multi_Currency_Prices( $this->woocommerce_wpml->multi_currency );
+
+	    $this->woocommerce_wpml->multi_currency->prices->prices_init();
+
+	    $currencies = array(
+		    'USD' => array(
+			    'rate'      => 1.34,
+			    'options'   => array(
+				    'position' => 'left',
+				    'thousand_sep' => ',',
+				    'decimal_sep' => '.',
+				    'num_decimals' => 2,
+				    'rounding' => 'disabled',
+				    'rounding_increment' => 0,
+				    'auto_subtract' => 0
+			    ),
+		    ),
+		    'JPY' => array(
+			    'rate'      => 137,
+			    'options'   => array(
+				    'position' => 'left',
+				    'thousand_sep' => ',',
+				    'decimal_sep' => '.',
+				    'num_decimals' => 0,
+				    'rounding' => 'disabled',
+				    'rounding_increment' => 0,
+				    'auto_subtract' => 0
+			    )
+		    ),
+		    'BTC' => array(
+			    'rate'      => 0.0020,
+			    'options'   => array(
+				    'position' => 'left',
+				    'thousand_sep' => ',',
+				    'decimal_sep' => '.',
+				    'num_decimals' => 4,
+				    'rounding' => 'disabled',
+				    'rounding_increment' => 0,
+				    'auto_subtract' => 0
+			    )
+		    )
+
+	    );
+
+	    foreach( $currencies as $code => $currency ){
+		    $this->add_currency( $code, $currency['rate'], $currency['options'] );
+	    }
+
+
+
+    }
+
 }
