@@ -25,6 +25,7 @@ class WCML_Admin_Menus{
 
         add_filter( 'woocommerce_prevent_admin_access', array( __CLASS__, 'check_user_admin_access' ) );
 
+        add_action( 'admin_head', array( __CLASS__, 'add_menu_warning' ) );
     }
 
     public static function register_menus(){
@@ -255,6 +256,29 @@ class WCML_Admin_Menus{
         }
 
         return $prevent_access;
+    }
+
+    public static function add_menu_warning(){
+        global $submenu, $menu;
+
+        if ( empty( self::$woocommerce_wpml->settings['set_up_wizard_run'] ) ||
+            (
+                empty( self::$woocommerce_wpml->settings['set_up_wizard_run'] ) &&
+                self::$woocommerce_wpml->settings['set_up_wizard_splash']
+            )
+        ) {
+            foreach ($submenu['woocommerce'] as $key => $menu_item) {
+                if ($menu_item[0] == 'WooCommerce Multilingual') {
+                    $submenu['woocommerce'][$key][0] .= '<span class="wcml-menu-warn"><i class="otgs-ico-warning"></i></span>';
+                }
+            }
+
+            foreach ($menu as $key => $menu_item) {
+                if ($menu_item[0] == 'WooCommerce') {
+                    $menu[$key][0] .= '<span class="wcml-menu-warn"><i class="otgs-ico-warning"></i></span>';
+                }
+            }
+        }
     }
 
 }

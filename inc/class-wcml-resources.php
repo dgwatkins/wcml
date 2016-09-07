@@ -51,6 +51,8 @@ class WCML_Resources {
             wp_enqueue_style( 'wcml_op' );
         }
 
+        wp_register_style( 'wcml_admin', WCML_PLUGIN_URL . '/res/css/admin.css', null, WCML_VERSION );
+        wp_enqueue_style( 'wcml_admin' );
     }
 
     public static function load_management_css() {
