@@ -45,6 +45,8 @@ class WCML_Install{
                 self:: set_language_information( $sitepress );
                 self:: check_product_type_terms();
 
+                set_transient( '_wcml_activation_redirect', 1, 30 );
+
                 $woocommerce_wpml->settings['set_up'] = 1;
                 $woocommerce_wpml->update_settings();
 

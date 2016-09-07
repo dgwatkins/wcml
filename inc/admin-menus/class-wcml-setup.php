@@ -13,6 +13,8 @@ class WCML_Setup {
         $this->woocommerce_wpml =& $woocommerce_wpml;
         $this->sitepress        =& $sitepress;
 
+        $this->setup_redirect();
+
         $this->steps = array(
             'introduction' => array(
                 'name'    =>  __( 'Introduction', 'woocommerce-multilingual' ),
@@ -58,6 +60,21 @@ class WCML_Setup {
 
     }
 
+    private function setup_redirect(){
+        if ( get_transient( '_wcml_activation_redirect' ) ) {
+            delete_transient( '_wcml_activation_redirect' );
+
+            if ( ( ! empty( $_GET['page'] ) && in_array( $_GET['page'], array( 'wcml-setup' ) ) ) || is_network_admin() || isset( $_GET['activate-multi'] ) || ! current_user_can( 'manage_options' )  ) {
+                return;
+            }
+
+            if( !$this->has_completed()){
+                wp_safe_redirect( admin_url( 'index.php?page=wcml-setup' ) );
+                exit;
+            }
+        }
+    }
+
     public function admin_menus() {
         add_dashboard_page( '', '', 'manage_options', 'wcml-setup', '' );
     }
@@ -88,6 +105,8 @@ class WCML_Setup {
 
             $this->complete_setup();
             remove_filter( 'admin_notices', array( $this, 'setup_wizard_notice') );
+
+	        delete_transient( '_wcml_activation_redirect' );
         }
 
     }
