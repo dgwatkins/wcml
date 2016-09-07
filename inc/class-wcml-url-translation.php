@@ -305,10 +305,6 @@ class WCML_Url_Translation {
     function force_bases_in_strings_languages( $value ) {
         global $sitepress, $woocommerce_wpml;
 
-	    if( defined('MI_TEST') ) {
-		    echo $sitepress->get_current_language() . "\n";
-	    }
-
         if( $value && $sitepress->get_current_language() != 'en' ) {
 
             remove_filter( 'gettext_with_context', array( $woocommerce_wpml->strings, 'category_base_in_strings_language' ), 99, 3 );
@@ -324,8 +320,8 @@ class WCML_Url_Translation {
                     'default'           => $this->default_product_tag_base
                 ),
             );
-            add_filter( 'gettext_with_context', array( $woocommerce_wpml->strings, 'category_base_in_strings_language' ), 99, 3 );
 
+            add_filter( 'gettext_with_context', array( $woocommerce_wpml->strings, 'category_base_in_strings_language' ), 99, 3 );
             foreach ( $taxonomies as $taxonomy => $taxonomy_details ) {
 
                 if ( empty( $this->wc_permalinks[$taxonomy_details['base']] ) && $value ) {
@@ -507,7 +503,7 @@ class WCML_Url_Translation {
                         $wp_rewrite->extra_permastructs[$taxonomy]['struct'] = preg_replace( '#^' . $base . '/(.*)#', $base_translated . '/$1', $wp_rewrite->extra_permastructs[$taxonomy]['struct'] );
 
 	                    // translate the attribute slug
-	                    if( $this->wc_permalinks['attribute_base'] === $base ){
+	                    if( isset($this->wc_permalinks['attribute_base']) && $this->wc_permalinks['attribute_base'] === $base ){
 
 		                    $attribute_slug = preg_replace('#^' . $base . '/([^/]+)/.+$#', '$1', $wp_rewrite->extra_permastructs[$taxonomy]['struct']);
 		                    $attribute_slug_default = preg_replace('#^pa_#', '', $taxonomy );

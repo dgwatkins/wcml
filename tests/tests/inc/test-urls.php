@@ -161,6 +161,10 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 	function test_force_bases_in_strings_languages(){
 
 		$this->sitepress->switch_lang( 'fr' );
+
+		global $l10n;
+		unset($l10n['woocommerce']);
+
 		$rewrite['categorie-produit/(.+?)/?$'] = 'index.php?product_cat=$matches[1]';
 		$rewrite['etiquette-produit/(.+?)/?$'] = 'index.php?product_tag=$matches[1]';
 
@@ -178,8 +182,7 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 	function test_translate_bases_in_rewrite_rules(){
 
 		$rewrite['product-category/(.+?)/?$'] = 'index.php?product_cat=$matches[1]';
-		$rewrite['etiquette-produit/(.+?)/?$'] = 'index.php?product_tag=$matches[1]';
-
+		$rewrite['product-tag/(.+?)/?$'] = 'index.php?product_tag=$matches[1]';
 
 		$this->sitepress->switch_lang( 'fr' );
 		$rewrite = $this->url_translation->translate_bases_in_rewrite_rules( $rewrite );
