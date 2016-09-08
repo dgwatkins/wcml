@@ -63,7 +63,15 @@ class WCML_Custom_Currency_Options extends WPML_Templates_Factory {
                     'up'        => __( 'Up', 'woocommerce-multilingual' ),
                     'down'      => __( 'Down', 'woocommerce-multilingual' ),
                     'nearest'   => __( 'Nearest', 'woocommerce-multilingual' ),
-                    'increment' => __( 'Increment for nearest integer', 'woocommerce-multilingual' )
+                    'increment' => __( 'Increment for nearest integer', 'woocommerce-multilingual' ),
+
+	                'rounding_tooltip'    => sprintf( __("Round the converted price to the closest integer. %se.g. 15.78 becomes 16.00", 'woocommerce-multilingual'), '<br />' ),
+                    'increment_tooltip'   => sprintf( __('The resulting price will be an increment of this value after initial rounding.%se.g.:', 'woocommerce-multilingual'), '<br>' ) .  '<br />' .
+                                             __('1454.07 &raquo; 1454 when set to 1', 'woocommerce-multilingual') . '<br />' .
+	                                         __('1454.07 &raquo; 1450 when set to 10', 'woocommerce-multilingual') . '<br />'.
+                                             __('1454.07 &raquo; 1500 when set to 100', 'woocommerce-multilingual') . '<br />',
+                    'autosubtract_tooltip'=> __('The value to be subtracted from the amount obtained previously.', 'woocommerce-multilingual') . '<br /><br />' .
+                                             __('For 1454.07, when the increment for the nearest integer is 100 and the auto-subtract amount is 1, the resulting amount is 1499.', 'woocommerce-multilingual')
                 ),
                 'autosubtract'      => array(
                     'label' => __( 'Autosubtract amount', 'woocommerce-multilingual' ),
