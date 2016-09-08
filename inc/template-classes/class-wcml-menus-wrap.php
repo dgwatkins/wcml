@@ -224,7 +224,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
 
             case 'product-attributes':
                 if( current_user_can('wpml_operate_woocommerce_multilingual') ) {
-                    $attribute_translation_ui = new WCML_Attribute_Translation_UI( $woocommerce_wpml );
+                    $attribute_translation_ui = new WCML_Attribute_Translation_UI( $woocommerce_wpml, $sitepress );
                     $content = $attribute_translation_ui->get_view();
                 }
                 break;
