@@ -432,4 +432,36 @@ class WCML_Products{
         return false;
     }
 
+    public function is_hide_resign_button(){
+        global $iclTranslationManagement;
+
+        $hide_resign = false;
+
+        if( isset( $_GET[ 'source_language_code' ] ) && isset( $_GET[ 'language_code' ] ) ){
+
+            $from_lang = $_GET[ 'source_language_code' ];
+            $to_lang = $_GET[ 'language_code' ];
+
+        }elseif( isset( $_GET[ 'job_id' ] ) ){
+
+            $job = $iclTranslationManagement->get_translation_job( $_GET[ 'job_id' ] );
+            $from_lang = $job->source_language_code;
+            $to_lang = $job->language_code;
+
+        }
+
+        $translators = $iclTranslationManagement->get_blog_translators(
+            array(
+                'from' => $from_lang,
+                'to'   => $to_lang
+            )
+        );
+
+        if( empty( $translators ) || ( sizeof( $translators ) == 1 && $translators[0]->ID == get_current_user_id() ) ){
+            $hide_resign = true;
+        }
+
+        return $hide_resign;
+    }
+
 }
