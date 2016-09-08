@@ -110,7 +110,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
                     'active'    => $current_tab == 'custom-taxonomies' ? 'nav-tab-active':'',
                     'url'       => admin_url('admin.php?page=wpml-wcml&tab=custom-taxonomies'),
                     'translated'=> !$this->product_extra_taxonomies || ( isset( $this->selected_taxonomy ) && $this->woocommerce_wpml->terms->is_fully_translated( $this->selected_taxonomy->name) ),
-                    'show'      => !empty( $this->product_attributes )
+                    'show'      => !empty( $this->product_extra_taxonomies )
                 ),
                 'attributes' => array(
                     'name'      => __('Attributes', 'woocommerce-multilingual'),
