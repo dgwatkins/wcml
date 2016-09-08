@@ -4,15 +4,17 @@
 class WCML_Custom_Taxonomy_Translation_UI extends WPML_Templates_Factory {
 
 	private $woocommerce_wpml;
+	private $sitepress;
 
 	private $custom_taxonomies = array();
 	private $product_builtin_taxonomy_names = array( 'product_cat', 'product_tag', 'product_shipping_class', 'product_type' ); //'product_type' is used for tags (?)
 
 
-	public function __construct( &$woocommerce_wpml ){
+	public function __construct( &$woocommerce_wpml, &$sitepress ){
 		parent::__construct();
 
 		$this->woocommerce_wpml = $woocommerce_wpml;
+		$this->sitepress = $sitepress;
 
 		$product_attributes = array();
 		$attributes = wc_get_attribute_taxonomies();
@@ -36,34 +38,48 @@ class WCML_Custom_Taxonomy_Translation_UI extends WPML_Templates_Factory {
 	public function get_model() {
 
 		$taxonomy = isset( $_GET['taxonomy'] ) ? $_GET['taxonomy'] : false;
+		$selected_taxonomy = false;
+		$translation_ui = '';
 
-		if( $this->custom_taxonomies ){
-			if( !empty($taxonomy) ){
-				foreach( $this->custom_taxonomies as $taxonomy_name => $taxonomy_object ){
-					if( $taxonomy_name == $taxonomy ){
-						$selected_taxonomy = $taxonomy_object;
-						break;
-					}
+		if( $this->custom_taxonomies && !empty( $taxonomy ) ){
+			foreach( $this->custom_taxonomies as $taxonomy_name => $taxonomy_object ){
+				if( $taxonomy_name == $taxonomy ){
+					$selected_taxonomy = $taxonomy_object;
+					break;
 				}
 			}
-			if( empty( $selected_taxonomy ) ){
-				$selected_taxonomy = current( $this->custom_taxonomies );
-			}
-		}else{
-			$selected_taxonomy = false;
 		}
 
-		$WPML_Translate_Taxonomy =
-			new WPML_Taxonomy_Translation(
-				isset( $selected_taxonomy->name ) ? $selected_taxonomy->name: '',
-				array(
-					'taxonomy_selector'=> false
-				)
-			);
-		ob_start();
-		$WPML_Translate_Taxonomy->render();
-		$translation_ui = ob_get_contents();
-		ob_end_clean();
+		if( $selected_taxonomy ){
+			$WPML_Translate_Taxonomy =
+				new WPML_Taxonomy_Translation(
+					isset( $selected_taxonomy->name ) ? $selected_taxonomy->name: '',
+					array(
+						'taxonomy_selector'=> false
+					)
+				);
+		}elseif( $this->custom_taxonomies ){
+			$empty_value = new stdClass();
+			$empty_value->name = '';
+			$empty_value->label = __( '--Taxonomy--', 'woocommerce-multilingual' );
+			array_unshift( $this->custom_taxonomies, $empty_value );
+
+			$WPML_Translate_Taxonomy =
+				new WPML_Taxonomy_Translation(
+					'',
+					array(
+						'taxonomy_selector' => false
+					),
+					new WPML_UI_Screen_Options_Factory( $this->sitepress )
+				);
+		}
+
+		if( isset( $WPML_Translate_Taxonomy ) ){
+			ob_start();
+			$WPML_Translate_Taxonomy->render();
+			$translation_ui = ob_get_contents();
+			ob_end_clean();
+		}
 
 		$model = array(
 
