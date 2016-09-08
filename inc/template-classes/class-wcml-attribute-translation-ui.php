@@ -18,6 +18,7 @@ class WCML_Attribute_Translation_UI extends WPML_Templates_Factory {
 		$product_attributes = $this->woocommerce_wpml->attributes->get_translatable_attributes();
 		$taxonomy = isset( $_GET['taxonomy'] ) ? $_GET['taxonomy'] : false;
 		$selected_attribute = false;
+		$translation_ui = '';
 
 		if( $product_attributes  && !empty( $taxonomy ) ) {
 			foreach ($product_attributes as $attribute) {
@@ -38,7 +39,7 @@ class WCML_Attribute_Translation_UI extends WPML_Templates_Factory {
 					)
 				);
 
-		}else{
+		}elseif( $product_attributes ){
 			$empty_value = new stdClass();
 			$empty_value->attribute_name = '';
 			$empty_value->attribute_label = __( '--Attribute--', 'woocommerce-multilingual' );
@@ -54,10 +55,12 @@ class WCML_Attribute_Translation_UI extends WPML_Templates_Factory {
 				);
 		}
 
-		ob_start();
-		$WPML_Translate_Taxonomy->render();
-		$translation_ui = ob_get_contents();
-		ob_end_clean();
+		if( isset( $WPML_Translate_Taxonomy ) ){
+			ob_start();
+			$WPML_Translate_Taxonomy->render();
+			$translation_ui = ob_get_contents();
+			ob_end_clean();
+		}
 
 		$model = array(
 			'attributes' => $product_attributes,

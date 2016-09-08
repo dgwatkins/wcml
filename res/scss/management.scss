@@ -540,3 +540,13 @@ input[name="wcml_curr_template"] {
 		min-width: 200px;
 	}
 }
+
+.wcml-product-custom-taxonomies-selector{
+  	text-align: center;
+  	margin-bottom: 25px;
+}
+
+.wcml_attributes_wrap #wpml_tt_taxonomy_translation_wrap>label,
+.wcml_custom_taxonomies_wrap #wpml_tt_taxonomy_translation_wrap>label{
+  	display: none;
+}

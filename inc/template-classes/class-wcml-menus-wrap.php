@@ -231,7 +231,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
 
             case 'custom-taxonomies':
                 if( current_user_can('wpml_operate_woocommerce_multilingual') ) {
-                    $custom_taxonomy_translation_ui = new WCML_Custom_Taxonomy_Translation_UI( $woocommerce_wpml );
+                    $custom_taxonomy_translation_ui = new WCML_Custom_Taxonomy_Translation_UI( $woocommerce_wpml, $sitepress );
                     $content = $custom_taxonomy_translation_ui->get_view();
                 }
                 break;
