@@ -144,6 +144,7 @@
 	.wcml-co-exchange-rate {
 		label {
 			width: 100px;
+			vertical-align: top;
 		}
 		input {
 			margin: 0 !important;
@@ -156,6 +157,9 @@
 		small {
 			display: block;
 		}
+	}
+	.wcml-co-help-link {
+		margin-top: 7px;
 	}
 
 	.wcml-co-preview {

@@ -83,6 +83,11 @@ class WCML_Custom_Currency_Options extends WPML_Templates_Factory {
 
 
             ),
+
+	        'currency_converter_url'    => 'https://www.google.com/finance/converter?a=1&from=%s&to=%s',
+            'currency_converter_label'  => __('Get exchange rates', 'woocommerce-multilingual'),
+            'currency_converter_title'  => __('Check real-time exchange rates, online, from Google Finance Currency Converter', 'woocommerce-multilingual'),
+
             'current_currency' => $current_currency
 
 
