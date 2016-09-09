@@ -9,30 +9,23 @@ class WCML_Pointers{
 	public function setup(){
 		$current_screen = get_current_screen();
 
+		if( empty($current_screen) ) {
+			return;
+		}
+
 		$tab     = isset( $_GET['tab'] ) ? $_GET['tab'] : '';
 		$section = isset( $_GET['section'] ) ? $_GET['section'] : '';
 		wp_register_style( 'wcml-pointers', WCML_PLUGIN_URL . '/res/css/wcml-pointers.css' );
 
-
-
 		if( $current_screen->id == 'edit-product' ){
-
 			add_action( 'admin_footer', array( $this, 'add_products_translation_link' ), 100 );
-
 		}elseif( $current_screen->id == 'woocommerce_page_wc-settings' && $tab == 'shipping' && $section == 'classes' ){
-
 			add_action( 'admin_footer', array( $this, 'add_shipping_classes_translation_link' ) );
-
 		}elseif( $current_screen->id == 'woocommerce_page_wc-settings' && ( $tab == 'general' || empty($tab) ) ){
-
 			add_filter( 'woocommerce_general_settings', array( $this, 'add_multi_currency_link' ) );
-
 		}elseif( $current_screen->id == 'woocommerce_page_wc-settings' && $tab == 'account'){
-
 			add_filter( 'woocommerce_account_settings', array( $this, 'add_endpoints_translation_link' ) );
-
 		}
-
 
 	}
 
