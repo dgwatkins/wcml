@@ -77,7 +77,7 @@
             <hr/>
 
             <div class="wpml-form-row">
-                <label for="wcml_currency_options_rounding_{{ args.currency_code }}">{{ form.rounding.label }}</label>
+                <label for="wcml_currency_options_rounding_{{ args.currency_code }}">{{ form.rounding.label }} <i class="wcml-tip otgs-ico-help" data-tip="{{ form.rounding.rounding_tooltip }}"></i></label>
                 <select name="currency_options[rounding]" id="wcml_currency_options_rounding_{{ args.currency_code }}">
                     <option value="disabled" {% if args.currency.rounding == 'disabled' %}selected="selected"{% endif %}>{{ form.rounding.disabled}}</option>
                     <option value="up" {% if args.currency.rounding == 'up' %}selected="selected"{% endif %}>{{ form.rounding.up}}</option>
@@ -87,7 +87,7 @@
             </div>
 
             <div class="wpml-form-row">
-                <label for="wcml_currency_options_increment_{{ args.currency_code }}">{{ form.rounding.increment}}</label>
+                <label for="wcml_currency_options_increment_{{ args.currency_code }}">{{ form.rounding.increment}} <i class="wcml-tip otgs-ico-help" data-tip="{{ form.rounding.increment_tooltip }}"></i></label>
                 <select name="currency_options[rounding_increment]" id="wcml_currency_options_increment_{{ args.currency_code }}">
                     <option value="1" {% if args.currency.rounding_increment == '1' %}selected="selected"{% endif %}>1</option>
                     <option value="10" {% if args.currency.rounding_increment == '10' %}selected="selected"{% endif %}>10</option>
@@ -97,7 +97,7 @@
             </div>
 
             <div class="wpml-form-row">
-                <label for="wcml_currency_options_subtract_{{ args.currency_code }}">{{ form.autosubtract.label }}</label>
+                <label for="wcml_currency_options_subtract_{{ args.currency_code }}">{{ form.autosubtract.label }} <i class="wcml-tip otgs-ico-help" data-tip="{{ form.rounding.autosubtract_tooltip }}"></i></label>
 
                 <input name="currency_options[auto_subtract]" class="abstract_amount"
                     value="{{ args.currency.auto_subtract }}" type="number" data-message="{{ form.autosbtract.only_numeric }}"
