@@ -15,7 +15,13 @@
  * @method \Codeception\Lib\Friend haveFriend($name, $actorClass = null)
  *
  * @SuppressWarnings(PHPMD)
+ *
+ * List of Commands in this file :
+ * exportDb, importDb, wp_login, activatePlugin, deactivatePlugin, seeActivatePlugin, seeDeactivatePlugin,
+ * addNameProducts, seePageHasElement, dontSeePageHasElement, savePermalinks, simpleProducts, createCategory,
+ * createAttribute, createVarProduct, createLocalVarProduct, enableMultiCurrency, disableMultiCurrency
 */
+
 class AcceptanceTester extends \Codeception\Actor
 {
     use _generated\AcceptanceTesterActions;
@@ -23,6 +29,29 @@ class AcceptanceTester extends \Codeception\Actor
     /**
      * Define custom actions here
      */
+
+    /** Export DB dump */
+    public function exportDb($filename) {
+
+        // Export DB Dump to _output folder
+        $this->runShellCommand('wp db export '.$filename.'.sql; cp '.$filename.'.sql ../tests/_output/');
+
+        echo "Success: Exported to $filename.sql\n";
+    }
+
+    /** Import DB dump with Reset of DB */
+    public function importDb($filename) {
+
+        // Reset DB
+        $this->runShellCommand('wp db reset --yes');
+
+        echo "Success: Database Reset!\n";
+
+        // Import DB Dump from _output folder
+        $this->runShellCommand('wp db import ../tests/_output/'.$filename.'.sql');
+
+        echo "Success: DB imported from $filename.sql\n";
+    }
 
     /** WP Login Function */
     public function wp_login($name, $password)
@@ -82,6 +111,36 @@ class AcceptanceTester extends \Codeception\Actor
     }
 
     /**
+     * @param $element
+     * @return bool
+     * Check if Element is in Page and run additional tests
+     */
+    function seePageHasElement($element)
+    {
+        try {
+            $this->seeElement($element);
+        } catch (\PHPUnit_Framework_AssertionFailedError $f) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param $element
+     * @return bool
+     * Check if Element is in Page and run additional tests
+     */
+    function dontSeePageHasElement($element)
+    {
+        try {
+            $this->dontSeeElement($element);
+        } catch (\PHPUnit_Framework_AssertionFailedError $f) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
 	 * Saves permalinks
 	 */
     public function savePermalinks() {
@@ -89,7 +148,7 @@ class AcceptanceTester extends \Codeception\Actor
         $this->click( '#submit' );
     }
 
-    /** Create WC Simple Product Action **
+    /** Create WC Simple Product Action
      *  Please when you run this function :
      *  Select Name of Product and How many Number you wish to create
      */
@@ -118,7 +177,7 @@ class AcceptanceTester extends \Codeception\Actor
         }
     }
 
-    /** Create WC Product Category Action **
+    /** Create WC Product Category Action
      *  Please when you run this function :
      *  Select Name of Category you wish to create
      */
@@ -137,10 +196,10 @@ class AcceptanceTester extends \Codeception\Actor
         $this->wait(2);
     }
 
-    /** Create WC Product Attribute Action **
+    /** Create WC Product Attribute Action
      *  Please when you run this function :
      *  Select Name of Attribute you wish to create
-     *  Selecte 1,2 or 3 Term Names for the Attribute
+     *  Select 1,2 or 3 Term Names for the Attribute
      */
     public function createAttribute ($name,$attr1,$attr2,$attr3) {
 
@@ -190,10 +249,10 @@ class AcceptanceTester extends \Codeception\Actor
 
     }
 
-    /** Create WC Variable Product with Global Attribute Action **
+    /** Create WC Variable Product with Global Attribute Action
      *  Please when you run this function :
-     *  Select Name of Attribute you wish to create
-     *  Selecte 1,2 or 3 Term Names for the Attribute
+     *  Select Name of Product you wish to create
+     *  Select the Global Attribute for the Variable Product
      */
     public function createVarProduct($name,$attribute){
         $this->amOnPage('/wp-admin/post-new.php?post_type=product');
@@ -230,11 +289,11 @@ class AcceptanceTester extends \Codeception\Actor
 
         $this->waitForElementVisible('.variations_tab',15);
 
-        $this->wait(10);
+        $this->wait(6);
 
         $this->click('.variations_tab');
 
-        $this->wait(10);
+        $this->wait(6);
 
         $this->selectOption('.variation_actions','Create variations from all attributes');
 
@@ -242,9 +301,128 @@ class AcceptanceTester extends \Codeception\Actor
 
         $this->acceptPopup();
 
-        // Not Finish Should Add price
+        $this->wait(6);
+
+        $this->acceptPopup();
+
+        $this->selectOption('#field_to_edit','Set regular prices');
+
+        $this->wait(6);
+
+        $this->click('Go');
+
+        $this->typeInPopup('10');
+
+        $this->acceptPopup();
+
+        $this->wait(6);
+
+        $this->click('#publish');
 
         $this->wait(2);
+    }
+
+    /** Create WC Variable Product with Local Attribute Action
+     *  Please when you run this function :
+     *  Select Name of Attribute you wish to create
+     *  Set 2 Term Names for the Attribute
+     */
+    public function createLocalVarProduct($name,$attribute,$term1,$term2){
+        $this->amOnPage('/wp-admin/post-new.php?post_type=product');
+
+        $this->see('Add New Product');
+
+        $this->fillField('Product name', $name);
+
+        $this->click('#content-html');
+
+        $this->fillField('#content', $name);
+
+        $this->selectOption('#product-type','Variable product');
+
+        $this->executeJS('window.scrollTo(0,500);');
+
+        $this->click('.attribute_tab');
+
+        $this->click('.add_attribute');
+
+        $this->waitForElementVisible('.woocommerce_attribute',10);
+
+        $this->wait(3);
+
+        $this->fillField('.woocommerce_attribute_data.wc-metabox-content table td.attribute_name input.attribute_name',$attribute);
+
+        $this->fillField('.woocommerce_attribute_data.wc-metabox-content table tbody tr td textarea',$term1.'|'.$term2);
+
+        $this->checkOption('input.checkbox[name="attribute_variation[0]"]');
+
+        $this->click('Save attributes');
+
+        $this->waitForElementNotVisible('.blockUI');
+
+        $this->waitForElementVisible('.variations_tab',15);
+
+        $this->wait(6);
+
+        $this->click('.variations_tab');
+
+        $this->wait(6);
+
+        $this->selectOption('.variation_actions','Create variations from all attributes');
+
+        $this->click('.do_variation_action');
+
+        $this->acceptPopup();
+
+        $this->wait(6);
+
+        $this->acceptPopup();
+
+        $this->selectOption('#field_to_edit','Set regular prices');
+
+        $this->wait(6);
+
+        $this->click('Go');
+
+        $this->typeInPopup('10');
+
+        $this->acceptPopup();
+
+        $this->wait(6);
+
+        $this->click('#publish');
+
+        $this->wait(2);
+    }
+
+    /** Enable Multi currency
+     *  No Params
+     */
+    public function enableMultiCurrency(){
+        $this->amOnPage('/wp-admin/admin.php?page=wpml-wcml&tab=multi-currency');
+
+        $this->checkOption('#multi_currency_independent');
+
+        $this->click('Save changes');
+
+        $this->wait(2);
+
+        $this->seeElement('#currency-switcher');
+    }
+
+    /** Disable Multi currency
+     *  No Params
+     */
+    public function disableMultiCurrency(){
+        $this->amOnPage('/wp-admin/admin.php?page=wpml-wcml&tab=multi-currency');
+
+        $this->uncheckOption('#multi_currency_independent');
+
+        $this->click('Save changes');
+
+        $this->wait(2);
+
+        $this->dontseeElement('#currency-switcher');
     }
     
 }

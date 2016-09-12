@@ -14,9 +14,13 @@ class FiveCest
         // Login Procedure
         $I->wp_login('admin', '123456');
 
-        //////////////////////
-        // WCML Activation  //
-        //////////////////////
+        /////////////////////////////////////
+        // WCML Activation and Wizard Run //
+        ////////////////////////////////////
+
+        $I->amGoingTo('to export the db for later use');
+
+        $I->exportDb('wcml_run');
 
         $I->amGoingTo('to activate WCML');
 
@@ -25,80 +29,130 @@ class FiveCest
         $I->see('Plugins');
 
         $I->activatePlugin('woocommerce-multilingual');
-        
-        $I->seeDeactivatePlugin('woocommerce-multilingual');
 
         $I->wait(2);
 
-        ////////////////////////
-        // WCML configuration//
-        ///////////////////////
+        $I->see('Let\'s turn your WooCommerce shop multilingual');
 
-        $I->amGoingTo('run the instllation wizard of WCML');
+        $I->seeLink('I\'ll do the setup later');
 
-        $I->click('Run the Setup Wizard');
-
-        $I->see('Welcome to WooCommerce Multilingual!');
-
-        $I->click('Start');
+        $I->click('Let\'s continue');
 
         $I->see('Translate Store Pages');
 
-        $I->checkOption('.wcml-status-list li label input[name="create_pages"]');
+        $I->see('All store pages must be translated in the languages configured on the site.');
 
         $I->click('Continue');
 
-        $I->see('Select translatable attributes');
+        $I->see('Select Translatable Attributes');
 
         $I->click('Continue');
 
-        $I->see('Enable multiple currencies');
+        $I->see('Enable Multiple Currencies');
+
+        $I->see('Enable the multi-currency mode');
 
         $I->click('Continue');
 
-        $I->see('Select the translation interface');
+        $I->see('Setup Complete');
 
-        $I->checkOption('.wcml-setup-content ul.no-bullets li label input[name="translation_interface"]');
+        $I->click('Close setup');
 
-        $I->click('Continue');
+        $I->seeInCurrentUrl('wp-admin/admin.php?page=wpml-wcml&tab=status&src=setup');
 
-        $I->see('Ready!');
+        $I->exportDb('wcml_finish');
 
-        $I->click('Start translating products');
+        ///////////////////////////////////////////////
+        // WCML Activation and Click later in Wizard //
+        //////////////////////////////////////////////
 
-        $I->seeInCurrentUrl('wp-admin/admin.php?page=wpml-wcml&tab=products&src=setup');
+        $I->amGoingTo('enable wcml and click run wizard later');
 
-        $I->see('WooCommerce Multilingual');
+        $I->importDb('wcml_run');
+
+        $I->wait(3);
+
+        $I->amOnPage('/wp-admin/plugins.php');
+
+        $I->see('Plugins');
+
+        $I->activatePlugin('woocommerce-multilingual');
+
+        $I->wait(3);
+
+        $I->see('Let\'s turn your WooCommerce shop multilingual');
+
+        $I->seeLink('I\'ll do the setup later');
+
+        $I->click('I\'ll do the setup later');
+
+        $I->seeInCurrentUrl('wp-admin/admin.php?page=wpml-wcml&src=setup_later');
+
+        $I->seeElement('#wcml-setup-wizard');
+
+        $I->see('Prepare your WooCommerce store to run multilingual!');
+
+        $I->see('Start the Setup Wizard');
+
+        $I->see('Skip');
+
+        $I->exportDb('skip_setup');
+
+        $I->click('Skip');
+
+        $I->dontSeeElement('#wcml-setup-wizard');
+
+        $I->importDb('skip_setup');
+
+        $I->wait(3);
+
+        $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml');
+
+        $I->seeElement('#wcml-setup-wizard');
+
+        $I->click('Start the Setup Wizard');
 
         $I->wait(2);
 
+        $I->see('Let\'s turn your WooCommerce shop multilingual');
 
-        //Old code without installation wizard -- To be removed
-        /*$I->amGoingTo('configure WCML');
+        /////////////////////////////////////////
+        // WCML Activation with other plugins //
+        ////////////////////////////////////////
 
-        $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml&tab=status');
+        $I->amGoingTo('enable wcml with other plugins');
 
-        $I->see('WooCommerce Multilingual');
+        $I->importDb('wcml_run');
 
-        $I->click('Create missing translations');
+        $I->wait(3);
 
-        // This is the code for translating URL's if they are
-        I->click('Translate URLs');
+        $I->amOnPage('/wp-admin/plugins.php');
 
-        $I->click('[data-base=product]');
+        $I->see('Plugins');
+
+        $I->deactivatePlugin('wpml-translation-management');
+
+        $I->checkOption('table.plugins tr[data-slug=wpml-translation-management] th.check-column input');
+
+        $I->executeJS('window.scrollTo(0,-40);');
+
+        $I->checkOption('table.plugins tr[data-slug=woocommerce-multilingual] th.check-column input');
+
+        $I->selectOption('#bulk-action-selector-bottom','Activate');
+
+        $I->click('#doaction2');
+
+        $I->see('Prepare your WooCommerce store to run multilingual!');
+
+        $I->click('Start the Setup Wizard');
 
         $I->wait(2);
 
-        $I->fillField('#base-translation', 'προϊόν');
+        $I->see('Let\'s turn your WooCommerce shop multilingual');
 
-        $I->click('Save');
+        $I->importDb('wcml_finish');
 
-        $I->wait(2);
-
-        $I->seeElement('.wcml-tax-translation-list .otgs-ico-ok');
-
-        $I->wait(2);*/
-
+        $I->wait(3);
 
     }
 

@@ -20,8 +20,6 @@ class ThreeCest
         $I->amOnPage('/wp-admin/plugins.php');
 
         $I->activatePlugin('woocommerce');
-
-        $I->seeDeactivatePlugin('woocommerce');
         
         $I->amGoingTo('Run Woocommerce Setup');
 
