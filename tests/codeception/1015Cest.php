@@ -1,6 +1,10 @@
 <?php
 //Check Custom Prices in Secondary Languages
 
+/**
+ * @group currency
+ */
+
 
 class FifteenCest
 {

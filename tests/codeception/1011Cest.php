@@ -37,15 +37,19 @@ class ElevenCest
 
         $I->seeElement('td.wpml-col-languages a');
 
-        //$I->seeElement('.js-wcml-translation-dialog-trigger', ['data-id' => '12']);
-
         $I->click('td.wpml-col-languages a');
 
         $I->seeInCurrentUrl('/wp-admin/admin.php?page=wpml-translation-management%2Fmenu%2Ftranslations-queue.php');
 
         $I->see('Product translation:');
 
-        $I->click('.wpml-translation-action-buttons div.alignleft button.cancel');
+        $I->fillField('#wpml-translation-editor-wrapper #job_field_title input.translated_value','Δοκιμαστικό Προϊόν');
+
+        $I->fillField('#wpml-translation-editor-wrapper #product_content_translated_editor textarea#product_content','Δοκιμαστικό Προϊόν');
+
+        $I->checkOption('#wpml-translation-editor-wrapper input.js-translation-complete');
+
+        $I->click('button.js-save-and-close');
 
         $I->wait(3);
 
@@ -57,9 +61,16 @@ class ElevenCest
 
         $I->see('Edit Product');
 
-        $I->waitForElement('.icl_odd_row',10);
+        $I->waitForElement('.icl_toggle_show_translations',10);
 
-        $I->click('.icl_odd_row a');
+        $value = $I->grabTextFrom('.icl_toggle_show_translations');
+
+        if ($value=='show'){
+
+            $I->click('show');
+        }
+        
+        $I->click('#icl_translations_table a');
 
         $I->seeInCurrentUrl('/wp-admin/admin.php?page=wpml-translation-management%2Fmenu%2Ftranslations-queue.php');
 
@@ -95,7 +106,7 @@ class ElevenCest
 
         $I->see('Edit Product');
 
-        $I->click('.icl_translations_table .icl_odd_row a');
+        $I->click('.icl_translations_table a');
 
         $I->see('Add New Product');
 

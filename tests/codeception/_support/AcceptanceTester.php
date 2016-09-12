@@ -27,6 +27,36 @@ class AcceptanceTester extends \Codeception\Actor
     use _generated\AcceptanceTesterActions;
 
     /**
+     * @param $element
+     * @return bool
+     * Check if Element is in Page and run additional tests
+     */
+    function seePageHasElement($element)
+    {
+        try {
+            $this->seeElement($element);
+        } catch (\PHPUnit_Framework_AssertionFailedError $f) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param $element
+     * @return bool
+     * Check if Element is in Page and run additional tests
+     */
+    function dontSeePageHasElement($element)
+    {
+        try {
+            $this->dontSeeElement($element);
+        } catch (\PHPUnit_Framework_AssertionFailedError $f) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Define custom actions here
      */
 

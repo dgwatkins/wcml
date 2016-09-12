@@ -1,21 +1,25 @@
 <?php
 //Check Multi Currency Tab
 
+/**
+ * @group currency
+ */
+
 
 class FourteenCest
 {
     public function _before(AcceptanceTester $I)
     {
-        $I->wantTo('check if product translation interface is working correct');
+        $I->wantTo('check if Multi-currency functionality is working correct');
 
         // Login Procedure
         $I->wp_login('admin', '123456');
 
         ///////////////////////////////////////////////////////////////
-        // Check if Path Sync  is working correct //
+        // Check Multicurrency Functionality //
         ///////////////////////////////////////////////////////////////
 
-        $I->amGoingTo('Check Translation Date Sync');
+        $I->amGoingTo('Check Multi-currency functionality');
 
         $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml&tab=multi-currency');
 
@@ -173,6 +177,8 @@ class FourteenCest
 
         $I->amGoingTo('Disable one Currency per Language');
 
+        $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml&tab=multi-currency');
+
         $I->click('#currency_row_langs_AED .currency_languages .on [data-language=en]');
 
         $I->waitForElementVisible('#currency_row_langs_AED .currency_languages [data-lang=en] .otgs-ico-no',10);
@@ -211,6 +217,8 @@ class FourteenCest
 
         $I->amGoingTo('Disable one Currency per Language');
 
+        $I->amOnPage('/wp-admin/admin.php?page=wpml-wcml&tab=multi-currency');
+
         $I->click('#currency_row_langs_AED .currency_languages .on [data-language=en]');
 
         $I->waitForElementVisible('#currency_row_langs_AED .currency_languages [data-lang=en] .otgs-ico-yes',10);
@@ -239,15 +247,23 @@ class FourteenCest
 
         $I->click('Save changes');
 
+        $I->resetCookie('_wcml_dashboard_currency');
+
         $I->amOnPage('/product/test-product/');
 
-        $I->seeOptionIsSelected('.product .product_meta .wcml_currency_switcher option','United States dollar ($) - USD');
+        $I->see('$20,00','.product div.summary div p.price span.amount');
+
+        $I->seeElement('.product .product_meta .wcml_currency_switcher option[value="USD"]');
 
         $I->amOnPage('/προϊόν/δοκιμαστικό-προϊόν/?lang=el');
 
-        $I->seeOptionIsSelected('.product .product_meta .wcml_currency_switcher option','Euros (€) - EUR');
+        $I->see('€10.00','.product div.summary div p.price span.amount');
+
+        $I->seeElement('.product .product_meta .wcml_currency_switcher option[value="EUR"]');
 
         $I->wait(3);
+
+        // Check prevent window
 
         $I->amGoingTo('see if prevent window apperas if not save options');
 

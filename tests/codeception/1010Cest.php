@@ -15,6 +15,23 @@ class TenCest
         // Check if taxonomies warnings are correct      //
         //////////////////////////////////////////////////
 
+        $I->amGoingTo('Create 1 Shipping Class');
+
+        $I->amOnPage('/wp-admin/admin.php?page=wc-settings&tab=shipping&section=classes');
+
+        $I->waitForElementVisible('.wc-shipping-class-add',10);
+
+        $I->click('Add Shipping Class');
+
+        $I->fillField('.wc-shipping-class-name div.edit input[data-attribute="name"]','Shippo Classy');
+
+        $I->wait(2);
+
+        $I->click('Save Shipping Classes');
+
+        $I->wait(5);
+
+        $I->waitForElementVisible('.wc-shipping-class-name .view',5);
 
         $I->amGoingTo('Create 2 Product Categories');
 
@@ -57,54 +74,6 @@ class TenCest
         $I->click('Add New Product Tag');
 
         $I->wait(2);
-
-        // Create Shipping Zone - Not need it no
-
-        /*$I->amGoingTo('Create 1 Shipping Class');
-
-        $I->amOnPage('/wp-admin/admin.php?page=wc-settings&tab=shipping');
-
-        $I->see('Shipping Zones');
-
-        $I->click('Add shipping zone');
-
-        $I->fillField('input[data-attribute="zone_name"]','Shippo Classy');
-
-        $I->click('.wc-shipping-zone-region .select2-search-field');
-
-        $I->pressKey('#s2id_autogen2','Europe',WebDriverKeys::ENTER);
-
-        $I->click('.wc-shipping-zone-save');
-
-        $I->wait(5);
-
-        $I->click('.wc-shipping-zone-methods-add-row .add_shipping_method');
-
-        $I->click('.wc-backbone-modal-content .button-large');
-
-        $I->wait(2);
-
-        $I->click('.wc-shipping-zone-edit');
-
-        $I->fillField('input[data-attribute="zone_name"]','Shippo Classy');
-
-        $I->click('.wc-shipping-zone-save');*/
-
-        $I->amGoingTo('Create 1 Shipping Class');
-
-        $I->amOnPage('/wp-admin/admin.php?page=wc-settings&tab=shipping&section=classes');
-
-        $I->waitForElementVisible('.wc-shipping-class-add',10);
-
-        $I->click('Add Shipping Class');
-
-        $I->fillField('.wc-shipping-class-name div.edit input[data-attribute="name"]','Shippo Classy');
-
-        $I->wait(5);
-
-        $I->click('Save Shipping Classes');
-
-        $I->wait(5);
 
         $I->amGoingTo('to  check warnings in WCML');
 
