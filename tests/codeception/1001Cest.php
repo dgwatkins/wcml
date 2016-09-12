@@ -27,7 +27,7 @@ class OneCest
 
         $I->amGoingTo('Configure WPML');
 
-        $I->click('No thanks, I will configure myself');
+        $I->click('Configure WPML');
 
         $I->click('Next'); //Let's English as Default language
 
