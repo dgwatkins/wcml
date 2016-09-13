@@ -49,6 +49,10 @@ class WCML_Multi_Currency{
      * @var WCML_Currency_Switcher
      */
     public $currency_switcher;
+	/**
+	 * @var WCML_Multi_Currency_Install
+	 */
+	public $install;
 
     public $W3TC = false;
 
@@ -62,7 +66,7 @@ class WCML_Multi_Currency{
 
         $this->woocommerce_wpml =& $woocommerce_wpml;
 
-        WCML_Multi_Currency_Install::set_up( $this, $woocommerce_wpml );
+        $this->install = new WCML_Multi_Currency_Install( $this, $woocommerce_wpml );
 
         $this->init_currencies();
 
@@ -147,6 +151,12 @@ class WCML_Multi_Currency{
 
         $this->currencies =& $this->woocommerce_wpml->settings['currency_options'];
 
+	    // Add default currency if missing (set when MC is off)
+	    $default_currency = get_option( 'woocommerce_currency' );
+	    if( !empty( $default_currency ) && !isset( $this->currencies[ $default_currency ] ) ){
+		    $this->currencies[ $default_currency ] = array();
+	    }
+
         $save_to_db = false;
 
         $active_languages = $sitepress->get_active_languages();
@@ -217,8 +227,7 @@ class WCML_Multi_Currency{
         }
 
         // force disable multi-currency when the default currency is empty
-        $wc_currency    = get_option('woocommerce_currency');
-        if(empty($wc_currency)){
+        if( empty( $default_currency ) ){
             $this->woocommerce_wpml->settings['enable_multi_currency'] = WCML_MULTI_CURRENCIES_DISABLED;
         }
 

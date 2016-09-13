@@ -30,8 +30,6 @@ class WCML_Multi_Currency_Configuration{
 
         }
 
-        add_action( 'update_option_woocommerce_currency', array( 'WCML_Multi_Currency_Install', 'set_default_currencies_languages' ), 10, 2 );
-
     }
 
     public static function save_configuration(){

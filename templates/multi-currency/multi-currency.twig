@@ -65,7 +65,7 @@
                         <tbody>
                             <tr class="wcml-row-currency">
                                 <td class="wcml-col-currency">
-                                    <span class="truncate">{{ attribute(wc_currencies, wc_currency) }}</span>
+                                    <span class="truncate">{{ attribute(wc_currencies, wc_currency)|raw }}</span>
                                     <small>{{ positioned_price|raw }}</small>
                                 </td>
                                 <td class="wcml-col-rate"><span class="truncate">{{ strings.currencies_table.default }}</span></td>
