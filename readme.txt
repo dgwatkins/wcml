@@ -98,7 +98,7 @@ Make sure that your theme is not hard-coding any URL. Always use API calls to re
 
 In order for the checkout and store pages to appear translated, you need to create several WordPress pages and insert the WooCommerce shortcodes into them. You'll have to go over the [documentation](http://wpml.org/documentation/related-projects/woocommerce-multilingual/) and see that you performed all steps on the way.
 
-= Can I have different urls for the store in the different languages =
+= Can I have different urls for the store in the different languages? =
 
 Yes. You can translate the product permalink base, product category base, product tag base and the product attribute base on the Store URLs section.
 
@@ -168,7 +168,7 @@ WooCommerce Multilingual is compatible with all major WooCommerce extensions. We
 * Bug fix: cart strings not displaying in the correct language in some conditions
 * Bug fix: prices in secondary currencies were not updated on the front end after changing the price (the cache was not invalidated)
 * Bug fix: shipping classes were not synchronized for translated products in some circumstances
-* Bug fix: translated endpoints were missing from teh rewrite rules after updating the permalinkst pull
+* Bug fix: translated endpoints were missing from teh rewrite rules after updating the permalinks
 * Bug fix: stock status was sometimes not synchronized correctly when changing the stock manually
 * Bug fix: when using the default category base the language switcher did not show translated urls on the front end
 * Updated the cart cache hashes logic according to new WooCommerce logic
@@ -677,7 +677,7 @@ WooCommerce Multilingual is compatible with all major WooCommerce extensions. We
 = 3.0 =
 * Brand new GUI and workflow
 * Support for easy taxonomy translation 
-* Bariations synchronization
+* Variations synchronization
 * Product images synchronization
 
 
