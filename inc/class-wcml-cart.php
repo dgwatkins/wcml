@@ -123,10 +123,20 @@ class WCML_Cart
             if( apply_filters( 'wcml_exception_duplicate_products_in_cart', false, $cart_content ) ){
                 continue;
             }
+
+            $quantity = $cart_content['quantity'];
+            // unset unnecessary data to generate id to check
+            unset( $cart_content['quantity'] );
+            unset( $cart_content['line_total'] );
+            unset( $cart_content['line_subtotal'] );
+            unset( $cart_content['line_tax'] );
+            unset( $cart_content['line_subtotal_tax'] );
+            unset( $cart_content['line_tax_data'] );
+
             $search_key = md5( serialize( $cart_content ) );
             if( array_key_exists( $search_key, $exists_products ) ){
                 unset( $cart_contents[ $key ] );
-                $cart_contents[ $exists_products[ $search_key ] ][ 'quantity' ] = $cart_contents[ $exists_products[ $search_key ] ][ 'quantity' ] + $cart_content[ 'quantity' ];
+                $cart_contents[ $exists_products[ $search_key ] ][ 'quantity' ] = $cart_contents[ $exists_products[ $search_key ] ][ 'quantity' ] + $quantity;
                 $woocommerce->cart->calculate_totals();
             }else{
                 $exists_products[ $search_key ] = $key;
