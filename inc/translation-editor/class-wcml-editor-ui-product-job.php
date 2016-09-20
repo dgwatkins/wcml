@@ -149,14 +149,10 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             if( !empty( $variations ) ){
                 $variations_data_section = new WPML_Editor_UI_Field_Section( __( 'Variations data', 'woocommerce-multilingual' ) );
                 foreach( $variations as $variation ){
-
                     $var_custom_fields = $this->get_product_custom_fields_to_translate( $variation[ 'variation_id' ] );
                     if( $var_custom_fields ){
                         $this->add_custom_fields_ui_section( $variations_data_section, $var_custom_fields, $variation[ 'variation_id' ] );
                     }
-
-                    $var_desc_field_input = new WPML_Editor_UI_Single_Line_Field( 'variation_desc'.$variation['variation_id'], 'Variation description #'.$variation['variation_id'], $this->data, true );
-                    $variations_data_section->add_field( $var_desc_field_input );
                 }
                 $this->add_field( $variations_data_section );
             }
