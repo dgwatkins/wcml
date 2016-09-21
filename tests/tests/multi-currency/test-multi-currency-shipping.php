@@ -120,8 +120,6 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
             define( 'WOOCOMMERCE_CHECKOUT', true );
         }
 
-        add_filter('woocommerce_cart_shipping_method_full_label', array( $this->multi_currency->shipping, 'convert_shipping_cost'), 10, 2 );
-
         WC()->cart->empty_cart();
         $this->multi_currency->set_client_currency( 'GBP' );
 

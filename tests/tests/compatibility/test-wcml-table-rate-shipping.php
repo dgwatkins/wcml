@@ -33,14 +33,10 @@ class Test_WCML_Table_Rate_Shipping extends WCML_UnitTestCase {
 
 		$domain = 'woocommerce';
 		$context = '';
-		$name = $label_1;
+
 		$table_rate = new WCML_Table_Rate_Shipping( $this->sitepress, $this->woocommerce_wpml );
 		$table_rate->init();
 
-		$query = $this->wpdb->prepare( "SELECT id, value, gettext_context, name
-										FROM {$this->wpdb->prefix}icl_strings
-										WHERE context=%s", $domain, $context, $name );
-		$res   = $this->wpdb->get_results( $query );
 		$expected = array(
 			$rate_title,
 			$label_1,
@@ -48,9 +44,16 @@ class Test_WCML_Table_Rate_Shipping extends WCML_UnitTestCase {
 			$label_3,
 		);
 
-		foreach ( $res as $index => $registered_string ) {
-			$this->assertEquals( $expected[ $index ], $registered_string->value );
-			$this->assertEquals( $expected[ $index ] . '_shipping_method_title', $registered_string->name );
+		foreach ( $expected as $registered_string ) {
+			$name = sanitize_text_field( $registered_string ) . '_shipping_method_title';
+
+			$query = $this->wpdb->prepare( "SELECT id, value, gettext_context, name
+										FROM {$this->wpdb->prefix}icl_strings
+										WHERE context=%s AND name=%s", $domain, $name );
+			$res   = $this->wpdb->get_row( $query );
+
+			$this->assertEquals( $registered_string, $res->value );
+			$this->assertEquals( $registered_string . '_shipping_method_title', $res->name );
 		}
 	}
 
@@ -81,6 +84,7 @@ class Test_WCML_Table_Rate_Shipping extends WCML_UnitTestCase {
 	 */
 	public function filter_query_rates_args(){
 
+		$settings_backup = $this->woocommerce_wpml->settings;
 		$this->multi_currency_helper = new WCML_Helper_Multi_Currency( $this->woocommerce_wpml );
 		$this->multi_currency_helper->enable_multi_currency();
 		$this->multi_currency_helper->setup_3_currencies();
@@ -93,6 +97,9 @@ class Test_WCML_Table_Rate_Shipping extends WCML_UnitTestCase {
 		$args = $table_rate->filter_query_rates_args( $args );
 
 		$this->assertEquals( 100, $args['price'] );
+
+		$this->woocommerce_wpml->settings = $settings_backup;
+		$this->woocommerce_wpml->update_settings();
 
 	}
 }
