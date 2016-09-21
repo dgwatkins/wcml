@@ -161,14 +161,14 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
     }
 
     function test_wcml_get_product_info_for_translators(){
-        global $wpdb;
+        global $wpdb, $wpml_post_translations, $wpml_term_translations;
 
         $product = $this->wcml_helper->add_product( 'en' , false, 'Test Product for translator' );
         $user_id    = $this->make_current_user_admin();
 
         $translator_id    = $this->make_current_user_admin();
 
-        $tm_records       = new WPML_TM_Records( $wpdb );
+        $tm_records       = new WPML_TM_Records( $wpdb, $wpml_post_translations, $wpml_term_translations );
         $subject          = new WPML_Translation_Job_Factory( $tm_records );
         $subject->create_local_post_job(
             $product->id, 'es', $user_id );

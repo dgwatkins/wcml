@@ -56,9 +56,6 @@ class Test_WCML_Currencies extends WCML_UnitTestCase {
 
 		do_action('woocommerce_settings_save_general');
 
-		// Read WCML settings again from the DB
-		$this->settings = $this->woocommerce_wpml->get_settings();
-
 		$this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
 		$this->woocommerce_wpml->multi_currency->init();
 

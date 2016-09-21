@@ -47,7 +47,11 @@ class Test_WCML_Orders extends WCML_UnitTestCase {
 		$line_items = $this->woocommerce_wpml->orders->woocommerce_order_get_items( $order->get_items() );
 
 		foreach( $line_items as $line_item ){
-			$this->assertEquals( $this->es_product_id , $line_item['product_id'] );
+			if( $line_item instanceof WC_Order_Item_Product ){
+				$this->assertEquals( $this->es_product_id , $line_item->get_product_id() );
+			}else{
+				$this->assertEquals( $this->es_product_id , $line_item['product_id'] );
+			}
 		}
 	}
 
