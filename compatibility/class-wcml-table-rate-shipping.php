@@ -44,6 +44,7 @@ class WCML_Table_Rate_Shipping {
 				$_GET[ 'page' ] === 'shipping_zones' ||
 				(
 					$_GET['page'] == 'wc-settings' &&
+					isset( $_GET[ 'tab' ] ) &&
 					$_GET['tab'] == 'shipping'
 				)
 			) &&

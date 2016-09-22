@@ -166,4 +166,17 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		$this->assertEquals( 'custom_value_es', get_post_meta( $en_product->id, $custom_field, true ) );
 
 	}
+
+	public function test_sync_product_taxonomies(){
+
+		$default_product = $this->wcml_helper->add_product( $this->default_language, false, rand_str() );
+		$translated_product = $this->wcml_helper->add_product( $this->second_language, $default_product->trid, rand_str() );
+
+		$default_cat = $this->wcml_helper->add_term( rand_str(), 'product_cat', $this->default_language, $default_product->id );
+		$translated_cat = $this->wcml_helper->add_term( rand_str(), 'product_cat', $this->second_language, false, $default_cat->trid  );
+
+		$this->woocommerce_wpml->sync_product_data->sync_product_taxonomies( $default_product->id, $translated_product->id, $this->second_language );
+
+		$this->assertEquals( get_term( $default_cat->term_id, 'product_cat' )->count, get_term( $translated_cat->term_id, 'product_cat' )->count );
+	}
 }
