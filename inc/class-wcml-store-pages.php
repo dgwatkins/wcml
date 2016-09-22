@@ -577,12 +577,10 @@ class WCML_Store_Pages{
 			    }
 
 			    if( !$is_translated ){
-				    wp_enqueue_style( 'otgs-notices', ICL_PLUGIN_URL . '/res/css/otgs-notices.css', array() );
-
 				    $text = sprintf( __( 'To quickly translate this and other WooCommerce store pages, please run the %ssetup wizard%s.', 'woocommerce-multilingual' ),
 					    '<a href="' . admin_url( 'admin.php?page=wcml-setup' ) . '">', '</a>' );
 
-				    echo '<div class="notice notice-error inline otgs-notice otgs-notice-error-bg">';
+				    echo '<div class="notice notice-error inline">';
 				    echo '<p><i class="otgs-ico-warning"></i> ' . $text . '</p>';
 				    echo '</div>';
 			    }
