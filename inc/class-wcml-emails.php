@@ -57,6 +57,7 @@ class WCML_Emails{
 
         add_filter( 'plugin_locale', array( $this, 'set_locale_for_emails' ), 10, 2 );
 
+
         if( is_admin() && $pagenow == 'admin.php' && isset($_GET['page']) && $_GET['page'] == 'wc-settings' && isset($_GET['tab']) && $_GET['tab'] == 'email' ){
             add_action('admin_footer', array($this, 'show_language_links_for_wc_emails'));
             $this->set_emails_string_lamguage();
@@ -136,7 +137,7 @@ class WCML_Emails{
 
     function email_heading_completed( $order_id, $no_checking = false ){
         global $woocommerce;
-        if(class_exists('WC_Email_Customer_Completed_Order') || $no_checking){
+        if( ( class_exists( 'WC_Email_Customer_Completed_Order' ) || $no_checking ) && isset( $woocommerce->mailer()->emails[ 'WC_Email_Customer_Completed_Order' ] ) ){
 
             $woocommerce->mailer()->emails['WC_Email_Customer_Completed_Order']->heading = $this->wcml_get_translated_email_string( 'admin_texts_woocommerce_customer_completed_order_settings', '[woocommerce_customer_completed_order_settings]heading' );
 
@@ -155,7 +156,7 @@ class WCML_Emails{
 
     function email_heading_processing($order_id){
         global $woocommerce;
-        if(class_exists('WC_Email_Customer_Processing_Order')){
+        if( class_exists( 'WC_Email_Customer_Processing_Order' ) && isset( $woocommerce->mailer()->emails[ 'WC_Email_Customer_Processing_Order' ] ) ){
 
             $woocommerce->mailer()->emails['WC_Email_Customer_Processing_Order']->heading = $this->wcml_get_translated_email_string( 'admin_texts_woocommerce_customer_processing_order_settings', '[woocommerce_customer_processing_order_settings]heading' );
 
@@ -171,7 +172,7 @@ class WCML_Emails{
     function email_heading_note($args){
         global $woocommerce;
 
-        if(class_exists('WC_Email_Customer_Note')){
+        if( class_exists( 'WC_Email_Customer_Note' ) && isset( $woocommerce->mailer()->emails[ 'WC_Email_Customer_Note' ] ) ){
 
             $woocommerce->mailer()->emails['WC_Email_Customer_Note']->heading = $this->wcml_get_translated_email_string( 'admin_texts_woocommerce_customer_note_settings', '[woocommerce_customer_note_settings]heading' );
 
@@ -186,7 +187,7 @@ class WCML_Emails{
 
     function email_heading_refund( $order_id, $refund_id = null ){
         global $woocommerce;
-        if(class_exists('WC_Email_Customer_Refunded_Order')){
+        if( class_exists( 'WC_Email_Customer_Refunded_Order' ) && isset( $woocommerce->mailer()->emails[ 'WC_Email_Customer_Refunded_Order' ] ) ){
 
             $woocommerce->mailer()->emails['WC_Email_Customer_Refunded_Order']->heading =
                 $this->wcml_get_translated_email_string( 'admin_texts_woocommerce_customer_refunded_order_settings',
@@ -206,7 +207,7 @@ class WCML_Emails{
 
     function new_order_admin_email($order_id){
         global $woocommerce;
-        if(isset( $woocommerce->mailer()->emails['WC_Email_New_Order'] )){
+        if( class_exists( 'WC_Email_New_Order' ) && isset( $woocommerce->mailer()->emails['WC_Email_New_Order'] ) ){
             $recipients = explode(',',$woocommerce->mailer()->emails['WC_Email_New_Order']->get_recipient());
             foreach($recipients as $recipient){
                 $user = get_user_by('email',$recipient);
