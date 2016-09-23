@@ -17,6 +17,9 @@ class WCML_Helper {
 
         $settings_helper->set_post_type_translatable( 'product' );
         $settings_helper->set_post_type_translatable( 'product_variation' );
+        $settings_helper->set_taxonomy_translatable( 'product_cat' );
+        $settings_helper->set_taxonomy_translatable( 'product_tag' );
+        $settings_helper->set_taxonomy_translatable( 'product_shipping_class' );
 
     }
 

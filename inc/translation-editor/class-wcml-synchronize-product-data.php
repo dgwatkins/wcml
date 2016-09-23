@@ -193,6 +193,7 @@ class WCML_Synchronize_Product_Data{
         foreach( $taxonomies as $taxonomy ) {
             $terms = get_the_terms( $original_product_id, $taxonomy );
             $terms_array = array();
+            $terms_tax_id_array = array();
             if ( $terms ) {
                 foreach ( $terms as $term ) {
                     if( $term->taxonomy == "product_type" ){
@@ -205,6 +206,7 @@ class WCML_Synchronize_Product_Data{
                         $translated_term = $this->wpdb->get_row( $this->wpdb->prepare( "
                             SELECT * FROM {$this->wpdb->terms} t JOIN {$this->wpdb->term_taxonomy} x ON x.term_id = t.term_id WHERE t.term_id = %d AND x.taxonomy = %s", $tr_id, $taxonomy ) );
                         $terms_array[] = $translated_term->term_id;
+                        $terms_tax_id_array[] = $translated_term->term_taxonomy_id;
                     }
                 }
                 if( $taxonomy != 'product_type' && !is_taxonomy_hierarchical( $taxonomy ) ){
@@ -213,6 +215,8 @@ class WCML_Synchronize_Product_Data{
                 $this->sitepress->switch_lang( $lang );
                 wp_set_post_terms( $tr_product_id, $terms_array, $taxonomy );
                 $this->sitepress->switch_lang();
+
+                wp_update_term_count( $terms_tax_id_array, $taxonomy );
             }
         }
     }
@@ -260,7 +264,7 @@ class WCML_Synchronize_Product_Data{
      * @param $action
      */
     public function sync_product_stocks( $order, $action ){
-        $order_id = $order->id;
+        $order_id = method_exists( 'WC_Order', 'get_id' ) ? $order->get_id() : $order->id;
 
         foreach( $order->get_items() as $item ) {
             if( isset( $item[ 'variation_id' ] ) && $item[ 'variation_id' ] > 0 ){
