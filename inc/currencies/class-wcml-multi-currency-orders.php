@@ -314,7 +314,7 @@ class WCML_Multi_Currency_Orders{
     // handle currency in order emails before handled in woocommerce
     public function fix_currency_before_order_email($order){
 
-        $order_currency = method_exists( $order, 'get_currency' ) ? $order->get_currency() : method_exists( $order, 'get_order_currency' ) ? $order->get_order_currency() : '' ;
+        $order_currency = method_exists( $order, 'get_currency' ) ? $order->get_currency() : ( method_exists( $order, 'get_order_currency' ) ? $order->get_order_currency() : '' ) ;
 
         if( !$order_currency ) return;
 
