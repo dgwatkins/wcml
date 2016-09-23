@@ -131,6 +131,24 @@ WooCommerce Multilingual is compatible with all major WooCommerce extensions. We
 
 == Changelog ==
 
+= 3.9 =
+* Added compatibility with WooCommerce 2.7 (orders, coupons etc...)
+* Included the custom taxonomies associated with products in the WooCommerce Multilingual menu
+* Added the possibility to translate the attribute slugs
+* Added possibility to include some HTML tags in the currency switcher
+* Added the option to show the cart total in the currency switcher
+* Import payment methods translations from mo files upon activation
+* Many usability improvements
+* Moved the WooCommerce Multilingual submenu under the WooCommerce menu
+* Added two new subsections to the Status section: products and multi-currency
+* Bug fix: table Rates labels were not showing up on the cart page when WCML was active
+* Bug fix: the currency order preview was not including the newly added currencies
+* Bug fix: number of untranslated terms was sometimes wrong in the Status area
+* Bug fix: in some cases a variation description field showed up twice in the Translation Editor
+* Bug fix: orders showed the attributes slugs instead of names
+* Fixed a compatibility issue with WooCommerce Bookings: custom prices were not displayed correctly in the second currency
+
+
 = 3.8.6 =
 * Fix shipping cost conversion issue specific to PHP 5.6
 * Bug fix: an incorrect shipping cost was displayed on the backend when the order was placed in a secondary currency
