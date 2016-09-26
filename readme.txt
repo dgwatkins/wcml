@@ -4,30 +4,41 @@ Donate link: http://wpml.org/documentation/related-projects/woocommerce-multilin
 Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multilingual, e-shop, shop
 License: GPLv2
 Requires at least: 3.9
-Tested up to: 4.6
+Tested up to: 4.6.1
 Stable tag: 3.9
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
 
 == Description ==
 
-This 'glue' plugin makes it possible to run fully multilingual e-commerce sites using [WooCommerce](https://wordpress.org/plugins/woocommerce/) and [WPML](http://wpml.org). It makes products and store pages translatable, lets visitors switch languages and order products in their language.
+This 'glue' plugin makes it possible to run fully multilingual e-commerce sites using [WooCommerce](https://wordpress.org/plugins/woocommerce/) and [WPML](http://wpml.org).
 
-= Features =
+= Key Features =
 
-* Lets you translate different kinds of WooCommerce product types
-* Central management for translating product categories, tags and custom attributes
-* Automatically synchronizes product variations and images
+* Translate all WooCommerce products (simple, variable, grouped, external)
+* Easy translation management for products, categories and attributes
 * Keeps the same language through the checkout process
-* Sends emails to clients and admins in their selected language
+* Sends emails to clients and admins in their language
 * Allows inventory tracking without breaking products into languages
 * Enables running a single WooCommerce store with multiple currencies
+
+= Compatibility with WooCommerce Extensions =
+
+Almost every WooCommerce store uses some extensions. WooCommerce Multilingual is fully compatible with popular extensions, including:
+
+* WooCommerce Bookings
+* WooCommerce Table Rate Shipping
+* WooCommerce Subscriptions
+* WooCommerce Product Add-ons
+* WooCommerce Tab Manager
+
+Looking for other extensions that are tested and compatible with WPML? See the complete [list of WooCommerce extensions that are compatible with WPML](https://wpml.org/documentation/woocommerce-extensions-compatibility/).
 
 = Usage Instructions =
 
 For step by step instructions on setting up a multilingual shop, please go to [WooCommerce Multilingual Manual](http://wpml.org/documentation/related-projects/woocommerce-multilingual/) page.
 
-After installing, follow the steps of the setup wizard to translate the store pages, configure what attributes should be translated, enable the multi-currency mode and other settings.
+After installing, follow the steps of the *setup wizard* to translate the store pages, configure what attributes should be translated, enable the multi-currency mode and other settings.
 
 Then, continue to the 'Products' and any categories, tags and attributes that you use.
 
