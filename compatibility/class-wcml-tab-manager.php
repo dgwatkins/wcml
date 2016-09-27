@@ -264,11 +264,18 @@ class WCML_Tab_Manager {
 			$this->sitepress->set_element_language_details( $tab_id, 'post_wc_product_tab', $tab_trid, $lang );
 		}
 
+
+		if ( empty( $title ) || strlen( $title ) != strlen( utf8_encode( $title ) ) ) {
+			$tab_name = "product-tab-". $tab_id;
+		} else {
+			$tab_name = sanitize_title( $title );
+		}
+
 		$trnsl_product_tabs[ $orig_prod_tab['type'] . '_tab_' . $tab_id ] = array(
 			'position' => $orig_prod_tab['position'],
 			'type'     => $orig_prod_tab['type'],
 			'id'       => $tab_id,
-			'name'     => get_post( $tab_id )->post_name,
+			'name'     => $tab_name,
 		);
 
 		return $trnsl_product_tabs;

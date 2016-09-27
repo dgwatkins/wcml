@@ -163,6 +163,21 @@ class Test_WCML_Tab_Manager extends WCML_UnitTestCase {
 		$wc_product_tab = get_post( $translated_tab );
 		$this->assertEquals( $wc_product_tab->post_title, $data[ md5( 'tab_' . $tab_data['position'] . '_title' ) ] );
 		$this->assertEquals( $wc_product_tab->post_content, $data[ md5( 'tab_' . $tab_data['position'] . '_heading' ) ] );
+
+		//test non-ascii symbols in product tab name
+		$data = array(
+			md5( 'tab_' . $tab_data['position'] . '_title' )   => 'Тестовий таб',
+			md5( 'tab_' . $tab_data['position'] . '_heading' ) => random_string(),
+		);
+		// Perform tab sync.
+		$tab_manager->sync_tabs( $product, $translated_product, $data, $this->second_language );
+		wp_cache_init();
+
+		$trnsl_product_tabs = maybe_unserialize( get_post_meta( $translated_product, '_product_tabs', true ) );
+		foreach( $trnsl_product_tabs as $key => $trnsl_product_tab ){
+			$this->assertEquals( $trnsl_product_tab[ 'name' ], str_replace( '_', '-', $key ) );
+		}
+
 	}
 
 	/**
