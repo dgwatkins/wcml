@@ -26,7 +26,7 @@ class WCML_Multi_Currency_Configuration{
             add_action('wp_ajax_wcml_delete_currency', array(__CLASS__,'delete_currency'));
 
             add_action('wp_ajax_wcml_update_currency_lang', array(__CLASS__,'update_currency_lang'));
-            add_action('wp_ajax_wcml_update_default_currency', array(__CLASS__,'update_default_currency'));
+            add_action('wp_ajax_wcml_update_default_currency', array(__CLASS__,'update_default_currency_ajax'));
 
         }
 
@@ -237,16 +237,30 @@ class WCML_Multi_Currency_Configuration{
         exit;
     }
 
-    public static function update_default_currency(){
+    public static function update_default_currency_ajax(){
+
+
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         if(!$nonce || !wp_verify_nonce($nonce, 'wcml_update_default_currency')){
             die('Invalid nonce');
         }
 
+        self::update_default_currency();
+
+        exit;
+    }
+
+    public static function update_default_currency(){
+        global $woocommerce;
+
+        if( !empty( $woocommerce->session ) &&
+            $_POST[ 'lang' ] == $woocommerce->session->get( 'client_currency_language' ) ){
+            $woocommerce->session->set( 'client_currency', $_POST[ 'code' ] );
+        }
+
         self::$woocommerce_wpml->settings['default_currencies'][$_POST['lang']] = $_POST['code'];
         self::$woocommerce_wpml->update_settings();
 
-        exit;
     }
 
     public static function currency_options_update_default_currency( $settings, $current_currency, $new_currency ){
