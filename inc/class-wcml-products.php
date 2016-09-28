@@ -476,15 +476,19 @@ class WCML_Products{
 
         }
 
-        $translators = $iclTranslationManagement->get_blog_translators(
-            array(
-                'from' => $from_lang,
-                'to'   => $to_lang
-            )
-        );
+        if( isset( $from_lang ) ){
 
-        if( empty( $translators ) || ( sizeof( $translators ) == 1 && $translators[0]->ID == get_current_user_id() ) ){
-            $hide_resign = true;
+            $translators = $iclTranslationManagement->get_blog_translators(
+                array(
+                    'from' => $from_lang,
+                    'to'   => $to_lang
+                )
+            );
+
+            if( empty( $translators ) || ( sizeof( $translators ) == 1 && $translators[0]->ID == get_current_user_id() ) ){
+                $hide_resign = true;
+            }
+
         }
 
         return $hide_resign;
