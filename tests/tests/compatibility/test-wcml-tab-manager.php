@@ -416,6 +416,38 @@ class Test_WCML_Tab_Manager extends WCML_UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function filter_default_layout() {
+		$current_screen_buff = get_current_screen();
+		set_current_screen( 'front' );
+		$tab_manager = $this->get_test_subject();
+
+		$tab_id = wpml_test_insert_post( $this->default_language, 'wc_product_tab', false, random_string() );
+		$tab_trid = wpml_test_get_element_trid( $tab_id, 'post_wc_product_tab' );
+		$trnsl_tab_id = wpml_test_insert_post( $this->second_language, 'wc_product_tab', $tab_trid, random_string() );
+
+		// add tab to default layout
+		$default_layout[ 'global_tab_'.$tab_id ] = array(
+			'position' 	=> 1,
+			'type'		=> 'global',
+			'id'		=> $tab_id,
+			'name'		=> get_post( $tab_id )->post_name
+		);
+		update_option( 'wc_tab_manager_default_layout', $default_layout );
+
+		$this->sitepress->switch_lang( $this->second_language );
+
+		$default_layout = get_option( 'wc_tab_manager_default_layout', true );
+
+		$this->assertTrue( isset( $default_layout[ 'global_tab_'.$trnsl_tab_id ] ) );
+		$this->assertFalse( isset( $default_layout[ 'global_tab_'.$tab_id ] ) );
+
+		$this->sitepress->switch_lang( $this->default_language );
+		set_current_screen( $current_screen_buff );
+	}
+
+	/**
+	 * @test
+	 */
 	public function custom_box_html_data() {
 		$title   = random_string();
 		$heading = random_string();

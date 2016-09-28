@@ -63,6 +63,8 @@ class WCML_Tab_Manager {
 			add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_custom_tabs_to_translation_package' ), 10, 2 );
 			add_action( 'wpml_translation_job_saved',   array( $this, 'save_custom_tabs_translation' ), 10, 3 );
 
+		}else{
+			add_filter( 'option_wc_tab_manager_default_layout', array( $this, 'filter_default_layout' ) );
 		}
 
 	}
@@ -631,5 +633,25 @@ class WCML_Tab_Manager {
 	 */
 	function wc_tab_manager_tab_id( $tab_id ) {
 		return apply_filters( 'wpml_object_id', $tab_id, 'wc_product_tab', true );
+	}
+
+	public function filter_default_layout( $default_tabs ){
+
+		if( is_array( $default_tabs ) ){
+			foreach( $default_tabs as $tab_key => $default_tab ){
+				if( substr( $tab_key, 0, 10 ) == 'global_tab' ){
+					$trnsl_tab_id = apply_filters( 'translate_object_id', $default_tab[ 'id' ], 'wc_product_tab', true, $this->sitepress->get_current_language() );
+
+					if( $trnsl_tab_id != $default_tab[ 'id' ] ){
+						$default_tabs[ 'global_tab_'.$trnsl_tab_id ] = $default_tab;
+						$default_tabs[ 'global_tab_'.$trnsl_tab_id ][ 'id' ] = $trnsl_tab_id;
+						$default_tabs[ 'global_tab_'.$trnsl_tab_id ][ 'name' ] = get_post( $trnsl_tab_id )->post_name;
+						unset( $default_tabs[ $tab_key ] );
+					}
+				}
+			}
+		}
+
+		return $default_tabs;
 	}
 }
