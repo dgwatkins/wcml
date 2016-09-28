@@ -261,21 +261,29 @@ class WCML_Admin_Menus{
     public static function add_menu_warning(){
         global $submenu, $menu;
 
-        if ( empty( self::$woocommerce_wpml->settings['set_up_wizard_run'] ) ||
+        if (
+            class_exists( 'woocommerce' ) &&
             (
-                empty( self::$woocommerce_wpml->settings['set_up_wizard_run'] ) &&
-                self::$woocommerce_wpml->settings['set_up_wizard_splash']
+                empty( self::$woocommerce_wpml->settings['set_up_wizard_run'] ) ||
+                (
+                    empty( self::$woocommerce_wpml->settings['set_up_wizard_run'] ) &&
+                    self::$woocommerce_wpml->settings['set_up_wizard_splash']
+                )
             )
         ) {
-            foreach ($submenu['woocommerce'] as $key => $menu_item) {
-                if ($menu_item[0] == 'WooCommerce Multilingual') {
-                    $submenu['woocommerce'][$key][0] .= '<span class="wcml-menu-warn"><i class="otgs-ico-warning"></i></span>';
+            if( isset( $submenu[ 'woocommerce' ] ) ){
+                foreach( $submenu[ 'woocommerce' ] as $key => $menu_item ) {
+                    if ( $menu_item[ 0 ] == __( 'WooCommerce Multilingual', 'woocommerce-multilingual' ) ) {
+                        $submenu[ 'woocommerce' ][ $key ][ 0 ] .= '<span class="wcml-menu-warn"><i class="otgs-ico-warning"></i></span>';
+                        break;
+                    }
                 }
             }
 
-            foreach ($menu as $key => $menu_item) {
-                if ($menu_item[0] == 'WooCommerce') {
-                    $menu[$key][0] .= '<span class="wcml-menu-warn"><i class="otgs-ico-warning"></i></span>';
+            foreach( $menu as $key => $menu_item ) {
+                if ( $menu_item[ 0 ] == __( 'WooCommerce', 'woocommerce' ) ) {
+                    $menu[ $key ][ 0 ] .= '<span class="wcml-menu-warn"><i class="otgs-ico-warning"></i></span>';
+                    break;
                 }
             }
         }
