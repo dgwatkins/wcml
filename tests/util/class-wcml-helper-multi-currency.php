@@ -40,7 +40,7 @@ class WCML_Helper_Multi_Currency {
 
         );
 
-        foreach( $options as $key => $value ){
+        foreach( $defaults as $key => $value ){
             if( !isset( $options[$key]) ){
                 $options[ $key ] = $defaults[ $key ];
             }

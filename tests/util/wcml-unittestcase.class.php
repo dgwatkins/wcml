@@ -4,6 +4,7 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 
 	public $sitepress;
 	public $woocommerce_wpml;
+	public $woocommerce;
 
 	public $wpdb;
 
@@ -14,7 +15,7 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 	function setUp() {
 		parent::setUp();
 
-		global $woocommerce_wpml, $sitepress, $wpdb;
+		global $woocommerce_wpml, $sitepress, $wpdb, $woocommerce;
 
 		parent::setUp();
 		$this->clear_db();
@@ -23,6 +24,7 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 		$this->sitepress 		=& $sitepress;
 		$this->woocommerce_wpml	=& $woocommerce_wpml;
 		$this->wpdb				=& $wpdb;
+		$this->woocommerce		=& $woocommerce;
 		$this->wcml_helper = new WCML_Helper( );
 		$this->wcml_helper->init( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
 		require_once WC_PATH . '/woocommerce.php';
