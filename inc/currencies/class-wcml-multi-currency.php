@@ -70,9 +70,8 @@ class WCML_Multi_Currency{
 
         $this->init_currencies();
 
-        if( !is_admin() ){
-            $this->prices   = new WCML_Multi_Currency_Prices( $this );
-        }
+        $this->prices   = new WCML_Multi_Currency_Prices( $this );
+
         if( $this->_load_filters()) {
             $this->coupons  = new WCML_Multi_Currency_Coupons();
             $this->shipping = new WCML_Multi_Currency_Shipping( $this );

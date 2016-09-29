@@ -220,4 +220,17 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
 	}
 
+	public function test_save_order_currency_for_filter(){
+
+		//add order post and set currency for it
+		$order_id = wpml_test_insert_post( $this->sitepress->get_default_language(), 'shop_order', false, rand_str() );
+		add_post_meta( $order_id, '_order_currency', $this->settings[ 'default_currencies' ][ $this->sitepress->get_default_language() ] );
+
+		$_GET[ 'post_type' ] = 'shop_order';
+		$order_currency = get_post_meta( $order_id, '_order_currency',true );
+
+		$this->assertEquals( $order_currency, $this->multi_currency->prices->get_admin_order_currency_code() );
+
+	}
+
 }
