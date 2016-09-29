@@ -119,7 +119,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
                     'style'           => __('Currency switcher style', 'woocommerce-multilingual'),
                     'order'           => __( 'Currency order', 'woocommerce-multilingual' ),
                     'parameters'      => __( 'Available parameters', 'woocommerce-multilingual' ),
-                    'parameters_list' => '%code%, %symbol%, %name, %subtotal%',
+                    'parameters_list' => '%code%, %symbol%, %name%, %subtotal%',
                     'template'        => __( 'Template for currency switcher', 'woocommerce-multilingual' ),
                     'visibility'      => __('Visibility', 'woocommerce-multilingual')
                 ),
