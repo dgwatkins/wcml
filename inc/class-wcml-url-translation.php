@@ -311,16 +311,25 @@ class WCML_Url_Translation {
             $taxonomies = array(
                 'product_cat' => array(
                     'base'              => 'category_base',
-                    'base_translated'   => _x( 'product-category', 'slug', 'woocommerce' ),
+                    'base_translated'   => apply_filters(
+					                        'wpml_translate_single_string',
+						                    'product-category',
+						                    $this->url_strings_context(),
+						                    $this->url_string_name( 'product_cat' )
+                                        ),
                     'default'           => $this->default_product_category_base
                 ),
                 'product_tag' => array(
                     'base'              => 'tag_base',
-                    'base_translated'   => _x( 'product-tag', 'slug', 'woocommerce' ),
+                    'base_translated'   => apply_filters(
+						                    'wpml_translate_single_string',
+						                    'product-tag',
+						                    $this->url_strings_context(),
+						                    $this->url_string_name( 'product_tag' )
+					                    ),
                     'default'           => $this->default_product_tag_base
                 ),
             );
-
             add_filter( 'gettext_with_context', array( $woocommerce_wpml->strings, 'category_base_in_strings_language' ), 99, 3 );
             foreach ( $taxonomies as $taxonomy => $taxonomy_details ) {
 

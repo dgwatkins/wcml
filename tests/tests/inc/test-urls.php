@@ -125,7 +125,7 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 
 		$this->assertEquals( 'produkt-kategorie', $string_translations['de']['value'] );
 		$this->assertEquals( 10, $string_translations['de']['status'] );
-		$this->assertEquals( 'producto-categoria', $string_translations['es']['value'] );
+		$this->assertEquals( 'categoria-producto', $string_translations['es']['value'] );
 		$this->assertEquals( 10, $string_translations['es']['status'] );
 		$this->assertEquals( 'categorie-produit', $string_translations['fr']['value'] );
 		$this->assertEquals( 10, $string_translations['fr']['status'] );
@@ -172,6 +172,7 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 
 		$this->assertTrue( !isset( $rewrite['categorie-produit/(.+?)/?$'] ) );
 		$this->assertTrue( isset( $rewrite['product-category/(.+?)/?$'] ) );
+
 		$this->assertTrue( !isset( $rewrite['etiquette-produit/(.+?)/?$'] ) );
 		$this->assertTrue( isset( $rewrite['product-tag/(.+?)/?$'] ) );
 
