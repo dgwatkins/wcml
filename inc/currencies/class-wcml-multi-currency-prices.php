@@ -24,8 +24,9 @@ class WCML_Multi_Currency_Prices{
             // Currency and Amount filters
             add_filter('woocommerce_currency', array($this, 'currency_filter'));
 
-            add_filter('wcml_price_currency', array($this, 'price_currency_filter'));      // WCML filters
-            add_filter('wcml_raw_price_amount', array($this, 'raw_price_filter'), 10, 2);  // WCML filters
+        add_filter( 'wcml_price_currency', array($this, 'price_currency_filter') );      // WCML filters
+        add_filter( 'wcml_raw_price_amount', array($this, 'raw_price_filter'), 10, 2 );  // WCML filters
+        add_filter( 'wcml_product_price_by_currency', array($this, 'get_product_price_in_currency'), 10, 2 );  // WCML filters
 
             add_filter('get_post_metadata', array($this, 'product_price_filter'), 10, 4);
             add_filter('get_post_metadata', array($this, 'variation_prices_filter'), 12, 4); // second
@@ -103,6 +104,29 @@ class WCML_Multi_Currency_Prices{
             $price = $this->convert_price_amount( $price, $currency );
             $price = $this->apply_rounding_rules( $price, $currency );
         }
+
+        return $price;
+
+    }
+
+    public function get_product_price_in_currency( $product_id, $currency ){
+
+        remove_filter( 'get_post_metadata', array( $this->woocommerce_wpml->multi_currency->prices, 'product_price_filter' ), 10, 4 );
+
+        $manual_prices = $this->multi_currency->custom_prices->get_product_custom_prices( $product_id, $currency );
+
+        if( $manual_prices && !empty( $manual_prices[ '_price' ] ) ){
+
+            $price = $manual_prices[ '_price' ];
+
+        }else{
+
+            $product = wc_get_product( $product_id );
+            $price = $this->raw_price_filter( $product->get_price(), $currency );
+
+        }
+
+        add_filter( 'get_post_metadata', array( $this->woocommerce_wpml->multi_currency->prices, 'product_price_filter' ), 10, 4 );
 
         return $price;
 
