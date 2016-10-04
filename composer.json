@@ -11,7 +11,6 @@
     }
   ],
   "config": {
-    "vendor-dir": "vendor/"
   },
   "repositories": [
     {
@@ -39,10 +38,5 @@
       "inc",
       "compatibility"
     ]
-  },
-  "extra" : {
-    "installer-paths" : {
-      "embedded/{$vendor}/{$name}/": ["type:wordpress-plugin"]
-    }
   }
 }
