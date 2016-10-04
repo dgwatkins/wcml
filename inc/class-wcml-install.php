@@ -47,6 +47,9 @@ class WCML_Install{
 
                 set_transient( '_wcml_activation_redirect', 1, 30 );
 
+                // Before the setup wizard redirects from plugins.php, allow WPML to scan the wpml-config.xml file
+                WPML_Config::load_config_run();
+
                 $woocommerce_wpml->settings['set_up'] = 1;
                 $woocommerce_wpml->update_settings();
 

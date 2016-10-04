@@ -53,7 +53,7 @@ class WCML_Setup {
             add_filter( 'wp_redirect', array($this, 'redirect_filters') );
         }
 
-        if( !$this->has_completed()){
+        if( !$this->has_completed() ){
             add_filter( 'admin_notices', array( $this, 'setup_wizard_notice') );
             add_action( 'admin_init', array( $this, 'skip_setup' ), 1 );
         }
