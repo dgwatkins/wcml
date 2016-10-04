@@ -76,6 +76,7 @@ class woocommerce_wpml {
         $this->xdomain_data = new WCML_xDomain_Data;
 
         add_action('init', array($this, 'init'),2);
+
     }
 
     /**
