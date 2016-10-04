@@ -24,9 +24,9 @@ include WCML_PLUGIN_PATH . '/inc/installer-loader.php';
 include WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
 
 if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
-    require WCML_PLUGIN_PATH . '/embedded/autoload.php';
+    require WCML_PLUGIN_PATH . '/vendor/autoload.php';
 } else {
-    require WCML_PLUGIN_PATH . '/embedded/autoload_52.php';
+    require WCML_PLUGIN_PATH . '/vendor/autoload_52.php';
 }
 
 // Load WooCommerce Multilingual when WPML is active

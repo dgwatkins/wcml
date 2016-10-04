@@ -11,7 +11,7 @@
     }
   ],
   "config": {
-    "vendor-dir": "embedded/"
+    "vendor-dir": "vendor/"
   },
   "repositories": [
     {
