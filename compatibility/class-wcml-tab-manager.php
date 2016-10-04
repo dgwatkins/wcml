@@ -314,7 +314,8 @@ class WCML_Tab_Manager {
 
 		$tabs_section = new WPML_Editor_UI_Field_Section( __( 'Product tabs', 'woocommerce-multilingual' ) );
 
-		$last_key = end( array_keys( $orig_prod_tabs ) );
+		$keys = array_keys( $orig_prod_tabs );
+		$last_key = end( $keys );
 		$divider = true;
 
 		foreach ( $orig_prod_tabs as $key => $prod_tab ) {
