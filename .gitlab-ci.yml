@@ -90,7 +90,7 @@ UnitTestJob:
 
   # Run WPML core unit tests install script
   - cd sitepress-multilingual-cms
-  - tests/install-wp-tests.sh wpml_core_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost
+  - tests/install-wp-tests.sh wpml_core_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost 4.6.1
   # No need to run unit tests for WPML Core or the other plugins for now
   #- phpunit
   #- cd ../wpml-translation-management
@@ -102,7 +102,7 @@ UnitTestJob:
 
   # Run WCML unit tests install script and unit tests
   - cd ../woocommerce-multilingual
-  - tests/install-wp-tests.sh wcml_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost
+  - tests/install-wp-tests.sh wcml_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost 4.6.1
   - phpunit
 
   # Run tests with WooCommerce 2.6.4

@@ -23,7 +23,7 @@ set -ex
 install_wp() {
 	mkdir -p $WP_CORE_DIR
 
-	local WC_VERSION_FOR_MO_FILES='2.6.2'
+	local WC_VERSION_FOR_MO_FILES='2.6.4'
 
 	if [ $WP_VERSION == 'latest' ]; then 
 		local ARCHIVE_NAME='latest'
@@ -66,13 +66,11 @@ install_test_suite() {
 	mkdir -p $WP_TESTS_DIR
 	cd $WP_TESTS_DIR
 	
-	if [ $WP_VERSION == 'latest' ]; then 
-		local BRANCH_NAME='trunk'
-	else
-		local BRANCH_NAME='tags/'$WP_VERSION
-	fi
-	
-	svn co --quiet http://develop.svn.wordpress.org/${BRANCH_NAME}/tests/phpunit/includes/
+	if [ $WP_VERSION == 'latest' ]; then
+	    svn co --quiet http://develop.svn.wordpress.org/trunk/tests/phpunit/includes/
+    else
+        svn co --quiet http://develop.svn.wordpress.org/tags/${WP_VERSION}/tests/phpunit/includes/
+    fi
 
 	sed $ioption "s:DIR_TESTDATA . '/languages': '$WP_CORE_LANG_DIR':" includes/bootstrap.php
 
