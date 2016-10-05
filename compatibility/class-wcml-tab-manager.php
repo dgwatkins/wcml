@@ -613,7 +613,7 @@ class WCML_Tab_Manager {
 	/**
 	 * @param $product_id
 	 *
-	 * @return mixed|void
+	 * @return array
 	 */
 	public function get_product_tabs( $product_id ) {
 
@@ -621,10 +621,10 @@ class WCML_Tab_Manager {
 
 		if ( 'yes' == $override_tab_layout ) {
 			// product defines its own tab layout?
-			$product_tabs = get_post_meta( $product_id, '_product_tabs', true );
+			$product_tabs = (array) get_post_meta( $product_id, '_product_tabs', true );
 		} else {
 			// otherwise, get the default layout if any
-			$product_tabs = get_option( 'wc_tab_manager_default_layout', false );
+			$product_tabs = (array) get_option( 'wc_tab_manager_default_layout', false );
 		}
 
 		return $product_tabs;
