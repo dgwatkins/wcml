@@ -106,8 +106,6 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 		$this->assertEquals( 10, $string_translations['es']['status'] );
 		$this->assertEquals( 'produit', $string_translations['fr']['value'] );
 		$this->assertEquals( 10, $string_translations['fr']['status'] );
-		$this->assertEquals( 'prodotto', $string_translations['it']['value'] );
-		$this->assertEquals( 10, $string_translations['it']['status'] );
 
 		// Product category base
 		$context = $this->url_translation->url_strings_context();
@@ -129,8 +127,6 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 		$this->assertEquals( 10, $string_translations['es']['status'] );
 		$this->assertEquals( 'categorie-produit', $string_translations['fr']['value'] );
 		$this->assertEquals( 10, $string_translations['fr']['status'] );
-		$this->assertEquals( 'categoria-prodotto', $string_translations['it']['value'] );
-		$this->assertEquals( 10, $string_translations['it']['status'] );
 
 		// Product tag base
 		$context = $this->url_translation->url_strings_context();
@@ -148,13 +144,10 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 
 		$this->assertEquals( 'produkt-schlagwort', $string_translations['de']['value'] );
 		$this->assertEquals( 10, $string_translations['de']['status'] );
-		$this->assertEquals( 'producto-etiqueta', $string_translations['es']['value'] );
+		$this->assertEquals( 'etiqueta-producto', $string_translations['es']['value'] );
 		$this->assertEquals( 10, $string_translations['es']['status'] );
 		$this->assertEquals( 'etiquette-produit', $string_translations['fr']['value'] );
 		$this->assertEquals( 10, $string_translations['fr']['status'] );
-		$this->assertEquals( 'tag-prodotto', $string_translations['it']['value'] );
-		$this->assertEquals( 10, $string_translations['it']['status'] );
-
 
 	}
 
