@@ -110,6 +110,10 @@ class WCML_Bookings {
             add_filter( 'get_post_metadata', array( $this, 'filter_wc_booking_cost' ), 10, 4 );
         }
 
+	    if( version_compare( ICL_SITEPRESS_VERSION, '3.6', '<' ) ){
+		    add_action( 'added_post_meta', array($this, 'maybe_fix_double_serialized_wc_booking_availability'), 10, 4);
+	    }
+
 
         $this->clear_transient_fields();
 
@@ -1683,61 +1687,68 @@ class WCML_Bookings {
     function save_person_translation($post_id, $data, $job ){
         $person_translations = array();
 
-        foreach($data as $value){
+	    $product = wc_get_product( $post_id );
 
-            if( $value['finished'] && strpos( $value['field_type'], 'wc_bookings:person:' ) === 0 ) {
-
-                $exp = explode( ':', $value['field_type'] );
-
-                $person_id  = $exp[2];
-                $field      = $exp[3];
-
-                $person_translations[$person_id][$field] = $value['data'];
-
-            }
-
-        }
-
-        if( $person_translations ){
-
-            foreach( $person_translations as $person_id => $pt ){
-
-                $person_trid = $this->sitepress->get_element_trid( $person_id, 'post_bookable_person');
+	    if( $product && $product->product_type == 'booking' ) {
 
 
-                $person_id_translated = apply_filters( 'translate_object_id', $person_id, 'bookable_person', false, $job->language_code );
+		    foreach ( $data as $value ) {
 
-                if( empty($person_id_translated) ) {
+			    if ( $value['finished'] && strpos( $value['field_type'], 'wc_bookings:person:' ) === 0 ) {
 
-                    $person_post = array(
+				    $exp = explode( ':', $value['field_type'] );
 
-                        'post_type' => 'bookable_person',
-                        'post_status' => 'publish',
-                        'post_title' => $pt['name'],
-                        'post_parent' => $post_id,
-                        'post_excerpt' => isset($pt['description']) ? $pt['description'] : ''
+				    $person_id = $exp[2];
+				    $field     = $exp[3];
 
-                    );
+				    $person_translations[ $person_id ][ $field ] = $value['data'];
 
-                    $person_id_translated = wp_insert_post( $person_post );
+			    }
 
-                    $this->sitepress->set_element_language_details( $person_id_translated, 'post_bookable_person', $person_trid, $job->language_code );
+		    }
 
-                } else {
+		    if ( $person_translations ) {
 
-                    $person_post = array(
-                        'ID'            => $person_id_translated,
-                        'post_title'    => $pt['name'],
-                        'post_excerpt'  => isset($pt['description']) ? $pt['description'] : ''
-                    );
+			    foreach ( $person_translations as $person_id => $pt ) {
 
-                    wp_update_post( $person_post );
+				    $person_trid = $this->sitepress->get_element_trid( $person_id, 'post_bookable_person' );
 
-                }
 
-            }
+				    $person_id_translated = apply_filters( 'translate_object_id', $person_id, 'bookable_person', false, $job->language_code );
 
-        }
+				    if ( empty( $person_id_translated ) ) {
+
+					    $person_post = array(
+
+						    'post_type'    => 'bookable_person',
+						    'post_status'  => 'publish',
+						    'post_title'   => $pt['name'],
+						    'post_parent'  => $post_id,
+						    'post_excerpt' => isset( $pt['description'] ) ? $pt['description'] : ''
+
+					    );
+
+					    $person_id_translated = wp_insert_post( $person_post );
+
+					    $this->sitepress->set_element_language_details( $person_id_translated, 'post_bookable_person', $person_trid, $job->language_code );
+
+				    } else {
+
+					    $person_post = array(
+						    'ID'           => $person_id_translated,
+						    'post_title'   => $pt['name'],
+						    'post_excerpt' => isset( $pt['description'] ) ? $pt['description'] : ''
+					    );
+
+					    wp_update_post( $person_post );
+
+				    }
+
+			    }
+
+		    }
+
+	    }
 
     }
 
@@ -1774,71 +1785,77 @@ class WCML_Bookings {
     function save_resource_translation( $post_id, $data, $job ){
         $resource_translations = array();
 
-        foreach($data as $value){
+	    $product = wc_get_product( $post_id );
 
-            if( $value['finished'] && strpos( $value['field_type'], 'wc_bookings:resource:' ) === 0 ) {
+	    if( $product && $product->product_type == 'booking' ) {
 
-                $exp = explode( ':', $value['field_type'] );
+		    foreach ( $data as $value ) {
 
-                $resource_id  = $exp[2];
-                $field        = $exp[3];
+			    if ( $value['finished'] && strpos( $value['field_type'], 'wc_bookings:resource:' ) === 0 ) {
 
-                $resource_translations[$resource_id][$field] = $value['data'];
+				    $exp = explode( ':', $value['field_type'] );
 
-            }
+				    $resource_id = $exp[2];
+				    $field       = $exp[3];
 
-        }
+				    $resource_translations[ $resource_id ][ $field ] = $value['data'];
 
-        if( $resource_translations ){
+			    }
 
-            foreach( $resource_translations as $resource_id => $rt ){
+		    }
 
-                $resource_trid = $this->sitepress->get_element_trid( $resource_id, 'post_bookable_resource');
+		    if ( $resource_translations ) {
 
-                $resource_id_translated = apply_filters( 'translate_object_id', $resource_id, 'bookable_resource', false, $job->language_code );
+			    foreach ( $resource_translations as $resource_id => $rt ) {
 
-                if( empty($resource_id_translated) ) {
+				    $resource_trid = $this->sitepress->get_element_trid( $resource_id, 'post_bookable_resource' );
 
-                    $resource_post = array(
+				    $resource_id_translated = apply_filters( 'translate_object_id', $resource_id, 'bookable_resource', false, $job->language_code );
 
-                        'post_type' => 'bookable_resource',
-                        'post_status' => 'publish',
-                        'post_title' => $rt['name'],
-                        'post_parent' => $post_id
-                    );
+				    if ( empty( $resource_id_translated ) ) {
 
-                    $resource_id_translated = wp_insert_post( $resource_post );
+					    $resource_post = array(
 
-                    $this->sitepress->set_element_language_details( $resource_id_translated, 'post_bookable_resource', $resource_trid, $job->language_code );
+						    'post_type'   => 'bookable_resource',
+						    'post_status' => 'publish',
+						    'post_title'  => $rt['name'],
+						    'post_parent' => $post_id
+					    );
 
-                    $sort_order = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT sort_order FROM {$this->wpdb->prefix}wc_booking_relationships WHERE resource_id=%d", $resource_id ) );
-                    $relationship = array(
-                        'product_id'    => $post_id,
-                        'resource_id'   => $resource_id_translated,
-                        'sort_order'    => $sort_order
-                    );
-                    $this->wpdb->insert( $this->wpdb->prefix . 'wc_booking_relationships',  $relationship);
+					    $resource_id_translated = wp_insert_post( $resource_post );
 
-                } else {
+					    $this->sitepress->set_element_language_details( $resource_id_translated, 'post_bookable_resource', $resource_trid, $job->language_code );
 
-                    $resource_post = array(
-                        'ID'            => $resource_id_translated,
-                        'post_title'    => $rt['name']
-                    );
+					    $sort_order   = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT sort_order FROM {$this->wpdb->prefix}wc_booking_relationships WHERE resource_id=%d", $resource_id ) );
+					    $relationship = array(
+						    'product_id'  => $post_id,
+						    'resource_id' => $resource_id_translated,
+						    'sort_order'  => $sort_order
+					    );
+					    $this->wpdb->insert( $this->wpdb->prefix . 'wc_booking_relationships', $relationship );
 
-                    wp_update_post( $resource_post );
+				    } else {
 
-                    $sort_order = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT sort_order FROM {$this->wpdb->prefix}wc_booking_relationships WHERE resource_id=%d", $resource_id ) );
-                    $this->wpdb->update( $this->wpdb->prefix . 'wc_booking_relationships', array( 'sort_order' => $sort_order ),
-                        array ( 'product_id' => $post_id, 'resource_id' => $resource_id_translated) );
+					    $resource_post = array(
+						    'ID'         => $resource_id_translated,
+						    'post_title' => $rt['name']
+					    );
+
+					    wp_update_post( $resource_post );
+
+					    $sort_order = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT sort_order FROM {$this->wpdb->prefix}wc_booking_relationships WHERE resource_id=%d", $resource_id ) );
+					    $this->wpdb->update( $this->wpdb->prefix . 'wc_booking_relationships', array( 'sort_order' => $sort_order ),
+						    array( 'product_id' => $post_id, 'resource_id' => $resource_id_translated ) );
 
 
-                }
+				    }
 
 
-            }
+			    }
 
-        }
+		    }
+
+	    }
 
     }
 
@@ -2062,4 +2079,27 @@ class WCML_Bookings {
 
 		return true;
 	}
+
+	public function maybe_fix_double_serialized_wc_booking_availability( $mid, $object_id, $meta_key, $_meta_value ) {
+		global $wpdb;
+
+		if ( version_compare( ICL_SITEPRESS_VERSION, '3.6', '<' ) ) {
+
+			$meta_keys_to_fix = array(
+				'_wc_booking_availability',
+				'_wc_booking_pricing'
+			);
+
+			if( in_array( $meta_key, $meta_keys_to_fix ) ) {
+
+				if ( is_string( $_meta_value ) ) {
+					$wpdb->update( $wpdb->postmeta, array( 'meta_value' => $_meta_value ), array( 'meta_id' => $mid ) );
+				}
+
+			}
+
+		}
+
+	}
+
 }
