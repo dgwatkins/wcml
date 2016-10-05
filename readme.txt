@@ -158,6 +158,8 @@ WooCommerce Multilingual is compatible with all major WooCommerce extensions. We
 * Bug fix: in some cases a variation description field showed up twice in the Translation Editor
 * Bug fix: orders showed the attributes slugs instead of names
 * Fixed a compatibility issue with WooCommerce Bookings: custom prices were not displayed correctly in the second currency
+* Added fixed to the compatibility class for WooCommerce Tab Manager
+* Fixed a compatibility problem with the recent version W3TC related to the currency switcher
 
 
 = 3.8.6 =
