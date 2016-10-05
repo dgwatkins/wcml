@@ -59,6 +59,7 @@ class WCML_Tab_Manager {
 			$this->tp = new WPML_Element_Translation_Package;
 
 			add_action( 'save_post', array( $this, 'force_set_language_information_on_product_tabs' ), 10, 2 );
+			add_action( 'save_post', array( $this, 'sync_product_tabs' ), 10, 2 );
 
 			add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_custom_tabs_to_translation_package' ), 10, 2 );
 			add_action( 'wpml_translation_job_saved',   array( $this, 'save_custom_tabs_translation' ), 10, 3 );
@@ -312,9 +313,11 @@ class WCML_Tab_Manager {
 		}
 
 		$tabs_section = new WPML_Editor_UI_Field_Section( __( 'Product tabs', 'woocommerce-multilingual' ) );
-		end( $orig_prod_tabs );
-		$last_key = key( $orig_prod_tabs );
+
+		$keys = array_keys( $orig_prod_tabs );
+		$last_key = end( $keys );
 		$divider = true;
+
 		foreach ( $orig_prod_tabs as $key => $prod_tab ) {
 			if ( $key === $last_key ) {
 				$divider = false;
@@ -373,6 +376,7 @@ class WCML_Tab_Manager {
 
 		if ( $translation ) {
 			$tr_prod_tabs = $this->get_product_tabs( $translation->ID );
+
 
 			if ( ! is_array( $tr_prod_tabs ) ) {
 				return $data; // __('Please update original product','woocommerce-multilingual');
@@ -624,6 +628,52 @@ class WCML_Tab_Manager {
 		}
 
 		return $product_tabs;
+	}
+
+	public function sync_product_tabs( $post_id, $post ){
+
+		$override_tab_layout = get_post_meta( $post_id, '_override_tab_layout', true );
+
+		if ( $override_tab_layout && $this->woocommerce_wpml->products->is_original_product( $post_id ) ){
+
+			$original_product_tabs = $this->get_product_tabs( $post_id );
+
+			$trid = $this->sitepress->get_element_trid( $post_id, 'post_'  . $post->post_type );
+			$translations = $this->sitepress->get_element_translations( $trid, 'post_'  . $post->post_type, true );
+
+
+
+			foreach( $translations as $language => $translation ){
+
+				if( empty( $translation->original ) ){
+
+					$translated_product_tabs = $this->get_product_tabs( $translation->element_id );
+
+					// sync tab positions for product tabs
+					foreach( $original_product_tabs as $tab ){
+						if( $tab['type'] == 'product' ){
+							$translated_tab_product_id = apply_filters( 'translate_object_id', $tab['id'], 'wc_product_tab', false, $language );
+							if( $translated_tab_product_id && is_array( $translated_product_tabs['product_tab_' . $translated_tab_product_id ] ) ){
+								$translated_product_tabs['product_tab_' . $translated_tab_product_id ]['position'] = $tab['position'];
+							}
+						}
+					}
+
+					// sync translated core tabs with original tabs
+					foreach( $translated_product_tabs as $tab_key => $tab ){
+						if( $tab['type'] === 'core' && !isset( $original_product_tabs[$tab_key] ) ){
+							unset( $translated_product_tabs[$tab_key] );
+						}
+					}
+
+					update_post_meta( $translation->element_id, '_product_tabs', $translated_product_tabs );
+
+				}
+
+			}
+
+		}
+
 	}
 
 	/**
