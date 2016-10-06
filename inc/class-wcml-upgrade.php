@@ -14,8 +14,8 @@ class WCML_Upgrade{
         '3.7',
         '3.7.3',
         '3.7.11',
-        '3.8'
-
+        '3.8',
+        '3.9'
     );
     
     function __construct(){
@@ -461,5 +461,26 @@ class WCML_Upgrade{
         update_option('_wcml_settings', $wcml_settings);
 
     }
+
+    function upgrade_3_9(){
+        global $wpdb;
+
+        $meta_keys_to_fix = array(
+            '_price',
+            '_regular_price',
+            '_sale_price',
+            '_sku'
+        );
+
+        $sql = "
+            UPDATE {$wpdb->postmeta} 
+            SET meta_value = '' 
+            WHERE meta_key IN('" . join("','", $meta_keys_to_fix) . "') 
+                AND meta_value IS NULL";
+
+        $wpdb->query( $sql );
+
+    }
+
 
 }
