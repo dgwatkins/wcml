@@ -164,6 +164,7 @@ class WCML_Bookings {
 			add_filter( 'get_post_metadata', array( $this, 'filter_wc_booking_cost' ), 10, 4 );
 		}
 
+		//@TODO review after WPML 3.6
 		if ( version_compare( ICL_SITEPRESS_VERSION, '3.6', '<' ) ) {
 			add_action( 'added_post_meta', array(
 				$this,
