@@ -166,7 +166,7 @@ class Test_WCML_Tab_Manager extends WCML_UnitTestCase {
 
 		//test non-ascii symbols in product tab name
 		$data = array(
-			md5( 'tab_' . $tab_data['position'] . '_title' )   => 'Тестовий таб',
+			md5( 'tab_' . $tab_data['position'] . '_title' )   => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ',
 			md5( 'tab_' . $tab_data['position'] . '_heading' ) => random_string(),
 		);
 		// Perform tab sync.
@@ -406,11 +406,13 @@ class Test_WCML_Tab_Manager extends WCML_UnitTestCase {
 	 */
 	public function get_product_tabs() {
 		$tab_id = wpml_test_insert_post( $this->default_language, 'wc_product_tab', false, random_string() );
-		update_option( 'wc_tab_manager_default_layout', 'test_value' );
-		$this->assertEquals( 'test_value', $this->get_test_subject()->get_product_tabs( $tab_id ) );
+
+		update_option( 'wc_tab_manager_default_layout', array( 'test_value' ) );
+		$this->assertEquals( array( 'test_value' ), $this->get_test_subject()->get_product_tabs( $tab_id ) );
+
 		update_post_meta( $tab_id, '_override_tab_layout', 'yes' );
-		update_post_meta( $tab_id, '_product_tabs', 'another_value' );
-		$this->assertEquals( 'another_value', $this->get_test_subject()->get_product_tabs( $tab_id ) );
+		update_post_meta( $tab_id, '_product_tabs', array('another_value') );
+		$this->assertEquals( array('another_value'), $this->get_test_subject()->get_product_tabs( $tab_id ) );
 	}
 
 	/**
