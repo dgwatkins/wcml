@@ -15,26 +15,8 @@ class Test_WCML_Orders extends WCML_UnitTestCase {
 
 	function test_get_order_items(){
 
-		$order_data = array(
-			'status'        => apply_filters( 'woocommerce_default_order_status', 'pending' ),
-			'customer_id'   => get_current_user_id(),
-			'customer_note' => '',
-			'cart_hash'     => md5( json_encode( 'test order' ) ),
-			'created_via'   => 'admin'
-		);
-
-		$order = wc_create_order( $order_data );
-
-		$order_id = method_exists( 'WC_Order', 'get_id' ) ? $order->get_id() : $order->id;
-		$item_id = wc_add_order_item( $order_id, array(
-			'order_item_name' 		=> 'product 1',
-			'order_item_type' 		=> 'line_item'
-		) );
-
-		wc_add_order_item_meta( $item_id, '_qty', 1 );
-		wc_add_order_item_meta( $item_id, '_product_id', $this->orig_product_id );
-		wc_add_order_item_meta( $item_id, '_line_subtotal', 10 );
-		wc_add_order_item_meta( $item_id, 'wpml_language', 'en' );
+		$order = WCML_Helper_Orders::create_order( array( 'product_id' => $this->orig_product_id ) );
+		$order_id = WCML_Helper_Orders::get_order_id( $order );
 
 		$_GET['post'] = $order_id;
 

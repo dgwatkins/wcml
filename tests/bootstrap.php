@@ -83,4 +83,5 @@ require WCML_CORE_TM_PATH . '/tests/util/wcml-unittestcase.class.php';
 require WCML_CORE_TM_PATH . '/tests/util/class-wcml-helper.php';
 require WCML_CORE_TM_PATH . '/tests/util/class-wcml-helper-coupon.php';
 require WCML_CORE_TM_PATH . '/tests/util/class-wcml-helper-multi-currency.php';
+require WCML_CORE_TM_PATH . '/tests/util/class-wcml-helper-orders.php';
 require WCML_CORE_TM_PATH . '/tests/util/class-wcml-helper-shipping.php';
