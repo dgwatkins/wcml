@@ -179,4 +179,29 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 
 		$this->assertEquals( get_term( $default_cat->term_id, 'product_cat' )->count, get_term( $translated_cat->term_id, 'product_cat' )->count );
 	}
+
+	public function test_sync_product_stocks(){
+
+		$orig_product_id = $this->test_data->orig_product->id;
+		$es_product_id = $this->test_data->es_product->id;
+
+		update_post_meta( $orig_product_id, '_manage_stock', 'yes' );
+		$orig_product = wc_get_product( $orig_product_id );
+		$orig_product->set_stock( 99 );
+		$orig_product->set_stock_status( 'instock' );
+
+		update_post_meta( $es_product_id, '_manage_stock', 'yes' );
+		$es_product = wc_get_product( $es_product_id );
+		$es_product->set_stock( 100 );
+		$es_product->set_stock_status( 'instock' );
+
+		$order = WCML_Helper_Orders::create_order( array( 'product_id' => $orig_product_id ) );
+		$this->woocommerce_wpml->sync_product_data->sync_product_stocks( $order, 'reduce' );
+
+		$this->assertEquals( 99, $orig_product->get_stock_quantity() );
+
+		$es_product = wc_get_product( $es_product_id );
+		$this->assertEquals( 99, $es_product->get_stock_quantity() );
+	}
+
 }
