@@ -142,6 +142,11 @@ WooCommerce Multilingual is compatible with all major WooCommerce extensions. We
 
 == Changelog ==
 
+= 3.9.1 =
+* Fixed a bug related to the stock information not syncing correctly across translations
+* Bug fix: and incorrect value for products out of stock was show on the dashboard
+* Bug fix: the link to edit custom prices was not working for variations
+
 = 3.9 =
 * Added compatibility with WooCommerce 2.7 (orders, coupons etc...)
 * Included the custom taxonomies associated with products in the WooCommerce Multilingual menu
