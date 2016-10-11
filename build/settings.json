@@ -1,0 +1,93 @@
+{
+  "skip_tasks": false,
+  "debug_mode": false,
+  "temp_dir": "/tmp",
+  "project": {
+    "namespace": "wcml",
+    "projectSlug": "woocommerce-multilingual",
+    "productId": "woocommerce-multilingual",
+    "develop_branch": "develop",
+    "master_branch": "master"
+  },
+  "gitlab": {
+    "apiUrl": "https://git.onthegosystems.com/api/v3/",
+    "apiToken": "EQzXJYcKfAqK9m8T6MVb"
+  },
+  "mysql": {
+    "ci": {
+      "host": "mysql",
+      "name": "wp_test_db",
+      "user": "root",
+      "password": "mysql_strong_password"
+    },
+    "local": {
+      "host": "127.0.0.1",
+      "name": "wp_test_db",
+      "user": "root",
+      "password": ""
+    }
+  },
+  "phpunit": {
+    "tests": {
+      "path": "tests/phpunit",
+      "legacy_path": "./",
+      "wp_unit_tests_version": "4.6.1",
+      "wp_version": "4.6.1"
+    }
+  },
+  "blackfire": {
+    "wordpress_path": "/home/bf/public_html/wordpress",
+    "phar_url": "http://get.blackfire.io/blackfire-player.phar",
+    "user": "6cd80405-74a9-4899-8b7b-0319d5f4ff16:ec67903ad9be1de594caa725e6e1cb42802d4c64c88c808bf38c65f329e2c823",
+    "webhook": "https://blackfire.io/api/v1/build/env/f184094e-7612-4a6e-b612-c63048bca1e4/webhook",
+    "endpoint": "http://bf.wpml.org",
+    "title": "Gitlab CI"
+  },
+  "dependencies": [
+    {
+      "server": "ssh://git@git.onthegosystems.com:10022",
+      "namespace": "wcml",
+      "project_slug": "woocommerce-multilingual",
+      "db": "tests_wcml_tm"
+    },
+    {
+      "server": "ssh://git@git.onthegosystems.com:10022",
+      "namespace": "wcml",
+      "project_slug": "woocommerce-bookings-mirror",
+      "db": "tests_wpml_core",
+      "target_dir_name": "woocommerce-bookings",
+      "clone_only": true
+    },
+    {
+      "server": "https://github.com",
+      "namespace": "woothemes",
+      "project_slug": "woocommerce",
+      "db": "tests_woocommerce_core",
+      "clone_only": true
+    },
+    {
+      "server": "ssh://git@git.onthegosystems.com:10022",
+      "namespace": "wpml",
+      "project_slug": "wpml-translation-management",
+      "db": "tests_wpml_tm"
+    },
+    {
+      "server": "ssh://git@git.onthegosystems.com:10022",
+      "namespace": "wpml",
+      "project_slug": "wpml-string-translation",
+      "db": "tests_wpml_st"
+    },
+    {
+      "server": "ssh://git@git.onthegosystems.com:10022",
+      "namespace": "wpml",
+      "project_slug": "wpml-media-translation",
+      "db": "tests_wpml_media"
+    },
+    {
+      "server": "ssh://git@git.onthegosystems.com:10022",
+      "namespace": "wpml",
+      "project_slug": "sitepress-multilingual-cms",
+      "db": "tests_wpml_core"
+    }
+  ]
+}
