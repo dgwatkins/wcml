@@ -800,12 +800,17 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function save_person_translation() {
-		$name = random_string();
-		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
-		$bookable_person = wpml_test_insert_post( $this->default_language, 'bookable_person', false, random_string() );
-		$bookable_person1 = wpml_test_insert_post( $this->default_language, 'bookable_person', false, random_string() );
+		$name                = random_string();
+		$product             = $this->create_bookable_product( $this->default_language );
+		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
+		$tr_product             = $this->create_bookable_product( $this->second_language, $trid );
+
+		$bookable_person     = wpml_test_insert_post( $this->default_language, 'bookable_person', false, random_string() );
+
+		$bookable_person1    = wpml_test_insert_post( $this->default_language, 'bookable_person', false, random_string() );
 		$trid = $this->sitepress->get_element_trid( $bookable_person1, 'post_bookable_person' );
 		$tr_bookable_person1 = wpml_test_insert_post( $this->second_language, 'bookable_person', $trid, random_string() );
+
 		$data = array(
 			array(
 				'finished'   => true,
@@ -831,12 +836,19 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$job = new stdClass();
 		$job->language_code = $this->second_language;
 		$bookings = $this->get_wcml_booking_object();
-		$bookings->save_person_translation( $product, $data, $job );
+
+		// No idea why, but without these 2 lines `translate_object_id` filter returns original post ID, even if 3rd arugment is false.
+		remove_all_filters( 'translate_object_id' );
+		add_filter( 'translate_object_id', 'icl_object_id', 10, 4 );
+
+		$bookings->save_person_translation( $tr_product, $data, $job );
 		wp_cache_init();
+
+		// After save_person_translation is called translation will have name specified in job data above.
 		$this->assertEquals( $name, get_the_title( $tr_bookable_person1 ) );
 
 		$person_id_translated = apply_filters( 'translate_object_id', $bookable_person, 'bookable_person', false, $this->second_language );
-		$this->assertEquals( $product, wp_get_post_parent_id( $person_id_translated ) );
+		$this->assertEquals( $tr_product, wp_get_post_parent_id( $person_id_translated ) );
 		$this->assertEquals( $name, get_the_title( $person_id_translated ) );
 	}
 
