@@ -800,8 +800,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function save_person_translation() {
-		//$name = random_string();
-		$name = 'Mitica';
+		$name = random_string();
 		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
 		$bookable_person = wpml_test_insert_post( $this->default_language, 'bookable_person', false, random_string() );
 		$bookable_person1 = wpml_test_insert_post( $this->default_language, 'bookable_person', false, random_string() );
