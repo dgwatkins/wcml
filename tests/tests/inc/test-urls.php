@@ -144,7 +144,7 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 
 		$this->assertEquals( 'produkt-schlagwort', $string_translations['de']['value'] );
 		$this->assertEquals( 10, $string_translations['de']['status'] );
-		$this->assertEquals( 'producto-etiqueta', $string_translations['es']['value'] );
+		$this->assertEquals( 'etiqueta-producto', $string_translations['es']['value'] );
 		$this->assertEquals( 10, $string_translations['es']['status'] );
 		$this->assertEquals( 'etiquette-produit', $string_translations['fr']['value'] );
 		$this->assertEquals( 10, $string_translations['fr']['status'] );
