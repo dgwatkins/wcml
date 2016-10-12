@@ -48,7 +48,10 @@
       "server": "ssh://git@git.onthegosystems.com:10022",
       "namespace": "wcml",
       "project_slug": "woocommerce-multilingual",
-      "db": "tests_wcml_tm"
+      "db": "tests_wcml_tm",
+      "scripts": {
+        "after_wp_install": "tests/download-mo-files.sh"
+      }
     },
     {
       "server": "ssh://git@git.onthegosystems.com:10022",

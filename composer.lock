@@ -802,7 +802,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "8976d81d28655f40cba49557c7f8f4f44308b791"
+                "reference": "2a874e98f5cfa4505851410cc652891081585ca2"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -842,7 +842,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2016-10-11 19:30:12"
+            "time": "2016-10-12 12:40:26"
         },
         {
             "name": "otgs/unit-tests-framework",

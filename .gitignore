@@ -60,8 +60,7 @@ build.xml
 
 ## Files
 
-!/build/*.sh
-!/build/ci/*.sh
+!/tests/*.sh
 
 !tests/install-wp-tests.sh
 
