@@ -246,6 +246,7 @@ class Test_WCML_Product_Addons extends WCML_UnitTestCase {
 	 */
 	public function addons_update() {
 		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
+		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
 		$name = random_string();
 		$description = random_string();
 		$label = random_string();
@@ -283,10 +284,11 @@ class Test_WCML_Product_Addons extends WCML_UnitTestCase {
 		);
 
 		update_post_meta( $product, '_product_addons', $product_addons );
+		$tr_product = wpml_test_insert_post( $this->second_language, 'product', $trid, random_string() );
 
 		$product_addons = new WCML_Product_Addons( $this->sitepress );
-		$product_addons->addons_update( null, $product, $data );
-		$output = get_post_meta( $product, '_product_addons', true );
+		$product_addons->addons_update( $product, $tr_product, $data );
+		$output = get_post_meta( $tr_product, '_product_addons', true );
 		$this->assertEquals( $expected, $output );
 	}
 
