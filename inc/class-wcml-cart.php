@@ -206,7 +206,8 @@ class WCML_Cart
             $attachments = array( 'png', 'jpg', 'jpeg', 'gif', 'js', 'css' );
 
             foreach( $attachments as $attachment ){
-                if( !empty( preg_match( '/\.'.$attachment.'$/',  $_SERVER['REQUEST_URI'] ) ) ){
+                $match = preg_match( '/\.'.$attachment.'$/',  $_SERVER['REQUEST_URI'] );
+                if( !empty( $match ) ){
                     return false;
                 }
             }
