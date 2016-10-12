@@ -252,8 +252,8 @@ class WCML_Upgrade{
     }
     
     function upgrade_3_2(){
-        
-        woocommerce_wpml::set_up_capabilities();
+
+        WCML_Capabilities::set_up_capabilities();
         
         //delete not existing currencies in WC
         global $wpdb;
@@ -269,8 +269,8 @@ class WCML_Upgrade{
     
     function upgrade_3_3(){
         global $wpdb, $woocommerce_wpml;
-        
-        woocommerce_wpml::set_up_capabilities();
+
+        WCML_Capabilities::set_up_capabilities();
 
         $currencies = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "icl_currencies ORDER BY `id` ASC", OBJECT);
         if($currencies)
