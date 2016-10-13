@@ -1,6 +1,6 @@
 {
   "skip_tasks": false,
-  "debug_mode": false,
+  "debug_mode": true,
   "temp_dir": "/tmp",
   "project": {
     "namespace": "wcml",
@@ -55,21 +55,6 @@
     },
     {
       "server": "ssh://git@git.onthegosystems.com:10022",
-      "namespace": "wcml",
-      "project_slug": "woocommerce-bookings-mirror",
-      "db": "tests_wpml_core",
-      "target_dir_name": "woocommerce-bookings",
-      "clone_only": true
-    },
-    {
-      "server": "https://github.com",
-      "namespace": "woothemes",
-      "project_slug": "woocommerce",
-      "db": "tests_woocommerce_core",
-      "clone_only": true
-    },
-    {
-      "server": "ssh://git@git.onthegosystems.com:10022",
       "namespace": "wpml",
       "project_slug": "wpml-translation-management",
       "db": "tests_wpml_tm"
@@ -91,6 +76,21 @@
       "namespace": "wpml",
       "project_slug": "sitepress-multilingual-cms",
       "db": "tests_wpml_core"
+    },
+    {
+      "server": "ssh://git@git.onthegosystems.com:10022",
+      "namespace": "wcml",
+      "project_slug": "woocommerce-bookings-mirror",
+      "db": "tests_wpml_core",
+      "target_dir_name": "woocommerce-bookings",
+      "clone_only": true
+    },
+    {
+      "server": "https://github.com",
+      "namespace": "woothemes",
+      "project_slug": "woocommerce",
+      "db": "tests_woocommerce_core",
+      "clone_only": true
     }
   ]
 }
