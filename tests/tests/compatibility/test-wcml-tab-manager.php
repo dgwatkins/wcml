@@ -66,6 +66,91 @@ class Test_WCML_Tab_Manager extends WCML_UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function sync_product_tabs(){
+		$product 			= wpml_test_insert_post( $this->default_language, 'product', false, rand_str() );
+		$trid               = $this->sitepress->get_element_trid( $product, 'post_product' );
+		$translated_product = wpml_test_insert_post( $this->second_language, 'product', $trid, rand_str() );
+		$tab_manager = $this->get_test_subject();
+
+
+		$tab_id = wpml_test_insert_post( $this->default_language, 'wc_product_tab', false, rand_str() );
+		$trid = $this->sitepress->get_element_trid( $tab_id, 'post_wc_product_tab' );
+		$tr_tab_id = wpml_test_insert_post( $this->second_language, 'wc_product_tab', $trid, rand_str() );
+		$tab_object = get_post( $tab_id );
+
+		update_post_meta( $product, '_override_tab_layout', 'yes' );
+		update_post_meta( $translated_product, '_override_tab_layout', 'yes' );
+
+		$core_tab_title = rand_str();
+		$tab_data = array(
+			'core_tab_description' => array(
+				'type'     => 'core',
+				'position' => 0,
+				'id'       => 'description',
+				'title'    => $core_tab_title,
+				'heading'  => $core_tab_title,
+			),
+			'product_tab_' .  $tab_id => array(
+				'position' => 1,
+				'type'     => 'product',
+				'id'       => $tab_id,
+				'name'     => sanitize_title( rand_str() ),
+			)
+		);
+		update_post_meta( $product, '_product_tabs', $tab_data );
+
+		$tr_tab_title = rand_str();
+		$tab_data = array(
+			'core_tab_description' => array(
+				'type'     => 'core',
+				'position' => 0,
+				'id'       => 'description',
+				'title'    => $core_tab_title,
+				'heading'  => $core_tab_title,
+			),
+			'core_tab_reviews' => array(
+				'type'     => 'core',
+				'position' => 1,
+				'id'       => 'reviews',
+				'title'    => $core_tab_title,
+				'heading'  => $core_tab_title,
+			),
+			'product_tab_' .  $tr_tab_id => array(
+				'position' => 2,
+				'type'     => 'product',
+				'id'       => $tr_tab_id,
+				'name'     => sanitize_title( $tr_tab_title ),
+			)
+		);
+
+		update_post_meta( $translated_product, '_product_tabs', $tab_data );
+
+		$tab_manager->sync_product_tabs( $product, get_post( $product ) );
+
+		$this->assertEquals(
+			array(
+				'core_tab_description' => array(
+					'type'     => 'core',
+					'position' => 0,
+					'id'       => 'description',
+					'title'    => $core_tab_title,
+					'heading'  => $core_tab_title,
+				),
+				'product_tab_' .  $tr_tab_id => array(
+					'position' => 1,
+					'type'     => 'product',
+					'id'       => $tr_tab_id,
+					'name'     => sanitize_title( $tr_tab_title ),
+				)
+			),
+			get_post_meta( $translated_product, '_product_tabs', true )
+		);
+
+	}
+
+	/**
 	 * @return WCML_Tab_Manager
 	 */
 	private function get_test_subject() {
