@@ -28,3 +28,8 @@ unzip fr_FR.zip
 unzip de_DE.zip
 unzip ru_RU.zip
 unzip es_ES.zip
+
+rm fr_FR.zip
+rm de_DE.zip
+rm ru_RU.zip
+rm es_ES.zip
