@@ -42,6 +42,30 @@ function is_woocommerce_active() {
 }
 
 function _install_wc() {
+	global $wpdb;
+
+	$tables_to_empty = array(
+		"{$wpdb->prefix}woocommerce_api_keys",
+		"{$wpdb->prefix}woocommerce_attribute_taxonomies",
+		"{$wpdb->prefix}woocommerce_downloadable_product_permissions",
+		"{$wpdb->prefix}woocommerce_order_itemmeta",
+		"{$wpdb->prefix}woocommerce_order_items",
+		"{$wpdb->prefix}woocommerce_payment_tokenmeta",
+		"{$wpdb->prefix}woocommerce_payment_tokens",
+		"{$wpdb->prefix}woocommerce_sessions",
+		"{$wpdb->prefix}woocommerce_shipping_zone_locations",
+		"{$wpdb->prefix}woocommerce_shipping_zone_methods",
+		"{$wpdb->prefix}woocommerce_shipping_zones",
+		"{$wpdb->prefix}woocommerce_tax_rate_locations",
+		"{$wpdb->prefix}woocommerce_tax_rates",
+		"{$wpdb->prefix}wc_booking_relationships",
+	);
+	foreach ( $tables_to_empty as $table_name ) {
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name ) {
+			$wpdb->query( "DROP TABLE {$table_name}" );
+		}
+
+	}
 
 	WC_Install::install();
 	update_option( 'woocommerce_calc_shipping', 'yes' ); // Needed for tests cart and shipping methods
@@ -55,7 +79,7 @@ function _install_wc() {
 	}
 }
 
-require_once 'wordpress/wp-includes/class-wp-locale.php';
+require_once dirname( __FILE__ ) . '/wordpress/wp-includes/class-wp-locale.php';
 
 // Install WPML
 tests_add_filter( 'wpml_loaded', 'wpml_test_install_setup' );

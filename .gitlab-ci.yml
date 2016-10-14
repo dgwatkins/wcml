@@ -1,114 +1,122 @@
 ---
 image: wptest
+services:
+  - mysql:latest
+
 variables:
   # Configure mysql service (https://hub.docker.com/_/mysql/)
   WORDPRESS_DB_NAME: wp_test_db
   WORDPRESS_DB_USER: root
   MYSQL_ROOT_PASSWORD: mysql_strong_password
+  MYSQL_HOST: localhost
+  REAL_MYSQL_HOST: mysql
 
 before_script:
-- if ! service mysql status; then service mysql start; fi
-- mysqladmin -u root password $MYSQL_ROOT_PASSWORD
-- 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-- eval $(ssh-agent -s)
-- ssh-add <(echo "$SSH_PRIVATE_KEY")
-- mkdir -p ~/.ssh
-- '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+  - eval $(ssh-agent -s)
+  - bash -c 'ssh-add <(echo "$SSH_PRIVATE_KEY")'
+  - '[[ -f /.dockerenv ]] && mkdir -p ~/.ssh && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  - 'composer install --quiet'
+
 stages:
-- build
-- test
-- deploy
-UnitTestJob:
-  image: wptest
+  - build
+  - test
+  - qa
+  - deploy
+  - documentation
+
+#PhpUnit:
+#  stage: test
+#  when: always
+#  image: otgs/phpunit
+#  tags:
+#    - docker
+#  script:
+#    - ./vendor/otgs/build-tools-ci/otgs-ci -p
+#  except:
+#    - tags
+
+PhpUnit-Legacy:
+  stage: test
+  when: always
   tags:
-  - docker
+    - docker
   script:
+    - ./vendor/otgs/build-tools-ci/otgs-ci -p --legacy
+  except:
+    - tags
 
-  # Run composer update for WCML
-  - composer update
+Blackfire-Front-End:
+  stage: test
+  when: manual
+  tags:
+    - blackfire
+  script:
+    - ./vendor/otgs/build-tools-ci/otgs-ci -b -f
 
-  # Install WPML Core
-  - cd ../
-  - rm -rf sitepress-multilingual-cms
-  - git clone ssh://git@git.onthegosystems.com:10022/wpml/sitepress-multilingual-cms.git
-  - cd sitepress-multilingual-cms
-  - composer update
+BlackfireJob-BackEnd:
+  stage: test
+  when: manual
+  tags:
+    - blackfire
+  script:
+    - ./vendor/otgs/build-tools-ci/otgs-ci -b -a
 
-  # Install WPML TM
-  - cd ../
-  - rm -rf wpml-translation-management
-  - git clone ssh://git@git.onthegosystems.com:10022/wpml/wpml-translation-management.git
-  - cd wpml-translation-management
-  - composer update
+Tag-Artifact:
+  stage: build
+  when: on_success
+  image: artbuilder
+  tags:
+    - artifacts
+  script:
+    - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
+  artifacts:
+    name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME}"
+    paths:
+      - ${CI_PROJECT_NAME}
+  only:
+    - tags
 
-  # Install WPML ST
-  - cd ../
-  - rm -rf wpml-string-translation
-  - git clone ssh://git@git.onthegosystems.com:10022/wpml/wpml-string-translation.git
-  - cd wpml-string-translation
-  - composer update
+Branch-Artifact:
+  stage: deploy
+  when: on_success
+  image: artbuilder
+  tags:
+    - artifacts
+  script:
+    - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
+  artifacts:
+    expire_in: 1h
+    name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME}-${CI_BUILD_ID}"
+    paths:
+      - ${CI_PROJECT_NAME}
+  except:
+    - tags
+    - /^pre-release.*$/
 
-  # Install WPML Media
-  - cd ../
-  - rm -rf wpml-media-translation
-  - git clone ssh://git@git.onthegosystems.com:10022/wpml/wpml-media-translation.git
-  - cd wpml-media-translation
-  - composer update
+Prereleases-Artifact:
+  stage: qa
+  when: on_success
+  image: artbuilder
+  tags:
+    - artifacts
+  script:
+    - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
+  artifacts:
+    expire_in: 4 weeks
+    name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME}-${CI_BUILD_ID}"
+    paths:
+      - ${CI_PROJECT_NAME}
+  only:
+    - /^pre-release.*$/
 
-  # Install WooCommerce
-  - cd ../
-  - rm -rf woocommerce
-  - git clone https://github.com/woothemes/woocommerce.git
-
-  # Install WooCommerce Bookings
-  - rm -rf woocommerce-bookings
-  - git clone -b 1.9.10 ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-bookings-mirror.git woocommerce-bookings
-
-  # Install WooCommerce Table Rate Shipping
-  #- rm -rf woocommerce-table-rate-shipping
-  #- git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-table-rate-shipping-mirror.git woocommerce-table-rate-shipping
-
-  # Install WooCommerce Tab Manager
-  #- rm -rf woocommerce-tab-manager
-  #- git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-tab-manager-mirror.git woocommerce-tab-manager
-
-  # Install WooCommerce Dynamic Pricing
-  #- rm -rf woocommerce-dynamic-pricing
-  #- git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-dynamic-pricing-mirror.git woocommerce-dynamic-pricing
-
-  # Install WooCommerce Product Bundles
-  #- rm -rf woocommerce-product-bundles
-  #- git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-product-bundles-mirror.git woocommerce-product-bundles
-
-  # Install WooCommerce Product Addons
-  #- rm -rf woocommerce-product-addons
-  #- git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-product-addons-mirror.git woocommerce-product-addons
-
-  # Install Visual Products Configurator
-  #- rm -rf woocommerce-visual-product-configurator
-  #- git clone ssh://git@git.onthegosystems.com:10022/wcml/woocommerce-visual-product-configurator-mirror.git woocommerce-visual-product-configurator
-
-  # Run WPML core unit tests install script
-  - cd sitepress-multilingual-cms
-  - tests/install-wp-tests.sh wpml_core_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost 4.6.1
-  # No need to run unit tests for WPML Core or the other plugins for now
-  #- phpunit
-  #- cd ../wpml-translation-management
-  #- tests/install-wp-tests.sh wp_tm_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost latest
-  #- phpunit
-  #- cd ../wpml-string-translation
-  #- tests/install-wp-tests.sh wp_st_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost latest
-  #- phpunit
-
-  # Run WCML unit tests install script and unit tests
-  - cd ../woocommerce-multilingual
-  - tests/install-wp-tests.sh wcml_test_db $WORDPRESS_DB_USER $MYSQL_ROOT_PASSWORD localhost 4.6.1
-  - phpunit
-
-  # Run tests with WooCommerce 2.6.4
-  # Install WooCommerce
-  - cd ../woocommerce
-  - git checkout tags/2.6.4
-  - cd ../woocommerce-multilingual
-  - phpunit
-
+Release-Notes:
+  stage: documentation
+  when: on_success
+  image: artbuilder
+  tags:
+    - artifacts
+  script:
+    - ./vendor/otgs/build-tools-ci/otgs-ci --releasenotes
+  only:
+    - tags

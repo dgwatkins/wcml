@@ -17,15 +17,14 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 
 		global $woocommerce_wpml, $sitepress, $wpdb, $woocommerce;
 
-		parent::setUp();
 		$this->clear_db();
 		icl_cache_clear();
 
-		$this->sitepress 		=& $sitepress;
-		$this->woocommerce_wpml	=& $woocommerce_wpml;
-		$this->wpdb				=& $wpdb;
-		$this->woocommerce		=& $woocommerce;
-		$this->wcml_helper = new WCML_Helper( );
+		$this->sitepress        =& $sitepress;
+		$this->woocommerce_wpml =& $woocommerce_wpml;
+		$this->wpdb             =& $wpdb;
+		$this->woocommerce      =& $woocommerce;
+		$this->wcml_helper      = new WCML_Helper();
 		$this->wcml_helper->init( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
 		require_once WC_PATH . '/woocommerce.php';
 
@@ -35,7 +34,7 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 
 	}
 
-	private function clear_db(){
+	private function clear_db() {
 		global $wpdb;
 
 		$tables_to_empty = array(
@@ -55,12 +54,14 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 			"{$wpdb->prefix}wc_booking_relationships",
 		);
 		foreach ( $tables_to_empty as $table_name ) {
-			$wpdb->query( "DELETE FROM {$table_name}" );
+			if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name ) {
+				$wpdb->query( "DELETE FROM {$table_name}" );
+			}
 
 		}
 	}
 
-	protected function make_current_user_wcml_admin( ) {
+	protected function make_current_user_wcml_admin() {
 		global $current_user;
 
 		if ( ! isset( $current_user ) || (bool) get_current_user_id() === false ) {

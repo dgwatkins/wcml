@@ -16,11 +16,30 @@
     {
       "type": "vcs",
       "url": "ssh://git@git.onthegosystems.com:10022/installer/installer.git"
+    },
+    {
+      "type": "vcs",
+      "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git"
+    },
+    {
+      "type": "vcs",
+      "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-unit-tests-framework.git"
     }
   ],
   "require": {
     "otgs/installer" : "dev-master",
     "xrstf/composer-php52": "1.*"
+  },
+  "require-dev": {
+    "m4tthumphrey/php-gitlab-api": "dev-master",
+    "corneltek/getoptionkit": "^2.5",
+    "10up/wp_mock": "dev-master",
+    "league/factory-muffin": "^3.0",
+    "league/factory-muffin-faker": "^2.0",
+    "otgs/unit-tests-framework": "dev-master",
+    "otgs/build-tools-ci": "dev-0.2.0-dev",
+    "symfony/dom-crawler": "^3.1",
+    "symfony/css-selector": "^3.1"
   },
   "scripts": {
     "post-install-cmd": [
