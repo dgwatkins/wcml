@@ -241,6 +241,8 @@
 
     </div>
 
+    {% include 'exchange-rates.twig' with exchange_rates %}
+
     {% include 'currency-switcher-options.twig' %}
 
     <input type="hidden" id="wcml_warn_message" value="{{ form.navigate_warn }}" />

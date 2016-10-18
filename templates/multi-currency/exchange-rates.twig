@@ -1,0 +1,95 @@
+<div class="wcml-section">
+
+    <div id="online-exchange-rates">
+
+        <div class="wcml-section-header">
+            <h3>{{ exchange_rates.strings.header }}</h3>
+        </div>
+
+        <div class="wcml-section-content">
+
+
+            <div class="wcml-section-content-inner">
+                <input type="radio" id="exchange-rates-manual" name="exchange-rates-mode" value="manual"
+                    {% if exchange_rates.settings.mode == 'manual' %}checked="checked"{% endif %} />
+                <label for="exchange-rates-manual">{{ exchange_rates.strings.manual }}</label>
+                <br />
+
+                <input type="radio" id="exchange-rates-online" name="exchange-rates-mode" value="online"
+                {% if exchange_rates.settings.mode == 'online' %}checked="checked"{% endif %} />
+                <label for="exchange-rates-online">{{ exchange_rates.strings.online }}</label>
+
+                <div id="exchange-rates-online-wrap" {% if exchange_rates.settings.mode == 'manual' %}class="hidden"{% endif %} >
+
+                    <h4>{{ exchange_rates.strings.services_label }}</h4>
+                    {% for id, service in exchange_rates.services %}
+                        <input type="radio" id="service-{{ id }}" name="exchange-rates-service" value="{{ id }}"
+                            {% if exchange_rates.settings.service == id %}checked="checked"{% endif %} />
+                        <label for="service-{{ id }}">{{ service.name }}</label>
+                        <br />
+                        <span class="exchange-rate-api-key-wrap" {% if exchange_rates.settings.service != id %}style="display: none"{% endif %}>
+                            <p>{{ service.description }}</p>
+                            <p><a href="{{ service.url }}" target="_blank">{{ exchange_rates.strings.visit_website }}</a></p>
+                            {% if service.requires_key %}
+                                {{ exchange_rates.strings.key_required }}
+                                <input type="text" name="services[{{ id }}][api-key]"
+                                    value="{{ service.api_key }}"
+                                    placeholder="{{ exchange_rates.strings.key_placeholder }}" /><br /><br />
+                            {% endif %}
+                         </span>
+                    {% endfor %}
+
+
+                    <h4>{{ exchange_rates.strings.frequency }}</h4>
+
+                    <input type="radio" id="update-frequency-manual" name="update-schedule" value="manual"
+                        {% if exchange_rates.settings.schedule == 'manual' %}checked="checked"{% endif %} />
+                    <label for="update-frequency-manual">{{ exchange_rates.strings.manually }}</label>
+                    <br />
+
+                    <input type="radio" id="update-frequency-daily" name="update-schedule" value="daily"
+                        {% if exchange_rates.settings.schedule == 'daily' %}checked="checked"{% endif %}/>
+                    <label for="update-frequency-daily">{{ exchange_rates.strings.daily }}</label>
+                    <br />
+
+                    <input type="radio" id="update-frequency-weekly" name="update-schedule" value="weekly"
+                        {% if exchange_rates.settings.schedule == 'weekly' %}checked="checked"{% endif %} />
+                    <label for="update-frequency-weekly">{{ exchange_rates.strings.weekly }}</label>
+                    <select name="update-weekly-day">
+                        {% for i in 0..6 %}
+                        <option value="{{ i }}"{% if exchange_rates.settings.week_day == i %} selected="selected"{% endif %}>{{ get_weekday(i) }}</option>
+                        {% endfor %}
+                    </select>
+                    <br />
+
+                    <input type="radio" id="update-frequency-monthly" name="update-schedule" value="monthly"
+                        {% if exchange_rates.settings.schedule == 'monthly' %}checked="checked"{% endif %} />
+                    <label for="update-frequency-monthly">{{ exchange_rates.strings.monthly }}</label>
+                    <select name="update-monthly-day">
+                        {% for i in 1..31 %}
+                        <option value="{{ i }}"{% if exchange_rates.settings.month_day == i %} selected="selected"{% endif %}>{{ i }}{% if i == 1 %}st{% elseif i == 2 %}nd{% elseif i == 2 %}rd{% else %}th{% endif %}</option>
+                        {% endfor %}
+                    </select>
+                    {{ exchange_rates.strings.at }}
+                    <br /><br />
+
+                    <span id="update-rates-time">{{ exchange_rates.strings.updated_time|raw }}</span>
+                    <br />
+                    <input type="button" id="update-rates-manually" class="button-secondary" value="{{ exchange_rates.strings.update }}" />
+                    <span id="update-rates-spinner" class="spinner" style="float:none;"></span>
+                    <input type="hidden" id="update-exchange-rates-nonce" value="{{ exchange_rates.strings.nonce }}" />
+                    <br />
+                    <span id="update-rates-success" style="display:none">{{ exchange_rates.strings.updated_success }}</span>
+                    <span id="update-rates-error" style="display:none"></span>
+                    <br />
+
+
+            </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

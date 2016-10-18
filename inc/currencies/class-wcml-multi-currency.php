@@ -66,6 +66,15 @@ class WCML_Multi_Currency{
      */
     public $woocommerce_wpml;
 
+    /**
+     * @var WCML_Exchange_Rate_Service
+     */
+    public $exchange_rate_services;
+
+
+    /**
+     * WCML_Multi_Currency constructor.
+     */
     public function __construct(){
         global $woocommerce_wpml;
 
@@ -87,6 +96,8 @@ class WCML_Multi_Currency{
         $this->custom_prices            = new WCML_Custom_Prices( $woocommerce_wpml );
         $this->currency_switcher        = new WCML_Currency_Switcher;
 
+        $this->exchange_rate_services = new WCML_Exchange_Rates( $this->woocommerce_wpml );
+
         if( defined('W3TC') ){
             $this->W3TC = new WCML_W3TC_Multi_Currency();
         }
@@ -100,6 +111,7 @@ class WCML_Multi_Currency{
             add_action('wp_ajax_nopriv_wcml_switch_currency', array($this, 'switch_currency'));
             add_action('wp_ajax_wcml_switch_currency', array($this, 'switch_currency'));
         }
+
     }
 
     private function _load_filters(){
