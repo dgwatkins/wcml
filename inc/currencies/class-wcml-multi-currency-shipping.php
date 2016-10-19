@@ -27,10 +27,13 @@ class WCML_Multi_Currency_Shipping{
 
         add_filter( 'woocommerce_shipping_packages', array( $this, 'convert_shipping_taxes'), 10 );
 
-        // Before WooCommerce 2.6
-        add_filter( 'option_woocommerce_free_shipping_settings', array( $this, 'adjust_min_amount_required' ) );
+        add_filter( 'woocommerce_package_rates', array($this, 'convert_shipping_costs_in_package_rates'), 10, 2 );
 
-	    add_filter( 'woocommerce_package_rates', array($this, 'convert_shipping_costs_in_package_rates'), 10, 2 );
+        // Before WooCommerce 2.6
+        if( version_compare( WC()->version, '2.6.0', '<' ) ){
+            new WCML_Multi_Currency_Shipping_Legacy();
+        }
+
 
     }
 
@@ -129,14 +132,5 @@ class WCML_Multi_Currency_Shipping{
 
     }
 
-    // Before WooCommerce 2.6
-    public function adjust_min_amount_required($options){
-
-        if( !empty( $options['min_amount'] ) ){
-            $options['min_amount'] = apply_filters( 'wcml_shipping_free_min_amount', $options['min_amount'] );
-        }
-
-        return $options;
-    }
 
 }
