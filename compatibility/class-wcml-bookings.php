@@ -83,7 +83,7 @@ class WCML_Bookings {
 			'wc_bookings_process_cost_rules_override_block_cost'
 		), 10, 3 );
 
-		add_filter( 'wcml_multi_currency_is_ajax', array( $this, 'wcml_multi_currency_is_ajax' ) );
+		add_filter( 'wcml_multi_currency_ajax_actions', array( $this, 'wcml_multi_currency_is_ajax' ) );
 
 		add_filter( 'wcml_cart_contents_not_changed', array(
 			$this,
