@@ -198,7 +198,8 @@ class woocommerce_wpml {
             'dismiss_doc_main'             => 0,
             'trnsl_interface'              => 1,
             'currency_options'             => array(),
-            'currency_switcher_product_visibility'             => 1
+            'currency_switcher_product_visibility' => 1,
+            'dismiss_tm_warning'             => 0
         );
 
         if(empty($this->settings)){
