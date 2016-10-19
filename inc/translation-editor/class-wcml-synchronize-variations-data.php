@@ -201,15 +201,19 @@ class WCML_Synchronize_Variations_Data{
 
             $post_fields = null;
             foreach( $all_meta as $meta_key => $meta ){
-                if ( !isset( $settings[ $meta_key ] ) || $settings[ $meta_key ] == WPML_IGNORE_CUSTOM_FIELD ) {
-                    continue;
-                }
+
                 foreach ( $meta as $meta_value ) {
                     // update current post variations meta
+
                     if( ( substr( $meta_key, 0, 10 ) == 'attribute_' || isset( $settings[ $meta_key ] ) && $settings[ $meta_key ] == WPML_COPY_CUSTOM_FIELD ) ) {
+
                         // adjust the global attribute slug in the custom field
                         $attid = null;
                         if( substr( $meta_key, 0, 10 ) == 'attribute_' ) {
+
+                            $original_product_attr = get_post_meta( wp_get_post_parent_id( $original_variation_id ), '_product_attributes', true );
+                            $tr_product_attr = get_post_meta( wp_get_post_parent_id( $variation_id ), '_product_attributes', true );
+
                             $tax = wc_sanitize_taxonomy_name ( substr( $meta_key, 10 ) );
                             if( taxonomy_exists( $tax ) ){
                                 $attid = $this->woocommerce_wpml->terms->wcml_get_term_id_by_slug( $tax, $meta_value );
@@ -250,7 +254,10 @@ class WCML_Synchronize_Variations_Data{
                             }
                         }
                         update_post_meta( $variation_id, $meta_key, $meta_value );
+                    }elseif ( !isset( $settings[ $meta_key ] ) || $settings[ $meta_key ] == WPML_IGNORE_CUSTOM_FIELD ) {
+                        continue;
                     }
+
                     //sync variation prices
                     if(
                         ( $this->woocommerce_wpml->settings[ 'enable_multi_currency' ] == WCML_MULTI_CURRENCIES_INDEPENDENT || $trbl ) &&
