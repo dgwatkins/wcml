@@ -106,7 +106,7 @@ class WCML_Multi_Currency{
         }else{
             if(is_ajax() && $this->get_client_currency() != get_option('woocommerce_currency')){
 
-                $ajax_actions = apply_filters('wcml_multi_currency_is_ajax',
+                $ajax_actions = apply_filters( 'wcml_multi_currency_ajax_actions',
                     array(
                         'woocommerce_get_refreshed_fragments',
                         'woocommerce_update_order_review',
