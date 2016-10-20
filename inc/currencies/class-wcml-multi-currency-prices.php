@@ -576,9 +576,10 @@ class WCML_Multi_Currency_Prices{
 
     public function filter_currency_thousand_sep_option($value){
 
+        $default_currency = $this->multi_currency->get_default_currency();
         $currency_code = $this->check_admin_order_currency_code();
 
-        if(isset($this->multi_currency->currencies[$currency_code]['thousand_sep']) ){
+        if( $currency_code !== $default_currency && isset( $this->multi_currency->currencies[$currency_code]['thousand_sep'] ) ){
             $value = $this->multi_currency->currencies[$currency_code]['thousand_sep'];
         }
         return $value;
@@ -586,9 +587,10 @@ class WCML_Multi_Currency_Prices{
 
     public function filter_currency_decimal_sep_option($value){
 
+        $default_currency = $this->multi_currency->get_default_currency();
         $currency_code = $this->check_admin_order_currency_code();
 
-        if(isset($this->multi_currency->currencies[$currency_code]['decimal_sep']) ){
+        if( $currency_code !== $default_currency &&  isset( $this->multi_currency->currencies[$currency_code]['decimal_sep'] ) ){
             $value = $this->multi_currency->currencies[$currency_code]['decimal_sep'];
 
         }
@@ -617,9 +619,11 @@ class WCML_Multi_Currency_Prices{
 
     public function filter_currency_position_option($value){
 
+        $default_currency = $this->multi_currency->get_default_currency();
         $currency_code = $this->get_admin_order_currency_code();
 
-        if(isset($this->multi_currency->currencies[$currency_code]['position']) && get_option('woocommerce_currency') != $currency_code &&
+        if( $currency_code !== $default_currency &&
+            isset($this->multi_currency->currencies[$currency_code]['position']) && get_option('woocommerce_currency') != $currency_code &&
             in_array($this->multi_currency->currencies[$currency_code]['position'], array('left', 'right', 'left_space', 'right_space'))){
             $value = $this->multi_currency->currencies[$currency_code]['position'];
         }

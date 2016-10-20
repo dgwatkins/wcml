@@ -7,13 +7,18 @@
 
 class WCML_Multi_Currency{
 
+    /** @var  array */
     public $currencies = array();
+    /** @var  array */
     public $currency_codes = array();
 
+    /** @var  string */
+    private $default_currency;
+    /** @var  string */
     private $client_currency;
-
+    /** @var  array */
     private $exchange_rates = array();
-
+    /** @var  array */
     public $currencies_without_cents = array('JPY', 'TWD', 'KRW', 'BIF', 'BYR', 'CLP', 'GNF', 'ISK', 'KMF', 'PYG', 'RWF', 'VUV', 'XAF', 'XOF', 'XPF');
 
     /**
@@ -154,12 +159,12 @@ class WCML_Multi_Currency{
     public function init_currencies(){
         global $sitepress;
 
+        $this->default_currency = get_option( 'woocommerce_currency' );
         $this->currencies =& $this->woocommerce_wpml->settings['currency_options'];
 
 	    // Add default currency if missing (set when MC is off)
-	    $default_currency = get_option( 'woocommerce_currency' );
-	    if( !empty( $default_currency ) && !isset( $this->currencies[ $default_currency ] ) ){
-		    $this->currencies[ $default_currency ] = array();
+	    if( !empty( $this->default_currency ) && !isset( $this->currencies[ $this->default_currency ] ) ){
+		    $this->currencies[ $this->default_currency ] = array();
 	    }
 
         $save_to_db = false;
@@ -236,6 +241,15 @@ class WCML_Multi_Currency{
             $this->woocommerce_wpml->settings['enable_multi_currency'] = WCML_MULTI_CURRENCIES_DISABLED;
         }
 
+    }
+
+    /**
+     *
+     * @since 3.9.2
+     * @return string
+     */
+    public function get_default_currency(){
+        return $this->default_currency;
     }
 
     public function get_currencies( $include_default = false ){
