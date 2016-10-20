@@ -171,7 +171,7 @@ class woocommerce_wpml {
         $this->wcml_products_screen = new WCML_Products_Screen_Options();
         $this->wcml_products_screen->init();
 
-        new WCML_Ajax_Setup;
+        new WCML_Ajax_Setup( $sitepress );
         new WCML_Fix_Copied_Custom_Fields_WPML353();
 
         if ( 'yes' == get_option( 'woocommerce_api_enabled' ) ){
