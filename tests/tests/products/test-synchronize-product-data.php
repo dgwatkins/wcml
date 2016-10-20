@@ -15,6 +15,8 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		//add product for tests
 		$this->test_data->orig_product = $this->wcml_helper->add_product( $this->default_language, false, 'product 1' );
 		$this->test_data->es_product = $this->wcml_helper->add_product( $this->second_language, $this->test_data->orig_product->trid, 'producto 1' );
+
+		$this->woocommerce_wpml->sync_variations_data = new WCML_Synchronize_Variations_Data( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
 	}
 
 	function test_duplicate_product_post_meta() {
@@ -183,7 +185,6 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 
 	}
 
-}
 	public function test_sync_product_taxonomies(){
 
 		$default_product = $this->wcml_helper->add_product( $this->default_language, false, rand_str() );
