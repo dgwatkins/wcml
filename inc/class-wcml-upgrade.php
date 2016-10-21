@@ -517,5 +517,10 @@ class WCML_Upgrade{
         }
     }
 
+    function upgrade_3_10(){
+        $wcml_settings = get_option( '_wcml_settings' );
+        $wcml_settings[ 'dismiss_tm_warning' ] = 0;
+        update_option( '_wcml_settings', $wcml_settings );
+    }
 
 }
