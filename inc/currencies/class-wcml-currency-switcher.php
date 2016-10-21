@@ -94,23 +94,26 @@ class WCML_Currency_Switcher {
         }
 
         $preview = '';
+        $show_currency_switcher = true;
 
-        if ( isset($wcml_settings['display_custom_prices']) && $wcml_settings['display_custom_prices'] ) {
+        $display_custom_prices = isset( $wcml_settings[ 'display_custom_prices' ] ) && $wcml_settings[ 'display_custom_prices' ];
 
-            if ( is_page( wc_get_page_id( 'cart' ) ) ||
-                is_page( wc_get_page_id( 'checkout' ) )
-            ) {
-                $preview = '';
-            } elseif ( is_product() ) {
-                $current_product_id = wc_get_product()->id;
-                $original_product_language = $this->woocommerce_wpml->products->get_original_product_language( $current_product_id );
+        $is_cart_or_checkout = is_page( wc_get_page_id( 'cart' ) ) || is_page( wc_get_page_id( 'checkout' ) );
 
-                if ( !get_post_meta( apply_filters( 'translate_object_id', $current_product_id, get_post_type( $current_product_id ), true, $original_product_language ), '_wcml_custom_prices_status', true ) ) {
-                    $preview = '';
-                }
-            }
+        if ( $display_custom_prices && is_product() ) {
+            $current_product_id = wc_get_product()->id;
+            $original_product_language = $this->woocommerce_wpml->products->get_original_product_language( $current_product_id );
 
-        } else {
+            $use_custom_prices  = get_post_meta(
+                apply_filters( 'translate_object_id', $current_product_id, get_post_type( $current_product_id ), true, $original_product_language ),
+                '_wcml_custom_prices_status',
+                true
+            );
+
+            if ( !$use_custom_prices )  $show_currency_switcher = false;
+        }
+
+        if ( $show_currency_switcher && !$is_cart_or_checkout ) {
 
             $currencies = isset($wcml_settings['currencies_order']) ?
                             $wcml_settings['currencies_order'] :
