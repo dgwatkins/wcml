@@ -237,7 +237,7 @@ class WCML_Multi_Currency{
         }
 
         // force disable multi-currency when the default currency is empty
-        if( empty( $default_currency ) ){
+        if( empty( $this->default_currency ) ){
             $this->woocommerce_wpml->settings['enable_multi_currency'] = WCML_MULTI_CURRENCIES_DISABLED;
         }
 

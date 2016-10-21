@@ -93,6 +93,7 @@ class WCML_Currency_Switcher {
                 $wcml_settings['wcml_curr_template'] : '%name% (%symbol%) - %code%';
         }
 
+        $preview = '';
 
         if ( isset($wcml_settings['display_custom_prices']) && $wcml_settings['display_custom_prices'] ) {
 

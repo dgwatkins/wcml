@@ -13,10 +13,12 @@ class WCML_Multi_Currency_Shipping{
         $this->multi_currency =& $multi_currency;
 
         // shipping method cost settings
-        $rates = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE method_id IN('flat_rate', 'local_pickup', 'free_shipping')" );
-        foreach( $rates as $method ){
-            $option_name = sprintf('woocommerce_%s_%d_settings', $method->method_id, $method->instance_id );
-            add_filter('option_' . $option_name, array($this, 'convert_shipping_method_cost_settings'));
+        if( version_compare( WC()->version, '2.6.0', '>=' ) ) {
+            $rates = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE method_id IN('flat_rate', 'local_pickup', 'free_shipping')" );
+            foreach ( $rates as $method ) {
+                $option_name = sprintf( 'woocommerce_%s_%d_settings', $method->method_id, $method->instance_id );
+                add_filter( 'option_' . $option_name, array($this, 'convert_shipping_method_cost_settings') );
+            }
         }
 
         // Used for table rate shipping compatibility class
