@@ -46,22 +46,6 @@ PhpUnit-Legacy:
   except:
     - tags
 
-Blackfire-Front-End:
-  stage: test
-  when: manual
-  tags:
-    - blackfire
-  script:
-    - ./vendor/otgs/build-tools-ci/otgs-ci -b -f
-
-BlackfireJob-BackEnd:
-  stage: test
-  when: manual
-  tags:
-    - blackfire
-  script:
-    - ./vendor/otgs/build-tools-ci/otgs-ci -b -a
-
 Tag-Artifact:
   stage: build
   when: on_success
