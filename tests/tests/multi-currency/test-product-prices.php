@@ -12,7 +12,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 	function setUp(){
 
 		parent::setUp();
-		add_filter('wcml_load_multi_currency', '__return_true');
+		add_filter('wcml_load_multi_currency_in_ajax', '__return_true');
 		set_current_screen( 'front' );
 
 		// Multi currency objects

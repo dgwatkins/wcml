@@ -95,7 +95,6 @@ class WCML_Multi_Currency{
             add_action('wp_ajax_nopriv_wcml_switch_currency', array($this, 'switch_currency'));
             add_action('wp_ajax_wcml_switch_currency', array($this, 'switch_currency'));
         }
-
     }
 
     private function _load_filters(){
@@ -126,7 +125,14 @@ class WCML_Multi_Currency{
             }
         }
 
-        return apply_filters('wcml_load_multi_currency', $load);
+        /**
+         * @deprecated 3.9.2
+         */
+        $load = apply_filters( 'wcml_load_multi_currency', $load );
+
+        $load = apply_filters( 'wcml_load_multi_currency_in_ajax', $load );
+
+        return $load;
     }
 
     public function init() {

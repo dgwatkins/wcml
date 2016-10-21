@@ -12,7 +12,7 @@ class Test_WCML_Multi_Currency_Switcher extends WCML_UnitTestCase {
 
     public function setUp() {
 
-        add_filter('wcml_load_multi_currency', '__return_true');
+        add_filter('wcml_load_multi_currency_in_ajax', '__return_true');
         set_current_screen( 'front' );
 
         parent::setUp();
