@@ -281,7 +281,9 @@ class WCML_Emails{
 
                             $custom_attr_trnsl = $this->woocommerce_wpml->attributes->get_custom_attribute_translation( $object->product->id, $formatted_var[ 'key' ], array('is_taxonomy' => false), $this->sitepress->get_current_language() );
 
-                            $formatted_meta[ $key ][ 'label' ] = $custom_attr_trnsl['name'];
+                            if ( false !== $custom_attr_trnsl ) {
+                                $formatted_meta[ $key ][ 'label' ] = $custom_attr_trnsl['name'];
+                            }
                         }
                     }
                 }
