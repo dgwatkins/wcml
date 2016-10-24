@@ -37,7 +37,7 @@ class WCML_Admin_Menus{
                 'woocommerce',
                 __( 'WooCommerce Multilingual', 'woocommerce-multilingual' ),
                 __( 'WooCommerce Multilingual', 'woocommerce-multilingual' ),
-                'wpml_manage_woocommerce_multilingual',
+                'wpml_operate_woocommerce_multilingual',
                 'wpml-wcml',
                 array( __CLASS__, 'render_menus' )
             );
