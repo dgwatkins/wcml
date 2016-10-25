@@ -599,10 +599,13 @@ class WCML_Multi_Currency_Prices{
     }
 
     public function filter_currency_num_decimals_option($value){
-
+		// no other way available (at the moment) to filter currency_num_decimals_option
         $db = debug_backtrace();
         if(
-            $db['8']['function'] == 'calculate_shipping_for_package' && $db['5']['function'] == 'add_rate' ||
+            isset( $db['8']['function'] ) &&  isset( $db['5']['function'] ) &&
+            $db['8']['function'] == 'calculate_shipping_for_package' && $db['5']['function'] == 'add_rate'
+                ||
+            isset( $db['7']['function'] ) &&  isset( $db['4']['function'] ) &&
             $db['7']['function'] == 'calculate_shipping_for_package' && $db['4']['function'] == 'add_rate'
         ){
             $currency_code = get_option( 'woocommerce_currency' );
