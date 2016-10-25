@@ -43,10 +43,9 @@ class WCML_Exchange_Rates_UI extends WPML_Templates_Factory {
         $model = array(
             'strings' => array(
 
-                'header'            => __( 'Exchange Rates', 'woocommerce-multilingual' ),
-                'manual'            => __( 'Manually entered exchange rates', 'woocommerce-multilingual' ),
-                'online'            => __( 'Automatic exchange rates', 'woocommerce-multilingual' ),
-                'services_label'    => __( 'Online exchange rates services', 'woocommerce-multilingual' ),
+                'header'            => __( 'Automatic Exchange Rates', 'woocommerce-multilingual' ),
+	            'enable_automatic'  => __( 'Enable automatic exchange rates', 'woocommerce-multilingual' ),
+                'services_label'    => __( 'Exchange rates source', 'woocommerce-multilingual' ),
                 'services_api'      => __( 'API key (required)', 'woocommerce-multilingual' ),
                 'frequency'         => __( 'Update frequency', 'woocommerce-multilingual' ),
                 'update'            => __( 'Update manually now', 'woocommerce-multilingual' ),

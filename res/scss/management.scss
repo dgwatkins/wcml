@@ -72,12 +72,10 @@
 	}
 }
 
-.wcml-section-content .wcml-section-content-inner {
+.wcml-section-content .wcml-section-content-inner:not(:last-child) {
 	margin: 0 0 20px 0;
 	padding: 0 0 10px 0;
 	border-bottom: 1px solid #ededed;
-	float: left;
-	width: 100%;
 }
 
 .wcml-section-header {
@@ -387,7 +385,7 @@ table.widefat.currency_lang_table {
 	width: 100%;
 	li {
 		float: left;
-		margin: 0 8px 0 0;
+		margin: 2px 4px 2px 0;
 		padding: 2px 8px;
 		border: 1px solid #DFDFDF;
 		border-radius: 2px;

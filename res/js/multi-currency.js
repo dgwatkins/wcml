@@ -67,11 +67,9 @@ jQuery( function($){
             $('#multi_currency_independent').change(function(){
 
                 if($(this).attr('checked') == 'checked'){
-                    $('#currency-switcher').fadeIn();
-                    $('#multi-currency-per-language-details').fadeIn();
+                    $('#currency-switcher, #multi-currency-per-language-details, #online-exchange-rates').fadeIn();
                 }else{
-                    $('#multi-currency-per-language-details').fadeOut();
-                    $('#currency-switcher').fadeOut();
+                    $('#currency-switcher, #multi-currency-per-language-details, #online-exchange-rates').fadeOut();
                 }
 
             })

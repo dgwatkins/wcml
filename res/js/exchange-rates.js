@@ -4,23 +4,24 @@ jQuery( function($){
 
         init: function(){
 
-            $('#online-exchange-rates').on( 'change', '#exchange-rates-manual', WCMLExchangeRates.toggleManualAutomatic );
             $('#online-exchange-rates').on( 'change', '#exchange-rates-online', WCMLExchangeRates.toggleManualAutomatic );
 
             $('#online-exchange-rates').on( 'click', '#update-rates-manually', WCMLExchangeRates.updateRatesManually);
 
             $('#online-exchange-rates').on( 'change', 'input[name=exchange-rates-service]', WCMLExchangeRates.selectService );
 
+            $('#online-exchange-rates').on( 'change', 'input[name=update-schedule]', WCMLExchangeRates.updateFrequency );
+
+
+
         },
 
         toggleManualAutomatic: function(){
 
-            var manual = $('#exchange-rates-manual').attr('checked') == 'checked';
-
-            if( manual ){
-                $('#exchange-rates-online-wrap').hide();
+            if($(this).attr('checked') == 'checked'){
+                $('#exchange-rates-online-wrap').fadeIn();
             }else{
-                $('#exchange-rates-online-wrap').show();
+                $('#exchange-rates-online-wrap').fadeOut();
             }
 
         },
@@ -61,12 +62,20 @@ jQuery( function($){
 
         selectService: function(){
 
-            $('#online-exchange-rates .exchange-rate-api-key-wrap').hide();
-            $(this).nextAll('.exchange-rate-api-key-wrap:first').show();
+            $('.exchange-rate-api-key-wrap').hide();
+            $(this).parent().find('.exchange-rate-api-key-wrap').show();
+
+        },
+
+        updateFrequency: function(){
+
+            $('[name="update-weekly-day"], [name="update-monthly-day"]').attr('disabled', 'disabled');
+            $(this).parent().find('select').removeAttr('disabled');
 
         }
-
     }
+
+
 
     WCMLExchangeRates.init();
 
