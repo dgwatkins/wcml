@@ -6,13 +6,13 @@
 
     <div class="wcml-section-content">
         <p>
-            <input type="checkbox" id="exchange-rates-online" name="exchange-rates-mode" value="online"
-                   {% if exchange_rates.settings.mode == 'online' %}checked="checked"{% endif %} />
-            <label for="exchange-rates-online">{{ exchange_rates.strings.enable_automatic }}</label>
+            <input type="checkbox" id="exchange-rates-automatic" name="exchange-rates-automatic" value="1"
+                   {% if exchange_rates.settings.automatic == 1 %}checked="checked"{% endif %} />
+            <label for="exchange-rates-automatic">{{ exchange_rates.strings.enable_automatic }}</label>
         </p>
 
         <div id="exchange-rates-online-wrap"
-             class="exchange-rates-online-wrap"{% if exchange_rates.settings.mode == 'manual' %}
+             class="exchange-rates-online-wrap"{% if exchange_rates.settings.automatic == 0 %}
              style="display: none;"{% endif %}" >
 
         <div class="wcml-section-content-inner">
@@ -21,18 +21,19 @@
             <p>
                 <input type="button" id="update-rates-manually" class="button-secondary"
                        value="{{ exchange_rates.strings.update }}"/>
+                <i class="otgs-ico-help wcml-tip" data-tip="{{ exchange_rates.strings.update_tip }}" style="display: none"></i>
                 <span id="update-rates-spinner" class="spinner" style="float:none;"></span>
                 <input type="hidden" id="update-exchange-rates-nonce" value="{{ exchange_rates.strings.nonce }}"/>
             </p>
 
-            <p class="notice inline notice-success" id="update-rates-success"
+            <p class="notice inline notice-success" id="exchange-rates-success"
                style="display:none">{{ exchange_rates.strings.updated_success }}</p>
-            <p class="notice inline notice-error" id="update-rates-error" style="display:none"></p>
+            <p class="notice inline notice-error" id="exchange-rates-error" style="display:none"></p>
         </div>
 
         <div class="wcml-section-content-inner">
             <h4>{{ exchange_rates.strings.services_label }}</h4>
-            <ul>
+            <ul class="exchange-rates-sources">
 
                 {% for id, service in exchange_rates.services %}
                     <li>
@@ -44,16 +45,24 @@
                         <a href="{{ service.url }}" title="{{ exchange_rates.strings.visit_website }}" class="exchange-rate-service-website no-ico" target="_blank">
                             <span class="dashicons dashicons-external"></span>
                         </a>
+                        <div class="service-details-wrap" {% if exchange_rates.settings.service != id %} style="display: none;"{% endif %} >
 
+                            {% if service.requires_key %}
 
-                        {% if service.requires_key %}
-                            <div class="exchange-rate-api-key-wrap"{% if exchange_rates.settings.service != id %} style="display: none;"{% endif %} >
-                                {{ exchange_rates.strings.key_required }}
-                                <input type="text" name="services[{{ id }}][api-key]"
-                                       value="{{ service.api_key }}"
-                                       placeholder="{{ exchange_rates.strings.key_placeholder }}"/>
-                            </div>
-                        {% endif %}
+                            {{ exchange_rates.strings.key_required }}
+                            <input type="text" name="services[{{ id }}][api-key]"
+                                   value="{{ service.api_key }}"
+                                   placeholder="{{ exchange_rates.strings.key_placeholder }}"
+                                   size="40" />
+
+                            {% endif %}
+                            <p class="notice inline notice-error" id="service-error-{{ id }}" {% if service.last_error == false %}style="display:none"{% endif %}>
+                            {% if service.last_error %}
+                                {{service.last_error.text}} <i>({{service.last_error.time}})</i>
+                            {% endif %}
+                            </p>
+
+                        </div>
                     </li>
                 {% endfor %}
             </ul>

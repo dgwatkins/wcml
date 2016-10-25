@@ -96,7 +96,7 @@ class WCML_Multi_Currency{
         $this->custom_prices            = new WCML_Custom_Prices( $woocommerce_wpml );
         $this->currency_switcher        = new WCML_Currency_Switcher;
 
-        $this->exchange_rate_services = new WCML_Exchange_Rates( $this->woocommerce_wpml );
+        $this->exchange_rate_services   = new WCML_Exchange_Rates( $this->woocommerce_wpml );
 
         if( defined('W3TC') ){
             $this->W3TC = new WCML_W3TC_Multi_Currency();

@@ -4,16 +4,14 @@ class WCML_Exchange_Rates_Fixierio extends WCML_Exchange_Rate_Service{
 
     private $id             = 'fixierio';
     private $name           = 'Fixer.io';
-    private $description    = '';
     private $url            = 'http://fixer.io/';
     private $api_url        = 'http://api.fixer.io/latest?base=%s&symbols=%s';
-    private $api_key        = '';
 
+    protected $api_key      = '';
     const REQUIRES_KEY      = false;
 
     function __construct() {
-        $this->description = __( 'Fixer.io is a free JSON API for current and historical foreign exchange rates published by the European Central Bank.', 'woocommerce-multilingual' );
-        parent::__construct( $this->id, $this->name, $this->description, $this->api_url, $this->url );
+        parent::__construct( $this->id, $this->name, $this->api_url, $this->url );
     }
 
     /**
@@ -24,38 +22,35 @@ class WCML_Exchange_Rates_Fixierio extends WCML_Exchange_Rate_Service{
      */
     public function get_rates( $from, $tos ){
 
+        parent::clear_last_error( );
         $rates = array();
 
-        $url = sprintf( $this->api_url, $this->api_key, $from, join(',', $tos) );
+        $url = sprintf( $this->api_url, $from, join(',', $tos) );
 
         $http = new WP_Http();
         $data = $http->request( $url );
 
         if( is_wp_error( $data ) ){
 
-            throw new Exception( join("\n", $data->get_error_messages() ));
+            $http_error = join("\n", $data->get_error_messages() );
+            parent::save_last_error( $http_error );
+            throw new Exception( $http_error );
 
         } else {
 
             $json = json_decode( $data['body'] );
 
-            if( empty( $json->success ) ){
-                if( !empty( $json->error->info ) ){
-                    throw new Exception( $json->error->info );
-                } else{
-                    throw new Exception( __( 'Cannot get exchange rates. Connection failed.', 'woocommerce-multilingual' ) );
+            if( isset( $json->base ) && isset( $json->rates ) ){
+                foreach( $json->rates as $to => $rate ){
+                    $rates[$to] = round( $rate, 4 );
                 }
             } else{
-
-                if( isset( $json->quotes ) ){
-                    foreach( $tos as $to ){
-                        if( isset( $json->quotes->{$from.$to} ) ){
-                            $rates[$to] = round( $json->quotes->{$from.$to}, 4 );
-                        }
-                    }
-                }
-
+                $error = isset( $json->error ) ? $json->error :
+                    __( 'Cannot get exchange rates. Connection failed.', 'woocommerce-multilingual' );
+                parent::save_last_error( $error );
+                throw new Exception( $error );
             }
+
         }
 
         return $rates;

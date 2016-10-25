@@ -25,13 +25,12 @@ class WCML_Exchange_Rates_UI extends WPML_Templates_Factory {
         foreach( $services as $id => $service ){
             $this->services[ $id ] = array(
                 'name'          => $service->get_name(),
-                'description'   => $service->get_description(),
                 'url'           => $service->get_url(),
                 'requires_key'  => $service->is_key_required(),
-                'api_key'       => $service->get_setting( 'api-key' )
+                'api_key'       => $service->get_setting( 'api-key' ),
+                'last_error'    => $service->get_last_error()
             );
         }
-
     }
 
     public function get_model(){
@@ -49,6 +48,7 @@ class WCML_Exchange_Rates_UI extends WPML_Templates_Factory {
                 'services_api'      => __( 'API key (required)', 'woocommerce-multilingual' ),
                 'frequency'         => __( 'Update frequency', 'woocommerce-multilingual' ),
                 'update'            => __( 'Update manually now', 'woocommerce-multilingual' ),
+	            'update_tip'        => __( 'You have to save all settings before updating exchange rates', 'woocommerce-multilingual' ),
                 'manually'          => __( 'Manually', 'woocommerce-multilingual'),
                 'daily'             => __( 'Daily', 'woocommerce-multilingual' ),
                 'weekly'            => __( 'Weekly on', 'woocommerce-multilingual' ),

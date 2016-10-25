@@ -4,15 +4,13 @@ jQuery( function($){
 
         init: function(){
 
-            $('#online-exchange-rates').on( 'change', '#exchange-rates-online', WCMLExchangeRates.toggleManualAutomatic );
-
+            $('#online-exchange-rates').on( 'change', '#exchange-rates-automatic', WCMLExchangeRates.toggleManualAutomatic );
             $('#online-exchange-rates').on( 'click', '#update-rates-manually', WCMLExchangeRates.updateRatesManually);
-
             $('#online-exchange-rates').on( 'change', 'input[name=exchange-rates-service]', WCMLExchangeRates.selectService );
-
             $('#online-exchange-rates').on( 'change', 'input[name=update-schedule]', WCMLExchangeRates.updateFrequency );
 
-
+            WCMLExchangeRates.selectedService = $('input[name=exchange-rates-service]:checked').val();
+            $('#online-exchange-rates').on( 'change', 'input[name=exchange-rates-service]', WCMLExchangeRates.toggleUpdateManuallyButton );
 
         },
 
@@ -29,8 +27,10 @@ jQuery( function($){
         updateRatesManually: function(){
 
             var updateButton = $(this);
-            $('#update-rates-error').html('');
+
+            $('#exchange-rates-error').html('').hide();
             $('#update-rates-spinner').css({ visibility: 'visible' });
+            $('.exchange-rates-sources .notice-error').html('').hide();
             updateButton.attr('disabled', 'disabled');
 
             $.ajax({
@@ -44,11 +44,12 @@ jQuery( function($){
                 success: function (response) {
 
                     if (response.success) {
-                        $('#update-rates-success').fadeIn();
+                        $('#exchange-rates-success').fadeIn();
                         $('#update-rates-time .time').html( response.last_updated );
                     }else{
                         if( response.error ){
-                            $('#update-rates-error').html( response.error ).fadeIn();
+                            var serviceErrorWrap = $('#service-error-' + response.service );
+                            serviceErrorWrap.html( response.error ).fadeIn();
                         }
                     }
 
@@ -60,10 +61,23 @@ jQuery( function($){
 
         },
 
+        /**
+         * @todo remove when moving to auto-saving forms
+         */
+        toggleUpdateManuallyButton: function(){
+
+            if( WCMLExchangeRates.selectedService == $(this).val() ){
+                $('#update-rates-manually').removeAttr( 'disabled' ).next('.wcml-tip').hide();
+            } else {
+                $('#update-rates-manually').attr( 'disabled', 'disabled' ).next('.wcml-tip').show().tipTip( WCML_Tooltip.default_args);
+            }
+
+        },
+
         selectService: function(){
 
-            $('.exchange-rate-api-key-wrap').hide();
-            $(this).parent().find('.exchange-rate-api-key-wrap').show();
+            $('.service-details-wrap').hide();
+            $(this).parent().find('.service-details-wrap').show();
 
         },
 
