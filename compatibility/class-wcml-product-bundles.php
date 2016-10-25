@@ -385,21 +385,23 @@ class WCML_Product_Bundles{
 
                 $key_data = $this->translate_bundle_key( $bundle_key, $job->language_code  );
 
-                $bundle_data[ $key_data->tr_key ] = array(
+                if( !isset( $bundle_data[ $key_data->tr_key ] ) ){
+                    $bundle_data[ $key_data->tr_key ] = array(
+                        'product_id'            => $key_data->tr_id,
+                        'hide_thumbnail'        => $bundle_data_original[ $bundle_key ][ 'hide_thumbnail' ],
+                        'override_title'        => $bundle_data_original[ $bundle_key ][ 'override_title' ],
+                        'product_title'         => '',
+                        'override_description'  => $bundle_data_original[ $bundle_key ][ 'override_description' ],
+                        'product_description'   => '',
+                        'optional'              => $bundle_data_original[ $bundle_key ][ 'optional' ],
+                        'bundle_quantity'       => $bundle_data_original[ $bundle_key ][ 'bundle_quantity' ],
+                        'bundle_quantity_max'   => $bundle_data_original[ $bundle_key ][ 'bundle_quantity_max' ],
+                        'bundle_discount'       => $bundle_data_original[ $bundle_key ][ 'bundle_discount' ],
+                        'visibility'            => $bundle_data_original[ $bundle_key ][ 'visibility' ],
+                    );
+                }
 
-                    'product_id'            => $key_data->tr_id,
-                    'hide_thumbnail'        => $bundle_data_original[ $bundle_key ][ 'hide_thumbnail' ],
-                    'override_title'        => $bundle_data_original[ $bundle_key ][ 'override_title' ],
-                    'product_title'         => isset( $value[ 'data' ][ 'title' ] ) ? $value[ 'data' ][ 'title' ] : '',
-                    'override_description'  => $bundle_data_original[ $bundle_key ][ 'override_description' ],
-                    'product_description'   => isset( $value[ 'data' ][ 'description' ] ) ? $value[ 'data' ][ 'description' ] : '',
-                    'optional'              => $bundle_data_original[ $bundle_key ][ 'optional' ],
-                    'bundle_quantity'       => $bundle_data_original[ $bundle_key ][ 'bundle_quantity' ],
-                    'bundle_quantity_max'   => $bundle_data_original[ $bundle_key ][ 'bundle_quantity_max' ],
-                    'bundle_discount'       => $bundle_data_original[ $bundle_key ][ 'bundle_discount' ],
-                    'visibility'            => $bundle_data_original[ $bundle_key ][ 'visibility' ],
-
-                );
+                $bundle_data[ $key_data->tr_key ][ 'product_'.$field ] = $value[ 'data' ];
 
             }
         }
