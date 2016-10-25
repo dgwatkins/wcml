@@ -172,7 +172,7 @@ class WCML_Bookings {
 			), 10, 4 );
 		}
 
-		add_filter( 'wpml_extra_conditions_snippet', array( $this, 'extra_conditions_to_filter_bookings' ), 10, 2 );
+		add_filter( 'wpml_extra_conditions_snippet', array( $this, 'extra_conditions_to_filter_bookings' ) );
 
 		$this->clear_transient_fields();
 
@@ -2218,9 +2218,9 @@ class WCML_Bookings {
 
 	}
 
-	public function extra_conditions_to_filter_bookings( $extra_conditions, $type ){
+	public function extra_conditions_to_filter_bookings( $extra_conditions ){
 
-		if( $type == 'wc_booking' && !isset( $_GET[ 'post_status' ] ) ){
+		if( isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'wc_booking' && !isset( $_GET[ 'post_status' ] ) ){
 			$extra_conditions = str_replace( "GROUP BY", " AND post_status = 'confirmed' GROUP BY", $extra_conditions );
 		}
 
