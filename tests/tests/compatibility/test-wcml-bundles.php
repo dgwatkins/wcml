@@ -421,11 +421,11 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 		$expected = array(
 			$this->test_data->translated_product_in_bundle->id => array(
 				'product_id' => $this->test_data->translated_product_in_bundle->id,
+				'hide_thumbnail' => 'no',
 				'override_title' => 'yes',
 				'product_title' => $data[ 'title' ][ 'data' ],
 				'override_description' => 'yes',
 				'product_description' => $data[ 'description' ][ 'data' ],
-				'hide_thumbnail' => 'no',
 				'optional' => 'no',
 				'bundle_quantity' => 1,
 				'bundle_quantity_max' => 1,
