@@ -172,8 +172,11 @@ class WCML_Bookings {
 			), 10, 4 );
 		}
 
+		add_filter( 'wpml_extra_conditions_snippet', array( $this, 'extra_conditions_to_filter_bookings' ), 10, 2 );
 
 		$this->clear_transient_fields();
+
+		add_filter( 'wpml_tm_dashboard_translatable_types', array(	$this, 'hide_bookings_type_on_tm_dashboard'	) );
 
 	}
 
@@ -2213,6 +2216,20 @@ class WCML_Bookings {
 
 		}
 
+	}
+
+	public function extra_conditions_to_filter_bookings( $extra_conditions, $type ){
+
+		if( $type == 'wc_booking' && !isset( $_GET[ 'post_status' ] ) ){
+			$extra_conditions = str_replace( "GROUP BY", " AND post_status = 'confirmed' GROUP BY", $extra_conditions );
+		}
+
+		return $extra_conditions;
+	}
+
+	public function hide_bookings_type_on_tm_dashboard( $types ){
+		unset( $types[ 'wc_booking' ] );
+		return $types;
 	}
 
 }
