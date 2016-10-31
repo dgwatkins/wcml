@@ -4,11 +4,13 @@ class WCML_Cart
 
     private $woocommerce_wpml;
     private $sitepress;
+    private $woocommerce;
 
-    public function __construct( &$woocommerce_wpml, &$sitepress )
+    public function __construct( &$woocommerce_wpml, &$sitepress, &$woocommerce )
     {
         $this->woocommerce_wpml = $woocommerce_wpml;
         $this->sitepress = $sitepress;
+        $this->woocommerce = $woocommerce;
 
         //cart widget
         add_action( 'wp_ajax_woocommerce_get_refreshed_fragments', array( $this, 'wcml_refresh_fragments' ), 0 );
@@ -36,7 +38,6 @@ class WCML_Cart
      *  Update cart and cart session when switch language
      */
     public function woocommerce_calculate_totals( $cart, $currency = false ){
-        global $woocommerce;
 
         $current_language = $this->sitepress->get_current_language();
         $new_cart_data = array();
@@ -74,7 +75,9 @@ class WCML_Cart
             }
 
             if( $cart_item[ 'product_id' ] == $tr_product_id ){
-                $new_cart_data[ $key ] = apply_filters( 'wcml_cart_contents_not_changed', $cart->cart_contents[$key], $key, $current_language );
+
+                $new_key = $this->wcml_generate_cart_key( $cart->cart_contents, $key );
+                $new_cart_data[ $new_key ] = apply_filters( 'wcml_cart_contents_not_changed', $cart->cart_contents[$key], $key, $current_language );
                 continue;
             }
 
@@ -95,25 +98,21 @@ class WCML_Cart
             }
 
             if( !is_null( $tr_product_id ) ){
-                $cart_item_data = $this->get_cart_item_data_from_cart( $cart->cart_contents[ $key ] );
-                $new_key = $woocommerce->cart->generate_cart_id(
-                                $cart->cart_contents[ $key ][ 'product_id' ],
-                                $cart->cart_contents[ $key ][ 'variation_id' ],
-                                $cart->cart_contents[ $key ][ 'variation' ],
-                                $cart_item_data );
+
+                $new_key = $this->wcml_generate_cart_key( $cart->cart_contents, $key );
                 $cart->cart_contents = apply_filters( 'wcml_update_cart_contents_lang_switch', $cart->cart_contents, $key, $new_key, $current_language );
                 $new_cart_data[ $new_key ] = $cart->cart_contents[ $key ];
+
                 $new_cart_data = apply_filters( 'wcml_cart_contents', $new_cart_data, $cart->cart_contents, $key, $new_key );
-            }
+           }
         }
 
         $cart->cart_contents = $this->wcml_check_on_duplicate_products_in_cart( $new_cart_data );
-        $woocommerce->session->cart = $cart;
+        $this->woocommerce->session->cart = $cart;
         return $cart;
     }
 
     public function wcml_check_on_duplicate_products_in_cart( $cart_contents ){
-        global $woocommerce;
 
         $exists_products = array();
         remove_action( 'woocommerce_before_calculate_totals', array( $this, 'woocommerce_calculate_totals' ), 100 );
@@ -125,19 +124,12 @@ class WCML_Cart
             }
 
             $quantity = $cart_content['quantity'];
-            // unset unnecessary data to generate id to check
-            unset( $cart_content['quantity'] );
-            unset( $cart_content['line_total'] );
-            unset( $cart_content['line_subtotal'] );
-            unset( $cart_content['line_tax'] );
-            unset( $cart_content['line_subtotal_tax'] );
-            unset( $cart_content['line_tax_data'] );
 
-            $search_key = md5( serialize( $cart_content ) );
+            $search_key = $this->wcml_generate_cart_key( $cart_contents, $key );
             if( array_key_exists( $search_key, $exists_products ) ){
                 unset( $cart_contents[ $key ] );
                 $cart_contents[ $exists_products[ $search_key ] ][ 'quantity' ] = $cart_contents[ $exists_products[ $search_key ] ][ 'quantity' ] + $quantity;
-                $woocommerce->cart->calculate_totals();
+                $this->woocommerce->cart->calculate_totals();
             }else{
                 $exists_products[ $search_key ] = $key;
             }
@@ -177,12 +169,32 @@ class WCML_Cart
         return $attr_translation;
     }
 
+    public function wcml_generate_cart_key( $cart_contents, $key ){
+        $cart_item_data = $this->get_cart_item_data_from_cart( $cart_contents[ $key ] );
+
+        return $this->woocommerce->cart->generate_cart_id(
+            $cart_contents[ $key ][ 'product_id' ],
+            $cart_contents[ $key ][ 'variation_id' ],
+            $cart_contents[ $key ][ 'variation' ],
+            (array) apply_filters( 'woocommerce_add_cart_item_data',
+                $cart_item_data,
+                $cart_contents[ $key ][ 'product_id' ],
+                $cart_contents[ $key ][ 'variation_id' ]
+            )
+        );
+    }
+
     //get cart_item_data from existing cart array ( from session )
     public function get_cart_item_data_from_cart( $cart_contents ){
         unset( $cart_contents[ 'product_id' ] );
         unset( $cart_contents[ 'variation_id' ] );
         unset( $cart_contents[ 'variation' ] );
         unset( $cart_contents[ 'quantity' ] );
+        unset( $cart_contents[ 'line_total' ] );
+        unset( $cart_contents[ 'line_subtotal' ] );
+        unset( $cart_contents[ 'line_tax' ] );
+        unset( $cart_contents[ 'line_subtotal_tax' ] );
+        unset( $cart_contents[ 'line_tax_data' ] );
         unset( $cart_contents[ 'data' ] );
 
         return apply_filters( 'wcml_filter_cart_item_data', $cart_contents );
@@ -226,11 +238,10 @@ class WCML_Cart
 
 
     public function localize_flat_rates_shipping_classes(){
-        global $woocommerce;
 
         if(is_ajax() && isset($_POST['action']) && $_POST['action'] == 'woocommerce_update_order_review'){
-            $woocommerce->shipping->load_shipping_methods();
-            $shipping_methods = $woocommerce->shipping->get_shipping_methods();
+            $this->woocommerce->shipping->load_shipping_methods();
+            $shipping_methods = $this->woocommerce->shipping->get_shipping_methods();
             foreach($shipping_methods as $method){
                 if(isset($method->flat_rate_option)){
                     add_filter('option_' . $method->flat_rate_option, array($this, 'translate_shipping_class'));
