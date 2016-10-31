@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f85883c7fcddf43e1fbe72e15309d7d5",
+    "content-hash": "5cb2171b379afbb9d0933c8ea0a538b6",
     "packages": [
         {
             "name": "composer/installers",
@@ -638,12 +638,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/m4tthumphrey/php-gitlab-api.git",
-                "reference": "4c934c61e8d17db0d19a0679006a7b5fcb86e90c"
+                "reference": "68226ccf9d7dfa8e969f3b8fda1b8e2961e65a94"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/m4tthumphrey/php-gitlab-api/zipball/4c934c61e8d17db0d19a0679006a7b5fcb86e90c",
-                "reference": "4c934c61e8d17db0d19a0679006a7b5fcb86e90c",
+                "url": "https://api.github.com/repos/m4tthumphrey/php-gitlab-api/zipball/68226ccf9d7dfa8e969f3b8fda1b8e2961e65a94",
+                "reference": "68226ccf9d7dfa8e969f3b8fda1b8e2961e65a94",
                 "shasum": ""
             },
             "require": {
@@ -686,7 +686,7 @@
                 "api",
                 "gitlab"
             ],
-            "time": "2016-10-03 18:13:47"
+            "time": "2016-10-28T11:27:46+00:00"
         },
         {
             "name": "mockery/mockery",
@@ -881,6 +881,31 @@
                 "phpunit"
             ],
             "time": "2016-10-18 07:04:43"
+        },
+        {
+            "name": "otgs/wcml-codeception-tests",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "ssh://git@git.onthegosystems.com:10022/wcml/codeception-tests.git",
+                "reference": "deee6ca4666a9218570a23c5f5ed0ef47b7072ce"
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "codeception-tests",
+            "license": [
+                "GPLv2"
+            ],
+            "authors": [
+                {
+                    "name": "Andreas Panagiotopulous",
+                    "email": "adreas.p@onthegosystems.com"
+                }
+            ],
+            "description": "Codeception tests for WooCommerce Multilingual",
+            "homepage": "https://wpml.org/documentation/related-projects/woocommerce-multilingual/",
+            "time": "2016-10-31T09:42:36+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -1336,16 +1361,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.6.1",
+            "version": "5.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "60c32c5b5e79c2248001efa2560f831da11cc2d7"
+                "reference": "cd13b23ac5a519a4708e00736c26ee0bb28b2e01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/60c32c5b5e79c2248001efa2560f831da11cc2d7",
-                "reference": "60c32c5b5e79c2248001efa2560f831da11cc2d7",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/cd13b23ac5a519a4708e00736c26ee0bb28b2e01",
+                "reference": "cd13b23ac5a519a4708e00736c26ee0bb28b2e01",
                 "shasum": ""
             },
             "require": {
@@ -1414,7 +1439,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-10-07T13:03:26+00:00"
+            "time": "2016-10-25T07:40:25+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1990,7 +2015,7 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
@@ -2043,16 +2068,16 @@
         },
         {
             "name": "symfony/dom-crawler",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dom-crawler.git",
-                "reference": "bb7395e8b1db3654de82b9f35d019958276de4d7"
+                "reference": "59eee3c76eb89f21857798620ebdad7a05ad14f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/bb7395e8b1db3654de82b9f35d019958276de4d7",
-                "reference": "bb7395e8b1db3654de82b9f35d019958276de4d7",
+                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/59eee3c76eb89f21857798620ebdad7a05ad14f4",
+                "reference": "59eee3c76eb89f21857798620ebdad7a05ad14f4",
                 "shasum": ""
             },
             "require": {
@@ -2095,7 +2120,7 @@
             ],
             "description": "Symfony DomCrawler Component",
             "homepage": "https://symfony.com",
-            "time": "2016-08-05T08:37:39+00:00"
+            "time": "2016-10-18T15:46:07+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -2158,16 +2183,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "368b9738d4033c8b93454cb0dbd45d305135a6d3"
+                "reference": "7ff51b06c6c3d5cc6686df69004a42c69df09e27"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/368b9738d4033c8b93454cb0dbd45d305135a6d3",
-                "reference": "368b9738d4033c8b93454cb0dbd45d305135a6d3",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/7ff51b06c6c3d5cc6686df69004a42c69df09e27",
+                "reference": "7ff51b06c6c3d5cc6686df69004a42c69df09e27",
                 "shasum": ""
             },
             "require": {
@@ -2203,7 +2228,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-25T08:27:07+00:00"
+            "time": "2016-10-24T18:41:13+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -2263,7 +2288,8 @@
         "m4tthumphrey/php-gitlab-api": 20,
         "10up/wp_mock": 20,
         "otgs/unit-tests-framework": 20,
-        "otgs/build-tools-ci": 20
+        "otgs/build-tools-ci": 20,
+        "otgs/wcml-codeception-tests": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
