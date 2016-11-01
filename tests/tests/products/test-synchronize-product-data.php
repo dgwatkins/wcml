@@ -175,9 +175,17 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		$default_cat = $this->wcml_helper->add_term( rand_str(), 'product_cat', $this->default_language, $default_product->id );
 		$translated_cat = $this->wcml_helper->add_term( rand_str(), 'product_cat', $this->second_language, false, $default_cat->trid  );
 
+		$this->wpdb->insert( $this->wpdb->term_relationships, array( 'object_id' => $translated_product->id, 'term_taxonomy_id' => $translated_cat->term_taxonomy_id ) );
+
 		$this->woocommerce_wpml->sync_product_data->sync_product_taxonomies( $default_product->id, $translated_product->id, $this->second_language );
 
-		$this->assertEquals( get_term( $default_cat->term_id, 'product_cat' )->count, get_term( $translated_cat->term_id, 'product_cat' )->count );
+		$this->assertEquals( get_term_meta( $default_cat->term_id, 'product_count_product_cat', true), get_term_meta( $translated_cat->term_id, 'product_count_product_cat', true) );
+
+		$this->wpdb->query( $this->wpdb->prepare( "DELETE FROM {$this->wpdb->term_relationships} WHERE object_id = %d AND term_taxonomy_id = %d", $default_product->id, $default_cat->term_taxonomy_id ) );
+
+		$this->woocommerce_wpml->sync_product_data->delete_term_relationships_update_term_count( $default_product->id, array( $default_cat->term_taxonomy_id ) );
+
+		$this->assertEquals( get_term_meta( $default_cat->term_id, 'product_count_product_cat', true), get_term_meta( $translated_cat->term_id, 'product_count_product_cat', true) );
 	}
 
 	public function test_sync_product_stocks(){
