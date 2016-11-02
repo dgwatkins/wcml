@@ -25,6 +25,7 @@ class WCML_Table_Rate_Shipping {
 		$this->sitepress = $sitepress;
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		add_action( 'init', array( $this, 'init' ), 9 );
+
 		add_filter( 'get_the_terms',array( $this, 'shipping_class_id_in_default_language' ), 10, 3 );
 
 		if( wcml_is_multi_currency_on() ){
@@ -69,8 +70,9 @@ class WCML_Table_Rate_Shipping {
 	 * @return mixed
 	 */
 	public function shipping_class_id_in_default_language( $terms, $post_id, $taxonomy ) {
-		global $icl_adjust_id_url_filter_off;
-		if ( 'product_shipping_class' === $taxonomy ) {
+		global $icl_adjust_id_url_filter_off, $pagenow;
+
+		if( $pagenow != 'post.php' && ( get_post_type( $post_id ) == 'product' || get_post_type( $post_id ) == 'product_variation' ) && $taxonomy == 'product_shipping_class' ){
 
 			foreach ( $terms as $k => $term ) {
 				$shipping_class_id = apply_filters( 'translate_object_id', $term->term_id, 'product_shipping_class', false, $this->sitepress->get_default_language() );
