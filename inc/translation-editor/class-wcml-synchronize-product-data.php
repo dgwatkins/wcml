@@ -267,7 +267,6 @@ class WCML_Synchronize_Product_Data{
      * @param $action
      */
     public function sync_product_stocks( $order, $action ){
-        $order_id = method_exists( 'WC_Order', 'get_id' ) ? $order->get_id() : $order->id;
 
         foreach( $order->get_items() as $item ) {
 
