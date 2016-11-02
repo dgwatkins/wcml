@@ -146,14 +146,16 @@
 		}
 		input {
 			margin: 0 !important;
-			width: 70px;
+			width: 75px;
 		}
 		.wcml-co-set-rate {
 			display: inline-block;
 			padding: 4px $margin-sm $margin-xs $margin-sm;
+			max-width: 265px;
 		}
 		small {
 			display: block;
+			margin-top: 5px;
 		}
 	}
 	.wcml-co-help-link {

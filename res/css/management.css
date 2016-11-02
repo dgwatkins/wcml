@@ -88,12 +88,10 @@
   margin: 0;
 }
 
-.wcml-section-content .wcml-section-content-inner {
+.wcml-section-content .wcml-section-content-inner:not(:last-child) {
   margin: 0 0 20px 0;
   padding: 0 0 10px 0;
   border-bottom: 1px solid #ededed;
-  float: left;
-  width: 100%;
 }
 
 .wcml-section-header {
@@ -158,14 +156,16 @@
 }
 .wcml-co-dialog .wcml-co-exchange-rate input {
   margin: 0 !important;
-  width: 70px;
+  width: 75px;
 }
 .wcml-co-dialog .wcml-co-exchange-rate .wcml-co-set-rate {
   display: inline-block;
   padding: 4px 15px 7px 15px;
+  max-width: 265px;
 }
 .wcml-co-dialog .wcml-co-exchange-rate small {
   display: block;
+  margin-top: 5px;
 }
 .wcml-co-dialog .wcml-co-help-link {
   margin-top: 7px;
@@ -380,7 +380,7 @@ table.widefat.currency_lang_table thead th {
 }
 #wcml_currencies_order li {
   float: left;
-  margin: 0 8px 0 0;
+  margin: 2px 4px 2px 0;
   padding: 2px 8px;
   border: 1px solid #DFDFDF;
   border-radius: 2px;
