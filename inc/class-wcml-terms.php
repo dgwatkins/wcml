@@ -24,8 +24,6 @@ class WCML_Terms{
         add_action('created_term', array($this, 'translated_terms_status_update'), 10,3);
         add_action('edit_term', array($this, 'translated_terms_status_update'), 10,3);
         add_action('wp_ajax_wcml_update_term_translated_warnings', array( $this, 'wcml_update_term_translated_warnings'));
-        add_action('wp_ajax_wcml_ingore_taxonomy_translation', array( $this, 'wcml_ingore_taxonomy_translation'));
-        add_action('wp_ajax_wcml_uningore_taxonomy_translation', array( $this, 'wcml_uningore_taxonomy_translation'));
 
         add_action('created_term', array( $this, 'set_flag_for_variation_on_attribute_update'), 10, 3);
 
@@ -274,71 +272,6 @@ class WCML_Terms{
         exit;
         
     }
-
-    public function wcml_ingore_taxonomy_translation(){
-        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_ingore_taxonomy_translation_nonce')){
-            die('Invalid nonce');
-        }
-        
-        $ret = array();
-        
-        $taxonomy = filter_input( INPUT_POST, 'taxonomy', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-
-        $wcml_settings = $this->woocommerce_wpml->get_settings();
-        $wcml_settings['untranstaled_terms'][$taxonomy]['status'] = $this->NEW_TAXONOMY_IGNORED;
-
-        $this->woocommerce_wpml->update_settings($wcml_settings);
-
-	    $ret['html'] = '<i class="otgs-ico-ok"></i> ';
-        $ret['html'] .= sprintf(__('%s do not require translation.', 'woocommerce-multilingual'), get_taxonomy($taxonomy)->labels->name);
-	    $ret['html'] .= '<small class="actions">';
-	    $ret['html'] .= '<a href="#unignore-' . $taxonomy . '">' . __( 'Include to translation', 'woocommerce-multilingual' ) . '</a>';
-	    $ret['html'] .= '</small>';
-
-        echo json_encode($ret);
-        exit;
-    }
-    
-    public function wcml_uningore_taxonomy_translation(){
-        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-        if(!$nonce || !wp_verify_nonce($nonce, 'wcml_ingore_taxonomy_translation_nonce')){
-            die('Invalid nonce');
-        }
-        
-        $ret = array();
-        
-        $taxonomy = filter_input( INPUT_POST, 'taxonomy', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-
-        $wcml_settings = $this->woocommerce_wpml->get_settings();
-
-        if($wcml_settings['untranstaled_terms'][$taxonomy]['count'] > 0){
-            $wcml_settings['untranstaled_terms'][$taxonomy]['status'] = $this->NEW_TAXONOMY_TERMS;
-
-	        $ret['html'] = '<i class="otgs-ico-warning-sign"></i> ';
-	        $ret['html'] .= sprintf( __( '%d %s are missing translations.', 'woocommerce-multilingual' ), $wcml_settings['untranstaled_terms'][ $taxonomy ]['count'], get_taxonomy( $taxonomy )->labels->name );
-	        $ret['html'] .= ' <a class="button-secondary" href="' . admin_url( 'admin.php?page=wpml-wcml&tab=' . $taxonomy ) . '">' . sprintf( __( 'Translate %s', 'woocommerce-multilingual' ), get_taxonomy( $taxonomy )->labels->name ) . '</a>';
-	        $ret['html'] .= '<small class="actions">';
-	        $ret['html'] .= '<a href="#ignore-' . $taxonomy . '">' . __( 'Exclude from translation', 'woocommerce-multilingual' ) . '</a>';
-	        $ret['html'] .= '</small>';
-
-            $ret['warn'] = 1;
-
-        }else{
-            $wcml_settings['untranstaled_terms'][$taxonomy]['status'] = $this->ALL_TAXONOMY_TERMS_TRANSLATED;
-
-	        $ret['html'] = '<i class="otgs-ico-ok"></i> ';
-            $ret['html'] .= sprintf(__('All %s are translated.', 'woocommerce-multilingual'), get_taxonomy($taxonomy)->labels->name);
-
-            $ret['warn'] = 0;
-        }
-
-        $this->woocommerce_wpml->update_settings($wcml_settings);
-
-
-        echo json_encode($ret);
-        exit;
-    }    
     
     public function update_terms_translated_status($taxonomy){
         

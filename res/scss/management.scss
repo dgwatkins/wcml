@@ -95,7 +95,7 @@
 
 .wcml-section-content {
 	float: left;
-	width: 570px;
+	width: 680px;
 	margin-left: 30px;
 }
 
@@ -471,9 +471,12 @@ input[name="wcml_curr_template"] {
 			margin-bottom: $margin-xs*.5;
 		}
 	}
-	&.wcml-plugins-status-list li,
 	&.wcml-tax-translation-list li {
-		margin-bottom: $margin-sm;
+		margin-bottom: 5px;
+	  	line-height: 26px;
+	}
+  	&.wcml-plugins-status-list li{
+		margin-bottom: 10px;
 	}
 	[class*="otgs-ico"]:not(.otgs-ico-help) {
 		margin-left: -25px;
