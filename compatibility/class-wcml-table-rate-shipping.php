@@ -30,6 +30,7 @@ class WCML_Table_Rate_Shipping {
 
 		if( wcml_is_multi_currency_on() ){
 			add_filter( 'woocommerce_table_rate_query_rates_args', array( $this, 'filter_query_rates_args' ) );
+			add_filter( 'woocommerce_table_rate_package_row_base_price', array( $this, 'filter_product_base_price' ), 10, 3 );
 		}
 
 	}
@@ -101,5 +102,14 @@ class WCML_Table_Rate_Shipping {
 		return $args;
 	}
 
+
+	public function filter_product_base_price( $row_base_price, $_product, $qty ){
+
+		if( get_option( 'woocommerce_currency') != $this->woocommerce_wpml->multi_currency->get_client_currency() ){
+			$row_base_price = apply_filters( 'wcml_product_price_by_currency', $_product->id, get_option( 'woocommerce_currency') ) * $qty;
+		}
+
+		return $row_base_price;
+	}
 
 }
