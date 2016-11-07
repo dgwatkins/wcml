@@ -93,24 +93,14 @@ class WCML_Terms{
         $taxonomies = $taxonomies + array_keys(get_taxonomies(array('object_type'=>array('product_variations')),'objects'));
         $taxonomies = array_unique($taxonomies);
         $taxonomy = isset($_GET['taxonomy']) ? $_GET['taxonomy'] : false;
-        if($taxonomy && in_array($taxonomy, $taxonomies)){
+        if( $taxonomy && in_array( $taxonomy, $taxonomies ) ){
             $taxonomy_obj = get_taxonomy($taxonomy);
-            $language = isset($_GET['lang']) ? $_GET['lang'] : false;
-            if(empty($language) && isset($_GET['tag_ID'])){
-                $tax_id = $this->wpdb->get_var($this->wpdb->prepare("SELECT term_taxonomy_id FROM {$this->wpdb->term_taxonomy} WHERE term_id=%d AND taxonomy=%s", $_GET['tag_ID'], $taxonomy));                
-                $language = $this->sitepress->get_language_for_element($tax_id, 'tax_' . $taxonomy);
-            }
-            if(empty($language)){
-                $language = $this->sitepress->get_default_language();
-            }
-
             $message = sprintf(__('To translate %s please use the %s translation%s page, inside the %sWooCommerce Multilingual admin%s.', 'woocommerce-multilingual'),
             $taxonomy_obj->labels->name,
             '<strong><a href="' . admin_url('admin.php?page=wpml-wcml&tab=' . $taxonomy ) . '">' . $taxonomy_obj->labels->singular_name,  '</a></strong>',
                 '<strong><a href="' . admin_url('admin.php?page=wpml-wcml">'), '</a></strong>');
 
             echo '<div class="updated"><p>' . $message . '</p></div>';
-            
         }
         
     } 
