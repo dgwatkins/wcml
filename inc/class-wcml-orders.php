@@ -296,7 +296,7 @@ class WCML_Orders{
 
     function order_language_dropdown( $order_id ){
         if( !get_post_meta( $order_id, '_order_currency') ) {
-            $languages = icl_get_languages('skip_missing=0&orderby=code');
+            $languages = apply_filters( 'wpml_active_languages', array(), array( 'skip_missing' => 0, 'orderby' => 'code' ) );
             $selected_lang =  isset( $_COOKIE [ '_wcml_dashboard_order_language' ] ) ?  $_COOKIE [ '_wcml_dashboard_order_language' ] : $this->sitepress->get_default_language();
             ?>
             <li class="wide">
