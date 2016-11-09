@@ -81,6 +81,9 @@ function _install_wc() {
 
 require_once dirname( __FILE__ ) . '/wordpress/wp-includes/class-wp-locale.php';
 
+if ( ! function_exists( 'get_plugins' ) ) {
+	require_once dirname( __FILE__ ) . '/wordpress/wp-admin/includes/plugin.php';
+}
 // Install WPML
 tests_add_filter( 'wpml_loaded', 'wpml_test_install_setup' );
 // install WC
