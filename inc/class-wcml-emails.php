@@ -256,7 +256,7 @@ class WCML_Emails{
 
     function filter_formatted_items( $formatted_meta, $object ){
 
-        if( $object->product->variation_id ){
+        if( isset( $object->product->variation_id ) ){
 
             $current_prod_variation_id = apply_filters( 'translate_object_id', $object->product->variation_id, 'product_variation', false );
 
@@ -344,6 +344,8 @@ class WCML_Emails{
         }elseif(isset($_POST['action']) && $_POST['action'] == 'woocommerce_refund_line_items'){
             $order_id = filter_input( INPUT_POST, 'order_id', FILTER_SANITIZE_NUMBER_INT );
         }
+
+        $order_id = apply_filters( 'wcml_send_email_order_id', $order_id );
 
         if( $order_id ){
             $order_language = get_post_meta( $order_id, 'wpml_language', true );
