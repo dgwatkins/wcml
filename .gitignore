@@ -40,6 +40,7 @@ Thumbs.db
 
 inc/sandbox.inc
 *.sh
+*.iml
 build.xml
 *.komodoproject
 
