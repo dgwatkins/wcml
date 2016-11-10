@@ -109,7 +109,11 @@ class WCML_Multi_Currency_Prices{
 
     }
 
-    public function get_product_price_in_currency( $product_id, $currency ){
+    public function get_product_price_in_currency( $product_id, $currency = false ){
+
+        if( !$currency ){
+            $currency = $this->multi_currency->get_client_currency();
+        }
 
         remove_filter( 'get_post_metadata', array( $this->woocommerce_wpml->multi_currency->prices, 'product_price_filter' ), 10, 4 );
 
