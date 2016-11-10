@@ -243,7 +243,7 @@ class WCML_Multi_Currency_Prices{
                 $amount = $amount * $exchange_rates[$currency];
 
                 // exception - currencies_without_cents
-                if(in_array($currency, $this->multi_currency->currencies_without_cents)){
+                if(in_array($currency, $this->multi_currency->get_currencies_without_cents())){
 
                     if(version_compare(PHP_VERSION, '5.3.0') >= 0){
                         $amount = round($amount, 0, PHP_ROUND_HALF_UP);
@@ -282,7 +282,7 @@ class WCML_Multi_Currency_Prices{
                 $amount = $amount / $exchange_rates[$currency];
 
                 // exception - currencies_without_cents
-                if(in_array($currency, $this->multi_currency->currencies_without_cents)){
+                if(in_array($currency, $this->multi_currency->get_currencies_without_cents())){
 
                     if(version_compare(PHP_VERSION, '5.3.0') >= 0){
                         $amount = round($amount, 0, PHP_ROUND_HALF_UP);
@@ -365,7 +365,7 @@ class WCML_Multi_Currency_Prices{
         }
 
 
-        return $price;
+        return apply_filters( 'wcml_rounded_price', $price, $currency );
 
     }
 
