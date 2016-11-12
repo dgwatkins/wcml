@@ -51,7 +51,7 @@ class WCML_Resources {
             wp_enqueue_style( 'wcml_op' );
         }
 
-        wp_register_style( 'wcml_admin', WCML_PLUGIN_URL . '/res/css/admin.css', null, WCML_VERSION );
+        wp_register_style( 'wcml_admin', WCML_PLUGIN_URL . '/res/css/admin.css', array( 'wp-pointer' ), WCML_VERSION );
         wp_enqueue_style( 'wcml_admin' );
     }
 
@@ -67,6 +67,14 @@ class WCML_Resources {
             'jquery-ui-core',
             'jquery-ui-resizable'
         ), WCML_VERSION );
+
+        wp_enqueue_script(
+            'wcml-pointer',
+            WCML_PLUGIN_URL . '/res/js/pointer' . WCML_JS_MIN . '.js',
+            array( 'wp-pointer' ),
+            WCML_VERSION,
+            true
+        );
 
         wp_register_script( 'wcml-front-scripts', WCML_PLUGIN_URL . '/res/js/front-scripts' . WCML_JS_MIN . '.js', array(
             'jquery'
