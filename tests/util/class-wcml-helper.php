@@ -216,13 +216,7 @@ class WCML_Helper {
         ) );
 
         // Set Product Type
-        $variable_type = get_term_by('name', 'variable', 'product_type');
-        self::$wpdb->insert( self::$wpdb->prefix . 'term_relationships', array(
-            'object_id'        => $product_id,
-            'term_taxonomy_id' => $variable_type->term_taxonomy_id,
-            'term_order'       => 0
-        ) );
-        $return['term_taxonomy_id'] = self::$wpdb->insert_id;
+        $return['term_taxonomy_id'] = self::set_product_as_variable( $product_id );
 
         $ret->variations = array();
         // VARIATIONS
@@ -292,6 +286,16 @@ class WCML_Helper {
         $ret->trid  = !$trid ? $wpml_post_translations->get_element_trid( $product_id, 'post_product' ) : $trid;
 
         return $ret;
+    }
+
+    public static function set_product_as_variable( $product_id ){
+        $variable_type = get_term_by('name', 'variable', 'product_type');
+        self::$wpdb->insert( self::$wpdb->prefix . 'term_relationships', array(
+            'object_id'        => $product_id,
+            'term_taxonomy_id' => $variable_type->term_taxonomy_id,
+            'term_order'       => 0
+        ) );
+        return self::$wpdb->insert_id;
     }
 
     public static function add_term( $name, $taxonomy, $language, $product_id = false, $trid = false , $term_id = false) {

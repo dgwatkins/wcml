@@ -76,7 +76,8 @@ class Test_WCML_Table_Rate_Shipping extends WCML_UnitTestCase {
 		$expected = array(
 			$tr_shipping_class['term_id'] => get_term( $shipping_class['term_id'], 'product_shipping_class' ),
 		);
-		$this->assertEquals( $expected, $table_rate->shipping_class_id_in_default_language( $terms, null, 'product_shipping_class' ) );
+		$product_id = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
+		$this->assertEquals( $expected, $table_rate->shipping_class_id_in_default_language( $terms, $product_id, 'product_shipping_class' ) );
 	}
 
 	/**

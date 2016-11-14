@@ -11,8 +11,8 @@ if ( ! defined( 'WPML_CORE_ST_PATH' ) ) {
 if ( ! defined( 'WPML_CORE_TM_PATH' ) ) {
 	define( 'WPML_CORE_TM_PATH', dirname( __FILE__ ) . '/../../wpml-translation-management' );
 }
-if ( ! defined( 'WCML_CORE_TM_PATH' ) ) {
-	define( 'WCML_CORE_TM_PATH',  dirname( dirname( __FILE__ ) ) );
+if ( ! defined( 'WCML_CORE_PATH' ) ) {
+	define( 'WCML_CORE_PATH',  dirname( dirname( __FILE__ ) ) );
 }
 if ( ! defined( 'WC_PATH' ) ) {
 	define( 'WC_PATH', dirname( __FILE__ ) . '/../../woocommerce' );
@@ -106,9 +106,9 @@ require WC_PATH . '/tests/framework/class-wc-unit-test-factory.php';
 require WC_PATH . '/tests/framework/factories/class-wc-unit-test-factory-for-webhook.php';
 require WC_PATH . '/tests/framework/factories/class-wc-unit-test-factory-for-webhook-delivery.php';
 
-require WCML_CORE_TM_PATH . '/tests/util/wcml-unittestcase.class.php';
-require WCML_CORE_TM_PATH . '/tests/util/class-wcml-helper.php';
-require WCML_CORE_TM_PATH . '/tests/util/class-wcml-helper-coupon.php';
-require WCML_CORE_TM_PATH . '/tests/util/class-wcml-helper-multi-currency.php';
-require WCML_CORE_TM_PATH . '/tests/util/class-wcml-helper-orders.php';
-require WCML_CORE_TM_PATH . '/tests/util/class-wcml-helper-shipping.php';
+require WCML_CORE_PATH . '/tests/util/wcml-unittestcase.class.php';
+require WCML_CORE_PATH . '/tests/util/class-wcml-helper.php';
+require WCML_CORE_PATH . '/tests/util/class-wcml-helper-coupon.php';
+require WCML_CORE_PATH . '/tests/util/class-wcml-helper-multi-currency.php';
+require WCML_CORE_PATH . '/tests/util/class-wcml-helper-orders.php';
+require WCML_CORE_PATH . '/tests/util/class-wcml-helper-shipping.php';

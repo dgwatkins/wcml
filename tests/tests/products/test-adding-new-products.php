@@ -52,6 +52,7 @@ class Test_Adding_New_Products extends WCML_UnitTestCase {
 		global $woocommerce_wpml;
 		$orig_product = $this->add_variable_product( $orig_lang );
 		$translation = wpml_test_insert_post( $second_lang, 'product', $orig_product['post']->trid, random_string() );
+		WCML_Helper::set_product_as_variable( $translation );
 		wp_cache_init();
 
 		$woocommerce_wpml->sync_product_data->sync_product_data( $orig_product['post']->id, $translation, $second_lang );
@@ -82,6 +83,12 @@ class Test_Adding_New_Products extends WCML_UnitTestCase {
 			true
 		);
 		$translation = wpml_test_insert_post( $second_lang, 'product', $grouped_product['post']->trid, random_string() );
+		wp_set_post_terms(
+			$translation,
+			array( $term->term_id ),
+			'product_type',
+			true
+		);
 		wp_cache_init();
 		$woocommerce_wpml->sync_product_data->sync_product_data( $grouped_product['post']->id, $translation, $second_lang );
 
