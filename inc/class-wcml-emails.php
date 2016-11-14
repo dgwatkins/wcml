@@ -60,7 +60,7 @@ class WCML_Emails{
 
         if( is_admin() && $pagenow == 'admin.php' && isset($_GET['page']) && $_GET['page'] == 'wc-settings' && isset($_GET['tab']) && $_GET['tab'] == 'email' ){
             add_action('admin_footer', array($this, 'show_language_links_for_wc_emails'));
-            $this->set_emails_string_lamguage();
+            $this->set_emails_string_language();
         }
 
         add_filter( 'get_post_metadata', array( $this, 'filter_payment_method_string' ), 10, 4 );
@@ -442,16 +442,30 @@ class WCML_Emails{
         }
     }
 
-    function set_emails_string_lamguage(){
+    function set_emails_string_language(){
 
-        foreach( $_POST as $key => $post_value ){
+        foreach( $_POST as $key => $language ){
+
             if( substr( $key, 0, 9 ) == 'wcml_lang' ){
 
                 $email_string = explode( '-', $key );
-                $email_settings = get_option( $email_string[1], true );
 
                 if( isset( $email_string[2] ) ){
-                    $this->woocommerce_wpml->strings->set_string_language( $email_settings[ $email_string[2] ], 'admin_texts_'.$email_string[1] ,  '['.$email_string[1].']'.$email_string[2], $post_value );
+
+                    $email_key = str_replace( '_settings', '',  $email_string[1] );
+                    $email_key .= '_'.$email_string[2];
+
+                    $email_settings = get_option( $email_string[1], true );
+                    $opt_string_value =  $email_settings[ $email_string[2] ];
+
+                    $string_value = isset( $_POST[ $email_key ] ) ? $_POST[ $email_key ] : $opt_string_value;
+
+                    $context = 'admin_texts_'.$email_string[1];
+                    $name =  '['.$email_string[1].']'.$email_string[2];
+
+                    do_action('wpml_register_single_string', $context, $name, $string_value, false, $this->woocommerce_wpml->strings->get_string_language( $opt_string_value, $context ) );
+
+                    $this->woocommerce_wpml->strings->set_string_language( $string_value, $context, $name, $language );
                 }
             }
         }
