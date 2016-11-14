@@ -343,6 +343,12 @@ class WCML_Emails{
             $order_id = $this->order_id;
         }elseif(isset($_POST['action']) && $_POST['action'] == 'woocommerce_refund_line_items'){
             $order_id = filter_input( INPUT_POST, 'order_id', FILTER_SANITIZE_NUMBER_INT );
+        }elseif( empty( $_POST ) && isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == 'wc-settings' && isset( $_GET[ 'tab' ] ) && $_GET[ 'tab' ] == 'email' && substr( $name, 0, 12 ) == '[woocommerce' ){
+            $email_string = explode( ']', str_replace( '[', '', $name ) );
+            $email_option = get_option( $email_string[ 0 ], true );
+            $context = 'admin_texts_'.$email_string[ 0 ];
+
+            $current_language = $this->woocommerce_wpml->strings->get_string_language( $email_option[ $email_string[ 1 ] ], $context, $name );
         }
 
         $order_id = apply_filters( 'wcml_send_email_order_id', $order_id );
