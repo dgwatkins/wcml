@@ -56,6 +56,10 @@ jQuery( function($){
                     $('#update-rates-spinner').css({ visibility: 'hidden' });
                     updateButton.removeAttr('disabled');
 
+                    for( code in response.rates ){
+                        $('#currency_row_' + code + ' span.rate').hide().html( response.rates[code] ).fadeIn('slow');
+                    }
+
                 }
             })
 

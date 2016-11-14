@@ -100,9 +100,10 @@ class WCML_Exchange_Rates{
 
             try {
 
-                $this->update_exchange_rates();
+                $rates = $this->update_exchange_rates();
                 $response['success']      = 1;
                 $response['last_updated'] = date_i18n( 'F j, Y g:i a', $this->settings['last_updated'] );
+                $response['rates']        = $rates;
 
             } catch ( Exception $e ) {
 
@@ -149,6 +150,7 @@ class WCML_Exchange_Rates{
         $this->settings['last_updated'] = current_time( 'timestamp' );
         $this->save_settings();
 
+        return $rates;
     }
 
     private function save_exchage_rate( $currency, $rate ){
@@ -234,15 +236,16 @@ class WCML_Exchange_Rates{
 
         if( $this->settings['schedule'] == 'monthly' ){
             $current_day = date('j');
-            if( $this->settings['month_day'] >= $current_day ){
+            $days_in_current_month = cal_days_in_month( CAL_GREGORIAN, date('n'), date('Y') );
+
+            if( $this->settings['month_day'] >= $current_day && $this->settings['month_day'] <= $days_in_current_month ){
                 $days = $this->settings['month_day'] - $current_day;
             }else{
-                $days = cal_days_in_month( CAL_GREGORIAN, date('n'), date('Y') ) - $current_day + $this->settings['month_day'];
+                $days = $days_in_current_month - $current_day + $this->settings['month_day'];
             }
 
             $time_offset = time() + $days * 86400;
             $schedule = 'wcml_' . $this->settings['schedule'] . '_on_' . $this->settings['month_day'];
-
 
         }elseif( $this->settings['schedule'] == 'weekly' ){
             $current_day = date('w');
@@ -284,8 +287,19 @@ class WCML_Exchange_Rates{
                 case 3:  $month_day .= 'rd'; break;
                 default: $month_day .= 'th'; break;
             }
+
+            $current_month = date('n');
+            $days_in_current_month = cal_days_in_month( CAL_GREGORIAN, $current_month, date('Y') );
+            if( $this->settings['month_day'] >= date('j') && $this->settings['month_day'] <= $days_in_current_month ){
+                $interval = 3600 * 24 * $days_in_current_month;
+            }else{
+                $month_number = $current_month == 12 ? 1 : $current_month + 1;
+                $year_number  = $current_month == 12 ? date('Y') + 1 : date('Y');
+                $interval = 3600 * 24 * cal_days_in_month( CAL_GREGORIAN, $month_number, $year_number  );
+            }
+
             $schedules['wcml_monthly_on_' . $this->settings['month_day']] = array(
-                'interval' => 2635200,
+                'interval' => $interval,
                 'display'  => sprintf( __( 'Monthly on the %s', 'woocommerce-multilingual' ), $month_day ),
             );
 

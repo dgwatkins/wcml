@@ -27,7 +27,6 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
 
         $functions = array(
             new Twig_SimpleFunction( 'get_flag_url', array( $this, 'get_flag_url' ) ),
-            new Twig_SimpleFunction( 'get_rate', array( $this, 'get_rate' ) ),
             new Twig_SimpleFunction( 'is_currency_on', array( $this, 'is_currency_on' ) ),
             new Twig_SimpleFunction( 'get_language_currency', array( $this, 'get_language_currency' ) ),
             new Twig_SimpleFunction( 'get_currency_symbol', array( $this, 'get_currency_symbol' ) ),
@@ -217,10 +216,6 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
 
     public function get_flag_url( $code ){
         return $this->sitepress->get_flag_url( $code );
-    }
-
-    public function get_rate($wc_currency, $rate, $code){
-        return sprintf( '1 %s = %s %s', $wc_currency, $rate, $code );
     }
 
     public function is_currency_on($currency, $language) {
