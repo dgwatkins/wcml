@@ -172,7 +172,7 @@ class WCML_Bookings {
 			), 10, 4 );
 		}
 
-		add_filter( 'wpml_extra_conditions_snippet', array( $this, 'extra_conditions_to_filter_bookings' ) );
+		add_filter( 'wpml_language_filter_extra_conditions_snippet', array( $this, 'extra_conditions_to_filter_bookings' ) );
 
 		$this->clear_transient_fields();
 
