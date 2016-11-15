@@ -31,13 +31,25 @@ class WCML_Exchange_Rates{
         $this->services['currencylayer'] = new WCML_Exchange_Rates_Currencylayer();
 
         if( is_admin() ){
-            add_action( 'wp_ajax_wcml_update_exchange_rates', array( $this, 'update_exchange_rates_ajax') );
-
-            add_action( 'wcml_saved_mc_options', array($this, 'update_exchange_rate_options' ) );
+            add_action( 'wcml_saved_mc_options', array($this, 'update_exchange_rate_options' ) ); //before init
         }
 
-        add_filter( 'cron_schedules', array( $this, 'cron_schedules' ) );
-        add_action( self::cronjob_event, array( $this, 'update_exchange_rates' ) );
+        add_action( 'init', array( $this, 'init' ) );
+
+    }
+
+    public function init(){
+
+        if( $this->woocommerce_wpml->multi_currency->get_currencies() ){
+
+            if( is_admin() ){
+                add_action( 'wp_ajax_wcml_update_exchange_rates', array( $this, 'update_exchange_rates_ajax') );
+            }
+
+            add_filter( 'cron_schedules', array( $this, 'cron_schedules' ) );
+            add_action( self::cronjob_event, array( $this, 'update_exchange_rates' ) );
+
+        }
 
     }
 
@@ -48,6 +60,7 @@ class WCML_Exchange_Rates{
             $this->settings = array(
                 'automatic'      => 0,
                 'service'        => 'yahoo',
+                'lifting_charge' => 0,
                 'schedule'       => 'manual',
                 'week_day'       => 1,
                 'month_day'      => 1
@@ -140,6 +153,9 @@ class WCML_Exchange_Rates{
                 }
                 return;
             }
+
+            $this->apply_lifting_charge( $rates );
+
             foreach( $rates as $to => $rate ){
                 if( $rate && is_numeric( $rate ) ){
                     $this->save_exchage_rate( $to, $rate );
@@ -151,6 +167,12 @@ class WCML_Exchange_Rates{
         $this->save_settings();
 
         return $rates;
+    }
+
+    public function apply_lifting_charge( &$rates ){
+        foreach( $rates as $k => $rate ){
+            $rates[$k] = $rate * ( 1 + $this->settings['lifting_charge'] / 100 );
+        }
     }
 
     private function save_exchage_rate( $currency, $rate ){
@@ -192,6 +214,8 @@ class WCML_Exchange_Rates{
                 }
 
             }
+
+            $this->settings['lifting_charge'] = is_numeric( $post_data['lifting_charge'] ) ? $post_data['lifting_charge'] : 0;
 
             if ( isset($post_data['update-schedule']) ) {
                 $this->settings['schedule'] = sanitize_text_field( $post_data['update-schedule'] );

@@ -4,7 +4,10 @@
         <h3>{{ exchange_rates.strings.header }}</h3>
     </div>
 
-    <div class="wcml-section-content">
+    <div class="wcml-section-content" id="online-exchange-rates-no-currencies" {% if exchange_rates.secondary_currencies %} style="display:none"{% endif %}>
+        <p><i>{{ exchange_rates.strings.no_currencies }}</i></p>
+    </div>
+    <div class="wcml-section-content" {% if exchange_rates.secondary_currencies is empty %} style="display:none"{% endif %}>
         <p>
             <input type="checkbox" id="exchange-rates-automatic" name="exchange-rates-automatic" value="1"
                    {% if exchange_rates.settings.automatic == 1 %}checked="checked"{% endif %} />
@@ -20,7 +23,7 @@
 
             <p>
                 <input type="button" id="update-rates-manually" class="button-secondary"
-                       value="{{ exchange_rates.strings.update }}"/>
+                       value="{{ exchange_rates.strings.update }}" />
                 <i class="otgs-ico-help wcml-tip" data-tip="{{ exchange_rates.strings.update_tip }}" style="display: none"></i>
                 <span id="update-rates-spinner" class="spinner" style="float:none;"></span>
                 <input type="hidden" id="update-exchange-rates-nonce" value="{{ exchange_rates.strings.nonce }}"/>
@@ -66,6 +69,13 @@
                     </li>
                 {% endfor %}
             </ul>
+        </div>
+
+        <div class="wcml-section-content-inner">
+            <h4>{{ exchange_rates.strings.lifting_label }}</h4>
+            <p>{{ exchange_rates.strings.lifting_details1 }}</p>
+            <input type="number" name="lifting_charge" value="{{ settings.lifting_charge }}" step="any" style="width:64px" /> %
+            <p><i>{{ exchange_rates.strings.lifting_details2 }}</i></p>
         </div>
 
         <div class="wcml-section-content-inner">

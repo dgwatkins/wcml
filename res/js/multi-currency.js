@@ -134,6 +134,11 @@ jQuery( function($){
                     });
 
                     WCML_Multi_Currency.currency_switcher_preview();
+
+                    if( $('.wcml-row-currency').length == 1 ){
+                        $('#online-exchange-rates-no-currencies').next().hide();
+                        $('#online-exchange-rates-no-currencies').show();
+                    }
                 },
                 done: function() {
                     ajaxLoader.remove();
@@ -222,6 +227,11 @@ jQuery( function($){
                     $('#wcml_mc_options').before(response.currency_options);
 
                     $('#wcml_currency_options_code_ option[value="'+currency+'"]').remove();
+
+                    if( $('#online-exchange-rates-no-currencies').is(':visible') ){
+                        $('#online-exchange-rates-no-currencies').hide();
+                        $('#online-exchange-rates-no-currencies').next().show();
+                    }
                 }
 
             })

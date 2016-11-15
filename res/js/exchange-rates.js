@@ -11,6 +11,7 @@ jQuery( function($){
 
             WCMLExchangeRates.selectedService = $('input[name=exchange-rates-service]:checked').val();
             $('#online-exchange-rates').on( 'change', 'input[name=exchange-rates-service]', WCMLExchangeRates.toggleUpdateManuallyButton );
+            $('#online-exchange-rates').on( 'change', 'input[name=lifting_charge]', WCMLExchangeRates.toggleUpdateManuallyButton );
 
         },
 
