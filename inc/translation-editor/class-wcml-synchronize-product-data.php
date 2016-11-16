@@ -195,21 +195,28 @@ class WCML_Synchronize_Product_Data{
         $taxonomies = get_object_taxonomies( 'product' );
 
         foreach( $taxonomies as $taxonomy ) {
-            if( in_array( $taxonomy, array( 'product_cat', 'product_tag' ) ) ) {
 
-                $terms = get_the_terms($original_product_id, $taxonomy);
-                $tt_ids = array();
-
-                if ($terms) {
-                    foreach ($terms as $term) {
-                        $tt_ids[] = $term->term_id;
+            $terms = wp_get_object_terms( $original_product_id, $taxonomy );
+            $tt_ids = array();
+            $tt_names = array();
+            if ($terms) {
+                foreach ($terms as $term) {
+                    if( $term->taxonomy == 'product_type' ){
+                        $tt_names[] = $term->name;
+                        continue;
                     }
-                    $this->wcml_update_term_count_by_ids($tt_ids, $lang, $taxonomy);
+                    $tt_ids[] = $term->term_id;
+                }
+
+                if( $taxonomy == 'product_type' ) {
+                    wp_set_post_terms( $tr_product_id, $tt_names, $taxonomy );
+                }else{
+                    $this->wcml_update_term_count_by_ids( $tt_ids, $lang, $taxonomy, $tr_product_id );
                 }
             }
         }
-
     }
+
     public function delete_term_relationships_update_term_count( $object_id, $tt_ids ){
 
         if( get_post_type( $object_id ) == 'product' ){
@@ -225,17 +232,19 @@ class WCML_Synchronize_Product_Data{
         }
 
     }
-    public function wcml_update_term_count_by_ids( $tt_ids, $language, $taxonomy = '' ){
+    public function wcml_update_term_count_by_ids( $tt_ids, $language, $taxonomy = '', $tr_product_id = false ){
         $terms_array = array();
+        $terms_ids_array = array();
 
         foreach( $tt_ids as $tt_id ){
 
-            $tr_id = apply_filters( 'translate_object_id', $tt_id, 'product_cat', false, $language );
+            $tr_id = apply_filters( 'translate_object_id', $tt_id, $taxonomy, false, $language );
 
             if( !is_null( $tr_id ) ){
                 // not using get_term - unfiltered get_term
                 $translated_term = $this->wpdb->get_row( $this->wpdb->prepare( "
                             SELECT * FROM {$this->wpdb->terms} t JOIN {$this->wpdb->term_taxonomy} x ON x.term_id = t.term_id WHERE t.term_id = %d", $tr_id ) );
+                $terms_ids_array[] = $translated_term->term_id;
                 $terms_array[] = $translated_term->term_taxonomy_id;
                 $taxonomy = $translated_term->taxonomy;
             }
@@ -246,13 +255,16 @@ class WCML_Synchronize_Product_Data{
             $terms_array = array_unique( array_map( 'intval', $terms_array ) );
         }
 
-        $this->sitepress->switch_lang( $language );
-        wp_update_term_count( $terms_array, $taxonomy );
-        $this->sitepress->switch_lang( );
+
+        if( in_array( $taxonomy, array( 'product_cat', 'product_tag' ) ) ) {
+            $this->sitepress->switch_lang( $language );
+            wp_update_term_count( $terms_array, $taxonomy );
+            $this->sitepress->switch_lang( );
+        }elseif( $tr_product_id ){
+            wp_set_post_terms( $tr_product_id, $terms_ids_array, $taxonomy );
+        }
 
     }
-
-
 
     public function sync_linked_products( $product_id, $translated_product_id, $lang ){
         //sync up-sells
