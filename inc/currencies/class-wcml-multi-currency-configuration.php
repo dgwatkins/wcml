@@ -71,7 +71,7 @@ class WCML_Multi_Currency_Configuration{
 
             $message = array(
                 'id'            => 'wcml-settings-saved',
-                'text'          => __('Settings saved!', 'woocommerce-multilingual' ),
+                'text'          => __('Your settings have been saved.', 'woocommerce-multilingual' ),
                 'group'         => 'wcml-multi-currency',
                 'admin_notice'  => true,
                 'limit_to_page' => true,
