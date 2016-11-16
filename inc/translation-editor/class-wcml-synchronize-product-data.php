@@ -195,16 +195,26 @@ class WCML_Synchronize_Product_Data{
         $taxonomies = get_object_taxonomies( 'product' );
 
         foreach( $taxonomies as $taxonomy ) {
-            if( in_array( $taxonomy, array( 'product_cat', 'product_tag' ) ) ) {
+            if( in_array( $taxonomy, array( 'product_cat', 'product_tag', 'product_type' ) ) ) {
 
                 $terms = get_the_terms($original_product_id, $taxonomy);
                 $tt_ids = array();
+                $tt_names = array();
 
                 if ($terms) {
                     foreach ($terms as $term) {
+                        if( $term->taxonomy == 'product_type' ){
+                            $tt_names[] = $term->name;
+                            continue;
+                        }
                         $tt_ids[] = $term->term_id;
                     }
-                    $this->wcml_update_term_count_by_ids($tt_ids, $lang, $taxonomy);
+
+                    if( $taxonomy == 'product_type' ) {
+                        wp_set_post_terms( $tr_product_id, $tt_names, $taxonomy );
+                    }else{
+                        $this->wcml_update_term_count_by_ids( $tt_ids, $lang, $taxonomy );
+                    }
                 }
             }
         }
