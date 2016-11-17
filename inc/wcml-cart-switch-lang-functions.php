@@ -43,7 +43,12 @@ class WCML_Cart_Switch_Lang_Functions{
 
         $request_url = add_query_arg( 'force_switch', 0, $sitepress->convert_url( get_permalink(), $this->lang_from ) );
 
-        if( $this->lang_from && $this->lang_to && $request_url && ( isset( WC()->cart ) && !empty( WC()->cart->get_cart_for_session() ) ) ) {
+        $cart_for_session = false;
+        if( isset( WC()->cart ) ){
+            $cart_for_session = WC()->cart->get_cart_for_session();
+        }
+
+        if( $this->lang_from && $this->lang_to && $request_url && !empty( $cart_for_session ) ) {
 
             $force_cart_url = add_query_arg( 'force_switch', 1, get_permalink() );
 

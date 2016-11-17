@@ -102,7 +102,8 @@ class WCML_Cart
 
     public function cart_switching_currency( $exc, $current_currency, $new_currency, $return = false ){
 
-        if( $this->woocommerce_wpml->settings[ 'cart_sync' ][ 'currency_switch' ] == WCML_CART_SYNC || empty( WC()->cart->get_cart_for_session() ) ){
+        $cart_for_session = WC()->cart->get_cart_for_session();
+        if( $this->woocommerce_wpml->settings[ 'cart_sync' ][ 'currency_switch' ] == WCML_CART_SYNC || empty( $cart_for_session ) ){
             return $exc;
         }
 
