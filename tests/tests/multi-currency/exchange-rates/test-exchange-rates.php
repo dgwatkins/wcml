@@ -20,6 +20,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
         $this->multi_currency =& $this->woocommerce_wpml->multi_currency;
 
         $this->exchange_rate_services =& $this->multi_currency->exchange_rate_services;
+        $this->exchange_rate_services->init();
     }
 
     /**
@@ -50,7 +51,8 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
             'service'        => 'currencylayer',
             'schedule'       => 'daily',
             'week_day'       => 5,
-            'month_day'      => 15
+            'month_day'      => 15,
+            'lifting_charge' => 0
         );
         $this->woocommerce_wpml->settings['multi_currency']['exchange_rates'] = $custom;
         new WCML_Exchange_Rates( $this->woocommerce_wpml ); // calls WCML_Exchange_Rates::initialize_settings
@@ -83,7 +85,8 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
             'service'        => 'currencylayer',
             'schedule'       => 'daily',
             'week_day'       => 5,
-            'month_day'      => 15
+            'month_day'      => 15,
+            'lifting_charge' => 0
         );
         $this->woocommerce_wpml->settings['multi_currency']['exchange_rates'] = $custom;
 
@@ -101,7 +104,8 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
             'service'        => 'currencylayer',
             'schedule'       => 'daily',
             'week_day'       => 5,
-            'month_day'      => 15
+            'month_day'      => 15,
+            'lifting_charge' => 0
         );
         $this->woocommerce_wpml->settings['multi_currency']['exchange_rates'] = $custom;
 
@@ -122,6 +126,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
             'schedule'       => 'daily',
             'week_day'       => 5,
             'month_day'      => 15,
+            'lifting_charge' => 0,
             '_random'        => $random
         );
         $this->woocommerce_wpml->settings['multi_currency']['exchange_rates'] = $custom;
@@ -249,6 +254,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
             'update-schedule'          => 'manual',
             'update-weekly-day'        => rand(1, 10000),
             'update-monthly-day'       => rand(1, 10000),
+            'lifting_charge'           => rand(1, 10000),
             'services'                 => array(
                 'currencylayer' => array(
                     'api-key' => random_string()
@@ -256,12 +262,14 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
             )
         );
 
+        // keys_map
         $post_settings_map = array(
             'exchange-rates-automatic' => 'automatic',
             'exchange-rates-service'   => 'service',
             'update-schedule'          => 'schedule',
             'update-weekly-day'        => 'week_day',
-            'update-monthly-day'       => 'month_day'
+            'update-monthly-day'       => 'month_day',
+            'lifting_charge'           => 'lifting_charge'
         );
 
         $this->exchange_rate_services->update_exchange_rate_options( $custom );
