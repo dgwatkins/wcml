@@ -194,7 +194,7 @@ class WCML_Synchronize_Product_Data{
     }
     public function wcml_update_term_count_by_ids( $tt_ids, $language, $taxonomy = '', $tr_product_id = false ){
         $terms_array = array();
-        $terms_ids_array = array();
+        $terms_to_insert = array();
 
         foreach( $tt_ids as $tt_id ){
 
@@ -204,15 +204,15 @@ class WCML_Synchronize_Product_Data{
                 // not using get_term - unfiltered get_term
                 $translated_term = $this->wpdb->get_row( $this->wpdb->prepare( "
                             SELECT * FROM {$this->wpdb->terms} t JOIN {$this->wpdb->term_taxonomy} x ON x.term_id = t.term_id WHERE t.term_id = %d", $tr_id ) );
-                $terms_ids_array[] = $translated_term->term_id;
+                if( is_taxonomy_hierarchical( $taxonomy ) ){
+                    $terms_to_insert[] = (int)$translated_term->term_id;
+                }else{
+                    $terms_to_insert[] = $translated_term->slug;
+                }
+
                 $terms_array[] = $translated_term->term_taxonomy_id;
-                $taxonomy = $translated_term->taxonomy;
             }
 
-        }
-
-        if( is_taxonomy_hierarchical( $taxonomy ) ){
-            $terms_array = array_unique( array_map( 'intval', $terms_array ) );
         }
 
 
@@ -221,7 +221,7 @@ class WCML_Synchronize_Product_Data{
             wp_update_term_count( $terms_array, $taxonomy );
             $this->sitepress->switch_lang( );
         }elseif( $tr_product_id ){
-            wp_set_post_terms( $tr_product_id, $terms_ids_array, $taxonomy );
+            wp_set_post_terms( $tr_product_id, $terms_to_insert, $taxonomy );
         }
 
     }
