@@ -151,6 +151,7 @@ class WCML_Exchange_Rates{
                 if( defined( 'WP_DEBUG_LOG' ) &&  WP_DEBUG_LOG ){
                     error_log( "Exchange rates update error (" . $this->settings['service'] . "): " . $e->getMessage() );
                 }
+                throw new Exception( $e->getMessage() );
                 return;
             }
 
