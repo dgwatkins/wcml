@@ -686,7 +686,7 @@
                 "api",
                 "gitlab"
             ],
-            "time": "2016-11-15T20:17:41+00:00"
+            "time": "2016-11-15 20:17:41"
         },
         {
             "name": "mockery/mockery",
@@ -842,7 +842,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2016-11-21T12:31:21+00:00"
+            "time": "2016-11-21 12:32:11"
         },
         {
             "name": "otgs/unit-tests-framework",

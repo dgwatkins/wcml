@@ -33,7 +33,8 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
             'service'        => 'yahoo',
             'schedule'       => 'manual',
             'week_day'       => 1,
-            'month_day'      => 1
+            'month_day'      => 1,
+            'lifting_charge' => 0
         );
         unset( $this->woocommerce_wpml->settings['multi_currency']['exchange_rates'] ); //reset
         // test private method by calling the constructor again
@@ -382,6 +383,31 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
 
         $schedules = wp_get_schedules();
         $this->assertArrayHasKey( 'wcml_weekly_on_3', $schedules );
+
+
+    }
+
+    public function test_apply_lifting_charge(){
+
+
+        $lifting_charge = 2.5;
+        $rates = array(
+            'RON' => 4.25
+        );
+
+        $expected_rates = array();
+        foreach( $rates as $currency => $rate ){
+            $expected_rates[ $currency ] = round( $rate * ($lifting_charge/100 + 1), 4);
+        }
+
+        $this->exchange_rate_services->save_setting( 'lifting_charge', $lifting_charge );
+
+        $this->exchange_rate_services->apply_lifting_charge( $rates );
+
+        foreach( $rates as $currency => $rate ){
+            $this->assertEquals( $expected_rates[ $currency ], $rate );
+        }
+
 
 
     }
