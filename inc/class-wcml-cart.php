@@ -252,8 +252,8 @@ class WCML_Cart
         }
 
         $cart->cart_contents = $this->wcml_check_on_duplicate_products_in_cart( $new_cart_data );
-        $this->woocommerce->session->cart = $cart;
-        return $cart;
+        $this->woocommerce->session->cart = $cart->cart_contents;
+        return $cart->cart_contents;
     }
 
     public function wcml_check_on_duplicate_products_in_cart( $cart_contents ){
