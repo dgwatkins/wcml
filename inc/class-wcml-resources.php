@@ -68,6 +68,11 @@ class WCML_Resources {
             'jquery-ui-resizable'
         ), WCML_VERSION );
 
+        wp_register_script( 'wcml-front-scripts', WCML_PLUGIN_URL . '/res/js/front-scripts' . WCML_JS_MIN . '.js', array(
+            'jquery'
+        ), WCML_VERSION );
+        wp_enqueue_script( 'wcml-front-scripts' );
+
         if ( self::$is_wpml_wcml_page ) {
 
             wp_register_script( 'jquery-cookie', WCML_PLUGIN_URL . '/res/js/jquery.cookie' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION );
@@ -96,6 +101,8 @@ class WCML_Resources {
         if ( self::$page == 'wpml-wcml' && self::$tab == 'multi-currency' ) {
             wp_register_script( 'multi-currency', WCML_PLUGIN_URL . '/res/js/multi-currency' . WCML_JS_MIN . '.js', array('jquery', 'jquery-ui-sortable'), WCML_VERSION, true );
             wp_enqueue_script( 'multi-currency' );
+            wp_register_script( 'exchange-rates', WCML_PLUGIN_URL . '/res/js/exchange-rates' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION, true );
+            wp_enqueue_script( 'exchange-rates' );
         }
 
         if ( self::$page == 'wpml-wcml' && self::$tab == 'product-attributes' ) {

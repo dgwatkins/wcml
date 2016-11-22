@@ -117,7 +117,7 @@ class WCML_Helper_Multi_Currency {
 		    $this->add_currency( $code, $currency['rate'], $currency['options'] );
 	    }
 
-
+        $this->woocommerce_wpml->multi_currency->init_currencies();
 
     }
 

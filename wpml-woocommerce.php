@@ -22,6 +22,10 @@ include WCML_PLUGIN_PATH . '/inc/constants.php';
 require WCML_PLUGIN_PATH . '/inc/missing-php-functions.php';
 include WCML_PLUGIN_PATH . '/inc/installer-loader.php';
 include WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
+include WCML_PLUGIN_PATH . '/inc/wcml-cart-switch-lang-functions.php';
+
+//for language switching need call as soon as possible
+$wcml_cart_switch_lang_functions = new WCML_Cart_Switch_Lang_Functions();
 
 if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
     require WCML_PLUGIN_PATH . '/vendor/autoload.php';
@@ -40,5 +44,3 @@ function wpml_wcml_startup(){
         $woocommerce_wpml = new woocommerce_wpml();
     }
 }
-
-

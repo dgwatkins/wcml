@@ -144,7 +144,7 @@ class WCML_Tab_Manager {
 						$title_key = md5( 'tab_' . $orig_prod_tab['position'] . '_title' );
 						$heading_key = md5( 'tab_' . $orig_prod_tab['position'] . '_heading' );
 						$title = isset( $data[ $title_key ] ) ? sanitize_text_field( $data[ $title_key ] ) : '';
-						$content = isset( $data[ $heading_key ] ) ? sanitize_text_field( $data[ $heading_key ] ) : '';
+						$content = isset( $data[ $heading_key ] ) ? wp_kses_post( $data[ $heading_key ] ) : '';
 
 						$trnsl_product_tabs = $this->set_product_tab( $orig_prod_tab, $trnsl_product_tabs, $lang, $trnsl_product_id, $tab_id, $title, $content );
 

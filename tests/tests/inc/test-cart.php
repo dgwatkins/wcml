@@ -204,4 +204,49 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
     }
 
 
+    function test_wcml_removed_cart_items_widget(){
+
+        $this->woocommerce->session->set( 'wcml_removed_items', array( $this->orig_product_id ) );
+        $this->woocommerce->session->set( 'wcml_switched_type', 'currency' );
+
+        $widget  = $this->woocommerce_wpml->cart->wcml_removed_cart_items_widget( array( 'echo' => false ) );
+
+        $this->assertNotEmpty( $widget );
+        $this->assertContains( $this->multi_currency->get_client_currency().':', $widget );
+        $this->assertContains( 'rel="'.$this->orig_product_id.'"', $widget );
+        $this->assertContains( get_permalink( $this->orig_product_id ), $widget );
+        $this->assertContains( 'wcml_clear_removed_items_nonce', $widget );
+
+    }
+
+    function test_switching_currency_empty_cart_if_needed(){
+        $this->woocommerce_wpml->cart->wcml_removed_cart_items_widget( $this->multi_currency->get_client_currency(), 1 );
+        $this->assertEquals( 'currency',  $this->woocommerce->session->get( 'wcml_switched_type' ) );
+    }
+
+    function test_empty_cart_if_needed(){
+        $this->woocommerce_wpml->settings[ 'cart_sync' ][ 'currency_switch' ] = WCML_CART_CLEAR;
+        $this->woocommerce->session->set( 'wcml_removed_items', array() );
+
+        WC()->cart->add_to_cart( $this->orig_product_id, 1 );
+
+        $this->woocommerce_wpml->cart->empty_cart_if_needed( 'currency_switch' );
+
+        $this->assertEquals( array(), WC()->cart->get_cart_for_session() );
+        $this->assertEquals( serialize( array( $this->orig_product_id ) ),  $this->woocommerce->session->get( 'wcml_removed_items' ) );
+
+    }
+
+    function test_cart_switching_currency(){
+        $this->woocommerce_wpml->settings[ 'cart_sync' ][ 'currency_switch' ] = WCML_CART_SYNC;
+        $return = $this->woocommerce_wpml->cart->cart_switching_currency( false, $this->multi_currency->get_client_currency(), 'USD', true );
+        $this->assertFalse( $return );
+
+        $this->woocommerce_wpml->settings[ 'cart_sync' ][ 'currency_switch' ] = WCML_CART_CLEAR;
+        WC()->cart->add_to_cart( $this->orig_product_id, 1 );
+        $return = $this->woocommerce_wpml->cart->cart_switching_currency( false, $this->multi_currency->get_client_currency(), 'USD', true );
+        $this->assertNotEmpty( $return['prevent_switching'] );
+        $this->assertContains( sprintf( __( 'Keep using %s', 'woocommerce-multilingual'), $this->multi_currency->get_client_currency() ), $return['prevent_switching'] );
+    }
+
 }

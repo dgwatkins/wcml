@@ -15,6 +15,8 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		//add product for tests
 		$this->test_data->orig_product = $this->wcml_helper->add_product( $this->default_language, false, 'product 1' );
 		$this->test_data->es_product = $this->wcml_helper->add_product( $this->second_language, $this->test_data->orig_product->trid, 'producto 1' );
+
+		$this->woocommerce_wpml->sync_variations_data = new WCML_Synchronize_Variations_Data( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
 	}
 
 	function test_duplicate_product_post_meta() {
@@ -164,6 +166,22 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		wp_cache_init();
 
 		$this->assertEquals( 'custom_value_es', get_post_meta( $en_product->id, $custom_field, true ) );
+
+	}
+
+	function test_check_if_product_fields_sync_needed(){
+
+		$sync_needed = $this->woocommerce_wpml->sync_product_data->check_if_product_fields_sync_needed( $this->test_data->orig_product->id, 'postmeta_fields' );
+		$this->assertTrue( $sync_needed );
+		wp_cache_init();
+
+		$sync_needed = $this->woocommerce_wpml->sync_product_data->check_if_product_fields_sync_needed( $this->test_data->orig_product->id, 'postmeta_fields' );
+		$this->assertFalse( $sync_needed );
+		wp_cache_init();
+
+		update_post_meta( $this->test_data->orig_product->id, '_regular_price', 100 );
+		$sync_needed = $this->woocommerce_wpml->sync_product_data->check_if_product_fields_sync_needed( $this->test_data->orig_product->id, 'postmeta_fields' );
+		$this->assertTrue( $sync_needed );
 
 	}
 

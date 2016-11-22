@@ -68,7 +68,7 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 			'created_via'	=> 'checkout',
 			'customer_id' 	=> get_current_user_id()
 		) );
-		$this->order_id = $this->order->id;
+		$this->order_id = $this->order->post->ID;
 		//set payment method for order
 		$this->payment_gateways = WC()->payment_gateways->payment_gateways();
 		$this->order->set_payment_method( $this->payment_gateways['bacs'] );
@@ -76,7 +76,7 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 		$this->orig_product = $this->wcml_helper->add_product( 'en', false, 'product 1' );
 
 		// Add line item
-		$item_id = wc_add_order_item( $this->order->id, array(
+		$item_id = wc_add_order_item( $this->order_id, array(
 			'order_item_name' 		=> 'product 1',
 			'order_item_type' 		=> 'line_item'
 		) );

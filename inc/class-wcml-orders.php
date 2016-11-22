@@ -251,9 +251,9 @@ class WCML_Orders{
     
     // Fix for shipping update on the checkout page.
     function fix_shipping_update($amount){
-        global $post;
+        global $sitepress, $post;
         
-        if($this->sitepress->get_current_language() !== $this->sitepress->get_default_language() && $post->ID == $this->checkout_page_id()){
+        if($sitepress->get_current_language() !== $sitepress->get_default_language() && $post->ID == $this->checkout_page_id()){
         
             $_SESSION['icl_checkout_shipping_amount'] = $amount;
             

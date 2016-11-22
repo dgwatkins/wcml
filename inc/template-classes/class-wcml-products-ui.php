@@ -148,7 +148,7 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 			$products[ $key ]->edit_post_link = get_edit_post_link( $product->ID );
 
 			if( has_post_thumbnail( $product->ID ) ){
-				$products[ $key ]->post_thumbnail = get_the_post_thumbnail_url( $product->ID, 150 );
+				$products[ $key ]->post_thumbnail = get_the_post_thumbnail_url( $product->ID, array( 150, 150 ) );
 			}else{
 				$products[ $key ]->post_thumbnail = wc_placeholder_img_src();
 			}

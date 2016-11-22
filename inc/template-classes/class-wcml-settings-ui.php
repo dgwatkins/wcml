@@ -57,6 +57,25 @@ class WCML_Settings_UI extends WPML_Templates_Factory {
                     'label_diff'    => __('Add separate download files for translations', 'woocommerce-multilingual'),
                 ),
 
+                'cart_sync' => array(
+                    'heading'   => __('Cart', 'woocommerce-multilingual'),
+                    'lang_switch' => array(
+                        'heading' => __('Switching languages when there are items in the cart', 'woocommerce-multilingual'),
+                        'sync_label' => __('Synchronize cart content when switching languages', 'woocommerce-multilingual'),
+                        'clear_label' => __('Prompt for a confirmation and reset the cart', 'woocommerce-multilingual'),
+                        'value' => $this->woocommerce_wpml->settings['cart_sync']['lang_switch']
+                    ),
+                    'currency_switch' => array(
+                        'heading' => __('Switching currencies when there are items in the cart', 'woocommerce-multilingual'),
+                        'sync_label' => __('Synchronize cart content when switching currencies', 'woocommerce-multilingual'),
+                        'clear_label' => __('Prompt for a confirmation and reset the cart', 'woocommerce-multilingual'),
+                        'value' => $this->woocommerce_wpml->settings['cart_sync']['currency_switch']
+                    ),
+                    'doc_link' => sprintf( __( 'Not sure which option to choose? Read about %spotential issues when switching languages and currencies while the cart has items%s.',
+                        'woocommerce-multilingual' ),
+                        '<a href="http://wpml.org" target="_blank">', '</a>'
+                    ),
+                ),
 
                 'nonce'             => wp_nonce_field('wcml_save_settings_nonce', 'wcml_nonce', true, false),
                 'save_label'        => __( 'Save changes', 'woocommerce-multilingual' ),
@@ -65,6 +84,9 @@ class WCML_Settings_UI extends WPML_Templates_Factory {
 
             'native_translation'  => WCML_TRANSLATION_METHOD_MANUAL,
             'wpml_translation'    => WCML_TRANSLATION_METHOD_EDITOR,
+
+            'wcml_cart_sync'     => WCML_CART_SYNC,
+            'wcml_cart_clear'    => WCML_CART_CLEAR,
 
             'troubleshooting' => array(
                 'url'   => admin_url( 'admin.php?page=wpml-wcml&tab=troubleshooting' ),
