@@ -22,7 +22,7 @@
                             {% else %}
                                 {{ strings.miss_trnsl_more|format( taxonomy.untranslated, taxonomy.name ) }}
                             {% endif %}
-                            <a class="button-secondary" href="{{ taxonomy.url }}">
+                            <a class="button button-secondary button-small" href="{{ taxonomy.url }}">
                                 {{ strings.trnsl|format( taxonomy.name ) }}
                             </a>
                         {% endif %}
