@@ -16,7 +16,7 @@ class WCML_WPSEO{
             }
         }
 
-        add_action( 'post_updated', array( $this, 'detect_slug_change' ) );
+        add_action( 'post_updated', array( $this, 'set_updated_post_id' ) );
         add_action( 'wpseo_premium_post_redirect_slug_change', array( $this, 'wpseo_premium_post_redirect_slug_change' ) );
     }
 
@@ -40,7 +40,7 @@ class WCML_WPSEO{
         return $field;
     }
 
-    function detect_slug_change( $post_id ){
+    function set_updated_post_id( $post_id ){
         $this->updated_post_id = $post_id;
     }
 
