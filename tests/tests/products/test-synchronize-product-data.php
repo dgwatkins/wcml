@@ -213,12 +213,12 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 
 		update_post_meta( $orig_product_id, '_manage_stock', 'yes' );
 		$orig_product = wc_get_product( $orig_product_id );
-		$orig_product->set_stock( 99 );
+		Deprecated_WC_Functions::set_stock( $orig_product_id, 99 );
 		$orig_product->set_stock_status( 'instock' );
 
 		update_post_meta( $es_product_id, '_manage_stock', 'yes' );
 		$es_product = wc_get_product( $es_product_id );
-		$es_product->set_stock( 100 );
+		Deprecated_WC_Functions::set_stock( $es_product_id, 99 );
 		$es_product->set_stock_status( 'instock' );
 
 		$order = WCML_Helper_Orders::create_order( array( 'product_id' => $orig_product_id ) );
@@ -227,7 +227,7 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		$this->assertEquals( 99, $orig_product->get_stock_quantity() );
 
 		$es_product = wc_get_product( $es_product_id );
-		$this->assertEquals( 99, $es_product->get_stock_quantity() );
+		$this->assertEquals( 98, $es_product->get_stock_quantity() );
 	}
 
 }

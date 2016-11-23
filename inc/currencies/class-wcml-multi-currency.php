@@ -341,11 +341,11 @@ class WCML_Multi_Currency{
             $this->woocommerce_wpml->settings['display_custom_prices'] ){
 
             $product_obj = wc_get_product();
-            $current_product_id = $product_obj->id;
+            $current_product_id = get_post()->ID;
             $original_product_language = $this->woocommerce_wpml->products->get_original_product_language( $current_product_id );
             $default = false;
 
-            if( $product_obj->is_type( 'variable' ) ){
+            if( Deprecated_WC_Functions::get_product_type ($current_product_id ) === 'variable' ){
                 foreach( $product_obj->get_children() as $child ){
                     if( !get_post_meta( apply_filters( 'translate_object_id', $child , get_post_type( $child ), true, $original_product_language ), '_wcml_custom_prices_status', true ) ){
                         $default = true;
