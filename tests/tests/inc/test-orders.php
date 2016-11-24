@@ -26,7 +26,7 @@ class Test_WCML_Orders extends WCML_UnitTestCase {
 
 		$this->sitepress->save_settings( $iclsettings );
 
-		$line_items = $this->woocommerce_wpml->orders->woocommerce_order_get_items( $order->get_items() );
+		$line_items = $this->woocommerce_wpml->orders->woocommerce_order_get_items( $order->get_items(), $order );
 
 		foreach( $line_items as $line_item ){
 			if( $line_item instanceof WC_Order_Item_Product ){
