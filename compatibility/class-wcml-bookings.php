@@ -158,6 +158,8 @@ class WCML_Bookings {
 
 			//allow filtering resources by language
 			add_filter( 'get_booking_resources_args', array( $this, 'filter_get_booking_resources_args' ) );
+
+			add_action( 'woocommerce_product_data_panels',   array( $this, 'show_pointer_info' ) );
 		}
 
 		if ( ! is_admin() || isset( $_POST['action'] ) && $_POST['action'] == 'wc_bookings_calculate_costs' ) {
@@ -2230,6 +2232,26 @@ class WCML_Bookings {
 	public function hide_bookings_type_on_tm_dashboard( $types ){
 		unset( $types[ 'wc_booking' ] );
 		return $types;
+	}
+
+	public function show_pointer_info(){
+
+		$pointer_ui = new WCML_Pointer_UI(
+			sprintf( __( 'You can translate the titles of your custom Resources on the %sWooCommerce product translation page%s', 'woocommerce-multilingual' ), '<a href="'.admin_url('admin.php?page=wpml-wcml').'">', '</a>' ),
+			'https://wpml.org/documentation/woocommerce-extensions-compatibility/translating-woocommerce-bookings-woocommerce-multilingual/',
+			'bookings_resources .woocommerce_bookable_resources #message'
+		);
+
+		$pointer_ui->show();
+
+		$pointer_ui = new WCML_Pointer_UI(
+			sprintf( __( 'You can translate the Person Type Name and Description on the  %sWooCommerce product translation page%s', 'woocommerce-multilingual' ), '<a href="'.admin_url('admin.php?page=wpml-wcml').'">', '</a>' ),
+			'https://wpml.org/documentation/woocommerce-extensions-compatibility/translating-woocommerce-bookings-woocommerce-multilingual/',
+			'bookings_persons #persons-types>div.toolbar'
+		);
+
+		$pointer_ui->show();
+
 	}
 
 }
