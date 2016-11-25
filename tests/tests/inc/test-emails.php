@@ -104,7 +104,10 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 		$this->sitepress->switch_lang('es');
 
 		$_POST['bacs_enabled'] = 1;
-		$this->woocommerce_wpml->gateways->register_gateway_strings( $this->payment_gateways['bacs']->settings );
+		$_POST['woocommerce_bacs_title'] = $this->payment_gateways['bacs']->settings['title'];
+		$_POST['wcml_lang-woocommerce_bacs_settings-title'] = 'en';
+
+		$this->woocommerce_wpml->gateways->register_and_set_gateway_strings_language();
 		$string_id = icl_get_string_id( $this->payment_gateways['bacs']->settings['title'], 'woocommerce', 'bacs_gateway_title' );
 		icl_add_string_translation( $string_id, 'es', 'Direct Bank Transfer ES', ICL_TM_COMPLETE );
 
