@@ -115,7 +115,7 @@ class WCML_Orders{
                         $tr_product_id = apply_filters( 'translate_object_id', $item_data, 'product', false, $language_to_filter );
                         if( !is_null( $tr_product_id ) ){
                             $items[ $index ][ $key ] = $tr_product_id;
-                            $items[ $index ][ 'name'] = wc_get_product( $tr_product_id )->get_title();
+                            $items[ $index ][ 'name'] = get_post( $tr_product_id )->post_title;
                         }
                     }
                     if( $key == 'variation_id' ){
@@ -155,7 +155,7 @@ class WCML_Orders{
                         $tr_product_id = apply_filters( 'translate_object_id', $item_product_id, 'product', false, $language_to_filter );
                         if( !is_null( $tr_product_id ) ){
                             $item->set_product_id( $tr_product_id );
-                            $item->set_name( wc_get_product( $tr_product_id )->get_title() );
+                            $item->set_name( get_post( $tr_product_id )->post_title );
                         }
                         $tr_variation_id = apply_filters( 'translate_object_id', $item->get_variation_id(), 'product_variation', false, $language_to_filter );
                         if( !is_null( $tr_variation_id ) ){

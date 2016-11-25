@@ -1234,6 +1234,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		update_post_meta( $translation, '_wc_booking_qty', $prod_qty );
 		$cart_item = array(
 			'data'    => new WC_Product_Booking( $booking ),
+			'product_id' => $booking,
 			'booking' => array(
 				'_year'  => random_int( 1900, 2016 ),
 				'_month' => random_int( 1, 12 ),

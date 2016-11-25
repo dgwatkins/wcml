@@ -300,13 +300,13 @@ class WCML_Synchronize_Product_Data{
                     $_product = wc_get_product( $translation->element_id );
 
                     if( $_product && $_product->exists() && $_product->managing_stock() ) {
-                        $total_sales    = get_post_meta($_product->id, 'total_sales', true);
+                        $total_sales    = get_post_meta( $translation->element_id, 'total_sales', true);
 
                         if( $action == 'reduce'){
-                            $stock  = $_product->reduce_stock( $qty );
+                            $stock  = Deprecated_WC_Functions::reduce_stock( $translation->element_id, $qty );
                             $total_sales   += $qty;
                         }else{
-                            $stock  = $_product->increase_stock( $qty );
+                            $stock  = Deprecated_WC_Functions::increase_stock( $translation->element_id, $qty );
                             $total_sales   -= $qty;
                         }
                         update_post_meta( $translation->element_id, 'total_sales', $total_sales );

@@ -189,9 +189,10 @@ class WCML_Cart
         foreach( $cart->cart_contents as $key => $cart_item ){
             $tr_product_id = apply_filters( 'translate_object_id', $cart_item[ 'product_id' ], 'product', false, $current_language );
             //translate custom attr labels in cart object
-            if( isset( $cart_item[ 'data' ]->product_attributes ) ){
+
+            if( version_compare( WC_VERSION , '2.7', '<' ) && isset( $cart_item[ 'data' ]->product_attributes ) ){
                 foreach( $cart_item[ 'data' ]->product_attributes as $attr_key => $product_attribute ){
-                    if( !$product_attribute[ 'is_taxonomy' ] ){
+                    if( isset( $product_attribute[ 'is_taxonomy' ]) && !$product_attribute[ 'is_taxonomy' ] ){
                         $cart->cart_contents[ $key ][ 'data' ]->product_attributes[ $attr_key ][ 'name' ] = $this->woocommerce_wpml->strings->translated_attribute_label(
                                                                                                                 $product_attribute[ 'name' ],
                                                                                                                 $product_attribute[ 'name' ],
@@ -208,7 +209,7 @@ class WCML_Cart
                                                                                     $attribute,
                                                                                     $cart_item[ 'variation_id' ],
                                                                                     $current_language,
-                                                                                    $cart_item[ 'data' ]->parent->id,
+                                                                                    $cart_item[ 'product_id' ],
                                                                                     $tr_product_id
                                                                                 );
                 }
