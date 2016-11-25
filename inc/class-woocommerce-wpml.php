@@ -161,7 +161,7 @@ class woocommerce_wpml {
         $this->orders               = new WCML_Orders( $this, $sitepress );
         $this->strings              = new WCML_WC_Strings;
         $this->shipping             = new WCML_WC_Shipping( $sitepress );
-        $this->gateways             = new WCML_WC_Gateways( $sitepress );
+        $this->gateways             = new WCML_WC_Gateways( $this, $sitepress );
         $this->currencies           = new WCML_Currencies( $this );
         $this->url_translation      = new WCML_Url_Translation ( $this, $sitepress );
         $this->requests             = new WCML_Requests;
