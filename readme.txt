@@ -5,7 +5,7 @@ Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multili
 License: GPLv2
 Requires at least: 3.9
 Tested up to: 4.6.1
-Stable tag: 3.9.5
+Stable tag: 4.0.0
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
 
@@ -141,6 +141,18 @@ WooCommerce Multilingual is compatible with all major WooCommerce extensions. We
 6. Shop URLs translation screen
 
 == Changelog ==
+
+= 4.0.0 =
+* Added the option to configure automatic exchange rates for the multi-currency mode
+* Optimized the synchronization process between products and their translations when saving products
+* Added the option to reset the cart when switching the languages or currencies
+* Added compatibility updates for WordPress 4.7
+* Improved usability aspects related to popular compatible extensions
+* Added compatibility updates for upcoming WooCommerce 2.7
+* Fixed a compatibility issue with Yoast SEO premium: Redirects to the original product were created for translated variations
+* Fixed a compatibility issue with WooCommerce Tab Manager: HTML was stripped out when saving the translation of a tab
+* Bug fix: downloadable products were added multiple times to the cart (instead of quantity change)
+* Bug fix: order-pay endpoint string was re-registering itself with a blank value
 
 = 3.9.5 =
 * Fixed a bug introduced in 3.9.4 that prevented translating variable products
