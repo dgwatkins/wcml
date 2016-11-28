@@ -153,6 +153,7 @@ class WCML_Endpoints{
                     if( isset($wp->query_vars[$key]) ){
                         if( $key === 'order-pay' ){
                             $endpoint = get_option( 'woocommerce_checkout_pay_endpoint' );
+                            $p .= isset( $_SERVER[ 'QUERY_STRING' ] ) ? '?'.$_SERVER[ 'QUERY_STRING' ] : '';
                         }elseif( $key === 'order-received' ){
                             $endpoint = get_option( 'woocommerce_checkout_order_received_endpoint' );
                         }else{
