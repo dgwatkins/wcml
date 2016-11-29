@@ -109,6 +109,7 @@ class woocommerce_wpml {
         WCML_Admin_Menus::set_up_menus( $this, $sitepress, $wpdb, $this->check_dependencies );
 
         if( !$this->check_dependencies ){
+            WCML_Capabilities::set_up_capabilities();
 
             wp_register_style( 'otgs-ico', WCML_PLUGIN_URL . '/res/css/otgs-ico.css', null, WCML_VERSION );
             wp_enqueue_style( 'otgs-ico');
