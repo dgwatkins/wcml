@@ -36,7 +36,7 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 	}
 
 	function test_check_wc_tax_url_on_redirect(){
-		global $wp_query;
+		global $wp_query, $wp_rewrite;
 
 		$cat = $this->wcml_helper->add_term( 'Test', 'product_cat', $this->default_language );
 		$cat_es = $this->wcml_helper->add_term( 'Test Es', 'product_cat', $this->second_language, false, $cat->trid  );
@@ -49,6 +49,8 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 		$expected_url = 'http://example.org/?product_cat=test-es&lang=es';
 
 		$this->switch_to_langs_as_params('', true);
+
+		$wp_rewrite->use_trailing_slashes = true;
 
 		$filtered_url = $this->url_translation->check_wc_tax_url_on_redirect(
 			'',

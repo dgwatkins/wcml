@@ -65,7 +65,9 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 	}
 
 	function test_translate_taxonomy_base(){
-		global $wpml_term_translations;
+		global $wpml_term_translations, $wp_rewrite;
+
+		$wp_rewrite->use_trailing_slashes = true;
 
 		$taxonomy = 'product_cat';
 
