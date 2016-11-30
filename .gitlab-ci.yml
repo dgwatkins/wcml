@@ -55,7 +55,7 @@ Tag-Artifact:
   script:
     - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
   artifacts:
-    name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME}"
+    name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}"
     paths:
       - ${CI_PROJECT_NAME}
   only:
@@ -71,7 +71,7 @@ Branch-Artifact:
     - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
   artifacts:
     expire_in: 1h
-    name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME}-${CI_BUILD_ID}"
+    name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
     paths:
       - ${CI_PROJECT_NAME}
   except:
@@ -88,7 +88,7 @@ Prereleases-Artifact:
     - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
   artifacts:
     expire_in: 4 weeks
-    name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME}-${CI_BUILD_ID}"
+    name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
     paths:
       - ${CI_PROJECT_NAME}
   only:
