@@ -19,6 +19,10 @@
     },
     {
       "type": "vcs",
+      "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools.git"
+    },
+    {
+      "type": "vcs",
       "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git"
     },
     {
@@ -40,8 +44,9 @@
     "10up/wp_mock": "dev-master",
     "league/factory-muffin": "^3.0",
     "league/factory-muffin-faker": "^2.0",
-    "otgs/unit-tests-framework": "dev-master",
-    "otgs/build-tools-ci": "dev-0.2.1-dev",
+    "otgs/unit-tests-framework": "~1.0",
+    "otgs/build-tools": "~0.1",
+    "otgs/build-tools-ci": "~0.2",
     "symfony/dom-crawler": "^3.1",
     "symfony/css-selector": "^3.1",
     "otgs/wcml-codeception-tests": "dev-master"
