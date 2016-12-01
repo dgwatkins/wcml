@@ -48,7 +48,7 @@ class WCML_Exchange_Rates_UI extends WPML_Templates_Factory {
                 'services_label'    => __( 'Exchange rates source', 'woocommerce-multilingual' ),
                 'lifting_label'     => __( 'Lifting charge', 'woocommerce-multilingual' ),
                 'lifting_details1'   => __( 'The lifting charge adjusts the exchange rate provided by the selected service before it is saved. The exchange rates displayed in the table above include the lifting charge.', 'woocommerce-multilingual' ),
-                'lifting_details2'   => __( 'Effective Rate = Service Rate x (1 + Lifting Charge / 100)', 'woocommerce-multilingual' ),
+                'lifting_details2'   => __( 'Exchange rate = %s exchange rate x (1 + lifting charge / 100)', 'woocommerce-multilingual' ),
                 'services_api'      => __( 'API key (required)', 'woocommerce-multilingual' ),
                 'frequency'         => __( 'Update frequency', 'woocommerce-multilingual' ),
                 'update'            => __( 'Update manually now', 'woocommerce-multilingual' ),

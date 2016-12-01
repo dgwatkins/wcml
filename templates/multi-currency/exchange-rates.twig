@@ -15,8 +15,7 @@
         </p>
 
         <div id="exchange-rates-online-wrap"
-             class="exchange-rates-online-wrap"{% if exchange_rates.settings.automatic == 0 %}
-             style="display: none;"{% endif %}" >
+             class="exchange-rates-online-wrap"{% if exchange_rates.settings.automatic == 0 %} style="display: none;"{% endif %} >
 
         <div class="wcml-section-content-inner">
             <p id="update-rates-time">{{ exchange_rates.strings.updated_time|raw }}</p>
@@ -75,7 +74,7 @@
             <h4>{{ exchange_rates.strings.lifting_label }}</h4>
             <p>{{ exchange_rates.strings.lifting_details1 }}</p>
             <input type="number" name="lifting_charge" value="{{ settings.lifting_charge }}" step="any" style="width:64px" /> %
-            <p><i>{{ exchange_rates.strings.lifting_details2 }}</i></p>
+            <p><i>{{ exchange_rates.strings.lifting_details2|format( exchange_rates.services[exchange_rates.settings.service].name ) }}</i></p>
         </div>
 
         <div class="wcml-section-content-inner">
