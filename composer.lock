@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "93171033088c98fe591092a78458bbb9",
-    "content-hash": "142a41fb36b47f0321ef4ee80bdac2c4",
+    "hash": "9bfc9b987ebf26123dca72d5c2aaeb0a",
+    "content-hash": "ed4332dea62881be786543b90dd0e645",
     "packages": [
         {
             "name": "composer/installers",
@@ -353,11 +353,11 @@
         },
         {
             "name": "wpml/commons",
-            "version": "dev-wpmlcore-3774",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/wpml/wpml-commons.git",
-                "reference": "dbaf569e8b9e5cefde6d23a503af0bb83ba7517f"
+                "reference": "4e32cbeed45caff3aca4e06535ba90364172e481"
             },
             "require": {
                 "php": ">=5.2.0",
@@ -2614,7 +2614,6 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "otgs/installer": 20,
-        "wpml/commons": 20,
         "roave/security-advisories": 20,
         "m4tthumphrey/php-gitlab-api": 20,
         "10up/wp_mock": 20,

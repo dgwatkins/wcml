@@ -41,7 +41,7 @@
   "require": {
     "otgs/installer" : "dev-master",
     "xrstf/composer-php52": "1.*",
-    "wpml/commons": "dev-wpmlcore-3774",
+    "wpml/commons": "~1.0",
     "twig/twig": "~1.0",
     "roave/security-advisories": "dev-master"
   },
