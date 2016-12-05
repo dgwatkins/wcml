@@ -210,7 +210,7 @@ class WCML_TP_Support {
             if ( $value['finished'] && isset( $value['field_type'] ) && 'slug' === $value['field_type'] ) {
                 $product = get_post( $post_id );
                 if ( $product->post_type == 'product' ) {
-                    $new_slug = wp_unique_post_slug( $value['data'], $post_id, $product->post_status, $product->post_type,  $product->post_parent );
+                    $new_slug = wp_unique_post_slug( sanitize_title( $value['data'] ), $post_id, $product->post_status, $product->post_type,  $product->post_parent );
                     $wpdb->update( $wpdb->posts, array( 'post_name' => $new_slug ), array( 'ID' => $post_id ) );
                     break;
                 }
