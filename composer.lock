@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "970f316bed795fbff9f8aa77d491c297",
+    "hash": "b455b53b83009afbb9644815a6a8bcfb",
     "content-hash": "0540d8108be6ba4688cd49f35ef0cc1b",
     "packages": [
         {
@@ -824,11 +824,11 @@
         },
         {
             "name": "otgs/build-tools-ci",
-            "version": "0.2.1",
+            "version": "0.2.2",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "8a1560035604eda36a4ffcb53bfe6eb250218ad2"
+                "reference": "16892c7caf37f9a31f69425e599a2c94f1e845e8"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -869,7 +869,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2016-11-29 17:05:49"
+            "time": "2016-12-05 17:49:37"
         },
         {
             "name": "otgs/unit-tests-framework",

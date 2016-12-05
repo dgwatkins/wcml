@@ -10,8 +10,7 @@
     "master_branch": "master"
   },
   "gitlab": {
-    "apiUrl": "https://git.onthegosystems.com/api/v3/",
-    "apiToken": "EQzXJYcKfAqK9m8T6MVb"
+    "apiUrl": "https://git.onthegosystems.com/api/v3/"
   },
   "mysql": {
     "ci": {
