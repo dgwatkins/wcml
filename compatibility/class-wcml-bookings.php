@@ -995,7 +995,7 @@ class WCML_Bookings {
 
 		$product_id = $pagenow == 'post.php' && isset( $_GET['post'] ) ? (int)$_GET['post'] : false;
 
-		if( $product_id ){
+		if( $product_id && get_post_type( $product_id ) === 'product' ){
 			$product_type = Deprecated_WC_Functions::get_product_type( $product_id );
 
 			if ( ( $product_type === 'booking' || $product_type === $external_product_type ) || $pagenow == 'post-new.php' ) {
