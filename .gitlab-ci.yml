@@ -46,7 +46,7 @@ PhpUnit-Legacy:
   except:
     - tags
 
-Tag-Artifact:
+Artifacts-Tag:
   stage: build
   when: on_success
   image: artbuilder
@@ -61,7 +61,7 @@ Tag-Artifact:
   only:
     - tags
 
-Branch-Artifact:
+Artifacts-Branches:
   stage: deploy
   when: on_success
   image: artbuilder
@@ -75,10 +75,12 @@ Branch-Artifact:
     paths:
       - ${CI_PROJECT_NAME}
   except:
+    - master
+    - develop
     - tags
     - /^pre-release.*$/
 
-Prereleases-Artifact:
+Artifacts-Prereleases:
   stage: qa
   when: on_success
   image: artbuilder
@@ -93,6 +95,38 @@ Prereleases-Artifact:
       - ${CI_PROJECT_NAME}
   only:
     - /^pre-release.*$/
+
+Artifacts-Develop:
+  stage: deploy
+  when: on_success
+  image: artbuilder
+  tags:
+    - artifacts
+  script:
+    - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
+  artifacts:
+    expire_in: 7 days
+    name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
+    paths:
+      - ${CI_PROJECT_NAME}
+  only:
+    - develop
+
+Artifacts-Master:
+  stage: deploy
+  when: on_success
+  image: artbuilder
+  tags:
+    - artifacts
+  script:
+    - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
+  artifacts:
+    expire_in: 6 mos
+    name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
+    paths:
+      - ${CI_PROJECT_NAME}
+  only:
+    - master
 
 Release-Notes:
   stage: documentation
