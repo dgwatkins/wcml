@@ -68,8 +68,10 @@ install_test_suite() {
 	
 	if [ $WP_VERSION == 'latest' ]; then
 	    svn co --quiet http://develop.svn.wordpress.org/trunk/tests/phpunit/includes/
+	    svn co --quiet http://develop.svn.wordpress.org/trunk/tests/phpunit/data/
     else
         svn co --quiet http://develop.svn.wordpress.org/tags/${WP_VERSION}/tests/phpunit/includes/
+        svn co --quiet http://develop.svn.wordpress.org/tags/${WP_VERSION}/tests/phpunit/data/
     fi
 
 	sed $ioption "s:DIR_TESTDATA . '/languages': '$WP_CORE_LANG_DIR':" includes/bootstrap.php

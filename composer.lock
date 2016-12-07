@@ -120,7 +120,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/installer/installer.git",
-                "reference": "5c03622f8f76baf90ae4cf522116a1df4eb60a6b"
+                "reference": "f841bfb38950e512a8944dd453ec8644a9475b8e"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -159,7 +159,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2016-11-30 13:53:07"
+            "time": "2016-12-06 07:54:24"
         },
         {
             "name": "roave/security-advisories",
@@ -167,12 +167,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "7a1c6b8d5700e89397e854530b837011d14aa4b3"
+                "reference": "5560bd95c22a4ccf9404d8f176fceb4812a7398e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/7a1c6b8d5700e89397e854530b837011d14aa4b3",
-                "reference": "7a1c6b8d5700e89397e854530b837011d14aa4b3",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/5560bd95c22a4ccf9404d8f176fceb4812a7398e",
+                "reference": "5560bd95c22a4ccf9404d8f176fceb4812a7398e",
                 "shasum": ""
             },
             "conflict": {
@@ -221,7 +221,8 @@
                 "silverstripe/forum": "<=0.6.1|>=0.7,<=0.7.3",
                 "silverstripe/framework": ">=3,<3.3",
                 "silverstripe/userforms": "<3",
-                "simplesamlphp/simplesamlphp": "<1.14.4",
+                "simplesamlphp/saml2": ">=1.9,<1.9.1|>=1.10,<1.10.3|>=2.3,<2.3.3",
+                "simplesamlphp/simplesamlphp": "<1.14.10",
                 "socalnick/scn-social-auth": "<1.15.2",
                 "swiftmailer/swiftmailer": ">=4,<4.99.99|>=5,<5.2.1",
                 "symfony/dependency-injection": ">=2,<2.0.17",
@@ -288,7 +289,7 @@
                 }
             ],
             "description": "Prevents installation of composer packages with known security vulnerabilities: no API, simply require it",
-            "time": "2016-11-23 19:06:04"
+            "time": "2016-12-06 13:29:26"
         },
         {
             "name": "twig/twig",
@@ -353,11 +354,11 @@
         },
         {
             "name": "wpml/commons",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/wpml/wpml-commons.git",
-                "reference": "4e32cbeed45caff3aca4e06535ba90364172e481"
+                "reference": "2c19b176b1b132228e7ed8fe7aa0e902ccf33679"
             },
             "require": {
                 "php": ">=5.2.0",
@@ -404,7 +405,7 @@
                 "auto-loader",
                 "twig-extensions"
             ],
-            "time": "2016-12-02 17:51:01"
+            "time": "2016-12-06 11:28:28"
         },
         {
             "name": "xrstf/composer-php52",
@@ -1069,17 +1070,18 @@
         },
         {
             "name": "otgs/build-tools-ci",
-            "version": "0.2.1",
+            "version": "0.2.5",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "8a1560035604eda36a4ffcb53bfe6eb250218ad2"
+                "reference": "0963ab2590ca7bd7fa8e578c27b282cafa9b60d5"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
                 "m4tthumphrey/php-gitlab-api": "dev-master",
                 "php": ">=5.6.0",
                 "phpunit/phpunit": "^5.5",
+                "roave/security-advisories": "dev-master",
                 "symfony/finder": "^3.1"
             },
             "type": "library",
@@ -1114,7 +1116,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2016-11-29 17:05:49"
+            "time": "2016-12-07 13:02:06"
         },
         {
             "name": "otgs/unit-tests-framework",
@@ -1635,16 +1637,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.7.1",
+            "version": "5.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "0158307fae98f8013eeac2ff2803fe8d4f6bc1a0"
+                "reference": "336aff0ac52e306c98e7455bc3e8d7b0bf777a5e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/0158307fae98f8013eeac2ff2803fe8d4f6bc1a0",
-                "reference": "0158307fae98f8013eeac2ff2803fe8d4f6bc1a0",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/336aff0ac52e306c98e7455bc3e8d7b0bf777a5e",
+                "reference": "336aff0ac52e306c98e7455bc3e8d7b0bf777a5e",
                 "shasum": ""
             },
             "require": {
@@ -1713,7 +1715,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-12-02 12:03:05"
+            "time": "2016-12-03 08:33:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
