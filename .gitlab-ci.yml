@@ -45,9 +45,6 @@ PhpUnit-Legacy:
     - ./vendor/otgs/build-tools-ci/otgs-ci -p --legacy
   except:
     - tags
-  only:
-    - develop
-    - master
 
 Artifacts-Tag:
   stage: build
