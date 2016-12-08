@@ -702,8 +702,12 @@ class WCML_Terms{
     }
 
     function filter_shipping_classes_terms( $terms, $taxonomies, $args ){
-        $is_shipping_settings = isset($_GET['page']) && $_GET['page'] == 'wc-settings' && isset($_GET['tab']) && $_GET['tab'] == 'shipping';
-        if( is_admin() && in_array( 'product_shipping_class', (array) $taxonomies ) && $is_shipping_settings  ){
+
+        $on_wc_settings_page = isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] === 'wc-settings';
+        $on_shipping_tab = isset( $_GET[ 'tab' ] ) && $_GET[ 'tab' ] === 'shipping';
+        $on_classes_section = isset( $_GET[ 'section' ] ) && $_GET[ 'section' ] === 'classes';
+
+        if( is_admin() && in_array( 'product_shipping_class', (array) $taxonomies ) && $on_wc_settings_page && $on_shipping_tab && !$on_classes_section ){
             remove_filter('get_terms',array($this,'filter_shipping_classes_terms'));
             $current_language = $this->sitepress->get_current_language();
             $this->sitepress->switch_lang($this->sitepress->get_default_language());
