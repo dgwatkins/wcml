@@ -888,11 +888,16 @@ class WCML_Terms{
 
         //don't use get_taxonomies for product, because when one more post type registered for product taxonomy functions returned taxonomies only for product type
         foreach ( $wp_taxonomies as $key => $taxonomy ) {
+
             if (
                 ( in_array( 'product', $taxonomy->object_type ) || in_array( 'product_variation', $taxonomy->object_type ) ) &&
-                ! in_array( $key, $taxonomies ) &&
-                $this->woocommerce_wpml->attributes->is_translatable_attribute( $key )
+                ! in_array( $key, $taxonomies )
             ) {
+
+                if( substr( $key, 0, 3 ) == 'pa_' && !$this->woocommerce_wpml->attributes->is_translatable_attribute( $key ) ){
+                    continue;
+                }
+
                 $taxonomies[] = $key;
             }
         }
