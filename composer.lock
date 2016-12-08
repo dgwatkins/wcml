@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9bfc9b987ebf26123dca72d5c2aaeb0a",
+    "hash": "e91f76301bdabe225d1c116ad67a4d90",
     "content-hash": "ed4332dea62881be786543b90dd0e645",
     "packages": [
         {
@@ -354,11 +354,11 @@
         },
         {
             "name": "wpml/commons",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/wpml/wpml-commons.git",
-                "reference": "2c19b176b1b132228e7ed8fe7aa0e902ccf33679"
+                "reference": "c24b57e249762d505fc70e4716af2132605ab034"
             },
             "require": {
                 "php": ">=5.2.0",
@@ -405,7 +405,7 @@
                 "auto-loader",
                 "twig-extensions"
             ],
-            "time": "2016-12-06 11:28:28"
+            "time": "2016-12-08 07:26:19"
         },
         {
             "name": "xrstf/composer-php52",
