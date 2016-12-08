@@ -49,7 +49,8 @@ class WCML_Exchange_Rates_YahooFinance extends WCML_Exchange_Rate_Service{
 
                 // Exception: sometimes it returns N/A
                 if( substr( $line, 0, 3) === 'N/A' ){
-                    $to = array_values( $tos )[$k];
+                	$values = array_values( $tos );
+                    $to     = $values[$k];
                     $rate   = trim( substr( $line, 4 ) );
                 }else{
                     $to     = substr( $line, 1, 3);
