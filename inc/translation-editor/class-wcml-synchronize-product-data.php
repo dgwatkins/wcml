@@ -215,15 +215,15 @@ class WCML_Synchronize_Product_Data{
 
         }
 
+        if( $tr_product_id ){
+            wp_set_post_terms( $tr_product_id, $terms_to_insert, $taxonomy );
+        }
 
         if( in_array( $taxonomy, array( 'product_cat', 'product_tag' ) ) ) {
             $this->sitepress->switch_lang( $language );
             wp_update_term_count( $terms_array, $taxonomy );
             $this->sitepress->switch_lang( );
-        }elseif( $tr_product_id ){
-            wp_set_post_terms( $tr_product_id, $terms_to_insert, $taxonomy );
         }
-
     }
 
     public function sync_linked_products( $product_id, $translated_product_id, $lang ){
