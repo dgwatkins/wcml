@@ -75,17 +75,23 @@ class Test_Adding_New_Products extends WCML_UnitTestCase {
 	public function add_and_check_grouped_product( $orig_lang, $second_lang ) {
 		global $woocommerce_wpml;
 		$grouped_product = $this->add_simple_product( $orig_lang );
-		$term = get_term_by( 'name', 'grouped', 'product_type' );
+
+		// Grouped product type
+		$term = get_term_by( 'name', 'grouped', 'product_type', ARRAY_A );
+		if ( !$term ) {
+			$term = wp_insert_term( 'grouped', 'product_type' );
+		}
+
 		wp_set_post_terms(
 			$grouped_product['post']->id,
-			array( $term->term_id ),
+			array( $term[ 'term_id' ] ),
 			'product_type',
 			true
 		);
 		$translation = wpml_test_insert_post( $second_lang, 'product', $grouped_product['post']->trid, random_string() );
 		wp_set_post_terms(
 			$translation,
-			array( $term->term_id ),
+			array( $term[ 'term_id' ] ),
 			'product_type',
 			true
 		);

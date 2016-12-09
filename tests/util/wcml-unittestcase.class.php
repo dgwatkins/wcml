@@ -31,6 +31,11 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 		$wc_unit = new WC_Unit_Test_Case();
 		$wc_unit->setUp();
 
+		// Variable product type
+		if ( ! get_term_by( 'slug', 'variable', 'product_type' ) ) {
+			wp_insert_term( 'variable', 'product_type' );
+		}
+
 
 	}
 

@@ -78,28 +78,28 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		$custom_field = '_variable_single_custom_field';
 		$this->wcml_helper->set_custom_field_to_translate( $custom_field );
 
-		$variation_id = wpml_test_insert_post(  $this->default_language, 'product_variation', false, rand_str() );
-		$trid = $this->sitepress->get_element_trid( $variation_id, 'post_product_variation' );
-		$es_variation_id = wpml_test_insert_post(  $this->second_language, 'product_variation', $trid, rand_str() );
+		$variation = $this->wcml_helper->add_product_variation( $this->default_language, false );
+		$trid = $this->sitepress->get_element_trid( $variation->id, 'post_product_variation' );
+		$es_variation = $this->wcml_helper->add_product_variation( $this->second_language, $trid );
 
 		//add values to original variation
-		add_post_meta( $variation_id, $custom_field, rand_str() );
+		add_post_meta( $variation->id, $custom_field, rand_str() );
 
 		$translated_value = rand_str();
 
 		// configure data array
 		$data = array(
-			md5( $custom_field.$variation_id ) => $translated_value
+			md5( $custom_field.$variation->id ) => $translated_value
 		);
 		//configure POST data array of fields
 		$_POST['data'] = array(
 			'fields' => array(
-				$custom_field.$variation_id => $translated_value
+				$custom_field.$variation->id => $translated_value
 			)
 		);
 
-		$this->woocommerce_wpml->sync_product_data->sync_custom_field_value( $custom_field, $data, $es_variation_id, null, $variation_id, true );
-		$translated_meta = get_post_meta( $es_variation_id, $custom_field );
+		$this->woocommerce_wpml->sync_product_data->sync_custom_field_value( $custom_field, $data, $es_variation->id, null, $variation->id, true );
+		$translated_meta = get_post_meta( $es_variation->id, $custom_field );
 		$this->assertCount( count( $data ), $translated_meta );
 		$this->assertEquals( $translated_value, $translated_meta[ 0 ] );
 
@@ -107,7 +107,7 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		//test custom filed with multiple values
 		$custom_field = '_variable_multiple_custom_field';
 		$this->wcml_helper->set_custom_field_to_translate( $custom_field );
-		add_post_meta( $variation_id, $custom_field, rand_str() );
+		add_post_meta( $variation->id, $custom_field, rand_str() );
 
 		$translated_value_for_first_field = rand_str();
 		$translated_value_for_second_field = rand_str();
@@ -115,19 +115,19 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		// test new values
 		// configure data array
 		$data = array(
-			md5( $custom_field.$variation_id.':new0' ) => $translated_value_for_first_field,
-			md5( $custom_field.$variation_id.':new1' ) => $translated_value_for_second_field
+			md5( $custom_field.$variation->id.':new0' ) => $translated_value_for_first_field,
+			md5( $custom_field.$variation->id.':new1' ) => $translated_value_for_second_field
 		);
 		//configure POST data array of fields
 		$_POST['data'] = array(
 			'fields' => array(
-				$custom_field.$variation_id.':new0' => $translated_value_for_first_field,
-				$custom_field.$variation_id.':new1' => $translated_value_for_second_field
+				$custom_field.$variation->id.':new0' => $translated_value_for_first_field,
+				$custom_field.$variation->id.':new1' => $translated_value_for_second_field
 			)
 		);
 
-		$this->woocommerce_wpml->sync_product_data->sync_custom_field_value( $custom_field, $data, $es_variation_id, null, $variation_id, true );
-		$translated_meta = get_post_meta( $es_variation_id, $custom_field );
+		$this->woocommerce_wpml->sync_product_data->sync_custom_field_value( $custom_field, $data, $es_variation->id, null, $variation->id, true );
+		$translated_meta = get_post_meta( $es_variation->id, $custom_field );
 		$this->assertCount( count( $data ), $translated_meta );
 		$this->assertEquals( $translated_value_for_first_field, $translated_meta[ 0 ] );
 		$this->assertEquals( $translated_value_for_second_field, $translated_meta[ 1 ] );
