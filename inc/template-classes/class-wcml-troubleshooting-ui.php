@@ -26,6 +26,7 @@ class WCML_Troubleshooting_UI extends WPML_Templates_Factory {
 			'prod_count' => $this->woocommerce_wpml->troubleshooting->wcml_count_products_for_gallery_sync(),
 			'prod_categories_count' => $this->woocommerce_wpml->troubleshooting->wcml_count_product_categories(),
 			'all_products_taxonomies' => $this->get_all_products_taxonomies(),
+			'product_type_sync_needed' => !empty( WCML_Install::translated_product_type_terms() ) ? true : false,
 			'media_def' => defined('WPML_MEDIA_VERSION'),
 			'strings' => array(
 				'troubl' => __( 'Troubleshooting', 'woocommerce-multilingual' ),
@@ -39,7 +40,9 @@ class WCML_Troubleshooting_UI extends WPML_Templates_Factory {
 				'sync_cat' => __( 'Sync products categories (display type, thumbnail):', 'woocommerce-multilingual' ),
 				'dup_terms' => __( 'Duplicate terms ( please select attribute ):', 'woocommerce-multilingual' ),
 				'none' => __( 'none', 'woocommerce-multilingual' ),
-				'start' => __( 'Start', 'woocommerce-multilingual' )
+				'start' => __( 'Start', 'woocommerce-multilingual' ),
+				'delete_terms' => __( 'Fix product_type taxonomy terms', 'woocommerce-multilingual' ),
+				'product_type_fix_done' => __( 'Done!', 'woocommerce-multilingual' )
 			),
 			'nonces' => array(
 				'trbl_update_count' => wp_nonce_field('trbl_update_count', 'trbl_update_count_nonce'),
@@ -47,6 +50,7 @@ class WCML_Troubleshooting_UI extends WPML_Templates_Factory {
 				'trbl_gallery_images' => wp_nonce_field('trbl_gallery_images', 'trbl_gallery_images_nonce'),
 				'trbl_sync_categories' => wp_nonce_field('trbl_sync_categories', 'trbl_sync_categories_nonce'),
 				'trbl_duplicate_terms' => wp_nonce_field('trbl_duplicate_terms', 'trbl_duplicate_terms_nonce'),
+				'trbl_product_type_terms' => wp_nonce_field('trbl_product_type_terms', 'trbl_product_type_terms_nonce'),
 			)
 		);
 
