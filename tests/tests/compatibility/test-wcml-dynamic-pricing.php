@@ -94,8 +94,8 @@ class Test_WCML_Dynamic_Pricing extends WCML_UnitTestCase {
 		$this->sitepress->set_term_filters_and_hooks();
 		$this->sitepress->set_setting( 'sync_post_taxonomies', true );
 		wp_set_post_terms( $product, array( $product_category['term_id'] ), 'product_cat' );
-		$this->sitepress->switch_lang( $this->second_language );
 		$this->assertTrue( $dynamic_pricing->woocommerce_dynamic_pricing_is_applied_to( false, $product_obj, null, $obj, $product_category['term_id'] ) );
+		$this->sitepress->switch_lang( $this->second_language );
 		$this->assertTrue( $dynamic_pricing->woocommerce_dynamic_pricing_is_applied_to( false, $tr_product_obj, null, $obj, $product_category['term_id'] ) );
 		$this->sitepress->switch_lang( $this->default_language );
 	}

@@ -23,7 +23,7 @@ set -ex
 install_wp() {
 	mkdir -p $WP_CORE_DIR
 
-	local WC_VERSION_FOR_MO_FILES='2.6.4'
+	local WC_VERSION_FOR_MO_FILES='2.6.9'
 
 	if [ $WP_VERSION == 'latest' ]; then 
 		local ARCHIVE_NAME='latest'

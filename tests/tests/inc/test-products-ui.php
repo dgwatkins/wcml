@@ -166,15 +166,10 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         $product = $this->wcml_helper->add_product( 'en' , false, 'Test Product for translator' );
         $user_id    = $this->make_current_user_admin();
 
-        $translator_id    = $this->make_current_user_admin();
-
         $tm_records       = new WPML_TM_Records( $wpdb, $wpml_post_translations, $wpml_term_translations );
         $subject          = new WPML_Translation_Job_Factory( $tm_records );
         $subject->create_local_post_job(
             $product->id, 'es', $user_id );
-
-        $product = $this->wcml_helper->add_product( 'en' , false, 'Test Product for translator 2' );
-        $subject->create_local_post_job( $product->id, 'es', 1 );
 
         $products_info = $this->wcml_products_ui->get_product_info_for_translators();
         $this->assertEquals( 1, $products_info[ 'products_count' ] );

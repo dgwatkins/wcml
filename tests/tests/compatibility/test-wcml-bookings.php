@@ -26,6 +26,12 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			);
 		}
 		parent::setUp();
+
+		// Product type
+		if ( ! get_term_by( 'slug', sanitize_title( 'booking' ), 'product_type' ) ) {
+			wp_insert_term( 'booking', 'product_type' );
+		}
+
 		$this->usd_code  = 'USD';
 		$this->euro_code = 'EUR';
 		$this->usd_price = random_int( 1, 999 );
@@ -1071,7 +1077,6 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		update_post_meta( $product, '_wc_booking_has_resources', 'yes' );
 
 		$bookings->sync_booking_data( $product, null );
-
 		$this->assertEquals( $qty, get_post_meta( $resource_translation, 'qty', true ) );
 		$this->assertEquals( $available, get_post_meta( $resource_translation, '_wc_booking_availability', true ) );
 		$sort_order = $this->wpdb->get_results(

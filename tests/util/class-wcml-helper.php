@@ -326,6 +326,10 @@ class WCML_Helper {
     public static function add_product_variation( $language, $trid = false, $product_id = 0 ) {
         global $wpml_post_translations;
 
+        if( !$product_id ){
+            $product_id = wpml_test_insert_post( $language, 'product' );
+        }
+
         $product_id = wpml_test_insert_post( $language, 'product_variation', $trid, 'Variation ' . time() . rand( 1000, 9999 ), $product_id );
 
         $ret = new stdClass();
@@ -351,6 +355,8 @@ class WCML_Helper {
             'attribute_public'  => 0,
         );
         self::$wpdb->insert( self::$wpdb->prefix . 'woocommerce_attribute_taxonomies', $attribute );
+
+        delete_transient( 'wc_attribute_taxonomies');
 
         $settings_helper = wpml_load_settings_helper();
         $settings_helper->set_taxonomy_translatable( $taxonomy );

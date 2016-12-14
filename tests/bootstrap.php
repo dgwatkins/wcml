@@ -70,8 +70,6 @@ function _install_wc() {
 	WC_Install::install();
 	update_option( 'woocommerce_calc_shipping', 'yes' ); // Needed for tests cart and shipping methods
 
-	// reload capabilities after install, see https://core.trac.wordpress.org/ticket/28374
-	$GLOBALS['wp_roles']->reinit();
 	if ( file_exists( WC_BOOKING_PATH . '/woocommerce-bookings.php' ) ) {
 		require WC_BOOKING_PATH . '/woocommerce-bookings.php';
 		$GLOBALS['wc_bookings']->includes();
