@@ -39,9 +39,10 @@ class WCML_Cart_Switch_Lang_Functions{
     }
 
     function wcml_language_switch_dialog( ){
-        global $woocommerce_wpml, $sitepress;
+        global $woocommerce_wpml, $sitepress, $wp;
 
-        $request_url = add_query_arg( 'force_switch', 0, $sitepress->convert_url( get_permalink(), $this->lang_from ) );
+        $current_url = home_url( add_query_arg( array(), $wp->request ) );
+        $request_url = add_query_arg( 'force_switch', 0, $sitepress->convert_url( $current_url, $this->lang_from ) );
 
         $cart_for_session = false;
         if( isset( WC()->cart ) ){
@@ -50,7 +51,7 @@ class WCML_Cart_Switch_Lang_Functions{
 
         if( $this->lang_from && $this->lang_to && $request_url && !empty( $cart_for_session ) ) {
 
-            $force_cart_url = add_query_arg( 'force_switch', 1, get_permalink() );
+            $force_cart_url = add_query_arg( 'force_switch', 1, $current_url );
 
             $new_language_details = $sitepress->get_language_details( $this->lang_to );
             $current_language_details = $sitepress->get_language_details( $this->lang_from );
