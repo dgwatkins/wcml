@@ -303,10 +303,10 @@ class WCML_Synchronize_Product_Data{
                         $total_sales    = get_post_meta( $translation->element_id, 'total_sales', true);
 
                         if( $action == 'reduce'){
-                            $stock  = Deprecated_WC_Functions::reduce_stock( $translation->element_id, $qty );
+                            $stock  = WooCommerce_Functions_Wrapper::reduce_stock( $translation->element_id, $qty );
                             $total_sales   += $qty;
                         }else{
-                            $stock  = Deprecated_WC_Functions::increase_stock( $translation->element_id, $qty );
+                            $stock  = WooCommerce_Functions_Wrapper::increase_stock( $translation->element_id, $qty );
                             $total_sales   -= $qty;
                         }
                         update_post_meta( $translation->element_id, 'total_sales', $total_sales );

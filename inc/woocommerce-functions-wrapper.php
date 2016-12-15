@@ -1,6 +1,6 @@
 <?php
 
-class Deprecated_WC_Functions{
+class WooCommerce_Functions_Wrapper{
 
     public static function is_deprecated(){
 

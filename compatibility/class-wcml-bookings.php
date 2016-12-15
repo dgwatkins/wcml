@@ -996,7 +996,7 @@ class WCML_Bookings {
 		$product_id = $pagenow == 'post.php' && isset( $_GET['post'] ) ? (int)$_GET['post'] : false;
 
 		if( $product_id && get_post_type( $product_id ) === 'product' ){
-			$product_type = Deprecated_WC_Functions::get_product_type( $product_id );
+			$product_type = WooCommerce_Functions_Wrapper::get_product_type( $product_id );
 
 			if ( ( $product_type === 'booking' || $product_type === $external_product_type ) || $pagenow == 'post-new.php' ) {
 
@@ -1227,7 +1227,7 @@ class WCML_Bookings {
 	}
 
 	function custom_box_html( $obj, $product_id, $data ) {
-		if ( Deprecated_WC_Functions::get_product_type( $product_id ) !== 'booking' ) {
+		if ( WooCommerce_Functions_Wrapper::get_product_type( $product_id ) !== 'booking' ) {
 			return;
 		}
 
@@ -1290,7 +1290,7 @@ class WCML_Bookings {
 
 	function custom_box_html_data( $data, $product_id, $translation, $lang ) {
 
-		if ( Deprecated_WC_Functions::get_product_type( $product_id ) !== 'booking' ) {
+		if ( WooCommerce_Functions_Wrapper::get_product_type( $product_id ) !== 'booking' ) {
 			return $data;
 		}
 
@@ -1768,7 +1768,7 @@ class WCML_Bookings {
 	function append_persons_to_translation_package( $package, $post ) {
 
 		if ( $post->post_type == 'product' ) {
-			$product_type = Deprecated_WC_Functions::get_product_type( $post->ID );
+			$product_type = WooCommerce_Functions_Wrapper::get_product_type( $post->ID );
 
 			if ( $product_type === 'booking' ) {
 
@@ -1803,7 +1803,7 @@ class WCML_Bookings {
 	function save_person_translation( $post_id, $data, $job ) {
 		$person_translations = array();
 
-		if ( Deprecated_WC_Functions::get_product_type( $post_id ) === 'booking' ) {
+		if ( WooCommerce_Functions_Wrapper::get_product_type( $post_id ) === 'booking' ) {
 
 			foreach ( $data as $value ) {
 
@@ -1870,7 +1870,7 @@ class WCML_Bookings {
 		if ( $post->post_type == 'product' ) {
 			$product = wc_get_product( $post->ID );
 
-			$product_type = Deprecated_WC_Functions::get_product_type( $post->ID );
+			$product_type = WooCommerce_Functions_Wrapper::get_product_type( $post->ID );
 
 			if ( $product_type === 'booking' && $product->has_resources() ) {
 
@@ -1897,7 +1897,7 @@ class WCML_Bookings {
 	function save_resource_translation( $post_id, $data, $job ) {
 		$resource_translations = array();
 
-		if ( Deprecated_WC_Functions::get_product_type( $post_id ) === 'booking' ) {
+		if ( WooCommerce_Functions_Wrapper::get_product_type( $post_id ) === 'booking' ) {
 
 			foreach ( $data as $value ) {
 
