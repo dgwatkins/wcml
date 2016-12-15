@@ -443,11 +443,17 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                 $args[ 'post_date' ] = $this->original_post->post_date;
             }
 
-            $tr_product_id = wp_insert_post( $args );
+            $this->sitepress->switch_lang( $this->get_target_language() );
 
-            $translation_id = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT translation_id
-                                                  FROM {$this->wpdb->prefix}icl_translations
-                                                  WHERE element_type=%s AND trid=%d AND language_code=%s AND element_id IS NULL ", 'post_product', $product_trid, $this->get_target_language() ) );
+		    $tr_product_id = wp_insert_post( $args );
+
+		    $this->sitepress->switch_lang(); // switch back
+
+            $translation_id = $this->wpdb->get_var( $this->wpdb->prepare(
+            	"SELECT translation_id
+                 FROM {$this->wpdb->prefix}icl_translations
+                 WHERE element_type=%s AND trid=%d AND language_code=%s AND element_id IS NULL ",
+            'post_product', $product_trid, $this->get_target_language() ) );
 
             if ( $translation_id ) {
                 $this->wpdb->query(
