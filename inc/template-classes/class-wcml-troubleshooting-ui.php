@@ -20,13 +20,14 @@ class WCML_Troubleshooting_UI extends WPML_Templates_Factory {
 		if( get_option( 'wcml_products_to_sync' ) === false ){
 			$this->woocommerce_wpml->troubleshooting->wcml_sync_variations_update_option();
 		}
+		$translated_product_type_terms = WCML_Install::translated_product_type_terms();
 
 		$model = array(
 			'prod_with_variations' => $this->woocommerce_wpml->troubleshooting->wcml_count_products_with_variations(),
 			'prod_count' => $this->woocommerce_wpml->troubleshooting->wcml_count_products_for_gallery_sync(),
 			'prod_categories_count' => $this->woocommerce_wpml->troubleshooting->wcml_count_product_categories(),
 			'all_products_taxonomies' => $this->get_all_products_taxonomies(),
-			'product_type_sync_needed' => !empty( WCML_Install::translated_product_type_terms() ) ? true : false,
+			'product_type_sync_needed' => !empty( $translated_product_type_terms ) ? true : false,
 			'media_def' => defined('WPML_MEDIA_VERSION'),
 			'strings' => array(
 				'troubl' => __( 'Troubleshooting', 'woocommerce-multilingual' ),
