@@ -76,7 +76,8 @@ class WCML_Install{
                 add_action( 'admin_notices', array( __CLASS__, 'admin_notice_after_install' ) );
             }
 
-            if ( !empty( WCML_Install::translated_product_type_terms() ) ) {
+            $translated_product_type_terms = WCML_Install::translated_product_type_terms();
+            if ( !empty( $translated_product_type_terms ) ) {
                 add_action( 'admin_notices', array( __CLASS__, 'admin_translated_product_type_terms_notice' ) );
             }elseif( $sitepress->is_translated_taxonomy( 'product_type' ) ){
                 add_action( 'admin_notices', array( __CLASS__, 'admin_translated_product_type_notice' ) );
