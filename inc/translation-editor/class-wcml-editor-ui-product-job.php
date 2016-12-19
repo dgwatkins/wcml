@@ -419,6 +419,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             //insert new post
             $args = array();
             $args[ 'post_title' ] = $translations[ md5( 'title' ) ];
+		    $args[ 'post_name' ] = $translations[ md5( 'slug' ) ];
             $args[ 'post_type' ] = $this->original_post->post_type;
             $args[ 'post_content' ] = $translations[ md5( 'product_content' ) ];
             $args[ 'post_excerpt' ] = $translations[ md5( 'product_excerpt' ) ];
