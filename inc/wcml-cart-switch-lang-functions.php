@@ -10,7 +10,7 @@ class WCML_Cart_Switch_Lang_Functions{
 
         add_action( 'wp_footer', array( $this, 'wcml_language_switch_dialog' ) );
         add_action( 'wp_loaded', array( $this, 'wcml_language_force_switch' ) );
-        add_action( 'wpml_user_switch_language', array( $this, 'language_has_switched' ), 10 , 2 );
+        add_action( 'wcml_user_switch_language', array( $this, 'language_has_switched' ), 10 , 2 );
 
     }
 

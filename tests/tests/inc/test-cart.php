@@ -10,6 +10,7 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
         add_filter('wcml_load_multi_currency_in_ajax', '__return_true');
         set_current_screen( 'front' );
 
+        $this->default_language = $this->sitepress->get_default_language();
 		//add product for tests
 		$orig_product = $this->wcml_helper->add_product( 'en', false, 'product 1' );
 		$this->orig_product_id = $orig_product->id;
@@ -126,26 +127,12 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
 	}
 
 	function test_filter_paypal_args(){
-		global $sitepress_settings, $wpml_post_translations, $WPML_String_Translation;
 
-		$WPML_String_Translation->init_active_languages();
-		$this->sitepress->switch_lang( 'de' );
-
-		$default_lang_code	= 'de';
-		$wpml_wp_api        = new WPML_WP_API();
-		$hidden_langs 		= array();
-		$wpml_url_converter = new WPML_Lang_Parameter_Converter( $default_lang_code, $hidden_langs, $wpml_wp_api );
-
-		$canonicals = new WPML_Canonicals( $this->sitepress );
-
-		$_SERVER['SERVER_NAME'] = $this->sitepress->convert_url( get_home_url() );
-		$wpml_url_filters = new WPML_URL_Filters( $wpml_post_translations, $wpml_url_converter, $canonicals, $this->sitepress );
-
-		$args['notify_url'] =  WC()->api_request_url( 'WC_Gateway_Paypal' );
+		$args['notify_url'] =  get_home_url().'%2F&wc-api=WC_Gateway_Paypal';
 
 		$filtered_args = $this->woocommerce_wpml->cart->filter_paypal_args( $args ) ;
 
-		$this->assertEquals( $this->sitepress->convert_url( get_home_url() ).'&wc-api=WC_Gateway_Paypal', $filtered_args['notify_url'] );
+		$this->assertEquals( get_home_url().'&wc-api=WC_Gateway_Paypal', $filtered_args['notify_url'] );
 	}
 
     /**

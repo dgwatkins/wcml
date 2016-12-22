@@ -23,9 +23,13 @@ require WCML_PLUGIN_PATH . '/inc/missing-php-functions.php';
 require WCML_PLUGIN_PATH . '/inc/woocommerce-functions-wrapper.php';
 include WCML_PLUGIN_PATH . '/inc/installer-loader.php';
 include WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
+include WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
 include WCML_PLUGIN_PATH . '/inc/wcml-cart-switch-lang-functions.php';
 
-//for language switching need call as soon as possible
+//detecting language switching
+$wcml_switch_lang_request = new WCML_Switch_Lang_Request( new WPML_Cookie(), new WPML_WP_API() );
+
+//cart related language switching functions
 $wcml_cart_switch_lang_functions = new WCML_Cart_Switch_Lang_Functions();
 
 if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
