@@ -250,6 +250,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
         $trn_product_id = apply_filters( 'translate_object_id', $this->product_id, 'product', false, $this->get_target_language() );
         $translation = false;
+        $is_variable_product = $this->woocommerce_wpml->products->is_variable_product( $this->product_id );
 	    if ( null !== $trn_product_id ) {
             $translation = get_post( $trn_product_id );
         }
@@ -307,7 +308,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
         $element_data = $this->add_custom_field_to_element_data( $element_data, $this->product_id, isset( $translation->ID ) ? $translation->ID : false, false );
 
-        if( $this->woocommerce_wpml->products->is_variable_product( $this->product_id ) ){
+        if( $is_variable_product ){
             $variations = $this->product->get_available_variations();
 
             if( !empty( $variations ) ){
@@ -323,7 +324,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
 
 	    $files_data = array( $this->product_id => $this->woocommerce_wpml->downloadable->get_files_data( $this->product_id ) );
-        if( $this->woocommerce_wpml->products->is_variable_product( $this->product_id ) ){
+        if( $is_variable_product ){
             $files_data = $this->get_files_for_variations();
         }
 
@@ -331,10 +332,14 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
             $custom_product_sync = get_post_meta( $post_id, 'wcml_sync_files', true);
 	        if ( ( $custom_product_sync && $custom_product_sync === 'self' ) || ( ! $custom_product_sync && ! $this->woocommerce_wpml->settings['file_path_sync'] ) ) {
-
                 $orig_product_files = $file_data;
                 $trnsl_product_files = array();
-                if (isset($translation->ID) && $translation->ID) {
+                if( $is_variable_product ){
+                    $trnsl_variation_id = apply_filters( 'translate_object_id', $post_id, 'product_variation', false, $this->get_target_language() );
+                    if( $trnsl_variation_id ){
+                        $trnsl_product_files = $this->woocommerce_wpml->downloadable->get_files_data( $trnsl_variation_id );
+                    }
+                }elseif ( isset( $translation->ID ) && $translation->ID ) {
                     $trnsl_product_files = $this->woocommerce_wpml->downloadable->get_files_data( $translation->ID );
                 }
 

@@ -24,9 +24,8 @@ class WCML_Synchronize_Variations_Data{
 
         if( $this->woocommerce_wpml->products->is_original_product( $product_id ) ){
 
-            if( $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ) {
-                $this->woocommerce_wpml->multi_currency->custom_prices->sync_product_variations_custom_prices( $product_id );
-            }
+            $this->sync_product_variations_custom_data( $product_id );
+
             $trid = $this->sitepress->get_element_trid( $product_id, 'post_product' );
 
             if ( empty( $trid ) ) {
@@ -43,6 +42,33 @@ class WCML_Synchronize_Variations_Data{
                     $this->sync_product_variations($product_id, $translation->element_id, $translation->language_code);
                     $this->woocommerce_wpml->attributes->sync_default_product_attr( $product_id, $translation->element_id, $translation->language_code );
                 }
+            }
+        }
+    }
+
+    public function sync_product_variations_custom_data( $product_id ){
+
+        $is_variable_product = $this->woocommerce_wpml->products->is_variable_product( $product_id );
+        if( $is_variable_product ) {
+            $get_all_post_variations = $this->wpdb->get_results(
+                $this->wpdb->prepare(
+                    "SELECT * FROM {$this->wpdb->posts}
+                                                WHERE post_status IN ('publish','private')
+                                                  AND post_type = 'product_variation'
+                                                  AND post_parent = %d
+                                                ORDER BY ID"
+                    , $product_id)
+            );
+
+            foreach ( $get_all_post_variations as $k => $post_data ) {
+
+                if ( $this->woocommerce_wpml->settings[ 'enable_multi_currency' ] == WCML_MULTI_CURRENCIES_INDEPENDENT ) {
+                    $this->woocommerce_wpml->multi_currency->custom_prices->sync_product_variations_custom_prices( $post_data->ID );
+                }
+
+                //save files option
+                $this->woocommerce_wpml->downloadable->save_files_option( $post_data->ID );
+
             }
         }
     }
@@ -68,6 +94,8 @@ class WCML_Synchronize_Variations_Data{
 
             foreach( $all_variations as $key => $post_data ) {
                 $original_variation_id = $post_data->ID;
+                //save files option
+                $this->woocommerce_wpml->downloadable->save_files_option( $original_variation_id );
 
                 $variation_id = $this->get_variation_id_by_lang( $lang, $original_variation_id );
 
