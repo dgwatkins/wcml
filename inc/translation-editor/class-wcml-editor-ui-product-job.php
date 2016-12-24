@@ -424,6 +424,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             //insert new post
             $args = array();
             $args[ 'post_title' ] = $translations[ md5( 'title' ) ];
+		    $args[ 'post_name' ] = $translations[ md5( 'slug' ) ];
             $args[ 'post_type' ] = $this->original_post->post_type;
             $args[ 'post_content' ] = $translations[ md5( 'product_content' ) ];
             $args[ 'post_excerpt' ] = $translations[ md5( 'product_excerpt' ) ];
@@ -448,11 +449,17 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                 $args[ 'post_date' ] = $this->original_post->post_date;
             }
 
-            $tr_product_id = wp_insert_post( $args );
+            $this->sitepress->switch_lang( $this->get_target_language() );
 
-            $translation_id = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT translation_id
-                                                  FROM {$this->wpdb->prefix}icl_translations
-                                                  WHERE element_type=%s AND trid=%d AND language_code=%s AND element_id IS NULL ", 'post_product', $product_trid, $this->get_target_language() ) );
+		    $tr_product_id = wp_insert_post( $args );
+
+		    $this->sitepress->switch_lang(); // switch back
+
+            $translation_id = $this->wpdb->get_var( $this->wpdb->prepare(
+            	"SELECT translation_id
+                 FROM {$this->wpdb->prefix}icl_translations
+                 WHERE element_type=%s AND trid=%d AND language_code=%s AND element_id IS NULL ",
+            'post_product', $product_trid, $this->get_target_language() ) );
 
             if ( $translation_id ) {
                 $this->wpdb->query(
