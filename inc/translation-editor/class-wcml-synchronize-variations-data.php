@@ -191,19 +191,27 @@ class WCML_Synchronize_Variations_Data{
     }
 
     public function sync_variations_taxonomies( $original_variation_id, $tr_variation_id, $lang ){
-        if( $this->woocommerce_wpml->sync_product_data->check_if_product_fields_sync_needed( $original_variation_id, 'taxonomies' ) ){
-            $all_taxs = get_object_taxonomies( 'product_variation' );
 
-            $tr_product_attr = get_post_meta( $tr_variation_id, '_product_attributes', true );
+       remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
+
+       if( $this->woocommerce_wpml->sync_product_data->check_if_product_fields_sync_needed( $original_variation_id, $tr_variation_id, 'taxonomies' ) ){
+
+            $all_taxs = get_object_taxonomies( 'product_variation' );
 
             if ( !empty( $all_taxs ) ) {
                 foreach ( $all_taxs as $tt ) {
-                    $terms = get_the_terms( $original_variation_id, $tt );
+                    if( isset( $tt->name ) ){
+                        $name = $tt->name;
+                    }else{
+                        $name = $tt;
+                    }
+
+                    $terms = get_the_terms( $original_variation_id, $name );
                     if ( !empty( $terms ) ) {
                         $tax_sync = array();
                         foreach ( $terms as $term ) {
                             if ( $this->sitepress->is_translated_taxonomy( $tt ) ) {
-                                $term_id = apply_filters( 'translate_object_id', $term->term_id, $tt, false, $lang );
+                                $term_id = apply_filters( 'translate_object_id', $term->term_id, $name, false, $lang );
                             } else {
                                 $term_id = $term->term_id;
                             }
@@ -212,17 +220,19 @@ class WCML_Synchronize_Variations_Data{
                             }
                         }
                         //set the fourth parameter in 'true' because we need to add new terms, instead of replacing all
-                        wp_set_object_terms( $tr_variation_id, $tax_sync, $tt, true );
+                        wp_set_object_terms( $tr_variation_id, $tax_sync, $name, true );
                     }
                 }
             }
         }
+
+        add_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
     }
 
     public function duplicate_variation_data( $original_variation_id, $variation_id, $data, $lang, $trbl ){
         global $iclTranslationManagement;
 
-        if( $this->woocommerce_wpml->sync_product_data->check_if_product_fields_sync_needed( $original_variation_id, 'postmeta_fields' ) ){
+        if( $this->woocommerce_wpml->sync_product_data->check_if_product_fields_sync_needed( $original_variation_id, $variation_id, 'postmeta_fields' ) ){
             // custom fields
             $settings = $iclTranslationManagement->settings[ 'custom_fields_translation' ];
             $all_meta = get_post_custom( $original_variation_id );
