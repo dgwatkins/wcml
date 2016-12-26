@@ -145,6 +145,7 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 
 		$es_product = $this->wcml_helper->add_product( $this->second_language, false, rand_str() );
 
+		$_POST['icl_ajx_action'] = 'connect_translations';
 		$_POST['new_trid'] = $es_product->trid;
 		$_POST['post_type'] = 'product';
 		$_POST['post_id'] = $en_product->id;
@@ -157,6 +158,7 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 
 		update_post_meta( $es_product->id, $custom_field, 'custom_value_es' );
 
+		$_POST['icl_ajx_action'] = 'connect_translations';
 		$_POST['new_trid'] = $es_product->trid;
 		$_POST['post_type'] = 'product';
 		$_POST['post_id'] = $en_product->id;
