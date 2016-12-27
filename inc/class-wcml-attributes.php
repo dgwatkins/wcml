@@ -401,4 +401,54 @@ class WCML_Attributes{
         return $fully_translated;
     }
 
+    public function get_translated_variation_attribute_post_meta( $meta_value, $meta_key, $original_variation_id, $variation_id, $lang ){
+
+        $original_product_attr = get_post_meta( wp_get_post_parent_id( $original_variation_id ), '_product_attributes', true );
+        $tr_product_attr = get_post_meta( wp_get_post_parent_id( $variation_id ), '_product_attributes', true );
+
+        $tax = wc_sanitize_taxonomy_name ( substr( $meta_key, 10 ) );
+        if( taxonomy_exists( $tax ) ){
+            $attid = $this->woocommerce_wpml->terms->wcml_get_term_id_by_slug( $tax, $meta_value );
+            if( $this->is_translatable_attribute( $tax ) && $attid ){
+
+                $term_obj = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $attid, $tax );
+                $trnsl_term_id = apply_filters( 'translate_object_id', $term_obj->term_id, $tax, false, $lang );
+
+                if( $trnsl_term_id ) {
+                    $trnsl_term_obj = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $trnsl_term_id, $tax );
+                    $meta_value = $trnsl_term_obj->slug;
+                }
+            }
+        }else{
+            if( !isset( $original_product_attr[ $tax ] ) ){
+                $tax = sanitize_title( $tax );
+            }
+
+            if( isset( $original_product_attr[ $tax ] ) ){
+                if( isset( $tr_product_attr[ $tax ] ) ){
+                    $values_arrs = array_map( 'trim', explode( '|', $original_product_attr[ $tax ][ 'value' ] ) );
+                    $values_arrs_tr = array_map( 'trim', explode( '|', $tr_product_attr[ $tax ][ 'value' ] ) );
+
+                    foreach( $values_arrs as $key => $value ){
+                        $value_sanitized = sanitize_title( $value );
+                        if(
+                            ( $value_sanitized == strtolower( urldecode( $meta_value ) ) ||
+                                strtolower( $value_sanitized ) == $meta_value ||
+                                $value == $meta_value )
+                            && isset( $values_arrs_tr[ $key ] ) )
+                        {
+                            $meta_value = $values_arrs_tr[ $key ];
+                        }
+                    }
+                }
+            }
+            $meta_key = 'attribute_'.$tax;
+        }
+
+        return array(
+            'meta_value' => $meta_value,
+            'meta_key' => $meta_key
+        );
+    }
+
 }
