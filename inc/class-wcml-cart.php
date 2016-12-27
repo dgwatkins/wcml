@@ -320,11 +320,7 @@ class WCML_Cart
             $cart_contents[ $key ][ 'product_id' ],
             $cart_contents[ $key ][ 'variation_id' ],
             $cart_contents[ $key ][ 'variation' ],
-            (array) apply_filters( 'woocommerce_add_cart_item_data',
-                $cart_item_data,
-                $cart_contents[ $key ][ 'product_id' ],
-                $cart_contents[ $key ][ 'variation_id' ]
-            )
+            $cart_item_data
         );
     }
 
