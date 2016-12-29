@@ -26,11 +26,13 @@ include WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
 include WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
 include WCML_PLUGIN_PATH . '/inc/wcml-cart-switch-lang-functions.php';
 
-//detecting language switching
-$wcml_switch_lang_request = new WCML_Switch_Lang_Request( new WPML_Cookie(), new WPML_WP_API() );
+if( defined( 'ICL_SITEPRESS_VERSION' ) && !ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ){
+    //detecting language switching
+    $wcml_switch_lang_request = new WCML_Switch_Lang_Request( new WPML_Cookie(), new WPML_WP_API() );
 
-//cart related language switching functions
-$wcml_cart_switch_lang_functions = new WCML_Cart_Switch_Lang_Functions();
+    //cart related language switching functions
+    $wcml_cart_switch_lang_functions = new WCML_Cart_Switch_Lang_Functions();
+}
 
 if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
     require WCML_PLUGIN_PATH . '/vendor/autoload.php';

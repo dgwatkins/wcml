@@ -377,7 +377,7 @@ class WCML_Store_Pages{
 
         $check_pages = $this->get_wc_pages();
 
-        $missing_lang = '';
+        $missing_lang = array();
         $pages_in_progress = array();
 
         foreach ($check_pages as $page) {

@@ -196,7 +196,7 @@ class WCML_Attributes{
         $orig_product_attrs = $this->get_product_atributes( $original_product_id );
         $trnsl_product_attrs = $this->get_product_atributes( $tr_product_id );
 
-        $trnsl_labels = get_post_meta( $tr_product_id, 'attr_label_translations', true );
+        $trnsl_labels = $this->get_attr_label_translations( $tr_product_id );
 
         foreach ( $orig_product_attrs as $key => $orig_product_attr ) {
             $sanitized_key = sanitize_title( $orig_product_attr[ 'name' ] );
@@ -242,6 +242,15 @@ class WCML_Attributes{
             $attributes = array();
         }
         return $attributes;
+    }
+
+    public function get_attr_label_translations( $product_id ){
+        $trnsl_labels = get_post_meta( $product_id, 'attr_label_translations', true );
+        if( !is_array( $trnsl_labels ) ){
+            $trnsl_labels = array();
+        }
+
+        return $trnsl_labels;
     }
 
     public function sync_default_product_attr( $orig_post_id, $transl_post_id, $lang ){
@@ -316,7 +325,7 @@ class WCML_Attributes{
                     foreach( $tr_attrs as $key => $tr_attr ) {
                         if( $attribute_key == $key ){
                             $transl[ 'value' ] = $tr_attr[ 'value' ];
-                            $trnsl_labels = maybe_unserialize( get_post_meta( $tr_post_id, 'attr_label_translations', true ) );
+                            $trnsl_labels = $this->get_attr_label_translations( $tr_post_id );
 
                             if( isset( $trnsl_labels[ $lang_code ][ $attribute_key ] ) ){
                                 $transl[ 'name' ] = $trnsl_labels[ $lang_code ][ $attribute_key ];
