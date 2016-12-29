@@ -180,6 +180,8 @@ class WCML_Bookings {
 
 		add_filter( 'wpml_tm_dashboard_translatable_types', array(	$this, 'hide_bookings_type_on_tm_dashboard'	) );
 
+		add_filter( 'wcml_add_to_cart_sold_individually', array( $this, 'add_to_cart_sold_individually'	), 10, 4 );
+
 	}
 
 	function wcml_price_field_after_booking_base_cost( $post_id ) {
@@ -2247,6 +2249,24 @@ class WCML_Bookings {
 
 		$pointer_ui->show();
 
+	}
+
+	public function add_to_cart_sold_individually( $sold_indiv, $cart_item_data, $product_id, $quantity ){
+
+		if( isset(  $cart_item_data[ 'booking' ] ) ){
+			$sold_indiv = false;
+			foreach( WC()->cart->cart_contents as $cart_item ){
+				if(
+					isset( $cart_item[ 'booking' ] ) &&
+					$cart_item[ 'booking' ][ '_start_date' ] == $cart_item_data[ 'booking' ][ '_start_date' ] &&
+					$cart_item[ 'booking' ][ '_end_date' ] == $cart_item_data[ 'booking' ][ '_end_date' ]
+				){
+					$sold_indiv = true;
+				}
+			}
+		}
+
+		return $sold_indiv;
 	}
 
 }
