@@ -152,7 +152,7 @@ class WCML_Synchronize_Product_Data{
 
     public function sync_product_taxonomies( $original_product_id, $tr_product_id, $lang ){
         $taxonomies = get_object_taxonomies( 'product' );
-
+        remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
         foreach( $taxonomies as $taxonomy ) {
 
             $terms = wp_get_object_terms( $original_product_id, $taxonomy );
@@ -174,6 +174,7 @@ class WCML_Synchronize_Product_Data{
                 }
             }
         }
+        add_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
     }
 
     public function delete_term_relationships_update_term_count( $object_id, $tt_ids ){
@@ -416,7 +417,7 @@ class WCML_Synchronize_Product_Data{
     public function duplicate_product_post_meta( $original_product_id, $trnsl_product_id, $data = false ){
         global $iclTranslationManagement;
 
-        if( $this->check_if_product_fields_sync_needed( $original_product_id, 'postmeta_fields' ) ){
+        if( $this->check_if_product_fields_sync_needed( $original_product_id, $trnsl_product_id, 'postmeta_fields' ) ){
             $settings = $iclTranslationManagement->settings[ 'custom_fields_translation' ];
             $all_meta = get_post_custom( $original_product_id );
             $post_fields = null;
@@ -592,10 +593,10 @@ class WCML_Synchronize_Product_Data{
         }
     }
 
-    public function check_if_product_fields_sync_needed( $original_id, $fields_group ){
+    public function check_if_product_fields_sync_needed( $original_id, $trnsl_post_id, $fields_group ){
 
         $cache_group = 'is_product_fields_sync_needed';
-        $cache_key = $original_id.$fields_group;
+        $cache_key = $trnsl_post_id.$fields_group;
         $temp_is_sync_needed = wp_cache_get( $cache_key, $cache_group );
 
         if( $temp_is_sync_needed !== false ) return (bool) $temp_is_sync_needed;
@@ -631,13 +632,13 @@ class WCML_Synchronize_Product_Data{
                 break;
         }
 
-        $post_md5 = maybe_unserialize( get_post_meta( $original_id, 'wcml_sync_hash', true ) );
+        $post_md5 = maybe_unserialize( get_post_meta( $trnsl_post_id, 'wcml_sync_hash', true ) );
 
         if( isset( $post_md5[ $fields_group ] ) && $post_md5[ $fields_group ] == $hash ){
             $is_sync_needed = false;
         }else{
             $post_md5[ $fields_group ] = $hash;
-            update_post_meta( $original_id, 'wcml_sync_hash', $post_md5 );
+            update_post_meta( $trnsl_post_id, 'wcml_sync_hash', $post_md5 );
         }
 
         wp_cache_set( $cache_key, intval( $is_sync_needed ), $cache_group );
