@@ -628,7 +628,8 @@ class WCML_Synchronize_Product_Data{
                 break;
         }
 
-        $post_md5 = maybe_unserialize( get_post_meta( $trnsl_post_id, 'wcml_sync_hash', true ) );
+	    $wcml_sync_hash = get_post_meta( $trnsl_post_id, 'wcml_sync_hash', true );
+	    $post_md5 = $wcml_sync_hash === '' ? array() : maybe_unserialize( $wcml_sync_hash );
 
         if( isset( $post_md5[ $fields_group ] ) && $post_md5[ $fields_group ] == $hash ){
             $is_sync_needed = false;
