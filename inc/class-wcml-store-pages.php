@@ -254,6 +254,26 @@ class WCML_Store_Pages{
             }
         }
 
+	    // copy get parameters?
+	    $gets_passed = array();
+	    $parameters_copied = apply_filters( 'icl_lang_sel_copy_parameters',
+		    array_map( 'trim',
+			    explode( ',',
+				    wpml_get_setting_filter('',
+					    'icl_lang_sel_copy_parameters') ) ) );
+	    if ( $parameters_copied ) {
+		    foreach ( $_GET as $k => $v ) {
+			    if ( in_array( $k, $parameters_copied ) ) {
+				    $gets_passed[ $k ] = $v;
+			    }
+		    }
+
+		    foreach( $languages as $code => $language ){
+			    $languages[$code]['url'] = add_query_arg( $gets_passed, $language['url'] );
+		    }
+	    }
+
+
         return $languages;
     }
 
