@@ -32,16 +32,11 @@
     {
       "type": "vcs",
       "url": "ssh://git@git.onthegosystems.com:10022/wcml/codeception-tests.git"
-    },
-    {
-      "type": "vcs",
-      "url": "ssh://git@git.onthegosystems.com:10022/wpml/wpml-commons.git"
     }
   ],
   "require": {
     "otgs/installer" : "dev-master",
     "xrstf/composer-php52": "1.*",
-    "wpml/commons": "~1.0",
     "twig/twig": "~1.0",
     "roave/security-advisories": "dev-master"
   },
