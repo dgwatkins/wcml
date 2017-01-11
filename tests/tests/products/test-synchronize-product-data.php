@@ -158,6 +158,7 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 
 		update_post_meta( $es_product->id, $custom_field, 'custom_value_es' );
 
+		$this->sitepress->switch_lang( $this->second_language );
 		$_POST['icl_ajx_action'] = 'connect_translations';
 		$_POST['new_trid'] = $es_product->trid;
 		$_POST['post_type'] = 'product';
