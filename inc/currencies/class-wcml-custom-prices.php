@@ -19,11 +19,8 @@ class WCML_Custom_Prices{
 
         }
 
-        if( version_compare( WC_VERSION , '2.7', '<' ) ){
-            add_action( 'woocommerce_get_children', array( $this, 'filter_product_variations_with_custom_prices' ), 10 );
-        }else{
-            add_action( 'woocommerce_product_get_children', array( $this, 'filter_product_variations_with_custom_prices' ), 10 );
-        }
+        add_action( 'woocommerce_variation_is_visible', array( $this, 'filter_product_variations_with_custom_prices' ), 10, 2 );
+
 
         add_filter( 'loop_shop_post_in', array( $this, 'filter_products_with_custom_prices' ), 100 );
 
@@ -290,25 +287,22 @@ class WCML_Custom_Prices{
 
     }
 
-    //display variations with custom prices when "Show only products with custom prices in secondary currencies" enabled
-    public function filter_product_variations_with_custom_prices( $children ){
+    //set variations without custom prices to not visible when "Show only products with custom prices in secondary currencies" is enabled
+    public function filter_product_variations_with_custom_prices( $is_visible, $variation_id ){
 
         if( is_product() && $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT &&
             isset($this->woocommerce_wpml->settings['display_custom_prices']) &&
             $this->woocommerce_wpml->settings['display_custom_prices'] ){
 
-            foreach( $children as $key => $child ){
-                $orig_lang = $this->woocommerce_wpml->products->get_original_product_language( $child );
-                $orig_child_id = apply_filters( 'translate_object_id', $child, get_post_type( $child ), true, $orig_lang );
+            $orig_lang = $this->woocommerce_wpml->products->get_original_product_language( $variation_id );
+            $orig_child_id = apply_filters( 'translate_object_id', $variation_id, 'product_variation', true, $orig_lang );
 
-                if( !get_post_meta( $orig_child_id, '_wcml_custom_prices_status', true ) ){
-                    unset( $children[ $key ] );
-                }
+            if( !get_post_meta( $orig_child_id, '_wcml_custom_prices_status', true ) ){
+                return false;
             }
         }
 
-        return $children;
-
+        return $is_visible;
     }
 
     // display products with custom prices only if enabled "Show only products with custom prices in secondary currencies" option on settings page
