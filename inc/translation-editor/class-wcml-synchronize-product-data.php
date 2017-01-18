@@ -357,24 +357,28 @@ class WCML_Synchronize_Product_Data{
         }
     }
 
-
-
     public function icl_pro_translation_completed( $tr_product_id ){
-        $trid = $this->sitepress->get_element_trid( $tr_product_id, 'post_product' );
-        $translations = $this->sitepress->get_element_translations( $trid, 'post_product' );
 
-        foreach( $translations as $translation ){
-            if( $translation->original ){
-                $original_product_id = $translation->element_id;
+        if( get_post_type( $tr_product_id ) == 'product' ){
+
+            $trid = $this->sitepress->get_element_trid( $tr_product_id, 'post_product' );
+            $translations = $this->sitepress->get_element_translations( $trid, 'post_product' );
+
+            foreach( $translations as $translation ){
+                if( $translation->original ){
+                    $original_product_id = $translation->element_id;
+                }
             }
+
+            if( !isset( $original_product_id ) ){
+                return;
+            }
+
+            $lang = $this->sitepress->get_language_for_element( $tr_product_id, 'post_product' );
+            $this->sync_product_data( $original_product_id, $tr_product_id, $lang );
+
         }
 
-        if( !isset( $original_product_id ) ){
-            return;
-        }
-
-        $lang = $this->sitepress->get_language_for_element( $tr_product_id, 'post_product' );
-        $this->sync_product_data( $original_product_id, $tr_product_id, $lang );
     }
 
     public function icl_make_duplicate( $master_post_id, $lang, $postarr, $id ){
