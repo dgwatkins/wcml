@@ -341,12 +341,18 @@ class WCML_Cart
     }
 
     public function translate_cart_contents( $item ) {
+
         // translate the product id and product data
         $item[ 'product_id' ] = apply_filters( 'translate_object_id', $item[ 'product_id' ], 'product', true );
         if ($item[ 'variation_id' ]) {
             $item[ 'variation_id' ] = apply_filters( 'translate_object_id',$item[ 'variation_id' ], 'product_variation', true );
         }
-        $item[ 'data' ]->post->post_title = get_the_title( $item[ 'product_id' ] );
+
+        if( version_compare( WC()->version, '2.7', '>=' ) ){
+        $item[ 'data' ]->set_name( get_the_title( $item[ 'product_id' ] ) );
+        } else {
+	        $item[ 'data' ]->post->post_title = get_the_title( $item[ 'product_id' ] );
+        }
 
         return $item;
     }
