@@ -20,6 +20,8 @@ class WCML_Attributes{
             $this->icl_custom_tax_sync_options();
         }
 
+        add_action( 'woocommerce_before_attribute_delete', array( $this, 'refresh_taxonomy_translations_cache' ), 10, 3 );
+
     }
 
     public function init(){
@@ -34,6 +36,19 @@ class WCML_Attributes{
                 $this->set_attribute_readonly_config( $_GET[ 'edit' ], $_POST );
             }
         }
+
+    }
+
+    /*
+     * This creates the terms translation cache so the translations can be deleted via the 'delete_term' hook
+     * after the original term was deleted and getting the translations directly from the db is not possible
+     */
+    public function refresh_taxonomy_translations_cache( $attribute_id, $attribute_name, $taxonomy ){
+
+	    $terms = get_terms( $taxonomy, 'orderby=name&hide_empty=0' );
+	    foreach ( $terms as $term ) {
+		    $trid = $this->sitepress->get_element_trid( $term->term_taxonomy_id, 'tax_' . $taxonomy );
+	    }
 
     }
 
