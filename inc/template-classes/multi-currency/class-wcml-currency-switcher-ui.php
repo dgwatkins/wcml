@@ -32,18 +32,14 @@ class WCML_Currency_Switcher_UI extends WPML_Templates_Factory {
     public function get_model(){
 
         $model = array(
-
-            'style'         => isset( $this->args['switcher_style'] ) ? $this->args['switcher_style'] : 'dropdown',
+            'style'         => isset( $this->args['style'] ) ? $this->args['style'] : 'dropdown',
+            'color_scheme'  => isset( $this->args['color_scheme'] ) ? $this->args['color_scheme'] : array(),
             'orientation'   => isset( $this->args['orientation'] ) && $this->args['orientation'] === 'horizontal' ?
                                 'curr_list_horizontal' : 'curr_list_vertical',
-            'format'        => $this->args['format'],
-
+            'format'        => isset( $this->args['format'] ) ? $this->args['format'] : '%code%, %symbol%, %name%',
             'currencies'    => $this->currencies,
-
             'selected_currency' => $this->woocommerce_wpml->multi_currency->get_client_currency()
-
         );
-
 
         return $model;
     }

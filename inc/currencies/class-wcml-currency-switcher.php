@@ -17,6 +17,8 @@ class WCML_Currency_Switcher {
 
         add_action( 'wp_ajax_wcml_currencies_order', array($this, 'wcml_currencies_order') );
         add_action( 'wp_ajax_wcml_currencies_switcher_preview', array($this, 'wcml_currencies_switcher_preview') );
+        add_action( 'wp_ajax_wcml_currencies_switcher_save_settings', array($this, 'wcml_currencies_switcher_save_settings') );
+        add_action( 'wp_ajax_wcml_delete_currency_switcher', array($this, 'wcml_delete_currency_switcher') );
 
         add_action( 'wcml_currency_switcher', array($this, 'wcml_currency_switcher') );
         //@deprecated 3.9
@@ -42,6 +44,56 @@ class WCML_Currency_Switcher {
         die;
     }
 
+    public function wcml_currencies_switcher_save_settings() {
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if ( !$nonce || !wp_verify_nonce( $nonce, 'wcml_currencies_switcher_save_settings' ) ) {
+            die('Invalid nonce');
+        }
+        $wcml_settings =& $this->woocommerce_wpml->settings;
+        $switcher_settings = array();
+
+        // Allow some HTML in the currency switcher
+        $currency_switcher_format = strip_tags( stripslashes_deep( $_POST[ 'template' ] ), '<img><span><u><strong><em>');
+        $currency_switcher_format = htmlentities( $currency_switcher_format );
+        $currency_switcher_format = sanitize_text_field( $currency_switcher_format );
+        $currency_switcher_format = html_entity_decode( $currency_switcher_format );
+
+        $switcher_id = sanitize_text_field( $_POST[ 'switcher_id' ] );
+        if( $switcher_id == 'new_widget' ){
+            $switcher_id = sanitize_text_field( $_POST[ 'widget_id' ] );
+        }
+        $switcher_settings[ 'switcher_style' ]   = sanitize_text_field( $_POST[ 'switcher_style' ] );
+        $switcher_settings[ 'orientation' ] = sanitize_text_field( $_POST[ 'orientation' ] );
+        $switcher_settings[ 'template' ]        = $currency_switcher_format;
+
+        foreach( $_POST[ 'color_scheme' ] as $color_id => $color ){
+            $switcher_settings[ 'color_scheme' ][ sanitize_text_field( $color_id ) ] = sanitize_hex_color( $color );
+        }
+
+        $wcml_settings[ 'currency_switchers' ][ $switcher_id ] = $switcher_settings;
+
+        $this->woocommerce_wpml->update_settings( $wcml_settings );
+
+        die();
+    }
+
+    public function wcml_delete_currency_switcher(){
+        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+        if ( !$nonce || !wp_verify_nonce( $nonce, 'delete_currency_switcher' ) ) {
+            die('Invalid nonce');
+        }
+
+        $switcher_id = sanitize_text_field( $_POST[ 'switcher_id' ] );
+
+        $wcml_settings =& $this->woocommerce_wpml->settings;
+
+        unset( $wcml_settings[ 'currency_switchers' ][ $switcher_id ] );
+
+        $this->woocommerce_wpml->update_settings( $wcml_settings );
+
+        die();
+    }
+
     public function wcml_currencies_switcher_preview() {
         $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         if ( !$nonce || !wp_verify_nonce( $nonce, 'wcml_currencies_switcher_preview' ) ) {
@@ -52,7 +104,8 @@ class WCML_Currency_Switcher {
             array(
                 'format'         => $_POST['template'] ? stripslashes_deep( $_POST['template'] ) : '%name% (%symbol%) - %code%',
                 'switcher_style' => $_POST['switcher_type'],
-                'orientation'    => $_POST['orientation']
+                'orientation'    => $_POST['orientation'],
+                'color_scheme'   => $_POST['color_scheme'],
             )
         );
 
@@ -78,23 +131,35 @@ class WCML_Currency_Switcher {
         }
 
         if( $args === '' ){
-        	$args = array();
+        	$args = array(
+                'switcher_id' => 'product'
+            );
         }
 
         $wcml_settings = $this->woocommerce_wpml->get_settings();
         $multi_currency_object =& $this->woocommerce_wpml->multi_currency;
 
-        if ( !isset($args['switcher_style']) ) {
-            $args['switcher_style'] = isset($wcml_settings['currency_switcher_style']) ? $wcml_settings['currency_switcher_style'] : 'dropdown';
-        }
+        if( isset( $args[ 'switcher_id' ] ) && isset( $wcml_settings[ 'currency_switchers' ][ $args[ 'switcher_id' ] ] ) ){
 
-        if ( !isset($args['orientation']) ) {
-            $args['orientation'] = isset($wcml_settings['wcml_curr_sel_orientation']) ? $wcml_settings['wcml_curr_sel_orientation'] : 'vertical';
-        }
+            $currency_switcher_settings = $wcml_settings[ 'currency_switchers' ][ $args[ 'switcher_id' ] ];
 
-        if ( !isset($args['format']) ) {
-            $args['format'] = isset($wcml_settings['wcml_curr_template']) && $wcml_settings['wcml_curr_template'] != '' ?
-                $wcml_settings['wcml_curr_template'] : '%name% (%symbol%) - %code%';
+            if ( !isset( $args[ 'switcher_style' ] ) ) {
+                $args[ 'style' ] = isset( $currency_switcher_settings[ 'switcher_style' ] ) ? $currency_switcher_settings[ 'switcher_style' ] : 'dropdown';
+            }
+
+            if ( !isset( $args[ 'orientation' ] ) ) {
+                $args[ 'orientation' ] = isset( $currency_switcher_settings[ 'orientation' ] ) ? $currency_switcher_settings[ 'orientation' ] : 'vertical';
+            }
+
+            if ( !isset( $args[ 'format' ] ) ) {
+                $args[ 'format' ] = isset( $currency_switcher_settings[ 'template' ] ) && $currency_switcher_settings[ 'template' ] != '' ?
+                    $currency_switcher_settings[ 'template' ] : '%name% (%symbol%) - %code%';
+            }
+
+            if ( !isset( $args[ 'color_scheme' ] ) ) {
+                $args[ 'color_scheme' ] = isset($currency_switcher_settings['color_scheme']) ? $currency_switcher_settings['color_scheme'] : array();
+            }
+
         }
 
         $preview = '';
@@ -179,6 +244,16 @@ class WCML_Currency_Switcher {
      */
     public function currency_switcher( $args = array() ){
         $this->wcml_currency_switcher( $args );
+    }
+
+
+    /**
+     * @return array
+     */
+    public function get_registered_sidebars() {
+        global $wp_registered_sidebars;
+
+        return is_array( $wp_registered_sidebars ) ? $wp_registered_sidebars : array();
     }
 
 

@@ -26,13 +26,6 @@ jQuery( function($){
 
                 WCML_Multi_Currency.setup_currencies_sorting();
 
-                $(document).on('click','input[name="currency_switcher_style"]', WCML_Multi_Currency.update_currency_switcher_style);
-
-                $(document).on('change','#wcml_curr_sel_orientation', WCML_Multi_Currency.set_currency_switcher_orientation);
-
-                $(document).on('keyup','input[name="wcml_curr_template"]', WCML_Multi_Currency.setup_currency_switcher_template_keyup);
-                $(document).on('change','input[name="wcml_curr_template"]', WCML_Multi_Currency.setup_currency_switcher_template_change);
-
                 $(document).on('change','.currency_option_position', WCML_Multi_Currency.price_preview);
                 $(document).on('change','.currency_option_thousand_sep', WCML_Multi_Currency.price_preview);
                 $(document).on('change','.currency_option_decimal_sep', WCML_Multi_Currency.price_preview);
@@ -56,7 +49,6 @@ jQuery( function($){
                         WCML_Multi_Currency.wcml_mc_form_submitted = true;
                     })
                 }
-
 
             } );
 
@@ -460,57 +452,6 @@ jQuery( function($){
                 }
             });
 
-        },
-
-        currency_switcher_preview: function (){
-            var template = $('input[name="wcml_curr_template"]').val();
-            if(!template){
-                template = $('#currency_switcher_default').val();
-            }
-
-            var ajaxLoader = $('<span class="spinner" style="visibility: visible;">');
-            $('#wcml_curr_sel_preview').html(ajaxLoader);
-
-            $.ajax({
-                type: "POST",
-                url: ajaxurl,
-                data: {
-                    action: 'wcml_currencies_switcher_preview',
-                    wcml_nonce: $('#wcml_currencies_switcher_preview_nonce').val(),
-                    switcher_type: $('input[name="currency_switcher_style"]:checked').val(),
-                    orientation: $('#wcml_curr_sel_orientation').val(),
-                    template: template
-                },
-                success: function(resp){
-                    $('#wcml_curr_sel_preview').html(resp);
-                }
-            });
-        },
-
-        update_currency_switcher_style: function(e){
-
-            if( $(this).val() == 'list' ){
-                $('#wcml_curr_sel_orientation_list_wrap').show();
-            }else{
-                $('#wcml_curr_sel_orientation_list_wrap').hide();
-            }
-            WCML_Multi_Currency.currency_switcher_preview();
-        },
-
-        set_currency_switcher_orientation: function(e){
-            WCML_Multi_Currency.currency_switcher_preview();
-        },
-
-        setup_currency_switcher_template_keyup: function(e){
-            discard = true;
-            $(this).closest('.wcml-section').find('.button-wrap input').css("border-color","#1e8cbe");
-            WCML_Multi_Currency.currency_switcher_preview();
-        },
-
-        setup_currency_switcher_template_change: function(e){
-            if(!$(this).val()){
-                $('input[name="wcml_curr_template"]').val($('#currency_switcher_default').val())
-            }
         },
 
         price_preview: function(){

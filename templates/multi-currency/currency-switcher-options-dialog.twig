@@ -1,0 +1,120 @@
+<div class="wcml-dialog hidden" id="wcml_currency_switcher_options_{{ args.currency_switcher }}" title="{{ args.title }}">
+
+    <div id="wcml_currency_switcher_options_form_{{ args.currency_switcher }}">
+
+        <div id="wcml_curr_sel_preview_wrap" class="wcml-section-content-inner text-center">
+            <p><strong>{{ form.preview }}</strong></p>
+            <input type="hidden" id="wcml_currencies_switcher_preview_nonce" value="{{ form.preview_nonce }}"/>
+            <div id="wcml_curr_sel_preview" class="wcml-currency-preview">
+                {{ form.switcher_preview|raw }}
+            </div>
+        </div>
+
+        <div id="wcml_curr_options_wrap">
+            {% if args.currency_switcher == 'new_widget' %}
+                <div class="wpml-form-row">
+                    <h4>{{ form.widgets.widget_area }}</h4>
+                    <select id="wcml-cs-widget">
+                        <option>{{ form.widgets.choose_label }}</option>
+                        {% for sidebar in form.widgets.available_sidebars %}
+                            <option value="{{ sidebar['id'] }}">{{ sidebar['name'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+
+            <div class="wpml-form-row">
+                <h4>{{ form.switcher_style.label }}</h4>
+                <ul class="wcml_curr_style">
+                    <li>
+                        <label for="wcml_curr_sel_stype">
+                            <input type="radio" name="currency_switcher_style" value="dropdown"
+                                   {% if(args.style is empty or args.style == 'dropdown') %}checked="checked"{% endif %} />
+                            {{ form.switcher_style.dropdown }}
+                        </label>
+                    </li>
+                    <li>
+                        <label for="wcml_curr_sel_orientation">
+                            <input type="radio" name="currency_switcher_style" value="list" {% if(args.style == 'list') %}checked="checked"{% endif %} />
+                            {{ form.switcher_style.list }}
+                        </label>
+                        <span id="wcml_curr_sel_orientation_list_wrap" {% if(args.style != 'list') %}style="display: none;"{% endif %}>
+                            <select id="wcml_curr_sel_orientation" name="{{ args.currency_switcher }}_sel_orientation">
+                                <option value="vertical" {% if(args.orientation == 'vertical') %}selected="selected"{% endif %}>{{ form.switcher_style.vertical }}</option>
+                                <option value="horizontal" {% if(args.orientation == 'horizontal') %}selected="selected"{% endif %}>{{ form.switcher_style.horizontal }}</option>
+                            </select>
+                            <input type="hidden" id="{{ args.currency_switcher }}_orientation_value" value="{{ args.orientation }}" />
+                            <p class="explanation-text">{{ form.switcher_style.allowed_tags }}</p>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="wpml-form-row">
+                <h4>{{ form.template.parameters }}</h4>
+                <span class="explanation-text">{{  form.template.parameters_list }}</span>
+
+                <h4>{{ form.template.label }}</h4>
+                <input type="text" name="wcml_curr_template" value="{{ args.template }}"/>
+                <p class="explanation-text">{{ form.template.template_tip }}</p>
+                <input type="hidden" id="currency_switcher_default" value="{{ args.template_default }}"/>
+            </div>
+
+            <div class="wpml-form-row">
+
+                <div class="js-wcml-cs-panel-colors wcml-cs-panel-colors">
+                    <h4>{{ form.colors.label }}</h4>
+
+                    <label for="wcml-cs-{{ id }}-colorpicker-preset">{{ form.colors.theme }}</label>
+                    <select name="wcml-cs-{{ id }}-colorpicker-preset" class="js-wcml-cs-colorpicker-preset">
+                        <option value="">-- {{ form.colors.select_option_choose }} --</option>
+                        {% for scheme_id, scheme in color_schemes %}
+                            <option value="{{ scheme_id }}">{{ scheme.label }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <div>
+                        <table>
+                            <tr>
+                                <td>
+                                </td>
+                                <th>{{ form.colors.normal }}</th>
+                                <th>{{ form.colors.hover }}</th>
+                            </tr>
+                            {% for option_id, option in options %}
+                                <tr>
+                                    <td>{{ option }}</td>
+                                    {% if args.options[ option_id ~ '_normal' ] is not null %}
+                                        <td class="js-wcml-cs-colorpicker-wrapper">
+                                            <input class="js-wcml-cs-colorpicker js-wcml-cs-color-{{ option_id }}_normal" type="text" size="7"
+                                                   id="wcml-cs-{{ option_id }}-normal" name="{{ option_id }}_normal"
+                                                   value="{{ args.options[ option_id ~ '_normal' ] }}" style="">
+                                        </td>
+                                    {% endif %}
+                                    {% if args.options[ option_id ~ '_hover' ] is not null %}
+                                        <td class="js-wcml-cs-colorpicker-wrapper">
+                                            <input class="js-wcml-cs-colorpicker js-wcml-cs-color-{{ option_id }}_hover" type="text" size="7"
+                                                   id="wcml-cs-{{ option_id }}-hover" name="{{ option_id }}_hover"
+                                                   value="{{ args.options[ option_id ~ '_hover' ] }}" style="">
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="wpml-dialog-footer">
+            <input type="button" class="cancel wcml-dialog-close-button wpml-dialog-close-button alignleft" value="{{ form.cancel }}"/>&nbsp;
+            <input type="submit" class="wcml-dialog-close-button wpml-dialog-close-button button-primary currency_switcher_save alignright"
+                   value="{{ form.save }}" data-switcher="{{ args.current_switcher }}" data-stay="1" />
+            <input type="hidden" id="wcml_currencies_switcher_save_settings_nonce" value="{{ form.save_settings_nonce }}"/>
+            <input type="hidden" id="wcml_currencies_switcher_id" value="{{ args.currency_switcher }}"/>
+        </footer>
+
+    </div>
+
+</div>
+

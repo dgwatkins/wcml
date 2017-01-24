@@ -1,16 +1,53 @@
 {% if style == 'dropdown'  %}
 
-    <select class="wcml_currency_switcher">
-        {% for currency in currencies %}
-        <option value="{{ currency }}" {% if( currency == selected_currency) %}selected="selected"{% endif %}>{{ get_formatted_price( currency, format )|raw }}</option>
-        {% endfor %}
-    </select>
-
+    <ul class="wcml_currency_switcher dropdown">
+        <li rel="{{ selected_currency }}" class="wcml-active-currency"
+            style=" border-color:{{ color_scheme['border_normal'] }};
+                    background-color:{{ color_scheme['background_current_normal'] }};
+                    color:{{ color_scheme['font_current_normal'] }}"
+            onMouseOver="jQuery(this).parent().find('.wcml-cs-submenu').css('visibility','visible'); jQuery(this).css( { 'background-color':'{{ color_scheme['background_current_hover'] }}','color':'{{ color_scheme['font_current_hover'] }}' })"
+            onMouseOut="jQuery(this).parent().find('.wcml-cs-submenu').css('visibility','hidden'); jQuery(this).css( { 'background-color':'{{ color_scheme['background_current_normal'] }}','color':'{{ color_scheme['font_current_normal'] }}' })"
+            >
+            <span>{{ get_formatted_price( selected_currency, format )|raw }}</span>
+            <ul class="wcml-cs-submenu">
+                {% for currency in currencies %}
+                    {% if currency != selected_currency %}
+                        <li rel="{{ currency }}"
+                            style=" border-color:{{ color_scheme['border_normal'] }};
+                                    background-color:{{ color_scheme['background_other_normal'] }};
+                                    color:{{ color_scheme['font_other_normal'] }}"
+                            onMouseOver="jQuery(this).css( { 'background-color':'{{ color_scheme['background_other_hover'] }}','color':'{{ color_scheme['font_other_hover'] }}' })"
+                            onMouseOut="jQuery(this).css( { 'background-color':'{{ color_scheme['background_other_normal'] }}','color':'{{ color_scheme['font_other_normal'] }}' })"
+                            >
+                            {{ get_formatted_price( currency, format )|raw }}
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
 {% else %}
 
     <ul class="wcml_currency_switcher {{ orientation }}">
         {% for currency in currencies %}
-        <li rel="{{ currency }}" {% if( currency == selected_currency) %}class="wcml-active-currency"{% endif %}>{{ get_formatted_price( currency, format )|raw }}</li>
+            <li rel="{{ currency }}" {% if( currency == selected_currency) %} class="wcml-active-currency" {% endif %}
+                style="border-color:{{ color_scheme['border_normal'] }};
+                    {% if( currency == selected_currency) %}
+                        background-color:{{ color_scheme['background_current_normal'] }}; color:{{ color_scheme['font_current_normal'] }}
+                    {% else %}
+                        background-color:{{ color_scheme['background_other_normal'] }}; color:{{ color_scheme['font_other_normal'] }}
+                    {% endif %}"
+
+                    {% if( currency == selected_currency) %}
+                        onMouseOver="jQuery(this).css( { 'background-color':'{{ color_scheme['background_current_hover'] }}','color':'{{ color_scheme['font_current_hover'] }}' })"
+                        onMouseOut="jQuery(this).css( { 'background-color':'{{ color_scheme['background_current_normal'] }}','color':'{{ color_scheme['font_current_normal'] }}' })"
+                    {% else %}
+                        onMouseOver="jQuery(this).css( { 'background-color':'{{ color_scheme['background_other_hover'] }}','color':'{{ color_scheme['font_other_hover'] }}' })"
+                        onMouseOut="jQuery(this).css( { 'background-color':'{{ color_scheme['background_other_normal'] }}','color':'{{ color_scheme['font_other_normal'] }}' })"
+                    {% endif %}
+                    >
+                {{ get_formatted_price( currency, format )|raw }}
+            </li>
         {% endfor %}
     </ul>
 

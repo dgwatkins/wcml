@@ -381,6 +381,44 @@ table.widefat.currency_lang_table {
 
 /* Currency switcher*/
 
+.js-wcml-cs-colorpicker-wrapper .wp-picker-container .wp-color-result:after {
+  background: transparent;
+  border-radius: 0;
+  border-left: 0;
+  padding: 0;
+  right: 0;
+  left: 0;
+  position: absolute;
+  content: '';
+}
+
+.js-wcml-cs-colorpicker-wrapper .wp-color-result {
+  padding-left: 50px;
+  position: relative;
+}
+
+.js-wcml-cs-colorpicker-wrapper .wp-color-result:not(.wp-picker-open):after {
+  font-family: otgs-icons;
+  content: 'h';
+  color: #333;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.4);
+  font-size: 16px;
+  min-width: 0;
+}
+
+.wcml-cs-panel-colors table {
+  width: 100%;
+  max-width: 600px;
+}
+
+.wcml-cs-panel-colors table td {
+  vertical-align: top;
+}
+
+.wcml-cs-panel-colors table th {
+  text-align: start;
+}
+
 #wcml_currencies_order {
 	display: block;
 	overflow: hidden;
@@ -406,7 +444,7 @@ table.widefat.currency_lang_table {
 }
 
 input[name="wcml_curr_template"] {
-	width: 100%;
+	width: 50%;
 }
 
 .wcml_curr_style label {
@@ -430,6 +468,11 @@ input[name="wcml_curr_template"] {
 	float: left;
 }
 
+#currency-switcher-widget a,
+#currency-switcher-product a{
+	text-decoration: none;
+}
+
 #display_custom_prices_select {
 	display: inline-block;
 	width: 100%;
@@ -437,6 +480,29 @@ input[name="wcml_curr_template"] {
 
 .edit_slug_input, .edit_slug_hide_link {
 	display: none;
+}
+
+.wcml-cs-list{
+  width: 570px;
+  border-collapse: collapse;
+  border: lightgrey 1px solid;
+  vertical-align: middle;
+  margin-bottom: 10px;
+}
+
+.wcml-cs-list th,
+.wcml-cs-list td {
+  text-align: center;
+  padding: 5px;
+  border: lightgrey 1px solid;
+}
+
+.wcml-cs-list .wcml-currency-preview {
+  margin: 15px 0;
+}
+
+#wcml_curr_sel_preview_wrap{
+  border: 1px solid #ccc;
 }
 
 /*============================================================*/

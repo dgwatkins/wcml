@@ -134,8 +134,10 @@ jQuery( function($){
                 }
 
                 WCML_Dialog.dialog(dialog_id, $(this).data());
-            }
 
+                WCML_Currency_Switcher_Settings.initColorPicker();
+                WCML_Currency_Switcher_Settings.currency_switcher_preview();
+            }
 
         });
 

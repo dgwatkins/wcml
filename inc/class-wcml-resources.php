@@ -62,6 +62,8 @@ class WCML_Resources {
 
     private static function load_js() {
 
+        wp_enqueue_style( 'wp-color-picker' );
+        wp_enqueue_script( 'wp-color-picker');
         wp_register_script( 'wcml-scripts', WCML_PLUGIN_URL . '/res/js/scripts' . WCML_JS_MIN . '.js', array(
             'jquery',
             'jquery-ui-core',
@@ -109,6 +111,13 @@ class WCML_Resources {
         if ( self::$page == 'wpml-wcml' && self::$tab == 'multi-currency' ) {
             wp_register_script( 'multi-currency', WCML_PLUGIN_URL . '/res/js/multi-currency' . WCML_JS_MIN . '.js', array('jquery', 'jquery-ui-sortable'), WCML_VERSION, true );
             wp_enqueue_script( 'multi-currency' );
+
+            wp_register_script( 'currency-switcher-settings', WCML_PLUGIN_URL . '/res/js/currency-switcher-settings' . WCML_JS_MIN . '.js', array('jquery', 'jquery-ui-sortable'), WCML_VERSION, true );
+            wp_enqueue_script( 'currency-switcher-settings' );
+            wp_localize_script( 'currency-switcher-settings', 'settings', array(
+                'pre_selected_colors' => WCML_Currency_Switcher_Options_Dialog::currency_switcher_pre_selected_colors()
+            ) );
+
             wp_register_script( 'exchange-rates', WCML_PLUGIN_URL . '/res/js/exchange-rates' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION, true );
             wp_enqueue_script( 'exchange-rates' );
         }
