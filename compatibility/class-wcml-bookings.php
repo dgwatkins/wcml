@@ -2257,9 +2257,10 @@ class WCML_Bookings {
 			$sold_indiv = false;
 			foreach( WC()->cart->cart_contents as $cart_item ){
 				if(
-					isset( $cart_item[ 'booking' ] ) &&
+					isset( $cart_item[ 'booking' ] ) && isset( $cart_item[ 'booking' ][ '_booking_id' ] ) &&
 					$cart_item[ 'booking' ][ '_start_date' ] == $cart_item_data[ 'booking' ][ '_start_date' ] &&
-					$cart_item[ 'booking' ][ '_end_date' ] == $cart_item_data[ 'booking' ][ '_end_date' ]
+					$cart_item[ 'booking' ][ '_end_date' ] == $cart_item_data[ 'booking' ][ '_end_date' ] &&
+					$cart_item[ 'booking' ][ '_booking_id' ] == $cart_item_data[ 'booking' ][ '_booking_id' ]
 				){
 					$sold_indiv = true;
 				}
