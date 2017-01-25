@@ -9,6 +9,10 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 	 */
 	private $sitepress;
 	/**
+	 * @var TranslationManagement
+	 */
+	private $tm_instance;
+	/**
 	 * @var WPDB
 	 */
 	private $wpdb;
@@ -19,9 +23,11 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
     private $not_display_fields_for_variables_product;
 
 	function __construct( $job_details, &$woocommerce_wpml, &$sitepress, &$wpdb  ) {
+		global $iclTranslationManagement;
 
         $this->woocommerce_wpml =& $woocommerce_wpml;
         $this->sitepress        =& $sitepress;
+        $this->tm_instance      =& $iclTranslationManagement;
         $this->wpdb             =& $wpdb;
         $this->not_display_fields_for_variables_product = array( '_purchase_note', '_regular_price', '_sale_price',
                                                                  '_price', '_min_variation_price', '_max_variation_price',
@@ -136,16 +142,35 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         }
 
         $custom_fields = $this->get_product_custom_fields_to_translate( $this->product_id );
+
+
         if( $this->product_type === 'external' ){
             $custom_fields = array_diff( $custom_fields, array( '_product_url', '_button_text' ) );
         }
 
         if( $custom_fields ) {
+
             $custom_fields_section = new WPML_Editor_UI_Field_Section( __( 'Custom Fields', 'woocommerce-multilingual' ) );
 
-            $this->add_custom_fields_ui_section( $custom_fields_section, $custom_fields, false );
+            foreach( $custom_fields as $custom_field ){
 
-            $this->add_field( $custom_fields_section );
+	            $cf_settings = new WPML_Post_Custom_Field_Setting( $this->tm_instance, $custom_field );
+	            switch( $cf_settings->get_editor_style() ){
+	            	case 'visual':
+			            $cf_field = new WPML_Editor_UI_WYSIWYG_Field( $custom_field, $cf_settings->get_editor_label(), $this->data, true );
+                        break;
+		            case 'textarea':
+			            $cf_field = new WPML_Editor_UI_TextArea_Field( $custom_field, $cf_settings->get_editor_label(), $this->data, true );
+		            	break;
+		            default: //line
+			            $cf_field = new WPML_Editor_UI_Single_Line_Field( $custom_field, $cf_settings->get_editor_label(), $this->data, true );
+	            }
+
+	            $custom_fields_section->add_field( $cf_field );
+
+            }
+
+	        $this->add_field( $custom_fields_section );
         }
 
         if( $this->woocommerce_wpml->products->is_variable_product( $this->product_id ) ){
