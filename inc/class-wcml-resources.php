@@ -182,14 +182,23 @@ class WCML_Resources {
     }
 
     public static function load_lock_fields_js() {
+        global $pagenow;
 
         wp_register_script( 'wcml-lock-script', WCML_PLUGIN_URL . '/res/js/lock_fields' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION );
         wp_enqueue_script( 'wcml-lock-script' );
 
         $file_path_sync = self::$woocommerce_wpml->settings['file_path_sync'];
-        if( isset( $_GET[ 'post' ] ) ){
-            $original_language = self::$woocommerce_wpml->products->get_original_product_language( $_GET[ 'post' ] );
-            $original_id = apply_filters( 'translate_object_id', $_GET[ 'post' ], 'product', true, $original_language );
+
+        $product_id = false;
+        if( $pagenow === 'post.php' && isset( $_GET['post'] ) ){
+            $product_id =  $_GET['post'];
+        }elseif( isset( $_POST['product_id'] ) ){
+            $product_id = $_POST['product_id'];
+        }
+
+        if( $product_id ){
+            $original_language = self::$woocommerce_wpml->products->get_original_product_language( $product_id );
+            $original_id = apply_filters( 'translate_object_id', $product_id, 'product', true, $original_language );
             $custom_product_sync = get_post_meta( $original_id, 'wcml_sync_files', true );
             if( $custom_product_sync && $custom_product_sync == 'self' ) {
                 $file_path_sync = false;

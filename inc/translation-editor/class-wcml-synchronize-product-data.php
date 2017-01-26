@@ -113,6 +113,9 @@ class WCML_Synchronize_Product_Data{
             $this->woocommerce_wpml->multi_currency->custom_prices->save_custom_prices( $original_product_id );
         }
 
+        //save files option
+        $this->woocommerce_wpml->downloadable->save_files_option( $original_product_id );
+
     }
 
     public function sync_product_data( $original_product_id, $tr_product_id, $lang ){
