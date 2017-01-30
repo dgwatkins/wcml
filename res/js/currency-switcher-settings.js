@@ -52,6 +52,9 @@ jQuery( function($){
                 color_scheme[ $(this).attr('name') ] = $(this).val();
             });
 
+            var widget_id = dialog.find('#wcml-cs-widget').val();
+            var widget_name = dialog.find('#wcml-cs-widget option:selected').text();
+
             $.ajax({
                 type: 'POST',
                 dataType: 'json',
@@ -60,14 +63,31 @@ jQuery( function($){
                     action: 'wcml_currencies_switcher_save_settings',
                     wcml_nonce: dialog.find('#wcml_currencies_switcher_save_settings_nonce').val(),
                     switcher_id: dialog.find('#wcml_currencies_switcher_id').val(),
-                    widget_id: dialog.find('#wcml-cs-widget').val(),
+                    widget_id: widget_id,
                     switcher_style: dialog.find('input[name="currency_switcher_style"]:checked').val(),
                     orientation: dialog.find('#wcml_curr_sel_orientation').val(),
                     template: template,
                     color_scheme: color_scheme
                 },
-                success: function(e){
+                success: function(e) {
                     dialog.find('.ui-dialog-titlebar-close').trigger('click');
+
+                    if( $('.wcml-currency-preview.' + widget_id ).length == 0 ){
+
+                        var widget_row = $('.wpml-cs-empty-row').clone();
+                        widget_row.removeClass('wpml-cs-empty-row');
+                        widget_row.find('.wcml-currency-preview').addClass(widget_id);
+                        widget_row.find('.wpml-cs-widget-name').html( widget_name );
+                        widget_row.find('.edit_currency_switcher').attr('data-switcher', widget_id );
+                        widget_row.find('.edit_currency_switcher').attr('data-dialog', 'wcml_currency_switcher_options_' + widget_id );
+                        widget_row.find('.edit_currency_switcher').attr('data-content', 'wcml_currency_switcher_options_' + widget_id );
+                        widget_row.find('.delete_currency_switcher').attr('data-switcher', widget_id );
+                        widget_row.show();
+
+                        $('.wcml-cs-list').find('tr.wpml-cs-empty-row').before( widget_row );
+                    }
+
+                    WCML_Currency_Switcher_Settings.currency_switcher_preview( true );
                 }
             });
         },
@@ -96,7 +116,7 @@ jQuery( function($){
             });
         },
 
-        currency_switcher_preview: _.debounce( function (){
+        currency_switcher_preview: _.debounce( function ( update_settings ){
 
             var dialog =  $('.wcml-ui-dialog' );
 
@@ -127,7 +147,14 @@ jQuery( function($){
                     color_scheme: color_scheme
                 },
                 success: function(resp){
-                    dialog.find('#wcml_curr_sel_preview').html(resp);
+                    if( update_settings ){
+                        if( switcher_id == 'new_widget'){
+                            switcher_id = dialog.find('#wcml-cs-widget').val();
+                        }
+                        $('.wcml-currency-preview.'+switcher_id).html(resp);
+                    }else{
+                        dialog.find('.wcml-currency-preview').html(resp);
+                    }
                 }
             });
         }, 500),

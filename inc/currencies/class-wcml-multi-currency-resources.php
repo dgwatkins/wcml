@@ -3,10 +3,12 @@
 class WCML_Multi_Currency_Resources{
 
     static $multi_currency;
+    static $woocommerce_wpml;
 
-    public static function set_up( &$multi_currency ){
+    public static function set_up( &$multi_currency, &$woocommerce_wpml ){
 
         self::$multi_currency =& $multi_currency;
+        self::$woocommerce_wpml =& $woocommerce_wpml;
 
         if(!is_admin()){
             self::load_inline_js();
@@ -46,7 +48,32 @@ class WCML_Multi_Currency_Resources{
     private static function register_css(){
         wp_register_style( 'currency-switcher', WCML_PLUGIN_URL . '/res/css/currency-switcher.css', null, WCML_VERSION );
         wp_enqueue_style('currency-switcher');
+
+        self::enqueue_inline_styles();
     }
 
+    private static function enqueue_inline_styles() {
+        $wcml_settings = self::$woocommerce_wpml->get_settings();
+
+        if ( $wcml_settings['currency_switcher_additional_css'] ) {
+            $additional_css = self::sanitize_css( $wcml_settings['currency_switcher_additional_css'] );
+
+            if ( ! empty( $additional_css ) ) {
+                wp_add_inline_style( 'currency-switcher', $additional_css );
+            }
+
+        }
+    }
+
+    /**
+     * @param string $css
+     *
+     * @return string
+     */
+    private static function sanitize_css( $css ) {
+        $css = wp_strip_all_tags( $css );
+        $css = preg_replace('/\s+/S', " ", trim( $css ) );
+        return $css;
+    }
 
 }

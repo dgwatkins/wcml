@@ -102,7 +102,7 @@ class WCML_Multi_Currency{
             $this->W3TC = new WCML_W3TC_Multi_Currency();
         }
 
-        WCML_Multi_Currency_Resources::set_up( $this );
+        WCML_Multi_Currency_Resources::set_up( $this, $this->woocommerce_wpml );
         WCML_Multi_Currency_Configuration::set_up( $this, $woocommerce_wpml );
 
         add_filter('init', array($this, 'init'), 5);

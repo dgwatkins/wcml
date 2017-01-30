@@ -11,7 +11,7 @@
             <p class="explanation-text">{{ currency_switcher.order_tip }}</p>
             <ul id="wcml_currencies_order">
                 {% for code in currency_switcher.order %}
-                    <li class="wcml_currencies_order_{{ code }}" cur="{{ code }}">{{ attribute(wc_currencies, code) }} ({{ get_currency_symbol(code)|raw }})</li>
+                    <li class="wcml_currencies_order_{{ code }}" cur="{{ code }}">{{ attribute( wc_currencies, code) }} ({{ get_currency_symbol(code)|raw }})</li>
                 {% endfor %}
             </ul>
             <span style="display:none;" class="wcml_currencies_order_ajx_resp"></span>
@@ -31,7 +31,7 @@
     </div>
     <div class="wcml-section-content">
         <div class="wcml-section-content-inner">
-            <table class="wcml-cs-list">
+            <table class="wcml-cs-list" {% if currency_switcher.widget_currency_switchers is empty %} style="display: none;" {% endif %}>
                 <thead>
                     <tr>
                         <th>{{ currency_switcher.headers.preview }}</th>
@@ -42,8 +42,8 @@
                 <tbody>
                     {% for widget_currency_switcher in currency_switcher.widget_currency_switchers %}
                         <tr>
-                            <td class="wpml-cs-cell-preview">
-                                <div id="wcml_curr_sel_preview" class="wcml-currency-preview">
+                            <td class="wcml-cs-cell-preview">
+                                <div id="wcml_curr_sel_preview" class="wcml-currency-preview {{ widget_currency_switcher['id'] }}">
                                     {{ currency_switcher.preview[ widget_currency_switcher['id'] ] |raw }}
                                 </div>
                             </td>
@@ -65,6 +65,27 @@
                             </td>
                         </tr>
                     {% endfor %}
+                    <tr class="wpml-cs-empty-row" style="display: none">
+                        <td class="wcml-cs-cell-preview">
+                            <div id="wcml_curr_sel_preview" class="wcml-currency-preview">
+                            </div>
+                        </td>
+                        <td class="wpml-cs-widget-name">
+                        </td>
+                        <td class="wcml-cs-actions">
+                            <a href="#" title="{{ currency_switcher.headers.edit }}"
+                               class="edit_currency_switcher js-wcml-dialog-trigger"
+                               data-switcher=""
+                               data-dialog=""
+                               data-content=""
+                               data-height="800" data-width="700">
+                                <i class="otgs-ico-edit"></i>
+                            </a>
+                            <a title="{{ currency_switcher.headers.delete }}" class="delete_currency_switcher" data-switcher="" href="#">
+                                <i class="otgs-ico-delete" title="{{ currency_switcher.headers.delete }}"></i>
+                            </a>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <button type="button" class="button-secondary wcml_add_cs_sidebar js-wcml-dialog-trigger"
@@ -105,7 +126,7 @@
                     <tbody>
                         <tr>
                             <td>
-                                <div id="wcml_curr_sel_preview" class="wcml-currency-preview">
+                                <div id="wcml_curr_sel_preview" class="wcml-currency-preview product">
                                     {{ currency_switcher.preview[ 'product' ] |raw }}
                                 </div>
                             </td>

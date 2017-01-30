@@ -28,7 +28,6 @@ class WCML_Currency_Switcher {
 
         // Built in currency switcher
         add_action( 'woocommerce_product_meta_start', array($this, 'show_currency_switcher') );
-
     }
 
     public function wcml_currencies_order() {
@@ -255,6 +254,5 @@ class WCML_Currency_Switcher {
 
         return is_array( $wp_registered_sidebars ) ? $wp_registered_sidebars : array();
     }
-
 
 }
