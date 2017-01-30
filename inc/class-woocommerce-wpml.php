@@ -152,7 +152,6 @@ class woocommerce_wpml {
         }
 
         $this->sync_product_data    = new WCML_Synchronize_Product_Data( $this, $sitepress, $wpdb );
-        $this->endpoints            = new WCML_Endpoints;
         $this->products             = new WCML_Products( $this, $sitepress, $wpdb );
         $this->store                = new WCML_Store_Pages ($this, $sitepress ) ;
         $this->emails               = new WCML_Emails( $this, $sitepress );
@@ -164,6 +163,7 @@ class woocommerce_wpml {
         $this->gateways             = new WCML_WC_Gateways( $this, $sitepress );
         $this->currencies           = new WCML_Currencies( $this );
         $this->url_translation      = new WCML_Url_Translation ( $this, $sitepress );
+	    $this->endpoints            = new WCML_Endpoints( $this );
         $this->requests             = new WCML_Requests;
         $this->cart                 = new WCML_Cart( $this, $sitepress, $woocommerce );
         $this->coupons              = new WCML_Coupons( $this, $sitepress );
