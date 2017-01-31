@@ -142,7 +142,7 @@ jQuery( function($){
                     action: 'wcml_currencies_switcher_preview',
                     wcml_nonce: dialog.find('#wcml_currencies_switcher_preview_nonce').val(),
                     switcher_type: dialog.find('input[name="currency_switcher_style"]:checked').val(),
-                    orientation: dialog.find('#'+switcher_id+'_orientation_value').val(),
+                    orientation: dialog.find('#wcml_curr_sel_orientation_value').val(),
                     template: template,
                     color_scheme: color_scheme
                 },
