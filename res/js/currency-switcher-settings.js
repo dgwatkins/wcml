@@ -178,9 +178,9 @@ jQuery( function($){
         update_currency_switcher_style: function(e){
 
             if( $(this).val() == 'list' ){
-                $(this).closest('div').find('#wcml_curr_sel_orientation_list_wrap').show();
+                $(this).closest('#wcml_curr_options_wrap').find('.js-toggle-cs-style').show();
             }else{
-                $(this).closest('div').find('#wcml_curr_sel_orientation_list_wrap').hide();
+				$(this).closest('#wcml_curr_options_wrap').find('.js-toggle-cs-style').hide();
             }
             WCML_Currency_Switcher_Settings.currency_switcher_preview();
         },

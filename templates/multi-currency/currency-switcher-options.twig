@@ -7,20 +7,22 @@
     <div class="wcml-section-content">
 
         <div class="wcml-section-content-inner">
-            <h4>{{ currency_switcher.headers.order }}</h4>
+            <h4>
+                {{ currency_switcher.headers.order }}
+                <span style="display:none;" class="wcml_currencies_order_ajx_resp"></span>
+            </h4>
             <p class="explanation-text">{{ currency_switcher.order_tip }}</p>
-            <ul id="wcml_currencies_order">
+            <ul id="wcml_currencies_order" class="wcml-cs-currencies-order">
                 {% for code in currency_switcher.order %}
                     <li class="wcml_currencies_order_{{ code }}" cur="{{ code }}">{{ attribute( wc_currencies, code) }} ({{ get_currency_symbol(code)|raw }})</li>
                 {% endfor %}
             </ul>
-            <span style="display:none;" class="wcml_currencies_order_ajx_resp"></span>
             <input type="hidden" id="wcml_currencies_order_order_nonce" value="{{ currency_switcher.order_nonce }}"/>
         </div>
 
         <div class="wcml-section-content-inner">
             <h4>{{ currency_switcher.headers.additional_css }}</h4>
-            <textarea name="currency_switcher_additional_css" rows="5">{{ currency_switcher.additional_css }}</textarea>
+            <textarea class="large-text" name="currency_switcher_additional_css" rows="5">{{ currency_switcher.additional_css }}</textarea>
         </div>
     </div>
 </div>
@@ -31,6 +33,16 @@
     </div>
     <div class="wcml-section-content">
         <div class="wcml-section-content-inner">
+            <div class="tablenav top clearfix">
+                <button type="button" class="button button-secondary alignright wcml_add_cs_sidebar js-wcml-dialog-trigger"
+                        data-switcher="new_widget"
+                        data-dialog="wcml_currency_switcher_options_new_widget"
+                        data-content="wcml_currency_switcher_options_new_widget"
+                        data-height="800" data-width="700">
+                    <i class="otgs-ico-add otgs-ico-sm"></i>
+                    {{ currency_switcher.headers.add_widget }}
+                </button>
+            </div>
             <table class="wcml-cs-list" {% if currency_switcher.widget_currency_switchers is empty %} style="display: none;" {% endif %}>
                 <thead>
                     <tr>
@@ -43,15 +55,17 @@
                     {% for widget_currency_switcher in currency_switcher.widget_currency_switchers %}
                         <tr>
                             <td class="wcml-cs-cell-preview">
-                                <div id="wcml_curr_sel_preview" class="wcml-currency-preview {{ widget_currency_switcher['id'] }}">
-                                    {{ currency_switcher.preview[ widget_currency_switcher['id'] ] |raw }}
+                                <div class="wcml-currency-preview-wrapper">
+                                    <div id="wcml_curr_sel_preview" class="wcml-currency-preview {{ widget_currency_switcher['id'] }}">
+                                        {{ currency_switcher.preview[ widget_currency_switcher['id'] ] |raw }}
+                                    </div>
                                 </div>
                             </td>
                             <td>
                                {{ widget_currency_switcher['name'] }}
                             </td>
                             <td class="wcml-cs-actions">
-                                <a href="#" title="{{ currency_switcher.headers.edit }}"
+                                <a title="{{ currency_switcher.headers.edit }}"
                                    class="edit_currency_switcher js-wcml-dialog-trigger"
                                    data-switcher="{{ widget_currency_switcher['id'] }}"
                                    data-dialog="wcml_currency_switcher_options_{{ widget_currency_switcher['id'] }}"
@@ -73,7 +87,7 @@
                         <td class="wcml-cs-widget-name">
                         </td>
                         <td class="wcml-cs-actions">
-                            <a href="#" title="{{ currency_switcher.headers.edit }}"
+                            <a title="{{ currency_switcher.headers.edit }}"
                                class="edit_currency_switcher js-wcml-dialog-trigger"
                                data-switcher=""
                                data-dialog=""
@@ -88,14 +102,8 @@
                     </tr>
                 </tbody>
             </table>
-            <button type="button" class="button-secondary wcml_add_cs_sidebar js-wcml-dialog-trigger"
-                    data-switcher="new_widget"
-                    data-dialog="wcml_currency_switcher_options_new_widget"
-                    data-content="wcml_currency_switcher_options_new_widget"
-                    data-height="800" data-width="700">
-                <i class="otgs-ico-add otgs-ico-sm"></i>
-                {{ currency_switcher.headers.add_widget }}
-            </button>
+
+
             <input type="hidden" id="wcml_delete_currency_switcher_nonce" value="{{ currency_switcher.delete_nonce }}"/>
         </div>
     </div>
@@ -125,14 +133,16 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>
-                                <div id="wcml_curr_sel_preview" class="wcml-currency-preview product">
-                                    {{ currency_switcher.preview[ 'product' ] |raw }}
+                            <td class="wcml-cs-cell-preview">
+                                <div class="wcml-currency-preview-wrapper">
+                                    <div id="wcml_curr_sel_preview" class="wcml-currency-preview product">
+                                        {{ currency_switcher.preview[ 'product' ] |raw }}
+                                    </div>
                                 </div>
                             </td>
 
                             <td class="wcml-cs-actions">
-                                <a href="#" title="{{ currency_switcher.headers.edit }}"
+                                <a title="{{ currency_switcher.headers.edit }}"
                                    class="edit_currency_switcher js-wcml-dialog-trigger"
                                    data-switcher="product"
                                    data-dialog="wcml_currency_switcher_options_product"

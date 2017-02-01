@@ -430,7 +430,6 @@ jQuery( function($){
 
             $('#wcml_currencies_order').sortable({
                 update: function(){
-                    $('.wcml_currencies_order_ajx_resp').fadeIn();
                     var currencies_order = [];
                     $('#wcml_currencies_order').find('li').each(function(){
                         currencies_order.push($(this).attr('cur'));
