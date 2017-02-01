@@ -74,17 +74,17 @@ jQuery( function($){
 
                     if( $('.wcml-currency-preview.' + widget_id ).length == 0 ){
 
-                        var widget_row = $('.wpml-cs-empty-row').clone();
-                        widget_row.removeClass('wpml-cs-empty-row');
+                        var widget_row = $('.wcml-cs-empty-row').clone();
+                        widget_row.removeClass('wcml-cs-empty-row');
                         widget_row.find('.wcml-currency-preview').addClass(widget_id);
-                        widget_row.find('.wpml-cs-widget-name').html( widget_name );
+                        widget_row.find('.wcml-cs-widget-name').html( widget_name );
                         widget_row.find('.edit_currency_switcher').attr('data-switcher', widget_id );
                         widget_row.find('.edit_currency_switcher').attr('data-dialog', 'wcml_currency_switcher_options_' + widget_id );
                         widget_row.find('.edit_currency_switcher').attr('data-content', 'wcml_currency_switcher_options_' + widget_id );
                         widget_row.find('.delete_currency_switcher').attr('data-switcher', widget_id );
                         widget_row.show();
 
-                        $('.wcml-cs-list').find('tr.wpml-cs-empty-row').before( widget_row );
+                        $('.wcml-cs-list').find('tr.wcml-cs-empty-row').before( widget_row );
                     }
 
                     WCML_Currency_Switcher_Settings.currency_switcher_preview( true );
