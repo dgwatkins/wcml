@@ -17,7 +17,8 @@ class WCML_Upgrade{
         '3.8',
         '3.9',
         '3.9.1',
-        '4.0'
+        '4.0',
+        '4.1'
     );
     
     function __construct(){
@@ -525,6 +526,27 @@ class WCML_Upgrade{
         $wcml_settings['cart_sync']['currency_switch'] = WCML_CART_SYNC;
 
         update_option('_wcml_settings', $wcml_settings);
+
+    }
+
+    function upgrade_4_1(){
+        global $wpdb;
+
+        $results = $wpdb->get_results("
+                        SELECT *
+                        FROM {$wpdb->postmeta}
+                        WHERE meta_key LIKE '_price_%' OR meta_key LIKE '_regular_price_%' OR ( meta_key LIKE '_sale_price_%' AND meta_key NOT LIKE '_sale_price_dates%' )
+                    ");
+
+        foreach( $results as $price ){
+            $formatted_price = wc_format_decimal( $price->meta_value );
+            update_post_meta( $price->post_id, $price->meta_key, $formatted_price );
+
+            if( get_post_type( $price->post_id ) == 'product_variation' ){
+                delete_transient( 'wc_var_prices_'.wp_get_post_parent_id( $price->post_id ) );
+            }
+
+        }
 
     }
 
