@@ -443,8 +443,8 @@ class WCML_Custom_Prices{
 
                 if( $_POST[ '_wcml_custom_prices' ][ $product_id ] == 1 ){
                     foreach( $currencies as $code => $currency ){
-                        $sale_price = $_POST[ '_custom_variation_sale_price' ][ $code ][ $product_id ];
-                        $regular_price = $_POST[ '_custom_variation_regular_price' ][ $code ][ $product_id ];
+                        $sale_price = wc_format_decimal( $_POST[ '_custom_variation_sale_price' ][ $code ][ $product_id ] );
+                        $regular_price = wc_format_decimal( $_POST[ '_custom_variation_regular_price' ][ $code ][ $product_id ] );
                         $date_from = strtotime( $_POST[ '_custom_variation_sale_price_dates_from' ][ $code ][ $product_id ] );
                         $date_to = strtotime( $_POST[ '_custom_variation_sale_price_dates_to' ][ $code ][ $product_id ] );
                         $schedule = $_POST[ '_wcml_schedule' ][ $code ][ $product_id ];
