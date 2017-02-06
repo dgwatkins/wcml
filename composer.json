@@ -34,6 +34,7 @@
       "url": "ssh://git@git.onthegosystems.com:10022/wcml/codeception-tests.git"
     }
   ],
+  "minimum-stability": "dev",
   "require": {
     "otgs/installer" : "dev-master",
     "xrstf/composer-php52": "1.*",
@@ -41,11 +42,6 @@
     "roave/security-advisories": "dev-master"
   },
   "require-dev": {
-    "m4tthumphrey/php-gitlab-api": "dev-master",
-    "corneltek/getoptionkit": "^2.5",
-    "10up/wp_mock": "dev-master",
-    "league/factory-muffin": "^3.0",
-    "league/factory-muffin-faker": "^2.0",
     "otgs/unit-tests-framework": "~1.0",
     "otgs/build-tools": "~0.1",
     "otgs/build-tools-ci": "~0.2",
