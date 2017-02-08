@@ -54,7 +54,8 @@ class WCML_Compatibility {
 	        if( version_compare( WC_PB()->version, '5.0.0', '<' ) ){
 		        $this->product_bundles = new WCML_Product_Bundles_Legacy( $this->sitepress, $this->woocommerce_wpml );
 	        }else{
-		        $this->product_bundles = new WCML_Product_Bundles( $this->sitepress, $this->woocommerce_wpml );
+		        $product_bundle_items = new WCML_WC_Product_Bundles_Items();
+		        $this->product_bundles = new WCML_Product_Bundles( $this->sitepress, $this->woocommerce_wpml, $product_bundle_items );
 	        }
         }
         
