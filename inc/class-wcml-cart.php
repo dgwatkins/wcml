@@ -346,8 +346,7 @@ class WCML_Cart
         if ($item[ 'variation_id' ]) {
             $item[ 'variation_id' ] = apply_filters( 'translate_object_id',$item[ 'variation_id' ], 'product_variation', true );
         }
-        $product_id = $item[ 'variation_id' ] ? $item[ 'variation_id' ] : $item[ 'product_id' ];
-        $item[ 'data' ]->post->post_title = get_the_title( $product_id );
+        $item[ 'data' ]->post->post_title = get_the_title( $item[ 'product_id' ] );
 
         return $item;
     }
