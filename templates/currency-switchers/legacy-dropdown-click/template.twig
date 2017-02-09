@@ -1,0 +1,16 @@
+<div class="{{ css_classes }} wcml_currency_switcher wcml-cs-legacy-dropdown-click" >
+	<ul>
+		<li rel="{{ selected_currency }}" class="wcml-cs-active-currency" >
+			<span>{{ get_formatted_price( selected_currency, format )|raw }}</span>
+			<ul class="wcml-cs-submenu">
+				{% for currency in currencies %}
+					{% if currency != selected_currency %}
+						<li rel="{{ currency }}" >
+							{{ get_formatted_price( currency, format )|raw }}
+						</li>
+					{% endif %}
+				{% endfor %}
+			</ul>
+		</li>
+	</ul>
+</div>

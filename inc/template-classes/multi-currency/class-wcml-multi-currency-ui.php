@@ -129,7 +129,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
                     'action'          => __('Action', 'woocommerce-multilingual'),
                     'delete'          => __('Delete', 'woocommerce-multilingual'),
                     'edit'            => __('Edit currency switcher', 'woocommerce-multilingual'),
-                    'add_widget'      => __('Add a new language switcher to a widget area', 'woocommerce-multilingual'),
+                    'add_widget'      => __('Add a new currency switcher to a widget area', 'woocommerce-multilingual'),
                 ),
                 'preview'       => $this->get_currency_switchers_preview(),
                 'widget_currency_switchers' => $this->widget_currency_switchers(),
@@ -279,8 +279,8 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
 
         //add empty dialog for new sidebar currency switcher
         $currency_switchers[ 'new_widget' ] = array(
-            'switcher_style' => 'dropdown',
-            'orientation' => 'vertical',
+            'switcher_style' => 'wcml-dropdown',
+            'switcher_templates' => $this->woocommerce_wpml->cs_templates->get_templates(),
             'template' => '%code%, %symbol%, %name%',
             'color_scheme' => array(
                 'font_current_normal'       => '',
@@ -303,8 +303,8 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
             $args = array(
                 'title'             => __('Edit Currency Switcher', 'woocommerce-multilingual'),
                 'currency_switcher'  => $switcher_id,
-                'style'  =>  $currency_switcher[ 'switcher_style' ],
-                'orientation'  => $currency_switcher[ 'orientation' ],
+                'switcher_style'  =>  $currency_switcher[ 'switcher_style' ],
+                'switcher_templates' => $this->woocommerce_wpml->cs_templates->get_templates(),
                 'template'  => $currency_switcher[ 'template' ],
                 'template_default'  => '%code%, %symbol%, %name%',
                 'options'  => $currency_switcher[ 'color_scheme' ]

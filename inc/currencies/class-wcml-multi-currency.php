@@ -76,7 +76,7 @@ class WCML_Multi_Currency{
      * WCML_Multi_Currency constructor.
      */
     public function __construct(){
-        global $woocommerce_wpml;
+        global $woocommerce_wpml, $sitepress;
 
         $this->woocommerce_wpml =& $woocommerce_wpml;
 
@@ -94,7 +94,7 @@ class WCML_Multi_Currency{
         $this->orders                   = new WCML_Multi_Currency_Orders( $this );
         $this->admin_currency_selector  = new WCML_Admin_Currency_Selector();
         $this->custom_prices            = new WCML_Custom_Prices( $woocommerce_wpml );
-        $this->currency_switcher        = new WCML_Currency_Switcher;
+        $this->currency_switcher        = new WCML_Currency_Switcher( $woocommerce_wpml, $sitepress );
 
         $this->exchange_rate_services   = new WCML_Exchange_Rates( $this->woocommerce_wpml );
 

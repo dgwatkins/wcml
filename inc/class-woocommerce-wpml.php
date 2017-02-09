@@ -47,6 +47,8 @@ class woocommerce_wpml {
     public $shipping;
     /** @var  WCML_WC_Gateways */
     public $gateways;
+    /** @var  WCML_CS_Templates */
+    public $cs_templates;
 
     /** @var  WCML_Reports */
     private $reports;
@@ -85,6 +87,8 @@ class woocommerce_wpml {
 
         add_action('init', array($this, 'init'),2);
 
+        $this->cs_templates = new WCML_Currency_Switcher_Templates( $this );
+        $this->cs_templates->init_hooks();
     }
 
     /**

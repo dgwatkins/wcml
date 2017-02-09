@@ -3,6 +3,8 @@ var WCML_Dialog = WCML_Dialog || {};
 
 jQuery( function($){
 
+    var dialog_div;
+
     WCML_Dialog.dialog = function(dialog_id, data){
         var self = this;
 
@@ -13,7 +15,7 @@ jQuery( function($){
         self.overflow_y = $('body').css('overflow-y');
         $('body').css('overflow-y','hidden');
 
-        var dialog_div = $('#wcml-dialog-' + dialog_id);
+        dialog_div = $('#wcml-dialog-' + dialog_id);
 
         var title = $('#' + dialog_id).attr('title');
         if( typeof title == 'undefined'){
@@ -22,6 +24,10 @@ jQuery( function($){
             }else{
                 title = '';
             }
+        }
+
+        if( data.class === 'undefined'){
+            data.class = '';
         }
 
         if(!dialog_div.length){
@@ -34,7 +40,7 @@ jQuery( function($){
                 title: '',
                 autoOpen:false,
                 show:true,
-                dialogClass:'wcml-ui-dialog otgs-ui-dialog',
+                dialogClass:'wcml-ui-dialog otgs-ui-dialog ' + data.class,
                 position: { my: 'center', at: 'center', of: window },
                 modal:true,
                 width: "90%",
@@ -53,6 +59,13 @@ jQuery( function($){
                 focus: function (event) {
                 },
                 open: function (event) {
+                    $('body').css('overflow', 'hidden');
+                    $('.js-wpml-ls-active-tooltip').pointer('close');
+                    WCML_Dialog._repositionDialog();
+
+                    if( data.class === 'wcml-cs-dialog' ){
+                        WCML_Dialog._attachDialogScrollEvent();
+                    }
                 },
                 refresh:function(event){
                 }
@@ -71,7 +84,6 @@ jQuery( function($){
             }else{
                 dialog_div.dialog(dialog_parameters);
             }
-
 
         }
 
@@ -114,6 +126,41 @@ jQuery( function($){
 
     }
 
+    WCML_Dialog._repositionDialog = function () {
+        var winH = $(window).height() - 180;
+        dialog_div.dialog("option", "maxHeight", winH);
+
+        dialog_div.dialog("option", "position", {
+            my: "center",
+            at: "center",
+            of: window
+        });
+    }
+
+    WCML_Dialog._attachDialogScrollEvent = function() {
+        var preview = dialog_div.find('.wcml-currency-preview-wrapper'),
+            has_two_columns = dialog_div.width() > 900,
+            has_minimal_height = (preview.height() + 200) < dialog_div.height();
+
+        has_minimal_height = has_minimal_height || (has_two_columns && preview.height() < dialog_div.height());
+
+        if (has_minimal_height) {
+            dialog_div.on('scroll.preview', function(){
+                dialog_div.find('.wcml-currency-preview-wrapper').css({
+                    position: 'relative',
+                    top: dialog_div.scrollTop()
+                });
+            });
+        } else {
+            dialog_div
+                .off('scroll.preview')
+                .find('.wcml-currency-preview-wrapper').css({
+                    position: 'relative',
+                    top: 0
+                });
+        }
+    }
+
     WCML_Dialog._register_open_handler = function(){
 
         // dialog open handler
@@ -134,11 +181,28 @@ jQuery( function($){
                 }
 
                 WCML_Dialog.dialog(dialog_id, $(this).data());
+            }
+        });
+
+        // dialog open handler
+        $(document).on( 'click','.js-wcml-cs-dialog-trigger', function(e){
+
+            e.preventDefault();
+            var dialog_id = false;
+
+            if( $(this).data('dialog') ){
+                dialog_id = $(this).data('dialog');
+            }
+
+            var data = $(this).data();
+            data.class = 'wcml-cs-dialog';
+
+            if( dialog_id ){
+                WCML_Dialog.dialog( dialog_id, data );
 
                 WCML_Currency_Switcher_Settings.initColorPicker();
                 WCML_Currency_Switcher_Settings.currency_switcher_preview();
             }
-
         });
 
     }

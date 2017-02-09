@@ -548,6 +548,10 @@ class WCML_Upgrade{
 
         }
 
+        $wcml_settings = get_option( '_wcml_settings' );
+        $wcml_settings[ 'currency_switcher_additional_css' ] = '';
+        update_option('_wcml_settings', $wcml_settings);
+
     }
 
 

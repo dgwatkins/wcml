@@ -5,7 +5,6 @@
         <div id="wcml_curr_sel_preview_wrap" class="wcml-section-content-inner wcml-currency-preview-wrapper">
             <strong class="wcml-currency-preview-label">{{ form.preview }}</strong>
             <input type="hidden" id="wcml_currencies_switcher_preview_nonce" value="{{ form.preview_nonce }}"/>
-            <input type="hidden" id="wcml_curr_sel_orientation_value" value="{{ args.orientation }}"/>
             <div id="wcml_curr_sel_preview" class="wcml-currency-preview {{ args.currency_switcher }}">
                 {{ form.switcher_preview|raw }}
             </div>
@@ -29,23 +28,19 @@
                 <ul class="wcml_curr_style">
                     <li>
                         <label>
-                            <input type="radio" name="currency_switcher_style" value="dropdown"
-                                   {% if(args.style is empty or args.style == 'dropdown') %}checked="checked"{% endif %} />
-                            {{ form.switcher_style.dropdown }}
-                        </label>
-                    </li>
-                    <li>
-                        <label>
-                            <input type="radio" name="currency_switcher_style" value="list" {% if(args.style == 'list') %}checked="checked"{% endif %} />
-                            {{ form.switcher_style.list }}
-                        </label>
-                        <span id="wcml_curr_sel_orientation_list_wrap" class="js-toggle-cs-style" {% if(args.style != 'list') %}style="display: none;"{% endif %}>
-                            <select id="wcml_curr_sel_orientation" name="{{ args.currency_switcher }}_sel_orientation">
-                                <option value="vertical" {% if(args.orientation == 'vertical') %}selected="selected"{% endif %}>{{ form.switcher_style.vertical }}</option>
-                                <option value="horizontal" {% if(args.orientation == 'horizontal') %}selected="selected"{% endif %}>{{ form.switcher_style.horizontal }}</option>
+                            <select id="currency_switcher_style">
+                                <optgroup label="{{ form.switcher_style.core }}">
+                                    {% for switcher_template_id,switcher_template in args.switcher_templates['core'] %}
+                                        <option value="{{ switcher_template_id }}" {% if( args.switcher_style == switcher_template_id) %}selected="selected"{% endif %}>{{ switcher_template['name'] }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                <optgroup label="{{ form.switcher_style.custom }}">
+                                    {% for switcher_template_id,switcher_template in args.switcher_templates['custom'] %}
+                                        <option value="{{ switcher_template_id }}" {% if( args.switcher_style == switcher_template_id) %}selected="selected"{% endif %}>{{ switcher_template['name'] }}</option>
+                                    {% endfor %}
+                                </optgroup>
                             </select>
-                            <input type="hidden" id="{{ args.currency_switcher }}_orientation_value" value="{{ args.orientation }}" />
-                        </span>
+                        </label>
                     </li>
                 </ul>
 

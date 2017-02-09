@@ -185,7 +185,6 @@ class WCML_Multi_Currency_Prices{
 
         }
 
-
         return !empty($price) ? $price : $null;
     }
 

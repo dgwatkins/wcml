@@ -43,10 +43,8 @@ class WCML_Currency_Switcher_Options_Dialog extends WPML_Templates_Factory {
             'form' => array(
                 'switcher_style'    => array(
                     'label'         =>__( 'Currency switcher style', 'woocommerce-multilingual' ),
-                    'dropdown'      => __( 'Drop-down menu', 'woocommerce-multilingual' ),
-                    'list'          => __( 'List of currencies', 'woocommerce-multilingual' ),
-                    'vertical'      => __( 'Vertical', 'woocommerce-multilingual' ),
-                    'horizontal'    => __( 'Horizontal', 'woocommerce-multilingual' ),
+                    'core'          =>__( 'Core', 'woocommerce-multilingual' ),
+                    'custom'        =>__( 'Custom', 'woocommerce-multilingual' ),
                     'allowed_tags'  => __( 'Allowed HTML tags: <img> <span> <u> <strong> <em>', 'woocommerce-multilingual')
                 ),
                 'template'  => array(

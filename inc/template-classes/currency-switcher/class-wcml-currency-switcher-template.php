@@ -1,25 +1,27 @@
 <?php
 
-class WCML_Currency_Switcher_UI extends WPML_Templates_Factory {
+class WCML_Currency_Switcher_Template extends WPML_Templates_Factory {
+
+    const FILENAME = 'template.twig';
+
+    /* @var array $template */
+    private $template;
 
     /**
      * @var woocommerce_wpml
      */
     private $woocommerce_wpml;
-    /**
-     * @var array
-     */
-    private $args;
-    /**
-     * @var array
-     */
-    private $currencies;
 
-    function __construct( &$args, &$woocommerce_wpml, $currencies ){
+
+    function __construct( &$woocommerce_wpml, $template_data ){
 
         $this->woocommerce_wpml =& $woocommerce_wpml;
-        $this->args             = $args;
-        $this->currencies       = $currencies;
+
+        $this->template = $this->format_data( $template_data );
+
+        if ( array_key_exists( 'template_string', $this->template ) ) {
+            $this->template_string = $this->template['template_string'];
+        }
 
         $functions = array(
             new Twig_SimpleFunction( 'get_formatted_price', array( $this, 'get_formatted_price' ) )
@@ -29,19 +31,22 @@ class WCML_Currency_Switcher_UI extends WPML_Templates_Factory {
 
     }
 
-    public function get_model(){
+    /**
+     * @param array $model
+     */
+    public function set_model( $model ) {
+        $this->model = is_array( $model ) ? $model : array( $model );
+    }
 
-        $model = array(
-            'style'         => isset( $this->args['style'] ) ? $this->args['style'] : 'dropdown',
-            'color_scheme'  => isset( $this->args['color_scheme'] ) ? $this->args['color_scheme'] : array(),
-            'orientation'   => isset( $this->args['orientation'] ) && $this->args['orientation'] === 'horizontal' ?
-                                'curr_list_horizontal' : 'curr_list_vertical',
-            'format'        => isset( $this->args['format'] ) ? $this->args['format'] : '%code%, %symbol%, %name%',
-            'currencies'    => $this->currencies,
-            'selected_currency' => $this->woocommerce_wpml->multi_currency->get_client_currency()
-        );
+    /**
+     * @return array
+     */
+    public function get_model() {
+        return $this->model;
+    }
 
-        return $model;
+    public function render(){
+        echo $this->get_view();
     }
 
     public function get_formatted_price( $currency, $format ){
@@ -106,20 +111,92 @@ class WCML_Currency_Switcher_UI extends WPML_Templates_Factory {
         return $currency_format;
     }
 
-    public function render(){
-        echo $this->get_view();
+    /**
+     * Make sure some elements are of array type
+     *
+     * @param array $template_data
+     *
+     * @return array
+     */
+    private function format_data( $template_data ) {
+        foreach ( array( 'path', 'js', 'css' ) as $k ) {
+            $template_data[ $k ] = isset( $template_data[ $k ] ) ? $template_data[ $k ] : array();
+            $template_data[ $k ] = is_array( $template_data[ $k ] ) ? $template_data[ $k ] : array( $template_data[ $k ] );
+        }
+
+        return $template_data;
     }
+
+
+    /**
+     * @param bool $with_version
+     *
+     * @return array
+     */
+    public function get_styles( $with_version = false ) {
+        return $with_version
+            ? array_map( array( $this, 'add_resource_version' ), $this->template['css'] )
+            : $this->template['css'];
+    }
+
+    /**
+     * @return bool
+     */
+    public function has_styles() {
+        return ! empty( $this->template['css'] );
+    }
+
+    /**
+     * @param bool $with_version
+     *
+     * @return array
+     */
+    public function get_scripts( $with_version = false ) {
+        return $with_version
+            ? array_map( array( $this, 'add_resource_version' ), $this->template['js'] )
+            : $this->template['js'];
+    }
+
+    /**
+     * @param string $url
+     *
+     * @return string
+     */
+    private function add_resource_version( $url ) {
+        return $url . '?ver=' . WCML_VERSION;
+    }
+
 
     protected function init_template_base_dir() {
-        $this->template_paths = array(
-            WCML_PLUGIN_PATH . '/templates/multi-currency/',
-        );
+        $this->template_paths = $this->template['path'];
     }
 
+    /**
+     * @return string Template filename
+     */
     public function get_template() {
-        return 'currency-switcher.twig';
+        $template = self::FILENAME;
+
+        if ( isset( $this->template_string ) ) {
+            $template = $this->template_string;
+        } elseif ( array_key_exists( 'filename', $this->template ) ) {
+            $template = $this->template['filename'];
+        }
+
+        return $template;
     }
 
+    /**
+     * @return array
+     */
+    public function get_template_data() {
+        return $this->template;
+    }
 
-
+    /**
+     * return bool
+     */
+    public function is_core() {
+        return isset( $this->template['is_core'] ) ? (bool) $this->template['is_core'] : false;
+    }
 }

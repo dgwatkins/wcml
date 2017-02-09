@@ -9,11 +9,10 @@ jQuery( function($){
 
             $(document).ready( function(){
 
-                $(document).on('click','input[name="currency_switcher_style"]', WCML_Currency_Switcher_Settings.update_currency_switcher_style);
+                $(document).on('change','#currency_switcher_style', WCML_Currency_Switcher_Settings.update_currency_switcher_style);
                 $(document).on('click','.currency_switcher_save', WCML_Currency_Switcher_Settings.save_currency_switcher_settings);
                 $(document).on('click','.delete_currency_switcher', WCML_Currency_Switcher_Settings.delete_currency_switcher);
 
-                $(document).on('change','#wcml_curr_sel_orientation', WCML_Currency_Switcher_Settings.set_currency_switcher_orientation);
                 $(document).on('change','.js-wcml-cs-colorpicker-preset', WCML_Currency_Switcher_Settings.set_currency_switcher_color_pre_set );
 
                 $(document).on('keyup','input[name="wcml_curr_template"]', WCML_Currency_Switcher_Settings.setup_currency_switcher_template_keyup);
@@ -64,8 +63,7 @@ jQuery( function($){
                     wcml_nonce: dialog.find('#wcml_currencies_switcher_save_settings_nonce').val(),
                     switcher_id: dialog.find('#wcml_currencies_switcher_id').val(),
                     widget_id: widget_id,
-                    switcher_style: dialog.find('input[name="currency_switcher_style"]:checked').val(),
-                    orientation: dialog.find('#wcml_curr_sel_orientation').val(),
+                    switcher_style: dialog.find('#currency_switcher_style').val(),
                     template: template,
                     color_scheme: color_scheme
                 },
@@ -141,8 +139,7 @@ jQuery( function($){
                 data: {
                     action: 'wcml_currencies_switcher_preview',
                     wcml_nonce: dialog.find('#wcml_currencies_switcher_preview_nonce').val(),
-                    switcher_type: dialog.find('input[name="currency_switcher_style"]:checked').val(),
-                    orientation: dialog.find('#wcml_curr_sel_orientation_value').val(),
+                    switcher_style: dialog.find('#currency_switcher_style').val(),
                     template: template,
                     color_scheme: color_scheme
                 },
@@ -176,17 +173,6 @@ jQuery( function($){
         },
 
         update_currency_switcher_style: function(e){
-
-            if( $(this).val() == 'list' ){
-                $(this).closest('#wcml_curr_options_wrap').find('.js-toggle-cs-style').show();
-            }else{
-				$(this).closest('#wcml_curr_options_wrap').find('.js-toggle-cs-style').hide();
-            }
-            WCML_Currency_Switcher_Settings.currency_switcher_preview();
-        },
-
-        set_currency_switcher_orientation: function(e){
-            $('.wcml-dialog-container #wcml_curr_sel_orientation_value').val( $(this).val() );
             WCML_Currency_Switcher_Settings.currency_switcher_preview();
         },
 
