@@ -133,7 +133,7 @@ jQuery( function($){
             dialog.find('.wcml-dialog-container #wcml_curr_sel_preview').html(ajaxLoader);
 
             var color_scheme = {};
-            jQuery('.wcml-ui-dialog input.js-wcml-cs-colorpicker').each( function(){
+            dialog.find('input.js-wcml-cs-colorpicker').each( function(){
                 color_scheme[ $(this).attr('name') ] = $(this).val();
             });
 
@@ -147,13 +147,18 @@ jQuery( function($){
                 data: {
                     action: 'wcml_currencies_switcher_preview',
                     wcml_nonce: dialog.find('#wcml_currencies_switcher_preview_nonce').val(),
+                    switcher_id: switcher_id,
                     switcher_style: switcher_style,
                     template: template,
                     color_scheme: color_scheme
                 },
                 success: function(resp){
 
-                    $( '#wcml-cs-inline-styles-'+switcher_style).html( resp.inline_css );
+                    if( $( '#wcml-cs-inline-styles-'+switcher_id+'-'+switcher_style).length == 0 ){
+                        $( '#wcml-cs-inline-styles-'+switcher_id+'-'+switcher_style).html( resp.inline_css );
+                    }else{
+                        $('head').append( '<style type="text/css" id="wcml-cs-inline-styles-'+switcher_id+'-'+switcher_style+'">'+ resp.inline_css+'</style>' );
+                    }
 
                     if( update_settings ){
                         if( switcher_id == 'new_widget'){

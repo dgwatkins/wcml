@@ -122,15 +122,16 @@ class WCML_Currency_Switcher{
 		}
 		$return= array();
 
-		$inline_css = $this->woocommerce_wpml->cs_templates->get_color_picket_css( array( 'switcher_style' => $_POST['switcher_style'], 'color_scheme' => $_POST['color_scheme'] ) );
+		$inline_css = $this->woocommerce_wpml->cs_templates->get_color_picket_css( $_POST['switcher_id'], array( 'switcher_style' => $_POST['switcher_style'], 'color_scheme' => $_POST['color_scheme'] ) );
 		$return['inline_css'] = $inline_css;
 
 		ob_start();
 		$this->wcml_currency_switcher(
 			array(
+				'switcher_id'	 => $_POST['switcher_id'],
 				'format'         => $_POST['template'] ? stripslashes_deep( $_POST['template'] ) : '%name% (%symbol%) - %code%',
 				'switcher_style' => $_POST['switcher_style'],
-				'color_scheme'   => $_POST['color_scheme'],
+				'color_scheme'   => $_POST['color_scheme']
 			)
 		);
 		$switcher_preview = ob_get_contents();
@@ -261,7 +262,7 @@ class WCML_Currency_Switcher{
 
 	public function get_model( $args, $currencies ){
 
-		$css_classes = $this->get_css_classes( array( $args[ 'switcher_style' ] ) );
+		$css_classes = $this->get_css_classes( array( $args[ 'switcher_style' ], $args[ 'switcher_id' ] ) );
 
 		$model = array(
 			'css_classes' 	=> $css_classes,

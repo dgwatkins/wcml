@@ -316,10 +316,10 @@ class WCML_Currency_Switcher_Templates {
         if( isset( $wcml_settings[ 'currency_switchers' ] ) ){
             foreach( $wcml_settings[ 'currency_switchers' ] as $key => $switcher_data ){
 
-                $css = $this->get_color_picket_css( $switcher_data );
+                $css = $this->get_color_picket_css( $key, $switcher_data );
                 $switcher_template = $switcher_data['switcher_style'];
 
-                echo $this->get_inline_style( $switcher_template, $css );
+                echo $this->get_inline_style( $key,$switcher_template, $css );
             }
         }
 
@@ -331,10 +331,10 @@ class WCML_Currency_Switcher_Templates {
         }
     }
 
-    public function get_color_picket_css( $switcher_data ){
+    public function get_color_picket_css( $switcher_id, $switcher_data ){
 
         $css = '';
-        $wrapper_class = '.'.$switcher_data[ 'switcher_style' ];
+        $wrapper_class = '.'.$switcher_id.'.'.$switcher_data[ 'switcher_style' ];
 
         if ( $switcher_data[ 'color_scheme' ][ 'border_normal' ] ) {
             $css .= "$wrapper_class, $wrapper_class li{";
@@ -374,8 +374,8 @@ class WCML_Currency_Switcher_Templates {
     }
 
 
-    public function get_inline_style( $switcher, $css ) {
-        $style_id = 'wcml-cs-inline-styles-' . $switcher;
+    public function get_inline_style( $switcher_id, $switcher_template, $css ) {
+        $style_id = 'wcml-cs-inline-styles-' . $switcher_id.'-'.$switcher_template;
         return '<style type="text/css" id="' . $style_id . '">' . $css . '</style>' . PHP_EOL;
     }
 

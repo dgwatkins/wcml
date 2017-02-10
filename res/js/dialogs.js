@@ -113,9 +113,7 @@ jQuery( function($){
 
         // load static html
         if( data.content && $('#' + data.content).length ) {
-
             dialog_div.html($('#' + data.content).html());
-
         }
 
         if( typeof WCML_Tooltip != 'undefined' ){
@@ -123,7 +121,6 @@ jQuery( function($){
         }
 
         return false;
-
     }
 
     WCML_Dialog._repositionDialog = function () {
@@ -179,7 +176,6 @@ jQuery( function($){
                 if($(this).data('action')){
                     $(this).data('action', $(this).data('action').replace(/-/g, '_'));
                 }
-
                 WCML_Dialog.dialog(dialog_id, $(this).data());
             }
         });
@@ -205,7 +201,6 @@ jQuery( function($){
 
             }
         });
-
     }
 
     WCML_Dialog._register_close_handler = function(){
@@ -257,30 +252,22 @@ jQuery( function($){
                         }
                     }
                 });
-
             }
 
             if(!data.stay){
-
                 elem.trigger('before_close_dialog');
-
                 if(WCML_Dialog.using_wpdialog){ // pre WP 3.5
                     dialog_div.wpdialog('close');
                 }else{
                     dialog_div.dialog('close');
                 }
-
             }
-
         });
-
-
     }
 
     WCML_Dialog.init = function(){
 
         $(document).ready(function() {
-
             if (typeof $.wp != 'undefined') {
                 WCML_Dialog.using_wpdialog = typeof $.wp.wpdialog != 'undefined';
             } else {
@@ -289,13 +276,10 @@ jQuery( function($){
 
             WCML_Dialog._register_open_handler();
             WCML_Dialog._register_close_handler();
-
         });
-
     }
 
     WCML_Dialog.init();
-
 });
 
 
