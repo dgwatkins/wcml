@@ -124,8 +124,10 @@ jQuery( function($){
                     $('#currency-lang-table').find('tr.default_currency select').each( function(){
                         $(this).find("option[value='"+currency+"']").remove();
                     });
+                    $('.wcml-ui-dialog').each(function(){
+                        WCML_Currency_Switcher_Settings.currency_switcher_preview( $(this) );
+                    });
 
-                    WCML_Multi_Currency.currency_switcher_preview();
 
                     if( $('.wcml-row-currency').length == 1 ){
                         $('#online-exchange-rates-no-currencies').next().hide();
@@ -169,7 +171,9 @@ jQuery( function($){
                 success: function(response){
                     parent.find('.wcml-dialog-close-button').trigger('click');
 
-                    WCML_Multi_Currency.currency_switcher_preview();
+                    $('.wcml-ui-dialog').each(function(){
+                        WCML_Currency_Switcher_Settings.currency_switcher_preview( $(this) );
+                    });
 
                     if( $('#currency_row_' + currency).length == 0 ) {
 
@@ -445,7 +449,9 @@ jQuery( function($){
                         },
                         success: function(resp){
                             fadeInAjxResp('.wcml_currencies_order_ajx_resp', resp.message);
-                            WCML_Multi_Currency.currency_switcher_preview();
+                            $('.wcml-ui-dialog').each(function(){
+                                WCML_Currency_Switcher_Settings.currency_switcher_preview( $(this) );
+                            });
                         }
                     });
                 }

@@ -38,7 +38,7 @@ class WCML_Currency_Switcher_Templates {
     public function init_hooks() {
         add_action( 'after_setup_theme',  array( $this, 'after_setup_theme_action' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_template_resources' ) );
-        add_action( 'admin_footer', array( $this, 'enqueue_template_resources' ) );
+        add_action( 'admin_head', array( $this, 'admin_enqueue_template_resources' ) );
     }
 
     /**
@@ -92,7 +92,7 @@ class WCML_Currency_Switcher_Templates {
 
             $template_data = $template->get_template_data();
 
-            if( $template_data['is_core'] ){
+            if( isset( $template_data['is_core'] ) && $template_data['is_core'] ){
                 $templates[ 'core' ][ $key ] = $template_data;
             }else{
                 $templates[ 'custom' ][ $key ] = $template_data;
@@ -317,6 +317,12 @@ class WCML_Currency_Switcher_Templates {
             $switcher_template = $switcher_data['switcher_style'];
 
             echo $this->get_inline_style( $switcher_template, $css );
+        }
+    }
+
+    public function admin_enqueue_template_resources(){
+        if( isset( $_GET['page'] ) && $_GET['page'] == 'wpml-wcml' && isset( $_GET['tab'] ) && $_GET['tab'] == 'multi-currency' ){
+            $this->enqueue_template_resources();
         }
     }
 

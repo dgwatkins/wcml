@@ -7,6 +7,9 @@ class WCML_Currency_Switcher_Template extends WPML_Templates_Factory {
     /* @var array $template */
     private $template;
 
+    /* @var string $prefix */
+    private $prefix = 'wcml-cs-';
+
     /**
      * @var woocommerce_wpml
      */
@@ -166,6 +169,16 @@ class WCML_Currency_Switcher_Template extends WPML_Templates_Factory {
         return $url . '?ver=' . WCML_VERSION;
     }
 
+    /**
+     * @param int $index
+     *
+     * @return string
+     */
+    public function get_resource_handler( $index ) {
+        $slug   = isset( $this->template['slug'] ) ? $this->template['slug'] : '';
+        $prefix = $this->is_core() ? '' : $this->prefix;
+        return $prefix . $slug . '-' . $index;
+    }
 
     protected function init_template_base_dir() {
         $this->template_paths = $this->template['path'];

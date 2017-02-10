@@ -198,10 +198,11 @@ jQuery( function($){
             data.class = 'wcml-cs-dialog';
 
             if( dialog_id ){
-                WCML_Dialog.dialog( dialog_id, data );
+                 WCML_Dialog.dialog( dialog_id, data );
 
                 WCML_Currency_Switcher_Settings.initColorPicker();
-                WCML_Currency_Switcher_Settings.currency_switcher_preview();
+                WCML_Currency_Switcher_Settings.currency_switcher_preview( $('#wcml-dialog-'+dialog_id) );
+
             }
         });
 

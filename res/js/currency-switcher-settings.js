@@ -25,10 +25,12 @@ jQuery( function($){
        initColorPicker : function() {
            $('.wcml-ui-dialog .js-wcml-cs-panel-colors').find('.js-wcml-cs-colorpicker').wpColorPicker({
                 change: function(e){
-                    WCML_Currency_Switcher_Settings.currency_switcher_preview();
+                    var dialog =  $( this ).closest( '.wcml-ui-dialog' );
+                    WCML_Currency_Switcher_Settings.currency_switcher_preview( dialog );
                 },
                 clear: function(e){
-                    WCML_Currency_Switcher_Settings.currency_switcher_preview();
+                    var dialog =  $( this ).closest( '.wcml-ui-dialog' );
+                    WCML_Currency_Switcher_Settings.currency_switcher_preview( dialog );
                 }
             });
         },
@@ -51,8 +53,10 @@ jQuery( function($){
                 color_scheme[ $(this).attr('name') ] = $(this).val();
             });
 
-            var widget_id = dialog.find('#wcml-cs-widget').val();
+
             var widget_name = dialog.find('#wcml-cs-widget option:selected').text();
+            var switcher_id = dialog.find('#wcml_currencies_switcher_id').val();
+            var widget_id = dialog.find('#wcml-cs-widget').val();
 
             $.ajax({
                 type: 'POST',
@@ -61,7 +65,7 @@ jQuery( function($){
                 data: {
                     action: 'wcml_currencies_switcher_save_settings',
                     wcml_nonce: dialog.find('#wcml_currencies_switcher_save_settings_nonce').val(),
-                    switcher_id: dialog.find('#wcml_currencies_switcher_id').val(),
+                    switcher_id: switcher_id,
                     widget_id: widget_id,
                     switcher_style: dialog.find('#currency_switcher_style').val(),
                     template: template,
@@ -69,6 +73,10 @@ jQuery( function($){
                 },
                 success: function(e) {
                     dialog.find('.ui-dialog-titlebar-close').trigger('click');
+
+                    if( typeof widget_id == 'undefined' ){
+                        widget_id = switcher_id;
+                    }
 
                     if( $('.wcml-currency-preview.' + widget_id ).length == 0 ){
 
@@ -85,7 +93,7 @@ jQuery( function($){
                         $('.wcml-cs-list').find('tr.wcml-cs-empty-row').before( widget_row );
                     }
 
-                    WCML_Currency_Switcher_Settings.currency_switcher_preview( true );
+                    WCML_Currency_Switcher_Settings.currency_switcher_preview( dialog, true );
                 }
             });
         },
@@ -114,9 +122,7 @@ jQuery( function($){
             });
         },
 
-        currency_switcher_preview: _.debounce( function ( update_settings ){
-
-            var dialog =  $('.wcml-ui-dialog' );
+        currency_switcher_preview: _.debounce( function ( dialog, update_settings ){
 
             var template = dialog.find('.wcml-dialog-container input[name="wcml_curr_template"]').val();
             if(!template){
@@ -132,25 +138,30 @@ jQuery( function($){
             });
 
             var switcher_id = dialog.find('#wcml_currencies_switcher_id').val();
+            var switcher_style = dialog.find('#currency_switcher_style').val();
 
             $.ajax({
                 type: "POST",
                 url: ajaxurl,
+                dataType: 'json',
                 data: {
                     action: 'wcml_currencies_switcher_preview',
                     wcml_nonce: dialog.find('#wcml_currencies_switcher_preview_nonce').val(),
-                    switcher_style: dialog.find('#currency_switcher_style').val(),
+                    switcher_style: switcher_style,
                     template: template,
                     color_scheme: color_scheme
                 },
                 success: function(resp){
+
+                    $( '#wcml-cs-inline-styles-'+switcher_style).html( resp.inline_css );
+
                     if( update_settings ){
                         if( switcher_id == 'new_widget'){
                             switcher_id = dialog.find('#wcml-cs-widget').val();
                         }
-                        $('.wcml-currency-preview.'+switcher_id).html(resp);
+                        $('.wcml-currency-preview.'+switcher_id).html(resp.preview);
                     }else{
-                        dialog.find('.wcml-currency-preview').html(resp);
+                        dialog.find('.wcml-currency-preview').html(resp.preview);
                     }
                 }
             });
@@ -159,6 +170,7 @@ jQuery( function($){
         set_currency_switcher_color_pre_set: function (){
 
             var color_sheme = $(this).val();
+            var dialog =  $( this ).closest( '.wcml-ui-dialog' );
 
             if( settings.pre_selected_colors[color_sheme] != 'undefined' ){
                 var selected_scheme = settings.pre_selected_colors[color_sheme];
@@ -169,17 +181,19 @@ jQuery( function($){
                 }
             }
 
-            WCML_Currency_Switcher_Settings.currency_switcher_preview();
+            WCML_Currency_Switcher_Settings.currency_switcher_preview( dialog );
         },
 
         update_currency_switcher_style: function(e){
-            WCML_Currency_Switcher_Settings.currency_switcher_preview();
+            var dialog =  $( this ).closest( '.wcml-ui-dialog' );
+            WCML_Currency_Switcher_Settings.currency_switcher_preview( dialog );
         },
 
         setup_currency_switcher_template_keyup: function(e){
+            var dialog =  $( this ).closest( '.wcml-ui-dialog' );
             discard = true;
             $(this).closest('.wcml-section').find('.button-wrap input').css("border-color","#1e8cbe");
-            WCML_Currency_Switcher_Settings.currency_switcher_preview();
+            WCML_Currency_Switcher_Settings.currency_switcher_preview( dialog );
         },
 
         setup_currency_switcher_template_change: function(e){

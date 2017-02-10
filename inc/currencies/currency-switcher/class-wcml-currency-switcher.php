@@ -120,14 +120,25 @@ class WCML_Currency_Switcher{
 		if ( !$nonce || !wp_verify_nonce( $nonce, 'wcml_currencies_switcher_preview' ) ) {
 			die('Invalid nonce');
 		}
+		$return= array();
 
-		echo $this->wcml_currency_switcher(
+		$inline_css = $this->woocommerce_wpml->cs_templates->get_color_picket_css( array( 'switcher_style' => $_POST['switcher_style'], 'color_scheme' => $_POST['color_scheme'] ) );
+		$return['inline_css'] = $inline_css;
+
+		ob_start();
+		$this->wcml_currency_switcher(
 			array(
 				'format'         => $_POST['template'] ? stripslashes_deep( $_POST['template'] ) : '%name% (%symbol%) - %code%',
 				'switcher_style' => $_POST['switcher_style'],
 				'color_scheme'   => $_POST['color_scheme'],
 			)
 		);
+		$switcher_preview = ob_get_contents();
+		ob_end_clean();
+
+		$return['preview'] = $switcher_preview;
+
+		echo json_encode( $return );
 
 		die();
 	}
