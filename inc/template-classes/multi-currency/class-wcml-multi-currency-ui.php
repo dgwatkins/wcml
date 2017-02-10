@@ -275,7 +275,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
     public function load_curency_switcher_option_boxes(){
 
         $wcml_settings = $this->woocommerce_wpml->get_settings();
-        $currency_switchers = $wcml_settings[ 'currency_switchers' ];
+        $currency_switchers = isset( $wcml_settings[ 'currency_switchers' ] ) ? $wcml_settings[ 'currency_switchers' ] : array();
 
         //add empty dialog for new sidebar currency switcher
         $currency_switchers[ 'new_widget' ] = array(
@@ -337,7 +337,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
 
     public function widget_currency_switchers(){
         $wcml_settings = $this->woocommerce_wpml->get_settings();
-        $currency_switchers = $wcml_settings[ 'currency_switchers' ];
+        $currency_switchers = isset( $wcml_settings[ 'currency_switchers' ] ) ? $wcml_settings[ 'currency_switchers' ] : array();
         $sidebars = $this->woocommerce_wpml->multi_currency->currency_switcher->get_registered_sidebars();
         foreach( $sidebars as $key => $sidebar ){
             if( !isset( $currency_switchers[ $key ] ) ){

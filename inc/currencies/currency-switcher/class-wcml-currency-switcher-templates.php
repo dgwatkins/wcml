@@ -70,10 +70,12 @@ class WCML_Currency_Switcher_Templates {
         $templates = array();
         $wcml_settings = $this->woocommerce_wpml->get_settings();
 
-        foreach( $wcml_settings[ 'currency_switchers' ] as $switcher ){
-            foreach( $this->templates as $key => $template ){
-                if( $switcher['switcher_style'] == $key && !isset( $templates[$key] ) ){
-                    $templates[$key] = $template;
+        if( isset( $wcml_settings[ 'currency_switchers' ] ) ){
+            foreach( $wcml_settings[ 'currency_switchers' ] as $switcher ){
+                foreach( $this->templates as $key => $template ){
+                    if( $switcher['switcher_style'] == $key && !isset( $templates[$key] ) ){
+                        $templates[$key] = $template;
+                    }
                 }
             }
         }
@@ -311,13 +313,16 @@ class WCML_Currency_Switcher_Templates {
 
         }
 
-        foreach( $wcml_settings[ 'currency_switchers' ] as $key => $switcher_data ){
+        if( isset( $wcml_settings[ 'currency_switchers' ] ) ){
+            foreach( $wcml_settings[ 'currency_switchers' ] as $key => $switcher_data ){
 
-            $css = $this->get_color_picket_css( $switcher_data );
-            $switcher_template = $switcher_data['switcher_style'];
+                $css = $this->get_color_picket_css( $switcher_data );
+                $switcher_template = $switcher_data['switcher_style'];
 
-            echo $this->get_inline_style( $switcher_template, $css );
+                echo $this->get_inline_style( $switcher_template, $css );
+            }
         }
+
     }
 
     public function admin_enqueue_template_resources(){
