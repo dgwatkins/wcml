@@ -1,0 +1,29 @@
+.wcml-horizontal-list {
+	border: 1px solid transparent;
+	clear: both;
+	&.product {
+		margin: 1em 0;
+	}
+	& > ul {
+		padding: 0;
+		margin: 0 !important;
+		list-style-type: none;
+	}
+	li {
+		list-style-type: none;
+		display: inline-block;
+
+		a {
+			display: block;
+			text-decoration: none;
+			padding: 5px 10px;
+			line-height: 1;
+			cursor: pointer;
+			box-shadow: none;
+			border-bottom: none;
+			&:hover {
+				box-shadow: none;
+			}
+		}
+	}
+}

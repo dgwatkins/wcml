@@ -1,8 +1,8 @@
-<div class="{{ css_classes }} wcml_currency_switcher wcml-cs-legacy-list-vertical" >
+<div class="{{ css_classes }} wcml_currency_switcher" >
 	<ul>
 		{% for currency in currencies %}
 			<li rel="{{ currency }}" {% if( currency == selected_currency) %} class="wcml-cs-active-currency" {% endif %} >
-				{{ get_formatted_price( currency, format )|raw }}
+				<a>{{ get_formatted_price( currency, format )|raw }}</a>
 			</li>
 		{% endfor %}
 	</ul>
