@@ -41,16 +41,25 @@ class WCML_Currency_Switcher{
 	/**
 	 * @return array
 	 */
-	public static function parameters() {
+	public static function parameters()
+	{
 		return array(
-			'css_prefix'     => 'wcml-cs-',
+			'css_prefix' => 'wcml-cs-',
 			'core_templates' => array(
-				'dropdown'          => 'wpml-legacy-dropdown',
-				'dropdown-click'    => 'wpml-legacy-dropdown-click',
-				'list-vertical'     => 'wpml-legacy-vertical-list',
-				'list-horizontal'   => 'wpml-legacy-horizontal-list'
+				'dropdown' => 'wpml-legacy-dropdown',
+				'dropdown-click' => 'wpml-legacy-dropdown-click',
+				'list-vertical' => 'wpml-legacy-vertical-list',
+				'list-horizontal' => 'wpml-legacy-horizontal-list'
 			),
 		);
+	}
+
+	public static function get_settings( $switcher_id ) {
+		global $woocommerce_wpml;
+
+		$wcml_settings =& $woocommerce_wpml->settings;
+
+		return $wcml_settings[ 'currency_switchers' ][ $switcher_id ];
 	}
 
 	public function wcml_currencies_order() {

@@ -18,6 +18,8 @@ jQuery( function($){
                 $(document).on('keyup','input[name="wcml_curr_template"]', WCML_Currency_Switcher_Settings.setup_currency_switcher_template_keyup);
                 $(document).on('change','input[name="wcml_curr_template"]', WCML_Currency_Switcher_Settings.setup_currency_switcher_template_change);
 
+                WCML_Currency_Switcher_Settings.open_dialog_from_hash();
+
             } );
 
         },
@@ -207,7 +209,19 @@ jQuery( function($){
             if(!$(this).val()){
                 $('input[name="wcml_curr_template"]').val($('#currency_switcher_default').val())
             }
+        },
+
+        open_dialog_from_hash: function(){
+            var hashParts = window.location.hash.substring(1).split('/'),
+                type = hashParts[0] || '',
+                slug = hashParts[1] || '';
+
+            if ( type == 'currency-switcher' ) {
+                $('.edit_currency_switcher[data-switcher="'+slug+'"]').trigger('click');
+                parent.location.hash = '';
+            }
         }
+
     }
 
     WCML_Currency_Switcher_Settings.init();
