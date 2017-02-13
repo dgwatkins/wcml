@@ -337,7 +337,7 @@ class WCML_Currency_Switcher_Templates {
         $wrapper_class = '.'.$switcher_id.'.'.$switcher_data[ 'switcher_style' ];
 
         if ( $switcher_data[ 'color_scheme' ][ 'border_normal' ] ) {
-            $css .= "$wrapper_class, $wrapper_class li{";
+            $css .= "$wrapper_class, $wrapper_class li, $wrapper_class li li{";
             $css .= "border-color:". $switcher_data[ 'color_scheme' ][ 'border_normal' ] ." ;";
             $css .= "}";
         }
@@ -357,14 +357,14 @@ class WCML_Currency_Switcher_Templates {
         }
 
         if ( $switcher_data[ 'color_scheme' ][ 'font_current_normal' ] || $switcher_data[ 'color_scheme' ][ 'background_current_normal' ] ) {
-            $css .= "$wrapper_class .wcml-cs-active-currency, $wrapper_class .wcml-cs-active-currency a {";
+            $css .= "$wrapper_class .wcml-cs-active-currency, $wrapper_class .wcml-cs-active-currency>a {";
             $css .= $switcher_data[ 'color_scheme' ][ 'font_current_normal' ] ? "color:". $switcher_data[ 'color_scheme' ][ 'font_current_normal' ] .";" : '';
             $css .= $switcher_data[ 'color_scheme' ][ 'background_current_normal' ] ? "background-color:". $switcher_data[ 'color_scheme' ][ 'background_current_normal' ] .";" : '';
             $css .= "}";
         }
 
         if ( $switcher_data[ 'color_scheme' ][ 'font_current_hover' ]|| $switcher_data[ 'color_scheme' ][ 'background_current_hover' ] ) {
-            $css .= "$wrapper_class .wcml-cs-active-currency:hover, $wrapper_class .wcml-cs-active-currency:hover a, $wrapper_class .wcml-cs-active-currency:focus, $wrapper_class .wcml-cs-active-currency:focus a {";
+            $css .= "$wrapper_class .wcml-cs-active-currency:hover, $wrapper_class .wcml-cs-active-currency:hover>a, $wrapper_class .wcml-cs-active-currency:focus, $wrapper_class .wcml-cs-active-currency:focus>a {";
             $css .= $switcher_data[ 'color_scheme' ][ 'font_current_hover' ] ? "color:". $switcher_data[ 'color_scheme' ][ 'font_current_hover' ] .";" : '';
             $css .= $switcher_data[ 'color_scheme' ][ 'background_current_hover' ] ? "background-color:". $switcher_data[ 'color_scheme' ][ 'background_current_hover' ] .";" : '';
             $css .= "}";

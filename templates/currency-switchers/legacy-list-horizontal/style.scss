@@ -1,7 +1,7 @@
 .wcml-horizontal-list {
 	border: 1px solid transparent;
 	clear: both;
-	&.product {
+	.woocommerce &.product {
 		margin: 1em 0;
 	}
 	& > ul {
@@ -16,7 +16,7 @@
 		a {
 			display: block;
 			text-decoration: none;
-			padding: 5px 10px;
+			padding: .5em .5em .4em;
 			line-height: 1;
 			cursor: pointer;
 			box-shadow: none;

@@ -1,71 +1,71 @@
 /*jshint browser:true, devel:true */
 /*global document */
 
-var WPMLLanguageSwitcherDropdownClick = (function() {
-    "use strict";
+var WCMLCurrecnySwitcherDropdownClick = (function() {
+	"use strict";
 
-    var wrapperSelector = '.js-wpml-ls-legacy-dropdown-click';
-    var submenuSelector = '.js-wpml-ls-sub-menu';
-    var isOpen = false;
+	var wrapperSelector = '.js-wcml-dropdown-click';
+	var submenuSelector = '.js-wcml-dropdown-click-submenu';
+	var isOpen = false;
 
-    var toggle = function(event) {
-        var subMenu = this.querySelectorAll(submenuSelector)[0];
+	var toggle = function(event) {
+		var subMenu = this.querySelectorAll(submenuSelector)[0];
 
-        if(subMenu.style.visibility === 'visible'){
-            subMenu.style.visibility = 'hidden';
-            document.removeEventListener('click', close);
-        }else{
-            subMenu.style.visibility = 'visible';
-            document.addEventListener('click', close);
-            isOpen = true;
-        }
+		if(subMenu.style.visibility === 'visible'){
+			subMenu.style.visibility = 'hidden';
+			document.removeEventListener('click', close);
+		}else{
+			subMenu.style.visibility = 'visible';
+			document.addEventListener('click', close);
+			isOpen = true;
+		}
 
-        return false;
-    };
+		return false;
+	};
 
-    var close = function(){
+	var close = function(){
 
-        if(!isOpen){
-            var switchers = document.querySelectorAll(wrapperSelector);
+		if(!isOpen){
+			var switchers = document.querySelectorAll(wrapperSelector);
 
-            for(var i=0;i<switchers.length;i++){
-                var altLangs = switchers[i].querySelectorAll(submenuSelector)[0];
-                altLangs.style.visibility = 'hidden';
-            }
-        }
+			for(var i=0;i<switchers.length;i++){
+				var altLangs = switchers[i].querySelectorAll(submenuSelector)[0];
+				altLangs.style.visibility = 'hidden';
+			}
+		}
 
-        isOpen = false;
-    };
+		isOpen = false;
+	};
 
-    var preventDefault = function(e) {
-        var evt = e ? e : window.event;
+	var preventDefault = function(e) {
+		var evt = e ? e : window.event;
 
-        if (evt.preventDefault) {
-            evt.preventDefault();
-        }
+		if (evt.preventDefault) {
+			evt.preventDefault();
+		}
 
-        evt.returnValue = false;
-    };
+		evt.returnValue = false;
+	};
 
-    var init = function() {
-        var wrappers = document.querySelectorAll(wrapperSelector);
-        for(var i=0; i < wrappers.length; i++ ) {
-            wrappers[i].addEventListener('click', toggle );
-        }
+	var init = function() {
+		var wrappers = document.querySelectorAll(wrapperSelector);
+		for(var i=0; i < wrappers.length; i++ ) {
+			wrappers[i].addEventListener('click', toggle );
+		}
 
-        var links = document.querySelectorAll(wrapperSelector + ' a.js-wpml-ls-item-toggle');
-        for(var j=0; j < links.length; j++) {
-            links[j].addEventListener('click', preventDefault );
-        }
-    };
+		var links = document.querySelectorAll(wrapperSelector + ' a.js-wcml-dropdown-click-toggle');
+		for(var j=0; j < links.length; j++) {
+			links[j].addEventListener('click', preventDefault );
+		}
+	};
 
-    return {
-        'init': init
-    };
+	return {
+		'init': init
+	};
 
 })();
 
 document.addEventListener('DOMContentLoaded', function(){
-    "use strict";
-    WPMLLanguageSwitcherDropdownClick.init();
+	"use strict";
+	WCMLCurrecnySwitcherDropdownClick.init();
 });
