@@ -180,6 +180,11 @@ class WCML_Currency_Switcher_Template extends WPML_Templates_Factory {
         return $prefix . $slug . '-' . $index;
     }
 
+    public function get_inline_style_handler() {
+        $count = count( $this->template['css'] );
+        return $count > 0 ? $this->get_resource_handler( $count - 1 ) : null;
+    }
+
     protected function init_template_base_dir() {
         $this->template_paths = $this->template['path'];
     }

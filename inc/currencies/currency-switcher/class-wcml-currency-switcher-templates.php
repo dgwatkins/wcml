@@ -316,10 +316,15 @@ class WCML_Currency_Switcher_Templates {
         if( isset( $wcml_settings[ 'currency_switchers' ] ) ){
             foreach( $wcml_settings[ 'currency_switchers' ] as $key => $switcher_data ){
 
-                $css = $this->get_color_picket_css( $key, $switcher_data );
                 $switcher_template = $switcher_data['switcher_style'];
+                $css = $this->get_color_picket_css( $key, $switcher_data );
+                $template = $templates[ $switcher_template ];
 
-                echo $this->get_inline_style( $key,$switcher_template, $css );
+                if ( $template->has_styles() ) {
+                    wp_add_inline_style( $template->get_inline_style_handler(), $css );
+                }else{
+                    echo $this->get_inline_style( $key, $switcher_template, $css );
+                }
             }
         }
 

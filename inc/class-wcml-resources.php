@@ -44,15 +44,17 @@ class WCML_Resources {
                 wp_register_style( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/css/dialogs.css', array('wpml-dialog'), WCML_VERSION );
                 wp_enqueue_style( 'wcml-dialogs' );
             }
+
+            wp_register_style( 'wcml_admin', WCML_PLUGIN_URL . '/res/css/admin.css', array( 'wp-pointer' ), WCML_VERSION );
+            wp_enqueue_style( 'wcml_admin' );
+
+            wp_enqueue_style( 'wp-color-picker' );
         }
 
         if ( self::$pagenow == 'options-permalink.php' ) {
             wp_register_style( 'wcml_op', WCML_PLUGIN_URL . '/res/css/options-permalink.css', null, WCML_VERSION );
             wp_enqueue_style( 'wcml_op' );
         }
-
-        wp_register_style( 'wcml_admin', WCML_PLUGIN_URL . '/res/css/admin.css', array( 'wp-pointer' ), WCML_VERSION );
-        wp_enqueue_style( 'wcml_admin' );
     }
 
     public static function load_management_css() {
@@ -62,8 +64,7 @@ class WCML_Resources {
 
     private static function load_js() {
 
-        wp_enqueue_style( 'wp-color-picker' );
-        wp_enqueue_script( 'wp-color-picker');
+
         wp_register_script( 'wcml-scripts', WCML_PLUGIN_URL . '/res/js/scripts' . WCML_JS_MIN . '.js', array(
             'jquery',
             'jquery-ui-core',
@@ -89,6 +90,7 @@ class WCML_Resources {
             wp_register_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs' . WCML_JS_MIN . '.js', array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'), WCML_VERSION );
             wp_register_script( 'wcml-troubleshooting', WCML_PLUGIN_URL . '/res/js/troubleshooting' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION );
 
+            wp_enqueue_script( 'wp-color-picker');
             wp_enqueue_script( 'wcml-dialogs' );
             wp_enqueue_script( 'wcml-scripts' );
             wp_enqueue_script( 'jquery-cookie' );

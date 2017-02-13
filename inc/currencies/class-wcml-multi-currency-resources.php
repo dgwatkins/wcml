@@ -46,9 +46,6 @@ class WCML_Multi_Currency_Resources{
     }
 
     private static function register_css(){
-        wp_register_style( 'currency-switcher', WCML_PLUGIN_URL . '/res/css/currency-switcher.css', null, WCML_VERSION );
-        wp_enqueue_style('currency-switcher');
-
         self::enqueue_inline_styles();
     }
 
