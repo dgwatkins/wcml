@@ -84,8 +84,9 @@ class WCML_Currency_Switcher{
 		if( $switcher_id == 'new_widget' ){
 			$switcher_id = sanitize_text_field( $_POST[ 'widget_id' ] );
 		}
-		$switcher_settings[ 'switcher_style' ]   = sanitize_text_field( $_POST[ 'switcher_style' ] );
-		$switcher_settings[ 'template' ]        = $currency_switcher_format;
+		$switcher_settings[ 'widget_title' ]   = sanitize_text_field( $_POST[ 'widget_title' ] );
+		$switcher_settings[ 'switcher_style' ] = sanitize_text_field( $_POST[ 'switcher_style' ] );
+		$switcher_settings[ 'template' ]       = $currency_switcher_format;
 
 		foreach( $_POST[ 'color_scheme' ] as $color_id => $color ){
 			$switcher_settings[ 'color_scheme' ][ sanitize_text_field( $color_id ) ] = sanitize_hex_color( $color );

@@ -57,6 +57,7 @@ jQuery( function($){
             var widget_name = dialog.find('#wcml-cs-widget option:selected').text();
             var switcher_id = dialog.find('#wcml_currencies_switcher_id').val();
             var widget_id = dialog.find('#wcml-cs-widget').val();
+            var widget_title = dialog.find('input[name="wcml_cs_widget_title"]').val();
 
             $.ajax({
                 type: 'POST',
@@ -67,6 +68,7 @@ jQuery( function($){
                     wcml_nonce: dialog.find('#wcml_currencies_switcher_save_settings_nonce').val(),
                     switcher_id: switcher_id,
                     widget_id: widget_id,
+                    widget_title: widget_title,
                     switcher_style: dialog.find('#currency_switcher_style').val(),
                     template: template,
                     color_scheme: color_scheme

@@ -280,6 +280,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
         //add empty dialog for new sidebar currency switcher
         $currency_switchers[ 'new_widget' ] = array(
             'switcher_style' => 'wcml-dropdown',
+            'widget_title'  =>  '',
             'switcher_templates' => $this->woocommerce_wpml->cs_templates->get_templates(),
             'template' => '%code%, %symbol%, %name%',
             'color_scheme' => array(
@@ -304,6 +305,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
                 'title'             => __('Edit Currency Switcher', 'woocommerce-multilingual'),
                 'currency_switcher'  => $switcher_id,
                 'switcher_style'  =>  $currency_switcher[ 'switcher_style' ],
+                'widget_title'  =>  $currency_switcher[ 'widget_title' ],
                 'switcher_templates' => $this->woocommerce_wpml->cs_templates->get_templates(),
                 'template'  => $currency_switcher[ 'template' ],
                 'template_default'  => '%code%, %symbol%, %name%',

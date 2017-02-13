@@ -62,6 +62,7 @@ class WCML_Currency_Switcher_Options_Dialog extends WPML_Templates_Factory {
                 ),
                 'widgets' => array(
                     'widget_area'           =>  __( 'Widget area', 'woocommerce-multilingual' ),
+                    'widget_title'          =>  __( 'Widget title', 'woocommerce-multilingual' ),
                     'choose_label'          => __( '-- Choose a widget area --', 'woocommerce-multilingual' ),
                     'available_sidebars'    => $this->get_available_sidebars()
                 ),
