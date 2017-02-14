@@ -60,7 +60,6 @@ jQuery( function($){
                 },
                 open: function (event) {
                     $('body').css('overflow', 'hidden');
-                    $('.js-wpml-ls-active-tooltip').pointer('close');
                     WCML_Dialog._repositionDialog();
 
                     if( data.class === 'wcml-cs-dialog' ){
@@ -71,11 +70,11 @@ jQuery( function($){
                 }
             };
 
-            if(typeof data.height != 'undefined'){
+            if(typeof data.height != 'undefined' && data.class != 'wcml-cs-dialog'){
                 dialog_parameters.height = Math.min(window_h * 0.7, data.height);
             }
 
-            if(typeof data.width != 'undefined'){
+            if(typeof data.width != 'undefined' && data.class != 'wcml-cs-dialog'){
                 dialog_parameters.width = data.width;
             }
 
@@ -87,7 +86,17 @@ jQuery( function($){
 
         }
 
-        if(WCML_Dialog.using_wpdialog) { // pre WP 3.5
+		var resizeWindowEvent = _.debounce(function() {
+			WCML_Dialog._repositionDialog();
+			if( data.class === 'wcml-cs-dialog' ) {
+				WCML_Dialog._attachDialogScrollEvent();
+			}
+		}, 200);
+
+		$(window).resize(resizeWindowEvent);
+
+
+		if(WCML_Dialog.using_wpdialog) { // pre WP 3.5
             dialog_div.wpdialog('open');
         }else{
             dialog_div.dialog('open');
