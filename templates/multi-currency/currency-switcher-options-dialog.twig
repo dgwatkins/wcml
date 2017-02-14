@@ -5,9 +5,7 @@
         <div id="wcml_curr_sel_preview_wrap" class="wcml-section-content-inner wcml-currency-preview-wrapper">
             <strong class="wcml-currency-preview-label">{{ form.preview }}</strong>
             <input type="hidden" id="wcml_currencies_switcher_preview_nonce" value="{{ form.preview_nonce }}"/>
-            <div id="wcml_curr_sel_preview" class="wcml-currency-preview {{ args.currency_switcher }}">
-                {{ form.switcher_preview|raw }}
-            </div>
+            <div id="wcml_curr_sel_preview" class="wcml-currency-preview {{ args.currency_switcher }}"></div>
         </div>
 
         <div id="wcml_curr_options_wrap">

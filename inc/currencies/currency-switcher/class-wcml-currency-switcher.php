@@ -55,7 +55,7 @@ class WCML_Currency_Switcher{
 			return '';
 		}
 
-		if( $args === '' ){
+		if( empty( $args ) ){
 			$args = array(
 				'switcher_id' => 'product'
 			);

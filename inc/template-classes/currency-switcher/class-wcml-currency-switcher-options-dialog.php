@@ -69,7 +69,6 @@ class WCML_Currency_Switcher_Options_Dialog extends WPML_Templates_Factory {
                 'preview'               =>  __( 'Preview', 'woocommerce-multilingual' ),
                 'preview_nonce'         => wp_create_nonce( 'wcml_currencies_switcher_preview' ),
                 'save_settings_nonce'   => wp_create_nonce( 'wcml_currencies_switcher_save_settings' ),
-                'switcher_preview'      =>  $this->woocommerce_wpml->multi_currency->currency_switcher->wcml_currency_switcher( array('echo' => false) ),
                 'cancel'                => __( 'Cancel', 'woocommerce-multilingual' ),
                 'save'                  => __( 'Save', 'woocommerce-multilingual' )
             )
