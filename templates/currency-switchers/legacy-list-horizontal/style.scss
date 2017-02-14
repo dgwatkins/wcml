@@ -1,9 +1,6 @@
 .wcml-horizontal-list {
 	border: 1px solid transparent;
 	clear: both;
-	.woocommerce &.product {
-		margin: 1em 0;
-	}
 	& > ul {
 		padding: 0;
 		margin: 0 !important;
@@ -27,6 +24,10 @@
 		li {
 			margin-bottom: 0;
 		}
+	}
+
+	.woocommerce &.product {
+		margin: 1em 0;
 	}
 }
 
