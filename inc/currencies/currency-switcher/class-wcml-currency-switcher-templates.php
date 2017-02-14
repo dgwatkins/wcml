@@ -9,7 +9,7 @@ class WCML_Currency_Switcher_Templates {
     */
     private $woocommerce_wpml;
 
-    /** @var  @var string $uploads_path */
+    /** @var string $uploads_path */
     private $uploads_path;
 
     /**
@@ -32,7 +32,6 @@ class WCML_Currency_Switcher_Templates {
         }
 
         $this->wpml_file = $wpml_file;
-
     }
 
     public function init_hooks() {

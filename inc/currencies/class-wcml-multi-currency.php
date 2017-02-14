@@ -54,6 +54,10 @@ class WCML_Multi_Currency{
      * @var WCML_Currency_Switcher
      */
     public $currency_switcher;
+    /**
+     * @var WCML_Currency_Switcher_Ajax
+     */
+    public $currency_switcher_ajax;
 	/**
 	 * @var WCML_Multi_Currency_Install
 	 */
@@ -95,6 +99,7 @@ class WCML_Multi_Currency{
         $this->admin_currency_selector  = new WCML_Admin_Currency_Selector();
         $this->custom_prices            = new WCML_Custom_Prices( $woocommerce_wpml );
         $this->currency_switcher        = new WCML_Currency_Switcher( $woocommerce_wpml, $sitepress );
+        $this->currency_switcher_ajax   = new WCML_Currency_Switcher_Ajax( $woocommerce_wpml );
 
         $this->exchange_rate_services   = new WCML_Exchange_Rates( $this->woocommerce_wpml );
 
