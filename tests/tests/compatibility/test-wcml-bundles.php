@@ -461,9 +461,18 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 				'bundle_quantity' => 1,
 				'bundle_quantity_max' => 1,
 				'bundle_discount' => '',
+				'stock_status' => 'in_stock',
+				'max_stock' => '',
+				'quantity_min' => 1,
+				'quantity_max' => 1,
+				'shipped_individually' => 'no',
+				'priced_individually' => 'no',
 				'single_product_visibility' => 'visible',
 				'cart_visibility' => 'visible',
-				'order_visibility' => 'visible'
+				'order_visibility' => 'visible',
+				'single_product_price_visibility' => 'visible',
+				'cart_price_visibility' => 'visible',
+				'order_price_visibility' => 'visible'
 			)
 		);
 
@@ -558,9 +567,18 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 			'bundle_quantity' => 1,
 			'bundle_quantity_max' => 1,
 			'bundle_discount' => '',
+			'stock_status' => 'in_stock',
+			'max_stock' => '',
+			'quantity_min' => 1,
+			'quantity_max' => 1,
+			'shipped_individually' => 'no',
+			'priced_individually' => 'no',
 			'single_product_visibility' => 'visible',
 			'cart_visibility' => 'visible',
-			'order_visibility' => 'visible'
+			'order_visibility' => 'visible',
+			'single_product_price_visibility' => 'visible',
+			'cart_price_visibility' => 'visible',
+			'order_price_visibility' => 'visible'
 		);
 
 		if( $override_title ){
@@ -682,7 +700,11 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 			'bundle_defaults' => array(
 				$attr_name => $this->test_data->attr_default
 			),
-			'override_defaults' => 'yes'
+			'override_defaults' => 'yes',
+			'stock_status' => 'in_stock',
+			'max_stock' => '',
+			'quantity_min' => 1,
+			'quantity_max' => 1
 		);
 
 		if( $override_title ){

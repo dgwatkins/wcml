@@ -18,7 +18,7 @@ class WCML_Product_Bundles{
     private $woocommerce_wpml;
 
 	/**
-	 *
+	 * @var WCML_WC_Product_Bundles_Items
 	 */
 	private $product_bundles_items;
 
@@ -46,8 +46,8 @@ class WCML_Product_Bundles{
 	        add_action( 'wcml_after_duplicate_product_post_meta', array( $this, 'sync_bundled_ids' ), 10, 2 );
 	        add_action( 'wcml_update_extra_fields', array( $this, 'bundle_update' ), 10, 4 );
 
+	        add_action( 'save_post', array( $this, 'sync_product_bundle_meta_with_translations' ) );
         }
-
 
     }
 
@@ -80,6 +80,73 @@ class WCML_Product_Bundles{
 
 	}
 
+	private function sync_product_bundle_meta( $bundle_id, $translated_bundle_id ){
+
+		$bundle_items = $this->product_bundles_items->get_items( $bundle_id );
+		$fields_to_sync = array(
+			'optional',
+			'stock_status',
+			'max_stock',
+			'quantity_min',
+			'quantity_max',
+			'shipped_individually',
+			'priced_individually',
+			'single_product_visibility',
+			'cart_visibility',
+			'order_visibility',
+			'single_product_price_visibility',
+			'cart_price_visibility',
+			'order_price_visibility'
+		);
+
+		$target_lang = $this->sitepress->get_language_for_element( $translated_bundle_id, 'post_product' );
+
+		foreach( $bundle_items as $item_id => $bundle_item ){
+
+			$item_meta = $this->product_bundles_items->get_item_data( $bundle_item );
+			$translated_product_id = apply_filters( 'translate_object_id', $item_meta['product_id'], get_post_type( $item_meta['product_id'] ), false, $target_lang );
+
+			if( $translated_product_id ){
+				$translated_item_id = $this->get_item_id_for_product_id( $translated_product_id, $translated_bundle_id );
+
+				$translated_item = $this->product_bundles_items->get_item_data_object( $translated_item_id );
+				foreach( $fields_to_sync as $key ){
+					$this->product_bundles_items->update_item_meta( $translated_item, $key, $item_meta[$key] );
+				}
+				$this->product_bundles_items->save_item_meta( $translated_item );
+			}
+
+		}
+
+
+
+	}
+
+	public function sync_product_bundle_meta_with_translations( $bundle_id ){
+
+		if ( WooCommerce_Functions_Wrapper::get_product_type( $bundle_id ) === 'bundle' ) {
+
+			$trid        = $this->sitepress->get_element_trid( $bundle_id, 'post_product' );
+			$tranlations = $this->sitepress->get_element_translations( $trid, 'post_product' );
+
+			foreach ( $tranlations as $language => $translation ) {
+				if ( $translation->original ) {
+					$original_bundle_id = $translation->element_id;
+					break;
+				}
+
+			}
+
+			foreach ( $tranlations as $language => $translation ) {
+				if ( $translation->element_id !== $original_bundle_id ) {
+					$this->sync_product_bundle_meta( $original_bundle_id, $translation->element_id );
+				}
+			}
+
+		}
+
+	}
+
 	private function get_product_id_for_item_id( $item_id ){
 		global $wpdb;
 		return $wpdb->get_var( $wpdb->prepare(
@@ -96,7 +163,6 @@ class WCML_Product_Bundles{
 
 
 	// Add Bundles Box to WCML Translation GUI
-	//@todo display fields only for translaetd products
 	public function custom_box_html( $obj, $bundle_id, $data ){
 
 		$bundle_items = $this->product_bundles_items->get_items( $bundle_id );
@@ -113,41 +179,48 @@ class WCML_Product_Bundles{
 		$flag = false;
 
 		foreach ( $bundle_items as $item_id => $bundle_item ) {
-			$add_group = false;
-			if( $item_id == $last_item_id ){
-				$divider = false;
+
+			$translated_product = apply_filters( 'translate_object_id', $bundle_item->product_id, get_post_type( $bundle_item->product_id ), false, $obj->get_target_language() );
+			if( !is_null($translated_product)) {
+
+				$add_group = false;
+				if( $item_id == $last_item_id ){
+					$divider = false;
+				}
+
+				$bundle_item_data = $this->product_bundles_items->get_item_data( $bundle_item );
+
+				$group = new WPML_Editor_UI_Field_Group( get_the_title( $bundle_item->product_id ), $divider );
+
+				if( $bundle_item_data[ 'override_title' ] == 'yes' ) {
+					$bundle_field = new WPML_Editor_UI_Single_Line_Field(
+						'bundle_' . $bundle_item->product_id . '_title',
+						__( 'Name', 'woocommerce-multilingual' ),
+						$data,
+						false
+					);
+					$group->add_field( $bundle_field );
+					$add_group = true;
+				}
+
+				if( $bundle_item_data[ 'override_description' ] == 'yes' ){
+					$bundle_field = new WPML_Editor_UI_Single_Line_Field(
+						'bundle_'. $bundle_item->product_id . '_desc' ,
+						__( 'Description', 'woocommerce-multilingual' ),
+						$data,
+						false
+					);
+					$group->add_field( $bundle_field );
+					$add_group = true;
+				}
+
+				if( $add_group ){
+					$bundles_section->add_field( $group );
+					$flag = true;
+				}
+
 			}
 
-			$bundle_item_data = $this->product_bundles_items->get_item_data( $bundle_item );
-
-			$group = new WPML_Editor_UI_Field_Group( get_the_title( $bundle_item->product_id ), $divider );
-
-			if( $bundle_item_data[ 'override_title' ] == 'yes' ) {
-				$bundle_field = new WPML_Editor_UI_Single_Line_Field(
-					'bundle_' . $bundle_item->product_id . '_title',
-					__( 'Name', 'woocommerce-multilingual' ),
-					$data,
-					false
-				);
-				$group->add_field( $bundle_field );
-				$add_group = true;
-			}
-
-			if( $bundle_item_data[ 'override_description' ] == 'yes' ){
-				$bundle_field = new WPML_Editor_UI_Single_Line_Field(
-					'bundle_'. $bundle_item->product_id . '_desc' ,
-					__( 'Description', 'woocommerce-multilingual' ),
-					$data,
-					false
-				);
-				$group->add_field( $bundle_field );
-				$add_group = true;
-			}
-
-			if( $add_group ){
-				$bundles_section->add_field( $group );
-				$flag = true;
-			}
 		}
 
 		if( $flag ){
@@ -270,7 +343,7 @@ class WCML_Product_Bundles{
 
 				$translated_item_id = $this->get_item_id_for_product_id( $translated_product_id, $translated_bundle_id );
 
-				$this->product_bundles_items->copy_item_data( $item_id, $translated_item_id );
+				//$this->product_bundles_items->copy_item_data( $item_id, $translated_item_id );
 
 				if ( isset( $data[ md5( 'bundle_' . $product_id . '_title' ) ] ) ) {
 					$translated_bundle_data[ $translated_item_id ]['title']          = $data[ md5( 'bundle_' . $product_id . '_title' ) ];
@@ -287,6 +360,9 @@ class WCML_Product_Bundles{
 		}
 
 		$this->save_product_bundle_data( $translated_bundle_id, $translated_bundle_data );
+		$this->sync_product_bundle_meta( $bundle_id, $translated_bundle_id );
+
+		$this->sitepress->copy_custom_fields ( $bundle_id, $translated_bundle_id );
 
 		return $translated_bundle_data;
 	}
@@ -482,7 +558,16 @@ class WCML_Product_Bundles{
                         'bundle_discount'       => $bundle_data[ $item_id ][ 'bundle_discount' ],
                         'single_product_visibility'  => $bundle_data[ $item_id ][ 'single_product_visibility' ],
                         'cart_visibility'            => $bundle_data[ $item_id ][ 'cart_visibility' ],
-                        'order_visibility'           => $bundle_data[ $item_id ][ 'order_visibility' ]
+                        'order_visibility'           => $bundle_data[ $item_id ][ 'order_visibility' ],
+                        'stock_status'               => $bundle_data[ $item_id ][ 'stock_status' ],
+		                'max_stock'                  => $bundle_data[ $item_id ][ 'max_stock' ],
+		                'quantity_min'               => $bundle_data[ $item_id ][ 'quantity_min' ],
+						'quantity_max'               => $bundle_data[ $item_id ][ 'quantity_max' ],
+						'shipped_individually'       => $bundle_data[ $item_id ][ 'shipped_individually' ],
+						'priced_individually'        => $bundle_data[ $item_id ][ 'priced_individually' ],
+						'single_product_price_visibility' => $bundle_data[ $item_id ][ 'single_product_price_visibility' ],
+						'cart_price_visibility'           => $bundle_data[ $item_id ][ 'cart_price_visibility' ],
+						'order_price_visibility'          => $bundle_data[ $item_id ][ 'order_price_visibility' ]
                     );
                 }
 
