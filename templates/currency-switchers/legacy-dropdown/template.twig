@@ -5,8 +5,8 @@
 			<ul class="wcml-cs-submenu">
 				{% for currency in currencies %}
 					{% if currency != selected_currency %}
-						<li rel="{{ currency }}" >
-							<a>{{ get_formatted_price( currency, format )|raw }}</a>
+						<li>
+							<a rel="{{ currency }}">{{ get_formatted_price( currency, format )|raw }}</a>
 						</li>
 					{% endif %}
 				{% endfor %}

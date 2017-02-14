@@ -4,12 +4,12 @@ jQuery(document).ready(function(){
         wcml_load_currency( jQuery(this).val() );
     });
 
-    jQuery(document).on( 'click', '.wcml_currency_switcher li a', function(e){
+    jQuery(document).on( 'click', '.wcml_currency_switcher a', function(e){
         e.preventDefault();
-        if(jQuery(this).parent().hasClass('wcml-cs-active-currency')){
+        if(jQuery(this).parent().hasClass('wcml-cs-active-currency') || jQuery(this).hasClass('wcml-cs-active-currency')){
             return false;
         }
-        wcml_load_currency( jQuery(this).parent().attr('rel') );
+        wcml_load_currency( jQuery(this).attr('rel') );
     });
 
     if( typeof woocommerce_price_slider_params != 'undefined' ){

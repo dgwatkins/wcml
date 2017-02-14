@@ -53,7 +53,7 @@ var WCMLCurrecnySwitcherDropdownClick = (function() {
 			wrappers[i].addEventListener('click', toggle );
 		}
 
-		var links = document.querySelectorAll(wrapperSelector + ' a.js-wcml-dropdown-click-toggle');
+		var links = document.querySelectorAll(wrapperSelector + ' .js-wcml-dropdown-click-toggle');
 		for(var j=0; j < links.length; j++) {
 			links[j].addEventListener('click', preventDefault );
 		}
