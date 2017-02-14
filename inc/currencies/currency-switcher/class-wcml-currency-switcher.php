@@ -272,7 +272,7 @@ class WCML_Currency_Switcher{
 
 	public function get_model( $args, $currencies ){
 
-		$css_classes = $this->get_css_classes( array( $args[ 'switcher_style' ], $args[ 'switcher_id' ] ) );
+		$css_classes = $this->get_css_classes( array( $args[ 'switcher_style' ], $args[ 'switcher_id' ], 'wcml_currency_switcher' ) );
 
 		$model = array(
 			'css_classes' 	=> $css_classes,
