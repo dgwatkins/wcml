@@ -134,7 +134,7 @@ jQuery( function($){
 
     WCML_Dialog._repositionDialog = function () {
         var winH = $(window).height() - 180;
-        dialog_div.dialog("option", "maxHeight", winH);
+        dialog_div.css("max-height", winH);
 
         dialog_div.dialog("option", "position", {
             my: "center",
