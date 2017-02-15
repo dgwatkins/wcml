@@ -563,6 +563,7 @@ class WCML_Upgrade{
         $wcml_settings[ 'currency_switchers' ][ 'product' ] = array(
             'switcher_style' => $switcher_style,
             'template' => $wcml_settings[ 'wcml_curr_template' ],
+            'widget_title' => '',
             'color_scheme' => array(
                 'font_current_normal'       => '',
                 'font_current_hover'        => '',
