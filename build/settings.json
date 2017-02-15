@@ -35,51 +35,35 @@
     }
   },
   "deploy": {
-    "cleanup": {
-      "directories": {
-        "remove_recursive": [
-          ".git"
-        ],
-        "remove": [
-          "vendor/*/*/tests",
-          "build",
-          "tests",
-          "vendor/bin",
-          "embedded",
-          ".idea"
-        ],
-        "except": [
-          "vendor/twig/twig/lib/Twig/Test"
-        ]
-      },
-      "files": {
-        "remove": [
-          ".*",
-          "vendor/*/*.json",
-          "vendor/*/LICENSE",
-          "vendor/*/CHANGELOG.md",
-          "vendor/*/README.md",
-          "vendor/*/phpunit*",
-          "vendor/*/*/*.json",
-          "vendor/*/*/LICENSE",
-          "vendor/*/*/CHANGELOG.md",
-          "vendor/*/*/README.md",
-          "vendor/*/*/.*",
-          "composer.*",
-          "*.db",
-          "*.DS_Store",
-          "*.komodoproject",
-          "*.sh",
-          "*.xml",
-          "*.iml",
-          "inc/sandbox.inc",
-          "README.md"
-        ],
-        "except": [
-          "wpml-config.xml"
-        ]
-      }
-    }
+    "del": [
+      "build",
+      "tests",
+      "node_modules",
+      ".*",
+      "composer.*",
+      "*.xml",
+      "*.xml.dist",
+      "*.js",
+      "*.json",
+      "README.md",
+      "vendor/bin",
+      "vendor/**/*/.*",
+      "vendor/**/*/*.md",
+      "vendor/**/*/*.txt",
+      "vendor/**/*/*.json",
+      "vendor/**/*/*.xml",
+      "vendor/**/*/*.xml.dist",
+      "vendor/**/*/composer.*",
+      "vendor/**/*/test",
+      "vendor/**/*/tests",
+      "!changelog.md",
+      "!license.txt",
+      "!readme.txt",
+      "!vendor/**/*/lib/test*",
+      "!vendor/**/*/src/test*",
+      "!wpml-config.xml",
+      "!wpml-dependencies.json"
+    ]
   },
   "dependencies": [
     {

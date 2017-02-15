@@ -42,9 +42,9 @@
     "roave/security-advisories": "dev-master"
   },
   "require-dev": {
-    "otgs/unit-tests-framework": "~1.0",
+    "otgs/unit-tests-framework": "dev-develop",
     "otgs/build-tools": "~0.1",
-    "otgs/build-tools-ci": "~0.2",
+    "otgs/build-tools-ci": "dev-develop",
     "symfony/dom-crawler": "^3.1",
     "symfony/css-selector": "^3.1",
     "otgs/wcml-codeception-tests": "dev-master"
