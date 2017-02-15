@@ -111,6 +111,15 @@ class WCML_Currency_Switcher_Ajax{
 		$return= array();
 
 		$inline_css = $this->woocommerce_wpml->cs_templates->get_color_picket_css( $_POST['switcher_id'], array( 'switcher_style' => $_POST['switcher_style'], 'color_scheme' => $_POST['color_scheme'] ) );
+
+		$template = $this->woocommerce_wpml->cs_templates->get_template( $_POST['switcher_style'] );
+
+		if ( $template->has_styles() ) {
+			$return['inline_styles_id'] = $template->get_inline_style_handler().'-inline-css';
+		}else{
+			$return['inline_styles_id'] = 'wcml-cs-inline-styles-' . $_POST['switcher_id'].'-'.$_POST['switcher_style'];
+		}
+
 		$return['inline_css'] = $inline_css;
 
 		ob_start();

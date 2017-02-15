@@ -40,13 +40,15 @@ jQuery( function($){
         save_currency_switcher_settings: function(){
 
             var dialog =  $( this ).closest( '.wcml-ui-dialog' );
-            var ajaxLoader = $('<span class="spinner" style="visibility: visible;">');
+            var ajaxLoader = $('<span class="spinner" style="visibility: visible;"></span>');
             var widget_name = dialog.find('#wcml-cs-widget option:selected').text();
             var switcher_id = dialog.find('#wcml_currencies_switcher_id').val();
             var widget_id = dialog.find('#wcml-cs-widget').val();
             var widget_title = dialog.find('input[name="wcml_cs_widget_title"]').val();
+            var switcher_style = dialog.find('#currency_switcher_style').val();
 
-            $(this).parent().append( ajaxLoader );
+            ajaxLoader.show();
+            $(this).parent().append(ajaxLoader);
             dialog.find(':submit,:button').prop('disabled', true);
 
             var template = dialog.find('input[name="wcml_curr_template"]').val();
@@ -69,7 +71,7 @@ jQuery( function($){
                     switcher_id: switcher_id,
                     widget_id: widget_id,
                     widget_title: widget_title,
-                    switcher_style: dialog.find('#currency_switcher_style').val(),
+                    switcher_style: switcher_style,
                     template: template,
                     color_scheme: color_scheme
                 },
@@ -97,10 +99,15 @@ jQuery( function($){
                             $('.wcml-cs-list').fadeIn();
                         }
                     }
+                    $('#wcml_currency_switcher_options_' + widget_id).remove();
+                    dialog.find(':submit,:button').prop('disabled', false);
+                    ajaxLoader.remove();
 
                     WCML_Currency_Switcher_Settings.currency_switcher_preview( dialog, true );
                 }
             });
+
+            return false;
         },
 
         delete_currency_switcher: function(e){
@@ -159,10 +166,10 @@ jQuery( function($){
                 },
                 success: function(resp){
 
-                    if( $( '#wcml-cs-inline-styles-'+switcher_id+'-'+switcher_style).length == 0 ){
-                        $( '#wcml-cs-inline-styles-'+switcher_id+'-'+switcher_style).html( resp.inline_css );
+                    if( $( '#'+resp.inline_styles_id).length == 0 ){
+                        $('head').append( '<style type="text/css" id="'+resp.inline_styles_id+'">'+ resp.inline_css+'</style>' );
                     }else{
-                        $('head').append( '<style type="text/css" id="wcml-cs-inline-styles-'+switcher_id+'-'+switcher_style+'">'+ resp.inline_css+'</style>' );
+                        $( '#'+resp.inline_styles_id).html( resp.inline_css );
                     }
 
                     if( update_settings ){
@@ -208,7 +215,7 @@ jQuery( function($){
 
         setup_currency_switcher_template_change: function(e){
             if(!$(this).val()){
-                $('input[name="wcml_curr_template"]').val($('#currency_switcher_default').val())
+                $(this).val($('#currency_switcher_default').val())
             }
         },
 
