@@ -63,7 +63,7 @@ class WCML_REST_API_Support{
 			$exp = explode( '?', $_SERVER['REQUEST_URI'] );
 			if ( ! empty( $exp[1] ) ) {
 				parse_str( $exp[1], $vars );
-				if ( $vars['lang'] === $this->sitepress->get_default_language() ) {
+				if ( isset($vars['lang']) && $vars['lang'] === $this->sitepress->get_default_language() ) {
 					unset( $vars['lang'] );
 					$_SERVER['REQUEST_URI'] = $exp[0] . '?' . http_build_query( $vars );
 				}
