@@ -282,7 +282,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
             'switcher_style' => 'wcml-dropdown',
             'widget_title'  =>  '',
             'switcher_templates' => $this->woocommerce_wpml->cs_templates->get_templates(),
-            'template' => '%code%, %symbol%, %name%',
+            'template' => '%name% (%symbol%) - %code%',
             'color_scheme' => array(
                 'font_current_normal'       => '',
                 'font_current_hover'        => '',
@@ -308,7 +308,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
                 'widget_title'  =>  $currency_switcher[ 'widget_title' ],
                 'switcher_templates' => $this->woocommerce_wpml->cs_templates->get_templates(),
                 'template'  => $currency_switcher[ 'template' ],
-                'template_default'  => '%code%, %symbol%, %name%',
+                'template_default'  => '%name% (%symbol%) - %code%',
                 'options'  => $currency_switcher[ 'color_scheme' ]
             );
 

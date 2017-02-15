@@ -128,9 +128,9 @@ jQuery( function($){
 
         currency_switcher_preview: _.debounce( function ( dialog, update_settings ){
 
-            var template = dialog.find('.wcml-dialog-container input[name="wcml_curr_template"]').val();
+            var template = dialog.find('input[name="wcml_curr_template"]').val();
             if(!template){
-                template = dialog.find('.wcml-dialog-container #currency_switcher_default').val();
+                template = dialog.find('#currency_switcher_default').val();
             }
 
             var ajaxLoader = $('<span class="spinner" style="visibility: visible;">');

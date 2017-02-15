@@ -148,7 +148,7 @@ class WCML_Currency_Switcher{
 
 		$model = array(
 			'css_classes' 	=> $css_classes,
-			'format'        => isset( $args['format'] ) ? $args['format'] : '%code%, %symbol%, %name%',
+			'format'        => isset( $args['format'] ) ? $args['format'] : '%name% (%symbol%) - %code%',
 			'currencies'    => $currencies,
 			'selected_currency' => $this->woocommerce_wpml->multi_currency->get_client_currency()
 		);
