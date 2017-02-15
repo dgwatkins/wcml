@@ -550,8 +550,32 @@ class WCML_Upgrade{
 
         $wcml_settings = get_option( '_wcml_settings' );
         $wcml_settings[ 'currency_switcher_additional_css' ] = '';
-        update_option('_wcml_settings', $wcml_settings);
+        if( $wcml_settings[ 'currency_switcher_style' ] == 'list' ){
+            if(  $wcml_settings[ 'wcml_curr_sel_orientation' ] == 'horizontal' ){
+                $switcher_style = 'wcml-horizontal-list';
+            }else{
+                $switcher_style = 'wcml-vertical-list';
+            }
+        }else{
+            $switcher_style = 'wcml-dropdown';
+        }
 
+        $wcml_settings[ 'currency_switchers' ][ 'product' ] = array(
+            'switcher_style' => $switcher_style,
+            'template' => $wcml_settings[ 'wcml_curr_template' ],
+            'color_scheme' => array(
+                'font_current_normal'       => '',
+                'font_current_hover'        => '',
+                'background_current_normal' => '',
+                'background_current_hover'  => '',
+                'font_other_normal'         => '',
+                'font_other_hover'          => '',
+                'background_other_normal'   => '',
+                'background_other_hover'    => '',
+                'border_normal'             => ''
+            )
+        );
+        update_option('_wcml_settings', $wcml_settings);
     }
 
 
