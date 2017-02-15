@@ -139,7 +139,10 @@ class woocommerce_wpml {
                 'wcml_update_currency_lang',
                 'wcml_update_default_currency',
                 'wcml_price_preview',
-	            'wcml_currencies_switcher_preview'
+	            'wcml_currencies_switcher_preview',
+                'wcml_currencies_switcher_save_settings',
+                'wcml_delete_currency_switcher',
+                'wcml_currencies_order'
         );
         if($this->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT
             || ( isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) && $_GET['tab'] == 'multi-currency' )

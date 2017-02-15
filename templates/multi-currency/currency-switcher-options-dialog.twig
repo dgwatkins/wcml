@@ -13,7 +13,6 @@
 
                     <h4>{{ form.widgets.widget_area }}</h4>
                     <select id="wcml-cs-widget">
-                        <option>{{ form.widgets.choose_label }}</option>
                         {% for sidebar in form.widgets.available_sidebars %}
                             <option value="{{ sidebar['id'] }}">{{ sidebar['name'] }}</option>
                         {% endfor %}

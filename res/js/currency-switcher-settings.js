@@ -41,6 +41,10 @@ jQuery( function($){
 
             var dialog =  $( this ).closest( '.wcml-ui-dialog' );
             var ajaxLoader = $('<span class="spinner" style="visibility: visible;">');
+            var widget_name = dialog.find('#wcml-cs-widget option:selected').text();
+            var switcher_id = dialog.find('#wcml_currencies_switcher_id').val();
+            var widget_id = dialog.find('#wcml-cs-widget').val();
+            var widget_title = dialog.find('input[name="wcml_cs_widget_title"]').val();
 
             $(this).parent().append( ajaxLoader );
             dialog.find(':submit,:button').prop('disabled', true);
@@ -54,12 +58,6 @@ jQuery( function($){
             dialog.find('input.js-wcml-cs-colorpicker').each( function(){
                 color_scheme[ $(this).attr('name') ] = $(this).val();
             });
-
-
-            var widget_name = dialog.find('#wcml-cs-widget option:selected').text();
-            var switcher_id = dialog.find('#wcml_currencies_switcher_id').val();
-            var widget_id = dialog.find('#wcml-cs-widget').val();
-            var widget_title = dialog.find('input[name="wcml_cs_widget_title"]').val();
 
             $.ajax({
                 type: 'POST',
@@ -95,6 +93,9 @@ jQuery( function($){
                         widget_row.show();
 
                         $('.wcml-cs-list').find('tr.wcml-cs-empty-row').before( widget_row );
+                        if( $('.wcml-cs-list').is(':hidden') ){
+                            $('.wcml-cs-list').fadeIn();
+                        }
                     }
 
                     WCML_Currency_Switcher_Settings.currency_switcher_preview( dialog, true );

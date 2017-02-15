@@ -12,11 +12,6 @@ class WCML_Currency_Switcher_Ajax{
 
 		$this->woocommerce_wpml = $woocommerce_wpml;
 
-		add_action( 'init', array($this, 'init'), 5 );
-	}
-
-	public function init() {
-
 		add_action( 'wp_ajax_wcml_currencies_order', array($this, 'wcml_currencies_order') );
 		add_action( 'wp_ajax_wcml_currencies_switcher_preview', array($this, 'wcml_currencies_switcher_preview') );
 		add_action( 'wp_ajax_wcml_currencies_switcher_save_settings', array($this, 'wcml_currencies_switcher_save_settings') );
