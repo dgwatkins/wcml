@@ -1407,7 +1407,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "1404657c4edef7b59590744a09a5219057c68e07"
+                "reference": "7993b30a47fd11cfb4cfa94a719f4cf29300ae77"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -1450,7 +1450,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2017-02-09 15:52:32"
+            "time": "2017-02-15 10:30:03"
         },
         {
             "name": "otgs/unit-tests-framework",
@@ -1490,7 +1490,7 @@
             "keywords": [
                 "phpunit"
             ],
-            "time": "2017-02-04 11:29:55"
+            "time": "2017-02-05 00:29:42"
         },
         {
             "name": "otgs/wcml-codeception-tests",
