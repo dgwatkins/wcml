@@ -7,14 +7,11 @@ class WCML_Currency_Switcher_Widget extends WP_Widget {
     }
 
     function widget($args, $instance) {
-        global $woocommerce_wpml;
-
-        $switcher_settings = $woocommerce_wpml->settings['currency_switchers'][ $args[ 'id' ] ];
 
         echo $args['before_widget'];
 
-        if( !empty( $switcher_settings['widget_title'] ) ){
-            $widget_title = apply_filters( 'widget_title', $switcher_settings['widget_title'] );
+        if( isset( $instance['settings']['widget_title'] ) && !empty( $instance['settings']['widget_title'] ) ){
+            $widget_title = apply_filters( 'widget_title', $instance['settings']['widget_title'] );
             echo $args['before_title']. $widget_title . $args['after_title'];
         }
 
@@ -25,7 +22,7 @@ class WCML_Currency_Switcher_Widget extends WP_Widget {
 
     public function update( $new_instance, $old_instance ) {
 
-        if ( ! $new_instance && ! $old_instance ) {
+        if ( ! $new_instance ) {
             $new_instance = array(
                 'id' => $_POST['sidebar'],
                 'settings' => WCML_Currency_Switcher::get_settings( $_POST['sidebar'] )

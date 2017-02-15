@@ -54,6 +54,7 @@ class WCML_Currency_Switcher_Ajax{
 		if( $switcher_id == 'new_widget' ){
 			$switcher_id = sanitize_text_field( $_POST[ 'widget_id' ] );
 		}
+
 		$switcher_settings[ 'widget_title' ]   = sanitize_text_field( $_POST[ 'widget_title' ] );
 		$switcher_settings[ 'switcher_style' ] = sanitize_text_field( $_POST[ 'switcher_style' ] );
 		$switcher_settings[ 'template' ]       = $currency_switcher_format;
@@ -63,6 +64,27 @@ class WCML_Currency_Switcher_Ajax{
 		}
 
 		$wcml_settings[ 'currency_switchers' ][ $switcher_id ] = $switcher_settings;
+
+		//update widget settings
+		if( $switcher_id != 'product' ){
+			$widget_settings = get_option('widget_currency_sel_widget');
+			$setting_match = false;
+			foreach( $widget_settings as $key => $widget_setting ){
+				if( $switcher_id == $widget_setting['id'] ){
+					$setting_match = true;
+					$widget_settings[ $key ][ 'settings' ] = $switcher_settings;
+				}
+			}
+
+			if( !$setting_match ){
+				$widget_settings[] = array(
+					'id' => $switcher_id,
+					'settings' => $switcher_settings
+				);
+			}
+
+			update_option( 'widget_currency_sel_widget', $widget_settings );
+		}
 
 		$this->woocommerce_wpml->update_settings( $wcml_settings );
 
