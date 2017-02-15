@@ -320,13 +320,35 @@ class WCML_Currency_Switcher_Templates {
                 $template = $templates[ $switcher_template ];
 
                 if ( $template->has_styles() ) {
-                    wp_add_inline_style( $template->get_inline_style_handler(), $css );
+                    $style_handler = $template->get_inline_style_handler();
+                    wp_add_inline_style( $style_handler, $css );
                 }else{
                     echo $this->get_inline_style( $key, $switcher_template, $css );
                 }
             }
         }
 
+        if ( ! empty( $wcml_settings['currency_switcher_additional_css'] ) ) {
+            $additional_css = $this->sanitize_css( $wcml_settings['currency_switcher_additional_css'] );
+
+            if( $style_handler ){
+                wp_add_inline_style( $style_handler, $additional_css );
+            }else{
+                echo $this->get_inline_style( 'currency_switcher', 'additional_css', $additional_css );
+            }
+        }
+
+    }
+
+    /**
+     * @param string $css
+     *
+     * @return string
+     */
+    private function sanitize_css( $css ) {
+        $css = wp_strip_all_tags( $css );
+        $css = preg_replace('/\s+/S', " ", trim( $css ) );
+        return $css;
     }
 
     public function admin_enqueue_template_resources(){

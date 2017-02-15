@@ -16,11 +16,6 @@ class WCML_Multi_Currency_Resources{
 
         $is_multi_currency = is_admin() && isset ($_GET['page'] ) && $_GET['page'] == 'wpml-wcml'
                              && isset( $_GET['tab'] ) && $_GET['tab'] == 'multi-currency';
-
-        if( !is_admin() || $is_multi_currency ){
-            self::register_css();
-        }
-
     }
 
     private static function load_inline_js(){
@@ -43,34 +38,6 @@ class WCML_Multi_Currency_Resources{
 
         wp_localize_script('wcml-mc-scripts', 'wcml_mc_settings', $script_vars );
 
-    }
-
-    private static function register_css(){
-        self::enqueue_inline_styles();
-    }
-
-    private static function enqueue_inline_styles() {
-        $wcml_settings = self::$woocommerce_wpml->get_settings();
-
-        if ( $wcml_settings['currency_switcher_additional_css'] ) {
-            $additional_css = self::sanitize_css( $wcml_settings['currency_switcher_additional_css'] );
-
-            if ( ! empty( $additional_css ) ) {
-                wp_add_inline_style( 'currency-switcher', $additional_css );
-            }
-
-        }
-    }
-
-    /**
-     * @param string $css
-     *
-     * @return string
-     */
-    private static function sanitize_css( $css ) {
-        $css = wp_strip_all_tags( $css );
-        $css = preg_replace('/\s+/S', " ", trim( $css ) );
-        return $css;
     }
 
 }
