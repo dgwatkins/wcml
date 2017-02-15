@@ -295,9 +295,12 @@ class WCML_Currency_Switcher_Templates {
         return $name;
     }
 
-    public function enqueue_template_resources( ) {
+    public function enqueue_template_resources( $templates = false ) {
 
-        $templates =  $this->get_active_templates();
+        if( !$templates ){
+            $templates =  $this->get_active_templates();
+        }
+
         $wcml_settings = $this->woocommerce_wpml->get_settings();
 
         foreach( $templates as $slug => $template ) {
@@ -353,7 +356,7 @@ class WCML_Currency_Switcher_Templates {
 
     public function admin_enqueue_template_resources(){
         if( isset( $_GET['page'] ) && $_GET['page'] == 'wpml-wcml' && isset( $_GET['tab'] ) && $_GET['tab'] == 'multi-currency' ){
-            $this->enqueue_template_resources();
+            $this->enqueue_template_resources( $this->templates );
         }
     }
 

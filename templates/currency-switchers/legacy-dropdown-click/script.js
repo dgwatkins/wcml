@@ -49,17 +49,13 @@ var WCMLCurrecnySwitcherDropdownClick = (function() {
 
 	var init = function() {
 		var wrappers = document.querySelectorAll(wrapperSelector);
-		for(var i=0; i < wrappers.length; i++ ) {
-			wrappers[i].addEventListener('click', toggle );
-		}
-
 		var links = document.querySelectorAll(wrapperSelector + ' .js-wcml-dropdown-click-toggle');
-		for(var j=0; j < links.length; j++) {
-			links[j].addEventListener('click', preventDefault );
-		}
-	};
 
+		jQuery(document).on( 'click', wrapperSelector, toggle );
+		jQuery(document).on( 'click', wrapperSelector + ' .js-wcml-dropdown-click-toggle', preventDefault);
+	};
 	return {
+
 		'init': init
 	};
 
