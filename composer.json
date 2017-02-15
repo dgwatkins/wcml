@@ -60,6 +60,11 @@
       "xrstf\\Composer52\\Generator::onPostInstallCmd"
     ]
   },
+  "autoload-dev": {
+    "classmap": [
+      "tests/phpunit/stubs"
+    ]
+  },
   "autoload": {
     "classmap": [
       "inc",

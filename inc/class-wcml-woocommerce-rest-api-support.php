@@ -1,5 +1,5 @@
 <?php
-return;
+// Should only be used for WooCommerce versions prior 2.6
 class WCML_WooCommerce_Rest_API_Support{
 
     private $woocommerce_wpml;

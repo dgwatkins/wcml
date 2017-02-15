@@ -200,12 +200,12 @@ class WCML_REST_API_Support{
 		if( isset( $data['lang'] )){
 			$active_languages = $this->sitepress->get_active_languages();
 			if( !isset( $active_languages[$data['lang']] ) ){
-				throw new WC_API_Exception( '404', sprintf( __( 'Invalid language parameter: %s', 'woocommerce-multilingual' ), $data['lang'] ), '404' );
+				throw new WC_REST_Exception( '404', sprintf( __( 'Invalid language parameter: %s', 'woocommerce-multilingual' ), $data['lang'] ), '404' );
 			}
 			if( isset( $data['translation_of'] ) ){
 				$trid = $this->sitepress->get_element_trid( $data['translation_of'], 'post_product' );
 				if( empty($trid) ){
-					throw new WC_API_Exception( '404', sprintf( __( 'Source product id not found: %s', 'woocommerce-multilingual' ), $data['translation_of'] ), '404' );
+					throw new WC_REST_Exception( '404', sprintf( __( 'Source product id not found: %s', 'woocommerce-multilingual' ), $data['translation_of'] ), '404' );
 				}
 			}else{
 				$trid = null;
@@ -232,7 +232,7 @@ class WCML_REST_API_Support{
 
 			if( !empty( $data['custom_prices'] ) ){
 
-				$original_post_id = Sitepress::get_original_element_id( $post->ID, 'post_product' );
+				$original_post_id = $this->sitepress->get_original_element_id_filter('', $post->ID, 'post_product' );
 
 				update_post_meta( $original_post_id, '_wcml_custom_prices_status', 1);
 
@@ -242,7 +242,6 @@ class WCML_REST_API_Support{
 					foreach( $prices as $k => $p){
 						$prices_uscore['_' . $k] = $p;
 					}
-
 					$this->woocommerce_wpml->multi_currency->custom_prices->update_custom_prices( $original_post_id, $prices_uscore, $currency );
 
 				}
@@ -332,7 +331,7 @@ class WCML_REST_API_Support{
 			$order_id = $post->ID;
 			$active_languages = $this->sitepress->get_active_languages();
 			if( !isset( $active_languages[$data['lang']] ) ){
-				throw new WC_API_Exception( '404', sprintf( __( 'Invalid language parameter: %s' ), $data['lang'] ), '404' );
+				throw new WC_REST_Exception( '404', sprintf( __( 'Invalid language parameter: %s' ), $data['lang'] ), '404' );
 			}
 
 			update_post_meta( $order_id, 'wpml_language', $data['lang'] );
