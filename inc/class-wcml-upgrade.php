@@ -18,7 +18,7 @@ class WCML_Upgrade{
         '3.9',
         '3.9.1',
         '4.0',
-        '4.1'
+        '4.1.0'
     );
     
     function __construct(){
@@ -529,7 +529,7 @@ class WCML_Upgrade{
 
     }
 
-    function upgrade_4_1(){
+    function upgrade_4_1_0(){
         global $wpdb;
 
         $results = $wpdb->get_results("
@@ -547,9 +547,9 @@ class WCML_Upgrade{
             }
 
         }
-
+        
         $wcml_settings = get_option( '_wcml_settings' );
-        $wcml_settings[ 'currency_switcher_additional_css' ] = '';
+
         if( $wcml_settings[ 'currency_switcher_style' ] == 'list' ){
             if(  $wcml_settings[ 'wcml_curr_sel_orientation' ] == 'horizontal' ){
                 $switcher_style = 'wcml-horizontal-list';
@@ -576,7 +576,10 @@ class WCML_Upgrade{
                 'border_normal'             => ''
             )
         );
-        update_option('_wcml_settings', $wcml_settings);
+
+
+        $wcml_settings[ 'currency_switcher_additional_css' ] = '';
+        update_option('_wcml_settings', $wcml_settings );
     }
 
 
