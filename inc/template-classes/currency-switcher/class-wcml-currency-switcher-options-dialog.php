@@ -64,7 +64,7 @@ class WCML_Currency_Switcher_Options_Dialog extends WPML_Templates_Factory {
                     'widget_area'           =>  __( 'Widget area', 'woocommerce-multilingual' ),
                     'widget_title'          =>  __( 'Widget title', 'woocommerce-multilingual' ),
                     'choose_label'          => __( '-- Choose a widget area --', 'woocommerce-multilingual' ),
-                    'available_sidebars'    => $this->get_available_sidebars()
+                    'available_sidebars'    => $this->woocommerce_wpml->multi_currency->currency_switcher->get_available_sidebars()
                 ),
                 'preview'               =>  __( 'Preview', 'woocommerce-multilingual' ),
                 'preview_nonce'         => wp_create_nonce( 'wcml_currencies_switcher_preview' ),
@@ -130,19 +130,6 @@ class WCML_Currency_Switcher_Options_Dialog extends WPML_Templates_Factory {
         );
 
         return $defaults;
-    }
-
-    public function get_available_sidebars(){
-        $sidebars = $this->woocommerce_wpml->multi_currency->currency_switcher->get_registered_sidebars();
-        $wcml_settings = $this->woocommerce_wpml->get_settings();
-
-        foreach( $sidebars as $key => $sidebar ){
-            if ( isset( $wcml_settings[ 'currency_switchers' ][ $sidebar[ 'id' ] ] ) ){
-                unset( $sidebars[ $key ] );
-            }
-        }
-
-        return $sidebars;
     }
 
     public function render(){

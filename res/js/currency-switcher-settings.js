@@ -130,6 +130,9 @@ jQuery( function($){
                 },
                 success: function(e){
                     switcher_row.hide();
+                    if( $('.wcml_add_cs_sidebar').is(':hidden') ){
+                        $('.wcml_add_cs_sidebar').fadeIn();
+                    }
                 }
             });
         },

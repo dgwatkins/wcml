@@ -207,4 +207,17 @@ class WCML_Currency_Switcher{
 		return is_array( $wp_registered_sidebars ) ? $wp_registered_sidebars : array();
 	}
 
+	public function get_available_sidebars(){
+		$sidebars = $this->get_registered_sidebars();
+		$wcml_settings = $this->woocommerce_wpml->get_settings();
+
+		foreach( $sidebars as $key => $sidebar ){
+			if ( isset( $wcml_settings[ 'currency_switchers' ][ $sidebar[ 'id' ] ] ) ){
+				unset( $sidebars[ $key ] );
+			}
+		}
+
+		return $sidebars;
+	}
+
 }

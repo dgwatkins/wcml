@@ -133,6 +133,7 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
                 ),
                 'preview'       => $this->get_currency_switchers_preview(),
                 'widget_currency_switchers' => $this->widget_currency_switchers(),
+                'available_sidebars'    => $this->woocommerce_wpml->multi_currency->currency_switcher->get_available_sidebars(),
                 'preview_text'  => __( 'Currency switcher preview', 'woocommerce-multilingual' ),
                 'order'             => !isset( $this->woocommerce_wpml->settings['currencies_order'] ) ?
                                         $this->woocommerce_wpml->multi_currency->get_currency_codes() :

@@ -38,7 +38,8 @@
                         data-switcher="new_widget"
                         data-dialog="wcml_currency_switcher_options_new_widget"
                         data-content="wcml_currency_switcher_options_new_widget"
-                        data-height="800" data-width="700">
+                        data-height="800" data-width="700"
+                        {% if currency_switcher.available_sidebars is empty %}style="display:none"{% endif %}>
                     <i class="otgs-ico-add otgs-ico-sm"></i>
                     {{ currency_switcher.headers.add_widget }}
                 </button>
