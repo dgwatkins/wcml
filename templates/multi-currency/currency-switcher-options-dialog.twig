@@ -59,7 +59,7 @@
 
                 <label for="wcml-cs-{{ id }}-colorpicker-preset">{{ form.colors.theme }}</label>
                 <select name="wcml-cs-{{ id }}-colorpicker-preset" class="js-wcml-cs-colorpicker-preset">
-                    <option value="" disabled>-- {{ form.colors.select_option_choose }} --</option>
+                    <option value="">-- {{ form.colors.select_option_choose }} --</option>
                     {% for scheme_id, scheme in color_schemes %}
                         <option value="{{ scheme_id }}">{{ scheme.label }}</option>
                     {% endfor %}
