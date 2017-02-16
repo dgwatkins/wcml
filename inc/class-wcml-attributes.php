@@ -15,6 +15,7 @@ class WCML_Attributes{
 
         add_action( 'woocommerce_attribute_added', array( $this, 'set_attribute_readonly_config' ), 100, 2 );
         add_filter( 'wpml_translation_job_post_meta_value_translated', array($this, 'filter_product_attributes_for_translation'), 10, 2 );
+        add_filter( 'woocommerce_dropdown_variation_attribute_options_args', array($this, 'filter_dropdown_variation_attribute_options_args') );
 
         if( isset( $_POST['icl_ajx_action'] ) && $_POST['icl_ajx_action'] == 'icl_custom_tax_sync_options' ){
             $this->icl_custom_tax_sync_options();
@@ -473,6 +474,24 @@ class WCML_Attributes{
             'meta_value' => $meta_value,
             'meta_key' => $meta_key
         );
+    }
+
+    function filter_dropdown_variation_attribute_options_args( $args ){
+
+        /*
+         * special case when original attribute language is German or Danish,
+         * needs handle special chars accordingly
+         * https://onthegosystems.myjetbrains.com/youtrack/issue/wcml-1785
+         */
+        if( isset( $args['attribute'] ) && isset( $args['product'] ) ){
+
+            $orig_lang = $this->woocommerce_wpml->products->get_original_product_language( $args['product']->id );
+            if ( in_array( $orig_lang, array( 'de', 'da' ) ) ) {
+                $args['attribute'] = $this->sitepress->locale_utils->filter_sanitize_title( remove_accents( $args['attribute'] ), $args['attribute'] );
+            }
+        }
+
+        return $args;
     }
 
 }
