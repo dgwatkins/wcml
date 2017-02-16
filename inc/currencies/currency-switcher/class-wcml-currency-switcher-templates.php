@@ -311,8 +311,12 @@ class WCML_Currency_Switcher_Templates {
 
             foreach ( $template->get_styles() as $k => $url ) {
                 wp_enqueue_style( $template->get_resource_handler( $k ), $url, array(), WCML_VERSION );
+
             }
 
+            if ( $template->has_styles() ) {
+                $style_handler = $template->get_inline_style_handler();
+            }
         }
 
         if( isset( $wcml_settings[ 'currency_switchers' ] ) ){
@@ -323,8 +327,7 @@ class WCML_Currency_Switcher_Templates {
                 $template = $templates[ $switcher_template ];
 
                 if ( $template->has_styles() ) {
-                    $style_handler = $template->get_inline_style_handler();
-                    wp_add_inline_style( $style_handler, $css );
+                    wp_add_inline_style( $template->get_inline_style_handler(), $css );
                 }else{
                     echo $this->get_inline_style( $key, $switcher_template, $css );
                 }
