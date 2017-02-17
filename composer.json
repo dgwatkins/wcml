@@ -36,10 +36,10 @@
   ],
   "minimum-stability": "dev",
   "require": {
+    "roave/security-advisories": "dev-master",
     "otgs/installer" : "dev-master",
     "xrstf/composer-php52": "1.*",
-    "twig/twig": "~1.0",
-    "roave/security-advisories": "dev-master"
+    "twig/twig": "~1.0"
   },
   "require-dev": {
     "otgs/unit-tests-framework": "dev-develop",
