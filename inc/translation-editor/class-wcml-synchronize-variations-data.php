@@ -252,7 +252,20 @@ class WCML_Synchronize_Variations_Data{
                             $meta_value = $trn_post_meta['meta_value'];
                             $meta_key = $trn_post_meta['meta_key'];
                         }
-                        update_post_meta( $variation_id, $meta_key, $meta_value );
+                        //use direct query to update '_stock' to not trigger additional filters
+                        if( $meta_key == '_stock'){
+                            $this->wpdb->update( $this->wpdb->postmeta,
+                                array(
+                                    'meta_value' => $meta_value
+                                ),
+                                array(
+                                    'meta_key'  => $meta_key,
+                                    'post_id' => $variation_id
+                                )
+                            );
+                        }else{
+                            update_post_meta( $variation_id, $meta_key, $meta_value );
+                        }
                     }elseif ( !isset( $settings[ $meta_key ] ) || $settings[ $meta_key ] == WPML_IGNORE_CUSTOM_FIELD ) {
                         continue;
                     }
