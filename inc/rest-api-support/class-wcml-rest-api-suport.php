@@ -35,6 +35,22 @@ class WCML_REST_API_Support{
 		// Terms
 		add_action( 'woocommerce_rest_product_cat_query', array($this, 'filter_terms_query' ), 10, 2 );
 		add_action( 'woocommerce_rest_product_tag_query', array($this, 'filter_terms_query' ), 10, 2 );
+
+		add_action( 'rest_api_init', array( $this, 'set_language_for_request' ) );
+	}
+
+	/**
+	 * @param $wp_rest_server
+	 * enforces the language of request as the current language to be able to filter items by language
+	 */
+	public function set_language_for_request( $wp_rest_server ){
+		if( isset( $_GET['lang'] )  ){
+			$request_language = $_GET['lang'];
+			$active_languages = $this->sitepress->get_active_languages();
+			if( isset( $active_languages[ $request_language ] ) ){
+				$this->sitepress->switch_lang( $request_language );
+			}
+		}
 	}
 
 	/**

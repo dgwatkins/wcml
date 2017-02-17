@@ -111,7 +111,43 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function set_language_for_request(){
+		$subject = $this->get_subject();
 
+		$default_language = 'en';
+		$other_language   = 'ro';
+		$wrong_language   = 'de';
+
+		$this->sitepress = $this->getMockBuilder( 'SitePress' )
+		                        ->disableOriginalConstructor()
+		                        ->setMethods( array( 'get_active_languages', 'switch_lang' ) )
+		                        ->getMock();
+		$this->sitepress->method( 'get_active_languages' )->wilLReturn( array( $default_language => 1, $other_language => 1 ) );
+		$this->sitepress->method( 'switch_lang' )->will( $this->returnCallback(
+			function( $lang ){
+				$this->test_data['sitepress_current_language'] = $lang;
+			}
+		) );
+
+		$this->test_data['sitepress_current_language'] = $default_language;
+
+		unset($_GET['lang']);
+		$subject->set_language_for_request( new stdClass() );
+		$this->assertEquals( $default_language, $this->test_data['sitepress_current_language'] );
+
+		$_GET['lang'] = $wrong_language;
+		$subject->set_language_for_request( new stdClass() );
+		$this->assertEquals( $default_language, $this->test_data['sitepress_current_language'] );
+
+		$_GET['lang'] = $other_language;
+		$subject->set_language_for_request( new stdClass() );
+		$this->assertEquals( $other_language, $this->test_data['sitepress_current_language'] );
+
+	}
+
+	/**
+	 * @test
+	 */
 	public function is_request_to_rest_api(){
 
 		$subject = $this->get_subject();
