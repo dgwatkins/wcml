@@ -550,6 +550,29 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @expectedException Exception
+	 * @expectedExceptionCode 404
+	 * @expectedExceptionMessage Using "translation_of" requires providing a "lang" parameter too
+	 */
+	function set_product_language_missing_lang(){
+
+		$subject = $this->get_subject();
+
+		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
+		                 ->disableOriginalConstructor()
+		                 ->setMethods( array( 'get_params' ) )
+		                 ->getMock();
+		$request1->method( 'get_params' )->wilLReturn( array( 'translation_of' => rand(1, 100) ) );
+
+		$post = new stdClass();
+		$post->ID = rand(1,100);
+
+		$subject->set_product_language( $post, $request1 );
+
+	}
+
+	/**
+	 * @test
 	 */
 	function set_product_language_new_product(){ // no translation_of
 
