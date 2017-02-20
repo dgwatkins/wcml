@@ -65,7 +65,7 @@ class WCML_Currency_Switcher_Ajax{
 			$widget_settings = get_option('widget_currency_sel_widget');
 			$setting_match = false;
 			foreach( $widget_settings as $key => $widget_setting ){
-				if( $switcher_id == $widget_setting['id'] ){
+				if( isset( $widget_setting['id'] ) && $switcher_id == $widget_setting['id'] ){
 					$setting_match = true;
 					$widget_settings[ $key ][ 'settings' ] = $switcher_settings;
 				}
