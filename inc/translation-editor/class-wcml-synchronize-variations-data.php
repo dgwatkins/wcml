@@ -232,7 +232,7 @@ class WCML_Synchronize_Variations_Data{
     public function duplicate_variation_data( $original_variation_id, $variation_id, $data, $lang, $trbl ){
         global $iclTranslationManagement;
 
-        if( $this->woocommerce_wpml->sync_product_data->check_if_product_fields_sync_needed( $original_variation_id, $variation_id, 'postmeta_fields' ) ){
+        if( $this->woocommerce_wpml->sync_product_data->check_if_product_fields_sync_needed( $original_variation_id, $variation_id, 'postmeta_fields' ) || $trbl ){
             // custom fields
             $settings = $iclTranslationManagement->settings[ 'custom_fields_translation' ];
             $all_meta = get_post_custom( $original_variation_id );
