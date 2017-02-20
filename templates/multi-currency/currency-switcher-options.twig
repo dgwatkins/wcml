@@ -119,13 +119,13 @@
             <ul class="wcml_curr_visibility">
                 <li>
                     <label>
-                        <input type="checkbox" name="currency_switcher_product_visibility" value="1" {%if currency_switcher.visibility_on%}checked="checked"{% endif %}>
+                        <input type="checkbox" name="currency_switcher_product_visibility" value="1" {%if currency_switcher.visibility_on %}checked="checked"{% endif %}>
                         {{ currency_switcher.visibility_label }}
                     </label>
                 </li>
             </ul>
             <div>
-                <table class="wcml-cs-list">
+                <table class="wcml-cs-list" {%if not currency_switcher.visibility_on %} style="display:none" {% endif %}>
                     <thead>
                         <tr>
                             <th>{{ currency_switcher.headers.preview }}</th>
