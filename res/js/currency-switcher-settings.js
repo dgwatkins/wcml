@@ -129,7 +129,10 @@ jQuery( function($){
                     switcher_id: switcher_id
                 },
                 success: function(e){
-                    switcher_row.hide();
+                    switcher_row.remove();
+                    if( $('#currency-switcher-widget .wcml-cs-list').find('tbody tr').length == 1 ){
+                        $('#currency-switcher-widget .wcml-cs-list').find('thead tr').fadeOut();
+                    }
                     if( $('.wcml_add_cs_sidebar').is(':hidden') ){
                         $('.wcml_add_cs_sidebar').fadeIn();
                     }
