@@ -34,9 +34,9 @@ class WCML_Currency_Switcher{
 	public static function get_settings( $switcher_id ) {
 		global $woocommerce_wpml;
 
-		$wcml_settings =& $woocommerce_wpml->settings;
+		$wcml_settings = $woocommerce_wpml->get_settings();
 
-		return $wcml_settings[ 'currency_switchers' ][ $switcher_id ];
+		return isset( $wcml_settings[ 'currency_switchers' ][ $switcher_id ] ) ? $wcml_settings[ 'currency_switchers' ][ $switcher_id ] : array();
 	}
 
 	public function currency_switcher_shortcode( $atts ) {
