@@ -9,6 +9,9 @@
     "develop_branch": "develop",
     "master_branch": "master"
   },
+  "accessTokens": {
+    "scrutinizer-read": "1404f3a2ea0593147e5026bc041dee3ac49ced04ff2e3dbcbfe6c41e897dcbec"
+  },
   "gitlab": {
     "apiUrl": "https://git.onthegosystems.com/api/v3/"
   },
@@ -18,6 +21,12 @@
       "name": "wp_test_db",
       "user": "root",
       "password": "mysql_strong_password"
+    },
+    "scrutinizer": {
+      "host": "127.0.0.1",
+      "name": "wp_test_db",
+      "user": "root",
+      "password": ""
     },
     "local": {
       "host": "127.0.0.1",
@@ -95,25 +104,29 @@
       "server": "ssh://git@git.onthegosystems.com:10022",
       "namespace": "wpml",
       "project_slug": "wpml-translation-management",
-      "db": "tests_wpml_tm"
+      "db": "tests_wpml_tm",
+      "clone_only": true
     },
     {
       "server": "ssh://git@git.onthegosystems.com:10022",
       "namespace": "wpml",
       "project_slug": "wpml-string-translation",
-      "db": "tests_wpml_st"
+      "db": "tests_wpml_st",
+      "clone_only": true
     },
     {
       "server": "ssh://git@git.onthegosystems.com:10022",
       "namespace": "wpml",
       "project_slug": "wpml-media-translation",
-      "db": "tests_wpml_media"
+      "db": "tests_wpml_media",
+      "clone_only": true
     },
     {
       "server": "ssh://git@git.onthegosystems.com:10022",
       "namespace": "wpml",
       "project_slug": "sitepress-multilingual-cms",
-      "db": "tests_wpml_core"
+      "db": "tests_wpml_core",
+      "clone_only": true
     }
   ]
 }

@@ -58,9 +58,6 @@ class woocommerce_wpml {
     /** @var  WCML_xDomain_Data */
     private $xdomain_data;
 
-    /** @var  WCML_WooCommerce_Rest_API_Support */
-    private $wc_rest_api;
-
     /**
      * @var WCML_Screen_Options
      */
@@ -76,6 +73,15 @@ class woocommerce_wpml {
         $this->xdomain_data = new WCML_xDomain_Data;
 
         new WCML_Widgets( $this );
+
+	    if ( 'yes' == get_option( 'woocommerce_api_enabled' ) ){
+	    	global $sitepress;
+	    	if( version_compare( WC()->version, '2.6') ){
+			    new WCML_REST_API_Support( $this, $sitepress );
+		    }else{
+			    new WCML_WooCommerce_Rest_API_Support( $this, $sitepress );
+		    }
+	    }
 
         add_action('init', array($this, 'init'),2);
 
@@ -176,10 +182,6 @@ class woocommerce_wpml {
 
         new WCML_Ajax_Setup( $sitepress );
         new WCML_Fix_Copied_Custom_Fields_WPML353();
-
-        if ( 'yes' == get_option( 'woocommerce_api_enabled' ) ){
-            $this->wc_rest_api = new WCML_WooCommerce_Rest_API_Support( $this, $sitepress );
-        }
 
         WCML_Install::initialize( $this, $sitepress );
 
