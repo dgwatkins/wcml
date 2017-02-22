@@ -26,8 +26,12 @@ jQuery( function($){
             }
         }
 
-        if( data.class === 'undefined'){
+        if( typeof data.class === 'undefined'){
             data.class = '';
+        }
+
+        if( typeof data.draggable === 'undefined'){
+            data.draggable = false;
         }
 
         if(!dialog_div.length){
@@ -46,7 +50,7 @@ jQuery( function($){
                 width: "90%",
                 height: window_h * 0.7,
                 resizable:false,
-                draggable:false,
+                draggable: data.draggable,
                 beforeOpen: function (event) {
                 },
                 beforeClose: function (event) {
@@ -201,6 +205,7 @@ jQuery( function($){
 
             var data = $(this).data();
             data.class = 'wcml-cs-dialog';
+            data.draggable = true;
 
             if( dialog_id ){
                  WCML_Dialog.dialog( dialog_id, data );
