@@ -148,7 +148,7 @@ jQuery( function($){
             }
 
             var ajaxLoader = $('<span class="spinner" style="visibility: visible;">');
-            dialog.find('.wcml-dialog-container #wcml_curr_sel_preview').html(ajaxLoader);
+            dialog.find('#wcml_curr_sel_preview_wrap').append(ajaxLoader);
 
             var color_scheme = {};
             dialog.find('input.js-wcml-cs-colorpicker').each( function(){
@@ -177,7 +177,7 @@ jQuery( function($){
                     }else{
                         $( '#'+resp.inline_styles_id).html( resp.inline_css );
                     }
-
+                    ajaxLoader.remove();
                     if( update_settings ){
                         if( switcher_id == 'new_widget'){
                             switcher_id = dialog.find('#wcml-cs-widget').val();
