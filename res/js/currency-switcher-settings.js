@@ -100,6 +100,7 @@ jQuery( function($){
                         }
                     }
                     $('#wcml_currency_switcher_options_' + widget_id).remove();
+                    dialog.find('.wcml-dialog-container').attr('id','wcml-dialog-wcml_currency_switcher_options_'+ widget_id );
                     dialog.find(':submit,:button').prop('disabled', false);
                     ajaxLoader.remove();
 
