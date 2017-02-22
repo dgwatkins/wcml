@@ -17,12 +17,16 @@ class WCML_The_Events_Calendar{
 
     	if( isset( $_POST['action'] ) && strpos( $_POST['action'], 'tribe-ticket-add-') === 0 ){
 		    add_action( 'tribe_tickets_ticket_add', array( $this, 'unset_post_post_id' ) );
+		    add_action( 'event_tickets_after_save_ticket', array( $this, 'restore_post_post_id' ) );
+
 	    }
 
 	    if( is_admin() ){
 		    $this->tp = new WPML_Element_Translation_Package;
 
 		    add_action( 'save_post', array( $this, 'synchronize_event_for_ticket' ), 20, 3 );
+
+		    add_action( 'wpml_pb_shortcode_content_for_translation' , array( $this, 'maybe_mark_event_as_needs_update' ), 100, 2 );
 
 		    add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_RSVP_tickets_to_translation_job' ), 10, 2 );
 		    add_action( 'wpml_pro_translation_completed', array( $this, 'save_RSVP_tickets_translations' ), 10, 3 );
@@ -36,13 +40,23 @@ class WCML_The_Events_Calendar{
 
 	    } else {
 		    add_action( 'event_tickets_rsvp_tickets_generated', array( $this, 'sync_rsvp_fields_on_attendee_created' ), 10, 3 );
+		    add_filter( 'tribe_get_organizer_ids', array( $this, 'get_translated_organizer_ids' ), 10, 2 );
 	    }
 
     }
 
     public function unset_post_post_id(){
-	    unset( $_POST['post_ID'] );
+		if( isset( $_POST['post_ID'] ) ){
+			$this->ticket_post_id_backup = $_POST['post_ID'];
+			unset( $_POST['post_ID'] );
+		}
     }
+
+    public function restore_post_post_id(){
+    	if( isset( $this->ticket_post_id_backup ) ){
+		    $_POST['post_ID'] = $this->ticket_post_id_backup;
+	    }
+	}
 
     public function synchronize_event_for_ticket( $post_id, $post, $update ){
 
@@ -64,6 +78,44 @@ class WCML_The_Events_Calendar{
 			}
 
 	    }
+    }
+
+    public function maybe_mark_event_as_needs_update( $content, $post_id ){
+    	$post = get_post( $post_id );
+
+	    if( $post->post_type == 'tribe_events' ){
+
+	    	if( $post_id == $this->sitepress->get_original_element_id( $post_id, 'post_tribe_events' ) ){
+
+			    $tickets = [];
+			    $ticket_meta = [];
+
+	    		if( class_exists('Tribe__Tickets__RSVP') ){
+				    $ticket_ids = Tribe__Tickets__RSVP::get_instance()->get_tickets_ids( $post_id );
+				    foreach ( $ticket_ids as $ticket_id ) {
+				    	$ticket = Tribe__Tickets__RSVP::get_instance()->get_ticket( $post_id, $ticket_id );
+					    $tickets[] = $ticket->name . "|#|" . $ticket->description;
+					    $ticket_meta[] = get_post_meta( $ticket_id, '_tribe_tickets_meta', true );
+				    }
+			    }
+
+			    if( class_exists('Tribe__Tickets_Plus__Commerce__WooCommerce__Main') ){
+				    $ticket_ids  = Tribe__Tickets_Plus__Commerce__WooCommerce__Main::get_instance()->get_tickets_ids( $post->ID );
+				    foreach ( $ticket_ids as $ticket_id ) {
+					    $ticket = Tribe__Tickets_Plus__Commerce__WooCommerce__Main::get_instance()->get_ticket( $post_id, $ticket_id );
+					    $tickets[] = $ticket->name . "|#|" . $ticket->description;
+					    $ticket_meta[] = get_post_meta( $ticket_id, '_tribe_tickets_meta', true );
+				    }
+			    }
+
+			    $content .= md5( serialize( $tickets ) );
+			    $content .= md5( serialize( $ticket_meta ) );
+		    }
+
+
+	    }
+
+	    return $content;
     }
 
     public function append_RSVP_tickets_to_translation_job( $package, $post ){
@@ -96,6 +148,8 @@ class WCML_The_Events_Calendar{
 					    );
 				    }
 
+				    // fieldsets
+				    $package = $this->append_tickets_meta( $package, $ticket_id, $original_ticket_id );
 
 			    }
 		    }
@@ -158,6 +212,8 @@ class WCML_The_Events_Calendar{
 
 		    $this->sync_custom_fields( $rsvp_post_id, $translated_rsvp_post_id );
 
+			$this->save_ticket_meta_translations( $rsvp_post_id, $translated_rsvp_post_id );
+
 	    }
     }
 
@@ -191,6 +247,8 @@ class WCML_The_Events_Calendar{
 						);
 					}
 
+					// fieldsets
+					$package = $this->append_tickets_meta( $package, $ticket_id, $original_ticket_id );
 
 				}
 			}
@@ -251,7 +309,82 @@ class WCML_The_Events_Calendar{
 
 			$this->sync_custom_fields( $ticket_post_id, $translated_ticket_post_id );
 
+			$this->save_ticket_meta_translations( $ticket_post_id, $translated_ticket_post_id );
+
 		}
+	}
+
+	private function append_tickets_meta( $package, $ticket_id, $original_ticket_id ){
+
+		$ticket_meta = get_post_meta( $ticket_id, '_tribe_tickets_meta', true );
+		if( is_array( $ticket_meta ) ) {
+			foreach ( $ticket_meta as $k => $meta ) {
+				$package['contents'][ 'rsvp_tickets_' . $original_ticket_id . '_meta_' . $k . '_label' ] = array(
+					'translate' => 1,
+					'data'      => $this->tp->encode_field_data( $meta['label'], 'base64' ),
+					'format'    => 'base64',
+				);
+				$package['contents'][ 'rsvp_tickets_' . $original_ticket_id . '_meta_' . $k . '_slug' ]  = array(
+					'translate' => 1,
+					'data'      => $this->tp->encode_field_data( $meta['slug'], 'base64' ),
+					'format'    => 'base64',
+				);
+				if ( isset( $meta['extra']['options'] ) ) {
+					foreach ( $meta['extra']['options'] as $option_id => $option_name ) {
+
+						$package['contents'][ 'rsvp_tickets_' . $original_ticket_id . '_meta_' . $k . '_option_' . $option_id ] = array(
+							'translate' => 1,
+							'data'      => $this->tp->encode_field_data( $option_name, 'base64' ),
+							'format'    => 'base64',
+						);
+
+					}
+
+				}
+			}
+		}
+
+		return $package;
+	}
+
+	private function save_ticket_meta_translations( $ticket_id, $translated_ticket_id ){
+
+		$ticket_meta = get_post_meta( $ticket_id, '_tribe_tickets_meta', true );
+		$translated_ticket_meta = $ticket_meta;
+		if( is_array( $ticket_meta ) ){
+
+			foreach ( $ticket_meta as $k => $meta ) {
+
+				$key = 'rsvp_tickets_' . $ticket_id . '_meta_' . $k . '_label';
+				if( isset( $data[$key] ) && $data[$key]['finished'] == 'on' ){
+					$translated_ticket_meta[$k]['label'] = $data[$key]['data'];
+				}
+
+				$key = 'rsvp_tickets_' . $ticket_id . '_meta_' . $k . '_slug';
+				if( isset( $data[$key] ) && $data[$key]['finished'] == 'on' ){
+					$translated_ticket_meta[$k]['slug'] = $data[$key]['data'];
+				}
+
+				if ( isset( $meta['extra']['options'] ) ) {
+					foreach ( $meta['extra']['options'] as $option_id => $option_name ) {
+						$key = 'rsvp_tickets_' . $ticket_id . '_meta_' . $k . '_option_' . $option_id;
+						if( isset( $data[$key] ) && $data[$key]['finished'] == 'on' ){
+							$translated_ticket_meta[$k]['extra']['options'][$option_id] = $data[$key]['data'];
+						}
+					}
+				}
+
+			}
+
+		}
+
+		update_post_meta( $translated_ticket_id, '_tribe_tickets_meta', $translated_ticket_meta );
+
+		update_post_meta( $translated_ticket_id, '_tribe_tickets_meta_enabled',
+			get_post_meta( $ticket_id, '_tribe_tickets_meta_enabled', true )
+		);
+
+
 	}
 
 	private function sync_custom_fields( $original_ticket_id, $translated_ticket_id ){
@@ -349,5 +482,11 @@ class WCML_The_Events_Calendar{
 	    }
     }
 
+    public function get_translated_organizer_ids( $organizer_ids, $event_id ){
+    	foreach( $organizer_ids as $key => $organizer_id ){
+		    $organizer_ids[$key] = apply_filters( 'translate_object_id', $organizer_id, 'tribe_organizer', true );
+	    }
+    	return $organizer_ids;
+    }
 }
 
