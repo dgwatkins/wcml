@@ -175,6 +175,11 @@ class WCML_Compatibility {
             $this->pip = new WCML_Pip();
         }
 
+	    // The Events Calendar
+	    if( class_exists( 'Tribe__Events__Main' ) ){
+		    new WCML_The_Events_Calendar( $this->sitepress, $this->woocommerce_wpml );
+	    }
+
 
     }
 
