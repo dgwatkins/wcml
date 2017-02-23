@@ -240,9 +240,34 @@ class WCML_Currency_Switcher{
 					}
 				}
 			}
+
+			$wcml_settings = $this->woocommerce_wpml->get_settings();
+			if( $found && empty( $wcml_settings[ 'currency_switchers' ][ $sidebar ] ) ){
+				$wcml_settings[ 'currency_switchers' ][ $sidebar ] = $this->get_switcher_default_settings();
+				$this->woocommerce_wpml->update_settings( $wcml_settings );
+			}
 		}
 
 		return $sidebars;
+	}
+
+	public function get_switcher_default_settings(){
+		return array(
+			'switcher_style' => 'wcml-dropdown',
+			'widget_title'  =>  '',
+			'template' => '%name% (%symbol%) - %code%',
+			'color_scheme' => array(
+				'font_current_normal'       => '',
+				'font_current_hover'        => '',
+				'background_current_normal' => '',
+				'background_current_hover'  => '',
+				'font_other_normal'         => '',
+				'font_other_hover'          => '',
+				'background_other_normal'   => '',
+				'background_other_hover'    => '',
+				'border_normal'             => ''
+			)
+		);
 	}
 
 }
