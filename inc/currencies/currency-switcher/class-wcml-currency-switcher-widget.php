@@ -2,6 +2,8 @@
   
 class WCML_Currency_Switcher_Widget extends WP_Widget {
 
+    const SLUG = 'currency_sel_widget';
+
     function __construct() {
         parent::__construct( 'currency_sel_widget', __('Currency switcher', 'woocommerce-multilingual'), __('Currency switcher', 'woocommerce-multilingual'));
     }

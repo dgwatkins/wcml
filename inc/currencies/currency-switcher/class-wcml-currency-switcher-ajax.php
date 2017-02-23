@@ -48,6 +48,7 @@ class WCML_Currency_Switcher_Ajax{
 		$switcher_id = sanitize_text_field( $_POST[ 'switcher_id' ] );
 		if( $switcher_id == 'new_widget' ){
 			$switcher_id = sanitize_text_field( $_POST[ 'widget_id' ] );
+
 		}
 
 		$switcher_settings[ 'widget_title' ]   = sanitize_text_field( $_POST[ 'widget_title' ] );
@@ -79,11 +80,59 @@ class WCML_Currency_Switcher_Ajax{
 			}
 
 			update_option( 'widget_currency_sel_widget', $widget_settings );
+
+			$this->synchronize_widget_instances( $widget_settings );
 		}
 
 		$this->woocommerce_wpml->update_settings( $wcml_settings );
 
 		die();
+	}
+
+	private function synchronize_widget_instances( $widget_settings ) {
+		require_once( ABSPATH . '/wp-admin/includes/widgets.php' );
+		$sidebars_widgets = wp_get_sidebars_widgets();
+
+		if ( is_array( $sidebars_widgets ) ) {
+
+			foreach ( $sidebars_widgets as $sidebar => $widgets ) {
+				if ( 'wp_inactive_widgets' === $sidebar ) {
+					continue;
+				}
+
+				$found = false;
+				if ( is_array( $widgets ) ) {
+					foreach ( $widgets as $key => $widget_id ) {
+						if ( strpos( $widget_id, WCML_Currency_Switcher_Widget::SLUG ) === 0 ) {
+
+							if ( $found ) { // Only synchronize the first CS widget instance per sidebar
+								unset( $sidebars_widgets[ $sidebar ][ $key ] );
+								continue;
+							}
+
+							$found = true;
+
+						}
+					}
+				}
+
+				if ( ! $found ) {
+
+					foreach( $widget_settings as $key => $widget_setting ){
+						if( $widget_setting['id'] == $sidebar ){
+							array_unshift( $sidebars_widgets[ $sidebar ], WCML_Currency_Switcher_Widget::SLUG.'-'.$key );
+						}
+					}
+
+				}
+			}
+		}
+
+		remove_action( 'pre_update_option_sidebars_widgets', array( $this->woocommerce_wpml->multi_currency->currency_switcher, 'update_option_sidebars_widgets' ), 10, 2 );
+
+		wp_set_sidebars_widgets( $sidebars_widgets );
+
+		add_action( 'pre_update_option_sidebars_widgets', array( $this->woocommerce_wpml->multi_currency->currency_switcher, 'update_option_sidebars_widgets' ), 10, 2 );
 	}
 
 	public function wcml_delete_currency_switcher(){

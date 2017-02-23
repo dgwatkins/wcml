@@ -29,6 +29,8 @@ class WCML_Currency_Switcher{
 
 		// Built in currency switcher
 		add_action( 'woocommerce_product_meta_start', array($this, 'show_currency_switcher') );
+
+		add_action( 'pre_update_option_sidebars_widgets', array( $this, 'update_option_sidebars_widgets' ), 10, 2 );
 	}
 
 	public static function get_settings( $switcher_id ) {
@@ -214,6 +216,29 @@ class WCML_Currency_Switcher{
 		foreach( $sidebars as $key => $sidebar ){
 			if ( isset( $wcml_settings[ 'currency_switchers' ][ $sidebar[ 'id' ] ] ) ){
 				unset( $sidebars[ $key ] );
+			}
+		}
+
+		return $sidebars;
+	}
+
+	public function update_option_sidebars_widgets( $sidebars, $old_sidebars ) {
+
+		foreach ( $sidebars as $sidebar => $widgets ) {
+			if ( 'wp_inactive_widgets' === $sidebar ) {
+				continue;
+			}
+			$found = false;
+			if ( is_array( $widgets ) ) {
+				foreach ( $widgets as $key => $widget_id ) {
+					if ( strpos($widget_id, WCML_Currency_Switcher_Widget::SLUG ) === 0 ) {
+						if ( $found ) { //Only one CS widget instance per sidebar
+							unset($sidebars[$sidebar][$key]);
+							continue;
+						}
+						$found = true;
+					}
+				}
 			}
 		}
 
