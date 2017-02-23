@@ -301,14 +301,16 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
             $currency_switchers[ 'product' ] = $currency_switchers[ 'new_widget' ];
         }
 
+        $widget_currency_switchers = $this->widget_currency_switchers();
+
         foreach( $currency_switchers as $switcher_id => $currency_switcher ){
 
             if( $switcher_id == 'product'){
-                $dialog_title = __('Edit Product Area Currency Switcher', 'woocommerce-multilingual');
+                $dialog_title = __('Edit Product Currency Switcher', 'woocommerce-multilingual');
             }elseif( $switcher_id == 'new_widget' ){
                 $dialog_title = __('New Widget Area Currency Switcher', 'woocommerce-multilingual');
             }else{
-                $dialog_title = __('Edit Widget Area Currency Switcher', 'woocommerce-multilingual');
+                $dialog_title = sprintf( __('Edit %s Currency Switcher', 'woocommerce-multilingual'), $widget_currency_switchers[ $switcher_id ]['name'] );
             }
 
             $args = array(

@@ -244,8 +244,11 @@ class WCML_Currency_Switcher{
 			$wcml_settings = $this->woocommerce_wpml->get_settings();
 			if( $found && empty( $wcml_settings[ 'currency_switchers' ][ $sidebar ] ) ){
 				$wcml_settings[ 'currency_switchers' ][ $sidebar ] = $this->get_switcher_default_settings();
-				$this->woocommerce_wpml->update_settings( $wcml_settings );
+			}elseif( !$found && isset( $wcml_settings[ 'currency_switchers' ][ $sidebar ] ) ){
+				unset( $wcml_settings[ 'currency_switchers' ][ $sidebar ] );
 			}
+
+			$this->woocommerce_wpml->update_settings( $wcml_settings );
 		}
 
 		return $sidebars;

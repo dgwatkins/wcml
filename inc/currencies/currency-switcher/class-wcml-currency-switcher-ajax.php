@@ -90,49 +90,43 @@ class WCML_Currency_Switcher_Ajax{
 	}
 
 	private function synchronize_widget_instances( $widget_settings ) {
-		require_once( ABSPATH . '/wp-admin/includes/widgets.php' );
-		$sidebars_widgets = wp_get_sidebars_widgets();
 
-		if ( is_array( $sidebars_widgets ) ) {
+		$sidebars_widgets = $this->get_sidebars_widgets();
 
-			foreach ( $sidebars_widgets as $sidebar => $widgets ) {
-				if ( 'wp_inactive_widgets' === $sidebar ) {
-					continue;
-				}
+		foreach ( $sidebars_widgets as $sidebar => $widgets ) {
+			if ( 'wp_inactive_widgets' === $sidebar ) {
+				continue;
+			}
 
-				$found = false;
-				if ( is_array( $widgets ) ) {
-					foreach ( $widgets as $key => $widget_id ) {
-						if ( strpos( $widget_id, WCML_Currency_Switcher_Widget::SLUG ) === 0 ) {
+			$found = false;
+			if ( is_array( $widgets ) ) {
+				foreach ( $widgets as $key => $widget_id ) {
+					if ( strpos( $widget_id, WCML_Currency_Switcher_Widget::SLUG ) === 0 ) {
 
-							if ( $found ) { // Only synchronize the first CS widget instance per sidebar
-								unset( $sidebars_widgets[ $sidebar ][ $key ] );
-								continue;
-							}
-
-							$found = true;
-
+						if ( $found ) { // Only synchronize the first CS widget instance per sidebar
+							unset( $sidebars_widgets[ $sidebar ][ $key ] );
+							continue;
 						}
+
+						$found = true;
+
+					}
+				}
+			}
+
+			if ( ! $found ) {
+
+				foreach( $widget_settings as $key => $widget_setting ){
+					if( $widget_setting['id'] == $sidebar ){
+						array_unshift( $sidebars_widgets[ $sidebar ], WCML_Currency_Switcher_Widget::SLUG.'-'.$key );
 					}
 				}
 
-				if ( ! $found ) {
-
-					foreach( $widget_settings as $key => $widget_setting ){
-						if( $widget_setting['id'] == $sidebar ){
-							array_unshift( $sidebars_widgets[ $sidebar ], WCML_Currency_Switcher_Widget::SLUG.'-'.$key );
-						}
-					}
-
-				}
 			}
 		}
 
-		remove_action( 'pre_update_option_sidebars_widgets', array( $this->woocommerce_wpml->multi_currency->currency_switcher, 'update_option_sidebars_widgets' ), 10, 2 );
+		$this->update_sidebars_widgets( $sidebars_widgets );
 
-		wp_set_sidebars_widgets( $sidebars_widgets );
-
-		add_action( 'pre_update_option_sidebars_widgets', array( $this->woocommerce_wpml->multi_currency->currency_switcher, 'update_option_sidebars_widgets' ), 10, 2 );
 	}
 
 	public function wcml_delete_currency_switcher(){
@@ -143,11 +137,29 @@ class WCML_Currency_Switcher_Ajax{
 
 		$switcher_id = sanitize_text_field( $_POST[ 'switcher_id' ] );
 
-		$wcml_settings =& $this->woocommerce_wpml->settings;
+		$wcml_settings = $this->woocommerce_wpml->get_settings();
 
 		unset( $wcml_settings[ 'currency_switchers' ][ $switcher_id ] );
 
 		$this->woocommerce_wpml->update_settings( $wcml_settings );
+
+		$sidebars_widgets = $this->get_sidebars_widgets();
+
+		foreach ($sidebars_widgets as $sidebar => $widgets) {
+			if ($sidebar != $switcher_id) {
+				continue;
+			}
+
+			if (is_array($widgets)) {
+				foreach ($widgets as $key => $widget_id) {
+					if (strpos($widget_id, WCML_Currency_Switcher_Widget::SLUG) === 0) {
+						unset($sidebars_widgets[$sidebar][$key]);
+					}
+				}
+			}
+		}
+
+		$this->update_sidebars_widgets( $sidebars_widgets );
 
 		die();
 	}
@@ -190,4 +202,17 @@ class WCML_Currency_Switcher_Ajax{
 		die();
 	}
 
+	public function get_sidebars_widgets(){
+		require_once( ABSPATH . '/wp-admin/includes/widgets.php' );
+		$sidebars_widgets = wp_get_sidebars_widgets();
+
+		return is_array( $sidebars_widgets ) ? $sidebars_widgets : array();
+	}
+	public function update_sidebars_widgets( $sidebars_widgets ){
+		remove_action( 'pre_update_option_sidebars_widgets', array( $this->woocommerce_wpml->multi_currency->currency_switcher, 'update_option_sidebars_widgets' ), 10, 2 );
+
+		wp_set_sidebars_widgets( $sidebars_widgets );
+
+		add_action( 'pre_update_option_sidebars_widgets', array( $this->woocommerce_wpml->multi_currency->currency_switcher, 'update_option_sidebars_widgets' ), 10, 2 );
+	}
 }

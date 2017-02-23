@@ -35,10 +35,11 @@ class WCML_Currency_Switcher_Widget extends WP_Widget {
     }
 
     function form( $instance ) {
-        if( !isset( $instance[ 'id' ] ) )  $instance[ 'id' ] = 'product';
+        if( !isset( $instance[ 'id' ] ) ) $instance[ 'id' ] = '';
 
-        printf('<p><a class="button button-secondary" href="%s"><span class="otgs-ico-edit"></span> %s</a></p>',admin_url('admin.php?page=wpml-wcml&tab=multi-currency#currency-switcher/'.$instance[ 'id' ]),__('Customize the currency switcher', 'woocommerce-multilingual'));
+        printf('<p><a class="button button-secondary wcml-cs-widgets-edit-link" href="%s"><span class="otgs-ico-edit"></span> %s</a></p>',admin_url('admin.php?page=wpml-wcml&tab=multi-currency#currency-switcher/'.$instance[ 'id' ]),__('Customize the currency switcher', 'woocommerce-multilingual'));
         return;
 
     }
+
 }

@@ -110,6 +110,11 @@ class WCML_Resources {
             wp_enqueue_script( 'wpml_tm' );
         }
 
+        if ( self::$pagenow == 'widgets.php' ) {
+            wp_register_script( 'wcml_widgets', WCML_PLUGIN_URL . '/res/js/widgets' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION );
+            wp_enqueue_script( 'wcml_widgets' );
+        }
+
         if ( self::$page == 'wpml-wcml' && self::$tab == 'multi-currency' ) {
             wp_register_script( 'multi-currency', WCML_PLUGIN_URL . '/res/js/multi-currency' . WCML_JS_MIN . '.js', array('jquery', 'jquery-ui-sortable'), WCML_VERSION, true );
             wp_enqueue_script( 'multi-currency' );
