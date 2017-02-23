@@ -252,17 +252,9 @@ class WCML_Synchronize_Variations_Data{
                             $meta_value = $trn_post_meta['meta_value'];
                             $meta_key = $trn_post_meta['meta_key'];
                         }
-                        //use direct query to update '_stock' to not trigger additional filters
+
                         if( $meta_key == '_stock'){
-                            $this->wpdb->update( $this->wpdb->postmeta,
-                                array(
-                                    'meta_value' => $meta_value
-                                ),
-                                array(
-                                    'meta_key'  => $meta_key,
-                                    'post_id' => $variation_id
-                                )
-                            );
+                            $this->update_stock_quantity( $variation_id, $meta_value );
                         }else{
                             update_post_meta( $variation_id, $meta_key, $meta_value );
                         }
@@ -286,6 +278,31 @@ class WCML_Synchronize_Variations_Data{
                 }
             }
         }
+    }
+
+    //use direct query to update '_stock' to not trigger additional filters
+    public function update_stock_quantity( $variation_id, $meta_value ){
+
+        if( !get_post_meta( $variation_id, '_stock' ) ){
+            $this->wpdb->insert( $this->wpdb->postmeta,
+                array(
+                    'meta_value' => $meta_value,
+                    'meta_key'   => '_stock',
+                    'post_id'    => $variation_id
+                )
+            );
+        }else{
+            $this->wpdb->update( $this->wpdb->postmeta,
+                array(
+                    'meta_value' => $meta_value
+                ),
+                array(
+                    'meta_key'   => '_stock',
+                    'post_id'    => $variation_id
+                )
+            );
+        }
+
     }
 
     public function delete_removed_variation_attributes( $orig_product_id, $variation_id ){
