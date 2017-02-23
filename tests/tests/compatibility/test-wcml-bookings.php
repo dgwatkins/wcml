@@ -955,6 +955,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			),
 		);
 		$this->assertEquals( $expected, $bookings->append_persons_to_translation_package( array(), $product_obj ) );
+
 		set_current_screen( 'front' );
 	}
 
@@ -1253,11 +1254,12 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 
 		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
 		$output = $bookings->filter_bundled_product_in_cart_contents( $cart_item, null, $this->second_language );
-		$this->assertEquals( $translation, $output['data']->id );
-		$this->assertEquals( 'booking', $output['data']->product_type );
+
+		$this->assertEquals( $translation, $output['data']->get_id() );
+		$this->assertEquals( 'booking', $output['data']->get_type() );
 		$this->assertEquals( $cart_item['booking']['_year'], $output['booking']['_year'] );
 		$this->assertEquals( $cart_item['booking']['_month'], $output['booking']['_month'] );
 		$this->assertEquals( $cart_item['booking']['_qty'], $output['booking']['_qty'] );
-		$this->assertEquals( $prod_qty, get_post_meta( $output['data']->id, '_wc_booking_qty', true ) );
+		$this->assertEquals( $prod_qty, get_post_meta( $output['data']->get_id(), '_wc_booking_qty', true ) );
 	}
 }
