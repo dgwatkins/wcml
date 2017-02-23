@@ -317,15 +317,18 @@ class WCML_Synchronize_Product_Data{
 
     public function sync_stock_status_for_translations( $id, $status ){
 
-        $type = get_post_type( $id );
-        $trid = $this->sitepress->get_element_trid( $id, 'post_'.$type );
-        $translations = $this->sitepress->get_element_translations( $trid, 'post_'.$type, true);
+        if( $this->woocommerce_wpml->products->is_original_product( $id ) ){
+            $type = get_post_type( $id );
+            $trid = $this->sitepress->get_element_trid( $id, 'post_'.$type );
+            $translations = $this->sitepress->get_element_translations( $trid, 'post_'.$type, true);
 
-        foreach ( $translations as $translation ) {
-            if ( !$translation->original ) {
-                update_post_meta( $translation->element_id, '_stock_status', $status );
+            foreach ( $translations as $translation ) {
+                if ( !$translation->original ) {
+                    update_post_meta( $translation->element_id, '_stock_status', $status );
+                }
             }
         }
+
     }
 
     //sync product parent & post_status
