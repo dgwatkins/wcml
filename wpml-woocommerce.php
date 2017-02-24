@@ -6,7 +6,7 @@
   Author: OnTheGoSystems
   Author URI: http://www.onthegosystems.com/
   Text Domain: woocommerce-multilingual
-  Version: 4.1.0-dev
+  Version: 4.1.0-beta1
 */
 
 if( defined( 'WCML_VERSION' ) ) return;
