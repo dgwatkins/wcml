@@ -40,11 +40,11 @@ class WCML_WC_Strings{
     }
 
     function translated_attribute_label($label, $name, $product_obj = false){
-        global $sitepress, $product, $sitepress_settings;
+        global $sitepress, $product, $sitepress_settings, $woocommerce_wpml;
 
         $product_id = false;
         $lang = $sitepress->get_current_language();
-        $name = sanitize_title($name);
+
 
         if( isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) == 'shop_order' ){
             $lang = $sitepress->get_user_admin_language( get_current_user_id(), true );
@@ -58,13 +58,15 @@ class WCML_WC_Strings{
             $product_id = $product_obj->id;
         }
 
+        $name = $woocommerce_wpml->attributes->filter_attribute_name( $name, $product_id );
+
         if( $product_id ){
 
-            $custom_attr_translation =  get_post_meta( $product_id, 'attr_label_translations', true ) ;
+            $custom_attr_translation =  $woocommerce_wpml->attributes->get_attr_label_translations( $product_id, $lang ) ;
 
             if( $custom_attr_translation ){
-                if( isset( $custom_attr_translation[$lang][$name] ) ){
-                    return  $custom_attr_translation[$lang][$name];
+                if( isset( $custom_attr_translation[$name] ) ){
+                    return $custom_attr_translation[$name];
                 }
             }
 
