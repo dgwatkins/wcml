@@ -18,7 +18,7 @@ class WCML_Upgrade{
         '3.9',
         '3.9.1',
         '4.0',
-        '4.1'
+        '4.1.0'
     );
     
     function __construct(){
@@ -529,7 +529,7 @@ class WCML_Upgrade{
 
     }
 
-    function upgrade_4_1(){
+    function upgrade_4_1_0(){
         global $wpdb;
 
         $results = $wpdb->get_results("
@@ -547,7 +547,39 @@ class WCML_Upgrade{
             }
 
         }
+        
+        $wcml_settings = get_option( '_wcml_settings' );
 
+        if( $wcml_settings[ 'currency_switcher_style' ] == 'list' ){
+            if(  $wcml_settings[ 'wcml_curr_sel_orientation' ] == 'horizontal' ){
+                $switcher_style = 'wcml-horizontal-list';
+            }else{
+                $switcher_style = 'wcml-vertical-list';
+            }
+        }else{
+            $switcher_style = 'wcml-dropdown';
+        }
+
+        $wcml_settings[ 'currency_switchers' ][ 'product' ] = array(
+            'switcher_style' => $switcher_style,
+            'template' => $wcml_settings[ 'wcml_curr_template' ],
+            'widget_title' => '',
+            'color_scheme' => array(
+                'font_current_normal'       => '',
+                'font_current_hover'        => '',
+                'background_current_normal' => '',
+                'background_current_hover'  => '',
+                'font_other_normal'         => '',
+                'font_other_hover'          => '',
+                'background_other_normal'   => '',
+                'background_other_hover'    => '',
+                'border_normal'             => ''
+            )
+        );
+
+
+        $wcml_settings[ 'currency_switcher_additional_css' ] = '';
+        update_option('_wcml_settings', $wcml_settings );
     }
 
 
