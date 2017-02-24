@@ -454,12 +454,13 @@ white-space: nowrap;
 
 
 .wcml-currency-preview-wrapper {
+	float: right;
 	background-color: #fff;
 	padding: 15px 10px 10px;
 	border: 1px solid #ccc;
 	width: 100%;
 	min-width: 150px;
-	min-height: 120px;
+	min-height: 40px;
 	box-sizing: border-box;
 	position: relative;
 	display: flex !important;
