@@ -35,7 +35,9 @@ class Test_WCML_Table_Rate_Shipping extends WCML_UnitTestCase {
 		$context = '';
 
 		$table_rate = new WCML_Table_Rate_Shipping( $this->sitepress, $this->woocommerce_wpml );
+		ob_start(); // hide pointer
 		$table_rate->init();
+		ob_end_clean();
 
 		$expected = array(
 			$rate_title,

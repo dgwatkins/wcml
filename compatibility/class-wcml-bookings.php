@@ -1782,13 +1782,13 @@ class WCML_Bookings {
 
 					$package['contents'][ 'wc_bookings:person:' . $person_type->ID . ':name' ] = array(
 						'translate' => 1,
-						'data'      => $this->tp->encode_field_data( $person_type->post_title, 'base64' ),
+						'data'      => $this->tp->encode_field_data( $person_type->get_name(), 'base64' ),
 						'format'    => 'base64'
 					);
 
 					$package['contents'][ 'wc_bookings:person:' . $person_type->ID . ':description' ] = array(
 						'translate' => 1,
-						'data'      => $this->tp->encode_field_data( $person_type->post_excerpt, 'base64' ),
+						'data'      => $this->tp->encode_field_data( $person_type->get_description(), 'base64' ),
 						'format'    => 'base64'
 					);
 

@@ -42,6 +42,8 @@ class WCML_Helper_Orders {
         wc_add_order_item_meta( $item_id, '_line_subtotal', $args[ '_line_subtotal' ] );
         wc_add_order_item_meta( $item_id, 'wpml_language', $args[ 'wpml_language' ] );
 
+        WooCommerce_Functions_Wrapper::reduce_stock( $args[ 'product_id' ], $args[ '_qty' ] );
+
         return $order;
     }
 

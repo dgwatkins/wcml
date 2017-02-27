@@ -464,12 +464,13 @@ class WCML_Product_Bundles{
     }
 
     public function resync_bundle( $cart_item, $session_values, $cart_item_key ) {
+
     	if ( isset( $cart_item[ 'bundled_items' ] ) && $cart_item[ 'data' ]->product_type === 'bundle' ) {
     		$current_bundle_id = apply_filters( 'translate_object_id', $cart_item[ 'product_id' ], 'product', true );
 			if ( $cart_item[ 'product_id' ] != $current_bundle_id ) {
 				$old_bundled_item_ids      = array_keys( $cart_item[ 'data' ]->bundle_data );
 				$cart_item[ 'data' ]       = wc_get_product( $current_bundle_id );
-                if( is_array( $cart_item[ 'data' ]->bundle_data ) ){
+                if( isset($cart_item[ 'data' ]->bundle_data) && is_array( $cart_item[ 'data' ]->bundle_data ) ){
                     $new_bundled_item_ids      = array_keys( $cart_item[ 'data' ]->bundle_data );
                     $remapped_bundled_item_ids = array();
                     foreach ( $old_bundled_item_ids as $old_item_id_index => $old_item_id ) {

@@ -48,7 +48,8 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 		$child_product_es = $this->wcml_helper->add_product( $this->second_language, $child_product->trid, 'Child Product ES', $parent_product_es->id );
 
 
-		$grouped_es = new WC_Product_Grouped($parent_product_es->id);
+		$grouped_es = new WC_Product_Grouped();
+		$grouped_es->set_children( $child_product_es->id );
 		$this->assertEquals(array( $child_product_es->id ), $grouped_es->get_children());
 
 
@@ -84,9 +85,9 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 
 		foreach( $this->test_data as $product ) {
 
-			$post = get_post($product['id']);
 			if (!empty($post)) {
-				$new_id = $wc_duplicate_class->duplicate_product($post);
+				$_REQUEST['post'] = $product['id'];
+				$new_id = $wc_duplicate_class->duplicate_product_action();
 				$duplicated_products = $this->woocommerce_wpml->sync_product_data->woocommerce_duplicate_product($new_id, $post);
 				//check duplicated products
 				$new_trid = $this->sitepress->get_element_trid($duplicated_products['original'], 'post_' . get_post_type($duplicated_products['original']));

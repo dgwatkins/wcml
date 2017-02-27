@@ -227,7 +227,8 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		$order = WCML_Helper_Orders::create_order( array( 'product_id' => $orig_product_id ) );
 		$this->woocommerce_wpml->sync_product_data->sync_product_stocks( $order, 'reduce' );
 
-		$this->assertEquals( 99, $orig_product->get_stock_quantity() );
+		$orig_product = wc_get_product( $orig_product_id );
+		$this->assertEquals( 98, $orig_product->get_stock_quantity() );
 
 		$es_product = wc_get_product( $es_product_id );
 		$this->assertEquals( 98, $es_product->get_stock_quantity() );
