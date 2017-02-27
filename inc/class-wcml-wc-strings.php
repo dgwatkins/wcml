@@ -50,12 +50,12 @@ class WCML_WC_Strings{
             $lang = $sitepress->get_user_admin_language( get_current_user_id(), true );
         }
 
-        if( isset($product->id) ){
-            $product_id = $product->id;
+        if( $product ){
+            $product_id = WooCommerce_Functions_Wrapper::get_product_id( $product );
         }elseif( is_numeric( $product_obj ) ){
             $product_id = $product_obj;
-        }elseif( isset($product_obj->id) ){
-            $product_id = $product_obj->id;
+        }elseif( $product_obj ){
+            $product_id = WooCommerce_Functions_Wrapper::get_product_id( $product_obj );
         }
 
         $name = $woocommerce_wpml->attributes->filter_attribute_name( $name, $product_id );
@@ -129,10 +129,10 @@ class WCML_WC_Strings{
         return $title;
     }
 
-    function translated_checkout_product_title($title,$product){
+    function translated_checkout_product_title( $title, $product ){
 
-        if(isset($product->id)){
-            $tr_product_id = apply_filters( 'translate_object_id', $product->id, 'product', true, $this->current_language );
+        if( $product ){
+            $tr_product_id = apply_filters( 'translate_object_id', WooCommerce_Functions_Wrapper::get_product_id( $product ), 'product', true, $this->current_language );
             $title = get_the_title($tr_product_id);
         }
 
