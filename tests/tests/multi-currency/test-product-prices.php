@@ -363,12 +363,12 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 			'variations' => array(
 				'small' => array(
 					'price'     => 1000,
-					'regular'   => 1100.33,
+					'regular'   => 1100,
 					'sale'   	=> 1000
 				),
 				'big' => array(
 					'price'     => 2000,
-					'regular'   => 2100.44,
+					'regular'   => 2100,
 					'sale'   	=> 2000
 				)
 			)
@@ -454,6 +454,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 	private function run_product_test( $product, $wc_product_type ){
 
+
 		$currencies = array_merge( array($this->default_currency), $this->secondary_currencies );
 
 		foreach( $currencies as $currency){
@@ -466,6 +467,9 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 			// Compare formatted price with expected formatted price
 			$this->assertEquals( $product['expected']['formatted'][$currency], $wc_product->get_price_html() );
+
+			// Flush products from cache (meta - incl. prices - already loaded )
+			wp_cache_flush();
 		}
 
 
