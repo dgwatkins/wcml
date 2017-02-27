@@ -87,8 +87,10 @@ class woocommerce_wpml {
 
         add_action('init', array($this, 'init'),2);
 
-        $this->cs_templates = new WCML_Currency_Switcher_Templates( $this );
-        $this->cs_templates->init_hooks();
+        if( defined( 'ICL_SITEPRESS_VERSION' ) && !ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ){
+            $this->cs_templates = new WCML_Currency_Switcher_Templates( $this );
+            $this->cs_templates->init_hooks();
+        }
     }
 
     /**
