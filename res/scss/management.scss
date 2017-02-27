@@ -69,7 +69,11 @@
 	margin: 0 0 $margin-sm 0;
 	border-bottom: 1px solid #ededed;
 	min-width: 900px;
-	overflow: hidden;
+	&:after {
+		content: '';
+		display: table;
+		clear: both;
+	}
 	&:last-of-type {
 		border: none;
 		margin: 0;
@@ -484,11 +488,44 @@ white-space: nowrap;
 	}
 }
 
-
-
 /**************************
 Currency switcher dialog
  **************************/
+
+.wcml-cs-dialog .wcml-currency-switcher-options-form {
+	@media (min-width: 1000px) {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		.wcml-currency-switcher-options {
+			width: 60%;
+			order: 1;
+			box-sizing: border-box;
+			& > h4:first-child {
+				margin-top: 0;
+			}
+		}
+
+		.wcml-currency-preview-wrapper {
+			width: 40%;
+			box-sizing: border-box;
+			order: 2;
+			& > div {
+				display: block;
+			}
+		}
+	}
+	@media (max-width: 999px) {
+		.wcml-currency-preview-wrapper {
+			margin: -17px -15px 30px -15px;
+			width: calc(100% + 2 * 15px);
+			border-left: 0;
+			border-right: 0;
+			z-index: 10;
+		}
+	}
+}
+
 .wcml-cs-panel-colors {
 	table {
 		width: 100%;
