@@ -212,7 +212,6 @@ jQuery( function($){
 
                 WCML_Currency_Switcher_Settings.initColorPicker();
                 WCML_Currency_Switcher_Settings.currency_switcher_preview( $('#wcml-dialog-'+dialog_id) );
-
             }
         });
     }

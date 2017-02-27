@@ -77,6 +77,9 @@ class WCML_Currency_Switcher_Templates {
                     }
                 }
             }
+        }else{
+            //set default template to active
+            $templates['wcml-dropdown'] = $this->templates['wcml-dropdown'];
         }
 
         return $templates;

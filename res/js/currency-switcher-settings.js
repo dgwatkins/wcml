@@ -206,6 +206,11 @@ jQuery( function($){
                     }else{
                         dialog.find('.wcml-currency-preview').html(resp.preview);
                     }
+
+                    if( switcher_style == 'wcml-dropdown-click' ){
+                        WCMLCurrecnySwitcherDropdownClick.init();
+                    }
+
                 }
             });
         }, 500),
