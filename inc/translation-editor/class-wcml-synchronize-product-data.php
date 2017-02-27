@@ -21,7 +21,12 @@ class WCML_Synchronize_Product_Data{
             add_action( 'icl_pro_translation_completed', array( $this, 'icl_pro_translation_completed' ) );
 
             add_filter( 'icl_make_duplicate', array( $this, 'icl_make_duplicate'), 110, 4 );
-            add_action( 'woocommerce_duplicate_product', array( $this, 'woocommerce_duplicate_product' ), 10, 2 );
+
+            if( ( defined('WC_VERSION') && version_compare( WC_VERSION , '2.7', '<' ) ) ) {
+                add_action('woocommerce_duplicate_product', array($this, 'woocommerce_duplicate_product'), 10, 2);
+            }else{
+                add_action( 'woocommerce_product_duplicate', array( $this, 'woocommerce_duplicate_product' ), 10, 2 );
+            }
 
             //quick & bulk edit
             add_action( 'woocommerce_product_quick_edit_save', array( $this, 'woocommerce_product_quick_edit_save' ) );
