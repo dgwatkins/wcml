@@ -470,7 +470,7 @@ class WCML_Product_Bundles{
 			if ( $cart_item[ 'product_id' ] != $current_bundle_id ) {
 				$old_bundled_item_ids      = array_keys( $cart_item[ 'data' ]->bundle_data );
 				$cart_item[ 'data' ]       = wc_get_product( $current_bundle_id );
-                if( is_array( $cart_item[ 'data' ]->bundle_data ) ){
+                if( isset($cart_item[ 'data' ]->bundle_data) && is_array( $cart_item[ 'data' ]->bundle_data ) ){
                     $new_bundled_item_ids      = array_keys( $cart_item[ 'data' ]->bundle_data );
                     $remapped_bundled_item_ids = array();
                     foreach ( $old_bundled_item_ids as $old_item_id_index => $old_item_id ) {
