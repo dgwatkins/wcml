@@ -141,6 +141,7 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
         }
 
         foreach( $this->currencies as $code => $currency ){
+	        wp_cache_flush(); // important ( products cache include prices )
 
             // Clean up the cart
             WC()->cart->empty_cart();
@@ -169,7 +170,6 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
 
 
     }
-
 
     public function test_free_shipping_eligibiltiy(){
 
@@ -209,6 +209,7 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
 
         // SECONDARY CURRENCIES
         foreach( $this->currencies as $code => $currency ){
+	        wp_cache_flush(); // important ( products cache include prices )
 
             // Clean up the cart
             WC()->cart->empty_cart();
