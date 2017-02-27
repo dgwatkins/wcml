@@ -168,6 +168,7 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
         $this->assertEquals( $items * $this->products[0]['price'],  WC()->cart->cart_contents_total );
 
         foreach( $this->currencies as $code => $currency ){
+	        wp_cache_flush(); // important ( products cache include prices )
 
             // Clean up the cart
             WC()->cart->empty_cart();
