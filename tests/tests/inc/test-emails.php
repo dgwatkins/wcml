@@ -27,11 +27,12 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 
 			// Add line item
 			$this->orig_product = $this->wcml_helper->add_product('en', false, 'product 1');
-			$item = new WC_Order_Item_Product(array(
+			$item = new WC_Order_Item_Product();
+			$item->set_props(array(
 				'qty' => 1,
 				'name' => 'product 1',
 				'tax_class' => '',
-				'product_id' => $this->orig_product->id,
+				'product' => wc_get_product( $this->orig_product->id ),
 				'variation_id' => 0,
 				'subtotal' => 12,
 				'total' => 12,
@@ -39,13 +40,12 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 				'total_tax' => '',
 				'taxes' => '',
 			));
-
 			$this->order->add_item($item);
-			$this->order_id = $this->order->save();
 
 			//add shipping to order
 			$this->shipping = new WC_Shipping_Rate('flat_rate', 'FLAT RATE', 10, array(), 'flat_rate');
-			$item = new WC_Order_Item_Shipping(array(
+			$item = new WC_Order_Item_Shipping();
+			$item->set_props(array(
 				'method_title' => $this->shipping->label,
 				'method_id' => $this->shipping->id,
 				'total' => wc_format_decimal($this->shipping->cost),
@@ -53,8 +53,9 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 				'meta_data' => $this->shipping->get_meta_data(),
 				'order_id' => $this->order_id,
 			));
-			$item->save();
+
 			$this->order->add_item($item);
+			$this->order_id = $this->order->save();
 		}else{
 			$this->add_order_for_tests_before_2_7();
 		}
