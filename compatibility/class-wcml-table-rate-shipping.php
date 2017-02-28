@@ -150,7 +150,7 @@ class WCML_Table_Rate_Shipping {
 	public function filter_product_base_price( $row_base_price, $_product, $qty ){
 
 		if( get_option( 'woocommerce_currency') != $this->woocommerce_wpml->multi_currency->get_client_currency() ){
-			$row_base_price = apply_filters( 'wcml_product_price_by_currency', $_product->id, get_option( 'woocommerce_currency') ) * $qty;
+			$row_base_price = apply_filters( 'wcml_product_price_by_currency', WooCommerce_Functions_Wrapper::get_product_id( $_product ), get_option( 'woocommerce_currency') ) * $qty;
 		}
 
 		return $row_base_price;

@@ -22,7 +22,13 @@ class WCML_Attributes{
         }
 
         add_action( 'woocommerce_before_attribute_delete', array( $this, 'refresh_taxonomy_translations_cache' ), 10, 3 );
-        add_filter( 'woocommerce_product_get_attributes', array( $this, 'filter_adding_to_cart_product_attributes_names' ) );
+        add_filter( 'woocommerce_get_product_attributes', array( $this, 'filter_adding_to_cart_product_attributes_names' ) );
+
+        if( ( defined('WC_VERSION') && version_compare( WC_VERSION , '2.7', '<' ) ) ){
+            add_filter( 'woocommerce_get_product_attributes', array( $this, 'filter_adding_to_cart_product_attributes_names' ) );
+        }else{
+            add_filter( 'woocommerce_product_get_attributes', array( $this, 'filter_adding_to_cart_product_attributes_names' ) );
+        }
 
     }
 
@@ -485,7 +491,7 @@ class WCML_Attributes{
     function filter_dropdown_variation_attribute_options_args( $args ){
 
         if( isset( $args['attribute'] ) && isset( $args['product'] ) ){
-            $args['attribute'] = $this->filter_attribute_name( $args['attribute'], $args['product']->id );
+            $args['attribute'] = $this->filter_attribute_name( $args['attribute'],  WooCommerce_Functions_Wrapper::get_product_id( $args['product'] ) );
         }
 
         return $args;
@@ -498,12 +504,14 @@ class WCML_Attributes{
      */
     function filter_attribute_name( $attribute_name, $product_id ){
 
-        $orig_lang = $this->woocommerce_wpml->products->get_original_product_language( $product_id );
-        if ( in_array( $orig_lang, array( 'de', 'da' ) ) ) {
-            $attribute_name = $this->sitepress->locale_utils->filter_sanitize_title( remove_accents( $attribute_name ), $attribute_name );
-            remove_filter( 'sanitize_title', array( $this->sitepress->locale_utils, 'filter_sanitize_title' ), 10 );
-        }else{
-            $attribute_name = sanitize_title( $attribute_name );
+        if( !is_admin() && $product_id ) {
+            $orig_lang = $this->woocommerce_wpml->products->get_original_product_language($product_id);
+            if (in_array($orig_lang, array('de', 'da'))) {
+                $attribute_name = $this->sitepress->locale_utils->filter_sanitize_title(remove_accents($attribute_name), $attribute_name);
+                remove_filter('sanitize_title', array($this->sitepress->locale_utils, 'filter_sanitize_title'), 10);
+            } else {
+                $attribute_name = sanitize_title($attribute_name);
+            }
         }
 
         return $attribute_name;

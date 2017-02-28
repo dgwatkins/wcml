@@ -403,8 +403,10 @@ class WCML_Synchronize_Product_Data{
     }
 
     public function woocommerce_product_quick_edit_save( $product ){
-        $is_original = $this->woocommerce_wpml->products->is_original_product( $product->id );
-        $trid = $this->sitepress->get_element_trid( $product->id, 'post_product' );
+
+        $product_id =  WooCommerce_Functions_Wrapper::get_product_id( $product );
+        $is_original = $this->woocommerce_wpml->products->is_original_product( $product_id );
+        $trid = $this->sitepress->get_element_trid( $product_id, 'post_product' );
 
         if( $trid ){
             $translations = $this->sitepress->get_element_translations( $trid, 'post_product' );
@@ -412,12 +414,12 @@ class WCML_Synchronize_Product_Data{
                 foreach( $translations as $translation ){
                     if( $is_original ){
                         if( !$translation->original ){
-                            $this->sync_product_data( $product->id, $translation->element_id, $translation->language_code );
-                            $this->sync_date_and_parent( $product->id, $translation->element_id, $translation->language_code );
+                            $this->sync_product_data( $product_id, $translation->element_id, $translation->language_code );
+                            $this->sync_date_and_parent( $product_id, $translation->element_id, $translation->language_code );
                         }
                     }elseif( $translation->original ){
-                        $this->sync_product_data( $translation->element_id, $product->id, $this->sitepress->get_language_for_element( $product->id, 'post_product' ) );
-                        $this->sync_date_and_parent( $translation->element_id, $product->id, $this->sitepress->get_language_for_element( $product->id, 'post_product' ) );
+                        $this->sync_product_data( $translation->element_id, $product_id, $this->sitepress->get_language_for_element( $product_id, 'post_product' ) );
+                        $this->sync_date_and_parent( $translation->element_id, $product_id, $this->sitepress->get_language_for_element( $product_id, 'post_product' ) );
                     }
                 }
             }
