@@ -1,18 +1,21 @@
 <div class="wcml-dialog hidden" id="wcml_currency_switcher_options_{{ args.currency_switcher }}" title="{{ args.title }}">
 
-    <div id="wcml_currency_switcher_options_form_{{ args.currency_switcher }}">
+    <div id="wcml_currency_switcher_options_form_{{ args.currency_switcher }}" class="wcml-currency-switcher-options-form">
 
-        <div id="wcml_curr_sel_preview_wrap" class="wcml-section-content-inner wcml-currency-preview-wrapper">
+        <div id="wcml_curr_sel_preview_wrap" class="wcml-currency-preview-wrapper">
             <strong class="wcml-currency-preview-label">{{ form.preview }}</strong>
             <input type="hidden" id="wcml_currencies_switcher_preview_nonce" value="{{ form.preview_nonce }}"/>
-            <div id="wcml_curr_sel_preview" class="wcml-currency-preview {{ args.currency_switcher }}"></div>
+            <div id="wcml_curr_sel_preview" class="wcml-currency-preview {{ args.currency_switcher }}">
+                {{ form.switcher_preview|raw }}
+            </div>
         </div>
 
-        <div id="wcml_curr_options_wrap">
+        <div id="wcml_curr_options_wrap" class="wcml-currency-switcher-options">
             {% if args.currency_switcher == 'new_widget' %}
 
                     <h4>{{ form.widgets.widget_area }}</h4>
                     <select id="wcml-cs-widget">
+                        <option selected disabled>{{ form.widgets.choose_label }}</option>
                         {% for sidebar in form.widgets.available_sidebars %}
                             <option value="{{ sidebar['id'] }}">{{ sidebar['name'] }}</option>
                         {% endfor %}
@@ -59,7 +62,7 @@
 
                 <label for="wcml-cs-{{ id }}-colorpicker-preset">{{ form.colors.theme }}</label>
                 <select name="wcml-cs-{{ id }}-colorpicker-preset" class="js-wcml-cs-colorpicker-preset">
-                    <option value="">-- {{ form.colors.select_option_choose }} --</option>
+                    <option selected disabled>-- {{ form.colors.select_option_choose }} --</option>
                     {% for scheme_id, scheme in color_schemes %}
                         <option value="{{ scheme_id }}">{{ scheme.label }}</option>
                     {% endfor %}
@@ -98,6 +101,7 @@
             </div>
         </div>
 
+    </div>
         <footer class="wpml-dialog-footer">
             <input type="button" class="cancel wcml-dialog-close-button wpml-dialog-close-button alignleft" value="{{ form.cancel }}"/>&nbsp;
             <input type="submit" class="wcml-dialog-close-button wpml-dialog-close-button button-primary currency_switcher_save alignright"
@@ -107,6 +111,4 @@
         </footer>
 
     </div>
-
-</div>
 
