@@ -70,19 +70,16 @@ class Test_WCML_Dynamic_Pricing extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function woocommerce_dynamic_pricing_is_applied_to() {
-		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
-		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
-		$tr_product = wpml_test_insert_post( $this->second_language, 'product', $trid, random_string() );
-		$product_obj = new stdClass();
-		$product_obj->id = $product;
-		$tr_product_obj = new stdClass();
-		$tr_product_obj->id = $tr_product;
+		$product = $this->wcml_helper->add_product( $this->default_language, false, random_string() );
+		$tr_product = $this->wcml_helper->add_product( $this->second_language, $product->trid, random_string() );
+		$product_obj = wc_get_product( $product->id );
+		$tr_product_obj = wc_get_product( $tr_product->id );
 
 		$product_category = wpml_test_insert_term( $this->default_language, 'product_cat', false, random_string() );
 		$trid = $this->sitepress->get_element_trid( $product_category['term_id'], 'tax_product_cat' );
 		$tr_catrgory = wpml_test_insert_term( $this->second_language, 'product_cat', $trid, random_string() );
 
-		wp_set_post_terms( $product, array( $product_category['term_id'] ), 'product_cat' );
+		wp_set_post_terms( $product->id, array( $product_category['term_id'] ), 'product_cat' );
 		$dynamic_pricing = new WCML_Dynamic_Pricing( $this->sitepress );
 		$obj = new stdClass();
 		$obj->available_rulesets = array(
@@ -93,7 +90,7 @@ class Test_WCML_Dynamic_Pricing extends WCML_UnitTestCase {
 
 		$this->sitepress->set_term_filters_and_hooks();
 		$this->sitepress->set_setting( 'sync_post_taxonomies', true );
-		wp_set_post_terms( $product, array( $product_category['term_id'] ), 'product_cat' );
+		wp_set_post_terms( $product->id, array( $product_category['term_id'] ), 'product_cat' );
 		$this->assertTrue( $dynamic_pricing->woocommerce_dynamic_pricing_is_applied_to( false, $product_obj, null, $obj, $product_category['term_id'] ) );
 		$this->sitepress->switch_lang( $this->second_language );
 		$this->assertTrue( $dynamic_pricing->woocommerce_dynamic_pricing_is_applied_to( false, $tr_product_obj, null, $obj, $product_category['term_id'] ) );
