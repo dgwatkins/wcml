@@ -24,7 +24,7 @@
                 <div class="wcml-co-set-rate">
                     1 {{ args.default_currency }} = <input name="currency_options[rate]" size="5" type="number"
                                                            class="ext_rate{% if automatic_rates %} wcml-tip{% endif %}"
-                                                           step="0.01" value="{{ args.currency.rate }}" data-message="{{ form.rate.only_numeric }}"
+                                                           min="0.01" step="0.01"  value="{{ args.currency.rate }}" data-message="{{ form.rate.only_numeric }}"
                                                            id="wcml_currency_options_rate_{{ args.currency_code }}"
                                                             {% if automatic_rates %}readonly="readonly" data-tip="{{ automatic_rates_tip }}"{% endif %}/>
                     <span class="this-currency">{{ current_currency }}</span>
