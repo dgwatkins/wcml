@@ -129,11 +129,6 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 			}
 		) );
 
-		if( !defined('ICL_TM_COMPLETE') ){
-			define( 'ICL_TM_COMPLETE', true );
-		}
-		\WP_Mock::wpPassthruFunction('wpml_tm_save_post');
-
 		$this->test_data['sitepress_current_language'] = $default_language;
 
 		unset($_GET['lang']);
@@ -547,6 +542,19 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 
 		$post = new stdClass();
 		$post->ID = rand(1,100);
+
+		if( !defined('ICL_TM_COMPLETE') ){
+			define( 'ICL_TM_COMPLETE', true );
+		}
+		$that = $this;
+		\WP_Mock::wpFunction( 'wpml_tm_save_post', array(
+			'return' => function ( $id_actual, $post_actual, $force_status_actual ) use ( $that, $post ) {
+				$that->assertEquals( $id_actual, $post->ID );
+				$that->assertEquals( $post_actual, $post );
+				$that->assertEquals( $force_status_actual, ICL_TM_COMPLETE );
+			},
+		) );
+
 
 		$subject->set_product_language( $post, $request1 );
 		$this->assertEquals( $this->expected_trid, $this->actual_trid );

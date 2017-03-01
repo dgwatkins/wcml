@@ -227,7 +227,7 @@ class WCML_REST_API_Support{
 				$trid = null;
 			}
 			$this->sitepress->set_element_language_details( $post->ID, 'post_product', $trid, $data['lang'] );
-			wpml_tm_save_post( $post->ID, $post , ICL_TM_COMPLETE);
+			wpml_tm_save_post( $post->ID, $post , ICL_TM_COMPLETE );
 		}else{
 			if( isset( $data['translation_of'] ) ){
 				throw new WC_REST_Exception( '404', __( 'Using "translation_of" requires providing a "lang" parameter too', 'woocommerce-multilingual' ), '404' );
