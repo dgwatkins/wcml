@@ -5,7 +5,7 @@
     </div>
 
     <div class="wcml-section-content" id="online-exchange-rates-no-currencies" {% if exchange_rates.secondary_currencies %} style="display:none"{% endif %}>
-        <p><i>{{ exchange_rates.strings.no_currencies }}</i></p>
+        <p><i>{{ exchange_rates.strings.no_currencies|raw }}</i></p>
     </div>
     <div class="wcml-section-content" {% if exchange_rates.secondary_currencies is empty %} style="display:none"{% endif %}>
         <p>

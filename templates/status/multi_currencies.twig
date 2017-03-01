@@ -12,7 +12,7 @@
                 {% else %}
                     {% if sec_currencies is empty %}
                         <i class="otgs-ico-warning"></i>
-                        {{ strings.no_secondary }}
+                        {{ strings.no_secondary|raw }}
 
                         <p>
                             <a class="button-secondary aligncenter" href="{{ add_cur_link }}">
