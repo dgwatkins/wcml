@@ -548,6 +548,7 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		}
 		$that = $this;
 		\WP_Mock::wpFunction( 'wpml_tm_save_post', array(
+			'times' => 1,
 			'return' => function ( $id_actual, $post_actual, $force_status_actual ) use ( $that, $post ) {
 				$that->assertEquals( $id_actual, $post->ID );
 				$that->assertEquals( $post_actual, $post );
