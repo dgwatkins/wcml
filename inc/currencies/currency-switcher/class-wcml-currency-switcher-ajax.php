@@ -51,7 +51,7 @@ class WCML_Currency_Switcher_Ajax{
 
 		}
 
-		$switcher_settings[ 'widget_title' ]   = sanitize_text_field( $_POST[ 'widget_title' ] );
+		$switcher_settings[ 'widget_title' ]   = isset( $_POST[ 'widget_title' ] ) ? sanitize_text_field( $_POST[ 'widget_title' ] ) : '';
 		$switcher_settings[ 'switcher_style' ] = sanitize_text_field( $_POST[ 'switcher_style' ] );
 		$switcher_settings[ 'template' ]       = $currency_switcher_format;
 
