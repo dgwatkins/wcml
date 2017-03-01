@@ -27,7 +27,7 @@ class WCML_Custom_Currency_Options extends WPML_Templates_Factory {
         $exchange_rate_services =& $this->woocommerce_wpml->multi_currency->exchange_rate_services;
         $exchange_rates_automatic = $exchange_rate_services->get_setting('automatic');
 
-        if( !$exchange_rates_automatic ){
+        if( $exchange_rates_automatic ){
             $service_id = $exchange_rate_services->get_setting('service');
             $services   = $exchange_rate_services->get_services();
             $exchange_rates_service = $services[$service_id]->get_name();
