@@ -129,6 +129,11 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 			}
 		) );
 
+		if( !defined('ICL_TM_COMPLETE') ){
+			define( 'ICL_TM_COMPLETE', true );
+		}
+		\WP_Mock::wpPassthruFunction('wpml_tm_save_post');
+
 		$this->test_data['sitepress_current_language'] = $default_language;
 
 		unset($_GET['lang']);
