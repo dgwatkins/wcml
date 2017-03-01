@@ -32,8 +32,6 @@ jQuery( function($){
                 $(document).on('change','.currency_option_decimals', WCML_Multi_Currency.price_preview);
                 $(document).on('change','.currency_code select', WCML_Multi_Currency.price_preview);
 
-                $(document).on('keydown','.ext_rate', WCML_Multi_Currency.ex_rate_check);
-
                 if($('#wcml_mc_options').length){
                     WCML_Multi_Currency.wcml_mc_form_submitted = false;
                     WCML_Multi_Currency.read_form_fields_status();
@@ -54,13 +52,6 @@ jQuery( function($){
 
             } );
 
-        },
-        ex_rate_check: function( e ){
-            if(!((e.keyCode > 95 && e.keyCode < 106)
-                || (e.keyCode > 47 && e.keyCode < 58)
-                || e.keyCode == 8 || e.keyCode == 110|| e.keyCode == 190 )) {
-                return false;
-            }
         },
 
         setup_multi_currency_toggle: function(){

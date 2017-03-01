@@ -58,7 +58,7 @@ class WCML_WC_Strings{
             $product_id = WooCommerce_Functions_Wrapper::get_product_id( $product_obj );
         }
 
-        $name = $woocommerce_wpml->attributes->filter_attribute_name( $name, $product_id );
+        $name = $woocommerce_wpml->attributes->filter_attribute_name( $name, $product_id, true );
 
         if( $product_id ){
 
