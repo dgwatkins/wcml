@@ -43,7 +43,7 @@ if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
 // Load WooCommerce Multilingual when WPML is active
 add_action( 'wpml_loaded', array( 'woocommerce_wpml', 'instance' ) );
 
-add_action( 'wpml_before_init', array( 'WCML_REST_API_Support', 'remove_wpml_global_url_filters' ) );
+add_action( 'wpml_before_init', array( 'WCML_REST_API_Support', 'remove_wpml_global_url_filters' ), 0 );
 
 
 // Load WooCommerce Multilingual when WPML is NOT active
