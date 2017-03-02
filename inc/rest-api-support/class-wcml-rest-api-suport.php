@@ -14,6 +14,10 @@ class WCML_REST_API_Support{
 
 		$this->prevent_default_lang_url_redirect();
 
+		add_action( 'rest_api_init', array( $this, 'set_language_for_request' ) );
+
+		add_action( 'parse_query', array($this, 'auto_adjust_included_ids') );
+
 		// Products
 		add_action( 'woocommerce_rest_prepare_product', array( $this, 'append_product_language_and_translations' ) );
 		add_action( 'woocommerce_rest_prepare_product', array( $this, 'append_product_secondary_prices' ) );
@@ -36,7 +40,6 @@ class WCML_REST_API_Support{
 		add_action( 'woocommerce_rest_product_cat_query', array($this, 'filter_terms_query' ), 10, 2 );
 		add_action( 'woocommerce_rest_product_tag_query', array($this, 'filter_terms_query' ), 10, 2 );
 
-		add_action( 'rest_api_init', array( $this, 'set_language_for_request' ) );
 	}
 
 	/**
@@ -51,6 +54,7 @@ class WCML_REST_API_Support{
 				$this->sitepress->switch_lang( $request_language );
 			}
 		}
+
 	}
 
 	/**
@@ -128,6 +132,21 @@ class WCML_REST_API_Support{
 			remove_filter( 'get_term', array( $this->sitepress, 'get_term_adjust_id' ), 1, 1 );
 		}
 		return $args;
+	}
+
+	/**
+	 * @param WP_Query $wp_query
+	 */
+	public function auto_adjust_included_ids( $wp_query ){
+		$lang = $wp_query->get('lang');
+		$include = $wp_query->get('post__in');
+		if( empty( $lang ) && !empty( $include ) ){
+			$filtered_include = [];
+			foreach( $include as $id ){
+				$filtered_include[] = apply_filters( 'translate_object_id', $id, get_post_type($id), true );
+			}
+			$wp_query->set( 'post__in' , $filtered_include );
+		}
 	}
 
 	/**

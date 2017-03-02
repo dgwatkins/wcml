@@ -176,11 +176,6 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 			},
 		) );
 		//
-		\WP_Mock::wpFunction( 'apply_filters', array(
-			'return' => function ( $arg ) {
-				return $arg;
-			},
-		) );
 		$_SERVER['REQUEST_URI'] = 'wp-json/wc/';
 
 		$this->assertTrue( $this->invokeMethod( $subject, 'is_request_to_rest_api' ) );
@@ -925,6 +920,67 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	function auto_adjust_included_ids(){
+
+		$subject = $this->get_subject();
+
+		$wp_query = $this->getMockBuilder( 'WP_Query' )
+		                 ->disableOriginalConstructor()
+		                 ->setMethods( array( 'get', 'set' ) )
+		                 ->getMock();
+
+		$wp_query->method('get')->will( $this->returnCallback(
+			function( $var ) use ($wp_query) {
+				return $wp_query->query_vars[ $var ];
+			}
+		) );
+		$wp_query->method('set')->will( $this->returnCallback(
+			function( $var, $value ) use ($wp_query) {
+				return $wp_query->query_vars[ $var ] = $value;
+			}
+		) );
+
+		$posts = [
+			'original' => [ rand(1, 100), rand(101, 200) ],
+			'translation' => [ rand(201, 300), rand(301, 400) ]
+		];
+
+		// no adjusting
+		$wp_query->set( 'lang', '' );
+		$wp_query->set( 'post__in', false );
+		$subject->auto_adjust_included_ids( $wp_query );
+		$this->assertFalse( $wp_query->get('post__in') );
+
+		// no adjusting
+		$wp_query->set( 'lang', 'en' );
+		$wp_query->set( 'post__in', false );
+		$subject->auto_adjust_included_ids( $wp_query );
+		$this->assertFalse( $wp_query->get('post__in') );
+
+		// no adjusting
+		$wp_query->set( 'lang', 'en' );
+		$wp_query->set( 'post__in', $posts['original'] );
+		$subject->auto_adjust_included_ids( $wp_query );
+		$this->assertEquals( $posts['original'], $wp_query->get('post__in') );
+
+		// adjusting
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'times' => count( $posts['original'] ),
+			'return' => function( $id ){ return 'product'; }
+
+		) );
+		\WP_Mock::onFilter( 'translate_object_id' )->with( $posts['original'][0], 'product', true )->reply( $posts['translation'][0] );
+		\WP_Mock::onFilter( 'translate_object_id' )->with( $posts['original'][1], 'product', true )->reply( $posts['translation'][1] );
+
+		$wp_query->set( 'lang', '' );
+		$wp_query->set( 'post__in', $posts['original'] );
+		$subject->auto_adjust_included_ids( $wp_query );
+		$this->assertEquals( $posts['translation'], $wp_query->get('post__in') );
+
+	}
 
 }
 
