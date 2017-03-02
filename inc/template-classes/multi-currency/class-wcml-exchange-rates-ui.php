@@ -43,7 +43,7 @@ class WCML_Exchange_Rates_UI extends WPML_Templates_Factory {
             'strings' => array(
 
                 'header'            => __( 'Automatic Exchange Rates', 'woocommerce-multilingual' ),
-                'no_currencies'     => __( 'You haven&#8217;t added any secondary currencies.', 'woocommerce-multilingual' ),
+                'no_currencies'     => esc_html__( "You haven't added any secondary currencies.", 'woocommerce-multilingual' ),
 	            'enable_automatic'  => __( 'Enable automatic exchange rates', 'woocommerce-multilingual' ),
                 'services_label'    => __( 'Exchange rates source', 'woocommerce-multilingual' ),
                 'lifting_label'     => __( 'Lifting charge', 'woocommerce-multilingual' ),
