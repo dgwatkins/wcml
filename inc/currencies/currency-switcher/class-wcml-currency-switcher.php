@@ -173,9 +173,11 @@ class WCML_Currency_Switcher{
 	public function add_user_agent_touch_device_classes( $classes ) {
 
 		if ( is_null( $this->is_touch_screen ) ) {
-			require_once ICL_PLUGIN_PATH . '/lib/mobile-detect.php';
+			if ( ! class_exists( 'WPML_Mobile_Detect' ) ) {
+				require_once ICL_PLUGIN_PATH . '/lib/mobile-detect.php';
+			}
 			$mobile_detect   = new WPML_Mobile_Detect();
-			$is_touch_screen = $mobile_detect->isMobile() || $mobile_detect->isTablet();
+			$this->is_touch_screen = $mobile_detect->isMobile() || $mobile_detect->isTablet();
 		}
 
 		if ( $this->is_touch_screen ) {

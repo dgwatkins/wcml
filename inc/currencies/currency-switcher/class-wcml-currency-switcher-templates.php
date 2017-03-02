@@ -40,11 +40,8 @@ class WCML_Currency_Switcher_Templates {
         add_action( 'admin_head', array( $this, 'admin_enqueue_template_resources' ) );
     }
 
-    /**
-     * @return array
-     */
     public function after_setup_theme_action() {
-        return $this->init_available_templates();
+        $this->init_available_templates();
     }
 
     /**
@@ -53,7 +50,7 @@ class WCML_Currency_Switcher_Templates {
      * @return WCML_CS_Template
      */
     public function get_template( $template_slug ) {
-
+	    $ret = false;
         if ( array_key_exists( $template_slug, $this->templates ) ) {
             $ret = $this->templates[ $template_slug ];
         }
@@ -137,12 +134,9 @@ class WCML_Currency_Switcher_Templates {
         return $config;
     }
 
-    /**
-     * @return array
-     */
     private function init_available_templates() {
 
-        $this->templates = array();
+        $templates = array();
         $dirs_to_scan = array();
 
         /**
@@ -181,11 +175,11 @@ class WCML_Currency_Switcher_Templates {
                     $tpl['slug']    = isset( $config['slug'] ) ? $config['slug'] : $tpl['slug'];
                 }
 
-                $this->templates[ $tpl['slug'] ] = new WCML_Currency_Switcher_Template( $this->woocommerce_wpml, $tpl );
+                $templates[ $tpl['slug'] ] = new WCML_Currency_Switcher_Template( $this->woocommerce_wpml, $tpl );
             }
         }
 
-        return $this->templates;
+        $this->set_templates( $templates );
     }
 
     /**
@@ -414,4 +408,7 @@ class WCML_Currency_Switcher_Templates {
         return '<style type="text/css" id="' . $style_id . '">' . $css . '</style>' . PHP_EOL;
     }
 
+	public function set_templates( $templates ) {
+    	$this->templates = $templates;
+	}
 }

@@ -191,24 +191,26 @@ jQuery( function($){
                     color_scheme: color_scheme
                 },
                 success: function(resp){
-
-                    if( $( '#'+resp.inline_styles_id).length == 0 ){
-                        $('head').append( '<style type="text/css" id="'+resp.inline_styles_id+'">'+ resp.inline_css+'</style>' );
-                    }else{
-                        $( '#'+resp.inline_styles_id).html( resp.inline_css );
-                    }
-                    ajaxLoader.remove();
-                    if( update_settings ){
-                        if( switcher_id == 'new_widget'){
-                            switcher_id = dialog.find('#wcml-cs-widget').val();
+                    if( resp.success ) {
+                        resp = resp.data;
+                        if( $( '#'+resp.inline_styles_id).length == 0 ){
+                            $('head').append( '<style type="text/css" id="'+resp.inline_styles_id+'">'+ resp.inline_css+'</style>' );
+                        }else{
+                            $( '#'+resp.inline_styles_id).html( resp.inline_css );
                         }
-                        $('.wcml-currency-preview.'+switcher_id).html(resp.preview);
-                    }else{
-                        dialog.find('.wcml-currency-preview').html(resp.preview);
-                    }
+                        ajaxLoader.remove();
+                        if( update_settings ){
+                            if( switcher_id == 'new_widget'){
+                                switcher_id = dialog.find('#wcml-cs-widget').val();
+                            }
+                            $('.wcml-currency-preview.'+switcher_id).html(resp.preview);
+                        }else{
+                            dialog.find('.wcml-currency-preview').html(resp.preview);
+                        }
 
-                    if( switcher_style == 'wcml-dropdown-click' ){
-                        WCMLCurrecnySwitcherDropdownClick.init();
+                        if( switcher_style == 'wcml-dropdown-click' ){
+                            WCMLCurrecnySwitcherDropdownClick.init();
+                        }
                     }
 
                 }
