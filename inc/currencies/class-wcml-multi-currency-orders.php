@@ -46,6 +46,10 @@ class WCML_Multi_Currency_Orders{
         add_action( 'woocommerce_email_before_order_table', array($this, 'fix_currency_before_order_email') );
         add_action( 'woocommerce_email_after_order_table', array($this, 'fix_currency_after_order_email') );
 
+	    if( is_admin() ){
+	        add_filter( 'woocommerce_order_get_currency', array( $this, 'get_currency_for_new_order' ), 10, 2 );
+	    }
+
     }
 
     public function get_orders_currencies(){
@@ -339,5 +343,16 @@ class WCML_Multi_Currency_Orders{
 
         $this->client_currency = $currency_code;
     }
+
+	public function get_currency_for_new_order( $value, $order ){
+		if( get_current_screen()->id == 'shop_order' ){
+			$order_currency = get_post_meta( $order->get_id(), 'order_currency', true );
+			if( empty( $order_currency ) ){
+				$value = $this->get_order_currency_cookie();
+			}
+		}
+		return $value;
+	}
+
 
 }
