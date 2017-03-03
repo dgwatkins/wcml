@@ -538,6 +538,16 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		$post = new stdClass();
 		$post->ID = rand(1,100);
 
+		if( !defined('ICL_TM_COMPLETE') ){
+			define( 'ICL_TM_COMPLETE', true );
+		}
+		$that = $this;
+		\WP_Mock::wpFunction( 'wpml_tm_save_post', array(
+			'times' => 1,
+			'args'  => [ $post->ID, $post, ICL_TM_COMPLETE ]
+		) );
+
+
 		$subject->set_product_language( $post, $request1 );
 		$this->assertEquals( $this->expected_trid, $this->actual_trid );
 
