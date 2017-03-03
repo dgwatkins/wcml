@@ -130,7 +130,7 @@ class WCML_Currency_Switcher{
 			} else{
 
 				if( is_admin() ){
-					$preview = '<i>' . __("You haven't added any secondary currencies.", 'woocommerce-multilingual') . '</i>';
+					$preview = '<i>' . esc_html__("You haven't added any secondary currencies.", 'woocommerce-multilingual') . '</i>';
 				}else{
 					$preview = '';
 				}
