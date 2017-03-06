@@ -32,7 +32,7 @@ jQuery( function($){
                 $(document).on('change','.currency_option_decimals', WCML_Multi_Currency.price_preview);
                 $(document).on('change','.currency_code select', WCML_Multi_Currency.price_preview);
 
-                $(document).on('keydown','.ext_rate', WCML_Multi_Currency.ex_rate_check);
+                $(document).on('keydown','.wcml-exchange-rate', WCML_Multi_Currency.ex_rate_check);
 
                 if($('#wcml_mc_options').length){
                     WCML_Multi_Currency.wcml_mc_form_submitted = false;
@@ -56,9 +56,25 @@ jQuery( function($){
 
         },
         ex_rate_check: function( e ){
-            if(!((e.keyCode > 95 && e.keyCode < 106)
-                || (e.keyCode > 47 && e.keyCode < 58)
-                || e.keyCode == 8 || e.keyCode == 110|| e.keyCode == 190 )) {
+
+            if (typeof KeyEvent == "undefined") {
+                var KeyEvent = {
+                    DOM_VK_BACK_SPACE: 8,
+                    DOM_VK_0: 48,
+                    DOM_VK_9: 57,
+                    DOM_VK_SEMICOLON: 59,
+                    DOM_VK_NUMPAD0: 96,
+                    DOM_VK_NUMPAD9: 105,
+                    DOM_VK_DECIMAL: 110,
+                    DOM_VK_PERIOD: 190
+                };
+            }
+
+            if(!((e.keyCode >= KeyEvent.DOM_VK_NUMPAD0 && e.keyCode <= KeyEvent.DOM_VK_NUMPAD9 )
+                || (e.keyCode >= KeyEvent.DOM_VK_0 && e.keyCode <= KeyEvent.DOM_VK_9 )
+                || e.keyCode == KeyEvent.DOM_VK_BACK_SPACE
+                || e.keyCode == KeyEvent.DOM_VK_DECIMAL
+                || e.keyCode == KeyEvent.DOM_VK_PERIOD )) {
                 return false;
             }
         },

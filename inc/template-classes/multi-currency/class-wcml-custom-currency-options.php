@@ -43,6 +43,8 @@ class WCML_Custom_Currency_Options extends WPML_Templates_Factory {
                 'rate'   => array(
                     'label'         => __( 'Exchange Rate', 'woocommerce-multilingual' ),
                     'only_numeric'  => __( 'Only numeric', 'woocommerce-multilingual' ),
+                    'min'  => '0.01',
+                    'step'  => '0.01',
                     'set_on'        => empty($this->args['currency']['updated'] ) ? '' :
                                         sprintf( __( 'Set on %s', 'woocommerce-multilingual' ),
                                             date( 'F j, Y g:i a', strtotime( $this->args['currency']['updated'] ) ) ),
