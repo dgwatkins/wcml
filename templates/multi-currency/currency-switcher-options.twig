@@ -33,17 +33,6 @@
     </div>
     <div class="wcml-section-content">
         <div class="wcml-section-content-inner">
-            <div class="tablenav top clearfix">
-                <button type="button" class="button button-secondary alignright wcml_add_cs_sidebar js-wcml-cs-dialog-trigger"
-                        data-switcher="new_widget"
-                        data-dialog="wcml_currency_switcher_options_new_widget"
-                        data-content="wcml_currency_switcher_options_new_widget"
-                        data-height="800" data-width="700"
-                        {% if currency_switcher.available_sidebars is empty %}style="display:none"{% endif %}>
-                    <i class="otgs-ico-add otgs-ico-sm"></i>
-                    {{ currency_switcher.headers.add_widget }}
-                </button>
-            </div>
             <table class="wcml-cs-list" {% if currency_switcher.widget_currency_switchers is empty %} style="display: none;" {% endif %}>
                 <thead>
                     <tr>
@@ -104,7 +93,17 @@
                     </tr>
                 </tbody>
             </table>
-
+            <div class="tablenav top clearfix">
+                <button type="button" class="button button-secondary alignright wcml_add_cs_sidebar js-wcml-cs-dialog-trigger"
+                        data-switcher="new_widget"
+                        data-dialog="wcml_currency_switcher_options_new_widget"
+                        data-content="wcml_currency_switcher_options_new_widget"
+                        data-height="800" data-width="700"
+                        {% if currency_switcher.available_sidebars is empty %}style="display:none"{% endif %}>
+                    <i class="otgs-ico-add otgs-ico-sm"></i>
+                    {{ currency_switcher.headers.add_widget }}
+                </button>
+            </div>
             <input type="hidden" id="wcml_delete_currency_switcher_nonce" value="{{ currency_switcher.delete_nonce }}"/>
         </div>
     </div>

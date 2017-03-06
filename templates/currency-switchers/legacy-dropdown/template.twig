@@ -1,6 +1,6 @@
 <div class="{{ css_classes }}" >
 	<ul>
-		<li rel="{{ selected_currency }}" class="wcml-cs-active-currency" >
+		<li class="wcml-cs-active-currency" >
 			<a class="wcml-cs-item-toggle">{{ get_formatted_price( selected_currency, format )|raw }}</a>
 			<ul class="wcml-cs-submenu">
 				{% for currency in currencies %}
