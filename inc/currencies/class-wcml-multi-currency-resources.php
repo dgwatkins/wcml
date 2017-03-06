@@ -6,16 +6,15 @@ class WCML_Multi_Currency_Resources{
     static $woocommerce_wpml;
 
     public static function set_up( &$multi_currency, &$woocommerce_wpml ){
+        global $pagenow;
 
         self::$multi_currency =& $multi_currency;
         self::$woocommerce_wpml =& $woocommerce_wpml;
 
-        if(!is_admin()){
+        if(!is_admin() && $pagenow != 'wp-login.php' ){
             self::load_inline_js();
         }
 
-        $is_multi_currency = is_admin() && isset ($_GET['page'] ) && $_GET['page'] == 'wpml-wcml'
-                             && isset( $_GET['tab'] ) && $_GET['tab'] == 'multi-currency';
     }
 
     private static function load_inline_js(){

@@ -64,27 +64,21 @@ class WCML_Resources {
 
     private static function load_js() {
 
-
-        wp_register_script( 'wcml-scripts', WCML_PLUGIN_URL . '/res/js/scripts' . WCML_JS_MIN . '.js', array(
-            'jquery',
-            'jquery-ui-core',
-            'jquery-ui-resizable'
-        ), WCML_VERSION );
-
-        wp_enqueue_script(
-            'wcml-pointer',
-            WCML_PLUGIN_URL . '/res/js/pointer' . WCML_JS_MIN . '.js',
-            array( 'wp-pointer' ),
-            WCML_VERSION,
-            true
-        );
-
-        wp_register_script( 'wcml-front-scripts', WCML_PLUGIN_URL . '/res/js/front-scripts' . WCML_JS_MIN . '.js', array(
-            'jquery'
-        ), WCML_VERSION );
-        wp_enqueue_script( 'wcml-front-scripts' );
-
         if ( self::$is_wpml_wcml_page ) {
+
+            wp_register_script( 'wcml-scripts', WCML_PLUGIN_URL . '/res/js/scripts' . WCML_JS_MIN . '.js', array(
+                'jquery',
+                'jquery-ui-core',
+                'jquery-ui-resizable'
+            ), WCML_VERSION );
+
+            wp_enqueue_script(
+                'wcml-pointer',
+                WCML_PLUGIN_URL . '/res/js/pointer' . WCML_JS_MIN . '.js',
+                array( 'wp-pointer' ),
+                WCML_VERSION,
+                true
+            );
 
             wp_register_script( 'jquery-cookie', WCML_PLUGIN_URL . '/res/js/jquery.cookie' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION );
             wp_register_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs' . WCML_JS_MIN . '.js', array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'), WCML_VERSION );
@@ -139,7 +133,13 @@ class WCML_Resources {
 		    wp_enqueue_script( 'custom-taxonomies' );
 	    }
 
-        if ( !is_admin() ) {
+        if ( !is_admin() && self::$pagenow != 'wp-login.php' ) {
+
+            wp_register_script( 'wcml-front-scripts', WCML_PLUGIN_URL . '/res/js/front-scripts' . WCML_JS_MIN . '.js', array(
+                'jquery'
+            ), WCML_VERSION );
+            wp_enqueue_script( 'wcml-front-scripts' );
+
             $referer = isset( $_SERVER[ 'HTTP_REFERER' ] ) ? $_SERVER[ 'HTTP_REFERER' ] : '';
 
             wp_register_script( 'cart-widget', WCML_PLUGIN_URL . '/res/js/cart_widget' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION );
@@ -148,7 +148,7 @@ class WCML_Resources {
                 'is_lang_switched' => self::$sitepress->get_language_from_url( $referer ) !=  self::$sitepress->get_current_language() ? 1 : 0,
                 'is_currency_switched' => isset( $_GET[ 'wcmlc' ] ) ? 1 : 0
             ) );
-        } else {
+        } elseif( is_admin() ) {
             wp_register_script( 'wcml-messages', WCML_PLUGIN_URL . '/res/js/wcml-messages' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION );
             wp_enqueue_script( 'wcml-messages' );
         }
