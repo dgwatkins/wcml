@@ -32,7 +32,7 @@ jQuery( function($){
                 $(document).on('change','.currency_option_decimals', WCML_Multi_Currency.price_preview);
                 $(document).on('change','.currency_code select', WCML_Multi_Currency.price_preview);
 
-                $(document).on('keydown','.wcml-exchange-rate', WCML_Multi_Currency.ex_rate_check);
+                $(document).on('blur','.wcml-exchange-rate', WCML_Multi_Currency.exchange_rate_check);
 
                 if($('#wcml_mc_options').length){
                     WCML_Multi_Currency.wcml_mc_form_submitted = false;
@@ -54,29 +54,6 @@ jQuery( function($){
 
             } );
 
-        },
-        ex_rate_check: function( e ){
-
-            if (typeof KeyEvent == "undefined") {
-                var KeyEvent = {
-                    DOM_VK_BACK_SPACE: 8,
-                    DOM_VK_0: 48,
-                    DOM_VK_9: 57,
-                    DOM_VK_SEMICOLON: 59,
-                    DOM_VK_NUMPAD0: 96,
-                    DOM_VK_NUMPAD9: 105,
-                    DOM_VK_DECIMAL: 110,
-                    DOM_VK_PERIOD: 190
-                };
-            }
-
-            if(!((e.keyCode >= KeyEvent.DOM_VK_NUMPAD0 && e.keyCode <= KeyEvent.DOM_VK_NUMPAD9 )
-                || (e.keyCode >= KeyEvent.DOM_VK_0 && e.keyCode <= KeyEvent.DOM_VK_9 )
-                || e.keyCode == KeyEvent.DOM_VK_BACK_SPACE
-                || e.keyCode == KeyEvent.DOM_VK_DECIMAL
-                || e.keyCode == KeyEvent.DOM_VK_PERIOD )) {
-                return false;
-            }
         },
 
         setup_multi_currency_toggle: function(){
@@ -172,7 +149,7 @@ jQuery( function($){
 
             var parent = $(this).closest('.wcml-dialog-container');
 
-            var chk_rate = WCML_Multi_Currency.check_on_numeric(parent,'.ext_rate');
+            var chk_rate = WCML_Multi_Currency.check_on_numeric(parent,'.wcml-exchange-rate');
             var chk_deci = WCML_Multi_Currency.check_on_numeric(parent,'.currency_option_decimals');
             var chk_autosub = WCML_Multi_Currency.check_on_numeric(parent,'.abstract_amount');
 
@@ -531,6 +508,18 @@ jQuery( function($){
 
         form_fields_changed: function(){
             return this.mc_form_status != $('#wcml_mc_options').serialize();
+        },
+
+        exchange_rate_check: function(){
+
+            if( $( this ).val() < 0 ){
+                $('.wcml-co-set-rate .wcml-error').fadeIn();
+                $('.currency_options_save').attr( 'disabled', 'disabled' );
+            }else if( $('.currency_options_save').is(':disabled') ){
+                $('.wcml-co-set-rate .wcml-error').fadeOut();
+                $('.currency_options_save').removeAttr( 'disabled' );
+            }
+
         }
 
     }

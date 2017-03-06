@@ -28,7 +28,7 @@
                                                            id="wcml_currency_options_rate_{{ args.currency_code }}"
                                                             {% if automatic_rates %}readonly="readonly" data-tip="{{ automatic_rates_tip }}"{% endif %}/>
                     <span class="this-currency">{{ current_currency }}</span>
-
+                    <span class="wcml-error" style="display: none">{{ form.number_error }}</span>
                     {% if args.currency.updated %}
                     <small>
                         {{ form.rate.set_on }} <i>{{ form.rate.previous }}</i>
