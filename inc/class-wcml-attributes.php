@@ -501,16 +501,19 @@ class WCML_Attributes{
      * needs handle special chars accordingly
      * https://onthegosystems.myjetbrains.com/youtrack/issue/wcml-1785
      */
-    function filter_attribute_name( $attribute_name, $product_id ){
+    function filter_attribute_name( $attribute_name, $product_id, $return_sanitized = false ){
 
         if( !is_admin() && $product_id ) {
-            $orig_lang = $this->woocommerce_wpml->products->get_original_product_language($product_id);
-            if (in_array($orig_lang, array('de', 'da'))) {
-                $attribute_name = $this->sitepress->locale_utils->filter_sanitize_title(remove_accents($attribute_name), $attribute_name);
-                remove_filter('sanitize_title', array($this->sitepress->locale_utils, 'filter_sanitize_title'), 10);
-            } else {
-                $attribute_name = sanitize_title($attribute_name);
+            $orig_lang = $this->woocommerce_wpml->products->get_original_product_language( $product_id );
+            if ( in_array( $orig_lang, array('de', 'da' ) ) ) {
+                $attribute_name = $this->sitepress->locale_utils->filter_sanitize_title( remove_accents( $attribute_name ), $attribute_name );
+                remove_filter( 'sanitize_title', array( $this->sitepress->locale_utils, 'filter_sanitize_title' ), 10 );
+                return $attribute_name;
             }
+        }
+
+        if( $return_sanitized ){
+            $attribute_name = sanitize_title( $attribute_name );
         }
 
         return $attribute_name;
