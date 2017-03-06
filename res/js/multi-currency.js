@@ -33,6 +33,7 @@ jQuery( function($){
                 $(document).on('change','.currency_code select', WCML_Multi_Currency.price_preview);
 
                 $(document).on('blur','.wcml-exchange-rate', WCML_Multi_Currency.exchange_rate_check);
+                $(document).on('keyup','.wcml-exchange-rate', WCML_Multi_Currency.exchange_rate_revalidation);
 
                 if($('#wcml_mc_options').length){
                     WCML_Multi_Currency.wcml_mc_form_submitted = false;
@@ -515,13 +516,16 @@ jQuery( function($){
             if( $( this ).val() < 0 ){
                 $('.wcml-co-set-rate .wcml-error').fadeIn();
                 $('.currency_options_save').attr( 'disabled', 'disabled' );
-            }else if( $('.currency_options_save').is(':disabled') ){
-                $('.wcml-co-set-rate .wcml-error').fadeOut();
-                $('.currency_options_save').removeAttr( 'disabled' );
             }
 
-        }
+        },
+        exchange_rate_revalidation: function( e ) {
 
+            if ($(this).val() > 0) {
+                $('.wcml-co-set-rate .wcml-error').fadeOut();
+                $('.currency_options_save').removeAttr('disabled');
+            }
+        }
     }
 
 
