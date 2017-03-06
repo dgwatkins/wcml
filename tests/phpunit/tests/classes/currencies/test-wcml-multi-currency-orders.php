@@ -84,6 +84,11 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 	}
 
+	public function tearDown() {
+		unset( $this->sitepress, $this->woocommerce, $this->order );
+		parent::tearDown();
+	}
+
 	/**
 	 * @return WCML_REST_API_Support
 	 */

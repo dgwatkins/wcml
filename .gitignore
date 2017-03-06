@@ -43,6 +43,7 @@ inc/sandbox.inc
 *.iml
 build.xml
 *.komodoproject
+*.idea
 
 ### The following are created during the build project
 /sitepress-multilingual-cms.zip

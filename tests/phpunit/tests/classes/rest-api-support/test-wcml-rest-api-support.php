@@ -93,6 +93,11 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 
 	}
 
+	public function tearDown() {
+		unset( $this->sitepress, $this->woocommerce );
+		parent::tearDown();
+	}
+
 	/**
 	 * @return WCML_REST_API_Support
 	 */
