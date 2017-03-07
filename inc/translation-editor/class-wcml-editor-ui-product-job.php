@@ -293,7 +293,9 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
     }
 
-
+    /**
+     * @return array
+     */
     function get_data() {
 
         $trn_product_id = apply_filters( 'translate_object_id', $this->product_id, 'product', false, $this->get_target_language() );
