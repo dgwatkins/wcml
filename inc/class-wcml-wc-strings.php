@@ -45,7 +45,6 @@ class WCML_WC_Strings{
         $product_id = false;
         $lang = $sitepress->get_current_language();
 
-
         if( isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) == 'shop_order' ){
             $lang = $sitepress->get_user_admin_language( get_current_user_id(), true );
         }
@@ -72,6 +71,12 @@ class WCML_WC_Strings{
 
         }
 
+        $trnsl_label = apply_filters( 'wpml_translate_single_string', $label, 'WordPress', 'taxonomy singular name: '.$label, $lang );
+
+        if( $label != $trnsl_label ){
+            return $trnsl_label;
+        }
+
         if(is_admin() && !wpml_is_ajax()){
 
             $string_language = $this->get_string_language( 'taxonomy singular name: '.$label, 'WordPress' );
@@ -86,12 +91,6 @@ class WCML_WC_Strings{
                 return $label;
             }
 
-        }
-
-        $trnsl_label = apply_filters( 'wpml_translate_single_string', $label, 'WordPress', 'taxonomy singular name: '.$label, $lang );
-
-        if( $label != $trnsl_label ){
-            return $trnsl_label;
         }
 
         // backward compatibility for WCML < 3.6.1
