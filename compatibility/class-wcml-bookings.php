@@ -1497,9 +1497,13 @@ class WCML_Bookings {
 			'post_type'   => 'wc_booking',
 			'post_title'  => $booking_object->post_title,
 			'post_status' => $booking_object->post_status,
-			'ping_status' => 'closed',
-			'post_parent' => $booking_object->post_parent,
+			'ping_status' => 'closed'
 		);
+
+		if( $booking_object->post_parent && $lang ){
+			$translated_parent = apply_filters( 'translate_object_id', $booking_object->post_parent, get_post_type( $booking_object->post_parent ), false, $lang );
+			if( $translated_parent ) $booking_data[ 'post_parent' ] = $translated_parent;
+		}
 
 		$active_languages = $this->sitepress->get_active_languages();
 
@@ -1538,7 +1542,7 @@ class WCML_Bookings {
 			$this->sitepress->set_element_language_details( $trnsl_booking_id, 'post_wc_booking', $trid, $language['code'] );
 
 			$meta_args = array(
-				'_booking_order_item_id' => get_post_meta( $booking_id, '_booking_order_item_id', true ),
+				'_booking_order_item_id' => 0,
 				'_booking_product_id'    => $this->get_translated_booking_product_id( $booking_id, $language['code'] ),
 				'_booking_resource_id'   => $this->get_translated_booking_resource_id( $booking_id, $language['code'] ),
 				'_booking_persons'       => $this->get_translated_booking_persons_ids( $booking_id, $language['code'] ),
