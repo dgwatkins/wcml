@@ -20,21 +20,20 @@ class WCML_Currency_Switcher_Ajax{
 	}
 
 	public function wcml_currencies_order() {
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		$nonce = array_key_exists( 'wcml_nonce', $_POST ) ? sanitize_text_field( $_POST['wcml_nonce'] ) : false;
 		if ( !$nonce || !wp_verify_nonce( $nonce, 'set_currencies_order_nonce' ) ) {
-			die('Invalid nonce');
+			wp_send_json_error('Invalid nonce');
 		}
 
 		$this->woocommerce_wpml->settings['currencies_order'] = explode( ';', $_POST['order'] );
-		$this->woocommerce_wpml->update_settings();
-		echo json_encode( array('message' => __( 'Currencies order updated', 'woocommerce-multilingual' )) );
-		die;
+		$this->woocommerce_wpml->update_settings( $this->woocommerce_wpml->settings );
+		wp_send_json_success( array( 'message' => esc_html__( 'Currencies order updated', 'woocommerce-multilingual' ) ) );
 	}
 
 	public function wcml_currencies_switcher_save_settings() {
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		$nonce = array_key_exists( 'wcml_nonce', $_POST ) ? sanitize_text_field( $_POST['wcml_nonce'] ) : false;
 		if ( !$nonce || !wp_verify_nonce( $nonce, 'wcml_currencies_switcher_save_settings' ) ) {
-			die('Invalid nonce');
+			wp_send_json_error('Invalid nonce');
 		}
 		$wcml_settings =& $this->woocommerce_wpml->settings;
 		$switcher_settings = array();
@@ -86,7 +85,7 @@ class WCML_Currency_Switcher_Ajax{
 
 		$this->woocommerce_wpml->update_settings( $wcml_settings );
 
-		die();
+		wp_send_json_success();
 	}
 
 	private function synchronize_widget_instances( $widget_settings ) {
@@ -130,9 +129,9 @@ class WCML_Currency_Switcher_Ajax{
 	}
 
 	public function wcml_delete_currency_switcher(){
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		$nonce = array_key_exists( 'wcml_nonce', $_POST ) ? sanitize_text_field( $_POST['wcml_nonce'] ) : false;
 		if ( !$nonce || !wp_verify_nonce( $nonce, 'delete_currency_switcher' ) ) {
-			die('Invalid nonce');
+			wp_send_json_error();
 		}
 
 		$switcher_id = sanitize_text_field( $_POST[ 'switcher_id' ] );
@@ -161,13 +160,13 @@ class WCML_Currency_Switcher_Ajax{
 
 		$this->update_sidebars_widgets( $sidebars_widgets );
 
-		die();
+		wp_send_json_success();
 	}
 
 	public function wcml_currencies_switcher_preview() {
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		$nonce = array_key_exists( 'wcml_nonce', $_POST ) ? sanitize_text_field( $_POST['wcml_nonce'] ) : false;
 		if ( !$nonce || !wp_verify_nonce( $nonce, 'wcml_currencies_switcher_preview' ) ) {
-			die('Invalid nonce');
+			wp_send_json_error( 'Invalid nonce' );
 		}
 		$return= array();
 
@@ -197,13 +196,13 @@ class WCML_Currency_Switcher_Ajax{
 
 		$return['preview'] = $switcher_preview;
 
-		echo json_encode( $return );
-
-		die();
+		wp_send_json_success( $return );
 	}
 
-	public function get_sidebars_widgets(){
-		require_once( ABSPATH . '/wp-admin/includes/widgets.php' );
+	public function get_sidebars_widgets() {
+		if ( ! function_exists( 'wp_get_sidebars_widgets' ) ) {
+			require_once( ABSPATH . '/wp-admin/includes/widgets.php' );
+		}
 		$sidebars_widgets = wp_get_sidebars_widgets();
 
 		return is_array( $sidebars_widgets ) ? $sidebars_widgets : array();

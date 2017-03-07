@@ -448,10 +448,12 @@ jQuery( function($){
                             order: currencies_order.join(';')
                         },
                         success: function(resp){
-                            fadeInAjxResp('.wcml_currencies_order_ajx_resp', resp.message);
-                            $('.wcml-ui-dialog').each(function(){
-                                WCML_Currency_Switcher_Settings.currency_switcher_preview( $(this) );
-                            });
+                            if ( resp.success ) {
+                                fadeInAjxResp('.wcml_currencies_order_ajx_resp', resp.data.message);
+                                $('.wcml-ui-dialog').each(function(){
+                                    WCML_Currency_Switcher_Settings.currency_switcher_preview( $(this) );
+                                });
+                            }
                         }
                     });
                 }

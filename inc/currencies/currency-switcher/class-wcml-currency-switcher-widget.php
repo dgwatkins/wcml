@@ -5,7 +5,7 @@ class WCML_Currency_Switcher_Widget extends WP_Widget {
     const SLUG = 'currency_sel_widget';
 
     function __construct() {
-        parent::__construct( 'currency_sel_widget', __('Currency switcher', 'woocommerce-multilingual'), __('Currency switcher', 'woocommerce-multilingual'));
+        parent::__construct( 'currency_sel_widget', __('Currency switcher', 'woocommerce-multilingual'), array(), array() );
     }
 
     function widget($args, $instance) {
@@ -35,11 +35,13 @@ class WCML_Currency_Switcher_Widget extends WP_Widget {
     }
 
     function form( $instance ) {
-        if( !isset( $instance[ 'id' ] ) ) $instance[ 'id' ] = '';
+        if ( ! isset( $instance[ 'id' ] ) ) {
+        	$instance[ 'id' ] = '';
+        }
 
-        printf('<p><a class="button button-secondary wcml-cs-widgets-edit-link" href="%s"><span class="otgs-ico-edit"></span> %s</a></p>',admin_url('admin.php?page=wpml-wcml&tab=multi-currency#currency-switcher/'.$instance[ 'id' ]),__('Customize the currency switcher', 'woocommerce-multilingual'));
-        return;
-
+        $url_to_currency_switcher = esc_url( admin_url( 'admin.php?page=wpml-wcml&tab=multi-currency#currency-switcher/' . (int) $instance[ 'id' ] ) );
+        $button_text = esc_html__( 'Customize the currency switcher', 'woocommerce-multilingual' );
+        printf('<p><a class="button button-secondary wcml-cs-widgets-edit-link" href="%s"><span class="otgs-ico-edit"></span> %s</a></p>', $url_to_currency_switcher, $button_text );
     }
 
 }
