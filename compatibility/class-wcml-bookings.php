@@ -184,6 +184,10 @@ class WCML_Bookings {
 
 		add_filter( 'wcml_add_to_cart_sold_individually', array( $this, 'add_to_cart_sold_individually'	), 10, 4 );
 
+		// When an order is cancelled/fully refunded, cancel the bookings
+		add_action( 'woocommerce_order_status_cancelled', array( $this, 'cancel_bookings' ), 10, 1 );
+		add_action( 'woocommerce_order_status_refunded', array( $this, 'cancel_bookings' ), 10, 1 );
+
 	}
 
 	function wcml_price_field_after_booking_base_cost( $post_id ) {
@@ -2298,5 +2302,29 @@ class WCML_Bookings {
 
 		return $type;
 	}
+
+	/**
+	 * Cancel bookings with order.
+	 * @param  int $order_id
+	 */
+	public function cancel_bookings( $order_id ) {
+
+		$order    = wc_get_order( $order_id );
+		$bookings = WC_Booking_Data_Store::get_booking_ids_from_order_id( $order_id );
+		$active_languages = $this->sitepress->get_active_languages();
+
+		foreach ( $bookings as $booking_id ) {
+			foreach ( $active_languages as $language ) {
+				$translated_booking = apply_filters( 'translate_object_id', $booking_id, 'wc_booking', false, $language['code'] );
+				if( $translated_booking && $translated_booking != $booking_id ){
+					$booking = get_wc_booking( $translated_booking );
+					$booking->update_status( 'cancelled' );
+				}
+			}
+		}
+
+	}
+
+
 
 }
