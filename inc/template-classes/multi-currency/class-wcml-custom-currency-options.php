@@ -93,7 +93,7 @@ class WCML_Custom_Currency_Options extends WPML_Templates_Factory {
                     'only_numeric'  => __( 'Only numeric', 'woocommerce-multilingual' )
                 ),
 
-                'number_error' => __( 'Please enter a valid and positive number', 'woocommerce-multilingual' ),
+                'number_error' => __( 'Please enter a valid number', 'woocommerce-multilingual' ),
                 'cancel' => __( 'Cancel', 'woocommerce-multilingual' ),
                 'save'   => __( 'Save', 'woocommerce-multilingual' )
 
