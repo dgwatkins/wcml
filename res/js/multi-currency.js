@@ -152,7 +152,7 @@ jQuery( function($){
             var chk_deci = WCML_Multi_Currency.check_on_numeric(parent,'.currency_option_decimals');
             var chk_autosub = WCML_Multi_Currency.check_on_numeric(parent,'.abstract_amount');
 
-            if(chk_rate || chk_deci || chk_autosub){
+            if( chk_deci || chk_autosub ){
                 return false;
             }
 
