@@ -158,6 +158,8 @@ class WCML_Bookings {
 
 			//allow filtering resources by language
 			add_filter( 'get_booking_resources_args', array( $this, 'filter_get_booking_resources_args' ) );
+			add_filter( 'get_translatable_documents', array( $this, 'filter_translatable_documents' ) );
+			add_filter( 'pre_wpml_is_translated_post_type', array( $this, 'filter_is_translated_post_type' ) );
 
 			add_action( 'woocommerce_product_data_panels',   array( $this, 'show_pointer_info' ) );
 		}
@@ -2268,6 +2270,29 @@ class WCML_Bookings {
 		}
 
 		return $sold_indiv;
+	}
+
+	// unset "bookings" from translatable documents to hide WPML languages section from booking edit page
+	public function filter_translatable_documents( $icl_post_types ){
+
+		if(
+			( isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) == 'wc_booking' ) ||
+			( isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'wc_booking' )
+		){
+			unset( $icl_post_types[ 'wc_booking' ] );
+		}
+
+		return $icl_post_types;
+	}
+
+	// hide WPML languages links section from bookings list page
+	public function filter_is_translated_post_type( $type ){
+
+		if( isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'wc_booking' ){
+			return false;
+		}
+
+		return $type;
 	}
 
 }
