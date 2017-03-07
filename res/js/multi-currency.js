@@ -32,6 +32,8 @@ jQuery( function($){
                 $(document).on('change','.currency_option_decimals', WCML_Multi_Currency.price_preview);
                 $(document).on('change','.currency_code select', WCML_Multi_Currency.price_preview);
 
+                $(document).on('keyup','.wcml-exchange-rate', WCML_Multi_Currency.exchange_rate_check);
+
                 if($('#wcml_mc_options').length){
                     WCML_Multi_Currency.wcml_mc_form_submitted = false;
                     WCML_Multi_Currency.read_form_fields_status();
@@ -147,11 +149,10 @@ jQuery( function($){
 
             var parent = $(this).closest('.wcml-dialog-container');
 
-            var chk_rate = WCML_Multi_Currency.check_on_numeric(parent,'.ext_rate');
             var chk_deci = WCML_Multi_Currency.check_on_numeric(parent,'.currency_option_decimals');
             var chk_autosub = WCML_Multi_Currency.check_on_numeric(parent,'.abstract_amount');
 
-            if(chk_rate || chk_deci || chk_autosub){
+            if( chk_deci || chk_autosub ){
                 return false;
             }
 
@@ -508,8 +509,32 @@ jQuery( function($){
 
         form_fields_changed: function(){
             return this.mc_form_status != $('#wcml_mc_options').serialize();
-        }
+        },
 
+        exchange_rate_check: function( e ){
+
+            if (typeof KeyEvent == "undefined") {
+                var KeyEvent = {
+                    DOM_SUBTRACT: 109,
+                    DOM_DASH: 189,
+                    DOM_E: 69
+                };
+            }
+
+            if(
+                $( this ).val() <= 0 ||
+                !WCML_Multi_Currency.is_number( $( this ).val() ) ||
+                e.keyCode == KeyEvent.DOM_SUBTRACT ||
+                e.keyCode == KeyEvent.DOM_DASH ||
+                e.keyCode == KeyEvent.DOM_E
+            ){
+                $('.wcml-co-set-rate .wcml-error').fadeIn();
+                $('.currency_options_save').attr( 'disabled', 'disabled' );
+            }else{
+                $('.wcml-co-set-rate .wcml-error').fadeOut();
+                $('.currency_options_save').removeAttr('disabled');
+            }
+        }
     }
 
 
