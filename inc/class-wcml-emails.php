@@ -104,7 +104,7 @@ class WCML_Emails{
         if( is_array( $order ) ) {
             $order = $order[ 'order_id' ];
         } elseif( is_object( $order ) ) {
-            $order = $order->id;
+	        $order = method_exists( 'WC_Order', 'get_id' ) ? $order->get_id() : $order->id;
         }
 
         $this->refresh_email_lang( $order );
