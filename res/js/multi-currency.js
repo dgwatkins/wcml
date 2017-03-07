@@ -519,7 +519,13 @@ jQuery( function($){
                 };
             }
 
-            if( $( this ).val() < 0 || e.keyCode == KeyEvent.DOM_SUBTRACT || e.keyCode == KeyEvent.DOM_DASH || e.keyCode == KeyEvent.DOM_E ){
+            if(
+                $( this ).val() < 0 ||
+                !WCML_Multi_Currency.is_number( $( this ).val() ) ||
+                e.keyCode == KeyEvent.DOM_SUBTRACT ||
+                e.keyCode == KeyEvent.DOM_DASH ||
+                e.keyCode == KeyEvent.DOM_E
+            ){
                 $('.wcml-co-set-rate .wcml-error').fadeIn();
                 $('.currency_options_save').attr( 'disabled', 'disabled' );
             }else{
