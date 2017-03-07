@@ -520,7 +520,7 @@ jQuery( function($){
             }
 
             if(
-                $( this ).val() < 0 ||
+                $( this ).val() <= 0 ||
                 !WCML_Multi_Currency.is_number( $( this ).val() ) ||
                 e.keyCode == KeyEvent.DOM_SUBTRACT ||
                 e.keyCode == KeyEvent.DOM_DASH ||
