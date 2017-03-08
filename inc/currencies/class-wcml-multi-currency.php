@@ -341,7 +341,7 @@ class WCML_Multi_Currency{
         $current_language     = $sitepress->get_current_language();
         $current_language     = ( $current_language != 'all' && !is_null( $current_language ) ) ? $current_language : $sitepress->get_default_language();
 
-        if( is_product() &&
+        if( is_product() && empty( $this->client_currency ) &&
             isset($this->woocommerce_wpml->settings['display_custom_prices']) &&
             $this->woocommerce_wpml->settings['display_custom_prices'] ){
 

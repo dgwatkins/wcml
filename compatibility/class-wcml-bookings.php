@@ -162,6 +162,8 @@ class WCML_Bookings {
 			add_filter( 'pre_wpml_is_translated_post_type', array( $this, 'filter_is_translated_post_type' ) );
 
 			add_action( 'woocommerce_product_data_panels',   array( $this, 'show_pointer_info' ) );
+
+			add_action( 'save_post', array( $this, 'sync_booking_status' ), 10, 3 );
 		}
 
 		if ( ! is_admin() || isset( $_POST['action'] ) && $_POST['action'] == 'wc_bookings_calculate_costs' ) {
@@ -183,10 +185,6 @@ class WCML_Bookings {
 		add_filter( 'wpml_tm_dashboard_translatable_types', array(	$this, 'hide_bookings_type_on_tm_dashboard'	) );
 
 		add_filter( 'wcml_add_to_cart_sold_individually', array( $this, 'add_to_cart_sold_individually'	), 10, 4 );
-
-		// When an order is cancelled/fully refunded, cancel the bookings
-		add_action( 'woocommerce_order_status_cancelled', array( $this, 'cancel_bookings' ), 10, 1 );
-		add_action( 'woocommerce_order_status_refunded', array( $this, 'cancel_bookings' ), 10, 1 );
 
 	}
 
@@ -2304,23 +2302,28 @@ class WCML_Bookings {
 	}
 
 	/**
-	 * Cancel bookings with order.
-	 * @param  int $order_id
+	 * @param int $post_id
+	 * @param WP_Post $post
+	 * @param bool $update
+	 *
 	 */
-	public function cancel_bookings( $order_id ) {
+	public function sync_booking_status( $post_id, $post, $update ){
 
-		$order    = wc_get_order( $order_id );
-		$bookings = WC_Booking_Data_Store::get_booking_ids_from_order_id( $order_id );
-		$active_languages = $this->sitepress->get_active_languages();
+		if( $post->post_type === 'wc_booking' && $update ){
 
-		foreach ( $bookings as $booking_id ) {
-			foreach ( $active_languages as $language ) {
-				$translated_booking = apply_filters( 'translate_object_id', $booking_id, 'wc_booking', false, $language['code'] );
-				if( $translated_booking && $translated_booking != $booking_id ){
-					$booking = get_wc_booking( $translated_booking );
-					$booking->update_status( 'cancelled' );
+			$trid = $this->sitepress->get_element_trid( $post_id, 'post_wc_booking' );
+			$translations = $this->sitepress->get_element_translations( $trid, 'post_wc_booking' );
+
+			foreach( $translations as $translation ){
+				if( $translation->element_id != $post_id ){
+					$this->wpdb->update(
+						$this->wpdb->posts,
+						array( 'post_status' => $post->post_status ),
+						array( 'ID' => $translation->element_id )
+					);
 				}
 			}
+
 		}
 
 	}
