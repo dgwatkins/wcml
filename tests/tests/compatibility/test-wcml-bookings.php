@@ -868,7 +868,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		update_post_meta( $wc_booking, '_booking_product_id', $product );
 		$bookings = $this->get_wcml_booking_object();
 		$meta_data = array(
-			'_booking_order_item_id' => random_int( 1, 999 ),
+			'_booking_order_item_id' => 0,
 			'_booking_cost'          => random_int( 1, 999 ),
 			'_booking_start'         => random_int( 1, 999 ),
 			'_booking_end'           => random_int( 1, 999 ),
@@ -1013,7 +1013,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$bookings = $this->get_wcml_booking_object();
 
 		$meta_data = array(
-			'_booking_order_item_id' => random_int( 1, 999 ),
+			'_booking_order_item_id' => 0,
 			'_booking_cost'          => random_int( 1, 999 ),
 			'_booking_start'         => random_int( 1, 999 ),
 			'_booking_end'           => random_int( 1, 999 ),
