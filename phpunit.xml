@@ -6,9 +6,6 @@
         convertNoticesToExceptions="true"
         convertWarningsToExceptions="true"
         >
-    <php>
-        <const name="WPML_CORE_PATH" value="./../sitepress-multilingual-cms"/>
-    </php>
     <testsuites>
         <testsuite>
             <directory prefix="test-" suffix=".php">./tests/tests/</directory>

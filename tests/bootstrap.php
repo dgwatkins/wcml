@@ -1,4 +1,6 @@
 <?php
+define( 'WP_PLUGIN_DIR', realpath( dirname( __FILE__ ) . '/../../' ) );
+
 if ( ! defined( 'WPML_CORE_PATH' ) ) {
 	define( 'WPML_CORE_PATH', dirname( __FILE__ ) . '/../../sitepress-multilingual-cms' );
 }
