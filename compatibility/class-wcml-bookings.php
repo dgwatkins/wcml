@@ -162,6 +162,8 @@ class WCML_Bookings {
 			add_filter( 'pre_wpml_is_translated_post_type', array( $this, 'filter_is_translated_post_type' ) );
 
 			add_action( 'woocommerce_product_data_panels',   array( $this, 'show_pointer_info' ) );
+
+			add_action( 'save_post', array( $this, 'sync_booking_status' ), 10, 3 );
 		}
 
 		if ( ! is_admin() || isset( $_POST['action'] ) && $_POST['action'] == 'wc_bookings_calculate_costs' ) {
@@ -2298,5 +2300,34 @@ class WCML_Bookings {
 
 		return $type;
 	}
+
+	/**
+	 * @param int $post_id
+	 * @param WP_Post $post
+	 * @param bool $update
+	 *
+	 */
+	public function sync_booking_status( $post_id, $post, $update ){
+
+		if( $post->post_type === 'wc_booking' && $update ){
+
+			$trid = $this->sitepress->get_element_trid( $post_id, 'post_wc_booking' );
+			$translations = $this->sitepress->get_element_translations( $trid, 'post_wc_booking' );
+
+			foreach( $translations as $translation ){
+				if( $translation->element_id != $post_id ){
+					$this->wpdb->update(
+						$this->wpdb->posts,
+						array( 'post_status' => $post->post_status ),
+						array( 'ID' => $translation->element_id )
+					);
+				}
+			}
+
+		}
+
+	}
+
+
 
 }
