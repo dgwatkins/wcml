@@ -128,6 +128,18 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 		}
 	}
 
+	function test_wcml_check_product_sku(){
+
+		//set sku
+		update_post_meta( $this->orig_product_id, '_sku', 'test_sku' );
+		update_post_meta( $this->es_product_id, '_sku', 'test_sku' );
+
+		$this->assertFalse( $this->woocommerce_wpml->products->wcml_check_product_sku( true, $this->orig_product_id, 'test_sku' ) );
+
+		$second_orig_product = $this->wcml_helper->add_product( $this->default_language, false, 'product 2' );
+		$this->assertTrue( $this->woocommerce_wpml->products->wcml_check_product_sku( true, $second_orig_product->id, 'test_sku' ) );
+	}
+
 	private function add_products_to_duplicate(){
 
 		//add simple product

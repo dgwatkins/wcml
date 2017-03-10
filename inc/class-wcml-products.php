@@ -558,7 +558,10 @@ class WCML_Products{
 
             foreach( $products as $product ){
                 $trid = $this->sitepress->get_element_trid( $product->ID, 'post_'.get_post_type( $product_id ) );
-                if( $product_trid != $trid ) $sku_found = true;
+                if( $product_trid != $trid ){
+                    $sku_found = true;
+                    break;
+                }
             }
 
         }
