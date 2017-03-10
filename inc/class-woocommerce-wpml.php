@@ -87,7 +87,7 @@ class woocommerce_wpml {
 
         add_action('init', array($this, 'init'),2);
 
-        if( defined( 'ICL_SITEPRESS_VERSION' ) && !ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) && class_exists( 'WPML_File' ) ){
+        if( defined( 'ICL_SITEPRESS_VERSION' ) && !ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ){
             $this->cs_templates = new WCML_Currency_Switcher_Templates( $this );
             $this->cs_templates->init_hooks();
         }
