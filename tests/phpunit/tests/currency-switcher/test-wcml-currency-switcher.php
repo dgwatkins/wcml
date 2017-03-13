@@ -215,9 +215,13 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider currency_switcher_shortcode_data
 	 */
-	public function currency_switcher_shortcode() {
-		$shortcode_attrs = array( 'switcher_id' => mt_rand( 1, 10 ) );
+	public function currency_switcher_shortcode( $switcher_id ) {
+		$shortcode_attrs = array();
+		if ( $switcher_id ) {
+			$shortcode_attrs['switcher_id'] = $switcher_id;
+		}
 		\WP_Mock::wpFunction( 'shortcode_atts', array(
 			'return' => $shortcode_attrs,
 			'args'   => array( array(), $shortcode_attrs ),
@@ -235,9 +239,11 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 		\WP_Mock::wpFunction( 'is_admin', array(
 			'return' => false,
 		) );
+
+		$switcher_id = array_key_exists( 'switcher_id', $shortcode_attrs ) ? $shortcode_attrs['switcher_id'] : 'product';
 		$wcml_settings = array(
 			'currency_switchers' => array(
-				$shortcode_attrs['switcher_id'] => array(
+				$switcher_id => array(
 					'switcher_style' => 'wcml-horizontal-list',
 					'template'       => 'Testing Switcher - %name% (%symbol%) - %code%',
 					'color_scheme'   => 'gray',
@@ -272,13 +278,20 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 
 		$subject = \Mockery::mock( 'WCML_Currency_Switcher[get_model_data]', array( &$woocommerce_wpml, &$sitepress ) );
 		$subject->shouldReceive( 'get_model_data' )->with( array(
-			'switcher_id'    => $shortcode_attrs['switcher_id'],
+			'switcher_id'    => $switcher_id,
 			'switcher_style' => 'wcml-horizontal-list',
 			'format'         => 'Testing Switcher - %name% (%symbol%) - %code%',
 			'color_scheme'   => 'gray',
 		), array( 'EUR', 'USD' ) )->andReturn( 'MODEL_DATA' );
 
 		$this->assertEquals( 'SHORTCODE_VIEW', $subject->currency_switcher_shortcode( $shortcode_attrs ) );
+	}
+
+	public function currency_switcher_shortcode_data() {
+		return array(
+			array( mt_rand( 1, 100 ) ),
+			array( false ),
+		);
 	}
 
 	/**
