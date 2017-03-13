@@ -23,12 +23,13 @@ class WCML_Currency_Switcher_Templates {
     /* @var string $ds */
     private $ds = DIRECTORY_SEPARATOR;
 
-    public function __construct( &$woocommerce_wpml, WPML_File $wpml_file = null ) {
+    public function __construct( &$woocommerce_wpml, WCML_File $wpml_file = null ) {
 
         $this->woocommerce_wpml = $woocommerce_wpml;
 
         if ( ! $wpml_file ) {
-            $wpml_file = new WPML_File();
+            //TODO: use WPML_FILE class instead after changing requirements for WPML >= 3.6.0
+            $wpml_file = new WCML_File();
         }
 
         $this->wpml_file = $wpml_file;
