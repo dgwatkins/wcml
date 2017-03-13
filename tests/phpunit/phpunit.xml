@@ -18,6 +18,7 @@
 				<directory>../../build</directory>
 				<directory>../../locale</directory>
 				<directory>../../tests</directory>
+				<directory>../../vendor</directory>
 			</exclude>
 		</whitelist>
 	</filter>
