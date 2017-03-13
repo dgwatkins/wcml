@@ -57,10 +57,8 @@ class WCML_Currency_Switcher{
 			return '';
 		}
 
-		if( empty( $args ) ){
-			$args = array(
-				'switcher_id' => 'product'
-			);
+		if( !isset( $args[ 'switcher_id' ] ) ){
+			$args[ 'switcher_id' ] = 'product';
 		}
 
 		$wcml_settings = $this->woocommerce_wpml->get_settings();
@@ -83,8 +81,6 @@ class WCML_Currency_Switcher{
 				$args[ 'color_scheme' ] = isset($currency_switcher_settings['color_scheme']) ? $currency_switcher_settings['color_scheme'] : array();
 			}
 
-		}elseif( !isset( $args[ 'switcher_style' ] ) ){
-			$args[ 'switcher_style' ] = 'wcml-dropdown';
 		}
 
 		$preview = '';
