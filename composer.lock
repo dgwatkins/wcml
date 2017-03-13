@@ -302,12 +302,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "efb110d3d013905936130ac154726afe3d5eaf4a"
+                "reference": "c5ba65ca44264a640d23e8d1644b668949394fe8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/efb110d3d013905936130ac154726afe3d5eaf4a",
-                "reference": "efb110d3d013905936130ac154726afe3d5eaf4a",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/c5ba65ca44264a640d23e8d1644b668949394fe8",
+                "reference": "c5ba65ca44264a640d23e8d1644b668949394fe8",
                 "shasum": ""
             },
             "require": {
@@ -316,7 +316,7 @@
             "require-dev": {
                 "psr/container": "^1.0",
                 "symfony/debug": "~2.7",
-                "symfony/phpunit-bridge": "~3.2"
+                "symfony/phpunit-bridge": "~3.3@dev"
             },
             "type": "library",
             "extra": {
@@ -356,7 +356,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2017-03-10 16:51:30"
+            "time": "2017-03-12 15:19:55"
         },
         {
             "name": "xrstf/composer-php52",
@@ -985,12 +985,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/schmittjoh/serializer.git",
-                "reference": "76f2300601319c55ffd251bdde02ad561746a5ca"
+                "reference": "c8ad292e2f8b716180cc122ddb3e9b5fd82008db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/schmittjoh/serializer/zipball/76f2300601319c55ffd251bdde02ad561746a5ca",
-                "reference": "76f2300601319c55ffd251bdde02ad561746a5ca",
+                "url": "https://api.github.com/repos/schmittjoh/serializer/zipball/c8ad292e2f8b716180cc122ddb3e9b5fd82008db",
+                "reference": "c8ad292e2f8b716180cc122ddb3e9b5fd82008db",
                 "shasum": ""
             },
             "require": {
@@ -1021,6 +1021,8 @@
                 "twig/twig": "~1.12|~2.0"
             },
             "suggest": {
+                "doctrine/cache": "Required if you like to use cache functionality.",
+                "doctrine/collections": "Required if you like to use doctrine collection types as ArrayCollection.",
                 "symfony/yaml": "Required if you'd like to serialize data to YAML format."
             },
             "type": "library",
@@ -1053,7 +1055,7 @@
                 "serialization",
                 "xml"
             ],
-            "time": "2017-03-10 15:21:23"
+            "time": "2017-03-13 08:51:08"
         },
         {
             "name": "joshtronic/php-loremipsum",
@@ -1628,7 +1630,7 @@
             "keywords": [
                 "phpunit"
             ],
-            "time": "2017-03-03 09:33:25"
+            "time": "2017-03-03 10:15:05"
         },
         {
             "name": "otgs/wcml-codeception-tests",
