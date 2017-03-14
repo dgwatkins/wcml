@@ -102,7 +102,7 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 		$template         = array(
 			'wcml-dropdown' => 'dummy_template_data',
 		);
-		$woocommerce_wpml->expects( $this->once() )->method( 'get_settings' )->willReturn( array() );
+		$woocommerce_wpml->expects( $this->once() )->method( 'get_settings' )->willReturn( array( 'currency_switcher_product_visibility' => 1 ) );
 		$subject = new WCML_Currency_Switcher_Templates( $woocommerce_wpml, $wpml_file );
 		$subject->set_templates( $template );
 		$this->assertEquals( $template, $subject->get_active_templates() );

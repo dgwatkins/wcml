@@ -68,14 +68,15 @@ class WCML_Currency_Switcher_Templates {
         $wcml_settings = $this->woocommerce_wpml->get_settings();
 
         if( isset( $wcml_settings[ 'currency_switchers' ] ) ){
-            foreach( $wcml_settings[ 'currency_switchers' ] as $switcher ){
+            foreach( $wcml_settings[ 'currency_switchers' ] as $switcher_id => $switcher ){
+                if( $switcher_id === 'product' && $wcml_settings[ 'currency_switcher_product_visibility' ] != 1 ) continue;
                 foreach( $this->templates as $key => $template ){
                     if( $switcher['switcher_style'] == $key && !isset( $templates[$key] ) ){
                         $templates[$key] = $template;
                     }
                 }
             }
-        }else{
+        }elseif( isset( $wcml_settings[ 'currency_switcher_product_visibility' ] ) && $wcml_settings[ 'currency_switcher_product_visibility' ] === 1 ){
             //set default template to active
             $templates['wcml-dropdown'] = $this->templates['wcml-dropdown'];
         }
@@ -317,31 +318,32 @@ class WCML_Currency_Switcher_Templates {
             }
         }
 
-        if( isset( $wcml_settings[ 'currency_switchers' ] ) ){
-            foreach( $wcml_settings[ 'currency_switchers' ] as $key => $switcher_data ){
+        if( $templates ){
+            if( isset( $wcml_settings[ 'currency_switchers' ] ) ){
+                foreach( $wcml_settings[ 'currency_switchers' ] as $key => $switcher_data ){
 
-                $switcher_template = $switcher_data['switcher_style'];
-                $css = $this->get_color_picket_css( $key, $switcher_data );
-                $template = $templates[ $switcher_template ];
+                    $switcher_template = $switcher_data['switcher_style'];
+                    $css = $this->get_color_picket_css( $key, $switcher_data );
+                    $template = $templates[ $switcher_template ];
 
-                if ( $template->has_styles() ) {
-                    wp_add_inline_style( $template->get_inline_style_handler(), $css );
+                    if ( $template->has_styles() ) {
+                        wp_add_inline_style( $template->get_inline_style_handler(), $css );
+                    }else{
+                        echo $this->get_inline_style( $key, $switcher_template, $css );
+                    }
+                }
+            }
+
+            if ( ! empty( $wcml_settings['currency_switcher_additional_css'] ) ) {
+                $additional_css = $this->sanitize_css( $wcml_settings['currency_switcher_additional_css'] );
+
+                if( $style_handler ){
+                    wp_add_inline_style( $style_handler, $additional_css );
                 }else{
-                    echo $this->get_inline_style( $key, $switcher_template, $css );
+                    echo $this->get_inline_style( 'currency_switcher', 'additional_css', $additional_css );
                 }
             }
         }
-
-        if ( ! empty( $wcml_settings['currency_switcher_additional_css'] ) ) {
-            $additional_css = $this->sanitize_css( $wcml_settings['currency_switcher_additional_css'] );
-
-            if( $style_handler ){
-                wp_add_inline_style( $style_handler, $additional_css );
-            }else{
-                echo $this->get_inline_style( 'currency_switcher', 'additional_css', $additional_css );
-            }
-        }
-
     }
 
     /**
