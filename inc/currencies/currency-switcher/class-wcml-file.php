@@ -33,7 +33,7 @@ class WCML_File {
 	public function get_uri_from_path( $path ) {
 		$base = null;
 
-		if ( $this->wp_api->defined( 'WP_CONTENT_DIR' ) && $this->wp_api->defined( 'WP_CONTENT_URL' ) ) {
+		if ( $this->wp_api->constant( 'WP_CONTENT_DIR' ) && $this->wp_api->constant( 'WP_CONTENT_URL' ) ) {
 			$base_path = $this->fix_dir_separator( $this->wp_api->constant( 'WP_CONTENT_DIR' ) );
 
 			if ( 0 === strpos( $path, $base_path ) ) {
