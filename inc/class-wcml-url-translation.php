@@ -108,7 +108,13 @@ class WCML_Url_Translation {
         if( empty( $this->wc_permalinks['product_base'] ) ){
 
             $wp_post_types['product']->rewrite['slug'] = 'product';
-            $wp_rewrite->extra_permastructs['product']['struct'] = '/product/%product%';
+            if(
+                !isset( $wp_rewrite->extra_permastructs['product']['struct'] ) ||
+                empty( $wp_rewrite->extra_permastructs['product']['struct'] )
+            ){
+                $wp_rewrite->extra_permastructs['product']['struct'] = '/product/%product%';
+            }
+
 
         }
 
