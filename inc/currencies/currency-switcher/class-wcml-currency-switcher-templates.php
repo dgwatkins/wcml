@@ -69,7 +69,10 @@ class WCML_Currency_Switcher_Templates {
 
         if( isset( $wcml_settings[ 'currency_switchers' ] ) ){
             foreach( $wcml_settings[ 'currency_switchers' ] as $switcher_id => $switcher ){
-                if( $switcher_id === 'product' && $wcml_settings[ 'currency_switcher_product_visibility' ] != 1 ) continue;
+                if( 'product' === $switcher_id && 0 === $wcml_settings[ 'currency_switcher_product_visibility' ] ){
+                    continue;
+                }
+
                 foreach( $this->templates as $key => $template ){
                     if( $switcher['switcher_style'] == $key && !isset( $templates[$key] ) ){
                         $templates[$key] = $template;
