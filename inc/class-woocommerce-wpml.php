@@ -69,9 +69,7 @@ class woocommerce_wpml {
     public function __construct(){
 
         $this->settings = $this->get_settings();
-
         $this->currencies = new WCML_Currencies( $this );
-
         $this->xdomain_data = new WCML_xDomain_Data;
 
 	    new WCML_Widgets( $this );
