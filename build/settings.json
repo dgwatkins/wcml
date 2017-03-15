@@ -71,7 +71,9 @@
       "!vendor/**/*/lib/test*",
       "!vendor/**/*/src/test*",
       "!wpml-config.xml",
-      "!wpml-dependencies.json"
+      "!wpml-dependencies.json",
+      "res/scss",
+      "**/*/*.scss"
     ]
   },
   "dependencies": [
