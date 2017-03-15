@@ -42,7 +42,8 @@ class WCML_Currency_Switcher{
 	}
 
 	public function currency_switcher_shortcode( $atts ) {
-		extract( shortcode_atts( array(), $atts ) );
+
+		$atts = (array) $atts;
 
 		ob_start();
 		$this->wcml_currency_switcher( $atts );
@@ -63,24 +64,23 @@ class WCML_Currency_Switcher{
 
 		$wcml_settings = $this->woocommerce_wpml->get_settings();
 		$multi_currency_object =& $this->woocommerce_wpml->multi_currency;
+		$currency_switcher_settings = array();
 
-		if( isset( $args[ 'switcher_id' ] ) && isset( $wcml_settings[ 'currency_switchers' ][ $args[ 'switcher_id' ] ] ) ){
-
+		if( isset( $wcml_settings[ 'currency_switchers' ][ $args[ 'switcher_id' ] ] ) ){
 			$currency_switcher_settings = $wcml_settings[ 'currency_switchers' ][ $args[ 'switcher_id' ] ];
+		}
 
-			if ( !isset( $args[ 'switcher_style' ] ) ) {
-				$args[ 'switcher_style' ] = isset( $currency_switcher_settings[ 'switcher_style' ] ) ? $currency_switcher_settings[ 'switcher_style' ] : 'wcml-dropdown';
-			}
+		if ( !isset( $args[ 'switcher_style' ] ) ) {
+			$args[ 'switcher_style' ] = isset( $currency_switcher_settings[ 'switcher_style' ] ) ? $currency_switcher_settings[ 'switcher_style' ] : 'wcml-dropdown';
+		}
 
-			if ( !isset( $args[ 'format' ] ) ) {
-				$args[ 'format' ] = isset( $currency_switcher_settings[ 'template' ] ) && $currency_switcher_settings[ 'template' ] != '' ?
-					$currency_switcher_settings[ 'template' ] : '%name% (%symbol%) - %code%';
-			}
+		if ( !isset( $args[ 'format' ] ) ) {
+			$args[ 'format' ] = isset( $currency_switcher_settings[ 'template' ] ) && '' !== $currency_switcher_settings[ 'template' ] ?
+				$currency_switcher_settings[ 'template' ] : '%name% (%symbol%) - %code%';
+		}
 
-			if ( !isset( $args[ 'color_scheme' ] ) ) {
-				$args[ 'color_scheme' ] = isset($currency_switcher_settings['color_scheme']) ? $currency_switcher_settings['color_scheme'] : array();
-			}
-
+		if ( !isset( $args[ 'color_scheme' ] ) ) {
+			$args[ 'color_scheme' ] = isset($currency_switcher_settings['color_scheme']) ? $currency_switcher_settings['color_scheme'] : array();
 		}
 
 		$preview = '';
