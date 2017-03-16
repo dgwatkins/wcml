@@ -70,8 +70,10 @@ class WCML_Currency_Switcher{
 			$currency_switcher_settings = $wcml_settings[ 'currency_switchers' ][ $args[ 'switcher_id' ] ];
 		}
 
-		if ( !isset( $args[ 'switcher_style' ] ) ) {
-			$args[ 'switcher_style' ] = isset( $currency_switcher_settings[ 'switcher_style' ] ) ? $currency_switcher_settings[ 'switcher_style' ] : 'wcml-dropdown';
+		$args = $this->check_and_convert_switcher_style( $args );
+
+		if ( !isset( $args[ 'switcher_style' ] ) || !$this->woocommerce_wpml->cs_templates->check_is_active( $args[ 'switcher_style' ] ) ) {
+			$args[ 'switcher_style' ] = isset( $currency_switcher_settings[ 'switcher_style' ] ) ? $currency_switcher_settings[ 'switcher_style' ] : $this->woocommerce_wpml->cs_templates->get_first_active();
 		}
 
 		if ( !isset( $args[ 'format' ] ) ) {
@@ -195,6 +197,7 @@ class WCML_Currency_Switcher{
 	 * @deprecated 3.9
 	 */
 	public function currency_switcher( $args = array() ){
+
 		$this->wcml_currency_switcher( $args );
 	}
 
@@ -269,6 +272,28 @@ class WCML_Currency_Switcher{
 				'border_normal'             => ''
 			)
 		);
+	}
+
+	//backward compatibility to convert switcher style for users who uses old parameters wcml-1874
+	public function check_and_convert_switcher_style( $args ){
+
+		if( isset( $args[ 'switcher_style' ] ) ){
+			if(
+				'list' === $args[ 'switcher_style' ] &&
+				isset( $args[ 'orientation' ] )
+			){
+				if( 'horizontal' === $args[ 'orientation' ] ){
+					$args[ 'switcher_style' ] = 'wcml-horizontal-list';
+				}else{
+					$args[ 'switcher_style' ] = 'wcml-vertical-list';
+				}
+				unset( $args[ 'orientation' ] );
+			}elseif( 'dropdown' === $args[ 'switcher_style' ] ){
+				$args[ 'switcher_style' ] = 'wcml-dropdown';
+			}
+		}
+
+		return $args;
 	}
 
 }

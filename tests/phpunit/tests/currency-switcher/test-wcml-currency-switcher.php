@@ -319,4 +319,47 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 
 		$this->assertEquals( $currency_switcher_output, $output );
 	}
+
+
+	/**
+	 * @test
+	 */
+	public function check_and_convert_switcher_style() {
+
+		$woocommerce_wpml     = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
+		$sitepress            = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
+		$subject              = new WCML_Currency_Switcher( $woocommerce_wpml, $sitepress );
+
+		$initial_args = array(
+			'switcher_style' => 'list',
+			'orientation' => 'horizontal'
+		);
+
+		$expected_args = array(
+			'switcher_style' => 'wcml-horizontal-list'
+		);
+
+		$this->assertEquals( $expected_args, $subject->check_and_convert_switcher_style( $initial_args ) );
+
+		$initial_args = array(
+			'switcher_style' => 'list',
+			'orientation' => 'vertical'
+		);
+
+		$expected_args = array(
+			'switcher_style' => 'wcml-vertical-list'
+		);
+
+		$this->assertEquals( $expected_args, $subject->check_and_convert_switcher_style( $initial_args ) );
+
+		$initial_args = array(
+			'switcher_style' => 'dropdown'
+		);
+
+		$expected_args = array(
+			'switcher_style' => 'wcml-dropdown'
+		);
+
+		$this->assertEquals( $expected_args, $subject->check_and_convert_switcher_style( $initial_args ) );
+	}
 }

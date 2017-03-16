@@ -417,4 +417,26 @@ class WCML_Currency_Switcher_Templates {
 	public function set_templates( $templates ) {
     	$this->templates = $templates;
 	}
+
+    public function check_is_active( $template ){
+        $is_active = false;
+
+        $active_templates = $this->get_active_templates();
+
+        foreach( $active_templates as $template_key => $active_template ){
+            if ( $template === $template_key ){
+                $is_active = true;
+                break;
+            }
+        }
+
+        return $is_active;
+
+    }
+
+    public function get_first_active( ){
+
+        return current( array_keys( $this->get_active_templates() ) );
+
+    }
 }
