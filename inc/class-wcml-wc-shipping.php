@@ -119,8 +119,11 @@ class WCML_WC_Shipping{
     }
 
     function translate_shipping_method_title( $title, $shipping_id, $language = false ) {
-        $shipping_id = str_replace( ':', '', $shipping_id );
-        $title = apply_filters( 'wpml_translate_single_string', $title, 'woocommerce', $shipping_id .'_shipping_method_title', $language ? $language : $this->current_language );
+
+        if( !is_admin() ){
+            $shipping_id = str_replace( ':', '', $shipping_id );
+            $title = apply_filters( 'wpml_translate_single_string', $title, 'woocommerce', $shipping_id .'_shipping_method_title', $language ? $language : $this->current_language );
+        }
 
         return $title;
     }
