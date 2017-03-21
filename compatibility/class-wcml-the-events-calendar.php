@@ -87,8 +87,8 @@ class WCML_The_Events_Calendar{
 
 	    	if( $post_id == $this->sitepress->get_original_element_id( $post_id, 'post_tribe_events' ) ){
 
-			    $tickets = [];
-			    $ticket_meta = [];
+			    $tickets = array();
+			    $ticket_meta = array();
 
 	    		if( class_exists('Tribe__Tickets__RSVP') ){
 				    $ticket_ids = Tribe__Tickets__RSVP::get_instance()->get_tickets_ids( $post_id );

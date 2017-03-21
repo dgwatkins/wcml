@@ -47,14 +47,20 @@
     "otgs/build-tools-ci": "dev-develop",
     "symfony/dom-crawler": "^3.1",
     "symfony/css-selector": "^3.1",
-    "otgs/wcml-codeception-tests": "dev-master"
+    "otgs/wcml-codeception-tests": "dev-master",
+    "squizlabs/php_codesniffer": "^2.8",
+    "wimg/php-compatibility": "^7.1",
+    "simplyadmire/composer-plugins": "^2.1",
+    "wp-coding-standards/wpcs": "^0.10.0"
   },
   "scripts": {
     "post-install-cmd": [
-      "xrstf\\Composer52\\Generator::onPostInstallCmd"
+      "xrstf\\Composer52\\Generator::onPostInstallCmd",
+      "OTGS\\Composer\\Scripts\\Install::PHPCSStandards"
     ],
     "post-update-cmd": [
-      "xrstf\\Composer52\\Generator::onPostInstallCmd"
+      "xrstf\\Composer52\\Generator::onPostInstallCmd",
+      "OTGS\\Composer\\Scripts\\Install::PHPCSStandards"
     ],
     "post-autoload-dump": [
       "xrstf\\Composer52\\Generator::onPostInstallCmd"

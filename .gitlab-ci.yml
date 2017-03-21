@@ -25,6 +25,15 @@ stages:
   - deploy
   - documentation
 
+PhpComp:
+  stage: test
+  when: always
+  image: otgs/phpunit
+  tags:
+    - docker
+  script:
+    - vendor/bin/phpcs --standard=./phpcs.compatibility.xml -s -p --colors --report-full --report-summary ./
+
 PhpUnit:
   stage: test
   when: always
