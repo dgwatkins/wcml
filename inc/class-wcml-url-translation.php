@@ -106,18 +106,11 @@ class WCML_Url_Translation {
         global $wp_post_types, $wp_rewrite;
 
         if( empty( $this->wc_permalinks['product_base'] ) ){
-
             $wp_post_types['product']->rewrite['slug'] = 'product';
-            if(
-                !isset( $wp_rewrite->extra_permastructs['product']['struct'] ) ||
-                empty( $wp_rewrite->extra_permastructs['product']['struct'] )
-            ){
+            if( empty( $wp_rewrite->extra_permastructs['product']['struct'] ) ){
                 $wp_rewrite->extra_permastructs['product']['struct'] = '/product/%product%';
             }
-
-
         }
-
     }
 
     function url_strings_context() {
