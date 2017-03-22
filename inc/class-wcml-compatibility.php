@@ -180,6 +180,11 @@ class WCML_Compatibility {
 		    new WCML_The_Events_Calendar( $this->sitepress, $this->woocommerce_wpml );
 	    }
 
+	    // Klarna Gateway
+	    if( class_exists( 'WC_Gateway_Klarna' ) ){
+		    new WCML_Klarna_Gateway();
+	    }
+
 
     }
 

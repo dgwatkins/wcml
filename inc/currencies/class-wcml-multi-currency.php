@@ -75,6 +75,11 @@ class WCML_Multi_Currency{
      */
     public $exchange_rate_services;
 
+    /**
+     * @var WCML_Load_Filters
+     */
+    public $load_filters;
+
 
     /**
      * WCML_Multi_Currency constructor.
@@ -88,9 +93,10 @@ class WCML_Multi_Currency{
 
         $this->init_currencies();
 
+        $this->load_filters   = $this->_load_filters();
         $this->prices   = new WCML_Multi_Currency_Prices( $this );
 
-        if( $this->_load_filters()) {
+        if( $this->load_filters ) {
             $this->coupons  = new WCML_Multi_Currency_Coupons();
             $this->shipping = new WCML_Multi_Currency_Shipping( $this );
         }
