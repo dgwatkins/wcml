@@ -1,6 +1,6 @@
 <?php
 
-class WCML_Klarna_Gateway{
+class WCML_YITH_WCQV{
 
     public function add_hooks(){
 
@@ -10,7 +10,7 @@ class WCML_Klarna_Gateway{
 
     function ajax_action_needs_multi_currency( $actions ){
 
-        $actions[] = 'klarna_checkout_cart_callback_update';
+        $actions[] = 'yith_load_product_quick_view';
 
         return $actions;
     }

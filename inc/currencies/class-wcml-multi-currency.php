@@ -76,7 +76,7 @@ class WCML_Multi_Currency{
     public $exchange_rate_services;
 
     /**
-     * @var WCML_Load_Filters
+     * @var bool
      */
     public $load_filters;
 
