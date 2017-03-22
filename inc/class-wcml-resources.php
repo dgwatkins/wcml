@@ -45,15 +45,17 @@ class WCML_Resources {
                 wp_enqueue_style( 'wcml-dialogs' );
             }
 
-            wp_register_style( 'wcml_admin', WCML_PLUGIN_URL . '/res/css/admin.css', array( 'wp-pointer' ), WCML_VERSION );
-            wp_enqueue_style( 'wcml_admin' );
-
             wp_enqueue_style( 'wp-color-picker' );
         }
 
         if ( self::$pagenow == 'options-permalink.php' ) {
             wp_register_style( 'wcml_op', WCML_PLUGIN_URL . '/res/css/options-permalink.css', null, WCML_VERSION );
             wp_enqueue_style( 'wcml_op' );
+        }
+
+        if( is_admin() ){
+            wp_register_style( 'wcml_admin', WCML_PLUGIN_URL . '/res/css/admin.css', array( 'wp-pointer' ), WCML_VERSION );
+            wp_enqueue_style( 'wcml_admin' );
         }
     }
 
@@ -72,13 +74,6 @@ class WCML_Resources {
                 'jquery-ui-resizable'
             ), WCML_VERSION );
 
-            wp_enqueue_script(
-                'wcml-pointer',
-                WCML_PLUGIN_URL . '/res/js/pointer' . WCML_JS_MIN . '.js',
-                array( 'wp-pointer' ),
-                WCML_VERSION,
-                true
-            );
 
             wp_register_script( 'jquery-cookie', WCML_PLUGIN_URL . '/res/js/jquery.cookie' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION );
             wp_register_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs' . WCML_JS_MIN . '.js', array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'), WCML_VERSION );
@@ -149,6 +144,15 @@ class WCML_Resources {
                 'is_currency_switched' => isset( $_GET[ 'wcmlc' ] ) ? 1 : 0
             ) );
         } elseif( is_admin() ) {
+
+            wp_enqueue_script(
+                'wcml-pointer',
+                WCML_PLUGIN_URL . '/res/js/pointer' . WCML_JS_MIN . '.js',
+                array( 'wp-pointer' ),
+                WCML_VERSION,
+                true
+            );
+
             wp_register_script( 'wcml-messages', WCML_PLUGIN_URL . '/res/js/wcml-messages' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION );
             wp_enqueue_script( 'wcml-messages' );
         }
