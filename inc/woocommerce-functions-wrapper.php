@@ -4,7 +4,7 @@ class WooCommerce_Functions_Wrapper{
 
     public static function is_deprecated(){
 
-        if( version_compare( WC_VERSION , '2.7', '<' ) ){
+        if( version_compare( WC_VERSION , '3.0.0', '<' ) ){
             return true;
         }else{
             return false;

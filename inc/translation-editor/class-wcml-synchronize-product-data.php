@@ -22,7 +22,7 @@ class WCML_Synchronize_Product_Data{
 
             add_filter( 'icl_make_duplicate', array( $this, 'icl_make_duplicate'), 110, 4 );
 
-            if( ( defined('WC_VERSION') && version_compare( WC_VERSION , '2.7', '<' ) ) ) {
+            if( ( defined('WC_VERSION') && version_compare( WC_VERSION , '3.0.0', '<' ) ) ) {
                 add_action('woocommerce_duplicate_product', array($this, 'woocommerce_duplicate_product'), 10, 2);
             }else{
                 add_action( 'woocommerce_product_duplicate', array( $this, 'woocommerce_duplicate_product' ), 10, 2 );
