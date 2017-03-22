@@ -41,7 +41,8 @@ PhpUnit:
   tags:
     - docker
   script:
-    - ./vendor/otgs/build-tools-ci/otgs-ci -p
+    - cd tests/phpunit
+    - ../../vendor/bin/phpunit --fail-on-warning
   except:
     - tags
 
