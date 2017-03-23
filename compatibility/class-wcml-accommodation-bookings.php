@@ -35,7 +35,13 @@ class WCML_Accommodation_Bookings{
 
     function after_bookings_pricing( $post_id ){
 
-        if( $this->woocommerce_wpml->products->is_original_product( $post_id ) && $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
+        $product_terms = wp_get_post_terms( $post_id, 'product_type', array( "fields" => "names" ) );
+
+        if(
+            in_array( 'accommodation-booking', $product_terms ) &&
+            $this->woocommerce_wpml->products->is_original_product( $post_id ) &&
+            $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT
+        ){
 
             $custom_costs_status = get_post_meta( $post_id, '_wcml_custom_costs_status', true );
 
