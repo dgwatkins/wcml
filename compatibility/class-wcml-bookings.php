@@ -984,16 +984,35 @@ class WCML_Bookings {
 				}
 			}
 
-			if ( isset( $fields[ $name . $currency ] ) ) {
-				return $fields[ $name . $currency ];
-			} else {
-				return $this->woocommerce_wpml->multi_currency->prices->convert_price_amount( $cost, $currency );
+			$needs_filter_pricing_cost = $this->needs_filter_pricing_cost( $name, $fields );
+
+			if( $needs_filter_pricing_cost ){
+				if ( isset( $fields[ $name . $currency ] ) ) {
+					return $fields[ $name . $currency ];
+				} else {
+					return $this->woocommerce_wpml->multi_currency->prices->convert_price_amount( $cost, $currency );
+				}
 			}
 
 		}
 
 		return $cost;
 
+	}
+
+	function needs_filter_pricing_cost( $name, $fields ){
+
+		$modifier_skip_values = array( 'divide', 'times' );
+
+		if(
+			'override_block_' === $name ||
+			( 'cost_' === $name && !in_array( $fields[ 'modifier' ], $modifier_skip_values ) ) ||
+			( 'base_cost_' === $name && !in_array( $fields[ 'base_modifier' ], $modifier_skip_values ) )
+		){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	function load_assets( $external_product_type = false ) {

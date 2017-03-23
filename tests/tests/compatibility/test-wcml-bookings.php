@@ -612,20 +612,20 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 
 		$woocommerce_wpml->settings['enable_multi_currency'] = 2;
 		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
-		$this->assertEquals( $block_cost, $bookings->filter_pricing_cost( $cost, array( 'nameUSD' => $block_cost ), 'name', 'name_key' ) );
+		$this->assertEquals( $block_cost, $bookings->filter_pricing_cost( $cost, array( 'cost_USD' => $block_cost, 'modifier' => '' ), 'cost_', 'name_key' ) );
 
 		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
-		$this->assertEquals( $cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $cost, array(), 'name', 'name_key' ) );
-		$this->assertEquals( $block_cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $block_cost, array(), 'name', 'name_key' ) );
+		$this->assertEquals( $cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $cost, array( 'modifier' => '' ), 'cost_', 'name_key' ) );
+		$this->assertEquals( $block_cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $block_cost, array( 'base_modifier' => '' ), 'base_cost_', 'name_key' ) );
 
 		$product = $this->create_bookable_product( $this->default_language );
 		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
 		$translation = $this->create_bookable_product( $this->second_language, $trid );
 
-		update_post_meta( $product, '_wc_booking_pricing', array( 'name_key' => array( 'nameUSD' => $cost * 1.1 ) ) );
+		update_post_meta( $product, '_wc_booking_pricing', array( 'name_key' => array( 'cost_USD' => $cost * 1.1, 'modifier' => '' ) ) );
 
 		$_POST['add-to-cart'] = $translation;
-		$this->assertEquals( $cost * 1.1, $bookings->filter_pricing_cost( $cost, array(), 'name', 'name_key' ) );
+		$this->assertEquals( $cost * 1.1, $bookings->filter_pricing_cost( $cost, array( ), 'cost_', 'name_key' ) );
 		unset( $_POST['add-to-cart'] );
 	}
 
