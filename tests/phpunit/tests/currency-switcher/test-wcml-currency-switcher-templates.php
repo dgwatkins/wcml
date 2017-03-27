@@ -270,11 +270,66 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 		}
 	}
 
+	/**
+	 * @test
+	 */
+	public function check_is_active() {
+
+		$wcml_currency_switcher_template = $this->getMockBuilder( 'WCML_Currency_Switcher_Template' )->disableOriginalConstructor()->getMock();
+		$template_slug = 'dummy_template';
+
+		$subject = $this->get_currency_switcher_templates_subject( $template_slug );
+		$subject->set_templates( array( $template_slug => $wcml_currency_switcher_template ) );
+
+		$this->assertTrue( $subject->check_is_active( $template_slug ) );
+		$this->assertFalse( $subject->check_is_active( 'dummy_template_false' ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function get_first_active() {
+
+		$wcml_currency_switcher_template = $this->getMockBuilder( 'WCML_Currency_Switcher_Template' )->disableOriginalConstructor()->getMock();
+		$template_slug = 'dummy_template';
+
+		$subject = $this->get_currency_switcher_templates_subject( $template_slug );
+		$subject->set_templates(
+			array(
+				$template_slug => $wcml_currency_switcher_template,
+				'dummy_template_false' => $wcml_currency_switcher_template
+			)
+		);
+
+		$this->assertEquals( $template_slug, $subject->get_first_active( ) );
+	}
+
 	public function fix_dir_separator( $dir ) {
 		return $dir;
 	}
 
 	public function get_uri_from_path( $path ) {
 		return $path;
+	}
+
+	public function get_currency_switcher_templates_subject( $template_slug ) {
+
+		$woocommerce_wpml                = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
+		$wpml_file                       = $this->getMockBuilder( 'WCML_File' )->disableOriginalConstructor()->getMock();
+
+		$currency_switchers = array(
+			array(
+				'switcher_style' => $template_slug,
+				'format'         => array(
+					'template_options' => array(),
+				),
+			),
+		);
+
+		$wcml_settings['currency_switchers'] = $currency_switchers;
+		$woocommerce_wpml->method( 'get_settings' )->willReturn( $wcml_settings );
+		$subject = new WCML_Currency_Switcher_Templates( $woocommerce_wpml, $wpml_file );
+
+		return $subject;
 	}
 }
