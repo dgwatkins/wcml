@@ -216,7 +216,7 @@ class WCML_Admin_Menus{
                 !isset( $_GET[ 'action' ] ) ||
                 ( isset( $_GET[ 'action' ] ) && !in_array( $_GET[ 'action' ], array( 'trash', 'delete' ) ) )
             ) {
-                $prid = intval( $_GET[ 'post' ] );
+                $prid = (int)$_GET[ 'post' ];
                 wp_redirect( admin_url( 'admin.php?page=wpml-wcml&tab=products&prid='.$prid ) );
                 exit;
             }
