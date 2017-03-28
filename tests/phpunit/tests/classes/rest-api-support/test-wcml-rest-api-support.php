@@ -136,18 +136,45 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 
 		$this->test_data['sitepress_current_language'] = $default_language;
 
+		$WP_REST_Server = $this->getMockBuilder( 'WP_REST_Server' )->disableOriginalConstructor()->getMock();
+
+		// No lang - no switch
 		unset($_GET['lang']);
-		$subject->set_language_for_request( new stdClass() );
+		$subject->set_language_for_request( $WP_REST_Server );
 		$this->assertEquals( $default_language, $this->test_data['sitepress_current_language'] );
 
+		// Try to switch to inactive language - no switch
 		$_GET['lang'] = $wrong_language;
-		$subject->set_language_for_request( new stdClass() );
+		$subject->set_language_for_request( $WP_REST_Server );
 		$this->assertEquals( $default_language, $this->test_data['sitepress_current_language'] );
 
+		// #wcml-1881 the case when this is not a REST API request  - no switch
 		$_GET['lang'] = $other_language;
-		$subject->set_language_for_request( new stdClass() );
+		$this->test_data['sitepress_current_language'] = $default_language;
+		$_SERVER['REQUEST_URI'] = false;
+		$subject->set_language_for_request( $WP_REST_Server );
+		$this->assertEquals( $default_language, $this->test_data['sitepress_current_language'] );
+
+		// Swicth to an active language - do switch
+		$_GET['lang'] = $other_language;
+		// Make is_request_to_rest_api return true
+		\WP_Mock::wpFunction( 'trailingslashit', array(
+			'return' => function ( $url ) {
+				return rtrim( $url, '/' ) . '/';
+			},
+		) );
+		\WP_Mock::wpFunction( 'rest_get_url_prefix', array(
+			'return' => function ( ) {
+				return 'wp-json';
+			},
+		) );
+		//
+		$_SERVER['REQUEST_URI'] = 'wp-json/wc/';
+		$subject->set_language_for_request( $WP_REST_Server );
+
 		$this->assertEquals( $other_language, $this->test_data['sitepress_current_language'] );
 
+		unset($_SERVER['REQUEST_URI']);
 	}
 
 	/**
