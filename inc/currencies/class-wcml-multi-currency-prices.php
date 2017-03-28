@@ -18,7 +18,8 @@ class WCML_Multi_Currency_Prices{
     public function __construct( &$multi_currency ){
 
         $this->multi_currency =& $multi_currency;
-        if( !is_admin() ) {
+
+        if( $this->multi_currency->load_filters ) {
             add_filter('init', array($this, 'prices_init'), 5);
 
             // Currency and Amount filters
