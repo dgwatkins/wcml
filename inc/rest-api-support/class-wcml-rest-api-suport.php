@@ -43,18 +43,17 @@ class WCML_REST_API_Support{
 	}
 
 	/**
-	 * @param $wp_rest_server
+	 * @param WP_REST_Server $wp_rest_server
 	 * enforces the language of request as the current language to be able to filter items by language
 	 */
 	public function set_language_for_request( $wp_rest_server ){
-		if( isset( $_GET['lang'] )  ){
+		if( self::is_request_to_rest_api() && isset( $_GET['lang'] )  ){
 			$request_language = $_GET['lang'];
 			$active_languages = $this->sitepress->get_active_languages();
 			if( isset( $active_languages[ $request_language ] ) ){
 				$this->sitepress->switch_lang( $request_language );
 			}
 		}
-
 	}
 
 	/**
