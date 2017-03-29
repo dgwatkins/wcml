@@ -47,7 +47,7 @@ class WCML_Product_Addons {
 		add_filter( 'wcml_cart_contents_not_changed', array(
 			$this,
 			'filter_booing_addon_product_in_cart_contents'
-		), 20, 3 );
+		), 20 );
 	}
 
 	/**
@@ -267,7 +267,7 @@ class WCML_Product_Addons {
 	}
 
 	// special case for WC Bookings plugin - need add addon cost after re-calculating booking costs #wcml-1877
-	public function filter_booing_addon_product_in_cart_contents( $cart_item, $key, $current_language ) {
+	public function filter_booing_addon_product_in_cart_contents( $cart_item ) {
 
 		if ( $cart_item['data'] instanceof WC_Product_Booking && isset( $cart_item['addons'] ) ) {
 			$cost = $cart_item['data']->get_price();
