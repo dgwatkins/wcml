@@ -230,13 +230,21 @@ class WCML_Cart
                 if( !is_null( $tr_variation_id ) ){
                     $cart->cart_contents[ $key ][ 'product_id' ] = intval( $tr_product_id );
                     $cart->cart_contents[ $key ][ 'variation_id' ] = intval( $tr_variation_id );
-                    $cart->cart_contents[ $key ][ 'data' ]->id = intval( $tr_product_id );
+                    if( defined('WC_VERSION') && version_compare( WC_VERSION , '2.7', '<' ) ){
+                        $cart->cart_contents[ $key ][ 'data' ]->id = intval( $tr_product_id );
+                    }else{
+                        $cart->cart_contents[ $key ][ 'data' ]->set_id( intval( $tr_product_id ) );
+                    }
                     $cart->cart_contents[ $key ][ 'data' ]->post = get_post( $tr_product_id );
                 }
             }else{
                 if( !is_null( $tr_product_id ) ){
                     $cart->cart_contents[ $key ][ 'product_id' ] = intval( $tr_product_id );
-                    $cart->cart_contents[ $key ][ 'data' ]->id = intval( $tr_product_id );
+                    if( defined('WC_VERSION') && version_compare( WC_VERSION , '2.7', '<' ) ){
+                        $cart->cart_contents[ $key ][ 'data' ]->id = intval( $tr_product_id );
+                    }else{
+                        $cart->cart_contents[ $key ][ 'data' ]->set_id( intval( $tr_product_id ) );
+                    }
                     $cart->cart_contents[ $key ][ 'data' ]->post = get_post( $tr_product_id );
                 }
             }

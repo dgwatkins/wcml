@@ -160,13 +160,26 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
             )
         );
 
+        $es_product = $this->wcml_helper->add_product( 
+            'es', 
+            $product->trid, 
+            'producto 1', 
+            0,
+            array(
+                '_price' => $this->products[0]['price'],
+                '_regular_price' => $this->products[0]['price']
+            )
+        );
+
         // DEFAULT CURRENCY
         $items = random_int(1, 10);
         WC()->cart->add_to_cart( $product->id, $items );
+        $this->sitepress->switch_lang('es');
         WC()->cart->calculate_totals();
         // Cost without shipping
         $this->assertEquals( $items * $this->products[0]['price'],  WC()->cart->cart_contents_total );
 
+        $this->sitepress->switch_lang($this->sitepress->get_default_language());
         foreach( $this->currencies as $code => $currency ){
 	        wp_cache_flush(); // important ( products cache include prices )
 
