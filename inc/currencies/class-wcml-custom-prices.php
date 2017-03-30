@@ -380,9 +380,9 @@ class WCML_Custom_Prices{
                             '_sale_price_dates_to' => $date_to ),
                         $code
                     );
-                    $this->update_custom_prices( $post_id, $custom_prices , $code );
+                    $product_price = $this->update_custom_prices( $post_id, $custom_prices , $code );
 
-                    do_action( 'wcml_after_save_custom_prices', $post_id );
+                    do_action( 'wcml_after_save_custom_prices', $post_id, $product_price, $custom_prices, $code );
                 }
             }
         }
