@@ -292,6 +292,35 @@ class Test_WCML_Product_Addons extends WCML_UnitTestCase {
 		$this->assertEquals( $expected, $output );
 	}
 
+	/**
+	 * @test
+	 */
+	public function filter_booing_addon_product_in_cart_contents() {
+
+		$cart_item = array();
+
+		$cart_item[ 'data' ] = new stdClass();
+		$product_addons = new WCML_Product_Addons( $this->sitepress );
+
+		$filtered_cart_item = $product_addons->filter_booing_addon_product_in_cart_contents( $cart_item );
+		$this->assertEquals( $cart_item, $filtered_cart_item );
+
+		$product_id = $this->wcml_helper->add_product( $this->sitepress->get_default_language(), false, rand_str() );
+		$cart_item[ 'data' ] = new WC_Product_Booking( $product_id );
+
+		$filtered_cart_item = $product_addons->filter_booing_addon_product_in_cart_contents( $cart_item );
+		$this->assertEquals( $cart_item, $filtered_cart_item );
+
+		$product_price = 10;
+		$cart_item['data']->set_price( $product_price );
+
+		$addon_price = 10;
+		$cart_item[ 'addons' ] = array( array( 'price' => $addon_price ) );
+
+		$filtered_cart_item = $product_addons->filter_booing_addon_product_in_cart_contents( $cart_item );
+		$this->assertEquals( $product_price + $addon_price, $filtered_cart_item[ 'data' ]->get_price() );
+	}
+
 
 	public function raw_price_amount( $amount ) {
 		return $amount / $this->rate;
