@@ -113,7 +113,7 @@ class WCML_Currency_Switcher_Templates {
      */
     private function get_uploads_path() {
         if ( ! $this->uploads_path ) {
-            $uploads = wp_get_upload_dir();
+            $uploads = wp_upload_dir( null, false );
 
             if ( isset( $uploads['basedir'] ) ) {
                 $this->uploads_path = $uploads['basedir'];

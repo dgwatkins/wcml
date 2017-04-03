@@ -230,7 +230,8 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 			'returns' => './',
 		));
 
-		\WP_Mock::wpFunction( 'wp_get_upload_dir', array(
+		\WP_Mock::wpFunction( 'wp_upload_dir', array(
+			'args'   => array( null, false ),
 			'returns' => './',
 		));
 
