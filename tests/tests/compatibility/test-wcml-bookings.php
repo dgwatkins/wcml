@@ -933,12 +933,13 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$tp = new WPML_Element_Translation_Package;
 		$bookings = $this->get_wcml_booking_object();
 
-		$product = $product = $this->create_bookable_product( $this->default_language );
+		$product = $this->create_bookable_product( $this->default_language );
 		$product_obj = get_post( $product );
 
 		$this->assertEquals( array(), $bookings->append_persons_to_translation_package( array(), $product_obj ) );
 		$person_title = random_string();
 		$bookable_person = wpml_test_insert_post( $this->default_language, 'bookable_person', false, $person_title, $product );
+
 		$bookable_person = get_post( $bookable_person );
 		$expected = array(
 			'contents' => array(
