@@ -468,12 +468,6 @@ class WCML_Multi_Currency{
 
     public function switch_currency(){
 
-        $nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-        if(!$nonce || !wp_verify_nonce($nonce, 'switch_currency')){
-            echo json_encode(array('error' => __('Invalid nonce', 'woocommerce-multilingual')));
-            die();
-        }
-
         $currency = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
         $force_switch = filter_input( INPUT_POST, 'force_switch', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
