@@ -191,7 +191,7 @@ class WCML_Cart
             $tr_product_id = apply_filters( 'translate_object_id', $cart_item[ 'product_id' ], 'product', false, $current_language );
             //translate custom attr labels in cart object
 
-            if( version_compare( WC_VERSION , '2.7', '<' ) && isset( $cart_item[ 'data' ]->product_attributes ) ){
+            if( version_compare( WC_VERSION , '3.0.0', '<' ) && isset( $cart_item[ 'data' ]->product_attributes ) ){
                 foreach( $cart_item[ 'data' ]->product_attributes as $attr_key => $product_attribute ){
                     if( isset( $product_attribute[ 'is_taxonomy' ]) && !$product_attribute[ 'is_taxonomy' ] ){
                         $cart->cart_contents[ $key ][ 'data' ]->product_attributes[ $attr_key ][ 'name' ] = $this->woocommerce_wpml->strings->translated_attribute_label(
@@ -348,8 +348,8 @@ class WCML_Cart
             $item[ 'variation_id' ] = apply_filters( 'translate_object_id',$item[ 'variation_id' ], 'product_variation', true );
         }
 
-        if( version_compare( WC()->version, '2.7', '>=' ) ){
-        $item[ 'data' ]->set_name( get_the_title( $item[ 'product_id' ] ) );
+        if( version_compare( WC()->version, '3.0.0', '>=' ) ){
+            $item[ 'data' ]->set_name( get_the_title( $item[ 'product_id' ] ) );
         } else {
 	        $item[ 'data' ]->post->post_title = get_the_title( $item[ 'product_id' ] );
         }
