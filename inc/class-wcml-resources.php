@@ -173,8 +173,8 @@ class WCML_Resources {
             wp_localize_script( 'wcml-editor', 'wcml_settings',
                 array(
                     'strings' => array(
-                        'choose'        => __( 'Choose a file', 'woocommerce_multilingual' ),
-                        'save_tooltip'  => __( 'At least one of these fields is required: title, content or excerpt', 'woocommerce_multilingual' ),
+                        'choose'        => __( 'Choose a file', 'woocommerce-multilingual' ),
+                        'save_tooltip'  => __( 'At least one of these fields is required: title, content or excerpt', 'woocommerce-multilingual' ),
                         'resign_tooltip'=> __( 'This translation job will no longer be assigned to you. Other translators will be able take it and continue the translation.', 'woocommerce-multilingual')
                     ),
                     'hide_resign' => self::$woocommerce_wpml->products->is_hide_resign_button()
