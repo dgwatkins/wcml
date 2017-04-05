@@ -254,7 +254,8 @@ class Test_WCML_Currency_Switcher_Ajax extends OTGS_TestCase {
 				'switcher_id'    => $_POST['switcher_id'],
 				'format'         => $_POST['template'],
 				'switcher_style' => $_POST['switcher_style'],
-				'color_scheme'   => $_POST['color_scheme']
+				'color_scheme'   => $_POST['color_scheme'],
+				'preview'		 => true
 			)
 		)->will( $this->returnCallback( function () use ( $switcher_preview ) {
 			echo $switcher_preview;

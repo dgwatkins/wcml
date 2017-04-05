@@ -72,7 +72,11 @@ class WCML_Currency_Switcher{
 
 		$args = $this->check_and_convert_switcher_style( $args );
 
-		if ( !isset( $args[ 'switcher_style' ] ) || !$this->woocommerce_wpml->cs_templates->check_is_active( $args[ 'switcher_style' ] ) ) {
+		$switcher_style_not_available = !isset( $args[ 'switcher_style' ] ) || !$this->woocommerce_wpml->cs_templates->check_is_active( $args[ 'switcher_style' ] );
+		if (
+			!isset( $args[ 'preview' ] ) &&
+			$switcher_style_not_available
+		) {
 			$args[ 'switcher_style' ] = isset( $currency_switcher_settings[ 'switcher_style' ] ) ? $currency_switcher_settings[ 'switcher_style' ] : $this->woocommerce_wpml->cs_templates->get_first_active();
 		}
 
