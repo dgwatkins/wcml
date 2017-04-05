@@ -1807,15 +1807,17 @@ class WCML_Bookings {
 
 				foreach ( $person_types as $person_type ) {
 
-					$package['contents'][ 'wc_bookings:person:' . $person_type->ID . ':name' ] = array(
+					$bookable_person = get_post( $person_type->ID );
+
+					$package['contents'][ 'wc_bookings:person:' . $bookable_person->ID . ':name' ] = array(
 						'translate' => 1,
-						'data'      => $this->tp->encode_field_data( $person_type->get_name(), 'base64' ),
+						'data'      => $this->tp->encode_field_data( $bookable_person->post_title, 'base64' ),
 						'format'    => 'base64'
 					);
 
-					$package['contents'][ 'wc_bookings:person:' . $person_type->ID . ':description' ] = array(
+					$package['contents'][ 'wc_bookings:person:' . $bookable_person->ID . ':description' ] = array(
 						'translate' => 1,
-						'data'      => $this->tp->encode_field_data( $person_type->get_description(), 'base64' ),
+						'data'      => $this->tp->encode_field_data( $bookable_person->post_excerpt, 'base64' ),
 						'format'    => 'base64'
 					);
 
