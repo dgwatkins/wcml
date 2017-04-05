@@ -151,8 +151,8 @@ class WCML_Multi_Currency_Orders{
 
             if( isset( $_COOKIE[ '_wcml_order_currency' ] ) ){
                 $currency =  get_woocommerce_currency_symbol($_COOKIE[ '_wcml_order_currency' ]);
-            }elseif( get_post_meta( $_POST['order_id'], '_order_currency' ) ){
-                $currency = get_woocommerce_currency_symbol( get_post_meta( $_POST['order_id'], '_order_currency', true ) );
+            }elseif( isset( $_POST[ 'order_id' ] ) && $order_currency = get_post_meta( sanitize_text_field( $_POST[ 'order_id' ] ), '_order_currency', true ) ){
+                $currency = get_woocommerce_currency_symbol( $order_currency );
             }
 
             if( isset( $_SERVER[ 'HTTP_REFERER' ] ) ){
@@ -268,7 +268,6 @@ class WCML_Multi_Currency_Orders{
         $item['line_tax'] = $this->multi_currency->prices->convert_price_amount( $item['line_tax'], $order_currency );
         wc_update_order_item_meta( $item_id, '_line_tax', $item['line_tax'] );
 
-	    $item->save_meta_data();
         return $item;
     }
 
