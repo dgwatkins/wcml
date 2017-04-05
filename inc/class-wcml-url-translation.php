@@ -9,41 +9,32 @@ class WCML_Url_Translation {
     public $default_product_tag_gettext_base;
 
     function __construct() {
-
         $this->default_product_base             = 'product';
         $this->default_product_category_base    = 'product-category';
         $this->default_product_tag_base         = 'product-tag';
         $this->default_product_category_gettext_base = _x( 'product-category', 'slug', 'woocommerce' );
         $this->default_product_tag_gettext_base = _x( 'product-tag', 'slug', 'woocommerce' );
-
-        $this->wc_permalinks = get_option( 'woocommerce_permalinks' );
-
-        $this->set_up(); //initialization
-
-        add_filter( 'pre_update_option_woocommerce_permalinks', array( $this, 'register_product_and_taxonomy_bases' ), 10, 2 );
-
-        add_filter( 'pre_update_option_rewrite_rules', array( $this, 'force_bases_in_strings_languages' ), 1, 1 ); // high priority
-
-        add_filter( 'option_rewrite_rules', array( $this, 'translate_bases_in_rewrite_rules' ), 0, 1 ); // high priority
-
-        add_filter( 'term_link', array( $this, 'translate_taxonomy_base' ), 0, 3 ); // high priority
-
-        add_action( 'init', array( $this, 'fix_post_object_rewrite_slug' ), 6 ); // handle the particular case of the default product base: wpmlst-540
-
-        add_action( 'wp_ajax_wcml_update_base_translation', array( $this, 'wcml_update_base_translation' ) );
-
-        add_filter( 'redirect_canonical', array( $this, 'check_wc_tax_url_on_redirect' ), 10, 2 );
-
-        add_filter( 'query_vars', array( $this, 'translate_query_var_for_product' ) );
-
-        add_filter( 'wp_redirect', array( $this, 'encode_shop_slug' ), 10, 2 );
-
     }
 
     function set_up() {
         global $woocommerce_wpml;
 
-        if ( empty( $woocommerce_wpml->settings['url_translation_set_up'] ) ) {
+	    $this->wc_permalinks = get_option( 'woocommerce_permalinks' );
+
+	    add_filter( 'pre_update_option_woocommerce_permalinks', array( $this, 'register_product_and_taxonomy_bases' ), 10, 2 );
+	    if( !is_admin() ){
+		    add_filter( 'option_woocommerce_permalinks', array( $this, 'use_untranslated_default_url_bases' ), 1, 1 ); // avoid using the _x translations
+	    }
+	    add_filter( 'pre_update_option_rewrite_rules', array( $this, 'force_bases_in_strings_languages' ), 1, 1 ); // high priority
+	    add_filter( 'option_rewrite_rules', array( $this, 'translate_bases_in_rewrite_rules' ), 0, 1 ); // high priority
+	    add_filter( 'term_link', array( $this, 'translate_taxonomy_base' ), 0, 3 ); // high priority
+	    add_action( 'init', array( $this, 'fix_post_object_rewrite_slug' ), 6 ); // handle the particular case of the default product base: wpmlst-540
+	    add_action( 'wp_ajax_wcml_update_base_translation', array( $this, 'wcml_update_base_translation' ) );
+	    add_filter( 'redirect_canonical', array( $this, 'check_wc_tax_url_on_redirect' ), 10, 2 );
+	    add_filter( 'query_vars', array( $this, 'translate_query_var_for_product' ) );
+	    add_filter( 'wp_redirect', array( $this, 'encode_shop_slug' ), 10, 2 );
+
+	    if ( empty( $woocommerce_wpml->settings['url_translation_set_up'] ) ) {
 
             $this->clean_up_product_and_taxonomy_bases();
 
@@ -264,6 +255,21 @@ class WCML_Url_Translation {
         return $value;
     }
 
+    function use_untranslated_default_url_bases( $permalinks ){
+
+		if( empty( $permalinks['product_base'] ) ){
+			$permalinks['product_base'] = $this->default_product_base;
+		}
+	    if( empty( $permalinks['category_base'] ) ){
+		    $permalinks['category_base'] = $this->default_product_category_base;
+	    }
+	    if( empty( $permalinks['tag_base'] ) ){
+		    $permalinks['tag_base'] = $this->default_product_tag_base;
+	    }
+
+		return $permalinks;
+    }
+
     function add_default_slug_translations( $slug, $name ) {
         global $woocommerce_wpml, $sitepress, $wpdb;
 
@@ -353,6 +359,7 @@ class WCML_Url_Translation {
     }
 
     function translate_bases_in_rewrite_rules( $value ) {
+
         global $sitepress, $sitepress_settings, $woocommerce_wpml;
 
 		if ( ! empty( $value ) ) {
@@ -465,6 +472,14 @@ class WCML_Url_Translation {
 				unset( $buff_value );
 			}
 		}
+
+		/*
+	    $permalinks = get_option( 'woocommerce_permalinks' );
+	    echo '<pre>';
+	    print_r($permalinks);
+	    echo '</pre>';
+		*/
+
 
         return $value;
     }
