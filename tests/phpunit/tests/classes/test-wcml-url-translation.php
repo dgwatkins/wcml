@@ -1,6 +1,6 @@
 <?php
 
-class Test_WCML_url_tarnslation extends OTGS_TestCase {
+class Test_WCML_url_translation extends OTGS_TestCase {
 
 	private $options;
 
@@ -9,10 +9,6 @@ class Test_WCML_url_tarnslation extends OTGS_TestCase {
 
 		\WP_Mock::wpPassthruFunction('_x');
 
-	}
-
-	public function tearDown() {
-		parent::tearDown();
 	}
 
 	/**
@@ -49,15 +45,3 @@ class Test_WCML_url_tarnslation extends OTGS_TestCase {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
