@@ -76,7 +76,7 @@ class woocommerce_wpml {
 
 	    if ( class_exists( 'woocommerce' ) && 'yes' == get_option( 'woocommerce_api_enabled' ) ) {
 		    global $sitepress;
-		    if ( version_compare( WC()->version, '2.6', '>=' ) ) {
+		    if ( version_compare( WC()->version, '2.6', '>=' ) && $this->is_rest_api_request() ) {
 			    new WCML_REST_API_Support( $this, $sitepress );
 		    } else {
 			    new WCML_WooCommerce_Rest_API_Support( $this, $sitepress );
@@ -298,4 +298,23 @@ class woocommerce_wpml {
         }
 
     }
+
+	/**
+	 * Check if is request to the WooCommerce REST API.
+	 *
+	 * @return bool
+	 */
+	public function is_rest_api_request(){
+
+		if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+			return false;
+		}
+
+		$rest_prefix = trailingslashit( rest_get_url_prefix() );
+		// Check if WooCommerce endpoint.
+		$woocommerce = ( false !== strpos( $_SERVER['REQUEST_URI'], $rest_prefix . 'wc/' ) );
+
+		return apply_filters( 'woocommerce_rest_is_request_to_rest_api', $woocommerce );
+	}
+
 }

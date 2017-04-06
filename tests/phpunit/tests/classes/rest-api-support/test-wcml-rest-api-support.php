@@ -14,6 +14,8 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 	public function setUp() {
 		parent::setUp();
 
+		$_SERVER['REQUEST_URI'] = '/wp-json/wc/';
+
 		$this->sitepress = $this->getMockBuilder( 'SitePress' )
 		                        ->disableOriginalConstructor()
 		                        ->setMethods( array(
@@ -89,8 +91,6 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 			},
 		) );
 
-
-
 	}
 
 	public function tearDown() {
@@ -103,14 +103,6 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 	 */
 	private function get_subject(){
 		return new WCML_REST_API_Support( $this->woocommerce_wpml, $this->sitepress );
-	}
-
-	private function invokeMethod( &$object, $methodName, array $parameters = array() ){
-		$reflection = new \ReflectionClass( get_class($object) );
-		$method = $reflection->getMethod($methodName);
-		$method->setAccessible(true);
-
-		return $method->invokeArgs($object, $parameters);
 	}
 
 	/**
@@ -148,13 +140,6 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		$subject->set_language_for_request( $WP_REST_Server );
 		$this->assertEquals( $default_language, $this->test_data['sitepress_current_language'] );
 
-		// #wcml-1881 the case when this is not a REST API request  - no switch
-		$_GET['lang'] = $other_language;
-		$this->test_data['sitepress_current_language'] = $default_language;
-		$_SERVER['REQUEST_URI'] = false;
-		$subject->set_language_for_request( $WP_REST_Server );
-		$this->assertEquals( $default_language, $this->test_data['sitepress_current_language'] );
-
 		// Swicth to an active language - do switch
 		$_GET['lang'] = $other_language;
 		// Make is_request_to_rest_api return true
@@ -175,44 +160,6 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		$this->assertEquals( $other_language, $this->test_data['sitepress_current_language'] );
 
 		unset($_SERVER['REQUEST_URI']);
-	}
-
-	/**
-	 * @test
-	 */
-	public function is_request_to_rest_api(){
-
-		$subject = $this->get_subject();
-
-		// Part 1
-		if( isset( $_SERVER['REQUEST_URI'] ) ){
-			$req_uri = $_SERVER['REQUEST_URI'];
-			unset($_SERVER['REQUEST_URI']);
-		}
-
-		$this->assertFalse( $this->invokeMethod( $subject, 'is_request_to_rest_api' ) );
-
-		if( isset( $req_uri ) ) {
-			$_SERVER['REQUEST_URI'] = $req_uri;
-		}
-
-		// Part 2
-		\WP_Mock::wpFunction( 'trailingslashit', array(
-			'return' => function ( $url ) {
-				return rtrim( $url, '/' ) . '/';
-			},
-		) );
-		\WP_Mock::wpFunction( 'rest_get_url_prefix', array(
-			'return' => function ( ) {
-				return 'wp-json';
-			},
-		) );
-		//
-		$_SERVER['REQUEST_URI'] = 'wp-json/wc/';
-
-		$this->assertTrue( $this->invokeMethod( $subject, 'is_request_to_rest_api' ) );
-
-
 	}
 
 	/**
