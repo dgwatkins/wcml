@@ -177,6 +177,7 @@ class woocommerce_wpml {
         $this->gateways             = new WCML_WC_Gateways( $this, $sitepress );
         $this->currencies           = new WCML_Currencies( $this );
         $this->url_translation      = new WCML_Url_Translation ( $this, $sitepress );
+	    $this->url_translation->set_up();
 	    $this->endpoints            = new WCML_Endpoints( $this );
         $this->requests             = new WCML_Requests;
         $this->cart                 = new WCML_Cart( $this, $sitepress, $woocommerce );
