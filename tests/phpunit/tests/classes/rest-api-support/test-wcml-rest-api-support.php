@@ -14,6 +14,8 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 	public function setUp() {
 		parent::setUp();
 
+		$_SERVER['REQUEST_URI'] = '/wp-json/wc/';
+
 		$this->sitepress = $this->getMockBuilder( 'SitePress' )
 		                        ->disableOriginalConstructor()
 		                        ->setMethods( array(
@@ -100,7 +102,6 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 	 * @return WCML_REST_API_Support
 	 */
 	private function get_subject(){
-		$_SERVER['REQUEST_URI'] = '/wp-json/wc/';
 		return new WCML_REST_API_Support( $this->woocommerce_wpml, $this->sitepress );
 	}
 
