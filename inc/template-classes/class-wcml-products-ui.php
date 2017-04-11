@@ -430,17 +430,20 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 					foreach($this->sitepress->get_active_languages() as $lang){
 						if($lang['code'] == $slang) continue;
 						$tbl_alias_suffix = str_replace('-','_',$lang['code']);
-						$sql .= "( p.ID iN ( 
+						$sql .= sprintf( "( p.ID iN ( 
 							SELECT iclt_orig.element_id 
 							FROM {$wpdb->prefix}icl_translations iclt_orig 
-							LEFT JOIN {$wpdb->prefix}icl_translations iclt_{$tbl_alias_suffix} 
-								ON iclt_{$tbl_alias_suffix}.trid= iclt_orig.trid AND 
-                                   iclt_{$tbl_alias_suffix}.language_code='{$lang['code']}' 
+							LEFT JOIN {$wpdb->prefix}icl_translations iclt_%s 
+								ON iclt_%s.trid= iclt_orig.trid AND 
+                                   iclt_%s.language_code='%s' 
                             WHERE iclt_orig.source_language_code IS NULL AND 
-                                  iclt_{$tbl_alias_suffix}.element_id IS NULL AND
-                                  iclt_{$tbl_alias_suffix}.element_type IN ('post_product', 'post_product_variation') 
+                                  iclt_%s.element_id IS NULL AND
+                                  iclt_%s.element_type IN ('post_product', 'post_product_variation') 
                           ) 
-                        ) OR ";
+                        ) OR ",
+							esc_sql( $tbl_alias_suffix ), esc_sql( $tbl_alias_suffix ), esc_sql( $tbl_alias_suffix ),
+							esc_sql( $lang['code'] ), esc_sql( $tbl_alias_suffix ), esc_sql( $tbl_alias_suffix )
+						);
 					}
 					break;
 				case ( $translation_status == 'need_update' || $translation_status == 'not' ):
