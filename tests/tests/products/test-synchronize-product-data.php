@@ -72,6 +72,22 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		$this->assertEquals( $values_to_update[ 1 ], $translated_meta[ 1 ] );
 	}
 
+	function test_duplicate_variation_data(){
+		$custom_field = '_custom_field_to_test';
+		$this->wcml_helper->set_custom_field_to_copy( $custom_field );
+
+		$orig_product = $this->wcml_helper->add_product( $this->default_language, false, rand_str() );
+		$es_product = $this->wcml_helper->add_product( $this->second_language, $orig_product->trid, rand_str() );
+
+		//add values to original product
+		$serialized_value = serialize( array( 'test' ) );
+		add_post_meta( $orig_product->id, $custom_field, $serialized_value );
+
+		$this->woocommerce_wpml->sync_variations_data->duplicate_variation_data( $orig_product->id, $es_product->id, array(), 'es', true );
+
+		$this->assertEquals( $serialized_value, get_post_meta( $es_product->id, $custom_field, true ) );
+	}
+
 	function test_sync_custom_field_value(){
 
 		//test variation custom fields
