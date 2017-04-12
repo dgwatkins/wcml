@@ -43,6 +43,25 @@ class WCML_REST_API_Support{
 	}
 
 	/**
+	 * Check if is request to the WooCommerce REST API.
+	 *
+	 * @return bool
+	 */
+	public static function is_rest_api_request(){
+
+		if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+			return false;
+		}
+
+		$rest_prefix = trailingslashit( rest_get_url_prefix() );
+		// Check if WooCommerce endpoint.
+		$woocommerce = ( false !== strpos( $_SERVER['REQUEST_URI'], $rest_prefix . 'wc/' ) );
+
+		return apply_filters( 'woocommerce_rest_is_request_to_rest_api', $woocommerce );
+
+	}
+
+	/**
 	 * @param WP_REST_Server $wp_rest_server
 	 * enforces the language of request as the current language to be able to filter items by language
 	 */
