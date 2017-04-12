@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ab49c1e9e407f3081bfd3313691d2f5c",
-    "content-hash": "ca97632ac972b0b6880b92abfbfbfb96",
+    "hash": "0a0fd8eb1f6d6865bdad0e63ef3d4a54",
+    "content-hash": "c2bfedf5c7cd2ac50023f66e526b1811",
     "packages": [
         {
             "name": "composer/installers",
@@ -1513,11 +1513,11 @@
         },
         {
             "name": "otgs/build-tools",
-            "version": "0.1.0",
+            "version": "0.1.1",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools.git",
-                "reference": "2ac8852f1febc2987975a71c74342df46cacbc36"
+                "reference": "652c46e9de9e55e92a3104e426c0800bdba2aaa2"
             },
             "type": "library",
             "license": [
@@ -1535,15 +1535,15 @@
             "keywords": [
                 "grunt"
             ],
-            "time": "2016-09-06 22:03:34"
+            "time": "2016-11-28 11:32:27"
         },
         {
             "name": "otgs/build-tools-ci",
-            "version": "dev-windowssucks",
+            "version": "0.3.0",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "b96d16992adb4264e6060e09b2cc56a6fb389bff"
+                "reference": "2e2ec686df246f7b82b79f9d255b785dde58295c"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -1595,11 +1595,11 @@
         },
         {
             "name": "otgs/unit-tests-framework",
-            "version": "dev-develop",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-unit-tests-framework.git",
-                "reference": "bc3f0a710922154bde141b1a4eabd5e3963394f6"
+                "reference": "661abe1fa625ef640313d85386934c01cca107e7"
             },
             "require": {
                 "10up/wp_mock": "dev-master",
@@ -1635,7 +1635,7 @@
             "keywords": [
                 "phpunit"
             ],
-            "time": "2017-03-03 10:15:05"
+            "time": "2017-04-10 14:20:59"
         },
         {
             "name": "otgs/wcml-codeception-tests",
@@ -3734,8 +3734,6 @@
     "stability-flags": {
         "roave/security-advisories": 20,
         "otgs/installer": 20,
-        "otgs/unit-tests-framework": 20,
-        "otgs/build-tools-ci": 20,
         "otgs/wcml-codeception-tests": 20
     },
     "prefer-stable": false,
