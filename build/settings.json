@@ -7,7 +7,8 @@
     "projectSlug": "woocommerce-multilingual",
     "productId": "woocommerce-multilingual",
     "develop_branch": "develop",
-    "master_branch": "master"
+    "master_branch": "master",
+    "projectId": "wcml"
   },
   "accessTokens": {
     "scrutinizer-read": "1404f3a2ea0593147e5026bc041dee3ac49ced04ff2e3dbcbfe6c41e897dcbec"
@@ -15,6 +16,26 @@
   "gitlab": {
     "apiUrl": "https://git.onthegosystems.com/api/v3/"
   },
+  "youtrack": {
+    "url": "https://onthegosystems.myjetbrains.com/youtrack",
+    "username": "changelog-updater@onthegosystems.com",
+    "password": "54mcD3Vhn2sM"
+  },
+  "changelog": {
+    "path": "./changelog",
+    "fileTemplate": "{version}.md"
+  },
+  "main_file_replacements": [
+    {
+      "searchPattern": "(Version:\\s*)(\\d*.*)",
+      "replacePattern": "${1}{{tag}}"
+    },
+    {
+      "searchPattern": "(WCML_VERSION\\',\\s*\\')(\\d*.*)(\\')",
+      "replacePattern": "${1}{{tag}}${3}",
+      "extractSemVer": true
+    }
+  ],
   "mysql": {
     "ci": {
       "host": "mysql",
