@@ -22,7 +22,7 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		                        	'get_settings',
 			                        'save_settings',
 			                        'get_element_trid',
-			                        'get_element_translations'
+			                        'get_element_translations',
 		                        ) )
 		                        ->getMock();
 
@@ -103,6 +103,55 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 	 */
 	private function get_subject(){
 		return new WCML_REST_API_Support( $this->woocommerce_wpml, $this->sitepress );
+	}
+
+	/**
+	 * @test
+	 */
+	public function initialization(){
+		$subject = $this->get_subject();
+
+		\WP_Mock::wpFunction( 'trailingslashit', array(
+			'return' => function ( $url ) {
+				return rtrim( $url, '/' ) . '/';
+			},
+		) );
+		\WP_Mock::wpFunction( 'rest_get_url_prefix', array(
+			'return' => '/wp-json'
+		) );
+
+		\WP_Mock::expectActionAdded( 'rest_api_init', array( $subject, 'set_language_for_request') );
+		\WP_Mock::expectActionAdded( 'parse_query', array( $subject, 'auto_adjust_included_ids') );
+
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_object', array( $subject, 'append_product_language_and_translations') );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_object', array( $subject, 'append_product_secondary_prices') );
+
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_query', array( $subject, 'filter_products_query'), 10, 2 );
+
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product', array( $subject, 'set_product_language'), 10, 2 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_update_product', array( $subject, 'set_product_language'), 10, 2 );
+
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product', array( $subject, 'set_product_custom_prices'), 10, 2 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_update_product', array( $subject, 'set_product_custom_prices'), 10, 2 );
+
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_object', array( $subject, 'copy_product_custom_fields'), 10, 3 );
+
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_shop_order_query', array( $subject, 'filter_orders_by_language'), 20, 2 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_shop_order', array( $subject, 'filter_order_items_by_language'), 10, 3 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_shop_order', array( $subject, 'set_order_language'), 10, 2 );
+
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_product_cat_query', array( $subject, 'filter_terms_query'), 10, 2 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_product_tag_query', array( $subject, 'filter_terms_query'), 10, 2 );
+
+		$subject->initialize();
+
+		// Legacy for v1
+		$_SERVER['REQUEST_URI'] = rest_get_url_prefix() . '/wc/v1/';
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product', array( $subject, 'append_product_language_and_translations') );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product', array( $subject, 'append_product_secondary_prices') );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product', array( $subject, 'copy_product_custom_fields'), 10, 3 ); // v1
+		$subject->initialize();
+
 	}
 
 	/**
@@ -1000,6 +1049,49 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		$wp_query->set( 'post__in', $posts['original'] );
 		$subject->auto_adjust_included_ids( $wp_query );
 		$this->assertEquals( $posts['translation'], $wp_query->get('post__in') );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function copy_product_custom_fields(){
+		$subject = $this->get_subject();
+
+		$response = $this->getMockBuilder( 'WP_REST_Response' )
+		                 ->disableOriginalConstructor()
+		                 ->getMock();
+
+		$object = $this->getMockBuilder( 'WC_Product_Simple' )
+		                 ->disableOriginalConstructor()
+		                 ->getMock();
+
+		$request = $this->getMockBuilder( 'WP_REST_Request' )
+		                 ->disableOriginalConstructor()
+						->setMethods( array( 'get_params' ) )
+		                 ->getMock();
+
+		$post_id = rand(1,1000);
+		$request->method( 'get_params' )->wilLReturn( array( 'id' => $post_id ) );
+
+		$sitepress = $this->getMockBuilder( 'Sitepress' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'copy_custom_fields' ) )
+		                ->getMock();
+
+		$sitepress->expects( $this->once() )->method( 'copy_custom_fields' );
+
+
+		global $wpml_post_translations;
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Admin_Post_Actions' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'get_element_translations' ) )
+		                ->getMock();
+		$post_translations = [ rand(1000, 2000), rand(2000, 3000) ];
+		$wpml_post_translations->method( 'get_element_translations' )->wilLReturn( array( $post_translations ) );
+
+		$subject = new WCML_REST_API_Support( $this->woocommerce_wpml, $sitepress );
+		$subject->copy_product_custom_fields( $response, $object, $request );
 
 	}
 

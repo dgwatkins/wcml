@@ -8,9 +8,14 @@ class WCML_REST_API_Support{
 	private $sitepress;
 
 	function __construct( &$woocommerce_wpml, &$sitepress ) {
-
 		$this->woocommerce_wpml =& $woocommerce_wpml;
 		$this->sitepress        =& $sitepress;
+	}
+
+	/**
+	 * Adding hooks
+	 */
+	public function initialize(){
 
 		$this->prevent_default_lang_url_redirect();
 
@@ -19,17 +24,29 @@ class WCML_REST_API_Support{
 		add_action( 'parse_query', array($this, 'auto_adjust_included_ids') );
 
 		// Products
-		add_action( 'woocommerce_rest_prepare_product', array( $this, 'append_product_language_and_translations' ) );
-		add_action( 'woocommerce_rest_prepare_product', array( $this, 'append_product_secondary_prices' ) );
+		if( self::get_api_request_version() === 1 ) {
+			add_action( 'woocommerce_rest_prepare_product', array(
+				$this,
+				'append_product_language_and_translations'
+			) );
+			add_action( 'woocommerce_rest_prepare_product', array( $this, 'append_product_secondary_prices' ) );
+		}
+		add_action( 'woocommerce_rest_prepare_product_object', array( $this, 'append_product_language_and_translations' ) );
+		add_action( 'woocommerce_rest_prepare_product_object', array( $this, 'append_product_secondary_prices' ) );
+
 
 		add_filter( 'woocommerce_rest_product_query', array( $this, 'filter_products_query' ), 10, 2 );
-
 
 		add_action( 'woocommerce_rest_insert_product', array( $this, 'set_product_language' ), 10 , 2 );
 		add_action( 'woocommerce_rest_update_product', array( $this, 'set_product_language' ), 10 , 2 );
 
 		add_action( 'woocommerce_rest_insert_product', array( $this, 'set_product_custom_prices' ), 10 , 2 );
 		add_action( 'woocommerce_rest_update_product', array( $this, 'set_product_custom_prices' ), 10 , 2 );
+
+		if( self::get_api_request_version() === 1 ){
+			add_action( 'woocommerce_rest_prepare_product', array( $this, 'copy_product_custom_fields' ), 10 , 3 );
+		}
+		add_action( 'woocommerce_rest_prepare_product_object', array( $this, 'copy_product_custom_fields' ), 10 , 3 );
 
 		// Orders
 		add_filter( 'woocommerce_rest_shop_order_query', array( $this, 'filter_orders_by_language' ), 20, 2 );
@@ -59,6 +76,19 @@ class WCML_REST_API_Support{
 
 		return apply_filters( 'woocommerce_rest_is_request_to_rest_api', $woocommerce );
 
+	}
+
+	/**
+	 * @return int
+	 * Returns the version number of the API used for the current request
+	 */
+	private static function get_api_request_version(){
+		$version = 0;
+		$rest_prefix = trailingslashit( rest_get_url_prefix() );
+		if( preg_match( "@" . $rest_prefix . "wc/v([0-9]+)/@", $_SERVER['REQUEST_URI'], $matches ) ){
+			$version = intval($matches[1]);
+		}
+		return $version;
 	}
 
 	/**
@@ -260,7 +290,7 @@ class WCML_REST_API_Support{
 	 * @throws WC_API_Exception
 	 *
 	 */
-	public function set_product_custom_prices(  $post, $request ){
+	public function set_product_custom_prices( $post, $request ){
 
 		$data = $request->get_params();
 
@@ -285,6 +315,32 @@ class WCML_REST_API_Support{
 			}
 		}
 
+	}
+
+	/**
+	 * @param WP_REST_Response $response
+	 * @param mixed $object
+	 * @param WP_REST_Request $request
+	 *
+	 * Copy custom fields explicitly
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function copy_product_custom_fields($response, $object, $request){
+		global $wpdb;
+		global $wpml_post_translations;
+
+		//$sitepress_settings = $this->sitepress->get_settings();
+		//$wpml_post_translations = new WPML_Admin_Post_Actions( $sitepress_settings, $wpdb );
+
+		$data = $request->get_params();
+
+		$translations = $wpml_post_translations->get_element_translations ( $data['id'], false, true );
+		foreach ( $translations as $translation_id ) {
+			$this->sitepress->copy_custom_fields ( $data['id'], $translation_id );
+		}
+
+		return $response;
 	}
 
 	public function filter_orders_by_language( $args, $request ){
