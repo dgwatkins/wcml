@@ -162,6 +162,9 @@ class woocommerce_wpml {
             $this->wcml_products_screen = new WCML_Products_Screen_Options($sitepress);
             $this->wcml_products_screen->init();
             new WCML_Pointers();
+
+	        $taxonomy_translation_link_filters = new WCML_Taxonomy_Translation_Link_Filters( $this );
+	        $taxonomy_translation_link_filters->add_filters();
         }
 
         $this->sync_product_data    = new WCML_Synchronize_Product_Data( $this, $sitepress, $wpdb );
