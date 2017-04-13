@@ -186,10 +186,16 @@ class WCML_Compatibility {
             $this->klarna_gateway->add_hooks();
 	    }
 
-	    // Klarna Gateway
+	    // YITH_WCQV
 	    if( class_exists( 'YITH_WCQV' ) ){
 		    $this->yith_wcqv = new WCML_YITH_WCQV();
             $this->yith_wcqv->add_hooks();
+	    }
+
+	    // Woocommerce Memberships
+	    if( class_exists( 'WC_Memberships' ) ){
+		    $this->wc_memberships = new WCML_WC_Memberships();
+            $this->wc_memberships->add_hooks();
 	    }
 
 
