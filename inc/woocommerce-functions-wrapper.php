@@ -63,6 +63,22 @@ class WooCommerce_Functions_Wrapper{
             return $order->get_currency();
         }
     }
+    
+    public static function get_item_downloads( $object, $item ){
+        if( self::is_deprecated() ){
+            return $object->get_item_downloads( $item );
+        }else{
+            return $item->get_item_downloads( );
+        }
+    }
+
+    public static function get_order_id( $order ){
+        if( self::is_deprecated() ){
+            return $order->id;
+        }else{
+            return $order->get_id();
+        }
+    }
 
 }
 
