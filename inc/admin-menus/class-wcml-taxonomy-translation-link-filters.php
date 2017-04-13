@@ -21,7 +21,7 @@ class WCML_Taxonomy_Translation_Link_Filters{
 	 *
 	 * @return string
 	 */
-	public function get_filtered_url( $url, $taxonomy ){
+	public function get_filtered_url( $url, $taxonomy = '' ){
 
 		$built_in_taxonomies = array( 'product_cat', 'product_tag', 'product_shipping_class' );
 		if( in_array( $taxonomy, $built_in_taxonomies ) ){
