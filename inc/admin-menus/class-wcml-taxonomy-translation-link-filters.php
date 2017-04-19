@@ -26,7 +26,7 @@ class WCML_Taxonomy_Translation_Link_Filters{
 		$built_in_taxonomies = array( 'product_cat', 'product_tag', 'product_shipping_class' );
 		if( in_array( $taxonomy, $built_in_taxonomies ) ){
 
-			$url = admin_url( 'admin.php?page=wpml-wcml&tab=' . $taxonomy );
+			$url = add_query_arg( array( 'tab' => $taxonomy ), admin_url( 'admin.php?page=wpml-wcml' ) ) ;
 
 		} else {
 
@@ -38,7 +38,10 @@ class WCML_Taxonomy_Translation_Link_Filters{
 
 			if( in_array( $taxonomy, $translatable_attributes ) ) {
 
-				$url = admin_url( 'admin.php?page=wpml-wcml&tab=product-attributs&taxonomy=' . $taxonomy );
+				$url = add_query_arg(
+					array( 'taxonomy' => $taxonomy ),
+					admin_url( 'admin.php?page=wpml-wcml&tab=product-attributs' )
+				);
 
 			}else{
 
@@ -51,9 +54,12 @@ class WCML_Taxonomy_Translation_Link_Filters{
 					}
 				}
 
-				if( in_array( $taxonomy, $translatable_taxonomies ) ){
+				if ( in_array( $taxonomy, $translatable_taxonomies ) ) {
 
-					$url = admin_url( 'admin.php?page=wpml-wcml&tab=custom-taxonomies&taxonomy=' . $taxonomy );
+					$url = add_query_arg(
+						array( 'taxonomy' => $taxonomy ),
+						admin_url( 'admin.php?page=wpml-wcml&tab=custom-taxonomies' )
+					);
 
 				}
 
