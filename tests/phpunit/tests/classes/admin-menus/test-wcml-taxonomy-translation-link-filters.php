@@ -51,6 +51,13 @@ class Test_WCML_Taxonomy_Translation_Link_Filters extends OTGS_TestCase {
 			}
 		) );
 
+		\WP_Mock::wpFunction( 'add_query_arg', array(
+			'return' => function ( $args, $url ) {
+				$glue = strpos( $url , '?' ) ? '&' : '?';
+				return $url . $glue . http_build_query( $args );
+			}
+		) );
+
 		\WP_Mock::wpPassthruFunction('admin_url');
 
 		$subject = new WCML_Taxonomy_Translation_Link_Filters( $woocommerce_wpml );
