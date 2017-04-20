@@ -1,6 +1,6 @@
 <?php
 
-class Test_WCML_REST_API_Support extends OTGS_TestCase {
+class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
@@ -14,7 +14,6 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$_SERVER['REQUEST_URI'] = '/wp-json/wc/';
 
 		$this->sitepress = $this->getMockBuilder( 'SitePress' )
 		                        ->disableOriginalConstructor()
@@ -91,6 +90,11 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 			},
 		) );
 
+		\WP_Mock::wpFunction( 'rest_get_url_prefix', array(
+			'return' => 'wp-json',
+		) );
+
+		$_SERVER['REQUEST_URI'] = rest_get_url_prefix() . '/wc/v1/';
 	}
 
 	public function tearDown() {
@@ -102,7 +106,7 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 	 * @return WCML_REST_API_Support
 	 */
 	private function get_subject(){
-		return new WCML_REST_API_Support( $this->woocommerce_wpml, $this->sitepress );
+		return new WCML_REST_API_Support_V1( $this->woocommerce_wpml, $this->sitepress );
 	}
 
 	/**
@@ -123,56 +127,32 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'rest_api_init', array( $subject, 'set_language_for_request') );
 		\WP_Mock::expectActionAdded( 'parse_query', array( $subject, 'auto_adjust_included_ids') );
 
-		// Products
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_object', array( $subject, 'append_product_language_and_translations') );
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_object', array( $subject, 'append_product_secondary_prices') );
+
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_query', array( $subject, 'filter_products_query'), 10, 2 );
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product_object', array( $subject, 'set_product_language'), 10, 2 );
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product_object', array( $subject, 'set_product_custom_prices'), 10, 2 );
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_object', array( $subject, 'copy_product_custom_fields'), 10, 3 );
 
-		// Orders
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product', array( $subject, 'set_product_language'), 10, 2 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_update_product', array( $subject, 'set_product_language'), 10, 2 );
+
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product', array( $subject, 'set_product_custom_prices'), 10, 2 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_update_product', array( $subject, 'set_product_custom_prices'), 10, 2 );
+
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product', array( $subject, 'copy_product_custom_fields'), 10, 3 );
+
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_shop_order_query', array( $subject, 'filter_orders_by_language'), 20, 2 );
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_shop_order_object', array( $subject, 'filter_order_items_by_language'), 10, 3 );
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_shop_order_object', array( $subject, 'set_order_language'), 10, 2 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_shop_order', array( $subject, 'filter_order_items_by_language'), 10, 3 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_shop_order', array( $subject, 'set_order_language'), 10, 2 );
 
-		// Terms
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_product_cat_query', array( $subject, 'filter_terms_query'), 10, 2 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_product_tag_query', array( $subject, 'filter_terms_query'), 10, 2 );
 
 		$subject->initialize();
 
-	}
-
-	/**
-	 * @test
-	 */
-	public function is_rest_api_request(){
-
-		\WP_Mock::wpFunction( 'trailingslashit', array(
-			'return' => function ( $url ) {
-				return rtrim( $url, '/' ) . '/';
-			},
-		) );
-		\WP_Mock::wpFunction( 'rest_get_url_prefix', array(
-			'return' => 'wp-json',
-		) );
-
-		$subject = $this->get_subject();
-
-		// Part 1
-		if( isset( $_SERVER['REQUEST_URI'] ) ){
-			unset($_SERVER['REQUEST_URI']);
-		}
-
-		// test
-		$this->assertFalse( $subject->is_rest_api_request() );
-
-
-		// Part 2
-		$_SERVER['REQUEST_URI'] = 'wp-json/wc/';
-		// test
-		$this->assertTrue( $subject->is_rest_api_request() );
+		// Legacy for v1
+		$_SERVER['REQUEST_URI'] = rest_get_url_prefix() . '/wc/v1/';
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product', array( $subject, 'append_product_language_and_translations') );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product', array( $subject, 'append_product_secondary_prices') );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product', array( $subject, 'copy_product_custom_fields'), 10, 3 ); // v1
+		$subject->initialize();
 
 	}
 
@@ -585,25 +565,18 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 			}
 		) );
 
-		$post = $this->getMockBuilder( 'WC_Product_Simple' )
-		                        ->disableOriginalConstructor()
-		                        ->setMethods( array(
-			                        'get_id'
-		                        ) )
-		                        ->getMock();
-
+		$post = new stdClass();
 		$post->ID = rand(1,100);
-		$post->method('get_id')->willReturn( $post->ID );
 
 		if( !defined('ICL_TM_COMPLETE') ){
 			define( 'ICL_TM_COMPLETE', true );
 		}
-
-		$this->test_data['posts'][ $post->ID ] = $post;
+		$that = $this;
 		\WP_Mock::wpFunction( 'wpml_tm_save_post', array(
 			'times' => 1,
 			'args'  => [ $post->ID, $post, ICL_TM_COMPLETE ]
 		) );
+
 
 		$subject->set_product_language( $post, $request1 );
 		$this->assertEquals( $this->expected_trid, $this->actual_trid );
@@ -667,15 +640,8 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 			}
 		) );
 
-		$post = $this->getMockBuilder( 'WC_Product_Simple' )
-		             ->disableOriginalConstructor()
-		             ->setMethods( array(
-			             'get_id'
-		             ) )
-		             ->getMock();
-
+		$post = new stdClass();
 		$post->ID = rand(1,100);
-		$post->method('get_id')->willReturn( $post->ID );
 
 		$subject->set_product_language( $post, $request1 );
 		$this->assertEquals( $this->expected_trid, $this->actual_trid );
@@ -704,17 +670,8 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 			] ];
 
 		$original_element_id = rand(1, 100);
-
-		$post = $this->getMockBuilder( 'WC_Product_Simple' )
-		             ->disableOriginalConstructor()
-		             ->setMethods( array(
-			             'get_id'
-		             ) )
-		             ->getMock();
-
+		$post = new stdClass();
 		$post->ID = 77;
-		$post->method('get_id')->willReturn( $post->ID );
-
 
 
 		// 1) Empty Request
@@ -814,15 +771,8 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 	function filter_order_items_by_language(){
 
 		$subject = $this->get_subject();
-
-		$order = $this->getMockBuilder( 'WC_Order' )
-		             ->disableOriginalConstructor()
-		             ->setMethods( array(
-			             'get_id'
-		             ) )
-		             ->getMock();
+		$order = new stdClass();
 		$order->ID = rand(1,100);
-		$order->method('get_id')->willReturn( $order->ID );
 
 		$test_lang = 'ro';
 		$other_lang = 'fr';
@@ -968,15 +918,8 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		                        ->getMock();
 		$this->sitepress->method('get_active_languages')->willReturn( array( 'en' => 1, 'ro'=> 1 ) );
 
-		$post = $this->getMockBuilder( 'WC_Product_Simple' )
-		             ->disableOriginalConstructor()
-		             ->setMethods( array(
-			             'get_id'
-		             ) )
-		             ->getMock();
-
+		$post = new stdClass();
 		$post->ID = rand(1,100);
-		$post->method('get_id')->willReturn( $post->ID );
 
 		$subject->set_order_language( $post, $request1 );
 
@@ -1007,15 +950,8 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		                        ->getMock();
 		$this->sitepress->method('get_active_languages')->willReturn( array( 'en' => 1, $expected_language=> 1 ) );
 
-		$post = $this->getMockBuilder( 'WC_Order' )
-		             ->disableOriginalConstructor()
-		             ->setMethods( array(
-			             'get_id'
-		             ) )
-		             ->getMock();
-
+		$post = new stdClass();
 		$post->ID = rand(1,100);
-		$post->method('get_id')->willReturn( $post->ID );
 
 		$subject->set_order_language( $post, $request1 );
 
