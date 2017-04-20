@@ -122,7 +122,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$this->is_admin = true;
 		$this->current_screen->id = 'shop_order';
 		$this->order->set_id( rand(1, 1000) );
-		update_post_meta( $this->order->get_id(), 'order_currency', 'EUR' );
+		update_post_meta( $this->order->get_id(), '_order_currency', 'EUR' );
 		$filtered_currency = $subject->get_currency_for_new_order( $original_currency, $this->order );
 		$this->assertEquals( $original_currency, $filtered_currency );
 
@@ -130,7 +130,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$this->is_admin = true;
 		$this->current_screen->id = 'shop_order';
 		$this->order->set_id( rand(1, 1000) );
-		update_post_meta( $this->order->get_id(), 'order_currency', false );
+		update_post_meta( $this->order->get_id(), '_order_currency', false );
 		update_option( 'woocommerce_currency', $wocommerce_currency = rand_str() );
 		$filtered_currency = $subject->get_currency_for_new_order( $original_currency, $this->order );
 		$this->assertEquals( $wocommerce_currency, $filtered_currency );
@@ -139,7 +139,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$this->is_admin = true;
 		$this->current_screen->id = 'shop_order';
 		$this->order->set_id( rand(1, 1000) );
-		update_post_meta( $this->order->get_id(), 'order_currency', false );
+		update_post_meta( $this->order->get_id(), '_order_currency', false );
 		$_COOKIE['_wcml_order_currency'] = rand_str();
 		$filtered_currency = $subject->get_currency_for_new_order( $original_currency, $this->order );
 		$this->assertEquals( $_COOKIE['_wcml_order_currency'], $filtered_currency );
