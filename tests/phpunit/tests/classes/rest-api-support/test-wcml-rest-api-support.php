@@ -108,6 +108,38 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function is_rest_api_request(){
+
+		\WP_Mock::wpFunction( 'trailingslashit', array(
+			'return' => function ( $url ) {
+				return rtrim( $url, '/' ) . '/';
+			},
+		) );
+		\WP_Mock::wpFunction( 'rest_get_url_prefix', array(
+			'return' => 'wp-json',
+		) );
+
+		$subject = $this->get_subject();
+
+		// Part 1
+		if( isset( $_SERVER['REQUEST_URI'] ) ){
+			unset($_SERVER['REQUEST_URI']);
+		}
+
+		// test
+		$this->assertFalse( $subject->is_rest_api_request() );
+
+
+		// Part 2
+		$_SERVER['REQUEST_URI'] = 'wp-json/wc/';
+		// test
+		$this->assertTrue( $subject->is_rest_api_request() );
+
+	}
+
+	/**
+	 * @test
+	 */
 	public function set_language_for_request(){
 		$subject = $this->get_subject();
 
