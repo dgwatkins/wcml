@@ -361,7 +361,7 @@ class WCML_Multi_Currency_Orders{
         $current_screen = get_current_screen();
 		if( !empty($current_screen) && $current_screen->id == 'shop_order' ){
 		    $order_id = method_exists( $order, 'get_id' ) ? $order->get_id() : $order->id;
-			$order_currency = get_post_meta( $order_id, 'order_currency', true );
+			$order_currency = get_post_meta( $order_id, '_order_currency', true );
 			if( empty( $order_currency ) ){
 				$value = $this->get_order_currency_cookie();
 			}
