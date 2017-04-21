@@ -133,13 +133,30 @@ class WCML_REST_API_Support{
 	 * @param WP_REST_Request $request
 	 *
 	 * @return array
+	 * @throws WC_REST_Exception
 	 */
-	public function filter_terms_query( $args, $request ){
+	public function filter_terms_query( $args, $request ) {
+
 		$data = $request->get_params();
-		if( isset( $data['lang'] ) && $data['lang'] === 'all' ){
-			remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
-			remove_filter( 'get_term', array( $this->sitepress, 'get_term_adjust_id' ), 1, 1 );
+
+		if ( isset( $data['lang'] ) ) {
+
+			$active_languages = $this->sitepress->get_active_languages();
+
+			if ( $data['lang'] === 'all' ) {
+				remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
+				remove_filter( 'get_term', array( $this->sitepress, 'get_term_adjust_id' ), 1, 1 );
+			} elseif ( ! isset( $active_languages[ $data['lang'] ] ) ) {
+				throw new WC_REST_Exception(
+					'404',
+					sprintf( __( 'Invalid language parameter: %s', 'woocommerce-multilingual' ),
+					$data['lang'] ),
+					'404'
+				);
+			}
+
 		}
+
 		return $args;
 	}
 
@@ -358,10 +375,9 @@ class WCML_REST_API_Support{
 	public function filter_order_items_by_language( $response, $order, $request ){
 
 		$lang = get_query_var('lang');
-
 		$order_lang = get_post_meta( $order->get_id(), 'wpml_language', true );
 
-		if( $order_lang != $lang ){
+		if( $order_lang != $lang || 1 ){
 
 			foreach( $response->data['line_items'] as $k => $item ){
 

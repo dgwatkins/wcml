@@ -301,7 +301,16 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 	public function filter_terms_query(){
 		$globals_bk = serialize($GLOBALS);
 
-		$subject = $this->get_subject();
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array(
+			                  'get_active_languages',
+		                  ) )
+		                  ->getMock();
+
+		$sitepress->method('get_active_languages')->willReturn( [ 'en' => 1 ] );
+
+		$subject = new WCML_REST_API_Support( $this->woocommerce_wpml, $sitepress );
 
 		$GLOBALS['wp_filter']['terms_clauses'][10] = ['hardcoded_callback' => 'terms_clauses' ];
 		$GLOBALS['wp_filter']['get_term'][1] = ['hardcoded_callback' => 'get_term_adjust_id' ];
@@ -331,6 +340,33 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		$this->assertFalse( isset( $GLOBALS['wp_filter']['get_term'][1]['hardcoded_callback'] ) );
 
 		$GLOBALS = unserialize($globals_bk);
+
+	}
+
+	/**
+	 * @test
+	 * @expectedException WC_REST_Exception
+	 * @expectedExceptionCode 404
+	 * @expectedExceptionMessage Invalid language parameter
+	 */
+	function filter_terms_query_wrong_lang() {
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array(
+			                  'get_active_languages',
+		                  ) )
+		                  ->getMock();
+		$sitepress->method('get_active_languages')->willReturn( [ 'en' => 1 ] );
+		$subject = new WCML_REST_API_Support( $this->woocommerce_wpml, $sitepress );
+
+		$args = [];
+		$request = $this->getMockBuilder( 'WP_REST_Request' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'get_params' ) )
+		                ->getMock();
+		$request->method( 'get_params' )->wilLReturn( array( 'lang' => '--invalid_language--' ) );
+		$subject->filter_terms_query( $args, $request );
 
 	}
 
@@ -904,20 +940,12 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 
 		$request = null;
 
-		// Another language - no filtering
-		$this->test_data['query_var']['lang'] = $other_lang;
-		$response_out = $subject->filter_order_items_by_language( $response, $order, $request );
 
-		$this->assertEquals( $response, $response_out );
-
-
-		// The right language
-		$this->test_data['query_var']['lang'] = $test_lang;
 		global $wpdb;
 		$wpdb = $this->getMockBuilder( 'stdClass' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( array( 'get_var', 'prepare' ) )
-		                 ->getMock();
+		             ->disableOriginalConstructor()
+		             ->setMethods( array( 'get_var', 'prepare' ) )
+		             ->getMock();
 		$wpdb->method( 'get_var' )->will( $this->returnCallback(
 			function( $id ){
 				return $this->order_items[ $id ]['translated_id'];
@@ -930,8 +958,15 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		) );
 		$wpdb->prefix = '';
 
+		// Another language - no filtering
+		$this->test_data['query_var']['lang'] = $other_lang;
 		$response_out = $subject->filter_order_items_by_language( $response, $order, $request );
+		$this->assertEquals( $response, $response_out );
 
+
+		// The right language
+		$this->test_data['query_var']['lang'] = $test_lang;
+		$response_out = $subject->filter_order_items_by_language( $response, $order, $request );
 		$this->assertEquals( $expected_response, $response_out );
 
 		// cleanup
