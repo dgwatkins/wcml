@@ -40,7 +40,7 @@ class WCML_Taxonomy_Translation_Link_Filters{
 
 				$url = add_query_arg(
 					array( 'taxonomy' => $taxonomy ),
-					admin_url( 'admin.php?page=wpml-wcml&tab=product-attributs' )
+					admin_url( 'admin.php?page=wpml-wcml&tab=product-attributes' )
 				);
 
 			}else{
@@ -63,12 +63,9 @@ class WCML_Taxonomy_Translation_Link_Filters{
 
 				}
 
-
 			}
 
-
 		}
-
 
 		return $url;
 	}
