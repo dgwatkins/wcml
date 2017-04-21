@@ -32,7 +32,7 @@ class WCML_REST_API_Support{
 		add_action( 'woocommerce_rest_prepare_product_object', array( $this, 'copy_product_custom_fields' ), 10 , 3 );
 
 		// Orders
-		add_filter( 'woocommerce_rest_shop_order_query', array( $this, 'filter_orders_by_language' ), 20, 2 );
+		add_filter( 'woocommerce_rest_shop_order_object_query', array( $this, 'filter_orders_by_language' ), 20, 2 );
 		add_action( 'woocommerce_rest_prepare_shop_order_object', array( $this, 'filter_order_items_by_language'), 10, 3 );
 		add_action( 'woocommerce_rest_insert_shop_order_object' , array( $this, 'set_order_language' ), 10, 2 );
 
