@@ -34,7 +34,7 @@ class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 	 * @return WCML_Composite_Products
 	 */
 	private function get_test_subject( ) {
-		return new WCML_Composite_Products( $this->sitepress, $this->woocommerce_wpml );
+		return new WCML_Composite_Products( $this->sitepress, $this->woocommerce_wpml, $this->tp );
 	}
 
 	private function setup_composite_product_data( $product_id ){
@@ -366,7 +366,7 @@ class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 				)
 			) );
 
-		$wcml_composite_products = new WCML_Composite_Products( $this->sitepress, $woocommerce_wpml );
+		$wcml_composite_products = new WCML_Composite_Products( $this->sitepress, $woocommerce_wpml, $this->tp );
 
 		update_post_meta( $composite_product->id, '_bto_base_regular_price', $base_regular_price );
 		update_post_meta( $composite_product->id, '_bto_base_sale_price', $base_sale_price );

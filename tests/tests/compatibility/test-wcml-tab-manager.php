@@ -154,7 +154,10 @@ class Test_WCML_Tab_Manager extends WCML_UnitTestCase {
 	 * @return WCML_Tab_Manager
 	 */
 	private function get_test_subject() {
-		return new WCML_Tab_Manager( $this->sitepress, $this->woocommerce, $this->woocommerce_wpml, $this->wpdb );
+		$subject = new WCML_Tab_Manager( $this->sitepress, $this->woocommerce, $this->woocommerce_wpml, $this->wpdb, $this->tp );
+		$subject->add_hooks();
+
+		return $subject;
 	}
 
 	/**

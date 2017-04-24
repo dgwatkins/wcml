@@ -17,6 +17,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	public $wpdb;
 	private $booking_term;
 	private $booking_term_tranlsation;
+	private $tp;
 
 	function setUp() {
 		global $sitepress, $wpdb;
@@ -53,11 +54,11 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 
 		$this->sitepress = $sitepress;
 		$this->wpdb = $wpdb;
+		$this->tp = new WPML_Element_Translation_Package;
 		$this->booking_term = get_term_by( 'name', 'booking', 'product_type', ARRAY_A );
 		$trid = $this->sitepress->get_element_trid( $this->booking_term['term_id'], 'tax_product_type' );
 		$this->booking_term_tranlsation = wpml_test_insert_term( $this->second_language, 'product_type', $trid, 'booking' . $this->second_language );
 	}
-
 
 	/**
 	 * @test
@@ -376,7 +377,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 				),
 			) );
 
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object( $woocommerce_wpml );
 		// Add products.
 		$product            = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
 		$trid               = $this->sitepress->get_element_trid( $product, 'post_product' );
@@ -565,8 +566,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$this->duplicate_person_checks( $tr_person, $tr_product );
 
 		$empty_class = new stdClass();
-		$woocommerce_wpml = $this->get_test_subject();
-		$bookings = new WCML_Bookings( $empty_class, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object( );
 		$tr_person = $bookings->duplicate_person( $tr_product, $bookable_person, $this->second_language );
 		$this->duplicate_person_checks( $tr_person, $tr_product );
 	}
@@ -615,13 +615,16 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 				),
 			) );
 
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object( $woocommerce_wpml );
 		$this->assertEquals( $cost, $bookings->filter_pricing_cost( $cost, 'filed', 'name', 'name_key' ) );
 
 		$woocommerce_wpml->settings['enable_multi_currency'] = 2;
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object( $woocommerce_wpml );
 		$this->assertEquals( $block_cost, $bookings->filter_pricing_cost( $cost, array( 'cost_USD' => $block_cost, 'modifier' => '' ), 'cost_', 'name_key' ) );
 
+		$bookings = $this->get_wcml_booking_object( $woocommerce_wpml );
+		$this->assertEquals( $cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $cost, array( 'modifier' => '' ), 'cost_', 'name_key' ) );
+		$this->assertEquals( $block_cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $block_cost, array( 'base_modifier' => '' ), 'base_cost_', 'name_key' ) );
 
 		$product = $this->create_bookable_product( $this->default_language );
 		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
@@ -631,7 +634,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			->method( 'get_original_product_id' )
 			->willReturn( $product );
 
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb, $this->tp );
 		$this->assertEquals( $cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $cost, array( 'modifier' => '' ), 'cost_', 'name_key' ) );
 		$this->assertEquals( $block_cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $block_cost, array( 'base_modifier' => '' ), 'base_cost_', 'name_key' ) );
 
@@ -1182,13 +1185,16 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		return $product;
 	}
 
-	private function get_wcml_booking_object( $woocommerce_wpml = false ) {
+	public function get_wcml_booking_object($woocommerce_wpml = false ){
 
-		if( !$woocommerce_wpml ){
+		if( !$woocommerce_wpml) {
 			$woocommerce_wpml = $this->get_test_subject();
 		}
 
-		return new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$subject = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb , $this->tp );
+		$subject->add_hooks();
+
+		return $subject;
 	}
 
 	/**
@@ -1226,6 +1232,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 				)
 			) );
 
+		$bookings = $this->get_wcml_booking_object( $woocommerce_wpml );
 		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
 		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
 		$translation = wpml_test_insert_post( $this->second_language, 'product', $trid, random_string() );
@@ -1234,7 +1241,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			->method( 'get_original_product_id' )
 			->willReturn( $translation );
 
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb, $this->tp );
 		update_post_meta( $product, '_resource_base_costs', array( 1 => $block_cost ) );
 		$output = $bookings->filter_wc_booking_cost( $check, $product, '_resource_base_costs', true );
 		$this->assertEquals( $block_cost, $output[0][1] );
@@ -1257,7 +1264,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			->method( 'get_original_product_id' )
 			->willReturn( $product );
 
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb, $this->tp);
 
 		update_post_meta( $product, '_wc_display_cost_' . $this->usd_code, $base_costs );
 		update_post_meta( $product, '_wcml_custom_costs_status', true );
@@ -1291,7 +1298,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$woocommerce_wpml = $this->get_test_subject();
 		$woocommerce_wpml->settings['enable_multi_currency'] = 2;
 
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb );
+		$bookings = $this->get_wcml_booking_object( $woocommerce_wpml );
 		$output = $bookings->filter_bundled_product_in_cart_contents( $cart_item, null, $this->second_language );
 
 		$this->assertEquals( $translation, $output['data']->get_id() );
