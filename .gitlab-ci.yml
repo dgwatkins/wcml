@@ -107,20 +107,6 @@ Artifacts-Functional-Tests:
   only:
     - /^functional.*$/
 
-Artifacts-Manual:
-  stage: test
-  when: manual
-  image: artbuilder
-  tags:
-    - artifacts
-  script:
-    - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
-  artifacts:
-    expire_in: 1h
-    name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
-    paths:
-      - ${CI_PROJECT_NAME}
-
 Artifacts-Prereleases:
   stage: qa
   when: on_success
