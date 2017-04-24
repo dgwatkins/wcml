@@ -132,7 +132,7 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_object', array( $subject, 'copy_product_custom_fields'), 10, 3 );
 
 		// Orders
-		\WP_Mock::expectFilterAdded( 'woocommerce_rest_shop_order_query', array( $subject, 'filter_orders_by_language'), 20, 2 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_shop_order_object_query', array( $subject, 'filter_orders_by_language'), 20, 2 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_shop_order_object', array( $subject, 'filter_order_items_by_language'), 10, 3 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_shop_order_object', array( $subject, 'set_order_language'), 10, 2 );
 
