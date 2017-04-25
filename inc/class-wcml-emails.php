@@ -246,24 +246,20 @@ class WCML_Emails{
         }
     }
 
-    function filter_payment_method_string( $check, $object_id, $meta_key, $single ){
-        if( $meta_key == '_payment_method_title' ){
+    function filter_payment_method_string( $title, $object_id, $meta_key, $single ){
 
-            $payment_method = get_post_meta( $object_id, '_payment_method', true );
+        if( '_payment_method_title' === $meta_key ){
 
-            if( $payment_method ){
+            remove_filter( 'get_post_metadata', array( $this, 'filter_payment_method_string' ), 10, 4 );
+            $payment_gateway = wc_get_payment_gateway_by_order( $object_id );
+            add_filter( 'get_post_metadata', array( $this, 'filter_payment_method_string' ), 10, 4 );
 
-                $payment_gateways = WC()->payment_gateways->payment_gateways();
-                if( isset( $payment_gateways[ $payment_method ] ) ){
-                    $title = $this->woocommerce_wpml->gateways->translate_gateway_title( $payment_gateways[ $payment_method ]->title, $payment_method, $this->sitepress->get_current_language() );
-
-                    return $title;
-                }
+            if( $payment_gateway ){
+                $title = $this->woocommerce_wpml->gateways->translate_gateway_title( $payment_gateway->title, $payment_gateway->id, $this->sitepress->get_current_language() );
             }
-
-
         }
-        return $check;
+
+        return $title;
     }
 
     function filter_formatted_items( $formatted_meta, $object ){
