@@ -203,6 +203,11 @@ class woocommerce_wpml {
         add_filter('woocommerce_get_return_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
 
         add_action('wp_ajax_wcml_update_setting_ajx', array($this, 'update_setting_ajx'));
+
+        if( is_admin() ){
+	        $taxonomy_translation_link_filters = new WCML_Taxonomy_Translation_Link_Filters( $this->attributes );
+	        $taxonomy_translation_link_filters->add_filters();
+        }
     }
 
     public function get_settings(){
