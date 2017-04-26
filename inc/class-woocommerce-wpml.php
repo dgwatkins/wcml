@@ -187,6 +187,7 @@ class woocommerce_wpml {
         $this->locale               = new WCML_Locale( $this, $sitepress );
         $this->media                = new WCML_Media( $this, $sitepress, $wpdb );
         $this->downloadable         = new WCML_Downloadable_Products( $this, $sitepress );
+        $this->page_builders        = new WCML_Page_Builders( $sitepress );
         $this->reports              = new WCML_Reports;
         $this->wcml_products_screen = new WCML_Products_Screen_Options();
         $this->wcml_products_screen->init();
