@@ -48,7 +48,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$query_args = array();
 
-		$product_query_args = $subject->get_products_from_filter( $query_args );
+		$product_query_args = $subject->add_lang_to_shortcode_products_query( $query_args );
 
 		$this->assertEquals( $this->default_language, $product_query_args[ 'lang' ] );
 
