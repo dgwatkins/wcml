@@ -67,6 +67,7 @@ class woocommerce_wpml {
 
 
     public function __construct(){
+	    global $sitepress;
 
         $this->settings = $this->get_settings();
         $this->currencies = new WCML_Currencies( $this );
@@ -74,8 +75,7 @@ class woocommerce_wpml {
 
 	    new WCML_Widgets( $this );
 
-	    if ( class_exists( 'woocommerce' ) && 'yes' == get_option( 'woocommerce_api_enabled' ) ) {
-		    global $sitepress;
+	    if ( class_exists( 'woocommerce' ) && 'yes' == get_option( 'woocommerce_api_enabled' ) && ! is_null( $sitepress ) ) {
 		    if ( version_compare( WC()->version, '2.6', '>=' ) && WCML_REST_API_Support::is_rest_api_request() ) {
 			    new WCML_REST_API_Support( $this, $sitepress );
 		    } else {
