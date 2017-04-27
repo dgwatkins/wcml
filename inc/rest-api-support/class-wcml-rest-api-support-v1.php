@@ -1,6 +1,6 @@
 <?php
 
-class WCML_REST_API_Support{
+class WCML_REST_API_Support_V1{
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
@@ -24,54 +24,28 @@ class WCML_REST_API_Support{
 		add_action( 'parse_query', array($this, 'auto_adjust_included_ids') );
 
 		// Products
-		add_action( 'woocommerce_rest_prepare_product_object', array( $this, 'append_product_language_and_translations' ) );
-		add_action( 'woocommerce_rest_prepare_product_object', array( $this, 'append_product_secondary_prices' ) );
+		add_action( 'woocommerce_rest_prepare_product', array( $this, 'append_product_language_and_translations' ) );
+		add_action( 'woocommerce_rest_prepare_product', array( $this, 'append_product_secondary_prices' ) );
+
 		add_filter( 'woocommerce_rest_product_query', array( $this, 'filter_products_query' ), 10, 2 );
-		add_action( 'woocommerce_rest_insert_product_object', array( $this, 'set_product_language' ), 10, 2 );
-		add_action( 'woocommerce_rest_insert_product_object', array( $this, 'set_product_custom_prices' ), 10, 2 );
-		add_action( 'woocommerce_rest_prepare_product_object', array( $this, 'copy_product_custom_fields' ), 10 , 3 );
+
+		add_action( 'woocommerce_rest_insert_product', array( $this, 'set_product_language' ), 10, 2 );
+		add_action( 'woocommerce_rest_update_product', array( $this, 'set_product_language' ), 10, 2 );
+
+		add_action( 'woocommerce_rest_insert_product', array( $this, 'set_product_custom_prices' ), 10, 2 );
+		add_action( 'woocommerce_rest_update_product', array( $this, 'set_product_custom_prices' ), 10, 2 );
+
+		add_action( 'woocommerce_rest_prepare_product', array( $this, 'copy_product_custom_fields' ), 10 , 3 );
 
 		// Orders
-		add_filter( 'woocommerce_rest_shop_order_object_query', array( $this, 'filter_orders_by_language' ), 20, 2 );
-		add_action( 'woocommerce_rest_prepare_shop_order_object', array( $this, 'filter_order_items_by_language'), 10, 3 );
-		add_action( 'woocommerce_rest_insert_shop_order_object' , array( $this, 'set_order_language' ), 10, 2 );
+		add_filter( 'woocommerce_rest_shop_order_query', array( $this, 'filter_orders_by_language' ), 20, 2 );
+		add_action( 'woocommerce_rest_prepare_shop_order', array( $this, 'filter_order_items_by_language'), 10, 3 );
+		add_action( 'woocommerce_rest_insert_shop_order' , array( $this, 'set_order_language' ), 10, 2 );
 
 		// Terms
 		add_action( 'woocommerce_rest_product_cat_query', array($this, 'filter_terms_query' ), 10, 2 );
 		add_action( 'woocommerce_rest_product_tag_query', array($this, 'filter_terms_query' ), 10, 2 );
 
-	}
-
-	/**
-	 * Check if is request to the WooCommerce REST API.
-	 *
-	 * @return bool
-	 */
-	public static function is_rest_api_request(){
-
-		if ( empty( $_SERVER['REQUEST_URI'] ) ) {
-			return false;
-		}
-
-		$rest_prefix = trailingslashit( rest_get_url_prefix() );
-		// Check if WooCommerce endpoint.
-		$woocommerce = ( false !== strpos( $_SERVER['REQUEST_URI'], $rest_prefix . 'wc/' ) );
-
-		return apply_filters( 'woocommerce_rest_is_request_to_rest_api', $woocommerce );
-
-	}
-
-	/**
-	 * @return int
-	 * Returns the version number of the API used for the current request
-	 */
-	public static function get_api_request_version(){
-		$version = 0;
-		$rest_prefix = trailingslashit( rest_get_url_prefix() );
-		if( preg_match( "@" . $rest_prefix . "wc/v([0-9]+)/@", $_SERVER['REQUEST_URI'], $matches ) ){
-			$version = intval($matches[1]);
-		}
-		return $version;
 	}
 
 	/**
@@ -133,30 +107,13 @@ class WCML_REST_API_Support{
 	 * @param WP_REST_Request $request
 	 *
 	 * @return array
-	 * @throws WC_REST_Exception
 	 */
-	public function filter_terms_query( $args, $request ) {
-
+	public function filter_terms_query( $args, $request ){
 		$data = $request->get_params();
-
-		if ( isset( $data['lang'] ) ) {
-
-			$active_languages = $this->sitepress->get_active_languages();
-
-			if ( $data['lang'] === 'all' ) {
-				remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
-				remove_filter( 'get_term', array( $this->sitepress, 'get_term_adjust_id' ), 1, 1 );
-			} elseif ( ! isset( $active_languages[ $data['lang'] ] ) ) {
-				throw new WC_REST_Exception(
-					'404',
-					sprintf( __( 'Invalid language parameter: %s', 'woocommerce-multilingual' ),
-					$data['lang'] ),
-					'404'
-				);
-			}
-
+		if( isset( $data['lang'] ) && $data['lang'] === 'all' ){
+			remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
+			remove_filter( 'get_term', array( $this->sitepress, 'get_term_adjust_id' ), 1, 1 );
 		}
-
 		return $args;
 	}
 
@@ -252,13 +209,13 @@ class WCML_REST_API_Support{
 	/**
 	 * Sets the product information according to the provided language
 	 *
-	 * @param object $product
+	 * @param WP_Post $post
 	 * @param WP_REST_Request $request
 	 *
 	 * @throws WC_REST_Exception
 	 *
 	 */
-	public function set_product_language( $product, $request ){
+	public function set_product_language( $post, $request ){
 
 		$data = $request->get_params();
 
@@ -276,8 +233,8 @@ class WCML_REST_API_Support{
 				$trid = null;
 			}
 
-			$this->sitepress->set_element_language_details( $product->get_id(), 'post_product', $trid, $data['lang'] );
-			wpml_tm_save_post( $product->get_id(), get_post( $product->get_id() ), ICL_TM_COMPLETE );
+			$this->sitepress->set_element_language_details( $post->ID, 'post_product', $trid, $data['lang'] );
+			wpml_tm_save_post( $post->ID, $post , ICL_TM_COMPLETE );
 		}else{
 			if( isset( $data['translation_of'] ) ){
 				throw new WC_REST_Exception( '404', __( 'Using "translation_of" requires providing a "lang" parameter too', 'woocommerce-multilingual' ), '404' );
@@ -289,13 +246,13 @@ class WCML_REST_API_Support{
 	/**
 	 * Sets custom prices in secondary currencies for products
 	 *
-	 * @param object $product
+	 * @param WP_Post $post
 	 * @param WP_REST_Request $request
 	 *
 	 * @throws WC_API_Exception
 	 *
 	 */
-	public function set_product_custom_prices( $product, $request ){
+	public function set_product_custom_prices( $post, $request ){
 
 		$data = $request->get_params();
 
@@ -303,7 +260,7 @@ class WCML_REST_API_Support{
 
 			if( !empty( $data['custom_prices'] ) ){
 
-				$original_post_id = $this->sitepress->get_original_element_id_filter('', $product->get_id(), 'post_product' );
+				$original_post_id = $this->sitepress->get_original_element_id_filter('', $post->ID, 'post_product' );
 
 				update_post_meta( $original_post_id, '_wcml_custom_prices_status', 1);
 
@@ -337,10 +294,10 @@ class WCML_REST_API_Support{
 
 		$data = $request->get_params();
 
-		if( isset( $data['id'] ) ) {
-			$translations = $wpml_post_translations->get_element_translations( $data['id'], false, true );
+		if( isset( $data['id'] ) ){
+			$translations = $wpml_post_translations->get_element_translations ( $data['id'], false, true );
 			foreach ( $translations as $translation_id ) {
-				$this->sitepress->copy_custom_fields( $data['id'], $translation_id );
+				$this->sitepress->copy_custom_fields ( $data['id'], $translation_id );
 			}
 		}
 
@@ -375,9 +332,10 @@ class WCML_REST_API_Support{
 	public function filter_order_items_by_language( $response, $order, $request ){
 
 		$lang = get_query_var('lang');
-		$order_lang = get_post_meta( $order->get_id(), 'wpml_language', true );
 
-		if( $order_lang != $lang || 1 ){
+		$order_lang = get_post_meta( $order->ID, 'wpml_language', true );
+
+		if( $order_lang != $lang ){
 
 			foreach( $response->data['line_items'] as $k => $item ){
 
@@ -413,16 +371,16 @@ class WCML_REST_API_Support{
 	/**
 	 * Sets the language for a new order
 	 *
-	 * @param WC_Order $order
+	 * @param WP_Post $post
 	 * @param WP_REST_Request $request
 	 *
 	 * @throws WC_REST_Exception
 	 */
-	public function set_order_language( $order, $request ){
+	public function set_order_language( $post, $request ){
 
 		$data = $request->get_params();
 		if( isset( $data['lang'] ) ){
-			$order_id = $order->get_id();
+			$order_id = $post->ID;
 			$active_languages = $this->sitepress->get_active_languages();
 			if( !isset( $active_languages[$data['lang']] ) ){
 				throw new WC_REST_Exception( '404', sprintf( __( 'Invalid language parameter: %s' ), $data['lang'] ), '404' );

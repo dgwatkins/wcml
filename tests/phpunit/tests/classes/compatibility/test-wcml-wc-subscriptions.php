@@ -59,16 +59,4 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 		$this->assertEquals( $cart->recurring_carts, $other_cart->recurring_carts );
 	}
 
-	function expectActionAdded( $action_name, callable $callback, $priority, $args = 1, $times = null ) {
-		$intercept = \Mockery::mock( 'intercept' );
-
-		if ( null !== $times ) {
-			$intercept->shouldReceive( 'intercepted' )->times( $times );
-		} else {
-			$intercept->shouldReceive( 'intercepted' )->atLeast()->once();
-		}
-		/** @var WP_Mock\HookedCallbackResponder $responder */
-		$responder = \WP_Mock::onHookAdded( $action_name, 'action' )->with( $callback, $priority, $args );
-		$responder->perform( array( $intercept, 'intercepted' ) );
-	}
 }

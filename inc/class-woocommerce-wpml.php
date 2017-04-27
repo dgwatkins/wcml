@@ -77,7 +77,12 @@ class woocommerce_wpml {
 
 	    if ( class_exists( 'woocommerce' ) && 'yes' == get_option( 'woocommerce_api_enabled' ) && ! is_null( $sitepress ) ) {
 		    if ( version_compare( WC()->version, '2.6', '>=' ) && WCML_REST_API_Support::is_rest_api_request() ) {
-			    new WCML_REST_API_Support( $this, $sitepress );
+			    if( WCML_REST_API_Support::get_api_request_version() === 1 ) {
+				    $wcml_rest_api_support = new WCML_REST_API_Support_V1( $this, $sitepress );
+			    }else{
+				    $wcml_rest_api_support = new WCML_REST_API_Support( $this, $sitepress );
+			    }
+			    $wcml_rest_api_support->initialize();
 		    } else {
 			    new WCML_WooCommerce_Rest_API_Support( $this, $sitepress );
 		    }
