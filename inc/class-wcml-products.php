@@ -27,6 +27,10 @@ class WCML_Products{
         $this->sitepress = $sitepress;
         $this->wpdb = $wpdb;
 
+    }
+
+    public function add_hooks(){
+
         if( is_admin() ){
 
             add_filter( 'woocommerce_json_search_found_products', array( $this, 'woocommerce_json_search_found_products' ) );
@@ -51,6 +55,7 @@ class WCML_Products{
 
         add_filter( 'wpml_override_is_translator', array( $this, 'wcml_override_is_translator' ), 10, 3 );
         add_filter( 'wc_product_has_unique_sku', array( $this, 'check_product_sku' ), 10, 3 );
+
     }
 
     // Check if original product
