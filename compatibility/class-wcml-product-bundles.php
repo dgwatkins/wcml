@@ -46,7 +46,8 @@ class WCML_Product_Bundles{
 	        add_action( 'wcml_after_duplicate_product_post_meta', array( $this, 'sync_bundled_ids' ), 10, 2 );
 	        add_action( 'wcml_update_extra_fields', array( $this, 'bundle_update' ), 10, 4 );
 
-	        add_action( 'save_post', array( $this, 'sync_product_bundle_meta_with_translations' ) );
+	        add_action( 'wp_insert_post', array( $this, 'sync_product_bundle_meta_with_translations' ), 10 );
+
         }
 
     }
@@ -67,15 +68,12 @@ class WCML_Product_Bundles{
 		$bundle_items = $this->product_bundles_items->get_items( $bundle_id );
 
 		foreach( $bundle_items as $item_id => $bundle_item ){
-
 			$bundled_item_data = $this->product_bundles_items->get_item_data_object( $item_id );
 
 			foreach( $product_bundle_data[ $item_id ] as $key => $value ){
 				$this->product_bundles_items->update_item_meta( $bundled_item_data,  $key,  $value );
 			}
-
 			$this->product_bundles_items->save_item_meta( $bundled_item_data );
-
 		}
 
 	}
@@ -100,7 +98,7 @@ class WCML_Product_Bundles{
 		);
 
 		$target_lang = $this->sitepress->get_language_for_element( $translated_bundle_id, 'post_product' );
-
+		$translated_item_ids = array();
 		foreach( $bundle_items as $item_id => $bundle_item ){
 
 			$item_meta = $this->product_bundles_items->get_item_data( $bundle_item );
@@ -108,17 +106,26 @@ class WCML_Product_Bundles{
 
 			if( $translated_product_id ){
 				$translated_item_id = $this->get_item_id_for_product_id( $translated_product_id, $translated_bundle_id );
+				$translated_item_ids[] = $translated_item_id;
 
 				$translated_item = $this->product_bundles_items->get_item_data_object( $translated_item_id );
 				foreach( $fields_to_sync as $key ){
 					$this->product_bundles_items->update_item_meta( $translated_item, $key, $item_meta[$key] );
 				}
 				$this->product_bundles_items->save_item_meta( $translated_item );
+
 			}
 
 		}
 
-
+		// Delete removed items
+		$translated_bundle_items = $this->product_bundles_items->get_items( $translated_bundle_id );
+		foreach ( $translated_bundle_items as $item_id => $bundle_item ) {
+			if ( ! in_array( $item_id, $translated_item_ids ) ) {
+				$bundled_item_data = $this->product_bundles_items->get_item_data_object( $item_id );
+				$bundled_item_data->delete();
+			}
+		}
 
 	}
 
@@ -127,9 +134,9 @@ class WCML_Product_Bundles{
 		if ( WooCommerce_Functions_Wrapper::get_product_type( $bundle_id ) === 'bundle' ) {
 
 			$trid        = $this->sitepress->get_element_trid( $bundle_id, 'post_product' );
-			$tranlations = $this->sitepress->get_element_translations( $trid, 'post_product' );
+			$translations = $this->sitepress->get_element_translations( $trid, 'post_product' );
 
-			foreach ( $tranlations as $language => $translation ) {
+			foreach ( $translations as $language => $translation ) {
 				if ( $translation->original ) {
 					$original_bundle_id = $translation->element_id;
 					break;
@@ -137,7 +144,7 @@ class WCML_Product_Bundles{
 
 			}
 
-			foreach ( $tranlations as $language => $translation ) {
+			foreach ( $translations as $language => $translation ) {
 				if ( $translation->element_id !== $original_bundle_id ) {
 					$this->sync_product_bundle_meta( $original_bundle_id, $translation->element_id );
 				}
@@ -304,7 +311,7 @@ class WCML_Product_Bundles{
 
 	}
 
-	// Update Bundled products title and descritpion after saving the translation
+	// Update Bundled products title and description after saving the translation
 	public function bundle_update( $bundle_id, $translated_bundle_id, $data, $lang ){
 		global $wpdb;
 
