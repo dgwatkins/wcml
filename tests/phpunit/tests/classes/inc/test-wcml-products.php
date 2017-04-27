@@ -35,16 +35,23 @@ class Test_WCML_Products extends OTGS_TestCase {
 	private function get_subject(){
 		$subject = new WCML_Products( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
 
+		return $subject;
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_adds_frontend_hooks(){
 		\WP_Mock::wpFunction( 'is_admin', array(
 			'return' => false,
 			'times'  => 1
 		) );
 
+		$subject = $this->get_subject();
+
 		\WP_Mock::expectFilterAdded( 'woocommerce_shortcode_products_query', array( $subject, 'add_lang_to_shortcode_products_query' ) );
 
 		$subject->add_hooks();
-
-		return $subject;
 	}
 
 	/**
