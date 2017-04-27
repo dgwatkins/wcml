@@ -169,6 +169,7 @@ class woocommerce_wpml {
         $this->sync_product_data    = new WCML_Synchronize_Product_Data( $this, $sitepress, $wpdb );
         $this->duplicate_product    = new WCML_WC_Admin_Duplicate_Product( $this, $sitepress, $wpdb );
         $this->products             = new WCML_Products( $this, $sitepress, $wpdb );
+        $this->products->add_hooks();
         $this->store                = new WCML_Store_Pages ($this, $sitepress ) ;
         $this->emails               = new WCML_Emails( $this, $sitepress );
         $this->terms                = new WCML_Terms( $this, $sitepress, $wpdb );

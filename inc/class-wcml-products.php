@@ -27,6 +27,10 @@ class WCML_Products{
         $this->sitepress = $sitepress;
         $this->wpdb = $wpdb;
 
+    }
+
+    public function add_hooks(){
+
         if( is_admin() ){
 
             add_filter( 'woocommerce_json_search_found_products', array( $this, 'woocommerce_json_search_found_products' ) );
@@ -40,6 +44,7 @@ class WCML_Products{
         }else{
             add_filter( 'woocommerce_json_search_found_products', array( $this, 'filter_found_products_by_language' ) );
             add_filter( 'woocommerce_related_products_args', array( $this, 'filter_related_products_args' ) );
+            add_filter( 'woocommerce_shortcode_products_query', array( $this, 'add_lang_to_shortcode_products_query' ) );
         }
 
         add_filter( 'woocommerce_upsell_crosssell_search_products', array( $this, 'filter_woocommerce_upsell_crosssell_posts_by_language' ) );
@@ -50,6 +55,7 @@ class WCML_Products{
 
         add_filter( 'wpml_override_is_translator', array( $this, 'wcml_override_is_translator' ), 10, 3 );
         add_filter( 'wc_product_has_unique_sku', array( $this, 'check_product_sku' ), 10, 3 );
+
     }
 
     // Check if original product
@@ -572,5 +578,12 @@ class WCML_Products{
 
 		return $sku_found;
 	}
+
+    public function add_lang_to_shortcode_products_query( $query_args ){
+
+        $query_args[ 'lang' ] = $this->sitepress->get_current_language();
+
+        return $query_args;
+    }
 
 }
