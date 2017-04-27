@@ -492,7 +492,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 			if ( $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ) {
 
-				$original_id = apply_filters( 'translate_object_id', $object_id, 'product', true, $this->woocommerce_wpml->products->get_original_product_language( $object_id ) );
+				$original_id = $this->woocommerce_wpml->products->get_original_product_id( $object_id );
 
 				$cost_status = get_post_meta( $original_id, '_wcml_custom_prices_status', true );
 				

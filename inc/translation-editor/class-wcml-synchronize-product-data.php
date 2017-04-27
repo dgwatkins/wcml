@@ -47,7 +47,7 @@ class WCML_Synchronize_Product_Data{
 
         $original_language  = $this->woocommerce_wpml->products->get_original_product_language( $post_id );
         $current_language   = $this->sitepress->get_current_language();
-        $original_product_id = apply_filters( 'translate_object_id', $post_id, 'product', false, $original_language );
+        $original_product_id = $this->woocommerce_wpml->products->get_original_product_id( $post_id );
 
         $wpml_media_options = maybe_unserialize( get_option( '_wpml_media' ) );
 
@@ -389,8 +389,7 @@ class WCML_Synchronize_Product_Data{
     public function icl_make_duplicate( $master_post_id, $lang, $postarr, $id ){
         if( get_post_type( $master_post_id ) == 'product' ){
 
-            $original_language  = $this->woocommerce_wpml->products->get_original_product_language( $master_post_id );
-            $master_post_id = apply_filters( 'translate_object_id', $master_post_id, 'product', false, $original_language );
+            $master_post_id = $this->woocommerce_wpml->products->get_original_product_id( $master_post_id );
 
             $this->sync_product_data( $master_post_id, $id, $lang );
         }

@@ -7,8 +7,9 @@ class WCML_Multi_Currency_Orders{
      */
     private $multi_currency;
 
-    public function __construct( &$multi_currency ){
+    public function __construct( &$multi_currency, &$woocommerce_wpml ){
         $this->multi_currency =& $multi_currency;
+        $this->woocommerce_wpml =& $woocommerce_wpml;
 
         if( is_admin() ){
             add_filter( 'init', array( $this, 'orders_init' ) );
@@ -246,7 +247,8 @@ class WCML_Multi_Currency_Orders{
             $order_currency = get_post_meta( $_POST['order_id'], '_order_currency', true);
         }
 
-        $custom_price = get_post_meta( $_POST['item_to_add'], '_price_'.$order_currency, true );
+        $original_product_id = $this->woocommerce_wpml->products->get_original_product_id( sanitize_text_field( $_POST['item_to_add'][ 0 ] ) );
+        $custom_price = get_post_meta( $original_product_id, '_price_'.$order_currency, true );
 
         if( !isset( $this->multi_currency->prices ) ){
             $this->multi_currency->prices = new WCML_Multi_Currency_Prices( $this->multi_currency );

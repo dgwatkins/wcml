@@ -72,4 +72,33 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function get_original_product_id(){
+
+		$product_id = rand( 1, 100 );
+		$original_product_id = rand( 1, 100 );
+		$language = rand_str();
+
+		$this->sitepress->method( 'get_current_language' )
+			->wilLReturn( $this->default_language );
+
+		\WP_Mock::wpFunction( 'wp_cache_get', array(
+			'return' => $language
+		) );
+
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'return' => 'product'
+		) );
+
+		\WP_Mock::onFilter( 'translate_object_id' )->with( $product_id, 'product', false, $language )->reply( $original_product_id );
+
+		$subject = $this->get_subject();
+		$subject_original_product_id = $subject->get_original_product_id( $product_id );
+
+		$this->assertEquals( $original_product_id, $subject_original_product_id );
+
+	}
+
 }

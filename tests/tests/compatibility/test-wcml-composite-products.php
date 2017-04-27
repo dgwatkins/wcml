@@ -338,6 +338,10 @@ class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 			->method( 'get_original_product_language' )
 			->willReturn( $this->default_language );
 
+		$woocommerce_wpml->products
+			->method( 'get_original_product_id' )
+			->willReturn( $composite_product->id );
+
 		$woocommerce_wpml->multi_currency
 			->method( 'get_client_currency' )
 			->willReturn( $usd_code);

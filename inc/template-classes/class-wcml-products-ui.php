@@ -207,11 +207,12 @@ class WCML_Products_UI extends WPML_Templates_Factory {
 
 		if ( isset( $_GET[ 'prid' ] ) ) {
 
-			if ( ! $this->woocommerce_wpml->products->is_original_product( $_GET[ 'prid' ] ) ) {
-				$original_language = $this->woocommerce_wpml->products->get_original_product_language( $_GET[ 'prid' ] );
-				$products[]        = get_post( apply_filters( 'translate_object_id', $_GET[ 'prid' ], 'product', true, $original_language ) );
+			$prid = sanitize_text_field( $_GET[ 'prid' ] );
+
+			if ( ! $this->woocommerce_wpml->products->is_original_product( $prid ) ){
+				$products[]        = get_post( $this->woocommerce_wpml->products->get_original_product_id( $prid ) );
 			} else {
-				$products[] = get_post( $_GET[ 'prid' ] );
+				$products[] = get_post( $prid );
 			}
 			$products_count = 1;
 
