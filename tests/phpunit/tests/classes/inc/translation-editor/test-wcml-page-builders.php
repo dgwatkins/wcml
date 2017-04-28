@@ -86,6 +86,11 @@ class Test_WCML_Page_Builders extends OTGS_TestCase
 			$builders_strings[ $package_id ][ 'strings' ][ 0 ]->translated_value
 		);
 
+		$second_product_id = rand( 1, 10 );
+		\WP_Mock::onFilter('wpml_st_get_post_string_packages')->with(false, $second_product_id )->reply(false);
+		$builders_strings = $subject->get_page_builders_strings( $second_product_id, $target_language );
+		$this->assertEquals( array(), $builders_strings );
+
 		$builders_data = $subject->page_builders_data( array(), $product_id, $target_language );
 
 		$this->assertEquals( $string_value, $builders_data[ $string_name ][ 'original' ] );
