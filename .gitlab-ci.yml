@@ -20,19 +20,21 @@ before_script:
 
 stages:
   - build
-  - test
   - qa
+  - test
   - deploy
   - documentation
 
 PhpComp:
-  stage: test
+  stage: qa
   when: always
   image: otgs/phpunit
   tags:
     - docker
   script:
     - vendor/bin/phpcs --standard=./phpcs.compatibility.xml -s -p --colors --report-full --report-summary ./
+  except:
+    - tags
 
 PhpUnit:
   stage: test
