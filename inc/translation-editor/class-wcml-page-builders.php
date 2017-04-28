@@ -20,6 +20,7 @@ class WCML_Page_Builders{
     public function get_page_builders_strings( $product_id, $target_language ){
 
         $string_packages = $this->get_page_builders_string_packages( $product_id );
+        $translation_package = array();
 
         if ( $string_packages ) {
 
