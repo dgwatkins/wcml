@@ -101,7 +101,7 @@ class WCML_Multi_Currency{
             $this->shipping = new WCML_Multi_Currency_Shipping( $this );
         }
         $this->reports                  = new WCML_Multi_Currency_Reports();
-        $this->orders                   = new WCML_Multi_Currency_Orders( $this );
+        $this->orders                   = new WCML_Multi_Currency_Orders( $this, $woocommerce_wpml );
         $this->admin_currency_selector  = new WCML_Admin_Currency_Selector();
         $this->custom_prices            = new WCML_Custom_Prices( $woocommerce_wpml );
         $this->currency_switcher        = new WCML_Currency_Switcher( $woocommerce_wpml, $sitepress );

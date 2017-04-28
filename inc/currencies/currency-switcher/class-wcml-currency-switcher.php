@@ -100,9 +100,9 @@ class WCML_Currency_Switcher{
 				$show_currency_switcher = false;
 			}elseif( is_product() ){
 				$current_product_id = get_post()->ID;
-				$original_product_language = $this->woocommerce_wpml->products->get_original_product_language( $current_product_id );
+				$original_product_id = $this->woocommerce_wpml->products->get_original_product_id( $current_product_id );
 				$use_custom_prices  = get_post_meta(
-					apply_filters( 'translate_object_id', $current_product_id, get_post_type( $current_product_id ), true, $original_product_language ),
+					$original_product_id,
 					'_wcml_custom_prices_status',
 					true
 				);

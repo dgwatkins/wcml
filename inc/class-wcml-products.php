@@ -95,6 +95,14 @@ class WCML_Products{
         return $language;
     }
 
+    public function get_original_product_id( $product_id ){
+
+        $original_product_language = $this->get_original_product_language( $product_id );
+        $original_product_id = apply_filters( 'translate_object_id', $product_id, get_post_type( $product_id ), true, $original_product_language );
+
+        return $original_product_id;
+    }
+
     public function is_variable_product( $product_id ){
         $cache_key = $product_id;
         $cache_group = 'is_variable_product';

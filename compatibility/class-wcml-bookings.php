@@ -751,7 +751,7 @@ class WCML_Bookings {
 
 			if ( $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ) {
 
-				$original_id = apply_filters( 'translate_object_id', $object_id, 'product', true, $this->woocommerce_wpml->products->get_original_product_language( $object_id ) );
+				$original_id = $this->woocommerce_wpml->products->get_original_product_id( $object_id );
 
 				$cost_status = get_post_meta( $original_id, '_wcml_custom_costs_status', true );
 
@@ -874,7 +874,7 @@ class WCML_Bookings {
 	function sync_resource_costs_with_translations( $object_id, $meta_key, $check = false ) {
 
 
-		$original_product_id = apply_filters( 'translate_object_id', $object_id, 'product', true, $this->woocommerce_wpml->products->get_original_product_language( $object_id ) );
+		$original_product_id = $this->woocommerce_wpml->products->get_original_product_id( $object_id );
 
 		if ( $object_id == $original_product_id ) {
 
@@ -976,7 +976,7 @@ class WCML_Bookings {
 			}
 
 			if ( isset( $booking_id ) ) {
-				$original_id = apply_filters( 'translate_object_id', $booking_id, 'product', true, $this->woocommerce_wpml->products->get_original_product_language( $booking_id ) );
+				$original_id = $this->woocommerce_wpml->products->get_original_product_id( $booking_id );
 
 				if ( $booking_id != $original_id ) {
 					$fields = maybe_unserialize( get_post_meta( $original_id, '_wc_booking_pricing', true ) );

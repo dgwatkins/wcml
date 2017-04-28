@@ -217,8 +217,7 @@ class WCML_Resources {
         }
 
         if( $product_id ){
-            $original_language = self::$woocommerce_wpml->products->get_original_product_language( $product_id );
-            $original_id = apply_filters( 'translate_object_id', $product_id, 'product', true, $original_language );
+            $original_id = self::$woocommerce_wpml->products->get_original_product_id( $product_id );
             $custom_product_sync = get_post_meta( $original_id, 'wcml_sync_files', true );
             if( $custom_product_sync && $custom_product_sync == 'self' ) {
                 $file_path_sync = false;
@@ -251,10 +250,9 @@ class WCML_Resources {
             '" style="display: none;position:relative;left:2px;top:2px;">';
 
         if ( isset($_GET['post']) ) {
-            $original_language = self::$woocommerce_wpml->products->get_original_product_language( $_GET['post'] );
-            $original_id = apply_filters( 'translate_object_id', $_GET['post'], 'product', true, $original_language );
+            $original_id = self::$woocommerce_wpml->products->get_original_product_id( sanitize_text_field( $_GET['post'] ) );
         } elseif ( isset($_GET['trid']) ) {
-            $original_id = $sitepress->get_original_element_id_by_trid( $_GET['trid'] );
+            $original_id = $sitepress->get_original_element_id_by_trid( sanitize_text_field( $_GET['trid'] ) );
         }
 
         if ( isset($_GET['lang']) ) {

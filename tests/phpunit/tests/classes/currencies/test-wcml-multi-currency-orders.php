@@ -4,6 +4,8 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
+	/** @var WCML_Multi_Currency */
+	private $wcml_multi_currency;
 	/** @var Sitepress */
 	private $sitepress;
 	/** @var WC_Order */
@@ -24,6 +26,10 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		                        ->getMock();
 
 		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                               ->disableOriginalConstructor()
+		                               ->getMock();
+
+		$this->wcml_multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
 		                               ->disableOriginalConstructor()
 		                               ->getMock();
 
@@ -93,7 +99,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 	 * @return WCML_REST_API_Support
 	 */
 	private function get_subject(){
-		return new WCML_Multi_Currency_Orders( $this->woocommerce_wpml, $this->sitepress );
+		return new WCML_Multi_Currency_Orders( $this->wcml_multi_currency, $this->woocommerce_wpml );
 	}
 
 	/**
