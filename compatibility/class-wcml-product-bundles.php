@@ -50,6 +50,11 @@ class WCML_Product_Bundles{
 
         }
 
+        // product bundle using separate custom fields for prices
+	    if( wcml_is_multi_currency_on() ){
+		    add_filter( 'wcml_price_custom_fields_filtered', array( $this, 'get_price_custom_fields' ) );
+	    }
+
     }
 
 	private function get_product_bundle_data( $bundle_id ){
@@ -167,7 +172,6 @@ class WCML_Product_Bundles{
 			$product_id, $bundle_id
 		) );
 	}
-
 
 	// Add Bundles Box to WCML Translation GUI
 	public function custom_box_html( $obj, $bundle_id, $data ){
@@ -604,4 +608,22 @@ class WCML_Product_Bundles{
 
 	    return $wpdb->insert_id;
     }
+
+	/**
+	 * @param array $custom_fields
+	 *
+	 * @return array
+	 */
+	public function get_price_custom_fields( $custom_fields ) {
+
+		$custom_fields = array_merge( $custom_fields, array(
+			'_wc_pb_base_regular_price',
+			'_wc_pb_base_sale_price',
+			'_wc_pb_base_price',
+			'_wc_sw_max_price',
+			'_wc_sw_max_regular_price'
+		) );
+
+		return $custom_fields;
+	}
 }
