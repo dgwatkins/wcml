@@ -25,12 +25,14 @@ class WCML_Url_Translation {
 			$this,
 			'register_product_and_taxonomy_bases'
 		), 10, 2 );
+
 		if ( ! is_admin() ) {
 			add_filter( 'option_woocommerce_permalinks', array(
 				$this,
 				'use_untranslated_default_url_bases'
 			), 1, 1 ); // avoid using the _x translations
 		}
+
 		add_filter( 'pre_update_option_rewrite_rules', array(
 			$this,
 			'force_bases_in_strings_languages'
@@ -280,6 +282,11 @@ class WCML_Url_Translation {
 	 */
 	function use_untranslated_default_url_bases( $permalinks ) {
 
+		// exception (index.php in WP permalink structure) #wcml-1939
+		if ( preg_match( '#^/?index\.php/#', get_option( 'permalink_structure' ) ) ) {
+			return $permalinks;
+		}
+
 		if ( empty( $permalinks['product_base'] ) ) {
 			$permalinks['product_base'] = $this->default_product_base;
 		}
@@ -388,8 +395,7 @@ class WCML_Url_Translation {
 	}
 
 	function translate_bases_in_rewrite_rules( $value ) {
-
-		global $sitepress, $sitepress_settings, $woocommerce_wpml;
+		global $sitepress, $woocommerce_wpml;
 
 		if ( ! empty( $value ) ) {
 
@@ -409,6 +415,7 @@ class WCML_Url_Translation {
 					$slug_translation_match = ltrim( $slug_details['translated_slug'], '/' );
 
 					$buff_value = array();
+
 					foreach ( (array) $value as $k => $v ) {
 
 						if ( $slug_details['slug'] != $slug_details['translated_slug'] && preg_match( '#^[^/]*/?' . $slug_match . '/#', $k ) ) {
@@ -731,7 +738,6 @@ class WCML_Url_Translation {
 
 		return $source_language;
 	}
-
 
 	function wcml_update_base_translation() {
 
