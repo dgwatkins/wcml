@@ -6,12 +6,12 @@
   Author: OnTheGoSystems
   Author URI: http://www.onthegosystems.com/
   Text Domain: woocommerce-multilingual
-  Version: 4.1.3-b1
+  Version: 4.1.3
 */
 
 if( defined( 'WCML_VERSION' ) ) return;
 
-define( 'WCML_VERSION', '4.1.3-b1' );
+define( 'WCML_VERSION', '4.1.3' );
 define( 'WCML_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WCML_PLUGIN_FOLDER', basename( WCML_PLUGIN_PATH ) );
 define( 'WCML_LOCALE_PATH', WCML_PLUGIN_PATH . '/locale' );
