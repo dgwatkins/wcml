@@ -54,8 +54,13 @@ class WCML_Currency_Switcher{
 	}
 
 	public function wcml_currency_switcher( $args = array() ) {
+
 		if ( is_page( wc_get_page_id( 'myaccount' ) ) ) {
 			return '';
+		}
+
+		if( !is_array( $args ) ){
+			$args = array();
 		}
 
 		if( !isset( $args[ 'switcher_id' ] ) ){
