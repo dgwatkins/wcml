@@ -30,7 +30,7 @@ class WCML_Endpoints{
 
     function register_endpoints_translations( $language = null ){
 
-        if( !class_exists( 'woocommerce' ) || !defined( 'ICL_SITEPRESS_VERSION' ) || ICL_PLUGIN_INACTIVE || version_compare( WOOCOMMERCE_VERSION, '2.2', '<' ) ) return false;
+        if( !class_exists( 'WooCommerce' ) || !defined( 'ICL_SITEPRESS_VERSION' ) || ICL_PLUGIN_INACTIVE || version_compare( WOOCOMMERCE_VERSION, '2.2', '<' ) ) return false;
 
         $wc_vars = WC()->query->query_vars;
 
