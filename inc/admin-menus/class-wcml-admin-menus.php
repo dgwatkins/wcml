@@ -268,7 +268,7 @@ class WCML_Admin_Menus{
         global $submenu, $menu;
 
         if (
-            class_exists( 'woocommerce' ) &&
+            class_exists( 'WooCommerce' ) &&
             (
                 empty( self::$woocommerce_wpml->settings['set_up_wizard_run'] ) ||
                 (
