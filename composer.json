@@ -31,6 +31,10 @@
     },
     {
       "type": "vcs",
+      "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-changelog.git"
+    },
+    {
+      "type": "vcs",
       "url": "ssh://git@git.onthegosystems.com:10022/wcml/codeception-tests.git"
     }
   ],
@@ -44,14 +48,8 @@
   "require-dev": {
     "otgs/build-tools": "~0.1",
     "otgs/unit-tests-framework": "~1.1",
-    "otgs/build-tools-ci": "~0.3",
-    "symfony/dom-crawler": "^3.1",
-    "symfony/css-selector": "^3.1",
-    "otgs/wcml-codeception-tests": "dev-master",
-    "squizlabs/php_codesniffer": "^2.8",
-    "wimg/php-compatibility": "^7.1",
-    "simplyadmire/composer-plugins": "^2.1",
-    "wp-coding-standards/wpcs": "^0.10.0"
+    "otgs/build-tools-ci": "~0.4",
+    "otgs/wcml-codeception-tests": "dev-master"
   },
   "scripts": {
     "post-install-cmd": [
