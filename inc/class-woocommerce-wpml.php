@@ -181,6 +181,7 @@ class woocommerce_wpml {
         $this->emails               = new WCML_Emails( $this, $sitepress );
         $this->terms                = new WCML_Terms( $this, $sitepress, $wpdb );
         $this->attributes           = new WCML_Attributes( $this, $sitepress, $wpdb );
+        $this->attributes->add_hooks();
         $this->orders               = new WCML_Orders( $this, $sitepress );
         $this->strings              = new WCML_WC_Strings;
         $this->shipping             = new WCML_WC_Shipping( $sitepress );
@@ -219,6 +220,9 @@ class woocommerce_wpml {
         if( is_admin() ){
 	        $taxonomy_translation_link_filters = new WCML_Taxonomy_Translation_Link_Filters( $this->attributes );
 	        $taxonomy_translation_link_filters->add_filters();
+
+            $tp_support = new WCML_TP_Support( $this, $wpdb , new WPML_Element_Translation_Package );
+            $tp_support->add_hooks();
         }
     }
 
