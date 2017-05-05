@@ -86,6 +86,7 @@
       "vendor/**/*/composer.*",
       "vendor/**/*/test",
       "vendor/**/*/tests",
+      "vendor/wimg",
       "!changelog.md",
       "!license.txt",
       "!readme.txt",
