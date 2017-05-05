@@ -248,7 +248,7 @@ class WCML_Emails{
 
     function filter_payment_method_string( $title, $object_id, $meta_key, $single ){
 
-        if( '_payment_method_title' === $meta_key ){
+        if( $object_id && 'shop_order' === get_post_type( $object_id ) && '_payment_method_title' === $meta_key ){
 
             remove_filter( 'get_post_metadata', array( $this, 'filter_payment_method_string' ), 10, 4 );
             $payment_gateway = wc_get_payment_gateway_by_order( $object_id );
