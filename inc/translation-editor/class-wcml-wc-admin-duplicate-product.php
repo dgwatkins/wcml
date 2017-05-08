@@ -1,6 +1,6 @@
 <?php
 
-class WCML_WC_Admin_Duplicate_Product extends WC_Admin_Duplicate_Product{
+class WCML_WC_Admin_Duplicate_Product{
 
     /**
      * @var woocommerce_wpml
@@ -68,6 +68,7 @@ class WCML_WC_Admin_Duplicate_Product extends WC_Admin_Duplicate_Product{
         $translations = $this->sitepress->get_element_translations( $trid, 'post_' . $post->post_type );
         $duplicated_products[ 'translations' ] = array();
         if( $translations ){
+
             foreach( $translations as $translation ){
                 if( !$translation->original && $translation->element_id != $product_id ){
                     $post_to_duplicate = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT * FROM {$this->wpdb->posts} WHERE ID=%d", $translation->element_id ) );
@@ -105,11 +106,12 @@ class WCML_WC_Admin_Duplicate_Product extends WC_Admin_Duplicate_Product{
     public function wc_duplicate_product( $post_to_duplicate ){
 
         $product = wc_get_product( $post_to_duplicate->ID );
-        
+        $wc_duplicate_product_instance = new WC_Admin_Duplicate_Product();;
+
         if( WooCommerce_Functions_Wrapper::is_deprecated() ){
-            $new_orig_id = $this->duplicate_product( $product );
+            $new_orig_id = $wc_duplicate_product_instance->duplicate_product( $product );
         }else{
-            $duplicate = $this->product_duplicate( $product );
+            $duplicate = $wc_duplicate_product_instance->product_duplicate( $product );
             $new_orig_id = $duplicate->get_id();
         }
 
