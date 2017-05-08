@@ -32,5 +32,37 @@
          $this->assertEquals( 'Test custom', $custom_field_label );
 
      }
+     
+     public function test_add_taxonomies_to_element_data(){
+
+         $element_data = array();
+         
+         $product = $this->wcml_helper->add_product( $this->default_language, 'product', false );
+
+         $original_category = $this->wcml_helper->add_term( rand_str(), 'product_cat', $this->default_language, $product->id );
+         $translated_category = $this->wcml_helper->add_term( rand_str(), 'product_cat', $this->second_language, false, $original_category->trid );
+
+         $expected_element_data = array(
+
+             't_'.$original_category->term_taxonomy_id => array(
+                 'original' => $original_category->name,
+                 'translation' => $translated_category->name,
+
+             )
+         );
+
+         $job_details = array(
+             'job_type'             => 'product',
+             'job_id'               => $product->id,
+             'target'               => $this->second_language,
+             'translation_complete' => false,
+         );
+
+         $editor_ui_product_job = new WCML_Editor_UI_Product_Job( $job_details, $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
+
+         $filtered_element_data = $editor_ui_product_job->add_taxonomies_to_element_data( $element_data );
+         $this->assertEquals( $expected_element_data, $filtered_element_data );
+
+     }
 
  }

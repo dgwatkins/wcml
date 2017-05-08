@@ -238,6 +238,21 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             }
         }
 
+        $this->add_taxonomies_ui_section();
+
+        if( $this->product_type === 'external' ){
+            $external_product_section = new WPML_Editor_UI_Field_Section( __( 'External Product', 'woocommerce-multilingual' ) );
+            $external_product_section->add_field( new WPML_Editor_UI_Single_Line_Field( '_product_url', __( 'Product url', 'woocommerce-multilingual' ), $this->data, true ) );
+            $external_product_section->add_field( new WPML_Editor_UI_Single_Line_Field( '_button_text', __( 'Button text', 'woocommerce-multilingual' ), $this->data, true ) );
+            $this->add_field( $external_product_section );
+        }
+
+        do_action( 'wcml_gui_additional_box_html', $this, $this->product_id, $this->data );
+
+    }
+
+    public function add_taxonomies_ui_section(){
+
         $taxonomies = get_object_taxonomies( 'product', 'objects' );
         foreach( $taxonomies as $taxonomy => $taxonomy_obj ){
             if( $taxonomy != 'product_type' && is_taxonomy_translated( $taxonomy ) ){
@@ -251,7 +266,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                         ){
                             continue;
                         }
-                        $term_field = new WPML_Editor_UI_Single_Line_Field( 't_'. $term->term_id, '', $this->data, false );
+                        $term_field = new WPML_Editor_UI_Single_Line_Field( 't_'. $term->term_taxonomy_id, '', $this->data, false );
                         $tax_section->add_field( $term_field );
                     }
                     if( isset( $term_field ) ){
@@ -260,15 +275,6 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                 }
             }
         }
-
-        if( $this->product_type === 'external' ){
-            $external_product_section = new WPML_Editor_UI_Field_Section( __( 'External Product', 'woocommerce-multilingual' ) );
-            $external_product_section->add_field( new WPML_Editor_UI_Single_Line_Field( '_product_url', __( 'Product url', 'woocommerce-multilingual' ), $this->data, true ) );
-            $external_product_section->add_field( new WPML_Editor_UI_Single_Line_Field( '_button_text', __( 'Button text', 'woocommerce-multilingual' ), $this->data, true ) );
-            $this->add_field( $external_product_section );
-        }
-
-        do_action( 'wcml_gui_additional_box_html', $this, $this->product_id, $this->data );
 
     }
 
@@ -374,26 +380,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             }
         }
 
-        $taxonomies = get_object_taxonomies( 'product', 'objects' );
-        foreach( $taxonomies as $taxonomy => $taxonomy_obj ){
-            if( $taxonomy != 'product_type' && is_taxonomy_translated( $taxonomy ) ){
-                $product_terms = wp_get_post_terms( $this->product_id, $taxonomy );
-                if( $product_terms ){
-                    foreach( $product_terms as $term ){
-                        $translated_term = $this->woocommerce_wpml->terms->wcml_get_translated_term( $term->term_id, $taxonomy, $this->get_target_language() );
-                        if(
-                            $this->sitepress->get_setting( 'tm_block_retranslating_terms' ) &&
-                            $translated_term->term_id != $term->term_id
-                        ){
-                            continue;
-                        }
-
-                        $element_data[ 't_'.$term->term_id ] = array( 'original' => $term->name );
-                        $element_data[ 't_'.$term->term_id ][ 'translation' ] = $translated_term->term_id != $term->term_id ? $translated_term->name : '';
-                    }
-                }
-            }
-        }
+        $element_data = $this->add_taxonomies_to_element_data( $element_data );
 
         $element_data = $this->add_custom_field_to_element_data( $element_data, $this->product_id, isset( $translation->ID ) ? $translation->ID : false, false );
 
@@ -445,6 +432,33 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         }
 
         $element_data = apply_filters( 'wcml_gui_additional_box_data', $element_data, $this->product_id, $translation, $this->get_target_language() );
+
+        return $element_data;
+    }
+
+    public function add_taxonomies_to_element_data( $element_data ){
+
+        $taxonomies = get_object_taxonomies( 'product', 'objects' );
+
+        foreach( $taxonomies as $taxonomy => $taxonomy_obj ){
+            if( $taxonomy != 'product_type' && is_taxonomy_translated( $taxonomy ) ){
+                $product_terms = wp_get_post_terms( $this->product_id, $taxonomy );
+                if( !is_wp_error( $product_terms ) ){
+                    foreach( $product_terms as $term ){
+                        $translated_term = $this->woocommerce_wpml->terms->wcml_get_translated_term( $term->term_id, $taxonomy, $this->get_target_language() );
+                        if(
+                            $this->sitepress->get_setting( 'tm_block_retranslating_terms' ) &&
+                            $translated_term->term_taxonomy_id != $term->term_taxonomy_id
+                        ){
+                            continue;
+                        }
+
+                        $element_data[ 't_'.$term->term_taxonomy_id ] = array( 'original' => $term->name );
+                        $element_data[ 't_'.$term->term_taxonomy_id ][ 'translation' ] = $translated_term->term_taxonomy_id != $term->term_taxonomy_id ? $translated_term->name : '';
+                    }
+                }
+            }
+        }
 
         return $element_data;
     }
