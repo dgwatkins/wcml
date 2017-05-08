@@ -79,7 +79,7 @@ class WCML_Currency_Switcher_Templates {
                     }
                 }
             }
-        }elseif( isset( $wcml_settings[ 'currency_switcher_product_visibility' ] ) && $wcml_settings[ 'currency_switcher_product_visibility' ] === 1 ){
+        }else{
             //set default template to active
             $templates['wcml-dropdown'] = $this->templates['wcml-dropdown'];
         }
