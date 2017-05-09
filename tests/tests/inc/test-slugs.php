@@ -83,7 +83,14 @@ class Test_WCML_Slugs extends WCML_UnitTestCase {
 
 		$this->sitepress->set_element_language_details( $tr_ttid, 'tax_'.$taxonomy, $trid, $translated_language );
 
-		$this->assertEquals( 'http://'.WP_TESTS_DOMAIN.'/?product_cat=test_cat1_es&lang=es' , $this->woocommerce_wpml->url_translation->translate_taxonomy_base(  get_term_link( $tr_tax_term['term_id'], $taxonomy ), get_term( $tr_tax_term['term_id'], $taxonomy ), $taxonomy ) );
+		$this->assertEquals(
+			'http://'.WP_TESTS_DOMAIN.'/?product_cat=test_cat1_es' ,
+			$this->woocommerce_wpml->url_translation->translate_taxonomy_base(
+				get_term_link( $tr_tax_term['term_id'], $taxonomy ),
+				get_term( $tr_tax_term['term_id'], $taxonomy ),
+				$taxonomy
+			) )
+		;
 
 	}
 
