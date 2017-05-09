@@ -7,7 +7,7 @@ class WCML_Price_Filter {
 	 */
 	private $woocommerce_wpml;
 
-	public function __construct( &$woocommerce_wpml ) {
+	public function __construct( woocommerce_wpml &$woocommerce_wpml ) {
 		$this->woocommerce_wpml = $woocommerce_wpml;
 	}
 
@@ -23,7 +23,9 @@ class WCML_Price_Filter {
 	public function override_currency_symbol() {
 		?>
         <script type="text/javascript">
+        /* <![CDATA[ */
             woocommerce_price_slider_params.currency_format_symbol = wcml_mc_settings.current_currency.symbol;
+        /* ]]> */
         </script>
 		<?php
 	}
@@ -37,8 +39,8 @@ class WCML_Price_Filter {
 
 		$multi_currency = $this->woocommerce_wpml->multi_currency;
 
-		if ( $multi_currency->get_client_currency() != get_option( 'woocommerce_currency' ) ) {
-			if ( isset( $meta_query['price_filter'] ) && $meta_query['price_filter']['key'] === '_price' ) {
+		if ( $multi_currency->get_client_currency() !== get_option( 'woocommerce_currency' ) ) {
+			if ( isset( $meta_query['price_filter'] ) && isset($meta_query['price_filter']['key']) && $meta_query['price_filter']['key'] === '_price' ) {
 				$meta_query['price_filter']['value'][0] = $multi_currency->prices->unconvert_price_amount( $meta_query['price_filter']['value'][0] );
 				$meta_query['price_filter']['value'][1] = $multi_currency->prices->unconvert_price_amount( $meta_query['price_filter']['value'][1] );
 			}

@@ -157,7 +157,7 @@ class woocommerce_wpml {
         ){
             $this->multi_currency = new WCML_Multi_Currency;
             $wcml_price_filters = new WCML_Price_Filter( $this );
-	        $wcml_price_filters->add_hooks();
+            $wcml_price_filters->add_hooks();
         }else{
             add_shortcode('currency_switcher', '__return_empty_string');
         }
