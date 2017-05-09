@@ -527,9 +527,8 @@ class WCML_Url_Translation {
 		if ( ( $taxonomy == 'product_cat' || $taxonomy == 'product_tag' || ( ! empty( $wc_taxonomies_wc_format ) && in_array( $taxonomy, $wc_taxonomies_wc_format ) ) ) && ! $no_recursion_flag ) {
 
 			$cache_key = 'termlink#' . $taxonomy . '#' . $term->term_id;
-			if ( false && $link = wp_cache_get( $cache_key, 'terms' ) ) {
+			if ( $link = wp_cache_get( $cache_key, 'terms' ) ) {
 				$termlink = $link;
-
 			} else {
 
 				$no_recursion_flag = false;
