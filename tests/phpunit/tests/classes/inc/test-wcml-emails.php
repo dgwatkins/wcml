@@ -89,6 +89,11 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			'return' => $payment_gateway
 		) );
 
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'args'   => array( $object_id ),
+			'return' => 'shop_order'
+		) );
+
 		$this->sitepress->method( 'get_current_language' )->willReturn( $language_code );
 
 		$this->woocommerce_wpml->gateways->method( 'translate_gateway_title' )
@@ -111,7 +116,27 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			'return' => false
 		) );
 
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'args'   => array( $object_id ),
+			'return' => 'shop_order'
+		) );
+
 		$filtered_payment_method_string = $subject->filter_payment_method_string( $title, $object_id, $meta_key, $single );
+
+		$this->assertEquals( $title, $filtered_payment_method_string );
+
+		$object_id = rand( 1, 100 );
+
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'args'   => array( $object_id ),
+			'return' => rand_str()
+		) );
+
+		$filtered_payment_method_string = $subject->filter_payment_method_string( $title, $object_id, $meta_key, $single );
+
+		$this->assertEquals( $title, $filtered_payment_method_string );
+
+		$filtered_payment_method_string = $subject->filter_payment_method_string( $title, false, $meta_key, $single );
 
 		$this->assertEquals( $title, $filtered_payment_method_string );
 	}
