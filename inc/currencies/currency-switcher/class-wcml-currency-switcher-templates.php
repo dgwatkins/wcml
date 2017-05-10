@@ -144,13 +144,6 @@ class WCML_Currency_Switcher_Templates {
         $templates = array();
         $dirs_to_scan = array();
 
-        /**
-         * Filter the directories to scan
-         *
-         * @param array $dirs_to_scan
-         */
-        $dirs_to_scan = apply_filters( 'wcml_cs_directories_to_scan', $dirs_to_scan );
-
         $sub_dir          = $this->ds . 'templates' . $this->ds . 'currency-switchers';
 
         $wcml_core_path   = WCML_PLUGIN_PATH . $sub_dir;
@@ -159,6 +152,13 @@ class WCML_Currency_Switcher_Templates {
         $uploads_path     = $this->get_uploads_path() . $this->ds . 'wpml' . $sub_dir;
 
         array_unshift( $dirs_to_scan, $wcml_core_path, $theme_path, $child_theme_path, $uploads_path );
+
+        /**
+         * Filter the directories to scan
+         *
+         * @param array $dirs_to_scan
+         */
+        $dirs_to_scan = apply_filters( 'wcml_cs_directories_to_scan', $dirs_to_scan );
 
         $templates_paths = $this->scan_template_paths( $dirs_to_scan );
 
