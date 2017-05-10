@@ -541,7 +541,7 @@ class WCML_Url_Translation {
 
 				if ( $term_language ) {
 
-					$slug_details = $this->get_translated_tax_slug( $taxonomy, $term_language, true );
+					$slug_details = $this->get_translated_tax_slug( $taxonomy, $term_language );
 
 					$base            = $slug_details['slug'];
 					$base_translated = $slug_details['translated_slug'];
@@ -596,7 +596,7 @@ class WCML_Url_Translation {
 		return $termlink;
 	}
 
-	function get_translated_tax_slug( $taxonomy, $language = false, $return_gettext_slug = false ) {
+	function get_translated_tax_slug( $taxonomy, $language = false ) {
 		global $sitepress, $woocommerce_wpml;
 
 		switch ( $taxonomy ) {
@@ -606,9 +606,6 @@ class WCML_Url_Translation {
 					$slug = $gettext_slug = trim( $this->wc_permalinks['tag_base'], '/' );
 				} else {
 					$slug = 'product-tag';
-					if ( $return_gettext_slug ) {
-						$gettext_slug = $this->default_product_tag_gettext_base;
-					}
 				}
 
 				$string_language = $woocommerce_wpml->strings->get_string_language( $slug, $this->url_strings_context(), $this->url_string_name( $taxonomy ) );
@@ -621,9 +618,6 @@ class WCML_Url_Translation {
 					$slug = $gettext_slug = trim( $this->wc_permalinks['category_base'], '/' );
 				} else {
 					$slug = 'product-category';
-					if ( $return_gettext_slug ) {
-						$gettext_slug = $this->default_product_category_gettext_base;
-					}
 				}
 
 				$string_language = $woocommerce_wpml->strings->get_string_language( $slug, $this->url_strings_context(), $this->url_string_name( $taxonomy ) );
@@ -631,7 +625,7 @@ class WCML_Url_Translation {
 				break;
 
 			default:
-				$slug = $gettext_slug = trim( $this->wc_permalinks['attribute_base'], '/' );
+				$slug = trim( $this->wc_permalinks['attribute_base'], '/' );
 
 				$string_language = $woocommerce_wpml->strings->get_string_language( $slug, $this->url_strings_context(), $this->url_string_name( 'attribute' ) );
 
@@ -649,14 +643,14 @@ class WCML_Url_Translation {
 			$slug_translation = apply_filters( 'wpml_translate_single_string', $slug, $this->url_strings_context(), $this->url_string_name( $taxonomy ), $language, false );
 
 			return array(
-				'slug'            => $return_gettext_slug ? $gettext_slug : $slug,
+				'slug'            => $slug,
 				'translated_slug' => $slug_translation
 			);
 		}
 
 		return array(
-			'slug'            => $return_gettext_slug ? $gettext_slug : $slug,
-			'translated_slug' => $return_gettext_slug && $language != $string_language ? $gettext_slug : $slug
+			'slug'            => $slug,
+			'translated_slug' => $slug
 		);
 
 	}
