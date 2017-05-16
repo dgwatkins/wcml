@@ -473,8 +473,7 @@ class WCML_Products{
         foreach( $products as $product ){
             if( $product->language_code == $language ) continue;
 
-            $element_key        = array( 'trid' => $product->trid, 'language_code' => $language );
-            $translation_status = apply_filters( 'wpml_tm_translation_status', null, $element_key );
+            $translation_status = apply_filters( 'wpml_translation_status', null, $product->trid, $language );
 
             if( in_array( $translation_status, array( ICL_TM_NOT_TRANSLATED, ICL_TM_WAITING_FOR_TRANSLATOR, ICL_TM_IN_PROGRESS ) ) ){
                 $count++;
