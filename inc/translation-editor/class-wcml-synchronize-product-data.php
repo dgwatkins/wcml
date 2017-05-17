@@ -16,7 +16,7 @@ class WCML_Synchronize_Product_Data{
 
         if( is_admin() ){
             // filters to sync variable products
-            add_action( 'save_post', array( $this, 'synchronize_products' ), 110, 2 ); // After WPML
+            add_action( 'save_post', array( $this, 'synchronize_products' ), PHP_INT_MAX, 2 ); // After WPML
 
             add_action( 'icl_pro_translation_completed', array( $this, 'icl_pro_translation_completed' ) );
 
@@ -77,7 +77,7 @@ class WCML_Synchronize_Product_Data{
             return;
         }
         // Remove filter to avoid double sync
-        remove_action( 'save_post', array( $this, 'synchronize_products' ), 110, 2 );
+        remove_action( 'save_post', array( $this, 'synchronize_products' ), PHP_INT_MAX, 2 );
 
         do_action( 'wcml_before_sync_product', $original_product_id, $post_id );
 
