@@ -9,6 +9,7 @@ class WCML_sensei{
 
         add_filter( 'manage_edit-lesson_columns', array( $custom_columns, 'add_posts_management_column' ) );
         add_filter( 'manage_edit-course_columns', array( $custom_columns, 'add_posts_management_column' ) );
+        add_filter( 'manage_edit-question_columns', array( $custom_columns, 'add_posts_management_column' ) );
 
         add_action( 'save_post', array( $this, 'save_post_actions' ), 100, 2 );
         add_action( 'sensei_log_activity_after', array( $this, 'log_activity_after' ), 10, 3 );
