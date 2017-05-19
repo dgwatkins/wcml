@@ -1,0 +1,17 @@
+@import "mixins";
+@import "variables";
+
+.otgs-is-dismissible {
+  position: relative;
+  padding-right: 38px;
+  .notice-dismiss {
+	text-decoration: none;
+  }
+  p [class*="button-"] {
+	margin: -5px 5px;
+  }
+  ul {
+	list-style-type: disc;
+	margin: 0.5em 1.5em;
+  }
+}
