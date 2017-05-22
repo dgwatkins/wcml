@@ -11,6 +11,13 @@ define( 'WPML_PATH', dirname( WPML_TESTS_MAIN_FILE ) );
 define( 'WPML_TM_TESTS_MAIN_FILE', __DIR__ . '/../../../wpml-translation-management/plugin.php' );
 define( 'WPML_TM_PATH', dirname( WPML_TM_TESTS_MAIN_FILE ) );
 
+define('WCML_MULTI_CURRENCIES_DISABLED', 0);
+define('WCML_MULTI_CURRENCIES_PER_LANGUAGE', 1); //obsolete - migrate to 2
+define('WCML_MULTI_CURRENCIES_INDEPENDENT', 2);
+
+define( 'WCML_CART_CLEAR', 0);
+define( 'WCML_CART_SYNC', 1);
+
 
 /** WP Constants */
 define( 'WP_CONTENT_URL', WPML_TESTS_SITE_URL . '/wp-content' );

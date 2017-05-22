@@ -73,7 +73,6 @@ class WooCommerce_WPML {
         $this->currencies = new WCML_Currencies( $this );
         $this->xdomain_data = new WCML_xDomain_Data;
 
-	    new WCML_Widgets( $this );
 
 	    if ( class_exists( 'WooCommerce' ) && defined( 'WC_VERSION' ) && 'yes' == get_option( 'woocommerce_api_enabled' ) && ! is_null( $sitepress ) ) {
 		    if ( version_compare( WC_VERSION, '2.6', '>=' ) && WCML_REST_API_Support::is_rest_api_request() ) {

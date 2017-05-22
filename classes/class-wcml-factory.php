@@ -6,6 +6,11 @@
 class WCML_Factory {
 
 	public function create() {
-		return new WooCommerce_WPML();
+		$wcml = new WooCommerce_WPML();
+
+		$widgets = new WCML_Widgets( $wcml->settings );
+		$widgets->init_hooks();
+
+		return $wcml;
 	}
 }
