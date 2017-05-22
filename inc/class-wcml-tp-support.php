@@ -218,12 +218,26 @@ class WCML_TP_Support {
         }
     }
 
+	/**
+	 * @return WooCommerce_WPML
+	 */
+	private function get_wcml_instance() {
+		global $woocommerce_wpml;
+		if ( ! $woocommerce_wpml ) {
+			$wcml_factory     = new WCML_Factory();
+			$woocommerce_wpml = $wcml_factory->create();
+		}
+
+		return $woocommerce_wpml;
+	}
+
     public function append_images_to_translation_package( $package, $post ) {
         global $wpdb;
 
         if ( $post->post_type == 'product' ) {
 
-            $woocommerce_wpml = WooCommerce_WPML::instance();
+	        $woocommerce_wpml = $this->get_wcml_instance();
+
             $product_images   = $woocommerce_wpml->media->product_images_ids( $post->ID );
             $product_images   = $woocommerce_wpml->media->exclude_not_duplicated_attachments( $product_images, $post->ID );
             foreach ( $product_images as $image_id ) {
@@ -248,7 +262,7 @@ class WCML_TP_Support {
 
         $language = $job->language_code;
 
-        $woocommerce_wpml = WooCommerce_WPML::instance();
+	    $woocommerce_wpml = $this->get_wcml_instance();
 
         $product_images = $woocommerce_wpml->media->product_images_ids( $job->original_doc_id );
         foreach ( $product_images as $image_id ) {
