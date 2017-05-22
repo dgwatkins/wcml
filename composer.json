@@ -71,6 +71,7 @@
   },
   "autoload": {
     "classmap": [
+      "classes",
       "inc",
       "compatibility"
     ]
