@@ -65,27 +65,17 @@ class WooCommerce_WPML {
      */
     private $wcml_products_screen;
 
-
-    public function __construct(){
-	    global $sitepress;
+	/**
+	 * WooCommerce_WPML constructor.
+	 *
+	 * @param SitePress|null $sitepress The instance of SitePress is optional, as the class can be be instantiated without it
+	 */
+	public function __construct( SitePress $sitepress = null ) {
+		$this->sitepress = $sitepress;
 
         $this->settings = $this->get_settings();
         $this->currencies = new WCML_Currencies( $this );
         $this->xdomain_data = new WCML_xDomain_Data;
-
-
-	    if ( class_exists( 'WooCommerce' ) && defined( 'WC_VERSION' ) && 'yes' == get_option( 'woocommerce_api_enabled' ) && ! is_null( $sitepress ) ) {
-		    if ( version_compare( WC_VERSION, '2.6', '>=' ) && WCML_REST_API_Support::is_rest_api_request() ) {
-			    if( WCML_REST_API_Support::get_api_request_version() === 1 ) {
-				    $wcml_rest_api_support = new WCML_REST_API_Support_V1( $this, $sitepress );
-			    }else{
-				    $wcml_rest_api_support = new WCML_REST_API_Support( $this, $sitepress );
-			    }
-			    $wcml_rest_api_support->initialize();
-		    } else {
-			    new WCML_WooCommerce_Rest_API_Support( $this, $sitepress );
-		    }
-	    }
 
         add_action('init', array($this, 'init'),2);
 
@@ -93,19 +83,17 @@ class WooCommerce_WPML {
             $this->cs_templates = new WCML_Currency_Switcher_Templates( $this );
             $this->cs_templates->init_hooks();
         }
-
-
     }
 
     public function init(){
-        global $sitepress, $wpdb, $woocommerce;
+        global  $wpdb, $woocommerce;
 
         new WCML_Upgrade;
 
         $this->dependencies = new WCML_Dependencies;
         $this->check_dependencies = $this->dependencies->check();
 
-        WCML_Admin_Menus::set_up_menus( $this, $sitepress, $wpdb, $this->check_dependencies );
+        WCML_Admin_Menus::set_up_menus( $this, $this->sitepress, $wpdb, $this->check_dependencies );
 
         if( !$this->check_dependencies ){
             WCML_Capabilities::set_up_capabilities();
@@ -118,7 +106,7 @@ class WooCommerce_WPML {
             return false;
         }
 
-        $this->compatibility        = new WCML_Compatibility( $sitepress, $this, $wpdb );
+        $this->compatibility        = new WCML_Compatibility( $this->sitepress, $this, $wpdb );
 
         $actions_that_need_mc = array(
                 'save-mc-options',
@@ -145,50 +133,50 @@ class WooCommerce_WPML {
         }
 
         if( is_admin() ) {
-            $this->troubleshooting = new WCML_Troubleshooting( $this, $sitepress, $wpdb );
-            $this->links = new WCML_Links($this, $sitepress);
-            $this->translation_editor = new WCML_Translation_Editor($this, $sitepress, $wpdb);
+            $this->troubleshooting = new WCML_Troubleshooting( $this, $this->sitepress, $wpdb );
+            $this->links = new WCML_Links($this, $this->sitepress);
+            $this->translation_editor = new WCML_Translation_Editor($this, $this->sitepress, $wpdb);
             $this->languages_upgrader = new WCML_Languages_Upgrader;
-            $this->sync_variations_data = new WCML_Synchronize_Variations_Data($this, $sitepress, $wpdb);
-            $this->wcml_products_screen = new WCML_Products_Screen_Options($sitepress);
+            $this->sync_variations_data = new WCML_Synchronize_Variations_Data($this, $this->sitepress, $wpdb);
+            $this->wcml_products_screen = new WCML_Products_Screen_Options($this->sitepress);
             $this->wcml_products_screen->init();
             new WCML_Pointers();
         }
 
-        $this->sync_product_data    = new WCML_Synchronize_Product_Data( $this, $sitepress, $wpdb );
-        $this->duplicate_product    = new WCML_WC_Admin_Duplicate_Product( $this, $sitepress, $wpdb );
-        $this->products             = new WCML_Products( $this, $sitepress, $wpdb );
+        $this->sync_product_data    = new WCML_Synchronize_Product_Data( $this, $this->sitepress, $wpdb );
+        $this->duplicate_product    = new WCML_WC_Admin_Duplicate_Product( $this, $this->sitepress, $wpdb );
+        $this->products             = new WCML_Products( $this, $this->sitepress, $wpdb );
         $this->products->add_hooks();
-        $this->store                = new WCML_Store_Pages ($this, $sitepress ) ;
-        $this->emails               = new WCML_Emails( $this, $sitepress );
-        $this->terms                = new WCML_Terms( $this, $sitepress, $wpdb );
-        $this->attributes           = new WCML_Attributes( $this, $sitepress, $wpdb );
-        $this->orders               = new WCML_Orders( $this, $sitepress );
+        $this->store                = new WCML_Store_Pages ($this, $this->sitepress ) ;
+        $this->emails               = new WCML_Emails( $this, $this->sitepress );
+        $this->terms                = new WCML_Terms( $this, $this->sitepress, $wpdb );
+        $this->attributes           = new WCML_Attributes( $this, $this->sitepress, $wpdb );
+        $this->orders               = new WCML_Orders( $this, $this->sitepress );
         $this->strings              = new WCML_WC_Strings;
-        $this->shipping             = new WCML_WC_Shipping( $sitepress );
+        $this->shipping             = new WCML_WC_Shipping( $this->sitepress );
         $this->shipping->add_hooks();
-        $this->gateways             = new WCML_WC_Gateways( $this, $sitepress );
+        $this->gateways             = new WCML_WC_Gateways( $this, $this->sitepress );
         $this->currencies           = new WCML_Currencies( $this );
-        $this->url_translation      = new WCML_Url_Translation ( $this, $sitepress, $wpdb );
+        $this->url_translation      = new WCML_Url_Translation ( $this, $this->sitepress, $wpdb );
 	    $this->url_translation->set_up();
 	    $this->endpoints            = new WCML_Endpoints( $this );
         $this->requests             = new WCML_Requests;
-        $this->cart                 = new WCML_Cart( $this, $sitepress, $woocommerce );
-        $this->coupons              = new WCML_Coupons( $this, $sitepress );
-        $this->locale               = new WCML_Locale( $this, $sitepress );
-        $this->media                = new WCML_Media( $this, $sitepress, $wpdb );
-        $this->downloadable         = new WCML_Downloadable_Products( $this, $sitepress );
-        $this->page_builders        = new WCML_Page_Builders( $sitepress );
+        $this->cart                 = new WCML_Cart( $this, $this->sitepress, $woocommerce );
+        $this->coupons              = new WCML_Coupons( $this, $this->sitepress );
+        $this->locale               = new WCML_Locale( $this, $this->sitepress );
+        $this->media                = new WCML_Media( $this, $this->sitepress, $wpdb );
+        $this->downloadable         = new WCML_Downloadable_Products( $this, $this->sitepress );
+        $this->page_builders        = new WCML_Page_Builders( $this->sitepress );
         $this->reports              = new WCML_Reports;
         $this->wcml_products_screen = new WCML_Products_Screen_Options();
         $this->wcml_products_screen->init();
 
-        new WCML_Ajax_Setup( $sitepress );
+        new WCML_Ajax_Setup( $this->sitepress );
         new WCML_Fix_Copied_Custom_Fields_WPML353();
 
-        WCML_Install::initialize( $this, $sitepress );
+        WCML_Install::initialize( $this, $this->sitepress );
 
-        WCML_Resources::set_up_resources( $this, $sitepress );
+        WCML_Resources::set_up_resources( $this, $this->sitepress );
 
         add_filter('woocommerce_get_checkout_payment_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
         add_filter('woocommerce_get_cancel_order_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));

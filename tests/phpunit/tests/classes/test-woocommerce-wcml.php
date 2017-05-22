@@ -42,6 +42,7 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 		// Multi-currency ON
 		\WP_Mock::wpFunction( 'wcml_is_multi_currency_on', array( 'return' => true ) );
 
+		/** @var woocommerce|PHPUnit_Framework_MockObject_MockObject $woocommerce */
 		$woocommerce = $this->getMockBuilder( 'woocommerce' )
 		                  ->disableOriginalConstructor()
 		                  ->getMock();
@@ -49,13 +50,14 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 		\WP_Mock::wpFunction( 'WC', array( 'return' => $woocommerce, ) );
 
 
+		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
 		$sitepress = $this->getMockBuilder( 'SitePress' )
 		                        ->disableOriginalConstructor()
 								->setMethods( array( 'get_settings' ) )
 		                        ->getMock();
 		$sitepress->method( 'get_settings' )->willReturn( array() );
 
-		$woocommerce_wpml = new WooCommerce_WPML();
+		$woocommerce_wpml = new WooCommerce_WPML( $sitepress );
 
 	}
 

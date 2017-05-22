@@ -222,9 +222,9 @@ class WCML_TP_Support {
 	 * @return WooCommerce_WPML
 	 */
 	private function get_wcml_instance() {
-		global $woocommerce_wpml;
+		global $woocommerce_wpml, $sitepress;
 		if ( ! $woocommerce_wpml ) {
-			$wcml_factory     = new WCML_Factory();
+			$wcml_factory     = new WCML_Factory( $sitepress );
 			$woocommerce_wpml = $wcml_factory->create();
 		}
 

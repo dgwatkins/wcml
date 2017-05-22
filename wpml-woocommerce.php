@@ -58,6 +58,7 @@ function load_wcml_without_wpml() {
 }
 
 function wcml_load() {
-	global $woocommerce_wpml;
-	$woocommerce_wpml = new WooCommerce_WPML();
+	global $woocommerce_wpml, $sitepress;
+	$factory          = new WCML_Factory( $sitepress );
+	$woocommerce_wpml = $factory->create();
 }
