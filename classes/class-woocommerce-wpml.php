@@ -98,23 +98,6 @@ class WooCommerce_WPML {
 
     }
 
-    /**
-     * Main instance.
-     *
-     * @since 3.8
-     * @static
-     * @return WooCommerce_WPML
-     */
-    public static function instance() {
-        global $woocommerce_wpml;
-
-        if ( is_null( self::$_instance ) ) {
-            self::$_instance = new self();
-            $woocommerce_wpml = self::$_instance;
-        }
-
-        return self::$_instance;
-    }
     public function init(){
         global $sitepress, $wpdb, $woocommerce;
 
