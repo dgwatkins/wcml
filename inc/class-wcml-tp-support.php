@@ -223,7 +223,7 @@ class WCML_TP_Support {
 
         if ( $post->post_type == 'product' ) {
 
-            $woocommerce_wpml = woocommerce_wpml::instance();
+            $woocommerce_wpml = WooCommerce_WPML::instance();
             $product_images   = $woocommerce_wpml->media->product_images_ids( $post->ID );
             $product_images   = $woocommerce_wpml->media->exclude_not_duplicated_attachments( $product_images, $post->ID );
             foreach ( $product_images as $image_id ) {
@@ -248,7 +248,7 @@ class WCML_TP_Support {
 
         $language = $job->language_code;
 
-        $woocommerce_wpml = woocommerce_wpml::instance();
+        $woocommerce_wpml = WooCommerce_WPML::instance();
 
         $product_images = $woocommerce_wpml->media->product_images_ids( $job->original_doc_id );
         foreach ( $product_images as $image_id ) {

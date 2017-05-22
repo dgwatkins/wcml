@@ -4,7 +4,7 @@ class WCML_The_Events_Calendar{
 
 	/** @var  SitePress */
 	private $sitepress;
-	/** @var  woocommerce_wpml */
+	/** @var  WooCommerce_WPML */
 	private $woocommerce_wpml;
 
 	/** @var WPML_Element_Translation_Package */

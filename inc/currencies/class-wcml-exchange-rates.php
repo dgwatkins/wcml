@@ -3,7 +3,7 @@
 class WCML_Exchange_Rates{
 
     /**
-     * @var woocommerce_wpml
+     * @var WooCommerce_WPML
      */
     private $woocommerce_wpml;
 

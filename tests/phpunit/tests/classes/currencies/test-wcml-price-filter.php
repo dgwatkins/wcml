@@ -3,7 +3,7 @@
 class Test_WCML_Price_Filter extends OTGS_TestCase {
 
 	/**
-	 * @var woocommerce_wpml;
+	 * @var WooCommerce_WPML;
 	 */
 	private $woocommerce_wpml;
 	/**
@@ -29,7 +29,7 @@ class Test_WCML_Price_Filter extends OTGS_TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		$this->woocommerce_wpml = $this->getMockBuilder( 'WooCommerce_WPML' )
 		                               ->disableOriginalConstructor()
 		                               ->getMock();
 

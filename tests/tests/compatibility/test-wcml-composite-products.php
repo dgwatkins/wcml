@@ -328,7 +328,7 @@ class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 			$usd_code => random_int( 1, 9 ),
 		);
 
-		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
+		$woocommerce_wpml = $this->getMockBuilder( 'WooCommerce_WPML' )->disableOriginalConstructor()->getMock();
 		$woocommerce_wpml->settings['enable_multi_currency'] = WCML_MULTI_CURRENCIES_INDEPENDENT;
 		$woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )->disableOriginalConstructor()->getMock();
 		$woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )->disableOriginalConstructor()->getMock();

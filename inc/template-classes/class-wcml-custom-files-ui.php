@@ -12,9 +12,9 @@ class WCML_Custom_Files_UI extends WPML_Templates_Factory {
 	/**
 	 * WCML_Custom_Files_UI constructor.
 	 *
-	 * @param woocommerce_wpml $woocommerce_wpml
-	 * @param int $product_id
-	 * @param bool  $is_variation
+	 * @param WooCommerce_WPML $woocommerce_wpml
+	 * @param int              $product_id
+	 * @param bool             $is_variation
 	 */
 	function __construct( &$woocommerce_wpml, $product_id, $is_variation = false ) {
 		parent::__construct();

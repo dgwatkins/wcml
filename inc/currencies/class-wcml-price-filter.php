@@ -3,11 +3,11 @@
 class WCML_Price_Filter {
 
 	/**
-	 * @var woocommerce_wpml;
+	 * @var WooCommerce_WPML;
 	 */
 	private $woocommerce_wpml;
 
-	public function __construct( woocommerce_wpml &$woocommerce_wpml ) {
+	public function __construct( WooCommerce_WPML &$woocommerce_wpml ) {
 		$this->woocommerce_wpml = $woocommerce_wpml;
 	}
 

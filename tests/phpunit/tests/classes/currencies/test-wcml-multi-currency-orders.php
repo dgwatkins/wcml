@@ -2,7 +2,7 @@
 
 class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
-	/** @var woocommerce_wpml */
+	/** @var WooCommerce_WPML */
 	private $woocommerce_wpml;
 	/** @var WCML_Multi_Currency */
 	private $wcml_multi_currency;
@@ -25,7 +25,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		                        ->setMethods( array() )
 		                        ->getMock();
 
-		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		$this->woocommerce_wpml = $this->getMockBuilder( 'WooCommerce_WPML' )
 		                               ->disableOriginalConstructor()
 		                               ->getMock();
 

@@ -14,7 +14,7 @@ class Test_WCML_Currency_Switcher_Ajax extends OTGS_TestCase {
 	 * @test
 	 */
 	public function wcml_currencies_order() {
-		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'update_settings' ) )->getMock();
+		$woocommerce_wpml = $this->getMockBuilder( 'WooCommerce_WPML' )->disableOriginalConstructor()->setMethods( array( 'update_settings' ) )->getMock();
 		$_POST['wcml_nonce'] = 'test_nonce';
 		$_POST['order'] = 'USD;EUR';
 		$woocommerce_wpml->expects( $this->once() )->method( 'update_settings' )->with( array( 'currencies_order' => array( 'USD', 'EUR' ) ) )->willReturn( true );
@@ -40,7 +40,7 @@ class Test_WCML_Currency_Switcher_Ajax extends OTGS_TestCase {
 	 * @preserveGlobalState disabled
 	 */
 	public function wcml_delete_currency_switcher() {
-		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'update_settings', 'get_settings' ) )->getMock();
+		$woocommerce_wpml = $this->getMockBuilder( 'WooCommerce_WPML' )->disableOriginalConstructor()->setMethods( array( 'update_settings', 'get_settings' ) )->getMock();
 		$woocommerce_wpml->multi_currency = new stdClass();
 		$woocommerce_wpml->multi_currency->currency_switcher = new stdClass();
 		$switcher_id = 'new_widget';
@@ -115,7 +115,7 @@ class Test_WCML_Currency_Switcher_Ajax extends OTGS_TestCase {
 	 * @preserveGlobalState disabled
 	 */
 	public function wcml_currencies_switcher_save_settings() {
-		$woocommerce_wpml                                    = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array(
+		$woocommerce_wpml                                    = $this->getMockBuilder( 'WooCommerce_WPML' )->disableOriginalConstructor()->setMethods( array(
 			'update_settings'
 		) )->getMock();
 		$woocommerce_wpml->multi_currency                    = new stdClass();
@@ -236,7 +236,7 @@ class Test_WCML_Currency_Switcher_Ajax extends OTGS_TestCase {
 
 		$switcher_template->expects( $this->once() )->method( 'has_styles' )->willReturn( true );
 		$switcher_template->expects( $this->once() )->method( 'get_inline_style_handler' )->willReturn( $inline_style_handler );
-		$woocommerce_wpml               = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
+		$woocommerce_wpml               = $this->getMockBuilder( 'WooCommerce_WPML' )->disableOriginalConstructor()->getMock();
 		$woocommerce_wpml->cs_templates = $this->getMockBuilder( 'WCML_Currency_Switcher_Templates' )->disableOriginalConstructor()->setMethods(
 			array( 'get_color_picket_css', 'get_template' )
 		)->getMock();

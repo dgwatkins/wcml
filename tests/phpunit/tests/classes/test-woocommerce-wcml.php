@@ -55,7 +55,7 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 		                        ->getMock();
 		$sitepress->method( 'get_settings' )->willReturn( array() );
 
-		$woocommerce_wpml = new woocommerce_wpml();
+		$woocommerce_wpml = new WooCommerce_WPML();
 
 	}
 

@@ -9,7 +9,7 @@ class Test_SKU extends OTGS_TestCase {
 	 * @return array
 	 */
 	private function get_stubs() {
-		$wcml      = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
+		$wcml      = $this->getMockBuilder( 'WooCommerce_WPML' )->disableOriginalConstructor()->getMock();
 		$sitepress = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->setMethods( array( 'get_element_trid' ) )->getMock();
 		$wpdb      = $this->stubs->wpdb();
 

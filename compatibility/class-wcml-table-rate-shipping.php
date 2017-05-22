@@ -11,7 +11,7 @@ class WCML_Table_Rate_Shipping {
 	public $sitepress;
 
 	/**
-	 * @var woocommerce_wpml
+	 * @var WooCommerce_WPML
 	 */
 	public $woocommerce_wpml;
 

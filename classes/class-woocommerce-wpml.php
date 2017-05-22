@@ -1,7 +1,7 @@
 <?php
-class woocommerce_wpml {
+class WooCommerce_WPML {
 
-    /** @var woocommerce_wpml */
+    /** @var WooCommerce_WPML */
     protected static $_instance = null;
 
     public $settings;
@@ -103,7 +103,7 @@ class woocommerce_wpml {
      *
      * @since 3.8
      * @static
-     * @return woocommerce_wpml
+     * @return WooCommerce_WPML
      */
     public static function instance() {
         global $woocommerce_wpml;

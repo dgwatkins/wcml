@@ -3,7 +3,7 @@
 class WCML_Multi_Currency_Prices{
 
     /**
-     * @var woocommerce_wpml
+     * @var WooCommerce_WPML
      */
     private $woocommerce_wpml;
     /**

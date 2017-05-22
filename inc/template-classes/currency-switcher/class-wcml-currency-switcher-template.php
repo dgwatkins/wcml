@@ -11,7 +11,7 @@ class WCML_Currency_Switcher_Template extends WPML_Templates_Factory {
     private $prefix = 'wcml-cs-';
 
     /**
-     * @var woocommerce_wpml
+     * @var WooCommerce_WPML
      */
     private $woocommerce_wpml;
 

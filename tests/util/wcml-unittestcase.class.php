@@ -100,7 +100,7 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 	}
 
 	function get_wcml_mock() {
-		return $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
+		return $this->getMockBuilder( 'WooCommerce_WPML' )->disableOriginalConstructor()->getMock();
 	}
 
 	/**

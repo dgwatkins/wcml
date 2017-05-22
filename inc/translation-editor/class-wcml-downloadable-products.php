@@ -8,7 +8,7 @@ class WCML_Downloadable_Products{
 	/**
 	 * WCML_Downloadable_Products constructor.
 	 *
-	 * @param woocommerce_wpml $woocommerce_wpml
+	 * @param WooCommerce_WPML $woocommerce_wpml
 	 * @param SitePress        $sitepress
 	 */
 	public function __construct( &$woocommerce_wpml, &$sitepress ) {

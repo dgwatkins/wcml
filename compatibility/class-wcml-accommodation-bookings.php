@@ -3,7 +3,7 @@
 class WCML_Accommodation_Bookings{
 
     /**
-     * @var woocommerce_wpml
+     * @var WooCommerce_WPML
      */
     private $woocommerce_wpml;
 

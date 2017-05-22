@@ -16,7 +16,7 @@ class WCML_Bookings {
 	public $sitepress;
 
 	/**
-	 * @var woocommerce_wpml
+	 * @var WooCommerce_WPML
 	 */
 	public $woocommerce_wpml;
 

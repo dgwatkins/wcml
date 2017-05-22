@@ -3,7 +3,7 @@
 class WCML_Store_Pages{
 
 	/**
-	 * @var woocommerce_wpml
+	 * @var WooCommerce_WPML
 	 */
 	private $woocommerce_wpml;
 	/**

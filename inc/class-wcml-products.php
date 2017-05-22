@@ -8,7 +8,7 @@ class WCML_Products{
     public $tp_support;
 
     /**
-     * @var woocommerce_wpml
+     * @var WooCommerce_WPML
      */
     private $woocommerce_wpml;
     /**

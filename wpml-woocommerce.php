@@ -43,18 +43,17 @@ if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
 }
 
 // Load WooCommerce Multilingual when WPML is active
-add_action( 'wpml_loaded', array( 'woocommerce_wpml', 'instance' ) );
+add_action( 'wpml_loaded', array( 'WooCommerce_WPML', 'instance' ) );
 
 if( WCML_REST_API_Support::is_rest_api_request() ){
 	add_action( 'wpml_before_init', array( 'WCML_REST_API_Support', 'remove_wpml_global_url_filters' ), 0 );
 }
-
 
 // Load WooCommerce Multilingual when WPML is NOT active
 add_action( 'plugins_loaded', 'load_wcml_without_wpml', 10000 );
 function load_wcml_without_wpml() {
 	if ( ! did_action( 'wpml_loaded' ) ) {
 		global $woocommerce_wpml;
-		$woocommerce_wpml = new woocommerce_wpml();
+		$woocommerce_wpml = new WooCommerce_WPML();
 	}
 }

@@ -20,18 +20,18 @@ class WCML_Settings_UI extends WPML_Templates_Factory {
                 'action' => $_SERVER['REQUEST_URI'],
 
                 'translation_interface' => array(
-                    'heading'   => __('Product Translation Interface','woocommerce-multilingual'),
-                    'tip'       => __( 'The recommended way is using the WPML Translation Editor. It is streamlined for making the translation process much easier while also providing a much better integration with various WooCommerce extensions.',
+	                'heading'          => __('Product Translation Interface','woocommerce-multilingual'),
+	                'tip'              => __( 'The recommended way is using the WPML Translation Editor. It is streamlined for making the translation process much easier while also providing a much better integration with various WooCommerce extensions.',
                                     'woocommerce-multilingual' ),
-                    'wcml'      => array(
+	                'WooCommerce_WPML' => array(
                         'label' => __('WPML Translation Editor', 'woocommerce-multilingual'),
 
                     ),
-                    'native'    => array(
+	                'native'           => array(
                         'label' => __('Native WooCommerce product editing screen' , 'woocommerce-multilingual'),
 
                     ),
-                    'controls_value' => $this->woocommerce_wpml->settings['trnsl_interface'],
+	                'controls_value'   => $this->woocommerce_wpml->settings['trnsl_interface'],
 
                 ),
 

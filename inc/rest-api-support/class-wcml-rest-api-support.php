@@ -2,7 +2,7 @@
 
 class WCML_REST_API_Support{
 
-	/** @var woocommerce_wpml */
+	/** @var WooCommerce_WPML */
 	private $woocommerce_wpml;
 	/** @var Sitepress */
 	private $sitepress;

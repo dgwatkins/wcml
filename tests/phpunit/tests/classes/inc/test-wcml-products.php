@@ -2,7 +2,7 @@
 
 class Test_WCML_Products extends OTGS_TestCase {
 
-	/** @var woocommerce_wpml */
+	/** @var WooCommerce_WPML */
 	private $woocommerce_wpml;
 	/** @var Sitepress */
 	private $sitepress;
@@ -22,7 +22,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		                        ->getMock();
 
 
-		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		$this->woocommerce_wpml = $this->getMockBuilder( 'WooCommerce_WPML' )
 		                               ->disableOriginalConstructor()
 		                               ->getMock();
 

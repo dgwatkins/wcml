@@ -8,7 +8,7 @@ class WCML_Compatibility {
     public $sitepress;
 
     /**
-     * @var woocommerce_wpml
+     * @var WooCommerce_WPML
      */
     public $woocommerce_wpml;
 

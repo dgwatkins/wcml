@@ -20,7 +20,7 @@ class WCML_Tab_Manager {
 	public $woocommerce;
 
 	/**
-	 * @var woocommerce_wpml
+	 * @var WooCommerce_WPML
 	 */
 	public $woocommerce_wpml;
 

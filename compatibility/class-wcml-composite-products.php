@@ -9,7 +9,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 	public $sitepress;
 
 	/**
-	 * @var woocommerce_wpml
+	 * @var WooCommerce_WPML
 	 */
 	public $woocommerce_wpml;
 

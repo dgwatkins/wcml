@@ -3,7 +3,7 @@
 class WCML_WC_Admin_Duplicate_Product{
 
     /**
-     * @var woocommerce_wpml
+     * @var WooCommerce_WPML
      */
     private $woocommerce_wpml;
 	/**
