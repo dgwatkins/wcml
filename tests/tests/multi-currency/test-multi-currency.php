@@ -78,6 +78,12 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 		$curr = $this->multi_currency->get_client_currency();
 		$this->assertEquals( 'CHF', $curr );
 
+		//get default currency during REST API call #wcml-1961
+		$req_uri = $_SERVER['REQUEST_URI'];
+		$_SERVER['REQUEST_URI'] = 'wp-json/wc/';
+		$curr = $this->multi_currency->get_client_currency();
+		$this->assertEquals( get_option('woocommerce_currency'), $curr );
+		$_SERVER['REQUEST_URI'] = $req_uri;
 	}
 
 	function test_raw_price_filter() {
