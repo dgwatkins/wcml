@@ -183,7 +183,8 @@ class woocommerce_wpml {
         $this->attributes           = new WCML_Attributes( $this, $sitepress, $wpdb );
         $this->attributes->add_hooks();
         $this->orders               = new WCML_Orders( $this, $sitepress );
-        $this->strings              = new WCML_WC_Strings;
+        $this->strings              = new WCML_WC_Strings( $this, $sitepress );
+        $this->strings->add_hooks();
         $this->shipping             = new WCML_WC_Shipping( $sitepress );
         $this->shipping->add_hooks();
         $this->gateways             = new WCML_WC_Gateways( $this, $sitepress );
@@ -193,6 +194,7 @@ class woocommerce_wpml {
 	    $this->endpoints            = new WCML_Endpoints( $this );
         $this->requests             = new WCML_Requests;
         $this->cart                 = new WCML_Cart( $this, $sitepress, $woocommerce );
+        $this->cart->add_hooks();
         $this->coupons              = new WCML_Coupons( $this, $sitepress );
         $this->locale               = new WCML_Locale( $this, $sitepress );
         $this->media                = new WCML_Media( $this, $sitepress, $wpdb );
