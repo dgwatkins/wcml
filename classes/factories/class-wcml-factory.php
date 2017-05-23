@@ -24,6 +24,8 @@ class WCML_Factory {
 		$rest_api_factory = new WCML_REST_API_Factory( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), $wcml, $this->sitepress );
 		$rest_api_factory->create();
 
+		add_action( 'init', array( $wcml, 'init' ), 2 );
+
 		return $wcml;
 	}
 }
