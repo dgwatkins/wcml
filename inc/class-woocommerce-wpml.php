@@ -200,7 +200,9 @@ class woocommerce_wpml {
         $this->reports              = new WCML_Reports;
         $this->wcml_products_screen = new WCML_Products_Screen_Options();
         $this->wcml_products_screen->init();
-
+        $this->cart_sync_warnings = new WCML_Cart_Sync_Warnings( $this, $sitepress );
+        $this->cart_sync_warnings->add_hooks();
+        
         new WCML_Ajax_Setup( $sitepress );
         new WCML_Fix_Copied_Custom_Fields_WPML353();
 
@@ -231,6 +233,7 @@ class woocommerce_wpml {
             'currency_options'             => array(),
             'currency_switcher_product_visibility' => 1,
             'dismiss_tm_warning'           => 0,
+            'dismiss_cart_warning'         => 0,
             'cart_sync'                    => array(
                 'lang_switch' => WCML_CART_SYNC,
                 'currency_switch' => WCML_CART_SYNC
