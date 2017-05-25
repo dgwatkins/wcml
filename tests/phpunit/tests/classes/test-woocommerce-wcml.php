@@ -36,7 +36,7 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 	public function creating_instance_in_admin(){
 		global $sitepress;
 
-		include dirname( dirname( __DIR__ ) ) . '/stubs/woocommerce.php';
+		//include dirname( dirname( __DIR__ ) ) . '/stubs/woocommerce.php';
 
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
 		// Multi-currency ON
