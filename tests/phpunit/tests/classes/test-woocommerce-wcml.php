@@ -30,6 +30,12 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 
 	}
 
+	public function tearDown(){
+		parent::tearDown();
+		global$sitepress, $woocommerce_wpml, $wpdb;
+		unset( $sitepress, $woocommerce_wpml, $wpdb );
+	}
+
 	private function get_subject(){
 		return new woocommerce_wpml();
 	}
@@ -63,6 +69,8 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function get_multi_currency(){
 
@@ -85,6 +93,7 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 		                                       ->getMock();
 		$woocommerce_wpml->cs_templates->method( 'get_active_templates' )->willReturn( array() );
 
+		$mock = Mockery::mock('overload:\WCML_Multi_Currency');
 		$multi_currency = $woocommerce_wpml->get_multi_currency();
 
 		$this->assertInstanceOf( 'WCML_Multi_Currency', $multi_currency );

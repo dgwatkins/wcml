@@ -1,11 +1,24 @@
 <?php
-
+/**
+ * Class Test_WCML_REST_API_Support_V1
+ * @group wcml-1979
+ */
 class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
 	/** @var Sitepress */
 	private $sitepress;
+	/** @var wpdb */
+	private $wpdb;
+	/** @var  WCML_REST_API_Query_Filters_Products */
+	private $query_filters_posts;
+	/** @var  WCML_REST_API_Query_Filters_Orders */
+	private $query_filters_orders;
+	/** @var  WCML_REST_API_Query_Filters_Terms */
+	private $query_filters_terms;
+	/** @var WPML_Frontend_Post_Actions */
+	private $wpml_post_translations;
 
 	private $test_data = [
 		'post_meta' => [ ]
@@ -95,6 +108,25 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		) );
 
 		$_SERVER['REQUEST_URI'] = rest_get_url_prefix() . '/wc/v1/';
+
+		$this->wpdb = $this->stubs->wpdb();
+
+		$this->query_filters_posts = $this->getMockBuilder( 'WCML_REST_API_Query_Filters_Products' )
+		                                  ->disableOriginalConstructor()
+		                                  ->getMock();
+
+		$this->query_filters_orders = $this->getMockBuilder( 'WCML_REST_API_Query_Filters_Orders' )
+		                                   ->disableOriginalConstructor()
+		                                   ->getMock();
+
+		$this->query_filters_terms = $this->getMockBuilder( 'WCML_REST_API_Query_Filters_Terms' )
+		                                  ->disableOriginalConstructor()
+		                                  ->getMock();
+
+
+		$this->wpml_post_translations = $this->getMockBuilder( 'WPML_Frontend_Post_Actions' )
+		                                     ->disableOriginalConstructor()
+		                                     ->getMock();
 	}
 
 	public function tearDown() {
@@ -106,13 +138,20 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 	 * @return WCML_REST_API_Support
 	 */
 	private function get_subject(){
-		return new WCML_REST_API_Support_V1( $this->woocommerce_wpml, $this->sitepress );
+		return new WCML_REST_API_Support_V1(
+			$this->woocommerce_wpml,
+			$this->sitepress,
+			$this->query_filters_posts,
+			$this->query_filters_orders,
+			$this->query_filters_terms,
+			$this->wpml_post_translations
+		);
 	}
 
 	/**
 	 * @test
 	 */
-	public function initialization(){
+	public function test_adding_hooks(){
 		$subject = $this->get_subject();
 
 		\WP_Mock::wpFunction( 'trailingslashit', array(
@@ -127,9 +166,6 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'rest_api_init', array( $subject, 'set_language_for_request') );
 		\WP_Mock::expectActionAdded( 'parse_query', array( $subject, 'auto_adjust_included_ids') );
 
-
-		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_query', array( $subject, 'filter_products_query'), 10, 2 );
-
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product', array( $subject, 'set_product_language'), 10, 2 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_update_product', array( $subject, 'set_product_language'), 10, 2 );
 
@@ -139,21 +175,16 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product', array( $subject, 'copy_product_custom_fields'), 10, 3 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product', array( $subject, 'copy_custom_fields_from_original'), 10, 1 );
 
-		\WP_Mock::expectFilterAdded( 'woocommerce_rest_shop_order_query', array( $subject, 'filter_orders_by_language'), 20, 2 );
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_shop_order', array( $subject, 'filter_order_items_by_language'), 10, 3 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_shop_order', array( $subject, 'set_order_language'), 10, 2 );
 
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_product_cat_query', array( $subject, 'filter_terms_query'), 10, 2 );
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_product_tag_query', array( $subject, 'filter_terms_query'), 10, 2 );
-
-		$subject->initialize();
+		$subject->add_hooks();
 
 		// Legacy for v1
 		$_SERVER['REQUEST_URI'] = rest_get_url_prefix() . '/wc/v1/';
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product', array( $subject, 'append_product_language_and_translations') );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product', array( $subject, 'append_product_secondary_prices') );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product', array( $subject, 'copy_product_custom_fields'), 10, 3 ); // v1
-		$subject->initialize();
+		$subject->add_hooks();
 
 	}
 
@@ -189,6 +220,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 
 		// Try to switch to inactive language - no switch
 		$_GET['lang'] = $wrong_language;
+		$subject = $this->get_subject();
 		$subject->set_language_for_request( $WP_REST_Server );
 		$this->assertEquals( $default_language, $this->test_data['sitepress_current_language'] );
 
@@ -212,107 +244,6 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		$this->assertEquals( $other_language, $this->test_data['sitepress_current_language'] );
 
 		unset($_SERVER['REQUEST_URI']);
-	}
-
-	/**
-	 * @test
-	 * not very useful
-	 */
-	public function remove_wpml_global_url_filters(){
-
-		$globals_bk = serialize($GLOBALS);
-
-		$tag = 'home_url';
-		$priority = '-10';
-		$GLOBALS['wp_filter'][$tag][$priority] = ['hardcoded_callback' => 1 ];
-
-		$subject = $this->get_subject();
-		$subject->remove_wpml_global_url_filters();
-
-		$this->assertTrue( !isset( $GLOBALS['wp_filter'][ $tag ][ $priority ][ 'hardcoded_callback' ] ) );
-
-		$GLOBALS = unserialize($globals_bk);
-
-	}
-
-	/**
-	 * @test
-	 *
-	 */
-	public function filter_products_query(){
-		$globals_bk = serialize($GLOBALS);
-
-		$subject = $this->get_subject();
-
-		$GLOBALS['wp_filter']['posts_join'][10] = ['hardcoded_callback' => 'posts_join' ];
-		$GLOBALS['wp_filter']['posts_where'][10] = ['hardcoded_callback' => 'posts_where' ];
-
-		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
-		                                ->disableOriginalConstructor()
-										->setMethods( array( 'get_params' ) )
-		                                ->getMock();
-		$request1->method( 'get_params' )->wilLReturn( array( 'lang' => 'en' ) );
-
-		$args = [];
-
-		$subject->filter_products_query( $args, $request1 );
-
-		$request2 = $this->getMockBuilder( 'WP_REST_Request' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( array( 'get_params' ) )
-		                 ->getMock();
-		$request2->method( 'get_params' )->wilLReturn( array( 'lang' => 'all' ) );
-
-		$this->assertTrue( isset( $GLOBALS['wp_filter']['posts_join'][10]['hardcoded_callback'] ) );
-		$this->assertTrue( isset( $GLOBALS['wp_filter']['posts_where'][10]['hardcoded_callback'] ) );
-
-		$subject->filter_products_query( $args, $request2 );
-
-		$this->assertFalse( isset( $GLOBALS['wp_filter']['posts_join'][10]['hardcoded_callback'] ) );
-		$this->assertFalse( isset( $GLOBALS['wp_filter']['posts_where'][10]['hardcoded_callback'] ) );
-
-		$GLOBALS = unserialize($globals_bk);
-
-	}
-
-	/**
-	 * @test
-	 *
-	 */
-	public function filter_terms_query(){
-		$globals_bk = serialize($GLOBALS);
-
-		$subject = $this->get_subject();
-
-		$GLOBALS['wp_filter']['terms_clauses'][10] = ['hardcoded_callback' => 'terms_clauses' ];
-		$GLOBALS['wp_filter']['get_term'][1] = ['hardcoded_callback' => 'get_term_adjust_id' ];
-
-		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( array( 'get_params' ) )
-		                 ->getMock();
-		$request1->method( 'get_params' )->wilLReturn( array( 'lang' => 'en' ) );
-
-		$args = [];
-
-		$subject->filter_terms_query( $args, $request1 );
-
-		$request2 = $this->getMockBuilder( 'WP_REST_Request' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( array( 'get_params' ) )
-		                 ->getMock();
-		$request2->method( 'get_params' )->wilLReturn( array( 'lang' => 'all' ) );
-
-		$this->assertTrue( isset( $GLOBALS['wp_filter']['terms_clauses'][10]['hardcoded_callback'] ) );
-		$this->assertTrue( isset( $GLOBALS['wp_filter']['get_term'][1]['hardcoded_callback'] ) );
-
-		$subject->filter_terms_query( $args, $request2 );
-
-		$this->assertFalse( isset( $GLOBALS['wp_filter']['terms_clauses'][10]['hardcoded_callback'] ) );
-		$this->assertFalse( isset( $GLOBALS['wp_filter']['get_term'][1]['hardcoded_callback'] ) );
-
-		$GLOBALS = unserialize($globals_bk);
-
 	}
 
 	/**
@@ -369,7 +300,6 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-
 	public function append_product_secondary_prices() {
 
 		$subject = $this->get_subject();
@@ -461,7 +391,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 	/**
 	 * @test
 	 * @expectedException Exception
-	 * @expectedExceptionCode 404
+	 * @expectedExceptionCode 422
 	 * @expectedExceptionMessage Invalid language parameter
 	 */
 	function set_product_language_wrong_lang(){
@@ -489,6 +419,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		$post = new stdClass();
 		$post->ID = rand(1,100);
 
+		$subject = $this->get_subject();
 		$subject->set_product_language( $post, $request1 );
 
 	}
@@ -496,8 +427,8 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 	/**
 	 * @test
 	 * @expectedException Exception
-	 * @expectedExceptionCode 404
-	 * @expectedExceptionMessage Source product id not found
+	 * @expectedExceptionCode 422
+	 * @expectedExceptionMessage Product not found:
 	 */
 	function set_product_language_no_source_product(){ // with translation_of
 
@@ -527,6 +458,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		$post = new stdClass();
 		$post->ID = rand(1,100);
 
+		$subject = $this->get_subject();
 		$subject->set_product_language( $post, $request1 );
 
 	}
@@ -578,7 +510,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 			'args'  => [ $post->ID, $post, ICL_TM_COMPLETE ]
 		) );
 
-
+		$subject = $this->get_subject();
 		$subject->set_product_language( $post, $request1 );
 		$this->assertEquals( $this->expected_trid, $this->actual_trid );
 
@@ -587,7 +519,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 	/**
 	 * @test
 	 * @expectedException Exception
-	 * @expectedExceptionCode 404
+	 * @expectedExceptionCode 422
 	 * @expectedExceptionMessage Using "translation_of" requires providing a "lang" parameter too
 	 */
 	function set_product_language_missing_lang(){
@@ -644,6 +576,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		$post = new stdClass();
 		$post->ID = rand(1,100);
 
+		$subject = $this->get_subject();
 		$subject->set_product_language( $post, $request1 );
 		$this->assertEquals( $this->expected_trid, $this->actual_trid );
 
@@ -722,6 +655,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 					update_post_meta( $original_post_id, 'custom_currencies_' . $currency, $prices_uscore ); //mock
 				}) );
 
+		$subject = $this->get_subject();
 		$subject->set_product_custom_prices( $post, $request1 );
 
 		foreach( $expected_prices['custom_prices'] as $currency => $prices ){
@@ -742,159 +676,8 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 
 	/**
 	 * @test
-	 */
-	function filter_orders_by_language(){
-
-		$subject = $this->get_subject();
-
-		$lang = 'ro';
-
-		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( array( 'get_param' ) )
-		                 ->getMock();
-		$request1->method( 'get_param' )->wilLReturn( $lang );
-
-		$args = [ 'meta_query' => [] ];
-		$args_add_expect = [ 'key'=> 'wpml_language', 'value' => $lang ];
-
-		$args_out = $subject->filter_orders_by_language( $args, $request1 );
-
-		$args_add_actual = array_pop( $args_out['meta_query'] );
-
-		$this->assertEquals( $args_add_expect , $args_add_actual );
-
-	}
-
-	/**
-	 * @test
-	 */
-	function filter_order_items_by_language(){
-
-		$subject = $this->get_subject();
-		$order = new stdClass();
-		$order->ID = rand(1,100);
-
-		$test_lang = 'ro';
-		$other_lang = 'fr';
-
-		// First translated post
-		$post1 = new stdClass();
-		$post1->post_title = 'Dummy Product Translated';
-		$post1->post_type = 'product';
-		$this->test_data['posts'][ 2323 ] = $post1;
-
-		// Second translated post (variation)
-		$post2 = new stdClass();
-		$post2->post_title = 'Dummy Variation Translated';
-		$post2->post_type = 'product_variation';
-		$post2->post_parent = 1000;
-		$this->test_data['posts'][ 4444 ] = $post2;
-
-		// Parent of variation
-		$post3 = new stdClass();
-		$post3->post_title = 'Dummy Parent Product Translated';
-		$post3->post_title = 'product';
-		$this->test_data['posts'][ 1000 ] = $post3;
-
-
-		$this->order_items = [
-			15 =>
-				[
-					'item_id' => 15,
-					'product_id' => 23,
-					'product_name' => 'Dummy Product',
-					'translated_id' => 2323,
-					'translated_name' => $this->test_data['posts'][ 2323 ]->post_title,
-				],
-			99 =>
-				[
-					'item_id' => 99,
-					'product_id' => 44,
-					'product_name' => 'Dummy Parent Product',
-					'translated_id' => 4444,
-					'translated_name' => $this->test_data['posts'][ 1000 ]->post_title,
-				],
-		];
-
-		$response = new stdClass();
-		$response->data = [
-			'line_items' => [
-				0 => [
-					'id' => $this->order_items['15']['item_id'],
-					'product_id' => $this->order_items['15']['product_id'],
-					'name' => $this->order_items['15']['product_name']
-				],
-				1 => [
-					'id' => $this->order_items['99']['item_id'],
-					'product_id' => $this->order_items['99']['product_id'],
-					'name' => $this->order_items['99']['product_name']
-				]
-			]
-		];
-
-		$expected_response = new stdClass();
-		$expected_response->data = [
-			'line_items' => [
-				0 => [
-					'id' => $this->order_items['15']['item_id'],
-					'product_id' => $this->order_items['15']['translated_id'],
-					'name' => $this->order_items['15']['translated_name']
-				],
-				1 => [
-					'id' => $this->order_items['99']['item_id'],
-					'product_id' => $this->order_items['99']['translated_id'],
-					'name' => $this->order_items['99']['translated_name']
-				]
-			]
-		];
-
-
-
-		update_post_meta( $order->ID,  'wpml_language', $other_lang);
-
-		$request = null;
-
-		// Another language - no filtering
-		$this->test_data['query_var']['lang'] = $other_lang;
-		$response_out = $subject->filter_order_items_by_language( $response, $order, $request );
-
-		$this->assertEquals( $response, $response_out );
-
-
-		// The right language
-		$this->test_data['query_var']['lang'] = $test_lang;
-		global $wpdb;
-		$wpdb = $this->getMockBuilder( 'stdClass' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( array( 'get_var', 'prepare' ) )
-		                 ->getMock();
-		$wpdb->method( 'get_var' )->will( $this->returnCallback(
-			function( $id ){
-				return $this->order_items[ $id ]['translated_id'];
-			}
-		) );
-		$wpdb->method( 'prepare' )->will( $this->returnCallback(
-			function( $query, $id ){
-				return $id;
-			}
-		) );
-		$wpdb->prefix = '';
-
-		$response_out = $subject->filter_order_items_by_language( $response, $order, $request );
-
-		$this->assertEquals( $expected_response, $response_out );
-
-		// cleanup
-		unset($this->test_data['query_var']['lang']);
-		unset($this->order_items);
-
-	}
-
-	/**
-	 * @test
 	 * @expectedException Exception
-	 * @expectedExceptionCode 404
+	 * @expectedExceptionCode 422
 	 * @expectedExceptionMessage Invalid language parameter
 
 	 */
@@ -922,6 +705,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		$post = new stdClass();
 		$post->ID = rand(1,100);
 
+		$subject = $this->get_subject();
 		$subject->set_order_language( $post, $request1 );
 
 	}
@@ -954,6 +738,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		$post = new stdClass();
 		$post->ID = rand(1,100);
 
+		$subject = $this->get_subject();
 		$subject->set_order_language( $post, $request1 );
 
 		$actual_language = get_post_meta( $post->ID, 'wpml_language', true);
@@ -1027,8 +812,6 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 	 * @test
 	 */
 	public function copy_custom_fields_from_original_when_creating_a_new_product(){
-		$subject = $this->get_subject();
-
 		$post = new stdClass();
 		$post->ID = random_int(1, 100);
 
@@ -1040,6 +823,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		$this->sitepress->expects( $this->never() )
 			->method('copy_custom_fields');
 
+		$subject = $this->get_subject();
 		$subject->copy_custom_fields_from_original( $post );
 	}
 
@@ -1047,8 +831,6 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 	 * @test
 	 */
 	public function copy_custom_fields_from_original_when_creating_a_translation(){
-		$subject = $this->get_subject();
-
 		$original_product_id = random_int(1, 100);
 		$translated_product_id = random_int(101, 200);
 		$post = new stdClass();
@@ -1064,6 +846,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 			->method('copy_custom_fields')
 			->with( $original_product_id, $translated_product_id );
 
+		$subject = $this->get_subject();
 		$subject->copy_custom_fields_from_original( $post );
 	}
 
@@ -1097,19 +880,130 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		$sitepress->expects( $this->once() )->method( 'copy_custom_fields' );
 
 
-		global $wpml_post_translations;
-		$wpml_post_translations = $this->getMockBuilder( 'WPML_Admin_Post_Actions' )
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Frontend_Post_Actions' )
 		                ->disableOriginalConstructor()
 		                ->setMethods( array( 'get_element_translations' ) )
 		                ->getMock();
 		$post_translations = [ rand(1000, 2000), rand(2000, 3000) ];
-		$wpml_post_translations->method( 'get_element_translations' )->wilLReturn( array( $post_translations ) );
+		$wpml_post_translations->method( 'get_element_translations' )->willReturn( array( $post_translations ) );
 
-		$subject = new WCML_REST_API_Support( $this->woocommerce_wpml, $sitepress );
+		$subject = new WCML_REST_API_Support(
+			$this->woocommerce_wpml,
+			$sitepress,
+			$this->wpdb,
+			$this->query_filters_posts,
+			$this->query_filters_orders,
+			$this->query_filters_terms,
+			$wpml_post_translations
+		);
 		$subject->copy_product_custom_fields( $response, $object, $request );
 
 	}
 
+	/**
+	 * @test
+	 */
+	function test_initialize_with_default_lang_parameters_in_get() {
+
+		$lang = 'en';
+		$_SERVER['REQUEST_URI'] .= '?lang=' . $lang;
+
+		$sitepress = $this->getMockBuilder( 'Sitepress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_default_language' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_default_language' )->wilLReturn( $lang );
+
+		$expected_request_uri = str_replace( 'lang=' . $lang, '', $_SERVER['REQUEST_URI'] );
+		$subject     = new WCML_REST_API_Support_V1(
+			$this->woocommerce_wpml,
+			$sitepress,
+			$this->query_filters_posts,
+			$this->query_filters_orders,
+			$this->query_filters_terms,
+			$this->wpml_post_translations
+		);
+
+		$this->assertEquals( $expected_request_uri, $_SERVER['REQUEST_URI'] );
+	}
+
+	/**
+	 * @test
+	 */
+	function test_initialize_with_not_default_lang_parameters_in_get() {
+
+		$lang = 'en';
+		$_SERVER['REQUEST_URI'] .= '?lang=' . $lang;
+
+		$sitepress = $this->getMockBuilder( 'Sitepress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_default_language' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_default_language' )->wilLReturn( 'non-' . $lang );
+
+		$expected_request_uri = $_SERVER['REQUEST_URI'];
+
+		$subject     = new WCML_REST_API_Support_V1(
+			$this->woocommerce_wpml,
+			$sitepress,
+			$this->query_filters_posts,
+			$this->query_filters_orders,
+			$this->query_filters_terms,
+			$this->wpml_post_translations
+		);
+
+		$this->assertEquals( $expected_request_uri, $_SERVER['REQUEST_URI'] );
+
+	}
+
+	/**
+	 * @test
+	 */
+	function test_copy_product_custom_fields() {
+		global $wpml_post_translations;
+
+		$request_params  = [ 'id' => rand( 1, 100 ) ];
+		$translation_ids = [ rand( 100, 200 ), rand( 200, 300 ), rand( 300, 400 ) ];
+
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Frontend_Post_Actions' )
+		                               ->disableOriginalConstructor()
+		                               ->setMethods( array( 'get_element_translations' ) )
+		                               ->getMock();
+		$wpml_post_translations->method( 'get_element_translations' )->willReturn( $translation_ids );
+
+
+		$sitepress = $this->getMockBuilder( 'Sitepress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'copy_custom_fields' ) )
+		                  ->getMock();
+		$sitepress->expects( $this->exactly(3) )
+		          ->method( 'copy_custom_fields' )
+				  ->with( $request_params['id'] );
+
+		$rest_response = $this->getMockBuilder( 'WP_REST_Response' )
+		                      ->disableOriginalConstructor()
+			                  ->getMock();
+
+		$rest_request = $this->getMockBuilder( 'WP_REST_Request' )
+		                     ->disableOriginalConstructor()
+		                     ->setMethods( array( 'get_params' ) )
+		                     ->getMock();
+
+		$rest_request->method( 'get_params' )->willReturn( $request_params );
+
+
+		$subject = new WCML_REST_API_Support_V1(
+			$this->woocommerce_wpml,
+			$sitepress,
+			$this->query_filters_posts,
+			$this->query_filters_orders,
+			$this->query_filters_terms,
+			$wpml_post_translations
+		);
+
+		$subject->copy_product_custom_fields( $rest_response, new stdClass(), $rest_request );
+
+	}
 }
 
 

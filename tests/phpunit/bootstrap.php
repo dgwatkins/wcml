@@ -35,6 +35,8 @@ if( ! defined( 'WOOCOMMERCE_VERSION' ) ){
 
 require_once __DIR__ . '/includes/missing-php-functions.php';
 
+require_once __DIR__ . '/includes/missing-php-functions.php';
+
 $autoloader_dir = WCML_PATH . '/vendor';
 if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
 	$autoloader = $autoloader_dir . '/autoload.php';

@@ -64,7 +64,7 @@ class woocommerce_wpml {
 
 
     public function __construct(){
-	    global $sitepress;
+	    global $sitepress, $wpdb, $wpml_query_filter, $wpml_post_translations;
 
 	    $this->settings = $this->get_settings();
 
@@ -72,14 +72,33 @@ class woocommerce_wpml {
 
 	    new WCML_Widgets( $this );
 
+	    $WCML_REST_API = new WCML_REST_API();
 	    if ( class_exists( 'WooCommerce' ) && defined( 'WC_VERSION' ) && 'yes' == get_option( 'woocommerce_api_enabled' ) && ! is_null( $sitepress ) ) {
-		    if ( version_compare( WC_VERSION, '2.6', '>=' ) && WCML_REST_API_Support::is_rest_api_request() ) {
-			    if( WCML_REST_API_Support::get_api_request_version() === 1 ) {
-				    $wcml_rest_api_support = new WCML_REST_API_Support_V1( $this, $sitepress );
+		    if ( version_compare( WC_VERSION, '2.6', '>=' ) && $WCML_REST_API->is_rest_api_request() ) {
+			    $wcml_rest_api_query_filters_products = new WCML_REST_API_Query_Filters_Products( $wpml_query_filter );
+			    $wcml_rest_api_query_filters_orders   = new WCML_REST_API_Query_Filters_Orders( $wpdb );
+			    $wcml_rest_api_query_filters_terms    = new WCML_REST_API_Query_Filters_Terms( $sitepress );
+			    if( 1 === $WCML_REST_API->get_api_request_version() ) {
+				    $wcml_rest_api_support = new WCML_REST_API_Support_V1(
+				    	$this,
+					    $sitepress,
+					    $wcml_rest_api_query_filters_products,
+					    $wcml_rest_api_query_filters_orders,
+					    $wcml_rest_api_query_filters_terms,
+					    $wpml_post_translations
+				    );
 			    }else{
-				    $wcml_rest_api_support = new WCML_REST_API_Support( $this, $sitepress );
+				    $wcml_rest_api_support = new WCML_REST_API_Support(
+					    $this,
+					    $sitepress,
+					    $wpdb,
+					    $wcml_rest_api_query_filters_products,
+					    $wcml_rest_api_query_filters_orders,
+					    $wcml_rest_api_query_filters_terms,
+					    $wpml_post_translations
+				    );
 			    }
-			    $wcml_rest_api_support->initialize();
+			    $wcml_rest_api_support->add_hooks();
 		    } else {
 			    new WCML_WooCommerce_Rest_API_Support( $this, $sitepress );
 		    }

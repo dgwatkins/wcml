@@ -500,8 +500,8 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 			'exchange-rates-service'   => rand_str(),
 			'lifting_charge'           => rand_str(),
 			'update-time'              => rand_str(),
-			'update-weekly-day'        => rand_str(),
-			'update-monthly-day'       => rand_str(),
+			'update-weekly-day'        => random_int(1,7),
+			'update-monthly-day'       => random_int(1,30)
 		];
 
 		\WP_Mock::wpFunction( 'wp_get_schedule', [
@@ -552,8 +552,8 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 			'exchange-rates-service'   => rand_str(),
 			'lifting_charge'           => rand_str(),
 			'update-time'              => rand_str(),
-			'update-weekly-day'        => rand_str(),
-			'update-monthly-day'       => rand_str(),
+			'update-weekly-day'        => random_int(1,7),
+			'update-monthly-day'       => random_int(1,30)
 		];
 
 		\WP_Mock::wpFunction( 'wp_get_schedule', [
@@ -612,8 +612,8 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 			],
 			'lifting_charge'           => random_int( 1, 1000 ),
 			'update-time'              => rand_str(),
-			'update-weekly-day'        => rand_str(),
-			'update-monthly-day'       => rand_str(),
+			'update-weekly-day'        => random_int(1,7),
+			'update-monthly-day'       => random_int(1,30)
 		];
 
 		\WP_Mock::wpFunction( 'wp_get_schedule', [

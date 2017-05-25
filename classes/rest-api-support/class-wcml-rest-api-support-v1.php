@@ -6,19 +6,47 @@ class WCML_REST_API_Support_V1{
 	private $woocommerce_wpml;
 	/** @var Sitepress */
 	private $sitepress;
+	/** @var  WCML_REST_API_Query_Filters_Products */
+	private $query_filters_products;
+	/** @var  WCML_REST_API_Query_Filters_Orders */
+	private $query_filters_orders;
+	/** @var  WCML_REST_API_Query_Filters_Terms */
+	private $query_filters_terms;
+	/** @var WPML_Admin_Post_Actions */
+	private $wpml_post_translations;
 
-	function __construct( &$woocommerce_wpml, &$sitepress ) {
-		$this->woocommerce_wpml =& $woocommerce_wpml;
-		$this->sitepress        =& $sitepress;
+	/**
+	 * WCML_REST_API_Support_V1 constructor.
+	 *
+	 * @param woocommerce_wpml $woocommerce_wpml
+	 * @param SitePress $sitepress
+	 * @param WCML_REST_API_Query_Filters_Products $query_filters_products
+	 * @param WCML_REST_API_Query_Filters_Orders $query_filters_orders
+	 * @param WCML_REST_API_Query_Filters_Terms $query_filters_terms
+	 * @param WPML_Frontend_Post_Actions $wpml_post_translations
+	 */
+	public function __construct(
+		woocommerce_wpml $woocommerce_wpml,
+		SitePress $sitepress,
+		WCML_REST_API_Query_Filters_Products $query_filters_products,
+		WCML_REST_API_Query_Filters_Orders $query_filters_orders,
+		WCML_REST_API_Query_Filters_Terms $query_filters_terms,
+		WPML_Frontend_Post_Actions $wpml_post_translations
+	) {
+		$this->woocommerce_wpml       = $woocommerce_wpml;
+		$this->sitepress              = $sitepress;
+		$this->query_filters_products = $query_filters_products;
+		$this->query_filters_orders   = $query_filters_orders;
+		$this->query_filters_terms    = $query_filters_terms;
+		$this->wpml_post_translations = $wpml_post_translations;
+
+		$this->prevent_default_lang_url_redirect();
 	}
 
 	/**
 	 * Adding hooks
 	 */
-	public function initialize(){
-
-		$this->prevent_default_lang_url_redirect();
-
+	public function add_hooks(){
 		add_action( 'rest_api_init', array( $this, 'set_language_for_request' ) );
 
 		add_action( 'parse_query', array($this, 'auto_adjust_included_ids') );
@@ -26,8 +54,6 @@ class WCML_REST_API_Support_V1{
 		// Products
 		add_action( 'woocommerce_rest_prepare_product', array( $this, 'append_product_language_and_translations' ) );
 		add_action( 'woocommerce_rest_prepare_product', array( $this, 'append_product_secondary_prices' ) );
-
-		add_filter( 'woocommerce_rest_product_query', array( $this, 'filter_products_query' ), 10, 2 );
 
 		add_action( 'woocommerce_rest_insert_product', array( $this, 'set_product_language' ), 10, 2 );
 		add_action( 'woocommerce_rest_update_product', array( $this, 'set_product_language' ), 10, 2 );
@@ -39,13 +65,12 @@ class WCML_REST_API_Support_V1{
 		add_action( 'woocommerce_rest_insert_product', array( $this, 'copy_custom_fields_from_original' ), 10, 1 );
 
 		// Orders
-		add_filter( 'woocommerce_rest_shop_order_query', array( $this, 'filter_orders_by_language' ), 20, 2 );
 		add_action( 'woocommerce_rest_prepare_shop_order', array( $this, 'filter_order_items_by_language'), 10, 3 );
 		add_action( 'woocommerce_rest_insert_shop_order' , array( $this, 'set_order_language' ), 10, 2 );
 
-		// Terms
-		add_action( 'woocommerce_rest_product_cat_query', array($this, 'filter_terms_query' ), 10, 2 );
-		add_action( 'woocommerce_rest_product_tag_query', array($this, 'filter_terms_query' ), 10, 2 );
+		$this->query_filters_products->add_hooks();
+		$this->query_filters_orders->add_hooks();
+		$this->query_filters_terms->add_hooks();
 
 	}
 
@@ -75,47 +100,6 @@ class WCML_REST_API_Support_V1{
 				$_SERVER['REQUEST_URI'] = $exp[0] . '?' . http_build_query( $vars );
 			}
 		}
-	}
-
-	// Use url without the language parameter. Needed for the signature match.
-	public static function remove_wpml_global_url_filters(){
-		global $wpml_url_filters;
-		remove_filter( 'home_url', array( $wpml_url_filters, 'home_url_filter' ), - 10 );
-	}
-
-	/**
-	 * When lang=all don't filter products by language
-	 *
-	 * @param array $args
-	 * @param WP_REST_Request $request
-	 *
-	 * @return array
-	 */
-	public function filter_products_query( $args, $request ){
-		$data = $request->get_params();
-		if( isset( $data['lang'] ) && $data['lang'] === 'all' ){
-			global $wpml_query_filter;
-			remove_filter( 'posts_join', array( $wpml_query_filter, 'posts_join_filter' ), 10 );
-			remove_filter( 'posts_where', array( $wpml_query_filter, 'posts_where_filter' ), 10 );
-		}
-		return $args;
-	}
-
-	/**
-	 * When lang=all don't filter terms by language
-	 *
-	 * @param array $args
-	 * @param WP_REST_Request $request
-	 *
-	 * @return array
-	 */
-	public function filter_terms_query( $args, $request ){
-		$data = $request->get_params();
-		if( isset( $data['lang'] ) && $data['lang'] === 'all' ){
-			remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
-			remove_filter( 'get_term', array( $this->sitepress, 'get_term_adjust_id' ), 1, 1 );
-		}
-		return $args;
 	}
 
 	/**
@@ -213,7 +197,8 @@ class WCML_REST_API_Support_V1{
 	 * @param WP_Post $post
 	 * @param WP_REST_Request $request
 	 *
-	 * @throws WC_REST_Exception
+	 * @throws WCML_REST_Invalid_Language_Exception
+	 * @throws WCML_REST_Invalid_Product_Exception
 	 *
 	 */
 	public function set_product_language( $post, $request ){
@@ -223,12 +208,12 @@ class WCML_REST_API_Support_V1{
 		if( isset( $data['lang'] )){
 			$active_languages = $this->sitepress->get_active_languages();
 			if( !isset( $active_languages[$data['lang']] ) ){
-				throw new WC_REST_Exception( '404', sprintf( __( 'Invalid language parameter: %s', 'woocommerce-multilingual' ), $data['lang'] ), '404' );
+				throw new WCML_REST_Invalid_Language_Exception( $data['lang'] );
 			}
 			if( isset( $data['translation_of'] ) ){
 				$trid = $this->sitepress->get_element_trid( $data['translation_of'], 'post_product' );
 				if( empty($trid) ){
-					throw new WC_REST_Exception( '404', sprintf( __( 'Source product id not found: %s', 'woocommerce-multilingual' ), $data['translation_of'] ), '404' );
+					throw new WCML_REST_Invalid_Product_Exception( $data['translation_of'] );
 				}
 			}else{
 				$trid = null;
@@ -238,7 +223,7 @@ class WCML_REST_API_Support_V1{
 			wpml_tm_save_post( $post->ID, $post , ICL_TM_COMPLETE );
 		}else{
 			if( isset( $data['translation_of'] ) ){
-				throw new WC_REST_Exception( '404', __( 'Using "translation_of" requires providing a "lang" parameter too', 'woocommerce-multilingual' ), '404' );
+				throw new WCML_REST_Generic_Exception( __( 'Using "translation_of" requires providing a "lang" parameter too', 'woocommerce-multilingual' ) );
 			}
 		}
 
@@ -301,80 +286,13 @@ class WCML_REST_API_Support_V1{
 	 * @return WP_REST_Response
 	 */
 	public function copy_product_custom_fields($response, $object, $request){
-		global $wpdb;
-		global $wpml_post_translations;
-
 		$data = $request->get_params();
 
 		if( isset( $data['id'] ) ){
-			$translations = $wpml_post_translations->get_element_translations ( $data['id'], false, true );
+			$translations = $this->wpml_post_translations->get_element_translations( $data['id'], false, true );
 			foreach ( $translations as $translation_id ) {
 				$this->sitepress->copy_custom_fields ( $data['id'], $translation_id );
 			}
-		}
-
-		return $response;
-	}
-
-	public function filter_orders_by_language( $args, $request ){
-
-		$lang = $request->get_param( 'lang' );
-
-		if( !is_null( $lang ) && $lang !== 'all' ){
-
-			$args['meta_query'][] = array(
-				'key'   => 'wpml_language',
-				'value' => strval( $lang )
-			);
-
-		}
-
-		return $args;
-	}
-
-	/**
-	 * Filters the items of an order according to a given languages
-	 *
-	 * @param WP_REST_Response $response
-	 * @param WC_Order $order
-	 * @param WP_REST_Request $request
-	 * @return WP_REST_Response
-	 */
-
-	public function filter_order_items_by_language( $response, $order, $request ){
-
-		$lang = get_query_var('lang');
-
-		$order_lang = get_post_meta( $order->ID, 'wpml_language', true );
-
-		if( $order_lang != $lang ){
-
-			foreach( $response->data['line_items'] as $k => $item ){
-
-				global $wpdb;
-				$sql = "SELECT meta_value FROM {$wpdb->prefix}woocommerce_order_itemmeta WHERE order_item_id=%d AND meta_key='_product_id'";
-				$product_id = $wpdb->get_var( $wpdb->prepare( $sql, $item['id']) );
-
-				if( $product_id ){
-
-					$translated_product_id = apply_filters( 'translate_object_id', $product_id, 'product', true, $lang );
-
-					if( $translated_product_id ){
-						$translated_product = get_post( $translated_product_id );
-						$response->data['line_items'][$k]['product_id'] = $translated_product_id;
-						if( $translated_product->post_type == 'product_variation' ){
-							$post_parent = get_post( $translated_product->post_parent );
-							$post_name = $post_parent->post_title;
-						} else {
-							$post_name = $translated_product->post_title;
-						}
-						$response->data['line_items'][$k]['name'] = $post_name;
-					}
-
-				}
-
-			}
-
 		}
 
 		return $response;
@@ -386,7 +304,7 @@ class WCML_REST_API_Support_V1{
 	 * @param WP_Post $post
 	 * @param WP_REST_Request $request
 	 *
-	 * @throws WC_REST_Exception
+	 * @throws WCML_REST_Invalid_Language_Exception
 	 */
 	public function set_order_language( $post, $request ){
 
@@ -395,7 +313,7 @@ class WCML_REST_API_Support_V1{
 			$order_id = $post->ID;
 			$active_languages = $this->sitepress->get_active_languages();
 			if( !isset( $active_languages[$data['lang']] ) ){
-				throw new WC_REST_Exception( '404', sprintf( __( 'Invalid language parameter: %s' ), $data['lang'] ), '404' );
+				throw new WCML_REST_Invalid_Language_Exception( $data['lang'] );
 			}
 
 			update_post_meta( $order_id, 'wpml_language', $data['lang'] );
