@@ -343,6 +343,10 @@ class WCML_Multi_Currency{
     public function get_client_currency(){
         global $woocommerce, $sitepress, $wpdb;
 
+	    if( WCML_REST_API_Support::is_rest_api_request() ){
+		    return get_option('woocommerce_currency');
+	    }
+
         $default_currencies   = $this->woocommerce_wpml->settings['default_currencies'];
         $current_language     = $sitepress->get_current_language();
         $current_language     = ( $current_language != 'all' && !is_null( $current_language ) ) ? $current_language : $sitepress->get_default_language();
