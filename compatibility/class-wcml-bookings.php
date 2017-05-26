@@ -1090,11 +1090,7 @@ class WCML_Bookings {
 
 				$booking_form = new WC_Booking_Form( wc_get_product( $current_id ) );
 
-				$prod_qty = get_post_meta( $current_id, '_wc_booking_qty', true );
-				update_post_meta( $current_id, '_wc_booking_qty', intval( $prod_qty + $cart_item['booking']['_qty'] ) );
 				$cost = $booking_form->calculate_booking_cost( $booking_info );
-				update_post_meta( $current_id, '_wc_booking_qty', $prod_qty );
-
 				if ( ! is_wp_error( $cost ) ) {
 					$cart_item['data']->set_price( $cost );
 				}
@@ -1103,7 +1099,6 @@ class WCML_Bookings {
 		}
 
 		return $cart_item;
-
 	}
 
 	function booking_currency_dropdown() {
