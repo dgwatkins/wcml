@@ -117,6 +117,8 @@ class WCML_Admin_Menus{
         if ( is_null( $post ) )
             return;
 
+	    $tracking_link = new WCML_Tracking_Link();
+
         $get_post_type = get_post_type( $post->ID );
 
         if ( $get_post_type == 'product' && $pagenow == 'edit.php' ) {
@@ -146,12 +148,24 @@ class WCML_Admin_Menus{
             <?php
         }
 
+        $template = '
+            <span class="button" style="padding:4px;margin-top:0px; float: left;">
+                <img align="baseline" src="' . ICL_PLUGIN_URL . '/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> 
+                <a href="%1$s" target="_blank" style="text-decoration: none;">%2$s</a>
+            </span><br /><br />
+        ';
+
         if ( isset($_GET['taxonomy']) ) {
             $pos = strpos( $_GET['taxonomy'], 'pa_' );
 
             if ( $pos !== false && $pagenow == 'edit-tags.php' ) {
-                $prot_link = '<span class="button" style="padding:4px;margin-top:0px; float: left;"><img align="baseline" src="' . ICL_PLUGIN_URL . '/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="' . WCML_Links::generate_tracking_link( 'https://wpml.org/documentation/related-projects/woocommerce-multilingual/', 'woocommerce-multilingual', 'documentation', '#3' ) . '" target="_blank" style="text-decoration: none;">' .
-                    __( 'How to translate attributes', 'sitepress' ) . '<\/a>' . '<\/span><br \/><br \/>';
+	            $href = $tracking_link->generate(
+		            'https://wpml.org/documentation/related-projects/woocommerce-multilingual/',
+		            'woocommerce-multilingual',
+		            'documentation',
+		            '#3'
+	            );
+	            $prot_link = sprintf( $template, $href, __( 'How to translate attributes', 'sitepress' ) );
                 ?>
                 <script type="text/javascript">
                     jQuery("table.widefat").before('<?php echo $prot_link ?>');
@@ -161,9 +175,13 @@ class WCML_Admin_Menus{
         }
 
         if ( isset($_GET['taxonomy']) && $_GET['taxonomy'] == 'product_cat' ) {
-
-            $prot_link = '<span class="button" style="padding:4px;margin-top:0px; float: left;"><img align="baseline" src="' . ICL_PLUGIN_URL . '/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="' . WCML_Links::generate_tracking_link( 'https://wpml.org/documentation/related-projects/woocommerce-multilingual/', 'woocommerce-multilingual', 'documentation', '#3' ) . '" target="_blank" style="text-decoration: none;">' .
-                __( 'How to translate product categories', 'sitepress' ) . '<\/a>' . '<\/span><br \/><br \/>';
+	        $href = $tracking_link->generate(
+		        'https://wpml.org/documentation/related-projects/woocommerce-multilingual/',
+		        'woocommerce-multilingual',
+		        'documentation',
+		        '#3'
+	        );
+	        $prot_link = sprintf( $template, $href, __( 'How to translate product categories', 'sitepress' ) );
             ?>
             <script type="text/javascript">
                 jQuery("table.widefat").before('<?php echo $prot_link ?>');
@@ -294,5 +312,7 @@ class WCML_Admin_Menus{
             }
         }
     }
+
+
 
 }

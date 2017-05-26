@@ -208,6 +208,7 @@ class WCML_Install{
     public static function admin_notice_after_install(){
         global $woocommerce_wpml;
 
+        $tracking_link = new WCML_Tracking_Link();
         if( !$woocommerce_wpml->settings['dismiss_doc_main'] ){
 
             $url = $_SERVER['REQUEST_URI'];
@@ -225,7 +226,7 @@ class WCML_Install{
                         '<strong>', '</strong>' ); ?>
                 </p>
                 <p>
-                    <a class="button-primary align-right" href="<?php echo esc_url( WCML_Links::generate_tracking_link(
+                    <a class="button-primary align-right" href="<?php echo esc_url( $tracking_link->generate(
                             'https://wpml.org/documentation/related-projects/woocommerce-multilingual/','woocommerce-multilingual','documentation') ); ?>" target="_blank">
                         <?php _e('Learn how to turn your e-commerce site multilingual', 'woocommerce-multilingual') ?>
                     </a>
