@@ -118,7 +118,7 @@ class woocommerce_wpml {
         return self::$_instance;
     }
     public function init(){
-        global $sitepress, $wpdb, $woocommerce;
+        global $sitepress, $wpdb, $woocommerce, $wpml_url_converter;
 
         new WCML_Upgrade;
 
@@ -222,9 +222,8 @@ class woocommerce_wpml {
 
         WCML_Resources::set_up_resources( $this, $sitepress );
 
-        add_filter('woocommerce_get_checkout_payment_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
-        add_filter('woocommerce_get_cancel_order_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
-        add_filter('woocommerce_get_return_url', array('WCML_Links', 'filter_woocommerce_redirect_location'));
+	    $url_filters_redirect_location = new WCML_Url_Filters_Redirect_Location( $wpml_url_converter );
+	    $url_filters_redirect_location->add_hooks();
 
         add_action('wp_ajax_wcml_update_setting_ajx', array($this, 'update_setting_ajx'));
 

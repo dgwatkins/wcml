@@ -16,10 +16,4 @@ class WCML_Links {
         return $link . $params;
 
     }
-
-    public static function filter_woocommerce_redirect_location( $link ) {
-        global $sitepress;
-        return html_entity_decode( $sitepress->convert_url( $link ) );
-    }
-
 }
