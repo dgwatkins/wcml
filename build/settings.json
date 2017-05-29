@@ -121,6 +121,7 @@
       "namespace": "woothemes",
       "project_slug": "woocommerce",
       "db": "tests_woocommerce_core",
+      "tag": "3.0.7",
       "clone_only": true
     },
     {
