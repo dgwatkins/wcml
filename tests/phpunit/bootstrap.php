@@ -19,7 +19,7 @@ define( 'WP_PLUGIN_URL', WP_CONTENT_URL . '/plugins' );
 define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 define( 'WPML_TM_FOLDER',  WP_CONTENT_DIR . '/plugins/wpml-translation-management/' );
 define( 'WCML_PLUGIN_URL', WP_CONTENT_DIR . '/plugins/woocommerce-multilingual/' );
-
+define( 'ICL_PLUGIN_URL', WP_CONTENT_DIR . 'http://testsite.local/plugins/woocommerce-multilingual/' );
 
 if( ! defined( 'COOKIEPATH' ) ){
 	define( 'COOKIEPATH', '/' );

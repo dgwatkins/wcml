@@ -49,6 +49,9 @@ class woocommerce_wpml {
 	/** @var  WCML_Comments */
 	public $comments;
 
+    /** @var bool */
+    public $check_dependencies;
+
     /** @var  WCML_Reports */
     private $reports;
     /** @var  WCML_Requests */
@@ -132,10 +135,19 @@ class woocommerce_wpml {
 
         new WCML_Upgrade;
 
-        $this->dependencies = new WCML_Dependencies;
-        $this->check_dependencies = $this->dependencies->check();
+        $dependencies = new WCML_Dependencies;
+        $this->check_dependencies = $dependencies->check();
 
-        WCML_Admin_Menus::set_up_menus( $this, $sitepress, $wpdb, $this->check_dependencies );
+	    $this->attributes           = new WCML_Attributes( $this, $sitepress, $wpdb );
+	    $this->attributes->add_hooks();
+
+	    $admin_menus_container = new WCML_Admin_Menu_Container( $this );
+	    $admin_menus = $admin_menus_container->get_admin_menus();
+	    $admin_menus->set_up_menus();
+
+	    $restriction_factory = new WCML_Admin_Restriction_Factory( $this );
+	    $restrictions = $restriction_factory->create();
+	    $restrictions->add_hooks();
 
         if( !$this->check_dependencies ){
             WCML_Capabilities::set_up_capabilities();
@@ -204,8 +216,6 @@ class woocommerce_wpml {
 		$this->emails->add_hooks();
         $this->terms                = new WCML_Terms( $this, $sitepress, $wpdb );
         $this->terms->add_hooks();
-		$this->attributes           = new WCML_Attributes( $this, $sitepress, $wpdb );
-        $this->attributes->add_hooks();
         $this->orders               = new WCML_Orders( $this, $sitepress );
         $this->shipping             = new WCML_WC_Shipping( $sitepress );
         $this->shipping->add_hooks();

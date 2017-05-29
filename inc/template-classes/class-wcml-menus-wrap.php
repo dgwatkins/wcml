@@ -1,6 +1,6 @@
 <?php
 
-class WCML_Menus_Wrap extends WPML_Templates_Factory {
+class WCML_Menus_Wrap extends WPML_Templates_Factory implements WCML_Admin_Menu_Display {
 
     private $woocommerce_wpml;
 
@@ -292,5 +292,7 @@ class WCML_Menus_Wrap extends WPML_Templates_Factory {
 
     }
 
-
+	public function render() {
+		parent::show();
+	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-class WCML_Plugins_Wrap {
+class WCML_Plugins_Wrap implements WCML_Admin_Menu_Display {
 
     private $woocommerce_wpml;
     private $sitepress;
@@ -68,7 +68,7 @@ class WCML_Plugins_Wrap {
 
     }
 
-    public function show(){
+    public function render(){
 	    $template = $this->twig->load( 'plugins-wrap.twig' );
 	    echo $template->render( $this->get_model() );
     }
