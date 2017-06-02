@@ -136,7 +136,7 @@ class woocommerce_wpml {
             return false;
         }
 
-        $this->compatibility        = new WCML_Compatibility( $sitepress, $this, $wpdb );
+        $this->compatibility        = new WCML_Compatibility( $sitepress, $this, $wpdb, new WPML_Element_Translation_Package );
 
         $actions_that_need_mc = array(
                 'save-mc-options',
@@ -174,6 +174,7 @@ class woocommerce_wpml {
         }
 
         $this->sync_product_data    = new WCML_Synchronize_Product_Data( $this, $sitepress, $wpdb );
+        $this->sync_product_data->add_hooks();
         $this->duplicate_product    = new WCML_WC_Admin_Duplicate_Product( $this, $sitepress, $wpdb );
         $this->products             = new WCML_Products( $this, $sitepress, $wpdb );
         $this->products->add_hooks();
@@ -205,7 +206,7 @@ class woocommerce_wpml {
         $this->wcml_products_screen->init();
         $this->cart_sync_warnings = new WCML_Cart_Sync_Warnings( $this, $sitepress );
         $this->cart_sync_warnings->add_hooks();
-        
+
         new WCML_Ajax_Setup( $sitepress );
         new WCML_Fix_Copied_Custom_Fields_WPML353();
 

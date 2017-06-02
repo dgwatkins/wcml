@@ -5,22 +5,31 @@ class WCML_Compatibility {
     /**
      * @var SitePress
      */
-    public $sitepress;
-
+    private $sitepress;
     /**
      * @var woocommerce_wpml
      */
-    public $woocommerce_wpml;
-
+    private $woocommerce_wpml;
     /**
      * @var wpdb
      */
-    public $wpdb;
+    private $wpdb;
+    /** @var WPML_Element_Translation_Package */
+    private $tp;
 
-    function __construct( &$sitepress, &$woocommerce_wpml, &$wpdb ) {
-        $this->sitepress = $sitepress;
+    /**
+     * WCML_Compatibility constructor.
+     *
+     * @param SitePress $sitepress
+     * @param woocommerce_wpml $woocommerce_wpml
+     * @param wpdb $wpdb
+     * @param WPML_Element_Translation_Package $tp
+     */
+    function __construct( SitePress $sitepress, woocommerce_wpml $woocommerce_wpml, wpdb $wpdb, WPML_Element_Translation_Package $tp ) {
+        $this->sitepress        = $sitepress;
         $this->woocommerce_wpml = $woocommerce_wpml;
-        $this->wpdb = $wpdb;
+        $this->wpdb             = $wpdb;
+        $this->tp               = $tp;
         $this->init();
 
     }
@@ -31,7 +40,8 @@ class WCML_Compatibility {
         //WooCommerce Tab Manager plugin
         if(class_exists('WC_Tab_Manager')){
             global $woocommerce;
-            $this->tab_manager = new WCML_Tab_Manager( $this->sitepress, $woocommerce, $this->woocommerce_wpml, $this->wpdb );
+            $this->tab_manager = new WCML_Tab_Manager( $this->sitepress, $woocommerce, $this->woocommerce_wpml, $this->wpdb, $this->tp );
+            $this->tab_manager->add_hooks();
         }
 
         //WooCommerce Table Rate Shipping plugin
@@ -52,7 +62,8 @@ class WCML_Compatibility {
         //Product Bundle
         if(class_exists('WC_Product_Bundle')){
 	        if( version_compare( WC_PB()->version, '5.0.0', '<' ) ){
-		        $this->product_bundles = new WCML_Product_Bundles_Legacy( $this->sitepress, $this->woocommerce_wpml );
+		        $this->product_bundles = new WCML_Product_Bundles_Legacy( $this->sitepress, $this->woocommerce_wpml, $this->tp );
+		        $this->product_bundles->add_hooks();
 	        }else{
 		        $product_bundle_items = new WCML_WC_Product_Bundles_Items();
 		        $this->product_bundles = new WCML_Product_Bundles( $this->sitepress, $this->woocommerce_wpml, $product_bundle_items );
@@ -67,6 +78,7 @@ class WCML_Compatibility {
         // Product Add-ons
         if(class_exists( 'Product_Addon_Display' )){
             $this->product_addons = new WCML_Product_Addons( $this->sitepress );
+            $this->product_addons->add_hooks();
         }
 
         // Product Per Product Shipping
@@ -100,7 +112,8 @@ class WCML_Compatibility {
 
         // WooCommerce Bookings
         if(defined( 'WC_BOOKINGS_VERSION' ) && version_compare(WC_BOOKINGS_VERSION, '1.7.8', '>=') ){
-            $this->bookings = new WCML_Bookings( $this->sitepress, $this->woocommerce_wpml, $this->wpdb );
+            $this->bookings = new WCML_Bookings( $this->sitepress, $this->woocommerce_wpml, $this->wpdb, $this->tp );
+            $this->bookings->add_hooks();
 
             // WooCommerce Accommodation Bookings
             if( defined( 'WC_ACCOMMODATION_BOOKINGS_VERSION' ) ){
@@ -129,7 +142,8 @@ class WCML_Compatibility {
 
         // woocommerce composite products
         if ( isset( $GLOBALS[ 'woocommerce_composite_products' ] ) ) {
-            $this->wc_composite_products = new WCML_Composite_Products(  $this->sitepress, $this->woocommerce_wpml );
+            $this->wc_composite_products = new WCML_Composite_Products(  $this->sitepress, $this->woocommerce_wpml, $this->tp );
+            $this->wc_composite_products->add_hooks();
         }
 				
         // woocommerce checkout addons
@@ -152,7 +166,8 @@ class WCML_Compatibility {
 
         //Adventure Tours theme
         if( function_exists( 'adventure_tours_check' ) ){
-            $this->adventure_tours = new WCML_Adventure_tours();
+            $this->adventure_tours = new WCML_Adventure_tours( $this->woocommerce_wpml, $this->sitepress, $this->tp  );
+            $this->adventure_tours->add_hooks();
         }
 
         //Aurum Theme
