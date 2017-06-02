@@ -12,9 +12,13 @@ class WCML_Product_Addons {
 
 	/**
 	 * WCML_Product_Addons constructor.
+	 * @param SitePress $sitepress
 	 */
-	function __construct( &$sitepress ) {
+	function __construct( $sitepress ){
 		$this->sitepress = $sitepress;
+	}
+
+	public function add_hooks(){
 		add_filter( 'get_product_addons_product_terms', array( $this, 'addons_product_terms' ) );
 		add_filter( 'get_product_addons_fields', array( $this, 'product_addons_filter' ), 10, 1 );
 
@@ -42,6 +46,8 @@ class WCML_Product_Addons {
 			add_action( 'wcml_update_extra_fields', array( $this, 'addons_update' ), 10, 3 );
 
 			add_action( 'woocommerce_product_data_panels',   array( $this, 'show_pointer_info' ) );
+
+			add_filter( 'wcml_do_not_display_custom_fields_for_product', array( $this, 'replace_tm_editor_custom_fields_with_own_sections' ) );
 		}
 
 		add_filter( 'wcml_cart_contents_not_changed', array(
@@ -281,4 +287,11 @@ class WCML_Product_Addons {
 
 		return $cart_item;
 	}
+
+	function replace_tm_editor_custom_fields_with_own_sections( $fields ){
+		$fields[] = '_product_addons';
+
+		return $fields;
+	}
+
 }
