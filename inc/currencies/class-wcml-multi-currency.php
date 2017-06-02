@@ -80,6 +80,11 @@ class WCML_Multi_Currency{
      */
     public $load_filters;
 
+    /**
+     * @var string
+     */
+    public $switching_currency_html;
+
 
     /**
      * WCML_Multi_Currency constructor.
@@ -166,6 +171,7 @@ class WCML_Multi_Currency{
     public function init() {
 
         add_filter( 'wcml_get_client_currency', array($this, 'get_client_currency') );
+        add_action( 'wp_footer', array( $this, 'maybe_show_switching_currency_prompt_dialog' ) );
 
     }
 
@@ -375,6 +381,7 @@ class WCML_Multi_Currency{
                 $this->client_currency = get_option('woocommerce_currency');
             }
 
+
         }
 
         if( isset($_GET['pay_for_order']) && $_GET['pay_for_order'] == true && isset($_GET['key']) ){
@@ -382,6 +389,7 @@ class WCML_Multi_Currency{
             if( $order_id ){
                 $this->client_currency = get_post_meta( $order_id, '_order_currency', true );
             }
+
         }
 
         if(
@@ -410,7 +418,16 @@ class WCML_Multi_Currency{
             !empty($woocommerce->session) &&
             $current_language != $woocommerce->session->get('client_currency_language') )
         {
-            $this->client_currency = $default_currencies[$current_language];
+
+            $current_currency = $woocommerce->session->get('client_currency');
+            $client_currency = $default_currencies[ $current_language ];
+            $prevent_switching = apply_filters( 'wcml_switch_currency_exception', false, $current_currency, $client_currency, true );
+
+	        $this->client_currency = $client_currency;
+	        if ( ! array_key_exists( 'force_switch', $_POST ) && $prevent_switching ) {
+		        $this->switching_currency_html = $prevent_switching['prevent_switching'];
+	        }
+
         }
 
         //edit order page
@@ -428,8 +445,10 @@ class WCML_Multi_Currency{
         if( is_null( $this->client_currency ) && !empty( $woocommerce->session ) ){
             $session_currency = $woocommerce->session->get('client_currency');
             if($session_currency && !empty($this->currencies[$session_currency]['languages'][$current_language])){
+
                 $this->client_currency = $woocommerce->session->get('client_currency');
             }
+
         }
 
         if( is_null( $this->client_currency ) ){
@@ -457,6 +476,13 @@ class WCML_Multi_Currency{
         return apply_filters('wcml_client_currency', $this->client_currency);
     }
 
+    public function maybe_show_switching_currency_prompt_dialog(){
+        if( $this->switching_currency_html ){
+            echo $this->switching_currency_html;
+        }
+
+    }
+
     public function set_client_currency($currency){
         global $woocommerce,$sitepress;
 
@@ -481,7 +507,7 @@ class WCML_Multi_Currency{
             die();
         }
 
-        $this->set_client_currency($currency);
+        $this->set_client_currency($currency, $force_switch);
 
         // force set user cookie when user is not logged in
         global $woocommerce, $current_user;
