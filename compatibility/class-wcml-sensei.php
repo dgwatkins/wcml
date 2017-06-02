@@ -1,34 +1,54 @@
 <?php
 
-class WCML_sensei{
+class WCML_Sensei{
 
-    function __construct(){
-        global $sitepress, $wpdb;
+	/** @var SitePress */
+	private $sitepress;
+	/** @var wpdb */
+	private $wpdb;
+	/** WPML_Custom_Columns $wpml_custom_columns */
+	private $custom_columns;
 
-        $custom_columns     = new WPML_Custom_Columns( $wpdb, $sitepress );
-
-        add_filter( 'manage_edit-lesson_columns', array( $custom_columns, 'add_posts_management_column' ) );
-        add_filter( 'manage_edit-course_columns', array( $custom_columns, 'add_posts_management_column' ) );
-        add_filter( 'manage_edit-question_columns', array( $custom_columns, 'add_posts_management_column' ) );
-
-        add_action( 'save_post', array( $this, 'save_post_actions' ), 100, 2 );
-        add_action( 'sensei_log_activity_after', array( $this, 'log_activity_after' ), 10, 3 );
-        add_filter( 'sensei_bought_product_id', array( $this, 'filter_bought_product_id' ), 10, 2 );
-        add_action( 'delete_comment', array( $this, 'delete_user_activity' ) );
-
-        add_action( 'pre_get_comments', array( $this, 'pre_get_comments') );
-
-        if( is_admin() &&
-            (
-                ( isset($_GET['post_type']) && $_GET['post_type'] == 'sensei_message' ) ||
-                ( isset($_GET['page']) && $_GET['page'] == 'sensei_grading' )
-            ) ){
-            remove_action( 'wp_before_admin_bar_render', array($sitepress, 'admin_language_switcher') );
-        }
-
+	/**
+	 * WCML_Sensei constructor.
+	 *
+	 * @param Sitepress $sitepress
+	 * @param wpdb $wpdb
+	 * @param WPML_Custom_Columns $custom_columns
+	 */
+    public function __construct( SitePress $sitepress, wpdb $wpdb, WPML_Custom_Columns $custom_columns ){
+	    $this->sitepress      = $sitepress;
+	    $this->wpdb           = $wpdb;
+	    $this->custom_columns = $custom_columns;
     }
 
-    function save_post_actions( $post_id, $post ){
+    public function add_hooks(){
+
+	    add_filter( 'manage_edit-lesson_columns', array( $this->custom_columns, 'add_posts_management_column' ) );
+	    add_filter( 'manage_edit-course_columns', array( $this->custom_columns, 'add_posts_management_column' ) );
+	    add_filter( 'manage_edit-question_columns', array( $this->custom_columns, 'add_posts_management_column' ) );
+
+	    add_action( 'save_post', array( $this, 'save_post_actions' ), 100, 2 );
+	    add_action( 'sensei_log_activity_after', array( $this, 'log_activity_after' ), 10, 3 );
+	    add_filter( 'sensei_bought_product_id', array( $this, 'filter_bought_product_id' ), 10, 2 );
+	    add_action( 'delete_comment', array( $this, 'delete_user_activity' ) );
+
+	    add_action( 'pre_get_comments', array( $this, 'pre_get_comments') );
+
+	    if( $this->is_sensei_admin_without_language_switcher() ){
+		    remove_action( 'wp_before_admin_bar_render', array($this->sitepress, 'admin_language_switcher') );
+	    }
+    }
+
+	private function is_sensei_admin_without_language_switcher() {
+
+		$is_message_post_type = isset( $_GET['post_type'] ) && $_GET['post_type'] == 'sensei_message';
+		$is_grading_page      = isset( $_GET['page'] ) && $_GET['page'] == 'sensei_grading';
+
+		return is_admin() && ( $is_message_post_type || $is_grading_page );
+	}
+
+    public function save_post_actions( $post_id, $post ){
         global $sitepress;
 
         // skip not related post types

@@ -97,7 +97,12 @@ class WCML_Compatibility {
 
         //Sensei WooThemes
         if(class_exists('WooThemes_Sensei')){
-            $this->sensei = new WCML_sensei();
+            $this->sensei = new WCML_Sensei(
+            	$this->sitepress,
+	            $this->wpdb,
+	            WPML_Custom_Columns( $this->wpdb, $this->sitepress )
+            );
+	        $this->sensei->add_hooks();
         }
 
         //Extra Product Options
