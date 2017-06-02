@@ -70,7 +70,35 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
 
 	function test_get_client_currency(){
+		$this->check_language_default_currency();
+		$this->check_switch_currency_exception();
+		$this->check_order_currency();
+	}
 
+	function check_language_default_currency(){
+		$current_language = $this->sitepress->get_current_language();
+		$second_language = 'de';
+
+		$this->multi_currency->set_client_currency( NULL );
+		$this->sitepress->switch_lang( $second_language );
+		$client_currency = $this->multi_currency->get_client_currency();
+		$this->assertSame( $this->settings[ 'default_currencies' ][ $second_language ], $client_currency );
+	}
+
+	function check_switch_currency_exception(){
+
+		$current_language = $this->sitepress->get_current_language();
+		$second_language = 'de';
+		$wc_default_currency = get_option( 'woocommerce_currency' );
+
+		$this->multi_currency->set_client_currency( NULL );
+		$this->sitepress->switch_lang( $current_language );
+		add_filter( 'wcml_switch_currency_exception', '__return_true');
+		$client_currency = $this->multi_currency->get_client_currency();
+		$this->assertEquals( $wc_default_currency, $client_currency );
+	}
+
+	function check_order_currency(){
 		//test order currency when add product to order on order edit page
 		$order = wp_insert_post( array( 'title'=> 'TEST Order', 'post_type' => 'shop_order' ) );
 		update_post_meta( $order, '_order_currency','CHF' );

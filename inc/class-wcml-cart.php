@@ -32,7 +32,7 @@ class WCML_Cart
             add_action( 'wp_ajax_wcml_cart_clear_removed_items', array( $this, 'wcml_cart_clear_removed_items' ) );
             add_action( 'wp_ajax_nopriv_wcml_cart_clear_removed_items', array( $this, 'wcml_cart_clear_removed_items' ) );
 
-            add_filter( 'wcml_switch_currency_exception', array( $this, 'cart_switching_currency' ), 10, 3 );
+            add_filter( 'wcml_switch_currency_exception', array( $this, 'cart_switching_currency' ), 10, 4 );
             add_action( 'wcml_before_switch_currency', array( $this, 'switching_currency_empty_cart_if_needed' ), 10, 2 );
         }else{
             //cart widget

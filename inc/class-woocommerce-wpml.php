@@ -151,6 +151,9 @@ class woocommerce_wpml {
                 'wcml_delete_currency_switcher',
                 'wcml_currencies_order'
         );
+
+        $this->cart                 = new WCML_Cart( $this, $sitepress, $woocommerce );
+
         if($this->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT
             || ( isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']) && $_GET['tab'] == 'multi-currency' )
             || ( isset( $_POST[ 'action' ] ) && in_array( $_POST[ 'action' ], $actions_that_need_mc ) )
