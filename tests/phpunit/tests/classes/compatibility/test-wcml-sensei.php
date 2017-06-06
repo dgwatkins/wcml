@@ -10,7 +10,7 @@ class Test_WCML_Sensei extends OTGS_TestCase {
 	private $wpml_custom_columns;
 
 
-	public function setUp(){
+	public function setUp() {
 		parent::setUp();
 
 		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
@@ -20,20 +20,20 @@ class Test_WCML_Sensei extends OTGS_TestCase {
 		$this->wpdb = $this->stubs->wpdb();
 
 		$this->wpml_custom_columns = $this->getMockBuilder( 'WPML_Custom_Columns' )
-		                 ->disableOriginalConstructor()
-		                 ->getMock();
+		                                  ->disableOriginalConstructor()
+		                                  ->getMock();
 
 
 	}
 
-	private function get_subject(){
+	private function get_subject() {
 		return new WCML_Sensei( $this->sitepress, $this->wpdb, $this->wpml_custom_columns );
 	}
 
 	/**
 	 * @test
 	 */
-	public function construct(){
+	public function construct() {
 		$subject = $this->get_subject();
 		$this->assertInstanceOf( 'WCML_Sensei', $subject );
 	}
@@ -41,23 +41,35 @@ class Test_WCML_Sensei extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function add_hooks(){
+	public function add_hooks() {
 		$subject = $this->get_subject();
 
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => false ) );
 
-		\WP_Mock::expectFilterAdded( 'manage_edit-lesson_columns', array( $this->wpml_custom_columns, 'add_posts_management_column' ) );
-		\WP_Mock::expectFilterAdded( 'manage_edit-course_columns', array( $this->wpml_custom_columns, 'add_posts_management_column' ) );
-		\WP_Mock::expectFilterAdded( 'manage_edit-question_columns', array( $this->wpml_custom_columns, 'add_posts_management_column' ) );
+		\WP_Mock::expectFilterAdded( 'manage_edit-lesson_columns', array(
+			$this->wpml_custom_columns,
+			'add_posts_management_column'
+		) );
+		\WP_Mock::expectFilterAdded( 'manage_edit-course_columns', array(
+			$this->wpml_custom_columns,
+			'add_posts_management_column'
+		) );
+		\WP_Mock::expectFilterAdded( 'manage_edit-question_columns', array(
+			$this->wpml_custom_columns,
+			'add_posts_management_column'
+		) );
 		\WP_Mock::expectActionAdded( 'save_post', array( $subject, 'save_post_actions' ), 100, 2 );
 		\WP_Mock::expectActionAdded( 'sensei_log_activity_after', array( $subject, 'log_activity_after' ), 10, 3 );
 		\WP_Mock::expectFilterAdded( 'sensei_bought_product_id', array( $subject, 'filter_bought_product_id' ), 10, 2 );
 		\WP_Mock::expectActionAdded( 'delete_comment', array( $subject, 'delete_user_activity' ) );
-		\WP_Mock::expectActionAdded( 'pre_get_comments', array( $subject, 'pre_get_comments') );
+		\WP_Mock::expectActionAdded( 'pre_get_comments', array( $subject, 'pre_get_comments' ) );
 		$subject->add_hooks();
 
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
-		$this->expectActionAdded( 'wp_before_admin_bar_render', array($this->sitepress, 'admin_language_switcher'), 10, 1, 0 );
+		$this->expectActionAdded( 'wp_before_admin_bar_render', array(
+			$this->sitepress,
+			'admin_language_switcher'
+		), 10, 1, 0 );
 		$subject = $this->get_subject();
 		$subject->add_hooks();
 	}
@@ -65,7 +77,7 @@ class Test_WCML_Sensei extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function remove_wp_before_admin_bar_render_on_sensei_message_post_type(){
+	public function remove_wp_before_admin_bar_render_on_sensei_message_post_type() {
 		$subject = $this->get_subject();
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
 		$_GET['post_type'] = 'sensei_message';
@@ -81,10 +93,10 @@ class Test_WCML_Sensei extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function DONT_remove_wp_before_admin_bar_render_on_OTHER_post_type(){
+	public function DONT_remove_wp_before_admin_bar_render_on_OTHER_post_type() {
 		$subject = $this->get_subject();
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
-		$_GET['post_type'] = rand_str(16);
+		$_GET['post_type'] = rand_str( 16 );
 
 		\WP_Mock::wpFunction( 'remove_action', array( 'times' => 0 ) );
 		$subject->add_hooks();
@@ -109,10 +121,10 @@ class Test_WCML_Sensei extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function DONT_remove_wp_before_admin_bar_render_on_OTHER_page(){
+	public function DONT_remove_wp_before_admin_bar_render_on_OTHER_page() {
 		$subject = $this->get_subject();
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
-		$_GET['page'] = rand_str(16);
+		$_GET['page'] = rand_str( 16 );
 
 		\WP_Mock::wpFunction( 'remove_action', array( 'times' => 0 ) );
 		$subject->add_hooks();
