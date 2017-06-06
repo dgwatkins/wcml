@@ -211,6 +211,9 @@ class woocommerce_wpml {
         $this->cart_sync_warnings = new WCML_Cart_Sync_Warnings( $this, $sitepress );
         $this->cart_sync_warnings->add_hooks();
 
+	    $payment_method_filter = new WCML_Payment_Method_Filter();
+	    $payment_method_filter->add_hooks();
+
         new WCML_Ajax_Setup( $sitepress );
         new WCML_Fix_Copied_Custom_Fields_WPML353();
 

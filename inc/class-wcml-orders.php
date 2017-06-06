@@ -53,7 +53,7 @@ class WCML_Orders{
 
     public function should_attach_new_order_note_data_filter() {
 	    $admin_language = $this->sitepress->get_user_admin_language( get_current_user_id(), true );
-	    $all_strings_in_english = get_option( WPML_ST_Gettext_Hooks_Factory::ALL_STRINGS_ARE_IN_ENGLISH_OPTION );
+	    $all_strings_in_english = get_option( 'wpml-st-all-strings-are-in-english' );
 
 	    return 'en' !== $admin_language || ! $all_strings_in_english;
     }
