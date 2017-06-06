@@ -66,12 +66,7 @@ class Test_WCML_Sensei extends OTGS_TestCase {
 		$subject->add_hooks();
 
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
-		$this->expectActionAdded( 'wp_before_admin_bar_render', array(
-			$this->sitepress,
-			'admin_language_switcher'
-		), 10, 1, 0 );
-		$subject = $this->get_subject();
-		$subject->add_hooks();
+
 	}
 
 	/**
