@@ -72,6 +72,17 @@ if( version_compare( $GLOBALS['wp_version'], '4.4.0' , '<' ) ){
         }
     }
 
+	if ( ! function_exists( 'rest_get_url_prefix' ) ) {
+		function rest_get_url_prefix() {
+			/**
+			 * Filters the REST URL prefix.
+			 *
+			 * @param string $prefix URL prefix. Default 'wp-json'.
+			 */
+			return apply_filters( 'rest_url_prefix', 'wp-json' );
+		}
+	}
+
 }
 
 
