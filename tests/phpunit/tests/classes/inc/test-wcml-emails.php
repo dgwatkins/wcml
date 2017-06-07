@@ -139,5 +139,10 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$filtered_payment_method_string = $subject->filter_payment_method_string( $title, false, $meta_key, $single );
 
 		$this->assertEquals( $title, $filtered_payment_method_string );
+
+		$filtered_payment_method_string = $subject->filter_payment_method_string( '', $object_id, $meta_key, $single );
+
+		$this->assertEquals( '', $filtered_payment_method_string );
+
 	}
 }
