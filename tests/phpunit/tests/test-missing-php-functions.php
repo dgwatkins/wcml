@@ -2,6 +2,8 @@
 
 /**
  * @group  backwards-compatibility
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
  */
 class Test_Missing_Functions extends OTGS_TestCase {
 
@@ -12,6 +14,8 @@ class Test_Missing_Functions extends OTGS_TestCase {
 			$wp_version = $GLOBALS['wp_version'];
 		}
 		$GLOBALS['wp_version'] = '4.3.9';
+
+		$this->assertFalse( function_exists( 'rest_get_url_prefix' ) );
 
 		include_once WCML_PATH . '/inc/missing-php-functions.php';
 
