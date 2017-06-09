@@ -60,8 +60,8 @@
     "tests": {
       "path": "tests/phpunit",
       "legacy_path": "./",
-      "wp_unit_tests_version": "4.7.2",
-      "wp_version": "4.7.2"
+      "wp_unit_tests_version": "4.8.0",
+      "wp_version": "4.8.0"
     }
   },
   "deploy": {
