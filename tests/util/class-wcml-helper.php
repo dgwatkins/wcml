@@ -272,6 +272,16 @@ class WCML_Helper {
 
             // Link the product to the attribute
             $attribute_data = get_term_by('name', $attribute_value, $variation_data['attribute']['name']);
+
+            if( !is_object( $attribute_data ) ){
+            	global $wpdb;
+	            $attribute_data = $wpdb->get_row( $wpdb->prepare( "
+	                SELECT * FROM {$wpdb->terms} t 
+	                JOIN {$wpdb->term_taxonomy} x ON t.term_id = x.term_id
+	                  WHERE t.name=%s and x.taxonomy=%s
+	            ",  $attribute_value, $variation_data['attribute']['name'] ) ) ;
+            }
+
             self::$wpdb->insert( self::$wpdb->prefix . 'term_relationships', array(
                 'object_id'        => $product_id,
                 'term_taxonomy_id' => $attribute_data->term_taxonomy_id,
