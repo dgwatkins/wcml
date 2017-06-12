@@ -95,7 +95,9 @@
       "!wpml-config.xml",
       "!wpml-dependencies.json",
       "res/scss",
-      "**/*/*.scss"
+      "**/*/*.scss",
+      "vendor/wimg",
+      "vendor/xrstf"
     ]
   },
   "dependencies": [

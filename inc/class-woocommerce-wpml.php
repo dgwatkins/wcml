@@ -111,6 +111,7 @@ class woocommerce_wpml {
         if ( is_null( self::$_instance ) ) {
             self::$_instance = new self();
             $woocommerce_wpml = self::$_instance;
+	        do_action( 'wcml_loaded', $woocommerce_wpml );
         }
 
         return self::$_instance;
@@ -209,6 +210,9 @@ class woocommerce_wpml {
         $this->wcml_products_screen->init();
         $this->cart_sync_warnings = new WCML_Cart_Sync_Warnings( $this, $sitepress );
         $this->cart_sync_warnings->add_hooks();
+
+	    $payment_method_filter = new WCML_Payment_Method_Filter();
+	    $payment_method_filter->add_hooks();
 
         new WCML_Ajax_Setup( $sitepress );
         new WCML_Fix_Copied_Custom_Fields_WPML353();
@@ -330,4 +334,10 @@ class woocommerce_wpml {
 
     }
 
+	/**
+	 * @return array
+	 */
+	function get_wc_query_vars() {
+		return WooCommerce::instance()->query->query_vars;
+	}
 }
