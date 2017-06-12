@@ -179,7 +179,8 @@ class woocommerce_wpml {
             $this->sync_variations_data->add_hooks();
 			$this->wcml_products_screen = new WCML_Products_Screen_Options($sitepress);
             $this->wcml_products_screen->init();
-            new WCML_Pointers();
+	        $wcml_pointers = new WCML_Pointers();
+	        $wcml_pointers->add_hooks();
         }
 
         $this->sync_product_data    = new WCML_Synchronize_Product_Data( $this, $sitepress, $wpdb );
