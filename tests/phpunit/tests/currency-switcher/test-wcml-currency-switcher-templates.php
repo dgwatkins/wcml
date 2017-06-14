@@ -111,36 +111,45 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 	 * @preserveGlobalState disabled
 	 */
 	public function get_active_templates() {
-		$sidebar = rand_str();
+		$sidebar_with_active_switcher   = rand_str();
+		$sidebar_with_inactive_switcher = rand_str();
+		/** @var woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject $woocommerce_wpml */
 		$woocommerce_wpml                    = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
 
 		$currency_switchers                  = array(
-			$sidebar => array(
+			$sidebar_with_active_switcher   => array(
 				'switcher_style' => 'template1',
 				'format'         => array(
 					'template_options' => array(),
 				),
 			),
+			$sidebar_with_inactive_switcher => array(
+				'switcher_style' => 'template2',
+				'format'         => array(
+					'template_options' => array(),
+				),
+			),
 		);
-		$template                            = array(
+		$templates                           = array(
 			'template1' => 'dummy_template_data',
 		);
 		$wcml_settings['currency_switchers'] = $currency_switchers;
 		$woocommerce_wpml->expects( $this->once() )->method( 'get_settings' )->willReturn( $wcml_settings );
 		$woocommerce_wpml->cs_properties              = $this->getMockBuilder( 'WCML_Currency_Switcher_Properties' )->disableOriginalConstructor()->setMethods( array( 'is_currency_switcher_active' ) )->getMock();
-		$woocommerce_wpml->cs_properties->expects( $this->once() )->method( 'is_currency_switcher_active' )->with( $sidebar, $wcml_settings )->willReturn( true );
+		$woocommerce_wpml->cs_properties->expects( $this->at( 0 ) )->method( 'is_currency_switcher_active' )->with( $sidebar_with_active_switcher, $wcml_settings )->willReturn( true );
+		$woocommerce_wpml->cs_properties->expects( $this->at( 1 ) )->method( 'is_currency_switcher_active' )->with( $sidebar_with_inactive_switcher, $wcml_settings )->willReturn( false );
 
 		$subject = $this->get_subject( $woocommerce_wpml );
-		$subject->set_templates( $template );
-		$this->assertEquals( $template, $subject->get_active_templates() );
+		$subject->set_templates( $templates );
+		$this->assertEquals( $templates, $subject->get_active_templates() );
 
-		$woocommerce_wpml                    = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
-		$subject = $this->get_subject( $woocommerce_wpml );
-		$template                            = array(
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
+		$subject          = $this->get_subject( $woocommerce_wpml );
+		$templates        = array(
 			'wcml-dropdown' => 'dummy_template_data',
 		);
-		$subject->set_templates( $template );
-		$this->assertEquals( $template, $subject->get_active_templates( true ) );
+		$subject->set_templates( $templates );
+		$this->assertEquals( $templates, $subject->get_active_templates( true ) );
 	}
 
 	/**
@@ -188,14 +197,16 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider dp_enqueue_template_resources
 	 */
-	public function enqueue_template_resources() {
+	public function enqueue_template_resources( $with_arguments, $template_has_style ) {
 		if ( ! defined( 'WCML_VERSION' ) ) {
 			define( 'WCML_VERSION', '0.0.0' );
 		}
+		/** @var woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject $woocommerce_wpml */
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
 		$wcml_settings    = array(
-			'currency_switcher_additional_css' => 'some_additional_css',
+			'currency_switcher_additional_css' => $template_has_style ? 'some_additional_css' : null,
 			'currency_switchers'               => array(
 				'switcher1' => array(
 					'switcher_style' => 'template1',
@@ -213,11 +224,12 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 				),
 			),
 		);
-		$woocommerce_wpml->expects( $this->once() )->method( 'get_settings' )->willReturn( $wcml_settings );
+
 		$methods                         = array(
 			'get_scripts',
 			'get_styles',
 			'has_styles',
+			'get_inline_style',
 			'get_inline_style_handler',
 			'get_resource_handler',
 		);
@@ -234,11 +246,25 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 				array( 'style1', 'wp_enqueue_style' ),
 			)
 		);
-		$wcml_currency_switcher_template->method( 'has_styles' )->willReturn( true );
+		$wcml_currency_switcher_template->method( 'has_styles' )->willReturn( $template_has_style );
+		if ( ! $template_has_style ) {
+			$wcml_currency_switcher_template->method( 'get_inline_style' )->willReturn( $template_has_style );
+		}
 		$wcml_currency_switcher_template->method( 'get_inline_style_handler' )->willReturn( 'inline_style_handler' );
-		\WP_Mock::wpFunction( 'wp_add_inline_style', array(
-			'times' => 2,
-		) );
+
+		$subject          = $this->get_subject( $woocommerce_wpml );
+		$color_picker_css = $subject->get_color_picker_css( 'switcher1', $wcml_settings['currency_switchers']['switcher1'] );
+		$additional_css   = $wcml_settings['currency_switcher_additional_css'];
+
+		if ( $template_has_style ) {
+			\WP_Mock::wpFunction( 'wp_add_inline_style', array( 'times' => 1, 'args' => array( 'inline_style_handler', $subject->get_color_picker_css( 'switcher1', $wcml_settings['currency_switchers']['switcher1'] ) ) ) );
+			\WP_Mock::wpFunction( 'wp_add_inline_style', array( 'times' => 1, 'args' => array( 'inline_style_handler', $additional_css ) ) );
+		} else {
+			\WP_Mock::wpFunction( 'wp_add_inline_style', array( 'times' => 0, ) );
+			\WP_Mock::wpPassthruFunction( 'wp_kses');
+//			\WP_Mock::wpFunction( 'wp_kses', array( 'times' => 1, 'args' => array( $subject->get_inline_style( 'switcher1', $wcml_currency_switcher_template, $color_picker_css), array( 'style' => array() ) ) ) );
+//			\WP_Mock::wpFunction( 'wp_kses', array( 'times' => 1, 'args' => array( $subject->get_inline_style( 'currency_switcher', 'additional_css', $additional_css ), array( 'style' => array() ) ) ) );
+		}
 		\WP_Mock::wpFunction( 'wp_enqueue_script', array(
 			'args'   => array( 'script1_handler', 'url/to/script1.js', array(), WCML_VERSION ),
 			'return' => true,
@@ -252,8 +278,35 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 		$templates = array(
 			'template1' => $wcml_currency_switcher_template,
 		);
-		$subject   = $this->get_subject( $woocommerce_wpml );
-		$subject->enqueue_template_resources( $templates );
+
+		if ( $with_arguments ) {
+			$woocommerce_wpml->expects( $this->once() )->method( 'get_settings' )->willReturn( $wcml_settings );
+		} else {
+			$woocommerce_wpml->expects( $this->exactly( 2 ) )->method( 'get_settings' )->willReturn( $wcml_settings );
+			$woocommerce_wpml->cs_properties = $this->getMockBuilder( 'WCML_Currency_Switcher_Properties' )->disableOriginalConstructor()->setMethods( array( 'is_currency_switcher_active' ) )->getMock();
+			$woocommerce_wpml->cs_properties->expects( $this->once() )->method( 'is_currency_switcher_active' )->with( 'switcher1', $wcml_settings )->willReturn( true );
+
+			$subject->set_templates( $templates );
+			$templates = false;
+		}
+		if ( $template_has_style ) {
+			$subject->enqueue_template_resources( $templates );
+		} else {
+			ob_start();
+			$subject->enqueue_template_resources( $templates );
+			$expected = $color_picker_css;
+			$actual   = ob_get_clean();
+			$this->assertGreaterThan( 0, strpos( $actual, $expected ) );
+		}
+	}
+
+	public function dp_enqueue_template_resources() {
+		return array(
+			array( true, true ),
+			array( false, true ),
+			array( true, false ),
+			array( false, false ),
+		);
 	}
 
 	/**
@@ -270,16 +323,20 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 
 
 		\WP_Mock::wpFunction( 'get_template_directory', array(
-			'returns' => './',
+			'return' => './',
 		));
 
 		\WP_Mock::wpFunction( 'get_stylesheet_directory', array(
-			'returns' => './',
+			'return' => './',
 		));
 
 		\WP_Mock::wpFunction( 'wp_upload_dir', array(
 			'args'   => array( null, false ),
-			'returns' => './',
+			'return' => array(
+				'basedir' => WPML_TESTS_SITE_DIR . '/uploads',
+				'baseurl' => WP_CONTENT_URL . '/uploads',
+				'error'   => false,
+			),
 		));
 
 		\WP_Mock::wpPassthruFunction( 'sanitize_title_with_dashes' );

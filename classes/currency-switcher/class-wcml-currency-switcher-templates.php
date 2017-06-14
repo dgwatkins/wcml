@@ -63,6 +63,8 @@ class WCML_Currency_Switcher_Templates {
 	}
 
 	/**
+	 * @param bool $load_default
+	 *
 	 * @return array of active WCML_CS_Templates
 	 */
 	public function get_active_templates( $load_default = false ) {
@@ -70,7 +72,7 @@ class WCML_Currency_Switcher_Templates {
 		$templates     = array();
 		$wcml_settings = $this->woocommerce_wpml->get_settings();
 
-		if ( isset( $wcml_settings['currency_switchers'] ) ) {
+		if ( isset( $wcml_settings['currency_switchers'] ) && is_array( $wcml_settings['currency_switchers'] ) ) {
 			foreach ( $wcml_settings['currency_switchers'] as $switcher_id => $switcher ) {
 				if ( ! $this->woocommerce_wpml->cs_properties->is_currency_switcher_active( $switcher_id, $wcml_settings ) ) {
 					continue;
@@ -328,13 +330,13 @@ class WCML_Currency_Switcher_Templates {
 				foreach ( $wcml_settings['currency_switchers'] as $key => $switcher_data ) {
 
 					$switcher_template = $switcher_data['switcher_style'];
-					$css               = $this->get_color_picket_css( $key, $switcher_data );
+					$css               = $this->get_color_picker_css( $key, $switcher_data );
 					$template          = $templates[ $switcher_template ];
 
 					if ( $template->has_styles() ) {
 						wp_add_inline_style( $template->get_inline_style_handler(), $css );
 					} else {
-						echo $this->get_inline_style( $key, $switcher_template, $css );
+						echo wp_kses( $this->get_inline_style( $key, $switcher_template, $css ), array( 'style' => array() ) );
 					}
 				}
 			}
@@ -345,7 +347,7 @@ class WCML_Currency_Switcher_Templates {
 				if ( $style_handler ) {
 					wp_add_inline_style( $style_handler, $additional_css );
 				} else {
-					echo $this->get_inline_style( 'currency_switcher', 'additional_css', $additional_css );
+					echo wp_kses( $this->get_inline_style( 'currency_switcher', 'additional_css', $additional_css ), array( 'style' => array() ) );
 				}
 			}
 		}
@@ -369,7 +371,7 @@ class WCML_Currency_Switcher_Templates {
 		}
 	}
 
-	public function get_color_picket_css( $switcher_id, $switcher_data ) {
+	public function get_color_picker_css( $switcher_id, $switcher_data ) {
 
 		$css           = '';
 		$wrapper_class = '.' . $switcher_id . '.' . $switcher_data['switcher_style'];
