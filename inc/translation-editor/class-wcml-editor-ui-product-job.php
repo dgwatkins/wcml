@@ -218,7 +218,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             }
         }
 
-        if( $this->product->is_downloadable() ){
+        if( $this->woocommerce_wpml->products->is_downloadable_product( $this->product ) ){
             $is_variable = false;
             if( $this->woocommerce_wpml->products->is_variable_product( $this->product_id ) ){
                 $files_data = $this->get_files_for_variations();

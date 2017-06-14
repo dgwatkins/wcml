@@ -13,14 +13,27 @@ class WCML_Products{
     /**
      * @var wpdb
      */
-    private $wpdb;
+    private $wpdb;/**
+     * @var WPML_WP_Cache
+     */
+    private $wpml_cache;
 
 
-    public function __construct( &$woocommerce_wpml, &$sitepress, &$wpdb  )
-    {
+    /**
+     * WCML_Products constructor.
+     *
+     * @param woocommerce_wpml $woocommerce_wpml
+     * @param SitePress $sitepress
+     * @param wpdb $wpdb
+     * @param WPML_WP_Cache $wpml_cache
+     */
+    public function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress, wpdb $wpdb, WPML_WP_Cache $wpml_cache = null ) {
         $this->woocommerce_wpml = $woocommerce_wpml;
-        $this->sitepress = $sitepress;
-        $this->wpdb = $wpdb;
+        $this->sitepress        = $sitepress;
+        $this->wpdb             = $wpdb;
+
+        $cache_group = 'WCML_Products';
+        $this->wpml_cache    = is_null( $wpml_cache ) ? new WPML_WP_Cache( $cache_group ) : $wpml_cache;
 
     }
 
@@ -111,6 +124,33 @@ class WCML_Products{
         wp_cache_set( $cache_key, $is_variable_product, $cache_group );
 
         return $is_variable_product;
+    }
+
+    public function is_downloadable_product( $product ) {
+
+        $cache_key   = 'is_downloadable_product_'.$product->get_id();
+
+        $found           = false;
+        $is_downloadable = $this->wpml_cache->get( $cache_key, $found );
+        if ( ! $found ) {
+            if ( $product->is_downloadable() ) {
+                $is_downloadable = true;
+            } elseif ( $this->is_variable_product( $product->get_id() ) ) {
+                $variations = $product->get_available_variations();
+                if ( ! empty( $variations ) ) {
+                    foreach ( $variations as $variation ) {
+                        if ( $variation['is_downloadable'] ) {
+                            $is_downloadable = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            $this->wpml_cache->set( $cache_key, $is_downloadable );
+        }
+
+        return $is_downloadable;
+
     }
 
     public function is_grouped_product($product_id){
