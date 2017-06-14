@@ -206,7 +206,7 @@ class WCML_Currency_Switcher_Templates {
 			if ( ! is_dir( $dir ) ) {
 				continue;
 			}
-			$files = scandir( $dir );
+			$files = scandir( $dir, SCANDIR_SORT_DESCENDING );
 			$files = array_diff( $files, array( '..', '.' ) );
 			if ( count( $files ) > 0 ) {
 				foreach ( $files as $file ) {
@@ -268,7 +268,7 @@ class WCML_Currency_Switcher_Templates {
 	 * @return string
 	 */
 	private function get_unique_name( $name, $path ) {
-		if ( is_null( $name ) ) {
+		if ( null === $name ) {
 			$name = basename( $path );
 		}
 
@@ -277,17 +277,18 @@ class WCML_Currency_Switcher_Templates {
 			$name  = $theme . ' - ' . $name;
 		} elseif ( strpos( $path, $this->wpml_file->fix_dir_separator( $this->get_uploads_path() ) ) === 0 ) {
 			$name = __( 'Uploads', 'woocommerce-multilingual' ) . ' - ' . $name;
-		} elseif ( strpos( $path, $this->wpml_file->fix_dir_separator( WP_PLUGIN_DIR ) ) === 0
-		           && ! $this->is_core_template( $path )
+		} elseif ( ! $this->is_core_template( $path )
+		           && strpos( $path, $this->wpml_file->fix_dir_separator( WP_PLUGIN_DIR ) ) === 0
 		) {
 			$plugin_dir = $this->wpml_file->fix_dir_separator( WP_PLUGIN_DIR );
-			$plugin_dir = preg_replace( '#' . preg_quote( $plugin_dir ) . '#', '', $path, 1 );
+			$plugin_dir = preg_replace( '#' . preg_quote( $plugin_dir, '/' ) . '#', '', $path, 1 );
 			$plugin_dir = ltrim( $plugin_dir, $this->ds );
 			$plugin_dir = explode( $this->ds, $plugin_dir );
 
 			if ( isset( $plugin_dir[0] ) ) {
 				$require = ABSPATH . 'wp-admin' . $this->ds . 'includes' . $this->ds . 'plugin.php';
-				require_once( $require );
+				/** @noinspection PhpIncludeInspection */
+				require_once $require;
 				foreach ( get_plugins() as $slug => $plugin ) {
 					if ( strpos( $slug, $plugin_dir[0] ) === 0 ) {
 						$name = $plugin['Name'] . ' - ' . $name;
@@ -302,6 +303,9 @@ class WCML_Currency_Switcher_Templates {
 		return $name;
 	}
 
+	/**
+	 * @param bool|array $templates
+	 */
 	public function enqueue_template_resources( $templates = false ) {
 
 		if ( ! $templates ) {
@@ -310,6 +314,12 @@ class WCML_Currency_Switcher_Templates {
 
 		$wcml_settings = $this->woocommerce_wpml->get_settings();
 
+		$style_handler = null;
+
+		/**
+		 * @var string                          $slug
+		 * @var WCML_Currency_Switcher_Template $template
+		 */
 		foreach ( $templates as $slug => $template ) {
 
 			foreach ( $template->get_scripts() as $k => $url ) {
@@ -326,7 +336,7 @@ class WCML_Currency_Switcher_Templates {
 		}
 
 		if ( $templates ) {
-			if ( isset( $wcml_settings['currency_switchers'] ) ) {
+			if ( isset( $wcml_settings['currency_switchers'] ) && is_array( $wcml_settings['currency_switchers'] ) ) {
 				foreach ( $wcml_settings['currency_switchers'] as $key => $switcher_data ) {
 
 					$switcher_template = $switcher_data['switcher_style'];
@@ -334,20 +344,20 @@ class WCML_Currency_Switcher_Templates {
 					$template          = $templates[ $switcher_template ];
 
 					if ( $template->has_styles() ) {
-						wp_add_inline_style( $template->get_inline_style_handler(), $css );
+						wp_add_inline_style( $template->get_inline_style_handler(), $this->sanitize_css( $css ) );
 					} else {
-						echo wp_kses( $this->get_inline_style( $key, $switcher_template, $css ), array( 'style' => array() ) );
+						echo $this->sanitize_css( $this->get_inline_style( $key, $switcher_template, $css ) );
 					}
 				}
 			}
 
 			if ( ! empty( $wcml_settings['currency_switcher_additional_css'] ) ) {
-				$additional_css = $this->sanitize_css( $wcml_settings['currency_switcher_additional_css'] );
+				$additional_css = $wcml_settings['currency_switcher_additional_css'];
 
 				if ( $style_handler ) {
-					wp_add_inline_style( $style_handler, $additional_css );
+					wp_add_inline_style( $style_handler, $this->sanitize_css( $additional_css ) );
 				} else {
-					echo wp_kses( $this->get_inline_style( 'currency_switcher', 'additional_css', $additional_css ), array( 'style' => array() ) );
+					echo $this->sanitize_css( $this->get_inline_style( 'currency_switcher', 'additional_css', $additional_css ) );
 				}
 			}
 		}
@@ -359,14 +369,11 @@ class WCML_Currency_Switcher_Templates {
 	 * @return string
 	 */
 	private function sanitize_css( $css ) {
-		$css = wp_strip_all_tags( $css );
-		$css = preg_replace( '/\s+/S', " ", trim( $css ) );
-
-		return $css;
+		return wp_kses( $css, array( 'style' => array() ) );
 	}
 
 	public function admin_enqueue_template_resources() {
-		if ( isset( $_GET['page'] ) && $_GET['page'] == 'wpml-wcml' && isset( $_GET['tab'] ) && $_GET['tab'] == 'multi-currency' ) {
+		if ( isset( $_GET['page'], $_GET['tab'] ) && 'wpml-wcml' === $_GET['page'] && 'multi-currency' === $_GET['tab'] ) {
 			$this->enqueue_template_resources( $this->templates );
 		}
 	}
@@ -378,36 +385,36 @@ class WCML_Currency_Switcher_Templates {
 
 		if ( $switcher_data['color_scheme']['border_normal'] ) {
 			$css .= "$wrapper_class, $wrapper_class li, $wrapper_class li li{";
-			$css .= "border-color:" . $switcher_data['color_scheme']['border_normal'] . " ;";
-			$css .= "}";
+			$css .= 'border-color:' . $switcher_data['color_scheme']['border_normal'] . ' ;';
+			$css .= '}';
 		}
 
 		if ( $switcher_data['color_scheme']['font_other_normal'] || $switcher_data['color_scheme']['background_other_normal'] ) {
 			$css .= "$wrapper_class li>a {";
-			$css .= $switcher_data['color_scheme']['font_other_normal'] ? "color:" . $switcher_data['color_scheme']['font_other_normal'] . ";" : '';
-			$css .= $switcher_data['color_scheme']['background_other_normal'] ? "background-color:" . $switcher_data['color_scheme']['background_other_normal'] . ";" : '';
-			$css .= "}";
+			$css .= $switcher_data['color_scheme']['font_other_normal'] ? 'color:' . $switcher_data['color_scheme']['font_other_normal'] . ';' : '';
+			$css .= $switcher_data['color_scheme']['background_other_normal'] ? 'background-color:' . $switcher_data['color_scheme']['background_other_normal'] . ';' : '';
+			$css .= '}';
 		}
 
 		if ( $switcher_data['color_scheme']['font_other_hover'] || $switcher_data['color_scheme']['background_other_hover'] ) {
 			$css .= "$wrapper_class li:hover>a, $wrapper_class li:focus>a {";
-			$css .= $switcher_data['color_scheme']['font_other_hover'] ? "color:" . $switcher_data['color_scheme']['font_other_hover'] . ";" : '';
-			$css .= $switcher_data['color_scheme']['background_other_hover'] ? "background-color:" . $switcher_data['color_scheme']['background_other_hover'] . ";" : '';
-			$css .= "}";
+			$css .= $switcher_data['color_scheme']['font_other_hover'] ? 'color:' . $switcher_data['color_scheme']['font_other_hover'] . ';' : '';
+			$css .= $switcher_data['color_scheme']['background_other_hover'] ? 'background-color:' . $switcher_data['color_scheme']['background_other_hover'] . ';' : '';
+			$css .= '}';
 		}
 
 		if ( $switcher_data['color_scheme']['font_current_normal'] || $switcher_data['color_scheme']['background_current_normal'] ) {
 			$css .= "$wrapper_class .wcml-cs-active-currency>a {";
-			$css .= $switcher_data['color_scheme']['font_current_normal'] ? "color:" . $switcher_data['color_scheme']['font_current_normal'] . ";" : '';
-			$css .= $switcher_data['color_scheme']['background_current_normal'] ? "background-color:" . $switcher_data['color_scheme']['background_current_normal'] . ";" : '';
-			$css .= "}";
+			$css .= $switcher_data['color_scheme']['font_current_normal'] ? 'color:' . $switcher_data['color_scheme']['font_current_normal'] . ';' : '';
+			$css .= $switcher_data['color_scheme']['background_current_normal'] ? 'background-color:' . $switcher_data['color_scheme']['background_current_normal'] . ';' : '';
+			$css .= '}';
 		}
 
 		if ( $switcher_data['color_scheme']['font_current_hover'] || $switcher_data['color_scheme']['background_current_hover'] ) {
 			$css .= "$wrapper_class .wcml-cs-active-currency:hover>a, $wrapper_class .wcml-cs-active-currency:focus>a {";
-			$css .= $switcher_data['color_scheme']['font_current_hover'] ? "color:" . $switcher_data['color_scheme']['font_current_hover'] . ";" : '';
-			$css .= $switcher_data['color_scheme']['background_current_hover'] ? "background-color:" . $switcher_data['color_scheme']['background_current_hover'] . ";" : '';
-			$css .= "}";
+			$css .= $switcher_data['color_scheme']['font_current_hover'] ? 'color:' . $switcher_data['color_scheme']['font_current_hover'] . ';' : '';
+			$css .= $switcher_data['color_scheme']['background_current_hover'] ? 'background-color:' . $switcher_data['color_scheme']['background_current_hover'] . ';' : '';
+			$css .= '}';
 		}
 
 		return $css;
@@ -439,6 +446,9 @@ class WCML_Currency_Switcher_Templates {
 	}
 
 	public function get_first_active() {
-		return current( array_keys( $this->get_active_templates( true ) ) );
+		$active_templates = $this->get_active_templates( true );
+		$active_templates_keys = array_keys( $active_templates );
+
+		return current( $active_templates_keys );
 	}
 }

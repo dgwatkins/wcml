@@ -77,7 +77,7 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 	 */
 	public function it_adds_hooks() {
 		$enable_multi_currency = 1;
-		$woocommerce_wpml      = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
+		$woocommerce_wpml      = $this->get_woocommerce_wpml_stub();
 		$wcml_settings         = array(
 			'enable_multi_currency' => $enable_multi_currency
 		);
@@ -114,7 +114,7 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 		$sidebar_with_active_switcher   = rand_str();
 		$sidebar_with_inactive_switcher = rand_str();
 		/** @var woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject $woocommerce_wpml */
-		$woocommerce_wpml                    = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
+		$woocommerce_wpml = $this->get_woocommerce_wpml_stub();
 
 		$currency_switchers                  = array(
 			$sidebar_with_active_switcher   => array(
@@ -156,7 +156,7 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 	 * @test
 	 */
 	public function it_falls_back_to_default_template() {
-		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
+		$woocommerce_wpml = $this->get_woocommerce_wpml_stub();
 		$template         = array(
 			'wcml-dropdown' => 'dummy_template_data',
 		);
@@ -199,113 +199,78 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 	 * @test
 	 * @dataProvider dp_enqueue_template_resources
 	 */
-	public function enqueue_template_resources( $with_arguments, $template_has_style ) {
+	public function enqueue_template_resources_with_style( $with_arguments ) {
 		if ( ! defined( 'WCML_VERSION' ) ) {
 			define( 'WCML_VERSION', '0.0.0' );
 		}
-		/** @var woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject $woocommerce_wpml */
-		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
-		$wcml_settings    = array(
-			'currency_switcher_additional_css' => $template_has_style ? 'some_additional_css' : null,
-			'currency_switchers'               => array(
-				'switcher1' => array(
-					'switcher_style' => 'template1',
-					'color_scheme'   => array(
-						'border_normal'             => '1px solid red',
-						'font_other_normal'         => 'red',
-						'background_other_normal'   => 'red',
-						'font_other_hover'          => 'red',
-						'background_other_hover'    => 'red',
-						'font_current_normal'       => 'red',
-						'background_current_normal' => 'red',
-						'font_current_hover'        => 'red',
-						'background_current_hover'  => 'red',
-					),
-				),
-			),
-		);
+		$this->mock_resources_enqueueing();
 
-		$methods                         = array(
-			'get_scripts',
-			'get_styles',
-			'has_styles',
-			'get_inline_style',
-			'get_inline_style_handler',
-			'get_resource_handler',
-		);
-		$wcml_currency_switcher_template = $this->getMockBuilder( 'WCML_Currency_Switcher_Template' )->disableOriginalConstructor()->setMethods( $methods )->getMock();
-		$wcml_currency_switcher_template->method( 'get_scripts' )->willReturn( array(
-			'script1' => 'url/to/script1.js',
-		) );
-		$wcml_currency_switcher_template->method( 'get_styles' )->willReturn( array(
-			'style1' => 'url/to/style1.css',
-		) );
-		$wcml_currency_switcher_template->method( 'get_resource_handler' )->willReturnMap(
-			array(
-				array( 'script1', 'script1_handler' ),
-				array( 'style1', 'wp_enqueue_style' ),
-			)
-		);
-		$wcml_currency_switcher_template->method( 'has_styles' )->willReturn( $template_has_style );
-		if ( ! $template_has_style ) {
-			$wcml_currency_switcher_template->method( 'get_inline_style' )->willReturn( $template_has_style );
-		}
-		$wcml_currency_switcher_template->method( 'get_inline_style_handler' )->willReturn( 'inline_style_handler' );
-
+		$woocommerce_wpml = $this->get_woocommerce_wpml_stub();
 		$subject          = $this->get_subject( $woocommerce_wpml );
+
+		$wcml_settings = $this->get_single_currency_switcher_settings();
+
 		$color_picker_css = $subject->get_color_picker_css( 'switcher1', $wcml_settings['currency_switchers']['switcher1'] );
 		$additional_css   = $wcml_settings['currency_switcher_additional_css'];
 
-		if ( $template_has_style ) {
-			\WP_Mock::wpFunction( 'wp_add_inline_style', array( 'times' => 1, 'args' => array( 'inline_style_handler', $subject->get_color_picker_css( 'switcher1', $wcml_settings['currency_switchers']['switcher1'] ) ) ) );
-			\WP_Mock::wpFunction( 'wp_add_inline_style', array( 'times' => 1, 'args' => array( 'inline_style_handler', $additional_css ) ) );
-		} else {
-			\WP_Mock::wpFunction( 'wp_add_inline_style', array( 'times' => 0, ) );
-			\WP_Mock::wpPassthruFunction( 'wp_kses');
-//			\WP_Mock::wpFunction( 'wp_kses', array( 'times' => 1, 'args' => array( $subject->get_inline_style( 'switcher1', $wcml_currency_switcher_template, $color_picker_css), array( 'style' => array() ) ) ) );
-//			\WP_Mock::wpFunction( 'wp_kses', array( 'times' => 1, 'args' => array( $subject->get_inline_style( 'currency_switcher', 'additional_css', $additional_css ), array( 'style' => array() ) ) ) );
-		}
-		\WP_Mock::wpFunction( 'wp_enqueue_script', array(
-			'args'   => array( 'script1_handler', 'url/to/script1.js', array(), WCML_VERSION ),
-			'return' => true,
-		) );
-		\WP_Mock::wpFunction( 'wp_enqueue_style', array(
-			'args'   => array( 'wp_enqueue_style', 'url/to/style1.css', array(), WCML_VERSION ),
-			'return' => true,
-		) );
-		\WP_Mock::wpPassthruFunction( 'wp_strip_all_tags' );
+		\WP_Mock::wpFunction( 'wp_add_inline_style', array( 'times' => 1, 'args' => array( 'inline_style_handler', $color_picker_css ) ) );
+		\WP_Mock::wpFunction( 'wp_add_inline_style', array( 'times' => 1, 'args' => array( 'inline_style_handler', $additional_css ) ) );
 
-		$templates = array(
+		$this->mock_wp_kses( $color_picker_css, $additional_css );
+		$this->mock_woocommerce_wpml( $woocommerce_wpml, $wcml_settings, $with_arguments );
+
+		$wcml_currency_switcher_template = $this->get_wcml_currency_switcher_template_mock( true );
+		$templates                       = array(
 			'template1' => $wcml_currency_switcher_template,
 		);
+		$templates                       = $this->set_subject_templates( $subject, $templates, $with_arguments );
+		$subject->enqueue_template_resources( $templates );
+	}
 
-		if ( $with_arguments ) {
-			$woocommerce_wpml->expects( $this->once() )->method( 'get_settings' )->willReturn( $wcml_settings );
-		} else {
-			$woocommerce_wpml->expects( $this->exactly( 2 ) )->method( 'get_settings' )->willReturn( $wcml_settings );
-			$woocommerce_wpml->cs_properties = $this->getMockBuilder( 'WCML_Currency_Switcher_Properties' )->disableOriginalConstructor()->setMethods( array( 'is_currency_switcher_active' ) )->getMock();
-			$woocommerce_wpml->cs_properties->expects( $this->once() )->method( 'is_currency_switcher_active' )->with( 'switcher1', $wcml_settings )->willReturn( true );
+	/**
+	 * @test
+	 * @dataProvider dp_enqueue_template_resources
+	 */
+	public function enqueue_template_resources_without_style( $with_arguments ) {
+		if ( ! defined( 'WCML_VERSION' ) ) {
+			define( 'WCML_VERSION', '0.0.0' );
+		}
+		$this->mock_resources_enqueueing();
 
-			$subject->set_templates( $templates );
-			$templates = false;
-		}
-		if ( $template_has_style ) {
-			$subject->enqueue_template_resources( $templates );
-		} else {
-			ob_start();
-			$subject->enqueue_template_resources( $templates );
-			$expected = $color_picker_css;
-			$actual   = ob_get_clean();
-			$this->assertGreaterThan( 0, strpos( $actual, $expected ) );
-		}
+		$woocommerce_wpml = $this->get_woocommerce_wpml_stub();
+		$subject          = $this->get_subject( $woocommerce_wpml );
+
+		$wcml_settings           = $this->get_single_currency_switcher_settings();
+
+		$color_picker_css        = $subject->get_color_picker_css( 'switcher1', $wcml_settings['currency_switchers']['switcher1'] );
+		$additional_css          = $wcml_settings['currency_switcher_additional_css'];
+		$color_picker_css_inline = $subject->get_inline_style( 'switcher1', 'template1', $color_picker_css );
+		$additional_css_inline   = $subject->get_inline_style( 'currency_switcher', 'additional_css', $additional_css );
+
+		\WP_Mock::wpFunction( 'wp_add_inline_style', array( 'times' => 0, ) );
+
+		$this->mock_wp_kses( $color_picker_css_inline, $additional_css_inline );
+		$this->mock_woocommerce_wpml( $woocommerce_wpml, $wcml_settings, $with_arguments );
+
+		$wcml_currency_switcher_template = $this->get_wcml_currency_switcher_template_mock( false );
+		$templates                       = array(
+			'template1' => $wcml_currency_switcher_template,
+		);
+		$templates                       = $this->set_subject_templates( $subject, $templates, $with_arguments );
+
+		ob_start();
+		$subject->enqueue_template_resources( $templates );
+		$expected = $color_picker_css;
+		$actual   = ob_get_clean();
+		$this->assertGreaterThan( 0, strpos( $actual, $expected ) );
 	}
 
 	public function dp_enqueue_template_resources() {
 		return array(
-			array( true, true ),
-			array( false, true ),
-			array( true, false ),
-			array( false, false ),
+			array( true ),
+			array( false ),
+			array( true ),
+			array( false ),
 		);
 	}
 
@@ -444,5 +409,160 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 		$subject = $this->get_subject( $woocommerce_wpml );
 
 		return $subject;
+	}
+
+	/**
+	 * @return array
+	 */
+	private function get_single_currency_switcher_settings() {
+		return array(
+			'currency_switcher_additional_css' => 'some_additional_css',
+			'currency_switchers'               => array(
+				'switcher1' => array(
+					'switcher_style' => 'template1',
+					'color_scheme'   => array(
+						'border_normal'             => '1px solid red',
+						'font_other_normal'         => 'red',
+						'background_other_normal'   => 'red',
+						'font_other_hover'          => 'red',
+						'background_other_hover'    => 'red',
+						'font_current_normal'       => 'red',
+						'background_current_normal' => 'red',
+						'font_current_hover'        => 'red',
+						'background_current_hover'  => 'red',
+					),
+				),
+			),
+		);
+	}
+
+	/**
+	 * @param bool $has_style
+	 *
+	 * @return PHPUnit_Framework_MockObject_MockObject|WCML_Currency_Switcher_Template
+	 */
+	private function get_wcml_currency_switcher_template_mock( $has_style ) {
+		$methods                         = array(
+			'get_scripts',
+			'get_styles',
+			'has_styles',
+			'get_inline_style',
+			'get_inline_style_handler',
+			'get_resource_handler',
+		);
+		$wcml_currency_switcher_template = $this->getMockBuilder( 'WCML_Currency_Switcher_Template' )->disableOriginalConstructor()->setMethods( $methods )->getMock();
+
+		$wcml_currency_switcher_template->method( 'get_scripts' )->willReturn(
+			array(
+				'script1' => 'url/to/script1.js',
+			)
+		);
+		$wcml_currency_switcher_template->method( 'get_styles' )->willReturn(
+			array(
+				'style1' => 'url/to/style1.css',
+			)
+		);
+		$wcml_currency_switcher_template->method( 'get_resource_handler' )->willReturnMap(
+			array(
+				array( 'script1', 'script1_handler' ),
+				array( 'style1', 'wp_enqueue_style' ),
+			)
+		);
+		$wcml_currency_switcher_template->method( 'get_inline_style_handler' )->willReturn( 'inline_style_handler' );
+
+		if ( $has_style ) {
+			$wcml_currency_switcher_template->method( 'has_styles' )->willReturn( true );
+		} else {
+			$wcml_currency_switcher_template->method( 'has_styles' )->willReturn( false );
+			$wcml_currency_switcher_template->method( 'get_inline_style' )->willReturn( false );
+		}
+
+		return $wcml_currency_switcher_template;
+	}
+
+	/**
+	 * @param $color_picker_css
+	 * @param $additional_css
+	 */
+	private function mock_wp_kses( $color_picker_css, $additional_css ) {
+		\WP_Mock::wpFunction(
+			'wp_kses',
+			array(
+				'times'  => 1,
+				'return' => $color_picker_css,
+				'args'   => array(
+					$color_picker_css,
+					array( 'style' => array() )
+				)
+			)
+		);
+		\WP_Mock::wpFunction(
+			'wp_kses',
+			array(
+				'times'  => 1,
+				'return' => $additional_css,
+				'args'   => array(
+					$additional_css,
+					array( 'style' => array() )
+				)
+			)
+		);
+	}
+
+	private function mock_resources_enqueueing() {
+		\WP_Mock::wpFunction(
+			'wp_enqueue_script',
+			array(
+				'times'  => 1,
+				'args'   => array( 'script1_handler', 'url/to/script1.js', array(), WCML_VERSION ),
+				'return' => true,
+			)
+		);
+		\WP_Mock::wpFunction(
+			'wp_enqueue_style',
+			array(
+				'times'  => 1,
+				'args'   => array( 'wp_enqueue_style', 'url/to/style1.css', array(), WCML_VERSION ),
+				'return' => true,
+			)
+		);
+	}
+
+	/**
+	 * @param $woocommerce_wpml
+	 * @param $wcml_settings
+	 * @param $with_arguments
+	 */
+	private function mock_woocommerce_wpml( $woocommerce_wpml, $wcml_settings, $with_arguments ) {
+		if ( $with_arguments ) {
+			$woocommerce_wpml->expects( $this->once() )->method( 'get_settings' )->willReturn( $wcml_settings );
+		} else {
+			$woocommerce_wpml->expects( $this->exactly( 2 ) )->method( 'get_settings' )->willReturn( $wcml_settings );
+			$woocommerce_wpml->cs_properties = $this->getMockBuilder( 'WCML_Currency_Switcher_Properties' )->disableOriginalConstructor()->setMethods( array( 'is_currency_switcher_active' ) )->getMock();
+			$woocommerce_wpml->cs_properties->expects( $this->once() )->method( 'is_currency_switcher_active' )->with( 'switcher1', $wcml_settings )->willReturn( true );
+		}
+	}
+
+	/**
+	 * @param $subject
+	 * @param $templates
+	 * @param $with_arguments
+	 *
+	 * @return bool
+	 */
+	private function set_subject_templates( $subject, $templates, $with_arguments ) {
+		if ( ! $with_arguments ) {
+			$subject->set_templates( $templates );
+			$templates = false;
+		}
+
+		return $templates;
+	}
+
+	/**
+	 * @return woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject
+	 */
+	private function get_woocommerce_wpml_stub() {
+		return $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
 	}
 }
