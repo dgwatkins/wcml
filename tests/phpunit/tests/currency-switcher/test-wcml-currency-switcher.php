@@ -28,7 +28,7 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 			$subject,
 			'update_option_sidebars_widgets'
 		), 10, 2 );
-		$subject->init();
+		$subject->on_init();
 	}
 
 	/**
@@ -362,4 +362,5 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 
 		$this->assertEquals( $expected_args, $subject->check_and_convert_switcher_style( $initial_args ) );
 	}
+
 }
