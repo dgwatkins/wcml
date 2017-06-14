@@ -121,4 +121,55 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$this->assertFalse( $attribute_is_taxonomy );
 	}
 
+	/**
+	 * @test
+	 */
+	public function sync_product_attr_test_empty_translated_attributes_array(){
+
+		$product_id = rand( 1, 100 );
+		$translated_product_id = rand( 1, 100 );
+
+		$original_attributes = array( array(
+			'name' => rand_str(),
+			'value' => rand_str(),
+			'is_taxonomy' => 0
+		) );
+
+		$translated_attributes = array();
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $product_id, '_product_attributes', true ),
+			'return' => $original_attributes
+		) );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $translated_product_id, '_product_attributes', true ),
+			'return' => $translated_attributes
+		) );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $translated_product_id, 'attr_label_translations', true ),
+			'return' => false
+		) );
+
+		\WP_Mock::wpFunction( 'update_post_meta', array(
+			'args'   => array( $translated_product_id, 'attr_label_translations', array() ),
+			'times'  => 1,
+			'return' => true
+		));
+
+//		 The $original_attributes should be saved to the translated product if is_taxonomy = 0 and there are no existing $translated_attributes
+		\WP_Mock::wpFunction( 'update_post_meta', array(
+			'args'   => array( $translated_product_id, '_product_attributes', $original_attributes ),
+			'times'  => 1,
+			'return' => true
+		));
+
+		\WP_Mock::wpPassthruFunction( 'sanitize_title' );
+
+		$subject = $this->get_subject();
+
+		$subject->sync_product_attr( $product_id, $translated_product_id );
+	}
+
 }

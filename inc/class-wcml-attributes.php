@@ -260,7 +260,7 @@ class WCML_Attributes{
             }elseif( !$orig_product_attr[ 'is_taxonomy' ] ){
                 if( isset( $trnsl_product_attrs[ $key ] ) ){
                     $orig_product_attrs[ $key_to_save ][ 'value' ] = $trnsl_product_attrs[ $key ][ 'value' ];
-                }else{
+                }elseif( !empty( $trnsl_product_attrs ) ){
                     unset ( $orig_product_attrs[ $key_to_save ] );
                 }
             }
