@@ -40,8 +40,8 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 	private $woocommerce_wpml;
 	/** @var Sitepress */
 	private $sitepress;
-	/** @var WCML_File */
-	private $wcml_file;
+	/** @var WPML_File */
+	private $wpml_file;
 	/** @var WPML_WP_API $wp_api */
 	private $wp_api;
 
@@ -59,17 +59,17 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 
 		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )->disableOriginalConstructor()->setMethods( array( 'constant' ) )->getMock();
 
-		$this->wcml_file = $this->getMockBuilder( 'WCML_File' )->disableOriginalConstructor()->getMock();
+		$this->wpml_file = $this->getMockBuilder( 'WPML_File' )->disableOriginalConstructor()->getMock();
 
 		$this->sitepress->method( 'get_wp_api' )->willReturn( $this->wp_api );
 	}
 
-	public function get_subject( $woocommerce_wpml = false, $wcml_file = false ){
+	public function get_subject( $woocommerce_wpml = false, $wpml_file = false ){
 
 		if( !$woocommerce_wpml ) $woocommerce_wpml = $this->woocommerce_wpml;
-		if( !$wcml_file ) $wcml_file = $this->wcml_file;
+		if( !$wpml_file ) $wpml_file = $this->wpml_file;
 
-		return new WCML_Currency_Switcher_Templates( $woocommerce_wpml, $this->sitepress->get_wp_api(), $wcml_file );
+		return new WCML_Currency_Switcher_Templates( $woocommerce_wpml, $this->sitepress->get_wp_api(), $wpml_file );
 	}
 
 	/**
@@ -263,9 +263,9 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 		if ( ! defined( 'WCML_PLUGIN_PATH' ) ) {
 			define( 'WCML_PLUGIN_PATH', '../..' );
 		}
-		$wcml_file        = $this->getMockBuilder( 'WCML_File' )->disableOriginalConstructor()->setMethods( array( 'fix_dir_separator', 'get_uri_from_path' ) )->getMock();
-		$wcml_file->method( 'fix_dir_separator' )->will( $this->returnCallback( array( $this, 'fix_dir_separator' ) ) );
-		$wcml_file->method( 'get_uri_from_path' )->will( $this->returnCallback( array( $this, 'get_uri_from_path' ) ) );
+		$wpml_file        = $this->getMockBuilder( 'WPML_File' )->disableOriginalConstructor()->setMethods( array( 'fix_dir_separator', 'get_uri_from_path' ) )->getMock();
+		$wpml_file->method( 'fix_dir_separator' )->will( $this->returnCallback( array( $this, 'fix_dir_separator' ) ) );
+		$wpml_file->method( 'get_uri_from_path' )->will( $this->returnCallback( array( $this, 'get_uri_from_path' ) ) );
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
 
 
@@ -284,7 +284,7 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 
 		\WP_Mock::wpPassthruFunction( 'sanitize_title_with_dashes' );
 
-		$subject   = $this->get_subject( $woocommerce_wpml, $wcml_file );
+		$subject   = $this->get_subject( $woocommerce_wpml, $wpml_file );
 		$subject->after_setup_theme_action();
 		$expected_templates = array(
 			'wcml-dropdown' => array(
