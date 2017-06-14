@@ -5,11 +5,6 @@
  * @group currency-switcher
  */
 class Test_WCML_Currency_Switcher_Ajax extends OTGS_TestCase {
-
-	function setUp() {
-		parent::setUp();
-	}
-
 	/**
 	 * @test
 	 */
