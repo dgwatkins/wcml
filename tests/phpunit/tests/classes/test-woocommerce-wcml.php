@@ -57,4 +57,36 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function get_multi_currency(){
+
+		global $woocommerce_wpml, $sitepress, $wpdb;
+
+		$wpdb = $this->stubs->wpdb();
+
+		$woocommerce_wpml = new woocommerce_wpml();
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_active_languages', 'get_settings' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_active_languages' )->willReturn( array() );
+		$sitepress->method( 'get_settings' )->willReturn( array() );
+
+		$woocommerce_wpml->cs_templates = $this->getMockBuilder( 'WCML_CS_Templates' )
+		                                       ->disableOriginalConstructor()
+		                                       ->setMethods( array( 'get_active_templates' ) )
+		                                       ->getMock();
+		$woocommerce_wpml->cs_templates->method( 'get_active_templates' )->willReturn( array() );
+
+		$multi_currency = $woocommerce_wpml->get_multi_currency();
+
+		$this->assertInstanceOf( 'WCML_Multi_Currency', $multi_currency );
+
+
+
+	}
+
 }

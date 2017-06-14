@@ -17,6 +17,9 @@ define( 'WP_CONTENT_URL', WPML_TESTS_SITE_URL . '/wp-content' );
 define( 'WP_CONTENT_DIR', WPML_TESTS_SITE_DIR . '/wp-content' );
 define( 'WP_PLUGIN_URL', WP_CONTENT_URL . '/plugins' );
 define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
+define( 'WPML_TM_FOLDER',  WP_CONTENT_DIR . '/plugins/wpml-translation-management/' );
+define( 'WCML_PLUGIN_URL', WP_CONTENT_DIR . '/plugins/woocommerce-multilingual/' );
+
 
 require_once __DIR__ . '/includes/missing-php-functions.php';
 

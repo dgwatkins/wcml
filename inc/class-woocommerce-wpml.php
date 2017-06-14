@@ -99,7 +99,7 @@ class woocommerce_wpml {
 
     }
 
-    /**
+	/**
      * Main instance.
      *
      * @since 3.8
@@ -344,4 +344,15 @@ class woocommerce_wpml {
 	function get_wc_query_vars() {
 		return WooCommerce::instance()->query->query_vars;
 	}
+
+	/**
+	 * @return WCML_Multi_Currency
+	 */
+	public function get_multi_currency( ) {
+		if ( ! isset( $this->multi_currency ) ) {
+			$this->multi_currency = new WCML_Multi_Currency();
+		}
+		return $this->multi_currency;
+	}
+
 }

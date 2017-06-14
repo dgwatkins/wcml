@@ -71,7 +71,13 @@ class WCML_Install{
                 'hide_variation_type_on_tm_dashboard'
             ) );
 
-            new WCML_Setup( $woocommerce_wpml, $sitepress );
+	        $WCML_Setup_UI       = new WCML_Setup_UI( $woocommerce_wpml );
+	        $WCML_Setup_UI->add_hooks();
+	        $WCML_Setup_Handlers = new WCML_Setup_Handlers( $woocommerce_wpml );
+	        $WCML_Setup          = new WCML_Setup( $WCML_Setup_UI, $WCML_Setup_Handlers, $woocommerce_wpml, $sitepress );
+	        $WCML_Setup->setup_redirect();
+	        $WCML_Setup->add_hooks();
+
             if ( ! empty( $woocommerce_wpml->settings['set_up_wizard_run'] ) ) {
                 add_action( 'admin_notices', array( __CLASS__, 'admin_notice_after_install' ) );
             }
