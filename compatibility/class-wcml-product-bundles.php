@@ -56,6 +56,8 @@ class WCML_Product_Bundles {
 		// product bundle using separate custom fields for prices
 		if ( wcml_is_multi_currency_on() ) {
 			add_filter( 'wcml_price_custom_fields_filtered', array( $this, 'get_price_custom_fields' ) );
+			add_filter( 'wcml_update_custom_prices_values', array( $this, 'update_bundles_custom_prices_values' ), 10, 2 );
+			add_filter( 'wcml_after_save_custom_prices', array( $this, 'update_bundles_base_price' ), 10, 4 );
 		}
 
 	}
@@ -660,5 +662,28 @@ class WCML_Product_Bundles {
 		) );
 
 		return $custom_fields;
+	}
+
+
+	function update_bundles_custom_prices_values( $prices, $code ){
+
+		if( isset( $_POST[ '_custom_regular_price' ][ $code ]  ) ){
+			$prices[ '_wc_pb_base_regular_price' ] = wc_format_decimal( $_POST[ '_custom_regular_price' ][ $code ] );
+		}
+
+		if( isset( $_POST[ '_custom_sale_price' ][ $code ] ) ){
+			$prices[ '_wc_pb_base_sale_price' ] = wc_format_decimal( $_POST[ '_custom_sale_price' ][ $code ] );
+		}
+
+		return $prices;
+
+	}
+
+	function update_bundles_base_price( $post_id, $product_price, $custom_prices, $code ){
+
+		if( isset ( $custom_prices[ '_wc_pb_base_regular_price' ] ) ){
+			update_post_meta( $post_id, '_wc_pb_base_price_'.$code, $product_price );
+		}
+
 	}
 }
