@@ -51,7 +51,8 @@ class WCML_Compatibility {
 
 		//WooCommerce Subscriptions
 		if ( class_exists( 'WC_Subscriptions' ) ) {
-			$this->wp_subscriptions = new WCML_WC_Subscriptions();
+			$this->wp_subscriptions = new WCML_WC_Subscriptions( $this->woocommerce_wpml, $this->wpdb );
+			$this->wp_subscriptions->add_hooks();
 		}
 
 		//WooCommerce Name Your Price
