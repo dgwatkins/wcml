@@ -103,7 +103,8 @@ class WCML_Multi_Currency{
 
         if( $this->load_filters ) {
             $this->coupons  = new WCML_Multi_Currency_Coupons();
-            $this->shipping = new WCML_Multi_Currency_Shipping( $this );
+            $this->shipping = new WCML_Multi_Currency_Shipping( $this, $sitepress, $wpdb );
+            $this->shipping->add_hooks();
         }
         $this->reports                  = new WCML_Multi_Currency_Reports( $woocommerce_wpml, $sitepress, $wpdb );
         $this->reports->add_hooks();
