@@ -157,8 +157,11 @@ class Test_WCML_Switch_Lang_Request extends WCML_UnitTestCase{
 
 		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )->disableOriginalConstructor()->getMock();
 		$wp_api->method( 'constant' )->with( 'DOING_AJAX' )->willReturn( $this->doing_ajax_mock );
+		$sitepress = $this->getMockBuilder( 'Sitepress' )->disableOriginalConstructor()->getMock();
 
-		return new WCML_Test_Request( $cookie, $wp_api );
+		$subject = new WCML_Test_Request( $cookie, $wp_api, $sitepress );
+
+		return $subject;
 	}
 
 	private function set_requested_url( $url ) {
