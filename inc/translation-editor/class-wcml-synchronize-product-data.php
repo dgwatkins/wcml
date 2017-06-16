@@ -94,8 +94,6 @@ class WCML_Synchronize_Product_Data{
         ) {
             return;
         }
-        // Remove filter to avoid double sync
-        remove_action( 'save_post', array( $this, 'synchronize_products' ), PHP_INT_MAX, 2 );
 
         do_action( 'wcml_before_sync_product', $original_product_id, $post_id );
 
