@@ -30,12 +30,6 @@ class WCML_WC_Subscriptions{
 		add_filter( 'wcml_update_custom_prices_values', array( $this, 'update_custom_prices_values' ), 10, 3 );
 		add_action( 'wcml_after_custom_prices_block', array( $this, 'new_subscription_prices_block' ) );
 
-		// reenable coupons for subscriptions when multicurrency is on
-		add_action( 'woocommerce_subscription_cart_after_grouping', array(
-			$this,
-			'woocommerce_subscription_cart_after_grouping'
-		) );
-
 		add_action( 'woocommerce_subscriptions_product_options_pricing', array( $this, 'show_pointer_info' ) );
 		add_action( 'woocommerce_variable_subscription_pricing', array( $this, 'show_pointer_info' ) );
 
@@ -43,6 +37,8 @@ class WCML_WC_Subscriptions{
 			$this,
 			'woocommerce_subscription_price_from'
 		), 10, 2 );
+
+		add_filter( 'wcml_calculate_totals_exception', array( $this, '__return_false' ) );
 	}
 
 	function init(){
@@ -88,14 +84,6 @@ class WCML_WC_Subscriptions{
 		}
 
 		return isset($new_subscription_ranges) ? $new_subscription_ranges : $subscription_ranges;
-	}
-
-	public function woocommerce_subscription_cart_after_grouping() {
-
-		if( $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ){
-			remove_action('woocommerce_before_calculate_totals', 'WC_Subscriptions_Coupon::remove_coupons', 10);
-		}
-
 	}
 
 	function set_prices_fields( $fields, $product_id ){
