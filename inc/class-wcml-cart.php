@@ -155,8 +155,8 @@ class WCML_Cart
 
     public function cart_alert( $dialog_title, $confirmation_message, $switch_to, $stay_in, $switch_to_value, $stay_in_value = false, $language_switch = false ){
         ?>
-        <div id="wcml-cart-dialog-confirm" title="<?php echo $dialog_title ?>">
-            <p><?php echo $confirmation_message; ?></p>
+        <div id="wcml-cart-dialog-confirm" title="<?php echo esc_attr( $dialog_title ) ?>">
+            <p><?php echo esc_html( $confirmation_message ); ?></p>
         </div>
 
         <script type="text/javascript">
@@ -176,21 +176,21 @@ class WCML_Cart
                         "<?php echo $switch_to; ?>": function() {
                             jQuery( this ).dialog( "close" );
                             <?php if( $language_switch ): ?>
-                                window.location = '<?php echo $switch_to_value; ?>';
+                                window.location = '<?php echo esc_js( $switch_to_value ); ?>';
                             <?php else: ?>
                                 jQuery('.wcml_currency_switcher').parent().find('img').remove();
-                                wcml_load_currency( "<?php echo $switch_to_value; ?>", true );
+                                wcml_load_currency( "<?php echo esc_js( $switch_to_value ); ?>", true );
                             <?php endif; ?>
 
                         },
                         "<?php echo $stay_in; ?>": function() {
                             jQuery( this ).dialog( "close" );
                             <?php if( $language_switch ): ?>
-                                window.location = '<?php echo $stay_in_value; ?>';
+                                window.location = '<?php echo esc_js( $stay_in_value ); ?>';
                             <?php else: ?>
                                 jQuery('.wcml_currency_switcher').parent().find('img').remove();
                                 jQuery('.wcml_currency_switcher').removeAttr('disabled');
-                                jQuery('.wcml_currency_switcher').val( '<?php echo $stay_in_value; ?>' );
+                                jQuery('.wcml_currency_switcher').val( '<?php echo esc_js ( $stay_in_value ); ?>' );
                             <?php endif; ?>
                         }
                     }
