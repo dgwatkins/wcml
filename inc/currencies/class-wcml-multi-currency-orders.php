@@ -56,6 +56,10 @@ class WCML_Multi_Currency_Orders{
     public function get_orders_currencies(){
         global $wpdb;
 
+        $cache_key = 'wcml_get_orders_currencies';
+        $temp_orders_currencies = wp_cache_get( $cache_key);
+        if( $temp_orders_currencies ) return $temp_orders_currencies;
+
         $currencies = array();
 
         $results = $wpdb->get_results("
@@ -68,6 +72,8 @@ class WCML_Multi_Currency_Orders{
         foreach($results as $row){
             $currencies[$row->currency] = intval($row->c);
         }
+
+        wp_cache_set( $cache_key, $currencies );
 
         return $currencies;
 
