@@ -172,4 +172,63 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$subject->sync_product_attr( $product_id, $translated_product_id );
 	}
 
+	/**
+	 * @test
+	 */
+	public function filter_attribute_name() {
+
+		$attribute_name           = rand_str();
+		$sanitized_attribute_name = rand_str();
+		$orig_lang                = 'de';
+		$product_id               = rand( 1, 100 );
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'get_original_product_language' ) )
+		                                         ->getMock();
+
+		$this->woocommerce_wpml->products
+			->method( 'get_original_product_language' )
+			->with( $product_id )
+			->willReturn( $orig_lang );
+
+		$this->sitepress->locale_utils = $this->getMockBuilder( 'WPML_Locale' )
+		                                      ->disableOriginalConstructor()
+		                                      ->setMethods( array( 'filter_sanitize_title' ) )
+		                                      ->getMock();
+
+		$this->sitepress->locale_utils
+			->method( 'filter_sanitize_title' )
+			->with( $attribute_name, $attribute_name )
+			->willReturn( $attribute_name );
+
+		\WP_Mock::wpFunction( 'is_admin', array(
+			'times'  => 1,
+			'return' => false
+		) );
+
+		\WP_Mock::wpFunction( 'remove_accents', array(
+			'args'   => array( $attribute_name ),
+			'times'  => 1,
+			'return' => $attribute_name
+		) );
+
+		\WP_Mock::wpFunction( 'sanitize_title', array(
+			'args'   => array( $attribute_name ),
+			'times'  => 1,
+			'return' => $sanitized_attribute_name
+		) );
+
+		\WP_Mock::wpFunction( 'remove_filter', array(
+			'times'  => 1,
+			'return' => true
+		) );
+
+		$subject = $this->get_subject();
+
+		$filtered_attribute_name = $subject->filter_attribute_name( $attribute_name, $product_id, true );
+
+		$this->assertEquals( $sanitized_attribute_name, $filtered_attribute_name );
+	}
+
 }
