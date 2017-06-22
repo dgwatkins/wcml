@@ -41,7 +41,7 @@
   "minimum-stability": "dev",
   "require": {
     "roave/security-advisories": "dev-master",
-    "otgs/installer" : "dev-master",
+    "otgs/installer" : "~1.8",
     "xrstf/composer-php52": "1.*",
     "twig/twig": "~1.0"
   },
