@@ -2,29 +2,47 @@
 
 class WCML_Multi_Currency_Reports{
 
+    /** @var woocommerce_wpml */
     private $woocommerce_wpml;
-
+    /** @var Sitepress */
+    private $sitepress;
+    /** @var wpdb */
+    private $wpdb;
+    /** @var string $reports_currency */
     private $reports_currency;
 
-    public function __construct(){
+    public function __construct( woocommerce_wpml $woocommerce_wpml, Sitepress $sitepress, wpdb $wpdb ){
 
-        if( is_admin() ){
+        $this->woocommerce_wpml = $woocommerce_wpml;
+        $this->sitepress        = $sitepress;
+        $this->wpdb             = $wpdb;
+
+    }
+
+    public function add_hooks() {
+        if ( is_admin() ) {
             add_filter( 'init', array( $this, 'reports_init' ) );
-            add_action( 'wp_ajax_wcml_reports_set_currency', array($this, 'set_reports_currency') );
+            add_action( 'wp_ajax_wcml_reports_set_currency', array( $this, 'set_reports_currency' ) );
 
-            add_action( 'wc_reports_tabs', array($this, 'reports_currency_selector') );
+            add_action( 'wc_reports_tabs', array( $this, 'reports_currency_selector' ) );
 
             if ( current_user_can( 'view_woocommerce_reports' ) ||
                  current_user_can( 'manage_woocommerce' ) ||
-                 current_user_can( 'publish_shop_orders' ) ) {
+                 current_user_can( 'publish_shop_orders' )
+            ) {
 
-                add_filter( 'woocommerce_dashboard_status_widget_sales_query', array($this, 'filter_dashboard_status_widget_sales_query') );
-                add_filter( 'woocommerce_dashboard_status_widget_top_seller_query', array($this, 'filter_dashboard_status_widget_sales_query') );
+                add_filter( 'woocommerce_dashboard_status_widget_sales_query', array(
+                    $this,
+                    'filter_dashboard_status_widget_sales_query'
+                ) );
+                add_filter( 'woocommerce_dashboard_status_widget_top_seller_query', array(
+                    $this,
+                    'filter_dashboard_status_widget_sales_query'
+                ) );
             }
 
-            add_action( 'current_screen', array($this, 'admin_screen_loaded'), 10, 1 );
+            add_action( 'current_screen', array( $this, 'admin_screen_loaded' ), 10, 1 );
         }
-
     }
 
     public function admin_screen_loaded(  $screen ){
@@ -36,9 +54,6 @@ class WCML_Multi_Currency_Reports{
     }
 
     public function reports_init(){
-        global $woocommerce_wpml;
-
-        $this->woocommerce_wpml =& $woocommerce_wpml;
 
         if(isset($_GET['page']) && $_GET['page'] == 'wc-reports'){ //wc-reports - 2.1.x, woocommerce_reports 2.0.x
 
@@ -83,9 +98,8 @@ class WCML_Multi_Currency_Reports{
     }
 
     public function admin_reports_query_filter( $query ){
-        global $wpdb;
 
-        $query['join']  .= " LEFT JOIN {$wpdb->postmeta} AS meta_order_currency ON meta_order_currency.post_id = posts.ID ";
+        $query['join']  .= " LEFT JOIN {$this->wpdb->postmeta} AS meta_order_currency ON meta_order_currency.post_id = posts.ID ";
         $query['where'] .= sprintf(" AND meta_order_currency.meta_key='_order_currency' AND meta_order_currency.meta_value = '%s' ",
                                 $this->reports_currency);
 
@@ -103,13 +117,12 @@ class WCML_Multi_Currency_Reports{
     }
 
     public function _use_categories_in_all_languages( $product_ids, $category_id ){
-        global $sitepress;
 
         $category_term = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $category_id, 'product_cat' );
 
         if( !is_wp_error($category_term) ){
-            $trid = $sitepress->get_element_trid( $category_term->term_taxonomy_id, 'tax_product_cat' );
-            $translations = $sitepress->get_element_translations( $trid, 'tax_product_cat', true );
+            $trid = $this->sitepress->get_element_trid( $category_term->term_taxonomy_id, 'tax_product_cat' );
+            $translations = $this->sitepress->get_element_translations( $trid, 'tax_product_cat', true );
 
             foreach($translations as $translation){
                 if($translation->term_id != $category_id){
@@ -173,18 +186,33 @@ class WCML_Multi_Currency_Reports{
     *
     * @return string
     */
-    public function filter_dashboard_status_widget_sales_query( $query ){
-        global $wpdb;
-        $currency = $this->woocommerce_wpml->multi_currency->admin_currency_selector->get_cookie_dashboard_currency();
-        $query['where'] .= " AND posts.ID IN  ( SELECT order_currency.post_id FROM {$wpdb->postmeta} AS order_currency
-                            WHERE order_currency.meta_key = '_order_currency' AND order_currency.meta_value = '{$currency}' ) ";
+    public function filter_dashboard_status_widget_sales_query( $query ) {
+        $order_ids_list = $this->get_dashboard_currency_list_of_orders_ids();
+
+        $query['where'] .= " AND posts.ID IN  ( " . $order_ids_list . " ) ";
 
         return $query;
     }
 
+    public function get_dashboard_currency_list_of_orders_ids() {
 
+        $currency = $this->woocommerce_wpml->multi_currency->admin_currency_selector->get_cookie_dashboard_currency();
 
+        $cache_group = 'dashboard_currency_list_of_orders_ids';
+        $cache_key   = $currency;
+        $cache       = new WPML_WP_Cache( $cache_group );
+        $found       = false;
+        $orders_ids  = $cache->get( $cache_key, $found );
 
+        if ( ! $found ) {
+            $order_ids_array = $this->wpdb->get_col( "SELECT order_currency.post_id FROM {$this->wpdb->postmeta} AS order_currency
+                            WHERE order_currency.meta_key = '_order_currency' AND order_currency.meta_value = '{$currency}'" );
+            $orders_ids      = implode( ',', $order_ids_array );
 
+            $cache->set( $cache_key, $orders_ids );
+        }
+
+        return $orders_ids;
+    }
 
 }

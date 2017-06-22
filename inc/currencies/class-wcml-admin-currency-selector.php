@@ -120,9 +120,9 @@ class WCML_Admin_Currency_Selector{
                     break;
                 }
             }
-
-            setcookie('_wcml_dashboard_currency', $currency_code , time() + 86400, COOKIEPATH, COOKIE_DOMAIN);
         }
+
+        setcookie('_wcml_dashboard_currency', $currency_code , time() + 86400, COOKIEPATH, COOKIE_DOMAIN);
     }
 
     /*
