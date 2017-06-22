@@ -170,6 +170,7 @@ Release-Notes:
   tags:
     - artifacts
   script:
+    - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
     - ./vendor/otgs/build-tools-ci/otgs-ci --releasenotes
   only:
     - tags
