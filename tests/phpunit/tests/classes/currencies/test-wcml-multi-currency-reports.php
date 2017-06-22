@@ -34,19 +34,22 @@ class Test_WCML_Multi_Currency_Reports extends OTGS_TestCase {
 		                         ->setMethods( array( 'get', 'set' ) )
 		                         ->getMock();
 
-		$this->wpml_cache->method( 'get' )->willReturnCallback( function ( $key, &$found ) use ( $that ) {
-			if ( isset( $that->cached_data[ $key ] ) ) {
-				$found = true;
-
-				return $that->cached_data[ $key ];
-			} else {
-				return false;
+		$this->wpml_cache->method( 'get' )->willReturnCallback(
+			function ( $key ) use ( $that ) {
+				if ( isset( $that->cached_data[ $key ] ) ) {
+					$found = true;
+					return $that->cached_data[ $key ];
+				} else {
+					return false;
+				}
 			}
-		} );
+		);
 
-		$this->wpml_cache->method( 'set' )->willReturnCallback( function ( $key, $value ) use ( $that ) {
-			$that->cached_data[ $key ] = $value;
-		} );
+		$this->wpml_cache->method( 'set' )->willReturnCallback(
+			function ( $key, $value ) use ( $that ) {
+				$that->cached_data[ $key ] = $value;
+			}
+		);
 
 	}
 

@@ -223,6 +223,7 @@ class WCML_Multi_Currency_Reports {
 		$currency = $this->woocommerce_wpml->multi_currency->admin_currency_selector->get_cookie_dashboard_currency();
 
 		$cache_key  = $currency . '_list_of_orders_ids';
+		$found      = false;
 		$orders_ids = $this->wpml_cache->get( $cache_key, $found );
 
 		if ( ! $found ) {
