@@ -8,14 +8,28 @@ class WCML_Multi_Currency_Reports{
     private $sitepress;
     /** @var wpdb */
     private $wpdb;
+    /** @var WPML_WP_Cache */
+    private $wpml_cache;
+
     /** @var string $reports_currency */
     private $reports_currency;
 
-    public function __construct( woocommerce_wpml $woocommerce_wpml, Sitepress $sitepress, wpdb $wpdb ){
+    /**
+     * WCML_Multi_Currency_Reports constructor.
+     *
+     * @param woocommerce_wpml $woocommerce_wpml
+     * @param SitePress $sitepress
+     * @param wpdb $wpdb
+     * @param WPML_WP_Cache $wpml_cache
+     */
+    public function __construct( woocommerce_wpml $woocommerce_wpml, Sitepress $sitepress, wpdb $wpdb, WPML_WP_Cache $wpml_cache = null ){
 
         $this->woocommerce_wpml = $woocommerce_wpml;
         $this->sitepress        = $sitepress;
         $this->wpdb             = $wpdb;
+
+        $cache_group      = 'WCML_Multi_Currency_Reports';
+        $this->wpml_cache = is_null( $wpml_cache ) ? new WPML_WP_Cache( $cache_group ) : $wpml_cache;
 
     }
 
@@ -196,20 +210,18 @@ class WCML_Multi_Currency_Reports{
 
     public function get_dashboard_currency_list_of_orders_ids() {
 
-        $currency = $this->woocommerce_wpml->multi_currency->admin_currency_selector->get_cookie_dashboard_currency();
+        $currency  = $this->woocommerce_wpml->multi_currency->admin_currency_selector->get_cookie_dashboard_currency();
 
-        $cache_group = 'dashboard_currency_list_of_orders_ids';
-        $cache_key   = $currency;
-        $cache       = new WPML_WP_Cache( $cache_group );
-        $found       = false;
-        $orders_ids  = $cache->get( $cache_key, $found );
+        $cache_key  = $currency . '_list_of_orders_ids';
+        $found      = false;
+        $orders_ids = $this->wpml_cache->get( $cache_key, $found );
 
         if ( ! $found ) {
             $order_ids_array = $this->wpdb->get_col( "SELECT order_currency.post_id FROM {$this->wpdb->postmeta} AS order_currency
                             WHERE order_currency.meta_key = '_order_currency' AND order_currency.meta_value = '{$currency}'" );
             $orders_ids      = implode( ',', $order_ids_array );
 
-            $cache->set( $cache_key, $orders_ids );
+            $this->wpml_cache->set( $cache_key, $orders_ids );
         }
 
         return $orders_ids;
