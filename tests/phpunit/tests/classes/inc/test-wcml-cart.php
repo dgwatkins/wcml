@@ -15,9 +15,13 @@ class Test_WCML_Cart extends OTGS_TestCase {
 	public function setUp(){
 		parent::setUp();
 
+		\WP_Mock::wpPassthruFunction( '__' );
+		\WP_Mock::wpPassthruFunction( 'esc_html__' );
+		\WP_Mock::wpPassthruFunction( 'esc_url' );
+
 		$this->sitepress = $this->getMockBuilder('SitePress')
 			->disableOriginalConstructor()
-			->setMethods( array( 'get_wp_api' ) )
+			->setMethods( array( 'get_wp_api', 'get_element_trid' ) )
 			->getMock();
 
 		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )
@@ -154,6 +158,61 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		$translated_cart_item = $subject->translate_cart_contents( $cart_item );
 
 		$this->assertEquals( $variation_title, $translated_cart_item[ 'data' ]->post->post_title );
+
+	}
+
+	/**
+	 * @test
+	 * @expectedException Exception
+	 */
+	public function add_to_cart_sold_individually_exception(){
+
+		$qt = mt_rand( 1, 100 );
+		$quantity = mt_rand( 1, 100 );
+		$product_id = mt_rand( 1, 100 );
+		$variation_id = mt_rand( 1, 100 );
+		$cart_item_data = array();
+		$post_type = 'product_variation';
+
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'args' => $variation_id,
+			'return' => $post_type
+		) );
+
+		$this->sitepress->method('get_element_trid')->with( $variation_id, 'post_'.$post_type );
+
+		$woocommerce = $this->getMockBuilder( 'woocommerce' )
+		                    ->disableOriginalConstructor()
+		                    ->getMock();
+
+		$woocommerce->cart = $this->getMockBuilder( 'WC_Cart' )
+		                          ->disableOriginalConstructor()
+		                          ->getMock();
+
+		$cart_item = array();
+		$cart_item['variation_id'] = $variation_id;
+		$cart_item['quantity'] = mt_rand( 1, 10 );
+
+		$woocommerce->cart->cart_contents = array( $cart_item );
+
+		\WP_Mock::wpFunction( 'WC', array(
+			'return' => $woocommerce,
+			'times' => 1
+		) );
+
+		\WP_Mock::wpFunction( 'get_the_title', array(
+			'args' => array( $variation_id ),
+			'return' => rand_str(),
+			'times' => 1
+		) );
+
+		\WP_Mock::wpFunction( 'wc_get_cart_url', array(
+			'return' => rand_str(),
+			'times' => 1
+		) );
+
+		$subject = $this->get_subject();
+		$subject->add_to_cart_sold_individually_exception( $qt, $quantity, $product_id, $variation_id, $cart_item_data );
 
 	}
 
