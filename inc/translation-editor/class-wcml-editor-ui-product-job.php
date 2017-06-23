@@ -512,7 +512,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                             continue;
                         }
 
-                        $element_data[ 't_'.$term->term_taxonomy_id ] = array( 'original' => $term->name );
+                        $element_data[ 't_'.$term->term_taxonomy_id ] = array( 'original' => htmlspecialchars_decode( $term->name ) );
                         $element_data[ 't_'.$term->term_taxonomy_id ][ 'translation' ] = $translated_term->term_taxonomy_id != $term->term_taxonomy_id ? $translated_term->name : '';
                     }
                 }
