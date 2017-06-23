@@ -48,7 +48,7 @@ class WCML_Cart
             add_action( 'woocommerce_before_checkout_process', array( $this, 'wcml_refresh_cart_total' ) );
 
             add_filter('woocommerce_paypal_args', array($this, 'filter_paypal_args'));
-            add_filter( 'woocommerce_add_to_cart_sold_individually_quantity', array( $this, 'woocommerce_add_to_cart_sold_individually_quantity' ), 10, 5 );
+            add_filter( 'woocommerce_add_to_cart_sold_individually_quantity', array( $this, 'add_to_cart_sold_individually_exception' ), 10, 5 );
 
             $this->localize_flat_rates_shipping_classes();
         }
@@ -465,18 +465,56 @@ class WCML_Cart
         return $args;
     }
 
-    public function woocommerce_add_to_cart_sold_individually_quantity( $qt, $quantity, $product_id, $variation_id, $cart_item_data ){
+    public function add_to_cart_sold_individually_exception( $qt, $quantity, $product_id, $variation_id, $cart_item_data ) {
+
+        $post_id = $product_id;
+        if ( $variation_id ) {
+            $post_id = $variation_id;
+        }
 
         //check if product already added to cart in another language
-        $current_product_trid = $this->sitepress->get_element_trid( $product_id, 'post_product' );
+        foreach ( WC()->cart->cart_contents as $cart_item ) {
 
-        foreach( WC()->cart->cart_contents as $cart_item ){
-            $cart_element_trid = $this->sitepress->get_element_trid( $cart_item[ 'product_id' ], 'post_product' );
-            if( apply_filters( 'wcml_add_to_cart_sold_individually', true, $cart_item_data, $product_id, $quantity ) && $current_product_trid == $cart_element_trid && $cart_item[ 'quantity' ] > 0 ){
-                throw new Exception( sprintf( '<a href="%s" class="button wc-forward">%s</a> %s', esc_url( wc_get_cart_url() ), __( 'View Cart', 'woocommerce' ), sprintf( __( 'You cannot add another &quot;%s&quot; to your cart.', 'woocommerce' ), get_the_title( $product_id ) ) ) );
+            if ( $this->sold_individually_product( $cart_item, $cart_item_data, $post_id, $quantity ) ) {
+
+                $this->sold_individually_exception( $post_id );
+
             }
         }
 
         return $qt;
     }
+
+    public function sold_individually_product( $cart_item, $cart_item_data, $post_id, $quantity ){
+
+        $current_product_trid = $this->sitepress->get_element_trid( $post_id, 'post_' . get_post_type( $post_id ) );
+
+        if ( $cart_item['variation_id'] ) {
+            $cart_element_trid = $this->sitepress->get_element_trid( $cart_item['variation_id'], 'post_product_variation' );
+        } else {
+            $cart_element_trid = $this->sitepress->get_element_trid( $cart_item['product_id'], 'post_product' );
+        }
+
+        if ( apply_filters( 'wcml_add_to_cart_sold_individually', true, $cart_item_data, $post_id, $quantity ) &&
+             $current_product_trid == $cart_element_trid &&
+             $cart_item['quantity'] > 0
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function sold_individually_exception( $post_id ){
+
+        $wc_cart_url   = esc_url( wc_get_cart_url() );
+        $message_title = sprintf( esc_html__( 'You cannot add another &quot;%s&quot; to your cart.', 'woocommerce' ), get_the_title( $post_id ) );
+
+        $message = '<a href="' . $wc_cart_url . '" class="button wc-forward">' . esc_html__( 'View Cart', 'woocommerce' ) . '</a>';
+        $message .= ' ' . $message_title;
+
+        throw new Exception( $message );
+
+    }
+
 }
