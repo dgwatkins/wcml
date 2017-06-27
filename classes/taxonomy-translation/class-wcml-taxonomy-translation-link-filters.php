@@ -26,11 +26,11 @@ class WCML_Taxonomy_Translation_Link_Filters{
 			$taxonomy = get_taxonomy( $notice['id'] );
 			if ( false !== $taxonomy ) {
 
-				$link = sprintf(
-					'<a href="%s">%s</a>',
-					$this->get_screen_url( $taxonomy->name ),
-					sprintf( __( '%s translation', 'woocommerce-multilingual' ), $taxonomy->labels->singular_name )
-				);
+			$link = sprintf(
+				'<a href="%s">%s</a>',
+				$this->get_screen_url( $taxonomy->name ),
+				sprintf( esc_html__( '%s translation', 'woocommerce-multilingual' ), $taxonomy->labels->singular_name )
+			);
 
 				$text = sprintf(
 					esc_html__( 'Translating %s? Use the %s table for easier translation.', 'woocommerce-multilingual' ),
@@ -48,55 +48,47 @@ class WCML_Taxonomy_Translation_Link_Filters{
 	 *
 	 * @return string
 	 */
-	public function get_screen_url( $taxonomy = '' ){
-
+	public function get_screen_url( $taxonomy = '' ) {
 		$url = false;
 
+		$base_url = admin_url( 'admin.php' );
+		$args     = array( 'page' => 'wpml-wcml' );
+
 		$built_in_taxonomies = array( 'product_cat', 'product_tag', 'product_shipping_class' );
-		if( in_array( $taxonomy, $built_in_taxonomies ) ){
-
-			$url = add_query_arg( array( 'tab' => $taxonomy ), admin_url( 'admin.php?page=wpml-wcml' ) ) ;
-
+		if ( in_array( $taxonomy, $built_in_taxonomies, true ) ) {
+			$args['tab'] = $taxonomy;
 		} else {
 
-			$attributes = $this->wcml_attributes->get_translatable_attributes();
+			$attributes              = $this->wcml_attributes->get_translatable_attributes();
 			$translatable_attributes = array();
-			foreach( $attributes as $attribute ){
+			foreach ( $attributes as $attribute ) {
 				$translatable_attributes[] = 'pa_' . $attribute->attribute_name;
 			}
 
-			if( in_array( $taxonomy, $translatable_attributes ) ) {
-
-				$url = add_query_arg(
-					array( 'taxonomy' => $taxonomy ),
-					admin_url( 'admin.php?page=wpml-wcml&tab=product-attributes' )
-				);
-
-			}else{
-
+			if ( in_array( $taxonomy, $translatable_attributes, true ) ) {
+				$args['tab']      = 'product-attributes';
+				$args['taxonomy'] = $taxonomy;
+			} else {
 				$custom_taxonomies = get_object_taxonomies( 'product', 'objects' );
 
 				$translatable_taxonomies = array();
-				foreach( $custom_taxonomies as $product_taxonomy_name => $product_taxonomy_object ){
-					if( is_taxonomy_translated( $product_taxonomy_name ) ){
+				foreach ( $custom_taxonomies as $product_taxonomy_name => $product_taxonomy_object ) {
+					if ( is_taxonomy_translated( $product_taxonomy_name ) ) {
 						$translatable_taxonomies[] = $product_taxonomy_name;
 					}
 				}
 
-				if ( in_array( $taxonomy, $translatable_taxonomies ) ) {
-
-					$url = add_query_arg(
-						array( 'taxonomy' => $taxonomy ),
-						admin_url( 'admin.php?page=wpml-wcml&tab=custom-taxonomies' )
-					);
-
+				if ( in_array( $taxonomy, $translatable_taxonomies, true ) ) {
+					$args['tab']      = 'custom-taxonomies';
+					$args['taxonomy'] = $taxonomy;
 				}
-
 			}
+		}
 
+		if ( count( $args ) > 1 ) {
+			$url = add_query_arg( $args, $base_url );
 		}
 
 		return $url;
 	}
-
 }

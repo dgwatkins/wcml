@@ -3,7 +3,7 @@
 /**
  * Class Test_WCML_Taxonomy_Translation_Link_Filters
  * @group wcml-1988
- * @group taxonomies
+ * @group taxonomy-translation
  */
 class Test_WCML_Taxonomy_Translation_Link_Filters extends OTGS_TestCase {
 
@@ -68,6 +68,7 @@ class Test_WCML_Taxonomy_Translation_Link_Filters extends OTGS_TestCase {
 	 * @test
 	 */
 	public function override_translation_notice_text() {
+		\WP_Mock::wpPassthruFunction( 'admin_url' );
 
 		$subject = new WCML_Taxonomy_Translation_Link_Filters( $this->wcml_attributes );
 
@@ -115,23 +116,40 @@ class Test_WCML_Taxonomy_Translation_Link_Filters extends OTGS_TestCase {
 		// Built in product_tag
 		$taxonomy = 'product_tag';
 		$url      = $subject->get_screen_url( $taxonomy );
-		$this->assertEquals( 'admin.php?page=wpml-wcml&tab=' . $taxonomy, $url );
+
+		$this->assert_query_string_matches_values( $url, 'admin.php', array( 'page' => 'wpml-wcml', 'tab' => 'product_tag' ) );
 
 		// Built in product_shipping_class
 		$taxonomy = 'product_shipping_class';
 		$url      = $subject->get_screen_url( $taxonomy );
-		$this->assertEquals( 'admin.php?page=wpml-wcml&tab=' . $taxonomy, $url );
+		$this->assert_query_string_matches_values( $url, 'admin.php', array( 'page' => 'wpml-wcml', 'tab' => $taxonomy ) );
 
 		// Attribute
 		$taxonomy = 'pa_' . $this->translatable_attributes[0]->attribute_name;
 		$url      = $subject->get_screen_url( $taxonomy );
-		$this->assertEquals( 'admin.php?page=wpml-wcml&tab=product-attributes&taxonomy=' . $taxonomy, $url );
+		$this->assert_query_string_matches_values( $url, 'admin.php', array( 'page' => 'wpml-wcml', 'tab' => 'product-attributes', 'taxonomy' => $taxonomy ) );
 
 		// Custom taxonomy
 		$taxonomy = key( $this->translatable_custom_taxonomies );
 		$url      = $subject->get_screen_url( $taxonomy );
-		$this->assertEquals( 'admin.php?page=wpml-wcml&tab=custom-taxonomies&taxonomy=' . $taxonomy, $url );
+		$this->assert_query_string_matches_values( $url, 'admin.php', array( 'page' => 'wpml-wcml', 'tab' => 'custom-taxonomies', 'taxonomy' => $taxonomy ) );
 
+	}
+
+	private function assert_query_string_matches_values( $url, $expected_path, $expected_values ) {
+
+		$parsed_url = parse_url( $url );
+
+		$this->assertSame( $expected_path, $parsed_url['path'] );
+
+		parse_str( $parsed_url['query'], $parsed_querystring );
+		foreach ( $expected_values as $key => $value ) {
+			$this->assertArrayHasKey( $key, $parsed_querystring );
+			$this->assertSame( $value, $parsed_querystring[ $key ] );
+		}
+		foreach ( $parsed_querystring as $key => $value ) {
+			$this->assertArrayHasKey( $key, $expected_values, $key . '=' . $value .' in querystring was not expected' );
+		}
 	}
 
 }
