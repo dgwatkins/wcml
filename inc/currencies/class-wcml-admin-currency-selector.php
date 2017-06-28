@@ -106,24 +106,22 @@ class WCML_Admin_Currency_Selector{
         die();
     }
 
-    /*
-     * Set dashboard currency cookie
-     */
-    public function set_dashboard_currency( $currency_code = false ){
+	/*
+	 * Set dashboard currency cookie
+	 * @param string $currency_code
+	 */
+	public function set_dashboard_currency( $currency_code = '' ) {
 
-        if( !$currency_code && !headers_sent()){
-            $order_currencies = $this->woocommerce_wpml->multi_currency->orders->get_orders_currencies();
-            $currency_code = get_woocommerce_currency();
-            if(!isset($order_currencies[$currency_code])){
-                foreach( $order_currencies as $currency_code => $count ){
-                    $currency_code = $currency_code;
-                    break;
-                }
-            }
-        }
+		if ( ! $currency_code && ! headers_sent() ) {
+			$order_currencies = $this->woocommerce_wpml->multi_currency->orders->get_orders_currencies();
+			$currency_code    = get_woocommerce_currency();
+			if ( ! isset( $order_currencies[ $currency_code ] ) ) {
+				$currency_code = key( $order_currencies );
+			}
+		}
 
-        setcookie('_wcml_dashboard_currency', $currency_code , time() + 86400, COOKIEPATH, COOKIE_DOMAIN);
-    }
+		setcookie( '_wcml_dashboard_currency', $currency_code, time() + DAY_IN_SECONDS , COOKIEPATH, COOKIE_DOMAIN );
+	}
 
     /*
      * Get dashboard currency cookie

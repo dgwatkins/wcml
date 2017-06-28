@@ -29,7 +29,10 @@ class WCML_Multi_Currency_Reports{
         $this->wpdb             = $wpdb;
 
         $cache_group      = 'WCML_Multi_Currency_Reports';
-        $this->wpml_cache = is_null( $wpml_cache ) ? new WPML_WP_Cache( $cache_group ) : $wpml_cache;
+	    $this->wpml_cache = $wpml_cache;
+	    if ( null === $wpml_cache ) {
+		    $this->wpml_cache = new WPML_WP_Cache( $cache_group );
+	    }
 
     }
 
@@ -217,8 +220,15 @@ class WCML_Multi_Currency_Reports{
         $orders_ids = $this->wpml_cache->get( $cache_key, $found );
 
         if ( ! $found ) {
-            $order_ids_array = $this->wpdb->get_col( "SELECT order_currency.post_id FROM {$this->wpdb->postmeta} AS order_currency
-                            WHERE order_currency.meta_key = '_order_currency' AND order_currency.meta_value = '{$currency}'" );
+            $order_ids_array = $this->wpdb->get_col(
+                    $this->wpdb->prepare( "
+                        SELECT order_currency.post_id 
+                        FROM {$this->wpdb->postmeta} AS order_currency
+                        WHERE order_currency.meta_key = '_order_currency' 
+                            AND order_currency.meta_value = %s
+                    ", $currency
+                    )
+            );
             $orders_ids      = implode( ',', $order_ids_array );
 
             $this->wpml_cache->set( $cache_key, $orders_ids );

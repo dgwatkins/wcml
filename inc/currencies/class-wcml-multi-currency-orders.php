@@ -70,7 +70,7 @@ class WCML_Multi_Currency_Orders{
         ");
 
         foreach($results as $row){
-            $currencies[$row->currency] = intval($row->c);
+            $currencies[$row->currency] = (int) $row->c;
         }
 
         wp_cache_set( $cache_key, $currencies );
