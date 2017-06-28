@@ -57,14 +57,14 @@ class Test_WCML_Multi_Currency_Reports extends OTGS_TestCase {
 	/**
 	 * @return WCML_Multi_Currency_Reports
 	 */
-	private function get_subject(){
+	private function get_subject() {
 		return new WCML_Multi_Currency_Reports( $this->woocommerce_wpml, $this->sitepress, $this->wpdb, $this->wpml_cache );
 	}
 
 	/**
 	 * @test
 	 */
-	public function get_dashboard_currency_list_of_orders_ids(){
+	public function get_dashboard_currency_list_of_orders_ids() {
 
 		$dashboard_currency = rand_str();
 
@@ -79,7 +79,7 @@ class Test_WCML_Multi_Currency_Reports extends OTGS_TestCase {
 		                                                                        ->getMock();
 		$this->woocommerce_wpml->multi_currency->admin_currency_selector->method( 'get_cookie_dashboard_currency' )->willReturn( $dashboard_currency );
 
-		$order_ids = array();
+		$order_ids   = array();
 		$order_ids[] = mt_rand( 1, 100 );
 		$order_ids[] = mt_rand( 101, 200 );
 
@@ -89,6 +89,6 @@ class Test_WCML_Multi_Currency_Reports extends OTGS_TestCase {
 
 		$orders_ids_list = $subject->get_dashboard_currency_list_of_orders_ids();
 
-		$this->assertEquals( implode(',', $order_ids), $orders_ids_list );
+		$this->assertEquals( implode( ',', $order_ids ), $orders_ids_list );
 	}
 }
