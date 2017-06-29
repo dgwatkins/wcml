@@ -105,6 +105,78 @@ class Test_Endpoints extends OTGS_TestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function lost_password_filter_get_endpoint_url(){
+
+		$wcml      = $this->get_wcml();
+		$subject = new WCML_Endpoints( $wcml );
+
+		$url = rand_str();
+		$endpoint = rand_str();
+		$translated_endpoint = rand_str();
+		$value = rand_str();
+		$permalink = rand_str();
+		$translated_endpoint_url = rand_str();
+
+		WP_Mock::wpFunction(
+			'get_option',
+			array(
+				'args'   => array( 'woocommerce_myaccount_lost_password_endpoint' ),
+				'return' => $endpoint
+			)
+		);
+
+		\WP_Mock::wpFunction( 'remove_filter', array( 'times' => 1, 'return' => true ) );
+		\WP_Mock::wpFunction( 'WC', array( 'times' => 1, 'return' => false ) );
+
+		WP_Mock::onFilter( 'wpml_translate_single_string' )
+		       ->with( $endpoint, 'WooCommerce Endpoints', 'lost-password' )
+		       ->reply( $translated_endpoint );
+
+		WP_Mock::wpFunction(
+			'wc_get_endpoint_url',
+			array(
+				'args'   => array( $translated_endpoint ),
+				'return' => $translated_endpoint_url
+			)
+		);
+
+		\WP_Mock::expectFilterAdded( 'woocommerce_get_endpoint_url', array( $subject, 'filter_get_endpoint_url' ), 10, 4 );
+
+		$filtered_endpoint_url = $subject->filter_get_endpoint_url( $url, $endpoint, $value, $permalink );
+
+		$this->assertEquals( $translated_endpoint_url, $filtered_endpoint_url );
+	}
+
+	/**
+	 * @test
+	 */
+	public function default_endpoint_filter_get_endpoint_url(){
+
+		$url = rand_str();
+		$endpoint = rand_str();
+		$value = rand_str();
+		$permalink = rand_str();
+
+		$wcml      = $this->get_wcml();
+		$subject = new WCML_Endpoints( $wcml );
+
+		WP_Mock::wpFunction(
+			'get_option',
+			array(
+				'args'   => array( 'woocommerce_myaccount_lost_password_endpoint' ),
+				'return' => rand_str()
+			)
+		);
+
+		$filtered_endpoint_url = $subject->filter_get_endpoint_url( $url, $endpoint, $value, $permalink );
+
+		$this->assertEquals( $url, $filtered_endpoint_url );
+
+	}
+
+	/**
 	 * @return PHPUnit_Framework_MockObject_MockObject|woocommerce_wpml
 	 */
 	private function get_wcml() {
