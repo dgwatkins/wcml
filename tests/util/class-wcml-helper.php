@@ -407,9 +407,14 @@ class WCML_Helper {
 		global $WPML_String_Translation, $st_gettext_hooks;
 		$WPML_String_Translation->clear_string_filter( $language );
 
-        icl_cache_clear();
-        wp_cache_init();
-    $st_gettext_hooks->clear_filters();}
+		icl_cache_clear();
+		wp_cache_init();
+
+		if ( null !== $st_gettext_hooks ) {
+			$st_gettext_hooks->clear_filters();
+		}
+
+	}
 
 	public static function set_custom_field_to_translate( $name ) {
 
