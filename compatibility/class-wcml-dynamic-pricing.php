@@ -13,17 +13,31 @@ class WCML_Dynamic_Pricing {
 	/**
 	 * WCML_Dynamic_Pricing constructor.
 	 *
-	 * @param $sitepress
+	 * @param SitePress $sitepress
 	 */
-	function __construct( &$sitepress ) {
+	function __construct( SitePress $sitepress ) {
+
+		$this->sitepress = $sitepress;
+	}
+
+	public function add_hooks() {
+
 		if ( ! is_admin() ) {
-			$this->sitepress = $sitepress;
 			add_filter( 'wc_dynamic_pricing_load_modules', array( $this, 'filter_price' ) );
-			add_filter( 'woocommerce_dynamic_pricing_is_applied_to', array( $this, 'woocommerce_dynamic_pricing_is_applied_to' ), 10, 5 );
-			add_filter( 'woocommerce_dynamic_pricing_get_rule_amount', array( $this, 'woocommerce_dynamic_pricing_get_rule_amount' ), 10, 2 );
+			add_filter( 'woocommerce_dynamic_pricing_is_applied_to', array(
+				$this,
+				'woocommerce_dynamic_pricing_is_applied_to'
+			), 10, 5 );
+			add_filter( 'woocommerce_dynamic_pricing_get_rule_amount', array(
+				$this,
+				'woocommerce_dynamic_pricing_get_rule_amount'
+			), 10, 2 );
 			add_filter( 'dynamic_pricing_product_rules', array( $this, 'dynamic_pricing_product_rules' ) );
 			add_filter( 'wcml_calculate_totals_exception', array( $this, 'calculate_totals_exception' ) );
+		} else {
+			add_filter( 'woocommerce_product_get__pricing_rules', array( $this, 'translate_variations_in_rules' ) );
 		}
+
 	}
 
 	/**
@@ -113,4 +127,24 @@ class WCML_Dynamic_Pricing {
 	function calculate_totals_exception() {
 		return false;
 	}
+
+	/**
+	 * @param $rules
+	 *
+	 * @return array
+	 */
+	function translate_variations_in_rules( $rules ) {
+		if ( is_array( $rules ) ) {
+			foreach ( $rules as $r_key => $rule ) {
+				if ( array_key_exists( 'variation_rules', $rule ) ) {
+					foreach ( $rule['variation_rules']['args']['variations'] as $i => $variation_id ) {
+						$rules[ $r_key ]['variation_rules']['args']['variations'][ $i ] = apply_filters( 'translate_object_id', $variation_id, 'product_variation', true );
+					}
+				}
+			}
+		}
+
+		return $rules;
+	}
+
 }

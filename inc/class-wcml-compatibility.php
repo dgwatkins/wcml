@@ -114,6 +114,7 @@ class WCML_Compatibility {
 		// Dynamic Pricing
 		if ( class_exists( 'WC_Dynamic_Pricing' ) ) {
 			$this->dynamic_pricing = new WCML_Dynamic_Pricing( $this->sitepress );
+			$this->dynamic_pricing->add_hooks();
 		}
 
 		// WooCommerce Bookings
