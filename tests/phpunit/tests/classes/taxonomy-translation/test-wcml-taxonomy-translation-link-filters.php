@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class Test_WCML_Taxonomy_Translation_Link_Filters
+ * @group wcml-1988
+ * @group taxonomies
+ */
 class Test_WCML_Taxonomy_Translation_Link_Filters extends OTGS_TestCase {
 
 	/**
@@ -50,7 +55,7 @@ class Test_WCML_Taxonomy_Translation_Link_Filters extends OTGS_TestCase {
 
 		$subject = new WCML_Taxonomy_Translation_Link_Filters( $this->wcml_attributes );
 
-		\WP_Mock::expectFilterAdded( 'wpml_notice_text_taxonomy-term-help-notices', array(
+		\WP_Mock::expectFilterAdded( 'wpml_notice_text', array(
 			$subject,
 			'override_translation_notice_text'
 		), 10, 2 );
@@ -66,11 +71,7 @@ class Test_WCML_Taxonomy_Translation_Link_Filters extends OTGS_TestCase {
 
 		$subject = new WCML_Taxonomy_Translation_Link_Filters( $this->wcml_attributes );
 
-		$notice = $this->getMockBuilder( 'WPML_Notice' )
-		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'get_id' ) )
-		               ->getMock();
-		$notice->method( 'get_id' )->willReturn( rand_str() );
+		$notice = ['id' => rand_str(), 'group' => 'taxonomy-term-help-notices' ];
 
 		$taxonomy = $this->getMockBuilder( 'WP_Taxonomy' )
 		                 ->disableOriginalConstructor()
@@ -86,7 +87,6 @@ class Test_WCML_Taxonomy_Translation_Link_Filters extends OTGS_TestCase {
 		$text = rand_str();
 
 		$subject->override_translation_notice_text( $text, $notice );
-
 	}
 
 	/**

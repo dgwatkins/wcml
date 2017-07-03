@@ -7,37 +7,37 @@ class WCML_Taxonomy_Translation_Link_Filters{
 	 */
 	private $wcml_attributes;
 
-	public function __construct( $wcml_attributes ) {
+	public function __construct( WCML_Attributes $wcml_attributes ) {
 		$this->wcml_attributes = $wcml_attributes;
 	}
 
 	public function add_filters(){
-		add_filter( 'wpml_notice_text_taxonomy-term-help-notices', array( $this, 'override_translation_notice_text' ), 10, 2 );
-
+		add_filter( 'wpml_notice_text', array( $this, 'override_translation_notice_text' ), 10, 2 );
 	}
 
 	/**
 	 * @param string text
-	 * @param WPML_Notice $notice
+	 * @param array $notice
 	 *
 	 * @return string
 	 */
 	public function override_translation_notice_text( $text, $notice ) {
+		if( 'taxonomy-term-help-notices' === $notice['group'] ) {
+			$taxonomy = get_taxonomy( $notice['id'] );
+			if ( false !== $taxonomy ) {
 
-		$taxonomy = get_taxonomy( $notice->get_id() );
-		if ( false !== $taxonomy ) {
+				$link = sprintf(
+					'<a href="%s">%s</a>',
+					$this->get_screen_url( $taxonomy->name ),
+					sprintf( __( '%s translation', 'woocommerce-multilingual' ), $taxonomy->labels->singular_name )
+				);
 
-			$link = sprintf(
-				'<a href="%s">%s</a>',
-				$this->get_screen_url( $taxonomy->name ),
-				sprintf ( __( '%s translation', 'woocommerce-multilingual' ), $taxonomy->labels->singular_name )
-			);
-
-			$text = sprintf(
-				esc_html__( 'Translating %s? Use the %s table for easier translation.', 'woocommerce-multilingual' ),
-				$taxonomy->labels->name,
-				$link
-			);
+				$text = sprintf(
+					esc_html__( 'Translating %s? Use the %s table for easier translation.', 'woocommerce-multilingual' ),
+					$taxonomy->labels->name,
+					$link
+				);
+			}
 		}
 
 		return $text;
