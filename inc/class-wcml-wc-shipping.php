@@ -122,7 +122,7 @@ class WCML_WC_Shipping{
 
 	function translate_shipping_method_title( $title, $shipping_id, $language = false ) {
 
-		if ( is_admin() ) {
+		if ( is_admin() && did_action( 'admin_init' ) ) {
 			$screen        = get_current_screen();
 			$is_edit_order = $screen->id === 'shop_order';
 		} else {
