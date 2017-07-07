@@ -18,6 +18,8 @@ define( 'WP_CONTENT_DIR', WPML_TESTS_SITE_DIR . '/wp-content' );
 define( 'WP_PLUGIN_URL', WP_CONTENT_URL . '/plugins' );
 define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 
+require_once __DIR__ . '/includes/missing-php-functions.php';
+
 $autoloader_dir = WCML_PATH . '/vendor';
 if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
 	$autoloader = $autoloader_dir . '/autoload.php';
