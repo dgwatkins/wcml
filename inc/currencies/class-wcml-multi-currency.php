@@ -90,7 +90,7 @@ class WCML_Multi_Currency{
      * WCML_Multi_Currency constructor.
      */
     public function __construct(){
-        global $woocommerce_wpml, $sitepress, $wpdb;
+        global $woocommerce_wpml, $sitepress, $wpdb, $wp_locale;
 
         $this->woocommerce_wpml =& $woocommerce_wpml;
 
@@ -118,7 +118,13 @@ class WCML_Multi_Currency{
         $this->currency_switcher->add_hooks();
         $this->currency_switcher_ajax   = new WCML_Currency_Switcher_Ajax( $woocommerce_wpml );
 
-        $this->exchange_rate_services   = new WCML_Exchange_Rates( $this->woocommerce_wpml );
+        $this->exchange_rate_services   = new WCML_Exchange_Rates( $this->woocommerce_wpml, $wp_locale );
+	    $this->exchange_rate_services->initialize_settings();
+	    $this->exchange_rate_services->add_actions();
+	    $this->exchange_rate_services->add_service( 'yahoo', new WCML_Exchange_Rates_YahooFinance() );
+	    $this->exchange_rate_services->add_service( 'fixierio', new WCML_Exchange_Rates_Fixierio() );
+	    $this->exchange_rate_services->add_service( 'currencylayer', new WCML_Exchange_Rates_Currencylayer() );
+
 
         if( defined('W3TC') ){
             $this->W3TC = new WCML_W3TC_Multi_Currency();

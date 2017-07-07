@@ -27,7 +27,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
      * @test
      */
     public function test_initialize_settings(){
-
+		global $wp_locale;
         // 1) WCML_Exchange_Rates::initialize_settings will set defaults when settings don't exist
         $defaults = array(
             'automatic'      => 0,
@@ -40,7 +40,8 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
         unset( $this->woocommerce_wpml->settings['multi_currency']['exchange_rates'] ); //reset
         // test private method by calling the constructor again
         // will write to the the wcml global settings
-        new WCML_Exchange_Rates( $this->woocommerce_wpml ); // calls WCML_Exchange_Rates::initialize_settings
+	    $wcml_exchange_rates = new WCML_Exchange_Rates( $this->woocommerce_wpml, $wp_locale ); // calls WCML_Exchange_Rates::initialize_settings
+	    $wcml_exchange_rates->initialize_settings();
 
         $this->assertEquals( $defaults, $this->woocommerce_wpml->settings['multi_currency']['exchange_rates'] );
 
@@ -55,10 +56,10 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
             'lifting_charge' => 0
         );
         $this->woocommerce_wpml->settings['multi_currency']['exchange_rates'] = $custom;
-        new WCML_Exchange_Rates( $this->woocommerce_wpml ); // calls WCML_Exchange_Rates::initialize_settings
+	    $wcml_exchange_rates = new WCML_Exchange_Rates( $this->woocommerce_wpml, $wp_locale ); // calls WCML_Exchange_Rates::initialize_settings
+	    $wcml_exchange_rates->initialize_settings();
 
         $this->assertEquals( $custom, $this->woocommerce_wpml->settings['multi_currency']['exchange_rates'] );
-
 
     }
 
@@ -180,8 +181,10 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
      * @test
      */
     public function test_update_exchange_rates(){
+		global $wp_locale;
 
-        $exchange_rate_services = new WCML_Exchange_Rates( $this->woocommerce_wpml );
+        $exchange_rate_services = new WCML_Exchange_Rates( $this->woocommerce_wpml, $wp_locale );
+	    $exchange_rate_services->initialize_settings();
 
         $mocked_exchange_rate_service = $this->getMockBuilder( 'WCML_Exchange_Rates_YahooFinance' )
             ->disableOriginalConstructor()
@@ -289,7 +292,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
         $custom[ 'update-schedule' ] = 'daily';
         $this->exchange_rate_services->update_exchange_rate_options( $custom );
 
-        $schedule = wp_get_schedule( WCML_Exchange_Rates::cronjob_event );
+        $schedule = wp_get_schedule( WCML_Exchange_Rates::CRONJOB_EVENT );
         $this->assertEquals( 'daily',  $schedule );
 
 
@@ -299,7 +302,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
 
         $this->exchange_rate_services->update_exchange_rate_options( $custom );
 
-        $schedule = wp_get_schedule( WCML_Exchange_Rates::cronjob_event );
+        $schedule = wp_get_schedule( WCML_Exchange_Rates::CRONJOB_EVENT );
         $this->assertEquals( 'wcml_weekly_on_4',  $schedule );
 
 
@@ -308,7 +311,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
 
         $this->exchange_rate_services->update_exchange_rate_options( $custom );
 
-        $schedule = wp_get_schedule( WCML_Exchange_Rates::cronjob_event );
+        $schedule = wp_get_schedule( WCML_Exchange_Rates::CRONJOB_EVENT );
         $this->assertFalse( $schedule );
 
         // restore settings
@@ -327,7 +330,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
         $this->exchange_rate_services->save_setting( 'schedule', 'daily' );
         $this->exchange_rate_services->enable_update_cronjob();
 
-        $schedule = wp_get_schedule( WCML_Exchange_Rates::cronjob_event );
+        $schedule = wp_get_schedule( WCML_Exchange_Rates::CRONJOB_EVENT );
         $this->assertEquals( 'daily',  $schedule );
 
         // weekly
@@ -335,7 +338,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
         $this->exchange_rate_services->save_setting( 'week_day', '2' );
         $this->exchange_rate_services->enable_update_cronjob();
 
-        $schedule = wp_get_schedule( WCML_Exchange_Rates::cronjob_event );
+        $schedule = wp_get_schedule( WCML_Exchange_Rates::CRONJOB_EVENT );
         $this->assertEquals( 'wcml_weekly_on_2',  $schedule );
 
         // monthly
@@ -343,14 +346,14 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
         $this->exchange_rate_services->save_setting( 'month_day', '12' );
         $this->exchange_rate_services->enable_update_cronjob();
 
-        $schedule = wp_get_schedule( WCML_Exchange_Rates::cronjob_event );
+        $schedule = wp_get_schedule( WCML_Exchange_Rates::CRONJOB_EVENT );
         $this->assertEquals( 'wcml_monthly_on_12',  $schedule );
 
         // manual
         $this->exchange_rate_services->save_setting( 'schedule', 'manual' );
         $this->exchange_rate_services->enable_update_cronjob();
 
-        $schedule = wp_get_schedule( WCML_Exchange_Rates::cronjob_event );
+        $schedule = wp_get_schedule( WCML_Exchange_Rates::CRONJOB_EVENT );
         $this->assertFalse( $schedule );
 
     }
@@ -365,7 +368,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
         $this->exchange_rate_services->enable_update_cronjob();
 
         $this->exchange_rate_services->delete_update_cronjob();
-        $schedule = wp_get_schedule( WCML_Exchange_Rates::cronjob_event );
+        $schedule = wp_get_schedule( WCML_Exchange_Rates::CRONJOB_EVENT );
         $this->assertFalse( $schedule );
 
 
