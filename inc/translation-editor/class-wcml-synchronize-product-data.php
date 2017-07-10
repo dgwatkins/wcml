@@ -247,7 +247,22 @@ class WCML_Synchronize_Product_Data{
     }
 
     public function sync_linked_products( $product_id, $translated_product_id, $lang ){
-        //sync up-sells
+
+        $this->sync_up_sells_products( $product_id, $translated_product_id, $lang );
+        $this->sync_cross_sells_products( $product_id, $translated_product_id, $lang );
+        $this->sync_grouped_products( $product_id, $translated_product_id, $lang );
+
+        // refresh parent-children transients (e.g. this child goes to private or draft)
+        $translated_product_parent_id = wp_get_post_parent_id( $translated_product_id );
+        if ( $translated_product_parent_id ) {
+            delete_transient( 'wc_product_children_' . $translated_product_parent_id );
+            delete_transient( '_transient_wc_product_children_ids_' . $translated_product_parent_id );
+        }
+
+    }
+
+    public function sync_up_sells_products( $product_id, $translated_product_id, $lang ){
+
         $original_up_sells = maybe_unserialize( get_post_meta( $product_id, '_upsell_ids', true ) );
         $trnsl_up_sells = array();
         if( $original_up_sells ){
@@ -256,7 +271,11 @@ class WCML_Synchronize_Product_Data{
             }
         }
         update_post_meta( $translated_product_id, '_upsell_ids', $trnsl_up_sells );
-        //sync cross-sells
+
+    }
+
+    public function sync_cross_sells_products( $product_id, $translated_product_id, $lang ){
+
         $original_cross_sells = maybe_unserialize( get_post_meta( $product_id, '_crosssell_ids', true ) );
         $trnsl_cross_sells = array();
         if( $original_cross_sells )
@@ -264,15 +283,20 @@ class WCML_Synchronize_Product_Data{
                 $trnsl_cross_sells[] = apply_filters( 'translate_object_id', $original_cross_sell_product, get_post_type( $original_cross_sell_product ), false, $lang );
             }
         update_post_meta( $translated_product_id, '_crosssell_ids', $trnsl_cross_sells );
-        // refresh parent-children transients (e.g. this child goes to private or draft)
-        $translated_product_parent_id = wp_get_post_parent_id( $translated_product_id );
-        if ( $translated_product_parent_id ) {
-            delete_transient( 'wc_product_children_' . $translated_product_parent_id );
-            delete_transient( '_transient_wc_product_children_ids_' . $translated_product_parent_id );
-        }
+
     }
 
+    public function sync_grouped_products( $product_id, $translated_product_id, $lang ){
 
+        $original_children = maybe_unserialize( get_post_meta( $product_id, '_children', true ) );
+        $translated_children = array();
+        if( $original_children )
+            foreach( $original_children as $original_children_product ){
+                $translated_children[] = apply_filters( 'translate_object_id', $original_children_product, get_post_type( $original_children_product ), false, $lang );
+            }
+        update_post_meta( $translated_product_id, '_children', $translated_children );
+
+    }
 
     public function sync_product_stocks_reduce( $order ){
         return $this->sync_product_stocks( $order, 'reduce' );
