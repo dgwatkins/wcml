@@ -28,7 +28,7 @@ require WCML_PLUGIN_PATH . '/inc/woocommerce-functions-wrapper.php';
 include WCML_PLUGIN_PATH . '/inc/installer-loader.php';
 include WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
 include WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
-include WCML_PLUGIN_PATH . '/inc/wcml-cart-switch-lang-functions.php';
+include WCML_PLUGIN_PATH . '/inc/class-wcml-cart-switch-lang-functions.php';
 
 if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ) {
 	global $sitepress;
