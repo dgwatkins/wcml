@@ -15,6 +15,7 @@ jQuery(document).ready(function($){
         'parent_id',
         'crosssell_ids',
         'upsell_ids',
+        'grouped_products',
         'product_shipping_class'
     ];
 

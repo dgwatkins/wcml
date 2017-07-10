@@ -65,4 +65,41 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function sync_grouped_products(){
+
+		$product_id = mt_rand( 1, 10 );
+		$translated_product_id = mt_rand( 10, 20 );
+		$language = rand_str();
+
+		$original_child = mt_rand( 20, 30 );
+		$translated_child = mt_rand( 30, 40 );
+
+		\WP_Mock::wpPassthruFunction('maybe_unserialize');
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_children', true ),
+			'return' => array( $original_child )
+		));
+
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'args'   => array( $original_child ),
+			'return' => 'product'
+		));
+
+		\WP_Mock::onFilter( 'translate_object_id' )->with( $original_child, 'product', false, $language )->reply( $translated_child );
+
+		\WP_Mock::wpFunction( 'update_post_meta', array(
+			'args'   => array( $translated_product_id, '_children', array( $translated_child ) ),
+			'return' => true,
+			'times'  => 1
+		));
+
+		$subject = $this->get_subject();
+		$subject->sync_grouped_products( $product_id, $translated_product_id, $language );
+	}
+
+
 }
