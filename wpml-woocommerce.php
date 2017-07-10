@@ -28,7 +28,12 @@ require WCML_PLUGIN_PATH . '/inc/woocommerce-functions-wrapper.php';
 include WCML_PLUGIN_PATH . '/inc/installer-loader.php';
 include WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
 include WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
-include WCML_PLUGIN_PATH . '/inc/class-wcml-cart-switch-lang-functions.php';
+
+if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
+	require WCML_PLUGIN_PATH . '/vendor/autoload.php';
+} else {
+	require WCML_PLUGIN_PATH . '/vendor/autoload_52.php';
+}
 
 if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ) {
 	global $sitepress;
@@ -39,12 +44,6 @@ if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists
 	//cart related language switching functions
 	$wcml_cart_switch_lang_functions = new WCML_Cart_Switch_Lang_Functions();
 	$wcml_cart_switch_lang_functions->add_actions();
-}
-
-if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
-	require WCML_PLUGIN_PATH . '/vendor/autoload.php';
-} else {
-	require WCML_PLUGIN_PATH . '/vendor/autoload_52.php';
 }
 
 // Load WooCommerce Multilingual when WPML is active
