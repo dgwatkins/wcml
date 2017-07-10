@@ -314,7 +314,7 @@ class WCML_Currency_Switcher_Templates {
     public function enqueue_template_resources( $templates = false ) {
 
         if( !$templates ){
-            $templates =  $this->get_active_templates();
+            $templates =  $this->get_active_templates( true );
         }
 
         $wcml_settings = $this->woocommerce_wpml->get_settings();

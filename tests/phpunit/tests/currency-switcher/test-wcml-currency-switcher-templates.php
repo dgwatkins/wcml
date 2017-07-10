@@ -193,12 +193,14 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 		if ( ! defined( 'WCML_VERSION' ) ) {
 			define( 'WCML_VERSION', '0.0.0' );
 		}
+
+		$switcher_id = rand_str();
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
 		$wcml_settings    = array(
 			'currency_switcher_additional_css' => 'some_additional_css',
 			'currency_switchers'               => array(
-				'switcher1' => array(
-					'switcher_style' => 'template1',
+				$switcher_id => array(
+					'switcher_style' => 'wcml-dropdown',
 					'color_scheme'   => array(
 						'border_normal'             => '1px solid red',
 						'font_other_normal'         => 'red',
@@ -213,7 +215,7 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 				),
 			),
 		);
-		$woocommerce_wpml->expects( $this->once() )->method( 'get_settings' )->willReturn( $wcml_settings );
+		$woocommerce_wpml->method( 'get_settings' )->willReturn( $wcml_settings );
 		$methods                         = array(
 			'get_scripts',
 			'get_styles',
@@ -249,11 +251,16 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 		) );
 		\WP_Mock::wpPassthruFunction( 'wp_strip_all_tags' );
 
+		$woocommerce_wpml->cs_properties              = $this->getMockBuilder( 'WCML_Currency_Switcher_Properties' )->disableOriginalConstructor()->setMethods( array( 'is_currency_switcher_active' ) )->getMock();
+		$woocommerce_wpml->cs_properties->method( 'is_currency_switcher_active' )->with( $switcher_id, $wcml_settings )->willReturn( true );
+
 		$templates = array(
-			'template1' => $wcml_currency_switcher_template,
+			'wcml-dropdown' => $wcml_currency_switcher_template,
 		);
 		$subject   = $this->get_subject( $woocommerce_wpml );
-		$subject->enqueue_template_resources( $templates );
+		$subject->set_templates( $templates );
+
+		$subject->enqueue_template_resources( );
 	}
 
 	/**
