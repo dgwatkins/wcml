@@ -5,9 +5,31 @@
  */
 class Test_WCML_Shipping extends OTGS_TestCase {
 
-	private function get_subject( $sitepress ){
+	private function get_subject( $sitepress = null ){
+
+		if( null === $sitepress ){
+			$sitepress = $this->get_sitepress_mock();
+		}
 
 		return new WCML_WC_Shipping( $sitepress );
+	}
+
+	private function get_sitepress_mock() {
+		return $this->getMockBuilder( 'SitePress' )
+		            ->disableOriginalConstructor()
+		            ->setMethods( array(
+			            'get_current_language',
+			            'get_element_trid',
+			            'get_element_translations'
+		            ) )
+		            ->getMock();
+
+	}
+
+	private function get_wp_term_mock() {
+		return $this->getMockBuilder( 'WP_Term' )
+		            ->disableOriginalConstructor()
+		            ->getMock();
 
 	}
 
