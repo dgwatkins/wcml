@@ -10,6 +10,8 @@ class Test_WCML_Products extends OTGS_TestCase {
 	private $wpdb;
 	/** @var WPML_WP_Cache */
 	private $wpml_cache;
+	/** @var WPML_WP_API $wp_api */
+	private $wp_api;
 
 	private $default_language = 'en';
 	private $cached_data = array();
@@ -22,9 +24,16 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$this->sitepress = $this->getMockBuilder( 'SitePress' )
 		                        ->disableOriginalConstructor()
 		                        ->setMethods( array(
-			                        'get_current_language',
+			                        'get_current_language', 'get_wp_api', 'get_setting', 'convert_url'
 		                        ) )
 		                        ->getMock();
+
+		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		                     ->disableOriginalConstructor()
+		                     ->setMethods( array( 'constant' ) )
+		                     ->getMock();
+
+		$this->sitepress->method( 'get_wp_api' )->willReturn( $this->wp_api );
 
 
 		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
@@ -75,6 +84,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$subject = $this->get_subject();
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_shortcode_products_query', array( $subject, 'add_lang_to_shortcode_products_query' ) );
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_file_download_path', array( $subject, 'filter_file_download_path' ) );
 
 		$subject->add_hooks();
 	}
@@ -185,6 +195,50 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$subject = $this->get_subject();
 
 		$this->assertTrue( $subject->is_downloadable_product( $product ) );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function filter_file_download_path_default() {
+
+		$file_path              = rand_str();
+
+		$subject            = $this->get_subject();
+		$filtered_file_path = $subject->filter_file_download_path( $file_path );
+
+		$this->assertEquals( $file_path, $filtered_file_path );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function filter_file_download_path_per_domain(){
+
+		$negotation_type_domain = mt_rand( 1, 10);
+		$file_path = rand_str();
+		$converted_file_path = rand_str();
+
+		$this->wp_api->method( 'constant' )
+		             ->with( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' )
+		             ->willReturn( $negotation_type_domain );
+
+		$this->sitepress->expects( $this->once() )
+		                ->method( 'get_setting' )
+		                ->with( 'language_negotiation_type' )
+		                ->willReturn( $negotation_type_domain );
+
+		$this->sitepress->method( 'convert_url' )
+		                ->with( $file_path )
+		                ->willReturn( $converted_file_path );
+
+		$subject = $this->get_subject();
+		$filtered_file_path = $subject->filter_file_download_path( $file_path );
+
+		$this->assertEquals( $converted_file_path, $filtered_file_path );
+
 
 	}
 
