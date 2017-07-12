@@ -8,7 +8,6 @@ class Test_WCML_Cart_Switch_Lang_Functions extends OTGS_TestCase {
 
 	/**
 	 * @test
-	 * @group spec
 	 */
 	public function add_actions(){
 

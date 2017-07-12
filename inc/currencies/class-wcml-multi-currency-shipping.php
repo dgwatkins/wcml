@@ -87,7 +87,7 @@ class WCML_Multi_Currency_Shipping{
             if(
                 $settings['requires'] == 'min_amount' ||
                 $settings['requires'] == 'either' ||
-                $settings['requires'] == 'both' && $has_free_shipping_coupon
+                ( $settings['requires'] == 'both' && $has_free_shipping_coupon )
             ){
                 $settings['min_amount'] = apply_filters( 'wcml_shipping_free_min_amount', $settings['min_amount'] );
             }
@@ -96,16 +96,14 @@ class WCML_Multi_Currency_Shipping{
         return $settings;
     }
 
-    /**
-     * @param $args
-     * @param $sum
-     * @param $method
-     * @return array
-     *
-     * When using [cost] in the shipping class costs, we need to use the not-converted cart total
-     * It will be converted as part of the total cost
-     *
-     */
+	/**
+	 * @param array $args
+	 *
+	 * When using [cost] in the shipping class costs, we need to use the not-converted cart total
+	 * It will be converted as part of the total cost
+	 *
+	 * @return array
+	 */
     public function woocommerce_evaluate_shipping_cost_args( $args ){
 
         $args['cost'] = $this->multi_currency->prices->unconvert_price_amount( $args['cost'] );
@@ -115,14 +113,16 @@ class WCML_Multi_Currency_Shipping{
 
     public function convert_shipping_taxes( $packages ){
 
-        foreach( $packages as $package_id => $package ){
-            if( isset( $package['rates'] ) ){
-                foreach( $package['rates'] as $rate_id => $rate  ){
-	                $packages[$package_id]['rates'][$rate_id]->taxes =
-		                WC_Tax::calc_shipping_tax( $packages[$package_id]['rates'][$rate_id]->cost, WC_Tax::get_shipping_tax_rates() );
-                }
-            }
-        }
+    	if( 'yes' === get_option( 'woocommerce_calc_taxes' ) ) {
+		    foreach ( $packages as $package_id => $package ) {
+			    if ( isset( $package['rates'] ) ) {
+				    foreach ( $package['rates'] as $rate_id => $rate ) {
+					    $packages[ $package_id ]['rates'][ $rate_id ]->taxes =
+						    WC_Tax::calc_shipping_tax( $packages[ $package_id ]['rates'][ $rate_id ]->cost, WC_Tax::get_shipping_tax_rates() );
+				    }
+			    }
+		    }
+	    }
 
         return $packages;
     }
