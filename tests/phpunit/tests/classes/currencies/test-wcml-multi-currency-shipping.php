@@ -168,4 +168,84 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function convert_shipping_taxes_wc_taxes_calculation_off(){
+
+		$subject = $this->get_subject();
+		$packages = [ rand_str() => rand_str() ];
+
+		\WP_Mock::wpFunction( 'get_option', [
+			'times'=> 1,
+			'args' => 'woocommerce_calc_taxes',
+			'return' => 'no'
+		] );
+
+		$this->assertSame( $packages, $subject->convert_shipping_taxes( $packages ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function convert_shipping_taxes_wc_taxes_calculation_on(){
+
+		$subject = $this->get_subject();
+
+		$rate1 = $this->getMockBuilder( 'WC_Shipping_Rate' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$rate1->taxes = [
+			0 => round ( random_int(1, 100) / 100 ),
+			1 => round ( random_int(1, 100) / 100 )
+		];
+		$rate1->cost = round ( random_int(1, 100) / 100 );
+
+		$rate2 = $this->getMockBuilder( 'WC_Shipping_Rate' )
+		              ->disableOriginalConstructor()
+		              ->getMock();
+		$rate2->cost = round ( random_int(1, 100) / 100 );
+
+		$rate2->taxes = [
+			0 => round ( random_int(1, 100) / 100, 2 ),
+			1 => round ( random_int(1, 100) / 100, 2 )
+		];
+
+		$packages = [
+			0 => [ 'rates' => [ $rate1, $rate2 ] ]
+
+		];
+
+		\WP_Mock::wpFunction( 'get_option', [
+			'times'=> 1,
+			'args' => 'woocommerce_calc_taxes',
+			'return' => 'yes'
+		] );
+
+		$wc_tax_mock = \Mockery::mock( 'overload:WC_Tax' );
+
+
+		$converted_taxes_1 = [
+			0 => round ( random_int(1, 100) / 100, 2 ),
+			1 => round ( random_int(1, 100) / 100, 2 )
+		];
+		$converted_taxes_2 = [
+			0 => round ( random_int(1, 100) / 100, 2 ),
+			1 => round ( random_int(1, 100) / 100, 2 )
+		];
+
+
+		$wc_tax_mock->shouldReceive( 'calc_shipping_tax' )
+		            ->andReturn( $converted_taxes_1, $converted_taxes_2 );
+
+		$wc_tax_mock->shouldReceive( 'get_shipping_tax_rates' )->twice();
+
+		$packages_converted = $subject->convert_shipping_taxes( $packages );
+
+		$this->assertSame( $converted_taxes_1, $packages_converted[0]['rates'][0]->taxes );
+		$this->assertSame( $converted_taxes_2, $packages_converted[0]['rates'][1]->taxes );
+
+	}
+
 }
