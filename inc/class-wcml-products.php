@@ -51,6 +51,8 @@ class WCML_Products{
             add_filter( 'woocommerce_json_search_found_products', array( $this, 'filter_found_products_by_language' ) );
             add_filter( 'woocommerce_related_products_args', array( $this, 'filter_related_products_args' ) );
             add_filter( 'woocommerce_shortcode_products_query', array( $this, 'add_lang_to_shortcode_products_query' ) );
+
+            add_filter( 'woocommerce_product_file_download_path', array( $this, 'filter_file_download_path' ) );
         }
 
         add_filter( 'woocommerce_upsell_crosssell_search_products', array( $this, 'filter_woocommerce_upsell_crosssell_posts_by_language' ) );
@@ -624,6 +626,25 @@ class WCML_Products{
         $query_args[ 'lang' ] = $this->sitepress->get_current_language();
 
         return $query_args;
+    }
+
+
+    /**
+     * Get file download path in correct domain
+     *
+     * @param string $file_path file path URL
+     * @return string
+     */
+    public function filter_file_download_path( $file_path ) {
+
+        $is_per_domain = $this->sitepress->get_wp_api()->constant( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' ) === (int) $this->sitepress->get_setting( 'language_negotiation_type' );
+
+        if ( $is_per_domain ) {
+            $file_path = $this->sitepress->convert_url( $file_path );
+        }
+
+        return $file_path;
+
     }
 
 }
