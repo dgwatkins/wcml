@@ -120,4 +120,24 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function is_bundle_product() {
+
+		$bundle_product_id = mt_rand( 1, 100 );
+		$mock             = \Mockery::mock( 'alias:WooCommerce_Functions_Wrapper' );
+		$mock->shouldReceive( 'get_product_type' )->with( $bundle_product_id )->andReturn( rand_str() );
+
+		$subject = $this->get_subject();
+		$this->assertFalse( $subject->is_bundle_product( $bundle_product_id ) );
+
+
+		$bundle_product_id = mt_rand( 1, 100 );
+		$mock->shouldReceive( 'get_product_type' )->with( $bundle_product_id )->andReturn( 'bundle' );
+
+		$subject = $this->get_subject();
+		$this->assertTrue( $subject->is_bundle_product( $bundle_product_id ) );
+
+	}
 }
