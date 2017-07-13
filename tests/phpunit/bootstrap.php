@@ -21,6 +21,18 @@ define( 'WPML_TM_FOLDER',  WP_CONTENT_DIR . '/plugins/wpml-translation-managemen
 define( 'WCML_PLUGIN_URL', WP_CONTENT_DIR . '/plugins/woocommerce-multilingual/' );
 
 
+if( ! defined( 'COOKIEPATH' ) ){
+	define( 'COOKIEPATH', '/' );
+}
+if( ! defined( 'COOKIE_DOMAIN' ) ){
+	define( 'COOKIE_DOMAIN', 'example.com' );
+}
+
+if( ! defined( 'WOOCOMMERCE_VERSION' ) ){
+	define( 'WOOCOMMERCE_VERSION', '3.1' );
+}
+
+
 require_once __DIR__ . '/includes/missing-php-functions.php';
 
 $autoloader_dir = WCML_PATH . '/vendor';

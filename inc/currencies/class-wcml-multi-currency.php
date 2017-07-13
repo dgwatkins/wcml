@@ -112,7 +112,11 @@ class WCML_Multi_Currency{
         $this->reports                  = new WCML_Multi_Currency_Reports( $woocommerce_wpml, $sitepress, $wpdb );
         $this->reports->add_hooks();
         $this->orders                   = new WCML_Multi_Currency_Orders( $this, $woocommerce_wpml );
-        $this->admin_currency_selector  = new WCML_Admin_Currency_Selector();
+	    $this->admin_currency_selector  = new WCML_Admin_Currency_Selector(
+		    $woocommerce_wpml,
+		    new WCML_Admin_Cookie( '_wcml_dashboard_currency' )
+	    );
+	    $this->admin_currency_selector->add_hooks();
         $this->custom_prices            = new WCML_Custom_Prices( $woocommerce_wpml );
         $this->currency_switcher        = new WCML_Currency_Switcher( $woocommerce_wpml, $sitepress );
         $this->currency_switcher->add_hooks();

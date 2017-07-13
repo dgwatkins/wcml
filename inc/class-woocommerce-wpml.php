@@ -341,7 +341,7 @@ class woocommerce_wpml {
 	/**
 	 * @return array
 	 */
-	function get_wc_query_vars() {
+	public function get_wc_query_vars() {
 		return WooCommerce::instance()->query->query_vars;
 	}
 
@@ -355,4 +355,25 @@ class woocommerce_wpml {
 		return $this->multi_currency;
 	}
 
+
+	/**
+	 * @return string
+	 */
+	public function version(){
+		return get_option('_wcml_version');
+	}
+
+	/**
+	 * @return string
+	 */
+	public function plugin_url(){
+		return WCML_PLUGIN_URL;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function js_min_suffix(){
+		return WCML_JS_MIN;
+	}
 }
