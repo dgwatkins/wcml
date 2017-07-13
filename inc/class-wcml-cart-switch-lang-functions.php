@@ -36,14 +36,20 @@ class WCML_Cart_Switch_Lang_Functions{
     }
 
     public function wcml_language_switch_dialog( ){
-        global $woocommerce_wpml, $sitepress, $wp;
+        global $woocommerce_wpml, $sitepress, $wp, $post;
 
         $dependencies = new WCML_Dependencies;
 
         if( $dependencies->check() ){
 
             $current_url = home_url( add_query_arg( array(), $wp->request ) );
-            $request_url = add_query_arg( 'force_switch', 0, $sitepress->convert_url( $current_url, $this->lang_from ) );
+
+            if( isset( $post->ID ) ){
+                $requested_page_id = apply_filters( 'translate_object_id', $post->ID, get_post_type( $post->ID ), true, $this->lang_from );
+                $request_url = add_query_arg( 'force_switch', 0, $sitepress->convert_url( get_permalink( $requested_page_id ), $this->lang_from ) );
+            }else{
+                $request_url = $current_url;
+            }
 
             $cart_for_session = false;
             if( isset( WC()->cart ) ){
