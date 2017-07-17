@@ -15,61 +15,69 @@ class WCML_Multi_Currency_Prices{
      */
     private $orders_list_currency;
 
-    public function __construct( &$multi_currency ){
-
-        $this->multi_currency =& $multi_currency;
-
-        if( $this->multi_currency->load_filters ) {
-            add_filter('init', array($this, 'prices_init'), 5);
-
-            // Currency and Amount filters
-            add_filter('woocommerce_currency', array($this, 'currency_filter'));
-
-            add_filter( 'wcml_price_currency', array($this, 'price_currency_filter') );      // WCML filters
-            add_filter( 'wcml_raw_price_amount', array($this, 'raw_price_filter'), 10, 2 );  // WCML filters
-            add_filter( 'wcml_product_price_by_currency', array($this, 'get_product_price_in_currency'), 10, 2 );  // WCML filters
-
-            add_filter('get_post_metadata', array($this, 'product_price_filter'), 10, 4);
-            add_filter('get_post_metadata', array($this, 'variation_prices_filter'), 12, 4); // second
-
-            add_filter('woocommerce_price_filter_widget_max_amount', array($this, 'raw_price_filter'), 99);
-            add_filter('woocommerce_price_filter_widget_min_amount', array($this, 'raw_price_filter'), 99);
-
-            add_filter('woocommerce_adjust_price', array($this, 'raw_price_filter'), 10);
-
-            add_filter('wcml_formatted_price', array($this, 'formatted_price'), 10, 2); // WCML filters
-
-            // Shipping prices
-            add_filter('woocommerce_paypal_args', array($this, 'filter_price_woocommerce_paypal_args'));
-            add_filter('woocommerce_get_variation_prices_hash', array($this, 'add_currency_to_variation_prices_hash'));
-            add_filter('woocommerce_cart_contents_total', array($this, 'filter_woocommerce_cart_contents_total'), 100);
-            add_filter('woocommerce_cart_subtotal', array($this, 'filter_woocommerce_cart_subtotal'), 100, 3);
-
-            //filters for wc-widget-price-filter
-            add_filter('woocommerce_price_filter_results', array($this, 'filter_price_filter_results'), 10, 3);
-            add_filter('woocommerce_price_filter_widget_amount', array($this, 'filter_price_filter_widget_amount'));
-
-            add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'filter_currency_num_decimals_in_cart' ) );
-
-            if( version_compare( WOOCOMMERCE_VERSION, '2.3', '<' ) ){
-                add_filter( 'wc_price', array( $this, 'price_in_specific_currency' ), 10, 3 );
-            }
-
-            add_filter( 'wc_price_args', array( $this, 'filter_wc_price_args') );
-
-            WCML_Multi_Currency_Table_Rate_Shipping::set_up();
-        }
-
-        // formatting options
-        add_filter('option_woocommerce_price_thousand_sep', array($this, 'filter_currency_thousand_sep_option'));
-        add_filter('option_woocommerce_price_decimal_sep',  array($this, 'filter_currency_decimal_sep_option'));
-        add_filter('option_woocommerce_price_num_decimals', array($this, 'filter_currency_num_decimals_option'));
-        add_filter('option_woocommerce_currency_pos',       array($this, 'filter_currency_position_option'));
-
-        //need for display correct price format for order on orders list page
-        add_filter( 'get_post_metadata', array( $this, 'save_order_currency_for_filter' ), 10, 4);
-
+    public function __construct( $multi_currency ){
+        $this->multi_currency = $multi_currency;
     }
+
+	public function add_hooks() {
+		add_filter( 'wcml_raw_price_amount', array( $this, 'raw_price_filter' ), 10, 2 );  // WCML filters
+
+		if ( $this->multi_currency->load_filters ) {
+			add_filter( 'init', array( $this, 'prices_init' ), 5 );
+
+			// Currency and Amount filters
+			add_filter( 'woocommerce_currency', array( $this, 'currency_filter' ) );
+
+			add_filter( 'wcml_price_currency', array( $this, 'price_currency_filter' ) );      // WCML filters
+			add_filter( 'wcml_product_price_by_currency', array(
+				$this,
+				'get_product_price_in_currency'
+			), 10, 2 );  // WCML filters
+
+			add_filter( 'get_post_metadata', array( $this, 'product_price_filter' ), 10, 4 );
+			add_filter( 'get_post_metadata', array( $this, 'variation_prices_filter' ), 12, 4 ); // second
+
+			add_filter( 'woocommerce_price_filter_widget_max_amount', array( $this, 'raw_price_filter' ), 99 );
+			add_filter( 'woocommerce_price_filter_widget_min_amount', array( $this, 'raw_price_filter' ), 99 );
+
+			add_filter( 'woocommerce_adjust_price', array( $this, 'raw_price_filter' ), 10 );
+
+			add_filter( 'wcml_formatted_price', array( $this, 'formatted_price' ), 10, 2 ); // WCML filters
+
+			// Shipping prices
+			add_filter( 'woocommerce_paypal_args', array( $this, 'filter_price_woocommerce_paypal_args' ) );
+			add_filter( 'woocommerce_get_variation_prices_hash', array(
+				$this,
+				'add_currency_to_variation_prices_hash'
+			) );
+			add_filter( 'woocommerce_cart_contents_total', array(
+				$this,
+				'filter_woocommerce_cart_contents_total'
+			), 100 );
+			add_filter( 'woocommerce_cart_subtotal', array( $this, 'filter_woocommerce_cart_subtotal' ), 100, 3 );
+
+			//filters for wc-widget-price-filter
+			add_filter( 'woocommerce_price_filter_results', array( $this, 'filter_price_filter_results' ), 10, 3 );
+			add_filter( 'woocommerce_price_filter_widget_amount', array( $this, 'filter_price_filter_widget_amount' ) );
+
+			add_action( 'woocommerce_cart_loaded_from_session', array(
+				$this,
+				'filter_currency_num_decimals_in_cart'
+			) );
+
+			add_filter( 'wc_price_args', array( $this, 'filter_wc_price_args' ) );
+
+		}
+
+		// formatting options
+		add_filter( 'option_woocommerce_price_thousand_sep', array( $this, 'filter_currency_thousand_sep_option' ) );
+		add_filter( 'option_woocommerce_price_decimal_sep', array( $this, 'filter_currency_decimal_sep_option' ) );
+		add_filter( 'option_woocommerce_price_num_decimals', array( $this, 'filter_currency_num_decimals_option' ) );
+		add_filter( 'option_woocommerce_currency_pos', array( $this, 'filter_currency_position_option' ) );
+
+		//need for display correct price format for order on orders list page
+		add_filter( 'get_post_metadata', array( $this, 'save_order_currency_for_filter' ), 10, 4 );
+	}
 
     public function prices_init(){
         global $woocommerce_wpml;

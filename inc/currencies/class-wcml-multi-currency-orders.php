@@ -265,6 +265,7 @@ class WCML_Multi_Currency_Orders {
 
 		if ( ! isset( $this->multi_currency->prices ) ) {
 			$this->multi_currency->prices = new WCML_Multi_Currency_Prices( $this->multi_currency );
+			$this->multi_currency->prices->add_hooks();
 			$this->multi_currency->prices->prices_init();
 		}
 
