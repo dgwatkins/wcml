@@ -100,8 +100,11 @@ class WCML_Multi_Currency{
 
         $this->load_filters   = $this->_load_filters();
         $this->prices   = new WCML_Multi_Currency_Prices( $this );
+	    $this->prices->add_hooks();
+	    if( $this->load_filters ) {
+		    $table_rate_shipping_multi_currency  = new WCML_Multi_Currency_Table_Rate_Shipping();
+		    $table_rate_shipping_multi_currency->add_hooks();
 
-        if( $this->load_filters ) {
             $this->coupons  = new WCML_Multi_Currency_Coupons();
             $this->shipping = new WCML_Multi_Currency_Shipping( $this, $sitepress, $wpdb );
             $this->shipping->add_hooks();

@@ -70,7 +70,7 @@ class WCML_Helper_Multi_Currency {
 
 	    $this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
 	    $this->woocommerce_wpml->multi_currency->prices = new WCML_Multi_Currency_Prices( $this->woocommerce_wpml->multi_currency );
-
+	    $this->woocommerce_wpml->multi_currency->prices->add_hooks();
 	    $this->woocommerce_wpml->multi_currency->prices->prices_init();
 
 	    $currencies = array(
