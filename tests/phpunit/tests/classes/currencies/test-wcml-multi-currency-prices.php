@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Test_WCML_Multi_Currency_Prices
+ * Class Test_WCML_Multi_Currency_Price
  */
 class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 
@@ -11,6 +11,26 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 
 	private function get_multi_currency_mock() {
 		return $this->getMockBuilder( 'WCML_Multi_Currency' )
+		            ->disableOriginalConstructor()
+					->setMethods( ['get_client_currency', 'set_client_currency'] )
+		            ->getMock();
+	}
+
+	private function get_woocommerce_wpml_mock() {
+		return $this->getMockBuilder( 'woocommerce_wpml' )
+		            ->disableOriginalConstructor()
+		            ->getMock();
+	}
+
+	private function get_wc_cart_mock() {
+		return $this->getMockBuilder( 'WC_Cart' )
+		            ->disableOriginalConstructor()
+					->setMethods( ['woocommerce_calculate_totals', 'get_cart_subtotal'] )
+		            ->getMock();
+	}
+
+	private function get_wc_mock() {
+		return $this->getMockBuilder( 'woocommerce' )
 		            ->disableOriginalConstructor()
 		            ->getMock();
 	}
@@ -105,4 +125,190 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		$subject->add_hooks();
 	}
 
+	/**
+	 * @test
+	 */
+	public function convert_raw_woocommerce_price_with_null_currency() {
+		$multi_currency = $this->get_multi_currency_mock();
+		$subject        = $this->get_subject( $multi_currency );
+
+		$price          = random_int( 0, 1000 ) / random_int( 1, 10 );
+		$currency       = rand_str();
+		$expected_price = random_int( 0, 1000 ) / random_int( 1, 10 );
+
+		$multi_currency->expects( $this->once() )
+		               ->method( 'get_client_currency' )
+		               ->willReturn( $currency );
+
+		\WP_Mock::onFilter( 'wcml_raw_price_amount' )->with( $price, $currency )->reply( $expected_price );
+
+		$this->assertSame( $expected_price, $subject->convert_raw_woocommerce_price( $price ) );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function convert_raw_woocommerce_price_with_given_currency() {
+		$multi_currency = $this->get_multi_currency_mock();
+		$subject        = $this->get_subject( $multi_currency );
+
+		$price          = random_int( 0, 1000 ) / random_int( 1, 10 );
+		$currency       = rand_str();
+		$expected_price = random_int( 0, 1000 ) / random_int( 1, 10 );
+
+		$multi_currency->expects( $this->exactly( 0 ) )
+		               ->method( 'get_client_currency' );
+
+		\WP_Mock::onFilter( 'wcml_raw_price_amount' )->with( $price, $currency )->reply( $expected_price );
+
+		$this->assertSame( $expected_price, $subject->convert_raw_woocommerce_price( $price, $currency ) );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function get_cart_subtotal_in_given_currency_on_woocommerce_currency() {
+		$woocommerce_wpml                 = $this->get_woocommerce_wpml_mock();
+		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
+		$subject                          = $this->get_subject( $woocommerce_wpml->multi_currency );
+
+		$woocommerce_wpml->cart = $this->get_wc_cart_mock();
+
+		$currency        = rand_str();
+		$client_currency = rand_str();
+
+		$expected_subtotal = rand_str();
+
+		\WP_Mock::wpFunction( 'get_option', [
+			'times' => 1,
+			'args'  => [ 'woocommerce_currency' ],
+			'return' => $client_currency
+		] );
+
+		$woocommerce_wpml->multi_currency
+			->expects( $this->once() )
+			->method( 'get_client_currency' )
+			->willReturn( $client_currency );
+
+		$wc_cart = $this->get_wc_cart_mock();
+		$wc_mock = $this->get_wc_mock();
+		\WP_Mock::wpFunction( 'WC', [
+			'times' => 2,
+			'return'=> $wc_mock
+		] );
+		$wc_mock->cart = $wc_cart;
+
+		$woocommerce_wpml->cart
+			->expects( $this->once() )
+			->method( 'woocommerce_calculate_totals' )
+			->with( $wc_cart, $currency );
+
+		$wc_cart->expects( $this->once() )
+		        ->method( 'get_cart_subtotal' )
+		        ->willReturn( $expected_subtotal );
+
+		\WP_Mock::expectFilterAdded(
+			'raw_woocommerce_price', [ $subject, 'convert_raw_woocommerce_price' ]
+		);
+
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_currency', [ $woocommerce_wpml->multi_currency, 'get_client_currency' ]
+		);
+
+		\WP_Mock::wpFunction( 'remove_filter', [
+			'times' => 1,
+			'args'  => [ 'raw_woocommerce_price', [ $subject, 'convert_raw_woocommerce_price' ] ]
+		] );
+
+		\WP_Mock::wpFunction( 'remove_filter', [
+			'times' => 1,
+			'args'  => [ 'woocommerce_currency', [ $woocommerce_wpml->multi_currency, 'get_client_currency' ] ]
+		] );
+
+		$this->assertSame(
+			$expected_subtotal,
+			$subject->get_cart_subtotal_in_given_currency( $woocommerce_wpml, $currency )
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function get_cart_subtotal_in_given_currency_NOT_on_woocommerce_currency() {
+
+		$woocommerce_wpml                         = $this->get_woocommerce_wpml_mock();
+		$woocommerce_wpml->multi_currency         = $this->get_multi_currency_mock();
+		$subject                                  = $this->get_subject( $woocommerce_wpml->multi_currency );
+
+		$woocommerce_wpml->cart = $this->get_wc_cart_mock();
+
+		$currency        = rand_str();
+		$client_currency = rand_str();
+
+		$expected_subtotal = rand_str();
+
+		\WP_Mock::wpFunction( 'get_option', [
+			'times' => 1,
+			'args'  => [ 'woocommerce_currency' ],
+			'return' => rand_str()
+		] );
+
+		$woocommerce_wpml->multi_currency
+			->expects( $this->once() )
+			->method( 'get_client_currency' )
+			->willReturn( $client_currency );
+
+		$wc_cart = $this->get_wc_cart_mock();
+		$wc_mock = $this->get_wc_mock();
+		\WP_Mock::wpFunction( 'WC', [
+			'times' => 1,
+			'return'=> $wc_mock
+		] );
+		$wc_mock->cart = $wc_cart;
+
+		$wc_cart->expects( $this->once() )
+		        ->method( 'get_cart_subtotal' )
+		        ->willReturn( $expected_subtotal );
+
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_get_price', [ $subject, 'get_original_product_price' ], 10, 2 );
+
+		\WP_Mock::wpFunction( 'remove_filter', [
+			'times' => 1,
+			'args'  => [ 'woocommerce_product_get_price', [ $subject, 'get_original_product_price' ], 10, 2 ]
+		] );
+
+		$this->assertSame(
+			$expected_subtotal,
+			$subject->get_cart_subtotal_in_given_currency( $woocommerce_wpml, $currency )
+		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function get_original_product_price() {
+		$subject = $this->get_subject( $this->get_multi_currency_mock() );
+
+		$product_id = random_int(1, 1000);
+		$price          = round( random_int( 1, 1000 ) / random_int( 1, 100 ), 2 );
+		$expected_price = round( random_int( 1, 1000 ) / random_int( 1, 100 ), 2 );
+
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( ['get_id'] )
+		                ->getMock();
+
+		$product->expects( $this->once() )->method('get_id')->willReturn( $product_id );
+
+		\WP_Mock::wpFunction( 'get_post_meta', [
+			'times'  => 1,
+			'args'   => [ $product_id, '_price', 1 ],
+			'return' => $expected_price
+		] );
+
+		$this->assertSame( $expected_price, $subject->get_original_product_price( $price, $product ) );
+
+	}
 }
