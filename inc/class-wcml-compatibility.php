@@ -131,6 +131,7 @@ class WCML_Compatibility {
 		// WooCommerce Checkout Field Editor
 		if ( function_exists( 'woocommerce_init_checkout_field_editor' ) ) {
 			$this->checkout_field_editor = new WCML_Checkout_Field_Editor();
+			$this->checkout_field_editor->add_hooks();
 		}
 
 		if ( class_exists( 'WC_Bulk_Stock_Management' ) ) {
