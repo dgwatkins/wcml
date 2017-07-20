@@ -35,6 +35,7 @@ class WCML_REST_API_Support{
 		add_filter( 'woocommerce_rest_shop_order_object_query', array( $this, 'filter_orders_by_language' ), 20, 2 );
 		add_action( 'woocommerce_rest_prepare_shop_order_object', array( $this, 'filter_order_items_by_language'), 10, 3 );
 		add_action( 'woocommerce_rest_insert_shop_order_object' , array( $this, 'set_order_language' ), 10, 2 );
+		add_action( 'woocommerce_rest_insert_shop_order_object' , array( $this, 'set_order_currency' ), 10, 2 );
 
 		// Terms
 		add_action( 'woocommerce_rest_product_cat_query', array($this, 'filter_terms_query' ), 10, 2 );
@@ -434,6 +435,22 @@ class WCML_REST_API_Support{
 
 	}
 
-
+	/**
+	 * @param WC_Order $order
+	 * @param WP_REST_Request $request
+	 *
+	 * @throws WC_REST_Exception
+	 */
+	public function set_order_currency( $order, $request ) {
+		$data = $request->get_params();
+		if ( isset( $data['currency'] ) ) {
+			$order_id   = $order->get_id();
+			$currencies = get_woocommerce_currencies();
+			if ( ! isset( $currencies[ $data['currency'] ] ) ) {
+				throw new WC_REST_Exception( '404', sprintf( __( 'Invalid currency parameter: %s' ), $data['currency'] ), '404' );
+			}
+			update_post_meta( $order_id, '_order_currency', $data['currency'] );
+		}
+	}
 
 }
