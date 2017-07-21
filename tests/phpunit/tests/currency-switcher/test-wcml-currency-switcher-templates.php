@@ -266,6 +266,33 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function enqueue_not_active_template_resources() {
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
+		$wcml_settings    = array(
+			'currency_switcher_additional_css' => 'some_additional_css',
+			'currency_switchers'               => array(
+				rand_str() => array(
+					'switcher_style' => 'wcml-dropdown',
+					'color_scheme'   => array(),
+				),
+			),
+		);
+		$woocommerce_wpml->method( 'get_settings' )->willReturn( $wcml_settings );
+
+		$template_mock = $this->getMockBuilder( 'WCML_Currency_Switcher_Templates' )->disableOriginalConstructor()->setMethods( array( 'get_scripts', 'get_styles', 'has_styles' ) )->getMock();
+		$template_mock->method( 'get_scripts' )->willReturn( array() );
+		$template_mock->method( 'get_styles' )->willReturn( array() );
+		$template_mock->method( 'has_styles' )->willReturn( false );
+
+		$subject   = $this->get_subject( $woocommerce_wpml );
+
+		$subject->enqueue_template_resources( array( rand_str() => $template_mock ) );
+	}
+
+	/**
+	 * @test
+	 */
 	public function after_setup_theme_action() {
 		if ( ! defined( 'WCML_PLUGIN_PATH' ) ) {
 			define( 'WCML_PLUGIN_PATH', '../..' );
