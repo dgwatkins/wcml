@@ -5,21 +5,6 @@
  */
 class WCML_Dynamic_Pricing {
 
-	/**
-	 * @var SitePress
-	 */
-	public $sitepress;
-
-	/**
-	 * WCML_Dynamic_Pricing constructor.
-	 *
-	 * @param SitePress $sitepress
-	 */
-	function __construct( SitePress $sitepress ) {
-
-		$this->sitepress = $sitepress;
-	}
-
 	public function add_hooks() {
 
 		if ( ! is_admin() ) {
@@ -69,18 +54,26 @@ class WCML_Dynamic_Pricing {
 
 
 	/**
-	 * @param $process_discounts
-	 * @param $_product
-	 * @param $module_id
-	 * @param $obj
-	 * @param $cat_id
+	 * @param bool                           $process_discounts
+	 * @param WC_Product                     $_product
+	 * @param int                            $module_id
+	 * @param WC_Dynamic_Pricing_Simple_Base $obj
+	 * @param array|int                      $cat_ids
 	 *
 	 * @return bool|WP_Error
 	 */
-	function woocommerce_dynamic_pricing_is_applied_to( $process_discounts, $_product, $module_id, $obj, $cat_id ) {
-		if ( $cat_id && isset( $obj->available_rulesets ) && count( $obj->available_rulesets ) > 0 ) {
-			$cat_id = apply_filters( 'translate_object_id', $cat_id, 'product_cat', true, $this->sitepress->get_current_language() );
-			$process_discounts = is_object_in_term( WooCommerce_Functions_Wrapper::get_product_id( $_product ), 'product_cat', $cat_id );
+	function woocommerce_dynamic_pricing_is_applied_to( $process_discounts, $_product, $module_id, $obj, $cat_ids ) {
+		if ( $cat_ids && isset( $obj->available_rulesets ) && count( $obj->available_rulesets ) > 0 ) {
+
+			if ( ! is_array( $cat_ids ) ) {
+				$cat_ids = array( $cat_ids );
+			}
+
+			foreach ( $cat_ids as $i => $cat_id ) {
+				$cat_ids[$i] = apply_filters( 'translate_object_id', $cat_id, 'product_cat', true );
+			}
+
+			$process_discounts = is_object_in_term( WooCommerce_Functions_Wrapper::get_product_id( $_product ), 'product_cat', $cat_ids );
 		}
 
 		return $process_discounts;
