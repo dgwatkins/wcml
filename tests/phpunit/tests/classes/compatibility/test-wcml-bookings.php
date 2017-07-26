@@ -2,48 +2,78 @@
 
 class Test_WCML_Bookings extends OTGS_TestCase {
 
-	/** @var woocommerce_wpml */
-	private $woocommerce_wpml;
-	/** @var Sitepress */
-	private $sitepress;
 	/** @var wpdb */
 	private $wpdb;
-	/** @var WPML_WP_API $wp_api */
-	private $wp_api;
-	/** @var WPML_Element_Translation_Package */
-	private $tp;
-
 
 	public function setUp()
 	{
 		parent::setUp();
 
-		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
+		$this->wpdb = $this->stubs->wpdb();
+
+	}
+
+	/**
+	 * @return woocommerce_wpml
+	 */
+	private function get_woocommerce_wpml_mock() {
+		return $this->getMockBuilder( 'woocommerce_wpml' )
+			->disableOriginalConstructor()
+			->getMock();
+	}
+
+	/**
+	 * @return SitePress
+	 */
+	private function get_sitepress_mock( $wp_api = null ) {
+		$sitepress = $this->getMockBuilder('SitePress')
 			->disableOriginalConstructor()
 			->setMethods( array( 'get_wp_api' ) )
 			->getMock();
 
-		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		if( null === $wp_api ){
+			$wp_api = $this->get_wpml_wp_api_mock();
+		}
+
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		return $sitepress;
+	}
+
+	/**
+	 * @return WPML_WP_API
+	 */
+	private function get_wpml_wp_api_mock() {
+		return $this->getMockBuilder( 'WPML_WP_API' )
 			->disableOriginalConstructor()
 			->setMethods( array( 'constant', 'version_compare' ) )
 			->getMock();
-
-		$this->sitepress->method( 'get_wp_api' )->willReturn( $this->wp_api );
-
-		$this->woocommerce_wpml = $this->getMockBuilder('woocommerce_wpml')
-			->disableOriginalConstructor()
-			->getMock();
-
-		$this->wpdb = $this->stubs->wpdb();
-
-		$this->tp = $this->getMockBuilder( 'WPML_Element_Translation_Package' )
-			->disableOriginalConstructor()
-			->getMock();
-
 	}
 
-	private function get_subject(){
-		return new WCML_Bookings( $this->sitepress, $this->woocommerce_wpml, $this->wpdb, $this->tp );
+	/**
+	 * @return WPML_Element_Translation_Package
+	 */
+	private function get_wpml_element_translation_package_mock() {
+		return $this->getMockBuilder( 'WPML_Element_Translation_Package' )
+			->disableOriginalConstructor()
+			->getMock();
+	}
+
+	private function get_subject( $sitepress = null, $woocommerce_wpml = null, $tp = null  ){
+
+		if( null === $woocommerce_wpml ){
+			$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
+		}
+
+		if( null === $sitepress ){
+			$sitepress = $this->get_sitepress_mock();
+		}
+
+		if( null === $tp ){
+			$tp = $this->get_wpml_element_translation_package_mock();
+		}
+
+		return new WCML_Bookings( $sitepress, $woocommerce_wpml, $this->wpdb, $tp );
 	}
 
 	/**
@@ -52,18 +82,45 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 	public function add_hooks(){
 
 		$sitepress_version = '3.7.0';
-
-		$subject = $this->get_subject();
-
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
 
-		$this->wp_api->expects( $this->once() )
-			->method( 'constant' )
+		$wp_api = $this->get_wpml_wp_api_mock();
+		$wp_api->method( 'constant' )
 			->with( 'ICL_SITEPRESS_VERSION' )
 			->willReturn( $sitepress_version );
 
+		$sitepress = $this->get_sitepress_mock( $wp_api );
+
+		$subject = $this->get_subject( $sitepress );
 
 		\WP_Mock::expectFilterAdded( 'wcml_do_not_display_custom_fields_for_product', array( $subject, 'replace_tm_editor_custom_fields_with_own_sections' ) );
+		$subject->add_hooks();
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function add_hooks_after_wpml_3_8(){
+
+		$sitepress_version = '3.8.0';
+
+		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
+
+		$wp_api = $this->get_wpml_wp_api_mock();
+		$wp_api->method( 'constant' )
+			->with( 'ICL_SITEPRESS_VERSION' )
+			->willReturn( $sitepress_version );
+		
+		$wp_api->method( 'version_compare' )
+			->with( $sitepress_version, '3.8.0', '<' )
+			->willReturn( false );
+	
+		$sitepress = $this->get_sitepress_mock( $wp_api );
+
+		$subject = $this->get_subject( $sitepress );
+
+		\WP_Mock::expectFilterAdded( 'get_translatable_documents_all', array( $subject, 'filter_translatable_documents' ) );
 		$subject->add_hooks();
 
 	}
