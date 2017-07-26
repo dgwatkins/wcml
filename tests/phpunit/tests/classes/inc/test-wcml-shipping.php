@@ -112,6 +112,12 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 			'return' => true
 		) );
 
+		\WP_Mock::wpFunction( 'did_action', array(
+			'args' => array( 'current_screen' ),
+			'return' => true
+		) );
+
+
 		$screen = $this->getMockBuilder( 'WP_Screen' )->disableOriginalConstructor()->getMock();
 		\WP_Mock::wpFunction( 'get_current_screen', array( 'return' => $screen ) );
 

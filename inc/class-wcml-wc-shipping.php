@@ -120,9 +120,16 @@ class WCML_WC_Shipping{
         return $available_methods;
     }
 
-	function translate_shipping_method_title( $title, $shipping_id, $language = false ) {
+    /**
+     * @param string $title
+     * @param string $shipping_id
+     * @param string|bool $language
+     *
+     * @return string
+     */
+	public function translate_shipping_method_title( $title, $shipping_id, $language = false ) {
 
-		if ( is_admin() && did_action( 'admin_init' ) ) {
+		if ( is_admin() && did_action( 'admin_init' )  && did_action( 'current_screen' ) ) {
 			$screen        = get_current_screen();
 			$is_edit_order = $screen->id === 'shop_order';
 		} else {
