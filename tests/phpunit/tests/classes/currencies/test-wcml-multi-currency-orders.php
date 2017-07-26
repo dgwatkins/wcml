@@ -111,6 +111,11 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$original_currency = rand_str();
 
+		\WP_Mock::wpFunction( 'did_action', array(
+			'args' => array( 'current_screen' ),
+			'return' => true
+		) );
+
 		// Not admin
 		$this->is_admin = false;
 		$this->current_screen->id = '';
