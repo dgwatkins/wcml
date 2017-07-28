@@ -83,11 +83,16 @@ class Test_WCML_Price_Filter extends OTGS_TestCase {
 		$subject = new WCML_Price_Filter( $this->woocommerce_wpml );
 
 		$this->is_admin = true;
-		\WP_Mock::expectActionAdded( 'wp_footer', array( $subject, 'override_currency_symbol' ), 100 );
-		$this->expectActionAdded( 'woocommerce_product_query_meta_query', array(
+		WP_Mock::expectActionAdded( 'wp_footer', array( $subject, 'override_currency_symbol' ), 100 );
+		WP_Mock::expectActionNotAdded(
+			'woocommerce_product_query_meta_query',
+			array(
 			$subject,
 			'unconvert_price_filter_limits'
-		), 10, 1, 0 );
+			),
+			10,
+			1
+		);
 		$subject->add_hooks();
 	}
 
@@ -98,7 +103,7 @@ class Test_WCML_Price_Filter extends OTGS_TestCase {
 		$subject = new WCML_Price_Filter( $this->woocommerce_wpml );
 
 		$this->is_admin = false;
-		\WP_Mock::expectFilterAdded( 'woocommerce_product_query_meta_query', array( $subject, 'unconvert_price_filter_limits') );
+		WP_Mock::expectFilterAdded( 'woocommerce_product_query_meta_query', array( $subject, 'unconvert_price_filter_limits') );
 		$subject->add_hooks();
 	}
 

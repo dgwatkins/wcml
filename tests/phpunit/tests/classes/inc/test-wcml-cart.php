@@ -51,11 +51,11 @@ class Test_WCML_Cart extends OTGS_TestCase {
 	 */
 	public function add_hooks(){
 
-		\WP_Mock::wpFunction( 'wp_enqueue_script', array( 'return' => true ) );
-		\WP_Mock::wpFunction( 'wp_enqueue_style', array( 'return' => true ) );
+		WP_Mock::wpFunction( 'wp_enqueue_script', array( 'return' => true ) );
+		WP_Mock::wpFunction( 'wp_enqueue_style', array( 'return' => true ) );
 
 		$subject = $this->get_subject();
-		$this->expectActionAdded( 'woocommerce_get_cart_item_from_session', array( $subject, 'translate_cart_contents' ), 10, 1, 0 );
+		WP_Mock::expectActionNotAdded( 'woocommerce_get_cart_item_from_session', array( $subject, 'translate_cart_contents' ), 10, 1 );
 		$subject->add_hooks();
 
 		$cart_clear_constant = 0;
@@ -65,11 +65,11 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		$this->woocommerce_wpml->settings['cart_sync']['lang_switch'] = $cart_sync_constant;
 		$this->woocommerce_wpml->settings['cart_sync']['currency_switch'] = $cart_sync_constant;
 
-		\WP_Mock::wpFunction( 'is_ajax', array( 'return' => false ) );
+		WP_Mock::wpFunction( 'is_ajax', array( 'return' => false ) );
 
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectActionAdded( 'woocommerce_get_cart_item_from_session', array( $subject, 'translate_cart_contents' ) );
+		WP_Mock::expectActionAdded( 'woocommerce_get_cart_item_from_session', array( $subject, 'translate_cart_contents' ) );
 
 		$subject->add_hooks();
 	}

@@ -41,8 +41,8 @@ class Test_WCML_Cart_Sync_Warnings extends OTGS_TestCase {
 	 */
 	public function it_does_not_adds_hooks_when_notices_are_not_needed(){
 		$subject = $this->get_subject();
-		$this->expectActionAdded( 'admin_notices', array( $subject, 'show_cart_notice' ), 10, 1, 0 );
-		$this->expectActionAdded( 'admin_enqueue_scripts', array( $subject, 'register_styles' ), 10, 1, 0 );
+		WP_Mock::expectActionNotAdded( 'admin_notices', array( $subject, 'show_cart_notice' ), 10, 1 );
+		WP_Mock::expectActionNotAdded( 'admin_enqueue_scripts', array( $subject, 'register_styles' ), 10, 1 );
 		$subject->add_hooks();
 	}
 
@@ -65,8 +65,8 @@ class Test_WCML_Cart_Sync_Warnings extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectActionAdded( 'admin_notices', array( $subject, 'show_cart_notice' ) );
-		\WP_Mock::expectActionAdded( 'admin_enqueue_scripts', array( $subject, 'register_styles' ) );
+		WP_Mock::expectActionAdded( 'admin_notices', array( $subject, 'show_cart_notice' ) );
+		WP_Mock::expectActionAdded( 'admin_enqueue_scripts', array( $subject, 'register_styles' ) );
 
 		$subject->add_hooks();
 	}

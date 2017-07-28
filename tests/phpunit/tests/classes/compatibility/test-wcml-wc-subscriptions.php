@@ -35,8 +35,8 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		$this->expectActionAdded( 'woocommerce_before_calculate_totals', array( $subject, 'maybe_backup_recurring_carts' ), 1, 1, 1 );
-		$this->expectActionAdded( 'woocommerce_after_calculate_totals', array( $subject, 'maybe_restore_recurring_carts' ), 200, 1, 1 );
+		WP_Mock::expectActionAdded( 'woocommerce_before_calculate_totals', array( $subject, 'maybe_backup_recurring_carts' ), 1, 1, 1 );
+		WP_Mock::expectActionAdded( 'woocommerce_after_calculate_totals', array( $subject, 'maybe_restore_recurring_carts' ), 200, 1, 1 );
 
 		$subject->init();
 	}
@@ -54,8 +54,8 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		$this->expectActionAdded( 'woocommerce_before_calculate_totals', array( $subject, 'maybe_backup_recurring_carts' ), 1, 1, 0 );
-		$this->expectActionAdded( 'woocommerce_after_calculate_totals', array( $subject, 'maybe_restore_recurring_carts' ), 200, 1, 0 );
+		WP_Mock::expectActionNotAdded( 'woocommerce_before_calculate_totals', array( $subject, 'maybe_backup_recurring_carts' ), 1, 1 );
+		WP_Mock::expectActionNotAdded( 'woocommerce_after_calculate_totals', array( $subject, 'maybe_restore_recurring_carts' ), 200, 1 );
 
 		$subject->init();
 	}
