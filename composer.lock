@@ -122,11 +122,11 @@
         },
         {
             "name": "otgs/installer",
-            "version": "dev-develop",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/installer/installer.git",
-                "reference": "ceb4b553972774524d45cb7740dd4d261ce805eb"
+                "reference": "488f4ddf7d9b6272da4aa2f3a440011dc8b101f8"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -165,7 +165,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2017-07-28 14:26:51"
+            "time": "2017-06-14 05:56:45"
         },
         {
             "name": "roave/security-advisories",
@@ -404,16 +404,16 @@
     "packages-dev": [
         {
             "name": "10up/wp_mock",
-            "version": "dev-master",
+            "version": "0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/10up/wp_mock.git",
-                "reference": "86e20f5c148be21cb1c1ebae2ef9de0143554e6f"
+                "reference": "507e59027e9b0d86eba9b74420962a72c4c2ec9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/10up/wp_mock/zipball/86e20f5c148be21cb1c1ebae2ef9de0143554e6f",
-                "reference": "86e20f5c148be21cb1c1ebae2ef9de0143554e6f",
+                "url": "https://api.github.com/repos/10up/wp_mock/zipball/507e59027e9b0d86eba9b74420962a72c4c2ec9e",
+                "reference": "507e59027e9b0d86eba9b74420962a72c4c2ec9e",
                 "shasum": ""
             },
             "require": {
@@ -442,7 +442,7 @@
                 "GPL-2.0+"
             ],
             "description": "A mocking library to take the pain out of unit testing for WordPress",
-            "time": "2017-07-19T03:10:40+00:00"
+            "time": "2017-07-19T03:10:11+00:00"
         },
         {
             "name": "antecedent/patchwork",
@@ -525,7 +525,7 @@
             ],
             "description": "Powerful command-line option toolkit",
             "homepage": "http://github.com/c9s/GetOptionKit",
-            "time": "2017-06-30 18:19:27"
+            "time": "2017-06-30T18:19:27+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -596,6 +596,60 @@
             "time": "2017-02-24T16:22:25+00:00"
         },
         {
+            "name": "doctrine/instantiator",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/instantiator.git",
+                "reference": "5acd2bd8c2b600ad5cc4c9180ebf0a930604d6a5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/5acd2bd8c2b600ad5cc4c9180ebf0a930604d6a5",
+                "reference": "5acd2bd8c2b600ad5cc4c9180ebf0a930604d6a5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3,<8.0-DEV"
+            },
+            "require-dev": {
+                "athletic/athletic": "~0.1.8",
+                "ext-pdo": "*",
+                "ext-phar": "*",
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "~2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\Instantiator\\": "src/Doctrine/Instantiator/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com",
+                    "homepage": "http://ocramius.github.com/"
+                }
+            ],
+            "description": "A small, lightweight utility to instantiate objects in PHP without invoking their constructors",
+            "homepage": "https://github.com/doctrine/instantiator",
+            "keywords": [
+                "constructor",
+                "instantiate"
+            ],
+            "time": "2017-02-16 16:15:51"
+        },
+        {
             "name": "doctrine/lexer",
             "version": "dev-master",
             "source": {
@@ -647,55 +701,7 @@
                 "lexer",
                 "parser"
             ],
-            "time": "2017-07-24 09:37:08"
-        },
-        {
-            "name": "fzaninotto/faker",
-            "version": "v1.6.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/fzaninotto/Faker.git",
-                "reference": "44f9a286a04b80c76a4e5fb7aad8bb539b920123"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/44f9a286a04b80c76a4e5fb7aad8bb539b920123",
-                "reference": "44f9a286a04b80c76a4e5fb7aad8bb539b920123",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.3.3|^7.0"
-            },
-            "require-dev": {
-                "ext-intl": "*",
-                "phpunit/phpunit": "~4.0",
-                "squizlabs/php_codesniffer": "~1.5"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": []
-            },
-            "autoload": {
-                "psr-4": {
-                    "Faker\\": "src/Faker/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "François Zaninotto"
-                }
-            ],
-            "description": "Faker is a PHP library that generates fake data for you.",
-            "keywords": [
-                "data",
-                "faker",
-                "fixtures"
-            ],
-            "time": "2016-04-29T12:21:54+00:00"
+            "time": "2017-07-24T09:37:08+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1007,53 +1013,7 @@
                 "serialization",
                 "xml"
             ],
-            "time": "2017-07-24 09:44:23"
-        },
-        {
-            "name": "joshtronic/php-loremipsum",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/joshtronic/php-loremipsum.git",
-                "reference": "e033baaa7913f0e2f36e20d42678b2842bc6e54a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/joshtronic/php-loremipsum/zipball/e033baaa7913f0e2f36e20d42678b2842bc6e54a",
-                "reference": "e033baaa7913f0e2f36e20d42678b2842bc6e54a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "satooshi/php-coveralls": "~1.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "joshtronic\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Josh Sherman",
-                    "email": "josh@gravityblvd.com",
-                    "homepage": "http://joshtronic.com"
-                }
-            ],
-            "description": "Lorem ipsum generator in PHP without dependencies",
-            "homepage": "https://github.com/joshtronic/php-loremipsum",
-            "keywords": [
-                "generator",
-                "ipsum",
-                "lorem"
-            ],
-            "time": "2017-05-28T23:30:23+00:00"
+            "time": "2017-07-24T09:44:23+00:00"
         },
         {
             "name": "kriswallsmith/buzz",
@@ -1102,121 +1062,6 @@
                 "http client"
             ],
             "time": "2015-06-25 17:26:56"
-        },
-        {
-            "name": "league/factory-muffin",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/thephpleague/factory-muffin.git",
-                "reference": "2ffadfe5bd9077ee625a99b8c16bf07e730d9c35"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/factory-muffin/zipball/2ffadfe5bd9077ee625a99b8c16bf07e730d9c35",
-                "reference": "2ffadfe5bd9077ee625a99b8c16bf07e730d9c35",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0"
-            },
-            "replace": {
-                "zizaco/factory-muff": "self.version"
-            },
-            "require-dev": {
-                "doctrine/orm": "2.5.*",
-                "illuminate/database": "5.0.*|5.1.*",
-                "league/factory-muffin-faker": "^2.0",
-                "phpunit/phpunit": "^4.8|^5.0"
-            },
-            "suggest": {
-                "doctrine/orm": "Factory Muffin supports doctrine through the repository store.",
-                "illuminate/database": "Factory Muffin supports eloquent through the model store.",
-                "league/factory-muffin-faker": "Factory Muffin is very powerful together with faker."
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "League\\FactoryMuffin\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Scott Robertson",
-                    "email": "scottymeuk@gmail.com"
-                },
-                {
-                    "name": "Graham Campbell",
-                    "email": "graham@alt-three.com"
-                }
-            ],
-            "description": "The goal of this package is to enable the rapid creation of objects for the purpose of testing.",
-            "homepage": "http://factory-muffin.thephpleague.com/",
-            "keywords": [
-                "factory",
-                "testing"
-            ],
-            "time": "2017-01-01T12:45:11+00:00"
-        },
-        {
-            "name": "league/factory-muffin-faker",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/thephpleague/factory-muffin-faker.git",
-                "reference": "204f3a03f55e7fcb7ec6b12f9ffea5ef0197ce8a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/factory-muffin-faker/zipball/204f3a03f55e7fcb7ec6b12f9ffea5ef0197ce8a",
-                "reference": "204f3a03f55e7fcb7ec6b12f9ffea5ef0197ce8a",
-                "shasum": ""
-            },
-            "require": {
-                "fzaninotto/faker": "1.6.*",
-                "php": ">=5.4.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8|^5.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "League\\FactoryMuffin\\Faker\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Graham Campbell",
-                    "email": "graham@alt-three.com"
-                }
-            ],
-            "description": "The goal of this package is to wrap faker to make it super easy to use with factory muffin.",
-            "homepage": "http://factory-muffin.thephpleague.com/",
-            "keywords": [
-                "factory",
-                "faker",
-                "testing"
-            ],
-            "time": "2017-01-01T12:45:07+00:00"
         },
         {
             "name": "lucatume/args",
@@ -1646,18 +1491,15 @@
         },
         {
             "name": "otgs/unit-tests-framework",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-unit-tests-framework.git",
-                "reference": "4e87397179bb87baee24533bb37944a8fd6f487d"
+                "reference": "e3141a7bfe4ba6ffad18c20b3d6921b301d24797"
             },
             "require": {
-                "10up/wp_mock": "dev-master",
-                "joshtronic/php-loremipsum": "dev-master",
-                "league/factory-muffin": "^3.0",
-                "league/factory-muffin-faker": "^2.0",
-                "lucatume/function-mocker": "~1.0",
+                "10up/wp_mock": "~0.2.0",
+                "lucatume/function-mocker": "~1.3.0",
                 "phpunit/phpunit": "^5",
                 "roave/security-advisories": "dev-master",
                 "symfony/css-selector": "^3.1",
@@ -1686,7 +1528,7 @@
             "keywords": [
                 "phpunit"
             ],
-            "time": "2017-04-10T14:20:59+00:00"
+            "time": "2017-07-28T19:54:48+00:00"
         },
         {
             "name": "otgs/wcml-codeception-tests",
@@ -1711,7 +1553,7 @@
             ],
             "description": "Codeception tests for WooCommerce Multilingual",
             "homepage": "https://wpml.org/documentation/related-projects/woocommerce-multilingual/",
-            "time": "2017-06-29 11:08:34"
+            "time": "2017-06-29T11:08:34+00:00"
         },
         {
             "name": "phpcollection/phpcollection",
@@ -2018,7 +1860,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2017-07-19 07:44:25"
+            "time": "2017-07-19T07:44:25+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2267,7 +2109,7 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2017-07-25 09:28:19"
+            "time": "2017-07-25T09:28:19+00:00"
         },
         {
             "name": "phpunit/phpunit",
@@ -2349,7 +2191,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2017-07-27 05:56:17"
+            "time": "2017-07-27T05:56:17+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -2408,7 +2250,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2017-06-30 09:13:00"
+            "time": "2017-06-30T09:13:00+00:00"
         },
         {
             "name": "psr/log",
@@ -2612,24 +2454,24 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/diff.git",
-                "reference": "ed724f5d860f9a4cf8eb8ba27ea45cac9541bb5b"
+                "reference": "763d7adeb8c35d2af2b04c0f6cafeee059074dfb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/ed724f5d860f9a4cf8eb8ba27ea45cac9541bb5b",
-                "reference": "ed724f5d860f9a4cf8eb8ba27ea45cac9541bb5b",
+                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/763d7adeb8c35d2af2b04c0f6cafeee059074dfb",
+                "reference": "763d7adeb8c35d2af2b04c0f6cafeee059074dfb",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0"
+                "php": "^5.3.3 || ^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.2"
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0-dev"
+                    "dev-master": "1.4-dev"
                 }
             },
             "autoload": {
@@ -2656,7 +2498,7 @@
             "keywords": [
                 "diff"
             ],
-            "time": "2017-07-13T02:44:20+00:00"
+            "time": "2017-03-07 07:26:53"
         },
         {
             "name": "sebastian/environment",
@@ -2664,24 +2506,24 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "cd0871b3975fb7fc44d11314fd1ee20925fce4f5"
+                "reference": "144fedf9aa8e3f1c52199f3634eb699cb59741d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/cd0871b3975fb7fc44d11314fd1ee20925fce4f5",
-                "reference": "cd0871b3975fb7fc44d11314fd1ee20925fce4f5",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/144fedf9aa8e3f1c52199f3634eb699cb59741d9",
+                "reference": "144fedf9aa8e3f1c52199f3634eb699cb59741d9",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0"
+                "php": "^5.6 || ^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.1"
+                "phpunit/phpunit": "^5.7 || ^6.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1.x-dev"
+                    "dev-master": "2.0.x-dev"
                 }
             },
             "autoload": {
@@ -2706,7 +2548,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2017-07-01T08:51:00+00:00"
+            "time": "2017-03-07 12:59:58"
         },
         {
             "name": "sebastian/exporter",
@@ -3139,7 +2981,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2017-07-13 01:37:12"
+            "time": "2017-07-13T01:37:12+00:00"
         },
         {
             "name": "symfony/console",
@@ -3209,7 +3051,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2017-07-22 18:13:43"
+            "time": "2017-07-22T18:13:43+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -3318,7 +3160,7 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2017-07-28 15:30:20"
+            "time": "2017-07-28T15:30:20+00:00"
         },
         {
             "name": "symfony/dom-crawler",
@@ -3594,7 +3436,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2017-07-15 08:52:56"
+            "time": "2017-07-15T08:52:56+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -3649,7 +3491,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2017-07-26 06:46:38"
+            "time": "2017-07-26T06:46:38+00:00"
         },
         {
             "name": "webmozart/assert",
