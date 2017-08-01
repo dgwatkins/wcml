@@ -265,8 +265,9 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 		$switcher_template->method( 'set_model' )->with( 'MODEL_DATA' )->willReturn( false );
 		$switcher_template->method( 'get_view' )->willReturn( 'SHORTCODE_VIEW' );
 
-		$shortcode_template = $this->getMockBuilder( 'WCML_CS_Templates' )->disableOriginalConstructor()->setMethods( array( 'get_template' ) )->getMock();
+		$shortcode_template = $this->getMockBuilder( 'WCML_CS_Templates' )->disableOriginalConstructor()->setMethods( array( 'get_template', 'maybe_late_enqueue_template' ) )->getMock();
 		$shortcode_template->method( 'get_template' )->with( 'wcml-horizontal-list' )->willReturn( $switcher_template );
+		$shortcode_template->method( 'maybe_late_enqueue_template' )->willReturn( true );
 
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
 		$woocommerce_wpml->expects( $this->once() )->method( 'get_settings' )->willReturn( $wcml_settings );
