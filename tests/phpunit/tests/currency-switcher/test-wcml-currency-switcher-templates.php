@@ -260,6 +260,7 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 		$subject   = $this->get_subject( $woocommerce_wpml );
 		$subject->set_templates( $templates );
 
+		$this->expectOutputString('');
 		$subject->enqueue_template_resources( );
 	}
 
@@ -287,6 +288,7 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 
 		$subject   = $this->get_subject( $woocommerce_wpml );
 
+		$this->expectOutputString('<style type="text/css" id="wcml-cs-inline-styles-currency_switcher-additional_css"></style>'. PHP_EOL);
 		$subject->enqueue_template_resources( array( rand_str() => $template_mock ) );
 	}
 
@@ -388,6 +390,22 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 		);
 
 		$this->assertEquals( $template_slug, $subject->get_first_active( ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function maybe_late_enqueue_template() {
+
+		$slug = rand_str();
+
+		$template_mock = $this->getMockBuilder( 'WCML_Currency_Switcher_Templates' )->disableOriginalConstructor()->setMethods( array( 'get_scripts', 'get_styles' ) )->getMock();
+		$template_mock->expects( $this->once() )->method( 'get_scripts' )->willReturn( array() );
+		$template_mock->expects( $this->once() )->method( 'get_styles' )->willReturn( array() );
+
+		$subject   = $this->get_subject( );
+
+		$subject->maybe_late_enqueue_template( $slug, $template_mock );
 	}
 
 	public function fix_dir_separator( $dir ) {

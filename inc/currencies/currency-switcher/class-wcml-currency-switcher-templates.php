@@ -4,17 +4,19 @@ class WCML_Currency_Switcher_Templates {
 
     const CONFIG_FILE    = 'config.json';
 
-    /*
+    /**
     * @var  woocommerce_wpml
     */
     private $woocommerce_wpml;
 
-    /*
+    /**
     * @var  WPML_WP_API $wp_api
     */
     private $wp_api;
 
-    /** @var string $uploads_path */
+    /**
+     * @var string $uploads_path
+     */
     private $uploads_path;
 
     /**
@@ -22,10 +24,19 @@ class WCML_Currency_Switcher_Templates {
      */
     private $wpml_file;
 
-    /* @var array $templates Collection of WCML_CS_Template */
+    /**
+     * @var array $templates Collection of WCML_CS_Template
+     */
     private $templates = false;
 
-    /* @var string $ds */
+	/**
+	 * @var array $enqueued_templates
+	 */
+	private $enqueued_templates = array();
+
+    /**
+     * @var string $ds
+     */
     private $ds = DIRECTORY_SEPARATOR;
 
     public function __construct(  woocommerce_wpml $woocommerce_wpml, WPML_WP_API $wp_api, WCML_File $wpml_file = null ) {
@@ -321,13 +332,7 @@ class WCML_Currency_Switcher_Templates {
 
         foreach ( $templates as $slug => $template ) {
 
-            foreach ( $template->get_scripts() as $k => $url ) {
-                wp_enqueue_script( $template->get_resource_handler( $k ), $url, array(), WCML_VERSION );
-            }
-
-            foreach ( $template->get_styles() as $k => $url ) {
-                wp_enqueue_style( $template->get_resource_handler( $k ), $url, array(), WCML_VERSION );
-            }
+            $this->enqueue_template_assets( $slug, $template );
 
             if ( $template->has_styles() ) {
                 $style_handler = $template->get_inline_style_handler();
@@ -366,6 +371,37 @@ class WCML_Currency_Switcher_Templates {
             }
         }
     }
+
+	/**
+	 * @param string $slug
+	 * @param WCML_Currency_Switcher_Template $template
+	 *
+	 */
+    public function enqueue_template_assets( $slug, $template ){
+
+	    $this->enqueued_templates[] = $slug;
+
+	    foreach ( $template->get_scripts() as $k => $url ) {
+		    wp_enqueue_script( $template->get_resource_handler( $k ), $url, array(), WCML_VERSION );
+	    }
+
+	    foreach ( $template->get_styles() as $k => $url ) {
+		    wp_enqueue_style( $template->get_resource_handler( $k ), $url, array(), WCML_VERSION );
+	    }
+
+    }
+
+
+	/**
+	 * @param $slug
+	 * @param $template
+	 */
+	public function maybe_late_enqueue_template( $slug, $template ) {
+		if ( ! in_array( $slug, $this->enqueued_templates ) ) {
+			$this->enqueue_template_assets( $slug, $template );
+		}
+	}
+
 
     /**
      * @param string $css

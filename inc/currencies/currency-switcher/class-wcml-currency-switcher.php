@@ -79,10 +79,9 @@ class WCML_Currency_Switcher{
 
 		$args = $this->check_and_convert_switcher_style( $args );
 
-		$switcher_style_not_available = !isset( $args[ 'switcher_style' ] ) || !$this->woocommerce_wpml->cs_templates->check_is_active( $args[ 'switcher_style' ] );
 		if (
 			!isset( $args[ 'preview' ] ) &&
-			$switcher_style_not_available
+			!isset( $args[ 'switcher_style' ] )
 		) {
 			$args[ 'switcher_style' ] = isset( $currency_switcher_settings[ 'switcher_style' ] ) ? $currency_switcher_settings[ 'switcher_style' ] : $this->woocommerce_wpml->cs_templates->get_first_active();
 		}
@@ -134,8 +133,13 @@ class WCML_Currency_Switcher{
 				}
 
 				$template = $this->woocommerce_wpml->cs_templates->get_template( $args[ 'switcher_style' ] );
-				$template->set_model( $this->get_model_data( $args, $currencies ) );
-				$preview = $template->get_view();
+
+				if( $template ) {
+					$this->woocommerce_wpml->cs_templates->maybe_late_enqueue_template( $args['switcher_style'], $template );
+					$template->set_model( $this->get_model_data( $args, $currencies ) );
+					$preview = $template->get_view();
+				}
+
 			} else{
 
 				if( is_admin() ){
