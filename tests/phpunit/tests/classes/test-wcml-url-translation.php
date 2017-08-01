@@ -11,12 +11,27 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 
 	}
 
+	private function get_woocommerce_wcml_mock() {
+		return $this->getMockBuilder( 'woocommerce_wpml' )
+		            ->disableOriginalConstructor()
+		            ->getMock();
+	}
+
+	private function get_sitepress_mock() {
+		return $this->getMockBuilder( 'SitePress' )
+		            ->disableOriginalConstructor()
+		            ->getMock();
+	}
+
 	/**
 	 * @test
 	 */
 	public function use_untranslated_default_url_bases(){
 
-		$url_translation = new WCML_Url_Translation();
+		$url_translation = new WCML_Url_Translation(
+			$this->get_woocommerce_wcml_mock(),
+			$this->get_sitepress_mock()
+		);
 
 		$url_translation->default_product_base = rand_str();
 		$url_translation->default_product_category_base = rand_str();

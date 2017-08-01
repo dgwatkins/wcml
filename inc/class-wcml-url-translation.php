@@ -353,7 +353,7 @@ class WCML_Url_Translation {
 
 	function force_bases_in_strings_languages( $value ) {
 
-		if ( $value && $sitepress->get_current_language() != 'en' ) {
+		if ( $value && $this->sitepress->get_current_language() != 'en' ) {
 
 			remove_filter( 'gettext_with_context', array(
 				$this->woocommerce_wpml->strings,
@@ -493,7 +493,7 @@ class WCML_Url_Translation {
 
 			//filter shop page rewrite slug
 			$current_shop_id = wc_get_page_id( 'shop' );
-			$default_shop_id = apply_filters( 'translate_object_id', $current_shop_id, 'page', true, $sitepress->get_default_language() );
+			$default_shop_id = apply_filters( 'translate_object_id', $current_shop_id, 'page', true, $this->sitepress->get_default_language() );
 
 			if ( is_null( get_post( $current_shop_id ) ) || is_null( get_post( $default_shop_id ) ) ) {
 				return $value;

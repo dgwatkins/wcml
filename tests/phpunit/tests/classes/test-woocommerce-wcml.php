@@ -30,6 +30,10 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 
 	}
 
+	private function get_subject(){
+		return new woocommerce_wpml();
+	}
+
 	/**
 	 * @test
 	 */
@@ -55,6 +59,28 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 
 		$woocommerce_wpml = new woocommerce_wpml();
 
+	}
+
+	/**
+	 * @test
+	 */
+	public function add_hooks(){
+		$subject = $this->get_subject();
+
+		\WP_Mock::expectActionAdded( 'wpml_loaded', array( $subject, 'load' ) );
+		\WP_Mock::expectActionAdded( 'init', array( $subject, 'init' ), 2 );
+
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
+	public function load(){
+		$subject = $this->get_subject();
+
+		\WP_Mock::expectAction( 'wcml_loaded',$subject );
+		$subject->load();
 	}
 
 }
