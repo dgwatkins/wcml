@@ -79,7 +79,7 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 	public function load(){
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectAction( 'wcml_loaded',$subject );
+		\WP_Mock::expectAction( 'wcml_loaded' );
 		$subject->load();
 	}
 
