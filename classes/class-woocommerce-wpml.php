@@ -104,7 +104,7 @@ class woocommerce_wpml {
 
 	public function load(){
 
-		do_action( 'wcml_loaded', $this );
+		do_action( 'wcml_loaded' );
 	}
 
 
