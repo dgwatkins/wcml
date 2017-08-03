@@ -16,7 +16,7 @@ class WCML_REST_API_Support{
 	 * Adding hooks
 	 */
 	public function initialize(){
-
+				
 		$this->prevent_default_lang_url_redirect();
 
 		add_action( 'rest_api_init', array( $this, 'set_language_for_request' ) );
@@ -29,6 +29,8 @@ class WCML_REST_API_Support{
 		add_filter( 'woocommerce_rest_product_query', array( $this, 'filter_products_query' ), 10, 2 );
 		add_action( 'woocommerce_rest_insert_product_object', array( $this, 'set_product_language' ), 10, 2 );
 		add_action( 'woocommerce_rest_insert_product_object', array( $this, 'set_product_custom_prices' ), 10, 2 );
+		add_action( 'woocommerce_rest_insert_product_object', array( $this, 'copy_custom_fields_from_original' ), 10, 1 );
+
 		add_action( 'woocommerce_rest_prepare_product_object', array( $this, 'copy_product_custom_fields' ), 10 , 3 );
 
 		// Orders
@@ -321,6 +323,17 @@ class WCML_REST_API_Support{
 			}
 		}
 
+	}
+
+	/**
+	 * @param WC_Product $product
+	 */
+	public function copy_custom_fields_from_original( WC_Product $product ){
+		$original_post_id = $this->sitepress->get_original_element_id_filter('', $product->get_id(), 'post_product' );
+
+		if( $original_post_id !== $product->get_id() ){
+			$this->sitepress->copy_custom_fields( $original_post_id, $product->get_id() );
+		}
 	}
 
 	/**
