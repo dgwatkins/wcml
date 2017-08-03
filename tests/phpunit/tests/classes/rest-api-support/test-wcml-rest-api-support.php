@@ -23,6 +23,8 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 			                        'save_settings',
 			                        'get_element_trid',
 			                        'get_element_translations',
+			                        'get_original_element_id_filter',
+			                        'copy_custom_fields'
 		                        ) )
 		                        ->getMock();
 
@@ -141,6 +143,10 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 			$subject,
 			'set_product_custom_prices'
 		), 10, 2 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product_object', array(
+			$subject,
+			'copy_custom_fields_from_original'
+		), 10, 1 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_object', array(
 			$subject,
 			'copy_product_custom_fields'
@@ -855,6 +861,50 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		}
 
 
+	}
+
+	/**
+	 * @test
+	 */
+	public function copy_custom_fields_from_original_when_creating_a_new_product(){
+		$subject = $this->get_subject();
+
+		$product_id = random_int(1, 100);
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                       ->disableOriginalConstructor()
+		                       ->setMethods( array( 'get_id' ) )
+		                       ->getMock();
+		$product->method( 'get_id' )->willReturn( $product_id );
+
+		$this->sitepress->method('get_original_element_id_filter')->willReturn( $product_id );
+		$this->sitepress->expects( $this->never() )
+		                ->method('copy_custom_fields');
+
+		$subject->copy_custom_fields_from_original( $product );
+	}
+
+	/**
+	 * @test
+	 */
+	public function copy_custom_fields_from_original_when_creating_a_translation(){
+		$subject = $this->get_subject();
+
+		$original_product_id = random_int(1, 100);
+		$translated_product_id = random_int(101, 200);
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'get_id' ) )
+		                ->getMock();
+		$product->method( 'get_id' )
+		        ->willReturn( $translated_product_id );
+
+		$this->sitepress->method('get_original_element_id_filter')
+		                ->willReturn( $original_product_id );
+		$this->sitepress->expects( $this->once() )
+		                ->method('copy_custom_fields')
+		                ->with( $original_product_id, $translated_product_id );
+
+		$subject->copy_custom_fields_from_original( $product );
 	}
 
 	/**
