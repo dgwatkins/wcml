@@ -137,6 +137,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_update_product', array( $subject, 'set_product_custom_prices'), 10, 2 );
 
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product', array( $subject, 'copy_product_custom_fields'), 10, 3 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product', array( $subject, 'copy_custom_fields_from_original'), 10, 1 );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_shop_order_query', array( $subject, 'filter_orders_by_language'), 20, 2 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_shop_order', array( $subject, 'filter_order_items_by_language'), 10, 3 );
@@ -1020,6 +1021,50 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		$subject->auto_adjust_included_ids( $wp_query );
 		$this->assertEquals( $posts['translation'], $wp_query->get('post__in') );
 
+	}
+
+	/**
+	 * @test
+	 */
+	public function copy_custom_fields_from_original_when_creating_a_new_product(){
+		$subject = $this->get_subject();
+
+		$post = new stdClass();
+		$post->ID = random_int(1, 100);
+
+		$this->sitepress = $this->getMockBuilder( 'SitePress' )
+			->disableOriginalConstructor()
+			->setMethods( array( 'get_original_element_id_filter', 'copy_custom_fields' ) )
+			->getMock();
+		$this->sitepress->method('get_original_element_id_filter')->willReturn( $post->ID );
+		$this->sitepress->expects( $this->never() )
+			->method('copy_custom_fields');
+
+		$subject->copy_custom_fields_from_original( $post );
+	}
+
+	/**
+	 * @test
+	 */
+	public function copy_custom_fields_from_original_when_creating_a_translation(){
+		$subject = $this->get_subject();
+
+		$original_product_id = random_int(1, 100);
+		$translated_product_id = random_int(101, 200);
+		$post = new stdClass();
+		$post->ID = $translated_product_id;
+
+		$this->sitepress = $this->getMockBuilder( 'SitePress' )
+			->disableOriginalConstructor()
+			->setMethods( array( 'get_original_element_id_filter', 'copy_custom_fields' ) )
+			->getMock();
+		$this->sitepress->method('get_original_element_id_filter')
+			->willReturn( $original_product_id );
+		$this->sitepress->expects( $this->once() )
+			->method('copy_custom_fields')
+			->with( $original_product_id, $translated_product_id );
+
+		$subject->copy_custom_fields_from_original( $post );
 	}
 
 	/**
