@@ -59,9 +59,6 @@ class Test_WCML_Products_UI extends OTGS_TestCase {
 		global $wpdb;
 		$wpdb = $this->stubs->wpdb();
 
-		$wpdb->expects( $this->once() )
-		     ->method( 'prepare' );
-
 		$result = [ rand_str() ];
 		$wpdb->expects( $this->once() )
 		     ->method( 'get_results' )
