@@ -32,6 +32,8 @@ class WCML_Helper {
 		$dummy_data = array();
 
 		if ( is_array( $args ) ) {
+			$status_helper      = wpml_get_post_status_helper();
+
 			foreach ( $args as $lang_code => $data ) {
 				for ( $i = 0; $i < $data['count']; $i ++ ) {
 					$product = $this->add_product( $lang_code, false, sprintf( 'Test Product: %d', $i ) );
@@ -44,6 +46,10 @@ class WCML_Helper {
 						foreach ( $data['translations'] as $trnsl_lang ) {
 							$trnsl_product                              = $this->add_product( $trnsl_lang, $product->trid, sprintf( 'Test Product %s: %d', $trnsl_lang, $i ) );
 							$dummy_data[ $product->id ]['translations'] = array( $trnsl_lang => $trnsl_product->id );
+
+							if ( isset( $data['status'] ) ) {
+								$status_helper->set_status( $trnsl_product->id, $data['status'] );
+							}
 						}
 					}
 				}
