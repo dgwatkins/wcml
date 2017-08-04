@@ -44,6 +44,7 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         //make current user as admin
         $this->make_current_user_wcml_admin();
 
+	    $_GET['slang'] = 'en';
         $products = $this->wcml_products_ui->get_products_data();
 
         foreach( $products['products'] as $key => $product ){
@@ -63,6 +64,9 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
                 $i++;
             }
         }
+
+	    unset( $_GET['slang'] );
+	    $_GET['lm'] = 1000;
 
         //test products from filter
         foreach( $this->test_data[ 'filters' ][ 'source_languages' ] as $source_language ){
@@ -188,12 +192,14 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
 
         $products_info = $this->wcml_products_ui->get_product_info_from_self_edit_mode();
         $this->assertEquals( 1, $products_info[ 'products_count' ] );
+	    unset( $_GET[ 'prid' ] );
     }
 
     function test_wcml_check_rendered_table(){
 
         $this->make_current_user_wcml_admin();
 
+	    $_GET['slang'] = 'en';
         $content = $this->wcml_products_ui->get_view();
         $content = str_replace('&','%26',$content);
         $dom = new DOMDocument();
@@ -205,6 +211,7 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         $this->check_products_rows( $dom );
 
         $this->check_pagination( $dom );
+        unset( $_GET['slang'] );
 
     }
 
@@ -215,14 +222,16 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         $this->test_data[ 'products_count' ][ 'en' ] = 100;
         $this->test_data[ 'original_products_count' ] += $this->test_data[ 'products_count' ][ 'en' ];
 
-        $args[ 'en' ] = array( 'count' => $this->test_data[ 'products_count' ][ 'en' ], 'translations' => array( 'es' ) );
+        $args[ 'en' ] = array( 'count' => $this->test_data[ 'products_count' ][ 'en' ], 'translations' => array( 'es' ), 'status' => ICL_TM_COMPLETE );
+	    $this->test_data[ 'complete_product_translations' ] = $this->test_data[ 'products_count' ][ 'en' ];
 
         //add 10 products in ES with EN translations
         $this->test_data[ 'products_count' ][ 'es' ] = 10;
         $this->test_data[ 'original_products_count' ] += $this->test_data[ 'products_count' ][ 'es' ];
-        $args[ 'es' ] = array( 'count' => $this->test_data[ 'products_count' ][ 'es' ], 'translations' => array( 'en' ) );
-        $this->test_data[ 'products' ] = $this->wcml_helper->add_products( $args );
+        $args[ 'es' ] = array( 'count' => $this->test_data[ 'products_count' ][ 'es' ], 'translations' => array( 'en' ), 'status' => ICL_TM_IN_PROGRESS );
+	    $this->test_data[ 'in_progress_product_translations' ] = $this->test_data[ 'products_count' ][ 'es' ];
 
+	    $this->test_data[ 'products' ] = $this->wcml_helper->add_products( $args );
     }
 
     private function add_test_categories(){
@@ -254,16 +263,23 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
 
         //add 3 products with child's in EN
         $this->test_data[ 'products_with_childs' ][ 'count' ] = 3;
-        $this->test_data[ 'original_products_count' ] += $this->test_data[ 'products_with_childs' ][ 'count' ];
-        for( $i=0; $i<$this->test_data[ 'products_with_childs' ][ 'count' ]; $i++ ){
-            $product = $this->wcml_helper->add_product( 'en', false, 'TEST Product with Child '.$i );
-            $this->test_data[ 'products' ][ $product->id ] = array( 'id' => $product->id, 'trid' => $product->trid, 'language' => 'en', 'translations' => array() );
-            $child_product = $this->wcml_helper->add_product( 'en', false, 'Child Product for '.$product->id, $product->id );
-            $this->test_data[ 'products' ][ $product->id ] = array( 'id' => $child_product->id, 'trid' => $child_product->trid, 'language' => 'en', 'translations' => array() );
+        for( $i=0; $i<$this->test_data[ 'products_with_childs' ][ 'count' ]; $i++ ) {
+	        $product                                     = $this->wcml_helper->add_product( 'en', false, 'TEST Product with Child ' . $i );
+	        $this->test_data['products'][ $product->id ] = array( 'id'           => $product->id,
+	                                                              'trid'         => $product->trid,
+	                                                              'language'     => 'en',
+	                                                              'translations' => array()
+	        );
+	        $child_product                               = $this->wcml_helper->add_product( 'en', false, 'Child Product for ' . $product->id, $product->id );
+	        $this->test_data['products'][ $product->id ] = array( 'id'           => $child_product->id,
+	                                                              'trid'         => $child_product->trid,
+	                                                              'language'     => 'en',
+	                                                              'translations' => array()
+	        );
 
-            $this->test_data[ 'products_with_childs' ][ 'ids' ][] = $product->id;
+	        $this->test_data['products_with_childs']['ids'][] = $product->id;
         }
-
+	    $this->test_data[ 'original_products_count' ] += $this->test_data[ 'products_with_childs' ][ 'count' ]*2;
     }
 
     private function add_products_with_categories(){
@@ -293,17 +309,22 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
     private function set_filter_combinations(){
         //set filter combinations to check ( key structure - *source_language*_*category*_*translation_status*_*product_status* )
         $this->test_data[ 'filters' ][ 'combinations' ] = array();
-        $this->test_data[ 'filters' ][ 'combinations' ][ 'all_all_all_all' ] = $this->test_data[ 'original_products_count' ];
-        $this->test_data[ 'filters' ][ 'combinations' ][ 'en_all_all_all' ] = $this->test_data[ 'products_count' ][ 'en' ];
-        $this->test_data[ 'filters' ][ 'combinations' ][ 'en_all_all_publish' ] = $this->test_data[ 'original_products_count' ] - $this->test_data[ 'draft_products' ][ 'count' ] - $this->test_data[ 'products_count' ][ 'es' ];
-        $this->test_data[ 'filters' ][ 'combinations' ][ 'es_all_all_all' ] = $this->test_data[ 'products_count' ][ 'es' ];
+        $this->test_data[ 'filters' ][ 'combinations' ][ 'all_0_all_all' ] = $this->test_data[ 'original_products_count' ];
+        $this->test_data[ 'filters' ][ 'combinations' ][ 'en_0_all_all' ] = $this->test_data[ 'original_products_count' ] - $this->test_data[ 'products_count' ][ 'es' ];;
+        $this->test_data[ 'filters' ][ 'combinations' ][ 'en_0_all_publish' ] = $this->test_data[ 'original_products_count' ] - $this->test_data[ 'draft_products' ][ 'count' ] - $this->test_data[ 'products_count' ][ 'es' ];
+        $this->test_data[ 'filters' ][ 'combinations' ][ 'es_0_all_all' ] = $this->test_data[ 'products_count' ][ 'es' ];
         foreach( $this->test_data[ 'products_with_categories' ] as $cat_id => $cat_wit_products ){
             $this->test_data[ 'filters' ][ 'combinations' ][ 'all_'.$cat_id.'_all_all' ] = $cat_wit_products[ 'count' ];
         }
-        $this->test_data[ 'filters' ][ 'combinations' ][ 'all_all_all_draft' ] = $this->test_data[ 'draft_products' ][ 'count' ];
-        $this->test_data[ 'filters' ][ 'combinations' ][ 'en_all_all_draft' ] = $this->test_data[ 'draft_products' ][ 'count' ];
-        $this->test_data[ 'filters' ][ 'combinations' ][ 'es_all_all_draft' ] = 0;
-        $this->test_data[ 'filters' ][ 'combinations' ][ 'all_all_all_publish' ] = $this->test_data[ 'original_products_count' ] - $this->test_data[ 'draft_products' ][ 'count' ];
+        $this->test_data[ 'filters' ][ 'combinations' ][ 'all_0_all_draft' ] = $this->test_data[ 'draft_products' ][ 'count' ];
+        $this->test_data[ 'filters' ][ 'combinations' ][ 'en_0_all_draft' ] = $this->test_data[ 'draft_products' ][ 'count' ];
+        $this->test_data[ 'filters' ][ 'combinations' ][ 'es_0_all_draft' ] = 0;
+        $this->test_data[ 'filters' ][ 'combinations' ][ 'all_0_all_publish' ] = $this->test_data[ 'original_products_count' ] - $this->test_data[ 'draft_products' ][ 'count' ];
+        //set filter combinations to test translation statuses
+	    $this->test_data[ 'filters' ][ 'combinations' ][ 'all_0_not_all' ] = $this->test_data[ 'original_products_count' ];
+	    $this->test_data[ 'filters' ][ 'combinations' ][ 'all_0_need_update_all' ] = 0;
+	    $this->test_data[ 'filters' ][ 'combinations' ][ 'all_0_in_progress_all' ] = $this->test_data[ 'in_progress_product_translations' ];
+	    $this->test_data[ 'filters' ][ 'combinations' ][ 'all_0_complete_all' ] = $this->test_data[ 'complete_product_translations' ];;
     }
 
     //check drop-downs from filter at top
