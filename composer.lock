@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8bbcc150b6877418a86fcdbdd2c6ed38",
-    "content-hash": "e944fb01c3d1bec76f00dcda7e73b300",
+    "content-hash": "15419a202fcd66b897770a4f968febe0",
     "packages": [
         {
             "name": "composer/installers",
@@ -119,15 +118,15 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2017-04-24 06:37:16"
+            "time": "2017-04-24T06:37:16+00:00"
         },
         {
             "name": "otgs/installer",
-            "version": "dev-master",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/installer/installer.git",
-                "reference": "488f4ddf7d9b6272da4aa2f3a440011dc8b101f8"
+                "reference": "36101873478f3590c410701f7869570310271477"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -166,7 +165,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2017-06-14 05:56:45"
+            "time": "2017-08-04 15:33:42"
         },
         {
             "name": "roave/security-advisories",
@@ -302,42 +301,39 @@
                 }
             ],
             "description": "Prevents installation of composer packages with known security vulnerabilities: no API, simply require it",
-            "time": "2017-06-22 16:43:17"
+            "time": "2017-06-22T16:43:17+00:00"
         },
         {
             "name": "twig/twig",
-            "version": "1.x-dev",
+            "version": "v1.32.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "8c9bb921ea35b1bc9b59fe99bdce2e8e1d076d45"
+                "reference": "9935b662e24d6e634da88901ab534cc12e8c728f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/8c9bb921ea35b1bc9b59fe99bdce2e8e1d076d45",
-                "reference": "8c9bb921ea35b1bc9b59fe99bdce2e8e1d076d45",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/9935b662e24d6e634da88901ab534cc12e8c728f",
+                "reference": "9935b662e24d6e634da88901ab534cc12e8c728f",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3"
+                "php": ">=5.2.7"
             },
             "require-dev": {
                 "psr/container": "^1.0",
                 "symfony/debug": "~2.7",
-                "symfony/phpunit-bridge": "~3.3@dev"
+                "symfony/phpunit-bridge": "~3.2"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.34-dev"
+                    "dev-master": "1.32-dev"
                 }
             },
             "autoload": {
                 "psr-0": {
                     "Twig_": "lib/"
-                },
-                "psr-4": {
-                    "Twig\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -367,7 +363,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2017-06-16 13:42:12"
+            "time": "2017-02-27T00:07:03+00:00"
         },
         {
             "name": "xrstf/composer-php52",
@@ -398,7 +394,7 @@
             "license": [
                 "MIT"
             ],
-            "time": "2016-04-16 21:52:24"
+            "time": "2016-04-16T21:52:24+00:00"
         }
     ],
     "packages-dev": [
@@ -446,7 +442,7 @@
                 "GPL-2.0+"
             ],
             "description": "A mocking library to take the pain out of unit testing for WordPress",
-            "time": "2017-02-24 16:42:08"
+            "time": "2017-02-24T16:42:08+00:00"
         },
         {
             "name": "antecedent/patchwork",
@@ -486,7 +482,7 @@
                 "runkit",
                 "testing"
             ],
-            "time": "2016-07-02 04:25:33"
+            "time": "2016-07-02T04:25:33+00:00"
         },
         {
             "name": "corneltek/getoptionkit",
@@ -846,7 +842,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2014-01-28 22:29:15"
+            "time": "2014-01-28T22:29:15+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
@@ -948,7 +944,7 @@
                 "xml",
                 "yaml"
             ],
-            "time": "2016-12-05 10:18:33"
+            "time": "2016-12-05T10:18:33+00:00"
         },
         {
             "name": "jms/parser-lib",
@@ -1315,7 +1311,7 @@
                 }
             ],
             "description": "A PHP 5.2 compatible arguments handling library.",
-            "time": "2016-03-21 10:13:39"
+            "time": "2016-03-21T10:13:39+00:00"
         },
         {
             "name": "lucatume/function-mocker",
@@ -1356,7 +1352,7 @@
                 }
             ],
             "description": "Function mocking with Patchwork",
-            "time": "2016-06-03 19:40:26"
+            "time": "2016-06-03T19:40:26+00:00"
         },
         {
             "name": "m4tthumphrey/php-gitlab-api",
@@ -1581,7 +1577,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools.git",
-                "reference": "652c46e9de9e55e92a3104e426c0800bdba2aaa2"
+                "reference": "2ad2acac1abcca3aea18fbe4209f54adc0e4ac55"
             },
             "type": "library",
             "license": [
@@ -1599,15 +1595,15 @@
             "keywords": [
                 "grunt"
             ],
-            "time": "2016-11-28 11:32:27"
+            "time": "2016-11-28T11:32:27+00:00"
         },
         {
             "name": "otgs/build-tools-ci",
-            "version": "0.6.2",
+            "version": "0.6.3",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "0bb28ab50771554ea8f60e286ccefe57098f2291"
+                "reference": "6b3cb765041059a9900953623eba36784dd9194b"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -1655,7 +1651,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2017-06-22 11:37:01"
+            "time": "2017-06-27T14:43:00+00:00"
         },
         {
             "name": "otgs/changelog",
@@ -1663,7 +1659,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-changelog.git",
-                "reference": "9f8b6790096c760f440153a524a67833b07e85df"
+                "reference": "72c0df88f2cd3d555f2aa5860e39d26fbb3fe70b"
             },
             "require": {
                 "nepda/youtrack-client": "dev-master",
@@ -1702,15 +1698,15 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2017-05-18 12:05:16"
+            "time": "2017-05-18T12:05:16+00:00"
         },
         {
             "name": "otgs/unit-tests-framework",
-            "version": "1.1.1",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-unit-tests-framework.git",
-                "reference": "661abe1fa625ef640313d85386934c01cca107e7"
+                "reference": "4e87397179bb87baee24533bb37944a8fd6f487d"
             },
             "require": {
                 "10up/wp_mock": "dev-master",
@@ -1746,32 +1742,7 @@
             "keywords": [
                 "phpunit"
             ],
-            "time": "2017-04-10 14:20:59"
-        },
-        {
-            "name": "otgs/wcml-codeception-tests",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "ssh://git@git.onthegosystems.com:10022/wcml/codeception-tests.git",
-                "reference": "ce2750fbf5544ce374139c11215910de03508623"
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "codeception-tests",
-            "license": [
-                "GPLv2"
-            ],
-            "authors": [
-                {
-                    "name": "Andreas Panagiotopulous",
-                    "email": "andreas.p@onthegosystems.com"
-                }
-            ],
-            "description": "Codeception tests for WooCommerce Multilingual",
-            "homepage": "https://wpml.org/documentation/related-projects/woocommerce-multilingual/",
-            "time": "2017-06-27 11:55:22"
+            "time": "2017-04-10T14:20:59+00:00"
         },
         {
             "name": "phpcollection/phpcollection",
@@ -1819,7 +1790,7 @@
                 "sequence",
                 "set"
             ],
-            "time": "2015-05-17 12:39:23"
+            "time": "2015-05-17T12:39:23+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -1918,7 +1889,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2016-09-30 07:12:33"
+            "time": "2016-09-30T07:12:33+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -1965,7 +1936,7 @@
                     "email": "me@mikevanriel.com"
                 }
             ],
-            "time": "2016-11-25 06:54:22"
+            "time": "2016-11-25T06:54:22+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -2015,7 +1986,7 @@
                 "php",
                 "type"
             ],
-            "time": "2015-07-25 16:39:46"
+            "time": "2015-07-25T16:39:46+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -2229,7 +2200,7 @@
             "keywords": [
                 "template"
             ],
-            "time": "2015-06-21 13:50:34"
+            "time": "2015-06-21T13:50:34+00:00"
         },
         {
             "name": "phpunit/php-timer",
@@ -2552,7 +2523,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2016-09-09 08:07:18"
+            "time": "2016-09-09T08:07:18+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -3118,7 +3089,7 @@
                 "typo3"
             ],
             "abandoned": true,
-            "time": "2016-05-12 11:58:38"
+            "time": "2016-05-12T11:58:38+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
@@ -3803,7 +3774,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2017-05-06 19:28:14"
+            "time": "2017-05-06T19:28:14+00:00"
         },
         {
             "name": "wp-coding-standards/wpcs",
@@ -3839,15 +3810,13 @@
                 "standards",
                 "wordpress"
             ],
-            "time": "2016-08-29 20:04:47"
+            "time": "2016-08-29T20:04:47+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "roave/security-advisories": 20,
-        "otgs/installer": 20,
-        "otgs/wcml-codeception-tests": 20
+        "roave/security-advisories": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
