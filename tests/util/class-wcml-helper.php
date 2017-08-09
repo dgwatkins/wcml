@@ -171,7 +171,7 @@ class WCML_Helper {
 				$max_variation_regular_price = $vp['regular'];
 			}
 
-			if ( ! empty( $vp['sale'] ) ) {
+			if ( isset( $vp['sale'] ) ) {
 				if ( ! isset( $min_variation_sale_price ) || $min_variation_sale_price > $vp['sale'] ) {
 					$min_variation_sale_price = $vp['sale'];
 				}
@@ -245,7 +245,7 @@ class WCML_Helper {
 			// Price related meta
 			update_post_meta( $variation_id, '_price', $variation['price'] );
 			update_post_meta( $variation_id, '_regular_price', $variation['regular'] );
-			if ( ! empty( $variation['sale'] ) ) {
+			if ( isset( $variation['sale'] ) ) {
 				update_post_meta( $variation_id, '_sale_price', $variation['sale'] );
 			}
 

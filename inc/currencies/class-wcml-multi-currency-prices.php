@@ -131,7 +131,7 @@ class WCML_Multi_Currency_Prices {
 
 		$manual_prices = $this->multi_currency->custom_prices->get_product_custom_prices( $product_id, $currency );
 
-		if ( $manual_prices && ! empty( $manual_prices['_price'] ) ) {
+		if ( $manual_prices && isset( $manual_prices['_price'] ) ) {
 
 			$price = $manual_prices['_price'];
 
@@ -192,26 +192,25 @@ class WCML_Multi_Currency_Prices {
 					// 1. manual prices
 					$manual_prices = $this->multi_currency->custom_prices->get_product_custom_prices( $object_id, $this->multi_currency->get_client_currency() );
 
-					if ( $manual_prices && ! empty( $manual_prices[ $meta_key ] ) ) {
+					if ( $manual_prices && isset( $manual_prices[ $meta_key ] ) ) {
 
 						$price = $manual_prices[ $meta_key ];
 
 					} else {
 						// 2. automatic conversion
 						$price = get_post_meta( $object_id, $meta_key, $single );
-						$price = apply_filters( 'wcml_raw_price_amount', $price );
-
+						if( $price ){
+							$price = apply_filters( 'wcml_raw_price_amount', $price );
+						}
 					}
-
 				}
-
 
 				$no_filter = false;
 			}
 
 		}
 
-		return ! empty( $price ) ? $price : $null;
+		return isset( $price ) ? $price : $null;
 	}
 
 	public function variation_prices_filter( $null, $object_id, $meta_key, $single ) {
@@ -235,7 +234,7 @@ class WCML_Multi_Currency_Prices {
 							if ( isset( $manual_prices[ $k ] ) ) {
 								$variation_fields[ $k ][ $j ] = $manual_prices[ $k ];     // manual price
 
-							} else {
+							} elseif( $amount ) {
 								$variation_fields[ $k ][ $j ] = apply_filters( 'wcml_raw_price_amount', $amount );   // automatic conversion
 							}
 
@@ -250,7 +249,7 @@ class WCML_Multi_Currency_Prices {
 
 		}
 
-		return ! empty( $variation_fields ) ? $variation_fields : $null;
+		return isset( $variation_fields ) ? $variation_fields : $null;
 
 	}
 
