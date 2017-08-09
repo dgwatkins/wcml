@@ -33,10 +33,11 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 		$this->set_up_currencies();
 
 		// PRODUCTS
-		$this->products['simple'] 		= $this->add_simple_product('Test Product Simple');
-		$this->products['simple_sale'] 	= $this->add_simple_sale_product('Test Product Simple');
-		$this->products['variable'] 	= $this->add_variable_product('Test Product Variable');
-		$this->products['variable_sale']= $this->add_variable_sale_product('Test Product Variable Sale');
+		$this->products['simple']             = $this->add_simple_product( 'Test Product Simple' );
+		$this->products['simple_sale']        = $this->add_simple_sale_product( 'Test Product Simple' );
+		$this->products['variable']           = $this->add_variable_product( 'Test Product Variable' );
+		$this->products['variable_sale']      = $this->add_variable_sale_product( 'Test Product Variable Sale' );
+		$this->products['variable_sale_free'] = $this->add_variable_sale_product_free_price( 'Test Product Variable Sale Free' );
 
 		$this->multi_currency->set_client_currency( $this->default_currency );
 
@@ -352,6 +353,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 		WCML_Helper::register_attribute( 'size' );
 		$white = WCML_Helper::add_attribute_term( 'Small', 'size', $this->sitepress->get_default_language() );
 		$black = WCML_Helper::add_attribute_term( 'Big', 'size', $this->sitepress->get_default_language() );
+
 		$variation_data = array(
 
 			'product_title' => $title,
@@ -452,6 +454,107 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 	}
 
+	private function add_variable_sale_product_free_price($title){
+
+		WCML_Helper::register_attribute( 'color' );
+		WCML_Helper::add_attribute_term( 'Red', 'size', $this->sitepress->get_default_language() );
+		WCML_Helper::add_attribute_term( 'Green', 'size', $this->sitepress->get_default_language() );
+		$variation_data = array(
+
+			'product_title' => $title,
+
+			'attribute' => array(
+				'name' => 'pa_size'
+			),
+
+			'variations' => array(
+				'red' => array(
+					'price'     => 0,
+					'regular'   => 1100,
+					'sale'   	=> 0
+				),
+				'green' => array(
+					'price'     => 2000,
+					'regular'   => 2000,
+					'sale'   	=> ''
+				)
+			)
+		);
+
+		$product['post'] = $this->wcml_helper->add_variable_product( $variation_data );
+
+		foreach( $variation_data['variations'] as $vp ){
+			if( !isset($min_variation_price) || $min_variation_price > $vp['price'] ){
+				$min_variation_price = $vp['price'];
+			}
+			if( !isset($max_variation_price) || $max_variation_price < $vp['price'] ){
+				$max_variation_price = $vp['price'];
+			}
+			if( !isset($min_variation_regular_price) || $min_variation_regular_price > $vp['regular'] ){
+				$min_variation_regular_price = $vp['regular'];
+			}
+			if( !isset($max_variation_regular_price) || $max_variation_regular_price < $vp['regular'] ){
+				$max_variation_regular_price = $vp['regular'];
+			}
+
+		}
+
+		$expected['price'] = array(
+			'GBP' 	=> $min_variation_price,
+			// used min variation price which is 0
+			'USD'	=> 0,
+			// used min variation price which is 0
+			'RON'	=> 0,
+			// used min variation price which is 0
+			'AUD'	=> 0,
+			// used min variation price which is 0
+			'CHF'	=> 0
+		);
+
+
+		// Chnged in WC 2.7
+		$expected['formatted'] = array(
+			// according to default woocommerce settings: symbol left (no space), ',' thousands separator, '.' decimal separator
+			'GBP' =>
+				$this->wc_format_price('<cur>&pound;</cur>0.00') . ' &ndash; ' .
+				$this->wc_format_price('<cur>&pound;</cur>2,000.00'),
+			// according to settings defined in self::set_up_currencies ->
+			// symbol left (no space), '#' thousands separator, '@' decimal separator, 4 decimals
+			'USD' =>
+				$this->wc_format_price('<cur>&#36;</cur>0@0000') . ' &ndash; ' .
+				$this->wc_format_price('<cur>&#36;</cur>3#097@0000'),
+			// according to settings defined in self::set_up_currencies ->
+			// symbol right (w/ space), '.' thousands separator, ',' decimal separator, 0 decimals
+			'RON' =>
+				$this->wc_format_price('0<cur>lei</cur>') . ' &ndash; ' .
+				$this->wc_format_price('3.299<cur>lei</cur>'),
+			// according to settings defined in self::set_up_currencies ->
+			// symbol right (w space), '.' thousands separator, ',' decimal separator, 1 decimals
+			'AUD' =>
+				$this->wc_format_price('0.0&nbsp;<cur>&#36;</cur>') . ' &ndash; ' .
+				$this->wc_format_price('4,900.0&nbsp;<cur>&#36;</cur>'),
+			// according to settings defined in self::set_up_currencies ->
+			// symbol right (w/ space), '.' thousands separator, ',' decimal separator, 2 decimals
+			'CHF' =>
+				$this->wc_format_price('0,00<cur>&#67;&#72;&#70;</cur>') . ' &ndash; ' .
+				$this->wc_format_price('110.000,00<cur>&#67;&#72;&#70;</cur>')
+		);
+
+		$expected['price_on_language'] = array(
+			'en' => $expected['price']['USD'], // 'USD' price according to settings defined in self::set_up_currencies
+			'de' => $expected['price']['RON'], // keep previous according to settings defined in self::set_up_currencies
+			'fr' => $expected['price']['RON'], // keep previous according to settings defined in self::set_up_currencies
+			'es' => $expected['price']['RON'], // keep previous according to settings defined in self::set_up_currencies
+			'ru' => $expected['price']['RON'], // keep previous according to settings defined in self::set_up_currencies
+			'it' => $expected['price']['AUD']  // 'AUD' price according to settings defined in self::set_up_currencies
+		);
+
+		$product['expected'] = $expected;
+
+		return $product;
+
+	}
+
 	private function run_product_test( $product, $wc_product_type ){
 
 
@@ -530,6 +633,13 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 	public function test_variable_sale_product(){
 
 		$this->run_product_test( $this->products['variable_sale'], 'WC_Product_Variable' );
+
+	}
+
+	// Check prices for a variable product on sale, for different currencies and different languages
+	public function test_variable_sale_free_product(){
+
+		$this->run_product_test( $this->products['variable_sale_free'], 'WC_Product_Variable' );
 
 	}
 
