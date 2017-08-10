@@ -38,7 +38,7 @@ class WCML_WC_Subscriptions{
 			'woocommerce_subscription_price_from'
 		), 10, 2 );
 
-		add_filter( 'wcml_calculate_totals_exception', array( $this, '__return_false' ) );
+		add_filter( 'wcml_calculate_totals_exception', '__return_false' );
 	}
 
 	function init(){
