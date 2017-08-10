@@ -48,9 +48,8 @@
   "require-dev": {
     "otgs/build-tools": "~0.1",
     "otgs/unit-tests-framework": "~1.2.0",
-    "otgs/build-tools-ci": "~0.6",
-    "otgs/changelog": "~0.2",
-    "otgs/wcml-codeception-tests": "dev-master"
+    "otgs/build-tools-ci": "~0.7.0",
+    "otgs/changelog": "~0.2"
   },
   "scripts": {
     "post-install-cmd": [

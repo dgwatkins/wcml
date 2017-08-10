@@ -1,10 +1,10 @@
 ---
-image: wptest
+image: wptest:php7
 services:
   - mysql:latest
 
 variables:
-  # Configure mysql service (https://hub.docker.com/_/mysql/)
+  # Configure mysql service (https://hub.ec2.com/_/mysql/)
   WORDPRESS_DB_NAME: wp_test_db
   WORDPRESS_DB_USER: root
   MYSQL_ROOT_PASSWORD: mysql_strong_password
@@ -15,7 +15,7 @@ before_script:
   - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
   - eval $(ssh-agent -s)
   - bash -c 'ssh-add <(echo "$SSH_PRIVATE_KEY")'
-  - '[[ -f /.dockerenv ]] && mkdir -p ~/.ssh && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  - '[[ -f /.ec2env ]] && mkdir -p ~/.ssh && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   - 'composer install --quiet'
 
 stages:
@@ -28,9 +28,9 @@ stages:
 PhpComp:
   stage: qa
   when: always
-  image: otgs/phpunit
+  image: otgs/phpunit:5.7
   tags:
-    - docker
+    - ec2
   script:
     - vendor/bin/phpcs --standard=./phpcs.compatibility.xml -s -p --colors --report-full --report-summary ./
   except:
@@ -39,9 +39,9 @@ PhpComp:
 PhpUnit:
   stage: test
   when: always
-  image: otgs/phpunit
+  image: otgs/phpunit:5.7
   tags:
-    - docker
+    - ec2
   script:
     - cd tests/phpunit
     - ../../vendor/bin/phpunit --fail-on-warning
@@ -52,7 +52,7 @@ PhpUnit-Legacy:
   stage: test
   when: always
   tags:
-    - docker
+    - ec2
   script:
     - ./vendor/otgs/build-tools-ci/otgs-ci -p --legacy
   except:
@@ -61,9 +61,9 @@ PhpUnit-Legacy:
 Artifacts-Tag:
   stage: build
   when: on_success
-  image: artbuilder
+  image: artbuilder:php7
   tags:
-    - artifacts
+    - ec2
   script:
     - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
     - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
@@ -77,9 +77,9 @@ Artifacts-Tag:
 Artifacts-Branches:
   stage: deploy
   when: on_success
-  image: artbuilder
+  image: artbuilder:php7
   tags:
-    - artifacts
+    - ec2
   script:
     - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
     - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
@@ -98,9 +98,9 @@ Artifacts-Branches:
 Artifacts-Functional-Tests:
   stage: deploy
   when: on_success
-  image: artbuilder
+  image: artbuilder:php7
   tags:
-    - artifacts
+    - ec2
   script:
     - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
     - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
@@ -115,9 +115,9 @@ Artifacts-Functional-Tests:
 Artifacts-Prereleases:
   stage: qa
   when: on_success
-  image: artbuilder
+  image: artbuilder:php7
   tags:
-    - artifacts
+    - ec2
   script:
     - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
     - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
@@ -132,9 +132,9 @@ Artifacts-Prereleases:
 Artifacts-Develop:
   stage: deploy
   when: on_success
-  image: artbuilder
+  image: artbuilder:php7
   tags:
-    - artifacts
+    - ec2
   script:
     - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
   artifacts:
@@ -148,9 +148,9 @@ Artifacts-Develop:
 Artifacts-Master:
   stage: deploy
   when: on_success
-  image: artbuilder
+  image: artbuilder:php7
   tags:
-    - artifacts
+    - ec2
   script:
     - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
     - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
@@ -165,9 +165,9 @@ Artifacts-Master:
 Release-Notes:
   stage: documentation
   when: on_success
-  image: artbuilder
+  image: artbuilder:php7
   tags:
-    - artifacts
+    - ec2
   script:
     - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
     - ./vendor/otgs/build-tools-ci/otgs-ci --releasenotes
