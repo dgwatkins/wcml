@@ -24,7 +24,6 @@ define( 'WCML_PLUGIN_URL', untrailingslashit( plugin_dir_url( __FILE__ ) ) );
 
 include WCML_PLUGIN_PATH . '/inc/constants.php';
 require WCML_PLUGIN_PATH . '/inc/missing-php-functions.php';
-require WCML_PLUGIN_PATH . '/inc/woocommerce-functions-wrapper.php';
 include WCML_PLUGIN_PATH . '/inc/installer-loader.php';
 include WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
 include WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
