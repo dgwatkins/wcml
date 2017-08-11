@@ -8,7 +8,7 @@
   Text Domain: woocommerce-multilingual
   Requires at least: 3.9
   Tested up to: 4.8.1
-  Version: 4.2.1
+  Version: 4.2.1.1
 */
 
 if ( defined( 'WCML_VERSION' ) ) {
