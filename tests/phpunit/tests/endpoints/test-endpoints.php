@@ -118,6 +118,7 @@ class Test_Endpoints extends OTGS_TestCase {
 		$value = rand_str();
 		$permalink = rand_str();
 		$translated_endpoint_url = rand_str();
+		$wc_account_page_url = rand_str();
 
 		WP_Mock::wpFunction(
 			'get_option',
@@ -135,9 +136,17 @@ class Test_Endpoints extends OTGS_TestCase {
 		       ->reply( $translated_endpoint );
 
 		WP_Mock::wpFunction(
+			'wc_get_page_permalink',
+			array(
+				'args'   => array( 'myaccount' ),
+				'return' => $wc_account_page_url
+			)
+		);
+
+		WP_Mock::wpFunction(
 			'wc_get_endpoint_url',
 			array(
-				'args'   => array( $translated_endpoint ),
+				'args'   => array( $translated_endpoint, '', $wc_account_page_url ),
 				'return' => $translated_endpoint_url
 			)
 		);
