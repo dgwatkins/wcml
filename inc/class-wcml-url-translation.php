@@ -66,6 +66,8 @@ class WCML_Url_Translation {
 		add_filter( 'query_vars', array( $this, 'translate_query_var_for_product' ) );
 		add_filter( 'wp_redirect', array( $this, 'encode_shop_slug' ), 10, 2 );
 
+		add_filter( 'post_type_link', array( $this, 'translate_product_post_type_link' ), 10, 2 );
+
 		if ( empty( $this->woocommerce_wpml->settings['url_translation_set_up'] ) ) {
 
 			$this->clean_up_product_and_taxonomy_bases();
@@ -934,4 +936,28 @@ class WCML_Url_Translation {
 
 		return $location;
 	}
+
+	public function translate_product_post_type_link( $permalink, $post ) {
+
+		// Abort if post is not a product or permalink don't have 'uncategorized' flag
+		if ( 'product' !== $post->post_type || false === strpos( $permalink, '/uncategorized/' ) ) {
+			return $permalink;
+		}
+
+		$permalinks = wc_get_permalink_structure();
+
+		// Make sure the product permalink have %product_cat% flag.
+		if ( preg_match( '`/(.+)(/%product_cat%)`', $permalinks['product_rewrite_slug'], $matches ) ) {
+			$find             = 'uncategorized';
+			$element_language = $this->sitepress->get_language_for_element( $post->ID, 'post_product' );
+			$replace          = $this->woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( 'slug' . chr( 4 ) . $find, $element_language, false );
+
+			if ( ! is_null( $replace ) ) {
+				$permalink = str_replace( $find, $replace, $permalink );
+			}
+		}
+
+		return $permalink;
+	}
+
 }

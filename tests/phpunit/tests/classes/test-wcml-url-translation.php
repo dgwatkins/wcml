@@ -111,6 +111,54 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function translate_product_post_type_link() {
+
+		$translated_slug = rand_str();
+		$post = new stdClass();
+		$post->ID = mt_rand( 1, 100 );
+		$post->post_type = 'product';
+
+		$woocommerce_wpml = $this->get_woocommerce_multilingual();
+		$woocommerce_wpml->strings = $this->getMockBuilder( 'WCML_WC_Strings' )
+		                                  ->disableOriginalConstructor()
+		                                  ->setMethods( array( 'get_translation_from_woocommerce_mo_file' ) )
+		                                  ->getMock();
+
+		$woocommerce_wpml->strings->expects($this->once())->method( 'get_translation_from_woocommerce_mo_file' )->willReturn( $translated_slug );
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_language_for_element' ) )
+		                  ->getMock();
+
+		$sitepress->expects($this->once())->method( 'get_language_for_element' )->with( $post->ID, 'post_product' )->willReturn( rand_str() );
+
+		$subject = new WCML_Url_Translation( $woocommerce_wpml, $sitepress , $this->stubs->wpdb() );
+
+		$permalink_structure = array();
+		$permalink_structure['product_rewrite_slug'] = '/'.rand_str().'/%product_cat%';
+
+		\WP_Mock::wpFunction( 'wc_get_permalink_structure', array(
+			'return' => $permalink_structure
+		) );
+
+		$permalink = rand_str().'/uncategorized/'.rand_str();
+
+		$filtered_permalink = $subject->translate_product_post_type_link( $permalink, $post );
+
+		$this->assertContains( $translated_slug, $filtered_permalink );
+
+		$post->post_type = rand_str();
+		$permalink = rand_str();
+		$filtered_permalink = $subject->translate_product_post_type_link( $permalink, $post );
+
+		$this->assertEquals( $permalink, $filtered_permalink );
+
+	}
+
 	public function rewrite_rules_attribute_base_is_translated( $subject, $attribute_base_slug, $attribute_slug ){
 
 		$translated_attribute_base_slug = rand_str();
