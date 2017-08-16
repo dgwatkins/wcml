@@ -684,7 +684,11 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                 $_POST[ 'new_title' ] = $translations[ md5( 'title' ) ];
                 $_POST[ 'new_slug' ] = $new_post_name;
                 $new_slug = wp_unique_post_slug( $new_post_name, $tr_product_id, $this->original_post->post_status, $this->original_post->post_type, $args[ 'post_parent' ] );
-                $this->wpdb->update( $this->wpdb->posts, array( 'post_name' => $new_slug ), array( 'ID' => $tr_product_id ) );
+                
+			    wp_update_post( array(
+				    'ID'        => $tr_product_id,
+				    'post_name' => $new_slug
+			    ) );
             }
 
             $this->sitepress->set_element_language_details( $tr_product_id, 'post_' . $this->original_post->post_type, $product_trid, $this->get_target_language() );
