@@ -276,7 +276,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
         $taxonomies = get_object_taxonomies( 'product', 'objects' );
         foreach( $taxonomies as $taxonomy => $taxonomy_obj ){
-            if( $taxonomy != 'product_type' && is_taxonomy_translated( $taxonomy ) ){
+            if( $this->woocommerce_wpml->terms->is_translatable_wc_taxonomy( $taxonomy ) && is_taxonomy_translated( $taxonomy ) ){
                 $product_terms = wp_get_post_terms( $this->product_id, $taxonomy );
                 if( $product_terms ){
                     $tax_section = new WPML_Editor_UI_Field_Section( $taxonomy_obj->label, __( 'Changes in these translations will affect terms in general! ( Not only for this product )', 'woocommerce-multilingual' ));
@@ -500,7 +500,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $taxonomies = get_object_taxonomies( 'product', 'objects' );
 
         foreach( $taxonomies as $taxonomy => $taxonomy_obj ){
-            if( $taxonomy != 'product_type' && is_taxonomy_translated( $taxonomy ) ){
+            if( $this->woocommerce_wpml->terms->is_translatable_wc_taxonomy( $taxonomy ) && is_taxonomy_translated( $taxonomy ) ){
                 $product_terms = wp_get_post_terms( $this->product_id, $taxonomy );
                 if( !is_wp_error( $product_terms ) ){
                     foreach( $product_terms as $term ){

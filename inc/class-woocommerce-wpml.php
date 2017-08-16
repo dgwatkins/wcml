@@ -191,6 +191,7 @@ class woocommerce_wpml {
 		$this->emails = new WCML_Emails( $this, $sitepress, $woocommerce );
 		$this->emails->add_hooks();
 		$this->terms      = new WCML_Terms( $this, $sitepress, $wpdb );
+	    $this->terms->add_hooks();
 		$this->attributes = new WCML_Attributes( $this, $sitepress, $wpdb );
 		$this->attributes->add_hooks();
 		$this->orders   = new WCML_Orders( $this, $sitepress );
