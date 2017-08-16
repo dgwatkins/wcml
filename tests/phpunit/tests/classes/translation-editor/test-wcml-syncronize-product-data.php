@@ -2,10 +2,6 @@
 
 class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
-	/** @var woocommerce_wpml */
-	private $woocommerce_wpml;
-	/** @var Sitepress */
-	private $sitepress;
 	/** @var wpdb */
 	private $wpdb;
 
@@ -13,21 +9,60 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 	{
 		parent::setUp();
 
-		$this->sitepress = $this->getMockBuilder('SitePress')
-			->disableOriginalConstructor()
-			->setMethods(array( 'get_current_language' ))
-			->getMock();
-
-		$this->woocommerce_wpml = $this->getMockBuilder('woocommerce_wpml')
-			->disableOriginalConstructor()
-			->getMock();
-
 		$this->wpdb = $this->stubs->wpdb();
 	}
 
 
-	private function get_subject(){
-		return new WCML_Synchronize_Product_Data( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
+	/**
+	 * @return woocommerce_wpml
+	 */
+	private function get_woocommerce_wpml() {
+		return $this->getMockBuilder( 'woocommerce_wpml' )
+		            ->disableOriginalConstructor()
+		            ->getMock();
+	}
+
+	/**
+	 * @return SitePress
+	 */
+	private function get_sitepress() {
+		return $this->getMockBuilder('SitePress')
+		            ->disableOriginalConstructor()
+		            ->setMethods( array( 'get_current_language' ) )
+		            ->getMock();
+	}
+
+	/**
+	 * @return WCML_Synchronize_Product_Data
+	 */
+	private function get_subject(  $woocommerce_wpml = null, $sitepress = null  ){
+
+		if( null === $woocommerce_wpml ){
+			$woocommerce_wpml = $this->get_woocommerce_wpml();
+		}
+
+		if( null === $sitepress ){
+			$sitepress = $this->get_sitepress();
+		}
+
+
+		return new WCML_Synchronize_Product_Data( $woocommerce_wpml, $sitepress, $this->wpdb );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_adds_admin_hooks(){
+		\WP_Mock::wpFunction( 'is_admin', array(
+			'return' => true,
+			'times'  => 1
+		) );
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::expectActionAdded( 'woocommerce_product_set_visibility', array( $subject, 'sync_product_translations_visibility' ) );
+
+		$subject->add_hooks();
 	}
 
 	/**
@@ -101,5 +136,65 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		$subject->sync_grouped_products( $product_id, $translated_product_id, $language );
 	}
 
+	/**
+	 * @test
+	 */
+	public function sync_product_translations_visibility(){
+
+		$product_id = mt_rand( 1, 100 );
+		$trid = mt_rand( 100, 200 );
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		     ->disableOriginalConstructor()
+		     ->getMock();
+		$woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'is_original_product' ) )
+		                                         ->getMock();
+
+		$woocommerce_wpml->products->method( 'is_original_product' )->with( $product_id )->willReturn( true );
+
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		     ->disableOriginalConstructor()
+		     ->setMethods( array( 'get_element_translations', 'get_element_trid' ) )
+		     ->getMock();
+
+		$sitepress->expects( $this->once() )->method( 'get_element_trid' )->with( $product_id, 'post_product' )->willReturn( $trid );
+
+		$en_translation = new stdClass();
+		$en_translation->original = true;
+		$en_translation->element_id = $product_id;
+		$translations['en'] = $en_translation;
+
+		$fr_translation = new stdClass();
+		$fr_translation->original = false;
+		$fr_translation->element_id = mt_rand( 200, 300 );
+		$translations['fr'] = $fr_translation;
+
+		$sitepress->expects( $this->once() )->method( 'get_element_translations' )->with( $trid, 'post_product' )->willReturn( $translations );
+
+		$subject = $this->get_subject( $woocommerce_wpml, $sitepress );
+
+		$product_object = $this->getMockBuilder( 'WC_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'is_featured' ) )
+		                ->getMock();
+
+		$product_object->method( 'is_featured' )->willReturn( true );
+
+		\WP_Mock::wpFunction( 'wc_get_product', array(
+			'args' => array( $product_id ),
+			'return' => $product_object
+		) );
+
+		\WP_Mock::wpFunction( 'wp_set_post_terms', array(
+			'args' => array( $fr_translation->element_id, array( 'featured' ), 'product_visibility', false ),
+			'return' => true,
+			'times' => 1
+		) );
+
+		$subject->sync_product_translations_visibility( $product_id );
+	}
 
 }
