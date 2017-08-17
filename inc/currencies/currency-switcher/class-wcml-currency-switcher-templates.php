@@ -2,8 +2,7 @@
 
 class WCML_Currency_Switcher_Templates {
 
-	const CONFIG_FILE = 'config.json';
-	const OPTION_NAME = 'wcml_currency_switcher_template_objects';
+    const CONFIG_FILE    = 'config.json';
 
     /**
     * @var  woocommerce_wpml
@@ -165,84 +164,53 @@ class WCML_Currency_Switcher_Templates {
         return $config;
     }
 
-	private function init_available_templates() {
+    private function init_available_templates() {
 
-		$is_admin_ui_page = isset( $_GET['page'] ) && 'wpml-wcml' === $_GET['page'] && isset( $_GET['tab'] ) && 'multi-currency' === $_GET['tab'];
+        $templates = array();
+        $dirs_to_scan = array();
 
-		if ( ! $is_admin_ui_page ) {
-			$this->templates = $this->get_templates_from_transient();
-		}
+        $sub_dir          = $this->ds . 'templates' . $this->ds . 'currency-switchers';
 
-		if ( $this->templates === false ) {
-			$templates    = array();
-			$dirs_to_scan = array();
+        $wcml_core_path   = WCML_PLUGIN_PATH . $sub_dir;
+        $theme_path       = get_template_directory() . $this->ds . 'wpml' . $sub_dir;
+        $child_theme_path = get_stylesheet_directory() . $this->ds . 'wpml' . $sub_dir;
+        $uploads_path     = $this->get_uploads_path() . $this->ds . 'wpml' . $sub_dir;
 
-			$sub_dir = $this->ds . 'templates' . $this->ds . 'currency-switchers';
+        array_unshift( $dirs_to_scan, $wcml_core_path, $theme_path, $child_theme_path, $uploads_path );
 
-			$wcml_core_path   = WCML_PLUGIN_PATH . $sub_dir;
-			$theme_path       = get_template_directory() . $this->ds . 'wpml' . $sub_dir;
-			$child_theme_path = get_stylesheet_directory() . $this->ds . 'wpml' . $sub_dir;
-			$uploads_path     = $this->get_uploads_path() . $this->ds . 'wpml' . $sub_dir;
+        /**
+         * Filter the directories to scan
+         *
+         * @param array $dirs_to_scan
+         */
+        $dirs_to_scan = apply_filters( 'wcml_cs_directories_to_scan', $dirs_to_scan );
 
-			array_unshift( $dirs_to_scan, $wcml_core_path, $theme_path, $child_theme_path, $uploads_path );
+        $templates_paths = $this->scan_template_paths( $dirs_to_scan );
 
-			/**
-			 * Filter the directories to scan
-			 *
-			 * @param array $dirs_to_scan
-			 */
-			$dirs_to_scan = apply_filters( 'wcml_cs_directories_to_scan', $dirs_to_scan );
+        foreach ( $templates_paths as $template_path ) {
+            $template_path = $this->wpml_file->fix_dir_separator( $template_path );
+            if ( file_exists( $template_path . $this->ds . WCML_Currency_Switcher_Template::FILENAME ) ) {
+                $tpl    = array();
+                $config = $this->parse_template_config( $template_path );
 
-			$templates_paths = $this->scan_template_paths( $dirs_to_scan );
+                $tpl['path']     = $template_path;
+                $tpl['name']     = isset( $config['name'] ) ? $config['name'] : null;
+                $tpl['name']     = $this->get_unique_name( $tpl['name'], $template_path );
+                $tpl['slug']     = sanitize_title_with_dashes( $tpl['name'] );
+                $tpl['css']      = $this->get_files( 'css', $template_path, $config );
+                $tpl['js']       = $this->get_files( 'js', $template_path, $config );
 
-			foreach ( $templates_paths as $template_path ) {
-				$template_path = $this->wpml_file->fix_dir_separator( $template_path );
-				if ( file_exists( $template_path . $this->ds . WCML_Currency_Switcher_Template::FILENAME ) ) {
-					$tpl    = array();
-					$config = $this->parse_template_config( $template_path );
+                if ( $this->is_core_template( $template_path ) ) {
+                    $tpl['is_core'] = true;
+                    $tpl['slug']    = isset( $config['slug'] ) ? $config['slug'] : $tpl['slug'];
+                }
 
-					$tpl['path'] = $template_path;
-					$tpl['name'] = isset( $config['name'] ) ? $config['name'] : null;
-					$tpl['name'] = $this->get_unique_name( $tpl['name'], $template_path );
-					$tpl['slug'] = sanitize_title_with_dashes( $tpl['name'] );
-					$tpl['css']  = $this->get_files( 'css', $template_path, $config );
-					$tpl['js']   = $this->get_files( 'js', $template_path, $config );
+                $templates[ $tpl['slug'] ] = new WCML_Currency_Switcher_Template( $this->woocommerce_wpml, $tpl );
+            }
+        }
 
-					if ( $this->is_core_template( $template_path ) ) {
-						$tpl['is_core'] = true;
-						$tpl['slug']    = isset( $config['slug'] ) ? $config['slug'] : $tpl['slug'];
-					}
-
-					$templates[ $tpl['slug'] ] = new WCML_Currency_Switcher_Template( $this->woocommerce_wpml, $tpl );
-				}
-			}
-
-			update_option( self::OPTION_NAME, $templates );
-
-			$this->set_templates( $templates );
-		}
-
-	}
-
-	private function get_templates_from_transient() {
-		$templates = get_option( self::OPTION_NAME );
-		if ( $templates && $this->are_template_paths_valid( $templates ) ) {
-			return $templates;
-		}
-		return false;
-	}
-
-
-	private function are_template_paths_valid( $templates ) {
-		$paths_are_valid = true;
-		foreach ( $templates as $template ) {
-			if ( ! $template->is_path_valid() ) {
-				$paths_are_valid = false;
-				break;
-			}
-		}
-		return $paths_are_valid;
-	}
+        $this->set_templates( $templates );
+    }
 
     /**
      * @param array $dirs_to_scan
