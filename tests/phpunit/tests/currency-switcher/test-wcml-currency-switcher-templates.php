@@ -318,6 +318,17 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 			'returns' => './',
 		));
 
+		\WP_Mock::wpFunction( 'get_option', array(
+			'args'   => array( 'wcml_currency_switcher_template_objects' ),
+			'times' => 1,
+			'returns' => false
+		));
+
+		\WP_Mock::wpFunction( 'update_option', array(
+			'times'   => 1,
+			'returns' => true
+		));
+
 		\WP_Mock::wpPassthruFunction( 'sanitize_title_with_dashes' );
 
 		$subject   = $this->get_subject( $woocommerce_wpml, $wcml_file );
