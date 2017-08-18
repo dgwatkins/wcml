@@ -47,7 +47,7 @@ class WCML_Admin_Menus{
                 $wp_api = self::$sitepress->get_wp_api();
                 if (!$wp_api->current_user_can('wpml_manage_translation_management')) {
                     $wp_api->add_submenu_page(null,
-                        __('Translations', 'wpml-translation-management'), __('Translations', 'wpml-translation-management'),
+                        __( 'Translations', 'woocommerce-multilingual' ), __( 'Translations', 'woocommerce-multilingual' ),
                         'wpml_operate_woocommerce_multilingual', WPML_TM_FOLDER . '/menu/translations-queue.php', array($WPML_Translation_Management, 'translation_queue_page'));
                 }
             }
@@ -165,7 +165,7 @@ class WCML_Admin_Menus{
 		            'documentation',
 		            '#3'
 	            );
-	            $prot_link = sprintf( $template, $href, __( 'How to translate attributes', 'sitepress' ) );
+	            $prot_link = sprintf( $template, $href, __( 'How to translate attributes', 'woocommerce-multilingual' ) );
                 ?>
                 <script type="text/javascript">
                     jQuery("table.widefat").before('<?php echo $prot_link ?>');
@@ -181,7 +181,7 @@ class WCML_Admin_Menus{
 		        'documentation',
 		        '#3'
 	        );
-	        $prot_link = sprintf( $template, $href, __( 'How to translate product categories', 'sitepress' ) );
+	        $prot_link = sprintf( $template, $href, __( 'How to translate product categories', 'woocommerce-multilingual' ) );
             ?>
             <script type="text/javascript">
                 jQuery("table.widefat").before('<?php echo $prot_link ?>');

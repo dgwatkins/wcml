@@ -42,10 +42,10 @@ class WCML_Upgrade{
             $wcml_settings['notifications'][$n] = 
                 array(
                     'show' => 1, 
-                    'text' => __('Looks like you are upgrading from a previous version of WooCommerce Multilingual. Would you like to automatically create translated variations and images?', 'wcml').
+                    'text' => __( 'Looks like you are upgrading from a previous version of WooCommerce Multilingual. Would you like to automatically create translated variations and images?', 'woocommerce-multilingual' ).
                             '<br /><strong>' .
-                            ' <a href="' .  admin_url('admin.php?page=wpml-wcml&tab=troubleshooting') . '">' . __('Yes, go to the troubleshooting page', 'wcml') . '</a> |' .
-                            ' <a href="#" onclick="jQuery.ajax({type:\'POST\',url: ajaxurl,data:\'action=wcml_hide_notice&notice='.$n.'\',success:function(){jQuery(\'#' . $n . '\').fadeOut()}});return false;">'  . __('No - dismiss', 'wcml') . '</a>' . 
+                            ' <a href="' .  admin_url('admin.php?page=wpml-wcml&tab=troubleshooting') . '">' . __( 'Yes, go to the troubleshooting page', 'woocommerce-multilingual' ) . '</a> |' .
+                            ' <a href="#" onclick="jQuery.ajax({type:\'POST\',url: ajaxurl,data:\'action=wcml_hide_notice&notice='.$n.'\',success:function(){jQuery(\'#' . $n . '\').fadeOut()}});return false;">'  . __( 'No - dismiss', 'woocommerce-multilingual' ) . '</a>' .
                             '</strong>'
                 );
             update_option('_wcml_settings', $wcml_settings);
