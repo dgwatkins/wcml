@@ -47,7 +47,7 @@ class WCML_Admin_Menus{
                 $wp_api = self::$sitepress->get_wp_api();
                 if (!$wp_api->current_user_can('wpml_manage_translation_management')) {
                     $wp_api->add_submenu_page(null,
-                        __('Translations', 'wpml-translation-management'), __('Translations', 'wpml-translation-management'),
+                        __( 'Translations', 'woocommerce-multilingual' ), __( 'Translations', 'woocommerce-multilingual' ),
                         'wpml_operate_woocommerce_multilingual', WPML_TM_FOLDER . '/menu/translations-queue.php', array($WPML_Translation_Management, 'translation_queue_page'));
                 }
             }
@@ -151,7 +151,7 @@ class WCML_Admin_Menus{
 
             if ( $pos !== false && $pagenow == 'edit-tags.php' ) {
                 $prot_link = '<span class="button" style="padding:4px;margin-top:0px; float: left;"><img align="baseline" src="' . ICL_PLUGIN_URL . '/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="' . WCML_Links::generate_tracking_link( 'https://wpml.org/documentation/related-projects/woocommerce-multilingual/', 'woocommerce-multilingual', 'documentation', '#3' ) . '" target="_blank" style="text-decoration: none;">' .
-                    __( 'How to translate attributes', 'sitepress' ) . '<\/a>' . '<\/span><br \/><br \/>';
+                    __( 'How to translate attributes', 'woocommerce-multilingual' ) . '<\/a>' . '<\/span><br \/><br \/>';
                 ?>
                 <script type="text/javascript">
                     jQuery("table.widefat").before('<?php echo $prot_link ?>');
@@ -163,7 +163,7 @@ class WCML_Admin_Menus{
         if ( isset($_GET['taxonomy']) && $_GET['taxonomy'] == 'product_cat' ) {
 
             $prot_link = '<span class="button" style="padding:4px;margin-top:0px; float: left;"><img align="baseline" src="' . ICL_PLUGIN_URL . '/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="' . WCML_Links::generate_tracking_link( 'https://wpml.org/documentation/related-projects/woocommerce-multilingual/', 'woocommerce-multilingual', 'documentation', '#3' ) . '" target="_blank" style="text-decoration: none;">' .
-                __( 'How to translate product categories', 'sitepress' ) . '<\/a>' . '<\/span><br \/><br \/>';
+                __( 'How to translate product categories', 'woocommerce-multilingual' ) . '<\/a>' . '<\/span><br \/><br \/>';
             ?>
             <script type="text/javascript">
                 jQuery("table.widefat").before('<?php echo $prot_link ?>');
