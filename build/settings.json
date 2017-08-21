@@ -1,6 +1,6 @@
 {
   "skip_tasks": false,
-  "debug_mode": false,
+  "debug_mode": true,
   "temp_dir": "/tmp",
   "project": {
     "namespace": "wcml",
