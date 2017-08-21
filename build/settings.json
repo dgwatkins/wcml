@@ -123,6 +123,7 @@
       "namespace": "woothemes",
       "project_slug": "woocommerce",
       "db": "tests_woocommerce_core",
+      "tag": "3.1.0",
       "clone_only": true
     },
     {
