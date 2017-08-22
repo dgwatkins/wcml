@@ -69,14 +69,16 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 		) )->getMock();
 		$args                             = array(
 			'switcher_style' => 'random_style',
+			'format'            => '%name% (%symbol%) - %code%',
 			'switcher_id'    => mt_rand( 1, 10 ),
 		);
 		$mock_hard                        = \Mockery::mock( 'overload:WPML_Mobile_Detect' );
 		$mock_hard->shouldReceive( 'isMobile' )->once()->andReturn( false );
 		$mock_hard->shouldReceive( 'isTablet' )->once()->andReturn( true );
+
 		$expected_model = array(
 			'css_classes'       => 'random_style ' . $args['switcher_id'] . ' wcml_currency_switcher wcml-cs-touch-device',
-			'format'            => '%name% (%symbol%) - %code%',
+			'format'            => $args[ 'format' ],
 			'currencies'        => $currencies,
 			'selected_currency' => $random_currency[0],
 		);
