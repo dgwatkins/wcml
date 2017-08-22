@@ -87,8 +87,11 @@ class WCML_Currency_Switcher{
 		}
 
 		if ( !isset( $args[ 'format' ] ) ) {
-			$args[ 'format' ] = isset( $currency_switcher_settings[ 'template' ] ) && '' !== $currency_switcher_settings[ 'template' ] ?
-				$currency_switcher_settings[ 'template' ] : '%name% (%symbol%) - %code%';
+
+			$args['format'] = '%name% (%symbol%) - %code%';
+			if( isset( $currency_switcher_settings[ 'template' ] ) && '' !== $currency_switcher_settings[ 'template' ] ){
+				$args[ 'format' ] = apply_filters( 'wpml_translate_single_string', $currency_switcher_settings[ 'template' ], 'woocommerce-multilingual', $args[ 'switcher_id' ] .'_switcher_format' ) ;
+			}
 		}
 
 		if ( !isset( $args[ 'color_scheme' ] ) ) {
@@ -161,9 +164,11 @@ class WCML_Currency_Switcher{
 
 		$css_classes = $this->get_css_classes( array( $args[ 'switcher_style' ], $args[ 'switcher_id' ], 'wcml_currency_switcher' ) );
 
+		$format = isset( $args['format'] ) ? $args['format'] : '%name% (%symbol%) - %code%';
+
 		$model = array(
 			'css_classes' 	=> $css_classes,
-			'format'        => isset( $args['format'] ) ? $args['format'] : '%name% (%symbol%) - %code%',
+			'format'        => $format,
 			'currencies'    => $currencies,
 			'selected_currency' => $this->woocommerce_wpml->multi_currency->get_client_currency()
 		);
