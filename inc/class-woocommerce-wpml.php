@@ -170,7 +170,6 @@ class woocommerce_wpml {
 
 		if ( is_admin() ) {
 			$this->troubleshooting      = new WCML_Troubleshooting( $this, $sitepress, $wpdb );
-			$this->links                = new WCML_Links( $this, $sitepress );
 			$this->translation_editor   = new WCML_Translation_Editor( $this, $sitepress, $wpdb );
 			$this->languages_upgrader   = new WCML_Languages_Upgrader;
 			$this->sync_variations_data = new WCML_Synchronize_Variations_Data( $this, $sitepress, $wpdb );
