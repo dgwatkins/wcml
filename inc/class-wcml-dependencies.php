@@ -67,6 +67,7 @@ class WCML_Dependencies{
         
         if($this->allok){
             $this->check_for_incompatible_permalinks();
+	        $this->check_for_transaltable_default_taxonomies();
         }
 
         if(isset($sitepress)){
@@ -74,8 +75,6 @@ class WCML_Dependencies{
         }else{
             $this->load_twig_support();
         }
-
-	    $this->check_for_transaltable_default_taxonomies();
 
         return $this->allok;
     }
