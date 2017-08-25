@@ -19,7 +19,8 @@ class WCML_Upgrade{
         '3.9.1',
         '4.0',
         '4.1.0',
-        '4.2.0'
+        '4.2.0',
+	    '4.2.2'
     );
     
     function __construct(){
@@ -601,7 +602,19 @@ class WCML_Upgrade{
         $wcml_settings[ 'dismiss_cart_warning' ] = 0;
 
         update_option( '_wcml_settings', $wcml_settings );
-
     }
-    
+
+	private function upgrade_4_2_2(){
+
+		// #wcml-2128
+		$user = new WP_User( 'admin' );
+		if( $user->exists() && ! is_super_admin( $user->ID ) ) {
+			$user->remove_cap( 'wpml_manage_woocommerce_multilingual' );
+			if( ! in_array( 'shop_manager', $user->roles, true ) ){
+				$user->remove_cap( 'wpml_operate_woocommerce_multilingual' );
+			}
+		}
+
+	}
+
 }
