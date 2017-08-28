@@ -66,9 +66,8 @@ class woocommerce_wpml {
     public function __construct(){
 	    global $sitepress, $wpdb, $wpml_query_filter, $wpml_post_translations;
 
-	    $this->settings = $this->get_settings();
-
-        $this->xdomain_data = new WCML_xDomain_Data;
+        $this->settings = $this->get_settings();
+        $this->currencies = new WCML_Currencies( $this );
 
 	    new WCML_Widgets( $this );
 

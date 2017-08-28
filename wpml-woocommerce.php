@@ -63,3 +63,6 @@ function load_wcml_without_wpml() {
 		$woocommerce_wpml = new woocommerce_wpml();
 	}
 }
+
+$xdomain_data = new WCML_xDomain_Data( new WPML_Cookie() );
+$xdomain_data->add_hooks();

@@ -35,6 +35,17 @@ if( ! defined( 'WOOCOMMERCE_VERSION' ) ){
 
 require_once __DIR__ . '/includes/missing-php-functions.php';
 
+if ( !defined( 'COOKIEHASH' ) ) {
+	define( 'COOKIEHASH', md5( WPML_TESTS_SITE_URL ) );
+}
+if ( !defined( 'COOKIEPATH' ) ) {
+	define('COOKIEPATH', preg_replace('|https?://[^/]+|i', '', WPML_TESTS_SITE_URL . '/' ) );
+}
+if ( !defined( 'COOKIE_DOMAIN' ) ) {
+	define( 'COOKIE_DOMAIN', false );
+}
+
+
 require_once __DIR__ . '/includes/missing-php-functions.php';
 
 $autoloader_dir = WCML_PATH . '/vendor';
