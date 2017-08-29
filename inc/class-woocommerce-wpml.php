@@ -175,6 +175,7 @@ class woocommerce_wpml {
 			$this->translation_editor   = new WCML_Translation_Editor( $this, $sitepress, $wpdb );
 			$this->languages_upgrader   = new WCML_Languages_Upgrader;
 			$this->sync_variations_data = new WCML_Synchronize_Variations_Data( $this, $sitepress, $wpdb );
+			$this->sync_variations_data->add_hooks();
 			$this->wcml_products_screen = new WCML_Products_Screen_Options( $sitepress );
 			$this->wcml_products_screen->init();
 			new WCML_Pointers();
