@@ -197,4 +197,65 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		$subject->sync_product_translations_visibility( $product_id );
 	}
 
+	/**
+	 * @test
+	 * @group wcml-2135
+	 */
+	public function sync_custom_field_value_should_sync_serialzied_cf(){
+		$subject = $this->get_subject();
+
+		$custom_field = rand_str(32);
+		$translated_product_id = random_int(1, 1000);
+		$post_fields = [
+			'field-' . $custom_field . '-0' => [
+				'data'   => rand_str( 32 ),
+				'tid'    => 0,
+				'format' => 'base64',
+			],
+			'field-' . $custom_field . '-1' => [
+				'data'   => rand_str( 32 ),
+				'tid'    => 0,
+				'format' => 'base64',
+			],
+			'field-' . $custom_field . '-2' => [
+				'data'   => rand_str( 32 ),
+				'tid'    => 0,
+				'format' => 'base64',
+			]
+		];
+		$original_product_id = random_int(1001, 2000);
+		$translation_data = [
+			md5( 'field-' . $custom_field . '-0' ) => rand_str( 32 ),
+			md5( 'field-' . $custom_field . '-1' ) => rand_str( 32 ),
+			md5( 'field-' . $custom_field . '-2' ) => rand_str( 32 ),
+		];
+
+		$original_custom_fields = [
+			'key1' => rand_str(32),
+			'key2' => rand_str(32),
+			'key3' => rand_str(32)
+		];
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'expected' => 1,
+			'args' => [ $original_product_id, $custom_field, true ],
+			'return' => $original_custom_fields
+		] );
+
+		$expected_translated_custom_field = [
+			'key1' => $translation_data[ md5( 'field-' . $custom_field . '-0' ) ],
+			'key2' => $translation_data[ md5( 'field-' . $custom_field . '-1' ) ],
+			'key3' => $translation_data[ md5( 'field-' . $custom_field . '-2' ) ],
+		];
+
+		\WP_Mock::userFunction( 'update_post_meta', [
+			'expected' => 1,
+			'args' => [ $translated_product_id, $custom_field, $expected_translated_custom_field ],
+		] );
+
+		$subject->sync_custom_field_value(
+			$custom_field, $translation_data, $translated_product_id, $post_fields, $original_product_id );
+
+	}
+
 }
