@@ -134,4 +134,69 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$this->assertEquals( array( '_resource_base_costs', '_resource_block_costs' ), $fields_to_hide );
 
 	}
+
+	/**
+	 * @test
+	 */
+	public function filter_my_account_bookings_tables_by_current_language(){
+
+		$original_language = rand_str();
+		$current_language = rand_str();
+		$original_booking_id = mt_rand( 1, 100 );
+		$translated_booking_id = mt_rand( 101, 200 );
+		$original_booking_product_id = mt_rand( 201, 300 );
+
+		$sitepress = $this->getMockBuilder('SitePress')
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_current_language', 'get_language_for_element' ) )
+		                  ->getMock();
+
+		$sitepress->expects( $this->once() )->method( 'get_current_language' )->willReturn( $current_language );
+		$sitepress->expects( $this->once() )->method( 'get_language_for_element' )->with( $original_booking_product_id, 'post_product' )->willReturn( $original_language );
+
+		$original_booking = $this->getMockBuilder( 'WC_Booking' )
+		                         ->disableOriginalConstructor()
+		                         ->setMethods( array( 'get_id', 'get_product_id' ) )
+		                         ->getMock();
+
+		$translated_booking = $this->getMockBuilder( 'WC_Booking' )
+		                         ->disableOriginalConstructor()
+		                         ->setMethods( array( 'get_id' ) )
+		                         ->getMock();
+
+		$original_booking->expects( $this->once() )->method( 'get_id' )->willReturn( $original_booking_id );
+		$original_booking->expects( $this->once() )->method( 'get_product_id' )->willReturn( $original_booking_product_id );
+		$translated_booking->expects( $this->once() )->method( 'get_id' )->willReturn( $translated_booking_id );
+
+		$subject = $this->get_subject( $sitepress );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $original_booking_id, '_language_code', true ),
+			'times'  => 1,
+			'return' => ''
+		) );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $translated_booking_id, '_language_code', true ),
+			'times'  => 1,
+			'return' => $current_language
+		) );
+
+		$tables = array();
+		$bookings = array( $original_booking, $translated_booking );
+		$tables[]['bookings'] = $bookings;
+
+		$filtered_tables = $subject->filter_my_account_bookings_tables_by_current_language( $tables );
+
+		$expected_tables = array(
+			array(
+				'bookings' => array(
+					$translated_booking
+				)
+			)
+		);
+
+		$this->assertEquals($expected_tables, $filtered_tables );
+
+	}
 }
