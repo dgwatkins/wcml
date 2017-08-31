@@ -277,6 +277,22 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function admin_enqueue_template_resources( ) {
+
+		$woocommerce_wpml      = $this->get_woocommerce_wpml_stub();
+		$wcml_settings         = array(	);
+		$woocommerce_wpml->expects( $this->exactly( 2 ) )->method( 'get_settings' )->willReturn( $wcml_settings );
+
+		$subject = $this->get_subject( $woocommerce_wpml);
+		$_GET['page'] = 'wpml-wcml';
+		$_GET['tab'] = 'multi-currency';
+
+		$subject->admin_enqueue_template_resources();
+	}
+
+	/**
+	 * @test
+	 */
 	public function after_setup_theme_action() {
 		if ( ! defined( 'WCML_PLUGIN_PATH' ) ) {
 			define( 'WCML_PLUGIN_PATH', '../..' );
