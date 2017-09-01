@@ -96,6 +96,8 @@ class woocommerce_wpml {
             $this->cs_templates->init_hooks();
         }
 
+        $wc_shortccode_product_category = new WCML_WC_Shortcode_Product_Category( $sitepress );
+	    $wc_shortccode_product_category->add_hooks();
 
     }
 
