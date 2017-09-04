@@ -177,6 +177,7 @@ class WCML_Multi_Currency_Prices {
 				// legacy prior 3.1
 				$original_object_id = apply_filters( 'translate_object_id', $object_id, get_post_type( $object_id ), false, $sitepress->get_default_language() );
 				$ccr                = get_post_meta( $original_object_id, '_custom_conversion_rate', true );
+
 				if ( in_array( $meta_key, array(
 						'_price',
 						'_regular_price',

@@ -141,6 +141,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 		$product['title'] = $title;
 		$product['price'] = 1234.56;
+		$product_price_AUD = 1111;
 
 		$expected['price'] = array(
 			'GBP' 	=> $product['price'],
@@ -150,9 +151,8 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 			// according to settings defined in self::set_up_currencies -> round up, rounding increment 100, subtract 1
 			// 1234.56 * 1.64 =~ 2025 (rounded up, rounding increment 100) -> 2099 (subtract 1)
 			'RON'	=> 2099,
-			// according to settings defined in self::set_up_currencies -> round up, rounding increment 100, subtract 1
-			// 1234.56 * 2.45 =~ 3024.672 (rounding disabled, num decimals 1)
-			'AUD'	=> 3024.6,
+			// check custom price
+			'AUD'	=> $product_price_AUD,
 			// according to settings defined in self::set_up_currencies -> round up, rounding increment 100, subtract 1
 			// 1234.56 * 55 =~ 67900.80 (num decimals 2, rounding disabled)
 			'CHF'	=> round( $product['price'] * $this->settings['currency_options']['CHF']['rate'], 2 )
@@ -169,7 +169,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 			'RON' => $this->wc_format_price('2.099<cur>lei</cur>'),
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w space), '.' thousands separator, ',' decimal separator, 1 decimals
-			'AUD' => $this->wc_format_price('3,024.6&nbsp;<cur>&#36;</cur>'),
+			'AUD' => $this->wc_format_price('1,111.0&nbsp;<cur>&#36;</cur>'),
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w/ space), '.' thousands separator, ',' decimal separator, 2 decimals
 			'CHF' => $this->wc_format_price('67.900,80<cur>&#67;&#72;&#70;</cur>'),
@@ -188,6 +188,13 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 		$product['post'] = $this->wcml_helper->add_product( $this->default_language , false, $product['title'], 0,
 							array( '_price' => $product['price'], '_regular_price' => $product['price'] ) );
+
+		//set custom prices for AUD currency
+		update_post_meta( $product['post']->id, '_wcml_custom_prices_status', true );
+		update_post_meta( $product['post']->id, '_price_AUD', $product_price_AUD );
+		update_post_meta( $product['post']->id, '_regular_price_AUD', $product_price_AUD );
+		update_post_meta( $product['post']->id, '_sale_price_AUD', '' );
+
 
 		return $product;
 
