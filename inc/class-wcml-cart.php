@@ -184,7 +184,7 @@ class WCML_Cart
                         "<?php echo $switch_to; ?>": function() {
                             jQuery( this ).dialog( "close" );
                             <?php if( $language_switch ): ?>
-                                window.location = '<?php echo esc_js( $switch_to_value ); ?>';
+                                window.location = '<?php echo esc_url( $switch_to_value, null, 'redirect' ); ?>';
                             <?php else: ?>
                                 jQuery('.wcml_currency_switcher').parent().find('img').remove();
                                 wcml_load_currency( "<?php echo esc_js( $switch_to_value ); ?>", true );
@@ -194,7 +194,7 @@ class WCML_Cart
                         "<?php echo $stay_in; ?>": function() {
                             jQuery( this ).dialog( "close" );
                             <?php if( $language_switch ): ?>
-                                window.location = '<?php echo esc_js( $stay_in_value ); ?>';
+                                window.location = '<?php echo esc_url( $stay_in_value, null, 'redirect' ); ?>';
                             <?php else: ?>
                                 jQuery('.wcml_currency_switcher').parent().find('img').remove();
                                 jQuery('.wcml_currency_switcher').removeAttr('disabled');

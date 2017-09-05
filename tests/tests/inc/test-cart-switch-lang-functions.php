@@ -17,7 +17,7 @@ class Test_WCML_Cart_Switch_Lang_Functions extends WCML_UnitTestCase {
     }
 
 	function test_wcml_language_force_switch(){
-        $_GET[ 'force_switch' ] = 1;
+        $_GET[ 'force_switch' ] = '1';
         $this->wcml_cart_switch_lang_functions->wcml_language_force_switch();
         $this->assertEquals( 'lang_switch',  $this->woocommerce->session->get( 'wcml_switched_type' ) );
     }
@@ -38,7 +38,7 @@ class Test_WCML_Cart_Switch_Lang_Functions extends WCML_UnitTestCase {
         $html = ob_get_contents();
         ob_end_clean();
 
-	    $expected_from_link = esc_js( add_query_arg( 'force_switch', 0, get_permalink( $orig_product->id ) ) );
+	    $expected_from_link = esc_url( add_query_arg( 'force_switch', 0, get_permalink( $orig_product->id ) ), null, 'redirect' );
 
         $this->assertNotEmpty( $html );
         $this->assertContains( 'wcml-cart-dialog-confirm', $html );
