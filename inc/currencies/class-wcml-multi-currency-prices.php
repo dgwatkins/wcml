@@ -505,7 +505,9 @@ class WCML_Multi_Currency_Prices {
 		global $woocommerce;
 		remove_filter( 'woocommerce_cart_subtotal', array( $this, 'filter_woocommerce_cart_subtotal' ), 100, 3 );
 		if ( apply_filters( 'wcml_calculate_totals_exception', true ) ) {
-			$woocommerce->cart->calculate_totals();
+			if ( is_checkout() || is_cart() || defined( 'WOOCOMMERCE_CHECKOUT' ) || defined( 'WOOCOMMERCE_CART' ) ) {
+				$woocommerce->cart->calculate_totals();
+			}
 		}
 		$cart_subtotal = $woocommerce->cart->get_cart_subtotal( $compound );
 		add_filter( 'woocommerce_cart_subtotal', array( $this, 'filter_woocommerce_cart_subtotal' ), 100, 3 );

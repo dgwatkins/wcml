@@ -408,7 +408,9 @@ class WCML_Cart
         }
 
         if( apply_filters( 'wcml_calculate_totals_exception', true, $cart ) ){
-            $cart->calculate_totals();
+            if ( is_checkout() || is_cart() || defined( 'WOOCOMMERCE_CHECKOUT' ) || defined( 'WOOCOMMERCE_CART' ) ) {
+                $cart->calculate_totals();
+            }
         }
 
     }
