@@ -9,6 +9,13 @@ class WCML_Cart_Switch_Lang_Functions{
 	    add_action( 'wp_footer', array( $this, 'wcml_language_switch_dialog' ) );
 	    add_action( 'wp_loaded', array( $this, 'wcml_language_force_switch' ) );
 	    add_action( 'wcml_user_switch_language', array( $this, 'language_has_switched' ), 10 , 2 );
+
+	    add_filter( 'woocommerce_product_add_to_cart_url', array( $this, 'remove_force_switch_from_add_to_cart_url' ) );
+    }
+
+    public function remove_force_switch_from_add_to_cart_url( $url ){
+        $url = str_replace('force_switch=1&', '', $url );
+        return $url;
     }
 
     public function language_has_switched( $lang_from, $lang_to ){
@@ -29,7 +36,7 @@ class WCML_Cart_Switch_Lang_Functions{
     public function wcml_language_force_switch(){
         global $woocommerce_wpml, $woocommerce;
 
-        if( isset( $_GET[ 'force_switch' ] ) && $_GET[ 'force_switch' ] == true ){
+        if( ! wpml_is_ajax() && isset( $_GET[ 'force_switch' ] ) && '1' === $_GET[ 'force_switch' ] ){
             $woocommerce_wpml->cart->empty_cart_if_needed( 'lang_switch' );
             $woocommerce->session->set( 'wcml_switched_type', 'lang_switch' );
         }
