@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class WCML_WC_Shortcode_Product_Category
  * @since 4.2.2
@@ -12,6 +13,7 @@ class WCML_WC_Shortcode_Product_Category {
 
 	/**
 	 * WCML_WC_Shortcode_Product_Category constructor.
+	 *
 	 * @param SitePress $sitepress
 	 */
 	public function __construct( SitePress $sitepress ) {
@@ -30,11 +32,15 @@ class WCML_WC_Shortcode_Product_Category {
 	 * @return array
 	 */
 	public function translate_category( $args, $atts ) {
-		if ( isset( $atts['category'] ) ) {
+
+		if ( isset( $args['product_cat'] ) ) {
+			$args = $this->translate_categories_using_simple_tax_query( $args );
+		} elseif ( isset( $atts['category'] ) ) {
 
 			// Get translated category slugs, we need to remove WPML filter.
 			$filter_exists = remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10 );
 			$categories    = get_terms( array( 'slug' => $atts['category'], 'taxonomy' => 'product_cat' ) );
+
 			if ( $filter_exists ) {
 				add_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
 			}
@@ -54,6 +60,30 @@ class WCML_WC_Shortcode_Product_Category {
 				}
 			}
 		}
+
+		return $args;
+	}
+
+	/**
+	 * @param $args array
+	 *
+	 * @return array
+	 */
+	public function translate_categories_using_simple_tax_query( $args ) {
+
+		$category_slugs = array_map( 'trim', explode( ',', $args['product_cat'] ) );
+
+		$filter_exists = remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10 );
+		$categories_translated = get_terms( array( 'slug' => $category_slugs, 'taxonomy' => 'product_cat' ) );
+		if ( $filter_exists ) {
+			add_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
+		}
+
+		$category_slugs_translated = array();
+		foreach ( $categories_translated as $category_translated ) {
+			$category_slugs_translated[] = $category_translated->slug;
+		}
+		$args['product_cat'] = implode( ',', $category_slugs_translated );
 
 		return $args;
 	}

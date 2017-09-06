@@ -123,4 +123,46 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function translate_categories_using_simple_tax_query(){
+		$sitepress = $this->get_sitepress();
+		$subject   = $this->get_subject( $sitepress );
+
+		$category_slugs = [
+			0 => rand_str( 32 ),
+			1 => rand_str( 32 ),
+		];
+
+		$args = [ 'product_cat' => implode(',', $category_slugs) ];
+
+		\WP_Mock::userFunction( 'remove_filter', [
+			'times'  => 1,
+			'args'   => [ 'terms_clauses', [ $sitepress, 'terms_clauses' ], 10 ],
+			'return' => true
+		] );
+		\WP_Mock::expectFilterAdded( 'terms_clauses', array( $sitepress, 'terms_clauses' ), 10, 4 );
+
+		$category_term_translations = [
+			'0' => $this->getMockBuilder( 'WP_Term' )->disableOriginalConstructor()->getMock(),
+			'1' => $this->getMockBuilder( 'WP_Term' )->disableOriginalConstructor()->getMock(),
+		];
+		$category_term_translations[0]->slug = rand_str( 32 );
+		$category_term_translations[1]->slug = rand_str( 32 );
+		$category_slugs_translated = $category_term_translations[0]->slug . ',' . $category_term_translations[1]->slug;
+
+		\WP_Mock::userFunction( 'get_terms', [
+			'times'  => 1,
+			'args'   => [ [ 'slug' => $category_slugs, 'taxonomy' => 'product_cat' ] ],
+			'return' => $category_term_translations
+		] );
+
+
+		$args_filtered = $subject->translate_categories_using_simple_tax_query( $args );
+
+		$this->assertSame( $category_slugs_translated, $args_filtered['product_cat'] );
+
+	}
+
 }
