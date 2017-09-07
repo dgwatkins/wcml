@@ -27,6 +27,11 @@ class WCML_Dependencies{
         } elseif(version_compare(ICL_SITEPRESS_VERSION, '3.4', '<')){
             add_action('admin_notices', array($this, '_old_wpml_warning'));
             $this->allok = false;
+        }elseif ( !$sitepress->setup() ) {
+	        if ( !( isset( $_GET['page'] ) && ICL_PLUGIN_FOLDER.'/menu/languages.php' === $_GET['page'] ) ) {
+		        add_action('admin_notices', array($this, '_wpml_not_installed_warning'));
+	        }
+	        $this->allok = false;
         }
 
         if( !class_exists( 'WooCommerce' ) || !function_exists( 'WC' ) ){
@@ -87,6 +92,13 @@ class WCML_Dependencies{
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML</a> versions prior %s.',
                     'woocommerce-multilingual'), WCML_Links::generate_tracking_link('https://wpml.org/'), '3.4'); ?></p></div>
     <?php }
+
+	function _wpml_not_installed_warning() {
+		?>
+        <div class="message error">
+            <p><?php printf( __( 'WooCommerce Multilingual is enabled but not effective. Please finish the installation of WPML first.', 'woocommerce-multilingual' ) ); ?></p></div>
+		<?php
+	}
 
     function _old_wc_warning(){
         ?>
