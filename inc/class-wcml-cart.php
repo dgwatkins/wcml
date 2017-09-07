@@ -94,7 +94,7 @@ class WCML_Cart
     }
 
     public function switching_currency_empty_cart_if_needed( $currency, $force_switch ){
-        if( $force_switch && $this->woocommerce_wpml->settings[ 'cart_sync' ][ 'currency_switch' ] == WCML_CART_CLEAR ) {
+        if( $force_switch && $this->woocommerce_wpml->settings[ 'cart_sync' ][ 'currency_switch' ] == $this->sitepress->get_wp_api()->constant( 'WCML_CART_CLEAR' ) ) {
             $this->empty_cart_if_needed('currency_switch');
             $this->woocommerce->session->set('wcml_switched_type', 'currency');
         }
@@ -102,7 +102,7 @@ class WCML_Cart
 
     public function empty_cart_if_needed( $switching_type ){
 
-            if( $this->woocommerce_wpml->settings[ 'cart_sync' ][ $switching_type ] == WCML_CART_CLEAR ){
+            if( $this->woocommerce_wpml->settings[ 'cart_sync' ][ $switching_type ] == $this->sitepress->get_wp_api()->constant( 'WCML_CART_CLEAR' ) ){
                 $removed_products = $this->woocommerce->session->get( 'wcml_removed_items' ) ? maybe_unserialize( $this->woocommerce->session->get( 'wcml_removed_items' ) ) : array();
 
                 foreach( WC()->cart->get_cart_for_session() as $item_key => $cart ){
@@ -156,6 +156,13 @@ class WCML_Cart
     }
 
     public function cart_alert( $dialog_title, $confirmation_message, $switch_to, $stay_in, $switch_to_value, $stay_in_value = false, $language_switch = false ){
+
+        if( apply_filters( 'wcml_hide_cart_alert_dialog', false ) ){
+            $switching_type = $language_switch ? 'lang_switch' : 'currency_switch';
+            $this->empty_cart_if_needed( $switching_type );
+            return false;
+        }
+
         ?>
         <div id="wcml-cart-dialog-confirm" title="<?php echo esc_attr( $dialog_title ) ?>">
             <p><?php echo esc_html( $confirmation_message ); ?></p>

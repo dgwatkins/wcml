@@ -222,6 +222,27 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @runInSeparateProcess
+	 */
+	function cart_alert_hide_dialog(){
+
+		$this->wp_api->expects( $this->once() )
+		             ->method( 'constant' )
+		             ->with( 'WCML_CART_CLEAR' )
+		             ->willReturn( rand_str() );
+
+		\WP_Mock::onFilter( 'wcml_hide_cart_alert_dialog' )->with( false )->reply( true );
+
+		$subject = $this->get_subject();
+
+		$alert_dialog = $subject->cart_alert( rand_str(), rand_str(), rand_str(), rand_str(), rand_str() );
+
+		$this->assertFalse( $alert_dialog );
+
+	}
+
+	/**
+	 * @test
 	 */
 	public function use_cart_contents_total_for_needs_payment_does_need() {
 		$subject = $this->get_subject();
