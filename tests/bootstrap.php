@@ -89,7 +89,12 @@ tests_add_filter( 'wpml_loaded', 'wpml_test_install_setup' );
 // install WC
 tests_add_filter( 'init', '_install_wc', -1 );
 // Launch WCML
-tests_add_filter( 'wpml_loaded', array( 'woocommerce_wpml', 'instance' ) );
+tests_add_filter( 'wpml_loaded', 'load_wcml' );
+function load_wcml(){
+	global $woocommerce_wpml;
+	$woocommerce_wpml = new woocommerce_wpml();
+	$woocommerce_wpml->add_hooks();
+}
 
 // Temporary workaround for missing WP_REST_Server class missing
 tests_add_filter( 'init', 'WP_REST_Server_placeholder' );

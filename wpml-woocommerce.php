@@ -46,7 +46,8 @@ if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists
 }
 
 // Load WooCommerce Multilingual when WPML is active
-add_action( 'wpml_loaded', array( 'woocommerce_wpml', 'instance' ) );
+$woocommerce_wpml = new woocommerce_wpml();
+$woocommerce_wpml->add_hooks();
 
 if( WCML_REST_API_Support::is_rest_api_request() ){
 	add_action( 'wpml_before_init', array( 'WCML_REST_API_Support', 'remove_wpml_global_url_filters' ), 0 );

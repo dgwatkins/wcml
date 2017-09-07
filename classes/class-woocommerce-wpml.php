@@ -1,9 +1,6 @@
 <?php
 class woocommerce_wpml {
 
-    /** @var woocommerce_wpml */
-    protected static $_instance = null;
-
     public $settings;
     /** @var  WCML_Troubleshooting */
     public $troubleshooting;
@@ -69,7 +66,7 @@ class woocommerce_wpml {
     public function __construct(){
 	    global $sitepress;
 
-        $this->settings = $this->get_settings();
+	    $this->settings = $this->get_settings();
 
         $this->xdomain_data = new WCML_xDomain_Data;
 
@@ -101,24 +98,14 @@ class woocommerce_wpml {
 
     }
 
-	/**
-     * Main instance.
-     *
-     * @since 3.8
-     * @static
-     * @return woocommerce_wpml
-     */
-    public static function instance() {
-        global $woocommerce_wpml;
+	public function add_hooks() {
+		add_action( 'wpml_loaded', array($this, 'load') );
+		add_action( 'init', array($this, 'init'), 2 );
+	}
 
-        if ( is_null( self::$_instance ) ) {
-            self::$_instance = new self();
-            $woocommerce_wpml = self::$_instance;
-	        do_action( 'wcml_loaded', $woocommerce_wpml );
-        }
-
-        return self::$_instance;
-    }
+	public function load() {
+		do_action( 'wcml_loaded' );
+	}
 
     public function init(){
         global $sitepress, $wpdb, $woocommerce, $wpml_url_converter;
