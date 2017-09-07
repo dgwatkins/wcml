@@ -11,13 +11,14 @@ class WCML_Admin_Menus{
         self::$sitepress =& $sitepress;
         self::$wpdb =& $wpdb;
 
-        add_action( 'admin_menu', array(__CLASS__, 'register_menus' ), 80 );
-
         if( self::is_page_without_admin_language_switcher() ){
             self::remove_wpml_admin_language_switcher();
         }
 
         if( is_admin() && !is_null( $sitepress ) && $check_dependencies ){
+
+	        add_action( 'admin_menu', array(__CLASS__, 'register_menus' ), 80 );
+
             add_action( 'admin_footer', array(__CLASS__, 'documentation_links' ) );
             add_action( 'admin_head', array( __CLASS__, 'hide_multilingual_content_setup_box' ) );
             add_action( 'admin_init', array( __CLASS__, 'restrict_admin_with_redirect' ) );
