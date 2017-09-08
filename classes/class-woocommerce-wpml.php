@@ -194,7 +194,8 @@ class woocommerce_wpml {
         $this->requests             = new WCML_Requests;
         $this->cart                 = new WCML_Cart( $this, $sitepress, $woocommerce );
         $this->cart->add_hooks();
-        $this->coupons              = new WCML_Coupons( $this, $sitepress );$this->coupons->add_hooks();
+        $this->coupons              = new WCML_Coupons( $this, $sitepress );
+        $this->coupons->add_hooks();
         $this->locale               = new WCML_Locale( $this, $sitepress );
         $this->media                = new WCML_Media( $this, $sitepress, $wpdb );
         $this->downloadable         = new WCML_Downloadable_Products( $this, $sitepress );
