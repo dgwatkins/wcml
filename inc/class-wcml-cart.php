@@ -169,8 +169,14 @@ class WCML_Cart
                     modal: true,
                     closeOnEscape: false,
                     dialogClass: "wcml-cart-dialog",
+                    create: function(){
+                        jQuery('#jquery-ui-style-css').attr('disabled', 'disabled');
+                    },
                     open: function(event, ui) {
                         jQuery(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+                    },
+                    close: function(event, ui){
+                        jQuery('#jquery-ui-style-css').removeAttr('disabled');
                     },
                     buttons: {
                         "<?php echo $switch_to; ?>": function() {
