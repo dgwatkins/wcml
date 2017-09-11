@@ -53,6 +53,8 @@ class WCML_Cart
             $this->localize_flat_rates_shipping_classes();
         }
 
+		add_filter( 'woocommerce_cart_needs_payment', array( $this, 'use_cart_contents_total_for_needs_payment' ), 10, 2 );
+
     }
 
     public function is_clean_cart_enabled(){
@@ -522,5 +524,18 @@ class WCML_Cart
         throw new Exception( $message );
 
     }
+
+	/**
+	 * @param bool $needs
+	 * @param WC_Cart $cart
+	 *
+	 * @return bool
+	 */
+	public function use_cart_contents_total_for_needs_payment( $needs, $cart ){
+		if( isset( $cart->cart_contents_total ) && version_compare( WC()->version,'3.2', '<' ) ){
+			$needs = $cart->cart_contents_total > 0;
+		}
+		return $needs;
+	}
 
 }
