@@ -82,4 +82,40 @@ class Test_WCML_Tab_Manager extends OTGS_TestCase {
 		$this->assertEquals( array( '_product_tabs' ), $fields_to_hide );
 
 	}
+
+	/**
+	 * @test
+	 */
+	public function translate_categories() {
+		$original_language = 'en';
+		$original_tab_id = 1;
+		$translated_tab_id = 2;
+		$original_cat_id = 1;
+		$translated_cat_id = 2;
+		$original_categories = array( $original_cat_id );
+		$translated_categories = array( $translated_cat_id );
+
+		\WP_Mock::onFilter( 'wpml_element_language_code' )
+			->with( false, array( 'element_id' => $translated_tab_id, 'element_type' => 'wc_product_tab' ) )
+			->reply( $original_language );
+
+		\WP_Mock::onFilter( 'wpml_object_id' )
+			->with( $original_cat_id, 'product_cat', true, $original_language )
+			->reply( $translated_cat_id );
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $original_tab_id, '_wc_tab_categories', true ),
+			'times'  => 1,
+			'return' => $original_categories
+		) );
+
+		\WP_Mock::wpFunction( 'update_post_meta', array(
+			'args'   => array( $translated_tab_id, '_wc_tab_categories', $translated_categories, $original_categories ),
+			'times'  => 1
+		) );
+
+		$subject = $this->get_subject();
+		$subject->translate_categories( $original_tab_id, $translated_tab_id, '_wc_tab_categories' );
+	}
+
 }
