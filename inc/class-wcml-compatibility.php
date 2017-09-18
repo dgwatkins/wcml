@@ -223,6 +223,11 @@ class WCML_Compatibility {
 			$this->wc_memberships->add_hooks();
 		}
 
+		// MaxStore-Pro Theme
+		if ( function_exists( 'maxstore_pro_setup' ) ) {
+			$this->maxstore = new WCML_MaxStore();
+			$this->maxstore->add_hooks();
+		}
 
 	}
 
