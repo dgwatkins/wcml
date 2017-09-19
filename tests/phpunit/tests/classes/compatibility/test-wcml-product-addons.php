@@ -2,6 +2,7 @@
 
 class Test_WCML_Product_Addons extends OTGS_TestCase {
 
+	const ENABLE_MULTI_CURRENCY = 1;
 	/** @var Sitepress */
 	private $sitepress;
 
@@ -15,8 +16,9 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 
 	}
 
-	private function get_subject(){
-		return new WCML_Product_Addons( $this->sitepress);
+	public function get_subject(){
+
+		return new WCML_Product_Addons( $this->sitepress, self::ENABLE_MULTI_CURRENCY );
 	}
 
 	/**
