@@ -17,6 +17,7 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 
 		return $this->getMockBuilder( 'SitePress' )
 		            ->disableOriginalConstructor()
+					->setMethods( [ 'get_current_language', 'get_default_language' ] )
 		            ->getMock();
 
 	}
@@ -41,6 +42,9 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 	public function should_translate_category() {
 		$sitepress = $this->get_sitepress();
 		$subject   = $this->get_subject( $sitepress );
+
+		$sitepress->method('get_current_language')->willReturn( rand_str() );
+		$sitepress->method('get_default_language')->willReturn( rand_str() );
 
 		$category = rand_str();
 
@@ -72,7 +76,7 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 		$category_term_translation->slug = $category_translation;
 		\WP_Mock::userFunction( 'get_terms', [
 			'times'  => 1,
-			'args'   => [ [ 'slug' => $atts['category'], 'taxonomy' => 'product_cat' ] ],
+			'args'   => [ [ 'slug' => [ $atts['category'] ], 'taxonomy' => 'product_cat' ] ],
 			'return' => [ $category_term_translation ]
 		] );
 		\WP_Mock::expectFilterAdded( 'terms_clauses', array( $sitepress, 'terms_clauses' ), 10, 4 );
@@ -95,6 +99,9 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 	public function translate_category_should_not_do_anything() {
 		$sitepress = $this->get_sitepress();
 		$subject   = $this->get_subject( $sitepress );
+
+		$sitepress->method('get_current_language')->willReturn( rand_str() );
+		$sitepress->method('get_default_language')->willReturn( rand_str() );
 
 		$args = [
 			'tax_query' => [
