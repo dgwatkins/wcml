@@ -219,7 +219,7 @@ class WCML_Compatibility {
 
 		// Woocommerce Memberships
 		if ( class_exists( 'WC_Memberships' ) ) {
-			$this->wc_memberships = new WCML_WC_Memberships();
+			$this->wc_memberships = new WCML_WC_Memberships( $this->sitepress->get_wp_api() );
 			$this->wc_memberships->add_hooks();
 		}
 
