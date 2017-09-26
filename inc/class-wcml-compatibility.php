@@ -89,7 +89,8 @@ class WCML_Compatibility {
 		}
 		//Store Exporter plugin
 		if ( defined( 'WOO_CE_PATH' ) ) {
-			$this->wc_exporter = new WCML_wcExporter();
+			$this->wc_exporter = new WCML_wcExporter( $this->sitepress, $this->woocommerce_wpml );
+			$this->wc_exporter->add_hooks();
 		}
 
 		//Gravity Forms
