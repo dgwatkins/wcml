@@ -14,10 +14,12 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 	 * @test
 	 */
 	public function it_init_function() {
+		/** @var woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject $woocommerce_wpml */
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
+		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
 		$sitepress        = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
 		$subject          = new WCML_Currency_Switcher( $woocommerce_wpml, $sitepress );
-		\WP_Mock::wpFunction( 'add_shortcode', array(
+		\WP_Mock::userFunction( 'add_shortcode', array(
 			'times' => 1,
 			'args'  => array( 'currency_switcher', array( $subject, 'currency_switcher_shortcode' ) ),
 		) );
@@ -36,8 +38,8 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 	 */
 	public function it_returns_settings() {
 		global $woocommerce_wpml;
+		/** @var woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject $woocommerce_wpml */
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
-		$sitepress        = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
 		$switcher_id      = mt_rand( 1, 20 );
 		$switcher_data    = array(
 			'dummy_data' => 'dummy_value',
@@ -48,8 +50,11 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 			),
 		);
 		$woocommerce_wpml->expects( $this->once() )->method( 'get_settings' )->willReturn( $wcml_settings );
+		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
+		$sitepress        = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
+
 		$subject = new WCML_Currency_Switcher( $woocommerce_wpml, $sitepress );
-		$this->assertEquals( $switcher_data, $subject->get_settings( $switcher_id ) );
+		$this->assertEquals( $switcher_data, $subject::get_settings( $switcher_id ) );
 	}
 
 	/**
@@ -61,8 +66,10 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 		$random_currency = array_rand( $currencies, 1 );
 		$multi_currency  = $this->getMockBuilder( 'WCML_Multi_Currency' )->disableOriginalConstructor()->setMethods( array( 'get_client_currency' ) )->getMock();
 		$multi_currency->expects( $this->once() )->method( 'get_client_currency' )->willReturn( $random_currency[0] );
+		/** @var woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject $woocommerce_wpml */
 		$woocommerce_wpml                 = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
 		$woocommerce_wpml->multi_currency = $multi_currency;
+		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
 		$sitepress                        = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->setMethods( array(
 			'is_rtl',
 			'get_current_language',
@@ -92,7 +99,9 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 	 */
 	public function it_returns_registered_sidebars() {
 		global $wp_registered_sidebars;
+		/** @var woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject $woocommerce_wpml */
 		$woocommerce_wpml       = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
+		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
 		$sitepress              = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
 		$subject                = new WCML_Currency_Switcher( $woocommerce_wpml, $sitepress );
 		$wp_registered_sidebars = array(
@@ -108,7 +117,9 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 	 */
 	public function get_available_sidebars() {
 		global $wp_registered_sidebars;
+		/** @var woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject $woocommerce_wpml */
 		$woocommerce_wpml     = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
+		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
 		$sitepress            = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
 		$subject              = new WCML_Currency_Switcher( $woocommerce_wpml, $sitepress );
 		$currency_switcher_id = mt_rand( 1, 100 );
@@ -125,7 +136,7 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 				'id' => $currency_switcher_id,
 			),
 			'sidebar3' => array(
-				'id' => mt_rand( 1, 100 ),
+				'id' => mt_rand( 101, 200 ),
 			),
 		);
 
@@ -141,23 +152,27 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 		$sidebars         = array(
 			'sidebar1'            => array(),
 			'wp_inactive_widgets' => array(),
-			'sidebare2'           => array(),
+			'sidebar2'           => array(),
 		);
 		$wcml_settings    = array(
 			'currency_switchers' => array(
 				'sidebar2' => array(),
 			),
 		);
+		/** @var woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject $woocommerce_wpml */
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array(
 			'get_settings',
 			'update_settings'
 		) )->getMock();
-		$sitepress        = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
 		$woocommerce_wpml->expects( $this->exactly( count( $sidebars ) - 1 ) )->method( 'get_settings' )->willReturn( $wcml_settings );
 		$woocommerce_wpml->expects( $this->exactly( count( $sidebars ) - 1 ) )->method( 'update_settings' )->willReturnMap( array(
 			array( $wcml_settings, true ),
 			array( array( 'currency_switchers' => array() ), true ),
 		) );
+
+		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
+		$sitepress        = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
+
 		$subject = new WCML_Currency_Switcher( $woocommerce_wpml, $sitepress );
 		$subject->update_option_sidebars_widgets( $sidebars, array() );
 	}
@@ -169,7 +184,7 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 		$sidebars         = array(
 			'sidebar1'            => array(),
 			'wp_inactive_widgets' => array(),
-			'sidebare2'           => array(
+			'sidebar2'           => array(
 				'currency_sel_widget',
 				'currency_sel_widget',
 			),
@@ -179,11 +194,11 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 				'sidebar2' => array(),
 			),
 		);
+		/** @var woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject $woocommerce_wpml */
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array(
 			'get_settings',
 			'update_settings',
 		) )->getMock();
-		$sitepress        = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
 		$woocommerce_wpml->expects( $this->exactly( count( $sidebars ) - 1 ) )->method( 'get_settings' )->willReturn( $wcml_settings );
 		$woocommerce_wpml->expects( $this->exactly( count( $sidebars ) - 1 ) )->method( 'update_settings' )->willReturnMap( array(
 			array( $wcml_settings, true ),
@@ -210,6 +225,9 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 			),
 		) );
 
+		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
+		$sitepress        = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
+
 		\Mockery::mock( 'WP_Widget' );
 		$subject = new WCML_Currency_Switcher( $woocommerce_wpml, $sitepress );
 		$subject->update_option_sidebars_widgets( $sidebars, array() );
@@ -224,21 +242,21 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 		if ( $switcher_id ) {
 			$shortcode_attrs['switcher_id'] = $switcher_id;
 		}
-		\WP_Mock::wpFunction( 'shortcode_atts', array(
+		\WP_Mock::userFunction( 'shortcode_atts', array(
 			'return' => $shortcode_attrs,
 			'args'   => array( array(), $shortcode_attrs ),
 		) );
-		\WP_Mock::wpFunction( 'wc_get_page_id', array(
+		\WP_Mock::userFunction( 'wc_get_page_id', array(
 			'return' => 'requested_page_id',
 		) );
-		\WP_Mock::wpFunction( 'is_page', array(
+		\WP_Mock::userFunction( 'is_page', array(
 			'return' => false,
 			'args'   => array( 'requested_page_id' ),
 		) );
-		\WP_Mock::wpFunction( 'is_product', array(
+		\WP_Mock::userFunction( 'is_product', array(
 			'return' => false,
 		) );
-		\WP_Mock::wpFunction( 'is_admin', array(
+		\WP_Mock::userFunction( 'is_admin', array(
 			'return' => false,
 		) );
 
@@ -276,6 +294,7 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 		$woocommerce_wpml->multi_currency = $multi_currency;
 		$woocommerce_wpml->cs_templates   = $shortcode_template;
 
+		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
 		$sitepress = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->setMethods( array( 'get_current_language' ) )->getMock();
 		$sitepress->method( 'get_current_language' )->willReturn( 'en' );
 
@@ -305,15 +324,19 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 		$wcml_settings = array(
 			'currency_switcher_product_visibility' => 1,
 		);
-		$sitepress        = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
+
+		/** @var woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject $woocommerce_wpml */
 		$woocommerce_wpml                 = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
 		$woocommerce_wpml->expects( $this->once() )->method( 'get_settings' )->willReturn( $wcml_settings );
+		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
+		$sitepress        = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
+
 		$subject = new WCML_Currency_Switcher( $woocommerce_wpml, $sitepress );
-		\WP_Mock::wpFunction( 'is_product', array(
+		\WP_Mock::userFunction( 'is_product', array(
 			'return'  => true,
 			'times'   => 1,
 		));
-		\WP_Mock::wpFunction( 'do_shortcode', array(
+		\WP_Mock::userFunction( 'do_shortcode', array(
 			'return' => $currency_switcher_output,
 		));
 		ob_start();
@@ -329,8 +352,11 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 	 */
 	public function check_and_convert_switcher_style() {
 
+		/** @var woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject $woocommerce_wpml */
 		$woocommerce_wpml     = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
+		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
 		$sitepress            = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
+
 		$subject              = new WCML_Currency_Switcher( $woocommerce_wpml, $sitepress );
 
 		$initial_args = array(
@@ -365,5 +391,4 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 
 		$this->assertEquals( $expected_args, $subject->check_and_convert_switcher_style( $initial_args ) );
 	}
-
 }
