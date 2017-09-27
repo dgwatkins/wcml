@@ -235,6 +235,11 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		WP_Mock::userFunction( 'WC', ['times' => 1, 'return' => $wc] );
 
 		$this->assertTrue( $subject->use_cart_contents_total_for_needs_payment( $needs, $cart ) );
+
+		unset($cart->cart_contents_total);
+		$cart->total = random_int( 1, 100 );
+		WP_Mock::userFunction( 'WC', ['times' => 1, 'return' => $wc] );
+		$this->assertTrue( $subject->use_cart_contents_total_for_needs_payment( $needs, $cart ) );
 	}
 
 	/**
@@ -277,6 +282,10 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		$subject = $this->get_subject();
 		$needs = rand_str( 32 );
 		$cart = $this->getMockBuilder( 'WC_Cart' )->disableOriginalConstructor()->getMock();
+
+		$wc = $this->getMockBuilder( 'woocommerce' )->disableOriginalConstructor()->getMock();
+		$wc->version = '3.2';
+		WP_Mock::userFunction( 'WC', ['times' => 1, 'return' => $wc] );
 
 		$this->assertSame( $needs, $subject->use_cart_contents_total_for_needs_payment( $needs, $cart ) );
 	}
