@@ -46,8 +46,8 @@ class Test_WCML_Page_Builders extends OTGS_TestCase
 
 		$string_id = rand(1, 10);
 		$target_language = rand_str();
-		$string_name = rand_str();
 		$string_value = rand_str();
+		$string_name = rand_str();
 		$translated_string_value = rand_str();
 
 		$package_string = new stdClass();
@@ -66,9 +66,6 @@ class Test_WCML_Page_Builders extends OTGS_TestCase
 
 		$package->method('get_package_strings')->willReturn(array($package_string));
 		$package->method('get_translated_strings')->willReturn($translated_strings);
-
-		$mock = \Mockery::mock('alias:WPML_TM_Page_Builders_Field_Wrapper');
-		$mock->shouldReceive('generate_field_slug')->andReturn( $string_name );
 
 		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )->disableOriginalConstructor()->setMethods( array( 'constant' ) )->getMock();
 
