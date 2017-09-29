@@ -125,4 +125,67 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function filter_refund_emails_strings(){
+
+		$order_id = mt_rand( 1, 100 );
+		$language = rand_str();
+		$context = 'admin_texts_woocommerce_customer_refunded_order_settings';
+		$key = 'subject_full';
+		$name = '[woocommerce_customer_refunded_order_settings]'.$key;
+		$translated_value = rand_str();
+
+		$object = $this->getMockBuilder('WC_Emails')
+		               ->disableOriginalConstructor()
+		               ->getMock();
+
+		$object->object = $this->getMockBuilder('WC_Order')
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'get_id' ) )
+		               ->getMock();
+
+		$object->object->expects( $this->once() )
+		                    ->method( 'get_id' )
+		                    ->willReturn( $order_id );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $order_id, 'wpml_language', true ),
+			'return' => $language
+		) );
+
+
+		\WP_Mock::onFilter( 'wpml_translate_single_string')->with( false, $context, $name, $language )->reply( $translated_value );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( $translated_value, $subject->filter_refund_emails_strings( rand_str(), $object, rand_str(), $key ) );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function filter_refund_emails_strings_key_not_matched(){
+
+		$key = rand_str();
+		$value = rand_str();
+
+		$object = $this->getMockBuilder('WC_Emails')
+		               ->disableOriginalConstructor()
+		               ->getMock();
+
+		$object->object = $this->getMockBuilder('WC_Order')
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'get_id' ) )
+		               ->getMock();
+
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( $value, $subject->filter_refund_emails_strings( $value, $object, $value, $key ) );
+
+	}
+
 }
