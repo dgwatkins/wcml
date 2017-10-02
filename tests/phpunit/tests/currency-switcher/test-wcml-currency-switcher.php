@@ -111,7 +111,7 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 		$woocommerce_wpml     = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
 		$sitepress            = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
 		$subject              = new WCML_Currency_Switcher( $woocommerce_wpml, $sitepress );
-		$currency_switcher_id = mt_rand( 1, 100 );
+		$currency_switcher_id = mt_rand( 101, 200 );
 		$woocommerce_wpml->expects( $this->once() )->method( 'get_settings' )->willReturn( array(
 			'currency_switchers' => array(
 				$currency_switcher_id => 'dummy_data',
@@ -125,7 +125,7 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 				'id' => $currency_switcher_id,
 			),
 			'sidebar3' => array(
-				'id' => mt_rand( 1, 100 ),
+				'id' => mt_rand( 201, 300 ),
 			),
 		);
 
