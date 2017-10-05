@@ -55,6 +55,7 @@ class WCML_Cart {
 			add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'translate_cart_subtotal' ) );
 			add_action( 'woocommerce_before_checkout_process', array( $this, 'wcml_refresh_cart_total' ) );
 
+			add_filter( 'woocommerce_cart_item_permalink', array( $this, 'cart_item_permalink' ), 10, 2 );
 			add_filter( 'woocommerce_paypal_args', array( $this, 'filter_paypal_args' ) );
 			add_filter( 'woocommerce_add_to_cart_sold_individually_quantity', array(
 				$this,
@@ -73,11 +74,13 @@ class WCML_Cart {
 
 	public function is_clean_cart_enabled() {
 
-		$cart_sync_settings = $this->woocommerce_wpml->settings['cart_sync'];
+		$cart_sync_settings   = $this->woocommerce_wpml->settings['cart_sync'];
+		$wpml_cookies_enabled = $this->sitepress->get_setting( $this->sitepress->get_wp_api()->constant( 'WPML_Cookie_Setting::COOKIE_SETTING_FIELD' ) );
 
 		if (
-			$cart_sync_settings['currency_switch'] === $this->sitepress->get_wp_api()->constant( 'WCML_CART_CLEAR' ) ||
-			$cart_sync_settings['lang_switch'] === $this->sitepress->get_wp_api()->constant( 'WCML_CART_CLEAR' )
+			$wpml_cookies_enabled &&
+			( $cart_sync_settings['currency_switch'] === $this->sitepress->get_wp_api()->constant( 'WCML_CART_CLEAR' ) ||
+			  $cart_sync_settings['lang_switch'] === $this->sitepress->get_wp_api()->constant( 'WCML_CART_CLEAR' ) )
 		) {
 			return true;
 		}
@@ -559,6 +562,21 @@ class WCML_Cart {
 		}
 
 		return $needs;
+	}
+
+	/**
+	 * @param string $permalink
+	 * @param array $cart_item
+	 *
+	 * @return string
+	 */
+	public function cart_item_permalink( $permalink, $cart_item ) {
+
+		if ( ! $this->sitepress->get_setting( 'auto_adjust_ids' ) ) {
+			$permalink = get_permalink( $cart_item['product_id'] );
+		}
+
+		return $permalink;
 	}
 
 }
