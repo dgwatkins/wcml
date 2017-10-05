@@ -335,6 +335,23 @@ class Test_WCML_Cart extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function use_cart_contents_total_for_needs_payment_recurring_payment() {
+		$subject = $this->get_subject();
+		$needs = false;
+		$cart = $this->getMockBuilder( 'WC_Cart' )->disableOriginalConstructor()->getMock();
+
+		$wc = $this->getMockBuilder( 'woocommerce' )->disableOriginalConstructor()->getMock();
+		$wc->version = '3.1';
+		WP_Mock::userFunction( 'WC', ['times' => 1, 'return' => $wc] );
+
+		$cart->recurring_carts = array();
+
+		$this->assertTrue( $subject->use_cart_contents_total_for_needs_payment( $needs, $cart ) );
+	}
+
+	/**
+	 * @test
+	 */
 	public function is_clean_cart_enabled_wpml_cookies_enabled() {
 
 		$subject = $this->clean_cart_subject_mock();

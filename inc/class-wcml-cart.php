@@ -556,9 +556,11 @@ class WCML_Cart {
 	 * @return bool
 	 */
 	public function use_cart_contents_total_for_needs_payment( $needs, $cart ) {
+
 		if ( version_compare( WC()->version, '3.2', '<' ) ) {
 			$needs = ( isset( $cart->cart_contents_total ) && $cart->cart_contents_total > 0 )
-			         || ( isset( $cart->total ) && $cart->total > 0 );
+			         || ( isset( $cart->total ) && $cart->total > 0 )
+			         || isset( $cart->recurring_carts );
 		}
 
 		return $needs;
