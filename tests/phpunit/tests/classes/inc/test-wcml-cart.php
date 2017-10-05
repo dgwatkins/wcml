@@ -15,6 +15,10 @@ class Test_WCML_Cart extends OTGS_TestCase {
 	private $wp_api;
 
 
+	private $cart_clear_constant;
+	private $cookie_setting_field;
+
+
 	public function setUp(){
 		parent::setUp();
 
@@ -24,7 +28,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 		$this->sitepress = $this->getMockBuilder('SitePress')
 			->disableOriginalConstructor()
-			->setMethods( array( 'get_wp_api', 'get_element_trid' ) )
+			->setMethods( array( 'get_wp_api', 'get_element_trid', 'get_setting' ) )
 			->getMock();
 
 		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )
@@ -52,28 +56,45 @@ class Test_WCML_Cart extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function add_hooks(){
-
-		\WP_Mock::wpFunction( 'wp_enqueue_script', array( 'return' => true ) );
-		\WP_Mock::wpFunction( 'wp_enqueue_style', array( 'return' => true ) );
-
-		$subject = $this->get_subject();
-		$this->expectActionAdded( 'woocommerce_get_cart_item_from_session', array( $subject, 'translate_cart_contents' ), 10, 1, 0 );
-		$subject->add_hooks();
-
-		$cart_clear_constant = 0;
-		$cart_sync_constant = 1;
-		$this->wp_api->method( 'constant' )->with( 'WCML_CART_CLEAR' )->willReturn( $cart_clear_constant );
-
-		$this->woocommerce_wpml->settings['cart_sync']['lang_switch'] = $cart_sync_constant;
-		$this->woocommerce_wpml->settings['cart_sync']['currency_switch'] = $cart_sync_constant;
+	public function it_adds_correct_hooks_when_clean_cart_is_disabled(){
 
 		\WP_Mock::wpFunction( 'is_ajax', array( 'return' => false ) );
 
 		$subject = $this->get_subject();
-
 		\WP_Mock::expectActionAdded( 'woocommerce_get_cart_item_from_session', array( $subject, 'translate_cart_contents' ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_cart_needs_payment', array( $subject, 'use_cart_contents_total_for_needs_payment' ), 10, 2 );
+
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_adds_correct_hooks_when_clean_cart_is_enabled(){
+
+		\WP_Mock::wpFunction( 'wp_enqueue_script', array( 'return' => true ) );
+		\WP_Mock::wpFunction( 'wp_enqueue_style', array( 'return' => true ) );
+
+		$this->cart_clear_constant = 0;
+		$cart_sync_constant = 1;
+		$this->cookie_setting_field = rand_str();
+
+		$that = $this;
+		$this->wp_api->method( 'constant' )->willReturnCallback( function ( $const ) use ( $that ) {
+			if ( 'WPML_Cookie_Setting::COOKIE_SETTING_FIELD' == $const ) {
+				return $that->cookie_setting_field;
+			} else if ( 'WCML_CART_CLEAR' == $const ) {
+				return $that->cart_clear_constant;
+			}
+		} );
+
+		$this->sitepress->method( 'get_setting' )->with( $this->cookie_setting_field )->willReturn( true );
+
+		$this->woocommerce_wpml->settings['cart_sync']['lang_switch'] = $this->cart_clear_constant;
+		$this->woocommerce_wpml->settings['cart_sync']['currency_switch'] = $cart_sync_constant;
+
+		$subject = $this->get_subject();
+		\WP_Mock::expectActionAdded( 'wcml_removed_cart_items', array( $subject, 'wcml_removed_cart_items_widget' ) );
 
 		$subject->add_hooks();
 	}
@@ -288,6 +309,87 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		WP_Mock::userFunction( 'WC', ['times' => 1, 'return' => $wc] );
 
 		$this->assertSame( $needs, $subject->use_cart_contents_total_for_needs_payment( $needs, $cart ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function is_clean_cart_enabled_wpml_cookies_enabled() {
+
+		$subject = $this->clean_cart_subject_mock();
+
+		$this->sitepress->method( 'get_setting' )->with( $this->cookie_setting_field )->willReturn( true );
+
+		$this->assertTrue( $subject->is_clean_cart_enabled() );
+	}
+
+	/**
+	 * @test
+	 */
+	public function is_clean_cart_enabled_wpml_cookies_disabled() {
+
+		$subject = $this->clean_cart_subject_mock();
+
+		$this->sitepress->method( 'get_setting' )->with( $this->cookie_setting_field )->willReturn( false );
+
+		$this->assertFalse( $subject->is_clean_cart_enabled() );
+	}
+
+
+	private function clean_cart_subject_mock(){
+
+		$this->cart_clear_constant = 0;
+		$this->cookie_setting_field = rand_str();
+
+		$that = $this;
+		$this->wp_api->method( 'constant' )->willReturnCallback( function ( $const ) use ( $that ) {
+			if ( 'WPML_Cookie_Setting::COOKIE_SETTING_FIELD' == $const ) {
+				return $that->cookie_setting_field;
+			} else if ( 'WCML_CART_CLEAR' == $const ) {
+				return $that->cart_clear_constant;
+			}
+		} );
+
+		$this->woocommerce_wpml->settings['cart_sync']['lang_switch'] = $this->cart_clear_constant;
+		$this->woocommerce_wpml->settings['cart_sync']['currency_switch'] = $this->cart_clear_constant;
+
+		return $this->get_subject();
+
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function cart_item_permalink_auto_adjust_ids_on() {
+
+		$subject = $this->get_subject();
+		$permalink = rand_str();
+
+		$this->sitepress->method( 'get_setting' )->with( 'auto_adjust_ids' )->willReturn( true );
+
+		$this->assertEquals( $permalink, $subject->cart_item_permalink( $permalink, array() ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function cart_item_permalink_auto_adjust_ids_off() {
+
+		$subject = $this->get_subject();
+		$permalink = rand_str();
+		$translated_permalink = rand_str();
+		$cart_item = array();
+		$cart_item['product_id'] = mt_rand( 1, 100 );
+
+		\WP_Mock::wpFunction( 'get_permalink', array(
+			'args' => array( $cart_item['product_id'] ),
+			'return' => $translated_permalink,
+		) );
+
+		$this->sitepress->method( 'get_setting' )->with( 'auto_adjust_ids' )->willReturn( false );
+
+		$this->assertEquals( $translated_permalink, $subject->cart_item_permalink( $permalink, $cart_item ) );
 	}
 
 }
