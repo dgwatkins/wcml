@@ -269,9 +269,9 @@ class WCML_Emails{
 
                 $this->change_email_language( $user_lang );
 
-                $this->woocommerce->mailer()->emails['WC_Email_New_Order']->heading = $this->wcml_get_translated_email_string( 'admin_texts_woocommerce_new_order_settings', '[woocommerce_new_order_settings]heading', $order_id );
+                $this->woocommerce->mailer()->emails['WC_Email_New_Order']->heading = $this->wcml_get_translated_email_string( 'admin_texts_woocommerce_new_order_settings', '[woocommerce_new_order_settings]heading', $order_id, $user_lang );
 
-                $this->woocommerce->mailer()->emails['WC_Email_New_Order']->subject = $this->wcml_get_translated_email_string( 'admin_texts_woocommerce_new_order_settings', '[woocommerce_new_order_settings]subject', $order_id );
+                $this->woocommerce->mailer()->emails['WC_Email_New_Order']->subject = $this->wcml_get_translated_email_string( 'admin_texts_woocommerce_new_order_settings', '[woocommerce_new_order_settings]subject', $order_id, $user_lang );
 
                 $this->woocommerce->mailer()->emails['WC_Email_New_Order']->recipient = $recipient;
 
@@ -348,11 +348,9 @@ class WCML_Emails{
         return $value;
     }
 
-    function wcml_get_translated_email_string( $context, $name, $order_id = false ){
+    function wcml_get_translated_email_string( $context, $name, $order_id = false, $language_code = null ){
 
-        $language_code = null;
-
-        if( $order_id ){
+        if( $order_id && !$language_code ){
             $order_language = get_post_meta( $order_id, 'wpml_language', true );
             if( $order_language ){
                 $language_code = $order_language;

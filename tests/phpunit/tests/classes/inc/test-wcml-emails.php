@@ -71,6 +71,27 @@ class Test_WCML_Emails extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function wcml_get_translated_email_string_with_language_code(){
+
+		$context = rand_str();
+		$name = rand_str();
+		$trnsl_name = rand_str();
+		$order_id = rand( 1, 100 );
+		$language_code = rand_str();
+
+		$subject = $this->get_subject();
+
+		WP_Mock::onFilter( 'wpml_translate_single_string' )
+			->with( false, $context, $name , $language_code )
+			->reply( $trnsl_name );
+
+		$filtered_name = $subject->wcml_get_translated_email_string( $context, $name, $order_id, $language_code );
+		$this->assertEquals( $trnsl_name, $filtered_name );
+	}
+
+	/**
+	 * @test
+	 */
 	public function email_refresh_in_ajax(){
 
 		$order_id = $_GET['order_id'] = mt_rand( 1, 100 );
