@@ -9,7 +9,7 @@ class WCML_Admin_Menus{
 	/** @var SitePress */
     private static $wpdb;
 
-    public static function set_up_menus( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress, wpdb $wpdb, $check_dependencies ){
+    public static function set_up_menus( woocommerce_wpml $woocommerce_wpml, $sitepress, wpdb $wpdb, $check_dependencies ){
 	    self::$woocommerce_wpml = $woocommerce_wpml;
 	    self::$sitepress        = $sitepress;
 	    self::$wpdb             = $wpdb;
