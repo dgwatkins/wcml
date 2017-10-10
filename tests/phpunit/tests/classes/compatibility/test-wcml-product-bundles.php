@@ -133,7 +133,7 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 		$this->assertFalse( $subject->is_bundle_product( $bundle_product_id ) );
 
 
-		$bundle_product_id = mt_rand( 1, 100 );
+		$bundle_product_id = mt_rand( 101, 200 );
 		$mock->shouldReceive( 'get_product_type' )->with( $bundle_product_id )->andReturn( 'bundle' );
 
 		$subject = $this->get_subject();
