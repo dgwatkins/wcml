@@ -50,6 +50,7 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		$this->assertEquals( $translated_value_for_first_field, $translated_meta[ 0 ] );
 		$this->assertEquals( $translated_value_for_second_field, $translated_meta[ 1 ] );
 
+		wp_cache_init();
 		//test updating values
 		$translated_mid_ids = $this->woocommerce_wpml->products->get_mid_ids_by_key( $this->test_data->es_product->id, $custom_field );
 		$values_to_update = array();
