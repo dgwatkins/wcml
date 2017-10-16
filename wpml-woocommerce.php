@@ -9,6 +9,8 @@
   Requires at least: 3.9
   Tested up to: 4.8.1
   Version: 4.3-beta
+  WC requires at least: 2.1.0
+  WC tested up to: 3.2.1
 */
 
 if ( defined( 'WCML_VERSION' ) ) {
