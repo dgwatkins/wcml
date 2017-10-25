@@ -30,7 +30,6 @@ class WCML_Product_Addons {
 
 		add_action( 'updated_post_meta', array( $this, 'register_addons_strings' ), 10, 4 );
 		add_action( 'added_post_meta', array( $this, 'register_addons_strings' ), 10, 4 );
-		add_filter( 'get_post_metadata', array( $this, 'translate_addons_strings' ), 10, 4 );
 
 		global $pagenow;
 		if ( 'edit.php' === $pagenow &&
@@ -54,6 +53,8 @@ class WCML_Product_Addons {
 			add_action( 'woocommerce_product_data_panels',   array( $this, 'show_pointer_info' ) );
 
 			add_filter( 'wcml_do_not_display_custom_fields_for_product', array( $this, 'replace_tm_editor_custom_fields_with_own_sections' ) );
+		}else{
+			add_filter( 'get_post_metadata', array( $this, 'translate_addons_strings' ), 10, 4 );
 		}
 
 		add_filter( 'wcml_cart_contents_not_changed', array(
