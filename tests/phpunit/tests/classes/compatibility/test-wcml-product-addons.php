@@ -24,12 +24,24 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function add_hooks(){
+	public function add_admin_hooks(){
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
 
 		$subject = $this->get_subject();
 		\WP_Mock::expectFilterAdded( 'wcml_do_not_display_custom_fields_for_product', array( $subject, 'replace_tm_editor_custom_fields_with_own_sections' ) );
 		\WP_Mock::expectFilterAdded( 'wcml_cart_contents_not_changed', array( $subject, 'filter_booking_addon_product_in_cart_contents'	), 20 );
+
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
+	public function add_front_hooks(){
+		\WP_Mock::wpFunction( 'is_admin', array( 'return' => false ) );
+
+		$subject = $this->get_subject();
+		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'translate_addons_strings' ), 10 ,4 );
 
 		$subject->add_hooks();
 	}
