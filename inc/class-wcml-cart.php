@@ -182,50 +182,70 @@ class WCML_Cart {
             <p><?php echo esc_html( $confirmation_message ); ?></p>
         </div>
 
-        <script type="text/javascript">
-            jQuery(document).ready(function () {
-                jQuery("#wcml-cart-dialog-confirm").dialog({
-                    resizable: false,
-                    draggable: false,
-                    height: "auto",
-                    width: 500,
-                    modal: true,
-                    closeOnEscape: false,
-                    dialogClass: "wcml-cart-dialog",
-                    create: function () {
-                        jQuery('#jquery-ui-style-css').attr('disabled', 'disabled');
-                    },
-                    open: function (event, ui) {
-                        jQuery(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
-                    },
-                    close: function (event, ui) {
-                        jQuery('#jquery-ui-style-css').removeAttr('disabled');
-                    },
-                    buttons: {
-                        "<?php echo $switch_to; ?>": function () {
-                            jQuery(this).dialog("close");
-							<?php if( $language_switch ): ?>
-                            window.location = '<?php echo esc_url( $switch_to_value, null, 'redirect' ); ?>';
-							<?php else: ?>
-                            jQuery('.wcml_currency_switcher').parent().find('img').remove();
-                            wcml_load_currency("<?php echo esc_js( $switch_to_value ); ?>", true);
-							<?php endif; ?>
+	    <script type="text/javascript">
+		  jQuery(document).ready(function () {
+			  var dialogBox = jQuery("#wcml-cart-dialog-confirm");
+			  dialogBox.dialog({
+				  resizable: false,
+				  draggable: false,
+				  height: "auto",
+				  width: 500,
+				  modal: true,
+				  closeOnEscape: false,
+				  dialogClass: "otgs-ui-dialog wcml-cart-dialog",
+				  create: function () {
+					  jQuery('#jquery-ui-style-css').attr('disabled', 'disabled');
+				  },
+				  open: function (event, ui) {
+					  jQuery(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+					  repositionDialog();
+				  },
+				  close: function (event, ui) {
+					  jQuery('#jquery-ui-style-css').removeAttr('disabled');
+				  },
+				  buttons: {
+					  "<?php echo $switch_to; ?>": function () {
+						  jQuery(this).dialog("close");
+					      <?php if( $language_switch ): ?>
+						  window.location = '<?php echo esc_url( $switch_to_value, null, 'redirect' ); ?>';
+					      <?php else: ?>
+						  jQuery('.wcml_currency_switcher').parent().find('img').remove();
+						  wcml_load_currency("<?php echo esc_js( $switch_to_value ); ?>", true);
+					      <?php endif; ?>
 
-                        },
-                        "<?php echo $stay_in; ?>": function () {
-                            jQuery(this).dialog("close");
-							<?php if( $language_switch ): ?>
-                            window.location = '<?php echo esc_url( $stay_in_value, null, 'redirect' ); ?>';
-							<?php else: ?>
-                            jQuery('.wcml_currency_switcher').parent().find('img').remove();
-                            jQuery('.wcml_currency_switcher').removeAttr('disabled');
-                            jQuery('.wcml_currency_switcher').val('<?php echo esc_js( $stay_in_value ); ?>');
-							<?php endif; ?>
-                        }
-                    }
-                });
-            });
-        </script>
+					  },
+					  "<?php echo $stay_in; ?>": function () {
+						  jQuery(this).dialog("close");
+					      <?php if( $language_switch ): ?>
+						  window.location = '<?php echo esc_url( $stay_in_value, null, 'redirect' ); ?>';
+					      <?php else: ?>
+						  jQuery('.wcml_currency_switcher').parent().find('img').remove();
+						  jQuery('.wcml_currency_switcher').removeAttr('disabled');
+						  jQuery('.wcml_currency_switcher').val('<?php echo esc_js( $stay_in_value ); ?>');
+					      <?php endif; ?>
+					  }
+				  }
+			  });
+
+			  jQuery(window).resize(repositionDialog);
+
+			  function repositionDialog() {
+				  var winH = jQuery(window).height() - 180;
+				  jQuery('.wcml-cart-dialog').css({
+					  "max-height": winH,
+					  "max-width": "95%"
+				  });
+
+				  dialogBox.dialog("option", "position", {
+					  my: "center",
+					  at: "center",
+					  of: window
+				  });
+			  };
+
+
+		  });
+	    </script>
 		<?php
 	}
 
