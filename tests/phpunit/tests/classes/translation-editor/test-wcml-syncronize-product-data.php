@@ -258,4 +258,45 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function duplicate_product_post_meta_updating_values() {
+
+		$subject = $this->get_subject();
+
+		$custom_field          = rand_str();
+		$original_product_id   = mt_rand( 1, 100 );
+		$translated_product_id = mt_rand( 101, 200 );
+
+		$first_mid  = mt_rand( 201, 300 );
+		$second_mid = mt_rand( 301, 400 );
+
+		$first_mid_value  = rand_str();
+		$second_mid_value = rand_str();
+
+		$translation_data = array(
+			md5( $custom_field . ':' . $first_mid )  => $first_mid_value,
+			md5( $custom_field . ':' . $second_mid ) => $second_mid_value,
+		);
+
+		$post_fields = array(
+			$custom_field . ':' . $first_mid  => rand_str(),
+			$custom_field . ':' . $second_mid => rand_str()
+		);
+
+		\WP_Mock::wpFunction( 'update_meta', array(
+			'args'  => array( $first_mid, $custom_field, $first_mid_value ),
+			'times' => 1
+		) );
+
+		\WP_Mock::wpFunction( 'update_meta', array(
+			'args'  => array( $second_mid, $custom_field, $second_mid_value ),
+			'times' => 1
+		) );
+
+		$subject->sync_custom_field_value( $custom_field, $translation_data, $translated_product_id, $post_fields );
+
+	}
+
 }
