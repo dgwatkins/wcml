@@ -14,6 +14,7 @@ class WCML_Url_Translation {
 	public $default_product_category_gettext_base;
 	public $default_product_tag_base;
 	public $default_product_tag_gettext_base;
+	public $wc_permalinks;
 
 	/**
 	 * WCML_Url_Translation constructor.

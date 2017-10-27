@@ -155,7 +155,12 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 
 	function test_force_bases_in_strings_languages(){
 
+		//force WC permalinks option
+		$permalink_options = $this->url_translation->wc_permalinks;
+		$this->url_translation->wc_permalinks = array();
+
 		$this->sitepress->switch_lang( 'fr' );
+		$this->wcml_helper->icl_clear_and_init_cache( 'fr' );
 
 		global $l10n;
 		unset($l10n['woocommerce']);
@@ -173,6 +178,8 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 
 		$this->sitepress->switch_lang( 'en' );
 
+		//restore WC permalinks
+		$this->url_translation->wc_permalinks = $permalink_options;
 	}
 
 	function test_translate_bases_in_rewrite_rules(){
