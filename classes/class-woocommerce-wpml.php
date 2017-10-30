@@ -46,6 +46,8 @@ class woocommerce_wpml {
     public $gateways;
     /** @var  WCML_CS_Templates */
     public $cs_templates;
+	/** @var  WCML_Comments */
+	public $comments;
 
     /** @var  WCML_Reports */
     private $reports;
@@ -224,6 +226,8 @@ class woocommerce_wpml {
         $this->wcml_products_screen->init();
         $this->cart_sync_warnings = new WCML_Cart_Sync_Warnings( $this, $sitepress );
         $this->cart_sync_warnings->add_hooks();
+	    $this->comments = new WCML_Comments( $this, $sitepress );
+	    $this->comments->add_hooks();
 
 	    $payment_method_filter = new WCML_Payment_Method_Filter();
 	    $payment_method_filter->add_hooks();
