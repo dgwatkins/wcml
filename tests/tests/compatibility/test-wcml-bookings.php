@@ -1070,6 +1070,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$bookable_resource1 = wpml_test_insert_post( $this->default_language, 'bookable_resource', false, $person_title, $product );
 
 		update_post_meta( $bookable_resource1, 'dummy_key', 'dummy_value' );
+		$this->wcml_helper->set_custom_field_to_copy( 'dummy_key' );
 
 		$qty = random_int( 1, 999 );
 		$available = random_int( 1, 999 );

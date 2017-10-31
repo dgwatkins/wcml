@@ -72,6 +72,7 @@ class Test_WCML_Product_Bundles_Legacy extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @runInSeparateProcess
 	 */
 	public function is_bundle_product() {
 
