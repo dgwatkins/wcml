@@ -299,4 +299,80 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function sync_variable_custom_field_value() {
+
+		$subject = $this->get_subject();
+
+		$custom_field            = rand_str();
+		$original_product_id   = mt_rand( 1, 100 );
+		$translated_product_id = mt_rand( 101, 200 );
+
+		$translated_value_for_first_field  = rand_str( 10 );
+		$translated_value_for_second_field = rand_str( 11 );
+
+		$translation_data = array(
+			md5( $custom_field . ':new0' ) => $translated_value_for_first_field,
+			md5( $custom_field . ':new1' ) => $translated_value_for_second_field,
+		);
+
+		$post_fields = array(
+			$custom_field . ':new0' => rand_str(),
+			$custom_field . ':new1' => rand_str()
+		);
+
+		\WP_Mock::wpFunction( 'add_post_meta', array(
+			'args'  => array( $translated_product_id, $custom_field, $translated_value_for_first_field ),
+			'times' => 1
+		) );
+
+		\WP_Mock::wpFunction( 'add_post_meta', array(
+			'args'  => array( $translated_product_id, $custom_field, $translated_value_for_second_field ),
+			'times' => 1
+		) );
+
+		$subject->sync_custom_field_value( $custom_field, $translation_data, $translated_product_id, $post_fields );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function sync_variable_custom_field_multiple_values() {
+
+		$subject = $this->get_subject();
+
+		$custom_field            = rand_str();
+		$original_variation_id   = mt_rand( 1, 100 );
+		$translated_variation_id = mt_rand( 101, 200 );
+
+		$translated_value_for_first_field  = rand_str( 15 );
+		$translated_value_for_second_field = rand_str( 17 );
+
+		$translation_data = array(
+			md5( $custom_field . $original_variation_id . ':new0' ) => $translated_value_for_first_field,
+			md5( $custom_field . $original_variation_id . ':new1' ) => $translated_value_for_second_field,
+		);
+
+		$post_fields = array(
+			$custom_field . $original_variation_id . ':new0' => rand_str(),
+			$custom_field . $original_variation_id . ':new1' => rand_str()
+		);
+
+		\WP_Mock::wpFunction( 'add_post_meta', array(
+			'args'  => array( $translated_variation_id, $custom_field, $translated_value_for_first_field ),
+			'times' => 1
+		) );
+
+		\WP_Mock::wpFunction( 'add_post_meta', array(
+			'args'  => array( $translated_variation_id, $custom_field, $translated_value_for_second_field ),
+			'times' => 1
+		) );
+
+		$subject->sync_custom_field_value( $custom_field, $translation_data, $translated_variation_id, $post_fields, $original_variation_id, true );
+
+	}
+
 }
