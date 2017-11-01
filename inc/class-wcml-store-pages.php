@@ -111,8 +111,7 @@ class WCML_Store_Pages{
                         AND post_name = %s 
                         AND icl.element_type = 'post_page' 
                         AND icl.language_code = %s LIMIT 1;
-                    ",
-	                esc_sql( $page['name'] ), $this->sitepress->get_default_language() ) );
+                    ", $page['name'], $this->sitepress->get_default_language() ) );
             }
 
             if( !$page_found ){
@@ -120,7 +119,7 @@ class WCML_Store_Pages{
                     'post_status'       => 'publish',
                     'post_type'         => 'page',
                     'post_author'       => 1,
-                    'post_name'         => esc_sql( $page['name'] ),
+                    'post_name'         => $page['name'],
                     'post_title'        => $page['title'],
                     'post_content'      => $page['content'],
                     'post_parent'       => ! empty( $page['parent'] ) ? wc_get_page_id( $page['parent'] ) : '',
