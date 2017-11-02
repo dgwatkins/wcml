@@ -145,13 +145,16 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 		$span_currency	= '<span class="woocommerce-Price-currencySymbol">';
 		$span_close		= '</span>';
 
-		$this->assertEquals( $span_price . $span_currency . '&#36;' . $span_close .'1#907@0000' . $span_close,
+		$unicode_pos_left = '&#x200e;';
+		$unicode_pos_right = '&#x200f;';
+
+		$this->assertEquals( $span_price . $span_currency . '&#36;' . $span_close . $unicode_pos_left .'1#907@0000' . $span_close,
 				$this->multi_currency->prices->formatted_price(1234.137, 'USD') );
 
-		$this->assertEquals( $span_price . '2.099' . $span_currency .'lei' . $span_close . $span_close,
+		$this->assertEquals( $span_price . '2.099' . $span_currency .'lei' . $span_close . $unicode_pos_right . $span_close,
 			$this->multi_currency->prices->formatted_price(1234.137, 'RON') );
 
-		$this->assertEquals( $span_price .'3.023,6' . $span_currency . '&#36;' . $span_close . $span_close,
+		$this->assertEquals( $span_price .'3.023,6' . $span_currency . '&#36;' . $span_close . $unicode_pos_right . $span_close,
 			$this->multi_currency->prices->formatted_price(1234.137, 'AUD') );
 
 	}
