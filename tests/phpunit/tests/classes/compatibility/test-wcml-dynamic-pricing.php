@@ -28,6 +28,19 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 		$subject->add_hooks();
 
 	}
+
+	/**
+	 * @test
+	 */
+	public function is_frontend_add_hooks(){
+		\WP_Mock::wpFunction( 'is_admin', array( 'return' => false ) );
+
+		$subject = $this->get_subject();
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_get__pricing_rules', array( $subject, 'translate_variations_in_rules' ) );
+		$subject->add_hooks();
+
+	}
+
 	/**
 	 * @test
 	 */
