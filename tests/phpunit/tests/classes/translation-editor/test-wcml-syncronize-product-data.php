@@ -28,7 +28,6 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 	private function get_sitepress() {
 		return $this->getMockBuilder('SitePress')
 		            ->disableOriginalConstructor()
-		            ->setMethods( array( 'get_current_language' ) )
 		            ->getMock();
 	}
 
@@ -372,6 +371,182 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		) );
 
 		$subject->sync_custom_field_value( $custom_field, $translation_data, $translated_variation_id, $post_fields, $original_variation_id, true );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function sync_total_sales_simple_product() {
+
+		//handle a case when managing stock is off for product but total sales should be sync
+		$product_id = mt_rand( 1, 100 );
+		$quantity = mt_rand( 101, 200 );
+		$orig_language_details = new stdClass();
+		$orig_language_details->language_code = rand_str();
+
+		$translations = array();
+		$translation = new stdClass();
+		$translation->language_code = rand_str();
+		$translation->element_id = mt_rand( 201, 300 );
+		$translations[] = $translation;
+
+		$total_sales = mt_rand( 301, 400 );
+
+		$sitepress = $this->getMockBuilder('SitePress')
+		     ->disableOriginalConstructor()
+		     ->setMethods( array( 'get_element_trid', 'get_element_translations', 'get_element_language_details',  ) )
+		     ->getMock();
+
+		$sitepress->method( 'get_element_trid' )->willReturn( rand_str() );
+		$sitepress->method( 'get_element_translations' )->willReturn( $translations );
+		$sitepress->method( 'get_element_language_details' )->willReturn( $orig_language_details );
+
+		$subject = $this->get_subject( null , $sitepress );
+
+		$order = $this->getMockBuilder( 'WC_Order' )
+		              ->disableOriginalConstructor()
+		              ->setMethods( array( 'get_items' ) )
+		              ->getMock();
+
+		$items = array();
+		$order_item = $this->getMockBuilder( 'WC_Order_Item_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'get_variation_id','get_product_id','get_quantity' ) )
+		                ->getMock();
+
+		$items[] = $order_item;
+
+		$order->method( 'get_items' )->willReturn( $items );
+
+		$order_item->method( 'get_variation_id' )->willReturn( false );
+		$order_item->method( 'get_product_id' )->willReturn( $product_id );
+		$order_item->method( 'get_quantity' )->willReturn( $quantity );
+
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'args'  => array( $translation->element_id ),
+			'return' => rand_str()
+		) );
+
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'exists', 'managing_stock' ) )
+		                ->getMock();
+
+		$product->method( 'exists' )->willReturn( true );
+		$product->method( 'managing_stock' )->willReturn( false );
+
+		\WP_Mock::wpFunction( 'wc_get_product', array(
+			'args'  => array( $translation->element_id ),
+			'return' => $product
+		) );
+
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'  => array( $translation->element_id, 'total_sales', true ),
+			'return' => $total_sales
+		) );
+
+		\WP_Mock::wpFunction( 'update_post_meta', array(
+			'args'  => array( $translation->element_id, 'total_sales', $total_sales + $quantity ),
+			'times' => 1
+		) );
+
+		$subject->sync_product_stocks( $order, 'reduce' );
+
+	}
+	/**
+	 * @test
+	 */
+	public function sync_total_sales_variable_product() {
+
+		//handle a case when managing stock is off for product but total sales should be sync
+		$product_id = mt_rand( 1, 100 );
+		$variation_id = mt_rand( 101, 200 );
+		$quantity = mt_rand( 201, 300 );
+		$orig_language_details = new stdClass();
+		$orig_language_details->language_code = rand_str();
+
+		$translations = array();
+		$translation = new stdClass();
+		$translation->language_code = rand_str();
+		$translation->element_id = mt_rand( 201, 300 );
+		$translations[] = $translation;
+
+		$total_sales = mt_rand( 301, 400 );
+
+		$translation_product_id = mt_rand( 401, 500 );
+
+		$sitepress = $this->getMockBuilder('SitePress')
+		     ->disableOriginalConstructor()
+		     ->setMethods( array( 'get_element_trid', 'get_element_translations', 'get_element_language_details',  ) )
+		     ->getMock();
+
+		$sitepress->method( 'get_element_trid' )->willReturn( rand_str() );
+		$sitepress->method( 'get_element_translations' )->willReturn( $translations );
+		$sitepress->method( 'get_element_language_details' )->willReturn( $orig_language_details );
+
+		$subject = $this->get_subject( null , $sitepress );
+
+		$order = $this->getMockBuilder( 'WC_Order' )
+		              ->disableOriginalConstructor()
+		              ->setMethods( array( 'get_items' ) )
+		              ->getMock();
+
+		$items = array();
+		$order_item = $this->getMockBuilder( 'WC_Order_Item_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'get_variation_id','get_product_id','get_quantity' ) )
+		                ->getMock();
+
+		$items[] = $order_item;
+
+		$order->method( 'get_items' )->willReturn( $items );
+
+		$order_item->method( 'get_variation_id' )->willReturn( $variation_id );
+		$order_item->method( 'get_product_id' )->willReturn( $product_id );
+		$order_item->method( 'get_quantity' )->willReturn( $quantity );
+
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'args'  => array( $translation->element_id ),
+			'return' => 'product_variation'
+		) );
+
+		\WP_Mock::wpFunction( 'wp_get_post_parent_id', array(
+			'args'  => array( $translation->element_id ),
+			'return' => $translation_product_id
+		) );
+
+		\WP_Mock::wpFunction( 'get_post', array(
+			'args'  => array( $translation_product_id ),
+			'return' => true
+		) );
+
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'exists', 'managing_stock' ) )
+		                ->getMock();
+
+		$product->method( 'exists' )->willReturn( true );
+		$product->method( 'managing_stock' )->willReturn( false );
+
+		\WP_Mock::wpFunction( 'wc_get_product', array(
+			'args'  => array( $translation->element_id ),
+			'return' => $product
+		) );
+
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'  => array( $translation_product_id, 'total_sales', true ),
+			'return' => $total_sales
+		) );
+
+		\WP_Mock::wpFunction( 'update_post_meta', array(
+			'args'  => array( $translation_product_id, 'total_sales', $total_sales + $quantity ),
+			'times' => 1
+		) );
+
+		$subject->sync_product_stocks( $order, 'reduce' );
 
 	}
 

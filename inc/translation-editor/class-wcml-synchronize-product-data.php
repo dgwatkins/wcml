@@ -333,24 +333,37 @@ class WCML_Synchronize_Product_Data{
             // Process for non-current languages
             foreach( $translations as $translation ){
                 if ( $ld->language_code != $translation->language_code ) {
-                    //check if product exist
-                    if( get_post_type( $translation->element_id ) == 'product_variation' && !get_post( wp_get_post_parent_id( $translation->element_id ) ) ){
-                        continue;
-                    }
+
+	                $translation_product_id = $translation->element_id;
+	                //check if product exist
+	                if ( get_post_type( $translation->element_id ) === 'product_variation' ) {
+		                if ( ! get_post( wp_get_post_parent_id( $translation->element_id ) ) ) {
+			                continue;
+		                }
+		                $translation_product_id = wp_get_post_parent_id( $translation->element_id );
+	                }
+
                     $_product = wc_get_product( $translation->element_id );
 
-                    if( $_product && $_product->exists() && $_product->managing_stock() ) {
-                        $total_sales    = get_post_meta( $translation->element_id, 'total_sales', true);
+                    $managing_stock = $_product && $_product->exists() && $_product->managing_stock();
 
-                        if( $action == 'reduce'){
-                            $stock  = WooCommerce_Functions_Wrapper::reduce_stock( $translation->element_id, $qty );
-                            $total_sales   += $qty;
-                        }else{
-                            $stock  = WooCommerce_Functions_Wrapper::increase_stock( $translation->element_id, $qty );
-                            $total_sales   -= $qty;
-                        }
-                        update_post_meta( $translation->element_id, 'total_sales', $total_sales );
-                    }
+	                $total_sales = get_post_meta( $translation_product_id, 'total_sales', true );
+
+	                if ( $action === 'reduce' ) {
+		                $total_sales += $qty;
+
+	                	if( $managing_stock ){
+			                WooCommerce_Functions_Wrapper::reduce_stock( $translation->element_id, $qty );
+		                }
+	                } else {
+		                $total_sales -= $qty;
+
+		                if( $managing_stock ){
+		                    WooCommerce_Functions_Wrapper::increase_stock( $translation->element_id, $qty );
+		                }
+	                }
+
+	                update_post_meta( $translation_product_id, 'total_sales', $total_sales );
                 }
             }
         }
