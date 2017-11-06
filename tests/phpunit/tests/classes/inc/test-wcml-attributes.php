@@ -20,7 +20,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 
 		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
 			->disableOriginalConstructor()
-			->setMethods( array( 'get_wp_api' ) )
+			->setMethods( array( 'get_wp_api', 'get_current_language' ) )
 			->getMock();
 
 		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )
@@ -181,6 +181,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$sanitized_attribute_name = rand_str();
 		$orig_lang                = 'de';
 		$product_id               = rand( 1, 100 );
+		$current_language         = 'fr';
 
 		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
 		                                         ->disableOriginalConstructor()
@@ -201,6 +202,10 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 			->method( 'filter_sanitize_title' )
 			->with( $attribute_name, $attribute_name )
 			->willReturn( $attribute_name );
+
+		$this->sitepress
+			->method( 'get_current_language' )
+			->willReturn( $current_language );
 
 		\WP_Mock::wpFunction( 'is_admin', array(
 			'times'  => 1,
@@ -229,6 +234,41 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$filtered_attribute_name = $subject->filter_attribute_name( $attribute_name, $product_id, true );
 
 		$this->assertEquals( $sanitized_attribute_name, $filtered_attribute_name );
+	}
+
+	/**
+	 * @test
+	 */
+	public function filter_attribute_name_current_is_original() {
+
+		$attribute_name           = rand_str();
+		$orig_lang                = 'de';
+		$product_id               = rand( 1, 100 );
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'get_original_product_language' ) )
+		                                         ->getMock();
+
+		$this->woocommerce_wpml->products
+			->method( 'get_original_product_language' )
+			->with( $product_id )
+			->willReturn( $orig_lang );
+
+		$this->sitepress
+			->method( 'get_current_language' )
+			->willReturn( $orig_lang );
+
+		\WP_Mock::wpFunction( 'is_admin', array(
+			'times'  => 1,
+			'return' => false
+		) );
+
+		$subject = $this->get_subject();
+
+		$filtered_attribute_name = $subject->filter_attribute_name( $attribute_name, $product_id, false );
+
+		$this->assertEquals( $attribute_name, $filtered_attribute_name );
 	}
 
 }
