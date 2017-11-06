@@ -50,6 +50,10 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 		WP_Mock::expectActionAdded( 'woocommerce_before_calculate_totals', array( $subject, 'maybe_backup_recurring_carts' ), 1, 1, 1 );
 		WP_Mock::expectActionAdded( 'woocommerce_after_calculate_totals', array( $subject, 'maybe_restore_recurring_carts' ), 200, 1, 1 );
 
+		\WP_Mock::wpFunction( 'wcs_cart_contains_resubscribe', array(
+			'return' => false
+		) );
+
 		$subject->init();
 	}
 
@@ -160,6 +164,67 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 		$filtered_price = $subject->woocommerce_subscription_price_from( $price, $product );
 
 		$this->assertEquals( $expected_price, $filtered_price );
+	}
+
+	/**
+	 * @test
+	 */
+	public function maybe_force_client_currency_for_resubscribe_subscription() {
+
+		$subscription_id       = mt_rand( 1, 100 );
+		$_GET['resubscribe']   = $subscription_id;
+		$subscription_currency = rand_str( mt_rand( 1, 10 ) );
+		$client_currency       = rand_str( mt_rand( 10, 20 ) );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $subscription_id, '_order_currency', true ),
+			'return' => $subscription_currency
+		) );
+
+		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                               ->disableOriginalConstructor()
+		                                               ->setMethods( array( 'set_client_currency', 'get_client_currency' ) )
+		                                               ->getMock();
+
+		$this->woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
+		$this->woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'set_client_currency' )->willReturn( true );
+
+		$subject = $this->get_subject();
+		$subject->maybe_force_client_currency_for_resubscribe_subscription();
+
+		unset ( $_GET['resubscribe'] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function maybe_force_client_currency_for_resubscribe_subscription_cart_contains_resubscribe() {
+
+		$subscription_id       = mt_rand( 1, 100 );
+		$subscription_currency = rand_str( mt_rand( 1, 10 ) );
+		$client_currency       = rand_str( mt_rand( 10, 20 ) );
+
+		$wcs_cart_contains_resubscribe['subscription_resubscribe']['subscription_id'] = $subscription_id;
+
+		\WP_Mock::wpFunction( 'wcs_cart_contains_resubscribe', array(
+			'return' => $wcs_cart_contains_resubscribe
+		) );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $subscription_id, '_order_currency', true ),
+			'return' => $subscription_currency
+		) );
+
+		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                               ->disableOriginalConstructor()
+		                                               ->setMethods( array( 'set_client_currency', 'get_client_currency' ) )
+		                                               ->getMock();
+
+		$this->woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
+		$this->woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'set_client_currency' )->willReturn( true );
+
+		$subject = $this->get_subject();
+		$subject->maybe_force_client_currency_for_resubscribe_subscription();
 	}
 
 	/**

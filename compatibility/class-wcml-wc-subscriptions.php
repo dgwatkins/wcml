@@ -50,6 +50,8 @@ class WCML_WC_Subscriptions{
 
 			add_action( 'woocommerce_before_calculate_totals', array( $this, 'maybe_backup_recurring_carts'), 1 );
 			add_action( 'woocommerce_after_calculate_totals', array( $this, 'maybe_restore_recurring_carts'), 200 );
+
+			$this->maybe_force_client_currency_for_resubscribe_subscription();
 		}
 	}
 
@@ -265,6 +267,24 @@ class WCML_WC_Subscriptions{
 		}
 
 		return $price;
+	}
+
+	/**
+	 * Force client currency for resubscribe subscription
+	 *
+	 */
+	function maybe_force_client_currency_for_resubscribe_subscription( ){
+
+		if ( isset( $_GET['resubscribe'] ) || false !== ( $resubscribe_cart_item = wcs_cart_contains_resubscribe() ) ) {
+			$subscription_id = ( isset( $_GET['resubscribe'] ) ) ? (int) $_GET['resubscribe'] : $resubscribe_cart_item['subscription_resubscribe']['subscription_id'];
+
+			$subscription_currency = get_post_meta( $subscription_id, '_order_currency', true );
+			$client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
+
+			if( $subscription_currency && $client_currency !== $subscription_currency ){
+				$this->woocommerce_wpml->multi_currency->set_client_currency( $subscription_currency );
+            }
+		}
 	}
 
 }
