@@ -518,7 +518,9 @@ class WCML_Attributes{
 
         if ( ! is_admin() && $product_id ) {
             $orig_lang = $this->woocommerce_wpml->products->get_original_product_language( $product_id );
-            if ( in_array( $orig_lang, array( 'de', 'da' ) ) ) {
+            $current_language = $this->sitepress->get_current_language();
+
+            if ( in_array( $orig_lang, array( 'de', 'da' ) ) && $current_language !== $orig_lang ) {
                 $attribute_name = $this->sitepress->locale_utils->filter_sanitize_title( remove_accents( $attribute_name ), $attribute_name );
                 remove_filter( 'sanitize_title', array( $this->sitepress->locale_utils, 'filter_sanitize_title' ), 10 );
             }
