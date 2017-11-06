@@ -162,4 +162,85 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 		$this->assertEquals( $expected_price, $filtered_price );
 	}
 
+	/**
+	 * @test
+	 */
+	public function subscriptions_product_sign_up_fee_filter_custom_price() {
+
+		$subscription_sign_up_fee          = mt_rand( 1, 100 );
+		$expected_subscription_sign_up_fee = mt_rand( 101, 200 );
+		$product_id                        = mt_rand( 201, 300 );
+		$client_currency                   = rand_str();
+
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'get_id' ) )
+		                ->getMock();
+
+		$product->method( 'get_id' )->willReturn( $product_id );
+
+		\WP_Mock::wpFunction( 'wcml_is_multi_currency_on', array(
+			'return' => true
+		) );
+
+		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                               ->disableOriginalConstructor()
+		                                               ->setMethods( array( 'get_client_currency' ) )
+		                                               ->getMock();
+
+		$this->woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_wcml_custom_prices_status', true ),
+			'return' => true
+		) );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_subscription_sign_up_fee_' . $client_currency, true ),
+			'return' => $expected_subscription_sign_up_fee
+		) );
+
+		$subject = $this->get_subject();
+
+		$filtered_subscription_sign_up_fee = $subject->subscriptions_product_sign_up_fee_filter( $subscription_sign_up_fee, $product );
+
+		$this->assertEquals( $expected_subscription_sign_up_fee, $filtered_subscription_sign_up_fee );
+	}
+
+	/**
+	 * @test
+	 */
+	public function subscriptions_product_sign_up_fee_filter_converted_price() {
+
+		$subscription_sign_up_fee          = mt_rand( 1, 100 );
+		$expected_subscription_sign_up_fee = mt_rand( 101, 200 );
+		$product_id                        = mt_rand( 201, 300 );
+
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'get_id' ) )
+		                ->getMock();
+
+		$product->method( 'get_id' )->willReturn( $product_id );
+
+		\WP_Mock::wpFunction( 'wcml_is_multi_currency_on', array(
+			'return' => true
+		) );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_wcml_custom_prices_status', true ),
+			'return' => false
+		) );
+
+		\WP_Mock::onFilter( 'wcml_raw_price_amount' )
+		        ->with( $subscription_sign_up_fee )
+		        ->reply( $expected_subscription_sign_up_fee );
+
+		$subject = $this->get_subject();
+
+		$filtered_subscription_sign_up_fee = $subject->subscriptions_product_sign_up_fee_filter( $subscription_sign_up_fee, $product );
+
+		$this->assertEquals( $expected_subscription_sign_up_fee, $filtered_subscription_sign_up_fee );
+	}
+
 }

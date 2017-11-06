@@ -43,16 +43,34 @@ class WCML_WC_Subscriptions{
 
 	function init(){
 		if( !is_admin() ){
-			add_filter('woocommerce_subscriptions_product_sign_up_fee', array($this, 'product_price_filter'), 10, 2);
+			add_filter( 'woocommerce_subscriptions_product_sign_up_fee', array(
+				$this,
+				'subscriptions_product_sign_up_fee_filter'
+			), 10, 2 );
 
 			add_action( 'woocommerce_before_calculate_totals', array( $this, 'maybe_backup_recurring_carts'), 1 );
 			add_action( 'woocommerce_after_calculate_totals', array( $this, 'maybe_restore_recurring_carts'), 200 );
 		}
 	}
 
-	function product_price_filter($subscription_sign_up_fee, $product){
 
-		$subscription_sign_up_fee = apply_filters('wcml_raw_price_amount', $subscription_sign_up_fee );
+	/**
+	 * Filter Subscription Sign-up fee cost
+	 *
+	 * @param string $subscription_sign_up_fee
+	 * @param WC_Product $product
+	 * @return string
+	 */
+	function subscriptions_product_sign_up_fee_filter( $subscription_sign_up_fee, $product ) {
+
+		if ( wcml_is_multi_currency_on() ) {
+			if ( get_post_meta( $product->get_id(), '_wcml_custom_prices_status', true ) ) {
+				$currency                 = $this->woocommerce_wpml->multi_currency->get_client_currency();
+				$subscription_sign_up_fee = get_post_meta( $product->get_id(), '_subscription_sign_up_fee_' . $currency, true );
+			} else {
+				$subscription_sign_up_fee = apply_filters( 'wcml_raw_price_amount', $subscription_sign_up_fee );
+			}
+		}
 
 		return $subscription_sign_up_fee;
 	}
