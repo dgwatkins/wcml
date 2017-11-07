@@ -32,10 +32,6 @@
     {
       "type": "vcs",
       "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-changelog.git"
-    },
-    {
-      "type": "vcs",
-      "url": "ssh://git@git.onthegosystems.com:10022/wcml/codeception-tests.git"
     }
   ],
   "minimum-stability": "dev",
