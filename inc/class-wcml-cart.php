@@ -291,7 +291,8 @@ class WCML_Cart {
 				$cart->cart_contents[ $key ]['data']->price = get_post_meta( $cart_item['product_id'], '_price', 1 );
 			}
 
-			if ( $cart_item['product_id'] == $tr_product_id ) {
+			$display_as_translated = apply_filters(  'wpml_is_display_as_translated_post_type', false, 'product' );
+            if ( $cart_item['product_id'] == $tr_product_id || $display_as_translated ) {
 				$new_cart_data[ $key ] = apply_filters( 'wcml_cart_contents_not_changed', $cart->cart_contents[ $key ], $key, $current_language );
 				continue;
 			}
