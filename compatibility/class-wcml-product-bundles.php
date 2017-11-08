@@ -23,13 +23,19 @@ class WCML_Product_Bundles {
 	private $product_bundles_items;
 
 	/**
+	 * @var wpdb
+	 */
+	private $wpdb;
+
+	/**
 	 * WCML_Product_Bundles constructor.
 	 */
-	function __construct( &$sitepress, &$woocommerce_wpml, &$product_bundles_items ) {
+	function __construct( SitePress $sitepress, woocommerce_wpml $woocommerce_wpml, $product_bundles_items, wpdb $wpdb ) {
 
 		$this->sitepress             = $sitepress;
 		$this->woocommerce_wpml      = $woocommerce_wpml;
 		$this->product_bundles_items = $product_bundles_items;
+		$this->wpdb                  = $wpdb;
 
 		add_action( 'woocommerce_get_cart_item_from_session', array( $this, 'resync_bundle' ), 5, 3 );
 		add_filter( 'woocommerce_cart_loaded_from_session', array( $this, 'resync_bundle_clean' ), 10 );
@@ -88,7 +94,7 @@ class WCML_Product_Bundles {
 
 	}
 
-	private function sync_product_bundle_meta( $bundle_id, $translated_bundle_id ) {
+	public function sync_product_bundle_meta( $bundle_id, $translated_bundle_id ) {
 
 		$bundle_items   = $this->product_bundles_items->get_items( $bundle_id );
 		$fields_to_sync = array(
@@ -104,7 +110,11 @@ class WCML_Product_Bundles {
 			'order_visibility',
 			'single_product_price_visibility',
 			'cart_price_visibility',
-			'order_price_visibility'
+			'order_price_visibility',
+			'discount',
+			'override_variations',
+			'override_default_variation_attributes',
+			'hide_filtered_variations'
 		);
 
 		$target_lang         = $this->sitepress->get_language_for_element( $translated_bundle_id, 'post_product' );
@@ -122,6 +132,18 @@ class WCML_Product_Bundles {
 				foreach ( $fields_to_sync as $key ) {
 					$this->product_bundles_items->update_item_meta( $translated_item, $key, $item_meta[ $key ] );
 				}
+
+
+				if( isset( $item_meta['allowed_variations'] ) ){
+					if( is_array( $item_meta['allowed_variations'] ) ){
+						$allowed_variations =
+							$this->translate_allowed_variations( $item_meta['allowed_variations'], $target_lang );
+						$this->product_bundles_items->update_item_meta( $translated_item, 'allowed_variations', $allowed_variations );
+					}else{
+						$this->product_bundles_items->update_item_meta( $translated_item, 'allowed_variations', $item_meta['allowed_variations'] );
+					}
+				}
+
 				$this->product_bundles_items->save_item_meta( $translated_item );
 
 			}
@@ -181,17 +203,15 @@ class WCML_Product_Bundles {
 	}
 
 	private function get_product_id_for_item_id( $item_id ) {
-		global $wpdb;
 
-		return $wpdb->get_var( $wpdb->prepare(
-			"SELECT product_id FROM {$wpdb->prefix}woocommerce_bundled_items WHERE bundled_item_id=%d", $item_id ) );
+		return $this->wpdb->get_var( $this->wpdb->prepare(
+			"SELECT product_id FROM {$this->wpdb->prefix}woocommerce_bundled_items WHERE bundled_item_id=%d", $item_id ) );
 	}
 
 	private function get_item_id_for_product_id( $product_id, $bundle_id ) {
-		global $wpdb;
 
-		return $wpdb->get_var( $wpdb->prepare(
-			"SELECT bundled_item_id FROM {$wpdb->prefix}woocommerce_bundled_items WHERE product_id=%d AND bundle_id=%d",
+		return $this->wpdb->get_var( $this->wpdb->prepare(
+			"SELECT bundled_item_id FROM {$this->wpdb->prefix}woocommerce_bundled_items WHERE product_id=%d AND bundle_id=%d",
 			$product_id, $bundle_id
 		) );
 	}
@@ -341,7 +361,6 @@ class WCML_Product_Bundles {
 
 	// Update Bundled products title and description after saving the translation
 	public function bundle_update( $bundle_id, $translated_bundle_id, $data, $lang ) {
-		global $wpdb;
 
 		$bundle_data            = $this->get_product_bundle_data( $bundle_id );
 		$translated_bundle_data = $this->get_product_bundle_data( $translated_bundle_id );
@@ -350,8 +369,8 @@ class WCML_Product_Bundles {
 			return;
 		}
 
-		$translate_bundled_item_ids = $wpdb->get_col( $wpdb->prepare(
-			"SELECT product_id FROM {$wpdb->prefix}woocommerce_bundled_items WHERE bundle_id = %d", $translated_bundle_id ) );
+		$translate_bundled_item_ids = $this->wpdb->get_col( $this->wpdb->prepare(
+			"SELECT product_id FROM {$this->wpdb->prefix}woocommerce_bundled_items WHERE bundle_id = %d", $translated_bundle_id ) );
 
 		foreach ( $bundle_data as $item_id => $bundle_item_data ) {
 
@@ -362,12 +381,12 @@ class WCML_Product_Bundles {
 
 				if ( ! in_array( $translated_product_id, $translate_bundled_item_ids ) ) {
 
-					$menu_order = $wpdb->get_var( $wpdb->prepare( " 
-	                    SELECT menu_order FROM {$wpdb->prefix}woocommerce_bundled_items
+					$menu_order = $this->wpdb->get_var( $this->wpdb->prepare( " 
+	                    SELECT menu_order FROM {$this->wpdb->prefix}woocommerce_bundled_items
 	                    WHERE bundle_id=%d AND product_id=%d
 	                ", $bundle_id, $bundle_item_data['product_id'] ) );
 
-					$wpdb->insert( $wpdb->prefix . 'woocommerce_bundled_items',
+					$this->wpdb->insert( $this->wpdb->prefix . 'woocommerce_bundled_items',
 						array(
 							'product_id' => $translated_product_id,
 							'bundle_id'  => $translated_bundle_id,
@@ -415,7 +434,6 @@ class WCML_Product_Bundles {
 
 	// Sync product bundle data with translated values when the product is duplicated
 	public function sync_bundled_ids( $bundle_id, $translated_bundle_id ) {
-		global $wpdb;
 
 		$bundle_data = $this->get_product_bundle_data( $bundle_id );
 		if ( $bundle_data ) {
@@ -431,19 +449,19 @@ class WCML_Product_Bundles {
 
 					$translated_item_id = $this->get_item_id_for_product_id( $translated_product_id, $translated_bundle_id );
 					if ( ! $translated_item_id ) {
-						$menu_order = $wpdb->get_var( $wpdb->prepare( " 
-                            SELECT menu_order FROM {$wpdb->prefix}woocommerce_bundled_items
+						$menu_order = $this->wpdb->get_var( $this->wpdb->prepare( " 
+                            SELECT menu_order FROM {$this->wpdb->prefix}woocommerce_bundled_items
 	                        WHERE bundle_id=%d AND product_id=%d
 	                        ", $bundle_id, $product_id ) );
 
-						$wpdb->insert( $wpdb->prefix . 'woocommerce_bundled_items',
+						$this->wpdb->insert( $this->wpdb->prefix . 'woocommerce_bundled_items',
 							array(
 								'product_id' => $translated_product_id,
 								'bundle_id'  => $translated_bundle_id,
 								'menu_order' => $menu_order,
 							)
 						);
-						$translated_item_id = $wpdb->insert_id;
+						$translated_item_id = $this->wpdb->insert_id;
 					}
 
 					$translated_bundle_data[ $translated_item_id ]               = $product_data;
@@ -632,13 +650,12 @@ class WCML_Product_Bundles {
 	}
 
 	private function add_product_to_bundle( $product_id, $bundle_id, $original_bundle_id, $original_product_id ) {
-		global $wpdb;
-		$menu_order = $wpdb->get_var( $wpdb->prepare( " 
-                            SELECT menu_order FROM {$wpdb->prefix}woocommerce_bundled_items
+		$menu_order = $this->wpdb->get_var( $this->wpdb->prepare( " 
+                            SELECT menu_order FROM {$this->wpdb->prefix}woocommerce_bundled_items
 	                        WHERE bundle_id=%d AND product_id=%d
 	                        ", $original_bundle_id, $original_product_id ) );
 
-		$wpdb->insert( $wpdb->prefix . 'woocommerce_bundled_items',
+		$this->wpdb->insert( $this->wpdb->prefix . 'woocommerce_bundled_items',
 			array(
 				'product_id' => $product_id,
 				'bundle_id'  => $bundle_id,
@@ -646,7 +663,7 @@ class WCML_Product_Bundles {
 			)
 		);
 
-		return $wpdb->insert_id;
+		return $this->wpdb->insert_id;
 	}
 
 	/**

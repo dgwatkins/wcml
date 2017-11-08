@@ -74,7 +74,7 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 	 */
 	private function get_test_subject() {
 
-		return new WCML_Product_Bundles( $this->sitepress, $this->woocommerce_wpml, $this->WCML_WC_Product_Bundles_Items_Mock );
+		return new WCML_Product_Bundles( $this->sitepress, $this->woocommerce_wpml, $this->WCML_WC_Product_Bundles_Items_Mock, $this->wpdb );
 
 	}
 
@@ -579,7 +579,11 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 			'order_visibility' => 'visible',
 			'single_product_price_visibility' => 'visible',
 			'cart_price_visibility' => 'visible',
-			'order_price_visibility' => 'visible'
+			'order_price_visibility' => 'visible',
+			'discount' => 10,
+			'override_variations' => 'no',
+			'override_default_variation_attributes' => 'no',
+			'hide_filtered_variations' => 'no'
 		);
 
 		if( $override_title ){
