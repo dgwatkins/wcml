@@ -68,7 +68,7 @@ class WCML_Compatibility {
 				$this->product_bundles->add_hooks();
 			} else {
 				$product_bundle_items  = new WCML_WC_Product_Bundles_Items();
-				$this->product_bundles = new WCML_Product_Bundles( $this->sitepress, $this->woocommerce_wpml, $product_bundle_items );
+				$this->product_bundles = new WCML_Product_Bundles( $this->sitepress, $this->woocommerce_wpml, $product_bundle_items, $this->wpdb );
 			}
 		}
 

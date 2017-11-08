@@ -8,13 +8,22 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 	private $sitepress;
 	/** @var  WCML_WC_Product_Bundles_Items */
 	private $product_bundles_items;
+	/** @var  wpdb */
+	private $wpdb;
 
 	function setUp(){
 		parent::setUp();
 
-		$this->woocommerce_wpml      = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
-		$this->sitepress             = $this->getMockBuilder( 'Sitepress' )->disableOriginalConstructor()->getMock();
-		$this->product_bundles_items = $this->getMockBuilder( 'WCML_WC_Product_Bundles_Items' )->disableOriginalConstructor()->getMock();
+		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
+		$this->sitepress = $this->getMockBuilder( 'Sitepress' )->setMethods( array( 'get_language_for_element' ) )->disableOriginalConstructor()->getMock();
+		$this->product_bundles_items = $this->getMockBuilder( 'WCML_WC_Product_Bundles_Items' )->setMethods( array(
+			'get_items',
+			'get_item_data',
+			'get_item_data_object',
+			'update_item_meta',
+			'save_item_meta'
+		) )->disableOriginalConstructor()->getMock();
+		$this->wpdb = $this->stubs->wpdb();
 
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => false ) );
 		\WP_Mock::wpFunction( 'wcml_is_multi_currency_on', array( 'return' => false ) );
@@ -22,7 +31,7 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 	}
 
 	private function get_subject() {
-		return new WCML_Product_Bundles( $this->woocommerce_wpml, $this->sitepress, $this->product_bundles_items );
+		return new WCML_Product_Bundles( $this->sitepress, $this->woocommerce_wpml, $this->product_bundles_items, $this->wpdb );
 	}
 
 	/**
@@ -138,6 +147,110 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 		$this->assertTrue( $subject->is_bundle_product( $bundle_product_id ) );
+
+	}
+
+	/**
+	 * @test
+	 * @group wcml-2204
+	 */
+	public function sync_product_bundle_meta() {
+
+		$this->bundle_id = 1;
+		$this->translated_bundle_id = 2;
+		$language = rand_str();
+
+		$bundle_item = 10;
+		$this->bundles_items = array( $bundle_item );
+
+		$this->translated_bundle_items = array();
+
+		$this->product_bundles_items->method( 'get_items' )->will( $this->returnCallback(
+			function ( $id ) {
+
+				if( $this->bundle_id == $id ){
+					return $this->bundles_items;
+				}elseif( $this->translated_bundle_id == $id ){
+					return $this->translated_bundle_items;
+				}
+
+				return array();
+			}
+		));
+
+		$this->sitepress->method( 'get_language_for_element' )->willReturn( $language );
+
+		$variation_id = 30;
+		$translated_variation_id = 31;
+
+		$this->fields_to_sync = array(
+			'optional',
+			'stock_status',
+			'max_stock',
+			'quantity_min',
+			'quantity_max',
+			'shipped_individually',
+			'priced_individually',
+			'single_product_visibility',
+			'cart_visibility',
+			'order_visibility',
+			'single_product_price_visibility',
+			'cart_price_visibility',
+			'order_price_visibility',
+			'discount',
+			'override_variations',
+			'override_default_variation_attributes',
+			'hide_filtered_variations'
+		);
+
+		$this->item_meta = array(
+			'product_id' => 20,
+			'allowed_variations' => array( $variation_id )
+		);
+
+		foreach( $this->fields_to_sync as $field_key ){
+			$this->item_meta[ $field_key ] = rand_str();
+		}
+
+		$translated_product_id = 21;
+
+		$this->product_bundles_items->method( 'get_item_data' )->with( $bundle_item )->willReturn( $this->item_meta );
+
+		\WP_Mock::wpFunction( 'get_post_type', array(
+				'args' => array( $this->item_meta[ 'product_id' ] ),
+				'return' => 'product'
+			)
+		);
+
+		\WP_Mock::onFilter( 'translate_object_id' )
+		        ->with( $this->item_meta['product_id'], 'product', false, $language )
+		        ->reply( $translated_product_id );
+
+		\WP_Mock::onFilter( 'translate_object_id' )
+		        ->with( $variation_id, 'product_variation', true, $language )
+		        ->reply( $translated_variation_id );
+
+		$this->translated_item = 40;
+
+		$this->product_bundles_items->method( 'get_item_data_object' )->willReturn( $this->translated_item );
+
+		$this->item_meta['allowed_variations'] = array( $translated_variation_id );
+
+		$this->product_bundles_items->expects( $this->exactly( count( $this->fields_to_sync ) + 1 ) )->method( 'update_item_meta' )->will( $this->returnCallback(
+			function ( $item, $key, $value ) {
+
+				if( $this->translated_item === $item && $this->item_meta[$key] === $value ){
+					return true;
+				}
+
+				return new WP_Error();
+			}
+		));
+
+		$this->product_bundles_items->method( 'save_item_meta' )->with( $this->translated_item )->willReturn( true );
+
+		$subject = $this->get_subject();
+		$subject->sync_product_bundle_meta( $this->bundle_id, $this->translated_bundle_id );
 
 	}
 }
