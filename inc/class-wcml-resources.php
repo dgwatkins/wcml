@@ -78,12 +78,14 @@ class WCML_Resources {
             wp_register_script( 'jquery-cookie', WCML_PLUGIN_URL . '/res/js/jquery.cookie' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION );
             wp_register_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs' . WCML_JS_MIN . '.js', array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'), WCML_VERSION );
             wp_register_script( 'wcml-troubleshooting', WCML_PLUGIN_URL . '/res/js/troubleshooting' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION );
+            wp_register_script( 'wcml-translation-interface-dialog-warning', WCML_PLUGIN_URL . '/res/js/trnsl_interface_dialog_warning' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION );
 
             wp_enqueue_script( 'wp-color-picker');
             wp_enqueue_script( 'wcml-dialogs' );
             wp_enqueue_script( 'wcml-scripts' );
             wp_enqueue_script( 'jquery-cookie' );
             wp_enqueue_script( 'wcml-troubleshooting' );
+            wp_enqueue_script( 'wcml-translation-interface-dialog-warning' );
 
             wp_localize_script( 'wcml-scripts', 'wcml_settings',
                 array(

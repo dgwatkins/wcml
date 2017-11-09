@@ -18,7 +18,7 @@ class Test_WCML_Product_Translation_Edit_Links extends WCML_UnitTestCase {
 		parent::setUp();
 
 		$this->woocommerce_wpml->translation_editor = new WCML_Translation_Editor( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
-
+		$this->woocommerce_wpml->translation_editor->add_hooks();
 
 		//add product for tests
 		$orig_product = $this->wcml_helper->add_product( 'en', false, 'product 1' );
@@ -58,6 +58,7 @@ class Test_WCML_Product_Translation_Edit_Links extends WCML_UnitTestCase {
 			remove_filter( 'wpml_use_tm_editor', array( $this->woocommerce_wpml->translation_editor, 'force_woocommerce_native_editor'), 100 );
 			remove_action( 'wpml_pre_status_icon_display', array( $this->woocommerce_wpml->translation_editor, 'force_remove_wpml_translation_editor_links'), 100 );
 			$this->woocommerce_wpml->translation_editor = new WCML_Translation_Editor( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
+			$this->woocommerce_wpml->translation_editor->add_hooks();
 		}
 	}
 

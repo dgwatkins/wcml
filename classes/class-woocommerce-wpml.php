@@ -181,6 +181,7 @@ class woocommerce_wpml {
 	    $this->currencies->add_hooks();if( is_admin() ) {
             $this->troubleshooting = new WCML_Troubleshooting( $this, $sitepress, $wpdb );
             $this->translation_editor = new WCML_Translation_Editor($this, $sitepress, $wpdb);
+		    $this->translation_editor->add_hooks();
             $this->languages_upgrader = new WCML_Languages_Upgrader;
             $this->sync_variations_data = new WCML_Synchronize_Variations_Data($this, $sitepress, $wpdb);
             $this->sync_variations_data->add_hooks();
