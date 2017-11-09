@@ -2,20 +2,22 @@
 
 class WCML_Translation_Editor{
 
-    /**
-     * @var woocommerce_wpml
-     */
+    /** @var woocommerce_wpml */
     private $woocommerce_wpml;
-	/**
-	 * @var SitePress
-	 */
+	/** @var SitePress */
 	private $sitepress;
+	/** @var  wpdb */
+	private $wpdb;
 
-    public function __construct( &$woocommerce_wpml, &$sitepress, &$wpdb ) {
+    public function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress, wpdb $wpdb ) {
 
-        $this->woocommerce_wpml =& $woocommerce_wpml;
-        $this->sitepress        =& $sitepress;
-        $this->wpdb             =& $wpdb;
+	    $this->woocommerce_wpml = $woocommerce_wpml;
+	    $this->sitepress        = $sitepress;
+	    $this->wpdb             = $wpdb;
+
+    }
+
+    public function add_hooks(){
 
         add_filter( 'wpml-translation-editor-fetch-job', array( $this, 'fetch_translation_job_for_editor' ), 10, 2 );
         add_filter( 'wpml-translation-editor-job-data', array( $this, 'get_translation_job_data_for_editor' ), 10, 2 );
@@ -32,6 +34,8 @@ class WCML_Translation_Editor{
             add_action( 'wp_ajax_wcml_editor_auto_slug', array( $this, 'auto_generate_slug' ) );
 
             add_action('wpml_doc_translation_method_below', array( $this, 'wpml_translation_editor_override_notice') );
+
+            add_filter( 'wpml_tm_show_page_builders_translation_editor_warning', array( $this, 'show_page_builders_translation_editor_warning' ), 10, 2 );
         }
 
     }
@@ -359,4 +363,22 @@ class WCML_Translation_Editor{
         <?php
 
     }
+
+	/**
+     * Don't show Page builders Translation editor warning for products
+     *
+	 * @param bool $display
+	 * @param int $post_id
+	 *
+	 * @return bool
+	 */
+	public function show_page_builders_translation_editor_warning( $display, $post_id ){
+
+		if( 'product' === get_post_type( $post_id ) ){
+			$display = false;
+		}
+
+		return $display;
+	}
+
 }

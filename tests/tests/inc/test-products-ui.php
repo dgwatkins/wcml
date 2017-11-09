@@ -11,6 +11,7 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         wpml_tm_load_status_display_filter();
 
         $this->woocommerce_wpml->translation_editor = new WCML_Translation_Editor( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
+	    $this->woocommerce_wpml->translation_editor->add_hooks();
 
         $this->wcml_products_ui = new WCML_Products_UI( $this->woocommerce_wpml, $this->sitepress );
         $this->languages = array_map('trim', explode(',', WPML_TEST_LANGUAGE_CODES));
