@@ -191,4 +191,65 @@ class Test_WCML_Synchronize_Variations_Data extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	function sync_prices_variation_ids() {
+
+		$product_id = 1;
+		$translated_product_id = 2;
+		$language = 'fr';
+
+		$original_min_price_variation_id = 10;
+		$translated_min_price_variation_id = 11;
+
+		$original_max_price_variation_id = 20;
+		$translated_max_price_variation_id = 21;
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_min_price_variation_id', true ),
+			'return' => $original_min_price_variation_id
+		) );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_max_price_variation_id', true ),
+			'return' => $original_max_price_variation_id
+		) );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_min_regular_price_variation_id', true ),
+			'return' => false
+		) );
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_min_sale_price_variation_id', true ),
+			'return' => false
+		) );
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_max_regular_price_variation_id', true ),
+			'return' => false
+		) );
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_max_sale_price_variation_id', true ),
+			'return' => false
+		) );
+
+		\WP_Mock::onFilter( 'translate_object_id' )->with( $original_min_price_variation_id, 'product_variation', false, $language )->reply( $translated_min_price_variation_id );
+		\WP_Mock::onFilter( 'translate_object_id' )->with( $original_max_price_variation_id, 'product_variation', false, $language )->reply( $translated_max_price_variation_id );
+
+		\WP_Mock::wpFunction( 'update_post_meta', array(
+			'args'   => array( $translated_product_id, '_min_price_variation_id', $translated_min_price_variation_id ),
+			'return' => true,
+			'times'  => 1
+		) );
+
+		\WP_Mock::wpFunction( 'update_post_meta', array(
+			'args'   => array( $translated_product_id, '_max_price_variation_id', $translated_max_price_variation_id ),
+			'return' => true,
+			'times'  => 1
+		) );
+
+		$subject = $this->get_subject();
+		$subject->sync_prices_variation_ids( $product_id, $translated_product_id, $language );
+	}
+
 }
