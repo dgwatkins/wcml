@@ -15,6 +15,10 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 		$this->default_language = $this->sitepress->get_default_language();
 		$this->second_language = 'es';
 
+		$tax_hooks_factory = new WPML_Tax_Permalink_Filters_Factory();
+		$tax_hooks = $tax_hooks_factory->create();
+		$tax_hooks->add_hooks();
+
 	}
 
 
