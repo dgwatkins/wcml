@@ -250,4 +250,16 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
         $this->assertContains( sprintf( __( 'Keep using %s', 'woocommerce-multilingual'), $this->multi_currency->get_client_currency() ), $return['prevent_switching'] );
     }
 
+	function test_cart_switching_currency_WC_cart_object_not_exists(){
+		$this->woocommerce_wpml->settings[ 'cart_sync' ][ 'currency_switch' ] = WCML_CART_CLEAR;
+
+		$wc_cart = WC()->cart;
+		unset( WC()->cart );
+
+		$return = $this->woocommerce_wpml->cart->cart_switching_currency( false, $this->multi_currency->get_client_currency(), 'USD', true );
+		$this->assertFalse( $return );
+
+		WC()->cart = $wc_cart;
+	}
+
 }
