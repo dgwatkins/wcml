@@ -78,7 +78,7 @@ class WCML_Terms{
         $page = isset( $_GET['page'] )? $_GET['page'] : '';
         if ( $page === ICL_PLUGIN_FOLDER . '/menu/taxonomy-translation.php' ) {
             WCML_Resources::load_management_css();
-            wp_enqueue_script( 'wcml-scripts' );
+	        WCML_Resources::load_taxonomy_translation_scripts();
         }
         
     }
@@ -396,6 +396,7 @@ class WCML_Terms{
 
         $is_wcml = is_admin() && $taxonomy && isset($_GET['page']) && $_GET['page'] == 'wpml-wcml' && isset($_GET['tab']);
         $is_ajax = is_ajax() && $taxonomy && isset( $_POST['action'] ) && $_POST['action'] === 'wpml_get_terms_and_labels_for_taxonomy_table';
+
         if( $is_wcml || $is_ajax ){
 
             $sync_tax = new WCML_Sync_Taxonomy( $this->woocommerce_wpml, $taxonomy, $taxonomy_obj );
