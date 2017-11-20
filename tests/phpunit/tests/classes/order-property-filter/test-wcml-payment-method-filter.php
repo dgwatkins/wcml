@@ -183,4 +183,51 @@ class Test_WCML_Payment_Method_Filter extends OTGS_TestCase {
 			$subject->payment_method_string( $title, $object_id, $meta_key );
 		}
 	}
+
+	/**
+	 * @test
+	 */
+	public function get_payment_method_from_Post() {
+		$title = 'original title';
+		$translated_title = 'translated title';
+		$object_id = 12;
+		$meta_key = '_payment_method_title';
+
+		$subject = new WCML_Payment_Method_Filter();
+
+		$payment_gateway = new \stdClass();
+		$payment_gateway->id = 'gateway';
+		$payment_gateway->title = 'title value';
+
+		\WP_Mock::wpFunction( 'get_post_type', array( 'return' => 'shop_order' ) );
+		\WP_Mock::wpFunction( 'remove_filter', array() );
+		\WP_Mock::wpFunction( 'wc_get_payment_gateway_by_order', array( 'return' => $payment_gateway ) );
+
+		$payment_gateways = array();
+		$post_payment_gateway = new \stdClass();
+		$post_payment_gateway->id = 'gateway_test';
+		$post_payment_gateway->title = 'gateway test title value';
+
+		$_POST['payment_method'] = $post_payment_gateway->id;
+
+		$payment_gateways[ $post_payment_gateway->id ] = $post_payment_gateway;
+		$wc = $this->getMockBuilder( 'WooCommerce' )->setMethods( array( 'payment_gateways' ) )->disableOriginalConstructor()->getMock();
+		$wc->expects( $this->once() )
+		        ->method( 'payment_gateways' )
+		        ->willReturn( $payment_gateways );
+
+		$wc->payment_gateways = $this->getMockBuilder( 'WC_Payment_Gateways' )->setMethods( array( 'payment_gateways' ) )->disableOriginalConstructor()->getMock();
+		$wc->payment_gateways->expects( $this->once() )
+		   ->method( 'payment_gateways' )
+		   ->willReturn( $payment_gateways );
+
+		WP_Mock::userFunction( 'WC', array( 'return' => $wc ) );
+
+		\WP_Mock::wpFunction( 'icl_translate', array(
+			'args'  => array( 'woocommerce', $post_payment_gateway->id . '_gateway_title', $post_payment_gateway->title ),
+			'return' => $translated_title,
+		) );
+
+		$this->assertEquals( $translated_title, $subject->payment_method_string( $title, $object_id, $meta_key ) );
+	}
 }
