@@ -15,6 +15,13 @@ class WCML_Payment_Method_Filter {
 		if ( '_payment_method_title' === $meta_key && '' !== $title && $object_id && 'shop_order' === $this->get_post_type( $object_id ) ) {
 			$payment_gateway = $this->get_payment_gateway( $object_id );
 
+			if( isset( $_POST['payment_method'] ) && $payment_gateway->id !== $_POST['payment_method'] && WC()->payment_gateways() ){
+				$payment_gateways = WC()->payment_gateways->payment_gateways();
+				if( isset( $payment_gateways[ $_POST['payment_method'] ] ) ){
+					$payment_gateway = $payment_gateways[ $_POST['payment_method'] ];
+				}
+			}
+
 			if( $payment_gateway ){
 				$title = icl_translate( 'woocommerce', $payment_gateway->id . '_gateway_title', $payment_gateway->title );
 			}
