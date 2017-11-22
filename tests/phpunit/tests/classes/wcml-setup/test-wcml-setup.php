@@ -48,10 +48,22 @@ class Test_WCML_Setup extends OTGS_TestCase {
 	}
 
 	private function get_sitepress_mock() {
-		return $this->getMockBuilder( 'SitePress' )
-		            ->disableOriginalConstructor()
-		            ->setMethods( array() )
-		            ->getMock();
+
+		$sitepress = $this->getMockBuilder( 'Sitepress' )
+		                        ->disableOriginalConstructor()
+		                        ->setMethods( array( 'get_wp_api' ) )
+		                        ->getMock();
+
+		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		                     ->disableOriginalConstructor()
+		                     ->setMethods( array( 'constant', 'version_compare' ) )
+		                     ->getMock();
+
+		$wp_api->method( 'version_compare' )->willReturn( true );
+
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		return $sitepress;
 	}
 
 	public function tearDown(){
