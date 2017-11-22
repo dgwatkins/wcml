@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e6b2f8737442d397dd55af49618c1340",
+    "content-hash": "3341850805255ff34feb6d1b2fd3dbfd",
     "packages": [
         {
             "name": "composer/installers",
@@ -129,7 +129,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/installer/installer.git",
-                "reference": "36101873478f3590c410701f7869570310271477"
+                "reference": "2d102e4e5b72ad8f51e3f2bbb9d83c9d6ed01415"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -168,7 +168,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2017-08-04T15:33:42+00:00"
+            "time": "2017-11-22T12:22:13+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -1334,7 +1334,7 @@
             ],
             "authors": [
                 {
-                    "name": "P??draic Brady",
+                    "name": "Pádraic Brady",
                     "email": "padraic.brady@gmail.com",
                     "homepage": "http://blog.astrumfutura.com"
                 },
@@ -3209,7 +3209,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jean-Fran??ois Simon",
+                    "name": "Jean-François Simon",
                     "email": "jeanfrancois.simon@sensiolabs.com"
                 },
                 {
