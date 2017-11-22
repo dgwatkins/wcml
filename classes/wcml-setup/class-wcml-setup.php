@@ -35,6 +35,8 @@ class WCML_Setup {
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->sitepress        = $sitepress;
 
+		$include_translation_options_step = $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'ICL_SITEPRESS_VERSION' ), '3.9.0', '>=' );
+
 		$this->steps = array(
 			'introduction'   => array(
 				'name'    => __( 'Introduction', 'woocommerce-multilingual' ),
@@ -65,16 +67,29 @@ class WCML_Setup {
 				'name'    => __( 'Multiple Currencies', 'woocommerce-multilingual' ),
 				'view'    => new WCML_Setup_Multi_Currency_UI(
 					$this->woocommerce_wpml,
-					$this->step_url( 'ready' )
+					$this->step_url( $include_translation_options_step ? 'translation-options' :'ready' )
 				),
 				'handler' => array( $this->handlers, 'save_multi_currency' )
-			),
-			'ready'          => array(
-				'name'    => __( 'Ready!', 'woocommerce-multilingual' ),
-				'view'    => new WCML_Setup_Ready_UI( $this->woocommerce_wpml ),
-				'handler' => ''
 			)
 		);
+
+		if ( $include_translation_options_step ) {
+			$this->steps['translation-options'] = array(
+				'name'    =>  __( 'Translation Options', 'woocommerce-multilingual' ),
+				'view'    => new WCML_Setup_Translation_Options_UI(
+					$this->woocommerce_wpml,
+					$this->step_url( 'ready' )
+				),
+				'handler' => array( $this->handlers, 'save_translation_options' )
+			);
+		}
+
+		$this->steps['ready'] = array(
+			'name'    => __( 'Ready!', 'woocommerce-multilingual' ),
+			'view'    => new WCML_Setup_Ready_UI( $this->woocommerce_wpml ),
+			'handler' => ''
+		);
+
 
 	}
 
