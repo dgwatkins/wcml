@@ -54,8 +54,10 @@ class Test_Endpoints extends OTGS_TestCase {
 		foreach ( $this->endpoints_translations as $code => $translated_query_vars ) {
 			if ( $code !== 'en' ) {
 				$expected[] = $this->my_account_page_title . '-' . $code;
+				$expected[] = '/^' . $this->my_account_page_title . '-' . $code . '/';
 			} else {
 				$expected[] = $this->my_account_page_title;
+				$expected[] = '/^' . $this->my_account_page_title . '/';
 			}
 
 			/** @var array $translated_query_vars */
@@ -89,8 +91,10 @@ class Test_Endpoints extends OTGS_TestCase {
 		foreach ( $this->endpoints_translations as $code => $translated_query_vars ) {
 			if ( $code !== 'en' ) {
 				$expected[] = $this->my_account_page_title . '-' . $code;
+				$expected[] = '/^' . $this->my_account_page_title . '-' . $code . '/';
 			} else {
 				$expected[] = $this->my_account_page_title;
+				$expected[] = '/^' . $this->my_account_page_title . '/';
 			}
 		}
 

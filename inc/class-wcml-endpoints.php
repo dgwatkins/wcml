@@ -12,6 +12,7 @@ class WCML_Endpoints{
         add_action( 'icl_ajx_custom_call', array( $this, 'rewrite_rule_endpoints' ), 11, 2 );
         add_action( 'woocommerce_update_options', array( $this, 'add_endpoints' ) );
         add_filter( 'pre_update_option_rewrite_rules', array( $this, 'update_rewrite_rules' ), 100, 2 );
+	    add_filter( 'wpml_sl_blacklist_requests', array( $this, 'reserved_requests' ), 10, 2 );
 
         add_filter( 'page_link', array( $this, 'endpoint_permalink_filter' ), 10, 2 ); //after WPML
 
@@ -20,8 +21,6 @@ class WCML_Endpoints{
             $this->maybe_flush_rules();
             $this->register_endpoints_translations();
             add_filter('pre_get_posts', array($this, 'check_if_endpoint_exists'));
-        }else{
-	        add_filter( 'wpml_sl_blacklist_requests', array( $this, 'reserved_requests' ), 10, 2 );
         }
 
         add_filter( 'woocommerce_get_endpoint_url', array( $this, 'filter_get_endpoint_url' ), 10, 4 );
@@ -52,6 +51,7 @@ class WCML_Endpoints{
 						$account_base = $my_account_page->post_name;
 
 						$reserved_requests[] = $account_base;
+						$reserved_requests[] = '/^' . $account_base . '/'; // regex version
 
 						foreach ( $this->woocommerce_wpml->get_wc_query_vars() as $key => $endpoint ) {
 							$translated_endpoint = $this->get_endpoint_translation( $key, $endpoint, $language_code );

@@ -207,6 +207,7 @@ class WCML_WC_Subscriptions{
 	function register_endpoint( $query_vars, $wc_vars, $obj ){
 
 		$query_vars[ 'view-subscription' ] = $obj->get_endpoint_translation( 'view-subscription',  isset( $wc_vars['view-subscription'] ) ? $wc_vars['view-subscription'] : 'view-subscription' );
+		$query_vars[ 'subscriptions' ] = $obj->get_endpoint_translation( 'subscriptions',  isset( $wc_vars['subscriptions'] ) ? $wc_vars['subscriptions'] : 'subscriptions' );
 		return $query_vars;
 	}
 
