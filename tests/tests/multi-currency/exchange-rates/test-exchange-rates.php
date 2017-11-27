@@ -28,26 +28,10 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
      */
     public function test_initialize_settings(){
 
-        // 1) WCML_Exchange_Rates::initialize_settings will set defaults when settings don't exist
-        $defaults = array(
-            'automatic'      => 0,
-            'service'        => 'yahoo',
-            'schedule'       => 'manual',
-            'week_day'       => 1,
-            'month_day'      => 1,
-            'lifting_charge' => 0
-        );
-        unset( $this->woocommerce_wpml->settings['multi_currency']['exchange_rates'] ); //reset
-        // test private method by calling the constructor again
-        // will write to the the wcml global settings
-        new WCML_Exchange_Rates( $this->woocommerce_wpml ); // calls WCML_Exchange_Rates::initialize_settings
 
-        $this->assertEquals( $defaults, $this->woocommerce_wpml->settings['multi_currency']['exchange_rates'] );
-
-
-        // 2) WCML_Exchange_Rates::initialize_settings will not set defaults when settings exist
+        // 1) WCML_Exchange_Rates::initialize_settings will not set defaults when settings exist
         $custom = array(
-            'automatic'      => 1,
+            'automatic'      => 0,
             'service'        => 'currencylayer',
             'schedule'       => 'daily',
             'week_day'       => 5,
@@ -68,7 +52,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
      */
     public function test_get_services(){
 
-        $expected_services = array('yahoo', 'fixierio', 'currencylayer');
+        $expected_services = array( 'fixierio', 'currencylayer');
         $actual_services   = array_keys( $this->exchange_rate_services->get_services() );
 
         $this->assertEquals( $expected_services, $actual_services );
@@ -183,7 +167,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
 
         $exchange_rate_services = new WCML_Exchange_Rates( $this->woocommerce_wpml );
 
-        $mocked_exchange_rate_service = $this->getMockBuilder( 'WCML_Exchange_Rates_YahooFinance' )
+        $mocked_exchange_rate_service = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixierio' )
             ->disableOriginalConstructor()
             ->setMethods( array( 'get_rates' ) )
             ->getMock();
@@ -209,7 +193,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
         }
 
         // restore exchange rate service
-        $this->exchange_rate_services->save_setting( 'service',  'yahoo' );
+        $this->exchange_rate_services->save_setting( 'service',  'fixierio' );
     }
 
     /**
@@ -245,7 +229,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
      */
     public function test_update_exchange_rate_options(){
 
-        $this->exchange_rate_services->save_setting( 'service', 'yahoo' );
+        $this->exchange_rate_services->save_setting( 'service', 'currencylayer' );
         $backup_settings = $this->exchange_rate_services->get_settings();
 
         $custom = array(

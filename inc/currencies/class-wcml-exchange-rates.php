@@ -26,7 +26,6 @@ class WCML_Exchange_Rates{
         $this->initialize_settings();
 
         // Load built in services
-        $this->services['yahoo']         = new WCML_Exchange_Rates_YahooFinance();
         $this->services['fixierio']      = new WCML_Exchange_Rates_Fixierio();
         $this->services['currencylayer'] = new WCML_Exchange_Rates_Currencylayer();
 
@@ -59,7 +58,7 @@ class WCML_Exchange_Rates{
 
             $this->settings = array(
                 'automatic'      => 0,
-                'service'        => 'yahoo',
+                'service'        => 'fixierio',
                 'lifting_charge' => 0,
                 'schedule'       => 'manual',
                 'week_day'       => 1,
