@@ -26,6 +26,37 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 
 	}
 
+	public function get_subject() {
+
+		return new WCML_Url_Translation( $this->get_woocommerce_multilingual(), $this->get_sitepress(), $this->stubs->wpdb() );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function set_up_hooks(){
+
+		$woocommerce_wpml = $this->get_woocommerce_multilingual();
+		$woocommerce_wpml->settings['url_translation_set_up'] = true;
+
+		$subject =  new WCML_Url_Translation( $woocommerce_wpml, $this->get_sitepress(), $this->stubs->wpdb() );
+
+		\WP_Mock::wpFunction( 'get_option', array(
+			'values' => 'woocommerce_permalinks',
+			'return' => array()
+		) );
+
+		\WP_Mock::wpFunction( 'is_admin', array(
+			'return' => true
+		) );
+
+		\WP_Mock::expectActionNotAdded( 'init', array( $subject, 'fix_post_object_rewrite_slug' ), 6 );
+
+		$subject->set_up();
+
+	}
+
 	/**
 	 * @test
 	 */
