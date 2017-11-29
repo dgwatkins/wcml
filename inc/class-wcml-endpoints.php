@@ -212,11 +212,13 @@ class WCML_Endpoints{
 
                 foreach( $endpoints as $key => $endpoint ){
                     if( isset($wp->query_vars[$key]) ){
-                        if( $key === 'order-pay' ){
+                        if( 'order-pay' === $key ){
                             $endpoint = get_option( 'woocommerce_checkout_pay_endpoint' );
                             $p .= isset( $_SERVER[ 'QUERY_STRING' ] ) ? '?'.$_SERVER[ 'QUERY_STRING' ] : '';
-                        }elseif( $key === 'order-received' ){
+                        }elseif( 'order-received' === $key ){
                             $endpoint = get_option( 'woocommerce_checkout_order_received_endpoint' );
+                        }elseif( 'customer-logout' === $key ){
+	                        $endpoint = get_option( 'woocommerce_logout_endpoint' );
                         }else{
                             $endpoint = get_option( 'woocommerce_myaccount_'.str_replace( '-','_',$key).'_endpoint', $endpoint );
                         }
