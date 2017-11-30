@@ -229,6 +229,12 @@ class WCML_Compatibility {
 			$this->maxstore->add_hooks();
 		}
 
+		// MaxStore-Pro Theme
+		if ( defined( 'ETHEME_THEME_NAME') && 'Blanco' === ETHEME_THEME_NAME ) {
+			$this->etheme_blanco = new WCML_Etheme_Blanco();
+			$this->etheme_blanco->add_hooks();
+		}
+
 	}
 
 }
