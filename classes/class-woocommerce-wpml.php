@@ -197,6 +197,7 @@ class woocommerce_wpml {
         $this->products             = new WCML_Products( $this, $sitepress, $wpdb );
         $this->products->add_hooks();
         $this->store                = new WCML_Store_Pages ($this, $sitepress ) ;
+	    $this->store->add_hooks();
         $this->strings = new WCML_WC_Strings( $this, $sitepress );
 		$this->strings->add_hooks();
 		$this->emails               = new WCML_Emails( $this, $sitepress , $woocommerce );
