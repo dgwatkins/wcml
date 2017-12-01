@@ -11,24 +11,31 @@ class WCML_Store_Pages{
 	 */
 	private $sitepress;
 
-    function __construct( $woocommerce_wpml, $sitepress ){
+    function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress ){
 
-    	$this->woocommerce_wpml =& $woocommerce_wpml;
-	    $this->sitepress        =& $sitepress;
+	    $this->woocommerce_wpml = $woocommerce_wpml;
+	    $this->sitepress        = $sitepress;
 
-        add_action('init', array($this, 'init'));
-        add_filter( 'woocommerce_create_pages', array( $this, 'switch_pages_language' ), 9 );
-        add_filter( 'woocommerce_create_pages', array( $this, 'install_pages_action' ), 11 );
-        //update wc pages ids after change default language or create new if not exists
-        add_action( 'icl_after_set_default_language', array( $this, 'after_set_default_language' ), 10, 2 );
-        // Translate shop page ids
-        $this->add_filter_to_get_shop_translated_page_id();
-        add_filter( 'template_include', array( $this, 'template_loader' ), 100 );
+    }
+
+    public function add_hooks(){
+
+	    add_action( 'init', array( $this, 'init' ) );
+	    add_filter( 'woocommerce_create_pages', array( $this, 'switch_pages_language' ), 9 );
+	    add_filter( 'woocommerce_create_pages', array( $this, 'install_pages_action' ), 11 );
+	    //update wc pages ids after change default language or create new if not exists
+	    add_action( 'icl_after_set_default_language', array( $this, 'after_set_default_language' ), 10, 2 );
+	    // Translate shop page ids
+	    $this->add_filter_to_get_shop_translated_page_id();
+	    add_filter( 'template_include', array( $this, 'template_loader' ), 100 );
 
 	    if( is_admin() ){
-	    	add_action( 'icl_post_languages_options_before', array( $this, 'show_translate_shop_pages_notice') );
+		    add_action( 'icl_post_languages_options_before', array( $this, 'show_translate_shop_pages_notice') );
 	    }
-    }   
+
+	    add_filter( 'post_type_archive_link', array( $this, 'filter_shop_archive_link' ), 10, 2 );
+
+    }
     
     function init(){        
 
@@ -623,6 +630,19 @@ class WCML_Store_Pages{
 	    }
 
 
+    }
+
+    public function filter_shop_archive_link( $link, $post_type ){
+
+    	if(
+    		'product' === $post_type &&
+		    (int)$this->front_page_id === (int)$this->shop_page_id &&
+		    $this->sitepress->get_current_language() !== $this->sitepress->get_default_language()
+	    ){
+    		$link = home_url( '/' );
+	    }
+
+	    return $link;
     }
     
 }
