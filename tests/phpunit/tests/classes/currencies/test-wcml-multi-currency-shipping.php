@@ -171,7 +171,7 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function convert_shipping_taxes_wc_taxes_calculation_off(){
+	public function it_does_not_convert_shipping_taxes_when_wc_taxes_calculation_is_off(){
 
 		$subject = $this->get_subject();
 		$packages = [ rand_str() => rand_str() ];
@@ -188,13 +188,44 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function convert_shipping_taxes_wc_taxes_calculation_on(){
+	public function it_does_not_convert_shipping_taxes_when_no_shipping_tax(){
+
+		$subject = $this->get_subject();
+
+		$rate1 = $this->getMockBuilder( 'WC_Shipping_Rate' )
+		              ->disableOriginalConstructor()
+		              ->setMethods( array( 'get_shipping_tax' ) )
+		              ->getMock();
+
+		$rate1->method( 'get_shipping_tax' )->willReturn( 0 );
+
+		$packages = [
+			0 => [ 'rates' => [ $rate1 ] ]
+
+		];
+
+		\WP_Mock::wpFunction( 'get_option', [
+			'times'=> 1,
+			'args' => 'woocommerce_calc_taxes',
+			'return' => 'yes'
+		] );
+
+		$this->assertSame( $packages, $subject->convert_shipping_taxes( $packages ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_does_convert_shipping_taxes_when_wc_taxes_calculation_is_on(){
 
 		$subject = $this->get_subject();
 
 		$rate1 = $this->getMockBuilder( 'WC_Shipping_Rate' )
 			->disableOriginalConstructor()
+			->setMethods( array( 'get_shipping_tax' ) )
 			->getMock();
+
+		$rate1->method( 'get_shipping_tax' )->willReturn( mt_rand( 1, 10 ) );
 
 		$rate1->taxes = [
 			0 => round ( random_int(1, 100) / 100 ),
@@ -204,7 +235,11 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 
 		$rate2 = $this->getMockBuilder( 'WC_Shipping_Rate' )
 		              ->disableOriginalConstructor()
+		              ->setMethods( array( 'get_shipping_tax' ) )
 		              ->getMock();
+
+		$rate2->method( 'get_shipping_tax' )->willReturn( mt_rand( 1, 10 ) );
+
 		$rate2->cost = round ( random_int(1, 100) / 100 );
 
 		$rate2->taxes = [
