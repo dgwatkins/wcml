@@ -326,8 +326,8 @@ class WCML_Exchange_Rates {
 			if ( $this->settings['month_day'] <= $days_in_current_month && $this->settings['month_day'] >= date( 'j' ) ) {
 				$interval = DAY_IN_SECONDS * $days_in_current_month;
 			} else {
-				$month_number = 12 === $current_month ? 1 : $current_month + 1;
-				$year_number  = 12 === $current_month? date( 'Y' ) + 1 : date( 'Y' );
+				$month_number = 12 === (int)$current_month ? 1 : $current_month + 1;
+				$year_number  = 12 === (int)$current_month? date( 'Y' ) + 1 : date( 'Y' );
 				$interval     = DAY_IN_SECONDS * cal_days_in_month( CAL_GREGORIAN, $month_number, $year_number );
 			}
 
