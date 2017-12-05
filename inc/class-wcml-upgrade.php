@@ -20,7 +20,8 @@ class WCML_Upgrade{
         '4.0',
         '4.1.0',
         '4.2.0',
-	    '4.2.2'
+	    '4.2.2',
+	    '4.2.7'
     );
     
     function __construct(){
@@ -613,6 +614,17 @@ class WCML_Upgrade{
 			if( ! in_array( 'shop_manager', $user->roles, true ) ){
 				$user->remove_cap( 'wpml_operate_woocommerce_multilingual' );
 			}
+		}
+
+	}
+
+	private function upgrade_4_2_7(){
+
+		// #wcml-2242
+		$wcml_settings = get_option( '_wcml_settings' );
+		if( 'yahoo' === $wcml_settings['multi_currency']['exchange_rates']['service'] ){
+			$wcml_settings['multi_currency']['exchange_rates']['service'] = 'fixierio';
+			update_option( '_wcml_settings', $wcml_settings );
 		}
 
 	}

@@ -143,53 +143,6 @@ class WCML_Test_Exchange_Rate_Service extends WCML_UnitTestCase {
     /**
      * @test
      */
-    public function test_yahoo(){
-
-        add_filter( 'pre_http_request', array( $this, 'mock_api_response' ) );
-
-        $yahoo = new WCML_Exchange_Rates_YahooFinance();
-
-
-        // 1) WP error
-        $this->_mock_http_response = new WP_Error( 500, 'some_wp_error' );
-        try{
-            $rates = $yahoo->get_rates( 'USD', array( 'RON', 'BGN' ) );
-        } catch ( Exception $e ){
-            $this->assertEquals( 'some_wp_error', $e->getMessage() );
-        }
-
-        // 2) Valid request
-        $source = 'USD';
-        $quotes = array(
-            'RON' => round( rand(1, 10000) / 100, 2 ),
-            'BGN' => round( rand(1, 10000) / 100, 2 )
-        );
-
-        $lines = array();
-        foreach( $quotes as $to => $quote ){
-            $lines[] = '"' . $to . '",' . $quotes[$to];
-        }
-
-        $this->_mock_http_response = array(
-            'body' => join("\n" , $lines )
-        );
-
-        try{
-            $rates = $yahoo->get_rates( $source, array_keys( $quotes ) );
-
-            $this->assertEquals( $quotes, $rates );
-        } catch ( Exception $e ){
-            $this->assertFalse( $e->getMessage() ); // Reveal this! Should not happen.
-        }
-
-        remove_filter( 'pre_http_request', array( $this, 'mock_api_response' ) );
-        $this->_mock_http_response = false;
-
-    }
-
-    /**
-     * @test
-     */
     public function test_fixierio(){
 
         add_filter( 'pre_http_request', array( $this, 'mock_api_response' ) );
