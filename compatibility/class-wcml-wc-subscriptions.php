@@ -66,11 +66,14 @@ class WCML_WC_Subscriptions{
 	function subscriptions_product_sign_up_fee_filter( $subscription_sign_up_fee, $product ) {
 
 		if ( wcml_is_multi_currency_on() ) {
-			if ( get_post_meta( $product->get_id(), '_wcml_custom_prices_status', true ) ) {
-				$currency                 = $this->woocommerce_wpml->multi_currency->get_client_currency();
-				$subscription_sign_up_fee = get_post_meta( $product->get_id(), '_subscription_sign_up_fee_' . $currency, true );
-			} else {
-				$subscription_sign_up_fee = apply_filters( 'wcml_raw_price_amount', $subscription_sign_up_fee );
+			$currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
+
+			if ( $currency !== get_option( 'woocommerce_currency' ) ) {
+				if ( get_post_meta( $product->get_id(), '_wcml_custom_prices_status', true ) ) {
+					$subscription_sign_up_fee = get_post_meta( $product->get_id(), '_subscription_sign_up_fee_' . $currency, true );
+				} else {
+					$subscription_sign_up_fee = apply_filters( 'wcml_raw_price_amount', $subscription_sign_up_fee );
+				}
 			}
 		}
 
