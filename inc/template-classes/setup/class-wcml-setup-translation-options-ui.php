@@ -22,11 +22,12 @@ class WCML_Setup_Translation_Options_UI extends WPML_Templates_Factory {
 
         $model = array(
             'strings' => array(
+                'step_id'          => 'translation_options_step',
                 'heading'          => __( 'Translation Options', 'woocommerce-multilingual' ),
                 'description'      => __( "Normally, you first create products in the site's default language and then you translate them. If products are not translated, do you want to show them on other languages?", 'woocommerce-multilingual' ),
                 'label_display_as_translated' => sprintf( __( 'Yes - show products even if they are not yet translated (%smore on how this will work%s)',
-	                'woocommerce-multilingual' ),
-	                '<a target="blank" href="https://wpml.org/documentation/related-projects/woocommerce-multilingual/displaying-untranslated-products-in-secondary-languages/">', '</a>'
+                    'woocommerce-multilingual' ),
+                    '<a target="blank" href="https://wpml.org/documentation/related-projects/woocommerce-multilingual/displaying-untranslated-products-in-secondary-languages/">', '</a>'
                 ),
                 'label_translated'        => __( 'No - only display products on other languages once they are translated', 'woocommerce-multilingual' ),
                 'description_footer'        => __( 'Note, to change this later, go to %sWPML &raquo; Translation Management &raquo; Multilingual Content Setup.%s', 'woocommerce-multilingual' ),
