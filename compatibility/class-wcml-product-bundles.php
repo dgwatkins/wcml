@@ -125,12 +125,14 @@ class WCML_Product_Bundles {
 			$translated_product_id = apply_filters( 'translate_object_id', $item_meta['product_id'], get_post_type( $item_meta['product_id'] ), false, $target_lang );
 
 			if ( $translated_product_id ) {
-				$translated_item_id    = $this->get_item_id_for_product_id( $translated_product_id, $translated_bundle_id );
+				$translated_item_id    = $this->get_item_id_for_language( $item_id, $target_lang );
 				$translated_item_ids[] = $translated_item_id;
 
 				$translated_item = $this->product_bundles_items->get_item_data_object( $translated_item_id );
 				foreach ( $fields_to_sync as $key ) {
-					$this->product_bundles_items->update_item_meta( $translated_item, $key, $item_meta[ $key ] );
+					if ( isset( $item_meta[ $key ] ) ) {
+						$this->product_bundles_items->update_item_meta( $translated_item, $key, $item_meta[ $key ] );
+					}
 				}
 
 
@@ -208,12 +210,34 @@ class WCML_Product_Bundles {
 			"SELECT product_id FROM {$this->wpdb->prefix}woocommerce_bundled_items WHERE bundled_item_id=%d", $item_id ) );
 	}
 
-	private function get_item_id_for_product_id( $product_id, $bundle_id ) {
+	/**
+	 * @param array $item_id
+	 * @param string $language
+	 *
+	 * @return string
+	 */
+	public function get_item_id_for_language( $item_id, $language ) {
 
 		return $this->wpdb->get_var( $this->wpdb->prepare(
-			"SELECT bundled_item_id FROM {$this->wpdb->prefix}woocommerce_bundled_items WHERE product_id=%d AND bundle_id=%d",
-			$product_id, $bundle_id
-		) );
+			"SELECT meta_value FROM {$this->wpdb->prefix}woocommerce_bundled_itemmeta WHERE bundled_item_id=%d AND meta_key=%s", $item_id, 'translation_item_id_of_'.$language ) );
+
+	}
+
+	/**
+	 * @param int $original_item_id
+	 * @param int $translated_item_id
+	 * @param string $language
+	 */
+	public function set_translated_item_id_relationship( $original_item_id, $translated_item_id, $language ) {
+
+		$this->wpdb->insert( $this->wpdb->prefix . 'woocommerce_bundled_itemmeta',
+			array(
+				'bundled_item_id'  => $original_item_id,
+				'meta_key' => 'translation_item_id_of_'.$language,
+				'meta_value' => $translated_item_id,
+			)
+		);
+
 	}
 
 	// Add Bundles Box to WCML Translation GUI
@@ -304,7 +328,7 @@ class WCML_Product_Bundles {
 
 			$translated_product_id = apply_filters( 'translate_object_id', $product_id, get_post_type( $product_id ), false, $lang );
 			if ( $translation ) {
-				$translated_item_id = $this->get_item_id_for_product_id( $translated_product_id, $translated_bundle_id );
+				$translated_item_id = $this->get_item_id_for_language( $item_id, $lang );
 			}
 
 			if ( $bundle_data[ $item_id ]['override_title'] == 'yes' ) {
@@ -344,7 +368,7 @@ class WCML_Product_Bundles {
 					$product_id = $this->get_product_id_for_item_id( $item_id );
 					foreach ( $fields as $field ) {
 						if ( $product_data[ 'override_' . $field ] == 'yes' && ! empty( $product_data[ $field ] ) ) {
-							$package['contents'][ 'product_bundles:' . $product_id . ':' . $field ] = array(
+							$package['contents'][ 'product_bundles:' . $product_id . ':'.$item_id.':'. $field ] = array(
 								'translate' => 1,
 								'data'      => $this->tp->encode_field_data( $product_data[ $field ], 'base64' ),
 								'format'    => 'base64'
@@ -393,9 +417,12 @@ class WCML_Product_Bundles {
 							'menu_order' => $menu_order,
 						)
 					);
+
+					$translated_item_id = $this->wpdb->insert_id;
+					$this->set_translated_item_id_relationship( $item_id, $translated_item_id, $lang );
 				}
 
-				$translated_item_id = $this->get_item_id_for_product_id( $translated_product_id, $translated_bundle_id );
+				$translated_item_id = $this->get_item_id_for_language( $item_id, $lang );
 
 				//$this->product_bundles_items->copy_item_data( $item_id, $translated_item_id );
 
@@ -447,7 +474,7 @@ class WCML_Product_Bundles {
 
 				if ( $translated_product_id ) {
 
-					$translated_item_id = $this->get_item_id_for_product_id( $translated_product_id, $translated_bundle_id );
+					$translated_item_id = $this->get_item_id_for_language( $item_id, $lang );
 					if ( ! $translated_item_id ) {
 						$menu_order = $this->wpdb->get_var( $this->wpdb->prepare( " 
                             SELECT menu_order FROM {$this->wpdb->prefix}woocommerce_bundled_items
@@ -462,6 +489,7 @@ class WCML_Product_Bundles {
 							)
 						);
 						$translated_item_id = $this->wpdb->insert_id;
+						$this->set_translated_item_id_relationship( $item_id, $translated_item_id, $lang );
 					}
 
 					$translated_bundle_data[ $translated_item_id ]               = $product_data;
@@ -600,18 +628,18 @@ class WCML_Product_Bundles {
 
 			foreach ( $data as $value ) {
 
-				if ( preg_match( '/product_bundles:([0-9]+):(.+)/', $value['field_type'], $matches ) ) {
+				if ( preg_match( '/product_bundles:([0-9]+):([0-9]+):(.+)/', $value['field_type'], $matches ) ) {
 
 					$product_id = $matches[1];
-					$field      = $matches[2];
+					$item_id    = $matches[2];
+					$field      = $matches[3];
+
 
 					$translated_product_id = apply_filters( 'translate_object_id', $product_id, get_post_type( $product_id ), false, $job->language_code );
-					$translated_item_id    = $this->get_item_id_for_product_id( $translated_product_id, $translated_bundle_id );
+					$translated_item_id    = $this->get_item_id_for_language( $item_id, $job->language_code );
 					if ( empty( $translated_item_id ) ) {
-						$translated_item_id = $this->add_product_to_bundle( $translated_product_id, $translated_bundle_id, $bundle_id, $product_id );
+						$translated_item_id = $this->add_product_to_bundle( $translated_product_id, $translated_bundle_id, $item_id, $job->language_code );
 					}
-
-					$item_id = $this->get_item_id_for_product_id( $product_id, $bundle_id );
 
 					if ( ! isset( $translated_bundle_data[ $translated_item_id ] ) ) {
 						$translated_bundle_data[ $translated_item_id ] = array(
@@ -649,11 +677,12 @@ class WCML_Product_Bundles {
 		}
 	}
 
-	private function add_product_to_bundle( $product_id, $bundle_id, $original_bundle_id, $original_product_id ) {
+	private function add_product_to_bundle( $product_id, $bundle_id, $item_id, $language ) {
+
 		$menu_order = $this->wpdb->get_var( $this->wpdb->prepare( " 
                             SELECT menu_order FROM {$this->wpdb->prefix}woocommerce_bundled_items
-	                        WHERE bundle_id=%d AND product_id=%d
-	                        ", $original_bundle_id, $original_product_id ) );
+	                        WHERE bundled_item_id=%d
+	                        ", $item_id ) );
 
 		$this->wpdb->insert( $this->wpdb->prefix . 'woocommerce_bundled_items',
 			array(
@@ -663,7 +692,10 @@ class WCML_Product_Bundles {
 			)
 		);
 
-		return $this->wpdb->insert_id;
+		$translated_item_id = $this->wpdb->insert_id;
+		$this->set_translated_item_id_relationship( $item_id, $translated_item_id, $language );
+
+		return $translated_item_id;
 	}
 
 	/**
