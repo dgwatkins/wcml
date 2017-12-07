@@ -107,4 +107,49 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		$this->assertEquals( $exp_downloads, $filtered_downloads );
 
 	}
+
+	/**
+	 * @test
+	 */
+	public function get_filtered_comments(){
+
+		$user_id = 1;
+		$user_language = rand_str( 2 );
+
+		$comment = new stdClass();
+		$comment->comment_content = rand_str();
+		$comments[] = $comment;
+
+		$comment_string_id = 10;
+		$filtered_comment = new stdClass();
+		$filtered_comment->comment_content = rand_str();
+		$comment_strings[ $user_language ][ 'value' ] = $filtered_comment->comment_content;
+
+		$expected_comments[] = $filtered_comment;
+
+		\WP_Mock::wpFunction( 'get_current_user_id', array(
+			'return' => $user_id
+		));
+
+		\WP_Mock::wpFunction( 'get_user_meta', array(
+			'args'   => array( $user_id, 'icl_admin_language', true ),
+			'return' => $user_language
+		));
+
+		\WP_Mock::wpFunction( 'icl_get_string_id', array(
+			'args'   => array( $comment->comment_content, 'woocommerce' ),
+			'return' => $comment_string_id
+		));
+
+		\WP_Mock::wpFunction( 'icl_get_string_translations_by_id', array(
+			'args'   => array( $comment_string_id ),
+			'return' => $comment_strings
+		));
+
+		$subject = $this->get_subject( );
+		$filtered_comments = $subject->get_filtered_comments( $comments );
+
+		$this->assertEquals( $expected_comments, $filtered_comments );
+
+	}
 }
