@@ -203,9 +203,13 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 			'hide_filtered_variations'
 		);
 
+		$attribute_taxonomy = rand_str();
+		$attribute_term_slug = rand_str();
+
 		$this->item_meta = array(
 			'product_id' => 20,
-			'allowed_variations' => array( $variation_id )
+			'allowed_variations' => array( $variation_id ),
+			'default_variation_attributes' => array( $attribute_taxonomy => $attribute_term_slug )
 		);
 
 		foreach( $this->fields_to_sync as $field_key ){
@@ -236,7 +240,27 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 
 		$this->item_meta['allowed_variations'] = array( $translated_variation_id );
 
-		$this->product_bundles_items->expects( $this->exactly( count( $this->fields_to_sync ) + 1 ) )->method( 'update_item_meta' )->will( $this->returnCallback(
+		$attribute_term_id = 50;
+		$translated_attribute_term_id = 60;
+		$translated_term = new stdClass();
+		$translated_term->slug = rand_str();
+
+		$this->woocommerce_wpml->terms = $this->getMockBuilder( 'WCML_Terms' )->setMethods( array(
+			'wcml_get_term_id_by_slug',
+			'wcml_get_term_by_id'
+		) )->disableOriginalConstructor()->getMock();
+
+		$this->woocommerce_wpml->terms->method( 'wcml_get_term_id_by_slug' )->willReturn( $attribute_term_id );
+
+		\WP_Mock::onFilter( 'translate_object_id' )
+		        ->with( $attribute_term_id, $attribute_taxonomy, true, $language )
+		        ->reply( $translated_attribute_term_id );
+
+		$this->woocommerce_wpml->terms->method( 'wcml_get_term_by_id' )->willReturn( $translated_term );
+
+		$this->item_meta[ 'default_variation_attributes'] = array( $attribute_taxonomy => $translated_term->slug );
+
+		$this->product_bundles_items->expects( $this->exactly( count( $this->fields_to_sync ) + 2 ) )->method( 'update_item_meta' )->will( $this->returnCallback(
 			function ( $item, $key, $value ) {
 
 				if( $this->translated_item === $item && $this->item_meta[$key] === $value ){
