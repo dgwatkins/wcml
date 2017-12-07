@@ -295,6 +295,7 @@ class WCML_Attributes{
 
     public function sync_default_product_attr( $orig_post_id, $transl_post_id, $lang ){
         $original_default_attributes = get_post_meta( $orig_post_id, '_default_attributes', true );
+
         if( !empty( $original_default_attributes ) ){
             $unserialized_default_attributes = array();
             foreach(maybe_unserialize( $original_default_attributes ) as $attribute => $default_term_slug ){
@@ -319,6 +320,7 @@ class WCML_Attributes{
 
                     if( isset( $unserialized_orig_product_attributes[ $attribute ] ) ){
                         $orig_attr_values = explode( '|', $unserialized_orig_product_attributes[ $attribute ][ 'value' ] );
+	                    $orig_attr_values = array_map( 'trim', $orig_attr_values );
 
                         foreach( $orig_attr_values as $key => $orig_attr_value ){
                             $orig_attr_value_sanitized = strtolower( sanitize_title ( $orig_attr_value ) );
@@ -349,7 +351,14 @@ class WCML_Attributes{
         }
 
         $where = array( 'post_id' => $transl_post_id, 'meta_key' => '_default_attributes' );
-        $this->wpdb->update( $this->wpdb->postmeta, $data, $where );
+
+        $translated_product_meta = get_post_meta( $transl_post_id );
+	    if ( isset( $translated_product_meta['_default_attributes'] ) ) {
+		    $this->wpdb->update( $this->wpdb->postmeta, $data, $where );
+	    } else {
+		    $this->wpdb->insert( $this->wpdb->postmeta, array_merge( $data, $where ) );
+	    }
+
     }
 
     /*
