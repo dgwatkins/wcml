@@ -200,24 +200,26 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 
 		$package = $product_bundles->append_bundle_data_translation_package( $package, $post );
 
-		$this->assertArrayHasKey( 'product_bundles:' . $this->test_data->product_in_bundle->id . ':title' , $package['contents'] );
-		$this->assertArrayHasKey( 'product_bundles:' . $this->test_data->product_in_bundle->id . ':description' , $package['contents'] );
+		$item_key = $this->test_data->product_in_bundle->id.':'.$this->test_data->product_in_bundle->bundled_item_id;
 
-		$this->assertEquals( 1, $package['contents']['product_bundles:' . $this->test_data->product_in_bundle->id . ':title']['translate'] );
-		$this->assertEquals( 1, $package['contents']['product_bundles:' . $this->test_data->product_in_bundle->id . ':description']['translate'] );
+		$this->assertArrayHasKey( 'product_bundles:' . $item_key . ':title' , $package['contents'] );
+		$this->assertArrayHasKey( 'product_bundles:' . $item_key . ':description' , $package['contents'] );
+
+		$this->assertEquals( 1, $package['contents']['product_bundles:' . $item_key . ':title']['translate'] );
+		$this->assertEquals( 1, $package['contents']['product_bundles:' . $item_key . ':description']['translate'] );
 
 		$package = array( 'contents' => array() );
 		$this->setup_product_in_bundle( $this->test_data->product_in_bundle->id, true, false );
-		$this->assertArrayNotHasKey( 'product_bundles:' . $this->test_data->product_in_bundle->id . ':description' , $package['contents'] );
+		$this->assertArrayNotHasKey( 'product_bundles:' . $item_key . ':description' , $package['contents'] );
 
 		$package = array( 'contents' => array() );
 		$this->setup_product_in_bundle( $this->test_data->product_in_bundle->id, false, true );
-		$this->assertArrayNotHasKey( 'product_bundles:' . $this->test_data->product_in_bundle->id . ':title' , $package['contents'] );
+		$this->assertArrayNotHasKey( 'product_bundles:' . $item_key . ':title' , $package['contents'] );
 
 		$package = array( 'contents' => array() );
 		$this->setup_product_in_bundle( $this->test_data->product_in_bundle->id, false, false );
-		$this->assertArrayNotHasKey( 'product_bundles:' . $this->test_data->product_in_bundle->id . ':description' , $package['contents'] );
-		$this->assertArrayNotHasKey( 'product_bundles:' . $this->test_data->product_in_bundle->id . ':title' , $package['contents'] );
+		$this->assertArrayNotHasKey( 'product_bundles:' . $item_key . ':description' , $package['contents'] );
+		$this->assertArrayNotHasKey( 'product_bundles:' . $item_key . ':title' , $package['contents'] );
 
 	}
 
@@ -432,13 +434,15 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 		$product = get_post( $this->test_data->bundle_product->id );
 
 		$bundle_data = $this->setup_product_in_bundle( $this->test_data->bundle_product->id, true, true );
+
+		$item_key = $this->test_data->product_in_bundle->id.':'.$this->test_data->product_in_bundle->bundled_item_id;
 		$data = array(
 			'title' => array(
-				'field_type' => 'product_bundles:'.$this->test_data->product_in_bundle->id.':title',
+				'field_type' => 'product_bundles:'.$item_key.':title',
 				'data'	=> random_string()
 			),
 			'description' => array(
-				'field_type' => 'product_bundles:'.$this->test_data->product_in_bundle->id.':description',
+				'field_type' => 'product_bundles:'.$item_key.':description',
 				'data'	=> random_string()
 			)
 		);
@@ -607,6 +611,7 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 			);
 
 			$bundled_item_id = $this->wpdb->insert_id;
+			$this->test_data->product_in_bundle->bundled_item_id = $bundled_item_id;
 
 			foreach( $data as $key => $value ){
 				$this->wpdb->insert(
