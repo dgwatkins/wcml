@@ -146,6 +146,11 @@ class WCML_Product_Bundles {
 					}
 				}
 
+				if ( isset( $item_meta['default_variation_attributes'] ) ) {
+					$default_variation_attributes = $this->translate_default_variation_attributes( $item_meta['default_variation_attributes'], $target_lang );
+					$this->product_bundles_items->update_item_meta( $translated_item, 'default_variation_attributes', $default_variation_attributes );
+				}
+
 				$this->product_bundles_items->save_item_meta( $translated_item );
 
 			}
@@ -202,6 +207,28 @@ class WCML_Product_Bundles {
 		}
 
 		return $allowed_variations;
+	}
+
+	/**
+	 * @param array $original_default_variation_attributes
+	 * @param string $target_lang
+	 *
+	 * @return array
+	 */
+	public function translate_default_variation_attributes( $original_default_variation_attributes, $target_lang ) {
+		$default_variation_attributes = array();
+
+		if ( is_array( $original_default_variation_attributes ) ) {
+			foreach ( $original_default_variation_attributes as $attribute_taxonomy => $attribute_slug ) {
+				$attribute_term_id            = $this->woocommerce_wpml->terms->wcml_get_term_id_by_slug( $attribute_taxonomy, $attribute_slug );
+				$translated_attribute_term_id = apply_filters( 'translate_object_id', $attribute_term_id, $attribute_taxonomy, true, $target_lang );
+				$translated_term              = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $translated_attribute_term_id, $attribute_taxonomy );
+
+				$default_variation_attributes[ $attribute_taxonomy ] = $translated_term->slug;
+			}
+		}
+
+		return $default_variation_attributes;
 	}
 
 	private function get_product_id_for_item_id( $item_id ) {
