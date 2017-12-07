@@ -271,4 +271,180 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$this->assertEquals( $attribute_name, $filtered_attribute_name );
 	}
 
+	/**
+	 * @test
+	 */
+	public function sync_default_product_attr_for_custom_attributes_should_sync_by_insert() {
+		$subject = $this->get_subject();
+
+		$original_product_id   = 27222;
+		$translated_product_id = 1919191;
+		$lang                  = 'ru';
+
+		$original_product_attributes = [
+			'size'  => [
+				'name'  => 'size',
+				'value' => 'small | medium | big'
+			],
+			'color' => [
+				'name'  => 'color',
+				'value' => 'white|black'
+			]
+		];
+
+		$original_default_attributes = [
+			'size'  => 'medium',
+			'color' => 'black'
+		];
+
+		$translated_product_attributes = [
+			'size'  => [
+				'name'  => 'size',
+				'value' => 'small-translated | medium-translated | big-translated'
+			],
+			'color' => [
+				'name'  => 'color',
+				'value' => 'white-translated|black-translated'
+			]
+		];
+		// default attribute not set
+		$translated_product_meta = [
+			'_product_attributes' => $translated_product_attributes
+		];
+
+		$expected_translated_default_attributes = [
+			'size'  => 'medium-translated',
+			'color' => 'black-translated'
+		];
+
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $original_product_id, '_default_attributes', true ],
+			'return' => $original_default_attributes
+		] );
+
+		\WP_Mock::passthruFunction( 'maybe_unserialize' );
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $original_product_id, '_product_attributes', true ],
+			'return' => $original_product_attributes
+		] );
+
+		\WP_Mock::passthruFunction( 'sanitize_title' );
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $translated_product_id, '_product_attributes', true ],
+			'return' => $translated_product_attributes
+		] );
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $translated_product_id ],
+			'return' => $translated_product_meta
+		] );
+
+		\WP_Mock::passthruFunction( 'maybe_serialize' );
+
+		$insert_data = [
+			'post_id'    => $translated_product_id,
+			'meta_key'   => '_default_attributes',
+			'meta_value' => $expected_translated_default_attributes
+		];
+
+		$this->wpdb->expects( $this->once() )
+		           ->method( 'insert' )
+		           ->with( $this->wpdb->postmeta, $insert_data );
+
+		$subject->sync_default_product_attr( $original_product_id, $translated_product_id, $lang );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function sync_default_product_attr_for_custom_attributes_should_sync_by_update() {
+		$subject = $this->get_subject();
+
+		$original_product_id   = 27222;
+		$translated_product_id = 1919191;
+		$lang                  = 'ru';
+
+		$original_product_attributes = [
+			'size'  => [
+				'name'  => 'size',
+				'value' => 'small | medium | big'
+			],
+			'color' => [
+				'name'  => 'color',
+				'value' => 'white|black'
+			]
+		];
+
+		$original_default_attributes = [
+			'size'  => 'medium',
+			'color' => 'black'
+		];
+
+		$translated_product_attributes = [
+			'size'  => [
+				'name'  => 'size',
+				'value' => 'small-translated | medium-translated | big-translated'
+			],
+			'color' => [
+				'name'  => 'color',
+				'value' => 'white-translated|black-translated'
+			]
+		];
+		// default attribute ARE set
+		$translated_product_meta = [
+			'_product_attributes' => $translated_product_attributes,
+			'_default_attributes' => [ 'size' => 'small-translated', 'color' => 'white-translated' ]
+		];
+
+		$expected_translated_default_attributes = [
+			'size'  => 'medium-translated',
+			'color' => 'black-translated'
+		];
+
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $original_product_id, '_default_attributes', true ],
+			'return' => $original_default_attributes
+		] );
+
+		\WP_Mock::passthruFunction( 'maybe_unserialize' );
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $original_product_id, '_product_attributes', true ],
+			'return' => $original_product_attributes
+		] );
+
+		\WP_Mock::passthruFunction( 'sanitize_title' );
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $translated_product_id, '_product_attributes', true ],
+			'return' => $translated_product_attributes
+		] );
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $translated_product_id ],
+			'return' => $translated_product_meta
+		] );
+
+		\WP_Mock::passthruFunction( 'maybe_serialize' );
+
+		$update_data = [
+			'meta_value' => $expected_translated_default_attributes
+		];
+		$update_where = [
+			'post_id'    => $translated_product_id,
+			'meta_key'   => '_default_attributes'
+		];
+
+		$this->wpdb->expects( $this->once() )
+		           ->method( 'update' )
+		           ->with( $this->wpdb->postmeta, $update_data, $update_where );
+
+		$subject->sync_default_product_attr( $original_product_id, $translated_product_id, $lang );
+
+	}
 }
