@@ -103,8 +103,6 @@ require $_tests_dir . '/includes/bootstrap.php';
 require WPML_CORE_PATH . '/tests/util/wpml-unittestcase.class.php';
 require WC_PATH . '/tests/framework/class-wc-unit-test-case.php';
 require WC_PATH . '/tests/framework/class-wc-unit-test-factory.php';
-require WC_PATH . '/tests/framework/factories/class-wc-unit-test-factory-for-webhook.php';
-require WC_PATH . '/tests/framework/factories/class-wc-unit-test-factory-for-webhook-delivery.php';
 
 require WCML_CORE_PATH . '/tests/util/wcml-unittestcase.class.php';
 require WCML_CORE_PATH . '/tests/util/class-wcml-helper.php';
