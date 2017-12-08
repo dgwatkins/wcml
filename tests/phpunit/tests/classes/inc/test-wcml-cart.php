@@ -99,6 +99,39 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		$subject->add_hooks();
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_adds_correct_hooks_when_clean_cart_is_enabled_for_currency_switching(){
+
+		\WP_Mock::userFunction( 'wp_enqueue_script', array( 'return' => true ) );
+		\WP_Mock::userFunction( 'wp_enqueue_style', array( 'return' => true ) );
+
+		$this->cart_clear_constant = 0;
+		$cart_sync_constant = 1;
+		$this->cookie_setting_field = rand_str();
+
+		$that = $this;
+		$this->wp_api->method( 'constant' )->willReturnCallback( function ( $const ) use ( $that ) {
+			if ( 'WPML_Cookie_Setting::COOKIE_SETTING_FIELD' == $const ) {
+				return $that->cookie_setting_field;
+			} else if ( 'WCML_CART_CLEAR' == $const ) {
+				return $that->cart_clear_constant;
+			}
+		} );
+
+		$this->sitepress->method( 'get_setting' )->with( $this->cookie_setting_field )->willReturn( true );
+
+		$this->woocommerce_wpml->settings['cart_sync']['lang_switch'] = $cart_sync_constant;
+		$this->woocommerce_wpml->settings['cart_sync']['currency_switch'] = $this->cart_clear_constant;
+
+		$subject = $this->get_subject();
+		\WP_Mock::expectFilterAdded( 'wcml_switch_currency_exception', array( $subject, 'cart_switching_currency' ), 10, 4 );
+		\WP_Mock::expectActionAdded( 'wcml_before_switch_currency', array( $subject, 'switching_currency_empty_cart_if_needed' ), 10, 2 );
+
+		$subject->add_hooks();
+	}
+
 
 	/**
 	 * @test

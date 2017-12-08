@@ -28,17 +28,19 @@ class WCML_Cart {
 			$this->enqueue_dialog_ui();
 
 			add_action( 'wcml_removed_cart_items', array( $this, 'wcml_removed_cart_items_widget' ) );
-			add_action( 'wp_ajax_wcml_cart_clear_removed_items', array( $this, 'wcml_cart_clear_removed_items' ) );
+ 			add_action( 'wp_ajax_wcml_cart_clear_removed_items', array( $this, 'wcml_cart_clear_removed_items' ) );
 			add_action( 'wp_ajax_nopriv_wcml_cart_clear_removed_items', array(
 				$this,
 				'wcml_cart_clear_removed_items'
 			) );
 
-			add_filter( 'wcml_switch_currency_exception', array( $this, 'cart_switching_currency' ), 10, 4 );
-			add_action( 'wcml_before_switch_currency', array(
-				$this,
-				'switching_currency_empty_cart_if_needed'
-			), 10, 2 );
+			if( $this->is_clean_cart_enabled_for_currency_switch() ){
+				add_filter( 'wcml_switch_currency_exception', array( $this, 'cart_switching_currency' ), 10, 4 );
+				add_action( 'wcml_before_switch_currency', array(
+					$this,
+					'switching_currency_empty_cart_if_needed'
+				), 10, 2 );
+            }
 		} else {
 			//cart widget
 			add_action( 'wp_ajax_woocommerce_get_refreshed_fragments', array( $this, 'wcml_refresh_fragments' ), 0 );
@@ -81,6 +83,21 @@ class WCML_Cart {
 			$wpml_cookies_enabled &&
 			( $cart_sync_settings['currency_switch'] === $this->sitepress->get_wp_api()->constant( 'WCML_CART_CLEAR' ) ||
 			  $cart_sync_settings['lang_switch'] === $this->sitepress->get_wp_api()->constant( 'WCML_CART_CLEAR' ) )
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private function is_clean_cart_enabled_for_currency_switch() {
+
+		$cart_sync_settings   = $this->woocommerce_wpml->settings['cart_sync'];
+		$wpml_cookies_enabled = $this->sitepress->get_setting( $this->sitepress->get_wp_api()->constant( 'WPML_Cookie_Setting::COOKIE_SETTING_FIELD' ) );
+
+		if (
+			$wpml_cookies_enabled &&
+			$cart_sync_settings['currency_switch'] === $this->sitepress->get_wp_api()->constant( 'WCML_CART_CLEAR' )
 		) {
 			return true;
 		}
@@ -148,7 +165,8 @@ class WCML_Cart {
 
 	public function cart_switching_currency( $exc, $current_currency, $new_currency, $return = false ) {
 
-		$cart_for_session = !is_null( WC()->cart ) ? WC()->cart->get_cart_for_session() : false;
+		$cart_for_session = !is_null( WC()->cart ) ? array_filter( WC()->cart->get_cart_contents() ) : false;
+
 		if ( $this->woocommerce_wpml->settings['cart_sync']['currency_switch'] == WCML_CART_SYNC || empty( $cart_for_session ) ) {
 			return $exc;
 		}
