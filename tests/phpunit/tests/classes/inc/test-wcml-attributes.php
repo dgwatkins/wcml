@@ -18,6 +18,11 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 			->disableOriginalConstructor()
 		    ->getMock();
 
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'is_product_display_as_translated_post_type' ) )
+		                                         ->getMock();
+
 		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
 			->disableOriginalConstructor()
 			->setMethods( array( 'get_wp_api', 'get_current_language' ) )
@@ -83,6 +88,31 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_get_attributes', array( $subject, 'filter_adding_to_cart_product_attributes_names' ) );
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
+	public function hooks_for_product_display_as_translated_post_type()
+	{
+		$check_version = '3.0.0';
+		$wc_version = '3.0.0';
+		$this->wp_api->expects( $this->once() )
+			->method( 'constant' )
+			->with( 'WC_VERSION' )
+			->willReturn( $wc_version );
+		$this->wp_api->expects( $this->once() )
+			->method( 'version_compare' )
+			->with( $wc_version, $check_version, '<' )
+			->willReturn( false );
+
+
+		$this->woocommerce_wpml->products->method( 'is_product_display_as_translated_post_type' )->willReturn( true );
+
+		$subject = $this->get_subject();
+		\WP_Mock::expectFilterAdded( 'woocommerce_available_variation', array( $subject, 'filter_available_variation_attribute_values_in_current_language' ) );
+		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_variation_post_meta_attribute_values_in_current_language' ), 10 ,4 );
 		$subject->add_hooks();
 	}
 
@@ -447,4 +477,90 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$subject->sync_default_product_attr( $original_product_id, $translated_product_id, $lang );
 
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_does_filter_available_variation_attribute_values_in_current_language() {
+
+		$attribute_taxonomy = rand_str( 10 );
+		$attribute_key = 'attribute_'.$attribute_taxonomy;
+		$attribute_value = rand_str( 12 );
+		$translated_attribute_value = rand_str( 15 );
+
+		$args['attributes'] = array( $attribute_key => $attribute_value );
+
+		$term = new stdClass();
+		$term->slug = $translated_attribute_value;
+
+		\WP_Mock::wpFunction( 'get_term_by', array(
+			'args'  => array( 'slug', $attribute_value, $attribute_taxonomy ),
+			'return' => $term
+		) );
+
+		$subject = $this->get_subject();
+
+		$filter_attribute = $subject->filter_available_variation_attribute_values_in_current_language( $args );
+
+		$this->assertEquals( $filter_attribute[ 'attributes' ][ $attribute_key ], $translated_attribute_value );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_does_filter_product_variation_post_meta_attribute_values_in_current_language_when_post_type_is_product_variation() {
+
+		$object_id = mt_rand( 1, 10 );
+
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'args'  => array( $object_id ),
+			'return' => 'product_variation'
+		) );
+
+		$attribute_taxonomy = rand_str( 10 );
+		$attribute_key = 'attribute_'.$attribute_taxonomy;
+		$attribute_value = rand_str( 12 );
+		$translated_attribute_value = rand_str( 15 );
+
+		$all_meta[ $attribute_key ] = array( $attribute_value );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'  => array( $object_id ),
+			'return' => $all_meta
+		) );
+
+		$term = new stdClass();
+		$term->slug = $translated_attribute_value;
+
+		\WP_Mock::wpFunction( 'get_term_by', array(
+			'args'  => array( 'slug', $attribute_value, $attribute_taxonomy ),
+			'return' => $term
+		) );
+
+		$subject = $this->get_subject();
+
+		$filter_attribute = $subject->filter_product_variation_post_meta_attribute_values_in_current_language( null, $object_id, '', false );
+
+		$this->assertEquals( $filter_attribute[ $attribute_key ][ 0 ], $translated_attribute_value );
+	}
+
+	/**
+	 * @test
+	 */
+	public function does_not_filter_product_variation_post_meta_attribute_values_in_current_language_when_post_type_is_not_product_variation() {
+
+		$object_id = mt_rand( 1, 10 );
+
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'args'  => array( $object_id ),
+			'return' => rand_str()
+		) );
+
+		$subject = $this->get_subject();
+
+		$filter_attribute = $subject->filter_product_variation_post_meta_attribute_values_in_current_language( null, $object_id, '', false );
+
+		$this->assertNull( $filter_attribute );
+	}
+
 }
