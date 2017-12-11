@@ -42,6 +42,17 @@ class WCML_Attributes{
         }else{
             add_filter( 'woocommerce_product_get_attributes', array( $this, 'filter_adding_to_cart_product_attributes_names' ) );
         }
+
+	    if ( $this->woocommerce_wpml->products->is_product_display_as_translated_post_type() ) {
+		    add_filter( 'woocommerce_available_variation', array(
+			    $this,
+			    'filter_available_variation_attribute_values_in_current_language'
+		    ) );
+		    add_filter( 'get_post_metadata', array(
+			    $this,
+			    'filter_product_variation_post_meta_attribute_values_in_current_language'
+		    ), 10, 4 );
+	    }
     }
 
     public function init(){
@@ -513,6 +524,12 @@ class WCML_Attributes{
 
         if( isset( $args['attribute'] ) && isset( $args['product'] ) ){
             $args['attribute'] = $this->filter_attribute_name( $args['attribute'],  WooCommerce_Functions_Wrapper::get_product_id( $args['product'] ) );
+
+            if( $this->woocommerce_wpml->products->is_product_display_as_translated_post_type() ){
+	            foreach( $args[ 'options' ] as $key => $attribute_value ){
+		            $args[ 'options' ][ $key ] = $this->get_attribute_term_translation_in_current_language( $args[ 'attribute' ], $attribute_value );
+	            }
+            }
         }
 
         return $args;
@@ -572,5 +589,78 @@ class WCML_Attributes{
 
         return false;
     }
+
+	/**
+	 *
+	 * @param array $args
+	 *
+	 * @return array
+	 */
+	public function filter_available_variation_attribute_values_in_current_language( $args ) {
+
+		foreach ( $args['attributes'] as $attribute_key => $attribute_value ) {
+
+			$args['attributes'][ $attribute_key ] = $this->get_attribute_term_translation_in_current_language( substr( $attribute_key, 10 ), $attribute_value );
+		}
+
+		return $args;
+	}
+
+	/**
+	 * @param null $value
+	 * @param int $object_id
+	 * @param string $meta_key
+	 * @param bool $single
+	 *
+	 * @return array
+	 */
+	public function filter_product_variation_post_meta_attribute_values_in_current_language( $value, $object_id, $meta_key, $single ) {
+
+		if ( 'product_variation' === get_post_type( $object_id ) && '' === $meta_key ) {
+
+			remove_filter( 'get_post_metadata', array(
+				$this,
+				'filter_product_variation_post_meta_attribute_values_in_current_language'
+			), 10, 4 );
+
+			$all_meta = get_post_meta( $object_id );
+
+			add_filter( 'get_post_metadata', array(
+				$this,
+				'filter_product_variation_post_meta_attribute_values_in_current_language'
+			), 10, 4 );
+
+			if ( $all_meta ) {
+				foreach ( $all_meta as $meta_key => $meta_value ) {
+					if ( 'attribute_' === substr( $meta_key, 0, 10 ) ) {
+						foreach ( $meta_value as $key => $value ) {
+							$all_meta[ $meta_key ][ $key ] = $this->get_attribute_term_translation_in_current_language( substr( $meta_key, 10 ), $value );
+						}
+					}
+				}
+
+				return $all_meta;
+			}
+
+		}
+
+		return $value;
+
+	}
+
+	/**
+	 *
+	 * @param string $attribute_taxonomy
+	 * @param string $attribute_value
+	 *
+	 * @return string
+	 */
+	private function get_attribute_term_translation_in_current_language( $attribute_taxonomy, $attribute_value ) {
+
+		$term = get_term_by( 'slug', $attribute_value, $attribute_taxonomy );
+
+		return $term->slug;
+	}
+
 
 }
