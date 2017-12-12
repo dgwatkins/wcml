@@ -281,7 +281,7 @@ class WCML_Dependencies{
     }
     
     public function check_wpml_config(){
-        global $sitepress_settings;
+        global $sitepress_settings, $sitepress, $woocommerce_wpml;
         
         if(empty($sitepress_settings)) return;
         
@@ -327,17 +327,21 @@ class WCML_Dependencies{
                         }
                     }
                     
-                    if($cts)
-                    foreach($cts as $ct){
-                        if(!isset($sitepress_settings['custom_posts_sync_option'][$ct['value']])) continue;
-                        $effective_config_value = $sitepress_settings['custom_posts_sync_option'][$ct['value']];
-                        $correct_config_value   = $ct['attr']['translate'];
-                        
-                        if($effective_config_value != $correct_config_value){
-                            $this->xml_config_errors[] = sprintf(__('Custom type %s configuration from wpml-config.xml file was altered!', 'woocommerce-multilingual'), '<i>' . $ct['value'] . '</i>');
-                        }
+                    if($cts){
+	                    foreach($cts as $ct){
+		                    if(!isset($sitepress_settings['custom_posts_sync_option'][$ct['value']])) continue;
+		                    $effective_config_value = $sitepress_settings['custom_posts_sync_option'][$ct['value']];
+		                    $correct_config_value   = $ct['attr']['translate'];
+
+		                    if( 'product' === $ct[ 'value' ] && $woocommerce_wpml->products->is_product_display_as_translated_post_type() ){
+			                    $correct_config_value = WPML_CONTENT_TYPE_DISPLAY_AS_IF_TRANSLATED;
+                            }
+
+		                    if($effective_config_value != $correct_config_value){
+			                    $this->xml_config_errors[] = sprintf(__('Custom type %s configuration from wpml-config.xml file was altered!', 'woocommerce-multilingual'), '<i>' . $ct['value'] . '</i>');
+		                    }
+	                    }
                     }
-                    
                 }
 
                 //taxonomies
@@ -355,7 +359,11 @@ class WCML_Dependencies{
                         if(!isset($sitepress_settings['taxonomies_sync_option'][$tx['value']])) continue;
                         $effective_config_value = $sitepress_settings['taxonomies_sync_option'][$tx['value']];
                         $correct_config_value   = $tx['attr']['translate'];
-                        
+
+	                    if( $sitepress->is_display_as_translated_taxonomy( $tx['value'] ) ){
+		                    $correct_config_value = WPML_CONTENT_TYPE_DISPLAY_AS_IF_TRANSLATED;
+                        }
+
                         if($effective_config_value != $correct_config_value){
                             $this->xml_config_errors[] = sprintf(__('Custom taxonomy %s configuration from wpml-config.xml file was altered!', 'woocommerce-multilingual'), '<i>' . $tx['value'] . '</i>');
                         }
