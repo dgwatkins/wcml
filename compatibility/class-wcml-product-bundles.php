@@ -66,6 +66,8 @@ class WCML_Product_Bundles {
 			add_filter( 'wcml_after_save_custom_prices', array( $this, 'update_bundles_base_price' ), 10, 4 );
 		}
 
+		add_action( 'init', array( $this, 'upgrade_bundles_items_relationships' ) );
+
 	}
 
 	private function get_product_bundle_data( $bundle_id ) {
@@ -773,4 +775,46 @@ class WCML_Product_Bundles {
 
 		return false;
 	}
+
+	// #wcml-2241
+	public function upgrade_bundles_items_relationships() {
+
+		if ( ! get_option( 'wcml_upgrade_bundles_items_relationships' ) ) {
+
+			$bundled_items    = $this->wpdb->get_results( "SELECT bundled_item_id, bundle_id, product_id FROM {$this->wpdb->prefix}woocommerce_bundled_items" );
+			$active_languages = $this->sitepress->get_active_languages();
+
+			foreach ( $bundled_items as $bundled_item ) {
+
+				if ( $this->woocommerce_wpml->products->is_original_product( $bundled_item->bundle_id ) ) {
+
+					foreach ( $active_languages as $lang ) {
+
+						if ( $lang['code'] !== $this->woocommerce_wpml->products->get_original_product_language( $bundled_item->bundle_id ) ) {
+
+							$translated_bundle_id  = apply_filters( 'translate_object_id', $bundled_item->bundle_id, get_post_type( $bundled_item->bundle_id ), false, $lang['code'] );
+							$translated_product_id = apply_filters( 'translate_object_id', $bundled_item->product_id, get_post_type( $bundled_item->product_id ), false, $lang['code'] );
+
+							$translated_item_id = $this->wpdb->get_var( $this->wpdb->prepare(
+								"SELECT bundled_item_id FROM {$this->wpdb->prefix}woocommerce_bundled_items WHERE product_id=%d AND bundle_id=%d",
+								$translated_product_id, $translated_bundle_id
+							) );
+
+							$this->wpdb->insert( $this->wpdb->prefix . 'woocommerce_bundled_itemmeta',
+								array(
+									'bundled_item_id' => $bundled_item->bundled_item_id,
+									'meta_key'        => 'translation_item_id_of_' . $lang['code'],
+									'meta_value'      => $translated_item_id,
+								)
+							);
+						}
+					}
+				}
+			}
+
+			add_option( 'wcml_upgrade_bundles_items_relationships', true );
+
+		}
+	}
+
 }
