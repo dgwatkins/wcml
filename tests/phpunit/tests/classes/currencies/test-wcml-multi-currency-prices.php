@@ -311,4 +311,26 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		$this->assertSame( $expected_price, $subject->get_original_product_price( $price, $product ) );
 
 	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_does_filter_woocommerce_cart_subtotal() {
+
+		$cart_subtotal = 10;
+		$expected_subtotal = 20;
+		$compound = false;
+		$cart_object = $this->getMockBuilder( 'WC_Cart' )
+		                    ->disableOriginalConstructor()
+		                    ->setMethods( array( 'get_cart_subtotal' ) )
+		                    ->getMock();
+
+		$cart_object->expects( $this->once() )->method( 'get_cart_subtotal' )->willReturn( $expected_subtotal );
+
+		$subject = $this->get_subject( $this->get_multi_currency_mock() );
+
+		$this->assertSame( $expected_subtotal, $subject->filter_woocommerce_cart_subtotal( $cart_subtotal, $compound, $cart_object ) );
+
+	}
 }

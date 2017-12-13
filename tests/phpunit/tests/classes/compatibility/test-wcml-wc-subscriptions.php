@@ -25,18 +25,6 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function add_hooks() {
-
-		$subject = $this->get_subject();
-
-		\WP_Mock::expectFilterAdded( 'wcml_calculate_totals_exception', '__return_false' );
-
-		$subject->add_hooks();
-	}
-
-	/**
-	 * @test
-	 */
 	public function actions_on_init_front_end() {
 		\WP_Mock::wpFunction(
 			'is_admin',
