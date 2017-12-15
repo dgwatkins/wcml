@@ -49,7 +49,7 @@ class WCML_Synchronize_Product_Data{
 
         add_action( 'woocommerce_reduce_order_stock', array( $this, 'sync_product_stocks_reduce' ) );
         add_action( 'woocommerce_restore_order_stock', array( $this, 'sync_product_stocks_restore' ) );
-        add_action( 'woocommerce_product_set_stock_status', array($this, 'sync_stock_status_for_translations' ), 10, 2);
+        add_action( 'woocommerce_product_set_stock_status', array($this, 'sync_stock_status_for_translations' ), 100, 2);
         add_action( 'woocommerce_variation_set_stock_status', array($this, 'sync_stock_status_for_translations' ), 10, 2);
 
         add_filter( 'future_product', array( $this, 'set_schedule_for_translations'), 10, 2 );
@@ -364,6 +364,8 @@ class WCML_Synchronize_Product_Data{
 	                }
 
 	                update_post_meta( $translation_product_id, 'total_sales', $total_sales );
+
+	                $this->wc_taxonomies_recount_after_stock_change( (int)$translation_product_id );
                 }
             }
         }
@@ -379,9 +381,27 @@ class WCML_Synchronize_Product_Data{
             foreach ( $translations as $translation ) {
                 if ( !$translation->original ) {
                     update_post_meta( $translation->element_id, '_stock_status', $status );
+
+                    $this->wc_taxonomies_recount_after_stock_change( (int)$translation->element_id );
                 }
             }
         }
+
+    }
+
+	/**
+	 * @param int $product_id
+	 */
+    private function wc_taxonomies_recount_after_stock_change( $product_id ){
+
+	    remove_filter( 'get_term', array( $this->sitepress, 'get_term_adjust_id' ), 1, 1 );
+
+	    wp_cache_delete( $product_id, 'product_cat_relationships' );
+	    wp_cache_delete( $product_id, 'product_tag_relationships' );
+
+	    wc_recount_after_stock_change( $product_id );
+
+	    add_filter( 'get_term', array( $this->sitepress, 'get_term_adjust_id' ), 1, 1 );
 
     }
 
