@@ -184,7 +184,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
                 }else{
 
-                    $custom_fields_values = array_values( array_filter( get_post_meta($this->product_id, $custom_field , true ) ) );
+                    $custom_fields_values = array_values( array_filter( maybe_unserialize( get_post_meta($this->product_id, $custom_field , true ) ) ) );
 
                     if( $custom_fields_values ){
                         $cf_fields_group = new WPML_Editor_UI_Field_Group();
@@ -556,11 +556,11 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
                     }else{
 
-                        $custom_fields_values = array_values( array_filter( get_post_meta($this->product_id, $custom_field, true ) ) );
+                        $custom_fields_values = array_values( array_filter( maybe_unserialize( get_post_meta($this->product_id, $custom_field, true ) ) ) );
 
                         if( $custom_fields_values ){
                             if ( $translation_id ) {
-                                $translated_custom_field_values = array_values( array_filter( get_post_meta( $translation_id, $custom_field , true ) ) );
+                                $translated_custom_field_values = array_values( array_filter( maybe_unserialize( get_post_meta( $translation_id, $custom_field , true ) ) ) );
                             }
                             foreach( $custom_fields_values as $custom_field_index => $custom_field_val ){
 
