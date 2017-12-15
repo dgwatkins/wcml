@@ -9,6 +9,9 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 	{
 		parent::setUp();
 
+		\WP_Mock::wpPassthruFunction( 'wp_cache_delete' );
+		\WP_Mock::wpPassthruFunction( 'remove_filter' );
+
 		$this->wpdb = $this->stubs->wpdb();
 	}
 
@@ -60,6 +63,23 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		$subject = $this->get_subject();
 
 		\WP_Mock::expectActionAdded( 'woocommerce_product_set_visibility', array( $subject, 'sync_product_translations_visibility' ) );
+
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_adds_admin_and_front_hooks(){
+		\WP_Mock::wpFunction( 'is_admin', array(
+			'return' => true,
+			'times'  => 1
+		) );
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::expectActionAdded( 'woocommerce_product_set_stock_status', array( $subject, 'sync_stock_status_for_translations' ), 100, 2 );
+		\WP_Mock::expectActionAdded( 'woocommerce_variation_set_stock_status', array( $subject, 'sync_stock_status_for_translations' ), 10, 2 );
 
 		$subject->add_hooks();
 	}
@@ -452,6 +472,11 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 			'times' => 1
 		) );
 
+		\WP_Mock::wpFunction( 'wc_recount_after_stock_change', array(
+			'args'  => array( $translation->element_id ),
+			'times' => 1
+		) );
+
 		$subject->sync_product_stocks( $order, 'reduce' );
 
 	}
@@ -546,7 +571,95 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 			'times' => 1
 		) );
 
+
+		\WP_Mock::wpFunction( 'wc_recount_after_stock_change', array(
+			'args'  => array( $translation_product_id),
+			'times' => 1
+		) );
+
 		$subject->sync_product_stocks( $order, 'reduce' );
+
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_sync_stock_status_for_translations() {
+
+		$product_id = mt_rand( 1, 100 );
+		$status = rand_str( 5 );
+		$post_type = 'product';
+
+		$translation = new stdClass();
+		$translation->original = false;
+		$translation->language_code = rand_str();
+		$translation->element_id = mt_rand( 101, 200 );
+		$translations[] = $translation;
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->getMock();
+		$woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                   ->disableOriginalConstructor()
+		                                   ->setMethods( array( 'is_original_product' ) )
+		                                   ->getMock();
+
+		$woocommerce_wpml->products->method( 'is_original_product' )->with( $product_id )->willReturn( true );
+
+
+		$sitepress = $this->getMockBuilder('SitePress')
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_element_trid', 'get_element_translations' ) )
+		                  ->getMock();
+
+		$sitepress->method( 'get_element_trid' )->willReturn( mt_rand( 201, 300 ) );
+		$sitepress->method( 'get_element_translations' )->willReturn( $translations );
+
+
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'args'  => array( $product_id ),
+			'return' => $post_type
+		) );
+
+		\WP_Mock::wpFunction( 'update_post_meta', array(
+			'args'  => array( $translation->element_id, '_stock_status', $status ),
+			'times' => 1
+		) );
+
+		\WP_Mock::wpFunction( 'wc_recount_after_stock_change', array(
+			'args'  => array( $translation->element_id),
+			'times' => 1
+		) );
+
+		$subject = $this->get_subject( $woocommerce_wpml, $sitepress );
+
+		$subject->sync_stock_status_for_translations( $product_id, $status );
+
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_does_not_sync_stock_status_for_translations() {
+
+		$product_id = mt_rand( 1, 100 );
+		$status = rand_str( 5 );
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->getMock();
+		$woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                   ->disableOriginalConstructor()
+		                                   ->setMethods( array( 'is_original_product' ) )
+		                                   ->getMock();
+
+		$woocommerce_wpml->products->method( 'is_original_product' )->with( $product_id )->willReturn( false );
+
+		$subject = $this->get_subject( $woocommerce_wpml );
+
+		$subject->sync_stock_status_for_translations( $product_id, $status );
 
 	}
 
