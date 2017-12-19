@@ -84,16 +84,20 @@ class WCML_Synchronize_Product_Data{
         }
 
         // exceptions
-        $ajax_call = ( !empty( $_POST[ 'icl_ajx_action' ] ) && $_POST[ 'icl_ajx_action' ] == 'make_duplicates' );
-        $api_call  = !empty( $wp->query_vars['wc-api-version'] );
-        if (
-            $post_type != 'product' ||
-            ( empty( $original_product_id ) || isset( $_POST[ 'autosave' ] ) ) ||
-            ( $pagenow != 'post.php' && $pagenow != 'post-new.php' && $pagenow != 'admin.php' && !$ajax_call && !$api_call ) ||
-            ( isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] == 'trash' )
-        ) {
-            return;
-        }
+	    $ajax_call  = ( ! empty( $_POST['icl_ajx_action'] ) && 'make_duplicates' === $_POST['icl_ajx_action'] );
+	    $api_call   = ! empty( $wp->query_vars['wc-api-version'] );
+	    $auto_draft = 'auto-draft' === $post->post_status;
+	    $trashing = isset( $_GET['action'] ) && 'trash' === $_GET['action'];
+	    if (
+		    $post_type !== 'product' ||
+		    empty( $original_product_id ) ||
+		    isset( $_POST['autosave'] )  ||
+		    ( $pagenow !== 'post.php' && $pagenow !== 'post-new.php' && $pagenow != 'admin.php' && ! $ajax_call && ! $api_call ) ||
+		    $trashing ||
+		    $auto_draft
+	    ) {
+		    return;
+	    }
         // Remove filter to avoid double sync
         remove_action( 'save_post', array( $this, 'synchronize_products' ), PHP_INT_MAX, 2 );
 
