@@ -49,14 +49,14 @@ class Test_WCML_Payment_Method_Filter extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_does_not_skip_logic_when_a_title_is_null_but_not_an_empty_string() {
+	public function it_returns_original_value_when_a_title_is_null() {
 		$title = null;
 		$object_id = 12;
 		$meta_key = '_payment_method_title';
 
 		$subject = new WCML_Payment_Method_Filter();
 
-		\WP_Mock::wpFunction( 'get_post_type', array( 'times' => 1, 'return' => 'post' ) );
+		\WP_Mock::wpFunction( 'get_post_type', array( 'times' => 0 ) );
 
 		$this->assertNull( $subject->payment_method_string( $title, $object_id, $meta_key ) );
 	}
