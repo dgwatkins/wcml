@@ -26,7 +26,7 @@ class WCML_Translation_Editor{
         add_filter( 'icl_post_alternative_languages', array( $this, 'hide_post_translation_links' ) );
 
         add_filter( 'manage_product_posts_columns', array( $this, 'add_languages_column' ), 100 );
-        add_action( 'woocommerce_product_after_variable_attributes', array( $this, 'lock_variable_fields' ), 10, 3 );
+        add_action( 'woocommerce_product_after_variable_attributes', array( $this, 'lock_variable_fields' ), 10 );
 
         if( is_admin() ){
             add_filter( 'wpml_use_tm_editor', array( $this, 'force_woocommerce_native_editor'), 100 );
@@ -196,7 +196,7 @@ class WCML_Translation_Editor{
         return $new_columns;
     }
 
-    public function lock_variable_fields( $loop, $variation_data, $variation ){
+    public function lock_variable_fields( $loop ){
 
         $product_id = false;
 
@@ -225,11 +225,11 @@ class WCML_Translation_Editor{
             if ( $variations ) {
                 foreach ($variations as $variation) {
                     $variation_id = absint( $variation->ID );
-                    $original_id = $this->woocommerce_wpml->products->get_original_product_id( $product_id );
+                    $original_id = $this->woocommerce_wpml->products->get_original_product_id( $variation_id );
                     $custom_product_sync = get_post_meta( $original_id, 'wcml_sync_files', true );
                     if( $custom_product_sync && $custom_product_sync == 'self' ) {
                         $file_path_sync[ $variation_id ] = false;
-                    }elseif( $custom_product_sync && $custom_product_sync == 'auto' ){
+                    }else{
                         $file_path_sync[ $variation_id ] = true;
                     }
                 }
