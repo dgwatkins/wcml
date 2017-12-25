@@ -278,7 +278,7 @@ class WCML_WC_Subscriptions{
 	 */
 	function maybe_force_client_currency_for_resubscribe_subscription( ){
 
-		if ( isset( $_GET['resubscribe'] ) || false !== ( $resubscribe_cart_item = wcs_cart_contains_resubscribe() ) ) {
+		if ( wcml_is_multi_currency_on() && ( isset( $_GET['resubscribe'] ) || false !== ( $resubscribe_cart_item = wcs_cart_contains_resubscribe() ) ) ) {
 			$subscription_id = ( isset( $_GET['resubscribe'] ) ) ? (int) $_GET['resubscribe'] : $resubscribe_cart_item['subscription_resubscribe']['subscription_id'];
 
 			$subscription_currency = get_post_meta( $subscription_id, '_order_currency', true );

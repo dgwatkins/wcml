@@ -33,6 +33,13 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 			)
 		);
 
+		\WP_Mock::wpFunction(
+			'wcml_is_multi_currency_on',
+			array(
+				'return' => true,
+			)
+		);
+
 		$subject = $this->get_subject();
 
 		$this->expectActionAdded( 'woocommerce_before_calculate_totals', array( $subject, 'maybe_backup_recurring_carts' ), 1, 1, 1 );
@@ -169,6 +176,10 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 			'return' => $subscription_currency
 		) );
 
+		\WP_Mock::wpFunction( 'wcml_is_multi_currency_on', array(
+			'return' => true
+		) );
+
 		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
 		                                               ->disableOriginalConstructor()
 		                                               ->setMethods( array( 'set_client_currency', 'get_client_currency' ) )
@@ -203,6 +214,10 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 			'return' => $subscription_currency
 		) );
 
+		\WP_Mock::wpFunction( 'wcml_is_multi_currency_on', array(
+			'return' => true
+		) );
+
 		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
 		                                               ->disableOriginalConstructor()
 		                                               ->setMethods( array( 'set_client_currency', 'get_client_currency' ) )
@@ -210,6 +225,23 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 
 		$this->woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
 		$this->woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'set_client_currency' )->willReturn( true );
+
+		$subject = $this->get_subject();
+		$subject->maybe_force_client_currency_for_resubscribe_subscription();
+	}
+
+	/**
+	 * @test
+	 */
+	public function does_not_force_client_currency_for_resubscribe_subscription_when_MC_is_off() {
+
+		\WP_Mock::wpFunction( 'wcml_is_multi_currency_on', array(
+			'return' => false
+		) );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'times' => 0
+		) );
 
 		$subject = $this->get_subject();
 		$subject->maybe_force_client_currency_for_resubscribe_subscription();
