@@ -255,7 +255,7 @@ class WCML_WC_Subscriptions{
 
 	function woocommerce_subscription_price_from( $price, $product ){
 
-		if( 'variable-subscription' === $product->get_type() ){
+		if ( in_array( $product->get_type(), array( 'variable-subscription', 'subscription_variation' ) ) ) {
 
 			$variation_id = $product->get_meta( '_min_price_variation_id', true );
 
