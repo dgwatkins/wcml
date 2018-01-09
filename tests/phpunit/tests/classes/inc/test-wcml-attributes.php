@@ -498,6 +498,11 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 			'return' => $term
 		) );
 
+		\WP_Mock::wpFunction( 'taxonomy_exists', array(
+			'args'  => array( $attribute_taxonomy ),
+			'return' => true
+		) );
+
 		$subject = $this->get_subject();
 
 		$filter_attribute = $subject->filter_available_variation_attribute_values_in_current_language( $args );
@@ -537,6 +542,11 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 			'return' => $term
 		) );
 
+		\WP_Mock::wpFunction( 'taxonomy_exists', array(
+			'args'  => array( $attribute_taxonomy ),
+			'return' => true
+		) );
+
 		$subject = $this->get_subject();
 
 		$filter_attribute = $subject->filter_product_variation_post_meta_attribute_values_in_current_language( null, $object_id, '', false );
@@ -561,6 +571,30 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$filter_attribute = $subject->filter_product_variation_post_meta_attribute_values_in_current_language( null, $object_id, '', false );
 
 		$this->assertNull( $filter_attribute );
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function does_not_filter_product_variation_post_meta_attribute_values_in_current_language_when_attribute_is_not_taxonomy() {
+
+		$attribute_taxonomy = rand_str( 10 );
+		$attribute_key = 'attribute_'.$attribute_taxonomy;
+		$attribute_value = rand_str( 12 );
+
+		$args['attributes'] = array( $attribute_key => $attribute_value );
+
+		\WP_Mock::wpFunction( 'taxonomy_exists', array(
+			'args'  => array( $attribute_taxonomy ),
+			'return' => false
+		) );
+
+		$subject = $this->get_subject();
+
+		$filter_attribute = $subject->filter_available_variation_attribute_values_in_current_language( $args );
+
+		$this->assertEquals( $filter_attribute[ 'attributes' ][ $attribute_key ], $attribute_value );
 	}
 
 }

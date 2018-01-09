@@ -657,9 +657,12 @@ class WCML_Attributes{
 	 */
 	private function get_attribute_term_translation_in_current_language( $attribute_taxonomy, $attribute_value ) {
 
-		$term = get_term_by( 'slug', $attribute_value, $attribute_taxonomy );
+		if( taxonomy_exists( $attribute_taxonomy ) ){
+			$term = get_term_by( 'slug', $attribute_value, $attribute_taxonomy );
+			$attribute_value = $term->slug;
+		}
 
-		return $term->slug;
+		return $attribute_value;
 	}
 
 
