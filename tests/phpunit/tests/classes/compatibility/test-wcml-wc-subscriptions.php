@@ -160,6 +160,33 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 
 		$this->assertEquals( $expected_price, $filtered_price );
 	}
+	/**
+	 * @test
+	 */
+	public function woocommerce_subscription_price_from_auto_converted_price_for_subscription_variation_type() {
+
+		$price          = rand( 1, 100 );
+		$expected_price = rand( 1, 100 );
+
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'get_type', 'get_meta' ) )
+		                ->getMock();
+
+		$product->method( 'get_type' )->willReturn( 'subscription_variation' );
+
+		$product->method( 'get_meta' )->with( '_min_price_variation_id', true )->willReturn( false );
+
+		\WP_Mock::onFilter( 'wcml_raw_price_amount' )
+		        ->with( $price )
+		        ->reply( $expected_price );
+
+		$subject = $this->get_subject();
+
+		$filtered_price = $subject->woocommerce_subscription_price_from( $price, $product );
+
+		$this->assertEquals( $expected_price, $filtered_price );
+	}
 
 	/**
 	 * @test
