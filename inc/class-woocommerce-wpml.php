@@ -225,7 +225,8 @@ class woocommerce_wpml {
 		$payment_method_filter = new WCML_Payment_Method_Filter();
 		$payment_method_filter->add_hooks();
 
-		new WCML_Ajax_Setup( $sitepress );
+		$wcml_ajax_setup = new WCML_Ajax_Setup( $sitepress );
+		$wcml_ajax_setup->add_hooks();
 		new WCML_Fix_Copied_Custom_Fields_WPML353();
 
 		WCML_Install::initialize( $this, $sitepress );
