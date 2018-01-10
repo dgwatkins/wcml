@@ -398,7 +398,7 @@ class WCML_Cart {
 					$term             = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $trnsl_term_id, $taxonomy );
 					$attr_translation = $term->slug;
 				}
-			} else {
+			} elseif( $variation_id ) {
 
 				$trnsl_attr = get_post_meta( $variation_id, $attr_key, true );
 

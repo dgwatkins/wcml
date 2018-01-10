@@ -442,4 +442,25 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		$this->assertEquals( $translated_permalink, $subject->cart_item_permalink( $permalink, $cart_item ) );
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_does_not_get_cart_attribute_translation_when_variation_is_empty() {
+
+		$attr_key = rand_str();
+		$attribute = rand_str();
+		$current_language = rand_str();
+		$variation_id = 0;
+		$product_id = mt_rand( 1, 10 );
+		$tr_product_id = mt_rand( 11, 20 );
+
+		\WP_Mock::wpFunction( 'taxonomy_exists', array(
+			'args' => array( $attr_key ),
+			'return' => false
+		) );
+
+		$subject = $this->get_subject();
+		$this->assertEquals( $attribute, $subject->get_cart_attribute_translation( 'attribute_'.$attr_key, $attribute, $variation_id, $current_language, $product_id, $tr_product_id ) );
+	}
+
 }
