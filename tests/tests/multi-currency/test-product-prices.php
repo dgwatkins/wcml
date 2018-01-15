@@ -126,13 +126,10 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 		$price_formatted = '<span class="woocommerce-Price-amount amount">';
 
-		$price_formatted .= sprintf(
-			str_replace(
-				array( '<cur>', '</cur>' ),
-				array( '<span class="woocommerce-Price-currencySymbol">', '</span>%s' ),
-				$price
-			),
-			$currency_position === 'left' ? '&#x200e;' : '&#x200f;'
+		$price_formatted .= str_replace(
+			array( '<cur>', '</cur>' ),
+			array( '<span class="woocommerce-Price-currencySymbol">', '</span>' ),
+			$price
 		);
 
 		$price_formatted .= '</span>';
