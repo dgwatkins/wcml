@@ -104,10 +104,10 @@ class Test_WCML_Multi_Currency_Switcher extends WCML_UnitTestCase {
 
             '%code%/#%subtotal%' => array(
                 'expected' => array(
-                    'USD' => 'USD/#<span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">&#36;</span>&#x200e;0.00</span>',
-                    'JPY' => 'JPY/#<span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">&yen;</span>&#x200e;0</span>',
-                    'BTC' => 'BTC/#<span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">&#3647;</span>&#x200e;0.0000</span>',
-                    'GBP' => 'GBP/#<span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">&pound;</span>&#x200e;0.00</span>'
+                    'USD' => 'USD/#<span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">&#36;</span>0.00</span>',
+                    'JPY' => 'JPY/#<span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">&yen;</span>0</span>',
+                    'BTC' => 'BTC/#<span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">&#3647;</span>0.0000</span>',
+                    'GBP' => 'GBP/#<span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">&pound;</span>0.00</span>'
                 )
             )
         );

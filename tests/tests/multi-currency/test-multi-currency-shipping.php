@@ -160,7 +160,6 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
                     $label = wc_cart_totals_shipping_method_label( $method );
                     $cost = preg_replace('#[^<]+<span[^>]+><span[^>]+>[^<]+</span>(.+)</span>#', '$1', $label);
                     $cost = str_replace(',', '', $cost);
-                    $cost = preg_replace('/&#x200[ef];/', '', $cost );
                     $this->assertEquals( $this->expected_rates[$method->id][$code],  $cost );
                 }
             }
