@@ -27,10 +27,6 @@
     },
     {
       "type": "vcs",
-      "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-unit-tests-framework.git"
-    },
-    {
-      "type": "vcs",
       "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-changelog.git"
     }
   ],
