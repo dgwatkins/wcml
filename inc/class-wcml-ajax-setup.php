@@ -116,16 +116,24 @@ class WCML_Ajax_Setup{
         return $value; 
     }
 
+	public function wcml_localize_woocommerce_on_ajax() {
+		$action         = filter_var( $_POST['action'], FILTER_SANITIZE_STRING );
+		$is_ajax_action = $action
+		                  && in_array( $action,
+				array(
+					'wcml_product_data',
+					'wpml_translation_dialog_save_job',
+					'edit-theme-plugin-file'
+				),
+				true );
+		if ( $action && ( $is_ajax_action || ! apply_filters( 'wcml_is_localize_woocommerce_on_ajax', true, $action ) ) ) {
+			return;
+		}
 
-    function wcml_localize_woocommerce_on_ajax(){
-        if( isset($_POST['action']) && in_array( $_POST['action'], array( 'wcml_product_data', 'wpml_translation_dialog_save_job' ) ) ){
-            return;
-        }
+		$current_language = $this->sitepress->get_current_language();
 
-        $current_language = $this->sitepress->get_current_language();
-
-	    $this->sitepress->switch_lang($current_language, true);
-    }
+		$this->sitepress->switch_lang( $current_language, true );
+	}
 
 	/**
 	 * @param $endpoint string

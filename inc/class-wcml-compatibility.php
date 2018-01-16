@@ -235,6 +235,12 @@ class WCML_Compatibility {
 			$this->etheme_blanco->add_hooks();
 		}
 
+		// WPBakery Page Builder
+		if ( defined( 'WPB_VC_VERSION') ) {
+			$this->wpb_vc= new WCML_Wpb_Vc();
+			$this->wpb_vc->add_hooks();
+		}
+
 	}
 
 }
