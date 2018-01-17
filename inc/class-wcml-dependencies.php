@@ -367,7 +367,7 @@ class WCML_Dependencies{
                         $effective_config_value = $sitepress_settings['taxonomies_sync_option'][$tx['value']];
                         $correct_config_value   = $tx['attr']['translate'];
 
-	                    if($sitepress->is_display_as_translated_taxonomy( $tx['value'] ) ){
+	                    if( method_exists( $sitepress, 'is_display_as_translated_taxonomy' ) && $sitepress->is_display_as_translated_taxonomy( $tx['value'] ) ){
 		                    $correct_config_value = WPML_CONTENT_TYPE_DISPLAY_AS_IF_TRANSLATED;
                         }
 

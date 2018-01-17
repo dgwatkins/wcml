@@ -117,7 +117,7 @@ class WCML_Ajax_Setup{
     }
 
 	public function wcml_localize_woocommerce_on_ajax() {
-		$action         = filter_var( $_POST['action'], FILTER_SANITIZE_STRING );
+		$action         = isset( $_POST['action'] ) ? filter_var( $_POST['action'], FILTER_SANITIZE_STRING ) : false;
 		$is_ajax_action = $action
 		                  && in_array( $action,
 				array(
