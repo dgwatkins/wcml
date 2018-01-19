@@ -44,7 +44,7 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function translate_variations_in_rules(){
+	public function it_translates_variations_in_rules(){
 
 		$variation_id = mt_rand( 1, 100 );
 		$translated_variation_id = mt_rand ( 101, 200 );
@@ -66,6 +66,28 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 		$subject        = $this->get_subject();
 		$filtered_rules = $subject->translate_variations_in_rules( $rules );
 		$this->assertEquals( array( $translated_variation_id ), $filtered_rules[0]['variation_rules']['args']['variations'] );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_does_not_translate_variations_in_rules(){
+
+		$variation_id = mt_rand( 1, 100 );
+		$translated_variation_id = mt_rand ( 101, 200 );
+
+		$rule = array(
+			'variation_rules' => array(
+				'args' => array()
+			)
+		);
+
+		$rules = array( $rule );
+
+		$subject        = $this->get_subject();
+		$filtered_rules = $subject->translate_variations_in_rules( $rules );
+		$this->assertEquals( $rules, $filtered_rules );
 
 	}
 }
