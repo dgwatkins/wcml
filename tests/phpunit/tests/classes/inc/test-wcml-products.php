@@ -218,7 +218,8 @@ class Test_WCML_Products extends OTGS_TestCase {
 	public function filter_file_download_path_per_domain(){
 
 		$negotation_type_domain = mt_rand( 1, 10);
-		$file_path = rand_str();
+		$home_url = rand_str( 5 );
+		$file_path = $home_url.rand_str();
 		$converted_file_path = rand_str();
 
 		$this->wp_api->method( 'constant' )
@@ -234,12 +235,40 @@ class Test_WCML_Products extends OTGS_TestCase {
 		                ->with( $file_path )
 		                ->willReturn( $converted_file_path );
 
+		$url_helper_mock = \Mockery::mock( 'overload:WPML_URL_Converter_Url_Helper' );
+		$url_helper_mock->shouldReceive( 'get_abs_home' )->andReturn( $home_url );
+
 		$subject = $this->get_subject();
 		$filtered_file_path = $subject->filter_file_download_path( $file_path );
 
 		$this->assertEquals( $converted_file_path, $filtered_file_path );
+	}
 
+	/**
+	 * @test
+	 */
+	public function it_does_not_filter_not_home_site_file_download_path_per_domain(){
 
+		$negotation_type_domain = mt_rand( 1, 10);
+		$home_url = rand_str( 5 );
+		$file_path = rand_str();
+
+		$this->wp_api->method( 'constant' )
+		             ->with( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' )
+		             ->willReturn( $negotation_type_domain );
+
+		$this->sitepress->expects( $this->once() )
+		                ->method( 'get_setting' )
+		                ->with( 'language_negotiation_type' )
+		                ->willReturn( $negotation_type_domain );
+
+		$url_helper_mock = \Mockery::mock( 'overload:WPML_URL_Converter_Url_Helper' );
+		$url_helper_mock->shouldReceive( 'get_abs_home' )->andReturn( $home_url );
+
+		$subject = $this->get_subject();
+		$filtered_file_path = $subject->filter_file_download_path( $file_path );
+
+		$this->assertEquals( $file_path, $filtered_file_path );
 	}
 
 }
