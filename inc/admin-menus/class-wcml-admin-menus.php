@@ -47,9 +47,15 @@ class WCML_Admin_Menus{
                 //force add translations-queue page for shop manager
                 $wp_api = self::$sitepress->get_wp_api();
                 if (!$wp_api->current_user_can('wpml_manage_translation_management')) {
-                    $wp_api->add_submenu_page(null,
-                        __( 'Translations', 'woocommerce-multilingual' ), __( 'Translations', 'woocommerce-multilingual' ),
-                        'wpml_operate_woocommerce_multilingual', WPML_TM_FOLDER . '/menu/translations-queue.php', array($WPML_Translation_Management, 'translation_queue_page'));
+	                $menu               = array();
+	                $menu['order']      = 400;
+	                $menu['page_title'] = __( 'Translations', 'wpml-translation-management' );
+	                $menu['menu_title'] = __( 'Translations', 'wpml-translation-management' );
+	                $menu['capability'] = 'wpml_operate_woocommerce_multilingual';
+	                $menu['menu_slug']  = WPML_TM_FOLDER . '/menu/translations-queue.php';
+	                $menu['function']   = array( $WPML_Translation_Management, 'translation_queue_page' );
+	                $menu['icon_url']   = ICL_PLUGIN_URL . '/res/img/icon16.png';
+	                do_action( 'wpml_admin_menu_register_item', $menu );
                 }
             }
         } else {
