@@ -241,6 +241,12 @@ class WCML_Compatibility {
 			$this->wpb_vc->add_hooks();
 		}
 
+		// Relevanssi plugin
+		if ( function_exists( 'relevanssi_insert_edit' ) ) {
+			$this->relevanssi = new WCML_Relevanssi();
+			$this->relevanssi->add_hooks();
+		}
+
 	}
 
 }
