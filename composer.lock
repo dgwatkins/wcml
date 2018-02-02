@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e6b2f8737442d397dd55af49618c1340",
+    "content-hash": "9d6d1dcc008f68669f965061fe6a0ae6",
     "packages": [
         {
             "name": "composer/installers",
@@ -1482,11 +1482,11 @@
         },
         {
             "name": "otgs/build-tools-ci",
-            "version": "0.7.4",
+            "version": "0.7.6",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "e4c0c63ed465e40872d017ebc081093cd5ccf88d"
+                "reference": "b13b15565f510b64913585d279bbcf2d72a8f204"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -1500,7 +1500,8 @@
                 "wp-coding-standards/wpcs": "^0.10.0"
             },
             "bin": [
-                "otgs-ci"
+                "otgs-ci",
+                "bin/publish-artifact-to-s3"
             ],
             "type": "library",
             "autoload": {
@@ -1534,7 +1535,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2017-11-16T11:45:00+00:00"
+            "time": "2018-02-02T10:35:22+00:00"
         },
         {
             "name": "otgs/changelog",
@@ -1589,7 +1590,7 @@
             "version": "1.2.3",
             "source": {
                 "type": "git",
-                "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-unit-tests-framework.git",
+                "url": "https://github.com/OnTheGoSystems/otgs-unit-tests-framework.git",
                 "reference": "9987942e47bd9b9c4d595fa04711cc21195b5888"
             },
             "require": {
