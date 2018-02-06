@@ -1482,11 +1482,11 @@
         },
         {
             "name": "otgs/build-tools-ci",
-            "version": "0.7.6",
+            "version": "0.7.7",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "b13b15565f510b64913585d279bbcf2d72a8f204"
+                "reference": "607b8738c593889b1f43a8232b0e5f91b8faf761"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -1535,7 +1535,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2018-02-02T10:35:22+00:00"
+            "time": "2018-02-05T17:06:00+00:00"
         },
         {
             "name": "otgs/changelog",
@@ -1590,7 +1590,7 @@
             "version": "1.2.3",
             "source": {
                 "type": "git",
-                "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-unit-tests-framework.git",
+                "url": "https://github.com/OnTheGoSystems/otgs-unit-tests-framework.git",
                 "reference": "9987942e47bd9b9c4d595fa04711cc21195b5888"
             },
             "require": {
