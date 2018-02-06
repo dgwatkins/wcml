@@ -1482,11 +1482,11 @@
         },
         {
             "name": "otgs/build-tools-ci",
-            "version": "0.7.3",
+            "version": "0.7.7",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "880173607970d682d5a0370887333b1f319a2927"
+                "reference": "607b8738c593889b1f43a8232b0e5f91b8faf761"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -1500,7 +1500,8 @@
                 "wp-coding-standards/wpcs": "^0.10.0"
             },
             "bin": [
-                "otgs-ci"
+                "otgs-ci",
+                "bin/publish-artifact-to-s3"
             ],
             "type": "library",
             "autoload": {
@@ -1534,7 +1535,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2017-08-10T19:48:15+00:00"
+            "time": "2018-02-05T17:06:00+00:00"
         },
         {
             "name": "otgs/changelog",
@@ -1589,7 +1590,7 @@
             "version": "1.2.3",
             "source": {
                 "type": "git",
-                "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-unit-tests-framework.git",
+                "url": "https://github.com/OnTheGoSystems/otgs-unit-tests-framework.git",
                 "reference": "9987942e47bd9b9c4d595fa04711cc21195b5888"
             },
             "require": {
