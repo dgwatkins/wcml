@@ -15,7 +15,8 @@ before_script:
   - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
   - eval $(ssh-agent -s)
   - bash -c 'ssh-add <(echo "$SSH_PRIVATE_KEY")'
-  - '[[ -f /.ec2env ]] && mkdir -p ~/.ssh && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  - '[[ -f /.dockerenv ]] && mkdir -p ~/.ssh && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  - 'php --version'
   - 'composer install --quiet'
 
 stages:
@@ -24,6 +25,7 @@ stages:
   - test
   - deploy
   - documentation
+  - publish
 
 PhpComp:
   stage: qa
@@ -173,3 +175,21 @@ Release-Notes:
     - ./vendor/otgs/build-tools-ci/otgs-ci --releasenotes
   only:
     - tags
+  except:
+
+Deploy:S3:
+  stage: publish
+  when: on_success
+  image: artbuilder:php7
+  tags:
+    - ec2
+  script:
+    - ./vendor/bin/publish-artifact-to-s3
+  dependencies:
+  - Artifacts-Tag
+  - Artifacts-Develop
+  - Artifacts-Master
+  only:
+    - tags
+    - develop
+    - master

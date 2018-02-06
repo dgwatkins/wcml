@@ -1482,11 +1482,11 @@
         },
         {
             "name": "otgs/build-tools-ci",
-            "version": "0.7.3",
+            "version": "0.7.6",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "880173607970d682d5a0370887333b1f319a2927"
+                "reference": "b13b15565f510b64913585d279bbcf2d72a8f204"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -1500,7 +1500,8 @@
                 "wp-coding-standards/wpcs": "^0.10.0"
             },
             "bin": [
-                "otgs-ci"
+                "otgs-ci",
+                "bin/publish-artifact-to-s3"
             ],
             "type": "library",
             "autoload": {
@@ -1534,7 +1535,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2017-08-10T19:48:15+00:00"
+            "time": "2018-02-02T10:35:22+00:00"
         },
         {
             "name": "otgs/changelog",
