@@ -20,15 +20,14 @@ before_script:
   - 'composer install --quiet'
 
 stages:
-  - build
-  - qa
+  - quality
   - test
-  - deploy
+  - build
   - documentation
-  - publish
+  - deploy
 
-PhpComp:
-  stage: qa
+Compatibility <PHP>:
+  stage: quality
   when: always
   image: otgs/phpunit:5.7
   tags:
@@ -38,7 +37,7 @@ PhpComp:
   except:
     - tags
 
-PhpUnit:
+Unit <PHP>:
   stage: test
   when: always
   image: otgs/phpunit:5.7
@@ -50,7 +49,7 @@ PhpUnit:
   except:
     - tags
 
-PhpUnit-Legacy:
+Integration <PHP>:
   stage: test
   when: always
   tags:
@@ -60,9 +59,9 @@ PhpUnit-Legacy:
   except:
     - tags
 
-Artifacts-Tag:
+Tag:
   stage: build
-  when: on_success
+  when: always
   image: artbuilder:php7
   tags:
     - ec2
@@ -76,8 +75,8 @@ Artifacts-Tag:
   only:
     - tags
 
-Artifacts-Branches:
-  stage: deploy
+Branch:
+  stage: build
   when: on_success
   image: artbuilder:php7
   tags:
@@ -97,25 +96,8 @@ Artifacts-Branches:
     - /^pre-release.*$/
     - /^functional.*$/
 
-Artifacts-Functional-Tests:
-  stage: deploy
-  when: on_success
-  image: artbuilder:php7
-  tags:
-    - ec2
-  script:
-    - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
-    - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
-  artifacts:
-    expire_in: 7 days
-    name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
-    paths:
-      - ${CI_PROJECT_NAME}
-  only:
-    - /^functional.*$/
-
-Artifacts-Prereleases:
-  stage: qa
+Pre-Release:
+  stage: build
   when: on_success
   image: artbuilder:php7
   tags:
@@ -131,8 +113,8 @@ Artifacts-Prereleases:
   only:
     - /^pre-release.*$/
 
-Artifacts-Develop:
-  stage: deploy
+Develop:
+  stage: build
   when: on_success
   image: artbuilder:php7
   tags:
@@ -147,8 +129,8 @@ Artifacts-Develop:
   only:
     - develop
 
-Artifacts-Master:
-  stage: deploy
+Master:
+  stage: build
   when: on_success
   image: artbuilder:php7
   tags:
@@ -164,7 +146,7 @@ Artifacts-Master:
   only:
     - master
 
-Release-Notes:
+Release Notes:
   stage: documentation
   when: on_success
   image: artbuilder:php7
@@ -177,8 +159,8 @@ Release-Notes:
     - tags
   except:
 
-Deploy:S3:
-  stage: publish
+S3:
+  stage: deploy
   when: on_success
   image: artbuilder:php7
   tags:
@@ -186,9 +168,9 @@ Deploy:S3:
   script:
     - ./vendor/bin/publish-artifact-to-s3
   dependencies:
-  - Artifacts-Tag
-  - Artifacts-Develop
-  - Artifacts-Master
+  - Tag
+  - Develop
+  - Master
   only:
     - tags
     - develop
