@@ -9,11 +9,22 @@ class WCML_Emails{
     private $sitepress;
     /** @var WooCommerce */
     private $woocommerce;
+	/** @var wpdb */
+	private $wpdb;
 
-    function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress, WooCommerce $woocommerce ) {
+	/**
+	 * WCML_Emails constructor.
+	 *
+	 * @param woocommerce_wpml $woocommerce_wpml
+	 * @param SitePress $sitepress
+	 * @param WooCommerce $woocommerce
+	 * @param wpdb $wpdb
+	 */
+    function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress, WooCommerce $woocommerce, wpdb $wpdb ) {
         $this->woocommerce_wpml = $woocommerce_wpml;
         $this->sitepress        = $sitepress;
         $this->woocommerce      = $woocommerce;
+	    $this->wpdb             = $wpdb;
     }
 
     function add_hooks(){
@@ -122,6 +133,10 @@ class WCML_Emails{
 
 	    add_filter( 'woocommerce_email_setup_locale', '__return_false' );
 	    add_filter( 'woocommerce_email_restore_locale', '__return_false' );
+
+
+	    add_filter( 'woocommerce_email_heading_new_order',  array( $this, 'new_order_email_heading' ) );
+	    add_filter( 'woocommerce_email_subject_new_order',  array( $this, 'new_order_email_subject' ) );
     }
 
     function email_refresh_in_ajax() {
@@ -282,6 +297,18 @@ class WCML_Emails{
         }
     }
 
+    public function new_order_email_heading( $heading ){
+        $heading = $this->woocommerce->mailer()->emails['WC_Email_New_Order']->heading;
+
+        return $heading;
+    }
+
+    public function new_order_email_subject( $subject ){
+	    $subject = $this->woocommerce->mailer()->emails['WC_Email_New_Order']->subject;
+
+	    return $subject;
+    }
+
     public function backend_new_order_admin_email( $order_id ){
         if( isset( $_POST[ 'wc_order_action' ] ) && $_POST[ 'wc_order_action' ] == 'send_email_new_order' ){
             $this->new_order_admin_email( $order_id );
@@ -356,19 +383,9 @@ class WCML_Emails{
                 $language_code = $order_language;
             }
         }
+        $result = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT value FROM {$this->wpdb->prefix}icl_strings WHERE context = %s AND name = %s ", $context, $name ) );
 
-        if( version_compare( $this->sitepress->get_wp_api()->constant( 'WPML_ST_VERSION' ), '2.2.6', '<=' ) ){
-            global $wpdb;
-
-            $result = $wpdb->get_var( $wpdb->prepare( "SELECT value FROM {$wpdb->prefix}icl_strings WHERE context = %s AND name = %s ", $context, $name ) );
-
-            return apply_filters( 'wpml_translate_single_string', $result, $context, $name, $language_code );
-        }else{
-
-            return apply_filters( 'wpml_translate_single_string', false, $context, $name , $language_code);
-
-        }
-
+        return apply_filters( 'wpml_translate_single_string', $result, $context, $name, $language_code );
     }
 
     function icl_current_string_language(  $current_language, $name ){

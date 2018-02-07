@@ -8,6 +8,8 @@ class Test_WCML_Emails extends OTGS_TestCase {
 	private $sitepress;
 	/** @var WooCommerce */
 	private $woocommerce;
+	/** @var wpdb */
+	private $wpdb;
 	/** @var WPML_WP_API $wp_api */
 	private $wp_api;
 
@@ -34,11 +36,13 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			->getMock();
 
 		$this->wp_api->method( 'constant' )->with( 'WPML_ST_VERSION' )->willReturn( '2.5.2' );
+
+		$this->wpdb = $this->stubs->wpdb();
 	}
 
 	private function get_subject( ){
 
-		return new WCML_Emails( $this->woocommerce_wpml, $this->sitepress, $this->woocommerce );
+		return new WCML_Emails( $this->woocommerce_wpml, $this->sitepress, $this->woocommerce, $this->wpdb );
 
 	}
 
@@ -52,6 +56,9 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$trnsl_name = rand_str();
 		$order_id = rand( 1, 100 );
 		$language_code = 'fr';
+		$result = rand_str();
+
+		$this->wpdb->method( 'get_var' )->willReturn( $result );
 
 		$subject = $this->get_subject( );
 
@@ -61,7 +68,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		) );
 		
 		WP_Mock::onFilter( 'wpml_translate_single_string' )
-			->with( false, $context, $name , $language_code )
+			->with( $result, $context, $name , $language_code )
 			->reply( $trnsl_name );
 
 		$filtered_name = $subject->wcml_get_translated_email_string( $context, $name, $order_id  );
@@ -78,11 +85,14 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$trnsl_name = rand_str();
 		$order_id = rand( 1, 100 );
 		$language_code = rand_str();
+		$result = rand_str();
+
+		$this->wpdb->method( 'get_var' )->willReturn( $result );
 
 		$subject = $this->get_subject();
 
 		WP_Mock::onFilter( 'wpml_translate_single_string' )
-			->with( false, $context, $name , $language_code )
+			->with( $result, $context, $name , $language_code )
 			->reply( $trnsl_name );
 
 		$filtered_name = $subject->wcml_get_translated_email_string( $context, $name, $order_id, $language_code );
@@ -175,9 +185,11 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			'args'   => array( $order_id, 'wpml_language', true ),
 			'return' => $language
 		) );
+		$result = rand_str();
 
+		$this->wpdb->method( 'get_var' )->willReturn( $result );
 
-		\WP_Mock::onFilter( 'wpml_translate_single_string')->with( false, $context, $name, $language )->reply( $translated_value );
+		\WP_Mock::onFilter( 'wpml_translate_single_string')->with( $result, $context, $name, $language )->reply( $translated_value );
 
 		$subject = $this->get_subject();
 
