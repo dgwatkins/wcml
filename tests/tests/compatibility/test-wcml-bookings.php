@@ -105,7 +105,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	private function check_update_booking_costs( $product_id ) {
 		foreach ( $this->currencies as $currency_code => $currency_data ) {
 			$_POST['wcml_wc_booking_cost'][ $currency_code ] = 100;
-			$_POST['wcml_wc_booking_base_cost'][ $currency_code ] = 101;
+			$_POST['wcml_wc_booking_block_cost'][ $currency_code ] = 101;
 			$_POST['wcml_wc_display_cost'][ $currency_code ] = 102;
 		}
 
@@ -114,11 +114,11 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 
 		foreach ( $this->currencies as $currency_code => $currency_data ) {
 			$this->assertEquals( '100', get_post_meta( $product_id, '_wc_booking_cost_' . $currency_code, true ) );
-			$this->assertEquals( '101', get_post_meta( $product_id, '_wc_booking_base_cost_' . $currency_code, true ) );
+			$this->assertEquals( '101', get_post_meta( $product_id, '_wc_booking_block_cost_' . $currency_code, true ) );
 			$this->assertEquals( '102', get_post_meta( $product_id, '_wc_display_cost_' . $currency_code, true ) );
 		}
 		unset( $_POST['wcml_wc_booking_cost'] );
-		unset( $_POST['wcml_wc_booking_base_cost'] );
+		unset( $_POST['wcml_wc_booking_block_cost'] );
 		unset( $_POST['wcml_wc_display_cost'] );
 	}
 

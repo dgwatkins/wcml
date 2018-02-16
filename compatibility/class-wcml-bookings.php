@@ -208,9 +208,11 @@ class WCML_Bookings {
 	}
 
 	function wcml_price_field_after_booking_block_cost( $post_id ) {
-
-		$this->echo_wcml_price_field( $post_id, 'wcml_wc_booking_base_cost' );
-
+		if ( $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_BOOKINGS_VERSION' ), '1.10.9', '<' ) ) {
+			$this->echo_wcml_price_field( $post_id, 'wcml_wc_booking_base_cost' );
+		}else{
+			$this->echo_wcml_price_field( $post_id, 'wcml_wc_booking_block_cost' );
+        }
 	}
 
 	function wcml_price_field_after_display_cost( $post_id ) {
@@ -285,14 +287,15 @@ class WCML_Bookings {
 							)
 						) );
 						break;
+					case 'wcml_wc_booking_block_cost':
 					case 'wcml_wc_booking_base_cost':
 						woocommerce_wp_text_input( array(
-							'id'                => 'wcml_wc_booking_base_cost',
+							'id'                => $field,
 							'class'             => 'wcml_bookings_custom_price',
-							'name'              => 'wcml_wc_booking_base_cost[' . $currency_code . ']',
+							'name'              => $field . '[' . $currency_code . ']',
 							'label'             => get_woocommerce_currency_symbol( $currency_code ),
 							'description'       => __( 'This is the cost per block booked. All other costs (for resources and persons) are added to this.', 'woocommerce-bookings' ),
-							'value'             => get_post_meta( $post_id, '_wc_booking_base_cost_' . $currency_code, true ),
+							'value'             => get_post_meta( $post_id, $field === 'wcml_wc_booking_block_cost' ? '_wc_booking_block_cost_' : '_wc_booking_base_cost_' . $currency_code, true ),
 							'type'              => 'number',
 							'desc_tip'          => true,
 							'custom_attributes' => array(
@@ -757,6 +760,7 @@ class WCML_Bookings {
 			'_wc_display_cost',
 			'_wc_booking_pricing',
 			'cost',
+			'_wc_booking_block_cost',
 			'block_cost',
 			'_resource_base_costs',
 			'_resource_block_costs'
@@ -2065,9 +2069,15 @@ class WCML_Bookings {
 	private function update_booking_costs( $currencies = array(), $post_id = 0 ) {
 		$booking_options = array(
 			'wcml_wc_booking_cost'      => '_wc_booking_cost_',
-			'wcml_wc_booking_base_cost' => '_wc_booking_base_cost_',
+			'wcml_wc_booking_block_cost' => '_wc_booking_block_cost_',
 			'wcml_wc_display_cost'      => '_wc_display_cost_',
 		);
+
+		if ( $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_BOOKINGS_VERSION' ), '1.10.9', '<' ) ) {
+		    unset( $booking_options['wcml_wc_booking_block_cost']);
+			$booking_options['wcml_wc_booking_base_cost'] = '_wc_booking_base_cost_';
+		}
+
 
 		foreach ( $currencies as $code => $currency ) {
 			foreach ( $booking_options as $booking_options_post_key => $booking_options_meta_key_prefix ) {
