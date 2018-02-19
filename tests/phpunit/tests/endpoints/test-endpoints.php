@@ -189,6 +189,57 @@ class Test_Endpoints extends OTGS_TestCase {
 
 	}
 
+
+	/**
+	 * @test
+	 */
+	public function translate_endpoints_in_rewrite_rules() {
+
+		$endpoint_key         = 'orders';
+		$endpoint_translation = 'orders-fr';
+
+		$rule_key       = $endpoint_key . '(/(.*))?/?$';
+		$rule_key_slash = '/' . $endpoint_key . '(/(.*))?/?$';
+		$not_match_rule_key = $endpoint_key.'/'.rand_str( 5 );
+
+		$rules_value = rand_str();
+		$rules       = array(
+			$rule_key       => $rules_value,
+			$rule_key_slash => $rules_value,
+			$not_match_rule_key => $rules_value
+		);
+
+		$wcml    = $this->get_wcml();
+		$subject = new WCML_Endpoints( $wcml );
+
+		$woocommerce = $this->getMockBuilder( 'woocommerce' )
+		                    ->disableOriginalConstructor()
+		                    ->getMock();
+
+		$woocommerce->query = $this->getMockBuilder( 'WC_Query' )
+		                           ->disableOriginalConstructor()
+		                           ->getMock();
+
+		$woocommerce->query->query_vars = array(
+			$endpoint_key => $endpoint_translation
+		);
+
+		\WP_Mock::wpFunction( 'WC', array(
+			'return' => $woocommerce,
+			'times'  => 1
+		) );
+
+		$filtered_rules = $subject->translate_endpoints_in_rewrite_rules( $rules );
+
+		$this->assertEquals(
+			array(
+				$endpoint_translation . '(/(.*))?/?$'       => $rules_value,
+				'/' . $endpoint_translation . '(/(.*))?/?$' => $rules_value,
+				$not_match_rule_key => $rules_value
+			),
+			$filtered_rules );
+	}
+
 	/**
 	 * @return PHPUnit_Framework_MockObject_MockObject|woocommerce_wpml
 	 */
