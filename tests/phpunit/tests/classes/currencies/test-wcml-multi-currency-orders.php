@@ -172,7 +172,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_sets_totals_for_order_items_for_ajax_add_new_order_item_call(){
+	public function it_sets_custom_totals_for_order_items_for_ajax_add_new_order_item_call(){
 		$_POST['action'] = 'woocommerce_add_order_item';
 		$_POST['order_id'] = 1;
 		$_POST['item_to_add'][0] = 10;
@@ -219,5 +219,81 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 		$subject->set_totals_for_order_items( $items );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_sets_converted_totals_for_order_items_for_ajax_add_new_order_item_call(){
+		$_POST['action'] = 'woocommerce_add_order_item';
+		$_POST['order_id'] = 2;
+		$_POST['item_to_add'][0] = 11;
+		$original_product_id = 21;
+		$subtotal = 100;
+		$total = 101;
+		$converted_price = 102;
+
+		$order_currency = 'EUR';
+
+		$item =  $this->getMockBuilder( 'WC_Order_Item_Product' )
+		              ->disableOriginalConstructor()
+		              ->setMethods( array( 'get_type', 'set_subtotal', 'set_total', 'save', 'meta_exists', 'add_meta_data', 'get_subtotal', 'get_total' ) )
+		              ->getMock();
+
+		$items = array( $item );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $_POST['order_id'], '_order_currency', true ),
+			'return' => $order_currency
+		) );
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'get_original_product_id' ) )
+		                                         ->getMock();
+
+		$this->woocommerce_wpml->products->method( 'get_original_product_id' )->willReturn( $original_product_id );
+
+
+		$this->wcml_multi_currency->prices = $this->getMockBuilder( 'WCML_Prices' )
+		                             ->disableOriginalConstructor()
+		                             ->setMethods( array( 'raw_price_filter' ) )
+		                             ->getMock();
+
+		\WP_Mock::wpFunction( 'sanitize_text_field', array(
+			'args' => array( $_POST['item_to_add'][0] ),
+			'return' => $_POST['item_to_add'][0]
+		) );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $original_product_id, '_price_' . $order_currency, true ),
+			'return' => false
+		) );
+
+		$item->method( 'get_type' )->willReturn( 'line_item' );
+		$item->method( 'meta_exists' )->willReturn( false );
+		$item->method( 'add_meta_data' )->willReturn( true );
+		$item->method( 'get_subtotal' )->willReturn( $subtotal );
+		$item->method( 'get_total' )->willReturn( $total );
+		$this->wcml_multi_currency->prices->method( 'raw_price_filter' )->willReturn( $converted_price );
+		$item->expects( $this->once() )->method( 'set_subtotal' )->with( $converted_price )->willReturn( true );
+		$item->expects( $this->once() )->method( 'set_total' )->with( $converted_price )->willReturn( true );
+		$item->expects( $this->once() )->method( 'save' )->willReturn( true );
+
+		$subject = $this->get_subject();
+		$subject->set_totals_for_order_items( $items );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_adds_woocommerce_hidden_order_itemmeta(){
+
+		$itemmeta = array();
+
+		$subject = $this->get_subject();
+		$filtered_itemmeta = $subject->add_woocommerce_hidden_order_itemmeta( $itemmeta );
+
+		$this->assertSame( array( 'wcml_converted_subtotal', 'wcml_converted_total'), $filtered_itemmeta );
 	}
 }
