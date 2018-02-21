@@ -126,9 +126,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
          * Images
          */
         $product_images = $this->woocommerce_wpml->media->product_images_ids( $this->product_id );
-        // Exclude not-duplicated attachments and featured
-        $product_images = $this->woocommerce_wpml->media->exclude_not_duplicated_attachments( $product_images, $this->product_id );
-        
+
 	    if ( count( $product_images ) ) {
 
             $images_section = new WPML_Editor_UI_Field_Section( __( 'Images', 'woocommerce-multilingual' ) );
@@ -714,11 +712,6 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $this->woocommerce_wpml->attributes->sync_default_product_attr( $this->product_id, $tr_product_id, $this->get_target_language() );
 
         //sync media
-        if ( $this->woocommerce_wpml->media->settings[ 'duplicate_featured' ] ) {
-            //sync feature image
-            $this->woocommerce_wpml->media->sync_thumbnail_id( $this->product_id, $tr_product_id, $this->get_target_language() );
-        }
-
         if ( $this->woocommerce_wpml->media->settings[ 'duplicate_media' ] ) {
             //sync product gallery
             $this->woocommerce_wpml->media->sync_product_gallery( $this->product_id );

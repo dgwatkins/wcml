@@ -151,13 +151,6 @@ class WCML_Synchronize_Product_Data{
 
         $this->woocommerce_wpml->attributes->sync_default_product_attr( $original_product_id, $tr_product_id, $lang );
 
-        $wpml_media_options = maybe_unserialize( get_option( '_wpml_media' ) );
-        //sync media
-        if( $wpml_media_options[ 'new_content_settings' ][ 'duplicate_featured' ] ){
-            //sync feature image
-            $this->woocommerce_wpml->media->sync_thumbnail_id( $original_product_id, $tr_product_id, $lang );
-        }
-
         //sync taxonomies
         $this->sync_product_taxonomies( $original_product_id, $tr_product_id, $lang );
 
