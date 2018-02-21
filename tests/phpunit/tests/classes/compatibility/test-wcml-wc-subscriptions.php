@@ -302,6 +302,13 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 
 		$this->woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
 
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                               ->disableOriginalConstructor()
+		                                               ->setMethods( array( 'get_original_product_id' ) )
+		                                               ->getMock();
+
+		$this->woocommerce_wpml->products->method( 'get_original_product_id' )->willReturn( $product_id );
+
 		\WP_Mock::wpFunction( 'get_post_meta', array(
 			'args'   => array( $product_id, '_wcml_custom_prices_status', true ),
 			'return' => true
@@ -339,6 +346,13 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 		                                               ->getMock();
 
 		$this->woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( rand_str() );
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'get_original_product_id' ) )
+		                                         ->getMock();
+
+		$this->woocommerce_wpml->products->method( 'get_original_product_id' )->willReturn( $product_id );
 
 		$product = $this->getMockBuilder( 'WC_Product' )
 		                ->disableOriginalConstructor()
