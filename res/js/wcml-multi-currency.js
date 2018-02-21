@@ -53,6 +53,9 @@ function wcml_load_currency( currency, force_switch ){
                     target_location += url_glue + 'wcmlc=' + currency + hash;
 
                 }
+
+                wcml_reset_cart_fragments();
+
                 window.location = target_location;
 
             }
