@@ -58,6 +58,13 @@ add_action( 'wpml_loaded', 'wcml_loader' );
 function wcml_loader(){
 	$xdomain_data = new WCML_xDomain_Data( new WPML_Cookie() );
 	$xdomain_data->add_hooks();
+
+	$loaders = array(
+		'WCML_Product_Image_Filter_Factory'
+	);
+
+	$action_filter_loader = new WPML_Action_Filter_Loader();
+	$action_filter_loader->load( $loaders );
 }
 
 $WCML_REST_API = new WCML_REST_API();
