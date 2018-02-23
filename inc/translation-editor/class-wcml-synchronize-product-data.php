@@ -65,12 +65,6 @@ class WCML_Synchronize_Product_Data{
         $current_language   = $this->sitepress->get_current_language();
         $original_product_id = $this->woocommerce_wpml->products->get_original_product_id( $post_id );
 
-        $wpml_media_options = maybe_unserialize( get_option( '_wpml_media' ) );
-
-        if( $wpml_media_options[ 'new_content_settings' ][ 'duplicate_media' ] ){
-            //sync product gallery
-            $this->woocommerce_wpml->media->sync_product_gallery( $original_product_id );
-        }
         // check its a product
         $post_type = get_post_type( $post_id );
         //set trid for variations

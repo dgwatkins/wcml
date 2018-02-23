@@ -711,12 +711,6 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
         $this->woocommerce_wpml->attributes->sync_default_product_attr( $this->product_id, $tr_product_id, $this->get_target_language() );
 
-        //sync media
-        if ( $this->woocommerce_wpml->media->settings[ 'duplicate_media' ] ) {
-            //sync product gallery
-            $this->woocommerce_wpml->media->sync_product_gallery( $this->product_id );
-        }
-
         // synchronize post variations
         $this->woocommerce_wpml->sync_variations_data->sync_product_variations( $this->product_id, $tr_product_id, $this->get_target_language(), $translations, true );
 
