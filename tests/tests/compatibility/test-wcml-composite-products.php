@@ -70,7 +70,7 @@ class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 			'query_type'	=> 'category_ids',
 			'assigned_category_ids'	=> array( $original_category->term_id ),
 			'selection_mode'=> 'dropdowns',
-			'default_id' 	=>  $original_category->term_id,
+			'default_id' 	=>  $original_simple_product->id,
 			'title' 		=> rand_str(),
 			'description' 	=> rand_str(),
 			'quantity_min'	=> 1,
@@ -133,13 +133,11 @@ class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 			//check sync ids
 			if( $component[ 'query_type' ] == 'product_ids' ){
 				$this->assertEquals( array( $this->test_data->components['product']['translated']->id ), $component[ 'assigned_ids' ] );
-				//check sync default
-				$this->assertEquals( $this->test_data->components['product']['translated']->id, $component[ 'default_id' ] );
 			}elseif( $component[ 'query_type' ] == 'category_ids' ){
 				$this->assertEquals( array( $this->test_data->components['category']['translated']->term_id ), $component[ 'assigned_category_ids' ] );
-				//check sync default
-				$this->assertEquals( $this->test_data->components['category']['translated']->term_id, $component[ 'default_id' ] );
 			}
+			//check sync default
+			$this->assertEquals( $this->test_data->components['product']['translated']->id, $component[ 'default_id' ] );
 		}
 
 		foreach( $tr_composite_data['scenarios'] as $scenario_id => $scenario ){
