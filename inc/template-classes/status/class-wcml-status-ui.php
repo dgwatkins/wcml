@@ -35,7 +35,7 @@ class WCML_Status_UI extends WPML_Templates_Factory {
 			'multi_currency'	=> $WCML_Status_Multi_Currencies_UI->get_view(),
 			'troubl_url' => admin_url( 'admin.php?page=wpml-wcml&tab=troubleshooting' ),
 			'strings' => array(
-				'troubl' => __( 'Troubleshooting page', 'woocommerce-multilingual' )
+				'troubl' => __( 'Troubleshooting', 'woocommerce-multilingual' )
 			)
 		);
 
