@@ -1,8 +1,13 @@
 <?php
   
 class WCML_Dependencies{
-    
-      
+
+	const MIN_WPML = '3.4';
+	const MIN_WPML_TM = '1.9';
+	const MIN_WPML_ST = '2.0';
+	const MIN_WPML_MEDIA = '2.3';
+	const MIN_WOOCOMMERCE = '2.1';
+
     private $missing = array();
     private $err_message = '';
     private $allok = true;
@@ -29,7 +34,7 @@ class WCML_Dependencies{
         if(!defined('ICL_SITEPRESS_VERSION') || ICL_PLUGIN_INACTIVE || is_null( $sitepress ) || !class_exists('SitePress')){
              $this->missing['WPML'] = $this->tracking_link->generate('https://wpml.org/');
              $this->allok = false;
-        } elseif(version_compare(ICL_SITEPRESS_VERSION, '3.4', '<')){
+        } elseif(version_compare(ICL_SITEPRESS_VERSION, self::MIN_WPML, '<')){
             add_action('admin_notices', array($this, '_old_wpml_warning'));
             $this->allok = false;
         }elseif ( !$sitepress->setup() ) {
@@ -42,7 +47,10 @@ class WCML_Dependencies{
         if( !class_exists( 'WooCommerce' ) || !function_exists( 'WC' ) ){
             $this->missing['WooCommerce'] = 'http://www.woothemes.com/woocommerce/';
             $this->allok = false;
-        }elseif( ( defined('WC_VERSION') && version_compare( WC_VERSION , '2.1', '<' ) ) || ( isset( $woocommerce->version ) && version_compare( $woocommerce->version , '2.1', '<' ) ) ){
+        }elseif(
+        		defined('WC_VERSION') && version_compare( WC_VERSION , self::MIN_WOOCOMMERCE, '<' ) ||
+		        isset( $woocommerce->version ) && version_compare( $woocommerce->version , self::MIN_WOOCOMMERCE, '<' )
+        ){
             add_action('admin_notices', array($this, '_old_wc_warning'));
             $this->allok = false;
         }
@@ -50,7 +58,7 @@ class WCML_Dependencies{
         if(!defined('WPML_TM_VERSION')){
             $this->missing['WPML Translation Management'] = $this->tracking_link->generate('https://wpml.org/');
             $this->allok = false;
-        }elseif(version_compare(WPML_TM_VERSION, '1.9', '<')){
+        }elseif(version_compare(WPML_TM_VERSION, self::MIN_WPML_TM, '<')){
             add_action('admin_notices', array($this, '_old_wpml_tm_warning'));
             $this->allok = false;
         }
@@ -58,7 +66,7 @@ class WCML_Dependencies{
         if(!defined('WPML_ST_VERSION')){
             $this->missing['WPML String Translation'] = $this->tracking_link->generate('https://wpml.org/');
             $this->allok = false;
-        }elseif(version_compare(WPML_ST_VERSION, '2.0', '<')){
+        }elseif(version_compare(WPML_ST_VERSION, self::MIN_WPML_ST, '<')){
             add_action('admin_notices', array($this, '_old_wpml_st_warning'));
             $this->allok = false;
         }
@@ -66,7 +74,7 @@ class WCML_Dependencies{
         if(!defined('WPML_MEDIA_VERSION')){
             $this->missing['WPML Media'] = $this->tracking_link->generate('https://wpml.org/');
             $this->allok = false;
-        }elseif(version_compare(WPML_MEDIA_VERSION, '2.1', '<')){
+        }elseif(version_compare(WPML_MEDIA_VERSION, self::MIN_WPML_MEDIA, '<')){
             add_action('admin_notices', array($this, '_old_wpml_media_warning'));
             $this->allok = false;
         }
@@ -95,7 +103,7 @@ class WCML_Dependencies{
     public function _old_wpml_warning(){
         ?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML</a> versions prior %s.',
-                    'woocommerce-multilingual'), $this->tracking_link->generate('https://wpml.org/'), '3.4'); ?></p></div>
+                    'woocommerce-multilingual'), $this->tracking_link->generate('https://wpml.org/'), self::MIN_WPML); ?></p></div>
     <?php }
 
 	function _wpml_not_installed_warning() {
@@ -108,25 +116,25 @@ class WCML_Dependencies{
     function _old_wc_warning(){
         ?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">Woocommerce</a> versions prior %s.',
-                    'woocommerce-multilingual'), 'http://www.woothemes.com/woocommerce/', '2.1' ); ?></p></div>
+                    'woocommerce-multilingual'), 'http://www.woothemes.com/woocommerce/', self::MIN_WOOCOMMERCE ); ?></p></div>
     <?php }
 
     public function _old_wpml_tm_warning(){
         ?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML Translation Management</a> versions prior %s.',
-                    'woocommerce-multilingual'), $this->tracking_link->generate('https://wpml.org/'), '1.9'); ?></p></div>
+                    'woocommerce-multilingual'), $this->tracking_link->generate('https://wpml.org/'), self::MIN_WPML_TM); ?></p></div>
     <?php }
 
     public function _old_wpml_st_warning(){
         ?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML String Translation</a> versions prior %s.',
-                    'woocommerce-multilingual'), $this->tracking_link->generate('https://wpml.org/'), '2.0'); ?></p></div>
+                    'woocommerce-multilingual'), $this->tracking_link->generate('https://wpml.org/'), self::MIN_WPML_ST); ?></p></div>
     <?php }
 
     public function _old_wpml_media_warning(){
         ?>
         <div class="message error"><p><?php printf(__('WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML Media</a> versions prior %s.',
-                    'woocommerce-multilingual'), $this->tracking_link->generate('https://wpml.org/'), '2.1'); ?></p></div>
+                    'woocommerce-multilingual'), $this->tracking_link->generate('https://wpml.org/'), self::MIN_WPML_MEDIA); ?></p></div>
     <?php }
 
 	/**

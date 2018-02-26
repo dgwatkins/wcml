@@ -57,7 +57,7 @@ WooCommerce Multilingual checks that the following versions of WPML and their co
 * WPML Multilingual CMS       - 3.4
 * WPML String Translation     - 2.0
 * WPML Translation Management - 2.2
-* WPML Media                  - 2.1
+* WPML Media                  - 2.3.0
 
 Without having all these running, WooCommerce Multilingual will not be able to run.
 
