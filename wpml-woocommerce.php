@@ -61,7 +61,8 @@ function wcml_loader(){
 
 	$loaders = array(
 		'WCML_Product_Image_Filter_Factory',
-		'WCML_Product_Gallery_Filter_Factory'
+		'WCML_Product_Gallery_Filter_Factory',
+		'WCML_Update_Product_Gallery_Translation_Factory'
 	);
 
 	$action_filter_loader = new WPML_Action_Filter_Loader();
