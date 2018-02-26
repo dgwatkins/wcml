@@ -60,7 +60,8 @@ function wcml_loader(){
 	$xdomain_data->add_hooks();
 
 	$loaders = array(
-		'WCML_Product_Image_Filter_Factory'
+		'WCML_Product_Image_Filter_Factory',
+		'WCML_Product_Gallery_Filter_Factory'
 	);
 
 	$action_filter_loader = new WPML_Action_Filter_Loader();
