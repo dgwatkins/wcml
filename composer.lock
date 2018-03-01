@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e6b2f8737442d397dd55af49618c1340",
+    "content-hash": "fc3319a230eccf26e5457dccf3d5bc66",
     "packages": [
         {
             "name": "composer/installers",
@@ -125,11 +125,11 @@
         },
         {
             "name": "otgs/installer",
-            "version": "dev-develop",
+            "version": "1.8.8",
             "source": {
                 "type": "git",
-                "url": "ssh://git@git.onthegosystems.com:10022/installer/installer.git",
-                "reference": "2d102e4e5b72ad8f51e3f2bbb9d83c9d6ed01415"
+                "url": "https://git.onthegosystems.com/installer/installer.git",
+                "reference": "4f33032eed7d02bf2cd1871706d249370ecf7032"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -145,13 +145,9 @@
                     "dev-develop": "1.8.x-dev"
                 }
             },
-            "scripts": {
-                "test": [
-                    "phpunit"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "GPL-2.0"
+                "GPL-2.0-or-later"
             ],
             "authors": [
                 {
@@ -168,7 +164,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2017-11-22T12:22:13+00:00"
+            "time": "2018-03-01T13:01:25+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -3751,7 +3747,7 @@
     "stability-flags": {
         "roave/security-advisories": 20
     },
-    "prefer-stable": false,
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": []
