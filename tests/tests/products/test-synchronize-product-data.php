@@ -35,6 +35,21 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		$this->assertEquals( $serialized_value, get_post_meta( $es_product->id, $custom_field, true ) );
 	}
 
+	function test_duplicate_attribute_empty_value(){
+		$custom_field = 'attribute_pa_test';
+		$this->wcml_helper->set_custom_field_to_copy( $custom_field );
+
+		$orig_product = $this->wcml_helper->add_product( $this->default_language, false, rand_str() );
+		$es_product = $this->wcml_helper->add_product( $this->second_language, $orig_product->trid, rand_str() );
+
+		//add values to original product
+		add_post_meta( $orig_product->id, $custom_field, null );
+
+		$this->woocommerce_wpml->sync_variations_data->duplicate_variation_data( $orig_product->id, $es_product->id, array(), 'es', true );
+
+		$this->assertEquals( '', get_post_meta( $es_product->id, $custom_field, true ) );
+	}
+
 	function test_sync_variable_custom_field_value() {
 
 		//test variation custom fields
