@@ -62,4 +62,98 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 		$this->assertSame( $expected_link, $subject->filter_shop_archive_link( $link, $post_type ) );
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_does_not_adjust_shop_page_if_WC_version_3_3_and_above(){
+
+		$sitepress = $this->getMockBuilder( 'Sitepress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_wp_api', 'get_default_language' ) )
+		                  ->getMock();
+
+		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->getMock();
+
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		$subject = $this->get_subject( null, $sitepress );
+
+		$wc_version = '3.3.3';
+		$check_version = '3.3';
+
+		$wp_api->expects( $this->once() )
+		             ->method( 'constant' )
+		             ->with( 'WC_VERSION' )
+		             ->willReturn( $wc_version );
+		$wp_api->expects( $this->once() )
+		             ->method( 'version_compare' )
+		             ->with( $wc_version, $check_version, '<' )
+		             ->willReturn( false );
+
+		$subject->adjust_shop_page( array() );
+
+		$sitepress->expects( $this->never() )->method( 'get_default_language' );
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_adjusts_the_shop_page_if_WC_version_prior_to_3_3(){
+
+		$sitepress = $this->getMockBuilder( 'Sitepress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_wp_api', 'get_default_language', 'get_current_language' ) )
+		                  ->getMock();
+
+		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->getMock();
+
+		$default_language = rand_str( 2 );
+		$current_language = rand_str( 2 );
+
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+		$sitepress->method( 'get_default_language' )->willReturn( $default_language );
+		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
+
+		$subject = $this->get_subject( null, $sitepress );
+
+		$wc_version = '3.2';
+		$check_version = '3.3';
+
+		$wp_api->expects( $this->once() )
+		             ->method( 'constant' )
+		             ->with( 'WC_VERSION' )
+		             ->willReturn( $wc_version );
+		$wp_api->expects( $this->once() )
+		             ->method( 'version_compare' )
+		             ->with( $wc_version, $check_version, '<' )
+		             ->willReturn( true );
+		$q = new stdClass();
+		$q->query_vars['pagename'] = '/shop';
+
+		$shop_id = mt_rand( 1, 10 );
+		WP_Mock::userFunction( 'wc_get_page_id', array(
+			'args' => array( 'shop' ),
+			'return' => $shop_id
+		));
+
+		$shop_page = new stdClass();
+		$shop_page->post_name = 'shop';
+		WP_Mock::userFunction( 'get_post', array(
+			'args' => array( $shop_id ),
+			'return' => $shop_page
+		));
+
+		$subject->adjust_shop_page( $q );
+
+		$expected_query_vars['post_type'] = 'product';
+		$this->assertEquals( $expected_query_vars, $q->query_vars );
+	}
+
 }
