@@ -48,6 +48,7 @@ if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists
 }
 
 // Load WooCommerce Multilingual when WPML is active
+global $woocommerce_wpml;
 $woocommerce_wpml = new woocommerce_wpml();
 $woocommerce_wpml->add_hooks();
 
