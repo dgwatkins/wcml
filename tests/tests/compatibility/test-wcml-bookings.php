@@ -20,7 +20,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	private $tp;
 
 	function setUp() {
-		global $sitepress, $wpdb;
+		global $sitepress, $wpdb, $woocommerce;
 		if ( ! class_exists( 'WC_Bookings' ) ) {
 			$this->markTestSkipped(
 				'The WC Bookings extension is not loaded.'
@@ -54,6 +54,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 
 		$this->sitepress = $sitepress;
 		$this->wpdb = $wpdb;
+		$this->woocommerce = $woocommerce;
 		$this->tp = new WPML_Element_Translation_Package;
 		$this->booking_term = get_term_by( 'name', 'booking', 'product_type', ARRAY_A );
 		$trid = $this->sitepress->get_element_trid( $this->booking_term['term_id'], 'tax_product_type' );
@@ -634,7 +635,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			->method( 'get_original_product_id' )
 			->willReturn( $product );
 
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb, $this->tp );
+		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->woocommerce, $this->wpdb, $this->tp );
 		$this->assertEquals( $cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $cost, array( 'modifier' => '' ), 'cost_', 'name_key' ) );
 		$this->assertEquals( $block_cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $block_cost, array( 'base_modifier' => '' ), 'base_cost_', 'name_key' ) );
 
@@ -1192,7 +1193,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			$woocommerce_wpml = $this->get_test_subject();
 		}
 
-		$subject = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb , $this->tp );
+		$subject = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->woocommerce, $this->wpdb , $this->tp );
 		$subject->add_hooks();
 
 		return $subject;
@@ -1242,7 +1243,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			->method( 'get_original_product_id' )
 			->willReturn( $translation );
 
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb, $this->tp );
+		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->woocommerce, $this->wpdb, $this->tp );
 		update_post_meta( $product, '_resource_base_costs', array( 1 => $block_cost ) );
 		$output = $bookings->filter_wc_booking_cost( $check, $product, '_resource_base_costs', true );
 		$this->assertEquals( $block_cost, $output[0][1] );
@@ -1265,7 +1266,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			->method( 'get_original_product_id' )
 			->willReturn( $product );
 
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb, $this->tp);
+		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->woocommerce, $this->wpdb, $this->tp);
 
 		update_post_meta( $product, '_wc_display_cost_' . $this->usd_code, $base_costs );
 		update_post_meta( $product, '_wcml_custom_costs_status', true );
