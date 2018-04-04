@@ -59,10 +59,16 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 			->getMock();
 	}
 
-	private function get_subject( $sitepress = null, $woocommerce_wpml = null, $tp = null  ){
+	private function get_subject( $sitepress = null, $woocommerce_wpml = null, $woocommerce = null, $tp = null  ){
 
 		if( null === $woocommerce_wpml ){
 			$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
+		}
+
+		if( null === $woocommerce ) {
+			$woocommerce = $this->getMockBuilder( 'woocommerce' )
+			                    ->disableOriginalConstructor()
+			                    ->getMock();
 		}
 
 		if( null === $sitepress ){
@@ -73,7 +79,7 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 			$tp = $this->get_wpml_element_translation_package_mock();
 		}
 
-		return new WCML_Bookings( $sitepress, $woocommerce_wpml, $this->wpdb, $tp );
+		return new WCML_Bookings( $sitepress, $woocommerce_wpml, $woocommerce, $this->wpdb, $tp );
 	}
 
 	/**
@@ -199,4 +205,73 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$this->assertEquals($expected_tables, $filtered_tables );
 
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_add_bookings_emails_options_to_translate(){
+
+		$subject = $this->get_subject();
+
+		$options = array();
+		$options = $subject->emails_options_to_translate( $options );
+
+		$this->assertContains( 'woocommerce_new_booking_settings', $options );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_add_bookings_emails_text_keys_to_translate(){
+
+		$subject = $this->get_subject();
+
+		$text_keys = array();
+		$text_keys = $subject->emails_text_keys_to_translate( $text_keys );
+
+		$this->assertEquals( array( 'subject_confirmation','heading_confirmation' ), $text_keys );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_translate_emails_text_strings(){
+
+		$subject = $this->get_subject();
+
+		$value = rand_str();
+		$old_value = rand_str();
+		$key = 'subject';
+
+		$object = new stdClass();
+		$object->id = 'new_booking';
+		$object->$key = rand_str();
+
+		$translated_value = $subject->translate_emails_text_strings( $value, $object , $old_value, $key );
+
+		$this->assertEquals( $object->$key, $translated_value );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_return_booking_email_language(){
+
+		$subject = $this->get_subject();
+
+		$current_language = rand_str( 2 );
+		$_POST[ 'post_type' ] = 'wc_booking';
+		$_POST[ '_booking_order_id' ] = mt_rand( 1, 10 );
+
+		$order_language = rand_str(2);
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args' => array( $_POST[ '_booking_order_id' ], 'wpml_language', true ),
+			'return' => $order_language
+		) );
+
+		$booking_language = $subject->booking_email_language( $current_language );
+
+		$this->assertEquals( $order_language, $booking_language );
+	}
 }
+
