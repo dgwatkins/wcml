@@ -95,7 +95,7 @@ class Test_WCML_Multi_Currency_Switcher extends WCML_UnitTestCase {
 
             '%name%/%symbol%' => array(
                 'expected' => array(
-                    'USD' => 'United States dollar/&#36;',
+                    'USD' => 'United States (US) dollar/&#36;',
                     'JPY' => 'Japanese yen/&yen;',
                     'BTC' => 'Bitcoin/&#3647;',
                     'GBP' => 'Pound sterling/&pound;'
