@@ -501,6 +501,19 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 
 		$product_bundles = $this->get_test_subject();
 
+		//test sync with override title and desc
+		$this->setup_product_in_bundle( $this->test_data->bundle_product->id, true, true );
+		$tr_bundle_data = $product_bundles->sync_bundled_ids( $this->test_data->bundle_product->id, $this->test_data->translated_bundle_product->id );
+		$this->assertTrue( !empty( $tr_bundle_data ) );
+
+		$translated_item_id = $this->get_item_id_from_product_id( $this->test_data->translated_product_in_bundle->id, $this->test_data->translated_bundle_product->id );
+		$this->assertTrue( isset( $tr_bundle_data[ $translated_item_id ] ) );
+		$this->assertEquals( $this->test_data->translated_product_in_bundle->id, $tr_bundle_data[ $translated_item_id ][ 'product_id' ] );
+		$this->assertEquals( 'yes', $tr_bundle_data[ $translated_item_id ][ 'override_title' ] );
+		$this->assertEquals( 'yes', $tr_bundle_data[ $translated_item_id ][ 'override_description' ] );
+		$this->assertTrue( isset( $tr_bundle_data[ $translated_item_id ][ 'title' ] ) );
+		$this->assertTrue( isset( $tr_bundle_data[ $translated_item_id ][ 'description' ] ) );
+
 		//test sync without override title and desc
 		$this->setup_product_in_bundle( $this->test_data->bundle_product->id, false, false );
 		$tr_bundle_data = $product_bundles->sync_bundled_ids( $this->test_data->bundle_product->id, $this->test_data->translated_bundle_product->id );
@@ -516,20 +529,8 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 		$this->assertTrue( empty( $tr_bundle_data[ $translated_item_id ][ 'description' ] ) );
 
 
-		//test sync with override title and desc
-		$this->setup_product_in_bundle( $this->test_data->bundle_product->id, true, true );
-		$tr_bundle_data = $product_bundles->sync_bundled_ids( $this->test_data->bundle_product->id, $this->test_data->translated_bundle_product->id );
-		$this->assertTrue( !empty( $tr_bundle_data ) );
-
-		$translated_item_id = $this->get_item_id_from_product_id( $this->test_data->translated_product_in_bundle->id, $this->test_data->translated_bundle_product->id );
-		$this->assertTrue( isset( $tr_bundle_data[ $translated_item_id ] ) );
-		$this->assertEquals( $this->test_data->translated_product_in_bundle->id, $tr_bundle_data[ $translated_item_id ][ 'product_id' ] );
-		$this->assertTrue( !empty( $tr_bundle_data[ $translated_item_id ][ 'title' ] ) );
-		$this->assertTrue( !empty( $tr_bundle_data[ $translated_item_id ][ 'description' ] ) );
-
-
 		//test sync variable products in bundle
-		$this->setup_variable_product_in_bundle( $this->test_data->bundle_product->id, true, true );
+		$this->setup_variable_product_in_bundle( $this->test_data->bundle_product->id, false, false );
 		$tr_bundle_data = $product_bundles->sync_bundled_ids( $this->test_data->bundle_product->id, $this->test_data->translated_bundle_product->id );
 		$allowed_variations = array();
 		foreach( wc_get_product( $this->test_data->translated_variable_product_in_bundle->id )->get_available_variations() as $variation_data ){
@@ -541,16 +542,8 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 		$this->assertTrue( !empty( $tr_bundle_data ) );
 		$this->assertTrue( isset( $tr_bundle_data[ $translated_item_id ] ) );
 		$this->assertEquals( $this->test_data->translated_variable_product_in_bundle->id, $tr_bundle_data[ $translated_item_id ][ 'product_id' ] );
-		$this->assertFalse( empty( $tr_bundle_data[ $translated_item_id ][ 'title' ] ) );
-		$this->assertFalse( empty( $tr_bundle_data[ $translated_item_id ][ 'description' ] ) );
-		/*
-		$this->assertEquals(
-			array( $this->test_data->attr_name => $this->test_data->attr_values[ 'medium' ][ 'translated' ] ),
-			unserialize( $tr_bundle_data[ $translated_item_id ][ 'bundle_defaults' ] )
-		);
-		$this->assertEquals( $allowed_variations, unserialize( $tr_bundle_data[ $translated_item_id ][ 'allowed_variations' ] ) );
-		*/
-
+		$this->assertTrue( empty( $tr_bundle_data[ $translated_item_id ][ 'title' ] ) );
+		$this->assertTrue( empty( $tr_bundle_data[ $translated_item_id ][ 'description' ] ) );
 	}
 
 	private function setup_product_in_bundle( $bundle_id, $override_title = false, $override_description = false ){
