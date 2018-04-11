@@ -244,4 +244,43 @@ class Test_WCML_Coupons extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function translation_is_null_is_valid_for_product() {
+
+
+		$current_language = rand_str();
+		$product_id       = random_int( 1, 100 );
+
+		$sitepress = $this->get_sitepress_mock();
+		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
+
+		$wc          = $this->getMockBuilder( 'woocommerce' )->disableOriginalConstructor()->getMock();
+		$wc->version = '2.6.9';
+		WP_Mock::userFunction( 'WC', [ 'times' => 1, 'return' => $wc ] );
+
+		$subject = $this->get_subject( null, $sitepress );
+
+		$product_mock = $this->getMockBuilder( 'WC_Product_Variation' )
+		                     ->disableOriginalConstructor()
+		                     ->setMethods( array( 'is_type' ) )
+		                     ->getMock();
+
+		$product_mock->method( 'is_type' )->with( 'variation' )->willReturn( true );
+		$product_mock->parent     = $this->getMockBuilder( 'WC_Product' )
+		                                 ->disableOriginalConstructor()
+		                                 ->setMethods()
+		                                 ->getMock();
+		$product_mock->parent->id = $product_id;
+
+		\WP_Mock::onFilter( 'translate_object_id' )->with( $product_id, 'product', false, $current_language )->reply( null );
+
+		$coupon_is_valid = $subject->is_valid_for_product( false, $product_mock, false, array() );
+
+		$this->assertFalse( $coupon_is_valid );
+
+	}
+
+
 }
