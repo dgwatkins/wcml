@@ -635,7 +635,7 @@ class WCML_Upgrade{
 		// #wcml-2307
 		global $wpdb;
 
-		if ( version_compare(WC_BOOKINGS_VERSION, '1.10.9', '>=' ) ) {
+		if ( defined( 'WC_BOOKINGS_VERSION' ) && version_compare(WC_BOOKINGS_VERSION, '1.10.9', '>=' ) ) {
 
 			$results = $wpdb->get_results( "
                         SELECT *
