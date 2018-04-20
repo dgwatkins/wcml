@@ -47,8 +47,11 @@ class WCML_Synchronize_Product_Data{
             add_action( 'woocommerce_product_set_visibility', array( $this, 'sync_product_translations_visibility' ) );
         }
 
-        add_action( 'woocommerce_reduce_order_stock', array( $this, 'sync_product_stocks_reduce' ) );
-        add_action( 'woocommerce_restore_order_stock', array( $this, 'sync_product_stocks_restore' ) );
+	    if ( $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.0.0', '<' ) ) {
+		    add_action( 'woocommerce_reduce_order_stock', array( $this, 'sync_product_stocks_reduce' ) );
+		    add_action( 'woocommerce_restore_order_stock', array( $this, 'sync_product_stocks_restore' ) );
+	    }
+
         add_action( 'woocommerce_product_set_stock_status', array($this, 'sync_stock_status_for_translations' ), 100, 2);
         add_action( 'woocommerce_variation_set_stock_status', array($this, 'sync_stock_status_for_translations' ), 10, 2);
 

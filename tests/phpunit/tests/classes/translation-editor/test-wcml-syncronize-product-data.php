@@ -28,9 +28,28 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 	/**
 	 * @return SitePress
 	 */
-	private function get_sitepress() {
-		return $this->getMockBuilder('SitePress')
+	private function get_sitepress( $wp_api = null ) {
+		$sitepress = $this->getMockBuilder('SitePress')
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_wp_api' ) )
+		                  ->getMock();
+
+		if( null === $wp_api ){
+			$wp_api = $this->get_wpml_wp_api_mock();
+		}
+
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		return $sitepress;
+	}
+
+	/**
+	 * @return WPML_WP_API
+	 */
+	private function get_wpml_wp_api_mock() {
+		return $this->getMockBuilder( 'WPML_WP_API' )
 		            ->disableOriginalConstructor()
+		            ->setMethods( array( 'constant', 'version_compare' ) )
 		            ->getMock();
 	}
 
@@ -80,6 +99,72 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 		\WP_Mock::expectActionAdded( 'woocommerce_product_set_stock_status', array( $subject, 'sync_stock_status_for_translations' ), 100, 2 );
 		\WP_Mock::expectActionAdded( 'woocommerce_variation_set_stock_status', array( $subject, 'sync_stock_status_for_translations' ), 10, 2 );
+
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_adds_pre_wc_3_0_hooks(){
+		\WP_Mock::wpFunction( 'is_admin', array(
+			'return' => false,
+			'times'  => 1
+		) );
+
+		$check_version = '3.0.0';
+		$wc_version = '2.9.3';
+
+		$wp_api = $this->get_wpml_wp_api_mock();
+
+		$wp_api->expects( $this->once() )
+		             ->method( 'constant' )
+		             ->with( 'WC_VERSION' )
+		             ->willReturn( $wc_version );
+		$wp_api->expects( $this->once() )
+		             ->method( 'version_compare' )
+		             ->with( $wc_version, $check_version, '<' )
+		             ->willReturn( true );
+
+		$sitepress = $this->get_sitepress( $wp_api );
+
+		$subject = $this->get_subject( null, $sitepress );
+
+		\WP_Mock::expectActionAdded( 'woocommerce_reduce_order_stock', array( $subject, 'sync_product_stocks_reduce' ) );
+		\WP_Mock::expectActionAdded( 'woocommerce_restore_order_stock', array( $subject, 'sync_product_stocks_restore' ) );
+
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_not_adds_after_wc_3_0_hooks(){
+		\WP_Mock::wpFunction( 'is_admin', array(
+			'return' => false,
+			'times'  => 1
+		) );
+
+		$check_version = '3.0.0';
+		$wc_version = '3.3';
+
+		$wp_api = $this->get_wpml_wp_api_mock();
+
+		$wp_api->expects( $this->once() )
+		             ->method( 'constant' )
+		             ->with( 'WC_VERSION' )
+		             ->willReturn( $wc_version );
+		$wp_api->expects( $this->once() )
+		             ->method( 'version_compare' )
+		             ->with( $wc_version, $check_version, '<' )
+		             ->willReturn( false );
+
+		$sitepress = $this->get_sitepress( $wp_api );
+
+		$subject = $this->get_subject( null, $sitepress );
+
+		\WP_Mock::expectActionNotAdded( 'woocommerce_reduce_order_stock', array( $subject, 'sync_product_stocks_reduce' ) );
+		\WP_Mock::expectActionNotAdded( 'woocommerce_restore_order_stock', array( $subject, 'sync_product_stocks_restore' ) );
 
 		$subject->add_hooks();
 	}
