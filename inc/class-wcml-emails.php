@@ -310,7 +310,7 @@ class WCML_Emails{
     }
 
     public function backend_new_order_admin_email( $order_id ){
-        if( isset( $_POST[ 'wc_order_action' ] ) && $_POST[ 'wc_order_action' ] == 'send_email_new_order' ){
+        if( isset( $_POST[ 'wc_order_action' ] ) && in_array( $_POST[ 'wc_order_action' ], array( 'send_email_new_order', 'send_order_details_admin' ) ) ){
             $this->new_order_admin_email( $order_id );
         }
     }
