@@ -221,4 +221,71 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 	}
 
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_new_order_email_heading(){
+
+
+		$mailer =  $this->getMockBuilder('WC_Emails')
+		                ->disableOriginalConstructor()
+		                ->getMock();
+
+		$wc_mailer_new_order = $this->getMockBuilder( 'WC_Email_New_Order' )
+		                            ->disableOriginalConstructor()
+		                            ->setMethods( array( 'format_string' ) )
+		                            ->getMock();
+		$wc_mailer_new_order->heading = rand_str();
+
+		$mailer->emails = array( 'WC_Email_New_Order' => $wc_mailer_new_order );
+
+		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
+
+		$translated_formatted_heading = rand_str();
+
+		$wc_mailer_new_order->expects( $this->once() )
+		                    ->method( 'format_string' )
+		                    ->with( $wc_mailer_new_order->heading )
+		                    ->willReturn( $translated_formatted_heading );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( $translated_formatted_heading, $subject->new_order_email_heading( rand_str() ) );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_new_order_email_subject(){
+
+
+		$mailer =  $this->getMockBuilder('WC_Emails')
+		                ->disableOriginalConstructor()
+		                ->getMock();
+
+		$wc_mailer_new_order = $this->getMockBuilder( 'WC_Email_New_Order' )
+		                            ->disableOriginalConstructor()
+		                            ->setMethods( array( 'format_string' ) )
+		                            ->getMock();
+		$wc_mailer_new_order->subject = rand_str();
+
+		$mailer->emails = array( 'WC_Email_New_Order' => $wc_mailer_new_order );
+
+		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
+
+		$translated_formatted_subject = rand_str();
+
+		$wc_mailer_new_order->expects( $this->once() )
+		                    ->method( 'format_string' )
+		                    ->with( $wc_mailer_new_order->subject )
+		                    ->willReturn( $translated_formatted_subject );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( $translated_formatted_subject, $subject->new_order_email_subject( rand_str() ) );
+
+	}
+
 }
