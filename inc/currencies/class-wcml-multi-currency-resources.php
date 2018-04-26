@@ -41,17 +41,25 @@ class WCML_Multi_Currency_Resources{
 
     }
 
-    private static function set_cache_compatibility_variables( $script_vars ){
+	private static function set_cache_compatibility_variables( $script_vars ) {
 
-    	$script_vars['w3tc'] = (int) ! empty( self::$multi_currency->W3TC )
-	                           || ( function_exists( 'wp_cache_is_enabled' ) && wp_cache_is_enabled() );
+		$script_vars = array();
 
-	    global $sg_cachepress_environment;
-	    if( $sg_cachepress_environment ){
-		    $script_vars['sg_cachepress'] = $sg_cachepress_environment->cache_is_enabled();
-	    }
+		if (
+			(int) ! empty( self::$multi_currency->W3TC ) ||
+			( function_exists( 'wp_cache_is_enabled' ) && wp_cache_is_enabled() )
+		) {
+			$script_vars['w3tc'] = true;
+		}
 
-    	return $script_vars;
-    }
+		global $sg_cachepress_environment;
+		if ( $sg_cachepress_environment && $sg_cachepress_environment->cache_is_enabled() ) {
+			$script_vars['sg_cachepress'] = true;
+		}
+
+		$script_vars = apply_filters( 'wcml_cache_compatibility_variables', $script_vars );
+
+		return $script_vars;
+	}
 
 }
