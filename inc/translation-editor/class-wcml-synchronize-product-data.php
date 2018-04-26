@@ -47,10 +47,8 @@ class WCML_Synchronize_Product_Data{
             add_action( 'woocommerce_product_set_visibility', array( $this, 'sync_product_translations_visibility' ) );
         }
 
-	    if ( $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.0.0', '<' ) ) {
-		    add_action( 'woocommerce_reduce_order_stock', array( $this, 'sync_product_stocks_reduce' ) );
-		    add_action( 'woocommerce_restore_order_stock', array( $this, 'sync_product_stocks_restore' ) );
-	    }
+	    add_action( 'woocommerce_reduce_order_stock', array( $this, 'sync_product_stocks_reduce' ) );
+	    add_action( 'woocommerce_restore_order_stock', array( $this, 'sync_product_stocks_restore' ) );
 
         add_action( 'woocommerce_product_set_stock_status', array($this, 'sync_stock_status_for_translations' ), 100, 2);
         add_action( 'woocommerce_variation_set_stock_status', array($this, 'sync_stock_status_for_translations' ), 10, 2);
@@ -305,6 +303,7 @@ class WCML_Synchronize_Product_Data{
         foreach( $order->get_items() as $item ) {
 
             if( $item instanceof WC_Order_Item_Product ){
+
                 $variation_id = $item->get_variation_id();
                 $product_id = $item->get_product_id();
                 $qty = $item->get_quantity();
@@ -313,6 +312,12 @@ class WCML_Synchronize_Product_Data{
                 $product_id = $item[ 'product_id' ];
                 $qty = $item[ 'qty' ];
             }
+
+	        $is_original = $this->woocommerce_wpml->products->is_original_product( $product_id );
+
+	        if ( $is_original && $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.0.0', '>=' ) ) {
+		        return;
+	        }
 
 	        $qty = apply_filters( 'wcml_order_item_quantity', $qty, $order, $item );
 
@@ -328,7 +333,7 @@ class WCML_Synchronize_Product_Data{
 
             // Process for non-current languages
             foreach( $translations as $translation ){
-                if ( $ld->language_code != $translation->language_code ) {
+                if ( !$is_original || $ld->language_code != $translation->language_code ) {
 
 	                $translation_product_id = $translation->element_id;
 	                //check if product exist

@@ -3,30 +3,26 @@
 class WooCommerce_Functions_Wrapper{
 
     public static function is_deprecated(){
+
         if( version_compare( WC_VERSION , '3.0.0', '<' ) ){
             return true;
         }
-	    return false;
+        return false;
     }
 
-	/**
-	 * @param WC_Product $product
-	 *
-	 * @return int
-	 */
     public static function get_product_id( $product ){
         if( self::is_deprecated() ){
-	        /** @noinspection Annotator */
-	        return $product->id;
+            return $product->id;
         }
 	    return $product->get_id();
     }
 
     public static function get_product_type( $product_id ){
         if( self::is_deprecated() ){
-	        return wc_get_product( $product_id )->product_type;
+            $product = wc_get_product( $product_id );
+            return $product->product_type;
         }
-        return WC_Product_Factory::get_product_type( $product_id );
+	    return WC_Product_Factory::get_product_type( $product_id );
     }
 
     public static function reduce_stock( $product_id, $qty ){
@@ -34,7 +30,8 @@ class WooCommerce_Functions_Wrapper{
             $product = wc_get_product( $product_id );
             return $product->reduce_stock( $qty );
         }
-        return wc_update_product_stock( $product_id, $qty, 'decrease' );
+	    $data_store = WC_Data_Store::load( 'product' );
+	    return $data_store->update_product_stock( $product_id, $qty, 'decrease' );
     }
 
     public static function increase_stock( $product_id, $qty ){
@@ -42,7 +39,8 @@ class WooCommerce_Functions_Wrapper{
             $product = wc_get_product( $product_id );
             return $product->increase_stock( $qty );
         }
-        return wc_update_product_stock( $product_id, $qty, 'increase' );
+	    $data_store = WC_Data_Store::load( 'product' );
+	    return $data_store->update_product_stock( $product_id, $qty, 'increase' );
     }
 
     public static function set_stock( $product_id, $qty ){
