@@ -146,8 +146,12 @@ class WCML_Multi_Currency_Configuration{
             die('Invalid nonce');
         }
 
-        $options = array_map( 'sanitize_text_field', $_POST['currency_options'] );
-        $currency_code = $options['code'];
+	    $options = $_POST['currency_options'];
+
+	    $options['thousand_sep'] = wc_format_option_price_separators( null, null, $options['thousand_sep'] );
+	    $options['decimal_sep']  = wc_format_option_price_separators( null, null, $options['decimal_sep'] );
+
+	    $currency_code = $options['code'];
 
         if( !isset( self::$multi_currency->currencies[$currency_code] ) ){
             self::add_currency( $currency_code );
