@@ -1,10 +1,10 @@
 ---
-image: wptest:php7
+image: registry.git.onthegosystems.com/infrastructure/docker-images/wptest
 services:
-  - mysql:latest
+  - mysql:5.7
 
 variables:
-  # Configure mysql service (https://hub.ec2.com/_/mysql/)
+  # Configure mysql service (https://hub.autoscale.com/_/mysql/)
   WORDPRESS_DB_NAME: wp_test_db
   WORDPRESS_DB_USER: root
   MYSQL_ROOT_PASSWORD: mysql_strong_password
@@ -29,9 +29,9 @@ stages:
 Compatibility <PHP>:
   stage: quality
   when: always
-  image: otgs/phpunit:5.7
+  image: registry.git.onthegosystems.com/infrastructure/docker-images/otgs/phpunit:5.7
   tags:
-    - ec2
+    - autoscale
   script:
     - vendor/bin/phpcs --standard=./phpcs.compatibility.xml -s -p --colors --report-full --report-summary ./
   except:
@@ -40,9 +40,9 @@ Compatibility <PHP>:
 Unit <PHP>:
   stage: test
   when: always
-  image: otgs/phpunit:5.7
+  image: registry.git.onthegosystems.com/infrastructure/docker-images/otgs/phpunit:5.7
   tags:
-    - ec2
+    - autoscale
   script:
     - cd tests/phpunit
     - ../../vendor/bin/phpunit --fail-on-warning
@@ -53,7 +53,7 @@ Integration <PHP>:
   stage: test
   when: always
   tags:
-    - ec2
+    - autoscale
   script:
     - ./vendor/otgs/build-tools-ci/otgs-ci -p --legacy
   except:
@@ -62,9 +62,9 @@ Integration <PHP>:
 Tag:
   stage: build
   when: always
-  image: artbuilder:php7
+  image: registry.git.onthegosystems.com/infrastructure/docker-images/artbuilder:php7
   tags:
-    - ec2
+    - autoscale
   script:
     - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
     - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
@@ -78,9 +78,9 @@ Tag:
 Branch:
   stage: build
   when: on_success
-  image: artbuilder:php7
+  image: registry.git.onthegosystems.com/infrastructure/docker-images/artbuilder:php7
   tags:
-    - ec2
+    - autoscale
   script:
     - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
     - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
@@ -99,9 +99,9 @@ Branch:
 Pre-Release:
   stage: build
   when: on_success
-  image: artbuilder:php7
+  image: registry.git.onthegosystems.com/infrastructure/docker-images/artbuilder:php7
   tags:
-    - ec2
+    - autoscale
   script:
     - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
     - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
@@ -116,9 +116,9 @@ Pre-Release:
 Develop:
   stage: build
   when: on_success
-  image: artbuilder:php7
+  image: registry.git.onthegosystems.com/infrastructure/docker-images/artbuilder:php7
   tags:
-    - ec2
+    - autoscale
   script:
     - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
   artifacts:
@@ -132,9 +132,9 @@ Develop:
 Master:
   stage: build
   when: on_success
-  image: artbuilder:php7
+  image: registry.git.onthegosystems.com/infrastructure/docker-images/artbuilder:php7
   tags:
-    - ec2
+    - autoscale
   script:
     - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
     - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
@@ -149,9 +149,9 @@ Master:
 Release Notes:
   stage: documentation
   when: on_success
-  image: artbuilder:php7
+  image: registry.git.onthegosystems.com/infrastructure/docker-images/artbuilder:php7
   tags:
-    - ec2
+    - autoscale
   script:
     - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
     - ./vendor/otgs/build-tools-ci/otgs-ci --releasenotes
@@ -162,9 +162,9 @@ Release Notes:
 S3:
   stage: deploy
   when: on_success
-  image: artbuilder:php7
+  image: registry.git.onthegosystems.com/infrastructure/docker-images/artbuilder:php7
   tags:
-    - ec2
+    - autoscale
   script:
     - ./vendor/bin/publish-artifact-to-s3
   dependencies:
