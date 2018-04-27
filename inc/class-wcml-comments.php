@@ -100,11 +100,19 @@ class WCML_Comments {
 	 */
 	public function filter_average_rating( $value, $object_id, $meta_key ) {
 
-		if ( 'product' === get_post_type( $object_id ) ) {
-			if ( '_wc_average_rating' === $meta_key ) {
-				$filtered_value = get_post_meta( $object_id, self::WCML_AVERAGE_RATING_KEY, true );
-			} elseif ( self::WC_REVIEW_COUNT_KEY === $meta_key && $this->is_reviews_in_all_languages( $object_id ) ) {
-				$filtered_value = get_post_meta( $object_id, self::WCML_REVIEW_COUNT_KEY, true );
+		$filtered_value = $value;
+
+		if ( in_array( $meta_key, array( '_wc_average_rating', self::WC_REVIEW_COUNT_KEY ) ) && 'product' === get_post_type( $object_id ) ) {
+
+			switch ( $meta_key ){
+				case '_wc_average_rating':
+					$filtered_value = get_post_meta( $object_id, self::WCML_AVERAGE_RATING_KEY, true );
+					break;
+				case self::WC_REVIEW_COUNT_KEY:
+					if ( $this->is_reviews_in_all_languages( $object_id ) ) {
+						$filtered_value = get_post_meta( $object_id, self::WCML_REVIEW_COUNT_KEY, true );
+					}
+					break;
 			}
 		}
 

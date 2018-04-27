@@ -69,6 +69,10 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 		$global_addon->ID = mt_rand( 1, 10 );
 		$global_addons[] = $global_addon;
 
+		\WP_Mock::wpFunction( 'is_product', array(
+			'return' => true
+		) );
+
 		\WP_Mock::wpFunction( 'get_posts', array(
 			'args' => array( $args ),
 			'return' => $global_addons
