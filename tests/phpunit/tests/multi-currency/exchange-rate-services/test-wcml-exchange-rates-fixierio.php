@@ -58,10 +58,12 @@ class Test_WCML_Exchange_Rates_Fixierio extends OTGS_TestCase{
 
 		\WP_Mock::wpFunction( 'is_wp_error', [ 'return' => false ] );
 
+		$error = new stdClass();
+		$error->info = 'Custom Error';
 		$data = [
 			'body' => json_encode(
 				[
-					'error' => 'Custom Error'
+					'error' => $error
 				]
 			)
 		];
@@ -124,7 +126,7 @@ class Test_WCML_Exchange_Rates_Fixierio extends OTGS_TestCase{
 
 		\WP_Mock::wpFunction( 'wp_safe_remote_get', [ 'return' => $data ] );
 		$rates = $subject->get_rates( $from, $tos );
-		
+
 		$this->assertSame( $expected_rates, $rates );
 	}
 
