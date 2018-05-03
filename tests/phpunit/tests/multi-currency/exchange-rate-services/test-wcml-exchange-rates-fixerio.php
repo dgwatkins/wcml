@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class Test_WCML_Exchange_Rates_Fixierio
+ * Class Test_WCML_Exchange_Rates_Fixerio
  */
-class Test_WCML_Exchange_Rates_Fixierio extends OTGS_TestCase{
+class Test_WCML_Exchange_Rates_Fixerio extends OTGS_TestCase{
 
 	public function setUp(){
 		parent::setUp();
@@ -14,7 +14,7 @@ class Test_WCML_Exchange_Rates_Fixierio extends OTGS_TestCase{
 		\WP_Mock::wpFunction( 'get_option', [ 'return' => [] ] );
 		\WP_Mock::wpFunction( 'update_option', [] );
 
-		return new WCML_Exchange_Rates_Fixierio();
+		return new WCML_Exchange_Rates_Fixerio();
 	}
 
 	/**

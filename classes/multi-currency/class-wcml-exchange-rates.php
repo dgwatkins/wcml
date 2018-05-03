@@ -48,7 +48,7 @@ class WCML_Exchange_Rates {
 		if ( ! isset( $this->woocommerce_wpml->settings['multi_currency']['exchange_rates'] ) ) {
 			$this->settings = array(
 				'automatic'      => 0,
-				'service'        => 'fixierio',
+				'service'        => 'fixerio',
 				'lifting_charge' => 0,
 				'schedule'       => 'manual',
 				'week_day'       => 1,

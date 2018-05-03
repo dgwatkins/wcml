@@ -51,7 +51,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
      */
     public function test_get_services(){
 
-        $expected_services = array('fixierio', 'currencylayer');
+        $expected_services = array('fixerio', 'currencylayer');
         $actual_services   = array_keys( $this->exchange_rate_services->get_services() );
 
         $this->assertEquals( $expected_services, $actual_services );
@@ -168,7 +168,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
         $exchange_rate_services = new WCML_Exchange_Rates( $this->woocommerce_wpml, $wp_locale );
 	    $exchange_rate_services->initialize_settings();
 
-	    $mocked_exchange_rate_service = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixierio' )
+	    $mocked_exchange_rate_service = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
             ->disableOriginalConstructor()
             ->setMethods( array( 'get_rates' ) )
             ->getMock();
@@ -194,7 +194,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
         }
 
         // restore exchange rate service
-	    $this->exchange_rate_services->save_setting( 'service',  'fixierio' );
+	    $this->exchange_rate_services->save_setting( 'service',  'fixerio' );
     }
 
     /**

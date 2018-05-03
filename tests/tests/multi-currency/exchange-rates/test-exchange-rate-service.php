@@ -143,17 +143,17 @@ class WCML_Test_Exchange_Rate_Service extends WCML_UnitTestCase {
     /**
      * @test
      */
-    public function test_fixierio(){
+    public function test_fixerio(){
 
         add_filter( 'pre_http_request', array( $this, 'mock_api_response' ) );
 
-        $fixier = new WCML_Exchange_Rates_Fixierio();
+        $fixer = new WCML_Exchange_Rates_Fixerio();
 
 
         // 1) WP error
         $this->_mock_http_response = new WP_Error( 500, 'some_wp_error' );
         try{
-            $rates = $fixier->get_rates( 'USD', array( 'RON', 'BGN' ) );
+            $rates = $fixer->get_rates( 'USD', array( 'RON', 'BGN' ) );
         } catch ( Exception $e ){
             $this->assertEquals( 'some_wp_error', $e->getMessage() );
         }
@@ -176,7 +176,7 @@ class WCML_Test_Exchange_Rate_Service extends WCML_UnitTestCase {
         );
 
         try{
-            $rates = $fixier->get_rates( $from, $tos );
+            $rates = $fixer->get_rates( $from, $tos );
             $this->assertEquals( $quotes, $rates );
         } catch ( Exception $e ){
             $this->assertFalse( $e->getMessage() ); // Reveal this! Should not happen.

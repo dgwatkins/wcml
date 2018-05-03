@@ -158,7 +158,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 
 		$expected_settings = array(
 			'automatic'      => 0,
-			'service'        => 'fixierio',
+			'service'        => 'fixerio',
 			'lifting_charge' => 0,
 			'schedule'       => 'manual',
 			'week_day'       => 1,
@@ -311,8 +311,8 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 			$cur_1 => random_int( 1, 1000 ),
 			$cur_2 => random_int( 1, 1000 )
 		];
-		$service_id = 'fixierio';
-		$service    = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixierio' )
+		$service_id = 'fixerio';
+		$service    = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
 		                   ->disableOriginalConstructor()
 		                   ->setMethods( [ 'get_rates' ] )
 		                   ->getMock();
@@ -368,8 +368,8 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 			'return' => $_POST['wcml_nonce']
 		) );
 
-		$service_id = 'fixierio';
-		$service    = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixierio' )
+		$service_id = 'fixerio';
+		$service    = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
 		                   ->disableOriginalConstructor()
 		                   ->setMethods( [ 'get_rates' ] )
 		                   ->getMock();
@@ -486,7 +486,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$subject          = $this->get_subject( $woocommerce_wpml );
 
 		$preexisting_service = rand_str();
-		$service             = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixierio' )
+		$service             = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
 		                            ->disableOriginalConstructor()
 		                            ->getMock();
 		$subject->add_service( $preexisting_service, $service );
@@ -538,7 +538,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$subject          = $this->get_subject( $woocommerce_wpml );
 
 		$preexisting_service = rand_str();
-		$service             = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixierio' )
+		$service             = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
 		                            ->disableOriginalConstructor()
 		                            ->getMock();
 		$subject->add_service( $preexisting_service, $service );
@@ -590,7 +590,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$subject          = $this->get_subject( $woocommerce_wpml );
 
 		$preexisting_service = rand_str();
-		$service             = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixierio' )
+		$service             = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
 		                            ->disableOriginalConstructor()
 		                            ->setMethods( [ 'save_setting' ] )
 		                            ->getMock();

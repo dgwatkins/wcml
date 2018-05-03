@@ -23,7 +23,8 @@ class WCML_Upgrade{
 	    '4.2.2',
 	    '4.2.7',
         '4.2.10',
-        '4.2.11'
+        '4.2.11',
+	    '4.3.0'
     );
     
     function __construct(){
@@ -625,7 +626,7 @@ class WCML_Upgrade{
 		// #wcml-2242
 		$wcml_settings = get_option( '_wcml_settings' );
 		if( 'yahoo' === $wcml_settings['multi_currency']['exchange_rates']['service'] ){
-			$wcml_settings['multi_currency']['exchange_rates']['service'] = 'fixierio';
+			$wcml_settings['multi_currency']['exchange_rates']['service'] = 'fixerio';
 			update_option( '_wcml_settings', $wcml_settings );
 		}
 
@@ -666,6 +667,17 @@ class WCML_Upgrade{
                                   WHERE meta_key = 'wcml_converted_total'"
 		);
 
+	}
+
+	private function upgrade_4_3_0() {
+		$wcml_settings = get_option( '_wcml_settings' );
+		if (
+			isset( $wcml_settings['multi_currency']['exchange_rates']['service'] ) &&
+			'fixierio' === $wcml_settings['multi_currency']['exchange_rates']['service']
+		) {
+			$wcml_settings['multi_currency']['exchange_rates']['service'] = 'fixerio';
+			update_option( '_wcml_settings', $wcml_settings );
+		}
 	}
 
 }
