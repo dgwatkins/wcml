@@ -994,7 +994,7 @@ class WCML_Terms{
 		$ttid          = isset( $wcml_settings['default_categories'][ $lang ] ) ? (int) $wcml_settings['default_categories'][ $lang ] : 0;
 
 		return $ttid === 0
-			? null : $this->wpdb->get_var(
+			? false : $this->wpdb->get_var(
 				$this->wpdb->prepare(
 					"SELECT term_id
 		                     FROM {$this->wpdb->term_taxonomy}

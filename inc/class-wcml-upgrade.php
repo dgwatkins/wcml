@@ -667,6 +667,8 @@ class WCML_Upgrade{
                                   WHERE meta_key = 'wcml_converted_total'"
 		);
 
+		WCML_Install::insert_default_categories();
+
 	}
 
 	private function upgrade_4_3_0() {
