@@ -22,7 +22,8 @@ class WCML_Upgrade{
         '4.2.0',
 	    '4.2.2',
 	    '4.2.7',
-        '4.2.10'
+        '4.2.10',
+        '4.2.11'
     );
     
     function __construct(){
@@ -649,6 +650,21 @@ class WCML_Upgrade{
 				update_post_meta( $price->post_id, $block_cost_field_key, $base_cost_price );
 			}
 		}
+
+	}
+
+	private function upgrade_4_2_11(){
+        global $wpdb;
+
+		$wpdb->query( "UPDATE {$wpdb->prefix}woocommerce_order_itemmeta
+                                  SET meta_key = '_wcml_converted_subtotal'
+                                  WHERE meta_key = 'wcml_converted_subtotal'"
+		);
+
+		$wpdb->query( "UPDATE {$wpdb->prefix}woocommerce_order_itemmeta
+                                  SET meta_key = '_wcml_converted_total'
+                                  WHERE meta_key = 'wcml_converted_total'"
+		);
 
 	}
 

@@ -294,6 +294,6 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$subject = $this->get_subject();
 		$filtered_itemmeta = $subject->add_woocommerce_hidden_order_itemmeta( $itemmeta );
 
-		$this->assertSame( array( 'wcml_converted_subtotal', 'wcml_converted_total'), $filtered_itemmeta );
+		$this->assertSame( array( '_wcml_converted_subtotal', '_wcml_converted_total'), $filtered_itemmeta );
 	}
 }
