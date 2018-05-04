@@ -268,8 +268,8 @@ class WCML_Multi_Currency_Orders {
 
 	public function add_woocommerce_hidden_order_itemmeta( $itemmeta ) {
 
-		$itemmeta[] = 'wcml_converted_subtotal';
-		$itemmeta[] = 'wcml_converted_total';
+		$itemmeta[] = '_wcml_converted_subtotal';
+		$itemmeta[] = '_wcml_converted_total';
 
 		return $itemmeta;
 	}
@@ -296,18 +296,18 @@ class WCML_Multi_Currency_Orders {
 			if ( 'line_item' === $item->get_type() ) {
 
 				if ( ! $converted_price ) {
-					if( $item->meta_exists( 'wcml_converted_subtotal' ) ){
-						$converted_subtotal_price = $item->get_meta( 'wcml_converted_subtotal' );
+					if( $item->meta_exists( '_wcml_converted_subtotal' ) ){
+						$converted_subtotal_price = $item->get_meta( '_wcml_converted_subtotal' );
 					}else{
 						$converted_subtotal_price = $this->multi_currency->prices->raw_price_filter( $item->get_subtotal(), $order_currency );
-						$item->add_meta_data('wcml_converted_subtotal', $converted_subtotal_price );
+						$item->add_meta_data('_wcml_converted_subtotal', $converted_subtotal_price );
 					}
 
-					if( $item->meta_exists( 'wcml_converted_total' ) ){
-						$converted_total_price = $item->get_meta( 'wcml_converted_total' );
+					if( $item->meta_exists( '_wcml_converted_total' ) ){
+						$converted_total_price = $item->get_meta( '_wcml_converted_total' );
 					}else{
 						$converted_total_price = $this->multi_currency->prices->raw_price_filter( $item->get_total(), $order_currency );
-						$item->add_meta_data('wcml_converted_total', $converted_total_price );
+						$item->add_meta_data('_wcml_converted_total', $converted_total_price );
 					}
 				}
 
@@ -318,18 +318,18 @@ class WCML_Multi_Currency_Orders {
 		} else {
 
 			if ( ! $converted_price ) {
-				if( isset( $item[ 'wcml_converted_subtotal' ] ) ){
-					$converted_subtotal_price = $item[ 'wcml_converted_subtotal' ];
+				if( isset( $item[ '_wcml_converted_subtotal' ] ) ){
+					$converted_subtotal_price = $item[ '_wcml_converted_subtotal' ];
 				}else{
 					$converted_subtotal_price = $this->multi_currency->prices->raw_price_filter( $item['line_subtotal'], $order_currency );
-					$item[ 'wcml_converted_subtotal' ] = $converted_subtotal_price;
+					$item[ '_wcml_converted_subtotal' ] = $converted_subtotal_price;
 				}
 
-				if( isset( $item[ 'wcml_converted_total' ] ) ){
-					$converted_total_price = $item[ 'wcml_converted_total' ];
+				if( isset( $item[ '_wcml_converted_total' ] ) ){
+					$converted_total_price = $item[ '_wcml_converted_total' ];
 				}else{
 					$converted_total_price = $this->multi_currency->prices->raw_price_filter( $item['line_total'] , $order_currency );
-					$item[ 'wcml_converted_total' ] = $converted_total_price;
+					$item[ '_wcml_converted_total' ] = $converted_total_price;
 				}
 			}
 
