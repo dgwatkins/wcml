@@ -50,6 +50,8 @@ class WCML_Install{
                 // Before the setup wizard redirects from plugins.php, allow WPML to scan the wpml-config.xml file
                 WPML_Config::load_config_run();
 
+	            add_action( 'init', array( __CLASS__, 'insert_default_categories' ) );
+
                 $woocommerce_wpml->settings['set_up'] = 1;
                 $woocommerce_wpml->update_settings();
 
@@ -88,7 +90,6 @@ class WCML_Install{
             }elseif( $sitepress->is_translated_taxonomy( 'product_type' ) ){
                 add_action( 'admin_notices', array( __CLASS__, 'admin_translated_product_type_notice' ) );
             }
-
         }
 
     }
@@ -269,5 +270,52 @@ class WCML_Install{
         unset( $types['product_variation'] );
         return $types;
     }
+
+	public static function insert_default_categories() {
+		global $sitepress, $woocommerce_wpml;
+
+		$settings = $woocommerce_wpml->get_settings();
+
+		$default_language   = $sitepress->get_default_language();
+		$default_categories = isset( $settings['default_categories'] ) ? $settings['default_categories'] : array() ;
+
+		foreach ( $sitepress->get_active_languages() as $language ) {
+			if ( isset( $default_categories[ $language['code'] ] ) ) {
+				continue;
+			}
+
+			$sitepress->switch_locale( $language['code'] );
+			$tr_cat  = __( 'Uncategorized', 'sitepress' );
+			$tr_cat  = $tr_cat === 'Uncategorized' && $language['code'] !== 'en' ? 'Uncategorized @' . $language['code'] : $tr_cat;
+			$tr_term = term_exists( $tr_cat, 'product_cat' );
+			$sitepress->switch_locale();
+
+			// check if the term already exists
+			if ( $tr_term ) {
+				$tmp = get_term( $tr_term['term_taxonomy_id'], 'product_cat', ARRAY_A );
+			} else {
+				$tmp = wp_insert_term( $tr_cat, 'product_cat' );
+			}
+
+			// add it to settings
+			$settings['default_categories'][ $language['code'] ] = $tmp['term_taxonomy_id'];
+
+			//update translations table
+			$default_category_trid = $sitepress->get_element_trid(
+				get_option( 'default_product_cat' ),
+				'tax_product_cat'
+			);
+			$sitepress->set_element_language_details(
+				$tmp['term_taxonomy_id'],
+				'tax_product_cat',
+				$default_category_trid,
+				$language['code'],
+				$default_language
+			);
+
+		}
+
+		$woocommerce_wpml->update_settings( $settings );
+	}
 
 }
