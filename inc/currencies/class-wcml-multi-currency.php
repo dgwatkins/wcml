@@ -188,6 +188,7 @@ class WCML_Multi_Currency{
 
         add_filter( 'wcml_get_client_currency', array($this, 'get_client_currency') );
         add_action( 'wp_footer', array( $this, 'maybe_show_switching_currency_prompt_dialog' ) );
+        add_action( 'wp_footer', array( $this, 'maybe_reset_cart_fragments' ) );
 
     }
 
@@ -497,8 +498,23 @@ class WCML_Multi_Currency{
         if( $this->switching_currency_html ){
             echo $this->switching_currency_html;
         }
-
     }
+
+	public function maybe_reset_cart_fragments() {
+		global $woocommerce;
+
+		if ( ! empty( $woocommerce->session ) && $woocommerce->session->get( 'client_currency_switched' ) ) {
+			?>
+			<script type="text/javascript">
+                jQuery(document).ready(function () {
+                    wcml_reset_cart_fragments();
+                });
+			</script>
+			<?php
+			$woocommerce->session->set( 'client_currency_switched', false );
+		}
+
+	}
 
     public function set_client_currency($currency){
         global $woocommerce,$sitepress;
@@ -531,6 +547,8 @@ class WCML_Multi_Currency{
         if(empty($woocommerce->session->data) && empty($current_user->ID)){
             $woocommerce->session->set_customer_session_cookie(true);
         }
+
+	    $woocommerce->session->set('client_currency_switched', true );
 
         do_action('wcml_switch_currency', $currency );
 

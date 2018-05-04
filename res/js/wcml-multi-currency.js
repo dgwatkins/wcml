@@ -57,7 +57,6 @@ function wcml_load_currency( currency, force_switch ){
                 wcml_reset_cart_fragments();
 
                 window.location = target_location;
-
             }
         }
     });
