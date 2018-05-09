@@ -58,6 +58,8 @@
              'translation_complete' => false,
          );
 
+         $this->sitepress->set_setting( 'tm_block_retranslating_terms', '' );
+
          $editor_ui_product_job = new WCML_Editor_UI_Product_Job( $job_details, $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
 
          $filtered_element_data = $editor_ui_product_job->add_taxonomies_to_element_data( $element_data );
