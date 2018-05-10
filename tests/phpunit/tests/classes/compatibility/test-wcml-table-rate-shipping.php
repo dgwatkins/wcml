@@ -33,6 +33,7 @@ class Test_WCML_Table_Rate_Shipping extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 		\WP_Mock::expectFilterAdded( 'get_the_terms', array( $subject, 'shipping_class_id_in_default_language' ), 10, 3 );
+		\WP_Mock::expectFilterAdded(  'woocommerce_shipping_table_rate_is_available', array( $subject, 'shipping_table_rate_is_available' ), 10, 3 );
 		$subject->add_hooks();
 
 	}
@@ -49,6 +50,53 @@ class Test_WCML_Table_Rate_Shipping extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'woocommerce_table_rate_package_row_base_price', array( $subject, 'filter_product_base_price' ), 10, 3 );
 		$subject->add_hooks();
 
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_table_rate_priorities() {
+
+		$class_instance_id = 2;
+		$values            = array(
+			'class_slug' => $class_instance_id
+		);
+
+		$translated_class       = new stdClass();
+		$translated_class->slug = 'slug-de';
+
+		WP_Mock::userFunction( 'get_term_by', array(
+			'args'   => array( 'slug', 'class_slug', 'product_shipping_class' ),
+			'return' => $translated_class
+		) );
+
+		$subject         = $this->get_subject();
+		$filtered_values = $subject->filter_table_rate_priorities( $values );
+
+		$this->assertEquals( array( $translated_class->slug => $class_instance_id ), $filtered_values );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_re_check_shipping_table_rate_is_available() {
+
+		\WP_Mock::wpPassthruFunction( 'remove_filter' );
+		$available = false;
+
+		$object = $this->getMockBuilder( 'WC_Shipping_Method' )
+		                     ->disableOriginalConstructor()
+		                     ->setMethods( array( 'is_available' ) )
+		                     ->getMock();
+		$object->method( 'is_available' )->willReturn( true );
+
+		$object->instance_id = mt_rand( 1, 10 );
+
+		$subject         = $this->get_subject();
+
+		\WP_Mock::expectFilterAdded( 'option_woocommerce_table_rate_priorities_'.$object->instance_id, array( $subject, 'filter_table_rate_priorities' ) );
+
+		$filtered_values = $subject->shipping_table_rate_is_available( $available, array(), $object );
 	}
 
 }
