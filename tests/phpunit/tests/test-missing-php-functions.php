@@ -9,6 +9,10 @@ class Test_Missing_Functions extends OTGS_TestCase {
 
 	public function test_rest_get_url_prefix(){
 
+		\WP_Mock::userFunction( 'is_admin', array(
+			'return' => false
+		) );
+
 		// backup
 		if ( isset( $GLOBALS['wp_version'] ) ) {
 			$wp_version = $GLOBALS['wp_version'];
