@@ -452,8 +452,8 @@ class WCML_Url_Translation {
 
 				foreach ( (array) $value as $k => $v ) {
 
-					if ( $slug_details['slug'] != $slug_details['translated_slug'] && preg_match( '#^[^/]*/?' . $slug_match . '/#', $k ) ) {
-						$k = preg_replace( '#^([^/]*)(/?)' . $slug_match . '/#', '$1$2' . $slug_translation_match . '/', $k );
+					if ( $slug_details['slug'] != $slug_details['translated_slug'] && preg_match( '#(^|^/)' . $slug_match . '/#', $k ) ) {
+						$k = preg_replace( '#(^|^/)' . $slug_match . '/#', '$1'. $slug_translation_match . '/', $k );
 					}
 
 					$buff_value[ $k ] = $v;
