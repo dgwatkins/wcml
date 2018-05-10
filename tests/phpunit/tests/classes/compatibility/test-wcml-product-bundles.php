@@ -15,7 +15,7 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 		parent::setUp();
 
 		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
-		$this->sitepress = $this->getMockBuilder( 'Sitepress' )->setMethods( array( 'get_language_for_element' ) )->disableOriginalConstructor()->getMock();
+		$this->sitepress = $this->getMockBuilder( 'Sitepress' )->setMethods( array( 'get_language_for_element', 'get_current_language' ) )->disableOriginalConstructor()->getMock();
 		$this->product_bundles_items = $this->getMockBuilder( 'WCML_WC_Product_Bundles_Items' )->setMethods( array(
 			'get_items',
 			'get_item_data',
@@ -275,6 +275,24 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 		$subject->sync_product_bundle_meta( $this->bundle_id, $this->translated_bundle_id );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_woocommerce_json_search_products_in_current_language() {
+
+		$product_id = mt_rand( 1, 100 );
+		$found_products = array( $product_id => rand_str() );
+
+		$this->sitepress->method( 'get_language_for_element' )->willReturn( 'es' );
+		$this->sitepress->method( 'get_current_language' )->willReturn( 'en' );
+
+		$subject = $this->get_subject();
+		$filtered_products = $subject->woocommerce_json_search_filter_found_products( $found_products );
+
+		$this->assertEmpty( $filtered_products );
 
 	}
 }
