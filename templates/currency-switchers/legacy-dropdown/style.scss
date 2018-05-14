@@ -1,6 +1,7 @@
 .wcml-dropdown {
 	width: 15.5em;
 	max-width: 100%;
+	position: relative;
 	& > ul {
 		position: relative;
 		padding: 0;
@@ -91,5 +92,16 @@
 				}
 			}
 		}
+	}
+}
+
+.wcml-spinner {
+	position: absolute;
+	right: -20px;
+	top: 50%;
+	transform: translateY(-50%);
+	.rtl & {
+		right: auto;
+		left: -20px;
 	}
 }

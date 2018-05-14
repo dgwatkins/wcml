@@ -3,6 +3,7 @@
 	border: 1px solid transparent;
 	border-bottom: 0;
 	clear: both;
+	position: relative;
 	& > ul {
 		padding: 0;
 		margin: 0 !important;
@@ -29,5 +30,16 @@
 
 	.woocommerce &.product {
 		margin: 1em 0;
+	}
+}
+
+.wcml-spinner {
+	position: absolute;
+	right: -20px;
+	top: 50%;
+	transform: translateY(-50%);
+	.rtl & {
+		right: auto;
+		left: -20px;
 	}
 }
