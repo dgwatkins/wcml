@@ -27,9 +27,8 @@ class WCML_Multi_Currency_Resources{
 
         wp_register_script('wcml-mc-scripts', WCML_PLUGIN_URL . '/res/js/wcml-multi-currency' . WCML_JS_MIN . '.js', array('jquery'), WCML_VERSION, true);
 
-        wp_enqueue_script('wcml-mc-scripts');
 
-        $script_vars['wcml_spinner']    = WCML_PLUGIN_URL . '/res/images/ajax-loader.gif';
+        $script_vars['wcml_spinner']    =  ICL_PLUGIN_URL . '/res/img/ajax-loader.gif';
         $script_vars['current_currency']= array(
             'code'  => self::$multi_currency->get_client_currency(),
             'symbol'=> get_woocommerce_currency_symbol( self::$multi_currency->get_client_currency() )
@@ -37,13 +36,13 @@ class WCML_Multi_Currency_Resources{
 
 	    $script_vars = self::set_cache_compatibility_variables( $script_vars );
 
-        wp_localize_script('wcml-mc-scripts', 'wcml_mc_settings', $script_vars );
+	    wp_localize_script('wcml-mc-scripts', 'wcml_mc_settings', $script_vars );
+
+	    wp_enqueue_script('wcml-mc-scripts');
 
     }
 
 	private static function set_cache_compatibility_variables( $script_vars ) {
-
-		$script_vars = array();
 
 		if (
 			(int) ! empty( self::$multi_currency->W3TC ) ||

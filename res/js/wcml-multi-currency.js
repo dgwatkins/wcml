@@ -17,9 +17,8 @@ jQuery(document).ready(function(){
 });
 
 function wcml_load_currency( currency, force_switch ){
-    var ajax_loader = jQuery('<img style=\"margin-left:10px;\" width=\"16\" heigth=\"16\" src=\"' + wcml_mc_settings.wcml_spinner +'\" />')
-    jQuery('.wcml_currency_switcher').after();
-    ajax_loader.insertAfter(jQuery('.wcml_currency_switcher'));
+    var ajax_loader = jQuery('<img class=\"wcml-spinner\" width=\"16\" heigth=\"16\" src=\"' + wcml_mc_settings.wcml_spinner +'\" />');
+    jQuery('.wcml_currency_switcher').append(ajax_loader);
 
     if ( typeof force_switch === 'undefined') force_switch = 0;
 
