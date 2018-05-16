@@ -332,8 +332,16 @@ class Test_WCML_Setup extends OTGS_TestCase {
 			define( 'WCML_VERSION', rand_str() );
 		}
 
+		if ( ! defined( 'ICL_PLUGIN_URL' ) ) {
+			define( 'ICL_PLUGIN_URL', rand_str() );
+		}
+
+		if ( ! defined( 'ICL_SITEPRESS_VERSION' ) ) {
+			define( 'ICL_SITEPRESS_VERSION', rand_str() );
+		}
+
 		\WP_Mock::wpFunction( 'wp_enqueue_style', array(
-			'times' => 1
+			'times' => 2
 		) );
 		\WP_Mock::wpFunction( 'wp_enqueue_script', array(
 			'times' => 1

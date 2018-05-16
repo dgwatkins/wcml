@@ -124,6 +124,8 @@ class Test_WCML_Setup_UI extends OTGS_TestCase {
 
 		$step_keys = [ rand_str(), rand_str(), rand_str() ];
 
+		$current_step = $step_keys[1];
+
 		$steps = [
 			$step_keys[0] => [ 'name' => rand_str() ],
 			$step_keys[1] => [ 'name' => rand_str() ],
@@ -135,7 +137,7 @@ class Test_WCML_Setup_UI extends OTGS_TestCase {
 		) );
 
 		ob_start();
-		$subject->setup_steps( $steps );
+		$subject->setup_steps( $steps, $current_step );
 		ob_end_clean();
 	}
 

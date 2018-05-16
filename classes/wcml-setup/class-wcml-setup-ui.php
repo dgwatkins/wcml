@@ -47,17 +47,18 @@ class WCML_Setup_UI {
 
 	/**
 	 * @param array $steps
+	 * @param string $current_step
 	 */
-	public function setup_steps( $steps ) {
+	public function setup_steps( array $steps, $current_step ) {
 		$step_keys = array_keys( $steps );
 		array_shift( $steps );
 		?>
         <ol class="wcml-setup-steps">
 			<?php foreach ( $steps as $step_key => $step ) : ?>
                 <li class="<?php
-				if ( $step_key === $step ) {
+				if ( $step_key === $current_step ) {
 					echo 'active';
-				} elseif ( array_search( $step, $step_keys ) > array_search( $step_key, $step_keys ) ) {
+				} elseif ( array_search( $current_step, $step_keys ) > array_search( $step_key, $step_keys ) ) {
 					echo 'done';
 				}
 				?>"><?php echo esc_html( $step['name'] ); ?></li>

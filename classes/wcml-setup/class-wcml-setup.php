@@ -159,11 +159,14 @@ class WCML_Setup {
 
 		$this->step = isset( $_GET['step'] ) ? sanitize_key( $_GET['step'] ) : current( array_keys( $this->steps ) );
 
+		wp_enqueue_style( 'otgs-ico', ICL_PLUGIN_URL . '/res/css/otgs-ico.css', null, ICL_SITEPRESS_VERSION );
 		wp_enqueue_style( 'wcml-setup', WCML_PLUGIN_URL . '/res/css/wcml-setup.css', array(
 			'dashicons',
 			'install'
 		), WCML_VERSION );
+
 		wp_enqueue_script( 'wcml-setup', WCML_PLUGIN_URL . '/res/js/wcml-setup.js', array( 'jquery' ), WCML_VERSION );
+
 
 		$this->ui->setup_header( $this->steps, $this->step );
 
@@ -171,13 +174,14 @@ class WCML_Setup {
 		$step_index      = array_search( $this->step, $steps_keys );
 		$this->next_step = isset( $steps_keys[ $step_index + 1 ] ) ? $steps_keys[ $step_index + 1 ] : '';
 
-		$this->ui->setup_steps( $this->steps );
+		$this->ui->setup_steps( $this->steps, $this->step );
 		$this->ui->setup_content( $this->steps[ $this->step ]['view'] );
 		$this->ui->setup_footer( ! empty( $this->steps[ $this->step ]['handler'] ) );
 
 		if ( $this->step == 'ready' ) {
 			$this->complete_setup();
 		}
+
 		wp_die();
 	}
 
