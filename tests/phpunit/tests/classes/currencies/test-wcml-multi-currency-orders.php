@@ -183,7 +183,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$item =  $this->getMockBuilder( 'WC_Order_Item_Product' )
 		              ->disableOriginalConstructor()
-		              ->setMethods( array( 'get_type', 'set_subtotal', 'set_total', 'save' ) )
+		              ->setMethods( array( 'get_type', 'set_subtotal', 'set_total', 'save', 'get_quantity' ) )
 		              ->getMock();
 
 		$items = array( $item );
@@ -212,6 +212,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		) );
 
 		$item->method( 'get_type' )->willReturn( 'line_item' );
+		$item->method( 'get_quantity' )->willReturn( 1 );
 		$item->expects( $this->once() )->method( 'set_subtotal' )->with( $converted_price )->willReturn( true );
 		$item->expects( $this->once() )->method( 'set_total' )->with( $converted_price )->willReturn( true );
 		$item->expects( $this->once() )->method( 'save' )->willReturn( true );
@@ -237,7 +238,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$item =  $this->getMockBuilder( 'WC_Order_Item_Product' )
 		              ->disableOriginalConstructor()
-		              ->setMethods( array( 'get_type', 'set_subtotal', 'set_total', 'save', 'meta_exists', 'add_meta_data', 'get_subtotal', 'get_total' ) )
+		              ->setMethods( array( 'get_type', 'set_subtotal', 'set_total', 'save', 'meta_exists', 'add_meta_data', 'get_subtotal', 'get_total','get_quantity' ) )
 		              ->getMock();
 
 		$items = array( $item );
@@ -273,6 +274,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$item->method( 'get_type' )->willReturn( 'line_item' );
 		$item->method( 'meta_exists' )->willReturn( false );
 		$item->method( 'add_meta_data' )->willReturn( true );
+		$item->method( 'get_quantity' )->willReturn( 1 );
 		$item->method( 'get_subtotal' )->willReturn( $subtotal );
 		$item->method( 'get_total' )->willReturn( $total );
 		$this->wcml_multi_currency->prices->method( 'raw_price_filter' )->willReturn( $converted_price );
