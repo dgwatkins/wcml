@@ -12,7 +12,6 @@ class Test_WCML_Admin_Menus extends WCML_UnitTestCase {
 	}
 
 	public function test_check_user_admin_access(){
-		global $wpdb;
 
 		$current_user_id = get_current_user_id();
 
@@ -22,9 +21,10 @@ class Test_WCML_Admin_Menus extends WCML_UnitTestCase {
 		$prevent_access = WCML_Admin_Menus::check_user_admin_access( true );
 		$this->assertTrue( $prevent_access );
 
-		$user->add_cap( WPML_Translator_Role::CAPABILITY );
-		$language_pair_records = new WPML_Language_Pair_Records( $wpdb, new WPML_Language_Records( $wpdb ) );
-		$language_pair_records->store( $user->ID, array( 'en' => array( 'es' ) ) );
+		$tm = new TranslationManagement();
+
+		$language_pairs = array( 'en' => array( 'es' => 1 ) );
+		$tm->add_translator( $user->ID, $language_pairs );
 		wp_set_current_user( $user->ID );
 
 		$prevent_access = WCML_Admin_Menus::check_user_admin_access( true );
