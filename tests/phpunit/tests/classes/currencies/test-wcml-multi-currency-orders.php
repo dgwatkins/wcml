@@ -183,14 +183,23 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$item =  $this->getMockBuilder( 'WC_Order_Item_Product' )
 		              ->disableOriginalConstructor()
-		              ->setMethods( array( 'get_type', 'set_subtotal', 'set_total', 'save', 'get_quantity' ) )
+		              ->setMethods( array( 'get_type', 'set_subtotal', 'set_total', 'save', 'get_quantity', 'get_product' ) )
 		              ->getMock();
 
 		$items = array( $item );
 
+		$product_obj =  $this->getMockBuilder( 'WC_Product' )
+		              ->disableOriginalConstructor()
+		              ->getMock();
+
 		\WP_Mock::wpFunction( 'get_post_meta', array(
 			'args' => array( $_POST['order_id'], '_order_currency', true ),
 			'return' => $order_currency
+		) );
+
+		\WP_Mock::wpFunction( 'wc_get_price_excluding_tax', array(
+			'args' => array( $product_obj, array( 'price' => $converted_price , 'qty' => 1 ) ),
+			'return' => $converted_price
 		) );
 
 		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
@@ -213,6 +222,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$item->method( 'get_type' )->willReturn( 'line_item' );
 		$item->method( 'get_quantity' )->willReturn( 1 );
+		$item->method( 'get_product' )->willReturn( $product_obj );
 		$item->expects( $this->once() )->method( 'set_subtotal' )->with( $converted_price )->willReturn( true );
 		$item->expects( $this->once() )->method( 'set_total' )->with( $converted_price )->willReturn( true );
 		$item->expects( $this->once() )->method( 'save' )->willReturn( true );
