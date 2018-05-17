@@ -294,7 +294,7 @@ class WCML_Multi_Currency_Orders {
 
 			if ( 'line_item' === $item->get_type() ) {
 
-				$converted_price = $converted_subtotal_price = $converted_total_price = get_post_meta( $original_product_id, '_price_' . $order_currency, true ) * $item->get_quantity();
+				$converted_price = get_post_meta( $original_product_id, '_price_' . $order_currency, true );
 
 				if ( ! $converted_price ) {
 					if( $item->meta_exists( '_wcml_converted_subtotal' ) ){
@@ -310,7 +310,13 @@ class WCML_Multi_Currency_Orders {
 						$converted_total_price = $this->multi_currency->prices->raw_price_filter( $item->get_total(), $order_currency );
 						$item->add_meta_data('_wcml_converted_total', $converted_total_price );
 					}
-				}
+				}else{
+
+					$converted_price = wc_get_price_excluding_tax( $item->get_product(), array( 'price' => $converted_price, 'qty' => $item->get_quantity() ) );
+
+					$converted_subtotal_price = $converted_price;
+					$converted_total_price    = $converted_price;
+                }
 
 				$item->set_subtotal( $converted_subtotal_price );
 				$item->set_total( $converted_total_price );
@@ -318,7 +324,7 @@ class WCML_Multi_Currency_Orders {
 			}
 		} else {
 
-			$converted_price = $converted_subtotal_price = $converted_total_price = get_post_meta( $original_product_id, '_price_' . $order_currency, true ) * $item['quantity'];
+			$converted_price = $converted_subtotal_price = $converted_total_price = get_post_meta( $original_product_id, '_price_' . $order_currency, true );
 
 			if ( ! $converted_price ) {
 				if( isset( $item[ '_wcml_converted_subtotal' ] ) ){
@@ -334,6 +340,12 @@ class WCML_Multi_Currency_Orders {
 					$converted_total_price = $this->multi_currency->prices->raw_price_filter( $item['line_total'] , $order_currency );
 					$item[ '_wcml_converted_total' ] = $converted_total_price;
 				}
+			}else{
+
+				$converted_price = wc_get_price_excluding_tax( wc_get_product( $item[ 'product_id' ] ), array( 'price' => $converted_price, 'qty' => $item['quantity'] ) );
+
+				$converted_subtotal_price = $converted_price;
+				$converted_total_price    = $converted_price;
 			}
 
 			$item['line_subtotal']      = $converted_subtotal_price;
