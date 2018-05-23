@@ -4,8 +4,8 @@ Donate link: http://wpml.org/documentation/related-projects/woocommerce-multilin
 Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multilingual, e-shop, shop
 License: GPLv2
 Requires at least: 3.9
-Tested up to: 4.8
-Stable tag: 4.3-beta
+Tested up to: 4.9.6
+Stable tag: 4.3.0-b.1
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
 
