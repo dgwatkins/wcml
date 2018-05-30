@@ -74,14 +74,6 @@ class WCML_Dependencies {
 			$this->allok = false;
 		}
 
-		if ( ! defined( 'WPML_MEDIA_VERSION' ) ) {
-			$this->missing['WPML Media'] = $this->tracking_link->generate( 'https://wpml.org/' );
-			$this->allok                 = false;
-		} elseif ( version_compare( WPML_MEDIA_VERSION, self::MIN_WPML_MEDIA, '<' ) ) {
-			add_action( 'admin_notices', array( $this, '_old_wpml_media_warning' ) );
-			$this->allok = false;
-		}
-
 		if ( $this->missing ) {
 			add_action( 'admin_notices', array( $this, '_missing_plugins_warning' ) );
 		}

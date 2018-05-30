@@ -4,9 +4,6 @@ define( 'WP_PLUGIN_DIR', realpath( dirname( __FILE__ ) . '/../../' ) );
 if ( ! defined( 'WPML_CORE_PATH' ) ) {
 	define( 'WPML_CORE_PATH', dirname( __FILE__ ) . '/../../sitepress-multilingual-cms' );
 }
-if ( ! defined( 'WPML_CORE_MT_PATH' ) ) {
-	define( 'WPML_CORE_MT_PATH', dirname( __FILE__ ) . '/../../wpml-media-translation' );
-}
 if ( ! defined( 'WPML_CORE_ST_PATH' ) ) {
 	define( 'WPML_CORE_ST_PATH', dirname( __FILE__ ) . '/../../wpml-string-translation' );
 }
@@ -33,7 +30,6 @@ function _manually_load_plugin() {
 	require WPML_CORE_PATH . '/sitepress.php';
 	require WPML_CORE_ST_PATH . '/plugin.php';
 	require WPML_CORE_TM_PATH . '/plugin.php';
-	require WPML_CORE_MT_PATH . '/plugin.php';
 	require WC_PATH. '/woocommerce.php';
 	require dirname( __FILE__ ) . '/../wpml-woocommerce.php';
 }

@@ -142,13 +142,6 @@
     {
       "server": "ssh://git@git.onthegosystems.com:10022",
       "namespace": "wpml",
-      "project_slug": "wpml-media-translation",
-      "db": "tests_wpml_media",
-      "clone_only": true
-    },
-    {
-      "server": "ssh://git@git.onthegosystems.com:10022",
-      "namespace": "wpml",
       "project_slug": "sitepress-multilingual-cms",
       "db": "tests_wpml_core",
       "clone_only": true
