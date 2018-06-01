@@ -779,18 +779,14 @@ class WCML_Terms{
         return $filtered_terms;
     }
 
-
-
-
-    function set_flag_to_sync( $taxonomy, $el_id, $language_code ){
-
-        $elem_details = $this->sitepress->get_element_language_details( $el_id, 'tax_'.$taxonomy );
-        if( is_null( $elem_details->source_language_code ) )
-            return;
-
-        $this->check_if_sync_term_translation_needed( $el_id, $taxonomy );
-
-    }
+	function set_flag_to_sync( $taxonomy, $el_id, $language_code ) {
+		if ( $el_id ) {
+			$elem_details = $this->sitepress->get_element_language_details( $el_id, 'tax_' . $taxonomy );
+			if ( null !== $elem_details->source_language_code ) {
+				$this->check_if_sync_term_translation_needed( $el_id, $taxonomy );
+			}
+		}
+	}
 
     function check_if_sync_terms_needed(){
 
