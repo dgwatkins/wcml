@@ -316,6 +316,7 @@ class WCML_Cart {
 			$display_as_translated = apply_filters(  'wpml_is_display_as_translated_post_type', false, 'product' );
             if ( $cart_item['product_id'] == $tr_product_id || $display_as_translated ) {
 				$new_cart_data[ $key ] = apply_filters( 'wcml_cart_contents_not_changed', $cart->cart_contents[ $key ], $key, $current_language );
+	            $new_cart_data[ $key ][ 'data_hash' ]  = $this->get_data_cart_hash( $cart_item );
 				continue;
 			}
 
@@ -348,6 +349,7 @@ class WCML_Cart {
 				$new_key                   = $this->wcml_generate_cart_key( $cart->cart_contents, $key );
 				$cart->cart_contents       = apply_filters( 'wcml_update_cart_contents_lang_switch', $cart->cart_contents, $key, $new_key, $current_language );
 				$new_cart_data[ $new_key ] = $cart->cart_contents[ $key ];
+				$new_cart_data[ $new_key ][ 'data_hash' ]  = $this->get_data_cart_hash( $new_cart_data[ $new_key ] );
 
 				$new_cart_data = apply_filters( 'wcml_cart_contents', $new_cart_data, $cart->cart_contents, $key, $new_key );
 			}
@@ -357,6 +359,19 @@ class WCML_Cart {
 		$this->woocommerce->session->cart = $cart->cart_contents;
 
 		return $cart->cart_contents;
+	}
+
+	/**
+	 * @param $cart_item array
+	 *
+	 * @return string
+	 */
+	public function get_data_cart_hash( $cart_item ) {
+
+		$hash_product_object = wc_get_product( $cart_item[ 'variation_id' ] ? $cart_item[ 'variation_id' ] : $cart_item[ 'product_id' ] );
+		$data_hash           = wc_get_cart_item_data_hash( $hash_product_object );
+
+		return $data_hash;
 	}
 
 	public function wcml_check_on_duplicate_products_in_cart( $cart_contents ) {

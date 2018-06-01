@@ -484,4 +484,62 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		$this->assertEquals( $attribute, $subject->get_cart_attribute_translation( 'attribute_'.$attr_key, $attribute, $variation_id, $current_language, $product_id, $tr_product_id ) );
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_should_get_data_cart_hash_from_variation_if_exists() {
+
+		$cart_item[ 'variation_id' ] = 10;
+		$cart_item[ 'product_id' ] = 20;
+
+		$product = $this->getMockBuilder( 'WC_Product_Variation' )
+		                ->disableOriginalConstructor()
+		                ->getMock();
+
+		\WP_Mock::wpFunction( 'wc_get_product', array(
+			'args' => array( $cart_item[ 'variation_id' ] ),
+			'return' => $product
+		) );
+
+		$hash = rand_str();
+
+		\WP_Mock::wpFunction( 'wc_get_cart_item_data_hash', array(
+			'args' => array( $product ),
+			'return' => $hash
+		) );
+
+		$subject = $this->get_subject();
+		$this->assertEquals( $hash, $subject->get_data_cart_hash( $cart_item ) );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_get_data_cart_hash_from_product_if_variation_does_not_exists() {
+
+		$cart_item[ 'variation_id' ] = '';
+		$cart_item[ 'product_id' ] = 10;
+
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                ->disableOriginalConstructor()
+		                ->getMock();
+
+		\WP_Mock::wpFunction( 'wc_get_product', array(
+			'args' => array( $cart_item[ 'product_id' ] ),
+			'return' => $product
+		) );
+
+		$hash = rand_str();
+
+		\WP_Mock::wpFunction( 'wc_get_cart_item_data_hash', array(
+			'args' => array( $product ),
+			'return' => $hash
+		) );
+
+		$subject = $this->get_subject();
+		$this->assertEquals( $hash, $subject->get_data_cart_hash( $cart_item ) );
+
+	}
+
 }
