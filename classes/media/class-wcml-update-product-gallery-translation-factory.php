@@ -5,7 +5,10 @@ class WCML_Update_Product_Gallery_Translation_Factory implements IWPML_Backend_A
 	public function create() {
 		global $sitepress;
 
-		return new WCML_Update_Product_Gallery_Translation( new WPML_Translation_Element_Factory( $sitepress ), $sitepress );
+		return new WCML_Update_Product_Gallery_Translation(
+			new WPML_Translation_Element_Factory( $sitepress ),
+			new WPML_Media_Usage_Factory()
+		);
 	}
 
 }

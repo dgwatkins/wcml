@@ -7,47 +7,40 @@ class WCML_Update_Product_Gallery_Translation implements IWPML_Action {
 	 */
 	private $translation_element_factory;
 	/**
-	 * @var SitePress
+	 * @var WPML_Media_Usage_Factory
 	 */
-	private $sitepress;
+	private $media_usage_factory;
 
-	public function __construct( WPML_Translation_Element_Factory $translation_element_factory, SitePress $sitepress ) {
+	public function __construct(
+		WPML_Translation_Element_Factory $translation_element_factory,
+		WPML_Media_Usage_Factory $media_usage_factory
+	) {
 		$this->translation_element_factory = $translation_element_factory;
-		$this->sitepress                   = $sitepress;
+		$this->media_usage_factory         = $media_usage_factory;
 	}
 
 	public function add_hooks() {
-		add_action( 'wpml_added_media_file_translation', array( $this, 'update_meta' ), PHP_INT_MAX, 1 );
+		add_action( 'wpml_added_media_file_translation', array( $this, 'update_meta' ), PHP_INT_MAX, 3 );
 	}
 
 	/**
-	 * @param int $attachment_id
-	 *
-	 * @throws \InvalidArgumentException
+	 * @param int $original_attachment_id
 	 */
-	public function update_meta( $attachment_id ) {
+	public function update_meta( $original_attachment_id, $file, $language ) {
+		$media_usage = $this->media_usage_factory->create( $original_attachment_id );
 
-		$post_source_meta_key = $this->sitepress->get_wp_api()
-		                                        ->constant( 'WPML_Media_Translation_Status::POST_SOURCE_META_KEY' );
-
-		$source_post_id = get_post_meta( $attachment_id, $post_source_meta_key, true );
-
-		if ( $source_post_id ) {
-
-			$source_post = $this->translation_element_factory->create( $source_post_id, 'post' );
-
-			$updated_attachment_element = $this->translation_element_factory->create( $attachment_id, 'post' );
-
-			$meta_value = $this->get_translated_gallery( $source_post_id, $updated_attachment_element );
-
+		$posts = $media_usage->get_posts();
+		foreach ( $posts as $source_post_id ) {
+			$source_post                 = $this->translation_element_factory->create( $source_post_id, 'post' );
+			$original_attachment_element = $this->translation_element_factory->create( $original_attachment_id, 'post' );
+			$updated_attachment_element  = $original_attachment_element->get_translation( $language );
+			$meta_value                  = $this->get_translated_gallery( $source_post_id, $updated_attachment_element );
 			$this->update_gallery( $meta_value, $source_post, $updated_attachment_element );
-
-			delete_post_meta( $attachment_id, $post_source_meta_key );
 		}
 	}
 
 	/**
-	 * @param int                      $source_post_id
+	 * @param int $source_post_id
 	 * @param WPML_Post_Element $updated_attachment_element
 	 *
 	 * @return array
@@ -72,7 +65,7 @@ class WCML_Update_Product_Gallery_Translation implements IWPML_Action {
 	}
 
 	/**
-	 * @param array                    $meta_value
+	 * @param array $meta_value
 	 * @param WPML_Post_Element $source_post
 	 * @param WPML_Post_Element $updated_attachment_element
 	 *

@@ -2,7 +2,6 @@
 
 /**
  * Class Test_WCML_Status_Media_UI
- * @group spec
  */
 class Test_WCML_Status_Media_UI extends OTGS_TestCase {
 

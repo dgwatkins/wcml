@@ -19,6 +19,7 @@ class Test_WCML_Update_Product_Gallery_Translation_Factory extends OTGS_TestCase
 		global $sitepress;
 		\Mockery::mock( 'WPML_Translation_Element_Factory' );
 		$sitepress = \Mockery::mock( 'Sitepress' );
+		\Mockery::mock( 'WPML_Media_Usage_Factory' );
 
 		$factory = new WCML_Update_Product_Gallery_Translation_Factory();
 		$this->assertInstanceOf( 'WCML_Update_Product_Gallery_Translation', $factory->create() );
@@ -32,6 +33,7 @@ class Test_WCML_Update_Product_Gallery_Translation_Factory extends OTGS_TestCase
 
 		\Mockery::mock( 'WPML_Translation_Element_Factory' );
 		$sitepress = \Mockery::mock( 'Sitepress' );
+		\Mockery::mock( 'WPML_Media_Usage_Factory' );
 
 		$factory = new WCML_Update_Product_Gallery_Translation_Factory();
 
