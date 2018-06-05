@@ -14,6 +14,15 @@ class Test_WCML_Update_Product_Gallery_Translation_Factory extends OTGS_TestCase
 
 	/**
 	 * @test
+	 * @group wcml-2400
+	 */
+	public function it_should_return_null_if_wpml_media_is_not_activated() {
+		$factory = new WCML_Update_Product_Gallery_Translation_Factory();
+		$this->assertNull( $factory->create() );
+	}
+
+	/**
+	 * @test
 	 */
 	public function it_should_create_the_object() {
 		global $sitepress;
@@ -41,5 +50,4 @@ class Test_WCML_Update_Product_Gallery_Translation_Factory extends OTGS_TestCase
 		$this->assertContains( 'IWPML_Action', $implements );
 
 	}
-
 }
