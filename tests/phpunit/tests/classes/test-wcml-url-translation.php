@@ -18,17 +18,45 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 
 	}
 
-	public function get_sitepress() {
+	/**
+	 * @return SitePress
+	 */
+	private function get_sitepress( $wp_api = null ) {
+		$sitepress = $this->getMockBuilder('SitePress')
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_wp_api' ) )
+		                  ->getMock();
 
-		return $this->getMockBuilder( 'SitePress' )
-		            ->disableOriginalConstructor()
-		            ->getMock();
+		if( null === $wp_api ){
+			$wp_api = $this->get_wpml_wp_api_mock();
+		}
 
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		return $sitepress;
 	}
 
-	public function get_subject() {
+	/**
+	 * @return WPML_WP_API
+	 */
+	private function get_wpml_wp_api_mock() {
+		return $this->getMockBuilder( 'WPML_WP_API' )
+		            ->disableOriginalConstructor()
+		            ->setMethods( array( 'constant' ) )
+		            ->getMock();
+	}
 
-		return new WCML_Url_Translation( $this->get_woocommerce_multilingual(), $this->get_sitepress(), $this->stubs->wpdb() );
+	private function get_subject( $woocommerce_wpml = null, $sitepress = null ){
+
+		if( null === $woocommerce_wpml ){
+			$woocommerce_wpml = $this->get_woocommerce_multilingual();
+		}
+
+		if( null === $sitepress ){
+			$sitepress = $this->get_sitepress();
+		}
+
+		return new WCML_Url_Translation( $woocommerce_wpml, $sitepress, $this->stubs->wpdb() );
 
 	}
 
@@ -190,6 +218,33 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_should_remove_query_vars_filter_if_ST_not_active_when_switching_blog(){
+
+		$wp_api = $this->get_wpml_wp_api_mock();
+
+		$wp_api->expects( $this->once() )
+		       ->method( 'constant' )
+		       ->with( 'WPML_ST_PATH' )
+		       ->willReturn( rand_str() );
+
+		WP_Mock::userFunction( 'is_plugin_active', array(
+				'return' => false
+			)
+		);
+
+		\WP_Mock::userFunction( 'remove_filter', array(
+			'return' => true,
+			'times'  => 1
+		) );
+
+
+		$subject = $this->get_subject( null, $this->get_sitepress( $wp_api ) );
+		$subject->maybe_remove_query_vars_filter();
+	}
+
 	public function rewrite_rules_attribute_base_is_translated( $subject, $attribute_base_slug, $attribute_slug ){
 
 		$translated_attribute_base_slug = rand_str();
@@ -242,5 +297,7 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 		$this->assertEquals( $expected_values, $filtered_rules );
 
 	}
+
+
 
 }
