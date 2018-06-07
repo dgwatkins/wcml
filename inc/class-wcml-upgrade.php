@@ -682,12 +682,15 @@ class WCML_Upgrade{
 
 			$announcement_url   = 'https://github.com/fixerAPI/fixer#readme';
 			$api_key_url        = 'https://fixer.io/dashboard';
-			$announcement_link  = '<a href="' . $announcement_url . '" target="_blank">' . __( 'important change about this service', 'woocommerce-multilingual' ) . '</a>';
+			$announcement_link_start  = '<a href="' . $announcement_url . '" target="_blank">';
+			$announcement_link_end  = '</a>';
 			$fixer_api_key_link = '<a href="' . $api_key_url . '" target="_blank">' . __( 'Fixer.io API key', 'woocommerce-multilingual' ) . '</a>';
 			$fixerio_name       = '<strong>Fixer.io</strong>';
 			$mc_settings_link   = '<a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=multi-currency' ) . '">' . __( 'multi-currency settings page', 'woocommerce-multilingual' ) . '</a>';
 
-			$message = sprintf( __( 'Your site uses %s to automatically calculate prices in the secondary currency. There is an %s effective June 1st, 2018.', 'woocommerce-multilingual' ), $fixerio_name, $announcement_link );
+			$message = sprintf( __( 'Your site uses %s to automatically calculate prices in the secondary currency.' , 'woocommerce-multilingual' ), $fixerio_name );
+			$message .= "&nbsp;";
+			$message .= sprintf( __( 'There is an %s important change about this service%s effective June 1st, 2018.', 'woocommerce-multilingual' ), $announcement_link_start, $announcement_link_end );
 			$message .= '<br />';
 			$message .= sprintf( __( 'Please go to the %s and fill in your %s.', 'woocommerce-multilingual' ), $mc_settings_link, $fixer_api_key_link );
 
@@ -696,7 +699,6 @@ class WCML_Upgrade{
 			$notice->set_dismissible( true );
 			$wpml_admin_notices = wpml_get_admin_notices();
 			$wpml_admin_notices->add_notice( $notice );
-
 		}
 	}
 
