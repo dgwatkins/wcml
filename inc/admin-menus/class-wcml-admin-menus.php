@@ -202,61 +202,43 @@ class WCML_Admin_Menus{
         remove_meta_box('icl_div_config', convert_to_screen('shop_coupon'), 'normal');
     }
 
-    public static function restrict_admin_with_redirect() {
-        global $pagenow;
+	public static function restrict_admin_with_redirect() {
+		global $pagenow;
 
-        $default_lang = self::$sitepress->get_default_language();
-        $current_lang = self::$sitepress->get_current_language();
+		if ( self::$woocommerce_wpml->settings['trnsl_interface'] ) {
 
-        if(
-            ( $pagenow == 'post.php' && isset( $_GET[ 'post' ] ) ) ||
-            ( $pagenow == 'admin.php' &&
-                isset( $_GET[ 'action' ] ) &&
-                $_GET[ 'action'] == 'duplicate_product' &&
-                isset( $_GET[ 'post' ] )
-            )
-        ){
-            $prod_lang = self::$sitepress->get_language_for_element( $_GET[ 'post' ], 'post_product' );
-        }
+			if (
+				'post.php' === $pagenow &&
+				! is_ajax() &&
+				self::is_post_product_translation_screen() &&
+				self::is_post_action_needs_redirect()
+			) {
+				$prid = (int) $_GET['post'];
+				wp_redirect( admin_url( 'admin.php?page=wpml-wcml&tab=products&prid=' . $prid ) );
+				exit;
 
-        if(
-            !self::$woocommerce_wpml->settings[ 'trnsl_interface' ] &&
-            $pagenow == 'post.php' &&
-            isset( $_GET[ 'post' ] )&&
-            get_post_type( $_GET[ 'post' ] ) == 'product' &&
-            !self::$woocommerce_wpml->products->is_original_product(  $_GET[ 'post' ] ) )
-        {
-            add_action( 'admin_notices', array( __CLASS__, 'inf_editing_product_in_non_default_lang' ) );
-        }
+			} elseif ( self::is_admin_duplicate_page_action( $pagenow ) && self::is_post_product_translation_screen() ) {
 
-        if(
-            self::$woocommerce_wpml->settings[ 'trnsl_interface' ] &&
-            $pagenow == 'post.php' &&
-            !is_ajax() &&
-            isset( $_GET[ 'post' ] ) &&
-            !self::$woocommerce_wpml->products->is_original_product( $_GET[ 'post' ] ) &&
-            get_post_type( $_GET[ 'post' ] ) == 'product'
-        ) {
-            if(
-                !isset( $_GET[ 'action' ] ) ||
-                ( isset( $_GET[ 'action' ] ) && !in_array( $_GET[ 'action' ], array( 'trash', 'delete' ) ) )
-            ) {
-                $prid = (int)$_GET[ 'post' ];
-                wp_redirect( admin_url( 'admin.php?page=wpml-wcml&tab=products&prid='.$prid ) );
-                exit;
-            }
-        }
+				wp_redirect( admin_url( 'admin.php?page=wpml-wcml&tab=products' ) );
+				exit;
+			}
 
-        if(
-            self::$woocommerce_wpml->settings[ 'trnsl_interface' ] &&
-            $pagenow == 'admin.php' &&
-            isset( $_GET[ 'action' ] ) &&
-            $_GET[ 'action' ] == 'duplicate_product' &&
-            $default_lang != $prod_lang )
-        {
-            wp_redirect( admin_url( 'admin.php?page=wpml-wcml&tab=products' ) );
-            exit;
-        }
+		} elseif ( 'post.php' === $pagenow && self::is_post_product_translation_screen() ) {
+			add_action( 'admin_notices', array( __CLASS__, 'inf_editing_product_in_non_default_lang' ) );
+		}
+
+	}
+
+	private static function is_post_product_translation_screen(){
+        return isset( $_GET['post'] ) && 'product' === get_post_type( $_GET['post'] ) && ! self::$woocommerce_wpml->products->is_original_product( $_GET['post'] );
+    }
+
+	private static function is_post_action_needs_redirect(){
+        return ! isset( $_GET['action'] ) || ( isset( $_GET['action'] ) && ! in_array( $_GET['action'], array( 'trash', 'delete', 'untrash' ) ) );
+    }
+
+	private static function is_admin_duplicate_page_action( $pagenow ){
+        return 'admin.php' === $pagenow && isset( $_GET['action'] ) && 'duplicate_product' === $_GET['action'];
     }
 
     public static function inf_editing_product_in_non_default_lang(){
