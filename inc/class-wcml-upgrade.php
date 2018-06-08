@@ -674,6 +674,7 @@ class WCML_Upgrade{
 	private function upgrade_4_3_0() {
 		$wcml_settings = get_option( '_wcml_settings' );
 		if (
+			WCML_MULTI_CURRENCIES_INDEPENDENT === $wcml_settings['enable_multi_currency'] &&
 			isset( $wcml_settings['multi_currency']['exchange_rates']['service'] ) &&
 			'fixierio' === $wcml_settings['multi_currency']['exchange_rates']['service']
 		) {
