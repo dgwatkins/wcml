@@ -540,7 +540,8 @@ Currency switcher dialog
 		}
 	}
 
-	.wp-color-result {
+	.wp-color-result,
+	.wp-color-result.button /* for WP 4.9*/ {
 		padding-left: 50px;
 		position: relative;
 		@media screen and (max-width: 782px) {
@@ -561,13 +562,26 @@ Currency switcher dialog
 		}
 		&:not(.wp-picker-open):after {
 			font-family: otgs-icons;
-			// otgs-ico-edit
-			content: 'h';
+			// .otgs-ico-note-edit
+			content: '\69';
 			color: #333;
 			text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.4);
 			font-size: 16px;
 			min-width: 0;
 		}
+	}
+	.wp-color-result.button {
+		.wp-color-result-text {
+			display: none!important;
+		}
+		&:after {
+			top: -2px;
+		}
+	}
+
+	.wp-picker-container input[type="text"].wp-color-picker {
+		display: inline!important;
+		margin-right: 6px;
 	}
 }
 
