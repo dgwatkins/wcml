@@ -103,7 +103,7 @@ class WCML_Compatibility {
 			$this->sensei = new WCML_Sensei(
 				$this->sitepress,
 				$this->wpdb,
-				new WPML_Custom_Columns( $this->wpdb, $this->sitepress )
+				new WPML_Custom_Columns( $this->sitepress )
 			);
 			$this->sensei->add_hooks();
 		}
