@@ -102,12 +102,12 @@ class Test_WCML_Multi_Currency_Switcher extends WCML_UnitTestCase {
                 )
             ),
 
-            '%code%/#%subtotal%' => array(
+            '%code%' => array(
                 'expected' => array(
-                    'USD' => 'USD/#<span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">&#36;</span>0.00</span>',
-                    'JPY' => 'JPY/#<span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">&yen;</span>0</span>',
-                    'BTC' => 'BTC/#<span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">&#3647;</span>0.0000</span>',
-                    'GBP' => 'GBP/#<span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">&pound;</span>0.00</span>'
+                    'USD' => 'USD',
+                    'JPY' => 'JPY',
+                    'BTC' => 'BTC',
+                    'GBP' => 'GBP'
                 )
             )
         );
