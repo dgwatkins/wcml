@@ -27,7 +27,7 @@ class WCML_Comments {
 		add_action( 'comment_post', array( $this, 'add_comment_rating' ) );
 		add_action( 'woocommerce_review_before_comment_meta', array( $this, 'add_comment_flag' ), 9 );
 
-		add_filter( 'get_post_metadata', array( $this, 'filter_average_rating' ), 10, 3 );
+		add_filter( 'get_post_metadata', array( $this, 'filter_average_rating' ), 10, 4 );
 		add_filter( 'comments_clauses', array( $this, 'comments_clauses' ), 10, 2 );
 		add_filter( 'woocommerce_product_review_list_args', array( $this, 'comments_link' ) );
 		add_filter( 'wpml_is_comment_query_filtered', array( $this, 'is_comment_query_filtered' ), 10, 2 );
@@ -96,9 +96,10 @@ class WCML_Comments {
 	 *                                    array of values.
 	 * @param int               $object_id  Post ID.
 	 * @param string            $meta_key Meta key.
+	 * @param bool
 	 * @return array|null|string Filtered metadata value, array of values, or null.
 	 */
-	public function filter_average_rating( $value, $object_id, $meta_key ) {
+	public function filter_average_rating( $value, $object_id, $meta_key, $single ) {
 
 		$filtered_value = $value;
 
@@ -106,11 +107,11 @@ class WCML_Comments {
 
 			switch ( $meta_key ){
 				case '_wc_average_rating':
-					$filtered_value = get_post_meta( $object_id, self::WCML_AVERAGE_RATING_KEY, true );
+					$filtered_value = get_post_meta( $object_id, self::WCML_AVERAGE_RATING_KEY, $single );
 					break;
 				case self::WC_REVIEW_COUNT_KEY:
 					if ( $this->is_reviews_in_all_languages( $object_id ) ) {
-						$filtered_value = get_post_meta( $object_id, self::WCML_REVIEW_COUNT_KEY, true );
+						$filtered_value = get_post_meta( $object_id, self::WCML_REVIEW_COUNT_KEY, $single );
 					}
 					break;
 			}
@@ -242,7 +243,7 @@ class WCML_Comments {
 	 */
 	public function get_reviews_count( $language = false ) {
 
-		remove_filter( 'get_post_metadata', array( $this, 'filter_average_rating' ), 10, 3 );
+		remove_filter( 'get_post_metadata', array( $this, 'filter_average_rating' ), 10, 4 );
 
 		if ( ! metadata_exists( 'post', get_the_ID(), self::WCML_REVIEW_COUNT_KEY ) ) {
 			$this->recalculate_comment_rating( get_the_ID() );
@@ -254,7 +255,7 @@ class WCML_Comments {
 			$reviews_count = get_post_meta( get_the_ID(), self::WC_REVIEW_COUNT_KEY, true );
 		}
 
-		add_filter( 'get_post_metadata', array( $this, 'filter_average_rating' ), 10, 3 );
+		add_filter( 'get_post_metadata', array( $this, 'filter_average_rating' ), 10, 4 );
 
 		return $reviews_count;
 	}

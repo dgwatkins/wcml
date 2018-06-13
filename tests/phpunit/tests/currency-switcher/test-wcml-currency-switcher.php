@@ -129,14 +129,14 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 			),
 		) );
 		$wp_registered_sidebars = array(
-			'sidebar1' => array(
-				'id' => mt_rand( 1, 100 ),
-			),
 			'sidebar2' => array(
 				'id' => $currency_switcher_id,
 			),
 			'sidebar3' => array(
 				'id' => mt_rand( 101, 200 ),
+			),
+			'sidebar1' => array(
+				'id' => mt_rand( 1, 100 ),
 			),
 		);
 

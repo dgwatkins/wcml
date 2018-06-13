@@ -54,7 +54,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'comment_post', array( $subject, 'add_comment_rating' ) );
 		\WP_Mock::expectActionAdded( 'woocommerce_review_before_comment_meta', array( $subject, 'add_comment_flag' ), 9 );
 
-		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_average_rating' ), 10, 3 );
+		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_average_rating' ), 10, 4 );
 		\WP_Mock::expectFilterAdded( 'comments_clauses', array( $subject, 'comments_clauses' ), 10, 2 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_review_list_args', array( $subject, 'comments_link' ) );
 		\WP_Mock::expectFilterAdded( 'wpml_is_comment_query_filtered', array( $subject, 'is_comment_query_filtered' ), 10, 2 );
@@ -176,7 +176,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		) );
 
 		$meta_key       = rand_str();
-		$filtered_value = $subject->filter_average_rating( $value, $object_id, $meta_key );
+		$filtered_value = $subject->filter_average_rating( $value, $object_id, $meta_key, false );
 
 		$this->assertEquals( $value, $filtered_value );
 
@@ -201,11 +201,11 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$wcml_average_rating = mt_rand( 101, 200 );
 
 		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args'   => array( $object_id, '_wcml_average_rating', true ),
+			'args'   => array( $object_id, '_wcml_average_rating', false ),
 			'return' => $wcml_average_rating
 		) );
 
-		$filtered_value = $subject->filter_average_rating( $value, $object_id, $meta_key );
+		$filtered_value = $subject->filter_average_rating( $value, $object_id, $meta_key, false );
 
 		$this->assertEquals( $wcml_average_rating, $filtered_value );
 	}
@@ -231,11 +231,11 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$_GET['clang'] = 'all';
 		
 		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args'   => array( $object_id, '_wcml_review_count', true ),
+			'args'   => array( $object_id, '_wcml_review_count', false ),
 			'return' => $wcml_review_count
 		));
 
-		$filtered_value = $subject->filter_average_rating( $value, $object_id, $meta_key );
+		$filtered_value = $subject->filter_average_rating( $value, $object_id, $meta_key, false );
 
 		$this->assertEquals( $wcml_review_count, $filtered_value );
 	}
