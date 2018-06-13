@@ -237,9 +237,12 @@ class WCML_Cart {
 					      <?php if( $language_switch ): ?>
 						  window.location = '<?php echo esc_url( $stay_in_value, null, 'redirect' ); ?>';
 					      <?php else: ?>
-						  jQuery('.wcml_currency_switcher').parent().find('img').remove();
-						  jQuery('.wcml_currency_switcher').removeAttr('disabled');
-						  jQuery('.wcml_currency_switcher').val('<?php echo esc_js( $stay_in_value ); ?>');
+                          jQuery('.wcml_currency_switcher').each( function(){
+                              jQuery(this).parent().find('img').remove();
+                              jQuery(this).removeAttr('disabled');
+                              jQuery(this).val('<?php echo esc_js( $stay_in_value ); ?>');
+                          });
+                          jQuery(document).on('click', '.wcml_currency_switcher a', wcml_switch_currency_handler );
 					      <?php endif; ?>
 					  }
 				  }

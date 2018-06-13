@@ -1,20 +1,19 @@
-jQuery(document).ready(function(){
+jQuery(document).ready(function() {
 
-    jQuery(document).on( 'click', '.wcml_currency_switcher a', function( event ){
-        event.preventDefault();
-        if( jQuery(this).is(':disabled') || jQuery(this).parent().hasClass('wcml-cs-active-currency') || jQuery(this).hasClass('wcml-cs-active-currency')){
-            return false;
-        }else{
-            jQuery( this ).off( event );
-        }
+    jQuery(document).on('click', '.wcml_currency_switcher a', wcml_switch_currency_handler );
 
-        wcml_load_currency( jQuery(this).attr('rel') );
-    });
-
-    if( typeof woocommerce_price_slider_params !== 'undefined' ){
-        woocommerce_price_slider_params.currency_symbol = wcml_mc_settings.current_currency.symbol;
-    }
 });
+
+var wcml_switch_currency_handler = function( event ){
+    event.preventDefault();
+    if( jQuery(this).is(':disabled') || jQuery(this).parent().hasClass('wcml-cs-active-currency') || jQuery(this).hasClass('wcml-cs-active-currency')){
+        return false;
+    }else{
+        jQuery( this ).off( event );
+    }
+
+    wcml_load_currency( jQuery(this).attr('rel') );
+}
 
 function wcml_load_currency( currency, force_switch ){
     var ajax_loader = jQuery('<img class=\"wcml-spinner\" width=\"16\" heigth=\"16\" src=\"' + wcml_mc_settings.wcml_spinner +'\" />');
