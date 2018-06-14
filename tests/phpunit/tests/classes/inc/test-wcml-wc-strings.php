@@ -44,20 +44,8 @@ class Test_WCML_WC_Strings extends OTGS_TestCase {
 
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => false ) );
 
-		$check_wc_version = '3.0.0';
-		$wc_version = '2.7.0';
-		$this->wp_api->expects( $this->once() )
-			->method( 'constant' )
-			->with( 'WC_VERSION' )
-			->willReturn( $wc_version );
-
-		$this->wp_api->expects( $this->once() )
-			->method( 'version_compare' )
-			->with( $wc_version, $check_wc_version, '<' )
-			->willReturn( true );
-
 		$subject = $this->get_subject();
-		\WP_Mock::expectFilterAdded( 'woocommerce_cart_item_name', array( $subject, 'translated_cart_item_name' ), 10, 3 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_cart_item_name', array( $subject, 'translated_cart_item_name' ), 10, 2 );
 		$subject->add_on_init_hooks();
 	}
 

@@ -56,6 +56,7 @@ class WCML_Cart {
 			add_action( 'woocommerce_get_cart_item_from_session', array( $this, 'translate_cart_contents' ) );
 			add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'translate_cart_subtotal' ) );
 			add_action( 'woocommerce_before_checkout_process', array( $this, 'wcml_refresh_cart_total' ) );
+			add_filter( 'woocommerce_cart_item_data_to_validate', array( $this, 'validate_cart_item_data' ), 10, 2 );
 
 			add_filter( 'woocommerce_cart_item_permalink', array( $this, 'cart_item_permalink' ), 10, 2 );
 			add_filter( 'woocommerce_paypal_args', array( $this, 'filter_paypal_args' ) );
@@ -375,6 +376,29 @@ class WCML_Cart {
 		$data_hash           = wc_get_cart_item_data_hash( $hash_product_object );
 
 		return $data_hash;
+	}
+
+	/**
+	 * @param array $item_data
+	 * @param WC_Product $product Product object
+	 *
+	 * @return array
+	 */
+	public function validate_cart_item_data( array $item_data, WC_Product $product ) {
+
+		if( $item_data['attributes'] ){
+
+			$product_id = $product->get_parent_id();
+			$product_language = $this->sitepress->get_language_for_element( $product_id, 'post_'.$item_data['type']);
+			$tr_product_id = apply_filters( 'translate_object_id', $product_id, 'product', false, $product_language );
+
+		    foreach ( $item_data['attributes'] as $key => $name ){
+		        $item_data['attributes'][$key] = $this->get_cart_attribute_translation( $key, $name, $product->get_id(), $product_language, $product_id, $tr_product_id );
+            }
+
+        }
+
+		return $item_data;
 	}
 
 	public function wcml_check_on_duplicate_products_in_cart( $cart_contents ) {
