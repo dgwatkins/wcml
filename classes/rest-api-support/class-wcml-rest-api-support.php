@@ -27,7 +27,7 @@ class WCML_REST_API_Support{
 	 * @param WCML_REST_API_Query_Filters_Products $query_filters_products
 	 * @param WCML_REST_API_Query_Filters_Orders $query_filters_orders
 	 * @param WCML_REST_API_Query_Filters_Terms $query_filters_terms
-	 * @param WPML_Frontend_Post_Actions $wpml_post_translations
+	 * @param WPML_Post_Translation $wpml_post_translations
 	 */
 	public function __construct(
 		woocommerce_wpml $woocommerce_wpml,
@@ -36,7 +36,7 @@ class WCML_REST_API_Support{
 		WCML_REST_API_Query_Filters_Products $query_filters_products,
 		WCML_REST_API_Query_Filters_Orders $query_filters_orders,
 		WCML_REST_API_Query_Filters_Terms $query_filters_terms,
-		WPML_Frontend_Post_Actions $wpml_post_translations
+		WPML_Post_Translation $wpml_post_translations
 	) {
 		$this->woocommerce_wpml       = $woocommerce_wpml;
 		$this->sitepress              = $sitepress;
@@ -66,7 +66,6 @@ class WCML_REST_API_Support{
 
 		// Orders
 		add_action( 'woocommerce_rest_insert_shop_order_object' , array( $this, 'set_order_language' ), 10, 2 );
-		add_action( 'woocommerce_rest_insert_shop_order_object' , array( $this, 'set_order_currency' ), 10, 2 );
 
 		$this->query_filters_products->add_hooks();
 		$this->query_filters_orders->add_hooks();

@@ -124,7 +124,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		                                  ->getMock();
 
 
-		$this->wpml_post_translations = $this->getMockBuilder( 'WPML_Frontend_Post_Actions' )
+		$this->wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
 		                                     ->disableOriginalConstructor()
 		                                     ->getMock();
 	}
@@ -880,7 +880,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		$sitepress->expects( $this->once() )->method( 'copy_custom_fields' );
 
 
-		$wpml_post_translations = $this->getMockBuilder( 'WPML_Frontend_Post_Actions' )
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
 		                ->disableOriginalConstructor()
 		                ->setMethods( array( 'get_element_translations' ) )
 		                ->getMock();
@@ -965,7 +965,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		$request_params  = [ 'id' => rand( 1, 100 ) ];
 		$translation_ids = [ rand( 100, 200 ), rand( 200, 300 ), rand( 300, 400 ) ];
 
-		$wpml_post_translations = $this->getMockBuilder( 'WPML_Frontend_Post_Actions' )
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
 		                               ->disableOriginalConstructor()
 		                               ->setMethods( array( 'get_element_translations' ) )
 		                               ->getMock();

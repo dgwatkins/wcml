@@ -119,7 +119,7 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		                                  ->disableOriginalConstructor()
 		                                  ->getMock();
 
-		$this->wpml_post_translations = $this->getMockBuilder( 'WPML_Frontend_Post_Actions' )
+		$this->wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
 		                               ->disableOriginalConstructor()
 		                               ->getMock();
 
@@ -993,7 +993,7 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		$sitepress->expects( $this->once() )->method( 'copy_custom_fields' );
 
 
-		$wpml_post_translations = $this->getMockBuilder( 'WPML_Frontend_Post_Actions' )
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
 		                               ->disableOriginalConstructor()
 		                               ->setMethods( array( 'get_element_translations' ) )
 		                               ->getMock();
