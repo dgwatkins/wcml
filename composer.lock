@@ -144,11 +144,11 @@
         },
         {
             "name": "otgs/installer",
-            "version": "1.8.20",
+            "version": "1.8.21",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/installer/installer.git",
-                "reference": "b0e7b74f6f2c8436529fb84f11ca0e636d6ae4dd"
+                "reference": "cb5b243eabc2ac56a339df6fb560cc96ad6d7da5"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -190,7 +190,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2018-06-13T17:26:51+00:00"
+            "time": "2018-06-18T07:49:04+00:00"
         },
         {
             "name": "roave/security-advisories",
