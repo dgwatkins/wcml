@@ -1,5 +1,5 @@
 === WooCommerce Multilingual - run WooCommerce with WPML ===
-Contributors: AmirHelzer, sergey.r, mihaimihai, EduardMaghakyan
+Contributors: AmirHelzer, sergey.r, mihaimihai, EduardMaghakyan, andrewp-2
 Donate link: http://wpml.org/documentation/related-projects/woocommerce-multilingual/
 Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multilingual, e-shop, shop
 License: GPLv2
