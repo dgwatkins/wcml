@@ -69,21 +69,21 @@ class woocommerce_wpml {
 	    global $sitepress;
 
         $this->settings = $this->get_settings();
+
+	    if( defined( 'ICL_SITEPRESS_VERSION' ) && !ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ){
+		    $this->cs_properties = new WCML_Currency_Switcher_Properties();
+		    $this->cs_templates = new WCML_Currency_Switcher_Templates( $this, $sitepress->get_wp_api() );
+		    $this->cs_templates->init_hooks();
+
+		    $wc_shortccode_product_category = new WCML_WC_Shortcode_Product_Category( $sitepress );
+		    $wc_shortccode_product_category->add_hooks();
+	    }
+
         $this->currencies = new WCML_Currencies( $this );
 
 	    new WCML_Widgets( $this );
 
-        add_action('init', array($this, 'init'),2);
-
-        if( defined( 'ICL_SITEPRESS_VERSION' ) && !ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ){
-            $this->cs_properties = new WCML_Currency_Switcher_Properties();
-            $this->cs_templates = new WCML_Currency_Switcher_Templates( $this, $sitepress->get_wp_api() );
-            $this->cs_templates->init_hooks();
-
-            $wc_shortccode_product_category = new WCML_WC_Shortcode_Product_Category( $sitepress );
-            $wc_shortccode_product_category->add_hooks();
-        }
-
+	    add_action( 'init', array( $this, 'init' ), 2 );
     }
 
     private function load_rest_api(){
