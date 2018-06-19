@@ -61,7 +61,6 @@ function wcml_loader(){
 	$xdomain_data->add_hooks();
 
 	$loaders = array(
-		'WCML_Product_Image_Filter_Factory',
 		'WCML_Product_Gallery_Filter_Factory',
 		'WCML_Update_Product_Gallery_Translation_Factory',
 		'WCML_Append_Gallery_To_Post_Media_Ids_Factory',
