@@ -376,7 +376,9 @@ class WCML_Cart {
 
 		if ( function_exists( 'wc_get_cart_item_data_hash' ) ) {
 			$hash_product_object = wc_get_product( $cart_item['variation_id'] ? $cart_item['variation_id'] : $cart_item['product_id'] );
-			$data_hash           = wc_get_cart_item_data_hash( $hash_product_object );
+			if( $hash_product_object ){
+				$data_hash = wc_get_cart_item_data_hash( $hash_product_object );
+			}
 		}
 
 		return $data_hash;
