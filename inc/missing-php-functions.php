@@ -156,6 +156,3 @@ if ( !is_admin() && ! function_exists( 'woocommerce_wp_text_input' ) ) {
 		echo '</p>';
 	}
 }
-
-
-?>
