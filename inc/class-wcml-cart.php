@@ -372,8 +372,12 @@ class WCML_Cart {
 	 */
 	public function get_data_cart_hash( $cart_item ) {
 
-		$hash_product_object = wc_get_product( $cart_item[ 'variation_id' ] ? $cart_item[ 'variation_id' ] : $cart_item[ 'product_id' ] );
-		$data_hash           = wc_get_cart_item_data_hash( $hash_product_object );
+		$data_hash = '';
+
+		if ( function_exists( 'wc_get_cart_item_data_hash' ) ) {
+			$hash_product_object = wc_get_product( $cart_item['variation_id'] ? $cart_item['variation_id'] : $cart_item['product_id'] );
+			$data_hash           = wc_get_cart_item_data_hash( $hash_product_object );
+		}
 
 		return $data_hash;
 	}
