@@ -287,7 +287,7 @@ class WCML_Install{
 			$sitepress->switch_locale( $language['code'] );
 			$translated_cat_name  = __( 'Uncategorized', 'sitepress' );
 			$translated_cat_name  = $translated_cat_name === 'Uncategorized' && $language['code'] !== 'en' ? 'Uncategorized @' . $language['code'] : $translated_cat_name;
-			$translated_term = get_term_by( 'name', $translated_cat_name, 'product_cat' );
+			$translated_term = get_term_by( 'name', $translated_cat_name, 'product_cat', ARRAY_A );
 			$sitepress->switch_locale();
 
 			// check if the term already exists
