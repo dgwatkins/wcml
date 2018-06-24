@@ -29,16 +29,16 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "roave/security-advisories": "dev-master",
     "otgs/installer" : "~1.8.0",
     "xrstf/composer-php52": "1.*",
     "twig/twig": "~1.0"
   },
   "require-dev": {
+    "roave/security-advisories": "dev-master",
     "otgs/build-tools": "~0.1",
     "otgs/unit-tests-framework": "~1.2.0",
-    "otgs/build-tools-ci": "~0.7.0",
-    "otgs/changelog": "~0.2"
+    "otgs/changelog": "~0.2",
+    "otgs/build-tools-ci": "~0.8.0"
   },
   "scripts": {
     "post-install-cmd": [
