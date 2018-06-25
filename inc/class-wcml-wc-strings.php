@@ -50,9 +50,7 @@ class WCML_WC_Strings{
         }
         add_action( 'woocommerce_product_options_attributes', array ( $this, 'notice_after_woocommerce_product_options_attributes' ) );
 
-        if( !is_admin() ){
-            add_filter( 'woocommerce_attribute_taxonomies', array( $this, 'translate_attribute_taxonomies_labels') );
-        }
+        add_filter( 'woocommerce_attribute_taxonomies', array( $this, 'translate_attribute_taxonomies_labels' ) );
 
         add_filter('woocommerce_get_breadcrumb', array($this, 'filter_woocommerce_breadcrumbs' ), 10, 2 );
     }
@@ -401,28 +399,29 @@ class WCML_WC_Strings{
         }
     }
 
-    function translate_attribute_taxonomies_labels( $attribute_taxonomies ){
+	function translate_attribute_taxonomies_labels( $attribute_taxonomies ) {
 
-        if( is_admin() && !wpml_is_ajax() ){
+		if ( is_admin() && ! wpml_is_ajax() ) {
 
-            foreach( $attribute_taxonomies as $key => $attribute_taxonomy ){
-                $string_language = $this->get_string_language( $attribute_taxonomy->attribute_name, 'WordPress', 'taxonomy singular name: '.$attribute_taxonomy->attribute_name );
+			foreach ( $attribute_taxonomies as $key => $attribute_taxonomy ) {
+				$string_language = $this->get_string_language( $attribute_taxonomy->attribute_label, 'WordPress', 'taxonomy singular name: ' . $attribute_taxonomy->attribute_label );
 
-                if( $this->sitepress->get_current_language() == $string_language ) continue;
+				if ( $this->sitepress->get_current_language() == $string_language ) {
+					continue;
+				}
 
-                $string_id = icl_get_string_id( $attribute_taxonomy->attribute_name, 'WordPress', 'taxonomy singular name: '.$attribute_taxonomy->attribute_name );
-                $strings = icl_get_string_translations_by_id( $string_id );
+				$string_id = icl_get_string_id( $attribute_taxonomy->attribute_label, 'WordPress', 'taxonomy singular name: ' . $attribute_taxonomy->attribute_label );
+				$strings   = icl_get_string_translations_by_id( $string_id );
 
-                if($strings && isset($strings[$this->sitepress->get_current_language()])) {
-                    $attribute_taxonomies[$key]->attribute_label = $strings[$this->sitepress->get_current_language()]['value'];
-                }
-            }
+				if ( $strings && isset( $strings[ $this->sitepress->get_current_language() ] ) ) {
+					$attribute_taxonomies[ $key ]->attribute_label = $strings[ $this->sitepress->get_current_language() ]['value'];
+				}
+			}
 
-        }
+		}
 
-
-        return $attribute_taxonomies;
-    }
+		return $attribute_taxonomies;
+	}
 
     function get_translation_from_woocommerce_mo_file( $string, $language, $return_original = true ){
 
