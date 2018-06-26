@@ -227,6 +227,7 @@ class woocommerce_wpml {
         $this->coupons->add_hooks();
         $this->locale               = new WCML_Locale( $this, $sitepress );
         $this->media                = new WCML_Media( $this, $sitepress, $wpdb );
+        $this->media->add_hooks();
         $this->downloadable         = new WCML_Downloadable_Products( $this, $sitepress );
         $this->downloadable->add_hooks();
         $this->page_builders        = new WCML_Page_Builders( $sitepress );
