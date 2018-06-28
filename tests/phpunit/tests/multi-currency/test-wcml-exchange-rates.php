@@ -480,17 +480,89 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @group wcml-2462
 	 */
 	public function update_exchange_rate_options_it_enables_monthly_cron() {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject          = $this->get_subject( $woocommerce_wpml );
 
+		\WP_Mock::wpFunction( 'wp_clear_scheduled_hook', [
+			'times' => 1,
+			'args'  => $subject::CRONJOB_EVENT
+		] );
+
 		$preexisting_service = rand_str();
 		$service             = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
 		                            ->disableOriginalConstructor()
 		                            ->getMock();
+
+		$service->expects( $this->once() )
+		        ->method( 'clear_last_error' );
+
 		$subject->add_service( $preexisting_service, $service );
 		$subject->save_setting( 'service', $preexisting_service );
+
+		\WP_Mock::wpPassthruFunction( 'sanitize_text_field' );
+
+		$post_data = [
+			'exchange-rates-automatic' => 1,
+			'update-schedule'          => 'monthly',
+			'exchange-rates-service'   => rand_str(),
+			'lifting_charge'           => rand_str(),
+			'update-time'              => rand_str(),
+			'update-weekly-day'        => random_int(1,7),
+			'update-monthly-day'       => random_int(1,30)
+		];
+
+		\WP_Mock::wpFunction( 'wp_get_schedule', [
+			'times' => 1,
+			'args'  => $subject::CRONJOB_EVENT
+		] );
+
+		\WP_Mock::wpFunction( 'wp_next_scheduled', [
+			'times' => 1,
+			'args'  => $subject::CRONJOB_EVENT
+		] );
+
+		\WP_Mock::wpFunction( 'wp_schedule_event', [
+			'times' => 1,
+			'args'  => [
+				\Mockery::type( 'int' ),
+				'wcml_monthly_on_' . $post_data['update-monthly-day'],
+				$subject::CRONJOB_EVENT
+			]
+		] );
+
+		$subject->update_exchange_rate_options( $post_data );
+
+		$settings = $subject->get_settings();
+
+		$this->assertSame( 1, $settings['automatic'] );
+	}
+
+	/**
+	 * @test
+	 * @group wcml-2462
+	 */
+	public function it_should_not_clear_last_error_if_service_is_not_available_in_the_list_of_services() {
+		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
+		$subject          = $this->get_subject( $woocommerce_wpml );
+
+		\WP_Mock::wpFunction( 'wp_clear_scheduled_hook', [
+			'times' => 1,
+			'args'  => $subject::CRONJOB_EVENT
+		] );
+
+		$preexisting_service = rand_str();
+		$service             = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
+		                            ->disableOriginalConstructor()
+		                            ->getMock();
+
+		$service->expects( $this->never() )
+		        ->method( 'clear_last_error' );
+
+		$subject->add_service( $preexisting_service, $service );
+		$subject->save_setting( 'service', rand_str() );
 
 		\WP_Mock::wpPassthruFunction( 'sanitize_text_field' );
 
