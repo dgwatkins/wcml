@@ -2,6 +2,8 @@
 
 class WCML_Media{
 
+	const DUPLICATE_FEATURED_META_KEY = '_wpml_media_featured';
+
     /** @var woocommerce_wpml */
     private $woocommerce_wpml;
     /** @var  SitePress */
@@ -74,13 +76,31 @@ class WCML_Media{
     }
 
 	public function sync_thumbnail_id( $orig_post_id, $trnsl_post_id, $lang ) {
-		$thumbnail_id    = get_post_meta( $orig_post_id, '_thumbnail_id', true );
-		$trnsl_thumbnail = apply_filters( 'translate_object_id', $thumbnail_id, 'attachment', false, $lang );
-		if ( is_null( $trnsl_thumbnail ) && $thumbnail_id ) {
-			$trnsl_thumbnail = $this->create_base_media_translation( $thumbnail_id, $lang );
+    	if ( $this->is_featured_image_duplicated( $trnsl_post_id, $orig_post_id ) ) {
+		    $thumbnail_id    = get_post_meta( $orig_post_id, '_thumbnail_id', true );
+		    $trnsl_thumbnail = apply_filters( 'translate_object_id', $thumbnail_id, 'attachment', false, $lang );
+		    if ( is_null( $trnsl_thumbnail ) && $thumbnail_id ) {
+			    $trnsl_thumbnail = $this->create_base_media_translation( $thumbnail_id, $lang );
+		    }
+
+		    update_post_meta( $trnsl_post_id, '_thumbnail_id', $trnsl_thumbnail );
+	    }
+	}
+
+	/**
+	 * @param int      $post_id
+	 * @param int|null $original_post_id
+	 *
+	 * @return bool
+	 */
+	private function is_featured_image_duplicated( $post_id, $original_post_id = null ) {
+		$value = get_post_meta( $post_id, self::DUPLICATE_FEATURED_META_KEY, true );
+
+		if ( ! $value && $original_post_id ) {
+			$value = get_post_meta( $original_post_id, self::DUPLICATE_FEATURED_META_KEY, true );
 		}
 
-		update_post_meta( $trnsl_post_id, '_thumbnail_id', $trnsl_thumbnail );
+		return $value;
 	}
 
 	public function sync_product_gallery( $product_id ) {
