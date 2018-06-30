@@ -65,9 +65,12 @@ function wcml_loader(){
 	);
 
 	if (
-		defined( 'ICL_SITEPRESS_VERSION' ) &&
-		version_compare( ICL_SITEPRESS_VERSION, '4.0.0', '>=' ) &&
-		version_compare( ICL_SITEPRESS_VERSION, '4.0.4', '<' )
+		( defined( 'ICL_SITEPRESS_VERSION' ) && defined( 'WPML_MEDIA_VERSION' ) )
+		|| ( defined( 'ICL_SITEPRESS_VERSION' )
+		     && version_compare( ICL_SITEPRESS_VERSION, '4.0.0', '>=' )
+		     && version_compare( ICL_SITEPRESS_VERSION, '4.0.4', '<' )
+		     && ! defined( 'WPML_MEDIA_VERSION' )
+		)
 	) {
 		$loaders[] = 'WCML_Product_Image_Filter_Factory';
 		$loaders[] = 'WCML_Product_Gallery_Filter_Factory';
