@@ -271,4 +271,41 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$this->assertEquals( $file_path, $filtered_file_path );
 	}
 
+
+	/**
+	 * @test
+	 */
+	public function is_customer_bought_product_in_original(){
+
+		\WP_Mock::passthruFunction( 'remove_filter' );
+		\WP_Mock::passthruFunction( 'wp_cache_set' );
+
+		$user_email = rand_str();
+		$user_id = mt_rand( 1, 10 );
+		$product_id = mt_rand( 11, 20 );
+		$original_product_id = mt_rand( 21, 30 );
+		$original_language = NULL;
+
+		WP_Mock::userFunction( 'wc_customer_bought_product', array(
+			'args'  => array( $user_email, $user_id, $original_product_id ),
+			'return' => true
+		));
+
+		WP_Mock::userFunction( 'wp_cache_get', array(
+			'return' => false
+		));
+
+		WP_Mock::userFunction( 'get_post_type', array(
+			'args'  => array( $product_id ),
+			'return' => 'product'
+		));
+
+		\WP_Mock::onFilter( 'translate_object_id' )->with( $product_id, 'product', true, $original_language )->reply( $original_product_id );
+
+		$subject = $this->get_subject();
+		$is_customer_bought_product = $subject->is_customer_bought_product( false, $user_email, $user_id, $product_id );
+
+		$this->assertTrue( $is_customer_bought_product );
+	}
+
 }
