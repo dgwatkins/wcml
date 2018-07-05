@@ -175,7 +175,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 	public function it_sets_custom_totals_for_order_items_for_ajax_add_new_order_item_call(){
 		$_POST['action'] = 'woocommerce_add_order_item';
 		$_POST['order_id'] = 1;
-		$_POST['item_to_add'][0] = 10;
+		$product_id = 10;
 		$original_product_id = 20;
 		$converted_price = 100;
 
@@ -183,7 +183,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$item =  $this->getMockBuilder( 'WC_Order_Item_Product' )
 		              ->disableOriginalConstructor()
-		              ->setMethods( array( 'get_type', 'set_subtotal', 'set_total', 'save', 'get_quantity', 'get_product' ) )
+		              ->setMethods( array( 'get_type', 'set_subtotal', 'set_total', 'save', 'get_quantity', 'get_product', 'get_product_id' ) )
 		              ->getMock();
 
 		$items = array( $item );
@@ -210,11 +210,6 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$this->woocommerce_wpml->products->method( 'get_original_product_id' )->willReturn( $original_product_id );
 
 
-		\WP_Mock::wpFunction( 'sanitize_text_field', array(
-			'args' => array( $_POST['item_to_add'][0] ),
-			'return' => $_POST['item_to_add'][0]
-		) );
-
 		\WP_Mock::wpFunction( 'get_post_meta', array(
 			'args' => array( $original_product_id, '_price_' . $order_currency, true ),
 			'return' => $converted_price
@@ -223,6 +218,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$item->method( 'get_type' )->willReturn( 'line_item' );
 		$item->method( 'get_quantity' )->willReturn( 1 );
 		$item->method( 'get_product' )->willReturn( $product_obj );
+		$item->method( 'get_product_id' )->willReturn( $product_id );
 		$item->expects( $this->once() )->method( 'set_subtotal' )->with( $converted_price )->willReturn( true );
 		$item->expects( $this->once() )->method( 'set_total' )->with( $converted_price )->willReturn( true );
 		$item->expects( $this->once() )->method( 'save' )->willReturn( true );
@@ -238,7 +234,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 	public function it_sets_converted_totals_for_order_items_for_ajax_add_new_order_item_call(){
 		$_POST['action'] = 'woocommerce_add_order_item';
 		$_POST['order_id'] = 2;
-		$_POST['item_to_add'][0] = 11;
+		$product_id = 11;
 		$original_product_id = 21;
 		$subtotal = 100;
 		$total = 101;
@@ -248,7 +244,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$item =  $this->getMockBuilder( 'WC_Order_Item_Product' )
 		              ->disableOriginalConstructor()
-		              ->setMethods( array( 'get_type', 'set_subtotal', 'set_total', 'save', 'meta_exists', 'add_meta_data', 'get_subtotal', 'get_total','get_quantity' ) )
+		              ->setMethods( array( 'get_type', 'set_subtotal', 'set_total', 'save', 'meta_exists', 'add_meta_data', 'get_subtotal', 'get_total', 'get_quantity', 'get_product_id' ) )
 		              ->getMock();
 
 		$items = array( $item );
@@ -271,11 +267,6 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		                             ->setMethods( array( 'raw_price_filter' ) )
 		                             ->getMock();
 
-		\WP_Mock::wpFunction( 'sanitize_text_field', array(
-			'args' => array( $_POST['item_to_add'][0] ),
-			'return' => $_POST['item_to_add'][0]
-		) );
-
 		\WP_Mock::wpFunction( 'get_post_meta', array(
 			'args' => array( $original_product_id, '_price_' . $order_currency, true ),
 			'return' => false
@@ -287,6 +278,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$item->method( 'get_quantity' )->willReturn( 1 );
 		$item->method( 'get_subtotal' )->willReturn( $subtotal );
 		$item->method( 'get_total' )->willReturn( $total );
+		$item->method( 'get_product_id' )->willReturn( $product_id );
 		$this->wcml_multi_currency->prices->method( 'raw_price_filter' )->willReturn( $converted_price );
 		$item->expects( $this->once() )->method( 'set_subtotal' )->with( $converted_price )->willReturn( true );
 		$item->expects( $this->once() )->method( 'set_total' )->with( $converted_price )->willReturn( true );
