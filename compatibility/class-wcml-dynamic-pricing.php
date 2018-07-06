@@ -34,15 +34,20 @@ class WCML_Dynamic_Pricing {
 		foreach ( $modules as $mod_key => $module ) {
 			if ( isset( $module->available_rulesets ) ) {
 				$available_rulesets = $module->available_rulesets;
+
 				foreach ( $available_rulesets as $rule_key => $available_ruleset ) {
-					$rules = $available_ruleset['rules'];
-					if ( $rules ) {
+
+					if ( isset( $available_ruleset['rules'] ) && is_array( $available_ruleset['rules'] ) ) {
+						$rules = $available_ruleset['rules'];
 						foreach ( $rules as $r_key => $rule ) {
 							if ( 'fixed_product' === $rule['type'] ) {
 								$rules[ $r_key ]['amount'] = apply_filters( 'wcml_raw_price_amount', $rule['amount'] );
 							}
 						}
 						$modules[ $mod_key ]->available_rulesets[ $rule_key ]['rules'] = $rules;
+
+					} elseif ( isset( $available_ruleset['type'] ) && 'fixed_product' === $available_ruleset['type'] ) {
+						$modules[ $mod_key ]->available_rulesets[ $rule_key ]['amount'] = apply_filters( 'wcml_raw_price_amount', $available_ruleset['amount'] );
 					}
 				}
 			}
