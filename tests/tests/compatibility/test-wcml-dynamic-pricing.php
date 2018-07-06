@@ -62,6 +62,36 @@ class Test_WCML_Dynamic_Pricing extends WCML_UnitTestCase {
 		$this->assertEquals( $expected, $dynamic_pricing->filter_price( $modules ) );
 	}
 
+
+	/**
+	 * @test
+	 */
+	public function filter_price_by_user_role() {
+		$amount = random_int( 1, 9999 );
+		$module = new stdClass();
+		$module->available_rulesets = array(
+			'rule_key' => array(
+				'amount' => $amount,
+				'type'   => 'fixed_product',
+			),
+		);
+		$modules = array(
+			'mod_key' => $module,
+		);
+		$expected_obj = new stdClass();
+		$expected_obj->available_rulesets = array(
+			'rule_key' => array(
+				'amount' => $amount / $this->rate,
+				'type'   => 'fixed_product',
+			),
+		);
+		$expected = array(
+			'mod_key' => $expected_obj,
+		);
+		$dynamic_pricing = new WCML_Dynamic_Pricing( $this->sitepress );
+		$this->assertEquals( $expected, $dynamic_pricing->filter_price( $modules ) );
+	}
+
 	public function raw_price_amount( $amount ) {
 		return $amount / $this->rate;
 	}
