@@ -113,6 +113,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$subject = $this->get_subject();
 		\WP_Mock::expectFilterAdded( 'woocommerce_available_variation', array( $subject, 'filter_available_variation_attribute_values_in_current_language' ) );
 		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_variation_post_meta_attribute_values_in_current_language' ), 10 ,4 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_get_default_attributes', array( $subject, 'filter_product_variation_default_attributes' ) );
 		$subject->add_hooks();
 	}
 
@@ -595,6 +596,47 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$filter_attribute = $subject->filter_available_variation_attribute_values_in_current_language( $args );
 
 		$this->assertEquals( $filter_attribute[ 'attributes' ][ $attribute_key ], $attribute_value );
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_does_filter_product_variation_default_attributes() {
+
+		$object_id = mt_rand( 1, 10 );
+
+		$attribute_taxonomy = rand_str( 10 );
+		$attribute_value = rand_str( 12 );
+
+		$default_attributes = array(
+			$attribute_taxonomy => $attribute_value
+		);
+
+		$translated_attribute_value = rand_str( 15 );
+
+		$term = new stdClass();
+		$term->slug = $translated_attribute_value;
+
+		\WP_Mock::wpFunction( 'get_term_by', array(
+			'args'  => array( 'slug', $attribute_value, $attribute_taxonomy ),
+			'return' => $term
+		) );
+
+		\WP_Mock::wpFunction( 'taxonomy_exists', array(
+			'args'  => array( $attribute_taxonomy ),
+			'return' => true
+		) );
+
+		$subject = $this->get_subject();
+
+		$expected_default_attributes = array(
+			$attribute_taxonomy => $translated_attribute_value
+		);
+
+		$filtered_default_attributes = $subject->filter_product_variation_default_attributes( $default_attributes );
+
+		$this->assertEquals( $expected_default_attributes, $filtered_default_attributes );
 	}
 
 }
