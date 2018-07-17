@@ -120,7 +120,7 @@ class WCML_Media{
 	public function sync_product_gallery_duplicate_attachment( $att_id, $dup_att_id ) {
 		$product_id = wp_get_post_parent_id( $att_id );
 		$post_type  = get_post_type( $product_id );
-		if ( $post_type != 'product' ) {
+		if ( $post_type != 'product' || $dup_att_id ) {
 			return;
 		}
 		$this->sync_product_gallery( $product_id );
