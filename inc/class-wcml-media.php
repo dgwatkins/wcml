@@ -11,6 +11,8 @@ class WCML_Media{
 
     public $settings = array();
 
+    private $products_being_synced = array();
+
     public function __construct( $woocommerce_wpml, $sitepress, $wpdb ){
         $this->woocommerce_wpml = $woocommerce_wpml;
         $this->sitepress        = $sitepress;
@@ -120,10 +122,12 @@ class WCML_Media{
 	public function sync_product_gallery_duplicate_attachment( $att_id, $dup_att_id ) {
 		$product_id = wp_get_post_parent_id( $att_id );
 		$post_type  = get_post_type( $product_id );
-		if ( $post_type != 'product' ) {
+		if ( $post_type != 'product' || array_key_exists( $product_id, $this->products_being_synced ) ) {
 			return;
 		}
+		$this->products_being_synced[ $product_id ] = 1;
 		$this->sync_product_gallery( $product_id );
+		unset( $this->products_being_synced[ $product_id ] );
 	}
 
 }
