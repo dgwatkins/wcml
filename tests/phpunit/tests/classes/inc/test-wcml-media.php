@@ -12,24 +12,25 @@ class Test_WCML_Media extends OTGS_TestCase {
 	 */
 	public function it_sync_product_gallery() {
 		$wcml = $this->getMockBuilder( 'woocommerce_wpml' )
-			->disableOriginalConstructor()
-			->getMock();
+		             ->disableOriginalConstructor()
+		             ->getMock();
 
 		$sitepress = $this->getMockBuilder( 'SitePress' )
-			->disableOriginalConstructor()
-			->getMock();
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_element_translations', 'get_element_trid' ) )
+		                  ->getMock();
 
 		$sitepress->expects( $this->once() )
-			->method( 'get_element_translations' )
-			->willReturn( array() );
+		          ->method( 'get_element_translations' )
+		          ->willReturn( array() );
 
 
 		$wpdb = $this->getMockBuilder( 'wpdb' )
-			->disableOriginalConstructor()
-			->getMock();
+		             ->disableOriginalConstructor()
+		             ->getMock();
 
-		$product_id = 2;
-		$att_id = 1;
+		$product_id        = 2;
+		$att_id            = 1;
 		$duplicated_att_id = null;
 
 		\WP_Mock::wpFunction( 'wp_get_post_parent_id', array(
@@ -58,6 +59,7 @@ class Test_WCML_Media extends OTGS_TestCase {
 
 		$sitepress = $this->getMockBuilder( 'SitePress' )
 		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_element_translations' ) )
 		                  ->getMock();
 
 		$sitepress->expects( $this->never() )
@@ -69,8 +71,8 @@ class Test_WCML_Media extends OTGS_TestCase {
 		             ->disableOriginalConstructor()
 		             ->getMock();
 
-		$product_id = 2;
-		$att_id = 1;
+		$product_id        = 2;
+		$att_id            = 1;
 		$duplicated_att_id = 3;
 
 		\WP_Mock::wpFunction( 'wp_get_post_parent_id', array(
@@ -99,6 +101,7 @@ class Test_WCML_Media extends OTGS_TestCase {
 
 		$sitepress = $this->getMockBuilder( 'SitePress' )
 		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_element_translations' ) )
 		                  ->getMock();
 
 		$sitepress->expects( $this->never() )
@@ -110,8 +113,8 @@ class Test_WCML_Media extends OTGS_TestCase {
 		             ->disableOriginalConstructor()
 		             ->getMock();
 
-		$product_id = 2;
-		$att_id = 1;
+		$product_id        = 2;
+		$att_id            = 1;
 		$duplicated_att_id = null;
 
 		\WP_Mock::wpFunction( 'wp_get_post_parent_id', array(
