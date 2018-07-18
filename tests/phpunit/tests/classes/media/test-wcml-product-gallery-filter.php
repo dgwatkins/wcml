@@ -110,7 +110,7 @@ class Test_WCML_Product_Gallery_Filter extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'remove_filter', [
 			'times' => 1,
-			'args'  => [ 'get_post_metadata', array( $subject, 'localize_image_ids' ), 10, 3 ]
+			'args'  => [ 'get_post_metadata', array( $subject, 'localize_image_ids' ), 10 ]
 		] );
 
 		$source_element = $this->get_wpml_post_element( $source_object_id );
