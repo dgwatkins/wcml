@@ -1790,7 +1790,11 @@ class WCML_Bookings {
 
 	function delete_bookings( $booking_id ) {
 
-		if ( $booking_id > 0 && get_post_type( $booking_id ) == 'wc_booking' ) {
+		if (
+			! $this->is_delete_all_action()
+			&& $booking_id
+			&& get_post_type( $booking_id ) == 'wc_booking'
+		) {
 
 			$translated_bookings = $this->get_translated_bookings( $booking_id );
 
@@ -1813,7 +1817,10 @@ class WCML_Bookings {
 
 			add_action( 'before_delete_post', array( $this, 'delete_bookings' ) );
 		}
+	}
 
+	private function is_delete_all_action() {
+		return array_key_exists( 'delete_all', $_GET ) && $_GET['delete_all'];
 	}
 
 	function trash_bookings( $booking_id ) {
