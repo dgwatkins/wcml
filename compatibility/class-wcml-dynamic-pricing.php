@@ -9,6 +9,10 @@ class WCML_Dynamic_Pricing {
 
 		if ( ! is_admin() ) {
 			add_filter( 'wc_dynamic_pricing_load_modules', array( $this, 'filter_price' ) );
+			add_action( 'woocommerce_dynamic_pricing_is_object_in_terms', array(
+				$this,
+				'is_object_in_translated_terms'
+			), 10, 3 );
 			add_filter( 'woocommerce_dynamic_pricing_is_applied_to', array(
 				$this,
 				'woocommerce_dynamic_pricing_is_applied_to'
@@ -54,6 +58,22 @@ class WCML_Dynamic_Pricing {
 		}
 
 		return $modules;
+	}
+
+
+	/**
+	 * @param boolean $result
+	 * @param int     $product_id
+	 * @param array   $categories
+	 *
+	 * @return boolean
+	 */
+	function is_object_in_translated_terms( $result, $product_id, $categories ) {
+		foreach ($categories as &$cat_id ) {
+			$cat_id = apply_filters( 'translate_object_id', $cat_id, 'product_cat', true );
+		}
+
+		return is_object_in_term( $product_id, 'product_cat', $categories );
 	}
 
 
