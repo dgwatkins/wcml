@@ -733,7 +733,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
                 $trnsl_prod_image = apply_filters( 'translate_object_id', $image_id, 'attachment', false, $this->get_target_language() );
 
                 if ( ! $trnsl_prod_image ) {
-	                $trnsl_prod_image = $this->woocommerce_wpml->media->create_base_media_translation( $image_id, $this->get_target_language() );
+	                $trnsl_prod_image = $this->woocommerce_wpml->media->create_base_media_translation( $image_id, $this->product_id, $this->get_target_language() );
                 }
 
 	            //update image texts
