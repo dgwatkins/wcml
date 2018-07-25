@@ -103,6 +103,7 @@ function WP_REST_Server_placeholder(){
 
 require $_tests_dir . '/includes/bootstrap.php';
 require WPML_CORE_PATH . '/tests/util/wpml-unittestcase.class.php';
+require WC_PATH . '/tests/includes/wp-http-testcase.php';
 require WC_PATH . '/tests/framework/class-wc-unit-test-case.php';
 require WC_PATH . '/tests/framework/class-wc-unit-test-factory.php';
 
