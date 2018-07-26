@@ -491,7 +491,7 @@ class WCML_Custom_Prices{
 
 			$custom_prices = $this->get_product_custom_prices( $product_object->get_id() );
 
-			if( $custom_prices[ '_sale_price' ] != $custom_prices[ '_regular_price' ] ){
+			if( $custom_prices[ '_sale_price' ] !== '' && $custom_prices[ '_sale_price' ] != $custom_prices[ '_regular_price' ] ){
 				$on_sale = true;
 			}
 
