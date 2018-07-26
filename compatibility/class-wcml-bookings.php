@@ -2468,7 +2468,9 @@ class WCML_Bookings {
 
 		if( class_exists( 'WC_Email_Booking_Confirmed' ) && isset( $this->woocommerce->mailer()->emails[ 'WC_Email_Booking_Confirmed' ] ) ){
 			$booking = get_wc_booking( $booking_id );
-			$this->translate_email_strings( 'WC_Email_Booking_Confirmed', 'woocommerce_booking_confirmed_settings', $booking->get_order()->get_id() );
+			if( $booking->get_order() ){
+				$this->translate_email_strings( 'WC_Email_Booking_Confirmed', 'woocommerce_booking_confirmed_settings', $booking->get_order()->get_id() );
+            }
 		}
 
 	}
