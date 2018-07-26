@@ -273,5 +273,33 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 
 		$this->assertEquals( $order_language, $booking_language );
 	}
+
+	/**
+	 * @test
+	 */
+	public function set_booking_language_if_missing(){
+
+		$booking_id = mt_rand( 1, 10 );
+		$current_language = mt_rand();
+
+		\WP_Mock::userFunction( 'get_post_type', array(
+			'args' => array( $booking_id ),
+			'return' => 'wc_booking'
+		) );
+
+
+		$sitepress = $this->getMockBuilder('SitePress')
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_current_language', 'get_element_language_details', 'set_element_language_details' ) )
+		                  ->getMock();
+
+		$sitepress->expects( $this->once() )->method( 'get_current_language' )->willReturn( $current_language );
+		$sitepress->expects( $this->once() )->method( 'get_element_language_details' )->with( $booking_id, 'post_wc_booking' )->willReturn( array() );
+		$sitepress->expects( $this->once() )->method( 'set_element_language_details' )->with( $booking_id, 'post_wc_booking', false, $current_language )->willReturn( true );
+
+		$subject = $this->get_subject( $sitepress );
+
+		$subject->maybe_set_booking_language( $booking_id );
+	}
 }
 
