@@ -3,7 +3,7 @@
   "debug_mode": false,
   "temp_dir": "/tmp",
   "project": {
-    "namespace": "wcml",
+    "namespace": "wpml",
     "projectSlug": "woocommerce-multilingual",
     "productId": "woocommerce-multilingual",
     "develop_branch": "develop",
@@ -103,7 +103,7 @@
   "dependencies": [
     {
       "server": "ssh://git@git.onthegosystems.com:10022",
-      "namespace": "wcml",
+      "namespace": "wpml",
       "project_slug": "woocommerce-multilingual",
       "db": "tests_wcml_tm",
       "scripts": {
