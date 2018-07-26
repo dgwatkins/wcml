@@ -81,7 +81,8 @@ class WCML_Bookings {
 
 		add_action( 'init', array( $this, 'load_assets' ) );
 
-		add_action( 'save_post', array( $this, 'save_custom_costs' ), 110, 1 );
+		add_action( 'save_post', array( $this, 'save_booking_action_handler' ), 110 );
+
 		add_action( 'wcml_before_sync_product_data', array( $this, 'sync_bookings' ), 10, 3 );
 		add_action( 'wcml_before_sync_product', array( $this, 'sync_booking_data' ), 10, 2 );
 
@@ -229,6 +230,13 @@ class WCML_Bookings {
 
 		add_filter( 'woocommerce_bookings_account_tables', array( $this, 'filter_my_account_bookings_tables_by_current_language'	) );
 
+	}
+
+	public function save_booking_action_handler( $booking_id ) {
+
+		$this->maybe_set_booking_language( $booking_id );
+
+		$this->save_custom_costs( $booking_id );
 	}
 
 	function wcml_price_field_after_booking_base_cost( $post_id ) {
@@ -2541,5 +2549,17 @@ class WCML_Bookings {
 		$this->woocommerce->mailer()->emails[$email_class]->heading = $this->woocommerce_wpml->emails->wcml_get_translated_email_string( 'admin_texts_'.$setting_slug, '['.$setting_slug.']heading', $order_id, $user_lang );
 		$this->woocommerce->mailer()->emails[$email_class]->subject = $this->woocommerce_wpml->emails->wcml_get_translated_email_string( 'admin_texts_'.$setting_slug, '['.$setting_slug.']subject', $order_id, $user_lang );
     }
+
+	public function maybe_set_booking_language( $booking_id ) {
+
+		if ( 'wc_booking' === get_post_type( $booking_id ) ) {
+			$language_details = $this->sitepress->get_element_language_details( $booking_id, 'post_wc_booking' );
+			if ( ! $language_details ) {
+				$current_language = $this->sitepress->get_current_language();
+				$this->sitepress->set_element_language_details( $booking_id, 'post_wc_booking', false, $current_language );
+			}
+		}
+
+	}
 
 }
