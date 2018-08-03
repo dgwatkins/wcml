@@ -24,7 +24,7 @@ if ( ! defined( 'WC_BOOKING_PATH' ) ) {
 $_tests_dir = isset( $_ENV['WP_TEST_DIR'] ) ? $_ENV['WP_TEST_DIR'] : 'wordpress-tests-lib';
 require_once $_tests_dir . '/includes/functions.php';
 
-function _manually_load_plugin() {
+function _manually_load_wcml() {
 	wp_styles();
 	require WPML_CORE_PATH . '/tests/util/functions.php';
 	require WPML_CORE_PATH . '/sitepress.php';
@@ -34,7 +34,7 @@ function _manually_load_plugin() {
 	require dirname( __FILE__ ) . '/../wpml-woocommerce.php';
 }
 
-tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
+tests_add_filter( 'plugins_loaded', '_manually_load_wcml', - PHP_INT_MAX );
 
 function is_woocommerce_active() {
 	return true;
