@@ -675,13 +675,6 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
 		                         ->disableOriginalConstructor()
 		                         ->getMock();
-		$woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
-		                                   ->disableOriginalConstructor()
-		                                   ->setMethods( array( 'is_original_product' ) )
-		                                   ->getMock();
-
-		$woocommerce_wpml->products->method( 'is_original_product' )->with( $product_id )->willReturn( true );
-
 
 		$sitepress = $this->getMockBuilder('SitePress')
 		                  ->disableOriginalConstructor()
@@ -717,22 +710,31 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_does_not_sync_stock_status_for_translations() {
+	public function it_does_not_sync_stock_status_for_purchased_product() {
 
 		$product_id = mt_rand( 1, 100 );
 		$status = rand_str( 5 );
+		$post_type = 'product';
 
-		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
-		                         ->disableOriginalConstructor()
-		                         ->getMock();
-		$woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
-		                                   ->disableOriginalConstructor()
-		                                   ->setMethods( array( 'is_original_product' ) )
-		                                   ->getMock();
+		$translation = new stdClass();
+		$translation->element_id = $product_id;
+		$translations[] = $translation;
 
-		$woocommerce_wpml->products->method( 'is_original_product' )->with( $product_id )->willReturn( false );
 
-		$subject = $this->get_subject( $woocommerce_wpml );
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'args'  => array( $product_id ),
+			'return' => $post_type
+		) );
+
+		$sitepress = $this->getMockBuilder('SitePress')
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_element_trid', 'get_element_translations' ) )
+		                  ->getMock();
+
+		$sitepress->method( 'get_element_trid' )->willReturn( mt_rand( 201, 300 ) );
+		$sitepress->method( 'get_element_translations' )->willReturn( $translations );
+
+		$subject = $this->get_subject( null, $sitepress );
 
 		$subject->sync_stock_status_for_translations( $product_id, $status );
 
