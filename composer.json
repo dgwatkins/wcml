@@ -1,68 +1,69 @@
 {
-  "name": "wcml/woocommerce-multilingual",
-  "description": "Allows running fully multilingual e-commerce sites using WooCommerce and WPML.",
-  "license": "GPLv2",
-  "homepage" : "https://wpml.org/documentation/related-projects/woocommerce-multilingual/",
-  "type": "wordpress-plugin",
-  "authors": [
-    {
-      "name": "Mihai Grigori",
-      "email": "mihai@wpml.org"
-    }
-  ],
-  "config": {
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools.git"
-    },
-    {
-      "type": "vcs",
-      "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git"
-    },
-    {
-      "type": "vcs",
-      "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-changelog.git"
-    }
-  ],
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "require": {
-    "otgs/installer" : "~1.8.0",
-    "xrstf/composer-php52": "1.*",
-    "twig/twig": "~1.0"
-  },
-  "require-dev": {
-    "roave/security-advisories": "dev-master",
-    "otgs/build-tools": "~0.1",
-    "otgs/unit-tests-framework": "~1.2.0",
-    "otgs/changelog": "~0.2",
-    "otgs/build-tools-ci": "~0.8.0"
-  },
-  "scripts": {
-    "post-install-cmd": [
-      "xrstf\\Composer52\\Generator::onPostInstallCmd",
-      "OTGS\\Composer\\Scripts\\Install::PHPCSStandards"
+    "name": "wcml/woocommerce-multilingual",
+    "description": "Allows running fully multilingual e-commerce sites using WooCommerce and WPML.",
+    "license": "GPLv2",
+    "homepage": "https://wpml.org/documentation/related-projects/woocommerce-multilingual/",
+    "type": "wordpress-plugin",
+    "authors": [
+        {
+            "name": "Mihai Grigori",
+            "email": "mihai@wpml.org"
+        }
     ],
-    "post-update-cmd": [
-      "xrstf\\Composer52\\Generator::onPostInstallCmd",
-      "OTGS\\Composer\\Scripts\\Install::PHPCSStandards"
+    "config": {
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools.git"
+        },
+        {
+            "type": "vcs",
+            "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git"
+        },
+        {
+            "type": "vcs",
+            "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-changelog.git"
+        }
     ],
-    "post-autoload-dump": [
-      "xrstf\\Composer52\\Generator::onPostInstallCmd"
-    ]
-  },
-  "autoload-dev": {
-    "classmap": [
-      "tests/phpunit/stubs"
-    ]
-  },
-  "autoload": {
-    "classmap": [
-      "classes",
-      "inc",
-      "compatibility"
-    ]
-  }
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "otgs/installer": "~1.8.0",
+        "xrstf/composer-php52": "1.*",
+        "twig/twig": "~1.0"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-master",
+        "otgs/build-tools": "~0.1",
+        "otgs/unit-tests-framework": "~1.2.0",
+        "otgs/changelog": "~0.2",
+        "otgs/build-tools-ci": "~0.9"
+    },
+    "scripts": {
+        "php52-autoloader": [
+            "xrstf\\Composer52\\Generator::onPostInstallCmd"
+        ],
+        "post-install-cmd": [
+            "@php52-autoloader"
+        ],
+        "post-update-cmd": [
+            "@php52-autoloader"
+        ],
+        "post-autoload-dump": [
+            "@php52-autoloader"
+        ]
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/phpunit/stubs"
+        ]
+    },
+    "autoload": {
+        "classmap": [
+            "classes",
+            "inc",
+            "compatibility"
+        ]
+    }
 }
