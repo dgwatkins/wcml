@@ -74,6 +74,26 @@ class Test_WCML_WC_Strings extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function not_listing_pages_admin_hooks(){
+
+		$sitepress = $this->get_sitepress();
+		$sitepress->method( 'get_current_language' )->willReturn( rand_str() );
+
+		global $pagenow;
+		$pagenow = rand_str();
+
+		\WP_Mock::userFunction( 'is_admin', array( 'return' => true ) );
+
+		\WP_Mock::userFunction( 'wpml_is_ajax', array( 'return' => false ) );
+
+		$subject = $this->get_subject( null, $sitepress );
+		\WP_Mock::expectFilterAdded( 'woocommerce_attribute_taxonomies', array( $subject, 'translate_attribute_taxonomies_labels' ) );
+		$subject->add_on_init_hooks();
+	}
+
+	/**
+	 * @test
+	 */
 	public function filter_woocommerce_breadcrumbs_prepend_shop_page_if_needed(){
 
 		$sitepress = $this->get_sitepress();
