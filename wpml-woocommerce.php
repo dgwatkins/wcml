@@ -78,8 +78,10 @@ function wcml_loader(){
 		$loaders[] = 'WCML_Append_Gallery_To_Post_Media_Ids_Factory';
 	}
 
-	$action_filter_loader = new WPML_Action_Filter_Loader();
-	$action_filter_loader->load( $loaders );
+	if( version_compare( ICL_SITEPRESS_VERSION, '3.9.0', '>=' ) ){
+		$action_filter_loader = new WPML_Action_Filter_Loader();
+		$action_filter_loader->load( $loaders );
+	}
 }
 
 $WCML_REST_API = new WCML_REST_API();
