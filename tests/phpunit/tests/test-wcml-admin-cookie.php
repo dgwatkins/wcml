@@ -2,6 +2,8 @@
 
 /**
  * Class Test_WCML_Admin_Cookie
+ *
+ * @group cookies
  */
 class Test_WCML_Admin_Cookie extends OTGS_TestCase {
 
@@ -13,6 +15,10 @@ class Test_WCML_Admin_Cookie extends OTGS_TestCase {
 	private function get_subject( $name ){
 		return new WCML_Admin_Cookie( $name );
 	}
+
+//	public function wpsc_add_cookie_action() {
+//		$this->ass
+//	}
 
 	/**
 	 * @test
@@ -28,6 +34,8 @@ class Test_WCML_Admin_Cookie extends OTGS_TestCase {
 				$_COOKIE[ $name ] = $value;
 			}
 		] );
+
+		WP_Mock::expectAction( 'wpsc_add_cookie', $name);
 
 		$subject->set_value( $value );
 
@@ -52,6 +60,8 @@ class Test_WCML_Admin_Cookie extends OTGS_TestCase {
 
 		] );
 
+		WP_Mock::expectAction( 'wpsc_add_cookie', $name);
+
 		$subject->set_value( $value, $expiration );
 
 		$this->assertSame( $value, $subject->get_value() );
@@ -70,6 +80,8 @@ class Test_WCML_Admin_Cookie extends OTGS_TestCase {
 				$_COOKIE[ $name ] = $value;
 			}
 		] );
+
+		WP_Mock::expectAction( 'wpsc_add_cookie', $name);
 
 		$subject->set_value( $value );
 
