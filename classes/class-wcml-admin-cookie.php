@@ -22,6 +22,7 @@ class WCML_Admin_Cookie{
 		if( null === $expiration ){
 			$expiration = time() + DAY_IN_SECONDS;
 		}
+		$this->handle_cache_plugins();
 		wc_setcookie( $this->name, $value, $expiration );
 	}
 
@@ -36,4 +37,10 @@ class WCML_Admin_Cookie{
 		return $value;
 	}
 
+	/**
+	 * @param $name
+	 */
+	private function handle_cache_plugins() {
+		do_action( 'wpsc_add_cookie', $this->name );
+	}
 }

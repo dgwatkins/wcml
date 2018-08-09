@@ -145,7 +145,9 @@ class WCML_Multi_Currency_Reports {
 			die();
 		}
 
-		setcookie( '_wcml_reports_currency', filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS ),
+		$cookie_name = '_wcml_reports_currency';
+		do_action( 'wpsc_add_cookie', $cookie_name );
+		setcookie( $cookie_name, filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS ),
 			time() + 86400, COOKIEPATH, COOKIE_DOMAIN );
 
 		exit;
