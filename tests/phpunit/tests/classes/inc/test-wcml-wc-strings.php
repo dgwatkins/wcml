@@ -67,7 +67,7 @@ class Test_WCML_WC_Strings extends OTGS_TestCase {
 		\WP_Mock::userFunction( 'is_admin', array( 'return' => false ) );
 
 		$subject = $this->get_subject( null, $sitepress );
-		\WP_Mock::expectFilterAdded( 'woocommerce_cart_item_name', array( $subject, 'translated_cart_item_name' ), 10, 2 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_cart_item_name', array( $subject, 'translated_cart_item_name' ), -1, 2 );
 		$subject->add_on_init_hooks();
 	}
 
