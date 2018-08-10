@@ -41,7 +41,7 @@ class WCML_WC_Strings {
 		//translate attribute label
 		add_filter( 'woocommerce_attribute_label', array( $this, 'translated_attribute_label' ), 10, 3 );
 		add_filter( 'woocommerce_checkout_product_title', array( $this, 'translated_checkout_product_title' ), 10, 2 );
-		add_filter( 'woocommerce_cart_item_name', array( $this, 'translated_cart_item_name' ), 10, 2 );
+		add_filter( 'woocommerce_cart_item_name', array( $this, 'translated_cart_item_name' ), -1, 2 );
 
 		if ( is_admin() ) {
 
