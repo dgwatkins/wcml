@@ -511,10 +511,17 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$this->assertEquals( $filter_attribute[ 'attributes' ][ $attribute_key ], $translated_attribute_value );
 	}
 
+
+
 	/**
 	 * @test
+	 * @group wcml-2517
 	 */
 	public function it_does_filter_product_variation_post_meta_attribute_values_in_current_language_when_post_type_is_product_variation() {
+		$current_lang = 'fr';
+
+		$this->sitepress->method( 'get_current_language' )->willReturn( $current_lang );
+		$subject = $this->get_subject();
 
 		$object_id = mt_rand( 1, 10 );
 
@@ -529,26 +536,94 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$translated_attribute_value = rand_str( 15 );
 
 		$all_meta[ $attribute_key ] = array( $attribute_value );
+		$translated_all_meta = $all_meta;
+		$translated_all_meta[ $attribute_key ] = array( $translated_attribute_value );
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
+		\WP_Mock::userFunction( 'wp_cache_get', array(
+			'return' => false,
+		));
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
 			'args'  => array( $object_id ),
 			'return' => $all_meta
 		) );
 
+		\WP_Mock::userFunction( 'remove_filter', array(
+			'times' => 1,
+			'args'  => array(
+				'get_post_metadata',
+				array( $subject, 'filter_product_variation_post_meta_attribute_values_in_current_language' ),
+				10,
+			),
+		));
+
+		\WP_Mock::expectFilterAdded(
+			'get_post_metadata',
+			array( $subject, 'filter_product_variation_post_meta_attribute_values_in_current_language' ),
+			10,
+			4
+		);
+
 		$term = new stdClass();
 		$term->slug = $translated_attribute_value;
 
-		\WP_Mock::wpFunction( 'get_term_by', array(
+		\WP_Mock::userFunction( 'get_term_by', array(
 			'args'  => array( 'slug', $attribute_value, $attribute_taxonomy ),
 			'return' => $term
 		) );
 
-		\WP_Mock::wpFunction( 'taxonomy_exists', array(
+		\WP_Mock::userFunction( 'taxonomy_exists', array(
 			'args'  => array( $attribute_taxonomy ),
 			'return' => true
 		) );
 
+		\WP_Mock::userFunction( 'wp_cache_add', array(
+			'args' => array( $current_lang . $object_id, $translated_all_meta, 'wpml-all-meta-product-variation' ),
+		));
+
+		$filter_attribute = $subject->filter_product_variation_post_meta_attribute_values_in_current_language( null, $object_id, '', false );
+
+		$this->assertEquals( $filter_attribute[ $attribute_key ][ 0 ], $translated_attribute_value );
+	}
+
+	/**
+	 * @test
+	 * @group wcml-2517
+	 */
+	public function it_does_filter_product_variation_post_meta_attribute_values_in_current_language_from_cache() {
+		$current_lang = 'fr';
+
+		$this->sitepress->method( 'get_current_language' )->willReturn( $current_lang );
 		$subject = $this->get_subject();
+
+		$object_id = mt_rand( 1, 10 );
+
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'args'  => array( $object_id ),
+			'return' => 'product_variation'
+		) );
+
+		$attribute_taxonomy = rand_str( 10 );
+		$attribute_key = 'attribute_'.$attribute_taxonomy;
+		$attribute_value = rand_str( 12 );
+		$translated_attribute_value = rand_str( 15 );
+
+		$all_meta[ $attribute_key ] = array( $attribute_value );
+		$translated_all_meta = $all_meta;
+		$translated_all_meta[ $attribute_key ] = array( $translated_attribute_value );
+
+		\WP_Mock::userFunction( 'wp_cache_get', array(
+			'args'   => array( $current_lang . $object_id, 'wpml-all-meta-product-variation' ),
+			'return' => $translated_all_meta,
+		));
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'time' => 0
+		) );
+
+		\WP_Mock::userFunction( 'wp_cache_add', array(
+			'times' => 0,
+		));
 
 		$filter_attribute = $subject->filter_product_variation_post_meta_attribute_values_in_current_language( null, $object_id, '', false );
 
