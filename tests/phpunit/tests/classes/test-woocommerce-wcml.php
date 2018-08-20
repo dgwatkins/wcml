@@ -6,9 +6,6 @@
  */
 class Test_woocommerce_wcml extends OTGS_TestCase {
 
-	private $options = [
-		'woocommerce_api_enabled' => 'yes'
-	];
 
 	public function setUp() {
 		parent::setUp();
@@ -23,9 +20,8 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 		$that = $this;
 
 		\WP_Mock::wpFunction( 'get_option', array(
-			'return' => function ( $option_name ) use ( $that ) {
-				return isset( $that->options[$option_name] ) ?  $that->options[$option_name] : null ;
-			},
+			'args' => array( '_wcml_settings' ),
+			'return' => null
 		) );
 
 	}
