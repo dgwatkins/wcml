@@ -25,7 +25,8 @@ class WCML_Upgrade{
         '4.2.10',
         '4.2.11',
 	    '4.3.0',
-        '4.3.4'
+        '4.3.4',
+        '4.3.5'
     );
     
     function __construct(){
@@ -709,6 +710,18 @@ class WCML_Upgrade{
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}icl_translations WHERE `element_id` IN ( SELECT ID FROM {$wpdb->prefix}posts WHERE `guid` LIKE '%attachment_id%' ) " );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}postmeta WHERE `post_id` IN ( SELECT ID FROM {$wpdb->prefix}posts WHERE `guid` LIKE '%attachment_id%' ) " );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}posts WHERE `guid` LIKE '%attachment_id%'" );
+
+	}
+
+	private function upgrade_4_3_5() {
+
+		if ( class_exists( 'WC_Product_Bundle' ) && function_exists( 'WC_PB' ) ) {
+
+			global $wpdb;
+			//delete wrong duplicated attachments
+			$wpdb->query( "DELETE FROM {$wpdb->prefix}woocommerce_bundled_itemmeta WHERE `meta_key` LIKE 'translation_item_id_of_%' AND `meta_value` IN ( SELECT bundled_item_id FROM {$wpdb->prefix}woocommerce_bundled_items WHERE `product_id` = 0 AND `bundle_id` = 0 ) " );
+			$wpdb->query( "DELETE FROM {$wpdb->prefix}woocommerce_bundled_items WHERE `product_id` = 0 AND `bundle_id` = 0 " );
+		}
 
 	}
 
