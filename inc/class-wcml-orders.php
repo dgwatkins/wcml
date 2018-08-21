@@ -186,10 +186,11 @@ class WCML_Orders{
                     }
                 }elseif( $item instanceof WC_Order_Item_Shipping ){
                     if( $item->get_method_id() ){
+	                    $shipping_id = $item->get_method_id() . $item->get_instance_id();
                         $item->set_method_title(
                                 $this->woocommerce_wpml->shipping->translate_shipping_method_title(
                                     $item->get_method_title(),
-                                    $item->get_method_id(),
+                                    $shipping_id,
                                     $language_to_filter
                                 )
                         );

@@ -43,11 +43,12 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 			$this->order->add_item($item);
 
 			//add shipping to order
-			$this->shipping = new WC_Shipping_Rate('flat_rate', 'FLAT RATE', 10, array(), 'flat_rate');
+			$this->shipping = new WC_Shipping_Rate('flat_rate', 'FLAT RATE', 10, array(), 'flat_rate', 1 );
 			$item = new WC_Order_Item_Shipping();
 			$item->set_props(array(
 				'method_title' => $this->shipping->label,
 				'method_id' => $this->shipping->id,
+				'instance_id' => $this->shipping->instance_id,
 				'total' => wc_format_decimal($this->shipping->cost),
 				'taxes' => $this->shipping->taxes,
 				'meta_data' => $this->shipping->get_meta_data(),
@@ -115,8 +116,8 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 		}
 
 		//check if shipping title translated
-		$this->woocommerce_wpml->shipping->register_shipping_title( $this->shipping->method_id, $this->shipping->label );
-		$ship_string_id = icl_get_string_id( $this->shipping->label, 'woocommerce', $this->shipping->method_id.'_shipping_method_title' );
+		$this->woocommerce_wpml->shipping->register_shipping_title( $this->shipping->method_id.$this->shipping->instance_id, $this->shipping->label );
+		$ship_string_id = icl_get_string_id( $this->shipping->label, 'woocommerce', $this->shipping->method_id.$this->shipping->instance_id.'_shipping_method_title' );
 		icl_add_string_translation( $ship_string_id, 'es', 'FLAT RATE ES', ICL_TM_COMPLETE );
 
 		$this->wcml_helper->icl_clear_and_init_cache( 'es' );
