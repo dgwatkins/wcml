@@ -202,7 +202,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		                        ->disableOriginalConstructor()
 		                        ->setMethods( array( 'get_active_languages', 'switch_lang' ) )
 		                        ->getMock();
-		$this->sitepress->method( 'get_active_languages' )->wilLReturn( array( $default_language => 1, $other_language => 1 ) );
+		$this->sitepress->method( 'get_active_languages' )->willReturn( array( $default_language => 1, $other_language => 1 ) );
 		$this->sitepress->method( 'switch_lang' )->will( $this->returnCallback(
 			function( $lang ){
 				$this->test_data['sitepress_current_language'] = $lang;
@@ -400,9 +400,10 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 
 		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
 		                 ->disableOriginalConstructor()
-		                 ->setMethods( array( 'get_params' ) )
+		                 ->setMethods( array( 'get_params', 'get_method' ) )
 		                 ->getMock();
-		$request1->method( 'get_params' )->wilLReturn( array( 'lang' => 'ru' ) );
+		$request1->method( 'get_params' )->willReturn( array( 'lang' => 'ru' ) );
+		$request1->method( 'get_method' )->willReturn( 'POST' );
 
 		$this->sitepress = $this->getMockBuilder( 'SitePress' )
 		                        ->disableOriginalConstructor()
@@ -436,12 +437,13 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 
 		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
 		                 ->disableOriginalConstructor()
-		                 ->setMethods( array( 'get_params' ) )
+		                 ->setMethods( array( 'get_params', 'get_method' ) )
 		                 ->getMock();
-		$request1->method( 'get_params' )->wilLReturn( array(
+		$request1->method( 'get_params' )->willReturn( array(
 			'lang' => 'ro',
 			'translation_of' => rand(1,100)
 		) );
+		$request1->method( 'get_method' )->willReturn( 'POST' );
 
 		$this->sitepress = $this->getMockBuilder( 'SitePress' )
 		                        ->disableOriginalConstructor()
@@ -472,12 +474,13 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 
 		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
 		                 ->disableOriginalConstructor()
-		                 ->setMethods( array( 'get_params' ) )
+		                 ->setMethods( array( 'get_params', 'get_method' ) )
 		                 ->getMock();
-		$request1->method( 'get_params' )->wilLReturn( array(
+		$request1->method( 'get_params' )->willReturn( array(
 			'lang' => 'ro',
 			'translation_of' => rand(1,100)
 		) );
+		$request1->method( 'get_method' )->willReturn( 'POST' );
 
 		$this->expected_trid = null;
 		$this->actual_trid   = rand(1,100);
@@ -530,7 +533,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		                 ->disableOriginalConstructor()
 		                 ->setMethods( array( 'get_params' ) )
 		                 ->getMock();
-		$request1->method( 'get_params' )->wilLReturn( array( 'translation_of' => rand(1, 100) ) );
+		$request1->method( 'get_params' )->willReturn( array( 'translation_of' => rand(1, 100) ) );
 
 		$post = new stdClass();
 		$post->ID = rand(1,100);
@@ -548,11 +551,12 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 
 		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
 		                 ->disableOriginalConstructor()
-		                 ->setMethods( array( 'get_params' ) )
+		                 ->setMethods( array( 'get_params', 'get_method' ) )
 		                 ->getMock();
-		$request1->method( 'get_params' )->wilLReturn( array(
+		$request1->method( 'get_params' )->willReturn( array(
 			'lang' => 'ro'
 		) );
+		$request1->method( 'get_method' )->willReturn( 'POST' );
 
 		$this->expected_trid = null;
 		$this->actual_trid   = null;
@@ -580,6 +584,29 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		$subject->set_product_language( $post, $request1 );
 		$this->assertEquals( $this->expected_trid, $this->actual_trid );
 
+	}
+
+	/**
+	 * @test
+	 */
+	function do_no_set_poduct_language_if_method_not_post(){
+
+		$subject = $this->get_subject();
+
+		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
+		                 ->disableOriginalConstructor()
+		                 ->setMethods( array( 'get_params', 'get_method' ) )
+		                 ->getMock();
+		$request1->method( 'get_params' )->willReturn( array(
+			'lang' => 'en'
+		) );
+		$request1->method( 'get_method' )->willReturn( 'PUT' );
+
+
+		$post = new stdClass();
+		$post->ID = rand(1,100);
+
+		$subject->set_product_language( $post, $request1 );
 	}
 
 	/**
@@ -613,7 +640,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		                 ->disableOriginalConstructor()
 		                 ->setMethods( array( 'get_params' ) )
 		                 ->getMock();
-		$request0->method( 'get_params' )->wilLReturn( $expected_prices );
+		$request0->method( 'get_params' )->willReturn( $expected_prices );
 		$subject->set_product_custom_prices( $post, $request0 );
 
 		$this->assertEmpty( get_post_meta( $original_element_id, '_wcml_custom_prices_status', true ) );
@@ -624,7 +651,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		                 ->disableOriginalConstructor()
 		                 ->setMethods( array( 'get_params' ) )
 		                 ->getMock();
-		$request1->method( 'get_params' )->wilLReturn( $expected_prices );
+		$request1->method( 'get_params' )->willReturn( $expected_prices );
 
 
 
@@ -688,7 +715,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		                 ->disableOriginalConstructor()
 		                 ->setMethods( array( 'get_params' ) )
 		                 ->getMock();
-		$request1->method( 'get_params' )->wilLReturn( array(
+		$request1->method( 'get_params' )->willReturn( array(
 			'lang' => 'de'
 		) );
 
@@ -721,7 +748,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		                 ->disableOriginalConstructor()
 		                 ->setMethods( array( 'get_params' ) )
 		                 ->getMock();
-		$request1->method( 'get_params' )->wilLReturn( array(
+		$request1->method( 'get_params' )->willReturn( array(
 			'lang' => $expected_language
 		) );
 
@@ -870,7 +897,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		                 ->getMock();
 
 		$post_id = rand(1,1000);
-		$request->method( 'get_params' )->wilLReturn( array( 'id' => $post_id ) );
+		$request->method( 'get_params' )->willReturn( array( 'id' => $post_id ) );
 
 		$sitepress = $this->getMockBuilder( 'Sitepress' )
 		                ->disableOriginalConstructor()
@@ -912,7 +939,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_default_language' ) )
 		                  ->getMock();
-		$sitepress->method( 'get_default_language' )->wilLReturn( $lang );
+		$sitepress->method( 'get_default_language' )->willReturn( $lang );
 
 		$expected_request_uri = str_replace( 'lang=' . $lang, '', $_SERVER['REQUEST_URI'] );
 		$subject     = new WCML_REST_API_Support_V1(
@@ -939,7 +966,7 @@ class Test_WCML_REST_API_Support_V1 extends OTGS_TestCase {
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_default_language' ) )
 		                  ->getMock();
-		$sitepress->method( 'get_default_language' )->wilLReturn( 'non-' . $lang );
+		$sitepress->method( 'get_default_language' )->willReturn( 'non-' . $lang );
 
 		$expected_request_uri = $_SERVER['REQUEST_URI'];
 
