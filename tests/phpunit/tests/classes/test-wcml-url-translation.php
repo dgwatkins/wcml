@@ -145,8 +145,8 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 
 		$subject = new WCML_Url_Translation( $woocommerce_wpml, $sitepress , $this->stubs->wpdb() );
 
-		$attribute_base_slug = rand_str();
-		$attribute_slug = rand_str();
+		$attribute_base_slug = 'product-attribute';
+		$attribute_slug = 'color';
 
 		$attribute_taxonomies = array();
 		$attr_object = new stdClass();
@@ -166,6 +166,7 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 		) );
 
 		$this->rewrite_rules_attribute_base_is_translated( $subject, $attribute_base_slug, $attribute_slug );
+		$this->rewrite_rules_attribute_slug_is_translated_without_base( $subject, $attribute_base_slug, $attribute_slug );
 		$this->rewrite_rules_attribute_base_not_translated( $subject, $attribute_base_slug, $attribute_slug );
 
 	}
@@ -247,8 +248,8 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 
 	public function rewrite_rules_attribute_base_is_translated( $subject, $attribute_base_slug, $attribute_slug ){
 
-		$translated_attribute_base_slug = rand_str();
-		$translated_attribute_slug = rand_str();
+		$translated_attribute_base_slug = 'product-attribute-translated';
+		$translated_attribute_slug = 'color-translated';
 
 		\WP_Mock::onFilter( 'wpml_translate_single_string' )
 		        ->with( $attribute_base_slug, $subject->url_strings_context(), $subject->url_string_name( 'attribute' ) )
@@ -272,9 +273,36 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 
 	}
 
+	public function rewrite_rules_attribute_slug_is_translated_without_base( $subject, $attribute_base_slug, $attribute_slug ){
+
+		$translated_attribute_base_slug = '';
+		$translated_attribute_slug = 'color-translated';
+
+		\WP_Mock::onFilter( 'wpml_translate_single_string' )
+		        ->with( $attribute_base_slug, $subject->url_strings_context(), $subject->url_string_name( 'attribute' ) )
+		        ->reply( $translated_attribute_base_slug );
+
+		\WP_Mock::onFilter( 'wpml_translate_single_string' )
+		        ->with( $attribute_slug, $subject->url_strings_context(), $subject->url_string_name( 'attribute_slug', $attribute_slug ) )
+		        ->reply( $translated_attribute_slug );
+
+		$rule_string = rand_str();
+
+		$values = array();
+		$values[ $attribute_slug.'/([^/]+)/?$' ] = $rule_string;
+
+		$expected_values = array();
+		$expected_values[ $translated_attribute_slug.'/([^/]+)/?$' ] = $rule_string;
+
+		$filtered_rules = $subject->translate_attributes_bases_in_rewrite_rules( $values );
+
+		$this->assertEquals( $expected_values, $filtered_rules );
+
+	}
+
 	public function rewrite_rules_attribute_base_not_translated( $subject, $attribute_base_slug, $attribute_slug ){
 
-		$translated_attribute_slug = rand_str();
+		$translated_attribute_slug = 'color-translated';
 
 		\WP_Mock::onFilter( 'wpml_translate_single_string' )
 		        ->with( $attribute_base_slug, $subject->url_strings_context(), $subject->url_string_name( 'attribute' ) )
