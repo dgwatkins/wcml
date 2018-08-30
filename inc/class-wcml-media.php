@@ -79,7 +79,9 @@ class WCML_Media{
     	if ( method_exists( 'WPML_Media_Attachments_Duplication', 'sync_post_thumbnail') ) {
 		    $factory = new WPML_Media_Attachments_Duplication_Factory();
 		    $media_duplicate = $factory->create();
-		    $media_duplicate->sync_post_thumbnail( $orig_post_id );
+		    if( $media_duplicate ){
+			    $media_duplicate->sync_post_thumbnail( $orig_post_id );
+		    }
 	    }
 	}
 
