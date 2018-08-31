@@ -60,6 +60,11 @@ class Test_WCML_Taxonomy_Translation_Link_Filters extends OTGS_TestCase {
 			'override_translation_notice_text'
 		), 10, 2 );
 
+		\WP_Mock::expectFilterAdded( 'wpml_taxonomy_slug_translation_ui', array(
+			$subject,
+			'slug_translation_ui_class'
+		), 10, 2 );
+
 		$subject->add_filters();
 
 	}
@@ -133,6 +138,25 @@ class Test_WCML_Taxonomy_Translation_Link_Filters extends OTGS_TestCase {
 		$taxonomy = key( $this->translatable_custom_taxonomies );
 		$url      = $subject->get_screen_url( $taxonomy );
 		$this->assert_query_string_matches_values( $url, 'admin.php', array( 'page' => 'wpml-wcml', 'tab' => 'custom-taxonomies', 'taxonomy' => $taxonomy ) );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_load_wcml_slug_translation_ui_class_for_attributes() {
+
+
+		$subject = new WCML_Taxonomy_Translation_Link_Filters( $this->wcml_attributes );
+
+		$mock = \Mockery::mock( 'overload:WCML_St_Taxonomy_UI' );
+
+		$ui_class = $this->getMockBuilder( 'WPML_ST_Element_Slug_Translation_UI' );
+		// Attribute
+		$taxonomy          = 'pa_' . $this->translatable_attributes[0]->attribute_name;
+		$filtered_ui_class = $subject->slug_translation_ui_class( $ui_class, $taxonomy );
+
+		$this->assertNotSame( $ui_class, $filtered_ui_class );
 
 	}
 

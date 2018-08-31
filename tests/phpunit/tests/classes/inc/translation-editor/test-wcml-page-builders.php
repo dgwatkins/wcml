@@ -29,8 +29,8 @@ class Test_WCML_Page_Builders extends OTGS_TestCase
 	 */
 	public function page_builders()
 	{
-		$product_id = rand(1, 100);
-		$package_id = rand(1, 100);
+		$product_id = 1;
+		$package_id = 10;
 
 		$package = $this->getMockBuilder('WPML_Package')
 			->disableOriginalConstructor()
@@ -44,7 +44,7 @@ class Test_WCML_Page_Builders extends OTGS_TestCase
 
 		\WP_Mock::onFilter('wpml_st_get_post_string_packages')->with(false, $product_id )->reply($string_packages);
 
-		$string_id = rand(1, 10);
+		$string_id = 20;
 		$target_language = rand_str();
 		$string_value = rand_str();
 		$string_name = rand_str();
@@ -71,7 +71,7 @@ class Test_WCML_Page_Builders extends OTGS_TestCase
 
 		$this->sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
 
-		$icl_tm_complete = rand( 1, 10 );
+		$icl_tm_complete = 30;
 		$wp_api->method( 'constant' )->with( 'ICL_TM_COMPLETE' )->willReturn( $icl_tm_complete );
 
 		$subject = $this->get_subject();
@@ -83,7 +83,7 @@ class Test_WCML_Page_Builders extends OTGS_TestCase
 			$builders_strings[ $package_id ][ 'strings' ][ 0 ]->translated_value
 		);
 
-		$second_product_id = rand( 1, 10 );
+		$second_product_id = 2;
 		\WP_Mock::onFilter('wpml_st_get_post_string_packages')->with(false, $second_product_id )->reply(false);
 		$builders_strings = $subject->get_page_builders_strings( $second_product_id, $target_language );
 		$this->assertEquals( array(), $builders_strings );
