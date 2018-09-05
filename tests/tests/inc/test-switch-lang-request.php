@@ -21,23 +21,19 @@ class Test_WCML_Switch_Lang_Request extends WCML_UnitTestCase{
 	 * @param string $first_lang
 	 * @param string $second_lang
 	 * @param bool   $doing_ajax
-	 * @param string $requested_url
 	 */
-	public function detect_user_switch_language( $first_lang, $second_lang, $doing_ajax, $requested_url ) {
+	public function detect_user_switch_language( $first_lang, $second_lang, $doing_ajax ) {
 		$this->doing_ajax_mock = $doing_ajax;
 
 		$subject = $this->get_subject();
 		$subject->set_requested_lang( $second_lang );
-		$this->set_requested_url( $requested_url );
 		$this->set_request_cookie( $subject->get_cookie_name(), $first_lang );
-		$this->set_request_cookie( $subject->get_referer_url_cookie_name(), $requested_url );
-
 		$subject->detect_user_switch_language();
 
-		if ( ! $this->doing_ajax_mock ) {
-			$this->assertEquals( $requested_url, $this->cookie_buffer[ $subject->get_referer_url_cookie_name() ] );
+		if ( ! $this->doing_ajax_mock && $first_lang !== $second_lang ) {
+			$this->assertSame( 1, did_action( 'wcml_user_switch_language' ) );
 		} else {
-			$this->assertNull( $this->cookie_buffer[ $subject->get_referer_url_cookie_name() ] );
+			$this->assertSame( 0, did_action( 'wcml_user_switch_language' ) );
 		}
 	}
 
@@ -46,105 +42,11 @@ class Test_WCML_Switch_Lang_Request extends WCML_UnitTestCase{
 		$first_lang    = array_rand( $active_langs );
 		unset( $active_langs[ $first_lang ] );
 		$second_lang   = array_rand( $active_langs );
-		$requested_url = 'http://' . rand_str( 12 ) . '/' . rand_str( 17 );
 
 		return array (
-			'From first lang to first lang'  => array( $first_lang, $first_lang, false, $requested_url ),
-			'From first lang to second lang' => array( $first_lang, $second_lang, false, $requested_url ),
-			'From first lang to second lang with ajax' => array( $first_lang, $second_lang, true, $requested_url ),
-		);
-	}
-
-	/**
-	 * @test
-	 * @dataProvider get_request_url_data_provider
-	 *
-	 * @param array  $server_vars
-	 * @param string $expected_url
-	 */
-	public function get_request_url( $server_vars, $expected_url ) {
-		$_SERVER = array_merge( $_SERVER, $server_vars );
-
-		$subject = $this->get_subject();
-		$request_url = $subject->get_request_url();
-		$this->assertEquals( $expected_url, $request_url );
-	}
-
-	/**
-	 * @return array
-	 */
-	public function get_request_url_data_provider() {
-		return array(
-			'URL 1' => array(
-				array(
-					'HTTP_HOST'   => 'example.com',
-					'REQUEST_URI' => '/',
-				),
-				'http://example.com/'
-			),
-			'URL 2' => array(
-				array(
-					'HTTP_HOST'   => 'example.com',
-					'REQUEST_URI' => '/some-string-89/foo-12-bar/',
-				),
-				'http://example.com/some-string-89/foo-12-bar/'
-			),
-			'URL 3' => array(
-				array(
-					'HTTP_HOST'   => 'example.com',
-					'REQUEST_URI' => '/some-string-again/?foo=bar&ring=bell',
-				),
-				'http://example.com/some-string-again/?foo=bar&ring=bell'
-			),
-			'URL 4 with https' => array(
-				array(
-					'HTTP_HOST'   => 'example.com',
-					'REQUEST_URI' => '/some-string-again/?foo=bar&ring=bell',
-					'HTTPS'       => 'on',
-				),
-				'https://example.com/some-string-again/?foo=bar&ring=bell'
-			),
-			'URL 5 with port 80' => array(
-				array(
-					'HTTP_HOST'   => 'example.com',
-					'REQUEST_URI' => '/some-string-again/?foo=bar&ring=bell',
-					'SERVER_PORT' => '80',
-				),
-				'http://example.com/some-string-again/?foo=bar&ring=bell'
-			),
-			'URL 6 with port 443' => array(
-				array(
-					'HTTP_HOST'   => 'example.com',
-					'REQUEST_URI' => '/some-string-again/?foo=bar&ring=bell',
-					'HTTPS'       => 'on',
-					'SERVER_PORT' => '443',
-				),
-				'https://example.com/some-string-again/?foo=bar&ring=bell'
-			),
-			'URL 7 with port 1234' => array(
-				array(
-					'HTTP_HOST'   => 'example.com:1234',
-					'REQUEST_URI' => '/some-string-again/?foo=bar&ring=bell',
-				),
-				'http://example.com:1234/some-string-again/?foo=bar&ring=bell'
-			),
-			'URL 8 without HTTP_HOST' => array(
-				array(
-					'HTTP_HOST'   => null,
-					'SERVER_NAME' => 'example.com',
-					'REQUEST_URI' => '/some-string-again/?foo=bar&ring=bell',
-				),
-				'http://example.com/some-string-again/?foo=bar&ring=bell'
-			),
-			'URL 9 without HTTP_HOST, with port 1234' => array(
-				array(
-					'HTTP_HOST'   => null,
-					'SERVER_NAME' => 'example.com',
-					'REQUEST_URI' => '/some-string-again/?foo=bar&ring=bell',
-					'SERVER_PORT' => '1234',
-				),
-				'http://example.com:1234/some-string-again/?foo=bar&ring=bell'
-			),
+			'From first lang to first lang'  => array( $first_lang, $first_lang, false ),
+			'From first lang to second lang' => array( $first_lang, $second_lang, false ),
+			'From first lang to second lang with ajax' => array( $first_lang, $second_lang, true ),
 		);
 	}
 
@@ -164,18 +66,6 @@ class Test_WCML_Switch_Lang_Request extends WCML_UnitTestCase{
 		return $subject;
 	}
 
-	private function set_requested_url( $url ) {
-		$_SERVER['HTTP_HOST']   = parse_url( $url, PHP_URL_HOST );
-		$_SERVER['REQUEST_URI'] = parse_url( $url, PHP_URL_PATH );
-	}
-
-	/**
-	 * @param string $name
-	 * @param string $value
-	 */
-	private function set_request_cookie( $name, $value ) {
-		$_COOKIE[ $name ] = $value;
-	}
 
 	/**
 	 * @param string $name
@@ -201,6 +91,14 @@ class Test_WCML_Switch_Lang_Request extends WCML_UnitTestCase{
 	 */
 	public function is_language_active_mock( $lang ) {
 		return isset( $this->active_languages[ $lang ] );
+	}
+
+	/**
+	 * @param string $name
+	 * @param string $value
+	 */
+	private function set_request_cookie( $name, $value ) {
+		$_COOKIE[ $name ] = $value;
 	}
 
 	public function tearDown() {
@@ -234,12 +132,4 @@ class WCML_Test_Request extends WCML_Switch_Lang_Request {
 	public function set_requested_lang( $lang ) {
 		$this->requested_lang = $lang;
 	}
-
-	/**
-	 * @return string
-	 */
-	public function get_referer_url_cookie_name() {
-		return 'some-name';
-	}
-
 }
