@@ -390,7 +390,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
 
         $expected_rates = array();
         foreach( $rates as $currency => $rate ){
-            $expected_rates[ $currency ] = round( $rate * ($lifting_charge/100 + 1), 4);
+            $expected_rates[ $currency ] = round( $rate * ($lifting_charge/100 + 1), 6);
         }
 
         $this->exchange_rate_services->save_setting( 'lifting_charge', $lifting_charge );

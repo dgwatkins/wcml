@@ -104,8 +104,8 @@ class Test_WCML_Exchange_Rates_Fixerio extends OTGS_TestCase{
 		$tos  = [ $to1, $to2 ];
 
 		$quotes = [
-			$to1 => round ( random_int(1000000, 2000000) / 100000, 4 ),
-			$to2 => round ( random_int(2000000, 3000000) / 100000, 4 ),
+			$to1 => round ( random_int(1000000, 2000000) / 100000, 6 ),
+			$to2 => round ( random_int(2000000, 3000000) / 100000, 6 ),
 		];
 
 		$expected_rates = [

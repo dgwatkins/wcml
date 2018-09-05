@@ -138,8 +138,8 @@ class Test_WCML_Exchange_Rates_Currencylayer extends OTGS_TestCase{
 		$tos  = [ $to1, $to2 ];
 
 		$quotes = [
-			$from . $to1 => round ( random_int(1000000, 2000000) / 100000, 4 ),
-			$from . $to2 => round ( random_int(2000000, 3000000) / 100000, 4 ),
+			$from . $to1 => round ( random_int(1000000, 2000000) / 100000, 6 ),
+			$from . $to2 => round ( random_int(2000000, 3000000) / 100000, 6 ),
 		];
 
 		$expected_rates = [
