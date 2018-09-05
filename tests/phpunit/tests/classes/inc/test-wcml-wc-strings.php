@@ -143,6 +143,11 @@ class Test_WCML_WC_Strings extends OTGS_TestCase {
 			)
 		);
 
+		\WP_Mock::userFunction( 'get_home_url', array(
+				'return' => rand_str()
+			)
+		);
+
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
 		                         ->disableOriginalConstructor()
 		                         ->getMock();
@@ -172,6 +177,102 @@ class Test_WCML_WC_Strings extends OTGS_TestCase {
 		$expected_breadcrumbs = array(
 			array( $shop_page->post_title, $product_type_post_link ),
 			array( 'level 1', $level1_url ),
+			array( 'level 2', $level2_url )
+		);
+
+		$filtered_breadcrumbs = $subject->filter_woocommerce_breadcrumbs( $breadcrumbs, new stdClass() );
+
+		$this->assertEquals( $expected_breadcrumbs, $filtered_breadcrumbs );
+	}
+
+	/**
+	 * @test
+	 */
+	public function filter_woocommerce_breadcrumbs_append_shop_page_after_home_page_if_needed(){
+
+		$sitepress = $this->get_sitepress();
+		$sitepress->method( 'get_current_language' )->willReturn( rand_str() );
+		$sitepress->method( 'get_default_language' )->willReturn( rand_str() );
+
+		$shop_page_id  = mt_rand( 1, 10 );
+		$shop_page = new stdClass();
+		$shop_page->ID = mt_rand( 11, 20 );
+		$shop_page->post_title = rand_str();
+		$shop_page->post_name = rand_str();
+		$page_on_front = mt_rand( 21, 30 );
+		$product_type_post_link = rand_str();
+
+		\WP_Mock::userFunction( 'wc_get_page_id', array(
+				'args' => array( 'shop' ),
+				'return' => $shop_page_id
+			)
+		);
+
+		\WP_Mock::userFunction( 'get_post_status', array(
+				'args' => array( $shop_page_id ),
+				'return' => 'publish'
+			)
+		);
+
+		\WP_Mock::userFunction( 'get_post', array(
+				'args' => array( $shop_page_id ),
+				'return' => $shop_page
+			)
+		);
+
+		\WP_Mock::userFunction( 'is_woocommerce', array(
+				'return' => true
+			)
+		);
+
+		\WP_Mock::userFunction( 'get_option', array(
+				'args' => array( 'page_on_front' ),
+				'return' => $page_on_front
+			)
+		);
+
+		\WP_Mock::userFunction( 'get_post_type_archive_link', array(
+				'args' => array( 'product' ),
+				'return' => $product_type_post_link
+			)
+		);
+
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->getMock();
+
+		$woocommerce_wpml->url_translation = $this->getMockBuilder( 'WCML_Url_Translation' )
+		                                          ->disableOriginalConstructor()
+		                                          ->setMethods( array(
+			                                          'get_base_translation'
+		                                          ) )
+		                                          ->getMock();
+		$translated_base = array(
+			'original_value' => rand_str(),
+			'translated_base' => $shop_page->post_name
+		);
+
+		$woocommerce_wpml->url_translation->method( 'get_base_translation' )->willReturn( $translated_base );
+
+		$subject = $this->get_subject( $woocommerce_wpml, $sitepress );
+
+		$home_url = rand_str();
+
+		\WP_Mock::userFunction( 'get_home_url', array(
+				'return' => $home_url
+			)
+		);
+
+		$level2_url = rand_str();
+		$breadcrumbs = array(
+			array( 'home', $home_url ),
+			array( 'level 2', $level2_url )
+		);
+
+		$expected_breadcrumbs = array(
+			array( 'home', $home_url ),
+			array( $shop_page->post_title, $product_type_post_link ),
 			array( 'level 2', $level2_url )
 		);
 

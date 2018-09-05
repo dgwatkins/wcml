@@ -392,15 +392,25 @@ class WCML_WC_Strings {
 				if ( is_woocommerce() && $shop_page->ID && strstr( $trnsl_base['translated_base'], urldecode( $shop_page->post_name ) ) && get_option( 'page_on_front' ) != $shop_page->ID ) {
 					$breadcrumbs_buff = array();
 					$i                = 0;
+
 					foreach ( $breadcrumbs as $key => $breadcrumb ) {
 
 						//Prepend the shop page to shop breadcrumbs
-						if ( $key === 0 && $breadcrumbs[1][1] != get_post_type_archive_link( 'product' ) ) {
-							$breadcrumbs_buff[ $i ] = array(
-								$shop_page->post_title,
-								get_post_type_archive_link( 'product' )
-							);
-							$i ++;
+						if ( $key === 0 ) {
+
+							if ( $breadcrumbs[1][1] != get_post_type_archive_link( 'product' ) ) {
+
+								if ( get_home_url() === $breadcrumbs[0][1] ) {
+									$breadcrumbs_buff[ $i ] = $breadcrumb;
+									$i ++;
+								}
+
+								$breadcrumbs_buff[ $i ] = array(
+									$shop_page->post_title,
+									get_post_type_archive_link( 'product' )
+								);
+								$i ++;
+							}
 						}
 
 						if ( ! in_array( $breadcrumb, $breadcrumbs_buff ) ) {
