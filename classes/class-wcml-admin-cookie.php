@@ -41,6 +41,7 @@ class WCML_Admin_Cookie{
 	 * @param $name
 	 */
 	private function handle_cache_plugins() {
-		do_action( 'wpsc_add_cookie', $this->name );
+		// @todo uncomment or delete when #wpmlcore-5796 is resolved
+		//do_action( 'wpsc_add_cookie', $this->name );
 	}
 }

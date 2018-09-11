@@ -1254,7 +1254,8 @@ class WCML_Bookings {
 		}
 
 		if ( $currency_code ) {
-			do_action( 'wpsc_add_cookie', $cookie_name );
+			// @todo uncomment or delete when #wpmlcore-5796 is resolved
+			//do_action( 'wpsc_add_cookie', $cookie_name );
 			setcookie( $cookie_name, $currency_code, time() + 86400, COOKIEPATH, COOKIE_DOMAIN );
 		}
 

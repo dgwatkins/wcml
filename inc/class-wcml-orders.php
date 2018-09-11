@@ -1,5 +1,6 @@
 <?php
-class WCML_Orders{
+
+class WCML_Orders {
 
     private $woocommerce_wpml;
     private $sitepress;
@@ -368,7 +369,8 @@ class WCML_Orders{
         }
 
 		$cookie_name = '_wcml_dashboard_order_language';
-		do_action( 'wpsc_add_cookie', $cookie_name );
+		// @todo uncomment or delete when #wpmlcore-5796 is resolved
+		//do_action( 'wpsc_add_cookie', $cookie_name );
 		setcookie( $cookie_name, filter_input( INPUT_POST, 'lang', FILTER_SANITIZE_FULL_SPECIAL_CHARS ), time() + 86400, COOKIEPATH, COOKIE_DOMAIN );
 
     }
