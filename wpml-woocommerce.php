@@ -8,9 +8,9 @@
   Text Domain: woocommerce-multilingual
   Requires at least: 3.9
   Tested up to: 4.9.8
-  Version: 4.3.5
+  Version: 4.3.6
   WC requires at least: 2.1.0
-  WC tested up to: 3.4.4
+  WC tested up to: 3.4.5
 */
 
 if ( defined( 'WCML_VERSION' ) ) {
