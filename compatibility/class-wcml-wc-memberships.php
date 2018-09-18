@@ -83,7 +83,8 @@ class WCML_WC_Memberships {
 	public function get_members_area_endpoint() {
 
 		$endpoint            = get_option( 'woocommerce_myaccount_members_area_endpoint', 'members-area' );
-		$translated_endpoint = apply_filters( 'wpml_translate_single_string', $endpoint, 'WooCommerce Endpoints', 'members_area' );
+		$string_context      = class_exists( 'WPML_Endpoints_Support' ) ? WPML_Endpoints_Support::STRING_CONTEXT : 'WooCommerce Endpoints';
+		$translated_endpoint = apply_filters( 'wpml_translate_single_string', $endpoint, $string_context, 'members_area' );
 
 		return array(
 			'original'   => $endpoint,

@@ -779,7 +779,7 @@ class WCML_Url_Translation {
 				$endpoints      = WC()->query->query_vars;
 				$slug           = isset( $endpoints[ $base ] ) ? $endpoints[ $base ] : false;
 				$return['name'] = sprintf( __( 'Endpoint: %s', 'woocommerce-multilingual' ), $base );
-				$string_id      = icl_get_string_id( $slug, 'WooCommerce Endpoints', $base );
+				$string_id      = icl_get_string_id( $slug, $this->get_endpoint_string_context(), $base );
 				break;
 		}
 
@@ -803,6 +803,12 @@ class WCML_Url_Translation {
 
 	}
 
+	private function get_endpoint_string_context(){
+
+		return class_exists( 'WPML_Endpoints_Support' ) ? WPML_Endpoints_Support::STRING_CONTEXT : 'WooCommerce Endpoints';
+
+	}
+
 	function get_source_slug_language( $base ) {
 
 		if ( $base == 'shop' ) {
@@ -810,7 +816,7 @@ class WCML_Url_Translation {
 		} elseif ( in_array( $base, array( 'product', 'product_cat', 'product_tag', 'attribute' ) ) ) {
 			$source_language = $this->woocommerce_wpml->strings->get_string_language( $base, $this->url_strings_context(), $this->url_string_name( $base ) );
 		} else {
-			$source_language = $this->woocommerce_wpml->strings->get_string_language( $base, 'WooCommerce Endpoints', $base );
+			$source_language = $this->woocommerce_wpml->strings->get_string_language( $base, $this->get_endpoint_string_context(), $base );
 		}
 
 		return $source_language;
@@ -848,12 +854,15 @@ class WCML_Url_Translation {
 				do_action( 'wpml_register_single_string', $this->url_strings_context(), $this->url_string_name( 'attribute_slug', $slug ), $slug );
 				$string_id = icl_get_string_id( $original_base_value, $this->url_strings_context(), $this->url_string_name( 'attribute_slug', $slug ) );
 			} else {
-				$string_id = icl_get_string_id( $original_base_value, 'WooCommerce Endpoints', $original_base );
+				$string_id = icl_get_string_id( $original_base_value, $this->get_endpoint_string_context(), $original_base );
 				if ( ! $string_id && function_exists( 'icl_register_string' ) ) {
-					$string_id = icl_register_string( 'WooCommerce Endpoints', $original_base, $original_base_value );
+					$string_id = icl_register_string( $this->get_endpoint_string_context(), $original_base, $original_base_value );
 				}
-				$this->woocommerce_wpml->endpoints->add_endpoints();
-				$this->woocommerce_wpml->endpoints->flush_rules_for_endpoints_translations();
+
+				if( method_exists( $this->woocommerce_wpml->endpoints, 'add_endpoints' ) ){
+					$this->woocommerce_wpml->endpoints->add_endpoints();
+					$this->woocommerce_wpml->endpoints->flush_rules_for_endpoints_translations();
+				}
 			}
 
 			icl_add_string_translation( $string_id, $language, $base_translation, ICL_STRING_TRANSLATION_COMPLETE );

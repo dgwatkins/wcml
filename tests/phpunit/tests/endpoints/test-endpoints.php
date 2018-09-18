@@ -6,11 +6,11 @@
  * @group  wpmlsl-73
  */
 class Test_Endpoints extends OTGS_TestCase {
-	private $active_languages       = array();
+	private $active_languages = array();
 	private $current_language;
 	private $endpoints_translations = array();
 	private $my_account_page_title;
-	private $query_vars             = array();
+	private $query_vars = array();
 
 	function setUp() {
 		parent::setUp();
@@ -39,11 +39,8 @@ class Test_Endpoints extends OTGS_TestCase {
 		);
 
 		$this->build_endpoints();
-		$this->mock_wpml_translate_single_string_filter();
 		$this->mock_generic_functions();
 		$this->mock_my_account_page();
-		$this->mock_icl_get_string_id();
-		$this->mock_wpml_translate_single_string();
 	}
 
 	/**
@@ -70,14 +67,19 @@ class Test_Endpoints extends OTGS_TestCase {
 			}
 		}
 
-		$wcml      = $this->get_wcml();
-		$sitepress = $this->get_sitepress();
+		$subject = $this->get_subject();
 
-		$subject = new WCML_Endpoints( $wcml );
+		$that = $this;
 
-		$actual = $subject->reserved_requests( array(), $sitepress );
+		foreach ( $this->query_vars as $key => $value ){
+			foreach( $this->active_languages as $language => $lang_data ){
+				\WP_Mock::onFilter( 'wpml_get_endpoint_translation' )->with( $key, $value, $language )->reply( $this->get_endpoint_translation( $key, $language ) );
+			}
+		}
 
-		$this->assertSame( $expected, $actual );
+		$actual = $subject->reserved_requests( array() );
+
+		$this->assertEquals( $expected, $actual );
 	}
 
 	/**
@@ -98,12 +100,9 @@ class Test_Endpoints extends OTGS_TestCase {
 			}
 		}
 
-		$wcml      = $this->get_wcml();
-		$sitepress = $this->get_sitepress();
+		$subject = $this->get_subject();
 
-		$subject = new WCML_Endpoints( $wcml );
-
-		$actual = $subject->reserved_requests( array(), $sitepress );
+		$actual = $subject->reserved_requests( array() );
 
 		$this->assertSame( $expected, $actual );
 	}
@@ -111,18 +110,20 @@ class Test_Endpoints extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function lost_password_filter_get_endpoint_url(){
+	public function lost_password_filter_get_endpoint_url() {
 
-		$wcml      = $this->get_wcml();
-		$subject = new WCML_Endpoints( $wcml );
+		$subject = $this->get_subject();
 
-		$url = rand_str();
-		$endpoint = rand_str();
-		$translated_endpoint = rand_str();
-		$value = rand_str();
-		$permalink = rand_str();
+		$url                     = rand_str();
+		$endpoint                = 'endpoint-1';
+		$this->current_language  = 'fr';
+		$translated_endpoint     = $this->get_endpoint_translation( $endpoint, $this->current_language );
+		$value                   = rand_str();
+		$permalink               = rand_str();
 		$translated_endpoint_url = rand_str();
-		$wc_account_page_url = rand_str();
+		$wc_account_page_url     = rand_str();
+
+		WP_Mock::onFilter( 'wpml_get_endpoint_translation' )->with( 'lost-password', $endpoint, null )->reply( $translated_endpoint );
 
 		WP_Mock::wpFunction(
 			'get_option',
@@ -135,9 +136,6 @@ class Test_Endpoints extends OTGS_TestCase {
 		\WP_Mock::wpFunction( 'remove_filter', array( 'times' => 1, 'return' => true ) );
 		\WP_Mock::wpFunction( 'WC', array( 'times' => 1, 'return' => false ) );
 
-		WP_Mock::onFilter( 'wpml_translate_single_string' )
-		       ->with( $endpoint, 'WooCommerce Endpoints', 'lost-password' )
-		       ->reply( $translated_endpoint );
 
 		WP_Mock::wpFunction(
 			'wc_get_page_permalink',
@@ -155,7 +153,10 @@ class Test_Endpoints extends OTGS_TestCase {
 			)
 		);
 
-		\WP_Mock::expectFilterAdded( 'woocommerce_get_endpoint_url', array( $subject, 'filter_get_endpoint_url' ), 10, 4 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_get_endpoint_url', array(
+			$subject,
+			'filter_get_endpoint_url'
+		), 10, 4 );
 
 		$filtered_endpoint_url = $subject->filter_get_endpoint_url( $url, $endpoint, $value, $permalink );
 
@@ -165,15 +166,14 @@ class Test_Endpoints extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function default_endpoint_filter_get_endpoint_url(){
+	public function default_endpoint_filter_get_endpoint_url() {
 
-		$url = rand_str();
-		$endpoint = rand_str();
-		$value = rand_str();
+		$url       = rand_str();
+		$endpoint  = rand_str();
+		$value     = rand_str();
 		$permalink = rand_str();
 
-		$wcml      = $this->get_wcml();
-		$subject = new WCML_Endpoints( $wcml );
+		$subject = $this->get_subject();
 
 		WP_Mock::wpFunction(
 			'get_option',
@@ -189,61 +189,25 @@ class Test_Endpoints extends OTGS_TestCase {
 
 	}
 
+	private function get_subject( $woocommerce_wpml = null, $sitepress = null, $wpdb = null ) {
+		if ( ! $woocommerce_wpml ) {
+			$woocommerce_wpml = $this->get_woocommerce_wpml();
+		}
+		if ( ! $sitepress ) {
+			$sitepress = $this->get_sitepress();
+		}
+		if ( ! $wpdb ) {
+			$wpdb = $this->stubs->wpdb();
+		}
 
-	/**
-	 * @test
-	 */
-	public function translate_endpoints_in_rewrite_rules() {
-
-		$endpoint_key         = 'orders';
-		$endpoint_translation = 'orders-fr';
-
-		$rule_key       = $endpoint_key . '(/(.*))?/?$';
-		$rule_key_slash = '/' . $endpoint_key . '(/(.*))?/?$';
-		$not_match_rule_key = $endpoint_key.'/'.rand_str( 5 );
-
-		$rules_value = rand_str();
-		$rules       = array(
-			$rule_key       => $rules_value,
-			$rule_key_slash => $rules_value,
-			$not_match_rule_key => $rules_value
-		);
-
-		$wcml    = $this->get_wcml();
-		$subject = new WCML_Endpoints( $wcml );
-
-		$woocommerce = $this->getMockBuilder( 'woocommerce' )
-		                    ->disableOriginalConstructor()
-		                    ->getMock();
-
-		$woocommerce->query = $this->getMockBuilder( 'WC_Query' )
-		                           ->disableOriginalConstructor()
-		                           ->getMock();
-
-		$woocommerce->query->query_vars = array(
-			$endpoint_key => $endpoint_translation
-		);
-
-		\WP_Mock::wpFunction( 'WC', array(
-			'return' => $woocommerce,
-			'times'  => 1
-		) );
-
-		$filtered_rules = $subject->translate_endpoints_in_rewrite_rules( $rules );
-
-		$this->assertEquals(
-			array(
-				$endpoint_translation . '(/(.*))?/?$'       => $rules_value,
-				'/' . $endpoint_translation . '(/(.*))?/?$' => $rules_value,
-				$not_match_rule_key => $rules_value
-			),
-			$filtered_rules );
+		return new WCML_Endpoints( $woocommerce_wpml, $sitepress, $wpdb );
 	}
+
 
 	/**
 	 * @return PHPUnit_Framework_MockObject_MockObject|woocommerce_wpml
 	 */
-	private function get_wcml() {
+	private function get_woocommerce_wpml() {
 		/** @var woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject $wcml */
 		$wcml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods(
 			array(
@@ -315,33 +279,9 @@ class Test_Endpoints extends OTGS_TestCase {
 		);
 	}
 
-	private function mock_icl_get_string_id() {
-		$that = $this;
 
-		WP_Mock::wpFunction( 'icl_t' );
-		/** @noinspection PhpUnusedParameterInspection */
-		WP_Mock::wpFunction(
-			'icl_get_string_id',
-			array(
-				'return' => function ( $string, $context, $name ) use ( $that ) {
-					return $that->get_endpoint_translation( $name, $that->current_language );
-				},
-			)
-		);
-	}
+	function get_endpoint_translation( $key, $language ) {
 
-	private function mock_wpml_translate_single_string() {
-		$that = $this;
-		/** @noinspection PhpUnusedParameterInspection */
-		/** @noinspection MoreThanThreeArgumentsInspection */
-		WP_Mock::onFilter( 'wpml_translate_single_string' )->with( Mockery::any(), Mockery::any(), Mockery::any(), Mockery::any() )->reply(
-			function ( $endpoint, $context, $key, $language ) use ( $that ) {
-				return $that->get_endpoint_translation( $key, $language );
-			}
-		);
-	}
-
-	private function get_endpoint_translation( $key, $language ) {
 		return $this->endpoints_translations[ $language ] [ $key ];
 	}
 
@@ -359,20 +299,7 @@ class Test_Endpoints extends OTGS_TestCase {
 				$this->endpoints_translations[ $code ] = $translated_query_vars;
 			}
 		}
-	}
 
-	private function mock_wpml_translate_single_string_filter() {
-		foreach ( $this->endpoints_translations as $code => $translated_query_vars ) {
-			/** @var array $translated_query_vars */
-			foreach ( $translated_query_vars as $key => $endpoint ) {
-				WP_Mock::onFilter( 'wpml_translate_single_string' )->with(
-					$this->endpoints_translations['en'][ $key ],
-					'WooCommerce Endpoints',
-					$key,
-					$code
-				)->reply( $endpoint );
-			}
-		}
 	}
 
 	private function mock_generic_functions() {

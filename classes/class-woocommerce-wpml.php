@@ -219,7 +219,13 @@ class woocommerce_wpml {
         $this->gateways             = new WCML_WC_Gateways( $this, $sitepress );
         $this->url_translation      = new WCML_Url_Translation ( $this, $sitepress, $wpdb );
 	    $this->url_translation->set_up();
-	    $this->endpoints            = new WCML_Endpoints( $this );
+	    if ( class_exists( 'WPML_Endpoints_Support_Factory' ) ) {
+		    $this->endpoints = new WCML_Endpoints( $this, $sitepress, $wpdb );
+	    } else {
+		    //backward compatibility
+		    $this->endpoints = new WCML_Endpoints_Legacy( $this );
+	    }
+	    $this->endpoints->add_hooks();
         $this->requests             = new WCML_Requests;
         $this->cart                 = new WCML_Cart( $this, $sitepress, $woocommerce );
         $this->cart->add_hooks();
