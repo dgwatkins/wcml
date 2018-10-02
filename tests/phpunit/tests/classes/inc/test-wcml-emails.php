@@ -32,7 +32,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		$this->woocommerce = $this->getMockBuilder('WooCommerce')
 			->disableOriginalConstructor()
-			->setMethods( array( 'mailer' ) )
+			->setMethods( array( 'mailer', 'load_plugin_textdomain' ) )
 			->getMock();
 
 		$this->wp_api->method( 'constant' )->with( 'WPML_ST_VERSION' )->willReturn( '2.5.2' );
@@ -44,6 +44,55 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		return new WCML_Emails( $this->woocommerce_wpml, $this->sitepress, $this->woocommerce, $this->wpdb );
 
+	}
+
+	/**
+	 * @test
+	 * @group wcml-2549
+	 */
+	public function it_should_change_current_language() {
+		$lang = 'pt-br';
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+			->setMethods( array( 'switch_lang', 'get_locale' ) )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$subject = new WCML_Emails( $this->woocommerce_wpml, $sitepress, $this->woocommerce, $this->wpdb );
+
+		\Mockery::mock( 'overload:WP_Locale' );
+
+		\WP_Mock::userFunction( 'unload_textdomain', array() );
+		\WP_Mock::userFunction( 'load_default_textdomain', array() );
+
+		$sitepress->expects( $this->once() )->method( 'switch_lang' )->with( $lang );
+
+		$subject->change_email_language( $lang );
+	}
+
+	/**
+	 * @test
+	 * @group wcml-2549
+	 */
+	public function it_should_not_change_current_language_when_page_is_shop_order() {
+		$_POST['post_type'] = 'shop_order';
+		$lang = 'pt-br';
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->setMethods( array( 'switch_lang', 'get_locale' ) )
+		                  ->disableOriginalConstructor()
+		                  ->getMock();
+
+		$subject = new WCML_Emails( $this->woocommerce_wpml, $sitepress, $this->woocommerce, $this->wpdb );
+
+		\Mockery::mock( 'overload:WP_Locale' );
+
+		\WP_Mock::userFunction( 'unload_textdomain', array() );
+		\WP_Mock::userFunction( 'load_default_textdomain', array() );
+
+		$sitepress->expects( $this->never() )->method( 'switch_lang' );
+		$subject->change_email_language( $lang );
+		unset( $_POST['post_type'] );
 	}
 
 	/**
