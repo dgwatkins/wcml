@@ -191,6 +191,11 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 			'return' => false
 		) );
 
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $translated_product_id, '_icl_lang_duplicate_of', true ),
+			'return' => false
+		) );
+
 		\WP_Mock::wpFunction( 'update_post_meta', array(
 			'args'   => array( $translated_product_id, 'attr_label_translations', array() ),
 			'times'  => 1,
@@ -198,6 +203,68 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		));
 
 //		 The $original_attributes should be saved to the translated product if is_taxonomy = 0 and there are no existing $translated_attributes
+		\WP_Mock::wpFunction( 'update_post_meta', array(
+			'args'   => array( $translated_product_id, '_product_attributes', $original_attributes ),
+			'times'  => 1,
+			'return' => true
+		));
+
+		\WP_Mock::wpPassthruFunction( 'sanitize_title' );
+
+		$subject = $this->get_subject();
+
+		$subject->sync_product_attr( $product_id, $translated_product_id );
+	}
+
+	/**
+	 * @test
+	 */
+	public function sync_product_attr_for_duplicated_product(){
+
+		$product_id = rand( 1, 100 );
+		$translated_product_id = rand( 1, 100 );
+
+		$original_attributes = array( array(
+			'name' => rand_str(),
+			'value' => rand_str(),
+			'is_taxonomy' => 0
+		) );
+
+		$translated_attributes = array(
+			array(
+				'name' => rand_str(),
+				'value' => rand_str(),
+				'is_taxonomy' => 0
+			)
+		);
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $product_id, '_product_attributes', true ),
+			'return' => $original_attributes
+		) );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $translated_product_id, '_product_attributes', true ),
+			'return' => $translated_attributes
+		) );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $translated_product_id, 'attr_label_translations', true ),
+			'return' => false
+		) );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $translated_product_id, '_icl_lang_duplicate_of', true ),
+			'return' => $product_id
+		) );
+
+		\WP_Mock::wpFunction( 'update_post_meta', array(
+			'args'   => array( $translated_product_id, 'attr_label_translations', array() ),
+			'times'  => 1,
+			'return' => true
+		));
+
+		//The $original_attributes should be duplicated to the translated product if is_taxonomy = 0 and translation is a duplication
 		\WP_Mock::wpFunction( 'update_post_meta', array(
 			'args'   => array( $translated_product_id, '_product_attributes', $original_attributes ),
 			'times'  => 1,

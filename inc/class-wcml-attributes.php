@@ -274,11 +274,15 @@ class WCML_Attributes{
                     $trnsl_labels[ $language ][ $key_to_save ] = '';
                 }
             }elseif( !$orig_product_attr[ 'is_taxonomy' ] ){
-                if( isset( $trnsl_product_attrs[ $key ] ) ){
-                    $orig_product_attrs[ $key_to_save ][ 'value' ] = $trnsl_product_attrs[ $key ][ 'value' ];
-                }elseif( !empty( $trnsl_product_attrs ) ){
-                    unset ( $orig_product_attrs[ $key_to_save ] );
-                }
+	            $duplicate_of = get_post_meta( $tr_product_id, '_icl_lang_duplicate_of', true );
+
+	            if( !$duplicate_of ){
+		            if( isset( $trnsl_product_attrs[ $key ] ) ){
+			            $orig_product_attrs[ $key_to_save ][ 'value' ] = $trnsl_product_attrs[ $key ][ 'value' ];
+		            }elseif( !empty( $trnsl_product_attrs ) ){
+			            unset ( $orig_product_attrs[ $key_to_save ] );
+		            }
+	            }
             }
         }
 
