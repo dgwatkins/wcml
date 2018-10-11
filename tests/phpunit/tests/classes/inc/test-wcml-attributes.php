@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * Class Test_WCML_Attributes
+ *
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
+ *
+ * @group wcml-attributes
+ */
 class Test_WCML_Attributes extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
@@ -114,6 +121,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'woocommerce_available_variation', array( $subject, 'filter_available_variation_attribute_values_in_current_language' ) );
 		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_variation_post_meta_attribute_values_in_current_language' ), 10 ,4 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_get_default_attributes', array( $subject, 'filter_product_variation_default_attributes' ) );
+		\WP_Mock::expectActionAdded( 'update_post_meta', array( $subject, 'set_translation_status_as_needs_update' ), 10, 3 );
 		$subject->add_hooks();
 	}
 
@@ -712,6 +720,93 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$filtered_default_attributes = $subject->filter_product_variation_default_attributes( $default_attributes );
 
 		$this->assertEquals( $expected_default_attributes, $filtered_default_attributes );
+	}
+
+	/**
+	 * @test
+	 * @group wcml-2551
+	 */
+	public function it_sets_translation_status_as_needs_update() {
+		$default_language = 'en';
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->setMethods( array( 'get_default_language' ) )
+		                  ->disableOriginalConstructor()
+		                  ->getMock();
+
+		$sitepress->method( 'get_default_language' )
+		          ->willReturn( $default_language );
+
+		$subject        = new WCML_Attributes( $this->woocommerce_wpml, $sitepress, $this->wpdb );
+		$product_id     = 2;
+		$translation_id = 3;
+		$meta_key       = '_product_attributes';
+		$lang_code      = 'pt-br';
+
+		$translation = $this->getMockBuilder( 'WPML_Post_Element' )
+		                    ->setMethods( array( 'get_source_language_code', 'get_id' ) )
+		                    ->disableOriginalConstructor()
+		                    ->getMock();
+
+		$translation->method( 'get_source_language_code' )
+		            ->willReturn( $default_language );
+
+		$translation->method( 'get_id' )
+		            ->willReturn( $translation_id );
+
+		$element_translation = $this->getMockBuilder( 'WPML_Post_Element' )
+		                            ->setMethods( array( 'get_translations', 'get_source_language_code' ) )
+		                            ->disableOriginalConstructor()
+		                            ->getMock();
+
+		$element_translation->method( 'get_source_language_code' )
+		                    ->willReturn( null );
+
+		$element_translation->method( 'get_translations' )
+		                    ->willReturn( array( $translation ) );
+
+		$translation_element_factory = \Mockery::mock( 'overload:WPML_Translation_Element_Factory' );
+		$translation_element_factory->shouldReceive( 'create_post' )
+		                            ->with( $product_id )
+		                            ->andReturn( $element_translation );
+
+
+		$status_helper = $this->getMockBuilder( 'WPML_Post_Status' )
+		                      ->setMethods( array( 'set_update_status' ) )
+		                      ->disableOriginalConstructor()
+		                      ->getMock();
+		$status_helper->expects( $this->once() )
+		              ->method( 'set_update_status' )
+		              ->with( $translation_id, 1 );
+
+		\WP_Mock::userFunction( 'wpml_get_post_status_helper', array(
+			'return' => $status_helper
+		) );
+
+		$subject->set_translation_status_as_needs_update( 1, $product_id, $meta_key );
+	}
+
+	/**
+	 * @test
+	 * @group wcml-2551
+	 */
+	public function it_should_not_set_translation_status_as_needs_update_when_meta_field_is_not_product_attributes() {
+		$subject    = new WCML_Attributes( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
+		$product_id = 2;
+		$meta_key   = 'any_other_meta_field';
+
+		$status_helper = $this->getMockBuilder( 'WPML_Post_Status' )
+		                      ->setMethods( array( 'set_update_status' ) )
+		                      ->disableOriginalConstructor()
+		                      ->getMock();
+		$status_helper->expects( $this->never() )
+		              ->method( 'set_update_status' );
+
+		\WP_Mock::userFunction( 'wpml_get_post_status_helper', array(
+			'return' => $status_helper
+		) );
+
+		$subject->set_translation_status_as_needs_update( 1, $product_id, $meta_key );
 	}
 
 }
