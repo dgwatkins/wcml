@@ -1,5 +1,5 @@
 ---
-image: registry.git.onthegosystems.com/infrastructure/docker-images/wptest
+image: registry.otgs.work/infrastructure/docker-images/wptest:7.2
 services:
   - mysql:5.7
 
@@ -29,7 +29,7 @@ stages:
 Compatibility <PHP>:
   stage: quality
   when: always
-  image: registry.git.onthegosystems.com/infrastructure/docker-images/otgs/phpunit:5.7
+  image: registry.otgs.work/infrastructure/docker-images/otgs/phpunit:5.7
   tags:
     - autoscale
   script:
@@ -40,7 +40,7 @@ Compatibility <PHP>:
 Unit <PHP>:
   stage: test
   when: always
-  image: registry.git.onthegosystems.com/infrastructure/docker-images/otgs/phpunit:5.7
+  image: registry.otgs.work/infrastructure/docker-images/otgs/phpunit:5.7
   tags:
     - autoscale
   script:
@@ -62,7 +62,7 @@ Integration <PHP>:
 Tag:
   stage: build
   when: always
-  image: registry.git.onthegosystems.com/infrastructure/docker-images/artbuilder:php7
+  image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php71
   tags:
     - autoscale
   script:
@@ -78,7 +78,7 @@ Tag:
 Branch:
   stage: build
   when: on_success
-  image: registry.git.onthegosystems.com/infrastructure/docker-images/artbuilder:php7
+  image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php71
   tags:
     - autoscale
   script:
@@ -99,7 +99,7 @@ Branch:
 Pre-Release:
   stage: build
   when: on_success
-  image: registry.git.onthegosystems.com/infrastructure/docker-images/artbuilder:php7
+  image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php71
   tags:
     - autoscale
   script:
@@ -116,7 +116,7 @@ Pre-Release:
 Develop:
   stage: build
   when: on_success
-  image: registry.git.onthegosystems.com/infrastructure/docker-images/artbuilder:php7
+  image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php71
   tags:
     - autoscale
   script:
@@ -132,7 +132,7 @@ Develop:
 Master:
   stage: build
   when: on_success
-  image: registry.git.onthegosystems.com/infrastructure/docker-images/artbuilder:php7
+  image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php71
   tags:
     - autoscale
   script:
@@ -149,7 +149,7 @@ Master:
 Release Notes:
   stage: documentation
   when: on_success
-  image: registry.git.onthegosystems.com/infrastructure/docker-images/artbuilder:php7
+  image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php71
   tags:
     - autoscale
   script:
@@ -162,7 +162,7 @@ Release Notes:
 S3:
   stage: deploy
   when: on_success
-  image: registry.git.onthegosystems.com/infrastructure/docker-images/artbuilder:php7
+  image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php71
   tags:
     - autoscale
   script:
