@@ -79,6 +79,30 @@ class Test_WCML_Table_Rate_Shipping extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function it_should_not_filter_table_rate_priorities_with_same_slug() {
+
+		$class_instance_id = 2;
+		$values            = array(
+			'class_slug' => $class_instance_id
+		);
+
+		$translated_class       = new stdClass();
+		$translated_class->slug = 'class_slug';
+
+		WP_Mock::userFunction( 'get_term_by', array(
+			'args'   => array( 'slug', 'class_slug', 'product_shipping_class' ),
+			'return' => $translated_class
+		) );
+
+		$subject         = $this->get_subject();
+		$filtered_values = $subject->filter_table_rate_priorities( $values );
+
+		$this->assertEquals( array( $translated_class->slug => $class_instance_id ), $filtered_values );
+	}
+
+	/**
+	 * @test
+	 */
 	public function it_should_re_check_shipping_table_rate_is_available() {
 
 		\WP_Mock::wpPassthruFunction( 'remove_filter' );
