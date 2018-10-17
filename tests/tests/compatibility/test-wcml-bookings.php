@@ -231,6 +231,9 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @param $product_id
 	 */
 	private function check_update_booking_resource_block_cost( $product_id ) {
+
+		update_post_meta( $product_id, '_resource_block_costs', array() );
+
 		$resource_id = random_int( 90, 999 );
 		$_POST['wcml_wc_booking_resource_block_cost'] = array(
 			$resource_id => array(
