@@ -32,6 +32,7 @@ jQuery( function($){
                 $(document).on('change','.currency_option_decimals', WCML_Multi_Currency.price_preview);
                 $(document).on('change','.currency_code select', WCML_Multi_Currency.price_preview);
                 $(document).on('change','.wcml-gateways-enabled', WCML_Multi_Currency.display_gateways);
+                $(document).on('change','#wcml_currency_options_gateway_code_paypal', WCML_Multi_Currency.preset_paypal_email);
 
                 $(document).on('keypress', '.currency_option_decimals', function (event) {
                     // 8 for backspace, 0 for null values, 48-57 for 0-9 numbers
@@ -517,6 +518,22 @@ jQuery( function($){
                 $('.wcml-gateways').show();
             } else {
                 $('.wcml-gateways').hide();
+            }
+        },
+
+        preset_paypal_email: function(){
+
+            var paypal_value_input = $('input[name="currency_options[gateways_settings][paypal][value]"]');
+            var paypal_warning = $('.paypal-gateway-warning');
+
+            paypal_value_input.val( $(this).find(":selected").data('email') );
+
+            if(  $(this).find(":selected").data('is-valid') ){
+                paypal_warning.hide();
+                paypal_value_input.removeAttr('readonly');
+            }else{
+                paypal_warning.show();
+                paypal_value_input.attr('readonly','readonly');
             }
         },
 

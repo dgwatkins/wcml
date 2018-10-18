@@ -65,6 +65,7 @@ class WCML_Currencies_Payment_Gateways {
 
 		$this->supported_gateways = array(
 			'bacs' => 'WCML_Payment_Gateway_Bacs',
+			'paypal' => 'WCML_Payment_Gateway_PayPal'
 		);
 		$this->supported_gateways = apply_filters( 'wcml_supported_currency_payment_gateways', $this->supported_gateways );
 
