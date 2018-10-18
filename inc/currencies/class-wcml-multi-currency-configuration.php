@@ -169,6 +169,21 @@ class WCML_Multi_Currency_Configuration
 
 		self::$multi_currency->currencies_payment_gateways->set_enabled( $currency_code, isset( $options['gateways_enabled'] ) ? true : false );
 
+		if ( isset( $options['gateways_settings'] ) ) {
+
+			$payment_gateways = self::$multi_currency->currencies_payment_gateways->get_gateways();
+
+			foreach ( $options['gateways_settings'] as $code => $gateways_setting ) {
+				if ( isset( $payment_gateways[ $code ] ) ) {
+
+					$payment_gateway_settings['currency'] = $gateways_setting['currency'];
+					$payment_gateway_settings['value']    = $gateways_setting['value'];
+
+					$payment_gateways[ $code ]->save_setting( $currency_code, $payment_gateway_settings );
+				}
+			}
+		}
+
 		if (!isset(self::$multi_currency->currencies[$currency_code])) {
 			self::add_currency($currency_code);
 		}

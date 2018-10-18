@@ -120,12 +120,7 @@
 
             <div class="wcml-gateways" {% if not payment_gateways_enabled %}style="display: none;"{% endif %}>
                 {% for gateway in payment_gateways %}
-                    <label><strong>{{ gateway.get_title() }}</strong></label>
-                    {% if not gateway.is_supported() %}
-                        <div class="wpml-form-row">
-                            <label>{{ form.payment_gateways.not_supported }}</label>
-                        </div>
-                    {% endif %}
+                    {{ gateway.get_settings_output( current_currency, active_currencies )|raw }}
                 {% endfor %}
             </div>
 

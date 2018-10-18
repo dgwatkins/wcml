@@ -3,34 +3,12 @@
 /**
  * Class WCML_Not_Supported_Payment_Gateway
  */
-class WCML_Not_Supported_Payment_Gateway {
+class WCML_Not_Supported_Payment_Gateway extends WCML_Payment_Gateway{
 
-	/**
-	 * @var WC_Payment_Gateway
-	 */
-	private $gateway;
+	public function get_settings_output(){
+		$ui_settings = new WCML_Not_Supported_Gateway_UI( $this->get_title() );
 
-	/**
-	 * WCML_Not_Supported_Payment_Gateway constructor.
-	 *
-	 * @param WC_Payment_Gateway  $gateway
-	 */
-	public function __construct( WC_Payment_Gateway $gateway ) {
-		$this->gateway = $gateway;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_title() {
-		return $this->gateway->title;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function is_supported() {
-		return false;
+		return $ui_settings->get_view();
 	}
 
 }

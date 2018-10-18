@@ -51,6 +51,9 @@ class WCML_Currencies_Payment_Gateways {
 		$payment_gateways = array();
 		foreach ( $available_gateways as $gateway ) {
 			switch ( $gateway->id ) {
+				case 'bacs':
+					$payment_gateways[ $gateway->id ] = new WCML_Payment_Gateway_Bacs( $gateway );
+					break;
 				default:
 					$payment_gateways[ $gateway->id ] = new WCML_Not_Supported_Payment_Gateway( $gateway );
 					break;
