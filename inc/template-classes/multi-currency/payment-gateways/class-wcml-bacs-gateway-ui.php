@@ -3,7 +3,10 @@
 /**
  * Created by OnTheGo Systems
  */
-class WCML_Bacs_Gateway_UI extends WPML_Templates_Factory {
+class WCML_Bacs_Gateway_UI extends WPML_Twig_Template_Loader {
+
+	const TEMPLATE = 'bacs.twig';
+	const TEMPLATE_FOLDER = '/templates/multi-currency/payment-gateways/';
 
 	/**
 	 * @var string
@@ -19,14 +22,14 @@ class WCML_Bacs_Gateway_UI extends WPML_Templates_Factory {
 	private $gateway;
 
 	function __construct( $current_currency, $active_currencies, $gateway ){
-		parent::__construct();
+		parent::__construct( array( WCML_PLUGIN_PATH . self::TEMPLATE_FOLDER ) );
 
 		$this->current_currency  = $current_currency;
 		$this->active_currencies = $active_currencies;
 		$this->gateway           = $gateway;
 	}
 
-	public function get_model() {
+	public function render() {
 
 		$model = array(
 			'strings'           => array(
@@ -43,16 +46,7 @@ class WCML_Bacs_Gateway_UI extends WPML_Templates_Factory {
 			'account_details'   => $this->gateway->get_gateway()->account_details,
 		);
 
-		return $model;
+		return $this->get_template()->show( $model, self::TEMPLATE );
 	}
 
-	public function init_template_base_dir() {
-		$this->template_paths = array(
-			WCML_PLUGIN_PATH . '/templates/multi-currency/payment-gateways/',
-		);
-	}
-
-	public function get_template() {
-		return 'bacs.twig';
-	}
 }

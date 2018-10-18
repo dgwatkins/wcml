@@ -9,7 +9,7 @@ class WCML_Payment_Gateway_Bacs extends WCML_Payment_Gateway {
 
 		$ui_settings = new WCML_Bacs_Gateway_UI( $current_currency, $active_currencies, $this );
 
-		return $ui_settings->get_view();
+		return $ui_settings->render();
 	}
 
 }
