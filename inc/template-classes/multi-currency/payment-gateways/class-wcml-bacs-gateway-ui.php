@@ -21,7 +21,14 @@ class WCML_Bacs_Gateway_UI extends WPML_Twig_Template_Loader {
 	 */
 	private $gateway;
 
-	function __construct( $current_currency, $active_currencies, $gateway ){
+	/**
+	 * WCML_Bacs_Gateway_UI constructor.
+	 *
+	 * @param string $current_currency
+	 * @param array $active_currencies
+	 * @param WCML_Payment_Gateway $gateway
+	 */
+	function __construct( $current_currency, array $active_currencies, WCML_Payment_Gateway $gateway ){
 		parent::__construct( array( WCML_PLUGIN_PATH . self::TEMPLATE_FOLDER ) );
 
 		$this->current_currency  = $current_currency;
