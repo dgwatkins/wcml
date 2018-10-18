@@ -1,6 +1,6 @@
 <?php
 
-class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
+class Test_WCML_Payment_Gateway_Bacs extends OTGS_TestCase {
 
 	private function get_subject( $gateway = null ) {
 		if( null === $gateway ){
