@@ -95,7 +95,6 @@ class WCML_Custom_Currency_Options extends WPML_Templates_Factory {
                 'payment_gateways' => array(
 	                'label'          => __( 'Payment Gateways', 'woocommerce-multilingual' ),
 	                'settings_label' => sprintf( __( 'Custom settings for %s', 'woocommerce-multilingual' ), $current_currency ),
-	                'not_supported'  => __( 'Not yet supported', 'woocommerce-multilingual' ),
 	                'learn_url '     => 'https://wpml.org/documentation/related-projects/woocommerce-multilingual/',
 	                'learn_txt'      => __( 'Learn more', 'woocommerce-multilingual' ),
                 ),
@@ -107,6 +106,7 @@ class WCML_Custom_Currency_Options extends WPML_Templates_Factory {
             'automatic_rates'          => $exchange_rates_automatic,
             'automatic_rates_tip'      => sprintf( __( 'Exchange rate updated automatically from %s', 'woocommerce-multilingual' ), $exchange_rates_service ),
             'current_currency'         => $current_currency,
+            'active_currencies'        => $this->woocommerce_wpml->multi_currency->get_currencies( true ),
             'payment_gateways_enabled' => $this->woocommerce_wpml->multi_currency->currencies_payment_gateways->is_enabled( $current_currency ),
             'payment_gateways'         => $this->woocommerce_wpml->multi_currency->currencies_payment_gateways->get_gateways()
         );

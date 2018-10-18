@@ -3,34 +3,21 @@
 /**
  * Class WCML_Not_Supported_Payment_Gateway
  */
-class WCML_Not_Supported_Payment_Gateway {
+class WCML_Not_Supported_Payment_Gateway extends WCML_Payment_Gateway{
 
-	/**
-	 * @var WC_Payment_Gateway
-	 */
-	private $gateway;
+	const TEMPLATE = 'not-supported.twig';
 
-	/**
-	 * WCML_Not_Supported_Payment_Gateway constructor.
-	 *
-	 * @param WC_Payment_Gateway  $gateway
-	 */
-	public function __construct( WC_Payment_Gateway $gateway ) {
-		$this->gateway = $gateway;
+	protected function get_output_model() {
+		return array(
+			'strings'       => array(
+				'not_supported' => __( 'Not yet supported', 'woocommerce-multilingual' )
+			),
+			'gateway_title' => $this->get_title()
+		);
 	}
 
-	/**
-	 * @return string
-	 */
-	public function get_title() {
-		return $this->gateway->title;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function is_supported() {
-		return false;
+	protected function get_output_template() {
+		return self::TEMPLATE;
 	}
 
 }
