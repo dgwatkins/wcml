@@ -136,12 +136,17 @@
 	&.hidden {
 		display: none;
 	}
-	.wpml-form-row label {
-		width: 215px;
-		text-align: left;
-	}
-	input, select {
-		width: 145px;
+	.wpml-form-row {
+		label, input, select {
+			margin: 3px 15px;
+		}
+		label {
+			width: 215px;
+			text-align: start;
+		}
+		input, select {
+			width: 145px;
+		}
 	}
 	.currency_code {
 		label {
@@ -193,7 +198,35 @@
 			margin: $margin-sm 0;
 		}
 	}
+	.label-header {
+		margin: 20px 15px 7px 15px;
+		display: block;
+	}
+	.wcml-gateways-switcher {
+		margin: 7px 15px 30px;
+		.otgs-toggle-group {
+			display: inline-flex;
+			margin-inline-end: 15px;
+		}
+	}
 
+	.wcml-gateways {
+		.wpml-form-row {
+			label {
+				width: 90px;
+			}
+			input, select {
+				width: auto;
+				&+.wcml-tip {
+					margin-inline-start: -12px;
+				}
+			}
+		}
+		.explanation-text {
+			display: block;
+			margin: 0 15px;
+		}
+	}
 }
 
 table.widefat.currency_table {
