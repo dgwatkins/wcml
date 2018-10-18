@@ -58,7 +58,7 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 		               ->getMock();;
 		$gateway->id = 'test';
 
-		$available_payment_gateways[] = $gateway;
+		$available_payment_gateways[ $gateway->id ] = $gateway;
 
 		$not_supported_payment_gateway = new WCML_Not_Supported_Payment_Gateway( $gateway );
 

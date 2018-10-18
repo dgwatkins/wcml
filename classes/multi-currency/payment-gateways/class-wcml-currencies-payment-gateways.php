@@ -5,11 +5,11 @@
  */
 class WCML_Currencies_Payment_Gateways {
 
-	const OPTION_KEY  = 'wcml_custom_payment_gateways_for_currencies';
+	const OPTION_KEY = 'wcml_custom_payment_gateways_for_currencies';
 
 	private $available_gateways = array();
 	private $supported_gateways = array();
-	private $payment_gateways  = array();
+	private $payment_gateways = array();
 
 	/**
 	 * @param string $currency
@@ -59,7 +59,6 @@ class WCML_Currencies_Payment_Gateways {
 
 		$this->store_supported_gateways();
 		$this->store_non_supported_gateways();
-
 
 		return $this->payment_gateways;
 	}
