@@ -76,6 +76,11 @@ class WCML_Multi_Currency{
     public $exchange_rate_services;
 
     /**
+     * @var WCML_Currencies_Payment_Gateways
+     */
+    public $currencies_payment_gateways;
+
+    /**
      * @var bool
      */
     public $load_filters;
@@ -122,12 +127,13 @@ class WCML_Multi_Currency{
         $this->currency_switcher->add_hooks();
         $this->currency_switcher_ajax   = new WCML_Currency_Switcher_Ajax( $woocommerce_wpml );
 
-        $this->exchange_rate_services   = new WCML_Exchange_Rates( $this->woocommerce_wpml, $wp_locale );
+	    $this->exchange_rate_services = new WCML_Exchange_Rates( $this->woocommerce_wpml, $wp_locale );
 	    $this->exchange_rate_services->initialize_settings();
 	    $this->exchange_rate_services->add_actions();
 	    $this->exchange_rate_services->add_service( 'fixerio', new WCML_Exchange_Rates_Fixerio() );
 	    $this->exchange_rate_services->add_service( 'currencylayer', new WCML_Exchange_Rates_Currencylayer() );
 
+	    $this->currencies_payment_gateways = new WCML_Currencies_Payment_Gateways();
 
         if( defined('W3TC') ){
             $this->W3TC = new WCML_W3TC_Multi_Currency();

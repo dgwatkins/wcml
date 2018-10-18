@@ -31,6 +31,7 @@ jQuery( function($){
                 $(document).on('change','.currency_option_decimal_sep', WCML_Multi_Currency.price_preview);
                 $(document).on('change','.currency_option_decimals', WCML_Multi_Currency.price_preview);
                 $(document).on('change','.currency_code select', WCML_Multi_Currency.price_preview);
+                $(document).on('change','.wcml-gateways-enabled', WCML_Multi_Currency.display_gateways);
 
                 $(document).on('keypress', '.currency_option_decimals', function (event) {
                     // 8 for backspace, 0 for null values, 48-57 for 0-9 numbers
@@ -509,6 +510,14 @@ jQuery( function($){
 
             return false;
 
+        },
+
+        display_gateways: function(){
+            if ($(this).attr('checked') == 'checked') {
+                $('.wcml-gateways').show();
+            } else {
+                $('.wcml-gateways').hide();
+            }
         },
 
         read_form_fields_status: function(){

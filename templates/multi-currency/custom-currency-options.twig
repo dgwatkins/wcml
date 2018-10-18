@@ -108,6 +108,26 @@
                     id="wcml_currency_options_subtract_{{ args.currency_code }}"/>
             </div>
 
+            <hr>
+
+            <label><strong>{{ form.payment_gateways.label }}</strong></label>
+
+            <div class="wpml-form-row otgs-ui">
+                <label>{{ form.payment_gateways.settings_label }}</label>
+                <input name="currency_options[gateways_enabled]" type="checkbox" class="wcml-gateways-enabled" {% if payment_gateways_enabled %}checked="checked"{% endif %} />
+                <a href="{{ form.payment_gateways.learn_url }}">{{ form.payment_gateways.learn_txt }}</a>
+            </div>
+
+            <div class="wcml-gateways" {% if not payment_gateways_enabled %}style="display: none;"{% endif %}>
+                {% for gateway in payment_gateways %}
+                    <label><strong>{{ gateway.get_title() }}</strong></label>
+                    {% if not gateway.is_supported() %}
+                        <div class="wpml-form-row">
+                            <label>{{ form.payment_gateways.not_supported }}</label>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
 
             <footer class="wpml-dialog-footer">
                 <input type="button" class="cancel wcml-dialog-close-button wpml-dialog-close-button alignleft"
