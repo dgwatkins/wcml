@@ -265,11 +265,11 @@ class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
             $args['currency_name'] 		= $args['wc_currencies'][$args['currency_code']];
             $args['currency_symbol'] 	= get_woocommerce_currency_symbol( $args['currency_code'] );
             $args['currency']			= $currency;
-            $args['title'] = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ), $args['currency_name'] . ' (' . $args['currency_symbol'] . ')' );
+            $args['title'] = sprintf( __( 'Currency settings for %s', 'woocommerce-multilingual' ), $args['currency_name'] . ' (' . $args['currency_symbol'] . ')' );
 
             $args['current_currency'] = $args['currency_code'];
 
-            new WCML_Custom_Currency_Options($args, $this->woocommerce_wpml);
+            new WCML_Custom_Currency_Options( $args, $this->woocommerce_wpml );
 
         }
 
