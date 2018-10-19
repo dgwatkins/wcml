@@ -173,13 +173,9 @@ class WCML_Multi_Currency_Configuration
 
 			$payment_gateways = self::$multi_currency->currencies_payment_gateways->get_gateways();
 
-			foreach ( $options['gateways_settings'] as $code => $gateways_setting ) {
+			foreach ( $options['gateways_settings'] as $code => $gateways_settings ) {
 				if ( isset( $payment_gateways[ $code ] ) ) {
-
-					$payment_gateway_settings['currency'] = $gateways_setting['currency'];
-					$payment_gateway_settings['value']    = $gateways_setting['value'];
-
-					$payment_gateways[ $code ]->save_setting( $currency_code, $payment_gateway_settings );
+					$payment_gateways[ $code ]->save_setting( $currency_code, $gateways_settings );
 				}
 			}
 		}

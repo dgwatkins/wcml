@@ -48,7 +48,7 @@ class WCML_Bacs_Gateway_UI extends WPML_Twig_Template_Loader {
 			'gateway_id'        => $this->gateway->get_id(),
 			'gateway_title'     => $this->gateway->get_title(),
 			'current_currency'  => $this->current_currency,
-			'gateway_settings'  => $this->gateway->get_settings(),
+			'gateway_settings'  => $this->gateway->get_setting( $this->current_currency ),
 			'active_currencies' => $this->active_currencies,
 			'account_details'   => $this->gateway->get_gateway()->account_details,
 		);
