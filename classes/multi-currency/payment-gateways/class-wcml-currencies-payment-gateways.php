@@ -54,6 +54,7 @@ class WCML_Currencies_Payment_Gateways {
 
 		$this->supported_gateways = array(
 			'bacs' => 'WCML_Payment_Gateway_Bacs',
+			'stripe' => 'WCML_Payment_Gateway_Stripe',
 		);
 		$this->supported_gateways = apply_filters( 'wcml_supported_currency_payment_gateways', $this->supported_gateways );
 
