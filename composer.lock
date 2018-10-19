@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "814364ba58e002c690bbe699a1de2b4e",
+    "content-hash": "ddffcb8f943b892007d5db7cd4e5d0af",
     "packages": [
         {
             "name": "composer/installers",
@@ -195,17 +195,6 @@
         {
             "name": "roave/security-advisories",
             "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "0e4ea9f9e1fd3c6a563524f8f399696d98c7c85a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/0e4ea9f9e1fd3c6a563524f8f399696d98c7c85a",
-                "reference": "0e4ea9f9e1fd3c6a563524f8f399696d98c7c85a",
-                "shasum": ""
-            },
             "conflict": {
                 "3f/pygmentize": "<1.2",
                 "adodb/adodb-php": "<5.20.12",
@@ -1671,11 +1660,11 @@
         },
         {
             "name": "otgs/changelog",
-            "version": "0.2.1",
+            "version": "0.3.1",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-changelog.git",
-                "reference": "8747fd93ddf68f8a73880cda66e67d0915980c41"
+                "reference": "d7c37015d6ff93e501ba9ddd9e79bc79a08a0755"
             },
             "require": {
                 "nepda/youtrack-client": "dev-master",
@@ -1715,7 +1704,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2017-11-07T10:53:28+00:00"
+            "time": "2018-10-19T13:09:51+00:00"
         },
         {
             "name": "otgs/unit-tests-framework",
