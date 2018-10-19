@@ -4,23 +4,50 @@
  * Class WCML_Payment_Gateway
  */
 abstract class WCML_Payment_Gateway {
+	const OPTION_KEY = 'wcml_payment_gateway_';
+
+	/**
+	 * @var string
+	 */
+	protected $current_currency;
+	/**
+	 * @var array
+	 */
+	protected $active_currencies;
 
 	/**
 	 * @var WC_Payment_Gateway
 	 */
-	private $gateway;
+	protected $gateway;
 
 	private $settings = array();
-
-	const OPTION_KEY = 'wcml_payment_gateway_';
+	/**
+	 * @var \IWPML_Template_Service
+	 */
+	private $template_service;
 
 	/**
-	 * @param WC_Payment_Gateway $gateway
+	 * @param WC_Payment_Gateway      $gateway
+	 * @param \IWPML_Template_Service $template_service
 	 */
-	public function __construct( WC_Payment_Gateway $gateway ) {
-		$this->gateway  = $gateway;
-		$this->settings = get_option( self::OPTION_KEY . $this->get_id(), array() );
+	public function __construct( WC_Payment_Gateway $gateway, IWPML_Template_Service $template_service ) {
+		$this->gateway          = $gateway;
+		$this->settings         = get_option( self::OPTION_KEY . $this->get_id(), array() );
+		$this->template_service = $template_service;
 	}
+
+
+	public function get_settings_output() {
+		return $this->template_service->show( $this->get_output_model(), $this->get_output_template() );
+	}
+
+	public function show() {
+		echo $this->get_settings_output();
+	}
+
+	abstract protected function get_output_model();
+
+	abstract protected function get_output_template();
 
 	/**
 	 * @return WC_Payment_Gateway

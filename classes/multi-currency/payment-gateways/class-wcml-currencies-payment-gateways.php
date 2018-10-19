@@ -5,7 +5,8 @@
  */
 class WCML_Currencies_Payment_Gateways {
 
-	const OPTION_KEY = 'wcml_custom_payment_gateways_for_currencies';
+	const OPTION_KEY      = 'wcml_custom_payment_gateways_for_currencies';
+	const TEMPLATE_FOLDER = '/templates/multi-currency/payment-gateways/';
 
 	private $available_gateways = array();
 	private $supported_gateways = array();
@@ -20,7 +21,7 @@ class WCML_Currencies_Payment_Gateways {
 
 		$gateway_enabled_settings = $this->get_settings();
 
-		if( isset( $gateway_enabled_settings[ $currency ] ) ){
+		if ( isset( $gateway_enabled_settings[ $currency ] ) ) {
 			return $gateway_enabled_settings[ $currency ];
 		}
 
@@ -29,7 +30,7 @@ class WCML_Currencies_Payment_Gateways {
 
 	/**
 	 * @param string $currency
-	 * @param bool $value
+	 * @param bool   $value
 	 */
 	public function set_enabled( $currency, $value ) {
 
@@ -53,7 +54,7 @@ class WCML_Currencies_Payment_Gateways {
 		$this->available_gateways = $this->get_available_payment_gateways();
 
 		$this->supported_gateways = array(
-			'bacs' => 'WCML_Payment_Gateway_Bacs',
+			'bacs'   => 'WCML_Payment_Gateway_Bacs',
 			'stripe' => 'WCML_Payment_Gateway_Stripe',
 		);
 		$this->supported_gateways = apply_filters( 'wcml_supported_currency_payment_gateways', $this->supported_gateways );
@@ -79,7 +80,7 @@ class WCML_Currencies_Payment_Gateways {
 			/** @var \WCML_Payment_Gateway $supported_gateway */
 			foreach ( $this->supported_gateways as $id => $supported_gateway ) {
 				if ( $this->is_a_valid_gateway( $id, $supported_gateway ) ) {
-					$this->payment_gateways[ $id ] = new $supported_gateway( $this->available_gateways[ $id ] );
+					$this->payment_gateways[ $id ] = new $supported_gateway( $this->available_gateways[ $id ], $this->get_template_service() );
 				}
 			}
 		}
@@ -90,15 +91,26 @@ class WCML_Currencies_Payment_Gateways {
 
 		/** @var int $non_supported_gateway */
 		foreach ( $non_supported_gateways as $non_supported_gateway ) {
-			$this->payment_gateways[ $non_supported_gateway ] = new WCML_Not_Supported_Payment_Gateway( $this->available_gateways[ $non_supported_gateway ] );
+			$this->payment_gateways[ $non_supported_gateway ] = new WCML_Not_Supported_Payment_Gateway( $this->available_gateways[ $non_supported_gateway ], $this->get_template_service() );
 		}
+	}
+
+	/**
+	 * @return \WPML_Twig_Template
+	 */
+	private function get_template_service() {
+		$twig_loader = new WPML_Twig_Template_Loader( array( self::TEMPLATE_FOLDER ) );
+
+		return $twig_loader->get_template();
 	}
 
 	/**
 	 * @return array
 	 */
 	private function get_available_payment_gateways() {
-		return WC()->payment_gateways->get_available_payment_gateways();
+		return WC()
+			->payment_gateways()
+			->get_available_payment_gateways();
 	}
 
 }
