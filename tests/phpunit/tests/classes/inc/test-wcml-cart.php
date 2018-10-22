@@ -175,6 +175,10 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 		$translated_cart_item = $subject->translate_cart_contents( $cart_item );
 
+		$expected_cart_item = $cart_item;
+		$expected_cart_item[ 'data_hash' ] = '';
+
+		$this->assertEquals( $expected_cart_item, $translated_cart_item );
 	}
 
 	/**

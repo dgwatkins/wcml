@@ -496,18 +496,27 @@ class WCML_Cart {
 	public function translate_cart_contents( $item ) {
 
 		// translate the product id and product data
-		$item['product_id'] = apply_filters( 'translate_object_id', $item['product_id'], 'product', true );
-		if ( $item['variation_id'] ) {
-			$item['variation_id'] = apply_filters( 'translate_object_id', $item['variation_id'], 'product_variation', true );
+		$translated_product_id = apply_filters( 'translate_object_id', $item['product_id'], 'product', true );
+		if( $item['product_id'] !== $translated_product_id ){
+			$item['product_id'] = $translated_product_id;
 		}
 
-		$item_product_title = $item['variation_id'] ? get_the_title( $item['variation_id'] ) : get_the_title( $item['product_id'] );
+		if ( $item['variation_id'] ) {
+			$translated_variation_id = apply_filters( 'translate_object_id', $item['variation_id'], 'product_variation', true );
 
+			if( $item['variation_id'] !== $translated_variation_id ){
+				$item['variation_id'] = $translated_variation_id;
+			}
+		}
+
+		$item_product_title = $item['variation_id'] ? get_the_title( $translated_variation_id ) : get_the_title( $translated_product_id );
 		if ( $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.0.0', '>=' ) ) {
 			$item['data']->set_name( $item_product_title );
 		} else {
 			$item['data']->post->post_title = $item_product_title;
 		}
+
+		$item['data_hash'] = $this->get_data_cart_hash( $item );
 
 		return $item;
 	}
