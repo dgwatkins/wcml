@@ -516,9 +516,9 @@ jQuery( function($){
 
         display_gateways: function(){
             if ($(this).attr('checked') == 'checked') {
-                $('.wcml-gateways').show();
+                $('.wcml-gateways').slideDown();
             } else {
-                $('.wcml-gateways').hide();
+                $('.wcml-gateways').slideUp();
             }
         },
 
