@@ -515,8 +515,10 @@ jQuery( function($){
         },
 
         display_gateways: function(){
+
             if ($(this).attr('checked') == 'checked') {
                 $('.wcml-gateways').slideDown();
+                WCML_Tooltip.init();
             } else {
                 $('.wcml-gateways').slideUp();
             }

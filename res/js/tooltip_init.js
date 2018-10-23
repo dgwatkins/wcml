@@ -1,7 +1,6 @@
 var WCML_Tooltip = {
 
     default_args : {
-        activation: 'click',
         attribute : 'data-tip',
         fadeIn    : 50,
         fadeOut   : 50,
@@ -15,7 +14,7 @@ var WCML_Tooltip = {
     },
 
     init: function(){
-        jQuery('.wcml-tip').tipTip( WCML_Tooltip.default_args );
+        jQuery('.wcml-tip:visible').tipTip( WCML_Tooltip.default_args ); //jquery hover won't work on hidden elements
     },
 
     create_tip: function( text, style, args ){
