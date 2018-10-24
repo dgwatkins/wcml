@@ -536,6 +536,7 @@ jQuery( function($){
                 paypal_value_input.removeAttr('readonly');
             }else{
                 paypal_warning.show();
+                paypal_value_input.val('');
                 paypal_value_input.attr('readonly','readonly');
             }
         },

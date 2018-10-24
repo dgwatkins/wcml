@@ -115,7 +115,7 @@
             <div class="otgs-ui wcml-gateways-switcher">
                 <label>{{ form.payment_gateways.settings_label }}</label>
                 <input name="currency_options[gateways_enabled]" type="checkbox" class="wcml-gateways-enabled" {% if payment_gateways_enabled %}checked="checked"{% endif %} />
-                <a class="wpml-external-link" href="{{ form.payment_gateways.learn_url }}">{{ form.payment_gateways.learn_txt }}</a>
+                <a class="wpml-external-link" href="{{ form.payment_gateways.learn_url }}" target="_blank">{{ form.payment_gateways.learn_txt }}</a>
             </div>
 
             <div class="wcml-gateways" {% if not payment_gateways_enabled %}style="display: none;"{% endif %}>

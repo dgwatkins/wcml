@@ -35,6 +35,8 @@ class WCML_Custom_Currency_Options extends WPML_Templates_Factory {
             $exchange_rates_service = '';
         }
 
+	    $tracking_link = new WCML_Tracking_Link();
+
         $model = array(
 
             'args' => $this->args,
@@ -95,7 +97,7 @@ class WCML_Custom_Currency_Options extends WPML_Templates_Factory {
                 'payment_gateways' => array(
 	                'label'          => __( 'Payment Gateways', 'woocommerce-multilingual' ),
 	                'settings_label' => sprintf( __( 'Custom settings for %s', 'woocommerce-multilingual' ), $current_currency ),
-	                'learn_url '     => 'https://wpml.org/documentation/related-projects/woocommerce-multilingual/',
+	                'learn_url'      => $tracking_link->generate( 'https://wpml.org/documentation/related-projects/woocommerce-multilingual/', 'payment-gateways', 'documentation' ),
 	                'learn_txt'      => __( 'Learn more', 'woocommerce-multilingual' ),
                 ),
                 'number_error' => __( 'Please enter a valid number', 'woocommerce-multilingual' ),
