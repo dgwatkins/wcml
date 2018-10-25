@@ -208,7 +208,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr class="currency_default wcml-row-currency-del">
+                            <tr class="currency_default wcml-row-currencies-actions">
                                 <td class="wcml-col-edit">
                                     <a href="#" title="{{ strings.currencies_table.edit }}"
                                        class="edit_currency js-wcml-dialog-trigger hidden" data-height="530"
@@ -225,7 +225,7 @@
                             </tr>
 
                             {% for code, currency in currencies %}
-                                <tr id="currency_row_del_{{ code }}" class="wcml-row-currency-del">
+                                <tr id="wcml-row-currency-actions-{{ code }}" class="wcml-row-currencies-actions">
                                     <td class="wcml-col-edit">
                                         <a href="#" title="{{ strings.currencies_table.edit }}"
                                            class="edit_currency js-wcml-dialog-trigger"

@@ -125,7 +125,7 @@ jQuery( function($){
                 success: function(response) {
                     $('#currency_row_' + currency).remove();
                     $('#currency_row_langs_' + currency).remove();
-                    $('#currency_row_del_' + currency).remove();
+                    $('#wcml-row-currency-actions-' + currency).remove();
 
                     $('#wcml_currencies_order .wcml_currencies_order_'+ currency).remove();
 
@@ -189,12 +189,6 @@ jQuery( function($){
                         var tr = $('#currency-table tr.wcml-row-currency:last').clone();
                         tr.attr('id', 'currency_row_' + currency);
 
-                        var edit_link = tr.find('.wcml-col-edit a');
-                        edit_link.attr('data-content', 'wcml_currency_options_' + currency);
-                        edit_link.attr('data-currency', currency);
-                        edit_link.data('dialog', 'wcml_currency_options_' + currency);
-                        edit_link.removeClass('hidden');
-
                         $('#currency-table').find('tr.default_currency').before( tr );
 
                         var tr = $('.empty-currency-language-row').clone();
@@ -216,15 +210,22 @@ jQuery( function($){
                         //add to orders list
                         $('#wcml_currencies_order').append('<li class="wcml_currencies_order_'+currency+' ui-sortable-handle" cur="'+currency+'">'+response.currency_name_formatted+'</li>');
 
-                        var tr = $('#currency-delete-table tr.wcml-row-currency-del:last').clone();
-                        tr.attr('id', 'currency_row_del_' + currency);
 
-                        var del_link = tr.find('.delete_currency');
+                        var settings_row = $('#currency-settings-table tr.wcml-row-currencies-actions:last').clone();
+                        settings_row.attr('id', 'wcml-row-currency-actions-' + currency);
+
+                        var edit_link = settings_row.find('.wcml-col-edit a');
+                        edit_link.attr('data-content', 'wcml_currency_options_' + currency);
+                        edit_link.attr('data-currency', currency);
+                        edit_link.data('dialog', 'wcml_currency_options_' + currency);
+                        edit_link.removeClass('hidden');
+
+                        var del_link = settings_row.find('.delete_currency');
                         del_link.removeClass('hidden');
                         del_link.attr('data-currency', currency);
                         del_link.attr('data-currency_name', response.currency_name);
                         del_link.attr('data-currency_symbol', response.currency_symbol);
-                        $('#currency-delete-table').find('tr.default_currency').before( tr );
+                        $('#currency-settings-table').find('tr.default_currency').before( settings_row );
 
                     }
 
