@@ -57,8 +57,8 @@ class Test_WCML_Payment_Gateway_PayPal extends OTGS_TestCase {
 
 		$active_currencies = array( 'USD' => array(), 'UAH' => array() );
 		$expected_currencies_details = array(
-			'USD' => array( 'value' => 'test_email', 'is_valid' => true ),
-			'UAH' => array( 'value' => '', 'is_valid' => false )
+			'USD' => array( 'value' => 'test_email', 'currency' => 'USD', 'is_valid' => true ),
+			'UAH' => array( 'value' => '', 'currency' => 'UAH', 'is_valid' => false )
 		);
 
 		$this->assertSame( $expected_currencies_details, $subject->get_currencies_details( $active_currencies ) );
