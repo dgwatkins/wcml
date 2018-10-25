@@ -216,7 +216,7 @@
 	.wcml-gateways {
 		.wpml-form-row {
 			label {
-				width: 90px;
+				width: 130px;
 			}
 			input, select {
 				width: auto;
@@ -362,7 +362,14 @@ table.widefat.currency_settings_table {
 		}
 	}
 }
-
+.currencies-table-content {
+	display: inline-block;
+	&::after {
+		display: table;
+		clear: both;
+		content: '';
+	}
+}
 table.widefat.currency_lang_table {
 	border-left: none;
 	border-right: none;
@@ -389,11 +396,11 @@ table.widefat.currency_lang_table {
 }
 
 .currency_wrap {
-	width: calc(100% - 240px - 80px);
+	max-width: calc(100% - 240px - 80px);
 	float: left;
 	margin-bottom: 10px;
 	@media (max-width: 782px) {
-		width: calc(100% - 141px - 80px);
+		max-width: calc(100% - 141px - 80px);
 	}
 }
 
