@@ -28,4 +28,20 @@ class WCML_Payment_Gateway_Bacs extends WCML_Payment_Gateway {
 		return self::TEMPLATE;
 	}
 
+	public function add_hooks(){
+		add_filter( 'woocommerce_bacs_accounts', array( $this, 'filter_bacs_accounts' ) );
+	}
+
+	public function filter_bacs_accounts( $accounts ) {
+
+		$client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
+		$gateway_setting = $this->get_setting( $client_currency );
+
+		if ( $gateway_setting && 'all' !== $gateway_setting['value'] ) {
+			return array( $accounts[ $gateway_setting['value'] ] );
+		}
+
+		return $accounts;
+	}
+
 }

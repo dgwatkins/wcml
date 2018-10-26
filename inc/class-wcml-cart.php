@@ -669,4 +669,39 @@ class WCML_Cart {
 		return $permalink;
 	}
 
+	/**
+	 * @param $currency
+	 *
+	 * @return float
+	 */
+	public function get_cart_total_in_currency( $currency ){
+
+		$client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
+		$cart_total = 0;
+		$cart_items = WC()->cart->get_cart_contents();
+
+		//items total
+		foreach( $cart_items as $item ){
+			$cart_total += $this->woocommerce_wpml->multi_currency->prices->get_product_price_in_currency( $item['product_id'], $currency ) * $item['quantity'];
+		}
+
+		$cart_total += $this->woocommerce_wpml->multi_currency->prices->convert_price_amount_by_currencies( WC()->cart->get_shipping_total(), $client_currency, $currency );
+
+		$cart_total = $this->woocommerce_wpml->multi_currency->prices->apply_rounding_rules( $cart_total, $currency );
+
+		return $cart_total;
+	}
+
+	/**
+	 * @param string $currency
+	 *
+	 * @return string
+     */
+	public function get_formatted_cart_total_in_currency( $currency ){
+
+		$cart_total = $this->woocommerce_wpml->multi_currency->prices->formatted_price( $this->get_cart_total_in_currency( $currency ), $currency );
+
+		return $cart_total;
+	}
+
 }

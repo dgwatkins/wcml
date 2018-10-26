@@ -12,14 +12,25 @@ class WCML_Currencies_Payment_Gateways {
 	private $supported_gateways = array();
 	private $payment_gateways = array();
 
+	/** @var woocommerce_wpml */
+	private $woocommerce_wpml;
 	/** @var WPML_WP_API */
 	private $wp_api;
 
 	/**
+	 * @param woocommerce_wpml $woocommerce_wpml
 	 * @param WPML_WP_API $wp_api
 	 */
-	public function __construct( WPML_WP_API $wp_api ) {
-		$this->wp_api = $wp_api;
+	public function __construct( woocommerce_wpml $woocommerce_wpml, WPML_WP_API $wp_api ) {
+		$this->woocommerce_wpml = $woocommerce_wpml;
+		$this->wp_api           = $wp_api;
+	}
+
+	public function add_hooks(){
+		add_action( 'init', array( $this, 'init_gateways' ) );
+
+		add_filter( 'woocommerce_gateway_description', array( $this, 'filter_gateway_description' ), 10, 2 );
+		add_filter( 'option_woocommerce_stripe_settings', array( 'WCML_Payment_Gateway_Stripe', 'filter_stripe_settings' ) );
 	}
 
 	/**
@@ -57,10 +68,10 @@ class WCML_Currencies_Payment_Gateways {
 		return get_option( self::OPTION_KEY, array() );
 	}
 
-	/**
-	 * @return array
-	 */
-	public function get_gateways() {
+	public function init_gateways(){
+
+		do_action( 'wcml_before_init_currency_payment_gateways' );
+
 		$this->available_gateways = $this->get_available_payment_gateways();
 
 		$this->supported_gateways = array(
@@ -72,8 +83,53 @@ class WCML_Currencies_Payment_Gateways {
 
 		$this->store_supported_gateways();
 		$this->store_non_supported_gateways();
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_gateways() {
 
 		return $this->payment_gateways;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_supported_gateways() {
+
+		return $this->supported_gateways;
+	}
+
+	/**
+	 * @param string $description
+	 * @param string $id
+	 *
+	 * @return string
+	 */
+	public function filter_gateway_description( $description, $id ) {
+
+		if ( in_array( $id, array_keys( $this->supported_gateways ), true ) ) {
+
+			$client_currency   = $this->woocommerce_wpml->multi_currency->get_client_currency();
+			$gateway_setting   = $this->payment_gateways[ $id ]->get_setting( $client_currency );
+			$active_currencies = $this->woocommerce_wpml->multi_currency->get_currency_codes();
+
+			if (
+				$this->is_enabled( $client_currency ) &&
+				$gateway_setting &&
+				$client_currency !== $gateway_setting['currency'] &&
+				in_array( $gateway_setting['currency'], $active_currencies )
+			) {
+				$cart_total = $this->woocommerce_wpml->cart->get_formatted_cart_total_in_currency( $gateway_setting['currency'] );
+
+				$description .= '<p>';
+				$description .= sprintf( __( 'Please note that the payment will be made in %1$s. %2$s will be debited from your account.', 'woocommerce-multilingual' ), $gateway_setting['currency'], $cart_total );
+				$description .= '</p>';
+			}
+		}
+
+		return $description;
 	}
 
 	/**
@@ -89,9 +145,13 @@ class WCML_Currencies_Payment_Gateways {
 	private function store_supported_gateways() {
 		if ( is_array( $this->supported_gateways ) ) {
 			/** @var \WCML_Payment_Gateway $supported_gateway */
+			$client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
 			foreach ( $this->supported_gateways as $id => $supported_gateway ) {
 				if ( $this->is_a_valid_gateway( $id, $supported_gateway ) ) {
-					$this->payment_gateways[ $id ] = new $supported_gateway( $this->available_gateways[ $id ], $this->get_template_service() );
+					$this->payment_gateways[ $id ] = new $supported_gateway( $this->available_gateways[ $id ], $this->get_template_service(), $this->woocommerce_wpml );
+					if ( $this->is_enabled( $client_currency ) ) {
+						$this->payment_gateways[ $id ]->add_hooks();
+					}
 				}
 			}
 		}
@@ -102,7 +162,7 @@ class WCML_Currencies_Payment_Gateways {
 
 		/** @var int $non_supported_gateway */
 		foreach ( $non_supported_gateways as $non_supported_gateway ) {
-			$this->payment_gateways[ $non_supported_gateway ] = new WCML_Not_Supported_Payment_Gateway( $this->available_gateways[ $non_supported_gateway ], $this->get_template_service() );
+			$this->payment_gateways[ $non_supported_gateway ] = new WCML_Not_Supported_Payment_Gateway( $this->available_gateways[ $non_supported_gateway ], $this->get_template_service(), $this->woocommerce_wpml );
 		}
 	}
 

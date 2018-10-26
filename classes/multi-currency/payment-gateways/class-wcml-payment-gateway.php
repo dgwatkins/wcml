@@ -26,14 +26,20 @@ abstract class WCML_Payment_Gateway {
 	 * @var \IWPML_Template_Service
 	 */
 	private $template_service;
+	/**
+	 * @var woocommerce_wpml
+	 */
+	protected $woocommerce_wpml;
 
 	/**
 	 * @param WC_Payment_Gateway $gateway
 	 * @param \IWPML_Template_Service $template_service
+	 * @param woocommerce_wpml $woocommerce_wpml
 	 */
-	public function __construct( WC_Payment_Gateway $gateway, IWPML_Template_Service $template_service ) {
+	public function __construct( WC_Payment_Gateway $gateway, IWPML_Template_Service $template_service, woocommerce_wpml $woocommerce_wpml ) {
 		$this->gateway          = $gateway;
 		$this->template_service = $template_service;
+		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->settings         = get_option( self::OPTION_KEY . $this->get_id(), array() );
 	}
 

@@ -75,4 +75,43 @@ class WCML_Payment_Gateway_PayPal extends WCML_Payment_Gateway {
 
 	}
 
+	public function add_hooks(){
+		add_filter( 'woocommerce_paypal_args', array( $this, 'filter_paypal_args' ), 10, 2 );
+	}
+
+	/**
+	 * @param array $args
+	 * @param WC_Order $order
+	 *
+	 * @return array
+	 */
+	public function filter_paypal_args( $args, $order ) {
+
+		$order_data      = $order->get_data();
+		$client_currency = $order_data['currency'];
+		$gateway_setting = $this->get_setting( $client_currency );
+
+		if ( $gateway_setting ) {
+
+			if ( $gateway_setting['value'] ) {
+				$args['business'] = $gateway_setting['value'];
+			}
+
+			if ( $client_currency !== $gateway_setting['currency'] ) {
+				$args['currency_code'] = $gateway_setting['currency'];
+				$cart_items            = WC()->cart->get_cart_contents();
+				$item_id               = 1;
+
+				foreach ( $cart_items as $item ) {
+					$args[ 'amount_' . $item_id ] = $this->woocommerce_wpml->multi_currency->prices->get_product_price_in_currency( $item['product_id'], $gateway_setting['currency'] );
+					$item_id ++;
+				}
+
+				$args['shipping_1'] = $this->woocommerce_wpml->multi_currency->prices->convert_price_amount_by_currencies( WC()->cart->get_shipping_total(), $client_currency, $gateway_setting['currency'] );
+			}
+		}
+
+		return $args;
+	}
+
 }
