@@ -1,4 +1,3 @@
-
 jQuery( function($){
 
     WCML_Multi_Currency = {
@@ -84,10 +83,18 @@ jQuery( function($){
         select_currency: function(){
             var parent = $(this).closest('.wcml_currency_options');
             var close_button = parent.find('.wcml-dialog-close-button');
+            var previous_currency = parent.find('.this-currency').text();
+            var gateways = parent.find('.wcml-gateways-switcher');
+            var gateways_currency_select = parent.find('.wcml-gateways select[name*="[currency]"] option[value="'+previous_currency+'"]');
+            var gateway_new_label_text = gateways.find('label.otgs-on-off-switch').text().replace( previous_currency, $(this).val() );
+
             close_button.attr('data-currency', $(this).val());
             close_button.attr('data-symbol', $(this).find('option:selected').attr('data-symbol'));
-            parent.find('.this-currency').html( $(this).val() );
 
+            parent.find('.this-currency').html( $(this).val() );
+            gateways.find('label.otgs-on-off-switch').text( gateway_new_label_text );
+            gateways_currency_select.val( $(this).val() );
+            gateways_currency_select.html( $(this).val() );
         },
 
         delete_currency: function(e){
@@ -232,6 +239,11 @@ jQuery( function($){
                     $('#currency_row_' + currency + ' .wcml-col-currency').html(response.currency_name_formatted);
                     $('#currency_row_' + currency + ' .wcml-col-rate').html(response.currency_meta_info);
 
+                    var gateways_switcher = $('#wcml_currency_options_' + currency).find('.otgs-ui.wcml-gateways-switcher');
+                    if( 0 == gateways_switcher.length ){
+                        gateways_switcher = $('#wcml_currency_options_').find('.otgs-ui.wcml-gateways-switcher').clone();
+                    }
+
                     $('#wcml_currency_options_' + currency).remove();
                     $('#wcml_mc_options').before(response.currency_options);
 
@@ -241,8 +253,17 @@ jQuery( function($){
                         $('#online-exchange-rates-no-currencies').hide();
                         $('#online-exchange-rates-no-currencies').next().show();
                     }
-                }
 
+                    var currency_options_dialog = $('#wcml_currency_options_' + currency);
+                    var is_gateway_switcher_checked = currency_options_dialog.find('.otgs-ui input[type="checkbox"]:checked').length > 0;
+                    currency_options_dialog.find('.otgs-ui.wcml-gateways-switcher').remove();
+                    currency_options_dialog.find('.wcml-gateways').before(gateways_switcher);
+                    if( is_gateway_switcher_checked ){
+                        currency_options_dialog.find('.otgs-ui input[type="checkbox"]').attr('checked','checked');
+                    }else{
+                        currency_options_dialog.find('.otgs-ui input[type="checkbox"]').removeAttr('checked');
+                    }
+                }
             })
 
             return false;

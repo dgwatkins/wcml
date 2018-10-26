@@ -133,7 +133,8 @@ class WCML_Multi_Currency{
 	    $this->exchange_rate_services->add_service( 'fixerio', new WCML_Exchange_Rates_Fixerio() );
 	    $this->exchange_rate_services->add_service( 'currencylayer', new WCML_Exchange_Rates_Currencylayer() );
 
-	    $this->currencies_payment_gateways = new WCML_Currencies_Payment_Gateways( $sitepress->get_wp_api() );
+	    $this->currencies_payment_gateways = new WCML_Currencies_Payment_Gateways( $this->woocommerce_wpml, $sitepress->get_wp_api() );
+	    $this->currencies_payment_gateways->add_hooks();
 
         if( defined('W3TC') ){
             $this->W3TC = new WCML_W3TC_Multi_Currency();
