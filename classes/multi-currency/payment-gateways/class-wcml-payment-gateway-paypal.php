@@ -8,7 +8,7 @@ class WCML_Payment_Gateway_PayPal extends WCML_Payment_Gateway {
 	const TEMPLATE = 'paypal.twig';
 
 	protected function get_output_model() {
-		$currencies_details = $this->get_currencies_details( $this->active_currencies );
+		$currencies_details = $this->get_currencies_details();
 
 		return array(
 			'strings'                 => array(
@@ -20,7 +20,7 @@ class WCML_Payment_Gateway_PayPal extends WCML_Payment_Gateway {
 			'gateway_title'           => $this->get_title(),
 			'current_currency'        => $this->current_currency,
 			'gateway_settings'        => $this->get_setting( $this->current_currency ),
-			'currencies_details'      => $currencies_details,
+			'currencies_details'      => array_intersect_key( $currencies_details, $this->active_currencies ),
 			'selected_currency_valid' => $this->is_valid_for_use( $currencies_details[ $this->current_currency ]['currency'] ),
 			'current_currency_valid'  => $currencies_details[ $this->current_currency ]['is_valid']
 		);
@@ -51,12 +51,13 @@ class WCML_Payment_Gateway_PayPal extends WCML_Payment_Gateway {
 	 *
 	 * @return array
 	 */
-	public function get_currencies_details( $active_currencies ){
+	public function get_currencies_details(){
 
 		$currencies_details = array();
 		$default_currency   = get_option( 'woocommerce_currency' );
+		$woocommerce_currencies = get_woocommerce_currencies();
 
-		foreach ( $active_currencies as $code => $currency ) {
+		foreach ( $woocommerce_currencies as $code => $currency ) {
 
 			if ( $default_currency === $code ) {
 				$currencies_details[ $code ]['value'] = $this->get_gateway()->settings['email'];

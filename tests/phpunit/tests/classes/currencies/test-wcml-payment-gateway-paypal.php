@@ -56,6 +56,10 @@ class Test_WCML_Payment_Gateway_PayPal extends OTGS_TestCase {
 		));
 
 		$active_currencies = array( 'USD' => array(), 'UAH' => array() );
+		WP_Mock::userFunction( 'get_woocommerce_currencies', array(
+			'args' => array( ),
+			'return' => $active_currencies
+		));
 		$expected_currencies_details = array(
 			'USD' => array( 'value' => 'test_email', 'currency' => 'USD', 'is_valid' => true ),
 			'UAH' => array( 'value' => '', 'currency' => 'UAH', 'is_valid' => false )
