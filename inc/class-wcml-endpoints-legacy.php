@@ -39,8 +39,15 @@ class WCML_Endpoints_Legacy {
 
 		$found             = null;
 		$reserved_requests = wp_cache_get( $cache_key, $cache_group, false, $found );
+		$is_page_display_as_translated = $sitepress->is_display_as_translated_post_type( 'page' );
 
-		if ( ! $found || ! $reserved_requests ) {
+		if (
+			! $is_page_display_as_translated &&
+			(
+				! $found ||
+				! $reserved_requests
+			)
+		) {
 			$reserved_requests = array();
 
 			$current_language = $sitepress->get_current_language();

@@ -116,8 +116,15 @@ class WCML_Endpoints {
 
 		$found             = null;
 		$reserved_requests = wp_cache_get( $cache_key, $cache_group, false, $found );
+		$is_page_display_as_translated = $this->sitepress->is_display_as_translated_post_type( 'page' );
 
-		if ( ! $found || ! $reserved_requests ) {
+		if (
+			! $is_page_display_as_translated &&
+			(
+				! $found ||
+				! $reserved_requests
+			)
+		) {
 			$reserved_requests = array();
 
 			$current_language = $this->sitepress->get_current_language();
@@ -127,6 +134,7 @@ class WCML_Endpoints {
 				$this->sitepress->switch_lang( $language_code );
 
 				$my_account_page_id = get_option( 'woocommerce_myaccount_page_id' );
+
 				if ( $my_account_page_id ) {
 					$my_account_page = get_post( $my_account_page_id );
 					if ( $my_account_page ) {
@@ -136,6 +144,7 @@ class WCML_Endpoints {
 						$reserved_requests[] = '/^' . $account_base . '/'; // regex version
 
 						foreach ( $this->woocommerce_wpml->get_wc_query_vars() as $key => $endpoint ) {
+
 							$translated_endpoint = apply_filters( 'wpml_get_endpoint_translation', $key, $endpoint, $language_code );
 
 							$reserved_requests[] = $account_base . '/' . $translated_endpoint;
