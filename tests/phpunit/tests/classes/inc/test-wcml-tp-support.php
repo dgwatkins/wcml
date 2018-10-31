@@ -53,8 +53,9 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider product_types
 	 */
-	public function append_custom_attributes_to_translation_package(){
+	public function append_custom_attributes_to_translation_package( $product_type ){
 
 		$package = array();
 
@@ -68,7 +69,7 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 			->getMock();
 
 		$wc_functions_wrapper_mock             = \Mockery::mock( 'alias:WooCommerce_Functions_Wrapper' );
-		$wc_functions_wrapper_mock->shouldReceive( 'get_product_type' )->andReturn( 'variable' );
+		$wc_functions_wrapper_mock->shouldReceive( 'get_product_type' )->andReturn( $product_type );
 
 		\WP_Mock::wpFunction( 'wc_get_product', array(
 			'args' => array( $post->ID ),
@@ -103,6 +104,15 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 		$this->assertEquals( $first_attribute_value, $translation_package[ 'contents' ][ 'wc_attribute_value:0:' . $attribute_key ][ 'data' ] );
 		$this->assertEquals( $second_attribute_value, $translation_package[ 'contents' ][ 'wc_attribute_value:1:' . $attribute_key ][ 'data' ] );
 
+	}
+
+	function product_types(){
+		return array(
+			array( 'simple' ),
+			array( 'variable' ),
+			array( 'external' ),
+			array( 'grouped' )
+		);
 	}
 
 }
