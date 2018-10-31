@@ -266,6 +266,7 @@ class Test_Endpoints extends OTGS_TestCase {
 				'get_current_language',
 				'get_active_languages',
 				'switch_lang',
+				'is_display_as_translated_post_type'
 			)
 		)->getMock();
 		$sitepress->method( 'get_current_language' )->willReturnCallback(
@@ -274,6 +275,7 @@ class Test_Endpoints extends OTGS_TestCase {
 			}
 		);
 		$sitepress->method( 'get_active_languages' )->willReturn( $this->active_languages );
+		$sitepress->method( 'is_display_as_translated_post_type' )->willReturn( false );
 		$sitepress->method( 'switch_lang' )->willReturnCallback(
 			function ( $language ) use ( $that ) {
 				$that->current_language = $language;
