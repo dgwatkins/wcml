@@ -78,7 +78,7 @@ class WCML_Compatibility {
 		}
 
 		// Product Add-ons
-		if ( class_exists( 'Product_Addon_Display' ) ) {
+		if ( defined( 'WC_PRODUCT_ADDONS_VERSION' ) || class_exists( 'Product_Addon_Display' ) ) {
 			$this->product_addons = new WCML_Product_Addons( $this->sitepress, $this->woocommerce_wpml->settings['enable_multi_currency'] );
 			$this->product_addons->add_hooks();
 		}
