@@ -10,23 +10,28 @@ class WCML_Product_Addons {
 	 */
 	public $sitepress;
 	/**
+	 * @var woocommerce_wpml
+	 */
+	private $woocommerce_wpml;
+	/**
 	 * @var int
 	 */
-	private $enable_multi_currency_setting;
+	private $multi_currency_mode;
 
 	/**
 	 * WCML_Product_Addons constructor.
 	 * @param SitePress $sitepress
-	 * @param int $enable_multi_currency_setting
+	 * @param woocommerce_wpml $woocommerce_wpml
 	 */
-	function __construct( SitePress $sitepress, $enable_multi_currency_setting ){
-		$this->sitepress        = $sitepress;
-		$this->enable_multi_currency_setting = $enable_multi_currency_setting;
+	function __construct( SitePress $sitepress, woocommerce_wpml $woocommerce_wpml ) {
+		$this->sitepress           = $sitepress;
+		$this->woocommerce_wpml    = $woocommerce_wpml;
+		$this->multi_currency_mode = $woocommerce_wpml->settings['enable_multi_currency'];
 	}
 
 	public function add_hooks(){
 		add_filter( 'get_product_addons_product_terms', array( $this, 'addons_product_terms' ) );
-		add_filter( 'get_product_addons_fields', array( $this, 'product_addons_filter' ), 10, 1 );
+		add_filter( 'get_product_addons_fields', array( $this, 'product_addons_price_filter' ), 10, 1 );
 
 		add_action( 'updated_post_meta', array( $this, 'register_addons_strings' ), 10, 4 );
 		add_action( 'added_post_meta', array( $this, 'register_addons_strings' ), 10, 4 );
@@ -131,18 +136,40 @@ class WCML_Product_Addons {
 	 *
 	 * @return mixed
 	 */
-	function product_addons_filter( $addons ) {
+	function product_addons_price_filter( $addons ) {
 
-		foreach ( $addons as $add_id => $addon ) {
-			foreach ( $addon['options'] as $key => $option ) {
-				//price filter
-				$addons[ $add_id ]['options'][ $key ]['price']  = apply_filters( 'wcml_raw_price_amount', $option['price'] );
+		if ( $this->is_multi_currency_on() ) {
+
+			$client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
+
+			foreach ( $addons as $add_id => $addon ) {
+
+				if ( $addon['price'] ) {
+					if (
+						isset( $addon[ 'price_' . $client_currency ] ) &&
+						$addon[ 'price_' . $client_currency ]
+					) {
+						$addons[ $add_id ]['price'] = $addon[ 'price_' . $client_currency ];
+					} else {
+						$addons[ $add_id ]['price'] = apply_filters( 'wcml_raw_price_amount', $addon['price'] );
+					}
+				}
+
+				foreach ( $addon['options'] as $key => $option ) {
+					if (
+						isset( $option[ 'price_' . $client_currency ] ) &&
+						$option[ 'price_' . $client_currency ]
+					) {
+						$addons[ $add_id ]['options'][ $key ]['price'] = $option[ 'price_' . $client_currency ];
+					} else {
+						$addons[ $add_id ]['options'][ $key ]['price'] = apply_filters( 'wcml_raw_price_amount', $option['price'] );
+					}
+				}
 			}
 		}
 
 		return $addons;
 	}
-
 
 	/**
 	 * @param $product_terms
@@ -294,10 +321,9 @@ class WCML_Product_Addons {
 	// special case for WC Bookings plugin - need add addon cost after re-calculating booking costs #wcml-1877
 	public function filter_booking_addon_product_in_cart_contents( $cart_item ) {
 
-		$is_multi_currency_on = $this->enable_multi_currency_setting == WCML_MULTI_CURRENCIES_INDEPENDENT;
 		$is_booking_product_with_addons = $cart_item['data'] instanceof WC_Product_Booking && isset( $cart_item['addons'] );
 
-		if ( $is_multi_currency_on && $is_booking_product_with_addons ) {
+		if ( $this->is_multi_currency_on() && $is_booking_product_with_addons ) {
 			$cost = $cart_item['data']->get_price();
 
 			foreach( $cart_item['addons'] as $addon ){
@@ -331,6 +357,10 @@ class WCML_Product_Addons {
 		}
 
 		return $args;
+	}
+
+	private function is_multi_currency_on(){
+		return $this->multi_currency_mode === $this->sitepress->get_wp_api()->constant( 'WCML_MULTI_CURRENCIES_INDEPENDENT' );
 	}
 
 }

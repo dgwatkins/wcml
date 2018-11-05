@@ -2,23 +2,41 @@
 
 class Test_WCML_Product_Addons extends OTGS_TestCase {
 
-	const ENABLE_MULTI_CURRENCY = 1;
 	/** @var Sitepress */
 	private $sitepress;
+	/** @var woocommerce_wpml */
+	private $woocommerce_wpml;
 
 	public function setUp()
 	{
 		parent::setUp();
 
+		$independent_currencies = 2;
+
 		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
 			->disableOriginalConstructor()
+			->setMethods( array( 'get_wp_api' ) )
 			->getMock();
+
+		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'constant' ) )
+		               ->getMock();
+		$wp_api->method( 'constant' )->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )->willReturn( $independent_currencies );
+
+		$this->sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$this->woocommerce_wpml->settings['enable_multi_currency'] = $independent_currencies;
 
 	}
 
 	public function get_subject(){
 
-		return new WCML_Product_Addons( $this->sitepress, self::ENABLE_MULTI_CURRENCY );
+		return new WCML_Product_Addons( $this->sitepress, $this->woocommerce_wpml );
 	}
 
 	/**
@@ -97,4 +115,72 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 		$this->assertEquals( array( 'include' => array( $global_addon->ID ) ), $filtered_query_args );
 
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_product_addons_price(){
+
+		$client_currency = 'USD';
+
+		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'woocommerce_wpml' )
+		                                               ->disableOriginalConstructor()
+		                                               ->setMethods( array( 'get_client_currency' ) )
+		                                               ->getMock();
+
+		$this->woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
+
+		$subject = $this->get_subject();
+
+		$not_converted_price = 33;
+		$converted_price = 55;
+
+		$addons = array(
+			array(
+				'price' => 0,
+				'options' => array(
+					array(
+						'price' => 11,
+						'price_'.$client_currency => 111
+					)
+				)
+			),
+			array(
+				'price' => 22,
+				'price_'.$client_currency => 222,
+				'options' => array()
+			),
+			array(
+				'price' => $not_converted_price,
+				'options' => array()
+			)
+		);
+
+		\WP_Mock::onFilter( 'wcml_raw_price_amount' )->with( $not_converted_price )->reply( $converted_price );
+
+		$expected_addons = array(
+			array(
+				'price' => 0,
+				'options' => array(
+					array(
+						'price' => 111,
+						'price_'.$client_currency => 111
+					)
+				)
+			),
+			array(
+				'price' => 222,
+				'price_'.$client_currency => 222,
+				'options' => array()
+			),
+			array(
+				'price' => $converted_price,
+				'options' => array()
+			)
+		);
+
+		$filtered_addons = $subject->product_addons_price_filter( $addons );
+		$this->assertSame( $expected_addons, $filtered_addons );
+	}
+
 }
