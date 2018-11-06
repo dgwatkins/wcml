@@ -34,6 +34,8 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 		add_filter( 'wcml_cart_contents', array($this, 'wpml_composites_compat'), 11, 4 );
 		add_filter( 'woocommerce_composite_component_options_query_args', array($this, 'wpml_composites_transients_cache_per_language'), 10, 3 );
 		add_action( 'wcml_before_sync_product', array( $this, 'sync_composite_data_across_translations'), 10, 2 );
+		add_filter( 'raw_woocommerce_price', array( $this, 'apply_rounding_rules' ) );
+
 
 		if( is_admin() ){		
 
@@ -259,7 +261,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 		return $data;
 	}
 
-    function components_update( $original_product_id, $product_id, $data, $language ){
+	function components_update( $original_product_id, $product_id, $data, $language ){
 
 		$composite_data = $this->get_composite_data( $original_product_id );
 
@@ -554,6 +556,10 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 		$fields[] = '_bto_scenario_data';
 
 		return $fields;
+	}
+
+	public function apply_rounding_rules( $price ) {
+		return $this->woocommerce_wpml->multi_currency->prices->apply_rounding_rules( $price );
 	}
 
 }
