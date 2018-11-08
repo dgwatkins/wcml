@@ -263,7 +263,7 @@ table.widefat.currency_table {
 
 	td.wcml-col-currency {
 		.truncate {
-			max-width: 120px;
+			max-width: 100px;
 			display: block;
 		}
 		small {
@@ -430,7 +430,7 @@ table.widefat.currency_lang_table {
 		background: linear-gradient(to right, transparent, #fff);
 	}
 	@media (max-width: 782px) {
-		max-width: calc(100% - 141px - 80px);
+		max-width: calc(100% - 121px - 80px);
 	}
 }
 
@@ -542,17 +542,51 @@ white-space: nowrap;
 		text-align: center;
 		padding: 5px;
 	}
-
 	.wcml-cs-cell-preview {
 		text-align: start;
 	}
-
 	.wcml-cs-actions {
 		width: 60px;
 		a {
 			display: inline-block;
 			width: 20px;
 			cursor: pointer;
+		}
+	}
+	@media (max-width: 480px) {
+		display: block;
+		thead {
+			display: none;
+		}
+		tbody,
+		tr:not(.wcml-cs-empty-row),
+		td {
+			display: block !important;
+			box-sizing: border-box;
+		}
+		tr {
+			&::after {
+				display: table;
+				content: '';
+				clear: both;
+			}
+			& + tr{
+				margin-top: 30px;
+			}
+		}
+		.wcml-cs-cell-preview {
+			width: 100%;
+		}
+		.wcml-cs-widget-name,
+		.wcml-cs-actions {
+			width: 50%;
+			float: left;
+		}
+		.wcml-cs-widget-name {
+			text-align:start;
+		}
+		.wcml-cs-actions {
+			text-align: end;
 		}
 	}
 }
