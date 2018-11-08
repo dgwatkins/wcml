@@ -5,6 +5,10 @@
  */
 class WCML_Product_Addons {
 
+	const TEMPLATE_FOLDER = '/templates/compatibility/';
+	const TEMPLATE = 'product-addons-prices-dialog.twig';
+	const PRICE_OPTION_KEY = '_product_addon_prices';
+
 	/**
 	 * @var SitePress
 	 */
@@ -30,6 +34,8 @@ class WCML_Product_Addons {
 	}
 
 	public function add_hooks(){
+
+		add_action( 'init', array( $this, 'load_assets' ) );
 		add_filter( 'get_product_addons_product_terms', array( $this, 'addons_product_terms' ) );
 		add_filter( 'get_product_addons_fields', array( $this, 'product_addons_price_filter' ), 10, 1 );
 
@@ -41,7 +47,7 @@ class WCML_Product_Addons {
 		    isset( $_GET['post_type'] ) &&
 		    'product' === $_GET['post_type'] &&
 		    isset( $_GET['page'] ) &&
-		     'global_addons' === $_GET['page'] &&
+		     ( 'global_addons' === $_GET['page'] || 'addons' === $_GET['page'] ) &&
 		     ! isset( $_GET['edit'] )
 		) {
 			add_action( 'admin_notices', array( $this, 'inf_translate_strings' ) );
@@ -58,6 +64,11 @@ class WCML_Product_Addons {
 			add_action( 'woocommerce_product_data_panels',   array( $this, 'show_pointer_info' ) );
 
 			add_filter( 'wcml_do_not_display_custom_fields_for_product', array( $this, 'replace_tm_editor_custom_fields_with_own_sections' ) );
+
+			add_action( 'woocommerce_product_addons_panel_start', array( $this, 'load_dialog_resources' ) );
+			add_action( 'woocommerce_product_addons_panel_option_row', array( $this, 'dialog_button_after_option_row' ), 10, 4 );
+			add_action( 'woocommerce_product_addons_panel_before_options', array( $this, 'dialog_button_before_options' ), 10, 3 );
+			add_action( 'wcml_before_sync_product', array( $this, 'update_custom_prices_values' ) );
 		}else{
 			add_filter( 'get_post_metadata', array( $this, 'translate_addons_strings' ), 10, 4 );
 		}
@@ -72,6 +83,17 @@ class WCML_Product_Addons {
 			'set_global_ids_in_query_args'
 		) );
 
+
+
+	}
+
+	/**
+	 * @param string $product_id
+	 *
+	 * @return array
+	 */
+	private function get_product_addons( $product_id ) {
+		return maybe_unserialize( get_post_meta( $product_id, '_product_addons', true ) );
 	}
 
 	/**
@@ -82,6 +104,7 @@ class WCML_Product_Addons {
 	 */
 	function register_addons_strings( $meta_id, $id, $meta_key, $addons ) {
 		if ( '_product_addons' === $meta_key && 'global_product_addon' === get_post_type( $id ) ) {
+			$this->update_custom_prices_values( $id );
 			foreach ( $addons as $addon ) {
 				//register name
 				do_action( 'wpml_register_single_string', 'wc_product_addons_strings', $id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_name', $addon['name'] );
@@ -202,7 +225,7 @@ class WCML_Product_Addons {
 	 */
 	function custom_box_html( $obj, $product_id, $data ) {
 
-		$product_addons = maybe_unserialize( get_post_meta( $product_id, '_product_addons', true ) );
+		$product_addons = $this->get_product_addons( $product_id );
 
 		if ( ! empty( $product_addons ) ) {
 			foreach ( $product_addons as $addon_id => $product_addon ) {
@@ -241,7 +264,7 @@ class WCML_Product_Addons {
 	 */
 	function custom_box_html_data( $data, $product_id, $translation ) {
 
-		$product_addons = maybe_unserialize( get_post_meta( $product_id, '_product_addons', true ) );
+		$product_addons = $this->get_product_addons( $product_id );
 
 		if ( ! empty( $product_addons ) ) {
 			foreach ( $product_addons as $addon_id => $product_addon ) {
@@ -255,9 +278,9 @@ class WCML_Product_Addons {
 			}
 
 			if ( $translation ) {
-				$transalted_product_addons = maybe_unserialize( get_post_meta( $translation->ID, '_product_addons', true ) );
-				if ( ! empty( $transalted_product_addons ) ) {
-					foreach ( $transalted_product_addons as $addon_id => $transalted_product_addon ) {
+				$translated_product_addons = $this->get_product_addons( $translation->ID );
+				if ( ! empty( $translated_product_addons ) ) {
+					foreach ( $translated_product_addons as $addon_id => $transalted_product_addon ) {
 						$data[ 'addon_' . $addon_id . '_name' ]['translation'] = $transalted_product_addon['name'];
 						$data[ 'addon_' . $addon_id . '_description' ]['translation'] = $transalted_product_addon['description'];
 						if ( ! empty( $transalted_product_addon['options'] ) ) {
@@ -280,7 +303,7 @@ class WCML_Product_Addons {
 	 */
 	function addons_update( $original_product_id, $product_id, $data ) {
 
-		$product_addons = maybe_unserialize( get_post_meta( $original_product_id, '_product_addons', true ) );
+		$product_addons = $this->get_product_addons( $original_product_id );
 
 		if ( ! empty( $product_addons ) ) {
 
@@ -359,8 +382,182 @@ class WCML_Product_Addons {
 		return $args;
 	}
 
+	/**
+	 * @return bool
+	 */
 	private function is_multi_currency_on(){
 		return $this->multi_currency_mode === $this->sitepress->get_wp_api()->constant( 'WCML_MULTI_CURRENCIES_INDEPENDENT' );
+	}
+
+	public function load_dialog_resources(){
+		wp_register_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs' . WCML_JS_MIN . '.js', array('jquery-ui-dialog'), WCML_VERSION );
+		wp_enqueue_script( 'wcml-dialogs' );
+	}
+
+	/**
+	 * @param WP_Post|null $product
+	 * @param array $product_addons
+	 * @param int $loop
+	 * @param array $option
+	 */
+	public function dialog_button_after_option_row( $product, $product_addons, $loop, $option ){
+		if( $option ){
+			$custom_prices_on = $product ? $this->is_product_custom_prices_on( $product->ID ) : false;
+			$this->render_edit_price_element( $this->get_prices_dialog_model( $product_addons, $option, $loop, $custom_prices_on ) );
+		}
+
+	}
+
+	/**
+	 * @param WP_Post|null $product
+	 * @param array $product_addons
+	 * @param int $loop
+	 */
+	public function dialog_button_before_options( $product, $product_addons, $loop ){
+		$custom_prices_on = $product ? $this->is_product_custom_prices_on( $product->ID ) : false;
+		$this->render_edit_price_element( $this->get_prices_dialog_model( array(), $product_addons, $loop, $custom_prices_on ) );
+	}
+
+	/**
+	 * @param array $model
+	 */
+	private function render_edit_price_element( $model ){
+		$twig_loader = $this->get_twig_loader();
+		echo $twig_loader->get_template()->show( $model, self::TEMPLATE );
+	}
+
+	/**
+	 * @return array
+	 */
+	private function get_one_price_types(){
+
+		return array(
+			'custom_text',
+			'custom_textarea',
+			'file_upload',
+			'input_multiplier'
+		);
+	}
+
+	/**
+	 * @return WPML_Twig_Template_Loader
+	 */
+	private function get_twig_loader(){
+		return new WPML_Twig_Template_Loader( array( $this->sitepress->get_wp_api()->constant( 'WCML_PLUGIN_PATH' ) . self::TEMPLATE_FOLDER ) );
+	}
+
+	/**
+	 * @param int $product
+	 *
+	 * @return mixed
+	 */
+	private function is_product_custom_prices_on( $product_id ){
+		return get_post_meta( $product_id, '_wcml_custom_prices_status', true );
+	}
+
+	public function load_assets( ) {
+		global $pagenow;
+
+		$is_product_page      = $pagenow == 'post.php' && isset( $_GET['post'] );
+		$is_global_addon_page = 'edit.php' === $pagenow && isset( $_GET['post_type'] ) &&
+		                        'product' === $_GET['post_type'] && isset( $_GET['page'] ) &&
+		                        ( 'global_addons' === $_GET['page'] || 'addons' === $_GET['page'] );
+
+		if ( $is_product_page || $is_global_addon_page ) {
+			wp_register_script( 'wcml-product-addons', WCML_PLUGIN_URL . '/compatibility/res/js/wcml-product-addons'. WCML_JS_MIN . '.js', array( 'jquery' ), WCML_VERSION );
+			wp_enqueue_script( 'wcml-product-addons' );
+		}
+
+	}
+
+	/**
+	 * @param string $product_id
+	 */
+	public function update_custom_prices_values( $product_id ) {
+
+		$product_addons = $this->get_product_addons( $product_id );
+
+		if ( $product_addons ) {
+			$active_currencies = $this->woocommerce_wpml->multi_currency->get_currencies();
+
+			foreach ( $product_addons as $addon_key => $product_addon ) {
+
+				foreach ( $active_currencies as $code => $currency ) {
+					$price_option_key = self::PRICE_OPTION_KEY;
+
+					if( in_array( $product_addon['type'], $this->get_one_price_types() ) ){
+						$product_addons = $this->update_single_option_prices( $product_addons, $price_option_key, $addon_key, $code );
+					}else{
+						$product_addons = $this->update_multiple_options_prices( $product_addons, $price_option_key, $addon_key, $code );
+					}
+				}
+			}
+
+			update_post_meta( $product_id, '_product_addons', $product_addons );
+		}
+	}
+
+	/**
+	 * @param array $product_addons
+	 * @param string $price_option_key
+	 * @param string $addon_key
+	 * @param string $code
+	 *
+	 * @return array
+	 */
+	private function update_single_option_prices( $product_addons, $price_option_key, $addon_key, $code ){
+		if ( isset( $_POST[ $price_option_key ][ $addon_key ][ 'price_'.$code ][ 0 ] ) ) {
+			$product_addons[ $addon_key ][ 'price_' . $code ] = wc_format_decimal( $_POST[ $price_option_key ][ $addon_key ][ 'price_'.$code ][ 0 ] );
+		}
+
+		return $product_addons;
+	}
+
+	/**
+	 * @param array $product_addons
+	 * @param string $price_option_key
+	 * @param string $addon_key
+	 * @param string $code
+	 *
+	 * @return array
+	 */
+	private function update_multiple_options_prices( $product_addons, $price_option_key, $addon_key, $code ){
+		foreach ( $product_addons[ $addon_key ]['options'] as $option_key => $option ) {
+			if ( isset( $_POST[ $price_option_key ][ $addon_key ][ 'price_'.$code ][ $option_key ] ) ) {
+				$product_addons[ $addon_key ]['options'][ $option_key ][ 'price_' . $code ] = wc_format_decimal( $_POST[ $price_option_key ][ $addon_key ][ 'price_'.$code ][ $option_key ] );
+			}
+		}
+
+		return $product_addons;
+	}
+
+	/**
+	 * @param array $product_addons
+	 * @param array $option
+	 * @param int $loop
+	 * @param string|bool $custom_prices_on
+	 *
+	 * @return array
+	 */
+	private function get_prices_dialog_model( $product_addons, $option, $loop, $custom_prices_on ) {
+
+		$label = isset( $option['label'] ) ? $option['label'] : $option['name'];
+
+		return array(
+			'strings'           => array(
+				'dialog_title' => sprintf( __( 'Multicurrency settings for %s', 'woocommerce-multilingual' ), $label ),
+				'description'  => __( 'Here you can set different prices for this option in multiple currencies:', 'woocommerce-multilingual' ),
+				'apply'        => __( 'Apply', 'woocommerce-multilingual' ),
+				'cancel'       => __( 'Cancel', 'woocommerce-multilingual' )
+			),
+			'custom_prices_on'  => $custom_prices_on,
+			'dialog_id'         => '_product_addon_option_' . md5( uniqid( $loop . $label )  ),
+			'option_id'         => isset( $product_addons[ $loop ]['options'] ) ? array_search( $option, $product_addons[ $loop ]['options'] ) : '',
+			'addon_id'          => $loop,
+			'option_details'    => $option,
+			'default_currency'  => get_option( 'woocommerce_currency' ),
+			'active_currencies' => $this->woocommerce_wpml->multi_currency->get_currencies(),
+		);
 	}
 
 }
