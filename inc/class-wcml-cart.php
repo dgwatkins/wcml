@@ -207,12 +207,13 @@ class WCML_Cart {
 				  closeOnEscape: false,
 				  dialogClass: "otgs-ui-dialog wcml-cart-dialog",
 				  create: function () {
-					  jQuery('#jquery-ui-style-css').attr('disabled', 'disabled');
+
 				  },
-				  open: function (event, ui) {
-					  jQuery(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
-					  repositionDialog();
-				  },
+					open: function (event, ui) {
+						jQuery(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+						jQuery('#jquery-ui-style-css').attr('disabled', 'disabled');
+						repositionDialog();
+					},
 				  close: function (event, ui) {
 					  jQuery('#jquery-ui-style-css').removeAttr('disabled');
 				  },

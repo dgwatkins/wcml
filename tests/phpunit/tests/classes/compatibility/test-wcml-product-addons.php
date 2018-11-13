@@ -208,7 +208,13 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 			)
 		);
 
-		$filtered_addons = $subject->product_addons_price_filter( $addons );
+		$product_id = 1;
+		WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_wcml_custom_prices_status', true ),
+			'return' => true
+		) );
+
+		$filtered_addons = $subject->product_addons_price_filter( $addons, $product_id );
 		$this->assertSame( $expected_addons, $filtered_addons );
 	}
 
@@ -330,8 +336,74 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 			'return' => true
 		) );
 
+
+		$_POST['_wcml_custom_prices_nonce'] = rand_str();
+		$_POST['_wcml_custom_prices'] = 1;
+
+		WP_Mock::userFunction( 'wp_verify_nonce', array(
+			'args'   => array( $_POST['_wcml_custom_prices_nonce'], 'wcml_save_custom_prices' ),
+			'times'  => 1,
+			'return' => true
+		) );
+
+		WP_Mock::userFunction( 'update_post_meta', array(
+			'args'   => array( $product_id, '_wcml_custom_prices_status', 1 ),
+			'times'  => 1,
+			'return' => true
+		) );
+
 		$subject->update_custom_prices_values( $product_id );
 
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_add_custom_prices_settings_block() {
+
+		$nonce = rand_str();
+		$_GET['edit'] = 11;
+
+		WP_Mock::userFunction( 'wp_create_nonce', array(
+			'args'   => array( 'wcml_save_custom_prices' ),
+			'times'  => 1,
+			'return' => $nonce
+		) );
+
+		WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $_GET['edit'], '_wcml_custom_prices_status', true ),
+			'times'  => 1,
+			'return' => 1
+		) );
+
+		$expected_settings_model = array(
+			'strings'          => array(
+				'label'    => 'Multi-currency settings',
+				'auto'     => 'Calculate prices in other currencies automatically',
+				'manually' => 'Set prices in other currencies manually'
+			),
+			'custom_prices_on' => 1,
+			'nonce'            => $nonce
+		);
+
+		$subject = $this->get_subject();
+
+		$template_service = $this->getMockBuilder( 'IWPML_Template_Service' )
+		                         ->disableOriginalConstructor()
+		                         ->setMethods( array( 'show' ) )
+		                         ->getMock();
+
+		$template_service->method( 'show' )->with( $expected_settings_model, $subject::SETTINGS_TEMPLATE )->willReturn( 'settings_template' );
+
+		$twig = \Mockery::mock( 'overload:WPML_Twig_Template_Loader' );
+		$twig->shouldReceive( 'get_template' )
+		     ->andReturn( $template_service );
+
+		ob_start();
+		$subject->custom_prices_settings_block();
+		$template = ob_get_clean();
+
+		$this->assertSame( 'settings_template', $template );
 	}
 
 }
