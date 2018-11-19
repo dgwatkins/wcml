@@ -162,32 +162,41 @@ class WCML_Synchronize_Product_Data{
         wc_delete_product_transients( $tr_product_id );
     }
 
-    public function sync_product_taxonomies( $original_product_id, $tr_product_id, $lang ){
-        $taxonomies = get_object_taxonomies( 'product' );
-        remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
-        foreach( $taxonomies as $taxonomy ) {
+	public function sync_product_taxonomies( $original_product_id, $tr_product_id, $lang ) {
 
-            $terms = wp_get_object_terms( $original_product_id, $taxonomy );
-            $tt_ids = array();
-            $tt_names = array();
-            if ($terms) {
-                foreach ($terms as $term) {
-	                if ( in_array( $term->taxonomy, array( 'product_type', 'product_visibility' ) ) ) {
-                        $tt_names[] = $term->name;
-                        continue;
-                    }
-                    $tt_ids[] = $term->term_id;
-                }
+		$taxonomies          = get_object_taxonomies( 'product' );
+		$taxonomy_exceptions = array( 'product_type', 'product_visibility' );
+		$sync_taxonomies     = $this->sitepress->get_setting( 'sync_post_taxonomies' );
 
-	            if ( ! $this->woocommerce_wpml->terms->is_translatable_wc_taxonomy( $taxonomy ) ) {
-                    wp_set_post_terms( $tr_product_id, $tt_names, $taxonomy );
-                }else{
-                    $this->wcml_update_term_count_by_ids( $tt_ids, $lang, $taxonomy, $tr_product_id );
-                }
-            }
-        }
-        add_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
-    }
+		remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
+		foreach ( $taxonomies as $taxonomy ) {
+			if (
+				$sync_taxonomies ||
+				in_array( $taxonomy, $taxonomy_exceptions )
+			) {
+				$terms    = wp_get_object_terms( $original_product_id, $taxonomy );
+				$tt_ids   = array();
+				$tt_names = array();
+				if ( $terms ) {
+					foreach ( $terms as $term ) {
+						if ( in_array( $term->taxonomy, $taxonomy_exceptions ) ) {
+							$tt_names[] = $term->name;
+							continue;
+						}
+						$tt_ids[] = $term->term_id;
+					}
+
+					if ( ! $this->woocommerce_wpml->terms->is_translatable_wc_taxonomy( $taxonomy ) ) {
+						wp_set_post_terms( $tr_product_id, $tt_names, $taxonomy );
+					} else {
+						$this->wcml_update_term_count_by_ids( $tt_ids, $lang, $taxonomy, $tr_product_id );
+					}
+				}
+			}
+		}
+
+		add_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
+	}
 
     public function delete_term_relationships_update_term_count( $object_id, $tt_ids ){
 

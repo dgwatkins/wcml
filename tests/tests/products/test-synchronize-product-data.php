@@ -137,7 +137,27 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 
 	}
 
+	public function test_sync_product_taxonomies_exceptions(){
+
+		$this->sitepress->set_setting( 'sync_post_taxonomies', false );
+
+		$default_product = $this->wcml_helper->add_product( $this->default_language, false, rand_str() );
+		$translated_product = $this->wcml_helper->add_product( $this->second_language, $default_product->trid, rand_str() );
+
+		$default_cat = $this->wcml_helper->add_term( rand_str(), 'product_type', $this->default_language, $default_product->id );
+		$translated_cat = $this->wcml_helper->add_term( rand_str(), 'product_type', $this->second_language, false, $default_cat->trid  );
+
+		$this->wpdb->insert( $this->wpdb->term_relationships, array( 'object_id' => $translated_product->id, 'term_taxonomy_id' => $translated_cat->term_taxonomy_id ) );
+
+		$this->woocommerce_wpml->sync_product_data->sync_product_taxonomies( $default_product->id, $translated_product->id, $this->second_language );
+
+		$this->assertEquals( get_term_meta( $default_cat->term_id, 'product_count_product_cat', true), get_term_meta( $translated_cat->term_id, 'product_count_product_cat', true) );
+
+	}
+
 	public function test_sync_product_taxonomies(){
+
+		$this->sitepress->set_setting( 'sync_post_taxonomies', true );
 
 		$default_product = $this->wcml_helper->add_product( $this->default_language, false, rand_str() );
 		$translated_product = $this->wcml_helper->add_product( $this->second_language, $default_product->trid, rand_str() );
