@@ -98,7 +98,7 @@ class WCML_WooCommerce_Rest_API_Support{
 
                         case '/products/categories':
                             // Remove WPML language filters for the terms query
-                            remove_filter('terms_clauses', array($this->sitepress,'terms_clauses'));
+                            remove_filter('terms_clauses', array($this->sitepress,'terms_clauses'), 10 );
                             remove_filter( 'get_term', array( $this->sitepress, 'get_term_adjust_id' ), 1 );
                             break;
 

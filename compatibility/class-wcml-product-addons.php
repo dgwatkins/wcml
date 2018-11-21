@@ -316,7 +316,7 @@ class WCML_Product_Addons {
 
 			remove_filter( 'get_terms_args', array( $this->sitepress, 'get_terms_args_filter' ), 10, 2 );
 			remove_filter( 'get_term', array( $this->sitepress, 'get_term_adjust_id' ), 1 );
-			remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
+			remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10 );
 
 			$matched_addons_ids = wp_list_pluck( get_posts( $args ), 'ID' );
 
@@ -327,7 +327,7 @@ class WCML_Product_Addons {
 
 			add_filter( 'get_terms_args', array( $this->sitepress, 'get_terms_args_filter' ), 10, 2 );
 			add_filter( 'get_term', array( $this->sitepress, 'get_term_adjust_id' ), 1 );
-			add_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
+			add_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 3 );
 		}
 
 		return $args;
