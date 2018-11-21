@@ -89,7 +89,7 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 
 		\WP_Mock::expectFilterAdded( 'get_terms_args', array( $this->sitepress, 'get_terms_args_filter' ), 10, 2 );
 		\WP_Mock::expectFilterAdded( 'get_term', array( $this->sitepress, 'get_term_adjust_id' ), 1 );
-		\WP_Mock::expectFilterAdded( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
+		\WP_Mock::expectFilterAdded( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 3 );
 
 		$subject = $this->get_subject();
 		$filtered_query_args = $subject->set_global_ids_in_query_args( $args );

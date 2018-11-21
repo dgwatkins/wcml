@@ -168,7 +168,7 @@ class WCML_Synchronize_Product_Data{
 		$taxonomy_exceptions = array( 'product_type', 'product_visibility' );
 		$sync_taxonomies     = $this->sitepress->get_setting( 'sync_post_taxonomies' );
 
-		remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
+		remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10 );
 		foreach ( $taxonomies as $taxonomy ) {
 			if (
 				$sync_taxonomies ||
@@ -195,7 +195,7 @@ class WCML_Synchronize_Product_Data{
 			}
 		}
 
-		add_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
+		add_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 3 );
 	}
 
     public function delete_term_relationships_update_term_count( $object_id, $tt_ids ){

@@ -79,7 +79,7 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 			'args'   => [ [ 'slug' => [ $atts['category'] ], 'taxonomy' => 'product_cat' ] ],
 			'return' => [ $category_term_translation ]
 		] );
-		\WP_Mock::expectFilterAdded( 'terms_clauses', array( $sitepress, 'terms_clauses' ), 10, 4 );
+		\WP_Mock::expectFilterAdded( 'terms_clauses', array( $sitepress, 'terms_clauses' ), 10, 3 );
 
 		\WP_Mock::userFunction( 'wp_list_pluck', [
 			'times'  => 1,
@@ -120,7 +120,7 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'remove_filter', [ 'times'  => 0 ] );
 		\WP_Mock::userFunction( 'get_terms', [ 'times'  => 0 ] );
-		\WP_Mock::expectFilterNotAdded( 'terms_clauses', array( $sitepress, 'terms_clauses' ), 10, 4 );
+		\WP_Mock::expectFilterNotAdded( 'terms_clauses', array( $sitepress, 'terms_clauses' ), 10, 3 );
 
 		\WP_Mock::userFunction( 'wp_list_pluck', [ 'times'  => 0 ] );
 
@@ -149,7 +149,7 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 			'args'   => [ 'terms_clauses', [ $sitepress, 'terms_clauses' ], 10 ],
 			'return' => true
 		] );
-		\WP_Mock::expectFilterAdded( 'terms_clauses', array( $sitepress, 'terms_clauses' ), 10, 4 );
+		\WP_Mock::expectFilterAdded( 'terms_clauses', array( $sitepress, 'terms_clauses' ), 10, 3 );
 
 		$category_term_translations = [
 			'0' => $this->getMockBuilder( 'WP_Term' )->disableOriginalConstructor()->getMock(),

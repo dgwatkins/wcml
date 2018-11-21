@@ -45,7 +45,7 @@ class WCML_WC_Shortcode_Product_Category {
 				$categories    = get_terms( array( 'slug' => $slugs, 'taxonomy' => 'product_cat' ) );
 
 				if ( $filter_exists ) {
-					add_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
+					add_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 3 );
 				}
 
 				// Replace slugs in query arguments.
@@ -82,7 +82,7 @@ class WCML_WC_Shortcode_Product_Category {
 		$filter_exists = remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10 );
 		$categories_translated = get_terms( array( 'slug' => $category_slugs, 'taxonomy' => 'product_cat' ) );
 		if ( $filter_exists ) {
-			add_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 4 );
+			add_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 3 );
 		}
 
 		$category_slugs_translated = array();
