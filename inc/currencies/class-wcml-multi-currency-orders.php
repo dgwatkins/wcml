@@ -290,9 +290,10 @@ class WCML_Multi_Currency_Orders {
 
 		if ( $item instanceof WC_Order_Item_Product ) {
 
-			$original_product_id = $this->woocommerce_wpml->products->get_original_product_id( $item->get_product_id() );
-
 			if ( 'line_item' === $item->get_type() ) {
+
+				$product_id          = $item->get_variation_id() ? $item->get_variation_id() : $item->get_product_id();
+				$original_product_id = $this->woocommerce_wpml->products->get_original_product_id( $product_id );
 
 				$converted_price = get_post_meta( $original_product_id, '_price_' . $order_currency, true );
 
@@ -324,7 +325,8 @@ class WCML_Multi_Currency_Orders {
 			}
 		} else {
 
-			$original_product_id = $this->woocommerce_wpml->products->get_original_product_id( $item[ 'product_id' ] );
+			$product_id          = $item['variation_id'] ? $item['variation_id'] : $item['product_id'];
+			$original_product_id = $this->woocommerce_wpml->products->get_original_product_id( $product_id );
 
 			$converted_price = $converted_subtotal_price = $converted_total_price = get_post_meta( $original_product_id, '_price_' . $order_currency, true );
 
