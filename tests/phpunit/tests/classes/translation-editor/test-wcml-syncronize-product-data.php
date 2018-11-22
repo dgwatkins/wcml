@@ -528,6 +528,108 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		$subject->sync_product_stocks( $order, 'reduce' );
 
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_sync_product_stocks_on_order_edit_page() {
+
+		$post_buff = $_POST;
+		$_POST['action'] = 'editpost';
+		$_POST['post_type'] = 'shop_order';
+
+		$product_id = 10;
+		$quantity = 1;
+		$orig_language_details = new stdClass();
+		$orig_language_details->language_code = rand_str();
+
+		$translations = array();
+		$translation = new stdClass();
+		$translation->language_code = rand_str();
+		$translation->element_id = 21;
+		$translations[] = $translation;
+
+		$total_sales = 2;
+
+		$sitepress = $this->getMockBuilder('SitePress')
+		     ->disableOriginalConstructor()
+		     ->setMethods( array( 'get_element_trid', 'get_element_translations', 'get_element_language_details', 'get_wp_api'  ) )
+		     ->getMock();
+
+		$sitepress->method( 'get_element_trid' )->willReturn( rand_str() );
+		$sitepress->method( 'get_element_translations' )->willReturn( $translations );
+		$sitepress->method( 'get_element_language_details' )->willReturn( $orig_language_details );
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->getMock();
+
+		$woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                   ->disableOriginalConstructor()
+		                                   ->setMethods( array( 'is_original_product' ) )
+		                                   ->getMock();
+
+		$woocommerce_wpml->products->method( 'is_original_product' )->willReturn( true );
+
+		$subject = $this->get_subject( $woocommerce_wpml , $sitepress );
+
+		$order = $this->getMockBuilder( 'WC_Order' )
+		              ->disableOriginalConstructor()
+		              ->setMethods( array( 'get_items' ) )
+		              ->getMock();
+
+		$items = array();
+		$order_item = $this->getMockBuilder( 'WC_Order_Item_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'get_variation_id','get_product_id','get_quantity' ) )
+		                ->getMock();
+
+		$items[] = $order_item;
+
+		$order->method( 'get_items' )->willReturn( $items );
+
+		$order_item->method( 'get_variation_id' )->willReturn( false );
+		$order_item->method( 'get_product_id' )->willReturn( $product_id );
+		$order_item->method( 'get_quantity' )->willReturn( $quantity );
+
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'args'  => array( $translation->element_id ),
+			'return' => rand_str()
+		) );
+
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'exists', 'managing_stock' ) )
+		                ->getMock();
+
+		$product->method( 'exists' )->willReturn( true );
+		$product->method( 'managing_stock' )->willReturn( false );
+
+		\WP_Mock::wpFunction( 'wc_get_product', array(
+			'args'  => array( $translation->element_id ),
+			'return' => $product
+		) );
+
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'  => array( $translation->element_id, 'total_sales', true ),
+			'return' => $total_sales
+		) );
+
+		\WP_Mock::wpFunction( 'update_post_meta', array(
+			'args'  => array( $translation->element_id, 'total_sales', $total_sales + $quantity ),
+			'times' => 1
+		) );
+
+		\WP_Mock::wpFunction( 'wc_recount_after_stock_change', array(
+			'args'  => array( $translation->element_id ),
+			'times' => 1
+		) );
+
+		$subject->sync_product_stocks( $order, 'reduce' );
+
+		$_POST = $post_buff;
+	}
 	/**
 	 * @test
 	 */
