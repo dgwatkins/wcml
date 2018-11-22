@@ -259,6 +259,12 @@ class WCML_Compatibility {
 			$this->litespeed_cache->add_hooks();
 		}
 
+		// WpFastest Cache
+		if ( class_exists( 'WpFastestCache' ) ) {
+			$this->wpfastestcache = new WCML_WpFastest_Cache();
+			$this->wpfastestcache->add_hooks();
+		}
+
 	}
 
 }
