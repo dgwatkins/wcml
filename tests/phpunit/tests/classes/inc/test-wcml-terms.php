@@ -148,4 +148,43 @@ class Test_WCML_Terms extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	function it_should_update_category_count_meta() {
+		$meta_id = 1;
+		$object_id = 10;
+		$trid = 11;
+		$meta_key = 'product_count_product_cat';
+		$meta_value = 2;
+
+		$translations                      = array();
+		$translations['en']                = new StdClass();
+		$translations['es']                = new StdClass();
+		$translations['en']->language_code = 'en';
+		$translations['en']->element_id    = $object_id;
+		$translations['es']->language_code = 'es';
+		$translations['es']->element_id    = 20;
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_element_trid', 'get_element_translations' ) )
+		                  ->getMock();
+
+		$sitepress->method( 'get_element_trid' )->with( $object_id, 'tax_product_cat' )->willReturn( $trid );
+		$sitepress->method( 'get_element_translations' )->with( $trid )->willReturn( $translations );
+
+		$subject = $this->get_subject( null, $sitepress );
+
+		WP_Mock::passthruFunction( 'remove_action' );
+
+		\WP_Mock::userFunction( 'update_term_meta', array(
+			'args' => array( $translations['es']->element_id, $meta_key, $meta_value, '' ),
+			'times' => 1,
+		));
+
+		$subject->update_category_count_meta( $meta_id, $object_id, $meta_key, $meta_value );
+
+	}
+
 }

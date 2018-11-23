@@ -81,7 +81,12 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectActionAdded( 'woocommerce_product_set_visibility', array( $subject, 'sync_product_translations_visibility' ) );
+		\WP_Mock::expectActionAdded( 'save_post', array( $subject, 'synchronize_products' ), PHP_INT_MAX, 2 );
+		\WP_Mock::expectActionAdded( 'icl_pro_translation_completed', array( $subject, 'icl_pro_translation_completed' ) );
+		\WP_Mock::expectActionAdded( 'woocommerce_product_quick_edit_save', array( $subject, 'woocommerce_product_quick_edit_save' ) );
+		\WP_Mock::expectActionAdded( 'woocommerce_product_bulk_edit_save', array( $subject, 'woocommerce_product_quick_edit_save' ) );
+		\WP_Mock::expectActionAdded( 'wpml_translation_update', array( $subject, 'icl_connect_translations_action' ) );
+		\WP_Mock::expectActionAdded( 'deleted_term_relationships', array( $subject, 'delete_term_relationships_update_term_count' ), 10, 2 );
 
 		$subject->add_hooks();
 	}
@@ -102,6 +107,8 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 		\WP_Mock::expectActionAdded( 'woocommerce_reduce_order_stock', array( $subject, 'sync_product_stocks_reduce' ) );
 		\WP_Mock::expectActionAdded( 'woocommerce_restore_order_stock', array( $subject, 'sync_product_stocks_restore' ) );
+
+		\WP_Mock::expectActionAdded( 'woocommerce_product_set_visibility', array( $subject, 'sync_product_translations_visibility' ) );
 
 		$subject->add_hooks();
 	}
@@ -219,10 +226,11 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 		$product_object = $this->getMockBuilder( 'WC_Product' )
 		                ->disableOriginalConstructor()
-		                ->setMethods( array( 'is_featured' ) )
+		                ->setMethods( array( 'is_featured', 'get_stock_status' ) )
 		                ->getMock();
 
 		$product_object->method( 'is_featured' )->willReturn( true );
+		$product_object->method( 'get_stock_status' )->willReturn( 'outofstock' );
 
 		\WP_Mock::wpFunction( 'wc_get_product', array(
 			'args' => array( $product_id ),
@@ -230,7 +238,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		) );
 
 		\WP_Mock::wpFunction( 'wp_set_post_terms', array(
-			'args' => array( $fr_translation->element_id, array( 'featured' ), 'product_visibility', false ),
+			'args' => array( $fr_translation->element_id, array( 'featured', 'outofstock' ), 'product_visibility', false ),
 			'return' => true,
 			'times' => 1
 		) );
