@@ -43,9 +43,9 @@ class WCML_Synchronize_Product_Data{
             add_action( 'wpml_translation_update', array( $this, 'icl_connect_translations_action' ) );
 
             add_action( 'deleted_term_relationships', array( $this, 'delete_term_relationships_update_term_count' ), 10, 2 );
-
-            add_action( 'woocommerce_product_set_visibility', array( $this, 'sync_product_translations_visibility' ) );
         }
+
+	    add_action( 'woocommerce_product_set_visibility', array( $this, 'sync_product_translations_visibility' ) );
 
 	    add_action( 'woocommerce_reduce_order_stock', array( $this, 'sync_product_stocks_reduce' ) );
 	    add_action( 'woocommerce_restore_order_stock', array( $this, 'sync_product_stocks_restore' ) );
@@ -743,28 +743,31 @@ class WCML_Synchronize_Product_Data{
     }
 
 	public function sync_product_translations_visibility( $product_id ) {
+		$trid         = $this->sitepress->get_element_trid( $product_id, 'post_product' );
+		$translations = $this->sitepress->get_element_translations( $trid, 'post_product' );
 
-		if ( $this->woocommerce_wpml->products->is_original_product( $product_id ) ) {
+		if ( $translations ) {
 
-			$trid         = $this->sitepress->get_element_trid( $product_id, 'post_product' );
-			$translations = $this->sitepress->get_element_translations( $trid, 'post_product' );
+			$product = wc_get_product( $product_id );
+			$terms   = array();
 
-			if ( $translations ) {
-
-				$product = wc_get_product( $product_id );
-				$terms   = array();
+			if ( $this->woocommerce_wpml->products->is_original_product( $product_id ) ) {
 				if ( $product->is_featured() ) {
 					$terms[] = 'featured';
 				}
+			}
 
-				foreach ( $translations as $translation ) {
-					if ( ! $translation->original ) {
-						wp_set_post_terms( $translation->element_id, $terms, 'product_visibility', false );
-					}
+			if ( 'outofstock' === $product->get_stock_status() ) {
+				$terms[] = 'outofstock';
+			}
+
+			foreach ( $translations as $translation ) {
+				if ( $product_id !== $translation->element_id ) {
+					wp_set_post_terms( $translation->element_id, $terms, 'product_visibility', false );
 				}
 			}
 		}
-
 	}
+
 
 }
