@@ -305,7 +305,7 @@ class WCML_Bookings {
 			$wc_currencies = get_woocommerce_currencies();
 
 			if ( ! function_exists( 'woocommerce_wp_text_input' ) ) {
-				include_once dirname( WC_PLUGIN_FILE ) . 'includes/admin/wc-meta-box-functions.php';
+				include_once dirname( WC_PLUGIN_FILE ) . '/includes/admin/wc-meta-box-functions.php';
 			}
 
 			echo '<div class="wcml_custom_cost_field" >';
