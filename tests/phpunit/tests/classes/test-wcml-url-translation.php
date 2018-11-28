@@ -174,6 +174,26 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function it_should_return_attribute_slug_source_slug_language(){
+
+		$base = 'attribute_slug-color';
+		$slug_language = rand_str();
+
+		$woocommerce_wpml = $this->get_woocommerce_multilingual();
+		$woocommerce_wpml->strings = $this->getMockBuilder( 'WCML_WC_Strings' )
+		                                  ->disableOriginalConstructor()
+		                                  ->setMethods( array( 'get_string_language' ) )
+		                                  ->getMock();
+
+		$woocommerce_wpml->strings->method( 'get_string_language' )->with( $base, 'WordPress', 'URL attribute slug: color')->willReturn( $slug_language );
+
+		$subject = new WCML_Url_Translation( $woocommerce_wpml, $this->get_sitepress(), $this->stubs->wpdb() );
+		$this->assertSame( $slug_language, $subject->get_source_slug_language( $base ) );
+	}
+
+	/**
+	 * @test
+	 */
 	public function translate_product_post_type_link() {
 
 		$translated_slug = rand_str();
