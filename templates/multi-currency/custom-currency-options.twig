@@ -112,11 +112,11 @@
 
             <label class="label-header"><strong>{{ form.payment_gateways.label }}</strong></label>
 
-            <div class="otgs-ui wcml-gateways-switcher">
-                <label>{{ form.payment_gateways.settings_label }}</label>
-                <input name="currency_options[gateways_enabled]" type="checkbox" class="wcml-gateways-enabled" {% if payment_gateways_enabled %}checked="checked"{% endif %} />
+            <label class="wcml-gateways-switcher">
+                <input name="currency_options[gateways_enabled]" type="checkbox" class="wcml-gateways-enabled otgs-switcher-input" {% if payment_gateways_enabled %}checked="checked"{% endif %} />
+                <span class="otgs-switcher wpml-theme" data-on="ON" data-off="OFF">{{ form.payment_gateways.settings_label }}</span>
                 <a class="wpml-external-link" href="{{ form.payment_gateways.learn_url }}" target="_blank">{{ form.payment_gateways.learn_txt }}</a>
-            </div>
+            </label>
 
             <div class="wcml-gateways" {% if not payment_gateways_enabled %}style="display: none;"{% endif %}>
                 {% for gateway in payment_gateways %}
@@ -130,7 +130,6 @@
                 <input type="submit" class="wcml-dialog-close-button wpml-dialog-close-button button-primary currency_options_save alignright"
                     value="{{ form.save }}" data-currency="{{ current_currency }}" data-symbol="{{ get_currency_symbol(current_currency) }}" data-stay="1" />
             </footer>
-
         </form>
 
     </div>

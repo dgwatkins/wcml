@@ -239,9 +239,9 @@ jQuery( function($){
                     $('#currency_row_' + currency + ' .wcml-col-currency').html(response.currency_name_formatted);
                     $('#currency_row_' + currency + ' .wcml-col-rate').html(response.currency_meta_info);
 
-                    var gateways_switcher = $('#wcml_currency_options_' + currency).find('.otgs-ui.wcml-gateways-switcher');
+                    var gateways_switcher = $('#wcml_currency_options_' + currency).find('.wcml-gateways-switcher');
                     if( 0 == gateways_switcher.length ){
-                        gateways_switcher = $('#wcml_currency_options_').find('.otgs-ui.wcml-gateways-switcher').clone();
+                        gateways_switcher = $('#wcml_currency_options_').find('.wcml-gateways-switcher').clone();
                     }
 
                     $('#wcml_currency_options_' + currency).remove();
@@ -255,13 +255,13 @@ jQuery( function($){
                     }
 
                     var currency_options_dialog = $('#wcml_currency_options_' + currency);
-                    var is_gateway_switcher_checked = currency_options_dialog.find('.otgs-ui input[type="checkbox"]:checked').length > 0;
-                    currency_options_dialog.find('.otgs-ui.wcml-gateways-switcher').remove();
+                    var is_gateway_switcher_checked = currency_options_dialog.find('.wcml-gateways-switcher input[type="checkbox"]:checked').length > 0;
+                    currency_options_dialog.find('.wcml-gateways-switcher').remove();
                     currency_options_dialog.find('.wcml-gateways').before(gateways_switcher);
                     if( is_gateway_switcher_checked ){
-                        currency_options_dialog.find('.otgs-ui input[type="checkbox"]').attr('checked','checked');
+                        currency_options_dialog.find('.wcml-gateways-switcher input[type="checkbox"]').attr('checked', 'checked');
                     }else{
-                        currency_options_dialog.find('.otgs-ui input[type="checkbox"]').removeAttr('checked');
+                        currency_options_dialog.find('.wcml-gateways-switcher input[type="checkbox"]').removeAttr('checked');
                     }
                 }
             })

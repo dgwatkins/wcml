@@ -117,8 +117,7 @@ class WCML_Custom_Currency_Options extends WPML_Templates_Factory {
     }
 
     public function enqueue_resources(){
-	    wp_enqueue_style( OTGS_Installer_WP_Components_Setting_Resources::HANDLES_OTGS_INSTALLER_UI );
-	    wp_enqueue_script( OTGS_Installer_WP_Components_Setting_Resources::HANDLES_OTGS_INSTALLER_UI );
+	    wp_enqueue_style( 'otgsSwitcher' );
     }
 
     public function render(){
