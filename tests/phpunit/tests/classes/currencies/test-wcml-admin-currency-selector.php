@@ -44,7 +44,7 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 	 */
 	public function add_hooks_not_admin() {
 		$subject = $this->get_subject();
-		\WP_Mock::wpFunction( 'is_admin', [ 'return' => false ] );
+		\WP_Mock::userFunction( 'is_admin', [ 'return' => false ] );
 		$this->expectActionAdded( 'admin_enqueue_scripts', array( $subject, 'load_js' ), 10, 1, 0 );
 		$subject->add_hooks();
 	}
@@ -54,9 +54,9 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 	 */
 	public function add_hooks_yes_admin_user_can_manage() {
 		$subject = $this->get_subject();
-		\WP_Mock::wpFunction( 'is_admin', [ 'return' => true ] );
+		\WP_Mock::userFunction( 'is_admin', [ 'return' => true ] );
 
-		\WP_Mock::wpFunction( 'current_user_can', [ 'return' => true ] );
+		\WP_Mock::userFunction( 'current_user_can', [ 'return' => true ] );
 
 		\WP_Mock::expectActionAdded( 'init', array( $subject, 'set_dashboard_currency' ), 10, 1 );
 		\WP_Mock::expectActionAdded( 'wp_ajax_wcml_dashboard_set_currency', array(
@@ -84,9 +84,9 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 	 */
 	public function add_hooks_admin_user_cant_manage() {
 		$subject = $this->get_subject();
-		\WP_Mock::wpFunction( 'is_admin', [ 'return' => true ] );
+		\WP_Mock::userFunction( 'is_admin', [ 'return' => true ] );
 
-		\WP_Mock::wpFunction( 'current_user_can', [ 'return' => false ] );
+		\WP_Mock::userFunction( 'current_user_can', [ 'return' => false ] );
 
 		$this->expectActionAdded( 'init', array( $subject, 'set_dashboard_currency' ), 10, 1, 0 );
 		$this->expectActionAdded( 'wp_ajax_wcml_dashboard_set_currency',
@@ -108,9 +108,9 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 	 */
 	public function load_js() {
 		$subject = $this->get_subject();
-		\WP_Mock::wpFunction( 'wp_enqueue_script', [ 'times' => 1 ] );
-		\WP_Mock::wpFunction( 'wp_localize_script', [ 'times' => 1 ] );
-		\WP_Mock::wpFunction( 'wp_create_nonce', [ 'times' => 1, 'args' => 'wcml-admin-currency-selector' ] );
+		\WP_Mock::userFunction( 'wp_enqueue_script', [ 'times' => 1 ] );
+		\WP_Mock::userFunction( 'wp_localize_script', [ 'times' => 1 ] );
+		\WP_Mock::userFunction( 'wp_create_nonce', [ 'times' => 1, 'args' => 'wcml-admin-currency-selector' ] );
 		$subject->load_js();
 	}
 
@@ -121,7 +121,7 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject          = $this->get_subject( $woocommerce_wpml );
 
-		\WP_Mock::wpPassthruFunction( '_e' );
+		\WP_Mock::passthruFunction( '_e' );
 
 		$woocommerce_currency   = rand_str();
 		$another_currency       = rand_str();
@@ -129,8 +129,8 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 			$woocommerce_currency => rand_str(),
 			$another_currency     => rand_str()
 		];
-		\WP_Mock::wpFunction( 'get_woocommerce_currencies', [ 'return' => $woocommerce_currencies ] );
-		\WP_Mock::wpFunction( 'get_woocommerce_currency', [ 'return' => $woocommerce_currency ] );
+		\WP_Mock::userFunction( 'get_woocommerce_currencies', [ 'return' => $woocommerce_currencies ] );
+		\WP_Mock::userFunction( 'get_woocommerce_currency', [ 'return' => $woocommerce_currency ] );
 
 		$woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
 		                                         ->disableOriginalConstructor()
@@ -169,10 +169,10 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 		$subject          = $this->get_subject( $woocommerce_wpml, $currency_cookie );
 
 		$_POST['wcml_nonce'] = rand_str();
-		\WP_Mock::wpPassthruFunction( '__' );
-		\WP_Mock::wpPassthruFunction( 'sanitize_text_field' );
-		\WP_Mock::wpFunction( 'wp_verify_nonce', [ 'return' => false ] );
-		\WP_Mock::wpFunction( 'wp_send_json_error', [
+		\WP_Mock::passthruFunction( '__' );
+		\WP_Mock::passthruFunction( 'sanitize_text_field' );
+		\WP_Mock::userFunction( 'wp_verify_nonce', [ 'return' => false ] );
+		\WP_Mock::userFunction( 'wp_send_json_error', [
 				'args' => [ 'Invalid nonce', 403 ]
 			]
 		);
@@ -192,10 +192,10 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 		$currency_code       = rand_str();
 		$_POST['wcml_nonce'] = rand_str();
 		$_POST['currency']   = $currency_code;
-		\WP_Mock::wpPassthruFunction( 'sanitize_text_field' );
-		\WP_Mock::wpFunction( 'wp_verify_nonce', [ 'return' => true ] );
-		\WP_Mock::wpFunction( 'wp_send_json_error', [ 'times' => 0 ] );
-		\WP_Mock::wpFunction( 'wp_send_json_success', [ 'args' => [] ] );
+		\WP_Mock::passthruFunction( 'sanitize_text_field' );
+		\WP_Mock::userFunction( 'wp_verify_nonce', [ 'return' => true ] );
+		\WP_Mock::userFunction( 'wp_send_json_error', [ 'times' => 0 ] );
+		\WP_Mock::userFunction( 'wp_send_json_success', [ 'args' => [] ] );
 
 		$currency_cookie->expects( $this->once() )->method( 'set_value' )
 		                ->with( $currency_code, $this->isType( 'int' ) );
@@ -248,7 +248,7 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 		                ->method( 'get_value' )
 		                ->willReturn( null );
 
-		\WP_Mock::wpFunction( 'get_woocommerce_currency', [ 'return' => $currency_code ] );
+		\WP_Mock::userFunction( 'get_woocommerce_currency', [ 'return' => $currency_code ] );
 
 		$this->assertSame( $currency_code, $subject->get_cookie_dashboard_currency() );
 
@@ -268,7 +268,7 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 			'filter_dashboard_currency_symbol'
 		) );
 
-		\WP_Mock::wpFunction( 'remove_filter', [
+		\WP_Mock::userFunction( 'remove_filter', [
 				'args' => [
 					'woocommerce_currency_symbol',
 					[ $subject, 'filter_dashboard_currency_symbol' ]
@@ -276,7 +276,7 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 			]
 		);
 
-		\WP_Mock::wpFunction( 'get_woocommerce_currency_symbol', [ 'times' => 0 ] );
+		\WP_Mock::userFunction( 'get_woocommerce_currency_symbol', [ 'times' => 0 ] );
 
 		$currency = rand_str();
 
@@ -298,7 +298,7 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 			'filter_dashboard_currency_symbol'
 		) );
 
-		\WP_Mock::wpFunction( 'remove_filter', [
+		\WP_Mock::userFunction( 'remove_filter', [
 				'args' => [
 					'woocommerce_currency_symbol',
 					[ $subject, 'filter_dashboard_currency_symbol' ]
@@ -309,7 +309,7 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 		$currency                             = rand_str();
 		$_COOKIE ['_wcml_dashboard_currency'] = rand_str();
 
-		\WP_Mock::wpFunction( 'get_woocommerce_currency_symbol', [ 'return' => $_COOKIE ['_wcml_dashboard_currency'] ] );
+		\WP_Mock::userFunction( 'get_woocommerce_currency_symbol', [ 'return' => $_COOKIE ['_wcml_dashboard_currency'] ] );
 
 		$this->assertSame( $_COOKIE ['_wcml_dashboard_currency'], $subject->filter_dashboard_currency_symbol( $currency ) );
 

@@ -57,19 +57,19 @@ class WCML_Admin_Currency_Selector {
 	}
 
 	public function load_js(){
-	    wp_enqueue_script(
-	            'wcml-admin-currency-selector',
-		        $this->woocommerce_wpml->plugin_url() .
-                    '/res/js/admin-currency-selector' . $this->woocommerce_wpml->js_min_suffix() . '.js',
-                array('jquery'),
-                $this->woocommerce_wpml->version()
-        );
+		wp_enqueue_script(
+			'wcml-admin-currency-selector',
+			$this->woocommerce_wpml->plugin_url() .
+			'/res/js/admin-currency-selector' . $this->woocommerce_wpml->js_min_suffix() . '.js',
+			array( 'jquery' ),
+			$this->woocommerce_wpml->version(),
+			true
+		);
 		wp_localize_script( 'wcml-admin-currency-selector', 'wcml_admin_currency_selector',
 			array(
 				'nonce' => wp_create_nonce( self::NONCE_KEY )
 			)
 		);
-
     }
 
 	/**

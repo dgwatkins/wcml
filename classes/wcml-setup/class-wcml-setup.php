@@ -165,7 +165,7 @@ class WCML_Setup {
 			'install'
 		), WCML_VERSION );
 
-		wp_enqueue_script( 'wcml-setup', WCML_PLUGIN_URL . '/res/js/wcml-setup.js', array( 'jquery' ), WCML_VERSION );
+		wp_enqueue_script( 'wcml-setup', WCML_PLUGIN_URL . '/res/js/wcml-setup.js', array( 'jquery' ), WCML_VERSION, true );
 
 
 		$this->ui->setup_header( $this->steps, $this->step );

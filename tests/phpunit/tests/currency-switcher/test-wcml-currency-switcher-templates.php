@@ -238,18 +238,18 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 		);
 		$wcml_currency_switcher_template->method( 'has_styles' )->willReturn( true );
 		$wcml_currency_switcher_template->method( 'get_inline_style_handler' )->willReturn( 'inline_style_handler' );
-		\WP_Mock::wpFunction( 'wp_add_inline_style', array(
+		\WP_Mock::userFunction( 'wp_add_inline_style', array(
 			'times' => 2,
 		) );
-		\WP_Mock::wpFunction( 'wp_enqueue_script', array(
-			'args'   => array( 'script1_handler', 'url/to/script1.js', array(), WCML_VERSION ),
+		\WP_Mock::userFunction( 'wp_enqueue_script', array(
+			'args'   => array( 'script1_handler', 'url/to/script1.js', array(), WCML_VERSION, true ),
 			'return' => true,
 		) );
-		\WP_Mock::wpFunction( 'wp_enqueue_style', array(
+		\WP_Mock::userFunction( 'wp_enqueue_style', array(
 			'args'   => array( 'wp_enqueue_style', 'url/to/style1.css', array(), WCML_VERSION ),
 			'return' => true,
 		) );
-		\WP_Mock::wpPassthruFunction( 'wp_strip_all_tags' );
+		\WP_Mock::passthruFunction( 'wp_strip_all_tags' );
 
 		$woocommerce_wpml->cs_properties              = $this->getMockBuilder( 'WCML_Currency_Switcher_Properties' )->disableOriginalConstructor()->setMethods( array( 'is_currency_switcher_active' ) )->getMock();
 		$woocommerce_wpml->cs_properties->method( 'is_currency_switcher_active' )->with( $switcher_id, $wcml_settings )->willReturn( true );
@@ -305,31 +305,31 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
 
 
-		\WP_Mock::wpFunction( 'get_template_directory', array(
+		\WP_Mock::userFunction( 'get_template_directory', array(
 			'returns' => './',
 		));
 
-		\WP_Mock::wpFunction( 'get_stylesheet_directory', array(
+		\WP_Mock::userFunction( 'get_stylesheet_directory', array(
 			'returns' => './',
 		));
 
-		\WP_Mock::wpFunction( 'wp_upload_dir', array(
+		\WP_Mock::userFunction( 'wp_upload_dir', array(
 			'args'   => array( null, false ),
 			'returns' => './',
 		));
 
-		\WP_Mock::wpFunction( 'get_option', array(
+		\WP_Mock::userFunction( 'get_option', array(
 			'args'   => array( 'wcml_currency_switcher_template_objects' ),
 			'times' => 1,
 			'returns' => false
 		));
 
-		\WP_Mock::wpFunction( 'update_option', array(
+		\WP_Mock::userFunction( 'update_option', array(
 			'times'   => 1,
 			'returns' => true
 		));
 
-		\WP_Mock::wpPassthruFunction( 'sanitize_title_with_dashes' );
+		\WP_Mock::passthruFunction( 'sanitize_title_with_dashes' );
 
 		$subject   = $this->get_subject( $woocommerce_wpml, $wcml_file );
 		$subject->after_setup_theme_action();

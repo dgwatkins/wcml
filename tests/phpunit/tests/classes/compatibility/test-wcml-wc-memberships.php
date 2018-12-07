@@ -98,7 +98,7 @@ class Test_WCML_WC_Memberships extends OTGS_TestCase {
 		                         ->getMock();
 		$endpoints_object->method( 'get_endpoint_translation' )->willReturn( $translated_endpoint );
 
-		\WP_Mock::wpFunction( 'get_option', array(
+		\WP_Mock::userFunction( 'get_option', array(
 			'args'   => array( 'woocommerce_myaccount_members_area_endpoint', $endpoint ),
 			'return' => $endpoint,
 			'times'  => 1,
@@ -137,7 +137,7 @@ class Test_WCML_WC_Memberships extends OTGS_TestCase {
 
 		$endpoint = rand_str();
 
-		\WP_Mock::wpFunction( 'get_option', array(
+		\WP_Mock::userFunction( 'get_option', array(
 			'args'   => array( 'woocommerce_myaccount_members_area_endpoint', 'members-area' ),
 			'return' => $endpoint,
 			'times'  => 1,
@@ -173,7 +173,7 @@ class Test_WCML_WC_Memberships extends OTGS_TestCase {
 
 		$endpoint = rand_str();
 
-		\WP_Mock::wpFunction( 'get_option', array(
+		\WP_Mock::userFunction( 'get_option', array(
 			'args'   => array( 'woocommerce_myaccount_members_area_endpoint', 'members-area' ),
 			'return' => $original_endpoint,
 			'times'  => 1,
@@ -212,27 +212,28 @@ class Test_WCML_WC_Memberships extends OTGS_TestCase {
 		                 ->getMock();
 		$post->ID = random_int( 1, 1000 );
 
-		\WP_Mock::wpFunction( 'wc_get_page_id', array(
+		\WP_Mock::userFunction( 'wc_get_page_id', array(
 			'args'   => [ 'myaccount' ],
 			'return' => $post->ID
 		) );
 
-		\WP_Mock::wpFunction( 'wp_register_script', array(
+		\WP_Mock::userFunction( 'wp_register_script', array(
 			'args'  => [
 				'wcml-members-js',
 				$wcml_plugin_url . '/compatibility/res/js/wcml-members.js',
 				array( 'jquery' ),
-				$wcml_version
+				$wcml_version,
+				true
 			],
 			'times' => 1
 		) );
 
-		\WP_Mock::wpFunction( 'wp_enqueue_script', array(
+		\WP_Mock::userFunction( 'wp_enqueue_script', array(
 			'args'  => [ 'wcml-members-js' ],
 			'times' => 1
 		) );
 
-		\WP_Mock::wpFunction( 'wp_localize_script', array(
+		\WP_Mock::userFunction( 'wp_localize_script', array(
 			'args'  => [ 'wcml-members-js', 'wc_memberships_memebers_area_endpoint', Mockery::type( 'array' ) ],
 			'times' => 1
 		) );

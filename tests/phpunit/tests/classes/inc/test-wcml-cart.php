@@ -22,9 +22,9 @@ class Test_WCML_Cart extends OTGS_TestCase {
 	public function setUp(){
 		parent::setUp();
 
-		\WP_Mock::wpPassthruFunction( '__' );
-		\WP_Mock::wpPassthruFunction( 'esc_html__' );
-		\WP_Mock::wpPassthruFunction( 'esc_url' );
+		\WP_Mock::passthruFunction( '__' );
+		\WP_Mock::passthruFunction( 'esc_html__' );
+		\WP_Mock::passthruFunction( 'esc_url' );
 
 		$this->sitepress = $this->getMockBuilder('SitePress')
 			->disableOriginalConstructor()
@@ -58,7 +58,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 	 */
 	public function it_adds_correct_hooks_when_clean_cart_is_disabled(){
 
-		\WP_Mock::wpFunction( 'is_ajax', array( 'return' => false ) );
+		\WP_Mock::userFunction( 'is_ajax', array( 'return' => false ) );
 
 		$subject = $this->get_subject();
 		\WP_Mock::expectActionAdded( 'woocommerce_get_cart_item_from_session', array( $subject, 'translate_cart_contents' ) );
@@ -72,8 +72,8 @@ class Test_WCML_Cart extends OTGS_TestCase {
 	 */
 	public function it_adds_correct_hooks_when_clean_cart_is_enabled(){
 
-		\WP_Mock::wpFunction( 'wp_enqueue_script', array( 'return' => true ) );
-		\WP_Mock::wpFunction( 'wp_enqueue_style', array( 'return' => true ) );
+		\WP_Mock::userFunction( 'wp_enqueue_script', array( 'return' => true ) );
+		\WP_Mock::userFunction( 'wp_enqueue_style', array( 'return' => true ) );
 
 		$this->cart_clear_constant = 0;
 		$cart_sync_constant = 1;
@@ -159,7 +159,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		$cart_item[ 'product_id' ] = $product_id;
 		$cart_item[ 'variation_id' ] = '';
 
-		\WP_Mock::wpFunction( 'get_the_title', array(
+		\WP_Mock::userFunction( 'get_the_title', array(
 			'args' => $product_id,
 			'return' => $product_title
 		) );
@@ -208,7 +208,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		$cart_item[ 'product_id' ] = $product_id;
 		$cart_item[ 'variation_id' ] = $variation_id;
 
-		\WP_Mock::wpFunction( 'get_the_title', array(
+		\WP_Mock::userFunction( 'get_the_title', array(
 			'args' => $variation_id,
 			'return' => $variation_title
 		) );
@@ -236,7 +236,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		$cart_item_data = array();
 		$post_type = 'product_variation';
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 			'args' => $variation_id,
 			'return' => $post_type
 		) );
@@ -257,18 +257,18 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 		$woocommerce->cart->cart_contents = array( $cart_item );
 
-		\WP_Mock::wpFunction( 'WC', array(
+		\WP_Mock::userFunction( 'WC', array(
 			'return' => $woocommerce,
 			'times' => 1
 		) );
 
-		\WP_Mock::wpFunction( 'get_the_title', array(
+		\WP_Mock::userFunction( 'get_the_title', array(
 			'args' => array( $variation_id ),
 			'return' => rand_str(),
 			'times' => 1
 		) );
 
-		\WP_Mock::wpFunction( 'wc_get_cart_url', array(
+		\WP_Mock::userFunction( 'wc_get_cart_url', array(
 			'return' => rand_str(),
 			'times' => 1
 		) );
@@ -457,7 +457,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		$cart_item = array();
 		$cart_item['product_id'] = mt_rand( 1, 100 );
 
-		\WP_Mock::wpFunction( 'get_permalink', array(
+		\WP_Mock::userFunction( 'get_permalink', array(
 			'args' => array( $cart_item['product_id'] ),
 			'return' => $translated_permalink,
 		) );
@@ -479,7 +479,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		$product_id = mt_rand( 1, 10 );
 		$tr_product_id = mt_rand( 11, 20 );
 
-		\WP_Mock::wpFunction( 'taxonomy_exists', array(
+		\WP_Mock::userFunction( 'taxonomy_exists', array(
 			'args' => array( $attr_key ),
 			'return' => false
 		) );
@@ -500,14 +500,14 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		                ->disableOriginalConstructor()
 		                ->getMock();
 
-		\WP_Mock::wpFunction( 'wc_get_product', array(
+		\WP_Mock::userFunction( 'wc_get_product', array(
 			'args' => array( $cart_item[ 'variation_id' ] ),
 			'return' => $product
 		) );
 
 		$hash = rand_str();
 
-		\WP_Mock::wpFunction( 'wc_get_cart_item_data_hash', array(
+		\WP_Mock::userFunction( 'wc_get_cart_item_data_hash', array(
 			'args' => array( $product ),
 			'return' => $hash
 		) );
@@ -529,14 +529,14 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		                ->disableOriginalConstructor()
 		                ->getMock();
 
-		\WP_Mock::wpFunction( 'wc_get_product', array(
+		\WP_Mock::userFunction( 'wc_get_product', array(
 			'args' => array( $cart_item[ 'product_id' ] ),
 			'return' => $product
 		) );
 
 		$hash = rand_str();
 
-		\WP_Mock::wpFunction( 'wc_get_cart_item_data_hash', array(
+		\WP_Mock::userFunction( 'wc_get_cart_item_data_hash', array(
 			'args' => array( $product ),
 			'return' => $hash
 		) );
