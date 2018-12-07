@@ -12,12 +12,12 @@ class Test_WCML_Setup extends OTGS_TestCase {
 	public function setUp(){
 		parent::setUp();
 
-		\WP_Mock::wpPassthruFunction('__');
-		\WP_Mock::wpPassthruFunction('esc_html__');
+		\WP_Mock::passthruFunction('__');
+		\WP_Mock::passthruFunction('esc_html__');
 
 		$templates_factory_stub = Mockery::mock( 'overload:WPML_Templates_Factory' );
 
-		\WP_Mock::wpFunction( 'admin_url', array(
+		\WP_Mock::userFunction( 'admin_url', array(
 			'return' => function ( $step ) {
 				return 'admin.php?page=wcml-setup&step=' . $step;
 			}
@@ -90,7 +90,7 @@ class Test_WCML_Setup extends OTGS_TestCase {
 	public function adding_hooks_cant_manage_options(){
 		$subject = $this->get_subject();
 
-		\WP_Mock::wpFunction( 'current_user_can', array(
+		\WP_Mock::userFunction( 'current_user_can', array(
 			'args'   => 'manage_options',
 			'return' => false
 		) );
@@ -109,7 +109,7 @@ class Test_WCML_Setup extends OTGS_TestCase {
 	public function adding_hooks_can_manage_options(){
 		$subject = $this->get_subject();
 
-		\WP_Mock::wpFunction( 'current_user_can', array(
+		\WP_Mock::userFunction( 'current_user_can', array(
 			'args'   => 'manage_options',
 			'return' => true
 		) );
@@ -129,7 +129,7 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject = $this->get_subject( $woocommerce_wpml );
 
-		\WP_Mock::wpFunction( 'current_user_can', array(
+		\WP_Mock::userFunction( 'current_user_can', array(
 			'args'   => 'manage_options',
 			'return' => false
 		) );
@@ -148,7 +148,7 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject = $this->get_subject( $woocommerce_wpml );
 
-		\WP_Mock::wpFunction( 'current_user_can', array(
+		\WP_Mock::userFunction( 'current_user_can', array(
 			'args'   => 'manage_options',
 			'return' => false
 		) );
@@ -166,12 +166,12 @@ class Test_WCML_Setup extends OTGS_TestCase {
 	public function setup_redirect_no_activation_redirect(){
 		$subject = $this->get_subject();
 
-		\WP_Mock::wpFunction( 'get_transient', array(
+		\WP_Mock::userFunction( 'get_transient', array(
 			'args'   => '_wcml_activation_redirect',
 			'return' => false
 		) );
 
-		\WP_Mock::wpFunction( 'delete_transient', array(
+		\WP_Mock::userFunction( 'delete_transient', array(
 			'times' => 0
 		) );
 
@@ -184,17 +184,17 @@ class Test_WCML_Setup extends OTGS_TestCase {
 	public function setup_redirect_yes_activation_redirect_do_not_redirect_to_setup(){
 		$subject = $this->get_subject();
 
-		\WP_Mock::wpFunction( 'get_transient', array(
+		\WP_Mock::userFunction( 'get_transient', array(
 			'args'   => '_wcml_activation_redirect',
 			'return' => true
 		) );
 
-		\WP_Mock::wpFunction( 'delete_transient', array(
+		\WP_Mock::userFunction( 'delete_transient', array(
 			'args' => '_wcml_activation_redirect',
 			'times' => 1
 		) );
 
-		\WP_Mock::wpFunction( 'get_option', array(
+		\WP_Mock::userFunction( 'get_option', array(
 			'args'   => [ 'woocommerce_admin_notices', [] ],
 			'return' => array('install')
 		) );
@@ -213,17 +213,17 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject = $this->get_subject( $woocommerce_wpml );
 
-		\WP_Mock::wpFunction( 'get_transient', array(
+		\WP_Mock::userFunction( 'get_transient', array(
 			'args'   => '_wcml_activation_redirect',
 			'return' => true
 		) );
 
-		\WP_Mock::wpFunction( 'delete_transient', array(
+		\WP_Mock::userFunction( 'delete_transient', array(
 			'args' => '_wcml_activation_redirect',
 			'times' => 1
 		) );
 
-		\WP_Mock::wpFunction( 'get_option', array(
+		\WP_Mock::userFunction( 'get_option', array(
 			'args'   => [ 'woocommerce_admin_notices', [] ],
 			'return' => array()
 		) );
@@ -231,21 +231,21 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		// is_wcml_setup_page = false
 		$_GET['page'] = 'wcml-setup' . rand_str();
 
-		\WP_Mock::wpFunction( 'is_network_admin', array(
+		\WP_Mock::userFunction( 'is_network_admin', array(
 			'return' => false
 		) );
 
-		\WP_Mock::wpFunction( 'current_user_can', array(
+		\WP_Mock::userFunction( 'current_user_can', array(
 			'return' => true
 		) );
 
 		// has_completed = yes
 		$woocommerce_wpml->settings['set_up_wizard_run'] = true;
 
-		\WP_Mock::wpFunction( 'wp_safe_redirect', array(
+		\WP_Mock::userFunction( 'wp_safe_redirect', array(
 			'times' => 0
 		) );
-		\WP_Mock::wpFunction( 'wp_die', array(
+		\WP_Mock::userFunction( 'wp_die', array(
 			'times' => 0
 		) );
 
@@ -259,17 +259,17 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject = $this->get_subject( $woocommerce_wpml );
 
-		\WP_Mock::wpFunction( 'get_transient', array(
+		\WP_Mock::userFunction( 'get_transient', array(
 			'args'   => '_wcml_activation_redirect',
 			'return' => true
 		) );
 
-		\WP_Mock::wpFunction( 'delete_transient', array(
+		\WP_Mock::userFunction( 'delete_transient', array(
 			'args' => '_wcml_activation_redirect',
 			'times' => 1
 		) );
 
-		\WP_Mock::wpFunction( 'get_option', array(
+		\WP_Mock::userFunction( 'get_option', array(
 			'args'   => [ 'woocommerce_admin_notices', [] ],
 			'return' => array()
 		) );
@@ -277,21 +277,21 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		// is_wcml_setup_page = false
 		$_GET['page'] = 'wcml-setup' . rand_str();
 
-		\WP_Mock::wpFunction( 'is_network_admin', array(
+		\WP_Mock::userFunction( 'is_network_admin', array(
 			'return' => false
 		) );
 
-		\WP_Mock::wpFunction( 'current_user_can', array(
+		\WP_Mock::userFunction( 'current_user_can', array(
 			'return' => true
 		) );
 
 		// has_completed = no
 		$woocommerce_wpml->settings['set_up_wizard_run'] = false;
 
-		\WP_Mock::wpFunction( 'wp_safe_redirect', array(
+		\WP_Mock::userFunction( 'wp_safe_redirect', array(
 			'times' => 1
 		) );
-		\WP_Mock::wpFunction( 'wp_die', array(
+		\WP_Mock::userFunction( 'wp_die', array(
 			'times' => 1
 		) );
 
@@ -309,7 +309,7 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		// is_wcml_setup_page = false
 		$_GET['page'] = 'wcml-setup' . rand_str();
 
-		\WP_Mock::wpFunction( 'wp_die', array(
+		\WP_Mock::userFunction( 'wp_die', array(
 			'times' => 0
 		) );
 
@@ -340,14 +340,14 @@ class Test_WCML_Setup extends OTGS_TestCase {
 			define( 'ICL_SITEPRESS_VERSION', rand_str() );
 		}
 
-		\WP_Mock::wpFunction( 'wp_enqueue_style', array(
+		\WP_Mock::userFunction( 'wp_enqueue_style', array(
 			'times' => 2
 		) );
-		\WP_Mock::wpFunction( 'wp_enqueue_script', array(
+		\WP_Mock::userFunction( 'wp_enqueue_script', array(
 			'times' => 1
 		) );
 
-		\WP_Mock::wpFunction( 'wp_die', array(
+		\WP_Mock::userFunction( 'wp_die', array(
 			'times' => 1
 		) );
 
@@ -360,13 +360,13 @@ class Test_WCML_Setup extends OTGS_TestCase {
 	public function skip_setup_should_not_do_anything_without_get_params(){
 		$subject = $this->get_subject();
 
-		\WP_Mock::wpFunction( 'wp_verify_nonce', array(
+		\WP_Mock::userFunction( 'wp_verify_nonce', array(
 			'times' => 0
 		) );
-		\WP_Mock::wpFunction( 'remove_filter', array(
+		\WP_Mock::userFunction( 'remove_filter', array(
 			'times' => 0
 		) );
-		\WP_Mock::wpFunction( 'delete_transient', array(
+		\WP_Mock::userFunction( 'delete_transient', array(
 			'times' => 0
 		) );
 
@@ -382,25 +382,25 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		$_GET['wcml-setup-skip'] = rand_str();
 		$_GET['_wcml_setup_nonce'] = rand_str();
 
-		\WP_Mock::wpFunction( 'wp_verify_nonce', array(
+		\WP_Mock::userFunction( 'wp_verify_nonce', array(
 			'times' => 1,
 			'return' => false
 		) );
 
-		\WP_Mock::wpFunction( 'wp_die', array(
+		\WP_Mock::userFunction( 'wp_die', array(
 			'times' => 2
 		) );
 
-		\WP_Mock::wpFunction( 'current_user_can', array(
+		\WP_Mock::userFunction( 'current_user_can', array(
 			'args' => [ 'manage_options' ],
 			'return' => false
 		) );
 
-		\WP_Mock::wpFunction( 'remove_filter', array(
+		\WP_Mock::userFunction( 'remove_filter', array(
 			'times' => 1
 		) );
 
-		\WP_Mock::wpFunction( 'delete_transient', array(
+		\WP_Mock::userFunction( 'delete_transient', array(
 			'args' => '_wcml_activation_redirect',
 			'times' => 1
 		) );
@@ -417,25 +417,25 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		$_GET['wcml-setup-skip'] = rand_str();
 		$_GET['_wcml_setup_nonce'] = rand_str();
 
-		\WP_Mock::wpFunction( 'wp_verify_nonce', array(
+		\WP_Mock::userFunction( 'wp_verify_nonce', array(
 			'times' => 1,
 			'return' => true
 		) );
 
-		\WP_Mock::wpFunction( 'wp_die', array(
+		\WP_Mock::userFunction( 'wp_die', array(
 			'times' => 0
 		) );
 
-		\WP_Mock::wpFunction( 'current_user_can', array(
+		\WP_Mock::userFunction( 'current_user_can', array(
 			'args' => [ 'manage_options' ],
 			'return' => true
 		) );
 
-		\WP_Mock::wpFunction( 'remove_filter', array(
+		\WP_Mock::userFunction( 'remove_filter', array(
 			'times' => 1
 		) );
 
-		\WP_Mock::wpFunction( 'delete_transient', array(
+		\WP_Mock::userFunction( 'delete_transient', array(
 			'args' => '_wcml_activation_redirect',
 			'times' => 1
 		) );
@@ -458,7 +458,7 @@ class Test_WCML_Setup extends OTGS_TestCase {
 	 */
 	public function redirect_filters_without_next_step_url() {
 		$subject = $this->get_subject();
-		\WP_Mock::wpFunction( 'sanitize_text_field', array(
+		\WP_Mock::userFunction( 'sanitize_text_field', array(
 			'times' => 0
 		) );
 		$url = rand_str();
@@ -473,7 +473,7 @@ class Test_WCML_Setup extends OTGS_TestCase {
 
 		$_POST['next_step_url'] = rand_str();
 
-		\WP_Mock::wpFunction( 'sanitize_text_field', array(
+		\WP_Mock::userFunction( 'sanitize_text_field', array(
 			'times' => 1,
 			'args' => [ $_POST['next_step_url'] ],
 			'return' => $_POST['next_step_url']
@@ -500,11 +500,11 @@ class Test_WCML_Setup extends OTGS_TestCase {
 	public function handle_steps_invalid_nonce(){
 		$subject = $this->get_subject();
 
-		\WP_Mock::wpFunction( 'wp_create_nonce', array(
+		\WP_Mock::userFunction( 'wp_create_nonce', array(
 			'return' => rand_str()
 		) );
 
-		\WP_Mock::wpFunction( 'sanitize_text_field', array(
+		\WP_Mock::userFunction( 'sanitize_text_field', array(
 			'times' => 0
 		) );
 
@@ -521,11 +521,11 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		$_POST['handle_step'] = rand_str();
 		$_POST['nonce'] = rand_str();
 
-		\WP_Mock::wpFunction( 'wp_create_nonce', array(
+		\WP_Mock::userFunction( 'wp_create_nonce', array(
 			'return' => $_POST['nonce']
 		) );
 
-		\WP_Mock::wpFunction( 'sanitize_text_field', array(
+		\WP_Mock::userFunction( 'sanitize_text_field', array(
 			'times' => 1,
 			'args' => [ $_POST['handle_step'] ]
 		) );

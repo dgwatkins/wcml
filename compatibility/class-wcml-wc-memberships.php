@@ -73,7 +73,7 @@ class WCML_WC_Memberships {
 		if ( isset( $post->ID ) && wc_get_page_id( 'myaccount' ) == $post->ID ) {
 			$wcml_plugin_url = $this->wp_api->constant( 'WCML_PLUGIN_URL' );
 			$wcml_version    = $this->wp_api->constant( 'WCML_VERSION' );
-			wp_register_script( 'wcml-members-js', $wcml_plugin_url . '/compatibility/res/js/wcml-members.js', array( 'jquery' ), $wcml_version );
+			wp_register_script( 'wcml-members-js', $wcml_plugin_url . '/compatibility/res/js/wcml-members.js', array( 'jquery' ), $wcml_version, true );
 			wp_enqueue_script( 'wcml-members-js' );
 			wp_localize_script( 'wcml-members-js', 'wc_memberships_memebers_area_endpoint', $this->get_members_area_endpoint() );
 		}

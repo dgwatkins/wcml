@@ -1092,7 +1092,7 @@ class WCML_Bookings {
 				wp_register_style( 'wcml-bookings-css', WCML_PLUGIN_URL . '/compatibility/res/css/wcml-bookings.css', array(), WCML_VERSION );
 				wp_enqueue_style( 'wcml-bookings-css' );
 
-				wp_register_script( 'wcml-bookings-js', WCML_PLUGIN_URL . '/compatibility/res/js/wcml-bookings.js', array( 'jquery' ), WCML_VERSION );
+				wp_register_script( 'wcml-bookings-js', WCML_PLUGIN_URL . '/compatibility/res/js/wcml-bookings.js', array( 'jquery' ), WCML_VERSION, true );
 				wp_enqueue_script( 'wcml-bookings-js' );
 
 			}

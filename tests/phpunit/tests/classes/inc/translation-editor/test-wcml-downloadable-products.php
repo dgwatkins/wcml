@@ -14,10 +14,10 @@ class Test_WCML_Downloadable_Products extends OTGS_TestCase
 	{
 		parent::setUp();
 
-		\WP_Mock::wpFunction( 'wp_register_script', array( 'return' => true ) );
-		\WP_Mock::wpFunction( 'wp_register_style', array( 'return' => true ) );
-		\WP_Mock::wpFunction( 'wp_enqueue_style', array( 'return' => true ) );
-		\WP_Mock::wpFunction( 'wp_enqueue_script', array( 'return' => true ) );
+		\WP_Mock::userFunction( 'wp_register_script', array( 'return' => true ) );
+		\WP_Mock::userFunction( 'wp_register_style', array( 'return' => true ) );
+		\WP_Mock::userFunction( 'wp_enqueue_style', array( 'return' => true ) );
+		\WP_Mock::userFunction( 'wp_enqueue_script', array( 'return' => true ) );
 
 		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
 		                               ->disableOriginalConstructor()
@@ -74,7 +74,7 @@ class Test_WCML_Downloadable_Products extends OTGS_TestCase
 
 		$_POST['product_id'] = $product_id;
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 				'args' => $product_id,
 				'return' => 'product'
 			)
@@ -103,7 +103,7 @@ class Test_WCML_Downloadable_Products extends OTGS_TestCase
 
 		$_POST['product_id'] = $product_id;
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 				'args' => $product_id,
 				'return' => 'product'
 			)
@@ -126,7 +126,7 @@ class Test_WCML_Downloadable_Products extends OTGS_TestCase
 
 		$_POST['product_id'] = $product_id;
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 				'args' => $product_id,
 				'return' => rand_str()
 			)
@@ -141,7 +141,7 @@ class Test_WCML_Downloadable_Products extends OTGS_TestCase
 
 		$_GET['post'] = $product_id;
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 				'args' => $product_id,
 				'return' => rand_str()
 			)
@@ -164,7 +164,7 @@ class Test_WCML_Downloadable_Products extends OTGS_TestCase
 		$_GET['source_lang'] = rand_str();
 		$_GET['post_type']  = 'product';
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 				'args' => $product_id,
 				'return' => rand_str()
 			)

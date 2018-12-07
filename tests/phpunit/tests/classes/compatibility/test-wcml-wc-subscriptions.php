@@ -42,8 +42,8 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		WP_Mock::expectActionAdded( 'woocommerce_before_calculate_totals', array( $subject, 'maybe_backup_recurring_carts' ), 1, 1, 1 );
-		WP_Mock::expectActionAdded( 'woocommerce_after_calculate_totals', array( $subject, 'maybe_restore_recurring_carts' ), 200, 1, 1 );
+		WP_Mock::expectActionAdded( 'woocommerce_before_calculate_totals', array( $subject, 'maybe_backup_recurring_carts' ), 1, 1 );
+		WP_Mock::expectActionAdded( 'woocommerce_after_calculate_totals', array( $subject, 'maybe_restore_recurring_carts' ), 200, 1 );
 
 		\WP_Mock::wpFunction( 'wcs_cart_contains_resubscribe', array(
 			'return' => false
@@ -133,6 +133,7 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 
 		$this->assertEquals( $expected_price, $filtered_price );
 	}
+
 	/**
 	 * @test
 	 */
