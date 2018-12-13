@@ -36,21 +36,7 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 			wp_insert_term( 'variable', 'product_type' );
 		}
 
-		// Create icl_string_packages
-		$table_name = $this->wpdb->prefix . 'icl_string_packages';
-		$this->wpdb->query("
-                 CREATE TABLE IF NOT EXISTS `" . $table_name . "` (
-                  `ID` bigint(20) unsigned NOT NULL auto_increment,
-                  `kind_slug` varchar(160) NOT NULL,
-                  `kind` varchar(160) NOT NULL,
-                  `name` varchar(160) NOT NULL,
-                  `title` varchar(160) NOT NULL,
-                  `edit_link` TEXT NOT NULL,
-                  `view_link` TEXT NOT NULL,
-                  `post_id` INTEGER DEFAULT NULL,
-                  PRIMARY KEY  (`ID`)
-                )" );
-
+		WCML_Helper::create_icl_string_packages_table();
 	}
 
 	private function clear_db() {
