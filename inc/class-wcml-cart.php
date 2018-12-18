@@ -390,7 +390,7 @@ class WCML_Cart {
 	 *
 	 * @return array
 	 */
-	public function validate_cart_item_data( array $item_data, WC_Product $product ) {
+	public function validate_cart_item_data( array $item_data, $product ) {
 
 		if( $item_data['attributes'] ){
 
