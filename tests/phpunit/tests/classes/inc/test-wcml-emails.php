@@ -52,9 +52,10 @@ class Test_WCML_Emails extends OTGS_TestCase {
 	 */
 	public function it_should_change_current_language() {
 		$lang = 'pt-br';
+		$user_id = 1;
 
 		$sitepress = $this->getMockBuilder( 'SitePress' )
-			->setMethods( array( 'switch_lang', 'get_locale' ) )
+			->setMethods( array( 'switch_lang', 'get_locale', 'get_user_admin_language' ) )
 			->disableOriginalConstructor()
 			->getMock();
 
@@ -65,34 +66,14 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		\WP_Mock::userFunction( 'unload_textdomain', array() );
 		\WP_Mock::userFunction( 'load_default_textdomain', array() );
 
+		\WP_Mock::userFunction( 'get_current_user_id', array(
+			'return' => $user_id,
+		) );
+
+		$sitepress->expects( $this->once() )->method( 'get_user_admin_language' )->with()->willReturn( $lang );
 		$sitepress->expects( $this->once() )->method( 'switch_lang' )->with( $lang );
 
 		$subject->change_email_language( $lang );
-	}
-
-	/**
-	 * @test
-	 * @group wcml-2549
-	 */
-	public function it_should_not_change_current_language_when_page_is_shop_order() {
-		$_POST['post_type'] = 'shop_order';
-		$lang = 'pt-br';
-
-		$sitepress = $this->getMockBuilder( 'SitePress' )
-		                  ->setMethods( array( 'switch_lang', 'get_locale' ) )
-		                  ->disableOriginalConstructor()
-		                  ->getMock();
-
-		$subject = new WCML_Emails( $this->woocommerce_wpml, $sitepress, $this->woocommerce, $this->wpdb );
-
-		\Mockery::mock( 'overload:WP_Locale' );
-
-		\WP_Mock::userFunction( 'unload_textdomain', array() );
-		\WP_Mock::userFunction( 'load_default_textdomain', array() );
-
-		$sitepress->expects( $this->never() )->method( 'switch_lang' );
-		$subject->change_email_language( $lang );
-		unset( $_POST['post_type'] );
 	}
 
 	/**
