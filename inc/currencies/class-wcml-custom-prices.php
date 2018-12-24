@@ -35,7 +35,7 @@ class WCML_Custom_Prices{
     }
 
     public function get_product_custom_prices( $product_id, $currency = false ){
-        global $wpdb, $sitepress;
+        global $wpdb;
 
         if( empty( $currency ) ){
             $currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
@@ -51,19 +51,7 @@ class WCML_Custom_Prices{
 	    $cache_custom_prices = wp_cache_get( $cache_key, $cache_group, false, $cache_found );
 	    if( $cache_found ) return $cache_custom_prices;
 
-
-	    $original_product_id = $product_id;
-        $post_type = get_post_type($product_id);
-        $product_translations = $sitepress->get_element_translations($sitepress->get_element_trid($product_id, 'post_'.$post_type), 'post_'.$post_type);
-        foreach($product_translations as $translation){
-            if( $translation->original ){
-                $original_product_id = $translation->element_id;
-                break;
-            }
-        }
-
-        $product_meta = get_post_custom($original_product_id);
-
+        $product_meta = get_post_custom( $this->woocommerce_wpml->products->get_original_product_id( $product_id ) );
         $custom_prices = false;
 
         if( !empty( $product_meta['_wcml_custom_prices_status'][0] ) ){

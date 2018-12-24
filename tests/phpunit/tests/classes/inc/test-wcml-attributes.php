@@ -13,6 +13,8 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 	private $woocommerce_wpml;
 	/** @var Sitepress */
 	private $sitepress;
+	/** @var WPML_Post_Translation */
+	private $post_translations;
 	/** @var wpdb */
 	private $wpdb;
 	/** @var WPML_WP_API $wp_api */
@@ -29,6 +31,16 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		                                         ->disableOriginalConstructor()
 		                                         ->setMethods( array( 'is_product_display_as_translated_post_type' ) )
 		                                         ->getMock();
+
+		$this->post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
+			->disableOriginalConstructor()
+			->setMethods( array( 'get_source_lang_code', 'get_element_translations' ) )
+			->getMock();
+
+		$this->wpml_term_translations = $this->getMockBuilder( 'WPML_Term_Translation' )
+			->disableOriginalConstructor()
+			->setMethods( array( ) )
+			->getMock();
 
 		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
 			->disableOriginalConstructor()
@@ -50,7 +62,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 	 * @return WCML_Attributes
 	 */
 	private function get_subject(){
-		$subject = new WCML_Attributes( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
+		$subject = new WCML_Attributes( $this->woocommerce_wpml, $this->sitepress, $this->post_translations, $this->wpml_term_translations, $this->wpdb );
 
 		return $subject;
 	}
@@ -804,39 +816,28 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$sitepress->method( 'get_default_language' )
 		          ->willReturn( $default_language );
 
-		$subject        = new WCML_Attributes( $this->woocommerce_wpml, $sitepress, $this->wpdb );
-		$product_id     = 2;
+		$this->product_id     = 2;
 		$translation_id = 3;
 		$meta_key       = '_product_attributes';
-		$lang_code      = 'pt-br';
+		$this->lang_code      = 'pt';
 
-		$translation = $this->getMockBuilder( 'WPML_Post_Element' )
-		                    ->setMethods( array( 'get_source_language_code', 'get_id' ) )
-		                    ->disableOriginalConstructor()
-		                    ->getMock();
+		$translations = array(
+			$default_language => $this->product_id,
+			$this->lang_code => $translation_id
+		);
 
-		$translation->method( 'get_source_language_code' )
-		            ->willReturn( $default_language );
+		$that = $this;
+		$this->post_translations->method( 'get_source_lang_code' )->willReturnCallback( function ( $id ) use ( $that ) {
+			if ( $this->product_id == $id ) {
+				return null;
+			} else {
+				return $this->lang_code;
+			}
+		} );
 
-		$translation->method( 'get_id' )
-		            ->willReturn( $translation_id );
+		$this->post_translations->method( 'get_element_translations' )->with( $this->product_id )->willReturn( $translations );
 
-		$element_translation = $this->getMockBuilder( 'WPML_Post_Element' )
-		                            ->setMethods( array( 'get_translations', 'get_source_language_code' ) )
-		                            ->disableOriginalConstructor()
-		                            ->getMock();
-
-		$element_translation->method( 'get_source_language_code' )
-		                    ->willReturn( null );
-
-		$element_translation->method( 'get_translations' )
-		                    ->willReturn( array( $translation ) );
-
-		$translation_element_factory = \Mockery::mock( 'overload:WPML_Translation_Element_Factory' );
-		$translation_element_factory->shouldReceive( 'create_post' )
-		                            ->with( $product_id )
-		                            ->andReturn( $element_translation );
-
+		$subject        = new WCML_Attributes( $this->woocommerce_wpml, $sitepress, $this->post_translations, $this->wpml_term_translations, $this->wpdb );
 
 		$status_helper = $this->getMockBuilder( 'WPML_Post_Status' )
 		                      ->setMethods( array( 'set_update_status' ) )
@@ -850,7 +851,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 			'return' => $status_helper
 		) );
 
-		$subject->set_translation_status_as_needs_update( 1, $product_id, $meta_key );
+		$subject->set_translation_status_as_needs_update( 1, $this->product_id, $meta_key );
 	}
 
 	/**
@@ -858,7 +859,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 	 * @group wcml-2551
 	 */
 	public function it_should_not_set_translation_status_as_needs_update_when_meta_field_is_not_product_attributes() {
-		$subject    = new WCML_Attributes( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
+		$subject    = new WCML_Attributes( $this->woocommerce_wpml, $this->sitepress, $this->post_translations, $this->wpml_term_translations, $this->wpdb );
 		$product_id = 2;
 		$meta_key   = 'any_other_meta_field';
 

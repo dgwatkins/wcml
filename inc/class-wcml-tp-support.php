@@ -198,11 +198,9 @@ class WCML_TP_Support {
 					$translated_variation_id = apply_filters( 'translate_object_id', $variation_id, 'product_variation', false, $language );
 
 				} else {
-					global $sitepress;
-					$trid         = $sitepress->get_element_trid( $variation_id, 'post_product_variation' );
-					$translations = $sitepress->get_element_translations( $trid, 'post_product_variation', true, true, true );
-
-					$translated_variation_id = isset( $translations[ $language ] ) ? $translations[ $language ]->element_id : false;
+					global $wpml_post_translations;
+					$translations            = $wpml_post_translations->get_element_translations( $variation_id );
+					$translated_variation_id = isset( $translations[ $language ] ) ? $translations[ $language ] : false;
 
 				}
 

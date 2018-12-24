@@ -10,16 +10,20 @@ class WCML_Comments {
 	private $woocommerce_wpml;
 	/** @var Sitepress */
 	private $sitepress;
+	/** @var WPML_Post_Translation */
+	private $post_translations;
 
 	/**
 	 * WCML_Comments constructor.
 	 *
 	 * @param woocommerce_wpml $woocommerce_wpml
 	 * @param SitePress $sitepress
+	 * @param WPML_Post_Translation $post_translations
 	 */
-	public function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress ) {
-		$this->woocommerce_wpml = $woocommerce_wpml;
-		$this->sitepress        = $sitepress;
+	public function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress, WPML_Post_Translation $post_translations ) {
+		$this->woocommerce_wpml  = $woocommerce_wpml;
+		$this->sitepress         = $sitepress;
+		$this->post_translations = $post_translations;
 	}
 
 	public function add_hooks() {
@@ -58,15 +62,14 @@ class WCML_Comments {
 	 */
 	public function recalculate_comment_rating( $product_id ){
 
-		$trid                  = $this->sitepress->get_element_trid( $product_id, 'post_product' );
-		$translations          = $this->sitepress->get_element_translations( $trid, 'post_product', false, true );
+		$translations          = $this->post_translations->get_element_translations( $product_id );
 		$average_ratings_sum   = 0;
 		$average_ratings_count = 0;
 		$reviews_count         = 0;
 
 		foreach ( $translations as $translation ) {
-			$ratings      = get_post_meta( $translation->element_id, '_wc_rating_count', true );
-			$review_count = get_post_meta( $translation->element_id, self::WC_REVIEW_COUNT_KEY, true );
+			$ratings      = get_post_meta( $translation, '_wc_rating_count', true );
+			$review_count = get_post_meta( $translation, self::WC_REVIEW_COUNT_KEY, true );
 
 			if ( $ratings ) {
 				foreach ( $ratings as $rating => $count ) {
@@ -82,8 +85,8 @@ class WCML_Comments {
 			$average_rating = number_format( $average_ratings_sum / $average_ratings_count, 2, '.', '' );
 
 			foreach ( $translations as $translation ) {
-				update_post_meta( $translation->element_id, self::WCML_AVERAGE_RATING_KEY, $average_rating );
-				update_post_meta( $translation->element_id, self::WCML_REVIEW_COUNT_KEY, $reviews_count );
+				update_post_meta( $translation, self::WCML_AVERAGE_RATING_KEY, $average_rating );
+				update_post_meta( $translation, self::WCML_REVIEW_COUNT_KEY, $reviews_count );
 			}
 		}
 
@@ -149,15 +152,9 @@ class WCML_Comments {
 	 */
 	private function get_translations_ids_list( $product_id ){
 
-		$trid         = $this->sitepress->get_element_trid( $product_id, 'post_product' );
-		$translations = $this->sitepress->get_element_translations( $trid, 'post_product', false, true );
+		$translations = $this->post_translations->get_element_translations( $product_id );
 
-		$ids = array();
-		foreach ( $translations as $translation ) {
-			$ids[] = $translation->element_id;
-		}
-
-		return implode( ',', array_filter( $ids ) );
+		return implode( ',', array_filter( $translations ) );
 
 	}
 
@@ -219,7 +216,7 @@ class WCML_Comments {
 	public function add_comment_flag( $comment ) {
 
 		if ( $this->is_reviews_in_all_languages( $comment->comment_post_ID ) ) {
-			$comment_language = $this->sitepress->get_language_for_element( $comment->comment_post_ID, 'post_product' );
+			$comment_language = $this->post_translations->get_element_lang_code( $comment->comment_post_ID );
 
 			$html = '<div style="float: left; padding-right: 5px;">';
 			$html .= '<img src="' . $this->sitepress->get_flag_url( $comment_language ) . '" width=18" height="12">';

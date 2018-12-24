@@ -133,7 +133,7 @@ class woocommerce_wpml {
 	}
 
     public function init(){
-        global $sitepress, $wpdb, $woocommerce, $wpml_url_converter;
+        global $sitepress, $wpdb, $woocommerce, $wpml_url_converter, $wpml_post_translations, $wpml_term_translations;
 
         $this->load_rest_api();
 
@@ -201,7 +201,7 @@ class woocommerce_wpml {
         $this->sync_product_data    = new WCML_Synchronize_Product_Data( $this, $sitepress, $wpdb );
         $this->sync_product_data->add_hooks();
         $this->duplicate_product    = new WCML_WC_Admin_Duplicate_Product( $this, $sitepress, $wpdb );
-        $this->products             = new WCML_Products( $this, $sitepress, $wpdb );
+        $this->products             = new WCML_Products( $this, $sitepress, $wpml_post_translations, $wpdb );
         $this->products->add_hooks();
         $this->store                = new WCML_Store_Pages ($this, $sitepress ) ;
 	    $this->store->add_hooks();
@@ -211,7 +211,7 @@ class woocommerce_wpml {
 		$this->emails->add_hooks();
         $this->terms                = new WCML_Terms( $this, $sitepress, $wpdb );
         $this->terms->add_hooks();
-		$this->attributes           = new WCML_Attributes( $this, $sitepress, $wpdb );
+		$this->attributes           = new WCML_Attributes( $this, $sitepress, $wpml_post_translations, $wpml_term_translations, $wpdb );
         $this->attributes->add_hooks();
         $this->orders               = new WCML_Orders( $this, $sitepress );
         $this->shipping             = new WCML_WC_Shipping( $sitepress );
@@ -242,7 +242,7 @@ class woocommerce_wpml {
         $this->wcml_products_screen->init();
         $this->cart_sync_warnings = new WCML_Cart_Sync_Warnings( $this, $sitepress );
         $this->cart_sync_warnings->add_hooks();
-	    $this->comments = new WCML_Comments( $this, $sitepress );
+	    $this->comments = new WCML_Comments( $this, $sitepress, $wpml_post_translations );
 	    $this->comments->add_hooks();
 
 	    $payment_method_filter = new WCML_Payment_Method_Filter();

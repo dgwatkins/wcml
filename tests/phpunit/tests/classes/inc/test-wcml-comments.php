@@ -30,8 +30,14 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		            ->getMock();
 	}
 
+	private function get_wpml_post_translations() {
+		return $this->getMockBuilder( 'WPML_Post_Translation' )
+		            ->disableOriginalConstructor()
+		            ->getMock();
+	}
 
-	private function get_subject( $woocommerce_wpml = false, $sitepress = false ){
+
+	private function get_subject( $woocommerce_wpml = false, $sitepress = false, $wpml_post_translations = false ){
 		
 		if( !$woocommerce_wpml ){
 			$woocommerce_wpml = $this->get_woocommerce_wpml();
@@ -40,8 +46,12 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		if( !$sitepress ){
 			$sitepress = $this->get_sitepress();
 		}
+
+		if( !$wpml_post_translations ){
+			$wpml_post_translations = $this->get_wpml_post_translations();
+		}
 		
-		return new WCML_Comments( $woocommerce_wpml, $sitepress );
+		return new WCML_Comments( $woocommerce_wpml, $sitepress, $wpml_post_translations );
 	}
 
 	/**
@@ -73,23 +83,17 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$_POST['comment_post_ID'] = $product_id;
 		
 		$translations = array();
-		$translation = new stdClass();
-		$translation->element_id = $product_id;
-		$translations[] = $translation;
+		$translations[] = $product_id;
+		$translations[] = $translated_product_id;
 
-		$translation = new stdClass();
-		$translation->element_id = $translated_product_id;
-		$translations[] = $translation;
-		
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
 		     ->disableOriginalConstructor()
-		     ->setMethods( array( 'get_element_trid', 'get_element_translations' ) )
+		     ->setMethods( array( 'get_element_translations' ) )
 		     ->getMock();
 
-		$sitepress->method( 'get_element_trid' )->with( $product_id )->willReturn( $trid );
-		$sitepress->method( 'get_element_translations' )->with( $trid )->willReturn( $translations );
+		$wpml_post_translations->method( 'get_element_translations' )->with( $product_id )->willReturn( $translations );
 		
-		$subject = $this->get_subject( false, $sitepress );
+		$subject = $this->get_subject( false, false, $wpml_post_translations );
 		
 		\WP_Mock::wpFunction( 'get_post_type', array(
 			'args'   => array( $product_id ),
@@ -255,23 +259,17 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		));
 		
 		$translations = array();
-		$translation = new stdClass();
-		$translation->element_id = $product_id;
-		$translations[] = $translation;
+		$translations[] = $product_id;
+		$translations[] = $translated_product_id;
 
-		$translation = new stdClass();
-		$translation->element_id = $translated_product_id;
-		$translations[] = $translation;
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
+		                               ->disableOriginalConstructor()
+		                               ->setMethods( array( 'get_element_translations' ) )
+		                               ->getMock();
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
-		                  ->disableOriginalConstructor()
-		                  ->setMethods( array( 'get_element_trid', 'get_element_translations' ) )
-		                  ->getMock();
+		$wpml_post_translations->expects( $this->once() )->method( 'get_element_translations' )->with( $product_id )->willReturn( $translations );
 
-		$sitepress->expects( $this->once() )->method( 'get_element_trid' )->with( $product_id )->willReturn( $trid );
-		$sitepress->expects( $this->once() )->method( 'get_element_translations' )->with( $trid )->willReturn( $translations );
-
-		$subject = $this->get_subject( false, $sitepress );
+		$subject = $this->get_subject( false, false, $wpml_post_translations );
 		
 		$clauses = array();
 		$clauses['where'] = 'comment_post_ID = ' . $product_id;
@@ -441,11 +439,17 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_language_for_element', 'get_flag_url' ) )
 		                  ->getMock();
-		
-		$sitepress->method( 'get_language_for_element' )->with( $comment->comment_post_ID )->willReturn( $language );
+
 		$sitepress->method( 'get_flag_url' )->with( $language )->willReturn( $flag_url );
 
-		$subject = $this->get_subject( false, $sitepress );
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
+		                               ->disableOriginalConstructor()
+		                               ->setMethods( array( 'get_element_lang_code' ) )
+		                               ->getMock();
+
+		$wpml_post_translations->method( 'get_element_lang_code' )->with( $comment->comment_post_ID )->willReturn( $language );
+
+		$subject = $this->get_subject( false, $sitepress, $wpml_post_translations );
 		
 		ob_start();
 		$subject->add_comment_flag( $comment );

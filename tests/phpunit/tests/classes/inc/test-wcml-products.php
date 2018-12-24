@@ -40,6 +40,11 @@ class Test_WCML_Products extends OTGS_TestCase {
 		                               ->disableOriginalConstructor()
 		                               ->getMock();
 
+		$this->wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
+		                                     ->disableOriginalConstructor()
+		                                     ->setMethods( array( 'get_original_element', 'get_source_lang_code' ) )
+		                                     ->getMock();
+
 		$this->wpdb = $this->stubs->wpdb();
 
 		$this->wpml_cache = $this->getMockBuilder( 'WPML_WP_Cache' )
@@ -67,7 +72,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 	 * @return WCML_Products
 	 */
 	private function get_subject(){
-		$subject = new WCML_Products( $this->woocommerce_wpml, $this->sitepress, $this->wpdb, $this->wpml_cache );
+		$subject = new WCML_Products( $this->woocommerce_wpml, $this->sitepress, $this->wpml_post_translations, $this->wpdb, $this->wpml_cache );
 
 		return $subject;
 	}
@@ -116,18 +121,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$original_product_id = rand( 1, 100 );
 		$language = rand_str();
 
-		$this->sitepress->method( 'get_current_language' )
-			->wilLReturn( $this->default_language );
-
-		\WP_Mock::wpFunction( 'wp_cache_get', array(
-			'return' => $language
-		) );
-
-		\WP_Mock::wpFunction( 'get_post_type', array(
-			'return' => 'product'
-		) );
-
-		\WP_Mock::onFilter( 'translate_object_id' )->with( $product_id, 'product', false, $language )->reply( $original_product_id );
+		$this->wpml_post_translations->method( 'get_original_element' )->with( $product_id )->wilLReturn( $original_product_id );
 
 		$subject = $this->get_subject();
 		$subject_original_product_id = $subject->get_original_product_id( $product_id );
@@ -291,16 +285,8 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'return' => true
 		));
 
-		WP_Mock::userFunction( 'wp_cache_get', array(
-			'return' => false
-		));
-
-		WP_Mock::userFunction( 'get_post_type', array(
-			'args'  => array( $product_id ),
-			'return' => 'product'
-		));
-
-		\WP_Mock::onFilter( 'translate_object_id' )->with( $product_id, 'product', true, $original_language )->reply( $original_product_id );
+		$this->wpml_post_translations->method( 'get_source_lang_code' )->with( $product_id )->wilLReturn( 'en' );
+		$this->wpml_post_translations->method( 'get_original_element' )->with( $product_id )->wilLReturn( $original_product_id );
 
 		$subject = $this->get_subject();
 		$is_customer_bought_product = $subject->is_customer_bought_product( false, $user_email, $user_id, $product_id );

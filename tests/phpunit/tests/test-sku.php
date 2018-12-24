@@ -10,10 +10,22 @@ class Test_SKU extends OTGS_TestCase {
 	 */
 	private function get_stubs() {
 		$wcml      = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
-		$sitepress = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->setMethods( array( 'get_element_trid' ) )->getMock();
+		$sitepress = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )->disableOriginalConstructor()->setMethods( array( 'get_element_trid' ) )->getMock();
 		$wpdb      = $this->stubs->wpdb();
 
-		return array( $wcml, $sitepress, $wpdb );
+		return array( $wcml, $sitepress, $wpml_post_translations, $wpdb );
+	}
+
+	/**
+	 * @return WCML_Products
+	 */
+	private function get_subject(){
+		//Stubs
+		list( $wcml, $sitepress, $wpml_post_translations, $wpdb ) = $this->get_stubs();
+
+		// Test
+		return new WCML_Products( $wcml, $sitepress, $wpml_post_translations, $wpdb );
 	}
 
 	/**
@@ -22,11 +34,7 @@ class Test_SKU extends OTGS_TestCase {
 	function it_must_return_false_if_sku_is_not_found() {
 		WP_Mock::wpFunction( 'is_admin', array( 'return' => false ) );
 
-		//Stubs
-		list( $wcml, $sitepress, $wpdb ) = $this->get_stubs();
-
-		// Test
-		$subject = new WCML_Products( $wcml, $sitepress, $wpdb );
+		$subject = $this->get_subject();
 
 		$this->assertFalse( $subject->check_product_sku( false, mt_rand(), 'test_sku' ) );
 	}
@@ -40,13 +48,13 @@ class Test_SKU extends OTGS_TestCase {
 		WP_Mock::wpPassthruFunction( 'wp_slash' );
 
 		//Stubs
-		list( $wcml, $sitepress, $wpdb ) = $this->get_stubs();
+		list( $wcml, $sitepress, $wpml_post_translations, $wpdb ) = $this->get_stubs();
 
 		//Mocks
 		$wpdb->method( 'get_results' )->willReturn( array() );
 
 		// Test
-		$subject = new WCML_Products( $wcml, $sitepress, $wpdb );
+		$subject = new WCML_Products( $wcml, $sitepress, $wpml_post_translations, $wpdb );
 
 		$this->assertFalse( $subject->check_product_sku( true, mt_rand(), 'test_sku' ) );
 	}
@@ -60,7 +68,7 @@ class Test_SKU extends OTGS_TestCase {
 		WP_Mock::wpPassthruFunction( 'wp_slash' );
 
 		//Stubs
-		list( $wcml, $sitepress, $wpdb ) = $this->get_stubs();
+		list( $wcml, $sitepress, $wpml_post_translations, $wpdb ) = $this->get_stubs();
 
 		//Mocks
 		$trid                = mt_rand();
@@ -75,7 +83,7 @@ class Test_SKU extends OTGS_TestCase {
 
 		$products = array( $product_a->ID => $product_a, $product_b->ID => $product_b );
 
-		$sitepress->method( 'get_element_trid' )->willReturnCallback(
+		$wpml_post_translations->method( 'get_element_trid' )->willReturnCallback(
 			function ( $product_id ) use ( $products ) {
 				return $products[ $product_id ]->trid;
 			}
@@ -84,7 +92,7 @@ class Test_SKU extends OTGS_TestCase {
 		$wpdb->method( 'get_results' )->willReturn( $products );
 
 		// Test
-		$subject = new WCML_Products( $wcml, $sitepress, $wpdb );
+		$subject = new WCML_Products( $wcml, $sitepress, $wpml_post_translations, $wpdb );
 
 		$this->assertFalse( $subject->check_product_sku( true, $original_product_id, 'test_sku' ) );
 	}
@@ -98,7 +106,7 @@ class Test_SKU extends OTGS_TestCase {
 		WP_Mock::wpPassthruFunction( 'wp_slash' );
 
 		//Stubs
-		list( $wcml, $sitepress, $wpdb ) = $this->get_stubs();
+		list( $wcml, $sitepress, $wpml_post_translations, $wpdb ) = $this->get_stubs();
 
 		//Mocks
 		$trid                = mt_rand();
@@ -113,7 +121,7 @@ class Test_SKU extends OTGS_TestCase {
 
 		$products = array( $product_a->ID => $product_a, $product_b->ID => $product_b );
 
-		$sitepress->method( 'get_element_trid' )->willReturnCallback(
+		$wpml_post_translations->method( 'get_element_trid' )->willReturnCallback(
 			function ( $product_id ) use ( $products ) {
 				return $products[ $product_id ]->trid;
 			}
@@ -122,7 +130,7 @@ class Test_SKU extends OTGS_TestCase {
 		$wpdb->method( 'get_results' )->willReturn( $products );
 
 		// Test
-		$subject = new WCML_Products( $wcml, $sitepress, $wpdb );
+		$subject = new WCML_Products( $wcml, $sitepress, $wpml_post_translations, $wpdb );
 
 		$this->assertTrue( $subject->check_product_sku( true, $original_product_id, 'test_sku' ) );
 	}
