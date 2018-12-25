@@ -21,6 +21,11 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 			->setMethods( array( 'is_a_taxonomy' ) )
 			->getMock();
 
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+			->disableOriginalConstructor()
+			->setMethods( array( 'get_original_product_language' ) )
+			->getMock();
+
 		$this->tp = $this->getMockBuilder( 'WPML_Element_Translation_Package' )
 			->disableOriginalConstructor()
 			->setMethods( array( 'encode_field_data' ) )
@@ -47,6 +52,7 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 		$subject = $this->get_subject();
 
 		\WP_Mock::expectFilterAdded( 'wpml_tm_translation_job_data', array( $subject, 'append_custom_attributes_to_translation_package' ), 10, 2 );
+		\WP_Mock::expectActionAdded( 'wpml_translation_job_saved',   array( $subject, 'save_custom_attribute_translations' ), 10, 3 );
 
 		$subject->add_hooks();
 	}
@@ -113,6 +119,102 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 			array( 'external' ),
 			array( 'grouped' )
 		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_save_custom_attribute_translations(){
+
+		$product_id = 1;
+		$data = array(
+			'wc_attribute_name:custom'    =>
+				array(
+					'data'       => 'custom es',
+					'finished'   => 1,
+					'tid'        => '65',
+					'field_type' => 'wc_attribute_name:custom',
+					'format'     => 'base64',
+				),
+			'wc_attribute_value:0:custom' =>
+				array(
+					'data'       => 'val es',
+					'finished'   => 1,
+					'tid'        => '66',
+					'field_type' => 'wc_attribute_value:0:custom',
+					'format'     => 'base64',
+				),
+			'wc_attribute_value:1:custom' =>
+				array(
+					'data'       => 'val2 es',
+					'finished'   => 1,
+					'tid'        => '67',
+					'field_type' => 'wc_attribute_value:1:custom',
+					'format'     => 'base64',
+				),
+		);
+		$job = new stdClass();
+		$job->language_code = 'es';
+		$original_post_language = 'en';
+		$original_product_id = 2;
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $product_id, 'attr_label_translations', true ),
+			'return' => false
+		) );
+
+		$product_attributes = array();
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $product_id, '_product_attributes', true ),
+			'return' => $product_attributes
+		) );
+
+		$this->woocommerce_wpml->products->method( 'get_original_product_language' )->willReturn( $original_post_language );
+
+		\WP_Mock::onFilter( 'translate_object_id' )->with( $product_id, 'product', false, $original_post_language  )->reply( $original_product_id );
+
+		$original_product_attributes = array (
+			'custom' =>
+				array (
+					'name' => 'custom',
+					'value' => 'val | val2',
+					'position' => 0,
+					'is_visible' => 1,
+					'is_taxonomy' => 0,
+				),
+		);
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $original_product_id, '_product_attributes', true ),
+			'return' => $original_product_attributes
+		) );
+
+		$expected_product_attributes = $original_product_attributes;
+		$expected_product_attributes['custom']['name'] = 'custom es';
+		$expected_product_attributes['custom']['value'] = 'val es | val2 es';
+
+		\WP_Mock::wpFunction( 'update_post_meta', array(
+			'args' => array( $product_id, '_product_attributes', $expected_product_attributes ),
+			'times' => 1,
+			'return' => true
+		) );
+
+		$expected_product_attributes_labels = array(
+			'es' =>
+				array(
+					'custom' => 'custom es'
+				),
+		);
+
+		\WP_Mock::wpFunction( 'update_post_meta', array(
+			'args' => array( $product_id, 'attr_label_translations', $expected_product_attributes_labels ),
+			'times' => 1,
+			'return' => true
+		) );
+
+		$subject = $this->get_subject();
+		$subject->save_custom_attribute_translations( $product_id, $data, $job );
 	}
 
 }
