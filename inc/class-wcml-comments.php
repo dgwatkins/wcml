@@ -174,16 +174,21 @@ class WCML_Comments {
 
 		if ( ! isset( $_GET['clang'] ) || $current_language === $_GET['clang'] ) {
 			$comments_link = add_query_arg( array( 'clang' => 'all' ), $current_url );
-			$reviews_count = $this->get_reviews_count( 'all' );
-			$comments_link_text = sprintf( __( 'Show reviews in all languages  (%s)', 'woocommerce-multilingual'), $reviews_count);
+			$all_languages_reviews_count = $this->get_reviews_count( 'all' );
+			$current_language_reviews_count = $this->get_reviews_count();
+
+			if( $all_languages_reviews_count > $current_language_reviews_count ){
+				$comments_link_text = sprintf( __( 'Show reviews in all languages  (%s)', 'woocommerce-multilingual'), $all_languages_reviews_count);
+			}
 		} elseif ( 'all' === $_GET['clang'] ) {
+
+			$current_language_reviews_count = $this->get_reviews_count();
 			$comments_link    = add_query_arg( array( 'clang' => $current_language ), $current_url );
 			$language_details = $this->sitepress->get_language_details( $current_language );
-			$reviews_count = $this->get_reviews_count( );
-			$comments_link_text = sprintf( __( 'Show only reviews in %s (%s)', 'woocommerce-multilingual'), $language_details['display_name'], $reviews_count );
+			$comments_link_text = sprintf( __( 'Show only reviews in %s (%s)', 'woocommerce-multilingual'), $language_details['display_name'], $current_language_reviews_count );
 		}
 
-		if( isset( $reviews_count ) && $reviews_count ){
+		if( isset( $comments_link_text ) && $comments_link_text ){
 			echo '<p><a id="lang-comments-link" href="' . $comments_link . '">' . $comments_link_text . '</a></p>';
 		}
 

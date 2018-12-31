@@ -322,7 +322,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$product_id = mt_rand( 1, 100 );
 
 		\WP_Mock::wpFunction( 'get_the_ID', array(
-			'times'   => 4,
+			'times'   => 6,
 			'return' => $product_id
 		));
 
@@ -366,11 +366,17 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$_GET['clang'] = $current_language;
 		$new_query_args = array( 'clang' => 'all' );
 		$expected_url   = $url . '?' . http_build_query( $new_query_args );
-		$wcml_review_count = mt_rand( 101, 200 );
+		$current_review_count = mt_rand( 201, 300 );
+		$all_wcml_review_count = mt_rand( 301, 400 );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_wc_review_count', true ),
+			'return' => $current_review_count
+		));
 
 		\WP_Mock::wpFunction( 'get_post_meta', array(
 			'args'   => array( $product_id, '_wcml_review_count', true ),
-			'return' => $wcml_review_count
+			'return' => $all_wcml_review_count
 		));
 
 		\WP_Mock::wpFunction( 'add_query_arg', array(
@@ -382,7 +388,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$subject->comments_link( array() );
 		$link = ob_get_clean();
 
-		$expected_link = '<p><a id="lang-comments-link" href="' . $expected_url . '">Show reviews in all languages  ('.$wcml_review_count.')</a></p>';
+		$expected_link = '<p><a id="lang-comments-link" href="' . $expected_url . '">Show reviews in all languages  ('.$all_wcml_review_count.')</a></p>';
 		$this->assertEquals( $expected_link, $link );
 	}
 	
