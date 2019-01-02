@@ -145,7 +145,7 @@ class Test_WCML_Payment_Gateway_Bacs extends OTGS_TestCase {
 	 */
 	public function it_should_filter_bacs_accounts() {
 
-		$accounts = array( 'Test' => array( 'settings' ), 'Test2' => array( 'settings' ) );
+		$accounts = array( 'Test' => array( 'settings1' ), 'Test2' => array( 'settings2' ) );
 		$client_currency = 'USD';
 
 		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
@@ -173,6 +173,51 @@ class Test_WCML_Payment_Gateway_Bacs extends OTGS_TestCase {
 
 		$filtered_accounts = $subject->filter_bacs_accounts( $accounts );
 		$expected_filtered_accounts = array( $accounts[ 'Test' ] );
+
+		$this->assertSame( $expected_filtered_accounts, $filtered_accounts );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_all_in_bacs_accounts() {
+
+		$accounts = array( 'Test' => array( 'settings1' ), 'Test2' => array( 'settings2' ), 'Test3' => array( 'settings3' ) );
+		$client_currency = 'USD';
+
+		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                               ->disableOriginalConstructor()
+		                                               ->setMethods( array( 'get_client_currency' ) )
+		                                               ->getMock();
+
+		$this->woocommerce_wpml->multi_currency->method('get_client_currency')->willReturn( $client_currency );
+
+
+		$gateway = $this->getMockBuilder('WC_Payment_Gateway')
+		                ->disableOriginalConstructor()
+		                ->getMock();
+		$gateway->id = 'id';
+		$gateway->title = 'title';
+		$gateway->settings = array( $client_currency => array( 'currency' => 'EUR', 'value' => 'all_in' ) );
+
+		WP_Mock::userFunction( 'get_option', array(
+			'args' => array( WCML_Payment_Gateway::OPTION_KEY.$gateway->id, array() ),
+			'times' => 1,
+			'return' => $gateway->settings
+		));
+
+		$bacs_accounts_currencies = array( 'Test' => 'EUR', 'Test2' =>'USD', 'Test3' =>'EUR' );
+
+		WP_Mock::userFunction( 'get_option', array(
+			'args' => array( 'wcml_bacs_accounts_currencies', array() ),
+			'times' => 1,
+			'return' => $bacs_accounts_currencies
+		));
+
+		$subject = $this->get_subject( $gateway );
+
+		$filtered_accounts = $subject->filter_bacs_accounts( $accounts );
+		$expected_filtered_accounts = array( $accounts[ 'Test' ], $accounts[ 'Test3' ] );
 
 		$this->assertSame( $expected_filtered_accounts, $filtered_accounts );
 	}

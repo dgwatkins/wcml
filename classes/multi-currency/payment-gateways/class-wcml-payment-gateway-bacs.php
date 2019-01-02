@@ -13,6 +13,7 @@ class WCML_Payment_Gateway_Bacs extends WCML_Payment_Gateway {
 				'currency_label' => __( 'Currency', 'woocommerce-multilingual' ),
 				'setting_label'  => __( 'Bank Account', 'woocommerce-multilingual' ),
 				'all_label'      => __( 'All Accounts', 'woocommerce-multilingual' ),
+				'all_in_label'   => __( 'All in selected currency', 'woocommerce-multilingual' ),
 				'tooltip'        => __( 'Set the currency in which your customer will see the final price when they checkout. Choose which accounts they will see in their payment message.', 'woocommerce-multilingual' )
 			),
 			'gateway_id'        => $this->get_id(),
@@ -38,10 +39,21 @@ class WCML_Payment_Gateway_Bacs extends WCML_Payment_Gateway {
 		$gateway_setting = $this->get_setting( $client_currency );
 
 		if ( $gateway_setting && 'all' !== $gateway_setting['value'] ) {
-			return array( $accounts[ $gateway_setting['value'] ] );
+
+			if( 'all_in' === $gateway_setting['value'] ){
+				$allowed_accounts = array();
+				$bacs_accounts_currencies = get_option( WCML_WC_Gateways::WCML_BACS_ACCOUNTS_CURRENCIES_OPTION, array() );
+				foreach ( $bacs_accounts_currencies as $account_key => $currency ){
+					if( $gateway_setting['currency'] === $currency ){
+						$allowed_accounts[] = $accounts[ $account_key ];
+					}
+				}
+			}else{
+				$allowed_accounts[] = $accounts[ $gateway_setting['value'] ];
+			}
 		}
 
-		return $accounts;
+		return $allowed_accounts ? $allowed_accounts : $accounts;
 	}
 
 }

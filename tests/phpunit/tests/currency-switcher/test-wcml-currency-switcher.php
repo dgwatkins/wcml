@@ -136,7 +136,7 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 				'id' => mt_rand( 101, 200 ),
 			),
 			'sidebar1' => array(
-				'id' => mt_rand( 1, 100 ),
+				'id' => mt_rand( 201, 300 ),
 			),
 		);
 
