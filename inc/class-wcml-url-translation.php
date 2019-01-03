@@ -821,7 +821,7 @@ class WCML_Url_Translation {
 	public function get_source_slug_language( $base ) {
 
 		if ( $base == 'shop' ) {
-			$source_language = $this->sitepress->get_language_for_element( get_option( 'woocommerce_shop_page_id' ), 'post_page' );
+			$source_language = $this->sitepress->get_language_for_element( wc_get_page_id( 'shop' ), 'post_page' );
 		} elseif ( in_array( $base, array( 'product', 'product_cat', 'product_tag', 'attribute' ) ) ) {
 			$source_language = $this->woocommerce_wpml->strings->get_string_language( $base, $this->url_strings_context(), $this->url_string_name( $base ) );
 		} elseif ( strpos( $base, 'attribute_slug-' ) === 0 ) {
@@ -847,7 +847,7 @@ class WCML_Url_Translation {
 		$language            = $_POST['language'];
 
 		if ( $original_base == 'shop' ) {
-			$original_shop_id   = get_option( 'woocommerce_shop_page_id' );
+			$original_shop_id   = wc_get_page_id( 'shop' );
 			$translated_shop_id = apply_filters( 'translate_object_id', $original_shop_id, 'page', false, $language );
 
 			if ( ! is_null( $translated_shop_id ) ) {

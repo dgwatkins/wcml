@@ -100,7 +100,7 @@ class WCML_Translation_Editor{
         }
 
         $post_type = get_post_type( $post->ID );
-        $checkout_page_id = get_option( 'woocommerce_checkout_page_id' );
+        $checkout_page_id = wc_get_page_id( 'checkout' );
 
 	    if ( $post_type === 'product' || is_page( $checkout_page_id ) ){
             $output = '';
