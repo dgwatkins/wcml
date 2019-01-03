@@ -224,8 +224,8 @@ class WCML_Dependencies {
 		$allsame = true;
 		if ( version_compare( WOOCOMMERCE_VERSION, "2.0.0" ) >= 0 ) {
 		} else {
-			$shop_page_id = get_option( 'woocommerce_shop_page_id', false );
-			if ( ! empty( $shop_page_id ) ) {
+			$shop_page_id = wc_get_page_id( 'shop' );
+			if ( $shop_page_id ) {
 				$slug      = @get_post( $shop_page_id )->post_name;
 				$languages = $sitepress->get_active_languages();
 				if ( sizeof( $languages ) < 2 ) {

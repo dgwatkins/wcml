@@ -132,7 +132,7 @@ class WCML_Endpoints {
 			foreach ( $languages_codes as $language_code ) {
 				$this->sitepress->switch_lang( $language_code );
 
-				$my_account_page_id = get_option( 'woocommerce_myaccount_page_id' );
+				$my_account_page_id = wc_get_page_id( 'myaccount' );
 
 				if ( $my_account_page_id ) {
 					$my_account_page = get_post( $my_account_page_id );

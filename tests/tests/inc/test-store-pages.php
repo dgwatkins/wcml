@@ -14,7 +14,7 @@ class Test_WCML_Store_Pages extends WCML_UnitTestCase {
 		WC_Install::create_pages();
 		$check_pages = $this->woocommerce_wpml->store->get_wc_pages();
 		foreach( $check_pages as $page ){
-			$page_id = get_option($page);
+			$page_id = wc_get_page_id( $page );
 			$this->orig_pages[ $page ] = $page_id;
 			$this->sitepress->set_element_language_details( $page_id, 'post_page', false, $this->sitepress->get_default_language() );
 		}
@@ -25,10 +25,10 @@ class Test_WCML_Store_Pages extends WCML_UnitTestCase {
 
 		$wc_pages = $this->woocommerce_wpml->store->get_wc_pages();
 
-		$this->assertTrue( in_array( 'woocommerce_shop_page_id', $wc_pages ) );
-		$this->assertTrue( in_array( 'woocommerce_cart_page_id', $wc_pages ) );
-		$this->assertTrue( in_array( 'woocommerce_checkout_page_id', $wc_pages ) );
-		$this->assertTrue( in_array( 'woocommerce_myaccount_page_id', $wc_pages ) );
+		$this->assertTrue( in_array( 'shop', $wc_pages ) );
+		$this->assertTrue( in_array( 'cart', $wc_pages ) );
+		$this->assertTrue( in_array( 'checkout', $wc_pages ) );
+		$this->assertTrue( in_array( 'myaccount', $wc_pages ) );
 	}
 
 	function test_get_missing_store_pages(){
