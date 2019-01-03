@@ -25,7 +25,7 @@ class WCML_Store_URLs_UI extends WPML_Templates_Factory {
 			),
 			'shop_base' => array(
 				'flag' => $this->sitepress->get_flag_url( $this->woocommerce_wpml->url_translation->get_source_slug_language( 'shop' ) ),
-				'orig_value' => get_post( get_option('woocommerce_shop_page_id' ) )->post_name,
+				'orig_value' => get_post( wc_get_page_id( 'shop' ) )->post_name,
 				'statuses' => $this->get_base_translations_statuses( 'shop', $this->active_languages ),
 			),
 			'product_base' => array(

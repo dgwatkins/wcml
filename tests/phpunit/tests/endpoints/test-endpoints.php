@@ -218,9 +218,9 @@ class Test_Endpoints extends OTGS_TestCase {
 		$woocommerce_my_account_page_id = mt_rand( 1, 100 );
 		/** @noinspection SpellCheckingInspection */
 		WP_Mock::wpFunction(
-			'get_option',
+			'wc_get_page_id',
 			array(
-				'args'   => array( 'woocommerce_myaccount_page_id' ),
+				'args'   => array( 'myaccount' ),
 				'return' => $woocommerce_my_account_page_id,
 			)
 		);
