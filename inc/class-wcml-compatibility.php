@@ -161,11 +161,6 @@ class WCML_Compatibility {
 			$this->wc_checkout_addons = new WCML_Checkout_Addons();
 		}
 
-		// woocommerce checkout addons
-		if ( wp_get_theme() == 'Flatsome' ) {
-			$this->flatsome = new WCML_Flatsome();
-		}
-
 		if ( class_exists( 'WC_Mix_and_Match' ) ) {
 			$this->mix_and_match_products = new WCML_Mix_and_Match_Products();
 		}
@@ -180,8 +175,13 @@ class WCML_Compatibility {
 			$this->adventure_tours->add_hooks();
 		}
 
+		// flatsome theme
+		if ( wp_get_theme()->get( 'Name' ) === 'Flatsome' ) {
+			$this->flatsome = new WCML_Flatsome();
+		}
+
 		//Aurum Theme
-		if ( wp_get_theme() == 'Aurum' ) {
+		if ( wp_get_theme()->get( 'Name' ) === 'Aurum' ) {
 			new WCML_Aurum();
 		}
 
