@@ -265,6 +265,12 @@ class WCML_Compatibility {
 			$this->wpfastestcache->add_hooks();
 		}
 
+		// WooCommerce Product Type Column
+		if ( class_exists( 'WC_Product_Type_Column' ) ) {
+			$this->wc_type_column = new WCML_WC_Product_Type_Column();
+			$this->wc_type_column->add_hooks();
+		}
+
 	}
 
 }

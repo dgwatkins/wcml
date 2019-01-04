@@ -371,10 +371,8 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
 
             //categories list
             $this->assertNotEmpty( $cols->item(3) );
-            //product type
-            $this->assertNotEmpty( $cols->item(4) );
             //product date
-            $this->assertNotEmpty( $cols->item(5) );
+            $this->assertNotEmpty( $cols->item(4) );
         }
     }
 
