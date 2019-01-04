@@ -62,7 +62,6 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 		\WP_Mock::expectActionAdded( 'woocommerce_get_cart_item_from_session', array( $subject, 'translate_cart_contents' ) );
-		\WP_Mock::expectFilterAdded( 'woocommerce_cart_needs_payment', array( $subject, 'use_cart_contents_total_for_needs_payment' ), 10, 2 );
 
 		$subject->add_hooks();
 	}
@@ -137,19 +136,6 @@ class Test_WCML_Cart extends OTGS_TestCase {
 	 * @test
 	 */
 	public function translate_cart_contents(){
-
-		$check_wc_version = '3.0.0';
-		$wc_version = '3.0.0';
-		$this->wp_api->expects( $this->once() )
-			->method( 'constant' )
-			->with( 'WC_VERSION' )
-			->willReturn( $wc_version );
-
-		$this->wp_api->expects( $this->once() )
-			->method( 'version_compare' )
-			->with( $wc_version, $check_wc_version, '>=' )
-			->willReturn( true );
-
 		$subject = $this->get_subject();
 
 		$product_id = rand( 1, 100 );
@@ -179,48 +165,6 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		$expected_cart_item[ 'data_hash' ] = '';
 
 		$this->assertEquals( $expected_cart_item, $translated_cart_item );
-	}
-
-	/**
-	 * @test
-	 */
-	public function translate_cart_contents_for_deprecated_wc(){
-
-		$product_id = rand( 1, 100 );
-		$variation_id = rand( 1, 100 );
-		$variation_title = rand_str();
-		$check_wc_version = '3.0.0';
-		$wc_version = '2.7.0';
-
-		$this->wp_api->expects( $this->once() )
-			->method( 'constant' )
-			->with( 'WC_VERSION' )
-			->willReturn( $wc_version );
-
-		$this->wp_api->expects( $this->once() )
-			->method( 'version_compare' )
-			->with( $wc_version, $check_wc_version, '>=' )
-			->willReturn( false );
-
-		$subject = $this->get_subject();
-
-		$cart_item = array();
-		$cart_item[ 'product_id' ] = $product_id;
-		$cart_item[ 'variation_id' ] = $variation_id;
-
-		\WP_Mock::userFunction( 'get_the_title', array(
-			'args' => $variation_id,
-			'return' => $variation_title
-		) );
-
-		$cart_item[ 'data' ] = new stdClass();
-		$cart_item[ 'data' ]->post = new stdClass();
-		$cart_item[ 'data' ]->post->post_title = rand_str();
-
-		$translated_cart_item = $subject->translate_cart_contents( $cart_item );
-
-		$this->assertEquals( $variation_title, $translated_cart_item[ 'data' ]->post->post_title );
-
 	}
 
 	/**
@@ -297,93 +241,6 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 		$this->assertFalse( $alert_dialog );
 
-	}
-
-	/**
-	 * @test
-	 */
-	public function use_cart_contents_total_for_needs_payment_does_need() {
-		$subject = $this->get_subject();
-		$needs = false;
-		$cart = $this->getMockBuilder( 'WC_Cart' )->disableOriginalConstructor()->getMock();
-
-		$cart->cart_contents_total = random_int( 1, 100 );
-
-		$wc = $this->getMockBuilder( 'woocommerce' )->disableOriginalConstructor()->getMock();
-		$wc->version = '3.1';
-		WP_Mock::userFunction( 'WC', ['times' => 1, 'return' => $wc] );
-
-		$this->assertTrue( $subject->use_cart_contents_total_for_needs_payment( $needs, $cart ) );
-
-		unset($cart->cart_contents_total);
-		$cart->total = random_int( 1, 100 );
-		WP_Mock::userFunction( 'WC', ['times' => 1, 'return' => $wc] );
-		$this->assertTrue( $subject->use_cart_contents_total_for_needs_payment( $needs, $cart ) );
-	}
-
-	/**
-	 * @test
-	 */
-	public function use_cart_contents_total_for_needs_payment_doesnt_need() {
-		$subject = $this->get_subject();
-		$needs = false;
-		$cart = $this->getMockBuilder( 'WC_Cart' )->disableOriginalConstructor()->getMock();
-
-		$wc = $this->getMockBuilder( 'woocommerce' )->disableOriginalConstructor()->getMock();
-		$wc->version = '3.1';
-		WP_Mock::userFunction( 'WC', ['times' => 1, 'return' => $wc] );
-
-		$cart->cart_contents_total = 0;
-
-		$this->assertFalse( $subject->use_cart_contents_total_for_needs_payment( $needs, $cart ) );
-	}
-
-	/**
-	 * @test
-	 */
-	public function use_cart_contents_total_for_needs_payment_dont_filter_when_woocommerce_32() {
-		$subject = $this->get_subject();
-		$needs = rand_str( 32 );
-		$cart = $this->getMockBuilder( 'WC_Cart' )->disableOriginalConstructor()->getMock();
-
-		$wc = $this->getMockBuilder( 'woocommerce' )->disableOriginalConstructor()->getMock();
-		$wc->version = '3.2';
-		WP_Mock::userFunction( 'WC', ['times' => 1, 'return' => $wc] );
-		$cart->cart_contents_total = random_int( 1, 100 );
-
-		$this->assertSame( $needs, $subject->use_cart_contents_total_for_needs_payment( $needs, $cart ) );
-	}
-
-	/**
-	 * @test
-	 */
-	public function use_cart_contents_total_for_needs_payment_doesnt_filter() {
-		$subject = $this->get_subject();
-		$needs = rand_str( 32 );
-		$cart = $this->getMockBuilder( 'WC_Cart' )->disableOriginalConstructor()->getMock();
-
-		$wc = $this->getMockBuilder( 'woocommerce' )->disableOriginalConstructor()->getMock();
-		$wc->version = '3.2';
-		WP_Mock::userFunction( 'WC', ['times' => 1, 'return' => $wc] );
-
-		$this->assertSame( $needs, $subject->use_cart_contents_total_for_needs_payment( $needs, $cart ) );
-	}
-
-	/**
-	 * @test
-	 */
-	public function use_cart_contents_total_for_needs_payment_recurring_payment() {
-		$subject = $this->get_subject();
-		$needs = false;
-		$cart = $this->getMockBuilder( 'WC_Cart' )->disableOriginalConstructor()->getMock();
-
-		$wc = $this->getMockBuilder( 'woocommerce' )->disableOriginalConstructor()->getMock();
-		$wc->version = '3.1';
-		WP_Mock::userFunction( 'WC', ['times' => 1, 'return' => $wc] );
-
-		$cart->recurring_carts = array();
-
-		$this->assertTrue( $subject->use_cart_contents_total_for_needs_payment( $needs, $cart ) );
 	}
 
 	/**

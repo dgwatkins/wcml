@@ -36,48 +36,11 @@ class Test_WCML_Ajax_Setup extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function on_init_hooks_before_wc_3_3()
+	public function add_hooks()
 	{
 		\WP_Mock::wpFunction( 'wpml_is_ajax', array(
 			'return' => true
 		) );
-
-		$check_version = '3.3';
-		$wc_version = '2.7.0';
-
-		$this->wp_api->expects( $this->once() )
-			->method('constant')
-			->with('WC_VERSION')
-			->willReturn( $wc_version );
-		$this->wp_api->expects($this->once())
-			->method('version_compare')
-			->with($wc_version, $check_version, '<')
-			->willReturn(true);
-
-		$subject = $this->get_subject();
-		\WP_Mock::expectFilterAdded( 'woocommerce_params', array( $subject, 'filter_woocommerce_ajax_params' ) );
-		$subject->init();
-	}
-
-	/**
-	 * @test
-	 */
-	public function on_init_hooks_from_wc_3_3()
-	{
-		\WP_Mock::wpFunction( 'wpml_is_ajax', array(
-			'return' => true
-		) );
-
-		$check_version = '3.3';
-		$wc_version = '3.3';
-		$this->wp_api->expects( $this->once() )
-			->method( 'constant' )
-			->with( 'WC_VERSION' )
-			->willReturn( $wc_version );
-		$this->wp_api->expects( $this->once() )
-			->method( 'version_compare' )
-			->with( $wc_version, $check_version, '<' )
-			->willReturn( false );
 
 		$subject = $this->get_subject();
 		\WP_Mock::expectFilterAdded( 'woocommerce_get_script_data', array( $subject, 'add_language_parameter_to_ajax_url' ) );

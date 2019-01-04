@@ -178,29 +178,7 @@ class WCML_Url_Translation {
 		}
 
 		$slug = $this->get_woocommerce_product_base();
-
-		if ( version_compare( WPML_ST_VERSION, '2.2.6', '>' ) ) {
-
-			// Use new API for WPML ST > 2.2.6
-			do_action( 'wpml_activate_slug_translation', 'product', $slug );
-
-		} else {
-
-			// force_product_slug_translation_on
-			$iclsettings = $this->sitepress->get_settings();
-			if ( empty( $iclsettings['posts_slug_translation']['on'] ) || empty( $iclsettings['posts_slug_translation']['types']['product'] ) ) {
-				$iclsettings['posts_slug_translation']['on']               = 1;
-				$iclsettings['posts_slug_translation']['types']['product'] = 1;
-				$this->sitepress->save_settings( $iclsettings );
-			}
-
-			$string = icl_get_string_id( $slug, $this->url_strings_context(), $this->url_string_name( 'product' ) );
-			if ( ! $string ) {
-				do_action( 'wpml_register_single_string', $this->url_strings_context(), $this->url_string_name( 'product' ), trim( $slug, '/' ) );
-			}
-
-		}
-
+		do_action( 'wpml_activate_slug_translation', 'product', $slug );
 	}
 
 	function get_woocommerce_product_base() {
@@ -945,13 +923,7 @@ class WCML_Url_Translation {
 			$product_slug = $this->woocommerce_wpml->strings->product_permalink_slug();
 		}
 
-		if ( version_compare( WPML_ST_VERSION, '2.3', '>=' ) ) {
-			$translated_slug = apply_filters( 'wpml_get_translated_slug', $product_slug, 'product', $language );
-		} elseif ( apply_filters( 'wpml_slug_translation_available', false ) ) {
-			$translated_slug = apply_filters( 'wpml_get_translated_slug', 'product', $language );
-		} else {
-			$translated_slug = apply_filters( 'wpml_translate_single_string', $product_slug, $this->url_strings_context(), $this->url_string_name( 'product' ) );
-		}
+		$translated_slug = apply_filters( 'wpml_get_translated_slug', $product_slug, 'product', $language );
 
 		return $translated_slug;
 	}

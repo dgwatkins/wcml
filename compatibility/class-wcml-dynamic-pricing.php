@@ -97,7 +97,7 @@ class WCML_Dynamic_Pricing {
 				$cat_ids[$i] = apply_filters( 'translate_object_id', $cat_id, 'product_cat', true );
 			}
 
-			$process_discounts = is_object_in_term( WooCommerce_Functions_Wrapper::get_product_id( $_product ), 'product_cat', $cat_ids );
+			$process_discounts = is_object_in_term( $_product->get_id(), 'product_cat', $cat_ids );
 		}
 
 		return $process_discounts;

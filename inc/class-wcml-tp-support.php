@@ -51,7 +51,7 @@ class WCML_TP_Support {
 		if ( $post->post_type === 'product' ) {
 
 			$product      = wc_get_product( $post->ID );
-			$product_type = WooCommerce_Functions_Wrapper::get_product_type( $post->ID );
+			$product_type = $product->get_type();
 
 			if ( ! empty( $product ) ) {
 
@@ -153,11 +153,9 @@ class WCML_TP_Support {
 			/** @var WC_Product_Variable $product */
 			$product = wc_get_product( $post->ID );
 
-			$product_type = WooCommerce_Functions_Wrapper::get_product_type( $post->ID );
-
 			$allowed_variations_types = apply_filters( 'wcml_xliff_allowed_variations_types', array( 'variable' ) );
 
-			if ( ! empty( $product ) && in_array( $product_type, $allowed_variations_types, true ) ) {
+			if ( ! empty( $product ) && in_array( $product->get_type(), $allowed_variations_types, true ) ) {
 
 				$variations = $product->get_available_variations();
 

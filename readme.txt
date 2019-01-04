@@ -4,7 +4,7 @@ Donate link: http://wpml.org/documentation/related-projects/woocommerce-multilin
 Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multilingual, e-shop, shop
 License: GPLv2
 Requires at least: 3.9
-Tested up to: 4.9.8
+Tested up to: 5.0.2
 Stable tag: 4.3.6
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
@@ -46,7 +46,7 @@ When you need help, go to [WooCommerce Multilingual support forum](http://wpml.o
 
 = Downloads =
 
-This version of WooCommerce Multilingual works with WooCommerce > 2.1
+This version of WooCommerce Multilingual works with WooCommerce > 3.3.0
 
 You will also need [WPML](http://wpml.org), together with the String Translation and the Translation Management modules, which are part of the [Multilingual CMS](http://wpml.org/purchase/) package.
 
@@ -54,9 +54,9 @@ You will also need [WPML](http://wpml.org), together with the String Translation
 
 WooCommerce Multilingual checks that the following versions of WPML and their components are active:
 
-* WPML Multilingual CMS       - 3.4
-* WPML String Translation     - 2.0
-* WPML Translation Management - 2.2
+* WPML Multilingual CMS       - 4.0
+* WPML String Translation     - 2.8
+* WPML Translation Management - 2.6
 
 Without having all these running, WooCommerce Multilingual will not be able to run.
 
@@ -68,10 +68,10 @@ Without having all these running, WooCommerce Multilingual will not be able to r
 * PHP version 5.6 or later
 * MySQL version 5.6 or later
 
-* WooCommerce 2.1 or later
-* WPML Multilingual CMS 3.4 or later
-* WPML String Translation 2.0 or later
-* WPML Translation Management 2.2 or later
+* WooCommerce 3.3.0 or later
+* WPML Multilingual CMS 4.0 or later
+* WPML String Translation 2.8 or later
+* WPML Translation Management 2.6 or later
 
 = WordPress automatic installation =
 In your WordPress dashboard, go to the Plugins section and click 'Add new'.

@@ -42,7 +42,6 @@ class WCML_Store_Pages{
         if(!is_admin()){
             add_filter('pre_get_posts', array($this, 'shop_page_query'), 9);
             add_filter('icl_ls_languages', array($this, 'translate_ls_shop_url'));
-            add_filter('parse_request', array($this, 'adjust_shop_page'));
         }
         
         add_filter( 'woocommerce_create_page_id', array( $this, 'check_store_page_id'), 10 ,3 );
@@ -283,24 +282,6 @@ class WCML_Store_Pages{
         return $languages;
     }
 
-    function adjust_shop_page($q) {
-
-	    $is_wc_prior_3_3 = $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.3', '<' );
-
-        if ( $is_wc_prior_3_3 && $this->sitepress->get_default_language() != $this->sitepress->get_current_language() ) {
-            if (!empty($q->query_vars['pagename'])) {
-                $shop_page = get_post( wc_get_page_id('shop') );
-                // we should explode by / for children page
-                $query_var_page = explode('/',$q->query_vars['pagename']);
-                if (isset($shop_page->post_name) && ( ( $shop_page->post_name == $query_var_page[count($query_var_page)-1]) || (  $shop_page->post_name == strtolower($query_var_page[count($query_var_page)-1]) ) ) ) {
-                    unset($q->query_vars['page']);
-                    unset($q->query_vars['pagename']);
-                    $q->query_vars['post_type'] = 'product';
-                }
-            }
-        }
-    }
-
     function create_missing_store_pages_with_redirect(){
         $this->create_missing_store_pages();
 
@@ -399,13 +380,9 @@ class WCML_Store_Pages{
 
     private function switch_lang( $lang_code = false ){
 
-    	$st_prior_2_6 = version_compare( $this->sitepress->get_wp_api()->constant( 'WPML_ST_VERSION' ), '2.6.0', '<' );
+	    $is_mo_loading_disabled = WPML_Theme_Localization_Type::USE_ST_AND_NO_MO_FILES === $this->sitepress->get_setting('theme_localization_type' );
 
-    	if( !$st_prior_2_6 ){
-		    $is_mo_loading_disabled = WPML_Theme_Localization_Type::USE_ST_AND_NO_MO_FILES === $this->sitepress->get_setting('theme_localization_type' );
-	    }
-
-    	if( $st_prior_2_6 || !$is_mo_loading_disabled  ){
+    	if( !$is_mo_loading_disabled  ){
 		    $this->woocommerce_wpml->locale->switch_locale( $lang_code );
 	    }else{
 		    $this->sitepress->switch_lang( $lang_code );

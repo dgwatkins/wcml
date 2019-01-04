@@ -22,15 +22,8 @@ class Test_WCML_Tab_Manager extends OTGS_TestCase {
 
 		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
 			->disableOriginalConstructor()
-			->setMethods( array( 'get_wp_api' ) )
 			->getMock();
 
-		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )
-			->disableOriginalConstructor()
-			->setMethods( array( 'constant', 'version_compare' ) )
-			->getMock();
-
-		$this->sitepress->method( 'get_wp_api' )->willReturn( $this->wp_api );
 
 		$this->woocommerce_wpml = $this->getMockBuilder('woocommerce_wpml')
 			->disableOriginalConstructor()
@@ -56,18 +49,9 @@ class Test_WCML_Tab_Manager extends OTGS_TestCase {
 	 * @test
 	 */
 	public function add_hooks(){
-
-		$wcml_version = '4.0.0';
-
 		$subject = $this->get_subject();
 
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
-
-		$this->wp_api->expects( $this->once() )
-			->method( 'constant' )
-			->with( 'WCML_VERSION' )
-			->willReturn( $wcml_version );
-
 		\WP_Mock::expectFilterAdded( 'wcml_do_not_display_custom_fields_for_product', array( $subject, 'replace_tm_editor_custom_fields_with_own_sections' ) );
 		$subject->add_hooks();
 

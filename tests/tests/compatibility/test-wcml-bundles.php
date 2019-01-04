@@ -418,7 +418,7 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 
 		$new_cart_item = $product_bundles->resync_bundle( $cart_item, false, false );
 
-		$new_id = version_compare( WC()->version, '3.0.0', '<') ? $new_cart_item[ 'data' ]->id : $new_cart_item[ 'data' ]->get_id();
+		$new_id = $new_cart_item[ 'data' ]->get_id();
 		$this->assertEquals( $this->test_data->translated_bundle_product->id, $new_id );
 
 		$this->sitepress->switch_lang( $this->default_language );

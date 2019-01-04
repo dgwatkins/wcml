@@ -2,24 +2,26 @@
 
 class WCML_Attributes{
 
-    /** @var woocommerce_wpml */
-    private $woocommerce_wpml;
-    /** @var Sitepress */
-    private $sitepress;
-    /** @var WPML_Post_Translation */
-    private $post_translations;
-    /** @var wpdb */
-    private $wpdb;
+	/** @var woocommerce_wpml */
+	private $woocommerce_wpml;
+	/** @var Sitepress */
+	private $sitepress;
+	/** @var WPML_Post_Translation */
+	private $post_translations;
+	/** @var WPML_Term_Translation */
+	private $term_translations;
+	/** @var wpdb */
+	private $wpdb;
 
-    /**
-     * WCML_Attributes constructor.
-     *
-     * @param woocommerce_wpml $woocommerce_wpml
-     * @param SitePress $sitepress
-     * @param WPML_Post_Translation $post_translations
-     * @param WPML_Term_Translation $term_translations
-     * @param wpdb $wpdb
-     */
+	/**
+	 * WCML_Attributes constructor.
+	 *
+	 * @param woocommerce_wpml $woocommerce_wpml
+	 * @param SitePress $sitepress
+	 * @param WPML_Post_Translation $post_translations
+	 * @param WPML_Term_Translation $term_translations
+	 * @param wpdb $wpdb
+	 */
 	public function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress, WPML_Post_Translation $post_translations, WPML_Term_Translation $term_translations, wpdb $wpdb ) {
 		$this->woocommerce_wpml  = $woocommerce_wpml;
 		$this->sitepress         = $sitepress;
@@ -40,12 +42,7 @@ class WCML_Attributes{
             $this->icl_custom_tax_sync_options();
         }
 
-        $deprecated_wc = $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.0.0', '<' );
-        if ( $deprecated_wc ) {
-            add_filter( 'woocommerce_get_product_attributes', array( $this, 'filter_adding_to_cart_product_attributes_names' ) );
-        }else{
-            add_filter( 'woocommerce_product_get_attributes', array( $this, 'filter_adding_to_cart_product_attributes_names' ) );
-        }
+        add_filter( 'woocommerce_product_get_attributes', array( $this, 'filter_adding_to_cart_product_attributes_names' ) );
 
 	    if ( $this->woocommerce_wpml->products->is_product_display_as_translated_post_type() ) {
 		    add_filter( 'woocommerce_available_variation', array(
@@ -520,7 +517,7 @@ class WCML_Attributes{
     function filter_dropdown_variation_attribute_options_args( $args ){
 
         if( isset( $args['attribute'] ) && isset( $args['product'] ) ){
-            $args['attribute'] = $this->filter_attribute_name( $args['attribute'],  WooCommerce_Functions_Wrapper::get_product_id( $args['product'] ) );
+            $args['attribute'] = $this->filter_attribute_name( $args['attribute'],  $args['product']->get_id() );
 
             if( $this->woocommerce_wpml->products->is_product_display_as_translated_post_type() ){
 	            foreach( $args[ 'options' ] as $key => $attribute_value ){

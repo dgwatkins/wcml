@@ -86,40 +86,36 @@ class woocommerce_wpml {
 
     }
 
-    private function load_rest_api(){
+    private function load_rest_api() {
 	    global $sitepress, $wpdb, $wpml_query_filter, $wpml_post_translations;
 
 	    $WCML_REST_API = new WCML_REST_API();
 
-	    if ( class_exists( 'WooCommerce' ) && defined( 'WC_VERSION' ) && ! is_null( $sitepress ) ) {
-		    if ( version_compare( WC_VERSION, '2.6', '>=' ) && $WCML_REST_API->is_rest_api_request() ) {
-			    $wcml_rest_api_query_filters_products = new WCML_REST_API_Query_Filters_Products( $wpml_query_filter );
-			    $wcml_rest_api_query_filters_orders   = new WCML_REST_API_Query_Filters_Orders( $wpdb );
-			    $wcml_rest_api_query_filters_terms    = new WCML_REST_API_Query_Filters_Terms( $sitepress );
-			    if( 1 === $WCML_REST_API->get_api_request_version() ) {
-				    $wcml_rest_api_support = new WCML_REST_API_Support_V1(
-					    $this,
-					    $sitepress,
-					    $wcml_rest_api_query_filters_products,
-					    $wcml_rest_api_query_filters_orders,
-					    $wcml_rest_api_query_filters_terms,
-					    $wpml_post_translations
-				    );
-			    }else{
-				    $wcml_rest_api_support = new WCML_REST_API_Support(
-					    $this,
-					    $sitepress,
-					    $wpdb,
-					    $wcml_rest_api_query_filters_products,
-					    $wcml_rest_api_query_filters_orders,
-					    $wcml_rest_api_query_filters_terms,
-					    $wpml_post_translations
-				    );
-			    }
-			    $wcml_rest_api_support->add_hooks();
+	    if ( class_exists( 'WooCommerce' ) && defined( 'WC_VERSION' ) && ! is_null( $sitepress ) && $WCML_REST_API->is_rest_api_request() ) {
+		    $wcml_rest_api_query_filters_products = new WCML_REST_API_Query_Filters_Products( $wpml_query_filter );
+		    $wcml_rest_api_query_filters_orders   = new WCML_REST_API_Query_Filters_Orders( $wpdb );
+		    $wcml_rest_api_query_filters_terms    = new WCML_REST_API_Query_Filters_Terms( $sitepress );
+		    if ( 1 === $WCML_REST_API->get_api_request_version() ) {
+			    $wcml_rest_api_support = new WCML_REST_API_Support_V1(
+				    $this,
+				    $sitepress,
+				    $wcml_rest_api_query_filters_products,
+				    $wcml_rest_api_query_filters_orders,
+				    $wcml_rest_api_query_filters_terms,
+				    $wpml_post_translations
+			    );
 		    } else {
-			    new WCML_WooCommerce_Rest_API_Support( $this, $sitepress );
+			    $wcml_rest_api_support = new WCML_REST_API_Support(
+				    $this,
+				    $sitepress,
+				    $wpdb,
+				    $wcml_rest_api_query_filters_products,
+				    $wcml_rest_api_query_filters_orders,
+				    $wcml_rest_api_query_filters_terms,
+				    $wpml_post_translations
+			    );
 		    }
+		    $wcml_rest_api_support->add_hooks();
 	    }
     }
 
@@ -250,8 +246,6 @@ class woocommerce_wpml {
 
 	    $wcml_ajax_setup = new WCML_Ajax_Setup( $sitepress );
 	    $wcml_ajax_setup->add_hooks();
-        new WCML_Fix_Copied_Custom_Fields_WPML353();
-
         WCML_Install::initialize( $this, $sitepress );
 
         WCML_Resources::set_up_resources( $this, $sitepress );

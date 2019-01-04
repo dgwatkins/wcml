@@ -48,18 +48,13 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 	*/
 	public function add_hooks(){
 
-		$check_version = '2.6.0';
-		$wc_version = '2.5.0';
 
-		$this->wp_api->expects( $this->once() )
-		             ->method( 'constant' )
-		             ->with( 'WC_VERSION' )
-		             ->willReturn( $wc_version );
-		$this->wp_api->expects( $this->once() )
-		             ->method( 'version_compare' )
-		             ->with( $wc_version, $check_version, '>=' )
-		             ->willReturn( false );
+		$method = new stdClass();
+		$method->method_id = rand_str();
+		$method->instance_id = rand( 1, 100 );
+		$rates = array( $method );
 
+		$this->wpdb->method('get_results')->willReturn( $rates );
 		$subject = $this->get_subject();
 
 		\WP_Mock::expectFilterAdded( 'wcml_shipping_price_amount', array( $subject, 'shipping_price_filter' ) );
@@ -68,38 +63,10 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'woocommerce_shipping_packages', array( $subject, 'convert_shipping_taxes' ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_package_rates', array( $subject, 'convert_shipping_costs_in_package_rates' ) );
 
-		$subject->add_hooks();
-
-	}
-
-	/**
-	 * @test
-	 */
-	public function hooks_from_wc_2_6()
-	{
-		$check_version = '2.6.0';
-		$wc_version = '2.7.0';
-		$this->wp_api->expects( $this->once() )
-			->method( 'constant' )
-			->with( 'WC_VERSION' )
-			->willReturn( $wc_version );
-		$this->wp_api->expects( $this->once() )
-			->method( 'version_compare' )
-			->with( $wc_version, $check_version, '>=' )
-			->willReturn( true );
-
-		$method = new stdClass();
-		$method->method_id = rand_str();
-		$method->instance_id = rand( 1, 100 );
-		$rates = array( $method );
-
-		$this->wpdb->method('get_results')->willReturn( $rates );
-
-		$subject = $this->get_subject();
-
 		\WP_Mock::expectFilterAdded( 'option_woocommerce_'.$method->method_id.'_'.$method->instance_id.'_settings', array( $subject, 'convert_shipping_method_cost_settings' ) );
 
 		$subject->add_hooks();
+
 	}
 
 	/**

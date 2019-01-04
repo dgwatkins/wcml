@@ -185,12 +185,12 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 
 		update_post_meta( $orig_product_id, '_manage_stock', 'yes' );
 		$orig_product = wc_get_product( $orig_product_id );
-		WooCommerce_Functions_Wrapper::set_stock( $orig_product_id, 99 );
+		wc_update_product_stock( $orig_product_id, 99 );
 		$orig_product->set_stock_status( 'instock' );
 
 		update_post_meta( $es_product_id, '_manage_stock', 'yes' );
 		$es_product = wc_get_product( $es_product_id );
-		WooCommerce_Functions_Wrapper::set_stock( $es_product_id, 99 );
+		wc_update_product_stock( $es_product_id, 99 );
 		$es_product->set_stock_status( 'instock' );
 
 		$this->sitepress->switch_lang( $this->second_language );

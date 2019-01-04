@@ -33,15 +33,10 @@ class WCML_Admin_Currency_Selector {
 				add_filter( 'woocommerce_currency_symbol', array( $this, 'filter_dashboard_currency_symbol' ) );
             }
 
-			if ( 'index.php' === $pagenow && version_compare( WOOCOMMERCE_VERSION, '2.4', '<' ) ) {
-				add_action( 'admin_footer', array( $this, 'show_dashboard_currency_selector' ) );
-			} else {
-				add_action( 'woocommerce_after_dashboard_status_widget', array(
-					$this,
-					'show_dashboard_currency_selector'
-				) );
-			}
-
+            add_action( 'woocommerce_after_dashboard_status_widget', array(
+                $this,
+                'show_dashboard_currency_selector'
+            ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_js' ) );
 		}
     }

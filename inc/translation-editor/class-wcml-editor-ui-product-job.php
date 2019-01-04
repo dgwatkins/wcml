@@ -40,8 +40,8 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $this->job_details = $job_details;
         $this->product = wc_get_product( $job_details[ 'job_id' ] );
         $this->original_post = get_post( $job_details[ 'job_id' ] );
-        $this->product_id = WooCommerce_Functions_Wrapper::get_product_id( $this->product );
-        $this->product_type = WooCommerce_Functions_Wrapper::get_product_type( $this->product_id );
+        $this->product_id = $this->product->get_id();
+        $this->product_type = $this->product->get_type();
 
         $source_lang = $this->sitepress->get_language_for_element( $job_details[ 'job_id' ], 'post_product' );
         $target_lang = $job_details[ 'target'];
@@ -52,7 +52,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
             $job_details[ 'job_id' ],
             'wc_product', __( 'Product', 'woocommerce-multilingual' ),
             $this->original_post->post_title,
-            get_post_permalink( WooCommerce_Functions_Wrapper::get_product_id( $this->product ) ),
+            get_post_permalink( $this->product->get_id() ),
             $source_lang,
             $target_lang,
             $translation_complete,

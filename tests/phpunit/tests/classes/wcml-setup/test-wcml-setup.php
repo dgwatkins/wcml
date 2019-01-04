@@ -54,15 +54,6 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		                        ->setMethods( array( 'get_wp_api' ) )
 		                        ->getMock();
 
-		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
-		                     ->disableOriginalConstructor()
-		                     ->setMethods( array( 'constant', 'version_compare' ) )
-		                     ->getMock();
-
-		$wp_api->method( 'version_compare' )->willReturn( true );
-
-		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
-
 		return $sitepress;
 	}
 

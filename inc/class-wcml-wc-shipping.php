@@ -37,19 +37,20 @@ class WCML_WC_Shipping{
 
         foreach ( $shipping_methods as $shipping_method ) {
 
-            if( isset( $shipping_method->id ) ){
-                $shipping_method_id = $shipping_method->id;
-            }else{
-                continue;
-            }
+	        if ( isset( $shipping_method->id ) ) {
+		        $shipping_method_id = $shipping_method->id;
+	        } else {
+		        continue;
+	        }
 
-            if( ( defined('WC_VERSION') && version_compare( WC_VERSION , '2.6', '<' ) ) ){
-                add_filter( 'woocommerce_settings_api_sanitized_fields_'.$shipping_method_id, array( $this, 'register_shipping_strings' ) );
-            }else{
-                add_filter( 'woocommerce_shipping_' . $shipping_method_id . '_instance_settings_values', array( $this, 'register_zone_shipping_strings' ),9,2 );
-            }
-
-            add_filter( 'option_woocommerce_'.$shipping_method_id.'_settings', array( $this, 'translate_shipping_strings' ), 9, 2 );
+	        add_filter( 'woocommerce_shipping_' . $shipping_method_id . '_instance_settings_values', array(
+		        $this,
+		        'register_zone_shipping_strings'
+	        ), 9, 2 );
+	        add_filter( 'option_woocommerce_' . $shipping_method_id . '_settings', array(
+		        $this,
+		        'translate_shipping_strings'
+	        ), 9, 2 );
         }
     }
 
@@ -72,23 +73,6 @@ class WCML_WC_Shipping{
         }
 
         return $instance_settings;
-    }
-
-    function register_shipping_strings( $fields ){
-        $shipping = WC_Shipping::instance();
-
-        foreach( $shipping->get_shipping_methods() as $shipping_method ){
-            if( isset( $_POST['woocommerce_'.$shipping_method->id.'_enabled'] ) ){
-                $shipping_method_id = $shipping_method->id;
-                break;
-            }
-        }
-
-        if( isset( $shipping_method_id ) ){
-            $this->register_shipping_title( $shipping_method_id, $fields['title'] );
-        }
-
-        return $fields;
     }
 
     function register_shipping_title( $shipping_method_id, $title ){

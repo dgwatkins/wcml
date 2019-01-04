@@ -33,37 +33,41 @@ class Test_WCML_Orders extends OTGS_TestCase {
 	public function filter_downloadable_product_items(){
 
 		$subject = $this->get_subject( );
-
-		$object = new stdClass();
-		$object->id = rand( 1, 100 );
 		$language = 'fr';
+		$order_id =  mt_rand( 1, 100 );
+
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'get_id' ) )
+		                ->getMock();
+		$product->method( 'get_id' )->willReturn( $order_id );
+
 
 		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args'   => array( $object->id, 'wpml_language', true ),
+			'args'   => array( $order_id, 'wpml_language', true ),
 			'return' => $language
 		));
 
-		$item = array();
-		$item[ 'product_id' ] = rand( 1, 100 );
-		$item[ 'variation_id' ] = rand( 1, 100 );
+		$variation_id = mt_rand( 101, 200 );
+		$translated_variation_id = mt_rand( 201, 300 );
+		$expected_downloads = array( 'test' );
 
-		$expected_item = array();
-		$expected_item[ 'product_id' ] = rand( 1, 100 );
-		$expected_item[ 'variation_id' ] = rand( 1, 100 );
+		\WP_Mock::onFilter( 'translate_object_id' )->with( $variation_id, 'product_variation', false, $language )->reply( $translated_variation_id );
+		$item = $this->getMockBuilder( 'WC_Order_Item_Product' )
+		             ->disableOriginalConstructor()
+		             ->setMethods( array( 'get_item_downloads', 'get_variation_id', 'set_variation_id', 'set_product_id' ) )
+		             ->getMock();
+		$item->method( 'get_variation_id' )->willReturn( $variation_id );
+		$item->method( 'set_variation_id' )->with( $translated_variation_id )->willReturn( true );
+		$item->method( 'get_item_downloads' )->willReturn( $expected_downloads );
 
-		\WP_Mock::onFilter( 'translate_object_id' )->with( $item[ 'product_id' ], 'product', false, $language )->reply( $expected_item[ 'product_id' ] );
-		\WP_Mock::onFilter( 'translate_object_id' )->with( $item[ 'variation_id' ], 'product_variation', false, $language )->reply( $expected_item[ 'variation_id' ] );
-
-		$mock             = \Mockery::mock( 'alias:WooCommerce_Functions_Wrapper' );
-		$mock->shouldReceive( 'get_order_id' )->andReturn( $object->id );		
-		$mock->shouldReceive( 'get_item_downloads' )->andReturn( $expected_item );
 		
 		\WP_Mock::wpFunction( 'remove_filter', array( 'times' => 1, 'return' => true ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_get_item_downloads', array( $subject, 'filter_downloadable_product_items' ), 10, 3 );
 
-		$filtered_item = $subject->filter_downloadable_product_items( array(), $item, $object );
+		$filtered_files = $subject->filter_downloadable_product_items( array(), $item, $product );
 
-		$this->assertEquals( $expected_item, $filtered_item );
+		$this->assertEquals( $expected_downloads, $filtered_files );
 	}
 
 	/**
