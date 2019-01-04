@@ -38,6 +38,8 @@ class WCML_WC_Subscriptions{
 			'woocommerce_subscription_price_from'
 		), 10, 2 );
 
+		add_filter( 'wcml_xliff_allowed_variations_types', array( $this, 'set_allowed_variations_types_in_xliff') );
+
 	}
 
 	function init(){
@@ -292,5 +294,18 @@ class WCML_WC_Subscriptions{
             }
 		}
 	}
+
+	/**
+	 * @param array $allowed_types
+	 *
+	 * @return array
+	 */
+	public function set_allowed_variations_types_in_xliff( $allowed_types ){
+
+		$allowed_types[] = 'variable-subscription';
+		$allowed_types[] = 'subscription_variation';
+
+	    return $allowed_types;
+    }
 
 }

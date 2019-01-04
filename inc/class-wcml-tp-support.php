@@ -155,7 +155,9 @@ class WCML_TP_Support {
 
 			$product_type = WooCommerce_Functions_Wrapper::get_product_type( $post->ID );
 
-			if ( ! empty( $product ) && $product_type === 'variable' ) {
+			$allowed_variations_types = apply_filters( 'wcml_xliff_allowed_variations_types', array( 'variable' ) );
+
+			if ( ! empty( $product ) && in_array( $product_type, $allowed_variations_types, true ) ) {
 
 				$variations = $product->get_available_variations();
 
@@ -165,7 +167,7 @@ class WCML_TP_Support {
 
 						$package['contents'][ 'wc_variation_description:' . $variation['variation_id'] ] = array(
 							'translate' => 1,
-							'data'      => $this->tp->encode_field_data( $variation['variation_description'], 'base64' ),
+							'data'      => $this->tp->encode_field_data( get_post_meta( $variation['variation_id'], '_variation_description', true ), 'base64' ),
 							'format'    => 'base64'
 						);
 

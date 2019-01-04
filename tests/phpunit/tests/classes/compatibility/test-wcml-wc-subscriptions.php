@@ -415,4 +415,17 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 		$this->assertSame( $subscription_sign_up_fee, $filtered_subscription_sign_up_fee );
 	}
 
+
+	/**
+	 * @test
+	 */
+	public function it_set_allowed_variations_types_in_xliff() {
+
+		$subject = $this->get_subject();
+
+		$filtered_types = $subject->set_allowed_variations_types_in_xliff( array() );
+
+		$this->assertSame( array( 'variable-subscription', 'subscription_variation' ), $filtered_types );
+	}
+
 }
