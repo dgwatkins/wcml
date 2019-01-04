@@ -1075,7 +1075,7 @@ class WCML_Bookings {
 
 		if( $product_id && get_post_type( $product_id ) === 'product' ){
 		    $product = wc_get_product( $product_id );
-			$product_type = $product->get_type();
+		    $product_type = $product->get_type();
 
 			if ( ( $product_type === 'booking' || $product_type === $external_product_type ) || $pagenow == 'post-new.php' ) {
 
