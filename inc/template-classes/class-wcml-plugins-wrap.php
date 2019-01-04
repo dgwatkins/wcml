@@ -25,7 +25,6 @@ class WCML_Plugins_Wrap {
 
         $model = array(
             'link_url' => admin_url('admin.php?page=wpml-wcml'),
-            'old_wpml' => defined('ICL_SITEPRESS_VERSION') && version_compare( ICL_SITEPRESS_VERSION, '3.4', '<' ),
             'tracking_link' => $this->tracking_link->generate( 'https://wpml.org/shop/account/', false, 'account' ),
             'install_wpml_link' => $this->woocommerce_wpml->dependencies->required_plugin_install_link( 'wpml' ),
             'icl_version' => defined('ICL_SITEPRESS_VERSION'),
@@ -34,14 +33,12 @@ class WCML_Plugins_Wrap {
             'tm_version' => defined( 'WPML_TM_VERSION' ),
             'st_version' => defined( 'WPML_ST_VERSION' ),
             'wc' => class_exists('WooCommerce') ,
-            'old_wc' => class_exists('WooCommerce') && version_compare( WC_VERSION, '2.0', '<'),
             'wc_link' => 'http://wordpress.org/extend/plugins/woocommerce/',
             'strings' => array(
                 'title'             => __('WooCommerce Multilingual', 'woocommerce-multilingual'),
                 'required'=> __('Required plugins', 'woocommerce-multilingual'),
                 'plugins'=> __('Plugins Status', 'woocommerce-multilingual'),
                 'depends'=> __('WooCommerce Multilingual depends on several plugins to work. If any required plugin is missing, you should install and activate it.', 'woocommerce-multilingual'),
-                'old_wpml_link'=> sprintf( __( 'WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%s">WPML</a> versions prior 2.0.5.', 'woocommerce-multilingual' ), $this->tracking_link->generate( 'https://wpml.org/' ) ),
                 'update_wpml'=> __( 'Update WPML', 'woocommerce-multilingual' ),
                 'upgrade_wpml'=> __( 'Upgrade WPML', 'woocommerce-multilingual' ),
                 'get_wpml'=> __( 'Get WPML', 'woocommerce-multilingual' ),
@@ -59,7 +56,6 @@ class WCML_Plugins_Wrap {
                 'not_setup' => __( '%s is not set up.', 'woocommerce-multilingual' ),
                 'not_inst' => __( '%s is either not installed or not active.', 'woocommerce-multilingual' ),
                 'wpml_not_inst' => sprintf( __( '%s is either not installed or not active.', 'woocommerce-multilingual' ),'<strong><a title="' . esc_attr__('The WordPress Multilingual Plugin', 'woocommerce-multilingual') .'" href="' . $this->tracking_link->generate( 'https://wpml.org/' ) . '">WPML</a></strong>' ),
-                'old_wc' => sprintf( __( '%1$s  is installed, but with incorrect version. You need %1$s %2$s or higher. ', 'woocommerce-multilingual' ), '<strong>WooCommerce</strong>', '2.0' ),
                 'download_wc' => __( 'Download WooCommerce', 'woocommerce-multilingual' ),
             )
         );

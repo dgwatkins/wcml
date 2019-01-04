@@ -87,45 +87,8 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 	 */
 	public function add_hooks(){
 
-		$sitepress_version = '3.7.0';
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
-
-		$wp_api = $this->get_wpml_wp_api_mock();
-		$wp_api->method( 'constant' )
-			->with( 'ICL_SITEPRESS_VERSION' )
-			->willReturn( $sitepress_version );
-
-		$sitepress = $this->get_sitepress_mock( $wp_api );
-
-		$subject = $this->get_subject( $sitepress );
-
-		\WP_Mock::expectFilterAdded( 'wcml_do_not_display_custom_fields_for_product', array( $subject, 'replace_tm_editor_custom_fields_with_own_sections' ) );
-		$subject->add_hooks();
-
-	}
-
-	/**
-	 * @test
-	 */
-	public function add_hooks_after_wpml_3_8(){
-
-		$sitepress_version = '3.8.0';
-
-		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
-
-		$wp_api = $this->get_wpml_wp_api_mock();
-		$wp_api->method( 'constant' )
-			->with( 'ICL_SITEPRESS_VERSION' )
-			->willReturn( $sitepress_version );
-		
-		$wp_api->method( 'version_compare' )
-			->with( $sitepress_version, '3.8.0', '<' )
-			->willReturn( false );
-	
-		$sitepress = $this->get_sitepress_mock( $wp_api );
-
-		$subject = $this->get_subject( $sitepress );
-
+		$subject = $this->get_subject();
 		\WP_Mock::expectFilterAdded( 'get_translatable_documents_all', array( $subject, 'filter_translatable_documents' ) );
 		$subject->add_hooks();
 

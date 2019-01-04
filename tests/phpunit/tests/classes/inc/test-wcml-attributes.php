@@ -70,41 +70,8 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function hooks_before_wc_3_0()
+	public function add_hooks()
 	{
-		$check_version = '3.0.0';
-		$wc_version = '2.7.0';
-
-		$this->wp_api->expects( $this->once() )
-			->method('constant')
-			->with('WC_VERSION')
-			->willReturn( $wc_version );
-		$this->wp_api->expects($this->once())
-			->method('version_compare')
-			->with($wc_version, $check_version, '<')
-			->willReturn(true);
-
-		$subject = $this->get_subject();
-		\WP_Mock::expectFilterAdded( 'woocommerce_get_product_attributes', array( $subject, 'filter_adding_to_cart_product_attributes_names' ) );
-		$subject->add_hooks();
-	}
-
-	/**
-	 * @test
-	 */
-	public function hooks_from_wc_3_0()
-	{
-		$check_version = '3.0.0';
-		$wc_version = '3.0.0';
-		$this->wp_api->expects( $this->once() )
-			->method( 'constant' )
-			->with( 'WC_VERSION' )
-			->willReturn( $wc_version );
-		$this->wp_api->expects( $this->once() )
-			->method( 'version_compare' )
-			->with( $wc_version, $check_version, '<' )
-			->willReturn( false );
-
 		$subject = $this->get_subject();
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_get_attributes', array( $subject, 'filter_adding_to_cart_product_attributes_names' ) );
 		$subject->add_hooks();
@@ -115,18 +82,6 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 	 */
 	public function hooks_for_product_display_as_translated_post_type()
 	{
-		$check_version = '3.0.0';
-		$wc_version = '3.0.0';
-		$this->wp_api->expects( $this->once() )
-			->method( 'constant' )
-			->with( 'WC_VERSION' )
-			->willReturn( $wc_version );
-		$this->wp_api->expects( $this->once() )
-			->method( 'version_compare' )
-			->with( $wc_version, $check_version, '<' )
-			->willReturn( false );
-
-
 		$this->woocommerce_wpml->products->method( 'is_product_display_as_translated_post_type' )->willReturn( true );
 
 		$subject = $this->get_subject();

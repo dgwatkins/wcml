@@ -40,12 +40,8 @@ class WCML_Attributes{
             $this->icl_custom_tax_sync_options();
         }
 
-        $deprecated_wc = $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.0.0', '<' );
-        if ( $deprecated_wc ) {
-            add_filter( 'woocommerce_get_product_attributes', array( $this, 'filter_adding_to_cart_product_attributes_names' ) );
-        }else{
-            add_filter( 'woocommerce_product_get_attributes', array( $this, 'filter_adding_to_cart_product_attributes_names' ) );
-        }
+        add_action( 'woocommerce_before_attribute_delete', array( $this, 'refresh_taxonomy_translations_cache' ), 10, 3 );
+        add_filter( 'woocommerce_product_get_attributes', array( $this, 'filter_adding_to_cart_product_attributes_names' ) );
 
 	    if ( $this->woocommerce_wpml->products->is_product_display_as_translated_post_type() ) {
 		    add_filter( 'woocommerce_available_variation', array(

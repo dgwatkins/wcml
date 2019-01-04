@@ -71,11 +71,10 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 
 		$product = $this->getMockBuilder( 'WC_Product' )
 			->disableOriginalConstructor()
-			->setMethods( array( 'get_attributes' ) )
+			->setMethods( array( 'get_attributes','get_type' ) )
 			->getMock();
 
-		$wc_functions_wrapper_mock             = \Mockery::mock( 'alias:WooCommerce_Functions_Wrapper' );
-		$wc_functions_wrapper_mock->shouldReceive( 'get_product_type' )->andReturn( $product_type );
+		$product->method( 'get_type' )->willReturn( $product_type );
 
 		\WP_Mock::wpFunction( 'wc_get_product', array(
 			'args' => array( $post->ID ),
@@ -95,6 +94,7 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 		);
 
 		$product->method( 'get_attributes' )->willReturn( $attributes );
+
 
 		$this->woocommerce_wpml->attributes->method( 'is_a_taxonomy' )->willReturn( false );
 

@@ -34,10 +34,7 @@ class WCML_Product_Bundles_Legacy{
 		add_action( 'wcml_update_extra_fields', array( $this, 'bundle_update' ), 10, 4 );
 		add_action( 'woocommerce_get_cart_item_from_session', array( $this, 'resync_bundle' ), 5, 3 );
 		add_filter( 'woocommerce_cart_loaded_from_session', array( $this, 'resync_bundle_clean' ), 10 );
-
-		if ( $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WCML_VERSION' ), '3.7.2', '>' ) ) {
-			add_filter( 'option_wpml_config_files_arr', array( $this, 'make__bundle_data_not_translatable_by_default' ), 0 );
-		}
+		add_filter( 'option_wpml_config_files_arr', array( $this, 'make__bundle_data_not_translatable_by_default' ), 0 );
 
 		if( is_admin() ){
 
@@ -426,7 +423,7 @@ class WCML_Product_Bundles_Legacy{
 	}
 
 	public function is_bundle_product( $product_id ){
-		if ( 'bundle' === WooCommerce_Functions_Wrapper::get_product_type( $product_id ) ) {
+		if ( 'bundle' === wc_get_product( $product_id )->get_type() ) {
 			return true;
 		}
 

@@ -67,12 +67,6 @@ class WCML_Cart {
 
 			$this->localize_flat_rates_shipping_classes();
 		}
-
-		add_filter( 'woocommerce_cart_needs_payment', array(
-			$this,
-			'use_cart_contents_total_for_needs_payment'
-		), 10, 2 );
-
 	}
 
 	public function is_clean_cart_enabled() {
@@ -288,18 +282,7 @@ class WCML_Cart {
 			$tr_product_id = apply_filters( 'translate_object_id', $cart_item['product_id'], 'product', false, $current_language );
 			//translate custom attr labels in cart object
 
-			if ( version_compare( WC_VERSION, '3.0.0', '<' ) && isset( $cart_item['data']->product_attributes ) ) {
-				foreach ( $cart_item['data']->product_attributes as $attr_key => $product_attribute ) {
-					if ( isset( $product_attribute['is_taxonomy'] ) && ! $product_attribute['is_taxonomy'] ) {
-						$cart->cart_contents[ $key ]['data']->product_attributes[ $attr_key ]['name'] = $this->woocommerce_wpml->strings->translated_attribute_label(
-							$product_attribute['name'],
-							$product_attribute['name'],
-							$tr_product_id );
-					}
-				}
-			}
-
-			//translate custom attr value in cart object
+            //translate custom attr value in cart object
 			if ( isset( $cart_item['variation'] ) && is_array( $cart_item['variation'] ) ) {
 				foreach ( $cart_item['variation'] as $attr_key => $attribute ) {
 					$cart->cart_contents[ $key ]['variation'][ $attr_key ] = $this->get_cart_attribute_translation(
@@ -329,22 +312,14 @@ class WCML_Cart {
 				if ( ! is_null( $tr_variation_id ) ) {
 					$cart->cart_contents[ $key ]['product_id']   = intval( $tr_product_id );
 					$cart->cart_contents[ $key ]['variation_id'] = intval( $tr_variation_id );
-					if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.7', '<' ) ) {
-						$cart->cart_contents[ $key ]['data']->id = intval( $tr_product_id );
-					} else {
-						$cart->cart_contents[ $key ]['data']->set_id( intval( $tr_product_id ) );
-					}
+					$cart->cart_contents[ $key ]['data']->set_id( intval( $tr_product_id ) );
 					$cart->cart_contents[ $key ]['data']->post = get_post( $tr_product_id );
 				}
 			} else {
 				if ( ! is_null( $tr_product_id ) ) {
 					$cart->cart_contents[ $key ]['product_id'] = intval( $tr_product_id );
-					if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.7', '<' ) ) {
-						$cart->cart_contents[ $key ]['data']->id = intval( $tr_product_id );
-					} else {
-						$cart->cart_contents[ $key ]['data']->set_id( intval( $tr_product_id ) );
-					}
-					$cart->cart_contents[ $key ]['data']->post = get_post( $tr_product_id );
+					$cart->cart_contents[ $key ]['data']->set_id( intval( $tr_product_id ) );
+                    $cart->cart_contents[ $key ]['data']->post = get_post( $tr_product_id );
 				}
 			}
 
@@ -510,12 +485,7 @@ class WCML_Cart {
 		}
 
 		$item_product_title = $item['variation_id'] ? get_the_title( $translated_variation_id ) : get_the_title( $translated_product_id );
-		if ( $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.0.0', '>=' ) ) {
-			$item['data']->set_name( $item_product_title );
-		} else {
-			$item['data']->post->post_title = $item_product_title;
-		}
-
+		$item['data']->set_name( $item_product_title );
 		$item['data_hash'] = $this->get_data_cart_hash( $item );
 
 		return $item;
@@ -644,23 +614,6 @@ class WCML_Cart {
 
 		throw new Exception( $message );
 
-	}
-
-	/**
-	 * @param bool $needs
-	 * @param WC_Cart $cart
-	 *
-	 * @return bool
-	 */
-	public function use_cart_contents_total_for_needs_payment( $needs, $cart ) {
-
-		if ( version_compare( WC()->version, '3.2', '<' ) ) {
-			$needs = ( isset( $cart->cart_contents_total ) && $cart->cart_contents_total > 0 )
-			         || ( isset( $cart->total ) && $cart->total > 0 )
-			         || isset( $cart->recurring_carts );
-		}
-
-		return $needs;
 	}
 
 	/**

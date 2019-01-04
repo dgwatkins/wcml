@@ -16,14 +16,7 @@
             </div>
             <div class="wcml-section-content wcml-section-content-wide">
                 <ul>
-                    {% if old_wpml %}
-                        <li>
-                            <i class="otgs-ico-warning wpml-multilingual-cms"></i>
-                            {{ strings.old_wpml_link|raw }}
-                            <a href="{{ tracking_link }}"
-                               target="_blank">{{ strings.update_wpml }}</a>
-                        </li>
-                    {% elseif icl_version %}
+                    {% if icl_version %}
                         <li>
                             <i class="otgs-ico-ok wpml-multilingual-cms"></i>
                             {{ strings.inst_active|format( strings.wpml )|raw }}
@@ -86,13 +79,7 @@
                         </li>
                     {% endif %}
 
-                    {% if old_wc %}
-                        <li>
-                            <i class="otgs-ico-warning woocommerce"></i>
-                            {{ strings.old_wc|raw }}
-                            <a href="{{ wc_link|e }}" target="_blank">{{ strings.download_wc }}</a>
-                        </li>
-                    {% elseif wc %}
+                    {% if wc %}
                         <li>
                             <i class="otgs-ico-ok woocommerce"></i>
                             {{ strings.inst_active|format( strings.wc )|raw }}

@@ -43,7 +43,8 @@ class WCML_Helper_Orders {
         wc_add_order_item_meta( $item_id, 'wpml_language', $args[ 'wpml_language' ] );
 
         if( 'en' === $args['wpml_language'] ){
-	        WooCommerce_Functions_Wrapper::reduce_stock( $args[ 'product_id' ], $args[ '_qty' ] );
+	        $data_store = WC_Data_Store::load( 'product' );
+	        $data_store->update_product_stock( $args[ 'product_id' ], $args[ '_qty' ], 'decrease' );
         }
 
         return $order;

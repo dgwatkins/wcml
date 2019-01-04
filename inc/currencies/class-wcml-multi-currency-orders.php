@@ -139,7 +139,7 @@ class WCML_Multi_Currency_Orders {
 
 			$the_order = new WC_Order( get_the_ID() );
 			if ( $the_order ) {
-				$order_currency = WooCommerce_Functions_Wrapper::get_order_currency( $the_order );
+				$order_currency = $the_order->get_currency();
 
 				if ( ! $order_currency && isset( $_COOKIE['_wcml_order_currency'] ) ) {
 					$order_currency = $_COOKIE['_wcml_order_currency'];
@@ -423,7 +423,7 @@ class WCML_Multi_Currency_Orders {
 	// handle currency in order emails before handled in woocommerce
 	public function fix_currency_before_order_email( $order ) {
 
-		$order_currency = WooCommerce_Functions_Wrapper::get_order_currency( $order );
+		$order_currency = $order->get_currency();
 
 		if ( ! $order_currency ) {
 			return;

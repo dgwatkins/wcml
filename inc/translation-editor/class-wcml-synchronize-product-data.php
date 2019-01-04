@@ -328,7 +328,7 @@ class WCML_Synchronize_Product_Data{
 
 			$is_original               = $this->woocommerce_wpml->products->is_original_product( $product_id );
 			$is_edit_order_page_action = isset( $_POST['action'] ) && 'editpost' === $_POST['action'] && isset( $_POST['post_type'] ) && 'shop_order' === $_POST['post_type'];
-			if ( ! $is_edit_order_page_action && $is_original && $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.0.0', '>=' ) ) {
+			if ( ! $is_edit_order_page_action && $is_original ) {
 				return;
 			}
 
@@ -367,13 +367,15 @@ class WCML_Synchronize_Product_Data{
 						$total_sales += $qty;
 
 						if ( $managing_stock ) {
-							WooCommerce_Functions_Wrapper::reduce_stock( $translation->element_id, $qty );
+							$data_store = WC_Data_Store::load( 'product' );
+							$data_store->update_product_stock( $translation->element_id, $qty, 'decrease' );
 						}
 					} else {
 						$total_sales -= $qty;
 
 						if ( $managing_stock ) {
-							WooCommerce_Functions_Wrapper::increase_stock( $translation->element_id, $qty );
+							$data_store = WC_Data_Store::load( 'product' );
+							$data_store->update_product_stock( $translation->element_id, $qty, 'increase' );
 						}
 					}
 
@@ -484,7 +486,7 @@ class WCML_Synchronize_Product_Data{
 
     public function woocommerce_product_quick_edit_save( $product ){
 
-        $product_id =  WooCommerce_Functions_Wrapper::get_product_id( $product );
+        $product_id =  $product->get_id();
         $is_original = $this->woocommerce_wpml->products->is_original_product( $product_id );
         $trid = $this->sitepress->get_element_trid( $product_id, 'post_product' );
 

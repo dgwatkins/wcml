@@ -777,7 +777,7 @@ class WCML_Product_Bundles {
 	}
 
 	public function is_bundle_product( $product_id ){
-		if ( 'bundle' === WooCommerce_Functions_Wrapper::get_product_type( $product_id ) ) {
+		if ( 'bundle' === wc_get_product( $product_id )->get_type() ) {
 			return true;
 		}
 

@@ -140,15 +140,8 @@ class WCML_Languages_Upgrader{
             $version = WC_VERSION;
         }
 
-        if( version_compare( $version, '2.5.0', '<') ){
-            $repo = 'https://github.com/woothemes/woocommerce-language-packs/raw/v';
-            return $repo . $version . '/packages/' . $locale . '.zip';
-
-        }else{
-            $repo = 'https://downloads.wordpress.org/translation/plugin/woocommerce/';
-            return $repo . $version . '/' . $locale . '.zip';
-        }
-
+        $repo = 'https://downloads.wordpress.org/translation/plugin/woocommerce/';
+        return $repo . $version . '/' . $locale . '.zip';
     }
 
     /*

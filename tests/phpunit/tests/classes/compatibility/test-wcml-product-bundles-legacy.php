@@ -16,15 +16,7 @@ class Test_WCML_Product_Bundles_Legacy extends OTGS_TestCase {
 
 		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
 			->disableOriginalConstructor()
-			->setMethods( array( 'get_wp_api' ) )
 			->getMock();
-
-		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )
-			->disableOriginalConstructor()
-			->setMethods( array( 'constant', 'version_compare' ) )
-			->getMock();
-
-		$this->sitepress->method( 'get_wp_api' )->willReturn( $this->wp_api );
 
 		$this->woocommerce_wpml = $this->getMockBuilder('woocommerce_wpml')
 			->disableOriginalConstructor()
@@ -44,17 +36,10 @@ class Test_WCML_Product_Bundles_Legacy extends OTGS_TestCase {
 	 * @test
 	 */
 	public function add_hooks(){
-		$wcml_version = '4.0.0';
 
 		$subject = $this->get_subject();
 
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
-
-		$this->wp_api->expects( $this->once() )
-			->method( 'constant' )
-			->with( 'WCML_VERSION' )
-			->willReturn( $wcml_version );
-
 		\WP_Mock::expectFilterAdded( 'wcml_do_not_display_custom_fields_for_product', array( $subject, 'replace_tm_editor_custom_fields_with_own_sections' ) );
 		$subject->add_hooks();
 
@@ -77,15 +62,17 @@ class Test_WCML_Product_Bundles_Legacy extends OTGS_TestCase {
 	public function is_bundle_product() {
 
 		$bundle_product_id = mt_rand( 1, 100 );
-		$mock             = \Mockery::mock( 'alias:WooCommerce_Functions_Wrapper' );
-		$mock->shouldReceive( 'get_product_type' )->with( $bundle_product_id )->andReturn( rand_str() );
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'get_type' ) )
+		                ->getMock();
 
-		$subject = $this->get_subject();
-		$this->assertFalse( $subject->is_bundle_product( $bundle_product_id ) );
+		$product->method( 'get_type' )->willReturn( 'bundle' );
 
-
-		$bundle_product_id = mt_rand( 101, 200 );
-		$mock->shouldReceive( 'get_product_type' )->with( $bundle_product_id )->andReturn( 'bundle' );
+		\WP_Mock::wpFunction( 'wc_get_product', array(
+			'args' => array( $bundle_product_id ),
+			'return' => $product
+		) );
 
 		$subject = $this->get_subject();
 		$this->assertTrue( $subject->is_bundle_product( $bundle_product_id ) );
