@@ -95,6 +95,7 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @group wpmlcore-6202
 	 */
 	public function translate_category_should_not_do_anything() {
 		$sitepress = $this->get_sitepress();
@@ -115,7 +116,7 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 		];
 
 		$atts = [
-			'category' . rand_str(32) => rand_str(32)
+			'category' => '',
 		];
 
 		\WP_Mock::userFunction( 'remove_filter', [ 'times'  => 0 ] );
