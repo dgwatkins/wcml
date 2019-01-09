@@ -16,7 +16,14 @@
             </div>
             <div class="wcml-section-content wcml-section-content-wide">
                 <ul>
-                    {% if icl_version %}
+                    {% if old_wpml %}
+                        <li>
+                            <i class="otgs-ico-warning wpml-multilingual-cms"></i>
+                            {{ strings.old_wpml_link|raw }}
+                            <a href="{{ tracking_link }}"
+                               target="_blank">{{ strings.update_wpml }}</a>
+                        </li>
+                    {% elseif icl_version %}
                         <li>
                             <i class="otgs-ico-ok wpml-multilingual-cms"></i>
                             {{ strings.inst_active|format( strings.wpml )|raw }}
@@ -37,19 +44,6 @@
                             <i class="otgs-ico-warning wpml-multilingual-cms"></i>
                             {{ strings.wpml_not_inst|raw }}
                             <a href="{{ install_wpml_link|e }}" target="_blank">{{ strings.get_wpml }}</a>
-                        </li>
-                    {% endif %}
-
-                    {% if media_version %}
-                        <li>
-                            <i class="otgs-ico-ok wpml-media"></i>
-                            {{ strings.inst_active|format( strings.media )|raw }}
-                        </li>
-                    {% else %}
-                        <li>
-                            <i class="otgs-ico-warning wpml-media"></i>
-                            {{ strings.not_inst|format( strings.media )|raw }}
-                            <a href="{{ install_wpml_link|e }}" target="_blank">{{ strings.get_wpml_media }}</a>
                         </li>
                     {% endif %}
 
@@ -79,7 +73,13 @@
                         </li>
                     {% endif %}
 
-                    {% if wc %}
+                    {% if old_wc %}
+                        <li>
+                            <i class="otgs-ico-warning woocommerce"></i>
+                            {{ strings.old_wc|raw }}
+                            <a href="{{ wc_link|e }}" target="_blank">{{ strings.download_wc }}</a>
+                        </li>
+                    {% elseif wc %}
                         <li>
                             <i class="otgs-ico-ok woocommerce"></i>
                             {{ strings.inst_active|format( strings.wc )|raw }}

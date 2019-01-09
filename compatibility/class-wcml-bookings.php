@@ -1077,7 +1077,7 @@ class WCML_Bookings {
 		    $product = wc_get_product( $product_id );
 		    $product_type = $product->get_type();
 
-			if ( ( $product_type === 'booking' || $product_type === $external_product_type ) || $pagenow == 'post-new.php' ) {
+			if ( ( $this->is_booking( $product ) || $product_type === $external_product_type ) || $pagenow == 'post-new.php' ) {
 
 				wp_register_style( 'wcml-bookings-css', WCML_PLUGIN_URL . '/compatibility/res/css/wcml-bookings.css', array(), WCML_VERSION );
 				wp_enqueue_style( 'wcml-bookings-css' );
@@ -1305,8 +1305,7 @@ class WCML_Bookings {
 
 	function custom_box_html( $obj, $product_id, $data ) {
 
-		$product = wc_get_product( $product_id );
-		if ( $product->get_type() !== 'booking' ) {
+		if ( !$this->is_booking( $product_id ) ) {
 			return;
 		}
 
@@ -1369,8 +1368,7 @@ class WCML_Bookings {
 
 	function custom_box_html_data( $data, $product_id, $translation, $lang ) {
 
-		$product = wc_get_product( $product_id );
-		if ( $product->get_type() !== 'booking' ) {
+		if ( !$this->is_booking( $product_id ) ) {
 			return $data;
 		}
 
@@ -1858,8 +1856,7 @@ class WCML_Bookings {
 	function append_persons_to_translation_package( $package, $post ) {
 
 		if ( $post->post_type == 'product' ) {
-			$product = wc_get_product( $post->ID );
-			if ( $product->get_type() === 'booking' ) {
+			if ( $this->is_booking( $post->ID ) ) {
 
 				$bookable_product = new WC_Product_Booking( $post->ID );
 
@@ -1893,9 +1890,8 @@ class WCML_Bookings {
 
 	function save_person_translation( $post_id, $data, $job ) {
 		$person_translations = array();
-		$product = wc_get_product( $post_id );
 
-		if ( $product->get_type() === 'booking' ) {
+		if ( $this->is_booking( $post_id ) ) {
 
 			foreach ( $data as $value ) {
 
@@ -1961,7 +1957,7 @@ class WCML_Bookings {
 
 		if ( $post->post_type == 'product' ) {
 			$product = wc_get_product( $post->ID );
-			if ( $product->get_type() === 'booking' && $product->has_resources() ) {
+			if ( $this->is_booking( $product ) && $product->has_resources() ) {
 
 				$resources = $product->get_resources();
 
@@ -1985,9 +1981,8 @@ class WCML_Bookings {
 
 	function save_resource_translation( $post_id, $data, $job ) {
 		$resource_translations = array();
-		$product = wc_get_product( $post_id );
 
-		if ( $product->get_type() === 'booking' ) {
+		if ( $this->is_booking( $post_id ) ) {
 
 			foreach ( $data as $value ) {
 
@@ -2536,6 +2531,18 @@ class WCML_Bookings {
 			}
 		}
 
+	}
+
+	/**
+	 * @param WC_Product|int|string $product
+	 *
+	 * @return bool
+	 */
+	private function is_booking( $product ){
+	    if( !$product instanceof WC_Product ){
+		    $product = wc_get_product( $product );
+        }
+		return $product->get_type() === 'booking';
 	}
 
 }

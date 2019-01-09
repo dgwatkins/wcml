@@ -319,7 +319,7 @@ class WCML_Cart {
 				if ( ! is_null( $tr_product_id ) ) {
 					$cart->cart_contents[ $key ]['product_id'] = intval( $tr_product_id );
 					$cart->cart_contents[ $key ]['data']->set_id( intval( $tr_product_id ) );
-                    $cart->cart_contents[ $key ]['data']->post = get_post( $tr_product_id );
+					$cart->cart_contents[ $key ]['data']->post = get_post( $tr_product_id );
 				}
 			}
 
