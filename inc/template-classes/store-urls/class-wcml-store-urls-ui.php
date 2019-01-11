@@ -82,6 +82,9 @@ class WCML_Store_URLs_UI extends WPML_Templates_Factory {
 
 		$endpoints_info = array();
 		foreach( WC()->query->query_vars as $key => $endpoint ){
+			if ( class_exists( 'WPML_Endpoints_Support' ) ) {
+				$key = $endpoint;
+			}
 
 			$endpoints_info[ $key ][ 'key' ] = $key;
 			$endpoints_info[ $key ][ 'orig_value' ] = $endpoint;

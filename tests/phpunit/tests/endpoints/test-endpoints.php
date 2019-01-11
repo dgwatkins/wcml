@@ -110,9 +110,7 @@ class Test_Endpoints extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function lost_password_filter_get_endpoint_url() {
-
-		$subject = $this->get_subject();
+	public function it_should_filter_get_endpoint_url() {
 
 		$url                     = rand_str();
 		$endpoint                = 'endpoint-1';
@@ -123,32 +121,23 @@ class Test_Endpoints extends OTGS_TestCase {
 		$translated_endpoint_url = rand_str();
 		$wc_account_page_url     = rand_str();
 
-		WP_Mock::onFilter( 'wpml_get_endpoint_translation' )->with( 'lost-password', $endpoint, null )->reply( $translated_endpoint );
 
-		WP_Mock::wpFunction(
-			'get_option',
+		$sitepress = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->setMethods(
 			array(
-				'args'   => array( 'woocommerce_myaccount_lost_password_endpoint' ),
-				'return' => $endpoint
+				'convert_url'
 			)
-		);
+		)->getMock();
 
-		\WP_Mock::wpFunction( 'remove_filter', array( 'times' => 1, 'return' => true ) );
-		\WP_Mock::wpFunction( 'WC', array( 'times' => 1, 'return' => false ) );
+		$sitepress->method( 'convert_url' )->willReturn( $permalink );
 
+		$subject = $this->get_subject( null, $sitepress );
 
-		WP_Mock::wpFunction(
-			'wc_get_page_permalink',
-			array(
-				'args'   => array( 'myaccount' ),
-				'return' => $wc_account_page_url
-			)
-		);
-
+		WP_Mock::onFilter( 'wpml_get_endpoint_translation' )->with( $endpoint, $endpoint, null )->reply( $translated_endpoint );
+		WP_Mock::wpFunction( 'remove_filter', array( 'times' => 1, 'return' => true ) );
 		WP_Mock::wpFunction(
 			'wc_get_endpoint_url',
 			array(
-				'args'   => array( $translated_endpoint, '', $wc_account_page_url ),
+				'args'   => array( $translated_endpoint, $value, $permalink ),
 				'return' => $translated_endpoint_url
 			)
 		);
@@ -161,32 +150,6 @@ class Test_Endpoints extends OTGS_TestCase {
 		$filtered_endpoint_url = $subject->filter_get_endpoint_url( $url, $endpoint, $value, $permalink );
 
 		$this->assertEquals( $translated_endpoint_url, $filtered_endpoint_url );
-	}
-
-	/**
-	 * @test
-	 */
-	public function default_endpoint_filter_get_endpoint_url() {
-
-		$url       = rand_str();
-		$endpoint  = rand_str();
-		$value     = rand_str();
-		$permalink = rand_str();
-
-		$subject = $this->get_subject();
-
-		WP_Mock::wpFunction(
-			'get_option',
-			array(
-				'args'   => array( 'woocommerce_myaccount_lost_password_endpoint' ),
-				'return' => rand_str()
-			)
-		);
-
-		$filtered_endpoint_url = $subject->filter_get_endpoint_url( $url, $endpoint, $value, $permalink );
-
-		$this->assertEquals( $url, $filtered_endpoint_url );
-
 	}
 
 	private function get_subject( $woocommerce_wpml = null, $sitepress = null, $wpdb = null ) {

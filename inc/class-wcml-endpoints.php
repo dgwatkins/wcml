@@ -30,7 +30,6 @@ class WCML_Endpoints {
 		add_filter( 'wpml_endpoint_permalink_filter', array( $this, 'endpoint_permalink_filter' ), 10, 2 );
 		add_filter( 'wpml_endpoint_url_value', array( $this, 'filter_endpoint_url_value' ), 10, 2 );
 
-		add_filter( 'woocommerce_settings_saved', array( $this, 'update_original_endpoints_strings' ) );
 		add_filter( 'woocommerce_get_endpoint_url', array( $this, 'filter_get_endpoint_url' ), 10, 4 );
 		add_filter( 'wpml_current_ls_language_url_endpoint', array( $this, 'add_endpoint_to_current_ls_language_url' ), 10, 4 );
 
@@ -145,7 +144,7 @@ class WCML_Endpoints {
 
 						foreach ( $this->woocommerce_wpml->get_wc_query_vars() as $key => $endpoint ) {
 
-							$translated_endpoint = apply_filters( 'wpml_get_endpoint_translation', $key, $endpoint, $language_code );
+							$translated_endpoint = $this->get_endpoint_translation( $endpoint, $language_code );
 
 							$reserved_requests[] = $account_base . '/' . $translated_endpoint;
 						}
@@ -175,46 +174,20 @@ class WCML_Endpoints {
 		$wc_vars = WC()->query->query_vars;
 
 		if ( ! empty( $wc_vars ) ) {
-			$query_vars = array(
-				// Checkout actions
-				'order-pay'          => $this->get_endpoint_translation( 'order-pay', $wc_vars['order-pay'], $language ),
-				'order-received'     => $this->get_endpoint_translation( 'order-received', $wc_vars['order-received'], $language ),
 
-				// My account actions
-				'view-order'         => $this->get_endpoint_translation( 'view-order', $wc_vars['view-order'], $language ),
-				'edit-account'       => $this->get_endpoint_translation( 'edit-account', $wc_vars['edit-account'], $language ),
-				'edit-address'       => $this->get_endpoint_translation( 'edit-address', $wc_vars['edit-address'], $language ),
-				'lost-password'      => $this->get_endpoint_translation( 'lost-password', $wc_vars['lost-password'], $language ),
-				'customer-logout'    => $this->get_endpoint_translation( 'customer-logout', $wc_vars['customer-logout'], $language ),
-				'add-payment-method' => $this->get_endpoint_translation( 'add-payment-method', $wc_vars['add-payment-method'], $language )
-			);
-
-			if ( isset( $wc_vars['orders'] ) ) {
-				$query_vars['orders'] = $this->get_endpoint_translation( 'orders', $wc_vars['orders'], $language );
-			}
-			if ( isset( $wc_vars['downloads'] ) ) {
-				$query_vars['downloads'] = $this->get_endpoint_translation( 'downloads', $wc_vars['downloads'], $language );
-			}
-			if ( isset( $wc_vars['payment-methods'] ) ) {
-				$query_vars['payment-methods'] = $this->get_endpoint_translation( 'payment-methods', $wc_vars['payment-methods'], $language );
-			}
-			if ( isset( $wc_vars['delete-payment-method'] ) ) {
-				$query_vars['delete-payment-method'] = $this->get_endpoint_translation( 'delete-payment-method', $wc_vars['delete-payment-method'], $language );
-			}
-			if ( isset( $wc_vars['set-default-payment-method'] ) ) {
-				$query_vars['set-default-payment-method'] = $this->get_endpoint_translation( 'set-default-payment-method', $wc_vars['set-default-payment-method'], $language );
+			foreach ( $wc_vars as $key => $endpoint ){
+				$endpoint_translation = $this->get_endpoint_translation( $endpoint, $language );
+				$query_vars[ $endpoint_translation ] = $endpoint_translation;
 			}
 
 			$query_vars = apply_filters( 'wcml_register_endpoints_query_vars', $query_vars, $wc_vars, $this );
-
-			$query_vars             = array_merge( $wc_vars, $query_vars );
-			WC()->query->query_vars = $query_vars;
+			WC()->query->query_vars = array_merge( $wc_vars, $query_vars );
 		}
 
 	}
 
-	public function get_endpoint_translation( $endpoint_key, $endpoint, $language = null ) {
-		return apply_filters( 'wpml_get_endpoint_translation', $endpoint_key, $endpoint, $language );
+	public function get_endpoint_translation( $endpoint, $language = null ) {
+		return apply_filters( 'wpml_get_endpoint_translation', $endpoint, $endpoint, $language );
 	}
 
 	public function endpoint_permalink_filter( $data, $endpoint_key ) {
@@ -222,20 +195,7 @@ class WCML_Endpoints {
 		$link     = $data[0];
 		$endpoint = $data[1];
 
-		if ( isset( $wp->query_vars[ $endpoint_key ] ) ) {
-			if ( 'order-pay' === $endpoint_key ) {
-				$endpoint = get_option( 'woocommerce_checkout_pay_endpoint' );
-				$link     .= isset( $_SERVER['QUERY_STRING'] ) ? '?' . $_SERVER['QUERY_STRING'] : '';
-			} elseif ( 'order-received' === $endpoint_key ) {
-				$endpoint = get_option( 'woocommerce_checkout_order_received_endpoint' );
-			} elseif ( 'customer-logout' === $endpoint_key ) {
-				$endpoint = get_option( 'woocommerce_logout_endpoint' );
-			} else {
-				$endpoint = get_option( 'woocommerce_myaccount_' . str_replace( '-', '_', $endpoint_key ) . '_endpoint', $endpoint );
-			}
-
-			$endpoint = apply_filters( 'wcml_endpoint_permalink_filter', $endpoint, $endpoint_key );
-		}
+		$endpoint = apply_filters( 'wcml_endpoint_permalink_filter', $endpoint, $endpoint_key );
 
 		return array( $link, $endpoint );
 	}
@@ -296,21 +256,11 @@ class WCML_Endpoints {
 
 	public function filter_get_endpoint_url( $url, $endpoint, $value, $permalink ) {
 
-		// return translated edit account slugs
 		remove_filter( 'woocommerce_get_endpoint_url', array( $this, 'filter_get_endpoint_url' ), 10, 4 );
-		if ( isset( WC()->query->query_vars['edit-address'] ) && WC()->query->query_vars['edit-address'] == $endpoint && in_array( $value, array(
-				'shipping',
-				'billing'
-			) )
-		) {
-			$url = wc_get_endpoint_url( 'edit-address', $this->get_translated_edit_address_slug( $value ) );
-		} elseif ( $endpoint === get_option( 'woocommerce_myaccount_lost_password_endpoint' ) ) {
-			$translated_lost_password_endpoint = $this->get_endpoint_translation( 'lost-password', $endpoint );
 
-			$wc_account_page_url = wc_get_page_permalink( 'myaccount' );
-			$url                 = wc_get_endpoint_url( $translated_lost_password_endpoint, '', $wc_account_page_url );
+		$translated_endpoint = $this->get_endpoint_translation( $endpoint );
+		$url                 = wc_get_endpoint_url( $translated_endpoint, $value, $this->sitepress->convert_url( $permalink ) );
 
-		}
 		add_filter( 'woocommerce_get_endpoint_url', array( $this, 'filter_get_endpoint_url' ), 10, 4 );
 
 		return $url;
@@ -330,12 +280,6 @@ class WCML_Endpoints {
 		}
 
 		return $value;
-	}
-
-	public function update_original_endpoints_strings() {
-		foreach ( WC()->query->query_vars as $endpoint_key => $endpoint ) {
-			apply_filters( 'wpml_register_endpoint_string', $endpoint_key, $endpoint );
-		}
 	}
 
 	public function add_endpoint_to_current_ls_language_url( $url, $post_lang, $data, $current_endpoint ){

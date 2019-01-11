@@ -775,8 +775,13 @@ class WCML_Url_Translation {
 				break;
 
 			default:
-				$endpoints      = WC()->query->query_vars;
-				$slug           = isset( $endpoints[ $base ] ) ? $endpoints[ $base ] : false;
+				if ( class_exists( 'WPML_Endpoints_Support' ) ) {
+					$slug = $base;
+				} else {
+					$endpoints = WC()->query->query_vars;
+					$slug      = isset( $endpoints[ $base ] ) ? $endpoints[ $base ] : false;
+				}
+
 				$return['name'] = sprintf( __( 'Endpoint: %s', 'woocommerce-multilingual' ), $base );
 				$string_id      = icl_get_string_id( $slug, $this->get_endpoint_string_context(), $base );
 				break;
