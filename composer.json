@@ -1,7 +1,7 @@
 {
     "name": "wcml/woocommerce-multilingual",
     "description": "Allows running fully multilingual e-commerce sites using WooCommerce and WPML.",
-    "license": "GPLv2",
+    "license": "GPL-2.0-only",
     "homepage": "https://wpml.org/documentation/related-projects/woocommerce-multilingual/",
     "type": "wordpress-plugin",
     "authors": [
