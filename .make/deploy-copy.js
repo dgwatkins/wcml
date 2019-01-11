@@ -18,6 +18,12 @@ const argv = require('yargs')
 		demandOption: true,
 		string:       true,
 	})
+	.option('d', {
+		description: 'Debug',
+		alias:       'debug',
+		boolean:     true,
+		default:     false
+	})
 	.demand('t')
 	.argv;
 

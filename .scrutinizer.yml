@@ -1,34 +1,84 @@
---- 
+---
 build:
-  dependencies:
-    before:
-      - "sudo apt-get -y install dnsutils"
-      - "ssh-keyscan -H -p 10022 git.onthegosystems.com >> ~/.ssh/known_hosts"
-      - "ssh-keyscan -H -p 10022 $(dig -t a +short git.onthegosystems.com) >> ~/.ssh/known_hosts"
-  cache:
-    directories:
-      - vendor/
-  environment:
-    php: 5.6
-    mysql: 5.5
-  tests:
-    override:
-      -
-        on_node: 1
-        idle_timeout: 4800
-        command: "./vendor/otgs/build-tools-ci/otgs-ci -p --coveragetype=coverage-clover --coveragefile=../../coverage.xml"
-        coverage:
-          file: coverage.xml
-          format: php-clover
-      -
-        on_node: 2
-        idle_timeout: 4800
-        command: "./vendor/otgs/build-tools-ci/otgs-ci -p --legacy --coveragetype=coverage-clover --coveragefile=./coverage-legacy.xml"
-        coverage:
-          file: coverage-legacy.xml
-          format: php-clover
-      -
-        on_node: 3
-        idle_timeout: 4800
-        command: "phpcs-run ./"
+    dependencies:
+        before:
+            - "sudo apt-get -y install dnsutils"
+            - "ssh-keyscan -H -p 10022 git.onthegosystems.com >> ~/.ssh/known_hosts"
+            - "ssh-keyscan -H -p 10022 $(dig -t a +short git.onthegosystems.com) >> ~/.ssh/known_hosts"
+    cache:
+        directories:
+            - ./vendor/
+            - ./src/node_modules
+    environment:
+        variables:
+            CI_PROJECT_NAMESPACE: 'wpml'
+            CI_PROJECT_NAME: 'woocommerce-multilingual'
+            OTGS_CI_DEBUG_MODE: 0
+            OTGS_CI_INTEGRATION_PATH: './'
+            OTGS_CI_INTEGRATION_WP_UNIT_TESTS_VERSION: 'latest'
+            OTGS_CI_INTEGRATION_WP_VERSION: 'latest'
+            OTGS_CI_PHPUNIT_PATH: 'tests/phpunit'
+            OTGS_CI_PROJECT_BRANCHES_DEVELOP: 'develop'
+            OTGS_CI_PROJECT_BRANCHES_MASTER: 'master'
+            OTGS_CI_TEMP_DIR: '/tmp'
+            OTGS_CI_MYSQL_PASSWORD: 'mysql_strong_password'
+            OTGS_CI_SCRUTINIZER_MYSQL_HOST: '127.0.0.1'
+            OTGS_CI_SCRUTINIZER_MYSQL_NAME: 'wp_test_db'
+            OTGS_CI_SCRUTINIZER_MYSQL_USER: 'root'
+            OTGS_CI_SCRUTINIZER_MYSQL_PASSWORD: ''
+            OTGS_CI_DEPENDENCIES: '
+                [
+                  {
+                    "server": "ssh://git@git.onthegosystems.com:10022",
+                    "namespace": "wpml",
+                    "project_slug": "sitepress-multilingual-cms",
+                    "db": "tests_wpml_core"
+                  }
+                ]
+            '
 
+    nodes:
+        php-unit:
+            environment:
+                php: 5.6
+            tests:
+                override:
+                    - idle_timeout: 4800
+                      command: "./vendor/otgs/build-tools-ci/otgs-ci -p --coveragetype=coverage-clover --coveragefile=../../coverage.xml"
+                      coverage:
+                          file: coverage.xml
+                          format: php-clover
+
+        php-integration:
+            environment:
+                php: 5.6
+            tests:
+                override:
+                    - idle_timeout: 4800
+                      command: "./vendor/otgs/build-tools-ci/otgs-ci -p --legacy --coveragetype=coverage-clover --coveragefile=./coverage-legacy.xml"
+                      coverage:
+                          file: coverage-legacy.xml
+                          format: php-clover
+
+        php-cs:
+            environment:
+                php: 5.6
+            tests:
+                override:
+                    - idle_timeout: 4800
+                      command: "phpcs-run ./"
+
+        php70:
+            environment:
+                php: 7.0
+
+        php71:
+            environment:
+                php: 7.1
+
+    tests:
+        override:
+            - idle_timeout: 4800
+              command: "./vendor/otgs/build-tools-ci/otgs-ci -p"
+            - idle_timeout: 4800
+              command: "./vendor/otgs/build-tools-ci/otgs-ci -p --legacy"
