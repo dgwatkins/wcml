@@ -199,7 +199,7 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 
 		$currency_cookie->expects( $this->once() )->method( 'set_value' )
 		                ->with( $currency_code, $this->isType( 'int' ) );
-		$subject->set_dashboard_currency_ajax( $currency_code );
+		$subject->set_dashboard_currency_ajax();
 	}
 
 	/**

@@ -1,177 +1,210 @@
 ---
-image: registry.otgs.work/infrastructure/docker-images/wptest:7.2
-services:
-  - mysql:5.7
-
 variables:
-  # Configure mysql service (https://hub.autoscale.com/_/mysql/)
-  WORDPRESS_DB_NAME: wp_test_db
-  WORDPRESS_DB_USER: root
-  MYSQL_ROOT_PASSWORD: mysql_strong_password
-  MYSQL_HOST: localhost
-  REAL_MYSQL_HOST: mysql
+    # Configure mysql service (https://hub.autoscale.com/_/mysql/)
+    WORDPRESS_DB_NAME: wp_test_db
+    WORDPRESS_DB_USER: root
+    MYSQL_ROOT_PASSWORD: mysql_strong_password
+    MYSQL_HOST: localhost
+    REAL_MYSQL_HOST: mysql
 
 before_script:
-  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-  - eval $(ssh-agent -s)
-  - bash -c 'ssh-add <(echo "$SSH_PRIVATE_KEY")'
-  - '[[ -f /.dockerenv ]] && mkdir -p ~/.ssh && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-  - 'php --version'
-  - 'composer install --quiet'
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - bash -c 'ssh-add <(echo "$SSH_PRIVATE_KEY")'
+    - '[[ -f /.dockerenv ]] && mkdir -p ~/.ssh && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
 stages:
-  - quality
-  - test
-  - build
-  - documentation
-  - deploy
+    - quality
+    - test
+    - build
+    - documentation
+    - deploy
 
 Compatibility <PHP>:
-  stage: quality
-  when: always
-  image: registry.otgs.work/infrastructure/docker-images/otgs/phpunit:5.7
-  tags:
-    - autoscale
-  script:
-    - vendor/bin/phpcs --standard=./phpcs.compatibility.xml -s -p --colors --report-full --report-summary ./
-  except:
-    - tags
+    stage: quality
+    when: always
+    image: registry.otgs.work/infrastructure/docker-images/phpunit:7.3
+    tags:
+        - autoscale
+    script:
+        - composer install
+        - vendor/bin/phpcs --standard=./phpcs.compatibility.xml -s -p --colors --report-full --report-summary ./
+    except:
+        - tags
+
+#@todo fix duplication with `vendor/bin/phpcpd --exclude=tests --exclude=vendor -- ./`, then uncomment this block
+#Duplication <PHP>:
+#    stage: quality
+#    when: always
+#    image: registry.otgs.work/infrastructure/docker-images/phpunit:7.3
+#    tags:
+#        - autoscale
+#    script:
+#        - composer install
+#        - vendor/bin/phpcpd --exclude=tests --exclude=vendor -- ./
+#    except:
+#        - tags
 
 Unit <PHP>:
-  stage: test
-  when: always
-  image: registry.otgs.work/infrastructure/docker-images/otgs/phpunit:5.7
-  tags:
-    - autoscale
-  script:
-    - cd tests/phpunit
-    - ../../vendor/bin/phpunit --fail-on-warning
-  except:
-    - tags
+    stage: test
+    when: always
+    image: registry.git.onthegosystems.com/infrastructure/docker-images/otgs/phpunit:5.7
+    tags:
+        - autoscale
+    script:
+        - composer install
+        - cd tests/phpunit
+        - ../../vendor/bin/phpunit --fail-on-warning
+    except:
+        - tags
 
 Integration <PHP>:
-  stage: test
-  when: always
-  tags:
-    - autoscale
-  script:
-    - ./vendor/otgs/build-tools-ci/otgs-ci -p --legacy
-  except:
-    - tags
-
-Tag:
-  stage: build
-  when: always
-  image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php71
-  tags:
-    - autoscale
-  script:
-    - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
-    - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
-  artifacts:
-    name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}"
-    paths:
-      - ${CI_PROJECT_NAME}
-  only:
-    - tags
+    stage: test
+    when: always
+    image: registry.otgs.work/infrastructure/docker-images/wptest:7.3
+    services:
+        - mysql:5.7
+    tags:
+        - autoscale
+    script:
+        - composer install
+        - ./vendor/otgs/build-tools-ci/otgs-ci -p --legacy
+    except:
+        - tags
 
 Branch:
-  stage: build
-  when: on_success
-  image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php71
-  tags:
-    - autoscale
-  script:
-    - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
-    - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
-  artifacts:
-    expire_in: 1h
-    name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
-    paths:
-      - ${CI_PROJECT_NAME}
-  except:
-    - master
-    - develop
-    - tags
-    - /^pre-release.*$/
-    - /^functional.*$/
+    stage: build
+    when: on_success
+    image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php73
+    tags:
+        - autoscale
+    script:
+        - composer install
+        - yarn install
+        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
+        - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
+    artifacts:
+        expire_in: 1h
+        name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
+        paths:
+            - ${CI_PROJECT_NAME}
+    except:
+        - master
+        - develop
+        - tags
+        - /^pre-release.*$/
+        - /^functional.*$/
 
 Pre-Release:
-  stage: build
-  when: on_success
-  image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php71
-  tags:
-    - autoscale
-  script:
-    - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
-    - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
-  artifacts:
-    expire_in: 4 weeks
-    name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
-    paths:
-      - ${CI_PROJECT_NAME}
-  only:
-    - /^pre-release.*$/
+    stage: build
+    when: on_success
+    image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php73
+    tags:
+        - autoscale
+    script:
+        - composer install
+        - yarn install
+        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
+        - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
+    artifacts:
+        expire_in: 4 weeks
+        name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
+        paths:
+            - ${CI_PROJECT_NAME}
+    only:
+        - /^pre-release.*$/
 
 Develop:
-  stage: build
-  when: on_success
-  image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php71
-  tags:
-    - autoscale
-  script:
-    - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
-  artifacts:
-    expire_in: 7 days
-    name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
-    paths:
-      - ${CI_PROJECT_NAME}
-  only:
-    - develop
+    stage: build
+    when: on_success
+    image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php73
+    tags:
+        - autoscale
+    script:
+        - composer install
+        - yarn install
+        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
+        - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
+    artifacts:
+        expire_in: 7 days
+        name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
+        paths:
+            - ${CI_PROJECT_NAME}
+    only:
+        - develop
 
 Master:
-  stage: build
-  when: on_success
-  image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php71
-  tags:
-    - autoscale
-  script:
-    - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
-    - ./vendor/otgs/build-tools-ci/otgs-ci -d --deploytype=src --deploytarget=./
-  artifacts:
-    expire_in: 6 mos
-    name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
-    paths:
-      - ${CI_PROJECT_NAME}
-  only:
-    - master
+    stage: build
+    when: on_success
+    image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php73
+    tags:
+        - autoscale
+    script:
+        - composer install
+        - yarn install
+        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
+        - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
+    artifacts:
+        expire_in: 6 mos
+        name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
+        paths:
+            - ${CI_PROJECT_NAME}
+    only:
+        - master
+
+Tag:
+    stage: build
+    when: always
+    image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php73
+    tags:
+        - autoscale
+    script:
+        - composer install
+        - yarn install
+        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - composer install --no-dev
+        - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
+        - ./.make/deploy-update-version.js -t ./${CI_PROJECT_NAME} -r ${CI_COMMIT_TAG}
+        - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
+    artifacts:
+        name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}"
+        paths:
+            - ${CI_PROJECT_NAME}
+    only:
+        - tags
 
 Release Notes:
-  stage: documentation
-  when: on_success
-  image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php71
-  tags:
-    - autoscale
-  script:
-    - ./vendor/bin/otgs-changelog update --project wcml --target-version all --path ./changelog
-    - ./vendor/otgs/build-tools-ci/otgs-ci --releasenotes
-  only:
-    - tags
-  except:
+    stage: documentation
+    when: on_success
+    image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php73
+    tags:
+        - autoscale
+    script:
+        - composer install
+        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - ./vendor/otgs/build-tools-ci/otgs-ci --releasenotes
+    only:
+        - tags
+    except:
 
 S3:
-  stage: deploy
-  when: on_success
-  image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php71
-  tags:
-    - autoscale
-  script:
-    - ./vendor/bin/publish-artifact-to-s3
-  dependencies:
-  - Tag
-  - Develop
-  - Master
-  only:
-    - tags
-    - develop
-    - master
+    stage: deploy
+    when: on_success
+    image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php73
+    tags:
+        - autoscale
+    script:
+        - composer install
+        - ./vendor/bin/publish-artifact-to-s3
+    dependencies:
+        - Tag
+        - Develop
+        - Master
+    only:
+        - tags
+        - develop
+        - master

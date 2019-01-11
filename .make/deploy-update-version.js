@@ -18,10 +18,10 @@ const argv = require('yargs')
 		string:       true,
 	})
 	.option('d', {
-		description: 'Do not make changes to files',
-		alias:       'dryRun',
+		description: 'Debug',
+		alias:       'debug',
 		boolean:     true,
-		default:     false,
+		default:     false
 	})
 	.argv;
 
@@ -30,7 +30,9 @@ const targetPath = path.normalize(argv.target);
 updatePluginVersion();
 
 function updatePluginVersion() {
-	setTestPatterns();
+	if (argv.target) {
+		setTestPatterns();
+	}
 
 	const tag = argv.ref.trim();
 
@@ -129,15 +131,11 @@ function getMainPluginFile() {
 function setTestPatterns() {
 	const testPatterns = [
 		{
-			"searchPattern": "(wpml.org\\/version\\/gravityforms-multilingual-)([\\d\\-*]*)(\\/\">Gravity Forms Multilingual )([\\d\\.*]*)( release notes)",
-			"replacePattern": "$1{{tag-slug}}$3{{tag}}$5"
-		},
-		{
 			"searchPattern": "(Version:\\s*)(\\d*.*)",
 			"replacePattern": "$1{{tag}}"
 		},
 		{
-			"searchPattern": "(GRAVITYFORMS_MULTILINGUAL_VERSION\\',\\s*\\')(\\d*.*)(\\')",
+			"searchPattern": "(WCML_VERSION\\',\\s*\\')(\\d*.*)(\\')",
 			"replacePattern": "$1{{tag}}$3",
 			"extractSemVer": true
 		}
