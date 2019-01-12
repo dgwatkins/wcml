@@ -25,7 +25,7 @@ cleanupTarget();
 
 function cleanupTarget() {
 
-	if (argv.target) {
+	if (!process.env.OTGS_CI_DEPLOY_DEL && argv.debug) {
 		setTestPatterns();
 	}
 
@@ -34,7 +34,7 @@ function cleanupTarget() {
 		process.chdir(targetPath);
 		const del_patterns = JSON.parse(process.env.OTGS_CI_DEPLOY_DEL);
 
-		return del(del_patterns, {dot: true})
+		return del(del_patterns, {dot: true,})
 			.then(paths => {
 				process.chdir(currentDirectory);
 				return console.info(`Deleted ${paths.length} files`);
@@ -63,8 +63,17 @@ function setTestPatterns() {
 		".make",
 		"build",
 		"composer.*",
+		"libraries/**/*/*.log",
+		"libraries/**/*/*.md",
+		"libraries/**/*/.*",
+		"libraries/**/*/bin",
+		"libraries/**/*/demo",
+		"libraries/**/*/doc",
+		"libraries/**/*/node_modules",
+		"libraries/**/*/src",
+		"libraries/**/*/test",
+		"libraries/vkBeautify/**/*",
 		"Makefile",
-		"node_modules",
 		"node_modules",
 		"package.json",
 		"postcss.config.json",
@@ -88,13 +97,15 @@ function setTestPatterns() {
 		"yarn-error.log",
 		"yarn.lock",
 		"!changelog.md",
+		"!libraries/vkBeautify/vkbeautify.js",
 		"!license.txt",
 		"!readme.txt",
 		"!vendor/**/*/lib/test*",
+		"!vendor/**/*/README.md",
 		"!vendor/**/*/src/test*",
 		"!vendor/otgs/installer/*.xml",
 		"!wpml-config.xml",
-		"!wpml-dependencies.json",
+		"!wpml-dependencies.json"
 	];
 
 	process.env.OTGS_CI_DEPLOY_DEL = JSON.stringify(testPatterns);
