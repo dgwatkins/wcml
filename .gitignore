@@ -61,11 +61,26 @@ build.xml
 ## Directories
 
 !tests/js/vendor
+!.githooks
+!.make
 
 ## Files
 
-!/tests/*.sh
+!/build/*.sh
+!/build/ci/*.sh
 
 !tests/install-wp-tests.sh
 
 !/tests/compatibility/run.sh
+
+!.babelrc
+!.browserslistrc
+!.eslintrc
+!package.json
+!postcss.config.json
+!webpack.config.js
+!yarn.lock
+
+!.githooks/*.sh
+!.make/*.sh
+!Makefile
