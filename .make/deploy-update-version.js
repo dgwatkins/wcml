@@ -30,7 +30,7 @@ const targetPath = path.normalize(argv.target);
 updatePluginVersion();
 
 function updatePluginVersion() {
-	if (argv.target) {
+	if (!process.env.OTGS_CI_REPLACEMENTS && argv.debug) {
 		setTestPatterns();
 	}
 
