@@ -49,7 +49,7 @@ function updatePluginVersion() {
 
 			console.info('- Found "' + file + '": updating...');
 
-			const replacement_patterns = JSON.parse(process.env.OTGS_CI_REPLACEMENTS);
+			const replacement_patterns = JSON.parse(process.env.OTGS_CI_REPLACEMENTS.replace(/(%)(\d)/g, '$$$2'));
 
 			console.log('replacement_patterns',replacement_patterns);
 
