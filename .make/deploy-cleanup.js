@@ -24,7 +24,6 @@ const targetPath = path.normalize(argv.target);
 cleanupTarget();
 
 function cleanupTarget() {
-
 	if (!process.env.OTGS_CI_DEPLOY_DEL && argv.debug) {
 		setTestPatterns();
 	}
