@@ -51,23 +51,29 @@ function updatePluginVersion() {
 
 			const replacement_patterns = JSON.parse(process.env.OTGS_CI_REPLACEMENTS.replace(/(%)(\d)/g, '$$$2'));
 
-			console.log('replacement_patterns',replacement_patterns);
+			replacement_patterns
+				.filter(regex_args => {
+					const regExp = new RegExp(regex_args.searchPattern, 'g');
+					return regExp.test(updatedContent);
+				})
+				.map((regex_args, index) => {
 
-			replacement_patterns.map((regex_args, index) => {
+					const use     = regex_args.extractSemVer ? regex_args.extractSemVer : false;
+					const tagName = use ? extractSemVer(tag) : tag;
+					const tagSlug = tagName.trim().replace(/\./g, '-');
 
-				const use     = regex_args.extractSemVer ? regex_args.extractSemVer : false;
-				const tagName = use ? extractSemVer(tag) : tag;
-				const tagSlug = tagName.trim().replace(/\./g, '-');
+					const regExp = new RegExp(regex_args.searchPattern, 'g');
 
-				process.stdout.write((index + 1) + ') Will search for "' + regex_args.searchPattern);
-				process.stdout.write(' using "' + tagName + '" as a tag and "' + tagSlug + '" as a tag slug');
-				process.stdout.write(' and replacing it with "' + regex_args.replacePattern + '"\n');
+					if (regExp.test(updatedContent)) {
+						process.stdout.write((index + 1) + ') Will search for "' + regex_args.searchPattern);
+						process.stdout.write(' using "' + tagName + '" as a tag and "' + tagSlug + '" as a tag slug');
+						process.stdout.write(' and replacing it with "' + regex_args.replacePattern + '"\n');
 
-				const regExp   = new RegExp(regex_args.searchPattern, 'g');
-				updatedContent = updatedContent.replace(regExp, regex_args.replacePattern)
-					.replace(/{{tag-slug}}/g, tagSlug)
-					.replace(/{{tag}}/g, tagName);
-			});
+						updatedContent = updatedContent.replace(regExp, regex_args.replacePattern)
+							.replace(/{{tag-slug}}/g, tagSlug)
+							.replace(/{{tag}}/g, tagName);
+					}
+				});
 
 			if (!argv.dryRun && updatedContent !== content) {
 				fs.writeFileSync(file, updatedContent, {encoding: 'utf8'});
@@ -89,8 +95,6 @@ function extractSemVer(version) {
 		.replace(/([^0-9.]+)/, '.$1.')
 		.replace(/\.{2,}/g, '.')
 		.split('.');
-
-	console.log('versionElements', versionElements);
 
 	const nakedElements = ['0', '0', '0'];
 
@@ -131,13 +135,76 @@ function getMainPluginFile() {
 function setTestPatterns() {
 	const testPatterns = [
 		{
-			"searchPattern": "(Version:\\s*)(\\d*.*)",
-			"replacePattern": "$1{{tag}}"
+			"searchPattern":  "(Version:\\s*)(\\d*.*)",
+			"replacePattern": "%1{{tag}}"
 		},
 		{
-			"searchPattern": "(WCML_VERSION\\',\\s*\\')(\\d*.*)(\\')",
-			"replacePattern": "$1{{tag}}$3",
-			"extractSemVer": true
+			"searchPattern":  "(GRAVITYFORMS_MULTILINGUAL_VERSION\\',\\s*\\')(\\d*.*)(\\')",
+			"replacePattern": "%1{{tag}}%3",
+			"extractSemVer":  true
+		},
+		{
+			"searchPattern":  "(wpml.org\\/version\\/wpml-)([\\d\\-*]*)(\\/\">WPML )([\\d\\.*]*)( release notes)",
+			"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
+		},
+		{
+			"searchPattern":  "(WCML_VERSION\\',\\s*\\')(\\d*.*)(\\')",
+			"replacePattern": "%1{{tag}}%3",
+			"extractSemVer":  true
+		},
+		{
+			"searchPattern":  "(wpml.org\\/version\\/cms-nav-)([\\d\\-*]*)(\\/\">WPML CMS Nav )([\\d\\.*]*)( release notes)",
+			"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
+		},
+		{
+			"searchPattern":  "(wpml.org\\/version\\/gravityforms-multilingual-)([\\d\\-*]*)(\\/\">Gravity Forms Multilingual )([\\d\\.*]*)( release notes)",
+			"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
+		},
+		{
+			"searchPattern":  "(wpml.org\\/version\\/media-translation-)([\\d\\-*]*)(\\/\">WPML Media Translation )([\\d\\.*]*)( release notes)",
+			"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
+		},
+		{
+			"searchPattern":  "(wpml.org\\/version\\/sticky-links-)([\\d\\-*]*)(\\/\">WPML Sticky Links )([\\d\\.*]*)( release notes)",
+			"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
+		},
+		{
+			"searchPattern":  "(wpml.org\\/version\\/string-translation-)([\\d\\-*]*)(\\/\">WPML String Translation )([\\d\\.*]*)( release notes)",
+			"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
+		},
+		{
+			"searchPattern":  "(wpml.org\\/version\\/translation-management-)([\\d\\-*]*)(\\/\">WPML Translation Management )([\\d\\.*]*)( release notes)",
+			"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
+		},
+		{
+			"searchPattern":  "(ICL_SITEPRESS_VERSION\\',\\s*\\')(\\d*.*)(\\')",
+			"replacePattern": "%1{{tag}}%3",
+			"extractSemVer":  true
+		},
+		{
+			"searchPattern":  "(WPML_CMS_NAV_VERSION\\',\\s*\\')(\\d*.*)(\\')",
+			"replacePattern": "%1{{tag}}%3",
+			"extractSemVer":  true
+		},
+		{
+			"searchPattern":  "(WPML_MEDIA_VERSION\\',\\s*\\')(\\d*.*)(\\')",
+			"replacePattern": "%1{{tag}}%3",
+			"extractSemVer":  true
+		},
+		{
+			"searchPattern":  "(WPML_ST_VERSION\\',\\s*\\')(\\d*.*)(\\')",
+			"replacePattern": "%1{{tag}}%3",
+			"extractSemVer":  true
+		},
+		{
+			"searchPattern":  "(WPML_STICKY_LINKS_VERSION\\',\\s*\\')(\\d*.*)(\\')",
+			"replacePattern": "%1{{tag}}%3",
+			"extractSemVer":  true
+		},
+		{
+			"searchPattern":  "(WPML_TM_VERSION\\',\\s*\\')(\\d*.*)(\\')",
+			"replacePattern": "%1{{tag}}%3",
+			"extractSemVer":  true
 		}
 	];
 
