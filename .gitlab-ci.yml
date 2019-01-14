@@ -82,6 +82,7 @@ Branch:
         - composer install
         - yarn install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
         - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
     artifacts:
@@ -106,6 +107,7 @@ Pre-Release:
         - composer install
         - yarn install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
         - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
     artifacts:
@@ -126,6 +128,7 @@ Develop:
         - composer install
         - yarn install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
         - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
     artifacts:
@@ -146,6 +149,7 @@ Master:
         - composer install
         - yarn install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
         - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
     artifacts:
