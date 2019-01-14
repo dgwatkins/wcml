@@ -31,6 +31,7 @@ class Test_WCML_Exchange_Rates_Ajax extends WP_Ajax_UnitTestCase {
     /**
      * @test
      * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function test_update_exchange_rates_ajax(){
 
