@@ -34,7 +34,8 @@ class Test_WCML_Exchange_Rates_Ajax extends WP_Ajax_UnitTestCase {
      * @test
      */
     public function test_update_exchange_rates_ajax(){
-
+global $sitepress;
+var_dump($sitepress->get_setting( 'translation-management', array() ));
 	    $exchange_rate_service_fixerio = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
             ->disableOriginalConstructor()
             ->setMethods( array( 'get_rates' ) )
