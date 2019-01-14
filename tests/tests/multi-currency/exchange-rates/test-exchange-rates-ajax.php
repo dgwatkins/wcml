@@ -25,17 +25,14 @@ class Test_WCML_Exchange_Rates_Ajax extends WP_Ajax_UnitTestCase {
         $this->multi_currency =& $this->woocommerce_wpml->multi_currency;
 
         $this->exchange_rate_services =& $this->multi_currency->exchange_rate_services;
-	    $tm_settings = $sitepress->get_setting( 'translation-management', array() );
-	    $tm_settings['doc_translation_method'] = 1;
-	    $sitepress->set_setting( 'translation-management', $tm_settings, true );
+
     }
 
     /**
      * @test
      */
     public function test_update_exchange_rates_ajax(){
-global $sitepress;
-var_dump($sitepress->get_setting( 'translation-management', array() ));
+
 	    $exchange_rate_service_fixerio = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
             ->disableOriginalConstructor()
             ->setMethods( array( 'get_rates' ) )
