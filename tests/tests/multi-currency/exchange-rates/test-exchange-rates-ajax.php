@@ -6,12 +6,14 @@ class Test_WCML_Exchange_Rates_Ajax extends WP_Ajax_UnitTestCase {
     private $multi_currency;
     private $exchange_rate_services;
     private $woocommerce_wpml;
+    private $sitepress;
 
     function setUp(){
         global $woocommerce_wpml, $sitepress, $wpdb;
 
         $this->woocommerce_wpml =& $woocommerce_wpml;
-	    WCML_Helper::init( $this->woocommerce_wpml, $sitepress, $wpdb );
+        $this->sitepress =& $sitepress;
+	    WCML_Helper::init( $this->woocommerce_wpml, $this->sitepress, $wpdb );
 	    WCML_Helper::create_icl_string_packages_table();
 
         parent::setUp();
