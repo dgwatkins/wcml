@@ -26,12 +26,13 @@ class Test_WCML_Exchange_Rates_Ajax extends WP_Ajax_UnitTestCase {
 
         $this->exchange_rate_services =& $this->multi_currency->exchange_rate_services;
 
+	    $tm_settings['doc_translation_method'] = 1;
+	    $sitepress->set_setting( 'translation-management', $tm_settings, true );
+	    $sitepress->set_setting( 'doc_translation_method', 1, true );
     }
 
     /**
      * @test
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
      */
     public function test_update_exchange_rates_ajax(){
 
@@ -39,6 +40,8 @@ class Test_WCML_Exchange_Rates_Ajax extends WP_Ajax_UnitTestCase {
             ->disableOriginalConstructor()
             ->setMethods( array( 'get_rates' ) )
             ->getMock();
+
+
 
         // Set random rates for the mocked get_rates method
         $currencies = $this->woocommerce_wpml->multi_currency->get_currency_codes();
