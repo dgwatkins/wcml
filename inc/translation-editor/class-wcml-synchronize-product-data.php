@@ -561,9 +561,11 @@ class WCML_Synchronize_Product_Data{
             foreach( $post_fields as $post_field_key => $post_field ){
 
                 if( 1 === preg_match( '/field-' . $custom_field . '-.*?/', $post_field_key ) ){
-	                $custom_fields        = array_filter( get_post_meta( $original_product_id, $custom_field, true ) );
-	                $custom_fields_values = array_values( $custom_fields );
-	                $custom_fields_keys   = array_keys( $custom_fields );
+	                $custom_fields          = get_post_meta( $original_product_id, $custom_field, true );
+	                $filtered_custom_fields = array_filter( $custom_fields );
+	                $custom_fields_values   = array_values( $filtered_custom_fields );
+	                $custom_fields_keys     = array_keys( $filtered_custom_fields );
+
 	                foreach ( $custom_fields_values as $custom_field_index => $custom_field_value ) {
 		                $custom_fields_values =
 			                $this->get_translated_custom_field_values(
@@ -575,8 +577,9 @@ class WCML_Synchronize_Product_Data{
 			                );
 	                }
 
-	                $custom_fields_translated = array();
-	                foreach ( $custom_fields_values as $index => $value ) {
+	                $custom_fields_translated = $custom_fields;
+
+	                foreach( $custom_fields_values as $index => $value ){
 		                $custom_fields_translated[ $custom_fields_keys[ $index ] ] = $value;
 	                }
 

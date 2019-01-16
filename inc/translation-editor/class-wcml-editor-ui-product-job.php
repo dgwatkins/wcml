@@ -529,11 +529,11 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         if( $custom_fields ){
             foreach( $custom_fields as $custom_field ) {
                 $orig_custom_field_values = get_post_meta( $element_id, $custom_field );
-                $translated_custom_field_values = array();
+                $translated_custom_field_value = array();
                 $trnsl_mid_ids = array();
 
                 if ( $translation_id ) {
-                    $translated_custom_field_values = get_post_meta( $translation_id, $custom_field );
+                    $translated_custom_field_value = get_post_meta( $translation_id, $custom_field );
                     $trnsl_mid_ids = $this->woocommerce_wpml->products->get_mid_ids_by_key( $translation_id, $custom_field );
                 }
 
@@ -547,31 +547,35 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
                         if( count( $orig_custom_field_values ) == 1 ){
                             $element_data[ $custom_field ] = array( 'original' => $orig_custom_field_value );
-                            $element_data[ $custom_field ][ 'translation' ] = ( $translation_id && isset( $translated_custom_field_values[ $val_key ] ) ) ? $translated_custom_field_values[ $val_key ] : '';
+                            $element_data[ $custom_field ][ 'translation' ] = ( $translation_id && isset( $translated_custom_field_value[ $val_key ] ) ) ? $translated_custom_field_value[ $val_key ] : '';
                         }else{
 
                             $custom_field_key = $custom_field.':'. ( isset( $trnsl_mid_ids[ $val_key ] ) ? $trnsl_mid_ids[ $val_key ] : 'new_'. $val_key );
 
                             $element_data[ $custom_field ][ $custom_field_key ] = array( 'original' => $orig_custom_field_value );
-                            $element_data[ $custom_field ][ $custom_field_key ][ 'translation' ] = ($translation_id && isset( $translated_custom_field_values[ $val_key ] ) ) ? $translated_custom_field_values[ $val_key ] : '';
+                            $element_data[ $custom_field ][ $custom_field_key ][ 'translation' ] = ($translation_id && isset( $translated_custom_field_value[ $val_key ] ) ) ? $translated_custom_field_value[ $val_key ] : '';
                         }
 
                     }else{
 
-                        $custom_fields_values = array_values( array_filter( maybe_unserialize( get_post_meta($this->product_id, $custom_field, true ) ) ) );
+	                    $custom_fields = maybe_unserialize( get_post_meta( $this->product_id, $custom_field, true ) );
+	                    $translated_custom_fields = array();
 
-                        if( $custom_fields_values ){
-                            if ( $translation_id ) {
-                                $translated_custom_field_values = array_values( array_filter( maybe_unserialize( get_post_meta( $translation_id, $custom_field , true ) ) ) );
-                            }
-                            foreach( $custom_fields_values as $custom_field_index => $custom_field_val ){
+	                    if ( $custom_fields ) {
 
-                                $translated_custom_field_value = isset( $translated_custom_field_values[ $custom_field_index ] )? $translated_custom_field_values[ $custom_field_index ] : '';
+		                    if ( $translation_id ) {
+			                    $translated_custom_fields = maybe_unserialize( get_post_meta( $translation_id, $custom_field, true ) );
+		                    }
 
-                                    $element_data = $this->add_single_custom_field_content_value( $element_data, $custom_field, $custom_field_index, $custom_field_val, $translated_custom_field_value );
-
-                            }
-                        }
+		                    $i = 0;
+		                    foreach ( $custom_fields as $key => $field_value ) {
+			                    if ( ! empty( $field_value ) ) {
+				                    $translated_custom_field_value = isset( $translated_custom_fields[ $key ] ) ? $translated_custom_fields[ $key ] : '';
+				                    $element_data                  = $this->add_single_custom_field_content_value( $element_data, $custom_field, $i, $field_value, $translated_custom_field_value );
+				                    $i ++;
+			                    }
+		                    }
+	                    }
                     }
                 }
             }
