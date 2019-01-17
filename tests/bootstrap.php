@@ -26,12 +26,13 @@ require_once $_tests_dir . '/includes/functions.php';
 
 function _manually_load_wcml() {
 	wp_styles();
-	require WPML_CORE_PATH . '/tests/util/functions.php';
-	require WPML_CORE_PATH . '/sitepress.php';
-	require WPML_CORE_ST_PATH . '/plugin.php';
-	require WPML_CORE_TM_PATH . '/plugin.php';
-	require WC_PATH. '/woocommerce.php';
-	require dirname( __FILE__ ) . '/../wpml-woocommerce.php';
+	require_once WPML_CORE_PATH . '/tests/util/functions.php';
+	require_once WPML_CORE_PATH . '/sitepress.php';
+	require_once WPML_CORE_ST_PATH . '/plugin.php';
+	require_once WPML_CORE_TM_PATH . '/plugin.php';
+	require_once WC_PATH. '/woocommerce.php';
+	require_once WC_BOOKING_PATH . '/woocommerce-bookings.php';
+	require_once dirname( __FILE__ ) . '/../wpml-woocommerce.php';
 }
 
 tests_add_filter( 'plugins_loaded', '_manually_load_wcml', - PHP_INT_MAX );
@@ -57,7 +58,6 @@ function _install_wc() {
 		"{$wpdb->prefix}woocommerce_shipping_zones",
 		"{$wpdb->prefix}woocommerce_tax_rate_locations",
 		"{$wpdb->prefix}woocommerce_tax_rates",
-		"{$wpdb->prefix}wc_booking_relationships",
 	);
 	foreach ( $tables_to_empty as $table_name ) {
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name ) {
@@ -68,12 +68,6 @@ function _install_wc() {
 
 	WC_Install::install();
 	update_option( 'woocommerce_calc_shipping', 'yes' ); // Needed for tests cart and shipping methods
-
-	if ( file_exists( WC_BOOKING_PATH . '/woocommerce-bookings.php' ) ) {
-		require WC_BOOKING_PATH . '/woocommerce-bookings.php';
-		$GLOBALS['wc_bookings']->includes();
-		$GLOBALS['wc_bookings']->delayed_install();
-	}
 }
 
 require_once dirname( __FILE__ ) . '/wordpress/wp-includes/class-wp-locale.php';
@@ -101,15 +95,15 @@ function WP_REST_Server_placeholder(){
 	}
 }
 
-require $_tests_dir . '/includes/bootstrap.php';
-require WPML_CORE_PATH . '/tests/util/wpml-unittestcase.class.php';
-require WC_PATH . '/tests/includes/wp-http-testcase.php';
-require WC_PATH . '/tests/framework/class-wc-unit-test-case.php';
-require WC_PATH . '/tests/framework/class-wc-unit-test-factory.php';
+require_once $_tests_dir . '/includes/bootstrap.php';
+require_once WPML_CORE_PATH . '/tests/util/wpml-unittestcase.class.php';
+require_once WC_PATH . '/tests/includes/wp-http-testcase.php';
+require_once WC_PATH . '/tests/framework/class-wc-unit-test-case.php';
+require_once WC_PATH . '/tests/framework/class-wc-unit-test-factory.php';
 
-require WCML_CORE_PATH . '/tests/util/wcml-unittestcase.class.php';
-require WCML_CORE_PATH . '/tests/util/class-wcml-helper.php';
-require WCML_CORE_PATH . '/tests/util/class-wcml-helper-coupon.php';
-require WCML_CORE_PATH . '/tests/util/class-wcml-helper-multi-currency.php';
-require WCML_CORE_PATH . '/tests/util/class-wcml-helper-orders.php';
-require WCML_CORE_PATH . '/tests/util/class-wcml-helper-shipping.php';
+require_once WCML_CORE_PATH . '/tests/util/wcml-unittestcase.class.php';
+require_once WCML_CORE_PATH . '/tests/util/class-wcml-helper.php';
+require_once WCML_CORE_PATH . '/tests/util/class-wcml-helper-coupon.php';
+require_once WCML_CORE_PATH . '/tests/util/class-wcml-helper-multi-currency.php';
+require_once WCML_CORE_PATH . '/tests/util/class-wcml-helper-orders.php';
+require_once WCML_CORE_PATH . '/tests/util/class-wcml-helper-shipping.php';
