@@ -19,9 +19,13 @@ class Test_WCML_Table_Rate_Shipping extends OTGS_TestCase {
 		                        ->getMock();
 	}
 
-	private function get_subject(){
+	private function get_subject( $sitepress = null ){
 
-		return new WCML_Table_Rate_Shipping( $this->get_sitepress(), $this->get_woocommerce_wpml() );
+		if( !$sitepress ){
+			$sitepress = $this->get_sitepress();
+		}
+
+		return new WCML_Table_Rate_Shipping( $sitepress, $this->get_woocommerce_wpml() );
 	}
 
 	/**
@@ -45,7 +49,21 @@ class Test_WCML_Table_Rate_Shipping extends OTGS_TestCase {
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
 		\WP_Mock::wpFunction( 'wcml_is_multi_currency_on', array( 'return' => true ) );
 
-		$subject = $this->get_subject();
+		$sitepress = $this->getMockBuilder( 'Sitepress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_wp_api' ) )
+		                  ->getMock();
+
+		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->getMock();
+
+		$wp_api->method( 'version_compare' )->willReturn( true );
+
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		$subject = $this->get_subject( $sitepress );
 		\WP_Mock::expectFilterAdded( 'woocommerce_table_rate_query_rates_args', array( $subject, 'filter_query_rates_args' ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_table_rate_package_row_base_price', array( $subject, 'filter_product_base_price' ), 10, 3 );
 		$subject->add_hooks();

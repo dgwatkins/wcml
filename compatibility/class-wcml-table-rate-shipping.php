@@ -36,7 +36,11 @@ class WCML_Table_Rate_Shipping {
 		}
 
 		if ( wcml_is_multi_currency_on() ) {
-			add_filter( 'woocommerce_table_rate_query_rates_args', array( $this, 'filter_query_rates_args' ) );
+			$wpml_api = $this->sitepress->get_wp_api();
+			if ( $wpml_api->version_compare( $wpml_api->constant( 'TABLE_RATE_SHIPPING_VERSION' ), '3.0.11', '<' ) ) {
+				add_filter( 'woocommerce_table_rate_query_rates_args', array( $this, 'filter_query_rates_args' ) );
+			}
+
 			add_filter( 'woocommerce_table_rate_package_row_base_price', array(
 				$this,
 				'filter_product_base_price'
