@@ -194,7 +194,7 @@ class woocommerce_wpml {
 	        $wcml_pointers->add_hooks();
         }
 
-        $this->sync_product_data    = new WCML_Synchronize_Product_Data( $this, $sitepress, $wpdb );
+        $this->sync_product_data    = new WCML_Synchronize_Product_Data( $this, $sitepress, $wpml_post_translations, $wpdb );
         $this->sync_product_data->add_hooks();
         $this->duplicate_product    = new WCML_WC_Admin_Duplicate_Product( $this, $sitepress, $wpdb );
         $this->products             = new WCML_Products( $this, $sitepress, $wpml_post_translations, $wpdb );

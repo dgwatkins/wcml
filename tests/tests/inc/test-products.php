@@ -7,11 +7,12 @@ class Test_WCML_Products extends WCML_UnitTestCase {
 
 	function setUp() {
 		parent::setUp();
+		global $wpml_post_translations;
 
 		set_current_screen( 'admin' );
 
 		$this->woocommerce_wpml->sync_product_data =
-			new WCML_Synchronize_Product_Data( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
+			new WCML_Synchronize_Product_Data( $this->woocommerce_wpml, $this->sitepress, $wpml_post_translations, $this->wpdb );
 		$this->woocommerce_wpml->sync_variations_data =
 			new WCML_Synchronize_Variations_Data( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
 

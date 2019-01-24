@@ -178,33 +178,4 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		$this->assertEquals( get_term_meta( $default_cat->term_id, 'product_count_product_cat', true), get_term_meta( $translated_cat->term_id, 'product_count_product_cat', true) );
 	}
 
-	public function test_sync_product_stocks_for_non_original_product(){
-
-		$orig_product_id = $this->test_data->orig_product->id;
-		$es_product_id = $this->test_data->es_product->id;
-
-		update_post_meta( $orig_product_id, '_manage_stock', 'yes' );
-		$orig_product = wc_get_product( $orig_product_id );
-		wc_update_product_stock( $orig_product_id, 99 );
-		$orig_product->set_stock_status( 'instock' );
-
-		update_post_meta( $es_product_id, '_manage_stock', 'yes' );
-		$es_product = wc_get_product( $es_product_id );
-		wc_update_product_stock( $es_product_id, 99 );
-		$es_product->set_stock_status( 'instock' );
-
-		$this->sitepress->switch_lang( $this->second_language );
-
-		$order = WCML_Helper_Orders::create_order( array( 'product_id' => $es_product_id, 'wpml_language' => $this->second_language ) );
-		$this->woocommerce_wpml->sync_product_data->sync_product_stocks( $order, 'reduce' );
-
-		$orig_product = wc_get_product( $orig_product_id );
-		$this->assertEquals( 98, $orig_product->get_stock_quantity() );
-
-		$es_product = wc_get_product( $es_product_id );
-		$this->assertEquals( 98, $es_product->get_stock_quantity() );
-
-		$this->sitepress->switch_lang();
-	}
-
 }
