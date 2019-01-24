@@ -47,11 +47,20 @@ vendor/autoload.php: composer.lock
 # Setup
 
 githooks:
+ifndef CI
 	find .git/hooks -type l -exec rm {} \;
 	find .githooks -type f -exec ln -sf ../../{} .git/hooks/ \;
+else
+	echo 'Skipping in CI'
+endif
 
 
 # Tests
 
 phpunit: vendor/autoload.php
 	vendor/bin/phpunit --fail-on-warning --configuration tests/phpunit/phpunit.xml
+
+# Install
+install:
+	composer install
+	yarn install
