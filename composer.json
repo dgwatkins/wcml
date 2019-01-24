@@ -42,10 +42,14 @@
         "sebastian/phpcpd": "^3.0"
     },
     "scripts": {
+        "make": [
+            "make githooks"
+        ],
         "php52-autoloader": [
             "xrstf\\Composer52\\Generator::onPostInstallCmd"
         ],
         "post-install-cmd": [
+            "@make",
             "@php52-autoloader"
         ],
         "post-update-cmd": [
