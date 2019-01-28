@@ -23,16 +23,20 @@ class WCML_Endpoints {
 
 	public function add_hooks() {
 
-		add_action( 'init', array( $this, 'migrate_ones_string_translations' ), 9 );
-		add_action( 'wpml_after_add_endpoints_translations', array( $this, 'add_wc_endpoints_translations' ) );
+		if ( class_exists( 'WPML_Endpoints_Support_Factory' ) ) {
+			add_action( 'init', array( $this, 'migrate_ones_string_translations' ), 9 );
+			add_action( 'wpml_after_add_endpoints_translations', array( $this, 'add_wc_endpoints_translations' ) );
+
+			add_filter( 'wpml_endpoint_permalink_filter', array( $this, 'endpoint_permalink_filter' ), 10, 2 );
+			add_filter( 'wpml_endpoint_url_value', array( $this, 'filter_endpoint_url_value' ), 10, 2 );
+			add_filter( 'wpml_current_ls_language_url_endpoint', array( $this, 'add_endpoint_to_current_ls_language_url' ), 10, 4 );
+		}else{
+			$legacy_endpoints = new WCML_Endpoints_Legacy( $this->woocommerce_wpml );
+			$legacy_endpoints->add_hooks();
+		}
 
 		add_filter( 'wpml_sl_blacklist_requests', array( $this, 'reserved_requests' ) );
-		add_filter( 'wpml_endpoint_permalink_filter', array( $this, 'endpoint_permalink_filter' ), 10, 2 );
-		add_filter( 'wpml_endpoint_url_value', array( $this, 'filter_endpoint_url_value' ), 10, 2 );
-
 		add_filter( 'woocommerce_get_endpoint_url', array( $this, 'filter_get_endpoint_url' ), 10, 4 );
-		add_filter( 'wpml_current_ls_language_url_endpoint', array( $this, 'add_endpoint_to_current_ls_language_url' ), 10, 4 );
-
 		if ( ! is_admin() ) {
 			add_filter( 'pre_get_posts', array( $this, 'check_if_endpoint_exists' ) );
 		}

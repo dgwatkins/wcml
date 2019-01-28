@@ -183,13 +183,11 @@ class Test_WCML_REST_API extends OTGS_TestCase {
 		) );
 		\WP_Mock::wpFunction( 'rest_get_url_prefix', array( 'return' => 'wp-json' ) );
 
-		$subject = $this->get_subject();
-
 		$_SERVER['REQUEST_URI'] = sprintf( '/wp-json/wc/v%d/', $version );
-		$this->assertEquals( $version, $subject->get_api_request_version() );
+		$this->assertEquals( $version, WCML_REST_API::get_api_request_version() );
 
 		$_SERVER['REQUEST_URI'] = sprintf( rand_str( 8 ), $version );
-		$this->assertEquals( 0, $subject->get_api_request_version() );
+		$this->assertEquals( 0, WCML_REST_API::get_api_request_version() );
 
 	}
 

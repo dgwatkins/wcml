@@ -95,26 +95,16 @@ class woocommerce_wpml {
 		    $wcml_rest_api_query_filters_products = new WCML_REST_API_Query_Filters_Products( $wpml_query_filter );
 		    $wcml_rest_api_query_filters_orders   = new WCML_REST_API_Query_Filters_Orders( $wpdb );
 		    $wcml_rest_api_query_filters_terms    = new WCML_REST_API_Query_Filters_Terms( $sitepress );
-		    if ( 1 === $WCML_REST_API->get_api_request_version() ) {
-			    $wcml_rest_api_support = new WCML_REST_API_Support_V1(
-				    $this,
-				    $sitepress,
-				    $wcml_rest_api_query_filters_products,
-				    $wcml_rest_api_query_filters_orders,
-				    $wcml_rest_api_query_filters_terms,
-				    $wpml_post_translations
-			    );
-		    } else {
-			    $wcml_rest_api_support = new WCML_REST_API_Support(
-				    $this,
-				    $sitepress,
-				    $wpdb,
-				    $wcml_rest_api_query_filters_products,
-				    $wcml_rest_api_query_filters_orders,
-				    $wcml_rest_api_query_filters_terms,
-				    $wpml_post_translations
-			    );
-		    }
+
+		    $wcml_rest_api_support = new WCML_REST_API_Support(
+			    $this,
+			    $sitepress,
+			    $wcml_rest_api_query_filters_products,
+			    $wcml_rest_api_query_filters_orders,
+			    $wcml_rest_api_query_filters_terms,
+			    $wpml_post_translations
+		    );
+
 		    $wcml_rest_api_support->add_hooks();
 	    }
     }
@@ -215,12 +205,7 @@ class woocommerce_wpml {
         $this->gateways             = new WCML_WC_Gateways( $this, $sitepress );
         $this->url_translation      = new WCML_Url_Translation ( $this, $sitepress, $wpdb );
 	    $this->url_translation->set_up();
-	    if ( class_exists( 'WPML_Endpoints_Support_Factory' ) ) {
-		    $this->endpoints = new WCML_Endpoints( $this, $sitepress, $wpdb );
-	    } else {
-		    //backward compatibility
-		    $this->endpoints = new WCML_Endpoints_Legacy( $this );
-	    }
+	    $this->endpoints            = new WCML_Endpoints( $this, $sitepress, $wpdb );
 	    $this->endpoints->add_hooks();
         $this->requests             = new WCML_Requests;
         $this->cart                 = new WCML_Cart( $this, $sitepress, $woocommerce );

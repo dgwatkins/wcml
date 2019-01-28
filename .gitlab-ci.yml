@@ -32,18 +32,17 @@ Compatibility <PHP>:
     except:
         - tags
 
-#@todo fix duplication with `vendor/bin/phpcpd --exclude=tests --exclude=vendor -- ./`, then uncomment this block
-#Duplication <PHP>:
-#    stage: quality
-#    when: always
-#    image: registry.otgs.work/infrastructure/docker-images/phpunit:7.3
-#    tags:
-#        - autoscale
-#    script:
-#        - composer install
-#        - vendor/bin/phpcpd --exclude=tests --exclude=vendor -- ./
-#    except:
-#        - tags
+Duplication <PHP>:
+    stage: quality
+    when: always
+    image: registry.otgs.work/infrastructure/docker-images/phpunit:7.3
+    tags:
+        - autoscale
+    script:
+        - composer install
+        - vendor/bin/phpcpd --exclude=tests --exclude=vendor -- ./
+    except:
+        - tags
 
 Unit <PHP>:
     stage: test

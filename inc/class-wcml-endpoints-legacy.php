@@ -20,71 +20,14 @@ class WCML_Endpoints_Legacy {
 			$this,
 			'translate_endpoints_in_rewrite_rules'
 		), 0, 1 ); // high priority
-		add_filter( 'wpml_sl_blacklist_requests', array( $this, 'reserved_requests' ), 10, 2 );
 		add_filter( 'page_link', array( $this, 'endpoint_permalink_filter' ), 10, 2 ); //after WPML
 
 		if ( ! is_admin() ) {
 			$this->maybe_flush_rules();
 			$this->register_endpoints_translations();
-			add_filter( 'pre_get_posts', array( $this, 'check_if_endpoint_exists' ) );
 		}
 
-		add_filter( 'woocommerce_get_endpoint_url', array( $this, 'filter_get_endpoint_url' ), 10, 4 );
 		add_filter( 'woocommerce_settings_saved', array( $this, 'update_original_endpoints_strings' ) );
-	}
-
-	public function reserved_requests( $requests, SitePress $sitepress ) {
-		$cache_key   = 'reserved_requests';
-		$cache_group = 'wpml-endpoints';
-
-		$found             = null;
-		$reserved_requests = wp_cache_get( $cache_key, $cache_group, false, $found );
-		$is_page_display_as_translated = $sitepress->is_display_as_translated_post_type( 'page' );
-
-		if (
-			! $is_page_display_as_translated &&
-			(
-				! $found ||
-				! $reserved_requests
-			)
-		) {
-			$reserved_requests = array();
-
-			$current_language = $sitepress->get_current_language();
-			$languages        = $sitepress->get_active_languages();
-			$languages_codes  = array_keys( $languages );
-			foreach ( $languages_codes as $language_code ) {
-				$sitepress->switch_lang( $language_code );
-
-				$my_account_page_id = wc_get_page_id( 'myaccount' );
-				if ( $my_account_page_id ) {
-					$my_account_page = get_post( $my_account_page_id );
-					if ( $my_account_page ) {
-						$account_base = $my_account_page->post_name;
-
-						$reserved_requests[] = $account_base;
-						$reserved_requests[] = '/^' . $account_base . '/'; // regex version
-
-						foreach ( $this->woocommerce_wpml->get_wc_query_vars() as $key => $endpoint ) {
-							$translated_endpoint = $this->get_endpoint_translation( $key, $endpoint, $language_code );
-
-							$reserved_requests[] = $account_base . '/' . $translated_endpoint;
-						}
-					}
-				}
-			}
-			$sitepress->switch_lang( $current_language );
-
-			if ( $reserved_requests ) {
-				wp_cache_set( $cache_key, $reserved_requests, $cache_group );
-			}
-		}
-
-		if ( $reserved_requests ) {
-			$requests = array_unique( array_merge( $requests, $reserved_requests ) );
-		}
-
-		return $requests;
 	}
 
 	function register_endpoints_translations( $language = null ) {
@@ -298,47 +241,10 @@ class WCML_Endpoints_Legacy {
 		return $url;
 	}
 
-	/*
-	 * We need check special case - when you manually put in URL default not translated endpoint it not generated 404 error
-	 */
-	function check_if_endpoint_exists( $q ) {
-		global $wp_query;
-
-		$my_account_id = wc_get_page_id( 'myaccount' );
-
-		$current_id = $q->query_vars['page_id'];
-		if ( ! $current_id ) {
-			$current_id = $q->queried_object_id;
-		}
-
-		if ( ! $q->is_404 && $current_id == $my_account_id && $q->is_page ) {
-
-			$uri_vars        = array_filter( explode( '/', $_SERVER['REQUEST_URI'] ) );
-			$endpoints       = WC()->query->get_query_vars();
-			$endpoint_in_url = urldecode( end( $uri_vars ) );
-
-			$endpoints['shipping'] = urldecode( $this->get_translated_edit_address_slug( 'shipping' ) );
-			$endpoints['billing']  = urldecode( $this->get_translated_edit_address_slug( 'billing' ) );
-
-			$endpoint_not_pagename         = isset( $q->query['pagename'] ) && urldecode( $q->query['pagename'] ) != $endpoint_in_url;
-			$endpoint_url_not_in_endpoints = ! in_array( $endpoint_in_url, $endpoints );
-			$uri_vars_not_in_query_vars    = ! in_array( urldecode( prev( $uri_vars ) ), $q->query_vars );
-
-			if ( $endpoint_not_pagename && $endpoint_url_not_in_endpoints && is_numeric( $endpoint_in_url ) && $uri_vars_not_in_query_vars ) {
-				$wp_query->set_404();
-				status_header( 404 );
-				include( get_query_template( '404' ) );
-				die();
-			}
-
-		}
-
-	}
 
 	function get_translated_edit_address_slug( $slug, $language = false ) {
-		global $woocommerce_wpml;
 
-		$strings_language = $woocommerce_wpml->strings->get_string_language( $slug, 'woocommerce', 'edit-address-slug: ' . $slug );
+		$strings_language = $this->woocommerce_wpml->strings->get_string_language( $slug, 'woocommerce', 'edit-address-slug: ' . $slug );
 
 		if ( $strings_language == $language ) {
 			return $slug;
@@ -349,7 +255,7 @@ class WCML_Endpoints_Legacy {
 		if ( $translated_slug == $slug ) {
 
 			if ( $language ) {
-				$translated_slug = $woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( 'edit-address-slug' . chr( 4 ) . $slug, $language );
+				$translated_slug = $this->woocommerce_wpml->strings->get_translation_from_woocommerce_mo_file( 'edit-address-slug' . chr( 4 ) . $slug, $language );
 			} else {
 				$translated_slug = _x( $slug, 'edit-address-slug', 'woocommerce' );
 			}
@@ -357,28 +263,6 @@ class WCML_Endpoints_Legacy {
 		}
 
 		return $translated_slug;
-	}
-
-	function filter_get_endpoint_url( $url, $endpoint, $value, $permalink ) {
-
-		// return translated edit account slugs
-		remove_filter( 'woocommerce_get_endpoint_url', array( $this, 'filter_get_endpoint_url' ), 10, 4 );
-		if ( isset( WC()->query->query_vars['edit-address'] ) && WC()->query->query_vars['edit-address'] == $endpoint && in_array( $value, array(
-				'shipping',
-				'billing'
-			) )
-		) {
-			$url = wc_get_endpoint_url( 'edit-address', $this->get_translated_edit_address_slug( $value ) );
-		} elseif ( $endpoint === get_option( 'woocommerce_myaccount_lost_password_endpoint' ) ) {
-			$translated_lost_password_endpoint = apply_filters( 'wpml_translate_single_string', $endpoint, 'WooCommerce Endpoints', 'lost-password' );
-
-			$wc_account_page_url = wc_get_page_permalink( 'myaccount' );
-			$url                 = wc_get_endpoint_url( $translated_lost_password_endpoint, '', $wc_account_page_url );
-
-		}
-		add_filter( 'woocommerce_get_endpoint_url', array( $this, 'filter_get_endpoint_url' ), 10, 4 );
-
-		return $url;
 	}
 
 	public function update_original_endpoints_strings() {

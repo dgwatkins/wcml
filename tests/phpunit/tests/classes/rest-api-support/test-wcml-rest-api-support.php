@@ -10,8 +10,6 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 	private $woocommerce_wpml;
 	/** @var Sitepress */
 	private $sitepress;
-	/** @var wpdb */
-	private $wpdb;
 	/** @var  WCML_REST_API_Query_Filters_Products */
 	private $query_filters_posts;
 	/** @var  WCML_REST_API_Query_Filters_Orders */
@@ -105,8 +103,6 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 			},
 		) );
 
-		$this->wpdb = $this->stubs->wpdb();
-
 		$this->query_filters_posts = $this->getMockBuilder( 'WCML_REST_API_Query_Filters_Products' )
 		                                  ->disableOriginalConstructor()
 		                                  ->getMock();
@@ -137,7 +133,6 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		return new WCML_REST_API_Support(
 			$this->woocommerce_wpml,
 			$this->sitepress,
-			$this->wpdb,
 			$this->query_filters_posts,
 			$this->query_filters_orders,
 			$this->query_filters_terms,
@@ -1030,7 +1025,6 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		$subject = new WCML_REST_API_Support(
 			$this->woocommerce_wpml,
 			$sitepress,
-			$this->wpdb,
 			$this->query_filters_posts,
 			$this->query_filters_orders,
 			$this->query_filters_terms,
@@ -1059,7 +1053,6 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		$subject     = new WCML_REST_API_Support(
 			$this->woocommerce_wpml,
 			$sitepress,
-			$this->wpdb,
 			$this->query_filters_posts,
 			$this->query_filters_orders,
 			$this->query_filters_terms,
@@ -1089,7 +1082,6 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		$subject     = new WCML_REST_API_Support(
 			$this->woocommerce_wpml,
 			$sitepress,
-			$this->wpdb,
 			$this->query_filters_posts,
 			$this->query_filters_orders,
 			$this->query_filters_terms,
