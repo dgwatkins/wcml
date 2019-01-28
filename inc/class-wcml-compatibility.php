@@ -63,13 +63,8 @@ class WCML_Compatibility {
 
 		//Product Bundle
 		if ( class_exists( 'WC_Product_Bundle' ) && function_exists( 'WC_PB' ) ) {
-			if ( version_compare( WC_PB()->version, '5.0.0', '<' ) ) {
-				$this->product_bundles = new WCML_Product_Bundles_Legacy( $this->sitepress, $this->woocommerce_wpml, $this->tp );
-				$this->product_bundles->add_hooks();
-			} else {
-				$product_bundle_items  = new WCML_WC_Product_Bundles_Items();
-				$this->product_bundles = new WCML_Product_Bundles( $this->sitepress, $this->woocommerce_wpml, $product_bundle_items, $this->wpdb );
-			}
+			$product_bundle_items  = new WCML_WC_Product_Bundles_Items();
+			$this->product_bundles = new WCML_Product_Bundles( $this->sitepress, $this->woocommerce_wpml, $product_bundle_items, $this->wpdb );
 		}
 
 		// WooCommerce Variation Swatches and Photos
