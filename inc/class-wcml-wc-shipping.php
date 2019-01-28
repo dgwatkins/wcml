@@ -101,7 +101,7 @@ class WCML_WC_Shipping{
             $available_methods[$key]->label =  $this->translate_shipping_method_title( $method->label, $key );
         }
 
-        return $available_methods;
+        return apply_filters( 'wcml_translated_package_rates', $available_methods );
     }
 
     /**
