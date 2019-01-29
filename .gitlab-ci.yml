@@ -81,7 +81,7 @@ Branch:
     script:
         - composer install
         - yarn install
-        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
         - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
@@ -106,7 +106,7 @@ Pre-Release:
     script:
         - composer install
         - yarn install
-        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
         - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
@@ -127,7 +127,7 @@ Develop:
     script:
         - composer install
         - yarn install
-        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
         - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
@@ -148,7 +148,7 @@ Master:
     script:
         - composer install
         - yarn install
-        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
         - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
@@ -169,7 +169,7 @@ Tag:
     script:
         - composer install
         - yarn install
-        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
         - ./.make/deploy-update-version.js -t ./${CI_PROJECT_NAME} -r ${CI_COMMIT_TAG}
@@ -189,7 +189,7 @@ Release Notes:
         - autoscale
     script:
         - composer install
-        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog
+        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - ./vendor/otgs/build-tools-ci/otgs-ci --releasenotes
     only:
         - tags
