@@ -17,6 +17,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 	private $cart_clear_constant;
 	private $cookie_setting_field;
+	private $mc_independent;
 
 
 	public function setUp(){
@@ -75,6 +76,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		\WP_Mock::userFunction( 'wp_enqueue_style', array( 'return' => true ) );
 
 		$this->cart_clear_constant = 0;
+		$this->mc_independent = 2;
 		$cart_sync_constant = 1;
 		$this->cookie_setting_field = rand_str();
 
@@ -84,6 +86,8 @@ class Test_WCML_Cart extends OTGS_TestCase {
 				return $that->cookie_setting_field;
 			} else if ( 'WCML_CART_CLEAR' == $const ) {
 				return $that->cart_clear_constant;
+			} else if ( 'WCML_MULTI_CURRENCIES_INDEPENDENT' == $const ) {
+				return $that->mc_independent;
 			}
 		} );
 
@@ -91,6 +95,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 		$this->woocommerce_wpml->settings['cart_sync']['lang_switch'] = $this->cart_clear_constant;
 		$this->woocommerce_wpml->settings['cart_sync']['currency_switch'] = $cart_sync_constant;
+		$this->woocommerce_wpml->settings['enable_multi_currency'] = $this->mc_independent;
 
 		$subject = $this->get_subject();
 		\WP_Mock::expectActionAdded( 'wcml_removed_cart_items', array( $subject, 'wcml_removed_cart_items_widget' ) );
@@ -107,6 +112,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		\WP_Mock::userFunction( 'wp_enqueue_style', array( 'return' => true ) );
 
 		$this->cart_clear_constant = 0;
+		$this->mc_independent = 2;
 		$cart_sync_constant = 1;
 		$this->cookie_setting_field = rand_str();
 
@@ -116,6 +122,8 @@ class Test_WCML_Cart extends OTGS_TestCase {
 				return $that->cookie_setting_field;
 			} else if ( 'WCML_CART_CLEAR' == $const ) {
 				return $that->cart_clear_constant;
+			} else if ( 'WCML_MULTI_CURRENCIES_INDEPENDENT' == $const ) {
+				return $that->mc_independent;
 			}
 		} );
 
@@ -123,6 +131,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 		$this->woocommerce_wpml->settings['cart_sync']['lang_switch'] = $cart_sync_constant;
 		$this->woocommerce_wpml->settings['cart_sync']['currency_switch'] = $this->cart_clear_constant;
+		$this->woocommerce_wpml->settings['enable_multi_currency'] = $this->mc_independent;
 
 		$subject = $this->get_subject();
 		\WP_Mock::expectFilterAdded( 'wcml_switch_currency_exception', array( $subject, 'cart_switching_currency' ), 10, 4 );
@@ -267,11 +276,37 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		$this->assertFalse( $subject->is_clean_cart_enabled() );
 	}
 
+	/**
+	 * @test
+	 */
+	public function is_clean_cart_enabled_wpml_mc_disabled() {
+
+		$subject = $this->clean_cart_subject_mock();
+
+		$this->sitepress->method( 'get_setting' )->with( $this->cookie_setting_field )->willReturn( true );
+		$this->woocommerce_wpml->settings['cart_sync']['lang_switch'] = 1;
+ 		$this->woocommerce_wpml->settings['enable_multi_currency'] = 0;
+
+		$this->assertFalse( $subject->is_clean_cart_enabled() );
+	}
+
+	/**
+	 * @test
+	 */
+	public function is_clean_cart_enabled_wpml_mc_enabled() {
+
+		$subject = $this->clean_cart_subject_mock();
+
+		$this->sitepress->method( 'get_setting' )->with( $this->cookie_setting_field )->willReturn( true );
+
+		$this->assertTrue( $subject->is_clean_cart_enabled() );
+	}
 
 	private function clean_cart_subject_mock(){
 
 		$this->cart_clear_constant = 0;
 		$this->cookie_setting_field = rand_str();
+		$this->mc_independent = 2;
 
 		$that = $this;
 		$this->wp_api->method( 'constant' )->willReturnCallback( function ( $const ) use ( $that ) {
@@ -279,11 +314,15 @@ class Test_WCML_Cart extends OTGS_TestCase {
 				return $that->cookie_setting_field;
 			} else if ( 'WCML_CART_CLEAR' == $const ) {
 				return $that->cart_clear_constant;
+			} else if ( 'WCML_MULTI_CURRENCIES_INDEPENDENT' == $const ) {
+				return $that->mc_independent;
 			}
 		} );
 
+
 		$this->woocommerce_wpml->settings['cart_sync']['lang_switch'] = $this->cart_clear_constant;
 		$this->woocommerce_wpml->settings['cart_sync']['currency_switch'] = $this->cart_clear_constant;
+		$this->woocommerce_wpml->settings['enable_multi_currency'] = $this->mc_independent;
 
 		return $this->get_subject();
 

@@ -76,8 +76,13 @@ class WCML_Cart {
 
 		if (
 			$wpml_cookies_enabled &&
-			( $cart_sync_settings['currency_switch'] === $this->sitepress->get_wp_api()->constant( 'WCML_CART_CLEAR' ) ||
-			  $cart_sync_settings['lang_switch'] === $this->sitepress->get_wp_api()->constant( 'WCML_CART_CLEAR' ) )
+			(
+				(
+					$this->woocommerce_wpml->settings['enable_multi_currency'] === $this->sitepress->get_wp_api()->constant( 'WCML_MULTI_CURRENCIES_INDEPENDENT' ) &&
+					$cart_sync_settings['currency_switch'] === $this->sitepress->get_wp_api()->constant( 'WCML_CART_CLEAR' )
+				) ||
+				$cart_sync_settings['lang_switch'] === $this->sitepress->get_wp_api()->constant( 'WCML_CART_CLEAR' )
+			)
 		) {
 			return true;
 		}
