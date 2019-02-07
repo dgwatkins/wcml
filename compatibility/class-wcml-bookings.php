@@ -2542,7 +2542,8 @@ class WCML_Bookings {
 	    if( !$product instanceof WC_Product ){
 		    $product = wc_get_product( $product );
         }
-		return $product->get_type() === 'booking';
+
+		return $product ? $product->get_type() === 'booking' : false;
 	}
 
 }
