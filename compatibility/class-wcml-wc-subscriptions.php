@@ -66,7 +66,7 @@ class WCML_WC_Subscriptions{
 	 */
 	function subscriptions_product_sign_up_fee_filter( $subscription_sign_up_fee, $product ) {
 
-		if ( wcml_is_multi_currency_on() ) {
+		if ( $product && wcml_is_multi_currency_on() ) {
 			$currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
 
 			if ( $currency !== get_option( 'woocommerce_currency' ) ) {
@@ -260,7 +260,7 @@ class WCML_WC_Subscriptions{
 
 	function woocommerce_subscription_price_from( $price, $product ){
 
-		if ( in_array( $product->get_type(), array( 'variable-subscription', 'subscription_variation' ) ) ) {
+		if ( $product && in_array( $product->get_type(), array( 'variable-subscription', 'subscription_variation' ) ) ) {
 
 			$variation_id = $product->get_meta( '_min_price_variation_id', true );
 

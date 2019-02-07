@@ -161,7 +161,7 @@ class WCML_Table_Rate_Shipping {
 
 	public function filter_product_base_price( $row_base_price, $_product, $qty ){
 
-		if( get_option( 'woocommerce_currency') != $this->woocommerce_wpml->multi_currency->get_client_currency() ){
+		if( $_product && get_option( 'woocommerce_currency') != $this->woocommerce_wpml->multi_currency->get_client_currency() ){
 			$row_base_price = apply_filters( 'wcml_product_price_by_currency', $_product->get_id(), get_option( 'woocommerce_currency') ) * $qty;
 		}
 
