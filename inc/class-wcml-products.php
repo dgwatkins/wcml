@@ -72,6 +72,10 @@ class WCML_Products{
 		add_filter( 'get_product_search_form', array( $this->sitepress, 'get_search_form_filter' ) );
 
 		add_filter( 'woocommerce_pre_customer_bought_product', array( $this, 'is_customer_bought_product' ), 10, 4 );
+
+		if ( $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.6.0', '>=' ) ) {
+			add_filter( 'get_post_metadata', array( $this, 'filter_product_data' ), 10, 3 );
+		}
 	}
 
 	/**
@@ -649,5 +653,56 @@ class WCML_Products{
 
 	    return $value;
     }
+
+
+	public function filter_product_data( $data, $product_id, $meta_key ) {
+
+		if ( ! $meta_key && in_array( get_post_type( $product_id ), array( 'product', 'product_variation' ) ) ) {
+			remove_filter( 'get_post_metadata', array( $this, 'filter_product_data' ), 10, 3 );
+
+			$data = get_post_meta( $product_id );
+
+			$is_mc_enabled = $this->woocommerce_wpml->settings[ 'enable_multi_currency' ] === $this->sitepress->get_wp_api()->constant( 'WCML_MULTI_CURRENCIES_INDEPENDENT' );
+
+			if( $is_mc_enabled ){
+				$price_keys = apply_filters( 'wcml_price_custom_fields_filtered', array(
+					'_price',
+					'_regular_price',
+					'_sale_price',
+					'_min_variation_price',
+					'_max_variation_price',
+					'_min_variation_regular_price',
+					'_max_variation_regular_price',
+					'_min_variation_sale_price',
+					'_max_variation_sale_price'
+				) );
+            }
+
+			foreach ( $data as $meta_key => $meta_value ) {
+
+				$filtered_value = false;
+
+				if ( $is_mc_enabled && in_array( $meta_key, $price_keys, true ) ) {
+					$filtered_value = $this->woocommerce_wpml->multi_currency->prices->product_price_filter( null, $product_id, $meta_key, true );
+				} elseif ( in_array( $meta_key, array( '_wc_review_count', '_wc_average_rating' ), true ) ) {
+					$filtered_value = $this->woocommerce_wpml->comments->filter_average_rating( null, $product_id, $meta_key, true );
+				} elseif ( '_product_image_gallery' === $meta_key ) {
+					$factory        = new WCML_Product_Gallery_Filter_Factory();
+					$filtered_value = $factory->create()->localize_image_ids( null, $product_id, $meta_key );
+				} elseif ( '_thumbnail_id' === $meta_key ) {
+					$factory        = new WCML_Product_Image_Filter_Factory();
+					$filtered_value = $factory->create()->localize_image_id( null, $product_id, $meta_key );
+				}
+
+				if ( $filtered_value ) {
+					$data[ $meta_key ][0] = $filtered_value;
+				}
+			}
+
+			add_filter( 'get_post_metadata', array( $this, 'filter_product_data' ), 10, 3 );
+		}
+
+		return $data;
+	}
 
 }
