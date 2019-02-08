@@ -469,18 +469,25 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function custom_box_html_data() {
+	public function custom_box_html_data_not_booking_product() {
+
 		$bookings = $this->get_wcml_booking_object();
 		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
+
+		$this->assertEquals( 'this is data', $bookings->custom_box_html_data( 'this is data', $product, false, $this->second_language ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function custom_box_html_data() {
+		$bookings = $this->get_wcml_booking_object();
+		$product = $this->create_bookable_product( $this->default_language );
 		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
 		$translation = wpml_test_insert_post( $this->second_language, 'product', $trid, random_string() );
 		$translation = get_post( $translation );
 
-		// If product is not bookable.
-		$this->assertEquals( 'this is data', $bookings->custom_box_html_data( 'this is data', $product, $translation, $this->second_language ) );
-
 		// Add booking term
-		wp_set_post_terms( $product, array( (int) $this->booking_term['term_id'] ), 'product_type' );
 		wp_set_post_terms( $translation->ID, array( (int) $this->booking_term_tranlsation['term_id'] ), 'product_type' );
 
 		$this->add_and_check_resource_labels( $bookings, $product, $translation );
