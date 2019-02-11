@@ -104,7 +104,14 @@ class WCML_Synchronize_Product_Data{
         do_action( 'wcml_before_sync_product', $original_product_id, $post_id );
 
         //trnsl_interface option
-        if ( !$this->woocommerce_wpml->settings['trnsl_interface'] && $original_language != $current_language ) {
+	    if( $this->woocommerce_wpml->is_wpml_prior_4_2() ){
+		    $is_using_native_editor = !self::$woocommerce_wpml->settings['trnsl_interface'];
+	    }else{
+		    $is_using_native_editor = !WPML_TM_Post_Edit_TM_Editor_Mode::is_using_tm_editor( $this->sitepress, $original_product_id );
+	    }
+
+
+        if ( $is_using_native_editor && $original_language != $current_language ) {
             if( !isset( $_POST[ 'wp-preview' ] ) || empty( $_POST[ 'wp-preview' ] ) ){
                 //make sure we sync post in current language
                 $post_id = apply_filters( 'translate_object_id', $post_id, 'product', false, $current_language );

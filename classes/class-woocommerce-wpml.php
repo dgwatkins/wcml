@@ -385,4 +385,9 @@ class woocommerce_wpml {
 	public function js_min_suffix(){
 		return WCML_JS_MIN;
 	}
+
+	public function is_wpml_prior_4_2(){
+		global $sitepress;
+		return $sitepress->get_wp_api()->version_compare( $sitepress->get_wp_api()->constant( 'ICL_SITEPRESS_VERSION' ), '4.2.0', '<' );
+	}
 }

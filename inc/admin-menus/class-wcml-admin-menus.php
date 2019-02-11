@@ -205,7 +205,10 @@ class WCML_Admin_Menus{
 	public static function restrict_admin_with_redirect() {
 		global $pagenow;
 
-		if ( self::$woocommerce_wpml->settings['trnsl_interface'] ) {
+		if (
+			self::$woocommerce_wpml->is_wpml_prior_4_2() &&
+			self::$woocommerce_wpml->settings['trnsl_interface'] )
+		{
 
 			if (
 				'post.php' === $pagenow &&

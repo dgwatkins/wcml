@@ -28,7 +28,18 @@ class WCML_Resources {
         $is_original_product = isset( $_GET['post'] ) && !is_array( $_GET['post'] ) && self::$woocommerce_wpml->products->is_original_product( $_GET['post'] );
         $is_new_product = self::$pagenow == 'post-new.php' && isset($_GET['source_lang']) && isset($_GET['post_type']) && $_GET['post_type'] == 'product';
 
-        if ( ($is_edit_product && !$is_original_product) || $is_new_product && !self::$woocommerce_wpml->settings['trnsl_interface'] ) {
+	    if( self::$woocommerce_wpml->is_wpml_prior_4_2() ){
+		    $is_using_native_editor = !self::$woocommerce_wpml->settings['trnsl_interface'];
+	    }else{
+		    $tm_settings = $sitepress->get_setting( 'translation-management', array() );
+		    if( $is_edit_product ){
+		    	$is_using_native_editor = WPML_TM_Post_Edit_TM_Editor_Mode::is_using_tm_editor( self::$sitepress, filter_var( $_GET['post'], FILTER_SANITIZE_NUMBER_INT ) );
+		    }else{
+			    $is_using_native_editor = isset( $tm_settings[ WPML_TM_Post_Edit_TM_Editor_Mode::TM_KEY_FOR_POST_TYPE_USE_NATIVE ][ 'product' ]) ? $tm_settings[ WPML_TM_Post_Edit_TM_Editor_Mode::TM_KEY_FOR_POST_TYPE_USE_NATIVE ][ 'product' ] : false;
+		    }
+	    }
+
+        if ( ($is_edit_product && !$is_original_product) || $is_new_product && $is_using_native_editor ) {
             add_action( 'init', array(__CLASS__, 'load_lock_fields_js') );
             add_action( 'admin_footer', array(__CLASS__, 'hidden_label') );
         }
@@ -80,14 +91,18 @@ class WCML_Resources {
 			wp_register_script( 'jquery-cookie', WCML_PLUGIN_URL . '/res/js/jquery.cookie' . WCML_JS_MIN . '.js', array( 'jquery' ), WCML_VERSION, true );
 			wp_register_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs' . WCML_JS_MIN . '.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-dialog' ), WCML_VERSION, true );
 			wp_register_script( 'wcml-troubleshooting', WCML_PLUGIN_URL . '/res/js/troubleshooting' . WCML_JS_MIN . '.js', array( 'jquery' ), WCML_VERSION, true );
-			wp_register_script( 'wcml-translation-interface-dialog-warning', WCML_PLUGIN_URL . '/res/js/trnsl_interface_dialog_warning' . WCML_JS_MIN . '.js', array( 'jquery' ), WCML_VERSION, true );
+
+			if( self::$woocommerce_wpml->is_wpml_prior_4_2() ){
+				wp_register_script( 'wcml-translation-interface-dialog-warning', WCML_PLUGIN_URL . '/res/js/trnsl_interface_dialog_warning' . WCML_JS_MIN . '.js', array( 'jquery' ), WCML_VERSION, true );
+				wp_enqueue_script( 'wcml-translation-interface-dialog-warning' );
+			}
+
 
 	        wp_enqueue_script( 'wcml-scripts' );
             wp_enqueue_script( 'wp-color-picker');
             wp_enqueue_script( 'wcml-dialogs' );
             wp_enqueue_script( 'jquery-cookie' );
             wp_enqueue_script( 'wcml-troubleshooting' );
-            wp_enqueue_script( 'wcml-translation-interface-dialog-warning' );
 
             wp_localize_script( 'wcml-scripts', 'wcml_settings',
                 array(

@@ -90,7 +90,8 @@ class WCML_Compatibility {
 
 		//Gravity Forms
 		if ( class_exists( 'GFForms' ) ) {
-			$this->gravityforms = new WCML_gravityforms();
+			$this->gravityforms = new WCML_gravityforms( $this->sitepress, $this->woocommerce_wpml );
+			$this->gravityforms->add_hooks();
 		}
 
 		//Sensei WooThemes

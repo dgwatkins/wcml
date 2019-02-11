@@ -76,6 +76,9 @@ class Test_WCML_Product_Translation_Edit_Links extends WCML_UnitTestCase {
 
 	public function test_product_translation_edit_links(){
 
+		if( !$this->woocommerce_wpml->is_wpml_prior_4_2() ){
+			return;
+		}
 		// WPML and WCML translation method set to manual
 		$this->set_wpml_translation_method( ICL_TM_TMETHOD_MANUAL );
 		$this->set_wcml_translation_method( WCML_TRANSLATION_METHOD_MANUAL );

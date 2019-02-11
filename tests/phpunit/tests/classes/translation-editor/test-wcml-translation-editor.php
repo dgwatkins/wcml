@@ -12,9 +12,19 @@ class Test_WCML_Translation_Editor extends OTGS_TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->sitepress = $this->getMockBuilder( 'SitePress' )
-		                        ->disableOriginalConstructor()
-		                        ->getMock();
+		$this->sitepress = $this->getMockBuilder('SitePress')
+		                         ->disableOriginalConstructor()
+		                         ->setMethods( array( 'get_wp_api' ) )
+		                         ->getMock();
+
+
+		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->getMock();
+
+
+		$this->sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
 
 		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
 		                               ->disableOriginalConstructor()
