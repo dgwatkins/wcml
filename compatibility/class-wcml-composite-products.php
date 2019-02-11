@@ -559,7 +559,11 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 	}
 
 	public function apply_rounding_rules( $price ) {
-		return $this->woocommerce_wpml->multi_currency->prices->apply_rounding_rules( $price );
+		if ( wcml_is_multi_currency_on() ) {
+			$price = $this->woocommerce_wpml->multi_currency->prices->apply_rounding_rules( $price );
+		}
+
+		return $price;
 	}
 
 }
