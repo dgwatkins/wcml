@@ -36,6 +36,10 @@ class WCML_Resources {
 		    	$is_using_native_editor = WPML_TM_Post_Edit_TM_Editor_Mode::is_using_tm_editor( self::$sitepress, filter_var( $_GET['post'], FILTER_SANITIZE_NUMBER_INT ) );
 		    }else{
 			    $is_using_native_editor = isset( $tm_settings[ WPML_TM_Post_Edit_TM_Editor_Mode::TM_KEY_FOR_POST_TYPE_USE_NATIVE ][ 'product' ]) ? $tm_settings[ WPML_TM_Post_Edit_TM_Editor_Mode::TM_KEY_FOR_POST_TYPE_USE_NATIVE ][ 'product' ] : false;
+
+			    if ( ! $is_using_native_editor ) {
+				    $is_using_native_editor = isset( $tm_settings[ WPML_TM_Post_Edit_TM_Editor_Mode::TM_KEY_GLOBAL_USE_NATIVE ] ) ? $tm_settings[ WPML_TM_Post_Edit_TM_Editor_Mode::TM_KEY_GLOBAL_USE_NATIVE ] : false;
+			    }
 		    }
 	    }
 
