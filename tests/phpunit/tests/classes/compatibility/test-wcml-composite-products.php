@@ -57,9 +57,11 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider it_should_apply_rounding_rules_data_provider
+	 *
+	 * @group wcml-2663
 	 */
-	public function it_should_apply_rounding_rules() {
-
+	public function it_should_apply_rounding_rules( $is_multi_currency_on ) {
 		$price           = mt_rand( 1, 100 );
 		$converted_price = mt_rand( 101, 200 );
 
@@ -77,10 +79,33 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 		                                                 ->getMock();
 		$woocommerce_wpml->multi_currency->prices->method( 'apply_rounding_rules' )->with( $price )->willReturn( $converted_price );
 
+		\WP_Mock::userFunction(
+			'wcml_is_multi_currency_on',
+			array(
+				'return' => $is_multi_currency_on,
+			)
+		);
+
 
 		$subject        = $this->get_subject( null, $woocommerce_wpml );
 		$filtered_price = $subject->apply_rounding_rules( $price );
 
-		$this->assertSame( $converted_price, $filtered_price );
+		if ( $is_multi_currency_on ) {
+			$this->assertSame( $converted_price, $filtered_price );
+		} else {
+			$this->assertSame( $price, $filtered_price );
+		}
+	}
+
+	/**
+	 * Data provider for it_should_apply_rounding_rules.
+	 *
+	 * @return array
+	 */
+	public function it_should_apply_rounding_rules_data_provider() {
+		return array(
+			array( false ),
+			array( true ),
+		);
 	}
 }
