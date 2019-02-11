@@ -504,27 +504,28 @@ class WCML_Product_Addons {
 	 */
 	public function update_custom_prices_values( $product_id ) {
 
-		$this->save_global_addon_prices_setting( $product_id );
+		if( $this->is_multi_currency_on() ){
+			$this->save_global_addon_prices_setting( $product_id );
+			$product_addons = $this->get_product_addons( $product_id );
 
-		$product_addons = $this->get_product_addons( $product_id );
+			if ( $product_addons ) {
+				$active_currencies = $this->woocommerce_wpml->multi_currency->get_currencies();
 
-		if ( $product_addons ) {
-			$active_currencies = $this->woocommerce_wpml->multi_currency->get_currencies();
+				foreach ( $product_addons as $addon_key => $product_addon ) {
 
-			foreach ( $product_addons as $addon_key => $product_addon ) {
+					foreach ( $active_currencies as $code => $currency ) {
+						$price_option_key = self::PRICE_OPTION_KEY;
 
-				foreach ( $active_currencies as $code => $currency ) {
-					$price_option_key = self::PRICE_OPTION_KEY;
-
-					if( in_array( $product_addon['type'], $this->get_one_price_types() ) ){
-						$product_addons = $this->update_single_option_prices( $product_addons, $price_option_key, $addon_key, $code );
-					}else{
-						$product_addons = $this->update_multiple_options_prices( $product_addons, $price_option_key, $addon_key, $code );
+						if( in_array( $product_addon['type'], $this->get_one_price_types() ) ){
+							$product_addons = $this->update_single_option_prices( $product_addons, $price_option_key, $addon_key, $code );
+						}else{
+							$product_addons = $this->update_multiple_options_prices( $product_addons, $price_option_key, $addon_key, $code );
+						}
 					}
 				}
-			}
 
-			update_post_meta( $product_id, '_product_addons', $product_addons );
+				update_post_meta( $product_id, '_product_addons', $product_addons );
+			}
 		}
 	}
 
