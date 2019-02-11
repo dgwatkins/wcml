@@ -697,7 +697,7 @@ class WCML_Synchronize_Product_Data{
     }
 
 	public function sync_product_translations_visibility( $product_id ) {
-		$translations = $this->post_translations->get_element_translations( $product_id );
+		$translations = $this->post_translations->get_element_translations( $product_id, false, true );
 		if ( $translations ) {
 
 			$product = wc_get_product( $product_id );
