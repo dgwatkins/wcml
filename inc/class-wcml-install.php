@@ -24,9 +24,9 @@ class WCML_Install{
 		                $woocommerce_wpml->settings['trnsl_interface'] = 1;
 	                }
                 }else{
-	                $tm_settings = $sitepress->get_setting( 'translation-management', array() );
-	                $tm_settings[ WPML_TM_Post_Edit_TM_Editor_Mode::TM_KEY_FOR_POST_TYPE_USE_NATIVE ][ 'product' ] = false;
-	                $sitepress->set_setting( 'translation-management', $tm_settings, true );
+                	global $iclTranslationManagement;
+	                $iclTranslationManagement->settings[ WPML_TM_Post_Edit_TM_Editor_Mode::TM_KEY_FOR_POST_TYPE_USE_NATIVE ][ 'product' ] = false;
+	                $iclTranslationManagement->save_settings();
                 }
 
 
