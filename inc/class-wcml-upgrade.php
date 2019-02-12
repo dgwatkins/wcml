@@ -27,7 +27,8 @@ class WCML_Upgrade{
 	    '4.3.0',
         '4.3.4',
         '4.3.5',
-        '4.4.1'
+        '4.4.1',
+        '4.4.3',
     );
     
     function __construct(){
@@ -745,6 +746,33 @@ class WCML_Upgrade{
 	        $sitepress->set_setting( 'translation-management', $tm_settings, true );
         }
 
+	}
+
+
+	private function upgrade_4_4_3() {
+		if ( class_exists( 'WC_SwatchesPlugin' ) ) {
+			global $wpdb, $sitepress, $wpml_post_translations;
+
+			$variation_sp = new WCML_Variation_Swatches_And_Photos( $sitepress );
+			$original_products = $wpdb->get_results( "
+                        SELECT element_id
+                        FROM {$wpdb->prefix}icl_translations
+                        WHERE element_type = 'post_product' AND source_language_code IS NULL" );
+
+			$current_language = $sitepress->get_current_language();
+
+			foreach ( $original_products as $product ) {
+
+			    $sitepress->switch_lang( $wpml_post_translations->get_element_lang_code( $product->element_id ) );
+
+				$translations = $wpml_post_translations->get_element_translations( $product->element_id, false, true );
+				foreach ( $translations as $translation ) {
+					$variation_sp->sync_variation_swatches_and_photos( $product->element_id, $translation, false );
+				}
+			}
+
+			$sitepress->switch_lang( $current_language );
+		}
 	}
 
 }
