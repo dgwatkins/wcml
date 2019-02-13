@@ -176,7 +176,7 @@ class WCML_Product_Addons {
 
 			foreach ( $addons as $add_id => $addon ) {
 
-				if ( $addon['price'] ) {
+				if ( isset( $addon['price'] ) && $addon['price'] ) {
 					if (
 						$is_custom_prices_on &&
 						isset( $addon[ 'price_' . $client_currency ] ) &&
