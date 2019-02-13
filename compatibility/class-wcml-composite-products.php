@@ -460,7 +460,16 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 	function load_assets( ){
 		global $pagenow;
 
-		if( ( $pagenow == 'post.php' && isset( $_GET[ 'post' ] ) && wc_get_product( $_GET[ 'post' ] )->get_type() === 'composite' ) || $pagenow == 'post-new.php' ){
+		$is_composite_edit_page = false;
+
+		if( $pagenow == 'post.php' && isset( $_GET[ 'post' ] ) ){
+			$wc_product = wc_get_product( $_GET[ 'post' ] );
+			if( $wc_product && $wc_product->get_type() === 'composite' ){
+				$is_composite_edit_page = true;
+			}
+		}
+
+		if( $is_composite_edit_page || $pagenow == 'post-new.php' ){
 			wp_register_script( 'wcml-composite-js', WCML_PLUGIN_URL . '/compatibility/res/js/wcml-composite.js', array( 'jquery' ), WCML_VERSION, true );
 			wp_enqueue_script( 'wcml-composite-js' );
 
