@@ -105,7 +105,7 @@ class WCML_Synchronize_Product_Data{
 
         //trnsl_interface option
 	    if( $this->woocommerce_wpml->is_wpml_prior_4_2() ){
-		    $is_using_native_editor = !self::$woocommerce_wpml->settings['trnsl_interface'];
+		    $is_using_native_editor = !$this->woocommerce_wpml->settings['trnsl_interface'];
 	    }else{
 		    $is_using_native_editor = !WPML_TM_Post_Edit_TM_Editor_Mode::is_using_tm_editor( $this->sitepress, $original_product_id );
 	    }
