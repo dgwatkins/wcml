@@ -121,8 +121,13 @@ class WCML_Admin_Menus{
     public static function documentation_links() {
         global $post, $pagenow;
 
-        if ( is_null( $post ) )
-            return;
+	    if ( $post && ! is_object( $post ) ) {
+		    $post = get_post( $post );
+	    }
+
+	    if ( ! $post ) {
+		    return;
+	    }
 
 	    $tracking_link = new WCML_Tracking_Link();
 
