@@ -51,12 +51,12 @@
 .wcml-tabs {
 	@include clearfix();
 	.nav-tab {
-		margin-top: 5px;
-		@media (max-width: 1350px) {
-			margin-left: .2em;
-		}
 		[class*="otgs-ico"]:before {
 			font-size: 18px;
+		}
+		&-active {
+			background: #fff;
+			border-bottom: none;
 		}
 	}
 }
