@@ -498,12 +498,14 @@ class WCML_Multi_Currency{
             }
         }
 
+        $this->client_currency = apply_filters( 'wcml_client_currency', $this->client_currency );
+
         if(!empty($woocommerce->session) && $this->client_currency){
             $woocommerce->session->set('client_currency', $this->client_currency);
             $woocommerce->session->set('client_currency_language',$current_language);
         }
 
-        return apply_filters('wcml_client_currency', $this->client_currency);
+        return $this->client_currency;
     }
 
     public function maybe_show_switching_currency_prompt_dialog(){
