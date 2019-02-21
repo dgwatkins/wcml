@@ -47,12 +47,14 @@ if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists
 	$wcml_cart_switch_lang_functions->add_actions();
 }
 
-// Load WooCommerce Multilingual when WPML is active
-global $woocommerce_wpml;
-$woocommerce_wpml = new woocommerce_wpml();
-$woocommerce_wpml->add_hooks();
+if ( WPML_Core_Version_Check::is_ok( WCML_PLUGIN_PATH . '/wpml-dependencies.json' ) ) {
+	global $woocommerce_wpml;
+	$woocommerce_wpml = new woocommerce_wpml();
+	$woocommerce_wpml->add_hooks();
 
-add_action( 'wpml_loaded', 'wcml_loader' );
+	add_action( 'wpml_loaded', 'wcml_loader' );
+}
+
 /**
  * Load WooCommerce Multilingual after WPML is loaded
  */

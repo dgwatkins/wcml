@@ -24,6 +24,10 @@
         {
             "type": "vcs",
             "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-changelog.git"
+        },
+        {
+            "type": "vcs",
+            "url": "ssh://git@git.onthegosystems.com:10022/wpml-shared/wpml-lib-dependencies.git"
         }
     ],
     "minimum-stability": "dev",
@@ -31,7 +35,8 @@
     "require": {
         "otgs/installer": "~1.9.0",
         "xrstf/composer-php52": "1.*",
-        "twig/twig": "~1.0"
+        "twig/twig": "~1.0",
+        "wpml-shared/wpml-lib-dependencies": "~0.1"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
