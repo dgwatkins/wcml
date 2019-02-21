@@ -105,6 +105,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_shortcode_products_query', array( $subject, 'add_lang_to_shortcode_products_query' ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_file_download_path', array( $subject, 'filter_file_download_path' ) );
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_related_posts_query', array( $subject, 'filter_related_products_query' ) );
 
 		$subject->add_hooks();
 	}
@@ -390,6 +391,27 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$filtered_data = $subject->filter_product_data( false, $product_id, false );
 
 		$this->assertEquals( $expected_data, $filtered_data );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_related_products_query() {
+
+		$query = array( 'join' => 'test', 'where' => 'test' );
+
+		$this->sitepress->method( 'get_current_language' )
+		                ->wilLReturn( $this->default_language );
+
+		$this->wpdb->method( 'prepare' )
+		           ->with( ' AND icl.language_code = %s ', $this->default_language )
+		           ->willReturn( ' AND icl.language_code = ' . $this->default_language . ' ' );
+
+		$subject        = $this->get_subject();
+		$filtered_query = $subject->filter_related_products_query( $query );
+
+		$this->assertSame( 'test LEFT JOIN wp_icl_translations AS icl ON icl.element_id = p.ID ', $filtered_query['join'] );
+		$this->assertSame( 'test AND icl.language_code = ' . $this->default_language . ' ', $filtered_query['where'] );
 	}
 
 }

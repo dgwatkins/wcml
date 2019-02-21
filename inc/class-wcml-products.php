@@ -49,6 +49,7 @@ class WCML_Products{
 		} else {
 			add_filter( 'woocommerce_json_search_found_products', array( $this, 'filter_found_products_by_language' ) );
 			add_filter( 'woocommerce_related_products_args', array( $this, 'filter_related_products_args' ) );
+			add_filter( 'woocommerce_product_related_posts_query', array( $this, 'filter_related_products_query' ) );
 			add_filter( 'woocommerce_shortcode_products_query', array(
 				$this,
 				'add_lang_to_shortcode_products_query'
@@ -461,6 +462,19 @@ class WCML_Products{
         }
         return $args;
     }
+
+	/**
+	 * @param array $query
+	 *
+	 * @return array
+	 */
+	public function filter_related_products_query( $query ) {
+
+		$query['join']  .= " LEFT JOIN {$this->wpdb->prefix}icl_translations AS icl ON icl.element_id = p.ID ";
+		$query['where'] .= $this->wpdb->prepare( " AND icl.language_code = %s ", $this->sitepress->get_current_language() );
+
+		return $query;
+	}
 
     /*
      * get meta ids for multiple values post meta key
