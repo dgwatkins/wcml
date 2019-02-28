@@ -44,7 +44,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 
 		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
 			->disableOriginalConstructor()
-			->setMethods( array( 'get_wp_api', 'get_current_language' ) )
+			->setMethods( array( 'get_wp_api', 'get_current_language', 'get_setting', 'set_setting', 'verify_taxonomy_translations' ) )
 			->getMock();
 
 		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )
@@ -519,6 +519,75 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 
 		$subject->sync_default_product_attr( $original_product_id, $translated_product_id, $lang );
 
+	}
+
+	/**
+	 * @test
+	 */
+	public function sync_default_product_attr_taxonomy_with_no_latin_letters() {
+
+		\WP_Mock::passthruFunction( 'maybe_unserialize' );
+		\WP_Mock::passthruFunction( 'maybe_serialize' );
+		\WP_Mock::passthruFunction( 'sanitize_title' );
+
+		$original_product_id   = 2;
+		$translated_product_id = 3;
+		$lang = 'en';
+		$attribute_name = 'pa_%d1%80%d0%be%d0%b7%d0%bc%d1%96%d1%80';
+		$sanitized_attribute_name = 'pa_колір';
+		$default_term_slug = '%d0%b2%d0%b5%d0%bb%d0%b8%d0%ba%d0%b8%d0%b9';
+		$default_term_id = 10;
+		$translated_term = new stdClass();
+		$translated_term->term_id = 20;
+		$translated_term->slug = 'big';
+
+		$original_default_attributes = array(
+			$attribute_name => $default_term_slug
+		);
+
+		$expected_translated_default_attributes = array(
+			$attribute_name => $translated_term->slug
+		);
+
+		$this->woocommerce_wpml->terms = $this->getMockBuilder( 'WCML_Terms' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'update_terms_translated_status', 'wcml_get_term_id_by_slug', 'wcml_get_term_by_id' ) )
+		                                         ->getMock();
+		$this->woocommerce_wpml->terms->method( 'wcml_get_term_id_by_slug' )->with( $sanitized_attribute_name, $default_term_slug )->willReturn( $default_term_id );
+		$this->woocommerce_wpml->terms->method( 'wcml_get_term_by_id' )->with( $translated_term->term_id, $sanitized_attribute_name )->willReturn( $translated_term );
+
+		\WP_Mock::onFilter( 'translate_object_id' )
+		        ->with( $default_term_id, $sanitized_attribute_name, false, $lang )
+		        ->reply( $translated_term->term_id );
+
+		\WP_Mock::userFunction( 'wc_sanitize_taxonomy_name', array(
+			'args'   => array( $attribute_name ),
+			'return' => $sanitized_attribute_name
+		) );
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $original_product_id, '_default_attributes', true ),
+			'return' => $original_default_attributes
+		) );
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $translated_product_id ),
+			'return' => array()
+		) );
+
+		$insert_data = array(
+			'post_id'    => $translated_product_id,
+			'meta_key'   => '_default_attributes',
+			'meta_value' => $expected_translated_default_attributes
+		);
+
+		$this->wpdb->expects( $this->once() )
+		           ->method( 'insert' )
+		           ->with( $this->wpdb->postmeta, $insert_data );
+
+		$subject->sync_default_product_attr( $original_product_id, $translated_product_id, $lang );
 	}
 
 	/**
