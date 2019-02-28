@@ -308,11 +308,12 @@ class WCML_Attributes{
                 if ( substr( $attribute, 0, 3 ) == 'pa_' ) {
                     //attr is taxonomy
                     if( $this->is_translatable_attribute( $attribute ) ){
-                        $default_term_id = $this->woocommerce_wpml->terms->wcml_get_term_id_by_slug( $attribute, $default_term_slug );
-                        $tr_id = apply_filters( 'translate_object_id', $default_term_id, $attribute, false, $lang );
+                    	$sanitized_attribute_name = wc_sanitize_taxonomy_name( $attribute );
+                        $default_term_id = $this->woocommerce_wpml->terms->wcml_get_term_id_by_slug( $sanitized_attribute_name, $default_term_slug );
+                        $tr_id = apply_filters( 'translate_object_id', $default_term_id, $sanitized_attribute_name, false, $lang );
 
                         if( $tr_id ){
-                            $translated_term = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $tr_id, $attribute );
+                            $translated_term = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $tr_id, $sanitized_attribute_name );
                             $unserialized_default_attributes[ $attribute ] = $translated_term->slug;
                         }
                     }else{
