@@ -44,10 +44,12 @@ class woocommerce_wpml {
     public $shipping;
     /** @var  WCML_WC_Gateways */
     public $gateways;
-    /** @var  WCML_CS_Templates */
+    /** @var  WCML_Currency_Switcher_Templates */
     public $cs_templates;
 	/** @var  WCML_Comments */
 	public $comments;
+	/** @var  WCML_Translation_Editor */
+	public $translation_editor;
 
     /** @var  WCML_Reports */
     private $reports;
@@ -60,7 +62,7 @@ class woocommerce_wpml {
     private $xdomain_data;
 
     /**
-     * @var WCML_Screen_Options
+     * @var WCML_Products_Screen_Options
      */
     private $wcml_products_screen;
 
@@ -171,10 +173,17 @@ class woocommerce_wpml {
         }
 
         $this->currencies = new WCML_Currencies( $this );
-	    $this->currencies->add_hooks();if( is_admin() ) {
-            $this->troubleshooting = new WCML_Troubleshooting( $this, $sitepress, $wpdb );
-            $this->translation_editor = new WCML_Translation_Editor($this, $sitepress, $wpdb);
+	    $this->currencies->add_hooks();
+
+	    if( is_admin() || wpml_is_rest_request() ) {
+		    $this->translation_editor = new WCML_Translation_Editor($this, $sitepress, $wpdb);
 		    $this->translation_editor->add_hooks();
+		    $tp_support = new WCML_TP_Support( $this, $wpdb , new WPML_Element_Translation_Package );
+		    $tp_support->add_hooks();
+	    }
+
+	    if( is_admin() ) {
+            $this->troubleshooting = new WCML_Troubleshooting( $this, $sitepress, $wpdb );
             $this->languages_upgrader = new WCML_Languages_Upgrader;
             $this->sync_variations_data = new WCML_Synchronize_Variations_Data($this, $sitepress, $wpdb);
             $this->sync_variations_data->add_hooks();
@@ -226,6 +235,11 @@ class woocommerce_wpml {
 	    $this->comments = new WCML_Comments( $this, $sitepress, $wpml_post_translations );
 	    $this->comments->add_hooks();
 
+	    if( is_admin() ) {
+		    $taxonomy_translation_link_filters = new WCML_Taxonomy_Translation_Link_Filters( $this->attributes );
+		    $taxonomy_translation_link_filters->add_filters();
+	    }
+
 	    $payment_method_filter = new WCML_Payment_Method_Filter();
 	    $payment_method_filter->add_hooks();
 
@@ -239,14 +253,6 @@ class woocommerce_wpml {
 	    $url_filters_redirect_location->add_hooks();
 
 		add_action( 'wp_ajax_wcml_update_setting_ajx', array( $this, 'update_setting_ajx' ) );
-
-		if ( is_admin() ) {
-			$taxonomy_translation_link_filters = new WCML_Taxonomy_Translation_Link_Filters( $this->attributes );
-			$taxonomy_translation_link_filters->add_filters();
-
-            $tp_support = new WCML_TP_Support( $this, $wpdb , new WPML_Element_Translation_Package );
-            $tp_support->add_hooks();
-        }
     }
 
     public function get_settings(){
