@@ -28,25 +28,21 @@ class WCML_Translation_Editor{
         add_filter( 'manage_product_posts_columns', array( $this, 'add_languages_column' ), 100 );
         add_action( 'woocommerce_product_after_variable_attributes', array( $this, 'lock_variable_fields' ), 10 );
 
-        if( is_admin() ){
+        add_filter( 'wpml_use_tm_editor', array( $this, 'force_woocommerce_native_editor_for_wcml_products_screen' ), 100 );
 
-            add_filter( 'wpml_use_tm_editor', array( $this, 'force_woocommerce_native_editor_for_wcml_products_screen' ), 100 );
-
-            if( $this->woocommerce_wpml->is_wpml_prior_4_2() ) {
-		        add_filter( 'wpml_use_tm_editor', array( $this, 'force_woocommerce_native_editor' ), 100 );
-		        add_action( 'wpml_pre_status_icon_display', array(
-			        $this,
-			        'force_remove_wpml_translation_editor_links'
-		        ), 100 );
-	        }
-
-            add_action( 'wp_ajax_wcml_editor_auto_slug', array( $this, 'auto_generate_slug' ) );
-
-            add_action('wpml_doc_translation_method_below', array( $this, 'wpml_translation_editor_override_notice') );
-
-            add_filter( 'wpml_tm_show_page_builders_translation_editor_warning', array( $this, 'show_page_builders_translation_editor_warning' ), 10, 2 );
+        if( $this->woocommerce_wpml->is_wpml_prior_4_2() ) {
+            add_filter( 'wpml_use_tm_editor', array( $this, 'force_woocommerce_native_editor' ), 100 );
+            add_action( 'wpml_pre_status_icon_display', array(
+                $this,
+                'force_remove_wpml_translation_editor_links'
+            ), 100 );
         }
 
+        add_action( 'wp_ajax_wcml_editor_auto_slug', array( $this, 'auto_generate_slug' ) );
+
+        add_action('wpml_doc_translation_method_below', array( $this, 'wpml_translation_editor_override_notice') );
+
+        add_filter( 'wpml_tm_show_page_builders_translation_editor_warning', array( $this, 'show_page_builders_translation_editor_warning' ), 10, 2 );
     }
 
     public function fetch_translation_job_for_editor( $job, $job_details ) {

@@ -32,11 +32,13 @@ class WCML_Synchronize_Product_Data{
 	}
 
     public function add_hooks(){
-        if( is_admin() ){
-            // filters to sync variable products
-            add_action( 'save_post', array( $this, 'synchronize_products' ), PHP_INT_MAX, 2 ); // After WPML
+        if( is_admin() || wpml_is_rest_request() ) {
+	        add_action( 'icl_pro_translation_completed', array( $this, 'icl_pro_translation_completed' ) );
+        }
 
-            add_action( 'icl_pro_translation_completed', array( $this, 'icl_pro_translation_completed' ) );
+        if( is_admin() ){
+	        // filters to sync variable products
+	        add_action( 'save_post', array( $this, 'synchronize_products' ), PHP_INT_MAX, 2 ); // After WPML
 
             add_filter( 'icl_make_duplicate', array( $this, 'icl_make_duplicate'), 110, 4 );
 

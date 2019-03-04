@@ -89,7 +89,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 	public function it_adds_admin_hooks(){
 		\WP_Mock::wpFunction( 'is_admin', array(
 			'return' => true,
-			'times'  => 1
+			'times'  => 2
 		) );
 
 		$subject = $this->get_subject();
@@ -110,7 +110,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 	public function it_adds_admin_and_front_hooks(){
 		\WP_Mock::wpFunction( 'is_admin', array(
 			'return' => true,
-			'times'  => 1
+			'times'  => 2
 		) );
 
 		$subject = $this->get_subject();

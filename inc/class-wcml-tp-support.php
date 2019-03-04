@@ -119,8 +119,11 @@ class WCML_TP_Support {
 
 			$product_attributes = get_post_meta( $post_id, '_product_attributes', true );
 
-			$original_post_language = $this->woocommerce_wpml->products->get_original_product_language( $post_id );
-			$original_post_id       = apply_filters( 'translate_object_id', $post_id, 'product', false, $original_post_language );
+			if( isset( $job->original_doc_id ) ){
+				$original_post_id = $job->original_doc_id;
+			}else{
+				$original_post_id = $this->woocommerce_wpml->products->get_original_product_id( $post_id );
+			}
 
 			$original_attributes = get_post_meta( $original_post_id, '_product_attributes', true );
 
