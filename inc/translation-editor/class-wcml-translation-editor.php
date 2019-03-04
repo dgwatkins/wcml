@@ -287,7 +287,7 @@ class WCML_Translation_Editor{
 
         if( function_exists('get_current_screen') ) {
             $current_screen = get_current_screen();
-            if ( $current_screen->id === 'woocommerce_page_wpml-wcml' ) {
+            if ( $current_screen && $current_screen->id === 'woocommerce_page_wpml-wcml' ) {
                     $use_tm_editor = 1;
             }
         }

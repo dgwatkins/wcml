@@ -128,4 +128,55 @@ class Test_WCML_Translation_Editor extends OTGS_TestCase {
 	}
 
 
+	/**
+	 * @test
+	 */
+	public function it_should_force_woocommerce_native_editor_for_wcml_products_screen(){
+
+		$subject = $this->get_subject();
+
+		$current_screen = new stdClass();
+		$current_screen->id = 'woocommerce_page_wpml-wcml';
+
+		\WP_Mock::wpFunction( 'get_current_screen', array(
+			'return' => $current_screen
+		));
+
+		$this->assertEquals( 1, $subject->force_woocommerce_native_editor_for_wcml_products_screen( false ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_force_woocommerce_native_editor_for_not_defined_screen(){
+
+		$subject = $this->get_subject();
+
+		$current_screen = null;
+
+		\WP_Mock::wpFunction( 'get_current_screen', array(
+			'return' => $current_screen
+		));
+
+		$this->assertFalse( $subject->force_woocommerce_native_editor_for_wcml_products_screen( false ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_force_woocommerce_native_editor_for_not_wcml_products_screen(){
+
+		$subject = $this->get_subject();
+
+		$current_screen = new stdClass();
+		$current_screen->id = 'a-non-wcml-dashboard';
+
+		\WP_Mock::wpFunction( 'get_current_screen', array(
+			'return' => $current_screen
+		));
+
+		$this->assertFalse( $subject->force_woocommerce_native_editor_for_wcml_products_screen( false ) );
+	}
+
+
 }
