@@ -214,4 +214,50 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		$this->assertSame( $expected_subtotal, $subject->filter_woocommerce_cart_subtotal( $cart_subtotal, $compound, $cart_object ) );
 
 	}
+
+	/**
+	 * @test
+	 * @group wcml_price_custom_fields
+	 */
+	public function it_should_call_wcml_price_custom_fields() {
+		$product_id = 123;
+		$post_type = 'product';
+		$meta_key = null;
+
+		$subject = $this->get_subject( $this->get_multi_currency_mock() );
+
+		WP_Mock::userFunction( 'get_post_type', array(
+			'times'  => 1,
+			'args'   => array( $product_id ),
+			'return' => $post_type,
+		) );
+		WP_Mock::userFunction( 'wcml_price_custom_fields', array(
+			'times' => 1,
+			'args'  => array( $product_id ),
+		) );
+
+		$subject->product_price_filter( array(), $product_id, $meta_key, true );
+	}
+
+	/**
+	 * @test
+	 * @group wcml_price_custom_fields
+	 */
+	public function it_should_NOT_call_wcml_price_custom_fields_if_the_post_type_is_not_a_product_or_a_product_variation() {
+		$product_id = 123;
+		$post_type = 'post';
+		$meta_key = null;
+
+		$subject = $this->get_subject( $this->get_multi_currency_mock() );
+
+		WP_Mock::userFunction( 'get_post_type', array(
+			'times'  => 1,
+			'args'   => array( $product_id ),
+			'return' => $post_type,
+		) );
+		WP_Mock::userFunction( 'wcml_price_custom_fields', array( 'times' => 0 ) );
+
+		$subject->product_price_filter( array(), $product_id, $meta_key, true );
+	}
+
 }
