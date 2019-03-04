@@ -79,15 +79,18 @@ class Test_WCML_Products_UI extends OTGS_TestCase {
 
 }
 
+if ( ! class_exists( 'WPML_Templates_Factory' ) ) {
+	/**
+	 * Class WPML_Templates_Factory
+	 * Stub for Test_WCML_Products_UI
+	 */
+	abstract class WPML_Templates_Factory {
 
-/**
- * Class WPML_Templates_Factory
- * Stub for Test_WCML_Products_UI
- */
-abstract class WPML_Templates_Factory{
+		public function __construct() { /*silence is golden*/
+		}
 
-	public function __construct() { /*silence is golden*/ }
+		public function show() { /*silence is golden*/
+		}
 
-	public function show( ) { /*silence is golden*/  }
-
+	}
 }

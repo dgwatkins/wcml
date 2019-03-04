@@ -96,9 +96,7 @@ class Test_WCML_WC_Strings extends OTGS_TestCase {
 	 */
 	public function filter_woocommerce_breadcrumbs_prepend_shop_page_if_needed(){
 
-		$sitepress = $this->get_sitepress();
-		$sitepress->method( 'get_current_language' )->willReturn( rand_str() );
-		$sitepress->method( 'get_default_language' )->willReturn( rand_str() );
+		$sitepress = $this->get_sitepress_with_mocked_current_and_default_languages();
 
 		$shop_page_id  = mt_rand( 1, 10 );
 		$shop_page = new stdClass();
@@ -190,9 +188,7 @@ class Test_WCML_WC_Strings extends OTGS_TestCase {
 	 */
 	public function filter_woocommerce_breadcrumbs_append_shop_page_after_home_page_if_needed(){
 
-		$sitepress = $this->get_sitepress();
-		$sitepress->method( 'get_current_language' )->willReturn( rand_str() );
-		$sitepress->method( 'get_default_language' )->willReturn( rand_str() );
+		$sitepress = $this->get_sitepress_with_mocked_current_and_default_languages();
 
 		$shop_page_id  = mt_rand( 1, 10 );
 		$shop_page = new stdClass();
@@ -279,6 +275,17 @@ class Test_WCML_WC_Strings extends OTGS_TestCase {
 		$filtered_breadcrumbs = $subject->filter_woocommerce_breadcrumbs( $breadcrumbs, new stdClass() );
 
 		$this->assertEquals( $expected_breadcrumbs, $filtered_breadcrumbs );
+	}
+
+	/**
+	 * @return \SitePress
+	 */
+	private function get_sitepress_with_mocked_current_and_default_languages() {
+		$sitepress = $this->get_sitepress();
+		$sitepress->method( 'get_current_language' )->willReturn( rand_str() );
+		$sitepress->method( 'get_default_language' )->willReturn( rand_str() );
+
+		return $sitepress;
 	}
 
 }
