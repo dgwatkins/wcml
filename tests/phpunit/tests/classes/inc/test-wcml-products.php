@@ -349,6 +349,24 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'return' => 'product'
 		));
 
+		WP_Mock::userFunction( 'wcml_price_custom_fields', array(
+			'return' => function ( $object_id ) {
+				$default_keys = array(
+					'_max_variation_price',
+					'_max_variation_regular_price',
+					'_max_variation_sale_price',
+					'_min_variation_price',
+					'_min_variation_regular_price',
+					'_min_variation_sale_price',
+					'_price',
+					'_regular_price',
+					'_sale_price',
+				);
+
+				return apply_filters( 'wcml_price_custom_fields', $default_keys, $object_id );
+			}
+		) );
+
 		$enable_multi_currency = 1;
 		$this->wp_api->method( 'constant' )->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )->willReturn( $enable_multi_currency );
 		$this->woocommerce_wpml->settings[ 'enable_multi_currency' ] = $enable_multi_currency;

@@ -158,17 +158,7 @@ class WCML_Multi_Currency_Prices {
 
 		if ( empty( $no_filter ) && in_array( get_post_type( $object_id ), array( 'product', 'product_variation' ) ) ) {
 
-			$price_keys = apply_filters( 'wcml_price_custom_fields_filtered', array(
-				'_price',
-				'_regular_price',
-				'_sale_price',
-				'_min_variation_price',
-				'_max_variation_price',
-				'_min_variation_regular_price',
-				'_max_variation_regular_price',
-				'_min_variation_sale_price',
-				'_max_variation_sale_price'
-			) );
+			$price_keys = wcml_price_custom_fields( $object_id );
 
 			if ( in_array( $meta_key, $price_keys ) ) {
 				$no_filter = true;

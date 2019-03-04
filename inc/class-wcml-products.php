@@ -672,25 +672,15 @@ class WCML_Products{
 	public function filter_product_data( $data, $product_id, $meta_key ) {
 
 		if ( ! $meta_key && in_array( get_post_type( $product_id ), array( 'product', 'product_variation' ) ) ) {
-			remove_filter( 'get_post_metadata', array( $this, 'filter_product_data' ), 10, 3 );
+			remove_filter( 'get_post_metadata', array( $this, 'filter_product_data' ), 10 );
 
 			$data = get_post_meta( $product_id );
 
 			$is_mc_enabled = $this->woocommerce_wpml->settings[ 'enable_multi_currency' ] === $this->sitepress->get_wp_api()->constant( 'WCML_MULTI_CURRENCIES_INDEPENDENT' );
 
-			if( $is_mc_enabled ){
-				$price_keys = apply_filters( 'wcml_price_custom_fields_filtered', array(
-					'_price',
-					'_regular_price',
-					'_sale_price',
-					'_min_variation_price',
-					'_max_variation_price',
-					'_min_variation_regular_price',
-					'_max_variation_regular_price',
-					'_min_variation_sale_price',
-					'_max_variation_sale_price'
-				) );
-            }
+			if ( $is_mc_enabled ) {
+				$price_keys = wcml_price_custom_fields( $product_id );
+			}
 
 			foreach ( $data as $meta_key => $meta_value ) {
 
