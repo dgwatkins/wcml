@@ -4,7 +4,7 @@
  * @author OnTheGo Systems
  * @group  sku
  */
-class Test_SKU extends OTGS_TestCase {
+class Test_WCML_Products_SKU extends OTGS_TestCase {
 	/**
 	 * @return array
 	 */
@@ -32,20 +32,20 @@ class Test_SKU extends OTGS_TestCase {
 	 * @test
 	 */
 	function it_must_return_false_if_sku_is_not_found() {
-		WP_Mock::wpFunction( 'is_admin', array( 'return' => false ) );
+		WP_Mock::userFunction( 'is_admin', array( 'return' => false ) );
 
 		$subject = $this->get_subject();
 
-		$this->assertFalse( $subject->check_product_sku( false, mt_rand(), 'test_sku' ) );
+		$this->assertFalse( $subject->check_product_sku( false, mt_rand(), 'Test_WCML_Products_SKU' ) );
 	}
 
 	/**
 	 * @test
 	 */
 	function it_must_return_false_if_there_are_no_other_products_with_the_same_sku() {
-		WP_Mock::wpFunction( 'is_admin', array( 'return' => false ) );
-		WP_Mock::wpFunction( 'get_post_type', array( 'return' => 'product' ) );
-		WP_Mock::wpPassthruFunction( 'wp_slash' );
+		WP_Mock::userFunction( 'is_admin', array( 'return' => false ) );
+		WP_Mock::userFunction( 'get_post_type', array( 'return' => 'product' ) );
+		WP_Mock::passthruFunction( 'wp_slash' );
 
 		//Stubs
 		list( $wcml, $sitepress, $wpml_post_translations, $wpdb ) = $this->get_stubs();
@@ -56,16 +56,16 @@ class Test_SKU extends OTGS_TestCase {
 		// Test
 		$subject = new WCML_Products( $wcml, $sitepress, $wpml_post_translations, $wpdb );
 
-		$this->assertFalse( $subject->check_product_sku( true, mt_rand(), 'test_sku' ) );
+		$this->assertFalse( $subject->check_product_sku( true, mt_rand(), 'Test_WCML_Products_SKU' ) );
 	}
 
 	/**
 	 * @test
 	 */
 	function it_must_return_false_if_there_are_other_products_with_the_same_sku_and_same_trid() {
-		WP_Mock::wpFunction( 'is_admin', array( 'return' => false ) );
-		WP_Mock::wpFunction( 'get_post_type', array( 'return' => 'product' ) );
-		WP_Mock::wpPassthruFunction( 'wp_slash' );
+		WP_Mock::userFunction( 'is_admin', array( 'return' => false ) );
+		WP_Mock::userFunction( 'get_post_type', array( 'return' => 'product' ) );
+		WP_Mock::passthruFunction( 'wp_slash' );
 
 		//Stubs
 		list( $wcml, $sitepress, $wpml_post_translations, $wpdb ) = $this->get_stubs();
@@ -94,16 +94,16 @@ class Test_SKU extends OTGS_TestCase {
 		// Test
 		$subject = new WCML_Products( $wcml, $sitepress, $wpml_post_translations, $wpdb );
 
-		$this->assertFalse( $subject->check_product_sku( true, $original_product_id, 'test_sku' ) );
+		$this->assertFalse( $subject->check_product_sku( true, $original_product_id, 'Test_WCML_Products_SKU' ) );
 	}
 
 	/**
 	 * @test
 	 */
 	function it_must_return_true_if_there_are_other_products_with_the_same_sku_on_different_trid() {
-		WP_Mock::wpFunction( 'is_admin', array( 'return' => false ) );
-		WP_Mock::wpFunction( 'get_post_type', array( 'return' => 'product' ) );
-		WP_Mock::wpPassthruFunction( 'wp_slash' );
+		WP_Mock::userFunction( 'is_admin', array( 'return' => false ) );
+		WP_Mock::userFunction( 'get_post_type', array( 'return' => 'product' ) );
+		WP_Mock::passthruFunction( 'wp_slash' );
 
 		//Stubs
 		list( $wcml, $sitepress, $wpml_post_translations, $wpdb ) = $this->get_stubs();
@@ -132,6 +132,6 @@ class Test_SKU extends OTGS_TestCase {
 		// Test
 		$subject = new WCML_Products( $wcml, $sitepress, $wpml_post_translations, $wpdb );
 
-		$this->assertTrue( $subject->check_product_sku( true, $original_product_id, 'test_sku' ) );
+		$this->assertTrue( $subject->check_product_sku( true, $original_product_id, 'Test_WCML_Products_SKU' ) );
 	}
 }
