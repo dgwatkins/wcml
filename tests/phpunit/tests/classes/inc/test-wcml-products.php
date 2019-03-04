@@ -320,6 +320,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 	/**
 	 * @test
 	 * @runInSeparateProcess
+	 * @group wcml_price_custom_fields
 	 */
 	public function it_filter_product_data(){
 
