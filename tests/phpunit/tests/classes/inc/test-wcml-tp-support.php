@@ -23,7 +23,7 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 
 		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
 			->disableOriginalConstructor()
-			->setMethods( array( 'get_original_product_language' ) )
+			->setMethods( array( 'get_original_product_id' ) )
 			->getMock();
 
 		$this->tp = $this->getMockBuilder( 'WPML_Element_Translation_Package' )
@@ -155,7 +155,6 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 		);
 		$job = new stdClass();
 		$job->language_code = 'es';
-		$original_post_language = 'en';
 		$original_product_id = 2;
 
 		\WP_Mock::wpFunction( 'get_post_meta', array(
@@ -170,9 +169,7 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 			'return' => $product_attributes
 		) );
 
-		$this->woocommerce_wpml->products->method( 'get_original_product_language' )->willReturn( $original_post_language );
-
-		\WP_Mock::onFilter( 'translate_object_id' )->with( $product_id, 'product', false, $original_post_language  )->reply( $original_product_id );
+		$this->woocommerce_wpml->products->method( 'get_original_product_id' )->willReturn( $original_product_id );
 
 		$original_product_attributes = array (
 			'custom' =>
