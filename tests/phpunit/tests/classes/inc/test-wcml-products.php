@@ -54,12 +54,13 @@ class Test_WCML_Products extends OTGS_TestCase {
 		                         ->setMethods( array( 'get', 'set' ) )
 		                         ->getMock();
 
-		$this->wpml_cache->method( 'get' )->willReturnCallback( function ( $key, &$found ) use ( $that ) {
+		$this->wpml_cache->method( 'get' )->willReturnCallback( function ( $key, $found ) use ( $that ) {
 			if ( isset( $that->cached_data[ $key ] ) ) {
 				$found = true;
 
 				return $that->cached_data[ $key ];
 			} else {
+				$found = false;
 				return false;
 			}
 		} );
@@ -442,6 +443,127 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$this->assertSame( 'test LEFT JOIN wp_icl_translations AS icl ON icl.element_id = p.ID ', $filtered_query['join'] );
 		$this->assertSame( 'test AND icl.language_code = ' . $this->default_language . ' ', $filtered_query['where'] );
 	}
+
+	/**
+	 * @test
+	 * @group wcml_price_custom_fields
+	 */
+	public function it_should_call_wcml_price_custom_fields() {
+		$product_id = 123;
+		$post_type = 'product';
+		$multi_currency_setting = 2;
+		$meta_key = null;
+
+		$this->wp_api->method( 'constant' )->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )->willReturn( 2 );
+		$this->woocommerce_wpml->settings['enable_multi_currency'] = $multi_currency_setting;
+
+		$subject = $this->get_subject();
+
+		WP_Mock::userFunction( 'get_post_type', array(
+			'times'  => 1,
+			'args'   => array( $product_id ),
+			'return' => $post_type,
+		) );
+		WP_Mock::userFunction( 'remove_filter', array(
+			'times' => 1,
+			'args'  => array(
+				'get_post_metadata',
+				array( $subject, 'filter_product_data' ),
+				10,
+			)
+		) );
+		WP_Mock::userFunction( 'get_post_meta', array(
+			'times'  => 1,
+			'args'   => array( $product_id ),
+			'return' => array(),
+		) );
+		WP_Mock::userFunction( 'wcml_price_custom_fields', array(
+			'times' => 1,
+			'args'  => array( $product_id ),
+		) );
+
+		$subject->filter_product_data( array(), $product_id, $meta_key );
+	}
+
+	/**
+	 * @test
+	 * @group wcml_price_custom_fields
+	 */
+	public function it_should_NOT_call_wcml_price_custom_fields_if_multicurrency_is_disabled() {
+		$product_id = 123;
+		$post_type = 'product';
+		$multi_currency_setting = 1;
+		$meta_key = null;
+
+		$this->wp_api->method( 'constant' )->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )->willReturn( 2 );
+		$this->woocommerce_wpml->settings['enable_multi_currency'] = $multi_currency_setting;
+
+		$subject = $this->get_subject();
+
+
+		WP_Mock::userFunction( 'get_post_type', array(
+			'times'  => 1,
+			'args'   => array( $product_id ),
+			'return' => $post_type,
+		) );
+		WP_Mock::userFunction( 'remove_filter', array(
+			'times' => 1,
+			'args'  => array(
+				'get_post_metadata',
+				array( $subject, 'filter_product_data' ),
+				10,
+			)
+		) );
+		WP_Mock::userFunction( 'get_post_meta', array(
+			'times'  => 1,
+			'args'   => array( $product_id ),
+			'return' => array(),
+		) );
+		WP_Mock::userFunction( 'wcml_price_custom_fields', array( 'times' => 0 ) );
+
+		$subject->filter_product_data( array(), $product_id, $meta_key );
+	}
+
+	/**
+	 * @test
+	 * @group wcml_price_custom_fields
+	 */
+	public function it_should_NOT_call_wcml_price_custom_fields_if_the_post_type_is_not_a_product_or_a_product_variation() {
+		$product_id = 123;
+		$post_type = 'post';
+		$meta_key = null;
+
+		$subject = $this->get_subject();
+
+		WP_Mock::userFunction( 'get_post_type', array(
+			'times'  => 1,
+			'args'   => array( $product_id ),
+			'return' => $post_type,
+		) );
+		WP_Mock::userFunction( 'remove_filter', array( 'times' => 0 ) );
+		WP_Mock::userFunction( 'get_post_meta', array( 'times' => 0 ) );
+		WP_Mock::userFunction( 'wcml_price_custom_fields', array( 'times' => 0 ) );
+
+		$subject->filter_product_data( array(), $product_id, $meta_key );
+	}
+
+	/**
+	 * @test
+	 * @group wcml_price_custom_fields
+	 */
+	public function it_should_NOT_call_wcml_price_custom_fields_if_the_a_meta_key_is_provided() {
+		$product_id = 123;
+		$meta_key = null;
+
+		$subject = $this->get_subject();
+
+		WP_Mock::userFunction( 'remove_filter', array( 'times' => 0 ) );
+		WP_Mock::userFunction( 'get_post_meta', array( 'times' => 0 ) );
+		WP_Mock::userFunction( 'wcml_price_custom_fields', array( 'times' => 0 ) );
+
+		$subject->filter_product_data( array(), $product_id, $meta_key );
+	}
+
 
 	/**
 	 * @return wpdb|PHPUnit_Framework_MockObject_MockObject

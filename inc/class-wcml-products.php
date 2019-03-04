@@ -676,7 +676,7 @@ class WCML_Products{
 
 			$data = get_post_meta( $product_id );
 
-			$is_mc_enabled = $this->woocommerce_wpml->settings[ 'enable_multi_currency' ] === $this->sitepress->get_wp_api()->constant( 'WCML_MULTI_CURRENCIES_INDEPENDENT' );
+			$is_mc_enabled = (int) $this->woocommerce_wpml->settings['enable_multi_currency'] === (int) $this->sitepress->get_wp_api()->constant( 'WCML_MULTI_CURRENCIES_INDEPENDENT' );
 
 			if ( $is_mc_enabled ) {
 				$price_keys = wcml_price_custom_fields( $product_id );
