@@ -160,7 +160,7 @@ class WCML_Multi_Currency_Prices {
 
 			$price_keys = wcml_price_custom_fields( $object_id );
 
-			if ( in_array( $meta_key, $price_keys ) ) {
+			if ( is_array( $price_keys ) && in_array( $meta_key, $price_keys ) ) {
 				$no_filter = true;
 
 				// exception for products migrated from before WCML 3.1 with independent prices
