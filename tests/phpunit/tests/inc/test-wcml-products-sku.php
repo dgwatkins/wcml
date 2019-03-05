@@ -5,28 +5,8 @@
  * @group  sku
  */
 class Test_WCML_Products_SKU extends OTGS_TestCase {
-	/**
-	 * @return array
-	 */
-	private function get_stubs() {
-		$wcml      = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
-		$sitepress = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
-		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )->disableOriginalConstructor()->setMethods( array( 'get_element_trid' ) )->getMock();
-		$wpdb      = $this->stubs->wpdb();
-
-		return array( $wcml, $sitepress, $wpml_post_translations, $wpdb );
-	}
-
-	/**
-	 * @return WCML_Products
-	 */
-	private function get_subject(){
-		//Stubs
-		list( $wcml, $sitepress, $wpml_post_translations, $wpdb ) = $this->get_stubs();
-
-		// Test
-		return new WCML_Products( $wcml, $sitepress, $wpml_post_translations, $wpdb );
-	}
+	/** @var array */
+	private $cached_data;
 
 	/**
 	 * @test
@@ -134,4 +114,87 @@ class Test_WCML_Products_SKU extends OTGS_TestCase {
 
 		$this->assertTrue( $subject->check_product_sku( true, $original_product_id, 'Test_WCML_Products_SKU' ) );
 	}
+
+	/**
+	 * @return array
+	 */
+	private function get_stubs() {
+		$wcml                   = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
+		$sitepress              = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )->disableOriginalConstructor()->setMethods( array( 'get_element_trid' ) )->getMock();
+
+		$wpdb = $this->getMockBuilder( 'wpdb' )->disableOriginalConstructor()->setMethods( array(
+			'prepare',
+			'query',
+			'get_results',
+			'get_col',
+			'get_var',
+			'get_row',
+			'delete',
+			'update',
+			'insert',
+		) )->getMock();
+
+		/** @noinspection PhpUndefinedFieldInspection */
+		$wpdb->blogid = 1;
+		/** @noinspection PhpUndefinedFieldInspection */
+		$wpdb->prefix = 'wp_';
+		/** @noinspection PhpUndefinedFieldInspection */
+		$wpdb->posts = 'posts';
+		/** @noinspection PhpUndefinedFieldInspection */
+		$wpdb->postmeta = 'post_meta';
+		/** @noinspection PhpUndefinedFieldInspection */
+		$wpdb->comments = 'comments';
+		/** @noinspection PhpUndefinedFieldInspection */
+		$wpdb->commentmeta = 'comment_meta';
+		/** @noinspection PhpUndefinedFieldInspection */
+		$wpdb->terms = 'terms';
+		/** @noinspection PhpUndefinedFieldInspection */
+		$wpdb->term_taxonomy = 'term_taxonomy';
+		/** @noinspection PhpUndefinedFieldInspection */
+		$wpdb->term_relationships = 'term_relationships';
+
+		$wpml_cache = $this->get_wpml_cache_mock();
+
+		return array( $wcml, $sitepress, $wpml_post_translations, $wpdb, $wpml_cache );
+	}
+
+	private function get_wpml_cache_mock() {
+		$that = $this;
+
+		$wpml_cache_mock = $this->getMockBuilder( 'WPML_WP_Cache' )
+								->disableOriginalConstructor()
+								->setMethods( array( 'get', 'set' ) )
+								->getMock();
+
+		$wpml_cache_mock->method( 'get' )->willReturnCallback(
+			function ( $key ) use ( $that ) {
+				if ( isset( $that->cached_data[ $key ] ) ) {
+					return $that->cached_data[ $key ];
+				}
+
+				return false;
+			}
+		);
+
+		$wpml_cache_mock->method( 'set' )->willReturnCallback(
+			function ( $key, $value ) use ( $that ) {
+				$that->cached_data[ $key ] = $value;
+			}
+		);
+
+		return $wpml_cache_mock;
+	}
+
+	/**
+	 * @return WCML_Products
+	 */
+	private function get_subject() {
+		//Stubs
+		list( $wcml, $sitepress, $wpml_post_translations, $wpdb, $wpml_cache ) = $this->get_stubs();
+
+		// Test
+		return new WCML_Products( $wcml, $sitepress, $wpml_post_translations, $wpdb, $wpml_cache );
+	}
+
 }

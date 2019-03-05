@@ -60,6 +60,7 @@ class Test_WCML_Downloadable_Products extends OTGS_TestCase
 
 	/**
 	 * @test
+	 * @runInSeparateProcess
 	 */
 	public function new_original_product_edit_page( ){
 
@@ -79,6 +80,9 @@ class Test_WCML_Downloadable_Products extends OTGS_TestCase
 				'return' => 'product'
 			)
 		);
+
+		$custom_files_ui = \Mockery::mock( 'overload:WCML_Custom_Files_UI' );
+		$custom_files_ui->shouldReceive( 'show' )->andReturn( '' );
 
 		$subject = $this->get_subject();
 
@@ -189,6 +193,20 @@ if ( ! class_exists( 'WPML_Templates_Factory' ) ) {
 		public function __construct() { /*silence is golden*/ }
 
 		public function show( ) { /*silence is golden*/  }
+
+	}
+}
+
+
+if ( ! class_exists( 'WP_Widget' ) ) {
+	/**
+	 * Class WP_Widget
+	 * Stub for Test_WCML_Downloadable_Products
+	 */
+	abstract class WP_Widget {
+
+		public function __construct() { /*silence is golden*/
+		}
 
 	}
 }

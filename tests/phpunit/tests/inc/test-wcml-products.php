@@ -326,6 +326,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 	/**
 	 * @test
 	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 * @group wcml_price_custom_fields
 	 */
 	public function it_filter_product_data(){
@@ -603,5 +604,18 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$wpdb->term_relationships = 'term_relationships';
 
 		return $wpdb;
+	}
+}
+
+if ( ! class_exists( 'WP_Widget' ) ) {
+	/**
+	 * Class WP_Widget
+	 * Stub for Test_WCML_Products
+	 */
+	abstract class WP_Widget {
+
+		public function __construct() { /*silence is golden*/
+		}
+
 	}
 }
