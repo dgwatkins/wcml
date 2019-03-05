@@ -233,7 +233,6 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 	/**
 	 * @test
-	 * @runInSeparateProcess
 	 */
 	function cart_alert_hide_dialog(){
 

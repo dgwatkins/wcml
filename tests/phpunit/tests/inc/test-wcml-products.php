@@ -54,7 +54,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		                         ->setMethods( array( 'get', 'set' ) )
 		                         ->getMock();
 
-		$this->wpml_cache->method( 'get' )->willReturnCallback( function ( $key, &$found ) use ( $that ) {
+		$this->wpml_cache->method( 'get' )->willReturnCallback( function ( $key ) use ( $that ) {
 			if ( isset( $that->cached_data[ $key ] ) ) {
 				$found = true;
 
