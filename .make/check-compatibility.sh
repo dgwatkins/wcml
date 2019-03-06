@@ -24,6 +24,12 @@ do
 	else
 		echo ":: PHP Lint: OK"
 	fi
+
+	if [[ ${FILE} != tests/* ]]
+	then
+		FILES="$FILES ./$FILE"
+	fi
+
 	FILES="$FILES ./$FILE"
 done
 

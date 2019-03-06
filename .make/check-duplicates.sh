@@ -16,13 +16,17 @@ STAGED_FILES=${STAGED_FILES:-$STAGED_FILES_CMD}
 echo "Checking PHP Lint..."
 for FILE in ${STAGED_FILES}
 do
-	FILES="$FILES ./$FILE"
+	if [[ ${FILE} != tests/* ]]
+	then
+		FILES="$FILES ./$FILE"
+	fi
 done
 
 if [[ "$FILES" != "" ]]
 then
     echo "Running duplicates checks..."
-    vendor/bin/phpcpd --exclude=tests --exclude=vendor -- ${FILES}
+    echo "vendor/bin/phpcpd --exclude tests --exclude vendor --${FILES}"
+    vendor/bin/phpcpd --exclude tests --exclude vendor -- ${FILES}
 
     if [[ $? != 0 ]]
     then
