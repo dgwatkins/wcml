@@ -88,11 +88,35 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 	public function add_hooks(){
 
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
+		$_GET['post_type'] = 'wc_booking';
+		\WP_Mock::wpFunction( 'remove_action', array( 'times' => 1 ) );
+
 		$subject = $this->get_subject();
 		\WP_Mock::expectFilterAdded( 'get_translatable_documents_all', array( $subject, 'filter_translatable_documents' ) );
+		\WP_Mock::expectFilterAdded( 'wp_count_posts', array( $subject, 'count_bookings_by_current_language' ), 10, 2 );
+		\WP_Mock::expectFilterAdded( 'views_edit-wc_booking', array( $subject, 'unset_mine_from_bookings_views' ) );
 		$subject->add_hooks();
 
 	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_add_hooks_for_not_bookings_listing_page(){
+
+		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
+		\WP_Mock::wpFunction( 'remove_action', array( 'times' => 0 ) );
+		$_GET['post_type'] = 'not_wc_booking';
+
+		$subject = $this->get_subject();
+		\WP_Mock::expectFilterNotAdded( 'wp_count_posts', array( $subject, 'count_bookings_by_current_language' ), 10, 2 );
+		\WP_Mock::expectFilterNotAdded( 'views_edit-wc_booking', array( $subject, 'unset_mine_from_bookings_views' ) );
+		$subject->add_hooks();
+
+	}
+
+
 	/**
 	 * @test
 	 */
@@ -264,5 +288,79 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 
 		$subject->maybe_set_booking_language( $booking_id );
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_unset_mine_from_bookings_views(){
+
+		$_GET['post_type'] = 'wc_booking';
+
+		$views['mine'] = rand_str();
+		$views['unpaid'] = rand_str();
+
+		$expected_views['unpaid'] = $views['unpaid'];
+
+		$subject = $this->get_subject();
+
+		$filtered_views = $subject->unset_mine_from_bookings_views( $views );
+
+		$this->assertEquals( $expected_views, $filtered_views );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_remove_language_switcher_from_bookings_admin_page(){
+
+		$_GET['post_type'] = 'wc_booking';
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::wpFunction( 'remove_action', array( 'times' => 1 ) );
+
+		$subject->remove_language_switcher();
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_count_bookings_by_current_language(){
+
+		$_GET['post_type'] = 'wc_booking';
+		$type              = 'wc_booking';
+		$counts[] = array(
+			'post_status' => 'unpaid',
+			'num_posts' => 100
+		);
+
+		$this->wpdb->method( 'get_results' )->willReturn( $counts );
+
+		$sitepress = $this->getMockBuilder('SitePress')
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_current_language' ) )
+		                  ->getMock();
+
+		$sitepress->expects( $this->once() )->method( 'get_current_language' )->willReturn( 'es' );
+
+		$post_statuses = array( 'unpaid' => 'unpaid' );
+
+		\WP_Mock::userFunction( 'get_post_stati',
+			array(
+				'return' => $post_statuses,
+				'times'  => 1
+			)
+		);
+
+		$subject = $this->get_subject( $sitepress );
+
+		$expected_counts         = new stdClass();
+		$expected_counts->unpaid = 100;
+
+		$filtered_counts = $subject->count_bookings_by_current_language( new stdClass(), $type );
+
+		$this->assertEquals( $expected_counts, $filtered_counts );
+	}
+
 }
 
