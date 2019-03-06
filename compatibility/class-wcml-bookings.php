@@ -203,6 +203,12 @@ class WCML_Bookings {
 			add_action( 'woocommerce_booking_paid_to_cancelled_notification', array( $this, 'translate_booking_cancelled_admin_email_texts' ), 9 );
 
 			add_filter( 'wcml_email_language', array( $this, 'booking_email_language' ) );
+
+			if( $this->is_bookings_listing_page() ) {
+				$this->remove_language_switcher();
+				add_filter( 'wp_count_posts', array( $this, 'count_bookings_by_current_language' ), 10, 2 );
+				add_filter( 'views_edit-wc_booking', array( $this, 'unset_mine_from_bookings_views' ) );
+			}
 		}
 
 		if ( ! is_admin() || isset( $_POST['action'] ) && $_POST['action'] == 'wc_bookings_calculate_costs' ) {
@@ -2546,4 +2552,49 @@ class WCML_Bookings {
 		return $product ? $product->get_type() === 'booking' : false;
 	}
 
+	/**
+	 * @param string $counts
+	 * @param string $type
+	 *
+	 * @return object
+	 */
+	public function count_bookings_by_current_language( $counts, $type ) {
+
+		$query = "SELECT p.post_status, COUNT( * ) AS num_posts FROM {$this->wpdb->posts} as p 
+                  LEFT JOIN {$this->wpdb->prefix}icl_translations as icl ON p.ID = icl.element_id 
+                  WHERE p.post_type = %s AND icl.language_code = %s AND icl.element_type = %s GROUP BY p.post_status";
+
+		$results = $this->wpdb->get_results( $this->wpdb->prepare( $query, $type, $this->sitepress->get_current_language(), 'post_wc_booking' ), ARRAY_A );
+		$counts  = array_fill_keys( get_post_stati(), 0 );
+
+		foreach ( $results as $row ) {
+			$counts[ $row['post_status'] ] = $row['num_posts'];
+		}
+
+		$counts = (object) $counts;
+
+		return $counts;
+	}
+
+	/**
+	 * @param array $views
+	 *
+	 * @return array
+	 */
+	public function unset_mine_from_bookings_views( $views ) {
+		unset( $views['mine'] );
+
+		return $views;
+	}
+
+	public function remove_language_switcher() {
+		remove_action( 'wp_before_admin_bar_render', array( $this->sitepress, 'admin_language_switcher' ) );
+	}
+
+	/**
+	 * @return bool
+	 */
+	private function is_bookings_listing_page() {
+		return isset( $_GET['post_type'] ) && 'wc_booking' === $_GET['post_type'];
+	}
 }
