@@ -48,6 +48,24 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 */
+	public function add_hooks()
+	{
+		$subject = $this->get_subject();
+		\WP_Mock::userFunction( 'is_admin', array(
+			'return' => true
+		) );
+
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_pending_to_on-hold_notification', array( $subject, 'email_heading_on_hold' ), 9 );
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_failed_to_on-hold_notification', array( $subject, 'email_heading_on_hold' ), 9 );
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_cancelled_to_on-hold_notification', array( $subject, 'email_heading_on_hold' ), 9 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_email_heading_customer_on_hold_order', array( $subject, 'customer_on_hold_order_heading' ) );
+		\WP_Mock::expectFilterAdded( 'woocommerce_email_subject_customer_on_hold_order', array( $subject, 'customer_on_hold_order_subject' ) );
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
 	 * @group wcml-2549
 	 */
 	public function it_should_change_current_language() {
@@ -315,6 +333,104 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		$this->assertEquals( $translated_formatted_subject, $subject->new_order_email_subject( rand_str() ) );
 
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_customer_on_hold_order_heading(){
+
+
+		$mailer =  $this->getMockBuilder('WC_Emails')
+		                ->disableOriginalConstructor()
+		                ->getMock();
+
+		$wc_mailer_on_hold_order = $this->getMockBuilder( 'WC_Email_Customer_On_Hold_Order' )
+		                            ->disableOriginalConstructor()
+		                            ->setMethods( array( 'format_string' ) )
+		                            ->getMock();
+		$wc_mailer_on_hold_order->heading = rand_str();
+
+		$mailer->emails = array( 'WC_Email_Customer_On_Hold_Order' => $wc_mailer_on_hold_order );
+
+		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
+
+		$translated_formatted_heading = rand_str();
+
+		$wc_mailer_on_hold_order->expects( $this->once() )
+		                    ->method( 'format_string' )
+		                    ->with( $wc_mailer_on_hold_order->heading )
+		                    ->willReturn( $translated_formatted_heading );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( $translated_formatted_heading, $subject->customer_on_hold_order_heading( rand_str() ) );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_customer_on_hold_order_subject(){
+
+
+		$mailer =  $this->getMockBuilder('WC_Emails')
+		                ->disableOriginalConstructor()
+		                ->getMock();
+
+		$wc_mailer_on_hold_order = $this->getMockBuilder( 'WC_Email_Customer_On_Hold_Order' )
+		                            ->disableOriginalConstructor()
+		                            ->setMethods( array( 'format_string' ) )
+		                            ->getMock();
+		$wc_mailer_on_hold_order->subject = rand_str();
+
+		$mailer->emails = array( 'WC_Email_Customer_On_Hold_Order' => $wc_mailer_on_hold_order );
+
+		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
+
+		$translated_formatted_subject = rand_str();
+
+		$wc_mailer_on_hold_order->expects( $this->once() )
+		                    ->method( 'format_string' )
+		                    ->with( $wc_mailer_on_hold_order->subject )
+		                    ->willReturn( $translated_formatted_subject );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( $translated_formatted_subject, $subject->customer_on_hold_order_subject( rand_str() ) );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_email_heading_on_hold(){
+
+		$order_id = 10;
+		$mailer =  $this->getMockBuilder('WC_Emails')
+		                ->disableOriginalConstructor()
+		                ->getMock();
+
+		$wc_mailer_on_hold_order = $this->getMockBuilder( 'WC_Email_Customer_On_Hold_Order' )
+		                            ->disableOriginalConstructor()
+		                            ->setMethods( array( 'trigger' ) )
+		                            ->getMock();
+		$wc_mailer_on_hold_order->subject = rand_str();
+		$wc_mailer_on_hold_order->heading = rand_str();
+		$wc_mailer_on_hold_order->enabled = true;
+
+		$mailer->emails = array( 'WC_Email_Customer_On_Hold_Order' => $wc_mailer_on_hold_order );
+
+		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
+
+		$translated_formatted_subject = rand_str();
+
+		$wc_mailer_on_hold_order->expects( $this->once() )
+		                    ->method( 'trigger' )
+		                    ->willReturn( true );
+
+		$subject = $this->get_subject();
+		$subject->email_heading_on_hold( $order_id );
 	}
 
 }

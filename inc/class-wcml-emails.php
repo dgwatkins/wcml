@@ -47,10 +47,14 @@ class WCML_Emails{
             $this,
             'email_heading_processing'
         ), 9 );
-        add_action( 'woocommerce_order_status_pending_to_on-hold_notification', array(
-            $this,
-            'email_heading_processing'
-        ), 9 );
+
+
+	    foreach( array( 'pending', 'failed', 'cancelled' ) as $state ) {
+		    add_action( 'woocommerce_order_status_' . $state . '_to_on-hold_notification', array(
+			    $this,
+			    'email_heading_on_hold'
+		    ), 9 );
+	    }
 
         //wrappers for email's body
         add_action( 'woocommerce_before_resend_order_emails', array( $this, 'email_header' ) );
@@ -71,31 +75,15 @@ class WCML_Emails{
         ), 9 );
         add_action( 'woocommerce_new_customer_note', array( $this, 'refresh_email_lang' ), 9 );
 
-        //new order admins email
-        add_action( 'woocommerce_order_status_pending_to_processing_notification', array(
-            $this,
-            'new_order_admin_email'
-        ), 9 );
-        add_action( 'woocommerce_order_status_pending_to_completed_notification', array(
-            $this,
-            'new_order_admin_email'
-        ), 9 );
-        add_action( 'woocommerce_order_status_pending_to_on-hold_notification', array(
-            $this,
-            'new_order_admin_email'
-        ), 9 );
-        add_action( 'woocommerce_order_status_failed_to_processing_notification', array(
-            $this,
-            'new_order_admin_email'
-        ), 9 );
-        add_action( 'woocommerce_order_status_failed_to_completed_notification', array(
-            $this,
-            'new_order_admin_email'
-        ), 9 );
-        add_action( 'woocommerce_order_status_failed_to_on-hold_notification', array(
-            $this,
-            'new_order_admin_email'
-        ), 9 );
+        foreach( array( 'pending', 'failed' ) as $from_state ) {
+	        foreach ( array( 'processing', 'completed', 'on-hold' ) as $to_state ) {
+		        add_action( 'woocommerce_order_status_'.$from_state.'_to_'.$to_state.'_notification', array(
+			        $this,
+			        'new_order_admin_email'
+		        ), 9 );
+	        }
+        }
+
         add_action( 'woocommerce_before_resend_order_emails', array( $this, 'backend_new_order_admin_email' ), 9 );
 
         add_filter( 'icl_st_admin_string_return_cached', array( $this, 'admin_string_return_cached' ), 10, 2 );
@@ -138,6 +126,9 @@ class WCML_Emails{
 
 	    add_filter( 'woocommerce_email_heading_new_order',  array( $this, 'new_order_email_heading' ) );
 	    add_filter( 'woocommerce_email_subject_new_order',  array( $this, 'new_order_email_subject' ) );
+
+	    add_filter( 'woocommerce_email_heading_customer_on_hold_order',  array( $this, 'customer_on_hold_order_heading' ) );
+	    add_filter( 'woocommerce_email_subject_customer_on_hold_order',  array( $this, 'customer_on_hold_order_subject' ) );
     }
 
     function email_refresh_in_ajax() {
@@ -231,19 +222,36 @@ class WCML_Emails{
     }
 
     function email_heading_processing($order_id){
-
-        if( class_exists( 'WC_Email_Customer_Processing_Order' ) && isset( $this->woocommerce->mailer()->emails[ 'WC_Email_Customer_Processing_Order' ] ) ){
-
-            $this->woocommerce->mailer()->emails['WC_Email_Customer_Processing_Order']->heading = $this->wcml_get_translated_email_string( 'admin_texts_woocommerce_customer_processing_order_settings', '[woocommerce_customer_processing_order_settings]heading', $order_id );
-
-            $this->woocommerce->mailer()->emails['WC_Email_Customer_Processing_Order']->subject = $this->wcml_get_translated_email_string( 'admin_texts_woocommerce_customer_processing_order_settings', '[woocommerce_customer_processing_order_settings]subject', $order_id );
-            $enabled = $this->woocommerce->mailer()->emails['WC_Email_Customer_Processing_Order']->enabled;
-            $this->woocommerce->mailer()->emails['WC_Email_Customer_Processing_Order']->enabled = false;
-            $this->woocommerce->mailer()->emails['WC_Email_Customer_Processing_Order']->trigger($order_id);
-            $this->woocommerce->mailer()->emails['WC_Email_Customer_Processing_Order']->enabled = $enabled;
-
-        }
+	    $this->translate_email_headings( $order_id, 'WC_Email_Customer_Processing_Order', 'woocommerce_customer_processing_order_settings' );
     }
+
+    public function email_heading_on_hold( $order_id ){
+        $this->translate_email_headings( $order_id, 'WC_Email_Customer_On_Hold_Order', 'woocommerce_customer_on_hold_order_settings' );
+    }
+
+	/**
+	 * @param int|string $order_id
+	 * @param string $class_name
+	 * @param string $string_name
+	 */
+    private function translate_email_headings( $order_id, $class_name, $string_name ){
+	    if( class_exists( $class_name ) && isset( $this->woocommerce->mailer()->emails[ $class_name ] ) ){
+		    $this->woocommerce->mailer()->emails[ $class_name ]->heading = $this->wcml_get_translated_email_string( 'admin_texts_'.$string_name, '['.$string_name.']heading', $order_id );
+		    $this->woocommerce->mailer()->emails[ $class_name ]->subject = $this->wcml_get_translated_email_string( 'admin_texts_'.$string_name, '['.$string_name.']subject', $order_id );
+		    $enabled = $this->woocommerce->mailer()->emails[ $class_name ]->enabled;
+		    $this->woocommerce->mailer()->emails[ $class_name ]->enabled = false;
+		    $this->woocommerce->mailer()->emails[ $class_name ]->trigger($order_id);
+		    $this->woocommerce->mailer()->emails[ $class_name ]->enabled = $enabled;
+	    }
+    }
+
+	public function customer_on_hold_order_heading( $heading ){
+		return $this->get_translated_order_strings( 'heading', $heading, 'WC_Email_Customer_On_Hold_Order' );
+	}
+
+	public function customer_on_hold_order_subject( $subject ){
+		return $this->get_translated_order_strings( 'subject', $subject, 'WC_Email_Customer_On_Hold_Order' );
+	}
 
     function email_heading_note($args){
 
@@ -304,21 +312,30 @@ class WCML_Emails{
     }
 
     public function new_order_email_heading( $heading ){
-	    $translated_heading = $this->woocommerce->mailer()->emails['WC_Email_New_Order']->heading;
-	    if( $translated_heading ){
-		    $heading = $this->woocommerce->mailer()->emails['WC_Email_New_Order']->format_string( $translated_heading );
-	    }
-
-        return $heading;
+	    return $this->get_translated_order_strings( 'heading', $heading, 'WC_Email_New_Order' );
     }
 
     public function new_order_email_subject( $subject ){
-	    $translated_subject = $this->woocommerce->mailer()->emails['WC_Email_New_Order']->subject;
-	    if( $translated_subject ){
-		    $subject = $this->woocommerce->mailer()->emails['WC_Email_New_Order']->format_string( $translated_subject );
-	    }
+        return $this->get_translated_order_strings( 'subject', $subject, 'WC_Email_New_Order' );
+    }
 
-	    return $subject;
+	/**
+	 * @param string $type
+	 * @param string $string
+	 * @param string $class_name
+	 *
+	 * @return string
+	 */
+    private function get_translated_order_strings( $type, $string, $class_name ){
+        if( 'heading' === $type ){
+	        $translated_string = $this->woocommerce->mailer()->emails[ $class_name ]->heading;
+        }elseif( 'subject' ===  $type ){
+	        $translated_string = $this->woocommerce->mailer()->emails[ $class_name ]->subject;
+        }else{
+            return $string;
+        }
+
+	    return $translated_string ? $this->woocommerce->mailer()->emails[ $class_name ]->format_string( $translated_string ): $string;
     }
 
     public function backend_new_order_admin_email( $order_id ){
