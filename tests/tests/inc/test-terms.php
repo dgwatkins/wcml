@@ -26,7 +26,7 @@ class Test_WCML_Terms extends WCML_UnitTestCase {
 
 		$i = 2;
 		foreach( $this->terms['product_cat'] as $key => $term ){
-			add_woocommerce_term_meta( $term['id'], 'order', $i );
+			add_term_meta( $term['id'], 'order', $i );
 			$this->terms['product_cat'][$key]['order'] = $i;
 			$i++;
 		}
@@ -37,7 +37,7 @@ class Test_WCML_Terms extends WCML_UnitTestCase {
 			$translations = $this->sitepress->get_element_translations( $term['trid'], 'tax_product_cat' );
 			foreach( $translations as $translation ){
 				if( $translation->original ){
-					$term_order = get_woocommerce_term_meta( $translation->term_id,'order' );
+					$term_order = get_term_meta( $translation->term_id,'order', true );
 					$this->assertEquals( $term['order'], $term_order );
 				}
 			}
