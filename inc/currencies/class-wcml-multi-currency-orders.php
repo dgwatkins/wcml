@@ -66,10 +66,11 @@ class WCML_Multi_Currency_Orders {
 		$currencies = array();
 
 		$results = $wpdb->get_results( "
-            SELECT m.meta_value AS currency, COUNT(m.post_id) AS c
-            FROM {$wpdb->posts} p JOIN {$wpdb->postmeta} m ON p.ID = m.post_id
-            WHERE meta_key='_order_currency' AND p.post_type='shop_order'
-            GROUP BY meta_value
+            SELECT LEFT(m.meta_value, 3) AS currency, COUNT(*) AS c
+            FROM {$wpdb->postmeta} m
+            INNER JOIN {$wpdb->posts} p on p.ID = m.post_id
+            WHERE m.meta_key='_order_currency' AND p.post_type='shop_order'
+            GROUP BY currency
         " );
 
 		foreach ( $results as $row ) {
@@ -79,7 +80,6 @@ class WCML_Multi_Currency_Orders {
 		wp_cache_set( $cache_key, $currencies );
 
 		return $currencies;
-
 	}
 
 	public function show_orders_currencies_selector() {
