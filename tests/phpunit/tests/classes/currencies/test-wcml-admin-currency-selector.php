@@ -221,6 +221,24 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function it_should_not_set_dashboard_currency_for_not_dashborad_pages() {
+
+		global $pagenow;
+		$pagenow = 'not_index.php';
+		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
+		$currency_cookie  = $this->get_wcml_admin_cookie_mock();
+		$subject          = $this->get_subject( $woocommerce_wpml, $currency_cookie );
+
+		$currency_code = rand_str();
+		$currency_cookie->expects( $this->never() )->method( 'set_value' );
+		$subject->set_dashboard_currency();
+
+		$pagenow = 'index.php';
+	}
+
+	/**
+	 * @test
+	 */
 	public function get_cookie_dashboard_currency_from_cookie() {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$currency_cookie  = $this->get_wcml_admin_cookie_mock();
