@@ -63,7 +63,8 @@ function wcml_loader(){
 	$xdomain_data->add_hooks();
 
 	$loaders = array(
-		'WCML_Privacy_Content_Factory'
+		'WCML_Privacy_Content_Factory',
+		'WCML_ATE_Activate_Synchronization',
 	);
 
 	if (
