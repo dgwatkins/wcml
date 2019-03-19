@@ -209,7 +209,7 @@ class WCML_Products{
                     if( isset( $product_translations[ $language[ 'code' ] ] ) ) {
                         $job_id = $this->wpdb->get_var(
                                     $this->wpdb->prepare(
-                                        "SELECT tj.job_id FROM {$this->wpdb->prefix}icl_translate_job AS tj
+                                        "SELECT MAX(tj.job_id) FROM {$this->wpdb->prefix}icl_translate_job AS tj
                                          LEFT JOIN {$this->wpdb->prefix}icl_translation_status AS ts
                                          ON tj.rid = ts.rid WHERE ts.translation_id=%d",
                                         $product_translations[ $language[ 'code' ] ]->translation_id )
@@ -251,6 +251,8 @@ class WCML_Products{
                         wpml_tm_load_status_display_filter();
                     } ?>
                     <a href="<?php echo apply_filters( 'wpml_link_to_translation', '', $original_product_id, $language[ 'code' ], $trid ) ?>"
+                       class="js-wpml-translate-link"
+                       data-tm-job-id="<?php echo $job_id ?>"
                         <?php if( isset( $product_translations[ $language[ 'code' ] ] ) ){
                             $tr_status = $this->wpdb->get_row(
                                             $this->wpdb->prepare(
