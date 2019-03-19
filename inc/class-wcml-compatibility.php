@@ -69,7 +69,8 @@ class WCML_Compatibility {
 
 		// WooCommerce Variation Swatches and Photos
 		if ( class_exists( 'WC_SwatchesPlugin' ) ) {
-			$this->variation_sp = new WCML_Variation_Swatches_and_Photos();
+			$this->variation_sp = new WCML_Variation_Swatches_And_Photos( $this->sitepress );
+			$this->variation_sp->add_hooks();
 		}
 
 		// Product Add-ons
