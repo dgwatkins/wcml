@@ -65,7 +65,7 @@ class WCML_Product_Bundles {
 		// product bundle using separate custom fields for prices.
 		if ( wcml_is_multi_currency_on() ) {
 			add_filter( 'wcml_price_custom_fields_filtered', array( $this, 'get_price_custom_fields' ), 10, 2 );
-			add_filter( 'wcml_update_custom_prices_values', array( $this, 'update_bundles_custom_prices_values' ), 10 );
+			add_filter( 'wcml_update_custom_prices_values', array( $this, 'update_bundles_custom_prices_values' ), 10, 2 );
 			add_filter( 'wcml_after_save_custom_prices', array( $this, 'update_bundles_base_price' ), 10, 4 );
 		}
 
