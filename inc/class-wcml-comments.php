@@ -78,7 +78,9 @@ class WCML_Comments {
 				}
 			}
 
-			$reviews_count += $review_count;
+			if( $review_count ){
+				$reviews_count += $review_count;
+			}
 		}
 
 		if ( $average_ratings_sum ) {
