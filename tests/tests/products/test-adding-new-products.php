@@ -119,7 +119,7 @@ class Test_Adding_New_Products extends WCML_UnitTestCase {
 		$orig_product = $this->add_simple_product( $orig_lang );
 		$translation = $this->add_simple_product( $second_lang, $orig_product['post']->trid );
 
-		$woocommerce_wpml->sync_product_data->sync_product_data( $orig_product['post']->trid, $translation['post']->id, $second_lang );
+		$woocommerce_wpml->sync_product_data->sync_product_data( $orig_product['post']->id, $translation['post']->id, $second_lang );
 		$this->assertFalse( (bool) $woocommerce_wpml->products->is_variable_product( $orig_product['post']->id ) );
 		$this->assertFalse( (bool) $woocommerce_wpml->products->is_grouped_product( $orig_product['post']->id ) );
 

@@ -170,6 +170,8 @@ class WCML_Synchronize_Variations_Data{
 
                 $this->delete_removed_variation_attributes( $product_id, $variation_id );
 
+	            $this->woocommerce_wpml->sync_product_data->sync_product_stock( wc_get_product( $original_variation_id ), wc_get_product( $variation_id ) );
+
                 //refresh parent-children transients
                 delete_transient( 'wc_product_children_' . $tr_product_id );
                 delete_transient( '_transient_wc_product_children_ids_' . $tr_product_id );

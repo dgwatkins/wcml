@@ -98,6 +98,7 @@ class WCML_Media{
 		update_post_meta( $translated_variation_id, '_thumbnail_id', $translated_thumbnail );
 		update_post_meta( $variation_id, '_wpml_media_duplicate', 1 );
 		update_post_meta( $variation_id, '_wpml_media_featured', 1 );
+
 	}
 
 

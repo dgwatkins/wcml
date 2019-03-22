@@ -724,6 +724,8 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
 	    $this->woocommerce_wpml->sync_product_data->sync_linked_products( $this->product_id, $tr_product_id, $this->get_target_language() );
 
+	    $this->woocommerce_wpml->sync_product_data->sync_product_stock( $this->product, wc_get_product( $tr_product_id ) );
+
 	    //sync feature image
 	    $this->woocommerce_wpml->media->sync_thumbnail_id( $this->product_id, $tr_product_id, $this->get_target_language() );
 	    //sync product gallery

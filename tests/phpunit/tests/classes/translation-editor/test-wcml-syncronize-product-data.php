@@ -521,7 +521,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_should_sync_product_stock(){
+	public function it_should_sync_product_stock_for_translations(){
 
 		WP_Mock::passthruFunction( 'remove_action' );
 
@@ -563,6 +563,38 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		$subject = $this->get_subject( null, null, $wpml_post_translations );
 
 		$subject->sync_product_stock( $product );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_sync_product_stock_for_translation(){
+
+		WP_Mock::passthruFunction( 'remove_action' );
+
+		$product_id = 1;
+		$qty = 5;
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                       ->disableOriginalConstructor()
+		                       ->setMethods( array( 'get_id', 'get_stock_quantity' ) )
+		                       ->getMock();
+		$product->method( 'get_id' )->willReturn( $product_id );
+		$product->method( 'get_stock_quantity' )->willReturn( $qty );
+
+		$translated_product = $this->getMockBuilder( 'WC_Product' )
+		                       ->disableOriginalConstructor()
+		                       ->getMock();
+
+
+		\WP_Mock::wpFunction( 'wc_update_product_stock', array(
+			'args' => array( $translated_product, $qty ),
+			'times' => 1,
+			'return' => $translated_product
+		) );
+
+		$subject = $this->get_subject();
+
+		$subject->sync_product_stock( $product, $translated_product );
 	}
 
 	/**

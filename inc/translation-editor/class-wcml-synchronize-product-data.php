@@ -169,6 +169,8 @@ class WCML_Synchronize_Product_Data{
 
         $this->sync_linked_products( $original_product_id, $tr_product_id, $lang );
 
+	    $this->sync_product_stock( wc_get_product( $original_product_id ), wc_get_product( $tr_product_id ) );
+
         // Clear any unwanted data
         wc_delete_product_transients( $tr_product_id );
     }
@@ -310,20 +312,25 @@ class WCML_Synchronize_Product_Data{
 
 	/**
 	 * @param $product
+	 * @param $translated_product
 	 */
-	public function sync_product_stock( $product ) {
+	public function sync_product_stock( $product, $translated_product = false ) {
+
 		$stock = $product->get_stock_quantity();
 		$product_id = $product->get_id();
 
 		remove_action( 'woocommerce_product_set_stock', array( $this, 'sync_product_stock' ) );
 		remove_action( 'woocommerce_variation_set_stock', array( $this, 'sync_product_stock' ) );
 
-		$translations = $this->post_translations->get_element_translations( $product_id );
-
-		foreach( $translations as $translation ){
-			if( $product_id !== $translation ){
-				$_product = wc_get_product( $translation );
-				wc_update_product_stock( $_product, $stock );
+		if( $translated_product ){
+			wc_update_product_stock( $translated_product, $stock );
+		}else{
+			$translations = $this->post_translations->get_element_translations( $product_id );
+			foreach( $translations as $translation ){
+				if( $product_id !== $translation ){
+					$_product = wc_get_product( $translation );
+					wc_update_product_stock( $_product, $stock );
+				}
 			}
 		}
 
