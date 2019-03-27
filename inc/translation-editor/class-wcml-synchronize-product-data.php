@@ -80,7 +80,7 @@ class WCML_Synchronize_Product_Data{
             $var_lang = $this->sitepress->get_language_for_element( wp_get_post_parent_id( $post_id ), 'post_product' );
             $is_parent_original = $this->woocommerce_wpml->products->is_original_product( wp_get_post_parent_id( $post_id ) );
             $variation_language_details = $this->sitepress->get_element_language_details( $post_id, 'post_product_variation' );
-            if( $is_parent_original && !$variation_language_details ){
+            if( $is_parent_original && !$variation_language_details && $var_lang ){
                 $this->sitepress->set_element_language_details( $post_id, 'post_product_variation', false, $var_lang );
             }
         }
