@@ -527,9 +527,10 @@ class WCML_Products{
         }elseif( isset( $_GET[ 'job_id' ] ) ){
 
             $job = $iclTranslationManagement->get_translation_job( $_GET[ 'job_id' ] );
-            $from_lang = $job->source_language_code;
-            $to_lang = $job->language_code;
-
+            if( $job ){
+	            $from_lang = $job->source_language_code;
+	            $to_lang = $job->language_code;
+            }
         }
 
         if( isset( $from_lang ) ){

@@ -104,4 +104,19 @@ class Test_WCML_Page_Builders extends OTGS_TestCase
 		$builders_data = $subject->save_page_builders_strings( array( md5( $string_name ) => $translated_string_value ), $product_id, $target_language );
 	}
 
+	/**
+	 * @test
+	 */
+	function it_should_not_filter_element_data_without_strings(){
+		$product_id = 2;
+		$target_language = 'es';
+		$string_packages = array();
+		$element_data = array();
+
+		\WP_Mock::onFilter('wpml_st_get_post_string_packages')->with( false, $product_id )->reply( $string_packages );
+
+		$subject = $this->get_subject();
+		$this->assertEmpty( $subject->page_builders_data( array(), $product_id, $target_language ) );
+	}
+
 }
