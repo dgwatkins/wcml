@@ -50,6 +50,12 @@ function wcml_check_wpml_functions() {
 		}
 	}
 
+	if( !function_exists( 'wpml_is_rest_request' ) ){
+		function wpml_is_rest_request() {
+			return array_key_exists( 'rest_route', $_REQUEST ) || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-json' );
+		}
+	}
+
 }
 
 // two WordPress functions that were added in 4.4.0
