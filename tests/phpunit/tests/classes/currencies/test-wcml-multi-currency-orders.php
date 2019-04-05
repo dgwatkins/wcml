@@ -162,9 +162,14 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$_POST['action'] = rand_str();
 
 		$items = array();
+		$order =  $this->getMockBuilder( 'WC_Order' )
+		              ->disableOriginalConstructor()
+		              ->setMethods( array( 'get_items' ) )
+		              ->getMock();
+		$order->method( 'get_items' )->with('coupon')->willReturn( array() );
 
 		$subject = $this->get_subject();
-		$filtered_items = $subject->set_totals_for_order_items( $items );
+		$filtered_items = $subject->set_totals_for_order_items( $items, $order );
 
 		$this->assertSame( $items, $filtered_items );
 	}
@@ -173,6 +178,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 	 * @test
 	 */
 	public function it_sets_custom_totals_for_order_items_for_ajax_add_new_order_item_call(){
+		\WP_Mock::passthruFunction( 'remove_filter' );
 		$_POST['action'] = 'woocommerce_add_order_item';
 		$_POST['order_id'] = 1;
 		$product_id = 10;
@@ -187,6 +193,12 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		              ->getMock();
 
 		$items = array( $item );
+
+		$order =  $this->getMockBuilder( 'WC_Order' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'get_items' ) )
+		               ->getMock();
+		$order->method( 'get_items' )->with('coupon')->willReturn( array() );
 
 		$product_obj =  $this->getMockBuilder( 'WC_Product' )
 		              ->disableOriginalConstructor()
@@ -231,13 +243,14 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 
 		$subject = $this->get_subject();
-		$subject->set_totals_for_order_items( $items );
+		$subject->set_totals_for_order_items( $items, $order );
 	}
 
 	/**
 	 * @test
 	 */
 	public function it_sets_variation_custom_totals_for_order_items_for_ajax_add_new_order_item_call(){
+		\WP_Mock::passthruFunction( 'remove_filter' );
 		$_POST['action'] = 'woocommerce_add_order_item';
 		$_POST['order_id'] = 1;
 		$variation_id = 20;
@@ -252,6 +265,12 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		              ->getMock();
 
 		$items = array( $item );
+
+		$order =  $this->getMockBuilder( 'WC_Order' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'get_items' ) )
+		               ->getMock();
+		$order->method( 'get_items' )->with('coupon')->willReturn( array() );
 
 		$product_obj =  $this->getMockBuilder( 'WC_Product' )
 		              ->disableOriginalConstructor()
@@ -295,19 +314,21 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 
 		$subject = $this->get_subject();
-		$subject->set_totals_for_order_items( $items );
+		$subject->set_totals_for_order_items( $items, $order );
 	}
 
 	/**
 	 * @test
 	 */
 	public function it_sets_converted_totals_for_order_items_for_ajax_add_new_order_item_call(){
+		\WP_Mock::passthruFunction( 'remove_filter' );
 		$_POST['action'] = 'woocommerce_add_order_item';
 		$_POST['order_id'] = 2;
 		$product_id = 11;
 		$original_product_id = 21;
 		$subtotal = 100;
 		$total = 101;
+		$original_price = 100;
 		$item_price = 100;
 		$converted_price = 102;
 
@@ -320,11 +341,18 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$items = array( $item );
 
-		$product = $this->getMockBuilder( 'WC_Product' )
-		                ->disableOriginalConstructor()
-		                ->setMethods( array( 'get_price' ) )
-		                ->getMock();
-		$product->method( 'get_price' )->willReturn( $item_price );
+		$order =  $this->getMockBuilder( 'WC_Order' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'get_items' ) )
+		               ->getMock();
+		$order->method( 'get_items' )->with('coupon')->willReturn( array() );
+
+		$product_obj =  $this->getMockBuilder( 'WC_Product' )
+		                     ->disableOriginalConstructor()
+		                     ->setMethods( array( 'get_price' ) )
+		                     ->getMock();
+
+		$product_obj->method( 'get_price' )->willReturn( $original_price );
 
 		\WP_Mock::wpFunction( 'get_post_meta', array(
 			'args' => array( $_POST['order_id'], '_order_currency', true ),
@@ -349,8 +377,9 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 			'return' => false
 		) );
 
+
 		\WP_Mock::wpFunction( 'wc_get_price_excluding_tax', array(
-			'args' => array( $product, array( 'price' => $converted_price ) ),
+			'args' => array( $product_obj, array( 'price' => $converted_price ) ),
 			'return' => $converted_price
 		) );
 
@@ -361,7 +390,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$item->method( 'get_quantity' )->willReturn( 1 );
 		$item->method( 'get_subtotal' )->willReturn( $subtotal );
 		$item->method( 'get_total' )->willReturn( $total );
-		$item->method( 'get_product' )->willReturn( $product );
+		$item->method( 'get_product' )->willReturn( $product_obj );
 		$item->method( 'get_product_id' )->willReturn( $product_id );
 		$item->method( 'get_variation_id' )->willReturn( 0 );
 		$this->wcml_multi_currency->prices->method( 'raw_price_filter' )->willReturn( $converted_price );
@@ -370,13 +399,14 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$item->expects( $this->once() )->method( 'save' )->willReturn( true );
 
 		$subject = $this->get_subject();
-		$subject->set_totals_for_order_items( $items );
+		$subject->set_totals_for_order_items( $items, $order );
 	}
 
 	/**
 	 * @test
 	 */
 	public function it_updates_order_currency_and_converted_totals_for_order_items_for_ajax_save_order_items_call(){
+		\WP_Mock::passthruFunction( 'remove_filter' );
 		$_POST['action']     = 'woocommerce_save_order_items';
 		$_POST['order_id']   = 3;
 
@@ -402,6 +432,12 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		              ->getMock();
 
 		$items = array( $item );
+
+		$order =  $this->getMockBuilder( 'WC_Order' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'get_items' ) )
+		               ->getMock();
+		$order->method( 'get_items' )->with('coupon')->willReturn( array() );
 
 		\WP_Mock::wpFunction( 'get_post_meta', array(
 			'args' => array( $_POST['order_id'], '_order_currency', true ),
@@ -469,7 +505,101 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$item->expects( $this->once() )->method( 'save' )->willReturn( true );
 
 		$subject = $this->get_subject();
-		$subject->set_totals_for_order_items( $items );
+		$subject->set_totals_for_order_items( $items, $order );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_sets_custom_totals_with_discount_for_order_items_if_coupon_applied(){
+		\WP_Mock::passthruFunction( 'remove_filter' );
+		$_POST['action'] = 'woocommerce_add_order_item';
+		$_POST['order_id'] = 1;
+		$product_id = 10;
+		$original_product_id = 20;
+		$original_price = 100;
+		$coupon_discount = 11;
+		$converted_price = 110;
+		$price_with_coupon_discount = $converted_price - $coupon_discount;
+
+		$order_currency = 'EUR';
+
+		$item =  $this->getMockBuilder( 'WC_Order_Item_Product' )
+		              ->disableOriginalConstructor()
+		              ->setMethods( array( 'get_type', 'set_subtotal', 'set_total', 'save', 'get_quantity', 'get_product', 'get_product_id', 'get_variation_id', 'update_meta_data', 'meta_exists' ) )
+		              ->getMock();
+
+		$items = array( $item );
+
+		$coupon_data['code'] = 'coupon1';
+		$order_item_coupon =  $this->getMockBuilder( 'WC_Order_Item_Coupon' )
+		                      ->disableOriginalConstructor()
+		                      ->setMethods( array( 'get_data' ) )
+		                      ->getMock();
+		$order_item_coupon->method( 'get_data' )->willReturn( $coupon_data );
+
+		$wc_coupon = \Mockery::mock( 'overload:WC_Coupon' );
+		$wc_coupon->shouldReceive( 'is_type' )->with( 'percent' )->andReturn( true );
+		$wc_coupon->shouldReceive( 'get_discount_amount' )->with( $converted_price )->andReturn( $coupon_discount );
+
+		$order =  $this->getMockBuilder( 'WC_Order' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'get_items' ) )
+		               ->getMock();
+		$order->method( 'get_items' )->with('coupon')->willReturn( array( $order_item_coupon ) );
+
+		$product_obj =  $this->getMockBuilder( 'WC_Product' )
+		                     ->disableOriginalConstructor()
+							 ->setMethods( array( 'get_price' ) )
+		                     ->getMock();
+		$product_obj->method( 'get_price' )->willReturn( $original_price );
+
+		$this->wcml_multi_currency->prices = $this->getMockBuilder( 'WCML_Prices' )
+		                                          ->disableOriginalConstructor()
+		                                          ->setMethods( array( 'raw_price_filter' ) )
+		                                          ->getMock();
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $_POST['order_id'], '_order_currency', true ),
+			'return' => $order_currency
+		) );
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'get_original_product_id' ) )
+		                                         ->getMock();
+
+		$this->woocommerce_wpml->products->method( 'get_original_product_id' )->willReturn( $original_product_id );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $original_product_id, '_price_' . $order_currency, true ),
+			'return' => false
+		) );
+
+		\WP_Mock::wpFunction( 'wc_get_price_excluding_tax', array(
+			'args' => array( $product_obj, array( 'price' => $converted_price ) ),
+			'return' => $converted_price
+		) );
+
+		\WP_Mock::wpFunction( 'wc_get_price_excluding_tax', array(
+			'args' => array( $product_obj, array( 'price' => $price_with_coupon_discount ) ),
+			'return' => $price_with_coupon_discount
+		) );
+
+		$item->method( 'meta_exists' )->willReturn( false );
+		$item->method( 'get_type' )->willReturn( 'line_item' );
+		$item->method( 'get_quantity' )->willReturn( 1 );
+		$item->method( 'get_product' )->willReturn( $product_obj );
+		$item->method( 'get_product_id' )->willReturn( $product_id );
+		$item->method( 'get_variation_id' )->willReturn( 0 );
+		$this->wcml_multi_currency->prices->method( 'raw_price_filter' )->willReturn( $converted_price );
+		$item->expects( $this->once() )->method( 'set_subtotal' )->with( $converted_price )->willReturn( true );
+		$item->expects( $this->once() )->method( 'set_total' )->with( $price_with_coupon_discount )->willReturn( true );
+		$item->expects( $this->once() )->method( 'save' )->willReturn( true );
+
+
+		$subject = $this->get_subject();
+		$subject->set_totals_for_order_items( $items, $order );
 	}
 
 	/**
