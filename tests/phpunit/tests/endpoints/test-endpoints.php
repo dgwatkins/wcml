@@ -110,6 +110,31 @@ class Test_Endpoints extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	function it_adds_no_blacklisted_endpoints_for_display_pages_as_translated() {
+
+		$this->query_vars = array();
+
+		$expected = array();
+		foreach ( $this->endpoints_translations as $code => $translated_query_vars ) {
+			if ( $code !== 'en' ) {
+				$expected[] = $this->my_account_page_title . '-' . $code;
+				$expected[] = '/^' . $this->my_account_page_title . '-' . $code . '/';
+			} else {
+				$expected[] = $this->my_account_page_title;
+				$expected[] = '/^' . $this->my_account_page_title . '/';
+			}
+		}
+
+		$subject = $this->get_subject( null, $this->get_sitepress( true ) );
+
+		$actual = $subject->reserved_requests( array() );
+
+		$this->assertSame( $expected, $actual );
+	}
+
+	/**
+	 * @test
+	 */
 	public function it_should_filter_get_endpoint_url() {
 
 		$url                     = rand_str();
@@ -185,7 +210,7 @@ class Test_Endpoints extends OTGS_TestCase {
 	/**
 	 * @return SitePress|PHPUnit_Framework_MockObject_MockObject
 	 */
-	private function get_sitepress() {
+	private function get_sitepress( $is_display_as_translated = false ) {
 		$that = $this;
 		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
 		$sitepress = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->setMethods(
@@ -202,7 +227,7 @@ class Test_Endpoints extends OTGS_TestCase {
 			}
 		);
 		$sitepress->method( 'get_active_languages' )->willReturn( $this->active_languages );
-		$sitepress->method( 'is_display_as_translated_post_type' )->willReturn( false );
+		$sitepress->method( 'is_display_as_translated_post_type' )->willReturn( $is_display_as_translated );
 		$sitepress->method( 'switch_lang' )->willReturnCallback(
 			function ( $language ) use ( $that ) {
 				$that->current_language = $language;
