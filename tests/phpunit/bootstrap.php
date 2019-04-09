@@ -48,12 +48,37 @@ if ( !defined( 'COOKIE_DOMAIN' ) ) {
 
 require_once __DIR__ . '/includes/missing-php-functions.php';
 
-$autoloader_dir = WCML_PATH . '/vendor';
-if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
-	$autoloader = $autoloader_dir . '/autoload.php';
-} else {
-	$autoloader = $autoloader_dir . '/autoload_52.php';
+require_once WCML_PATH . '/vendor/autoload.php';
+
+try {
+	if ( ! spl_autoload_register( 'autoload_tests_classes' ) ) {
+		echo 'Test classes cannot be loaded!';
+		exit( 1 );
+	}
+} catch ( Exception $e ) {
+	echo $e->getMessage();
+	exit( 1 );
 }
-require_once $autoloader;
+
+function autoload_tests_classes( $class ) {
+	static $maps;
+
+	if ( ! $maps ) {
+		$dirs = [
+			WCML_PATH . "/tests/phpunit/stubs",
+		];
+
+		$maps = array();
+		foreach ( $dirs as $dir ) {
+			$maps = array_merge( $maps, \Composer\Autoload\ClassMapGenerator::createMap( $dir ) );
+		}
+	}
+
+	if ( $maps && array_key_exists( $class, $maps ) ) {
+		/** @noinspection PhpIncludeInspection */
+		require_once $maps[ $class ];
+	}
+}
+
 
 require_once WCML_PATH . '/vendor/otgs/unit-tests-framework/phpunit/bootstrap.php';
