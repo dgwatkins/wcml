@@ -44,7 +44,8 @@
         "otgs/unit-tests-framework": "~1.2.0",
         "otgs/changelog": "~0.3",
         "otgs/build-tools-ci": "~0.10",
-        "sebastian/phpcpd": "^3.0"
+        "sebastian/phpcpd": "^3.0",
+        "composer/composer": "~1.9"
     },
     "scripts": {
         "make": [
@@ -62,11 +63,6 @@
         ],
         "post-autoload-dump": [
             "@php52-autoloader"
-        ]
-    },
-    "autoload-dev": {
-        "classmap": [
-            "tests/phpunit/stubs"
         ]
     },
     "autoload": {
