@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "39c8ea41f0c80b5e143d1d33f43c2257",
+    "content-hash": "b3188117436b64f25795791ae11fc6a3",
     "packages": [
         {
             "name": "composer/installers",
@@ -795,16 +795,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "1.8.4",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "bc364c2480c17941e2135cfc568fa41794392534"
+                "reference": "d2ab4f66fd79e9f3fe906a8c8b2c8c183819b27a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/bc364c2480c17941e2135cfc568fa41794392534",
-                "reference": "bc364c2480c17941e2135cfc568fa41794392534",
+                "url": "https://api.github.com/repos/composer/composer/zipball/d2ab4f66fd79e9f3fe906a8c8b2c8c183819b27a",
+                "reference": "d2ab4f66fd79e9f3fe906a8c8b2c8c183819b27a",
                 "shasum": ""
             },
             "require": {
@@ -840,7 +840,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.8-dev"
+                    "dev-master": "1.9-dev"
                 }
             },
             "autoload": {
@@ -864,14 +864,14 @@
                     "homepage": "http://seld.be"
                 }
             ],
-            "description": "Composer helps you declare, manage and install dependencies of PHP projects, ensuring you have the right stack everywhere.",
+            "description": "Composer helps you declare, manage and install dependencies of PHP projects. It ensures you have the right stack everywhere.",
             "homepage": "https://getcomposer.org/",
             "keywords": [
                 "autoload",
                 "dependency",
                 "package"
             ],
-            "time": "2019-02-11T09:52:10+00:00"
+            "time": "2019-04-09T11:06:33+00:00"
         },
         {
             "name": "composer/semver",

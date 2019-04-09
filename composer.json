@@ -45,7 +45,7 @@
         "otgs/changelog": "~0.3",
         "otgs/build-tools-ci": "~0.10",
         "sebastian/phpcpd": "^3.0",
-        "composer/composer": "^1.8"
+        "composer/composer": "~1.9"
     },
     "scripts": {
         "make": [
