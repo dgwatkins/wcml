@@ -388,7 +388,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 															   ->disableOriginalConstructor()
 															   ->setMethods( array( 'product_price_filter' ) )
 															   ->getMock();
-		$prices->method( 'product_price_filter' )->with( null, $product_id, '_price' , true )->willReturn( $expected_data['_price'][0]);
+		$prices->method( 'product_price_filter' )->with( $post_meta['_price'][0], $product_id, '_price' , true )->willReturn( $expected_data['_price'][0]);
 
 		$this->woocommerce_wpml->multi_currency->prices = $prices;
 
@@ -398,7 +398,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 						 ->disableOriginalConstructor()
 						 ->setMethods( array( 'filter_average_rating' ) )
 						 ->getMock();
-		$comments->method( 'filter_average_rating' )->with( null, $product_id, '_wc_review_count' , true )->willReturn( $expected_data['_wc_review_count'][0]);
+		$comments->method( 'filter_average_rating' )->with( $post_meta['_wc_review_count'][0], $product_id, '_wc_review_count' , true )->willReturn( $expected_data['_wc_review_count'][0]);
 
 		$this->woocommerce_wpml->comments = $comments;
 
@@ -407,7 +407,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		                               ->disableOriginalConstructor()
 		                               ->setMethods( array( 'localize_image_ids' ) )
 		                               ->getMock();
-		$gallery_filter->method( 'localize_image_ids' )->with( null, $product_id, '_product_image_gallery' )->willReturn( $expected_data['_product_image_gallery'][0] );
+		$gallery_filter->method( 'localize_image_ids' )->with( $post_meta['_product_image_gallery'][0], $product_id, '_product_image_gallery' )->willReturn( $expected_data['_product_image_gallery'][0] );
 		$gallery_filter_factory->shouldReceive( 'create' )->andReturn( $gallery_filter );
 
 		$image_filter_factory = \Mockery::mock( 'overload:WCML_Product_Image_Filter_Factory' );
@@ -415,7 +415,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		                               ->disableOriginalConstructor()
 		                               ->setMethods( array( 'localize_image_id' ) )
 		                               ->getMock();
-		$image_filter->method( 'localize_image_id' )->with( null, $product_id, '_thumbnail_id' )->willReturn( $expected_data['_thumbnail_id'][0] );
+		$image_filter->method( 'localize_image_id' )->with( $post_meta['_thumbnail_id'][0], $product_id, '_thumbnail_id' )->willReturn( $expected_data['_thumbnail_id'][0] );
 		$image_filter_factory->shouldReceive( 'create' )->andReturn( $image_filter );
 
 		$subject = $this->get_subject();

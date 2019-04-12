@@ -688,17 +688,18 @@ class WCML_Products{
 			foreach ( $data as $meta_key => $meta_value ) {
 
 				$filtered_value = false;
+				$meta_value = $meta_value ? $meta_value[0] : null;
 
 				if ( $is_mc_enabled && in_array( $meta_key, $price_keys, true ) ) {
-					$filtered_value = $this->woocommerce_wpml->multi_currency->prices->product_price_filter( null, $product_id, $meta_key, true );
+					$filtered_value = $this->woocommerce_wpml->multi_currency->prices->product_price_filter( $meta_value, $product_id, $meta_key, true );
 				} elseif ( in_array( $meta_key, array( '_wc_review_count', '_wc_average_rating' ), true ) ) {
-					$filtered_value = $this->woocommerce_wpml->comments->filter_average_rating( null, $product_id, $meta_key, true );
+					$filtered_value = $this->woocommerce_wpml->comments->filter_average_rating( $meta_value, $product_id, $meta_key, true );
 				} elseif ( '_product_image_gallery' === $meta_key ) {
 					$factory        = new WCML_Product_Gallery_Filter_Factory();
-					$filtered_value = $factory->create()->localize_image_ids( null, $product_id, $meta_key );
+					$filtered_value = $factory->create()->localize_image_ids( $meta_value, $product_id, $meta_key );
 				} elseif ( '_thumbnail_id' === $meta_key ) {
 					$factory        = new WCML_Product_Image_Filter_Factory();
-					$filtered_value = $factory->create()->localize_image_id( null, $product_id, $meta_key );
+					$filtered_value = $factory->create()->localize_image_id( $meta_value, $product_id, $meta_key );
 				}
 
 				if ( $filtered_value ) {
