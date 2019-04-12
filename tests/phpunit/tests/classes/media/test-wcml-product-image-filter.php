@@ -66,7 +66,7 @@ class Test_WCML_Product_Image_Filter extends OTGS_TestCase {
 
 		$meta_key  = '_thumbnail_id';
 		$object_id = 123;
-		$value     = 88;
+		$value     = null;
 
 		\WP_Mock::userFunction( 'get_post_type', [
 			'times'  => 1,
@@ -74,6 +74,19 @@ class Test_WCML_Product_Image_Filter extends OTGS_TestCase {
 			'return' => 'NOT-product-type'
 		] );
 		\WP_Mock::userFunction( 'get_post_meta', [ 'times' => 0 ] );
+
+		$this->assertSame( $value, $subject->localize_image_id( $value, $object_id, $meta_key ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_when_translated_image_passed_to_function() {
+		$subject = $this->get_subject();
+
+		$meta_key  = '_thumbnail_id';
+		$object_id = 123;
+		$value     = 88;
 
 		$this->assertSame( $value, $subject->localize_image_id( $value, $object_id, $meta_key ) );
 	}
@@ -107,7 +120,7 @@ class Test_WCML_Product_Image_Filter extends OTGS_TestCase {
 
 		$this->expectFilterAdded( 'get_post_metadata', array( $subject, 'localize_image_id' ), 11, 3 );
 
-		$this->assertSame( $thumbnail_id, $subject->localize_image_id( $thumbnail_id, $object_id, $meta_key ) );
+		$this->assertNull( $subject->localize_image_id( null, $object_id, $meta_key ) );
 	}
 
 	/**
@@ -159,7 +172,7 @@ class Test_WCML_Product_Image_Filter extends OTGS_TestCase {
 			'return' => $source_thumbnail_id
 		] );
 
-		$this->assertSame( $source_thumbnail_id, $subject->localize_image_id( $thumbnail_id, $object_id, $meta_key ) );
+		$this->assertSame( $source_thumbnail_id, $subject->localize_image_id( null, $object_id, $meta_key ) );
 	}
 
 
