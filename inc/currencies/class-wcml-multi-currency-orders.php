@@ -2,14 +2,20 @@
 
 class WCML_Multi_Currency_Orders {
 
-	/**
-	 * @var WCML_Multi_Currency
-	 */
+	/** @var WCML_Multi_Currency */
 	private $multi_currency;
+	/** @var woocommerce_wpml */
+	private $woocommerce_wpml;
+	/** @var WPML_WP_API $wp_api */
+	private $wp_api;
+	/** @var WP $wp */
+	private $wp;
 
-	public function __construct( &$multi_currency, &$woocommerce_wpml ) {
-		$this->multi_currency   =& $multi_currency;
-		$this->woocommerce_wpml =& $woocommerce_wpml;
+	public function __construct( WCML_Multi_Currency $multi_currency, woocommerce_wpml $woocommerce_wpml, WPML_WP_API $wp_api, WP $wp ) {
+		$this->multi_currency   = $multi_currency;
+		$this->woocommerce_wpml = $woocommerce_wpml;
+		$this->wp_api           = $wp_api;
+		$this->wp               = $wp;
 
 		if ( is_admin() ) {
 			add_filter( 'init', array( $this, 'orders_init' ) );
@@ -19,10 +25,9 @@ class WCML_Multi_Currency_Orders {
 	}
 
 	public function orders_init() {
-		global $wp;
 
 		add_action( 'restrict_manage_posts', array( $this, 'show_orders_currencies_selector' ) );
-		$wp->add_query_var( '_order_currency' );
+		$this->wp->add_query_var( '_order_currency' );
 
 		add_filter( 'posts_join', array( $this, 'filter_orders_by_currency_join' ) );
 		add_filter( 'posts_where', array( $this, 'filter_orders_by_currency_where' ) );
@@ -34,7 +39,10 @@ class WCML_Multi_Currency_Orders {
 		add_action( 'woocommerce_process_shop_order_meta', array( $this, 'set_order_currency_on_update' ), 10, 2 );
 		add_action( 'woocommerce_order_actions_start', array( $this, 'show_order_currency_selector' ) );
 
-		add_filter( 'woocommerce_order_get_items', array( $this, 'set_totals_for_order_items' ), 10, 2 );
+		if( $this->wp_api->version_compare( $this->wp_api->constant( 'WC_VERSION' ), '3.6.0', '<' ) ){
+			add_filter( 'woocommerce_order_get_items', array( $this, 'set_totals_for_order_items' ), 10, 2 );
+        }
+
 		add_filter( 'woocommerce_hidden_order_itemmeta', array( $this, 'add_woocommerce_hidden_order_itemmeta' ) );
 
 		add_action( 'wp_ajax_wcml_order_set_currency', array( $this, 'set_order_currency_on_ajax_update' ) );
