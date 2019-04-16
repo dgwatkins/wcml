@@ -118,8 +118,8 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'woocommerce_product_set_stock_status', array( $subject, 'sync_stock_status_for_translations' ), 100, 2 );
 		\WP_Mock::expectActionAdded( 'woocommerce_variation_set_stock_status', array( $subject, 'sync_stock_status_for_translations' ), 10, 2 );
 
-		\WP_Mock::expectActionAdded( 'woocommerce_product_set_stock', array( $subject, 'sync_product_stock' ) );
-		\WP_Mock::expectActionAdded( 'woocommerce_variation_set_stock', array( $subject, 'sync_product_stock' ) );
+		\WP_Mock::expectActionAdded( 'woocommerce_product_set_stock', array( $subject, 'sync_product_stock_hook' ) );
+		\WP_Mock::expectActionAdded( 'woocommerce_variation_set_stock', array( $subject, 'sync_product_stock_hook' ) );
 		\WP_Mock::expectActionAdded( 'woocommerce_recorded_sales', array( $subject, 'sync_product_total_sales' ) );
 
 		\WP_Mock::expectActionAdded( 'woocommerce_product_set_visibility', array( $subject, 'sync_product_translations_visibility' ) );
