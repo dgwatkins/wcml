@@ -685,6 +685,10 @@ class WCML_Products{
 				$price_keys = wcml_price_custom_fields( $product_id );
 			}
 
+			if( is_product() ){
+				$data['_product_image_gallery'] = null;
+            }
+
 			foreach ( $data as $meta_key => $meta_value ) {
 
 				$filtered_value = false;

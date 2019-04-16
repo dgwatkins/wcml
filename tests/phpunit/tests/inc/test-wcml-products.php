@@ -336,14 +336,14 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$post_meta = array(
 			'_price' => array( 10 ),
 			'_wc_review_count' => array( 1 ),
-			'_product_image_gallery' => array( array( 1, 2 ) ),
+			'_product_image_gallery' => array( '1, 2' ),
 			'_thumbnail_id' => array( 5 ),
 		);
 
 		$expected_data = array(
 			'_price' => array( 20 ),
 			'_wc_review_count' => array( 2 ),
-			'_product_image_gallery' => array( array( 3, 4 ) ),
+			'_product_image_gallery' => array( '3, 4' ),
 			'_thumbnail_id' => array( 6 ),
 		);
 
@@ -407,7 +407,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		                               ->disableOriginalConstructor()
 		                               ->setMethods( array( 'localize_image_ids' ) )
 		                               ->getMock();
-		$gallery_filter->method( 'localize_image_ids' )->with( $post_meta['_product_image_gallery'][0], $product_id, '_product_image_gallery' )->willReturn( $expected_data['_product_image_gallery'][0] );
+		$gallery_filter->method( 'localize_image_ids' )->with( null, $product_id, '_product_image_gallery' )->willReturn( $expected_data['_product_image_gallery'][0] );
 		$gallery_filter_factory->shouldReceive( 'create' )->andReturn( $gallery_filter );
 
 		$image_filter_factory = \Mockery::mock( 'overload:WCML_Product_Image_Filter_Factory' );
@@ -417,6 +417,11 @@ class Test_WCML_Products extends OTGS_TestCase {
 		                               ->getMock();
 		$image_filter->method( 'localize_image_id' )->with( $post_meta['_thumbnail_id'][0], $product_id, '_thumbnail_id' )->willReturn( $expected_data['_thumbnail_id'][0] );
 		$image_filter_factory->shouldReceive( 'create' )->andReturn( $image_filter );
+
+		WP_Mock::userFunction( 'is_product', array(
+			'times'  => 1,
+			'return' => true
+		) );
 
 		$subject = $this->get_subject();
 		$filtered_data = $subject->filter_product_data( false, $product_id, false );
@@ -482,6 +487,10 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'times' => 1,
 			'args'  => array( $product_id ),
 		) );
+		WP_Mock::userFunction( 'is_product', array(
+			'times'  => 1,
+			'return' => false
+		) );
 
 		$subject->filter_product_data( array(), $product_id, $meta_key );
 	}
@@ -519,6 +528,11 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'times'  => 1,
 			'args'   => array( $product_id ),
 			'return' => array(),
+		) );
+
+		WP_Mock::userFunction( 'is_product', array(
+			'times'  => 1,
+			'return' => false
 		) );
 		WP_Mock::userFunction( 'wcml_price_custom_fields', array( 'times' => 0 ) );
 
