@@ -179,7 +179,7 @@ class Test_WCML_Terms extends OTGS_TestCase {
 		WP_Mock::passthruFunction( 'remove_action' );
 
 		\WP_Mock::userFunction( 'update_term_meta', array(
-			'args' => array( $translations['es']->element_id, $meta_key, $meta_value, '' ),
+			'args' => array( $translations['es']->element_id, $meta_key, $meta_value ),
 			'times' => 1,
 		));
 
