@@ -3,7 +3,7 @@ Contributors: AmirHelzer, sergey.r, mihaimihai, EduardMaghakyan, andrewp-2
 Donate link: http://wpml.org/documentation/related-projects/woocommerce-multilingual/
 Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multilingual, e-shop, shop
 License: GPLv2
-Requires at least: 3.9
+Requires at least: 4.7
 Tested up to: 5.1.1
 Stable tag: 4.5.0
 
@@ -64,7 +64,7 @@ Without having all these running, WooCommerce Multilingual will not be able to r
 
 = Minimum Requirements =
 
-* WordPress 3.9 or later
+* WordPress 4.7 or later
 * PHP version 5.6 or later
 * MySQL version 5.6 or later
 
