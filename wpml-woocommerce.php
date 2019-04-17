@@ -10,7 +10,7 @@
   Tested up to: 5.1.1
   Version: 4.6.0
   WC requires at least: 3.3.0
-  WC tested up to: 3.5.7
+  WC tested up to: 3.6.0
 */
 
 if ( defined( 'WCML_VERSION' ) ) {
