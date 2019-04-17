@@ -161,6 +161,7 @@ class WCML_Multi_Currency_Orders {
 				isset( $_POST['action'] ) &&
 				in_array( $_POST['action'], array(
 						'woocommerce_add_order_item',
+						'woocommerce_remove_order_item',
 						'woocommerce_calc_line_taxes',
 						'woocommerce_save_order_items'
 					)
