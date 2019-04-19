@@ -402,6 +402,15 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$this->woocommerce_wpml->comments = $comments;
 
+		/** @var \WCML_Products|\PHPUnit_Framework_MockObject_MockObject $products */
+		$products = $this->getMockBuilder( 'WCML_Products' )
+		                 ->disableOriginalConstructor()
+		                 ->setMethods( array( 'is_original_product' ) )
+		                 ->getMock();
+		$products->method( 'is_original_product' )->with( $product_id )->willReturn( false );
+
+		$this->woocommerce_wpml->products = $products;
+
 		$gallery_filter_factory = \Mockery::mock( 'overload:WCML_Product_Gallery_Filter_Factory' );
 		$gallery_filter         = $this->getMockBuilder( 'WCML_Product_Gallery_Filter' )
 		                               ->disableOriginalConstructor()
