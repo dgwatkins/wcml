@@ -19,13 +19,17 @@ class Test_WCML_Table_Rate_Shipping extends OTGS_TestCase {
 		                        ->getMock();
 	}
 
-	private function get_subject( $sitepress = null ){
+	private function get_subject( $sitepress = null, $woocommerce_wpml = null ){
 
 		if( !$sitepress ){
 			$sitepress = $this->get_sitepress();
 		}
 
-		return new WCML_Table_Rate_Shipping( $sitepress, $this->get_woocommerce_wpml() );
+		if( !$woocommerce_wpml ){
+			$woocommerce_wpml = $this->get_woocommerce_wpml();
+		}
+
+		return new WCML_Table_Rate_Shipping( $sitepress, $woocommerce_wpml );
 	}
 
 	/**
@@ -139,6 +143,53 @@ class Test_WCML_Table_Rate_Shipping extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'option_woocommerce_table_rate_priorities_'.$object->instance_id, array( $subject, 'filter_table_rate_priorities' ) );
 
 		$filtered_values = $subject->shipping_table_rate_is_available( $available, array(), $object );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_product_base_price() {
+
+		$default_currency = 'USD';
+		$client_currency = 'EUR';
+
+		WP_Mock::userFunction( 'get_option', array(
+			'args' => array( 'woocommerce_currency' ),
+			'times' => 1,
+			'return' => $default_currency
+		));
+
+		$product_id = 1;
+		$product_price = 10;
+		$qty = 3;
+
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'get_id' ) )
+		                ->getMock();
+		$product->method( 'get_id' )->willReturn( $product_id );
+
+		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                               ->disableOriginalConstructor()
+		                               ->getMock();
+
+		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                               ->disableOriginalConstructor()
+		                                               ->setMethods( array( 'get_client_currency' ) )
+		                                               ->getMock();
+
+		$this->woocommerce_wpml->multi_currency->method('get_client_currency')->willReturn( $client_currency );
+
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'get_product_price_from_db' ) )
+		                                         ->getMock();
+		$this->woocommerce_wpml->products->method('get_product_price_from_db')->with( $product_id )->willReturn( $product_price );
+
+		$subject         = $this->get_subject( null, $this->woocommerce_wpml );
+
+		$this->assertEquals( $product_price * $qty, $subject->filter_product_base_price( 10, $product, $qty ) );
 	}
 
 }
