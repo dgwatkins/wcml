@@ -685,9 +685,9 @@ class WCML_Products{
 				$price_keys = wcml_price_custom_fields( $product_id );
 			}
 
-			if( is_product() ){
+			if( is_product() && !$this->woocommerce_wpml->products->is_original_product( $product_id ) ){
 				$data['_product_image_gallery'] = null;
-            }
+			}
 
 			foreach ( $data as $meta_key => $meta_value ) {
 
