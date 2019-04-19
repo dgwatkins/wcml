@@ -717,4 +717,14 @@ class WCML_Products{
 		return $data;
 	}
 
+	/**
+	 * @param int $product_id
+	 *
+	 * @return null|string
+	 */
+	public function get_product_price_from_db( $product_id ){
+
+	    return $this->wpdb->get_var( $this->wpdb->prepare( "SELECT meta_value FROM {$this->wpdb->postmeta} WHERE `meta_key` = '_price' AND post_id = %d ", $product_id ) );
+    }
+
 }
