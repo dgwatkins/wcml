@@ -440,6 +440,57 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 * @group wcml_price_custom_fields
+	 */
+	public function it_should_not_filter_product_data_images_for_original_product(){
+
+		\WP_Mock::passthruFunction( 'remove_filter' );
+		$product_id = 111;
+		$post_meta = array(
+			'_product_image_gallery' => array( '1, 2' ),
+			'_thumbnail_id' => array( 5 ),
+		);
+
+		WP_Mock::userFunction( 'get_post_meta', array(
+			'args'  => array( $product_id ),
+			'return' => $post_meta
+		));
+
+		WP_Mock::userFunction( 'get_post_type', array(
+			'args'  => array( $product_id ),
+			'return' => 'product'
+		));
+
+		WP_Mock::userFunction( 'is_product', array(
+			'times'  => 1,
+			'return' => true
+		) );
+
+		/** @var \WCML_Products|\PHPUnit_Framework_MockObject_MockObject $products */
+		$products = $this->getMockBuilder( 'WCML_Products' )
+		                 ->disableOriginalConstructor()
+		                 ->setMethods( array( 'is_original_product' ) )
+		                 ->getMock();
+		$products->method( 'is_original_product' )->with( $product_id )->willReturn( true );
+
+		$this->woocommerce_wpml->products = $products;
+
+		WP_Mock::userFunction( 'wcml_price_custom_fields', array(
+			'times' => 1,
+			'args'  => array( $product_id ),
+			'return' => array()
+		) );
+
+		$subject = $this->get_subject();
+		$filtered_data = $subject->filter_product_data( false, $product_id, false );
+
+		$this->assertEquals( $post_meta, $filtered_data );
+	}
+
+	/**
+	 * @test
 	 */
 	public function it_should_filter_related_products_query() {
 
@@ -471,6 +522,16 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$this->wp_api->method( 'constant' )->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )->willReturn( 2 );
 		$this->woocommerce_wpml->settings['enable_multi_currency'] = $multi_currency_setting;
+
+
+		/** @var \WCML_Products|\PHPUnit_Framework_MockObject_MockObject $products */
+		$products = $this->getMockBuilder( 'WCML_Products' )
+		                 ->disableOriginalConstructor()
+		                 ->setMethods( array( 'is_original_product' ) )
+		                 ->getMock();
+		$products->method( 'is_original_product' )->with( $product_id )->willReturn( false );
+
+		$this->woocommerce_wpml->products = $products;
 
 		$subject = $this->get_subject();
 
@@ -517,8 +578,16 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$this->wp_api->method( 'constant' )->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )->willReturn( 2 );
 		$this->woocommerce_wpml->settings['enable_multi_currency'] = $multi_currency_setting;
 
-		$subject = $this->get_subject();
+		/** @var \WCML_Products|\PHPUnit_Framework_MockObject_MockObject $products */
+		$products = $this->getMockBuilder( 'WCML_Products' )
+		                 ->disableOriginalConstructor()
+		                 ->setMethods( array( 'is_original_product' ) )
+		                 ->getMock();
+		$products->method( 'is_original_product' )->with( $product_id )->willReturn( false );
 
+		$this->woocommerce_wpml->products = $products;
+
+		$subject = $this->get_subject();
 
 		WP_Mock::userFunction( 'get_post_type', array(
 			'times'  => 1,
