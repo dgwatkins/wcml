@@ -95,7 +95,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		
 		$subject = $this->get_subject( false, false, $wpml_post_translations );
 		
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 			'args'   => array( $product_id ),
 			'return' => 'product'
 		));
@@ -104,11 +104,11 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$original_ratings_count = mt_rand( 301, 400 );
 		$original_ratings = array( $original_ratings_stars => $original_ratings_count );
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
+		\WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $product_id, '_wc_rating_count', true ),
 			'return' => $original_ratings
 		));
-		\WP_Mock::wpFunction( 'get_post_meta', array(
+		\WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $product_id, '_wc_review_count', true ),
 			'return' => $original_ratings_count
 		));
@@ -117,23 +117,23 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$translated_ratings_count = mt_rand( 401, 500 );
 		$translated_ratings = array( $translated_ratings_stars => $translated_ratings_count );
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
+		\WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $translated_product_id, '_wc_rating_count', true ),
 			'return' => $translated_ratings
 		));
-		\WP_Mock::wpFunction( 'get_post_meta', array(
+		\WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $translated_product_id, '_wc_review_count', true ),
 			'return' => $translated_ratings_count
 		));
 
 		$expected_reviews_count = $original_ratings_count + $translated_ratings_count;
 
-		\WP_Mock::wpFunction( 'update_post_meta', array(
+		\WP_Mock::userFunction( 'update_post_meta', array(
 			'args'   => array( $translated_product_id, '_wcml_review_count', $expected_reviews_count ),
 			'times'   => 1,
 			'return' => true
 		));
-		\WP_Mock::wpFunction( 'update_post_meta', array(
+		\WP_Mock::userFunction( 'update_post_meta', array(
 			'args'   => array( $product_id, '_wcml_review_count', $expected_reviews_count ),
 			'times'   => 1,
 			'return' => true
@@ -143,18 +143,18 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$translated_ratings_sum = $translated_ratings_stars*$translated_ratings_count;
 		$expected_average_rating = number_format( ( $original_ratings_sum + $translated_ratings_sum ) / $expected_reviews_count, 2, '.', '' );
 		
-		\WP_Mock::wpFunction( 'update_post_meta', array(
+		\WP_Mock::userFunction( 'update_post_meta', array(
 			'args'   => array( $translated_product_id, '_wcml_average_rating', $expected_average_rating ),
 			'times'   => 1,
 			'return' => true
 		));
-		\WP_Mock::wpFunction( 'update_post_meta', array(
+		\WP_Mock::userFunction( 'update_post_meta', array(
 			'args'   => array( $product_id, '_wcml_average_rating', $expected_average_rating ),
 			'times'   => 1,
 			'return' => true
 		));
 
-		\WP_Mock::wpFunction( 'sanitize_text_field', array(
+		\WP_Mock::userFunction( 'sanitize_text_field', array(
 			'args'   => array( $product_id ),
 			'times'   => 1,
 			'return' => $product_id
@@ -174,7 +174,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$value     = rand_str();
 		$object_id = mt_rand( 1, 100 );
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 			'args'   => array( $object_id ),
 			'return' => 'product'
 		) );
@@ -196,7 +196,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$value     = rand_str();
 		$object_id = mt_rand( 1, 100 );
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 			'args'   => array( $object_id ),
 			'return' => 'product'
 		) );
@@ -204,7 +204,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$meta_key            = '_wc_average_rating';
 		$wcml_average_rating = mt_rand( 101, 200 );
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
+		\WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $object_id, '_wcml_average_rating', false ),
 			'return' => $wcml_average_rating
 		) );
@@ -224,7 +224,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$value     = rand_str();
 		$object_id = mt_rand( 1, 100 );
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 			'args'   => array( $object_id ),
 			'return' => 'product'
 		) );
@@ -234,7 +234,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$wcml_review_count = mt_rand( 201, 300 );
 		$_GET['clang'] = 'all';
 		
-		\WP_Mock::wpFunction( 'get_post_meta', array(
+		\WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $object_id, '_wcml_review_count', false ),
 			'return' => $wcml_review_count
 		));
@@ -253,7 +253,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$trid = mt_rand( 200, 300 );
 		$_GET['clang'] = 'all';
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 			'args'   => array( $product_id ),
 			'return' => 'product'
 		));
@@ -308,18 +308,18 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 		$subject = $this->get_subject( false, $sitepress );
 
-		\WP_Mock::wpFunction( 'is_ssl', array(
+		\WP_Mock::userFunction( 'is_ssl', array(
 			'times'   => 2,
 			'return' => false
 		));
 
-		\WP_Mock::wpFunction( 'remove_filter', array(
+		\WP_Mock::userFunction( 'remove_filter', array(
 			'return' => true
 		));
 
 		$product_id = mt_rand( 1, 100 );
 
-		\WP_Mock::wpFunction( 'get_the_ID', array(
+		\WP_Mock::userFunction( 'get_the_ID', array(
 			'times'   => 6,
 			'return' => $product_id
 		));
@@ -336,17 +336,17 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$expected_url   = $url . '?' . http_build_query( $new_query_args );
 		$wc_review_count = mt_rand( 201, 300 );
 
-		\WP_Mock::wpFunction( 'add_query_arg', array(
+		\WP_Mock::userFunction( 'add_query_arg', array(
 			'args'   => array( $new_query_args, $url ),
 			'return' => $expected_url,
 		));
 
-		\WP_Mock::wpFunction( 'metadata_exists', array(
+		\WP_Mock::userFunction( 'metadata_exists', array(
 			'args'   => array( 'post', $product_id, '_wcml_review_count' ),
 			'return' => $expected_url,
 		));
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
+		\WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $product_id, '_wc_review_count', true ),
 			'return' => $wc_review_count
 		));
@@ -367,17 +367,17 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$current_review_count = mt_rand( 201, 300 );
 		$all_wcml_review_count = mt_rand( 301, 400 );
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
+		\WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $product_id, '_wc_review_count', true ),
 			'return' => $current_review_count
 		));
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
+		\WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $product_id, '_wcml_review_count', true ),
 			'return' => $all_wcml_review_count
 		));
 
-		\WP_Mock::wpFunction( 'add_query_arg', array(
+		\WP_Mock::userFunction( 'add_query_arg', array(
 			'args'   => array( $new_query_args, $url ),
 			'return' => $expected_url,
 		));
@@ -401,7 +401,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 		$_GET['clang'] = 'all';
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 			'args'   => array( $product_id ),
 			'return' => 'product'
 		));
@@ -410,7 +410,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 		$product_id = mt_rand( 101, 200 );
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 			'args'   => array( $product_id ),
 			'return' => rand_str()
 		));
@@ -430,7 +430,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 		$_GET['clang'] = 'all';
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 			'args'   => array( $comment->comment_post_ID ),
 			'return' => 'product'
 		));
@@ -457,6 +457,48 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 		$expected_comment_flag = '<div style="float: left; padding-right: 5px;"><img src="' . $flag_url . '" width=18" height="12"></div>';
 		$this->assertEquals( $expected_comment_flag, $comment_flag );
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_recalculate_comment_rating_for_corrupted_data(){
+
+		$product_id = 1;
+		$translated_product_id = 2;
+
+		$translations = array();
+		$translations[] = $translated_product_id;
+
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
+		                               ->disableOriginalConstructor()
+		                               ->setMethods( array( 'get_element_translations' ) )
+		                               ->getMock();
+
+		$wpml_post_translations->method( 'get_element_translations' )->with( $product_id )->willReturn( $translations );
+
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $translated_product_id, '_wc_rating_count', true ),
+			'return' => 'corrupted_data'
+		));
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $translated_product_id, '_wc_review_count', true ),
+			'return' => 10
+		));
+
+		$subject = $this->get_subject( false, false, $wpml_post_translations );
+
+		\WP_Mock::userFunction( 'update_post_meta', array(
+			'args'   => array( $translated_product_id, '_wcml_average_rating', 0 ),
+			'times'   => 0,
+			'return' => false
+		));
+
+		$subject->recalculate_comment_rating( $product_id );
+
 	}
 
 }
