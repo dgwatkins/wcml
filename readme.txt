@@ -5,7 +5,7 @@ Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multili
 License: GPLv2
 Requires at least: 4.7
 Tested up to: 5.1.1
-Stable tag: 4.6.2-beta1
+Stable tag: 4.6.2-beta2
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
 
