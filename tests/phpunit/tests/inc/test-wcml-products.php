@@ -116,6 +116,42 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$subject->add_hooks();
 	}
 
+	/**
+	 * @test
+	 * @dataProvider wc_versions_provider
+	 *
+	 * @param string $wc_version
+	 * @param bool   $version_compare_result
+	 */
+	public function it_adds_backend_hooks( $wc_version, $version_compare_result ){
+		\WP_Mock::userFunction( 'is_admin', array(
+			'return' => true,
+			'times'  => 1
+		) );
+
+		$this->wp_api->method( 'constant' )
+		             ->with( 'WC_VERSION' )
+		             ->willReturn( $wc_version );
+
+		$this->wp_api->method( 'version_compare' )
+		             ->with( $wc_version, '3.6.0', '>=' )
+		             ->willReturn( $version_compare_result );
+
+		$subject = $this->get_subject();
+
+		if( $version_compare_result ){
+			\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ), 10, 3 );
+		}else{
+			\WP_Mock::expectFilterNotAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ) );
+		}
+
+		\WP_Mock::expectFilterAdded( 'woocommerce_json_search_found_products', array( $subject, 'woocommerce_json_search_found_products' ) );
+		\WP_Mock::expectFilterAdded( 'post_row_actions', array( $subject, 'filter_product_actions' ), 10, 2 );
+		\WP_Mock::expectActionAdded( 'wp_ajax_wpml_switch_post_language', array( $subject, 'switch_product_variations_language' ), 9 );
+
+		$subject->add_hooks();
+	}
+
 	public function wc_versions_provider(){
 		return array(
 			array( '3.5.0', false ),
@@ -347,6 +383,11 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'_thumbnail_id' => array( 6 ),
 		);
 
+		WP_Mock::userFunction( 'is_admin', array(
+			'times' => 3,
+			'return' => false
+		));
+
 		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'  => array( $product_id ),
 			'return' => $post_meta
@@ -452,6 +493,11 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'_product_image_gallery' => array( '1, 2' ),
 			'_thumbnail_id' => array( 5 ),
 		);
+
+		WP_Mock::userFunction( 'is_admin', array(
+			'times' => 2,
+			'return' => false
+		));
 
 		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'  => array( $product_id ),
