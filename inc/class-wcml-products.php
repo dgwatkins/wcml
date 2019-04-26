@@ -671,51 +671,46 @@ class WCML_Products{
 	    return $value;
     }
 
-
 	public function filter_product_data( $data, $product_id, $meta_key ) {
 
-		if ( ! $meta_key && in_array( get_post_type( $product_id ), array( 'product', 'product_variation' ) ) ) {
-			remove_filter( 'get_post_metadata', array( $this, 'filter_product_data' ), 10 );
+		if ( ! $meta_key ) {
 
-			$data = get_post_meta( $product_id );
+			$post_type = get_post_type( $product_id );
 
-			$is_mc_enabled = (int) $this->woocommerce_wpml->settings['enable_multi_currency'] === (int) $this->sitepress->get_wp_api()->constant( 'WCML_MULTI_CURRENCIES_INDEPENDENT' );
+			if ( in_array( $post_type, array( 'product', 'product_variation' ), true ) ) {
 
-			$price_keys = array();
-			if ( $is_mc_enabled ) {
-				$price_keys = wcml_price_custom_fields( $product_id );
-			}
+				remove_filter( 'get_post_metadata', array( $this, 'filter_product_data' ), 10 );
 
-			$is_original_product = $this->woocommerce_wpml->products->is_original_product( $product_id );
-			if( is_product() && !$is_original_product ){
-				$data['_product_image_gallery'] = null;
-			}
+				$data = get_post_meta( $product_id );
 
-			foreach ( $data as $meta_key => $meta_value ) {
+				$meta_keys_to_filter = array();
+				$is_mc_enabled       = (int) $this->woocommerce_wpml->settings['enable_multi_currency'] === (int) $this->sitepress->get_wp_api()->constant( 'WCML_MULTI_CURRENCIES_INDEPENDENT' );
 
-				$filtered_value = false;
-				$meta_value = $meta_value ? $meta_value[0] : null;
+				if ( $is_mc_enabled ) {
+					$meta_keys_to_filter = wcml_price_custom_fields( $product_id );
+				}
 
-				if ( $is_mc_enabled && in_array( $meta_key, $price_keys, true ) ) {
-					$filtered_value = $this->woocommerce_wpml->multi_currency->prices->product_price_filter( $meta_value, $product_id, $meta_key, true );
-				} elseif ( ! is_admin() ) {
-					if ( in_array( $meta_key, array( '_wc_review_count', '_wc_average_rating' ), true ) ) {
-						$filtered_value = $this->woocommerce_wpml->comments->filter_average_rating( $meta_value, $product_id, $meta_key, true );
-					} elseif ( '_product_image_gallery' === $meta_key && ! $is_original_product ) {
-						$factory        = new WCML_Product_Gallery_Filter_Factory();
-						$filtered_value = $factory->create()->localize_image_ids( $meta_value, $product_id, $meta_key );
-					} elseif ( '_thumbnail_id' === $meta_key && ! $is_original_product ) {
-						$factory        = new WCML_Product_Image_Filter_Factory();
-						$filtered_value = $factory->create()->localize_image_id( $meta_value, $product_id, $meta_key );
+				if ( ! is_admin() ) {
+					if ( 'product' === $post_type ) {
+						$meta_keys_to_filter[] = '_wc_review_count';
+						$meta_keys_to_filter[] = '_wc_average_rating';
+					}
+
+					$is_original_product = $this->woocommerce_wpml->products->is_original_product( $product_id );
+					if ( ! $is_original_product ) {
+						$meta_keys_to_filter[] = '_thumbnail_id';
+						if ( 'product' === $post_type && is_product() ) {
+							$meta_keys_to_filter[] = '_product_image_gallery';
+						}
 					}
 				}
 
-				if ( $filtered_value ) {
-					$data[ $meta_key ][0] = $filtered_value;
+				foreach ( $meta_keys_to_filter as $meta_key ) {
+					$data[ $meta_key ][0] = get_post_meta( $product_id, $meta_key, true );
 				}
-			}
 
-			add_filter( 'get_post_metadata', array( $this, 'filter_product_data' ), 10, 3 );
+				add_filter( 'get_post_metadata', array( $this, 'filter_product_data' ), 10, 3 );
+			}
 		}
 
 		return $data;
