@@ -6,15 +6,26 @@
  */
 class Test_WCML_Product_Gallery_Filter extends OTGS_TestCase {
 
-	public function get_subject( $translation_element_factory = null ) {
+	public function get_subject( $translation_element_factory = null, $wpml_cache = null  ) {
 		if ( null === $translation_element_factory ) {
 			$translation_element_factory = $this->get_translation_element_factory();
 		}
 
-		return new WCML_Product_Gallery_Filter( $translation_element_factory );
+		if ( null === $wpml_cache ) {
+			$wpml_cache = $this->get_wpml_cache_mock();
+		}
+
+		return new WCML_Product_Gallery_Filter( $translation_element_factory, $wpml_cache );
 	}
 
-	public function get_translation_element_factory() {
+	private function get_wpml_cache_mock() {
+		return $this->getMockBuilder( 'WPML_WP_Cache' )
+		            ->disableOriginalConstructor()
+		            ->setMethods( array( 'get', 'set', 'flush_group_cache' ) )
+		            ->getMock();
+	}
+
+	private function get_translation_element_factory() {
 		return $this->getMockBuilder( 'WPML_Translation_Element_Factory' )
 		            ->disableOriginalConstructor()
 		            ->setMethods( [ 'create' ] )
@@ -158,6 +169,30 @@ class Test_WCML_Product_Gallery_Filter extends OTGS_TestCase {
 			$expected_gallery,
 			$subject->localize_image_ids( implode( ',', $target_attachments ), $object_id, $meta_key )
 		);
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_return_cache_value_if_exists() {
+
+		$meta_key  = '_product_image_gallery';
+		$object_id = 123;
+		$cache_value = 88;
+
+		\WP_Mock::userFunction( 'get_post_type', [
+			'times'  => 1,
+			'args'   => [ $object_id ],
+			'return' => 'product'
+		] );
+
+		$wpml_cache = $this->get_wpml_cache_mock();
+
+		$wpml_cache->method( 'get' )->with( $object_id.'_image_gallery', false )->willReturn( $cache_value );
+
+		$subject = $this->get_subject( null, $wpml_cache );
+
+		$this->assertSame( $cache_value, $subject->localize_image_ids( 10, $object_id, $meta_key ) );
 	}
 
 }

@@ -33,7 +33,7 @@ class WCML_Product_Gallery_Filter implements IWPML_Action {
 			$found      = false;
 			$image_ids = $this->wpml_cache->get( $cache_key, $found );
 
-			if ( ! $found ) {
+			if ( ! $image_ids ) {
 
 				remove_filter( 'get_post_metadata', array( $this, 'localize_image_ids' ), 10 );
 
