@@ -8,8 +8,6 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 	private $wcml_multi_currency;
 	/** @var WC_Order */
 	private $order;
-	/** @var WPML_WP_API $wp_api */
-	private $wp_api;
 	/** @var WP $wp */
 	private $wp;
 
@@ -25,11 +23,6 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$this->wp = $this->getMockBuilder( 'WP' )
 		                     ->disableOriginalConstructor()
 		                     ->setMethods( array( 'add_query_var' ) )
-		                     ->getMock();
-
-		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )
-		                     ->disableOriginalConstructor()
-		                     ->setMethods( array( 'constant', 'version_compare' ) )
 		                     ->getMock();
 
 		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
@@ -66,17 +59,13 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 	 * @return WCML_REST_API_Support
 	 */
 	private function get_subject(){
-		return new WCML_Multi_Currency_Orders( $this->wcml_multi_currency, $this->woocommerce_wpml, $this->wp_api, $this->wp );
+		return new WCML_Multi_Currency_Orders( $this->wcml_multi_currency, $this->woocommerce_wpml, $this->wp );
 	}
 
 	/**
 	 * @test
 	 */
-	public function it_adds_pre_WC_3_6_hooks(){
-
-		$wc_version = '3.5.7';
-		$this->wp_api->method( 'constant' )->with( 'WC_VERSION' )->willReturn( $wc_version );
-		$this->wp_api->method( 'version_compare' )->with( $wc_version, '3.6.0', '<' )->willReturn( true );
+	public function it_adds_hooks(){
 
 		WP_Mock::userFunction( 'is_admin', array(
 			'return' => true,
