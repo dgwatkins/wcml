@@ -6,15 +6,12 @@ class WCML_Multi_Currency_Orders {
 	private $multi_currency;
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var WPML_WP_API $wp_api */
-	private $wp_api;
 	/** @var WP $wp */
 	private $wp;
 
-	public function __construct( WCML_Multi_Currency $multi_currency, woocommerce_wpml $woocommerce_wpml, WPML_WP_API $wp_api, WP $wp ) {
+	public function __construct( WCML_Multi_Currency $multi_currency, woocommerce_wpml $woocommerce_wpml, WP $wp ) {
 		$this->multi_currency   = $multi_currency;
 		$this->woocommerce_wpml = $woocommerce_wpml;
-		$this->wp_api           = $wp_api;
 		$this->wp               = $wp;
 
 		if ( is_admin() ) {
@@ -39,9 +36,7 @@ class WCML_Multi_Currency_Orders {
 		add_action( 'woocommerce_process_shop_order_meta', array( $this, 'set_order_currency_on_update' ), 10, 2 );
 		add_action( 'woocommerce_order_actions_start', array( $this, 'show_order_currency_selector' ) );
 
-		if( $this->wp_api->version_compare( $this->wp_api->constant( 'WC_VERSION' ), '3.6.0', '<' ) ){
-			add_filter( 'woocommerce_order_get_items', array( $this, 'set_totals_for_order_items' ), 10, 2 );
-        }
+		add_filter( 'woocommerce_order_get_items', array( $this, 'set_totals_for_order_items' ), 10, 2 );
 
 		add_filter( 'woocommerce_hidden_order_itemmeta', array( $this, 'add_woocommerce_hidden_order_itemmeta' ) );
 
