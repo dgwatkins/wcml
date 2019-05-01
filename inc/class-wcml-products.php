@@ -660,16 +660,33 @@ class WCML_Products{
 
 	public function is_customer_bought_product( $value, $customer_email, $user_id, $product_id ){
 
-        if ( !$this->is_original_product( $product_id ) ){
-	        remove_filter( 'woocommerce_pre_customer_bought_product', array( $this, 'is_customer_bought_product' ), 10, 4 );
-
-	        $value = wc_customer_bought_product( $customer_email, $user_id, $this->get_original_product_id( $product_id ) );
-
-		    add_filter( 'woocommerce_pre_customer_bought_product', array( $this, 'is_customer_bought_product' ), 10, 4 );
+	    if( $this->is_customer_bought_original( $customer_email, $user_id, $product_id ) ){
+	        return true;
         }
 
 	    return $value;
     }
+
+	private function is_customer_bought_original( $customer_email, $user_id, $product_id ) {
+
+		if ( ! $this->is_original_product( $product_id ) ) {
+			remove_filter( 'woocommerce_pre_customer_bought_product', array(
+				$this,
+				'is_customer_bought_product'
+			), 10, 4 );
+
+			$bought_original = wc_customer_bought_product( $customer_email, $user_id, $this->get_original_product_id( $product_id ) );
+
+			add_filter( 'woocommerce_pre_customer_bought_product', array(
+				$this,
+				'is_customer_bought_product'
+			), 10, 4 );
+
+			return (bool) $bought_original;
+        }
+
+		return false;
+	}
 
 	public function filter_product_data( $data, $product_id, $meta_key ) {
 
