@@ -362,6 +362,29 @@ class Test_WCML_Products extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function is_customer_bought_product_not_in_original(){
+
+		\WP_Mock::passthruFunction( 'remove_filter' );
+
+		$user_email = rand_str();
+		$user_id = mt_rand( 1, 10 );
+		$product_id = mt_rand( 11, 20 );
+		$original_product_id = mt_rand( 21, 30 );
+
+		WP_Mock::userFunction( 'wc_customer_bought_product', array(
+			'args'  => array( $user_email, $user_id, $original_product_id ),
+			'return' => false
+		));
+
+		$subject = $this->get_subject();
+		$is_customer_bought_product = $subject->is_customer_bought_product( null, $user_email, $user_id, $product_id );
+
+		$this->assertNull( $is_customer_bought_product );
+	}
+
+	/**
+	 * @test
+	 */
 	public function it_filter_product_data(){
 
 		\WP_Mock::passthruFunction( 'remove_filter' );

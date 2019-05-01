@@ -156,4 +156,21 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		$this->assertEquals( $expected_comments, $filtered_comments );
 
 	}
+
+	/**
+	 * @test
+	 */
+	public function do_to_filter_woocommerce_order_get_items_on_save_action(){
+
+		$_POST['post_type'] = 'shop_order';
+		$_POST['wc_order_action'] = '';
+
+		$subject = $this->get_subject();
+
+		$this->assertEmpty( $subject->woocommerce_order_get_items( array(), new stdClass() ) );
+
+		unset( $_POST['post_type'] );
+		unset( $_POST['wc_order_action'] );
+
+	}
 }
