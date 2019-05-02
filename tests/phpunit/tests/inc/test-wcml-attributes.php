@@ -332,6 +332,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 			->method( 'get_current_language' )
 			->willReturn( $orig_lang );
 
+
 		\WP_Mock::wpFunction( 'is_admin', array(
 			'times'  => 1,
 			'return' => false
@@ -342,6 +343,99 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$filtered_attribute_name = $subject->filter_attribute_name( $attribute_name, $product_id, false );
 
 		$this->assertEquals( $attribute_name, $filtered_attribute_name );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_filter_product_attributes_names_when_adding_to_cart() {
+
+		$product_id              = rand( 1, 100 );
+		$orig_lang               = 'de';
+		$_REQUEST['add-to-cart'] = $product_id;
+
+		$attributes = array(
+			array(
+				'name' => 'test1'
+			)
+		);
+
+		\WP_Mock::wpFunction( 'is_admin', array(
+			'times'  => 1,
+			'return' => false
+		) );
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'get_original_product_language' ) )
+		                                         ->getMock();
+
+		$this->woocommerce_wpml->products
+			->expects( $this->once() )
+			->method( 'get_original_product_language' )
+			->with( $product_id )
+			->willReturn( $orig_lang );
+
+		$this->sitepress
+			->expects( $this->once() )
+			->method( 'get_current_language' )
+			->willReturn( $orig_lang );
+
+		$subject = $this->get_subject();
+
+		$filtered_attributes = $subject->filter_adding_to_cart_product_attributes_names( $attributes, $product_id, false );
+
+		$this->assertEquals( $attributes, $filtered_attributes );
+
+		unset( $_REQUEST['add-to-cart'] );
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_filter_product_attributes_names_when_selecting_attribute() {
+
+		$product_id             = rand( 1, 100 );
+		$orig_lang              = 'de';
+		$_REQUEST['wc-ajax']    = 'get_variation';
+		$_REQUEST['product_id'] = $product_id;
+
+		$attributes = array(
+			array(
+				'name' => 'test1'
+			)
+		);
+
+		\WP_Mock::wpFunction( 'is_admin', array(
+			'times'  => 1,
+			'return' => false
+		) );
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'get_original_product_language' ) )
+		                                         ->getMock();
+
+		$this->woocommerce_wpml->products
+			->expects( $this->once() )
+			->method( 'get_original_product_language' )
+			->with( $product_id )
+			->willReturn( $orig_lang );
+
+		$this->sitepress
+			->expects( $this->once() )
+			->method( 'get_current_language' )
+			->willReturn( $orig_lang );
+
+		$subject = $this->get_subject();
+
+		$filtered_attributes = $subject->filter_adding_to_cart_product_attributes_names( $attributes, $product_id, false );
+
+		$this->assertEquals( $attributes, $filtered_attributes );
+
+		unset( $_REQUEST['wc-ajax'] );
+		unset( $_REQUEST['product_id'] );
 	}
 
 	/**
