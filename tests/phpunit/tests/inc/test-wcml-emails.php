@@ -61,6 +61,19 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'woocommerce_order_status_cancelled_to_on-hold_notification', array( $subject, 'email_heading_on_hold' ), 9 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_email_heading_customer_on_hold_order', array( $subject, 'customer_on_hold_order_heading' ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_email_subject_customer_on_hold_order', array( $subject, 'customer_on_hold_order_subject' ) );
+
+		//processing order actions
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_pending_to_processing_notification', array( $subject, 'email_heading_processing' ), 9 );
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_failed_to_processing_notification', array( $subject, 'email_heading_processing' ), 9 );
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_cancelled_to_processing_notification', array( $subject, 'email_heading_processing' ), 9 );
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_on-hold_to_processing_notification', array( $subject, 'email_heading_processing' ), 9 );
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_pending_to_processing_notification', array( $subject, 'refresh_email_lang' ), 9 );
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_failed_to_processing_notification', array( $subject, 'refresh_email_lang' ), 9 );
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_cancelled_to_processing_notification', array( $subject, 'refresh_email_lang' ), 9 );
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_on-hold_to_processing_notification', array( $subject, 'refresh_email_lang' ), 9 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_email_heading_customer_processing_order', array( $subject, 'customer_processing_order_heading' ) );
+		\WP_Mock::expectFilterAdded( 'woocommerce_email_subject_customer_processing_order', array( $subject, 'customer_processing_order_subject' ) );
+
 		$subject->add_hooks();
 	}
 
@@ -271,166 +284,129 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider email_heading_classes_provider
 	 */
-	public function it_should_filter_new_order_email_heading(){
+	public function it_should_filter_order_email_heading( $class_name, $method ){
 
 
 		$mailer =  $this->getMockBuilder('WC_Emails')
 		                ->disableOriginalConstructor()
 		                ->getMock();
 
-		$wc_mailer_new_order = $this->getMockBuilder( 'WC_Email_New_Order' )
+		$wc_mailer_class = $this->getMockBuilder( $class_name )
 		                            ->disableOriginalConstructor()
 		                            ->setMethods( array( 'format_string' ) )
 		                            ->getMock();
-		$wc_mailer_new_order->heading = rand_str();
+		$wc_mailer_class->heading = rand_str();
 
-		$mailer->emails = array( 'WC_Email_New_Order' => $wc_mailer_new_order );
+		$mailer->emails = array( $class_name => $wc_mailer_class );
 
 		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
 
 		$translated_formatted_heading = rand_str();
 
-		$wc_mailer_new_order->expects( $this->once() )
+		$wc_mailer_class->expects( $this->once() )
 		                    ->method( 'format_string' )
-		                    ->with( $wc_mailer_new_order->heading )
+		                    ->with( $wc_mailer_class->heading )
 		                    ->willReturn( $translated_formatted_heading );
 
 		$subject = $this->get_subject();
 
-		$this->assertEquals( $translated_formatted_heading, $subject->new_order_email_heading( rand_str() ) );
+		$this->assertEquals( $translated_formatted_heading, $subject->$method( rand_str() ) );
 
+	}
+
+	public function email_heading_classes_provider(){
+
+		return array(
+			array( 'WC_Email_New_Order', 'new_order_email_heading' ),
+			array( 'WC_Email_Customer_On_Hold_Order', 'customer_on_hold_order_heading' ),
+			array( 'WC_Email_Customer_Processing_Order', 'customer_processing_order_heading' ),
+		);
 	}
 
 	/**
 	 * @test
+	 * @dataProvider email_subject_classes_provider
 	 */
-	public function it_should_filter_new_order_email_subject(){
-
+	public function it_should_filter_order_email_subject( $class_name, $method ){
 
 		$mailer =  $this->getMockBuilder('WC_Emails')
 		                ->disableOriginalConstructor()
 		                ->getMock();
 
-		$wc_mailer_new_order = $this->getMockBuilder( 'WC_Email_New_Order' )
+		$wc_mailer_class = $this->getMockBuilder( $class_name )
 		                            ->disableOriginalConstructor()
 		                            ->setMethods( array( 'format_string' ) )
 		                            ->getMock();
-		$wc_mailer_new_order->subject = rand_str();
+		$wc_mailer_class->subject = rand_str();
 
-		$mailer->emails = array( 'WC_Email_New_Order' => $wc_mailer_new_order );
+		$mailer->emails = array( $class_name => $wc_mailer_class );
 
 		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
 
 		$translated_formatted_subject = rand_str();
 
-		$wc_mailer_new_order->expects( $this->once() )
+		$wc_mailer_class->expects( $this->once() )
 		                    ->method( 'format_string' )
-		                    ->with( $wc_mailer_new_order->subject )
+		                    ->with( $wc_mailer_class->subject )
 		                    ->willReturn( $translated_formatted_subject );
 
 		$subject = $this->get_subject();
 
-		$this->assertEquals( $translated_formatted_subject, $subject->new_order_email_subject( rand_str() ) );
+		$this->assertEquals( $translated_formatted_subject, $subject->$method( rand_str() ) );
 
 	}
 
-	/**
-	 * @test
-	 */
-	public function it_should_filter_customer_on_hold_order_heading(){
+	public function email_subject_classes_provider(){
 
-
-		$mailer =  $this->getMockBuilder('WC_Emails')
-		                ->disableOriginalConstructor()
-		                ->getMock();
-
-		$wc_mailer_on_hold_order = $this->getMockBuilder( 'WC_Email_Customer_On_Hold_Order' )
-		                            ->disableOriginalConstructor()
-		                            ->setMethods( array( 'format_string' ) )
-		                            ->getMock();
-		$wc_mailer_on_hold_order->heading = rand_str();
-
-		$mailer->emails = array( 'WC_Email_Customer_On_Hold_Order' => $wc_mailer_on_hold_order );
-
-		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
-
-		$translated_formatted_heading = rand_str();
-
-		$wc_mailer_on_hold_order->expects( $this->once() )
-		                    ->method( 'format_string' )
-		                    ->with( $wc_mailer_on_hold_order->heading )
-		                    ->willReturn( $translated_formatted_heading );
-
-		$subject = $this->get_subject();
-
-		$this->assertEquals( $translated_formatted_heading, $subject->customer_on_hold_order_heading( rand_str() ) );
-
+		return array(
+			array( 'WC_Email_New_Order', 'new_order_email_subject' ),
+			array( 'WC_Email_Customer_On_Hold_Order', 'customer_on_hold_order_subject' ),
+			array( 'WC_Email_Customer_Processing_Order', 'customer_processing_order_subject' ),
+		);
 	}
 
-	/**
-	 * @test
-	 */
-	public function it_should_filter_customer_on_hold_order_subject(){
-
-
-		$mailer =  $this->getMockBuilder('WC_Emails')
-		                ->disableOriginalConstructor()
-		                ->getMock();
-
-		$wc_mailer_on_hold_order = $this->getMockBuilder( 'WC_Email_Customer_On_Hold_Order' )
-		                            ->disableOriginalConstructor()
-		                            ->setMethods( array( 'format_string' ) )
-		                            ->getMock();
-		$wc_mailer_on_hold_order->subject = rand_str();
-
-		$mailer->emails = array( 'WC_Email_Customer_On_Hold_Order' => $wc_mailer_on_hold_order );
-
-		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
-
-		$translated_formatted_subject = rand_str();
-
-		$wc_mailer_on_hold_order->expects( $this->once() )
-		                    ->method( 'format_string' )
-		                    ->with( $wc_mailer_on_hold_order->subject )
-		                    ->willReturn( $translated_formatted_subject );
-
-		$subject = $this->get_subject();
-
-		$this->assertEquals( $translated_formatted_subject, $subject->customer_on_hold_order_subject( rand_str() ) );
-
-	}
 
 	/**
 	 * @test
+	 * @dataProvider email_headings_classes_provider
 	 */
-	public function it_should_filter_email_heading_on_hold(){
+	public function it_should_filter_email_headings( $class_name, $method ){
 
 		$order_id = 10;
 		$mailer =  $this->getMockBuilder('WC_Emails')
 		                ->disableOriginalConstructor()
 		                ->getMock();
 
-		$wc_mailer_on_hold_order = $this->getMockBuilder( 'WC_Email_Customer_On_Hold_Order' )
-		                            ->disableOriginalConstructor()
-		                            ->setMethods( array( 'trigger' ) )
-		                            ->getMock();
-		$wc_mailer_on_hold_order->subject = rand_str();
-		$wc_mailer_on_hold_order->heading = rand_str();
-		$wc_mailer_on_hold_order->enabled = true;
+		$wc_mailer_class = $this->getMockBuilder( $class_name )
+		                                ->disableOriginalConstructor()
+		                                ->setMethods( array( 'trigger' ) )
+		                                ->getMock();
+		$wc_mailer_class->subject = rand_str();
+		$wc_mailer_class->heading = rand_str();
+		$wc_mailer_class->enabled = true;
 
-		$mailer->emails = array( 'WC_Email_Customer_On_Hold_Order' => $wc_mailer_on_hold_order );
+		$mailer->emails = array( $class_name => $wc_mailer_class );
 
 		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
 
 		$translated_formatted_subject = rand_str();
 
-		$wc_mailer_on_hold_order->expects( $this->once() )
-		                    ->method( 'trigger' )
-		                    ->willReturn( true );
+		$wc_mailer_class->expects( $this->once() )
+		                        ->method( 'trigger' )
+		                        ->willReturn( true );
 
 		$subject = $this->get_subject();
-		$subject->email_heading_on_hold( $order_id );
+		$subject->$method( $order_id );
 	}
 
+
+	public function email_headings_classes_provider(){
+
+		return array(
+			array( 'WC_Email_Customer_On_Hold_Order', 'email_heading_on_hold' ),
+			array( 'WC_Email_Customer_Processing_Order', 'email_heading_processing' ),
+		);
+	}
 }
