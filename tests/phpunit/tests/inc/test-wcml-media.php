@@ -24,12 +24,29 @@ class Test_WCML_Media extends OTGS_TestCase {
 	/**
 	 * @return SitePress
 	 */
-	public function get_sitepress() {
+	private function get_sitepress( $wp_api = null ) {
+		$sitepress = $this->getMockBuilder('SitePress')
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_wp_api' ) )
+		                  ->getMock();
 
-		return $this->getMockBuilder( 'SitePress' )
+		if( null === $wp_api ){
+			$wp_api = $this->get_wpml_wp_api_mock();
+		}
+
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		return $sitepress;
+	}
+
+	/**
+	 * @return WPML_WP_API
+	 */
+	private function get_wpml_wp_api_mock() {
+		return $this->getMockBuilder( 'WPML_WP_API' )
 		            ->disableOriginalConstructor()
+		            ->setMethods( array( 'constant' ) )
 		            ->getMock();
-
 	}
 
 	/**
@@ -140,6 +157,75 @@ class Test_WCML_Media extends OTGS_TestCase {
 		$subject = $this->get_subject();
 		$subject->sync_variation_thumbnail_id( $variation_id, $translated_variation_id, $lang );
 
+	}
+
+	/**
+	 * @test
+	 */
+	function it_should_check_is_media_duplication_enabled_for_product_only() {
+
+		$product_id  = 10;
+		$setting_key = '_wpml_media_duplicate';
+
+		WP_Mock::userFunction( 'get_post_meta',
+			array(
+				'args'   => array( $product_id, $setting_key, true ),
+				'return' => 1
+			)
+		);
+
+		$wp_api = $this->get_wpml_wp_api_mock();
+
+		$wp_api->expects( $this->once() )
+		       ->method( 'constant' )
+		       ->with( 'WPML_Admin_Post_Actions::DUPLICATE_MEDIA_META_KEY' )
+		       ->willReturn( $setting_key );
+
+		$subject = $this->get_subject( null, $this->get_sitepress( $wp_api ) );
+		$this->assertTrue( $subject->is_media_duplication_enabled( $product_id ) );
+	}
+
+	/**
+	 * @test
+	 */
+	function it_should_check_is_media_duplication_enabled_globally_if_disabled_for_product(){
+
+		$product_id = 10;
+		$this->setting_key = '_wpml_media_duplicate';
+		$this->global_setting_key = 'duplicate_media';
+		$media_settings = array(
+			'new_content_settings' => array(
+				$this->global_setting_key => 1
+			)
+		);
+
+		WP_Mock::userFunction( 'get_post_meta',
+			array(
+				'args' => array( $product_id, $this->setting_key, true ),
+				'return' => ''
+			)
+		);
+
+		WP_Mock::userFunction( 'get_option',
+			array(
+				'args' => array( '_wpml_media', array() ),
+				'return' => $media_settings
+			)
+		);
+
+		$wp_api = $this->get_wpml_wp_api_mock();
+
+		$that = $this;
+		$wp_api->method( 'constant' )->willReturnCallback( function ( $const ) use ( $that ) {
+			if ( 'WPML_Admin_Post_Actions::DUPLICATE_MEDIA_META_KEY' == $const ) {
+				return $that->setting_key;
+			} else if ( 'WPML_Admin_Post_Actions::DUPLICATE_MEDIA_GLOBAL_KEY' == $const ) {
+				return $that->global_setting_key;
+			}
+		} );
+
+		$subject = $this->get_subject( null, $this->get_sitepress( $wp_api ) );
+		$this->assertTrue( $subject->is_media_duplication_enabled( $product_id ) );
 	}
 
 }
