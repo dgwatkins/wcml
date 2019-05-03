@@ -206,13 +206,14 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$_POST['order_id'] = 1;
 		$product_id = 10;
 		$original_product_id = 20;
+		$original_price = 50;
 		$converted_price = 100;
 
 		$order_currency = 'EUR';
 
 		$item =  $this->getMockBuilder( 'WC_Order_Item_Product' )
 		              ->disableOriginalConstructor()
-		              ->setMethods( array( 'get_type', 'set_subtotal', 'set_total', 'save', 'get_quantity', 'get_product', 'get_product_id', 'get_variation_id', 'update_meta_data' ) )
+		              ->setMethods( array( 'get_type', 'get_total', 'get_subtotal', 'set_subtotal', 'set_total', 'save', 'get_quantity', 'get_product', 'get_product_id', 'get_variation_id', 'update_meta_data' ) )
 		              ->getMock();
 
 		$items = array( $item );
@@ -257,6 +258,8 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$item->method( 'get_type' )->willReturn( 'line_item' );
 		$item->method( 'get_quantity' )->willReturn( 1 );
+		$item->method( 'get_total' )->willReturn( $original_price );
+		$item->method( 'get_subtotal' )->willReturn( $original_price );
 		$item->method( 'get_product' )->willReturn( $product_obj );
 		$item->method( 'get_product_id' )->willReturn( $product_id );
 		$item->method( 'get_variation_id' )->willReturn( 0 );
@@ -278,13 +281,14 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$_POST['order_id'] = 1;
 		$variation_id = 20;
 		$original_variation_id = 30;
+		$original_price = 50;
 		$converted_price = 100;
 
 		$order_currency = 'EUR';
 
 		$item =  $this->getMockBuilder( 'WC_Order_Item_Product' )
 		              ->disableOriginalConstructor()
-		              ->setMethods( array( 'get_type', 'set_subtotal', 'set_total', 'save', 'get_quantity', 'get_product', 'get_variation_id', 'update_meta_data' ) )
+		              ->setMethods( array( 'get_type', 'get_total', 'get_subtotal', 'set_subtotal', 'set_total', 'save', 'get_quantity', 'get_product', 'get_variation_id', 'update_meta_data' ) )
 		              ->getMock();
 
 		$items = array( $item );
@@ -329,6 +333,8 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$item->method( 'get_type' )->willReturn( 'line_item' );
 		$item->method( 'get_quantity' )->willReturn( 1 );
+		$item->method( 'get_total' )->willReturn( $original_price );
+		$item->method( 'get_subtotal' )->willReturn( $original_price );
 		$item->method( 'get_product' )->willReturn( $product_obj );
 		$item->method( 'get_variation_id' )->willReturn( $variation_id );
 		$item->expects( $this->once() )->method( 'set_subtotal' )->with( $converted_price )->willReturn( true );
@@ -343,17 +349,16 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_sets_converted_totals_for_order_items_for_ajax_add_new_order_item_call(){
+	public function it_sets_discounted_total_price_for_converted_totals_for_order_items_for_ajax_add_new_order_item_call(){
 		\WP_Mock::passthruFunction( 'remove_filter' );
 		$_POST['action'] = 'woocommerce_add_order_item';
 		$_POST['order_id'] = 2;
 		$product_id = 11;
 		$original_product_id = 21;
-		$subtotal = 100;
-		$total = 101;
-		$original_price = 100;
-		$item_price = 100;
-		$converted_price = 102;
+		$original_price = 110;
+		$subtotal = $original_price;
+		$discounted_total = 100;
+		$converted_price = 120;
 
 		$order_currency = 'EUR';
 
@@ -412,13 +417,13 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$item->method( 'update_meta_data' )->willReturn( true );
 		$item->method( 'get_quantity' )->willReturn( 1 );
 		$item->method( 'get_subtotal' )->willReturn( $subtotal );
-		$item->method( 'get_total' )->willReturn( $total );
+		$item->method( 'get_total' )->willReturn( $discounted_total );
 		$item->method( 'get_product' )->willReturn( $product_obj );
 		$item->method( 'get_product_id' )->willReturn( $product_id );
 		$item->method( 'get_variation_id' )->willReturn( 0 );
 		$this->wcml_multi_currency->prices->method( 'raw_price_filter' )->willReturn( $converted_price );
 		$item->expects( $this->once() )->method( 'set_subtotal' )->with( $converted_price )->willReturn( true );
-		$item->expects( $this->once() )->method( 'set_total' )->with( $converted_price )->willReturn( true );
+		$item->expects( $this->once() )->method( 'set_total' )->with( $discounted_total )->willReturn( true );
 		$item->expects( $this->once() )->method( 'save' )->willReturn( true );
 
 		$subject = $this->get_subject();
@@ -549,7 +554,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$item =  $this->getMockBuilder( 'WC_Order_Item_Product' )
 		              ->disableOriginalConstructor()
-		              ->setMethods( array( 'get_type', 'set_subtotal', 'set_total', 'save', 'get_quantity', 'get_product', 'get_product_id', 'get_variation_id', 'update_meta_data', 'meta_exists' ) )
+		              ->setMethods( array( 'get_type', 'get_total', 'get_subtotal', 'set_subtotal', 'set_total', 'save', 'get_quantity', 'get_product', 'get_product_id', 'get_variation_id', 'update_meta_data', 'meta_exists' ) )
 		              ->getMock();
 
 		$items = array( $item );
@@ -612,6 +617,8 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$item->method( 'meta_exists' )->willReturn( false );
 		$item->method( 'get_type' )->willReturn( 'line_item' );
 		$item->method( 'get_quantity' )->willReturn( 1 );
+		$item->method( 'get_total' )->willReturn( $original_price );
+		$item->method( 'get_subtotal' )->willReturn( $original_price );
 		$item->method( 'get_product' )->willReturn( $product_obj );
 		$item->method( 'get_product_id' )->willReturn( $product_id );
 		$item->method( 'get_variation_id' )->willReturn( 0 );
