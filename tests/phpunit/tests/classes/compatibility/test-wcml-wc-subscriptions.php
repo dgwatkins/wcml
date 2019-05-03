@@ -428,4 +428,55 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 		$this->assertSame( array( 'variable-subscription', 'subscription_variation' ), $filtered_types );
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_should_update_subscription_custom_prices_values() {
+
+		WP_Mock::passthruFunction( 'wc_format_decimal' );
+
+		$code = 'USD';
+		$sing_up_fee = 100;
+
+		$_POST[ '_custom_subscription_sign_up_fee' ][ $code ] = $sing_up_fee;
+
+		$expected_prices = array(
+			'_subscription_sign_up_fee' => $sing_up_fee
+		);
+
+		$subject = $this->get_subject();
+
+		$filtered_prices = $subject->update_custom_prices_values( array(), $code );
+
+		$this->assertSame( $expected_prices, $filtered_prices );
+
+		unset( $_POST[ '_custom_subscription_sign_up_fee' ] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_update_variation_subscription_custom_prices_values() {
+
+		WP_Mock::passthruFunction( 'wc_format_decimal' );
+
+		$code = 'USD';
+		$variation_id = 10;
+		$sing_up_fee = 100;
+
+		$_POST[ '_custom_variation_subscription_sign_up_fee' ][ $code ][ $variation_id ] = $sing_up_fee;
+
+		$expected_prices = array(
+			'_subscription_sign_up_fee' => $sing_up_fee
+		);
+
+		$subject = $this->get_subject();
+
+		$filtered_prices = $subject->update_custom_prices_values( array(), $code, $variation_id );
+
+		$this->assertSame( $expected_prices, $filtered_prices );
+
+		unset( $_POST[ '_custom_variation_subscription_sign_up_fee' ] );
+	}
+
 }
