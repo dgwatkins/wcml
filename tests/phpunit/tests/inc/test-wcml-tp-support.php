@@ -31,6 +31,10 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 			->setMethods( array( 'encode_field_data' ) )
 			->getMock();
 
+		$base = 'base64';
+		$this->tp->method( 'encode_field_data' )->willReturnCallback( function ( $value, $base ) {
+			return $value;
+		});
 
 		$this->wpdb = $this->stubs->wpdb();
 	}
@@ -97,11 +101,6 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 
 
 		$this->woocommerce_wpml->attributes->method( 'is_a_taxonomy' )->willReturn( false );
-
-		$base = 'base64';
-		$this->tp->method( 'encode_field_data' )->willReturnCallback( function ( $value, $base ) {
-			return $value;
-		});
 
 		$subject = $this->get_subject();
 		$translation_package = $subject->append_custom_attributes_to_translation_package( $package, $post );
@@ -212,6 +211,66 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 		$subject->save_custom_attribute_translations( $product_id, $data, $job );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_append_variation_descriptions_translation_package(){
+
+		$package = array();
+		$post = new stdClass();
+		$post->ID = 1;
+		$post->post_type = 'product';
+		$variation_description = rand_str();
+
+		$product_object = $this->getMockBuilder( 'WC_Product' )
+		                       ->disableOriginalConstructor()
+		                       ->setMethods( array( 'get_type' ) )
+		                       ->getMock();
+
+		$product_object->method( 'get_type' )->willReturn( 'variable' );
+
+		\WP_Mock::wpFunction( 'wc_get_product', array(
+			'args' => array( $post->ID ),
+			'return' => $product_object
+		) );
+
+		$variation = new stdClass();
+		$variation->ID = 101;
+
+		$available_variations = array(
+			$variation
+		);
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $variation->ID, '_variation_description', true ),
+			'return' => $variation_description
+		) );
+
+		$sync_variations_data = $this->getMockBuilder( 'WCML_Synchronize_Variations_Data' )
+		                             ->disableOriginalConstructor()
+		                             ->setMethods( array( 'get_product_variations' ) )
+		                             ->getMock();
+		$sync_variations_data->method( 'get_product_variations' )->with( $post->ID )->willReturn( $available_variations );
+
+		$this->woocommerce_wpml->sync_variations_data = $sync_variations_data;
+
+		$expected_package = array(
+			'contents' => array(
+				'wc_variation_description:' . $variation->ID =>
+					array(
+						'translate' => 1,
+						'data'      => $variation_description,
+						'format'    => 'base64'
+					),
+			)
+		);
+
+		$subject = $this->get_subject();
+		$filtered_package = $subject->append_variation_descriptions_translation_package( $package, $post );
+
+		$this->assertEquals( $expected_package, $filtered_package );
 	}
 
 }
