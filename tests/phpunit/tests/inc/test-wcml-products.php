@@ -229,7 +229,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$product = $this->getMockBuilder( 'WC_Product' )
 		                ->disableOriginalConstructor()
 		                ->setMethods( array(
-			                'get_id', 'is_downloadable', 'get_available_variations'
+			                'get_id', 'is_downloadable',
 		                ) )
 		                ->getMock();
 
@@ -242,14 +242,46 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'return' => true
 		) );
 
+		$variation = new stdClass();
+		$variation->ID = 101;
+
 		$available_variations = array(
-			array(
-				'variation_id' => rand_str(),
-				'is_downloadable' => true
-			)
+			$variation
 		);
 
-		$product->method( 'get_available_variations' )->willReturn( $available_variations );
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $variation->ID, '_downloadable', true ),
+			'return' => 'yes'
+		) );
+
+		\WP_Mock::userFunction( 'wp_list_pluck', array(
+			'args'   => array( $available_variations, 'ID' ),
+			'return' => array( $variation->ID )
+		) );
+
+		\WP_Mock::userFunction( 'wpml_prepare_in', array(
+			'args'   => array( array( $variation->ID ), '%d' ),
+			'return' => $variation->ID
+		) );
+
+		$sql          = 'SELECT count(*) FROM ' . $this->wpdb->prefix . 'postmeta WHERE post_id IN (' . $variation->ID . ') AND meta_key = %s AND meta_value = %s ';
+		$prepared_sql = 'SELECT count(*) FROM ' . $this->wpdb->prefix . 'postmeta WHERE post_id IN (' . $variation->ID . ') AND meta_key = \'_downloadable\' AND meta_value = \'yes\' ';
+
+		$this->wpdb->method( 'prepare' )
+		           ->with( $sql, '_downloadable', 'yes' )
+		           ->willReturn( $prepared_sql );
+
+		$this->wpdb->method( 'get_var' )
+		           ->with( $prepared_sql )
+		           ->willReturn( '1' );
+
+		$sync_variations_data = $this->getMockBuilder( 'WCML_Synchronize_Variations_Data' )
+		                 ->disableOriginalConstructor()
+		                 ->setMethods( array( 'get_product_variations' ) )
+		                 ->getMock();
+		$sync_variations_data->method( 'get_product_variations' )->with( $product_id )->willReturn( $available_variations );
+
+		$this->woocommerce_wpml->sync_variations_data = $sync_variations_data;
 
 		$subject = $this->get_subject();
 

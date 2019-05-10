@@ -131,23 +131,16 @@ class WCML_Products{
 
     public function is_downloadable_product( $product ) {
 
-        $cache_key   = 'is_downloadable_product_'.$product->get_id();
+	    $product_id = $product->get_id();
+	    $cache_key  = 'is_downloadable_product_' . $product_id;
 
         $found           = false;
         $is_downloadable = $this->wpml_cache->get( $cache_key, $found );
         if ( ! $found ) {
             if ( $product->is_downloadable() ) {
                 $is_downloadable = true;
-            } elseif ( $this->is_variable_product( $product->get_id() ) ) {
-                $variations = $product->get_available_variations();
-                if ( ! empty( $variations ) ) {
-                    foreach ( $variations as $variation ) {
-                        if ( $variation['is_downloadable'] ) {
-                            $is_downloadable = true;
-                            break;
-                        }
-                    }
-                }
+            } elseif ( $this->is_variable_product( $product_id ) ) {
+	            $is_downloadable = $this->is_downloadable_variations( $this->woocommerce_wpml->sync_variations_data->get_product_variations( $product_id ) );
             }
             $this->wpml_cache->set( $cache_key, $is_downloadable );
         }
@@ -155,6 +148,17 @@ class WCML_Products{
         return $is_downloadable;
 
     }
+
+	private function is_downloadable_variations( $variations ) {
+		if ( $variations && is_array( $variations ) ) {
+			$variation_ids = wp_list_pluck( $variations, 'ID' );
+			$sql           = 'SELECT count(*) FROM ' . $this->wpdb->prefix . 'postmeta WHERE post_id IN (' . wpml_prepare_in( $variation_ids, '%d' ) . ') AND meta_key = %s AND meta_value = %s ';
+
+			return (bool) $this->wpdb->get_var( $this->wpdb->prepare( $sql, '_downloadable', 'yes' ) );
+		}
+
+		return false;
+	}
 
     public function is_grouped_product($product_id){
         $get_variation_term_taxonomy_id = $this->wpdb->get_var( "SELECT tt.term_taxonomy_id FROM {$this->wpdb->terms} AS t LEFT JOIN {$this->wpdb->term_taxonomy} AS tt ON t.term_id = tt.term_id WHERE t.name = 'grouped'" );
