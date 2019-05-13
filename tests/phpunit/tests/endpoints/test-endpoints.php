@@ -17,6 +17,7 @@ class Test_Endpoints extends OTGS_TestCase {
 
 		$this->current_language      = 'en';
 		$this->my_account_page_title = 'my-account';
+		$this->shop_base             = '';
 
 		if ( ! defined( 'WCML_MULTI_CURRENCIES_DISABLED' ) ) {
 			define( 'WCML_MULTI_CURRENCIES_DISABLED', false );
@@ -45,24 +46,21 @@ class Test_Endpoints extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider shop_base_dp
 	 */
-	function it_adds_blacklisted_endpoints() {
+	function it_adds_blacklisted_endpoints( $shop_base ) {
+		$this->shop_base = $shop_base;
+
 		$expected = array();
 		foreach ( $this->endpoints_translations as $code => $translated_query_vars ) {
-			if ( $code !== 'en' ) {
-				$expected[] = $this->my_account_page_title . '-' . $code;
-				$expected[] = '/^' . $this->my_account_page_title . '-' . $code . '/';
-			} else {
-				$expected[] = $this->my_account_page_title;
-				$expected[] = '/^' . $this->my_account_page_title . '/';
-			}
+			$expected = array_merge( $expected, $this->get_expected( $code ) );
 
 			/** @var array $translated_query_vars */
 			foreach ( $translated_query_vars as $key => $endpoint ) {
 				if ( $code !== 'en' ) {
-					$expected[] = $this->my_account_page_title . '-' . $code . '/' . $endpoint;
+					$expected[] = $this->shop_base . $this->my_account_page_title . '-' . $code . '/' . $endpoint;
 				} else {
-					$expected[] = $this->my_account_page_title . '/' . $endpoint;
+					$expected[] = $this->shop_base . $this->my_account_page_title . '/' . $endpoint;
 				}
 			}
 		}
@@ -71,8 +69,8 @@ class Test_Endpoints extends OTGS_TestCase {
 
 		$that = $this;
 
-		foreach ( $this->query_vars as $key => $value ){
-			foreach( $this->active_languages as $language => $lang_data ){
+		foreach ( $this->query_vars as $key => $value ) {
+			foreach ( $this->active_languages as $language => $lang_data ) {
 				\WP_Mock::onFilter( 'wpml_get_endpoint_translation' )->with( $key, $value, $language )->reply( $this->get_endpoint_translation( $key, $language ) );
 			}
 		}
@@ -84,20 +82,16 @@ class Test_Endpoints extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider shop_base_dp
 	 */
-	function it_adds_no_blacklisted_endpoints() {
+	function it_adds_no_blacklisted_endpoints( $shop_base ) {
+		$this->shop_base = $shop_base;
 
 		$this->query_vars = array();
 
 		$expected = array();
 		foreach ( $this->endpoints_translations as $code => $translated_query_vars ) {
-			if ( $code !== 'en' ) {
-				$expected[] = $this->my_account_page_title . '-' . $code;
-				$expected[] = '/^' . $this->my_account_page_title . '-' . $code . '/';
-			} else {
-				$expected[] = $this->my_account_page_title;
-				$expected[] = '/^' . $this->my_account_page_title . '/';
-			}
+			$expected = array_merge( $expected, $this->get_expected( $code ) );
 		}
 
 		$subject = $this->get_subject();
@@ -109,20 +103,16 @@ class Test_Endpoints extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider shop_base_dp
 	 */
-	function it_adds_no_blacklisted_endpoints_for_display_pages_as_translated() {
+	function it_adds_no_blacklisted_endpoints_for_display_pages_as_translated( $shop_base ) {
+		$this->shop_base = $shop_base;
 
 		$this->query_vars = array();
 
 		$expected = array();
 		foreach ( $this->endpoints_translations as $code => $translated_query_vars ) {
-			if ( $code !== 'en' ) {
-				$expected[] = $this->my_account_page_title . '-' . $code;
-				$expected[] = '/^' . $this->my_account_page_title . '-' . $code . '/';
-			} else {
-				$expected[] = $this->my_account_page_title;
-				$expected[] = '/^' . $this->my_account_page_title . '/';
-			}
+			$expected = array_merge( $expected, $this->get_expected( $code ) );
 		}
 
 		$subject = $this->get_subject( null, $this->get_sitepress( true ) );
@@ -144,7 +134,6 @@ class Test_Endpoints extends OTGS_TestCase {
 		$value                   = rand_str();
 		$permalink               = rand_str();
 		$translated_endpoint_url = rand_str();
-		$wc_account_page_url     = rand_str();
 
 
 		$sitepress = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->setMethods(
@@ -250,22 +239,19 @@ class Test_Endpoints extends OTGS_TestCase {
 			)
 		);
 
-		WP_Mock::wpFunction(
-			'get_post',
-			array(
-				'args'   => array( $woocommerce_my_account_page_id ),
+		WP_Mock::userFunction( 'get_page_uri',
+			[
+				'args'   => [ $woocommerce_my_account_page_id ],
 				'return' => function () use ( $that ) {
-					$my_account_page = $that->getMockBuilder( 'WP_Post' )->disableOriginalConstructor();
-					/** @noinspection PhpUndefinedFieldInspection */
-					$my_account_page->post_name = $that->my_account_page_title;
+					$uri = $that->shop_base . $that->my_account_page_title;
 					if ( $that->current_language !== 'en' ) {
 						/** @noinspection PhpUndefinedFieldInspection */
-						$my_account_page->post_name = $that->my_account_page_title . '-' . $that->current_language;
+						$uri = $that->shop_base . $that->my_account_page_title . '-' . $that->current_language;
 					}
 
-					return $my_account_page;
+					return $uri;
 				},
-			)
+			]
 		);
 	}
 
@@ -316,5 +302,24 @@ class Test_Endpoints extends OTGS_TestCase {
 			)
 		);
 		WP_Mock::wpFunction( 'wp_cache_set' );
+	}
+
+	public function shop_base_dp() {
+		return [
+			[ '' ],
+			[ 'shop/' ]
+		];
+	}
+
+	private function get_expected( $code ) {
+		if ( $code !== 'en' ) {
+			$expected[] = $this->shop_base . $this->my_account_page_title . '-' . $code;
+			$expected[] = '/^' . str_replace( '/', "\/", $this->shop_base . $this->my_account_page_title ) . '-' . $code . '/';
+		} else {
+			$expected[] = $this->shop_base . $this->my_account_page_title;
+			$expected[] = '/^' . str_replace( '/', "\/", $this->shop_base . $this->my_account_page_title ) . '/';
+		}
+
+		return $expected;
 	}
 }
