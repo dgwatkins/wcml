@@ -549,10 +549,11 @@ class WCML_Synchronize_Product_Data{
 
         if( is_null( $post_fields ) ){
             $post_fields = array();
-            if( isset( $_POST['data'] ) ){
-                $post_args = wp_parse_args( $_POST['data'] );
-                $post_fields = $post_args[ 'fields' ];
-            }
+	        if ( isset( $_POST['data'] ) ) {
+		        $job_data    = array();
+		        parse_str( $_POST['data'], $job_data );
+		        $post_fields = $job_data['fields'];
+	        }
         }
 
         $custom_filed_key = $is_variation && $original_product_id ? $custom_field.$original_product_id : $custom_field;
