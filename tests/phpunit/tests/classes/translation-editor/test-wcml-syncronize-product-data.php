@@ -332,10 +332,12 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 			md5( $custom_field . ':' . $second_mid ) => $second_mid_value,
 		);
 
-		$post_fields = array(
+		$post_fields = array( 'fields' => array(
 			$custom_field . ':' . $first_mid  => rand_str(),
 			$custom_field . ':' . $second_mid => rand_str()
-		);
+		) );
+
+		$_POST['data'] = http_build_query( $post_fields );
 
 		\WP_Mock::userFunction( 'update_meta', array(
 			'args'  => array( $first_mid, $custom_field, $first_mid_value ),
@@ -347,8 +349,9 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 			'times' => 1
 		) );
 
-		$subject->sync_custom_field_value( $custom_field, $translation_data, $translated_product_id, $post_fields );
+		$subject->sync_custom_field_value( $custom_field, $translation_data, $translated_product_id, null );
 
+		unset( $_POST['data'] );
 	}
 
 	/**

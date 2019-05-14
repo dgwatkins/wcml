@@ -70,9 +70,10 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 			md5( $custom_field . $variation->id ) => $translated_value
 		);
 		//configure POST data array of fields
-		$_POST['data'] = array(
-			'fields' => array(
-				$custom_field . $variation->id => $translated_value
+		$_POST['data'] = http_build_query( array(
+				'fields' => array(
+					$custom_field . $variation->id => $translated_value
+				)
 			)
 		);
 
@@ -80,7 +81,7 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		$translated_meta = get_post_meta( $es_variation->id, $custom_field );
 		$this->assertCount( count( $data ), $translated_meta );
 		$this->assertEquals( $translated_value, $translated_meta[0] );
-
+		unset( $_POST['data'] );
 	}
 
 	public function test_icl_connect_translations_action(){
