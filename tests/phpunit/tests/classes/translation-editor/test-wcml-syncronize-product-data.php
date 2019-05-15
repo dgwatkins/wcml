@@ -87,7 +87,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 	 * @test
 	 */
 	public function it_adds_admin_hooks(){
-		\WP_Mock::wpFunction( 'is_admin', array(
+		\WP_Mock::userFunction( 'is_admin', array(
 			'return' => true,
 			'times'  => 2
 		) );
@@ -108,7 +108,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 	 * @test
 	 */
 	public function it_adds_admin_and_front_hooks(){
-		\WP_Mock::wpFunction( 'is_admin', array(
+		\WP_Mock::userFunction( 'is_admin', array(
 			'return' => true,
 			'times'  => 2
 		) );
@@ -176,19 +176,19 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 		\WP_Mock::wpPassthruFunction('maybe_unserialize');
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
+		\WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $product_id, '_children', true ),
 			'return' => array( $original_child )
 		));
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 			'args'   => array( $original_child ),
 			'return' => 'product'
 		));
 
 		\WP_Mock::onFilter( 'translate_object_id' )->with( $original_child, 'product', false, $language )->reply( $translated_child );
 
-		\WP_Mock::wpFunction( 'update_post_meta', array(
+		\WP_Mock::userFunction( 'update_post_meta', array(
 			'args'   => array( $translated_product_id, '_children', array( $translated_child ) ),
 			'return' => true,
 			'times'  => 1
@@ -235,12 +235,12 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		$product_object->method( 'is_featured' )->willReturn( true );
 		$product_object->method( 'get_stock_status' )->willReturn( 'outofstock' );
 
-		\WP_Mock::wpFunction( 'wc_get_product', array(
+		\WP_Mock::userFunction( 'wc_get_product', array(
 			'args' => array( $product_id ),
 			'return' => $product_object
 		) );
 
-		\WP_Mock::wpFunction( 'wp_set_post_terms', array(
+		\WP_Mock::userFunction( 'wp_set_post_terms', array(
 			'args' => array( $translations['fr'], array( 'featured', 'outofstock' ), 'product_visibility', false ),
 			'return' => true,
 			'times' => 1
@@ -337,12 +337,12 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 			$custom_field . ':' . $second_mid => rand_str()
 		);
 
-		\WP_Mock::wpFunction( 'update_meta', array(
+		\WP_Mock::userFunction( 'update_meta', array(
 			'args'  => array( $first_mid, $custom_field, $first_mid_value ),
 			'times' => 1
 		) );
 
-		\WP_Mock::wpFunction( 'update_meta', array(
+		\WP_Mock::userFunction( 'update_meta', array(
 			'args'  => array( $second_mid, $custom_field, $second_mid_value ),
 			'times' => 1
 		) );
@@ -375,12 +375,12 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 			$custom_field . ':new1' => rand_str()
 		);
 
-		\WP_Mock::wpFunction( 'add_post_meta', array(
+		\WP_Mock::userFunction( 'add_post_meta', array(
 			'args'  => array( $translated_product_id, $custom_field, $translated_value_for_first_field ),
 			'times' => 1
 		) );
 
-		\WP_Mock::wpFunction( 'add_post_meta', array(
+		\WP_Mock::userFunction( 'add_post_meta', array(
 			'args'  => array( $translated_product_id, $custom_field, $translated_value_for_second_field ),
 			'times' => 1
 		) );
@@ -413,12 +413,12 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 			$custom_field . $original_variation_id . ':new1' => rand_str()
 		);
 
-		\WP_Mock::wpFunction( 'add_post_meta', array(
+		\WP_Mock::userFunction( 'add_post_meta', array(
 			'args'  => array( $translated_variation_id, $custom_field, $translated_value_for_first_field ),
 			'times' => 1
 		) );
 
-		\WP_Mock::wpFunction( 'add_post_meta', array(
+		\WP_Mock::userFunction( 'add_post_meta', array(
 			'args'  => array( $translated_variation_id, $custom_field, $translated_value_for_second_field ),
 			'times' => 1
 		) );
@@ -458,18 +458,18 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		$wpml_post_translations->method( 'get_element_translations' )->willReturn( $translations );
 
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 			'args'  => array( $product_id ),
 			'return' => $post_type
 		) );
 
-		\WP_Mock::wpFunction( 'update_post_meta', array(
-			'args'  => array( $translations['en'], '_stock_status', $status ),
+		\WP_Mock::userFunction( 'wc_recount_after_stock_change', array(
+			'args'  => array( $translations['en'] ),
 			'times' => 1
 		) );
 
-		\WP_Mock::wpFunction( 'wc_recount_after_stock_change', array(
-			'args'  => array( $translations['en'] ),
+		\WP_Mock::userFunction( 'wc_update_product_stock_status', array(
+			'args'  => array( $translations['en'], $status ),
 			'times' => 1
 		) );
 
@@ -501,7 +501,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 		$woocommerce_wpml->products->method( 'is_original_product' )->with( $product_id )->willReturn( true );
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
+		\WP_Mock::userFunction( 'get_post_type', array(
 			'args'  => array( $product_id ),
 			'return' => $post_type
 		) );
@@ -524,15 +524,18 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 	public function it_should_sync_product_stock_for_translations(){
 
 		WP_Mock::passthruFunction( 'remove_action' );
+		WP_Mock::passthruFunction( 'delete_transient' );
 
 		$product_id = 1;
 		$qty = 5;
 		$product = $this->getMockBuilder( 'WC_Product' )
 		                       ->disableOriginalConstructor()
-		                       ->setMethods( array( 'get_id', 'get_stock_quantity' ) )
+		                       ->setMethods( array( 'get_id', 'get_stock_quantity', 'get_stock_managed_by_id', 'get_stock_status' ) )
 		                       ->getMock();
 		$product->method( 'get_id' )->willReturn( $product_id );
+		$product->method( 'get_stock_managed_by_id' )->willReturn( $product_id );
 		$product->method( 'get_stock_quantity' )->willReturn( $qty );
+		$product->method( 'get_stock_status' )->willReturn( 'instock' );
 
 		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
 		                               ->disableOriginalConstructor()
@@ -546,16 +549,20 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 		$product_object = $this->getMockBuilder( 'WC_Product' )
 		                       ->disableOriginalConstructor()
+		                       ->setMethods( array( 'get_id', 'get_stock_managed_by_id', 'is_type' ) )
 		                       ->getMock();
+		$product_object->method( 'get_id' )->willReturn( $translations['fr'] );
+		$product_object->method( 'get_stock_managed_by_id' )->willReturn( $translations['fr'] );
+		$product_object->method( 'is_type' )->with( 'variation' )->willReturn( false );
 
-		\WP_Mock::wpFunction( 'wc_get_product', array(
+		$wc_product_data_store = \Mockery::mock( 'overload:WC_Product_Data_Store_CPT' );
+		$wc_product_data_store->shouldReceive( 'update_product_stock' )->with( $translations['fr'], $qty, 'set' )->andReturn( true );
+
+		$wc_data_store = \Mockery::mock( 'overload:WC_Data_Store' );
+		$wc_data_store->shouldReceive( 'load' )->andReturn( $wc_product_data_store );
+
+		\WP_Mock::userFunction( 'wc_get_product', array(
 			'args' => array( $translations['fr'] ),
-			'times' => 1,
-			'return' => $product_object
-		) );
-
-		\WP_Mock::wpFunction( 'wc_update_product_stock', array(
-			'args' => array( $product_object, $qty ),
 			'times' => 1,
 			'return' => $product_object
 		) );
@@ -573,24 +580,31 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		WP_Mock::passthruFunction( 'remove_action' );
 
 		$product_id = 1;
+		$translated_product_id = 10;
+
 		$qty = 5;
 		$product = $this->getMockBuilder( 'WC_Product' )
 		                       ->disableOriginalConstructor()
-		                       ->setMethods( array( 'get_id', 'get_stock_quantity' ) )
+		                       ->setMethods( array( 'get_id', 'get_stock_quantity', 'get_stock_managed_by_id', 'get_stock_status' ) )
 		                       ->getMock();
 		$product->method( 'get_id' )->willReturn( $product_id );
+		$product->method( 'get_stock_managed_by_id' )->willReturn( $product_id );
 		$product->method( 'get_stock_quantity' )->willReturn( $qty );
+		$product->method( 'get_stock_status' )->willReturn( 'instock' );
 
 		$translated_product = $this->getMockBuilder( 'WC_Product' )
 		                       ->disableOriginalConstructor()
+		                       ->setMethods( array( 'get_id', 'get_stock_managed_by_id', 'is_type' ) )
 		                       ->getMock();
+		$translated_product->method( 'get_id' )->willReturn( $translated_product_id );
+		$translated_product->method( 'get_stock_managed_by_id' )->willReturn( $translated_product_id );
+		$translated_product->method( 'is_type' )->with( 'variation' )->willReturn( false );
 
+		$wc_product_data_store = \Mockery::mock( 'overload:WC_Product_Data_Store_CPT' );
+		$wc_product_data_store->shouldReceive( 'update_product_stock' )->with( $translated_product_id, $qty, 'set' )->andReturn( true );
 
-		\WP_Mock::wpFunction( 'wc_update_product_stock', array(
-			'args' => array( $translated_product, $qty ),
-			'times' => 1,
-			'return' => $translated_product
-		) );
+		$wc_data_store = \Mockery::mock( 'overload:WC_Data_Store' );
+		$wc_data_store->shouldReceive( 'load' )->andReturn( $wc_product_data_store );
 
 		$subject = $this->get_subject();
 
