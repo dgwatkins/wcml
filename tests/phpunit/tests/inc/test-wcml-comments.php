@@ -66,7 +66,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_average_rating' ), 10, 4 );
 		\WP_Mock::expectFilterAdded( 'comments_clauses', array( $subject, 'comments_clauses' ), 10, 2 );
-		\WP_Mock::expectFilterAdded( 'woocommerce_product_review_list_args', array( $subject, 'comments_link' ) );
+		\WP_Mock::expectActionAdded( 'comment_form_before', array( $subject, 'comments_link' ) );
 		\WP_Mock::expectFilterAdded( 'wpml_is_comment_query_filtered', array( $subject, 'is_comment_query_filtered' ), 10, 2 );
 
 		$subject->add_hooks();
@@ -308,6 +308,10 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 		$subject = $this->get_subject( false, $sitepress );
 
+		\WP_Mock::userFunction( 'is_product', array(
+			'return' => true
+		));
+
 		\WP_Mock::userFunction( 'is_ssl', array(
 			'times'   => 2,
 			'return' => false
@@ -327,6 +331,19 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$this->comments_link_to_current_language( $subject, $product_id, $url, $current_language, $language_details );
 		$this->comments_link_to_all_languages( $subject, $product_id, $url, $current_language );
 
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_comments_link_for_non_product(){
+
+		\WP_Mock::userFunction( 'is_product', array(
+			'return' => false
+		));
+
+		$subject = $this->get_subject();
+		$subject->comments_link();
 	}
 
 	private function comments_link_to_current_language( $subject, $product_id, $url, $current_language, $language_details ){
