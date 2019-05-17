@@ -379,11 +379,12 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider api_method_type
 	 * @expectedException Exception
 	 * @expectedExceptionCode 422
 	 * @expectedExceptionMessage Invalid language parameter
 	 */
-	function set_product_language_wrong_lang() {
+	function set_product_language_wrong_lang( $api_method_type ) {
 
 		$subject = $this->get_subject();
 
@@ -392,7 +393,7 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		                 ->setMethods( array( 'get_params', 'get_method' ) )
 		                 ->getMock();
 		$request1->method( 'get_params' )->willReturn( array( 'lang' => 'ru' ) );
-		$request1->method( 'get_method' )->willReturn( 'POST' );
+		$request1->method( 'get_method' )->willReturn( $api_method_type );
 
 		$this->sitepress = $this->getMockBuilder( 'SitePress' )
 		                        ->disableOriginalConstructor()
@@ -416,11 +417,12 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider api_method_type
 	 * @expectedException Exception
 	 * @expectedExceptionCode 422
 	 * @expectedExceptionMessage Product not found:
 	 */
-	function set_product_language_no_source_product() { // with translation_of
+	function set_product_language_no_source_product( $api_method_type ) { // with translation_of
 
 		$subject = $this->get_subject();
 
@@ -432,7 +434,7 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 			'lang'           => 'ro',
 			'translation_of' => rand( 1, 100 )
 		) );
-		$request1->method( 'get_method' )->willReturn( 'POST' );
+		$request1->method( 'get_method' )->willReturn( $api_method_type );
 
 		$this->sitepress = $this->getMockBuilder( 'SitePress' )
 		                        ->disableOriginalConstructor()
@@ -456,8 +458,9 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider api_method_type
 	 */
-	function set_product_language_with_trid() {
+	function set_product_language_with_trid( $api_method_type ) {
 
 		$subject = $this->get_subject();
 
@@ -469,7 +472,7 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 			'lang'           => 'ro',
 			'translation_of' => rand( 1, 100 )
 		) );
-		$request1->method( 'get_method' )->willReturn( 'POST' );
+		$request1->method( 'get_method' )->willReturn( $api_method_type );
 
 		$this->expected_trid = null;
 		$this->actual_trid   = rand( 1, 100 );
@@ -542,8 +545,9 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider api_method_type
 	 */
-	function set_product_language_new_product() { // no translation_of
+	function set_product_language_new_product( $api_method_type ) { // no translation_of
 
 		$subject = $this->get_subject();
 
@@ -554,7 +558,7 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		$request1->method( 'get_params' )->willReturn( array(
 			'lang' => 'ro'
 		) );
-		$request1->method( 'get_method' )->willReturn( 'POST' );
+		$request1->method( 'get_method' )->willReturn( $api_method_type );
 
 		$this->expected_trid = null;
 		$this->actual_trid   = null;
@@ -595,7 +599,7 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	function do_no_set_poduct_language_if_method_not_post(){
+	function do_no_set_poduct_language_if_method_not_post_or_put(){
 
 		$subject = $this->get_subject();
 
@@ -606,13 +610,20 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 		$request1->method( 'get_params' )->willReturn( array(
 			'lang' => 'en'
 		) );
-		$request1->method( 'get_method' )->willReturn( 'PUT' );
+		$request1->method( 'get_method' )->willReturn( 'GET' );
 
 
 		$post = new stdClass();
 		$post->ID = rand(1,100);
 
 		$subject->set_product_language( $post, $request1 );
+	}
+
+	function api_method_type() {
+		return array(
+			'Use POST' => array( 'POST' ),
+			'User PUT' => array( 'PUT' ),
+		);
 	}
 
 	/**
