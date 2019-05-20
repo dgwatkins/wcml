@@ -192,7 +192,6 @@ Release Notes:
         - ./vendor/otgs/build-tools-ci/otgs-ci --releasenotes
     only:
         - tags
-    except:
 
 S3:
     stage: deploy
