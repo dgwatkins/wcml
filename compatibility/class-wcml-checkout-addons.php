@@ -7,7 +7,7 @@
 class WCML_Checkout_Addons {
 	private static $is_default_language = null;
 
-	public function __construct() {
+	public function add_hooks() {
 		add_filter( 'option_wc_checkout_add_ons', array( $this, 'option_wc_checkout_add_ons' ), 10, 2 );
 	}
 
@@ -59,9 +59,6 @@ class WCML_Checkout_Addons {
 	}
 
 	private function is_default_language() {
-		if ( self::$is_default_language === null ) {
-			self::$is_default_language = apply_filters( 'wpml_current_language', null ) === apply_filters( 'wpml_default_language', false );
-		}
-		return self::$is_default_language;
+		return apply_filters( 'wpml_current_language', null ) === apply_filters( 'wpml_default_language', null );
 	}
 }

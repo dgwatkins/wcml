@@ -156,6 +156,7 @@ class WCML_Compatibility {
 		// woocommerce checkout addons
 		if ( class_exists( 'WC_Checkout_Add_Ons_Loader' ) ) {
 			$this->wc_checkout_addons = new WCML_Checkout_Addons();
+			$this->wc_checkout_addons->add_hooks();
 		}
 
 		if ( class_exists( 'WC_Mix_and_Match' ) ) {
