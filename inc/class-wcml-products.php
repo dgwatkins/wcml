@@ -45,7 +45,7 @@ class WCML_Products{
 			add_filter( 'post_row_actions', array( $this, 'filter_product_actions' ), 10, 2 );
 
 			add_action( 'wp_ajax_wpml_switch_post_language', array( $this, 'switch_product_variations_language' ), 9 );
-
+			add_filter( 'woocommerce_product_type_query', array( $this, 'override_product_type_query' ), 10, 2 );
 		} else {
 			add_filter( 'woocommerce_json_search_found_products', array( $this, 'filter_found_products_by_language' ) );
 			add_filter( 'woocommerce_related_products_args', array( $this, 'filter_related_products_args' ) );
@@ -747,4 +747,24 @@ class WCML_Products{
 	    return $this->wpdb->get_var( $this->wpdb->prepare( "SELECT meta_value FROM {$this->wpdb->postmeta} WHERE `meta_key` = '_price' AND post_id = %d ", $product_id ) );
     }
 
+	/**
+	 * return not cached value for product
+	 *
+	 * @param bool $product_type
+	 * @param int $product_id
+	 *
+	 * @return bool|string
+	 */
+	public function override_product_type_query( $product_type, $product_id ) {
+
+		if ( 'product' === get_post_type( $product_id ) ) {
+			$product_type = 'simple';
+			$terms        = get_the_terms( $product_id, 'product_type' );
+			if ( $terms ) {
+				$product_type = sanitize_title( current( $terms )->name );
+			}
+		}
+
+		return $product_type;
+	}
 }
