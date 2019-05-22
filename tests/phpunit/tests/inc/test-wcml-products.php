@@ -147,6 +147,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_json_search_found_products', array( $subject, 'woocommerce_json_search_found_products' ) );
 		\WP_Mock::expectFilterAdded( 'post_row_actions', array( $subject, 'filter_product_actions' ), 10, 2 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_type_query', array( $subject, 'override_product_type_query' ), 10, 2 );
 		\WP_Mock::expectActionAdded( 'wp_ajax_wpml_switch_post_language', array( $subject, 'switch_product_variations_language' ), 9 );
 
 		$subject->add_hooks();
@@ -652,6 +653,54 @@ class Test_WCML_Products extends OTGS_TestCase {
 		WP_Mock::userFunction( 'wcml_price_custom_fields', array( 'times' => 0 ) );
 
 		$subject->filter_product_data( array(), $product_id, $meta_key );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_override_product_type_query_for_product() {
+		\WP_Mock::wpPassthruFunction( 'sanitize_title' );
+
+		$product_id = 128;
+		$product_type = false;
+
+		$term = new stdClass();
+		$term->name = 'grouped';
+		$terms = array( $term );
+
+		$subject = $this->get_subject();
+
+		WP_Mock::userFunction( 'get_post_type', array(
+			'args' => array( $product_id ),
+			'return' => 'product',
+			'times' => 1
+		) );
+
+		WP_Mock::userFunction( 'get_the_terms', array(
+			'args' => array( $product_id, 'product_type' ),
+			'return' => $terms,
+			'times' => 1
+		) );
+
+		$this->assertEquals( $term->name, $subject->override_product_type_query( $product_type, $product_id ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_override_product_type_query_for_variation() {
+		$product_id = 129;
+		$product_type = false;
+
+		$subject = $this->get_subject();
+
+		WP_Mock::userFunction( 'get_post_type', array(
+			'args' => array( $product_id ),
+			'return' => 'product_variation',
+			'times' => 1
+		) );
+
+		$this->assertFalse( $subject->override_product_type_query( $product_type, $product_id ) );
 	}
 
 
