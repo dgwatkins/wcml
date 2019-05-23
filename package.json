@@ -1,5 +1,5 @@
 {
-    "name": "wpml-gf",
+    "name": "woocommerce-multilingual",
     "license": "MIT",
     "devDependencies": {
         "commander": "~2.19",
