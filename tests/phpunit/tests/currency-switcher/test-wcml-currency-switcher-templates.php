@@ -306,27 +306,27 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 
 
 		\WP_Mock::userFunction( 'get_template_directory', array(
-			'returns' => './',
+			'return' => './',
 		));
 
 		\WP_Mock::userFunction( 'get_stylesheet_directory', array(
-			'returns' => './',
+			'return' => './',
 		));
 
 		\WP_Mock::userFunction( 'wp_upload_dir', array(
 			'args'   => array( null, false ),
-			'returns' => './',
+			'return' => array( 'basedir' => './' ),
 		));
 
 		\WP_Mock::userFunction( 'get_option', array(
 			'args'   => array( 'wcml_currency_switcher_template_objects' ),
 			'times' => 1,
-			'returns' => false
+			'return' => false
 		));
 
 		\WP_Mock::userFunction( 'update_option', array(
 			'times'   => 1,
-			'returns' => true
+			'return' => true
 		));
 
 		\WP_Mock::passthruFunction( 'sanitize_title_with_dashes' );
