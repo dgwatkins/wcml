@@ -918,6 +918,10 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 	public function requires_translation_complete_for_each_field() {
 		return false;
 	}
+
+	public function display_hide_completed_switcher() {
+		return false;
+	}
 	
 	public function is_hide_empty_fields() {
 		return false;
