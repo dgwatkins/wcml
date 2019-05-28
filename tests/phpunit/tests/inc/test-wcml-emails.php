@@ -18,7 +18,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		$this->sitepress = $this->getMockBuilder('SitePress')
 			->disableOriginalConstructor()
-			->setMethods( array( 'get_wp_api', 'get_current_language' ) )
+			->setMethods( array( 'get_wp_api', 'get_current_language', 'switch_lang', 'get_locale', 'get_user_admin_language', 'get_default_language' ) )
 			->getMock();
 
 
@@ -408,5 +408,120 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			array( 'WC_Email_Customer_On_Hold_Order', 'email_heading_on_hold' ),
 			array( 'WC_Email_Customer_Processing_Order', 'email_heading_processing' ),
 		);
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_should_get_email_language_from_admin_user_settings_for_new_order_admin_email(){
+
+		$order_id = 101;
+		$recipient = 'admin@test.com';
+
+		$user = new stdClass();
+		$user->ID = 1;
+		$user_language = 'en';
+
+		WP_Mock::userFunction( 'get_user_by', array(
+			'args' => array( 'email', $recipient ),
+			'return' => $user
+		));
+
+		WP_Mock::userFunction( 'get_current_user_id', array(
+			'return' => $user->ID
+		));
+
+		$mailer =  $this->getMockBuilder('WC_Emails')
+		                ->disableOriginalConstructor()
+		                ->getMock();
+
+		$wc_mailer_new_order = $this->getMockBuilder( 'WC_Email_New_Order' )
+		                            ->disableOriginalConstructor()
+		                            ->setMethods( array( 'trigger', 'get_recipient' ) )
+		                            ->getMock();
+		$wc_mailer_new_order->enabled = rand_str();
+
+		$wc_mailer_new_order->expects( $this->once() )
+		                    ->method( 'get_recipient' )
+		                    ->willReturn( $recipient );
+
+		$wc_mailer_new_order->expects( $this->once() )
+		                    ->method( 'trigger' )
+		                    ->with( $order_id )
+		                    ->willReturn( true );
+
+
+		$mailer->emails = array( 'WC_Email_New_Order' => $wc_mailer_new_order );
+
+		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
+
+		$this->sitepress->method( 'get_user_admin_language' )->with( $user->ID, true )->willReturn( $user_language );
+		$this->sitepress->expects( $this->once() )->method( 'switch_lang' )->with( $user_language );
+
+		\Mockery::mock( 'overload:WP_Locale' );
+
+		\WP_Mock::userFunction( 'unload_textdomain', array() );
+		\WP_Mock::userFunction( 'load_default_textdomain', array() );
+
+		$subject = $this->get_subject();
+
+		$subject->new_order_admin_email( $order_id );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_use_default_language_if_admin_user_not_exists_for_new_order_admin_email(){
+
+		$order_id = 102;
+		$recipient = 'test@test.com';
+
+		$default_language = 'en';
+
+		WP_Mock::userFunction( 'get_user_by', array(
+			'args' => array( 'email', $recipient ),
+			'return' => false
+		));
+
+		WP_Mock::userFunction( 'get_current_user_id', array(
+			'return' => 0
+		));
+
+		$mailer =  $this->getMockBuilder('WC_Emails')
+		                ->disableOriginalConstructor()
+		                ->getMock();
+
+		$wc_mailer_new_order = $this->getMockBuilder( 'WC_Email_New_Order' )
+		                            ->disableOriginalConstructor()
+		                            ->setMethods( array( 'trigger', 'get_recipient' ) )
+		                            ->getMock();
+		$wc_mailer_new_order->enabled = rand_str();
+
+		$wc_mailer_new_order->expects( $this->once() )
+		                    ->method( 'get_recipient' )
+		                    ->willReturn( $recipient );
+
+		$wc_mailer_new_order->expects( $this->once() )
+		                    ->method( 'trigger' )
+		                    ->with( $order_id )
+		                    ->willReturn( true );
+
+
+		$mailer->emails = array( 'WC_Email_New_Order' => $wc_mailer_new_order );
+
+		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
+
+		$this->sitepress->method( 'get_default_language' )->willReturn( $default_language );
+		$this->sitepress->expects( $this->once() )->method( 'switch_lang' )->with( $default_language );
+
+		\Mockery::mock( 'overload:WP_Locale' );
+
+		\WP_Mock::userFunction( 'unload_textdomain', array() );
+		\WP_Mock::userFunction( 'load_default_textdomain', array() );
+
+		$subject = $this->get_subject();
+
+		$subject->new_order_admin_email( $order_id );
 	}
 }
