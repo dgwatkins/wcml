@@ -143,7 +143,7 @@ class woocommerce_wpml {
 
 	    new WCML_Upgrade;
 
-        $this->compatibility        = new WCML_Compatibility( $sitepress, $this, $wpdb, new WPML_Element_Translation_Package );
+        $this->compatibility        = new WCML_Compatibility( $sitepress, $this, $wpdb, new WPML_Element_Translation_Package, $wpml_post_translations );
 
         $actions_that_need_mc = array(
                 'save-mc-options',

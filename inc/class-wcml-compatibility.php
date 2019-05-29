@@ -16,6 +16,10 @@ class WCML_Compatibility {
 	private $wpdb;
 	/** @var WPML_Element_Translation_Package */
 	private $tp;
+	/**
+	 * @var WPML_Element_Translation
+	 */
+	private $wpml_post_translations;
 
 	/**
 	 * WCML_Compatibility constructor.
@@ -25,11 +29,12 @@ class WCML_Compatibility {
 	 * @param wpdb $wpdb
 	 * @param WPML_Element_Translation_Package $tp
 	 */
-	function __construct( SitePress $sitepress, woocommerce_wpml $woocommerce_wpml, wpdb $wpdb, WPML_Element_Translation_Package $tp ) {
-		$this->sitepress        = $sitepress;
-		$this->woocommerce_wpml = $woocommerce_wpml;
-		$this->wpdb             = $wpdb;
-		$this->tp               = $tp;
+	function __construct( SitePress $sitepress, woocommerce_wpml $woocommerce_wpml, wpdb $wpdb, WPML_Element_Translation_Package $tp, WPML_Element_Translation $wpml_post_translations ) {
+		$this->sitepress              = $sitepress;
+		$this->woocommerce_wpml       = $woocommerce_wpml;
+		$this->wpdb                   = $wpdb;
+		$this->tp                     = $tp;
+		$this->wpml_post_translations = $wpml_post_translations;
 		$this->init();
 
 	}
@@ -125,6 +130,12 @@ class WCML_Compatibility {
 			if ( defined( 'WC_ACCOMMODATION_BOOKINGS_VERSION' ) ) {
 				$this->accomodation_bookings = new WCML_Accommodation_Bookings( $this->woocommerce_wpml );
 			}
+		}
+
+		// WOOBE WooCommerce Bulk Editor
+		if ( defined( 'WOOBE_PATH' ) ) {
+			$this->woobe = new WCML_Woobe( $this->sitepress, $this->wpml_post_translations );
+			$this->woobe->add_hooks();
 		}
 
 		// WooCommerce Checkout Field Editor
