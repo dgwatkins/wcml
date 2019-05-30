@@ -4,13 +4,15 @@
 
 __MACOSX
 
+.idea
 .sass-cache
 tags
 
-/embedded/
-/build/vendor/
-/tests/phpunit/vendor/
+embedded/
+build/vendor/
+tests/phpunit/vendor/
 vendor/**
+dist/**
 node_modules
 
 /build/dist
@@ -43,7 +45,8 @@ inc/sandbox.inc
 *.iml
 build.xml
 *.komodoproject
-*.idea
+yarn-error.log
+yarn.lock
 
 ### The following are created during the build project
 /sitepress-multilingual-cms.zip
@@ -73,14 +76,8 @@ build.xml
 
 !/tests/compatibility/run.sh
 
-!.babelrc
-!.browserslistrc
-!.eslintrc
-!package.json
-!postcss.config.json
-!webpack.config.js
-!yarn.lock
-
+!tests/js/vendor
 !.githooks/*.sh
 !.make/*.sh
 !Makefile
+!package-lock.json
