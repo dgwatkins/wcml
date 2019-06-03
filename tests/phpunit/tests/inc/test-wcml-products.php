@@ -18,43 +18,53 @@ class Test_WCML_Products extends OTGS_TestCase {
 	private $default_language = 'en';
 	private $cached_data = array();
 
-	public function setUp() {
-		parent::setUp();
+	private function get_woocommerce_wpml(){
+		return $this->getMockBuilder( 'woocommerce_wpml' )
+		            ->disableOriginalConstructor()
+		            ->getMock();
+	}
 
-		$that = $this;
+	private function get_sitepress() {
+		return $this->getMockBuilder( 'SitePress' )
+		            ->disableOriginalConstructor()
+		            ->getMock();
+	}
 
-		$this->sitepress = $this->getMockBuilder( 'SitePress' )
-		                        ->disableOriginalConstructor()
-		                        ->setMethods( array(
-			                        'get_current_language', 'get_wp_api', 'get_setting', 'convert_url'
-		                        ) )
-		                        ->getMock();
+	private function get_wpml_post_translations() {
+		return $this->getMockBuilder( 'WPML_Post_Translation' )
+		            ->disableOriginalConstructor()
+		            ->getMock();
+	}
 
-		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )
-		                     ->disableOriginalConstructor()
-		                     ->setMethods( array( 'constant', 'version_compare' ) )
-		                     ->getMock();
+	/**
+	 * @return WCML_Products
+	 */
+	private function get_subject( $woocommerce_wpml = false, $sitepress = false, $wpml_post_translations = false, $wpdb = false ){
 
-		$this->sitepress->method( 'get_wp_api' )->willReturn( $this->wp_api );
+		if( !$woocommerce_wpml ){
+			$woocommerce_wpml = $this->get_woocommerce_wpml();
+		}
+
+		if( !$sitepress ){
+			$sitepress = $this->get_sitepress();
+		}
 
 
-		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
-		                               ->disableOriginalConstructor()
-		                               ->getMock();
+		if( !$wpml_post_translations ){
+			$wpml_post_translations = $this->get_wpml_post_translations();
+		}
 
-		$this->wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
-		                                     ->disableOriginalConstructor()
-		                                     ->setMethods( array( 'get_original_element', 'get_source_lang_code' ) )
-		                                     ->getMock();
+		if( !$wpdb ){
+			$wpdb = $this->get_wpdb();
+		}
 
-		$this->wpdb = $this->get_wpdb();
-
-		$this->wpml_cache = $this->getMockBuilder( 'WPML_WP_Cache' )
+		$wpml_cache = $this->getMockBuilder( 'WPML_WP_Cache' )
 		                         ->disableOriginalConstructor()
 		                         ->setMethods( array( 'get', 'set' ) )
 		                         ->getMock();
 
-		$this->wpml_cache->method( 'get' )->willReturnCallback( function ( $key, $found ) use ( $that ) {
+		$that = $this;
+		$wpml_cache->method( 'get' )->willReturnCallback( function ( $key, $found ) use ( $that ) {
 			if ( isset( $that->cached_data[ $key ] ) ) {
 				$found = true;
 
@@ -65,19 +75,11 @@ class Test_WCML_Products extends OTGS_TestCase {
 			}
 		} );
 
-		$this->wpml_cache->method( 'set' )->willReturnCallback( function ( $key, $value ) use ( $that ) {
+		$wpml_cache->method( 'set' )->willReturnCallback( function ( $key, $value ) use ( $that ) {
 			$that->cached_data[ $key ] = $value;
 		} );
 
-	}
-
-	/**
-	 * @return WCML_Products
-	 */
-	private function get_subject(){
-		$subject = new WCML_Products( $this->woocommerce_wpml, $this->sitepress, $this->wpml_post_translations, $this->wpdb, $this->wpml_cache );
-
-		return $subject;
+		return new WCML_Products( $woocommerce_wpml, $sitepress, $wpml_post_translations, $wpdb, $wpml_cache );
 	}
 
 	/**
@@ -93,15 +95,26 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'times'  => 1
 		) );
 
-		$this->wp_api->method( 'constant' )
+		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->getMock();
+
+		$wp_api->method( 'constant' )
 		             ->with( 'WC_VERSION' )
 		             ->willReturn( $wc_version );
 
-		$this->wp_api->method( 'version_compare' )
+		$wp_api->method( 'version_compare' )
 		             ->with( $wc_version, '3.6.0', '>=' )
 		             ->willReturn( $version_compare_result );
 
-		$subject = $this->get_subject();
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_wp_api' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		$subject = $this->get_subject( false, $sitepress );
 
 		if( $version_compare_result ){
 			\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ), 10, 3 );
@@ -112,6 +125,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'woocommerce_shortcode_products_query', array( $subject, 'add_lang_to_shortcode_products_query' ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_file_download_path', array( $subject, 'filter_file_download_path' ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_related_posts_query', array( $subject, 'filter_related_products_query' ) );
+		\WP_Mock::expectFilterAdded( 'woocommerce_json_search_found_products', array( $subject, 'filter_wc_searched_products_on_front' ) );
 
 		$subject->add_hooks();
 	}
@@ -129,15 +143,26 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'times'  => 1
 		) );
 
-		$this->wp_api->method( 'constant' )
-		             ->with( 'WC_VERSION' )
-		             ->willReturn( $wc_version );
+		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->getMock();
 
-		$this->wp_api->method( 'version_compare' )
-		             ->with( $wc_version, '3.6.0', '>=' )
-		             ->willReturn( $version_compare_result );
+		$wp_api->method( 'constant' )
+		       ->with( 'WC_VERSION' )
+		       ->willReturn( $wc_version );
 
-		$subject = $this->get_subject();
+		$wp_api->method( 'version_compare' )
+		       ->with( $wc_version, '3.6.0', '>=' )
+		       ->willReturn( $version_compare_result );
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_wp_api' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		$subject = $this->get_subject( false, $sitepress );
 
 		if( $version_compare_result ){
 			\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ), 10, 3 );
@@ -145,7 +170,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 			\WP_Mock::expectFilterNotAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ) );
 		}
 
-		\WP_Mock::expectFilterAdded( 'woocommerce_json_search_found_products', array( $subject, 'woocommerce_json_search_found_products' ) );
+		\WP_Mock::expectFilterAdded( 'woocommerce_json_search_found_products', array( $subject, 'filter_wc_searched_products_on_admin' ) );
 		\WP_Mock::expectFilterAdded( 'post_row_actions', array( $subject, 'filter_product_actions' ), 10, 2 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_type_query', array( $subject, 'override_product_type_query' ), 10, 2 );
 		\WP_Mock::expectActionAdded( 'wp_ajax_wpml_switch_post_language', array( $subject, 'switch_product_variations_language' ), 9 );
@@ -165,10 +190,14 @@ class Test_WCML_Products extends OTGS_TestCase {
 	 */
 	public function add_lang_to_shortcode_products_query(){
 
-		$this->sitepress->method( 'get_current_language' )
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_current_language' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_current_language' )
 			->wilLReturn( $this->default_language );
 
-		$subject = $this->get_subject();
+		$subject = $this->get_subject( false, $sitepress );
 
 		$query_args = array();
 
@@ -186,9 +215,14 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$product_id = rand( 1, 100 );
 		$original_product_id = rand( 1, 100 );
 
-		$this->wpml_post_translations->method( 'get_original_element' )->with( $product_id )->wilLReturn( $original_product_id );
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
+		                               ->disableOriginalConstructor()
+		                               ->setMethods( array( 'get_original_element' ) )
+		                               ->getMock();
 
-		$subject = $this->get_subject();
+		$wpml_post_translations->method( 'get_original_element' )->with( $product_id )->willReturn( $original_product_id );
+
+		$subject = $this->get_subject( false, false, $wpml_post_translations );
 		$subject_original_product_id = $subject->get_original_product_id( $product_id );
 
 		$this->assertEquals( $original_product_id, $subject_original_product_id );
@@ -265,14 +299,15 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'return' => $variation->ID
 		) );
 
-		$sql          = 'SELECT count(*) FROM ' . $this->wpdb->prefix . 'postmeta WHERE post_id IN (' . $variation->ID . ') AND meta_key = %s AND meta_value = %s ';
-		$prepared_sql = 'SELECT count(*) FROM ' . $this->wpdb->prefix . 'postmeta WHERE post_id IN (' . $variation->ID . ') AND meta_key = \'_downloadable\' AND meta_value = \'yes\' ';
+		$wpdb = $this->get_wpdb();
+		$sql          = 'SELECT count(*) FROM ' . $wpdb->prefix . 'postmeta WHERE post_id IN (' . $variation->ID . ') AND meta_key = %s AND meta_value = %s ';
+		$prepared_sql = 'SELECT count(*) FROM ' . $wpdb->prefix . 'postmeta WHERE post_id IN (' . $variation->ID . ') AND meta_key = \'_downloadable\' AND meta_value = \'yes\' ';
 
-		$this->wpdb->method( 'prepare' )
+		$wpdb->method( 'prepare' )
 		           ->with( $sql, '_downloadable', 'yes' )
 		           ->willReturn( $prepared_sql );
 
-		$this->wpdb->method( 'get_var' )
+		$wpdb->method( 'get_var' )
 		           ->with( $prepared_sql )
 		           ->willReturn( '1' );
 
@@ -282,9 +317,10 @@ class Test_WCML_Products extends OTGS_TestCase {
 		                 ->getMock();
 		$sync_variations_data->method( 'get_product_variations' )->with( $product_id )->willReturn( $available_variations );
 
-		$this->woocommerce_wpml->sync_variations_data = $sync_variations_data;
+		$woocommerce_wpml = $this->get_woocommerce_wpml();
+		$woocommerce_wpml->sync_variations_data = $sync_variations_data;
 
-		$subject = $this->get_subject();
+		$subject = $this->get_subject( $woocommerce_wpml, false, false, $wpdb );
 
 		$this->assertTrue( $subject->is_downloadable_product( $product ) );
 
@@ -297,7 +333,21 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$file_path              = rand_str();
 
-		$subject            = $this->get_subject();
+		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->getMock();
+		$wp_api->method( 'constant' )
+		       ->with( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' )
+		       ->willReturn( 1 );
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_wp_api', 'get_setting', 'convert_url' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		$subject            = $this->get_subject( false, $sitepress );
 		$filtered_file_path = $subject->filter_file_download_path( $file_path );
 
 		$this->assertEquals( $file_path, $filtered_file_path );
@@ -314,23 +364,34 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$file_path = $home_url.rand_str();
 		$converted_file_path = rand_str();
 
-		$this->wp_api->method( 'constant' )
+		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->getMock();
+		$wp_api->method( 'constant' )
 		             ->with( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' )
 		             ->willReturn( $negotation_type_domain );
 
-		$this->sitepress->expects( $this->once() )
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_wp_api', 'get_setting', 'convert_url' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+
+		$sitepress->expects( $this->once() )
 		                ->method( 'get_setting' )
 		                ->with( 'language_negotiation_type' )
 		                ->willReturn( $negotation_type_domain );
 
-		$this->sitepress->method( 'convert_url' )
+		$sitepress->method( 'convert_url' )
 		                ->with( $file_path )
 		                ->willReturn( $converted_file_path );
 
 		$url_helper_mock = \Mockery::mock( 'overload:WPML_URL_Converter_Url_Helper' );
 		$url_helper_mock->shouldReceive( 'get_abs_home' )->andReturn( $home_url );
 
-		$subject = $this->get_subject();
+		$subject = $this->get_subject( false, $sitepress );
 		$filtered_file_path = $subject->filter_file_download_path( $file_path );
 
 		$this->assertEquals( $converted_file_path, $filtered_file_path );
@@ -345,11 +406,21 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$home_url = rand_str( 5 );
 		$file_path = rand_str();
 
-		$this->wp_api->method( 'constant' )
-		             ->with( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' )
-		             ->willReturn( $negotation_type_domain );
+		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->getMock();
+		$wp_api->method( 'constant' )
+		       ->with( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' )
+		       ->willReturn( $negotation_type_domain );
 
-		$this->sitepress->expects( $this->once() )
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_wp_api', 'get_setting' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		$sitepress->expects( $this->once() )
 		                ->method( 'get_setting' )
 		                ->with( 'language_negotiation_type' )
 		                ->willReturn( $negotation_type_domain );
@@ -357,7 +428,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$url_helper_mock = \Mockery::mock( 'overload:WPML_URL_Converter_Url_Helper' );
 		$url_helper_mock->shouldReceive( 'get_abs_home' )->andReturn( $home_url );
 
-		$subject = $this->get_subject();
+		$subject = $this->get_subject( false, $sitepress );
 		$filtered_file_path = $subject->filter_file_download_path( $file_path );
 
 		$this->assertEquals( $file_path, $filtered_file_path );
@@ -383,10 +454,15 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'return' => true
 		));
 
-		$this->wpml_post_translations->method( 'get_source_lang_code' )->with( $product_id )->wilLReturn( 'en' );
-		$this->wpml_post_translations->method( 'get_original_element' )->with( $product_id )->wilLReturn( $original_product_id );
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
+		                               ->disableOriginalConstructor()
+		                               ->setMethods( array( 'get_source_lang_code', 'get_original_element' ) )
+		                               ->getMock();
 
-		$subject = $this->get_subject();
+		$wpml_post_translations->method( 'get_source_lang_code' )->with( $product_id )->wilLReturn( 'en' );
+		$wpml_post_translations->method( 'get_original_element' )->with( $product_id )->wilLReturn( $original_product_id );
+
+		$subject = $this->get_subject( false, false, $wpml_post_translations );
 		$is_customer_bought_product = $subject->is_customer_bought_product( false, $user_email, $user_id, $product_id );
 
 		$this->assertTrue( $is_customer_bought_product );
@@ -409,7 +485,15 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'return' => false
 		));
 
-		$subject = $this->get_subject();
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
+		                               ->disableOriginalConstructor()
+		                               ->setMethods( array( 'get_source_lang_code', 'get_original_element' ) )
+		                               ->getMock();
+
+		$wpml_post_translations->method( 'get_source_lang_code' )->with( $product_id )->wilLReturn( 'fr' );
+		$wpml_post_translations->method( 'get_original_element' )->with( $product_id )->wilLReturn( $original_product_id );
+
+		$subject = $this->get_subject( false, false, $wpml_post_translations );
 		$is_customer_bought_product = $subject->is_customer_bought_product( null, $user_email, $user_id, $product_id );
 
 		$this->assertNull( $is_customer_bought_product );
@@ -483,8 +567,23 @@ class Test_WCML_Products extends OTGS_TestCase {
 		) );
 
 		$enable_multi_currency = 1;
-		$this->wp_api->method( 'constant' )->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )->willReturn( $enable_multi_currency );
-		$this->woocommerce_wpml->settings[ 'enable_multi_currency' ] = $enable_multi_currency;
+
+		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->getMock();
+		$wp_api->method( 'constant' )
+		       ->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )
+		       ->willReturn( $enable_multi_currency );
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_wp_api' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		$woocommerce_wpml = $this->get_woocommerce_wpml();
+		$woocommerce_wpml->settings[ 'enable_multi_currency' ] = $enable_multi_currency;
 
 		/** @var \WCML_Products|\PHPUnit_Framework_MockObject_MockObject $products */
 		$products = $this->getMockBuilder( 'WCML_Products' )
@@ -493,14 +592,14 @@ class Test_WCML_Products extends OTGS_TestCase {
 		                 ->getMock();
 		$products->method( 'is_original_product' )->with( $product_id )->willReturn( false );
 
-		$this->woocommerce_wpml->products = $products;
+		$woocommerce_wpml->products = $products;
 
 		WP_Mock::userFunction( 'is_product', array(
 			'times'  => 1,
 			'return' => true
 		) );
 
-		$subject = $this->get_subject();
+		$subject = $this->get_subject( $woocommerce_wpml, $sitepress );
 		$filtered_data = $subject->filter_product_data( false, $product_id, false );
 
 		$this->assertEquals( $expected_data, $filtered_data );
@@ -530,11 +629,26 @@ class Test_WCML_Products extends OTGS_TestCase {
 		                 ->getMock();
 		$products->method( 'is_original_product' )->with( $product_id )->willReturn( true );
 
-		$this->woocommerce_wpml->products = $products;
+		$woocommerce_wpml = $this->get_woocommerce_wpml();
+		$woocommerce_wpml->products = $products;
 
 		$multi_currency_setting = 1;
-		$this->wp_api->method( 'constant' )->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )->willReturn( 2 );
-		$this->woocommerce_wpml->settings['enable_multi_currency'] = $multi_currency_setting;
+
+		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->getMock();
+		$wp_api->method( 'constant' )
+		       ->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )
+		       ->willReturn( 2 );
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_wp_api' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		$woocommerce_wpml->settings['enable_multi_currency'] = $multi_currency_setting;
 
 		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'  => array( $product_id ),
@@ -546,7 +660,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'args'   => array( $product_id, '_thumbnail_id', true ),
 		) );
 
-		$subject = $this->get_subject();
+		$subject = $this->get_subject( $woocommerce_wpml, $sitepress );
 		$filtered_data = $subject->filter_product_data( null, $product_id, false );
 	}
 
@@ -557,14 +671,19 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$query = array( 'join' => 'test', 'where' => 'test' );
 
-		$this->sitepress->method( 'get_current_language' )
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_current_language' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_current_language' )
 		                ->wilLReturn( $this->default_language );
 
-		$this->wpdb->method( 'prepare' )
+		$wpdb = $this->get_wpdb();
+		$wpdb->method( 'prepare' )
 		           ->with( ' AND icl.language_code = %s ', $this->default_language )
 		           ->willReturn( ' AND icl.language_code = ' . $this->default_language . ' ' );
 
-		$subject        = $this->get_subject();
+		$subject        = $this->get_subject( false, $sitepress, false, $wpdb );
 		$filtered_query = $subject->filter_related_products_query( $query );
 
 		$this->assertSame( 'test LEFT JOIN wp_icl_translations AS icl ON icl.element_id = p.ID ', $filtered_query['join'] );
@@ -580,8 +699,22 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$multi_currency_setting = 1;
 		$meta_key = null;
 
-		$this->wp_api->method( 'constant' )->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )->willReturn( 2 );
-		$this->woocommerce_wpml->settings['enable_multi_currency'] = $multi_currency_setting;
+		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->getMock();
+		$wp_api->method( 'constant' )
+		       ->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )
+		       ->willReturn( 2 );
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_wp_api' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		$woocommerce_wpml = $this->get_woocommerce_wpml();
+		$woocommerce_wpml->settings['enable_multi_currency'] = $multi_currency_setting;
 
 		/** @var \WCML_Products|\PHPUnit_Framework_MockObject_MockObject $products */
 		$products = $this->getMockBuilder( 'WCML_Products' )
@@ -590,9 +723,9 @@ class Test_WCML_Products extends OTGS_TestCase {
 		                 ->getMock();
 		$products->method( 'is_original_product' )->with( $product_id )->willReturn( false );
 
-		$this->woocommerce_wpml->products = $products;
+		$woocommerce_wpml->products = $products;
 
-		$subject = $this->get_subject();
+		$subject = $this->get_subject( $woocommerce_wpml, $sitepress );
 
 		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'  => array( $product_id ),
@@ -703,6 +836,129 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$this->assertFalse( $subject->override_product_type_query( $product_type, $product_id ) );
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_should_filter_wc_searched_products_on_front_in_current_language() {
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_current_language' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_current_language' )->wilLReturn( $this->default_language );
+
+		$this->product_id_in_default_language = 10;
+		$this->product_id_in_second_language = 20;
+
+		$found_products = array(
+			$this->product_id_in_default_language => 'test default',
+			$this->product_id_in_second_language => 'test second'
+		);
+
+		$expected_products = array(
+			$this->product_id_in_default_language => 'test default'
+		);
+
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
+		                               ->disableOriginalConstructor()
+		                               ->setMethods( array( 'get_element_lang_code' ) )
+		                               ->getMock();
+
+		$that = $this;
+		$wpml_post_translations->method( 'get_element_lang_code' )->willReturnCallback( function ( $product_id ) use ( $that ) {
+			if ( $that->product_id_in_default_language === $product_id ) {
+				return $that->default_language;
+			} elseif ( $that->product_id_in_second_language === $product_id ) {
+				return 'fr';
+			}
+		} );
+
+		$subject = $this->get_subject( false, $sitepress, $wpml_post_translations );
+
+		$this->assertEquals( $expected_products, $subject->filter_wc_searched_products_on_front( $found_products ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_wc_searched_products_on_admin_in_current_language() {
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_current_language' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_current_language' )->wilLReturn( $this->default_language );
+
+		$this->product_id_in_default_language = 10;
+		$this->product_id_in_second_language = 20;
+
+		$found_products = array(
+			$this->product_id_in_default_language => 'test default',
+			$this->product_id_in_second_language => 'test second'
+		);
+
+		$expected_products = array(
+			$this->product_id_in_default_language => 'test default'
+		);
+
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
+		                               ->disableOriginalConstructor()
+		                               ->setMethods( array( 'get_element_lang_code' ) )
+		                               ->getMock();
+
+		$that = $this;
+		$wpml_post_translations->method( 'get_element_lang_code' )->willReturnCallback( function ( $product_id ) use ( $that ) {
+			if ( $that->product_id_in_default_language === $product_id ) {
+				return $that->default_language;
+			} elseif ( $that->product_id_in_second_language === $product_id ) {
+				return 'fr';
+			}
+		} );
+
+		$subject = $this->get_subject( false, $sitepress, $wpml_post_translations );
+
+		$this->assertEquals( $expected_products, $subject->filter_wc_searched_products_on_admin( $found_products ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_wc_searched_products_on_admin_in_dashboard_order_language() {
+
+		$this->cookie_lang = 'fr';
+		$_COOKIE['_wcml_dashboard_order_language'] = $this->cookie_lang;
+
+		$this->product_id_in_dashboard_order_language = 10;
+		$this->product_id_in_default_language = 20;
+
+		$found_products = array(
+			$this->product_id_in_dashboard_order_language => 'test default',
+			$this->product_id_in_default_language => 'test second'
+		);
+
+		$expected_products = array(
+			$this->product_id_in_dashboard_order_language => 'test default'
+		);
+
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
+		                               ->disableOriginalConstructor()
+		                               ->setMethods( array( 'get_element_lang_code' ) )
+		                               ->getMock();
+
+		$that = $this;
+		$wpml_post_translations->method( 'get_element_lang_code' )->willReturnCallback( function ( $product_id ) use ( $that ) {
+			if ( $that->product_id_in_dashboard_order_language === $product_id ) {
+				return $that->cookie_lang;
+			} elseif ( $that->product_id_in_default_language === $product_id ) {
+				return $that->default_language;
+			}
+		} );
+
+		$subject = $this->get_subject( false, false, $wpml_post_translations );
+
+		$this->assertEquals( $expected_products, $subject->filter_wc_searched_products_on_admin( $found_products ) );
+		unset( $_COOKIE ['_wcml_dashboard_order_language'] );
+	}
 
 	/**
 	 * @return wpdb|PHPUnit_Framework_MockObject_MockObject
