@@ -94,7 +94,7 @@ function setTestPatterns() {
 		"vendor/xrstf",
 		"webpack.config.js",
 		"yarn-error.log",
-		"yarn.lock",
+		"package-lock.json",
 		"!changelog.md",
 		"!libraries/vkBeautify/vkbeautify.js",
 		"!license.txt",

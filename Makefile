@@ -10,8 +10,8 @@ help:
 	$(info Run `make install-prod` to install the dependencies in production mode)
 #	$(info - Run `make composer-install` to only install Composer dependencies)
 #	$(info - Run `make composer-install-prod` to only install Composer dependencies in production mode)
-#	$(info - Run `make yarn-install` to only install Yarn/Node dependencies)
-#	$(info - Run `make yarn-install-prod` to only install Yarn/Node dependencies in production mode)
+#	$(info - Run `make npm-install` to only install NPM/Node dependencies)
+#	$(info - Run `make npm-install-prod` to only install NPM/Node dependencies in production mode)
 	$(info Run `make tests` to run all tests)
 #	$(info - Run `make jest` to run only Jest tests)
 #	$(info - Run `make phpunit` to run only PhpUnit tests)
@@ -41,16 +41,16 @@ endif
 .PHONY: install
 
 install: composer-install
-#install: yarn-install
+#install: npm-install
 
 install-prod: composer-install-prod
-#install-prod: yarn-install-prod
+#install-prod: npm-install-prod
 
 # Build
 .PHONY: dev prod
 
-#dev prod: yarn-install
-#	@yarn run build:$@
+#dev prod: npm-install
+#	@npm run build:$@
 #	$(info WebPack modules bundled)
 
 # Tests
@@ -63,12 +63,12 @@ tests:: phpunit
 .PHONY: precommit
 
 precommit:: validate-composer
-#precommit:: validate-yarn
+#precommit:: validate-npm
 precommit:: dupes
 precommit:: compatibility
 
 # precommit
-.PHONY: dupes compatibility validate-composer validate-yarn
+.PHONY: dupes compatibility validate-composer validate-npm
 
 dupes: composer-install
 	./.make/check-duplicates.sh
@@ -79,8 +79,8 @@ compatibility: composer-install
 validate-composer: composer-install
 	./.make/check-composer.sh
 
-#validate-yarn: yarn-install
-#	./.make/check-yarn.sh
+#validate-npm: npm-install
+#	./.make/check-npm.sh
 
 
 # Dependency managers
@@ -102,29 +102,29 @@ composer-install-prod:
 	$(info Installing Composer dependencies)
 	@composer --no-dev install
 
-## Yarn
-.PHONY: yarn-install
+## NPM
+.PHONY: npm-install
 
-#package.json: yarn-install
+#package.json: npm-install
 #	@touch $@
 #
-#yarn.lock: yarn-install
+#npm.lock: npm-install
 #	@touch $@
 #
-#yarn-install:
-#	$(info Installing Yarn/Node dependencies)
-#	@yarn install
+#npm-install:
+#	$(info Installing NPM/Node dependencies)
+#	@npm install
 #
-#yarn-install-prod:
-#	$(info Installing Yarn/Node dependencies)
-#	@yarn --prod install
+#npm-install-prod:
+#	$(info Installing NPM/Node dependencies)
+#	@npm install --production
 
 # Tests
 .PHONY: jest phpunit
 
-#jest: yarn-install
+#jest: npm-install
 #	$(info Running Jest)
-#	@yarn run test
+#	@npm run test
 
 phpunit: composer-install
 	$(info Running PhpUnit)
