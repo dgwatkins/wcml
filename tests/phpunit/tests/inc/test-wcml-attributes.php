@@ -134,6 +134,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 
 		$product_id = rand( 1, 100 );
 		$translated_product_id = rand( 1, 100 );
+		$orig_lang = 'en';
 
 		$original_attributes = array( array(
 			'name' => rand_str(),
@@ -178,6 +179,16 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 
 		\WP_Mock::wpPassthruFunction( 'sanitize_title' );
 
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'get_original_product_language' ) )
+		                                         ->getMock();
+
+		$this->woocommerce_wpml->products
+			->method( 'get_original_product_language' )
+			->with( $product_id )
+			->willReturn( $orig_lang );
+
 		$subject = $this->get_subject();
 
 		$subject->sync_product_attr( $product_id, $translated_product_id );
@@ -190,6 +201,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 
 		$product_id = rand( 1, 100 );
 		$translated_product_id = rand( 1, 100 );
+		$orig_lang = 'en';
 
 		$original_attributes = array( array(
 			'name' => rand_str(),
@@ -240,6 +252,16 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 
 		\WP_Mock::wpPassthruFunction( 'sanitize_title' );
 
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'get_original_product_language' ) )
+		                                         ->getMock();
+
+		$this->woocommerce_wpml->products
+			->method( 'get_original_product_language' )
+			->with( $product_id )
+			->willReturn( $orig_lang );
+
 		$subject = $this->get_subject();
 
 		$subject->sync_product_attr( $product_id, $translated_product_id );
@@ -279,11 +301,6 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$this->sitepress
 			->method( 'get_current_language' )
 			->willReturn( $current_language );
-
-		\WP_Mock::wpFunction( 'is_admin', array(
-			'times'  => 1,
-			'return' => false
-		) );
 
 		\WP_Mock::wpFunction( 'remove_accents', array(
 			'args'   => array( $attribute_name ),
@@ -332,12 +349,6 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 			->method( 'get_current_language' )
 			->willReturn( $orig_lang );
 
-
-		\WP_Mock::wpFunction( 'is_admin', array(
-			'times'  => 1,
-			'return' => false
-		) );
-
 		$subject = $this->get_subject();
 
 		$filtered_attribute_name = $subject->filter_attribute_name( $attribute_name, $product_id, false );
@@ -359,11 +370,6 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 				'name' => 'test1'
 			)
 		);
-
-		\WP_Mock::wpFunction( 'is_admin', array(
-			'times'  => 1,
-			'return' => false
-		) );
 
 		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
 		                                         ->disableOriginalConstructor()
@@ -406,11 +412,6 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 				'name' => 'test1'
 			)
 		);
-
-		\WP_Mock::wpFunction( 'is_admin', array(
-			'times'  => 1,
-			'return' => false
-		) );
 
 		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
 		                                         ->disableOriginalConstructor()
