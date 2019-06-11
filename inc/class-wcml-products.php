@@ -72,6 +72,7 @@ class WCML_Products{
 
 		if ( $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.6.0', '>=' ) ) {
 			add_filter( 'get_post_metadata', array( $this, 'filter_product_data' ), 10, 3 );
+			add_filter( 'woocommerce_can_reduce_order_stock', array( $this, 'remove_post_meta_data_filter_on_checkout_stock_update' ) );
 		}
 	}
 
@@ -766,5 +767,17 @@ class WCML_Products{
 		}
 
 		return $product_type;
+	}
+
+	/**
+	 * @param bool $reduce_stock
+	 *
+	 * @return bool
+	 */
+	public function remove_post_meta_data_filter_on_checkout_stock_update( $reduce_stock ){
+		if( isset( $_GET['wc-ajax'] ) && 'checkout' === $_GET['wc-ajax'] ){
+			remove_filter( 'get_post_metadata', array( $this, 'filter_product_data' ), 10, 3 );
+		}
+		return $reduce_stock;
 	}
 }
