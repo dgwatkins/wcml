@@ -166,8 +166,10 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		if( $version_compare_result ){
 			\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ), 10, 3 );
+			\WP_Mock::expectFilterAdded( 'woocommerce_can_reduce_order_stock', array( $subject, 'remove_post_meta_data_filter_on_checkout_stock_update' ) );
 		}else{
 			\WP_Mock::expectFilterNotAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ) );
+			\WP_Mock::expectFilterNotAdded( 'woocommerce_can_reduce_order_stock', array( $subject, 'remove_post_meta_data_filter_on_checkout_stock_update' ) );
 		}
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_json_search_found_products', array( $subject, 'filter_wc_searched_products_on_admin' ) );
@@ -958,6 +960,45 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$this->assertEquals( $expected_products, $subject->filter_wc_searched_products_on_admin( $found_products ) );
 		unset( $_COOKIE ['_wcml_dashboard_order_language'] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_remove_post_meta_data_filter_on_checkout_stock_update() {
+
+		$_GET['wc-ajax'] = 'checkout';
+
+		$subject = $this->get_subject();
+
+		WP_Mock::userFunction( 'remove_filter',
+			array(
+				'args' => array( 'get_post_metadata', array( $subject, 'filter_product_data' ), 10, 3 ),
+				'times' => 1,
+				'return' => true
+			)
+		);
+
+		$this->assertTrue( $subject->remove_post_meta_data_filter_on_checkout_stock_update( true ) );
+
+		unset( $_GET['wc-ajax'] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_remove_post_meta_data_filter_on_non_checkout_stock_update() {
+
+		$subject = $this->get_subject();
+
+		WP_Mock::userFunction( 'remove_filter',
+			array(
+				'times' => 0,
+				'return' => true
+			)
+		);
+
+		$this->assertTrue( $subject->remove_post_meta_data_filter_on_checkout_stock_update( true ) );
 	}
 
 	/**
