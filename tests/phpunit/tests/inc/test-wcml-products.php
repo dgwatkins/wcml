@@ -105,7 +105,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		             ->willReturn( $wc_version );
 
 		$wp_api->method( 'version_compare' )
-		             ->with( $wc_version, '3.6.0', '<' )
+		             ->with( $wc_version, '3.6.0', '>=' )
 		             ->willReturn( $version_compare_result );
 
 		$sitepress = $this->getMockBuilder( 'SitePress' )
@@ -117,9 +117,9 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$subject = $this->get_subject( false, $sitepress );
 
 		if( $version_compare_result ){
-			\WP_Mock::expectFilterNotAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ) );
-		}else{
 			\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ), 10, 3 );
+		}else{
+			\WP_Mock::expectFilterNotAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ) );
 		}
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_shortcode_products_query', array( $subject, 'add_lang_to_shortcode_products_query' ) );
@@ -153,7 +153,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		       ->willReturn( $wc_version );
 
 		$wp_api->method( 'version_compare' )
-		       ->with( $wc_version, '3.6.0', '<' )
+		       ->with( $wc_version, '3.6.0', '>=' )
 		       ->willReturn( $version_compare_result );
 
 		$sitepress = $this->getMockBuilder( 'SitePress' )
@@ -165,9 +165,9 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$subject = $this->get_subject( false, $sitepress );
 
 		if( $version_compare_result ){
-			\WP_Mock::expectFilterNotAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ) );
-		}else{
 			\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ), 10, 3 );
+		}else{
+			\WP_Mock::expectFilterNotAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ) );
 		}
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_json_search_found_products', array( $subject, 'filter_wc_searched_products_on_admin' ) );
@@ -178,52 +178,10 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$subject->add_hooks();
 	}
 
-
-	/**
-	 * @test
-	 *
-	 */
-	public function it_does_not_add_get_post_metadata_filter_for_checkout_ajax_call(){
-		\WP_Mock::userFunction( 'is_admin', array(
-			'return' => true,
-			'times'  => 1
-		) );
-
-		$wc_version = '3.6.8';
-		$version_compare_result = false;
-		$_GET['wc-ajax'] = 'checkout';
-
-		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
-		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'constant', 'version_compare' ) )
-		               ->getMock();
-
-		$wp_api->method( 'constant' )
-		       ->with( 'WC_VERSION' )
-		       ->willReturn( $wc_version );
-
-		$wp_api->method( 'version_compare' )
-		       ->with( $wc_version, '3.6.0', '<' )
-		       ->willReturn( $version_compare_result );
-
-		$sitepress = $this->getMockBuilder( 'SitePress' )
-		                  ->disableOriginalConstructor()
-		                  ->setMethods( array( 'get_wp_api' ) )
-		                  ->getMock();
-		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
-
-		$subject = $this->get_subject( false, $sitepress );
-
-		\WP_Mock::expectFilterNotAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ) );
-
-		$subject->add_hooks();
-		unset( $_GET['wc-ajax'] );
-	}
-
 	public function wc_versions_provider(){
 		return array(
-			array( '3.5.0', true ),
-			array( '3.6.0', false )
+			array( '3.5.0', false ),
+			array( '3.6.0', true )
 		);
 	}
 
