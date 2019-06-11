@@ -62,26 +62,21 @@ tests:: phpunit
 # Git Hooks
 .PHONY: precommit
 
+precommit:: check-php
 precommit:: validate-composer
 #precommit:: validate-npm
-precommit:: dupes
-precommit:: compatibility
 
 # precommit
-.PHONY: dupes compatibility validate-composer validate-npm
+.PHONY: check-php validate-composer validate-npm
 
-dupes: composer-install
-	./.make/check-duplicates.sh
-
-compatibility: composer-install
-	./.make/check-compatibility.sh
+check-php: composer-install
+	./vendor/bin/otgs-check-php
 
 validate-composer: composer-install
 	./.make/check-composer.sh
 
-#validate-npm: npm-install
-#	./.make/check-npm.sh
-
+validate-npm: npm-install
+	./.make/check-npm.sh
 
 # Dependency managers
 
