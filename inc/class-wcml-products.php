@@ -70,25 +70,9 @@ class WCML_Products{
 
 		add_filter( 'woocommerce_pre_customer_bought_product', array( $this, 'is_customer_bought_product' ), 10, 4 );
 
-		if ( $this->load_get_post_metadata_filter() ) {
+		if ( $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.6.0', '>=' ) ) {
 			add_filter( 'get_post_metadata', array( $this, 'filter_product_data' ), 10, 3 );
 		}
-	}
-
-	/**
-	 * @return bool
-	 */
-	private function load_get_post_metadata_filter() {
-		$load = true;
-
-		if (
-			$this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.6.0', '<' ) ||
-			( isset( $_GET['wc-ajax'] ) && 'checkout' === $_GET['wc-ajax'] )
-		) {
-			$load = false;
-		}
-
-		return $load;
 	}
 
 	/**
