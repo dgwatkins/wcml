@@ -96,8 +96,9 @@ Unit <PHP>:
         - composer install
         - cd tests/phpunit
         - ../../vendor/bin/phpunit --fail-on-warning
-    except:
-        - tags
+    only:
+        - branches
+        - merge_requests
 
 Integration <PHP>:
     stage: test
@@ -113,8 +114,9 @@ Integration <PHP>:
     script:
         - composer install
         - ./vendor/otgs/build-tools-ci/otgs-ci -p --legacy
-    except:
-        - tags
+    only:
+        - branches
+        - merge_requests
 
 Branch:
     stage: build
