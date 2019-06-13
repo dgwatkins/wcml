@@ -3,42 +3,49 @@
 class WCML_WC_Gateways{
 
     const WCML_BACS_ACCOUNTS_CURRENCIES_OPTION = 'wcml_bacs_accounts_currencies';
+	private $current_language;
 
-    private $current_language;
-    private $sitepress;
+	/** @var woocommerce_wpml */
+	private $woocommerce_wpml;
+	/** @var  Sitepress */
+	private $sitepress;
 
-    function __construct( &$woocommerce_wpml, &$sitepress ){
+	/**
+	 * WCML_WC_Gateways constructor.
+	 *
+	 * @param woocommerce_wpml $woocommerce_wpml
+	 * @param SitePress $sitepress
+	 */
+	function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress ) {
+		$this->sitepress        = $sitepress;
+		$this->woocommerce_wpml = $woocommerce_wpml;
 
-        $this->sitepress = $sitepress;
-        $this->woocommerce_wpml = $woocommerce_wpml;
+		$this->current_language = $this->sitepress->get_current_language();
+		if ( $this->current_language == 'all' ) {
+			$this->current_language = $this->sitepress->get_default_language();
+		}
+	}
 
-        add_action( 'init', array( $this, 'init' ), 11 );
+	public function add_hooks() {
+		add_action( 'init', array( $this, 'on_init_hooks' ), 11 );
+		add_filter( 'woocommerce_payment_gateways', array( $this, 'loaded_woocommerce_payment_gateways' ) );
+	}
 
-        $this->current_language = $sitepress->get_current_language();
-        if( $this->current_language == 'all' ){
-            $this->current_language = $sitepress->get_default_language();
-        }
+	public function on_init_hooks() {
+		global $pagenow;
 
-        add_filter( 'woocommerce_payment_gateways', array( $this, 'loaded_woocommerce_payment_gateways' ) );
+		add_filter( 'woocommerce_gateway_title', array( $this, 'translate_gateway_title' ), 10, 2 );
+		add_filter( 'woocommerce_gateway_description', array( $this, 'translate_gateway_description' ), 10, 2 );
 
-    }
+		if ( is_admin() && 'admin.php' === $pagenow && isset( $_GET['page'] ) && 'wc-settings' === $_GET['page'] && isset( $_GET['tab'] ) && 'checkout' === $_GET['tab'] ) {
+			add_action( 'admin_footer', array( $this, 'show_language_links_for_gateways' ) );
+			$this->register_and_set_gateway_strings_language();
 
-    function init(){
-        global $pagenow;
-
-        add_filter('woocommerce_gateway_title', array($this, 'translate_gateway_title'), 10, 2);
-        add_filter('woocommerce_gateway_description', array($this, 'translate_gateway_description'), 10, 2);
-
-        if( is_admin() && $pagenow == 'admin.php' && isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == 'wc-settings' && isset( $_GET[ 'tab' ] ) && $_GET[ 'tab' ] == 'checkout' ){
-            add_action( 'admin_footer', array($this, 'show_language_links_for_gateways' ) );
-            $this->register_and_set_gateway_strings_language();
-
-            if( isset( $_GET[ 'section' ] ) && 'bacs' === $_GET[ 'section' ] ){
-	            add_action( 'admin_footer', array( $this, 'append_currency_selector_to_bacs_account_settings' ) );
-            }
-        }
-
-    }
+			if ( isset( $_GET['section'] ) && 'bacs' === $_GET['section'] && wcml_is_multi_currency_on() ) {
+				add_action( 'admin_footer', array( $this, 'append_currency_selector_to_bacs_account_settings' ) );
+			}
+		}
+	}
 
 
     function loaded_woocommerce_payment_gateways( $load_gateways ){

@@ -212,6 +212,7 @@ class woocommerce_wpml {
         $this->shipping             = new WCML_WC_Shipping( $sitepress );
         $this->shipping->add_hooks();
         $this->gateways             = new WCML_WC_Gateways( $this, $sitepress );
+        $this->gateways->add_hooks();
         $this->url_translation      = new WCML_Url_Translation ( $this, $sitepress, $wpdb );
 	    $this->url_translation->set_up();
 	    $this->endpoints            = new WCML_Endpoints( $this, $sitepress, $wpdb );
