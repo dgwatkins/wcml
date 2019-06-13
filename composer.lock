@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e701464f0cfbd4b81ba65e7763526b02",
+    "content-hash": "709f7a30bf1f972faff9022c385db05a",
     "packages": [
         {
             "name": "composer/installers",
@@ -177,24 +177,23 @@
         },
         {
             "name": "otgs/installer",
-            "version": "1.9.3",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/installer/installer.git",
-                "reference": "41c64afb33e3dd2f523faedb77a3b5bdd5f6ef1e"
+                "reference": "1344cc059d7f7168ba2dadbd65a448f748d540da"
             },
             "require": {
                 "composer/installers": "~1.0",
                 "jakeasmith/http_build_url": "^1.0",
                 "otgs/icons": "~1.0",
-                "php": ">=5.2.0",
-                "twig/twig": "~1.38.0"
+                "php": ">=5.6.0",
+                "twig/twig": "~1.39"
             },
             "require-dev": {
                 "otgs/build-tools": "~0.1",
                 "otgs/build-tools-ci": "~0.10",
                 "otgs/unit-tests-framework": "~1.2.0",
-                "roave/security-advisories": "dev-master",
                 "sebastian/phpcpd": "^3.0"
             },
             "suggest": {
@@ -265,7 +264,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2019-03-21T17:16:21+00:00"
+            "time": "2019-06-13T15:45:16+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -538,16 +537,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.38.4",
+            "version": "v1.42.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "7732e9e7017d751313811bd118de61302e9c8b35"
+                "reference": "671347603760a88b1e7288aaa9378f33687d7edf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/7732e9e7017d751313811bd118de61302e9c8b35",
-                "reference": "7732e9e7017d751313811bd118de61302e9c8b35",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/671347603760a88b1e7288aaa9378f33687d7edf",
+                "reference": "671347603760a88b1e7288aaa9378f33687d7edf",
                 "shasum": ""
             },
             "require": {
@@ -557,12 +556,12 @@
             "require-dev": {
                 "psr/container": "^1.0",
                 "symfony/debug": "^2.7",
-                "symfony/phpunit-bridge": "^3.4.19|^4.1.8"
+                "symfony/phpunit-bridge": "^3.4.19|^4.1.8|^5.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.38-dev"
+                    "dev-master": "1.42-dev"
                 }
             },
             "autoload": {
@@ -600,7 +599,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2019-03-23T14:27:19+00:00"
+            "time": "2019-06-04T11:31:08+00:00"
         },
         {
             "name": "wpml-shared/wpml-lib-dependencies",
@@ -869,12 +868,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "d63bf33848f396c58c5e0de834cf15f9d7094b95"
+                "reference": "cd15bbd64bf303937b9a2abc7df85366ab1bb821"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/d63bf33848f396c58c5e0de834cf15f9d7094b95",
-                "reference": "d63bf33848f396c58c5e0de834cf15f9d7094b95",
+                "url": "https://api.github.com/repos/composer/composer/zipball/cd15bbd64bf303937b9a2abc7df85366ab1bb821",
+                "reference": "cd15bbd64bf303937b9a2abc7df85366ab1bb821",
                 "shasum": ""
             },
             "require": {
@@ -941,7 +940,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2019-05-14T08:30:18+00:00"
+            "time": "2019-06-12T06:09:04+00:00"
         },
         {
             "name": "composer/semver",
@@ -2413,7 +2412,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/otgs-public/otgs-diff-checks.git",
-                "reference": "61a075f59ac67f2e1ae6e611096c81a10d98577d"
+                "reference": "4567a60ecb2ffa9ada70aebf4a1ed4f010a1cd24"
             },
             "require": {
                 "exussum12/coverage-checker": "^0.11.2"
@@ -2444,7 +2443,7 @@
                 }
             ],
             "description": "Run static code analysis against the changed code (applicable) or files",
-            "time": "2019-06-10T14:41:15+00:00"
+            "time": "2019-06-13T12:01:23+00:00"
         },
         {
             "name": "otgs/unit-tests-framework",
