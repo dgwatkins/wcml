@@ -65,7 +65,7 @@ class WCML_Dependencies {
 			$this->allok = false;
 		}
 
-		if ( ! defined( 'WPML_ST_VERSION' ) ) {
+		if ( ! defined( 'WPML_ST_VERSION' ) || !function_exists( 'icl_get_string_id' ) ) {
 			$this->missing['WPML String Translation'] = $this->tracking_link->generate( 'https://wpml.org/' );
 			$this->allok                              = false;
 		} elseif ( version_compare( WPML_ST_VERSION, self::MIN_WPML_ST, '<' ) ) {
