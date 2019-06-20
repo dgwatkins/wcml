@@ -519,7 +519,9 @@ class WCML_Emails{
 
         foreach( $emails_options as $emails_option ) {
 
-            $section_name = str_replace( 'woocommerce_', 'wc_email_', $emails_option );
+	    $section_prefix = apply_filters( 'wcml_emails_section_name_prefix', 'wc_email_', $emails_option );
+            
+	    $section_name = str_replace( 'woocommerce_', $section_prefix, $emails_option );
             $section_name = str_replace( '_settings', '', $section_name );
             if( isset( $_GET['section'] ) && $_GET['section'] == $section_name ){
 
