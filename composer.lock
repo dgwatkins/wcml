@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "9cf844a223640cb83df814523a1f0f8c",
+    "content-hash": "684f04d1ec62d376bcd80f8caa2209db",
     "packages": [
         {
             "name": "composer/installers",
@@ -607,11 +607,11 @@
         },
         {
             "name": "wpml-shared/wpml-lib-dependencies",
-            "version": "0.1.3",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/wpml-shared/wpml-lib-dependencies.git",
-                "reference": "6475eddcc90c5f2b03193625bbeeb726ca211755"
+                "reference": "511e3306170b498cffd63c4f6cd7d68ffc49cedf"
             },
             "require": {
                 "php": ">=5.2.0",
@@ -638,7 +638,7 @@
                 "dependencies",
                 "wpml"
             ],
-            "time": "2019-02-10T19:20:04+00:00"
+            "time": "2019-06-27T16:17:47+00:00"
         },
         {
             "name": "xrstf/composer-php52",
@@ -5509,6 +5509,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "wpml-shared/wpml-lib-dependencies": 20,
         "roave/security-advisories": 20,
         "otgs/build-tools-ci": 20,
         "otgs/diff-checks": 20

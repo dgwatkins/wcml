@@ -44,7 +44,7 @@
         "otgs/installer": "~1.9.0",
         "xrstf/composer-php52": "1.*",
         "twig/twig": "~1.0",
-        "wpml-shared/wpml-lib-dependencies": "~0.1"
+        "wpml-shared/wpml-lib-dependencies": "dev-master"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
