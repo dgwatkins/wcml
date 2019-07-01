@@ -24,15 +24,29 @@ if ( ! defined( 'WC_BOOKING_PATH' ) ) {
 $_tests_dir = isset( $_ENV['WP_TEST_DIR'] ) ? $_ENV['WP_TEST_DIR'] : 'wordpress-tests-lib';
 require_once $_tests_dir . '/includes/functions.php';
 
+/**
+ * @throws \Auryn\InjectionException
+ */
 function _manually_load_wcml() {
 	wp_styles();
 	require_once WPML_CORE_PATH . '/tests/util/functions.php';
 	require_once WPML_CORE_PATH . '/sitepress.php';
+
+	wpml_core_bootstrap( WPML_CORE_PLUGIN_PATH . '/' . WPML_CORE_PLUGIN_FILE );
+
 	require_once WPML_CORE_ST_PATH . '/plugin.php';
 	require_once WPML_CORE_TM_PATH . '/plugin.php';
 	require_once WC_PATH. '/woocommerce.php';
 	require_once WC_BOOKING_PATH . '/woocommerce-bookings.php';
 	require_once dirname( __FILE__ ) . '/../wpml-woocommerce.php';
+
+
+	/** @var $wpml_core WPML_Core */
+	global $wpml_core;
+	wpml_st_bootstrap( $wpml_core );
+	wpml_tm_bootstrap( $wpml_core );
+	wcml_bootstrap( $wpml_core );
+
 }
 
 tests_add_filter( 'plugins_loaded', '_manually_load_wcml', - PHP_INT_MAX );
