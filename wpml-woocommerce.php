@@ -20,6 +20,9 @@ if ( defined( 'WCML_VERSION' ) ) {
 	return;
 }
 
+/**
+ * As long as WCML can be installed and activated without WPML-Core, we have to keep this code here.
+ */
 require_once 'vendor/wpml-shared/wpml-lib-dependencies/src/dependencies/class-wpml-php-version-check.php'; // We cannot use composer here.
 
 $wpml_php_version_check = new WPML_PHP_Version_Check(
@@ -39,41 +42,39 @@ define( 'WCML_LOCALE_PATH', WCML_PLUGIN_PATH . '/locale' );
 define( 'WPML_LOAD_API_SUPPORT', true );
 define( 'WCML_PLUGIN_URL', untrailingslashit( plugin_dir_url( __FILE__ ) ) );
 
-require WCML_PLUGIN_PATH . '/inc/constants.php';
-require WCML_PLUGIN_PATH . '/inc/missing-php-functions.php';
-require WCML_PLUGIN_PATH . '/inc/installer-loader.php';
-require WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
-require WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
+define( 'WCML_AUTOLOADER_PATH', WCML_PLUGIN_PATH . '/vendor' );
+define( 'WCML_AUTOLOADER', WCML_AUTOLOADER_PATH . '/autoload.php' );
 
-if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
-	require WCML_PLUGIN_PATH . '/vendor/autoload.php';
-} else {
-	require WCML_PLUGIN_PATH . '/vendor/autoload_52.php';
-}
 
-if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ) {
-	global $sitepress;
+/**
+ * @param \WPML_Core $wpml_core
+ *
+ * @throws \Auryn\InjectionException
+ */
+function wcml_bootstrap( WPML_Core $wpml_core ) {
+	require WCML_PLUGIN_PATH . '/inc/constants.php';
+	require WCML_PLUGIN_PATH . '/inc/missing-php-functions.php';
+	require WCML_PLUGIN_PATH . '/inc/installer-loader.php';
+	require WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
+	require WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
+	require_once WCML_AUTOLOADER;
+
 	// Detecting language switching.
-	$wcml_switch_lang_request = new WCML_Switch_Lang_Request( new WPML_Cookie(), new WPML_WP_API(), $sitepress );
+	$wcml_switch_lang_request = new WCML_Switch_Lang_Request( new WPML_Cookie(), new WPML_WP_API(), $wpml_core->get_sitepress() );
 	$wcml_switch_lang_request->add_hooks();
 
 	// Cart related language switching functions.
 	$wcml_cart_switch_lang_functions = new WCML_Cart_Switch_Lang_Functions();
 	$wcml_cart_switch_lang_functions->add_actions();
-}
 
-if ( WPML_Core_Version_Check::is_ok( WCML_PLUGIN_PATH . '/wpml-dependencies.json' ) ) {
+	if ( ! WPML_Core_Version_Check::is_ok( WCML_PLUGIN_PATH . '/wpml-dependencies.json' ) ) {
+		return;
+	}
+
 	global $woocommerce_wpml;
 	$woocommerce_wpml = new woocommerce_wpml();
 	$woocommerce_wpml->add_hooks();
 
-	add_action( 'wpml_loaded', 'wcml_loader' );
-}
-
-/**
- * Load WooCommerce Multilingual after WPML is loaded
- */
-function wcml_loader() {
 	$xdomain_data = new WCML_xDomain_Data( new WPML_Cookie() );
 	$xdomain_data->add_hooks();
 
@@ -99,21 +100,22 @@ function wcml_loader() {
 
 	$action_filter_loader = new WPML_Action_Filter_Loader();
 	$action_filter_loader->load( $loaders );
-}
 
-$WCML_REST_API = new WCML_REST_API();
-if ( $WCML_REST_API->is_rest_api_request() ) {
-	add_action( 'wpml_before_init', array( $WCML_REST_API, 'remove_wpml_global_url_filters' ), 0 );
+	$rest_api = new WCML_REST_API();
+	if ( $rest_api->is_rest_api_request() ) {
+		add_action( 'wpml_before_init', array( $rest_api, 'remove_wpml_global_url_filters' ), 0 );
+	}
 }
 
 /**
  * Load WooCommerce Multilingual when WPML is NOT active.
  */
 function load_wcml_without_wpml() {
-	if ( ! did_action( 'wpml_loaded' ) ) {
+	if ( ! did_action( 'wpml_core_loaded' ) && ! did_action( 'wpml_core_checks_started' ) ) {
 		global $woocommerce_wpml;
 		$woocommerce_wpml = new woocommerce_wpml();
 	}
 }
 
-add_action( 'plugins_loaded', 'load_wcml_without_wpml', 10000 );
+add_action( 'wpml_core_loaded', 'wcml_bootstrap' );
+add_action( 'init', 'load_wcml_without_wpml', 10000 );
