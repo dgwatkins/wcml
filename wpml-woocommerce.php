@@ -52,11 +52,11 @@ define( 'WCML_AUTOLOADER', WCML_AUTOLOADER_PATH . '/autoload.php' );
  * @throws \Auryn\InjectionException
  */
 function wcml_bootstrap( WPML_Core $wpml_core ) {
-	require WCML_PLUGIN_PATH . '/inc/constants.php';
-	require WCML_PLUGIN_PATH . '/inc/missing-php-functions.php';
-	require WCML_PLUGIN_PATH . '/inc/installer-loader.php';
-	require WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
-	require WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
+	require_once WCML_PLUGIN_PATH . '/inc/constants.php';
+	require_once WCML_PLUGIN_PATH . '/inc/missing-php-functions.php';
+	require_once WCML_PLUGIN_PATH . '/inc/installer-loader.php';
+	require_once WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
+	require_once WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
 	require_once WCML_AUTOLOADER;
 
 	// Detecting language switching.

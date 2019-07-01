@@ -1,28 +1,51 @@
 <?php
-define( 'WP_PLUGIN_DIR', realpath( dirname( __FILE__ ) . '/../../' ) );
+if ( getenv( 'SCRUTINIZER' ) ) {
+	$home  = getenv( 'HOME' ); //=/home/scrutinizer
+	$build = $home . '/build';
+
+	define( 'WP_PLUGIN_DIR', realpath( $home ) );
+} else {
+	define( 'WP_PLUGIN_DIR', realpath( get_plugins_dir() . '/' ) );
+}
 
 if ( ! defined( 'WPML_CORE_PATH' ) ) {
-	define( 'WPML_CORE_PATH', dirname( __FILE__ ) . '/../../sitepress-multilingual-cms' );
+	define( 'WPML_CORE_PATH', WP_PLUGIN_DIR . '/sitepress-multilingual-cms' );
 }
 if ( ! defined( 'WPML_CORE_ST_PATH' ) ) {
-	define( 'WPML_CORE_ST_PATH', dirname( __FILE__ ) . '/../../wpml-string-translation' );
+	define( 'WPML_CORE_ST_PATH', WP_PLUGIN_DIR . '/wpml-string-translation' );
 }
 if ( ! defined( 'WPML_CORE_TM_PATH' ) ) {
-	define( 'WPML_CORE_TM_PATH', dirname( __FILE__ ) . '/../../wpml-translation-management' );
+	define( 'WPML_CORE_TM_PATH', WP_PLUGIN_DIR . '/wpml-translation-management' );
 }
 if ( ! defined( 'WCML_CORE_PATH' ) ) {
 	define( 'WCML_CORE_PATH',  dirname( dirname( __FILE__ ) ) );
 }
 if ( ! defined( 'WC_PATH' ) ) {
-	define( 'WC_PATH', dirname( __FILE__ ) . '/../../woocommerce' );
+	define( 'WC_PATH', WP_PLUGIN_DIR . '/woocommerce' );
 }
 
 if ( ! defined( 'WC_BOOKING_PATH' ) ) {
-	define( 'WC_BOOKING_PATH', dirname( __FILE__ ) . '/../../woocommerce-bookings' );
+	define( 'WC_BOOKING_PATH', WP_PLUGIN_DIR . '/woocommerce-bookings' );
 }
 
 $_tests_dir = isset( $_ENV['WP_TEST_DIR'] ) ? $_ENV['WP_TEST_DIR'] : 'wordpress-tests-lib';
 require_once $_tests_dir . '/includes/functions.php';
+
+function get_tests_dir() {
+	return __DIR__ . '/wordpress-tests-lib';
+}
+
+function get_themes_dir() {
+	return __DIR__ . '/wordpress/wp-content/themes';
+}
+
+function get_wp_content_dir() {
+	return __DIR__ . '/..';
+}
+
+function get_plugins_dir() {
+	return get_wp_content_dir() . '/..';
+}
 
 /**
  * @throws \Auryn\InjectionException
