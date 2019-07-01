@@ -98,7 +98,7 @@ function wcml_bootstrap( WPML_Core $wpml_core ) {
 		$loaders[] = 'WCML_Append_Gallery_To_Post_Media_Ids_Factory';
 	}
 
-	$action_filter_loader = new WPML_Action_Filter_Loader();
+	$action_filter_loader = $wpml_core->get_actions_loader();
 	$action_filter_loader->load( $loaders );
 
 	$rest_api = new WCML_REST_API();
