@@ -5,7 +5,6 @@
  * @author konrad
  */
 class WCML_Checkout_Addons {
-	private static $is_default_language = null;
 
 	public function add_hooks() {
 		add_filter( 'option_wc_checkout_add_ons', array( $this, 'option_wc_checkout_add_ons' ), 10, 2 );
@@ -17,8 +16,7 @@ class WCML_Checkout_Addons {
 				$addon_conf = $this->handle_option_part( $addon_id, $addon_conf );
 				if ( isset( $addon_conf['options'] ) ) {
 					foreach ( $addon_conf['options'] as $index => $fields ) {
-						$fields                          = $this->handle_option_part( $index, $fields );
-						$addon_conf['options'][ $index ] = $fields;
+						$addon_conf['options'][ $index ] = $this->handle_option_part( $index, $fields );
 					}
 				}
 				$option_value[ $addon_id ] = $addon_conf;
@@ -49,8 +47,7 @@ class WCML_Checkout_Addons {
 	}
 
 	private function adjust_price( $conf ) {
-		if ( isset( $conf['adjustment'] )
-			 && isset( $conf['adjustment_type'] )
+		if ( isset( $conf['adjustment'], $conf['adjustment_type'] )
 			 && $conf['adjustment_type'] === 'fixed'
 			 && ! $this->is_default_language() ) {
 			$conf['adjustment'] = apply_filters( 'wcml_raw_price_amount', $conf['adjustment'] );
