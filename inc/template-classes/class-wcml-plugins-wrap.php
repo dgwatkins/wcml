@@ -71,7 +71,7 @@ class WCML_Plugins_Wrap {
 	 * Outputs the template.
 	 */
 	public function show() {
-		$model = json_decode( wp_json_encode( $this->get_model() ) );
+		$model = new \WPML\Templates\PHP\Model( $this->get_model() );
 		include WCML_PLUGIN_PATH . '/templates/php/plugins-wrap.php';
 	}
 
