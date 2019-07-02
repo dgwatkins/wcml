@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+		"Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "684f04d1ec62d376bcd80f8caa2209db",
+	"content-hash": "79604a74f7f46ced244a4e4416c0890c",
     "packages": [
         {
             "name": "composer/installers",
@@ -1678,6 +1678,55 @@
             "time": "2015-05-11T14:41:42+00:00"
         },
         {
+			"name": "imangazaliev/didom",
+			"version": "1.14.1",
+			"source": {
+				"type": "git",
+				"url": "https://github.com/Imangazaliev/DiDOM.git",
+				"reference": "a8389cc26897f6bb8843363b4ea16e7ef16fb3c3"
+			},
+			"dist": {
+				"type": "zip",
+				"url": "https://api.github.com/repos/Imangazaliev/DiDOM/zipball/a8389cc26897f6bb8843363b4ea16e7ef16fb3c3",
+				"reference": "a8389cc26897f6bb8843363b4ea16e7ef16fb3c3",
+				"shasum": ""
+			},
+			"require": {
+				"ext-dom": "*",
+				"ext-iconv": "*",
+				"php": ">=5.4"
+			},
+			"require-dev": {
+				"friendsofphp/php-cs-fixer": "2.9",
+				"phpunit/phpunit": "^4.8"
+			},
+			"type": "library",
+			"autoload": {
+				"psr-4": {
+					"DiDom\\": "src/DiDom/"
+				}
+			},
+			"notification-url": "https://packagist.org/downloads/",
+			"license": [
+				"MIT"
+			],
+			"authors": [
+				{
+					"name": "Imangazaliev Muhammad",
+					"email": "imangazalievm@gmail.com"
+				}
+			],
+			"description": "Simple and fast HTML parser",
+			"homepage": "https://github.com/Imangazaliev/DiDOM",
+			"keywords": [
+				"didom",
+				"html",
+				"parser",
+				"xml"
+			],
+			"time": "2019-01-17T11:01:36+00:00"
+		},
+		{
             "name": "jms/metadata",
             "version": "1.7.0",
             "source": {
@@ -5470,12 +5519,12 @@
             "version": "0.14.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git",
+				"url": "https://github.com/WordPress/WordPress-Coding-Standards.git",
                 "reference": "cf6b310caad735816caef7573295f8a534374706"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WordPress-Coding-Standards/WordPress-Coding-Standards/zipball/cf6b310caad735816caef7573295f8a534374706",
+				"url": "https://api.github.com/repos/WordPress/WordPress-Coding-Standards/zipball/cf6b310caad735816caef7573295f8a534374706",
                 "reference": "cf6b310caad735816caef7573295f8a534374706",
                 "shasum": ""
             },

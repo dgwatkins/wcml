@@ -55,7 +55,8 @@
         "otgs/build-tools-ci": "dev-develop",
         "sebastian/phpcpd": "^3.0",
         "composer/composer": "~1.9",
-        "otgs/diff-checks": "dev-master"
+        "otgs/diff-checks": "dev-master",
+        "imangazaliev/didom": "^1.14"
     },
     "scripts": {
         "make": [
