@@ -65,8 +65,12 @@ function _manually_load_wcml() {
 
 
 	/** @var $wpml_core WPML_Core */
-	global $wpml_core;
+	global $wpml_core, $wpdb;
 	wpml_st_bootstrap( $wpml_core );
+	$factory = new WPML_ST_Upgrade_Command_Factory( $wpdb, $wpml_core->get_sitepress() );
+	$upgrade = new WPML_ST_Upgrade( $wpml_core->get_sitepress(), $factory );
+	$upgrade->add_hooks();
+	$upgrade->run();
 	wpml_tm_bootstrap( $wpml_core );
 	wcml_bootstrap( $wpml_core );
 
