@@ -6,40 +6,40 @@
  */
 ?>
 <div class="wrap">
-	<h1><?php echo esc_html( $model->strings->title ); ?></h1>
+	<h1><?php echo wp_kses_post( $model->strings->title ); ?></h1>
 
 	<nav class="wcml-tabs wpml-tabs" style="display:table;margin-top:30px;">
-		<a class="nav-tab nav-tab-active wcml-required-plugins-tab" href="<?php echo esc_attr( $model->link_url ); ?>"><?php echo esc_html( $model->strings->required ); ?></a>
+		<a class="nav-tab nav-tab-active wcml-required-plugins-tab" href="<?php echo esc_attr( $model->link_url ); ?>"><?php echo wp_kses_post( $model->strings->required ); ?></a>
 	</nav>
 
 	<div class="wcml-wrap wcml-required-plugins-wrap">
 		<div class="wcml-section">
 			<div class="wcml-section-header">
 				<h3>
-					<?php echo esc_html( $model->strings->plugins ); ?>
+					<?php echo wp_kses_post( $model->strings->plugins ); ?>
 					<i class="otgs-ico-help wcml-tip" data-tip="<?php echo esc_attr( $model->strings->depends ); ?>"> </i>
 				</h3>
 			</div>
 			<div class="wcml-section-content wcml-section-content-wide">
 				<ul>
 					<?php
-					if ( $model->hasValue( 'old_wpml' ) ) {
+					if ( true === $model->old_wpml ) {
 						?>
 						<li>
 							<i class="otgs-ico-warning wpml-multilingual-cms"></i>
-							<?php echo $model->strings->old_wpml_link; ?>
-							<a href="<?php echo $model->tracking_link; ?>"
-							   target="_blank"><?php echo esc_html( $model->strings->update_wpml ); ?></a>
+							<?php echo wp_kses_post( $model->strings->old_wpml_link ); ?>
+							<a href="<?php echo esc_attr( $model->tracking_link ); ?>"
+							   target="_blank"><?php echo wp_kses_post( $model->strings->update_wpml ); ?></a>
 						</li>
 						<?php
-					} elseif ( $model->hasValue( 'icl_version' ) ) {
+					} elseif ( true === $model->icl_version ) {
 						?>
 						<li>
 							<i class="otgs-ico-ok wpml-multilingual-cms"></i>
 							<?php echo sprintf( $model->strings->inst_active, $model->strings->wpml ); ?>
 						</li>
 						<?php
-						if ( $model->hasValue( 'icl_setup' ) ) {
+						if ( true === $model->icl_setup ) {
 							?>
 							<li>
 								<i class="otgs-ico-ok wpml-multilingual-cms wpml-setup"></i>
@@ -58,12 +58,12 @@
 						?>
 						<li>
 							<i class="otgs-ico-warning wpml-multilingual-cms"></i>
-							<?php echo esc_html( $model->strings->wpml_not_inst ); ?>
-							<a href="<?php esc_attr( $model->install_wpml_link ); ?>" target="_blank"><?php echo esc_html( $model->strings->get_wpml ); ?></a>
+							<?php echo wp_kses_post( $model->strings->wpml_not_inst ); ?>
+							<a href="<?php esc_attr( $model->install_wpml_link ); ?>" target="_blank"><?php echo wp_kses_post( $model->strings->get_wpml ); ?></a>
 						</li>
 						<?php
 					}
-					if ( $model->hasValue( 'tm_version' ) ) {
+					if ( true === $model->tm_version ) {
 						?>
 						<li>
 							<i class="otgs-ico-ok wpml-translation-management"></i>
@@ -75,11 +75,11 @@
 						<li>
 							<i class="otgs-ico-warning wpml-translation-management"></i>
 							<?php echo sprintf( $model->strings->not_inst, $model->strings->tm ); ?>
-							<a href="<?php esc_attr( $model->install_wpml_link ); ?>" target="_blank"><?php echo esc_html( $model->strings->get_wpml_tm ); ?></a>
+							<a href="<?php esc_attr( $model->install_wpml_link ); ?>" target="_blank"><?php echo wp_kses_post( $model->strings->get_wpml_tm ); ?></a>
 						</li>
 						<?php
 					}
-					if ( $model->hasValue( 'st_version' ) ) {
+					if ( true === $model->st_version ) {
 						?>
 						<li>
 							<i class="otgs-ico-ok wpml-string-translation"></i>
@@ -91,19 +91,19 @@
 						<li>
 							<i class="otgs-ico-warning wpml-string-translation"></i>
 							<?php echo sprintf( $model->strings->not_inst, $model->strings->st ); ?>
-							<a href="<?php esc_attr( $model->install_wpml_link ); ?>" target="_blank"><?php echo esc_html( $model->strings->get_wpml_st ); ?></a>
+							<a href="<?php esc_attr( $model->install_wpml_link ); ?>" target="_blank"><?php echo wp_kses_post( $model->strings->get_wpml_st ); ?></a>
 						</li>
 						<?php
 					}
-					if ( $model->hasValue( 'old_wc' ) ) {
+					if ( true === $model->old_wc ) {
 						?>
 						<li>
 							<i class="otgs-ico-warning woocommerce"></i>
-							<?php echo esc_html( $model->strings->old_wc ); ?>
-							<a href="<?php esc_attr( $model->wc_link ); ?>" target="_blank"><?php echo esc_html( $model->strings->download_wc ); ?></a>
+							<?php echo wp_kses_post( $model->strings->old_wc ); ?>
+							<a href="<?php esc_attr( $model->wc_link ); ?>" target="_blank"><?php echo wp_kses_post( $model->strings->download_wc ); ?></a>
 						</li>
 						<?php
-					} elseif ( $model->hasValue( 'wc' ) ) {
+					} elseif ( true === $model->wc ) {
 						?>
 						<li>
 							<i class="otgs-ico-ok woocommerce"></i>
@@ -115,7 +115,7 @@
 						<li>
 							<i class="otgs-ico-warning woocommerce"></i>
 							<?php echo sprintf( $model->strings->not_inst, $model->strings->wc ); ?>
-							<a href="<?php esc_attr( $model->wc_link ); ?>" target="_blank"><?php echo esc_html( $model->strings->download_wc ); ?></a>
+							<a href="<?php esc_attr( $model->wc_link ); ?>" target="_blank"><?php echo wp_kses_post( $model->strings->download_wc ); ?></a>
 						</li>
 						<?php
 					}

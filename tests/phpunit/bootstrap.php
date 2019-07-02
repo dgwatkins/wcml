@@ -3,7 +3,8 @@ define( 'WPML_TESTS_SITE_DIR', __DIR__ . '/site' );
 define( 'WPML_TESTS_SITE_URL', 'http://domain.tld' );
 
 define( 'WCML_TESTS_MAIN_FILE', __DIR__ . '/../../wpml-woocommerce.php' );
-define( 'WCML_PATH', dirname( WCML_TESTS_MAIN_FILE ) );
+define( 'WCML_PLUGIN_PATH', dirname( WCML_TESTS_MAIN_FILE ) );
+define( 'WCML_PATH', WCML_PLUGIN_PATH );
 
 define( 'WPML_TESTS_MAIN_FILE', __DIR__ . '/../../../sitepress-multilingual-cms/sitepress.php' );
 define( 'WPML_PATH', dirname( WPML_TESTS_MAIN_FILE ) );

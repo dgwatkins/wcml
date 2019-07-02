@@ -24,15 +24,6 @@ class Model {
 	}
 
 	/**
-	 * @param string $name
-	 *
-	 * @return bool
-	 */
-	public function isTruthy( $name ) {
-		return ! ! $this->__get( $name );
-	}
-
-	/**
 	 * If a property does not exist, the method will create it as an "empty" instance of `Model`
 	 * so that children properties can be called without throwing errors.
 	 *
@@ -60,7 +51,10 @@ class Model {
 			$value = get_object_vars( $value );
 		}
 		if ( is_array( $value ) ) {
-			$value = new Model( $value );
+			$is_assoc = is_array( $value ) && count( array_filter( array_keys( $value ), 'is_string' ) ) > 0;
+			if($is_assoc) {
+				$value = new Model( $value );
+			}
 		}
 		$this->attributes[ $name ] = $value;
 	}
