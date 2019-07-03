@@ -167,7 +167,8 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
                     $cf_settings = new WPML_Post_Custom_Field_Setting( $this->tm_instance, $custom_field );
 
-	                $field_style = (string) apply_filters( 'wpml_tm_editor_string_style', $cf_settings->get_editor_style(), 'field-'.$custom_field.'-0', get_post( $this->product_id ) );
+	                $field_style = apply_filters( 'wpml_editor_custom_field_style', $cf_settings->get_editor_style(), 'field-'.$custom_field );
+	                $field_style = (string) apply_filters( 'wpml_tm_editor_string_style', $field_style, 'field-'.$custom_field.'-0', get_post( $this->product_id ) );
 
                     switch( $field_style ){
                         case 'visual':
