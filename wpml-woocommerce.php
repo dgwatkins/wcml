@@ -112,10 +112,12 @@ function wcml_bootstrap( WPML_Core $wpml_core ) {
  */
 function load_wcml_without_wpml() {
 	if ( ! did_action( 'wpml_core_loaded' ) && ! did_action( 'wpml_core_checks_started' ) ) {
+		require_once WCML_PLUGIN_PATH . '/inc/constants.php';
+		require_once WCML_AUTOLOADER;
 		global $woocommerce_wpml;
 		$woocommerce_wpml = new woocommerce_wpml();
 	}
 }
 
 add_action( 'wpml_core_loaded', 'wcml_bootstrap' );
-add_action( 'init', 'load_wcml_without_wpml', 10000 );
+add_action( 'plugins_loaded', 'load_wcml_without_wpml', PHP_INT_MAX );
