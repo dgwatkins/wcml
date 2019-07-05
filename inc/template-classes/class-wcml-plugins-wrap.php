@@ -2,9 +2,10 @@
 
 class WCML_Plugins_Wrap {
 
+	/** @var \woocommerce_wpml */
 	private $woocommerce_wpml;
+	/** @var \SitePress */
 	private $sitepress;
-
 	/** @var WCML_Tracking_Link */
 	private $tracking_link;
 

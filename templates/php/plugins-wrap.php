@@ -26,7 +26,7 @@
 					if ( true === $model->old_wpml ) {
 						?>
 						<li>
-							<i class="otgs-ico-warning wpml-multilingual-cms"></i>
+							<i class="otgs-ico-warning wpml-multilingual-cms otgs-old"></i>
 							<?php echo wp_kses_post( $model->strings->old_wpml_link ); ?>
 							<a href="<?php echo esc_attr( $model->tracking_link ); ?>"
 							   target="_blank"><?php echo wp_kses_post( $model->strings->update_wpml ); ?></a>
@@ -49,7 +49,7 @@
 						} else {
 							?>
 							<li>
-								<i class="otgs-ico-warning wpml-multilingual-cms wpml-setup"></i>
+								<i class="otgs-ico-warning wpml-multilingual-cms otgs-no-setup"></i>
 								<?php echo sprintf( $model->strings->not_setup, $model->strings->wpml ); ?>
 							</li>
 							<?php
@@ -57,9 +57,9 @@
 					} else {
 						?>
 						<li>
-							<i class="otgs-ico-warning wpml-multilingual-cms"></i>
+							<i class="otgs-ico-warning wpml-multilingual-cms otgs-missing"></i>
 							<?php echo wp_kses_post( $model->strings->wpml_not_inst ); ?>
-							<a href="<?php esc_attr( $model->install_wpml_link ); ?>" target="_blank"><?php echo wp_kses_post( $model->strings->get_wpml ); ?></a>
+							<a href="<?php echo esc_attr( $model->install_wpml_link ); ?>" target="_blank"><?php echo wp_kses_post( $model->strings->get_wpml ); ?></a>
 						</li>
 						<?php
 					}
@@ -73,9 +73,9 @@
 					} else {
 						?>
 						<li>
-							<i class="otgs-ico-warning wpml-translation-management"></i>
+							<i class="otgs-ico-warning wpml-translation-management otgs-missing"></i>
 							<?php echo sprintf( $model->strings->not_inst, $model->strings->tm ); ?>
-							<a href="<?php esc_attr( $model->install_wpml_link ); ?>" target="_blank"><?php echo wp_kses_post( $model->strings->get_wpml_tm ); ?></a>
+							<a href="<?php echo esc_attr( $model->install_wpml_link ); ?>" target="_blank"><?php echo wp_kses_post( $model->strings->get_wpml_tm ); ?></a>
 						</li>
 						<?php
 					}
@@ -89,18 +89,18 @@
 					} else {
 						?>
 						<li>
-							<i class="otgs-ico-warning wpml-string-translation"></i>
+							<i class="otgs-ico-warning wpml-string-translation otgs-missing"></i>
 							<?php echo sprintf( $model->strings->not_inst, $model->strings->st ); ?>
-							<a href="<?php esc_attr( $model->install_wpml_link ); ?>" target="_blank"><?php echo wp_kses_post( $model->strings->get_wpml_st ); ?></a>
+							<a href="<?php echo esc_attr( $model->install_wpml_link ); ?>" target="_blank"><?php echo wp_kses_post( $model->strings->get_wpml_st ); ?></a>
 						</li>
 						<?php
 					}
 					if ( true === $model->old_wc ) {
 						?>
 						<li>
-							<i class="otgs-ico-warning woocommerce"></i>
+							<i class="otgs-ico-warning woocommerce otgs-old"></i>
 							<?php echo wp_kses_post( $model->strings->old_wc ); ?>
-							<a href="<?php esc_attr( $model->wc_link ); ?>" target="_blank"><?php echo wp_kses_post( $model->strings->download_wc ); ?></a>
+							<a href="<?php echo esc_attr( $model->wc_link ); ?>" target="_blank"><?php echo wp_kses_post( $model->strings->download_wc ); ?></a>
 						</li>
 						<?php
 					} elseif ( true === $model->wc ) {
@@ -113,9 +113,9 @@
 					} else {
 						?>
 						<li>
-							<i class="otgs-ico-warning woocommerce"></i>
+							<i class="otgs-ico-warning woocommerce otgs-missing"></i>
 							<?php echo sprintf( $model->strings->not_inst, $model->strings->wc ); ?>
-							<a href="<?php esc_attr( $model->wc_link ); ?>" target="_blank"><?php echo wp_kses_post( $model->strings->download_wc ); ?></a>
+							<a href="<?php echo esc_attr( $model->wc_link ); ?>" target="_blank"><?php echo wp_kses_post( $model->strings->download_wc ); ?></a>
 						</li>
 						<?php
 					}

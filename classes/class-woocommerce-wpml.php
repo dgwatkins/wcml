@@ -65,9 +65,13 @@ class woocommerce_wpml {
      * @var WCML_Products_Screen_Options
      */
     private $wcml_products_screen;
+	/**
+	 * @var \WCML_Dependencies
+	 */
+	public $dependencies;
 
 
-    public function __construct(){
+	public function __construct() {
 	    global $sitepress;
 
         $this->settings = $this->get_settings();
