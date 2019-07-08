@@ -8,6 +8,11 @@ class WCML_Payment_Gateway_PayPal extends WCML_Payment_Gateway {
 	const TEMPLATE = 'paypal.twig';
 
 	protected function get_output_model() {
+
+		if( $this->is_current_currency_default() ){
+			return array();
+		}
+
 		$currencies_details = $this->get_currencies_details();
 
 		return array(

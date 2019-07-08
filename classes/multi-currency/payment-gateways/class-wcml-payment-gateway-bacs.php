@@ -19,6 +19,7 @@ class WCML_Payment_Gateway_Bacs extends WCML_Payment_Gateway {
 			'gateway_id'        => $this->get_id(),
 			'gateway_title'     => $this->get_title(),
 			'current_currency'  => $this->current_currency,
+			'default_currency'  => $this->default_currency,
 			'gateway_settings'  => $this->get_setting( $this->current_currency ),
 			'active_currencies' => $this->get_active_currencies(),
 			'account_details'   => $this->get_gateway()->account_details,

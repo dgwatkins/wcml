@@ -206,11 +206,40 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 			'return' => $wc
 		) );
 
+		\WP_Mock::userFunction( 'get_woocommerce_currency', array(
+			'return' => rand_str( 3 )
+		));
+
 		$subject = $this->get_subject();
 		$subject->init_gateways();
 		$filtered_description = $subject->filter_gateway_description( $description, $gateway->id );
 
 		$this->assertSame( $description.$expected_user_notice_text, $filtered_description);
+	}
+
+	/**
+	 * @test
+	 */
+	public function id_should_not_filter_gateway_description_for_default_currency() {
+
+		$client_currency = 'USD';
+		$description = rand_str();
+
+		\WP_Mock::userFunction( 'get_woocommerce_currency', array(
+			'return' => $client_currency
+		));
+
+		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                               ->disableOriginalConstructor()
+		                                               ->setMethods( array( 'get_client_currency', 'get_currency_codes' ) )
+		                                               ->getMock();
+
+		$this->woocommerce_wpml->multi_currency->method('get_client_currency')->willReturn( $client_currency );
+
+		$subject = $this->get_subject();
+		$filtered_description = $subject->filter_gateway_description( $description, 'gateway_id' );
+
+		$this->assertSame( $description, $description);
 	}
 
 }
