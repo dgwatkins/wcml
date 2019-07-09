@@ -663,7 +663,7 @@ class WCML_Synchronize_Product_Data{
             $set_as_source = $_POST['set_as_source'];
 
             if ($post_type == 'product') {
-
+	            remove_action( 'wpml_translation_update', array( $this, 'icl_connect_translations_action' ) );
                 $translations = $this->sitepress->get_element_translations($new_trid, 'post_' . $post_type);
 
                 if ($translations) {
@@ -693,6 +693,7 @@ class WCML_Synchronize_Product_Data{
                         }
                     }
                 }
+	            add_action( 'wpml_translation_update', array( $this, 'icl_connect_translations_action' ) );
             }
         }
     }
