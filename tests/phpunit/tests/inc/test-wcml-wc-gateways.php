@@ -95,4 +95,111 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		unset( $_GET['page'], $_GET['tab'], $_GET['section'] );
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_should_get_default_dropdown_if_bacs_settings_not_saved_yet() {
+
+		$bacs_settings            = array();
+		$default_currency         = 'USD';
+		$bacs_accounts_currencies = array();
+		$active_currencies        = array( 'USD', 'EUR' );
+		$default_dropdown         = '<select><option>USD</option></select>';
+
+		\WP_Mock::userFunction( 'get_option', array(
+			'args'   => array( 'woocommerce_bacs_accounts', array() ),
+			'return' => $bacs_settings
+		) );
+
+		\WP_Mock::userFunction( 'get_option', array(
+			'args'   => array( 'woocommerce_currency' ),
+			'return' => $default_currency
+		) );
+
+		\WP_Mock::userFunction( 'get_option', array(
+			'args'   => array( 'wcml_bacs_accounts_currencies', array() ),
+			'return' => $bacs_accounts_currencies
+		) );
+
+		$woocommerce_wpml = $this->get_woocommerce_wpml();
+
+		$woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'get_currency_codes' ) )
+		                                         ->getMock();
+		$woocommerce_wpml->multi_currency->method( 'get_currency_codes' )->willReturn( $active_currencies );
+
+
+		$currencies_dropdown_ui = $this->getMockBuilder( 'WCML_Currencies_Dropdown_UI' )
+		                               ->disableOriginalConstructor()
+		                               ->setMethods( array( 'get' ) )
+		                               ->getMock();
+		$currencies_dropdown_ui->method( 'get' )->with( $active_currencies, $default_currency )->willReturn( $default_dropdown );
+
+		$subject = $this->get_subject( $woocommerce_wpml );
+
+		$this->assertSame( array(
+			$default_dropdown,
+			array( $default_dropdown )
+		), $subject->get_dropdown( $currencies_dropdown_ui ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_get_default_dropdown_for_bacs_settings() {
+
+		$bacs_settings                  = array( 0 => array() );
+		$default_currency               = 'USD';
+		$this->bacs_accounts_currencies = array( 0 => 'EUR' );
+		$active_currencies              = array( 'USD', 'EUR' );
+		$this->default_dropdown         = '<select><option>USD</option></select>';
+		$this->eur_dropdown             = '<select><option>EUR</option></select>';
+
+		\WP_Mock::userFunction( 'get_option', array(
+			'args'   => array( 'woocommerce_bacs_accounts', array() ),
+			'return' => $bacs_settings
+		) );
+
+		\WP_Mock::userFunction( 'get_option', array(
+			'args'   => array( 'woocommerce_currency' ),
+			'return' => $default_currency
+		) );
+
+		\WP_Mock::userFunction( 'get_option', array(
+			'args'   => array( 'wcml_bacs_accounts_currencies', array() ),
+			'return' => $this->bacs_accounts_currencies
+		) );
+
+		$woocommerce_wpml = $this->get_woocommerce_wpml();
+
+		$woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'get_currency_codes' ) )
+		                                         ->getMock();
+		$woocommerce_wpml->multi_currency->method( 'get_currency_codes' )->willReturn( $active_currencies );
+
+
+		$currencies_dropdown_ui = $this->getMockBuilder( 'WCML_Currencies_Dropdown_UI' )
+		                               ->disableOriginalConstructor()
+		                               ->setMethods( array( 'get' ) )
+		                               ->getMock();
+
+		$that = $this;
+		$currencies_dropdown_ui->method( 'get' )->willReturnCallback( function ( $active_currencies, $currency ) use ( $that ) {
+			if ( $that->bacs_accounts_currencies[0] === $currency ) {
+				return $that->eur_dropdown;
+			} else {
+				return $that->default_dropdown;
+			}
+		} );
+
+		$subject = $this->get_subject( $woocommerce_wpml );
+
+		$this->assertSame( array(
+			$this->default_dropdown,
+			array( $this->eur_dropdown )
+		), $subject->get_dropdown( $currencies_dropdown_ui ) );
+	}
+
 }
