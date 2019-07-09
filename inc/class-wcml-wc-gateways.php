@@ -211,18 +211,10 @@ class WCML_WC_Gateways{
 
 	public function append_currency_selector_to_bacs_account_settings() {
 
-		$active_currencies        = $this->woocommerce_wpml->multi_currency->get_currency_codes();
-		$default_currency         = get_option( 'woocommerce_currency' );
-		$bacs_settings            = get_option( 'woocommerce_bacs_accounts', array() );
-		$bacs_accounts_currencies = get_option( self::WCML_BACS_ACCOUNTS_CURRENCIES_OPTION, array() );
 		$template_loader          = new WPML_Twig_Template_Loader( array( $this->sitepress->get_wp_api()->constant( 'WCML_PLUGIN_PATH' ) . '/templates/multi-currency/' ) );
 		$currencies_dropdown_ui   = new WCML_Currencies_Dropdown_UI( $template_loader );
 
-		foreach ( $bacs_settings as $id => $account_settings ) {
-			$currencies_output[ $id ] = $currencies_dropdown_ui->get( $active_currencies, isset( $bacs_accounts_currencies[ $id ] ) ? $bacs_accounts_currencies[ $id ] : $default_currency );
-		}
-
-		$default_dropdown = $currencies_dropdown_ui->get( $active_currencies, $default_currency );
+		list( $default_dropdown, $currencies_output ) = $this->get_dropdown( $currencies_dropdown_ui );
 
 		wp_enqueue_script( 'wcml-bacs-accounts-currencies', WCML_PLUGIN_URL . '/res/js/bacs-accounts-currencies' . WCML_JS_MIN . '.js', array( 'jquery' ), WCML_VERSION, true );
 		wp_localize_script( 'wcml-bacs-accounts-currencies', 'wcml_data', array(
@@ -230,6 +222,32 @@ class WCML_WC_Gateways{
 			'label'               => __( 'Currency', 'woocommerce-multilingual' ),
 			'default_dropdown'    => $default_dropdown
 		) );
+	}
+
+	/**
+	 * @param WCML_Currencies_Dropdown_UI $currencies_dropdown_ui
+	 *
+	 * @return array
+	 */
+	public function get_dropdown( $currencies_dropdown_ui ) {
+
+		$bacs_settings            = get_option( 'woocommerce_bacs_accounts', array() );
+		$active_currencies        = $this->woocommerce_wpml->multi_currency->get_currency_codes();
+		$default_currency         = get_option( 'woocommerce_currency' );
+		$bacs_accounts_currencies = get_option( self::WCML_BACS_ACCOUNTS_CURRENCIES_OPTION, array() );
+		$currencies_output        = array();
+
+		$default_dropdown = $currencies_dropdown_ui->get( $active_currencies, $default_currency );
+
+		if ( $bacs_settings ) {
+			foreach ( $bacs_settings as $id => $account_settings ) {
+				$currencies_output[ $id ] = isset( $bacs_accounts_currencies[ $id ] ) ? $currencies_dropdown_ui->get( $active_currencies,  $bacs_accounts_currencies[ $id ] ) : $default_dropdown;
+			}
+		} else {
+			$currencies_output[] = $default_dropdown;
+		}
+
+		return array( $default_dropdown, $currencies_output );
 	}
 
 }
