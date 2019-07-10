@@ -292,7 +292,20 @@ class woocommerce_wpml {
         return $this->settings;
     }
 
-    public function update_settings($settings = null){
+	/**
+	 * @param string $key
+	 * @param null|string $default
+	 *
+	 * @return null|string
+	 */
+	public function get_setting( $key, $default = null ) {
+		if( array_key_exists( $key , $this->settings ) ) {
+			return $this->settings[ $key ];
+		}
+		return $default;
+	}
+
+	public function update_settings($settings = null){
         if(!is_null($settings)){
             $this->settings = $settings;
         }
