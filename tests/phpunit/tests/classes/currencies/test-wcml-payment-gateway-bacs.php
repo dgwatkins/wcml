@@ -222,4 +222,34 @@ class Test_WCML_Payment_Gateway_Bacs extends OTGS_TestCase {
 		$this->assertSame( $expected_filtered_accounts, $filtered_accounts );
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_bacs_accounts_if_settings_not_exists() {
+
+		$accounts = array( 'Test' => array( 'settings1' ), 'Test2' => array( 'settings2' ), 'Test3' => array( 'settings3' ) );
+		$client_currency = 'USD';
+
+		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                               ->disableOriginalConstructor()
+		                                               ->setMethods( array( 'get_client_currency' ) )
+		                                               ->getMock();
+
+		$this->woocommerce_wpml->multi_currency->method('get_client_currency')->willReturn( $client_currency );
+
+
+		$gateway = $this->getMockBuilder('WC_Payment_Gateway')
+		                ->disableOriginalConstructor()
+		                ->getMock();
+		$gateway->id = 'id';
+		$gateway->title = 'title';
+		$gateway->settings = array( );
+
+		$subject = $this->get_subject( $gateway );
+
+		$filtered_accounts = $subject->filter_bacs_accounts( $accounts );
+
+		$this->assertSame( $accounts, $filtered_accounts );
+	}
+
 }
