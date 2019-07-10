@@ -188,13 +188,48 @@ class Test_WCML_Setup_UI extends OTGS_TestCase {
 
 	/**
 	 * @test
-	 * @group reru
+	 * @group wizard_notice
 	 */
-	public function add_wizard_notice_hook(){
+	public function it_should_add_wizard_notice_hook_on_wp_dashboard_page(){
+		global $pagenow;
+		$pagenow_buff = $pagenow;
+		$pagenow      = 'index.php';
 
 		$subject = $this->get_subject();
 
 		\WP_Mock::expectFilterAdded( 'admin_notices', array( $subject, 'wizard_notice') );
+
+		$subject->add_wizard_notice_hook();
+
+		$pagenow = $pagenow_buff;
+	}
+
+	/**
+	 * @test
+	 * @group wizard_notice
+	 */
+	public function it_should_add_wizard_notice_hook_on_wcml_dashboard_page(){
+
+		$_GET['page'] = 'wpml-wcml';
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::expectFilterAdded( 'admin_notices', array( $subject, 'wizard_notice') );
+
+		$subject->add_wizard_notice_hook();
+
+		unset( $_GET['page'] );
+	}
+
+	/**
+	 * @test
+	 * @group wizard_notice
+	 */
+	public function it_should_not_add_wizard_notice_hook_on_not_wp_dashboard_and_wcml_dashboard_admin_pages(){
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::expectFilterNotAdded( 'admin_notices', array( $subject, 'wizard_notice') );
 
 		$subject->add_wizard_notice_hook();
 	}
