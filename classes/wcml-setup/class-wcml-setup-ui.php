@@ -20,9 +20,16 @@ class WCML_Setup_UI {
 		}
     }
 
-    public function add_wizard_notice_hook(){
-	    add_filter( 'admin_notices', array( $this, 'wizard_notice' ) );
-    }
+	public function add_wizard_notice_hook() {
+		global $pagenow;
+
+		$is_wcml_dashboard_page = isset( $_GET['page'] ) && 'wpml-wcml' === $_GET['page'];
+		$is_wp_dashboard_page   = 'index.php' === $pagenow;
+
+		if ( $is_wcml_dashboard_page || $is_wp_dashboard_page ) {
+			add_filter( 'admin_notices', array( $this, 'wizard_notice' ) );
+		}
+	}
 
 	/**
 	 * @return bool
