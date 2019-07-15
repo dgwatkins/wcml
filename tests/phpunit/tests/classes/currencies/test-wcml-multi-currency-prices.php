@@ -12,7 +12,7 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 	private function get_multi_currency_mock() {
 		return $this->getMockBuilder( 'WCML_Multi_Currency' )
 		            ->disableOriginalConstructor()
-					->setMethods( ['get_client_currency', 'set_client_currency'] )
+					->setMethods( ['get_client_currency', 'set_client_currency', 'get_exchange_rates', 'get_currencies_without_cents' ] )
 		            ->getMock();
 	}
 
@@ -111,9 +111,7 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		), 100 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_cart_subtotal', array( $subject, 'filter_woocommerce_cart_subtotal' ), 100, 3 );
 
-		//filters for wc-widget-price-filter
-		\WP_Mock::expectFilterAdded( 'woocommerce_price_filter_results', array( $subject, 'filter_price_filter_results' ), 10, 3 );
-		\WP_Mock::expectFilterAdded( 'woocommerce_price_filter_widget_amount', array( $subject, 'filter_price_filter_widget_amount' ) );
+		\WP_Mock::expectFilterAdded( 'posts_clauses', array( $subject, 'price_filter_post_clauses' ), 100, 2 );
 
 		\WP_Mock::expectActionAdded( 'woocommerce_cart_loaded_from_session', array(
 			$subject,
@@ -199,6 +197,8 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 	 */
 	public function it_does_filter_woocommerce_cart_subtotal() {
 
+		WP_Mock::passthruFunction( 'remove_filter' );
+
 		$cart_subtotal = 10;
 		$expected_subtotal = 20;
 		$compound = false;
@@ -258,6 +258,128 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		WP_Mock::userFunction( 'wcml_price_custom_fields', array( 'times' => 0 ) );
 
 		$subject->product_price_filter( array(), $product_id, $meta_key, true );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_NOT_filter_price_filter_post_clauses_when_price_not_entered() {
+
+		$args     = array( 'where' => rand_str() );
+		$wp_query = $this->getMockBuilder( 'WP_Query' )
+		                 ->disableOriginalConstructor()
+		                 ->setMethods( array( 'is_main_query' ) )
+		                 ->getMock();
+		$wp_query->method( 'is_main_query' )->willReturn( true );
+
+		$subject = $this->get_subject( $this->get_multi_currency_mock() );
+
+		$this->assertSame( $args, $subject->price_filter_post_clauses( $args, $wp_query ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_NOT_filter_price_filter_post_clauses_when_wp_query_is_not_main_query() {
+
+		$args     = array( 'where' => rand_str() );
+		$wp_query = $this->getMockBuilder( 'WP_Query' )
+		                 ->disableOriginalConstructor()
+		                 ->setMethods( array( 'is_main_query' ) )
+		                 ->getMock();
+		$wp_query->method( 'is_main_query' )->willReturn( false );
+
+		$subject = $this->get_subject( $this->get_multi_currency_mock() );
+
+		$this->assertSame( $args, $subject->price_filter_post_clauses( $args, $wp_query ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_NOT_filter_price_filter_post_clauses_when_is_default_currency() {
+
+		WP_Mock::passthruFunction( 'wp_unslash' );
+
+		$currency = 'USD';
+		$args     = array( 'where' => rand_str() );
+
+		$wp_query = $this->getMockBuilder( 'WP_Query' )
+		                 ->disableOriginalConstructor()
+		                 ->setMethods( array( 'is_main_query' ) )
+		                 ->getMock();
+		$wp_query->method( 'is_main_query' )->willReturn( true );
+
+		$_GET['min_price'] = 10;
+		$_GET['max_price'] = 20;
+
+		$multi_currency = $this->get_multi_currency_mock();
+		$multi_currency->method( 'get_client_currency' )->willReturn( $currency );
+
+		WP_Mock::userFunction( 'get_option', array(
+			'args'   => array( 'woocommerce_currency' ),
+			'return' => $currency
+		) );
+
+		$subject = $this->get_subject( $multi_currency );
+
+		$this->assertSame( $args, $subject->price_filter_post_clauses( $args, $wp_query ) );
+
+		unset( $_GET['min_price'] );
+		unset( $_GET['max_price'] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_price_filter_post_clauses() {
+
+		WP_Mock::passthruFunction( 'wp_unslash' );
+
+		$wp_query = $this->getMockBuilder( 'WP_Query' )
+		                 ->disableOriginalConstructor()
+		                 ->setMethods( array( 'is_main_query' ) )
+		                 ->getMock();
+		$wp_query->method( 'is_main_query' )->willReturn( true );
+
+		$currency                 = 'EUR';
+		$exchange_rates           = array( $currency => 2 );
+		$currencies_without_cents = array();
+		$_GET['min_price']        = 10;
+		$_GET['max_price']        = 20;
+		$converted_min_price      = $_GET['min_price'] / $exchange_rates[ $currency ];
+		$converted_max_price      = $_GET['max_price'] / $exchange_rates[ $currency ];
+
+		$args          = array( 'where' => 'wc_product_meta_lookup.min_price >= ' . $_GET['min_price'] . ' AND wc_product_meta_lookup.max_price <= ' . $_GET['max_price'] );
+		$expected_args = array( 'where' => 'wc_product_meta_lookup.min_price >= ' . $converted_min_price . ' AND wc_product_meta_lookup.max_price <= ' . $converted_max_price );
+
+		$multi_currency = $this->get_multi_currency_mock();
+		$multi_currency->method( 'get_client_currency' )->willReturn( $currency );
+		$multi_currency->method( 'get_exchange_rates' )->willReturn( $exchange_rates );
+		$multi_currency->method( 'get_currencies_without_cents' )->willReturn( $exchange_rates );
+
+
+		WP_Mock::userFunction( 'get_option', array(
+			'args'   => array( 'woocommerce_currency' ),
+			'return' => 'USD'
+		) );
+
+
+		global $wpdb;
+		$wpdb = $this->stubs->wpdb();
+
+		$wpdb->method( 'prepare' )->will( $this->returnCallback(
+			function ( $query, $value ) {
+				return str_replace( '%f', $value, $query );
+			}
+		) );
+
+		$subject = $this->get_subject( $multi_currency );
+
+		$this->assertSame( $expected_args, $subject->price_filter_post_clauses( $args, $wp_query ) );
+
+		unset( $_GET['min_price'] );
+		unset( $_GET['max_price'] );
 	}
 
 }
