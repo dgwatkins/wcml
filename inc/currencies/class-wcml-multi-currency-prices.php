@@ -56,9 +56,7 @@ class WCML_Multi_Currency_Prices {
 			), 100 );
 			add_filter( 'woocommerce_cart_subtotal', array( $this, 'filter_woocommerce_cart_subtotal' ), 100, 3 );
 
-			//filters for wc-widget-price-filter
-			add_filter( 'woocommerce_price_filter_results', array( $this, 'filter_price_filter_results' ), 10, 3 );
-			add_filter( 'woocommerce_price_filter_widget_amount', array( $this, 'filter_price_filter_widget_amount' ) );
+			add_filter( 'posts_clauses', array( $this, 'price_filter_post_clauses' ), 100, 2 );
 
 			add_action( 'woocommerce_cart_loaded_from_session', array(
 				$this,
@@ -547,40 +545,27 @@ class WCML_Multi_Currency_Prices {
 		return $cart_subtotal;
 	}
 
-	public function filter_price_filter_results( $matched_products, $min, $max ) {
-		global $wpdb;
+	public function price_filter_post_clauses( $args, $wp_query ) {
 
-		$current_currency = $this->multi_currency->get_client_currency();
-		if ( $current_currency != get_option( 'woocommerce_currency' ) ) {
-			$filtered_min = $this->unconvert_price_amount( $min, $current_currency );
-			$filtered_max = $this->unconvert_price_amount( $max, $current_currency );
-
-			$matched_products = $wpdb->get_results( $wpdb->prepare( "
-	        	SELECT DISTINCT ID, post_parent, post_type FROM $wpdb->posts
-				INNER JOIN $wpdb->postmeta ON ID = post_id
-				WHERE post_type IN ( 'product', 'product_variation' ) AND post_status = 'publish' AND meta_key = %s AND meta_value BETWEEN %d AND %d
-			", '_price', $filtered_min, $filtered_max ), OBJECT_K );
-
-			foreach ( $matched_products as $key => $matched_product ) {
-				$custom_price = get_post_meta( $matched_product->ID, '_price_' . $current_currency, true );
-				if ( $custom_price && ( $custom_price < $min || $custom_price > $max ) ) {
-					unset( $matched_products[ $key ] );
-				}
-			}
+		if ( ! $wp_query->is_main_query() || ( ! isset( $_GET['max_price'] ) && ! isset( $_GET['min_price'] ) ) ) {
+			return $args;
 		}
 
-		return $matched_products;
-	}
+		$currency = $this->multi_currency->get_client_currency();
 
-	public function filter_price_filter_widget_amount( $amount ) {
+		if( $currency !== get_option( 'woocommerce_currency' ) ){
+			global $wpdb;
+			$min_price = isset( $_GET['min_price'] ) ? floatval( wp_unslash( $_GET['min_price'] ) ) : 0;
+			$max_price = isset( $_GET['max_price'] ) ? floatval( wp_unslash( $_GET['max_price'] ) ) : PHP_INT_MAX;
 
-		$current_currency = $this->multi_currency->get_client_currency();
-		if ( $current_currency != get_option( 'woocommerce_currency' ) ) {
-			$amount = apply_filters( 'wcml_raw_price_amount', $amount );
+			$min_price_in_default_currency = $this->unconvert_price_amount( $min_price, $currency );
+			$max_price_in_default_currency = $this->unconvert_price_amount( $max_price, $currency );
+
+			$args['where'] = str_replace( $wpdb->prepare( 'wc_product_meta_lookup.min_price >= %f', $min_price ), $wpdb->prepare( 'wc_product_meta_lookup.min_price >= %f', $min_price_in_default_currency ), $args['where'] );
+			$args['where'] = str_replace( $wpdb->prepare( 'wc_product_meta_lookup.max_price <= %f', $max_price ), $wpdb->prepare( 'wc_product_meta_lookup.max_price <= %f', $max_price_in_default_currency ), $args['where'] );
 		}
 
-		return $amount;
-
+		return $args;
 	}
 
 	private function check_admin_order_currency_code() {
