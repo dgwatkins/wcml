@@ -189,21 +189,37 @@ class Test_WCML_Setup_UI extends OTGS_TestCase {
 	/**
 	 * @test
 	 * @group wizard_notice
+	 *
+	 * @param string $test_pagenow
+	 *
+	 * @dataProvider dp_pagenow_for_wizard_notice
 	 */
-	public function it_should_add_wizard_notice_hook_on_wp_dashboard_page(){
+	public function it_should_add_wizard_notice_hook_on_wp_dashboard_or_plugin_page( $test_pagenow ){
 		global $pagenow;
 		$pagenow_buff = $pagenow;
-		$pagenow      = 'index.php';
-
+		$pagenow      = $test_pagenow;
+		
+		
 		$subject = $this->get_subject();
-
+		
 		\WP_Mock::expectFilterAdded( 'admin_notices', array( $subject, 'wizard_notice') );
-
+		
 		$subject->add_wizard_notice_hook();
-
+		
 		$pagenow = $pagenow_buff;
+		
 	}
-
+	
+	/**
+	 * Data Provider for test it_should_add_wizard_notice_hook_on_wp_dashboard_or_plugin_page.
+	 */
+	public function dp_pagenow_for_wizard_notice() {
+		return array(
+			'dashboard' => array( 'index.php' ),
+			'plugins'   => array( 'plugins.php' ),
+		);
+	}
+	
 	/**
 	 * @test
 	 * @group wizard_notice
