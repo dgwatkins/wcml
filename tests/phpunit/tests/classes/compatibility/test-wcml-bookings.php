@@ -92,6 +92,11 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		\WP_Mock::wpFunction( 'remove_action', array( 'times' => 1 ) );
 
 		$subject = $this->get_subject();
+		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'get_order_language' ), 10, 4 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_booking_reminder_notification', array( $subject, 'translate_notification' ), 9 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_booking_confirmed_notification', array( $subject, 'translate_notification' ), 9 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_booking_cancelled_notification', array( $subject, 'translate_notification' ), 9 );
+
 		\WP_Mock::expectFilterAdded( 'get_translatable_documents_all', array( $subject, 'filter_translatable_documents' ) );
 		\WP_Mock::expectFilterAdded( 'wp_count_posts', array( $subject, 'count_bookings_by_current_language' ), 10, 2 );
 		\WP_Mock::expectFilterAdded( 'views_edit-wc_booking', array( $subject, 'unset_mine_from_bookings_views' ) );
@@ -114,6 +119,59 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		\WP_Mock::expectFilterNotAdded( 'views_edit-wc_booking', array( $subject, 'unset_mine_from_bookings_views' ) );
 		$subject->add_hooks();
 
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function get_order_language() {
+
+		$booking_id    = mt_rand( 1, 100 );
+		$order_item_id = mt_rand( 1, 100 );
+		$order_id      = mt_rand( 1, 100 );
+		$expected      = rand_str();
+
+		\WP_Mock::wpFunction( 'get_post_type', array(
+			'args'   => array( $booking_id ),
+			'return' => 'wc_booking',
+		) );
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $booking_id, '_booking_order_item_id', true ),
+			'return' => $order_item_id,
+		) );
+		$sql = 'SELECT order_id FROM wp_woocommerce_order_items WHERE order_item_id = ' . $order_item_id;
+		$this->wpdb->method( 'get_var' )->with( $sql )->willReturn( $order_id );
+		$this->wpdb->method( 'prepare' )->will( $this->returnCallback( function() {
+			return call_user_func_array( 'sprintf', func_get_args() );
+		} ) );
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $order_id, 'wpml_language', true ),
+			'return' => $expected,
+		) );
+		\WP_Mock::wpFunction( 'remove_filter' );
+		\WP_Mock::wpFunction( 'add_filter' );
+
+		$subject = $this->get_subject();
+		$language = $subject->get_order_language( null, $booking_id, 'wpml_language', true );
+		$this->assertEquals( $language, $expected );
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_should_translate_notifications() {
+		$order_id = 123;
+
+		$emails = \Mockery::mock( WCML_Emails::class );
+		$emails->shouldReceive( 'refresh_email_lang' )->once()->with( $order_id );
+
+		$woocommerce_wcml = \Mockery::mock( woocommerce_wpml::class );
+		$woocommerce_wcml->emails = $emails;
+
+		$subject = $this->get_subject( null, $woocommerce_wcml );
+		$subject->translate_notification( $order_id );
 	}
 
 
