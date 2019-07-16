@@ -46,7 +46,17 @@ class WCML_Bookings {
 		$this->tp               = $tp;
 	}
 
+	/**
+	 * Adds hooks.
+	 */
 	public function add_hooks(){
+
+		// Translate emails.
+		add_filter( 'get_post_metadata', array( $this, 'get_order_language' ), 10, 4 );
+		add_filter( 'woocommerce_booking_reminder_notification', array( $this, 'translate_notification' ), 9 );
+		add_filter( 'woocommerce_booking_confirmed_notification', array( $this, 'translate_notification' ), 9 );
+		add_filter( 'woocommerce_booking_cancelled_notification', array( $this, 'translate_notification' ), 9 );
+
 		add_action( 'woocommerce_bookings_after_booking_base_cost', array(
 			$this,
 			'wcml_price_field_after_booking_base_cost'
@@ -225,6 +235,47 @@ class WCML_Bookings {
 
 		add_filter( 'woocommerce_bookings_account_tables', array( $this, 'filter_my_account_bookings_tables_by_current_language'	) );
 
+	}
+
+	/**
+	 * When sending a booking notification to the customer get the language from the order.
+	 *
+	 * @param string  $check     Dummy argument.
+	 * @param integer $object_id The Post ID to query.
+	 * @param string  $meta_key  The meta key to query.
+	 * @param bool    $single    Wether we want a single value or an array.
+	 * @return string
+	 */
+	public function get_order_language( $check, $object_id, $meta_key, $single ) {
+
+		if ( 'wpml_language' === $meta_key && 'wc_booking' === get_post_type( $object_id ) ) {
+			// Get the order_item_id which might be in the original booking.
+			$order_item_id = get_post_meta( $object_id, '_booking_order_item_id', true );
+			if ( empty( $order_item_id ) ) {
+				$original_booking_id = get_post_meta( $object_id, '_booking_duplicate_of', true );
+				$order_item_id       = get_post_meta( $original_booking_id, '_booking_order_item_id', true );
+			}
+
+			// From here we can grab the order_id and return its language.
+			$order_id = $this->wpdb->get_var( $this->wpdb->prepare(
+				"SELECT order_id FROM {$this->wpdb->prefix}woocommerce_order_items WHERE order_item_id = %d",
+				$order_item_id
+			) ); // WPCS: unprepared SQL OK.
+			remove_filter( 'get_post_metadata', array( $this, 'get_order_language' ), 10 );
+			$check = get_post_meta( $order_id, 'wpml_language', $single );
+			add_filter( 'get_post_metadata', array( $this, 'get_order_language' ), 10, 4 );
+		}
+
+		return $check;
+	}
+
+	/**
+	 * Translate strings of notifications.
+	 *
+	 * @param integer $order_id Order ID.
+	 */
+	public function translate_notification( $order_id ) {
+		$this->woocommerce_wpml->emails->refresh_email_lang( $order_id );
 	}
 
 	public function save_booking_action_handler( $booking_id ) {
