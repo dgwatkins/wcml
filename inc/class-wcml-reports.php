@@ -81,7 +81,7 @@ class WCML_Reports{
                         $product_ids[] = $translation->element_id;
                     }
                         
-                    $query[ 'where' ] = str_replace("order_item_meta__product_id.meta_value = '{$product_id}'", "order_item_meta__product_id.meta_value IN(" . join(',', $product_ids) . ")", $query[ 'where' ]);
+                    $query[ 'where' ] = str_replace("order_item_meta__product_id.meta_value = '{$product_id}'", "order_item_meta__product_id.meta_value IN(" . join(',', array_filter( $product_ids ) ) . ")", $query[ 'where' ]);
                     
                 }
 
@@ -111,7 +111,7 @@ class WCML_Reports{
                     }
                 }
                 
-                $query[ 'where' ] = preg_replace("#order_item_meta__product_id_array\.meta_value IN \(([^\)]+)\)#", "order_item_meta__product_id_array.meta_value IN (" . join(',', $all_product_ids) . ")", $query[ 'where' ]);
+                $query[ 'where' ] = preg_replace("#order_item_meta__product_id_array\.meta_value IN \(([^\)]+)\)#", "order_item_meta__product_id_array.meta_value IN (" . join(',', array_filter( $all_product_ids ) ) . ")", $query[ 'where' ]);
             
                 
             }
