@@ -41,9 +41,8 @@
     "prefer-stable": true,
     "require": {
         "php": ">=5.6.0",
-        "otgs/installer": "~1.9.4",
+        "otgs/installer": "~2.1.0",
         "xrstf/composer-php52": "1.*",
-        "twig/twig": "~1.32.0",
         "wpml-shared/wpml-lib-dependencies": "dev-master"
     },
     "require-dev": {
@@ -78,9 +77,10 @@
     },
     "autoload": {
         "classmap": [
-            "classes",
-            "inc",
-            "compatibility"
+            "classes/",
+            "compatibility/",
+            "inc/",
+            "lib/"
         ]
     }
 }

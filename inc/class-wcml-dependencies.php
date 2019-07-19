@@ -383,8 +383,8 @@ class WCML_Dependencies {
 	 */
 	private function load_twig_support() {
 
-		if ( ! class_exists( 'Twig_Autoloader' ) ) {
-			Twig_Autoloader::register();
+		if ( ! class_exists( 'WCML\Twig_Autoloader' ) ) {
+			WCML\Twig_Autoloader::register();
 		}
 
 	}

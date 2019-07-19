@@ -1,6 +1,6 @@
 <?php
 
-class WCML_Menus_Wrap extends WPML_Templates_Factory {
+class WCML_Menus_Wrap extends WCML_Templates_Factory {
 
     private $woocommerce_wpml;
 

@@ -182,13 +182,13 @@ class Test_WCML_Downloadable_Products extends OTGS_TestCase
 
 }
 
-if ( ! class_exists( 'WPML_Templates_Factory' ) ) {
+if ( ! class_exists( 'WCML_Templates_Factory' ) ) {
 
 	/**
-	 * Class WPML_Templates_Factory
+	 * Class WCML_Templates_Factory
 	 * Stub for Test_WCML_Downloadable_Products
 	 */
-	abstract class WPML_Templates_Factory {
+	abstract class WCML_Templates_Factory {
 
 		public function __construct() { /*silence is golden*/ }
 

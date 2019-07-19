@@ -34,7 +34,7 @@ class Test_WCML_Product_Image_Filter_Factory extends OTGS_TestCase {
 
 if ( ! class_exists( 'WPML_WP_Cache' ) ) {
 	/**
-	 * Class WPML_Templates_Factory
+	 * Class WCML_Templates_Factory
 	 * Stub for Test_WCML_Products_UI
 	 */
 	class WPML_WP_Cache {

@@ -147,7 +147,7 @@ class Test_WCML_Setup_UI extends OTGS_TestCase {
 	public function setup_content(){
 		$subject = $this->get_subject();
 
-		$ui_stub  = Mockery::mock( 'overload:WPML_Templates_Factory' );
+		$ui_stub  = Mockery::mock( 'overload:WCML_Templates_Factory' );
 		$ui_stub->shouldReceive( 'get_view' );
 
 		ob_start();

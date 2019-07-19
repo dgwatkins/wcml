@@ -1,6 +1,8 @@
 <?php
 
-class WCML_Multi_Currency_UI extends WPML_Templates_Factory {
+use WCML\Twig_SimpleFunction;
+
+class WCML_Multi_Currency_UI extends WCML_Templates_Factory {
 
     /**
      * @var woocommerce_wpml

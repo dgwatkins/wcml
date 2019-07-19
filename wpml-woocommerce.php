@@ -83,12 +83,11 @@ function wcml_loader() {
 	);
 
 	if (
-		( defined( 'ICL_SITEPRESS_VERSION' ) && defined( 'WPML_MEDIA_VERSION' ) ) ||
-		(
-			defined( 'ICL_SITEPRESS_VERSION' )
-			&& version_compare( ICL_SITEPRESS_VERSION, '4.0.0', '>=' )
-			&& version_compare( ICL_SITEPRESS_VERSION, '4.0.4', '<' )
-			&& ! defined( 'WPML_MEDIA_VERSION' )
+		( defined( 'ICL_SITEPRESS_VERSION' ) && defined( 'WPML_MEDIA_VERSION' ) )
+		|| ( defined( 'ICL_SITEPRESS_VERSION' )
+		     && version_compare( ICL_SITEPRESS_VERSION, '4.0.0', '>=' )
+		     && version_compare( ICL_SITEPRESS_VERSION, '4.0.4', '<' )
+		     && ! defined( 'WPML_MEDIA_VERSION' )
 		)
 	) {
 		$loaders[] = 'WCML_Product_Image_Filter_Factory';
@@ -101,14 +100,13 @@ function wcml_loader() {
 	$action_filter_loader->load( $loaders );
 }
 
-$WCML_REST_API = new WCML_REST_API();
-if ( $WCML_REST_API->is_rest_api_request() ) {
-	add_action( 'wpml_before_init', array( $WCML_REST_API, 'remove_wpml_global_url_filters' ), 0 );
+$wcml_rest_api = new WCML_REST_API();
+if ( $wcml_rest_api->is_rest_api_request() ) {
+	add_action( 'wpml_before_init', array( $wcml_rest_api, 'remove_wpml_global_url_filters' ), 0 );
 }
 
-/**
- * Load WooCommerce Multilingual when WPML is NOT active.
- */
+// Load WooCommerce Multilingual when WPML is NOT active.
+add_action( 'plugins_loaded', 'load_wcml_without_wpml', 10000 );
 function load_wcml_without_wpml() {
 	if ( ! did_action( 'wpml_loaded' ) ) {
 		global $woocommerce_wpml;
