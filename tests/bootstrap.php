@@ -29,6 +29,7 @@ function _manually_load_wcml() {
 	require_once WPML_CORE_PATH . '/tests/util/functions.php';
 	require_once WPML_CORE_PATH . '/sitepress.php';
 	require_once WPML_CORE_ST_PATH . '/plugin.php';
+
 	require_once WPML_CORE_TM_PATH . '/plugin.php';
 	require_once WC_PATH. '/woocommerce.php';
 	require_once WC_BOOKING_PATH . '/woocommerce-bookings.php';

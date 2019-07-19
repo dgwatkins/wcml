@@ -10,8 +10,6 @@
             "email": "mihai@wpml.org"
         }
     ],
-    "config": {
-    },
     "repositories": [
         {
             "type": "vcs",
@@ -28,18 +26,28 @@
         {
             "type": "vcs",
             "url": "ssh://git@git.onthegosystems.com:10022/wpml-shared/wpml-lib-dependencies.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/OnTheGoSystems/patchwork.git"
         }
     ],
+    "config": {
+        "platform": {
+            "php": "5.6"
+        }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "otgs/installer": "~1.9.0",
+        "php": ">=5.6.0",
+        "otgs/installer": "~2.1.0",
         "xrstf/composer-php52": "1.*",
-        "twig/twig": "~1.0",
-        "wpml-shared/wpml-lib-dependencies": "~0.1"
+        "wpml-shared/wpml-lib-dependencies": "dev-master"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
+        "antecedent/patchwork": "^2.0",
         "otgs/build-tools": "~0.1",
         "otgs/unit-tests-framework": "~1.2.0",
         "otgs/changelog": "~0.3",
@@ -71,9 +79,10 @@
     },
     "autoload": {
         "classmap": [
-            "classes",
-            "inc",
-            "compatibility"
+            "classes/",
+            "compatibility/",
+            "inc/",
+            "lib/"
         ]
     }
 }
