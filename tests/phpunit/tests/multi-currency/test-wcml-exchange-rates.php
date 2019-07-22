@@ -329,9 +329,8 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 
 		$subject->save_setting( 'lifting_charge', 0 );
 
-		\WP_Mock::wpFunction( 'get_option', array(
+		\WP_Mock::wpFunction( 'wcml_get_woocommerce_currency_option', array(
 			'times'  => 1,
-			'args'   => [ 'woocommerce_currency' ],
 			'return' => $cur_1
 		) );
 

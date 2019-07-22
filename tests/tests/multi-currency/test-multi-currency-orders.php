@@ -55,7 +55,7 @@ class Test_WCML_Multi_Currency_Orders extends WCML_UnitTestCase {
 
         $currencies = $this->multi_currency->orders->get_orders_currencies();
 
-	    $default_currency = get_option('woocommerce_currency');
+	    $default_currency = wcml_get_woocommerce_currency_option();
 
         $this->assertEquals( array(  'EUR' => 2, $default_currency => 1 ), $currencies );
 

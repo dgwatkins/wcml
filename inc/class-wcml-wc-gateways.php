@@ -233,7 +233,7 @@ class WCML_WC_Gateways{
 
 		$bacs_settings            = get_option( 'woocommerce_bacs_accounts', array() );
 		$active_currencies        = $this->woocommerce_wpml->multi_currency->get_currency_codes();
-		$default_currency         = get_option( 'woocommerce_currency' );
+		$default_currency         = wcml_get_woocommerce_currency_option();
 		$bacs_accounts_currencies = get_option( self::WCML_BACS_ACCOUNTS_CURRENCIES_OPTION, array() );
 		$currencies_output        = array();
 

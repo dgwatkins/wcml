@@ -171,8 +171,7 @@ class Test_WCML_Custom_Prices extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'current_time', [ 'return' => time() ] );
 
-		\WP_Mock::userFunction( 'get_option', array(
-			'args' => array( 'woocommerce_currency' ),
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
 			'times' => 1,
 			'return' => 'EUR'
 		) );

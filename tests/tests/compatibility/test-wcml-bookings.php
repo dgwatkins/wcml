@@ -440,7 +440,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	public function get_cookie_booking_currency() {
 		$bookings = $this->get_wcml_booking_object();
 		$_COOKIE['_wcml_booking_currency'] = 'USD';
-		$backup = get_option( 'woocommerce_currency', '' );
+		$backup = wcml_get_woocommerce_currency_option();
 		update_option( 'woocommerce_currency', 'EUR', 'no' );
 		$this->assertEquals( 'USD', $bookings->get_cookie_booking_currency() );
 		unset( $_COOKIE['_wcml_booking_currency'] );

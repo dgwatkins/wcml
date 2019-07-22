@@ -178,7 +178,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
 
         // Set random rates for the mocked get_rates method
         $currencies = $this->woocommerce_wpml->multi_currency->get_currency_codes();
-        $default_currency = get_option( 'woocommerce_currency' );
+        $default_currency = wcml_get_woocommerce_currency_option();
         $secondary_currencies = array_diff( $currencies, array( $default_currency ) );
         foreach( $secondary_currencies as $currency ){
             $rates[ $currency ] = round( rand( 1, 1000 ) / 100 , 2);

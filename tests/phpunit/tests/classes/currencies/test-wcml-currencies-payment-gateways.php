@@ -213,8 +213,7 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 			'return' => $wc
 		) );
 
-		\WP_Mock::userFunction( 'get_option', array(
-			'args' => array( 'woocommerce_currency' ),
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
 			'return' => rand_str( 3 )
 		));
 
@@ -233,7 +232,7 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 		$client_currency = 'USD';
 		$description = rand_str();
 
-		\WP_Mock::userFunction( 'get_woocommerce_currency', array(
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
 			'return' => $client_currency
 		));
 

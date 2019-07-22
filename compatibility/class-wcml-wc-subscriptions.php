@@ -77,7 +77,7 @@ class WCML_WC_Subscriptions{
 		if ( $product && wcml_is_multi_currency_on() ) {
 			$currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
 
-			if ( $currency !== get_option( 'woocommerce_currency' ) ) {
+			if ( $currency !== wcml_get_woocommerce_currency_option() ) {
 
 				$original_product_id = $this->woocommerce_wpml->products->get_original_product_id( $product->get_id() );
 

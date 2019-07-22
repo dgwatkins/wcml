@@ -47,7 +47,7 @@ class WCML_Custom_Prices{
             $currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
         }
 
-        if( get_option('woocommerce_currency') == $currency ){
+        if( wcml_get_woocommerce_currency_option() === $currency ){
             return false;
         }
 
@@ -333,7 +333,7 @@ class WCML_Custom_Prices{
             $this->woocommerce_wpml->settings[ 'display_custom_prices' ] ){
 
             $client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
-            $woocommerce_currency = get_option( 'woocommerce_currency' );
+            $woocommerce_currency = wcml_get_woocommerce_currency_option();
 
             if( $client_currency == $woocommerce_currency ){
                 return $filtered_posts;

@@ -60,7 +60,7 @@ class WCML_Multi_Currency_Configuration
 					'woocommerce_price_num_decimals' => 'num_decimals'
 				);
 
-				$woocommerce_currency = get_option('woocommerce_currency', true);
+				$woocommerce_currency = wcml_get_woocommerce_currency_option();
 
 				foreach ($options as $wc_key => $key) {
 					$wcml_settings['currency_options'][$woocommerce_currency][$key] = get_option($wc_key, true);
@@ -142,7 +142,7 @@ class WCML_Multi_Currency_Configuration
 		$settings['currency_options'][$currency_code]['rate'] = (double)filter_input(INPUT_POST, 'currency_value', FILTER_VALIDATE_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 		$settings['currency_options'][$currency_code]['updated'] = date('Y-m-d H:i:s');
 
-		$wc_currency = get_option('woocommerce_currency');
+		$wc_currency = wcml_get_woocommerce_currency_option();
 		if (!isset($settings['currencies_order']))
 			$settings['currencies_order'][] = $wc_currency;
 
@@ -160,7 +160,7 @@ class WCML_Multi_Currency_Configuration
 			die('Invalid nonce');
 		}
 
-		$wc_currency = get_woocommerce_currency();
+		$wc_currency = wcml_get_woocommerce_currency_option();
 		$wc_currencies = get_woocommerce_currencies();
 
 		$options = $_POST['currency_options'];

@@ -98,7 +98,7 @@ class WCML_Payment_Gateway_PayPal extends WCML_Payment_Gateway {
 	public function get_currencies_details(){
 
 		$currencies_details = array();
-		$default_currency   = get_option( 'woocommerce_currency' );
+		$default_currency   = wcml_get_woocommerce_currency_option();
 		$woocommerce_currencies = get_woocommerce_currencies();
 
 		foreach ( $woocommerce_currencies as $code => $currency ) {

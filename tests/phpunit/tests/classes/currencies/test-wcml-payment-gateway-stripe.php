@@ -56,8 +56,7 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 	public function is_should_get_currencies_details() {
 		$subject = $this->get_subject();
 
-		WP_Mock::userFunction( 'get_option', array(
-			'args' => array( 'woocommerce_currency' ),
+		WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
 			'return' => 'USD'
 		));
 

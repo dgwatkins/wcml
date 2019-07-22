@@ -107,7 +107,7 @@ class WCML_Multi_Currency_Prices {
 			$currency = $this->multi_currency->get_client_currency();
 		}
 
-		if ( $currency != get_option( 'woocommerce_currency' ) ) {
+		if ( $currency !== wcml_get_woocommerce_currency_option() ) {
 			$price = $this->convert_price_amount( $price, $currency );
 			$price = $this->apply_rounding_rules( $price, $currency );
 		}
@@ -254,7 +254,7 @@ class WCML_Multi_Currency_Prices {
 			$currency = $this->multi_currency->get_client_currency();
 		}
 
-		if ( $currency != get_option( 'woocommerce_currency' ) ) {
+		if ( $currency !== wcml_get_woocommerce_currency_option() ) {
 
 			$amount = $this->calculate_exchange_rate_price( $amount, $currency, '*' );
 
@@ -273,7 +273,7 @@ class WCML_Multi_Currency_Prices {
 	 */
 	public function convert_price_amount_by_currencies( $amount, $from_currency, $to_currency ){
 
-		if( $to_currency !== get_option( 'woocommerce_currency' )  ){
+		if( $to_currency !== wcml_get_woocommerce_currency_option() ){
 			$amount = $this->calculate_exchange_rate_price( $amount, $to_currency, '*' );
 		}else{
 			$amount = $this->calculate_exchange_rate_price( $amount, $from_currency, '/' );
@@ -322,7 +322,7 @@ class WCML_Multi_Currency_Prices {
 			$currency = $this->multi_currency->get_client_currency();
 		}
 
-		if ( $currency != get_option( 'woocommerce_currency' ) ) {
+		if ( $currency !== wcml_get_woocommerce_currency_option() ) {
 
 			$exchange_rates = $this->multi_currency->get_exchange_rates();
 
@@ -553,7 +553,7 @@ class WCML_Multi_Currency_Prices {
 
 		$currency = $this->multi_currency->get_client_currency();
 
-		if( $currency !== get_option( 'woocommerce_currency' ) ){
+		if( $currency !== wcml_get_woocommerce_currency_option() ){
 			global $wpdb;
 			$min_price = isset( $_GET['min_price'] ) ? floatval( wp_unslash( $_GET['min_price'] ) ) : 0;
 			$max_price = isset( $_GET['max_price'] ) ? floatval( wp_unslash( $_GET['max_price'] ) ) : PHP_INT_MAX;
@@ -688,7 +688,7 @@ class WCML_Multi_Currency_Prices {
 		$currency_code    = $this->get_admin_order_currency_code();
 
 		if ( $currency_code !== $default_currency &&
-		     isset( $this->multi_currency->currencies[ $currency_code ]['position'] ) && get_option( 'woocommerce_currency' ) != $currency_code &&
+		     isset( $this->multi_currency->currencies[ $currency_code ]['position'] ) && wcml_get_woocommerce_currency_option() !== $currency_code &&
 		     in_array( $this->multi_currency->currencies[ $currency_code ]['position'], array(
 			     'left',
 			     'right',
