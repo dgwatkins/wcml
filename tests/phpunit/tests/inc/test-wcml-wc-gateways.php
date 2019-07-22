@@ -111,8 +111,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 			'return' => $bacs_settings
 		) );
 
-		\WP_Mock::userFunction( 'get_option', array(
-			'args'   => array( 'woocommerce_currency' ),
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
 			'return' => $default_currency
 		) );
 
@@ -161,8 +160,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 			'return' => $bacs_settings
 		) );
 
-		\WP_Mock::userFunction( 'get_option', array(
-			'args'   => array( 'woocommerce_currency' ),
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
 			'return' => $default_currency
 		) );
 

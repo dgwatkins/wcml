@@ -104,7 +104,7 @@ class WCML_Multi_Currency_Reports {
                 });
             " );
 
-			$this->reports_currency = isset( $_COOKIE['_wcml_reports_currency'] ) ? $_COOKIE['_wcml_reports_currency'] : get_option( 'woocommerce_currency' );
+			$this->reports_currency = isset( $_COOKIE['_wcml_reports_currency'] ) ? $_COOKIE['_wcml_reports_currency'] : wcml_get_woocommerce_currency_option();
 			//validation
 			$orders_currencies = $this->woocommerce_wpml->multi_currency->orders->get_orders_currencies();
 			if ( ! isset( $orders_currencies[ $this->reports_currency ] ) ) {

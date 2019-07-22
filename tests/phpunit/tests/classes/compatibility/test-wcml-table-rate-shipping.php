@@ -153,8 +153,7 @@ class Test_WCML_Table_Rate_Shipping extends OTGS_TestCase {
 		$default_currency = 'USD';
 		$client_currency = 'EUR';
 
-		WP_Mock::userFunction( 'get_option', array(
-			'args' => array( 'woocommerce_currency' ),
+		WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
 			'times' => 1,
 			'return' => $default_currency
 		));

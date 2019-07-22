@@ -116,7 +116,7 @@ class WCML_Currencies_Payment_Gateways {
 		if ( in_array( $id, array_keys( $this->supported_gateways ), true ) ) {
 
 			$client_currency   = $this->woocommerce_wpml->multi_currency->get_client_currency();
-			$default_currency  = get_option( 'woocommerce_currency' );
+			$default_currency  = wcml_get_woocommerce_currency_option();
 
 			if( $client_currency === $default_currency ){
 				return $description;

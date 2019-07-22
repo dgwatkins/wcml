@@ -456,7 +456,7 @@ class WCML_Products{
         {
 
             $client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
-            $woocommerce_currency = get_option('woocommerce_currency');
+            $woocommerce_currency = wcml_get_woocommerce_currency_option();
 
             if( $client_currency != $woocommerce_currency ){
                 $args['meta_query'][] =  array(

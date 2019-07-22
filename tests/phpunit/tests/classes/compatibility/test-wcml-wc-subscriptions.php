@@ -320,8 +320,7 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 			'return' => $expected_subscription_sign_up_fee
 		) );
 
-		\WP_Mock::wpFunction( 'get_option', array(
-			'args'   => array( 'woocommerce_currency' ),
+		\WP_Mock::wpFunction( 'wcml_get_woocommerce_currency_option', array(
 			'return' => rand_str()
 		) );
 
@@ -371,8 +370,7 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 			'return' => false
 		) );
 
-		\WP_Mock::wpFunction( 'get_option', array(
-			'args'   => array( 'woocommerce_currency' ),
+		\WP_Mock::wpFunction( 'wcml_get_woocommerce_currency_option', array(
 			'return' => rand_str()
 		) );
 
@@ -403,8 +401,7 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 
 		$this->woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
 
-		\WP_Mock::wpFunction( 'get_option', array(
-			'args'   => array( 'woocommerce_currency' ),
+		\WP_Mock::wpFunction( 'wcml_get_woocommerce_currency_option', array(
 			'return' => $client_currency
 		) );
 

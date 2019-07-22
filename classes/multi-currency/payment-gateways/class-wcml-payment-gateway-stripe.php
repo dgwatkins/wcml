@@ -59,7 +59,7 @@ class WCML_Payment_Gateway_Stripe extends WCML_Payment_Gateway {
 	public function get_currencies_details( $active_currencies ){
 
 		$currencies_details = array();
-		$default_currency   = get_option( 'woocommerce_currency' );
+		$default_currency   = wcml_get_woocommerce_currency_option();
 
 		foreach ( $active_currencies as $code => $currency ) {
 

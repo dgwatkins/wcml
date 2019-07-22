@@ -50,7 +50,7 @@ abstract class WCML_Payment_Gateway {
 	public function get_settings_output( $current_currency, $active_currencies ) {
 		$this->current_currency  = $current_currency;
 		$this->active_currencies = $active_currencies;
-		$this->default_currency  = get_woocommerce_currency();
+		$this->default_currency  = wcml_get_woocommerce_currency_option();
 
 		return $this->template_service->show( $this->get_output_model(), $this->get_output_template() );
 	}

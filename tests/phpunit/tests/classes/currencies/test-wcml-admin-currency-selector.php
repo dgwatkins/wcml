@@ -132,7 +132,7 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 			$another_currency     => rand_str()
 		];
 		\WP_Mock::userFunction( 'get_woocommerce_currencies', [ 'return' => $woocommerce_currencies ] );
-		\WP_Mock::userFunction( 'get_woocommerce_currency', [ 'return' => $woocommerce_currency ] );
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', [ 'return' => $woocommerce_currency ] );
 
 		$woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
 		                                         ->disableOriginalConstructor()
@@ -273,7 +273,7 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 		                ->method( 'get_value' )
 		                ->willReturn( null );
 
-		\WP_Mock::userFunction( 'get_woocommerce_currency', [ 'return' => $currency_code ] );
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', [ 'return' => $currency_code ] );
 
 		$this->assertSame( $currency_code, $subject->get_cookie_dashboard_currency() );
 

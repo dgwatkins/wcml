@@ -89,7 +89,7 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
 		$current_language = $this->sitepress->get_current_language();
 		$second_language = 'de';
-		$wc_default_currency = get_option( 'woocommerce_currency' );
+		$wc_default_currency = wcml_get_woocommerce_currency_option();
 
 		$this->multi_currency->set_client_currency( NULL );
 		$this->sitepress->switch_lang( $current_language );
@@ -110,7 +110,7 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 		$req_uri = $_SERVER['REQUEST_URI'];
 		$_SERVER['REQUEST_URI'] = 'wp-json/wc/';
 		$curr = $this->multi_currency->get_client_currency();
-		$this->assertEquals( get_option('woocommerce_currency'), $curr );
+		$this->assertEquals( wcml_get_woocommerce_currency_option(), $curr );
 		$_SERVER['REQUEST_URI'] = $req_uri;
 	}
 
