@@ -667,6 +667,7 @@ class WCML_Synchronize_Product_Data{
                 $translations = $this->sitepress->get_element_translations($new_trid, 'post_' . $post_type);
 
                 if ($translations) {
+
                     foreach ($translations as $translation) {
                         //current as original need sync translation
                         if ($translation->original) {
@@ -682,13 +683,15 @@ class WCML_Synchronize_Product_Data{
                             $this->sync_product_data($orig_id, $trnsl_id, $lang);
                             $this->sync_date_and_parent($orig_id, $trnsl_id, $lang);
                             $this->sitepress->copy_custom_fields($orig_id, $trnsl_id);
-                            $this->woocommerce_wpml->translation_editor->create_product_translation_package($orig_id, $new_trid, $lang, ICL_TM_COMPLETE);
+	                        $this->woocommerce_wpml->translation_editor->create_product_translation_package( $orig_id, $new_trid, $lang, ICL_TM_COMPLETE);
+	                        break;
                         } else {
                             if ( $set_as_source ) {
                                 $this->sync_product_data($post_id, $translation->element_id, $translation->language_code);
                                 $this->sync_date_and_parent($post_id, $translation->element_id, $translation->language_code);
                                 $this->sitepress->copy_custom_fields($post_id, $translation->element_id);
-                                $this->woocommerce_wpml->translation_editor->create_product_translation_package($post_id, $new_trid, $translation->language_code, ICL_TM_COMPLETE);
+	                            $this->woocommerce_wpml->translation_editor->create_product_translation_package( $post_id, $new_trid, $translation->language_code, ICL_TM_COMPLETE );
+	                            break;
                             }
                         }
                     }
