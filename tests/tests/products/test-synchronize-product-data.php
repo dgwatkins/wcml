@@ -84,7 +84,7 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		unset( $_POST['data'] );
 	}
 
-	public function test_icl_connect_translations_action(){
+	public function test_icl_connect_translations_action_set_as_origin(){
 
 		$custom_field = 'test_custom_1';
 
@@ -93,10 +93,10 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		update_post_meta( $en_product->id, $custom_field, 'custom_value' );
 		$this->wcml_helper->set_custom_field_to_copy( $custom_field );
 
-		$es_product = $this->wcml_helper->add_product( $this->second_language, false, rand_str() );
+		$es_product = $this->wcml_helper->add_product( $this->second_language, $en_product->trid, rand_str() );
 
 		$_POST['icl_ajx_action'] = 'connect_translations';
-		$_POST['new_trid'] = $es_product->trid;
+		$_POST['new_trid'] = $en_product->trid;
 		$_POST['post_type'] = 'product';
 		$_POST['post_id'] = $en_product->id;
 		$_POST['set_as_source'] = true;
@@ -105,10 +105,20 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		wp_cache_init();
 
 		$this->assertEquals( 'custom_value', get_post_meta( $es_product->id, $custom_field, true ) );
+	}
 
+	public function test_icl_connect_translations_action_not_as_origin(){
+
+		$custom_field = 'test_custom_1';
+
+		$es_product = $this->wcml_helper->add_product( $this->second_language, false, rand_str() );
+		$en_product = $this->wcml_helper->add_product( $this->default_language, $es_product->trid, rand_str() );
+
+		update_post_meta( $en_product->id, '_regular_price', 101 );
 		update_post_meta( $es_product->id, $custom_field, 'custom_value_es' );
+		$this->wcml_helper->set_custom_field_to_copy( $custom_field );
 
-		$this->sitepress->switch_lang( $this->second_language );
+		$this->sitepress->switch_lang( $this->default_language );
 		$_POST['icl_ajx_action'] = 'connect_translations';
 		$_POST['new_trid'] = $es_product->trid;
 		$_POST['post_type'] = 'product';
@@ -119,7 +129,6 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		wp_cache_init();
 
 		$this->assertEquals( 'custom_value_es', get_post_meta( $en_product->id, $custom_field, true ) );
-
 	}
 
 	function test_check_if_product_fields_sync_needed(){
