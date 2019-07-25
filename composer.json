@@ -43,7 +43,7 @@
         "otgs/build-tools": "~0.1",
         "otgs/unit-tests-framework": "~1.2.0",
         "otgs/changelog": "~0.3",
-        "otgs/build-tools-ci": "~0.10",
+        "otgs/build-tools-ci": "~0.11",
         "sebastian/phpcpd": "^3.0"
     },
     "scripts": {
