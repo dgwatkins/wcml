@@ -68,8 +68,6 @@ Integration <PHP>:
     script:
         - composer install
         - ./vendor/otgs/build-tools-ci/otgs-ci -p --legacy
-        - ls /builds/wpml/woocommerce-multilingual/wpml-translation-management
-        - ls /builds/wpml/woocommerce-multilingual/wpml-translation-management/vendor
     except:
         - tags
 
