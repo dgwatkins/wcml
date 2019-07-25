@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c3baed9df1e4ae8749706c1e2252f098",
+    "content-hash": "745788b51905682f0ff9e835d9cd371c",
     "packages": [
         {
             "name": "composer/installers",
@@ -809,12 +809,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "cd15bbd64bf303937b9a2abc7df85366ab1bb821"
+                "reference": "e022c073706769d0486de96de0f98719cd9950b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/cd15bbd64bf303937b9a2abc7df85366ab1bb821",
-                "reference": "cd15bbd64bf303937b9a2abc7df85366ab1bb821",
+                "url": "https://api.github.com/repos/composer/composer/zipball/e022c073706769d0486de96de0f98719cd9950b5",
+                "reference": "e022c073706769d0486de96de0f98719cd9950b5",
                 "shasum": ""
             },
             "require": {
@@ -881,7 +881,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2019-06-12T06:09:04+00:00"
+            "time": "2019-06-27T12:06:49+00:00"
         },
         {
             "name": "composer/semver",
@@ -2295,21 +2295,22 @@
         },
         {
             "name": "otgs/build-tools-ci",
-            "version": "dev-develop",
+            "version": "0.11.1",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "f9de17bab863f38fbb76de05c574770027b08cda"
+                "reference": "2c04322f3298cc708e335d4086b969621be5bad0"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
                 "dealerdirect/phpcodesniffer-composer-installer": "*",
                 "m4tthumphrey/php-gitlab-api": "^9.0.0",
+                "php": ">=5.6.0",
                 "php-http/guzzle6-adapter": "^1.1",
                 "phpcompatibility/php-compatibility": "*",
                 "phpcompatibility/phpcompatibility-wp": "*",
-                "scrutinizer/ocular": "^1.3",
                 "squizlabs/php_codesniffer": "~3",
+                "symfony/console": "^3.4",
                 "symfony/finder": "^3.1",
                 "wp-coding-standards/wpcs": "^0"
             },
@@ -2352,7 +2353,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2019-06-17T10:42:37+00:00"
+            "time": "2019-07-25T14:22:26+00:00"
         },
         {
             "name": "otgs/changelog",
@@ -3047,13 +3048,13 @@
                 },
                 {
                     "name": "Wim Godden",
-                    "homepage": "https://github.com/wimg",
-                    "role": "lead"
+                    "role": "lead",
+                    "homepage": "https://github.com/wimg"
                 },
                 {
                     "name": "Juliette Reinders Folmer",
-                    "homepage": "https://github.com/jrfnl",
-                    "role": "lead"
+                    "role": "lead",
+                    "homepage": "https://github.com/jrfnl"
                 }
             ],
             "description": "A set of sniffs for PHP_CodeSniffer that checks for PHP cross-version compatibility.",
@@ -5514,12 +5515,12 @@
             "version": "0.14.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git",
+                "url": "https://github.com/WordPress/WordPress-Coding-Standards.git",
                 "reference": "cf6b310caad735816caef7573295f8a534374706"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WordPress-Coding-Standards/WordPress-Coding-Standards/zipball/cf6b310caad735816caef7573295f8a534374706",
+                "url": "https://api.github.com/repos/WordPress/WordPress-Coding-Standards/zipball/cf6b310caad735816caef7573295f8a534374706",
                 "reference": "cf6b310caad735816caef7573295f8a534374706",
                 "shasum": ""
             },
@@ -5555,7 +5556,6 @@
     "stability-flags": {
         "wpml-shared/wpml-lib-dependencies": 20,
         "roave/security-advisories": 20,
-        "otgs/build-tools-ci": 20,
         "otgs/diff-checks": 20
     },
     "prefer-stable": true,
