@@ -2,6 +2,8 @@
 
 /**
  * Class Test_WCML_Admin_Curreny_Selector
+ *
+ * @group fix-tests-on-windows
  */
 class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 
@@ -195,7 +197,12 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 		\WP_Mock::passthruFunction( 'sanitize_text_field' );
 		\WP_Mock::userFunction( 'wp_verify_nonce', [ 'return' => true ] );
 		\WP_Mock::userFunction( 'wp_send_json_error', [ 'times' => 0 ] );
-		\WP_Mock::userFunction( 'wp_send_json_success', [ 'args' => [] ] );
+		\WP_Mock::userFunction(
+			'wp_send_json_success',
+			[
+				'times' => 1,
+			]
+		);
 
 		$currency_cookie->expects( $this->once() )->method( 'set_value' )
 		                ->with( $currency_code, $this->isType( 'int' ) );

@@ -33,6 +33,7 @@ if ( ! class_exists( 'WPML_Templates_Factory' ) ) {
 /**
  * Class Test_WCML_Currency_Switcher_Templates
  * @group currency-switcher
+ * @group fix-tests-on-windows
  */
 class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 
@@ -315,8 +316,8 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'wp_upload_dir', array(
 			'args'   => array( null, false ),
-			'return' => array( 'basedir' => './' ),
-		));
+			'return' => [ 'basedir' => './' ],
+		) );
 
 		\WP_Mock::userFunction( 'get_option', array(
 			'args'   => array( 'wcml_currency_switcher_template_objects' ),
