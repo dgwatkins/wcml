@@ -18,40 +18,40 @@ WP_CORE_DIR=${SCRIPTPATH}/wordpress/
 WP_CORE_LANG_DIR=${SCRIPTPATH}/wordpress/wp-content/languages/
 WP_CORE_LANG_PLUGINS_DIR=${SCRIPTPATH}/wordpress/wp-content/languages/plugins/
 
-set -ex
+#set -ex
 
 install_wp() {
 	mkdir -p $WP_CORE_DIR
 
 	local WC_VERSION_FOR_MO_FILES='2.6.14'
 
-	if [ $WP_VERSION == 'latest' ]; then 
+	if [ $WP_VERSION == 'latest' ]; then
 		local ARCHIVE_NAME='latest'
 	else
 		local ARCHIVE_NAME="wordpress-$WP_VERSION"
 	fi
 
-	wget -nv -O /tmp/wordpress.tar.gz http://wordpress.org/${ARCHIVE_NAME}.tar.gz
+	wget -qO /tmp/wordpress.tar.gz http://wordpress.org/${ARCHIVE_NAME}.tar.gz
 	tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C $WP_CORE_DIR
 
-	
+
 
 	# Create languages directory
   	mkdir -p $WP_CORE_LANG_DIR
   	mkdir -p $WP_CORE_LANG_PLUGINS_DIR
   	#WC lang packs
-  	wget -P $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/fr_FR.zip
-  	wget -P $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/de_DE.zip
-  	wget -P $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/ru_RU.zip
-  	wget -P $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/es_ES.zip
+  	wget -qP $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/fr_FR.zip
+  	wget -qP $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/de_DE.zip
+  	wget -qP $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/ru_RU.zip
+  	wget -qP $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/es_ES.zip
 
   	cd $WP_CORE_LANG_PLUGINS_DIR
-  	unzip fr_FR.zip
-  	unzip de_DE.zip
-  	unzip ru_RU.zip
-  	unzip es_ES.zip
+  	unzip -q fr_FR.zip
+  	unzip -q de_DE.zip
+  	unzip -q ru_RU.zip
+  	unzip -q es_ES.zip
 
-	wget -nv -O $WP_CORE_DIR/wp-content/db.php https://raw.github.com/markoheijnen/wp-mysqli/master/db.php
+	wget -qO $WP_CORE_DIR/wp-content/db.php https://raw.github.com/markoheijnen/wp-mysqli/master/db.php
 }
 
 install_test_suite() {
@@ -65,7 +65,7 @@ install_test_suite() {
 	# set up testing suite
 	mkdir -p $WP_TESTS_DIR
 	cd $WP_TESTS_DIR
-	
+
 	if [ $WP_VERSION == 'latest' ]; then
 	    svn co --quiet http://develop.svn.wordpress.org/trunk/tests/phpunit/includes/
 	    svn co --quiet http://develop.svn.wordpress.org/trunk/tests/phpunit/data/
@@ -74,10 +74,18 @@ install_test_suite() {
         svn co --quiet http://develop.svn.wordpress.org/tags/${WP_VERSION}/tests/phpunit/data/
     fi
 
-	sed $ioption "s:DIR_TESTDATA . '/languages': '$WP_CORE_LANG_DIR':" includes/bootstrap.php
+	TESTS_ABSPATH=$WP_CORE_DIR
+	TESTS_LANG_DIR=$WP_CORE_LANG_DIR
+	if grep -q Microsoft /proc/version; then
+    # Fix paths if we are in Windows Subsystem Linux (WSL)
+	  TESTS_ABSPATH=$(wslpath -m $WP_CORE_DIR)/
+	  TESTS_LANG_DIR=$(wslpath -m $WP_CORE_LANG_DIR)
+  fi
 
-	wget -nv -O wp-tests-config.php http://develop.svn.wordpress.org/trunk/wp-tests-config-sample.php
-	sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR':" wp-tests-config.php
+	sed $ioption "s#DIR_TESTDATA . '/languages'# '$TESTS_LANG_DIR'#" includes/bootstrap.php
+
+	wget -qO wp-tests-config.php http://develop.svn.wordpress.org/trunk/wp-tests-config-sample.php
+	sed $ioption "s#dirname( __FILE__ ) . '/src/'#'$TESTS_ABSPATH'#" wp-tests-config.php
 	sed $ioption "s/youremptytestdbnamehere/$DB_NAME/" wp-tests-config.php
 	sed $ioption "s/yourusernamehere/$DB_USER/" wp-tests-config.php
 	sed $ioption "s/yourpasswordhere/$DB_PASS/" wp-tests-config.php
@@ -102,7 +110,7 @@ install_db() {
 	fi
 
 	# create database
-	mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
+  mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
 }
 
 install_wp
