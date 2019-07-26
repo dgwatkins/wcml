@@ -30,6 +30,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/OnTheGoSystems/patchwork.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/OnTheGoSystems/collect.git"
         }
     ],
     "config": {
@@ -55,7 +59,8 @@
         "sebastian/phpcpd": "^3.0",
         "composer/composer": "~1.9",
         "otgs/diff-checks": "dev-master",
-        "imangazaliev/didom": "^1.14"
+        "imangazaliev/didom": "^1.14",
+        "tightenco/collect": "dev-wpml-collect"
     },
     "scripts": {
         "make": [
