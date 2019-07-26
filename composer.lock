@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d4a3ab6999b3359ac431315d6654cec4",
+    "content-hash": "dd9dc6f55be6676596acc09b4ef3e1ee",
     "packages": [
         {
             "name": "composer/installers",
@@ -4221,6 +4221,55 @@
             "time": "2017-06-30T11:53:12+00:00"
         },
         {
+            "name": "tightenco/collect",
+            "version": "dev-wpml-collect",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/OnTheGoSystems/collect.git",
+                "reference": "dfef4cde9560289775e59914c42999119ce622c7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/OnTheGoSystems/collect/zipball/dfef4cde9560289775e59914c42999119ce622c7",
+                "reference": "dfef4cde9560289775e59914c42999119ce622c7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "require-dev": {
+                "mockery/mockery": "~0.9.4",
+                "phpunit/phpunit": "~4.1"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Illuminate/Support/helpers.php"
+                ],
+                "psr-4": {
+                    "WPML\\Collect\\": "src/Illuminate"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylorotwell@gmail.com"
+                }
+            ],
+            "description": "Collect - Illuminate Collections as a separate package.",
+            "keywords": [
+                "collection",
+                "laravel"
+            ],
+            "support": {
+                "source": "https://github.com/OnTheGoSystems/collect/tree/wpml-collect"
+            },
+            "time": "2019-07-02T07:00:10+00:00"
+        },
+        {
             "name": "webmozart/assert",
             "version": "1.4.0",
             "source": {
@@ -4316,7 +4365,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "wpml-shared/wpml-lib-dependencies": 20,
-        "roave/security-advisories": 20
+        "roave/security-advisories": 20,
+        "tightenco/collect": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
