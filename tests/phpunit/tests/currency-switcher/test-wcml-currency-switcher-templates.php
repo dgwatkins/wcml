@@ -3,8 +3,8 @@
 if ( ! class_exists( 'WPML_Templates_Factory' ) ) {
 	abstract class WPML_Templates_Factory {
 
-		private $custom_filters;
-		private $custom_functions;
+		protected $custom_filters;
+		protected $custom_functions;
 
 		/* @var WPML_WP_API $wp_api */
 		private $wp_api;

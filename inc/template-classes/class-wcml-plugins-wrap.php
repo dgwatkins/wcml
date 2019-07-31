@@ -1,5 +1,8 @@
 <?php
 
+use WCML\Twig_Loader_Filesystem;
+use WCML\Twig_Environment;
+
 class WCML_Plugins_Wrap {
 
     private $woocommerce_wpml;
