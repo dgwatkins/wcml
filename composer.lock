@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "dd9dc6f55be6676596acc09b4ef3e1ee",
+    "content-hash": "db1d4791d87a94c2b009ac30cf162c9d",
     "packages": [
         {
             "name": "composer/installers",
@@ -1211,11 +1211,11 @@
         },
         {
             "name": "otgs/build-tools-ci",
-            "version": "0.11.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "2c04322f3298cc708e335d4086b969621be5bad0"
+                "reference": "bf5e6f047a45829e464a2c79304846d05e48b68a"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -1269,7 +1269,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2019-07-25T14:22:26+00:00"
+            "time": "2019-08-01T10:56:26+00:00"
         },
         {
             "name": "otgs/changelog",
@@ -4366,6 +4366,7 @@
     "stability-flags": {
         "wpml-shared/wpml-lib-dependencies": 20,
         "roave/security-advisories": 20,
+        "otgs/build-tools-ci": 20,
         "tightenco/collect": 20
     },
     "prefer-stable": true,
