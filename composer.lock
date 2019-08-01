@@ -1211,11 +1211,11 @@
         },
         {
             "name": "otgs/build-tools-ci",
-            "version": "0.11.1",
+            "version": "0.11.2",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "2c04322f3298cc708e335d4086b969621be5bad0"
+                "reference": "86a00066bf1b65de0a191e465506e09752e81156"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -1269,7 +1269,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2019-07-25T14:22:26+00:00"
+            "time": "2019-07-25T15:39:46+00:00"
         },
         {
             "name": "otgs/changelog",
