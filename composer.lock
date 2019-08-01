@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "80470326d780a1586b7de764e1bac52a",
@@ -1730,7 +1730,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "bf5e6f047a45829e464a2c79304846d05e48b68a"
+                "reference": "e50b4c90360919fe9a798ec5fd03604e3655278c"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -1784,7 +1784,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2019-08-01T10:56:26+00:00"
+            "time": "2019-08-01T13:29:49+00:00"
         },
         {
             "name": "otgs/changelog",
