@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "577842de3290b01173b48010f2a5a28c",
+    "content-hash": "80470326d780a1586b7de764e1bac52a",
     "packages": [
         {
             "name": "composer/installers",
@@ -538,12 +538,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "e022c073706769d0486de96de0f98719cd9950b5"
+                "reference": "362ebe4f68ac397b3294110c4944884e9bd90495"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/e022c073706769d0486de96de0f98719cd9950b5",
-                "reference": "e022c073706769d0486de96de0f98719cd9950b5",
+                "url": "https://api.github.com/repos/composer/composer/zipball/362ebe4f68ac397b3294110c4944884e9bd90495",
+                "reference": "362ebe4f68ac397b3294110c4944884e9bd90495",
                 "shasum": ""
             },
             "require": {
@@ -610,7 +610,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2019-06-27T12:06:49+00:00"
+            "time": "2019-07-31T16:43:18+00:00"
         },
         {
             "name": "composer/semver",
@@ -1726,11 +1726,11 @@
         },
         {
             "name": "otgs/build-tools-ci",
-            "version": "0.11.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "86a00066bf1b65de0a191e465506e09752e81156"
+                "reference": "bf5e6f047a45829e464a2c79304846d05e48b68a"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -1784,7 +1784,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2019-07-25T15:39:46+00:00"
+            "time": "2019-08-01T10:56:26+00:00"
         },
         {
             "name": "otgs/changelog",
@@ -5112,6 +5112,7 @@
     "stability-flags": {
         "wpml-shared/wpml-lib-dependencies": 20,
         "roave/security-advisories": 20,
+        "otgs/build-tools-ci": 20,
         "otgs/diff-checks": 20,
         "tightenco/collect": 20
     },
