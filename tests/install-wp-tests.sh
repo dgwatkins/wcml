@@ -15,7 +15,7 @@ SCRIPTPATH=`pwd -P`
 
 WP_TESTS_DIR=${SCRIPTPATH}/wordpress-tests-lib/
 WP_CORE_DIR=${SCRIPTPATH}/wordpress/
-WP_CORE_LANG_DIR=${SCRIPTPATH}/wordpress/wp-content/languages/
+WP_CORE_LANG_DIR=${SCRIPTPATH}/wordpress/wp-content/languages
 WP_CORE_LANG_PLUGINS_DIR=${SCRIPTPATH}/wordpress/wp-content/languages/plugins/
 
 set -ex
