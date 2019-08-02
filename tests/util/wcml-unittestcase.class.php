@@ -1,5 +1,9 @@
 <?php
 
+use WPML\ST\MOTranslations\LanguageSwitchHooks;
+use WPML\ST\TranslateWpmlString;
+use WPML\ST\TranslationFile\Domains;
+
 class WCML_UnitTestCase extends WPML_UnitTestCase {
 
 	public $sitepress;
@@ -37,6 +41,7 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 		}
 
 		WCML_Helper::create_icl_string_packages_table();
+		$this->add_filter_to_mock_mo_update_in_shutdown();
 	}
 
 	private function clear_db() {
@@ -116,5 +121,35 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 
 	function get_wcml_multi_currency_prices_mock() {
 		return $this->getMockBuilder( 'WCML_Multi_Currency_Prices' )->disableOriginalConstructor()->getMock();
+	}
+
+
+	/**
+	 * When a string is translated, we need to update the custom MO file
+	 * because it's done in the shutdown. And then re-load the relative
+	 * text domain so it includes the custom MO file.
+	 */
+	private function add_filter_to_mock_mo_update_in_shutdown() {
+		add_action(
+			'wpml_st_add_string_translation',
+			[ WCML_UnitTestCase::class, 'update_custom_mo_and_reload_text_domain' ],
+			PHP_INT_MAX
+		);
+	}
+
+	public static function update_custom_mo_and_reload_text_domain() {
+		$mo_update_hooks   = \WPML\ST\MOTranslations\Factory::createUpdateHooks();
+		$file_manager      = \WPML\ST\MOTranslations\Factory::createFileManager();
+		$outdated_entities = wpml_collect( $mo_update_hooks->process_update_queue() );
+		$outdated_entities->first(
+			function( $entity ) use ( $file_manager ) {
+				load_textdomain( $entity->domain, $file_manager->getFilepath( $entity->domain, $entity->locale ) );
+			}
+		);
+
+		wp_cache_flush();
+
+		LanguageSwitchHooks::resetCache( 'dummy-locale-to-force-switching-to-a-different-locale' );
+		TranslateWpmlString::resetCache();
 	}
 }
