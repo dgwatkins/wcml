@@ -42,6 +42,7 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 
 		WCML_Helper::create_icl_string_packages_table();
 		$this->add_filter_to_mock_mo_update_in_shutdown();
+		self::reset_domain_cache();
 	}
 
 	private function clear_db() {
@@ -151,5 +152,11 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 
 		LanguageSwitchHooks::resetCache( 'dummy-locale-to-force-switching-to-a-different-locale' );
 		TranslateWpmlString::resetCache();
+		self::reset_domain_cache();
+	}
+
+	protected static function reset_domain_cache() {
+		Domains::resetCache();
+		\WPML\Container\make( \WPML_ST_Translations_File_Dictionary_Storage_Table::class )->reset();
 	}
 }
