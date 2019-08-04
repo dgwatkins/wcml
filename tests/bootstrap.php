@@ -29,6 +29,9 @@ function _manually_load_wcml() {
 	require_once WPML_CORE_PATH . '/tests/util/functions.php';
 	require_once WPML_CORE_PATH . '/sitepress.php';
 	require_once WPML_CORE_ST_PATH . '/plugin.php';
+
+	
+
 	// This should be called on `plugins_loaded` (- PHP_INT_MAX) in ST but it's already too late here.
 	// So we need to invoke it manually.
 	$st_initialize = new WPML_ST_Initialize();
