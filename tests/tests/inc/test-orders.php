@@ -13,6 +13,9 @@ class Test_WCML_Orders extends WCML_UnitTestCase {
 		$this->es_product_id = $es_product->id;
 	}
 
+	/**
+	 * @group wpmlst-2040
+	 */
 	function test_get_order_items(){
 
 		$order = WCML_Helper_Orders::create_order( array( 'product_id' => $this->orig_product_id ) );

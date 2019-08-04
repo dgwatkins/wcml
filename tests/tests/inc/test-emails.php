@@ -100,7 +100,9 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 
 	}
 
-	/** @group pierre */
+	/**
+	 * @group wpmlst-2040
+	 */
 	function test_woocommerce_order_get_items(){
 
 		$this->sitepress->switch_lang('es');
