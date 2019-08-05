@@ -59,6 +59,9 @@ class Test_WCML_Payment_Gateway_PayPal extends OTGS_TestCase {
 	 * @test
 	 */
 	public function is_valid_for_use() {
+
+		\WP_Mock::passthruFunction( 'remove_filter' );
+
 		$subject = $this->get_subject();
 
 		$this->assertTrue( $subject->is_valid_for_use( 'USD' ) );
@@ -176,6 +179,77 @@ class Test_WCML_Payment_Gateway_PayPal extends OTGS_TestCase {
 		);
 
 		$this->assertSame( $expected_filtered_args, $filtered_args );
+	}
+
+	/**
+	 * @test
+	 * @runInSeparateProcess
+	 */
+	public function it_should_add_not_supported_currency_to_supported_currencies_array() {
+
+		$client_currency = 'UAH';
+
+		$this->mock_woocommerce_wpml( $client_currency );
+
+		$gateway_settings = array(
+			$client_currency => array(
+				'currency'   => 'USD',
+				'email'      => rand_str()
+			)
+		);
+
+		WP_Mock::userFunction( 'get_option', array(
+			'args'   => array( WCML_Payment_Gateway_PayPal::OPTION_KEY . WCML_Payment_Gateway_PayPal::ID, array() ),
+			'times'  => 1,
+			'return' => $gateway_settings
+		) );
+
+		$expected_currencies = array( $client_currency );
+
+		$filtered_currencies = WCML_Payment_Gateway_PayPal::filter_supported_currencies( array() );
+
+		$this->assertSame( $expected_currencies, $filtered_currencies );
+	}
+
+	/**
+	 * @test
+	 * @runInSeparateProcess
+	 */
+	public function it_should_not_add_not_supported_currency_to_supported_currencies_array() {
+
+		$client_currency = 'UAH';
+
+		$this->mock_woocommerce_wpml( $client_currency );
+
+		$gateway_settings = array(
+			$client_currency => array(
+				'currency'   => $client_currency,
+				'email'      => rand_str()
+			)
+		);
+
+		WP_Mock::userFunction( 'get_option', array(
+			'args'   => array( WCML_Payment_Gateway_PayPal::OPTION_KEY . WCML_Payment_Gateway_PayPal::ID, array() ),
+			'times'  => 1,
+			'return' => $gateway_settings
+		) );
+
+		$filtered_currencies = WCML_Payment_Gateway_PayPal::filter_supported_currencies( array() );
+
+		$this->assertSame( array(), $filtered_currencies );
+	}
+
+	private function mock_woocommerce_wpml( $client_currency ) {
+
+		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                               ->disableOriginalConstructor()
+		                                               ->setMethods( array( 'get_client_currency' ) )
+		                                               ->getMock();
+
+		$this->woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
+
+		global $woocommerce_wpml;
+		$woocommerce_wpml = $this->woocommerce_wpml;
 	}
 
 }
