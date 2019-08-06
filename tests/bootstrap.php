@@ -25,10 +25,21 @@ $_tests_dir = isset( $_ENV['WP_TEST_DIR'] ) ? $_ENV['WP_TEST_DIR'] : 'wordpress-
 require_once $_tests_dir . '/includes/functions.php';
 
 function _manually_load_wcml() {
+	global $wpdb, $sitepress;
+
 	wp_styles();
 	require_once WPML_CORE_PATH . '/tests/util/functions.php';
 	require_once WPML_CORE_PATH . '/sitepress.php';
 	require_once WPML_CORE_ST_PATH . '/plugin.php';
+
+	require_once WPML_ST_PATH . '/vendor/autoload.php';
+
+	$factory = new WPML_ST_Upgrade_Command_Factory( $wpdb, $sitepress );
+	$upgrade = new WPML_ST_Upgrade( $sitepress, $factory );
+	$upgrade->add_hooks();
+	$upgrade->run();
+
+	WPML_Package_Translation_Schema::run_update();
 
 	require_once WPML_CORE_TM_PATH . '/plugin.php';
 	require_once WC_PATH. '/woocommerce.php';
