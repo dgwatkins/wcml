@@ -84,8 +84,6 @@ class WCML_Dependencies {
 
 		if ( isset( $sitepress ) ) {
 			$this->allok = $this->allok & $sitepress->setup();
-		} else {
-			$this->load_twig_support();
 		}
 
 		return $this->allok;
@@ -377,17 +375,4 @@ class WCML_Dependencies {
 		return $url;
 	}
 
-	/**
-	 * The support for the Twig templates comes from WPML by default
-	 * When WPML is not active, WCML will load it
-	 */
-	private function load_twig_support() {
-
-		if ( ! class_exists( 'WCML\Twig_Autoloader' ) ) {
-			WCML\Twig_Autoloader::register();
-		}
-
-	}
-
 }
-  

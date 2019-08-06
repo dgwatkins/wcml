@@ -1,6 +1,6 @@
 <?php
 
-use WCML\Twig_SimpleFunction;
+use WPML\Core\Twig_SimpleFunction;
 
 class WCML_Currency_Switcher_Template extends WCML_Templates_Factory {
 

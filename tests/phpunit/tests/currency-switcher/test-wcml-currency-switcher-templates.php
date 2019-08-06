@@ -34,6 +34,7 @@ if ( ! class_exists( 'WPML_Templates_Factory' ) ) {
  * Class Test_WCML_Currency_Switcher_Templates
  * @group currency-switcher
  * @group fix-tests-on-windows
+ * @group wcml-2878
  */
 class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 
@@ -331,6 +332,8 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 		));
 
 		\WP_Mock::passthruFunction( 'sanitize_title_with_dashes' );
+
+		\Mockery::mock( 'WPML\Core\Twig_SimpleFunction' );
 
 		$subject   = $this->get_subject( $woocommerce_wpml, $wcml_file );
 		$subject->after_setup_theme_action();

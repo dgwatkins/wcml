@@ -45,11 +45,7 @@ require WCML_PLUGIN_PATH . '/inc/installer-loader.php';
 require WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
 require WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
 
-if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
-	require WCML_PLUGIN_PATH . '/vendor/autoload.php';
-} else {
-	require WCML_PLUGIN_PATH . '/vendor/autoload_52.php';
-}
+require WCML_PLUGIN_PATH . '/vendor/autoload.php';
 
 if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ) {
 	global $sitepress;

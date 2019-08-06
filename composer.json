@@ -76,22 +76,14 @@
             "xrstf\\Composer52\\Generator::onPostInstallCmd"
         ],
         "post-install-cmd": [
-            "@make",
-            "@php52-autoloader"
-        ],
-        "post-update-cmd": [
-            "@php52-autoloader"
-        ],
-        "post-autoload-dump": [
-            "@php52-autoloader"
+            "@make"
         ]
     },
     "autoload": {
         "classmap": [
             "classes/",
             "compatibility/",
-            "inc/",
-            "lib/"
+            "inc/"
         ]
     }
 }

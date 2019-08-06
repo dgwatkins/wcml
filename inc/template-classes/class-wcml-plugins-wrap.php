@@ -1,7 +1,7 @@
 <?php
 
-use WCML\Twig_Loader_Filesystem;
-use WCML\Twig_Environment;
+use WPML\Core\Twig_Loader_Filesystem;
+use WPML\Core\Twig_Environment;
 
 class WCML_Plugins_Wrap {
 
