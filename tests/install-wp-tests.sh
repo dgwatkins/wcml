@@ -75,14 +75,10 @@ install_test_suite() {
     fi
 
 	TESTS_ABSPATH=$WP_CORE_DIR
-	TESTS_LANG_DIR=$WP_CORE_LANG_DIR
 	if grep -q Microsoft /proc/version; then
     # Fix paths if we are in Windows Subsystem Linux (WSL)
 	  TESTS_ABSPATH=$(wslpath -m $WP_CORE_DIR)/
-	  TESTS_LANG_DIR=$(wslpath -m $WP_CORE_LANG_DIR)
-  fi
-
-	sed $ioption "s#DIR_TESTDATA . '/languages'# '$TESTS_LANG_DIR'#" includes/bootstrap.php
+    fi
 
 	wget -qO wp-tests-config.php http://develop.svn.wordpress.org/trunk/wp-tests-config-sample.php
 	sed $ioption "s#dirname( __FILE__ ) . '/src/'#'$TESTS_ABSPATH'#" wp-tests-config.php
