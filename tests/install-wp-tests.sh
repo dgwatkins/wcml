@@ -15,41 +15,25 @@ SCRIPTPATH=`pwd -P`
 
 WP_TESTS_DIR=${SCRIPTPATH}/wordpress-tests-lib/
 WP_CORE_DIR=${SCRIPTPATH}/wordpress/
-WP_CORE_LANG_DIR=${SCRIPTPATH}/wordpress/wp-content/languages/
-WP_CORE_LANG_PLUGINS_DIR=${SCRIPTPATH}/wordpress/wp-content/languages/plugins/
+WP_CORE_LANG_DIR=${SCRIPTPATH}/wordpress/wp-content/languages
 
 set -ex
 
 install_wp() {
 	mkdir -p $WP_CORE_DIR
 
-	local WC_VERSION_FOR_MO_FILES='2.6.14'
-
-	if [ $WP_VERSION == 'latest' ]; then 
-		local ARCHIVE_NAME='latest'
-	else
-		local ARCHIVE_NAME="wordpress-$WP_VERSION"
-	fi
-
-	wget -nv -O /tmp/wordpress.tar.gz http://wordpress.org/${ARCHIVE_NAME}.tar.gz
-	tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C $WP_CORE_DIR
-
-	
-
-	# Create languages directory
-  	mkdir -p $WP_CORE_LANG_DIR
-  	mkdir -p $WP_CORE_LANG_PLUGINS_DIR
-  	#WC lang packs
-  	wget -P $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/fr_FR.zip
-  	wget -P $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/de_DE.zip
-  	wget -P $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/ru_RU.zip
-  	wget -P $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/es_ES.zip
-
-  	cd $WP_CORE_LANG_PLUGINS_DIR
-  	unzip fr_FR.zip
-  	unzip de_DE.zip
-  	unzip ru_RU.zip
-  	unzip es_ES.zip
+    if [[ $WP_TEST_VERSION  == "trunk" ]]; then
+        wget -nv -O /tmp/wordpress.zip https://wordpress.org/nightly-builds/wordpress-latest.zip
+        unzip -d . /tmp/wordpress.zip
+    elif [[ $WP_VERSION  == "" ]]; then
+        wget -nv -O /tmp/wordpress.tar.gz https://wordpress.org/latest.tar.gz
+        tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C "$WP_CORE_DIR"
+        WP_TEST_VERSION=$(cd "$WP_CORE_DIR"; wp core version --allow-root)
+    else
+        ARCHIVE_NAME="wordpress-$WP_VERSION"
+        wget -nv -O /tmp/wordpress.tar.gz https://wordpress.org/${ARCHIVE_NAME}.tar.gz
+        tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C "$WP_CORE_DIR"
+    fi
 
 	wget -nv -O $WP_CORE_DIR/wp-content/db.php https://raw.github.com/markoheijnen/wp-mysqli/master/db.php
 }
