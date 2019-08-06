@@ -20,10 +20,10 @@ wget -P ${WP_TESTS_LANG_PLUGINS_DIR} https://downloads.wordpress.org/translation
 wget -P ${WP_TESTS_LANG_PLUGINS_DIR} https://downloads.wordpress.org/translation/plugin/woocommerce/$WC_VERSION_FOR_MO_FILES/es_ES.zip
 
 cd ${WP_TESTS_LANG_PLUGINS_DIR}
-unzip fr_FR.zip
-unzip de_DE.zip
-unzip ru_RU.zip
-unzip es_ES.zip
+unzip -o fr_FR.zip
+unzip -o de_DE.zip
+unzip -o ru_RU.zip
+unzip -o es_ES.zip
 
 rm fr_FR.zip
 rm de_DE.zip
