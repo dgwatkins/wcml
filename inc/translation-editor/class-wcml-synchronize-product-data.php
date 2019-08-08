@@ -316,27 +316,30 @@ class WCML_Synchronize_Product_Data{
 	 */
 	public function sync_product_stock( $product, $translated_product = false ) {
 		$stock = $product->get_stock_quantity();
-		$product_id = $product->get_id();
 
-		remove_action( 'woocommerce_product_set_stock', array( $this, 'sync_product_stock_hook' ) );
-		remove_action( 'woocommerce_variation_set_stock', array( $this, 'sync_product_stock_hook' ) );
+		if ( ! is_null( $stock ) ){
+			$product_id = $product->get_id();
 
-		if( $translated_product ){
-			$this->update_stock_value( $translated_product, $stock );
-			wc_update_product_stock_status( $translated_product->get_id(), $product->get_stock_status() );
-		}else{
-			$translations = $this->post_translations->get_element_translations( $product_id );
-			foreach( $translations as $translation ){
-				if( $product_id !== $translation ){
-					$_product = wc_get_product( $translation );
-					$this->update_stock_value( $_product, $stock );
-					wc_update_product_stock_status( $translation, $product->get_stock_status() );
+			remove_action( 'woocommerce_product_set_stock', array( $this, 'sync_product_stock_hook' ) );
+			remove_action( 'woocommerce_variation_set_stock', array( $this, 'sync_product_stock_hook' ) );
+
+			if( $translated_product ){
+				$this->update_stock_value( $translated_product, $stock );
+				wc_update_product_stock_status( $translated_product->get_id(), $product->get_stock_status() );
+			}else{
+				$translations = $this->post_translations->get_element_translations( $product_id );
+				foreach( $translations as $translation ){
+					if( $product_id !== $translation ){
+						$_product = wc_get_product( $translation );
+						$this->update_stock_value( $_product, $stock );
+						wc_update_product_stock_status( $translation, $product->get_stock_status() );
+					}
 				}
 			}
-		}
 
-		add_action( 'woocommerce_product_set_stock', array( $this, 'sync_product_stock_hook' ) );
-		add_action( 'woocommerce_variation_set_stock', array( $this, 'sync_product_stock_hook' ) );
+			add_action( 'woocommerce_product_set_stock', array( $this, 'sync_product_stock_hook' ) );
+			add_action( 'woocommerce_variation_set_stock', array( $this, 'sync_product_stock_hook' ) );
+		}
 	}
 
 	/**
