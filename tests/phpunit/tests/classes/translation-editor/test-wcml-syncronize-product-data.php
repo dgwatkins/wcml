@@ -578,6 +578,27 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function it_should_not_sync_product_stock_if_stock_is_null(){
+
+		$product_id = 101;
+		$qty = null;
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                       ->disableOriginalConstructor()
+		                       ->setMethods( array( 'get_stock_quantity' ) )
+		                       ->getMock();
+		$product->method( 'get_stock_quantity' )->willReturn( $qty );
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::expectActionNotAdded( 'woocommerce_product_set_stock', array( $subject, 'sync_product_stock_hook' ) );
+		\WP_Mock::expectActionNotAdded( 'woocommerce_variation_set_stock', array( $subject, 'sync_product_stock_hook' ) );
+
+		$subject->sync_product_stock( $product );
+	}
+
+	/**
+	 * @test
+	 */
 	public function it_should_sync_product_stock_for_translation(){
 
 		WP_Mock::passthruFunction( 'remove_action' );
