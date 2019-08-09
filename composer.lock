@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+		"Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dd9dc6f55be6676596acc09b4ef3e1ee",
+	"content-hash": "36dc951fca225752951f239649944e0c",
     "packages": [
         {
             "name": "composer/installers",
@@ -4370,9 +4370,7 @@
     },
     "prefer-stable": true,
     "prefer-lowest": false,
-    "platform": {
-        "php": ">=5.6.0"
-    },
+	"platform": [],
     "platform-dev": [],
     "platform-overrides": {
         "php": "5.6"
