@@ -10,33 +10,38 @@
             "email": "mihai@wpml.org"
         }
     ],
-    "repositories": [
-        {
+    "repositories": {
+        "otgs-php-integration-tests": {
+            "type": "vcs",
+            "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-php-integration-tests.git"
+        },
+        "otgs-build-tools": {
             "type": "vcs",
             "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools.git"
         },
-        {
+        "otgs-build-tools-ci": {
             "type": "vcs",
             "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git"
         },
-        {
+        "otgs-changelog": {
             "type": "vcs",
             "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-changelog.git"
         },
-        {
+        "wpml-lib-dependencies": {
             "type": "vcs",
             "url": "ssh://git@git.onthegosystems.com:10022/wpml-shared/wpml-lib-dependencies.git"
         },
-        {
+        "patchwork": {
             "type": "vcs",
             "url": "https://github.com/OnTheGoSystems/patchwork.git"
         },
-        {
+        "collect": {
             "type": "vcs",
             "url": "https://github.com/OnTheGoSystems/collect.git"
         }
-    ],
+    },
     "config": {
+        "sort-packages": true,
         "platform": {
             "php": "5.6"
         }
