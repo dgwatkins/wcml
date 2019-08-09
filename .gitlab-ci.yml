@@ -1,6 +1,6 @@
 ---
 variables:
-    # Configure mysql service (https://hub.autoscale.com/_/mysql/)
+    # Configure mysql service (https://hub.docker.com/_/mysql/)
     WORDPRESS_DB_NAME: wp_test_db
     WORDPRESS_DB_USER: root
     MYSQL_ROOT_PASSWORD: mysql_strong_password
@@ -14,78 +14,108 @@ before_script:
     - '[[ -f /.dockerenv ]] && mkdir -p ~/.ssh && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
 stages:
+    - pre-flight
     - quality
     - test
     - build
     - documentation
     - deploy
 
+Prepare <Cache>:
+    stage: pre-flight
+    cache: &cache-commit
+        untracked: true
+        key: "$CI_COMMIT_REF_NAME"
+        paths:
+            - node_modules/
+            - vendor/
+            - libraries/
+        policy: push
+    when: always
+    image: registry.otgs.work/infrastructure/docker-images/phpunit:7.3
+    script:
+        - composer install
+        - npm install
+
 Compatibility <PHP>:
     stage: quality
-    when: always
+    cache:
+        <<: *cache-commit
+        policy: pull
+    when: on_success
     image: registry.otgs.work/infrastructure/docker-images/phpunit:7.3
     tags:
         - autoscale
     script:
-        - composer install
         - vendor/bin/phpcs --standard=./phpcs.compatibility.xml -s -p --colors --report-full --report-summary ./
-    except:
-        - tags
+    only:
+        - master
+        - develop
 
 Duplication <PHP>:
     stage: quality
-    when: always
+    cache:
+        <<: *cache-commit
+        policy: pull
+    when: on_success
     image: registry.otgs.work/infrastructure/docker-images/phpunit:7.3
     tags:
         - autoscale
     script:
-        - composer install
         - vendor/bin/phpcpd --exclude=tests --exclude=vendor -- ./
-    except:
-        - tags
+    only:
+        - master
+        - develop
 
 Unit <PHP>:
     stage: test
-    when: always
-    image: registry.git.onthegosystems.com/infrastructure/docker-images/otgs/phpunit:5.7
+    cache:
+        <<: *cache-commit
+        policy: pull
+    when: on_success
+    image: registry.otgs.work/infrastructure/docker-images/otgs/phpunit:5.7
     tags:
         - autoscale
     script:
-        - composer install
         - cd tests/phpunit
         - ../../vendor/bin/phpunit --fail-on-warning
-    except:
-        - tags
+    only:
+        - branches
 
 Integration <PHP>:
     stage: test
-    when: always
+    cache:
+        <<: *cache-commit
+        policy: pull
+    variables:
+        GIT_STRATEGY: none
+    when: on_success
     image: registry.otgs.work/infrastructure/docker-images/wptest:7.3
     services:
         - mysql:5.7
     tags:
         - autoscale
     script:
-        - composer install
-        - ./vendor/otgs/build-tools-ci/otgs-ci -p --legacy
-    except:
-        - tags
+        - ./vendor/bin/otgs-php-integration-tests
+    only:
+        - branches
 
 Branch:
     stage: build
+    cache:
+        <<: *cache-commit
+        policy: pull
     when: on_success
     image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php73
     tags:
         - autoscale
     script:
-        - composer install
-        - yarn install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
         - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
     artifacts:
-        expire_in: 1h
+        expire_in: 48h
         name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
         paths:
             - ${CI_PROJECT_NAME}
@@ -98,13 +128,14 @@ Branch:
 
 Pre-Release:
     stage: build
+    cache:
+        <<: *cache-commit
+        policy: pull
     when: on_success
     image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php73
     tags:
         - autoscale
     script:
-        - composer install
-        - yarn install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
@@ -119,13 +150,14 @@ Pre-Release:
 
 Develop:
     stage: build
+    cache:
+        <<: *cache-commit
+        policy: pull
     when: on_success
     image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php73
     tags:
         - autoscale
     script:
-        - composer install
-        - yarn install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
@@ -140,13 +172,14 @@ Develop:
 
 Master:
     stage: build
+    cache:
+        <<: *cache-commit
+        policy: pull
     when: on_success
     image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php73
     tags:
         - autoscale
     script:
-        - composer install
-        - yarn install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
@@ -161,13 +194,14 @@ Master:
 
 Tag:
     stage: build
-    when: always
+    cache:
+        <<: *cache-commit
+        policy: pull
+    when: on_success
     image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php73
     tags:
         - autoscale
     script:
-        - composer install
-        - yarn install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
@@ -182,12 +216,14 @@ Tag:
 
 Release Notes:
     stage: documentation
+    cache:
+        <<: *cache-commit
+        policy: pull
     when: on_success
     image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php73
     tags:
         - autoscale
     script:
-        - composer install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - ./vendor/otgs/build-tools-ci/otgs-ci --releasenotes
     only:
@@ -195,17 +231,20 @@ Release Notes:
 
 S3:
     stage: deploy
+    cache:
+        <<: *cache-commit
+        policy: pull
     when: on_success
     image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php73
     tags:
         - autoscale
     script:
-        - composer install
         - ./vendor/bin/publish-artifact-to-s3
     dependencies:
         - Tag
         - Develop
         - Master
+        - Branch
     only:
         - tags
         - develop
