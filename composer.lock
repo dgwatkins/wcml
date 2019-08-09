@@ -4,7 +4,7 @@
 		"Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-	"content-hash": "36dc951fca225752951f239649944e0c",
+	"content-hash": "11ec3fe3b0afc3218d4daca240b67d29",
     "packages": [
         {
             "name": "composer/installers",
@@ -1320,6 +1320,35 @@
             "time": "2018-10-19T13:09:51+00:00"
         },
         {
+			"name": "otgs/php-integration-tests",
+			"version": "dev-develop",
+			"source": {
+				"type": "git",
+				"url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-php-integration-tests.git",
+				"reference": "bc63051b6984365367ffb3e399c5dc24a813d594"
+			},
+			"require": {
+				"symfony/console": "^3.4"
+			},
+			"bin": [
+				"otgs-php-integration-tests"
+			],
+			"type": "library",
+			"autoload": {
+				"psr-4": {
+					"OTGS\\": "src/"
+				},
+				"psr-0": {
+					"OTGS\\": "src/"
+				},
+				"classmap": [
+					"src/"
+				]
+			},
+			"description": "Clone, install, setup dependencies and run the integration tests of the current project",
+			"time": "2019-08-08T15:03:41+00:00"
+		},
+		{
             "name": "otgs/unit-tests-framework",
             "version": "1.2.5",
             "source": {
@@ -4365,6 +4394,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "wpml-shared/wpml-lib-dependencies": 20,
+		"otgs/php-integration-tests": 20,
         "roave/security-advisories": 20,
         "tightenco/collect": 20
     },
