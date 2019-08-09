@@ -1,6 +1,6 @@
 ---
 variables:
-    # Configure mysql service (https://hub.autoscale.com/_/mysql/)
+    # Configure mysql service (https://hub.docker.com/_/mysql/)
     WORDPRESS_DB_NAME: wp_test_db
     WORDPRESS_DB_USER: root
     MYSQL_ROOT_PASSWORD: mysql_strong_password
@@ -36,21 +36,6 @@ Prepare <Cache>:
         - composer install
         - npm install
 
-Diff <PHP>:
-    stage: quality
-    cache:
-        <<: *cache-commit
-        policy: pull
-    when: on_success
-    image: registry.otgs.work/infrastructure/docker-images/phpunit:7.3
-    tags:
-        - autoscale
-    script:
-        - composer install
-        - ./vendor/bin/otgs-check-php
-    only:
-        - merge_requests
-
 Compatibility <PHP>:
     stage: quality
     cache:
@@ -61,7 +46,6 @@ Compatibility <PHP>:
     tags:
         - autoscale
     script:
-        - composer install
         - vendor/bin/phpcs --standard=./phpcs.compatibility.xml -s -p --colors --report-full --report-summary ./
     only:
         - master
@@ -77,7 +61,6 @@ Duplication <PHP>:
     tags:
         - autoscale
     script:
-        - composer install
         - vendor/bin/phpcpd --exclude=tests --exclude=vendor -- ./
     only:
         - master
@@ -89,22 +72,22 @@ Unit <PHP>:
         <<: *cache-commit
         policy: pull
     when: on_success
-    image: registry.git.onthegosystems.com/infrastructure/docker-images/otgs/phpunit:5.7
+    image: registry.otgs.work/infrastructure/docker-images/otgs/phpunit:5.7
     tags:
         - autoscale
     script:
-        - composer install
         - cd tests/phpunit
         - ../../vendor/bin/phpunit --fail-on-warning
     only:
         - branches
-        - merge_requests
 
 Integration <PHP>:
     stage: test
     cache:
         <<: *cache-commit
         policy: pull
+    variables:
+        GIT_STRATEGY: none
     when: on_success
     image: registry.otgs.work/infrastructure/docker-images/wptest:7.3
     services:
@@ -112,11 +95,9 @@ Integration <PHP>:
     tags:
         - autoscale
     script:
-        - composer install
-        - ./vendor/otgs/build-tools-ci/otgs-ci -p --legacy
+        - ./vendor/bin/otgs-php-integration-tests
     only:
         - branches
-        - merge_requests
 
 Branch:
     stage: build
@@ -128,14 +109,12 @@ Branch:
     tags:
         - autoscale
     script:
-        - composer install
-        - yarn install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
         - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
     artifacts:
-        expire_in: 1h
+        expire_in: 48h
         name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
         paths:
             - ${CI_PROJECT_NAME}
@@ -156,8 +135,6 @@ Pre-Release:
     tags:
         - autoscale
     script:
-        - composer install
-        - yarn install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
@@ -180,8 +157,6 @@ Develop:
     tags:
         - autoscale
     script:
-        - composer install
-        - yarn install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
@@ -204,8 +179,6 @@ Master:
     tags:
         - autoscale
     script:
-        - composer install
-        - yarn install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
@@ -228,8 +201,6 @@ Tag:
     tags:
         - autoscale
     script:
-        - composer install
-        - yarn install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
@@ -252,7 +223,6 @@ Release Notes:
     tags:
         - autoscale
     script:
-        - composer install
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - ./vendor/otgs/build-tools-ci/otgs-ci --releasenotes
     only:
@@ -268,12 +238,12 @@ S3:
     tags:
         - autoscale
     script:
-        - composer install
         - ./vendor/bin/publish-artifact-to-s3
     dependencies:
         - Tag
         - Develop
         - Master
+        - Branch
     only:
         - tags
         - develop
