@@ -87,8 +87,6 @@ Integration <PHP>:
     cache:
         <<: *cache-commit
         policy: pull
-    variables:
-        GIT_STRATEGY: none
     when: on_success
     image: registry.otgs.work/infrastructure/docker-images/wptest:7.3
     services:
