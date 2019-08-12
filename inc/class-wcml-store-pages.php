@@ -19,6 +19,7 @@ class WCML_Store_Pages {
 	}
 
 	public function add_hooks() {
+		global $pagenow;
 
 		add_action( 'init', array( $this, 'init' ) );
 		add_filter( 'woocommerce_create_pages', array( $this, 'switch_pages_language' ), 9 );
@@ -28,9 +29,16 @@ class WCML_Store_Pages {
 
 		add_filter( 'template_include', array( $this, 'template_loader' ), 100 );
 
-		if ( is_admin() ) {
+		$is_admin = is_admin();
+
+		if ( $is_admin ) {
 			add_action( 'icl_post_languages_options_before', array( $this, 'show_translate_shop_pages_notice' ) );
-		} else {
+		}
+
+		if (
+			! $is_admin ||
+			( 'admin.php' === $pagenow && isset( $_GET['page'] ) && 'wc-settings' === $_GET['page'] )
+		) {
 			// Translate shop page ids
 			$this->add_filter_to_get_shop_translated_page_id();
 		}
@@ -146,6 +154,7 @@ class WCML_Store_Pages {
 	}
 
 	function add_filter_to_get_shop_translated_page_id() {
+
 		$woo_pages = array(
 			'shop_page_id',
 			'cart_page_id',
@@ -172,11 +181,6 @@ class WCML_Store_Pages {
 	}
 
 	function translate_pages_in_settings( $id ) {
-		global $pagenow;
-		if ( $pagenow == 'options-permalink.php' || ( isset( $_GET['page'] ) && $_GET['page'] == 'wpml-wcml' ) ) {
-			return $id;
-		}
-
 		return apply_filters( 'translate_object_id', $id, 'page', true );
 	}
 
