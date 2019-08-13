@@ -3,8 +3,10 @@
 const fs   = require('fs-extra');
 const path = require('path');
 
-const argv = require('yargs')
+const yargs = require('yargs')
 	.usage('Usage: [options]')
+	.wrap(null)
+	.example(getHelp())
 	.option('t', {
 		description: 'The target path to update',
 		alias:       'target',
@@ -18,25 +20,60 @@ const argv = require('yargs')
 		string:       true,
 	})
 	.option('d', {
-		description: 'Debug',
+		description: 'A hard-coded JSON array will be used instead of attempting to read ti from the environment variable.',
 		alias:       'debug',
 		boolean:     true,
 		default:     false
-	})
+	});
+const argv  = yargs
 	.argv;
 
 const targetPath = path.normalize(argv.target);
 
-updatePluginVersion();
+function getHelp() {
+	const help = [];
+	if (!hasEnvironmentVariable()) {
+		help.push('You must set a constant named OTGS_CI_REPLACEMENTS containing a JSON array in this form:');
+		help.push('');
+		help.push(':: Example:');
+		const sample = [
+			{
+				"searchPattern":      "(Version:\\s+)(\\S+)",
+				"replacePattern":     "%1{{tag}}",
+				"displayFullVersion": true
+			},
+			{
+				"searchPattern":  "(wpml.org\\/version\\/wpml-)(\\S+)(\\/\">WPML )(\\S+)( release notes)",
+				"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
+			},
+			{
+				"searchPattern":      "(define\\s*\\(\\s*\\'ICL_SITEPRESS_VERSION\\'\\s*,\\s*\\')(\\S*)(\\'\\s*\\);)",
+				"replacePattern":     "%1{{tag}}%3",
+				"displayFullVersion": false
+			},
+		];
+		// help.push('[');
+		// sample.map(item => help.push(JSON.stringify(item,null,2)));
+		// help.push(']');
+		help.push(JSON.stringify(sample, null, 2));
+
+		help.push('');
+
+		help.push('- searchPattern: the regular expression to use for searching the string to replace.');
+		help.push('- replacePattern: the replacement expression');
+		help.push('  - "{{tag}}": the placeholder for the tag string');
+		help.push('  - "{{tag-slug}}": the placeholder for the URL-friendly tag string');
+		help.push('"- displayFullVersion": when set to false, it removes the prerelease component of the version (e.g. "1.2.3-b.1" becomes "1.2.3"');
+		help.push('');
+	}
+	return help.join('\n');
+}
 
 function updatePluginVersion() {
-	if (!process.env.OTGS_CI_REPLACEMENTS && argv.debug) {
-		setTestPatterns();
-	}
+	const tag          = argv.ref.trim();
+	const replacements = getReplacements();
 
-	const tag = argv.ref.trim();
-
-	if (process.env.OTGS_CI_REPLACEMENTS) {
+	if (replacements) {
 		const currentDirectory = process.cwd();
 		process.chdir(targetPath);
 
@@ -49,7 +86,7 @@ function updatePluginVersion() {
 
 			console.info('- Found "' + file + '": updating...');
 
-			const replacement_patterns = JSON.parse(process.env.OTGS_CI_REPLACEMENTS.replace(/(%)(\d)/g, '$$$2'));
+			const replacement_patterns = JSON.parse(replacements.replace(/(%)(\d)/g, '$$$2'));
 
 			replacement_patterns
 				.filter(regex_args => {
@@ -58,8 +95,17 @@ function updatePluginVersion() {
 				})
 				.map((regex_args, index) => {
 
-					const use     = regex_args.extractSemVer ? regex_args.extractSemVer : false;
-					const tagName = use ? extractSemVer(tag) : tag;
+					const usePrerelease = (() => {
+						if (regex_args.hasOwnProperty('displayFullVersion')) {
+							return !!regex_args.displayFullVersion;
+						}
+						if (regex_args.hasOwnProperty('extractSemVer')) {
+							return !!regex_args.extractSemVer;
+						}
+						return true;
+					})();
+
+					const tagName = extractSemVer(tag, usePrerelease);
 					const tagSlug = tagName.trim().replace(/\./g, '-');
 
 					const regExp = new RegExp(regex_args.searchPattern, 'g');
@@ -83,29 +129,26 @@ function updatePluginVersion() {
 		}
 	} else {
 		console.info('A constant named OTGS_CI_REPLACEMENTS hasn\'t been set: skipping.');
+		console.info('Example:');
+		console.info(getTestPatterns());
 	}
 }
 
-function extractSemVer(version) {
-	const versionElements = version
+function extractSemVer(version, withPrerelease = true) {
+	const sanitizedVersion = version
 		.trim()
-		.replace(/-/g, '.')
-		.replace(/_/g, '.')
-		.replace(/\+/g, '.')
-		.replace(/([^0-9.]+)/, '.$1.')
-		.replace(/\.{2,}/g, '.')
-		.split('.');
+		.replace(/\.{2,}/g, '.');
 
-	const nakedElements = ['0', '0', '0'];
+	const [versionNumber, prerelease = ''] = sanitizedVersion.split('-');
 
-	versionElements
-		.filter(element => !isNaN(element))
-		.slice(0, 3)
-		.map((element, index) => {
-			nakedElements[index] = element;
-		});
+	const versionElements = versionNumber.split('.');
 
-	return nakedElements.join('.');
+	const sanitizedVersionElements = versionElements.filter(element => !isNaN(element));
+
+	return sanitizedVersionElements.join('.')
+		+ (
+			(withPrerelease && prerelease) ? ('-' + prerelease) : ''
+		);
 }
 
 function getMainPluginFile() {
@@ -132,81 +175,116 @@ function getMainPluginFile() {
 	return null;
 }
 
-function setTestPatterns() {
-	const testPatterns = [
-		{
-			"searchPattern":  "(Version:\\s*)(\\d*.*)",
-			"replacePattern": "%1{{tag}}"
-		},
-		{
-			"searchPattern":  "(GRAVITYFORMS_MULTILINGUAL_VERSION\\',\\s*\\')(\\d*.*)(\\')",
-			"replacePattern": "%1{{tag}}%3",
-			"extractSemVer":  true
-		},
-		{
-			"searchPattern":  "(wpml.org\\/version\\/wpml-)([\\d\\-*]*)(\\/\">WPML )([\\d\\.*]*)( release notes)",
-			"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
-		},
-		{
-			"searchPattern":  "(WCML_VERSION\\',\\s*\\')(\\d*.*)(\\')",
-			"replacePattern": "%1{{tag}}%3",
-			"extractSemVer":  true
-		},
-		{
-			"searchPattern":  "(wpml.org\\/version\\/cms-nav-)([\\d\\-*]*)(\\/\">WPML CMS Nav )([\\d\\.*]*)( release notes)",
-			"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
-		},
-		{
-			"searchPattern":  "(wpml.org\\/version\\/gravityforms-multilingual-)([\\d\\-*]*)(\\/\">Gravity Forms Multilingual )([\\d\\.*]*)( release notes)",
-			"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
-		},
-		{
-			"searchPattern":  "(wpml.org\\/version\\/media-translation-)([\\d\\-*]*)(\\/\">WPML Media Translation )([\\d\\.*]*)( release notes)",
-			"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
-		},
-		{
-			"searchPattern":  "(wpml.org\\/version\\/sticky-links-)([\\d\\-*]*)(\\/\">WPML Sticky Links )([\\d\\.*]*)( release notes)",
-			"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
-		},
-		{
-			"searchPattern":  "(wpml.org\\/version\\/string-translation-)([\\d\\-*]*)(\\/\">WPML String Translation )([\\d\\.*]*)( release notes)",
-			"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
-		},
-		{
-			"searchPattern":  "(wpml.org\\/version\\/translation-management-)([\\d\\-*]*)(\\/\">WPML Translation Management )([\\d\\.*]*)( release notes)",
-			"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
-		},
-		{
-			"searchPattern":  "(ICL_SITEPRESS_VERSION\\',\\s*\\')(\\d*.*)(\\')",
-			"replacePattern": "%1{{tag}}%3",
-			"extractSemVer":  true
-		},
-		{
-			"searchPattern":  "(WPML_CMS_NAV_VERSION\\',\\s*\\')(\\d*.*)(\\')",
-			"replacePattern": "%1{{tag}}%3",
-			"extractSemVer":  true
-		},
-		{
-			"searchPattern":  "(WPML_MEDIA_VERSION\\',\\s*\\')(\\d*.*)(\\')",
-			"replacePattern": "%1{{tag}}%3",
-			"extractSemVer":  true
-		},
-		{
-			"searchPattern":  "(WPML_ST_VERSION\\',\\s*\\')(\\d*.*)(\\')",
-			"replacePattern": "%1{{tag}}%3",
-			"extractSemVer":  true
-		},
-		{
-			"searchPattern":  "(WPML_STICKY_LINKS_VERSION\\',\\s*\\')(\\d*.*)(\\')",
-			"replacePattern": "%1{{tag}}%3",
-			"extractSemVer":  true
-		},
-		{
-			"searchPattern":  "(WPML_TM_VERSION\\',\\s*\\')(\\d*.*)(\\')",
-			"replacePattern": "%1{{tag}}%3",
-			"extractSemVer":  true
-		}
-	];
-
-	process.env.OTGS_CI_REPLACEMENTS = JSON.stringify(testPatterns);
+function getTestPatterns() {
+	return JSON.stringify(
+		[
+			{
+				"searchPattern":      "(Version:\\s+)(\\S+)",
+				"replacePattern":     "%1{{tag}}",
+				"displayFullVersion": true
+			},
+			{
+				"searchPattern":      "(define\\s*\\(\\s*\\'GRAVITYFORMS_MULTILINGUAL_VERSION\\'\\s*,\\s*\\')(\\S*)(\\'\\s*\\);)",
+				"replacePattern":     "%1{{tag}}%3",
+				"displayFullVersion": false
+			},
+			{
+				"searchPattern":  "(wpml.org\\/version\\/wpml-)(\\S+)(\\/\">WPML )(\\S+)( release notes)",
+				"replacePattern": "%1{{tag-slug}}%3{{tag}}%5"
+			},
+			{
+				"searchPattern":      "(define\\s*\\(\\s*\\'WCML_VERSION\\'\\s*,\\s*\\')(\\S*)(\\'\\s*\\);)",
+				"replacePattern":     "%1{{tag}}%3",
+				"displayFullVersion": false
+			},
+			{
+				"searchPattern":      "(wpml.org\\/version\\/cms-nav-)([\\d\\-*]*)(\\/\">WPML CMS Nav )(\\S+)( release notes)",
+				"replacePattern":     "%1{{tag-slug}}%3{{tag}}%5",
+				"displayFullVersion": true
+			},
+			{
+				"searchPattern":      "(wpml.org\\/version\\/gravityforms-multilingual-)(\\S+)(\\/\">Gravity Forms Multilingual )(\\S+)( release notes)",
+				"replacePattern":     "%1{{tag-slug}}%3{{tag}}%5",
+				"displayFullVersion": true
+			},
+			{
+				"searchPattern":      "(wpml.org\\/version\\/media-translation-)(\\S+)(\\/\">WPML Media Translation )(\\S+)( release notes)",
+				"replacePattern":     "%1{{tag-slug}}%3{{tag}}%5",
+				"displayFullVersion": true
+			},
+			{
+				"searchPattern":      "(wpml.org\\/version\\/sticky-links-)(\\S+)(\\/\">WPML Sticky Links )(\\S+)( release notes)",
+				"replacePattern":     "%1{{tag-slug}}%3{{tag}}%5",
+				"displayFullVersion": true
+			},
+			{
+				"searchPattern":      "(wpml.org\\/version\\/string-translation-)(\\S+)(\\/\">WPML String Translation )(\\S+)( release notes)",
+				"replacePattern":     "%1{{tag-slug}}%3{{tag}}%5",
+				"displayFullVersion": true
+			},
+			{
+				"searchPattern":      "(wpml.org\\/version\\/translation-management-)(\\S+)(\\/\">WPML Translation Management )(\\S+)( release notes)",
+				"replacePattern":     "%1{{tag-slug}}%3{{tag}}%5",
+				"displayFullVersion": true
+			},
+			{
+				"searchPattern":      "(define\\s*\\(\\s*\\'ICL_SITEPRESS_VERSION\\'\\s*,\\s*\\')(\\S*)(\\'\\s*\\);)",
+				"replacePattern":     "%1{{tag}}%3",
+				"displayFullVersion": false
+			},
+			{
+				"searchPattern":      "(define\\s*\\(\\s*\\'WPML_CMS_NAV_VERSION\\'\\s*,\\s*\\')(\\S*)(\\'\\s*\\);)",
+				"replacePattern":     "%1{{tag}}%3",
+				"displayFullVersion": false
+			},
+			{
+				"searchPattern":      "(define\\s*\\(\\s*\\'WPML_MEDIA_VERSION\\'\\s*,\\s*\\')(\\S*)(\\'\\s*\\);)",
+				"replacePattern":     "%1{{tag}}%3",
+				"displayFullVersion": false
+			},
+			{
+				"searchPattern":      "(define\\s*\\(\\s*\\'WPML_ST_VERSION\\'\\s*,\\s*\\')(\\S*)(\\'\\s*\\);)",
+				"replacePattern":     "%1{{tag}}%3",
+				"displayFullVersion": false
+			},
+			{
+				"searchPattern":      "(define\\s*\\(\\s*\\'WPML_STICKY_LINKS_VERSION\\'\\s*,\\s*\\')(\\S*)(\\'\\s*\\);)",
+				"replacePattern":     "%1{{tag}}%3",
+				"displayFullVersion": false
+			},
+			{
+				"searchPattern":      "(define\\s*\\(\\s*\\'WPML_TM_VERSION\\'\\s*,\\s*\\')(\\S*)(\\'\\s*\\);)",
+				"replacePattern":     "%1{{tag}}%3",
+				"displayFullVersion": false
+			}
+		]
+	);
 }
+
+function hasEnvironmentVariable() {
+	return process.env.OTGS_CI_REPLACEMENTS
+		|| process.env.OTGS_CI_MAIN_FILE_REPLACEMENTS
+		|| process.env.OTGS_CI_REPLACEMENTS;
+}
+
+function getReplacements() {
+	if (argv.debug) {
+		return getTestPatterns();
+	}
+
+	if (hasEnvironmentVariable()) {
+		if (process.env.OTGS_CI_REPLACEMENTS) {
+			return process.env.OTGS_CI_REPLACEMENTS;
+		}
+
+		if (process.env.OTGS_CI_MAIN_FILE_REPLACEMENTS) {
+			return process.env.OTGS_CI_MAIN_FILE_REPLACEMENTS;
+		}
+
+		if (process.env.OTGS_CI_REPLACEMENTS) {
+			return process.env.OTGS_CI_REPLACEMENTS;
+		}
+	}
+}
+
+updatePluginVersion();
