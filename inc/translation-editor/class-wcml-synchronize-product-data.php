@@ -552,7 +552,7 @@ class WCML_Synchronize_Product_Data{
 
         if( is_null( $post_fields ) ){
             $post_fields = array();
-	        if ( isset( $_POST['data'] ) ) {
+	        if ( isset( $_POST['data'] ) && !is_array( $_POST['data'] ) ) {
 		        $job_data    = array();
 		        parse_str( $_POST['data'], $job_data );
 		        $post_fields = $job_data['fields'];
