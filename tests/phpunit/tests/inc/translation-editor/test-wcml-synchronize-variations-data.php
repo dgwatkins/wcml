@@ -43,6 +43,22 @@ class Test_WCML_Synchronize_Variations_Data extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function add_hooks() {
+
+		$subject = $this->get_subject();
+
+		WP_Mock::expectActionAdded( 'woocommerce_ajax_save_product_variations', array( $subject, 'sync_product_variations_action' ), 11 );
+		WP_Mock::expectActionAdded( 'woocommerce_bulk_edit_variations', array( $subject, 'sync_product_variations_on_bulk_edit' ), 10, 3 );
+		WP_Mock::expectActionAdded( 'wp_ajax_woocommerce_remove_variations', array( $subject, 'remove_translations_for_variations' ), 9 );
+		WP_Mock::expectActionAdded( 'wp_ajax_wpml_tt_save_term_translation', array( $subject, 'update_taxonomy_in_variations' ), 7 );
+		WP_Mock::expectActionAdded( 'wp_ajax_woocommerce_remove_variation', array( $subject, 'remove_variation_ajax' ), 9 );
+
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
 	function sync_variations_taxonomies_no_terms_assigned() {
 
 		$original_variation_id   = mt_rand( 1, 100 );
