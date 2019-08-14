@@ -10,7 +10,7 @@
  * Tested up to: 5.2
  * Version: 4.7.0
  * WC requires at least: 3.3.0
- * WC tested up to: 3.6.4
+ * WC tested up to: 3.7.0
  *
  * @package WCML
  * @author  OnTheGoSystems
