@@ -8,7 +8,8 @@
  * Text Domain: woocommerce-multilingual
  * Requires at least: 4.7
  * Tested up to: 5.2
- * Version: 4.7.0
+ * Version: 4.7.0-b.6
+ * Plugin Slug: woocommerce-multilingual
  * WC requires at least: 3.3.0
  * WC tested up to: 3.7.0
  *
