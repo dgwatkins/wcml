@@ -224,7 +224,6 @@ Release Notes:
         - autoscale
     script:
         - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
-        - ./vendor/otgs/build-tools-ci/otgs-ci --releasenotes
     only:
         - tags
 
