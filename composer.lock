@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1dd3c2c29831e6a5727c163f9a6f4776",
+    "content-hash": "8131251eb31a62bd7ea35fcb478f014b",
     "packages": [
         {
             "name": "composer/installers",
@@ -1790,11 +1790,11 @@
         },
         {
             "name": "otgs/changelog",
-            "version": "0.3.1",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-changelog.git",
-                "reference": "d7c37015d6ff93e501ba9ddd9e79bc79a08a0755"
+                "reference": "614ab39ee7c2404920323928fa38894b233c0ed0"
             },
             "require": {
                 "nepda/youtrack-client": "dev-master",
@@ -1809,12 +1809,15 @@
                 "phpunit/phpunit": "^5"
             },
             "bin": [
-                "bin/otgs-changelog"
+                "otgs-changelog"
             ],
             "type": "library",
             "autoload": {
+                "psr-4": {
+                    "OTGS\\": "src/"
+                },
                 "psr-0": {
-                    "": "src/"
+                    "OTGS\\": "src/"
                 },
                 "classmap": [
                     "src/"
@@ -1834,7 +1837,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2018-10-19T13:09:51+00:00"
+            "time": "2019-08-19T15:33:21+00:00"
         },
         {
             "name": "otgs/diff-checks",
@@ -5093,7 +5096,7 @@
             "version": "dev-wpml-collect-rename",
             "source": {
                 "type": "git",
-                "url": "git@github.com:OnTheGoSystems/collect.git",
+                "url": "https://github.com/OnTheGoSystems/collect.git",
                 "reference": "d395c7e42f036fc29c81b4519b0ca4b00215a732"
             },
             "dist": {
@@ -5132,6 +5135,9 @@
                 "collection",
                 "laravel"
             ],
+            "support": {
+                "source": "https://github.com/OnTheGoSystems/collect/tree/wpml-collect-rename"
+            },
             "time": "2019-08-21T09:25:10+00:00"
         }
     ],
@@ -5139,6 +5145,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "wpml-shared/wpml-lib-dependencies": 20,
+        "otgs/changelog": 20,
         "otgs/diff-checks": 20,
         "otgs/php-integration-tests": 20,
         "roave/security-advisories": 20,
