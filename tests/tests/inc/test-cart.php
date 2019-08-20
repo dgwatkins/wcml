@@ -96,19 +96,24 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
 
 	function test_get_cart_attribute_translation(){
 
-		//test global attribute
-		$trnsl_attr = $this->woocommerce_wpml->cart->get_cart_attribute_translation( 'attribute_pa_size', 'medium', false, 'es', false, false );
+		//test global attribute without "attribute_" in name
+		$translated_attribute = $this->woocommerce_wpml->cart->get_cart_attribute_translation( 'pa_size', 'medium', false, 'es', false, false );
 
-		$this->assertEquals( 'medio', $trnsl_attr );
+		$this->assertEquals( 'medio', $translated_attribute );
+
+		//test global attribute
+		$translated_attribute = $this->woocommerce_wpml->cart->get_cart_attribute_translation( 'attribute_pa_size', 'medium', false, 'es', false, false );
+
+		$this->assertEquals( 'medio', $translated_attribute );
 
 		//test variation global attribute
 		$variation = $this->wcml_helper->add_product_variation( 'es', false );
 		$variation_id = $variation->id;
 
 		add_post_meta( $variation_id, 'attribute_pa_size', 'medio' );
-		$trnsl_attr = $this->woocommerce_wpml->cart->get_cart_attribute_translation( 'attribute_pa_size', 'medio', $variation_id, 'es', false, false );
+		$translated_attribute = $this->woocommerce_wpml->cart->get_cart_attribute_translation( 'attribute_pa_size', 'medio', $variation_id, 'es', false, false );
 
-		$this->assertEquals( 'medio', $trnsl_attr );
+		$this->assertEquals( 'medio', $translated_attribute );
 
 		//test local attribute with variation set to any
 
@@ -120,9 +125,9 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
 		$variation_id = $variation->id;
 		add_post_meta( $variation_id, 'attribute_size', '' );
 
-		$trnsl_attr = $this->woocommerce_wpml->cart->get_cart_attribute_translation( 'attribute_size', 'small', $variation_id, 'es', $this->orig_product_id , $this->es_product_id );
+		$translated_attribute = $this->woocommerce_wpml->cart->get_cart_attribute_translation( 'attribute_size', 'small', $variation_id, 'es', $this->orig_product_id , $this->es_product_id );
 
-		$this->assertEquals( 'pequena', $trnsl_attr );
+		$this->assertEquals( 'pequena', $translated_attribute );
 
 	}
 
