@@ -63,29 +63,22 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 			'category' => $category
 		];
 
-		\WP_Mock::userFunction( 'remove_filter', [
-			'times'  => 1,
-			'args'   => [ 'terms_clauses', [ $sitepress, 'terms_clauses' ], 10 ],
-			'return' => true
-		] );
 
 		$category_translation            = rand_str( 32 );
 		$category_term_translation       = $this->getMockBuilder( 'WP_Term' )
 		                                        ->disableOriginalConstructor()
 		                                        ->getMock();
 		$category_term_translation->slug = $category_translation;
-		\WP_Mock::userFunction( 'get_terms', [
-			'times'  => 1,
-			'args'   => [ [ 'slug' => [ $atts['category'] ], 'taxonomy' => 'product_cat' ] ],
-			'return' => [ $category_term_translation ]
+		\WP_Mock::userFunction( 'get_term', [
+			'args'   => [ $atts['category'], 'product_cat' ],
+			'return' => $category_term_translation
 		] );
-		\WP_Mock::expectFilterAdded( 'terms_clauses', array( $sitepress, 'terms_clauses' ), 10, 3 );
 
 		\WP_Mock::userFunction( 'wp_list_pluck', [
 			'times'  => 1,
-			'args'   => [ [ $category_term_translation ], 'slug' ],
 			'return' => [ $category_translation ]
 		] );
+
 
 		$args = $subject->translate_category( $args, $atts );
 
@@ -121,7 +114,6 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'remove_filter', [ 'times'  => 0 ] );
 		\WP_Mock::userFunction( 'get_terms', [ 'times'  => 0 ] );
-		\WP_Mock::expectFilterNotAdded( 'terms_clauses', array( $sitepress, 'terms_clauses' ), 10, 3 );
 
 		\WP_Mock::userFunction( 'wp_list_pluck', [ 'times'  => 0 ] );
 
