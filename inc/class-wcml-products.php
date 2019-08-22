@@ -286,14 +286,27 @@ class WCML_Products{
         <?php }
     }
 
-    public function wcml_override_is_translator( $is_translator, $user_id, $args ){
+	/**
+	 * @param bool  $is_translator
+	 * @param int   $user_id
+	 * @param array $args
+	 *
+	 * @return bool
+	 */
+	public function wcml_override_is_translator( $is_translator, $user_id, $args ) {
+		if ( current_user_can( 'wpml_operate_woocommerce_multilingual' ) ) {
+			if ( ! ( isset( $args['post_id'] ) && $args['post_id'] ) ) {
+				return $is_translator;
+			}
+			$wc_post_types = [ 'product', 'product_variation', 'shop_coupon', 'shop_order', 'shop_order_refund' ];
+			$post_type     = get_post_type( $args['post_id'] );
+			if ( in_array( $post_type, $wc_post_types, true ) ) {
+				return true;
+			}
+		}
 
-        if( current_user_can( 'wpml_operate_woocommerce_multilingual' ) ){
-            return true;
-        }
-
-        return $is_translator;
-    }
+		return $is_translator;
+	}
 
     //product quickedit
     public function filter_product_actions( $actions, $post ){
