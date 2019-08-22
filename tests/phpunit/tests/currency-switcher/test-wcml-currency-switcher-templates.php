@@ -297,9 +297,6 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 	 * @test
 	 */
 	public function after_setup_theme_action() {
-		if ( ! defined( 'WCML_PLUGIN_PATH' ) ) {
-			define( 'WCML_PLUGIN_PATH', '../..' );
-		}
 		$wcml_file        = $this->getMockBuilder( 'WCML_File' )->disableOriginalConstructor()->setMethods( array( 'fix_dir_separator', 'get_uri_from_path' ) )->getMock();
 		$wcml_file->method( 'fix_dir_separator' )->will( $this->returnCallback( array( $this, 'fix_dir_separator' ) ) );
 		$wcml_file->method( 'get_uri_from_path' )->will( $this->returnCallback( array( $this, 'get_uri_from_path' ) ) );
