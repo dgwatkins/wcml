@@ -1,23 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-		"Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-	"content-hash": "7c34e14db790d600021a304dafa84b00",
+    "content-hash": "1dd3c2c29831e6a5727c163f9a6f4776",
     "packages": [
         {
             "name": "composer/installers",
-            "version": "v1.6.0",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/installers.git",
-                "reference": "cfcca6b1b60bc4974324efb5783c13dca6932b5b"
+                "reference": "141b272484481432cda342727a427dc1e206bfa0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/installers/zipball/cfcca6b1b60bc4974324efb5783c13dca6932b5b",
-                "reference": "cfcca6b1b60bc4974324efb5783c13dca6932b5b",
+                "url": "https://api.github.com/repos/composer/installers/zipball/141b272484481432cda342727a427dc1e206bfa0",
+                "reference": "141b272484481432cda342727a427dc1e206bfa0",
                 "shasum": ""
             },
             "require": {
@@ -73,6 +73,7 @@
                 "RadPHP",
                 "SMF",
                 "Thelia",
+                "Whmcs",
                 "WolfCMS",
                 "agl",
                 "aimeos",
@@ -95,6 +96,7 @@
                 "installer",
                 "itop",
                 "joomla",
+                "known",
                 "kohana",
                 "laravel",
                 "lavalite",
@@ -124,7 +126,7 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2018-08-27T06:10:37+00:00"
+            "time": "2019-08-12T15:00:31+00:00"
         },
         {
             "name": "jakeasmith/http_build_url",
@@ -271,7 +273,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/wpml-shared/wpml-lib-dependencies.git",
-                "reference": "060424a4a04522e3a403e7db6f8585f0b266805b"
+                "reference": "581bd05c26ed83ffe0985f2cfff23aba3c9c38e3"
             },
             "require": {
                 "php": ">=5.6.0"
@@ -304,7 +306,7 @@
                 "dependencies",
                 "wpml"
             ],
-            "time": "2019-07-01T13:24:55+00:00"
+            "time": "2019-08-16T08:51:28+00:00"
         },
         {
             "name": "xrstf/composer-php52",
@@ -1874,35 +1876,35 @@
             "time": "2019-06-14T14:01:28+00:00"
         },
         {
-			"name": "otgs/php-integration-tests",
-			"version": "dev-develop",
-			"source": {
-				"type": "git",
-				"url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-php-integration-tests.git",
-				"reference": "bc63051b6984365367ffb3e399c5dc24a813d594"
-			},
-			"require": {
-				"symfony/console": "^3.4"
-			},
-			"bin": [
-				"otgs-php-integration-tests"
-			],
-			"type": "library",
-			"autoload": {
-				"psr-4": {
-					"OTGS\\": "src/"
-				},
-				"psr-0": {
-					"OTGS\\": "src/"
-				},
-				"classmap": [
-					"src/"
-				]
-			},
-			"description": "Clone, install, setup dependencies and run the integration tests of the current project",
-			"time": "2019-08-08T15:03:41+00:00"
-		},
-		{
+            "name": "otgs/php-integration-tests",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-php-integration-tests.git",
+                "reference": "5c8031948daaf804cfd43f74acf0b3892ec13b71"
+            },
+            "require": {
+                "symfony/console": "^3.4"
+            },
+            "bin": [
+                "otgs-php-integration-tests"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OTGS\\": "src/"
+                },
+                "psr-0": {
+                    "OTGS\\": "src/"
+                },
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "description": "Clone, install, setup dependencies and run the integration tests of the current project",
+            "time": "2019-08-16T09:48:22+00:00"
+        },
+        {
             "name": "otgs/unit-tests-framework",
             "version": "1.2.5",
             "source": {
@@ -4996,55 +4998,6 @@
             "time": "2017-06-30T11:53:12+00:00"
         },
         {
-            "name": "tightenco/collect",
-            "version": "dev-wpml-collect",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/OnTheGoSystems/collect.git",
-                "reference": "dfef4cde9560289775e59914c42999119ce622c7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/OnTheGoSystems/collect/zipball/dfef4cde9560289775e59914c42999119ce622c7",
-                "reference": "dfef4cde9560289775e59914c42999119ce622c7",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.5.9"
-            },
-            "require-dev": {
-                "mockery/mockery": "~0.9.4",
-                "phpunit/phpunit": "~4.1"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/Illuminate/Support/helpers.php"
-                ],
-                "psr-4": {
-                    "WPML\\Collect\\": "src/Illuminate"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylorotwell@gmail.com"
-                }
-            ],
-            "description": "Collect - Illuminate Collections as a separate package.",
-            "keywords": [
-                "collection",
-                "laravel"
-            ],
-            "support": {
-                "source": "https://github.com/OnTheGoSystems/collect/tree/wpml-collect"
-            },
-            "time": "2019-07-02T07:00:10+00:00"
-        },
-        {
             "name": "webmozart/assert",
             "version": "1.4.0",
             "source": {
@@ -5134,16 +5087,62 @@
                 "wordpress"
             ],
             "time": "2018-02-16T01:57:48+00:00"
+        },
+        {
+            "name": "wpml/collect",
+            "version": "dev-wpml-collect-rename",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:OnTheGoSystems/collect.git",
+                "reference": "d395c7e42f036fc29c81b4519b0ca4b00215a732"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/OnTheGoSystems/collect/zipball/d395c7e42f036fc29c81b4519b0ca4b00215a732",
+                "reference": "d395c7e42f036fc29c81b4519b0ca4b00215a732",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "require-dev": {
+                "mockery/mockery": "~0.9.4",
+                "phpunit/phpunit": "~4.1"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Illuminate/Support/helpers.php"
+                ],
+                "psr-4": {
+                    "WPML\\Collect\\": "src/Illuminate"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylorotwell@gmail.com"
+                }
+            ],
+            "description": "Collect - Illuminate Collections as a separate package.",
+            "keywords": [
+                "collection",
+                "laravel"
+            ],
+            "time": "2019-08-21T09:25:10+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
         "wpml-shared/wpml-lib-dependencies": 20,
-		"otgs/diff-checks": 20,
-		"otgs/php-integration-tests": 20,
+        "otgs/diff-checks": 20,
+        "otgs/php-integration-tests": 20,
         "roave/security-advisories": 20,
-        "tightenco/collect": 20
+        "wpml/collect": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
