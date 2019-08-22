@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class Test_WCML_Products
+ */
 class Test_WCML_Products extends OTGS_TestCase {
 
 	/** @var \woocommerce_wpml|\PHPUnit_Framework_MockObject_MockObject */
@@ -80,6 +83,137 @@ class Test_WCML_Products extends OTGS_TestCase {
 		} );
 
 		return new WCML_Products( $woocommerce_wpml, $sitepress, $wpml_post_translations, $wpdb, $wpml_cache );
+	}
+
+	/**
+	 * @test
+	 * @group        wpmlcore-6794
+	 *
+	 * @param bool   $is_shop_manager
+	 * @param string $post_type
+	 * @param bool   $expected
+	 *
+	 * @dataProvider dp_it_overrides_translator_when_user_is_translator
+	 */
+	public function it_overrides_translator_when_user_is_translator( $is_shop_manager, $post_type, $expected ) {
+		$post_id         = 5;
+		$args['post_id'] = $post_id;
+		$is_translator   = true;
+
+		\WP_Mock::userFunction(
+			'current_user_can',
+			[
+				'args'   => [ 'wpml_operate_woocommerce_multilingual' ],
+				'times'  => 1,
+				'return' => $is_shop_manager,
+			]
+		);
+
+		\WP_Mock::userFunction(
+			'get_post_type',
+			[
+				'args'   => [ $args['post_id'] ],
+				'times'  => '1-',
+				'return' => $post_type,
+			]
+		);
+
+		$mock = \Mockery::mock( 'WCML_Products' )->makePartial();
+		$this->assertSame( $expected, $mock->wcml_override_is_translator( $is_translator, 0, $args ) );
+	}
+
+	/**
+	 * Data provider for it_overrides_translator
+	 *
+	 * @return array
+	 */
+	public function dp_it_overrides_translator_when_user_is_translator() {
+		return [
+			'not shop manager'                          => [ false, null, true ],
+			'shop manager, no post_type'                => [ true, null, true ],
+			'shop manager, not WC post_type'            => [ true, 'post', true ],
+			'shop manager, post_type=product'           => [ true, 'product', true ],
+			'shop manager, post_type=product_variation' => [ true, 'product_variation', true ],
+			'shop manager, post_type=shop_coupon'       => [ true, 'shop_coupon', true ],
+			'shop manager, post_type=shop_order'        => [ true, 'shop_order', true ],
+			'shop manager, post_type=shop_order_refund' => [ true, 'shop_order_refund', true ],
+		];
+	}
+
+	/**
+	 * @test
+	 * @group        wpmlcore-6794
+	 *
+	 * @param bool   $is_shop_manager
+	 * @param string $post_type
+	 * @param bool   $expected
+	 *
+	 * @dataProvider dp_it_overrides_translator_when_user_is_NOT_translator
+	 */
+	public function it_overrides_translator_when_user_is_NOT_translator( $is_shop_manager, $post_type, $expected ) {
+		$post_id         = 5;
+		$args['post_id'] = $post_id;
+		$is_translator   = false;
+
+		\WP_Mock::userFunction(
+			'current_user_can',
+			[
+				'args'   => [ 'wpml_operate_woocommerce_multilingual' ],
+				'times'  => 1,
+				'return' => $is_shop_manager,
+			]
+		);
+
+		\WP_Mock::userFunction(
+			'get_post_type',
+			[
+				'args'   => [ $args['post_id'] ],
+				'times'  => '1-',
+				'return' => $post_type,
+			]
+		);
+
+		$mock = \Mockery::mock( 'WCML_Products' )->makePartial();
+		$this->assertSame( $expected, $mock->wcml_override_is_translator( $is_translator, 0, $args ) );
+	}
+
+	/**
+	 * Data provider for it_overrides_translator
+	 *
+	 * @return array
+	 */
+	public function dp_it_overrides_translator_when_user_is_NOT_translator() {
+		return [
+			'not shop manager'                          => [ false, null, false ],
+			'shop manager, no post_type'                => [ true, null, false ],
+			'shop manager, not WC post_type'            => [ true, 'post', false ],
+			'shop manager, post_type=product'           => [ true, 'product', true ],
+			'shop manager, post_type=product_variation' => [ true, 'product_variation', true ],
+			'shop manager, post_type=shop_coupon'       => [ true, 'shop_coupon', true ],
+			'shop manager, post_type=shop_order'        => [ true, 'shop_order', true ],
+			'shop manager, post_type=shop_order_refund' => [ true, 'shop_order_refund', true ],
+		];
+	}
+
+	/**
+	 * @test
+	 * @group wpmlcore-6794
+	 */
+	public function it_returns_is_translator_when_post_id_is_0() {
+		\WP_Mock::userFunction(
+			'current_user_can',
+			[
+				'args'   => [ 'wpml_operate_woocommerce_multilingual' ],
+				'times'  => 2,
+				'return' => true,
+			]
+		);
+
+		$args = [ 'post_id' => 0 ];
+
+		$mock = \Mockery::mock( 'WCML_Products' )->makePartial();
+		$this->assertTrue( $mock->wcml_override_is_translator( true, 0, $args ) );
+		$this->assertFalse( $mock->wcml_override_is_translator( false, 0, $args ) );
 	}
 
 	/**
