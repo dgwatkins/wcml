@@ -88,16 +88,18 @@ class WCML_Dynamic_Pricing {
 	 */
 	function woocommerce_dynamic_pricing_is_applied_to( $process_discounts, $_product, $module_id, $obj, $cat_ids ) {
 		if ( $_product && $cat_ids && ( ! empty( $obj->available_rulesets ) || ! empty( $obj->adjustment_sets ) ) ) {
+		    
+			$taxonomy = ! empty( $obj->taxonomy ) ? $obj->taxonomy : 'product_cat';
 
 			if ( ! is_array( $cat_ids ) ) {
 				$cat_ids = array( $cat_ids );
 			}
 
 			foreach ( $cat_ids as $i => $cat_id ) {
-				$cat_ids[$i] = apply_filters( 'translate_object_id', $cat_id, 'product_cat', true );
+				$cat_ids[$i] = apply_filters( 'translate_object_id', $cat_id, $taxonomy, true );
 			}
 
-			$process_discounts = is_object_in_term( $_product->get_id(), 'product_cat', $cat_ids );
+			$process_discounts = is_object_in_term( $_product->get_id(), $taxonomy, $cat_ids );
 		}
 
 		return $process_discounts;
