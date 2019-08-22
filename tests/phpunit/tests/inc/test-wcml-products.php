@@ -395,17 +395,28 @@ class Test_WCML_Products extends OTGS_TestCase {
 	public function is_downloadable_variable_product(){
 
 		$product_id = rand( 1, 100 );
+		$available_variations = array(
+			array(
+				'variation_id' => 12,
+				'is_downloadable' => false
+			),
+			array(
+				'variation_id' => 15,
+				'is_downloadable' => true
+			)
+		);
 
 		/** @var WC_Product|\PHPUnit_Framework_MockObject_MockObject $product */
 		$product = $this->getMockBuilder( 'WC_Product' )
 		                ->disableOriginalConstructor()
 		                ->setMethods( array(
-			                'get_id', 'is_downloadable',
+			                'get_id', 'is_downloadable', 'get_available_variations'
 		                ) )
 		                ->getMock();
 
 		$product->method( 'get_id' )->willReturn( $product_id );
 		$product->method( 'is_downloadable' )->willReturn( false );
+		$product->method( 'get_available_variations' )->willReturn( $available_variations );
 
 
 		\WP_Mock::userFunction( 'wp_cache_get', array(
@@ -413,50 +424,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'return' => true
 		) );
 
-		$variation = new stdClass();
-		$variation->ID = 101;
-
-		$available_variations = array(
-			$variation
-		);
-
-		\WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => array( $variation->ID, '_downloadable', true ),
-			'return' => 'yes'
-		) );
-
-		\WP_Mock::userFunction( 'wp_list_pluck', array(
-			'args'   => array( $available_variations, 'ID' ),
-			'return' => array( $variation->ID )
-		) );
-
-		\WP_Mock::userFunction( 'wpml_prepare_in', array(
-			'args'   => array( array( $variation->ID ), '%d' ),
-			'return' => $variation->ID
-		) );
-
-		$wpdb = $this->get_wpdb();
-		$sql          = 'SELECT count(*) FROM ' . $wpdb->prefix . 'postmeta WHERE post_id IN (' . $variation->ID . ') AND meta_key = %s AND meta_value = %s ';
-		$prepared_sql = 'SELECT count(*) FROM ' . $wpdb->prefix . 'postmeta WHERE post_id IN (' . $variation->ID . ') AND meta_key = \'_downloadable\' AND meta_value = \'yes\' ';
-
-		$wpdb->method( 'prepare' )
-		           ->with( $sql, '_downloadable', 'yes' )
-		           ->willReturn( $prepared_sql );
-
-		$wpdb->method( 'get_var' )
-		           ->with( $prepared_sql )
-		           ->willReturn( '1' );
-
-		$sync_variations_data = $this->getMockBuilder( 'WCML_Synchronize_Variations_Data' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( array( 'get_product_variations' ) )
-		                 ->getMock();
-		$sync_variations_data->method( 'get_product_variations' )->with( $product_id )->willReturn( $available_variations );
-
-		$woocommerce_wpml = $this->get_woocommerce_wpml();
-		$woocommerce_wpml->sync_variations_data = $sync_variations_data;
-
-		$subject = $this->get_subject( $woocommerce_wpml, false, false, $wpdb );
+		$subject = $this->get_subject( );
 
 		$this->assertTrue( $subject->is_downloadable_product( $product ) );
 

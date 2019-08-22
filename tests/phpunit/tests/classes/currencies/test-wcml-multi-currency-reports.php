@@ -92,97 +92,25 @@ class Test_WCML_Multi_Currency_Reports extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function get_dashboard_currency_list_of_orders_ids() {
+	public function it_should_filter_dashboard_status_widget_sales_query() {
 
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$wpdb = $this->get_wpdb_mock();
-		$subject = $this->get_subject( $woocommerce_wpml, $wpdb );
-
-		$dashboard_currency = rand_str();
+		$dashboard_currency = 'EUR';
 
 		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
 		$woocommerce_wpml->multi_currency->admin_currency_selector = $this->get_wcml_admin_currency_selector_mock();
 		$woocommerce_wpml->multi_currency->admin_currency_selector->method( 'get_cookie_dashboard_currency' )->willReturn( $dashboard_currency );
 
-		$order_ids   = array();
-		$order_ids[] = random_int( 1, 100 );
-		$order_ids[] = random_int( 101, 200 );
-
-		$wpdb->method( 'get_col' )->willReturn( $order_ids );
-
-		\WP_Mock::wpFunction( 'wpml_prepare_in', array(
-			'times' => 1,
-			'args'  => array( $order_ids, '%d' ),
-			'return' => implode(',' , $order_ids )
-		) );
-
-		$orders_ids_list = $subject->get_dashboard_currency_list_of_orders_ids();
-
-		$this->assertEquals( implode( ',', $order_ids ), $orders_ids_list );
-	}
-
-	/**
-	 * @test
-	 */
-	public function filter_dashboard_status_widget_sales_query_with_posts(){
-
-		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
-		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
-		$woocommerce_wpml->multi_currency->admin_currency_selector = $this->get_wcml_admin_currency_selector_mock();
-		$woocommerce_wpml->multi_currency->admin_currency_selector
-			->method( 'get_cookie_dashboard_currency' )
-			->willReturn( rand_str() );
-
-		$order_ids   = array();
-		$order_ids[] = random_int( 1, 100 );
-		$order_ids[] = random_int( 101, 200 );
-
-		$wpdb = $this->get_wpdb_mock();
-		$wpdb->method( 'get_col' )->willReturn( $order_ids );
-
+		$expected_query = array(
+			'join' => " INNER JOIN {$wpdb->postmeta} AS currency_postmeta ON posts.ID = currency_postmeta.post_id",
+			'where' => $wpdb->prepare( " AND currency_postmeta.meta_key = '_order_currency' AND currency_postmeta.meta_value = %s", $dashboard_currency )
+		);
 
 		$subject = $this->get_subject( $woocommerce_wpml, $wpdb );
+		$filtered_query = $subject->filter_dashboard_status_widget_sales_query( array( 'join' => '', 'where' => '' ) );
 
-		$query = ['where' => rand_str() ];
-
-		\WP_Mock::wpFunction( 'wpml_prepare_in', array(
-			'times' => 1,
-			'args'  => array( $order_ids, '%d' ),
-			'return' => implode(',' , $order_ids )
-		) );
-
-		$fitered_query = $subject->filter_dashboard_status_widget_sales_query( $query );
-
-		$this->assertSame( $query['where'] . ' AND posts.ID IN (' . implode(',', $order_ids ) . ') ', $fitered_query['where'] );
-
-	}
-
-
-	/**
-	 * @test
-	 * @group wcml-2064
-	 */
-	public function filter_dashboard_status_widget_sales_query_without_posts(){
-
-		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
-		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
-		$woocommerce_wpml->multi_currency->admin_currency_selector = $this->get_wcml_admin_currency_selector_mock();
-		$woocommerce_wpml->multi_currency->admin_currency_selector
-			->method( 'get_cookie_dashboard_currency' )
-			->willReturn( rand_str() );
-
-		$order_ids   = array();
-
-		$wpdb = $this->get_wpdb_mock();
-		$wpdb->method( 'get_col' )->willReturn( $order_ids );
-
-		$subject = $this->get_subject( $woocommerce_wpml, $wpdb );
-
-		$query = ['where' => rand_str() ];
-
-		$fitered_query = $subject->filter_dashboard_status_widget_sales_query( $query );
-
-		$this->assertSame( $query['where'], $fitered_query['where'] );
+		$this->assertEquals( $expected_query, $filtered_query );
 	}
 
 }
