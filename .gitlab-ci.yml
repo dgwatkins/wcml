@@ -29,13 +29,14 @@ Prepare <Cache>:
         paths:
             - node_modules/
             - vendor/
-            - libraries/
+            - changelog/
         policy: push
     when: always
     image: registry.otgs.work/infrastructure/docker-images/phpunit:7.3
     script:
         - composer install
         - npm install
+        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
 
 Compatibility <PHP>:
     stage: quality
@@ -49,8 +50,7 @@ Compatibility <PHP>:
     script:
         - vendor/bin/phpcs --standard=./phpcs.compatibility.xml -s -p --colors --report-full --report-summary ./
     only:
-        - master
-        - develop
+        - branches
 
 Duplication <PHP>:
     stage: quality
@@ -64,8 +64,7 @@ Duplication <PHP>:
     script:
         - vendor/bin/phpcpd --exclude=tests --exclude=vendor -- ./
     only:
-        - master
-        - develop
+        - branches
 
 Unit <PHP>:
     stage: test
@@ -77,8 +76,7 @@ Unit <PHP>:
     tags:
         - autoscale
     script:
-        - cd tests/phpunit
-        - ../../vendor/bin/phpunit --fail-on-warning
+        - ./vendor/bin/phpunit --configuration=./tests/phpunit/phpunit.xml --fail-on-warning
     only:
         - branches
 
@@ -108,7 +106,6 @@ Branch:
     tags:
         - autoscale
     script:
-        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
         - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
@@ -121,30 +118,6 @@ Branch:
         - master
         - develop
         - tags
-        - /^pre-release.*$/
-        - /^functional.*$/
-
-Pre-Release:
-    stage: build
-    cache:
-        <<: *cache-commit
-        policy: pull
-    when: on_success
-    image: registry.otgs.work/infrastructure/docker-images/artifacts_builder:php73
-    tags:
-        - autoscale
-    script:
-        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
-        - composer install --no-dev
-        - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
-        - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
-    artifacts:
-        expire_in: 4 weeks
-        name: "${CI_PROJECT_NAME}.${CI_BUILD_REF_NAME}.${CI_BUILD_ID}"
-        paths:
-            - ${CI_PROJECT_NAME}
-    only:
-        - /^pre-release.*$/
 
 Develop:
     stage: build
@@ -156,7 +129,6 @@ Develop:
     tags:
         - autoscale
     script:
-        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
         - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
@@ -178,7 +150,6 @@ Master:
     tags:
         - autoscale
     script:
-        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
         - ./.make/deploy-cleanup.js -t ./${CI_PROJECT_NAME}
@@ -200,7 +171,6 @@ Tag:
     tags:
         - autoscale
     script:
-        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - composer install --no-dev
         - ./.make/deploy-copy.js -t ./${CI_PROJECT_NAME}
         - ./.make/deploy-update-version.js -t ./${CI_PROJECT_NAME} -r ${CI_COMMIT_TAG}
@@ -222,7 +192,6 @@ Release Notes:
     tags:
         - autoscale
     script:
-        - ./vendor/bin/otgs-changelog update --project ${OTGS_CI_YOUTRACK_PROJECT_ID} --target-version all --path ./changelog --filename-template {version}.md
         - ./vendor/otgs/build-tools-ci/otgs-ci --releasenotes
     only:
         - tags
