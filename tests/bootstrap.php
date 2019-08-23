@@ -1,24 +1,24 @@
 <?php
-define( 'WP_PLUGIN_DIR', realpath( dirname( __FILE__ ) . '/../../' ) );
+define( 'WP_PLUGIN_DIR', realpath( __DIR__ . '/../..' ) );
 
 if ( ! defined( 'WPML_CORE_PATH' ) ) {
-	define( 'WPML_CORE_PATH', dirname( __FILE__ ) . '/../../sitepress-multilingual-cms' );
+	define( 'WPML_CORE_PATH', WP_PLUGIN_DIR . '/sitepress-multilingual-cms' );
 }
 if ( ! defined( 'WPML_CORE_ST_PATH' ) ) {
-	define( 'WPML_CORE_ST_PATH', dirname( __FILE__ ) . '/../../wpml-string-translation' );
+	define( 'WPML_CORE_ST_PATH', WP_PLUGIN_DIR . '/wpml-string-translation' );
 }
 if ( ! defined( 'WPML_CORE_TM_PATH' ) ) {
-	define( 'WPML_CORE_TM_PATH', dirname( __FILE__ ) . '/../../wpml-translation-management' );
+	define( 'WPML_CORE_TM_PATH', WP_PLUGIN_DIR . '/wpml-translation-management' );
 }
 if ( ! defined( 'WCML_CORE_PATH' ) ) {
-	define( 'WCML_CORE_PATH',  dirname( dirname( __FILE__ ) ) );
+	define( 'WCML_CORE_PATH', WP_PLUGIN_DIR . '/woocommerce-multilingual' );
 }
 if ( ! defined( 'WC_PATH' ) ) {
-	define( 'WC_PATH', dirname( __FILE__ ) . '/../../woocommerce' );
+	define( 'WC_PATH', WP_PLUGIN_DIR . '/woocommerce' );
 }
 
 if ( ! defined( 'WC_BOOKING_PATH' ) ) {
-	define( 'WC_BOOKING_PATH', dirname( __FILE__ ) . '/../../woocommerce-bookings' );
+	define( 'WC_BOOKING_PATH', WP_PLUGIN_DIR . '/woocommerce-bookings' );
 }
 
 $_tests_dir = isset( $_ENV['WP_TEST_DIR'] ) ? $_ENV['WP_TEST_DIR'] : 'wordpress-tests-lib';
@@ -33,7 +33,7 @@ function _manually_load_wcml() {
 	require_once WPML_CORE_TM_PATH . '/plugin.php';
 	require_once WC_PATH. '/woocommerce.php';
 	require_once WC_BOOKING_PATH . '/woocommerce-bookings.php';
-	require_once dirname( __FILE__ ) . '/../wpml-woocommerce.php';
+	require_once __DIR__ . '/../wpml-woocommerce.php';
 }
 
 tests_add_filter( 'plugins_loaded', '_manually_load_wcml', - PHP_INT_MAX );
@@ -71,10 +71,10 @@ function _install_wc() {
 	update_option( 'woocommerce_calc_shipping', 'yes' ); // Needed for tests cart and shipping methods
 }
 
-require_once dirname( __FILE__ ) . '/wordpress/wp-includes/class-wp-locale.php';
+require_once __DIR__ . '/wordpress/wp-includes/class-wp-locale.php';
 
 if ( ! function_exists( 'get_plugins' ) ) {
-	require_once dirname( __FILE__ ) . '/wordpress/wp-admin/includes/plugin.php';
+	require_once __DIR__ . '/wordpress/wp-admin/includes/plugin.php';
 }
 // Install WPML
 tests_add_filter( 'wpml_loaded', 'wpml_test_install_setup' );
