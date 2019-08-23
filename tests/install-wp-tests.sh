@@ -76,7 +76,7 @@ install_test_suite() {
 
 	TESTS_ABSPATH=$WP_CORE_DIR
 	TESTS_LANG_DIR=$WP_CORE_LANG_DIR
-	if grep -q Microsoft /proc/version; then
+	if [ "$OSTYPE" == "linux-gnu" ] && $(grep -q Microsoft /proc/version); then
     # Fix paths if we are in Windows Subsystem Linux (WSL)
 	  TESTS_ABSPATH=$(wslpath -m $WP_CORE_DIR)/
 	  TESTS_LANG_DIR=$(wslpath -m $WP_CORE_LANG_DIR)
