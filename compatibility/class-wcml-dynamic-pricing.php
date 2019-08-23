@@ -8,21 +8,13 @@ class WCML_Dynamic_Pricing {
 	public function add_hooks() {
 
 		if ( ! is_admin() ) {
-			add_filter( 'wc_dynamic_pricing_load_modules', array( $this, 'filter_price' ) );
-			add_action( 'woocommerce_dynamic_pricing_is_object_in_terms', array(
-				$this,
-				'is_object_in_translated_terms'
-			), 10, 3 );
-			add_filter( 'woocommerce_dynamic_pricing_is_applied_to', array(
-				$this,
-				'woocommerce_dynamic_pricing_is_applied_to'
-			), 10, 5 );
-			add_filter( 'woocommerce_dynamic_pricing_get_rule_amount', array(
-				$this,
-				'woocommerce_dynamic_pricing_get_rule_amount'
-			), 10, 2 );
-			add_filter( 'dynamic_pricing_product_rules', array( $this, 'dynamic_pricing_product_rules' ) );
-			add_filter( 'wcml_calculate_totals_exception', array( $this, 'calculate_totals_exception' ) );
+			add_action( 'woocommerce_dynamic_pricing_is_object_in_terms', [ $this, 'is_object_in_translated_terms' ], 10, 3 );
+
+			add_filter( 'wc_dynamic_pricing_load_modules', [ $this, 'filter_price' ] );
+			add_filter( 'woocommerce_dynamic_pricing_is_applied_to', [ $this, 'woocommerce_dynamic_pricing_is_applied_to' ], 10, 5 );
+			add_filter( 'woocommerce_dynamic_pricing_get_rule_amount', [ $this, 'woocommerce_dynamic_pricing_get_rule_amount' ], 10, 2 );
+			add_filter( 'dynamic_pricing_product_rules', [ $this, 'dynamic_pricing_product_rules' ] );
+			add_filter( 'wcml_calculate_totals_exception', [ $this, 'calculate_totals_exception' ] );
 		}
 		add_filter( 'woocommerce_product_get__pricing_rules', array( $this, 'translate_variations_in_rules' ) );
 
@@ -81,30 +73,104 @@ class WCML_Dynamic_Pricing {
 	 * @param bool                           $process_discounts
 	 * @param WC_Product                     $_product
 	 * @param int                            $module_id
-	 * @param WC_Dynamic_Pricing_Simple_Base $obj
+	 * @param WC_Dynamic_Pricing_Simple_Base $dynamic_pricing
 	 * @param array|int                      $cat_ids
 	 *
 	 * @return bool|WP_Error
 	 */
-	function woocommerce_dynamic_pricing_is_applied_to( $process_discounts, $_product, $module_id, $obj, $cat_ids ) {
-		if ( $_product && $cat_ids && ( ! empty( $obj->available_rulesets ) || ! empty( $obj->adjustment_sets ) ) ) {
-		    
-			$taxonomy = ! empty( $obj->taxonomy ) ? $obj->taxonomy : 'product_cat';
-
-			if ( ! is_array( $cat_ids ) ) {
-				$cat_ids = array( $cat_ids );
-			}
-
-			foreach ( $cat_ids as $i => $cat_id ) {
-				$cat_ids[$i] = apply_filters( 'translate_object_id', $cat_id, $taxonomy, true );
-			}
-
-			$process_discounts = is_object_in_term( $_product->get_id(), $taxonomy, $cat_ids );
+	public function woocommerce_dynamic_pricing_is_applied_to( $process_discounts, WC_Product $_product, $module_id, WC_Dynamic_Pricing_Simple_Base $dynamic_pricing, $cat_ids ) {
+		if ( ! $_product || ! $cat_ids || ! $this->has_requirements( $dynamic_pricing ) ) {
+			return $process_discounts;
 		}
 
-		return $process_discounts;
+		$taxonomy = $this->get_taxonomy( $dynamic_pricing );
+
+		return is_object_in_term( $_product->get_id(), $taxonomy, $this->adjust_cat_ids( $cat_ids, $taxonomy ) );
 	}
 
+	/**
+	 * @param \WC_Dynamic_Pricing_Simple_Base $dynamic_pricing
+	 *
+	 * @return string
+	 */
+	private function get_taxonomy( WC_Dynamic_Pricing_Simple_Base $dynamic_pricing ) {
+		$taxonomy = 'product_cat';
+		if ( $dynamic_pricing instanceof WC_Dynamic_Pricing_Simple_Taxonomy || $dynamic_pricing instanceof WC_Dynamic_Pricing_Advanced_Taxonomy ) {
+			$taxonomy = $dynamic_pricing->taxonomy;
+		}
+
+		return $taxonomy;
+	}
+
+	/**
+	 * @param \WC_Dynamic_Pricing_Simple_Base $dynamic_pricing
+	 *
+	 * @return bool
+	 */
+	private function has_requirements( WC_Dynamic_Pricing_Simple_Base $dynamic_pricing ) {
+		$requirements = [
+			'WC_Dynamic_Pricing_Advanced_Category' => [
+				'adjustment_sets',
+			],
+			'WC_Dynamic_Pricing_Advanced_Taxonomy' => [
+				'adjustment_sets',
+			],
+			'WC_Dynamic_Pricing_Advanced_Totals'   => [
+				'adjustment_sets',
+			],
+			'WC_Dynamic_Pricing_Simple_Membership' => [
+				'available_rulesets',
+			],
+			'WC_Dynamic_Pricing_Simple_Category'   => [
+				'available_rulesets',
+			],
+			'WC_Dynamic_Pricing_Simple_Taxonomy'   => [
+				'available_rulesets',
+			],
+			'WC_Dynamic_Pricing_Simple_Base'       => [
+				'available_rulesets',
+			],
+		];
+
+		$is_of_the_right_type = false;
+		foreach ( array_keys( $requirements ) as $class_name ) {
+			if ( get_class( $dynamic_pricing ) === $class_name || is_subclass_of( $dynamic_pricing, $class_name ) ) {
+				$is_of_the_right_type = true;
+				break;
+			}
+		}
+		if ( ! $is_of_the_right_type ) {
+			return false;
+		}
+
+		$properties = $requirements[ $class_name ];
+
+		$checks = array_filter( $properties, function ( $property ) use ( $dynamic_pricing ) {
+			return isset( $dynamic_pricing->$property ) && $dynamic_pricing->$property;
+		} );
+
+		return count( $checks ) === count( $properties );
+	}
+
+	/**
+	 * @param array|int $cat_ids
+	 * @param string    $taxonomy
+	 *
+	 * @return array
+	 */
+	private function adjust_cat_ids( $cat_ids, $taxonomy ) {
+		if ( ! $cat_ids ) {
+			return [];
+		}
+
+		if ( ! is_array( $cat_ids ) ) {
+			$cat_ids = [ $cat_ids ];
+		}
+
+		return array_map( function ( $cat_id ) use ( $taxonomy ) {
+			return apply_filters( 'translate_object_id', $cat_id, $taxonomy, true );
+		}, $cat_ids );
+	}
 
 	/**
 	 * @param $amount
