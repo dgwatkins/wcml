@@ -192,7 +192,7 @@ Release Notes:
     tags:
         - autoscale
     script:
-        - ./vendor/otgs/build-tools-ci/otgs-ci --releasenotes
+        
     only:
         - tags
 
