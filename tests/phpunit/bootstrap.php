@@ -1,4 +1,12 @@
 <?php
+/**
+ * PHP Unit tests bootstrap file.
+ *
+ * @package WPML\Core
+ */
+
+use tad\FunctionMocker\FunctionMocker;
+
 define( 'WPML_TESTS_SITE_DIR', __DIR__ . '/site' );
 define( 'WPML_TESTS_SITE_URL', 'http://domain.tld' );
 
@@ -81,5 +89,20 @@ function autoload_tests_classes( $class ) {
 	}
 }
 
+FunctionMocker::init(
+	[
+		'blacklist' => [
+			realpath( WCML_PATH ),
+		],
+		'whitelist' => [
+			realpath( WCML_PATH . '/classes' ),
+			realpath( WCML_PATH . '/compatibility' ),
+			realpath( WCML_PATH . '/inc' ),
+			realpath( WCML_PATH . '/tests/phpunit/includes' ),
+			realpath( WCML_PATH . '/tests/phpunit/stubs' ),
+		],
+		'redefinable-internals' => [],
+	]
+);
 
 require_once WCML_PATH . '/vendor/otgs/unit-tests-framework/phpunit/bootstrap.php';

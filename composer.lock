@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "content-hash": "8131251eb31a62bd7ea35fcb478f014b",
@@ -1909,16 +1909,16 @@
         },
         {
             "name": "otgs/unit-tests-framework",
-            "version": "1.2.5",
+            "version": "1.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OnTheGoSystems/otgs-unit-tests-framework.git",
-                "reference": "ac74845b1c3a7a64345625d4ab2421a71db14adc"
+                "reference": "5396c127c0ecb20b2973b759f9754a2e886aa41d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OnTheGoSystems/otgs-unit-tests-framework/zipball/ac74845b1c3a7a64345625d4ab2421a71db14adc",
-                "reference": "ac74845b1c3a7a64345625d4ab2421a71db14adc",
+                "url": "https://api.github.com/repos/OnTheGoSystems/otgs-unit-tests-framework/zipball/5396c127c0ecb20b2973b759f9754a2e886aa41d",
+                "reference": "5396c127c0ecb20b2973b759f9754a2e886aa41d",
                 "shasum": ""
             },
             "require": {
@@ -1953,7 +1953,7 @@
             "keywords": [
                 "phpunit"
             ],
-            "time": "2017-11-23T12:48:37+00:00"
+            "time": "2019-08-29T07:13:54+00:00"
         },
         {
             "name": "php-http/client-common",
