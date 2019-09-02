@@ -1,5 +1,7 @@
 <?php
 
+use WPML\Core\Twig_SimpleFunction;
+
 class WCML_Settings_UI extends WCML_Templates_Factory {
 
     /** @var woocommerce_wpml */
@@ -13,15 +15,23 @@ class WCML_Settings_UI extends WCML_Templates_Factory {
      * @param woocommerce_wpml $woocommerce_wpml
      * @param SitePress $sitepress
      */
-    function __construct( woocommerce_wpml $woocommerce_wpml, Sitepress $sitepress ){
-        parent::__construct();
+	function __construct( woocommerce_wpml $woocommerce_wpml, Sitepress $sitepress ) {
 
-        $this->woocommerce_wpml = $woocommerce_wpml;
-        $this->sitepress        = $sitepress;
+		$functions = array(
+			new Twig_SimpleFunction( 'wp_do_action', array( $this, 'wp_do_action' ) )
+		);
 
-    }
+		parent::__construct( $functions );
 
-    public function get_model(){
+		$this->woocommerce_wpml = $woocommerce_wpml;
+		$this->sitepress        = $sitepress;
+	}
+
+	public function wp_do_action( $hook ) {
+		do_action( $hook );
+	}
+
+	public function get_model(){
 
         $model = array(
             'form' => array(
