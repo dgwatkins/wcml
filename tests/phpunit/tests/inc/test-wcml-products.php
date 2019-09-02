@@ -2,6 +2,7 @@
 
 /**
  * Class Test_WCML_Products
+ * @group wcml-2905
  */
 class Test_WCML_Products extends OTGS_TestCase {
 
@@ -213,7 +214,45 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$mock = \Mockery::mock( 'WCML_Products' )->makePartial();
 		$this->assertTrue( $mock->wcml_override_is_translator( true, 0, $args ) );
-		$this->assertFalse( $mock->wcml_override_is_translator( false, 0, $args ) );
+		$this->assertTrue( $mock->wcml_override_is_translator( false, 0, $args ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_filters_wcml_user_can_translate_for_shop_manager() {
+		$user = \Mockery::mock( 'WP_User' );
+		\WP_Mock::userFunction(
+			'user_can',
+			[
+				'args'   => [ $user, 'wpml_operate_woocommerce_multilingual' ],
+				'times'  => 2,
+				'return' => true,
+			]
+		);
+
+		$mock = \Mockery::mock( 'WCML_Products' )->makePartial();
+		$this->assertTrue( $mock->wcml_user_can_translate( false, $user ) );
+		$this->assertTrue( $mock->wcml_user_can_translate( true, $user ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_filters_wcml_user_can_translate_for_NOT_shop_manager() {
+		$user = \Mockery::mock( 'WP_User' );
+		\WP_Mock::userFunction(
+			'user_can',
+			[
+				'args'   => [ $user, 'wpml_operate_woocommerce_multilingual' ],
+				'times'  => 2,
+				'return' => false,
+			]
+		);
+
+		$mock = \Mockery::mock( 'WCML_Products' )->makePartial();
+		$this->assertFalse( $mock->wcml_user_can_translate( false, $user ) );
+		$this->assertTrue( $mock->wcml_user_can_translate( true, $user ) );
 	}
 
 	/**
@@ -260,6 +299,15 @@ class Test_WCML_Products extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_file_download_path', array( $subject, 'filter_file_download_path' ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_related_posts_query', array( $subject, 'filter_related_products_query' ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_json_search_found_products', array( $subject, 'filter_wc_searched_products_on_front' ) );
+
+		\WP_Mock::expectFilterAdded( 'woocommerce_upsell_crosssell_search_products', array( $subject, 'filter_woocommerce_upsell_crosssell_posts_by_language' ) );
+		\WP_Mock::expectActionAdded( 'woocommerce_after_product_ordering', array( $subject, 'update_all_products_translations_ordering' ) );
+		\WP_Mock::expectFilterAdded( 'wpml_copy_from_original_custom_fields', array( $subject, 'filter_excerpt_field_content_copy' ) );
+		\WP_Mock::expectFilterAdded( 'wpml_override_is_translator', array( $subject, 'wcml_override_is_translator' ), 10, 3 );
+		\WP_Mock::expectFilterAdded( 'wpml_user_can_translate', array( $subject, 'wcml_user_can_translate' ), 10, 2 );
+		\WP_Mock::expectFilterAdded( 'wc_product_has_unique_sku', array( $subject, 'check_product_sku' ), 10, 3 );
+		\WP_Mock::expectFilterAdded( 'get_product_search_form', array( $sitepress, 'get_search_form_filter' ) );
+		\WP_Mock::expectFilterAdded( 'woocommerce_pre_customer_bought_product', array( $subject, 'is_customer_bought_product' ), 10, 4 );
 
 		$subject->add_hooks();
 	}
@@ -310,6 +358,15 @@ class Test_WCML_Products extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'post_row_actions', array( $subject, 'filter_product_actions' ), 10, 2 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_type_query', array( $subject, 'override_product_type_query' ), 10, 2 );
 		\WP_Mock::expectActionAdded( 'wp_ajax_wpml_switch_post_language', array( $subject, 'switch_product_variations_language' ), 9 );
+
+		\WP_Mock::expectFilterAdded( 'woocommerce_upsell_crosssell_search_products', array( $subject, 'filter_woocommerce_upsell_crosssell_posts_by_language' ) );
+		\WP_Mock::expectActionAdded( 'woocommerce_after_product_ordering', array( $subject, 'update_all_products_translations_ordering' ) );
+		\WP_Mock::expectFilterAdded( 'wpml_copy_from_original_custom_fields', array( $subject, 'filter_excerpt_field_content_copy' ) );
+		\WP_Mock::expectFilterAdded( 'wpml_override_is_translator', array( $subject, 'wcml_override_is_translator' ), 10, 3 );
+		\WP_Mock::expectFilterAdded( 'wpml_user_can_translate', array( $subject, 'wcml_user_can_translate' ), 10, 2 );
+		\WP_Mock::expectFilterAdded( 'wc_product_has_unique_sku', array( $subject, 'check_product_sku' ), 10, 3 );
+		\WP_Mock::expectFilterAdded( 'get_product_search_form', array( $sitepress, 'get_search_form_filter' ) );
+		\WP_Mock::expectFilterAdded( 'woocommerce_pre_customer_bought_product', array( $subject, 'is_customer_bought_product' ), 10, 4 );
 
 		$subject->add_hooks();
 	}

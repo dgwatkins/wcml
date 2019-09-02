@@ -64,6 +64,7 @@ class WCML_Products{
 		add_filter( 'wpml_copy_from_original_custom_fields', array( $this, 'filter_excerpt_field_content_copy' ) );
 
 		add_filter( 'wpml_override_is_translator', array( $this, 'wcml_override_is_translator' ), 10, 3 );
+		add_filter( 'wpml_user_can_translate', array( $this, 'wcml_user_can_translate' ), 10, 2 );
 		add_filter( 'wc_product_has_unique_sku', array( $this, 'check_product_sku' ), 10, 3 );
 
 		add_filter( 'get_product_search_form', array( $this->sitepress, 'get_search_form_filter' ) );
@@ -289,7 +290,7 @@ class WCML_Products{
 	public function wcml_override_is_translator( $is_translator, $user_id, $args ) {
 		if ( current_user_can( 'wpml_operate_woocommerce_multilingual' ) ) {
 			if ( ! ( isset( $args['post_id'] ) && $args['post_id'] ) ) {
-				return $is_translator;
+				return true;
 			}
 			$wc_post_types = [ 'product', 'product_variation', 'shop_coupon', 'shop_order', 'shop_order_refund' ];
 			$post_type     = get_post_type( $args['post_id'] );
@@ -299,6 +300,20 @@ class WCML_Products{
 		}
 
 		return $is_translator;
+	}
+
+	/**
+	 * @param bool    $user_can_translate
+	 * @param WP_User $user
+	 *
+	 * @return bool
+	 */
+	public function wcml_user_can_translate( $user_can_translate, $user ) {
+		if ( user_can( $user, 'wpml_operate_woocommerce_multilingual' ) ) {
+			return true;
+		}
+
+		return $user_can_translate;
 	}
 
     //product quickedit

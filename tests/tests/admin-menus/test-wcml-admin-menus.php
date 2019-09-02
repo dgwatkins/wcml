@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class WCML_Admin_Menus
+ * Class Test_WCML_Admin_Menus
  */
 class Test_WCML_Admin_Menus extends WCML_UnitTestCase {
 
