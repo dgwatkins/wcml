@@ -56,7 +56,7 @@
     "require-dev": {
         "antecedent/patchwork": "^2.0",
         "otgs/build-tools": "~0.1",
-        "otgs/build-tools-ci": "~0.11",
+        "otgs/build-tools-ci": "dev-master",
         "otgs/changelog": "dev-develop",
         "otgs/php-integration-tests": "dev-develop",
         "otgs/unit-tests-framework": "~1.2.0",
