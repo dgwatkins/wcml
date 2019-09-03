@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+		"Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8131251eb31a62bd7ea35fcb478f014b",
+	"content-hash": "bd3f151cd415cf336b06a2b9302571bf",
     "packages": [
         {
             "name": "composer/installers",
@@ -1728,11 +1728,11 @@
         },
         {
             "name": "otgs/build-tools-ci",
-            "version": "0.11.2",
+			"version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "86a00066bf1b65de0a191e465506e09752e81156"
+				"reference": "af894e119b557fdaf2a06e8ae0d5394f35631778"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -1786,7 +1786,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2019-07-25T15:39:46+00:00"
+			"time": "2019-09-03T08:34:57+00:00"
         },
         {
             "name": "otgs/changelog",
@@ -5145,6 +5145,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "wpml-shared/wpml-lib-dependencies": 20,
+		"otgs/build-tools-ci": 20,
         "otgs/changelog": 20,
         "otgs/diff-checks": 20,
         "otgs/php-integration-tests": 20,

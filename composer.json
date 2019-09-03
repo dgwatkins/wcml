@@ -59,7 +59,7 @@
         "composer/composer": "~1.9",
         "imangazaliev/didom": "^1.14",
         "otgs/build-tools": "~0.1",
-        "otgs/build-tools-ci": "~0.11",
+        "otgs/build-tools-ci": "dev-master",
         "otgs/changelog": "dev-develop",
         "otgs/diff-checks": "dev-master",
         "otgs/php-integration-tests": "dev-develop",
