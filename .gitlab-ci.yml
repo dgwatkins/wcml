@@ -47,7 +47,7 @@ Duplication <PHP>:
 Unit <PHP>:
     stage: test
     when: always
-    image: registry.git.onthegosystems.com/infrastructure/docker-images/otgs/phpunit:5.7
+    image: registry.otgs.work/infrastructure/docker-images/otgs/phpunit:5.7
     tags:
         - autoscale
     script:
@@ -57,19 +57,19 @@ Unit <PHP>:
     except:
         - tags
 
-Integration <PHP>:
-    stage: test
-    when: always
-    image: registry.otgs.work/infrastructure/docker-images/wptest:7.3
-    services:
-        - mysql:5.7
-    tags:
-        - autoscale
-    script:
-        - composer install
-        - ./vendor/otgs/build-tools-ci/otgs-ci -p --legacy
-    except:
-        - tags
+#Integration <PHP>:
+#    stage: test
+#    when: always
+#    image: registry.otgs.work/infrastructure/docker-images/wptest:7.3
+#    services:
+#        - mysql:5.7
+#    tags:
+#        - autoscale
+#    script:
+#        - composer install
+#        - ./vendor/otgs/build-tools-ci/otgs-ci -p --legacy
+#    except:
+#        - tags
 
 Branch:
     stage: build
