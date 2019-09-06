@@ -400,20 +400,12 @@ class WCML_Emails{
     }
 
 	function change_email_language( $lang ) {
-		global $wp_locale;
-
 		if ( ! $this->admin_language ) {
 			$this->admin_language = $this->sitepress->get_user_admin_language( get_current_user_id(), true );
 		}
 
 		$this->sitepress->switch_lang( $lang, true );
 		$this->locale = $this->sitepress->get_locale( $lang );
-		unload_textdomain( 'woocommerce' );
-		unload_textdomain( 'default' );
-
-		$wp_locale = new WP_Locale();
-		$this->woocommerce->load_plugin_textdomain();
-		load_default_textdomain( $this->locale );
 	}
 
     function admin_string_return_cached( $value, $option ){
