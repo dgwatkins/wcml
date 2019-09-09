@@ -2,9 +2,9 @@
 
 class WCML_Dependencies {
 
-	const MIN_WPML = '4.0.0';
-	const MIN_WPML_TM = '2.6';
-	const MIN_WPML_ST = '2.8';
+	const MIN_WPML = '4.2.8';
+	const MIN_WPML_TM = '2.8.7';
+	const MIN_WPML_ST = '2.10.6';
 	const MIN_WOOCOMMERCE = '3.3.0';
 
 	private $missing = array();
