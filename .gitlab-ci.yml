@@ -30,6 +30,7 @@ Prepare <Cache>:
             - node_modules/
             - vendor/
             - changelog/
+            - readme.txt
         policy: push
     when: always
     image: registry.otgs.work/infrastructure/docker-images/phpunit:7.3
