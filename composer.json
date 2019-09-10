@@ -49,7 +49,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "otgs/installer": "~2.1.0",
+        "otgs/installer": "~2.2.0",
         "xrstf/composer-php52": "1.*",
         "wpml-shared/wpml-lib-dependencies": "dev-master"
     },
