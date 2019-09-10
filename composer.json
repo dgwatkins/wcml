@@ -50,7 +50,7 @@
     "prefer-stable": true,
     "require": {
         "php": ">=5.6.0",
-        "otgs/installer": "~2.1.0",
+        "otgs/installer": "~2.2.0",
         "xrstf/composer-php52": "1.*",
         "wpml-shared/wpml-lib-dependencies": "dev-master"
     },

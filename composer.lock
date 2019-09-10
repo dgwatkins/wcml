@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-		"Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-	"content-hash": "bd3f151cd415cf336b06a2b9302571bf",
+    "content-hash": "f746d9f6963db517b628d781d3f50a14",
     "packages": [
         {
             "name": "composer/installers",
@@ -179,11 +179,11 @@
         },
         {
             "name": "otgs/installer",
-            "version": "2.1.0",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/installer/installer.git",
-                "reference": "46eb3b740370a3eb8bd6e706c91bceec71a61a00"
+                "reference": "a5b0a218f73cea21755d68a427067d49838916a7"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -195,7 +195,8 @@
                 "otgs/build-tools": "~0.1",
                 "otgs/build-tools-ci": "~0.10",
                 "otgs/unit-tests-framework": "~1.2.0",
-                "sebastian/phpcpd": "^3.0"
+                "sebastian/phpcpd": "^3.0",
+                "website/api": "dev-develop"
             },
             "suggest": {
                 "otgs/ui": "Some elements will have nicer styling, e.g. switcher instead of checkbox"
@@ -265,7 +266,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2019-07-22T09:48:22+00:00"
+            "time": "2019-08-21T13:32:17+00:00"
         },
         {
             "name": "wpml-shared/wpml-lib-dependencies",
@@ -1728,11 +1729,11 @@
         },
         {
             "name": "otgs/build-tools-ci",
-			"version": "dev-master",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-				"reference": "af894e119b557fdaf2a06e8ae0d5394f35631778"
+                "reference": "af894e119b557fdaf2a06e8ae0d5394f35631778"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -1786,7 +1787,7 @@
             "keywords": [
                 "cli"
             ],
-			"time": "2019-09-03T08:34:57+00:00"
+            "time": "2019-09-03T08:34:57+00:00"
         },
         {
             "name": "otgs/changelog",
@@ -3528,8 +3529,8 @@
             "authors": [
                 {
                     "name": "Marco Pivetta",
-                    "email": "ocramius@gmail.com",
-                    "role": "maintainer"
+                    "role": "maintainer",
+                    "email": "ocramius@gmail.com"
                 }
             ],
             "description": "Prevents installation of composer packages with known security vulnerabilities: no API, simply require it",
@@ -4992,8 +4993,8 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "email": "arne@blankerts.de",
-                    "role": "lead"
+                    "role": "lead",
+                    "email": "arne@blankerts.de"
                 }
             ],
             "description": "The classes contained within this repository extend the standard DOM to use exceptions at all occasions of errors instead of PHP warnings or notices. They also add various custom methods and shortcuts for convenience and to simplify the usage of DOM.",
@@ -5145,7 +5146,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "wpml-shared/wpml-lib-dependencies": 20,
-		"otgs/build-tools-ci": 20,
+        "otgs/build-tools-ci": 20,
         "otgs/changelog": 20,
         "otgs/diff-checks": 20,
         "otgs/php-integration-tests": 20,
