@@ -2,6 +2,8 @@
 
 class WCML_Attributes{
 
+	const PRIORITY_AFTER_WC_INIT = 100;
+
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
 	/** @var Sitepress */
@@ -34,7 +36,6 @@ class WCML_Attributes{
 
         add_action( 'init', array( $this, 'init' ) );
 
-        add_action( 'woocommerce_attribute_added', array( $this, 'set_attribute_readonly_config' ), 100, 2 );
         add_filter( 'wpml_translation_job_post_meta_value_translated', array($this, 'filter_product_attributes_for_translation'), 10, 2 );
         add_filter( 'woocommerce_dropdown_variation_attribute_options_args', array($this, 'filter_dropdown_variation_attribute_options_args') );
 
@@ -61,20 +62,19 @@ class WCML_Attributes{
 	    add_action( 'update_post_meta', array( $this, 'set_translation_status_as_needs_update' ), 10, 3 );
     }
 
-    public function init(){
+	public function init() {
 
-        $is_attr_page = apply_filters( 'wcml_is_attributes_page', isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == 'product_attributes' && isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'product' );
+		$is_attr_page = isset( $_GET['page'], $_GET['post_type'] )
+		                && 'product_attributes' === $_GET['page']
+		                && 'product' === $_GET['post_type'];
 
-        if( $is_attr_page ){
+		if ( apply_filters( 'wcml_is_attributes_page', $is_attr_page ) ) {
+			add_action( 'admin_init', array( $this, 'not_translatable_html' ) );
+			add_action( 'woocommerce_attribute_added', array( $this, 'set_attribute_readonly_config' ), self::PRIORITY_AFTER_WC_INIT, 2 );
+			add_action( 'woocommerce_attribute_updated', array( $this, 'set_attribute_readonly_config' ), self::PRIORITY_AFTER_WC_INIT, 3 );
+		}
 
-            add_action( 'admin_init', array( $this, 'not_translatable_html' ) );
-
-            if( isset( $_POST[ 'save_attribute' ] ) && isset( $_GET[ 'edit' ] ) ){
-                $this->set_attribute_readonly_config( $_GET[ 'edit' ], $_POST );
-            }
-        }
-
-    }
+	}
 
     public function not_translatable_html(){
         $attr_id = isset( $_GET[ 'edit' ] ) ? absint( $_GET[ 'edit' ] ) : false;
@@ -90,18 +90,51 @@ class WCML_Attributes{
 
     }
 
-    public function set_attribute_readonly_config( $id, $attribute ){
+	/**
+	 * @param int $id
+	 * @param array $data
+	 * @param bool $old_slug
+	 */
+    public function set_attribute_readonly_config( $id, $data, $old_slug = false ){
 
-        $is_translatable = isset( $_POST[ 'wcml-is-translatable-attr' ] ) ? 1 : 0;
-        $attribute_name = wc_attribute_taxonomy_name( $attribute['attribute_name'] );
-        if( $is_translatable === 0 ){
-            //delete all translated attributes terms if "Translatable?" option un-checked
-            $this->delete_translated_attribute_terms( $attribute_name );
-            $this->set_variations_to_use_original_attributes( $attribute_name );
-            $this->set_original_attributes_for_products( $attribute_name );
-        }
-        $this->set_attribute_config_in_settings( $attribute_name, $is_translatable );
+	    if( isset( $_POST[ 'save_attribute' ] ) || isset( $_POST[ 'add_new_attribute' ] ) ) {
+
+		    $is_translatable = (int)isset( $_POST['wcml-is-translatable-attr'] );
+
+		    if( $_POST['attribute_name'] ){
+			    $attribute_name = wc_sanitize_taxonomy_name( wp_unslash( $_POST['attribute_name'] ) );
+		    }else{
+			    $attribute_name = wc_sanitize_taxonomy_name( wc_clean( wp_unslash( $_POST['attribute_label'] ) ) );
+		    }
+
+		    $attribute_name = wc_attribute_taxonomy_name( $attribute_name );
+
+		    if ( $is_translatable === 0 ) {
+			    //delete all translated attributes terms if "Translatable?" option un-checked
+			    $this->delete_translated_attribute_terms( $attribute_name );
+			    $this->set_variations_to_use_original_attributes( $attribute_name );
+			    $this->set_original_attributes_for_products( $attribute_name );
+		    }
+
+		    if( $old_slug !== $data[ 'attribute_name' ] ){
+		    	$this->fix_attribute_slug_in_translations_table( wc_attribute_taxonomy_name( $old_slug ), $attribute_name );
+		    }
+
+		    $this->set_attribute_config_in_settings( $attribute_name, $is_translatable );
+	    }
     }
+
+	/**
+	 * @param string $old_attribute_name
+	 * @param string $new_attribute_name
+	 */
+	private function fix_attribute_slug_in_translations_table( $old_attribute_name, $new_attribute_name ) {
+		$this->wpdb->update(
+			$this->wpdb->prefix . 'icl_translations',
+			array( 'element_type' => 'tax_' . $new_attribute_name ),
+			array( 'element_type' => 'tax_' . $old_attribute_name )
+		);
+	}
 
     public function set_attribute_config_in_settings( $attribute_name, $is_translatable ){
         $this->set_attribute_config_in_wcml_settings( $attribute_name, $is_translatable );
