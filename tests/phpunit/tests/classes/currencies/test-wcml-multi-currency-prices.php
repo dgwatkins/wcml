@@ -92,8 +92,8 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'product_price_filter' ), 10, 4 );
 		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'variation_prices_filter' ), 12, 4 ); // second
 
-		\WP_Mock::expectFilterAdded( 'woocommerce_price_filter_widget_max_amount', array( $subject, 'raw_price_filter' ), 99 );
-		\WP_Mock::expectFilterAdded( 'woocommerce_price_filter_widget_min_amount', array( $subject, 'raw_price_filter' ), 99 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_price_filter_widget_max_amount', array( $subject, 'filter_widget_max_amount' ), 99 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_price_filter_widget_min_amount', array( $subject, 'filter_widget_min_amount' ), 99 );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_adjust_price', array( $subject, 'raw_price_filter' ), 10 );
 
@@ -316,10 +316,9 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		$multi_currency = $this->get_multi_currency_mock();
 		$multi_currency->method( 'get_client_currency' )->willReturn( $currency );
 
-		WP_Mock::userFunction( 'get_option', array(
-			'args'   => array( 'woocommerce_currency' ),
+		WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
 			'return' => $currency
-		) );
+		));
 
 		$subject = $this->get_subject( $multi_currency );
 
@@ -359,10 +358,9 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		$multi_currency->method( 'get_currencies_without_cents' )->willReturn( $exchange_rates );
 
 
-		WP_Mock::userFunction( 'get_option', array(
-			'args'   => array( 'woocommerce_currency' ),
+		WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
 			'return' => 'USD'
-		) );
+		));
 
 
 		global $wpdb;
@@ -380,6 +378,41 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 
 		unset( $_GET['min_price'] );
 		unset( $_GET['max_price'] );
+	}
+
+
+	/**
+	 * @test
+	 *
+	 */
+	public function it_should_filter_widget_min_amount_given_step_price_of_10(){
+
+		$subject = $this->get_subject( $this->get_multi_currency_mock() );
+
+		$min_price = 11.12;
+		$expected_step_price = 10;
+
+		$filtered_min_price = $subject->filter_widget_min_amount( $min_price );
+
+		$this->assertEquals( $expected_step_price, $filtered_min_price );
+
+	}
+
+	/**
+	 * @test
+	 *
+	 */
+	public function it_should_filter_widget_max_amount_given_step_price_of_10(){
+
+		$subject = $this->get_subject( $this->get_multi_currency_mock() );
+
+		$max_price = 12.22;
+		$expected_step_price = 20;
+
+		$filtered_max_price = $subject->filter_widget_max_amount( $max_price );
+
+		$this->assertEquals( $expected_step_price, $filtered_max_price );
+
 	}
 
 }
