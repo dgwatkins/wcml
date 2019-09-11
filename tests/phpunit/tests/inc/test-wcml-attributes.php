@@ -80,6 +80,21 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function add_on_init_hooks_for_attribute_page()
+	{
+		$_GET[ 'page' ] = 'product_attributes';
+		$_GET[ 'post_type' ] = 'product';
+
+		$subject = $this->get_subject();
+		\WP_Mock::expectActionAdded( 'admin_init', array( $subject, 'not_translatable_html' ) );
+		\WP_Mock::expectActionAdded( 'woocommerce_attribute_added', array( $subject, 'set_attribute_readonly_config' ), $subject::PRIORITY_AFTER_WC_INIT, 2 );
+		\WP_Mock::expectActionAdded( 'woocommerce_attribute_updated', array( $subject, 'set_attribute_readonly_config' ), $subject::PRIORITY_AFTER_WC_INIT, 3 );
+		$subject->init();
+	}
+
+	/**
+	 * @test
+	 */
 	public function hooks_for_product_display_as_translated_post_type()
 	{
 		$this->woocommerce_wpml->products->method( 'is_product_display_as_translated_post_type' )->willReturn( true );
