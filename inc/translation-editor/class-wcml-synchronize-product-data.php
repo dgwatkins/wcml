@@ -515,10 +515,10 @@ class WCML_Synchronize_Product_Data{
     }
 
     //duplicate product post meta
-    public function duplicate_product_post_meta( $original_product_id, $trnsl_product_id, $data = false ){
+    public function duplicate_product_post_meta( $original_product_id, $translated_product_id, $data = false ){
         global $iclTranslationManagement;
 
-        if( $this->check_if_product_fields_sync_needed( $original_product_id, $trnsl_product_id, 'postmeta_fields' ) || $data ){
+        if( $this->check_if_product_fields_sync_needed( $original_product_id, $translated_product_id, 'postmeta_fields' ) || $data ){
             $all_meta = get_post_custom( $original_product_id );
             $post_fields = null;
 
@@ -535,17 +535,20 @@ class WCML_Synchronize_Product_Data{
 
                 foreach ( $meta as $meta_value ) {
                     if( $key == '_downloadable_files' ){
-                        $this->woocommerce_wpml->downloadable->sync_files_to_translations( $original_product_id, $trnsl_product_id, $data );
+                        $this->woocommerce_wpml->downloadable->sync_files_to_translations( $original_product_id, $translated_product_id, $data );
                     }elseif ( $data ) {
                         if ( WPML_TRANSLATE_CUSTOM_FIELD  === $setting->status() ) {
-                            $post_fields = $this->sync_custom_field_value( $key, $data, $trnsl_product_id, $post_fields, $original_product_id );
+                            $post_fields = $this->sync_custom_field_value( $key, $data, $translated_product_id, $post_fields, $original_product_id );
                         }
                     }
                 }
             }
+
+	        $wcml_data_store = wcml_product_data_store_cpt();
+	        $wcml_data_store->update_lookup_table_data( $translated_product_id );
         }
 
-        do_action( 'wcml_after_duplicate_product_post_meta', $original_product_id, $trnsl_product_id, $data );
+        do_action( 'wcml_after_duplicate_product_post_meta', $original_product_id, $translated_product_id, $data );
     }
 
     public function sync_custom_field_value( $custom_field, $translation_data, $trnsl_product_id, $post_fields,  $original_product_id = false, $is_variation = false ){

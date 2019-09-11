@@ -2,6 +2,8 @@
 
 class WCML_Multi_Currency_Prices {
 
+	const WC_DEFAULT_STEP = 10;
+
 	/**
 	 * @var woocommerce_wpml
 	 */
@@ -37,8 +39,8 @@ class WCML_Multi_Currency_Prices {
 			add_filter( 'get_post_metadata', array( $this, 'product_price_filter' ), 10, 4 );
 			add_filter( 'get_post_metadata', array( $this, 'variation_prices_filter' ), 12, 4 ); // second
 
-			add_filter( 'woocommerce_price_filter_widget_max_amount', array( $this, 'raw_price_filter' ), 99 );
-			add_filter( 'woocommerce_price_filter_widget_min_amount', array( $this, 'raw_price_filter' ), 99 );
+			add_filter( 'woocommerce_price_filter_widget_max_amount', array( $this, 'filter_widget_max_amount' ), 99 );
+			add_filter( 'woocommerce_price_filter_widget_min_amount', array( $this, 'filter_widget_min_amount' ), 99 );
 
 			add_filter( 'woocommerce_adjust_price', array( $this, 'raw_price_filter' ), 10 );
 
@@ -99,6 +101,34 @@ class WCML_Multi_Currency_Prices {
 		}
 
 		return $currency;
+	}
+
+	/**
+	 * @param float $min_amount
+	 *
+	 * @return float
+	 */
+	public function filter_widget_min_amount( $min_amount ){
+		$step = $this->get_filter_widget_amount_step();
+
+		return floor( $this->raw_price_filter( $min_amount ) / $step ) * $step;
+	}
+
+	/**
+	 * @param float $max_price
+	 *
+	 * @return float
+	 */
+	public function filter_widget_max_amount( $max_price ){
+		$step = $this->get_filter_widget_amount_step();
+		return ceil( $this->raw_price_filter( $max_price ) / $step ) * $step;
+	}
+
+	/**
+	 * @return int
+	 */
+	private function get_filter_widget_amount_step(){
+		return max( apply_filters( 'woocommerce_price_filter_widget_step', self::WC_DEFAULT_STEP ), 1 );
 	}
 
 	public function raw_price_filter( $price, $currency = false ) {
