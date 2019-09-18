@@ -27,6 +27,7 @@ class WCML_WC_Shipping{
         add_filter('woocommerce_rate_label',array($this,'translate_woocommerce_rate_label'));
         add_filter( 'pre_update_option_woocommerce_flat_rate_settings', array( $this, 'update_woocommerce_shipping_settings_for_class_costs' ) );
         add_filter( 'pre_update_option_woocommerce_international_delivery_settings', array( $this, 'update_woocommerce_shipping_settings_for_class_costs' ) );
+        add_filter( 'woocommerce_shipping_flat_rate_instance_option', array( $this, 'get_original_shipping_class_rate' ), 10, 3 );
 
         $this->shipping_methods_filters();
     }
@@ -246,5 +247,23 @@ class WCML_WC_Shipping{
 
         return $inst_settings;
     }
+
+	/**
+	 * @param string $rate
+	 * @param string $class_name
+	 * @param WC_Shipping_Method $shipping_method
+	 *
+	 * @return string
+	 */
+	public function get_original_shipping_class_rate( $rate, $class_name, $shipping_method ){
+		if( !$rate && 'class_cost_' === substr( $class_name, 0, 11 ) ){
+			$original_class_id = $this->sitepress->term_translations()->get_original_element( substr( $class_name, 11 ) );
+			if( $original_class_id && isset( $shipping_method->instance_settings[ 'class_cost_'.$original_class_id ] ) ){
+				return $shipping_method->instance_settings[ 'class_cost_'.$original_class_id ];
+			}
+		}
+
+		return $rate;
+	}
 
 }
