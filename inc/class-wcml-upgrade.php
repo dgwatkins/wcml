@@ -29,6 +29,7 @@ class WCML_Upgrade{
         '4.3.5',
         '4.4.1',
         '4.4.3',
+        '4.6.8',
     );
     
     function __construct(){
@@ -773,6 +774,26 @@ class WCML_Upgrade{
 
 			$sitepress->switch_lang( $current_language );
 		}
+	}
+
+	private function upgrade_4_6_8() {
+		global $wpdb;
+
+		$wpdb->query( "UPDATE {$wpdb->prefix}icl_strings
+                      SET `context` = 'admin_texts_woocommerce_gateways',
+                          `domain_name_context_md5` = MD5( CONCAT( 'admin_texts_woocommerce_gateways', `name`, `gettext_context` ) )
+                      WHERE `context` = 'woocommerce' AND `name` LIKE '%_gateway_title'"
+		);
+		$wpdb->query( "UPDATE {$wpdb->prefix}icl_strings
+                      SET `context` = 'admin_texts_woocommerce_gateways',
+                          `domain_name_context_md5` = MD5( CONCAT( 'admin_texts_woocommerce_gateways', `name`, `gettext_context` ) )
+                      WHERE `context` = 'woocommerce' AND `name` LIKE '%_gateway_description'"
+		);
+		$wpdb->query( "UPDATE {$wpdb->prefix}icl_strings
+                      SET `context` = 'admin_texts_woocommerce_gateways',
+                          `domain_name_context_md5` = MD5( CONCAT( 'admin_texts_woocommerce_gateways', `name`, `gettext_context` ) )
+                      WHERE `context` = 'woocommerce' AND `name` LIKE '%_gateway_instructions'"
+		);
 	}
 
 }

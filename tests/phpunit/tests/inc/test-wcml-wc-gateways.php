@@ -217,7 +217,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$subject = $this->get_subject( false, $sitepress );
 
 		WP_Mock::onFilter( 'wpml_translate_single_string' )
-		       ->with( $gateway_instructions, 'woocommerce', $gateway_id . $string_name, $current_language )
+		       ->with( $gateway_instructions, 'admin_texts_woocommerce_gateways', $gateway_id . $string_name, $current_language )
 		       ->reply( $current_language_gateway_instructions );
 
 		$translated_gateway_instructions = $subject->$method_name( $gateway_instructions, $gateway_id );
@@ -252,7 +252,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$subject = $this->get_subject( false, $sitepress );
 
 		WP_Mock::onFilter( 'wpml_translate_single_string' )
-		       ->with( $gateway_instructions, 'woocommerce', $gateway_id . $string_name, $order_language )
+		       ->with( $gateway_instructions, 'admin_texts_woocommerce_gateways', $gateway_id . $string_name, $order_language )
 		       ->reply( $order_language_gateway_instructions );
 
 		$translated_gateway_instructions = $subject->$method_name( $gateway_instructions, $gateway_id );
@@ -287,7 +287,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$subject = $this->get_subject( false, $sitepress );
 
 		WP_Mock::onFilter( 'wpml_translate_single_string' )
-		       ->with( $gateway_instructions, 'woocommerce', $gateway_id . $string_name, $_COOKIE[ WCML_Orders::DASHBOARD_COOKIE_NAME ] )
+		       ->with( $gateway_instructions, 'admin_texts_woocommerce_gateways', $gateway_id . $string_name, $_COOKIE[ WCML_Orders::DASHBOARD_COOKIE_NAME ] )
 		       ->reply( $order_language_gateway_instructions );
 
 		$translated_gateway_instructions = $subject->$method_name( $gateway_instructions, $gateway_id );
