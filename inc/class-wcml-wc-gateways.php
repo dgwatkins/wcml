@@ -91,19 +91,38 @@ class WCML_WC_Gateways{
 
     }
 
-    function translate_gateway_title( $title, $gateway_id, $language = false ) {
-        $title = apply_filters( 'wpml_translate_single_string', $title, 'woocommerce', $gateway_id .'_gateway_title', $language ? $language : $this->current_language );
-        return $title;
+    function translate_gateway_title( $title, $gateway_id ) {
+        return apply_filters( 'wpml_translate_single_string', $title, 'woocommerce', $gateway_id .'_gateway_title', $this->get_current_gateway_language() );
     }
 
     function translate_gateway_description( $description, $gateway_id) {
-        $description = apply_filters( 'wpml_translate_single_string', $description, 'woocommerce', $gateway_id . '_gateway_description', $this->current_language );
-        return $description;
+        return apply_filters( 'wpml_translate_single_string', $description, 'woocommerce', $gateway_id . '_gateway_description', $this->get_current_gateway_language() );
     }
 
-    function translate_gateway_instructions( $instructions, $gateway_id ){
-        $instructions = apply_filters( 'wpml_translate_single_string', $instructions, 'woocommerce', $gateway_id . '_gateway_instructions', $this->current_language );
-        return $instructions;
+	public function translate_gateway_instructions( $instructions, $gateway_id ) {
+		return apply_filters( 'wpml_translate_single_string', $instructions, 'woocommerce', $gateway_id . '_gateway_instructions', $this->get_current_gateway_language() );
+	}
+
+	/**
+	 * @return string
+	 */
+	private function get_current_gateway_language(){
+
+		$language = $this->current_language;
+
+		$is_saving_new_order = isset( $_POST['action'] ) && 'editpost' === $_POST['action'] && isset( $_POST['save'] ) && $_POST['save'];
+		$is_send_order_details_action = isset( $_POST['wc_order_action'] ) && 'send_order_details' === $_POST['wc_order_action'];
+		$is_order_on_hold             = isset( $_POST ['order_status'] ) && 'wc-on-hold' === $_POST ['order_status'];
+
+		if ( $is_order_on_hold && isset( $_POST['post_ID'] ) ) {
+			if( $is_send_order_details_action ){
+				$language = get_post_meta( $_POST['post_ID'], 'wpml_language', true );
+			}elseif( $is_saving_new_order && isset( $_COOKIE[ WCML_Orders::DASHBOARD_COOKIE_NAME ] ) ){
+				$language = $_COOKIE[ WCML_Orders::DASHBOARD_COOKIE_NAME ];
+			}
+		}
+
+		return $language;
     }
 
     function show_language_links_for_gateways(){
