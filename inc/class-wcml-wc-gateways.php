@@ -92,15 +92,15 @@ class WCML_WC_Gateways{
     }
 
     function translate_gateway_title( $title, $gateway_id ) {
-        return apply_filters( 'wpml_translate_single_string', $title, 'woocommerce', $gateway_id .'_gateway_title', $this->get_current_gateway_language() );
+        return apply_filters( 'wpml_translate_single_string', $title, 'admin_texts_woocommerce_gateways', $gateway_id .'_gateway_title', $this->get_current_gateway_language() );
     }
 
     function translate_gateway_description( $description, $gateway_id) {
-        return apply_filters( 'wpml_translate_single_string', $description, 'woocommerce', $gateway_id . '_gateway_description', $this->get_current_gateway_language() );
+        return apply_filters( 'wpml_translate_single_string', $description, 'admin_texts_woocommerce_gateways', $gateway_id . '_gateway_description', $this->get_current_gateway_language() );
     }
 
 	public function translate_gateway_instructions( $instructions, $gateway_id ) {
-		return apply_filters( 'wpml_translate_single_string', $instructions, 'woocommerce', $gateway_id . '_gateway_instructions', $this->get_current_gateway_language() );
+		return apply_filters( 'wpml_translate_single_string', $instructions, 'admin_texts_woocommerce_gateways', $gateway_id . '_gateway_instructions', $this->get_current_gateway_language() );
 	}
 
 	/**
@@ -149,7 +149,7 @@ class WCML_WC_Gateways{
                     $gateway_option = $payment_gateway->plugin_id.$payment_gateway->id.'_settings';
 
                     $lang_selector = new WPML_Simple_Language_Selector( $this->sitepress );
-                    $language = $this->woocommerce_wpml->strings->get_string_language( $setting_value, 'woocommerce', $payment_gateway->id .'_gateway_'. $text_key );
+                    $language = $this->woocommerce_wpml->strings->get_string_language( $setting_value, 'admin_texts_woocommerce_gateways', $payment_gateway->id .'_gateway_'. $text_key );
                     if( is_null( $language ) ) {
                         $language = $this->sitepress->get_default_language();
                     }
@@ -197,7 +197,7 @@ class WCML_WC_Gateways{
 		    foreach ( $text_keys as $text_key ) {
 			    $gateway_string_name = str_replace( 'woocommerce_', '', $gateway ) . '_gateway_' . $text_key;
 			    $gateway_key         = $gateway . '_' . $text_key;
-			    $context = 'woocommerce';
+			    $context = 'admin_texts_woocommerce_gateways';
 
 			    $string_value     = isset( $_POST[ $gateway_key ] ) ? $_POST[ $gateway_key ] : '';
 			    $opt_string_value = isset( $gateway_settings[ $text_key ] ) ? $gateway_settings[ $text_key ] : $string_value;
