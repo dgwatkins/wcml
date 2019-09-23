@@ -202,7 +202,8 @@ class WCML_Products_UI extends WCML_Templates_Factory {
 			}else{
 				$products[ $key ]->formated_date = date(' Y/m/d', strtotime( $product->post_modified ) );
 			}
-
+			
+			$products[ $key ]->has_image = has_post_thumbnail($product->ID);
 		}
 
 		return array( 'products' => $products, 'products_count' => $products_info[ 'products_count' ] );

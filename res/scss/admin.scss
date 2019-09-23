@@ -59,3 +59,15 @@ div[data-selector="wpbody-content .woocommerce h2"] a{
   content: "\63";
 }
 
+.wcml-wrap .mouse-hovered {
+  display: none;
+  width: auto;
+  max-width: 350px;
+  height: auto;
+  max-height: 250px;
+  position: absolute;
+  z-index: 10;
+  border: solid 4px #999;
+  background: #fff;
+}
+
