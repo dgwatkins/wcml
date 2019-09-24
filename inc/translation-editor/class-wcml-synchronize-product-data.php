@@ -2,7 +2,7 @@
 
 class WCML_Synchronize_Product_Data{
 
-    const CUSTOM_FIELD_KEY_SEPARATOR = ':::';
+	const CUSTOM_FIELD_KEY_SEPARATOR = ':::';
 
     /** @var woocommerce_wpml */
     private $woocommerce_wpml;
@@ -181,29 +181,46 @@ class WCML_Synchronize_Product_Data{
 		$taxonomy_exceptions = array( 'product_type', 'product_visibility' );
 		$sync_taxonomies     = $this->sitepress->get_setting( 'sync_post_taxonomies' );
 
+		$taxonomies = array_filter(
+			$taxonomies,
+			function ( $taxonomy ) use ( $sync_taxonomies, $taxonomy_exceptions ) {
+				return $sync_taxonomies || in_array( $taxonomy, $taxonomy_exceptions, true );
+			}
+		);
+
 		remove_filter( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10 );
-		foreach ( $taxonomies as $taxonomy ) {
-			if (
-				$sync_taxonomies ||
-				in_array( $taxonomy, $taxonomy_exceptions )
-			) {
-				$terms    = wp_get_object_terms( $original_product_id, $taxonomy );
+
+		$found     = false;
+		$all_terms = WPML_Non_Persistent_Cache::get( $original_product_id, __CLASS__, $found );
+		if ( ! $found ) {
+			$all_terms = wp_get_object_terms( $original_product_id, $taxonomies );
+			WPML_Non_Persistent_Cache::set( $original_product_id, $all_terms, __CLASS__ );
+		}
+		if ( ! is_wp_error( $all_terms ) ) {
+			foreach ( $taxonomies as $taxonomy ) {
 				$tt_ids   = array();
 				$tt_names = array();
-				if ( $terms ) {
-					foreach ( $terms as $term ) {
-						if ( in_array( $term->taxonomy, $taxonomy_exceptions ) ) {
-							$tt_names[] = $term->name;
-							continue;
-						}
-						$tt_ids[] = $term->term_id;
+				$terms    = array_filter(
+					$all_terms,
+					function ( $term ) use ( $taxonomy ) {
+						return $term->taxonomy === $taxonomy;
 					}
+				);
+				if ( ! $terms ) {
+					continue;
+				}
+				foreach ( $terms as $term ) {
+					if ( in_array( $term->taxonomy, $taxonomy_exceptions, true ) ) {
+						$tt_names[] = $term->name;
+						continue;
+					}
+					$tt_ids[] = $term->term_id;
+				}
 
-					if ( ! $this->woocommerce_wpml->terms->is_translatable_wc_taxonomy( $taxonomy ) ) {
-						wp_set_post_terms( $tr_product_id, $tt_names, $taxonomy );
-					} else {
-						$this->wcml_update_term_count_by_ids( $tt_ids, $lang, $taxonomy, $tr_product_id );
-					}
+				if ( ! $this->woocommerce_wpml->terms->is_translatable_wc_taxonomy( $taxonomy ) ) {
+					wp_set_post_terms( $tr_product_id, $tt_names, $taxonomy );
+				} else {
+					$this->wcml_update_term_count_by_ids( $tt_ids, $lang, $taxonomy, $tr_product_id );
 				}
 			}
 		}

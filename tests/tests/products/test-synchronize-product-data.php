@@ -5,6 +5,7 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 	private $test_data;
 	private $default_language;
 	private $second_language;
+	private $queries = [];
 
 	function setUp() {
 		parent::setUp();
@@ -165,6 +166,9 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 
 	}
 
+	/**
+	 * @group wpmlcore-6795
+	 */
 	public function test_sync_product_taxonomies(){
 
 		$this->sitepress->set_setting( 'sync_post_taxonomies', true );
@@ -177,7 +181,22 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 
 		$this->wpdb->insert( $this->wpdb->term_relationships, array( 'object_id' => $translated_product->id, 'term_taxonomy_id' => $translated_cat->term_taxonomy_id ) );
 
+		add_filter( 'query', [ $this, 'query_filter' ] );
+
 		$this->woocommerce_wpml->sync_product_data->sync_product_taxonomies( $default_product->id, $translated_product->id, $this->second_language );
+
+		$wp_get_object_terms_request = '/SELECT term_id, meta_key, meta_value FROM wptests_termmeta WHERE term_id IN \(' . $default_cat->term_id . '\)/';
+		$wp_get_object_terms_requests = preg_grep( $wp_get_object_terms_request, $this->queries );
+		$this->assertCount( 1, $wp_get_object_terms_requests );
+
+		$this->queries = [];
+
+		$this->woocommerce_wpml->sync_product_data->sync_product_taxonomies( $default_product->id, $translated_product->id, $this->second_language );
+
+		$wp_get_object_terms_requests = preg_grep( $wp_get_object_terms_request, $this->queries );
+		$this->assertCount( 0, $wp_get_object_terms_requests );
+
+		remove_filter( 'query', [ $this, 'query_filter' ] );
 
 		$this->assertEquals( get_term_meta( $default_cat->term_id, 'product_count_product_cat', true), get_term_meta( $translated_cat->term_id, 'product_count_product_cat', true) );
 
@@ -188,4 +207,9 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		$this->assertEquals( get_term_meta( $default_cat->term_id, 'product_count_product_cat', true), get_term_meta( $translated_cat->term_id, 'product_count_product_cat', true) );
 	}
 
+	public function query_filter( $query ) {
+		$this->queries[] = $query;
+
+		return $query;
+	}
 }
