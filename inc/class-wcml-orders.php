@@ -53,9 +53,6 @@ class WCML_Orders {
         add_action( 'woocommerce_process_shop_order_meta', array( $this, 'set_order_language_backend'), 10, 2 );
         add_action( 'woocommerce_order_actions_start', array( $this, 'order_language_dropdown' ), 11 ); //after order currency drop-down
 
-        //special case for wcml-741
-        add_action('updated_post_meta', array($this,'update_order_currency'), 100,4);
-
         add_action( 'woocommerce_before_order_itemmeta', array( $this, 'backend_before_order_itemmeta' ), 100, 3 );
         add_action( 'woocommerce_after_order_itemmeta', array( $this, 'backend_after_order_itemmeta' ), 100, 3 );
 
@@ -380,15 +377,6 @@ class WCML_Orders {
         }
 
     }
-
-    function update_order_currency( $meta_id, $object_id, $meta_key, $meta_value ){
-
-        if( $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT && get_post_type($object_id) == 'shop_order' && isset( $_GET['wc-ajax'] ) && $_GET['wc-ajax'] == 'checkout' ){
-            update_post_meta( $object_id, '_order_currency', wcml_get_woocommerce_currency_option() );
-        }
-
-    }
-
 
     public function filter_downloadable_product_items( $files, $item, $object  ){
 
