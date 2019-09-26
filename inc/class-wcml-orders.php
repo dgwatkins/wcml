@@ -205,6 +205,7 @@ class WCML_Orders {
                         );
                     }
                 }
+	            $item->save();
             }
         }
 

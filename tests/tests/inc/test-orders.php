@@ -30,7 +30,9 @@ class Test_WCML_Orders extends WCML_UnitTestCase {
 
 		foreach( $line_items as $line_item ){
 			if( $line_item instanceof WC_Order_Item_Product ){
+				$line_item_data = $line_item->get_data();
 				$this->assertEquals( $this->es_product_id , $line_item->get_product_id() );
+				$this->assertEquals( $this->es_product_id , $line_item_data['product_id'] );
 			}else{
 				$this->assertEquals( $this->es_product_id , $line_item['product_id'] );
 			}
