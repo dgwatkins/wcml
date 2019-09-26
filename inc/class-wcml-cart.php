@@ -273,7 +273,6 @@ class WCML_Cart {
 
 	public function wcml_refresh_fragments() {
 		WC()->cart->calculate_totals();
-		$this->woocommerce_wpml->locale->wcml_refresh_text_domain();
 	}
 
 	/*

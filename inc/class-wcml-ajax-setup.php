@@ -30,17 +30,9 @@ class WCML_Ajax_Setup{
 		}
 
 		add_filter( 'woocommerce_get_script_data', array( $this, 'add_language_parameter_to_ajax_url' ) );
-		add_action( 'woocommerce_checkout_order_review', array( $this, 'filter_woocommerce_order_review' ), 9 );
 		add_action( 'woocommerce_checkout_order_review', array( $this, 'add_hidden_language_field' ) );
-		add_action( 'woocommerce_checkout_update_order_review', array( $this, 'filter_woocommerce_order_review' ), 9 );
 
 	}
-    
-    function filter_woocommerce_order_review(){                
-        global $woocommerce;
-        unload_textdomain('woocommerce');
-        $woocommerce->load_plugin_textdomain();
-    }
 
 	function add_hidden_language_field() {
 		do_action( 'wpml_add_language_form_field' );

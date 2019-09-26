@@ -32,7 +32,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		$this->woocommerce = $this->getMockBuilder('WooCommerce')
 			->disableOriginalConstructor()
-			->setMethods( array( 'mailer', 'load_plugin_textdomain' ) )
+			->setMethods( array( 'mailer' ) )
 			->getMock();
 
 		$this->wp_api->method( 'constant' )->with( 'WPML_ST_VERSION' )->willReturn( '2.5.2' );
@@ -91,11 +91,6 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			->getMock();
 
 		$subject = new WCML_Emails( $this->woocommerce_wpml, $sitepress, $this->woocommerce, $this->wpdb );
-
-		\Mockery::mock( 'overload:WP_Locale' );
-
-		\WP_Mock::userFunction( 'unload_textdomain', array() );
-		\WP_Mock::userFunction( 'load_default_textdomain', array() );
 
 		\WP_Mock::userFunction( 'get_current_user_id', array(
 			'return' => $user_id,
@@ -459,11 +454,6 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$this->sitepress->method( 'get_user_admin_language' )->with( $user->ID, true )->willReturn( $user_language );
 		$this->sitepress->expects( $this->once() )->method( 'switch_lang' )->with( $user_language );
 
-		\Mockery::mock( 'overload:WP_Locale' );
-
-		\WP_Mock::userFunction( 'unload_textdomain', array() );
-		\WP_Mock::userFunction( 'load_default_textdomain', array() );
-
 		$subject = $this->get_subject();
 
 		$subject->new_order_admin_email( $order_id );
@@ -514,11 +504,6 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		$this->sitepress->method( 'get_default_language' )->willReturn( $default_language );
 		$this->sitepress->expects( $this->once() )->method( 'switch_lang' )->with( $default_language );
-
-		\Mockery::mock( 'overload:WP_Locale' );
-
-		\WP_Mock::userFunction( 'unload_textdomain', array() );
-		\WP_Mock::userFunction( 'load_default_textdomain', array() );
 
 		$subject = $this->get_subject();
 
