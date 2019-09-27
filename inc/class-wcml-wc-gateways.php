@@ -149,10 +149,12 @@ class WCML_WC_Gateways{
                     $gateway_option = $payment_gateway->plugin_id.$payment_gateway->id.'_settings';
 
                     $lang_selector = new WPML_Simple_Language_Selector( $this->sitepress );
-                    $language = $this->woocommerce_wpml->strings->get_string_language( $setting_value, 'admin_texts_woocommerce_gateways', $payment_gateway->id .'_gateway_'. $text_key );
-                    if( is_null( $language ) ) {
-                        $language = $this->sitepress->get_default_language();
-                    }
+	                $string_id  = icl_get_string_id( $setting_value, 'admin_texts_woocommerce_gateways', $payment_gateway->id .'_gateway_'. $text_key );
+	                if( $string_id ){
+		                $language = $this->woocommerce_wpml->strings->get_string_language( $setting_value, 'admin_texts_woocommerce_gateways', $payment_gateway->id .'_gateway_'. $text_key );
+	                }else{
+		                $language = $this->sitepress->get_default_language();
+	                }
 
                     $lang_selector->render( array(
                             'id' => $gateway_option.'_'.$text_key.'_language_selector',
