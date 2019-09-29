@@ -147,8 +147,9 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider addons_to_filter
 	 */
-	public function it_should_filter_product_addons_price() {
+	public function it_should_filter_product_addons_price( $addons, $expected_addons ) {
 
 		$client_currency = 'USD';
 
@@ -161,53 +162,6 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		$not_converted_price = 33;
-		$converted_price     = 55;
-
-		$addons = array(
-			array(
-				'price'   => 0,
-				'options' => array(
-					array(
-						'price'                     => 11,
-						'price_' . $client_currency => 111
-					)
-				)
-			),
-			array(
-				'price'                     => 22,
-				'price_' . $client_currency => 222,
-				'options'                   => array()
-			),
-			array(
-				'price'   => $not_converted_price,
-				'options' => array()
-			)
-		);
-
-		\WP_Mock::onFilter( 'wcml_raw_price_amount' )->with( $not_converted_price )->reply( $converted_price );
-
-		$expected_addons = array(
-			array(
-				'price'   => 0,
-				'options' => array(
-					array(
-						'price'                     => 111,
-						'price_' . $client_currency => 111
-					)
-				)
-			),
-			array(
-				'price'                     => 222,
-				'price_' . $client_currency => 222,
-				'options'                   => array()
-			),
-			array(
-				'price'   => $converted_price,
-				'options' => array()
-			)
-		);
-
 		$product_id = 1;
 		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $product_id, '_wcml_custom_prices_status', true ),
@@ -216,6 +170,40 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 
 		$filtered_addons = $subject->product_addons_price_filter( $addons, $product_id );
 		$this->assertSame( $expected_addons, $filtered_addons );
+	}
+
+	public function addons_to_filter() {
+		return
+			[
+				'Flat_Fee_Addon_Options_Level_Prices' => [
+					[ [ 'price' => 0, 'options' => [ [ 'price' => 11, 'price_USD' => 111, 'price_type' => 'flat_fee' ] ] ] ],
+					[ [ 'price' => 0, 'options' => [ [ 'price' => 111, 'price_USD' => 111, 'price_type' => 'flat_fee' ] ] ] ]
+				],
+				'Flat_Fee_Addon_Level_Prices' => [
+					[ [ 'price' => 22, 'price_USD' => 222, 'options' => [], 'price_type' => 'flat_fee' ] ],
+					[ [ 'price' => 222, 'price_USD' => 222, 'options' => [], 'price_type' => 'flat_fee' ] ]
+				],
+				'Flat_Fee_Empty_Addon_Options_Level_Prices' => [
+					[ [ 'price' => 10, 'options' => [], 'price_type' => 'flat_fee' ] ],
+					[ [ 'price' => 10, 'options' => [], 'price_type' => 'flat_fee' ] ]
+				],
+				'Percentage_Based_Addon_Level_Prices' => [
+					[ [ 'price' => 12, 'options' => [], 'price_type' => 'percentage_based' ] ],
+					[ [ 'price' => 12, 'options' => [], 'price_type' => 'percentage_based' ] ]
+				],
+				'Percentage_Based_Addon_Options_Level_Prices' => [
+					[ [ 'price' => 0, 'options' => [ [ 'price' => 14, 'price_type' => 'percentage_based' ] ] ] ],
+					[ [ 'price' => 0, 'options' => [ [ 'price' => 14, 'price_type' => 'percentage_based' ] ] ] ]
+				],
+				'Quantity_Based_Addon_Level_Prices' => [
+					[ [ 'price' => 3, 'options' => [], 'price_type' => 'quantity_based' ] ],
+					[ [ 'price' => 3, 'options' => [], 'price_type' => 'quantity_based' ] ]
+				],
+				'Quantity_Based_Addon_Options_Level_Prices' => [
+					[ [ 'price' => 0, 'options' => [ [ 'price' => 5, 'price_type' => 'quantity_based' ] ] ] ],
+					[ [ 'price' => 0, 'options' => [ [ 'price' => 5, 'price_type' => 'quantity_based' ] ] ] ]
+				]
+			];
 	}
 
 	/**

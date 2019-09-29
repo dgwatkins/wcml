@@ -171,38 +171,43 @@ class WCML_Product_Addons {
 
 		if ( $this->is_multi_currency_on() ) {
 
-			$client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
-			$is_custom_prices_on = $this->is_product_custom_prices_on( $post_id );
-
 			foreach ( $addons as $add_id => $addon ) {
-
 				if ( isset( $addon['price'] ) && $addon['price'] ) {
-					if (
-						$is_custom_prices_on &&
-						isset( $addon[ 'price_' . $client_currency ] ) &&
-						$addon[ 'price_' . $client_currency ]
-					) {
-						$addons[ $add_id ]['price'] = $addon[ 'price_' . $client_currency ];
-					} else {
-						$addons[ $add_id ]['price'] = apply_filters( 'wcml_raw_price_amount', $addon['price'] );
-					}
+					$addons[ $add_id ]['price'] = $this->converted_addon_price( $addon, $post_id );
 				}
 
 				foreach ( $addon['options'] as $key => $option ) {
-					if (
-						$is_custom_prices_on &&
-						isset( $option[ 'price_' . $client_currency ] ) &&
-						$option[ 'price_' . $client_currency ]
-					) {
-						$addons[ $add_id ]['options'][ $key ]['price'] = $option[ 'price_' . $client_currency ];
-					} else {
-						$addons[ $add_id ]['options'][ $key ]['price'] = apply_filters( 'wcml_raw_price_amount', $option['price'] );
-					}
+					$addons[ $add_id ]['options'][ $key ]['price'] = $this->converted_addon_price( $option, $post_id );
 				}
 			}
 		}
 
 		return $addons;
+	}
+
+	/**
+	 * @param  array $addon
+	 * @param  int $post_id
+	 *
+	 * @return string
+	 */
+	private function converted_addon_price( $addon, $post_id ){
+
+		$client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
+		$is_custom_prices_on = $this->is_product_custom_prices_on( $post_id );
+		$field = 'price_' . $this->woocommerce_wpml->multi_currency->get_client_currency();
+
+		if (
+			$is_custom_prices_on &&
+			isset( $addon[ $field ] ) &&
+			$addon[ $field ]
+		) {
+			return $addon[ $field ];
+		} elseif( 'flat_fee' === $addon['price_type'] ) {
+			return apply_filters( 'wcml_raw_price_amount', $addon['price'] );
+		}
+
+		return $addon['price'];
 	}
 
 	/**
