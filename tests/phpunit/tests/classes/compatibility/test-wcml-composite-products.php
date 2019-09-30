@@ -40,9 +40,31 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 		\WP_Mock::expectFilterAdded( 'wcml_do_not_display_custom_fields_for_product', array( $subject, 'replace_tm_editor_custom_fields_with_own_sections' ) );
-		\WP_Mock::expectFilterAdded( 'raw_woocommerce_price', array( $subject, 'apply_rounding_rules' ) );
 		$subject->add_hooks();
 
+	}
+
+	/**
+	 * @test
+	 */
+	public function add_price_rounding_filters(){
+		\WP_Mock::wpFunction( 'is_admin', array( 'return' => false ) );
+
+		$subject = $this->get_subject();
+		$filters = array(
+			'woocommerce_product_get_price',
+			'woocommerce_product_get_sale_price',
+			'woocommerce_product_get_regular_price',
+			'woocommerce_product_variation_get_price',
+			'woocommerce_product_variation_get_sale_price',
+			'woocommerce_product_variation_get_regular_price'
+		);
+
+		foreach( $filters as $filter ){
+			\WP_Mock::expectFilterAdded( $filter, array( $subject, 'apply_rounding_rules' ), $subject::PRICE_FILTERS_PRIORITY_AFTER_COMPOSITE );
+		}
+
+		$subject->add_price_rounding_filters();
 	}
 	/**
 	 * @test
@@ -61,7 +83,7 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 	 *
 	 * @group wcml-2663
 	 */
-	public function it_should_apply_rounding_rules( $is_multi_currency_on ) {
+	public function it_should_apply_rounding_rules( $is_multi_currency_on, $is_composite_product ) {
 		$price           = mt_rand( 1, 100 );
 		$converted_price = mt_rand( 101, 200 );
 
@@ -86,11 +108,18 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 			)
 		);
 
+		\WP_Mock::userFunction(
+			'is_composite_product',
+			array(
+				'return' => $is_composite_product
+			)
+		);
+
 
 		$subject        = $this->get_subject( null, $woocommerce_wpml );
 		$filtered_price = $subject->apply_rounding_rules( $price );
 
-		if ( $is_multi_currency_on ) {
+		if ( $is_multi_currency_on && $is_composite_product ) {
 			$this->assertSame( $converted_price, $filtered_price );
 		} else {
 			$this->assertSame( $price, $filtered_price );
@@ -104,8 +133,10 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 	 */
 	public function it_should_apply_rounding_rules_data_provider() {
 		return array(
-			array( false ),
-			array( true ),
+			array( false, false ),
+			array( false, true ),
+			array( true, true ),
+			array( true, false ),
 		);
 	}
 }
