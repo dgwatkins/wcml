@@ -42,6 +42,18 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function it_adds_hooks() {
+		$subject = $this->get_subject();
+
+		\WP_Mock::expectActionAdded( 'init', array( $subject, 'on_init_hooks' ), 11 );
+
+		\WP_Mock::expectFilterAdded( 'woocommerce_payment_gateways', array( $subject, 'loaded_woocommerce_payment_gateways' ) );
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
 	public function add_on_init_hooks() {
 		global $pagenow;
 		$current_pagenow = $pagenow;
@@ -68,6 +80,69 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 
 		$pagenow = $current_pagenow;
 		unset( $_GET['page'], $_GET['tab'], $_GET['section'] );
+	}
+
+
+	/**
+	 * @test
+	 * @dataProvider default_gateways_names
+	 */
+	public function it_should_register_default_gateway_strings( $gateway_name ) {
+
+		$default_language = 'en';
+		$settings = array();
+		$settings['enabled'] = 'yes';
+		$settings['title'] = rand_str(32);
+		$settings['description'] = rand_str(32);
+		$settings['instructions'] = rand_str(32);
+
+
+		\WP_Mock::userFunction( 'icl_get_string_id', array(
+			'args'   => array( $settings['title'], 'admin_texts_woocommerce_gateways', $gateway_name .'_gateway_title' ),
+			'return' => false
+		) );
+		\WP_Mock::userFunction( 'icl_get_string_id', array(
+			'args'   => array( $settings['description'], 'admin_texts_woocommerce_gateways', $gateway_name .'_gateway_description' ),
+			'return' => false
+		) );
+		\WP_Mock::userFunction( 'icl_get_string_id', array(
+			'args'   => array( $settings['instructions'], 'admin_texts_woocommerce_gateways', $gateway_name .'_gateway_instructions' ),
+			'return' => false
+		) );
+
+
+		$sitepress = $this->get_sitepress();
+		$sitepress->method( 'get_default_language' )->willReturn( $default_language );
+
+		$subject = $this->get_subject( false, $sitepress );
+
+
+		\WP_Mock::userFunction( 'icl_register_string', array(
+			'args'   => array( 'admin_texts_woocommerce_gateways', $gateway_name .'_gateway_title', $settings['title'], false, $default_language ),
+			'times' => 1,
+			'return' => true
+		) );
+		\WP_Mock::userFunction( 'icl_register_string', array(
+			'args'   => array( 'admin_texts_woocommerce_gateways', $gateway_name .'_gateway_description', $settings['description'], false, $default_language ),
+			'times' => 1,
+			'return' => true
+		) );
+		\WP_Mock::userFunction( 'icl_register_string', array(
+			'args'   => array( 'admin_texts_woocommerce_gateways', $gateway_name .'_gateway_instructions', $settings['instructions'], false, $default_language ),
+			'times' => 1,
+			'return' => true
+		) );
+
+		$subject->register_gateway_settings_strings( $gateway_name, $settings );
+	}
+
+	public function default_gateways_names(){
+		return array(
+			array( 'cod' ),
+			array( 'bacs' ),
+			array( 'cheque' ),
+			array( 'paypal' )
+		);
 	}
 
 	/**
@@ -204,7 +279,37 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 	 * @test
 	 * @dataProvider gateway_string_method
 	 */
-	public function it_should_get_gateway_gateway_strings_in_current_language( $method_name, $string_name ) {
+	public function it_should_get_translated_default_gateway_strings( $method_name, $string_name ) {
+
+		$gateway_instructions = rand_str( 32 );
+		$current_language_gateway_instructions = rand_str( 32 );
+		$gateway_id = 'bacs';
+		$current_language = 'fr';
+
+		$sitepress = $this->get_sitepress();
+		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
+
+		$subject = $this->get_subject( false, $sitepress );
+
+		WP_Mock::onFilter( 'wpml_translate_single_string' )
+		       ->with( $gateway_instructions, 'admin_texts_woocommerce_gateways', $gateway_id . $string_name, $current_language )
+		       ->reply( $gateway_instructions );
+
+		WP_Mock::userFunction( '__', array(
+			'args' => array( $gateway_instructions, 'woocommerce' ),
+			'return' => $current_language_gateway_instructions
+		));
+
+		$translated_gateway_instructions = $subject->$method_name( $gateway_instructions, $gateway_id );
+
+		$this->assertSame( $current_language_gateway_instructions, $translated_gateway_instructions );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider gateway_string_method
+	 */
+	public function it_should_get_gateway_strings_in_current_language( $method_name, $string_name ) {
 
 		$gateway_instructions = rand_str( 32 );
 		$current_language_gateway_instructions = rand_str( 32 );
@@ -309,5 +414,4 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 			array( 'translate_gateway_instructions', '_gateway_instructions' )
 		);
 	}
-
 }

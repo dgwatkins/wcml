@@ -39,27 +39,41 @@ class WCML_WC_Gateways{
 
 		if ( is_admin() && 'admin.php' === $pagenow && isset( $_GET['page'] ) && 'wc-settings' === $_GET['page'] && isset( $_GET['tab'] ) && 'checkout' === $_GET['tab'] ) {
 			add_action( 'admin_footer', array( $this, 'show_language_links_for_gateways' ) );
-			$this->register_and_set_gateway_strings_language();
-
 			if ( isset( $_GET['section'] ) && 'bacs' === $_GET['section'] && wcml_is_multi_currency_on() ) {
+				$this->set_bacs_gateway_currency();
 				add_action( 'admin_footer', array( $this, 'append_currency_selector_to_bacs_account_settings' ) );
 			}
 		}
 	}
-
 
     function loaded_woocommerce_payment_gateways( $load_gateways ){
 
         foreach( $load_gateways as $key => $gateway ){
 
             $load_gateway = is_string( $gateway ) ? new $gateway() : $gateway;
+
+	        $this->register_gateway_settings_strings( $load_gateway->id, $load_gateway->settings );
             $this->payment_gateways_filters( $load_gateway );
             $load_gateways[ $key ] = $load_gateway;
-
         }
 
         return $load_gateways;
     }
+
+	/**
+	 * @param string $gateway_id
+	 * @param array $settings
+	 */
+	public function register_gateway_settings_strings( $gateway_id, $settings ) {
+		if ( isset( $settings['enabled'] ) && 'yes' === $settings['enabled'] ) {
+			foreach ( $this->get_gateway_text_keys_to_translate() as $text_key ) {
+				if ( isset( $settings[ $text_key ] ) && !$this->get_gateway_string_id( $settings[ $text_key ], $gateway_id, $text_key ) ) {
+					$language = $this->gateway_setting_language( $settings[ $text_key ], $gateway_id, $text_key );
+					icl_register_string( 'admin_texts_woocommerce_gateways', $gateway_id . '_gateway_' . $text_key, $settings[ $text_key ], false, $language );
+				}
+			}
+		}
+	}
 
     function payment_gateways_filters( $gateway ){
 
@@ -91,16 +105,35 @@ class WCML_WC_Gateways{
 
     }
 
-    function translate_gateway_title( $title, $gateway_id ) {
-        return apply_filters( 'wpml_translate_single_string', $title, 'admin_texts_woocommerce_gateways', $gateway_id .'_gateway_title', $this->get_current_gateway_language() );
+	public function translate_gateway_title( $title, $gateway_id ) {
+        return $this->get_translated_gateway_string( $title, $gateway_id, 'title' );
     }
 
-    function translate_gateway_description( $description, $gateway_id) {
-        return apply_filters( 'wpml_translate_single_string', $description, 'admin_texts_woocommerce_gateways', $gateway_id . '_gateway_description', $this->get_current_gateway_language() );
+	public function translate_gateway_description( $description, $gateway_id) {
+		return $this->get_translated_gateway_string( $description, $gateway_id, 'description' );
     }
 
 	public function translate_gateway_instructions( $instructions, $gateway_id ) {
-		return apply_filters( 'wpml_translate_single_string', $instructions, 'admin_texts_woocommerce_gateways', $gateway_id . '_gateway_instructions', $this->get_current_gateway_language() );
+		return $this->get_translated_gateway_string( $instructions, $gateway_id, 'instructions' );
+	}
+
+	public function get_translated_gateway_string( $string, $gateway_id, $name ) {
+		$translated_string = apply_filters(
+			'wpml_translate_single_string',
+			$string,
+			'admin_texts_woocommerce_gateways',
+			$gateway_id . '_gateway_' . $name,
+			$this->get_current_gateway_language()
+		);
+
+		if ( $translated_string === $string ) {
+			$translated_string = __( $string, 'woocommerce' );
+			if ( 'cheque' === $gateway_id && $translated_string === $string && 'title' === $name ) {
+				$translated_string = _x( $string, 'Check payment method', 'woocommerce' );
+			}
+		}
+
+		return $translated_string;
 	}
 
 	/**
@@ -149,12 +182,7 @@ class WCML_WC_Gateways{
                     $gateway_option = $payment_gateway->plugin_id.$payment_gateway->id.'_settings';
 
                     $lang_selector = new WPML_Simple_Language_Selector( $this->sitepress );
-	                $string_id  = icl_get_string_id( $setting_value, 'admin_texts_woocommerce_gateways', $payment_gateway->id .'_gateway_'. $text_key );
-	                if( $string_id ){
-		                $language = $this->woocommerce_wpml->strings->get_string_language( $setting_value, 'admin_texts_woocommerce_gateways', $payment_gateway->id .'_gateway_'. $text_key );
-	                }else{
-		                $language = $this->sitepress->get_default_language();
-	                }
+	                $language = $this->gateway_setting_language( $setting_value, $payment_gateway->id, $text_key );
 
                     $lang_selector->render( array(
                             'id' => $gateway_option.'_'.$text_key.'_language_selector',
@@ -183,35 +211,30 @@ class WCML_WC_Gateways{
         }
     }
 
-    function register_and_set_gateway_strings_language(){
+    private function gateway_setting_language( $setting_value, $gateway_id, $text_key ){
+
+	    if( $this->get_gateway_string_id( $setting_value, $gateway_id, $text_key ) ){
+		    return $this->woocommerce_wpml->strings->get_string_language( $setting_value, 'admin_texts_woocommerce_gateways', $gateway_id .'_gateway_'. $text_key );
+	    }else{
+		    return $this->sitepress->get_default_language();
+	    }
+
+    }
+
+    private function get_gateway_string_id( $value, $gateway_id, $name ){
+	    return icl_get_string_id( $value, 'admin_texts_woocommerce_gateways', $gateway_id .'_gateway_'. $name );
+    }
+
+    function set_bacs_gateway_currency(){
 
 	    foreach( $_POST as $key => $value ){
 
 		    if( '_enabled' === substr( $key, -8 ) ){
 			    $gateway = str_replace( '_enabled', '',  $key );
-			    $gateway_settings = get_option( $gateway.'_settings', array() );
             }
 	    }
 
 	    if ( isset( $gateway ) ) {
-		    $text_keys = $this->get_gateway_text_keys_to_translate();
-
-		    foreach ( $text_keys as $text_key ) {
-			    $gateway_string_name = str_replace( 'woocommerce_', '', $gateway ) . '_gateway_' . $text_key;
-			    $gateway_key         = $gateway . '_' . $text_key;
-			    $context = 'admin_texts_woocommerce_gateways';
-
-			    $string_value     = isset( $_POST[ $gateway_key ] ) ? $_POST[ $gateway_key ] : '';
-			    $opt_string_value = isset( $gateway_settings[ $text_key ] ) ? $gateway_settings[ $text_key ] : $string_value;
-
-			    $language_key = 'wcml_lang-' . $gateway . '_settings-' . $text_key;
-			    $language     = isset( $_POST[ $language_key ] ) ? $_POST[ $language_key ] : $this->woocommerce_wpml->strings->get_string_language( $opt_string_value, $context );
-
-			    do_action( 'wpml_register_single_string', $context, $gateway_string_name, $string_value, false, $language );
-
-			    $this->woocommerce_wpml->strings->set_string_language( $string_value, $context, $gateway_string_name, $language );
-		    }
-
 		    if( 'woocommerce_bacs' === $gateway && isset( $_POST['bacs-currency'] ) ){
 		        update_option( self::WCML_BACS_ACCOUNTS_CURRENCIES_OPTION, filter_var_array( $_POST['bacs-currency'], FILTER_SANITIZE_STRING ) );
             }

@@ -146,7 +146,9 @@ class Test_WCML_Payment_Method_Filter extends OTGS_TestCase {
 			'times' => 1,
 			'return' => $translated_title,
 			'args' => array(
-				'woocommerce', $payment_gateway->id . '_gateway_title', $payment_gateway->title
+				'admin_texts_woocommerce_gateways',
+				$payment_gateway->id . '_gateway_title',
+				$payment_gateway->title,
 			),
 		) );
 
@@ -224,7 +226,7 @@ class Test_WCML_Payment_Method_Filter extends OTGS_TestCase {
 		WP_Mock::userFunction( 'WC', array( 'return' => $wc ) );
 
 		\WP_Mock::wpFunction( 'icl_translate', array(
-			'args'  => array( 'woocommerce', $post_payment_gateway->id . '_gateway_title', $post_payment_gateway->title ),
+			'args'  => array( 'admin_texts_woocommerce_gateways', $post_payment_gateway->id . '_gateway_title', $post_payment_gateway->title ),
 			'return' => $translated_title,
 		) );
 
