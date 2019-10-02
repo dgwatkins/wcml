@@ -337,12 +337,6 @@ class WCML_Troubleshooting{
 		}
 
 		foreach ( array_slice( $translated_variations, 0, self::ITEMS_PER_AJAX, true ) as $key => $translated_variation ) {
-			//delete broken variations
-			if ( ! get_post_meta( $translated_variation->post_id, '_stock', true ) ) {
-				wp_delete_post( $translated_variation->post_id );
-				continue;
-			}
-
 			//check relationships
 			$tr_info_for_original_variation = $this->get_translation_info_for_element( $translated_variation->meta_value, 'post_product_variation' );
 
