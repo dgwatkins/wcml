@@ -585,8 +585,12 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 	}
 
 	public function apply_rounding_rules( $price ) {
+
 		if ( is_composite_product() && wcml_is_multi_currency_on() ) {
-			$price = $this->woocommerce_wpml->multi_currency->prices->apply_rounding_rules( $price );
+			$current_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
+			if( $current_currency !== wcml_get_woocommerce_currency_option() ) {
+				$price = $this->woocommerce_wpml->multi_currency->prices->apply_rounding_rules( $price, $current_currency );
+			}
 		}
 
 		return $price;
