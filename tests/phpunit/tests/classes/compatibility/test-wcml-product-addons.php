@@ -196,12 +196,12 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 					[ [ 'price' => 0, 'options' => [ [ 'price' => 14, 'price_type' => 'percentage_based' ] ] ] ]
 				],
 				'Quantity_Based_Addon_Level_Prices' => [
-					[ [ 'price' => 3, 'options' => [], 'price_type' => 'quantity_based' ] ],
-					[ [ 'price' => 3, 'options' => [], 'price_type' => 'quantity_based' ] ]
+					[ [ 'price' => 3, 'price_USD' => 33, 'options' => [], 'price_type' => 'quantity_based' ] ],
+					[ [ 'price' => 33, 'price_USD' => 33, 'options' => [], 'price_type' => 'quantity_based' ] ]
 				],
 				'Quantity_Based_Addon_Options_Level_Prices' => [
-					[ [ 'price' => 0, 'options' => [ [ 'price' => 5, 'price_type' => 'quantity_based' ] ] ] ],
-					[ [ 'price' => 0, 'options' => [ [ 'price' => 5, 'price_type' => 'quantity_based' ] ] ] ]
+					[ [ 'price' => 0, 'options' => [ [ 'price' => 5, 'price_USD' => 55, 'price_type' => 'quantity_based' ] ] ] ],
+					[ [ 'price' => 0, 'options' => [ [ 'price' => 55, 'price_USD' => 55, 'price_type' => 'quantity_based' ] ] ] ]
 				]
 			];
 	}

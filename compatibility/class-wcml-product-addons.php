@@ -203,7 +203,9 @@ class WCML_Product_Addons {
 			$addon[ $field ]
 		) {
 			return $addon[ $field ];
-		} elseif( 'flat_fee' === $addon['price_type'] ) {
+		}
+
+		if( wpml_collect( [ 'flat_fee', 'quantity_based' ] )->contains( $addon['price_type'] ) ) {
 			return apply_filters( 'wcml_raw_price_amount', $addon['price'] );
 		}
 
