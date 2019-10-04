@@ -14,7 +14,7 @@ class Test_WCML_Orders extends OTGS_TestCase {
 
 		$this->sitepress = $this->getMockBuilder('SitePress')
 			->disableOriginalConstructor()
-			->setMethods(array( 'get_current_language' ))
+			->setMethods(array( 'get_current_language', 'get_user_admin_language' ))
 			->getMock();
 
 		$this->woocommerce_wpml = $this->getMockBuilder('woocommerce_wpml')
@@ -157,20 +157,179 @@ class Test_WCML_Orders extends OTGS_TestCase {
 
 	}
 
+	public function it_should_get_woocommerce_order_items_in_user_admin_language(){
+
+		$language = 'es';
+		$current_user_id = 1;
+
+		\WP_Mock::userFunction( 'get_current_user_id', array(
+			'return' => $current_user_id
+		));
+
+		$_GET[ 'post' ] = 5;
+		\WP_Mock::userFunction( 'get_post_type', array(
+			'args'   => array( $_GET[ 'post' ] ),
+			'return' => 'shop_order'
+		));
+
+		$this->sitepress->method( 'get_user_admin_language' )->with( $current_user_id, true )->willReturn( $language );
+
+		$this->get_woocommerce_order_items_mock( $language, new stdClass() );
+
+		unset( $_GET[ 'post' ] );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider woocommerce_order_items_actions
+	 */
+	public function it_should_get_woocommerce_order_items_in_order_language( $action ) {
+
+		$language       = 'fr';
+		$_GET['action'] = $action;
+		$order_id       = 100;
+		$order          = $this->getMockBuilder( 'WC_Order' )
+		                       ->disableOriginalConstructor()
+		                       ->setMethods( array( 'get_id' ) )
+		                       ->getMock();
+		$order->method( 'get_id' )->willReturn( $order_id );
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $order_id, 'wpml_language', true ),
+			'return' => $language
+		) );
+
+		$this->get_woocommerce_order_items_mock( $language, $order );
+
+		unset( $_GET['action'] );
+	}
+
+	public function woocommerce_order_items_actions(){
+		return array(
+			array( 'woocommerce_mark_order_complete' ),
+			array( 'woocommerce_mark_order_status' ),
+			array( 'mark_processing' )
+		);
+	}
+
 	/**
 	 * @test
 	 */
-	public function do_to_filter_woocommerce_order_get_items_on_save_action(){
+	public function it_should_get_woocommerce_order_items_in_current_language(){
 
-		$_POST['post_type'] = 'shop_order';
-		$_POST['wc_order_action'] = '';
+		$language = 'en';
+
+		$this->sitepress->method( 'get_current_language' )->willReturn( $language );
+
+		$this->get_woocommerce_order_items_mock( $language, new stdClass() );
+	}
+
+	public function get_woocommerce_order_items_mock( $language, $order ){
+
+		$product_id = 8;
+		$translated_product_id = 9;
+		$this->translated_post_object = new stdClass();
+		$this->translated_post_object->post_title = 'ES PRODUCT';
+		$variation_id = 10;
+		$translated_variation_id = 11;
+		$this->translated_variation_title = 'ES PRODUCT - Black('.$language.')';
+		$translated_variation_object = $this->getMockBuilder( 'WC_Product' )
+		                                    ->disableOriginalConstructor()
+		                                    ->setMethods( array( 'get_name' ) )
+		                                    ->getMock();
+		$translated_variation_object->method( 'get_name' )->willReturn( $this->translated_variation_title );
+
+
+
+		\WP_Mock::userFunction( 'get_post_type', array(
+			'args'   => array( $product_id ),
+			'return' => 'product'
+		));
+
+		$data =	array(
+			'id' => 12,
+			'key' => 'color',
+			'value' => 'Black'
+		);
+		$meta_data = $this->getMockBuilder( 'WC_Meta_Data' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_data' ) )
+		                  ->getMock();
+		$meta_data->method( 'get_data' )->willReturn( $data );
+		$updated_meta_data_value = 'Black(ES)';
+
+
+
+		$items = array();
+		$product_item = $this->getMockBuilder( 'WC_Order_Item_Product' )
+		                     ->disableOriginalConstructor()
+		                     ->setMethods( array( 'get_type', 'get_product_id', 'get_variation_id', 'set_variation_id', 'set_product_id', 'get_meta_data', 'update_meta_data', 'set_name', 'save' ) )
+		                     ->getMock();
+		$product_item->method( 'get_product_id' )->willReturn( $product_id );
+		$product_item->method( 'get_variation_id' )->willReturn( $variation_id );
+		$product_item->expects( $this->once() )->method( 'set_product_id' )->with( $translated_product_id )->willReturn( true );
+		$product_item->expects( $this->once() )->method( 'set_variation_id' )->with( $translated_variation_id )->willReturn( true );
+		$product_item->method( 'get_type' )->willReturn( 'line_item' );
+		$product_item->method( 'get_meta_data' )->willReturn( array( $meta_data ) );
+		$product_item->expects( $this->once() )->method( 'update_meta_data' )->with( $data[ 'key' ], $updated_meta_data_value, $data[ 'id' ] )->willReturn( true );
+		$product_item->method( 'save' )->willReturn( true );
+
+		$that = $this;
+		$product_item->method( 'set_name' )->willReturnCallback( function ( $name ) use ( $that ) {
+			if ( $that->translated_post_object->post_title === $name || $that->translated_variation_title === $name ) {
+				return true;
+			}
+		} );
+
+		$items[] = $product_item;
+
+		$shipping_id  = 'flat_rate';
+		$shipping_instance_id  = 1;
+		$shipping_method_title  = 'Shipping title';
+		$translated_shipping_method_title = 'Shipping title ES';
+		$shipping_item = $this->getMockBuilder( 'WC_Order_Item_Shipping' )
+		                      ->disableOriginalConstructor()
+		                      ->setMethods( array( 'get_method_id', 'get_instance_id', 'get_method_title', 'set_method_title', 'save' ) )
+		                      ->getMock();
+		$shipping_item->method( 'get_method_id' )->willReturn( $shipping_id );
+		$shipping_item->method( 'get_instance_id' )->willReturn( $shipping_instance_id );
+		$shipping_item->method( 'get_method_title' )->willReturn( $shipping_method_title );
+		$shipping_item->expects( $this->once() )->method( 'set_method_title' )->with( $translated_shipping_method_title )->willReturn( true );
+		$shipping_item->method( 'save' )->willReturn( true );
+
+		$this->woocommerce_wpml->shipping = $this->getMockBuilder( 'WCML_Shipping' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'translate_shipping_method_title' ) )
+		                                         ->getMock();
+		$this->woocommerce_wpml->shipping->expects( $this->once() )->method( 'translate_shipping_method_title' )->with( $shipping_method_title, $shipping_id.$shipping_instance_id, $language )->willReturn( $translated_shipping_method_title );
+
+		$items[] = $shipping_item;
+
+		\WP_Mock::userFunction( 'get_post', array(
+				'args'   => array( $translated_product_id ),
+				'return' => $this->translated_post_object
+			)
+		);
+
+		\WP_Mock::userFunction( 'wc_get_product', array(
+				'args'   => array( $translated_variation_id ),
+				'return' => $translated_variation_object
+			)
+		);
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+				'args'   => array( $translated_variation_id, 'attribute_' . $data['key'], true ),
+				'return' => $updated_meta_data_value
+			)
+		);
+
+		\WP_Mock::onFilter( 'translate_object_id' )->with( $product_id, 'product', false, $language )->reply( $translated_product_id );
+		\WP_Mock::onFilter( 'translate_object_id' )->with( $variation_id, 'product_variation', false, $language )->reply( $translated_variation_id );
 
 		$subject = $this->get_subject();
+		$subject->woocommerce_order_get_items( $items, $order );
 
-		$this->assertEmpty( $subject->woocommerce_order_get_items( array(), new stdClass() ) );
-
-		unset( $_POST['post_type'] );
-		unset( $_POST['wc_order_action'] );
 
 	}
+
 }
