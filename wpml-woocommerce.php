@@ -77,6 +77,7 @@ function wcml_loader() {
 	$loaders = array(
 		'WCML_Privacy_Content_Factory',
 		'WCML_ATE_Activate_Synchronization',
+		\WCML\RewriteRules\Hooks::class,
 	);
 
 	if (
