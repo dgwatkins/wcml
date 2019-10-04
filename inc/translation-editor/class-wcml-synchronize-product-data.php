@@ -49,6 +49,7 @@ class WCML_Synchronize_Product_Data{
             add_action( 'wpml_translation_update', array( $this, 'icl_connect_translations_action' ) );
 
             add_action( 'deleted_term_relationships', array( $this, 'delete_term_relationships_update_term_count' ), 10, 2 );
+            add_action( 'deleted_post_meta', array( $this, 'delete_empty_post_meta_for_translations' ), 10, 3 );
         }
 
 	    add_action( 'woocommerce_product_set_visibility', array( $this, 'sync_product_translations_visibility' ) );
@@ -793,6 +794,27 @@ class WCML_Synchronize_Product_Data{
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param array  $meta_ids    An array of deleted metadata entry IDs.
+	 * @param int    $object_id   Object ID.
+	 * @param string $meta_key    Meta key.
+	 */
+	public function delete_empty_post_meta_for_translations( $meta_ids, $object_id, $meta_key ){
+
+		if(
+			wpml_collect( [ 'product', 'product_variation' ] )->contains( get_post_type( $object_id ) ) &&
+			$this->woocommerce_wpml->products->is_original_product( $object_id )
+		){
+			$translations = $this->post_translations->get_element_translations( $object_id, false, true );
+			remove_action( 'deleted_post_meta', array( $this, 'delete_empty_post_meta_for_translations' ), 10, 3 );
+			foreach( $translations as $translation ) {
+				delete_post_meta( $translation, $meta_key );
+			}
+			add_action( 'deleted_post_meta', array( $this, 'delete_empty_post_meta_for_translations' ), 10, 3 );
+		}
+
 	}
 
 

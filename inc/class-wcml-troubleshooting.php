@@ -27,6 +27,7 @@ class WCML_Troubleshooting{
         add_action('wp_ajax_trbl_fix_product_type_terms', array($this,'trbl_fix_product_type_terms'));
         add_action( 'wp_ajax_trbl_sync_stock', array( $this, 'trbl_sync_stock' ) );
         add_action( 'wp_ajax_fix_translated_variations_relationships', array( $this, 'fix_translated_variations_relationships' ) );
+        add_action( 'wp_ajax_sync_deleted_meta', array( $this, 'sync_deleted_meta' ) );
     }
 
     function wcml_count_products_with_variations(){
@@ -262,9 +263,9 @@ class WCML_Troubleshooting{
         wp_send_json_success();
     }
 
-    function wcml_count_product_stock_sync(){
+    function wcml_count_products_and_variations(){
 
-        $results = $this->get_products_needs_stock_sync();
+        $results = $this->get_original_products_and_variations();
 
         return count( $results );
     }
@@ -276,7 +277,7 @@ class WCML_Troubleshooting{
             wp_send_json_error('Invalid nonce');
         }
 
-        $results = $this->get_products_needs_stock_sync();
+        $results = $this->get_original_products_and_variations();
 
         foreach( $results as $product ){
 
@@ -307,7 +308,7 @@ class WCML_Troubleshooting{
         wp_send_json_success();
     }
 
-	function get_products_needs_stock_sync(){
+	function get_original_products_and_variations(){
 
 		$results = $this->wpdb->get_results("
                         SELECT p.ID, t.trid, t.element_type
@@ -412,5 +413,52 @@ class WCML_Troubleshooting{
 
 	    return count( $results );
     }
+
+
+	public function sync_deleted_meta(){
+
+		$nonce = array_key_exists( 'wcml_nonce', $_POST ) ? sanitize_text_field( $_POST['wcml_nonce'] ) : false;
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'sync_deleted_meta' ) ) {
+			wp_send_json_error( 'Invalid nonce' );
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Access error' );
+		}
+
+		$products_needs_fix_postmeta = get_option( 'wcml_trbl_products_needs_fix_postmeta' );
+
+		if( !$products_needs_fix_postmeta ){
+			$products_needs_fix_postmeta = $this->get_original_products_and_variations();
+		}
+
+		$iclTranslationManagement = wpml_load_core_tm();
+		$settings_factory = new WPML_Custom_Field_Setting_Factory( $iclTranslationManagement );
+
+		foreach ( array_slice( $products_needs_fix_postmeta, 0, self::ITEMS_PER_AJAX, true ) as $key => $product ) {
+
+			$translations = $this->sitepress->get_element_translations( $product->trid, $product->element_type );
+
+			foreach ( $translations as $translation ){
+				if( !$translation->original ){
+					$all_post_meta_keys = $this->wpdb->get_col( $this->wpdb->prepare( "SELECT meta_key FROM {$this->wpdb->postmeta} WHERE post_id = %d", $translation->element_id ) );
+					foreach( $all_post_meta_keys as $meta_key ){
+						$setting = $settings_factory->post_meta_setting( $meta_key );
+						if ( WPML_COPY_CUSTOM_FIELD === $setting->status() ) {
+							if( !metadata_exists('post', $product->ID, $meta_key) ){
+								delete_post_meta( $translation->element_id, $meta_key );
+							}
+						}
+					}
+				}
+			}
+
+			unset( $products_needs_fix_postmeta[ $key ] );
+		}
+
+		update_option( 'wcml_trbl_products_needs_fix_postmeta', $products_needs_fix_postmeta );
+
+		wp_send_json_success();
+	}
 
 }

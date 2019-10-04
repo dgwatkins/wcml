@@ -309,6 +309,8 @@ class WCML_Synchronize_Variations_Data{
                     }
                 }
             }
+	        $wcml_data_store = wcml_product_data_store_cpt();
+	        $wcml_data_store->update_lookup_table_data( $variation_id );
         }
     }
 
