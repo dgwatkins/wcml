@@ -97,7 +97,7 @@ class WCML_Resources {
     		self::load_taxonomy_translation_scripts();
 
 			wp_register_script( 'jquery-cookie', WCML_PLUGIN_URL . '/res/js/jquery.cookie' . WCML_JS_MIN . '.js', array( 'jquery' ), WCML_VERSION, true );
-			wp_register_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs' . WCML_JS_MIN . '.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-dialog' ), WCML_VERSION, true );
+			wp_register_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs' . WCML_JS_MIN . '.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-dialog', 'underscore' ), WCML_VERSION, true );
 			wp_register_script( 'wcml-troubleshooting', WCML_PLUGIN_URL . '/res/js/troubleshooting' . WCML_JS_MIN . '.js', array( 'jquery' ), WCML_VERSION, true );
 
 			if( self::$woocommerce_wpml->is_wpml_prior_4_2() ){

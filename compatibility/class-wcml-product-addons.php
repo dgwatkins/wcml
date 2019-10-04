@@ -408,7 +408,7 @@ class WCML_Product_Addons {
 	}
 
 	public function load_dialog_resources(){
-		wp_enqueue_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs' . WCML_JS_MIN . '.js', array('jquery-ui-dialog'), WCML_VERSION );
+		wp_enqueue_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs' . WCML_JS_MIN . '.js', array( 'jquery-ui-dialog', 'underscore' ), WCML_VERSION );
 	}
 
 	/**
