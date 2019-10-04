@@ -22,7 +22,7 @@ class Test_WCML_Languages_Upgrader extends WCML_UnitTestCase {
 		global $woocommerce;
 
 		//use stable version to test
-		$pack_uri = $this->woocommerce_wpml->languages_upgrader->get_language_pack_uri( 'uk', $this->woocommerce_wpml->get_stable_wc_version() );
+		$pack_uri = $this->woocommerce_wpml->languages_upgrader->get_language_pack_uri( 'es_ES', $this->woocommerce_wpml->get_stable_wc_version() );
 
 		$response = wp_safe_remote_get( $pack_uri, array( 'timeout' => 60 ) );
 		$response_result = false;
