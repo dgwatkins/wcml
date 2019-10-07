@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f746d9f6963db517b628d781d3f50a14",
+	"content-hash": "6378070919fdc6b6c3812a7d9d4dc9ad",
     "packages": [
         {
             "name": "composer/installers",
@@ -183,7 +183,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/installer/installer.git",
-                "reference": "a5b0a218f73cea21755d68a427067d49838916a7"
+				"reference": "a91b37878982ee2d3aa289037b82c1578d8bf79b"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -266,7 +266,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2019-08-21T13:32:17+00:00"
+			"time": "2019-09-16T04:18:55+00:00"
         },
         {
             "name": "wpml-shared/wpml-lib-dependencies",
@@ -308,37 +308,6 @@
                 "wpml"
             ],
             "time": "2019-08-16T08:51:28+00:00"
-        },
-        {
-            "name": "xrstf/composer-php52",
-            "version": "v1.0.20",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/composer-php52/composer-php52.git",
-                "reference": "bd41459d5e27df8d33057842b32377c39e97a5a8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/composer-php52/composer-php52/zipball/bd41459d5e27df8d33057842b32377c39e97a5a8",
-                "reference": "bd41459d5e27df8d33057842b32377c39e97a5a8",
-                "shasum": ""
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-default": "1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "xrstf\\Composer52": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "time": "2016-04-16T21:52:24+00:00"
         }
     ],
     "packages-dev": [
@@ -942,53 +911,6 @@
                 "instantiate"
             ],
             "time": "2015-06-14T21:17:01+00:00"
-        },
-        {
-            "name": "exussum12/coverage-checker",
-            "version": "0.11.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/exussum12/coverageChecker.git",
-                "reference": "ad0eb95b255bb9d18723f87146750b1a69e4ee16"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/exussum12/coverageChecker/zipball/ad0eb95b255bb9d18723f87146750b1a69e4ee16",
-                "reference": "ad0eb95b255bb9d18723f87146750b1a69e4ee16",
-                "shasum": ""
-            },
-            "require": {
-                "nikic/php-parser": "^3.1||^4.0",
-                "php": ">=5.5"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^5.7"
-            },
-            "bin": [
-                "bin/phpunitDiffFilter",
-                "bin/phpcsDiffFilter",
-                "bin/phpmdDiffFilter",
-                "bin/diffFilter"
-            ],
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "exussum12\\CoverageChecker\\": "src/",
-                    "exussum12\\CoverageChecker\\tests\\": "tests/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Scott Dutton",
-                    "email": "scott@exussum.co.uk"
-                }
-            ],
-            "description": "Allows checking the code coverage of a single pull request",
-            "time": "2019-04-17T05:12:24+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1651,57 +1573,6 @@
             "time": "2019-05-15T08:28:36+00:00"
         },
         {
-            "name": "nikic/php-parser",
-            "version": "v3.1.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "bb87e28e7d7b8d9a7fda231d37457c9210faf6ce"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/bb87e28e7d7b8d9a7fda231d37457c9210faf6ce",
-                "reference": "bb87e28e7d7b8d9a7fda231d37457c9210faf6ce",
-                "shasum": ""
-            },
-            "require": {
-                "ext-tokenizer": "*",
-                "php": ">=5.5"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.0|~5.0"
-            },
-            "bin": [
-                "bin/php-parse"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "PhpParser\\": "lib/PhpParser"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Nikita Popov"
-                }
-            ],
-            "description": "A PHP parser written in PHP",
-            "keywords": [
-                "parser",
-                "php"
-            ],
-            "time": "2018-02-28T20:30:58+00:00"
-        },
-        {
             "name": "otgs/build-tools",
             "version": "0.1.1",
             "source": {
@@ -1795,7 +1666,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-changelog.git",
-                "reference": "614ab39ee7c2404920323928fa38894b233c0ed0"
+				"reference": "b291ebd488281541c412ca35fbb18499be3f3edc"
             },
             "require": {
                 "nepda/youtrack-client": "dev-master",
@@ -1838,46 +1709,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2019-08-19T15:33:21+00:00"
-        },
-        {
-            "name": "otgs/diff-checks",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://git.onthegosystems.com/otgs-public/otgs-diff-checks.git",
-                "reference": "677f2642febb5d79d1e3751da0371479fefee23b"
-            },
-            "require": {
-                "exussum12/coverage-checker": "^0.11.2"
-            },
-            "bin": [
-                "otgs-check-php"
-            ],
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "OTGS\\DiffChecks\\": "src/"
-                },
-                "psr-0": {
-                    "OTGS\\DiffChecks\\": "src/"
-                },
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0-only"
-            ],
-            "authors": [
-                {
-                    "name": "Andrea Sciamanna",
-                    "email": "andrea.s@onthegosystems.com"
-                }
-            ],
-            "description": "Run static code analysis against the changed code (applicable) or files",
-            "time": "2019-06-14T14:01:28+00:00"
+			"time": "2019-09-16T08:12:57+00:00"
         },
         {
             "name": "otgs/php-integration-tests",
@@ -1957,6 +1789,42 @@
             "time": "2019-08-29T07:13:54+00:00"
         },
         {
+			"name": "otgs/wp-plugin-version",
+			"version": "dev-master",
+			"source": {
+				"type": "git",
+				"url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-wp-plugin-version.git",
+				"reference": "c1a44a185390a58b70a440c0c0079054078931cc"
+			},
+			"require": {
+				"symfony/console": "^3.4",
+				"symfony/finder": "^3.4"
+			},
+			"bin": [
+				"otgs-wp-plugin-version"
+			],
+			"type": "library",
+			"autoload": {
+				"psr-4": {
+					"OTGS\\WordPress\\": "src/"
+				},
+				"psr-0": {
+					"OTGS\\WordPress\\": "src/"
+				},
+				"classmap": [
+					"src/"
+				]
+			},
+			"authors": [
+				{
+					"name": "Andrea Sciamanna",
+					"email": "andrea.s@onthegosystems.com"
+				}
+			],
+			"description": "CI tools for accessing and manipulating WordPress plugins versions",
+			"time": "2019-08-12T15:23:35+00:00"
+		},
+		{
             "name": "php-http/client-common",
             "version": "1.9.1",
             "source": {
@@ -3529,8 +3397,8 @@
             "authors": [
                 {
                     "name": "Marco Pivetta",
-                    "role": "maintainer",
-                    "email": "ocramius@gmail.com"
+					"email": "ocramius@gmail.com",
+					"role": "maintainer"
                 }
             ],
             "description": "Prevents installation of composer packages with known security vulnerabilities: no API, simply require it",
@@ -4993,8 +4861,8 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "role": "lead",
-                    "email": "arne@blankerts.de"
+					"email": "arne@blankerts.de",
+					"role": "lead"
                 }
             ],
             "description": "The classes contained within this repository extend the standard DOM to use exceptions at all occasions of errors instead of PHP warnings or notices. They also add various custom methods and shortcuts for convenience and to simplify the usage of DOM.",
@@ -5098,12 +4966,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/OnTheGoSystems/collect.git",
-                "reference": "d395c7e42f036fc29c81b4519b0ca4b00215a732"
+				"reference": "70a9b94636d355c0c8d1e90db0384493a2b3d8f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OnTheGoSystems/collect/zipball/d395c7e42f036fc29c81b4519b0ca4b00215a732",
-                "reference": "d395c7e42f036fc29c81b4519b0ca4b00215a732",
+				"url": "https://api.github.com/repos/OnTheGoSystems/collect/zipball/70a9b94636d355c0c8d1e90db0384493a2b3d8f9",
+				"reference": "70a9b94636d355c0c8d1e90db0384493a2b3d8f9",
                 "shasum": ""
             },
             "require": {
@@ -5139,7 +5007,38 @@
             "support": {
                 "source": "https://github.com/OnTheGoSystems/collect/tree/wpml-collect-rename"
             },
-            "time": "2019-08-21T09:25:10+00:00"
+			"time": "2019-09-26T02:56:31+00:00"
+		},
+		{
+			"name": "xrstf/composer-php52",
+			"version": "v1.0.20",
+			"source": {
+				"type": "git",
+				"url": "https://github.com/composer-php52/composer-php52.git",
+				"reference": "bd41459d5e27df8d33057842b32377c39e97a5a8"
+			},
+			"dist": {
+				"type": "zip",
+				"url": "https://api.github.com/repos/composer-php52/composer-php52/zipball/bd41459d5e27df8d33057842b32377c39e97a5a8",
+				"reference": "bd41459d5e27df8d33057842b32377c39e97a5a8",
+				"shasum": ""
+			},
+			"type": "library",
+			"extra": {
+				"branch-alias": {
+					"dev-default": "1.x-dev"
+				}
+			},
+			"autoload": {
+				"psr-0": {
+					"xrstf\\Composer52": "lib/"
+				}
+			},
+			"notification-url": "https://packagist.org/downloads/",
+			"license": [
+				"MIT"
+			],
+			"time": "2016-04-16T21:52:24+00:00"
         }
     ],
     "aliases": [],
@@ -5148,8 +5047,8 @@
         "wpml-shared/wpml-lib-dependencies": 20,
         "otgs/build-tools-ci": 20,
         "otgs/changelog": 20,
-        "otgs/diff-checks": 20,
         "otgs/php-integration-tests": 20,
+		"otgs/wp-plugin-version": 20,
         "roave/security-advisories": 20,
         "wpml/collect": 20
     },

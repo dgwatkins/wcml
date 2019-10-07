@@ -38,6 +38,10 @@
         "collect": {
             "type": "vcs",
             "url": "https://github.com/OnTheGoSystems/collect.git"
+        },
+        "wp-plugin-version": {
+            "type": "vcs",
+            "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-wp-plugin-version.git"
         }
     },
     "config": {
@@ -51,7 +55,6 @@
     "require": {
         "php": ">=5.6.0",
         "otgs/installer": "~2.2.0",
-        "xrstf/composer-php52": "1.*",
         "wpml-shared/wpml-lib-dependencies": "dev-master"
     },
     "require-dev": {
@@ -61,9 +64,9 @@
         "otgs/build-tools": "~0.1",
         "otgs/build-tools-ci": "dev-master",
         "otgs/changelog": "dev-develop",
-        "otgs/diff-checks": "dev-master",
         "otgs/php-integration-tests": "dev-develop",
         "otgs/unit-tests-framework": "~1.2.0",
+        "otgs/wp-plugin-version": "dev-master",
         "roave/security-advisories": "dev-master",
         "sebastian/phpcpd": "^3.0",
         "wpml/collect": "dev-wpml-collect-rename"
@@ -71,9 +74,6 @@
     "scripts": {
         "make": [
             "make githooks"
-        ],
-        "php52-autoloader": [
-            "xrstf\\Composer52\\Generator::onPostInstallCmd"
         ],
         "post-install-cmd": [
             "@make"
