@@ -39,7 +39,7 @@ class woocommerce_wpml {
 	public $coupons;
 	/** @var WCML_Locale */
 	public $locale;
-	/** @var WCML_Media */
+	/** @var WCML\Media\Wrapper\IMedia */
 	public $media;
 	/** @var WCML_Downloadable_Products */
 	public $downloadable;
@@ -240,7 +240,7 @@ class woocommerce_wpml {
 		$this->coupons = new WCML_Coupons( $this, $sitepress );
 		$this->coupons->add_hooks();
 		$this->locale = new WCML_Locale( $this, $sitepress );
-		$this->media  = new WCML_Media( $this, $sitepress, $wpdb );
+		$this->media  = WCML\Media\Wrapper\Factory::create( $this );
 		$this->media->add_hooks();
 		$this->downloadable = new WCML_Downloadable_Products( $this, $sitepress );
 		$this->downloadable->add_hooks();

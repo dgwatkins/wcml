@@ -1,6 +1,8 @@
 <?php
 
-class WCML_Media{
+use WCML\Media\Wrapper\IMedia;
+
+class WCML_Media implements IMedia {
 
     /** @var woocommerce_wpml */
     private $woocommerce_wpml;
