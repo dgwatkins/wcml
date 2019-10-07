@@ -49,9 +49,9 @@ install-prod: composer-install-prod
 # Build
 .PHONY: dev prod
 
-#dev prod: npm-install
-#	@npm run build:$@
-#	$(info WebPack modules bundled)
+dev prod: npm-install
+	@npm run build:$@
+	$(info WebPack modules bundled)
 
 # Tests
 .PHONY: tests
@@ -62,21 +62,26 @@ tests:: phpunit
 # Git Hooks
 .PHONY: precommit
 
-precommit:: check-php
 precommit:: validate-composer
-#precommit:: validate-npm
+precommit:: validate-npm
+precommit:: dupes
+precommit:: compatibility
 
 # precommit
-.PHONY: check-php validate-composer validate-npm
+.PHONY: dupes compatibility validate-composer validate-npm
 
-check-php: composer-install
-	./vendor/bin/otgs-check-php
+dupes: composer-install
+	./.make/check-duplicates.sh
+
+compatibility: composer-install
+	./.make/check-compatibility.sh
 
 validate-composer: composer-install
 	./.make/check-composer.sh
 
 validate-npm: npm-install
 	./.make/check-npm.sh
+
 
 # Dependency managers
 
@@ -100,26 +105,26 @@ composer-install-prod:
 ## NPM
 .PHONY: npm-install
 
-#package.json: npm-install
-#	@touch $@
-#
-#npm.lock: npm-install
-#	@touch $@
-#
-#npm-install:
-#	$(info Installing NPM/Node dependencies)
-#	@npm install
-#
-#npm-install-prod:
-#	$(info Installing NPM/Node dependencies)
-#	@npm install --production
+package.json: npm-install
+	@touch $@
+
+npm.lock: npm-install
+	@touch $@
+
+npm-install:
+	$(info Installing NPM/Node dependencies)
+	@npm install
+
+npm-install-prod:
+	$(info Installing NPM/Node dependencies)
+	@npm install --production
 
 # Tests
 .PHONY: jest phpunit
 
-#jest: npm-install
-#	$(info Running Jest)
-#	@npm run test
+jest: npm-install
+	$(info Running Jest)
+	@npm run test
 
 phpunit: composer-install
 	$(info Running PhpUnit)
