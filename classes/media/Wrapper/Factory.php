@@ -2,7 +2,7 @@
 
 namespace WCML\Media\Wrapper;
 
-use WCML_Media;
+use WCML\Media\Wrapper\Translatable;
 use woocommerce_wpml;
 use WPML_Element_Sync_Settings_Factory;
 
@@ -21,7 +21,7 @@ class Factory {
 		$settingsFactory = new WPML_Element_Sync_Settings_Factory();
 
 		if ( $settingsFactory->create( 'post' )->is_sync( 'attachment' ) ) {
-			return new WCML_Media( $woocommerce_wpml, $sitepress, $wpdb );
+			return new Translatable( $woocommerce_wpml, $sitepress, $wpdb );
 		}
 
 		return new NonTranslatable();

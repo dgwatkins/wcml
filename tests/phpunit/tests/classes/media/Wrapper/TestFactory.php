@@ -4,7 +4,7 @@ namespace WPML\Media\Wrapper;
 
 use WCML\Media\Wrapper\Factory;
 use WCML\Media\Wrapper\NonTranslatable;
-use WCML_Media;
+use WCML\Media\Wrapper\Translatable;
 use woocommerce_wpml;
 
 /**
@@ -49,7 +49,7 @@ class TestFactory extends \OTGS_TestCase {
 
 		$woocommerce_wpml = $this->getMockBuilder( woocommerce_wpml::class )->getMock();
 
-		$this->assertInstanceOf( WCML_Media::class, Factory::create( $woocommerce_wpml ) );
+		$this->assertInstanceOf( Translatable::class, Factory::create( $woocommerce_wpml ) );
 	}
 
 	/**
