@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-	"content-hash": "6378070919fdc6b6c3812a7d9d4dc9ad",
+    "content-hash": "6378070919fdc6b6c3812a7d9d4dc9ad",
     "packages": [
         {
             "name": "composer/installers",
@@ -179,11 +179,11 @@
         },
         {
             "name": "otgs/installer",
-            "version": "2.2.0",
+            "version": "2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/installer/installer.git",
-				"reference": "a91b37878982ee2d3aa289037b82c1578d8bf79b"
+                "reference": "fd0c007fe5a2f4ab6610d91b209f12157fe241e9"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -266,7 +266,7 @@
                 "update",
                 "utils"
             ],
-			"time": "2019-09-16T04:18:55+00:00"
+            "time": "2019-10-08T07:34:59+00:00"
         },
         {
             "name": "wpml-shared/wpml-lib-dependencies",
@@ -1666,7 +1666,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-changelog.git",
-				"reference": "b291ebd488281541c412ca35fbb18499be3f3edc"
+                "reference": "b291ebd488281541c412ca35fbb18499be3f3edc"
             },
             "require": {
                 "nepda/youtrack-client": "dev-master",
@@ -1709,7 +1709,7 @@
             "keywords": [
                 "cli"
             ],
-			"time": "2019-09-16T08:12:57+00:00"
+            "time": "2019-09-16T08:12:57+00:00"
         },
         {
             "name": "otgs/php-integration-tests",
@@ -1789,42 +1789,42 @@
             "time": "2019-08-29T07:13:54+00:00"
         },
         {
-			"name": "otgs/wp-plugin-version",
-			"version": "dev-master",
-			"source": {
-				"type": "git",
-				"url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-wp-plugin-version.git",
-				"reference": "c1a44a185390a58b70a440c0c0079054078931cc"
-			},
-			"require": {
-				"symfony/console": "^3.4",
-				"symfony/finder": "^3.4"
-			},
-			"bin": [
-				"otgs-wp-plugin-version"
-			],
-			"type": "library",
-			"autoload": {
-				"psr-4": {
-					"OTGS\\WordPress\\": "src/"
-				},
-				"psr-0": {
-					"OTGS\\WordPress\\": "src/"
-				},
-				"classmap": [
-					"src/"
-				]
-			},
-			"authors": [
-				{
-					"name": "Andrea Sciamanna",
-					"email": "andrea.s@onthegosystems.com"
-				}
-			],
-			"description": "CI tools for accessing and manipulating WordPress plugins versions",
-			"time": "2019-08-12T15:23:35+00:00"
-		},
-		{
+            "name": "otgs/wp-plugin-version",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-wp-plugin-version.git",
+                "reference": "c1a44a185390a58b70a440c0c0079054078931cc"
+            },
+            "require": {
+                "symfony/console": "^3.4",
+                "symfony/finder": "^3.4"
+            },
+            "bin": [
+                "otgs-wp-plugin-version"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OTGS\\WordPress\\": "src/"
+                },
+                "psr-0": {
+                    "OTGS\\WordPress\\": "src/"
+                },
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "authors": [
+                {
+                    "name": "Andrea Sciamanna",
+                    "email": "andrea.s@onthegosystems.com"
+                }
+            ],
+            "description": "CI tools for accessing and manipulating WordPress plugins versions",
+            "time": "2019-08-12T15:05:05+00:00"
+        },
+        {
             "name": "php-http/client-common",
             "version": "1.9.1",
             "source": {
@@ -2334,13 +2334,13 @@
                 },
                 {
                     "name": "Wim Godden",
-                    "role": "lead",
-                    "homepage": "https://github.com/wimg"
+                    "homepage": "https://github.com/wimg",
+                    "role": "lead"
                 },
                 {
                     "name": "Juliette Reinders Folmer",
-                    "role": "lead",
-                    "homepage": "https://github.com/jrfnl"
+                    "homepage": "https://github.com/jrfnl",
+                    "role": "lead"
                 }
             ],
             "description": "A set of sniffs for PHP_CodeSniffer that checks for PHP cross-version compatibility.",
@@ -3397,8 +3397,8 @@
             "authors": [
                 {
                     "name": "Marco Pivetta",
-					"email": "ocramius@gmail.com",
-					"role": "maintainer"
+                    "email": "ocramius@gmail.com",
+                    "role": "maintainer"
                 }
             ],
             "description": "Prevents installation of composer packages with known security vulnerabilities: no API, simply require it",
@@ -4861,8 +4861,8 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-					"email": "arne@blankerts.de",
-					"role": "lead"
+                    "email": "arne@blankerts.de",
+                    "role": "lead"
                 }
             ],
             "description": "The classes contained within this repository extend the standard DOM to use exceptions at all occasions of errors instead of PHP warnings or notices. They also add various custom methods and shortcuts for convenience and to simplify the usage of DOM.",
@@ -4966,12 +4966,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/OnTheGoSystems/collect.git",
-				"reference": "70a9b94636d355c0c8d1e90db0384493a2b3d8f9"
+                "reference": "70a9b94636d355c0c8d1e90db0384493a2b3d8f9"
             },
             "dist": {
                 "type": "zip",
-				"url": "https://api.github.com/repos/OnTheGoSystems/collect/zipball/70a9b94636d355c0c8d1e90db0384493a2b3d8f9",
-				"reference": "70a9b94636d355c0c8d1e90db0384493a2b3d8f9",
+                "url": "https://api.github.com/repos/OnTheGoSystems/collect/zipball/70a9b94636d355c0c8d1e90db0384493a2b3d8f9",
+                "reference": "70a9b94636d355c0c8d1e90db0384493a2b3d8f9",
                 "shasum": ""
             },
             "require": {
@@ -5007,38 +5007,38 @@
             "support": {
                 "source": "https://github.com/OnTheGoSystems/collect/tree/wpml-collect-rename"
             },
-			"time": "2019-09-26T02:56:31+00:00"
-		},
-		{
-			"name": "xrstf/composer-php52",
-			"version": "v1.0.20",
-			"source": {
-				"type": "git",
-				"url": "https://github.com/composer-php52/composer-php52.git",
-				"reference": "bd41459d5e27df8d33057842b32377c39e97a5a8"
-			},
-			"dist": {
-				"type": "zip",
-				"url": "https://api.github.com/repos/composer-php52/composer-php52/zipball/bd41459d5e27df8d33057842b32377c39e97a5a8",
-				"reference": "bd41459d5e27df8d33057842b32377c39e97a5a8",
-				"shasum": ""
-			},
-			"type": "library",
-			"extra": {
-				"branch-alias": {
-					"dev-default": "1.x-dev"
-				}
-			},
-			"autoload": {
-				"psr-0": {
-					"xrstf\\Composer52": "lib/"
-				}
-			},
-			"notification-url": "https://packagist.org/downloads/",
-			"license": [
-				"MIT"
-			],
-			"time": "2016-04-16T21:52:24+00:00"
+            "time": "2019-09-26T02:56:31+00:00"
+        },
+        {
+            "name": "xrstf/composer-php52",
+            "version": "v1.0.20",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer-php52/composer-php52.git",
+                "reference": "bd41459d5e27df8d33057842b32377c39e97a5a8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer-php52/composer-php52/zipball/bd41459d5e27df8d33057842b32377c39e97a5a8",
+                "reference": "bd41459d5e27df8d33057842b32377c39e97a5a8",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-default": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "xrstf\\Composer52": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "time": "2016-04-16T21:52:24+00:00"
         }
     ],
     "aliases": [],
@@ -5048,7 +5048,7 @@
         "otgs/build-tools-ci": 20,
         "otgs/changelog": 20,
         "otgs/php-integration-tests": 20,
-		"otgs/wp-plugin-version": 20,
+        "otgs/wp-plugin-version": 20,
         "roave/security-advisories": 20,
         "wpml/collect": 20
     },
