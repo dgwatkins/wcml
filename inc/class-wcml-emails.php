@@ -9,8 +9,8 @@ class WCML_Emails {
 	private $woocommerce_wpml;
 	/** @var Sitepress */
 	private $sitepress;
-	/** @var WooCommerce */
-	private $woocommerce;
+	/** @var \WC_Emails $wcEmails */
+	private $wcEmails;
 	/** @var wpdb */
 	private $wpdb;
 
@@ -18,14 +18,14 @@ class WCML_Emails {
 	 * WCML_Emails constructor.
 	 *
 	 * @param woocommerce_wpml $woocommerce_wpml
-	 * @param SitePress $sitepress
-	 * @param WooCommerce $woocommerce
-	 * @param wpdb $wpdb
+	 * @param SitePress        $sitepress
+	 * @param WC_Emails        $wcEmails
+	 * @param wpdb             $wpdb
 	 */
-	function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress, WooCommerce $woocommerce, wpdb $wpdb ) {
+	function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress, WC_Emails $wcEmails, wpdb $wpdb ) {
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->sitepress        = $sitepress;
-		$this->woocommerce      = $woocommerce;
+		$this->wcEmails         = $wcEmails;
 		$this->wpdb             = $wpdb;
 	}
 
@@ -668,7 +668,7 @@ class WCML_Emails {
 			( $ignoreClassExists || class_exists( $emailClass ) )
 			&& isset( $this->wcEmails->emails[ $emailClass ] )
 		) {
-			return $this->woocommerce->mailer()->emails[ $emailClass ];
+			return $this->wcEmails->emails[ $emailClass ];
 		}
 
 		return null;

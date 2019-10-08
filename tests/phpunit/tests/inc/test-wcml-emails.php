@@ -9,8 +9,8 @@ class Test_WCML_Emails extends OTGS_TestCase {
 	private $woocommerce_wpml;
 	/** @var Sitepress */
 	private $sitepress;
-	/** @var WooCommerce */
-	private $woocommerce;
+	/** @var \WC_Emails $wcEmails */
+	private $wcEmails;
 	/** @var wpdb */
 	private $wpdb;
 	/** @var WPML_WP_API $wp_api */
@@ -33,9 +33,8 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			->disableOriginalConstructor()
 			->getMock();
 
-		$this->woocommerce = $this->getMockBuilder('WooCommerce')
+		$this->wcEmails = $this->getMockBuilder('WC_Emails')
 			->disableOriginalConstructor()
-			->setMethods( array( 'mailer' ) )
 			->getMock();
 
 		$this->wp_api->method( 'constant' )->with( 'WPML_ST_VERSION' )->willReturn( '2.5.2' );
@@ -45,7 +44,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 	private function get_subject( ){
 
-		return new WCML_Emails( $this->woocommerce_wpml, $this->sitepress, $this->woocommerce, $this->wpdb );
+		return new WCML_Emails( $this->woocommerce_wpml, $this->sitepress, $this->wcEmails, $this->wpdb );
 
 	}
 
@@ -93,7 +92,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			->disableOriginalConstructor()
 			->getMock();
 
-		$subject = new WCML_Emails( $this->woocommerce_wpml, $sitepress, $this->woocommerce, $this->wpdb );
+		$subject = new WCML_Emails( $this->woocommerce_wpml, $sitepress, $this->wcEmails, $this->wpdb );
 
 		\WP_Mock::userFunction( 'get_current_user_id', array(
 			'return' => $user_id,
@@ -189,7 +188,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			'return' => false
 		) );
 
-		$mailer =  $this->getMockBuilder('WC_Emails')
+		$this->wcEmails =  $this->getMockBuilder('WC_Emails')
 		                ->disableOriginalConstructor()
 		                ->getMock();
 
@@ -200,9 +199,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$wc_mailer_completed->enabled = rand_str();
 
 
-		$mailer->emails = array( 'WC_Email_Customer_Completed_Order' => $wc_mailer_completed );
-
-		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
+		$this->wcEmails->emails = array( 'WC_Email_Customer_Completed_Order' => $wc_mailer_completed );
 
 		$wc_mailer_completed->expects( $this->once() )
 		                    ->method( 'trigger' )
@@ -287,7 +284,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 	public function it_should_filter_order_email_heading( $class_name, $method ){
 
 
-		$mailer =  $this->getMockBuilder('WC_Emails')
+		$this->wcEmails =  $this->getMockBuilder('WC_Emails')
 		                ->disableOriginalConstructor()
 		                ->getMock();
 
@@ -297,9 +294,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		                            ->getMock();
 		$wc_mailer_class->heading = rand_str();
 
-		$mailer->emails = array( $class_name => $wc_mailer_class );
-
-		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
+		$this->wcEmails->emails = array( $class_name => $wc_mailer_class );
 
 		$translated_formatted_heading = rand_str();
 
@@ -329,7 +324,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 	 */
 	public function it_should_filter_order_email_subject( $class_name, $method ){
 
-		$mailer =  $this->getMockBuilder('WC_Emails')
+		$this->wcEmails =  $this->getMockBuilder('WC_Emails')
 		                ->disableOriginalConstructor()
 		                ->getMock();
 
@@ -339,9 +334,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		                            ->getMock();
 		$wc_mailer_class->subject = rand_str();
 
-		$mailer->emails = array( $class_name => $wc_mailer_class );
-
-		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
+		$this->wcEmails->emails = array( $class_name => $wc_mailer_class );
 
 		$translated_formatted_subject = rand_str();
 
@@ -373,7 +366,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 	public function it_should_filter_email_headings( $class_name, $method ){
 
 		$order_id = 10;
-		$mailer =  $this->getMockBuilder('WC_Emails')
+		$this->wcEmails =  $this->getMockBuilder('WC_Emails')
 		                ->disableOriginalConstructor()
 		                ->getMock();
 
@@ -385,11 +378,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$wc_mailer_class->heading = rand_str();
 		$wc_mailer_class->enabled = true;
 
-		$mailer->emails = array( $class_name => $wc_mailer_class );
-
-		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
-
-		$translated_formatted_subject = rand_str();
+		$this->wcEmails->emails = array( $class_name => $wc_mailer_class );
 
 		$wc_mailer_class->expects( $this->once() )
 		                        ->method( 'trigger' )
@@ -432,7 +421,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			'return' => $user->ID
 		));
 
-		$mailer =  $this->getMockBuilder('WC_Emails')
+		$this->wcEmails =  $this->getMockBuilder('WC_Emails')
 		                ->disableOriginalConstructor()
 		                ->getMock();
 
@@ -452,9 +441,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		                    ->willReturn( true );
 
 
-		$mailer->emails = array( 'WC_Email_New_Order' => $wc_mailer_new_order );
-
-		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
+		$this->wcEmails->emails = array( 'WC_Email_New_Order' => $wc_mailer_new_order );
 
 		$this->sitepress->method( 'get_user_admin_language' )->with( $user->ID, true )->willReturn( $user_language );
 		$this->sitepress->expects( $this->once() )->method( 'switch_lang' )->with( $user_language );
@@ -483,7 +470,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			'return' => 0
 		));
 
-		$mailer =  $this->getMockBuilder('WC_Emails')
+		$this->wcEmails =  $this->getMockBuilder('WC_Emails')
 		                ->disableOriginalConstructor()
 		                ->getMock();
 
@@ -503,9 +490,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		                    ->willReturn( true );
 
 
-		$mailer->emails = array( 'WC_Email_New_Order' => $wc_mailer_new_order );
-
-		$this->woocommerce->method( 'mailer' )->willReturn( $mailer );
+		$this->wcEmails->emails = array( 'WC_Email_New_Order' => $wc_mailer_new_order );
 
 		$this->sitepress->method( 'get_default_language' )->willReturn( $default_language );
 		$this->sitepress->expects( $this->once() )->method( 'switch_lang' )->with( $default_language );
