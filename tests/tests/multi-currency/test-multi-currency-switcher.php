@@ -80,9 +80,6 @@ class Test_WCML_Multi_Currency_Switcher extends WCML_UnitTestCase {
 
         $this->multi_currency->currency_swicther = new WCML_Currency_Switcher( $this->woocommerce_wpml, $this->sitepress );
 
-        $this->multi_currency->prices->prices_init();
-
-
         $this->switcher_args['switcher_style']  = array(
             'dropdown' => array(
                 'expected_string_match' => '#</?select /?([^>]*)>#',

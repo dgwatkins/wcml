@@ -27,6 +27,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
 		                               ->disableOriginalConstructor()
+		                               ->setMethods( array( 'get_setting' ) )
 		                               ->getMock();
 
 		$this->wcml_multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
@@ -238,6 +239,8 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 			'return' => $converted_price
 		) );
 
+		$this->woocommerce_wpml->method( 'get_setting' )->with( 'currency_options' )->willReturn( array() );
+
 		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
 		                                         ->disableOriginalConstructor()
 		                                         ->setMethods( array( 'get_original_product_id' ) )
@@ -312,6 +315,8 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 			'args' => array( $product_obj, array( 'price' => $converted_price , 'qty' => 1 ) ),
 			'return' => $converted_price
 		) );
+
+		$this->woocommerce_wpml->method( 'get_setting' )->with( 'currency_options' )->willReturn( array() );
 
 		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
 		                                         ->disableOriginalConstructor()
