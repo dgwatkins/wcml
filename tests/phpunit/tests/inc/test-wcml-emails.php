@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @group email
+ */
 class Test_WCML_Emails extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
@@ -402,6 +405,8 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		return array(
 			array( 'WC_Email_Customer_On_Hold_Order', 'email_heading_on_hold' ),
 			array( 'WC_Email_Customer_Processing_Order', 'email_heading_processing' ),
+			array( 'WC_Email_Customer_Processing_Order', 'email_heading_processing' ),
+			array( 'WC_Email_Customer_Note', 'email_heading_note' ),
 		);
 	}
 
