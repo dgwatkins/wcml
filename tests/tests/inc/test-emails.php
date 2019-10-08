@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @group email
+ */
 class Test_WCML_Emails extends WCML_UnitTestCase {
 	private $order;
 	private $order_id;
