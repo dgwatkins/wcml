@@ -65,7 +65,7 @@ If the checks fail, WooCommerce Multilingual will not be able to run.
 * MySQL version 5.6 or later
 
 * WooCommerce 3.3.0 or later
-* WPML Multilingual CMS 4.2.8 or later
+* WPML Multilingual CMS 4.3.0 or later
 * WPML String Translation 3.0.0 or later
 * WPML Translation Management 2.9.0 or later
 
