@@ -328,9 +328,8 @@ class WCML_Multi_Currency_Orders {
 			}
 
 			if ( ! isset( $this->multi_currency->prices ) ) {
-				$this->multi_currency->prices = new WCML_Multi_Currency_Prices( $this->multi_currency );
+				$this->multi_currency->prices = new WCML_Multi_Currency_Prices( $this->multi_currency, $this->woocommerce_wpml->get_setting( 'currency_options' ) );
 				$this->multi_currency->prices->add_hooks();
-				$this->multi_currency->prices->prices_init();
 			}
 
 			$product_id          = $item->get_variation_id() ? $item->get_variation_id() : $item->get_product_id();

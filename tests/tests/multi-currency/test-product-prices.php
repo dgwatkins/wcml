@@ -23,8 +23,6 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 		$this->settings 				=& $this->woocommerce_wpml->settings;
 		$this->multi_currency 			=& $this->woocommerce_wpml->multi_currency;
 
-		$this->multi_currency->prices->prices_init();
-
 		// LANGUAGE AND CURRENCIES
 		$this->default_currency 	= 'GBP';
 		$this->secondary_currencies	= array('USD', 'RON', 'AUD', 'CHF');

@@ -64,8 +64,6 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 		// Multi currency objects
 		$this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
 		$this->multi_currency =& $this->woocommerce_wpml->multi_currency;
-
-		$this->multi_currency->prices->prices_init();
 	}
 
 

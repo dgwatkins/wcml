@@ -6,19 +6,13 @@
 class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 
 	private function get_subject( $multi_currency ){
-		return new WCML_Multi_Currency_Prices( $multi_currency );
+		return new WCML_Multi_Currency_Prices( $multi_currency, array() );
 	}
 
 	private function get_multi_currency_mock() {
 		return $this->getMockBuilder( 'WCML_Multi_Currency' )
 		            ->disableOriginalConstructor()
-					->setMethods( ['get_client_currency', 'set_client_currency', 'get_exchange_rates', 'get_currencies_without_cents' ] )
-		            ->getMock();
-	}
-
-	private function get_woocommerce_wpml_mock() {
-		return $this->getMockBuilder( 'woocommerce_wpml' )
-		            ->disableOriginalConstructor()
+					->setMethods( ['get_client_currency', 'set_client_currency', 'get_exchange_rates', 'get_currencies_without_cents', 'are_filters_need_loading' ] )
 		            ->getMock();
 	}
 
@@ -78,15 +72,13 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 
 		$subject = $this->get_subject( $multi_currency );
 
-		\WP_Mock::expectFilterAdded( 'init', array( $subject, 'prices_init' ), 5 );
-
 		\WP_Mock::expectFilterAdded( 'woocommerce_currency', array( $subject, 'currency_filter' ) );
 
-		\WP_Mock::expectFilterAdded( 'wcml_price_currency', array( $subject, 'price_currency_filter' ) );      // WCML filters
+		\WP_Mock::expectFilterAdded( 'wcml_price_currency', array( $subject, 'price_currency_filter' ) );
 		\WP_Mock::expectFilterAdded( 'wcml_product_price_by_currency', array(
 			$subject,
 			'get_product_price_in_currency'
-		), 10, 2 );  // WCML filters
+		), 10, 2 );
 
 
 		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'product_price_filter' ), 10, 4 );
@@ -224,7 +216,10 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		$post_type = 'product';
 		$meta_key = null;
 
-		$subject = $this->get_subject( $this->get_multi_currency_mock() );
+		$multi_currency = $this->get_multi_currency_mock();
+		$multi_currency->method( 'are_filters_need_loading' )->willReturn( true );
+
+		$subject = $this->get_subject( $multi_currency );
 
 		WP_Mock::userFunction( 'get_post_type', array(
 			'times'  => 1,
@@ -248,7 +243,10 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		$post_type = 'post';
 		$meta_key = null;
 
-		$subject = $this->get_subject( $this->get_multi_currency_mock() );
+		$multi_currency = $this->get_multi_currency_mock();
+		$multi_currency->method( 'are_filters_need_loading' )->willReturn( true );
+
+		$subject = $this->get_subject( $multi_currency );
 
 		WP_Mock::userFunction( 'get_post_type', array(
 			'times'  => 1,

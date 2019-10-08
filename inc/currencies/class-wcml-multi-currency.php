@@ -102,8 +102,8 @@ class WCML_Multi_Currency {
 
 		$this->init_currencies();
 
-		$this->load_filters = $this->_load_filters();
-		$this->prices       = new WCML_Multi_Currency_Prices( $this );
+		$this->load_filters = $this->are_filters_need_loading();
+		$this->prices       = new WCML_Multi_Currency_Prices( $this, $woocommerce_wpml->get_setting( 'currency_options' ) );
 		$this->prices->add_hooks();
 		if ( $this->load_filters ) {
 			$table_rate_shipping_multi_currency = new WCML_Multi_Currency_Table_Rate_Shipping();
@@ -152,7 +152,7 @@ class WCML_Multi_Currency {
 
 	}
 
-	private function _load_filters() {
+	public function are_filters_need_loading() {
 		$load = false;
 
 		if ( ! is_admin() && $this->get_client_currency() !== wcml_get_woocommerce_currency_option() ) {

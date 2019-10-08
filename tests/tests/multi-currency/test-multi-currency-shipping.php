@@ -72,12 +72,6 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
 
         );
 
-        // Multi currency objects
-        $this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
-        $this->multi_currency =& $this->woocommerce_wpml->multi_currency;
-
-        $this->multi_currency->prices->prices_init();
-
         // Create Zones
         WCML_Helper_Shipping::create_mock_zones();
         // Create a flat rate method (cost will be 10)
@@ -111,6 +105,9 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
                 = $this->currencies[$code]['rate'] * $local_pickup_cost;
         }
 
+	    // Multi currency objects
+	    $this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
+	    $this->multi_currency =& $this->woocommerce_wpml->multi_currency;
     }
 
     public function test_convert_shipping_cost(){
