@@ -420,5 +420,350 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$this->assertEquals( $expected_counts, $filtered_counts );
 	}
 
+	private function get_wc_order_mock( $order_id ) {
+		$order = $this->getMockBuilder( 'WC_Order' )
+		              ->disableOriginalConstructor()
+		              ->setMethods( array( 'get_id' ) )
+		              ->getMock();
+
+		$order->expects( $this->once() )->method( 'get_id' )->willReturn( $order_id );
+
+		return $order;
+	}
+
+	private function get_booking_mock( $booking_id, $wc_order = false ) {
+		$booking = $this->getMockBuilder( 'WC_Booking' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'get_order' ) )
+		                ->getMock();
+
+		$booking->expects( $this->once() )->method( 'get_order' )->willReturn( $wc_order );
+
+		\WP_Mock::userFunction( 'get_wc_booking', array(
+			'args'   => array( $booking_id ),
+			'return' => $booking
+		) );
+
+		return $booking;
+	}
+
+	private function get_woocommerce_with_mailer_mock( $email_class, $params ) {
+		$mailer = $this->getMockBuilder( 'WC_Emails' )
+		               ->disableOriginalConstructor()
+		               ->getMock();
+
+		$wc_mailer_class = $this->getMockBuilder( $email_class )
+		                        ->disableOriginalConstructor()
+		                        ->getMock();
+		foreach ( $params as $key => $value ) {
+			$wc_mailer_class->$key = $value;
+		}
+
+		$mailer->emails = array( $email_class => $wc_mailer_class );
+
+		$woocommerce = $this->getMockBuilder( 'woocommerce' )
+		                    ->disableOriginalConstructor()
+		                    ->setMethods( array( 'mailer' ) )
+		                    ->getMock();
+		$woocommerce->method( 'mailer' )->willReturn( $mailer );
+
+		return $woocommerce;
+	}
+
+	private function get_woocommerce_wpml_with_translated_strings_mock( $strings ) {
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->getMock();
+
+		$woocommerce_wpml->emails = $this->getMockBuilder( 'WCML_Emails' )
+		                                 ->disableOriginalConstructor()
+		                                 ->setMethods( array( 'wcml_get_translated_email_string' ) )
+		                                 ->getMock();
+
+		$that          = $this;
+		$that->strings = $strings;
+		$woocommerce_wpml->emails->method( 'wcml_get_translated_email_string' )->willReturnCallback( function ( $context, $name, $order_id = false, $language_code = null ) use ( $that ) {
+			if ( 'heading' === substr( $name, - 7 ) ) {
+				return $that->strings['heading'];
+			}
+			if ( 'subject' === substr( $name, - 7 ) ) {
+				return $that->strings['subject'];
+			}
+			if ( 'heading_confirmation' === substr( $name, - 20 ) ) {
+				return $that->strings['heading_confirmation'];
+			}
+			if ( 'subject_confirmation' === substr( $name, - 20 ) ) {
+				return $that->strings['subject_confirmation'];
+			}
+
+			return rand_str();
+		} );
+
+		return $woocommerce_wpml;
+	}
+
+	private function get_sitepress_with_user_language_mock( $user_email, $user_exists = true ) {
+
+		$user                = new stdClass();
+		$user->ID            = 1;
+		$user_admin_language = 'es';
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_user_admin_language' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_user_admin_language' )->with( $user->ID, true )->willReturn( $user_admin_language );
+
+		\WP_Mock::userFunction( 'get_user_by', array(
+			'args'   => array( 'email', $user_email ),
+			'return' => $user_exists ? $user : false,
+		) );
+
+		return $sitepress;
+	}
+
+
+	/**
+	 * @test
+	 * @dataProvider customer_emails_classes
+	 */
+	public function it_should_translate_booking_customer_emails_in_order_language( $email_class, $method_name ) {
+
+		$booking_id         = 11;
+		$order_id           = 12;
+		$email_heading      = rand_str();
+		$translated_heading = rand_str();
+		$email_subject      = rand_str();
+		$translated_subject = rand_str();
+
+		$booking = $this->get_booking_mock( $booking_id, $this->get_wc_order_mock( $order_id ) );
+
+		$woocommerce = $this->get_woocommerce_with_mailer_mock( $email_class, array(
+			'heading' => $email_heading,
+			'subject' => $email_subject
+		) );
+
+		$woocommerce_wpml = $this->get_woocommerce_wpml_with_translated_strings_mock( array(
+			'heading' => $translated_heading,
+			'subject' => $translated_subject
+		) );
+
+		$subject = $this->get_subject( null, $woocommerce_wpml, $woocommerce );
+
+		$subject->$method_name( $booking_id );
+
+		$this->assertEquals( $translated_heading, $woocommerce->mailer()->emails[ $email_class ]->heading );
+		$this->assertEquals( $translated_subject, $woocommerce->mailer()->emails[ $email_class ]->subject );
+	}
+
+
+	/**
+	 * @test
+	 * @dataProvider customer_emails_classes
+	 */
+	public function it_should_not_translate_booking_customer_emails_if_order_not_set( $email_class, $method_name ) {
+
+		$booking_id    = 11;
+		$email_heading = rand_str();
+		$email_subject = rand_str();
+
+		$booking = $this->get_booking_mock( $booking_id );
+
+		$woocommerce = $this->get_woocommerce_with_mailer_mock( $email_class, array(
+			'heading' => $email_heading,
+			'subject' => $email_subject
+		) );
+
+		$subject = $this->get_subject( null, null, $woocommerce );
+
+		$subject->$method_name( $booking_id );
+
+		$this->assertEquals( $email_heading, $woocommerce->mailer()->emails[ $email_class ]->heading );
+		$this->assertEquals( $email_subject, $woocommerce->mailer()->emails[ $email_class ]->subject );
+	}
+
+	public function customer_emails_classes() {
+
+		return array(
+			array( 'WC_Email_Booking_Confirmed', 'translate_booking_confirmed_email_texts' ),
+			array( 'WC_Email_Booking_Cancelled', 'translate_booking_cancelled_email_texts' ),
+			array( 'WC_Email_Booking_Reminder', 'translate_booking_reminder_email_texts' ),
+		);
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_should_translate_new_booking_email_in_recipient_language() {
+
+		$booking_id                      = 11;
+		$user_email                      = 'admin@test.com';
+		$email_heading                   = rand_str();
+		$translated_heading              = rand_str();
+		$email_heading_confirmation      = rand_str();
+		$translated_heading_confirmation = rand_str();
+		$email_subject                   = rand_str();
+		$translated_subject              = rand_str();
+		$email_subject_confirmation      = rand_str();
+		$translated_subject_confirmation = rand_str();
+
+		$woocommerce = $this->get_woocommerce_with_mailer_mock( 'WC_Email_New_Booking', array(
+				'heading'              => $email_heading,
+				'heading_confirmation' => $email_heading_confirmation,
+				'subject'              => $email_subject,
+				'subject_confirmation' => $email_subject_confirmation,
+				'recipient'            => $user_email,
+			)
+		);
+
+		$woocommerce_wpml = $this->get_woocommerce_wpml_with_translated_strings_mock( array(
+			'heading'              => $translated_heading,
+			'heading_confirmation' => $translated_heading_confirmation,
+			'subject'              => $translated_subject,
+			'subject_confirmation' => $translated_subject_confirmation,
+		) );
+
+		$sitepress = $this->get_sitepress_with_user_language_mock( $user_email );
+
+		$subject = $this->get_subject( $sitepress, $woocommerce_wpml, $woocommerce );
+
+		$subject->translate_new_booking_email_texts( $booking_id );
+
+		$this->assertEquals( $translated_heading, $woocommerce->mailer()->emails['WC_Email_New_Booking']->heading );
+		$this->assertEquals( $translated_subject, $woocommerce->mailer()->emails['WC_Email_New_Booking']->subject );
+		$this->assertEquals( $translated_heading_confirmation, $woocommerce->mailer()->emails['WC_Email_New_Booking']->heading_confirmation );
+		$this->assertEquals( $translated_subject_confirmation, $woocommerce->mailer()->emails['WC_Email_New_Booking']->subject_confirmation );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_translate_new_booking_email_in_order_language() {
+
+		$booking_id                      = 11;
+		$order_id                        = 12;
+		$user_email                      = 'admin@test.com';
+		$email_heading                   = rand_str();
+		$translated_heading              = rand_str();
+		$email_heading_confirmation      = rand_str();
+		$translated_heading_confirmation = rand_str();
+		$email_subject                   = rand_str();
+		$translated_subject              = rand_str();
+		$email_subject_confirmation      = rand_str();
+		$translated_subject_confirmation = rand_str();
+
+		$booking = $this->get_booking_mock( $booking_id, $this->get_wc_order_mock( $order_id ) );
+
+		$woocommerce = $this->get_woocommerce_with_mailer_mock( 'WC_Email_New_Booking', array(
+				'heading'              => $email_heading,
+				'heading_confirmation' => $email_heading_confirmation,
+				'subject'              => $email_subject,
+				'subject_confirmation' => $email_subject_confirmation,
+				'recipient'            => $user_email,
+			)
+		);
+
+		$woocommerce_wpml = $this->get_woocommerce_wpml_with_translated_strings_mock( array(
+			'heading'              => $translated_heading,
+			'heading_confirmation' => $translated_heading_confirmation,
+			'subject'              => $translated_subject,
+			'subject_confirmation' => $translated_subject_confirmation,
+		) );
+
+		$sitepress = $this->get_sitepress_with_user_language_mock( $user_email, false );
+
+		$subject = $this->get_subject( $sitepress, $woocommerce_wpml, $woocommerce );
+
+		$subject->translate_new_booking_email_texts( $booking_id );
+
+		$this->assertEquals( $translated_heading, $woocommerce->mailer()->emails['WC_Email_New_Booking']->heading );
+		$this->assertEquals( $translated_subject, $woocommerce->mailer()->emails['WC_Email_New_Booking']->subject );
+		$this->assertEquals( $translated_heading_confirmation, $woocommerce->mailer()->emails['WC_Email_New_Booking']->heading_confirmation );
+		$this->assertEquals( $translated_subject_confirmation, $woocommerce->mailer()->emails['WC_Email_New_Booking']->subject_confirmation );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_translate_booking_cancelled_email_in_recipient_language() {
+
+		$booking_id         = 11;
+		$user_email         = 'admin@test.com';
+		$email_heading      = rand_str();
+		$translated_heading = rand_str();
+		$email_subject      = rand_str();
+		$translated_subject = rand_str();
+
+		$woocommerce = $this->get_woocommerce_with_mailer_mock( 'WC_Email_Admin_Booking_Cancelled', array(
+				'heading'   => $email_heading,
+				'subject'   => $email_subject,
+				'recipient' => $user_email,
+			)
+		);
+
+		$sitepress = $this->get_sitepress_with_user_language_mock( $user_email );
+
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->getMock();
+
+		$woocommerce_wpml = $this->get_woocommerce_wpml_with_translated_strings_mock( array(
+			'heading' => $translated_heading,
+			'subject' => $translated_subject,
+		) );
+
+		$subject = $this->get_subject( $sitepress, $woocommerce_wpml, $woocommerce );
+
+		$subject->translate_booking_cancelled_admin_email_texts( $booking_id );
+
+		$this->assertEquals( $translated_heading, $woocommerce->mailer()->emails['WC_Email_Admin_Booking_Cancelled']->heading );
+		$this->assertEquals( $translated_subject, $woocommerce->mailer()->emails['WC_Email_Admin_Booking_Cancelled']->subject );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_translate_booking_cancelled_email_in_order_language() {
+
+		$booking_id         = 11;
+		$order_id           = 12;
+		$user_email         = 'admin@test.com';
+		$email_heading      = rand_str();
+		$translated_heading = rand_str();
+		$email_subject      = rand_str();
+		$translated_subject = rand_str();
+
+		$booking = $this->get_booking_mock( $booking_id, $this->get_wc_order_mock( $order_id ) );
+
+		$woocommerce = $this->get_woocommerce_with_mailer_mock( 'WC_Email_Admin_Booking_Cancelled', array(
+				'heading'   => $email_heading,
+				'subject'   => $email_subject,
+				'recipient' => $user_email,
+			)
+		);
+
+		$sitepress = $this->get_sitepress_with_user_language_mock( $user_email, false );
+
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->getMock();
+
+		$woocommerce_wpml = $this->get_woocommerce_wpml_with_translated_strings_mock( array(
+			'heading' => $translated_heading,
+			'subject' => $translated_subject,
+		) );
+
+		$subject = $this->get_subject( $sitepress, $woocommerce_wpml, $woocommerce );
+
+		$subject->translate_booking_cancelled_admin_email_texts( $booking_id );
+
+		$this->assertEquals( $translated_heading, $woocommerce->mailer()->emails['WC_Email_Admin_Booking_Cancelled']->heading );
+		$this->assertEquals( $translated_subject, $woocommerce->mailer()->emails['WC_Email_Admin_Booking_Cancelled']->subject );
+	}
+
 }
 
