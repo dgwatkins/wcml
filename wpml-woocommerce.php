@@ -78,6 +78,7 @@ function wcml_loader() {
 		'WCML_Privacy_Content_Factory',
 		'WCML_ATE_Activate_Synchronization',
 		\WCML\RewriteRules\Hooks::class,
+		\WCML\Email\Settings\Hooks::class,
 	);
 
 	if (
