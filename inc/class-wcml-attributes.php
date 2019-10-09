@@ -32,6 +32,14 @@ class WCML_Attributes{
 		$this->wpdb              = $wpdb;
 	}
 
+	private function get_wcml_terms_instance(){
+		return $this->woocommerce_wpml->terms;
+	}
+
+	private function get_wcml_products_instance(){
+		return $this->woocommerce_wpml->products;
+	}
+
     public function add_hooks(){
 
         add_action( 'init', array( $this, 'init' ) );
@@ -42,10 +50,9 @@ class WCML_Attributes{
         if( isset( $_POST['icl_ajx_action'] ) && $_POST['icl_ajx_action'] == 'icl_custom_tax_sync_options' ){
             $this->icl_custom_tax_sync_options();
         }
-
         add_filter( 'woocommerce_product_get_attributes', array( $this, 'filter_adding_to_cart_product_attributes_names' ) );
 
-	    if ( $this->woocommerce_wpml->products->is_product_display_as_translated_post_type() ) {
+	    if ( $this->get_wcml_products_instance()->is_product_display_as_translated_post_type() ) {
 		    add_filter( 'woocommerce_available_variation', array(
 			    $this,
 			    'filter_available_variation_attribute_values_in_current_language'
@@ -60,6 +67,7 @@ class WCML_Attributes{
 		    ) );
 	    }
 	    add_action( 'update_post_meta', array( $this, 'set_translation_status_as_needs_update' ), 10, 3 );
+	    add_action( 'wc_ajax_get_variation', array( $this, 'maybe_filter_get_variation' ), 9 );
     }
 
 	public function init() {
@@ -140,7 +148,7 @@ class WCML_Attributes{
         $this->set_attribute_config_in_wcml_settings( $attribute_name, $is_translatable );
         $this->set_attribute_config_in_wpml_settings( $attribute_name, $is_translatable );
 
-        $this->woocommerce_wpml->terms->update_terms_translated_status( $attribute_name );
+        $this->get_wcml_terms_instance()->update_terms_translated_status( $attribute_name );
     }
 
     public function set_attribute_config_in_wcml_settings( $attribute_name, $is_translatable ){
@@ -342,11 +350,11 @@ class WCML_Attributes{
                     //attr is taxonomy
                     if( $this->is_translatable_attribute( $attribute ) ){
                     	$sanitized_attribute_name = wc_sanitize_taxonomy_name( $attribute );
-                        $default_term_id = $this->woocommerce_wpml->terms->wcml_get_term_id_by_slug( $sanitized_attribute_name, $default_term_slug );
+                        $default_term_id = $this->get_wcml_terms_instance()->wcml_get_term_id_by_slug( $sanitized_attribute_name, $default_term_slug );
                         $tr_id = apply_filters( 'translate_object_id', $default_term_id, $sanitized_attribute_name, false, $lang );
 
                         if( $tr_id ){
-                            $translated_term = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $tr_id, $sanitized_attribute_name );
+                            $translated_term = $this->get_wcml_terms_instance()->wcml_get_term_by_id( $tr_id, $sanitized_attribute_name );
                             $unserialized_default_attributes[ $attribute ] = $translated_term->slug;
                         }
                     }else{
@@ -487,7 +495,7 @@ class WCML_Attributes{
 
         if( $product_attributes ){
             foreach( $product_attributes as $attribute ){
-                $is_fully_translated = $this->woocommerce_wpml->terms->is_fully_translated( 'pa_' . $attribute->attribute_name );
+                $is_fully_translated = $this->get_wcml_terms_instance()->is_fully_translated( 'pa_' . $attribute->attribute_name );
                 if( !$is_fully_translated ){
                     $fully_translated = false;
                     break;
@@ -505,14 +513,14 @@ class WCML_Attributes{
 
         $tax = wc_sanitize_taxonomy_name ( substr( $meta_key, 10 ) );
         if( taxonomy_exists( $tax ) ){
-            $attid = $this->woocommerce_wpml->terms->wcml_get_term_id_by_slug( $tax, $meta_value );
+            $attid = $this->get_wcml_terms_instance()->wcml_get_term_id_by_slug( $tax, $meta_value );
             if( $this->is_translatable_attribute( $tax ) && $attid ){
 
-                $term_obj = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $attid, $tax );
+                $term_obj = $this->get_wcml_terms_instance()->wcml_get_term_by_id( $attid, $tax );
                 $trnsl_term_id = apply_filters( 'translate_object_id', $term_obj->term_id, $tax, false, $lang );
 
                 if( $trnsl_term_id ) {
-                    $trnsl_term_obj = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $trnsl_term_id, $tax );
+                    $trnsl_term_obj = $this->get_wcml_terms_instance()->wcml_get_term_by_id( $trnsl_term_id, $tax );
                     $meta_value = $trnsl_term_obj->slug;
                 }
             }
@@ -553,7 +561,7 @@ class WCML_Attributes{
         if( isset( $args['attribute'] ) && isset( $args['product'] ) ){
             $args['attribute'] = $this->filter_attribute_name( $args['attribute'],  $args['product']->get_id() );
 
-            if( $this->woocommerce_wpml->products->is_product_display_as_translated_post_type() ){
+            if( $this->get_wcml_products_instance()->is_product_display_as_translated_post_type() ){
 	            foreach( $args[ 'options' ] as $key => $attribute_value ){
 		            $args[ 'options' ][ $key ] = $this->get_attribute_term_translation_in_current_language( $args[ 'attribute' ], $attribute_value );
 	            }
@@ -571,7 +579,7 @@ class WCML_Attributes{
     function filter_attribute_name( $attribute_name, $product_id, $return_sanitized = false ) {
 
         if ( $product_id ) {
-            $orig_lang = $this->woocommerce_wpml->products->get_original_product_language( $product_id );
+            $orig_lang = $this->get_wcml_products_instance()->get_original_product_language( $product_id );
             $current_language = $this->sitepress->get_current_language();
 
             if ( in_array( $orig_lang, array( 'de', 'da' ) ) && $current_language !== $orig_lang ) {
@@ -750,6 +758,19 @@ class WCML_Attributes{
 					if ( null !== $this->post_translations->get_source_lang_code( $translation ) ) {
 						$status_helper->set_update_status( $translation, 1 );
 					}
+				}
+			}
+		}
+	}
+
+	public function maybe_filter_get_variation() {
+		if ( isset( $_POST['product_id'] ) ) {
+			foreach ( wp_unslash( $_POST ) as $key => $value ) {
+				if ( substr( $key, 0, 13 ) == 'attribute_pa_' ) {
+					$taxonomy        = substr( $key, 10 );
+					$term_id         = $this->get_wcml_terms_instance()->wcml_get_term_id_by_slug( $taxonomy, $value );
+					$translated_term = $this->get_wcml_terms_instance()->wcml_get_translated_term( $term_id, $taxonomy, $this->get_wcml_products_instance()->get_original_product_language( $_POST['product_id'] ) );
+					$_POST[ $key ]   = $translated_term->slug;
 				}
 			}
 		}
