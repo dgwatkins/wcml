@@ -104,6 +104,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_variation_post_meta_attribute_values_in_current_language' ), 10 ,4 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_get_default_attributes', array( $subject, 'filter_product_variation_default_attributes' ) );
 		\WP_Mock::expectActionAdded( 'update_post_meta', array( $subject, 'set_translation_status_as_needs_update' ), 10, 3 );
+		\WP_Mock::expectActionAdded( 'wc_ajax_get_variation', array( $subject, 'maybe_filter_get_variation' ), 9 );
 		$subject->add_hooks();
 	}
 
@@ -1010,5 +1011,64 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 
 		$subject->set_translation_status_as_needs_update( 1, $product_id, $meta_key );
 	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_terms_on_get_variation() {
+		WP_Mock::passthruFunction( 'wp_unslash' );
+
+		$attribute_taxonomy                          = 'pa_color';
+		$translated_term_slug                        = 'blue-de';
+		$translated_term_id                          = 15;
+		$original_language                           = 'en';
+		$original_term                               = new stdClass();
+		$original_term->slug                         = 'blue';
+		$_POST['product_id']                         = 11;
+		$_POST[ 'attribute_' . $attribute_taxonomy ] = $translated_term_slug;
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array(
+			                                         'get_original_product_language'
+		                                         ) )
+		                                         ->getMock();
+		$this->woocommerce_wpml->products->method( 'get_original_product_language' )->with( $_POST['product_id'] )->willReturn( $original_language );
+
+		$this->woocommerce_wpml->terms = $this->getMockBuilder( 'WCML_Terms' )
+		                                      ->disableOriginalConstructor()
+		                                      ->setMethods( array(
+			                                      'wcml_get_term_id_by_slug',
+			                                      'wcml_get_translated_term'
+		                                      ) )
+		                                      ->getMock();
+		$this->woocommerce_wpml->terms->method( 'wcml_get_term_id_by_slug' )->with( $attribute_taxonomy, $translated_term_slug )->willReturn( $translated_term_id );
+		$this->woocommerce_wpml->terms->method( 'wcml_get_translated_term' )->with( $translated_term_id, $attribute_taxonomy, $original_language )->willReturn( $original_term );
+
+		$subject = $this->get_subject();
+		$subject->maybe_filter_get_variation();
+
+		$this->assertEquals( $original_term->slug, $_POST[ 'attribute_' . $attribute_taxonomy ] );
+		unset( $_POST['product_id'], $_POST[ 'attribute_' . $attribute_taxonomy ] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_terms_on_get_variation_for_custom_attributes() {
+		WP_Mock::passthruFunction( 'wp_unslash' );
+
+		$term_slug                 = 'custom-slug';
+		$_POST['product_id']       = 12;
+		$_POST['attribute_custom'] = $term_slug;
+		$subject = $this->get_subject();
+		$subject->maybe_filter_get_variation();
+
+		$this->assertEquals( $term_slug, $_POST['attribute_custom'] );
+		unset( $_POST['product_id'], $_POST['attribute_custom'] );
+	}
+
+
 
 }
