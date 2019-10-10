@@ -61,7 +61,6 @@ class WCML_Install{
 
                 $woocommerce_wpml->settings['set_up'] = 1;
                 $woocommerce_wpml->update_settings();
-
             }
 
             if ( empty( $woocommerce_wpml->settings['downloaded_translations_for_wc'] ) ) { //from 3.3.3

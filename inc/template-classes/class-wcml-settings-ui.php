@@ -50,6 +50,15 @@ class WCML_Settings_UI extends WCML_Templates_Factory {
                     ),
                 ),
 
+                'media_synchronization' => array(
+	                'heading'    => __( 'Products Media Synchronization', 'woocommerce-multilingual' ),
+	                'tip'        => __( 'Configure thumbnail and gallery synchronization to translations.', 'woocommerce-multilingual' ),
+	                'sync_media' => array(
+		                'value' => $this->woocommerce_wpml->get_setting( 'sync_media', true ),
+		                'label' => __( 'Display original images on the translated product front page if images not specified', 'woocommerce-multilingual' )
+	                )
+                ),
+
                 'file_sync' => array(
                     'heading'       => __('Products Download Files', 'woocommerce-multilingual'),
                     'tip'           => __( 'If you are using downloadable products, you can choose to have their paths
