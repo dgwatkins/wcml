@@ -323,7 +323,7 @@ class woocommerce_wpml {
 		if ( array_key_exists( $key, $this->settings ) ) {
 			return $this->settings[ $key ];
 		}
-		return $default;
+		return get_option( 'wcml_' . $key, $default );
 	}
 
 	/**
@@ -337,6 +337,21 @@ class woocommerce_wpml {
 		}
 		update_option( '_wcml_settings', $this->settings );
 	}
+
+	/**
+	 * @param string     $key
+	 * @param mixed      $value
+	 * @param bool|false $autoload It only applies to these settings stored as separate options.
+	 */
+	public function update_setting( $key, $value, $autoload = false ) {
+		if ( array_key_exists( $key, $this->settings ) ) {
+			$this->settings [ $key ] = $value;
+			$this->update_settings( $this->settings );
+		} else {
+			update_option( 'wcml_' . $key, $value, $autoload );
+		}
+	}
+
 
 	public function update_setting_ajx() {
 		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );

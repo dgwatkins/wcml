@@ -120,5 +120,65 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 		$subject->load();
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_should_update_settings_in_settings_array(){
+		$subject = $this->get_subject();
+
+		WP_Mock::userFunction( 'update_option', array(
+			'args' => array( '_wcml_settings', $subject->settings ),
+			'times' => 1,
+		));
+
+		$subject->update_setting( 'file_path_sync', 1 );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_update_settings_in_options_table(){
+		$subject = $this->get_subject();
+
+		WP_Mock::userFunction( 'update_option', array(
+			'args' => array( 'wcml_sync_media', true, true ),
+			'times' => 1,
+		));
+
+		$subject->update_setting( 'sync_media', true, true );
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_should_get_setting_from_settings_array(){
+		$subject = $this->get_subject();
+
+		WP_Mock::userFunction( 'get_option', array(
+			'args' => array( 'wcml_file_path_sync', null ),
+			'times' => 0,
+		));
+
+		$this->assertEquals( $subject->settings[ 'file_path_sync' ], $subject->get_setting( 'file_path_sync' ) );
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_should_get_setting_from_options_table(){
+		$subject = $this->get_subject();
+		$setting_value = false;
+
+		WP_Mock::userFunction( 'get_option', array(
+			'args' => array( 'wcml_sync_media', true ),
+			'return' => $setting_value,
+			'times' => 1,
+		));
+
+		$this->assertEquals( $setting_value, $subject->get_setting( 'sync_media', true ) );
+	}
+
 
 }

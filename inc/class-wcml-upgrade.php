@@ -759,7 +759,7 @@ class WCML_Upgrade {
 		}
 	}
 
-	private function upgrade_4_6_8() {
+	private function upgrade_4_7_0() {
 		global $wpdb;
 
 		$wpdb->query(
