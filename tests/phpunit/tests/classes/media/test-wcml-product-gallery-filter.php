@@ -166,7 +166,7 @@ class Test_WCML_Product_Gallery_Filter extends OTGS_TestCase {
 		$this->expectFilterAdded( 'get_post_metadata', array( $subject, 'localize_image_ids' ), 10, 3 );
 
 		$this->assertSame(
-			$expected_gallery,
+			[ $expected_gallery ],
 			$subject->localize_image_ids( implode( ',', $target_attachments ), $object_id, $meta_key )
 		);
 	}
@@ -192,7 +192,7 @@ class Test_WCML_Product_Gallery_Filter extends OTGS_TestCase {
 
 		$subject = $this->get_subject( null, $wpml_cache );
 
-		$this->assertSame( $cache_value, $subject->localize_image_ids( 10, $object_id, $meta_key ) );
+		$this->assertSame( [ $cache_value ], $subject->localize_image_ids( 10, $object_id, $meta_key ) );
 	}
 
 }

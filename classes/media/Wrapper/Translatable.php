@@ -80,32 +80,47 @@ class Translatable implements IMedia {
 		return $product_images_ids;
 	}
 
-	public function sync_thumbnail_id( $orig_post_id, $trnsl_post_id, $lang ) {
-		if ( method_exists( 'WPML_Media_Attachments_Duplication', 'sync_post_thumbnail' ) ) {
-			$factory         = new WPML_Media_Attachments_Duplication_Factory();
-			$media_duplicate = $factory->create();
-			if ( $media_duplicate ) {
-				$media_duplicate->sync_post_thumbnail( $orig_post_id );
+	public function sync_thumbnail_id( $original_product_id, $translated_product_id, $language ) {
+
+		if ( $this->is_thumbnail_image_duplication_enabled( $original_product_id ) ) {
+			$translated_thumbnail_id = $this->get_translated_thumbnail_id( $original_product_id, $language );
+			if ( $translated_thumbnail_id ) {
+				update_post_meta( $translated_product_id, '_thumbnail_id', $translated_thumbnail_id );
 			}
 		}
 	}
 
-	public function sync_variation_thumbnail_id( $variation_id, $translated_variation_id, $lang ) {
-		$thumbnail_id         = get_post_meta( $variation_id, '_thumbnail_id', true );
-		$translated_thumbnail = apply_filters( 'translate_object_id', $thumbnail_id, 'attachment', false, $lang );
+	public function sync_variation_thumbnail_id( $variation_id, $translated_variation_id, $language ) {
 
-		if ( is_null( $translated_thumbnail ) && $thumbnail_id ) {
-			$factory              = new WPML_Media_Attachments_Duplication_Factory();
-			$media_duplicate      = $factory->create();
-			$translated_thumbnail = $media_duplicate->create_duplicate_attachment( $thumbnail_id,
-			                                                                       wp_get_post_parent_id( $thumbnail_id ),
-			                                                                       $lang );
+		if ( $this->is_thumbnail_image_duplication_enabled( wp_get_post_parent_id( $variation_id ) ) ) {
+			$translated_thumbnail_id = $this->get_translated_thumbnail_id( $variation_id, $language );
+			if ( $translated_thumbnail_id ) {
+				update_post_meta( $translated_variation_id, '_thumbnail_id', $translated_thumbnail_id );
+				update_post_meta( $variation_id, '_wpml_media_duplicate', 1 );
+				update_post_meta( $variation_id, '_wpml_media_featured', 1 );
+			}
 		}
-		if ( $translated_thumbnail ) {
-			update_post_meta( $translated_variation_id, '_thumbnail_id', $translated_thumbnail );
-			update_post_meta( $variation_id, '_wpml_media_duplicate', 1 );
-			update_post_meta( $variation_id, '_wpml_media_featured', 1 );
+	}
+
+	/**
+	 * @param int|string $post_id
+	 * @param string $language
+	 *
+	 * @return int|null
+	 */
+	private function get_translated_thumbnail_id( $post_id, $language ) {
+		$thumbnail_id            = get_post_meta( $post_id, '_thumbnail_id', true );
+		$translated_thumbnail_id = $this->sitepress->get_object_id( $thumbnail_id, 'attachment', false, $language );
+
+		if ( is_null( $translated_thumbnail_id ) && $thumbnail_id ) {
+			$factory                 = new WPML_Media_Attachments_Duplication_Factory();
+			$media_duplicate         = $factory->create();
+			$translated_thumbnail_id = $media_duplicate->create_duplicate_attachment( $thumbnail_id,
+				wp_get_post_parent_id( $thumbnail_id ),
+				$language );
 		}
+
+		return $translated_thumbnail_id;
 	}
 
 	public function sync_product_gallery( $product_id ) {
@@ -161,11 +176,19 @@ class Translatable implements IMedia {
 		unset( $this->products_being_synced[ $product_id ] );
 	}
 
-	public function is_media_duplication_enabled( $product_id ) {
+	private function is_thumbnail_image_duplication_enabled( $product_id ){
+		return $this->is_duplication_enabled( $product_id, 'WPML_Admin_Post_Actions::DUPLICATE_FEATURED_META_KEY', 'WPML_Admin_Post_Actions::DUPLICATE_FEATURED_GLOBAL_KEY' );
+	}
+
+	private function is_media_duplication_enabled( $product_id ){
+		return $this->is_duplication_enabled( $product_id, 'WPML_Admin_Post_Actions::DUPLICATE_MEDIA_META_KEY', 'WPML_Admin_Post_Actions::DUPLICATE_MEDIA_GLOBAL_KEY' );
+	}
+
+	private function is_duplication_enabled( $product_id, $meta_key, $global_key ) {
 
 		$setting_value = get_post_meta( $product_id,
 		                                $this->sitepress->get_wp_api()
-		                                                ->constant( 'WPML_Admin_Post_Actions::DUPLICATE_MEDIA_META_KEY' ),
+		                                                ->constant( $meta_key ),
 		                                true );
 
 		if ( '' === $setting_value ) {
@@ -173,7 +196,7 @@ class Translatable implements IMedia {
 			$media_options = get_option( '_wpml_media', [] );
 
 			$global_setting_key = $this->sitepress->get_wp_api()
-			                                      ->constant( 'WPML_Admin_Post_Actions::DUPLICATE_MEDIA_GLOBAL_KEY' );
+			                                      ->constant( $global_key );
 			if ( isset( $media_options['new_content_settings'][ $global_setting_key ] ) ) {
 				$setting_value = $media_options['new_content_settings'][ $global_setting_key ];
 			}

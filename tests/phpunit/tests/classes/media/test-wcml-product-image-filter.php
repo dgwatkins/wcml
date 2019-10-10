@@ -183,7 +183,7 @@ class Test_WCML_Product_Image_Filter extends OTGS_TestCase {
 			'return' => $source_thumbnail_id
 		] );
 
-		$this->assertSame( $source_thumbnail_id, $subject->localize_image_id( null, $object_id, $meta_key ) );
+		$this->assertSame( [ $source_thumbnail_id ], $subject->localize_image_id( null, $object_id, $meta_key ) );
 	}
 
 
@@ -208,7 +208,7 @@ class Test_WCML_Product_Image_Filter extends OTGS_TestCase {
 
 		$subject = $this->get_subject( null, $wpml_cache );
 
-		$this->assertSame( $cache_value, $subject->localize_image_id( null, $object_id, $meta_key ) );
+		$this->assertSame( [ $cache_value ], $subject->localize_image_id( null, $object_id, $meta_key ) );
 	}
 
 

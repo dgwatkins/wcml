@@ -31,15 +31,6 @@ class TestNonTranslatable extends \OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function itShouldReturnFalseForIsMediaDuplicationEnabled() {
-		$subject = new NonTranslatable();
-
-		$this->assertFalse( $subject->is_media_duplication_enabled( 123 ) );
-	}
-
-	/**
-	 * @test
-	 */
 	public function itShouldDoNothing() {
 		$subject = new NonTranslatable();
 
