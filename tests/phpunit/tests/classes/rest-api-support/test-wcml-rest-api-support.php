@@ -68,15 +68,8 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 			},
 		) );
 
-		\WP_Mock::wpFunction( 'get_option', array(
-			'return' => function ( $option_name ) {
-				$value = null;
-				if ( $option_name === 'woocommerce_currency' ) {
-					$value = 'EUR';
-				}
-
-				return $value;
-			},
+		\WP_Mock::wpFunction( 'wcml_get_woocommerce_currency_option', array(
+			'return' => 'EUR',
 		) );
 
 		\WP_Mock::wpPassthruFunction( '__' );
@@ -164,6 +157,7 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product_object', array( $subject, 'set_product_language'), 10, 2 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product_object', array( $subject, 'set_product_custom_prices'), 10, 2 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product_object', array( $subject, 'set_product_images'), 10, 2 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_object', array( $subject, 'copy_product_custom_fields'), 10, 3 );
 
 		// Orders
@@ -1101,6 +1095,61 @@ class Test_WCML_REST_API_Support extends OTGS_TestCase {
 
 		$this->assertEquals( $expected_request_uri, $_SERVER['REQUEST_URI'] );
 
+	}
+
+	/**
+	 * @test
+	 * @dataProvider api_method_type
+	 */
+	function it_should_set_product_images_for_translation( $api_method_type ) {
+
+		$post = $this->getMockBuilder( 'WC_Product_Simple' )
+		             ->disableOriginalConstructor()
+		             ->setMethods( array(
+			             'get_id'
+		             ) )
+		             ->getMock();
+
+		$post->ID = mt_rand( 1, 10 );
+		$post->method( 'get_id' )->willReturn( $post->ID );
+
+		$translation_of = mt_rand( 11, 20 );
+		$language = 'ro';
+		$translated_variation_id = mt_rand( 21, 30 );
+		$original_variation_id = mt_rand( 31, 40 );
+		$variations = array(
+			$translated_variation_id
+		);
+
+		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
+		                 ->disableOriginalConstructor()
+		                 ->setMethods( array( 'get_params', 'get_method' ) )
+		                 ->getMock();
+		$request1->method( 'get_params' )->willReturn( array(
+			'lang'           => $language,
+			'translation_of' => $translation_of,
+			'variations' => $variations,
+		) );
+		$request1->method( 'get_method' )->willReturn( $api_method_type );
+
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                      ->disableOriginalConstructor()
+		                                      ->setMethods( array( 'get_original_product_id' ) )
+		                                      ->getMock();
+		$this->woocommerce_wpml->products->method( 'get_original_product_id' )->with( $translated_variation_id )->willReturn( $original_variation_id );
+
+		$this->woocommerce_wpml->media = $this->getMockBuilder( 'WCML_Media' )
+		                                                       ->disableOriginalConstructor()
+		                                                       ->setMethods( array( 'sync_thumbnail_id', 'sync_product_gallery', 'sync_variation_thumbnail_id' ) )
+		                                                       ->getMock();
+
+		$this->woocommerce_wpml->media->expects( $this->once() )->method( 'sync_thumbnail_id' )->with( $translation_of, $post->ID, $language )->willReturn( true );
+		$this->woocommerce_wpml->media->expects( $this->once() )->method( 'sync_product_gallery' )->with( $translation_of )->willReturn( true );
+		$this->woocommerce_wpml->media->expects( $this->once() )->method( 'sync_variation_thumbnail_id' )->with( $original_variation_id, $translated_variation_id, $language )->willReturn( true );
+
+		$subject = $this->get_subject();
+		$subject->set_product_images( $post, $request1 );
 	}
 
 }

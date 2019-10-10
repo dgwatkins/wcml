@@ -48,11 +48,4 @@ interface IMedia {
 	 * @param int $dup_att_id
 	 */
 	public function sync_product_gallery_duplicate_attachment( $att_id, $dup_att_id );
-
-	/**
-	 * @param int $product_id
-	 *
-	 * @return bool
-	 */
-	public function is_media_duplication_enabled( $product_id );
 }
