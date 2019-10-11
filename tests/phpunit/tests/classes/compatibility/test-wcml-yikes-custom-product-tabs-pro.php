@@ -1,6 +1,6 @@
 <?php
 
-class Test_WCML_YIKES_Custom_Product_Tabs_Pro extends OTGS_TestCase {
+class Test_WCML_YIKES_Custom_Product_Tabs extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
@@ -32,10 +32,10 @@ class Test_WCML_YIKES_Custom_Product_Tabs_Pro extends OTGS_TestCase {
 	}
 
 	/**
-	 * @return WCML_YIKES_Custom_Product_Tabs_Pro
+	 * @return WCML_YIKES_Custom_Product_Tabs
 	 */
 	private function get_subject() {
-		return new WCML_YIKES_Custom_Product_Tabs_Pro( $this->woocommerce_wpml, $this->sitepress, $this->tp );
+		return new WCML_YIKES_Custom_Product_Tabs( $this->woocommerce_wpml, $this->sitepress, $this->tp );
 	}
 
 	/**

@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Class WCML_YIKES_Custom_Product_Tabs_Pro
+ * Class WCML_YIKES_Custom_Product_Tabs
  */
-class WCML_YIKES_Custom_Product_Tabs_Pro {
+class WCML_YIKES_Custom_Product_Tabs {
 
 	const CUSTOM_TABS_FIELD = 'yikes_woo_products_tabs';
 
