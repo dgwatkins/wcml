@@ -293,8 +293,8 @@ class WCML_Compatibility {
 		}
 
 		// Custom Product Tabs PRO.
-		if ( class_exists( 'YIKES_Custom_Product_Tabs_Pro' ) ) {
-			$this->custom_product_tabs = new WCML_YIKES_Custom_Product_Tabs_Pro( $this->woocommerce_wpml, $this->sitepress, $this->tp );
+		if ( class_exists( 'YIKES_Custom_Product_Tabs' ) ) {
+			$this->custom_product_tabs = new WCML_YIKES_Custom_Product_Tabs( $this->woocommerce_wpml, $this->sitepress, $this->tp );
 			$this->custom_product_tabs->add_hooks();
 		}
 
