@@ -60,7 +60,7 @@ class WCML_Variation_Swatches_And_Photos {
 
 						$translated_product_term = get_term( $translated_product_term_id, $original_product_term->taxonomy );
 
-						if ( is_object( $translated_product_term ) ) {
+						if ( isset( $translated_product_term->slug ) ) {
 
 							$translated_product_term_slug_md5 = md5( $translated_product_term->slug );
 
