@@ -322,6 +322,20 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function it_should_return_current_booking_email_language(){
+
+		$subject = $this->get_subject();
+
+		$current_language = rand_str( 2 );
+		$_POST[ 'post_type' ] = 'wc_booking';
+		$booking_language = $subject->booking_email_language( $current_language );
+
+		$this->assertEquals( $current_language, $booking_language );
+	}
+
+	/**
+	 * @test
+	 */
 	public function set_booking_language_if_missing(){
 
 		$booking_id = mt_rand( 1, 10 );

@@ -2567,11 +2567,16 @@ class WCML_Bookings {
     }
 
 
-	public function booking_email_language( $current_language ){
+	/**
+	 * @param string $current_language
+	 *
+	 * @return string
+	 */
+	public function booking_email_language( $current_language ) {
 
-		if( isset( $_POST[ 'post_type' ] ) && 'wc_booking' === $_POST[ 'post_type' ] ){
-			$order_language = get_post_meta( $_POST[ '_booking_order_id' ], 'wpml_language', true );
-			if( $order_language ){
+		if ( isset( $_POST['post_type'] ) && 'wc_booking' === $_POST['post_type'] && isset( $_POST['_booking_order_id'] ) ) {
+			$order_language = get_post_meta( $_POST['_booking_order_id'], 'wpml_language', true );
+			if ( $order_language ) {
 				$current_language = $order_language;
 			}
 		}
