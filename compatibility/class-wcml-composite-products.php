@@ -511,7 +511,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 	}
 
 	public function get_composite_data( $product_id ){
-		return get_post_meta( $product_id, '_bto_data', true );
+		return get_post_meta( $product_id, '_bto_data', true ) ?: [];
 	}
 
 

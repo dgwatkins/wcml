@@ -174,4 +174,44 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 		];
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_should_get_composite_data(){
+
+		$product_id = 21;
+		$bto_data = array( 11 => array( 'title' => 'test' ) );
+
+		\WP_Mock::userFunction(
+			'get_post_meta',
+			array(
+				'args' => array( $product_id, '_bto_data', true ),
+				'return' => $bto_data
+			)
+		);
+
+		$subject = $this->get_subject();
+		$composite_data = $subject->get_composite_data( $product_id );
+		$this->assertEquals( $bto_data, $composite_data );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_return_empty_array_if_composite_data_not_exists(){
+
+		$product_id = 21;
+
+		\WP_Mock::userFunction(
+			'get_post_meta',
+			array(
+				'args' => array( $product_id, '_bto_data', true ),
+				'return' => false
+			)
+		);
+
+		$subject = $this->get_subject();
+		$composite_data = $subject->get_composite_data( $product_id );
+		$this->assertEquals( array(), $composite_data );
+	}
 }
