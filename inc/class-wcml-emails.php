@@ -5,8 +5,8 @@ class WCML_Emails {
 	private $order_id = false;
 	private $locale = false;
 	private $admin_language = false;
-	/** @var woocommerce_wpml */
-	private $woocommerce_wpml;
+	/** @var WCML_WC_Strings */
+	private $wcmlStrings;
 	/** @var Sitepress */
 	private $sitepress;
 	/** @var \WC_Emails $wcEmails */
@@ -14,19 +14,11 @@ class WCML_Emails {
 	/** @var wpdb */
 	private $wpdb;
 
-	/**
-	 * WCML_Emails constructor.
-	 *
-	 * @param woocommerce_wpml $woocommerce_wpml
-	 * @param SitePress        $sitepress
-	 * @param WC_Emails        $wcEmails
-	 * @param wpdb             $wpdb
-	 */
-	function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress, WC_Emails $wcEmails, wpdb $wpdb ) {
-		$this->woocommerce_wpml = $woocommerce_wpml;
-		$this->sitepress        = $sitepress;
-		$this->wcEmails         = $wcEmails;
-		$this->wpdb             = $wpdb;
+	function __construct( WCML_WC_Strings $wcmlStrings, SitePress $sitepress, WC_Emails $wcEmails, wpdb $wpdb ) {
+		$this->wcmlStrings = $wcmlStrings;
+		$this->sitepress   = $sitepress;
+		$this->wcEmails    = $wcEmails;
+		$this->wpdb        = $wpdb;
 	}
 
 	function add_hooks() {
@@ -195,7 +187,7 @@ class WCML_Emails {
 		if ( is_admin() && false !== $this->admin_language ) {
 			$this->change_email_language( $this->admin_language );
 		} else {
-			$this->change_email_language( $this->woocommerce_wpml->strings->get_domain_language( 'woocommerce' ) );
+			$this->change_email_language( $this->wcmlStrings->get_domain_language( 'woocommerce' ) );
 		}
 	}
 
@@ -438,7 +430,7 @@ class WCML_Emails {
 			$email_option = get_option( $email_string[0], true );
 			$context      = 'admin_texts_' . $email_string[0];
 
-			$current_language = $this->woocommerce_wpml->strings->get_string_language( $email_option[ $email_string[1] ], $context, $name );
+			$current_language = $this->wcmlStrings->get_string_language( $email_option[ $email_string[1] ], $context, $name );
 		} elseif ( $this->order_id ) {
 			$order_id = $this->order_id;
 		}
