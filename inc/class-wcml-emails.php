@@ -94,21 +94,6 @@ class WCML_Emails {
 		add_filter( 'plugin_locale', array( $this, 'set_locale_for_emails' ), 10, 2 );
 		add_filter( 'woocommerce_countries', array( $this, 'translate_woocommerce_countries' ) );
 
-		if (
-			(
-				! isset( $_GET['post_type'] ) ||
-				$_GET['post_type'] != 'shop_order'
-			) &&
-			(
-				! isset( $_GET['action'] ) ||
-				! in_array( $_GET['action'], array(
-					'woocommerce_mark_order_status'
-				) )
-			)
-		) {
-			add_filter( 'woocommerce_order_items_meta_get_formatted', array( $this, 'filter_formatted_items' ), 10, 2 );
-		}
-
 		add_filter( 'woocommerce_allow_send_queued_transactional_email', array(
 			$this,
 			'send_queued_transactional_email'
@@ -403,46 +388,6 @@ class WCML_Emails {
 			) ) ) {
 			$this->new_order_admin_email( $order_id );
 		}
-	}
-
-	function filter_formatted_items( $formatted_meta, $object ) {
-
-		if ( isset( $object->product->variation_id ) ) {
-
-			$current_prod_variation_id = apply_filters( 'translate_object_id', $object->product->variation_id, 'product_variation', false );
-
-			if ( ! is_null( $current_prod_variation_id ) ) {
-
-				foreach ( $formatted_meta as $key => $formatted_var ) {
-
-					if ( substr( $formatted_var['key'], 0, 3 ) ) {
-
-						$attribute = wc_sanitize_taxonomy_name( $formatted_var['key'] );
-
-						if ( taxonomy_exists( $attribute ) ) {
-							$attr_term = get_term_by( 'name', $formatted_meta[ $key ]['value'], $attribute );
-							$tr_id     = apply_filters( 'translate_object_id', $attr_term->term_id, $attribute, false, $this->sitepress->get_current_language() );
-
-							if ( $tr_id ) {
-								$translated_term                 = $this->woocommerce_wpml->terms->wcml_get_term_by_id( $tr_id, $attribute );
-								$formatted_meta[ $key ]['value'] = $translated_term->name;
-							}
-
-						} else {
-
-							$custom_attr_trnsl = $this->woocommerce_wpml->attributes->get_custom_attribute_translation( $object->product->id, $formatted_var['key'], array( 'is_taxonomy' => false ), $this->sitepress->get_current_language() );
-
-							if ( false !== $custom_attr_trnsl ) {
-								$formatted_meta[ $key ]['label'] = $custom_attr_trnsl['name'];
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return $formatted_meta;
-
 	}
 
 	function change_email_language( $lang ) {

@@ -71,6 +71,8 @@ if ( WPML_Core_Version_Check::is_ok( WCML_PLUGIN_PATH . '/wpml-dependencies.json
  * Load WooCommerce Multilingual after WPML is loaded
  */
 function wcml_loader() {
+	\WPML\Container\share( \WCML\Container\Config::getSharedInstances() );
+
 	$xdomain_data = new WCML_xDomain_Data( new WPML_Cookie() );
 	$xdomain_data->add_hooks();
 
@@ -79,6 +81,7 @@ function wcml_loader() {
 		'WCML_ATE_Activate_Synchronization',
 		\WCML\RewriteRules\Hooks::class,
 		\WCML\Email\Settings\Hooks::class,
+		\WCML\Email\OrderItems\Hooks::class,
 	);
 
 	if (
