@@ -81,8 +81,6 @@ class WCML_Emails {
 
 		add_action( 'woocommerce_before_resend_order_emails', array( $this, 'backend_new_order_admin_email' ), 9 );
 
-		add_filter( 'icl_st_admin_string_return_cached', array( $this, 'admin_string_return_cached' ), 10, 2 );
-
 		add_filter( 'plugin_locale', array( $this, 'set_locale_for_emails' ), 10, 2 );
 		add_filter( 'woocommerce_countries', array( $this, 'translate_woocommerce_countries' ) );
 
@@ -389,14 +387,6 @@ class WCML_Emails {
 
 		$this->sitepress->switch_lang( $lang, true );
 		$this->locale = $this->sitepress->get_locale( $lang );
-	}
-
-	function admin_string_return_cached( $value, $option ) {
-		if ( in_array( $option, array( 'woocommerce_email_from_address', 'woocommerce_email_from_name' ) ) ) {
-			return false;
-		}
-
-		return $value;
 	}
 
 	function wcml_get_translated_email_string( $context, $name, $order_id = false, $language_code = null ) {
