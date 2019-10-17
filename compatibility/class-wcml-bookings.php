@@ -26,6 +26,11 @@ class WCML_Bookings {
 	private $woocommerce;
 
 	/**
+	 * @var WPML_Post_Translation
+	 */
+	private $wpml_post_translations;
+
+	/**
 	 * @var wpdb
 	 */
 	private $wpdb;
@@ -37,13 +42,15 @@ class WCML_Bookings {
 	 * @param woocommerce $woocommerce
 	 * @param wpdb $wpdb
 	 * @param WPML_Element_Translation_Package $tp
+	 * @param WPML_Post_Translation $wpml_post_translations
 	 */
-	function __construct( SitePress $sitepress, woocommerce_wpml $woocommerce_wpml, woocommerce $woocommerce, wpdb $wpdb, WPML_Element_Translation_Package $tp ) {
-		$this->sitepress        = $sitepress;
-		$this->woocommerce_wpml = $woocommerce_wpml;
-		$this->woocommerce      = $woocommerce;
-		$this->wpdb             = $wpdb;
-		$this->tp               = $tp;
+	function __construct( SitePress $sitepress, woocommerce_wpml $woocommerce_wpml, woocommerce $woocommerce, wpdb $wpdb, WPML_Element_Translation_Package $tp, WPML_Post_Translation $wpml_post_translations ) {
+		$this->sitepress              = $sitepress;
+		$this->woocommerce_wpml       = $woocommerce_wpml;
+		$this->woocommerce            = $woocommerce;
+		$this->wpdb                   = $wpdb;
+		$this->tp                     = $tp;
+		$this->wpml_post_translations = $wpml_post_translations;
 	}
 
 	/**
@@ -575,64 +582,50 @@ class WCML_Bookings {
 	}
 
 	// sync existing product bookings for translations
-	function sync_bookings( $original_product_id, $product_id, $lang ) {
+	function sync_bookings( $original_product_id, $product_id, $language ) {
 		$all_bookings_for_product = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id as id FROM {$this->wpdb->postmeta} WHERE meta_key = '_booking_product_id' AND meta_value = %d", $original_product_id ) );
 
 		foreach ( $all_bookings_for_product as $booking ) {
-			$check_if_exists = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT pm3.* FROM {$this->wpdb->postmeta} AS pm1
-                                            LEFT JOIN {$this->wpdb->postmeta} AS pm2 ON pm1.post_id = pm2.post_id
-                                            LEFT JOIN {$this->wpdb->postmeta} AS pm3 ON pm1.post_id = pm3.post_id
-                                            WHERE pm1.meta_key = '_booking_duplicate_of' AND pm1.meta_value = %s AND pm2.meta_key = '_language_code' AND pm2.meta_value = %s AND pm3.meta_key = '_booking_product_id'"
-				, $booking->id, $lang ) );
 
-			if ( is_null( $check_if_exists ) ) {
-				$this->duplicate_booking_for_translations( $booking->id, $lang );
-			} elseif ( '' === $check_if_exists->meta_value ) {
-				update_post_meta( $check_if_exists->post_id, '_booking_product_id', $this->get_translated_booking_product_id( $booking->id, $lang ) );
-				update_post_meta( $check_if_exists->post_id, '_booking_resource_id', $this->get_translated_booking_resource_id( $booking->id, $lang ) );
-				update_post_meta( $check_if_exists->post_id, '_booking_persons', $this->get_translated_booking_persons_ids( $booking->id, $lang ) );
+		    if( $language === $this->wpml_post_translations->get_source_lang_code( $booking->id ) ){
+		        continue;
+            }
+
+			$booking_translations = $this->get_translated_bookings( $booking->id );
+
+			if ( !isset( $booking_translations[ $language ] ) ) {
+				$this->duplicate_booking_for_translations( $booking->id, $language );
+			} elseif ( !get_post_meta( $booking_translations[ $language ], '_booking_product_id', true ) ) {
+			    $this->update_translated_booking_meta( $booking_translations[ $language ], $booking->id, $language );
 			}
 		}
 	}
 
+	/**
+	 * @param int $translated_booking_id
+	 * @param int $original_booking_id
+	 * @param string $language
+	 */
+	private function update_translated_booking_meta( $translated_booking_id, $original_booking_id, $language ){
+		update_post_meta( $translated_booking_id, '_booking_product_id', $this->get_translated_booking_product_id( $original_booking_id, $language ) );
+		update_post_meta( $translated_booking_id, '_booking_resource_id', $this->get_translated_booking_resource_id( $original_booking_id, $language ) );
+		update_post_meta( $translated_booking_id, '_booking_persons', $this->get_translated_booking_persons_ids( $original_booking_id, $language ) );
+    }
+
 	function sync_booking_data( $original_product_id, $current_product_id ) {
 
 		if ( has_term( 'booking', 'product_type', $original_product_id ) ) {
-			global $pagenow, $iclTranslationManagement;
-
-			// get language code
-			$language_details = $this->sitepress->get_element_language_details( $original_product_id, 'post_product' );
-			if ( $pagenow == 'admin.php' && empty( $language_details ) ) {
-				//translation editor support: sidestep icl_translations_cache
-				$language_details = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT element_id, trid, language_code, source_language_code FROM {$this->wpdb->prefix}icl_translations WHERE element_id = %d AND element_type = 'post_product'", $original_product_id ) );
-			}
-			if ( empty( $language_details ) ) {
-				return;
-			}
-
-			// pick posts to sync
-			$posts        = array();
-			$translations = $this->sitepress->get_element_translations( $language_details->trid, 'post_product' );
+			$translations = $this->wpml_post_translations->get_element_translations( $original_product_id, false, true );
 			foreach ( $translations as $translation ) {
+                $language = $this->wpml_post_translations->get_element_lang_code( $translation );
 
-				if ( ! $translation->original ) {
-					$posts[ $translation->element_id ] = $translation;
-				}
+                //sync_resources
+                $this->sync_resources( $original_product_id, $translation, $language );
+
+                //sync_persons
+                $this->sync_persons( $original_product_id, $translation, $language );
 			}
-
-			foreach ( $posts as $post_id => $translation ) {
-
-				$trn_lang = $this->sitepress->get_language_for_element( $post_id, 'post_product' );
-
-				//sync_resources
-				$this->sync_resources( $original_product_id, $post_id, $trn_lang );
-
-				//sync_persons
-				$this->sync_persons( $original_product_id, $post_id, $trn_lang );
-			}
-
 		}
-
 	}
 
 	function sync_resources( $original_product_id, $translated_product_id, $lang_code, $duplicate = true ) {
@@ -988,28 +981,26 @@ class WCML_Bookings {
 
 		if ( $object_id == $original_product_id ) {
 
-			$trid         = $this->sitepress->get_element_trid( $object_id, 'post_product' );
-			$translations = $this->sitepress->get_element_translations( $trid, 'post_product' );
+            $translations = $this->wpml_post_translations->get_element_translations( $object_id, false, true );
 
 			foreach ( $translations as $translation ) {
-
-				if ( ! $translation->original ) {
-
-					$this->sync_resource_costs( $original_product_id, $translation->element_id, $meta_key, $translation->language_code );
-
-				}
+				$this->sync_resource_costs(
+					$original_product_id,
+                    $translation,
+                    $meta_key,
+                    $this->wpml_post_translations->get_element_lang_code( $translation )
+                );
 			}
 
 			return $check;
-
 		} else {
-
-			$language_code = $this->sitepress->get_language_for_element( $object_id, 'post_product' );
-
-			$this->sync_resource_costs( $original_product_id, $object_id, $meta_key, $language_code );
-
+			$this->sync_resource_costs(
+			        $original_product_id,
+                    $object_id,
+                    $meta_key,
+                    $this->wpml_post_translations->get_element_lang_code( $object_id )
+            );
 			return true;
-
 		}
 
 	}
@@ -1755,12 +1746,11 @@ class WCML_Bookings {
 	}
 
 	function update_status_for_translations( $booking_id ) {
-		$translated_bookings = $this->get_translated_bookings( $booking_id );
 
-		foreach ( $translated_bookings as $booking ) {
+		foreach ( $this->get_translated_bookings( $booking_id ) as $translated_booking_id ) {
 
 			$status   = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT post_status FROM {$this->wpdb->posts} WHERE ID = %d", $booking_id ) ); //get_post_status( $booking_id );
-			$language = get_post_meta( $booking->post_id, '_language_code', true );
+			$language = get_post_meta( $translated_booking_id, '_language_code', true );
 
 			$this->wpdb->update(
 				$this->wpdb->posts,
@@ -1769,22 +1759,18 @@ class WCML_Bookings {
 					'post_parent' => wp_get_post_parent_id( $booking_id ),
 				),
 				array(
-					'ID' => $booking->post_id
+					'ID' => $translated_booking_id
 				)
 			);
 
-			update_post_meta( $booking->post_id, '_booking_product_id', $this->get_translated_booking_product_id( $booking_id, $language ) );
-			update_post_meta( $booking->post_id, '_booking_resource_id', $this->get_translated_booking_resource_id( $booking_id, $language ) );
-			update_post_meta( $booking->post_id, '_booking_persons', $this->get_translated_booking_persons_ids( $booking_id, $language ) );
-
+			$this->update_translated_booking_meta( $translated_booking_id, $booking_id, $language );
 		}
 
 	}
 
 	function get_translated_bookings( $booking_id ) {
-		$translated_bookings = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id FROM {$this->wpdb->postmeta} WHERE meta_key = '_booking_duplicate_of' AND meta_value = %d", $booking_id ) );
 
-		return $translated_bookings;
+		return $this->wpml_post_translations->get_element_translations( $booking_id, false, true );
 	}
 
 	public function booking_filters_query( $query ) {
@@ -1858,23 +1844,20 @@ class WCML_Bookings {
 			&& $booking_id
 			&& get_post_type( $booking_id ) == 'wc_booking'
 		) {
-
-			$translated_bookings = $this->get_translated_bookings( $booking_id );
-
 			remove_action( 'before_delete_post', array( $this, 'delete_bookings' ) );
 
-			foreach ( $translated_bookings as $booking ) {
+			foreach ( $this->get_translated_bookings( $booking_id ) as $translated_booking_id ) {
 				$this->wpdb->update(
 					$this->wpdb->posts,
 					array(
 						'post_parent' => 0
 					),
 					array(
-						'ID' => $booking->post_id
+						'ID' => $translated_booking_id
 					)
 				);
 
-				wp_delete_post( $booking->post_id );
+				wp_delete_post( $translated_booking_id );
 
 			}
 
@@ -1890,9 +1873,7 @@ class WCML_Bookings {
 
 		if ( $booking_id > 0 && get_post_type( $booking_id ) == 'wc_booking' ) {
 
-			$translated_bookings = $this->get_translated_bookings( $booking_id );
-
-			foreach ( $translated_bookings as $booking ) {
+			foreach ( $this->get_translated_bookings( $booking_id ) as $translated_booking_id ) {
 
 				$this->wpdb->update(
 					$this->wpdb->posts,
@@ -1900,7 +1881,7 @@ class WCML_Bookings {
 						'post_status' => 'trash'
 					),
 					array(
-						'ID' => $booking->post_id
+						'ID' => $translated_booking_id
 					)
 				);
 
@@ -2427,17 +2408,12 @@ class WCML_Bookings {
 
 		if( $post->post_type === 'wc_booking' && $update ){
 
-			$trid = $this->sitepress->get_element_trid( $post_id, 'post_wc_booking' );
-			$translations = $this->sitepress->get_element_translations( $trid, 'post_wc_booking' );
-
-			foreach( $translations as $translation ){
-				if( $translation->element_id != $post_id ){
-					$this->wpdb->update(
-						$this->wpdb->posts,
-						array( 'post_status' => $post->post_status ),
-						array( 'ID' => $translation->element_id )
-					);
-				}
+			foreach( $this->get_translated_bookings( $post_id ) as $translated_booking_id ){
+                $this->wpdb->update(
+                    $this->wpdb->posts,
+                    array( 'post_status' => $post->post_status ),
+                    array( 'ID' => $translated_booking_id )
+                );
 			}
 
 		}

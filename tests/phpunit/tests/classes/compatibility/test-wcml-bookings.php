@@ -58,8 +58,17 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 			->disableOriginalConstructor()
 			->getMock();
 	}
+	/**
+	 * @return WPML_Element_Translation_Package
+	 */
+	private function get_wpml_post_translations_mock() {
 
-	private function get_subject( $sitepress = null, $woocommerce_wpml = null, $woocommerce = null, $tp = null  ){
+		return $this->getMockBuilder( 'WPML_Post_Translation' )
+			->disableOriginalConstructor()
+			->getMock();
+	}
+
+	private function get_subject( $sitepress = null, $woocommerce_wpml = null, $woocommerce = null, $tp = null, $wpml_post_translations = null  ){
 
 		if( null === $woocommerce_wpml ){
 			$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
@@ -79,7 +88,11 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 			$tp = $this->get_wpml_element_translation_package_mock();
 		}
 
-		return new WCML_Bookings( $sitepress, $woocommerce_wpml, $woocommerce, $this->wpdb, $tp );
+		if( null === $wpml_post_translations ){
+			$wpml_post_translations = $this->get_wpml_post_translations_mock();
+		}
+
+		return new WCML_Bookings( $sitepress, $woocommerce_wpml, $woocommerce, $this->wpdb, $tp, $wpml_post_translations );
 	}
 
 	/**
