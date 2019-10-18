@@ -18,16 +18,22 @@ stages:
 include:
     -   project: 'wpml/wpml-plugin-template'
         file: '.gitlab-ci/root.before_script.yml'
+
     -   project: 'wpml/wpml-plugin-template'
         file: '.gitlab-ci/pre-flight/prepare-cache.yml'
+
     -   project: 'wpml/wpml-plugin-template'
         file: '.gitlab-ci/quality/php/compatibility.yml'
     -   project: 'wpml/wpml-plugin-template'
         file: '.gitlab-ci/quality/php/duplication.yml'
+
+    -   project: 'wpml/wpml-plugin-template'
+        file: '.gitlab-ci/test/cc.yml'
     -   project: 'wpml/wpml-plugin-template'
         file: '.gitlab-ci/test/unit/php.yml'
     -   project: 'wpml/wpml-plugin-template'
         file: '.gitlab-ci/test/integration/php.yml'
+
     -   project: 'wpml/wpml-plugin-template'
         file: '.gitlab-ci/build/branch.yml'
     -   project: 'wpml/wpml-plugin-template'
@@ -36,7 +42,9 @@ include:
         file: '.gitlab-ci/build/special-branches.yml'
     -   project: 'wpml/wpml-plugin-template'
         file: '.gitlab-ci/build/tag.yml'
+
     -   project: 'wpml/wpml-plugin-template'
         file: '.gitlab-ci/documentation/release-notes.yml'
+
     -   project: 'wpml/wpml-plugin-template'
         file: '.gitlab-ci/deploy/s3.yml'
