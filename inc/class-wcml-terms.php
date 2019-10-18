@@ -424,7 +424,7 @@ class WCML_Terms{
 
                     if($i > $languages_processed && $translation->element_id != $post_id){
                         $this->woocommerce_wpml->sync_product_data->sync_product_taxonomies($post_id, $translation->element_id, $translation->language_code);
-                        $this->woocommerce_wpml->sync_variations_data->sync_product_variations($post_id, $translation->element_id, $translation->language_code, false, true);
+                        $this->woocommerce_wpml->sync_variations_data->sync_product_variations( $post_id, $translation->element_id, $translation->language_code, [ 'is_troubleshooting' => true ] );
                         $this->woocommerce_wpml->translation_editor->create_product_translation_package($post_id,$trid, $translation->language_code,ICL_TM_COMPLETE);
                         $variations_processed += $terms_count*2;
                         $response['languages_processed'] = $i;

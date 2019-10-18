@@ -100,7 +100,7 @@ class WCML_Troubleshooting{
                     $tr_product_id = apply_filters( 'translate_object_id',$product['id'],'product',false,$language['code']);
 
                     if(!is_null($tr_product_id)){
-                        $this->woocommerce_wpml->sync_variations_data->sync_product_variations($product['id'],$tr_product_id,$language['code'],false,true);
+                        $this->woocommerce_wpml->sync_variations_data->sync_product_variations( $product['id'], $tr_product_id, $language['code'], [ 'is_troubleshooting' => true ] );
                     }
                     if(!in_array($key,$unset_keys)){
                         $unset_keys[] = $key;
