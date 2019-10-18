@@ -253,6 +253,7 @@ class WCML_Orders {
 		if ( $this->get_order_language_by_item_id( $item_id ) != $sitepress->get_user_admin_language( get_current_user_id(), true ) ) {
 			foreach ( $item['item_meta'] as $key => $item_meta ) {
 				if ( taxonomy_exists( wc_attribute_taxonomy_name( $key ) ) || substr( $key, 0, 3 ) == 'pa_' ) {
+					$item_meta = (array) $item_meta;
 					foreach ( $item_meta as $value ) {
 						$this->force_update_itemmeta( $item_id, $key, $value, $sitepress->get_user_admin_language( get_current_user_id(), true ) );
 					}
@@ -268,6 +269,7 @@ class WCML_Orders {
 		if ( $order_languge != $sitepress->get_user_admin_language( get_current_user_id(), true ) ) {
 			foreach ( $item['item_meta'] as $key => $item_meta ) {
 				if ( taxonomy_exists( wc_attribute_taxonomy_name( $key ) ) || substr( $key, 0, 3 ) == 'pa_' ) {
+					$item_meta = (array) $item_meta;
 					foreach ( $item_meta as $value ) {
 						$this->force_update_itemmeta( $item_id, $key, $value, $order_languge );
 					}
