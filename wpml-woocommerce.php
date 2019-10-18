@@ -82,6 +82,7 @@ function wcml_loader() {
 		\WCML\RewriteRules\Hooks::class,
 		\WCML\Email\Settings\Hooks::class,
 		\WCML\Email\OrderItems\Hooks::class,
+		\WCML\Block\Convert\Hooks::class,
 	);
 
 	if (
