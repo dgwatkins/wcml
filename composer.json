@@ -68,7 +68,8 @@
         "otgs/wp-plugin-version": "dev-master",
         "roave/security-advisories": "dev-master",
         "sebastian/phpcpd": "^3.0",
-        "wpml/collect": "dev-wpml-collect-rename"
+        "wpml/collect": "dev-wpml-collect-rename",
+        "wpml/page-builders-gutenberg": "dev-wcml-2676"
     },
     "scripts": {
         "make": [

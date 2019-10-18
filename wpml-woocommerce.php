@@ -8,7 +8,11 @@
  * Text Domain: woocommerce-multilingual
  * Requires at least: 4.7
  * Tested up to: 5.3
+<<<<<<< HEAD
  * Version: 4.7.6
+=======
+ * Version: 4.7.5
+>>>>>>> Convert dynamic WC blocks with items in the current language
  * Plugin Slug: woocommerce-multilingual
  * WC requires at least: 3.3.0
  * WC tested up to: 3.8.0
@@ -81,6 +85,7 @@ function wcml_loader() {
 		'WCML_ATE_Activate_Synchronization',
 		\WCML\RewriteRules\Hooks::class,
 		\WCML\Email\Settings\Hooks::class,
+		\WCML\Block\Convert\Hooks::class,
 	);
 
 	if (
