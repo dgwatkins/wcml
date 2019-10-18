@@ -146,7 +146,7 @@ class WCML_Synchronize_Product_Data{
 
     }
 
-    public function sync_product_data( $original_product_id, $tr_product_id, $lang ){
+    public function sync_product_data( $original_product_id, $tr_product_id, $lang, $duplicate = false ){
 
         do_action( 'wcml_before_sync_product_data', $original_product_id, $tr_product_id, $lang );
 
@@ -166,7 +166,7 @@ class WCML_Synchronize_Product_Data{
         $this->sync_product_taxonomies( $original_product_id, $tr_product_id, $lang );
 
         //duplicate variations
-        $this->woocommerce_wpml->sync_variations_data->sync_product_variations( $original_product_id, $tr_product_id, $lang );
+        $this->woocommerce_wpml->sync_variations_data->sync_product_variations( $original_product_id, $tr_product_id, $lang, [ 'is_duplicate' => $duplicate ] );
 
         $this->sync_linked_products( $original_product_id, $tr_product_id, $lang );
 
@@ -505,7 +505,7 @@ class WCML_Synchronize_Product_Data{
 
             $master_post_id = $this->woocommerce_wpml->products->get_original_product_id( $master_post_id );
 
-            $this->sync_product_data( $master_post_id, $id, $lang );
+            $this->sync_product_data( $master_post_id, $id, $lang, true );
         }
     }
 
