@@ -1604,7 +1604,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools-ci.git",
-                "reference": "af894e119b557fdaf2a06e8ae0d5394f35631778"
+                "reference": "b67d94128560e175810fc3d4eeba8943848cd262"
             },
             "require": {
                 "corneltek/getoptionkit": "^2.5",
@@ -1658,7 +1658,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2019-09-03T08:34:57+00:00"
+            "time": "2019-10-18T09:51:41+00:00"
         },
         {
             "name": "otgs/changelog",
@@ -1666,7 +1666,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-changelog.git",
-                "reference": "b291ebd488281541c412ca35fbb18499be3f3edc"
+                "reference": "c563d25e0e123b44087a02b13682a180fdebc0ee"
             },
             "require": {
                 "nepda/youtrack-client": "dev-master",
@@ -1709,7 +1709,7 @@
             "keywords": [
                 "cli"
             ],
-            "time": "2019-09-16T08:12:57+00:00"
+            "time": "2019-10-18T12:10:27+00:00"
         },
         {
             "name": "otgs/php-integration-tests",
@@ -1822,7 +1822,7 @@
                 }
             ],
             "description": "CI tools for accessing and manipulating WordPress plugins versions",
-            "time": "2019-08-12T15:05:05+00:00"
+            "time": "2019-08-12T15:23:35+00:00"
         },
         {
             "name": "php-http/client-common",
@@ -2334,13 +2334,13 @@
                 },
                 {
                     "name": "Wim Godden",
-                    "homepage": "https://github.com/wimg",
-                    "role": "lead"
+                    "role": "lead",
+                    "homepage": "https://github.com/wimg"
                 },
                 {
                     "name": "Juliette Reinders Folmer",
-                    "homepage": "https://github.com/jrfnl",
-                    "role": "lead"
+                    "role": "lead",
+                    "homepage": "https://github.com/jrfnl"
                 }
             ],
             "description": "A set of sniffs for PHP_CodeSniffer that checks for PHP cross-version compatibility.",
