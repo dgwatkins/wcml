@@ -136,7 +136,7 @@ WooCommerce Multilingual is compatible with all major WooCommerce extensions. We
 
 == Changelog ==
 
-{{changelog}}
+For post 4.1.0 changelogs, see the `changelog` folder.
 
 = 4.1.0 =
 * Enhanced language switchers
