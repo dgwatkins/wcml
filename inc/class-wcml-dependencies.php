@@ -31,7 +31,7 @@ class WCML_Dependencies {
 	}
 
 	function check() {
-		global $woocommerce_wpml, $sitepress, $woocommerce;
+		global $sitepress, $woocommerce;
 
 		if ( ! defined( 'ICL_SITEPRESS_VERSION' ) || ICL_PLUGIN_INACTIVE || is_null( $sitepress ) || ! class_exists( 'SitePress' ) ) {
 			$this->missing['WPML'] = $this->tracking_link->generate( 'https://wpml.org/' );
@@ -57,7 +57,7 @@ class WCML_Dependencies {
 			$this->allok = false;
 		}
 
-		if ( ! defined( 'WPML_TM_VERSION' ) ) {
+		if ( ! defined( 'WPML_TM_VERSION' ) || ! has_action( 'wpml_loaded', 'wpml_tm_load' ) ) {
 			$this->missing['WPML Translation Management'] = $this->tracking_link->generate( 'https://wpml.org/' );
 			$this->allok                                  = false;
 		} elseif ( version_compare( WPML_TM_VERSION, self::MIN_WPML_TM, '<' ) ) {
