@@ -242,7 +242,7 @@ class WCML_Orders {
 			$data            = $meta_data->get_data();
 			$attribute_value = get_post_meta( $variation_id, 'attribute_' . $data['key'], true );
 			if ( $attribute_value ) {
-				$item->update_meta_data( $data['key'], $attribute_value, $data['id'] );
+				$item->update_meta_data( $data['key'], $attribute_value, isset( $data['id'] ) ? $data['id'] : 0 );
 			}
 		}
 	}

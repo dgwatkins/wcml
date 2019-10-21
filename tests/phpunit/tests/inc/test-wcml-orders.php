@@ -246,17 +246,28 @@ class Test_WCML_Orders extends OTGS_TestCase {
 			'return' => 'product'
 		));
 
-		$data =	array(
+		$color_data =	array(
 			'id' => 12,
 			'key' => 'color',
 			'value' => 'Black'
 		);
-		$meta_data = $this->getMockBuilder( 'WC_Meta_Data' )
+		$color_meta_data = $this->getMockBuilder( 'WC_Meta_Data' )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_data' ) )
 		                  ->getMock();
-		$meta_data->method( 'get_data' )->willReturn( $data );
-		$updated_meta_data_value = 'Black(ES)';
+		$color_meta_data->method( 'get_data' )->willReturn( $color_data );
+		$updated_color_meta_data_value = 'Black(ES)';
+
+		$size_data_with_missing_id = array(
+			'key'   => 'size',
+			'value' => 'Small'
+		);
+		$size_meta_data = $this->getMockBuilder( 'WC_Meta_Data' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_data' ) )
+		                  ->getMock();
+		$size_meta_data->method( 'get_data' )->willReturn( $size_data_with_missing_id );
+		$updated_size_meta_data_value = 'Small(ES)';
 
 
 
@@ -270,8 +281,8 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		$product_item->expects( $this->once() )->method( 'set_product_id' )->with( $translated_product_id )->willReturn( true );
 		$product_item->expects( $this->once() )->method( 'set_variation_id' )->with( $translated_variation_id )->willReturn( true );
 		$product_item->method( 'get_type' )->willReturn( 'line_item' );
-		$product_item->method( 'get_meta_data' )->willReturn( array( $meta_data ) );
-		$product_item->expects( $this->once() )->method( 'update_meta_data' )->with( $data[ 'key' ], $updated_meta_data_value, $data[ 'id' ] )->willReturn( true );
+		$product_item->method( 'get_meta_data' )->willReturn( array( $color_meta_data, $size_meta_data ) );
+		$product_item->expects( $this->exactly( 2 ) )->method( 'update_meta_data' )->willReturn( true );
 		$product_item->method( 'save' )->willReturn( true );
 
 		$that = $this;
@@ -318,8 +329,14 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		);
 
 		\WP_Mock::userFunction( 'get_post_meta', array(
-				'args'   => array( $translated_variation_id, 'attribute_' . $data['key'], true ),
-				'return' => $updated_meta_data_value
+				'args'   => array( $translated_variation_id, 'attribute_' . $color_data['key'], true ),
+				'return' => $updated_color_meta_data_value
+			)
+		);
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+				'args'   => array( $translated_variation_id, 'attribute_' . $size_data_with_missing_id['key'], true ),
+				'return' => $updated_size_meta_data_value
 			)
 		);
 
