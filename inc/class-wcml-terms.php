@@ -681,21 +681,20 @@ class WCML_Terms{
         return $terms;
     }
 
-    function filter_shipping_classes_terms( $terms, $taxonomies, $args ){
+    public function filter_shipping_classes_terms( $terms, $taxonomies, $args ){
 
         $on_wc_settings_page = isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] === 'wc-settings';
         $on_shipping_tab = isset( $_GET[ 'tab' ] ) && $_GET[ 'tab' ] === 'shipping';
         $on_classes_section = isset( $_GET[ 'section' ] ) && $_GET[ 'section' ] === 'classes';
 
-        if( is_admin() && in_array( 'product_shipping_class', (array) $taxonomies ) && $on_wc_settings_page && $on_shipping_tab && !$on_classes_section ){
-            remove_filter('get_terms',array($this,'filter_shipping_classes_terms'));
-            $current_language = $this->sitepress->get_current_language();
-            $this->sitepress->switch_lang($this->sitepress->get_default_language());
-            add_filter( 'get_terms', array( 'WPML_Terms_Translations', 'get_terms_filter' ), 10, 2 );
-            $terms = get_terms( $taxonomies, $args );
-            remove_filter( 'get_terms', array( 'WPML_Terms_Translations', 'get_terms_filter' ), 10, 2 );
+        if( is_admin() && in_array( 'product_shipping_class', $taxonomies ) && $on_wc_settings_page && $on_shipping_tab && !$on_classes_section ){
+	        remove_filter( 'get_terms', array( $this, 'filter_shipping_classes_terms' ) );
+	        remove_filter( 'get_terms', array( 'WPML_Terms_Translations', 'get_terms_filter' ), 10, 2 );
+	        $this->sitepress->switch_lang( $this->sitepress->get_default_language() );
+	        $terms = get_terms( $args );
+	        add_filter( 'get_terms', array( 'WPML_Terms_Translations', 'get_terms_filter' ), 10, 2 );
             add_filter( 'get_terms', array( $this, 'filter_shipping_classes_terms' ), 10, 3 );
-            $this->sitepress->switch_lang($current_language);
+            $this->sitepress->switch_lang();
         }
 
         return $terms;

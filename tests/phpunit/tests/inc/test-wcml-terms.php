@@ -187,4 +187,123 @@ class Test_WCML_Terms extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_should_filter_shipping_classes_terms_in_default_language_on_shipping_settings_page() {
+
+		WP_Mock::passthruFunction( 'remove_filter' );
+
+		$_GET['page'] = 'wc-settings';
+		$_GET['tab']  = 'shipping';
+
+		$taxonomies = [ 'product_shipping_class' ];
+		$args       = [ 'taxonomy' => $taxonomies ];
+
+		$original_term_object          = new stdClass();
+		$original_term_object->term_id = 10;
+
+		$expected_terms = [ $original_term_object ];
+
+		WP_Mock::userFunction( 'is_admin', [
+			'return' => true
+		] );
+
+		WP_Mock::userFunction( 'get_terms', [
+			'args'   => [ $args ],
+			'return' => $expected_terms
+		] );
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'switch_lang', 'get_default_language' ) )
+		                  ->getMock();
+
+		$sitepress->expects( $this->once() )->method( 'get_default_language' )->willReturn( 'en' );
+		$sitepress->expects( $this->exactly( 2 ) )->method( 'switch_lang' )->willReturn( true );
+
+		$subject = $this->get_subject( null, $sitepress );
+
+		$filtered_terms = $subject->filter_shipping_classes_terms( [], $taxonomies, $args );
+
+		$this->assertEquals( $expected_terms, $filtered_terms );
+
+		unset( $_GET['page'], $_GET['tab'] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_shipping_classes_terms_for_not_shipping_settings_page() {
+
+		WP_Mock::passthruFunction( 'remove_filter' );
+
+		$_GET['page'] = 'wc-settings';
+		$_GET['tab']  = 'products';
+
+		WP_Mock::userFunction( 'is_admin', [
+			'return' => true
+		] );
+
+		$this->not_filtered_shipping_classes_terms_mock();
+
+		unset( $_GET['page'], $_GET['tab'] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_shipping_classes_terms_for_front_page() {
+
+		WP_Mock::passthruFunction( 'remove_filter' );
+
+		$_GET['page'] = 'wc-settings';
+		$_GET['tab']  = 'shipping';
+
+		WP_Mock::userFunction( 'is_admin', [
+			'return' => false
+		] );
+
+		$this->not_filtered_shipping_classes_terms_mock();
+
+		unset( $_GET['page'], $_GET['tab'] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_shipping_classes_terms_for_not_settings_page() {
+
+		WP_Mock::passthruFunction( 'remove_filter' );
+
+		$_GET['page'] = 'products';
+
+		WP_Mock::userFunction( 'is_admin', [
+			'return' => true
+		] );
+
+		$this->not_filtered_shipping_classes_terms_mock();
+
+		unset( $_GET['page'] );
+	}
+
+	private function not_filtered_shipping_classes_terms_mock(){
+		$taxonomies = [ 'product_shipping_class' ];
+		$args       = [ 'taxonomy' => $taxonomies ];
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'switch_lang', 'get_default_language' ) )
+		                  ->getMock();
+
+		$sitepress->expects( $this->exactly( 0 ) )->method( 'get_default_language' )->willReturn( 'en' );
+		$sitepress->expects( $this->exactly( 0 ) )->method( 'switch_lang' )->willReturn( true );
+
+		$subject = $this->get_subject( null, $sitepress );
+
+		$filtered_terms = $subject->filter_shipping_classes_terms( [], $taxonomies, $args );
+
+		$this->assertEquals( [], $filtered_terms );
+	}
+
 }
