@@ -41,10 +41,10 @@ endif
 .PHONY: install
 
 install: composer-install
-#install: npm-install
+install: npm-install
 
 install-prod: composer-install-prod
-#install-prod: npm-install-prod
+install-prod: npm-install-prod
 
 # Build
 .PHONY: dev prod
