@@ -161,12 +161,12 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 
 		$this->bundle_id = 1;
 		$this->translated_bundle_id = 2;
-		$language = rand_str();
+		$language = 'es';
 
 		$bundle_item = 10;
-		$this->bundles_items = array( $bundle_item );
+		$this->bundles_items = [ $bundle_item ];
 
-		$this->translated_bundle_items = array();
+		$this->translated_bundle_items = [];
 
 		$this->product_bundles_items->method( 'get_items' )->will( $this->returnCallback(
 			function ( $id ) {
@@ -177,7 +177,7 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 					return $this->translated_bundle_items;
 				}
 
-				return array();
+				return [];
 			}
 		));
 
@@ -186,7 +186,7 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 		$variation_id = 30;
 		$translated_variation_id = 31;
 
-		$this->fields_to_sync = array(
+		$this->fields_to_sync = [
 			'optional',
 			'stock_status',
 			'max_stock',
@@ -204,16 +204,18 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 			'override_variations',
 			'override_default_variation_attributes',
 			'hide_filtered_variations'
-		);
+		];
 
-		$attribute_taxonomy = rand_str();
-		$attribute_term_slug = rand_str();
+		$attribute_taxonomy = 'pa_color';
+		$attribute_term_slug = 'red';
+		$custom_attribute = 'size';
+		$custom_attribute_value = 'small';
 
-		$this->item_meta = array(
+		$this->item_meta = [
 			'product_id' => 20,
-			'allowed_variations' => array( $variation_id ),
-			'default_variation_attributes' => array( $attribute_taxonomy => $attribute_term_slug )
-		);
+			'allowed_variations' => [ $variation_id ],
+			'default_variation_attributes' => [ $attribute_taxonomy => $attribute_term_slug , $custom_attribute => $custom_attribute_value ]
+		];
 
 		foreach( $this->fields_to_sync as $field_key ){
 			$this->item_meta[ $field_key ] = rand_str();
@@ -223,10 +225,10 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 
 		$this->product_bundles_items->method( 'get_item_data' )->with( $bundle_item )->willReturn( $this->item_meta );
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
-				'args' => array( $this->item_meta[ 'product_id' ] ),
+		\WP_Mock::userFunction( 'get_post_type', [
+				'args' => [ $this->item_meta[ 'product_id' ] ],
 				'return' => 'product'
-			)
+			]
 		);
 
 		\WP_Mock::onFilter( 'translate_object_id' )
@@ -241,27 +243,35 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 
 		$this->product_bundles_items->method( 'get_item_data_object' )->willReturn( $this->translated_item );
 
-		$this->item_meta['allowed_variations'] = array( $translated_variation_id );
+		$this->item_meta['allowed_variations'] = [ $translated_variation_id ];
 
+		$translated_custom_attribute_value = 'small es';
 		$attribute_term_id = 50;
 		$translated_attribute_term_id = 60;
 		$translated_term = new stdClass();
 		$translated_term->slug = rand_str();
 
-		$this->woocommerce_wpml->terms = $this->getMockBuilder( 'WCML_Terms' )->setMethods( array(
-			'wcml_get_term_id_by_slug',
-			'wcml_get_term_by_id'
-		) )->disableOriginalConstructor()->getMock();
+		$this->woocommerce_wpml->terms = $this->getMockBuilder( 'WCML_Terms' )
+		                                      ->setMethods( array( 'wcml_get_term_id_by_slug', 'wcml_get_term_by_id' ) )
+		                                      ->disableOriginalConstructor()
+		                                      ->getMock();
 
-		$this->woocommerce_wpml->terms->method( 'wcml_get_term_id_by_slug' )->willReturn( $attribute_term_id );
+		$this->woocommerce_wpml->terms->method( 'wcml_get_term_id_by_slug' )->with( $attribute_taxonomy, $attribute_term_slug )->willReturn( $attribute_term_id );
 
 		\WP_Mock::onFilter( 'translate_object_id' )
 		        ->with( $attribute_term_id, $attribute_taxonomy, true, $language )
 		        ->reply( $translated_attribute_term_id );
 
-		$this->woocommerce_wpml->terms->method( 'wcml_get_term_by_id' )->willReturn( $translated_term );
+		$this->woocommerce_wpml->terms->method( 'wcml_get_term_by_id' )->with( $translated_attribute_term_id, $attribute_taxonomy )->willReturn( $translated_term );
 
-		$this->item_meta[ 'default_variation_attributes'] = array( $attribute_taxonomy => $translated_term->slug );
+		$this->item_meta[ 'default_variation_attributes'] = [ $attribute_taxonomy => $translated_term->slug, $custom_attribute => $translated_custom_attribute_value ];
+
+		$this->woocommerce_wpml->attributes = $this->getMockBuilder( 'WCML_Terms' )
+		                                           ->setMethods( [ 'get_custom_attr_translation' ] )
+		                                           ->disableOriginalConstructor()
+		                                           ->getMock();
+
+		$this->woocommerce_wpml->attributes->method( 'get_custom_attr_translation' )->with( $this->item_meta['product_id'], $translated_product_id, $custom_attribute, $custom_attribute_value )->willReturn( $translated_custom_attribute_value );
 
 		$this->product_bundles_items->expects( $this->exactly( count( $this->fields_to_sync ) + 2 ) )->method( 'update_item_meta' )->will( $this->returnCallback(
 			function ( $item, $key, $value ) {
@@ -278,7 +288,6 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 		$subject->sync_product_bundle_meta( $this->bundle_id, $this->translated_bundle_id );
-
 	}
 
 	/**
@@ -287,10 +296,16 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 	public function it_should_filter_woocommerce_json_search_products_in_current_language() {
 
 		$product_id = mt_rand( 1, 100 );
-		$found_products = array( $product_id => rand_str() );
+		$found_products = [ $product_id => rand_str() ];
 
 		$this->sitepress->method( 'get_language_for_element' )->willReturn( 'es' );
 		$this->sitepress->method( 'get_current_language' )->willReturn( 'en' );
+
+		\WP_Mock::userFunction( 'get_post_type', [
+				'args'   => [ $product_id ],
+				'return' => 'product'
+			]
+		);
 
 		$subject = $this->get_subject();
 		$filtered_products = $subject->woocommerce_json_search_filter_found_products( $found_products );
