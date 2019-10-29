@@ -59,9 +59,9 @@ class WCML_WC_Shortcode_Product_Category {
 		return function ( $slugOrId ) {
 			if ( is_numeric( $slugOrId ) ) {
 				return get_term( $slugOrId, 'product_cat' );
-			} else {
-				return get_term_by( 'slug', $slugOrId, 'product_cat' );
 			}
+
+			return get_term_by( 'slug', $slugOrId, 'product_cat' );
 		};
 	}
 
