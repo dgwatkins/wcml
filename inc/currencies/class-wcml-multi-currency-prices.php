@@ -458,6 +458,10 @@ class WCML_Multi_Currency_Prices {
 
 		$amount = $this->raw_price_filter( $amount, $currency );
 
+		return $this->format_price_in_currency( $amount, $currency );
+	}
+
+	public function format_price_in_currency( $price, $currency ){
 		$currency_details = $this->woocommerce_wpml->multi_currency->get_currency_details_by_code( $currency );
 
 		switch ( $currency_details['position'] ) {
@@ -486,7 +490,7 @@ class WCML_Multi_Currency_Prices {
 
 		);
 
-		$price = wc_price( $amount, $wc_price_args );
+		$price = wc_price( $price, $wc_price_args );
 
 		return $price;
 	}

@@ -164,8 +164,15 @@ class Test_WCML_Payment_Gateway_PayPal extends OTGS_TestCase {
 		                                                       ->getMock();
 
 		$this->woocommerce_wpml->multi_currency->prices->method( 'get_product_price_in_currency' )->with( $product_id, $gateway->settings[ $client_currency ]['currency'] )->willReturn( $converted_product_price );
-		$this->woocommerce_wpml->multi_currency->prices->method( 'convert_price_amount_by_currencies' )->with( $shipping_total, $client_currency, $gateway->settings[ $client_currency ]['currency'] )->willReturn( $converted_shipping_total );
 
+		$this->woocommerce_wpml->cart = $this->getMockBuilder( 'WCML_Cart' )
+		                                                       ->disableOriginalConstructor()
+		                                                       ->setMethods( array(
+			                                                       'get_cart_shipping_in_currency'
+		                                                       ) )
+		                                                       ->getMock();
+
+		$this->woocommerce_wpml->cart->method( 'get_cart_shipping_in_currency' )->with( $gateway->settings[ $client_currency ]['currency'] )->willReturn( $converted_shipping_total );
 
 		$subject = $this->get_subject( $gateway );
 
