@@ -1,5 +1,7 @@
 <?php
 
+use WPML\Collect\Support\Collection;
+
 /**
  * Class WCML_WC_Shortcode_Product_Category
  * @since 4.2.2
@@ -38,9 +40,10 @@ class WCML_WC_Shortcode_Product_Category {
 			if ( isset( $args['product_cat'] ) ) {
 				$args = $this->translate_categories_using_simple_tax_query( $args );
 			} elseif ( ! empty( $atts['category'] ) && isset( $args['tax_query'] ) ) {
-				$categories = wpml_collect( explode(',', $atts['category'] ) )
-					->filter( 'trim' )
-					->map( function ( $category ) { return get_term( $category, 'product_cat' ); } );
+				$categories = wpml_collect( explode( ',', $atts['category'] ) )
+					->map( function( $slugOrId ) { return trim( $slugOrId ); } )
+					->filter()
+					->map( $this->getProductCategory() );
 
 				$args = $this->replace_category_in_query_arguments( $args, $categories );
 			}
@@ -50,12 +53,25 @@ class WCML_WC_Shortcode_Product_Category {
 	}
 
 	/**
-	 * @param array $args
-	 * @param array $terms
+	 * @return Closure
+	 */
+	private function getProductCategory() {
+		return function ( $slugOrId ) {
+			if ( is_numeric( $slugOrId ) ) {
+				return get_term( $slugOrId, 'product_cat' );
+			} else {
+				return get_term_by( 'slug', $slugOrId, 'product_cat' );
+			}
+		};
+	}
+
+	/**
+	 * @param array      $args
+	 * @param Collection $terms
 	 *
 	 * @return array
 	 */
-	private function replace_category_in_query_arguments( $args, $terms ){
+	private function replace_category_in_query_arguments( array $args, Collection $terms ){
 
 		foreach ( $args['tax_query'] as $i => $tax_query ) {
 			$args['tax_query'][ $i ] = array();
@@ -64,7 +80,7 @@ class WCML_WC_Shortcode_Product_Category {
 			}
 			foreach ( $tax_query as $j => $condition ) {
 				if ( 'product_cat' === $condition['taxonomy'] ) {
-					$condition['terms'] = wp_list_pluck( $terms, $condition['field'] );
+					$condition['terms'] = $terms->pluck( $condition['field'] )->toArray();
 				}
 				$args['tax_query'][ $i ][] = $condition;
 			}
