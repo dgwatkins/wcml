@@ -40,29 +40,24 @@ class WCML_WC_Shortcode_Product_Category {
 			if ( isset( $args['product_cat'] ) ) {
 				$args = $this->translate_categories_using_simple_tax_query( $args );
 			} elseif ( ! empty( $atts['category'] ) && isset( $args['tax_query'] ) ) {
+				$getProductCategoryObject = function ( $slugOrId ) {
+					if ( is_numeric( $slugOrId ) ) {
+						return get_term( $slugOrId, 'product_cat' );
+					}
+
+					return get_term_by( 'slug', $slugOrId, 'product_cat' );
+				};
+
 				$categories = wpml_collect( explode( ',', $atts['category'] ) )
 					->map( function( $slugOrId ) { return trim( $slugOrId ); } )
 					->filter()
-					->map( $this->getProductCategory() );
+					->map( $getProductCategoryObject );
 
 				$args = $this->replace_category_in_query_arguments( $args, $categories );
 			}
 		}
 
 		return $args;
-	}
-
-	/**
-	 * @return Closure
-	 */
-	private function getProductCategory() {
-		return function ( $slugOrId ) {
-			if ( is_numeric( $slugOrId ) ) {
-				return get_term( $slugOrId, 'product_cat' );
-			}
-
-			return get_term_by( 'slug', $slugOrId, 'product_cat' );
-		};
 	}
 
 	/**
