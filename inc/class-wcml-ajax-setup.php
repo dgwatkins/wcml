@@ -60,6 +60,8 @@ class WCML_Ajax_Setup {
 								  'wpml_translation_dialog_save_job',
 								  'edit-theme-plugin-file',
 								  'search-install-plugins',
+								  'woocommerce_load_variations',
+								  'woocommerce_add_attribute',
 							  ],
 							  true
 						  );

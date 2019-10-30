@@ -12,7 +12,7 @@ class Test_WCML_Ajax_Setup extends OTGS_TestCase {
 
 		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
 			->disableOriginalConstructor()
-			->setMethods( array( 'get_wp_api', 'get_current_language', 'get_default_language' ) )
+			->setMethods( array( 'get_wp_api', 'get_current_language', 'get_default_language', 'switch_lang' ) )
 			->getMock();
 
 		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )
@@ -104,6 +104,52 @@ class Test_WCML_Ajax_Setup extends OTGS_TestCase {
 		$this->assertEquals( $woocommerce_params, $filtered_params );
 	}
 
+	/**
+	 * @test
+	 *
+	 */
+	public function it_should_localize_woocommerce_other_actions_on_ajax()
+	{
+		$_POST['action'] = rand_str();
+		$current_language = 'es';
 
+		$this->sitepress->expects( $this->once() )->method( 'get_current_language' )->willReturn( $current_language );
+		$this->sitepress->expects( $this->once() )->method( 'switch_lang' )->with( $current_language )->willReturn( true );
+
+		$subject = $this->get_subject();
+		$filtered_params = $subject->wcml_localize_woocommerce_on_ajax();
+	}
+
+
+	/**
+	 * @test
+	 * @dataProvider get_woocommerce_actions_to_skip
+	 *
+	 * @param string $action
+	 */
+	public function it_should_not_localize_woocommerce_on_ajax( $action )
+	{
+		$_POST['action'] = $action;
+		$current_language = 'es';
+
+		$this->sitepress->expects( $this->never() )->method( 'get_current_language' )->willReturn( $current_language );
+		$this->sitepress->expects( $this->never() )->method( 'switch_lang' )->with( $current_language )->willReturn( true );
+
+		$subject = $this->get_subject();
+		$filtered_params = $subject->wcml_localize_woocommerce_on_ajax();
+
+		unset($_POST['action']);
+	}
+
+	public function get_woocommerce_actions_to_skip(){
+		return [
+			['wcml_product_data'],
+			['wpml_translation_dialog_save_job'],
+			['edit-theme-plugin-file'],
+			['search-install-plugins'],
+			['woocommerce_load_variations'],
+			['woocommerce_add_attribute'],
+		];
+	}
 
 }
