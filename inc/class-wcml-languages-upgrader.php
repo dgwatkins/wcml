@@ -106,7 +106,6 @@ class WCML_Languages_Upgrader{
         global $sitepress;
 
         $active_languages = $sitepress->get_active_languages();
-        $current_language = $sitepress->get_current_language();
 
         foreach( $active_languages as $language ){
             if( $language['code'] == 'en' )
@@ -114,7 +113,7 @@ class WCML_Languages_Upgrader{
 
             $locale = $sitepress->get_locale( $language['code'] );
 
-            if ( $this->has_available_update( $locale ) && isset( $data->translations ) ) {
+            if ( isset( $data->translations ) ) {
 
                 $data->translations[] = array(
                     'type'       => 'plugin',
