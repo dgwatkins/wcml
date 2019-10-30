@@ -664,8 +664,9 @@ class WCML_Cart {
 		$cart_items = WC()->cart->get_cart_contents();
 
 		//items total
-		foreach( $cart_items as $item ){
-			$cart_total += $this->woocommerce_wpml->multi_currency->prices->get_product_price_in_currency( $item['product_id'], $currency ) * $item['quantity'];
+		foreach ( $cart_items as $item ) {
+			$item_product_id = $item['variation_id'] ? $item['variation_id'] : $item['product_id'];
+			$cart_total      += $this->woocommerce_wpml->multi_currency->prices->get_product_price_in_currency( $item_product_id, $currency ) * $item['quantity'];
 		}
 		$cart_total += $this->get_cart_shipping_in_currency( $currency );
 
