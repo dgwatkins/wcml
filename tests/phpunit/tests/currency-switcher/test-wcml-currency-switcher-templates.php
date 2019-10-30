@@ -35,6 +35,7 @@ if ( ! class_exists( 'WPML_Templates_Factory' ) ) {
  * @group currency-switcher
  * @group fix-tests-on-windows
  * @group wcml-2878
+ * @group wcml-2987
  */
 class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 
@@ -88,10 +89,31 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 
 		$subject = $this->get_subject( $woocommerce_wpml );
 
-		\WP_Mock::expectActionAdded( 'after_setup_theme', array( $subject, 'after_setup_theme_action' ) );
-		\WP_Mock::expectActionAdded( 'wp_enqueue_scripts', array( $subject, 'enqueue_template_resources' ) );
-		\WP_Mock::expectActionAdded( 'admin_head', array( $subject, 'admin_enqueue_template_resources' ) );
+		\WP_Mock::expectActionAdded( 'after_setup_theme', [ $subject, 'after_setup_theme_action' ] );
+		\WP_Mock::expectActionAdded( 'activated_plugin', [ $subject, 'activated_plugin_action' ] );
+		\WP_Mock::expectActionAdded( 'deactivated_plugin', [ $subject, 'activated_plugin_action' ] );
+		\WP_Mock::expectActionAdded( 'switch_theme', [ $subject, 'activated_plugin_action' ] );
+		\WP_Mock::expectActionAdded( 'wp_enqueue_scripts', [ $subject, 'enqueue_template_resources' ] );
+		\WP_Mock::expectActionAdded( 'admin_head', [ $subject, 'admin_enqueue_template_resources' ] );
 		$subject->init_hooks();
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_runs_activated_plugin_action() {
+		\WP_Mock::userFunction(
+			'delete_option',
+			[
+				'args'  => [ \WCML_Currency_Switcher_Templates::OPTION_NAME ],
+				'times' => 1,
+			]
+		);
+
+		$woocommerce_wpml      = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
+		$subject = $this->get_subject( $woocommerce_wpml );
+
+		$subject->activated_plugin_action();
 	}
 
 	/**
@@ -306,7 +328,6 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 		$wcml_file->method( 'get_uri_from_path' )->will( $this->returnCallback( array( $this, 'get_uri_from_path' ) ) );
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
 
-
 		\WP_Mock::userFunction( 'get_template_directory', array(
 			'return' => './',
 		));
@@ -320,16 +341,22 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 			'return' => [ 'basedir' => './' ],
 		) );
 
-		\WP_Mock::userFunction( 'get_option', array(
-			'args'   => array( 'wcml_currency_switcher_template_objects' ),
-			'times' => 1,
-			'return' => false
-		));
+		\WP_Mock::userFunction(
+			'get_option',
+			[
+				'args'   => [ \WCML_Currency_Switcher_Templates::OPTION_NAME ],
+				'times'  => 1,
+				'return' => false,
+			]
+		);
 
-		\WP_Mock::userFunction( 'update_option', array(
-			'times'   => 1,
-			'return' => true
-		));
+		\WP_Mock::userFunction(
+			'update_option',
+			[
+				'times'  => 1,
+				'return' => true,
+			]
+		);
 
 		\WP_Mock::passthruFunction( 'sanitize_title_with_dashes' );
 
