@@ -179,7 +179,7 @@
         },
         {
             "name": "otgs/installer",
-            "version": "2.2.1",
+            "version": "2.2.2",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/installer/installer.git",
@@ -1666,7 +1666,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-changelog.git",
-				"reference": "d03e6fa4ea33b147829ee1a6c39a997478e91a08"
+                "reference": "d03e6fa4ea33b147829ee1a6c39a997478e91a08"
             },
             "require": {
                 "nepda/youtrack-client": "dev-master",
@@ -1709,7 +1709,7 @@
             "keywords": [
                 "cli"
             ],
-			"time": "2019-10-21T09:41:46+00:00"
+            "time": "2019-10-21T09:41:46+00:00"
         },
         {
             "name": "otgs/php-integration-tests",
@@ -2334,13 +2334,13 @@
                 },
                 {
                     "name": "Wim Godden",
-                    "role": "lead",
-                    "homepage": "https://github.com/wimg"
+                    "homepage": "https://github.com/wimg",
+                    "role": "lead"
                 },
                 {
                     "name": "Juliette Reinders Folmer",
-                    "role": "lead",
-                    "homepage": "https://github.com/jrfnl"
+                    "homepage": "https://github.com/jrfnl",
+                    "role": "lead"
                 }
             ],
             "description": "A set of sniffs for PHP_CodeSniffer that checks for PHP cross-version compatibility.",
