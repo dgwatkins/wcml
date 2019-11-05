@@ -104,6 +104,8 @@ FunctionMocker::init(
 		],
 		'redefinable-internals' => [
 			'filter_input',
+			'defined',
+			'class_exists',
 		],
 	]
 );
