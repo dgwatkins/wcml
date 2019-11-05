@@ -109,8 +109,6 @@ if ( $wcml_rest_api->is_rest_api_request() ) {
 	add_action( 'wpml_before_init', array( $wcml_rest_api, 'remove_wpml_global_url_filters' ), 0 );
 }
 
-add_action( 'plugins_loaded', 'load_wcml_without_wpml', 10000 );
-
 /**
  * Load WooCommerce Multilingual when WPML is NOT active.
  */
