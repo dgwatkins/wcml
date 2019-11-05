@@ -1271,32 +1271,26 @@ class WCML_Bookings {
 		die();
 	}
 
-	function set_booking_currency( $currency_code = false ) {
-
+	public function set_booking_currency( $currency_code = false ) {
 		$cookie_name = '_wcml_booking_currency';
-		if ( ! isset( $_COOKIE [ $cookie_name ] ) && ! headers_sent() ) {
 
-
+		if ( ! isset( $_COOKIE[ $cookie_name ] ) && ! headers_sent() ) {
 			$currency_code = wcml_get_woocommerce_currency_option();
 
-			if ( $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ) {
-				$order_currencies = $this->woocommerce_wpml->multi_currency->orders->get_orders_currencies();
+			if ( WCML_MULTI_CURRENCIES_INDEPENDENT === $this->woocommerce_wpml->settings['enable_multi_currency'] ) {
+				$currency_codes = $this->woocommerce_wpml->multi_currency->get_currency_codes();
 
-				if ( ! isset( $order_currencies[ $currency_code ] ) ) {
-					foreach ( $order_currencies as $currency_code => $count ) {
-						$currency_code = $currency_code;
-						break;
-					}
+				if ( ! in_array( $currency_code, $currency_codes, true ) ) {
+					$currency_code = $this->woocommerce_wpml->multi_currency->get_default_currency();
 				}
 			}
 		}
 
 		if ( $currency_code ) {
 			// @todo uncomment or delete when #wpmlcore-5796 is resolved
-			//do_action( 'wpsc_add_cookie', $cookie_name );
+			// do_action( 'wpsc_add_cookie', $cookie_name );
 			setcookie( $cookie_name, $currency_code, time() + 86400, COOKIEPATH, COOKIE_DOMAIN );
 		}
-
 	}
 
 	function get_cookie_booking_currency() {

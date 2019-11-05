@@ -1,17 +1,17 @@
 <?php
 
 /**
- * Class Test_WCML_Admin_Curreny_Selector
+ * Class Test_WCML_Admin_Currency_Selector
  *
  * @group fix-tests-on-windows
+ * @group wcml-2957
  */
-class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
+class Test_WCML_Admin_Currency_Selector extends OTGS_TestCase {
 
 	public function tearDown() {
-		global $pagenow;
-		parent::tearDown();
+		unset( $GLOBALS['pagenow'], $_POST['wcml_nonce'], $_POST['currency'], $_COOKIE['_wcml_dashboard_currency'] );
 
-		unset( $pagenow, $_POST['wcml_nonce'], $_POST['currency'], $_COOKIE ['_wcml_dashboard_currency'] );
+		parent::tearDown();
 	}
 
 	private function get_subject( $woocommerce_wpml = null, $currency_cookie = null ) {
@@ -118,6 +118,8 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
+	 * @throws Exception
 	 */
 	public function show_dashboard_currency_selector() {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
@@ -134,21 +136,16 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 		\WP_Mock::userFunction( 'get_woocommerce_currencies', [ 'return' => $woocommerce_currencies ] );
 		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', [ 'return' => $woocommerce_currency ] );
 
+		$currencies = [
+			$woocommerce_currency,
+			$another_currency,
+		];
+
 		$woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
 		                                         ->disableOriginalConstructor()
 		                                         ->getMock();
 
-		$woocommerce_wpml->multi_currency->orders = $this->getMockBuilder( 'WCML_Multi_Currency_Orders' )
-		                                                 ->disableOriginalConstructor()
-		                                                 ->setMethods( [ 'get_orders_currencies' ] )
-		                                                 ->getMock();
-
-		$currencies = [
-			$woocommerce_currency => random_int( 0, 100 ),
-			$another_currency     => random_int( 0, 100 ),
-		];
-		$woocommerce_wpml->multi_currency->orders->method( 'get_orders_currencies' )
-		                                         ->willReturn( $currencies );
+		$woocommerce_wpml->multi_currency->method( 'get_currency_codes' )->willReturn( $currencies );
 
 		ob_start();
 		$subject->show_dashboard_currency_selector();
@@ -158,7 +155,6 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 
 		$this->assertContains( '<option value="' . $woocommerce_currency . '" selected="selected">', $content );
 		$this->assertContains( '<option value="' . $another_currency . '" >', $content );
-
 	}
 
 	/**
@@ -211,9 +207,10 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
+	 * @group wcml-2957
 	 */
 	public function set_dashboard_currency() {
-
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$currency_cookie  = $this->get_wcml_admin_cookie_mock();
 		$subject          = $this->get_subject( $woocommerce_wpml, $currency_cookie );
@@ -222,7 +219,6 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 		$currency_cookie->expects( $this->once() )->method( 'set_value' )
 		                ->with( $currency_code, $this->isType( 'int' ) );
 		$subject->set_dashboard_currency( $currency_code );
-
 	}
 
 	/**
@@ -332,11 +328,11 @@ class Test_WCML_Admin_Curreny_Selector extends OTGS_TestCase {
 		);
 
 		$currency                             = rand_str();
-		$_COOKIE ['_wcml_dashboard_currency'] = rand_str();
+		$_COOKIE['_wcml_dashboard_currency'] = rand_str();
 
-		\WP_Mock::userFunction( 'get_woocommerce_currency_symbol', [ 'return' => $_COOKIE ['_wcml_dashboard_currency'] ] );
+		\WP_Mock::userFunction( 'get_woocommerce_currency_symbol', [ 'return' => $_COOKIE['_wcml_dashboard_currency'] ] );
 
-		$this->assertSame( $_COOKIE ['_wcml_dashboard_currency'], $subject->filter_dashboard_currency_symbol( $currency ) );
+		$this->assertSame( $_COOKIE['_wcml_dashboard_currency'], $subject->filter_dashboard_currency_symbol( $currency ) );
 
 	}
 
