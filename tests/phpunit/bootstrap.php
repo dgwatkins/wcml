@@ -104,6 +104,9 @@ FunctionMocker::init(
 		],
 		'redefinable-internals' => [
 			'filter_input',
+			'headers_sent',
+			'setcookie',
+			'time',
 		],
 	]
 );

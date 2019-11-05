@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class Test_WCML_URLS
+ *
+ * @group wcml-2957
+ */
 class Test_WCML_URLS extends WCML_UnitTestCase {
 
 	private $default_language;

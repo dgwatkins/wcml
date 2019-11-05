@@ -1,5 +1,12 @@
 <?php
 
+use tad\FunctionMocker\FunctionMocker;
+
+/**
+ * Class Test_WCML_Bookings
+ *
+ * @group wcml-2957
+ */
 class Test_WCML_Bookings extends OTGS_TestCase {
 
 	/** @var wpdb */
@@ -10,7 +17,11 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		parent::setUp();
 
 		$this->wpdb = $this->stubs->wpdb();
+	}
 
+	public function tearDown() {
+		unset( $_COOKIE['_wcml_booking_currency'] );
+		parent::tearDown();
 	}
 
 	/**
@@ -774,11 +785,6 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 
 		$sitepress = $this->get_sitepress_with_user_language_mock( $user_email, false );
 
-
-		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
-		                         ->disableOriginalConstructor()
-		                         ->getMock();
-
 		$woocommerce_wpml = $this->get_woocommerce_wpml_with_translated_strings_mock( array(
 			'heading' => $translated_heading,
 			'subject' => $translated_subject,
@@ -792,5 +798,299 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$this->assertEquals( $translated_subject, $woocommerce->mailer()->emails['WC_Email_Admin_Booking_Cancelled']->subject );
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_does_NOT_set_booking_currency() {
+		$sitepress = $this->get_sitepress_mock();
+
+		$cookie_name      = '_wcml_booking_currency';
+		$setcookie_called = false;
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->getMock();
+
+		if ( ! defined( 'WCML_MULTI_CURRENCIES_INDEPENDENT' ) ) {
+			define( 'WCML_MULTI_CURRENCIES_INDEPENDENT', 2 );
+		}
+		$woocommerce_wpml->settings['enable_multi_currency'] = 0;
+
+		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
+		$woocommerce_wpml->multi_currency->expects( $this->never() )->method( 'get_currency_code' );
+
+		$woocommerce = $this->getMockBuilder( 'woocommerce' )
+		                    ->disableOriginalConstructor()
+		                    ->getMock();
+
+		$_COOKIE[ $cookie_name ] = 'something';
+		FunctionMocker::replace( 'headers_sent', false );
+
+		\WP_Mock::userFunction(
+			'wcml_get_woocommerce_currency_option',
+			[
+				'args'   => [],
+				'times'  => 0,
+			]
+		);
+
+		FunctionMocker::replace(
+			'setcookie',
+			function ( $name, $value, $expires, $path, $domain ) use ( &$setcookie_called ) {
+				$setcookie_called = true;
+
+				return true;
+			}
+		);
+		FunctionMocker::replace( 'time', 0 );
+
+		$subject = $this->get_subject( $sitepress, $woocommerce_wpml, $woocommerce );
+		$subject->set_booking_currency();
+
+		$this->assertFalse( $setcookie_called );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_sets_booking_currency_when_cookie_are_set() {
+		$sitepress = $this->get_sitepress_mock();
+
+		$cookie_name      = '_wcml_booking_currency';
+		$setcookie_ok     = false;
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->getMock();
+
+		if ( ! defined( 'WCML_MULTI_CURRENCIES_INDEPENDENT' ) ) {
+			define( 'WCML_MULTI_CURRENCIES_INDEPENDENT', 2 );
+		}
+		$woocommerce_wpml->settings['enable_multi_currency'] = 0;
+
+		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
+		$woocommerce_wpml->multi_currency->expects( $this->never() )->method( 'get_currency_code' );
+
+		$woocommerce = $this->getMockBuilder( 'woocommerce' )
+		                    ->disableOriginalConstructor()
+		                    ->getMock();
+
+		$_COOKIE[ $cookie_name ] = 'something';
+		FunctionMocker::replace( 'headers_sent', false );
+
+		$currency_option = 'EUR';
+		\WP_Mock::userFunction(
+			'wcml_get_woocommerce_currency_option',
+			[
+				'args'   => [],
+				'times'  => 0,
+			]
+		);
+
+		FunctionMocker::replace(
+			'setcookie',
+			function ( $name, $value, $expires, $path, $domain ) use ( $cookie_name, $currency_option, &$setcookie_ok ) {
+				$setcookie_ok = $cookie_name === $name
+				                && $currency_option === $value
+				                && 86400 === $expires
+				                && COOKIEPATH === $path
+				                && COOKIE_DOMAIN === $domain;
+
+				return true;
+			}
+		);
+		FunctionMocker::replace( 'time', 0 );
+
+		$subject = $this->get_subject( $sitepress, $woocommerce_wpml, $woocommerce );
+		$subject->set_booking_currency( 'EUR' );
+
+		$this->assertTrue( $setcookie_ok );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_sets_booking_currency_when_currencies_are_NOT_independent() {
+		$sitepress = $this->get_sitepress_mock();
+
+		$cookie_name      = '_wcml_booking_currency';
+		$setcookie_ok     = false;
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->getMock();
+
+		if ( ! defined( 'WCML_MULTI_CURRENCIES_INDEPENDENT' ) ) {
+			define( 'WCML_MULTI_CURRENCIES_INDEPENDENT', 2 );
+		}
+		$woocommerce_wpml->settings['enable_multi_currency'] = 0;
+
+		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
+		$woocommerce_wpml->multi_currency->expects( $this->never() )->method( 'get_currency_code' );
+
+		$woocommerce = $this->getMockBuilder( 'woocommerce' )
+		                    ->disableOriginalConstructor()
+		                    ->getMock();
+
+		unset( $_COOKIE[ $cookie_name ] );
+		FunctionMocker::replace( 'headers_sent', false );
+
+		$currency_option = 'EUR';
+		\WP_Mock::userFunction(
+			'wcml_get_woocommerce_currency_option',
+			[
+				'args'   => [],
+				'times'  => 1,
+				'return' => $currency_option,
+			]
+		);
+
+		FunctionMocker::replace(
+			'setcookie',
+			function ( $name, $value, $expires, $path, $domain ) use ( $cookie_name, $currency_option, &$setcookie_ok ) {
+				$setcookie_ok = $cookie_name === $name
+				                && $currency_option === $value
+				                && 86400 === $expires
+				                && COOKIEPATH === $path
+				                && COOKIE_DOMAIN === $domain;
+
+				return true;
+			}
+		);
+		FunctionMocker::replace( 'time', 0 );
+
+		$subject = $this->get_subject( $sitepress, $woocommerce_wpml, $woocommerce );
+		$subject->set_booking_currency();
+
+		$this->assertTrue( $setcookie_ok );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_sets_booking_currency_when_currencies_are_independent() {
+		$sitepress = $this->get_sitepress_mock();
+
+		$cookie_name     = '_wcml_booking_currency';
+		$currency_option = 'EUR';
+		$currency_code   = $currency_option;
+		$setcookie_ok    = false;
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->getMock();
+
+		if ( ! defined( 'WCML_MULTI_CURRENCIES_INDEPENDENT' ) ) {
+			define( 'WCML_MULTI_CURRENCIES_INDEPENDENT', 2 );
+		}
+		$woocommerce_wpml->settings['enable_multi_currency'] = WCML_MULTI_CURRENCIES_INDEPENDENT;
+
+		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
+		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_currency_code' )
+		                                 ->willReturn( $currency_code );
+
+		$woocommerce = $this->getMockBuilder( 'woocommerce' )
+		                    ->disableOriginalConstructor()
+		                    ->getMock();
+
+		unset( $_COOKIE[ $cookie_name ] );
+		FunctionMocker::replace( 'headers_sent', false );
+
+		\WP_Mock::userFunction(
+			'wcml_get_woocommerce_currency_option',
+			[
+				'args'   => [],
+				'times'  => 1,
+				'return' => $currency_option,
+			]
+		);
+
+		FunctionMocker::replace(
+			'setcookie',
+			function ( $name, $value, $expires, $path, $domain ) use ( $cookie_name, $currency_option, &$setcookie_ok ) {
+				$setcookie_ok = $cookie_name === $name
+				                && $currency_option === $value
+				                && 86400 === $expires
+				                && COOKIEPATH === $path
+				                && COOKIE_DOMAIN === $domain;
+
+				return true;
+			}
+		);
+		FunctionMocker::replace( 'time', 0 );
+
+		$subject = $this->get_subject( $sitepress, $woocommerce_wpml, $woocommerce );
+		$subject->set_booking_currency();
+
+		$this->assertTrue( $setcookie_ok );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_sets_booking_currency_and_uses_default_currency() {
+		$sitepress = $this->get_sitepress_mock();
+
+		$cookie_name      = '_wcml_booking_currency';
+		$default_currency = 'USD';
+		$currency_code    = $default_currency;
+		$setcookie_ok     = false;
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->getMock();
+
+		if ( ! defined( 'WCML_MULTI_CURRENCIES_INDEPENDENT' ) ) {
+			define( 'WCML_MULTI_CURRENCIES_INDEPENDENT', 2 );
+		}
+		$woocommerce_wpml->settings['enable_multi_currency'] = WCML_MULTI_CURRENCIES_INDEPENDENT;
+
+		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
+		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_currency_code' )
+		                                 ->willReturn( $currency_code );
+
+		$woocommerce = $this->getMockBuilder( 'woocommerce' )
+		                    ->disableOriginalConstructor()
+		                    ->getMock();
+
+		unset( $_COOKIE[ $cookie_name ] );
+		FunctionMocker::replace( 'headers_sent', false );
+
+		$currency_option = 'RUB';
+		\WP_Mock::userFunction(
+			'wcml_get_woocommerce_currency_option',
+			[
+				'args'   => [],
+				'times'  => 1,
+				'return' => $currency_option,
+			]
+		);
+
+		FunctionMocker::replace(
+			'setcookie',
+			function ( $name, $value, $expires, $path, $domain ) use ( $cookie_name, $currency_code, &$setcookie_ok ) {
+				$setcookie_ok = $cookie_name === $name
+				                && $currency_code === $value
+				                && 86400 === $expires
+				                && COOKIEPATH === $path
+				                && COOKIE_DOMAIN === $domain;
+
+				return true;
+			}
+		);
+		FunctionMocker::replace( 'time', 0 );
+
+		$subject = $this->get_subject( $sitepress, $woocommerce_wpml, $woocommerce );
+		$subject->set_booking_currency();
+
+		$this->assertTrue( $setcookie_ok );
+	}
+
+	private function get_multi_currency_mock() {
+		return $this->getMockBuilder( 'WCML_Multi_Currency' )
+		            ->disableOriginalConstructor()
+		            ->setMethods( [] )
+		            ->getMock();
+	}
 }
 
