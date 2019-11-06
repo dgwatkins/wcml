@@ -11,7 +11,7 @@
  * Version: 4.7.3
  * Plugin Slug: woocommerce-multilingual
  * WC requires at least: 3.3.0
- * WC tested up to: 3.7.1
+ * WC tested up to: 3.8.0
  *
  * @package WCML
  * @author  OnTheGoSystems
