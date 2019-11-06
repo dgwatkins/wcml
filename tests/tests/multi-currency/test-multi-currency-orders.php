@@ -40,8 +40,6 @@ class Test_WCML_Multi_Currency_Orders extends WCML_UnitTestCase {
 		$this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
 		$this->multi_currency                   = $this->woocommerce_wpml->multi_currency;
 
-		$this->multi_currency->prices->prices_init();
-
 		$this->orders[0] = WC_Helper_Order::create_order();
 
 		$this->orders[1] = WC_Helper_Order::create_order();
