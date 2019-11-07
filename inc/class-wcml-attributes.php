@@ -270,8 +270,8 @@ class WCML_Attributes{
     public function sync_product_attr( $original_product_id, $tr_product_id, $language = false, $data = false ){
 
         //get "_product_attributes" from original product
-        $orig_product_attrs = $this->get_product_atributes( $original_product_id );
-        $trnsl_product_attrs = $this->get_product_atributes( $tr_product_id );
+        $orig_product_attrs = $this->get_product_attributes( $original_product_id );
+        $trnsl_product_attrs = $this->get_product_attributes( $tr_product_id );
 
         $trnsl_labels = $this->get_attr_label_translations( $tr_product_id );
 
@@ -317,7 +317,7 @@ class WCML_Attributes{
         update_post_meta( $tr_product_id, '_product_attributes', $orig_product_attrs );
     }
 
-    public function get_product_atributes( $product_id ){
+    public function get_product_attributes( $product_id ){
         $attributes = get_post_meta( $product_id, '_product_attributes', true );
         if( !is_array( $attributes ) ){
             $attributes = array();
