@@ -1278,11 +1278,7 @@ class WCML_Bookings {
 			$currency_code = wcml_get_woocommerce_currency_option();
 
 			if ( WCML_MULTI_CURRENCIES_INDEPENDENT === $this->woocommerce_wpml->settings['enable_multi_currency'] ) {
-				$currency_codes = $this->woocommerce_wpml->multi_currency->get_currency_codes();
-
-				if ( ! in_array( $currency_code, $currency_codes, true ) ) {
-					$currency_code = $this->woocommerce_wpml->multi_currency->get_default_currency();
-				}
+				$currency_code = $this->woocommerce_wpml->multi_currency->get_currency_code();
 			}
 		}
 

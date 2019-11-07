@@ -106,11 +106,7 @@ class WCML_Multi_Currency_Reports {
 			$this->reports_currency = isset( $_COOKIE['_wcml_reports_currency'] ) ? $_COOKIE['_wcml_reports_currency'] : wcml_get_woocommerce_currency_option();
 
 			// Validation.
-			$currency_codes = $this->woocommerce_wpml->multi_currency->get_currency_codes();
-
-			if ( ! in_array( $this->reports_currency, $currency_codes, true ) ) {
-				$this->reports_currency = $this->woocommerce_wpml->multi_currency->get_default_currency();
-			}
+			$this->reports_currency = $this->woocommerce_wpml->multi_currency->get_currency_code();
 
 			add_filter( 'woocommerce_currency_symbol', array( $this, '_set_reports_currency_symbol' ) );
 		}

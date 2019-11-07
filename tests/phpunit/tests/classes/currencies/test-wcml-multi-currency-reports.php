@@ -101,12 +101,10 @@ class Test_WCML_Multi_Currency_Reports extends OTGS_TestCase {
 			]
 		);
 
-		$currency_codes = [ 'EUR', 'USD' ];
-		$default_curency = 'USD';
+		$currency_code = 'EUR';
 
 		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
-		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_currency_codes' )->willReturn( $currency_codes );
-		$woocommerce_wpml->multi_currency->expects( $this->never() )->method( 'get_default_currency' )->willReturn( $default_curency );;
+		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_currency_code' )->willReturn( $currency_code );
 
 		\WP_Mock::expectFilterAdded(
 			'woocommerce_currency_symbol',
@@ -180,12 +178,10 @@ class Test_WCML_Multi_Currency_Reports extends OTGS_TestCase {
 			]
 		);
 
-		$currency_codes = [ 'EUR', 'USD' ];
-		$default_curency = 'USD';
+		$currency_code = 'EUR';
 
 		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
-		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_currency_codes' )->willReturn( $currency_codes );
-		$woocommerce_wpml->multi_currency->expects( $this->never() )->method( 'get_default_currency' )->willReturn( $default_curency );;
+		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_currency_code' )->willReturn( $currency_code );
 
 		\WP_Mock::expectFilterAdded(
 			'woocommerce_currency_symbol',
@@ -260,12 +256,10 @@ class Test_WCML_Multi_Currency_Reports extends OTGS_TestCase {
 			]
 		);
 
-		$currency_codes = [ 'EUR', 'USD' ];
-		$default_curency = 'USD';
+		$currency_code = 'USD';
 
 		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
-		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_currency_codes' )->willReturn( $currency_codes );
-		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_default_currency' )->willReturn( $default_curency );;
+		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_currency_code' )->willReturn( $currency_code );
 
 		\WP_Mock::expectFilterAdded(
 			'woocommerce_currency_symbol',

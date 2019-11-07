@@ -805,8 +805,6 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress_mock();
 
 		$cookie_name      = '_wcml_booking_currency';
-		$currency_codes   = [ 'EUR', 'USD' ];
-		$default_currency = 'USD';
 		$setcookie_called = false;
 
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
@@ -819,8 +817,7 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$woocommerce_wpml->settings['enable_multi_currency'] = 0;
 
 		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
-		$woocommerce_wpml->multi_currency->expects( $this->never() )->method( 'get_currency_codes' );
-		$woocommerce_wpml->multi_currency->expects( $this->never() )->method( 'get_default_currency' );
+		$woocommerce_wpml->multi_currency->expects( $this->never() )->method( 'get_currency_code' );
 
 		$woocommerce = $this->getMockBuilder( 'woocommerce' )
 		                    ->disableOriginalConstructor()
@@ -829,7 +826,6 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$_COOKIE[ $cookie_name ] = 'something';
 		FunctionMocker::replace( 'headers_sent', false );
 
-		$currency_option = 'EUR';
 		\WP_Mock::userFunction(
 			'wcml_get_woocommerce_currency_option',
 			[
@@ -838,11 +834,9 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 			]
 		);
 
-		$currency_code = $default_currency;
-
 		FunctionMocker::replace(
 			'setcookie',
-			function ( $name, $value, $expires, $path, $domain ) use ( $cookie_name, $currency_option, &$setcookie_called ) {
+			function ( $name, $value, $expires, $path, $domain ) use ( &$setcookie_called ) {
 				$setcookie_called = true;
 
 				return true;
@@ -863,8 +857,6 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress_mock();
 
 		$cookie_name      = '_wcml_booking_currency';
-		$currency_codes   = [ 'EUR', 'USD' ];
-		$default_currency = 'USD';
 		$setcookie_ok     = false;
 
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
@@ -877,8 +869,7 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$woocommerce_wpml->settings['enable_multi_currency'] = 0;
 
 		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
-		$woocommerce_wpml->multi_currency->expects( $this->never() )->method( 'get_currency_codes' );
-		$woocommerce_wpml->multi_currency->expects( $this->never() )->method( 'get_default_currency' );
+		$woocommerce_wpml->multi_currency->expects( $this->never() )->method( 'get_currency_code' );
 
 		$woocommerce = $this->getMockBuilder( 'woocommerce' )
 		                    ->disableOriginalConstructor()
@@ -895,8 +886,6 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 				'times'  => 0,
 			]
 		);
-
-		$currency_code = $default_currency;
 
 		FunctionMocker::replace(
 			'setcookie',
@@ -925,8 +914,6 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress_mock();
 
 		$cookie_name      = '_wcml_booking_currency';
-		$currency_codes   = [ 'EUR', 'USD' ];
-		$default_currency = 'USD';
 		$setcookie_ok     = false;
 
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
@@ -939,8 +926,7 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$woocommerce_wpml->settings['enable_multi_currency'] = 0;
 
 		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
-		$woocommerce_wpml->multi_currency->expects( $this->never() )->method( 'get_currency_codes' );
-		$woocommerce_wpml->multi_currency->expects( $this->never() )->method( 'get_default_currency' );
+		$woocommerce_wpml->multi_currency->expects( $this->never() )->method( 'get_currency_code' );
 
 		$woocommerce = $this->getMockBuilder( 'woocommerce' )
 		                    ->disableOriginalConstructor()
@@ -958,8 +944,6 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 				'return' => $currency_option,
 			]
 		);
-
-		$currency_code = $default_currency;
 
 		FunctionMocker::replace(
 			'setcookie',
@@ -987,10 +971,10 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 	public function it_sets_booking_currency_when_currencies_are_independent() {
 		$sitepress = $this->get_sitepress_mock();
 
-		$cookie_name      = '_wcml_booking_currency';
-		$currency_codes   = [ 'EUR', 'USD' ];
-		$default_currency = 'USD';
-		$setcookie_ok     = false;
+		$cookie_name     = '_wcml_booking_currency';
+		$currency_option = 'EUR';
+		$currency_code   = $currency_option;
+		$setcookie_ok    = false;
 
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
 		                         ->disableOriginalConstructor()
@@ -1002,9 +986,8 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$woocommerce_wpml->settings['enable_multi_currency'] = WCML_MULTI_CURRENCIES_INDEPENDENT;
 
 		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
-		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_currency_codes' )
-		                                 ->willReturn( $currency_codes );
-		$woocommerce_wpml->multi_currency->expects( $this->never() )->method( 'get_default_currency' );
+		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_currency_code' )
+		                                 ->willReturn( $currency_code );
 
 		$woocommerce = $this->getMockBuilder( 'woocommerce' )
 		                    ->disableOriginalConstructor()
@@ -1013,7 +996,6 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		unset( $_COOKIE[ $cookie_name ] );
 		FunctionMocker::replace( 'headers_sent', false );
 
-		$currency_option = 'EUR';
 		\WP_Mock::userFunction(
 			'wcml_get_woocommerce_currency_option',
 			[
@@ -1022,8 +1004,6 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 				'return' => $currency_option,
 			]
 		);
-
-		$currency_code = $default_currency;
 
 		FunctionMocker::replace(
 			'setcookie',
@@ -1052,8 +1032,8 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress_mock();
 
 		$cookie_name      = '_wcml_booking_currency';
-		$currency_codes   = [ 'EUR', 'USD' ];
 		$default_currency = 'USD';
+		$currency_code    = $default_currency;
 		$setcookie_ok     = false;
 
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
@@ -1066,10 +1046,8 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$woocommerce_wpml->settings['enable_multi_currency'] = WCML_MULTI_CURRENCIES_INDEPENDENT;
 
 		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
-		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_currency_codes' )
-		                                 ->willReturn( $currency_codes );
-		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_default_currency' )
-		                                 ->willReturn( $default_currency );
+		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_currency_code' )
+		                                 ->willReturn( $currency_code );
 
 		$woocommerce = $this->getMockBuilder( 'woocommerce' )
 		                    ->disableOriginalConstructor()
@@ -1087,8 +1065,6 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 				'return' => $currency_option,
 			]
 		);
-
-		$currency_code = $default_currency;
 
 		FunctionMocker::replace(
 			'setcookie',

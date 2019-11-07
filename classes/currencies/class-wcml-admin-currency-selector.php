@@ -113,11 +113,7 @@ class WCML_Admin_Currency_Selector {
 		global $pagenow;
 
 		if ( ! $currency_code && 'index.php' === $pagenow && ! headers_sent() ) {
-			$currency_codes = $this->woocommerce_wpml->multi_currency->get_currency_codes();
-			$currency_code  = wcml_get_woocommerce_currency_option();
-			if ( ! in_array( $currency_code, $currency_codes, true ) ) {
-				$currency_code = $this->woocommerce_wpml->multi_currency->get_default_currency();
-			}
+			$currency_code = $this->woocommerce_wpml->multi_currency->get_currency_code();
 		}
 
 		if ( $currency_code ) {
