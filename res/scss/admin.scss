@@ -71,3 +71,10 @@ div[data-selector="wpbody-content .woocommerce h2"] a{
   background: #fff;
 }
 
+.wp-list-table {
+  &.fixed {
+    .column-icl_translations {
+      width: 12%;
+    }
+  }
+}
