@@ -119,12 +119,20 @@
 	.wcml-section-header {
 		width: 310px;
 		float: left;
+
+		.rtl & {
+			float: right;
+		}
 	}
 	.wcml-section-content {
 		float: left;
 		width: 600px;
 		max-width: 100%;
 		margin-left: 30px;
+
+		.rtl & {
+			float: right;
+		}
 	}
 
 	.wcml-section-content-wide {
@@ -788,6 +796,11 @@ Currency switcher dialog
 		margin-left: -25px;
 		margin-right: 5px;
 		vertical-align: baseline;
+
+		.rtl & {
+			margin-left: 5px;
+			margin-right: -25px;
+		}
 	}
 	.button-secondary {
 		vertical-align: middle;
@@ -802,6 +815,11 @@ Currency switcher dialog
 	.wpml-title-flag {
 		margin-left: -25px;
 		margin-right: 5px;
+
+		.rtl & {
+			margin-left: 5px;
+			margin-right: 0;
+		}
 	}
 }
 
