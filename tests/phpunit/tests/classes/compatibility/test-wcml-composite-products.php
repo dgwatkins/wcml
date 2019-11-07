@@ -79,14 +79,14 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 
 	/**
 	 * @test
-	 * @dataProvider it_should_apply_rounding_rules_data_provider
 	 *
 	 * @group wcml-2663
 	 */
-	public function it_should_apply_rounding_rules( $is_multi_currency_on, $is_composite_product, $client_currency ) {
-		$price           = mt_rand( 1, 100 );
+	public function it_should_apply_rounding_rules() {
+		$price = mt_rand( 1, 100 );
 		$converted_price = mt_rand( 101, 200 );
 		$default_currency = 'USD';
+		$client_currency = 'EUR';
 
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
 		                         ->disableOriginalConstructor()
@@ -114,6 +114,35 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 		\WP_Mock::userFunction(
 			'wcml_is_multi_currency_on',
 			array(
+				'return' => true,
+			)
+		);
+
+		\WP_Mock::userFunction(
+			'is_composite_product',
+			array(
+				'return' => true
+			)
+		);
+
+
+		$subject        = $this->get_subject( null, $woocommerce_wpml );
+		$filtered_price = $subject->apply_rounding_rules( $price );
+
+		$this->assertSame( $converted_price, $filtered_price );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider it_should_not_apply_rounding_rules_data_provider
+	 *
+	 * @group wcml-2663
+	 */
+	public function it_should_not_apply_rounding_rules( $price, $is_multi_currency_on, $is_composite_product ) {
+
+		\WP_Mock::userFunction(
+			'wcml_is_multi_currency_on',
+			array(
 				'return' => $is_multi_currency_on,
 			)
 		);
@@ -125,15 +154,10 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 			)
 		);
 
-
-		$subject        = $this->get_subject( null, $woocommerce_wpml );
+		$subject        = $this->get_subject( );
 		$filtered_price = $subject->apply_rounding_rules( $price );
 
-		if ( $is_multi_currency_on && $is_composite_product && $default_currency !== $client_currency ) {
-			$this->assertSame( $converted_price, $filtered_price );
-		} else {
-			$this->assertSame( $price, $filtered_price );
-		}
+		$this->assertSame( $price, $filtered_price );
 	}
 
 	/**
@@ -141,16 +165,13 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 	 *
 	 * @return array
 	 */
-	public function it_should_apply_rounding_rules_data_provider() {
-		return array(
-			array( false, false, 'USD' ),
-			array( false, true, 'USD' ),
-			array( true, true, 'USD' ),
-			array( true, false, 'USD' ),
-			array( false, false, 'EUR' ),
-			array( false, true, 'EUR' ),
-			array( true, true, 'EUR' ),
-			array( true, false, 'EUR' ),
-		);
+	public function it_should_not_apply_rounding_rules_data_provider() {
+		return [
+			[ 10, false, false ],
+			[ 12, false, true ],
+			[ 12, true, false ],
+			[ '', true, true ],
+		];
 	}
+
 }
