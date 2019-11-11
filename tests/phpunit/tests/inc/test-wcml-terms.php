@@ -287,6 +287,19 @@ class Test_WCML_Terms extends OTGS_TestCase {
 		unset( $_GET['page'] );
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_shipping_classes_terms_if_taxonomies_is_null() {
+
+		$subject = $this->get_subject();
+
+		$filtered_terms = $subject->filter_shipping_classes_terms( [], null, [] );
+
+		$this->assertEquals( [], $filtered_terms );
+	}
+
+
 	private function not_filtered_shipping_classes_terms_mock(){
 		$taxonomies = [ 'product_shipping_class' ];
 		$args       = [ 'taxonomy' => $taxonomies ];
