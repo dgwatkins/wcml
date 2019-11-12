@@ -668,7 +668,7 @@ class WCML_Cart {
 			$cart_total += $this->woocommerce_wpml->multi_currency->prices->get_product_price_in_currency( $item['product_id'], $currency ) * $item['quantity'];
 		}
 
-		$cart_total += $this->woocommerce_wpml->multi_currency->prices->convert_price_amount_by_currencies( WC()->cart->get_shipping_total(), $client_currency, $currency );
+		$cart_total += $this->get_cart_shipping_in_currency( $currency );
 
 		$cart_total = $this->woocommerce_wpml->multi_currency->prices->apply_rounding_rules( $cart_total, $currency );
 
@@ -680,11 +680,15 @@ class WCML_Cart {
 	 *
 	 * @return string
      */
-	public function get_formatted_cart_total_in_currency( $currency ){
-
-		$cart_total = $this->woocommerce_wpml->multi_currency->prices->formatted_price( $this->get_cart_total_in_currency( $currency ), $currency );
-
-		return $cart_total;
+	public function get_formatted_cart_total_in_currency( $currency ) {
+		return $this->woocommerce_wpml->multi_currency->prices->format_price_in_currency( $this->get_cart_total_in_currency( $currency ), $currency );
 	}
+
+	public function get_cart_shipping_in_currency( $currency ) {
+		$shipping_amount_in_default_currency = $this->woocommerce_wpml->multi_currency->prices->unconvert_price_amount( WC()->cart->get_shipping_total() );
+
+		return $this->woocommerce_wpml->multi_currency->prices->convert_price_amount( $shipping_amount_in_default_currency, $currency );
+	}
+
 
 }

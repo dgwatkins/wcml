@@ -484,17 +484,19 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		$this->woocommerce_wpml->multi_currency->prices = $this->getMockBuilder( 'WCML_Multi_Currency_Prices' )
 		                                                       ->disableOriginalConstructor()
 		                                                       ->setMethods( array(
-			                                                       'formatted_price',
+			                                                       'format_price_in_currency',
 			                                                       'get_product_price_in_currency',
-			                                                       'convert_price_amount_by_currencies',
-			                                                       'apply_rounding_rules'
+			                                                       'unconvert_price_amount',
+			                                                       'apply_rounding_rules',
+			                                                       'convert_price_amount'
 		                                                       ) )
 		                                                       ->getMock();
 
 		$this->woocommerce_wpml->multi_currency->prices->method( 'get_product_price_in_currency' )->with( $product_id, $currency )->willReturn( $converted_product_price );
-		$this->woocommerce_wpml->multi_currency->prices->method( 'convert_price_amount_by_currencies' )->with( $shipping_total, $client_currency, $currency )->willReturn( $converted_shipping_total );
+		$this->woocommerce_wpml->multi_currency->prices->method( 'unconvert_price_amount' )->with( $shipping_total )->willReturn( $shipping_total );
+		$this->woocommerce_wpml->multi_currency->prices->method( 'convert_price_amount' )->with( $shipping_total, $currency )->willReturn( $converted_shipping_total );
 		$this->woocommerce_wpml->multi_currency->prices->method( 'apply_rounding_rules' )->with( $converted_cart_total, $currency )->willReturn( $converted_cart_total );
-		$this->woocommerce_wpml->multi_currency->prices->method( 'formatted_price' )->with( $converted_cart_total, $currency )->willReturn( $formatted_cart_total );
+		$this->woocommerce_wpml->multi_currency->prices->method( 'format_price_in_currency' )->with( $converted_cart_total, $currency )->willReturn( $formatted_cart_total );
 
 		$subject = $this->get_subject();
 		$this->assertEquals( $formatted_cart_total, $subject->get_formatted_cart_total_in_currency( $currency ) );

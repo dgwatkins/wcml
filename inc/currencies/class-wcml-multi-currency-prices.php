@@ -451,6 +451,11 @@ class WCML_Multi_Currency_Prices {
 
 		$amount = $this->raw_price_filter( $amount, $currency );
 
+		return $this->format_price_in_currency( $amount, $currency );
+	}
+
+	public function format_price_in_currency( $price, $currency ){
+
 		$currency_details = $this->multi_currency->get_currency_details_by_code( $currency );
 
 		switch ( $currency_details['position'] ) {
@@ -466,22 +471,19 @@ class WCML_Multi_Currency_Prices {
 			case 'right_space' :
 				$format = '%2$s&nbsp;%1$s';
 				break;
+			default:
+				$format = get_woocommerce_price_format();
 		}
 
 		$wc_price_args = array(
-
 			'currency'           => $currency,
 			'decimal_separator'  => $currency_details['decimal_sep'],
 			'thousand_separator' => $currency_details['thousand_sep'],
 			'decimals'           => $currency_details['num_decimals'],
 			'price_format'       => $format,
-
-
 		);
 
-		$price = wc_price( $amount, $wc_price_args );
-
-		return $price;
+		return wc_price( $price, $wc_price_args );
 	}
 
 	// Exposed function
