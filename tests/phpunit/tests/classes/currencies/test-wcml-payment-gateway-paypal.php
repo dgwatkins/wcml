@@ -100,8 +100,11 @@ class Test_WCML_Payment_Gateway_PayPal extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider get_cart_contents
+	 *
+	 * @param array $cart_contents
 	 */
-	public function it_should_filter_paypal_args() {
+	public function it_should_filter_paypal_args( $cart_contents ) {
 
 		$args            = array( 'currency_code' => 'USD', 'business' => 'business@email.com' );
 		$client_currency = 'USD';
@@ -128,8 +131,6 @@ class Test_WCML_Payment_Gateway_PayPal extends OTGS_TestCase {
 
 		$order->method( 'get_data' )->willReturn( $order_data );
 
-		$product_id               = 1;
-		$cart_contents            = array( array( 'product_id' => $product_id ) );
 		$converted_product_price  = 11;
 		$shipping_total           = 10;
 		$converted_shipping_total = 11;
@@ -143,7 +144,7 @@ class Test_WCML_Payment_Gateway_PayPal extends OTGS_TestCase {
 		                 ->setMethods( array( 'get_cart_contents', 'get_shipping_total' ) )
 		                 ->getMock();
 
-		$wc->cart->method( 'get_cart_contents' )->willReturn( $cart_contents );
+		$wc->cart->method( 'get_cart_contents' )->willReturn( [ $cart_contents ] );
 		$wc->cart->method( 'get_shipping_total' )->willReturn( $shipping_total );
 
 		WP_Mock::userFunction( 'WC', array(
@@ -163,7 +164,8 @@ class Test_WCML_Payment_Gateway_PayPal extends OTGS_TestCase {
 		                                                       ) )
 		                                                       ->getMock();
 
-		$this->woocommerce_wpml->multi_currency->prices->method( 'get_product_price_in_currency' )->with( $product_id, $gateway->settings[ $client_currency ]['currency'] )->willReturn( $converted_product_price );
+		$item_product_id = $cart_contents[ 'variation_id' ] ? $cart_contents[ 'variation_id' ] : $cart_contents[ 'product_id' ];
+		$this->woocommerce_wpml->multi_currency->prices->method( 'get_product_price_in_currency' )->with( $item_product_id, $gateway->settings[ $client_currency ]['currency'] )->willReturn( $converted_product_price );
 		$this->woocommerce_wpml->cart = $this->getMockBuilder( 'WCML_Cart' )
 		                                     ->disableOriginalConstructor()
 		                                     ->setMethods( array(
@@ -184,6 +186,25 @@ class Test_WCML_Payment_Gateway_PayPal extends OTGS_TestCase {
 		);
 
 		$this->assertSame( $expected_filtered_args, $filtered_args );
+	}
+
+	public function get_cart_contents(){
+		return [
+			[
+				[
+					'product_id'   => 11,
+					'variation_id' => 0,
+					'quantity'     => 1
+				]
+			],
+			[
+				[
+					'product_id'   => 12,
+					'variation_id' => 14,
+					'quantity'     => 2
+				]
+			]
+		];
 	}
 
 	/**

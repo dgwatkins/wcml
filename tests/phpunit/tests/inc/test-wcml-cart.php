@@ -443,18 +443,18 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider get_cart_contents
+	 *
+	 * @param array $cart_contents
 	 */
-	public function it_should_get_formatted_cart_total_in_currency() {
+	public function it_should_get_formatted_cart_total_in_currency( $cart_contents ) {
 
 		$currency        = 'EUR';
 		$client_currency = 'USD';
-
-		$product_id               = 1;
 		$converted_product_price  = 10;
-		$cart_contents            = array( array( 'product_id' => $product_id, 'quantity' => 1 ) );
 		$shipping_total           = 10;
 		$converted_shipping_total = 100;
-		$converted_cart_total     = $converted_product_price + $converted_shipping_total;
+		$converted_cart_total     = ( $converted_product_price * $cart_contents['quantity'] ) + $converted_shipping_total;
 		$formatted_cart_total     = $converted_cart_total . ' €';
 
 		$wc = $this->getMockBuilder( 'WC' )
@@ -466,7 +466,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		                 ->setMethods( array( 'get_cart_contents', 'get_shipping_total' ) )
 		                 ->getMock();
 
-		$wc->cart->method( 'get_cart_contents' )->willReturn( $cart_contents );
+		$wc->cart->method( 'get_cart_contents' )->willReturn( [ $cart_contents ] );
 		$wc->cart->method( 'get_shipping_total' )->willReturn( $shipping_total );
 
 		WP_Mock::userFunction( 'WC', array(
@@ -492,7 +492,8 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		                                                       ) )
 		                                                       ->getMock();
 
-		$this->woocommerce_wpml->multi_currency->prices->method( 'get_product_price_in_currency' )->with( $product_id, $currency )->willReturn( $converted_product_price );
+		$item_product_id = $cart_contents[ 'variation_id' ] ? $cart_contents[ 'variation_id' ] : $cart_contents[ 'product_id' ];
+		$this->woocommerce_wpml->multi_currency->prices->method( 'get_product_price_in_currency' )->with( $item_product_id, $currency )->willReturn( $converted_product_price );
 		$this->woocommerce_wpml->multi_currency->prices->method( 'unconvert_price_amount' )->with( $shipping_total )->willReturn( $shipping_total );
 		$this->woocommerce_wpml->multi_currency->prices->method( 'convert_price_amount' )->with( $shipping_total, $currency )->willReturn( $converted_shipping_total );
 		$this->woocommerce_wpml->multi_currency->prices->method( 'apply_rounding_rules' )->with( $converted_cart_total, $currency )->willReturn( $converted_cart_total );
@@ -500,6 +501,25 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 		$this->assertEquals( $formatted_cart_total, $subject->get_formatted_cart_total_in_currency( $currency ) );
+	}
+
+	public function get_cart_contents(){
+		return [
+			[
+				[
+					'product_id'   => 11,
+					'variation_id' => 0,
+					'quantity'     => 1
+				]
+			],
+			[
+				[
+					'product_id'   => 12,
+					'variation_id' => 14,
+					'quantity'     => 2
+				]
+			]
+		];
 	}
 
 }
