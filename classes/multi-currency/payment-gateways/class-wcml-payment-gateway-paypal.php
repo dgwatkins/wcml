@@ -147,7 +147,8 @@ class WCML_Payment_Gateway_PayPal extends WCML_Payment_Gateway {
 				$item_id               = 1;
 
 				foreach ( $cart_items as $item ) {
-					$args[ 'amount_' . $item_id ] = $this->woocommerce_wpml->multi_currency->prices->get_product_price_in_currency( $item['product_id'], $gateway_setting['currency'] );
+					$item_product_id              = $item['variation_id'] ?: $item['product_id'];
+					$args[ 'amount_' . $item_id ] = $this->woocommerce_wpml->multi_currency->prices->get_product_price_in_currency( $item_product_id, $gateway_setting['currency'] );
 					$item_id ++;
 				}
 
