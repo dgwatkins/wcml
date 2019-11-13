@@ -183,7 +183,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/installer/installer.git",
-                "reference": "fd0c007fe5a2f4ab6610d91b209f12157fe241e9"
+                "reference": "1af57b1a13f48ca9fc71899a3bf12a8ef84e4746"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -266,7 +266,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2019-10-08T07:34:59+00:00"
+            "time": "2019-10-31T11:19:57+00:00"
         },
         {
             "name": "wpml-shared/wpml-lib-dependencies",
