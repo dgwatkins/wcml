@@ -334,7 +334,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 	 * @test
 	 * @dataProvider gateway_string_method
 	 */
-	public function it_should_get_gateway_gateway_strings_in_order_language( $method_name, $string_name ) {
+	public function it_should_get_gateway_strings_in_order_language( $method_name, $string_name ) {
 
 		$_POST['wc_order_action'] = 'send_order_details';
 		$_POST['order_status'] = 'wc-on-hold';
@@ -373,9 +373,316 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 	 * @test
 	 * @dataProvider gateway_string_method
 	 */
+	public function it_should_get_gateway_strings_in_order_language_for_completed_order_email( $method_name, $string_name ) {
+
+		$_POST['wc_order_action'] = 'send_order_details';
+		$_POST['order_status'] = 'wc-completed';
+		$_POST['post_ID'] = 10;
+
+		$gateway_instructions = rand_str( 32 );
+		$order_language_gateway_instructions = rand_str( 32 );
+		$gateway_id = 'bacs';
+		$order_language = 'es';
+		$current_language = 'fr';
+
+		$sitepress = $this->get_sitepress();
+		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $_POST['post_ID'], 'wpml_language', true ),
+			'return' => $order_language
+		) );
+
+		$subject = $this->get_subject( false, $sitepress );
+
+		WP_Mock::onFilter( 'wpml_translate_single_string' )
+		       ->with( $gateway_instructions, 'admin_texts_woocommerce_gateways', $gateway_id . $string_name, $order_language )
+		       ->reply( $order_language_gateway_instructions );
+
+		$translated_gateway_instructions = $subject->$method_name( $gateway_instructions, $gateway_id );
+
+		$this->assertSame( $order_language_gateway_instructions, $translated_gateway_instructions );
+
+		unset( $_POST['wc_order_action'] );
+		unset( $_POST['order_status'] );
+		unset( $_POST['post_ID'] );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider gateway_string_method
+	 */
+	public function it_should_get_gateway_strings_in_order_language_for_processing_order_email( $method_name, $string_name ) {
+
+		$_POST['wc_order_action'] = 'send_order_details';
+		$_POST['order_status'] = 'wc-processing';
+		$_POST['post_ID'] = 10;
+
+		$gateway_instructions = rand_str( 32 );
+		$order_language_gateway_instructions = rand_str( 32 );
+		$gateway_id = 'bacs';
+		$order_language = 'es';
+		$current_language = 'fr';
+
+		$sitepress = $this->get_sitepress();
+		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $_POST['post_ID'], 'wpml_language', true ),
+			'return' => $order_language
+		) );
+
+		$subject = $this->get_subject( false, $sitepress );
+
+		WP_Mock::onFilter( 'wpml_translate_single_string' )
+		       ->with( $gateway_instructions, 'admin_texts_woocommerce_gateways', $gateway_id . $string_name, $order_language )
+		       ->reply( $order_language_gateway_instructions );
+
+		$translated_gateway_instructions = $subject->$method_name( $gateway_instructions, $gateway_id );
+
+		$this->assertSame( $order_language_gateway_instructions, $translated_gateway_instructions );
+
+		unset( $_POST['wc_order_action'] );
+		unset( $_POST['order_status'] );
+		unset( $_POST['post_ID'] );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider gateway_string_method
+	 */
+	public function it_should_get_gateway_strings_in_order_language_for_refunded_order_email( $method_name, $string_name ) {
+
+		$_POST['wc_order_action'] = 'send_order_details';
+		$_POST['order_status'] = 'wc-refunded';
+		$_POST['post_ID'] = 10;
+
+		$gateway_instructions = rand_str( 32 );
+		$order_language_gateway_instructions = rand_str( 32 );
+		$gateway_id = 'bacs';
+		$order_language = 'es';
+		$current_language = 'fr';
+
+		$sitepress = $this->get_sitepress();
+		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $_POST['post_ID'], 'wpml_language', true ),
+			'return' => $order_language
+		) );
+
+		$subject = $this->get_subject( false, $sitepress );
+
+		WP_Mock::onFilter( 'wpml_translate_single_string' )
+		       ->with( $gateway_instructions, 'admin_texts_woocommerce_gateways', $gateway_id . $string_name, $order_language )
+		       ->reply( $order_language_gateway_instructions );
+
+		$translated_gateway_instructions = $subject->$method_name( $gateway_instructions, $gateway_id );
+
+		$this->assertSame( $order_language_gateway_instructions, $translated_gateway_instructions );
+
+		unset( $_POST['wc_order_action'] );
+		unset( $_POST['order_status'] );
+		unset( $_POST['post_ID'] );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider gateway_string_method
+	 */
+	public function it_should_get_gateway_strings_in_order_language_for_on_hold_order_email( $method_name, $string_name ) {
+
+		$_POST['order_status'] = 'wc-on-hold';
+		$_POST['post_ID'] = 10;
+
+		$gateway_instructions = rand_str( 32 );
+		$order_language_gateway_instructions = rand_str( 32 );
+		$gateway_id = 'bacs';
+		$order_language = 'es';
+		$current_language = 'fr';
+
+		$sitepress = $this->get_sitepress();
+		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $_POST['post_ID'], 'wpml_language', true ),
+			'return' => $order_language
+		) );
+
+		$subject = $this->get_subject( false, $sitepress );
+
+		WP_Mock::onFilter( 'wpml_translate_single_string' )
+		       ->with( $gateway_instructions, 'admin_texts_woocommerce_gateways', $gateway_id . $string_name, $order_language )
+		       ->reply( $order_language_gateway_instructions );
+
+		$translated_gateway_instructions = $subject->$method_name( $gateway_instructions, $gateway_id );
+
+		$this->assertSame( $order_language_gateway_instructions, $translated_gateway_instructions );
+
+		unset( $_POST['order_status'] );
+		unset( $_POST['post_ID'] );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider gateway_string_method
+	 */
+	public function it_should_get_gateway_strings_in_order_language_for_inline_refunded_order_email( $method_name, $string_name ) {
+
+		$_POST['action'] = 'woocommerce_refund_line_items';
+		$_POST['order_id'] = 10;
+
+		$gateway_instructions = rand_str( 32 );
+		$order_language_gateway_instructions = rand_str( 32 );
+		$gateway_id = 'bacs';
+		$order_language = 'es';
+		$current_language = 'fr';
+
+		$sitepress = $this->get_sitepress();
+		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $_POST['order_id'], 'wpml_language', true ),
+			'return' => $order_language
+		) );
+
+		$subject = $this->get_subject( false, $sitepress );
+
+		WP_Mock::onFilter( 'wpml_translate_single_string' )
+		       ->with( $gateway_instructions, 'admin_texts_woocommerce_gateways', $gateway_id . $string_name, $order_language )
+		       ->reply( $order_language_gateway_instructions );
+
+		$translated_gateway_instructions = $subject->$method_name( $gateway_instructions, $gateway_id );
+
+		$this->assertSame( $order_language_gateway_instructions, $translated_gateway_instructions );
+
+		unset( $_POST['action'] );
+		unset( $_POST['order_id'] );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider gateway_string_method
+	 */
+	public function it_should_get_gateway_strings_in_order_language_for_user_note_order_email( $method_name, $string_name ) {
+
+		$_POST['action'] = 'woocommerce_add_order_note';
+		$_POST['note_type'] = 'customer';
+		$_POST['post_id'] = 10;
+
+		$gateway_instructions = rand_str( 32 );
+		$order_language_gateway_instructions = rand_str( 32 );
+		$gateway_id = 'bacs';
+		$order_language = 'es';
+		$current_language = 'fr';
+
+		$sitepress = $this->get_sitepress();
+		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $_POST['post_id'], 'wpml_language', true ),
+			'return' => $order_language
+		) );
+
+		$subject = $this->get_subject( false, $sitepress );
+
+		WP_Mock::onFilter( 'wpml_translate_single_string' )
+		       ->with( $gateway_instructions, 'admin_texts_woocommerce_gateways', $gateway_id . $string_name, $order_language )
+		       ->reply( $order_language_gateway_instructions );
+
+		$translated_gateway_instructions = $subject->$method_name( $gateway_instructions, $gateway_id );
+
+		$this->assertSame( $order_language_gateway_instructions, $translated_gateway_instructions );
+
+		unset( $_POST['action'] );
+		unset( $_POST['note_type'] );
+		unset( $_POST['post_id'] );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider gateway_string_method
+	 */
+	public function it_should_get_gateway_strings_in_order_language_for_completed_order_email_ajax( $method_name, $string_name ) {
+
+		$_GET['action'] = 'woocommerce_mark_order_status';
+		$_GET['status'] = 'completed';
+		$_GET['order_id'] = 12;
+
+		$gateway_instructions = rand_str( 32 );
+		$order_language_gateway_instructions = rand_str( 32 );
+		$gateway_id = 'bacs';
+		$order_language = 'es';
+		$current_language = 'fr';
+
+		$sitepress = $this->get_sitepress();
+		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $_GET['order_id'], 'wpml_language', true ),
+			'return' => $order_language
+		) );
+
+		$subject = $this->get_subject( false, $sitepress );
+
+		WP_Mock::onFilter( 'wpml_translate_single_string' )
+		       ->with( $gateway_instructions, 'admin_texts_woocommerce_gateways', $gateway_id . $string_name, $order_language )
+		       ->reply( $order_language_gateway_instructions );
+
+		$translated_gateway_instructions = $subject->$method_name( $gateway_instructions, $gateway_id );
+
+		$this->assertSame( $order_language_gateway_instructions, $translated_gateway_instructions );
+
+		unset( $_GET['action'] );
+		unset( $_GET['status'] );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider gateway_string_method
+	 */
+	public function it_should_get_gateway_strings_in_order_language_for_processing_order_email_ajax( $method_name, $string_name ) {
+
+		$_GET['action'] = 'woocommerce_mark_order_status';
+		$_GET['status'] = 'processing';
+		$_GET['order_id'] = 12;
+
+		$gateway_instructions = rand_str( 32 );
+		$order_language_gateway_instructions = rand_str( 32 );
+		$gateway_id = 'bacs';
+		$order_language = 'es';
+		$current_language = 'fr';
+
+		$sitepress = $this->get_sitepress();
+		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $_GET['order_id'], 'wpml_language', true ),
+			'return' => $order_language
+		) );
+
+		$subject = $this->get_subject( false, $sitepress );
+
+		WP_Mock::onFilter( 'wpml_translate_single_string' )
+		       ->with( $gateway_instructions, 'admin_texts_woocommerce_gateways', $gateway_id . $string_name, $order_language )
+		       ->reply( $order_language_gateway_instructions );
+
+		$translated_gateway_instructions = $subject->$method_name( $gateway_instructions, $gateway_id );
+
+		$this->assertSame( $order_language_gateway_instructions, $translated_gateway_instructions );
+
+		unset( $_GET['action'] );
+		unset( $_GET['status'] );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider gateway_string_method
+	 */
 	public function it_should_get_gateway_strings_in_order_dashboard_language( $method_name, $string_name ) {
 
 		$_POST['action'] = 'editpost';
+		$_POST['post_status'] = 'draft';
 		$_POST['save'] = 'Create';
 		$_POST['order_status'] = 'wc-on-hold';
 		$_POST['post_ID'] = 10;
@@ -400,6 +707,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$this->assertSame( $order_language_gateway_instructions, $translated_gateway_instructions );
 
 		unset( $_POST['action'] );
+		unset( $_POST['post_status'] );
 		unset( $_POST['save'] );
 		unset( $_POST['order_status'] );
 		unset( $_POST['post_ID'] );
