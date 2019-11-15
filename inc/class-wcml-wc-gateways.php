@@ -140,26 +140,51 @@ class WCML_WC_Gateways{
 	/**
 	 * @return string
 	 */
-	private function get_current_gateway_language(){
+	private function get_current_gateway_language() {
 
-		$language = $this->current_language;
+		$postData                = wpml_collect( $_POST );
+	    if( $postData->isNotEmpty() ){
 
-		$is_saving_new_order = isset( $_POST['action'] ) && 'editpost' === $_POST['action'] && isset( $_POST['save'] ) && $_POST['save'];
-		$is_send_order_details_action = isset( $_POST['wc_order_action'] ) && 'send_order_details' === $_POST['wc_order_action'];
-		$is_order_on_hold             = isset( $_POST ['order_status'] ) && 'wc-on-hold' === $_POST ['order_status'];
+		    $is_user_order_note = 'woocommerce_add_order_note' === $postData->get( 'action' ) && 'customer' === $postData->get( 'note_type' );
+		    if( $is_user_order_note ){
+			    return get_post_meta( $postData->get( 'post_id' ), 'wpml_language', true );
+		    }
 
-		if ( $is_order_on_hold && isset( $_POST['post_ID'] ) ) {
-			if( $is_send_order_details_action ){
-				$language = get_post_meta( $_POST['post_ID'], 'wpml_language', true );
-			}elseif( $is_saving_new_order && isset( $_COOKIE[ WCML_Orders::DASHBOARD_COOKIE_NAME ] ) ){
-				$language = $_COOKIE[ WCML_Orders::DASHBOARD_COOKIE_NAME ];
+		    $is_refund_line_item = 'woocommerce_refund_line_items' === $postData->get( 'action' );
+		    if( $is_refund_line_item ){
+			    return get_post_meta( $postData->get( 'order_id' ), 'wpml_language', true );
+		    }
+
+		    if ( $postData->get( 'post_ID' ) ) {
+			    $is_saving_new_order          = wpml_collect( ['auto-draft', 'draft'] )->contains( $postData->get( 'post_status' ) )
+			                                    && 'editpost' === $postData->get( 'action' )
+			                                    && $postData->get( 'save' );
+			    if ( $is_saving_new_order && isset( $_COOKIE[ WCML_Orders::DASHBOARD_COOKIE_NAME ] ) ) {
+				    return $_COOKIE[ WCML_Orders::DASHBOARD_COOKIE_NAME ];
+			    }
+
+			    $is_order_emails_status = wpml_collect( ['wc-completed', 'wc-processing', 'wc-refunded', 'wc-on-hold'] )->contains( $postData->get( 'order_status' ) );
+			    $is_send_order_details_action = 'send_order_details' === $postData->get( 'wc_order_action' );
+			    if ( $is_order_emails_status || $is_send_order_details_action ) {
+				    return get_post_meta( $postData->get( 'post_ID' ), 'wpml_language', true );
+			    }
+
+			    return $this->current_language;
+		    }
+        }
+
+		$getData                 = wpml_collect( $_GET );
+		if( $getData->isNotEmpty() ) {
+			$is_order_ajax_action = 'woocommerce_mark_order_status' === $getData->get( 'action' ) && wpml_collect( ['completed', 'processing'] )->contains( $getData->get( 'status' ) );
+			if ( $is_order_ajax_action && $getData->get( 'order_id' ) ) {
+				return get_post_meta( $getData->get( 'order_id' ), 'wpml_language', true );
 			}
 		}
 
-		return $language;
-    }
+		return $this->current_language;
+	}
 
-    function show_language_links_for_gateways(){
+	function show_language_links_for_gateways(){
 
         $text_keys = $this->get_gateway_text_keys_to_translate();
 
