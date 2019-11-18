@@ -43,11 +43,9 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 	}
 
-	private function set_up_languages(){
-
-		$this->default_language			= WPML_TEST_LANGUAGE_CODE;
-		$this->languages 		= array_map('trim', explode(',', WPML_TEST_LANGUAGE_CODES));
-
+	private function set_up_languages() {
+		$this->default_language = WPML_TEST_LANGUAGE_CODE;
+		$this->languages        = [ 'en', 'de', 'fr', 'es', 'ru', 'it' ];
 	}
 
 	private function set_up_currencies(){
