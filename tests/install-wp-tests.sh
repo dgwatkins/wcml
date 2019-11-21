@@ -1,116 +1,173 @@
 #!/usr/bin/env bash
 
 if [ $# -lt 3 ]; then
-	echo "usage: $0 <db-name> <db-user> <db-pass> [db-host] [wp-version]"
-	exit 1
+  echo "usage: $0 <db-name> <db-user> <db-pass> [db-host] [wp-version]"
+  exit 1
+fi
+
+CWD=$(pwd)
+
+SVN_VERBOSITY_ARGS='--quiet'
+WGET_VERBOSITY_ARGS='--quiet'
+TAR_VERBOSITY_ARGS=''
+UNZIP_VERBOSITY_ARGS='-q'
+MYSQL_VERBOSITY_ARGS='-q'
+GIT_CLONE_VERBOSITY_ARGS='--quiet'
+
+if [[ ${OTGS_CI_DEBUG_MODE:=0} == 1 ]]; then
+  SVN_VERBOSITY_ARGS=''
+  WGET_VERBOSITY_ARGS='--verbose'
+  TAR_VERBOSITY_ARGS='-v'
+  UNZIP_VERBOSITY_ARGS=''
+  MYSQL_VERBOSITY_ARGS='-vvv'
+  GIT_CLONE_VERBOSITY_ARGS='--verbose'
 fi
 
 DB_NAME=$1
 DB_USER=$2
 DB_PASS=$3
 DB_HOST=${4-localhost}
-WP_VERSION=${5-latest}
+WP_VERSION=${5}
 
-SCRIPTPATH=`pwd -P`
+if [[ ${WP_VERSION} == "latest" || ${WP_VERSION} == "" ]]; then
+  WP_VERSION="master"
+  WP_TEST_VERSION="master"
+fi
 
-WP_TESTS_DIR=${SCRIPTPATH}/wordpress-tests-lib/
+SCRIPTPATH=$(pwd -P)
+
+WP_TESTS_DIR=${SCRIPTPATH}/wordpress-tests-lib
 WP_CORE_DIR=${SCRIPTPATH}/wordpress/
-WP_CORE_LANG_DIR=${SCRIPTPATH}/wordpress/wp-content/languages/
-WP_CORE_LANG_PLUGINS_DIR=${SCRIPTPATH}/wordpress/wp-content/languages/plugins/
 
-#set -ex
+set -ex
 
 install_wp() {
-	mkdir -p $WP_CORE_DIR
+  cd ${CWD}
 
-	local WC_VERSION_FOR_MO_FILES='2.6.14'
+  if [[ ! -d ${WP_CORE_DIR} || ${CI:0} == 1 ]]; then
+    rm -rf ${WP_CORE_DIR}
+    git clone ${GIT_CLONE_VERBOSITY_ARGS} git://github.com/WordPress/WordPress.git ${WP_CORE_DIR}
+  fi
 
-	if [ $WP_VERSION == 'latest' ]; then
-		local ARCHIVE_NAME='latest'
-	else
-		local ARCHIVE_NAME="wordpress-$WP_VERSION"
-	fi
+  if [[ ! -d ${WP_CORE_DIR} ]]; then
+    echo "${WP_CORE_DIR} does not exists!"
+    exit 1
+  fi
 
-	wget -qO /tmp/wordpress.tar.gz http://wordpress.org/${ARCHIVE_NAME}.tar.gz
-	tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C $WP_CORE_DIR
+  cd ${WP_CORE_DIR}
 
+  git checkout ${WP_VERSION}
 
+  if [[ ${WP_TEST_VERSION} == "master" ]]; then
+    WP_TEST_VERSION=$(
+      cd ${WP_CORE_DIR}
+      wp core version --allow-root
+    )
+  fi
 
-	# Create languages directory
-  	mkdir -p $WP_CORE_LANG_DIR
-  	mkdir -p $WP_CORE_LANG_PLUGINS_DIR
-  	#WC lang packs
-  	wget -qP $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/fr_FR.zip
-  	wget -qP $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/de_DE.zip
-  	wget -qP $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/ru_RU.zip
-  	wget -qP $WP_CORE_LANG_PLUGINS_DIR https://downloads.wordpress.org/translation/plugin/woocommerce/${WC_VERSION_FOR_MO_FILES}/es_ES.zip
-
-  	cd $WP_CORE_LANG_PLUGINS_DIR
-  	unzip -q fr_FR.zip
-  	unzip -q de_DE.zip
-  	unzip -q ru_RU.zip
-  	unzip -q es_ES.zip
-
-	wget -qO $WP_CORE_DIR/wp-content/db.php https://raw.github.com/markoheijnen/wp-mysqli/master/db.php
+  cd ${CWD}
+  #  wget -nv -O ${WP_CORE_DIR}/wp-content/db.php https://raw.github.com/markoheijnen/wp-mysqli/master/db.php
 }
 
 install_test_suite() {
-	# portable in-place argument for both GNU sed and Mac OSX sed
-	if [[ $(uname -s) == 'Darwin' ]]; then
-		local ioption='-i .bak'
-	else
-		local ioption='-i'
-	fi
+  cd ${CWD}
 
-	# set up testing suite
-	mkdir -p $WP_TESTS_DIR
-	cd $WP_TESTS_DIR
-
-	if [ $WP_VERSION == 'latest' ]; then
-	    svn co --quiet http://develop.svn.wordpress.org/trunk/tests/phpunit/includes/
-	    svn co --quiet http://develop.svn.wordpress.org/trunk/tests/phpunit/data/
-    else
-        svn co --quiet http://develop.svn.wordpress.org/tags/${WP_VERSION}/tests/phpunit/includes/
-        svn co --quiet http://develop.svn.wordpress.org/tags/${WP_VERSION}/tests/phpunit/data/
-    fi
-
-	TESTS_ABSPATH=$WP_CORE_DIR
-	TESTS_LANG_DIR=$WP_CORE_LANG_DIR
-	if [ "$OSTYPE" == "linux-gnu" ] && $(grep -q Microsoft /proc/version); then
-    # Fix paths if we are in Windows Subsystem Linux (WSL)
-	  TESTS_ABSPATH=$(wslpath -m $WP_CORE_DIR)/
-	  TESTS_LANG_DIR=$(wslpath -m $WP_CORE_LANG_DIR)
+  # portable in-place argument for both GNU sed and Mac OSX sed
+  if [[ $(uname -s) == 'Darwin' ]]; then
+    local ioption='-i .bak'
+  else
+    local ioption='-i'
   fi
 
-	sed $ioption "s#DIR_TESTDATA . '/languages'# '$TESTS_LANG_DIR'#" includes/bootstrap.php
+  # set up testing suite
+  if [[ ! -d ${WP_TESTS_DIR} || ${CI:0} == 1 ]]; then
+    rm -Rf ${WP_TESTS_DIR}
+    mkdir -p ${WP_TESTS_DIR}
+  fi
 
-	wget -qO wp-tests-config.php http://develop.svn.wordpress.org/trunk/wp-tests-config-sample.php
-	sed $ioption "s#dirname( __FILE__ ) . '/src/'#'$TESTS_ABSPATH'#" wp-tests-config.php
-	sed $ioption "s/youremptytestdbnamehere/$DB_NAME/" wp-tests-config.php
-	sed $ioption "s/yourusernamehere/$DB_USER/" wp-tests-config.php
-	sed $ioption "s/yourpasswordhere/$DB_PASS/" wp-tests-config.php
-	sed $ioption "s|localhost|${DB_HOST}|" wp-tests-config.php
+  if [[ ! -d wordpress-develop || ${CI:0} == 1 ]]; then
+    rm -rf wordpress-develop
+    git clone ${GIT_CLONE_VERBOSITY_ARGS} git://github.com/WordPress/wordpress-develop.git
+  fi
+
+  if [[ ! -d wordpress-develop ]]; then
+    echo "wordpress-develop does not exists!"
+    exit 1
+  fi
+
+  cd wordpress-develop
+
+  git checkout ${WP_VERSION}
+
+  cp -rf tests/phpunit/includes ${WP_TESTS_DIR}/includes
+
+  if [[ ! -d ${WP_TESTS_DIR}/includes ]]; then
+    echo "includes does not exists!"
+    exit 1
+  fi
+
+  cp -rf tests/phpunit/data ${WP_TESTS_DIR}/data
+
+  if [[ ! -d ${WP_TESTS_DIR}/data ]]; then
+    echo "data does not exists!"
+    exit 1
+  fi
+
+  cp wp-tests-config-sample.php ${WP_TESTS_DIR}/wp-tests-config.php
+
+  if [[ ! -f ${WP_TESTS_DIR}/wp-tests-config.php ]]; then
+    echo "wp-tests-config.php does not exists!"
+    exit 1
+  fi
+
+  cd ${WP_TESTS_DIR}
+
+  if [[ ${CI:0} == 1 ]]; then
+    rm -rf wordpress-develop
+  fi
+
+  sed $ioption "s:dirname( __FILE__ ) . '/src/':'${WP_CORE_DIR}':" wp-tests-config.php
+  sed $ioption "s/youremptytestdbnamehere/${DB_NAME}/" wp-tests-config.php
+  sed $ioption "s/yourusernamehere/${DB_USER}/" wp-tests-config.php
+  sed $ioption "s/yourpasswordhere/${DB_PASS}/" wp-tests-config.php
+  sed $ioption "s|localhost|${DB_HOST}|" wp-tests-config.php
+  echo "\$table_prefix = 'wptests' . ( getenv('TEST_TOKEN') !== false ? getenv('TEST_TOKEN') : '' ) . '_';" >>wp-tests-config.php
+
+  cd ${CWD}
 }
 
 install_db() {
-	# parse DB_HOST for port or socket references
-	local PARTS=(${DB_HOST//\:/ })
-	local DB_HOSTNAME=${PARTS[0]};
-	local DB_SOCK_OR_PORT=${PARTS[1]};
-	local EXTRA=""
+  cd ${CWD}
 
-	if ! [ -z $DB_HOSTNAME ] ; then
-		if [[ "$DB_SOCK_OR_PORT" =~ ^[0-9]+$ ]] ; then
-			EXTRA=" --host=$DB_HOSTNAME --port=$DB_SOCK_OR_PORT --protocol=tcp"
-		elif ! [ -z $DB_SOCK_OR_PORT ] ; then
-			EXTRA=" --socket=$DB_SOCK_OR_PORT"
-		elif ! [ -z $DB_HOSTNAME ] ; then
-			EXTRA=" --host=$DB_HOSTNAME --protocol=tcp"
-		fi
-	fi
+  # parse DB_HOST for port or socket references
+  local PARTS=(${DB_HOST//\:/ })
+  local DB_HOSTNAME=${PARTS[0]}
+  local DB_SOCK_OR_PORT=${PARTS[1]}
+  local EXTRA=""
 
-	# create database
-  mysqladmin create $DB_NAME --user="$DB_USER" --password="$DB_PASS"$EXTRA
+  if ! [ -z ${DB_HOSTNAME} ]; then
+    if [[ "${DB_SOCK_OR_PORT}" =~ ^[0-9]+$ ]]; then
+      EXTRA=" --host=${DB_HOSTNAME} --port=${DB_SOCK_OR_PORT} --protocol=tcp"
+    elif ! [ -z ${DB_SOCK_OR_PORT} ]; then
+      EXTRA=" --socket=${DB_SOCK_OR_PORT}"
+    elif ! [ -z ${DB_HOSTNAME} ]; then
+      EXTRA=" --host=${DB_HOSTNAME} --protocol=tcp"
+    fi
+  fi
+
+  # create database
+  MYSQL=$(which mysql)
+
+  ${MYSQL} ${MYSQL_VERBOSITY_ARGS} --user="${DB_USER}" --password="${DB_PASS}"${EXTRA} -e "DROP DATABASE IF EXISTS ${DB_NAME};"
+  ${MYSQL} ${MYSQL_VERBOSITY_ARGS} --user="${DB_USER}" --password="${DB_PASS}"${EXTRA} -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
+  ${MYSQL} ${MYSQL_VERBOSITY_ARGS} --user="${DB_USER}" --password="${DB_PASS}"${EXTRA} -e "GRANT USAGE ON *.* TO ${DB_USER}@${DB_HOSTNAME} IDENTIFIED BY '${DB_PASS}';"
+  ${MYSQL} ${MYSQL_VERBOSITY_ARGS} --user="${DB_USER}" --password="${DB_PASS}"${EXTRA} -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO ${DB_USER}@${DB_HOSTNAME};"
+  ${MYSQL} ${MYSQL_VERBOSITY_ARGS} --user="${DB_USER}" --password="${DB_PASS}"${EXTRA} -e "FLUSH PRIVILEGES;"
+  ${MYSQL} ${MYSQL_VERBOSITY_ARGS} --user="${DB_USER}" --password="${DB_PASS}"${EXTRA} -e "USE ${DB_NAME};"
+
+  #	mysqladmin create ${DB_NAME} --user="${DB_USER}" --password="${DB_PASS}"${EXTRA}
+
+  cd ${CWD}
 }
 
 install_wp
