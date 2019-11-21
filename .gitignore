@@ -19,6 +19,7 @@ node_modules
 %{TEMP}
 
 tests/vendor
+tests/wordpress-develop
 tests/wordpress-tests-lib
 tests/wordpress
 
