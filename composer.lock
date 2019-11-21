@@ -1717,7 +1717,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-php-integration-tests.git",
-                "reference": "5c8031948daaf804cfd43f74acf0b3892ec13b71"
+				"reference": "3b93be39528e61d74fae5ef9ee489a4436a0e5ff"
             },
             "require": {
                 "symfony/console": "^3.4"
@@ -1738,7 +1738,7 @@
                 ]
             },
             "description": "Clone, install, setup dependencies and run the integration tests of the current project",
-            "time": "2019-08-16T09:48:22+00:00"
+			"time": "2019-11-21T08:31:15+00:00"
         },
         {
             "name": "otgs/unit-tests-framework",
@@ -2334,13 +2334,13 @@
                 },
                 {
                     "name": "Wim Godden",
-                    "homepage": "https://github.com/wimg",
-                    "role": "lead"
+					"role": "lead",
+					"homepage": "https://github.com/wimg"
                 },
                 {
                     "name": "Juliette Reinders Folmer",
-                    "homepage": "https://github.com/jrfnl",
-                    "role": "lead"
+					"role": "lead",
+					"homepage": "https://github.com/jrfnl"
                 }
             ],
             "description": "A set of sniffs for PHP_CodeSniffer that checks for PHP cross-version compatibility.",
