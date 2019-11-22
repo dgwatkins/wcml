@@ -14,27 +14,13 @@ class WCML_Ajax_Setup {
 	}
 
 	public function add_hooks() {
-
 		add_action( 'init', [ $this, 'init' ] );
-		add_action( 'wcml_localize_woocommerce_on_ajax', [ $this, 'wcml_localize_woocommerce_on_ajax' ] );
-
-		// @deprecated 3.9 Use 'wcml_localize_woocommerce_on_ajax' instead
-		add_action( 'localize_woocommerce_on_ajax', [ $this, 'localize_woocommerce_on_ajax' ] );
-
 		add_action( 'woocommerce_ajax_get_endpoint', [ $this, 'add_language_to_endpoint' ] );
 	}
 
 	public function init() {
-		if ( wpml_is_ajax() ) {
-			/**
-			 * @since 3.9.0
-			 */
-			do_action( 'wcml_localize_woocommerce_on_ajax' );
-		}
-
 		add_filter( 'woocommerce_get_script_data', array( $this, 'add_language_parameter_to_ajax_url' ) );
 		add_action( 'woocommerce_checkout_order_review', array( $this, 'add_hidden_language_field' ) );
-
 	}
 
 	function add_hidden_language_field() {
@@ -48,30 +34,6 @@ class WCML_Ajax_Setup {
 		}
 
 		return $woocommerce_params;
-	}
-
-	public function wcml_localize_woocommerce_on_ajax() {
-		$action         = isset( $_POST['action'] ) ? filter_var( $_POST['action'], FILTER_SANITIZE_STRING ) : false;
-		$is_ajax_action = $action
-						&& in_array(
-							  $action,
-							  [
-								  'wcml_product_data',
-								  'wpml_translation_dialog_save_job',
-								  'edit-theme-plugin-file',
-								  'search-install-plugins',
-								  'woocommerce_load_variations',
-								  'woocommerce_add_attribute',
-							  ],
-							  true
-						  );
-		if ( $action && ( $is_ajax_action || ! apply_filters( 'wcml_is_localize_woocommerce_on_ajax', true, $action ) ) ) {
-			return;
-		}
-
-		$current_language = $this->sitepress->get_current_language();
-
-		$this->sitepress->switch_lang( $current_language, true );
 	}
 
 	/**
@@ -93,14 +55,4 @@ class WCML_Ajax_Setup {
 
 		return $endpoint;
 	}
-
-
-	/**
-	 * @deprecated 3.9
-	 */
-	function localize_woocommerce_on_ajax() {
-		$this->wcml_localize_woocommerce_on_ajax();
-	}
-
-
 }
