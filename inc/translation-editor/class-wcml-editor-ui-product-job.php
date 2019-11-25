@@ -768,6 +768,8 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 			}
         }
 
+	    do_action( 'wcml_after_sync_product_data', $this->product_id, $tr_product_id, $this->get_target_language() );
+
         if( $product_translations ){
             $iclTranslationManagement->update_translation_status(
                 array(

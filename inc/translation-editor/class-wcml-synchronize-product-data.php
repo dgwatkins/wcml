@@ -174,6 +174,8 @@ class WCML_Synchronize_Product_Data{
 
         // Clear any unwanted data
         wc_delete_product_transients( $tr_product_id );
+
+	    do_action( 'wcml_after_sync_product_data', $original_product_id, $tr_product_id, $lang );
     }
 
 	public function sync_product_taxonomies( $original_product_id, $tr_product_id, $lang ) {

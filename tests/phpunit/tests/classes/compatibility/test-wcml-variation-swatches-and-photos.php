@@ -35,17 +35,13 @@ class Test_WCML_Variation_Swatches_And_Photos extends OTGS_TestCase {
 			->getMock();
 	}
 
-	private function get_subject( $post_translations = null, $woocommerce_wpml = null ){
-
-		if ( null === $post_translations ) {
-			$post_translations = $this->get_post_translations_mock();
-		}
+	private function get_subject( $woocommerce_wpml = null ){
 
 		if( null === $woocommerce_wpml ){
 			$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		}
 
-		return new WCML_Variation_Swatches_And_Photos( $post_translations, $woocommerce_wpml );
+		return new WCML_Variation_Swatches_And_Photos( $woocommerce_wpml );
 	}
 
 	/**
@@ -53,10 +49,10 @@ class Test_WCML_Variation_Swatches_And_Photos extends OTGS_TestCase {
 	 */
 	public function add_hooks() {
 		$subject = $this->get_subject();
-		\WP_Mock::expectActionAdded( 'wcml_after_duplicate_product_post_meta', [
+		\WP_Mock::expectActionAdded( 'wcml_after_sync_product_data', [
 			$subject,
 			'sync_variation_swatches_and_photos'
-		], 10, 2 );
+		], 10, 3 );
 		$subject->add_hooks();
 	}
 
@@ -135,9 +131,6 @@ class Test_WCML_Variation_Swatches_And_Photos extends OTGS_TestCase {
 			'return' => $swatch_options
 		] );
 
-		$post_translations = $this->get_post_translations_mock();
-		$post_translations->method( 'get_element_lang_code' )->with( $translated_product_id )->willReturn( $language );
-
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$woocommerce_wpml->attributes->method( 'get_product_attributes' )->with( $original_product_id )->willReturn( $product_attributes );
 
@@ -156,7 +149,7 @@ class Test_WCML_Variation_Swatches_And_Photos extends OTGS_TestCase {
 
 		$woocommerce_wpml->attributes->method( 'get_custom_attr_translation' )->with( $original_product_id, $translated_product_id, $product_attributes['custom']['name'], $product_attributes['custom']['value'] )->willReturn( $translated_custom_attribute_value );
 
-		$subject = $this->get_subject( $post_translations, $woocommerce_wpml );
+		$subject = $this->get_subject( $woocommerce_wpml );
 
 		\WP_Mock::userFunction( 'update_post_meta', [
 			'args'   => [ $translated_product_id, '_swatch_type_options', $expected_swatch_options ],
@@ -164,7 +157,7 @@ class Test_WCML_Variation_Swatches_And_Photos extends OTGS_TestCase {
 			'return' => true
 		] );
 
-		$filtered_swatch_options = $subject->sync_variation_swatches_and_photos( $original_product_id, $translated_product_id );
+		$filtered_swatch_options = $subject->sync_variation_swatches_and_photos( $original_product_id, $translated_product_id, $language );
 	}
 
 }

@@ -734,9 +734,9 @@ class WCML_Upgrade {
 
 	private function upgrade_4_4_3() {
 		if ( class_exists( 'WC_SwatchesPlugin' ) ) {
-			global $wpdb, $sitepress, $wpml_post_translations;
+			global $wpdb, $sitepress, $wpml_post_translations, $woocommerce_wpml;
 
-			$variation_sp      = new WCML_Variation_Swatches_And_Photos( $sitepress );
+			$variation_sp      = new WCML_Variation_Swatches_And_Photos( $woocommerce_wpml );
 			$original_products = $wpdb->get_results(
 				"
                         SELECT element_id
