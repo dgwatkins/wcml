@@ -5,19 +5,15 @@
  */
 class WCML_Variation_Swatches_And_Photos {
 
-	/** @var WPML_Post_Translation */
-	private $wpml_post_translations;
-
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
 
-	function __construct( WPML_Post_Translation $wpml_post_translations, woocommerce_wpml $woocommerce_wpml ) {
-		$this->wpml_post_translations = $wpml_post_translations;
+	function __construct( woocommerce_wpml $woocommerce_wpml ) {
 		$this->woocommerce_wpml       = $woocommerce_wpml;
 	}
 
 	public function add_hooks() {
-		add_action( 'wcml_after_duplicate_product_post_meta', [ $this, 'sync_variation_swatches_and_photos' ], 10, 2 );
+		add_action( 'wcml_after_sync_product_data', [ $this, 'sync_variation_swatches_and_photos' ], 10, 3 );
 	}
 
 	/**
@@ -25,14 +21,14 @@ class WCML_Variation_Swatches_And_Photos {
 	 *
 	 * @param int $original_product_id Original product ID.
 	 * @param int $translated_product_id Translated product ID.
+	 * @param string $language
 	 */
-	public function sync_variation_swatches_and_photos( $original_product_id, $translated_product_id ) {
+	public function sync_variation_swatches_and_photos( $original_product_id, $translated_product_id, $language ) {
 
 		$swatch_options            = maybe_unserialize( get_post_meta( $original_product_id, '_swatch_type_options', true ) );
-		$translated_swatch_options = $swatch_options;
+ 		$translated_swatch_options = $swatch_options;
 
 		if ( $swatch_options ) {
-			$language                    = $this->wpml_post_translations->get_element_lang_code( $translated_product_id );
 			$original_product_attributes = $this->woocommerce_wpml->attributes->get_product_attributes( $original_product_id );
 
 			wpml_collect( $original_product_attributes )->each(
