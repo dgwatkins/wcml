@@ -193,23 +193,23 @@ class WCML_Product_Addons {
 	 */
 	private function converted_addon_price( $addon, $post_id ){
 
-		$client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
+		$addonData = wpml_collect( $addon );
+
 		$is_custom_prices_on = $this->is_product_custom_prices_on( $post_id );
 		$field = 'price_' . $this->woocommerce_wpml->multi_currency->get_client_currency();
 
 		if (
 			$is_custom_prices_on &&
-			isset( $addon[ $field ] ) &&
-			$addon[ $field ]
+			$addonData->get( $field )
 		) {
-			return $addon[ $field ];
+			return $addonData->get( $field );
 		}
 
-		if( wpml_collect( [ 'flat_fee', 'quantity_based' ] )->contains( $addon['price_type'] ) ) {
-			return apply_filters( 'wcml_raw_price_amount', $addon['price'] );
+		if( wpml_collect( [ 'flat_fee', 'quantity_based' ] )->contains( $addonData->get( 'price_type' ) ) ) {
+			return apply_filters( 'wcml_raw_price_amount', $addonData->get( 'price' ) );
 		}
 
-		return $addon['price'];
+		return $addonData->get( 'price' );
 	}
 
 	/**
