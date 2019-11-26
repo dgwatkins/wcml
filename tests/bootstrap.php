@@ -48,6 +48,25 @@ function _manually_load_wcml() {
 	$st_initialize->run();
 
 	require_once WPML_CORE_TM_PATH . '/plugin.php';
+
+	// Make WPML-TM related tests to run in admin mode.
+	add_action(
+		'wpml_loaded',
+		function() {
+			require_once ABSPATH . '/wp-admin/includes/class-wp-screen.php';
+			WP_Screen::get( 'admin.php' )->set_current_screen();
+		},
+		9, 1
+	);
+
+	add_action(
+		'wpml_loaded',
+		function() {
+			$GLOBALS['current_screen'] = null;
+		},
+		PHP_INT_MAX, 1
+	);
+
 	require_once WC_PATH. '/woocommerce.php';
 	require_once WC_BOOKING_PATH . '/woocommerce-bookings.php';
 	require_once __DIR__ . '/../wpml-woocommerce.php';
