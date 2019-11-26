@@ -593,6 +593,28 @@ class WCML_Multi_Currency_Prices {
 		return $args;
 	}
 
+	/**
+	 * @param array $response
+	 * @param string $to_currency
+	 * @param string $from_currency
+	 * @param array $params
+	 *
+	 * @return array
+	 */
+	public function filter_pre_selected_widget_prices_in_new_currency( $response, $to_currency, $from_currency, $params ) {
+
+		wpml_collect( $params )->each(
+			function ( $value, $key ) use ( &$response, $from_currency, $to_currency ) {
+				if ( wpml_collect( [ 'min_price', 'max_price' ] )->contains( $key ) ) {
+					$response[ $key ] = $this->convert_price_amount( $this->unconvert_price_amount( $value, $from_currency ), $to_currency );
+				}
+			}
+		);
+
+		return $response;
+	}
+
+
 	private function check_admin_order_currency_code() {
 		global $pagenow;
 
