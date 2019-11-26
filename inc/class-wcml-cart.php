@@ -184,7 +184,7 @@ class WCML_Cart {
 		if ( $return ) {
 			return array( 'prevent_switching' => $html );
 		} else {
-			echo json_encode( array( 'prevent_switching' => $html ) );
+			wp_send_json_success( [ 'prevent_switching' => $html ] );
 		}
 
 		return true;

@@ -413,4 +413,87 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 
 	}
 
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_pre_selected_widget_prices_in_second_currency() {
+
+		$to_currency = 'EUR';
+		$from_currency = 'USD';
+		$min_price = 10;
+		$max_price = 20;
+		$params = [ 'min_price' => $min_price, 'max_price' => $max_price ];
+
+		$exchange_rates           = array( $to_currency => 2 );
+		$currencies_without_cents = array();
+
+		$converted_min_price      = $min_price * $exchange_rates[ $to_currency ];
+		$converted_max_price      = $max_price * $exchange_rates[ $to_currency ];
+		$expected_params[ 'min_price' ] = $converted_min_price;
+		$expected_params[ 'max_price' ] = $converted_max_price;
+
+		$multi_currency = $this->get_multi_currency_mock();
+		$multi_currency->method( 'get_exchange_rates' )->willReturn( $exchange_rates );
+		$multi_currency->method( 'get_currencies_without_cents' )->willReturn( $exchange_rates );
+
+		WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
+			'return' => $from_currency
+		));
+
+		$subject = $this->get_subject( $multi_currency );
+
+		$this->assertSame( $expected_params, $subject->filter_pre_selected_widget_prices_in_new_currency( [], $to_currency, $from_currency, $params ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_pre_selected_widget_prices_in_default_currency() {
+
+		$to_currency = 'EUR';
+		$from_currency = 'USD';
+		$min_price = 10;
+		$max_price = 20;
+		$params = [ 'min_price' => $min_price, 'max_price' => $max_price ];
+
+		$exchange_rates           = array( $to_currency => 2 );
+		$currencies_without_cents = array();
+
+		$converted_min_price      = $min_price / $exchange_rates[ $to_currency ];
+		$converted_max_price      = $max_price / $exchange_rates[ $to_currency ];
+		$expected_params[ 'min_price' ] = $converted_min_price;
+		$expected_params[ 'max_price' ] = $converted_max_price;
+
+		$multi_currency = $this->get_multi_currency_mock();
+		$multi_currency->method( 'get_exchange_rates' )->willReturn( $exchange_rates );
+		$multi_currency->method( 'get_currencies_without_cents' )->willReturn( $exchange_rates );
+
+		WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
+			'return' => $from_currency
+		));
+
+		$subject = $this->get_subject( $multi_currency );
+
+		$this->assertSame( $expected_params, $subject->filter_pre_selected_widget_prices_in_new_currency( [], $from_currency, $to_currency, $params ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_pre_selected_widget_prices() {
+
+		$to_currency   = 'EUR';
+		$from_currency = 'USD';
+		$params        = [];
+
+		WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
+			'return' => $from_currency
+		) );
+
+		$subject = $this->get_subject( $this->get_multi_currency_mock() );
+
+		$this->assertSame( [], $subject->filter_pre_selected_widget_prices_in_new_currency( [], $from_currency, $to_currency, $params ) );
+	}
+
 }
