@@ -217,7 +217,7 @@ class woocommerce_wpml {
 		$this->products->add_hooks();
 		$this->store = new WCML_Store_Pages( $this, $sitepress );
 		$this->store->add_hooks();
-		$this->strings = new WCML_WC_Strings( $this, $sitepress );
+		$this->strings = new WCML_WC_Strings( $this, $sitepress, $wpdb );
 		$this->strings->add_hooks();
 		$this->emails = new WCML_Emails( $this->strings, $sitepress, WC_Emails::instance(), $wpdb );
 		$this->emails->add_hooks();
@@ -226,7 +226,7 @@ class woocommerce_wpml {
 		$this->attributes = new WCML_Attributes( $this, $sitepress, $wpml_post_translations, $wpml_term_translations, $wpdb );
 		$this->attributes->add_hooks();
 		$this->orders   = new WCML_Orders( $this, $sitepress );
-		$this->shipping = new WCML_WC_Shipping( $sitepress );
+		$this->shipping = new WCML_WC_Shipping( $sitepress, $this->strings );
 		$this->shipping->add_hooks();
 		$this->gateways = new WCML_WC_Gateways( $this, $sitepress );
 		$this->gateways->add_hooks();

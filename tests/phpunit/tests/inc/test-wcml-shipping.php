@@ -5,13 +5,17 @@
  */
 class Test_WCML_Shipping extends OTGS_TestCase {
 
-	private function get_subject( $sitepress = null ){
+	private function get_subject( $sitepress = null, $wcml_strings = null ){
 
 		if( null === $sitepress ){
 			$sitepress = $this->get_sitepress_mock();
 		}
 
-		return new WCML_WC_Shipping( $sitepress );
+		if( null === $wcml_strings ){
+			$wcml_strings = $this->get_wcml_strings_mock();
+		}
+
+		return new WCML_WC_Shipping( $sitepress, $wcml_strings );
 	}
 
 	private function get_sitepress_mock() {
@@ -31,6 +35,13 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 		            ->disableOriginalConstructor()
 		            ->getMock();
 
+	}
+
+	private function get_wcml_strings_mock(){
+		return $this->getMockBuilder( WCML_WC_Strings::class )
+		                          ->disableOriginalConstructor()
+		                          ->setMethods( [ 'get_translated_string_by_name_and_context' ] )
+		                          ->getMock();
 	}
 
 	/**
@@ -71,13 +82,11 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider get_shipping_method_title
 	 */
-	public function translate_shipping_method_title(){
+	public function translate_shipping_method_title( $title, $translated_title, $language ){
 
-		$title = rand_str();
-		$trnsl_title = rand_str();
 		$shipping_id = rand_str();
-		$language = 'en';
 
 		$sitepress = $this->getMockBuilder( 'SitePress' )
 			->disableOriginalConstructor()
@@ -89,42 +98,30 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => false ) );
 
-		$subject = $this->get_subject( $sitepress );
+		$wcml_strings = $this->get_wcml_strings_mock();
 
-		WP_Mock::onFilter( 'wpml_translate_single_string' )
-			->with( $title, 'woocommerce', $shipping_id .'_shipping_method_title', $language )
-			->reply( $trnsl_title );
+		$wcml_strings->method( 'get_translated_string_by_name_and_context' )->with( 'admin_texts_woocommerce_shipping', $shipping_id .'_shipping_method_title', $language )->willReturn( $translated_title );
+
+		$subject = $this->get_subject( $sitepress, $wcml_strings );
 
 		$filtered_title = $subject->translate_shipping_method_title( $title, $shipping_id );
-		$this->assertEquals( $trnsl_title, $filtered_title );
+		$this->assertEquals( $translated_title, $filtered_title );
+	}
 
-		$language = 'de';
-		$trnsl_title = rand_str();
-
-		WP_Mock::onFilter( 'wpml_translate_single_string' )
-			->with( $title, 'woocommerce', $shipping_id .'_shipping_method_title', $language )
-			->reply( $trnsl_title );
-
-		$filtered_title = $subject->translate_shipping_method_title( $title, $shipping_id, $language );
-		$this->assertEquals( $trnsl_title, $filtered_title );
-
-		WP_Mock::onFilter( 'wpml_translate_single_string' )
-			->with( $title, 'woocommerce', $shipping_id .'_shipping_method_title', $language )
-			->reply( '' );
-
-		$filtered_title = $subject->translate_shipping_method_title( $title, $shipping_id, $language );
-		$this->assertEquals( $title, $filtered_title );
+	public function get_shipping_method_title(){
+		return [
+			[ 'title origin', 'title origin', 'en' ],
+			[ 'title origin', 'title DE', 'de' ],
+		];
 	}
 
 	/**
 	 * @test
+	 * @dataProvider get_shipping_method_title
 	 */
-	public function translate_shipping_method_title_on_admin(){
+	public function translate_shipping_method_title_on_admin( $title, $translated_title, $language ){
 
-		$title            = rand_str();
-		$translated_title = rand_str();
 		$shipping_id      = rand_str();
-		$language         = 'en';
 
 		$sitepress = $this->getMockBuilder( 'SitePress' )
 		                  ->disableOriginalConstructor()
@@ -134,12 +131,11 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 		                  ->getMock();
 		$sitepress->method( 'get_current_language' )->willReturn( $language );
 
-		WP_Mock::onFilter( 'wpml_translate_single_string' )
-		       ->with( $title, 'woocommerce', $shipping_id .'_shipping_method_title', $language )
-		       ->reply( $translated_title );
+		$wcml_strings = $this->get_wcml_strings_mock();
 
-		$subject = $this->get_subject( $sitepress );
+		$wcml_strings->method( 'get_translated_string_by_name_and_context' )->with( 'admin_texts_woocommerce_shipping', $shipping_id .'_shipping_method_title', $language )->willReturn( $translated_title );
 
+		$subject = $this->get_subject( $sitepress, $wcml_strings );
 
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
 
@@ -152,7 +148,6 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 			'args' => array( 'current_screen' ),
 			'return' => true
 		) );
-
 
 		$screen = $this->getMockBuilder( 'WP_Screen' )->disableOriginalConstructor()->getMock();
 		\WP_Mock::wpFunction( 'get_current_screen', array( 'return' => $screen ) );

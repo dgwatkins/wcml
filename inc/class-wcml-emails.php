@@ -417,9 +417,8 @@ class WCML_Emails {
 				$language_code = $order_language;
 			}
 		}
-		$result = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT value FROM {$this->wpdb->prefix}icl_strings WHERE context = %s AND name = %s ", $context, $name ) );
 
-		return apply_filters( 'wpml_translate_single_string', $result, $context, $name, $language_code );
+		return $this->wcmlStrings->get_translated_string_by_name_and_context( $context, $name, $language_code );
 	}
 
 	function icl_current_string_language( $current_language, $name ) {

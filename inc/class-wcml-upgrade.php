@@ -31,6 +31,7 @@ class WCML_Upgrade {
 		'4.4.3',
 		'4.6.8',
 		'4.7.3',
+		'4.7.6',
 	];
 
 	public function __construct() {
@@ -784,5 +785,16 @@ class WCML_Upgrade {
 
 	private function upgrade_4_7_3() {
 		delete_option( 'wcml_currency_switcher_template_objects' );
+	}
+
+	private function upgrade_4_7_6() {
+		global $wpdb;
+
+		$wpdb->query(
+			"UPDATE {$wpdb->prefix}icl_strings
+                      SET `context` = 'admin_texts_woocommerce_shipping',
+                          `domain_name_context_md5` = MD5( CONCAT( 'admin_texts_woocommerce_shipping', `name`, `gettext_context` ) )
+                      WHERE `context` = 'woocommerce' AND `name` LIKE '%_shipping_method_title'"
+		);
 	}
 }

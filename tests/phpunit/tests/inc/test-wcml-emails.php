@@ -31,6 +31,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		$this->wcmlStrings = $this->getMockBuilder( WCML_WC_Strings::class )
 			->disableOriginalConstructor()
+			->setMethods( [ 'get_translated_string_by_name_and_context' ] )
 			->getMock();
 
 		$this->wcEmails = $this->getMockBuilder('WC_Emails')
@@ -127,10 +128,8 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			'args'   => array( $order_id, 'wpml_language', true ),
 			'return' => $language_code
 		) );
-		
-		WP_Mock::onFilter( 'wpml_translate_single_string' )
-			->with( $result, $context, $name , $language_code )
-			->reply( $trnsl_name );
+
+		$this->wcmlStrings->method( 'get_translated_string_by_name_and_context' )->with( $context, $name, $language_code )->willReturn( $trnsl_name );
 
 		$filtered_name = $subject->wcml_get_translated_email_string( $context, $name, $order_id  );
 		$this->assertEquals( $trnsl_name, $filtered_name );
@@ -152,9 +151,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		WP_Mock::onFilter( 'wpml_translate_single_string' )
-			->with( $result, $context, $name , $language_code )
-			->reply( $trnsl_name );
+		$this->wcmlStrings->method( 'get_translated_string_by_name_and_context' )->with( $context, $name, $language_code )->willReturn( $trnsl_name );
 
 		$filtered_name = $subject->wcml_get_translated_email_string( $context, $name, $order_id, $language_code );
 		$this->assertEquals( $trnsl_name, $filtered_name );
@@ -248,7 +245,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		$this->wpdb->method( 'get_var' )->willReturn( $result );
 
-		\WP_Mock::onFilter( 'wpml_translate_single_string')->with( $result, $context, $name, $language )->reply( $translated_value );
+		$this->wcmlStrings->method( 'get_translated_string_by_name_and_context' )->with( $context, $name, $language )->willReturn( $translated_value );
 
 		$subject = $this->get_subject();
 
