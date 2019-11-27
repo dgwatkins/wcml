@@ -2,9 +2,9 @@
 
 class WCML_Dependencies {
 
-	const MIN_WPML = '4.0.0';
-	const MIN_WPML_TM = '2.6';
-	const MIN_WPML_ST = '2.8';
+	const MIN_WPML = '4.3.5';
+	const MIN_WPML_TM = '2.9.1';
+	const MIN_WPML_ST = '3.0.5';
 	const MIN_WOOCOMMERCE = '3.3.0';
 
 	private $missing = array();
@@ -19,11 +19,6 @@ class WCML_Dependencies {
 	function __construct() {
 
 		if ( is_admin() ) {
-			add_action( 'wp_ajax_wcml_fix_strings_language', array(
-				$this,
-				'fix_strings_language'
-			) ); // TODO: remove after WPML release  with support strings in different languages
-
 			add_action( 'init', array( $this, 'check_wpml_config' ), 100 );
 		}
 
@@ -236,25 +231,6 @@ class WCML_Dependencies {
 
 	public function plugin_notice_message() {
 		echo $this->err_message;
-	}
-
-	public function fix_strings_language() {
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wcml_fix_strings_language' ) ) {
-			die( 'Invalid nonce' );
-		}
-
-		$ret = array();
-
-		$ret['_wpnonce'] = wp_create_nonce( 'icl_sw_form' );
-
-		$ret['success_1'] = '&nbsp;' . sprintf( __( 'Finished! You can visit the %sstrings translation%s screen to translate the strings now.', 'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php' ) . '">', '</a>' );
-
-
-		echo json_encode( $ret );
-
-		exit;
-
 	}
 
 	public function check_wpml_config() {
