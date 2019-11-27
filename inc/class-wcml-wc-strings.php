@@ -10,6 +10,8 @@ class WCML_WC_Strings {
 	private $woocommerce_wpml;
 	/** @var  Sitepress */
 	private $sitepress;
+	/** @var wpdb */
+	private $wpdb;
 
 	public $settings = array();
 
@@ -18,10 +20,12 @@ class WCML_WC_Strings {
 	 *
 	 * @param woocommerce_wpml $woocommerce_wpml
 	 * @param SitePress $sitepress
+	 * @param wpdb $wpdb
 	 */
-	public function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress ) {
+	public function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress, wpdb $wpdb ) {
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->sitepress        = $sitepress;
+		$this->wpdb             = $wpdb;
 	}
 
 	function add_hooks() {
@@ -324,7 +328,6 @@ class WCML_WC_Strings {
 	}
 
 	function get_string_language( $value, $context, $name = false ) {
-		global $wpdb;
 
 		if ( $name !== false ) {
 
@@ -338,7 +341,7 @@ class WCML_WC_Strings {
 				return 'en';
 			}
 
-			$string_object   = new WPML_ST_String( $string_id, $wpdb );
+			$string_object   = new WPML_ST_String( $string_id, $this->wpdb  );
 			$string_language = $string_object->get_language();
 
 		}
@@ -352,11 +355,10 @@ class WCML_WC_Strings {
 	}
 
 	function set_string_language( $value, $context, $name, $language ) {
-		global $wpdb;
 
 		$string_id = icl_get_string_id( $value, $context, $name );
 
-		$string_object   = new WPML_ST_String( $string_id, $wpdb );
+		$string_object   = new WPML_ST_String( $string_id, $this->wpdb );
 		$string_language = $string_object->set_language( $language );
 
 		return $string_language;
@@ -518,5 +520,16 @@ class WCML_WC_Strings {
 		}
 
 	}
+
+	/**
+	 * @param string $context
+	 * @param string $name
+	 * @param string $language
+	 *
+	 * @return string
+	 */
+	public function get_translated_string_by_name_and_context( $context, $name, $language ){
+		return apply_filters( 'wpml_translate_single_string', false, $context, $name, $language );
+    }
 
 }

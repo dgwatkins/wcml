@@ -2,22 +2,31 @@
 
 class WCML_WC_Shipping{
 
+	const STRINGS_CONTEXT = 'admin_texts_woocommerce_shipping';
+
     private $current_language;
-    private $sitepress;
+	/** @var Sitepress */
+	private $sitepress;
+	/** @var WCML_WC_Strings */
+	private $wcmlStrings;
 
 	/**
 	 * WCML_WC_Shipping constructor.
 	 *
 	 * @param SitePress $sitepress
+	 * @param WCML_WC_Strings $wcmlStrings
 	 */
-	public function __construct( $sitepress ) {
-		$this->sitepress = $sitepress;
+    function __construct( SitePress $sitepress, WCML_WC_Strings $wcmlStrings ){
 
-		$this->current_language = $this->sitepress->get_current_language();
-		if ( 'all' === $this->current_language ) {
-			$this->current_language = $this->sitepress->get_default_language();
-		}
-	}
+	    $this->sitepress   = $sitepress;
+	    $this->wcmlStrings = $wcmlStrings;
+
+        $this->current_language = $this->sitepress->get_current_language();
+        if( $this->current_language == 'all' ){
+            $this->current_language = $this->sitepress->get_default_language();
+        }
+
+    }
 
     function add_hooks(){
 
@@ -70,6 +79,7 @@ class WCML_WC_Shipping{
   	}
 
   	function register_zone_shipping_strings( $instance_settings, $object ){
+
         if( !empty( $instance_settings['title'] ) ){
             $this->register_shipping_title( $object->id.$object->instance_id, $instance_settings['title'] );
 
@@ -80,7 +90,7 @@ class WCML_WC_Shipping{
     }
 
     function register_shipping_title( $shipping_method_id, $title ){
-        do_action( 'wpml_register_single_string', 'woocommerce', $shipping_method_id .'_shipping_method_title', $title );
+        do_action( 'wpml_register_single_string', self::STRINGS_CONTEXT, $shipping_method_id .'_shipping_method_title', $title );
     }
 
     function translate_shipping_strings( $value, $option = false ){
@@ -131,19 +141,9 @@ class WCML_WC_Shipping{
 
 		if ( ! is_admin() || $is_edit_order ) {
 
-			$shipping_id      = str_replace( ':', '', $shipping_id );
-			$translated_title = apply_filters(
-				'wpml_translate_single_string',
-				$title,
-				'woocommerce',
-				$shipping_id . '_shipping_method_title',
-				$language ? $language : $this->current_language
-			);
+			$shipping_id = str_replace( ':', '', $shipping_id );
 
-			if ( $translated_title ) {
-				$title = $translated_title;
-			}
-
+			return $this->wcmlStrings->get_translated_string_by_name_and_context( self::STRINGS_CONTEXT, $shipping_id . '_shipping_method_title', $language ?: $this->current_language );
 		}
 
 		return $title;

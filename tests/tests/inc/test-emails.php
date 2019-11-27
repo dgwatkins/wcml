@@ -119,7 +119,7 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 
 		//check if shipping title translated
 		$this->woocommerce_wpml->shipping->register_shipping_title( $this->shipping->method_id, $this->shipping->label );
-		$ship_string_id = icl_get_string_id( $this->shipping->label, 'woocommerce', $this->shipping->method_id.'_shipping_method_title' );
+		$ship_string_id = icl_get_string_id( $this->shipping->label, 'admin_texts_woocommerce_shipping', $this->shipping->method_id.'_shipping_method_title' );
 		icl_add_string_translation( $ship_string_id, 'es', 'FLAT RATE ES', ICL_TM_COMPLETE );
 
 		$this->wcml_helper->icl_clear_and_init_cache( 'es' );

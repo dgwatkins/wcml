@@ -52,7 +52,7 @@ class Test_WCML_WC_Strings extends OTGS_TestCase {
 			$sitepress = $this->get_sitepress();
 		}
 
-		return new WCML_WC_Strings( $woocommerce_wpml, $sitepress );
+		return new WCML_WC_Strings( $woocommerce_wpml, $sitepress, $this->stubs->wpdb() );
 
 	}
 
