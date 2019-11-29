@@ -76,6 +76,9 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'woocommerce_email_heading_customer_processing_order', array( $subject, 'customer_processing_order_heading' ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_email_subject_customer_processing_order', array( $subject, 'customer_processing_order_subject' ) );
 
+		\WP_Mock::expectActionAdded( 'woocommerce_low_stock_notification', array( $subject, 'low_stock_admin_notification' ), 9 );
+		\WP_Mock::expectActionAdded( 'woocommerce_no_stock_notification', array( $subject, 'no_stock_admin_notification' ), 9 );
+
 		$subject->add_hooks();
 	}
 
@@ -498,5 +501,172 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$subject = $this->get_subject();
 
 		$subject->new_order_admin_email( $order_id );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_low_stock_admin_notification() {
+
+		$recipient     = 'admin@test.com';
+		$user          = new stdClass();
+		$user->ID      = 1;
+		$user_language = 'es';
+
+		$order_product_id          = 12;
+		$product_id_admin_language = 14;
+		$product                   = $this->getMockBuilder( 'WC_Product' )
+		                                  ->disableOriginalConstructor()
+		                                  ->setMethods( [ 'get_id' ] )
+		                                  ->getMock();
+		$product->method( 'get_id' )->willReturn( $order_product_id );
+
+		WP_Mock::userFunction( 'get_user_by', [
+			'args'   => [ 'email', $recipient ],
+			'return' => $user
+		] );
+
+		WP_Mock::userFunction( 'get_option', [
+			'args'   => [ 'woocommerce_stock_email_recipient' ],
+			'return' => $recipient
+		] );
+
+		WP_Mock::userFunction( 'wpml_object_id_filter', [
+			'args'   => [ $order_product_id, 'product', true, $user_language ],
+			'return' => $product_id_admin_language
+		] );
+
+		$product_in_admin_language = $this->getMockBuilder( 'WC_Product' )
+		                                  ->disableOriginalConstructor()
+		                                  ->getMock();
+
+		WP_Mock::userFunction( 'wc_get_product', [
+			'args'   => [ $product_id_admin_language ],
+			'return' => $product_in_admin_language
+		] );
+
+		$this->wcEmails = $this->getMockBuilder( 'WC_Emails' )
+		                       ->disableOriginalConstructor()
+		                       ->setMethods( [ 'low_stock' ] )
+		                       ->getMock();
+
+		$this->wcEmails->expects( $this->once() )->method( 'low_stock' )->with( $product_in_admin_language );
+
+		WP_Mock::userFunction( 'remove_action', [
+			'args'   => [ 'woocommerce_low_stock_notification', [ $this->wcEmails, 'low_stock' ] ],
+			'return' => $product_in_admin_language
+		] );
+
+		$this->sitepress->method( 'get_user_admin_language' )->with( $user->ID, true )->willReturn( $user_language );
+
+		$subject = $this->get_subject();
+
+		$subject->low_stock_admin_notification( $product );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_low_stock_admin_notification() {
+
+		$this->wcEmails = $this->getMockBuilder( 'WC_Emails' )
+		                       ->disableOriginalConstructor()
+		                       ->setMethods( [ 'low_stock' ] )
+		                       ->getMock();
+
+		$this->wcEmails->expects( $this->never() )->method( 'low_stock' );
+
+		WP_Mock::userFunction( 'remove_action', [
+			'args'   => [ 'woocommerce_low_stock_notification', [ $this->wcEmails, 'low_stock' ] ],
+			'return' => false
+		] );
+
+		$subject = $this->get_subject();
+
+		$subject->low_stock_admin_notification( new stdClass() );
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_no_stock_admin_notification() {
+
+		$recipient     = 'admin@test.com';
+		$user          = new stdClass();
+		$user->ID      = 1;
+		$user_language = 'es';
+
+		$order_product_id          = 12;
+		$product_id_admin_language = 14;
+		$product                   = $this->getMockBuilder( 'WC_Product' )
+		                                  ->disableOriginalConstructor()
+		                                  ->setMethods( [ 'get_id' ] )
+		                                  ->getMock();
+		$product->method( 'get_id' )->willReturn( $order_product_id );
+
+		WP_Mock::userFunction( 'get_user_by', [
+			'args'   => [ 'email', $recipient ],
+			'return' => $user
+		] );
+
+		WP_Mock::userFunction( 'get_option', [
+			'args'   => [ 'woocommerce_stock_email_recipient' ],
+			'return' => $recipient
+		] );
+
+		WP_Mock::userFunction( 'wpml_object_id_filter', [
+			'args'   => [ $order_product_id, 'product', true, $user_language ],
+			'return' => $product_id_admin_language
+		] );
+
+		$product_in_admin_language = $this->getMockBuilder( 'WC_Product' )
+		                                  ->disableOriginalConstructor()
+		                                  ->getMock();
+
+		WP_Mock::userFunction( 'wc_get_product', [
+			'args'   => [ $product_id_admin_language ],
+			'return' => $product_in_admin_language
+		] );
+
+		$this->wcEmails = $this->getMockBuilder( 'WC_Emails' )
+		                       ->disableOriginalConstructor()
+		                       ->setMethods( [ 'no_stock' ] )
+		                       ->getMock();
+
+		$this->wcEmails->expects( $this->once() )->method( 'no_stock' )->with( $product_in_admin_language );
+
+		WP_Mock::userFunction( 'remove_action', [
+			'args'   => [ 'woocommerce_no_stock_notification', [ $this->wcEmails, 'no_stock' ] ],
+			'return' => $product_in_admin_language
+		] );
+
+		$this->sitepress->method( 'get_user_admin_language' )->with( $user->ID, true )->willReturn( $user_language );
+
+		$subject = $this->get_subject();
+
+		$subject->no_stock_admin_notification( $product );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_no_stock_admin_notification() {
+
+		$this->wcEmails = $this->getMockBuilder( 'WC_Emails' )
+		                       ->disableOriginalConstructor()
+		                       ->setMethods( [ 'no_stock' ] )
+		                       ->getMock();
+
+		$this->wcEmails->expects( $this->never() )->method( 'no_stock' );
+
+		WP_Mock::userFunction( 'remove_action', [
+			'args'   => [ 'woocommerce_no_stock_notification', [ $this->wcEmails, 'no_stock' ] ],
+			'return' => false
+		] );
+
+		$subject = $this->get_subject();
+
+		$subject->no_stock_admin_notification( new stdClass() );
 	}
 }
