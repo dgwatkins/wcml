@@ -20,10 +20,10 @@ class WCML_UnitTestCase extends WPML_UnitTestCase {
 		$this->clear_db();
 		icl_cache_clear();
 
-		$this->sitepress        =& $sitepress;
-		$this->woocommerce_wpml =& $woocommerce_wpml;
-		$this->wpdb             =& $wpdb;
-		$this->woocommerce      =& $woocommerce;
+		$this->sitepress        = $sitepress;
+		$this->woocommerce_wpml = $woocommerce_wpml;
+		$this->wpdb             = $wpdb;
+		$this->woocommerce      = $woocommerce;
 		$this->wcml_helper      = new WCML_Helper();
 		$this->wcml_helper->init( $this->woocommerce_wpml, $this->sitepress, $this->wpdb );
 		require_once WC_PATH . '/woocommerce.php';

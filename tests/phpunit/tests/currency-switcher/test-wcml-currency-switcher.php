@@ -298,7 +298,7 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 		$sitepress = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->setMethods( array( 'get_current_language' ) )->getMock();
 		$sitepress->method( 'get_current_language' )->willReturn( 'en' );
 
-		$subject = \Mockery::mock( 'WCML_Currency_Switcher[get_model_data]', array( &$woocommerce_wpml, &$sitepress ) );
+		$subject = \Mockery::mock( 'WCML_Currency_Switcher[get_model_data]', array( $woocommerce_wpml, $sitepress ) );
 		$subject->shouldReceive( 'get_model_data' )->with( array(
 			'switcher_id'    => $switcher_id,
 			'switcher_style' => 'wcml-horizontal-list',

@@ -1,13 +1,16 @@
 <?php
 
-
+/**
+ * Class Test_WCML_Exchange_Rates
+ *
+ * @group wcml-3037
+ */
 class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
 
     private $multi_currency;
     private $exchange_rate_services;
 
     function setUp(){
-
         parent::setUp();
 
         set_current_screen( 'dashboard' );
@@ -17,9 +20,9 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
         $this->multi_currency_helper->setup_3_currencies();
 
         $this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
-        $this->multi_currency =& $this->woocommerce_wpml->multi_currency;
+        $this->multi_currency = $this->woocommerce_wpml->multi_currency;
 
-        $this->exchange_rate_services =& $this->multi_currency->exchange_rate_services;
+        $this->exchange_rate_services = $this->multi_currency->exchange_rate_services;
         $this->exchange_rate_services->init();
     }
 

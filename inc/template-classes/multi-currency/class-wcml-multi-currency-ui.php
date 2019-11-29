@@ -28,9 +28,16 @@ class WCML_Multi_Currency_UI extends WCML_Templates_Factory {
 	/** @var WCML_Tracking_Link */
 	private $tracking_link;
 
-    function __construct( &$woocommerce_wpml, &$sitepress ){
+	/**
+	 * WCML_Multi_Currency_UI constructor.
+	 *
+	 * @param woocommerce_wpml $woocommerce_wpml
+	 * @param SitePress        $sitepress
+	 */
+	public function __construct( $woocommerce_wpml, $sitepress ) {
+		// @todo Cover by tests, required for wcml-3037.
 
-        $functions = array(
+		$functions = array(
             new Twig_SimpleFunction( 'get_flag_url', array( $this, 'get_flag_url' ) ),
             new Twig_SimpleFunction( 'is_currency_on', array( $this, 'is_currency_on' ) ),
             new Twig_SimpleFunction( 'get_language_currency', array( $this, 'get_language_currency' ) ),

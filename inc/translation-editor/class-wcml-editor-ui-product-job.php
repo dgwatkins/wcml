@@ -23,13 +23,22 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
     private $not_display_fields_for_variables_product;
     private $not_display_custom_fields_for_product;
 
-	function __construct( $job_details, &$woocommerce_wpml, &$sitepress, &$wpdb  ) {
+	/**
+	 * WCML_Editor_UI_Product_Job constructor.
+	 *
+	 * @param array            $job_details
+	 * @param woocommerce_wpml $woocommerce_wpml
+	 * @param SitePress        $sitepress
+	 * @param wpdb             $wpdb
+	 */
+	public function __construct( $job_details, $woocommerce_wpml, $sitepress, $wpdb ) {
 		global $iclTranslationManagement;
 
-        $this->woocommerce_wpml =& $woocommerce_wpml;
-        $this->sitepress        =& $sitepress;
-        $this->tm_instance      =& $iclTranslationManagement;
-        $this->wpdb             =& $wpdb;
+		$this->woocommerce_wpml = $woocommerce_wpml;
+		$this->sitepress        = $sitepress;
+		$this->tm_instance      = $iclTranslationManagement;
+		$this->wpdb             = $wpdb;
+
         $this->not_display_fields_for_variables_product = array( '_purchase_note', '_regular_price', '_sale_price',
                                                                  '_price', '_min_variation_price', '_max_variation_price',
                                                                  '_min_variation_regular_price', '_max_variation_regular_price',

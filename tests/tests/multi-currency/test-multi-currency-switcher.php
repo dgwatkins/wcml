@@ -76,7 +76,7 @@ class Test_WCML_Multi_Currency_Switcher extends WCML_UnitTestCase {
 
         // Multi currency objects
         $this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
-        $this->multi_currency =& $this->woocommerce_wpml->multi_currency;
+        $this->multi_currency = $this->woocommerce_wpml->multi_currency;
 
         $this->multi_currency->currency_swicther = new WCML_Currency_Switcher( $this->woocommerce_wpml, $this->sitepress );
 
