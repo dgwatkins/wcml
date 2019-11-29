@@ -119,6 +119,9 @@ class WCML_Emails {
 			$this,
 			'customer_processing_order_subject'
 		) );
+
+		add_action( 'woocommerce_low_stock_notification', array( $this, 'low_stock_admin_notification' ), 9 );
+		add_action( 'woocommerce_no_stock_notification', array( $this, 'no_stock_admin_notification' ), 9 );
 	}
 
 	function email_refresh_in_ajax() {
@@ -306,13 +309,6 @@ class WCML_Emails {
 		if ( $email ) {
 			$recipients = explode( ',', $email->get_recipient() );
 			foreach ( $recipients as $recipient ) {
-				$user = get_user_by( 'email', $recipient );
-				if ( $user ) {
-					$admin_language = $this->sitepress->get_user_admin_language( $user->ID, true );
-				} else {
-					$admin_language = $this->sitepress->get_default_language();
-				}
-
 				/**
 				 * Filter new order admin email language for recipient
 				 *
@@ -322,7 +318,7 @@ class WCML_Emails {
 				 * @param string $recipient Admin email
 				 * @param int $order_id Order ID
 				 */
-				$admin_language = apply_filters( 'wcml_new_order_admin_email_language', $admin_language, $recipient, $order_id );
+				$admin_language = apply_filters( 'wcml_new_order_admin_email_language', $this->get_admin_language_by_email( $recipient ), $recipient, $order_id );
 
 				$this->change_email_language( $admin_language );
 
@@ -341,6 +337,20 @@ class WCML_Emails {
 			}
 			$email->enabled = false;
 			$this->refresh_email_lang( $order_id );
+		}
+	}
+
+	/**
+	 * @param string $recipient
+	 *
+	 * @return string
+	 */
+	private function get_admin_language_by_email( $recipient ){
+		$user = get_user_by( 'email', $recipient );
+		if ( $user ) {
+			return $this->sitepress->get_user_admin_language( $user->ID, true );
+		} else {
+			return $this->sitepress->get_default_language();
 		}
 	}
 
@@ -507,5 +517,43 @@ class WCML_Emails {
 		return function( $field ) use ( $domain, $namePrefix, $orderId, $languageCode ) {
 			return $this->wcml_get_translated_email_string( $domain, $namePrefix . $field, $orderId, $languageCode );
 		};
+	}
+
+	/**
+	 * @param WC_Product $product
+	 */
+	public function low_stock_admin_notification( $product ) {
+		$this->admin_notification( $product, 'woocommerce_low_stock_notification', 'low_stock' );
+	}
+
+	/**
+	 * @param WC_Product $product
+	 */
+	public function no_stock_admin_notification( $product ) {
+		$this->admin_notification( $product, 'woocommerce_no_stock_notification', 'no_stock' );
+	}
+
+	/**
+	 * @param WC_Product $product
+	 * @param string $action
+	 * @param string $method
+	 */
+	private function admin_notification( $product, $action, $method ) {
+
+		$is_action_removed = remove_action( $action, [ $this->wcEmails, $method ] );
+
+		if ( $is_action_removed ) {
+			$admin_language               = $this->get_admin_language_by_email( get_option( 'woocommerce_stock_email_recipient' ) );
+			$product_id_in_admin_language = wpml_object_id_filter(
+				$product->get_id(),
+				'product',
+				true,
+				$admin_language
+			);
+
+			$this->sitepress->switch_lang( $admin_language );
+			$this->wcEmails->$method( wc_get_product( $product_id_in_admin_language ) );
+			$this->sitepress->switch_lang();
+		}
 	}
 }
