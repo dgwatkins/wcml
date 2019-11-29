@@ -5,16 +5,19 @@ class WCML_WC_Shipping{
     private $current_language;
     private $sitepress;
 
-    function __construct( &$sitepress ){
+	/**
+	 * WCML_WC_Shipping constructor.
+	 *
+	 * @param SitePress $sitepress
+	 */
+	public function __construct( $sitepress ) {
+		$this->sitepress = $sitepress;
 
-        $this->sitepress = $sitepress;
-
-        $this->current_language = $this->sitepress->get_current_language();
-        if( $this->current_language == 'all' ){
-            $this->current_language = $this->sitepress->get_default_language();
-        }
-
-    }
+		$this->current_language = $this->sitepress->get_current_language();
+		if ( 'all' === $this->current_language ) {
+			$this->current_language = $this->sitepress->get_default_language();
+		}
+	}
 
     function add_hooks(){
 

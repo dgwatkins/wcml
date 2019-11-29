@@ -8,17 +8,23 @@ class WCML_Troubleshooting{
     private $sitepress;
     private $wpdb;
 
-    function __construct( &$woocommerce_wpml, &$sitepress, &$wpdb ){
+	/**
+	 * WCML_Troubleshooting constructor.
+	 *
+	 * @param woocommerce_wpml $woocommerce_wpml
+	 * @param SitePress        $sitepress
+	 * @param wpdb             $wpdb
+	 */
+	public function __construct( $woocommerce_wpml, $sitepress, $wpdb ) {
 
-        $this->woocommerce_wpml = $woocommerce_wpml;
-        $this->sitepress = $sitepress;
-        $this->wpdb = $wpdb;
-        
-        add_action( 'init', array( $this, 'init' ) );
-    }
-    
+		$this->woocommerce_wpml = $woocommerce_wpml;
+		$this->sitepress        = $sitepress;
+		$this->wpdb             = $wpdb;
 
-    function init(){
+		add_action( 'init', [ $this, 'init' ] );
+	}
+
+	function init() {
         add_action('wp_ajax_trbl_sync_variations', array($this,'trbl_sync_variations'));
         add_action('wp_ajax_trbl_gallery_images', array($this,'trbl_gallery_images'));
         add_action('wp_ajax_trbl_update_count', array($this,'trbl_update_count'));

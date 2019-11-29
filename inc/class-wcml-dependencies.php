@@ -78,7 +78,8 @@ class WCML_Dependencies {
 		}
 
 		if ( isset( $sitepress ) ) {
-			$this->allok = $this->allok & $sitepress->setup();
+			// @todo Cover by tests, required for wcml-3037.
+			$this->allok = $this->allok && $sitepress->setup();
 		}
 
 		return $this->allok;

@@ -57,13 +57,13 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 			'auto_subtract'		=> 0
 		);
 
-		$this->settings =& $settings;
+		$this->settings = $settings;
 
 		$this->woocommerce_wpml->update_settings( $settings );
 
 		// Multi currency objects
 		$this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
-		$this->multi_currency =& $this->woocommerce_wpml->multi_currency;
+		$this->multi_currency = $this->woocommerce_wpml->multi_currency;
 	}
 
 

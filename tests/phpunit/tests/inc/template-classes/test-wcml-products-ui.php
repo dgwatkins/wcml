@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class Test_WCML_Products_UI
+ *
+ * @group wcml-3037
+ */
 class Test_WCML_Products_UI extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */

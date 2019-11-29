@@ -8,10 +8,8 @@ class WCML_Helper_Multi_Currency {
 
     private $woocommerce_wpml;
 
-    public function __construct( &$woocommerce_wpml ){
-
-        $this->woocommerce_wpml =& $woocommerce_wpml;
-
+	public function __construct( $woocommerce_wpml ) {
+		$this->woocommerce_wpml = $woocommerce_wpml;
     }
 
     /**

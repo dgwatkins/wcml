@@ -10,7 +10,7 @@ class Test_WCML_Exchange_Rates_Ajax extends WP_Ajax_UnitTestCase {
     function setUp(){
         global $woocommerce_wpml, $sitepress, $wpdb;
 
-        $this->woocommerce_wpml =& $woocommerce_wpml;
+        $this->woocommerce_wpml = $woocommerce_wpml;
 	    WCML_Helper::init( $this->woocommerce_wpml, $sitepress, $wpdb );
 	    WCML_Helper::create_icl_string_packages_table();
 
@@ -22,9 +22,9 @@ class Test_WCML_Exchange_Rates_Ajax extends WP_Ajax_UnitTestCase {
         $this->multi_currency_helper->setup_3_currencies();
 
         $this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
-        $this->multi_currency =& $this->woocommerce_wpml->multi_currency;
+        $this->multi_currency = $this->woocommerce_wpml->multi_currency;
 
-        $this->exchange_rate_services =& $this->multi_currency->exchange_rate_services;
+        $this->exchange_rate_services = $this->multi_currency->exchange_rate_services;
 
     }
 

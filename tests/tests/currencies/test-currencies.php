@@ -6,7 +6,6 @@ class Test_WCML_Currencies extends WCML_UnitTestCase {
 	private $settings;
 
 	function setUp(){
-
 		parent::setUp();
 
 		set_current_screen( 'dashboard' );
@@ -38,10 +37,9 @@ class Test_WCML_Currencies extends WCML_UnitTestCase {
 
 		);
 
-		$this->settings =& $settings;
+		$this->settings = $settings;
 
 		$this->woocommerce_wpml->update_settings( $settings );
-
 	}
 
 	/*

@@ -99,7 +99,7 @@ class WCML_Multi_Currency {
 	public function __construct() {
 		global $woocommerce_wpml, $sitepress, $wpdb, $wp_locale, $wp;
 
-		$this->woocommerce_wpml =& $woocommerce_wpml;
+		$this->woocommerce_wpml = $woocommerce_wpml;
 
 		$this->install = new WCML_Multi_Currency_Install( $this, $woocommerce_wpml );
 
@@ -220,7 +220,7 @@ class WCML_Multi_Currency {
 		global $sitepress;
 
 		$this->default_currency = wcml_get_woocommerce_currency_option();
-		$this->currencies       =& $this->woocommerce_wpml->settings['currency_options'];
+		$this->currencies       = $this->woocommerce_wpml->settings['currency_options'];
 
 		// Add default currency if missing (set when MC is off)
 		if ( ! empty( $this->default_currency ) && ! isset( $this->currencies[ $this->default_currency ] ) ) {

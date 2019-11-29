@@ -86,7 +86,7 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
 
         // Multi currency objects
         $this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
-        $this->multi_currency =& $this->woocommerce_wpml->multi_currency;
+        $this->multi_currency = $this->woocommerce_wpml->multi_currency;
     }
 
 	function test_get_cart_attribute_translation(){

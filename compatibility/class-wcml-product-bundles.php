@@ -665,7 +665,7 @@ class WCML_Product_Bundles {
 
 			$translated_bundle_data = $this->get_product_bundle_data( $translated_bundle_id );
 
-			$bundle_id =& $job->original_doc_id;
+			$bundle_id = $job->original_doc_id;
 
 			$bundle_data = $this->get_product_bundle_data( $bundle_id );
 

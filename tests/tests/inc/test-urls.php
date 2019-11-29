@@ -4,6 +4,7 @@
  * Class Test_WCML_URLS
  *
  * @group wcml-2957
+ * @group wcml-3037
  */
 class Test_WCML_URLS extends WCML_UnitTestCase {
 
@@ -12,20 +13,17 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 
 	private $url_translation;
 
-	function setUp(){
-
+	function setUp() {
 		parent::setUp();
 
-		$this->url_translation =& $this->woocommerce_wpml->url_translation;
+		$this->url_translation  = $this->woocommerce_wpml->url_translation;
 		$this->default_language = $this->sitepress->get_default_language();
-		$this->second_language = 'es';
+		$this->second_language  = 'es';
 
 		$tax_hooks_factory = new WPML_Tax_Permalink_Filters_Factory();
-		$tax_hooks = $tax_hooks_factory->create();
+		$tax_hooks         = $tax_hooks_factory->create();
 		$tax_hooks->add_hooks();
-
 	}
-
 
 	function test_url_string_name(){
 		$this->assertEquals( 'URL product_cat tax slug', $this->url_translation->url_string_name( 'product_cat' ) );

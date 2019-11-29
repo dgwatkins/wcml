@@ -6,7 +6,7 @@ class WCML_Helper {
 	private static $woocommerce_wpml;
 	private static $wpdb;
 
-	static function init( &$woocommerce_wpml, &$sitepress, &$wpdb ) {
+	static function init( $woocommerce_wpml, $sitepress, $wpdb ) {
 
 		self::$sitepress        = $sitepress;
 		self::$woocommerce_wpml = $woocommerce_wpml;

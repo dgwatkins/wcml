@@ -1,6 +1,10 @@
 <?php
 
-
+/**
+ * Class Test_WCML_Product_Prices
+ *
+ * @group wcml-3037
+ */
 class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 	private $settings;
@@ -165,7 +169,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 			'RON' => $this->wc_format_price('2.099<cur>lei</cur>', 'right'),
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w space), '.' thousands separator, ',' decimal separator, 1 decimals
-			'AUD' => $this->wc_format_price('1,111.0&nbsp;<cur>&#36;</cur>', 'right'),
+			'AUD' => $this->wc_format_price('1.111,0<cur>&#36;</cur>', 'right'),
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w/ space), '.' thousands separator, ',' decimal separator, 2 decimals
 			'CHF' => $this->wc_format_price('67.900,80<cur>&#67;&#72;&#70;</cur>', 'right'),
