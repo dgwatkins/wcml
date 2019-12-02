@@ -610,13 +610,6 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
         $tr_product_id                = apply_filters( 'translate_object_id', $this->product_id, 'product', false, $this->get_target_language() );
 
 	    new WCML_Editor_Save_Filters( $product_trid, $this->get_target_language() );
-        if ( get_magic_quotes_gpc() ) {
-            foreach ( $translations as $key => $data_item ) {
-                if ( !is_array( $data_item ) ) {
-                    $translations[$key] = stripslashes( $data_item );
-                }
-            }
-        }
 
 	    if ( null === $tr_product_id ) {
 
