@@ -53,7 +53,6 @@ class WCML_Cart {
 
 			//cart
 			add_action( 'woocommerce_before_calculate_totals', array( $this, 'woocommerce_calculate_totals' ), 100 );
-			add_action( 'woocommerce_get_cart_item_from_session', array( $this, 'translate_cart_contents' ) );
 			add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'translate_cart_subtotal' ) );
 			add_action( 'woocommerce_before_checkout_process', array( $this, 'wcml_refresh_cart_total' ) );
 			add_filter( 'woocommerce_cart_item_data_to_validate', array( $this, 'validate_cart_item_data' ), 10, 2 );
@@ -487,29 +486,6 @@ class WCML_Cart {
 		unset( $cart_contents['key'] );
 
 		return apply_filters( 'wcml_filter_cart_item_data', $cart_contents );
-	}
-
-	public function translate_cart_contents( $item ) {
-
-		// translate the product id and product data
-		$translated_product_id = apply_filters( 'translate_object_id', $item['product_id'], 'product', true );
-		if( $item['product_id'] !== $translated_product_id ){
-			$item['product_id'] = $translated_product_id;
-		}
-
-		if ( $item['variation_id'] ) {
-			$translated_variation_id = apply_filters( 'translate_object_id', $item['variation_id'], 'product_variation', true );
-
-			if( $item['variation_id'] !== $translated_variation_id ){
-				$item['variation_id'] = $translated_variation_id;
-			}
-		}
-
-		$item_product_title = $item['variation_id'] ? get_the_title( $translated_variation_id ) : get_the_title( $translated_product_id );
-		$item['data']->set_name( $item_product_title );
-		$item['data_hash'] = $this->get_data_cart_hash( $item );
-
-		return $item;
 	}
 
 	public function translate_cart_subtotal( $cart ) {

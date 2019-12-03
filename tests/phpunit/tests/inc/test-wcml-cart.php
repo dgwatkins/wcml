@@ -57,12 +57,44 @@ class Test_WCML_Cart extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_adds_correct_hooks_when_clean_cart_is_disabled(){
+	public function it_adds_correct_hooks_when_clean_cart_is_disabled() {
 
-		\WP_Mock::userFunction( 'is_ajax', array( 'return' => false ) );
+		\WP_Mock::userFunction( 'is_ajax', [ 'return' => false ] );
 
 		$subject = $this->get_subject();
-		\WP_Mock::expectActionAdded( 'woocommerce_get_cart_item_from_session', array( $subject, 'translate_cart_contents' ) );
+
+		\WP_Mock::expectActionAdded( 'wp_ajax_woocommerce_get_refreshed_fragments', [
+			$subject,
+			'wcml_refresh_fragments'
+		], 0 );
+		\WP_Mock::expectActionAdded( 'wp_ajax_woocommerce_add_to_cart', [ $subject, 'wcml_refresh_fragments' ], 0 );
+		\WP_Mock::expectActionAdded( 'wp_ajax_nopriv_woocommerce_get_refreshed_fragments', [
+			$subject,
+			'wcml_refresh_fragments'
+		], 0 );
+		\WP_Mock::expectActionAdded( 'wp_ajax_nopriv_woocommerce_add_to_cart', [
+			$subject,
+			'wcml_refresh_fragments'
+		], 0 );
+
+		//cart
+		\WP_Mock::expectActionAdded( 'woocommerce_before_calculate_totals', [
+			$subject,
+			'woocommerce_calculate_totals'
+		], 100 );
+		\WP_Mock::expectActionAdded( 'woocommerce_cart_loaded_from_session', [ $subject, 'translate_cart_subtotal' ] );
+		\WP_Mock::expectActionAdded( 'woocommerce_before_checkout_process', [ $subject, 'wcml_refresh_cart_total' ] );
+		\WP_Mock::expectFilterAdded( 'woocommerce_cart_item_data_to_validate', [
+			$subject,
+			'validate_cart_item_data'
+		], 10, 2 );
+
+		\WP_Mock::expectFilterAdded( 'woocommerce_cart_item_permalink', [ $subject, 'cart_item_permalink' ], 10, 2 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_paypal_args', [ $subject, 'filter_paypal_args' ] );
+		\WP_Mock::expectFilterAdded( 'woocommerce_add_to_cart_sold_individually_found_in_cart', [
+			$subject,
+			'add_to_cart_sold_individually_exception'
+		], 10, 4 );
 
 		$subject->add_hooks();
 	}
@@ -138,42 +170,6 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'wcml_before_switch_currency', array( $subject, 'switching_currency_empty_cart_if_needed' ), 10, 2 );
 
 		$subject->add_hooks();
-	}
-
-
-	/**
-	 * @test
-	 */
-	public function translate_cart_contents(){
-		$subject = $this->get_subject();
-
-		$product_id = rand( 1, 100 );
-		$product_title = rand_str();
-
-		$cart_item = array();
-		$cart_item[ 'product_id' ] = $product_id;
-		$cart_item[ 'variation_id' ] = '';
-
-		\WP_Mock::userFunction( 'get_the_title', array(
-			'args' => $product_id,
-			'return' => $product_title
-		) );
-
-		$product_object = $this->getMockBuilder( 'WC_Product' )
-			->disableOriginalConstructor()
-			->setMethods( array( 'set_name' ) )
-			->getMock();
-
-		$product_object->expects( $this->once() )->method( 'set_name' )->with( $product_title )->willReturn( true );
-
-		$cart_item[ 'data' ] = $product_object;
-
-		$translated_cart_item = $subject->translate_cart_contents( $cart_item );
-
-		$expected_cart_item = $cart_item;
-		$expected_cart_item[ 'data_hash' ] = '';
-
-		$this->assertEquals( $expected_cart_item, $translated_cart_item );
 	}
 
 	/**
