@@ -2,7 +2,7 @@
 
 namespace WCML\Block\Convert\Type;
 
-class ProductsByAttributes extends Convertible {
+class ProductsByAttributes extends \WPML\PB\Gutenberg\ConvertIdsInBlock\Base {
 
 	public function convert( array $block ) {
 		if ( ! isset( $block['attrs']['attributes'] ) ) {

@@ -2,44 +2,73 @@
 
 namespace WCML\Block\Convert;
 
-use WCML\Block\Convert\Type\NonConvertible;
 use WCML\Block\Convert\Type\ProductsByAttributes;
-use WCML\Block\Convert\Type\WithIdsAttributes;
+use WPML\PB\Gutenberg\ConvertIdsInBlock\Composite;
+use WPML\PB\Gutenberg\ConvertIdsInBlock\NullConvert;
+use WPML\PB\Gutenberg\ConvertIdsInBlock\BlockAttributes;
+use WPML\PB\Gutenberg\ConvertIdsInBlock\TagAttributes;
 
 class Config {
 
 	/**
 	 * @param string $blockName
 	 *
-	 * @return Type\Base
+	 * @return \WPML\PB\Gutenberg\ConvertIdsInBlock\Base
 	 */
 	public static function get( $blockName ) {
-		/** @var \SitePress $sitepress */
-		global $sitepress;
+		switch ( $blockName ) {
+			case 'woocommerce/product-category':
+				$converter = new BlockAttributes( [ [ 'name' => 'categories', 'type' => 'product_cat' ] ] );
+				break;
 
-		return wpml_collect( [
-			'woocommerce/product-category' => new WithIdsAttributes( $sitepress, [
-				[ 'name' => 'categories', 'type' => 'product_cat' ],
-			] ),
-			'woocommerce/featured-category' => new WithIdsAttributes( $sitepress, [
-				[ 'name' => 'categoryId', 'type' => 'product_cat' ],
-			] ),
-			'woocommerce/featured-product' => new WithIdsAttributes( $sitepress, [
-				[ 'name' => 'productId', 'type' => 'product' ],
-			] ),
-			'woocommerce/handpicked-products' => new WithIdsAttributes( $sitepress, [
-				[ 'name' => 'products', 'type' => 'product' ],
-			] ),
-			'woocommerce/product-tag' => new WithIdsAttributes( $sitepress, [
-				[ 'name' => 'tags', 'type' => 'product_tag' ],
-			] ),
-			'woocommerce/reviews-by-product' => new WithIdsAttributes( $sitepress, [
-				[ 'name' => 'productId', 'type' => 'product' ],
-			] ),
-			'woocommerce/reviews-by-category' => new WithIdsAttributes( $sitepress, [
-				[ 'name' => 'categoryIds', 'type' => 'product_cat' ],
-			] ),
-			'woocommerce/products-by-attribute' => new ProductsByAttributes( $sitepress ),
-		] )->get( $blockName, new NonConvertible() );
+			case 'woocommerce/featured-category':
+				$converter = new BlockAttributes( [ [ 'name' => 'categoryId', 'type' => 'product_cat' ] ] );
+				break;
+
+			case 'woocommerce/featured-product':
+				$converter = new BlockAttributes( [ [ 'name' => 'productId', 'type' => 'product' ] ] );
+				break;
+
+			case 'woocommerce/handpicked-products':
+				$converter = new BlockAttributes( [ [ 'name' => 'products', 'type' => 'product' ] ] );
+				break;
+
+			case 'woocommerce/product-tag':
+				$converter = new BlockAttributes( [ [ 'name' => 'tags', 'type' => 'product_tag' ] ] );
+				break;
+
+			case 'woocommerce/reviews-by-product':
+				$converter = new Composite( [
+					                            new BlockAttributes( [ [ 'name' => 'productId', 'type' => 'product' ] ] ),
+					                            new TagAttributes( [
+                         [
+                             'xpath' => '//*[contains(@class, "wp-block-woocommerce-reviews-by-product")]/@data-product-id',
+                             'type' => 'product'
+                         ]
+                    ] )
+                ] );
+				break;
+
+			case 'woocommerce/reviews-by-category':
+				$converter = new Composite( [
+					                            new BlockAttributes( [ [ 'name' => 'categoryIds', 'type' => 'product_cat' ] ] ),
+					                            new TagAttributes( [
+					 	[
+					 		'xpath' => '//*[contains(@class, "wp-block-woocommerce-reviews-by-category")]/@data-category-ids',
+						    'type' => 'product_cat'
+					    ]
+					 ] )
+				] );
+				break;
+
+			case 'woocommerce/products-by-attribute':
+				$converter = new ProductsByAttributes();
+				break;
+
+			default:
+				$converter = new NullConvert();
+		}
+
+		return $converter;
 	}
 }

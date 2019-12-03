@@ -2,14 +2,14 @@
 
 namespace WCML\Block\Convert\Type;
 
-abstract class Convertible implements Type {
+abstract class Convert {
 
-	/** @var \SitePress $sitepress */
-	private $sitepress;
-
-	public function __construct( \SitePress $sitepress ) {
-		$this->sitepress = $sitepress;
-	}
+	/**
+	 * @param array $block
+	 *
+	 * @return array
+	 */
+	abstract public function convert( array $block );
 
 	/**
 	 * @param array|int $ids
@@ -19,7 +19,7 @@ abstract class Convertible implements Type {
 	 */
 	protected function convertIds( $ids, $elementType ) {
 		$getTranslation = function( $id ) use ( $elementType ) {
-			return (int) $this->sitepress->get_object_id( $id, $elementType );
+			return (int) wpml_object_id_filter( $id, $elementType );
 		};
 
 		if ( is_array( $ids ) ) {

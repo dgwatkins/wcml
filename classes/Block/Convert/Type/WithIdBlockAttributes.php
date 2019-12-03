@@ -2,12 +2,11 @@
 
 namespace WCML\Block\Convert\Type;
 
-class WithIdsAttributes extends Convertible {
+class WithIdBlockAttributes extends Convert {
 
 	private $attributesToConvert;
 
-	public function __construct( \SitePress $sitepress, array $attributesToConvert ) {
-		parent::__construct( $sitepress );
+	public function __construct( array $attributesToConvert ) {
 		$this->attributesToConvert = $attributesToConvert;
 	}
 

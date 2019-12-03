@@ -2,7 +2,7 @@
 
 namespace WCML\Block\Convert\Type;
 
-class NonConvertible implements Type {
+class NonConvertible extends Convert{
 
 	/**
 	 * @param array $block
