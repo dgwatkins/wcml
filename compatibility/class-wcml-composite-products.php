@@ -41,7 +41,8 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 			add_action( 'wcml_gui_additional_box_html', array( $this, 'custom_box_html' ), 10, 3 );
 			add_filter( 'wcml_gui_additional_box_data', array( $this, 'custom_box_html_data' ), 10, 4 );
-			add_action( 'wcml_update_extra_fields', array( $this, 'components_update' ), 10, 4 );
+			add_action( 'wcml_before_sync_product_data', array( $this, 'components_update' ), 10, 3 );
+			add_action( 'wcml_update_extra_fields', array( $this, 'update_component_strings' ), 10, 4 );
 			add_filter( 'woocommerce_json_search_found_products', array( $this, 'woocommerce_json_search_found_products' ) );
 
 			add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_composite_data_translation_package' ), 10, 2 );
@@ -278,19 +279,11 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 		return $data;
 	}
 
-	function components_update( $original_product_id, $product_id, $data, $language ){
+	public function components_update( $original_product_id, $product_id, $language ){
 
 		$composite_data = $this->get_composite_data( $original_product_id );
 
 		foreach( $composite_data as $component_id => $component ) {
-
-			if(!empty($data[ md5( 'composite_'.$component_id.'_title' ) ] ) ){
-				$composite_data[$component_id]['title'] = $data[ md5( 'composite_'.$component_id.'_title' ) ];
-			}
-
-			if(!empty($data[ md5( 'composite_'.$component_id.'_description' ) ])) {
-				$composite_data[$component_id]['description'] = $data[ md5( 'composite_'.$component_id.'_description' ) ];
-			}
 
 			//sync product ids
 			if( $component[ 'query_type' ] == 'product_ids' ){
@@ -324,14 +317,6 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 		$composite_scenarios_meta = $this->get_composite_scenarios_meta( $original_product_id );
 		if( $composite_scenarios_meta ){
 			foreach( $composite_scenarios_meta as $scenario_key => $scenario_meta ){
-				if( !empty( $data[ md5( 'composite_scenario_'.$scenario_key.'_title' ) ] ) ){
-					$composite_scenarios_meta[ $scenario_key ][ 'title' ] = $data[ md5( 'composite_scenario_'.$scenario_key.'_title' ) ];
-				}
-
-				if( !empty( $data[ md5( 'composite_scenario_'.$scenario_key.'_description' ) ])) {
-					$composite_scenarios_meta[ $scenario_key ][ 'description' ] = $data[ md5( 'composite_scenario_'.$scenario_key.'_description' ) ];
-				}
-
 				//sync product ids
 				foreach( $scenario_meta[ 'component_data' ] as $compon_id => $component_data ){
 					if( isset( $composite_data[ $compon_id ] ) && $composite_data[ $compon_id ][ 'query_type' ] == 'product_ids' ){
@@ -349,6 +334,46 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 							}
 						}
 					}
+				}
+			}
+		}
+
+		update_post_meta( $product_id, '_bto_scenario_data', $composite_scenarios_meta );
+
+		return array(
+			'components' => $composite_data,
+			'scenarios'  => $composite_scenarios_meta,
+		);
+	}
+
+
+	public function update_component_strings( $original_product_id, $product_id, $data, $language ){
+
+		$composite_data = $this->get_composite_data( $product_id );
+
+		foreach( $composite_data as $component_id => $component ) {
+
+			if(!empty($data[ md5( 'composite_'.$component_id.'_title' ) ] ) ){
+				$composite_data[$component_id]['title'] = $data[ md5( 'composite_'.$component_id.'_title' ) ];
+			}
+
+			if(!empty($data[ md5( 'composite_'.$component_id.'_description' ) ])) {
+				$composite_data[$component_id]['description'] = $data[ md5( 'composite_'.$component_id.'_description' ) ];
+			}
+
+		}
+
+		update_post_meta( $product_id, '_bto_data', $composite_data );
+
+		$composite_scenarios_meta = $this->get_composite_scenarios_meta( $product_id );
+		if( $composite_scenarios_meta ){
+			foreach( $composite_scenarios_meta as $scenario_key => $scenario_meta ){
+				if( !empty( $data[ md5( 'composite_scenario_'.$scenario_key.'_title' ) ] ) ){
+					$composite_scenarios_meta[ $scenario_key ][ 'title' ] = $data[ md5( 'composite_scenario_'.$scenario_key.'_title' ) ];
+				}
+
+				if( !empty( $data[ md5( 'composite_scenario_'.$scenario_key.'_description' ) ])) {
+					$composite_scenarios_meta[ $scenario_key ][ 'description' ] = $data[ md5( 'composite_scenario_'.$scenario_key.'_description' ) ];
 				}
 			}
 		}

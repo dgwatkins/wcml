@@ -108,10 +108,10 @@ class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 	/**
 	* @test
 	*/
-	public function components_update(){
+	public function it_should_update_component_strings(){
 		$composite_products = $this->get_test_subject();
 
-		$original_composite_data = $this->setup_composite_product_data( $this->test_data->composite_product->id );
+		$original_composite_data = $this->setup_composite_product_data( $this->test_data->translated_composite_product->id );
 
 		$expected = array();
 		$data = array();
@@ -125,11 +125,31 @@ class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 			$data[ md5( 'composite_scenario_'.$scenario_id.'_description' ) ] = $expected[ $scenario_id ][ 'description' ] = rand_str();
 		}
 
-		$tr_composite_data = $composite_products->components_update( $this->test_data->composite_product->id, $this->test_data->translated_composite_product, $data, $this->second_language );
+		$tr_composite_data = $composite_products->update_component_strings( $this->test_data->composite_product->id, $this->test_data->translated_composite_product->id, $data, $this->second_language );
 
 		foreach( $tr_composite_data['components'] as $component_id => $component ){
 			$this->assertEquals( $expected[ $component_id ][ 'title' ], $component[ 'title' ] );
 			$this->assertEquals( $expected[ $component_id ][ 'description' ], $component[ 'description' ] );
+		}
+
+		foreach( $tr_composite_data['scenarios'] as $scenario_id => $scenario ){
+			$this->assertEquals( $expected[ $scenario_id ][ 'title' ], $scenario[ 'title' ] );
+			$this->assertEquals( $expected[ $scenario_id ][ 'description' ], $scenario[ 'description' ] );
+		}
+
+	}
+
+	/**
+	* @test
+	*/
+	public function it_should_update_component(){
+		$composite_products = $this->get_test_subject();
+
+		$original_composite_data = $this->setup_composite_product_data( $this->test_data->composite_product->id );
+
+		$tr_composite_data = $composite_products->components_update( $this->test_data->composite_product->id, $this->test_data->translated_composite_product, $this->second_language );
+
+		foreach( $tr_composite_data['components'] as $component_id => $component ){
 			//check sync ids
 			if( $component[ 'query_type' ] == 'product_ids' ){
 				$this->assertEquals( array( $this->test_data->components['product']['translated']->id ), $component[ 'assigned_ids' ] );
@@ -141,8 +161,6 @@ class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 		}
 
 		foreach( $tr_composite_data['scenarios'] as $scenario_id => $scenario ){
-			$this->assertEquals( $expected[ $scenario_id ][ 'title' ], $scenario[ 'title' ] );
-			$this->assertEquals( $expected[ $scenario_id ][ 'description' ], $scenario[ 'description' ] );
 			//check sync ids
 			foreach( $scenario[ 'component_data' ] as $compon_id => $component_data ){
 				if( $original_composite_data['components'][ $compon_id ][ 'query_type' ] == 'product_ids' ){
