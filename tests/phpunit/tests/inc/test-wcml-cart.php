@@ -178,23 +178,21 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 	/**
 	 * @test
-	 * @expectedException Exception
 	 */
-	public function add_to_cart_sold_individually_exception(){
+	public function it_should_add_to_cart_sold_individually_exception() {
 
-		$qt = mt_rand( 1, 100 );
-		$quantity = mt_rand( 1, 100 );
-		$product_id = mt_rand( 1, 100 );
-		$variation_id = mt_rand( 1, 100 );
-		$cart_item_data = array();
-		$post_type = 'product_variation';
+		$product_id     = 10;
+		$variation_id   = 11;
+		$trid           = 12;
+		$cart_item_data = [];
+		$post_type      = 'product_variation';
 
-		\WP_Mock::userFunction( 'get_post_type', array(
-			'args' => $variation_id,
+		\WP_Mock::userFunction( 'get_post_type', [
+			'args'   => $variation_id,
 			'return' => $post_type
-		) );
+		] );
 
-		$this->sitepress->method('get_element_trid')->with( $variation_id, 'post_'.$post_type );
+		$this->sitepress->method( 'get_element_trid' )->with( $variation_id, 'post_' . $post_type )->willReturn( $trid );
 
 		$woocommerce = $this->getMockBuilder( 'woocommerce' )
 		                    ->disableOriginalConstructor()
@@ -204,31 +202,64 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		                          ->disableOriginalConstructor()
 		                          ->getMock();
 
-		$cart_item = array();
+		$cart_item                 = [];
 		$cart_item['variation_id'] = $variation_id;
-		$cart_item['quantity'] = mt_rand( 1, 10 );
+		$cart_item['quantity']     = 1;
 
-		$woocommerce->cart->cart_contents = array( $cart_item );
+		$woocommerce->cart->cart_contents = [ $cart_item ];
 
-		\WP_Mock::userFunction( 'WC', array(
+		\WP_Mock::userFunction( 'WC', [
 			'return' => $woocommerce,
-			'times' => 1
-		) );
-
-		\WP_Mock::userFunction( 'get_the_title', array(
-			'args' => array( $variation_id ),
-			'return' => rand_str(),
-			'times' => 1
-		) );
-
-		\WP_Mock::userFunction( 'wc_get_cart_url', array(
-			'return' => rand_str(),
-			'times' => 1
-		) );
+			'times'  => 1
+		] );
 
 		$subject = $this->get_subject();
-		$subject->add_to_cart_sold_individually_exception( $qt, $quantity, $product_id, $variation_id, $cart_item_data );
+		$this->assertTrue( $subject->add_to_cart_sold_individually_exception( false, $product_id, $variation_id, $cart_item_data ) );
+	}
 
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_add_to_cart_sold_individually_exception() {
+
+		$product_id     = 10;
+		$variation_id   = '';
+		$cart_item_data = [];
+		$post_type      = 'product';
+
+		\WP_Mock::userFunction( 'get_post_type', [
+			'args'   => $product_id,
+			'return' => $post_type
+		] );
+
+		$woocommerce = $this->getMockBuilder( 'woocommerce' )
+		                    ->disableOriginalConstructor()
+		                    ->getMock();
+
+		$woocommerce->cart = $this->getMockBuilder( 'WC_Cart' )
+		                          ->disableOriginalConstructor()
+		                          ->getMock();
+
+		$cart_item               = [];
+		$cart_item['product_id'] = 11;
+		$cart_item['quantity']   = 1;
+
+		$woocommerce->cart->cart_contents = [ $cart_item ];
+
+		$this->sitepress->method( 'get_element_trid' )->willReturnCallback(
+			function ( $product_id ) {
+				return $product_id;
+			}
+		);
+
+		\WP_Mock::userFunction( 'WC', [
+			'return' => $woocommerce,
+			'times'  => 1
+		] );
+
+		$subject = $this->get_subject();
+		$this->assertFalse( $subject->add_to_cart_sold_individually_exception( false, $product_id, $variation_id, $cart_item_data ) );
 	}
 
 	/**
