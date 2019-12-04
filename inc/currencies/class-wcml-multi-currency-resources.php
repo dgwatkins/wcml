@@ -43,13 +43,16 @@ class WCML_Multi_Currency_Resources{
     }
 
 	private static function set_cache_compatibility_variables( $script_vars ) {
-		global $sg_cachepress_environment;
+		global $sg_cachepress_environment, $siteground_optimizer_helper;
 
 		$script_vars['cache_enabled'] = false;
 
 		$w3tc_enabled = ! empty( self::$multi_currency->W3TC ) || ( function_exists( 'wp_cache_is_enabled' ) && wp_cache_is_enabled() );
 		$nginx_enabled = class_exists( 'NginxCache' );
-		$sg_cache_enabled = $sg_cachepress_environment && $sg_cachepress_environment->cache_is_enabled();
+
+		$sg_cache_enabled =
+			( $sg_cachepress_environment && $sg_cachepress_environment->cache_is_enabled() ) ||
+			( $siteground_optimizer_helper && get_option( 'siteground_optimizer_enable_memcached', false ) );
 
 		if ( $w3tc_enabled || $nginx_enabled || $sg_cache_enabled ) {
 			$script_vars['cache_enabled'] = true;
