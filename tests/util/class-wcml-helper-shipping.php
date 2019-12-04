@@ -46,7 +46,7 @@ class WCML_Helper_Shipping {
         $wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}woocommerce_shipping_zone_methods;" );
         $wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}woocommerce_shipping_zone_locations;" );
         $wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}woocommerce_shipping_zones;" );
-        WC_Cache_Helper::incr_cache_prefix( 'shipping_zones' );
+        WC_Cache_Helper::invalidate_cache_group( 'shipping_zones' );
     }
 
     /**
