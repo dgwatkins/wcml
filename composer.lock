@@ -179,11 +179,11 @@
         },
         {
             "name": "otgs/installer",
-            "version": "2.2.2",
+            "version": "2.2.3",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/installer/installer.git",
-                "reference": "1af57b1a13f48ca9fc71899a3bf12a8ef84e4746"
+                "reference": "1a995a6fccf702ac62bbc24be9c8257493905790"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -266,7 +266,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2019-10-31T11:19:57+00:00"
+            "time": "2019-12-05T19:32:49+00:00"
         },
         {
             "name": "wpml-shared/wpml-lib-dependencies",
@@ -1717,7 +1717,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-php-integration-tests.git",
-				"reference": "3b93be39528e61d74fae5ef9ee489a4436a0e5ff"
+                "reference": "3b93be39528e61d74fae5ef9ee489a4436a0e5ff"
             },
             "require": {
                 "symfony/console": "^3.4"
@@ -1738,7 +1738,7 @@
                 ]
             },
             "description": "Clone, install, setup dependencies and run the integration tests of the current project",
-			"time": "2019-11-21T08:31:15+00:00"
+            "time": "2019-11-21T08:31:15+00:00"
         },
         {
             "name": "otgs/unit-tests-framework",
@@ -2334,13 +2334,13 @@
                 },
                 {
                     "name": "Wim Godden",
-					"role": "lead",
-					"homepage": "https://github.com/wimg"
+                    "role": "lead",
+                    "homepage": "https://github.com/wimg"
                 },
                 {
                     "name": "Juliette Reinders Folmer",
-					"role": "lead",
-					"homepage": "https://github.com/jrfnl"
+                    "role": "lead",
+                    "homepage": "https://github.com/jrfnl"
                 }
             ],
             "description": "A set of sniffs for PHP_CodeSniffer that checks for PHP cross-version compatibility.",
