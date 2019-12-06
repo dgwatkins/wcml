@@ -227,9 +227,16 @@ class WCML_Multi_Currency_UI extends WCML_Templates_Factory {
         return $this->sitepress->get_flag_url( $code );
     }
 
-    public function is_currency_on($currency, $language) {
-        return $this->woocommerce_wpml->settings['currency_options'][ $currency ]['languages'][ $language ];
-    }
+	/**
+	 * @param string $currency
+	 * @param string $language
+	 *
+	 * @return bool
+	 */
+	public function is_currency_on( $currency, $language ) {
+		return isset( $this->woocommerce_wpml->settings['currency_options'][ $currency ]['languages'][ $language ] )
+		       && (bool) $this->woocommerce_wpml->settings['currency_options'][ $currency ]['languages'][ $language ];
+	}
 
     public function get_language_currency( $language ) {
         return $this->woocommerce_wpml->settings['default_currencies'][ $language ];
