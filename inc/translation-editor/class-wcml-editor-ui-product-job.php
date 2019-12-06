@@ -446,8 +446,8 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
                 $trn_attribute = $this->woocommerce_wpml->attributes->get_custom_attribute_translation( $this->product_id, $attr_key, $attribute, $this->get_target_language() );
 
-                $element_data[ $attr_key.'_name' ][ 'translation' ]       = $trn_attribute['name'] ? $trn_attribute['name'] : '';
-                $element_data[ $attr_key ][ 'translation' ]       = $trn_attribute['value'] ? $trn_attribute['value'] : '';
+				$element_data[ $attr_key . '_name' ]['translation'] = $this->get_array_item( $trn_attribute, 'name' );
+				$element_data[ $attr_key ]['translation']           = $this->get_array_item( $trn_attribute, 'value' );
             }
         }
 
@@ -506,6 +506,16 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
         return $element_data;
     }
+
+	/**
+	 * @param array  $array
+	 * @param string $key
+	 *
+	 * @return string
+	 */
+	private function get_array_item( $array, $key ) {
+		return isset( $array[ $key ] ) && $array[ $key ] ? $array[ $key ] : '';
+	}
 
     public function add_taxonomies_to_element_data( $element_data ){
 
