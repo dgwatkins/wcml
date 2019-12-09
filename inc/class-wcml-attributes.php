@@ -764,7 +764,12 @@ class WCML_Attributes{
 	}
 
 	public function maybe_filter_get_variation() {
-		if ( isset( $_POST['product_id'] ) ) {
+
+		if (
+			isset( $_POST['product_id'] ) &&
+			$this->woocommerce_wpml->products->is_product_display_as_translated_post_type() &&
+			is_null( $this->post_translations->element_id_in( $_POST['product_id'], $this->sitepress->get_current_language() ) )
+		) {
 			foreach ( wp_unslash( $_POST ) as $key => $value ) {
 				if ( substr( $key, 0, 13 ) == 'attribute_pa_' ) {
 					$taxonomy        = substr( $key, 10 );
