@@ -34,7 +34,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 
 		$this->post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
 			->disableOriginalConstructor()
-			->setMethods( array( 'get_source_lang_code', 'get_element_translations' ) )
+			->setMethods( array( 'get_source_lang_code', 'get_element_translations', 'element_id_in' ) )
 			->getMock();
 
 		$this->wpml_term_translations = $this->getMockBuilder( 'WPML_Term_Translation' )
@@ -1027,13 +1027,15 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$original_term->slug                         = 'blue';
 		$_POST['product_id']                         = 11;
 		$_POST[ 'attribute_' . $attribute_taxonomy ] = $translated_term_slug;
+		$current_language                            = 'es';
 
 		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
 		                                         ->disableOriginalConstructor()
 		                                         ->setMethods( array(
-			                                         'get_original_product_language'
+			                                         'get_original_product_language', 'is_product_display_as_translated_post_type'
 		                                         ) )
 		                                         ->getMock();
+		$this->woocommerce_wpml->products->method( 'is_product_display_as_translated_post_type' )->willReturn( true );
 		$this->woocommerce_wpml->products->method( 'get_original_product_language' )->with( $_POST['product_id'] )->willReturn( $original_language );
 
 		$this->woocommerce_wpml->terms = $this->getMockBuilder( 'WCML_Terms' )
@@ -1045,6 +1047,9 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		                                      ->getMock();
 		$this->woocommerce_wpml->terms->method( 'wcml_get_term_id_by_slug' )->with( $attribute_taxonomy, $translated_term_slug )->willReturn( $translated_term_id );
 		$this->woocommerce_wpml->terms->method( 'wcml_get_translated_term' )->with( $translated_term_id, $attribute_taxonomy, $original_language )->willReturn( $original_term );
+
+		$this->sitepress->method( 'get_current_language' )->willReturn( $current_language );
+		$this->post_translations->method( 'element_id_in' )->with( $_POST['product_id'], $current_language )->willReturn( null );
 
 		$subject = $this->get_subject();
 		$subject->maybe_filter_get_variation();
@@ -1062,11 +1067,81 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$term_slug                 = 'custom-slug';
 		$_POST['product_id']       = 12;
 		$_POST['attribute_custom'] = $term_slug;
+		$current_language          = 'es';
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array(
+			                                         'is_product_display_as_translated_post_type'
+		                                         ) )
+		                                         ->getMock();
+		$this->woocommerce_wpml->products->method( 'is_product_display_as_translated_post_type' )->willReturn( true );
+
+		$this->sitepress->method( 'get_current_language' )->willReturn( $current_language );
+		$this->post_translations->method( 'element_id_in' )->with( $_POST['product_id'], $current_language )->willReturn( null );
+
 		$subject = $this->get_subject();
 		$subject->maybe_filter_get_variation();
 
 		$this->assertEquals( $term_slug, $_POST['attribute_custom'] );
 		unset( $_POST['product_id'], $_POST['attribute_custom'] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_terms_on_get_variation_for_disabled_display_as_translated_mode() {
+		WP_Mock::passthruFunction( 'wp_unslash' );
+
+		$attribute_taxonomy                          = 'pa_color';
+		$translated_term_slug                        = 'blue-de';
+		$_POST['product_id']                         = 11;
+		$_POST[ 'attribute_' . $attribute_taxonomy ] = $translated_term_slug;
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array(
+			                                         'is_product_display_as_translated_post_type'
+		                                         ) )
+		                                         ->getMock();
+		$this->woocommerce_wpml->products->method( 'is_product_display_as_translated_post_type' )->willReturn( false );
+
+		$subject = $this->get_subject();
+		$subject->maybe_filter_get_variation();
+
+		$this->assertEquals( $translated_term_slug, $_POST[ 'attribute_' . $attribute_taxonomy ] );
+		unset( $_POST['product_id'], $_POST[ 'attribute_' . $attribute_taxonomy ] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_terms_on_get_variation_for_translated_products() {
+		WP_Mock::passthruFunction( 'wp_unslash' );
+
+		$attribute_taxonomy                          = 'pa_color';
+		$translated_term_slug                        = 'blue-de';
+		$_POST['product_id']                         = 11;
+		$translated_product_id                       = 12;
+		$_POST[ 'attribute_' . $attribute_taxonomy ] = $translated_term_slug;
+		$current_language                            = 'es';
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array(
+			                                         'is_product_display_as_translated_post_type'
+		                                         ) )
+		                                         ->getMock();
+		$this->woocommerce_wpml->products->method( 'is_product_display_as_translated_post_type' )->willReturn( true );
+
+		$this->sitepress->method( 'get_current_language' )->willReturn( $current_language );
+		$this->post_translations->method( 'element_id_in' )->with( $_POST['product_id'], $current_language )->willReturn( $translated_product_id );
+
+		$subject = $this->get_subject();
+		$subject->maybe_filter_get_variation();
+
+		$this->assertEquals( $translated_term_slug, $_POST[ 'attribute_' . $attribute_taxonomy ] );
+		unset( $_POST['product_id'], $_POST[ 'attribute_' . $attribute_taxonomy ] );
 	}
 
 
