@@ -52,6 +52,7 @@ class WCML_Products{
 			) );
 
 			add_filter( 'woocommerce_product_file_download_path', array( $this, 'filter_file_download_path' ) );
+			add_filter( 'woocommerce_product_add_to_cart_url', array( $this, 'maybe_add_language_parameter' ) );
 		}
 
 		add_filter( 'woocommerce_upsell_crosssell_search_products', array(
@@ -800,5 +801,20 @@ class WCML_Products{
 			remove_filter( 'get_post_metadata', array( $this, 'filter_product_data' ), 10, 3 );
 		}
 		return $reduce_stock;
+	}
+
+	public function maybe_add_language_parameter( $url ) {
+
+		if (
+			'no' === get_option( 'woocommerce_enable_ajax_add_to_cart' ) &&
+			constant( 'WPML_LANGUAGE_NEGOTIATION_TYPE_PARAMETER' ) === (int) $this->sitepress->get_setting( 'language_negotiation_type' )
+		) {
+		    $current_language = $this->sitepress->get_current_language();
+		    if( $current_language !== $this->sitepress->get_default_language() ){
+			    $url .= '&lang=' . $this->sitepress->get_current_language();
+            }
+		}
+
+		return $url;
 	}
 }

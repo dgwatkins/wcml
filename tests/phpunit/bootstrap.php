@@ -103,6 +103,7 @@ FunctionMocker::init(
 			realpath( WCML_PATH . '/tests/phpunit/stubs' ),
 		],
 		'redefinable-internals' => [
+			'constant',
 			'filter_input',
 			'headers_sent',
 			'setcookie',

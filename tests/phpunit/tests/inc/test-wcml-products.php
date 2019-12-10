@@ -1,5 +1,7 @@
 <?php
 
+use tad\FunctionMocker\FunctionMocker;
+
 /**
  * Class Test_WCML_Products
  * @group wcml-2905
@@ -308,6 +310,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'wc_product_has_unique_sku', array( $subject, 'check_product_sku' ), 10, 3 );
 		\WP_Mock::expectFilterAdded( 'get_product_search_form', array( $sitepress, 'get_search_form_filter' ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_pre_customer_bought_product', array( $subject, 'is_customer_bought_product' ), 10, 4 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_add_to_cart_url', array( $subject, 'maybe_add_language_parameter' ) );
 
 		$subject->add_hooks();
 	}
@@ -1158,6 +1161,122 @@ class Test_WCML_Products extends OTGS_TestCase {
 		);
 
 		$this->assertTrue( $subject->remove_post_meta_data_filter_on_checkout_stock_update( true ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_add_language_parameter_to_add_to_cart_url() {
+
+		$lang_as_parameter = 3;
+		$current_language  = 'es';
+		$url               = rand_str();
+		$expected_url      = $url . '&lang=' . $current_language;
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( [ 'get_current_language', 'get_setting', 'get_default_language' ] )
+		                  ->getMock();
+
+		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
+		$sitepress->method( 'get_default_language' )->willReturn( 'en' );
+		$sitepress->method( 'get_setting' )->with( 'language_negotiation_type' )->willReturn( $lang_as_parameter );
+
+		FunctionMocker::replace( 'constant', function( $name ) {
+			return 'WPML_LANGUAGE_NEGOTIATION_TYPE_PARAMETER' === $name ? 3 : null;
+		});
+
+		$subject = $this->get_subject( false, $sitepress );
+
+		WP_Mock::userFunction( 'get_option',
+			[
+				'args'   => [ 'woocommerce_enable_ajax_add_to_cart' ],
+				'return' => 'no'
+			]
+		);
+
+		$this->assertEquals( $expected_url, $subject->maybe_add_language_parameter( $url ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_add_language_parameter_to_add_to_cart_url_for_default_language() {
+
+		$lang_as_parameter = 3;
+		$current_language  = 'en';
+		$url               = rand_str();
+
+		FunctionMocker::replace( 'constant', function( $name ) {
+			return 'WPML_LANGUAGE_NEGOTIATION_TYPE_PARAMETER' === $name ? 3 : null;
+		});
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( [ 'get_current_language', 'get_setting', 'get_default_language' ] )
+		                  ->getMock();
+		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
+		$sitepress->method( 'get_default_language' )->willReturn( $current_language );
+		$sitepress->method( 'get_setting' )->with( 'language_negotiation_type' )->willReturn( $lang_as_parameter );
+
+		$subject = $this->get_subject( false, $sitepress );
+
+		WP_Mock::userFunction( 'get_option',
+			[
+				'args'   => [ 'woocommerce_enable_ajax_add_to_cart' ],
+				'return' => 'no'
+			]
+		);
+
+		$this->assertEquals( $url, $subject->maybe_add_language_parameter( $url ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_add_language_parameter_to_add_to_cart_url_if_lang_not_as_parameter() {
+
+		$url               = rand_str();
+
+		FunctionMocker::replace( 'constant', function( $name ) {
+			return 'WPML_LANGUAGE_NEGOTIATION_TYPE_PARAMETER' === $name ? 3 : null;
+		});
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( [ 'get_setting' ] )
+		                  ->getMock();
+		$sitepress->method( 'get_setting' )->with( 'language_negotiation_type' )->willReturn( 4 );
+
+		$subject = $this->get_subject( false, $sitepress );
+
+		WP_Mock::userFunction( 'get_option',
+			[
+				'args'   => [ 'woocommerce_enable_ajax_add_to_cart' ],
+				'return' => 'no'
+			]
+		);
+
+		$this->assertEquals( $url, $subject->maybe_add_language_parameter( $url ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_add_language_parameter_to_add_to_cart_url_if_ajax_cart_enabled() {
+
+		$url = rand_str();
+
+		$subject = $this->get_subject();
+
+		WP_Mock::userFunction( 'get_option',
+			[
+				'args'   => [ 'woocommerce_enable_ajax_add_to_cart' ],
+				'return' => 'yes'
+			]
+		);
+
+		$this->assertEquals( $url, $subject->maybe_add_language_parameter( $url ) );
 	}
 
 	/**
