@@ -220,7 +220,8 @@ class woocommerce_wpml {
 		$this->store->add_hooks();
 		$this->strings = new WCML_WC_Strings( $this, $sitepress, $wpdb );
 		$this->strings->add_hooks();
-		$this->emails = new WCML_Emails( $this->strings, $sitepress, WC_Emails::instance(), $wpdb );
+		//do not pass mailer instance instead of $woocommerce
+		$this->emails = new WCML_Emails( $this->strings, $sitepress, $woocommerce, $wpdb );
 		$this->emails->add_hooks();
 		$this->terms = new WCML_Terms( $this, $sitepress, $wpdb );
 		$this->terms->add_hooks();
