@@ -9,6 +9,8 @@ class Test_WCML_Emails extends OTGS_TestCase {
 	private $wcmlStrings;
 	/** @var Sitepress */
 	private $sitepress;
+	/** @var woocommerce $woocommerce */
+	private $woocommerce;
 	/** @var \WC_Emails $wcEmails */
 	private $wcEmails;
 	/** @var wpdb */
@@ -24,7 +26,6 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			->setMethods( array( 'get_wp_api', 'get_current_language', 'switch_lang', 'get_locale', 'get_user_admin_language', 'get_default_language' ) )
 			->getMock();
 
-
 		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )->disableOriginalConstructor()->setMethods( array( 'constant' ) )->getMock();
 
 		$this->sitepress->method( 'get_wp_api' )->willReturn( $this->wp_api );
@@ -34,8 +35,9 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			->setMethods( [ 'get_translated_string_by_name_and_context' ] )
 			->getMock();
 
-		$this->wcEmails = $this->getMockBuilder('WC_Emails')
+		$this->woocommerce = $this->getMockBuilder('woocommerce')
 			->disableOriginalConstructor()
+			->setMethods( array( 'mailer' ) )
 			->getMock();
 
 		$this->wp_api->method( 'constant' )->with( 'WPML_ST_VERSION' )->willReturn( '2.5.2' );
@@ -45,7 +47,9 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 	private function get_subject( ){
 
-		return new WCML_Emails( $this->wcmlStrings, $this->sitepress, $this->wcEmails, $this->wpdb );
+		$this->woocommerce->method( 'mailer' )->willReturn( $this->wcEmails );
+
+		return new WCML_Emails( $this->wcmlStrings, $this->sitepress, $this->woocommerce, $this->wpdb );
 
 	}
 
@@ -96,7 +100,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			->disableOriginalConstructor()
 			->getMock();
 
-		$subject = new WCML_Emails( $this->wcmlStrings, $sitepress, $this->wcEmails, $this->wpdb );
+		$subject = new WCML_Emails( $this->wcmlStrings, $sitepress, $this->woocommerce, $this->wpdb );
 
 		\WP_Mock::userFunction( 'get_current_user_id', array(
 			'return' => $user_id,

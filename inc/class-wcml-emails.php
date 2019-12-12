@@ -9,15 +9,15 @@ class WCML_Emails {
 	private $wcmlStrings;
 	/** @var Sitepress */
 	private $sitepress;
-	/** @var \WC_Emails $wcEmails */
-	private $wcEmails;
+	/** @var woocommerce $woocommerce */
+	private $woocommerce;
 	/** @var wpdb */
 	private $wpdb;
 
-	function __construct( WCML_WC_Strings $wcmlStrings, SitePress $sitepress, WC_Emails $wcEmails, wpdb $wpdb ) {
+	function __construct( WCML_WC_Strings $wcmlStrings, SitePress $sitepress, woocommerce $woocommerce, wpdb $wpdb ) {
 		$this->wcmlStrings = $wcmlStrings;
 		$this->sitepress   = $sitepress;
-		$this->wcEmails    = $wcEmails;
+		$this->woocommerce = $woocommerce;
 		$this->wpdb        = $wpdb;
 	}
 
@@ -199,7 +199,8 @@ class WCML_Emails {
 		if ( $email ) {
 			$translate = $this->getTranslatorFor(
 				'admin_texts_woocommerce_customer_completed_order_settings',
-				'[woocommerce_customer_completed_order_settings]'
+				'[woocommerce_customer_completed_order_settings]',
+				$order_id
 			);
 
 			$email->heading              = $translate( 'heading' );
@@ -484,11 +485,13 @@ class WCML_Emails {
 	 * @return WC_Email|null
 	 */
 	private function getEmailObject( $emailClass, $ignoreClassExists = false ) {
+
+		$wcEmails = $this->woocommerce->mailer();
 		if (
 			( $ignoreClassExists || class_exists( $emailClass ) )
-			&& isset( $this->wcEmails->emails[ $emailClass ] )
+			&& isset( $wcEmails->emails[ $emailClass ] )
 		) {
-			return $this->wcEmails->emails[ $emailClass ];
+			return $wcEmails->emails[ $emailClass ];
 		}
 
 		return null;
@@ -529,7 +532,8 @@ class WCML_Emails {
 	 */
 	private function admin_notification( $product, $action, $method ) {
 
-		$is_action_removed = remove_action( $action, [ $this->wcEmails, $method ] );
+		$wcEmails = $this->woocommerce->mailer();
+		$is_action_removed = remove_action( $action, [ $wcEmails, $method ] );
 
 		if ( $is_action_removed ) {
 			$admin_language               = $this->get_admin_language_by_email( get_option( 'woocommerce_stock_email_recipient' ) );
@@ -541,7 +545,7 @@ class WCML_Emails {
 			);
 
 			$this->sitepress->switch_lang( $admin_language );
-			$this->wcEmails->$method( wc_get_product( $product_id_in_admin_language ) );
+			$wcEmails->$method( wc_get_product( $product_id_in_admin_language ) );
 			$this->sitepress->switch_lang();
 		}
 	}
