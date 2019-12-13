@@ -113,13 +113,19 @@ class WCML_Product_Addons {
 		if ( '_product_addons' === $meta_key && 'global_product_addon' === get_post_type( $id ) ) {
 			$this->update_custom_prices_values( $id );
 			foreach ( $addons as $addon ) {
+				$addon_data = wpml_collect( $addon );
+				$addon_type = $addon_data->get('type');
+				$addon_position = $addon_data->get('position');
 				//register name
-				do_action( 'wpml_register_single_string', 'wc_product_addons_strings', $id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_name', $addon['name'] );
+				do_action( 'wpml_register_single_string', 'wc_product_addons_strings', $id . '_addon_' . $addon_type . '_' . $addon_position . '_name', $addon_data->get('name') );
 				//register description
-				do_action( 'wpml_register_single_string', 'wc_product_addons_strings', $id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_description', $addon['description'] );
+				do_action( 'wpml_register_single_string', 'wc_product_addons_strings', $id . '_addon_' . $addon_type . '_' . $addon_position . '_description', $addon_data->get('description') );
 				//register options labels
-				foreach ( $addon['options'] as $key => $option ) {
-					do_action( 'wpml_register_single_string', 'wc_product_addons_strings', $id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_option_label_' . $key, $option['label'] );
+
+				if ( $addon_data->offsetExists('options') ) {
+					foreach ( $addon_data->get('options') as $key => $option ) {
+						do_action( 'wpml_register_single_string', 'wc_product_addons_strings', $id . '_addon_' . $addon_type . '_' . $addon_position . '_option_label_' . $key, wpml_collect( $option )->get('label') );
+					}
 				}
 			}
 		}
@@ -143,13 +149,18 @@ class WCML_Product_Addons {
 
 			if ( is_array( $addons ) ) {
 				foreach ( $addons as $key => $addon ) {
+					$addon_data = wpml_collect( $addon );
+					$addon_type = $addon_data->get('type');
+					$addon_position = $addon_data->get('position');
 					//register name
-					$addons[ $key ]['name'] = apply_filters( 'wpml_translate_single_string', $addon['name'], 'wc_product_addons_strings', $object_id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_name' );
+					$addons[ $key ]['name'] = apply_filters( 'wpml_translate_single_string', $addon_data->get('name'), 'wc_product_addons_strings', $object_id . '_addon_' . $addon_type . '_' . $addon_position . '_name' );
 					//register description
-					$addons[ $key ]['description'] = apply_filters( 'wpml_translate_single_string', $addon['description'], 'wc_product_addons_strings', $object_id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_description' );
+					$addons[ $key ]['description'] = apply_filters( 'wpml_translate_single_string', $addon_data->get('description'), 'wc_product_addons_strings', $object_id . '_addon_' . $addon_type . '_' . $addon_position . '_description' );
 					//register options labels
-					foreach ( $addon['options'] as $opt_key => $option ) {
-						$addons[ $key ]['options'][ $opt_key ]['label'] = apply_filters( 'wpml_translate_single_string', $option['label'], 'wc_product_addons_strings', $object_id . '_addon_' . $addon['type'] . '_' . $addon['position'] . '_option_label_' . $opt_key );
+					if ( $addon_data->offsetExists('options') ) {
+						foreach ( $addon['options'] as $opt_key => $option ) {
+							$addons[ $key ]['options'][ $opt_key ]['label'] = apply_filters( 'wpml_translate_single_string', wpml_collect( $option )->get('label'), 'wc_product_addons_strings', $object_id . '_addon_' . $addon_type . '_' . $addon_position . '_option_label_' . $opt_key );
+						}
 					}
 				}
 			}
@@ -172,13 +183,19 @@ class WCML_Product_Addons {
 		if ( $this->is_multi_currency_on() ) {
 
 			foreach ( $addons as $add_id => $addon ) {
-				if ( isset( $addon['price'] ) && $addon['price'] ) {
+
+				$addon_data = wpml_collect( $addon );
+
+				if ( $addon_data->offsetExists('price') && $addon_data->get('price') ) {
 					$addons[ $add_id ]['price'] = $this->converted_addon_price( $addon, $post_id );
 				}
 
-				foreach ( $addon['options'] as $key => $option ) {
-					$addons[ $add_id ]['options'][ $key ]['price'] = $this->converted_addon_price( $option, $post_id );
+				if ( $addon_data->offsetExists('options') ) {
+					foreach ( $addon_data->get('options') as $key => $option ) {
+						$addons[ $add_id ]['options'][ $key ]['price'] = $this->converted_addon_price( $option, $post_id );
+					}
 				}
+
 			}
 		}
 
@@ -247,8 +264,9 @@ class WCML_Product_Addons {
 
 		if ( ! empty( $product_addons ) ) {
 			foreach ( $product_addons as $addon_id => $product_addon ) {
+				$addon_data = wpml_collect( $product_addon );
 
-				$addons_section = new WPML_Editor_UI_Field_Section( sprintf( __( 'Product Add-ons Group "%s"', 'woocommerce-multilingual' ), $product_addon['name'] ) );
+				$addons_section = new WPML_Editor_UI_Field_Section( sprintf( __( 'Product Add-ons Group "%s"', 'woocommerce-multilingual' ), $addon_data->get('name') ) );
 
 				$group = new WPML_Editor_UI_Field_Group( '' , true );
 				$addon_field = new WPML_Editor_UI_Single_Line_Field( 'addon_'.$addon_id.'_name', __( 'Name', 'woocommerce-multilingual' ), $data, false );
@@ -258,11 +276,11 @@ class WCML_Product_Addons {
 
 				$addons_section->add_field( $group );
 
-				if ( ! empty( $product_addon['options'] ) ) {
+				if ( $addon_data->offsetExists('options') && $addon_data->get('options') ) {
 
 					$labels_group = new WPML_Editor_UI_Field_Group( __( 'Options', 'woocommerce-multilingual' ) , true );
 
-					foreach ( $product_addon['options'] as $option_id => $option ) {
+					foreach ( $addon_data->get('options') as $option_id => $option ) {
 						$option_label_field = new WPML_Editor_UI_Single_Line_Field( 'addon_'.$addon_id.'_option_'.$option_id.'_label', __( 'Label', 'woocommerce-multilingual' ), $data, false );
 						$labels_group->add_field( $option_label_field );
 					}
@@ -286,11 +304,12 @@ class WCML_Product_Addons {
 
 		if ( ! empty( $product_addons ) ) {
 			foreach ( $product_addons as $addon_id => $product_addon ) {
-				$data[ 'addon_' . $addon_id . '_name' ] = array( 'original' => $product_addon['name'] );
-				$data[ 'addon_' . $addon_id . '_description' ] = array( 'original' => $product_addon['description'] );
-				if ( ! empty( $product_addon['options'] ) ) {
-					foreach ( $product_addon['options'] as $option_id => $option ) {
-						$data[ 'addon_' . $addon_id . '_option_' . $option_id . '_label' ] = array( 'original' => $option['label'] );
+				$addon_data = wpml_collect( $product_addon );
+				$data[ 'addon_' . $addon_id . '_name' ] = array( 'original' => $addon_data->get('name') );
+				$data[ 'addon_' . $addon_id . '_description' ] = array( 'original' => $addon_data->get('description') );
+				if ( $addon_data->offsetExists('options') && $addon_data->get('options') ) {
+					foreach ( $addon_data->get('options') as $option_id => $option ) {
+						$data[ 'addon_' . $addon_id . '_option_' . $option_id . '_label' ] = array( 'original' => wpml_collect( $option )->get('label') );
 					}
 				}
 			}
@@ -299,11 +318,12 @@ class WCML_Product_Addons {
 				$translated_product_addons = $this->get_product_addons( $translation->ID );
 				if ( ! empty( $translated_product_addons ) ) {
 					foreach ( $translated_product_addons as $addon_id => $transalted_product_addon ) {
-						$data[ 'addon_' . $addon_id . '_name' ]['translation'] = $transalted_product_addon['name'];
-						$data[ 'addon_' . $addon_id . '_description' ]['translation'] = $transalted_product_addon['description'];
-						if ( ! empty( $transalted_product_addon['options'] ) ) {
-							foreach ( $transalted_product_addon['options'] as $option_id => $option ) {
-								$data[ 'addon_' . $addon_id . '_option_' . $option_id . '_label' ]['translation'] = $option['label'];
+						$translated_addon_data = wpml_collect( $transalted_product_addon );
+						$data[ 'addon_' . $addon_id . '_name' ]['translation'] = $translated_addon_data->get('name');
+						$data[ 'addon_' . $addon_id . '_description' ]['translation'] = $translated_addon_data->get('description');
+						if ( $translated_addon_data->offsetExists('options') && $translated_addon_data->get('options') ) {
+							foreach ( $translated_addon_data->get('options') as $option_id => $option ) {
+								$data[ 'addon_' . $addon_id . '_option_' . $option_id . '_label' ]['translation'] = wpml_collect( $option )->get('label');
 							}
 						}
 					}
@@ -326,13 +346,12 @@ class WCML_Product_Addons {
 		if ( ! empty( $product_addons ) ) {
 
 			foreach ( $product_addons as $addon_id => $product_addon ) {
-
+				$addon_data = wpml_collect( $product_addon );
 				$product_addons[ $addon_id ]['name'] = $data[ md5( 'addon_' . $addon_id . '_name' ) ];
 				$product_addons[ $addon_id ]['description'] = $data[ md5( 'addon_' . $addon_id . '_description' ) ];
 
-				if ( ! empty( $product_addon['options'] ) ) {
-
-					foreach ( $product_addon['options'] as $option_id => $option ) {
+				if ( $addon_data->offsetExists('options') && $addon_data->get('options') ) {
+					foreach ( $addon_data->get('options') as $option_id => $option ) {
 						$product_addons[ $addon_id ]['options'][ $option_id ]['label'] = $data[ md5( 'addon_'.$addon_id.'_option_'.$option_id.'_label' ) ];
 					}
 				}
@@ -561,9 +580,14 @@ class WCML_Product_Addons {
 	 * @return array
 	 */
 	private function update_multiple_options_prices( $product_addons, $price_option_key, $addon_key, $code ){
-		foreach ( $product_addons[ $addon_key ]['options'] as $option_key => $option ) {
-			if ( isset( $_POST[ $price_option_key ][ $addon_key ][ 'price_'.$code ][ $option_key ] ) ) {
-				$product_addons[ $addon_key ]['options'][ $option_key ][ 'price_' . $code ] = wc_format_decimal( $_POST[ $price_option_key ][ $addon_key ][ 'price_'.$code ][ $option_key ] );
+
+		$addon_data = wpml_collect( $product_addons[ $addon_key ] );
+
+		if ( $addon_data->offsetExists('options') ) {
+			foreach ( $addon_data->get('options') as $option_key => $option ) {
+				if ( isset( $_POST[ $price_option_key ][ $addon_key ][ 'price_'.$code ][ $option_key ] ) ) {
+					$product_addons[ $addon_key ]['options'][ $option_key ][ 'price_' . $code ] = wc_format_decimal( $_POST[ $price_option_key ][ $addon_key ][ 'price_'.$code ][ $option_key ] );
+				}
 			}
 		}
 
