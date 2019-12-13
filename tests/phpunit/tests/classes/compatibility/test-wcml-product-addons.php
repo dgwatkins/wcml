@@ -204,8 +204,12 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 					[ [ 'price' => 0, 'options' => [ [ 'price' => 55, 'price_USD' => 55, 'price_type' => 'quantity_based' ] ] ] ]
 				],
 				'Addon_Options_No_Price_Type' => [
-					[ [ 'price' => 10, 'options' => [] ] ],
-					[ [ 'price' => 10, 'options' => [] ] ]
+					[ [ 'price' => 10 ], 'options' => [] ],
+					[ [ 'price' => 10 ], 'options' => [] ]
+				],
+				'Addon_Options_No_Options' => [
+					[ [ 'price' => 10 ] ],
+					[ [ 'price' => 10 ] ]
 				]
 			];
 	}
@@ -226,7 +230,13 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 			'price'     => 10,
 			'price_USD' => 100
 		);
-		$product_addons = array( array( 'options' => array( $option ) ) );
+		$product_addons = [
+			[
+				'options' => [ $option ],
+			],
+			[]
+		];
+
 		$loop           = 0;
 
 		$expected_dialog_model = array();
@@ -287,14 +297,17 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 
 		$product_id = 1;
 
-		$product_addons = array(
-			array(
+		$product_addons = [
+			[
 				'type'    => 'checkboxes',
-				'options' => array(
-					array( 'price' => 10 )
-				)
-			)
-		);
+				'options' => [
+					[ 'price' => 10 ]
+				]
+			],
+			[
+				'type'    => 'no_options',
+			]
+		];
 
 		$_POST['_product_addon_prices'][0]['price_USD'][0] = 100;
 
@@ -303,18 +316,17 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 			'return' => 100
 		) );
 
-		$expected_addons = array(
-			array(
+		$expected_addons = [
+			[
 				'type'    => 'checkboxes',
-				'options' => array(
-					array(
-						'price'     => 10,
-						'price_USD' => 100
-					)
-				)
-			)
-		);
-
+				'options' => [
+					[ 'price' => 10, 'price_USD' => 100 ]
+				]
+			],
+			[
+				'type'    => 'no_options',
+			]
+		];
 
 		WP_Mock::userFunction( 'maybe_unserialize', array(
 			'return' => $product_addons
