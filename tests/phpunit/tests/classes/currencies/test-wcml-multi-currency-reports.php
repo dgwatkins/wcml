@@ -103,14 +103,6 @@ class Test_WCML_Multi_Currency_Reports extends OTGS_TestCase {
 
 		$currency_code = 'EUR';
 
-		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
-		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_currency_code' )->willReturn( $currency_code );
-
-		\WP_Mock::expectFilterAdded(
-			'woocommerce_currency_symbol',
-			[ $subject, '_set_reports_currency_symbol', ]
-		);
-
 		$subject->reports_init();
 	}
 
@@ -179,14 +171,6 @@ class Test_WCML_Multi_Currency_Reports extends OTGS_TestCase {
 		);
 
 		$currency_code = 'EUR';
-
-		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
-		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_currency_code' )->willReturn( $currency_code );
-
-		\WP_Mock::expectFilterAdded(
-			'woocommerce_currency_symbol',
-			[ $subject, '_set_reports_currency_symbol', ]
-		);
 
 		$subject->reports_init();
 	}
@@ -257,14 +241,6 @@ class Test_WCML_Multi_Currency_Reports extends OTGS_TestCase {
 		);
 
 		$currency_code = 'USD';
-
-		$woocommerce_wpml->multi_currency = $this->get_multi_currency_mock();
-		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'get_currency_code' )->willReturn( $currency_code );
-
-		\WP_Mock::expectFilterAdded(
-			'woocommerce_currency_symbol',
-			[ $subject, '_set_reports_currency_symbol', ]
-		);
 
 		$subject->reports_init();
 	}
