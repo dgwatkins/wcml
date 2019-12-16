@@ -56,6 +56,7 @@ class WCML_Cart {
 			add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'translate_cart_subtotal' ) );
 			add_action( 'woocommerce_before_checkout_process', array( $this, 'wcml_refresh_cart_total' ) );
 			add_filter( 'woocommerce_cart_item_data_to_validate', array( $this, 'validate_cart_item_data' ), 10, 2 );
+			add_filter( 'woocommerce_cart_item_product', array( $this, 'adjust_cart_item_product' ) );
 
 			add_filter( 'woocommerce_cart_item_permalink', array( $this, 'cart_item_permalink' ), 10, 2 );
 			add_filter( 'woocommerce_paypal_args', array( $this, 'filter_paypal_args' ) );
@@ -505,6 +506,7 @@ class WCML_Cart {
 		if ( apply_filters( 'wcml_calculate_totals_exception', true, $cart ) ) {
 			$cart->calculate_totals();
 		}
+		WC()->cart->calculate_totals();
 
 	}
 
@@ -652,5 +654,18 @@ class WCML_Cart {
 		return $this->woocommerce_wpml->multi_currency->prices->convert_price_amount( $shipping_amount_in_default_currency, $currency );
 	}
 
+	/**
+	 * @param WC_Product $product
+	 *
+	 * @return WC_Product
+	 */
+	public function adjust_cart_item_product( $product ) {
+
+		$product_id = $product->get_id();
+
+		$current_product_id = wpml_object_id_filter( $product_id, get_post_type( $product_id ) );
+
+		return $current_product_id ? wc_get_product( $current_product_id ) : $product;
+	}
 
 }
