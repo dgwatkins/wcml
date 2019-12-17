@@ -31,6 +31,7 @@ class WCML_Adventure_tours{
     public function add_hooks(){
         add_action( 'updated_post_meta', array( $this, 'sync_tour_data_across_translations' ), 10, 4 );
         add_filter( 'get_post_metadata', array( $this, 'product_price_filter'), 9, 4 );
+	    add_action( 'wpml_translation_job_saved', array( $this, 'save_tour_data_translation' ), 10, 3 );
 
         if ( is_admin() ) {
 
@@ -39,7 +40,6 @@ class WCML_Adventure_tours{
             add_action( 'wcml_update_extra_fields', array( $this, 'tour_data_update' ), 10, 3 );
 
             add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_tour_data_translation_package' ), 10, 2 );
-            add_action( 'wpml_translation_job_saved', array( $this, 'save_tour_data_translation' ), 10, 3 );
 
             add_action( 'admin_footer', array( $this, 'load_assets' ) );
             add_action( 'wcml_after_custom_prices_block', array( $this, 'add_custom_prices_block' ) );

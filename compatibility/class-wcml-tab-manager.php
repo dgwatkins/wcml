@@ -56,13 +56,14 @@ class WCML_Tab_Manager {
 		add_filter( 'wc_tab_manager_tab_id', array( $this, 'wc_tab_manager_tab_id' ), 10, 1 );
 		add_filter( 'option_wpml_config_files_arr', array( $this, 'make__product_tabs_not_translatable_by_default' ), 0 );
 
+		add_action( 'wpml_translation_job_saved',   array( $this, 'save_custom_tabs_translation' ), 10, 3 );
+
 		if ( is_admin() ) {
 
 			add_action( 'save_post', array( $this, 'force_set_language_information_on_product_tabs' ), 10, 2 );
 			add_action( 'save_post', array( $this, 'sync_product_tabs' ), 10, 2 );
 
 			add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_custom_tabs_to_translation_package' ), 10, 2 );
-			add_action( 'wpml_translation_job_saved',   array( $this, 'save_custom_tabs_translation' ), 10, 3 );
 			add_action( 'woocommerce_product_data_panels', array( $this, 'show_pointer_info' ) );
 
 			add_filter( 'wcml_do_not_display_custom_fields_for_product', array( $this, 'replace_tm_editor_custom_fields_with_own_sections' ) );
@@ -596,9 +597,7 @@ class WCML_Tab_Manager {
 						'title'     => $tab['title'],
 					);
 
-					if ( isset( $tab['heading'] ) ) {
-						$translated_product_tabs[ 'core_tab_' . $id ]['heading'] = $tab['heading'];
-					}
+					$translated_product_tabs[ 'core_tab_' . $id ]['heading'] = isset( $tab['heading'] ) ? $tab['heading'] : '';
 				}
 
 				$translated_product_tabs_updated = true;

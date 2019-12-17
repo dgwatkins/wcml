@@ -303,7 +303,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			'sort_order'    => 'ASC',
 		);
 		$this->wpdb->insert( $this->wpdb->prefix . 'wc_booking_relationships',  $relationship );
-		$bookings->save_resource_translation( $product, $data, $job );
+		$bookings->save_booking_data_to_translation( $product, $data, $job );
 	}
 
 	/**
@@ -868,7 +868,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		remove_all_filters( 'translate_object_id' );
 		add_filter( 'translate_object_id', 'icl_object_id', 10, 4 );
 
-		$bookings->save_person_translation( $tr_product, $data, $job );
+		$bookings->save_booking_data_to_translation( $tr_product, $data, $job );
 		wp_cache_init();
 
 		// After save_person_translation is called translation will have name specified in job data above.
