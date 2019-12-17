@@ -168,6 +168,7 @@ class WCML_Bookings {
 		add_filter( 'woocommerce_bookings_in_date_range_query', array( $this, 'bookings_in_date_range_query' ) );
 		add_action( 'before_delete_post', array( $this, 'delete_bookings' ) );
 		add_action( 'wp_trash_post', array( $this, 'trash_bookings' ) );
+		add_action( 'wpml_translation_job_saved', array( $this, 'save_booking_data_to_translation' ), 10, 3 );
 
 		if ( is_admin() ) {
 
@@ -175,13 +176,11 @@ class WCML_Bookings {
 				$this,
 				'append_persons_to_translation_package'
 			), 10, 2 );
-			add_action( 'wpml_translation_job_saved', array( $this, 'save_person_translation' ), 10, 3 );
 
 			add_filter( 'wpml_tm_translation_job_data', array(
 				$this,
 				'append_resources_to_translation_package'
 			), 10, 2 );
-			add_action( 'wpml_translation_job_saved', array( $this, 'save_resource_translation' ), 10, 3 );
 
 			//lock fields on translations pages
 			add_filter( 'wcml_js_lock_fields_ids', array( $this, 'wcml_js_lock_fields_ids' ) );
@@ -1926,7 +1925,7 @@ class WCML_Bookings {
 		return $package;
 	}
 
-	function save_person_translation( $post_id, $data, $job ) {
+	private function save_person_translation( $post_id, $data, $job ) {
 		$person_translations = array();
 
 		if ( $this->is_booking( $post_id ) ) {
@@ -2017,7 +2016,7 @@ class WCML_Bookings {
 
 	}
 
-	function save_resource_translation( $post_id, $data, $job ) {
+	private function save_resource_translation( $post_id, $data, $job ) {
 		$resource_translations = array();
 
 		if ( $this->is_booking( $post_id ) ) {
@@ -2654,4 +2653,9 @@ class WCML_Bookings {
 	private function is_bookings_listing_page() {
 		return isset( $_GET['post_type'] ) && 'wc_booking' === $_GET['post_type'];
 	}
+
+	public function save_booking_data_to_translation( $post_id, $data, $job ){
+	    $this->save_person_translation( $post_id, $data, $job );
+	    $this->save_resource_translation( $post_id, $data, $job );
+    }
 }

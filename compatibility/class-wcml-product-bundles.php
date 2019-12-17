@@ -39,6 +39,7 @@ class WCML_Product_Bundles {
 
 		add_action( 'woocommerce_get_cart_item_from_session', array( $this, 'resync_bundle' ), 5, 3 );
 		add_filter( 'woocommerce_cart_loaded_from_session', array( $this, 'resync_bundle_clean' ), 10 );
+		add_action( 'wpml_translation_job_saved', array( $this, 'save_bundle_data_translation' ), 10, 3 );
 
 		if ( is_admin() ) {
 			$this->tp = new WPML_Element_Translation_Package();
@@ -47,7 +48,6 @@ class WCML_Product_Bundles {
 				$this,
 				'append_bundle_data_translation_package'
 			), 10, 2 );
-			add_action( 'wpml_translation_job_saved', array( $this, 'save_bundle_data_translation' ), 10, 3 );
 
 			add_action( 'wcml_gui_additional_box_html', array( $this, 'custom_box_html' ), 10, 3 );
 			add_filter( 'wcml_gui_additional_box_data', array( $this, 'custom_box_html_data' ), 10, 4 );
