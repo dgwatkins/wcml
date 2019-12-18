@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "6378070919fdc6b6c3812a7d9d4dc9ad",
+    "content-hash": "1914b6e01b6f82512f82d9f2aae5dc1c",
     "packages": [
         {
             "name": "composer/installers",
@@ -1717,7 +1717,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-php-integration-tests.git",
-                "reference": "3b93be39528e61d74fae5ef9ee489a4436a0e5ff"
+                "reference": "c154bea3f986759917178b0f4a1eb2f630711da7"
             },
             "require": {
                 "symfony/console": "^3.4"
@@ -1738,20 +1738,20 @@
                 ]
             },
             "description": "Clone, install, setup dependencies and run the integration tests of the current project",
-            "time": "2019-11-21T08:31:15+00:00"
+            "time": "2019-12-18T13:53:25+00:00"
         },
         {
             "name": "otgs/unit-tests-framework",
-            "version": "1.2.6",
+            "version": "1.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OnTheGoSystems/otgs-unit-tests-framework.git",
-                "reference": "5396c127c0ecb20b2973b759f9754a2e886aa41d"
+                "reference": "a88eb037eeee00c532b6ff912f380fe967d74646"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OnTheGoSystems/otgs-unit-tests-framework/zipball/5396c127c0ecb20b2973b759f9754a2e886aa41d",
-                "reference": "5396c127c0ecb20b2973b759f9754a2e886aa41d",
+                "url": "https://api.github.com/repos/OnTheGoSystems/otgs-unit-tests-framework/zipball/a88eb037eeee00c532b6ff912f380fe967d74646",
+                "reference": "a88eb037eeee00c532b6ff912f380fe967d74646",
                 "shasum": ""
             },
             "require": {
@@ -1786,7 +1786,7 @@
             "keywords": [
                 "phpunit"
             ],
-            "time": "2019-08-29T07:13:54+00:00"
+            "time": "2019-12-11T14:50:19+00:00"
         },
         {
             "name": "otgs/wp-plugin-version",
@@ -2334,13 +2334,13 @@
                 },
                 {
                     "name": "Wim Godden",
-                    "homepage": "https://github.com/wimg",
-                    "role": "lead"
+                    "role": "lead",
+                    "homepage": "https://github.com/wimg"
                 },
                 {
                     "name": "Juliette Reinders Folmer",
-                    "homepage": "https://github.com/jrfnl",
-                    "role": "lead"
+                    "role": "lead",
+                    "homepage": "https://github.com/jrfnl"
                 }
             ],
             "description": "A set of sniffs for PHP_CodeSniffer that checks for PHP cross-version compatibility.",
@@ -5054,9 +5054,7 @@
     },
     "prefer-stable": true,
     "prefer-lowest": false,
-    "platform": {
-        "php": ">=5.6.0"
-    },
+    "platform": [],
     "platform-dev": [],
     "platform-overrides": {
         "php": "5.6"

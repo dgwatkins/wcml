@@ -53,6 +53,7 @@ class Test_WCML_Currencies extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */

@@ -61,6 +61,11 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'is_ajax', [ 'return' => false ] );
 
+		$this->woocommerce_wpml->settings['cart_sync'] = [
+			'lang_switch' => false,
+			'currency_switch' => false,
+		];
+
 		$subject = $this->get_subject();
 
 		\WP_Mock::expectActionAdded( 'wp_ajax_woocommerce_get_refreshed_fragments', [
@@ -270,6 +275,11 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		             ->willReturn( rand_str() );
 
 		\WP_Mock::onFilter( 'wcml_hide_cart_alert_dialog' )->with( false )->reply( true );
+
+		$this->woocommerce_wpml->settings['cart_sync'] = [
+			'lang_switch' => false,
+			'currency_switch' => false,
+		];
 
 		$subject = $this->get_subject();
 

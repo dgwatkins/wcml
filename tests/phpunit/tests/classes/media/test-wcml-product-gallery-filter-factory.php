@@ -8,6 +8,7 @@ class Test_WCML_Product_Gallery_Filter_Factory extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
 	 * @runInSeparateProcess
 	 *
 	 */
@@ -22,7 +23,9 @@ class Test_WCML_Product_Gallery_Filter_Factory extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
 	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function it_should_create_the_object_that_implements_iwpml_action() {
 		$this->get_woocommerce_wpml_mock();

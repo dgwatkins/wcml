@@ -131,6 +131,7 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
@@ -398,6 +399,7 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
@@ -415,6 +417,7 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */

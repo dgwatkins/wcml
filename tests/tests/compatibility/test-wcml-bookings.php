@@ -72,6 +72,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$_POST['_wcml_custom_costs_nonce'] = wp_create_nonce( 'wcml_save_custom_costs' );
 
 		$woocommerce_wpml = $this->get_test_subject();
+		$woocommerce_wpml->settings['enable_multi_currency'] = 1;
 
 		$woocommerce_wpml->products
 			->method( 'get_original_product_id' )
@@ -473,7 +474,6 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function custom_box_html_data_not_booking_product() {
-
 		$bookings = $this->get_wcml_booking_object();
 		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
 
@@ -484,7 +484,10 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function custom_box_html_data() {
-		$bookings = $this->get_wcml_booking_object();
+		$woocommerce_wpml = $this->get_test_subject();
+		$woocommerce_wpml->settings['enable_multi_currency'] = 0;
+
+		$bookings = $this->get_wcml_booking_object( $woocommerce_wpml );
 		$product = $this->create_bookable_product( $this->default_language );
 		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
 		$translation = wpml_test_insert_post( $this->second_language, 'product', $trid, random_string() );
@@ -856,7 +859,11 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		);
 		$job = new stdClass();
 		$job->language_code = $this->second_language;
-		$bookings = $this->get_wcml_booking_object();
+
+		$woocommerce_wpml = $this->get_test_subject();
+		$woocommerce_wpml->settings['enable_multi_currency'] = 0;
+
+		$bookings = $this->get_wcml_booking_object( $woocommerce_wpml );
 		// No idea why, but without these 2 lines `translate_object_id` filter returns original post ID, even if 3rd arugment is false.
 		remove_all_filters( 'translate_object_id' );
 		add_filter( 'translate_object_id', 'icl_object_id', 10, 4 );
@@ -1082,7 +1089,11 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$product = $this->create_bookable_product( $this->default_language );
 		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
 		$translation = $this->create_bookable_product( $this->second_language, $trid );
-		$bookings = $this->get_wcml_booking_object();
+
+		$woocommerce_wpml = $this->get_test_subject();
+		$woocommerce_wpml->settings['enable_multi_currency'] = 1;
+
+		$bookings = $this->get_wcml_booking_object( $woocommerce_wpml );
 		// Add resource.
 		$person_title = random_string();
 		$bookable_resource = wpml_test_insert_post( $this->default_language, 'bookable_resource', false, $person_title, $product );
@@ -1202,9 +1213,10 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	}
 
 	private function create_bookable_product( $lang, $trid = false ) {
-		$product = wpml_test_insert_post( $lang, 'product', $trid, random_string() );
-		wp_set_post_terms( $product, array( (int) $this->booking_term['term_id'] ), 'product_type' );
-		return $product;
+		$product_id = wpml_test_insert_post( $lang, 'product', $trid, random_string() );
+		wp_set_post_terms( $product_id, array( (int) $this->booking_term['term_id'] ), 'product_type' );
+
+		return $product_id;
 	}
 
 	public function get_wcml_booking_object($woocommerce_wpml = false ){

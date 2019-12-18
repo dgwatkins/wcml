@@ -17,6 +17,21 @@ class Test_WCML_Products_UI extends OTGS_TestCase {
 	public function setUp() {
 		parent::setUp();
 
+		$active_languages = [
+			$this->default_language => [
+				'code'           => 'en',
+				'default_locale' => 'en_US',
+			],
+			'fr'                    => [
+				'code'           => 'fr',
+				'default_locale' => 'fr',
+			],
+			'de'                    => [
+				'code'           => 'de',
+				'default_locale' => 'de',
+			],
+		];
+
 		$this->sitepress = $this->getMockBuilder( 'SitePress' )
 		                        ->disableOriginalConstructor()
 		                        ->setMethods( array(
@@ -24,10 +39,7 @@ class Test_WCML_Products_UI extends OTGS_TestCase {
 		                        ) )
 		                        ->getMock();
 
-		$this->sitepress->method( 'get_active_languages' )
-		                ->wilLReturn(
-		                	array( $this->default_language => 1, 'fr' => 1, 'de' => 1 )
-		                );
+		$this->sitepress->method( 'get_active_languages' )->willReturn( $active_languages );
 
 		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
 		                               ->disableOriginalConstructor()

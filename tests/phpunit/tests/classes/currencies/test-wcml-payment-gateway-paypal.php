@@ -209,7 +209,9 @@ class Test_WCML_Payment_Gateway_PayPal extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
 	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function it_should_add_not_supported_currency_to_supported_currencies_array() {
 
@@ -239,7 +241,9 @@ class Test_WCML_Payment_Gateway_PayPal extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
 	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function it_should_not_add_not_supported_currency_to_supported_currencies_array() {
 

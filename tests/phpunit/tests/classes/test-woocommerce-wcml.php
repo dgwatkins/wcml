@@ -65,6 +65,7 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
