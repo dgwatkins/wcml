@@ -39,16 +39,10 @@ class WCML_Currency_Switcher_Templates {
 	 */
 	private $ds = DIRECTORY_SEPARATOR;
 
-	public function __construct( woocommerce_wpml $woocommerce_wpml, WPML_WP_API $wp_api, WCML_File $wpml_file = null ) {
+	public function __construct( woocommerce_wpml $woocommerce_wpml, WPML_WP_API $wp_api, WPML_File $wpml_file = null ) {
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->wp_api           = $wp_api;
-
-		if ( ! $wpml_file ) {
-			// @todo: use WPML_FILE class instead after changing requirements for WPML >= 3.6.0.
-			$wpml_file = new WCML_File();
-		}
-
-		$this->wpml_file = $wpml_file;
+		$this->wpml_file        = $wpml_file;
 	}
 
 	public function init_hooks() {
@@ -298,6 +292,7 @@ class WCML_Currency_Switcher_Templates {
 			}
 		} else {
 			$search_path = $template_path . $this->ds . '*.' . $ext;
+
 			if ( glob( $search_path ) ) {
 				foreach ( glob( $search_path ) as $file ) {
 					$resources[] = $this->wpml_file->get_uri_from_path( $file );

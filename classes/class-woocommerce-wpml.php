@@ -91,7 +91,8 @@ class woocommerce_wpml {
 
 		if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ) {
 			$this->cs_properties = new WCML_Currency_Switcher_Properties();
-			$this->cs_templates  = new WCML_Currency_Switcher_Templates( $this, $sitepress->get_wp_api() );
+			$wpml_wp_api = $sitepress->get_wp_api();
+			$this->cs_templates  = new WCML_Currency_Switcher_Templates( $this, $wpml_wp_api, new WPML_File( $wpml_wp_api ) );
 			$this->cs_templates->init_hooks();
 
 			$wc_shortccode_product_category = new WCML_WC_Shortcode_Product_Category( $sitepress );
