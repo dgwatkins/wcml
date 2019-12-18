@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class Test_WCML_Cart_Sync_Warnings
+ */
 class Test_WCML_Cart_Sync_Warnings extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
@@ -40,9 +43,15 @@ class Test_WCML_Cart_Sync_Warnings extends OTGS_TestCase {
 	 * @test
 	 */
 	public function it_does_not_adds_hooks_when_notices_are_not_needed(){
+		$this->woocommerce_wpml->settings['cart_sync'] = [
+			'lang_switch' => false,
+			'currency_switch' => false,
+		];
 		$subject = $this->get_subject();
+
 		WP_Mock::expectActionNotAdded( 'admin_notices', array( $subject, 'show_cart_notice' ), 10, 1 );
 		WP_Mock::expectActionNotAdded( 'admin_enqueue_scripts', array( $subject, 'register_styles' ), 10, 1 );
+
 		$subject->add_hooks();
 	}
 

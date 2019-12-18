@@ -97,6 +97,9 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function should_get_gateways() {
 
@@ -126,6 +129,21 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 		$available_payment_gateways[ $not_supported_gateway->id ] = $not_supported_gateway;
 		$available_payment_gateways[ $paypal_gateway->id ]        = $paypal_gateway;
 
+		WP_Mock::userFunction( 'get_option', [
+			'args'   => [ 'wcml_payment_gateway_' . 'test', [] ],
+			'return' => [],
+		] );
+
+		WP_Mock::userFunction( 'get_option', [
+			'args'   => [ 'wcml_payment_gateway_' . 'paypal', [] ],
+			'return' => [],
+		] );
+
+		WP_Mock::userFunction( 'get_option', [
+			'args'   => [ 'wcml_custom_payment_gateways_for_currencies', [] ],
+			'return' => [],
+		] );
+
 		$wcml_not_supported_payment_gateway = new WCML_Not_Supported_Payment_Gateway( $not_supported_gateway, $template_service, $this->woocommerce_wpml );
 		$wcml_paypal_payment_gateway        = new WCML_Payment_Gateway_PayPal( $paypal_gateway, $template_service, $this->woocommerce_wpml );
 
@@ -150,6 +168,7 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 		$expected_payment_gateways[ $paypal_gateway->id ]        = $wcml_paypal_payment_gateway;
 
 		$subject = $this->get_subject();
+
 		$subject->init_gateways();
 		$payment_gateways = $subject->get_gateways();
 
@@ -158,6 +177,9 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function should_filter_gateway_description() {
 
@@ -238,6 +260,9 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function id_should_not_filter_gateway_description_for_default_currency() {
 
@@ -287,6 +312,17 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 		] );
 
 		$subject              = $this->get_subject();
+
+		WP_Mock::userFunction( 'get_option', [
+			'args'   => [ 'wcml_payment_gateway_' . 'paypal', [] ],
+			'return' => [],
+		] );
+
+		WP_Mock::userFunction( 'get_option', [
+			'args'   => [ 'wcml_custom_payment_gateways_for_currencies', [] ],
+			'return' => [],
+		] );
+
 		$filtered_description = $subject->filter_gateway_description( $description, 'gateway_id' );
 
 		$this->assertSame( $description, $description );

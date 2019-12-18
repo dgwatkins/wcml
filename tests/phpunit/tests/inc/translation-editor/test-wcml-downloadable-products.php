@@ -1,7 +1,9 @@
 <?php
 
-class Test_WCML_Downloadable_Products extends OTGS_TestCase
-{
+/**
+ * Class Test_WCML_Downloadable_Products
+ */
+class Test_WCML_Downloadable_Products extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
@@ -60,7 +62,9 @@ class Test_WCML_Downloadable_Products extends OTGS_TestCase
 
 	/**
 	 * @test
+	 *
 	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function new_original_product_edit_page( ){
 
@@ -84,6 +88,7 @@ class Test_WCML_Downloadable_Products extends OTGS_TestCase
 		$custom_files_ui = \Mockery::mock( 'overload:WCML_Custom_Files_UI' );
 		$custom_files_ui->shouldReceive( 'show' )->andReturn( '' );
 
+		\Mockery::mock( 'overload:WCML_Templates_Factory' );
 		$subject = $this->get_subject();
 
 		$this->expectOutputString( '' );
@@ -177,36 +182,6 @@ class Test_WCML_Downloadable_Products extends OTGS_TestCase
 		$subject = $this->get_subject();
 
 		$this->assertFalse( $subject->product_options_downloads_custom_option() );
-
-	}
-
-}
-
-if ( ! class_exists( 'WCML_Templates_Factory' ) ) {
-
-	/**
-	 * Class WCML_Templates_Factory
-	 * Stub for Test_WCML_Downloadable_Products
-	 */
-	abstract class WCML_Templates_Factory {
-
-		public function __construct() { /*silence is golden*/ }
-
-		public function show( ) { /*silence is golden*/  }
-
-	}
-}
-
-
-if ( ! class_exists( 'WP_Widget' ) ) {
-	/**
-	 * Class WP_Widget
-	 * Stub for Test_WCML_Downloadable_Products
-	 */
-	abstract class WP_Widget {
-
-		public function __construct() { /*silence is golden*/
-		}
 
 	}
 }

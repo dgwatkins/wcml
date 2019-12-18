@@ -153,8 +153,7 @@ class Test_WCML_REST_API extends OTGS_TestCase {
 	 * not very useful
 	 */
 	public function remove_wpml_global_url_filters(){
-
-		$globals_bk = serialize($GLOBALS);
+		$globals_bk = $GLOBALS;
 
 		$tag = 'home_url';
 		$priority = '-10';
@@ -165,8 +164,7 @@ class Test_WCML_REST_API extends OTGS_TestCase {
 
 		$this->assertTrue( !isset( $GLOBALS['wp_filter'][ $tag ][ $priority ][ 'hardcoded_callback' ] ) );
 
-		$GLOBALS = unserialize($globals_bk);
-
+		$GLOBALS = $globals_bk;
 	}
 
 	/**

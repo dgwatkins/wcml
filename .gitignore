@@ -6,6 +6,7 @@ __MACOSX
 
 .idea
 .sass-cache
+.make
 tags
 
 embedded/
@@ -66,7 +67,6 @@ yarn.lock
 
 !tests/js/vendor
 !.githooks
-!.make
 
 ## Files
 
@@ -77,8 +77,6 @@ yarn.lock
 
 !/tests/compatibility/run.sh
 
-!tests/js/vendor
 !.githooks/*.sh
-!.make/*.sh
 !Makefile
 !package-lock.json

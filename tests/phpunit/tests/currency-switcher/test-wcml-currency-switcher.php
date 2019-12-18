@@ -59,13 +59,15 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
 	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function it_gets_model_data() {
 		$currencies      = array( 'EUR', 'USD', 'JPY' );
 		$random_currency = array_rand( $currencies, 1 );
 		$multi_currency  = $this->getMockBuilder( 'WCML_Multi_Currency' )->disableOriginalConstructor()->setMethods( array( 'get_client_currency' ) )->getMock();
-		$multi_currency->expects( $this->once() )->method( 'get_client_currency' )->willReturn( $random_currency[0] );
+		$multi_currency->expects( $this->once() )->method( 'get_client_currency' )->willReturn( $random_currency );
 		/** @var woocommerce_wpml|PHPUnit_Framework_MockObject_MockObject $woocommerce_wpml */
 		$woocommerce_wpml                 = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
 		$woocommerce_wpml->multi_currency = $multi_currency;
@@ -87,7 +89,7 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 			'css_classes'       => 'random_style ' . $args['switcher_id'] . ' wcml_currency_switcher wcml-cs-touch-device',
 			'format'            => $args[ 'format' ],
 			'currencies'        => $currencies,
-			'selected_currency' => $random_currency[0],
+			'selected_currency' => $random_currency,
 		);
 		$subject        = new WCML_Currency_Switcher( $woocommerce_wpml, $sitepress );
 		$model          = $subject->get_model_data( $args, $currencies );

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Class Test_WCML_Multi_Currency_Orders
+ *
+ * @runTestsInSeparateProcesses
+ * @preserveGlobalState disabled
+ */
 class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
@@ -164,6 +170,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$this->order->set_id( rand(1, 1000) );
 		update_post_meta( $this->order->get_id(), '_order_currency', false );
 		update_option( 'woocommerce_currency', $wocommerce_currency = rand_str() );
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', [ 'return' => $wocommerce_currency ] );
 		$filtered_currency = $subject->get_currency_for_new_order( $original_currency, $this->order );
 		$this->assertEquals( $wocommerce_currency, $filtered_currency );
 
@@ -191,6 +198,8 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		              ->setMethods( array( 'get_items' ) )
 		              ->getMock();
 		$order->method( 'get_items' )->with('coupon')->willReturn( array() );
+
+		\WP_Mock::wpFunction( 'is_admin', [ 'return' => false ] );
 
 		$subject = $this->get_subject();
 		$filtered_items = $subject->set_totals_for_order_items( $items, $order );
@@ -259,6 +268,8 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 			'return' => $converted_price
 		) );
 
+		\WP_Mock::wpFunction( 'is_admin', [ 'return' => false ] );
+
 		$item->method( 'get_type' )->willReturn( 'line_item' );
 		$item->method( 'get_quantity' )->willReturn( 1 );
 		$item->method( 'get_total' )->willReturn( $original_price );
@@ -315,6 +326,8 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 			'args' => array( $product_obj, array( 'price' => $converted_price , 'qty' => 1 ) ),
 			'return' => $converted_price
 		) );
+
+		\WP_Mock::wpFunction( 'is_admin', [ 'return' => false ] );
 
 		$this->woocommerce_wpml->method( 'get_setting' )->with( 'currency_options' )->willReturn( array() );
 
@@ -416,6 +429,8 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 			'return' => $converted_price
 		) );
 
+		\WP_Mock::wpFunction( 'is_admin', [ 'return' => false ] );
+
 		$item->method( 'get_type' )->willReturn( 'line_item' );
 		$item->method( 'meta_exists' )->willReturn( false );
 		$item->method( 'add_meta_data' )->willReturn( true );
@@ -472,10 +487,10 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		               ->getMock();
 		$order->method( 'get_items' )->with('coupon')->willReturn( array() );
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args' => array( $_POST['order_id'], '_order_currency', true ),
-			'return' => $order_currency
-		) );
+		\WP_Mock::wpFunction( 'get_post_meta', [
+			'args'   => [ $_POST['order_id'], '_order_currency', true ],
+			'return' => $order_currency,
+		] );
 
 		\WP_Mock::wpFunction( 'update_post_meta', array(
 			'args' => array( $_POST['order_id'], '_order_currency', $_COOKIE['_wcml_order_currency'] ),
@@ -502,26 +517,32 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		                ->getMock();
 		$product->method( 'get_price' )->willReturn( $item_price );
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args' => array( $original_product_id, '_price_' . $order_currency, true ),
-			'return' => false
-		) );
+		\WP_Mock::wpFunction( 'get_post_meta', [
+			'args'   => [ $original_product_id, '_price_' . 'USD', true ],
+			'return' => false,
+		] );
 
 		$that = $this;
-		$item->method( 'get_meta' )->willReturnCallback( function ( $const ) use ( $that ) {
-			if ( '_wcml_converted_total' === $const ) {
-				return $that->total;
-			} else if ( '_wcml_converted_subtotal' === $const ) {
-				return $that->subtotal;
-			} else if ( '_wcml_total_qty' === $const ) {
-				return $that->old_quantity;
+		$item->method( 'get_meta' )->willReturnCallback(
+			function ( $const ) use ( $that ) {
+				if ( '_wcml_converted_total' === $const ) {
+					return $that->total;
+				} elseif ( '_wcml_converted_subtotal' === $const ) {
+					return $that->subtotal;
+				} elseif ( '_wcml_total_qty' === $const ) {
+					return $that->old_quantity;
+				}
+
+				return null;
 			}
-		} );
+		);
 
 		\WP_Mock::wpFunction( 'wc_get_price_excluding_tax', array(
 			'args' => array( $product, array( 'price' => $item_price ) ),
 			'return' => $item_price
 		) );
+
+		\WP_Mock::wpFunction( 'is_admin', [ 'return' => false ] );
 
 		$item->method( 'get_type' )->willReturn( 'line_item' );
 		$item->method( 'meta_exists' )->willReturn( true );
@@ -619,6 +640,8 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 			'return' => $price_with_coupon_discount
 		) );
 
+		\WP_Mock::wpFunction( 'is_admin', [ 'return' => false ] );
+
 		$item->method( 'meta_exists' )->willReturn( false );
 		$item->method( 'get_type' )->willReturn( 'line_item' );
 		$item->method( 'get_quantity' )->willReturn( 1 );
@@ -643,6 +666,8 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 	public function it_adds_woocommerce_hidden_order_itemmeta(){
 
 		$itemmeta = array();
+
+		\WP_Mock::wpFunction( 'is_admin', [ 'return' => false ] );
 
 		$subject = $this->get_subject();
 		$filtered_itemmeta = $subject->add_woocommerce_hidden_order_itemmeta( $itemmeta );

@@ -125,7 +125,7 @@ class Test_WCML_Exchange_Rate_Service extends OTGS_TestCase {
 	}
 
 	/**
-	 * @testss
+	 * @test
 	 */
 	public function clear_last_error() {
 		$subject = $this->get_subject();
