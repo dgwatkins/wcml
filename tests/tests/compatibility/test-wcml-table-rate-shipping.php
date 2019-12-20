@@ -31,7 +31,7 @@ class Test_WCML_Table_Rate_Shipping extends WCML_UnitTestCase {
 		$_POST['shipping_label'] = array( $label_1, $label_2, $label_3 );
 		$_POST['woocommerce_table_rate_title'] = $rate_title;
 
-		$domain = 'woocommerce';
+		$domain = 'admin_texts_woocommerce_shipping';
 		$context = '';
 
 		$table_rate = new WCML_Table_Rate_Shipping( $this->sitepress, $this->woocommerce_wpml );
