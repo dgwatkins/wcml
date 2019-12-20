@@ -143,7 +143,15 @@ class WCML_WC_Shipping{
 
 			$shipping_id = str_replace( ':', '', $shipping_id );
 
-			return $this->wcmlStrings->get_translated_string_by_name_and_context( self::STRINGS_CONTEXT, $shipping_id . '_shipping_method_title', $language ?: $this->current_language );
+			$translated_title = apply_filters(
+				'wpml_translate_single_string',
+				$title,
+				self::STRINGS_CONTEXT,
+				$shipping_id . '_shipping_method_title',
+				$language ? $language : $this->current_language
+			);
+
+			return $translated_title ?: $title;
 		}
 
 		return $title;

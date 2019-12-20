@@ -70,12 +70,12 @@ class WCML_Table_Rate_Shipping {
 
 			if( isset( $_POST[ 'shipping_label' ] ) &&
 			    isset( $_POST[ 'woocommerce_table_rate_title' ] ) ){
-				do_action( 'wpml_register_single_string', 'woocommerce', sanitize_text_field( $_POST[ 'woocommerce_table_rate_title' ] ) . '_shipping_method_title', sanitize_text_field( $_POST[ 'woocommerce_table_rate_title' ] ) );
+				do_action( 'wpml_register_single_string', WCML_WC_Shipping::STRINGS_CONTEXT, sanitize_text_field( $_POST[ 'woocommerce_table_rate_title' ] ) . '_shipping_method_title', sanitize_text_field( $_POST[ 'woocommerce_table_rate_title' ] ) );
 
 				$shipping_labels = array_map( 'wc_clean', $_POST[ 'shipping_label' ] );
 				foreach ( $shipping_labels as $key => $shipping_label ) {
 					$rate_key = isset( $_GET[ 'instance_id' ] ) ? 'table_rate'.$_GET[ 'instance_id' ].$_POST[ 'rate_id' ][ $key ] : $shipping_label;
-					do_action( 'wpml_register_single_string', 'woocommerce', $rate_key. '_shipping_method_title', $shipping_label );
+					do_action( 'wpml_register_single_string', WCML_WC_Shipping::STRINGS_CONTEXT, $rate_key. '_shipping_method_title', $shipping_label );
 				}
 			}
 		}
