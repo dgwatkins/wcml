@@ -81,7 +81,6 @@ function wcml_loader() {
 		'WCML_ATE_Activate_Synchronization',
 		\WCML\RewriteRules\Hooks::class,
 		\WCML\Email\Settings\Hooks::class,
-		\WCML\Email\OrderItems\Hooks::class,
 	);
 
 	if (
