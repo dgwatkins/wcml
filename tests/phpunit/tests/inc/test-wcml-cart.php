@@ -93,7 +93,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 			$subject,
 			'validate_cart_item_data'
 		], 10, 2 );
-		\WP_Mock::expectFilterAdded( 'woocommerce_cart_item_product', [ $subject, 'adjust_cart_item_product' ] );
+		\WP_Mock::expectFilterAdded( 'woocommerce_cart_item_product', [ $subject, 'adjust_cart_item_product_name' ] );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_cart_item_permalink', [ $subject, 'cart_item_permalink' ], 10, 2 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_paypal_args', [ $subject, 'filter_paypal_args' ] );
@@ -563,18 +563,20 @@ class Test_WCML_Cart extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_should_adjust_cart_item_product() {
+	public function it_should_adjust_cart_item_product_name() {
 
 		$subject = $this->get_subject();
 
 		$product_id = 11;
+		$translated_product_name = rand_str();
 		$translated_product_id = 12;
 
 		$product = $this->getMockBuilder( 'WC_Product' )
 		                ->disableOriginalConstructor()
-		                ->setMethods( ['get_id'] )
+		                ->setMethods( ['get_id', 'set_name'] )
 		                ->getMock();
 		$product->method( 'get_id' )->willReturn( $product_id );
+		$product->expects( $this->once() )->method( 'set_name' )->with( $translated_product_name )->willReturn( true );
 
 		\WP_Mock::userFunction( 'get_post_type', [
 			'args' => [ $product_id ],
@@ -583,8 +585,9 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 		$translated_product = $this->getMockBuilder( 'WC_Product' )
 		                ->disableOriginalConstructor()
-		                ->setMethods( ['get_id'] )
+		                ->setMethods( ['get_id', 'get_name'] )
 		                ->getMock();
+		$translated_product->method( 'get_name' )->willReturn( $translated_product_name );
 
 		\WP_Mock::userFunction( 'wpml_object_id_filter', [
 			'args' => [ $product_id, 'product' ],
@@ -596,13 +599,13 @@ class Test_WCML_Cart extends OTGS_TestCase {
 			'return' => $translated_product,
 		] );
 
-		$this->assertEquals( $translated_product, $subject->adjust_cart_item_product( $product ) );
+		$subject->adjust_cart_item_product_name( $product );
 	}
 
 	/**
 	 * @test
 	 */
-	public function it_should_not_adjust_cart_item_product() {
+	public function it_should_not_adjust_cart_item_product_name() {
 
 		$subject = $this->get_subject();
 
@@ -610,9 +613,10 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 		$product = $this->getMockBuilder( 'WC_Product' )
 		                ->disableOriginalConstructor()
-		                ->setMethods( ['get_id'] )
+		                ->setMethods( ['get_id', 'set_name'] )
 		                ->getMock();
 		$product->method( 'get_id' )->willReturn( $product_id );
+		$product->expects( $this->never() )->method( 'set_name' );
 
 		\WP_Mock::userFunction( 'get_post_type', [
 			'args' => [ $product_id ],
@@ -624,7 +628,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 			'return' => null,
 		] );
 
-		$this->assertEquals( $product, $subject->adjust_cart_item_product( $product ) );
+		$subject->adjust_cart_item_product_name( $product );
 	}
 
 }

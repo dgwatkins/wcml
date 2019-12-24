@@ -56,7 +56,7 @@ class WCML_Cart {
 			add_action( 'woocommerce_cart_loaded_from_session', array( $this, 'translate_cart_subtotal' ) );
 			add_action( 'woocommerce_before_checkout_process', array( $this, 'wcml_refresh_cart_total' ) );
 			add_filter( 'woocommerce_cart_item_data_to_validate', array( $this, 'validate_cart_item_data' ), 10, 2 );
-			add_filter( 'woocommerce_cart_item_product', array( $this, 'adjust_cart_item_product' ) );
+			add_filter( 'woocommerce_cart_item_product', array( $this, 'adjust_cart_item_product_name' ) );
 
 			add_filter( 'woocommerce_cart_item_permalink', array( $this, 'cart_item_permalink' ), 10, 2 );
 			add_filter( 'woocommerce_paypal_args', array( $this, 'filter_paypal_args' ) );
@@ -659,13 +659,17 @@ class WCML_Cart {
 	 *
 	 * @return WC_Product
 	 */
-	public function adjust_cart_item_product( $product ) {
+	public function adjust_cart_item_product_name( $product ) {
 
 		$product_id = $product->get_id();
 
 		$current_product_id = wpml_object_id_filter( $product_id, get_post_type( $product_id ) );
 
-		return $current_product_id ? wc_get_product( $current_product_id ) : $product;
+		if ( $current_product_id ) {
+			$product->set_name( wc_get_product( $current_product_id )->get_name() );
+		}
+
+		return $product;
 	}
 
 }
