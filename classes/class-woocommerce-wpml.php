@@ -149,13 +149,16 @@ class woocommerce_wpml {
 		WCML_Admin_Menus::set_up_menus( $this, $sitepress, $wpdb );
 
 		if ( ! $this->dependencies_are_ok ) {
-			WCML_Capabilities::set_up_capabilities();
+			$is_dashboard_page = isset( $_GET['page'] ) && 'wpml-wcml' === $_GET['page'];
+			if( is_admin() && $is_dashboard_page ){
+				WCML_Capabilities::set_up_capabilities();
 
-			wp_register_style( 'otgs-ico', WCML_PLUGIN_URL . '/res/css/otgs-ico.css', null, WCML_VERSION );
-			wp_enqueue_style( 'otgs-ico' );
+				wp_register_style( 'otgs-ico', WCML_PLUGIN_URL . '/res/css/otgs-ico.css', null, WCML_VERSION );
+				wp_enqueue_style( 'otgs-ico' );
 
-			WCML_Resources::load_management_css();
-			WCML_Resources::load_tooltip_resources();
+				WCML_Resources::load_management_css();
+				WCML_Resources::load_tooltip_resources();
+			}
 			return false;
 		}
 
