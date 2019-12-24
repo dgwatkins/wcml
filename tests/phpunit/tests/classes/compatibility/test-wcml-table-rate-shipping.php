@@ -128,7 +128,7 @@ class Test_WCML_Table_Rate_Shipping extends OTGS_TestCase {
 	public function it_should_re_check_shipping_table_rate_is_available() {
 
 		\WP_Mock::wpPassthruFunction( 'remove_filter' );
-		$available = false;
+		$available = true;
 
 		$object = $this->getMockBuilder( 'WC_Shipping_Method' )
 		                     ->disableOriginalConstructor()

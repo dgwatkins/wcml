@@ -184,23 +184,21 @@ class WCML_Table_Rate_Shipping {
 	 */
 	public function shipping_table_rate_is_available( $available, $package, $object ) {
 
-		if ( ! $available ) {
-			add_filter( 'option_woocommerce_table_rate_priorities_' . $object->instance_id, array(
-				$this,
-				'filter_table_rate_priorities'
-			) );
-			remove_filter( 'woocommerce_shipping_table_rate_is_available', array(
-				$this,
-				'shipping_table_rate_is_available'
-			), 10, 3 );
+		add_filter( 'option_woocommerce_table_rate_priorities_' . $object->instance_id, array(
+			$this,
+			'filter_table_rate_priorities'
+		) );
+		remove_filter( 'woocommerce_shipping_table_rate_is_available', array(
+			$this,
+			'shipping_table_rate_is_available'
+		), 10, 3 );
 
-			$available = $object->is_available( $package );
+		$available = $object->is_available( $package );
 
-			add_filter( 'woocommerce_shipping_table_rate_is_available', array(
-				$this,
-				'shipping_table_rate_is_available'
-			), 10, 3 );
-		}
+		add_filter( 'woocommerce_shipping_table_rate_is_available', array(
+			$this,
+			'shipping_table_rate_is_available'
+		), 10, 3 );
 
 		return $available;
 	}
