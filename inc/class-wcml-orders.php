@@ -416,9 +416,15 @@ class WCML_Orders {
 		$order_language = get_post_meta( $object->get_id(), 'wpml_language', true );
 
 		if ( $item->get_variation_id() > 0 ) {
-			$item->set_variation_id( apply_filters( 'translate_object_id', $item->get_variation_id(), 'product_variation', false, $order_language ) );
+			$translated_variation_id = apply_filters( 'translate_object_id', $item->get_variation_id(), 'product_variation', false, $order_language );
+			if( ! is_null( $translated_variation_id ) ){
+				$item->set_variation_id( $translated_variation_id );
+            }
 		} else {
-			$item->set_product_id( apply_filters( 'translate_object_id', $item->get_product_id(), 'product', false, $order_language ) );
+		    $translated_product_id = apply_filters( 'translate_object_id', $item->get_product_id(), 'product', false, $order_language );
+			if( ! is_null( $translated_product_id ) ){
+				$item->set_product_id( $translated_product_id );
+			}
 		}
 
 		remove_filter( 'woocommerce_get_item_downloads', array( $this, 'filter_downloadable_product_items' ), 10, 3 );
