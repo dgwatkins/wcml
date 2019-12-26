@@ -30,7 +30,7 @@ class Test_WCML_Orders extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function filter_downloadable_product_items(){
+	public function it_should_filter_downloadable_product_items(){
 
 		$subject = $this->get_subject( );
 		$language = 'fr';
@@ -62,6 +62,50 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		$item->method( 'get_item_downloads' )->willReturn( $expected_downloads );
 
 		
+		\WP_Mock::wpFunction( 'remove_filter', array( 'times' => 1, 'return' => true ) );
+		\WP_Mock::expectFilterAdded( 'woocommerce_get_item_downloads', array( $subject, 'filter_downloadable_product_items' ), 10, 3 );
+
+		$filtered_files = $subject->filter_downloadable_product_items( array(), $item, $product );
+
+		$this->assertEquals( $expected_downloads, $filtered_files );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_set_product_id_when_filtering_downloadable_product_items(){
+
+		$subject = $this->get_subject( );
+		$language = 'fr';
+		$order_id =  mt_rand( 1, 100 );
+
+		$product = $this->getMockBuilder( 'WC_Product' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( array( 'get_id' ) )
+		                ->getMock();
+		$product->method( 'get_id' )->willReturn( $order_id );
+
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $order_id, 'wpml_language', true ),
+			'return' => $language
+		));
+
+		$product_id = mt_rand( 101, 200 );
+		$translated_product_id = null;
+		$expected_downloads = array( 'test' );
+
+		\WP_Mock::onFilter( 'translate_object_id' )->with( $product_id, 'product', false, $language )->reply( $translated_product_id );
+		$item = $this->getMockBuilder( 'WC_Order_Item_Product' )
+		             ->disableOriginalConstructor()
+		             ->setMethods( array( 'get_item_downloads', 'get_product_id', 'get_variation_id', 'set_product_id' ) )
+		             ->getMock();
+		$item->method( 'get_variation_id' )->willReturn( 0 );
+		$item->method( 'get_product_id' )->willReturn( $product_id );
+		$item->expects( $this->never() )->method( 'set_product_id' );
+		$item->method( 'get_item_downloads' )->willReturn( $expected_downloads );
+
+
 		\WP_Mock::wpFunction( 'remove_filter', array( 'times' => 1, 'return' => true ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_get_item_downloads', array( $subject, 'filter_downloadable_product_items' ), 10, 3 );
 
