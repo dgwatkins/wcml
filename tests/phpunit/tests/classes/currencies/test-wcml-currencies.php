@@ -57,7 +57,9 @@ class Test_WCML_Currencies extends OTGS_TestCase {
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
-	public function setup_multi_currency_on_currency_update(){
+	public function it_should_setup_multi_currency_on_currency_update(){
+		\WP_Mock::wpFunction( 'wcml_is_multi_currency_on', [ 'return' => true ] );
+
 		$subject = $this->get_subject();
 
 		$old_value = rand_str();
@@ -69,6 +71,29 @@ class Test_WCML_Currencies extends OTGS_TestCase {
 		$multi_currency_install->shouldReceive('set_default_currencies_languages')
 		                       ->with( $old_value, $new_value );
 
+		$subject->setup_multi_currency_on_currency_update( $old_value, $new_value );
+	}
+
+	/**
+	 * @test
+	 *
+	 */
+	public function it_should_update_default_currency_on_setup_multi_currency() {
+		\WP_Mock::wpFunction( 'wcml_is_multi_currency_on', [ 'return' => false ] );
+
+		$old_value        = rand_str();
+		$new_value        = rand_str();
+		$currency_options = [ $old_value => [ 'rate' => 0 ] ];
+		$expected_options = [ $new_value => [ 'rate' => 0 ] ];
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->setMethods( [ 'get_setting', 'update_setting' ] )
+		                         ->getMock();
+		$woocommerce_wpml->expects( $this->once() )->method( 'get_setting' )->with( 'currency_options' )->willReturn( $currency_options );
+		$woocommerce_wpml->expects( $this->once() )->method( 'update_setting' )->with( 'currency_options', $expected_options )->willReturn( true );
+
+		$subject = $this->get_subject( $woocommerce_wpml );
 		$subject->setup_multi_currency_on_currency_update( $old_value, $new_value );
 	}
 
