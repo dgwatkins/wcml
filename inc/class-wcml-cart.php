@@ -506,8 +506,6 @@ class WCML_Cart {
 		if ( apply_filters( 'wcml_calculate_totals_exception', true, $cart ) ) {
 			$cart->calculate_totals();
 		}
-		WC()->cart->calculate_totals();
-
 	}
 
 	// refresh cart total to return correct price from WC object
