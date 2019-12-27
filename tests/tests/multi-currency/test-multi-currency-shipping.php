@@ -108,7 +108,24 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
 	    // Multi currency objects
 	    $this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
 	    $this->multi_currency = $this->woocommerce_wpml->multi_currency;
+
+	    // Set an address so that shipping can be calculated.
+	    add_filter( 'woocommerce_customer_get_shipping_country', array( $this, 'force_customer_country' ) );
+	    add_filter( 'woocommerce_customer_get_shipping_state', array( $this, 'force_customer_state' ) );
+	    add_filter( 'woocommerce_customer_get_shipping_postcode', array( $this, 'force_customer_postcode' ) );
     }
+
+	public function force_customer_country( $country ) {
+		return 'ES';
+	}
+
+	public function force_customer_state( $state ) {
+		return 'AL';
+	}
+
+	public function force_customer_postcode( $postcode ) {
+		return '12345';
+	}
 
     public function test_convert_shipping_cost(){
 
