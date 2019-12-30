@@ -82,6 +82,33 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 		unset( $_GET['page'] );
 	}
 
+	/**
+	 * @test
+	 * @dataProvider woocommerce_page_option_name
+	 */
+	public function it_should_filter_woocommerce_page_id_on_pages_listings( $woo_page ) {
+
+		global $pagenow;
+		$pagenow_buff = $pagenow;
+		$pagenow      = 'edit.php';
+		$_GET['post_type'] = 'page';
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::userFunction( 'is_admin', array( 'times' => 1, 'return' => true ) );
+
+		WP_Mock::expectFilterAdded( 'woocommerce_get_' . $woo_page, array( $subject, 'translate_pages_in_settings' ) );
+		WP_Mock::expectFilterAdded( 'option_woocommerce_' . $woo_page, array(
+			$subject,
+			'translate_pages_in_settings'
+		) );
+
+		$subject->add_hooks();
+
+		$pagenow = $pagenow_buff;
+		unset( $_GET['post_type'] );
+	}
+
 	public function woocommerce_page_option_name(){
 
 		return array(

@@ -35,9 +35,11 @@ class WCML_Store_Pages {
 			add_action( 'icl_post_languages_options_before', array( $this, 'show_translate_shop_pages_notice' ) );
 		}
 
+		$getData = wpml_collect( $_GET );
 		if (
 			! $is_admin ||
-			( 'admin.php' === $pagenow && isset( $_GET['page'] ) && 'wc-settings' === $_GET['page'] )
+			( 'admin.php' === $pagenow && 'wc-settings' === $getData->get( 'page' ) ) ||
+			( 'edit.php' === $pagenow && 'page' === $getData->get( 'post_type' ) )
 		) {
 			// Translate shop page ids
 			$this->add_filter_to_get_shop_translated_page_id();
