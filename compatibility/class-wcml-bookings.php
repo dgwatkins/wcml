@@ -1149,7 +1149,7 @@ class WCML_Bookings {
 		return $actions;
 	}
 
-	function filter_bundled_product_in_cart_contents( $cart_item, $key, $current_language ) {
+	public function filter_bundled_product_in_cart_contents( $cart_item, $key, $current_language ) {
 
 		if ( $cart_item['data'] instanceof WC_Product_Booking && isset( $cart_item['booking'] ) ) {
 
@@ -1190,9 +1190,10 @@ class WCML_Bookings {
 					$booking_info['wc_bookings_field_start_date_time'] = $cart_item['booking']['_time'];
 				}
 
-				$booking_form = new WC_Booking_Form( wc_get_product( $current_id ) );
+				$current_product = wc_get_product( $current_id );
 
-				$cost = $booking_form->calculate_booking_cost( $booking_info );
+				$cost = $this->get_booking_cost( $booking_info, $current_product );
+
 				if ( ! is_wp_error( $cost ) ) {
 					$cart_item['data']->set_price( $cost );
 				}
@@ -1201,6 +1202,17 @@ class WCML_Bookings {
 		}
 
 		return $cart_item;
+	}
+
+	private function get_booking_cost( $booking_info, $current_product ) {
+		if ( class_exists( 'WC_Bookings_Cost_Calculation' ) ) {
+			$cost = WC_Bookings_Cost_Calculation::calculate_booking_cost( wc_bookings_get_posted_data( $booking_info, $current_product ), $current_product );
+		} else {
+			$booking_form = new WC_Booking_Form( $current_product );
+			$cost         = $booking_form->calculate_booking_cost( $booking_info );
+		}
+
+		return $cost;
 	}
 
 	function booking_currency_dropdown() {
