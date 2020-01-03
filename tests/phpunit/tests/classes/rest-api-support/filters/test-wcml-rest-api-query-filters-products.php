@@ -28,6 +28,7 @@ class Test_WCML_REST_API_Query_Filters_Products extends OTGS_TestCase {
 		$subject = new WCML_REST_API_Query_Filters_Products( $this->wpml_query_filter );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_query', array( $subject, 'filter_products_query'), 10, 2 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_object_query', array( $subject, 'filter_products_query'), 10, 2 );
 
 		$subject->add_hooks();
 
