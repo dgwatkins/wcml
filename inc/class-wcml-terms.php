@@ -63,6 +63,8 @@ class WCML_Terms{
 
 		add_filter( 'woocommerce_get_product_terms', array( $this, 'get_product_terms_filter' ), 10, 4 );
 		add_action( 'created_term_translation', array( $this, 'set_flag_to_sync' ), 10, 3 );
+
+		add_filter( 'woocommerce_get_product_subcategories_cache_key', array( $this, 'add_lang_parameter_to_cache_key' ) );
 	}
     
     function admin_menu_setup(){
@@ -1010,6 +1012,15 @@ class WCML_Terms{
 
 			add_action( 'update_term_meta', array( $this, 'update_category_count_meta' ), 10, 4 );
 		}
+	}
+
+	/**
+	 * @param string $key
+	 *
+	 * @return string
+	 */
+	public function add_lang_parameter_to_cache_key( $key ){
+		return $key.'-'.$this->sitepress->get_current_language();
 	}
 
 }
