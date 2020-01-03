@@ -59,6 +59,8 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		) );
 		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'save_order_currency_for_filter' ), 10, 4 );
 
+		\WP_Mock::expectFilterAdded( 'wcml_formatted_price', array( $subject, 'formatted_price' ), 10, 2 );
+
 		$subject->add_hooks();
 	}
 
@@ -88,8 +90,6 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'woocommerce_price_filter_widget_min_amount', array( $subject, 'filter_widget_min_amount' ), 99 );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_adjust_price', array( $subject, 'raw_price_filter' ), 10 );
-
-		\WP_Mock::expectFilterAdded( 'wcml_formatted_price', array( $subject, 'formatted_price' ), 10, 2 ); // WCML filters
 
 		// Shipping prices
 		\WP_Mock::expectFilterAdded( 'woocommerce_paypal_args', array( $subject, 'filter_price_woocommerce_paypal_args' ) );
