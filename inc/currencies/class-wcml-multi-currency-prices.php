@@ -29,6 +29,7 @@ class WCML_Multi_Currency_Prices {
 		add_filter( 'wcml_price_currency', array( $this, 'price_currency_filter' ) );
 		add_filter( 'get_post_metadata', array( $this, 'product_price_filter' ), 10, 4 );
 		add_filter( 'get_post_metadata', array( $this, 'variation_prices_filter' ), 12, 4 );
+		add_filter( 'wcml_formatted_price', array( $this, 'formatted_price' ), 10, 2 );
 
 		if ( $this->multi_currency->load_filters ) {
 			add_filter( 'wcml_product_price_by_currency', array(
@@ -39,8 +40,6 @@ class WCML_Multi_Currency_Prices {
 			add_filter( 'woocommerce_price_filter_widget_min_amount', array( $this, 'filter_widget_min_amount' ), 99 );
 
 			add_filter( 'woocommerce_adjust_price', array( $this, 'raw_price_filter' ), 10 );
-
-			add_filter( 'wcml_formatted_price', array( $this, 'formatted_price' ), 10, 2 ); // WCML filters
 
 			// Shipping prices
 			add_filter( 'woocommerce_paypal_args', array( $this, 'filter_price_woocommerce_paypal_args' ) );
