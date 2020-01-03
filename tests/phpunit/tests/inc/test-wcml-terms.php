@@ -61,6 +61,7 @@ class Test_WCML_Terms extends OTGS_TestCase {
 		$subject = $this->get_subject();
 
 		\WP_Mock::expectActionAdded( 'update_term_meta', [ $subject, 'update_category_count_meta'], 10 ,4 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_get_product_subcategories_cache_key', [ $subject, 'add_lang_parameter_to_cache_key'] );
 
 		$subject->add_hooks();
 	}
@@ -331,6 +332,26 @@ class Test_WCML_Terms extends OTGS_TestCase {
 		$filtered_terms = $subject->filter_shipping_classes_terms( [], $taxonomies, $args );
 
 		$this->assertEquals( [], $filtered_terms );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_add_current_language_parameter_to_cache_key() {
+
+		$cache_key = rand_str();
+		$current_language = 'es';
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( ['get_current_language'] )
+		                  ->getMock();
+
+		$sitepress->expects( $this->once() )->method( 'get_current_language' )->willReturn( $current_language );
+
+		$subject = $this->get_subject( null, $sitepress );
+
+		$this->assertEquals( $cache_key.'-'.$current_language, $subject->add_lang_parameter_to_cache_key( $cache_key ) );
 	}
 
 }
