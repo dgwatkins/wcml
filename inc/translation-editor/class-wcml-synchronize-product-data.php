@@ -406,10 +406,6 @@ class WCML_Synchronize_Product_Data{
 
 		$order = wc_get_order( $order_id );
 
-		if ( ! $order || $order->get_data_store()->get_recorded_sales( $order ) ) {
-			return;
-		}
-
 		foreach ( $order->get_items() as $item ) {
 
 			if ( $item instanceof WC_Order_Item_Product ) {
@@ -425,8 +421,8 @@ class WCML_Synchronize_Product_Data{
 			$translations = $this->post_translations->get_element_translations( $product_id );
 			$data_store = WC_Data_Store::load( 'product' );
 			foreach ( $translations as $translation ) {
-				if ( $product_id !== $translation ) {
-					$data_store->update_product_sales( $translation, absint( $qty ), 'increase' );
+				if ( $product_id !== (int)$translation ) {
+					$data_store->update_product_sales( (int)$translation, absint( $qty ), 'increase' );
 				}
 			}
 		}

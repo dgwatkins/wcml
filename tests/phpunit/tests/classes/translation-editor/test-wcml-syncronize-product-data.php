@@ -770,4 +770,63 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_should_sync_product_total_sales() {
+
+		\WP_Mock::passthruFunction( 'absint' );
+
+		$order_id   = 11;
+		$product_id = 10;
+		$qty        = 1;
+		$items      = [];
+
+		$order_item = $this->getMockBuilder( 'WC_Order_Item_Product' )
+		                   ->disableOriginalConstructor()
+		                   ->setMethods( [ 'get_product_id', 'get_quantity' ] )
+		                   ->getMock();
+		$order_item->method( 'get_product_id' )->willReturn( $product_id );
+		$order_item->method( 'get_quantity' )->willReturn( $qty );
+
+		$items[] = $order_item;
+
+		$order_object = $this->getMockBuilder( 'WC_Order' )
+		                     ->disableOriginalConstructor()
+		                     ->setMethods( [ 'get_items' ] )
+		                     ->getMock();
+
+		$order_object->method( 'get_items' )->willReturn( $items );
+
+		\WP_Mock::onFilter( 'wcml_order_item_quantity' )->with( $qty, $order_object, $order_item )->reply( $qty );
+
+
+		\WP_Mock::userFunction( 'wc_get_order', array(
+			'args'   => [ $order_id ],
+			'times'  => 1,
+			'return' => $order_object,
+		) );
+
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
+		                               ->disableOriginalConstructor()
+		                               ->setMethods( array( 'get_element_translations' ) )
+		                               ->getMock();
+
+		$translations['en'] = $product_id;
+		$translations['fr'] = 21;
+
+		$wpml_post_translations->expects( $this->once() )->method( 'get_element_translations' )->with( $product_id )->willReturn( $translations );
+
+		$wc_product_data_store = \Mockery::mock( 'overload:WC_Product_Data_Store_CPT' );
+		$wc_product_data_store->shouldReceive( 'update_product_sales' )->with( $translations['fr'], $qty, 'increase' )->andReturn( true );
+
+		$wc_data_store = \Mockery::mock( 'overload:WC_Data_Store' );
+		$wc_data_store->shouldReceive( 'load' )->andReturn( $wc_product_data_store );
+
+		$subject = $this->get_subject( null, null, $wpml_post_translations );
+
+		$subject->sync_product_total_sales( $order_id );
+
+	}
+
 }
