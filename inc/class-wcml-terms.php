@@ -54,10 +54,9 @@ class WCML_Terms{
 
 			add_filter( 'pre_option_default_product_cat', array( $this, 'pre_option_default_product_cat' ) );
 			add_filter( 'update_option_default_product_cat', array( $this, 'update_option_default_product_cat' ), 1, 2 );
-		}else{
-			add_action( 'update_term_meta', array( $this, 'update_category_count_meta' ), 10, 4 );
 		}
 
+		add_action( 'update_term_meta', array( $this, 'update_category_count_meta' ), 10, 4 );
 		add_action( 'delete_term', array( $this, 'wcml_delete_term' ), 10, 4 );
 		add_filter( 'get_the_terms', array( $this, 'shipping_terms' ), 10, 3 );
 		add_filter( 'get_terms', array( $this, 'filter_shipping_classes_terms' ), 10, 3 );

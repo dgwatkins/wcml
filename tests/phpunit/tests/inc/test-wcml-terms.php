@@ -54,6 +54,20 @@ class Test_WCML_Terms extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	function it_should_add_hooks(){
+
+		WP_Mock::userFunction( 'is_admin', [ 'return' => true ] );
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::expectActionAdded( 'update_term_meta', [ $subject, 'update_category_count_meta'], 10 ,4 );
+
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
 	function is_translatable_wc_taxonomy(){
 
 		$subject = $this->get_subject();
