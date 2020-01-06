@@ -2,18 +2,39 @@
 <ruleset name="WPML">
 	<description>WPML Coding Standards</description>
 
-	<rule ref="WordPress-Core"/>
-	<rule ref="WordPress-Docs"/>
-	<rule ref="WordPress-Extra"/>
-
-	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<!-- What to scan -->
+	<file>.</file>
+	<exclude-pattern>*/.git/*</exclude-pattern>
+	<exclude-pattern>*/.githooks/*</exclude-pattern>
+	<exclude-pattern>*/.make/*</exclude-pattern>
+	<exclude-pattern>*/locale/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/res/*</exclude-pattern>
+	<exclude-pattern>*/templates/*</exclude-pattern>
 	<exclude-pattern>*/tests/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*.js</exclude-pattern>
 	<exclude-pattern>*.mo</exclude-pattern>
 	<exclude-pattern>*.po</exclude-pattern>
 	<exclude-pattern>*.twig</exclude-pattern>
 	<exclude-pattern>*.css</exclude-pattern>
 	<exclude-pattern>*.scss</exclude-pattern>
+
+	<!-- How to scan -->
+	<arg value="sp"/><!-- Show sniff and progress -->
+	<arg name="basepath" value="./"/><!-- Strip the file paths down to the relevant bit -->
+	<arg name="extensions" value="php"/>
+	<arg name="parallel" value="12"/><!-- Enables parallel processing when available for faster results. -->
+
+	<config name="testVersion" value="5.6-"/>
+
+	<!-- Rules: Check PHP version compatibility-->
+	<rule ref="PHPCompatibility"/>
+	<rule ref="PHPCompatibilityWP"/>
+
+	<!-- Rules: WordPress Coding Standards-->
+	<config name="minimum_supported_wp_version" value="4.4"/>
+	<rule ref="WordPress"/>
 
 	<rule ref="Squiz.Commenting.FileComment.Missing">
 		<severity>0</severity>
@@ -29,11 +50,25 @@
 	<rule ref="Generic.Commenting.DocComment.MissingShort">
 		<severity>0</severity>
 	</rule>
+	<rule ref="Squiz.Commenting.FunctionComment.Missing">
+		<severity>0</severity>
+	</rule>
 	<rule ref="Squiz.Commenting.FunctionComment.MissingParamComment">
 		<severity>0</severity>
 	</rule>
 	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
 		<severity>0</severity>
 	</rule>
-
+	<rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+		<severity>0</severity>
+	</rule>
+	<rule ref="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid">
+		<severity>0</severity>
+	</rule>
+	<rule ref="WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Generic.Arrays.DisallowShortArraySyntax.Found">
+		<severity>0</severity>
+	</rule>
 </ruleset>
