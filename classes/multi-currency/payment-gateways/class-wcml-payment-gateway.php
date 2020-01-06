@@ -56,7 +56,7 @@ abstract class WCML_Payment_Gateway {
 	}
 
 	public function show() {
-		return $this->get_settings_output();
+		return $this->get_settings_output( $this->current_currency, $this->default_currency );
 	}
 
 	abstract protected function get_output_model();

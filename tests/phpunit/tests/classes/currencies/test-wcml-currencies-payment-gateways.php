@@ -32,25 +32,73 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 	 */
 	public function add_hooks() {
 
-		WP_Mock::userFunction( 'is_admin', [
-			'times'  => 1,
-			'return' => false,
-		] );
+		WP_Mock::userFunction(
+			'is_admin',
+			[
+				'times'  => 1,
+				'return' => false,
+			]
+		);
 
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectFilterAdded( 'woocommerce_gateway_description', [
-			$subject,
-			'filter_gateway_description',
-		], 10, 2 );
-		\WP_Mock::expectFilterAdded( 'option_woocommerce_stripe_settings', [
-			'WCML_Payment_Gateway_Stripe',
-			'filter_stripe_settings',
-		] );
-		\WP_Mock::expectFilterAdded( 'woocommerce_paypal_supported_currencies', [
-			'WCML_Payment_Gateway_PayPal',
-			'filter_supported_currencies',
-		] );
+		\WP_Mock::expectActionAdded(
+			'init',
+			[ $subject, 'init_gateways' ]
+		);
+
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_gateway_description',
+			[ $subject, 'filter_gateway_description' ],
+			10,
+			2
+		);
+		\WP_Mock::expectFilterAdded(
+			'option_woocommerce_stripe_settings',
+			[ 'WCML_Payment_Gateway_Stripe', 'filter_stripe_settings' ]
+		);
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_paypal_supported_currencies',
+			[ 'WCML_Payment_Gateway_PayPal', 'filter_supported_currencies' ]
+		);
+
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
+	public function add_hooks_in_admin() {
+
+		WP_Mock::userFunction(
+			'is_admin',
+			[
+				'times'  => 1,
+				'return' => true,
+			]
+		);
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::expectActionAdded(
+			'init',
+			[ $subject, 'init_gateways' ]
+		);
+
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_gateway_description',
+			[ $subject, 'filter_gateway_description' ],
+			10,
+			2
+		);
+		\WP_Mock::expectFilterAdded(
+			'option_woocommerce_stripe_settings',
+			[ 'WCML_Payment_Gateway_Stripe', 'filter_stripe_settings' ]
+		);
+		\WP_Mock::expectFilterNotAdded(
+			'woocommerce_paypal_supported_currencies',
+			[ 'WCML_Payment_Gateway_PayPal', 'filter_supported_currencies' ]
+		);
 
 		$subject->add_hooks();
 	}
