@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "1914b6e01b6f82512f82d9f2aae5dc1c",
@@ -274,7 +274,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/wpml-shared/wpml-lib-dependencies.git",
-                "reference": "581bd05c26ed83ffe0985f2cfff23aba3c9c38e3"
+                "reference": "1377bd83b2362c9e0ff88e2c6849ef13ab4880b7"
             },
             "require": {
                 "php": ">=5.6.0"
@@ -307,7 +307,7 @@
                 "dependencies",
                 "wpml"
             ],
-            "time": "2019-08-16T08:51:28+00:00"
+            "time": "2020-01-08T09:12:47+00:00"
         }
     ],
     "packages-dev": [
@@ -2334,13 +2334,13 @@
                 },
                 {
                     "name": "Wim Godden",
-                    "role": "lead",
-                    "homepage": "https://github.com/wimg"
+                    "homepage": "https://github.com/wimg",
+                    "role": "lead"
                 },
                 {
                     "name": "Juliette Reinders Folmer",
-                    "role": "lead",
-                    "homepage": "https://github.com/jrfnl"
+                    "homepage": "https://github.com/jrfnl",
+                    "role": "lead"
                 }
             ],
             "description": "A set of sniffs for PHP_CodeSniffer that checks for PHP cross-version compatibility.",
