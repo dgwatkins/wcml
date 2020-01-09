@@ -817,4 +817,17 @@ class WCML_Products{
 
 		return $url;
 	}
+
+	/**
+	 * @param int $product_id
+	 * @param string $status
+	 */
+	public function update_stock_status( $product_id, $status ) {
+		update_post_meta( $product_id, '_stock_status', $status );
+		$this->wpdb->query(
+			$this->wpdb->prepare(
+				"UPDATE {$this->wpdb->wc_product_meta_lookup} SET stock_status = %s WHERE product_id = %d",
+				$status, $product_id )
+		);
+	}
 }

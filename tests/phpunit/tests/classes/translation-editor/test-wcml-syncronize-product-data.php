@@ -449,10 +449,11 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 		$woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
 		                                         ->disableOriginalConstructor()
-		                                         ->setMethods( array( 'is_original_product' ) )
+		                                         ->setMethods( [ 'is_original_product', 'update_stock_status' ] )
 		                                         ->getMock();
 
 		$woocommerce_wpml->products->method( 'is_original_product' )->with( $product_id )->willReturn( true );
+		$woocommerce_wpml->products->method( 'update_stock_status' )->with( $translations['en'], $status )->willReturn( true );
 
 		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
 		                               ->disableOriginalConstructor()
@@ -472,11 +473,6 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 			'times' => 1
 		) );
 
-		\WP_Mock::userFunction( 'wc_update_product_stock_status', array(
-			'args'  => array( $translations['en'], $status ),
-			'times' => 1
-		) );
-
 		$subject = $this->get_subject( $woocommerce_wpml, null, $wpml_post_translations );
 
 		$subject->sync_stock_status_for_translations( $product_id, $status );
@@ -492,15 +488,13 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		$status = rand_str( 5 );
 		$post_type = 'product';
 
-		$translations[] = $product_id;
-
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
 		                         ->disableOriginalConstructor()
 		                         ->getMock();
 
 		$woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
 		                                   ->disableOriginalConstructor()
-		                                   ->setMethods( array( 'is_original_product' ) )
+		                                   ->setMethods( ['is_original_product'] )
 		                                   ->getMock();
 
 		$woocommerce_wpml->products->method( 'is_original_product' )->with( $product_id )->willReturn( true );
@@ -515,7 +509,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		                               ->setMethods( array( 'get_element_translations' ) )
 		                               ->getMock();
 
-		$wpml_post_translations->method( 'get_element_translations' )->willReturn( $translations );
+		$wpml_post_translations->method( 'get_element_translations' )->willReturn( [] );
 
 		$subject = $this->get_subject( $woocommerce_wpml, null, $wpml_post_translations );
 
@@ -532,6 +526,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 		$product_id = 1;
 		$qty = 5;
+		$stock_status = 'instock';
 		$product = $this->getMockBuilder( 'WC_Product' )
 		                       ->disableOriginalConstructor()
 		                       ->setMethods( array( 'get_id', 'get_stock_quantity', 'get_stock_managed_by_id', 'get_stock_status' ) )
@@ -539,7 +534,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		$product->method( 'get_id' )->willReturn( $product_id );
 		$product->method( 'get_stock_managed_by_id' )->willReturn( $product_id );
 		$product->method( 'get_stock_quantity' )->willReturn( $qty );
-		$product->method( 'get_stock_status' )->willReturn( 'instock' );
+		$product->method( 'get_stock_status' )->willReturn( $stock_status );
 
 		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
 		                               ->disableOriginalConstructor()
@@ -571,7 +566,14 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 			'return' => $product_object
 		) );
 
-		$subject = $this->get_subject( null, null, $wpml_post_translations );
+		$woocommerce_wpml = $this->get_woocommerce_wpml();
+		$woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                   ->disableOriginalConstructor()
+		                                   ->setMethods( [ 'update_stock_status' ] )
+		                                   ->getMock();
+		$woocommerce_wpml->products->method( 'update_stock_status' )->with( $translations['fr'], $stock_status )->willReturn( true );
+
+		$subject = $this->get_subject( $woocommerce_wpml, null, $wpml_post_translations );
 
 		$subject->sync_product_stock( $product );
 	}
@@ -606,7 +608,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 		$product_id = 1;
 		$translated_product_id = 10;
-
+		$stock_status = 'instock';
 		$qty = 5;
 		$product = $this->getMockBuilder( 'WC_Product' )
 		                       ->disableOriginalConstructor()
@@ -615,7 +617,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		$product->method( 'get_id' )->willReturn( $product_id );
 		$product->method( 'get_stock_managed_by_id' )->willReturn( $product_id );
 		$product->method( 'get_stock_quantity' )->willReturn( $qty );
-		$product->method( 'get_stock_status' )->willReturn( 'instock' );
+		$product->method( 'get_stock_status' )->willReturn( $stock_status );
 
 		$translated_product = $this->getMockBuilder( 'WC_Product' )
 		                       ->disableOriginalConstructor()
@@ -631,7 +633,13 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		$wc_data_store = \Mockery::mock( 'overload:WC_Data_Store' );
 		$wc_data_store->shouldReceive( 'load' )->andReturn( $wc_product_data_store );
 
-		$subject = $this->get_subject();
+		$woocommerce_wpml = $this->get_woocommerce_wpml();
+		$woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                   ->disableOriginalConstructor()
+		                                   ->setMethods( [ 'update_stock_status' ] )
+		                                   ->getMock();
+		$woocommerce_wpml->products->method( 'update_stock_status' )->with( $translated_product_id, $stock_status )->willReturn( true );
+		$subject = $this->get_subject( $woocommerce_wpml );
 
 		$subject->sync_product_stock( $product, $translated_product );
 	}

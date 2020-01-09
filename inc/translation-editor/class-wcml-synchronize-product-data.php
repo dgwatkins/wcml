@@ -345,14 +345,14 @@ class WCML_Synchronize_Product_Data{
 
 			if( $translated_product ){
 				$this->update_stock_value( $translated_product, $stock );
-				wc_update_product_stock_status( $translated_product->get_id(), $product->get_stock_status() );
+				$this->woocommerce_wpml->products->update_stock_status( $translated_product->get_id(), $product->get_stock_status() );
 			}else{
 				$translations = $this->post_translations->get_element_translations( $product_id );
 				foreach( $translations as $translation ){
 					if( $product_id !== $translation ){
 						$_product = wc_get_product( $translation );
 						$this->update_stock_value( $_product, $stock );
-						wc_update_product_stock_status( $translation, $product->get_stock_status() );
+						$this->woocommerce_wpml->products->update_stock_status( $translation, $product->get_stock_status() );
 					}
 				}
 			}
@@ -435,7 +435,7 @@ class WCML_Synchronize_Product_Data{
 		    $translations = $this->post_translations->get_element_translations( $product_id, false, true );
 
 		    foreach ( $translations as $translation ) {
-		    	wc_update_product_stock_status( $translation, $status );
+			    $this->woocommerce_wpml->products->update_stock_status( $translation, $status );
 			    $this->wc_taxonomies_recount_after_stock_change( $translation );
 		    }
 	    }
