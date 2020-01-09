@@ -1280,6 +1280,34 @@ class Test_WCML_Products extends OTGS_TestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function it_should_update_stock_status() {
+
+		$product_id = 1;
+		$status     = 'instock';
+
+		WP_Mock::userFunction( 'update_post_meta',
+			[
+				'args'   => [ $product_id, '_stock_status', $status ],
+				'return' => true,
+				'times'  => 1
+			]
+		);
+
+		$wpdb = $this->get_wpdb();
+		$wpdb->method( 'prepare' )
+		     ->with( 'UPDATE wc_product_meta_lookup SET stock_status = %s WHERE product_id = %d', $status, $product_id )
+		     ->willReturn( true );
+		$wpdb->method( 'query' )->willReturn( true );
+
+		$subject = $this->get_subject( false, false, false, $wpdb );
+
+		$subject->update_stock_status( $product_id, $status );
+	}
+
+
+	/**
 	 * @return wpdb|PHPUnit_Framework_MockObject_MockObject
 	 */
 	private function get_wpdb() {
@@ -1315,6 +1343,8 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$wpdb->term_taxonomy      = 'term_taxonomy';
 		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->term_relationships = 'term_relationships';
+		/** @noinspection PhpUndefinedFieldInspection */
+		$wpdb->wc_product_meta_lookup = 'wc_product_meta_lookup';
 
 		return $wpdb;
 	}
