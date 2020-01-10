@@ -218,6 +218,11 @@ class Test_WCML_Orders extends OTGS_TestCase {
 
 		$this->sitepress->method( 'get_user_admin_language' )->with( $current_user_id, true )->willReturn( $language );
 
+		\WP_Mock::userFunction( 'is_admin', array(
+				'return' => true
+			)
+		);
+
 		$this->get_woocommerce_order_items_mock( $language, new stdClass() );
 
 		unset( $_GET[ 'post' ] );
@@ -243,6 +248,11 @@ class Test_WCML_Orders extends OTGS_TestCase {
 			'return' => $language
 		) );
 
+		\WP_Mock::userFunction( 'is_admin', array(
+				'return' => true
+			)
+		);
+
 		$this->get_woocommerce_order_items_mock( $language, $order );
 
 		unset( $_GET['action'] );
@@ -261,11 +271,35 @@ class Test_WCML_Orders extends OTGS_TestCase {
 	 */
 	public function it_should_get_woocommerce_order_items_in_current_language(){
 
+		\WP_Mock::userFunction( 'is_view_order_page', array(
+				'return' => true
+			)
+		);
+
 		$language = 'en';
 
 		$this->sitepress->method( 'get_current_language' )->willReturn( $language );
 
 		$this->get_woocommerce_order_items_mock( $language, new stdClass() );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_get_woocommerce_order_items_for_non_view_order_front_pages(){
+
+		\WP_Mock::userFunction( 'is_admin', array(
+				'return' => false
+			)
+		);
+
+		\WP_Mock::userFunction( 'is_view_order_page', array(
+				'return' => false
+			)
+		);
+
+		$subject = $this->get_subject();
+		$subject->woocommerce_order_get_items( [ 'test' ], new stdClass() );
 	}
 
 	public function get_woocommerce_order_items_mock( $language, $order ){
@@ -389,7 +423,6 @@ class Test_WCML_Orders extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 		$subject->woocommerce_order_get_items( $items, $order );
-
 
 	}
 

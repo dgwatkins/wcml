@@ -122,7 +122,7 @@ class WCML_Orders {
 
 	public function woocommerce_order_get_items( $items, $order ) {
 
-		if ( $items ) {
+		if ( $items && ( is_admin() || is_view_order_page() ) ) {
 
 			$language_to_filter = $this->get_order_items_language_to_filter( $order );
 

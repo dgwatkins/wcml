@@ -14,6 +14,7 @@ class Test_WCML_Orders extends WCML_UnitTestCase {
 	}
 
 	function test_get_order_items(){
+		$this->switch_to_admin();
 
 		$order = WCML_Helper_Orders::create_order( array( 'product_id' => $this->orig_product_id ) );
 		$order_id = WCML_Helper_Orders::get_order_id( $order );
