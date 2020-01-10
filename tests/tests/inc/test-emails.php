@@ -104,6 +104,10 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 	}
 
 	function test_woocommerce_order_get_items(){
+		global $wp_actions;
+		$this->switch_to_admin();
+		set_current_screen('shop_order');
+		$wp_actions['admin_init'] = 'admin_init';
 
 		$this->sitepress->switch_lang('es');
 
@@ -126,16 +130,11 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 
 		$order_shippings = $this->order->get_items( 'shipping' );
 		foreach( $order_shippings as $order_shipping ){
-			if( $order_shipping instanceof WC_Order_Item_Shipping  ){
-				//WC >= 2.7
-				$this->assertEquals( 'FLAT RATE ES', $order_shipping->get_method_title() );
-			}else{
-				$this->assertEquals( 'FLAT RATE ES', $order_shipping['name'] );
-			}
-
+			$this->assertEquals( 'FLAT RATE ES', $order_shipping->get_method_title() );
 		}
 
 		$this->sitepress->switch_lang( $this->sitepress->get_default_language() );
+		unset($wp_actions['admin_init']);
 	}
 
 	function test_set_locale_for_emails() {
