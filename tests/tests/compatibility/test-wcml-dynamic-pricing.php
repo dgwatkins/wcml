@@ -112,7 +112,7 @@ class Test_WCML_Dynamic_Pricing extends WCML_UnitTestCase {
 		$tr_catrgory = wpml_test_insert_term( $this->second_language, 'product_cat', $trid, random_string() );
 
 		wp_set_post_terms( $product->id, array( $product_category['term_id'] ), 'product_cat' );
-		$dynamic_pricing         = new WCML_Dynamic_Pricing();
+		$dynamic_pricing         = new WCML_Dynamic_Pricing( $this->sitepress );
 		$obj                     = $this->getMockBuilder( 'WC_Dynamic_Pricing_Simple_Base' )->disableOriginalConstructor()->getMock();
 		$obj->available_rulesets = array(
 			'dummy_item' => 'dummy_rule',
