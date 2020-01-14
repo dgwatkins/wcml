@@ -1,9 +1,13 @@
 <?php
   
 class WCML_Terms{
-    
-    private $ALL_TAXONOMY_TERMS_TRANSLATED = 0;
+
+	const PRODUCT_SHIPPING_CLASS = 'product_shipping_class';
+
+	private $ALL_TAXONOMY_TERMS_TRANSLATED = 0;
+
     private $NEW_TAXONOMY_TERMS = 1;
+
     private $NEW_TAXONOMY_IGNORED = 2;
 
 	/** @var woocommerce_wpml */
@@ -664,27 +668,50 @@ class WCML_Terms{
         return $out;
     }
 
-    function shipping_terms($terms, $post_id, $taxonomy){
-        global $pagenow;
+	/**
+	 * Filter shipping terms
+	 *
+	 * @param WP_Term[]|false|WP_Error $terms    Terms to filter.
+	 * @param int                      $post_id  Post ID.
+	 * @param string                   $taxonomy Taxonomy.
+	 *
+	 * @return WP_Term[]|false|WP_Error
+	 */
+	public function shipping_terms( $terms, $post_id, $taxonomy ) {
+		global $pagenow;
 
-        if( isset( $_POST['action'] ) && $_POST['action'] == 'woocommerce_load_variations' ){
-            return $terms;
-        }
+		if (
+			'post.php' === $pagenow ||
+			self::PRODUCT_SHIPPING_CLASS !== $taxonomy ||
+			( isset( $_POST['action'] ) && 'woocommerce_load_variations' === $_POST['action'] ) ) {
+			return $terms;
+		}
 
-        if( $pagenow != 'post.php' && ( get_post_type($post_id) == 'product' || get_post_type($post_id) == 'product_variation' ) && $taxonomy == 'product_shipping_class'){
+		$post_type = get_post_type( $post_id );
+		if ( ! in_array( $post_type, [ 'product', 'product_variation' ], true ) ) {
+			return $terms;
+		}
 
-            remove_filter('get_the_terms',array($this,'shipping_terms'), 10, 3);
-            $terms = get_the_terms( apply_filters( 'translate_object_id', $post_id, get_post_type($post_id), true, $this->sitepress->get_current_language() ),'product_shipping_class');
-            add_filter('get_the_terms',array($this,'shipping_terms'), 10, 3);
-            return $terms;
-        }
+		$current_language = $this->sitepress->get_current_language();
+		$key              = md5( wp_json_encode( [ $post_id, $current_language ] ) );
+		$found            = false;
+		$terms            = WPML_Non_Persistent_Cache::get( $key, __CLASS__, $found );
+		if ( ! $found ) {
+			remove_filter( 'get_the_terms', [ $this, 'shipping_terms' ], 10 );
+			$terms = get_the_terms(
+				apply_filters( 'translate_object_id', $post_id, $post_type, true, $current_language ),
+				self::PRODUCT_SHIPPING_CLASS
+			);
+			add_filter( 'get_the_terms', [ $this, 'shipping_terms' ], 10, 3 );
+			WPML_Non_Persistent_Cache::set( $key, $terms, __CLASS__ );
+		}
 
-        return $terms;
-    }
+		return $terms;
+	}
 
-    public function filter_shipping_classes_terms( $terms, $taxonomies, $args ){
+	public function filter_shipping_classes_terms( $terms, $taxonomies, $args ){
 
-	    if( $taxonomies && is_admin() && in_array( 'product_shipping_class', $taxonomies ) ){
+	    if( $taxonomies && is_admin() && in_array( self::PRODUCT_SHIPPING_CLASS, $taxonomies ) ){
 		    $on_wc_settings_page = isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] === 'wc-settings';
 		    $on_shipping_tab = isset( $_GET[ 'tab' ] ) && $_GET[ 'tab' ] === 'shipping';
 		    $on_classes_section = isset( $_GET[ 'section' ] ) && $_GET[ 'section' ] === 'classes';
@@ -777,7 +804,7 @@ class WCML_Terms{
         $wcml_settings['sync_product_shipping_class'] = 0;
         $this->woocommerce_wpml->update_settings( $wcml_settings );
 
-        $taxonomies_to_check = array( 'product_cat', 'product_tag', 'product_shipping_class' );
+        $taxonomies_to_check = array( 'product_cat', 'product_tag', self::PRODUCT_SHIPPING_CLASS );
 
         foreach( $taxonomies_to_check as $check_taxonomy ){
             $terms = get_terms( $check_taxonomy, array( 'hide_empty' => false, 'fields' => 'ids' ) );
@@ -839,7 +866,7 @@ class WCML_Terms{
             $count = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT count( object_id ) FROM {$this->wpdb->term_relationships} WHERE term_taxonomy_id = %d ", $translation->element_id ) );
             if( $original_count != $count ){
 
-                if( in_array( $taxonomy, array( 'product_cat', 'product_tag', 'product_shipping_class' ) ) ){
+                if( in_array( $taxonomy, array( 'product_cat', 'product_tag', self::PRODUCT_SHIPPING_CLASS ) ) ){
                     $wcml_settings[ 'sync_'.$taxonomy ] = 1;
                     $this->woocommerce_wpml->update_settings($wcml_settings);
                     return true;
