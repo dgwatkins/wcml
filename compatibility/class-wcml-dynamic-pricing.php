@@ -5,6 +5,20 @@
  */
 class WCML_Dynamic_Pricing {
 
+	/**
+	 * @var SitePress
+	 */
+	private $sitepress;
+
+	/**
+	 * WCML_Dynamic_Pricing constructor.
+	 *
+	 * @param SitePress $sitepress
+	 */
+	function __construct( SitePress $sitepress ) {
+		$this->sitepress = $sitepress;
+	}
+
 	public function add_hooks() {
 
 		if ( ! is_admin() ) {
@@ -15,6 +29,8 @@ class WCML_Dynamic_Pricing {
 			add_filter( 'woocommerce_dynamic_pricing_get_rule_amount', [ $this, 'woocommerce_dynamic_pricing_get_rule_amount' ], 10, 2 );
 			add_filter( 'dynamic_pricing_product_rules', [ $this, 'dynamic_pricing_product_rules' ] );
 			add_filter( 'wcml_calculate_totals_exception', [ $this, 'calculate_totals_exception' ] );
+		}else{
+			$this->hide_language_switcher_for_settings_page();
 		}
 		add_filter( 'woocommerce_product_get__pricing_rules', array( $this, 'translate_variations_in_rules' ) );
 
@@ -222,6 +238,12 @@ class WCML_Dynamic_Pricing {
 		}
 
 		return $rules;
+	}
+
+	public function hide_language_switcher_for_settings_page() {
+		if ( 'wc_dynamic_pricing' === filter_input( INPUT_GET, 'page' ) ) {
+			remove_action( 'wp_before_admin_bar_render', [ $this->sitepress, 'admin_language_switcher' ] );
+		}
 	}
 
 }

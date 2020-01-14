@@ -1,13 +1,27 @@
 <?php
 
+use tad\FunctionMocker\FunctionMocker;
+
 /**
  * Class Test_WCML_Dynamic_Pricing
  *
  * @group dynamic-pricing
  */
 class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
-	private function get_subject() {
-		return new WCML_Dynamic_Pricing();
+
+	private function get_subject( $sitepress = null ) {
+
+		if ( null === $sitepress ) {
+			$sitepress = $this->get_sitepress_mock();
+		}
+
+		return new WCML_Dynamic_Pricing( $sitepress );
+	}
+
+	private function get_sitepress_mock() {
+		return $this->getMockBuilder( 'Sitepress' )
+		            ->disableOriginalConstructor()
+		            ->getMock();
 	}
 
 	/**
@@ -20,6 +34,24 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_get__pricing_rules', [ $subject, 'translate_variations_in_rules' ] );
 		$subject->add_hooks();
 
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_hide_language_switcher_for_settings_page() {
+
+		$sitepress = $this->get_sitepress_mock();
+
+		FunctionMocker::replace( 'filter_input', 'wc_dynamic_pricing' );
+
+		WP_Mock::userFunction( 'remove_action', [
+			'times' => 1,
+			'args'  => [ 'wp_before_admin_bar_render', [ $sitepress, 'admin_language_switcher' ] ],
+		] );
+
+		$subject = $this->get_subject( $sitepress );
+		$subject->hide_language_switcher_for_settings_page();
 	}
 
 	/**
