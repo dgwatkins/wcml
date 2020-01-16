@@ -14,7 +14,7 @@ class ProductsByAttributes extends \WPML\PB\Gutenberg\ConvertIdsInBlock\Base {
 				continue;
 			}
 
-			$block['attrs']['attributes'][ $key ]['id'] = self::convertIds( $attribute['id'], $attribute['attr_slug'] );
+			$block['attrs']['attributes'][ $key ]['id'] = self::convertIds( $attribute['id'], $attribute['attr_slug'], 'taxonomy' );
 		}
 
 		return $block;

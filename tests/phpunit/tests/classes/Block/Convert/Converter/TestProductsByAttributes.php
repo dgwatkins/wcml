@@ -8,6 +8,11 @@ namespace WCML\Block\Convert\Converter;
  */
 class TestProductsByAttributes extends \OTGS_TestCase {
 
+	public function tearDown() {
+		unset( $GLOBALS['sitepress'] );
+		parent::tearDown();
+	}
+
 	/**
 	 * @test
 	 * @dataProvider dpShouldNotConvertIfBlockDoesNotHaveTheRequiredAttributes
@@ -65,13 +70,27 @@ class TestProductsByAttributes extends \OTGS_TestCase {
 		$originalBlock  = $getBlock( $originalId );
 		$convertedBlock = $getBlock( $convertedId );
 
-		\WP_Mock::userFunction( 'wpml_object_id_filter', [
-			'args'   => [ $originalId, $attrSlug ],
-			'return' => $convertedId,
-		] );
+		$this->mockConvertIds( $originalId, $convertedId, $attrSlug );
 
 		$subject = new ProductsByAttributes();
 
 		$this->assertEquals( $convertedBlock, $subject->convert( $originalBlock ) );
+	}
+
+	private function mockConvertIds( $id, $convertedId, $slug ) {
+		global $sitepress;
+
+		$sitepress = $this->getMockBuilder( '\SitePress' )
+			->setMethods( [ 'is_display_as_translated_taxonomies' ] )
+			->disableOriginalConstructor()->getMock();
+
+		$sitepress->method( 'is_display_as_translated_taxonomies' )
+		          ->with( 'taxonomy' )
+		          ->willReturn( false );
+
+		\WP_Mock::userFunction( 'wpml_object_id_filter', [
+			'args'   => [ $id, $slug ],
+			'return' => $convertedId,
+		] );
 	}
 }
