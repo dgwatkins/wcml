@@ -162,21 +162,19 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 
 		\WP_Mock::wpFunction( 'get_post_meta', array(
 			'args' => array( $product_id, '_product_attributes', true ),
+			'times' => 1,
 			'return' => $original_attributes
 		) );
 
 		\WP_Mock::wpFunction( 'get_post_meta', array(
 			'args' => array( $translated_product_id, '_product_attributes', true ),
+			'times' => 1,
 			'return' => $translated_attributes
 		) );
 
 		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args' => array( $translated_product_id, 'attr_label_translations', true ),
-			'return' => false
-		) );
-
-		\WP_Mock::wpFunction( 'get_post_meta', array(
 			'args' => array( $translated_product_id, '_icl_lang_duplicate_of', true ),
+			'times' => 1,
 			'return' => false
 		) );
 
