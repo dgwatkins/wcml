@@ -2,6 +2,8 @@
 
 class WCML_Switch_Lang_Request{
 
+	const COOKIE_NAME = 'wp-wpml_current_language';
+
     /** @var string $default_language */
     protected $default_language;
     /** @var WPML_WP_API */
@@ -64,8 +66,7 @@ class WCML_Switch_Lang_Request{
     }
 
     public function get_cookie_name() {
-
-		return 'wp-wpml_current_language';
+		return self::COOKIE_NAME;
     }
 
     /**

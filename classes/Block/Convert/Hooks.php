@@ -5,6 +5,7 @@ namespace WCML\Block\Convert;
 use IWPML_DIC_Action;
 use IWPML_Frontend_Action;
 use SitePress;
+use WCML\Rest\Frontend\Language;
 use WPML_Cookie;
 
 class Hooks implements IWPML_Frontend_Action, IWPML_DIC_Action {
@@ -12,20 +13,20 @@ class Hooks implements IWPML_Frontend_Action, IWPML_DIC_Action {
 	/** @var SitePress $sitepress */
 	private $sitepress;
 
-	/** @var WPML_Cookie $cookie */
-	private $cookie;
+	/** @var Language $frontendRestLang */
+	private $frontendRestLang;
 
-	public function __construct( SitePress $sitepress, WPML_Cookie $cookie ) {
-		$this->sitepress = $sitepress;
-		$this->cookie    = $cookie;
+	public function __construct( SitePress $sitepress, Language $frontendRestLang ) {
+		$this->sitepress        = $sitepress;
+		$this->frontendRestLang = $frontendRestLang;
 	}
 
 	public function add_hooks() {
 		add_filter( 'render_block_data', [ $this, 'filterIdsInBlock' ] );
 		add_action( 'parse_query', [ $this, 'addCurrentLangToQueryVars' ] );
 
-		if ( ! is_admin() ) {
-			add_filter( 'rest_request_before_callbacks', [ $this, 'useLanguageFromCookie' ], 10, 3 );
+		if ( ! ( is_admin() || \WPML_URL_HTTP_Referer::is_post_edit_page() ) ) {
+			add_filter( 'rest_request_before_callbacks', [ $this, 'useLanguageFrontendRestLang' ], 10, 3 );
 		}
 	}
 
@@ -52,10 +53,9 @@ class Hooks implements IWPML_Frontend_Action, IWPML_DIC_Action {
 	 *
 	 * @return \WP_HTTP_Response|\WP_Error
 	 */
-	public function useLanguageFromCookie( $response, $handler, $request ) {
+	public function useLanguageFrontendRestLang( $response, $handler, $request ) {
 		if ( $this->isWcRestRequest( $request ) ) {
-			/** @see \WPML_Frontend_Request::COOKIE_NAME */
-			$lang = $this->cookie->get_cookie( 'wp-wpml_current_language' );
+			$lang = $this->frontendRestLang->get();
 
 			if ( $lang ) {
 				$this->sitepress->switch_lang( $lang );

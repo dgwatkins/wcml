@@ -26,10 +26,27 @@ class TestHooks extends \OTGS_TestCase {
 		$subject = $this->getSubject();
 
 		\WP_Mock::userFunction( 'is_admin', [ 'return' => true ] );
+		FunctionMocker::replace( 'WPML_URL_HTTP_Referer::is_post_edit_page', false );
 
 		\WP_Mock::expectFilterAdded( 'render_block_data', [ $subject, 'filterIdsInBlock' ] );
 		\WP_Mock::expectActionAdded( 'parse_query', [ $subject, 'addCurrentLangToQueryVars' ] );
-		\WP_Mock::expectFilterNotAdded( 'rest_request_before_callbacks', [ $subject, 'useLanguageFromCookie' ], 10, 3 );
+		\WP_Mock::expectFilterNotAdded( 'rest_request_before_callbacks', [ $subject, 'useLanguageFrontendRestLang' ], 10, 3 );
+
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldAddHooksRestRequestForPostEditPage() {
+		$subject = $this->getSubject();
+
+		\WP_Mock::userFunction( 'is_admin', [ 'return' => false ] );
+		FunctionMocker::replace( '\WPML_URL_HTTP_Referer::is_post_edit_page', true );
+
+		\WP_Mock::expectFilterAdded( 'render_block_data', [ $subject, 'filterIdsInBlock' ] );
+		\WP_Mock::expectActionAdded( 'parse_query', [ $subject, 'addCurrentLangToQueryVars' ] );
+		\WP_Mock::expectFilterNotAdded( 'rest_request_before_callbacks', [ $subject, 'useLanguageFrontendRestLang' ], 10, 3 );
 
 		$subject->add_hooks();
 	}
@@ -41,10 +58,11 @@ class TestHooks extends \OTGS_TestCase {
 		$subject = $this->getSubject();
 
 		\WP_Mock::userFunction( 'is_admin', [ 'return' => false ] );
+		FunctionMocker::replace( '\WPML_URL_HTTP_Referer::is_post_edit_page', false );
 
 		\WP_Mock::expectFilterAdded( 'render_block_data', [ $subject, 'filterIdsInBlock' ] );
 		\WP_Mock::expectActionAdded( 'parse_query', [ $subject, 'addCurrentLangToQueryVars' ] );
-		\WP_Mock::expectFilterAdded( 'rest_request_before_callbacks', [ $subject, 'useLanguageFromCookie' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'rest_request_before_callbacks', [ $subject, 'useLanguageFrontendRestLang' ], 10, 3 );
 
 		$subject->add_hooks();
 	}
@@ -126,7 +144,7 @@ class TestHooks extends \OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function itShouldNotUseLanguageFromCookieIfNotAWcRestRequest() {
+	public function itShouldNotUseFrontendRestLanguageIfNotAWcRestRequest() {
 		$response = 'some-response';
 		$request  = $this->getRestRequest( '/invalid/route/' );
 
@@ -135,25 +153,25 @@ class TestHooks extends \OTGS_TestCase {
 
 		$subject = $this->getSubject( $sitepress );
 
-		$this->assertSame( $response, $subject->useLanguageFromCookie( $response, [], $request ) );
+		$this->assertSame( $response, $subject->useLanguageFrontendRestLang( $response, [], $request ) );
 	}
 
 	/**
 	 * @test
 	 */
-	public function itShouldNotUseLanguageFromCookieIfEmpty() {
+	public function itShouldNotUseFrontendRestLanguageIfEmpty() {
 		$response = 'some-response';
 		$request  = $this->getRestRequest( '/wc/blocks/' );
 
 		$sitepress = $this->getSitepress();
 		$sitepress->expects( $this->never() )->method( 'switch_lang' );
 
-		$cookie = $this->getCookie();
-		$cookie->method( 'get_cookie' )->willReturn( '' );
+		$frontendRestLang = $this->getFrontendRestLanguage();
+		$frontendRestLang->method( 'get' )->willReturn( '' );
 
-		$subject = $this->getSubject( $sitepress, $cookie );
+		$subject = $this->getSubject( $sitepress, $frontendRestLang );
 
-		$this->assertSame( $response, $subject->useLanguageFromCookie( $response, [], $request ) );
+		$this->assertSame( $response, $subject->useLanguageFrontendRestLang( $response, [], $request ) );
 	}
 
 	/**
@@ -162,22 +180,22 @@ class TestHooks extends \OTGS_TestCase {
 	 *
 	 * @param string $route
 	 */
-	public function itShouldUseLanguageFromCookie( $route ) {
-		$response   = 'some-response';
-		$request    = $this->getRestRequest( $route );
-		$cookieLang = 'fr';
+	public function itShouldUseLanguageFromFrontendRestLanguage( $route ) {
+		$response = 'some-response';
+		$request  = $this->getRestRequest( $route );
+		$restLang = 'fr';
 
 		$sitepress = $this->getSitepress();
 		$sitepress->expects( $this->once() )
 		    ->method( 'switch_lang' )
-			->with( $cookieLang );
+			->with( $restLang );
 
-		$cookie = $this->getCookie();
-		$cookie->method( 'get_cookie' )->willReturn( $cookieLang );
+		$frontendRestLang = $this->getFrontendRestLanguage();
+		$frontendRestLang->method( 'get' )->willReturn( $restLang );
 
-		$subject = $this->getSubject( $sitepress, $cookie );
+		$subject = $this->getSubject( $sitepress, $frontendRestLang );
 
-		$this->assertSame( $response, $subject->useLanguageFromCookie( $response, [], $request ) );
+		$this->assertSame( $response, $subject->useLanguageFrontendRestLang( $response, [], $request ) );
 	}
 
 	public function dpShouldUseLanguageFromCookie() {
@@ -189,11 +207,11 @@ class TestHooks extends \OTGS_TestCase {
 		];
 	}
 
-	private function getSubject( $sitepress = null, $cookie = null ) {
-		$sitepress = $sitepress ?: $this->getSitepress();
-		$cookie    = $cookie ?: $this->getCookie();
+	private function getSubject( $sitepress = null, $frontendRestLang = null ) {
+		$sitepress        = $sitepress ?: $this->getSitepress();
+		$frontendRestLang = $frontendRestLang ?: $this->getFrontendRestLanguage();
 
-		return new Hooks( $sitepress, $cookie );
+		return new Hooks( $sitepress, $frontendRestLang );
 	}
 
 	private function getSitepress() {
@@ -202,9 +220,9 @@ class TestHooks extends \OTGS_TestCase {
 			->disableOriginalConstructor()->getMock();
 	}
 
-	private function getCookie() {
-		return $this->getMockBuilder( '\WPML_Cookie' )
-            ->setMethods( [ 'get_cookie' ] )
+	private function getFrontendRestLanguage() {
+		return $this->getMockBuilder( \WCML\Rest\Frontend\Language::class )
+            ->setMethods( [ 'get' ] )
             ->disableOriginalConstructor()->getMock();
 	}
 
