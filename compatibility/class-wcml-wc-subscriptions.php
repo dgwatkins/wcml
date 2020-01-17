@@ -57,6 +57,8 @@ class WCML_WC_Subscriptions{
 			add_action( 'woocommerce_after_calculate_totals', array( $this, 'maybe_restore_recurring_carts'), 200 );
 
 			$this->maybe_force_client_currency_for_resubscribe_subscription();
+
+			add_filter( 'wcs_get_subscription', array( $this, 'filter_subscription_items' ) );
 		}
 		
 		//Translate emails
@@ -380,5 +382,17 @@ class WCML_WC_Subscriptions{
 	    }
 	    
 	    return $section_prefix;
+	}
+
+	/**
+	 * @param WC_Subscription $subscription
+	 *
+	 * @return WC_Subscription
+	 */
+	public function filter_subscription_items( $subscription ){
+
+		$this->woocommerce_wpml->orders->adjust_order_item_in_language( $subscription->get_items() );
+
+		return $subscription;
 	}
 }
