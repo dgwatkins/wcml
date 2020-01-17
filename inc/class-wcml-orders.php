@@ -126,34 +126,47 @@ class WCML_Orders {
 
 			$language_to_filter = $this->get_order_items_language_to_filter( $order );
 
-			foreach ( $items as $index => $item ) {
-				if ( $item instanceof WC_Order_Item_Product ) {
-					if ( 'line_item' === $item->get_type() ) {
-						$this->adjust_product_item_if_translated( $item, $language_to_filter );
-						$this->adjust_variation_item_if_translated( $item, $language_to_filter );
-					}
-				} elseif ( $item instanceof WC_Order_Item_Shipping ) {
-					$shipping_id = $item->get_method_id();
-					if ( $shipping_id ) {
-
-						if ( method_exists( $item, 'get_instance_id' ) ) {
-							$shipping_id .= $item->get_instance_id();
-						}
-
-						$item->set_method_title(
-							$this->woocommerce_wpml->shipping->translate_shipping_method_title(
-								$item->get_method_title(),
-								$shipping_id,
-								$language_to_filter
-							)
-						);
-					}
-				}
-				$item->save();
-			}
+			$this->adjust_order_item_in_language( $items, $language_to_filter );
 		}
 
 		return $items;
+	}
+
+	/**
+	 * @param array $items
+	 * @param string|bool $language_to_filter
+	 */
+	public function adjust_order_item_in_language( $items, $language_to_filter = false ) {
+
+		if( !$language_to_filter ){
+			$language_to_filter = $this->sitepress->get_current_language();
+		}
+
+		foreach ( $items as $index => $item ) {
+			if ( $item instanceof WC_Order_Item_Product ) {
+				if ( 'line_item' === $item->get_type() ) {
+					$this->adjust_product_item_if_translated( $item, $language_to_filter );
+					$this->adjust_variation_item_if_translated( $item, $language_to_filter );
+				}
+			} elseif ( $item instanceof WC_Order_Item_Shipping ) {
+				$shipping_id = $item->get_method_id();
+				if ( $shipping_id ) {
+
+					if ( method_exists( $item, 'get_instance_id' ) ) {
+						$shipping_id .= $item->get_instance_id();
+					}
+
+					$item->set_method_title(
+						$this->woocommerce_wpml->shipping->translate_shipping_method_title(
+							$item->get_method_title(),
+							$shipping_id,
+							$language_to_filter
+						)
+					);
+				}
+			}
+			$item->save();
+		}
 	}
 
 	/**

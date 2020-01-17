@@ -45,6 +45,8 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 		WP_Mock::expectActionAdded( 'woocommerce_before_calculate_totals', array( $subject, 'maybe_backup_recurring_carts' ), 1, 1 );
 		WP_Mock::expectActionAdded( 'woocommerce_after_calculate_totals', array( $subject, 'maybe_restore_recurring_carts' ), 200, 1 );
 
+		WP_Mock::expectFilterAdded( 'wcs_get_subscription', array( $subject, 'filter_subscription_items' ) );
+
 		\WP_Mock::wpFunction( 'wcs_cart_contains_resubscribe', array(
 			'return' => false
 		) );
@@ -474,6 +476,30 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 		$this->assertSame( $expected_prices, $filtered_prices );
 
 		unset( $_POST[ '_custom_variation_subscription_sign_up_fee' ] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_subscription_items() {
+
+		$items = [];
+
+		$subscription = $this->getMockBuilder( 'WC_Subscription' )
+		                     ->disableOriginalConstructor()
+		                     ->setMethods( [ 'get_items' ] )
+		                     ->getMock();
+		$subscription->expects( $this->once() )->method( 'get_items' )->willReturn( $items );
+		$this->woocommerce_wpml->orders = $this->getMockBuilder( 'WCML_Orders' )
+		                                       ->disableOriginalConstructor()
+		                                       ->setMethods( [ 'adjust_order_item_in_language' ] )
+		                                       ->getMock();
+
+		$this->woocommerce_wpml->orders->expects( $this->once() )->method( 'adjust_order_item_in_language' )->with( $items )->willReturn( true );
+		$subject = $this->get_subject();
+
+		$subject->filter_subscription_items( $subscription );
+
 	}
 
 }
