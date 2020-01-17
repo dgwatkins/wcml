@@ -8,11 +8,7 @@
  * Text Domain: woocommerce-multilingual
  * Requires at least: 4.7
  * Tested up to: 5.3
-<<<<<<< HEAD
- * Version: 4.7.6
-=======
- * Version: 4.7.5
->>>>>>> Convert dynamic WC blocks with items in the current language
+ * Version: 4.7.8
  * Plugin Slug: woocommerce-multilingual
  * WC requires at least: 3.3.0
  * WC tested up to: 3.8.0
