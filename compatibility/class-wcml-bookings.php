@@ -2391,7 +2391,9 @@ class WCML_Bookings {
 	// hide WPML languages links section from bookings list page
 	public function filter_is_translated_post_type( $type ){
 
-		if( isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'wc_booking' ){
+		$getData = wpml_collect( $_GET );
+
+		if( 'wc_booking' === $getData->get( 'post_type' ) && 'create_booking' !== $getData->get( 'page' ) ){
 			return false;
 		}
 
