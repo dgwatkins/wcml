@@ -1092,5 +1092,30 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		            ->setMethods( [] )
 		            ->getMock();
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_is_translated_post_type_for_bookings_listing_page() {
+
+		$_GET['post_type'] = 'wc_booking';
+
+		$subject = $this->get_subject();
+		$this->assertFalse( $subject->filter_is_translated_post_type( true ) );
+		unset( $_GET['post_type'] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_is_translated_post_type_for_new_booking_page() {
+
+		$_GET['post_type'] = 'wc_booking';
+		$_GET['page']      = 'create_booking';
+
+		$subject = $this->get_subject();
+		$this->assertTrue( $subject->filter_is_translated_post_type( true ) );
+		unset( $_GET['post_type'], $_GET['page'] );
+	}
 }
 
