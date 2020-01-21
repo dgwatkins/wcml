@@ -56,7 +56,7 @@ class WCML_WC_Subscriptions{
 			add_action( 'woocommerce_before_calculate_totals', array( $this, 'maybe_backup_recurring_carts'), 1 );
 			add_action( 'woocommerce_after_calculate_totals', array( $this, 'maybe_restore_recurring_carts'), 200 );
 
-			$this->maybe_force_client_currency_for_resubscribe_subscription();
+			$this->maybe_force_client_currency_for_subscription();
 
 			add_filter( 'wcs_get_subscription', array( $this, 'filter_subscription_items' ) );
 		}
@@ -291,17 +291,35 @@ class WCML_WC_Subscriptions{
 	 * Force client currency for resubscribe subscription
 	 *
 	 */
-	function maybe_force_client_currency_for_resubscribe_subscription( ){
+	public function maybe_force_client_currency_for_subscription() {
 
-		if ( wcml_is_multi_currency_on() && ( isset( $_GET['resubscribe'] ) || false !== ( $resubscribe_cart_item = wcs_cart_contains_resubscribe() ) ) ) {
-			$subscription_id = ( isset( $_GET['resubscribe'] ) ) ? (int) $_GET['resubscribe'] : $resubscribe_cart_item['subscription_resubscribe']['subscription_id'];
+		if ( wcml_is_multi_currency_on() ) {
 
-			$subscription_currency = get_post_meta( $subscription_id, '_order_currency', true );
-			$client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
+			$subscription_id = false;
+			$getData         = wpml_collect( $_GET );
 
-			if( $subscription_currency && $client_currency !== $subscription_currency ){
-				$this->woocommerce_wpml->multi_currency->set_client_currency( $subscription_currency );
-            }
+			if ( $getData->has( 'resubscribe' ) ) {
+				$subscription_id = (int) $getData->get( 'resubscribe' );
+			} elseif ( $getData->has( 'subscription_renewal_early' ) ) {
+				$subscription_id = (int) $getData->get( 'subscription_renewal_early' );
+			} elseif ( is_cart() || is_checkout() ) {
+				$resubscribe_cart_item = wcs_cart_contains_resubscribe();
+				if ( $resubscribe_cart_item ) {
+					$subscription_id = $resubscribe_cart_item['subscription_resubscribe']['subscription_id'];
+				} else {
+					$early_renewal_cart_item = wcs_cart_contains_early_renewal();
+					if ( $early_renewal_cart_item ) {
+						$subscription_id = $early_renewal_cart_item['subscription_renewal']['subscription_renewal_early'];
+					}
+				}
+			}
+
+			if ( $subscription_id ) {
+				$subscription_currency = get_post_meta( $subscription_id, '_order_currency', true );
+				if ( $subscription_currency && $this->woocommerce_wpml->multi_currency->get_client_currency() !== $subscription_currency ) {
+					$this->woocommerce_wpml->multi_currency->set_client_currency( $subscription_currency );
+				}
+			}
 		}
 	}
 
