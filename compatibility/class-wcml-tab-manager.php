@@ -541,6 +541,7 @@ class WCML_Tab_Manager {
 			if ( $product_tab_translations ) {
 
 				$translated_product_tabs = get_post_meta( $post_id, '_product_tabs', true );
+				$translated_product_tabs = $translated_product_tabs ?: [];
 
 				foreach ( $product_tab_translations as $wc_product_tab_id => $value ) {
 
