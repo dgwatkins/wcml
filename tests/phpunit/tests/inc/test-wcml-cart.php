@@ -29,7 +29,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 		$this->sitepress = $this->getMockBuilder('SitePress')
 			->disableOriginalConstructor()
-			->setMethods( array( 'get_wp_api', 'get_element_trid', 'get_setting' ) )
+			->setMethods( array( 'get_wp_api', 'get_element_trid', 'get_setting', 'get_current_language' ) )
 			->getMock();
 
 		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )
@@ -101,6 +101,8 @@ class Test_WCML_Cart extends OTGS_TestCase {
 			$subject,
 			'add_to_cart_sold_individually_exception'
 		], 10, 4 );
+
+		\WP_Mock::expectFilterAdded( 'woocommerce_cart_hash_key', [ $subject, 'add_language_to_cart_hash_key' ] );
 
 		$subject->add_hooks();
 	}
@@ -629,6 +631,21 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		] );
 
 		$subject->adjust_cart_item_product_name( $product );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_add_language_to_cart_hash_key() {
+
+		$cart_hash_key    = rand_str();
+		$current_language = 'es';
+
+		$this->sitepress->expects( $this->once() )->method( 'get_current_language' )->willReturn( $current_language );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( $cart_hash_key . '-' . $current_language, $subject->add_language_to_cart_hash_key( $cart_hash_key ) );
 	}
 
 }
