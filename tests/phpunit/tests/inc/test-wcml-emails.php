@@ -84,6 +84,8 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'woocommerce_low_stock_notification', array( $subject, 'low_stock_admin_notification' ), 9 );
 		\WP_Mock::expectActionAdded( 'woocommerce_no_stock_notification', array( $subject, 'no_stock_admin_notification' ), 9 );
 
+		\WP_Mock::expectFilterAdded( 'woocommerce_email_get_option', array( $subject, 'filter_emails_strings' ), 10, 4 );
+
 		$subject->add_hooks();
 	}
 
@@ -216,70 +218,6 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 	}
 
-	/**
-	 * @test
-	 */
-	public function filter_refund_emails_strings(){
-
-		$order_id = mt_rand( 1, 100 );
-		$language = rand_str();
-		$context = 'admin_texts_woocommerce_customer_refunded_order_settings';
-		$key = 'subject_full';
-		$name = '[woocommerce_customer_refunded_order_settings]'.$key;
-		$translated_value = rand_str();
-
-		$object = $this->getMockBuilder('WC_Emails')
-		               ->disableOriginalConstructor()
-		               ->getMock();
-
-		$object->object = $this->getMockBuilder('WC_Order')
-		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'get_id' ) )
-		               ->getMock();
-
-		$object->object->expects( $this->once() )
-		                    ->method( 'get_id' )
-		                    ->willReturn( $order_id );
-
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args'   => array( $order_id, 'wpml_language', true ),
-			'return' => $language
-		) );
-		$result = rand_str();
-
-		$this->wpdb->method( 'get_var' )->willReturn( $result );
-
-		$this->wcmlStrings->method( 'get_translated_string_by_name_and_context' )->with( $context, $name, $language )->willReturn( $translated_value );
-
-		$subject = $this->get_subject();
-
-		$this->assertEquals( $translated_value, $subject->filter_refund_emails_strings( rand_str(), $object, rand_str(), $key ) );
-
-	}
-
-	/**
-	 * @test
-	 */
-	public function filter_refund_emails_strings_key_not_matched(){
-
-		$key = rand_str();
-		$value = rand_str();
-
-		$object = $this->getMockBuilder('WC_Emails')
-		               ->disableOriginalConstructor()
-		               ->getMock();
-
-		$object->object = $this->getMockBuilder('WC_Order')
-		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'get_id' ) )
-		               ->getMock();
-
-
-		$subject = $this->get_subject();
-
-		$this->assertEquals( $value, $subject->filter_refund_emails_strings( $value, $object, $value, $key ) );
-
-	}
 
 	/**
 	 * @test
@@ -669,5 +607,100 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$subject = $this->get_subject();
 
 		$subject->no_stock_admin_notification( new stdClass() );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider email_string_key
+	 */
+	public function it_should_filter_emails_strings( $emailOption, $textKey ) {
+
+		$value            = rand_str();
+		$old_value        = '';
+		$translated_value = rand_str();
+		$language         = 'es';
+		$order_id         = 12;
+
+		$object         = new stdClass();
+		$object->id     = $emailOption;
+		$object->object = $this->getMockBuilder( 'WC_Order' )
+		                       ->disableOriginalConstructor()
+		                       ->setMethods( array( 'get_id' ) )
+		                       ->getMock();
+
+		$object->object->expects( $this->once() )
+		               ->method( 'get_id' )
+		               ->willReturn( $order_id );
+
+		WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $order_id, 'wpml_language', true ],
+			'return' => $language
+		] );
+
+		$subject = $this->get_subject();
+
+
+		$this->wcmlStrings->method( 'get_translated_string_by_name_and_context' )->with( 'admin_texts_woocommerce_' . $emailOption . '_settings', '[woocommerce_' . $emailOption . '_settings]' . $textKey, $language )->willReturn( $translated_value );
+
+		$translated_value = $subject->filter_emails_strings( $value, $object, $old_value, $textKey );
+	}
+
+	public function email_string_key() {
+
+		$emailOptions = wpml_collect( [
+			'woocommerce_new_order_settings',
+			'woocommerce_cancelled_order_settings',
+			'woocommerce_failed_order_settings',
+			'woocommerce_customer_on_hold_order_settings',
+			'woocommerce_customer_processing_order_settings',
+			'woocommerce_customer_completed_order_settings',
+			'woocommerce_customer_refunded_order_settings',
+			'woocommerce_customer_invoice_settings',
+			'woocommerce_customer_note_settings',
+			'woocommerce_customer_reset_password_settings',
+			'woocommerce_customer_new_account_settings'
+		] );
+
+		$textKeys = wpml_collect( [
+			'subject_partial',
+			'subject_full',
+			'heading_partial',
+			'heading_full',
+			'additional_content'
+		] );
+
+		$data = [];
+
+		$emailOptions->each( function ( $emailOption ) use ( $textKeys, &$data ) {
+			$textKeys->each( function ( $textKey ) use ( $emailOption, &$data ) {
+				$data[] = [ $emailOption, $textKey ];
+			} );
+		} );
+
+		return $data;
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_emails_strings_for_key_not_matched(){
+
+		$key = rand_str();
+		$value = rand_str();
+
+		$object = $this->getMockBuilder('WC_Emails')
+		               ->disableOriginalConstructor()
+		               ->getMock();
+
+		$object->object = $this->getMockBuilder('WC_Order')
+		                       ->disableOriginalConstructor()
+		                       ->setMethods( array( 'get_id' ) )
+		                       ->getMock();
+
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( $value, $subject->filter_emails_strings( $value, $object, $value, $key ) );
+
 	}
 }

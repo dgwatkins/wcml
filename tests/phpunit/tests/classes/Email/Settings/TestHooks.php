@@ -179,7 +179,7 @@ class TestHooks extends \OTGS_TestCase {
 		$subject->showLanguageLinksForWcEmails();
 		$output = ob_get_clean();
 
-		$this->assertRegExp( '#input\[name="woocommerce_customer_on_hold_order_subject"\]#', $output );
+		$this->assertRegExp( '#woocommerce_customer_on_hold_order_subject#', $output );
 	}
 
 	private function getSubject( $sitepress = null, $wcmlStrings = null ) {
