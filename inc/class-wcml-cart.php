@@ -65,6 +65,8 @@ class WCML_Cart {
 				'add_to_cart_sold_individually_exception'
 			), 10, 4 );
 
+			add_filter( 'woocommerce_cart_hash_key', [ $this, 'add_language_to_cart_hash_key' ] );
+
 			$this->localize_flat_rates_shipping_classes();
 		}
 	}
@@ -668,6 +670,15 @@ class WCML_Cart {
 		}
 
 		return $product;
+	}
+
+	/**
+	 * @param string $cart_hash_key
+	 *
+	 * @return string
+	 */
+	public function add_language_to_cart_hash_key( $cart_hash_key ) {
+		return $cart_hash_key . '-' . $this->sitepress->get_current_language();
 	}
 
 }
