@@ -91,7 +91,7 @@ class WCML_Emails {
 
 		add_action( 'woocommerce_order_partially_refunded_notification', array( $this, 'refresh_email_lang' ), 9 );
 		add_action( 'woocommerce_order_fully_refunded_notification', array( $this, 'refresh_email_lang' ), 9 );
-		add_filter( 'woocommerce_email_get_option', array( $this, 'filter_refund_emails_strings' ), 10, 4 );
+		add_filter( 'woocommerce_email_get_option', array( $this, 'filter_emails_strings' ), 10, 4 );
 
 		add_filter( 'woocommerce_email_setup_locale', '__return_false' );
 		add_filter( 'woocommerce_email_restore_locale', '__return_false' );
@@ -281,25 +281,33 @@ class WCML_Emails {
 		}
 	}
 
-	public function filter_refund_emails_strings( $value, $object, $old_value, $key ) {
+	public function filter_emails_strings( $value, $object, $old_value, $key ) {
 
-		if ( in_array( $key, array(
-				'subject_partial',
-				'subject_full',
-				'heading_partial',
-				'heading_full'
-			) ) && $object->object ) {
-			$translated_value = $this->get_refund_email_translated_string( $key, $object );
+		$translated_value = false;
+		$emailStrings     = wpml_collect( [
+			'subject_partial',
+			'subject_full',
+			'heading_partial',
+			'heading_full',
+			'additional_content'
+		] );
+
+		if (
+			isset( $object->object ) &&
+			$emailStrings->contains( $key )
+		) {
+			$translated_value = $this->get_email_translated_string( $key, $object );
 		}
 
-		return ! empty( $translated_value ) ? $translated_value : $value;
+		return $translated_value ?: $value;
 	}
 
-	public function get_refund_email_translated_string( $key, $object ) {
+	public function get_email_translated_string( $key, $object ) {
 
-		return $this->wcml_get_translated_email_string( 'admin_texts_woocommerce_customer_refunded_order_settings',
-			'[woocommerce_customer_refunded_order_settings]' . $key, $object->object->get_id() );
+		$context = 'admin_texts_woocommerce_' . $object->id . '_settings';
+		$name    = '[woocommerce_' . $object->id . '_settings]' . $key;
 
+		return $this->wcml_get_translated_email_string( $context, $name, $object->object->get_id() );
 	}
 
 	function new_order_admin_email( $order_id ) {
