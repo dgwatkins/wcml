@@ -296,18 +296,38 @@ class WCML_Emails {
 			isset( $object->object ) &&
 			$emailStrings->contains( $key )
 		) {
-			$translated_value = $this->get_email_translated_string( $key, $object );
+
+			$language = null;
+
+			$adminEmails = wpml_collect([
+				'new_order',
+				'cancelled_order',
+				'failed_order',
+			]);
+
+			if ( $adminEmails->contains( $object->id ) ) {
+				$language = $this->get_admin_language_by_email( $object->recipient, $object->object->get_id() );
+			}
+
+			$translated_value = $this->get_email_translated_string( $key, $object, $language );
 		}
 
 		return $translated_value ?: $value;
 	}
 
-	public function get_email_translated_string( $key, $object ) {
+	/**
+	 * @param string $key
+	 * @param WC_Email $object
+	 * @param string $language
+	 *
+	 * @return string
+	 */
+	public function get_email_translated_string( $key, $object, $language ) {
 
 		$context = 'admin_texts_woocommerce_' . $object->id . '_settings';
 		$name    = '[woocommerce_' . $object->id . '_settings]' . $key;
 
-		return $this->wcml_get_translated_email_string( $context, $name, $object->object->get_id() );
+		return $this->wcml_get_translated_email_string( $context, $name, $object->object->get_id(), $language );
 	}
 
 	function new_order_admin_email( $order_id ) {
@@ -325,7 +345,7 @@ class WCML_Emails {
 				 * @param string $recipient Admin email
 				 * @param int $order_id Order ID
 				 */
-				$admin_language = apply_filters( 'wcml_new_order_admin_email_language', $this->get_admin_language_by_email( $recipient ), $recipient, $order_id );
+				$admin_language = $this->get_admin_language_by_email( $recipient, $order_id );
 
 				$this->change_email_language( $admin_language );
 
@@ -349,16 +369,19 @@ class WCML_Emails {
 
 	/**
 	 * @param string $recipient
+	 * @param integer|bool $order_id
 	 *
 	 * @return string
 	 */
-	private function get_admin_language_by_email( $recipient ){
+	private function get_admin_language_by_email( $recipient, $order_id = false ) {
 		$user = get_user_by( 'email', $recipient );
 		if ( $user ) {
-			return $this->sitepress->get_user_admin_language( $user->ID, true );
+			$language = $this->sitepress->get_user_admin_language( $user->ID, true );
 		} else {
-			return $this->sitepress->get_default_language();
+			$language = $this->sitepress->get_default_language();
 		}
+
+		return apply_filters( 'wcml_new_order_admin_email_language', $language, $recipient, $order_id );
 	}
 
 	public function new_order_email_heading( $heading ) {

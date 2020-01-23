@@ -621,15 +621,38 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$language         = 'es';
 		$order_id         = 12;
 
-		$object         = new stdClass();
+		$object         = $this->getMockBuilder( 'WC_Email' )
+		                       ->disableOriginalConstructor()
+		                       ->getMock();
 		$object->id     = $emailOption;
+
+		$adminEmails = wpml_collect([
+			'new_order',
+			'cancelled_order',
+			'failed_order',
+		]);
+
+		if ( $adminEmails->contains( $object->id ) ) {
+			$user          = new stdClass();
+			$user->ID      = 1;
+			$language = 'en';
+
+			$object->recipient = 'admin@test.com';
+
+			WP_Mock::userFunction( 'get_user_by', [
+				'args'   => [ 'email', $object->recipient ],
+				'return' => $user
+			] );
+
+			$this->sitepress->expects( $this->once() )->method( 'get_user_admin_language' )->with( $user->ID, true )->willReturn( $language );
+		}
+
 		$object->object = $this->getMockBuilder( 'WC_Order' )
 		                       ->disableOriginalConstructor()
 		                       ->setMethods( array( 'get_id' ) )
 		                       ->getMock();
 
-		$object->object->expects( $this->once() )
-		               ->method( 'get_id' )
+		$object->object->method( 'get_id' )
 		               ->willReturn( $order_id );
 
 		WP_Mock::userFunction( 'get_post_meta', [
@@ -648,17 +671,17 @@ class Test_WCML_Emails extends OTGS_TestCase {
 	public function email_string_key() {
 
 		$emailOptions = wpml_collect( [
-			'woocommerce_new_order_settings',
-			'woocommerce_cancelled_order_settings',
-			'woocommerce_failed_order_settings',
-			'woocommerce_customer_on_hold_order_settings',
-			'woocommerce_customer_processing_order_settings',
-			'woocommerce_customer_completed_order_settings',
-			'woocommerce_customer_refunded_order_settings',
-			'woocommerce_customer_invoice_settings',
-			'woocommerce_customer_note_settings',
-			'woocommerce_customer_reset_password_settings',
-			'woocommerce_customer_new_account_settings'
+			'new_order',
+			'cancelled_order',
+			'failed_order',
+			'customer_on_hold_order',
+			'customer_processing_order',
+			'customer_completed_order',
+			'customer_refunded_order',
+			'customer_invoice',
+			'customer_note',
+			'customer_reset_password',
+			'customer_new_account'
 		] );
 
 		$textKeys = wpml_collect( [
