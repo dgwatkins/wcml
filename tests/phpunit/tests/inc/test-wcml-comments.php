@@ -70,6 +70,8 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'comment_form_before', array( $subject, 'comments_link' ) );
 		\WP_Mock::expectFilterAdded( 'wpml_is_comment_query_filtered', array( $subject, 'is_comment_query_filtered' ), 10, 2 );
 
+		\WP_Mock::expectFilterAdded( 'woocommerce_top_rated_products_widget_args', array( $subject, 'top_rated_products_widget_args' ) );
+
 		$subject->add_hooks();
 	}
 	
@@ -576,5 +578,21 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 		$subject->recalculate_average_rating_on_comment_hook( $comment_id, null );
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_top_rated_products_widget_args() {
+
+		$args             = [];
+		$args['meta_key'] = rand_str();
+
+		$subject = $this->get_subject();
+
+		$filtered_args = $subject->top_rated_products_widget_args( $args );
+
+		$this->assertEquals( '_wcml_average_rating', $filtered_args['meta_key'] );
 	}
 }

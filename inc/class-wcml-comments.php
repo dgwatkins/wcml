@@ -39,6 +39,8 @@ class WCML_Comments {
 		add_action( 'trashed_comment', array( $this, 'recalculate_average_rating_on_comment_hook' ), 10, 2 );
 		add_action( 'deleted_comment', array( $this, 'recalculate_average_rating_on_comment_hook' ), 10, 2 );
 		add_action( 'untrashed_comment', array( $this, 'recalculate_average_rating_on_comment_hook' ), 10, 2 );
+
+		add_filter( 'woocommerce_top_rated_products_widget_args', [ $this, 'top_rated_products_widget_args' ] );
 	}
 
 	/**
@@ -285,4 +287,14 @@ class WCML_Comments {
 		}
 	}
 
+	/**
+	 * @param array $args
+	 *
+	 * @return array
+	 */
+	public function top_rated_products_widget_args( $args ) {
+		$args['meta_key'] = self::WCML_AVERAGE_RATING_KEY;
+
+		return $args;
+	}
 }
