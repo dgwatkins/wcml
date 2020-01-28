@@ -24,6 +24,7 @@ class WCML_Custom_Prices{
             add_action( 'woocommerce_product_options_pricing', array($this, 'woocommerce_product_options_custom_pricing') );
             add_action( 'woocommerce_product_after_variable_attributes', array($this, 'woocommerce_product_after_variable_attributes_custom_pricing'), 10, 3 );
 
+	        add_filter( 'woocommerce_product_import_process_item_data', [ $this, 'product_import_uppercase_currency_codes_in_item_data' ] );
         }else{
 	        add_filter( 'woocommerce_product_is_on_sale', array( $this, 'filter_product_is_on_sale' ), 10, 2 );
         }
@@ -542,5 +543,25 @@ class WCML_Custom_Prices{
 		}
 
 		return $on_sale;
+	}
+
+	/**
+	 * @param array $data
+	 *
+	 * @return array
+	 */
+	public function product_import_uppercase_currency_codes_in_item_data( $data ) {
+
+		$currencies = array_map('strtolower', $this->woocommerce_wpml->multi_currency->get_currency_codes() );
+
+		foreach ( $data['meta_data'] as $key => $meta ) {
+
+			if ( in_array( substr( $meta['key'], - 3 ), $currencies ) ) {
+				$currency_code                    = substr( $meta['key'], - 3 );
+				$data['meta_data'][ $key ]['key'] = str_replace( $currency_code, strtoupper( $currency_code ), $meta['key'] );
+			}
+		}
+
+		return $data;
 	}
 }

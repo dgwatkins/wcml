@@ -30,6 +30,37 @@ class Test_WCML_Custom_Prices extends OTGS_TestCase {
 		$subject->add_hooks();
 	}
 
+	/**
+	 * @test
+	 */
+	public function custom_prices_init_admin_hooks() {
+
+		\WP_Mock::userFunction( 'is_admin', [ 'return' => time() ] );
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::expectActionAdded( 'woocommerce_variation_options', [
+			$subject,
+			'add_individual_variation_nonce'
+		], 10, 3 );
+		\WP_Mock::expectActionAdded( 'woocommerce_product_options_pricing', [
+			$subject,
+			'woocommerce_product_options_custom_pricing'
+		] );
+		\WP_Mock::expectActionAdded( 'woocommerce_product_after_variable_attributes', [
+			$subject,
+			'woocommerce_product_after_variable_attributes_custom_pricing'
+		], 10, 3 );
+
+
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_import_process_item_data', [
+			$subject,
+			'product_import_uppercase_currency_codes_in_item_data'
+		] );
+
+		$subject->custom_prices_init();
+	}
+
 
 	/**
 	 * @test
@@ -190,9 +221,9 @@ class Test_WCML_Custom_Prices extends OTGS_TestCase {
 		$woocommerce_wpml = $this->get_woocommerce_wpml();
 
 		$woocommerce_wpml->products = $this->getMockBuilder( 'wcml_products' )
-		                                         ->disableOriginalConstructor()
-		                                         ->setMethods( array( 'get_original_product_id'))
-		                                         ->getMock();
+		                                   ->disableOriginalConstructor()
+		                                   ->setMethods( array( 'get_original_product_id'))
+		                                   ->getMock();
 
 		$woocommerce_wpml->products->method( 'get_original_product_id' )->with( $product_id )->willReturn( $product_id );
 
@@ -299,6 +330,42 @@ class Test_WCML_Custom_Prices extends OTGS_TestCase {
 				)
 			),
 		);
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function it_should_uppercase_currency_codes_in_item_data() {
+
+		$data['meta_data'] = [
+			[ 'key' => '_price_usd' ],
+			[ 'key' => '_regular_price_usd' ],
+			[ 'key' => '_price_eur' ],
+			[ 'key' => '_regular_price_eur' ],
+		];
+
+		$expected_data['meta_data'] = [
+			[ 'key' => '_price_USD' ],
+			[ 'key' => '_regular_price_USD' ],
+			[ 'key' => '_price_EUR' ],
+			[ 'key' => '_regular_price_EUR' ],
+		];
+
+		$currency_codes = [ 'USD', 'EUR' ];
+
+		$woocommerce_wpml = $this->get_woocommerce_wpml();
+
+		$woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( [ 'get_currency_codes' ] )
+		                                         ->getMock();
+
+		$woocommerce_wpml->multi_currency->method( 'get_currency_codes' )->willReturn( $currency_codes );
+
+		$subject = $this->get_subject( $woocommerce_wpml );
+
+		$this->assertEquals( $expected_data, $subject->product_import_uppercase_currency_codes_in_item_data( $data ) );
 	}
 
 }
