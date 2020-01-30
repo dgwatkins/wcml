@@ -47,10 +47,13 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 		\WP_Mock::userFunction( 'is_admin', array( 'times' => 1, 'return' => false ) );
 
 		WP_Mock::expectFilterAdded( 'woocommerce_get_' . $woo_page, array( $subject, 'translate_pages_in_settings' ) );
+
 		WP_Mock::expectFilterAdded( 'option_woocommerce_' . $woo_page, array(
 			$subject,
 			'translate_pages_in_settings'
 		) );
+
+		WP_Mock::expectFilterAdded( 'woocommerce_get_checkout_url', array( $subject, 'get_checkout_page_url' ) );
 
 		$subject->add_hooks();
 	}

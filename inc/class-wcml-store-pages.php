@@ -45,6 +45,8 @@ class WCML_Store_Pages {
 			$this->add_filter_to_get_shop_translated_page_id();
 		}
 
+		add_filter( 'woocommerce_get_checkout_url', array( $this, 'get_checkout_page_url' ) );
+
 		add_filter( 'post_type_archive_link', array( $this, 'filter_shop_archive_link' ), 10, 2 );
 	}
 
@@ -179,7 +181,6 @@ class WCML_Store_Pages {
 			add_filter( 'option_woocommerce_' . $woo_page, array( $this, 'translate_pages_in_settings' ) );
 		}
 
-		add_filter( 'woocommerce_get_checkout_url', array( $this, 'get_checkout_page_url' ) );
 	}
 
 	function translate_pages_in_settings( $id ) {
