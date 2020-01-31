@@ -39,7 +39,7 @@ class WCML_WC_Subscriptions{
 		), 10, 2 );
 
 		add_filter( 'wcml_xliff_allowed_variations_types', array( $this, 'set_allowed_variations_types_in_xliff') );
-		
+
 		//Add language links to email settings
 		add_filter( 'wcml_emails_options_to_translate', array( $this, 'translate_email_options' ) );
 		add_filter( 'wcml_emails_section_name_prefix', array( $this, 'email_option_section_prefix' ), 10, 2 );
@@ -60,7 +60,7 @@ class WCML_WC_Subscriptions{
 
 			add_filter( 'wcs_get_subscription', array( $this, 'filter_subscription_items' ) );
 		}
-		
+
 		//Translate emails
 		add_filter( 'woocommerce_generated_manual_renewal_order_renewal_notification', array( $this, 'translate_renewal_notification'), 9 );
 		add_filter( 'woocommerce_order_status_failed_renewal_notification', array( $this, 'translate_renewal_notification'), 9 );
@@ -74,14 +74,19 @@ class WCML_WC_Subscriptions{
 	 * @param WC_Product $product
 	 * @return string
 	 */
-	function subscriptions_product_sign_up_fee_filter( $subscription_sign_up_fee, $product ) {
+	public function subscriptions_product_sign_up_fee_filter( $subscription_sign_up_fee, $product ) {
 
 		if ( $product && wcml_is_multi_currency_on() ) {
 			$currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
 
 			if ( $currency !== wcml_get_woocommerce_currency_option() ) {
 
-				$original_product_id = $this->woocommerce_wpml->products->get_original_product_id( $product->get_id() );
+				$product_id = $product->get_id();
+				if( $product instanceof WC_Product_Variable_Subscription ){
+					$product_id = $product->get_meta( '_min_price_variation_id', true );
+				}
+
+				$original_product_id = $this->woocommerce_wpml->products->get_original_product_id( $product_id );
 
 				if ( get_post_meta( $original_product_id, '_wcml_custom_prices_status', true ) ) {
 					$subscription_sign_up_fee = get_post_meta( $original_product_id, '_subscription_sign_up_fee_' . $currency, true );
@@ -268,20 +273,24 @@ class WCML_WC_Subscriptions{
 		}
 	}
 
-	function woocommerce_subscription_price_from( $price, $product ){
+	/**
+	 * @param string $price
+	 * @param WC_Product|WC_Product_Subscription_Variation $product
+	 *
+	 * @return string
+	 */
+	public function woocommerce_subscription_price_from( $price, $product ) {
 
-		if ( $product && in_array( $product->get_type(), array( 'variable-subscription', 'subscription_variation' ) ) ) {
+		if ( $product && $product instanceof WC_Product_Subscription_Variation ) {
 
-			$variation_id = $product->get_meta( '_min_price_variation_id', true );
-
-			if( $variation_id && get_post_meta( $variation_id, '_wcml_custom_prices_status', true ) ){
+			$custom_prices_on = get_post_meta( $product->get_id(), '_wcml_custom_prices_status', true );
+			if ( $custom_prices_on ) {
 				$client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
 
-				$price = get_post_meta( $variation_id, '_price_'.$client_currency, true );
-			}else{
+				$price = get_post_meta( $product->get_id(), '_price_' . $client_currency, true );
+			} else {
 				$price = apply_filters( 'wcml_raw_price_amount', $price );
 			}
-
 		}
 
 		return $price;
@@ -341,10 +350,10 @@ class WCML_WC_Subscriptions{
 	 * @param integer $order_id Order ID
 	 */
 	public function translate_renewal_notification( $order_id ) {
-	    
+
 	    if ( isset( WC()->mailer()->emails['WCS_Email_Customer_Renewal_Invoice'] ) ) {
 		$this->woocommerce_wpml->emails->refresh_email_lang( $order_id );
-	    
+
 		$WCS_Email_Customer_Renewal_Invoice = WC()->mailer()->emails['WCS_Email_Customer_Renewal_Invoice'];
 		$WCS_Email_Customer_Renewal_Invoice->heading = __( $WCS_Email_Customer_Renewal_Invoice->heading, 'woocommerce-subscriptions' );
 		$WCS_Email_Customer_Renewal_Invoice->subject = __( $WCS_Email_Customer_Renewal_Invoice->subject, 'woocommerce-subscriptions' );
@@ -352,7 +361,7 @@ class WCML_WC_Subscriptions{
 		add_filter( 'woocommerce_email_get_option', array( $this, 'translate_heading_subject' ), 10, 4 );
 }
 	}
-	
+
 	/**
 	 * Translate custom heading and subject for renewal notification
 	 * @param string $return_value original string
@@ -369,24 +378,24 @@ class WCML_WC_Subscriptions{
 		    return empty( $translated_admin_string ) ? $return_value : $translated_admin_string;
 		}
 	    }
-	    
+
 	    return $return_value;
 	}
-	
+
 	/**
 	 * Add customer renewal invoice option to translate
 	 * @param array $emails_options list of option to translate
 	 * @return array $emails_options
 	 */
 	public function translate_email_options( $emails_options ) {
-	    
+
 	    if ( is_array( $emails_options ) ) {
 		$emails_options[] = 'woocommerce_customer_renewal_invoice_settings';
 	    }
-	    
+
 	    return $emails_options;
 	}
-	
+
 	/**
 	 * Change section name prefix to add language links
 	 * @param string $section_prefix section prefix
@@ -394,11 +403,11 @@ class WCML_WC_Subscriptions{
 	 * @return string $section_prefix
 	 */
 	public function email_option_section_prefix( $section_prefix, $emails_option ) {
-	    
+
 	    if ( $emails_option === 'woocommerce_customer_renewal_invoice_settings' ) {
 		return 'wcs_email_';
 	    }
-	    
+
 	    return $section_prefix;
 	}
 
