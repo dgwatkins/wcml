@@ -116,17 +116,15 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 
 		$price           = rand( 1, 100 );
 		$expected_price  = rand( 1, 100 );
-		$variation_id    = rand( 1, 100 );
+		$product_id      = rand( 1, 100 );
 		$client_currency = rand_str();
 
-		$product = $this->getMockBuilder( 'WC_Product' )
+		$product = $this->getMockBuilder( 'WC_Product_Subscription_Variation' )
 		                ->disableOriginalConstructor()
-		                ->setMethods( array( 'get_type', 'get_meta' ) )
+		                ->setMethods( ['get_id'] )
 		                ->getMock();
 
-		$product->method( 'get_type' )->willReturn( 'variable-subscription' );
-
-		$product->method( 'get_meta' )->with( '_min_price_variation_id', true )->willReturn( $variation_id );
+		$product->method( 'get_id' )->willReturn( $product_id );
 
 		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
 		                                               ->disableOriginalConstructor()
@@ -136,12 +134,12 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 		$this->woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
 
 		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args'   => array( $variation_id, '_wcml_custom_prices_status', true ),
+			'args'   => array( $product_id, '_wcml_custom_prices_status', true ),
 			'return' => true
 		) );
 
 		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args'   => array( $variation_id, '_price_' . $client_currency, true ),
+			'args'   => array( $product_id, '_price_' . $client_currency, true ),
 			'return' => $expected_price
 		) );
 
@@ -159,42 +157,19 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 
 		$price          = rand( 1, 100 );
 		$expected_price = rand( 1, 100 );
+		$product_id = 12;
 
-		$product = $this->getMockBuilder( 'WC_Product' )
+		$product = $this->getMockBuilder( 'WC_Product_Subscription_Variation' )
 		                ->disableOriginalConstructor()
-		                ->setMethods( array( 'get_type', 'get_meta' ) )
+		                ->setMethods( ['get_id'] )
 		                ->getMock();
 
-		$product->method( 'get_type' )->willReturn( 'variable-subscription' );
+		$product->method( 'get_id' )->willReturn( $product_id );
 
-		$product->method( 'get_meta' )->with( '_min_price_variation_id', true )->willReturn( false );
-
-		\WP_Mock::onFilter( 'wcml_raw_price_amount' )
-		        ->with( $price )
-		        ->reply( $expected_price );
-
-		$subject = $this->get_subject();
-
-		$filtered_price = $subject->woocommerce_subscription_price_from( $price, $product );
-
-		$this->assertEquals( $expected_price, $filtered_price );
-	}
-	/**
-	 * @test
-	 */
-	public function woocommerce_subscription_price_from_auto_converted_price_for_subscription_variation_type() {
-
-		$price          = rand( 1, 100 );
-		$expected_price = rand( 1, 100 );
-
-		$product = $this->getMockBuilder( 'WC_Product' )
-		                ->disableOriginalConstructor()
-		                ->setMethods( array( 'get_type', 'get_meta' ) )
-		                ->getMock();
-
-		$product->method( 'get_type' )->willReturn( 'subscription_variation' );
-
-		$product->method( 'get_meta' )->with( '_min_price_variation_id', true )->willReturn( false );
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_wcml_custom_prices_status', true ),
+			'return' => false
+		) );
 
 		\WP_Mock::onFilter( 'wcml_raw_price_amount' )
 		        ->with( $price )
@@ -345,6 +320,63 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 		                ->getMock();
 
 		$product->method( 'get_id' )->willReturn( $product_id );
+
+		\WP_Mock::wpFunction( 'wcml_is_multi_currency_on', array(
+			'return' => true
+		) );
+
+		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                               ->disableOriginalConstructor()
+		                                               ->setMethods( array( 'get_client_currency' ) )
+		                                               ->getMock();
+
+		$this->woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                               ->disableOriginalConstructor()
+		                                               ->setMethods( array( 'get_original_product_id' ) )
+		                                               ->getMock();
+
+		$this->woocommerce_wpml->products->method( 'get_original_product_id' )->willReturn( $product_id );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_wcml_custom_prices_status', true ),
+			'return' => true
+		) );
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_subscription_sign_up_fee_' . $client_currency, true ),
+			'return' => $expected_subscription_sign_up_fee
+		) );
+
+		\WP_Mock::wpFunction( 'wcml_get_woocommerce_currency_option', array(
+			'return' => rand_str()
+		) );
+
+		$subject = $this->get_subject();
+
+		$filtered_subscription_sign_up_fee = $subject->subscriptions_product_sign_up_fee_filter( $subscription_sign_up_fee, $product );
+
+		$this->assertEquals( $expected_subscription_sign_up_fee, $filtered_subscription_sign_up_fee );
+	}
+
+	/**
+	 * @test
+	 */
+	public function subscriptions_product_sign_up_fee_filter_custom_price_variable_subscription() {
+
+		$subscription_sign_up_fee          = mt_rand( 1, 100 );
+		$expected_subscription_sign_up_fee = mt_rand( 101, 200 );
+		$product_id                        = mt_rand( 201, 300 );
+		$client_currency                   = rand_str();
+
+		$product = $this->getMockBuilder( 'WC_Product_Variable_Subscription' )
+		                ->disableOriginalConstructor()
+		                ->setMethods( ['get_meta', 'get_id'] )
+		                ->getMock();
+
+		$product->method( 'get_id' )->willReturn( 1 );
+		$product->method( 'get_meta' )->with( '_min_price_variation_id', true )->willReturn( $product_id );
 
 		\WP_Mock::wpFunction( 'wcml_is_multi_currency_on', array(
 			'return' => true

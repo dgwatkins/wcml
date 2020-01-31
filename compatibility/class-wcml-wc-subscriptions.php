@@ -91,7 +91,12 @@ class WCML_WC_Subscriptions {
 
 			if ( $currency !== wcml_get_woocommerce_currency_option() ) {
 
-				$original_product_id = $this->woocommerce_wpml->products->get_original_product_id( $product->get_id() );
+				$product_id = $product->get_id();
+				if( $product instanceof WC_Product_Variable_Subscription ){
+					$product_id = $product->get_meta( '_min_price_variation_id', true );
+				}
+
+				$original_product_id = $this->woocommerce_wpml->products->get_original_product_id( $product_id );
 
 				if ( get_post_meta( $original_product_id, '_wcml_custom_prices_status', true ) ) {
 					$subscription_sign_up_fee = get_post_meta( $original_product_id, '_subscription_sign_up_fee_' . $currency, true );
@@ -279,16 +284,21 @@ class WCML_WC_Subscriptions {
 		}
 	}
 
+	/**
+	 * @param string $price
+	 * @param WC_Product|WC_Product_Subscription_Variation $product
+	 *
+	 * @return string
+	 */
 	public function woocommerce_subscription_price_from( $price, $product ) {
 
-		if ( $product && in_array( $product->get_type(), [ 'variable-subscription', 'subscription_variation' ] ) ) {
+		if ( $product && $product instanceof WC_Product_Subscription_Variation ) {
 
-			$variation_id = $product->get_meta( '_min_price_variation_id', true );
-
-			if ( $variation_id && get_post_meta( $variation_id, '_wcml_custom_prices_status', true ) ) {
+			$custom_prices_on = get_post_meta( $product->get_id(), '_wcml_custom_prices_status', true );
+			if ( $custom_prices_on ) {
 				$client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
 
-				$price = get_post_meta( $variation_id, '_price_' . $client_currency, true );
+				$price = get_post_meta( $product->get_id(), '_price_' . $client_currency, true );
 			} else {
 				$price = apply_filters( 'wcml_raw_price_amount', $price );
 			}
@@ -352,12 +362,12 @@ class WCML_WC_Subscriptions {
 	 */
 	public function translate_renewal_notification( $order_id ) {
 
-		if ( isset( WC()->mailer()->emails['WCS_Email_Customer_Renewal_Invoice'] ) ) {
-			$this->woocommerce_wpml->emails->refresh_email_lang( $order_id );
+	    if ( isset( WC()->mailer()->emails['WCS_Email_Customer_Renewal_Invoice'] ) ) {
+		$this->woocommerce_wpml->emails->refresh_email_lang( $order_id );
 
-			$WCS_Email_Customer_Renewal_Invoice          = WC()->mailer()->emails['WCS_Email_Customer_Renewal_Invoice'];
-			$WCS_Email_Customer_Renewal_Invoice->heading = __( $WCS_Email_Customer_Renewal_Invoice->heading, 'woocommerce-subscriptions' );
-			$WCS_Email_Customer_Renewal_Invoice->subject = __( $WCS_Email_Customer_Renewal_Invoice->subject, 'woocommerce-subscriptions' );
+		$WCS_Email_Customer_Renewal_Invoice = WC()->mailer()->emails['WCS_Email_Customer_Renewal_Invoice'];
+		$WCS_Email_Customer_Renewal_Invoice->heading = __( $WCS_Email_Customer_Renewal_Invoice->heading, 'woocommerce-subscriptions' );
+		$WCS_Email_Customer_Renewal_Invoice->subject = __( $WCS_Email_Customer_Renewal_Invoice->subject, 'woocommerce-subscriptions' );
 
 			add_filter( 'woocommerce_email_get_option', [ $this, 'translate_heading_subject' ], 10, 4 );
 		}
