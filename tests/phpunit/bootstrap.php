@@ -108,6 +108,7 @@ FunctionMocker::init(
 			'headers_sent',
 			'setcookie',
 			'time',
+			'defined',
 		],
 	]
 );

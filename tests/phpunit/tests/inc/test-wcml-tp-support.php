@@ -1,5 +1,7 @@
 <?php
 
+use tad\FunctionMocker\FunctionMocker;
+
 class Test_WCML_TP_Support extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
@@ -53,10 +55,36 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 	 */
 	public function add_hooks(){
 
+		FunctionMocker::replace( 'defined', function( $name ) {
+			return 'WPML_MEDIA_VERSION' === $name ? false : null;
+		});
+
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectFilterAdded( 'wpml_tm_translation_job_data', array( $subject, 'append_custom_attributes_to_translation_package' ), 10, 2 );
-		\WP_Mock::expectActionAdded( 'wpml_translation_job_saved',   array( $subject, 'save_custom_attribute_translations' ), 10, 3 );
+		\WP_Mock::expectFilterAdded( 'wpml_tm_translation_job_data', [ $subject, 'append_custom_attributes_to_translation_package' ], 10, 2 );
+		\WP_Mock::expectActionAdded( 'wpml_translation_job_saved',   [ $subject, 'save_custom_attribute_translations' ], 10, 3 );
+
+		\WP_Mock::expectFilterAdded( 'wpml_tm_translation_job_data', [ $subject, 'append_images_to_translation_package' ], 10, 2 );
+		\WP_Mock::expectActionAdded( 'wpml_translation_job_saved',   [ $subject, 'save_images_translations' ], 10, 3 );
+
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function it_should_not_add_media_hooks_when_Media_plugin_enabled(){
+
+		FunctionMocker::replace( 'defined', function( $name ) {
+			return 'WPML_MEDIA_VERSION' === $name ? true : null;
+		});
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::expectFilterNotAdded( 'wpml_tm_translation_job_data', [ $subject, 'append_images_to_translation_package' ], 10, 2 );
+		\WP_Mock::expectActionNotAdded( 'wpml_translation_job_saved',   [ $subject, 'save_images_translations' ], 10, 3 );
 
 		$subject->add_hooks();
 	}
