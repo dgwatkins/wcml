@@ -28,7 +28,6 @@ class WCML_Dynamic_Pricing {
 			add_filter( 'woocommerce_dynamic_pricing_is_applied_to', [ $this, 'woocommerce_dynamic_pricing_is_applied_to' ], 10, 5 );
 			add_filter( 'woocommerce_dynamic_pricing_get_rule_amount', [ $this, 'woocommerce_dynamic_pricing_get_rule_amount' ], 10, 2 );
 			add_filter( 'dynamic_pricing_product_rules', [ $this, 'dynamic_pricing_product_rules' ] );
-			add_filter( 'wcml_calculate_totals_exception', [ $this, 'calculate_totals_exception' ] );
 		}else{
 			$this->hide_language_switcher_for_settings_page();
 		}
@@ -212,13 +211,6 @@ class WCML_Dynamic_Pricing {
 			}
 		}
 		return $rules;
-	}
-
-	/**
-	 * @return bool
-	 */
-	function calculate_totals_exception() {
-		return false;
 	}
 
 	/**
