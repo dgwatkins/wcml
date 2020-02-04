@@ -240,8 +240,7 @@ class woocommerce_wpml {
 		$this->endpoints = new WCML_Endpoints( $this, $sitepress, $wpdb );
 		$this->endpoints->add_hooks();
 		$this->requests = new WCML_Requests();
-		$this->cart     = new WCML_Cart( $this, $sitepress, $woocommerce );
-		$this->cart->add_hooks();
+		$this->cart->add_hooks(); // object is instantiated before.
 		$this->coupons = new WCML_Coupons( $this, $sitepress );
 		$this->coupons->add_hooks();
 		$this->locale = new WCML_Locale( $this, $sitepress );
