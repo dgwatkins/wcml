@@ -87,7 +87,6 @@ class Test_WCML_Cart extends OTGS_TestCase {
 			$subject,
 			'woocommerce_calculate_totals'
 		], 100 );
-		\WP_Mock::expectActionAdded( 'woocommerce_cart_loaded_from_session', [ $subject, 'translate_cart_subtotal' ] );
 		\WP_Mock::expectActionAdded( 'woocommerce_before_checkout_process', [ $subject, 'wcml_refresh_cart_total' ] );
 		\WP_Mock::expectFilterAdded( 'woocommerce_cart_item_data_to_validate', [
 			$subject,

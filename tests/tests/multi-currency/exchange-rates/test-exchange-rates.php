@@ -139,32 +139,6 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
     /**
      * @test
      */
-    public function test_update_exchange_rates_ajax(){
-
-        /*
-
-        // Invalid Nonce
-        $_POST['wcml_nonce'] = '_invalid_';
-
-        $this->exchange_rate_services->update_exchange_rates_ajax();
-        $response = json_decode( $this->_json_response );
-
-        $this->assertEquals( 0 ,                $response['success'] );
-        $this->assertEquals( 'Invalid nonce' ,  $response['error'] );
-
-        // Valid Nonce
-        $_POST['wcml_nonce'] = wp_create_nonce( 'update-exchange-rates' );
-        $this->exchange_rate_services->update_exchange_rates_ajax();
-        $response = json_decode( $this->_json_response );
-
-        print_r( $response );
-
-        */
-    }
-
-    /**
-     * @test
-     */
     public function test_update_exchange_rates(){
 		global $wp_locale;
 

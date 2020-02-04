@@ -65,7 +65,6 @@ class WCML_Cart {
 
 			// cart
 			add_action( 'woocommerce_before_calculate_totals', [ $this, 'woocommerce_calculate_totals' ], 100 );
-			add_action( 'woocommerce_cart_loaded_from_session', [ $this, 'translate_cart_subtotal' ] );
 			add_action( 'woocommerce_before_checkout_process', [ $this, 'wcml_refresh_cart_total' ] );
 			add_filter( 'woocommerce_cart_item_data_to_validate', [ $this, 'validate_cart_item_data' ], 10, 2 );
 			add_filter( 'woocommerce_cart_item_product', [ $this, 'adjust_cart_item_product_name' ] );
@@ -504,25 +503,6 @@ class WCML_Cart {
 		unset( $cart_contents['key'] );
 
 		return apply_filters( 'wcml_filter_cart_item_data', $cart_contents );
-	}
-
-	public function translate_cart_subtotal( $cart ) {
-
-		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
-			// special case: check if attachment loading
-			$attachments = [ 'png', 'jpg', 'jpeg', 'gif', 'js', 'css' ];
-
-			foreach ( $attachments as $attachment ) {
-				$match = preg_match( '/\.' . $attachment . '$/', $_SERVER['REQUEST_URI'] );
-				if ( ! empty( $match ) ) {
-					return false;
-				}
-			}
-		}
-
-		if ( apply_filters( 'wcml_calculate_totals_exception', true, $cart ) ) {
-			$cart->calculate_totals();
-		}
 	}
 
 	// refresh cart total to return correct price from WC object

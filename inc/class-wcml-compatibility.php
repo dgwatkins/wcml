@@ -167,10 +167,6 @@ class WCML_Compatibility {
 			$this->wc_ajax_layered_nav_widget = new WCML_Ajax_Layered_Nav_Widget();
 		}
 
-		if ( is_plugin_active( 'woocommerce-ajax-cart/wooajaxcart.php' ) ) {
-			$this->wc_ajax_cart = new WCML_WC_Ajax_Cart();
-		}
-
 		// woocommerce composite products.
 		if ( isset( $GLOBALS['woocommerce_composite_products'] ) ) {
 			$this->wc_composite_products = new WCML_Composite_Products( $this->sitepress, $this->woocommerce_wpml, $this->tp );
@@ -204,11 +200,6 @@ class WCML_Compatibility {
 		// Aurum Theme.
 		if ( wp_get_theme()->get( 'Name' ) === 'Aurum' ) {
 			new WCML_Aurum();
-		}
-
-		// Visual Products Configurator.
-		if ( class_exists( 'Vpc' ) ) {
-			$this->vpc = new WCML_Vpc();
 		}
 
 		// WooCommerce Show Single Variations.
@@ -248,12 +239,6 @@ class WCML_Compatibility {
 		if ( function_exists( 'maxstore_pro_setup' ) ) {
 			$this->maxstore = new WCML_MaxStore();
 			$this->maxstore->add_hooks();
-		}
-
-		// MaxStore-Pro Theme.
-		if ( defined( 'ETHEME_THEME_NAME' ) && 'Blanco' === ETHEME_THEME_NAME ) {
-			$this->etheme_blanco = new WCML_Etheme_Blanco();
-			$this->etheme_blanco->add_hooks();
 		}
 
 		// WPBakery Page Builder.

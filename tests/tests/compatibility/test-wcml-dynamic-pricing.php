@@ -201,14 +201,6 @@ class Test_WCML_Dynamic_Pricing extends WCML_UnitTestCase {
 		$this->assertEquals( $expected, $dynamic_pricing->dynamic_pricing_product_rules( $rules ) );
 	}
 
-	/**
-	 * @test
-	 */
-	public function calculate_totals_exception() {
-		$dynamic_pricing = new WCML_Dynamic_Pricing( $this->sitepress );
-		$this->assertFalse( $dynamic_pricing->calculate_totals_exception() );
-	}
-
 	function tearDown() {
 		parent::tearDown();
 		$this->settings_helper->set_taxonomy_not_translatable( 'product_cat' );
