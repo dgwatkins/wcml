@@ -84,6 +84,15 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'woocommerce_low_stock_notification', array( $subject, 'low_stock_admin_notification' ), 9 );
 		\WP_Mock::expectActionAdded( 'woocommerce_no_stock_notification', array( $subject, 'no_stock_admin_notification' ), 9 );
 
+		//comments language actions
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_pending', [ $subject, 'comments_language' ], 11 );
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_processing', [ $subject, 'comments_language' ], 11 );
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_on-hold', [ $subject, 'comments_language' ], 11 );
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_completed', [ $subject, 'comments_language' ], 11 );
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_cancelled', [ $subject, 'comments_language' ], 11 );
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_refunded', [ $subject, 'comments_language' ], 11 );
+		\WP_Mock::expectActionAdded( 'woocommerce_order_status_failed', [ $subject, 'comments_language' ], 11 );
+
 		\WP_Mock::expectFilterAdded( 'woocommerce_email_get_option', array( $subject, 'filter_emails_strings' ), 10, 4 );
 
 		$subject->add_hooks();

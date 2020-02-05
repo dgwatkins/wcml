@@ -8,23 +8,6 @@ class WCML_Orders {
 	private $woocommerce_wpml;
 	private $sitepress;
 
-	private $standard_order_notes = [
-		'Order status changed from %s to %s.',
-		'Order item stock reduced successfully.',
-		'Item #%s stock reduced from %s to %s.',
-		'Item #%s stock increased from %s to %s.',
-		'Awaiting BACS payment',
-		'Awaiting cheque payment',
-		'Payment to be made upon delivery.',
-		'Validation error: PayPal amounts do not match (gross %s).',
-		'Validation error: PayPal IPN response from a different email address (%s).',
-		'Payment pending: %s',
-		'Payment %s via IPN.',
-		'Validation error: PayPal amounts do not match (amt %s).',
-		'IPN payment completed',
-		'PDT payment completed',
-	];
-
 	public function __construct( $woocommerce_wpml, $sitepress ) {
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->sitepress        = $sitepress;
@@ -44,10 +27,6 @@ class WCML_Orders {
 		add_filter( 'icl_lang_sel_copy_parameters', [ $this, 'append_query_parameters' ] );
 
 		add_filter( 'the_comments', [ $this, 'get_filtered_comments' ] );
-
-		if ( $this->should_attach_new_order_note_data_filter() ) {
-			add_filter( 'gettext', [ $this, 'filtered_woocommerce_new_order_note_data' ], 10, 3 );
-		}
 
 		add_filter( 'woocommerce_order_get_items', [ $this, 'woocommerce_order_get_items' ], 10, 2 );
 
@@ -72,33 +51,6 @@ class WCML_Orders {
 		if ( is_admin() ) {
 			$this->maybe_set_dashboard_cookie();
 		}
-	}
-
-	public function should_attach_new_order_note_data_filter() {
-		$admin_language         = $this->sitepress->get_user_admin_language( get_current_user_id(), true );
-		$all_strings_in_english = get_option( 'wpml-st-all-strings-are-in-english' );
-
-		return 'en' !== $admin_language || ! $all_strings_in_english;
-	}
-
-	public function filtered_woocommerce_new_order_note_data( $translations, $text, $domain ) {
-		if ( in_array( $text, $this->standard_order_notes ) ) {
-
-			$language = $this->woocommerce_wpml->strings->get_string_language( $text, 'woocommerce' );
-
-			if ( $this->sitepress->get_user_admin_language( get_current_user_id(), true ) != $language ) {
-
-				$string_id = icl_get_string_id( $text, 'woocommerce' );
-				$strings   = icl_get_string_translations_by_id( $string_id );
-				if ( $strings ) {
-					$translations = $strings[ $this->sitepress->get_user_admin_language( get_current_user_id(), true ) ]['value'];
-				}
-			} else {
-				return $text;
-			}
-		}
-
-		return $translations;
 	}
 
 	public function get_filtered_comments( $comments ) {
