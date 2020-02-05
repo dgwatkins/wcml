@@ -37,7 +37,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 	}
 
 
-	private function get_subject( $woocommerce_wpml = false, $sitepress = false, $wpml_post_translations = false ){
+	private function get_subject( $woocommerce_wpml = false, $sitepress = false, $wpml_post_translations = false, $wpdb = false ){
 		
 		if( !$woocommerce_wpml ){
 			$woocommerce_wpml = $this->get_woocommerce_wpml();
@@ -50,8 +50,12 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		if( !$wpml_post_translations ){
 			$wpml_post_translations = $this->get_wpml_post_translations();
 		}
+
+		if( !$wpdb ){
+			$wpdb = $this->stubs->wpdb();
+		}
 		
-		return new WCML_Comments( $woocommerce_wpml, $sitepress, $wpml_post_translations );
+		return new WCML_Comments( $woocommerce_wpml, $sitepress, $wpml_post_translations, $wpdb );
 	}
 
 	/**
@@ -69,8 +73,10 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'comments_clauses', array( $subject, 'comments_clauses' ), 10, 2 );
 		\WP_Mock::expectActionAdded( 'comment_form_before', array( $subject, 'comments_link' ) );
 		\WP_Mock::expectFilterAdded( 'wpml_is_comment_query_filtered', array( $subject, 'is_comment_query_filtered' ), 10, 2 );
+		\WP_Mock::expectActionAdded( 'woocommerce_product_set_visibility', array( $subject, 'recalculate_comment_rating' ), 9 );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_top_rated_products_widget_args', array( $subject, 'top_rated_products_widget_args' ) );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rating_filter_count', array( $subject, 'woocommerce_rating_filter_count' ), 10, 3 );
 
 		$subject->add_hooks();
 	}
@@ -594,5 +600,43 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$filtered_args = $subject->top_rated_products_widget_args( $args );
 
 		$this->assertEquals( '_wcml_average_rating', $filtered_args['meta_key'] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_filter_woocommerce_rating_count() {
+
+		$label         = rand_str();
+		$count         = 2;
+		$rating        = 4;
+		$expectedCount = 1;
+
+		$current_language = 'es';
+
+		$ratingTerm                   = new stdClass();
+		$ratingTerm->term_taxonomy_id = 10;
+
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( [ 'get_current_language' ] )
+		                  ->getMock();
+
+		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
+
+		$wpdb = $this->stubs->wpdb();
+		$wpdb->method( 'get_var' )->willReturn( $expectedCount );
+
+		$subject = $this->get_subject( false, $sitepress, false, $wpdb );
+
+		\WP_Mock::userFunction( 'get_term_by', [
+			'args'   => [ 'name', 'rated-' . $rating, 'product_visibility' ],
+			'return' => $ratingTerm
+		] );
+
+		$filtered_count = $subject->woocommerce_rating_filter_count( $label, $count, $rating );
+
+		$this->assertEquals( "({$expectedCount})", $filtered_count );
 	}
 }

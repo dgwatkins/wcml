@@ -255,7 +255,7 @@ class woocommerce_wpml {
 		$this->wcml_products_screen->init();
 		$this->cart_sync_warnings = new WCML_Cart_Sync_Warnings( $this, $sitepress );
 		$this->cart_sync_warnings->add_hooks();
-		$this->comments = new WCML_Comments( $this, $sitepress, $wpml_post_translations );
+		$this->comments = new WCML_Comments( $this, $sitepress, $wpml_post_translations, $wpdb );
 		$this->comments->add_hooks();
 
 		if ( is_admin() ) {

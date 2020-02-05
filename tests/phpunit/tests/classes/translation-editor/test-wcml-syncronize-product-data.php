@@ -205,6 +205,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 	public function sync_product_translations_visibility(){
 
 		$product_id = mt_rand( 1, 100 );
+		$average_rating = 4;
 
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
 		     ->disableOriginalConstructor()
@@ -230,11 +231,12 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 		$product_object = $this->getMockBuilder( 'WC_Product' )
 		                ->disableOriginalConstructor()
-		                ->setMethods( array( 'is_featured', 'get_stock_status' ) )
+		                ->setMethods( array( 'is_featured', 'get_stock_status', 'get_average_rating' ) )
 		                ->getMock();
 
 		$product_object->method( 'is_featured' )->willReturn( true );
 		$product_object->method( 'get_stock_status' )->willReturn( 'outofstock' );
+		$product_object->method( 'get_average_rating' )->willReturn( $average_rating );
 
 		\WP_Mock::userFunction( 'wc_get_product', array(
 			'args' => array( $product_id ),
@@ -242,7 +244,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		) );
 
 		\WP_Mock::userFunction( 'wp_set_post_terms', array(
-			'args' => array( $translations['fr'], array( 'featured', 'outofstock' ), 'product_visibility', false ),
+			'args' => array( $translations['fr'], array( 'featured', 'outofstock', 'rated-'.$average_rating ), 'product_visibility', false ),
 			'return' => true,
 			'times' => 1
 		) );
