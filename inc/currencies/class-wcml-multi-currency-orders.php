@@ -1,6 +1,7 @@
 <?php
 
 class WCML_Multi_Currency_Orders {
+	const WCML_CONVERTED_META_KEY_PREFIX = '_wcml_converted_';
 
 	/** @var WCML_Multi_Currency */
 	private $multi_currency;
@@ -279,9 +280,8 @@ class WCML_Multi_Currency_Orders {
 	}
 
 	public function add_woocommerce_hidden_order_itemmeta( $itemmeta ) {
-
-		$itemmeta[] = '_wcml_converted_subtotal';
-		$itemmeta[] = '_wcml_converted_total';
+		$itemmeta[] = $this->get_converted_meta_key( 'subtotal' );
+		$itemmeta[] = $this->get_converted_meta_key( 'total' );
 		$itemmeta[] = '_wcml_total_qty';
 
 		return $itemmeta;
@@ -329,20 +329,19 @@ class WCML_Multi_Currency_Orders {
 			foreach ( array_keys( $converted_totals ) as $key ) {
 
 				if ( 'total' === $key && $item->get_total() !== $item->get_subtotal() ) {
-					$converted_totals[ $key ] = $item->get_total();
+					$converted_totals[ $key ] = $this->get_item_meta( $item, $key );
 				} else {
 					if ( ! $converted_price ) {
-
-						$meta_key = '_wcml_converted_' . $key;
+						$converted_meta_key = $this->get_converted_meta_key( $key );
 						if (
-							! $item->meta_exists( $meta_key ) ||
+							! $item->meta_exists( $converted_meta_key ) ||
 							( $item->meta_exists( '_wcml_total_qty' ) && $item->get_quantity() !== (int) $item->get_meta( '_wcml_total_qty' ) )
 						) {
 							$item_price               = $this->multi_currency->prices->raw_price_filter( $item->get_product()->get_price(), $order_currency );
 							$converted_totals[ $key ] = $this->get_converted_item_meta( $key, $item_price, false, $item, $order_currency, $coupons );
-							$item->update_meta_data( $meta_key, $converted_totals[ $key ] );
+							$item->update_meta_data( $converted_meta_key, $converted_totals[ $key ] );
 						} else {
-							$converted_totals[ $key ] = $item->get_meta( $meta_key );
+							$converted_totals[ $key ] = $this->get_item_meta( $item, $key );
 						}
 					} else {
 						$converted_totals[ $key ] = $this->get_converted_item_meta( $key, $converted_price, true, $item, $order_currency, $coupons );
@@ -354,6 +353,50 @@ class WCML_Multi_Currency_Orders {
 
 			$item->update_meta_data( '_wcml_total_qty', $item->get_quantity() );
 			$item->save();
+		}
+	}
+
+	/**
+	 * @param string $key
+	 *
+	 * @return string
+	 */
+	private function get_converted_meta_key( $key ) {
+		return self::WCML_CONVERTED_META_KEY_PREFIX . $key;
+	}
+
+	/**
+	 * @param WC_Order_Item_Product $item
+	 * @param string                $key
+	 *
+	 * @return bool
+	 */
+	private function is_value_changed( $item, $key ) {
+		$converted_meta_key = $this->get_converted_meta_key( $key );
+
+		if ( ! $item->meta_exists( $converted_meta_key ) ) {
+			return true;
+		}
+
+		$get_key = 'get_' . $key;
+
+		return $item->$get_key() !== $item->get_meta( $converted_meta_key );
+	}
+
+	/**
+	 * @param WC_Order_Item_Product $item
+	 * @param string                $key
+	 *
+	 * @return mixed
+	 */
+	private function get_item_meta( $item, $key ) {
+		$converted_meta_key = $this->get_converted_meta_key( $key );
+
+		if ( $this->is_value_changed( $item, $key ) ) {
+			$get_key                  = 'get_' . $key;
+			return $item->$get_key();
+		} else {
+			return $item->get_meta( $converted_meta_key );
 		}
 	}
 

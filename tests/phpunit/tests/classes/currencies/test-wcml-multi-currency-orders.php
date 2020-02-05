@@ -2,9 +2,6 @@
 
 /**
  * Class Test_WCML_Multi_Currency_Orders
- *
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
  */
 class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
@@ -279,6 +276,109 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$item->method( 'get_variation_id' )->willReturn( 0 );
 		$item->expects( $this->once() )->method( 'set_subtotal' )->with( $converted_price )->willReturn( true );
 		$item->expects( $this->once() )->method( 'set_total' )->with( $converted_price )->willReturn( true );
+		$item->expects( $this->once() )->method( 'save' )->willReturn( true );
+
+
+		$subject = $this->get_subject();
+		$subject->set_totals_for_order_items( $items, $order );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_sets_custom_subtotal_for_order_items_for_ajax_edit_order_item_call(){
+		\WP_Mock::passthruFunction( 'remove_filter' );
+		$_POST['action'] = 'woocommerce_add_order_item';
+		$_POST['order_id'] = 1;
+		$product_id = 10;
+		$original_product_id = 20;
+		$original_price = 50;
+		$subtotal = $original_price + 2;
+		$converted_price = false;
+
+		$order_currency = 'EUR';
+
+		$item = $this->getMockBuilder( 'WC_Order_Item_Product' )
+		             ->disableOriginalConstructor()
+		             ->setMethods( [
+			             'get_type',
+			             'get_total',
+			             'get_subtotal',
+			             'set_subtotal',
+			             'set_total',
+			             'save',
+			             'get_meta',
+			             'get_quantity',
+			             'get_product',
+			             'get_product_id',
+			             'get_variation_id',
+			             'update_meta_data',
+			             'meta_exists',
+		             ] )
+		             ->getMock();
+
+		$get_meta_map = [
+			[ '_wcml_total_qty', 1 ],
+			[ '_wcml_converted_total', $original_price ],
+			[ '_wcml_converted_subtotal', $subtotal ],
+		];
+
+		$item->method( 'meta_exists' )->willReturn( true );
+		$item->method( 'get_meta' )->will( $this->returnValueMap( $get_meta_map ) );
+
+		$items = array( $item );
+
+		$order =  $this->getMockBuilder( 'WC_Order' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'get_items' ) )
+		               ->getMock();
+		$order->method( 'get_items' )->with('coupon')->willReturn( array() );
+
+		$product_obj =  $this->getMockBuilder( 'WC_Product' )
+		              ->disableOriginalConstructor()
+		              ->getMock();
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $_POST['order_id'], '_order_currency', true ),
+			'return' => $order_currency
+		) );
+
+		\WP_Mock::wpFunction( 'wc_get_price_excluding_tax', array(
+			'args' => array( $product_obj, array( 'price' => $converted_price , 'qty' => 1 ) ),
+			'return' => $converted_price
+		) );
+
+		$this->woocommerce_wpml->method( 'get_setting' )->with( 'currency_options' )->willReturn( array() );
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'get_original_product_id' ) )
+		                                         ->getMock();
+
+		$this->woocommerce_wpml->products->method( 'get_original_product_id' )->willReturn( $original_product_id );
+
+
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $original_product_id, '_price_' . $order_currency, true ),
+			'return' => $converted_price
+		) );
+
+		\WP_Mock::wpFunction( 'wc_get_price_excluding_tax', array(
+			'args' => array( $product_obj, array( 'price' => $converted_price ) ),
+			'return' => $converted_price
+		) );
+
+		\WP_Mock::wpFunction( 'is_admin', [ 'return' => false ] );
+
+		$item->method( 'get_type' )->willReturn( 'line_item' );
+		$item->method( 'get_quantity' )->willReturn( 1 );
+		$item->method( 'get_total' )->willReturn( $original_price );
+		$item->method( 'get_subtotal' )->willReturn( $subtotal );
+		$item->method( 'get_product' )->willReturn( $product_obj );
+		$item->method( 'get_product_id' )->willReturn( $product_id );
+		$item->method( 'get_variation_id' )->willReturn( 0 );
+		$item->expects( $this->once() )->method( 'set_subtotal' )->with( $subtotal )->willReturn( true );
+		$item->expects( $this->once() )->method( 'set_total' )->with( $original_price )->willReturn( true );
 		$item->expects( $this->once() )->method( 'save' )->willReturn( true );
 
 
@@ -564,6 +664,8 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function it_sets_custom_totals_with_discount_for_order_items_if_coupon_applied(){
 		\WP_Mock::passthruFunction( 'remove_filter' );
