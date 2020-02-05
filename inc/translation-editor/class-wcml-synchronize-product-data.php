@@ -797,6 +797,12 @@ class WCML_Synchronize_Product_Data {
 				$terms[] = 'outofstock';
 			}
 
+			$rating = min( 5, round( $product->get_average_rating(), 0 ) );
+
+			if ( $rating > 0 ) {
+				$terms[] = 'rated-' . $rating;
+			}
+
 			foreach ( $translations as $translation ) {
 				if ( $product_id !== $translation ) {
 					wp_set_post_terms( $translation, $terms, 'product_visibility', false );

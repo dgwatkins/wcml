@@ -12,6 +12,8 @@ class WCML_Comments {
 	private $sitepress;
 	/** @var WPML_Post_Translation */
 	private $post_translations;
+	/** @var wpdb */
+	private $wpdb;
 
 	/**
 	 * WCML_Comments constructor.
@@ -19,11 +21,13 @@ class WCML_Comments {
 	 * @param woocommerce_wpml      $woocommerce_wpml
 	 * @param SitePress             $sitepress
 	 * @param WPML_Post_Translation $post_translations
+	 * @param wpdb $wpdb
 	 */
-	public function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress, WPML_Post_Translation $post_translations ) {
+	public function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress, WPML_Post_Translation $post_translations, wpdb $wpdb ) {
 		$this->woocommerce_wpml  = $woocommerce_wpml;
 		$this->sitepress         = $sitepress;
 		$this->post_translations = $post_translations;
+		$this->wpdb              = $wpdb;
 	}
 
 	public function add_hooks() {
@@ -39,8 +43,11 @@ class WCML_Comments {
 		add_action( 'trashed_comment', [ $this, 'recalculate_average_rating_on_comment_hook' ], 10, 2 );
 		add_action( 'deleted_comment', [ $this, 'recalculate_average_rating_on_comment_hook' ], 10, 2 );
 		add_action( 'untrashed_comment', [ $this, 'recalculate_average_rating_on_comment_hook' ], 10, 2 );
+		//before WCML_Synchronize_Product_Data::sync_product_translations_visibility hook
+		add_action( 'woocommerce_product_set_visibility', [ $this, 'recalculate_comment_rating' ], 9 );
 
 		add_filter( 'woocommerce_top_rated_products_widget_args', [ $this, 'top_rated_products_widget_args' ] );
+		add_filter( 'woocommerce_rating_filter_count', [ $this, 'woocommerce_rating_filter_count' ], 10, 3 );
 	}
 
 	/**
@@ -296,5 +303,26 @@ class WCML_Comments {
 		$args['meta_key'] = self::WCML_AVERAGE_RATING_KEY;
 
 		return $args;
+	}
+
+	/**
+	 * @param string $label
+	 * @param int $count
+	 * @param int $rating
+	 *
+	 * @return array
+	 */
+	public function woocommerce_rating_filter_count( $label, $count, $rating ) {
+
+		$ratingTerm = get_term_by( 'name', 'rated-' . $rating, 'product_visibility' );
+
+		$productsCountInCurrentLanguage = $this->wpdb->get_var( $this->wpdb->prepare( "                
+                SELECT COUNT( DISTINCT tr.object_id ) 
+                FROM {$this->wpdb->term_relationships} tr
+                LEFT JOIN {$this->wpdb->prefix}icl_translations t ON t.element_id = tr.object_id 
+                WHERE tr.term_taxonomy_id = %d AND t.element_type='post_product' AND t.language_code = %s                 
+        ", $ratingTerm->term_taxonomy_id, $this->sitepress->get_current_language() ) );
+
+		return "({$productsCountInCurrentLanguage})";
 	}
 }
