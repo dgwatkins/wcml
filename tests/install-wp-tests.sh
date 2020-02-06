@@ -97,7 +97,7 @@ install_test_suite() {
 
   cd wordpress-develop
 
-  git checkout ${WP_VERSION}
+  git checkout 011962fae08d9eb15b1a7b333a91f8ae5c0191ad
 
   cp -rf tests/phpunit/includes ${WP_TESTS_DIR}/includes
 
