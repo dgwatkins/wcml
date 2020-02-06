@@ -26,10 +26,15 @@ class WCML_Currencies {
 	 */
 	public function add_hooks() {
 		if ( is_admin() ) {
-			add_action( 'update_option_woocommerce_currency', array(
-				$this,
-				'setup_multi_currency_on_currency_update',
-			), 10, 2 );
+			add_action(
+				'update_option_woocommerce_currency',
+				[
+					$this,
+					'setup_multi_currency_on_currency_update',
+				],
+				10,
+				2
+			);
 		}
 	}
 

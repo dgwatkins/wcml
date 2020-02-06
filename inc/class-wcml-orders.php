@@ -3,12 +3,12 @@
 class WCML_Orders {
 
 	const DASHBOARD_COOKIE_NAME = '_wcml_dashboard_order_language';
-	const COOKIE_TTL = 86400;
+	const COOKIE_TTL            = 86400;
 
 	private $woocommerce_wpml;
 	private $sitepress;
 
-	private $standard_order_notes = array(
+	private $standard_order_notes = [
 		'Order status changed from %s to %s.',
 		'Order item stock reduced successfully.',
 		'Item #%s stock reduced from %s to %s.',
@@ -22,50 +22,52 @@ class WCML_Orders {
 		'Payment %s via IPN.',
 		'Validation error: PayPal amounts do not match (amt %s).',
 		'IPN payment completed',
-		'PDT payment completed'
-	);
+		'PDT payment completed',
+	];
 
 	public function __construct( $woocommerce_wpml, $sitepress ) {
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->sitepress        = $sitepress;
 
-		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'init', [ $this, 'init' ] );
 
-		//checkout page
-		add_action( 'wp_ajax_woocommerce_checkout', array( $this, 'switch_to_current' ), 9 );
-		add_action( 'wp_ajax_nopriv_woocommerce_checkout', array( $this, 'switch_to_current' ), 9 );
+		// Checkout page.
+		add_action( 'wp_ajax_woocommerce_checkout', [ $this, 'switch_to_current' ], 9 );
+		add_action( 'wp_ajax_nopriv_woocommerce_checkout', [ $this, 'switch_to_current' ], 9 );
 
-		add_action( 'wp_ajax_wcml_order_delete_items', array( $this, 'order_delete_items' ) );
+		add_action( 'wp_ajax_wcml_order_delete_items', [ $this, 'order_delete_items' ] );
 	}
 
-	function init() {
+	public function init() {
+		add_action( 'woocommerce_checkout_update_order_meta', [ $this, 'set_order_language' ] );
 
-		add_action( 'woocommerce_checkout_update_order_meta', array( $this, 'set_order_language' ) );
+		add_filter( 'icl_lang_sel_copy_parameters', [ $this, 'append_query_parameters' ] );
 
-		add_filter( 'icl_lang_sel_copy_parameters', array( $this, 'append_query_parameters' ) );
-
-		add_filter( 'the_comments', array( $this, 'get_filtered_comments' ) );
+		add_filter( 'the_comments', [ $this, 'get_filtered_comments' ] );
 
 		if ( $this->should_attach_new_order_note_data_filter() ) {
-			add_filter( 'gettext', array( $this, 'filtered_woocommerce_new_order_note_data' ), 10, 3 );
+			add_filter( 'gettext', [ $this, 'filtered_woocommerce_new_order_note_data' ], 10, 3 );
 		}
 
-		add_filter( 'woocommerce_order_get_items', array( $this, 'woocommerce_order_get_items' ), 10, 2 );
+		add_filter( 'woocommerce_order_get_items', [ $this, 'woocommerce_order_get_items' ], 10, 2 );
 
-		add_action( 'woocommerce_process_shop_order_meta', array( $this, 'set_order_language_backend' ), 10, 2 );
-		add_action( 'woocommerce_order_actions_start', array(
-			$this,
-			'order_language_dropdown'
-		), 11 ); //after order currency drop-down
+		add_action( 'woocommerce_process_shop_order_meta', [ $this, 'set_order_language_backend' ], 10, 2 );
+		add_action(
+			'woocommerce_order_actions_start',
+			[ $this, 'order_language_dropdown' ],
+			11
+		); // After order currency drop-down.
 
-		add_action( 'woocommerce_before_order_itemmeta', array( $this, 'backend_before_order_itemmeta' ), 100, 3 );
-		add_action( 'woocommerce_after_order_itemmeta', array( $this, 'backend_after_order_itemmeta' ), 100, 3 );
+		add_action( 'woocommerce_before_order_itemmeta', [ $this, 'backend_before_order_itemmeta' ], 100, 3 );
+		add_action( 'woocommerce_after_order_itemmeta', [ $this, 'backend_after_order_itemmeta' ], 100, 3 );
 
-		add_filter( 'woocommerce_get_item_downloads', array( $this, 'filter_downloadable_product_items' ), 10, 3 );
-		add_filter( 'woocommerce_customer_get_downloadable_products', array(
-			$this,
-			'filter_customer_get_downloadable_products'
-		), 10, 3 );
+		add_filter( 'woocommerce_get_item_downloads', [ $this, 'filter_downloadable_product_items' ], 10, 3 );
+		add_filter(
+			'woocommerce_customer_get_downloadable_products',
+			[ $this, 'filter_customer_get_downloadable_products' ],
+			10,
+			3
+		);
 	}
 
 	public function should_attach_new_order_note_data_filter() {
@@ -75,7 +77,7 @@ class WCML_Orders {
 		return 'en' !== $admin_language || ! $all_strings_in_english;
 	}
 
-	function filtered_woocommerce_new_order_note_data( $translations, $text, $domain ) {
+	public function filtered_woocommerce_new_order_note_data( $translations, $text, $domain ) {
 		if ( in_array( $text, $this->standard_order_notes ) ) {
 
 			$language = $this->woocommerce_wpml->strings->get_string_language( $text, 'woocommerce' );
@@ -87,7 +89,6 @@ class WCML_Orders {
 				if ( $strings ) {
 					$translations = $strings[ $this->sitepress->get_user_admin_language( get_current_user_id(), true ) ]['value'];
 				}
-
 			} else {
 				return $text;
 			}
@@ -96,7 +97,7 @@ class WCML_Orders {
 		return $translations;
 	}
 
-	function get_filtered_comments( $comments ) {
+	public function get_filtered_comments( $comments ) {
 
 		$user_id = get_current_user_id();
 
@@ -114,7 +115,6 @@ class WCML_Orders {
 					}
 				}
 			}
-
 		}
 
 		return $comments;
@@ -133,12 +133,12 @@ class WCML_Orders {
 	}
 
 	/**
-	 * @param array $items
+	 * @param array       $items
 	 * @param string|bool $language_to_filter
 	 */
 	public function adjust_order_item_in_language( $items, $language_to_filter = false ) {
 
-		if( !$language_to_filter ){
+		if ( ! $language_to_filter ) {
 			$language_to_filter = $this->sitepress->get_current_language();
 		}
 
@@ -171,7 +171,7 @@ class WCML_Orders {
 
 	/**
 	 * @param WC_Order_Item_Product $item
-	 * @param string $language_to_filter
+	 * @param string                $language_to_filter
 	 */
 	private function adjust_product_item_if_translated( $item, $language_to_filter ) {
 
@@ -198,7 +198,7 @@ class WCML_Orders {
 
 	/**
 	 * @param WC_Order_Item_Product $item
-	 * @param string $language_to_filter
+	 * @param string                $language_to_filter
 	 */
 	private function adjust_variation_item_if_translated( $item, $language_to_filter ) {
 		$translated_variation_id = apply_filters( 'translate_object_id', $item->get_variation_id(), 'product_variation', false, $language_to_filter );
@@ -239,16 +239,14 @@ class WCML_Orders {
 	 * @return bool
 	 */
 	private function is_order_action_triggered_for_customer() {
-		return isset( $_GET['action'] ) && wpml_collect( [
-				'woocommerce_mark_order_complete',
-				'woocommerce_mark_order_status',
-				'mark_processing'
-			] )->contains( $_GET['action'] );
+		return isset( $_GET['action'] ) && wpml_collect(
+			[ 'woocommerce_mark_order_complete', 'woocommerce_mark_order_status', 'mark_processing' ]
+		)->contains( $_GET['action'] );
 	}
 
 	/**
 	 * @param WC_Order_Item_Product $item
-	 * @param int $variation_id
+	 * @param int                   $variation_id
 	 */
 	private function update_attribute_item_meta_value( $item, $variation_id ) {
 		foreach ( $item->get_meta_data() as $meta_data ) {
@@ -265,7 +263,7 @@ class WCML_Orders {
 
 		if ( $this->get_order_language_by_item_id( $item_id ) != $sitepress->get_user_admin_language( get_current_user_id(), true ) ) {
 			foreach ( $item['item_meta'] as $key => $item_meta ) {
-				if ( taxonomy_exists( wc_attribute_taxonomy_name( $key ) ) || substr( $key, 0, 3 ) == 'pa_' ) {
+				if ( taxonomy_exists( wc_attribute_taxonomy_name( $key ) ) || substr( $key, 0, 3 ) === 'pa_' ) {
 					$item_meta = (array) $item_meta;
 					foreach ( $item_meta as $value ) {
 						$this->force_update_itemmeta( $item_id, $key, $value, $sitepress->get_user_admin_language( get_current_user_id(), true ) );
@@ -281,7 +279,7 @@ class WCML_Orders {
 		$order_languge = $this->get_order_language_by_item_id( $item_id );
 		if ( $order_languge != $sitepress->get_user_admin_language( get_current_user_id(), true ) ) {
 			foreach ( $item['item_meta'] as $key => $item_meta ) {
-				if ( taxonomy_exists( wc_attribute_taxonomy_name( $key ) ) || substr( $key, 0, 3 ) == 'pa_' ) {
+				if ( taxonomy_exists( wc_attribute_taxonomy_name( $key ) ) || substr( $key, 0, 3 ) === 'pa_' ) {
 					$item_meta = (array) $item_meta;
 					foreach ( $item_meta as $value ) {
 						$this->force_update_itemmeta( $item_id, $key, $value, $order_languge );
@@ -299,20 +297,24 @@ class WCML_Orders {
 		return get_post_meta( $order_id, 'wpml_language', true );
 	}
 
-	//force update to display attribute in correct language on edit order page
+	// force update to display attribute in correct language on edit order page.
 	public function force_update_itemmeta( $item_id, $key, $value, $languge ) {
 		global $wpdb, $woocommerce_wpml;
 
-		$taxonomy        = substr( $key, 0, 3 ) != 'pa_' ? wc_attribute_taxonomy_name( $key ) : $key;
+		$taxonomy        = substr( $key, 0, 3 ) !== 'pa_' ? wc_attribute_taxonomy_name( $key ) : $key;
 		$term_id         = $woocommerce_wpml->terms->wcml_get_term_id_by_slug( $taxonomy, $value );
 		$translated_term = $woocommerce_wpml->terms->wcml_get_translated_term( $term_id, $taxonomy, $languge );
 
 		if ( $translated_term ) {
 			$value = $translated_term->slug;
-			$wpdb->update( $wpdb->prefix . 'woocommerce_order_itemmeta', array( 'meta_value' => $value ), array(
-				'order_item_id' => $item_id,
-				'meta_key'      => $key
-			) );
+			$wpdb->update(
+				$wpdb->prefix . 'woocommerce_order_itemmeta',
+				[ 'meta_value' => $value ],
+				[
+					'order_item_id' => $item_id,
+					'meta_key'      => $key,
+				]
+			);
 		}
 	}
 
@@ -321,13 +323,13 @@ class WCML_Orders {
 	 *
 	 * @param type $order_id
 	 */
-	function set_order_language( $order_id ) {
+	public function set_order_language( $order_id ) {
 		if ( ! get_post_meta( $order_id, 'wpml_language' ) ) {
 			update_post_meta( $order_id, 'wpml_language', ICL_LANGUAGE_CODE );
 		}
 	}
 
-	function append_query_parameters( $parameters ) {
+	public function append_query_parameters( $parameters ) {
 
 		if ( is_order_received_page() || is_checkout() ) {
 			if ( ! in_array( 'order', $parameters ) ) {
@@ -341,40 +343,45 @@ class WCML_Orders {
 		return $parameters;
 	}
 
-	function switch_to_current() {
+	public function switch_to_current() {
 		$this->woocommerce_wpml->emails->change_email_language( $this->sitepress->get_current_language() );
 	}
 
-	function order_language_dropdown( $order_id ) {
+	public function order_language_dropdown( $order_id ) {
 		if ( ! get_post_meta( $order_id, '_order_currency' ) ) {
-			$languages     = apply_filters( 'wpml_active_languages', array(), array(
-				'skip_missing' => 0,
-				'orderby'      => 'code'
-			) );
+			$languages     = apply_filters(
+				'wpml_active_languages',
+				[],
+				[
+					'skip_missing' => 0,
+					'orderby'      => 'code',
+				]
+			);
 			$selected_lang = isset( $_COOKIE [ self::DASHBOARD_COOKIE_NAME ] ) ? $_COOKIE [ self::DASHBOARD_COOKIE_NAME ] : $this->sitepress->get_default_language();
 			?>
-            <li class="wide">
-                <label><?php _e( 'Order language:' ); ?></label>
-                <select id="dropdown_shop_order_language" name="wcml_shop_order_language">
-					<?php if ( ! empty( $languages ) ): ?>
+			<li class="wide">
+				<label><?php _e( 'Order language:' ); ?></label>
+				<select id="dropdown_shop_order_language" name="wcml_shop_order_language">
+					<?php if ( ! empty( $languages ) ) : ?>
 
-						<?php foreach ( $languages as $l ): ?>
+						<?php foreach ( $languages as $l ) : ?>
 
-                            <option
-                                    value="<?php echo $l['language_code'] ?>" <?php echo $selected_lang == $l['language_code'] ? 'selected="selected"' : ''; ?>><?php echo $l['translated_name']; ?></option>
+							<option
+									value="<?php echo $l['language_code']; ?>" <?php echo $selected_lang == $l['language_code'] ? 'selected="selected"' : ''; ?>><?php echo $l['translated_name']; ?></option>
 
 						<?php endforeach; ?>
 
 					<?php endif; ?>
-                </select>
-            </li>
+				</select>
+			</li>
 			<?php
 			$wcml_set_dashboard_order_language_nonce = wp_create_nonce( 'set_dashboard_order_language' );
-			wc_enqueue_js( "
+			wc_enqueue_js(
+				"
                  var order_lang_current_value = jQuery('#dropdown_shop_order_language option:selected').val();
 
                  jQuery('#dropdown_shop_order_language').on('change', function(){
-                    if(confirm('" . esc_js( __( "All the products will be removed from the current order in order to change the language", 'woocommerce-multilingual' ) ) . "')){
+                    if(confirm('" . esc_js( __( 'All the products will be removed from the current order in order to change the language', 'woocommerce-multilingual' ) ) . "')){
                         var lang = jQuery(this).val();
 
                         jQuery.ajax({
@@ -396,16 +403,17 @@ class WCML_Orders {
                     }
                 });
 
-            " );
+            "
+			);
 		} else {
 			$this->remove_dashboard_order_language_cookie();
 		}
 	}
 
-	function order_delete_items() {
+	public function order_delete_items() {
 		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'set_dashboard_order_language' ) ) {
-			echo json_encode( array( 'error' => __( 'Invalid nonce', 'woocommerce-multilingual' ) ) );
+			echo json_encode( [ 'error' => __( 'Invalid nonce', 'woocommerce-multilingual' ) ] );
 			die();
 		}
 
@@ -416,7 +424,7 @@ class WCML_Orders {
 		setcookie( self::DASHBOARD_COOKIE_NAME, '', time() - self::COOKIE_TTL, COOKIEPATH, COOKIE_DOMAIN );
 	}
 
-	function set_order_language_backend( $post_id, $post ) {
+	public function set_order_language_backend( $post_id, $post ) {
 
 		if ( isset( $_POST['wcml_shop_order_language'] ) ) {
 			update_post_meta( $post_id, 'wpml_language', filter_input( INPUT_POST, 'wcml_shop_order_language', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) );
@@ -430,21 +438,21 @@ class WCML_Orders {
 
 		if ( $item->get_variation_id() > 0 ) {
 			$translated_variation_id = apply_filters( 'translate_object_id', $item->get_variation_id(), 'product_variation', false, $order_language );
-			if( ! is_null( $translated_variation_id ) ){
+			if ( ! is_null( $translated_variation_id ) ) {
 				$item->set_variation_id( $translated_variation_id );
-            }
+			}
 		} else {
-		    $translated_product_id = apply_filters( 'translate_object_id', $item->get_product_id(), 'product', false, $order_language );
-			if( ! is_null( $translated_product_id ) ){
+			$translated_product_id = apply_filters( 'translate_object_id', $item->get_product_id(), 'product', false, $order_language );
+			if ( ! is_null( $translated_product_id ) ) {
 				$item->set_product_id( $translated_product_id );
 			}
 		}
 
-		remove_filter( 'woocommerce_get_item_downloads', array( $this, 'filter_downloadable_product_items' ), 10, 3 );
+		remove_filter( 'woocommerce_get_item_downloads', [ $this, 'filter_downloadable_product_items' ], 10, 3 );
 
 		$files = $item->get_item_downloads();
 
-		add_filter( 'woocommerce_get_item_downloads', array( $this, 'filter_downloadable_product_items' ), 10, 3 );
+		add_filter( 'woocommerce_get_item_downloads', [ $this, 'filter_downloadable_product_items' ], 10, 3 );
 
 		return $files;
 	}
@@ -458,7 +466,6 @@ class WCML_Orders {
 			if ( $translated_id ) {
 				$downloads[ $key ]['product_name'] = get_the_title( $translated_id );
 			}
-
 		}
 
 		return $downloads;

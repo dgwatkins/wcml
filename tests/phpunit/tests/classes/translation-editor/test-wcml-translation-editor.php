@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class Test_WCML_Translation_Editor
+ */
 class Test_WCML_Translation_Editor extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
@@ -124,7 +127,7 @@ class Test_WCML_Translation_Editor extends OTGS_TestCase {
 		$subject->lock_variable_fields( true );
 		$output = ob_get_clean();
 
-		$this->assertContains( ' wcml_lock_variation_fields( {"'.$variation->ID.'":true} );', $output );
+		$this->assertContains( 'wcml_lock_variation_fields( {"'.$variation->ID.'":true} );', $output );
 	}
 
 

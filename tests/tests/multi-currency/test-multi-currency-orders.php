@@ -64,12 +64,15 @@ class Test_WCML_Multi_Currency_Orders extends WCML_UnitTestCase {
 
 		$typenow = 'shop_order';
 
-		$expected_selector = '        <select id="dropdown_shop_order_currency" name="_order_currency">
-            <option value="">Show all currencies</option>
-			                <option value="USD"  >United States (US) dollar (&#36;)</option>
-			                <option value="GBP"  >Pound sterling (&pound;)</option>
-			        </select>
-		';
+		ob_start();
+		?>
+		<select id="dropdown_shop_order_currency" name="_order_currency">
+			<option value="">Show all currencies</option>
+							<option value="USD" >United States (US) dollar (&#036;)</option>
+								<option value="GBP" >Pound sterling (&pound;)</option>
+						</select>
+		<?php
+		$expected_selector = ob_get_clean();
 
 		ob_start();
 		$this->multi_currency->orders->show_orders_currencies_selector();
@@ -87,12 +90,15 @@ class Test_WCML_Multi_Currency_Orders extends WCML_UnitTestCase {
 		$wp_query->query[ '_order_currency' ] = 'GBP';
 		$typenow = 'shop_order';
 
-		$expected_selector = '        <select id="dropdown_shop_order_currency" name="_order_currency">
-            <option value="">Show all currencies</option>
-			                <option value="USD"  >United States (US) dollar (&#36;)</option>
-			                <option value="GBP"  selected=\'selected\' >Pound sterling (&pound;)</option>
-			        </select>
-		';
+		ob_start();
+		?>
+		<select id="dropdown_shop_order_currency" name="_order_currency">
+			<option value="">Show all currencies</option>
+							<option value="USD" >United States (US) dollar (&#036;)</option>
+								<option value="GBP"  selected='selected'>Pound sterling (&pound;)</option>
+						</select>
+		<?php
+		$expected_selector = ob_get_clean();
 
 		ob_start();
 		$this->multi_currency->orders->show_orders_currencies_selector();

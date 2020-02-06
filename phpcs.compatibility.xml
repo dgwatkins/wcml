@@ -2,17 +2,53 @@
 <ruleset name="WPML">
 	<description>WPML Coding Standards</description>
 
-	<config name="testVersion" value="5.6-"/>
-
-	<rule ref="PHPCompatibility" />
-
-	<exclude-pattern>*/lib/*</exclude-pattern>
-	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<!-- What to scan -->
+	<file>.</file>
+	<exclude-pattern>*/.git/*</exclude-pattern>
+	<exclude-pattern>*/.githooks/*</exclude-pattern>
+	<exclude-pattern>*/.make/*</exclude-pattern>
+	<exclude-pattern>*/locale/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/res/*</exclude-pattern>
+	<exclude-pattern>*/templates/*</exclude-pattern>
 	<exclude-pattern>*/tests/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
 	<exclude-pattern>*.js</exclude-pattern>
 	<exclude-pattern>*.mo</exclude-pattern>
 	<exclude-pattern>*.po</exclude-pattern>
 	<exclude-pattern>*.twig</exclude-pattern>
 	<exclude-pattern>*.css</exclude-pattern>
 	<exclude-pattern>*.scss</exclude-pattern>
+
+	<!-- How to scan -->
+	<arg value="sp"/><!-- Show sniff and progress -->
+	<arg name="basepath" value="./"/><!-- Strip the file paths down to the relevant bit -->
+	<arg name="extensions" value="php"/>
+	<arg name="parallel" value="12"/><!-- Enables parallel processing when available for faster results. -->
+
+	<config name="testVersion" value="5.6-"/>
+
+	<!-- Rules: Check PHP version compatibility -->
+	<rule ref="PHPCompatibility"/>
+	<rule ref="PHPCompatibilityWP"/>
+
+	<!-- Rules: Check already fixed issues in all files -->
+	<rule ref="Squiz.Scope.MethodScope.Missing"/>
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax.Found"/>
+
+	<!-- Rules: Some checks in all files in progress -->
+	<!--	<rule ref="WordPress.PHP.StrictComparisons.LooseComparison"/>-->
+	<!--	<rule ref="WordPress.PHP.YodaConditions.NotYoda"/>-->
+
+	<!-- Rules: Check Security issues -->
+	<!--	<rule ref="WordPress.Security.EscapeOutput.OutputNotEscaped"/>-->
+	<!--	<rule ref="WordPress.Security.EscapeOutput.UnsafePrintingFunction"/>-->
+	<!--	<rule ref="WordPress.Security.NonceVerification.Missing"/>-->
+	<!--	<rule ref="WordPress.Security.ValidatedSanitizedInput.InputNotSanitized"/>-->
+	<!--	<rule ref="WordPress.Security.ValidatedSanitizedInput.MissingUnslash"/>-->
+
+	<!--	<rule ref="WordPress.DB.PreparedSQL.InterpolatedNotPrepared"/>-->
+	<!--	<rule ref="WordPress.DB.PreparedSQL.NotPrepared"/>-->
+	<!--	<rule ref="WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery"/>-->
+	<!--	<rule ref="WordPress.DB.PreparedSQLPlaceholders.QuotedSimplePlaceholder"/>-->
 </ruleset>

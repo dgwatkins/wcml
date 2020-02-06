@@ -39,7 +39,7 @@ class WCML_Compatibility {
 	 * @param wpdb                             $wpdb             Database object.
 	 * @param WPML_Element_Translation_Package $tp               Element Translation Package.
 	 */
-	function __construct( SitePress $sitepress, woocommerce_wpml $woocommerce_wpml, wpdb $wpdb, WPML_Element_Translation_Package $tp, WPML_Post_Translation $wpml_post_translations ) {
+	public function __construct( SitePress $sitepress, woocommerce_wpml $woocommerce_wpml, wpdb $wpdb, WPML_Element_Translation_Package $tp, WPML_Post_Translation $wpml_post_translations ) {
 		$this->sitepress              = $sitepress;
 		$this->woocommerce_wpml       = $woocommerce_wpml;
 		$this->wpdb                   = $wpdb;
@@ -145,13 +145,13 @@ class WCML_Compatibility {
 			}
 		}
 
-		// WOOBE WooCommerce Bulk Editor
+		// WOOBE WooCommerce Bulk Editor.
 		if ( defined( 'WOOBE_PATH' ) ) {
 			$this->woobe = new WCML_Woobe( $this->sitepress, $this->wpml_post_translations );
 			$this->woobe->add_hooks();
 		}
 
-		// WooCommerce Checkout Field Editor
+		// WooCommerce Checkout Field Editor.
 		if ( function_exists( 'woocommerce_init_checkout_field_editor' ) ) {
 			$this->checkout_field_editor = new WCML_Checkout_Field_Editor();
 			$this->checkout_field_editor->add_hooks();

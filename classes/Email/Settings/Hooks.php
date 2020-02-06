@@ -43,8 +43,8 @@ class Hooks implements IWPML_Backend_Action, IWPML_DIC_Action {
 			   && $_GET['tab'] === 'email';
 	}
 
-	function showLanguageLinksForWcEmails() {
-		$emailOptions = array(
+	public function showLanguageLinksForWcEmails() {
+		$emailOptions = [
 			'woocommerce_new_order_settings',
 			'woocommerce_cancelled_order_settings',
 			'woocommerce_failed_order_settings',
@@ -56,11 +56,11 @@ class Hooks implements IWPML_Backend_Action, IWPML_DIC_Action {
 			'woocommerce_customer_note_settings',
 			'woocommerce_customer_reset_password_settings',
 			'woocommerce_customer_new_account_settings',
-		);
+		];
 
 		$emailOptions = apply_filters( 'wcml_emails_options_to_translate', $emailOptions );
 
-		$textKeys = array(
+		$textKeys = [
 			'subject',
 			'heading',
 			'subject_downloadable',
@@ -72,7 +72,7 @@ class Hooks implements IWPML_Backend_Action, IWPML_DIC_Action {
 			'subject_paid',
 			'heading_paid',
 			'additional_content',
-		);
+		];
 
 		$textKeys = apply_filters( 'wcml_emails_text_keys_to_translate', $textKeys );
 
@@ -121,20 +121,20 @@ class Hooks implements IWPML_Backend_Action, IWPML_DIC_Action {
 								var input = jQuery('#<?php echo $emailInputKey; ?>');
 								if (input.length) {
 									input.parent().append('<div class="translation_controls"></div>');
-									input.parent().find('.translation_controls').append('<a href="<?php echo $stPage; ?>" style="margin-left: 10px"><?php _e( 'translations', 'woocommerce-multilingual' ); ?></a>');
-									jQuery('#<?php echo $emailOption . '_' . $settingsKey . '_language_selector'; ?>').prependTo(input.parent().find('.translation_controls'));
+									input.parent().find('.translation_controls').append('<a href="<?php echo esc_url( $stPage ); ?>" style="margin-left: 10px"><?php esc_html_e( 'translations', 'woocommerce-multilingual' ); ?></a>');
+									jQuery('#<?php echo esc_html( $emailOption . '_' . $settingsKey . '_language_selector' ); ?>').prependTo(input.parent().find('.translation_controls'));
 								}
 							</script>
-							<?php }
+							<?php
+						}
 					}
 				}
 			}
 		}
 	}
 
-	function setEmailsStringLanguage() {
+	public function setEmailsStringLanguage() {
 		foreach ( $_POST as $key => $language ) {
-
 			if ( substr( $key, 0, 9 ) === self::KEY_PREFIX ) {
 
 				$keyParts = explode( '-', $key );

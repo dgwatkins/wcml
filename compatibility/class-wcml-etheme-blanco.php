@@ -3,10 +3,14 @@
 class WCML_Etheme_Blanco {
 
 	public function add_hooks() {
-		add_filter( 'wcml_calculate_totals_exception', array(
-			$this,
-			'calculate_totals_on_et_refreshed_fragments'
-		), 9 );
+		add_filter(
+			'wcml_calculate_totals_exception',
+			[
+				$this,
+				'calculate_totals_on_et_refreshed_fragments',
+			],
+			9
+		);
 	}
 
 	public function calculate_totals_on_et_refreshed_fragments( $calculate ) {

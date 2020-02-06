@@ -15,7 +15,7 @@ class WCML_Dynamic_Pricing {
 	 *
 	 * @param SitePress $sitepress
 	 */
-	function __construct( SitePress $sitepress ) {
+	public function __construct( SitePress $sitepress ) {
 		$this->sitepress = $sitepress;
 	}
 
@@ -29,10 +29,10 @@ class WCML_Dynamic_Pricing {
 			add_filter( 'woocommerce_dynamic_pricing_get_rule_amount', [ $this, 'woocommerce_dynamic_pricing_get_rule_amount' ], 10, 2 );
 			add_filter( 'dynamic_pricing_product_rules', [ $this, 'dynamic_pricing_product_rules' ] );
 			add_filter( 'wcml_calculate_totals_exception', [ $this, 'calculate_totals_exception' ] );
-		}else{
+		} else {
 			$this->hide_language_switcher_for_settings_page();
 		}
-		add_filter( 'woocommerce_product_get__pricing_rules', array( $this, 'translate_variations_in_rules' ) );
+		add_filter( 'woocommerce_product_get__pricing_rules', [ $this, 'translate_variations_in_rules' ] );
 
 	}
 
@@ -41,7 +41,7 @@ class WCML_Dynamic_Pricing {
 	 *
 	 * @return mixed
 	 */
-	function filter_price( $modules ) {
+	public function filter_price( $modules ) {
 
 		foreach ( $modules as $mod_key => $module ) {
 			if ( isset( $module->available_rulesets ) ) {
@@ -76,8 +76,8 @@ class WCML_Dynamic_Pricing {
 	 *
 	 * @return boolean
 	 */
-	function is_object_in_translated_terms( $result, $product_id, $categories ) {
-		foreach ($categories as &$cat_id ) {
+	public function is_object_in_translated_terms( $result, $product_id, $categories ) {
+		foreach ( $categories as &$cat_id ) {
 			$cat_id = apply_filters( 'translate_object_id', $cat_id, 'product_cat', true );
 		}
 
@@ -149,15 +149,19 @@ class WCML_Dynamic_Pricing {
 		];
 
 		$class_name = wpml_collect( array_keys( $requirements ) )
-			->first( function ( $class_name ) use ( $dynamic_pricing ) {
-				return get_class( $dynamic_pricing ) === $class_name || is_subclass_of( $dynamic_pricing, $class_name );
-			} );
+			->first(
+				function ( $class_name ) use ( $dynamic_pricing ) {
+						return get_class( $dynamic_pricing ) === $class_name || is_subclass_of( $dynamic_pricing, $class_name );
+				}
+			);
 
 		if ( $class_name ) {
 			return wpml_collect( $requirements[ $class_name ] )
-				->filter( function ( $property ) use ( $dynamic_pricing ) {
-					return isset( $dynamic_pricing->$property ) && $dynamic_pricing->$property;
-				} )
+				->filter(
+					function ( $property ) use ( $dynamic_pricing ) {
+							return isset( $dynamic_pricing->$property ) && $dynamic_pricing->$property;
+					}
+				)
 				->count();
 		}
 
@@ -175,9 +179,12 @@ class WCML_Dynamic_Pricing {
 			$cat_ids = [ $cat_ids ];
 		}
 
-		return array_map( function ( $cat_id ) use ( $taxonomy ) {
-			return apply_filters( 'translate_object_id', $cat_id, $taxonomy, true );
-		}, $cat_ids );
+		return array_map(
+			function ( $cat_id ) use ( $taxonomy ) {
+					return apply_filters( 'translate_object_id', $cat_id, $taxonomy, true );
+			},
+			$cat_ids
+		);
 	}
 
 	/**
@@ -186,7 +193,7 @@ class WCML_Dynamic_Pricing {
 	 *
 	 * @return mixed|void
 	 */
-	function woocommerce_dynamic_pricing_get_rule_amount( $amount, $rule ) {
+	public function woocommerce_dynamic_pricing_get_rule_amount( $amount, $rule ) {
 
 		if ( 'price_discount' === $rule['type'] || 'fixed_price' === $rule['type'] ) {
 			$amount = apply_filters( 'wcml_raw_price_amount', $amount );
@@ -201,7 +208,7 @@ class WCML_Dynamic_Pricing {
 	 *
 	 * @return array
 	 */
-	function dynamic_pricing_product_rules( $rules ) {
+	public function dynamic_pricing_product_rules( $rules ) {
 		if ( is_array( $rules ) ) {
 			foreach ( $rules as $r_key => $rule ) {
 				foreach ( $rule['rules'] as $key => $product_rule ) {
@@ -217,7 +224,7 @@ class WCML_Dynamic_Pricing {
 	/**
 	 * @return bool
 	 */
-	function calculate_totals_exception() {
+	public function calculate_totals_exception() {
 		return false;
 	}
 
@@ -226,7 +233,7 @@ class WCML_Dynamic_Pricing {
 	 *
 	 * @return array
 	 */
-	function translate_variations_in_rules( $rules ) {
+	public function translate_variations_in_rules( $rules ) {
 		if ( is_array( $rules ) ) {
 			foreach ( $rules as $r_key => $rule ) {
 				if ( isset( $rule['variation_rules']['args']['variations'] ) ) {
