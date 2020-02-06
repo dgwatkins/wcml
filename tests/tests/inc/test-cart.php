@@ -140,6 +140,8 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
      */
     function test_woocommerce_calculate_totals(){
 
+	    wpml_load_settings_helper()->set_post_type_display_as_translated( 'product' );
+
         // We need this to have the calculate_totals() method calculate totals
         if ( ! defined( 'WOOCOMMERCE_CHECKOUT' ) ) {
             define( 'WOOCOMMERCE_CHECKOUT', true );
@@ -160,10 +162,10 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
             )
         );
 
-        $es_product = $this->wcml_helper->add_product( 
-            'es', 
-            $product->trid, 
-            'producto 1', 
+        $es_product = $this->wcml_helper->add_product(
+            'es',
+            $product->trid,
+            'producto 1',
             0,
             array(
                 '_price' => $this->products[0]['price'],
@@ -171,13 +173,26 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
             )
         );
 
+	    $product_without_translation = $this->wcml_helper->add_product(
+		    $this->sitepress->get_default_language(),
+		    false,
+		    rand_str(),
+		    0,
+		    array(
+			    '_price' => $this->products[0]['price'],
+			    '_regular_price' => $this->products[0]['price']
+		    )
+	    );
+
         // DEFAULT CURRENCY
+	    $products_count_in_cart = 2;
         $items = random_int(1, 10);
         WC()->cart->add_to_cart( $product->id, $items );
+        WC()->cart->add_to_cart( $product_without_translation->id, $items );
         $this->sitepress->switch_lang('es');
         WC()->cart->calculate_totals();
         // Cost without shipping
-        $this->assertEquals( $items * $this->products[0]['price'],  WC()->cart->cart_contents_total );
+        $this->assertEquals( $items * $this->products[0]['price'] * $products_count_in_cart,  WC()->cart->cart_contents_total );
 
         $this->sitepress->switch_lang($this->sitepress->get_default_language());
         foreach( $this->currencies as $code => $currency ){
@@ -188,11 +203,12 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
             $this->multi_currency->set_client_currency( $code );
             $items = random_int(1, 10);
             WC()->cart->add_to_cart( $product->id, $items );
+	        WC()->cart->add_to_cart( $product_without_translation->id, $items );
             WC()->cart->calculate_totals();
 
             //The cost of the cart in the SECONDARY currency (without shipping)
             $this->assertEquals(
-                $items * $this->currencies[$code]['rate'] * $this->products[0]['price'],
+                $items * $this->currencies[$code]['rate'] * $this->products[0]['price'] * $products_count_in_cart,
                 WC()->cart->cart_contents_total
             );
 
@@ -202,6 +218,7 @@ class Test_WCML_Cart extends WCML_UnitTestCase {
         wp_delete_post( $product->id, true );
 
         $this->multi_currency->set_client_currency( 'GBP' );
+	    wpml_load_settings_helper()->set_post_type_translatable( 'product' );
     }
 
 
