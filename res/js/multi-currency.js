@@ -83,7 +83,8 @@ jQuery( function($){
         select_currency: function(){
             var parent = $(this).closest('.wcml_currency_options');
             var close_button = parent.find('.wcml-dialog-close-button');
-            var previous_currency = parent.find('.this-currency').text();
+            var this_currency = parent.find('span.this-currency');
+            var previous_currency = this_currency.text();
             var gateways = parent.find('.wcml-gateways-switcher');
             var gateways_currency_select = parent.find('.wcml-gateways select[name*="[currency]"] option[value="'+previous_currency+'"]');
             var gateway_new_label_text = gateways.find('label.otgs-on-off-switch').text().replace( previous_currency, $(this).val() );
@@ -91,7 +92,7 @@ jQuery( function($){
             close_button.attr('data-currency', $(this).val());
             close_button.attr('data-symbol', $(this).find('option:selected').attr('data-symbol'));
 
-            parent.find('.this-currency').html( $(this).val() );
+            this_currency.html( $(this).val() );
             gateways.find('label.otgs-on-off-switch').text( gateway_new_label_text );
             gateways_currency_select.val( $(this).val() );
             gateways_currency_select.html( $(this).val() );
@@ -243,7 +244,10 @@ jQuery( function($){
                     $('#wcml_currency_options_' + currency).remove();
                     $('#wcml_mc_options').before(response.currency_options);
 
-                    $('#wcml_currency_options_code_ option[value="'+currency+'"]').remove();
+                    var currency_selector = $('#wcml_currency_options_code_');
+                    currency_selector.find('option[value="'+currency+'"]').remove();
+
+                    $('#wcml_currency_options_form_').find('span.this-currency').html( currency_selector.find(':selected').val() );
 
                     if( $('#online-exchange-rates-no-currencies').is(':visible') ){
                         $('#online-exchange-rates-no-currencies').hide();
