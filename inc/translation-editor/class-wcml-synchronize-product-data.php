@@ -354,7 +354,7 @@ class WCML_Synchronize_Product_Data {
 			} else {
 				$translations = $this->post_translations->get_element_translations( $product_id );
 				foreach ( $translations as $translation ) {
-					if ( $product_id !== $translation ) {
+					if ( $product_id !== (int)$translation ) {
 						$_product = wc_get_product( $translation );
 						$this->update_stock_value( $_product, $stock );
 						$this->woocommerce_wpml->products->update_stock_status( $translation, $product->get_stock_status() );
@@ -804,7 +804,7 @@ class WCML_Synchronize_Product_Data {
 			}
 
 			foreach ( $translations as $translation ) {
-				if ( $product_id !== $translation ) {
+				if ( $product_id !== (int)$translation ) {
 					wp_set_post_terms( $translation, $terms, 'product_visibility', false );
 				}
 			}
