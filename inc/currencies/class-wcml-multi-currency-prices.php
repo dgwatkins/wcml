@@ -194,7 +194,7 @@ class WCML_Multi_Currency_Prices {
 						'_sale_price'
 					) ) && ! empty( $ccr ) && isset( $ccr[ $meta_key ][ $this->multi_currency->get_client_currency() ] )
 				) {
-					$price_original = get_post_meta( $original_object_id, $meta_key, $single );
+					$price_original = get_post_meta( $original_object_id, $meta_key, true );
 					$price          = $price_original * $ccr[ $meta_key ][ $this->multi_currency->get_client_currency() ];
 
 				} else {
@@ -214,6 +214,10 @@ class WCML_Multi_Currency_Prices {
 							$price = apply_filters( 'wcml_raw_price_amount', $price );
 						}
 					}
+				}
+
+				if ( ! $single ) {
+					$price = (array) $price;
 				}
 
 				$no_filter = false;

@@ -19,7 +19,7 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 	private function get_wc_cart_mock() {
 		return $this->getMockBuilder( 'WC_Cart' )
 		            ->disableOriginalConstructor()
-					->setMethods( ['woocommerce_calculate_totals', 'get_cart_subtotal'] )
+		            ->setMethods( [ 'woocommerce_calculate_totals', 'get_cart_subtotal' ] )
 		            ->getMock();
 	}
 
@@ -27,6 +27,11 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		return $this->getMockBuilder( 'woocommerce' )
 		            ->disableOriginalConstructor()
 		            ->getMock();
+	}
+
+	public function tearDown() {
+		unset( $GLOBALS['sitepress'] );
+		parent::tearDown();
 	}
 
 	/**
@@ -261,6 +266,41 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function it_should_return_price_as_single_or_array() {
+		global $sitepress;
+
+		$product_id      = 123;
+		$post_type       = 'product';
+		$meta_key        = '_price';
+		$client_currency = 'EUR';
+
+		$sitepress = \Mockery::mock( 'SitePress' );
+		$sitepress->shouldReceive( 'get_default_language' )->andReturn( 'en' );
+
+		$multi_currency = $this->get_multi_currency_mock();
+		$multi_currency->method( 'are_filters_need_loading' )->willReturn( true );
+		$multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
+
+		$subject = $this->get_subject( $multi_currency );
+
+		\WP_Mock::userFunction( 'get_post_type' )->with( $product_id )->times( 4 )->andReturn( $post_type );
+
+		$ccr = [
+			$meta_key => [ $client_currency => 2 ],
+		];
+
+		\WP_Mock::userFunction( 'get_post_meta' )->with( $product_id, '_custom_conversion_rate', true )
+		        ->twice()->andReturn( $ccr );
+		\WP_Mock::userFunction( 'get_post_meta' )->with( $product_id, $meta_key, true )
+		        ->twice()->andReturn( '1' );
+
+		$this->assertSame( 2, $subject->product_price_filter( [], $product_id, $meta_key, true ) );
+		$this->assertSame( [ 2 ], $subject->product_price_filter( [], $product_id, $meta_key, false ) );
+	}
+
+	/**
+	 * @test
+	 */
 	public function it_should_NOT_filter_price_filter_post_clauses_when_price_not_entered() {
 
 		$args     = array( 'where' => rand_str() );
@@ -381,36 +421,44 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 
 	/**
 	 * @test
-	 *
 	 */
 	public function it_should_filter_widget_min_amount_given_step_price_of_10(){
+		$client_currency = 'EUR';
 
-		$subject = $this->get_subject( $this->get_multi_currency_mock() );
+		$multi_currency = $this->get_multi_currency_mock();
+		$multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
+
+		$subject = $this->get_subject( $multi_currency );
 
 		$min_price = 11.12;
 		$expected_step_price = 10;
 
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option' )->andReturn( $client_currency );
+
 		$filtered_min_price = $subject->filter_widget_min_amount( $min_price );
 
 		$this->assertEquals( $expected_step_price, $filtered_min_price );
-
 	}
 
 	/**
 	 * @test
-	 *
 	 */
 	public function it_should_filter_widget_max_amount_given_step_price_of_10(){
+		$client_currency = 'EUR';
 
-		$subject = $this->get_subject( $this->get_multi_currency_mock() );
+		$multi_currency = $this->get_multi_currency_mock();
+		$multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
+
+		$subject = $this->get_subject( $multi_currency );
 
 		$max_price = 12.22;
 		$expected_step_price = 20;
 
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option' )->andReturn( $client_currency );
+
 		$filtered_max_price = $subject->filter_widget_max_amount( $max_price );
 
 		$this->assertEquals( $expected_step_price, $filtered_max_price );
-
 	}
 
 
