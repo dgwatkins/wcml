@@ -434,7 +434,11 @@ class WCML_Products{
         }
     }
 
-    //update menu_order fro translations after ordering original products
+	/**
+     * update menu_order fro translations after ordering original products
+     *
+	 * @param int|string $product_id
+	 */
     public function update_order_for_product_translations( $product_id ){
         if( isset( $this->woocommerce_wpml->settings[ 'products_sync_order' ] ) && $this->woocommerce_wpml->settings[ 'products_sync_order' ] ){
             $current_language = $this->sitepress->get_current_language();
@@ -444,7 +448,7 @@ class WCML_Products{
                 $translations = $this->post_translations->get_element_translations( $product_id );
 
                 foreach( $translations as $translation ){
-                    if( $translation !== $product_id ){
+                    if( (int)$translation !== (int)$product_id ){
                         $this->wpdb->update( $this->wpdb->posts, array( 'menu_order' => $menu_order ), array( 'ID' => $translation ) );
                     }
                 }
