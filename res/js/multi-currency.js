@@ -500,7 +500,7 @@ jQuery( function($){
             var thousand_sep = parent.find('.currency_option_thousand_sep').val();
             var decimal_sep  = parent.find('.currency_option_decimal_sep').val();
             var symbol       = $(this).closest('.wcml_currency_options').find('.wcml-dialog-close-button').attr('data-symbol');
-            var decimals     = '56789'.substr(0, parent.find('.currency_option_decimals').val());
+            var decimals     = '0'.repeat(parent.find('.currency_option_decimals').val());
             if(decimals == ''){
                 decimal_sep = '';
             }

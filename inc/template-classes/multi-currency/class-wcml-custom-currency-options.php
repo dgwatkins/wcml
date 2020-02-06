@@ -163,7 +163,7 @@ class WCML_Custom_Currency_Options extends WCML_Templates_Factory {
                 'decimals' => $this->args['currencies'][$currency]['num_decimals'],
                 'price_format' => get_woocommerce_price_format()
             );
-            $price = wc_price( '1234.56', $args );
+            $price = wc_price( '1234.00', $args );
 
             remove_filter( 'option_woocommerce_currency_pos', array($this, 'filter_currency_pos') );
 
@@ -174,7 +174,7 @@ class WCML_Custom_Currency_Options extends WCML_Templates_Factory {
                 'currency' => $currency,
                 'price_format' => get_woocommerce_price_format()
             );
-            $price = wc_price( '1234.56', $args );
+            $price = wc_price( '1234.00', $args );
         }
 
         return $price;
