@@ -241,6 +241,7 @@ class WCML_Bookings {
 
 		add_filter( 'woocommerce_bookings_account_tables', array( $this, 'filter_my_account_bookings_tables_by_current_language'	) );
 
+		add_filter( 'get_post_metadata', array( $this, 'product_price_filter' ), PHP_INT_MAX, 4 );
 	}
 
 	/**
@@ -2616,8 +2617,8 @@ class WCML_Bookings {
 	 */
 	public function count_bookings_by_current_language( $counts, $type ) {
 
-		$query = "SELECT p.post_status, COUNT( * ) AS num_posts FROM {$this->wpdb->posts} as p 
-                  LEFT JOIN {$this->wpdb->prefix}icl_translations as icl ON p.ID = icl.element_id 
+		$query = "SELECT p.post_status, COUNT( * ) AS num_posts FROM {$this->wpdb->posts} as p
+                  LEFT JOIN {$this->wpdb->prefix}icl_translations as icl ON p.ID = icl.element_id
                   WHERE p.post_type = %s AND icl.language_code = %s AND icl.element_type = %s GROUP BY p.post_status";
 
 		$results = $this->wpdb->get_results( $this->wpdb->prepare( $query, $type, $this->sitepress->get_current_language(), 'post_wc_booking' ), ARRAY_A );
@@ -2657,5 +2658,21 @@ class WCML_Bookings {
 	public function save_booking_data_to_translation( $post_id, $data, $job ){
 	    $this->save_person_translation( $post_id, $data, $job );
 	    $this->save_resource_translation( $post_id, $data, $job );
+    }
+
+    public function product_price_filter( $null, $object_id, $meta_key, $single ) {
+		if ( ! $null && '_price' === $meta_key && ! $single ) {
+			$result = get_post_meta( $object_id, '_price',  true );
+
+			if ( null === $result ) {
+				return null;
+			} elseif ( $result ) {
+				return [ $result ];
+			}
+
+			return [];
+		}
+
+		return $null;
     }
 }
