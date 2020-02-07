@@ -68,6 +68,10 @@ class WCML_Orders {
 			10,
 			3
 		);
+
+		if ( is_admin() ) {
+			$this->maybe_set_dashboard_cookie();
+		}
 	}
 
 	public function should_attach_new_order_note_data_filter() {
@@ -417,11 +421,26 @@ class WCML_Orders {
 			die();
 		}
 
-		setcookie( self::DASHBOARD_COOKIE_NAME, filter_input( INPUT_POST, 'lang', FILTER_SANITIZE_FULL_SPECIAL_CHARS ), time() + self::COOKIE_TTL, COOKIEPATH, COOKIE_DOMAIN );
+		$this->set_dashboard_order_language_cookie( filter_input( INPUT_POST, 'lang', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) );
+	}
+
+	private function set_dashboard_order_language_cookie( $language ) {
+		setcookie( self::DASHBOARD_COOKIE_NAME, $language, time() + self::COOKIE_TTL, COOKIEPATH, COOKIE_DOMAIN );
 	}
 
 	private function remove_dashboard_order_language_cookie() {
 		setcookie( self::DASHBOARD_COOKIE_NAME, '', time() - self::COOKIE_TTL, COOKIEPATH, COOKIE_DOMAIN );
+	}
+
+	private function maybe_set_dashboard_cookie() {
+		global $pagenow;
+
+		if (
+			! isset( $_COOKIE [ self::DASHBOARD_COOKIE_NAME ] ) &&
+			( 'post-new.php' === $pagenow && isset( $_GET['post_type'] ) && 'shop_order' === $_GET['post_type'] )
+		) {
+			$this->set_dashboard_order_language_cookie( $this->sitepress->get_default_language() );
+		}
 	}
 
 	public function set_order_language_backend( $post_id, $post ) {

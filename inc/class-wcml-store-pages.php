@@ -45,6 +45,8 @@ class WCML_Store_Pages {
 			$this->add_filter_to_get_shop_translated_page_id();
 		}
 
+		add_filter( 'woocommerce_get_checkout_url', [ $this, 'get_checkout_page_url' ] );
+
 		add_filter( 'post_type_archive_link', [ $this, 'filter_shop_archive_link' ], 10, 2 );
 	}
 
@@ -189,8 +191,6 @@ class WCML_Store_Pages {
 			// I think following filter not needed because "option_woocommerce_..." not used in Woo, but I need ask David to confirm this
 			add_filter( 'option_woocommerce_' . $woo_page, [ $this, 'translate_pages_in_settings' ] );
 		}
-
-		add_filter( 'woocommerce_get_checkout_url', [ $this, 'get_checkout_page_url' ] );
 	}
 
 	public function translate_pages_in_settings( $id ) {

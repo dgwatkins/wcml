@@ -52,6 +52,8 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 			'translate_pages_in_settings'
 		) );
 
+		WP_Mock::expectFilterAdded( 'woocommerce_get_checkout_url', array( $subject, 'get_checkout_page_url' ) );
+
 		$subject->add_hooks();
 	}
 

@@ -1,5 +1,7 @@
 <?php
 
+use tad\FunctionMocker\FunctionMocker;
+
 class Test_WCML_Orders extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
@@ -12,10 +14,14 @@ class Test_WCML_Orders extends OTGS_TestCase {
 	{
 		parent::setUp();
 
-		$this->sitepress = $this->getMockBuilder('SitePress')
-			->disableOriginalConstructor()
-			->setMethods(array( 'get_current_language', 'get_user_admin_language' ))
-			->getMock();
+		$this->sitepress = $this->getMockBuilder( 'SitePress' )
+		                        ->disableOriginalConstructor()
+		                        ->setMethods( [
+			                        'get_current_language',
+			                        'get_user_admin_language',
+			                        'get_default_language',
+		                        ] )
+		                        ->getMock();
 
 		$this->woocommerce_wpml = $this->getMockBuilder('woocommerce_wpml')
 			->disableOriginalConstructor()
@@ -25,6 +31,81 @@ class Test_WCML_Orders extends OTGS_TestCase {
 
 	private function get_subject(){
 		return new WCML_Orders( $this->woocommerce_wpml, $this->sitepress );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_set_dashboard_order_language_for_new_order_page() {
+
+		\WP_Mock::userFunction( 'is_admin', [
+				'return' => true
+			]
+		);
+
+		\WP_Mock::userFunction( 'get_current_user_id', [
+				'return' => 1
+			]
+		);
+
+		\WP_Mock::userFunction( 'get_option', [
+				'args'   => [ 'wpml-st-all-strings-are-in-english' ],
+				'return' => false
+			]
+		);
+
+		global $pagenow;
+		$pagenow           = 'post-new.php';
+		$_GET['post_type'] = 'shop_order';
+
+		$language = 'en';
+		$this->sitepress->method( 'get_default_language' )->willReturn( $language );
+
+		$setCookie = FunctionMocker::replace( 'setcookie', true );
+
+		$subject = $this->get_subject();
+		$subject->init();
+
+		$setCookie->wasCalledWithOnce( [
+			$subject::DASHBOARD_COOKIE_NAME,
+			$language,
+			time() + $subject::COOKIE_TTL,
+			COOKIEPATH,
+			COOKIE_DOMAIN
+		] );
+
+		unset( $_GET['post_type'] );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_set_dashboard_order_language_for_not_new_order_admin_page() {
+
+		\WP_Mock::userFunction( 'is_admin', [
+				'return' => true
+			]
+		);
+
+		\WP_Mock::userFunction( 'get_current_user_id', [
+				'return' => 1
+			]
+		);
+
+		\WP_Mock::userFunction( 'get_option', [
+				'args'   => [ 'wpml-st-all-strings-are-in-english' ],
+				'return' => false
+			]
+		);
+
+		global $pagenow;
+		$pagenow           = 'post-new.php';
+		$_GET['post_type'] = 'product';
+
+		$subject = $this->get_subject();
+		$subject->init();
+
+		unset( $_GET['post_type'] );
 	}
 
 	/**
