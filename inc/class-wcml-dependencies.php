@@ -74,7 +74,7 @@ class WCML_Dependencies {
 
 		if ( $this->allok ) {
 			$this->check_for_incompatible_permalinks();
-			$this->check_for_transaltable_default_taxonomies();
+			add_action( 'init', [ $this, 'check_for_translatable_default_taxonomies' ] );
 		}
 
 		if ( isset( $sitepress ) ) {
@@ -131,7 +131,7 @@ class WCML_Dependencies {
 	/**
 	 * Adds default taxonomies notice.
 	 */
-	public function check_for_transaltable_default_taxonomies() {
+	public function check_for_translatable_default_taxonomies() {
 
 		$default_taxonomies = array( 'product_cat', 'product_tag', 'product_shipping_class' );
 		$show_error         = false;
