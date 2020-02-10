@@ -53,7 +53,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "otgs/installer": "dev-develop",
+        "otgs/installer": "~2.2.0",
         "wpml-shared/wpml-lib-dependencies": "dev-master"
     },
     "require-dev": {
