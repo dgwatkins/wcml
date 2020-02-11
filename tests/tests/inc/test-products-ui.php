@@ -34,6 +34,7 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
 
         $this->set_filter_combinations();
 
+	    $this->set_tm_editor_settings();
     }
 
     function test_products_list(){
@@ -399,9 +400,7 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         foreach( $editor_links as $editor_link ){
 
             $link_args = parse_url( $editor_link->getAttribute('href') );
-            parse_str( $link_args['query'], $link_args );
-            parse_str( $link_args['page'], $link_args );
-            $this->assertTrue( in_array( $link_args['language_code'], $this->languages ) );
+	        $this->assertContains( 'language_code', $link_args['fragment'] );
         }
     }
 
@@ -410,5 +409,11 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
         $current_page  = $dom->getElementById( 'current-page-selector' );
         $this->assertNotEmpty( $current_page );
         $this->assertEquals( 1, $current_page->getAttribute('value') );
+    }
+
+    private function set_tm_editor_settings(){
+	    $tm_settings = $this->sitepress->get_setting( 'translation-management', array() );;
+	    $tm_settings['doc_translation_method'] = ICL_TM_TMETHOD_EDITOR;
+	    $this->sitepress->set_setting( 'translation-management', $tm_settings );
     }
 }

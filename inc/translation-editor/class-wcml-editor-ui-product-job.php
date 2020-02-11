@@ -623,7 +623,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 			return $return;
 		}
 
-		$languages = $this->sitepress->get_active_languages();
+	    $active_languages = $this->sitepress->get_active_languages();
 
 		$product_trid  = $this->sitepress->get_element_trid( $this->product_id, 'post_' . $this->original_post->post_type );
 		$tr_product_id = apply_filters( 'translate_object_id', $this->product_id, 'product', false, $this->get_target_language() );
@@ -816,7 +816,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 		$this->woocommerce_wpml->products->get_translation_statuses(
 			$this->product_id,
 			$product_translations,
-			$languages,
+			$active_languages,
 			isset( $translations['slang'] )
 																															&& $translations['slang']
 																															   !== 'all' ? $translations['slang'] : false,
