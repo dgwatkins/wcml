@@ -195,8 +195,9 @@ class WCML_Multi_Currency_Prices {
 					) ) && ! empty( $ccr ) && isset( $ccr[ $meta_key ][ $this->multi_currency->get_client_currency() ] )
 				) {
 					$price_original = get_post_meta( $original_object_id, $meta_key, $single );
-					$price          = $price_original * $ccr[ $meta_key ][ $this->multi_currency->get_client_currency() ];
-
+					if( is_numeric( $price_original ) ){
+						$price = $price_original * $ccr[ $meta_key ][ $this->multi_currency->get_client_currency() ];
+					}
 				} else {
 
 					// normal filtering
@@ -209,9 +210,9 @@ class WCML_Multi_Currency_Prices {
 
 					} else {
 						// 2. automatic conversion
-						$price = get_post_meta( $object_id, $meta_key, $single );
-						if( is_numeric( $price ) ){
-							$price = apply_filters( 'wcml_raw_price_amount', $price );
+						$price_original = get_post_meta( $object_id, $meta_key, $single );
+						if( is_numeric( $price_original ) ){
+							$price = apply_filters( 'wcml_raw_price_amount', $price_original );
 						}
 					}
 				}
