@@ -594,7 +594,12 @@ class WCML_Synchronize_Product_Data {
 			foreach ( $post_fields as $post_field_key => $post_field ) {
 
 				if ( 1 === preg_match( '/field-' . $custom_field . '-.*?/', $post_field_key ) ) {
-					$custom_fields          = get_post_meta( $original_product_id, $custom_field, true );
+					delete_post_meta( $trnsl_product_id, $custom_field );
+
+					$custom_fields = get_post_meta( $original_product_id, $custom_field );
+					$single        = count( $custom_fields ) === 1;
+					$custom_fields = $single ? $custom_fields[0] : $custom_fields;
+
 					$filtered_custom_fields = array_filter( $custom_fields );
 					$custom_fields_values   = array_values( $filtered_custom_fields );
 					$custom_fields_keys     = array_keys( $filtered_custom_fields );
@@ -613,10 +618,15 @@ class WCML_Synchronize_Product_Data {
 					$custom_fields_translated = $custom_fields;
 
 					foreach ( $custom_fields_values as $index => $value ) {
-						$custom_fields_translated[ $custom_fields_keys[ $index ] ] = $value;
+						if ( ! $single ) {
+							add_post_meta( $trnsl_product_id, $custom_field, $value, $single );
+						} else {
+							$custom_fields_translated[ $custom_fields_keys[ $index ] ] = $value;
+						}
 					}
-
-					update_post_meta( $trnsl_product_id, $custom_field, $custom_fields_translated );
+					if ( $single ) {
+						update_post_meta( $trnsl_product_id, $custom_field, $custom_fields_translated );
+					}
 				} else {
 					$meta_value = $translation_data[ md5( $post_field_key ) ];
 					$field_key  = explode( ':', $post_field_key );

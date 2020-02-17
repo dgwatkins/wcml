@@ -285,7 +285,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 			md5( 'field-' . $custom_field . '-2' ) => rand_str( 32 ),
 		];
 
-		$original_custom_fields = [
+		$original_custom_fields[] = [
 			'key1' => rand_str(32),
 			'key2' => rand_str(32),
 			'key3' => rand_str(32)
@@ -293,7 +293,7 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'get_post_meta', [
 			'expected' => 1,
-			'args' => [ $original_product_id, $custom_field, true ],
+			'args' => [ $original_product_id, $custom_field ],
 			'return' => $original_custom_fields
 		] );
 
@@ -306,6 +306,80 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		\WP_Mock::userFunction( 'update_post_meta', [
 			'expected' => 1,
 			'args' => [ $translated_product_id, $custom_field, $expected_translated_custom_field ],
+		] );
+
+		\WP_Mock::userFunction( 'delete_post_meta', [
+			'expected' => 1,
+			'args' => [ $translated_product_id, $custom_field ],
+		] );
+
+		$subject->sync_custom_field_value(
+			$custom_field, $translation_data, $translated_product_id, $post_fields, $original_product_id );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function sync_custom_field_value_should_sync_multiple_cf(){
+		$subject = $this->get_subject();
+
+		$custom_field = rand_str(32);
+		$translated_product_id = 12;
+		$post_fields = [
+			'field-' . $custom_field . '-0' => [
+				'data'   => rand_str( 32 ),
+				'tid'    => 0,
+				'format' => 'base64',
+			],
+			'field-' . $custom_field . '-1' => [
+				'data'   => rand_str( 32 ),
+				'tid'    => 0,
+				'format' => 'base64',
+			],
+			'field-' . $custom_field . '-2' => [
+				'data'   => rand_str( 32 ),
+				'tid'    => 0,
+				'format' => 'base64',
+			]
+		];
+		$original_product_id = 11;
+		$translation_data = [
+			md5( 'field-' . $custom_field . '-0' ) => rand_str( 32 ),
+			md5( 'field-' . $custom_field . '-1' ) => rand_str( 32 ),
+			md5( 'field-' . $custom_field . '-2' ) => rand_str( 32 ),
+		];
+
+		$original_custom_fields[] = rand_str(32);
+		$original_custom_fields[] = rand_str(32);
+		$original_custom_fields[] = rand_str(32);
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'expected' => 1,
+			'args' => [ $original_product_id, $custom_field ],
+			'return' => $original_custom_fields
+		] );
+
+		$expected_translated_custom_field[] = $translation_data[ md5( 'field-' . $custom_field . '-0' ) ];
+		$expected_translated_custom_field[] = $translation_data[ md5( 'field-' . $custom_field . '-1' ) ];
+		$expected_translated_custom_field[] = $translation_data[ md5( 'field-' . $custom_field . '-2' ) ];
+
+		\WP_Mock::userFunction( 'add_post_meta', [
+			'expected' => 1,
+			'args' => [ $translated_product_id, $custom_field, $expected_translated_custom_field[0], false ],
+		] );
+		\WP_Mock::userFunction( 'add_post_meta', [
+			'expected' => 1,
+			'args' => [ $translated_product_id, $custom_field, $expected_translated_custom_field[1], false ],
+		] );
+		\WP_Mock::userFunction( 'add_post_meta', [
+			'expected' => 1,
+			'args' => [ $translated_product_id, $custom_field, $expected_translated_custom_field[2], false ],
+		] );
+
+		\WP_Mock::userFunction( 'delete_post_meta', [
+			'expected' => 1,
+			'args' => [ $translated_product_id, $custom_field ],
 		] );
 
 		$subject->sync_custom_field_value(
