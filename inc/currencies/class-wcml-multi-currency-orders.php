@@ -329,7 +329,7 @@ class WCML_Multi_Currency_Orders {
 			foreach ( array_keys( $converted_totals ) as $key ) {
 
 				if ( 'total' === $key && $item->get_total() !== $item->get_subtotal() ) {
-					$converted_totals[ $key ] = $this->get_item_meta( $item, $key );
+					$converted_totals[ $key ] = $item->get_total();
 				} else {
 					if ( ! $converted_price ) {
 						$converted_meta_key = $this->get_converted_meta_key( $key );
@@ -341,7 +341,11 @@ class WCML_Multi_Currency_Orders {
 							$converted_totals[ $key ] = $this->get_converted_item_meta( $key, $item_price, false, $item, $order_currency, $coupons );
 							$item->update_meta_data( $converted_meta_key, $converted_totals[ $key ] );
 						} else {
-							$converted_totals[ $key ] = $this->get_item_meta( $item, $key );
+							if ( 'total' === $key ) {
+								$converted_totals[ $key ] = $item->get_meta( $converted_meta_key );
+							} else {
+								$converted_totals[ $key ] = $this->get_item_meta( $item, $key );
+							}
 						}
 					} else {
 						$converted_totals[ $key ] = $this->get_converted_item_meta( $key, $converted_price, true, $item, $order_currency, $coupons );
