@@ -208,7 +208,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
 				} else {
 
-					$custom_fields_values = array_values( array_filter( maybe_unserialize( get_post_meta( $this->product_id, $custom_field, true ) ) ) );
+					$custom_fields_values = array_values( $this->get_custom_field_values( $this->product_id, $custom_field ) );
 
 					if ( $custom_fields_values ) {
 						$cf_fields_group = new WPML_Editor_UI_Field_Group();
@@ -587,13 +587,13 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 						}
 					} else {
 
-						$custom_fields            = maybe_unserialize( get_post_meta( $this->product_id, $custom_field, true ) );
+						$custom_fields            = $this->get_custom_field_values( $this->product_id, $custom_field );
 						$translated_custom_fields = [];
 
 						if ( $custom_fields ) {
 
 							if ( $translation_id ) {
-								$translated_custom_fields = maybe_unserialize( get_post_meta( $translation_id, $custom_field, true ) );
+								$translated_custom_fields = $this->get_custom_field_values( $translation_id, $custom_field );
 							}
 
 							$i = 0;
@@ -947,9 +947,8 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 	}
 
 	public function check_custom_field_is_single_value( $product_id, $meta_key ) {
-		$meta_value = maybe_unserialize( get_post_meta( $product_id, $meta_key, true ) );
 
-		if ( is_array( $meta_value ) ) {
+		if ( is_array( $this->get_custom_field_values( $product_id, $meta_key ) ) ) {
 			return false;
 		} else {
 			return apply_filters( 'wcml_check_is_single', true, $product_id, $meta_key );
@@ -970,6 +969,25 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
 	public function show_media_button() {
 		return true;
+	}
+
+	/**
+	 * @param int $product_id
+	 * @param string $field_key
+	 *
+	 * @return array|string
+	 */
+	private function get_custom_field_values( $product_id, $field_key ) {
+		$maybe_double_unserialize = function ( $value ) {
+			return maybe_unserialize( $value );
+		};
+
+		$values = array_map(
+			$maybe_double_unserialize,
+			array_filter( get_post_meta( $product_id, $field_key ) )
+		);
+
+		return count( $values ) === 1 ? $values[0] : $values;
 	}
 
 }
