@@ -440,12 +440,11 @@ class WCML_Terms {
                 JOIN {$this->wpdb->term_taxonomy} tx on tr.term_taxonomy_id = tx.term_taxonomy_id
                 JOIN {$this->wpdb->posts} p ON tr.object_id = p.ID
                 JOIN {$this->wpdb->prefix}icl_translations t ON t.element_id = p.ID 
-                WHERE {$where} tx.taxonomy = %s AND p.post_type = 'product' AND t.element_type='post_product' AND t.language_code = %s 
+                WHERE {$where} tx.taxonomy = %s AND p.post_type = 'product' AND t.element_type='post_product' AND t.source_language_code IS NULL  
                 ORDER BY ID ASC
                 
         ",
-				$taxonomy,
-				$this->sitepress->get_default_language()
+				$taxonomy
 			)
 		);
 
