@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fff24eb5d5da709db4c0953afa3af9e8",
+    "content-hash": "782fd2c9bd4419b7b90f153832b160c4",
     "packages": [
         {
             "name": "composer/installers",
@@ -179,11 +179,11 @@
         },
         {
             "name": "otgs/installer",
-            "version": "2.2.5",
+            "version": "2.2.6",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/installer/installer.git",
-                "reference": "3540b92cfcdc43236d8102d5dfb8a3e62dcd4d21"
+                "reference": "f8859e3a81c147d8693f8708155891ea828148c0"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -266,7 +266,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2020-02-03T09:06:48+00:00"
+            "time": "2020-02-24T16:33:43+00:00"
         },
         {
             "name": "wpml-shared/wpml-lib-dependencies",
@@ -1822,7 +1822,7 @@
                 }
             ],
             "description": "CI tools for accessing and manipulating WordPress plugins versions",
-            "time": "2019-08-12T15:05:05+00:00"
+            "time": "2019-08-12T15:23:35+00:00"
         },
         {
             "name": "php-http/client-common",
@@ -5038,16 +5038,16 @@
         },
         {
             "name": "wpml/page-builders-gutenberg",
-            "version": "dev-wcml-2676",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/OnTheGoSystems/wpml-page-builders-gutenberg.git",
-                "reference": "c6b5496e6acb9569e28a6051de8746a8cc0f6071"
+                "reference": "8d82e95064d97b97bd65d039cf0f175023c67b35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OnTheGoSystems/wpml-page-builders-gutenberg/zipball/c6b5496e6acb9569e28a6051de8746a8cc0f6071",
-                "reference": "c6b5496e6acb9569e28a6051de8746a8cc0f6071",
+                "url": "https://api.github.com/repos/OnTheGoSystems/wpml-page-builders-gutenberg/zipball/8d82e95064d97b97bd65d039cf0f175023c67b35",
+                "reference": "8d82e95064d97b97bd65d039cf0f175023c67b35",
                 "shasum": ""
             },
             "require": {
@@ -5077,7 +5077,7 @@
                 }
             ],
             "description": "A library used by WPML to handle Gutenberg",
-            "time": "2020-01-07T08:56:12+00:00"
+            "time": "2020-01-21T11:03:01+00:00"
         },
         {
             "name": "xrstf/composer-php52",
