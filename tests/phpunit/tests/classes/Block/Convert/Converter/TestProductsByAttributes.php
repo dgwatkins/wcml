@@ -81,11 +81,11 @@ class TestProductsByAttributes extends \OTGS_TestCase {
 		global $sitepress;
 
 		$sitepress = $this->getMockBuilder( '\SitePress' )
-			->setMethods( [ 'is_display_as_translated_taxonomies' ] )
+			->setMethods( [ 'is_display_as_translated_taxonomy' ] )
 			->disableOriginalConstructor()->getMock();
 
-		$sitepress->method( 'is_display_as_translated_taxonomies' )
-		          ->with( 'taxonomy' )
+		$sitepress->method( 'is_display_as_translated_taxonomy' )
+		          ->with( $slug )
 		          ->willReturn( false );
 
 		\WP_Mock::userFunction( 'wpml_object_id_filter', [
