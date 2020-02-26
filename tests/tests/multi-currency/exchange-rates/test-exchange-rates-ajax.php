@@ -1,6 +1,10 @@
 <?php
 
-
+/**
+ * Class Test_WCML_Exchange_Rates_Ajax
+ * @runInSeparateProcess
+ * @preserveGlobalState disabled
+ */
 class Test_WCML_Exchange_Rates_Ajax extends WP_Ajax_UnitTestCase {
 
     private $multi_currency;
@@ -10,7 +14,11 @@ class Test_WCML_Exchange_Rates_Ajax extends WP_Ajax_UnitTestCase {
     function setUp(){
         global $woocommerce_wpml, $sitepress, $wpdb;
 
-        $this->woocommerce_wpml = $woocommerce_wpml;
+	    if ( ! defined( 'DOING_AJAX' ) ) {
+		    define( 'DOING_AJAX', true );
+	    }
+
+	    $this->woocommerce_wpml = $woocommerce_wpml;
 	    WCML_Helper::init( $this->woocommerce_wpml, $sitepress, $wpdb );
 	    WCML_Helper::create_icl_string_packages_table();
 
