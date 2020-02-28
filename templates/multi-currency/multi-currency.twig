@@ -153,11 +153,6 @@
                                                 <select rel="{{ language.code }}">
                                                     <option value="0"
                                                             {% if get_language_currency(language.code) == 0 %}selected="selected"{% endif %}>{{ strings.currencies_table.keep_currency }}</option>
-                                                    {% if is_currency_on(wc_currency, language.code) %}
-                                                        <option value="{{ wc_currency }}"
-                                                                {% if get_language_currency(language.code) == wc_currency %}selected="selected"{% endif %}>{{ wc_currency }}</option>
-                                                    {% endif %}
-
                                                     {% for code, currency in currencies %}
                                                         {% if is_currency_on(code, language.code) %}
                                                             <option value="{{ code }}"
