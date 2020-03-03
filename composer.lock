@@ -1717,7 +1717,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-php-integration-tests.git",
-                "reference": "c154bea3f986759917178b0f4a1eb2f630711da7"
+                "reference": "f626acba07afe84aacd0615cfec54e12eadb9f92"
             },
             "require": {
                 "symfony/console": "^3.4"
@@ -1738,7 +1738,7 @@
                 ]
             },
             "description": "Clone, install, setup dependencies and run the integration tests of the current project",
-            "time": "2019-12-18T13:53:25+00:00"
+            "time": "2020-03-03T10:28:43+00:00"
         },
         {
             "name": "otgs/unit-tests-framework",
