@@ -179,11 +179,11 @@
         },
         {
             "name": "otgs/installer",
-            "version": "2.2.6",
+            "version": "2.2.7",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/installer/installer.git",
-                "reference": "f8859e3a81c147d8693f8708155891ea828148c0"
+                "reference": "7fe0a05757e0bf7cf2c0b6f13ec7487e9457d66d"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -266,7 +266,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2020-02-24T16:33:43+00:00"
+            "time": "2020-03-03T08:30:05+00:00"
         },
         {
             "name": "wpml-shared/wpml-lib-dependencies",
