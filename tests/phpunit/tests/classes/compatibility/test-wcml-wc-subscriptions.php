@@ -586,4 +586,15 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_should_not_filter_subscription_items_if_false() {
+
+		$subject = $this->get_subject();
+
+		$this->assertFalse( $subject->filter_subscription_items( false ) );
+
+	}
+
 }
