@@ -30,8 +30,6 @@ define( 'WPML_TM_FOLDER',  WP_CONTENT_DIR . '/plugins/wpml-translation-managemen
 define( 'WCML_PLUGIN_URL', WP_CONTENT_DIR . '/plugins/woocommerce-multilingual/' );
 define( 'WPML_ST_FOLDER', WP_CONTENT_DIR . '/plugins/wpml-string-translation/' );
 
-/** WCML Constants */
-define( 'WCML_VERSION', '1.2.3' );
 
 if( ! defined( 'COOKIEPATH' ) ){
 	define( 'COOKIEPATH', '/' );
