@@ -83,7 +83,6 @@ function wcml_loader() {
 		\WCML\Email\Settings\Hooks::class,
 		\WCML\Block\Convert\Hooks::class,
 		\WCML\MO\Hooks::class,
-		\WCML\UI\WC\Hooks::class,
 	];
 
 	if (
