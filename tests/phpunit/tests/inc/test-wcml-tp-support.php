@@ -10,6 +10,8 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 	private $wpdb;
 	/** @var WPML_Element_Translation_Package */
 	private $tp;
+	/** @var array */
+	private $tm_settings;
 
 	public function setUp() {
 		parent::setUp();
@@ -39,13 +41,15 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 		});
 
 		$this->wpdb = $this->stubs->wpdb();
+
+		$this->tm_settings['custom_fields_translation'] = [];
 	}
 
 	/**
 	 * @return WCML_TP_Support
 	 */
 	private function get_subject(){
-		$subject = new WCML_TP_Support( $this->woocommerce_wpml, $this->wpdb, $this->tp );
+		$subject = new WCML_TP_Support( $this->woocommerce_wpml, $this->wpdb, $this->tp, $this->tm_settings );
 
 		return $subject;
 	}
@@ -63,6 +67,9 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 
 		\WP_Mock::expectFilterAdded( 'wpml_tm_translation_job_data', [ $subject, 'append_custom_attributes_to_translation_package' ], 10, 2 );
 		\WP_Mock::expectActionAdded( 'wpml_translation_job_saved',   [ $subject, 'save_custom_attribute_translations' ], 10, 3 );
+
+		\WP_Mock::expectFilterAdded( 'wpml_tm_translation_job_data', [ $subject, 'append_variation_custom_fields_to_translation_package' ], 10, 2 );
+		\WP_Mock::expectActionAdded( 'wpml_pro_translation_completed',   [ $subject, 'save_variation_custom_fields_translations' ], 20, 3 );
 
 		\WP_Mock::expectFilterAdded( 'wpml_tm_translation_job_data', [ $subject, 'append_images_to_translation_package' ], 10, 2 );
 		\WP_Mock::expectActionAdded( 'wpml_translation_job_saved',   [ $subject, 'save_images_translations' ], 10, 3 );
@@ -267,61 +274,141 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_should_append_variation_descriptions_translation_package(){
+	public function it_should_append_variation_custom_fields_to_translation_package() {
 
-		$package = array();
-		$post = new stdClass();
-		$post->ID = 1;
-		$post->post_type = 'product';
+		$package               = [];
+		$post                  = new stdClass();
+		$post->ID              = 1;
+		$post->post_type       = 'product';
 		$variation_description = rand_str();
+		$custom_key_value      = rand_str();
+		$meta_keys             = [ '_variation_description', '_custom_key', '_custom_key_ignore', '_custom_key_copy', '_custom_key_copy_once' ];
+
+		$this->tm_settings['custom_fields_translation']['_variation_description'] = WPML_TRANSLATE_CUSTOM_FIELD;
+		$this->tm_settings['custom_fields_translation']['_custom_key'] = WPML_TRANSLATE_CUSTOM_FIELD;
+		$this->tm_settings['custom_fields_translation']['_custom_key_ignore'] = WPML_IGNORE_CUSTOM_FIELD;
+		$this->tm_settings['custom_fields_translation']['_custom_key_copy'] = WPML_COPY_CUSTOM_FIELD;
+		$this->tm_settings['custom_fields_translation']['_custom_key_copy_once'] = WPML_COPY_ONCE_CUSTOM_FIELD;
 
 		$product_object = $this->getMockBuilder( 'WC_Product' )
 		                       ->disableOriginalConstructor()
-		                       ->setMethods( array( 'get_type' ) )
+		                       ->setMethods( [ 'get_type' ] )
 		                       ->getMock();
 
 		$product_object->method( 'get_type' )->willReturn( 'variable' );
 
-		\WP_Mock::wpFunction( 'wc_get_product', array(
-			'args' => array( $post->ID ),
+		\WP_Mock::wpFunction( 'wc_get_product', [
+			'args'   => [ $post->ID ],
 			'return' => $product_object
-		) );
+		] );
 
-		$variation = new stdClass();
+		$variation     = new stdClass();
 		$variation->ID = 101;
 
-		$available_variations = array(
+		$available_variations = [
 			$variation
-		);
+		];
 
-		\WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => array( $variation->ID, '_variation_description', true ),
+		\WP_Mock::userFunction( 'get_post_custom_keys', [
+			'args'   => [ $variation->ID ],
+			'return' => $meta_keys
+		] );
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $variation->ID, '_variation_description', true ],
 			'return' => $variation_description
-		) );
+		] );
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $variation->ID, '_custom_key', true ],
+			'return' => $custom_key_value
+		] );
 
 		$sync_variations_data = $this->getMockBuilder( 'WCML_Synchronize_Variations_Data' )
 		                             ->disableOriginalConstructor()
-		                             ->setMethods( array( 'get_product_variations' ) )
+		                             ->setMethods( [ 'get_product_variations' ] )
 		                             ->getMock();
 		$sync_variations_data->method( 'get_product_variations' )->with( $post->ID )->willReturn( $available_variations );
 
 		$this->woocommerce_wpml->sync_variations_data = $sync_variations_data;
 
-		$expected_package = array(
-			'contents' => array(
-				'wc_variation_description:' . $variation->ID =>
-					array(
+		$expected_package = [
+			'contents' => [
+				'wc_variation_field:_variation_description:' . $variation->ID =>
+					[
 						'translate' => 1,
 						'data'      => $variation_description,
 						'format'    => 'base64'
-					),
-			)
-		);
+					],
+				'wc_variation_field:_custom_key:' . $variation->ID            =>
+					[
+						'translate' => 1,
+						'data'      => $custom_key_value,
+						'format'    => 'base64'
+					],
+			]
+		];
 
-		$subject = $this->get_subject();
-		$filtered_package = $subject->append_variation_descriptions_translation_package( $package, $post );
+		$subject          = $this->get_subject();
+		$filtered_package = $subject->append_variation_custom_fields_to_translation_package( $package, $post );
 
 		$this->assertEquals( $expected_package, $filtered_package );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_save_variation_custom_fields_translations() {
+
+		$variation_id            = 2;
+		$translated_variation_id = 3;
+		$translated_description  = 'description es';
+		$translated_custom_key   = 'custom es';
+
+		$data                = [
+			'wc_variation_field:_variation_description:' . $variation_id =>
+				[
+					'data'       => $translated_description,
+					'finished'   => 1,
+					'tid'        => '65',
+					'field_type' => 'wc_variation_field:_variation_description:' . $variation_id,
+					'format'     => 'base64',
+				],
+			'wc_variation_field:_custom_key:' . $variation_id            =>
+				[
+					'data'       => $translated_custom_key,
+					'finished'   => 1,
+					'tid'        => '66',
+					'field_type' => 'wc_variation_field:_custom_key:' . $variation_id,
+					'format'     => 'base64',
+				],
+		];
+		$job                 = new stdClass();
+		$job->language_code  = 'es';
+		$original_product_id = 1;
+
+		\WP_Mock::onFilter( 'translate_object_id' )->with( $variation_id, 'product_variation', false, $job->language_code )->reply( $translated_variation_id );
+
+		\WP_Mock::wpFunction( 'is_post_type_translated', [
+			'args'   => [ 'product_variation' ],
+			'times'  => 2,
+			'return' => true
+		] );
+
+		\WP_Mock::wpFunction( 'update_post_meta', [
+			'args'   => [ $translated_variation_id, '_variation_description', $translated_description ],
+			'times'  => 1,
+			'return' => true
+		] );
+
+		\WP_Mock::wpFunction( 'update_post_meta', [
+			'args'   => [ $translated_variation_id, '_custom_key', $translated_custom_key ],
+			'times'  => 1,
+			'return' => true
+		] );
+
+		$subject = $this->get_subject();
+		$subject->save_variation_custom_fields_translations( $original_product_id, $data, $job );
 	}
 
 }

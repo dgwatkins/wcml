@@ -30,6 +30,11 @@ define( 'WPML_TM_FOLDER',  WP_CONTENT_DIR . '/plugins/wpml-translation-managemen
 define( 'WCML_PLUGIN_URL', WP_CONTENT_DIR . '/plugins/woocommerce-multilingual/' );
 define( 'WPML_ST_FOLDER', WP_CONTENT_DIR . '/plugins/wpml-string-translation/' );
 
+define( 'WPML_TRANSLATE_CUSTOM_FIELD', 2 );
+define( 'WPML_COPY_CUSTOM_FIELD', 1 );
+define( 'WPML_IGNORE_CUSTOM_FIELD', 0 );
+define( 'WPML_COPY_ONCE_CUSTOM_FIELD', 3 );
+
 
 if( ! defined( 'COOKIEPATH' ) ){
 	define( 'COOKIEPATH', '/' );

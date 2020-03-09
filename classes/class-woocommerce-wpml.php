@@ -199,7 +199,7 @@ class woocommerce_wpml {
 		if ( is_admin() || wpml_is_rest_request() ) {
 			$this->translation_editor = new WCML_Translation_Editor( $this, $sitepress, $wpdb );
 			$this->translation_editor->add_hooks();
-			$tp_support = new WCML_TP_Support( $this, $wpdb, new WPML_Element_Translation_Package() );
+			$tp_support = new WCML_TP_Support( $this, $wpdb, new WPML_Element_Translation_Package(), $sitepress->get_setting( 'translation-management', [] ) );
 			$tp_support->add_hooks();
 			$this->sync_variations_data = new WCML_Synchronize_Variations_Data( $this, $sitepress, $wpdb );
 		}
