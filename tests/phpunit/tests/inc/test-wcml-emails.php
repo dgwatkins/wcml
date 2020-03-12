@@ -694,8 +694,12 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		] );
 
 		$textKeys = wpml_collect( [
+			'subject',
+			'subject_downloadable',
 			'subject_partial',
 			'subject_full',
+			'heading',
+			'heading_downloadable',
 			'heading_partial',
 			'heading_full',
 			'additional_content'
