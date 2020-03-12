@@ -344,8 +344,12 @@ class WCML_Emails {
 
 		$translated_value = false;
 		$emailStrings     = wpml_collect( [
+			'subject',
+			'subject_downloadable',
 			'subject_partial',
 			'subject_full',
+			'heading',
+			'heading_downloadable',
 			'heading_partial',
 			'heading_full',
 			'additional_content'
