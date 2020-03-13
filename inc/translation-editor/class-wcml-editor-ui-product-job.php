@@ -567,8 +567,9 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 					$trnsl_mid_ids                 = $this->woocommerce_wpml->products->get_mid_ids_by_key( $translation_id, $custom_field );
 				}
 
+				$data_custom_field_key = $custom_field;
 				if ( $is_variation ) {
-					$custom_field .= $element_id;
+					$data_custom_field_key .= $element_id;
 				}
 
 				foreach ( $orig_custom_field_values as $val_key => $orig_custom_field_value ) {
@@ -576,14 +577,14 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 					if ( $this->check_custom_field_is_single_value( $element_id, $custom_field ) ) {
 
 						if ( count( $orig_custom_field_values ) == 1 ) {
-							$element_data[ $custom_field ]                = [ 'original' => $orig_custom_field_value ];
-							$element_data[ $custom_field ]['translation'] = ( $translation_id && isset( $translated_custom_field_value[ $val_key ] ) ) ? $translated_custom_field_value[ $val_key ] : '';
+							$element_data[ $data_custom_field_key ]                = [ 'original' => $orig_custom_field_value ];
+							$element_data[ $data_custom_field_key ]['translation'] = ( $translation_id && isset( $translated_custom_field_value[ $val_key ] ) ) ? $translated_custom_field_value[ $val_key ] : '';
 						} else {
 
-							$custom_field_key = $custom_field . ':' . ( isset( $trnsl_mid_ids[ $val_key ] ) ? $trnsl_mid_ids[ $val_key ] : 'new_' . $val_key );
+							$custom_field_key = $data_custom_field_key . ':' . ( isset( $trnsl_mid_ids[ $val_key ] ) ? $trnsl_mid_ids[ $val_key ] : 'new_' . $val_key );
 
-							$element_data[ $custom_field ][ $custom_field_key ]                = [ 'original' => $orig_custom_field_value ];
-							$element_data[ $custom_field ][ $custom_field_key ]['translation'] = ( $translation_id && isset( $translated_custom_field_value[ $val_key ] ) ) ? $translated_custom_field_value[ $val_key ] : '';
+							$element_data[ $data_custom_field_key ][ $custom_field_key ]                = [ 'original' => $orig_custom_field_value ];
+							$element_data[ $data_custom_field_key ][ $custom_field_key ]['translation'] = ( $translation_id && isset( $translated_custom_field_value[ $val_key ] ) ) ? $translated_custom_field_value[ $val_key ] : '';
 						}
 					} else {
 
@@ -600,7 +601,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 							foreach ( $custom_fields as $key => $field_value ) {
 								if ( ! empty( $field_value ) ) {
 									$translated_custom_field_value = isset( $translated_custom_fields[ $key ] ) ? $translated_custom_fields[ $key ] : '';
-									$element_data                  = $this->add_single_custom_field_content_value( $element_data, $custom_field, $i, $field_value, $translated_custom_field_value );
+									$element_data                  = $this->add_single_custom_field_content_value( $element_data, $data_custom_field_key, $i, $field_value, $translated_custom_field_value );
 									$i ++;
 								}
 							}
