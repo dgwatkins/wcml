@@ -121,15 +121,15 @@ class TestHooks extends \OTGS_TestCase {
 	 * @test
 	 */
 	public function itShouldShowLanguageLinksForWcEmails() {
-		$stringValue      = 'The email subject';
+		$stringValue      = 'The email additional content';
 		$defaultLang      = 'fr';
 		$section          = 'wc_email_customer_on_hold_order';
 		$emailOptionName  = 'woocommerce_customer_on_hold_order_settings';
 		$emailOptionValue = [
-			'subject' => $stringValue,
+			'type' => 'html'
 		];
-		$domain            = 'admin_texts_' . $emailOptionName;
-		$name              = '[' . $emailOptionName . ']subject';
+		$domain           = 'admin_texts_' . $emailOptionName;
+		$name             = '[' . $emailOptionName . ']additional_content';
 
 		$_GET = [
 			'page'    => 'wc-settings',
@@ -142,36 +142,36 @@ class TestHooks extends \OTGS_TestCase {
 		] );
 
 		\WP_Mock::userFunction( 'get_option', [
-			'args'   => [ $emailOptionName ],
+			'args'   => [ $emailOptionName, false ],
 			'return' => $emailOptionValue,
 		] );
 
 		\WP_Mock::userFunction( 'admin_url', [
 			'times'  => 1,
-			'args'   => [ 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context=admin_texts_' . $emailOptionName . '&search=' . $stringValue ],
+			'args'   => [ 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context=admin_texts_' . $emailOptionName . '&search=' ],
 			'return' => 'http://path/to/string-translation',
 		] );
 
 		\Mockery::mock( 'overload:WPML_Simple_Language_Selector' )
 		        ->shouldReceive( 'render' )
-				->with(
-					[
-						'id'                 => $emailOptionName . '_subject_language_selector',
-						'name'               => 'wcml_lang-' . $emailOptionName . '-subject',
-						'selected'           => $defaultLang,
-						'show_please_select' => false,
-						'echo'               => true,
-						'style'              => 'width: 18%;float: left',
-					]
-				);
+		        ->with(
+			        [
+				        'id'                 => $emailOptionName . '_additional_content_language_selector',
+				        'name'               => 'wcml_lang-' . $emailOptionName . '-additional_content',
+				        'selected'           => $defaultLang,
+				        'show_please_select' => false,
+				        'echo'               => true,
+				        'style'              => 'width: 18%;float: left',
+			        ]
+		        );
 
 		$sitepress = $this->getSitepress();
 		$sitepress->method( 'get_default_language' )->willReturn( $defaultLang );
 
 		$wcmlStrings = $this->getWcmlStrings();
 		$wcmlStrings->expects( $this->once() )
-			->method( 'get_string_language' )
-			->with( $stringValue, $domain, $name );
+		            ->method( 'get_string_language' )
+		            ->with( '', $domain, $name );
 
 		$subject = $this->getSubject( $sitepress, $wcmlStrings );
 
@@ -179,7 +179,7 @@ class TestHooks extends \OTGS_TestCase {
 		$subject->showLanguageLinksForWcEmails();
 		$output = ob_get_clean();
 
-		$this->assertRegExp( '#woocommerce_customer_on_hold_order_subject#', $output );
+		$this->assertRegExp( '#woocommerce_customer_on_hold_order_additional_content#', $output );
 	}
 
 	private function getSubject( $sitepress = null, $wcmlStrings = null ) {
