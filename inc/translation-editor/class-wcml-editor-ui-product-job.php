@@ -358,31 +358,34 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
 	}
 
-	public function add_custom_fields_ui_section( $custom_fields_section, $custom_fields, $variation_id = false ) {
+	public function add_custom_fields_ui_section( $custom_fields_section, $custom_fields, $variation_id ) {
 
 		foreach ( $custom_fields as $custom_field ) {
 
-			$custom_field_id = $variation_id ? $custom_field . $variation_id : $custom_field;
+			if ( '_variation_description' === $custom_field || $this->get_custom_field_values( $variation_id, $custom_field ) ) {
 
-			if ( key( $this->data[ $custom_field_id ] ) !== 'original' ) {
-				$group = new WPML_Editor_UI_Field_Group( $this->get_product_custom_field_label( $custom_field, $variation_id ), true );
-				foreach ( $this->data[ $custom_field_id ] as $custom_field_key => $custom_field_array ) {
-					if ( '_variation_description' === $custom_field ) {
-						$custom_field_input = new WPML_Editor_UI_TextArea_Field( $custom_field_key, '', $this->data[ $custom_field_id ], false );
-					} else {
-						$custom_field_input = new WPML_Editor_UI_Single_Line_Field( $custom_field_key, '', $this->data[ $custom_field_id ], false );
+				$custom_field_id = $custom_field . $variation_id;
+
+				if ( key( $this->data[ $custom_field_id ] ) !== 'original' ) {
+					$group = new WPML_Editor_UI_Field_Group( $this->get_product_custom_field_label( $custom_field, $variation_id ), true );
+					foreach ( $this->data[ $custom_field_id ] as $custom_field_key => $custom_field_array ) {
+						if ( '_variation_description' === $custom_field ) {
+							$custom_field_input = new WPML_Editor_UI_TextArea_Field( $custom_field_key, '', $this->data[ $custom_field_id ], false );
+						} else {
+							$custom_field_input = new WPML_Editor_UI_Single_Line_Field( $custom_field_key, '', $this->data[ $custom_field_id ], false );
+						}
+
+						$group->add_field( $custom_field_input );
 					}
-
-					$group->add_field( $custom_field_input );
-				}
-				$custom_fields_section->add_field( $group );
-			} else {
-				if ( '_variation_description' === $custom_field ) {
-					$custom_field_input = new WPML_Editor_UI_TextArea_Field( $custom_field_id, $this->get_product_custom_field_label( $custom_field, $variation_id ), $this->data, true );
+					$custom_fields_section->add_field( $group );
 				} else {
-					$custom_field_input = new WPML_Editor_UI_Single_Line_Field( $custom_field_id, $this->get_product_custom_field_label( $custom_field, $variation_id ), $this->data, true );
+					if ( '_variation_description' === $custom_field ) {
+						$custom_field_input = new WPML_Editor_UI_TextArea_Field( $custom_field_id, $this->get_product_custom_field_label( $custom_field, $variation_id ), $this->data, true );
+					} else {
+						$custom_field_input = new WPML_Editor_UI_Single_Line_Field( $custom_field_id, $this->get_product_custom_field_label( $custom_field, $variation_id ), $this->data, true );
+					}
+					$custom_fields_section->add_field( $custom_field_input );
 				}
-				$custom_fields_section->add_field( $custom_field_input );
 			}
 		}
 
