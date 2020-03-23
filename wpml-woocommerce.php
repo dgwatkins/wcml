@@ -8,10 +8,10 @@
  * Text Domain: woocommerce-multilingual
  * Requires at least: 4.7
  * Tested up to: 5.3
- * Version: 4.7.9
+ * Version: 4.8.0
  * Plugin Slug: woocommerce-multilingual
  * WC requires at least: 3.3.0
- * WC tested up to: 3.8.0
+ * WC tested up to: 4.0.1
  *
  * @package WCML
  * @author  OnTheGoSystems
