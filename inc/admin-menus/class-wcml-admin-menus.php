@@ -161,7 +161,7 @@ class WCML_Admin_Menus {
 			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 			?>
 			<script type="text/javascript">
-				jQuery( '.subsubsub' ).append( '<?php echo wp_kses_post( $quick_edit_notice ); ?>' );
+				jQuery( '.subsubsub' ).append( '<?php echo wp_filter_post_kses( $quick_edit_notice ); ?>' );
 				jQuery( '.subsubsub' ).append( ' <?php echo $quick_edit_notice_prod_link; ?> ' );
 				jQuery( '.quick_hide a' ).on( 'click', function() {
 					jQuery( '.quick_product_trnsl_link' ).attr( 'href', jQuery( '#wcml_product_trnsl_link' ).val() + jQuery( this ).closest( 'tr' ).attr( 'id' ).replace( /post-/, '' ) );
