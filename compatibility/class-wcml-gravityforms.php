@@ -34,7 +34,8 @@ class WCML_gravityforms {
 
 
 	public function add_ajax_action( $actions ) {
-		$actions[] = 'get_updated_price';
+		$actions[] = 'get_updated_price'; // Deprecated from 2.7.
+		$actions[] = 'gforms_get_updated_price';
 		return $actions;
 	}
 
