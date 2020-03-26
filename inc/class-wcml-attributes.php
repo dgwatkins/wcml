@@ -325,7 +325,7 @@ class WCML_Attributes {
 		$orig_product_attrs  = $this->get_product_attributes( $original_product_id );
 		$trnsl_product_attrs = $this->get_product_attributes( $tr_product_id );
 
-		$translated_labels = [];
+		$translated_labels = $this->get_attr_label_translations( $tr_product_id );
 
 		foreach ( $orig_product_attrs as $key => $orig_product_attr ) {
 			$sanitized_key = $this->filter_attribute_name( $orig_product_attr['name'], $original_product_id, true );

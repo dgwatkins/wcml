@@ -178,6 +178,13 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 			'return' => false
 		) );
 
+		\WP_Mock::wpFunction( 'get_post_meta', array(
+			'args' => array( $translated_product_id, 'attr_label_translations', true ),
+			'times' => 1,
+			'return' => false
+		) );
+
+
 		\WP_Mock::wpFunction( 'update_post_meta', array(
 			'args'   => array( $translated_product_id, 'attr_label_translations', array() ),
 			'times'  => 1,
