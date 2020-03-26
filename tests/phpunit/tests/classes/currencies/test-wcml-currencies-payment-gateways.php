@@ -43,7 +43,7 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 		$subject = $this->get_subject();
 
 		\WP_Mock::expectActionAdded(
-			'init',
+			'wp_loaded',
 			[ $subject, 'init_gateways' ]
 		);
 
@@ -81,7 +81,7 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 		$subject = $this->get_subject();
 
 		\WP_Mock::expectActionAdded(
-			'init',
+			'wp_loaded',
 			[ $subject, 'init_gateways' ]
 		);
 
