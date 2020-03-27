@@ -214,4 +214,203 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 		$composite_data = $subject->get_composite_data( $product_id );
 		$this->assertEquals( array(), $composite_data );
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_sync_composite_data_across_translations(){
+
+		\WP_Mock::passthruFunction( 'sanitize_title' );
+
+		$original_product_id = 21;
+		$current_product_id = 22;
+
+		$product_type = new stdClass();
+		$product_type->name = 'composite';
+		$terms = [ $product_type ];
+
+		\WP_Mock::userFunction(
+			'wp_get_object_terms',
+			[
+				'args' => [ $original_product_id, 'product_type' ],
+				'return' => $terms
+			]
+		);
+
+		$assigned_original_product_id = 12;
+		$assigned_original_category_id = 14;
+
+		$original_bto_data[] = [
+			'title'        => 'test title',
+			'description'  => 'test description',
+			'query_type'   => 'product_ids',
+			'default_id'   => $assigned_original_product_id,
+			'assigned_ids' => [ $assigned_original_product_id ],
+		];
+
+		$original_bto_data[] = [
+			'title'                 => 'test title',
+			'description'           => 'test description',
+			'query_type'            => 'category_ids',
+			'default_id'            => $assigned_original_category_id,
+			'assigned_category_ids' => [ $assigned_original_category_id ],
+		];
+
+		\WP_Mock::userFunction(
+			'get_post_meta',
+			[
+				'args' => [ $original_product_id, '_bto_data', true ],
+				'return' => $original_bto_data
+			]
+		);
+
+		$translated_bto_data[] = [
+			'title'        => 'test title FR',
+			'description'  => 'test description FR',
+			'query_type'   => 'product_ids',
+			'default_id'   => $assigned_original_product_id,
+			'assigned_ids' => [ $assigned_original_product_id ],
+		];
+
+		$translated_bto_data[] = [
+			'title'                 => 'test title FR',
+			'description'           => 'test description FR',
+			'query_type'            => 'category_ids',
+			'default_id'            => $assigned_original_category_id,
+			'assigned_category_ids' => [ $assigned_original_category_id ],
+		];
+
+		\WP_Mock::userFunction(
+			'get_post_meta',
+			[
+				'args' => [ $current_product_id, '_bto_data', true ],
+				'return' => $translated_bto_data
+			]
+		);
+
+		$original_bto_scenario_data = [
+			[
+				'component_data' => [
+					[ $assigned_original_product_id ],
+					[ $assigned_original_category_id ],
+				]
+			]
+		];
+
+		\WP_Mock::userFunction(
+			'get_post_meta',
+			[
+				'args' => [ $original_product_id, '_bto_scenario_data', true ],
+				'return' => $original_bto_scenario_data
+			]
+		);
+
+		\WP_Mock::userFunction(
+			'get_post_type',
+			[
+				'args' => [ $assigned_original_product_id ],
+				'return' => 'product'
+			]
+		);
+
+		\WP_Mock::userFunction(
+			'get_post_type',
+			[
+				'args' => [ $assigned_original_category_id ],
+				'return' => 'product_cat'
+			]
+		);
+
+
+
+		$sitepress = $this->getMockBuilder( 'Sitepress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( [ 'get_element_trid', 'get_element_translations' ] )
+		                  ->getMock();
+
+		$en_translation                = new stdClass();
+		$en_translation->language_code = 'en';
+		$en_translation->original      = true;
+		$en_translation->element_id    = $original_product_id;
+		$translations['en']            = $en_translation;
+
+		$fr_translation                = new stdClass();
+		$fr_translation->language_code = 'fr';
+		$fr_translation->element_id    = $current_product_id;
+		$translations['fr']            = $fr_translation;
+
+		$sitepress->method( 'get_element_translations' )->willReturn( $translations );
+
+		$translated_assigned_product_id = 15;
+
+		WP_Mock::onFilter( 'translate_object_id' )->with( $assigned_original_product_id, 'product', true, $fr_translation->language_code )->reply( $translated_assigned_product_id );
+		WP_Mock::onFilter( 'translate_object_id' )->with( $assigned_original_product_id, 'product', false, $fr_translation->language_code )->reply( $translated_assigned_product_id );
+
+		$expected_bto_data = $translated_bto_data;
+		$expected_bto_data[0]['default_id'] = $translated_assigned_product_id;
+		$expected_bto_data[0]['assigned_ids'] = [ $translated_assigned_product_id ];
+
+		$translated_assigned_category_id  = 16;
+
+		WP_Mock::onFilter( 'translate_object_id' )->with( $assigned_original_category_id, 'product_cat', false, $fr_translation->language_code )->reply( $translated_assigned_category_id );
+
+		$expected_bto_data[1]['default_id'] = $translated_assigned_category_id;
+		$expected_bto_data[1]['assigned_category_ids'] = [ $translated_assigned_category_id ];
+
+		\WP_Mock::userFunction(
+			'update_post_meta',
+			[
+				'args' => [ $current_product_id, '_bto_data', $expected_bto_data ],
+				'times' => 1,
+				'return' => true
+			]
+		);
+
+		$expected_scenario_data = [
+			[
+				'component_data' => [
+					[ $translated_assigned_product_id ],
+					[ $translated_assigned_category_id ],
+				]
+			]
+		];
+
+		\WP_Mock::userFunction(
+			'update_post_meta',
+			[
+				'args' => [ $current_product_id, '_bto_scenario_data', $expected_scenario_data ],
+				'times' => 1,
+				'return' => true
+			]
+		);
+
+		$subject = $this->get_subject( $sitepress );
+		$subject->sync_composite_data_across_translations( $original_product_id, $current_product_id );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_sync_composite_data_across_translations_for_simple_product(){
+
+		\WP_Mock::passthruFunction( 'sanitize_title' );
+
+		$original_product_id = 10;
+		$current_product_id = 11;
+
+		$product_type = new stdClass();
+		$product_type->name = 'simple';
+		$terms = [ $product_type ];
+
+		\WP_Mock::userFunction(
+			'wp_get_object_terms',
+			[
+				'args' => [ $original_product_id, 'product_type' ],
+				'return' => $terms
+			]
+		);
+
+		$subject = $this->get_subject();
+		$subject->sync_composite_data_across_translations( $original_product_id, $current_product_id );
+	}
 }
