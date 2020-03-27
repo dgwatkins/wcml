@@ -140,40 +140,6 @@ class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 	}
 
 	/**
-	* @test
-	*/
-	public function it_should_update_component(){
-		$composite_products = $this->get_test_subject();
-
-		$original_composite_data = $this->setup_composite_product_data( $this->test_data->composite_product->id );
-
-		$tr_composite_data = $composite_products->components_update( $this->test_data->composite_product->id, $this->test_data->translated_composite_product, $this->second_language );
-
-		foreach( $tr_composite_data['components'] as $component_id => $component ){
-			//check sync ids
-			if( $component[ 'query_type' ] == 'product_ids' ){
-				$this->assertEquals( array( $this->test_data->components['product']['translated']->id ), $component[ 'assigned_ids' ] );
-			}elseif( $component[ 'query_type' ] == 'category_ids' ){
-				$this->assertEquals( array( $this->test_data->components['category']['translated']->term_id ), $component[ 'assigned_category_ids' ] );
-			}
-			//check sync default
-			$this->assertEquals( $this->test_data->components['product']['translated']->id, $component[ 'default_id' ] );
-		}
-
-		foreach( $tr_composite_data['scenarios'] as $scenario_id => $scenario ){
-			//check sync ids
-			foreach( $scenario[ 'component_data' ] as $compon_id => $component_data ){
-				if( $original_composite_data['components'][ $compon_id ][ 'query_type' ] == 'product_ids' ){
-					$this->assertEquals( array( $this->test_data->components['product']['translated']->id ), $component_data );
-				}elseif( $original_composite_data['components'][ $compon_id ][ 'query_type' ] == 'category_ids' ){
-					$this->assertEquals( array( $this->test_data->components['category']['translated']->term_id ), $component_data );
-				}
-			}
-		}
-
-	}
-
-	/**
 	 * @test
 	 */
 	public function custom_box_html_data(){
