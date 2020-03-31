@@ -29,12 +29,14 @@ define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 define( 'WPML_TM_FOLDER',  WP_CONTENT_DIR . '/plugins/wpml-translation-management/' );
 define( 'WCML_PLUGIN_URL', WP_CONTENT_DIR . '/plugins/woocommerce-multilingual/' );
 define( 'WPML_ST_FOLDER', WP_CONTENT_DIR . '/plugins/wpml-string-translation/' );
+define( 'WCML_VERSION', '4.0' );
 
 define( 'WPML_TRANSLATE_CUSTOM_FIELD', 2 );
 define( 'WPML_COPY_CUSTOM_FIELD', 1 );
 define( 'WPML_IGNORE_CUSTOM_FIELD', 0 );
 define( 'WPML_COPY_ONCE_CUSTOM_FIELD', 3 );
 
+define( 'WCML_MULTI_CURRENCIES_INDEPENDENT', 2 );
 
 if( ! defined( 'COOKIEPATH' ) ){
 	define( 'COOKIEPATH', '/' );

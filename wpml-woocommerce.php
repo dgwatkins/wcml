@@ -83,6 +83,7 @@ function wcml_loader() {
 		\WCML\Email\Settings\Hooks::class,
 		\WCML\Block\Convert\Hooks::class,
 		\WCML\MO\Hooks::class,
+		\WCML\Multicurrency\Shipping\AdminHooksFactory::class,
 	];
 
 	if (
