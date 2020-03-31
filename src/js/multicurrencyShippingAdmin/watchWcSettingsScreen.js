@@ -1,4 +1,4 @@
-var watch_wc_settings_screen = function () {
+export default function () {
     var settings_screen = document.querySelector('.woocommerce_page_wc-settings');
 
     var observer = new MutationObserver(function(mutations) {
@@ -24,5 +24,3 @@ var watch_wc_settings_screen = function () {
     var config = { attributes: true, childList: true, characterData: true };
     observer.observe(settings_screen, config);
 };
-
-document.addEventListener('DOMContentLoaded', watch_wc_settings_screen, false);
