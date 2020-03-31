@@ -1,5 +1,7 @@
 <?php
 
+use \WCML\Multicurrency\Shipping\AdminHooks as ManualCost;
+
 class WCML_Multi_Currency_Shipping {
 
 	/** @var WCML_Multi_Currency */
@@ -49,7 +51,12 @@ class WCML_Multi_Currency_Shipping {
 			if ( $cached_converted_shipping_cost ) {
 				$rate->cost = $cached_converted_shipping_cost;
 			} elseif ( isset( $rate->cost ) && $rate->cost ) {
-				$rate->cost = $this->multi_currency->prices->raw_price_filter( $rate->cost, $client_currency );
+				$custom_currency_cost = $this->getManualShippingCost( $rate, $client_currency );
+				if ( $custom_currency_cost !== $rate->cost ) {
+					$rate->cost = $custom_currency_cost;
+				} else {
+					$rate->cost = $this->multi_currency->prices->raw_price_filter( $rate->cost, $client_currency );
+				}
 				wp_cache_set( $cache_key, $rate->cost, $cache_group );
 			}
 		}
@@ -138,6 +145,26 @@ class WCML_Multi_Currency_Shipping {
 
 		return $price;
 
+	}
+
+	/**
+	 * Maybe get manually configured shipping cost in custom currency.
+	 *
+	 * @param WC_Shipping_Rate $rate Currently processed shipping method instance.
+	 * @param string $currency       Currency set in the front-end.
+	 *
+	 * @return mixed Shipping cost in custom currency or default.
+	 */
+	private function getManualShippingCost( \WC_Shipping_Rate $rate, $currency ) {
+		if ( isset( $rate->method_id, $rate->instance_id ) ) {
+			$option_name = sprintf( 'woocommerce_%s_%d_settings', $rate->method_id, $rate->instance_id );
+			$cost_name = ManualCost::getCostKey( $currency );
+			$rate_settings = get_option( $option_name );
+			if ( isset( $rate_settings[ $cost_name ] ) ) {
+				return $rate_settings[ $cost_name ];
+			}
+		}
+		return $rate->cost;
 	}
 
 
