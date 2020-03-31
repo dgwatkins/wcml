@@ -83,6 +83,7 @@ function wcml_loader() {
 		\WCML\Email\Settings\Hooks::class,
 		\WCML\Block\Convert\Hooks::class,
 		\WCML\MO\Hooks::class,
+		\WCML\Multicurrency\Shipping\AdminHooksFactory::class,
 		\WCML\Tax\Strings\Hooks::class,
 		\WCML\AdminDashboard\Hooks::class,
 	];
