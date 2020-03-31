@@ -25,21 +25,21 @@ class AdminHooks implements IWPML_Action {
 	 */
 	public function add_hooks() {
 		ShippingModeProvider::getAll()->each( function( ShippingMode $shippingMode ) {
-				add_filter(
-					'woocommerce_shipping_instance_form_fields_' . $shippingMode->getMethodId(),
-					$this->addCurrencyShippingFields( $shippingMode ),
-					10,
-					1
-				);
-			}
+			add_filter(
+				'woocommerce_shipping_instance_form_fields_' . $shippingMode->getMethodId(),
+				$this->addCurrencyShippingFields( $shippingMode ),
+				10,
+				1
+			);
+		}
 		);
 		add_action( 'admin_enqueue_scripts', [ $this, 'loadJs' ] );
 	}
 
 	public function addCurrencyShippingFields( ShippingMode $shippingMode ) {
-			return function( array $field ) use ( $shippingMode ) {
-				return $this->addCurrencyShippingFieldsToShippingMethodForm( $field, $shippingMode );
-			};
+		return function( array $field ) use ( $shippingMode ) {
+			return $this->addCurrencyShippingFieldsToShippingMethodForm( $field, $shippingMode );
+		};
 	}
 
 	/**
@@ -56,8 +56,23 @@ class AdminHooks implements IWPML_Action {
 	 * @return array
 	 */
 	private function addCurrencyShippingFieldsToShippingMethodForm( array $field, ShippingMode $shippingMode ) {
+		$field = $this->addTitleField( $field );
 		$field = $this->addEnableField( $field );
 		$field = $this->addCurrenciesFields( $field, $shippingMode );
+		if ( $shippingMode->supportsShippingClasses() ) {
+			$field = ( new ShippingClasses() )->addShippingClassesFields( $field, $this->wcmlMultiCurrency );
+		}
+		return $field;
+	}
+
+	private function addTitleField( $field ) {
+		$title_field = [
+			'title'       => __( 'Costs and values in custom currencies', 'woocommerce-multilingual' ),
+			'type'        => 'title',
+			'default'     => '',
+			'description' => __( 'Woocommerce Mulitlingual by default will multiply all your costs and values defined above by currency exchange rates. If you don\'t want this and you prefer static values instead, you can define them here.', 'woocommerce-multilingual' ),
+		];
+		$field[ 'wcml_shipping_costs_title' ] = $title_field;
 		return $field;
 	}
 
@@ -96,7 +111,6 @@ class AdminHooks implements IWPML_Action {
 			if ( $this->wcmlMultiCurrency->get_default_currency() === $currencyCode ) {
 				continue;
 			}
-
 			$field = $this->getCurrencyField( $field, $currencyCode, $shippingMode );
 		}
 		return $field;
@@ -138,9 +152,5 @@ class AdminHooks implements IWPML_Action {
 			constant( 'WCML_VERSION' ),
 			true
 		);
-	}
-
-	public static function getCostKey( $currency ) {
-		return sprintf( 'cost_%s', $currency );
 	}
 }

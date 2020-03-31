@@ -92,13 +92,14 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks extends OTGS_TestCase {
 		$fields = [];
 
 		$method = $this->getMockBuilder( 'WCML\Multicurrency\Shipping\FlatRateShipping' )
-			->disableOriginalConstructor()
-			->getMock();
+		               ->disableOriginalConstructor()
+		               ->getMock();
 		$method->expects( $this->atLeastOnce() )->method( 'getSettingsFormKey' )->will( $this->onConsecutiveCalls( 'cost_PLN', 'cost_EUR' ) );
 		$method->expects( $this->atLeastOnce() )->method( 'getFieldTitle' )->willReturn( 'title' );
 		$method->expects( $this->atLeastOnce() )->method( 'getFieldDescription' )->willReturn( 'desc' );
 		$new_fields = $subject->addCurrencyShippingFields( $method )( $fields );
 
+		$this->assertTrue( isset( $new_fields['wcml_shipping_costs_title'] ) );
 		$this->assertTrue( isset( $new_fields['wcml_shipping_costs'] ) );
 		$this->assertTrue( isset( $new_fields['cost_PLN'] ) );
 	}
@@ -128,6 +129,7 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks extends OTGS_TestCase {
 		$method->expects( $this->atLeastOnce() )->method( 'getFieldDescription' )->willReturn( 'desc' );
 		$new_fields = $subject->addCurrencyShippingFields( $method )( $fields );
 
+		$this->assertTrue( isset( $new_fields['wcml_shipping_costs_title'] ) );
 		$this->assertTrue( isset( $new_fields['wcml_shipping_costs'] ) );
 		$this->assertTrue( isset( $new_fields['min_amount_PLN'] ) );
 	}
