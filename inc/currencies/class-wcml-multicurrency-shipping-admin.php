@@ -67,8 +67,7 @@ class WCML_Multi_Currency_Shipping_Admin {
 	public function load_js() {
 		wp_enqueue_script(
 			'wcml-admin-shipping-currency-selector',
-			$this->woocommerce_wpml->plugin_url() .
-			'/res/js/wcml-admin-shipping-currency-selector' . $this->woocommerce_wpml->js_min_suffix() . '.js',
+			$this->woocommerce_wpml->plugin_url() . '/dist/js/multicurrencyShippingAdmin/app.js',
 			[ 'jquery' ],
 			$this->woocommerce_wpml->version(),
 			true
