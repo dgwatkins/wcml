@@ -423,8 +423,9 @@ class Test_WCML_Tab_Manager extends WCML_UnitTestCase {
 		$product = wpml_test_insert_post( $this->default_language, 'product', false, $title );
 		update_post_meta( $product, '_override_tab_layout', 'yes' );
 		$orig_tab_data = array(
-			'product_tab_' . $tab_id => array( 'position' => 'top' ),
-			'core_tab_' . $tab_id    => array( 'position' => 'bottom' ),
+			'product_tab_' . $tab_id => array( 'id' => $tab_id, 'position' => 0, 'type' => 'custom' ),
+			'core_tab_' . $tab_id    => array( 'id' => $tab_id, 'position' => 1, 'type' => 'core' ),
+			'global_tab_' . $tab_id  => array( 'id' => $tab_id, 'position' => 2, 'type' => 'global' ),
 		);
 		update_post_meta( $product, '_product_tabs', $orig_tab_data );
 		$title = random_string();
@@ -473,6 +474,12 @@ class Test_WCML_Tab_Manager extends WCML_UnitTestCase {
 					'title'    => $title,
 					'heading'  => $heading,
 				),
+				'global_tab_' .  $tab_id => array(
+					'type'     => 'global',
+					'position' => $orig_tab_data[ 'global_tab_' . $tab_id ]['position'],
+					'id'       => $tab_id,
+					'name'    =>  sanitize_title( get_post( $tab_id )->post_name ),
+				)
 			)
 		);
 		$output = get_post_meta( $product, '_product_tabs', true );
