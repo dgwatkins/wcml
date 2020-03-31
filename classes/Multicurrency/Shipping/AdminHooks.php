@@ -82,7 +82,7 @@ class AdminHooks implements IWPML_Action {
 			if ( $this->wcmlMultiCurrency->get_default_currency() === $currencyCode ) {
 				continue;
 			}
-			$fieldKey = self::getCostKey( $currencyCode );
+			$fieldKey = sprintf( 'cost_%s', $currencyCode );
 			$fieldValue = [
 				'title' => sprintf( esc_html_x( 'Cost in %s',
 					'The label for the field with shipping cost in additional currency. The currency symbol will be added in place of %s specifier.',
@@ -113,9 +113,5 @@ class AdminHooks implements IWPML_Action {
 			constant( 'WCML_VERSION' ),
 			true
 		);
-	}
-
-	public static function getCostKey( $currency ) {
-		return sprintf( 'cost_%s', $currency );
 	}
 }
