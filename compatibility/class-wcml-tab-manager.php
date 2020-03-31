@@ -603,6 +603,13 @@ class WCML_Tab_Manager {
 				$translated_product_tabs_updated = true;
 			}
 
+			foreach ( $original_product_tabs as $original_product_tab ) {
+				if ( 'global' === $original_product_tab['type'] ) {
+					$translated_product_tabs         = $this->set_global_tab( $original_product_tab, $translated_product_tabs, $job->language_code );
+					$translated_product_tabs_updated = true;
+				}
+			}
+
 			if ( true === $translated_product_tabs_updated && isset( $translated_product_tabs ) ) {
 				update_post_meta( $post_id, '_product_tabs', $translated_product_tabs );
 			}
