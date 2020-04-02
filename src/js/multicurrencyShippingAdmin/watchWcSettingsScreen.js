@@ -1,26 +1,38 @@
 export default function () {
-    const settings_screen = document.querySelector('.woocommerce_page_wc-settings');
+    // css selectors
+    const shipping_costs_field_selector          = '.wcml-shipping-cost-currency';
+    const enable_manual_costs_selector           = '.select.wcml-enable-shipping-custom-currency';
+    const enable_manual_costs_selected_selector  = enable_manual_costs_selector + ' option[selected="selected"]';
 
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
+    const hide_costs_fields_when_not_enabled = ( cost_fields_element ) => {
+        const enable_manual_costs_selected_element = document.querySelector( enable_manual_costs_selected_selector );
+        cost_fields_element.forEach( (field) => {
+            field.closest('tr').hidden = enable_manual_costs_selected_element.value === 'auto';
+        });
+    }
+
+    const toggle_fields_display = ( cost_fields_element ) => {
+        const cost_selector_element = document.querySelector( enable_manual_costs_selector );
+        cost_selector_element.addEventListener( 'change', function( event ) {
+            cost_fields_element.forEach( (field) => {
+                field.closest('tr').hidden = cost_selector_element.value !== 'manual';
+            });
+        } );
+    }
+
+    const observer = new MutationObserver( ( mutations ) => {
+        mutations.forEach( (mutation) => {
             if ( mutation.type === 'childList' ) {
-                const cost_fields = document.querySelectorAll('.wcml-shipping-cost-currency');
-                if ( cost_fields.length > 0 ) {
-                    const enable_manual_costs_selected = document.querySelector('.select.wcml-enable-shipping-custom-currency option[selected="selected"]');
-                    cost_fields.forEach(function (field) {
-                        field.closest('tr').hidden = enable_manual_costs_selected.value === 'auto';
-                    });
-
-                    const cost_selector = document.querySelector('.select.wcml-enable-shipping-custom-currency');
-                    cost_selector.addEventListener( 'change', function( event ) {
-                        cost_fields.forEach(function (field) {
-                            field.closest('tr').hidden = cost_selector.value !== 'manual';
-                        });
-                    } );
+                const cost_fields_element = document.querySelectorAll( shipping_costs_field_selector );
+                if ( cost_fields_element.length > 0 ) {
+                    hide_costs_fields_when_not_enabled( cost_fields_element );
+                    toggle_fields_display( cost_fields_element );
                 }
             }
         });
     });
-    const observer_config = { attributes: true, childList: true, characterData: true };
-    observer.observe( settings_screen, observer_config );
+
+    const settings_screen_element = document.querySelector('.woocommerce_page_wc-settings');
+    const observer_config         = { attributes: true, childList: true, characterData: true };
+    observer.observe( settings_screen_element, observer_config );
 };
