@@ -8,23 +8,23 @@ use WCML_Multi_Currency;
 class AdminHooks implements IWPML_Action {
 
 	/** @var WCML_Multi_Currency */
-	private $wcml_multi_currency;
+	private $wcmlMultiCurrency;
 
 	/**
 	 * WCML_Multi_Currency_Shipping_Admin constructor.
 	 *
-	 * @param WCML_Multi_Currency $wcml_multi_currency
+	 * @param WCML_Multi_Currency $wcmlMultiCurrency
 	 */
-	public function __construct( WCML_Multi_Currency $wcml_multi_currency ) {
-		$this->wcml_multi_currency = $wcml_multi_currency;
+	public function __construct( WCML_Multi_Currency $wcmlMultiCurrency ) {
+		$this->wcmlMultiCurrency = $wcmlMultiCurrency;
 	}
 
 	/**
 	 * Registers hooks.
 	 */
 	public function add_hooks() {
-		add_filter( 'woocommerce_shipping_instance_form_fields_flat_rate', [ $this, 'add_currency_shipping_fields_to_shipping_method_form' ], 10, 1 );
-		add_action( 'admin_enqueue_scripts', [ $this, 'load_js' ] );
+		add_filter( 'woocommerce_shipping_instance_form_fields_flat_rate', [ $this, 'addCurrencyShippingFieldsToShippingMethodForm' ], 10, 1 );
+		add_action( 'admin_enqueue_scripts', [ $this, 'loadJs' ] );
 	}
 
 	/**
@@ -40,9 +40,9 @@ class AdminHooks implements IWPML_Action {
 	 *
 	 * @return array
 	 */
-	public function add_currency_shipping_fields_to_shipping_method_form( array $field ) {
-		$field = $this->add_enable_field( $field );
-		$field = $this->add_currencies_fields( $field );
+	public function addCurrencyShippingFieldsToShippingMethodForm( array $field ) {
+		$field = $this->addEnableField( $field );
+		$field = $this->addCurrenciesFields( $field );
 
 		return $field;
 	}
@@ -54,7 +54,7 @@ class AdminHooks implements IWPML_Action {
 	 *
 	 * @return array
 	 */
-	private function add_enable_field( array $field ) {
+	private function addEnableField( array $field ) {
 		$enable_field = [
 			'title' => esc_html__( 'Enable costs in custom currencies', 'woocommerce-multilingual' ),
 			'type' => 'select',
@@ -77,26 +77,26 @@ class AdminHooks implements IWPML_Action {
 	 *
 	 * @return array
 	 */
-	private function add_currencies_fields( array $field ) {
-		foreach ( $this->wcml_multi_currency->get_currency_codes() as $currency_code ) {
-			if ( $this->wcml_multi_currency->get_default_currency() === $currency_code ) {
+	private function addCurrenciesFields( array $field ) {
+		foreach ( $this->wcmlMultiCurrency->get_currency_codes() as $currencyCode ) {
+			if ( $this->wcmlMultiCurrency->get_default_currency() === $currencyCode ) {
 				continue;
 			}
-			$field_key = sprintf( 'cost_%s', $currency_code );
-			$field_value = [
+			$fieldKey = sprintf( 'cost_%s', $currencyCode );
+			$fieldValue = [
 				'title' => sprintf( esc_html_x( 'Cost in %s',
 					'The label for the field with shipping cost in additional currency. The currency symbol will be added in place of %s specifier.',
-					'woocommerce-multilingual' ), $currency_code ),
+					'woocommerce-multilingual' ), $currencyCode ),
 				'type' => 'text',
 				'description' => sprintf( esc_html_x( 'The shipping cost if customer choose %s as a purchase currency.',
 					'The description for the field with shipping cost in additional currency. The currency symbol will be added in place of %s specifier.',
-					'woocommerce-multilingual' ), $currency_code ),
+					'woocommerce-multilingual' ), $currencyCode ),
 				'default' => '0',
 				'desc_tip' => true,
 				'class' => 'wcml-shipping-cost-currency'
 			];
 
-			$field[ $field_key] = $field_value;
+			$field[ $fieldKey] = $fieldValue;
 		}
 
 		return $field;
@@ -105,7 +105,7 @@ class AdminHooks implements IWPML_Action {
 	/**
 	 * Enqueues script responsible for JS actions on shipping fields.
 	 */
-	public function load_js() {
+	public function loadJs() {
 		wp_enqueue_script(
 			'wcml-admin-shipping-currency-selector',
 			constant( 'WCML_PLUGIN_URL' ) . '/dist/js/multicurrencyShippingAdmin/app.js',
