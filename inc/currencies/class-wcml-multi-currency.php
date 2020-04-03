@@ -116,8 +116,6 @@ class WCML_Multi_Currency {
 			$this->shipping = new WCML_Multi_Currency_Shipping( $this, $sitepress, $wpdb );
 			$this->shipping->add_hooks();
 		}
-		$this->shipping_admin = new WCML_Multi_Currency_Shipping_Admin( $this, $woocommerce_wpml );
-		$this->shipping_admin->add_hooks();
 		$this->reports = new WCML_Multi_Currency_Reports( $woocommerce_wpml, $sitepress, $wpdb );
 		$this->reports->add_hooks();
 		$this->orders                  = new WCML_Multi_Currency_Orders( $this, $woocommerce_wpml, $wp );

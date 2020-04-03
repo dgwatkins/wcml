@@ -1,11 +1,13 @@
 <?php
 
-/**
- * Class WCML_Multi_Currency_Shipping_Admin
- *
- * @author Konrad
- */
-class WCML_Multi_Currency_Shipping_Admin {
+namespace WCML\Multicurrency\Shipping;
+
+use IWPML_Action;
+use WCML_Multi_Currency;
+use woocommerce_wpml;
+
+class AdminHooks implements IWPML_Action {
+
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
 
@@ -116,7 +118,7 @@ class WCML_Multi_Currency_Shipping_Admin {
 	 */
 	private function is_multicurrency_enabled() {
 		return isset( $this->woocommerce_wpml->settings['enable_multi_currency'] )
-		       && $this->woocommerce_wpml->settings['enable_multi_currency'] === WCML_MULTI_CURRENCIES_INDEPENDENT;
+			&& $this->woocommerce_wpml->settings['enable_multi_currency'] === WCML_MULTI_CURRENCIES_INDEPENDENT;
 	}
 
 	/**
