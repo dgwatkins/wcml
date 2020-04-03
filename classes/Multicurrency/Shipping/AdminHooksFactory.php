@@ -9,7 +9,7 @@ class AdminHooksFactory implements \IWPML_Backend_Action_Loader {
 		global $woocommerce_wpml;
 
 		if ( $this->is_multicurrency_enabled() && $this->has_additional_currency_defined() ) {
-			return new AdminHooks( $woocommerce_wpml->get_multi_currency(), $woocommerce_wpml );
+			return new AdminHooks( $woocommerce_wpml->get_multi_currency() );
 		}
 
 		return null;

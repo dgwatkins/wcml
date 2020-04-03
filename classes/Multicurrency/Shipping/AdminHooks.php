@@ -4,12 +4,8 @@ namespace WCML\Multicurrency\Shipping;
 
 use IWPML_Action;
 use WCML_Multi_Currency;
-use woocommerce_wpml;
 
 class AdminHooks implements IWPML_Action {
-
-	/** @var woocommerce_wpml */
-	private $woocommerce_wpml;
 
 	/** @var WCML_Multi_Currency */
 	private $wcml_multi_currency;
@@ -18,10 +14,8 @@ class AdminHooks implements IWPML_Action {
 	 * WCML_Multi_Currency_Shipping_Admin constructor.
 	 *
 	 * @param WCML_Multi_Currency $wcml_multi_currency
-	 * @param woocommerce_wpml $woocommerce_wpml
 	 */
-	public function __construct( WCML_Multi_Currency $wcml_multi_currency, woocommerce_wpml $woocommerce_wpml ) {
-		$this->woocommerce_wpml = $woocommerce_wpml;
+	public function __construct( WCML_Multi_Currency $wcml_multi_currency ) {
 		$this->wcml_multi_currency = $wcml_multi_currency;
 	}
 
@@ -114,9 +108,9 @@ class AdminHooks implements IWPML_Action {
 	public function load_js() {
 		wp_enqueue_script(
 			'wcml-admin-shipping-currency-selector',
-			$this->woocommerce_wpml->plugin_url() . '/dist/js/multicurrencyShippingAdmin/app.js',
+			constant( 'WCML_PLUGIN_URL' ) . '/dist/js/multicurrencyShippingAdmin/app.js',
 			[ 'jquery' ],
-			$this->woocommerce_wpml->version(),
+			constant( 'WCML_VERSION' ),
 			true
 		);
 	}
