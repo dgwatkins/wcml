@@ -27,8 +27,10 @@ class WCML_Multi_Currency_Shipping_Admin {
 	 * Registers hooks.
 	 */
 	public function add_hooks() {
-		add_filter( 'woocommerce_shipping_instance_form_fields_flat_rate', [ $this, 'woocommerce_shipping_instance_form_fields_flat_rate' ], 10, 1 );
-		add_action( 'admin_enqueue_scripts', [ $this, 'load_js' ] );
+		if ( $this->is_multicurrency_enabled() && $this->has_additional_currency_defined() ) {
+			add_filter( 'woocommerce_shipping_instance_form_fields_flat_rate', [ $this, 'add_currency_shipping_fields_to_shipping_method_form' ], 10, 1 );
+			add_action( 'admin_enqueue_scripts', [ $this, 'load_js' ] );
+		}
 	}
 
 	/**
@@ -44,9 +46,11 @@ class WCML_Multi_Currency_Shipping_Admin {
 	 *
 	 * @return array
 	 */
-	public function woocommerce_shipping_instance_form_fields_flat_rate( array $field ) {
-		$field = $this->add_enable_field( $field );
-		$field = $this->add_currencies_fields( $field );
+	public function add_currency_shipping_fields_to_shipping_method_form( array $field ) {
+		if ( $this->is_multicurrency_enabled() && $this->has_additional_currency_defined() ) {
+			$field = $this->add_enable_field( $field );
+			$field = $this->add_currencies_fields( $field );
+		}
 		return $field;
 	}
 
@@ -103,6 +107,35 @@ class WCML_Multi_Currency_Shipping_Admin {
 		}
 
 		return $field;
+	}
+
+	/**
+	 * Is multicurrency feature enabled in WCML.
+	 *
+	 * @return bool
+	 */
+	private function is_multicurrency_enabled() {
+		return isset( $this->woocommerce_wpml->settings['enable_multi_currency'] )
+		       && $this->woocommerce_wpml->settings['enable_multi_currency'] === WCML_MULTI_CURRENCIES_INDEPENDENT;
+	}
+
+	/**
+	 * Does user defined at least one additional currency in WCML.
+	 *
+	 * @return bool
+	 */
+	private function has_additional_currency_defined() {
+		$available_currencies = $this->wcml_multi_currency->get_currency_codes();
+		if ( is_array( $available_currencies ) ) {
+			$default_currency = $this->wcml_multi_currency->get_default_currency();
+			foreach ( $available_currencies as $key => $currency_code ) {
+				if ( $currency_code === $default_currency ) {
+					unset( $available_currencies[ $key ] );
+				}
+			}
+		}
+
+		return is_array( $available_currencies ) && count( $available_currencies ) > 0;
 	}
 
 	/**
