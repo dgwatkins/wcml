@@ -622,13 +622,131 @@ class Test_WCML_Emails extends OTGS_TestCase {
 	 * @test
 	 * @dataProvider email_string_key
 	 */
-	public function it_should_filter_emails_strings( $emailOption, $textKey ) {
+	public function it_should_filter_emails_strings_order_is_object( $emailOption, $textKey ) {
 
 		$value            = rand_str();
 		$old_value        = '';
 		$translated_value = rand_str();
 		$language         = 'es';
 		$order_id         = 12;
+
+		$order_object = $this->getMockBuilder( 'WC_Order' )
+		               ->disableOriginalConstructor()
+		               ->setMethods( array( 'get_id' ) )
+		               ->getMock();
+
+		$order_object->method( 'get_id' )
+		       ->willReturn( $order_id );
+
+		WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $order_id, 'wpml_language', true ],
+			'return' => $language
+		] );
+
+		list( $wc_email_object, $language ) = $this->get_wc_email_mock( $order_object, $emailOption, $language );
+
+		$subject = $this->get_subject();
+
+		$this->wcmlStrings->method( 'get_translated_string_by_name_and_context' )->with( 'admin_texts_woocommerce_' . $emailOption . '_settings', '[woocommerce_' . $emailOption . '_settings]' . $textKey, $language )->willReturn( $translated_value );
+
+		$translated_value = $subject->filter_emails_strings( $value, $wc_email_object, $old_value, $textKey );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider email_string_key
+	 */
+	public function it_should_filter_emails_strings_order_is_object_without_id( $emailOption, $textKey ) {
+
+		$value            = rand_str();
+		$old_value        = '';
+		$translated_value = rand_str();
+		$language         = null;
+
+		$order_object = $this->getMockBuilder( 'WC_Order' )
+		                     ->disableOriginalConstructor()
+		                     ->getMock();
+
+		list( $wc_email_object, $language ) = $this->get_wc_email_mock( $order_object, $emailOption, $language );
+
+		$subject = $this->get_subject();
+
+		$this->wcmlStrings->method( 'get_translated_string_by_name_and_context' )->with( 'admin_texts_woocommerce_' . $emailOption . '_settings', '[woocommerce_' . $emailOption . '_settings]' . $textKey, $language )->willReturn( $translated_value );
+
+		$translated_value = $subject->filter_emails_strings( $value, $wc_email_object, $old_value, $textKey );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider email_string_key
+	 */
+	public function it_should_filter_emails_strings_order_is_array( $emailOption, $textKey ) {
+
+		$value            = rand_str();
+		$old_value        = '';
+		$translated_value = rand_str();
+		$language         = 'es';
+		$order_id         = 12;
+
+		$order_object = [ 'ID' => $order_id ];
+
+		WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $order_id, 'wpml_language', true ],
+			'return' => $language
+		] );
+
+		list( $wc_email_object, $language ) = $this->get_wc_email_mock( $order_object, $emailOption, $language );
+
+		$subject = $this->get_subject();
+
+		$this->wcmlStrings->method( 'get_translated_string_by_name_and_context' )->with( 'admin_texts_woocommerce_' . $emailOption . '_settings', '[woocommerce_' . $emailOption . '_settings]' . $textKey, $language )->willReturn( $translated_value );
+
+		$translated_value = $subject->filter_emails_strings( $value, $wc_email_object, $old_value, $textKey );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider email_string_key
+	 */
+	public function it_should_filter_emails_strings_order_is_array_without_id( $emailOption, $textKey ) {
+
+		$value            = rand_str();
+		$old_value        = '';
+		$translated_value = rand_str();
+		$language         = null;
+
+		$order_object = [];
+
+		list( $wc_email_object, $language ) = $this->get_wc_email_mock( $order_object, $emailOption, $language );
+
+		$subject = $this->get_subject();
+
+		$this->wcmlStrings->method( 'get_translated_string_by_name_and_context' )->with( 'admin_texts_woocommerce_' . $emailOption . '_settings', '[woocommerce_' . $emailOption . '_settings]' . $textKey, $language )->willReturn( $translated_value );
+
+		$translated_value = $subject->filter_emails_strings( $value, $wc_email_object, $old_value, $textKey );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider email_string_key
+	 */
+	public function it_should_filter_emails_strings_order_is_false( $emailOption, $textKey ) {
+
+		$value            = rand_str();
+		$old_value        = '';
+		$translated_value = rand_str();
+		$language         = null;
+
+		list( $wc_email_object, $language ) = $this->get_wc_email_mock( false, $emailOption, $language );
+
+		$subject = $this->get_subject();
+
+		$this->wcmlStrings->method( 'get_translated_string_by_name_and_context' )->with( 'admin_texts_woocommerce_' . $emailOption . '_settings', '[woocommerce_' . $emailOption . '_settings]' . $textKey, $language )->willReturn( $translated_value );
+
+		$translated_value = $subject->filter_emails_strings( $value, $wc_email_object, $old_value, $textKey );
+	}
+
+	private function get_wc_email_mock( $order_object, $emailOption, $language ){
 
 		$object         = $this->getMockBuilder( 'WC_Email' )
 		                       ->disableOriginalConstructor()
@@ -641,9 +759,11 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			'failed_order',
 		]);
 
+		$object->object = $order_object;
+
 		if ( $adminEmails->contains( $object->id ) ) {
-			$user          = new stdClass();
-			$user->ID      = 1;
+			$user     = new stdClass();
+			$user->ID = 1;
 			$language = 'en';
 
 			$object->recipient = 'admin@test.com';
@@ -656,25 +776,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			$this->sitepress->expects( $this->once() )->method( 'get_user_admin_language' )->with( $user->ID, true )->willReturn( $language );
 		}
 
-		$object->object = $this->getMockBuilder( 'WC_Order' )
-		                       ->disableOriginalConstructor()
-		                       ->setMethods( array( 'get_id' ) )
-		                       ->getMock();
-
-		$object->object->method( 'get_id' )
-		               ->willReturn( $order_id );
-
-		WP_Mock::userFunction( 'get_post_meta', [
-			'args'   => [ $order_id, 'wpml_language', true ],
-			'return' => $language
-		] );
-
-		$subject = $this->get_subject();
-
-
-		$this->wcmlStrings->method( 'get_translated_string_by_name_and_context' )->with( 'admin_texts_woocommerce_' . $emailOption . '_settings', '[woocommerce_' . $emailOption . '_settings]' . $textKey, $language )->willReturn( $translated_value );
-
-		$translated_value = $subject->filter_emails_strings( $value, $object, $old_value, $textKey );
+		return [ $object, $language ];
 	}
 
 	public function email_string_key() {

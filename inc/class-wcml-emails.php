@@ -369,7 +369,7 @@ class WCML_Emails {
 			]);
 
 			if ( $adminEmails->contains( $object->id ) ) {
-				$language = $this->get_admin_language_by_email( $object->recipient, $object->object->get_id() );
+				$language = $this->get_admin_language_by_email( $object->recipient, $this->get_order_id_from_email_object( $object ) );
 			}
 
 			$translated_value = $this->get_email_translated_string( $key, $object, $language );
@@ -385,14 +385,30 @@ class WCML_Emails {
 	 *
 	 * @return string
 	 */
-	public function get_email_translated_string( $key,
-			$object, $language)
-		{
+	public function get_email_translated_string( $key, $object, $language ) {
 
 		$context = 'admin_texts_woocommerce_' . $object->id . '_settings';
 		$name    = '[woocommerce_' . $object->id . '_settings]' . $key;
 
-		return $this->wcml_get_translated_email_string( $context, $name, $object->object->get_id(), $language );
+		return $this->wcml_get_translated_email_string( $context, $name, $this->get_order_id_from_email_object( $object ), $language );
+	}
+
+	/**
+	 * @param WC_Email $object
+	 *
+	 * @return bool|string|int
+	 */
+	private function get_order_id_from_email_object( $object ) {
+
+		if ( method_exists( $object->object, 'get_id' ) ) {
+			return $object->object->get_id();
+		}
+
+		if ( is_array( $object->object ) && isset( $object->object['ID'] ) ) {
+			return $object->object['ID'];
+		}
+
+		return false;
 	}
 
 	public function new_order_admin_email( $order_id ) {
