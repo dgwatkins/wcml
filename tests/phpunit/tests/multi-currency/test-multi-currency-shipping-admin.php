@@ -27,7 +27,7 @@ class Test_WCML_Multi_Currency_Shipping_Admin extends OTGS_TestCase {
 			$woocommerce_wpml->settings['enable_multi_currency'] = 0;
 		}
 
-		return new WCML_Multi_Currency_Shipping_Admin( $wcml_multi_currency, $woocommerce_wpml );
+		return new \WCML\Multicurrency\Shipping\AdminHooks( $wcml_multi_currency, $woocommerce_wpml );
 	}
 
 	public function setUp() {
