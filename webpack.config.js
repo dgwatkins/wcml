@@ -61,6 +61,24 @@ const multicurrencyShippingAdmin = (env) => {
 	};
 };
 
+const multicurrencyOptions = (env) => {
+	const isProduction = env === 'production';
+	return {
+		entry: ['./src/js/multicurrencyOptions/app.js'],
+		output: {
+			path: path.join(__dirname, 'dist'),
+			filename: path.join('js', 'multicurrencyOptions', 'app.js'),
+			sourceMapFilename: path.join('js', 'multicurrencyOptions', 'app.js.map'),
+		},
+		module: webPackModule(!isProduction),
+		devtool: isProduction ? '' : 'inline-source-map',
+		resolve: {
+			extensions: ['*', '.ts', '.tsx', '.mjs', '.js', '.jsx']
+		},
+	};
+};
+
 module.exports = [
 	multicurrencyShippingAdmin,
+	multicurrencyOptions,
 ];

@@ -3,6 +3,7 @@
     ["env", {
       "useBuiltIns": true
     }],
+    "react",
     "es2015"
   ],
   "plugins": [

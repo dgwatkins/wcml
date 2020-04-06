@@ -3,6 +3,7 @@
     "license": "MIT",
     "scripts": {
         "build:dev": "webpack --mode development",
+        "build:watch": "webpack -p --env development --mode development --watch",
         "build:prod": "webpack -p --env production --mode production",
         "test": "jest"
     },
