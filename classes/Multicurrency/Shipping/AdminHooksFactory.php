@@ -45,15 +45,6 @@ class AdminHooksFactory implements \IWPML_Deferred_Action_Loader, \IWPML_Backend
 
 		$available_currencies = $woocommerce_wpml->get_multi_currency()->get_currency_codes();
 
-		if ( is_array( $available_currencies ) ) {
-			$default_currency = $woocommerce_wpml->get_multi_currency()->get_default_currency();
-			foreach ( $available_currencies as $key => $currency_code ) {
-				if ( $currency_code === $default_currency ) {
-					unset( $available_currencies[ $key ] );
-				}
-			}
-		}
-
-		return is_array( $available_currencies ) && count( $available_currencies ) > 0;
+		return is_array( $available_currencies ) && count( $available_currencies ) > 1;
 	}
 }

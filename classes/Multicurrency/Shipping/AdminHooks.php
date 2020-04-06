@@ -109,7 +109,7 @@ class AdminHooks implements IWPML_Action {
 		wp_enqueue_script(
 			'wcml-admin-shipping-currency-selector',
 			constant( 'WCML_PLUGIN_URL' ) . '/dist/js/multicurrencyShippingAdmin/app.js',
-			[ 'jquery' ],
+			[],
 			constant( 'WCML_VERSION' ),
 			true
 		);
