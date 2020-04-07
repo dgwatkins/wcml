@@ -1,6 +1,7 @@
 <?php
 
 use function WPML\Container\make;
+use WCML\MultiCurrency\Geolocation;
 
 /**
  * Class WCML_Multi_Currency
@@ -334,6 +335,15 @@ class WCML_Multi_Currency {
 	}
 
 	/**
+	 * @param string $code
+	 *
+	 * @return bool
+	 */
+	public function is_currency_active( $code ) {
+		return in_array( $code, $this->get_currency_codes(), true );
+	}
+
+	/**
 	 * @return mixed|string
 	 */
 	public function get_currency_code() {
@@ -447,6 +457,8 @@ class WCML_Multi_Currency {
 			$this->client_currency = $_COOKIE['_wcml_order_currency'];
 		}
 
+		$this->client_currency = $this->maybe_get_currency_by_geolocation( $this->client_currency, $woocommerce->session );
+
 		if ( is_null( $this->client_currency ) &&
 			 isset( $default_currencies[ $current_language ] ) &&
 			 $default_currencies[ $current_language ] &&
@@ -508,6 +520,32 @@ class WCML_Multi_Currency {
 		}
 
 		return $this->client_currency;
+	}
+
+	/**
+	 * @param null|string $client_currency
+	 * @param WC_Session|WC_Session_Handler $woocommerce_session
+	 *
+	 * @return null|string
+	 */
+	public function maybe_get_currency_by_geolocation( $client_currency, $woocommerce_session ) {
+
+		$is_currency_not_set_in_session = empty( $woocommerce_session ) || ! $woocommerce_session->get( 'client_currency' );
+		$is_geolocation_enabled         = $this->woocommerce_wpml->get_setting( 'geolocation_enabled' );
+
+		if (
+			$is_currency_not_set_in_session &&
+			is_null( $client_currency ) &&
+			$is_geolocation_enabled
+		) {
+			$country_currency = Geolocation::getCurrencyCodeByUserCountry();
+
+			if ( $country_currency && $this->is_currency_active( $country_currency ) ) {
+				return $country_currency;
+			}
+		}
+
+		return $client_currency;
 	}
 
 	public function maybe_show_switching_currency_prompt_dialog() {

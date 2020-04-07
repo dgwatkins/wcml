@@ -296,6 +296,7 @@ class woocommerce_wpml {
 			'currency_options'                     => [],
 			'currency_switcher_product_visibility' => 1,
 			'dismiss_tm_warning'                   => 0,
+			'geolocation_enabled'                  => 0,
 			'dismiss_cart_warning'                 => 0,
 			'cart_sync'                            => [
 				'lang_switch'     => WCML_CART_SYNC,
