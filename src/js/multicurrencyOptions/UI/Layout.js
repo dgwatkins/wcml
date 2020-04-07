@@ -1,8 +1,10 @@
 import React from "react";
 import AddCurrency from "./AddCurrency";
 import TableFragmentLeft from "./TableFragmentLeft";
+import TableFragmentCenter from "./TableFragmentCenter";
+import TableFragmentRight from "./TableFragmentRight";
 
-const Layout = ({currencies}) => {
+const Layout = ({currencies, languages}) => {
     return <div className="wcml-section-content wcml-section-content-wide">
                 <div>
                     <div className="currencies-table-content">
@@ -10,6 +12,8 @@ const Layout = ({currencies}) => {
                             <AddCurrency/>
                         </div>
                         <TableFragmentLeft currencies={currencies} />
+                        <TableFragmentCenter currencies={currencies} languages={languages} />
+                        <TableFragmentRight currencies={currencies} />
                     </div>
                 </div>
             </div>
