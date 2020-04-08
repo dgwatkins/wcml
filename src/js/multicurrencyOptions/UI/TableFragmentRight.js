@@ -1,5 +1,5 @@
 import React from "react";
-import {useStoreState} from "easy-peasy";
+import {useStoreState, useStoreActions} from "easy-peasy";
 
 const TableFragmentRight = () => {
     const currencies = useStoreState(state => state.currencies);
@@ -27,6 +27,7 @@ const Row = ({currency}) => {
     const titleDelete = 'Delete';
     const titleEdit = 'Edit';
     const dataKey = 'wcml_currency_options_' + currency.code;
+    const deleteCurrency = useStoreActions(action => action.deleteCurrency);
 
     const deleteCell = ! currency.default
         && (
@@ -34,7 +35,9 @@ const Row = ({currency}) => {
                 <a title={titleDelete} className="delete_currency"
                    data-currency_name={currency.label}
                    data-currency_symbol={currency.symbol}
-                   data-currency={currency.code} href="#">
+                   data-currency={currency.code} href="#"
+                   onClick={() => deleteCurrency(currency.code)}
+                >
                     <i className="otgs-ico-delete" title={titleDelete} />
                 </a>
             </td>

@@ -1,5 +1,5 @@
 import React from "react";
-import {useStoreState} from "easy-peasy";
+import {useStoreState, useStoreActions} from "easy-peasy";
 
 const TableFragmentCenter = () => {
     const currencies = useStoreState(state => state.currencies);
@@ -49,15 +49,19 @@ const Row = ({currency, languages}) => {
 };
 
 const Cell = ({language, currency}) => {
+    const enableCurrencyForLang = useStoreActions(actions => actions.enableCurrencyForLang);
+
     const titleEnable  = 'Enable __CURRENCY__ for __LANGUAGE__';
     const titleDisable = 'Disable __CURRENCY__ for __LANGUAGE__';
-    const isEnabled = !! currency.languages.includes(language.code);
+    const isEnabled    = currency.languages.includes(language.code);
 
     const title = ( isEnabled ? titleDisable : titleEnable )
         .replace('__LANGUAGE__', language.displayName)
         .replace('__CURRENCY__', currency.label);
 
     const linkClass = isEnabled ? "otgs-ico-yes" : "otgs-ico-no";
+
+    const onClick = event => enableCurrencyForLang({enable:!isEnabled, currency:currency.code, language:language.code});
 
     return <td className="currency_languages">
                 <ul>
@@ -66,6 +70,7 @@ const Cell = ({language, currency}) => {
                            data-language={language.code}
                            data-currency={currency.code} href="#"
                            title={title}
+                           onClick={onClick}
                         ></a>
                     </li>
                 </ul>
@@ -81,6 +86,8 @@ const DefaultRow = ({languages, currencies}) => {
 }
 
 const DefaultCell = ({language, currencies}) => {
+    const setDefaultCurrencyForLang = useStoreActions(actions => actions.setDefaultCurrencyForLang);
+
     const options = currencies
         .filter(currency => {return currency.languages.includes(language.code)})
         .map(currency => {
@@ -92,7 +99,7 @@ const DefaultCell = ({language, currencies}) => {
         ...options
     ];
 
-    const onChange = () => {};
+    const onChange = event => setDefaultCurrencyForLang({language:language.code, currency:event.target.value});
 
     return <td align="center">
                 <select value={language.defaultCurrency} onChange={onChange} rel={language.code}>

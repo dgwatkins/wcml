@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./UI/App";
-import { createStore, StoreProvider } from "easy-peasy";
+import { action, createStore, StoreProvider } from "easy-peasy";
 
 const currencies = [
   {
@@ -45,12 +45,31 @@ const languages = [
   },
 ];
 
-document.addEventListener('DOMContentLoaded', function() {
-  const store = createStore({
-    currencies: currencies,
-    languages: languages
-  });
+const store = createStore({
+  currencies: currencies,
+  languages: languages,
+  setDefaultCurrencyForLang: action((state, data) => {
+    const index = state.languages.findIndex(lang => lang.code === data.language);
+    const language = state.languages[index];
+    language.defaultCurrency = data.currency;
+    state.languages[index] = language;
+  }),
+  enableCurrencyForLang: action((state, data) => {
+    const index = state.currencies.findIndex(currency => currency.code === data.currency);
+    const currency = state.currencies[index];
+    if (data.enable) {
+      currency.languages = [data.language, ...currency.languages];
+    } else {
+      currency.languages = currency.languages.filter(code => code !== data.language)
+    }
+    state.currencies[index] = currency;
+  }),
+  deleteCurrency: action((state, code) => {
+    state.currencies = state.currencies.filter(currency => currency.code !== code);
+  }),
+});
 
+document.addEventListener('DOMContentLoaded', function() {
   ReactDOM.render(
       <StoreProvider store={store}>
         <App currencies={store.get} languages={languages}/>
