@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Layout from "./UI/Layout";
+import App from "./UI/App";
+import { createStore, StoreProvider } from "easy-peasy";
 
 const currencies = [
   {
@@ -45,5 +46,15 @@ const languages = [
 ];
 
 document.addEventListener('DOMContentLoaded', function() {
-  ReactDOM.render(<Layout currencies={currencies} languages={languages}/>, document.getElementById('wcml-multicurrency-options'));
+  const store = createStore({
+    currencies: currencies,
+    languages: languages
+  });
+
+  ReactDOM.render(
+      <StoreProvider store={store}>
+        <App currencies={store.get} languages={languages}/>
+      </StoreProvider>,
+      document.getElementById('wcml-multicurrency-options')
+  );
 } );

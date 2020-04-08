@@ -22,12 +22,12 @@ class Hooks implements \IWPML_Backend_Action {
 				WCML_VERSION
 			);
 
-			wp_enqueue_style(
-				self::HANDLE,
-				WCML_PLUGIN_URL . '/dist/css/multicurrencyOptions/styles.css',
-				[],
-				WCML_VERSION
-			);
+//			wp_enqueue_style(
+//				self::HANDLE,
+//				WCML_PLUGIN_URL . '/dist/css/multicurrencyOptions/styles.css',
+//				[],
+//				WCML_VERSION
+//			);
 		}
 	}
 }

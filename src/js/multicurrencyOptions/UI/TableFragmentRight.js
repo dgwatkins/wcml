@@ -9,7 +9,7 @@ const TableFragmentRight = ({currencies}) => {
                 </thead>
                 <tbody>
 
-                    {currencies.map(currency => <Row currency={currency} />)}
+                    {currencies.map(currency => <Row key={currency.code} currency={currency} />)}
 
                     <tr className="default_currency">
                         <td colSpan="2"></td>

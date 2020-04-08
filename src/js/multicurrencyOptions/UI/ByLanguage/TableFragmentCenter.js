@@ -12,7 +12,7 @@ const TableFragmentCenter = ({currencies, languages}) => {
                             {
                                 languages.map((language) => (
                                         <th>
-                                            <img src={language.flagUrl} alt="language flag" width="18" height="12"/>
+                                            <img key={language.code} src={language.flagUrl} alt="language flag" width="18" height="12"/>
                                         </th>
                                     )
                                 )
@@ -21,7 +21,7 @@ const TableFragmentCenter = ({currencies, languages}) => {
                         </thead>
                         <tbody>
 
-                        {currencies.map(currency => <Row currency={currency} languages={languages} />)}
+                        {currencies.map(currency => <Row key={currency.code} currency={currency} languages={languages} />)}
 
                         <DefaultRow languages={languages} currencies={currencies} />
 
@@ -39,7 +39,7 @@ export default TableFragmentCenter;
 const Row = ({currency, languages}) => {
   return <tr id={'currency_row_langs_' + currency.code} className="wcml-row-currency-lang">
             {
-                languages.map(language => <Cell language={language} currency={currency} />)
+               languages.map(language => <Cell key={language.code} language={language} currency={currency} />)
             }
         </tr>
 };
@@ -71,20 +71,20 @@ const Cell = ({language, currency}) => {
 const DefaultRow = ({languages, currencies}) => {
     return <tr className="default_currency">
                 {
-                    languages.map(language => <DefaultCell language={language} currencies={currencies} />)
+                    languages.map(language => <DefaultCell key={language.code} language={language} currencies={currencies} />)
                 }
             </tr>
 }
 
 const DefaultCell = ({language, currencies}) => {
     return <td align="center">
-                <select rel="{{ language.code }}">
-                    <option value="0" selected={0 === language.defaultCurrency}>Keep</option>
+                <select rel={language.code}>
+                    <option key={0} value="0" selected={0 === language.defaultCurrency}>Keep</option>
 
                     {
                         currencies.map(currency => {
                                 return currency.languages.includes(language.code)
-                                    && <option value={currency.code} selected={currency.code === language.defaultCurrency}>{currency.code}</option>
+                                    && <option key={currency.code} value={currency.code} selected={currency.code === language.defaultCurrency}>{currency.code}</option>
                             }
                         )
                     }

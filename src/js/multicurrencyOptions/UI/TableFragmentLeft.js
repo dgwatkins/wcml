@@ -29,7 +29,7 @@ const Rows = ({currencies}) => {
         <React.Fragment>
             {
                 currencies.map((currency) => (
-                        <Row currency={currency} defaultCurrency={defaultCurrency} />
+                        <Row key={currency.code} currency={currency} defaultCurrency={defaultCurrency} />
                     )
                 )
             }
