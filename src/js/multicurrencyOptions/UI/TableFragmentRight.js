@@ -1,6 +1,9 @@
 import React from "react";
+import {useStoreState} from "easy-peasy";
 
-const TableFragmentRight = ({currencies}) => {
+const TableFragmentRight = () => {
+    const currencies = useStoreState(state => state.currencies);
+
     return <table className="widefat currency_settings_table" id="currency-settings-table">
                 <thead>
                     <tr>

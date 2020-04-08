@@ -1,24 +1,28 @@
 import React from "react";
+import {useStoreState} from "easy-peasy";
 
-const TableFragmentCenter = ({currencies, languages}) => {
+const TableFragmentCenter = () => {
+    const currencies = useStoreState(state => state.currencies);
+    const languages  = useStoreState(state => state.languages);
+
     return <div className="currency_wrap">
                 <div className="currency_inner">
                     <table className="widefat currency_lang_table" id="currency-lang-table">
-                        <thead>
-                        <tr>
-                            <td colSpan={languages.length}>Currencies to display for each language</td>
-                        </tr>
-                        <tr className="currency-lang-flags">
-                            {
-                                languages.map((language) => (
-                                        <th>
-                                            <img key={language.code} src={language.flagUrl} alt="language flag" width="18" height="12"/>
-                                        </th>
-                                    )
-                                )
-                            }
-                        </tr>
-                        </thead>
+                            <thead>
+                                <tr>
+                                    <td colSpan={languages.length}>Currencies to display for each language</td>
+                                </tr>
+                                <tr className="currency-lang-flags">
+                                    {
+                                        languages.map((language) => (
+                                                <th>
+                                                    <img key={language.code} src={language.flagUrl} alt="language flag" width="18" height="12"/>
+                                                </th>
+                                            )
+                                        )
+                                    }
+                                </tr>
+                            </thead>
                         <tbody>
 
                         {currencies.map(currency => <Row key={currency.code} currency={currency} languages={languages} />)}
@@ -71,24 +75,31 @@ const Cell = ({language, currency}) => {
 const DefaultRow = ({languages, currencies}) => {
     return <tr className="default_currency">
                 {
-                    languages.map(language => <DefaultCell key={language.code} language={language} currencies={currencies} />)
+                    languages.map((language, index) => <DefaultCell key={index} language={language} currencies={currencies} />)
                 }
             </tr>
 }
 
 const DefaultCell = ({language, currencies}) => {
+    const options = currencies
+        .filter(currency => {return currency.languages.includes(language.code)})
+        .map(currency => {
+            return {'text': currency.code, 'value': currency.code};
+        })
+
+    const allOptions = [
+        {'text': 'Keep', 'value': 0},
+        ...options
+    ];
+
     return <td align="center">
                 <select rel={language.code}>
-                    <option key={0} value="0" selected={0 === language.defaultCurrency}>Keep</option>
-
                     {
-                        currencies.map(currency => {
-                                return currency.languages.includes(language.code)
-                                    && <option key={currency.code} value={currency.code} selected={currency.code === language.defaultCurrency}>{currency.code}</option>
+                        allOptions.map(option => {
+                                <option value={option.value} selected={option.value === language.defaultCurrency}>{option.text}</option>
                             }
                         )
                     }
-
                 </select>
             </td>
 };
