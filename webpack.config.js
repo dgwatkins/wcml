@@ -84,7 +84,7 @@ const getModuleDefinition = (moduleName, isProduction, langFile) => ({
 	},
 });
 
-const isProduction = ( env ) => (env === 'production') || env.production;
+const isProduction = ( env ) => (env === 'production') || env.production !== "false";
 
 const createModule = R.curryN(2, (moduleName, env) => {
 	return !env.module || env.module === moduleName ?

@@ -15,8 +15,8 @@ const TableFragmentCenter = () => {
                                 <tr className="currency-lang-flags">
                                     {
                                         languages.map((language) => (
-                                                <th>
-                                                    <img key={language.code} src={language.flagUrl} alt="language flag" width="18" height="12"/>
+                                                <th key={language.code}>
+                                                    <img src={language.flagUrl} alt="language flag" width="18" height="12"/>
                                                 </th>
                                             )
                                         )
@@ -75,7 +75,7 @@ const Cell = ({language, currency}) => {
 const DefaultRow = ({languages, currencies}) => {
     return <tr className="default_currency">
                 {
-                    languages.map((language, index) => <DefaultCell key={index} language={language} currencies={currencies} />)
+                    languages.map((language) => <DefaultCell key={'default-' + language.code} language={language} currencies={currencies} />)
                 }
             </tr>
 }
@@ -92,12 +92,13 @@ const DefaultCell = ({language, currencies}) => {
         ...options
     ];
 
+    const onChange = () => {};
+
     return <td align="center">
-                <select rel={language.code}>
+                <select value={language.defaultCurrency} onChange={onChange} rel={language.code}>
                     {
-                        allOptions.map(option => {
-                                <option value={option.value} selected={option.value === language.defaultCurrency}>{option.text}</option>
-                            }
+                        allOptions.map(option =>
+                            <option key={'default-' + option.value} value={option.value}>{option.text}</option>
                         )
                     }
                 </select>
