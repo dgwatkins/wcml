@@ -1,5 +1,4 @@
 import React from "react";
-import { Modal } from "antd";
 
 const TableFragmentRight = ({currencies}) => {
     return <table className="widefat currency_settings_table" id="currency-settings-table">
@@ -47,7 +46,6 @@ const Row = ({currency}) => {
                        data-height="530" data-width="480">
                         <i className="otgs-ico-edit" title={titleEdit} />
                     </a>
-                    <Modal key={currency.code} visible="1">This is the modal</Modal>
                 </td>
                 {deleteCell}
             </tr>

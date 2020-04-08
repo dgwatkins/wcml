@@ -3,7 +3,7 @@
     "license": "MIT",
     "scripts": {
         "build:dev": "webpack --env.production=false --mode development",
-        "build:watch": "webpack -p --env development --mode development --watch",
+        "build:watch": "webpack --env.production=false --mode development --watch",
         "build:prod": "webpack -p --env production --mode production",
         "test": "jest"
     },
@@ -24,8 +24,9 @@
         }
     },
     "dependencies": {
+        "@wordpress/babel-plugin-makepot": "^3.4.0",
         "@wordpress/hooks": "^2.0.3",
-        "antd": "^4.1.1",
+        "antd": "^3.19.8",
         "classnames": "~2.2.0",
         "collect.js": "^4.12.5",
         "cross-fetch": "~1.1.0",

@@ -2,7 +2,7 @@ const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const R = require('ramda');
 
-const webPackModule = (production = true) => {
+const webPackModule = (production = true, langFile = '') => {
 	return {
 		rules: [
 			{
@@ -11,6 +11,14 @@ const webPackModule = (production = true) => {
 				exclude: /node_modules\/(?!(wpml-common-js-source|use-global-hook)\/).*/,
 				query: {
 					presets: ['es2015'],
+					plugins: [
+						[
+							'@wordpress/babel-plugin-makepot',
+							{
+								'output': langFile ? `./locale/jed/wpml-${langFile}-ui/wpml-${langFile}-ui.pot` : 'null.pot',
+							}
+						],
+					],
 				},
 			},
 			{
