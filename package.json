@@ -2,7 +2,7 @@
     "name": "woocommerce-multilingual",
     "license": "MIT",
     "scripts": {
-        "build:dev": "webpack --mode development",
+        "build:dev": "webpack --env.production=false --mode development",
         "build:watch": "webpack -p --env development --mode development --watch",
         "build:prod": "webpack -p --env production --mode production",
         "test": "jest"
@@ -25,10 +25,12 @@
     },
     "dependencies": {
         "@wordpress/hooks": "^2.0.3",
+        "antd": "^4.1.1",
         "classnames": "~2.2.0",
         "collect.js": "^4.12.5",
         "cross-fetch": "~1.1.0",
         "crypto-js": "~3.1.9-1",
+        "easy-peasy": "^3.3.0",
         "fetch": "^1.1.0",
         "file-saver": "^2.0.0",
         "jest-dom": "^3.4.0",

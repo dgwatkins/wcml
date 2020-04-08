@@ -8,6 +8,10 @@
   ],
   "plugins": [
     "transform-class-properties",
-    "transform-object-rest-spread"
+    "transform-object-rest-spread",
+    ["import", {
+      "libraryName" : "antd",
+      "style" : true
+    }]
   ]
 }
