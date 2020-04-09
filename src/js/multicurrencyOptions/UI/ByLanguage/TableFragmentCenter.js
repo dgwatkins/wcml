@@ -61,7 +61,7 @@ const Cell = ({language, currency}) => {
 
     const linkClass = isEnabled ? "otgs-ico-yes" : "otgs-ico-no";
 
-    const onClick = event => enableCurrencyForLang({enable:!isEnabled, currency:currency.code, language:language.code});
+    const onClick = () => enableCurrencyForLang({enable:!isEnabled, currency:currency.code, language:language.code});
 
     return <td className="currency_languages">
                 <ul>

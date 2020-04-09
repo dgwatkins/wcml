@@ -1,5 +1,6 @@
 import React from "react";
 import {useStoreState, useStoreActions} from "easy-peasy";
+import CurrencyModal from "./CurrencyModal";
 
 const TableFragmentRight = () => {
     const currencies = useStoreState(state => state.currencies);
@@ -28,6 +29,13 @@ const Row = ({currency}) => {
     const titleEdit = 'Edit';
     const dataKey = 'wcml_currency_options_' + currency.code;
     const deleteCurrency = useStoreActions(action => action.deleteCurrency);
+    const modalCurrencyCode = useStoreState(state => state.modalCurrencyCode);
+    const setModalCurrencyCode = useStoreActions(action => action.setModalCurrencyCode);
+
+    const onClickEdit = (event) => {
+        event.preventDefault();
+        setModalCurrencyCode(currency.code);
+    };
 
     const deleteCell = ! currency.default
         && (
@@ -43,16 +51,22 @@ const Row = ({currency}) => {
             </td>
         );
 
+    const showModal = modalCurrencyCode === currency.code
+        && ( <CurrencyModal currency={currency} /> );
+
     return <tr id={'wcml-row-currency-actions-' + currency.code } className="wcml-row-currencies-actions">
                 <td className="wcml-col-edit">
                     <a href="#" title={titleEdit}
-                       className="edit_currency js-wcml-dialog-trigger"
+                       className="edit_currency"
                        data-currency={currency.code} data-content={dataKey}
                        data-dialog={dataKey}
-                       data-height="530" data-width="480">
+                       data-height="530" data-width="480"
+                       onClick={onClickEdit}
+                    >
                         <i className="otgs-ico-edit" title={titleEdit} />
                     </a>
                 </td>
                 {deleteCell}
+                {showModal}
             </tr>
 };

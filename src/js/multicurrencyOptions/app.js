@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./UI/App";
-import { action, createStore, StoreProvider } from "easy-peasy";
+import { action, createStore, StoreProvider, computed } from "easy-peasy";
 
 const currencies = [
   {
@@ -22,6 +22,14 @@ const currencies = [
     languages: ['en', 'fr', 'es'],
     symbol: "€",
   },
+];
+
+const allCurrencies = [
+  {code:"USD", label:"US Dollar", symbol:"$"},
+  {code:"EUR", label:"Euro", symbol:"€"},
+  {code:"BRL", label:"Brazilian Real", symbol:"R$"},
+  {code:"GBP", label:"British Pound", symbol:"£"},
+  {code:"CHF", label:"Swiss Franc", symbol:"Frs"},
 ];
 
 const languages = [
@@ -47,6 +55,7 @@ const languages = [
 
 const store = createStore({
   currencies: currencies,
+  allCurrencies: allCurrencies,
   languages: languages,
   setDefaultCurrencyForLang: action((state, data) => {
     const index = state.languages.findIndex(lang => lang.code === data.language);
@@ -66,6 +75,14 @@ const store = createStore({
   }),
   deleteCurrency: action((state, code) => {
     state.currencies = state.currencies.filter(currency => currency.code !== code);
+  }),
+  modalCurrencyCode: null,
+  setModalCurrencyCode: action((state, code) => {
+    state.modalCurrencyCode = code;
+  }),
+  newCurrencies: computed(state => {
+    const usedCurrencyCodes = state.currencies.map(currency => currency.code);
+    return state.allCurrencies.filter((currency) => ! usedCurrencyCodes.includes(currency.code));
   }),
 });
 
