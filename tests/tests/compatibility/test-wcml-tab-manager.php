@@ -489,6 +489,51 @@ class Test_WCML_Tab_Manager extends WCML_UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function save_custom_tabs_translation_without_description() {
+		$title   = random_string();
+		$tab_id  = wpml_test_insert_post( $this->default_language, 'wc_product_tab', false, random_string() );
+		$product = wpml_test_insert_post( $this->default_language, 'product', false, $title );
+		update_post_meta( $product, '_override_tab_layout', 'yes' );
+		$orig_tab_data = array(
+			'product_tab_' . $tab_id => array( 'id' => $tab_id, 'position' => 0, 'type' => 'custom' ),
+		);
+		update_post_meta( $product, '_product_tabs', $orig_tab_data );
+		$title = random_string();
+
+		$data = array(
+			array(
+				'field_type' => 'product_tabs:product_tab:' . $tab_id . ':title',
+				'data'       => $title,
+			)
+		);
+
+		$job = new stdClass();
+		$job->original_doc_id = $product;
+		$job->language_code = $this->second_language;
+
+		$tab_manager = $this->get_test_subject();
+		$tab_manager->save_custom_tabs_translation( $product, $data, $job );
+		wp_cache_init();
+		$trid = $this->sitepress->get_element_trid( $tab_id, 'post_wc_product_tab' );
+		$tr_tab_id = $this->sitepress->get_element_translations( $trid, 'post_wc_product_tab' );
+		$expected = array_merge(
+			$orig_tab_data,
+			array(
+				'product_tab_' .  $tr_tab_id[ $this->second_language ]->element_id => array(
+					'position' => $orig_tab_data[ 'product_tab_' . $tab_id ]['position'],
+					'type'     => 'product',
+					'id'       => $tr_tab_id[ $this->second_language ]->element_id,
+					'name'     => sanitize_title( $title ),
+				)
+			)
+		);
+		$output = get_post_meta( $product, '_product_tabs', true );
+		$this->assertEquals( $expected, $output );
+	}
+
+	/**
+	 * @test
+	 */
 	public function wc_tab_manager_tab_id() {
 		$tab_id         = wpml_test_insert_post( $this->default_language, 'wc_product_tab', false, random_string() );
 		$trid           = $this->sitepress->get_element_trid( $tab_id, 'post_wc_product_tab' );
