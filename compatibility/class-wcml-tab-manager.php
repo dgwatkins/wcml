@@ -547,7 +547,7 @@ class WCML_Tab_Manager {
 					$new_wc_product_tab = [
 						'post_type'    => 'wp_product_tab',
 						'post_title'   => $value['title'],
-						'post_content' => $value['description'],
+						'post_content' => isset( $value['description'] ) ? $value['description'] : '',
 						'post_status'  => 'publish',
 					];
 
