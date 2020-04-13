@@ -50,18 +50,21 @@ const Row = ({currency, languages}) => {
 
 const Cell = ({language, currency}) => {
     const enableCurrencyForLang = useStoreActions(actions => actions.enableCurrencyForLang);
+    const updatingCurrencyByLang = useStoreState(state => state.updatingCurrencyByLang);
+    const test = useStoreActions(actions => actions.test);
 
     const titleEnable  = 'Enable __CURRENCY__ for __LANGUAGE__';
     const titleDisable = 'Disable __CURRENCY__ for __LANGUAGE__';
     const isEnabled    = currency.languages[language.code] != 0 ? true : false;
+    const isUpdating   = updatingCurrencyByLang[currency.code + '-' + language.code];
 
     const title = ( isEnabled ? titleDisable : titleEnable )
         .replace('__LANGUAGE__', language.displayName)
         .replace('__CURRENCY__', currency.label);
 
-    const linkClass = isEnabled ? "otgs-ico-yes" : "otgs-ico-no";
+    const linkClass = isUpdating ? 'spinning' : (isEnabled ? "otgs-ico-yes" : "otgs-ico-no");
 
-    const onClick = () => enableCurrencyForLang({enable:!isEnabled, currency:currency.code, language:language.code});
+    const onClick = () => test({enable:!isEnabled, currency:currency.code, language:language.code});
 
     return <td className="currency_languages">
                 <ul>
@@ -111,3 +114,11 @@ const DefaultCell = ({language, activeCurrencies}) => {
                 </select>
             </td>
 };
+
+const enableCurrency = (currencyCode, languageCode, isEnabled) => {
+    thunk((actions, payload) => {
+        const result = true;
+    });
+    const enableCurrencyForLang = useStoreActions(actions => actions.enableCurrencyForLang);
+    enableCurrencyForLang({enable:isEnabled, currency:currencyCode, language:languageCode});
+}
