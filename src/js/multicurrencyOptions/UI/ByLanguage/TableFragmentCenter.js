@@ -53,7 +53,7 @@ const Cell = ({language, currency}) => {
 
     const titleEnable  = 'Enable __CURRENCY__ for __LANGUAGE__';
     const titleDisable = 'Disable __CURRENCY__ for __LANGUAGE__';
-    const isEnabled    = !! currency.languages[language.code];
+    const isEnabled    = currency.languages[language.code] != 0 ? true : false;
 
     const title = ( isEnabled ? titleDisable : titleEnable )
         .replace('__LANGUAGE__', language.displayName)

@@ -67,7 +67,7 @@ class Hooks implements \IWPML_Backend_Action {
 			return (object) [
 				'code'   => $code,
 				'label'  => $label,
-				'symbol' => get_woocommerce_currency_symbol( $code ),
+				'symbol' => html_entity_decode( get_woocommerce_currency_symbol( $code ) ),
 			];
 		};
 

@@ -1,5 +1,6 @@
 import React from "react";
 import {useStoreState} from "easy-peasy";
+import { getSmallFormattedPrice } from '../Utils';
 
 const TableFragmentLeft = () => {
     const activeCurrencies = useStoreState(state => state.activeCurrencies);
@@ -27,12 +28,19 @@ export default TableFragmentLeft;
 
 const Rows = ({activeCurrencies}) => {
     const defaultCurrency = activeCurrencies.filter(currency => currency.isDefault)[0];
+    const formatPrice = getFormatPrice();
+    const formatLabel = getFormatLabel();
 
     return (
         <React.Fragment>
             {
                 activeCurrencies.map((currency) => (
-                        <Row key={currency.code} currency={currency} defaultCurrency={defaultCurrency} />
+                        <Row key={currency.code}
+                             currency={currency}
+                             defaultCurrency={defaultCurrency}
+                             formatPrice={formatPrice}
+                             formatLabel={formatLabel}
+                        />
                     )
                 )
             }
@@ -40,8 +48,8 @@ const Rows = ({activeCurrencies}) => {
     )
 };
 
-const Row = ({currency, defaultCurrency}) => {
-    const rateDisplay = currency.default
+const Row = ({currency, defaultCurrency, formatPrice, formatLabel}) => {
+    const rateDisplay = currency.isDefault
         ? <span className="truncate">default</span>
         : <span>1 {defaultCurrency.code} = <span className="rate">{currency.rate}</span> {currency.code}</span>;
 
@@ -49,11 +57,23 @@ const Row = ({currency, defaultCurrency}) => {
 
     return <tr id={id} className="wcml-row-currency">
                 <td className="wcml-col-currency">
-                    <span className="truncate">{currency.label}</span>
-                    <small>{currency.formatted}</small>
+                    <span className="truncate">{formatLabel(currency)}</span>
+                    <small>{formatPrice(currency)}</small>
                 </td>
                 <td className="wcml-col-rate">
                     {rateDisplay}
                 </td>
             </tr>;
 };
+
+const getFormatPrice = () => {
+    const allCurrencies = useStoreState(state => state.allCurrencies);
+
+    return getSmallFormattedPrice(allCurrencies);
+};
+
+const getFormatLabel = () => (currency) => {
+    const allCurrencies = useStoreState(state => state.allCurrencies);
+
+    return allCurrencies.filter(currencyData => currencyData.code === currency.code )[0].label;
+}

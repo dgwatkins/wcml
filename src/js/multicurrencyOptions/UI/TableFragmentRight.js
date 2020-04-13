@@ -37,7 +37,7 @@ const Row = ({currency}) => {
         setModalCurrencyCode(currency.code);
     };
 
-    const deleteCell = ! currency.default
+    const deleteCell = ! currency.isDefault
         && (
             <td className="wcml-col-delete">
                 <a title={titleDelete} className="delete_currency"
