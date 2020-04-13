@@ -2,7 +2,7 @@ import React from "react";
 import {useStoreState} from "easy-peasy";
 
 const TableFragmentLeft = () => {
-    const currencies = useStoreState(state => state.currencies);
+    const activeCurrencies = useStoreState(state => state.activeCurrencies);
 
     return <table className="widefat currency_table" id="currency-table">
                 <thead>
@@ -12,7 +12,7 @@ const TableFragmentLeft = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <Rows currencies={currencies}/>
+                    <Rows activeCurrencies={activeCurrencies}/>
                     <tr className="default_currency">
                         <td colSpan="3">Default currency
                             <i className="wcml-tip otgs-ico-help"
@@ -25,13 +25,13 @@ const TableFragmentLeft = () => {
 
 export default TableFragmentLeft;
 
-const Rows = ({currencies}) => {
-    const defaultCurrency = currencies.filter( currency => currency.default )[0];
+const Rows = ({activeCurrencies}) => {
+    const defaultCurrency = activeCurrencies.filter(currency => currency.isDefault)[0];
 
     return (
         <React.Fragment>
             {
-                currencies.map((currency) => (
+                activeCurrencies.map((currency) => (
                         <Row key={currency.code} currency={currency} defaultCurrency={defaultCurrency} />
                     )
                 )

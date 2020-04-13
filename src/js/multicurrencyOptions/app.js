@@ -6,20 +6,20 @@ import { action, createStore, StoreProvider, computed } from "easy-peasy";
 const currencies = [
   {
     code: "USD",
-    default: true,
+    isDefault: true,
     rate: "1",
     label: "US Dollar",
     formatted: "$99.99",
-    languages: ['en'],
+    languages: { 'en': 1, 'fr': 0 },
     symbol: "$",
   },
   {
     code: "EUR",
-    default: false,
+    isDefault: false,
     rate: "0,92",
     label: "Euro",
     formatted: "€99.99",
-    languages: ['en', 'fr', 'es'],
+    languages: {'en': 1, 'fr': 1, 'es': 1},
     symbol: "€",
   },
 ];
@@ -54,7 +54,7 @@ const languages = [
 ];
 
 const store = createStore({
-  currencies: currencies,
+  activeCurrencies: currencies,
   allCurrencies: allCurrencies,
   languages: languages,
   setDefaultCurrencyForLang: action((state, data) => {
@@ -64,24 +64,27 @@ const store = createStore({
     state.languages[index] = language;
   }),
   enableCurrencyForLang: action((state, data) => {
-    const index = state.currencies.findIndex(currency => currency.code === data.currency);
-    const currency = state.currencies[index];
-    if (data.enable) {
-      currency.languages = [data.language, ...currency.languages];
-    } else {
-      currency.languages = currency.languages.filter(code => code !== data.language)
-    }
-    state.currencies[index] = currency;
+    const index = state.activeCurrencies.findIndex(currency => currency.code === data.currency);
+    const currency = state.activeCurrencies[index];
+
+    const enabled = data.enable ? 1 : 0;
+    const language = data.language;
+    currency.languages = {
+      ...currency.languages,
+      language: enabled
+    };
+
+    state.activeCurrencies[index] = currency;
   }),
   deleteCurrency: action((state, code) => {
-    state.currencies = state.currencies.filter(currency => currency.code !== code);
+    state.activeCurrencies = state.activeCurrencies.filter(currency => currency.code !== code);
   }),
   modalCurrencyCode: null,
   setModalCurrencyCode: action((state, code) => {
     state.modalCurrencyCode = code;
   }),
   newCurrencies: computed(state => {
-    const usedCurrencyCodes = state.currencies.map(currency => currency.code);
+    const usedCurrencyCodes = state.activeCurrencies.map(currency => currency.code);
     return state.allCurrencies.filter((currency) => ! usedCurrencyCodes.includes(currency.code));
   }),
 });

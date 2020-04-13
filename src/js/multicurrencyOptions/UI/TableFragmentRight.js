@@ -3,7 +3,7 @@ import {useStoreState, useStoreActions} from "easy-peasy";
 import CurrencyModal from "./CurrencyModal";
 
 const TableFragmentRight = () => {
-    const currencies = useStoreState(state => state.currencies);
+    const activeCurrencies = useStoreState(state => state.activeCurrencies);
 
     return <table className="widefat currency_settings_table" id="currency-settings-table">
                 <thead>
@@ -13,7 +13,7 @@ const TableFragmentRight = () => {
                 </thead>
                 <tbody>
 
-                    {currencies.map(currency => <Row key={currency.code} currency={currency} />)}
+                    {activeCurrencies.map(currency => <Row key={currency.code} currency={currency} />)}
 
                     <tr className="default_currency">
                         <td colSpan="2"></td>

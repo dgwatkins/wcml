@@ -2,8 +2,8 @@ import React from "react";
 import {useStoreState, useStoreActions} from "easy-peasy";
 
 const TableFragmentCenter = () => {
-    const currencies = useStoreState(state => state.currencies);
-    const languages  = useStoreState(state => state.languages);
+    const activeCurrencies = useStoreState(state => state.activeCurrencies);
+    const languages = useStoreState(state => state.languages);
 
     return <div className="currency_wrap">
                 <div className="currency_inner">
@@ -25,9 +25,9 @@ const TableFragmentCenter = () => {
                             </thead>
                         <tbody>
 
-                        {currencies.map(currency => <Row key={currency.code} currency={currency} languages={languages} />)}
+                        {activeCurrencies.map(currency => <Row key={currency.code} currency={currency} languages={languages} />)}
 
-                        <DefaultRow languages={languages} currencies={currencies} />
+                        <DefaultRow languages={languages} activeCurrencies={activeCurrencies} />
 
                         </tbody>
                     </table>
@@ -53,7 +53,7 @@ const Cell = ({language, currency}) => {
 
     const titleEnable  = 'Enable __CURRENCY__ for __LANGUAGE__';
     const titleDisable = 'Disable __CURRENCY__ for __LANGUAGE__';
-    const isEnabled    = currency.languages.includes(language.code);
+    const isEnabled    = !! currency.languages[language.code];
 
     const title = ( isEnabled ? titleDisable : titleEnable )
         .replace('__LANGUAGE__', language.displayName)
@@ -77,19 +77,19 @@ const Cell = ({language, currency}) => {
             </td>
 };
 
-const DefaultRow = ({languages, currencies}) => {
+const DefaultRow = ({languages, activeCurrencies}) => {
     return <tr className="default_currency">
                 {
-                    languages.map((language) => <DefaultCell key={'default-' + language.code} language={language} currencies={currencies} />)
+                    languages.map((language) => <DefaultCell key={'default-' + language.code} language={language} activeCurrencies={activeCurrencies} />)
                 }
             </tr>
 }
 
-const DefaultCell = ({language, currencies}) => {
+const DefaultCell = ({language, activeCurrencies}) => {
     const setDefaultCurrencyForLang = useStoreActions(actions => actions.setDefaultCurrencyForLang);
 
-    const options = currencies
-        .filter(currency => {return currency.languages.includes(language.code)})
+    const options = activeCurrencies
+        .filter(currency => {return !! currency.languages[language.code]})
         .map(currency => {
             return {'text': currency.code, 'value': currency.code};
         })

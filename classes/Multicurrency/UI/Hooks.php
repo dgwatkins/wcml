@@ -44,12 +44,21 @@ class Hooks implements \IWPML_Backend_Action {
 	public function getActiveCurrencies() {
 		global $woocommerce_wpml;
 
-		$buildActiveCurrency = function( $currency, $code ) {
-			return $currency;
+		$defaultCurrency = wcml_get_woocommerce_currency_option();
+
+		$buildActiveCurrency = function( $currency, $code ) use ( $defaultCurrency ) {
+			return array_merge(
+				$currency,
+				[
+					'code'      => $code,
+					'isDefault' => $code === $defaultCurrency,
+				]
+			);
 		};
 
 		return wpml_collect( $woocommerce_wpml->multi_currency->get_currencies( true ) )
 			->map( $buildActiveCurrency )
+			->values()
 			->toArray();
 	}
 
@@ -62,7 +71,7 @@ class Hooks implements \IWPML_Backend_Action {
 			];
 		};
 
-		return wpml_collect( get_woocommerce_currencies() )->map( $buildCurrency )->toArray();
+		return wpml_collect( get_woocommerce_currencies() )->map( $buildCurrency )->values()->toArray();
 	}
 
 	public function getLanguages() {
@@ -75,12 +84,15 @@ class Hooks implements \IWPML_Backend_Action {
 				'code'            => $data['code'],
 				'displayName'     => $data['display_name'],
 				'flagUrl'         => $sitepress->get_flag_url( $data['code'] ),
-				'defaultCurrency' => '',
+				'defaultCurrency' => isset( $defaultCurrenciesByLang[ $data['code'] ] )
+					? $defaultCurrenciesByLang[ $data['code'] ]
+					: false,
 			];
 		};
 
 		return wpml_collect( $sitepress->get_active_languages() )
 			->map( $buildLanguage )
+			->values()
 			->toArray();
 	}
 }
