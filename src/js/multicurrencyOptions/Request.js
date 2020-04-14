@@ -10,7 +10,7 @@ const buildPayload = (action, data) => {
     }
 };
 
-export const setCurrencyForLang = (isEnabled, currencyCode, languageCode) => {
+const buildCurrencyForLangPayload = ({isEnabled, currencyCode, languageCode}) => {
     return buildPayload(
         'wcml_update_currency_lang',
         {
@@ -21,4 +21,18 @@ export const setCurrencyForLang = (isEnabled, currencyCode, languageCode) => {
     );
 };
 
-export const createAjaxRequest = createAjax;
+const capitalize = str => str[0].toUpperCase() + str.slice(1);
+
+const payloadBuilders = {
+    buildCurrencyForLangPayload,
+};
+
+export const createAjaxRequest = (endpoint) => {
+    const ajax = createAjax();
+    const buildPayload = 'build' + capitalize(endpoint) + 'Payload';
+
+    return {
+        fetching: ajax.fetching,
+        send: data => ajax.doFetch(payloadBuilders[buildPayload](data)),
+    };
+}

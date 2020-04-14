@@ -74,20 +74,6 @@ const initStore = ({activeCurrencies, allCurrencies, languages}) => createStore(
 
         state.activeCurrencies[index] = currency;
     }),
-    // test: thunk(async (actions, data) => {
-    //     actions.setUpdatingCurrencyByLang({updating:true, currency:data.currency, language:data.language});
-    //
-    //     // await new Promise((resolve) => {
-    //     //     setTimeout(() => {
-    //     //         resolve(console.log('updating currency by lang'));
-    //     //     }, 2000);
-    //     // });
-    //
-    //     result = Request.setCurrencyForLang(data.enable, data.currency, data.language);
-    //
-    //     actions.enableCurrencyForLang(data);
-    //     actions.setUpdatingCurrencyByLang({updating:false, currency:data.currency, language:data.language});
-    // }),
     deleteCurrency: action((state, code) => {
         state.activeCurrencies = state.activeCurrencies.filter(currency => currency.code !== code);
     }),
@@ -101,18 +87,10 @@ const initStore = ({activeCurrencies, allCurrencies, languages}) => createStore(
     }),
 
 
-    updatingCurrencyByLang: {},
-    setUpdatingCurrencyByLang: action((state, payload) => {
-        const {updating, currency, language} = payload;
-        const key = currency + '-' + language;
-
-        if (updating) {
-            state.updatingCurrencyByLang[key] = true;
-        } else {
-            delete state.updatingCurrencyByLang[key];
-        }
+    updating: false,
+    setUpdating: action((state, updating) => {
+        state.updating = updating;
     }),
-    // isUpdatingCurrencyByLang: (currency, language) => computed(state => state.updatingCurrencyByLang[currency + '-' + language]),
 });
 
 export default initStore;
@@ -124,10 +102,3 @@ export const getStore = (path, action) => [getStoreProperty(path), getStoreActio
 const capitalize = str => str[0].toUpperCase() + str.slice(1);
 
 export const useStore = (item) => [getStoreProperty(item), getStoreAction('set' + capitalize(item)), getStoreAction('reset' + capitalize(item))];
-
-
-export const isUpdating = (object) => {
-    const updating = useStoreState(state => state.updating);
-
-    return !! updating[getObjectKey(object)];
-};

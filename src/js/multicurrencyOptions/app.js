@@ -5,7 +5,6 @@ import { StoreProvider } from "easy-peasy";
 import initStore from './Store';
 
 document.addEventListener('DOMContentLoaded', function() {
-    return;
     const store = initStore({
         activeCurrencies: wcmlMultiCurrency.activeCurrencies,
         allCurrencies: wcmlMultiCurrency.allCurrencies,
