@@ -35,13 +35,19 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function add_hooks(){
-		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
+	public function add_hooks() {
+		\WP_Mock::wpFunction( 'is_admin', [ 'return' => true ] );
 
 		$subject = $this->get_subject();
-		\WP_Mock::expectFilterAdded( 'wcml_do_not_display_custom_fields_for_product', array( $subject, 'replace_tm_editor_custom_fields_with_own_sections' ) );
+		\WP_Mock::expectFilterAdded( 'wcml_do_not_display_custom_fields_for_product', [
+			$subject,
+			'replace_tm_editor_custom_fields_with_own_sections'
+		] );
+		\WP_Mock::expectActionAdded( 'wcml_before_sync_product_data', [
+			$subject,
+			'sync_composite_data_across_translations'
+		], 10, 2 );
 		$subject->add_hooks();
-
 	}
 
 	/**
