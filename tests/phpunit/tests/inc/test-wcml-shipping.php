@@ -51,13 +51,11 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		WP_Mock::expectActionAdded( 'woocommerce_tax_rate_added', array( $subject, 'register_tax_rate_label_string'), 10, 2 );
 		WP_Mock::expectActionAdded( 'wp_ajax_woocommerce_shipping_zone_methods_save_settings', array( $subject, 'save_shipping_zone_method_from_ajax'), 9 );
 		WP_Mock::expectActionAdded( 'icl_save_term_translation', array( $subject, 'sync_class_costs_for_new_shipping_classes'), 100, 2 );
 		WP_Mock::expectActionAdded( 'wp_ajax_woocommerce_shipping_zone_methods_save_settings', array( $subject, 'update_woocommerce_shipping_settings_for_class_costs_from_ajax'), 9 );
 
 		WP_Mock::expectFilterAdded( 'woocommerce_package_rates', array( $subject, 'translate_shipping_methods_in_package' ) );
-		WP_Mock::expectFilterAdded( 'woocommerce_rate_label', array( $subject, 'translate_woocommerce_rate_label' ) );
 		WP_Mock::expectFilterAdded( 'pre_update_option_woocommerce_flat_rate_settings', array( $subject, 'update_woocommerce_shipping_settings_for_class_costs' ) );
 		WP_Mock::expectFilterAdded( 'pre_update_option_woocommerce_international_delivery_settings', array( $subject, 'update_woocommerce_shipping_settings_for_class_costs' ) );
 		WP_Mock::expectFilterAdded( 'woocommerce_shipping_flat_rate_instance_option', array( $subject, 'get_original_shipping_class_rate' ), 10, 3 );
