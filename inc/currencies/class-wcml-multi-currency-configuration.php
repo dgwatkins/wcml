@@ -28,7 +28,7 @@ class WCML_Multi_Currency_Configuration {
 			add_action( 'wp_ajax_legacy_update_custom_rates', [ __CLASS__, 'legacy_update_custom_rates' ] );
 			add_action( 'wp_ajax_legacy_remove_custom_rates', [ __CLASS__, 'legacy_remove_custom_rates' ] );
 
-			add_action( 'wp_ajax_wcml_new_currency', [ __CLASS__, 'edit_currency' ] );
+			add_action( 'wp_ajax_wcml_new_currency', [ __CLASS__, 'edit_currency' ] ); // @todo: remove this callback never used
 			add_action( 'wp_ajax_wcml_save_currency', [ __CLASS__, 'save_currency' ] );
 			add_action( 'wp_ajax_wcml_delete_currency', [ __CLASS__, 'delete_currency' ] );
 
@@ -260,13 +260,15 @@ class WCML_Multi_Currency_Configuration {
 	}
 
 	public static function update_currency_lang() {
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wcml_update_currency_lang' ) ) {
+		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		if ( ! $nonce || ! wp_verify_nonce( $nonce,  WCML\Multicurrency\UI\Hooks::HANDLE ) ) {
 			die( 'Invalid nonce' );
 		}
 
+		$data = json_decode( stripslashes( $_POST['data'] ), true );
+
 		$settings = self::$woocommerce_wpml->get_settings();
-		$settings['currency_options'][ $_POST['code'] ]['languages'][ $_POST['lang'] ] = $_POST['value'];
+		$settings['currency_options'][ $data['code'] ]['languages'][ $data['lang'] ] = $data['value'];
 
 		self::$woocommerce_wpml->update_settings( $settings );
 		exit;
