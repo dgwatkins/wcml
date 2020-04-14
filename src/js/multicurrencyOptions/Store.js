@@ -1,4 +1,6 @@
-import { action, createStore, useStoreState, computed, thunk } from "easy-peasy";
+import { action, createStore, useStoreState, useStoreActions, computed, thunk } from "easy-peasy";
+import Request  from './Request';
+import * as R from 'ramda';
 
 const activeCurrencies = [
     {
@@ -72,18 +74,20 @@ const initStore = ({activeCurrencies, allCurrencies, languages}) => createStore(
 
         state.activeCurrencies[index] = currency;
     }),
-    test: thunk(async (actions, data) => {
-        actions.setUpdatingCurrencyByLang({updating:true, currency:data.currency, language:data.language});
-
-        await new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(console.log('updating currency by lang'));
-            }, 2000);
-        });
-
-        actions.enableCurrencyForLang(data);
-        actions.setUpdatingCurrencyByLang({updating:false, currency:data.currency, language:data.language});
-    }),
+    // test: thunk(async (actions, data) => {
+    //     actions.setUpdatingCurrencyByLang({updating:true, currency:data.currency, language:data.language});
+    //
+    //     // await new Promise((resolve) => {
+    //     //     setTimeout(() => {
+    //     //         resolve(console.log('updating currency by lang'));
+    //     //     }, 2000);
+    //     // });
+    //
+    //     result = Request.setCurrencyForLang(data.enable, data.currency, data.language);
+    //
+    //     actions.enableCurrencyForLang(data);
+    //     actions.setUpdatingCurrencyByLang({updating:false, currency:data.currency, language:data.language});
+    // }),
     deleteCurrency: action((state, code) => {
         state.activeCurrencies = state.activeCurrencies.filter(currency => currency.code !== code);
     }),
@@ -108,10 +112,19 @@ const initStore = ({activeCurrencies, allCurrencies, languages}) => createStore(
             delete state.updatingCurrencyByLang[key];
         }
     }),
-    isUpdatingCurrencyByLang: (currency, language) => computed(state => state.updatingCurrencyByLang[currency + '-' + language]),
+    // isUpdatingCurrencyByLang: (currency, language) => computed(state => state.updatingCurrencyByLang[currency + '-' + language]),
 });
 
 export default initStore;
+
+export const getStoreProperty = path => useStoreState(R.path(Array.isArray(path) ? path : [path]));
+export const getStoreAction = action => useStoreActions(R.prop(action));
+export const getStore = (path, action) => [getStoreProperty(path), getStoreAction(action)];
+
+const capitalize = str => str[0].toUpperCase() + str.slice(1);
+
+export const useStore = (item) => [getStoreProperty(item), getStoreAction('set' + capitalize(item)), getStoreAction('reset' + capitalize(item))];
+
 
 export const isUpdating = (object) => {
     const updating = useStoreState(state => state.updating);
