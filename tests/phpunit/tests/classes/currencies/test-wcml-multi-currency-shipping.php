@@ -79,11 +79,13 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 
 		$rates             = array();
 		$rate_id           = rand_str();
-		$rate              = new stdClass();
+		$rate              = $this->getMockBuilder( 'WC_Shipping_Rate' )
+			->disableOriginalConstructor()
+			->getMock();
 		$rate->cost        = rand( 1, 100 );
 		$rates[ $rate_id ] = $rate;
 
-		\WP_Mock::wpFunction( 'wp_cache_get', array(
+		\WP_Mock::userFunction( 'wp_cache_get', array(
 			'args'   => array( $rate_id, 'converted_shipping_cost' ),
 			'return' => false
 		) );
@@ -96,7 +98,59 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 		$converted_cost = rand( 1, 100 );
 		$this->multi_currency->prices->expects( $this->once() )->method( 'raw_price_filter' )->with( $rate->cost, $client_currency )->willReturn( $converted_cost );
 
-		\WP_Mock::wpFunction( 'wp_cache_set', array(
+		\WP_Mock::userFunction( 'wp_cache_set', array(
+			'args'   => array( $rate_id, $converted_cost, 'converted_shipping_cost' ),
+			'return' => true
+		) );
+
+		$subject = $this->get_subject();
+		$rates   = $subject->convert_shipping_costs_in_package_rates( $rates );
+
+		$this->assertEquals( $converted_cost, $rates[ $rate_id ]->cost );
+	}
+
+	/**
+	 * @test
+	 */
+	public function convert_shipping_costs_in_package_rates_when_manual_shipping_cost_is_set() {
+
+		$client_currency = rand_str();
+		$this->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
+
+		$rates             = [];
+		$rate_id           = rand_str();
+		$rate              = $this->getMockBuilder( 'WC_Shipping_Rate' )
+		                          ->disableOriginalConstructor()
+		                          ->getMock();
+		$rate->cost        = 15;
+		$rate->method_id = 'flat_rate';
+		$rate->instance_id = 2;
+		$rates[ $rate_id ] = $rate;
+
+		$currency_cost = 20;
+		$currency_key = 'cost_' . $client_currency;
+
+		\WP_Mock::userFunction( 'wp_cache_get', array(
+			'args'   => array( $rate_id, 'converted_shipping_cost' ),
+			'return' => false
+		) );
+
+		\WP_Mock::userFunction( 'get_option', [
+			'return' => [
+				$currency_key => $currency_cost
+			],
+			'args' => [ 'woocommerce_' . $rate->method_id . '_' . $rate->instance_id . '_settings' ]
+		]);
+
+
+		$this->multi_currency->prices = $this->getMockBuilder( 'WCML_Multi_Currency_Prices' )
+		                                     ->disableOriginalConstructor()
+		                                     ->setMethods( array( 'raw_price_filter' ) )
+		                                     ->getMock();
+
+		$converted_cost = $currency_cost;
+
+		\WP_Mock::userFunction( 'wp_cache_set', array(
 			'args'   => array( $rate_id, $converted_cost, 'converted_shipping_cost' ),
 			'return' => true
 		) );
