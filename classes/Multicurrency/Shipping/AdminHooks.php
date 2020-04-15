@@ -153,4 +153,8 @@ class AdminHooks implements IWPML_Action {
 			true
 		);
 	}
+
+	public static function getCostKey( $currency ) {
+		return sprintf( 'cost_%s', $currency );
+	}
 }
