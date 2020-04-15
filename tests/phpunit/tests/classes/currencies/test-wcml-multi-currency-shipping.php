@@ -15,19 +15,19 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 		parent::setUp();
 
 		$this->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
-			->disableOriginalConstructor()
-			->setMethods( array( 'get_client_currency' ) )
-		    ->getMock();
+		                             ->disableOriginalConstructor()
+		                             ->setMethods( array( 'get_client_currency' ) )
+		                             ->getMock();
 
 		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
-			->disableOriginalConstructor()
-			->setMethods( array( 'get_wp_api' ) )
-			->getMock();
+		                        ->disableOriginalConstructor()
+		                        ->setMethods( array( 'get_wp_api' ) )
+		                        ->getMock();
 
 		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )
-			->disableOriginalConstructor()
-			->setMethods( array( 'constant', 'version_compare' ) )
-			->getMock();
+		                     ->disableOriginalConstructor()
+		                     ->setMethods( array( 'constant', 'version_compare' ) )
+		                     ->getMock();
 
 		$this->sitepress->method( 'get_wp_api' )->willReturn( $this->wp_api );
 
@@ -44,8 +44,8 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 	}
 
 	/**
-	* @test
-	*/
+	 * @test
+	 */
 	public function add_hooks(){
 
 
@@ -73,6 +73,11 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 	 * @test
 	 */
 	public function convert_shipping_costs_in_package_rates() {
+		\WP_Mock::userFunction( 'WPML\Container\make', [
+			'return' => function( $className ) {
+				return new $className();
+			},
+		]);
 
 		$client_currency = rand_str();
 		$this->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
@@ -80,10 +85,15 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 		$rates             = array();
 		$rate_id           = rand_str();
 		$rate              = $this->getMockBuilder( 'WC_Shipping_Rate' )
-			->disableOriginalConstructor()
-			->getMock();
+		                          ->disableOriginalConstructor()
+		                          ->getMock();
 		$rate->cost        = rand( 1, 100 );
+		$rate->method_id   = 'flat_rate';
+		$rate->instance_id = 1;
 		$rates[ $rate_id ] = $rate;
+
+		$currency_cost = 20;
+		$currency_key = 'cost_' . $client_currency;
 
 		\WP_Mock::userFunction( 'wp_cache_get', array(
 			'args'   => array( $rate_id, 'converted_shipping_cost' ),
@@ -102,6 +112,13 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 			'args'   => array( $rate_id, $converted_cost, 'converted_shipping_cost' ),
 			'return' => true
 		) );
+		\WP_Mock::userFunction( 'get_option', [
+			'return' => [
+				$currency_key => $currency_cost,
+				'wcml_shipping_costs' => 'auto'
+			],
+			'args' => [ 'woocommerce_' . $rate->method_id . '_' . $rate->instance_id . '_settings' ]
+		]);
 
 		$subject = $this->get_subject();
 		$rates   = $subject->convert_shipping_costs_in_package_rates( $rates );
@@ -155,10 +172,9 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 		                                     ->setMethods( array( 'raw_price_filter' ) )
 		                                     ->getMock();
 
-		$converted_cost = $currency_cost;
+		$converted_cost = $rate->cost;
 
 		\WP_Mock::userFunction( 'wp_cache_set', array(
-			'args'   => array( $rate_id, $converted_cost, 'converted_shipping_cost' ),
 			'return' => true
 		) );
 
@@ -308,9 +324,9 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 		$subject = $this->get_subject();
 
 		$rate1 = $this->getMockBuilder( 'WC_Shipping_Rate' )
-			->disableOriginalConstructor()
-			->setMethods( array( 'get_shipping_tax' ) )
-			->getMock();
+		              ->disableOriginalConstructor()
+		              ->setMethods( array( 'get_shipping_tax' ) )
+		              ->getMock();
 
 		$rate1->method( 'get_shipping_tax' )->willReturn( mt_rand( 1, 10 ) );
 
