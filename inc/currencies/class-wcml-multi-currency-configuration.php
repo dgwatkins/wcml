@@ -249,14 +249,11 @@ class WCML_Multi_Currency_Configuration {
 	}
 
 	public static function delete_currency() {
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wcml_delete_currency' ) ) {
-			die( 'Invalid nonce' );
-		}
+		self::verify_nonce();
+		$data = self::get_data();
 
-		self::$multi_currency->delete_currency_by_code( $_POST['code'] );
-
-		exit;
+		self::$multi_currency->delete_currency_by_code( $data['code'] );
+		wp_send_json_success();
 	}
 
 	public static function update_currency_lang() {

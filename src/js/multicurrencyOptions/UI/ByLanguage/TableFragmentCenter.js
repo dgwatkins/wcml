@@ -1,7 +1,7 @@
 import React from "react";
 import {useStoreState, useStoreActions} from "easy-peasy";
 import {useStore} from "../../Store";
-import {createAjaxRequest, getCurrencyForLangPayload} from "../../Request";
+import {createAjaxRequest} from "../../Request";
 
 const TableFragmentCenter = () => {
     const activeCurrencies = useStoreState(state => state.activeCurrencies);
@@ -153,14 +153,6 @@ const DefaultCell = ({language, activeCurrencies}) => {
                         )
                     }
                 </select>
-                {ajax.fetching && <span className="spinner" style={{visibility:'visible'}}></span>}
+                {ajax.fetching && <span className="spinner" style={{visibility:'visible', float:'none', position:'absolute'}}></span>}
             </td>
 };
-
-const enableCurrency = (currencyCode, languageCode, isEnabled) => {
-    thunk((actions, payload) => {
-        const result = true;
-    });
-    const enableCurrencyForLang = useStoreActions(actions => actions.enableCurrencyForLang);
-    enableCurrencyForLang({enable:isEnabled, currency:currencyCode, language:languageCode});
-}

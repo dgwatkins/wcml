@@ -31,19 +31,26 @@ const buildDefaultCurrencyForLangPayload = ({languageCode, currencyCode}) => {
     );
 };
 
-const capitalize = str => str[0].toUpperCase() + str.slice(1);
+const buildDeleteCurrencyPayload = ({currencyCode}) => {
+    return buildPayload(
+        'wcml_delete_currency',
+        {
+            code: currencyCode,
+        }
+    );
+};
 
 const payloadBuilders = {
-    buildCurrencyForLangPayload,
-    buildDefaultCurrencyForLangPayload,
+    currencyForLang: buildCurrencyForLangPayload,
+    defaultCurrencyForLang: buildDefaultCurrencyForLangPayload,
+    deleteCurrency: buildDeleteCurrencyPayload,
 };
 
 export const createAjaxRequest = (endpoint) => {
     const ajax = createAjax();
-    const buildPayload = 'build' + capitalize(endpoint) + 'Payload';
 
     return {
         fetching: ajax.fetching,
-        send: data => ajax.doFetch(payloadBuilders[buildPayload](data)),
+        send: data => ajax.doFetch(payloadBuilders[endpoint](data)),
     };
 }

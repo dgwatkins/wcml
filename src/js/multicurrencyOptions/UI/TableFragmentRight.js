@@ -1,5 +1,7 @@
 import React from "react";
 import {useStoreState, useStoreActions} from "easy-peasy";
+import {createAjaxRequest} from "../Request";
+import {useStore} from "../Store";
 import CurrencyModal from "./CurrencyModal";
 
 const TableFragmentRight = () => {
@@ -25,10 +27,8 @@ const TableFragmentRight = () => {
 export default TableFragmentRight;
 
 const Row = ({currency}) => {
-    const titleDelete = 'Delete';
     const titleEdit = 'Edit';
     const dataKey = 'wcml_currency_options_' + currency.code;
-    const deleteCurrency = useStoreActions(action => action.deleteCurrency);
     const modalCurrencyCode = useStoreState(state => state.modalCurrencyCode);
     const setModalCurrencyCode = useStoreActions(action => action.setModalCurrencyCode);
 
@@ -36,20 +36,6 @@ const Row = ({currency}) => {
         event.preventDefault();
         setModalCurrencyCode(currency.code);
     };
-
-    const deleteCell = ! currency.isDefault
-        && (
-            <td className="wcml-col-delete">
-                <a title={titleDelete} className="delete_currency"
-                   data-currency_name={currency.label}
-                   data-currency_symbol={currency.symbol}
-                   data-currency={currency.code} href="#"
-                   onClick={() => deleteCurrency(currency.code)}
-                >
-                    <i className="otgs-ico-delete" title={titleDelete} />
-                </a>
-            </td>
-        );
 
     const showModal = modalCurrencyCode === currency.code
         && ( <CurrencyModal currency={currency} /> );
@@ -66,7 +52,48 @@ const Row = ({currency}) => {
                         <i className="otgs-ico-edit" title={titleEdit} />
                     </a>
                 </td>
-                {deleteCell}
+                <DeleteCell currency={currency} />
                 {showModal}
             </tr>
+};
+
+const DeleteCell = ({currency}) => {
+    const titleDelete = 'Delete';
+    const deleteCurrency = useStoreActions(action => action.deleteCurrency);
+    const ajax = createAjaxRequest('deleteCurrency');
+    const [updating, setUpdating] = useStore('updating');
+
+    const onClick = async (event) => {
+        event.preventDefault();
+
+        if (updating) {
+            return;
+        }
+
+        setUpdating(true);
+        const result = await ajax.send({currencyCode: currency.code});
+
+        if (result.data && result.data.success) {
+            deleteCurrency(currency.code);
+        }
+
+        setUpdating(false);
+    };
+
+    return ! currency.isDefault
+        && (
+            <td className="wcml-col-delete">
+                <a title={titleDelete} className="delete_currency"
+                   data-currency_name={currency.label}
+                   data-currency_symbol={currency.symbol}
+                   data-currency={currency.code} href="#"
+                   onClick={onClick}
+                >
+                    <i className={ajax.fetching ? "spinner" : "otgs-ico-delete"}
+                       style={ajax.fetching ? {visibility: "visible", margin: 0} : {}}
+                       title={titleDelete}
+                    />
+                </a>
+            </td>
+        );
 };

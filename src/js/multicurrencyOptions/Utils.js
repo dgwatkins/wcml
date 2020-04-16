@@ -1,3 +1,5 @@
+export const capitalize = str => str[0].toUpperCase() + str.slice(1);
+
 export const getFormattedPricePreview = (allCurrencies) => (currency) => {
     return getFormattedPrice(allCurrencies)('1', '234', '0')(currency);
 };
