@@ -1,11 +1,10 @@
 import React from "react";
-import {useStoreState, useStoreActions} from "easy-peasy";
-import {useStore} from "../../Store";
+import {useStore, getStoreAction, getStoreProperty} from "../../Store";
 import {createAjaxRequest} from "../../Request";
 
 const TableFragmentCenter = () => {
-    const activeCurrencies = useStoreState(state => state.activeCurrencies);
-    const languages = useStoreState(state => state.languages);
+    const activeCurrencies = getStoreProperty('activeCurrencies');
+    const languages = getStoreProperty('languages');
 
     return <div className="currency_wrap">
                 <div className="currency_inner">
@@ -51,7 +50,7 @@ const Row = ({currency, languages}) => {
 };
 
 const Cell = ({language, currency}) => {
-    const enableCurrencyForLang = useStoreActions(actions => actions.enableCurrencyForLang);
+    const enableCurrencyForLang = getStoreAction('enableCurrencyForLang');
     const [updating, setUpdating] = useStore('updating');
 
     const ajax         = createAjaxRequest('currencyForLang');
@@ -104,16 +103,16 @@ const DefaultRow = ({languages, activeCurrencies}) => {
                     languages.map((language) => <DefaultCell key={'default-' + language.code} language={language} activeCurrencies={activeCurrencies} />)
                 }
             </tr>
-}
+};
 
 const DefaultCell = ({language, activeCurrencies}) => {
-    const setDefaultCurrencyForLang = useStoreActions(actions => actions.setDefaultCurrencyForLang);
+    const setDefaultCurrencyForLang = getStoreAction('setDefaultCurrencyForLang');
     const [updating, setUpdating] = useStore('updating');
 
     const ajax = createAjaxRequest('defaultCurrencyForLang');
 
     const options = activeCurrencies
-        .filter(currency => {return !! currency.languages[language.code]})
+        .filter(currency => 1 == currency.languages[language.code])
         .map(currency => {
             return {'text': currency.code, 'value': currency.code};
         })

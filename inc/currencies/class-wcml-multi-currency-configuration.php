@@ -261,7 +261,7 @@ class WCML_Multi_Currency_Configuration {
 		$data = self::get_data();
 
 		$settings = self::$woocommerce_wpml->get_settings();
-		$settings['currency_options'][ $data['code'] ]['languages'][ $data['lang'] ] = $data['value'];
+		$settings['currency_options'][ $data['code'] ]['languages'][ $data['lang'] ] = (int) $data['value'];
 
 		self::$woocommerce_wpml->update_settings( $settings );
 		wp_send_json_success();

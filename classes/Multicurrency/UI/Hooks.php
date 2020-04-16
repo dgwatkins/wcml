@@ -53,6 +53,7 @@ class Hooks implements \IWPML_Backend_Action {
 				[
 					'code'      => $code,
 					'isDefault' => $code === $defaultCurrency,
+					'languages' => array_map( 'intval', $currency['languages'] ),
 				]
 			);
 		};

@@ -1,9 +1,9 @@
 import React from "react";
-import {useStoreState} from "easy-peasy";
-import { getSmallFormattedPrice } from '../Utils';
+import {getSmallFormattedPrice} from '../Utils';
+import {getStoreProperty} from "../Store";
 
 const TableFragmentLeft = () => {
-    const activeCurrencies = useStoreState(state => state.activeCurrencies);
+    const activeCurrencies = getStoreProperty('activeCurrencies');
 
     return <table className="widefat currency_table" id="currency-table">
                 <thead>
@@ -67,13 +67,13 @@ const Row = ({currency, defaultCurrency, formatPrice, formatLabel}) => {
 };
 
 const getFormatPrice = () => {
-    const allCurrencies = useStoreState(state => state.allCurrencies);
+    const allCurrencies = getStoreProperty('allCurrencies');
 
     return getSmallFormattedPrice(allCurrencies);
 };
 
 const getFormatLabel = () => (currency) => {
-    const allCurrencies = useStoreState(state => state.allCurrencies);
+    const allCurrencies = getStoreProperty('allCurrencies');
 
     return allCurrencies.filter(currencyData => currencyData.code === currency.code )[0].label;
 }

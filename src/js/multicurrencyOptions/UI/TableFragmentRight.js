@@ -1,11 +1,10 @@
 import React from "react";
-import {useStoreState, useStoreActions} from "easy-peasy";
 import {createAjaxRequest} from "../Request";
-import {useStore} from "../Store";
+import {useStore, getStoreAction, getStoreProperty} from "../Store";
 import CurrencyModal from "./CurrencyModal";
 
 const TableFragmentRight = () => {
-    const activeCurrencies = useStoreState(state => state.activeCurrencies);
+    const activeCurrencies = getStoreProperty('activeCurrencies');
 
     return <table className="widefat currency_settings_table" id="currency-settings-table">
                 <thead>
@@ -29,8 +28,8 @@ export default TableFragmentRight;
 const Row = ({currency}) => {
     const titleEdit = 'Edit';
     const dataKey = 'wcml_currency_options_' + currency.code;
-    const modalCurrencyCode = useStoreState(state => state.modalCurrencyCode);
-    const setModalCurrencyCode = useStoreActions(action => action.setModalCurrencyCode);
+    const modalCurrencyCode = getStoreProperty('modalCurrencyCode');
+    const setModalCurrencyCode = getStoreAction('setModalCurrencyCode');
 
     const onClickEdit = (event) => {
         event.preventDefault();
@@ -59,7 +58,7 @@ const Row = ({currency}) => {
 
 const DeleteCell = ({currency}) => {
     const titleDelete = 'Delete';
-    const deleteCurrency = useStoreActions(action => action.deleteCurrency);
+    const deleteCurrency = getStoreAction('deleteCurrency');
     const ajax = createAjaxRequest('deleteCurrency');
     const [updating, setUpdating] = useStore('updating');
 
