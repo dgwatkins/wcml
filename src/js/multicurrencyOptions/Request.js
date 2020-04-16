@@ -21,10 +21,21 @@ const buildCurrencyForLangPayload = ({isEnabled, currencyCode, languageCode}) =>
     );
 };
 
+const buildDefaultCurrencyForLangPayload = ({languageCode, currencyCode}) => {
+    return buildPayload(
+        'wcml_update_default_currency',
+        {
+            code: currencyCode,
+            lang: languageCode,
+        }
+    );
+};
+
 const capitalize = str => str[0].toUpperCase() + str.slice(1);
 
 const payloadBuilders = {
     buildCurrencyForLangPayload,
+    buildDefaultCurrencyForLangPayload,
 };
 
 export const createAjaxRequest = (endpoint) => {

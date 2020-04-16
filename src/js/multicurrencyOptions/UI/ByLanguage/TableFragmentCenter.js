@@ -76,7 +76,7 @@ const Cell = ({language, currency}) => {
         setUpdating(true);
         const result = await ajax.send({isEnabled:!isEnabled, currencyCode:currency.code, languageCode:language.code});
 
-        if ( result.data && result.data.success) {
+        if (result.data && result.data.success) {
             enableCurrencyForLang({enable:!isEnabled, currency:currency.code, language:language.code});
         }
 
@@ -108,6 +108,9 @@ const DefaultRow = ({languages, activeCurrencies}) => {
 
 const DefaultCell = ({language, activeCurrencies}) => {
     const setDefaultCurrencyForLang = useStoreActions(actions => actions.setDefaultCurrencyForLang);
+    const [updating, setUpdating] = useStore('updating');
+
+    const ajax = createAjaxRequest('defaultCurrencyForLang');
 
     const options = activeCurrencies
         .filter(currency => {return !! currency.languages[language.code]})
@@ -120,7 +123,27 @@ const DefaultCell = ({language, activeCurrencies}) => {
         ...options
     ];
 
-    const onChange = event => setDefaultCurrencyForLang({language:language.code, currency:event.target.value});
+    const onChange = async (event) => {
+        event.preventDefault();
+
+        if (updating) {
+            return;
+        }
+
+        const currencyCode = event.target.value;
+        const previousValue = language.defaultCurrency;
+
+        setDefaultCurrencyForLang({language: language.code, currency: currencyCode});
+
+        setUpdating(true);
+        const result = await ajax.send({languageCode: language.code, currencyCode: currencyCode});
+
+        if (!result.data || !result.data.success) {
+            setDefaultCurrencyForLang({language: language.code, currency: previousValue});
+        }
+
+        setUpdating(false);
+    }
 
     return <td align="center">
                 <select value={language.defaultCurrency} onChange={onChange} rel={language.code}>
@@ -130,6 +153,7 @@ const DefaultCell = ({language, activeCurrencies}) => {
                         )
                     }
                 </select>
+                {ajax.fetching && <span className="spinner" style={{visibility:'visible'}}></span>}
             </td>
 };
 

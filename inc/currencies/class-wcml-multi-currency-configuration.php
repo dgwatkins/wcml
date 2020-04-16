@@ -260,42 +260,45 @@ class WCML_Multi_Currency_Configuration {
 	}
 
 	public static function update_currency_lang() {
-		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce,  WCML\Multicurrency\UI\Hooks::HANDLE ) ) {
-			die( 'Invalid nonce' );
-		}
-
-		$data = json_decode( stripslashes( $_POST['data'] ), true );
+		self::verify_nonce();
+		$data = self::get_data();
 
 		$settings = self::$woocommerce_wpml->get_settings();
 		$settings['currency_options'][ $data['code'] ]['languages'][ $data['lang'] ] = $data['value'];
 
 		self::$woocommerce_wpml->update_settings( $settings );
 		wp_send_json_success();
-		exit;
+	}
+
+	private static function verify_nonce() {
+		$nonce = filter_input( INPUT_POST, 'nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+		if ( ! wp_verify_nonce( $nonce,  WCML\Multicurrency\UI\Hooks::HANDLE ) ) {
+			wp_send_json_error( 'Invalid nonce' );
+		}
+	}
+
+	private static function get_data() {
+		return json_decode( stripslashes( $_POST['data'] ), true );
 	}
 
 	public static function update_default_currency_ajax() {
-
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wcml_update_default_currency' ) ) {
-			die( 'Invalid nonce' );
-		}
-
+		self::verify_nonce();
 		self::update_default_currency();
-
-		exit;
+		wp_send_json_success();
 	}
 
 	public static function update_default_currency() {
 		global $woocommerce;
 
+		$data = self::get_data();
+
 		if ( ! empty( $woocommerce->session ) &&
-			$_POST['lang'] == $woocommerce->session->get( 'client_currency_language' ) ) {
-			$woocommerce->session->set( 'client_currency', $_POST['code'] );
+			$data['lang'] == $woocommerce->session->get( 'client_currency_language' ) ) {
+			$woocommerce->session->set( 'client_currency', $data['code'] );
 		}
 
-		self::$woocommerce_wpml->settings['default_currencies'][ $_POST['lang'] ] = $_POST['code'];
+		self::$woocommerce_wpml->settings['default_currencies'][ $data['lang'] ] = $data['code'];
 		self::$woocommerce_wpml->update_settings();
 
 	}
