@@ -84,6 +84,7 @@ function wcml_loader() {
 		\WCML\Block\Convert\Hooks::class,
 		\WCML\MO\Hooks::class,
 		\WCML\Tax\Strings\Hooks::class,
+		\WCML\AdminDashboard\Hooks::class,
 	];
 
 	if (
