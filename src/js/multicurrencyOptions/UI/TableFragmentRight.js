@@ -28,14 +28,12 @@ export default TableFragmentRight;
 const Row = ({currency}) => {
     const titleEdit = 'Edit';
     const dataKey = 'wcml_currency_options_' + currency.code;
-    const [modalCurrency, setModalCurrency] = useStore('modalCurrency');
+    const [ , setModalCurrency] = useStore('modalCurrency');
 
     const onClickEdit = (event) => {
         event.preventDefault();
         setModalCurrency(currency);
     };
-
-    const showModal =  modalCurrency && modalCurrency.code === currency.code && <CurrencyModal />;
 
     return <tr id={'wcml-row-currency-actions-' + currency.code } className="wcml-row-currencies-actions">
                 <td className="wcml-col-edit">
@@ -50,7 +48,6 @@ const Row = ({currency}) => {
                     </a>
                 </td>
                 <DeleteCell currency={currency} />
-                {showModal}
             </tr>
 };
 

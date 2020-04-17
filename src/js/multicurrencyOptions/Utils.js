@@ -14,7 +14,7 @@ const getFormattedPrice = (allCurrencies) => (firstPart, secondPart, thirdPart) 
     return getFormatPlaceholder(firstPart, secondPart)(currency.position)
         .replace(/__SYMBOL__/, currencyData.symbol)
         .replace(/__THOUSAND_SEP__/, firstPart ? currency.thousand_sep : '')
-        .replace(/__DECIMAL_SEP__/, currency.num_decimals ? currency.decimal_sep : '')
+        .replace(/__DECIMAL_SEP__/, currency.num_decimals > 0 ? currency.decimal_sep : '')
         .replace(/__DECIMALS_NUMBER__/, thirdPart.repeat(currency.num_decimals));
 };
 
