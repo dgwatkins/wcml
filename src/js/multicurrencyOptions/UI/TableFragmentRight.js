@@ -28,16 +28,14 @@ export default TableFragmentRight;
 const Row = ({currency}) => {
     const titleEdit = 'Edit';
     const dataKey = 'wcml_currency_options_' + currency.code;
-    const modalCurrencyCode = getStoreProperty('modalCurrencyCode');
-    const setModalCurrencyCode = getStoreAction('setModalCurrencyCode');
+    const [modalCurrency, setModalCurrency] = useStore('modalCurrency');
 
     const onClickEdit = (event) => {
         event.preventDefault();
-        setModalCurrencyCode(currency.code);
+        setModalCurrency(currency);
     };
 
-    const showModal = modalCurrencyCode === currency.code
-        && ( <CurrencyModal currency={currency} /> );
+    const showModal =  modalCurrency && modalCurrency.code === currency.code && <CurrencyModal />;
 
     return <tr id={'wcml-row-currency-actions-' + currency.code } className="wcml-row-currencies-actions">
                 <td className="wcml-col-edit">

@@ -25,8 +25,23 @@ const getFormatPlaceholder = (firstPart, secondPart) => (position) => {
         case 'right':
             return firstPart + '__THOUSAND_SEP__' + secondPart + '__DECIMAL_SEP____DECIMALS_NUMBER____SYMBOL__';
         case 'left_space':
-            return '__SYMBOL__&nbsp;' + firstPart + '__THOUSAND_SEP__' + secondPart + '__DECIMAL_SEP____DECIMALS_NUMBER__';
+            return '__SYMBOL__ ' + firstPart + '__THOUSAND_SEP__' + secondPart + '__DECIMAL_SEP____DECIMALS_NUMBER__';
         case 'right_space':
-            return firstPart + '__THOUSAND_SEP__' + secondPart + '__DECIMAL_SEP____DECIMALS_NUMBER__&nbsp;__SYMBOL__';
+            return firstPart + '__THOUSAND_SEP__' + secondPart + '__DECIMAL_SEP____DECIMALS_NUMBER__ __SYMBOL__';
     }
+};
+
+// @todo: To check
+const KEY_EVENTS = {
+    DOM_SUBTRACT: 109,
+    DOM_DASH: 189,
+    DOM_E: 69
+};
+
+export const validateRate = (value) => {
+    const isPositive = value => value > 0;
+    const isNumber = value => !isNaN(parseFloat(value)) && isFinite(value);
+    const hasNoInvalidChar = (value) => true; // @todo: To be confirmed with KEY_EVENTS
+
+    return isNumber(value) && isPositive(value) && hasNoInvalidChar(value);
 };

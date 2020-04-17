@@ -26,10 +26,11 @@ class Hooks implements \IWPML_Backend_Action {
 				self::HANDLE,
 				'wcmlMultiCurrency',
 				[
-					'nonce'            => wp_create_nonce( self::HANDLE ),
-					'activeCurrencies' => $this->getActiveCurrencies(),
-					'allCurrencies'    => $this->getAllCurrencies(),
-					'languages'        => $this->getLanguages(),
+					'nonce'             => wp_create_nonce( self::HANDLE ),
+					'activeCurrencies'  => $this->getActiveCurrencies(),
+					'allCurrencies'     => $this->getAllCurrencies(),
+					'languages'         => $this->getLanguages(),
+//					'currencyPositions' => $this->getCurrencyPositions(),
 				]
 			);
 

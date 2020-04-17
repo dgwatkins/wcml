@@ -27,9 +27,9 @@ const initStore = ({activeCurrencies, allCurrencies, languages}) => createStore(
     deleteCurrency: action((state, code) => {
         state.activeCurrencies = state.activeCurrencies.filter(currency => currency.code !== code);
     }),
-    modalCurrencyCode: null,
-    setModalCurrencyCode: action((state, code) => {
-        state.modalCurrencyCode = code;
+    modalCurrency: null,
+    setModalCurrency: action((state, currency) => {
+        state.modalCurrency = currency;
     }),
     newCurrencies: computed(state => {
         const usedCurrencyCodes = state.activeCurrencies.map(currency => currency.code);
