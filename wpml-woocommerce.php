@@ -85,6 +85,7 @@ function wcml_loader() {
 		\WCML\MO\Hooks::class,
 		\WCML\Multicurrency\Shipping\AdminHooksFactory::class,
 		\WCML\Tax\Strings\Hooks::class,
+		\WCML\AdminDashboard\Hooks::class,
 	];
 
 	if (
