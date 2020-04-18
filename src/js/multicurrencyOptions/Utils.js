@@ -11,14 +11,14 @@ export const getSmallFormattedPrice = (allCurrencies) => (currency) => {
 const getFormattedPrice = (allCurrencies) => (firstPart, secondPart, thirdPart) => (currency) => {
     const currencyData = allCurrencies.filter(currencyData => currencyData.code === currency.code )[0];
 
-    return getFormatPlaceholder(firstPart, secondPart)(currency.position)
+    return getFormatPlaceholder(firstPart, secondPart, currency.position)
         .replace(/__SYMBOL__/, currencyData.symbol)
         .replace(/__THOUSAND_SEP__/, firstPart ? currency.thousand_sep : '')
         .replace(/__DECIMAL_SEP__/, currency.num_decimals > 0 ? currency.decimal_sep : '')
         .replace(/__DECIMALS_NUMBER__/, thirdPart.repeat(currency.num_decimals));
 };
 
-const getFormatPlaceholder = (firstPart, secondPart) => (position) => {
+const getFormatPlaceholder = (firstPart, secondPart, position) => {
     switch(position){
         case 'left':
             return '__SYMBOL__' + firstPart + '__THOUSAND_SEP__' + secondPart + '__DECIMAL_SEP____DECIMALS_NUMBER__';

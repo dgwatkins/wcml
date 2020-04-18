@@ -11,19 +11,19 @@ const CurrencyModal = () => {
     const [currency, setModalCurrency] = useStore('modalCurrency');
     const onClose = () => setModalCurrency(null);
     const [isValidRate, setIsValidRate] = useState(true);
-    const onChangeRate = (event) => {
-        const rate = event.target.value;
-        setModalCurrency({...currency, rate:rate});
 
-        if (validateRate(rate)) {
+    const updateCurrencyProp = (prop) => (e) => {
+        setModalCurrency({...currency, [prop]:e.target.value});
+    };
+
+    const onChangeRate = (e) => {
+        updateCurrencyProp('rate')(e);
+
+        if (validateRate(e.target.value)) {
             setIsValidRate(true);
         } else {
             setIsValidRate(false);
         }
-    };
-
-    const updateCurrencyProp = (prop) => (event) => {
-        setModalCurrency({...currency, [prop]:event.target.value});
     };
 
     const onSave = () => {
@@ -35,7 +35,7 @@ const CurrencyModal = () => {
         title="The title"
         visible={true}
         onCancel={onClose}
-        footer={<Footer onClose={onClose} onSave={onSave} disableSave={!isValidRate}></Footer>}
+        footer={<Footer onClose={onClose} onSave={onSave} disableSave={!isValidRate} />}
 
     >
         <div className="wcml-dialog wcml-dialog-container ui-dialog-content ui-widget-content" id={'wcml_currency_options_' + currency.code}>
@@ -54,9 +54,7 @@ const CurrencyModal = () => {
                                     />
                             <span className="this-currency">{currency.code}</span>
                             {!isValidRate && <span className="wcml-error">Please enter a valid number</span>}
-                            <small>
-                                {currency.updated} <i></i>
-                            </small>
+                            <small>{currency.updated}</small>
                         </div>
                     </div>
 
@@ -92,14 +90,14 @@ const CurrencyModal = () => {
                         <option value="nearest">Nearest</option>
                     </SelectRow>
 
-                    <SelectRow currency={currency} prop="rounding_increment" updateCurrencyProp={updateCurrencyProp} label="Increment for nearest integer" tooltip="To be defined!!!">
+                    <SelectRow currency={currency} prop="rounding_increment" updateCurrencyProp={updateCurrencyProp} label="Increment for nearest integer" tooltip="To be defined!!!" attrs={{disabled: currency.rounding === 'disabled'}}>
                         <option value="1">1</option>
                         <option value="10">10</option>
                         <option value="100">100</option>
                         <option value="1000">1000</option>
                     </SelectRow>
 
-                    <InputRow currency={currency} prop='auto_subtract' updateCurrencyProp={updateCurrencyProp} label='Autosubtract amount' tooltip="To be defined!!!" />
+                    <InputRow currency={currency} prop='auto_subtract' updateCurrencyProp={updateCurrencyProp} label='Autosubtract amount' tooltip="To be defined!!!"  attrs={{disabled: currency.rounding === 'disabled'}}/>
 
                     <hr/>
 
@@ -147,10 +145,10 @@ const PreviewCurrency = ({currency}) => {
 };
 
 const getTooltip = (tooltip) => {
-    return tooltip && <Tooltip title={tooltip}> <i className="wcml-tip otgs-ico-help"></i></Tooltip>;
+    return tooltip && <Tooltip title={tooltip}> <i className="wcml-tip otgs-ico-help" /></Tooltip>;
 };
 
-const SelectRow = ({currency, prop, updateCurrencyProp, label, tooltip, children}) => {
+const SelectRow = ({currency, prop, updateCurrencyProp, label, tooltip, attrs, children}) => {
     const id = "wcml_currency_options_" + prop + "_" + currency.code;
 
     return (
@@ -159,6 +157,7 @@ const SelectRow = ({currency, prop, updateCurrencyProp, label, tooltip, children
             <select id={id}
                     name={"currency_options[" + prop + "]"}
                     className={"currency_option_" + prop}
+                    {...attrs}
                     value={currency[prop]}
                     onChange={updateCurrencyProp(prop)}
             >
@@ -214,7 +213,7 @@ const Gateways = () => {
             <label className="wcml-gateways-switcher">
                 <input name="currency_options[gateways_enabled]" type="checkbox"
                        className="wcml-gateways-enabled otgs-switcher-input" checked={checked} onChange={() => setChecked(!checked)}/>
-                <span className="otgs-switcher wpml-theme" data-on="ON" data-off="OFF"></span>
+                <span className="otgs-switcher wpml-theme" data-on="ON" data-off="OFF"/>
                 <a className="wpml-external-link"
                    href="https://wpml.org/?page_id=290080&utm_source=wcml-admin&utm_medium=plugin&utm_term=payment-gateways-settings&utm_content=documentation&utm_campaign=WCML#payment-gateways-settings"
                    target="_blank">Learn more</a>
