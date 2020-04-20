@@ -6,6 +6,7 @@ import 'antd/lib/modal/style/index.css';
 import 'antd/lib/tooltip/style/index.css';
 import {useStore, getStoreProperty} from "../Store";
 import {validateRate, getFormattedPricePreview} from '../Utils';
+import Gateways from "./Gateways/Gateways";
 
 const CurrencyModal = () => {
     const [currency, setModalCurrency] = useStore('modalCurrency');
@@ -200,24 +201,5 @@ const NewCurrencySelector = ({updateCurrencyProp}) => {
                 }
             </select>
         </React.Fragment>
-    );
-};
-
-const Gateways = () => {
-    const [checked, setChecked] = useState(false);
-
-    return (
-        <div>
-            <label className="label-header"><strong>Payment Gateways</strong></label>
-
-            <label className="wcml-gateways-switcher">
-                <input name="currency_options[gateways_enabled]" type="checkbox"
-                       className="wcml-gateways-enabled otgs-switcher-input" checked={checked} onChange={() => setChecked(!checked)}/>
-                <span className="otgs-switcher wpml-theme" data-on="ON" data-off="OFF"/>
-                <a className="wpml-external-link"
-                   href="https://wpml.org/?page_id=290080&utm_source=wcml-admin&utm_medium=plugin&utm_term=payment-gateways-settings&utm_content=documentation&utm_campaign=WCML#payment-gateways-settings"
-                   target="_blank">Learn more</a>
-            </label>
-        </div>
     );
 };

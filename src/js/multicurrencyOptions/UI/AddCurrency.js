@@ -20,6 +20,8 @@ const AddCurrency = () => {
             rounding_increment: 1,
             auto_subtract: 0,
             isDefault: false,
+            gatewaysEnabled: false,
+            gatewaysSettings: {},
         };
 
         setModalCurrency(newCurrency);

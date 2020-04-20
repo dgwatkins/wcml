@@ -2,6 +2,8 @@
 
 namespace WCML\Multicurrency\UI;
 
+use WPML\Collect\Support\Collection;
+
 class Hooks implements \IWPML_Backend_Action {
 
 	const HANDLE = 'wcml-multicurrency-options';
@@ -22,15 +24,17 @@ class Hooks implements \IWPML_Backend_Action {
 				WCML_VERSION
 			);
 
+			$gateways = $this->getGateways();
+
 			wp_localize_script(
 				self::HANDLE,
 				'wcmlMultiCurrency',
 				[
 					'nonce'             => wp_create_nonce( self::HANDLE ),
-					'activeCurrencies'  => $this->getActiveCurrencies(),
+					'activeCurrencies'  => $this->getActiveCurrencies( $gateways ),
 					'allCurrencies'     => $this->getAllCurrencies(),
 					'languages'         => $this->getLanguages(),
-//					'currencyPositions' => $this->getCurrencyPositions(),
+					'gateways'          => $gateways->toArray(),
 				]
 			);
 
@@ -43,7 +47,7 @@ class Hooks implements \IWPML_Backend_Action {
 		}
 	}
 
-	public function getActiveCurrencies() {
+	public function getActiveCurrencies( Collection $gateways ) {
 		global $woocommerce_wpml;
 
 		$defaultCurrency = wcml_get_woocommerce_currency_option();
@@ -52,15 +56,32 @@ class Hooks implements \IWPML_Backend_Action {
 			return array_merge(
 				$currency,
 				[
-					'code'      => $code,
-					'isDefault' => $code === $defaultCurrency,
-					'languages' => array_map( 'intval', $currency['languages'] ),
+					'code'            => $code,
+					'isDefault'       => $code === $defaultCurrency,
+					'languages'       => array_map( 'intval', $currency['languages'] ),
+					'gatewaysEnabled' => $this->getPaymentGateways()->is_enabled( $code ),
 				]
+			);
+		};
+
+		$getGatewaySettingsForCurrency = function( $code ) use ( $gateways ) {
+			return $gateways->mapWithKeys( function( \stdClass $gateway ) use ( $code ) {
+				return [
+					$gateway->id => isset( $gateway->settings[ $code ] ) ? $gateway->settings[ $code ] : [],
+				];
+			} )->toArray();
+		};
+
+		$addGatewaysSettings = function( $currency, $code ) use ( $getGatewaySettingsForCurrency ) {
+			return array_merge(
+				$currency,
+				[ 'gatewaySettings' => $getGatewaySettingsForCurrency( $code ) ]
 			);
 		};
 
 		return wpml_collect( $woocommerce_wpml->multi_currency->get_currencies( true ) )
 			->map( $buildActiveCurrency )
+			->map( $addGatewaysSettings )
 			->values()
 			->toArray();
 	}
@@ -97,5 +118,37 @@ class Hooks implements \IWPML_Backend_Action {
 			->map( $buildLanguage )
 			->values()
 			->toArray();
+	}
+
+	private function getGateways() {
+		$isSupported = function( \WCML_Payment_Gateway $gateway ) {
+			return ! $gateway instanceof \WCML_Not_Supported_Payment_Gateway;
+		};
+
+		$buildGateway = function( \WCML_Payment_Gateway $gateway ) use ( $isSupported ) {
+			return (object) [
+				'id'          => $gateway->get_id(),
+				'title'       => $gateway->get_title(),
+				'isSupported' => $isSupported( $gateway ),
+				'settings'    => $gateway->get_settings(),
+			];
+		};
+
+		return wpml_collect( $this->getPaymentGateways()->get_gateways() )
+			->prioritize( $isSupported )
+			->map( $buildGateway )
+			->values();
+	}
+
+	/**
+	 * @todo: Move it as a dependency
+	 *
+	 * @return \WCML_Currencies_Payment_Gateways
+	 */
+	private function getPaymentGateways() {
+		/** @var \woocommerce_wpml */
+		global $woocommerce_wpml;
+
+		return $woocommerce_wpml->multi_currency->currencies_payment_gateways;
 	}
 }
