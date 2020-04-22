@@ -75,7 +75,7 @@ class Hooks implements \IWPML_Backend_Action {
 		$addGatewaysSettings = function( $currency, $code ) use ( $getGatewaySettingsForCurrency ) {
 			return array_merge(
 				$currency,
-				[ 'gatewaySettings' => $getGatewaySettingsForCurrency( $code ) ]
+				[ 'gatewaysSettings' => $getGatewaySettingsForCurrency( $code ) ]
 			);
 		};
 

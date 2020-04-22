@@ -1,12 +1,12 @@
 import React from "react";
 import {useState} from "react";
 import Modal from 'antd/lib/modal';
-import Tooltip from 'antd/lib/tooltip';
 import 'antd/lib/modal/style/index.css';
 import 'antd/lib/tooltip/style/index.css';
 import {useStore, getStoreProperty} from "../Store";
 import {validateRate, getFormattedPricePreview} from '../Utils';
 import Gateways from "./Gateways/Gateways";
+import {SelectRow, InputRow} from "./FormElements";
 
 const CurrencyModal = () => {
     const [currency, setModalCurrency] = useStore('modalCurrency');
@@ -63,42 +63,65 @@ const CurrencyModal = () => {
 
                     <PreviewCurrency currency={currency} />
 
-                    <SelectRow currency={currency} prop="position" updateCurrencyProp={updateCurrencyProp} label="Currency Position">
+                    <SelectRow attrs={getRowAttrs(currency, 'position')}
+                               onChange={updateCurrencyProp('position')}
+                               label="Currency Position"
+                    >
                         <option value="left">Left</option>
                         <option value="right">Right</option>
                         <option value="left_space">Left with space</option>
                         <option value="right_space">Right with space</option>
                     </SelectRow>
 
-                    <SelectRow currency={currency} prop="thousand_sep" updateCurrencyProp={updateCurrencyProp} label="Thousand Separator">
+                    <SelectRow attrs={getRowAttrs(currency, 'thousand_sep')}
+                               onChange={updateCurrencyProp('thousand_sep')}
+                               label="Thousand Separator"
+                    >
                         <option value=".">.</option>
                         <option value=",">,</option>
                     </SelectRow>
 
-                    <SelectRow currency={currency} prop="decimal_sep" updateCurrencyProp={updateCurrencyProp} label="Decimal Separator">
+                    <SelectRow attrs={getRowAttrs(currency, 'decimal_sep')}
+                               onChange={updateCurrencyProp('decimal_sep')}
+                               label="Decimal Separator"
+                    >
                         <option value=".">.</option>
                         <option value=",">,</option>
                     </SelectRow>
 
-                    <InputRow currency={currency} prop='num_decimals' updateCurrencyProp={updateCurrencyProp} label='Number of Decimals' attrs={{min:'0', step:'1'}} />
+                    <InputRow attrs={getRowAttrs(currency, 'num_decimals', {min:'0', step:'1', type: 'number', 'data-message': 'Only numeric'})}
+                              onChange={updateCurrencyProp('num_decimals')}
+                              label='Number of Decimals'
+                    />
 
                     <hr/>
 
-                    <SelectRow currency={currency} prop="rounding" updateCurrencyProp={updateCurrencyProp} label="Rounding to the nearest integer" tooltip="To be defined!!!">
+                    <SelectRow attrs={getRowAttrs(currency, 'rounding')}
+                               onChange={updateCurrencyProp('rounding')}
+                               label="Rounding to the nearest integer"
+                               tooltip="To be defined!!!"
+                    >
                         <option value="disabled">Disabled</option>
                         <option value="up">Up</option>
                         <option value="down">Down</option>
                         <option value="nearest">Nearest</option>
                     </SelectRow>
 
-                    <SelectRow currency={currency} prop="rounding_increment" updateCurrencyProp={updateCurrencyProp} label="Increment for nearest integer" tooltip="To be defined!!!" attrs={{disabled: currency.rounding === 'disabled'}}>
+                    <SelectRow attrs={getRowAttrs(currency, 'rounding_increment', {disabled: currency.rounding === 'disabled'})}
+                               onChange={updateCurrencyProp('rounding_increment')}
+                               label="Increment for nearest integer"
+                               tooltip="To be defined!!!"
+                    >
                         <option value="1">1</option>
                         <option value="10">10</option>
                         <option value="100">100</option>
                         <option value="1000">1000</option>
                     </SelectRow>
 
-                    <InputRow currency={currency} prop='auto_subtract' updateCurrencyProp={updateCurrencyProp} label='Autosubtract amount' tooltip="To be defined!!!"  attrs={{disabled: currency.rounding === 'disabled'}}/>
+                    <InputRow attrs={getRowAttrs(currency, 'auto_subtract', {disabled: currency.rounding === 'disabled', type: 'number', 'data-message': 'Only numeric'})}
+                              onChange={updateCurrencyProp('auto_subtract')}
+                              label='Autosubtract amount'
+                              tooltip="To be defined!!!"/>
 
                     <hr/>
 
@@ -145,48 +168,6 @@ const PreviewCurrency = ({currency}) => {
     );
 };
 
-const getTooltip = (tooltip) => {
-    return tooltip && <Tooltip title={tooltip}> <i className="wcml-tip otgs-ico-help" /></Tooltip>;
-};
-
-const SelectRow = ({currency, prop, updateCurrencyProp, label, tooltip, attrs, children}) => {
-    const id = "wcml_currency_options_" + prop + "_" + currency.code;
-
-    return (
-        <div className="wpml-form-row">
-            <label htmlFor={id}>{label}{getTooltip(tooltip)}</label>
-            <select id={id}
-                    name={"currency_options[" + prop + "]"}
-                    className={"currency_option_" + prop}
-                    {...attrs}
-                    value={currency[prop]}
-                    onChange={updateCurrencyProp(prop)}
-            >
-                {children}
-            </select>
-        </div>
-    );
-};
-
-const InputRow = ({currency, prop, updateCurrencyProp, label, tooltip, attrs={}}) => {
-    const id = "wcml_currency_options_" + prop + "_" + currency.code;
-
-    return (
-        <div className="wpml-form-row">
-            <label htmlFor={id}>{label}{getTooltip(tooltip)}</label>
-            <input id={id}
-                   name={"currency_options[" + prop + "]"}
-                   className={"currency_option_" + prop}
-                   {...attrs}
-                   type="number"
-                   data-message="Only numeric"
-                   value={currency[prop]}
-                   onChange={updateCurrencyProp(prop)}
-            />
-        </div>
-    );
-}
-
 const NewCurrencySelector = ({updateCurrencyProp}) => {
     const newCurrencies = getStoreProperty('newCurrencies');
 
@@ -203,3 +184,15 @@ const NewCurrencySelector = ({updateCurrencyProp}) => {
         </React.Fragment>
     );
 };
+
+const getRowAttrs = (currency, prop, attrs={}) => {
+    return {
+        ...{
+            id: "wcml_currency_options_" + prop + "_" + currency.code,
+            name: "currency_options[" + prop + "]",
+            className: "currency_option_" + prop,
+            value: currency[prop]
+        },
+        ...attrs
+    };
+}

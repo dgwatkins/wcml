@@ -1,8 +1,12 @@
 import React, {useState} from "react";
-import {useStore} from "../../Store";
+import {useStore, getStoreProperty} from "../../Store";
+import Bacs from "./Bacs";
+import {capitalize} from "../../Utils";
 
 const Gateways = () => {
     const [currency, setModalCurrency] = useStore('modalCurrency');
+    const gateways = getStoreProperty('gateways');
+    const activeCurrencies = getStoreProperty('activeCurrencies');
 
     return (
         <div>
@@ -23,16 +27,13 @@ const Gateways = () => {
                 currency.gatewaysEnabled && (
                     <div className='wcml-gateways'>
                         {
-                            Object.keys(currency.gatewaySettings).map((gatewayId) => {
-                                return (
-                                    <React.Fragment key={gatewayId}>
-                                        <label className="label-header"><strong>{gatewayId}</strong> <i
-                                            className="wcml-tip otgs-ico-help"></i></label>
-                                        <div className="wpml-form-row">
-                                            Some settings...
-                                        </div>
-                                    </React.Fragment>
-                                );
+                            gateways.map((gateway, key) => {
+                                return <Gateway key={key}
+                                                gateway={gateway}
+                                                settings={currency.gatewaysSettings[gateway.id]}
+                                                activeCurrencies={activeCurrencies}
+                                                setModalCurrency={setModalCurrency}
+                                />;
                             })
                         }
                     </div>
@@ -43,3 +44,24 @@ const Gateways = () => {
 };
 
 export default Gateways;
+
+const Gateway = ({gateway, settings, activeCurrencies, setModalCurrency}) => {
+    const updateSettings = oldSettings => {/*setNewSettings using setModalCurrency*/};
+
+    let gatewayUi = <div>No display</div>;
+
+    switch (gateway.id) {
+        case 'bacs':
+            gatewayUi = <Bacs gateway={gateway} settings={settings} activeCurrencies={activeCurrencies} updateSettings={updateSettings}/>;
+    }
+
+    return (
+        <React.Fragment>
+            <label className="label-header">
+                <strong>{gateway.title}</strong>
+                <i className="wcml-tip otgs-ico-help"/>
+            </label>
+            {gatewayUi}
+        </React.Fragment>
+    );
+}

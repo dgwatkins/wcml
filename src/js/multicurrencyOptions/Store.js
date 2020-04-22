@@ -2,10 +2,11 @@ import { action, createStore, useStoreState, useStoreActions, computed, thunk } 
 import {capitalize} from "./Utils";
 import * as R from 'ramda';
 
-const initStore = ({activeCurrencies, allCurrencies, languages}) => createStore({
+const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => createStore({
     activeCurrencies: activeCurrencies,
     allCurrencies: allCurrencies,
     languages: languages,
+    gateways: gateways,
     setDefaultCurrencyForLang: action((state, data) => {
         const index = state.languages.findIndex(lang => lang.code === data.language);
         const language = state.languages[index];
