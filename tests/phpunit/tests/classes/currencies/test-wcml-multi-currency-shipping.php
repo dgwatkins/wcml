@@ -113,6 +113,12 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 	 * @test
 	 */
 	public function convert_shipping_costs_in_package_rates_when_manual_shipping_cost_is_set() {
+		\WP_Mock::userFunction( 'WPML\Container\make', [
+			'return' => function( $className ) {
+				return new $className();
+			},
+		]);
+
 
 		$client_currency = rand_str();
 		$this->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
