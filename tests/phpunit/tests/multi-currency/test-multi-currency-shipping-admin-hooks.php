@@ -77,18 +77,6 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function NO_fields_added_to_free_shipping_when_argument_is_not_an_array() {
-
-		$subject = $this->get_subject();
-
-		$this->expectException( TypeError::class );
-
-		$subject->addCurrencyShippingFieldsToFreeShipping( '' );
-	}
-
-	/**
-	 * @test
-	 */
 	public function fields_added_to_flat_rate() {
 		$wcml_multi_currency = $this->get_wcml_multi_currency_mock();
 		$wcml_multi_currency->expects( $this->atLeastOnce() )
