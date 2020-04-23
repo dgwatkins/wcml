@@ -11,7 +11,12 @@ class AdminHooks implements IWPML_Action {
 	private $wcmlMultiCurrency;
 
 	/**
-	 * WCML_Multi_Currency_Shipping_Admin constructor.
+	 * @var IGeneralShipping
+	 */
+	private $shippingType;
+
+	/**
+	 * AdminHooks constructor.
 	 *
 	 * @param WCML_Multi_Currency $wcmlMultiCurrency
 	 */
@@ -23,27 +28,51 @@ class AdminHooks implements IWPML_Action {
 	 * Registers hooks.
 	 */
 	public function add_hooks() {
-		add_filter( 'woocommerce_shipping_instance_form_fields_flat_rate', [ $this, 'addCurrencyShippingFieldsToShippingMethodForm' ], 10, 1 );
+		add_filter( 'woocommerce_shipping_instance_form_fields_flat_rate', [ $this, 'addCurrencyShippingFieldsToFlatRate' ], 10, 1 );
+		add_filter( 'woocommerce_shipping_instance_form_fields_free_shipping', [ $this, 'addCurrencyShippingFieldsToFreeShipping' ], 10, 1 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'loadJs' ] );
 	}
 
 	/**
-	 * Adds fields to display screen for flat rate shipping method.
-	 *
-	 * Adds two kind of fields:
-	 * - The select field to enable/disable shipping costs in other currencies.
-	 * @see \WCML_Multi_Currency_Shipping_Admin::add_enable_field
-	 * - The input field for each registered currency to provide shipping costs.
-	 * @see \WCML_Multi_Currency_Shipping_Admin::add_currencies_fields
+	 * Instantiate flat rate shipping method class and add field to the method GUI.
 	 *
 	 * @param array $field
 	 *
 	 * @return array
 	 */
-	public function addCurrencyShippingFieldsToShippingMethodForm( array $field ) {
+	public function addCurrencyShippingFieldsToFlatRate( array $field ) {
+		$this->shippingType = new FlatRateShipping();
+		return $this->addCurrencyShippingFieldsToShippingMethodForm( $field );
+	}
+
+	/**
+	 * Instantiate free shipping method class and add field to the method GUI.
+	 *
+	 * @param array $field
+	 *
+	 * @return array
+	 */
+	public function addCurrencyShippingFieldsToFreeShipping( array $field ) {
+		$this->shippingType = new FreeShipping();
+		return $this->addCurrencyShippingFieldsToShippingMethodForm( $field );
+	}
+
+	/**
+	 * Adds fields to display screen for shipping method.
+	 *
+	 * Adds two kind of fields:
+	 * - The select field to enable/disable shipping costs in other currencies.
+	 * @see \AdminHooks::add_enable_field
+	 * - The input field for each registered currency to provide shipping costs.
+	 * @see \AdminHooks::add_currencies_fields
+	 *
+	 * @param array $field
+	 *
+	 * @return array
+	 */
+	private function addCurrencyShippingFieldsToShippingMethodForm( array $field ) {
 		$field = $this->addEnableField( $field );
 		$field = $this->addCurrenciesFields( $field );
-
 		return $field;
 	}
 
@@ -77,20 +106,16 @@ class AdminHooks implements IWPML_Action {
 	 *
 	 * @return array
 	 */
-	private function addCurrenciesFields( array $field ) {
+	public function addCurrenciesFields( array $field ) {
 		foreach ( $this->wcmlMultiCurrency->get_currency_codes() as $currencyCode ) {
 			if ( $this->wcmlMultiCurrency->get_default_currency() === $currencyCode ) {
 				continue;
 			}
 			$fieldKey = sprintf( 'cost_%s', $currencyCode );
 			$fieldValue = [
-				'title' => sprintf( esc_html_x( 'Cost in %s',
-					'The label for the field with shipping cost in additional currency. The currency symbol will be added in place of %s specifier.',
-					'woocommerce-multilingual' ), $currencyCode ),
+				'title' => $this->shippingType->getFieldTitle( $currencyCode ),
 				'type' => 'text',
-				'description' => sprintf( esc_html_x( 'The shipping cost if customer choose %s as a purchase currency.',
-					'The description for the field with shipping cost in additional currency. The currency symbol will be added in place of %s specifier.',
-					'woocommerce-multilingual' ), $currencyCode ),
+				'description' => $this->shippingType->getFieldDescription( $currencyCode ),
 				'default' => '0',
 				'desc_tip' => true,
 				'class' => 'wcml-shipping-cost-currency'
@@ -98,8 +123,26 @@ class AdminHooks implements IWPML_Action {
 
 			$field[ $fieldKey] = $fieldValue;
 		}
-
 		return $field;
+	}
+
+	/**
+	 * Returns shipping cost key for given currency as is in shipping options.
+	 *
+	 * @param $currency
+	 * @param $method_id
+	 *
+	 * @return string|null
+	 */
+	public static function getCostKey( $currency, $method_id ) {
+		$patterns = [
+			'flat_rate' => 'cost_%s',
+			'free_shipping' => 'min_amount_%s',
+		];
+		if ( isset( $patterns[ $method_id ] ) ) {
+			return sprintf( $patterns[ $method_id ], $currency );
+		}
+		return null;
 	}
 
 	/**
