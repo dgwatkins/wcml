@@ -2,7 +2,7 @@
 
 namespace WCML\Multicurrency\Shipping;
 
-class FreeShipping extends IGeneralShipping {
+class FreeShipping extends AbstractShipping {
 	protected $methodId = 'free_shipping';
 
 	public function getFieldTitle( $currencyCode ) {

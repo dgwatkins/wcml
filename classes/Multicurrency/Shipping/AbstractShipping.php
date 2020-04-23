@@ -2,7 +2,7 @@
 
 namespace WCML\Multicurrency\Shipping;
 
-abstract class IGeneralShipping {
+abstract class AbstractShipping {
 	/**
 	 * Returns shipping method id (shipping option key).
 	 *

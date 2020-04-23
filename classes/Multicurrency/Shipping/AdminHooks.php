@@ -11,7 +11,7 @@ class AdminHooks implements IWPML_Action {
 	private $wcmlMultiCurrency;
 
 	/**
-	 * @var IGeneralShipping
+	 * @var AbstractShipping
 	 */
 	private $shippingType;
 

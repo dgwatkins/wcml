@@ -2,7 +2,7 @@
 
 namespace WCML\Multicurrency\Shipping;
 
-class FlatRateShipping extends IGeneralShipping {
+class FlatRateShipping extends AbstractShipping {
 	protected $methodId = 'flat_rate';
 
 	public function getFieldTitle( $currencyCode ) {
