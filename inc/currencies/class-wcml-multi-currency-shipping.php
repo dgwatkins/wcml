@@ -1,6 +1,6 @@
 <?php
 
-use \WCML\Multicurrency\Shipping\AdminHooks as ManualCost;
+use \WCML\Multicurrency\Shipping\ShippingModeProvider as ManualCost;
 
 class WCML_Multi_Currency_Shipping {
 
@@ -158,7 +158,7 @@ class WCML_Multi_Currency_Shipping {
 	private function getManualShippingCost( \WC_Shipping_Rate $rate, $currency ) {
 		if ( isset( $rate->method_id, $rate->instance_id ) ) {
 			$option_name = sprintf( 'woocommerce_%s_%d_settings', $rate->method_id, $rate->instance_id );
-			$cost_name = ManualCost::getCostKey( $currency );
+			$cost_name = ManualCost::get( $rate->method_id )->getCostKey( $currency );
 			$rate_settings = get_option( $option_name );
 			if ( isset( $rate_settings[ $cost_name ] ) ) {
 				return $rate_settings[ $cost_name ];
@@ -166,6 +166,4 @@ class WCML_Multi_Currency_Shipping {
 		}
 		return $rate->cost;
 	}
-
-
 }
