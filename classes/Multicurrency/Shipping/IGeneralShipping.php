@@ -2,8 +2,6 @@
 
 namespace WCML\Multicurrency\Shipping;
 
-use WCML_Multi_Currency;
-
 abstract class IGeneralShipping {
 	/**
 	 * Returns shipping method id (shipping option key).
