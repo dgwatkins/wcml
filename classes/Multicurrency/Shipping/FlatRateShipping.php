@@ -2,7 +2,7 @@
 
 namespace WCML\Multicurrency\Shipping;
 
-class FlatRateShipping extends AbstractShipping {
+class FlatRateShipping implements ShippingMode {
 	protected $methodId = 'flat_rate';
 
 	public function getFieldTitle( $currencyCode ) {
@@ -21,5 +21,9 @@ class FlatRateShipping extends AbstractShipping {
 		return sprintf( esc_html_x( 'The shipping cost if customer choose %s as a purchase currency.',
 			'The description for the field with shipping cost in additional currency. The currency symbol will be added in place of %s specifier.',
 			'woocommerce-multilingual' ), $currencyCode );
+	}
+
+	public function getMethodId() {
+		return $this->methodId;
 	}
 }

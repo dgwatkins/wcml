@@ -2,7 +2,7 @@
 
 namespace WCML\Multicurrency\Shipping;
 
-class FreeShipping extends AbstractShipping {
+class FreeShipping implements ShippingMode {
 	protected $methodId = 'free_shipping';
 
 	public function getFieldTitle( $currencyCode ) {
@@ -21,5 +21,9 @@ class FreeShipping extends AbstractShipping {
 		return sprintf( esc_html_x( 'The minimal order amount if customer choose %s as a purchase currency.',
 			'The description for the field with minimal order amount in additional currency. The currency symbol will be added in place of %s specifier.',
 			'woocommerce-multilingual' ), $currencyCode );
+	}
+
+	public function getMethodId() {
+		return $this->methodId;
 	}
 }

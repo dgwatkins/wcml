@@ -2,15 +2,13 @@
 
 namespace WCML\Multicurrency\Shipping;
 
-abstract class AbstractShipping {
+interface ShippingMode {
 	/**
 	 * Returns shipping method id (shipping option key).
 	 *
 	 * @return string
 	 */
-	public function getMethodId() {
-		return $this->methodId;
-	}
+	public function getMethodId();
 
 	/**
 	 * Returns field title.
@@ -21,7 +19,7 @@ abstract class AbstractShipping {
 	 *
 	 * @return string
 	 */
-	abstract public function getFieldTitle( $currencyCode );
+	public function getFieldTitle( $currencyCode );
 
 	/**
 	 * Returns field description.
@@ -33,5 +31,5 @@ abstract class AbstractShipping {
 	 *
 	 * @return string
 	 */
-	abstract public function getFieldDescription( $currencyCode );
+	public function getFieldDescription( $currencyCode );
 }
