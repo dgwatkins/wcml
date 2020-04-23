@@ -11,11 +11,6 @@ class AdminHooks implements IWPML_Action {
 	private $wcmlMultiCurrency;
 
 	/**
-	 * @var ShippingMode
-	 */
-	private $shippingMode;
-
-	/**
 	 * AdminHooks constructor.
 	 *
 	 * @param WCML_Multi_Currency $wcmlMultiCurrency
@@ -41,8 +36,7 @@ class AdminHooks implements IWPML_Action {
 	 * @return array
 	 */
 	public function addCurrencyShippingFieldsToFlatRate( array $field ) {
-		$this->shippingMode = new FlatRateShipping();
-		return $this->addCurrencyShippingFieldsToShippingMethodForm( $field );
+		return $this->addCurrencyShippingFieldsToShippingMethodForm( $field, new FlatRateShipping() );
 	}
 
 	/**
@@ -53,8 +47,7 @@ class AdminHooks implements IWPML_Action {
 	 * @return array
 	 */
 	public function addCurrencyShippingFieldsToFreeShipping( array $field ) {
-		$this->shippingMode = new FreeShipping();
-		return $this->addCurrencyShippingFieldsToShippingMethodForm( $field );
+		return $this->addCurrencyShippingFieldsToShippingMethodForm( $field, new FreeShipping() );
 	}
 
 	/**
@@ -70,9 +63,9 @@ class AdminHooks implements IWPML_Action {
 	 *
 	 * @return array
 	 */
-	private function addCurrencyShippingFieldsToShippingMethodForm( array $field ) {
+	private function addCurrencyShippingFieldsToShippingMethodForm( array $field, ShippingMode $shippingMode ) {
 		$field = $this->addEnableField( $field );
-		$field = $this->addCurrenciesFields( $field );
+		$field = $this->addCurrenciesFields( $field, $shippingMode );
 		return $field;
 	}
 
@@ -106,12 +99,12 @@ class AdminHooks implements IWPML_Action {
 	 *
 	 * @return array
 	 */
-	public function addCurrenciesFields( array $field ) {
+	public function addCurrenciesFields( array $field, ShippingMode $shippingMode ) {
 		foreach ( $this->wcmlMultiCurrency->get_currency_codes() as $currencyCode ) {
 			if ( $this->wcmlMultiCurrency->get_default_currency() === $currencyCode ) {
 				continue;
 			}
-			$field = $this->getCurrencyField( $field, $currencyCode );
+			$field = $this->getCurrencyField( $field, $currencyCode, $shippingMode );
 		}
 		return $field;
 	}
@@ -124,13 +117,13 @@ class AdminHooks implements IWPML_Action {
 	 *
 	 * @return mixed
 	 */
-	protected function getCurrencyField( $field, $currencyCode ) {
-		$fieldKey = self::getCostKey( $currencyCode, $this->shippingMode->getMethodId() );
+	protected function getCurrencyField( $field, $currencyCode, ShippingMode $shippingMode ) {
+		$fieldKey = self::getCostKey( $currencyCode, $shippingMode->getMethodId() );
 		if ( $fieldKey ) {
 			$fieldValue = [
-				'title' => $this->shippingMode->getFieldTitle( $currencyCode ),
+				'title' => $shippingMode->getFieldTitle( $currencyCode ),
 				'type' => 'text',
-				'description' => $this->shippingMode->getFieldDescription( $currencyCode ),
+				'description' => $shippingMode->getFieldDescription( $currencyCode ),
 				'default' => '0',
 				'desc_tip' => true,
 				'class' => 'wcml-shipping-cost-currency'
