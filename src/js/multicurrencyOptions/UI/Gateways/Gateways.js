@@ -1,7 +1,11 @@
 import React, {useState} from "react";
 import {useStore, getStoreProperty} from "../../Store";
+import {assocPath} from "ramda";
 import Bacs from "./Bacs";
-import {capitalize} from "../../Utils";
+import PayPal from "./PayPal";
+import Stripe from "./Stripe";
+import Unsupported from "./Unsupported";
+import {getTooltip} from "../FormElements";
 
 const Gateways = () => {
     const [currency, setModalCurrency] = useStore('modalCurrency');
@@ -30,9 +34,10 @@ const Gateways = () => {
                             gateways.map((gateway, key) => {
                                 return <Gateway key={key}
                                                 gateway={gateway}
-                                                settings={currency.gatewaysSettings[gateway.id]}
+                                                settings={currency.gatewaysSettings[gateway.id] || {}}
                                                 activeCurrencies={activeCurrencies}
                                                 setModalCurrency={setModalCurrency}
+                                                currency={currency}
                                 />;
                             })
                         }
@@ -45,21 +50,40 @@ const Gateways = () => {
 
 export default Gateways;
 
-const Gateway = ({gateway, settings, activeCurrencies, setModalCurrency}) => {
-    const updateSettings = oldSettings => {/*setNewSettings using setModalCurrency*/};
+const Gateway = ({gateway, currency, setModalCurrency, ...attrs}) => {
+    const updateSettings = prop => e => {
+        setModalCurrency(
+            assocPath(
+                ['gatewaysSettings', gateway.id, prop],
+                e.target.value,
+                currency
+            )
+        );
+    };
 
-    let gatewayUi = <div>No display</div>;
+    const getName = name => 'currency_options[gateways_settings][' + gateway.id + '][' + name + ']'
+
+    let gatewayUi = <Unsupported/>;
+    let tooltip = '';
 
     switch (gateway.id) {
         case 'bacs':
-            gatewayUi = <Bacs gateway={gateway} settings={settings} activeCurrencies={activeCurrencies} updateSettings={updateSettings}/>;
+            tooltip = 'TO BE DEFINED !!!';
+            gatewayUi = <Bacs gateway={gateway} updateSettings={updateSettings} getName={getName} {...attrs}/>;
+            break;
+        case 'paypal':
+            gatewayUi = <PayPal gateway={gateway} updateSettings={updateSettings} getName={getName} {...attrs}/>
+            break;
+        case 'stripe':
+            gatewayUi = <Stripe gateway={gateway} updateSettings={updateSettings} getName={getName} {...attrs}/>
+            break;
     }
 
     return (
         <React.Fragment>
             <label className="label-header">
                 <strong>{gateway.title}</strong>
-                <i className="wcml-tip otgs-ico-help"/>
+                {getTooltip(tooltip)}
             </label>
             {gatewayUi}
         </React.Fragment>

@@ -1,7 +1,7 @@
 import React from "react";
 import Tooltip from "antd/lib/tooltip";
 
-export const SelectRow = ({onChange, label, tooltip, attrs, children}) => {
+export const SelectRow = ({onChange, label, attrs, tooltip, children}) => {
     return (
         <div className="wpml-form-row">
             <label htmlFor={attrs.id}>{label}{getTooltip(tooltip)}</label>
@@ -12,7 +12,7 @@ export const SelectRow = ({onChange, label, tooltip, attrs, children}) => {
     );
 };
 
-export const InputRow = ({attrs, onChange, label, tooltip=null}) => {
+export const InputRow = ({onChange, label, attrs, tooltip}) => {
     return (
         <div className="wpml-form-row">
             <label htmlFor={attrs.id}>{label}{getTooltip(tooltip)}</label>
@@ -21,6 +21,6 @@ export const InputRow = ({attrs, onChange, label, tooltip=null}) => {
     );
 };
 
-const getTooltip = (tooltip) => {
+export const getTooltip = tooltip => {
     return tooltip && <Tooltip title={tooltip}> <i className="wcml-tip otgs-ico-help" /></Tooltip>;
 };

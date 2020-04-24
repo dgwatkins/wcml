@@ -13,8 +13,11 @@ const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => cr
         language.defaultCurrency = data.currency;
         state.languages[index] = language;
     }),
+    getCurrencyIndex: action((state, code) => {
+        state.activeCurrencies.findIndex(currency => currency.code === code);
+    }),
     enableCurrencyForLang: action((state, data) => {
-        const index = state.activeCurrencies.findIndex(currency => currency.code === data.currency);
+        const index = getCurrencyIndex(state.activeCurrencies)(data.currency);
         const currency = state.activeCurrencies[index];
         const enabled = data.enable ? 1 : 0;
 
@@ -32,6 +35,15 @@ const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => cr
     setModalCurrency: action((state, currency) => {
         state.modalCurrency = currency;
     }),
+    saveModalCurrency: action(state => {
+        const index = getCurrencyIndex(state.activeCurrencies)(state.modalCurrency.code);
+
+        if (index < 0) {
+            state.activeCurrencies.push(state.modalCurrency);
+        } else {
+            state.activeCurrencies[index] = state.modalCurrency;
+        }
+    }),
     newCurrencies: computed(state => {
         const usedCurrencyCodes = state.activeCurrencies.map(currency => currency.code);
         return state.allCurrencies.filter((currency) => ! usedCurrencyCodes.includes(currency.code));
@@ -44,6 +56,8 @@ const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => cr
 });
 
 export default initStore;
+
+const getCurrencyIndex = currencies => code => R.findIndex(R.propEq('code', code))(currencies);
 
 export const getStoreProperty = path => useStoreState(R.path(Array.isArray(path) ? path : [path]));
 export const getStoreAction = action => useStoreActions(R.prop(action));

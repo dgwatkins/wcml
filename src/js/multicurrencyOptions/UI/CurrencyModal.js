@@ -3,15 +3,16 @@ import {useState} from "react";
 import Modal from 'antd/lib/modal';
 import 'antd/lib/modal/style/index.css';
 import 'antd/lib/tooltip/style/index.css';
-import {useStore, getStoreProperty} from "../Store";
+import {useStore, getStoreProperty, getStoreAction} from "../Store";
 import {validateRate, getFormattedPricePreview} from '../Utils';
 import Gateways from "./Gateways/Gateways";
 import {SelectRow, InputRow} from "./FormElements";
 
 const CurrencyModal = () => {
     const [currency, setModalCurrency] = useStore('modalCurrency');
-    const onClose = () => setModalCurrency(null);
+    const saveModalCurrency = getStoreAction('saveModalCurrency');
     const [isValidRate, setIsValidRate] = useState(true);
+    const onClose = () => setModalCurrency(null);
 
     const updateCurrencyProp = (prop) => (e) => {
         setModalCurrency({...currency, [prop]:e.target.value});
@@ -29,6 +30,7 @@ const CurrencyModal = () => {
 
     const onSave = () => {
         console.log(currency);
+        saveModalCurrency();
         onClose();
     };
 

@@ -21,7 +21,11 @@ const AddCurrency = () => {
             auto_subtract: 0,
             isDefault: false,
             gatewaysEnabled: false,
-            gatewaysSettings: {},
+            gatewaysSettings: {
+                bacs: {currency:'', value:''},
+                paypal: {currency:'', value:''},
+                stripe: {currency:'', publishable_key:'', secret_key:''},
+            },
         };
 
         setModalCurrency(newCurrency);
