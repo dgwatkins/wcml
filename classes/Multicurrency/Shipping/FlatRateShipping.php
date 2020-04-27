@@ -4,6 +4,7 @@ namespace WCML\Multicurrency\Shipping;
 
 class FlatRateShipping implements ShippingMode {
 	protected $methodId = 'flat_rate';
+	protected $costKeyPattern = 'cost_%s';
 
 	public function getFieldTitle( $currencyCode ) {
 		if ( ! is_string( $currencyCode ) ) {
@@ -25,5 +26,9 @@ class FlatRateShipping implements ShippingMode {
 
 	public function getMethodId() {
 		return $this->methodId;
+	}
+
+	public function getCostKey( $currencyCode ) {
+		return sprintf( $this->costKeyPattern, $currencyCode );
 	}
 }

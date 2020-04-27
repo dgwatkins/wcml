@@ -23,31 +23,22 @@ class AdminHooks implements IWPML_Action {
 	 * Registers hooks.
 	 */
 	public function add_hooks() {
-		add_filter( 'woocommerce_shipping_instance_form_fields_flat_rate', [ $this, 'addCurrencyShippingFieldsToFlatRate' ], 10, 1 );
-		add_filter( 'woocommerce_shipping_instance_form_fields_free_shipping', [ $this, 'addCurrencyShippingFieldsToFreeShipping' ], 10, 1 );
+		ShippingModeProvider::getAll()->each( function( ShippingMode $shippingMode ) {
+				add_filter(
+					'woocommerce_shipping_instance_form_fields_' . $shippingMode->getMethodId(),
+					$this->addCurrencyShippingFields( $shippingMode ),
+					10,
+					1
+				);
+			}
+		);
 		add_action( 'admin_enqueue_scripts', [ $this, 'loadJs' ] );
 	}
 
-	/**
-	 * Instantiate flat rate shipping method class and add field to the method GUI.
-	 *
-	 * @param array $field
-	 *
-	 * @return array
-	 */
-	public function addCurrencyShippingFieldsToFlatRate( array $field ) {
-		return $this->addCurrencyShippingFieldsToShippingMethodForm( $field, new FlatRateShipping() );
-	}
-
-	/**
-	 * Instantiate free shipping method class and add field to the method GUI.
-	 *
-	 * @param array $field
-	 *
-	 * @return array
-	 */
-	public function addCurrencyShippingFieldsToFreeShipping( array $field ) {
-		return $this->addCurrencyShippingFieldsToShippingMethodForm( $field, new FreeShipping() );
+	public function addCurrencyShippingFields( ShippingMode $shippingMode ) {
+			return function( array $field ) use ( $shippingMode ) {
+				return $this->addCurrencyShippingFieldsToShippingMethodForm( $field, $shippingMode );
+			};
 	}
 
 	/**
@@ -118,7 +109,7 @@ class AdminHooks implements IWPML_Action {
 	 * @return mixed
 	 */
 	protected function getCurrencyField( $field, $currencyCode, ShippingMode $shippingMode ) {
-		$fieldKey = self::getCostKey( $currencyCode, $shippingMode->getMethodId() );
+		$fieldKey = $shippingMode->getCostKey( $currencyCode );
 		if ( $fieldKey ) {
 			$fieldValue = [
 				'title' => $shippingMode->getFieldTitle( $currencyCode ),
@@ -132,25 +123,6 @@ class AdminHooks implements IWPML_Action {
 			$field[ $fieldKey] = $fieldValue;
 		}
 		return $field;
-	}
-
-	/**
-	 * Returns shipping cost key for given currency as is in shipping options.
-	 *
-	 * @param $currency
-	 * @param $method_id
-	 *
-	 * @return string|null
-	 */
-	public static function getCostKey( $currency, $method_id ) {
-		$patterns = [
-			'flat_rate' => 'cost_%s',
-			'free_shipping' => 'min_amount_%s',
-		];
-		if ( isset( $patterns[ $method_id ] ) ) {
-			return sprintf( $patterns[ $method_id ], $currency );
-		}
-		return null;
 	}
 
 	/**

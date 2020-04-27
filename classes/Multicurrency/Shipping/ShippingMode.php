@@ -32,4 +32,6 @@ interface ShippingMode {
 	 * @return string
 	 */
 	public function getFieldDescription( $currencyCode );
+
+	public function getCostKey( $currencyCode );
 }
