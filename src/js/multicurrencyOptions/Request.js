@@ -40,13 +40,27 @@ const buildDeleteCurrencyPayload = ({currencyCode}) => {
     );
 };
 
+const buildSaveCurrencyPayload = (currency) => {
+    return buildPayload(
+        'wcml_save_currency',
+        {
+            currency_options: currency,
+        }
+    );
+};
+
 const payloadBuilders = {
     currencyForLang: buildCurrencyForLangPayload,
     defaultCurrencyForLang: buildDefaultCurrencyForLangPayload,
     deleteCurrency: buildDeleteCurrencyPayload,
+    saveCurrency: buildSaveCurrencyPayload,
 };
 
 export const createAjaxRequest = (endpoint) => {
+    if (!payloadBuilders[endpoint]) {
+        throw new Error('The endpoint ' + endpoint + ' is not defined');
+    }
+
     const ajax = createAjax();
 
     return {

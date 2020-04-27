@@ -153,29 +153,27 @@ class WCML_Multi_Currency_Configuration {
 	}
 
 	public static function save_currency() {
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'save_currency' ) ) {
-			die( 'Invalid nonce' );
-		}
+		self::verify_nonce();
+		$data = self::get_data();
 
 		$wc_currency   = wcml_get_woocommerce_currency_option();
 		$wc_currencies = get_woocommerce_currencies();
 
-		$options = $_POST['currency_options'];
+		$options = $data['currency_options'];
 
 		$currency_code = $options['code'];
 
-		if ( isset( $options['gateways_settings'] ) ) {
+		if ( isset( $options['gatewaysSettings'] ) ) {
 
 			$payment_gateways = self::$multi_currency->currencies_payment_gateways->get_gateways();
 
-			foreach ( $options['gateways_settings'] as $code => $gateways_settings ) {
+			foreach ( $options['gatewaysSettings'] as $code => $gateways_settings ) {
 				if ( isset( $payment_gateways[ $code ] ) ) {
 					$payment_gateways[ $code ]->save_setting( $currency_code, $gateways_settings );
 				}
 			}
 
-			self::$multi_currency->currencies_payment_gateways->set_enabled( $currency_code, isset( $options['gateways_enabled'] ) ? true : false );
+			self::$multi_currency->currencies_payment_gateways->set_enabled( $currency_code, isset( $options['gatewaysEnabled'] ) ? true : false );
 		}
 
 		if ( $wc_currency !== $currency_code ) {

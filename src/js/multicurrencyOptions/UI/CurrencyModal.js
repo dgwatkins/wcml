@@ -7,6 +7,7 @@ import {useStore, getStoreProperty, getStoreAction} from "../Store";
 import {validateRate, getFormattedPricePreview} from '../Utils';
 import Gateways from "./Gateways/Gateways";
 import {SelectRow, InputRow} from "./FormElements";
+import {createAjaxRequest} from "../Request";
 
 const CurrencyModal = () => {
     const [currency, setModalCurrency] = useStore('modalCurrency');
@@ -28,10 +29,16 @@ const CurrencyModal = () => {
         }
     };
 
-    const onSave = () => {
+    const ajax = createAjaxRequest('saveCurrency');
+
+    const onSave = async () => {
         console.log(currency);
-        saveModalCurrency();
-        onClose();
+        const result = await ajax.send(currency);
+
+        if (result) {
+            saveModalCurrency();
+            onClose();
+        }
     };
 
     return <Modal

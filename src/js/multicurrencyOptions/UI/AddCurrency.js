@@ -4,13 +4,19 @@ import {getStoreProperty, useStore} from "../Store";
 const AddCurrency = () => {
     const [ , setModalCurrency] = useStore('modalCurrency');
     const newCurrencies = getStoreProperty('newCurrencies');
+    const languages = getStoreProperty('languages');
     const hasNewCurrencies = !! newCurrencies.length;
 
     const onClick = () => {
+        // All language are enabled by default
+        const languageSettings = languages.reduce((carry, language) => {
+            return {...carry, [language.code]:1};
+        }, {});
+
         const newCurrency = {
             isNew: true,
             code: newCurrencies[0].code,
-            languages: {},
+            languages: languageSettings,
             rate: 1,
             position: 'left',
             thousand_sep: '.',

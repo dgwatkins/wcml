@@ -1,5 +1,4 @@
 jQuery( function($){
-    return;
     WCML_Multi_Currency = {
 
         _currency_languages_saving : 0,
