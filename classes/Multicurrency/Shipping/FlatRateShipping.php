@@ -9,4 +9,8 @@ class FlatRateShipping implements ShippingMode {
 	public function getMethodId() {
 		return 'flat_rate';
 	}
+
+	public function supportsShippingClasses() {
+		return true;
+	}
 }
