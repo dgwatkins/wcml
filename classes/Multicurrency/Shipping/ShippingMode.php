@@ -33,5 +33,12 @@ interface ShippingMode {
 	 */
 	public function getFieldDescription( $currencyCode );
 
+	/**
+	 * Returns key used in shipping options for cost in given currency.
+	 *
+	 * @param $currencyCode
+	 *
+	 * @return mixed
+	 */
 	public function getCostKey( $currencyCode );
 }
