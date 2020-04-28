@@ -1,21 +1,31 @@
+/* global wcmlMultiCurrency */
+
 export const capitalize = str => str[0].toUpperCase() + str.slice(1);
 
-export const getFormattedPricePreview = (allCurrencies) => (currency) => {
-    return getFormattedPrice(allCurrencies)('1', '234', '0')(currency);
+export const getFormattedPricePreview = (currency) => {
+    return getFormattedPrice('1', '234', '0')(currency);
 };
 
-export const getSmallFormattedPrice = (allCurrencies) => (currency) => {
-    return getFormattedPrice(allCurrencies)('', '99', '9')(currency);
+export const getSmallFormattedPrice = (currency) => {
+    return getFormattedPrice('', '99', '9')(currency);
 };
 
-const getFormattedPrice = (allCurrencies) => (firstPart, secondPart, thirdPart) => (currency) => {
-    const currencyData = allCurrencies.filter(currencyData => currencyData.code === currency.code )[0];
+const getFormattedPrice = (firstPart, secondPart, thirdPart) => (currency) => {
+    const currencyData = getCurrencyData(currency.code);
 
     return getFormatPlaceholder(firstPart, secondPart, currency.position)
         .replace(/__SYMBOL__/, currencyData.symbol)
         .replace(/__THOUSAND_SEP__/, firstPart ? currency.thousand_sep : '')
         .replace(/__DECIMAL_SEP__/, currency.num_decimals > 0 ? currency.decimal_sep : '')
         .replace(/__DECIMALS_NUMBER__/, thirdPart.repeat(currency.num_decimals));
+};
+
+export const getCurrencyLabel = code => {
+    return getCurrencyData(code).label;
+}
+
+const getCurrencyData = code => {
+    return wcmlMultiCurrency.allCurrencies.filter(currencyData => currencyData.code === code )[0];
 };
 
 const getFormatPlaceholder = (firstPart, secondPart, position) => {
@@ -44,4 +54,9 @@ export const validateRate = (value) => {
     const hasNoInvalidChar = (value) => true; // @todo: To be confirmed with KEY_EVENTS
 
     return isNumber(value) && isPositive(value) && hasNoInvalidChar(value);
+};
+
+export const triggerActiveCurrenciesChange = function(payload) {
+    payload.currencyData = getCurrencyData(payload.currency.code);
+    document.dispatchEvent(new CustomEvent('wcmlActiveCurrenciesChange', {detail:payload}));
 };

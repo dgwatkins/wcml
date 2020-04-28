@@ -1,5 +1,5 @@
 import React from "react";
-import {getSmallFormattedPrice} from '../Utils';
+import {getSmallFormattedPrice, getCurrencyLabel} from '../Utils';
 import {getStoreProperty} from "../Store";
 
 const TableFragmentLeft = () => {
@@ -28,8 +28,6 @@ export default TableFragmentLeft;
 
 const Rows = ({activeCurrencies}) => {
     const defaultCurrency = activeCurrencies.filter(currency => currency.isDefault)[0];
-    const formatPrice = getFormatPrice();
-    const formatLabel = getFormatLabel();
 
     return (
         <React.Fragment>
@@ -38,8 +36,8 @@ const Rows = ({activeCurrencies}) => {
                         <Row key={currency.code}
                              currency={currency}
                              defaultCurrency={defaultCurrency}
-                             formatPrice={formatPrice}
-                             formatLabel={formatLabel}
+                             formatPrice={getSmallFormattedPrice}
+                             formatLabel={getCurrencyLabel}
                         />
                     )
                 )
@@ -57,7 +55,7 @@ const Row = ({currency, defaultCurrency, formatPrice, formatLabel}) => {
 
     return <tr id={id} className="wcml-row-currency">
                 <td className="wcml-col-currency">
-                    <span className="truncate">{formatLabel(currency)}</span>
+                    <span className="truncate">{formatLabel(currency.code)}</span>
                     <small>{formatPrice(currency)}</small>
                 </td>
                 <td className="wcml-col-rate">
@@ -65,15 +63,3 @@ const Row = ({currency, defaultCurrency, formatPrice, formatLabel}) => {
                 </td>
             </tr>;
 };
-
-const getFormatPrice = () => {
-    const allCurrencies = getStoreProperty('allCurrencies');
-
-    return getSmallFormattedPrice(allCurrencies);
-};
-
-const getFormatLabel = () => (currency) => {
-    const allCurrencies = getStoreProperty('allCurrencies');
-
-    return allCurrencies.filter(currencyData => currencyData.code === currency.code )[0].label;
-}

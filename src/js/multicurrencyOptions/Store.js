@@ -1,6 +1,7 @@
 import { action, createStore, useStoreState, useStoreActions, computed, thunk } from "easy-peasy";
-import {capitalize} from "./Utils";
+import {capitalize, triggerActiveCurrenciesChange} from "./Utils";
 import * as R from 'ramda';
+import {original} from 'immer';
 
 const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => createStore({
     activeCurrencies: activeCurrencies,
@@ -29,7 +30,10 @@ const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => cr
         state.activeCurrencies[index] = currency;
     }),
     deleteCurrency: action((state, code) => {
-        state.activeCurrencies = state.activeCurrencies.filter(currency => currency.code !== code);
+        const index = getCurrencyIndex(state.activeCurrencies)(code);
+        const removedCurrency = {...state.activeCurrencies[index]};
+        state.activeCurrencies.splice(index, 1);
+        triggerActiveCurrenciesChange({action:'remove', currency:removedCurrency});
     }),
     modalCurrency: null,
     setModalCurrency: action((state, currency) => {
@@ -40,6 +44,7 @@ const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => cr
 
         if (index < 0) {
             state.activeCurrencies.push(state.modalCurrency);
+            triggerActiveCurrenciesChange({action:'add', currency:{...state.modalCurrency}});
         } else {
             state.activeCurrencies[index] = state.modalCurrency;
         }

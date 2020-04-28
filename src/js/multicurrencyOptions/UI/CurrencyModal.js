@@ -162,15 +162,12 @@ const Footer = ({onClose, onSave, disableSave}) => {
 };
 
 const PreviewCurrency = ({currency}) => {
-    const allCurrencies = getStoreProperty('allCurrencies');
-    const formatPrice = getFormattedPricePreview(allCurrencies);
-
     return (
         <div className="wpml-form-row wcml-co-preview">
             <label><strong>Currency Preview</strong></label>
             <p className="wcml-co-preview-value">
                 <span className="woocommerce-Price-amount amount">
-                    {formatPrice(currency)}
+                    {getFormattedPricePreview(currency)}
                 </span>
             </p>
         </div>
