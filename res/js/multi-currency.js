@@ -20,8 +20,8 @@ jQuery( function($){
 
                     window.onbeforeunload = function(e) {
                         if(
-                            ( !WCML_Multi_Currency.wcml_mc_form_submitted && WCML_Multi_Currency.form_fields_changed() ) ||
-                            WCML_Multi_Currency.is_update_currency_lang_in_progress()
+                            !WCML_Multi_Currency.wcml_mc_form_submitted
+                            && WCML_Multi_Currency.form_fields_changed()
                         ){
                             return $('#wcml_warn_message').val();
                         }

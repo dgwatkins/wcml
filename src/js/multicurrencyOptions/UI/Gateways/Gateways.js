@@ -69,13 +69,13 @@ const Gateway = ({gateway, currency, setModalCurrency, ...attrs}) => {
     switch (gateway.id) {
         case 'bacs':
             tooltip = 'TO BE DEFINED !!!';
-            gatewayUi = <Bacs gateway={gateway} updateSettings={updateSettings} getName={getName} {...attrs}/>;
+            gatewayUi = <Bacs gateway={gateway} updateSettings={updateSettings} getName={getName} currency={currency} {...attrs}/>;
             break;
         case 'paypal':
-            gatewayUi = <PayPal gateway={gateway} updateSettings={updateSettings} getName={getName} {...attrs}/>
+            gatewayUi = <PayPal gateway={gateway} updateSettings={updateSettings} getName={getName} currency={currency} {...attrs}/>
             break;
         case 'stripe':
-            gatewayUi = <Stripe gateway={gateway} updateSettings={updateSettings} getName={getName} {...attrs}/>
+            gatewayUi = <Stripe gateway={gateway} updateSettings={updateSettings} getName={getName} currency={currency} {...attrs}/>
             break;
     }
 
