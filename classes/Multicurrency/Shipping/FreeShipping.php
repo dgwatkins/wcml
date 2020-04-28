@@ -3,9 +3,6 @@
 namespace WCML\Multicurrency\Shipping;
 
 class FreeShipping implements ShippingMode {
-	protected $methodId = 'free_shipping';
-	protected $costKeyPattern = 'min_amount_%s';
-
 	public function getFieldTitle( $currencyCode ) {
 		if ( ! is_string( $currencyCode ) ) {
 			$currencyCode = '';
@@ -25,10 +22,10 @@ class FreeShipping implements ShippingMode {
 	}
 
 	public function getMethodId() {
-		return $this->methodId;
+		return 'free_shipping';
 	}
 
 	public function getCostKey( $currencyCode ) {
-		return sprintf( $this->costKeyPattern, $currencyCode );
+		return sprintf( 'min_amount_%s', $currencyCode );
 	}
 }
