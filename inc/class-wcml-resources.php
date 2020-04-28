@@ -138,7 +138,7 @@ class WCML_Resources {
 
 		if ( self::$page == 'wpml-wcml' && self::$tab == 'multi-currency' ) {
 			wp_register_script( 'multi-currency', WCML_PLUGIN_URL . '/res/js/multi-currency' . WCML_JS_MIN . '.js', [ 'jquery', 'jquery-ui-sortable' ], WCML_VERSION, true );
-			//wp_enqueue_script( 'multi-currency' );
+			wp_enqueue_script( 'multi-currency' );
 
 			wp_register_script( 'currency-switcher-settings', WCML_PLUGIN_URL . '/res/js/currency-switcher-settings' . WCML_JS_MIN . '.js', [ 'jquery', 'jquery-ui-sortable', 'underscore' ], WCML_VERSION, true );
 			wp_enqueue_script( 'currency-switcher-settings' );

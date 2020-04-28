@@ -9,38 +9,38 @@ jQuery( function($){
 
                 WCML_Multi_Currency.setup_multi_currency_toggle();
 
-                $(document).on('change','.currency_code select', WCML_Multi_Currency.select_currency);
+                // $(document).on('change','.currency_code select', WCML_Multi_Currency.select_currency);
 
-                $(document).on('click','.delete_currency', WCML_Multi_Currency.delete_currency);
+                // $(document).on('click','.delete_currency', WCML_Multi_Currency.delete_currency);
 
-                $(document).on('click', '.wcml_currency_options .currency_options_save', WCML_Multi_Currency.save_currency);
+                // $(document).on('click', '.wcml_currency_options .currency_options_save', WCML_Multi_Currency.save_currency);
 
-                $(document).on('click','.js-display-tooltip', WCML_Multi_Currency.tooltip);
+                // $(document).on('click','.js-display-tooltip', WCML_Multi_Currency.tooltip);
 
-                $(document).on('click', '.currency_languages a.otgs-ico-no', WCML_Multi_Currency.enable_currency_for_language);
-                $(document).on('click', '.currency_languages a.otgs-ico-yes', WCML_Multi_Currency.disable_currency_for_language);
+                // $(document).on('click', '.currency_languages a.otgs-ico-no', WCML_Multi_Currency.enable_currency_for_language);
+                // $(document).on('click', '.currency_languages a.otgs-ico-yes', WCML_Multi_Currency.disable_currency_for_language);
 
-                $(document).on('change', '.default_currency select', WCML_Multi_Currency.change_default_currency);
+                // $(document).on('change', '.default_currency select', WCML_Multi_Currency.change_default_currency);
 
                 WCML_Multi_Currency.setup_currencies_sorting();
 
-                $(document).on('change','.currency_option_position', WCML_Multi_Currency.price_preview);
-                $(document).on('change','.currency_option_thousand_sep', WCML_Multi_Currency.price_preview);
-                $(document).on('change','.currency_option_decimal_sep', WCML_Multi_Currency.price_preview);
-                $(document).on('change','.currency_option_decimals', WCML_Multi_Currency.price_preview);
-                $(document).on('change','.currency_code select', WCML_Multi_Currency.price_preview);
-                $(document).on('change','.wcml-gateways-enabled', WCML_Multi_Currency.display_gateways);
+                // $(document).on('change','.currency_option_position', WCML_Multi_Currency.price_preview);
+                // $(document).on('change','.currency_option_thousand_sep', WCML_Multi_Currency.price_preview);
+                // $(document).on('change','.currency_option_decimal_sep', WCML_Multi_Currency.price_preview);
+                // $(document).on('change','.currency_option_decimals', WCML_Multi_Currency.price_preview);
+                // $(document).on('change','.currency_code select', WCML_Multi_Currency.price_preview);
+                // $(document).on('change','.wcml-gateways-enabled', WCML_Multi_Currency.display_gateways);
                 $(document).on('change','#wcml_currency_options_gateway_code_paypal', WCML_Multi_Currency.preset_paypal_email);
                 $(document).on('change','#wcml_currency_options_gateway_code_stripe', WCML_Multi_Currency.preset_stripe_settings);
 
-                $(document).on('keypress', '.currency_option_decimals', function (event) {
-                    // 8 for backspace, 0 for null values, 48-57 for 0-9 numbers
-                    if (event.which != 8 && event.which != 0 && event.which < 48 || event.which > 57) {
-                        event.preventDefault();
-                    }
-                });
+                // $(document).on('keypress', '.currency_option_decimals', function (event) {
+                //     // 8 for backspace, 0 for null values, 48-57 for 0-9 numbers
+                //     if (event.which != 8 && event.which != 0 && event.which < 48 || event.which > 57) {
+                //         event.preventDefault();
+                //     }
+                // });
 
-                $(document).on('keyup','.wcml-exchange-rate', WCML_Multi_Currency.exchange_rate_check);
+                // $(document).on('keyup','.wcml-exchange-rate', WCML_Multi_Currency.exchange_rate_check);
 
                 if($('#wcml_mc_options').length){
                     WCML_Multi_Currency.wcml_mc_form_submitted = false;
@@ -76,89 +76,6 @@ jQuery( function($){
 
             })
 
-
-        },
-
-        select_currency: function(){
-            var parent = $(this).closest('.wcml_currency_options');
-            var close_button = parent.find('.wcml-dialog-close-button');
-            var this_currency = parent.find('span.this-currency');
-            var previous_currency = this_currency.text();
-            var gateways = parent.find('.wcml-gateways-switcher');
-            var gateways_currency_select = parent.find('.wcml-gateways select[name*="[currency]"] option[value="'+previous_currency+'"]');
-            var gateway_new_label_text = gateways.find('label.otgs-on-off-switch').text().replace( previous_currency, $(this).val() );
-
-            close_button.attr('data-currency', $(this).val());
-            close_button.attr('data-symbol', $(this).find('option:selected').attr('data-symbol'));
-
-            this_currency.html( $(this).val() );
-            gateways.find('label.otgs-on-off-switch').text( gateway_new_label_text );
-            gateways_currency_select.val( $(this).val() );
-            gateways_currency_select.html( $(this).val() );
-        },
-
-        delete_currency: function(e){
-
-            e.preventDefault();
-            var is_return = false;
-            var currency        = $(this).data('currency');
-            var currency_name   = $(this).data('currency_name');
-            var currency_symbol = $(this).data('currency_symbol');
-
-            $( '.currency_lang_table .wcml-row-currency-lang:first .currency_languages').each( function(){
-                if( !WCML_Multi_Currency.check_currency_language( $(this).find('li').data('lang'), currency ) ){
-                    is_return = true;
-                    return false;
-                }
-            });
-
-            if( is_return ){
-                return;
-            }
-
-            $('#currency_row_' + currency + ' .currency_action_update').hide();
-            var ajaxLoader = $('<span class="spinner" style="visibility: visible;margin:0;">');
-            $(this).hide();
-            $(this).parent().append(ajaxLoader).show();
-
-            $.ajax({
-                type : "post",
-                url : ajaxurl,
-                data : {
-                    action: "wcml_delete_currency",
-                    wcml_nonce: $('#del_currency_nonce').val(),
-                    code: currency
-                },
-                success: function(response) {
-                    $('#currency_row_' + currency).remove();
-                    $('#currency_row_langs_' + currency).remove();
-                    $('#wcml-row-currency-actions-' + currency).remove();
-
-                    $('#wcml_currencies_order .wcml_currencies_order_'+ currency).remove();
-
-                    $('#wcml_currency_options_code_').prepend('<option data-symbol="' + currency_symbol + '" value="' + currency + '">' + currency_name + '</option>');
-                    $('#wcml_currency_options_code_').val(currency).trigger('change');
-
-                    //remove from default currency list
-                    $('#currency-lang-table').find('tr.default_currency select').each( function(){
-                        $(this).find("option[value='"+currency+"']").remove();
-                    });
-                    $('.wcml-ui-dialog').each(function(){
-                        WCML_Currency_Switcher_Settings.currency_switcher_preview( $(this) );
-                    });
-
-
-                    if( $('.wcml-row-currency').length == 1 ){
-                        $('#online-exchange-rates-no-currencies').next().hide();
-                        $('#online-exchange-rates-no-currencies').show();
-                    }
-                },
-                done: function() {
-                    ajaxLoader.remove();
-                }
-            });
-
-            return false;
 
         },
 
