@@ -94,7 +94,7 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks extends OTGS_TestCase {
 		$method = $this->getMockBuilder( 'WCML\Multicurrency\Shipping\FlatRateShipping' )
 			->disableOriginalConstructor()
 			->getMock();
-		$method->expects( $this->atLeastOnce() )->method( 'getCostKey' )->will( $this->onConsecutiveCalls( 'cost_PLN', 'cost_EUR' ) );
+		$method->expects( $this->atLeastOnce() )->method( 'getSettingsFormKey' )->will( $this->onConsecutiveCalls( 'cost_PLN', 'cost_EUR' ) );
 		$method->expects( $this->atLeastOnce() )->method( 'getFieldTitle' )->willReturn( 'title' );
 		$method->expects( $this->atLeastOnce() )->method( 'getFieldDescription' )->willReturn( 'desc' );
 		$new_fields = $subject->addCurrencyShippingFields( $method )( $fields );
@@ -123,7 +123,7 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks extends OTGS_TestCase {
 		$method = $this->getMockBuilder( 'WCML\Multicurrency\Shipping\FreeShipping' )
 		               ->disableOriginalConstructor()
 		               ->getMock();
-		$method->expects( $this->atLeastOnce() )->method( 'getCostKey' )->will( $this->onConsecutiveCalls( 'min_amount_PLN', 'min_amount_EUR' ) );
+		$method->expects( $this->atLeastOnce() )->method( 'getSettingsFormKey' )->will( $this->onConsecutiveCalls( 'min_amount_PLN', 'min_amount_EUR' ) );
 		$method->expects( $this->atLeastOnce() )->method( 'getFieldTitle' )->willReturn( 'title' );
 		$method->expects( $this->atLeastOnce() )->method( 'getFieldDescription' )->willReturn( 'desc' );
 		$new_fields = $subject->addCurrencyShippingFields( $method )( $fields );
