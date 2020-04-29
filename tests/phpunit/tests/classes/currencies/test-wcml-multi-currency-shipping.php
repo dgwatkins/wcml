@@ -170,6 +170,64 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function convert_shipping_costs_in_package_rates_when_manual_shipping_cost_is_set_and_is_free_shipping() {
+		\WP_Mock::userFunction( 'WPML\Container\make', [
+			'return' => function( $className ) {
+				return new $className();
+			},
+		]);
+
+
+		$client_currency = rand_str();
+		$this->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
+
+		$rates             = [];
+		$rate_id           = rand_str();
+		$rate              = $this->getMockBuilder( 'WC_Shipping_Rate' )
+		                          ->disableOriginalConstructor()
+		                          ->getMock();
+		$rate->cost        = 15;
+		$rate->method_id = 'free_shipping';
+		$rate->instance_id = 2;
+		$rates[ $rate_id ] = $rate;
+
+		$currency_cost = 20;
+		$currency_key = 'cost_' . $client_currency;
+
+		\WP_Mock::userFunction( 'wp_cache_get', array(
+			'args'   => array( $rate_id, 'converted_shipping_cost' ),
+			'return' => false
+		) );
+
+		\WP_Mock::userFunction( 'get_option', [
+			'return' => [
+				$currency_key => $currency_cost
+			],
+			'args' => [ 'woocommerce_' . $rate->method_id . '_' . $rate->instance_id . '_settings' ]
+		]);
+
+
+		$this->multi_currency->prices = $this->getMockBuilder( 'WCML_Multi_Currency_Prices' )
+		                                     ->disableOriginalConstructor()
+		                                     ->setMethods( array( 'raw_price_filter' ) )
+		                                     ->getMock();
+		$converted_cost = $rate->cost;
+		$this->multi_currency->prices->expects( $this->once() )->method( 'raw_price_filter' )->with( $rate->cost, $client_currency )->willReturn( $converted_cost );
+
+
+		\WP_Mock::userFunction( 'wp_cache_set', array(
+			'return' => true
+		) );
+
+		$subject = $this->get_subject();
+		$rates   = $subject->convert_shipping_costs_in_package_rates( $rates );
+
+		$this->assertEquals( $converted_cost, $rates[ $rate_id ]->cost );
+	}
+
+	/**
+	 * @test
+	 */
 	public function convert_shipping_costs_in_package_rates_test_cost_from_cache(){
 
 		$client_currency = rand_str();
@@ -308,6 +366,88 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 		$this->assertSame( $converted_taxes_1, $packages_converted[0]['rates'][0]->taxes );
 		$this->assertSame( $converted_taxes_2, $packages_converted[0]['rates'][1]->taxes );
 
+	}
+
+	/**
+	 * @test
+	 */
+	public function convert_shipping_method_cost_settings_updated_when_manual_min_amount_defined_for_currency() {
+		\WP_Mock::userFunction( 'WPML\Container\make', [
+			'return' => function( $className ) {
+				return new $className();
+			},
+		]);
+
+		$this->multi_currency->method( 'get_client_currency' )->willReturn( 'PLN' );
+
+		$subject = $this->get_subject();
+
+		$cart = $this->getMockBuilder( 'WC_Cart' )
+		             ->disableOriginalConstructor()
+		             ->setMethods( ['get_coupons'] )
+		             ->getMock();
+
+		$WC = $this->getMockBuilder( 'WC' )->disableOriginalConstructor()->getMock();
+		$WC->cart = $cart;
+
+		\WP_Mock::userFunction( 'WC', [
+			'return' => $WC
+		] );
+
+		$settings = [
+			'min_amount' => 100,
+			'min_amount_PLN' => 10,
+			'requires' => 'min_amount',
+		];
+		$expected_settings = [
+			'min_amount' => 10,
+			'min_amount_PLN' => 10,
+			'requires' => 'min_amount',
+		];
+
+		$converted_settings = $subject->convert_shipping_method_cost_settings( $settings );
+
+		$this->assertSame( $converted_settings, $expected_settings );
+	}
+
+	/**
+	 * @test
+	 */
+	public function convert_shipping_method_cost_settings_updated_when_manual_min_amount_is_NOT_defined_for_currency() {
+		\WP_Mock::userFunction( 'WPML\Container\make', [
+			'return' => function( $className ) {
+				return new $className();
+			},
+		]);
+
+		$this->multi_currency->method( 'get_client_currency' )->willReturn( 'PLN' );
+
+		$subject = $this->get_subject();
+
+		$cart = $this->getMockBuilder( 'WC_Cart' )
+		             ->disableOriginalConstructor()
+		             ->setMethods( ['get_coupons'] )
+		             ->getMock();
+
+		$WC = $this->getMockBuilder( 'WC' )->disableOriginalConstructor()->getMock();
+		$WC->cart = $cart;
+
+		\WP_Mock::userFunction( 'WC', [
+			'return' => $WC
+		] );
+
+		$settings = [
+			'min_amount' => 10,
+			'requires' => 'min_amount',
+		];
+		$expected_settings = [
+			'min_amount' => 10,
+			'requires' => 'min_amount',
+		];
+
+		$converted_settings = $subject->convert_shipping_method_cost_settings( $settings );
+
+		$this->assertSame( $converted_settings, $expected_settings );
 	}
 
 }
