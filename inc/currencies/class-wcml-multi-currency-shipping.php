@@ -52,7 +52,9 @@ class WCML_Multi_Currency_Shipping {
 				$rate->cost = $cached_converted_shipping_cost;
 			} elseif ( isset( $rate->cost ) && $rate->cost ) {
 				$rate->cost = $this->multi_currency->prices->raw_price_filter( $rate->cost, $client_currency );
-				$rate->cost = ManualCost::get( $rate->method_id )->getShippingCostValue( $rate, $client_currency );
+				if ( isset( $rate->method_id ) ) {
+					$rate->cost = ManualCost::get( $rate->method_id )->getShippingCostValue( $rate, $client_currency );
+				}
 				wp_cache_set( $cache_key, $rate->cost, $cache_group );
 			}
 		}
