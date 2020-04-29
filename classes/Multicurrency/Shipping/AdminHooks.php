@@ -6,6 +6,7 @@ use IWPML_Action;
 use WCML_Multi_Currency;
 
 class AdminHooks implements IWPML_Action {
+	const WCML_SHIPPING_COSTS = 'wcml_shipping_costs';
 
 	/** @var WCML_Multi_Currency */
 	private $wcmlMultiCurrency;
@@ -68,7 +69,7 @@ class AdminHooks implements IWPML_Action {
 	 * @return array
 	 */
 	private function addEnableField( array $field ) {
-		$enable_field = [
+		$enable_field                                 = [
 			'title' => esc_html__( 'Enable costs in custom currencies', 'woocommerce-multilingual' ),
 			'type' => 'select',
 			'class' => 'wcml-enable-shipping-custom-currency',
@@ -78,7 +79,7 @@ class AdminHooks implements IWPML_Action {
 				'manual' => esc_html__( 'Set shipping costs in other currencies manually', 'woocommerce-multilingual' )
 			]
 		];
-		$field['wcml_shipping_costs'] = $enable_field;
+		$field[ self::WCML_SHIPPING_COSTS ] = $enable_field;
 
 		return $field;
 	}
@@ -109,7 +110,7 @@ class AdminHooks implements IWPML_Action {
 	 * @return mixed
 	 */
 	protected function getCurrencyField( $field, $currencyCode, ShippingMode $shippingMode ) {
-		$fieldKey = $shippingMode->getCostKey( $currencyCode );
+		$fieldKey = $shippingMode->getSettingsFormKey( $currencyCode );
 		if ( $fieldKey ) {
 			$fieldValue = [
 				'title' => $shippingMode->getFieldTitle( $currencyCode ),
@@ -123,25 +124,6 @@ class AdminHooks implements IWPML_Action {
 			$field[ $fieldKey] = $fieldValue;
 		}
 		return $field;
-	}
-
-	/**
-	 * Returns shipping cost key for given currency as is in shipping options.
-	 *
-	 * @param $currency
-	 * @param $method_id
-	 *
-	 * @return string|null
-	 */
-	public static function getCostKey( $currency, $method_id ) {
-		$patterns = [
-			'flat_rate' => 'cost_%s',
-			'free_shipping' => 'min_amount_%s',
-		];
-		if ( isset( $patterns[ $method_id ] ) ) {
-			return sprintf( $patterns[ $method_id ], $currency );
-		}
-		return null;
 	}
 
 	/**
