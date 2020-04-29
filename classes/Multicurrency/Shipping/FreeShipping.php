@@ -26,6 +26,26 @@ class FreeShipping implements ShippingMode {
 	}
 
 	public function getCostKey( $currencyCode ) {
+		return null;
+	}
+
+	public function getMinimalOrderAmountKey( $currencyCode ) {
 		return sprintf( 'min_amount_%s', $currencyCode );
+	}
+
+	public function getSettingsFormKey( $currencyCode ) {
+		return $this->getMinimalOrderAmountKey( $currencyCode );
+	}
+
+	public function getMinimalOrderAmountValue( $amount, $shipping, $currency ) {
+		$key = $this->getMinimalOrderAmountKey( $currency );
+		if ( isset( $shipping[ $key ] ) ) {
+			$amount = $shipping[ $key ];
+		}
+		return $amount;
+	}
+
+	public function getShippingCostValue( \WC_Shipping_Rate $rate, $currency ) {
+		return $rate->cost;
 	}
 }

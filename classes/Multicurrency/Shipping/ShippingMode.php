@@ -41,4 +41,12 @@ interface ShippingMode {
 	 * @return mixed
 	 */
 	public function getCostKey( $currencyCode );
+
+	public function getMinimalOrderAmountKey( $currencyCode );
+
+	public function getSettingsFormKey( $currencyCode );
+
+	public function getMinimalOrderAmountValue( $amount, $shipping, $currency );
+
+	public function getShippingCostValue( \WC_Shipping_Rate $rate, $currency );
 }

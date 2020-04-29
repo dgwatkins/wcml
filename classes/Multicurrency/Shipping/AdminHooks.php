@@ -109,7 +109,7 @@ class AdminHooks implements IWPML_Action {
 	 * @return mixed
 	 */
 	protected function getCurrencyField( $field, $currencyCode, ShippingMode $shippingMode ) {
-		$fieldKey = $shippingMode->getCostKey( $currencyCode );
+		$fieldKey = $shippingMode->getSettingsFormKey( $currencyCode );
 		if ( $fieldKey ) {
 			$fieldValue = [
 				'title' => $shippingMode->getFieldTitle( $currencyCode ),
