@@ -14,10 +14,6 @@ class FlatRateShipping implements ShippingMode {
 		return true;
 	}
 
-	public function getMinimalOrderAmountKey( $currencyCode ) {
-		return null;
-	}
-
 	public function getSettingsFormKey( $currencyCode ) {
 		return $this->getCostKey( $currencyCode );
 	}

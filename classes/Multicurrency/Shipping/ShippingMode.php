@@ -34,19 +34,32 @@ interface ShippingMode {
 	public function getFieldDescription( $currencyCode );
 
 	/**
-	 * Returns key used in shipping options for cost in given currency.
+	 * Return the key which will be used in shipping method configuration form.
 	 *
-	 * @param $currencyCode
+	 * @param $currencyCode Current currency.
 	 *
 	 * @return mixed
 	 */
-	public function getCostKey( $currencyCode );
-
-	public function getMinimalOrderAmountKey( $currencyCode );
-
 	public function getSettingsFormKey( $currencyCode );
 
+	/**
+	 * If shipping mode has minimal order amount, recalculate and return its value.
+	 *
+	 * @param mixed  $amount   The value as saved for original language.
+	 * @param array  $shipping The shipping metadata.
+	 * @param string $currency Currency code.
+	 *
+	 * @return mixed
+	 */
 	public function getMinimalOrderAmountValue( $amount, $shipping, $currency );
 
+	/**
+	 * If shipping mode has custom cost, recalculate and return its value.
+	 *
+	 * @param \WC_Shipping_Rate $rate     Shipping rate metadata.
+	 * @param string            $currency Currency code.
+	 *
+	 * @return mixed
+	 */
 	public function getShippingCostValue( \WC_Shipping_Rate $rate, $currency );
 }

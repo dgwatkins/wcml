@@ -24,27 +24,12 @@ class UnsupportedShipping implements ShippingMode {
 		return $amount;
 	}
 
-	public function getShippingCostValue( \WC_Shipping_Rate $rate, $currency ) {
-		if ( ! isset( $rate->cost ) ) {
-			$rate->cost = 0;
-		}
-		return $rate->cost;
-	}
-
 	public function isManualPricingEnabled( $instance = false ) {
 		return false;
 	}
 
 	public function getMinimalOrderAmountKey( $currencyCode ) {
 		// TODO: Implement getMinAmountKey() method.
-	}
-
-	public function getSettingsFormKey( $currencyCode ) {
-		// TODO: Implement getSettingsFormKey() method.
-	}
-
-	public function getMinimalOrderAmountValue( $amount, $shipping, $currency ) {
-		return $amount;
 	}
 
 	public function getShippingCostValue( \WC_Shipping_Rate $rate, $currency ) {
