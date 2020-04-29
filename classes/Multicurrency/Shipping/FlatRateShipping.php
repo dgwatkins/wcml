@@ -25,12 +25,15 @@ class FlatRateShipping implements ShippingMode {
 		return 'flat_rate';
 	}
 
-	public function getCostKey( $currencyCode ) {
+	/**
+	 * Returns cost key for given currency.
+	 *
+	 * @param string $currencyCode Currency code.
+	 *
+	 * @return string
+	 */
+	private function getCostKey( $currencyCode ) {
 		return sprintf( 'cost_%s', $currencyCode );
-	}
-
-	public function getMinimalOrderAmountKey( $currencyCode ) {
-		return null;
 	}
 
 	public function getSettingsFormKey( $currencyCode ) {

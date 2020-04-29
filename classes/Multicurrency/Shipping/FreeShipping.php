@@ -25,11 +25,14 @@ class FreeShipping implements ShippingMode {
 		return 'free_shipping';
 	}
 
-	public function getCostKey( $currencyCode ) {
-		return null;
-	}
-
-	public function getMinimalOrderAmountKey( $currencyCode ) {
+	/**
+	 * Returns minimal amount key for given currency.
+	 *
+	 * @param string $currencyCode Currency code.
+	 *
+	 * @return string
+	 */
+	private function getMinimalOrderAmountKey( $currencyCode ) {
 		return sprintf( 'min_amount_%s', $currencyCode );
 	}
 

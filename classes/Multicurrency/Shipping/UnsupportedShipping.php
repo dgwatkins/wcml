@@ -16,14 +16,6 @@ class UnsupportedShipping implements ShippingMode {
 		// TODO: Implement getFieldDescription() method.
 	}
 
-	public function getCostKey( $currencyCode ) {
-		// TODO: Implement getCostKey() method.
-	}
-
-	public function getMinimalOrderAmountKey( $currencyCode ) {
-		// TODO: Implement getMinAmountKey() method.
-	}
-
 	public function getSettingsFormKey( $currencyCode ) {
 		// TODO: Implement getSettingsFormKey() method.
 	}
