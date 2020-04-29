@@ -52,11 +52,15 @@ const Gateways = () => {
 export default Gateways;
 
 const Gateway = ({gateway, currency, setModalCurrency, ...attrs}) => {
-    const updateSettings = prop => e => {
+    const updateSettings = newSettings => {
+
         setModalCurrency(
             assocPath(
-                ['gatewaysSettings', gateway.id, prop],
-                e.target.value,
+                ['gatewaysSettings', gateway.id],
+                {
+                    ...currency.gatewaysSettings[gateway.id],
+                    ...newSettings
+                },
                 currency
             )
         );

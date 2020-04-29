@@ -14,7 +14,7 @@ const Bacs = ({gateway, settings, updateSettings, activeCurrencies, getName, cur
     return (
         <React.Fragment>
             <SelectRow attrs={{name: getName('currency'), value:settingsCurrency, disabled:currency.isDefault}}
-                       onChange={updateSettings('currency')}
+                       onChange={e => updateSettings({currency:e.target.value})}
                        label="Currency"
             >
                 {
@@ -25,7 +25,7 @@ const Bacs = ({gateway, settings, updateSettings, activeCurrencies, getName, cur
             </SelectRow>
 
             <SelectRow attrs={{name: getName('value'), value:settings.value}}
-                       onChange={updateSettings('value')}
+                       onChange={e => updateSettings({value:e.target.value})}
                        label="Bank Account"
             >
                 {

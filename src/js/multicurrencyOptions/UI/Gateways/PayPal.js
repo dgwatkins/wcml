@@ -1,12 +1,22 @@
 import React from "react";
 import {InputRow, SelectRow} from "../FormElements";
+import {assocPath} from "ramda";
 
 
 const PayPal = ({gateway, settings, updateSettings, activeCurrencies, getName, currency}) => {
+
+    const onChangeCurrency = e => {
+        const targetCurrency = e.target.value;
+        const presetEmail = gateway.settings && gateway.settings[targetCurrency]
+            ? gateway.settings[targetCurrency].value : '';
+
+        updateSettings({currency:targetCurrency, value:presetEmail});
+    };
+
     return ! currency.isDefault && (
         <React.Fragment>
             <SelectRow attrs={{name: getName('currency'), value:settings.currency}}
-                       onChange={updateSettings('currency')}
+                       onChange={onChangeCurrency}
                        label="Currency"
             >
                 {
@@ -17,7 +27,7 @@ const PayPal = ({gateway, settings, updateSettings, activeCurrencies, getName, c
             </SelectRow>
 
             <InputRow attrs={{name: getName('value'), value:settings.value, type:'text'}}
-                       onChange={updateSettings('value')}
+                       onChange={e => updateSettings({value:e.target.value})}
                        label="PayPal Email"
             />
         </React.Fragment>
