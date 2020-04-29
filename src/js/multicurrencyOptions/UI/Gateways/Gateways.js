@@ -6,6 +6,7 @@ import PayPal from "./PayPal";
 import Stripe from "./Stripe";
 import Unsupported from "./Unsupported";
 import {getTooltip} from "../FormElements";
+import {capitalize} from "../../Utils";
 
 const Gateways = () => {
     const [currency, setModalCurrency] = useStore('modalCurrency');
@@ -63,7 +64,7 @@ const Gateway = ({gateway, currency, setModalCurrency, ...attrs}) => {
 
     const getName = name => 'currency_options[gateways_settings][' + gateway.id + '][' + name + ']'
 
-    let gatewayUi = <Unsupported/>;
+    let gatewayUi = ! currency.isDefault && <Unsupported/>;
     let tooltip = '';
 
     switch (gateway.id) {
@@ -72,14 +73,14 @@ const Gateway = ({gateway, currency, setModalCurrency, ...attrs}) => {
             gatewayUi = <Bacs gateway={gateway} updateSettings={updateSettings} getName={getName} currency={currency} {...attrs}/>;
             break;
         case 'paypal':
-            gatewayUi = <PayPal gateway={gateway} updateSettings={updateSettings} getName={getName} currency={currency} {...attrs}/>
+            gatewayUi = ! currency.isDefault && <PayPal gateway={gateway} updateSettings={updateSettings} getName={getName} currency={currency} {...attrs}/>
             break;
         case 'stripe':
-            gatewayUi = <Stripe gateway={gateway} updateSettings={updateSettings} getName={getName} currency={currency} {...attrs}/>
+            gatewayUi = ! currency.isDefault && <Stripe gateway={gateway} updateSettings={updateSettings} getName={getName} currency={currency} {...attrs}/>
             break;
     }
 
-    return (
+    return gatewayUi && (
         <React.Fragment>
             <label className="label-header">
                 <strong>{gateway.title}</strong>

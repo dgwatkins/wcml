@@ -9,9 +9,11 @@ const Bacs = ({gateway, settings, updateSettings, activeCurrencies, getName, cur
         '0': ''
     };
 
+    const settingsCurrency = currency.isDefault ? currency.code : settings.currency;
+
     return (
         <React.Fragment>
-            <SelectRow attrs={{name: getName('currency'), value:settings.currency, disabled:currency.isDefault}}
+            <SelectRow attrs={{name: getName('currency'), value:settingsCurrency, disabled:currency.isDefault}}
                        onChange={updateSettings('currency')}
                        label="Currency"
             >

@@ -2,8 +2,8 @@ import React from "react";
 import {InputRow, SelectRow} from "../FormElements";
 
 
-const PayPal = ({gateway, settings, updateSettings, activeCurrencies, getName}) => {
-    return (
+const PayPal = ({gateway, settings, updateSettings, activeCurrencies, getName, currency}) => {
+    return ! currency.isDefault && (
         <React.Fragment>
             <SelectRow attrs={{name: getName('currency'), value:settings.currency}}
                        onChange={updateSettings('currency')}
