@@ -238,7 +238,7 @@ class WCML_Multi_Currency_Configuration {
 		$args['title']            = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ), $args['currency_name'] . ' (' . $args['currency_symbol'] . ')' );
 
 		$custom_currency_options    = new WCML_Custom_Currency_Options( $args, self::$woocommerce_wpml );
-		$return['currency_options'] = $custom_currency_options->get_view();
+//		$return['currency_options'] = $custom_currency_options->get_view(); // failing now that we changed the Twig model...
 		$return['currency_name']    = $wc_currencies[ $currency_code ];
 		$return['currency_symbol']  = get_woocommerce_currency_symbol( $currency_code );
 

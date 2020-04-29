@@ -7,7 +7,14 @@ class WCML_Payment_Gateway_Bacs extends WCML_Payment_Gateway {
 
 	const TEMPLATE = 'bacs.twig';
 
-	protected function get_output_model() {
+	public function get_output_model() {
+		return (object) [
+			'id'          => $this->get_id(),
+			'title'       => $this->get_title(),
+			'isSupported' => true,
+			'settings'    => $this->get_settings(),
+		];
+
 		return [
 			'strings'           => [
 				'currency_label' => __( 'Currency', 'woocommerce-multilingual' ),

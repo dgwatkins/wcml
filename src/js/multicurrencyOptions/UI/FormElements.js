@@ -1,13 +1,14 @@
 import React from "react";
 import Tooltip from "antd/lib/tooltip";
 
-export const SelectRow = ({onChange, label, attrs, tooltip, children}) => {
+export const SelectRow = ({onChange, label, attrs, tooltip, children, afterSelect=null}) => {
     return (
         <div className="wpml-form-row">
             <label htmlFor={attrs.id}>{label}{getTooltip(tooltip)}</label>
             <select onChange={onChange} {...attrs}>
                 {children}
             </select>
+            {afterSelect}
         </div>
     );
 };

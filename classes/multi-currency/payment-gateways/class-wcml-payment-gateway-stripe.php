@@ -8,7 +8,15 @@ class WCML_Payment_Gateway_Stripe extends WCML_Payment_Gateway {
 	const TEMPLATE = 'stripe.twig';
 	const ID       = 'stripe';
 
-	protected function get_output_model() {
+	public function get_output_model() {
+		return (object) [
+			'id'          => $this->get_id(),
+			'title'       => $this->get_title(),
+			'isSupported' => true,
+			'settings'    => $this->get_currencies_details( get_woocommerce_currencies() ),
+		];
+
+
 		if ( $this->is_current_currency_default() ) {
 			return [];
 		}

@@ -125,12 +125,20 @@ class Hooks implements \IWPML_Backend_Action {
 			return ! $gateway instanceof \WCML_Not_Supported_Payment_Gateway;
 		};
 
-		$buildGateway = function( \WCML_Payment_Gateway $gateway ) use ( $isSupported ) {
+		$defaultCurrency = wcml_get_woocommerce_currency_option();
+
+		$buildGateway = function( \WCML_Payment_Gateway $gateway ) use ( $isSupported, $defaultCurrency ) {
+
+			return $gateway->get_output_model();
+
 			return (object) [
 				'id'          => $gateway->get_id(),
 				'title'       => $gateway->get_title(),
-				'isSupported' => $isSupported( $gateway ),
-				'settings'    => $gateway->get_settings(),
+				'isSupported' => ! $gateway instanceof \WCML_Not_Supported_Payment_Gateway,
+				'settings'    => array_merge(
+					$gateway->get_settings(),
+					[ $defaultCurrency => [] ]
+				),
 			];
 		};
 

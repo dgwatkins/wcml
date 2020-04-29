@@ -37,7 +37,13 @@ class WCML_Payment_Gateway_PayPal extends WCML_Payment_Gateway {
 		'INR',
 	];
 
-	protected function get_output_model() {
+	public function get_output_model() {
+		return (object) [
+			'id'          => $this->get_id(),
+			'title'       => $this->get_title(),
+			'isSupported' => true,
+			'settings'    => $this->get_currencies_details(),
+		];
 
 		if ( $this->is_current_currency_default() ) {
 			return [];
@@ -106,12 +112,12 @@ class WCML_Payment_Gateway_PayPal extends WCML_Payment_Gateway {
 			if ( $default_currency === $code ) {
 				$currencies_details[ $code ]['value']    = $this->get_gateway()->settings['email'];
 				$currencies_details[ $code ]['currency'] = $code;
-				$currencies_details[ $code ]['is_valid'] = $this->is_valid_for_use( $default_currency );
+				$currencies_details[ $code ]['isValid'] = $this->is_valid_for_use( $default_currency );
 			} else {
 				$currency_gateway_setting                = $this->get_setting( $code );
 				$currencies_details[ $code ]['value']    = $currency_gateway_setting ? $currency_gateway_setting['value'] : '';
 				$currencies_details[ $code ]['currency'] = $currency_gateway_setting ? $currency_gateway_setting['currency'] : $code;
-				$currencies_details[ $code ]['is_valid'] = $this->is_valid_for_use( $code );
+				$currencies_details[ $code ]['isValid'] = $this->is_valid_for_use( $code );
 			}
 		}
 

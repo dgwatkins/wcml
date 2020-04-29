@@ -1,23 +1,35 @@
 import React from "react";
 import {InputRow, SelectRow} from "../FormElements";
-import {assocPath} from "ramda";
+import {getCurrencyIndex} from "../../Store"
+import Tooltip from "antd/lib/tooltip";
 
 
 const PayPal = ({gateway, settings, updateSettings, activeCurrencies, getName, currency}) => {
+    const selectedCode = settings.currency || currency.code;
+    const isSupportedCurrency = code => gateway.settings[code].isValid;
 
     const onChangeCurrency = e => {
-        const targetCurrency = e.target.value;
-        const presetEmail = gateway.settings && gateway.settings[targetCurrency]
-            ? gateway.settings[targetCurrency].value : '';
+        const targetCode = e.target.value;
+        const targetIndex = getCurrencyIndex(activeCurrencies)(targetCode);
+        const targetCurrency = activeCurrencies[targetIndex];
+        const presetEmail = isSupportedCurrency(targetCode) && targetCurrency.gatewaysSettings && targetCurrency.gatewaysSettings[gateway.id]
+            ? targetCurrency.gatewaysSettings[gateway.id].value : '';
 
-        updateSettings({currency:targetCurrency, value:presetEmail});
+        updateSettings({currency:targetCode, value:presetEmail});
     };
+
+    const warning = ! isSupportedCurrency(selectedCode) && (
+        <Tooltip title="This gateway does not support %s. To show this gateway please select another currency.">
+            <i className="wcml-tip otgs-ico-warning paypal-gateway-warning" />
+        </Tooltip>
+    );
 
     return ! currency.isDefault && (
         <React.Fragment>
             <SelectRow attrs={{name: getName('currency'), value:settings.currency}}
                        onChange={onChangeCurrency}
                        label="Currency"
+                       afterSelect={warning}
             >
                 {
                     activeCurrencies.map((currency, key) => {
@@ -26,7 +38,7 @@ const PayPal = ({gateway, settings, updateSettings, activeCurrencies, getName, c
                 }
             </SelectRow>
 
-            <InputRow attrs={{name: getName('value'), value:settings.value, type:'text'}}
+            <InputRow attrs={{name: getName('value'), value:settings.value, type:'text', disabled:!isSupportedCurrency(selectedCode)}}
                        onChange={e => updateSettings({value:e.target.value})}
                        label="PayPal Email"
             />

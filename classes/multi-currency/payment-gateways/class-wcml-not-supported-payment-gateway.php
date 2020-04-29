@@ -7,7 +7,14 @@ class WCML_Not_Supported_Payment_Gateway extends WCML_Payment_Gateway{
 
 	const TEMPLATE = 'not-supported.twig';
 
-	protected function get_output_model() {
+	public function get_output_model() {
+
+		return (object) [
+			'id'          => $this->get_id(),
+			'title'       => $this->get_title(),
+			'isSupported' => false,
+			'settings'    => [],
+		];
 
 		if( $this->is_current_currency_default() ){
 			return array();

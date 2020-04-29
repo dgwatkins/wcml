@@ -13,6 +13,10 @@ const Gateways = () => {
     const gateways = getStoreProperty('gateways');
     const activeCurrencies = getStoreProperty('activeCurrencies');
 
+    const getActiveCurrenciesAndModal = () => {
+        return currency.isNew ? [currency, ...activeCurrencies] : activeCurrencies;
+    };
+
     return (
         <div>
             <label className="label-header"><strong>Payment Gateways</strong></label>
@@ -36,7 +40,7 @@ const Gateways = () => {
                                 return <Gateway key={key}
                                                 gateway={gateway}
                                                 settings={currency.gatewaysSettings[gateway.id] || {}}
-                                                activeCurrencies={activeCurrencies}
+                                                activeCurrencies={getActiveCurrenciesAndModal()}
                                                 setModalCurrency={setModalCurrency}
                                                 currency={currency}
                                 />;

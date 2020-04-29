@@ -62,7 +62,7 @@ const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => cr
 
 export default initStore;
 
-const getCurrencyIndex = currencies => code => R.findIndex(R.propEq('code', code))(currencies);
+export const getCurrencyIndex = currencies => code => R.findIndex(R.propEq('code', code))(currencies);
 
 export const getStoreProperty = path => useStoreState(R.path(Array.isArray(path) ? path : [path]));
 export const getStoreAction = action => useStoreActions(R.prop(action));
