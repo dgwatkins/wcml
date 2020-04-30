@@ -75,11 +75,9 @@ const Gateway = ({gateway, currency, setModalCurrency, ...attrs}) => {
     const getName = name => 'currency_options[gateways_settings][' + gateway.id + '][' + name + ']'
 
     let gatewayUi = ! currency.isDefault && <Unsupported gateway={gateway}/>;
-    let tooltip = '';
 
     switch (gateway.id) {
         case 'bacs':
-            tooltip = 'TO BE DEFINED !!!';
             gatewayUi = <Bacs gateway={gateway} updateSettings={updateSettings} getName={getName} currency={currency} {...attrs}/>;
             break;
         case 'paypal':
@@ -94,7 +92,7 @@ const Gateway = ({gateway, currency, setModalCurrency, ...attrs}) => {
         <React.Fragment>
             <label className="label-header">
                 <strong>{gateway.title}</strong>
-                {getTooltip(tooltip)}
+                {getTooltip(gateway.tooltip)}
             </label>
             {gatewayUi}
         </React.Fragment>
