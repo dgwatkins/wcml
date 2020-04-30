@@ -3,6 +3,8 @@
 namespace WCML\Multicurrency\Shipping;
 
 class FreeShipping implements ShippingMode {
+	use ShippingModeBase;
+
 	public function getFieldTitle( $currencyCode ) {
 		if ( ! is_string( $currencyCode ) ) {
 			$currencyCode = '';
@@ -58,6 +60,6 @@ class FreeShipping implements ShippingMode {
 	}
 
 	public function isManualPricingEnabled( $instance ) {
-		return is_array( $instance ) && isset( $instance['wcml_shipping_costs'] ) && 'manual' === $instance['wcml_shipping_costs'];
+		return is_array( $instance ) && self::isEnabled( $instance );
 	}
 }

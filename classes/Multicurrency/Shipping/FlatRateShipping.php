@@ -3,6 +3,8 @@
 namespace WCML\Multicurrency\Shipping;
 
 class FlatRateShipping implements ShippingMode {
+	use ShippingModeBase;
+
 	private $wpOption = null;
 
 	public function getFieldTitle( $currencyCode ) {
@@ -57,8 +59,7 @@ class FlatRateShipping implements ShippingMode {
 	}
 
 	public function isManualPricingEnabled( $instance ) {
-		$rate_settings = $this->getWpOption( $instance->method_id, $instance->instance_id );
-		return isset( $rate_settings['wcml_shipping_costs'] ) && 'manual' === $rate_settings['wcml_shipping_costs'];
+		return self::isEnabled( $this->getWpOption( $instance->method_id, $instance->instance_id ) );
 	}
 
 	private function getWpOption( $method_id, $instance_id ) {

@@ -6,6 +6,7 @@ use IWPML_Action;
 use WCML_Multi_Currency;
 
 class AdminHooks implements IWPML_Action {
+	const WCML_SHIPPING_COSTS = 'wcml_shipping_costs';
 
 	/** @var WCML_Multi_Currency */
 	private $wcmlMultiCurrency;
@@ -68,7 +69,7 @@ class AdminHooks implements IWPML_Action {
 	 * @return array
 	 */
 	private function addEnableField( array $field ) {
-		$enable_field = [
+		$enable_field                                 = [
 			'title' => esc_html__( 'Enable costs in custom currencies', 'woocommerce-multilingual' ),
 			'type' => 'select',
 			'class' => 'wcml-enable-shipping-custom-currency',
@@ -78,7 +79,7 @@ class AdminHooks implements IWPML_Action {
 				'manual' => esc_html__( 'Set shipping costs in other currencies manually', 'woocommerce-multilingual' )
 			]
 		];
-		$field['wcml_shipping_costs'] = $enable_field;
+		$field[ self::WCML_SHIPPING_COSTS ] = $enable_field;
 
 		return $field;
 	}
