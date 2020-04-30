@@ -38,4 +38,8 @@ class UnsupportedShipping implements ShippingMode {
 		}
 		return apply_filters( 'wcml_unsupported_shipping_manual_cost', $rate->cost, $rate, $currency);
 	}
+
+	public function isManualPricingEnabled( $instance = false ) {
+		return false;
+	}
 }

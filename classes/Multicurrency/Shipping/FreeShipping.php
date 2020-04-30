@@ -106,4 +106,8 @@ class FreeShipping implements ShippingMode {
 		}
 		return 0;
 	}
+
+	public function isManualPricingEnabled( $instance ) {
+		return isset( $instance['wcml_shipping_costs'] ) && 'manual' === $instance['wcml_shipping_costs'];
+	}
 }
