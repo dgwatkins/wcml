@@ -23,6 +23,9 @@ class FlatRateShipping implements ShippingMode {
 	}
 
 	public function getShippingCostValue( \WC_Shipping_Rate $rate, $currency ) {
+		if ( ! isset( $rate->cost ) ) {
+			$rate->cost = 0;
+		}
 		if ( isset( $rate->method_id, $rate->instance_id ) ) {
 			$option_name = sprintf( 'woocommerce_%s_%d_settings', $rate->method_id, $rate->instance_id );
 			$cost_name = $this->getCostKey( $currency );
