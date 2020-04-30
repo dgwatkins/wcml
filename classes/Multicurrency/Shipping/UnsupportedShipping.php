@@ -21,14 +21,14 @@ class UnsupportedShipping implements ShippingMode {
 	}
 
 	public function getMinimalOrderAmountValue( $amount, $shipping, $currency ) {
-		return apply_filters( 'wcml_unsupported_shipping_manual_min_amount', $amount, $shipping, $currency);
+		return $amount;
 	}
 
 	public function getShippingCostValue( \WC_Shipping_Rate $rate, $currency ) {
 		if ( ! isset( $rate->cost ) ) {
 			$rate->cost = 0;
 		}
-		return apply_filters( 'wcml_unsupported_shipping_manual_cost', $rate->cost, $rate, $currency);
+		return $rate->cost;
 	}
 
 	public function isManualPricingEnabled( $instance = false ) {

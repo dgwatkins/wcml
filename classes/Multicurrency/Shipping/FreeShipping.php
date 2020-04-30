@@ -48,14 +48,14 @@ class FreeShipping implements ShippingMode {
 				$amount = $shipping[ $key ];
 			}
 		}
-		return apply_filters( 'wcml_free_shipping_manual_min_amount', $amount, $shipping, $currency);
+		return $amount;
 	}
 
 	public function getShippingCostValue( \WC_Shipping_Rate $rate, $currency ) {
 		if ( ! isset( $rate->cost ) ) {
 			$rate->cost = 0;
 		}
-		return apply_filters( 'wcml_free_shipping_manual_cost', $rate->cost, $rate, $currency);
+		return $rate->cost;
 	}
 
 	public function isManualPricingEnabled( $instance ) {
