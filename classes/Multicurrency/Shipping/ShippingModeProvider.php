@@ -8,6 +8,7 @@ class ShippingModeProvider {
 		$collection =  wpml_collect( [
 			'flat_rate'     => 'WCML\Multicurrency\Shipping\FlatRateShipping',
 			'free_shipping' => 'WCML\Multicurrency\Shipping\FreeShipping',
+			'local_pickup'  => 'WCML\Multicurrency\Shipping\LocalPickup',
 		] );
 		return $collection;
 	}
