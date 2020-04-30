@@ -49,7 +49,7 @@ class FreeShipping implements ShippingMode {
 				$amount = $shipping[ $key ];
 			}
 		}
-		return $amount;
+		return apply_filters( 'wcml_free_shipping_manual_min_amount', $amount, $shipping, $currency);
 	}
 
 	/**
