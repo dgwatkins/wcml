@@ -62,4 +62,13 @@ interface ShippingMode {
 	 * @return mixed
 	 */
 	public function getShippingCostValue( \WC_Shipping_Rate $rate, $currency );
+
+	/**
+	 * Checks if the instance of the shipping method has enabled manual pricing.
+	 *
+	 * @param array|object $instance Currently processed instance of the shipping method.
+	 *
+	 * @return mixed
+	 */
+	public function isManualPricingEnabled( $instance );
 }
