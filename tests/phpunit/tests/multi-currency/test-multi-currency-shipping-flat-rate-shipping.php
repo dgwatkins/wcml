@@ -78,7 +78,8 @@ class Test_WCML_Multi_Currency_Shipping_FlatRateShipping extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'get_option', [
 			'return' => [
-				'cost_' . $currencyKey => $expectedCost
+				'cost_' . $currencyKey => $expectedCost,
+				'wcml_shipping_costs' => 'manual'
 			]
 		] );
 

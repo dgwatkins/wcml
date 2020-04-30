@@ -3,7 +3,7 @@
 namespace WCML\Multicurrency\Shipping;
 
 class FlatRateShipping implements ShippingMode {
-	private static $wpOption = null;
+	private $wpOption = null;
 
 	public function getFieldTitle( $currencyCode ) {
 		if ( ! is_string( $currencyCode ) ) {
@@ -69,10 +69,10 @@ class FlatRateShipping implements ShippingMode {
 	}
 
 	private function getWpOption( $method_id, $instance_id ) {
-		if ( null === self::$wpOption ) {
+		if ( null === $this->wpOption ) {
 			$option_name = sprintf( 'woocommerce_%s_%d_settings', $method_id, $instance_id );
-			self::$wpOption = get_option( $option_name );
+			$this->wpOption = get_option( $option_name );
 		}
-		return self::$wpOption;
+		return $this->wpOption;
 	}
 }

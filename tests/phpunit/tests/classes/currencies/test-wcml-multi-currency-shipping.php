@@ -143,7 +143,8 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'get_option', [
 			'return' => [
-				$currency_key => $currency_cost
+				$currency_key => $currency_cost,
+				'wcml_shipping_costs' => 'manual'
 			],
 			'args' => [ 'woocommerce_' . $rate->method_id . '_' . $rate->instance_id . '_settings' ]
 		]);
@@ -201,7 +202,8 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'get_option', [
 			'return' => [
-				$currency_key => $currency_cost
+				$currency_key => $currency_cost,
+				'wcml_shipping_costs' => 'manual'
 			],
 			'args' => [ 'woocommerce_' . $rate->method_id . '_' . $rate->instance_id . '_settings' ]
 		]);
@@ -398,11 +400,13 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 			'min_amount' => 100,
 			'min_amount_PLN' => 10,
 			'requires' => 'min_amount',
+			'wcml_shipping_costs' => 'manual',
 		];
 		$expected_settings = [
 			'min_amount' => 10,
 			'min_amount_PLN' => 10,
 			'requires' => 'min_amount',
+			'wcml_shipping_costs' => 'manual',
 		];
 
 		$converted_settings = $subject->convert_shipping_method_cost_settings( $settings );

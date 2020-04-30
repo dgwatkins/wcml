@@ -51,7 +51,8 @@ class Test_WCML_Multi_Currency_Shipping_FreeShipping extends OTGS_TestCase {
 		$expectedAmount = 20;
 		$currencyKey = is_string( $currency ) ? $currency : '';
 		$shipping = [
-			'min_amount_' . $currencyKey => $expectedAmount
+			'min_amount_' . $currencyKey => $expectedAmount,
+			'wcml_shipping_costs' => 'manual'
 		];
 
 		$newAmount = $subject->getMinimalOrderAmountValue( $amount, $shipping, $currency );
