@@ -11,9 +11,6 @@ jQuery( function($){
 
                 WCML_Multi_Currency.setup_currencies_sorting();
 
-                $(document).on('change','#wcml_currency_options_gateway_code_paypal', WCML_Multi_Currency.preset_paypal_email);
-                $(document).on('change','#wcml_currency_options_gateway_code_stripe', WCML_Multi_Currency.preset_stripe_settings);
-
                 if($('#wcml_mc_options').length){
                     WCML_Multi_Currency.wcml_mc_form_submitted = false;
                     WCML_Multi_Currency.read_form_fields_status();
@@ -77,30 +74,6 @@ jQuery( function($){
                     });
                 }
             });
-
-        },
-
-        preset_paypal_email: function(){
-
-            var paypal_value_input = $('input[name="currency_options[gateways_settings][paypal][value]"]');
-            var paypal_warning = $('.paypal-gateway-warning');
-
-            paypal_value_input.val( $(this).find(":selected").data('email') );
-
-            if(  $(this).find(":selected").data('is-valid') ){
-                paypal_warning.hide();
-                paypal_value_input.removeAttr('readonly');
-            }else{
-                paypal_warning.show();
-                paypal_value_input.val('');
-                paypal_value_input.attr('readonly','readonly');
-            }
-        },
-
-        preset_stripe_settings: function(){
-
-            $('input[name="currency_options[gateways_settings][stripe][publishable_key]"]').val( $(this).find(":selected").data('publishable-key') );
-            $('input[name="currency_options[gateways_settings][stripe][secret_key]"]').val( $(this).find(":selected").data('secret-key') );
 
         },
 
