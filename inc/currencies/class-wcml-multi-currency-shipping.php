@@ -51,9 +51,10 @@ class WCML_Multi_Currency_Shipping {
 			if ( $cached_converted_shipping_cost ) {
 				$rate->cost = $cached_converted_shipping_cost;
 			} elseif ( isset( $rate->cost ) && $rate->cost ) {
-				$rate->cost = $this->multi_currency->prices->raw_price_filter( $rate->cost, $client_currency );
-				if ( isset( $rate->method_id ) ) {
+				if ( isset( $rate->method_id ) && ManualCost::get( $rate->method_id )->isManualPricingEnabled( $rate ) ) {
 					$rate->cost = ManualCost::get( $rate->method_id )->getShippingCostValue( $rate, $client_currency );
+				} else {
+					$rate->cost = $this->multi_currency->prices->raw_price_filter( $rate->cost, $client_currency );
 				}
 				wp_cache_set( $cache_key, $rate->cost, $cache_group );
 			}
@@ -89,8 +90,11 @@ class WCML_Multi_Currency_Shipping {
 				$settings['requires'] === 'either' ||
 				( $settings['requires'] === 'both' && $has_free_shipping_coupon )
 			) {
-				$settings['min_amount'] = apply_filters( 'wcml_shipping_free_min_amount', $settings['min_amount'] );
-				$settings['min_amount'] = ManualCost::get( 'free_shipping' )->getMinimalOrderAmountValue( $settings['min_amount'], $settings, $this->multi_currency->get_client_currency() );
+				if ( ManualCost::get( 'free_shipping' )->isManualPricingEnabled( $settings ) ) {
+					$settings['min_amount'] = ManualCost::get( 'free_shipping' )->getMinimalOrderAmountValue( $settings['min_amount'], $settings, $this->multi_currency->get_client_currency() );
+				} else {
+					$settings['min_amount'] = apply_filters( 'wcml_shipping_free_min_amount', $settings['min_amount'] );
+				}
 			}
 		}
 

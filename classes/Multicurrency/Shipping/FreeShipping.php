@@ -42,9 +42,11 @@ class FreeShipping implements ShippingMode {
 	}
 
 	public function getMinimalOrderAmountValue( $amount, $shipping, $currency ) {
-		$key = $this->getMinimalOrderAmountKey( $currency );
-		if ( isset( $shipping[ $key ] ) ) {
-			$amount = $shipping[ $key ];
+		if ( $this->isManualPricingEnabled( $shipping ) ) {
+			$key = $this->getMinimalOrderAmountKey( $currency );
+			if ( isset( $shipping[ $key ] ) ) {
+				$amount = $shipping[ $key ];
+			}
 		}
 		return apply_filters( 'wcml_free_shipping_manual_min_amount', $amount, $shipping, $currency);
 	}
@@ -54,5 +56,9 @@ class FreeShipping implements ShippingMode {
 			$rate->cost = 0;
 		}
 		return apply_filters( 'wcml_free_shipping_manual_cost', $rate->cost, $rate, $currency);
+	}
+
+	public function isManualPricingEnabled( $instance ) {
+		return isset( $instance['wcml_shipping_costs'] ) && 'manual' === $instance['wcml_shipping_costs'];
 	}
 }
