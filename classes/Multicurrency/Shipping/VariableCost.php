@@ -2,7 +2,7 @@
 
 namespace WCML\Multicurrency\Shipping;
 
-trait VariableCostModeBase {
+trait VariableCost {
 	private $wpOption = null;
 
 	public function getFieldTitle( $currencyCode ) {
