@@ -1,12 +1,29 @@
 import React from "react";
 import {InputRow, SelectRow} from "../FormElements";
+import {getCurrencyIndex} from "../../Store";
 
 
 const Stripe = ({gateway, settings, updateSettings, activeCurrencies, getName, currency}) => {
+    const onChangeCurrency = e => {
+        const targetCode = e.target.value;
+        const targetIndex = getCurrencyIndex(activeCurrencies)(targetCode);
+        const targetCurrency = activeCurrencies[targetIndex];
+        const getSettingFromTarget = prop => {
+            return targetCurrency.gatewaysSettings && targetCurrency.gatewaysSettings[gateway.id]
+                ? targetCurrency.gatewaysSettings[gateway.id][prop] : '';
+        }
+
+        updateSettings({
+            currency: targetCode,
+            publishable_key: getSettingFromTarget('publishable_key'),
+            secret_key: getSettingFromTarget('publishable_key')
+        });
+    };
+
     return ! currency.isDefault && (
         <React.Fragment>
             <SelectRow attrs={{name: getName('currency'), value:settings.currency}}
-                       onChange={e => updateSettings({currency:e.target.value})}
+                       onChange={onChangeCurrency}
                        label="Currency"
             >
                 {

@@ -57,7 +57,6 @@ export default Gateways;
 
 const Gateway = ({gateway, currency, setModalCurrency, ...attrs}) => {
     const updateSettings = newSettings => {
-
         setModalCurrency(
             assocPath(
                 ['gatewaysSettings', gateway.id],

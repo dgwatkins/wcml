@@ -43,8 +43,9 @@ const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => cr
         const index = getCurrencyIndex(state.activeCurrencies)(state.modalCurrency.code);
 
         if (index < 0) {
-            state.activeCurrencies.push(state.modalCurrency);
-            triggerActiveCurrenciesChange({action:'add', currency:{...state.modalCurrency}});
+            const newCurrency = {...state.modalCurrency, ...{isNew:false}};
+            state.activeCurrencies.push(newCurrency);
+            triggerActiveCurrenciesChange({action:'add', currency:newCurrency});
         } else {
             state.activeCurrencies[index] = state.modalCurrency;
         }
