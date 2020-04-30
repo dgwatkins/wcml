@@ -58,7 +58,7 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 		$subject = $this->get_subject();
 
 		\WP_Mock::expectFilterAdded( 'wcml_shipping_price_amount', array( $subject, 'shipping_price_filter' ) );
-		\WP_Mock::expectFilterAdded( 'wcml_shipping_free_min_amount', array( $subject, 'shipping_free_min_amount' ) );
+		\WP_Mock::expectFilterAdded( 'wcml_shipping_free_min_amount', array( $subject, 'shipping_free_min_amount' ), 10, 2 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_evaluate_shipping_cost_args', array( $subject, 'woocommerce_evaluate_shipping_cost_args' ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_shipping_packages', array( $subject, 'convert_shipping_taxes' ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_package_rates', array( $subject, 'convert_shipping_costs_in_package_rates' ) );
@@ -402,16 +402,12 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 			'requires' => 'min_amount',
 			'wcml_shipping_costs' => 'manual',
 		];
-		$expected_settings = [
-			'min_amount' => 10,
-			'min_amount_PLN' => 10,
-			'requires' => 'min_amount',
-			'wcml_shipping_costs' => 'manual',
-		];
+		$original_min_amount = 100;
+		$expected_min_amount = 10;
 
-		$converted_settings = $subject->convert_shipping_method_cost_settings( $settings );
+		$converted_min_amount = $subject->shipping_free_min_amount( $original_min_amount, $settings );
 
-		$this->assertSame( $converted_settings, $expected_settings );
+		$this->assertSame( $converted_min_amount, $expected_min_amount );
 	}
 
 	/**
