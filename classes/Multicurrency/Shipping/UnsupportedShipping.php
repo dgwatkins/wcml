@@ -17,7 +17,7 @@ class UnsupportedShipping implements ShippingMode {
 	}
 
 	public function getSettingsFormKey( $currencyCode ) {
-		// TODO: Implement getSettingsFormKey() method.
+		return null;
 	}
 
 	public function getMinimalOrderAmountValue( $amount, $shipping, $currency ) {
