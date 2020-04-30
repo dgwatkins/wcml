@@ -2,11 +2,11 @@
 
 namespace WCML\Multicurrency\Shipping;
 
-class FlatRateShipping implements ShippingMode {
+class LocalPickup implements ShippingMode {
 	use ShippingModeBase;
 	use VariableCost;
 
 	public function getMethodId() {
-		return 'flat_rate';
+		return 'local_pickup';
 	}
 }
