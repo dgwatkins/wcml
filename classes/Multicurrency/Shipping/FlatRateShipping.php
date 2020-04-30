@@ -35,7 +35,6 @@ class FlatRateShipping implements ShippingMode {
 	 * @return string
 	 */
 	private function getCostKey( $currencyCode ) {
-		$currencyCode = is_string( $currencyCode ) ? $currencyCode : '';
 		return sprintf( 'cost_%s', $currencyCode );
 	}
 

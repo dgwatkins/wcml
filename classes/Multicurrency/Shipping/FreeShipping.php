@@ -33,7 +33,6 @@ class FreeShipping implements ShippingMode {
 	 * @return string
 	 */
 	private function getMinimalOrderAmountKey( $currencyCode ) {
-		$currencyCode = is_string( $currencyCode ) ? $currencyCode : '';
 		return sprintf( 'min_amount_%s', $currencyCode );
 	}
 

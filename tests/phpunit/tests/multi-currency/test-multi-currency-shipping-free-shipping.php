@@ -85,11 +85,7 @@ class Test_WCML_Multi_Currency_Shipping_FreeShipping extends OTGS_TestCase {
 		return [
 			['USD', 'Minimal order amount in USD', 'The minimal order amount if customer choose USD as a purchase currency.'],
 			['PLN', 'Minimal order amount in PLN', 'The minimal order amount if customer choose PLN as a purchase currency.'],
-			['USDii', 'Minimal order amount in USDii', 'The minimal order amount if customer choose USDii as a purchase currency.'],
-			[null, 'Minimal order amount in ', 'The minimal order amount if customer choose  as a purchase currency.'],
-			[false, 'Minimal order amount in ', 'The minimal order amount if customer choose  as a purchase currency.'],
-			[new stdClass(), 'Minimal order amount in ', 'The minimal order amount if customer choose  as a purchase currency.'],
-			[[], 'Minimal order amount in ', 'The minimal order amount if customer choose  as a purchase currency.'],
+			['USDii', 'Minimal order amount in USDii', 'The minimal order amount if customer choose USDii as a purchase currency.']
 		];
 	}
 }

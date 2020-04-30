@@ -97,10 +97,6 @@ class Test_WCML_Multi_Currency_Shipping_FlatRateShipping extends OTGS_TestCase {
 			['USD', 'Cost in USD', 'The shipping cost if customer choose USD as a purchase currency.'],
 			['PLN', 'Cost in PLN', 'The shipping cost if customer choose PLN as a purchase currency.'],
 			['USDii', 'Cost in USDii', 'The shipping cost if customer choose USDii as a purchase currency.'],
-			[null, 'Cost in ', 'The shipping cost if customer choose  as a purchase currency.'],
-			[false, 'Cost in ', 'The shipping cost if customer choose  as a purchase currency.'],
-			[new stdClass(), 'Cost in ', 'The shipping cost if customer choose  as a purchase currency.'],
-			[[], 'Cost in ', 'The shipping cost if customer choose  as a purchase currency.'],
 		];
 	}
 }
