@@ -36,9 +36,9 @@ interface ShippingMode {
 	/**
 	 * Return the key which will be used in shipping method configuration form.
 	 *
-	 * @param $currencyCode Current currency.
+	 * @param string $currencyCode
 	 *
-	 * @return mixed
+	 * @return string|null
 	 */
 	public function getSettingsFormKey( $currencyCode );
 
