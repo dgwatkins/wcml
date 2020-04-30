@@ -67,10 +67,6 @@ class FreeShipping implements ShippingMode {
 		return $rate->cost;
 	}
 
-	public function isManualPricingEnabled( $instance ) {
-		return is_array( $instance ) && self::isEnabled( $instance );
-	}
-
 	public function supportsShippingClasses() {
 		return false;
 	}
