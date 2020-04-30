@@ -2,6 +2,8 @@
 
 namespace WCML\Multicurrency\Shipping;
 
+use phpDocumentor\Reflection\Types\Boolean;
+
 interface ShippingMode {
 	/**
 	 * Returns shipping method id (shipping option key).
@@ -45,11 +47,11 @@ interface ShippingMode {
 	/**
 	 * If shipping mode has minimal order amount, recalculate and return its value.
 	 *
-	 * @param mixed  $amount   The value as saved for original language.
-	 * @param array  $shipping The shipping metadata.
-	 * @param string $currency Currency code.
+	 * @param integer|float|string $amount   The value as saved for original language.
+	 * @param array                $shipping The shipping metadata.
+	 * @param string               $currency Currency code.
 	 *
-	 * @return mixed
+	 * @return integer|float|string
 	 */
 	public function getMinimalOrderAmountValue( $amount, $shipping, $currency );
 
@@ -59,16 +61,16 @@ interface ShippingMode {
 	 * @param \WC_Shipping_Rate $rate     Shipping rate metadata.
 	 * @param string            $currency Currency code.
 	 *
-	 * @return mixed
+	 * @return integer|float|string
 	 */
 	public function getShippingCostValue( \WC_Shipping_Rate $rate, $currency );
 
 	/**
 	 * Checks if the instance of the shipping method has enabled manual pricing.
 	 *
-	 * @param array|object $instance Currently processed instance of the shipping method.
+	 * @param array|\WC_Shipping_Rate $instance Currently processed instance of the shipping method.
 	 *
-	 * @return mixed
+	 * @return bool
 	 */
 	public function isManualPricingEnabled( $instance );
 }
