@@ -19,7 +19,7 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 	private function get_wc_cart_mock() {
 		return $this->getMockBuilder( 'WC_Cart' )
 		            ->disableOriginalConstructor()
-					->setMethods( ['woocommerce_calculate_totals', 'get_cart_subtotal'] )
+					->setMethods( ['woocommerce_calculate_totals', 'get_cart_subtotal', 'calculate_totals'] )
 		            ->getMock();
 	}
 
@@ -38,6 +38,11 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		$multi_currency->load_filters = false;
 
 		$subject = $this->get_subject( $multi_currency );
+
+		\WP_Mock::expectActionAdded( 'woocommerce_cart_loaded_from_session', [
+			$subject,
+			'recalculate_totals'
+		] );
 
 		\WP_Mock::expectFilterAdded( 'wcml_raw_price_amount', array( $subject, 'raw_price_filter' ), 10, 2 );
 
@@ -494,6 +499,25 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		$subject = $this->get_subject( $this->get_multi_currency_mock() );
 
 		$this->assertSame( [], $subject->filter_pre_selected_widget_prices_in_new_currency( [], $from_currency, $to_currency, $params ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_recalculate_totals() {
+
+		$woocommerce = $this->get_wc_mock();
+
+		$woocommerce->cart = $this->get_wc_cart_mock();
+		$woocommerce->cart->expects( $this->once() )->method( 'calculate_totals' )->willReturn( true );
+
+		WP_Mock::userFunction( 'WC', array(
+			'return' => $woocommerce
+		) );
+
+		$subject = $this->get_subject( $this->get_multi_currency_mock() );
+
+		$subject->recalculate_totals();
 	}
 
 }
