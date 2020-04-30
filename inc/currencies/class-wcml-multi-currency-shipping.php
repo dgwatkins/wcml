@@ -29,7 +29,7 @@ class WCML_Multi_Currency_Shipping {
 
 		// Used for table rate shipping compatibility class.
 		add_filter( 'wcml_shipping_price_amount', [ $this, 'shipping_price_filter' ] ); // WCML filters.
-		add_filter( 'wcml_shipping_free_min_amount', [ $this, 'shipping_free_min_amount' ] ); // WCML filters.
+		add_filter( 'wcml_shipping_free_min_amount', [ $this, 'shipping_free_min_amount' ], 10, 2 ); // WCML filters.
 
 		add_filter( 'woocommerce_evaluate_shipping_cost_args', [ $this, 'woocommerce_evaluate_shipping_cost_args' ] );
 
@@ -90,11 +90,7 @@ class WCML_Multi_Currency_Shipping {
 				$settings['requires'] === 'either' ||
 				( $settings['requires'] === 'both' && $has_free_shipping_coupon )
 			) {
-				if ( ManualCost::get( 'free_shipping' )->isManualPricingEnabled( $settings ) ) {
-					$settings['min_amount'] = ManualCost::get( 'free_shipping' )->getMinimalOrderAmountValue( $settings['min_amount'], $settings, $this->multi_currency->get_client_currency() );
-				} else {
-					$settings['min_amount'] = apply_filters( 'wcml_shipping_free_min_amount', $settings['min_amount'] );
-				}
+				$settings['min_amount'] = apply_filters( 'wcml_shipping_free_min_amount', $settings['min_amount'], $settings );
 			}
 		}
 
@@ -142,10 +138,12 @@ class WCML_Multi_Currency_Shipping {
 
 	}
 
-	public function shipping_free_min_amount( $price ) {
-
-		$price = $this->multi_currency->prices->raw_price_filter( $price, $this->multi_currency->get_client_currency() );
-
+	public function shipping_free_min_amount( $price, $settings ) {
+		if ( ManualCost::get( 'free_shipping' )->isManualPricingEnabled( $settings ) ) {
+			$price = ManualCost::get( 'free_shipping' )->getMinimalOrderAmountValue( $price, $settings, $this->multi_currency->get_client_currency() );
+		} else {
+			$price = $this->multi_currency->prices->raw_price_filter( $price, $this->multi_currency->get_client_currency() );
+		}
 		return $price;
 
 	}
