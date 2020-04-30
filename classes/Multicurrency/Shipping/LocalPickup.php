@@ -3,6 +3,8 @@
 namespace WCML\Multicurrency\Shipping;
 
 class LocalPickup implements ShippingMode {
+	use ShippingModeBase;
+
 	private $wpOption = null;
 
 	public function getMethodId() {
@@ -10,18 +12,12 @@ class LocalPickup implements ShippingMode {
 	}
 
 	public function getFieldTitle( $currencyCode ) {
-		if ( ! is_string( $currencyCode ) ) {
-			$currencyCode = '';
-		}
 		return sprintf( esc_html_x( 'Cost in %s',
 			'The label for the field with shipping cost in additional currency. The currency symbol will be added in place of %s specifier.',
 			'woocommerce-multilingual' ), $currencyCode );
 	}
 
 	public function getFieldDescription( $currencyCode ) {
-		if ( ! is_string( $currencyCode ) ) {
-			$currencyCode = '';
-		}
 		return sprintf( esc_html_x( 'The shipping cost if customer choose %s as a purchase currency.',
 			'The description for the field with shipping cost in additional currency. The currency symbol will be added in place of %s specifier.',
 			'woocommerce-multilingual' ), $currencyCode );
@@ -63,8 +59,7 @@ class LocalPickup implements ShippingMode {
 	}
 
 	public function isManualPricingEnabled( $instance ) {
-		$rate_settings = $this->getWpOption( $instance->method_id, $instance->instance_id );
-		return isset( $rate_settings['wcml_shipping_costs'] ) && 'manual' === $rate_settings['wcml_shipping_costs'];
+		return self::isEnabled( $this->getWpOption( $instance->method_id, $instance->instance_id ) );
 	}
 
 	private function getWpOption( $method_id, $instance_id ) {
