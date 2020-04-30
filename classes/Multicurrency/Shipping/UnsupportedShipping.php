@@ -21,7 +21,7 @@ class UnsupportedShipping implements ShippingMode {
 	}
 
 	public function getMinimalOrderAmountValue( $amount, $shipping, $currency ) {
-		return apply_filters( 'wcml_unsupported_shipping_manual_min_amount', $amount, $shipping, $currency);
+		return $amount;
 	}
 
 	public function isManualPricingEnabled( $instance = false ) {
@@ -36,7 +36,7 @@ class UnsupportedShipping implements ShippingMode {
 		if ( ! isset( $rate->cost ) ) {
 			$rate->cost = 0;
 		}
-		return apply_filters( 'wcml_unsupported_shipping_manual_cost', $rate->cost, $rate, $currency);
+		return $rate->cost;
 	}
 
 	public function isManualPricingEnabled( $instance = false ) {
