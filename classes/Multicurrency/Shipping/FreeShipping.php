@@ -45,10 +45,10 @@ class FreeShipping implements ShippingMode {
 		if ( isset( $shipping[ $key ] ) ) {
 			$amount = $shipping[ $key ];
 		}
-		return $amount;
+		return apply_filters( 'wcml_free_shipping_manual_min_amount', $amount, $shipping, $currency);
 	}
 
 	public function getShippingCostValue( \WC_Shipping_Rate $rate, $currency ) {
-		return $rate->cost;
+		return apply_filters( 'wcml_free_shipping_manual_cost', $rate->cost, $rate, $currency);
 	}
 }

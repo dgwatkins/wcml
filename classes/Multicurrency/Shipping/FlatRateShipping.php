@@ -41,7 +41,7 @@ class FlatRateShipping implements ShippingMode {
 	}
 
 	public function getMinimalOrderAmountValue( $amount, $shipping, $currency ) {
-		return $amount;
+		return apply_filters( 'wcml_flat_rate_manual_min_amount', $amount, $shipping, $currency);
 	}
 
 	public function getShippingCostValue( \WC_Shipping_Rate $rate, $currency ) {
@@ -53,6 +53,6 @@ class FlatRateShipping implements ShippingMode {
 				return $rate_settings[ $cost_name ];
 			}
 		}
-		return $rate->cost;
+		return apply_filters( 'wcml_flat_rate_manual_cost', $rate->cost, $rate, $currency);
 	}
 }
