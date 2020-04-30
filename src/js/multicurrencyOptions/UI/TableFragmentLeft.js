@@ -1,6 +1,8 @@
 import React from "react";
 import {getSmallFormattedPrice, getCurrencyLabel} from '../Utils';
 import {getStoreProperty} from "../Store";
+import {getTooltip} from "./FormElements";
+import strings from "../Strings";
 
 const TableFragmentLeft = () => {
     const activeCurrencies = getStoreProperty('activeCurrencies');
@@ -8,16 +10,15 @@ const TableFragmentLeft = () => {
     return <table className="widefat currency_table" id="currency-table">
                 <thead>
                     <tr>
-                        <th className="wcml-col-currency">Currency</th>
-                        <th className="wcml-col-rate">Rate</th>
+                        <th className="wcml-col-currency">{strings.labelCurrency}</th>
+                        <th className="wcml-col-rate">{strings.labelRate}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <Rows activeCurrencies={activeCurrencies}/>
                     <tr className="default_currency">
-                        <td colSpan="3">Default currency
-                            <i className="wcml-tip otgs-ico-help"
-                               data-tip="strings.currencies_table.default_cur_tip"/>
+                        <td colSpan="3">
+                            {strings.labelDefaultCurrency} {getTooltip(strings.tooltipDefaultCurrency)}
                         </td>
                     </tr>
                 </tbody>

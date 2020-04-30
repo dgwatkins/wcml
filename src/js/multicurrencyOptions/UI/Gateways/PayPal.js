@@ -2,6 +2,7 @@ import React from "react";
 import {InputRow, SelectRow} from "../FormElements";
 import {getCurrencyIndex} from "../../Store"
 import Tooltip from "antd/lib/tooltip";
+import {sprintf} from "wpml-common-js-source/src/i18n";
 
 
 const PayPal = ({gateway, settings, updateSettings, activeCurrencies, getName, currency}) => {
@@ -19,7 +20,7 @@ const PayPal = ({gateway, settings, updateSettings, activeCurrencies, getName, c
     };
 
     const warning = ! isSupportedCurrency(selectedCode) && (
-        <Tooltip title="This gateway does not support %s. To show this gateway please select another currency.">
+        <Tooltip title={sprintf(gateway.strings.tooltipNotSupported, selectedCode)}>
             <i className="wcml-tip otgs-ico-warning paypal-gateway-warning" />
         </Tooltip>
     );
@@ -28,7 +29,7 @@ const PayPal = ({gateway, settings, updateSettings, activeCurrencies, getName, c
         <React.Fragment>
             <SelectRow attrs={{name: getName('currency'), value:settings.currency}}
                        onChange={onChangeCurrency}
-                       label="Currency"
+                       label={gateway.strings.labelCurrency}
                        afterSelect={warning}
             >
                 {
@@ -40,7 +41,7 @@ const PayPal = ({gateway, settings, updateSettings, activeCurrencies, getName, c
 
             <InputRow attrs={{name: getName('value'), value:settings.value, type:'text', disabled:!isSupportedCurrency(selectedCode)}}
                        onChange={e => updateSettings({value:e.target.value})}
-                       label="PayPal Email"
+                       label={gateway.strings.labelPayPalEmail}
             />
         </React.Fragment>
     );

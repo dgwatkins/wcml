@@ -1,11 +1,10 @@
 import React from "react";
 import {SelectRow} from "../FormElements";
 
-
 const Bacs = ({gateway, settings, updateSettings, activeCurrencies, getName, currency}) => {
     const valueOptions = {
-        'all': 'All accounts',
-        'all_in': 'All in selected currency',
+        'all': gateway.strings.optionAll,
+        'all_in': gateway.strings.optionAllIn,
         '0': ''
     };
 
@@ -15,7 +14,7 @@ const Bacs = ({gateway, settings, updateSettings, activeCurrencies, getName, cur
         <React.Fragment>
             <SelectRow attrs={{name: getName('currency'), value:settingsCurrency, disabled:currency.isDefault}}
                        onChange={e => updateSettings({currency:e.target.value})}
-                       label="Currency"
+                       label={gateway.strings.labelCurrency}
             >
                 {
                     activeCurrencies.map((currency, key) => {
@@ -26,7 +25,7 @@ const Bacs = ({gateway, settings, updateSettings, activeCurrencies, getName, cur
 
             <SelectRow attrs={{name: getName('value'), value:settings.value}}
                        onChange={e => updateSettings({value:e.target.value})}
-                       label="Bank Account"
+                       label={gateway.strings.labelBankAccount}
             >
                 {
                     Object.keys(valueOptions).map((value) => {

@@ -1,5 +1,6 @@
 import React from "react";
 import {getStoreProperty, useStore} from "../Store";
+import strings from "../Strings";
 
 const AddCurrency = () => {
     const [ , setModalCurrency] = useStore('modalCurrency');
@@ -42,7 +43,7 @@ const AddCurrency = () => {
                 className="button-secondary wcml_add_currency alignright js-wcml-dialog-trigger"
                 onClick={onClick}
         >
-            <i className="otgs-ico-add otgs-ico-sm"></i> Add Currency
+            <i className="otgs-ico-add otgs-ico-sm"/> {strings.labelAddCurrency}
         </button>
     );
 }

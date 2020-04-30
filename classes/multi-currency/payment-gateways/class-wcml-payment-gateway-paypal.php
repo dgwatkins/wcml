@@ -38,32 +38,17 @@ class WCML_Payment_Gateway_PayPal extends WCML_Payment_Gateway {
 	];
 
 	public function get_output_model() {
-		return (object) [
+		return [
 			'id'          => $this->get_id(),
 			'title'       => $this->get_title(),
 			'isSupported' => true,
 			'settings'    => $this->get_currencies_details(),
-		];
-
-		if ( $this->is_current_currency_default() ) {
-			return [];
-		}
-
-		$currencies_details = $this->get_currencies_details();
-
-		return [
-			'strings'                 => [
-				'currency_label' => __( 'Currency', 'woocommerce-multilingual' ),
-				'setting_label'  => __( 'PayPal Email', 'woocommerce-multilingual' ),
-				'not_supported'  => sprintf( __( 'This gateway does not support %s. To show this gateway please select another currency.', 'woocommerce-multilingual' ), $this->current_currency ),
+			'tooltip'     => '',
+			'strings'     => [
+				'labelCurrency'       => __( 'Currency', 'woocommerce-multilingual' ),
+				'labelPayPalEmail'    => __( 'PayPal Email', 'woocommerce-multilingual' ),
+				'tooltipNotSupported' => __( 'This gateway does not support %s. To show this gateway please select another currency.', 'woocommerce-multilingual' ),
 			],
-			'gateway_id'              => $this->get_id(),
-			'gateway_title'           => $this->get_title(),
-			'current_currency'        => $this->current_currency,
-			'gateway_settings'        => $this->get_setting( $this->current_currency ),
-			'currencies_details'      => array_intersect_key( $currencies_details, $this->get_active_currencies() ),
-			'selected_currency_valid' => $this->is_valid_for_use( $currencies_details[ $this->current_currency ]['currency'] ),
-			'current_currency_valid'  => $currencies_details[ $this->current_currency ]['is_valid'],
 		];
 	}
 

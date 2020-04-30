@@ -9,29 +9,17 @@ class WCML_Payment_Gateway_Stripe extends WCML_Payment_Gateway {
 	const ID       = 'stripe';
 
 	public function get_output_model() {
-		return (object) [
+		return [
 			'id'          => $this->get_id(),
 			'title'       => $this->get_title(),
 			'isSupported' => true,
-			'settings'    => $this->get_currencies_details( get_woocommerce_currencies() ),
-		];
-
-
-		if ( $this->is_current_currency_default() ) {
-			return [];
-		}
-
-		return [
-			'strings'            => [
-				'currency_label'    => __( 'Currency', 'woocommerce-multilingual' ),
-				'publishable_label' => __( 'Live Publishable Key', 'woocommerce-multilingual' ),
-				'secret_label'      => __( 'Live Secret Key', 'woocommerce-multilingual' ),
+			'settings'    => $this->get_currencies_details(),
+			'tooltip'     => '',
+			'strings'     => [
+				'labelCurrency'           => __( 'Currency', 'woocommerce-multilingual' ),
+				'labelLivePublishableKey' => __( 'Live Publishable Key', 'woocommerce-multilingual' ),
+				'labelLiveSecretKey'      => __( 'Live Secret Key', 'woocommerce-multilingual' ),
 			],
-			'gateway_id'         => $this->get_id(),
-			'gateway_title'      => $this->get_title(),
-			'current_currency'   => $this->current_currency,
-			'gateway_settings'   => $this->get_setting( $this->current_currency ),
-			'currencies_details' => $this->get_currencies_details( $this->get_active_currencies() ),
 		];
 	}
 
@@ -60,14 +48,12 @@ class WCML_Payment_Gateway_Stripe extends WCML_Payment_Gateway {
 	}
 
 	/**
-	 * @param array $active_currencies
-	 *
 	 * @return array
 	 */
-	public function get_currencies_details( $active_currencies ) {
-
+	public function get_currencies_details() {
 		$currencies_details = [];
 		$default_currency   = wcml_get_woocommerce_currency_option();
+		$active_currencies  = get_woocommerce_currencies();
 
 		foreach ( $active_currencies as $code => $currency ) {
 

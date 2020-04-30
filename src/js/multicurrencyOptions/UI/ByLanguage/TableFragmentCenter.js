@@ -1,6 +1,9 @@
 import React from "react";
 import {useStore, getStoreAction, getStoreProperty} from "../../Store";
 import {createAjaxRequest} from "../../Request";
+import strings from "../../Strings";
+import {sprintf} from "wpml-common-js-source/src/i18n";
+import {getCurrencyLabel} from "../../Utils";
 
 const TableFragmentCenter = () => {
     const activeCurrencies = getStoreProperty('activeCurrencies');
@@ -11,7 +14,7 @@ const TableFragmentCenter = () => {
                     <table className="widefat currency_lang_table" id="currency-lang-table">
                             <thead>
                                 <tr>
-                                    <td colSpan={languages.length}>Currencies to display for each language</td>
+                                    <td colSpan={languages.length}>{strings.labelCurrenciesToDisplay}</td>
                                 </tr>
                                 <tr className="currency-lang-flags">
                                     {
@@ -32,9 +35,6 @@ const TableFragmentCenter = () => {
 
                         </tbody>
                     </table>
-                    <input type="hidden" id="wcml_update_default_currency_nonce"
-                           value="form.wpdate_default_cur_nonce"/>
-
                 </div>
             </div>
 }
@@ -54,13 +54,13 @@ const Cell = ({language, currency}) => {
     const [updating, setUpdating] = useStore('updating');
 
     const ajax         = createAjaxRequest('currencyForLang');
-    const titleEnable  = 'Enable __CURRENCY__ for __LANGUAGE__';
-    const titleDisable = 'Disable __CURRENCY__ for __LANGUAGE__';
     const isEnabled    = currency.languages[language.code] && currency.languages[language.code] != 0 ? true : false;
 
-    const title = ( isEnabled ? titleDisable : titleEnable )
-        .replace('__LANGUAGE__', language.displayName)
-        .replace('__CURRENCY__', currency.label);
+    const title = sprintf(
+        isEnabled ? strings.placeholderDisableFor : strings.placeholderEnableFor,
+        language.displayName,
+        getCurrencyLabel(currency.code)
+    );
 
     const linkClass = ajax.fetching ? 'spinner' : (isEnabled ? "otgs-ico-yes" : "otgs-ico-no");
     const linkStyle = ajax.fetching ? {visibility: 'visible', margin: 0} : {};
@@ -91,7 +91,7 @@ const Cell = ({language, currency}) => {
                            title={title}
                            style={linkStyle}
                            onClick={onClick}
-                        ></a>
+                        />
                     </li>
                 </ul>
             </td>
@@ -114,11 +114,11 @@ const DefaultCell = ({language, activeCurrencies}) => {
     const options = activeCurrencies
         .filter(currency => 1 == currency.languages[language.code])
         .map(currency => {
-            return {'text': currency.code, 'value': currency.code};
+            return {text:currency.code, value:currency.code};
         })
 
     const allOptions = [
-        {'text': 'Keep', 'value': 0},
+        {text: strings.labelKeep, value: 0},
         ...options
     ];
 
@@ -152,6 +152,6 @@ const DefaultCell = ({language, activeCurrencies}) => {
                         )
                     }
                 </select>
-                {ajax.fetching && <span className="spinner" style={{visibility:'visible', float:'none', position:'absolute'}}></span>}
+                {ajax.fetching && <span className="spinner" style={{visibility:'visible', float:'none', position:'absolute'}}/>}
             </td>
 };

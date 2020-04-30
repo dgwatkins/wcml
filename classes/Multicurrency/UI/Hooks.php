@@ -35,6 +35,7 @@ class Hooks implements \IWPML_Backend_Action {
 					'allCurrencies'     => $this->getAllCurrencies(),
 					'languages'         => $this->getLanguages(),
 					'gateways'          => $gateways->toArray(),
+					'strings'           => $this->getStrings(),
 				]
 			);
 
@@ -65,9 +66,9 @@ class Hooks implements \IWPML_Backend_Action {
 		};
 
 		$getGatewaySettingsForCurrency = function( $code ) use ( $gateways ) {
-			return $gateways->mapWithKeys( function( \stdClass $gateway ) use ( $code ) {
+			return $gateways->mapWithKeys( function( array $gateway ) use ( $code ) {
 				return [
-					$gateway->id => isset( $gateway->settings[ $code ] ) ? $gateway->settings[ $code ] : [],
+					$gateway['id'] => isset( $gateway['settings'][ $code ] ) ? $gateway['settings'][ $code ] : [],
 				];
 			} )->toArray();
 		};
@@ -158,5 +159,63 @@ class Hooks implements \IWPML_Backend_Action {
 		global $woocommerce_wpml;
 
 		return $woocommerce_wpml->multi_currency->currencies_payment_gateways;
+	}
+
+	private function getStrings() {
+		$trackingLink = new \WCML_Tracking_Link();
+
+		return [
+			'labelCurrencies'     => __( 'Currencies', 'woocommerce-multilingual' ),
+			'labelCurrency'    => __( 'Currency', 'woocommerce-multilingual' ),
+			'labelAddCurrency' => __( 'Add currency', 'woocommerce-multilingual' ),
+			'labelRate'        => __( 'Rate', 'woocommerce-multilingual' ),
+			'labelDefault'          => __( 'default', 'woocommerce-multilingual' ),
+			'labelEdit'             => __( 'Edit', 'woocommerce-multilingual' ),
+			'labelDefaultCurrency' => __( 'Default currency', 'woocommerce-multilingual' ),
+			'tooltipDefaultCurrency'  => __( 'Switch to this currency when switching language in the front-end', 'woocommerce-multilingual' ),
+			'labelKeep'    => __( 'Keep', 'woocommerce-multilingual' ),
+			'labelDelete'           => __( 'Delete', 'woocommerce-multilingual' ),
+			'labelCurrenciesToDisplay'       => __( 'Currencies to display for each language', 'woocommerce-multilingual' ),
+			'placeholderEnableFor'       => __( 'Enable %1$s for %2$s', 'woocommerce-multilingual' ),
+			'placeholderDisableFor'      => __( 'Disable %1$s for %2$s', 'woocommerce-multilingual' ),
+			'labelSettings'            => __( 'Settings', 'woocommerce-multilingual' ),
+			'labelAddNewCurrency'      => __( 'Add new currency', 'woocommerce-multilingual' ),
+			'placeholderCurrencySettingsFor' => __( 'Currency settings for %s', 'woocommerce-multilingual' ),
+
+			'labelSelectCurrency' => __( 'Select currency', 'woocommerce-multilingual' ),
+			'labelExchangeRate'           => __( 'Exchange Rate', 'woocommerce-multilingual' ),
+			'labelOnlyNumeric'    => __( 'Only numeric', 'woocommerce-multilingual' ),
+			'placeholderPreviousRate'   => __( '(previous value: %s)', 'woocommerce-multilingual' ),
+			'labelCurrencyPreview' => __( 'Currency Preview', 'woocommerce-multilingual' ),
+			'labelPosition'       => __( 'Currency Position', 'woocommerce-multilingual' ),
+			'optionLeft'        => __( 'Left', 'woocommerce-multilingual' ),
+			'optionRight'       => __( 'Right', 'woocommerce-multilingual' ),
+			'optionLeftSpace'  => __( 'Left with space', 'woocommerce-multilingual' ),
+			'optionRightSpace' => __( 'Right with space', 'woocommerce-multilingual' ),
+			'labelThousandSep' => __( 'Thousand Separator', 'woocommerce-multilingual' ),
+			'labelDecimalSep' => __( 'Decimal Separator', 'woocommerce-multilingual' ),
+			'labelNumDecimals'  => __( 'Number of Decimals', 'woocommerce-multilingual' ),
+			'labelRounding'                => __( 'Rounding to the nearest integer', 'woocommerce-multilingual' ),
+			'optionDisabled'             => __( 'Disabled', 'woocommerce-multilingual' ),
+			'optionUp'                   => __( 'Up', 'woocommerce-multilingual' ),
+			'optionDown'                 => __( 'Down', 'woocommerce-multilingual' ),
+			'optionNearest'              => __( 'Nearest', 'woocommerce-multilingual' ),
+			'labelIncrement'            => __( 'Increment for nearest integer', 'woocommerce-multilingual' ),
+			'tooltipIncrement'    => sprintf( __( 'The resulting price will be an increment of this value after initial rounding.%se.g.:', 'woocommerce-multilingual' ), '<br>' ) . '<br />' .
+				__( '1454.07 &raquo; 1454 when set to 1', 'woocommerce-multilingual' ) . '<br />' .
+				__( '1454.07 &raquo; 1450 when set to 10', 'woocommerce-multilingual' ) . '<br />' .
+				__( '1454.07 &raquo; 1500 when set to 100', 'woocommerce-multilingual' ) . '<br />',
+			'tooltipRounding'     => sprintf( __( 'Round the converted price to the closest integer. %se.g. 15.78 becomes 16.00', 'woocommerce-multilingual' ), '<br />' ),
+			'tooltipAutosubtract' => __( 'The value to be subtracted from the amount obtained previously.', 'woocommerce-multilingual' ) . '<br /><br />' .
+				__( 'For 1454.07, when the increment for the nearest integer is 100 and the auto-subtract amount is 1, the resulting amount is 1499.', 'woocommerce-multilingual' ),
+			'labelAutosubtract'        => __( 'Autosubtract amount', 'woocommerce-multilingual' ),
+			'labelPaymentGateways'          => __( 'Payment Gateways', 'woocommerce-multilingual' ),
+			'placeholderCustomSettings' => __( 'Custom settings for %s', 'woocommerce-multilingual' ),
+			'linkUrlLearn'      => $trackingLink->generate( 'https://wpml.org/?page_id=290080#payment-gateways-settings', 'payment-gateways-settings', 'documentation' ),
+			'linkLabelLearn'    => __( 'Learn more', 'woocommerce-multilingual' ),
+			'errorInvalidNumber'     => __( 'Please enter a valid number', 'woocommerce-multilingual' ),
+			'labelCancel'           => __( 'Cancel', 'woocommerce-multilingual' ),
+			'labelSave'             => __( 'Save', 'woocommerce-multilingual' ),
+		];
 	}
 }

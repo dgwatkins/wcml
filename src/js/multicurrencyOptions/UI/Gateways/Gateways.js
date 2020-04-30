@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {useStore, getStoreProperty} from "../../Store";
 import {assocPath} from "ramda";
 import Bacs from "./Bacs";
@@ -6,7 +6,7 @@ import PayPal from "./PayPal";
 import Stripe from "./Stripe";
 import Unsupported from "./Unsupported";
 import {getTooltip} from "../FormElements";
-import {capitalize} from "../../Utils";
+import strings from "../../Strings";
 
 const Gateways = () => {
     const [currency, setModalCurrency] = useStore('modalCurrency');
@@ -19,17 +19,20 @@ const Gateways = () => {
 
     return (
         <div>
-            <label className="label-header"><strong>Payment Gateways</strong></label>
+            <label className="label-header"><strong>{strings.labelPaymentGateways}</strong></label>
 
             <label className="wcml-gateways-switcher">
                 <input name="currency_options[gateways_enabled]" type="checkbox"
                        className="wcml-gateways-enabled otgs-switcher-input"
                        checked={currency.gatewaysEnabled}
-                       onChange={e => setModalCurrency({...currency, ['gatewaysEnabled']: !currency.gatewaysEnabled})}/>
+                       onChange={() => setModalCurrency({...currency, ['gatewaysEnabled']: !currency.gatewaysEnabled})}/>
                 <span className="otgs-switcher wpml-theme" data-on="ON" data-off="OFF"/>
                 <a className="wpml-external-link"
-                   href="https://wpml.org/?page_id=290080&utm_source=wcml-admin&utm_medium=plugin&utm_term=payment-gateways-settings&utm_content=documentation&utm_campaign=WCML#payment-gateways-settings"
-                   target="_blank">Learn more</a>
+                   href={strings.linkUrlLearn}
+                   target="_blank"
+                >
+                    {strings.linkLabelLearn}
+                </a>
             </label>
 
             {
@@ -71,7 +74,7 @@ const Gateway = ({gateway, currency, setModalCurrency, ...attrs}) => {
 
     const getName = name => 'currency_options[gateways_settings][' + gateway.id + '][' + name + ']'
 
-    let gatewayUi = ! currency.isDefault && <Unsupported/>;
+    let gatewayUi = ! currency.isDefault && <Unsupported gateway={gateway}/>;
     let tooltip = '';
 
     switch (gateway.id) {

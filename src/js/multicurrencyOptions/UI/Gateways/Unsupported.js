@@ -1,9 +1,9 @@
 import React from "react";
 
-const Unsupported = () => {
+const Unsupported = ({gateway}) => {
     return (
         <div className="wpml-form-row">
-            <span className="explanation-text">Not yet supported</span>
+            <span className="explanation-text">{gateway.strings.labelNotYetSupported}</span>
         </div>
     )
 }

@@ -24,7 +24,7 @@ const Stripe = ({gateway, settings, updateSettings, activeCurrencies, getName, c
         <React.Fragment>
             <SelectRow attrs={{name: getName('currency'), value:settings.currency}}
                        onChange={onChangeCurrency}
-                       label="Currency"
+                       label={gateway.strings.labelCurrency}
             >
                 {
                     activeCurrencies.map((currency, key) => {
@@ -35,12 +35,12 @@ const Stripe = ({gateway, settings, updateSettings, activeCurrencies, getName, c
 
             <InputRow attrs={{name: getName('publishable_key'), value:settings.publishable_key, type:'password'}}
                       onChange={e => updateSettings({publishable_key:e.target.value})}
-                      label="Live Publishable Key"
+                      label={gateway.strings.labelLivePublishableKey}
             />
 
             <InputRow attrs={{name: getName('secret_key'), value:settings.secret_key, type:'password'}}
                       onChange={e => updateSettings({secret_key:e.target.value})}
-                      label="Live Secret Key"
+                      label={gateway.strings.labelLiveSecretKey}
             />
         </React.Fragment>
     );
