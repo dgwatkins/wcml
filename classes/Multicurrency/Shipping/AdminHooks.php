@@ -142,25 +142,6 @@ class AdminHooks implements IWPML_Action {
 	}
 
 	/**
-	 * Returns shipping cost key for given currency as is in shipping options.
-	 *
-	 * @param $currency
-	 * @param $method_id
-	 *
-	 * @return string|null
-	 */
-	public static function getCostKey( $currency, $method_id ) {
-		$patterns = [
-			'flat_rate' => 'cost_%s',
-			'free_shipping' => 'min_amount_%s',
-		];
-		if ( isset( $patterns[ $method_id ] ) ) {
-			return sprintf( $patterns[ $method_id ], $currency );
-		}
-		return null;
-	}
-
-	/**
 	 * Enqueues script responsible for JS actions on shipping fields.
 	 */
 	public function loadJs() {
