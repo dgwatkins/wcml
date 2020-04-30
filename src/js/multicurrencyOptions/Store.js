@@ -54,6 +54,9 @@ const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => cr
         const usedCurrencyCodes = state.activeCurrencies.map(currency => currency.code);
         return state.allCurrencies.filter((currency) => ! usedCurrencyCodes.includes(currency.code));
     }),
+    defaultCurrency: computed(state => {
+        return state.activeCurrencies.filter(currency => currency.isDefault)[0];
+    }),
 
     updating: false,
     setUpdating: action((state, updating) => {

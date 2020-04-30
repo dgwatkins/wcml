@@ -4,7 +4,7 @@ import Modal from 'antd/lib/modal';
 import 'antd/lib/modal/style/index.css';
 import 'antd/lib/tooltip/style/index.css';
 import {useStore, getStoreProperty, getStoreAction} from "../Store";
-import {validateRate, getFormattedPricePreview} from '../Utils';
+import {validateRate, getFormattedPricePreview, getCurrencyLabel, getCurrencySymbol} from '../Utils';
 import Gateways from "./Gateways/Gateways";
 import {SelectRow, InputRow} from "./FormElements";
 import {createAjaxRequest} from "../Request";
@@ -13,7 +13,8 @@ const CurrencyModal = () => {
     const [currency, setModalCurrency] = useStore('modalCurrency');
     const saveModalCurrency = getStoreAction('saveModalCurrency');
     const [isValidRate, setIsValidRate] = useState(true);
-    const onClose = () => setModalCurrency(null);;
+    const defaultCurrency = getStoreProperty('defaultCurrency');
+    const onClose = () => setModalCurrency(null);
 
     const ajax = createAjaxRequest('saveCurrency');
 
@@ -27,8 +28,12 @@ const CurrencyModal = () => {
         }
     };
 
+    const modalTitle = currency.isNew
+        ? 'Add new currency'
+        : 'Currency settings for __CURRENCY__'.replace('__CURRENCY__', getCurrencyLabel(currency.code) + ' (' + getCurrencySymbol(currency.code) + ')' );
+
     return <Modal
-        title="The title"
+        title={modalTitle}
         visible={true}
         onCancel={onClose}
         footer={<Footer onClose={onClose} onSave={onSave} disableSave={!isValidRate && ajax.fetching} />}
@@ -40,9 +45,10 @@ const CurrencyModal = () => {
 
                     {!currency.isDefault && (
                             <CurrencySettingsFields currency={currency}
-                                                isValidRate={isValidRate}
-                                                setIsValidRate={setIsValidRate}
-                                                setModalCurrency={setModalCurrency}
+                                                    isValidRate={isValidRate}
+                                                    setIsValidRate={setIsValidRate}
+                                                    setModalCurrency={setModalCurrency}
+                                                    defaultCurrency={defaultCurrency}
                             />
                         )
                     }
@@ -56,7 +62,7 @@ const CurrencyModal = () => {
 
 export default CurrencyModal;
 
-const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModalCurrency}) => {
+const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModalCurrency, defaultCurrency}) => {
     const updateCurrencyProp = (prop) => (e) => {
         setModalCurrency({...currency, [prop]:e.target.value});
     };
@@ -78,7 +84,7 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
             <div className="wpml-form-row wcml-co-exchange-rate">
                 <label htmlFor={"wcml_currency_options_rate_" + currency.code}>Exchange Rate</label>
                 <div className="wcml-co-set-rate">
-                    1 BRL = <input name="currency_options[rate]" size="5" type="number"
+                    1 {defaultCurrency.code} = <input name="currency_options[rate]" size="5" type="number"
                                    className="wcml-exchange-rate" min="0.01" step="0.01" value={currency.rate}
                                    data-message="Only numeric" id={"wcml_currency_options_rate_" + currency.code}
                                    onChange={onChangeRate}
@@ -194,16 +200,17 @@ const NewCurrencySelector = ({updateCurrencyProp}) => {
     const newCurrencies = getStoreProperty('newCurrencies');
 
     return (
-        <React.Fragment>
-            <label htmlFor="wcml_currency_select_new">Select currency</label>
-            <select name="wcml_currency_select_new"
+        <div className="wpml-form-row currency_code">
+            <label htmlFor="wcml_currency_select_">Select currency</label>
+            <select name="currency_options[code]"
+                    id="wcml_currency_options_code_"
                 onChange={updateCurrencyProp('code')}
             >
                 {
                     newCurrencies.map((currency) => <option key={currency.code} value={currency.code}>{currency.label}</option>)
                 }
             </select>
-        </React.Fragment>
+        </div>
     );
 };
 

@@ -20,9 +20,9 @@ const getFormattedPrice = (firstPart, secondPart, thirdPart) => (currency) => {
         .replace(/__DECIMALS_NUMBER__/, thirdPart.repeat(currency.num_decimals));
 };
 
-export const getCurrencyLabel = code => {
-    return getCurrencyData(code).label;
-}
+export const getCurrencyLabel = code => getCurrencyData(code).label;
+
+export const getCurrencySymbol = code => getCurrencyData(code).symbol;
 
 const getCurrencyData = code => {
     return wcmlMultiCurrency.allCurrencies.filter(currencyData => currencyData.code === code )[0];
