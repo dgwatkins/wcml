@@ -21,7 +21,6 @@ const CurrencyModal = () => {
     const ajax = createAjaxRequest('saveCurrency');
 
     const onSave = async () => {
-        console.log(currency);
         const result = await ajax.send(currency);
 
         if (result) {

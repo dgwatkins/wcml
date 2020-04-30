@@ -126,39 +126,14 @@ class Hooks implements \IWPML_Backend_Action {
 			return ! $gateway instanceof \WCML_Not_Supported_Payment_Gateway;
 		};
 
-		$defaultCurrency = wcml_get_woocommerce_currency_option();
-
-		$buildGateway = function( \WCML_Payment_Gateway $gateway ) use ( $isSupported, $defaultCurrency ) {
-
+		$buildGateway = function( \WCML_Payment_Gateway $gateway ) {
 			return $gateway->get_output_model();
-
-			return (object) [
-				'id'          => $gateway->get_id(),
-				'title'       => $gateway->get_title(),
-				'isSupported' => ! $gateway instanceof \WCML_Not_Supported_Payment_Gateway,
-				'settings'    => array_merge(
-					$gateway->get_settings(),
-					[ $defaultCurrency => [] ]
-				),
-			];
 		};
 
 		return wpml_collect( $this->getPaymentGateways()->get_gateways() )
 			->prioritize( $isSupported )
 			->map( $buildGateway )
 			->values();
-	}
-
-	/**
-	 * @todo: Move it as a dependency
-	 *
-	 * @return \WCML_Currencies_Payment_Gateways
-	 */
-	private function getPaymentGateways() {
-		/** @var \woocommerce_wpml */
-		global $woocommerce_wpml;
-
-		return $woocommerce_wpml->multi_currency->currencies_payment_gateways;
 	}
 
 	private function getStrings() {
@@ -217,5 +192,17 @@ class Hooks implements \IWPML_Backend_Action {
 			'labelCancel'           => __( 'Cancel', 'woocommerce-multilingual' ),
 			'labelSave'             => __( 'Save', 'woocommerce-multilingual' ),
 		];
+	}
+
+	/**
+	 * @todo: Move it as a dependency
+	 *
+	 * @return \WCML_Currencies_Payment_Gateways
+	 */
+	private function getPaymentGateways() {
+		/** @var \woocommerce_wpml */
+		global $woocommerce_wpml;
+
+		return $woocommerce_wpml->multi_currency->currencies_payment_gateways;
 	}
 }
