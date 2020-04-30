@@ -39,6 +39,47 @@ class Test_WCML_Multi_Currency_Shipping_FreeShipping extends OTGS_TestCase {
 		$this->assertSame( $result, $expectedDescription );
 	}
 
+	/**
+	 * @dataProvider dataProvider
+	 *
+	 * @test
+	 */
+	public function it_updates_minimal_order_amount( $currency, $expectedTitle, $expectedDescription ) {
+		$subject = $this->get_subject();
+
+		$amount = 10;
+		$expectedAmount = 20;
+		$currencyKey = is_string( $currency ) ? $currency : '';
+		$shipping = [
+			'min_amount_' . $currencyKey => $expectedAmount
+		];
+
+		$newAmount = $subject->getMinimalOrderAmountValue( $amount, $shipping, $currency );
+
+		$this->assertSame( $newAmount, $expectedAmount );
+	}
+
+	/**
+	 * @dataProvider dataProvider
+	 *
+	 * @test
+	 */
+	public function it_returns_shipping_cost_unchanged( $currency, $expectedTitle, $expectedDescription ) {
+		$subject = $this->get_subject();
+
+		$expectedCost = $cost = 10;
+
+		$rate = $this->getMockBuilder( 'WC_Shipping_Rate' )->disableOriginalConstructor()->getMock();
+		$rate->cost = $cost;
+
+		$newCost = $subject->getShippingCostValue( $rate, $currency );
+
+		$this->assertSame( $newCost, $expectedCost );
+	}
+
+	/**
+	 * @return array
+	 */
 	public function dataProvider() {
 		return [
 			['USD', 'Minimal order amount in USD', 'The minimal order amount if customer choose USD as a purchase currency.'],

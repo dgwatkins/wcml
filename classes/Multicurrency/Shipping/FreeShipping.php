@@ -33,6 +33,7 @@ class FreeShipping implements ShippingMode {
 	 * @return string
 	 */
 	private function getMinimalOrderAmountKey( $currencyCode ) {
+		$currencyCode = is_string( $currencyCode ) ? $currencyCode : '';
 		return sprintf( 'min_amount_%s', $currencyCode );
 	}
 
@@ -49,6 +50,9 @@ class FreeShipping implements ShippingMode {
 	}
 
 	public function getShippingCostValue( \WC_Shipping_Rate $rate, $currency ) {
+		if ( ! isset( $rate->cost ) ) {
+			$rate->cost = 0;
+		}
 		return apply_filters( 'wcml_free_shipping_manual_cost', $rate->cost, $rate, $currency);
 	}
 }
