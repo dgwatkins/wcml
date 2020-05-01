@@ -78,6 +78,18 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks extends OTGS_TestCase {
 	 * @test
 	 */
 	public function fields_added_to_flat_rate() {
+		$wcShippingClass = new stdClass();
+		$wcShippingClass->term_id = 'foo';
+		$wcShippingClass->name    = 'bar';
+		$wcShippingClasses = [ $wcShippingClass ];
+
+		$WC = $this->getMockBuilder( 'WC' )->disableOriginalConstructor()->setMethods( [ 'shipping', 'get_shipping_classes' ] )->getMock();
+		$WC->method( 'shipping' )->willReturnSelf();
+		$WC->method( 'get_shipping_classes' )->willReturn( $wcShippingClasses );
+		WP_Mock::userFunction( 'WC', [
+			'return' => $WC
+		] );
+
 		$wcml_multi_currency = $this->get_wcml_multi_currency_mock();
 		$wcml_multi_currency->expects( $this->atLeastOnce() )
 		                    ->method( 'get_currency_codes' )

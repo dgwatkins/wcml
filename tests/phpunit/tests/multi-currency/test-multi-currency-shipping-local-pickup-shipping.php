@@ -18,6 +18,14 @@ class Test_WCML_Multi_Currency_Shipping_LocalPickupShipping extends OTGS_TestCas
 	}
 
 	/**
+	 * @test
+	 */
+	public function it_does_NOT_support_shipping_classes() {
+		$subject = $this->get_subject();
+		$this->assertFalse( $subject instanceof WCML\Multicurrency\Shipping\ShippingClassesMode );
+	}
+
+	/**
 	 * @dataProvider dataProvider
 	 *
 	 * @test
@@ -86,6 +94,28 @@ class Test_WCML_Multi_Currency_Shipping_LocalPickupShipping extends OTGS_TestCas
 		$newCost = $subject->getShippingCostValue( $rate, $currency );
 
 		$this->assertSame( $newCost, $expectedCost );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_returns_value_for_getShippingClassCostValue() {
+		$subject = $this->get_subject();
+		$rate = new stdClass();
+		$rate->cost = 10;
+
+		$this->assertEquals( 10, $subject->getShippingClassCostValue( $rate, 'PLN', 'class_cost_24' ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_returns_value_for_getNoShippingClassCostValue() {
+		$subject = $this->get_subject();
+		$rate = new stdClass();
+		$rate->cost = 10;
+
+		$this->assertEquals( 10, $subject->getNoShippingClassCostValue( $rate, 'PLN', 'class_cost_24' ) );
 	}
 
 	/**

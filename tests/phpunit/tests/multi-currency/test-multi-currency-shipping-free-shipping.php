@@ -18,6 +18,14 @@ class Test_WCML_Multi_Currency_Shipping_FreeShipping extends OTGS_TestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function it_does_NOT_support_shipping_classes() {
+		$subject = $this->get_subject();
+		$this->assertFalse( $subject instanceof WCML\Multicurrency\Shipping\ShippingClassesMode );
+	}
+
+	/**
 	 * @dataProvider dataProvider
 	 *
 	 * @test

@@ -32,14 +32,10 @@ class UnsupportedShipping implements ShippingMode {
 		// TODO: Implement getMinAmountKey() method.
 	}
 
-	public function getShippingCostValue( \WC_Shipping_Rate $rate, $currency ) {
+	public function getShippingCostValue( $rate, $currency ) {
 		if ( ! isset( $rate->cost ) ) {
 			$rate->cost = 0;
 		}
 		return $rate->cost;
-	}
-
-	public function isManualPricingEnabled( $instance = false ) {
-		return false;
 	}
 }
