@@ -2,7 +2,7 @@
 
 namespace WCML\Multicurrency\Shipping;
 
-class AdminHooksFactory implements \IWPML_Deferred_Action_Loader, \IWPML_Backend_Action_Loader {
+class ShippingHooksFactory implements \IWPML_Deferred_Action_Loader, \IWPML_Backend_Action_Loader, \IWPML_Frontend_Action_Loader {
 
 	public function get_load_action() {
 		return 'init';
@@ -14,9 +14,12 @@ class AdminHooksFactory implements \IWPML_Deferred_Action_Loader, \IWPML_Backend
 
 		if ( wcml_is_multi_currency_on()
 		     && $this->hasAdditionalCurrencyDefined()
-		     && $this->isShippingPageRequest()
 		) {
-			return new AdminHooks( $woocommerce_wpml->get_multi_currency() );
+			if ( $this->isShippingPageRequest() ) {
+				return new AdminHooks( $woocommerce_wpml->get_multi_currency() );
+			} else {
+				return new FrontEndHooks( $woocommerce_wpml->get_multi_currency() );
+			}
 		}
 
 		return null;

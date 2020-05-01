@@ -14,9 +14,9 @@ class AdminHooks implements IWPML_Action {
 	/**
 	 * AdminHooks constructor.
 	 *
-	 * @param WCML_Multi_Currency $wcmlMultiCurrency
+	 * @param \WCML_Multi_Currency $wcmlMultiCurrency
 	 */
-	public function __construct( WCML_Multi_Currency $wcmlMultiCurrency ) {
+	public function __construct( \WCML_Multi_Currency $wcmlMultiCurrency ) {
 		$this->wcmlMultiCurrency = $wcmlMultiCurrency;
 	}
 
@@ -59,20 +59,19 @@ class AdminHooks implements IWPML_Action {
 		$field = $this->addTitleField( $field );
 		$field = $this->addEnableField( $field );
 		$field = $this->addCurrenciesFields( $field, $shippingMode );
-		if ( $shippingMode->supportsShippingClasses() ) {
-			$field = ( new ShippingClasses() )->addShippingClassesFields( $field, $this->wcmlMultiCurrency );
+		if ( $shippingMode instanceof ShippingClassesMode ) {
+			$field = ShippingClasses::addFields( $field, $this->wcmlMultiCurrency );
 		}
 		return $field;
 	}
 
 	private function addTitleField( $field ) {
-		$title_field = [
+		$field[ 'wcml_shipping_costs_title' ] = [
 			'title'       => __( 'Costs and values in custom currencies', 'woocommerce-multilingual' ),
 			'type'        => 'title',
 			'default'     => '',
 			'description' => __( 'Woocommerce Mulitlingual by default will multiply all your costs and values defined above by currency exchange rates. If you don\'t want this and you prefer static values instead, you can define them here.', 'woocommerce-multilingual' ),
 		];
-		$field[ 'wcml_shipping_costs_title' ] = $title_field;
 		return $field;
 	}
 
