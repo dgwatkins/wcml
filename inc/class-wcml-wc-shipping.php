@@ -258,17 +258,6 @@ class WCML_WC_Shipping {
 	 * @return string
 	 */
 	public function get_original_shipping_class_rate( $rate, $class_name, $shipping_method ) {
-		if ( 'class_cost_' === substr( $class_name, 0, 11 ) ) {
-			$currentCurrency = (new WCML_Multi_Currency)->get_client_currency();
-			$defaultCurrency = (new WCML_Multi_Currency)->get_default_currency();
-			if ( $currentCurrency !== $defaultCurrency ) {
-				$original_class_id = $this->sitepress->term_translations()->get_original_element( substr( $class_name, 11 ) );
-				if ( $original_class_id && isset( $shipping_method->instance_settings[ 'class_cost_' . $original_class_id ] ) ) {
-					return $shipping_method->instance_settings[ 'class_cost_' . $original_class_id . '_' . $currentCurrency ];
-				}
-
-			}
-		}
 		if ( ! $rate && 'class_cost_' === substr( $class_name, 0, 11 ) ) {
 			$original_class_id = $this->sitepress->term_translations()->get_original_element( substr( $class_name, 11 ) );
 			if ( $original_class_id && isset( $shipping_method->instance_settings[ 'class_cost_' . $original_class_id ] ) ) {
