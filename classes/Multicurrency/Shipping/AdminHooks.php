@@ -56,8 +56,23 @@ class AdminHooks implements IWPML_Action {
 	 * @return array
 	 */
 	private function addCurrencyShippingFieldsToShippingMethodForm( array $field, ShippingMode $shippingMode ) {
+		$field = $this->addTitleField( $field );
 		$field = $this->addEnableField( $field );
 		$field = $this->addCurrenciesFields( $field, $shippingMode );
+		if ( $shippingMode->supportsShippingClasses() ) {
+			$field = $this->addShippingClassesFields( $field );
+		}
+		return $field;
+	}
+
+	private function addTitleField( $field ) {
+		$title_field = [
+			'title'       => __( 'Costs and values in custom currencies', 'woocommerce-multilingual' ),
+			'type'        => 'title',
+			'default'     => '',
+			'description' => __( 'Woocommerce Mulitlingual by default will multiply all your costs and values defined above by currency exchange rates. If you don\'t want this and you prefer static values instead, you can define them here.', 'woocommerce-multilingual' ),
+		];
+		$field[ 'wcml_shipping_costs_title' ] = $title_field;
 		return $field;
 	}
 
@@ -123,6 +138,41 @@ class AdminHooks implements IWPML_Action {
 
 			$field[ $fieldKey] = $fieldValue;
 		}
+		return $field;
+	}
+
+	protected function addShippingClassesFields( $field ) {
+		$shippingClasses = WC()->shipping()->get_shipping_classes();
+		if ( ! empty( $shippingClasses ) ) {
+			foreach ( $this->wcmlMultiCurrency->get_currency_codes() as $currencyCode ) {
+				if ( $this->wcmlMultiCurrency->get_default_currency() === $currencyCode ) {
+					continue;
+				}
+				foreach ( $shippingClasses as $shippingClass ) {
+					$field = $this->getShippingClassField( $field, $shippingClass, $currencyCode );
+				}
+				$field = $this->getNoShippingClassField( $field, $currencyCode );
+			}
+		}
+		return $field;
+	}
+
+	protected function getShippingClassField( $field, $shippingClass, $currencyCode ) {
+		$field[ 'class_cost_' . $shippingClass->term_id . '_' . $currencyCode ] = array(
+			'title'             => sprintf( __( '"%s" shipping class cost in %s', 'woocommerce-multilingual' ), esc_html( $shippingClass->name ), esc_html( $currencyCode ) ),
+			'type'              => 'text',
+			'placeholder'       => __( 'N/A', 'woocommerce-multilingual' ),
+		);
+		return $field;
+	}
+
+	protected function getNoShippingClassField( $field, $currencyCode ) {
+		$field[ 'no_class_cost_' . $currencyCode ] = array(
+			'title'             => sprintf( __( 'No shipping class cost in %s', 'woocommerce-multilingual' ), esc_html( $currencyCode ) ),
+			'type'              => 'text',
+			'placeholder'       => __( 'N/A', 'woocommerce-multilingual' ),
+			'default'           => '',
+		);
 		return $field;
 	}
 

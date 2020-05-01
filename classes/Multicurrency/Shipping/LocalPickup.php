@@ -9,4 +9,8 @@ class LocalPickup implements ShippingMode {
 	public function getMethodId() {
 		return 'local_pickup';
 	}
+
+	public function supportsShippingClasses() {
+		return false;
+	}
 }

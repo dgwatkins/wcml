@@ -34,4 +34,8 @@ class UnsupportedShipping implements ShippingMode {
 	public function isManualPricingEnabled( $instance = false ) {
 		return false;
 	}
+
+	public function supportsShippingClasses() {
+		return false;
+	}
 }

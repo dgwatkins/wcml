@@ -73,4 +73,11 @@ interface ShippingMode {
 	 * @return bool
 	 */
 	public function isManualPricingEnabled( $instance );
+
+	/**
+	 * Returns true if shipping mode can display shipping classes costs.
+	 *
+	 * @return bool
+	 */
+	public function supportsShippingClasses();
 }
