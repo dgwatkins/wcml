@@ -13,7 +13,6 @@ embedded/
 build/vendor/
 tests/phpunit/vendor/
 vendor/**
-dist/**
 node_modules
 
 /build/dist
