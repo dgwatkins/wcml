@@ -279,20 +279,20 @@ class WCML_Multi_Currency_UI extends WCML_Templates_Factory {
 			'current_currency' => current( array_diff( array_keys( $this->wc_currencies ), array_keys( $this->currencies ), [ $this->wc_currency ] ) ),
 		];
 
-		new WCML_Custom_Currency_Options( $args, $this->woocommerce_wpml );
-
-		foreach ( $this->currencies as $code => $currency ) {
-			$args['currency_code']   = $code;
-			$args['currency_name']   = $args['wc_currencies'][ $args['currency_code'] ];
-			$args['currency_symbol'] = get_woocommerce_currency_symbol( $args['currency_code'] );
-			$args['currency']        = $currency;
-			$args['title']           = sprintf( __( 'Currency settings for %s', 'woocommerce-multilingual' ), $args['currency_name'] . ' (' . $args['currency_symbol'] . ')' );
-
-			$args['current_currency'] = $args['currency_code'];
-
-			new WCML_Custom_Currency_Options( $args, $this->woocommerce_wpml );
-
-		}
+//		new WCML_Custom_Currency_Options( $args, $this->woocommerce_wpml );
+//
+//		foreach ( $this->currencies as $code => $currency ) {
+//			$args['currency_code']   = $code;
+//			$args['currency_name']   = $args['wc_currencies'][ $args['currency_code'] ];
+//			$args['currency_symbol'] = get_woocommerce_currency_symbol( $args['currency_code'] );
+//			$args['currency']        = $currency;
+//			$args['title']           = sprintf( __( 'Currency settings for %s', 'woocommerce-multilingual' ), $args['currency_name'] . ' (' . $args['currency_symbol'] . ')' );
+//
+//			$args['current_currency'] = $args['currency_code'];
+//
+//			new WCML_Custom_Currency_Options( $args, $this->woocommerce_wpml );
+//
+//		}
 
 	}
 
