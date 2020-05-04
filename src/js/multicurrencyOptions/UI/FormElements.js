@@ -23,5 +23,9 @@ export const InputRow = ({onChange, label, attrs, tooltip}) => {
 };
 
 export const getTooltip = tooltip => {
-    return tooltip && <Tooltip title={tooltip}> <i className="wcml-tip otgs-ico-help" /></Tooltip>;
+    return tooltip && <Tooltip title={allowBreakRules(tooltip)}> <i className="wcml-tip otgs-ico-help" /></Tooltip>;
+};
+
+const allowBreakRules = (string) => {
+    return <div dangerouslySetInnerHTML={{__html:string}}/>;
 };
