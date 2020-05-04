@@ -11,4 +11,10 @@ class Config {
 			$woocommerce_wpml,
 		];
 	}
+
+	public static function getSharedClasses() {
+		return [
+			\WCML_Currencies_Payment_Gateways::class,
+		];
+	}
 }

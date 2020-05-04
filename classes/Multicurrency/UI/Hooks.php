@@ -4,9 +4,16 @@ namespace WCML\Multicurrency\UI;
 
 use WPML\Collect\Support\Collection;
 
-class Hooks implements \IWPML_Backend_Action {
+class Hooks implements \IWPML_Backend_Action, \IWPML_DIC_Action {
 
 	const HANDLE = 'wcml-multicurrency-options';
+
+	/** @var \WCML_Currencies_Payment_Gateways $currenciesPaymentGateways */
+	private $currenciesPaymentGateways;
+
+	public function __construct( \WCML_Currencies_Payment_Gateways $currenciesPaymentGateways ) {
+		$this->currenciesPaymentGateways = $currenciesPaymentGateways;
+	}
 
 	public function add_hooks() {
 		add_action( 'admin_enqueue_scripts', [ $this, 'loadJs' ] );
@@ -207,15 +214,10 @@ class Hooks implements \IWPML_Backend_Action {
 	}
 
 	/**
-	 * @todo: Move it as a dependency
-	 *
 	 * @return \WCML_Currencies_Payment_Gateways
 	 */
 	private function getPaymentGateways() {
-		/** @var \woocommerce_wpml */
-		global $woocommerce_wpml;
-
-		return $woocommerce_wpml->multi_currency->currencies_payment_gateways;
+		return $this->currenciesPaymentGateways;
 	}
 
 	/**
