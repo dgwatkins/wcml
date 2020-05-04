@@ -132,7 +132,7 @@ class TestHooks extends \OTGS_TestCase {
 		           ->disableOriginalConstructor()
 		           ->setMethods( [ 'get_countries' ] )
 		           ->getMock();
-		
+
 		$WC->countries->method( 'get_countries' )->willReturn( $this->getCountriesList() );
 
 		$integrations                        = [];
@@ -319,7 +319,7 @@ class TestHooks extends \OTGS_TestCase {
 
 		return $gateway;
 	}
-	
+
 	private function getCountriesList(){
 		return [
 			'AF' => 'Afghanistan',
