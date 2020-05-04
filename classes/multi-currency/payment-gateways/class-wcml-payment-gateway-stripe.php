@@ -5,8 +5,7 @@
  */
 class WCML_Payment_Gateway_Stripe extends WCML_Payment_Gateway {
 
-	const TEMPLATE = 'stripe.twig';
-	const ID       = 'stripe';
+	const ID = 'stripe';
 
 	public function get_output_model() {
 		return [
@@ -21,10 +20,6 @@ class WCML_Payment_Gateway_Stripe extends WCML_Payment_Gateway {
 				'labelLiveSecretKey'      => __( 'Live Secret Key', 'woocommerce-multilingual' ),
 			],
 		];
-	}
-
-	protected function get_output_template() {
-		return self::TEMPLATE;
 	}
 
 	public function add_hooks() {
