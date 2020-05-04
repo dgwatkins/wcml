@@ -5,8 +5,6 @@
  */
 class WCML_Payment_Gateway_Bacs extends WCML_Payment_Gateway {
 
-	const TEMPLATE = 'bacs.twig';
-
 	public function get_output_model() {
 		return [
 			'id'          => $this->get_id(),
@@ -21,10 +19,6 @@ class WCML_Payment_Gateway_Bacs extends WCML_Payment_Gateway {
 				'optionAllIn'      => __( 'All in selected currency', 'woocommerce-multilingual' ),
 			],
 		];
-	}
-
-	protected function get_output_template() {
-		return self::TEMPLATE;
 	}
 
 	public function add_hooks() {

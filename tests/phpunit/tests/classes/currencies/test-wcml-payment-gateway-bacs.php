@@ -29,11 +29,7 @@ class Test_WCML_Payment_Gateway_Bacs extends OTGS_TestCase {
 			));
 		}
 
-		$template_service = $this->getMockBuilder( 'IWPML_Template_Service' )
-		                         ->disableOriginalConstructor()
-		                         ->getMock();
-
-		return new WCML_Payment_Gateway_Bacs( $gateway, $template_service, $this->woocommerce_wpml );
+		return new WCML_Payment_Gateway_Bacs( $gateway, $this->woocommerce_wpml );
 	}
 
 	/**

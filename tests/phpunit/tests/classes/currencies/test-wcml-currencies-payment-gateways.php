@@ -163,10 +163,6 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 
 		$client_currency = 'USD';
 
-		$template_service = $this->getMockBuilder( 'IWPML_Template_Service' )
-		                         ->disableOriginalConstructor()
-		                         ->getMock();
-
 		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
 		                                               ->disableOriginalConstructor()
 		                                               ->setMethods( [ 'get_client_currency' ] )
@@ -192,12 +188,8 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 			'return' => [],
 		] );
 
-		$wcml_not_supported_payment_gateway = new WCML_Not_Supported_Payment_Gateway( $not_supported_gateway, $template_service, $this->woocommerce_wpml );
-		$wcml_paypal_payment_gateway        = new WCML_Payment_Gateway_PayPal( $paypal_gateway, $template_service, $this->woocommerce_wpml );
-
-		$twig = \Mockery::mock( 'overload:WPML_Twig_Template_Loader' );
-		$twig->shouldReceive( 'get_template' )
-		     ->andReturn( $template_service );
+		$wcml_not_supported_payment_gateway = new WCML_Not_Supported_Payment_Gateway( $not_supported_gateway, $this->woocommerce_wpml );
+		$wcml_paypal_payment_gateway        = new WCML_Payment_Gateway_PayPal( $paypal_gateway, $this->woocommerce_wpml );
 
 		$wc               = \Mockery::mock( 'overload:WC' );
 		$payment_gateways = \Mockery::mock( 'overload:WC_Payment_Gateways' );
@@ -272,15 +264,7 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 			'return' => $gateway->settings,
 		] );
 
-		$template_service = $this->getMockBuilder( 'IWPML_Template_Service' )
-		                         ->disableOriginalConstructor()
-		                         ->getMock();
-
 		$available_payment_gateways[ $gateway->id ] = $gateway;
-
-		$twig = \Mockery::mock( 'overload:WPML_Twig_Template_Loader' );
-		$twig->shouldReceive( 'get_template' )
-		     ->andReturn( $template_service );
 
 		$wc               = \Mockery::mock( 'overload:WC' );
 		$payment_gateways = \Mockery::mock( 'overload:WC_Payment_Gateways' );
@@ -332,15 +316,7 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 
 		$this->woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
 
-		$template_service = $this->getMockBuilder( 'IWPML_Template_Service' )
-		                         ->disableOriginalConstructor()
-		                         ->getMock();
-
 		$available_payment_gateways[ $gateway->id ] = $gateway;
-
-		$twig = \Mockery::mock( 'overload:WPML_Twig_Template_Loader' );
-		$twig->shouldReceive( 'get_template' )
-		     ->andReturn( $template_service );
 
 		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', [
 			'return' => $client_currency,

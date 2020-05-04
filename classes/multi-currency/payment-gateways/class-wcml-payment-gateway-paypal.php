@@ -5,7 +5,6 @@
  */
 class WCML_Payment_Gateway_PayPal extends WCML_Payment_Gateway {
 
-	const TEMPLATE             = 'paypal.twig';
 	const ID                   = 'paypal';
 	const SUPPORTED_CURRENCIES = [
 		'AUD',
@@ -50,10 +49,6 @@ class WCML_Payment_Gateway_PayPal extends WCML_Payment_Gateway {
 				'tooltipNotSupported' => __( 'This gateway does not support %s. To show this gateway please select another currency.', 'woocommerce-multilingual' ),
 			],
 		];
-	}
-
-	protected function get_output_template() {
-		return self::TEMPLATE;
 	}
 
 	/**

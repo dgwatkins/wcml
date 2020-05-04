@@ -18,4 +18,13 @@ class TestConfig extends \WCML_UnitTestCase {
 			$this->assertSame( $instance, make( $class ) );
 		}
 	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldShareClasses() {
+		foreach ( Config::getSharedClasses() as $class ) {
+			$this->assertSame( make( $class ), make( $class ) );
+		}
+	}
 }
