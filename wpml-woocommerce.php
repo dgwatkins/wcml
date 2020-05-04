@@ -72,6 +72,7 @@ if ( WPML_Core_Version_Check::is_ok( WCML_PLUGIN_PATH . '/wpml-dependencies.json
  */
 function wcml_loader() {
 	\WPML\Container\share( \WCML\Container\Config::getSharedInstances() );
+	\WPML\Container\share( \WCML\Container\Config::getSharedClasses() );
 
 	$xdomain_data = new WCML_xDomain_Data( new WPML_Cookie() );
 	$xdomain_data->add_hooks();
@@ -87,6 +88,7 @@ function wcml_loader() {
 		\WCML\Tax\Strings\Hooks::class,
 		\WCML\AdminDashboard\Hooks::class,
 		\WCML\AdminNotices\Review::class,
+		\WCML\Multicurrency\UI\Factory::class,
 	];
 
 	if (

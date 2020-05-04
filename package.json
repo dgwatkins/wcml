@@ -2,7 +2,8 @@
     "name": "woocommerce-multilingual",
     "license": "MIT",
     "scripts": {
-        "build:dev": "webpack --mode development",
+        "build:dev": "webpack --env.production=false --mode development",
+        "build:watch": "webpack --env.production=false --mode development --watch",
         "build:prod": "webpack -p --env production --mode production",
         "test": "jest"
     },
@@ -23,13 +24,17 @@
         }
     },
     "dependencies": {
+        "@wordpress/babel-plugin-makepot": "^3.4.0",
         "@wordpress/hooks": "^2.0.3",
+        "antd": "^4.2.4",
         "classnames": "~2.2.0",
         "collect.js": "^4.12.5",
         "cross-fetch": "~1.1.0",
         "crypto-js": "~3.1.9-1",
+        "easy-peasy": "^3.3.0",
         "fetch": "^1.1.0",
         "file-saver": "^2.0.0",
+        "immer": "^6.0.3",
         "jest-dom": "^3.4.0",
         "jest-each": "^23.6.0",
         "jquery": "*",
@@ -46,7 +51,6 @@
         "react-syntax-highlighter": "^10.1.2",
         "react-tabs": "^3.0.0",
         "redux": "~4.0.0",
-        "sprintf-js": "^1.1.1",
         "tippy.js": "~2.2.0",
         "url-polyfill": "^1.1.3",
         "wpml-common-js-source": "git+ssh://git@git.onthegosystems.com:10022/wpml-packages/wpml-common-js-source.git"

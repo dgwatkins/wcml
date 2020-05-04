@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "41cfc8364c0e82b6f016f3d0dc5f1815",
+    "content-hash": "4aa1d369de2d78d03eb31e295c35c242",
     "packages": [
         {
             "name": "composer/installers",
@@ -5038,6 +5038,33 @@
             "time": "2019-09-26T02:56:31+00:00"
         },
         {
+            "name": "wpml/fp",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://git.onthegosystems.com/wpml-packages/fp.git",
+                "reference": "0ef1445eacaffc8dcddcebaa84f0358d6f2b9b6e"
+            },
+            "require-dev": {
+                "lucatume/function-mocker": "~1.0",
+                "phpunit/phpunit": "^5",
+                "wpml/collect": "dev-wpml-collect-rename"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "core"
+                ],
+                "files": [
+                    "core/functions.php",
+                    "core/strings_functions.php",
+                    "core/system.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "time": "2020-05-19T00:56:41+00:00"
+        },
+        {
             "name": "wpml/page-builders-gutenberg",
             "version": "dev-develop",
             "source": {
@@ -5081,6 +5108,40 @@
             "time": "2020-05-14T11:55:57+00:00"
         },
         {
+            "name": "wpml/wp",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://git.onthegosystems.com/wpml-packages/wp.git",
+                "reference": "2395597d991cc3753b286cf1b78a4a14b7537893"
+            },
+            "require-dev": {
+                "antecedent/patchwork": "^2.0",
+                "otgs/unit-tests-framework": "~1.2.0",
+                "wpml/collect": "dev-wpml-collect-rename",
+                "wpml/fp": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "classes/"
+                ],
+                "files": []
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bruce Pearson",
+                    "email": "bruce@onthegosystems.com"
+                }
+            ],
+            "description": "Class and utilities to interface with WordPress from WPML",
+            "time": "2020-05-13T02:16:17+00:00"
+        },
+        {
             "name": "xrstf/composer-php52",
             "version": "v1.0.20",
             "source": {
@@ -5121,7 +5182,9 @@
         "otgs/wp-plugin-version": 20,
         "roave/security-advisories": 20,
         "wpml/collect": 20,
-        "wpml/page-builders-gutenberg": 20
+        "wpml/fp": 20,
+        "wpml/page-builders-gutenberg": 20,
+        "wpml/wp": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

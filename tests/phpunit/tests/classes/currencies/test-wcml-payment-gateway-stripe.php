@@ -31,12 +31,7 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 			));
 		}
 
-		$template_service = $this->getMockBuilder( 'IWPML_Template_Service' )
-		                         ->disableOriginalConstructor()
-		                         ->getMock();
-
-
-		return new WCML_Payment_Gateway_Stripe( $gateway, $template_service, $this->woocommerce_wpml );
+		return new WCML_Payment_Gateway_Stripe( $gateway, $this->woocommerce_wpml );
 	}
 
 	/**
@@ -60,13 +55,16 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 			'return' => 'USD'
 		));
 
-		$active_currencies = array( 'USD' => array(), 'UAH' => array() );
+		WP_Mock::userFunction( 'get_woocommerce_currencies', [
+			'return' => [ 'USD' => [], 'UAH' => [] ],
+		] );
+
 		$expected_currencies_details = array(
 			'USD' => array( 'publishable_key' => 'publishable_key', 'secret_key' => 'secret_key' ),
 			'UAH' => array( 'publishable_key' => '', 'secret_key' => '' )
 		);
 
-		$this->assertSame( $expected_currencies_details, $subject->get_currencies_details( $active_currencies ) );
+		$this->assertEquals( $expected_currencies_details, $subject->get_currencies_details() );
 	}
 
 	/**
@@ -177,6 +175,53 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 		$filtered_settings = WCML_Payment_Gateway_Stripe::filter_stripe_settings( $settings );
 
 		$this->assertSame( $expected_settings, $filtered_settings );
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3178
+	 */
+	public function it_should_get_output_model() {
+		$defaultCurrency = 'USD';
+		$wcCurrencies    = [
+			$defaultCurrency => 'US Dollar',
+			'UAD'            => 'United Arab Emirate Dirham',
+		];
+
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option' )
+			->andReturn( $defaultCurrency );
+
+		\WP_Mock::userFunction( 'get_woocommerce_currencies' )
+			->andReturn( $wcCurrencies );
+
+		\WP_Mock::passthruFunction( 'remove_filter' );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals(
+			[
+				'id'          => 'id',
+				'title'       => 'title',
+				'isSupported' => true,
+				'settings'    => [
+					$defaultCurrency => [
+						'publishable_key' => 'publishable_key',
+						'secret_key'      => 'secret_key',
+					],
+					'UAD' => [
+						'publishable_key' => '',
+						'secret_key'      => '',
+					],
+				],
+				'tooltip'     => '',
+				'strings'     => [
+					'labelCurrency'           => 'Currency',
+					'labelLivePublishableKey' => 'Live Publishable Key',
+					'labelLiveSecretKey'      => 'Live Secret Key',
+				],
+			],
+			$subject->get_output_model()
+		);
 	}
 
 }
