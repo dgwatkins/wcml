@@ -3,7 +3,7 @@ import {capitalize, triggerActiveCurrenciesChange} from "./Utils";
 import * as R from 'ramda';
 import {original} from 'immer';
 
-const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => createStore({
+const initStore = ({activeCurrencies, allCurrencies, languages, gateways, mode}) => createStore({
     activeCurrencies: activeCurrencies,
     allCurrencies: allCurrencies,
     languages: languages,
@@ -61,6 +61,10 @@ const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => cr
     updating: false,
     setUpdating: action((state, updating) => {
         state.updating = updating;
+    }),
+    mode: mode,
+    setMode: action((state, mode) => {
+       state.mode = mode;
     }),
 });
 

@@ -34,6 +34,7 @@ class WCML_Multi_Currency_Configuration {
 
 			add_action( 'wp_ajax_wcml_update_currency_lang', [ __CLASS__, 'update_currency_lang' ] );
 			add_action( 'wp_ajax_wcml_update_default_currency', [ __CLASS__, 'update_default_currency_ajax' ] );
+			add_action( 'wp_ajax_wcml_set_currency_mode', [ __CLASS__, 'set_currency_mode' ] );
 
 		}
 
@@ -267,6 +268,15 @@ class WCML_Multi_Currency_Configuration {
 		$settings['currency_options'][ $data['code'] ]['languages'][ $data['lang'] ] = (int) $data['value'];
 
 		self::$woocommerce_wpml->update_settings( $settings );
+		wp_send_json_success();
+	}
+
+	public static function set_currency_mode() {
+		self::verify_nonce();
+		$data = self::get_data();
+
+		update_option( 'wcml_currency_mode', $data['mode'] );
+
 		wp_send_json_success();
 	}
 

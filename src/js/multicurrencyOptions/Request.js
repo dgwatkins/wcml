@@ -49,11 +49,21 @@ const buildSaveCurrencyPayload = (currency) => {
     );
 };
 
+const buildSetCurrencyModePayload = (mode) => {
+    return buildPayload(
+        'wcml_set_currency_mode',
+        {
+            mode:mode,
+        }
+    )
+}
+
 const payloadBuilders = {
     currencyForLang: buildCurrencyForLangPayload,
     defaultCurrencyForLang: buildDefaultCurrencyForLangPayload,
     deleteCurrency: buildDeleteCurrencyPayload,
     saveCurrency: buildSaveCurrencyPayload,
+    setCurrencyMode: buildSetCurrencyModePayload,
 };
 
 export const createAjaxRequest = (endpoint) => {

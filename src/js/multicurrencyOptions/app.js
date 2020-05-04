@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
         allCurrencies: wcmlMultiCurrency.allCurrencies,
         languages: wcmlMultiCurrency.languages,
         gateways: wcmlMultiCurrency.gateways,
+        mode: wcmlMultiCurrency.mode,
     });
 
     ReactDOM.render(

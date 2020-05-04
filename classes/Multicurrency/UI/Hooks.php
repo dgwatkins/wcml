@@ -43,6 +43,7 @@ class Hooks implements \IWPML_Backend_Action, \IWPML_DIC_Action {
 					'languages'         => $this->getLanguages(),
 					'gateways'          => $gateways->toArray(),
 					'strings'           => $this->getStrings(),
+					'mode'              => get_option( 'wcml_currency_mode', 'by_language' ),
 				]
 			);
 
