@@ -91,6 +91,7 @@ function wcml_loader() {
 		\WCML\Tax\Strings\Hooks::class,
 		\WCML\AdminDashboard\Hooks::class,
 		\WCML\AdminNotices\Review::class,
+		\WCML\Multicurrency\UI\Hooks::class,
 	];
 
 	if (
