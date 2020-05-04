@@ -6,7 +6,7 @@ trait VariableCost {
 	/**
 	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getFieldTitle
 	 *
-	 * @param $currencyCode
+	 * @param string $currencyCode
 	 *
 	 * return string
 	 */
@@ -21,7 +21,7 @@ trait VariableCost {
 	/**
 	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getFieldDescription
 	 *
-	 * @param $currencyCode
+	 * @param string $currencyCode
 	 *
 	 * @return string
 	 */
@@ -45,7 +45,7 @@ trait VariableCost {
 	/**
 	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getSettingsFormKey
 	 *
-	 * @param $currencyCode
+	 * @param string $currencyCode
 	 *
 	 * @return string
 	 */
@@ -56,9 +56,9 @@ trait VariableCost {
 	/**
 	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getMinimalOrderAmountValue
 	 *
-	 * @param $amount
-	 * @param $shipping
-	 * @param $currency
+	 * @param integer|float|string $amount   The value as saved for original language.
+	 * @param array                $shipping The shipping metadata.
+	 * @param string               $currency Currency code.
 	 *
 	 * @return mixed
 	 */
@@ -70,7 +70,7 @@ trait VariableCost {
 	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getShippingCostValue
 	 *
 	 * @param \WC_Shipping_Rate $rate
-	 * @param $currency
+	 * @param string            $currency
 	 *
 	 * @return int|mixed|string
 	 */
@@ -93,7 +93,7 @@ trait VariableCost {
 	/**
 	 * @see \WCML\Multicurrency\Shipping\ShippingMode::isManualPricingEnabled
 	 *
-	 * @param $instance
+	 * @param \WC_Shipping_Rate $instance
 	 *
 	 * @return mixed
 	 */
@@ -104,8 +104,8 @@ trait VariableCost {
 	/**
 	 * Returns shipping data from wp_options table.
 	 *
-	 * @param $methodId
-	 * @param $instanceId
+	 * @param string $methodId
+	 * @param int    $instanceId
 	 *
 	 * @return bool|mixed|void|null
 	 */
