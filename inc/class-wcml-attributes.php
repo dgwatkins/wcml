@@ -45,10 +45,10 @@ class WCML_Attributes {
 		add_action( 'init', [ $this, 'init' ] );
 
 		add_filter(
-			'wpml_translation_job_post_meta_value_translated',
+			'wpml_tm_job_field_is_translatable',
 			[
 				$this,
-				'filter_product_attributes_for_translation',
+				'set_custom_product_attributes_as_translatable_for_tm_job',
 			],
 			10,
 			2
@@ -528,11 +528,19 @@ class WCML_Attributes {
 		return $attribute;
 	}
 
-	public function filter_product_attributes_for_translation( $translated, $key ) {
-		$translated = $translated
-			? preg_match( '#^(?!field-_product_attributes-(.+)-(.+)-(?!value|name))#', $key ) : 0;
+	/**
+	 * @param int|bool $translatable
+	 * @param array $job_translate
+	 *
+	 * @return bool|int
+	 */
+	public function set_custom_product_attributes_as_translatable_for_tm_job( $translatable, $job_translate ) {
 
-		return $translated;
+		if ( 'wc_attribute' === substr( $job_translate['field_type'], 0, 12 ) ) {
+			return true;
+		}
+
+		return $translatable;
 	}
 
 	public function icl_custom_tax_sync_options() {
