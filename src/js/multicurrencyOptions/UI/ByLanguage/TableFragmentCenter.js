@@ -4,6 +4,7 @@ import {createAjaxRequest} from "../../Request";
 import strings from "../../Strings";
 import {sprintf} from "wpml-common-js-source/src/i18n";
 import {getCurrencyLabel} from "../../Utils";
+import {Spinner} from "../FormElements";
 
 const TableFragmentCenter = () => {
     const activeCurrencies = getStoreProperty('activeCurrencies');
@@ -62,9 +63,6 @@ const Cell = ({language, currency}) => {
         getCurrencyLabel(currency.code)
     );
 
-    const linkClass = ajax.fetching ? 'spinner' : (isEnabled ? "otgs-ico-yes" : "otgs-ico-no");
-    const linkStyle = ajax.fetching ? {visibility: 'visible', margin: 0} : {};
-
     const onClick = async (event) => {
         event.preventDefault();
 
@@ -85,13 +83,18 @@ const Cell = ({language, currency}) => {
     return <td className="currency_languages">
                 <ul>
                     <li className="on" data-lang={language.code}>
-                        <a className={linkClass}
-                           data-language={language.code}
-                           data-currency={currency.code} href="#"
-                           title={title}
-                           style={linkStyle}
-                           onClick={onClick}
-                        />
+                        {
+                            ajax.fetching ? (
+                                <Spinner style={{margin: 0}}/>
+                            ) : (
+                                <a className={isEnabled ? "otgs-ico-yes" : "otgs-ico-no"}
+                                   data-language={language.code}
+                                   data-currency={currency.code} href="#"
+                                   title={title}
+                                   onClick={onClick}
+                                />
+                            )
+                        }
                     </li>
                 </ul>
             </td>
@@ -152,6 +155,6 @@ const DefaultCell = ({language, activeCurrencies}) => {
                         )
                     }
                 </select>
-                {ajax.fetching && <span className="spinner" style={{visibility:'visible', float:'none', position:'absolute'}}/>}
+                {ajax.fetching && <Spinner style={{float:'none', position:'absolute'}}/>}
             </td>
 };

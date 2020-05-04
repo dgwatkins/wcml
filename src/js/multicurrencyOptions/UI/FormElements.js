@@ -29,3 +29,12 @@ export const getTooltip = tooltip => {
 const allowBreakRules = (string) => {
     return <div dangerouslySetInnerHTML={{__html:string}}/>;
 };
+
+export const Spinner = ({style}) => {
+    const spinnerStyle = {
+        visibility:'visible',
+        ...style
+    };
+
+    return <span className="spinner" style={spinnerStyle} />;
+};

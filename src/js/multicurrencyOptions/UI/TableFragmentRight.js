@@ -2,6 +2,7 @@ import React from "react";
 import {createAjaxRequest} from "../Request";
 import {useStore, getStoreAction, getStoreProperty} from "../Store";
 import strings from "../Strings";
+import {Spinner} from "./FormElements";
 
 const TableFragmentRight = () => {
     const activeCurrencies = getStoreProperty('activeCurrencies');
@@ -82,10 +83,15 @@ const DeleteCell = ({currency}) => {
                    data-currency={currency.code} href="#"
                    onClick={onClick}
                 >
-                    <i className={ajax.fetching ? "spinner" : "otgs-ico-delete"}
-                       style={ajax.fetching ? {visibility: "visible", margin: 0} : {}}
-                       title={strings.labelDelete}
-                    />
+                    {
+                        ajax.fetching ?
+                            (
+                                <Spinner style={{margin: 0}}/>
+                            ) : (
+                                <i className="otgs-ico-delete" title={strings.labelDelete}/>
+                            )
+                    }
+
                 </a>
             </td>
         );
