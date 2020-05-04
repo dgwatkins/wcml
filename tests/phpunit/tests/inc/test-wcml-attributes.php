@@ -73,7 +73,8 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 	public function add_hooks()
 	{
 		$subject = $this->get_subject();
-		\WP_Mock::expectFilterAdded( 'woocommerce_product_get_attributes', array( $subject, 'filter_adding_to_cart_product_attributes_names' ) );
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_get_attributes', [ $subject, 'filter_adding_to_cart_product_attributes_names' ] );
+		\WP_Mock::expectFilterAdded( 'wpml_tm_job_field_is_translatable', [ $subject, 'set_custom_product_attributes_as_translatable_for_tm_job' ], 10, 2 );
 		$subject->add_hooks();
 	}
 
@@ -1149,6 +1150,29 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		unset( $_POST['product_id'], $_POST[ 'attribute_' . $attribute_taxonomy ] );
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_should_set_custom_product_attributes_as_translatable_for_tm_job() {
+
+		$job_translate['field_type'] = 'wc_attribute_name:color';
+
+		$subject = $this->get_subject();
+
+		$this->assertTrue( $subject->set_custom_product_attributes_as_translatable_for_tm_job( false, $job_translate ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_set_other_fileds_as_translatable_for_tm_job() {
+
+		$job_translate['field_type'] = 'title';
+
+		$subject = $this->get_subject();
+
+		$this->assertFalse( $subject->set_custom_product_attributes_as_translatable_for_tm_job( false, $job_translate ) );
+	}
 
 
 }
