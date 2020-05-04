@@ -31,12 +31,7 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 			));
 		}
 
-		$template_service = $this->getMockBuilder( 'IWPML_Template_Service' )
-		                         ->disableOriginalConstructor()
-		                         ->getMock();
-
-
-		return new WCML_Payment_Gateway_Stripe( $gateway, $template_service, $this->woocommerce_wpml );
+		return new WCML_Payment_Gateway_Stripe( $gateway, $this->woocommerce_wpml );
 	}
 
 	/**
@@ -60,13 +55,16 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 			'return' => 'USD'
 		));
 
-		$active_currencies = array( 'USD' => array(), 'UAH' => array() );
+		WP_Mock::userFunction( 'get_woocommerce_currencies', [
+			'return' => [ 'USD' => [], 'UAH' => [] ],
+		] );
+
 		$expected_currencies_details = array(
 			'USD' => array( 'publishable_key' => 'publishable_key', 'secret_key' => 'secret_key' ),
 			'UAH' => array( 'publishable_key' => '', 'secret_key' => '' )
 		);
 
-		$this->assertSame( $expected_currencies_details, $subject->get_currencies_details( $active_currencies ) );
+		$this->assertEquals( $expected_currencies_details, $subject->get_currencies_details() );
 	}
 
 	/**

@@ -5,8 +5,6 @@
  */
 class WCML_Not_Supported_Payment_Gateway extends WCML_Payment_Gateway{
 
-	const TEMPLATE = 'not-supported.twig';
-
 	public function get_output_model() {
 		return [
 			'id'          => $this->get_id(),
@@ -19,9 +17,4 @@ class WCML_Not_Supported_Payment_Gateway extends WCML_Payment_Gateway{
 			],
 		];
 	}
-
-	protected function get_output_template() {
-		return self::TEMPLATE;
-	}
-
 }
