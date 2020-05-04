@@ -23,6 +23,9 @@ class Test_WCML_Multi_Currency_Configuration extends WCML_UnitTestCase {
 
     }
 
+	/**
+	 * @group pierre
+	 */
     public function test_update_default_currency(){
 
         $settings['default_currencies'] = $this->woocommerce_wpml->settings['default_currencies'];
@@ -30,8 +33,10 @@ class Test_WCML_Multi_Currency_Configuration extends WCML_UnitTestCase {
         $this->woocommerce_wpml->update_settings( $settings );
         $this->woocommerce->session->set( 'client_currency_language', $this->sitepress->get_default_language() );
 
-        $_POST[ 'lang' ] = $this->sitepress->get_default_language();
-        $_POST[ 'code' ] = $this->currencies[ 'second' ];
+        $_POST['data'] = json_encode( [
+	        'lang' => $this->sitepress->get_default_language(),
+	        'code' => $this->currencies[ 'second' ],
+        ] );
 
         WCML_Multi_Currency_Configuration::update_default_currency();
 
