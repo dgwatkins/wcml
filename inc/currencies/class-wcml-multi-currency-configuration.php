@@ -242,8 +242,13 @@ class WCML_Multi_Currency_Configuration {
 		$return['currency_name']    = $wc_currencies[ $currency_code ];
 		$return['currency_symbol']  = get_woocommerce_currency_symbol( $currency_code );
 
-		echo json_encode( $return );
-		exit;
+		wp_send_json_success([
+			'formattedLastRateUpdate' => \WCML\Multicurrency\UI\Hooks::formatLastRateUpdate(
+				isset( self::$multi_currency->currencies[ $currency_code ]['updated'] )
+					? self::$multi_currency->currencies[ $currency_code ]['updated']
+					: null
+			),
+		]);
 	}
 
 	public static function delete_currency() {

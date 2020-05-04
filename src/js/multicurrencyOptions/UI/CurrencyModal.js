@@ -10,6 +10,7 @@ import {SelectRow, InputRow} from "./FormElements";
 import {createAjaxRequest} from "../Request";
 import strings from "../Strings";
 import {sprintf} from "wpml-common-js-source/src/i18n";
+import * as R from "ramda";
 
 const CurrencyModal = () => {
     const [currency, setModalCurrency] = useStore('modalCurrency');
@@ -24,6 +25,8 @@ const CurrencyModal = () => {
         const result = await ajax.send(currency);
 
         if (result) {
+            const formattedLastRateUpdate = R.path(['data', 'data', 'formattedLastRateUpdate'], result);
+            setModalCurrency({...currency, formattedLastRateUpdate:formattedLastRateUpdate})
             saveModalCurrency();
             onClose();
         }
@@ -92,7 +95,7 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
                 />
                     <span className="this-currency">{currency.code}</span>
                     {!isValidRate && <span className="wcml-error">{strings.errorInvalidNumber}</span>}
-                    <small>{currency.updated}</small>
+                    <small>{currency.formattedLastRateUpdate}</small>
                 </div>
             </div>
 

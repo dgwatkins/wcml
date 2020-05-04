@@ -80,8 +80,20 @@ class Hooks implements \IWPML_Backend_Action {
 			);
 		};
 
+		$addFormattedLastRateUpdate = function( $currency ) {
+			return array_merge(
+				$currency,
+				[
+					'formattedLastRateUpdate' => isset( $currency['updated'] )
+						? self::formatLastRateUpdate( $currency['updated'] )
+						: null
+				]
+			);
+		};
+
 		return wpml_collect( $woocommerce_wpml->multi_currency->get_currencies( true ) )
 			->map( $buildActiveCurrency )
+			->map( $addFormattedLastRateUpdate )
 			->map( $addGatewaysSettings )
 			->values()
 			->toArray();
@@ -204,5 +216,19 @@ class Hooks implements \IWPML_Backend_Action {
 		global $woocommerce_wpml;
 
 		return $woocommerce_wpml->multi_currency->currencies_payment_gateways;
+	}
+
+	/**
+	 * @param string $lastRateUpdate
+	 *
+	 * @return string|null
+	 */
+	public static function formatLastRateUpdate( $lastRateUpdate ) {
+		return $lastRateUpdate
+			? sprintf(
+				__( 'Set on %s', 'woocommerce-multilingual' ),
+				date( 'F j, Y g:i a', strtotime( $lastRateUpdate ) )
+			)
+			: null;
 	}
 }
