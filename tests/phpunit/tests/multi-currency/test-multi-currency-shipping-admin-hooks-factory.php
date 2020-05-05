@@ -1,10 +1,10 @@
 <?php
 
-use \WCML\Multicurrency\Shipping\AdminHooksFactory;
+use \WCML\Multicurrency\Shipping\ShippingHooksFactory;
 
 class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCase {
 	private function get_subject() {
-		return new AdminHooksFactory();
+		return new ShippingHooksFactory();
 	}
 
 	/**
