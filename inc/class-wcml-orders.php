@@ -400,7 +400,6 @@ class WCML_Orders {
 		if ( isset( $_POST['wcml_shop_order_language'] ) ) {
 			update_post_meta( $post_id, 'wpml_language', filter_input( INPUT_POST, 'wcml_shop_order_language', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) );
 		}
-
 	}
 
 	public function filter_downloadable_product_items( $files, $item, $object ) {

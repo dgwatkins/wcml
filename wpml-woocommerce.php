@@ -85,6 +85,7 @@ function wcml_loader() {
 		\WCML\MO\Hooks::class,
 		\WCML\Tax\Strings\Hooks::class,
 		\WCML\AdminDashboard\Hooks::class,
+		\WCML\AdminNotices\Review::class,
 	];
 
 	if (
