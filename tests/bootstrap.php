@@ -134,9 +134,9 @@ function WP_REST_Server_placeholder(){
 
 require_once $_tests_dir . '/includes/bootstrap.php';
 require_once WPML_CORE_PATH . '/tests/util/wpml-unittestcase.class.php';
-require_once WC_PATH . '/tests/includes/wp-http-testcase.php';
-require_once WC_PATH . '/tests/framework/class-wc-unit-test-case.php';
-require_once WC_PATH . '/tests/framework/class-wc-unit-test-factory.php';
+require_once WC_PATH . '/tests/legacy/includes/wp-http-testcase.php';
+require_once WC_PATH . '/tests/legacy/framework/class-wc-unit-test-case.php';
+require_once WC_PATH . '/tests/legacy/framework/class-wc-unit-test-factory.php';
 
 require_once WCML_CORE_PATH . '/tests/util/wcml-unittestcase.class.php';
 require_once WCML_CORE_PATH . '/tests/util/class-wcml-helper.php';
