@@ -1,7 +1,7 @@
 <?php
-require WC_PATH . '/tests/framework/helpers/class-wc-helper-order.php';
-require WC_PATH . '/tests/framework/helpers/class-wc-helper-product.php';
-require WC_PATH . '/tests/framework/helpers/class-wc-helper-shipping.php';
+require WC_PATH . '/tests/legacy/framework/helpers/class-wc-helper-order.php';
+require WC_PATH . '/tests/legacy/framework/helpers/class-wc-helper-product.php';
+require WC_PATH . '/tests/legacy/framework/helpers/class-wc-helper-shipping.php';
 
 /**
  * Class Test_WCML_Multi_Currency_Orders
