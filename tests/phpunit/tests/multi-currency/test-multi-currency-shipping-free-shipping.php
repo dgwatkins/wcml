@@ -18,6 +18,14 @@ class Test_WCML_Multi_Currency_Shipping_FreeShipping extends OTGS_TestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	public function it_does_NOT_support_shipping_classes() {
+		$subject = $this->get_subject();
+		$this->assertFalse( $subject->supportsShippingClasses() );
+	}
+
+	/**
 	 * @dataProvider dataProvider
 	 *
 	 * @test
@@ -76,6 +84,24 @@ class Test_WCML_Multi_Currency_Shipping_FreeShipping extends OTGS_TestCase {
 		$newCost = $subject->getShippingCostValue( $rate, $currency );
 
 		$this->assertSame( $newCost, $expectedCost );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_returns_zero_for_getShippingClassCostValue() {
+		$subject = $this->get_subject();
+		$this->expectException( 'Exception' );
+		$this->assertEquals( 0, $subject->getShippingClassCostValue( [], 'PLN', 'class_cost_24' ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_returns_zero_for_getNoShippingClassCostValue() {
+		$subject = $this->get_subject();
+		$this->expectException( 'Exception' );
+		$this->assertEquals( 0, $subject->getNoShippingClassCostValue( [], 'PLN', 'class_cost_24' ) );
 	}
 
 	/**
