@@ -73,6 +73,11 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 	 * @test
 	 */
 	public function convert_shipping_costs_in_package_rates() {
+		\WP_Mock::userFunction( 'WPML\Container\make', [
+			'return' => function( $className ) {
+				return new $className();
+			},
+		]);
 
 		$client_currency = rand_str();
 		$this->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
@@ -83,7 +88,12 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 			->disableOriginalConstructor()
 			->getMock();
 		$rate->cost        = rand( 1, 100 );
+		$rate->method_id   = 'flat_rate';
+		$rate->instance_id = 1;
 		$rates[ $rate_id ] = $rate;
+
+		$currency_cost = 20;
+		$currency_key = 'cost_' . $client_currency;
 
 		\WP_Mock::userFunction( 'wp_cache_get', array(
 			'args'   => array( $rate_id, 'converted_shipping_cost' ),
@@ -102,6 +112,13 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 			'args'   => array( $rate_id, $converted_cost, 'converted_shipping_cost' ),
 			'return' => true
 		) );
+		\WP_Mock::userFunction( 'get_option', [
+			'return' => [
+				$currency_key => $currency_cost,
+				'wcml_shipping_costs' => 'auto'
+			],
+			'args' => [ 'woocommerce_' . $rate->method_id . '_' . $rate->instance_id . '_settings' ]
+		]);
 
 		$subject = $this->get_subject();
 		$rates   = $subject->convert_shipping_costs_in_package_rates( $rates );
@@ -155,10 +172,9 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 		                                     ->setMethods( array( 'raw_price_filter' ) )
 		                                     ->getMock();
 
-		$converted_cost = $currency_cost;
+		$converted_cost = $rate->cost;
 
 		\WP_Mock::userFunction( 'wp_cache_set', array(
-			'args'   => array( $rate_id, $converted_cost, 'converted_shipping_cost' ),
 			'return' => true
 		) );
 
