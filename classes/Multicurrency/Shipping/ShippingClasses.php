@@ -28,23 +28,23 @@ class ShippingClasses {
 	}
 
 	protected function getShippingClassField( $field, $shippingClass, $currencyCode ) {
-		$field[ 'class_cost_' . $shippingClass->term_id . '_' . $currencyCode ] = array(
+		$field[ 'class_cost_' . $shippingClass->term_id . '_' . $currencyCode ] = [
 			'title'             => sprintf( __( '"%s" shipping class cost in %s', 'woocommerce-multilingual' ), esc_html( $shippingClass->name ), esc_html( $currencyCode ) ),
 			'type'              => 'text',
 			'placeholder'       => __( 'N/A', 'woocommerce-multilingual' ),
 			'class' => 'wcml-shipping-cost-currency'
-		);
+		];
 		return $field;
 	}
 
 	protected function getNoShippingClassField( $field, $currencyCode ) {
-		$field[ 'no_class_cost_' . $currencyCode ] = array(
+		$field[ 'no_class_cost_' . $currencyCode ] = [
 			'title'             => sprintf( __( 'No shipping class cost in %s', 'woocommerce-multilingual' ), esc_html( $currencyCode ) ),
 			'type'              => 'text',
 			'placeholder'       => __( 'N/A', 'woocommerce-multilingual' ),
 			'default'           => '',
 			'class' => 'wcml-shipping-cost-currency'
-		);
+		];
 		return $field;
 	}
 }
