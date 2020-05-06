@@ -2,6 +2,8 @@
 
 namespace WCML\Multicurrency\Shipping;
 
+use Mockery\Exception;
+
 class FreeShipping implements ShippingMode {
 	use ShippingModeBase;
 
@@ -52,6 +54,14 @@ class FreeShipping implements ShippingMode {
 		return $amount;
 	}
 
+	/**
+	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getShippingCostValue
+	 *
+	 * @param array|object $rate
+	 * @param string       $currency
+	 *
+	 * @return int|mixed|string
+	 */
 	public function getShippingCostValue( $rate, $currency ) {
 		if ( ! isset( $rate->cost ) ) {
 			$rate->cost = 0;
@@ -65,5 +75,36 @@ class FreeShipping implements ShippingMode {
 
 	public function supportsShippingClasses() {
 		return false;
+	}
+
+	/**
+	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getShippingClassCostValue
+	 *
+	 * @param array|object $rate
+	 * @param string $currency
+	 * @param string $shippingClassKey
+	 *
+	 * @return int|mixed|string
+	 */
+	public function getShippingClassCostValue( $rate, $currency, $shippingClassKey ) {
+		if ( ! $this->supportsShippingClasses() ) {
+			throw new Exception( 'Method should not be called because this class does not support shipping classes.' );
+		}
+		return 0;
+	}
+
+	/**
+	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getNoShippingClassCostValue
+	 *
+	 * @param array|object $rate
+	 * @param string $currency
+	 *
+	 * @return int|mixed|string
+	 */
+	public function getNoShippingClassCostValue( $rate, $currency ) {
+		if ( ! $this->supportsShippingClasses() ) {
+			throw new Exception( 'Method should not be called because this class does not support shipping classes.' );
+		}
+		return 0;
 	}
 }

@@ -2,8 +2,6 @@
 
 namespace WCML\Multicurrency\Shipping;
 
-use phpDocumentor\Reflection\Types\Boolean;
-
 interface ShippingMode {
 	/**
 	 * Returns shipping method id (shipping option key).
@@ -58,8 +56,8 @@ interface ShippingMode {
 	/**
 	 * If shipping mode has custom cost, recalculate and return its value.
 	 *
-	 * @param $rate     Shipping rate metadata.
-	 * @param string            $currency Currency code.
+	 * @param array|object $rate    Shipping rate metadata.
+	 * @param string      $currency Currency code.
 	 *
 	 * @return integer|float|string
 	 */
@@ -68,7 +66,7 @@ interface ShippingMode {
 	/**
 	 * Checks if the instance of the shipping method has enabled manual pricing.
 	 *
-	 * @param array|\WC_Shipping_Rate $instance Currently processed instance of the shipping method.
+	 * @param array|object $instance Currently processed instance of the shipping method.
 	 *
 	 * @return bool
 	 */
@@ -80,4 +78,21 @@ interface ShippingMode {
 	 * @return bool
 	 */
 	public function supportsShippingClasses();
+
+	/**
+	 * @param array|object $rate
+	 * @param string       $currency
+	 * @param string       $shippingClassKey
+	 *
+	 * @return int|mixed|string Shipping class cost for given currency.
+	 */
+	public function getShippingClassCostValue( $rate, $currency, $shippingClassKey );
+
+	/**
+	 * @param array|object $rate
+	 * @param string       $currency
+	 *
+	 * @return int|mixed|string "No shipping class" cost for given currency.
+	 */
+	public function getNoShippingClassCostValue( $rate, $currency );
 }

@@ -42,6 +42,14 @@ trait VariableCost {
 		return sprintf( 'cost_%s', $currencyCode );
 	}
 
+	private function getShippingClassCostKey( $shippingClassKey, $currency ) {
+		return $shippingClassKey . '_' . $currency;
+	}
+
+	private function getNoShippingClassCostKey( $currency ) {
+		return 'no_class_cost_' . $currency;
+	}
+
 	/**
 	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getSettingsFormKey
 	 *
@@ -69,19 +77,47 @@ trait VariableCost {
 	/**
 	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getShippingCostValue
 	 *
-	 * @param $rate
-	 * @param string            $currency
+	 * @param array|object $rate
+	 * @param string       $currency
 	 *
 	 * @return int|mixed|string
 	 */
 	public function getShippingCostValue( $rate, $currency ) {
-		if ( ! isset( $rate->cost ) ) {
-			$rate->cost = 0;
-		}
+		$costName = $this->getCostKey( $currency );
+		return $this->getCostValueForName( $rate, $currency, $costName );
+	}
+
+	/**
+	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getShippingClassCostValue
+	 *
+	 * @param array|object $rate
+	 * @param string       $currency
+	 * @param string       $shippingClassKey
+	 *
+	 * @return int Shipping class cost for given currency.
+	 */
+	public function getShippingClassCostValue( $rate, $currency, $shippingClassKey ) {
+		$costName = $this->getShippingClassCostKey( $shippingClassKey, $currency );
+		return $this->getCostValueForName( $rate, $currency, $costName );
+	}
+
+	/**
+	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getNoShippingClassCostValue
+	 *
+	 * @param array|object $rate
+	 * @param string       $currency
+	 *
+	 * @return int "No shipping class" cost for given currency.
+	 */
+	public function getNoShippingClassCostValue( $rate, $currency ) {
+		$costName = $this->getNoShippingClassCostKey( $currency );
+		return $this->getCostValueForName( $rate, $currency, $costName );
+	}
+
+	private function getCostValueForName( $rate, $currency, $costName ) {
 		if ( isset( $rate->instance_id ) ) {
 			if ( $this->isManualPricingEnabled( $rate ) ) {
 				$rateSettings = $this->getWpOption( $this->getMethodId(), $rate->instance_id );
-				$costName = $this->getCostKey( $currency );
 				if ( isset( $rateSettings[ $costName ] ) ) {
 					$rate->cost = $rateSettings[ $costName ];
 				}
