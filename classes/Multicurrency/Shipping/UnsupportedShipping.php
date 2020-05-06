@@ -38,4 +38,18 @@ class UnsupportedShipping implements ShippingMode {
 	public function supportsShippingClasses() {
 		return false;
 	}
+
+	public function getShippingClassCostValue( $rate, $currency, $shippingClassKey ) {
+		if ( ! $this->supportsShippingClasses() ) {
+			throw new Exception( 'Method should not be called because this class does not support shipping classes.' );
+		}
+		return 0;
+	}
+
+	public function getNoShippingClassCostValue( $rate, $currency ) {
+		if ( ! $this->supportsShippingClasses() ) {
+			throw new Exception( 'Method should not be called because this class does not support shipping classes.' );
+		}
+		return 0;
+	}
 }
