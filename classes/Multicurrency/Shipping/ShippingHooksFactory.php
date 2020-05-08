@@ -11,18 +11,18 @@ class ShippingHooksFactory implements \IWPML_Deferred_Action_Loader, \IWPML_Back
 	public function create() {
 		/** @var \woocommerce_wpml $woocommerce_wpml */
 		global $woocommerce_wpml;
+		$hooks = [];
 
 		if ( wcml_is_multi_currency_on()
 		     && $this->hasAdditionalCurrencyDefined()
 		) {
-			if ( $this->isShippingPageRequest() ) {
-				return new AdminHooks( $woocommerce_wpml->get_multi_currency() );
-			} else {
-				return new FrontEndHooks( $woocommerce_wpml->get_multi_currency() );
+			if ( $this->isShippingPageRequest() || is_ajax() ) {
+				$hooks[] = new AdminHooks( $woocommerce_wpml->get_multi_currency() );
 			}
+			$hooks[] =  new FrontEndHooks( $woocommerce_wpml->get_multi_currency() );
 		}
 
-		return null;
+		return $hooks;
 	}
 
 	/**
