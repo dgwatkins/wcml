@@ -158,6 +158,15 @@ class Test_WCML_URLS extends WCML_UnitTestCase {
 		$this->assertEquals( 'etiquette-produit', $string_translations['fr']['value'] );
 		$this->assertEquals( 10, $string_translations['fr']['status'] );
 
+		// Product attribute base
+		$permalink_options['attribute_base'] = 'attribute';
+		$this->url_translation->register_product_and_taxonomy_bases( $permalink_options );
+		$string_id = icl_get_string_id( $permalink_options['attribute_base'], $this->url_translation->url_strings_context(), $this->url_translation->url_string_name( 'attribute' ) );
+
+		$string = icl_get_string_by_id( $string_id );
+
+		$this->assertEquals( $permalink_options['attribute_base'], $string );
+
 	}
 
 	function test_force_bases_in_strings_languages(){

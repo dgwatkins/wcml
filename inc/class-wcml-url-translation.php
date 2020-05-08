@@ -273,15 +273,16 @@ class WCML_Url_Translation {
 
 		if ( isset( $permalink_options['attribute_base'] ) && $permalink_options['attribute_base'] ) {
 			$attr_base = trim( $permalink_options['attribute_base'], '/' );
+			$attr_string_name = $this->url_string_name( 'attribute' );
 
-			$string_language = $this->woocommerce_wpml->strings->get_string_language( $attr_base, $this->url_strings_context(), $name );
+			$string_language = $this->woocommerce_wpml->strings->get_string_language( $attr_base, $this->url_strings_context(), $attr_string_name );
 			if ( is_null( $string_language ) ) {
 				$string_language = '';
 			}
-			do_action( 'wpml_register_single_string', $this->url_strings_context(), $this->url_string_name( 'attribute' ), $attr_base, false, $string_language );
+			do_action( 'wpml_register_single_string', $this->url_strings_context(), $attr_string_name, $attr_base, false, $string_language );
 
 			if ( isset( $_POST['attribute_base_language'] ) ) {
-				$this->woocommerce_wpml->strings->set_string_language( $attr_base, $this->url_strings_context(), $this->url_string_name( 'attribute' ), $_POST['attribute_base_language'] );
+				$this->woocommerce_wpml->strings->set_string_language( $attr_base, $this->url_strings_context(), $attr_string_name, $_POST['attribute_base_language'] );
 			}
 		}
 
