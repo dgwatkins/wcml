@@ -36,7 +36,7 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 		] );
 
 		$subject = $this->get_subject();
-		$this->assertInstanceOf( 'IWPML_Action', $subject->create() );
+		$this->assertInstanceOf( 'IWPML_Action', $subject->create()[0] );
 
 		unset( $woocommerce_wpml, $_GET );
 	}
@@ -64,8 +64,12 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 			'return' => true
 		] );
 
+		\WP_Mock::userFunction( 'is_ajax', [
+			'return' => false
+		] );
+
 		$subject = $this->get_subject();
-		$this->assertInstanceOf( 'WCML\Multicurrency\Shipping\FrontEndHooks', $subject->create() );
+		$this->assertInstanceOf( 'WCML\Multicurrency\Shipping\FrontEndHooks', $subject->create()[0] );
 
 		unset( $woocommerce_wpml );
 	}
@@ -99,7 +103,7 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 		] );
 
 		$subject = $this->get_subject();
-		$this->assertNull( $subject->create() );
+		$this->assertEmpty( $subject->create() );
 
 		unset( $woocommerce_wpml, $_GET );
 	}
@@ -133,7 +137,40 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 		] );
 
 		$subject = $this->get_subject();
-		$this->assertNull( $subject->create() );
+		$this->assertEmpty( $subject->create() );
+
+		unset( $woocommerce_wpml, $_GET );
+	}
+
+	/**
+	 * @test
+	 */
+	public function itCreatesAdminHooksForAjaxRequest() {
+		global $woocommerce_wpml;
+		global $_GET;
+
+		$multicurrency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                      ->disableOriginalConstructor()
+		                      ->setMethods( [ 'get_currency_codes' ] )
+		                      ->getMock();
+		$multicurrency->expects( $this->any() )->method( 'get_currency_codes' )->willReturn( [ 'PLN', 'EUR' ] );
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->setMethods( [ 'get_multi_currency' ] )
+		                         ->getMock();
+		$woocommerce_wpml->expects( $this->any() )->method( 'get_multi_currency' )->willReturn( $multicurrency );
+
+		\WP_Mock::userFunction( 'wcml_is_multi_currency_on', [
+			'return' => true
+		] );
+
+		\WP_Mock::userFunction( 'is_ajax', [
+			'return' => true
+		] );
+
+		$subject = $this->get_subject();
+		$this->assertInstanceOf( 'IWPML_Action', $subject->create()[0] );
 
 		unset( $woocommerce_wpml, $_GET );
 	}
