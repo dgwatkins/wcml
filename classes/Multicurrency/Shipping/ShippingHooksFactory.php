@@ -18,8 +18,9 @@ class ShippingHooksFactory implements \IWPML_Deferred_Action_Loader, \IWPML_Back
 		) {
 			if ( $this->isShippingPageRequest() || is_ajax() ) {
 				$hooks[] = new AdminHooks( $woocommerce_wpml->get_multi_currency() );
+			} else {
+				$hooks[] =  new FrontEndHooks( $woocommerce_wpml->get_multi_currency() );
 			}
-			$hooks[] =  new FrontEndHooks( $woocommerce_wpml->get_multi_currency() );
 		}
 
 		return $hooks;
