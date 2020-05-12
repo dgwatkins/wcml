@@ -116,12 +116,15 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
 		//AUD No rounding, exch rate: 2.45, 1 decimal
 		$this->assertEquals( 7.3, $this->multi_currency->prices->raw_price_filter(3, 'AUD') );
+		$this->assertEquals( 7.3, wcml_convert_price(3, 'AUD') );
 
 		//RON Round up, exch rate: 1.64, 0 decimals
 		$this->assertEquals( 799, $this->multi_currency->prices->raw_price_filter(434, 'RON') );
+		$this->assertEquals( 799, wcml_convert_price(434, 'RON') );
 
 		//USD Round down, exch rate: 1.5.5, 0 decimals, round incr 10, round subt 3
 		$this->assertEquals( 697, $this->multi_currency->prices->raw_price_filter(456, 'USD') );
+		$this->assertEquals( 697, wcml_convert_price(456, 'USD') );
 
 	}
 

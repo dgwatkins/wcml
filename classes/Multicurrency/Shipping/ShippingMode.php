@@ -56,8 +56,8 @@ interface ShippingMode {
 	/**
 	 * If shipping mode has custom cost, recalculate and return its value.
 	 *
-	 * @param array|object $rate    Shipping rate metadata.
-	 * @param string      $currency Currency code.
+	 * @param array|object $rate Shipping rate metadata.
+	 * @param string $currency Currency code.
 	 *
 	 * @return integer|float|string
 	 */

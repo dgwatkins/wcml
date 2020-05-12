@@ -92,3 +92,21 @@ if ( ! function_exists( 'wcml_product_data_store_cpt' ) ) {
 		return new WCML_Product_Data_Store_CPT();
 	}
 }
+
+if ( ! function_exists( 'wcml_convert_price' ) ) {
+
+	/**
+	 * @since 4.9.0
+	 *
+	 * @param float|int   $price
+	 * @param bool|string $currency_code
+	 *
+	 * @return float|int
+	 */
+	function wcml_convert_price( $price, $currency_code = false ) {
+		/** @var woocommerce_wpml $woocommerce_wpml */
+		global $woocommerce_wpml;
+
+		return $woocommerce_wpml->multi_currency->prices->raw_price_filter( $price, $currency_code );
+	}
+}

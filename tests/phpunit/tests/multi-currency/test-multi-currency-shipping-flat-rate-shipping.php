@@ -98,6 +98,38 @@ class Test_WCML_Multi_Currency_Shipping_FlatRateShipping extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 *
+	 * @dataProvider dataProvider
+	 */
+	public function it_returns_cost_in_default_currency_if_NO_cost_in_user_currency( $currency, $expectedTitle, $expectedDescription ) {
+		$subject = $this->get_subject();
+		$cost = 10;
+		$expectedCost = 20;
+
+		$rate = $this->getMockBuilder( 'WC_Shipping_Rate' )->disableOriginalConstructor()->getMock();
+		$rate->cost = $cost;
+		$rate->method_id = 'flat_rate';
+		$rate->instance_id = 7;
+
+		$currencyKey = is_string( $currency ) ? $currency : '';
+
+		\WP_Mock::userFunction( 'get_option', [
+			'return' => [
+				'cost_' . $currencyKey => '',
+				'wcml_shipping_costs' => 'manual',
+				'cost' => $expectedCost
+			]
+		] );
+
+		\WP_Mock::passthruFunction( 'wcml_convert_price' );
+
+		$newCost = $subject->getShippingCostValue( $rate, $currency );
+
+		$this->assertSame( $newCost, $expectedCost );
+	}
+
+	/**
+	 * @test
 	 */
 	public function it_returns_value_for_getShippingClassCostValue() {
 		$subject = $this->get_subject();

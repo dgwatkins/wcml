@@ -73,6 +73,30 @@ class Test_WCML_Multi_Currency_Shipping_FreeShipping extends OTGS_TestCase {
 	 *
 	 * @test
 	 */
+	public function it_updates_minimal_order_amount_when_NO_value_in_custom_currency( $currency, $expectedTitle, $expectedDescription ) {
+		$subject = $this->get_subject();
+
+		$amount = 10;
+		$expectedAmount = 20;
+		$currencyKey = is_string( $currency ) ? $currency : '';
+		$shipping = [
+			'min_amount' . $currencyKey => '',
+			'wcml_shipping_costs' => 'manual',
+			'min_amount' => $expectedAmount
+		];
+
+		\WP_Mock::passthruFunction( 'wcml_convert_price' );
+
+		$newAmount = $subject->getMinimalOrderAmountValue( $amount, $shipping, $currency );
+
+		$this->assertSame( $newAmount, $expectedAmount );
+	}
+
+	/**
+	 * @dataProvider dataProvider
+	 *
+	 * @test
+	 */
 	public function it_returns_shipping_cost_unchanged( $currency, $expectedTitle, $expectedDescription ) {
 		$subject = $this->get_subject();
 

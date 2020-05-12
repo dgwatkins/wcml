@@ -4,6 +4,7 @@ namespace WCML\Multicurrency\Shipping;
 
 class FreeShipping implements ShippingMode {
 	use ShippingModeBase;
+	use DefaultConversion;
 
 	public function getFieldTitle( $currencyCode ) {
 		if ( ! is_string( $currencyCode ) ) {
@@ -45,8 +46,10 @@ class FreeShipping implements ShippingMode {
 	public function getMinimalOrderAmountValue( $amount, $shipping, $currency ) {
 		if ( $this->isManualPricingEnabled( $shipping ) ) {
 			$key = $this->getMinimalOrderAmountKey( $currency );
-			if ( isset( $shipping[ $key ] ) ) {
+			if ( ! empty( $shipping[ $key ] ) ) {
 				$amount = $shipping[ $key ];
+			} else {
+				$amount = $this->getValueFromDefaultCurrency( $amount, $shipping, $key, $currency );
 			}
 		}
 		return $amount;

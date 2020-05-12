@@ -3,6 +3,8 @@
 namespace WCML\Multicurrency\Shipping;
 
 trait VariableCost {
+	use DefaultConversion;
+
 	/**
 	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getFieldTitle
 	 *
@@ -75,12 +77,12 @@ trait VariableCost {
 	}
 
 	/**
-	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getShippingCostValue
-	 *
 	 * @param array|object $rate
-	 * @param string       $currency
+	 * @param string $currency
 	 *
 	 * @return int|mixed|string
+	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getShippingCostValue
+	 *
 	 */
 	public function getShippingCostValue( $rate, $currency ) {
 		$costName = $this->getCostKey( $currency );
@@ -121,8 +123,10 @@ trait VariableCost {
 		if ( isset( $rate->instance_id ) ) {
 			if ( $this->isManualPricingEnabled( $rate ) ) {
 				$rateSettings = $this->getWpOption( $this->getMethodId(), $rate->instance_id );
-				if ( isset( $rateSettings[ $costName ] ) ) {
+				if ( ! empty( $rateSettings[ $costName ] ) ) {
 					$rate->cost = $rateSettings[ $costName ];
+				} else {
+					$rate->cost = $this->getValueFromDefaultCurrency( $rate->cost, $rateSettings, $costName, $currency );
 				}
 			}
 		}
