@@ -32,7 +32,7 @@ class UnsupportedShipping implements ShippingMode {
 		// TODO: Implement getMinAmountKey() method.
 	}
 
-	public function getShippingCostValue( $rate, $currency ) {
+	public function getShippingCostValue( $rate, $currency, $multiCurrencyPrices ) {
 		if ( ! isset( $rate->cost ) ) {
 			$rate->cost = 0;
 		}

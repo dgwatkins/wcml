@@ -56,12 +56,13 @@ interface ShippingMode {
 	/**
 	 * If shipping mode has custom cost, recalculate and return its value.
 	 *
-	 * @param array|object $rate    Shipping rate metadata.
-	 * @param string      $currency Currency code.
+	 * @param array|object $rate Shipping rate metadata.
+	 * @param string $currency Currency code.
+	 * @param WCML_Multi_Currency_Prices $multiCurrencyPrices
 	 *
 	 * @return integer|float|string
 	 */
-	public function getShippingCostValue( $rate, $currency );
+	public function getShippingCostValue( $rate, $currency, $multiCurrencyPrices );
 
 	/**
 	 * Checks if the instance of the shipping method has enabled manual pricing.

@@ -82,6 +82,8 @@ class Test_WCML_Multi_Currency_Shipping_FlatRateShipping extends OTGS_TestCase {
 		$rate->method_id = 'flat_rate';
 		$rate->instance_id = 7;
 
+		$prices = $this->getMockBuilder( 'WCML_Multi_Currency_Prices' )->disableOriginalConstructor()->setMethods( [ 'raw_price_filter' ] )->getMock();
+
 		$currencyKey = is_string( $currency ) ? $currency : '';
 
 		\WP_Mock::userFunction( 'get_option', [
@@ -91,7 +93,7 @@ class Test_WCML_Multi_Currency_Shipping_FlatRateShipping extends OTGS_TestCase {
 			]
 		] );
 
-		$newCost = $subject->getShippingCostValue( $rate, $currency );
+		$newCost = $subject->getShippingCostValue( $rate, $currency, $prices );
 
 		$this->assertSame( $newCost, $expectedCost );
 	}
@@ -111,6 +113,9 @@ class Test_WCML_Multi_Currency_Shipping_FlatRateShipping extends OTGS_TestCase {
 		$rate->method_id = 'flat_rate';
 		$rate->instance_id = 7;
 
+		$prices = $this->getMockBuilder( 'WCML_Multi_Currency_Prices' )->disableOriginalConstructor()->setMethods( [ 'raw_price_filter' ] )->getMock();
+		$prices->method( 'raw_price_filter' )->will($this->returnArgument(0));
+
 		$currencyKey = is_string( $currency ) ? $currency : '';
 
 		\WP_Mock::userFunction( 'get_option', [
@@ -121,7 +126,7 @@ class Test_WCML_Multi_Currency_Shipping_FlatRateShipping extends OTGS_TestCase {
 			]
 		] );
 
-		$newCost = $subject->getShippingCostValue( $rate, $currency );
+		$newCost = $subject->getShippingCostValue( $rate, $currency, $prices );
 
 		$this->assertSame( $newCost, $expectedCost );
 	}
@@ -134,7 +139,9 @@ class Test_WCML_Multi_Currency_Shipping_FlatRateShipping extends OTGS_TestCase {
 		$rate = new stdClass();
 		$rate->cost = 10;
 
-		$this->assertEquals( 10, $subject->getShippingClassCostValue( $rate, 'PLN', 'class_cost_24' ) );
+		$prices = $this->getMockBuilder( 'WCML_Multi_Currency_Prices' )->disableOriginalConstructor()->setMethods( [ 'raw_price_filter' ] )->getMock();
+
+		$this->assertEquals( 10, $subject->getShippingClassCostValue( $rate, 'PLN', 'class_cost_24', $prices ) );
 	}
 
 	/**
