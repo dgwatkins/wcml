@@ -3,6 +3,12 @@
 namespace WCML\Multicurrency\Shipping;
 
 trait ShippingModeBase {
+	private $multiCurrencyPrices;
+
+	public function __construct( \WCML_Multi_Currency_Prices $multiCurrencyPrices ) {
+		$this->multiCurrencyPrices = $multiCurrencyPrices;
+	}
+
 	/**
 	 * @param array|object
 	 *

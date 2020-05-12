@@ -3,6 +3,9 @@
 namespace WCML\Multicurrency\Shipping;
 
 interface ShippingMode {
+
+	public function __construct( \WCML_Multi_Currency_Prices $multiCurrencyPrices );
+
 	/**
 	 * Returns shipping method id (shipping option key).
 	 *
@@ -58,11 +61,10 @@ interface ShippingMode {
 	 *
 	 * @param array|object $rate Shipping rate metadata.
 	 * @param string $currency Currency code.
-	 * @param WCML_Multi_Currency_Prices $multiCurrencyPrices
 	 *
 	 * @return integer|float|string
 	 */
-	public function getShippingCostValue( $rate, $currency, $multiCurrencyPrices );
+	public function getShippingCostValue( $rate, $currency );
 
 	/**
 	 * Checks if the instance of the shipping method has enabled manual pricing.

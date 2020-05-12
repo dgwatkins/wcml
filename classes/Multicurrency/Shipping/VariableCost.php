@@ -77,15 +77,14 @@ trait VariableCost {
 	/**
 	 * @param array|object $rate
 	 * @param string $currency
-	 * @param $multiCurrencyPrices
 	 *
 	 * @return int|mixed|string
 	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getShippingCostValue
 	 *
 	 */
-	public function getShippingCostValue( $rate, $currency, $multiCurrencyPrices ) {
+	public function getShippingCostValue( $rate, $currency ) {
 		$costName = $this->getCostKey( $currency );
-		return $this->getCostValueForName( $rate, $currency, $costName, $multiCurrencyPrices );
+		return $this->getCostValueForName( $rate, $currency, $costName );
 	}
 
 	/**
@@ -97,9 +96,9 @@ trait VariableCost {
 	 *
 	 * @return int Shipping class cost for given currency.
 	 */
-	public function getShippingClassCostValue( $rate, $currency, $shippingClassKey, $multiCurrencyPrices ) {
+	public function getShippingClassCostValue( $rate, $currency, $shippingClassKey ) {
 		$costName = $this->getShippingClassCostKey( $shippingClassKey, $currency );
-		return $this->getCostValueForName( $rate, $currency, $costName, $multiCurrencyPrices );
+		return $this->getCostValueForName( $rate, $currency, $costName );
 	}
 
 	/**
@@ -110,12 +109,12 @@ trait VariableCost {
 	 *
 	 * @return int "No shipping class" cost for given currency.
 	 */
-	public function getNoShippingClassCostValue( $rate, $currency, $multiCurrencyPrices ) {
+	public function getNoShippingClassCostValue( $rate, $currency ) {
 		$costName = $this->getNoShippingClassCostKey( $currency );
-		return $this->getCostValueForName( $rate, $currency, $costName, $multiCurrencyPrices );
+		return $this->getCostValueForName( $rate, $currency, $costName );
 	}
 
-	private function getCostValueForName( $rate, $currency, $costName, $multiCurrencyPrices ) {
+	private function getCostValueForName( $rate, $currency, $costName ) {
 		if ( ! isset( $rate->cost ) ) {
 			$rate->cost = 0;
 		}
@@ -125,7 +124,7 @@ trait VariableCost {
 				if ( ! empty( $rateSettings[ $costName ] ) ) {
 					$rate->cost = $rateSettings[ $costName ];
 				} else {
-					$rate->cost = $this->getCostForDefaultCurrency( $rate->cost, $rateSettings, $costName, $currency, $multiCurrencyPrices );
+					$rate->cost = $this->getCostForDefaultCurrency( $rate->cost, $rateSettings, $costName, $currency );
 				}
 			}
 		}
@@ -142,13 +141,13 @@ trait VariableCost {
 	 *
 	 * @return mixed
 	 */
-	private function getCostForDefaultCurrency( $cost, $rateSettings, $costName, $currencyCode, $multiCurrencyPrices ) {
+	private function getCostForDefaultCurrency( $cost, $rateSettings, $costName, $currencyCode ) {
 		$currencyAppendix = '_' . $currencyCode;
 		$currencyAppendixLength = strlen( $currencyAppendix );
 		if ( substr($costName, -$currencyAppendixLength) === $currencyAppendix ) {
 			$defaultCostName = substr( $costName, 0, -$currencyAppendixLength );
 			if ( ! empty( $rateSettings[ $defaultCostName ] ) ) {
-				$cost = $multiCurrencyPrices->raw_price_filter( $rateSettings[ $defaultCostName ], $currencyCode );
+				$cost = $this->multiCurrencyPrices->raw_price_filter( $rateSettings[ $defaultCostName ], $currencyCode );
 			}
 		}
 		return $cost;
