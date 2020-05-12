@@ -121,12 +121,36 @@ trait VariableCost {
 		if ( isset( $rate->instance_id ) ) {
 			if ( $this->isManualPricingEnabled( $rate ) ) {
 				$rateSettings = $this->getWpOption( $this->getMethodId(), $rate->instance_id );
-				if ( isset( $rateSettings[ $costName ] ) ) {
+				if ( ! empty( $rateSettings[ $costName ] ) ) {
 					$rate->cost = $rateSettings[ $costName ];
+				} else {
+					$rate->cost = $this->getCostForDefaultCurrency( $rate->cost, $rateSettings, $costName, $currency );
 				}
 			}
 		}
 		return $rate->cost;
+	}
+
+	/**
+	 * Searches settings for the cost with name without currency code at the end.
+	 *
+	 * @param mixed  $cost         Filtered cost.
+	 * @param array  $rateSettings Shipping cost array taken from get_option.
+	 * @param string $costName     Cost name with currency code at the end.
+	 * @param string $currencyCode Currency code.
+	 *
+	 * @return mixed
+	 */
+	private function getCostForDefaultCurrency( $cost, $rateSettings, $costName, $currencyCode ) {
+		$currencyAppendix = '_' . $currencyCode;
+		$currencyAppendixLength = strlen( $currencyAppendix );
+		if ( substr($costName, -$currencyAppendixLength) === $currencyAppendix ) {
+			$defaultCostName = substr( $costName, 0, -$currencyAppendixLength );
+			if ( ! empty( $rateSettings[ $defaultCostName ] ) ) {
+				$cost = $rateSettings[ $defaultCostName ];
+			}
+		}
+		return $cost;
 	}
 
 	/**
