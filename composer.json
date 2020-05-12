@@ -31,14 +31,6 @@
             "type": "vcs",
             "url": "ssh://git@git.onthegosystems.com:10022/wpml-shared/wpml-lib-dependencies.git"
         },
-        "patchwork": {
-            "type": "vcs",
-            "url": "https://github.com/OnTheGoSystems/patchwork.git"
-        },
-        "collect": {
-            "type": "vcs",
-            "url": "https://github.com/OnTheGoSystems/collect.git"
-        },
         "wp-plugin-version": {
             "type": "vcs",
             "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-wp-plugin-version.git"
