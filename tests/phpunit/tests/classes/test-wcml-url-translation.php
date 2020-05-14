@@ -346,6 +346,73 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 * @dataProvider shop_page_slugs
+	 */
+	public function it_should_translate_shop_page_base_in_rewrite_rules( $default_slug, $current_slug ) {
+
+		$rules = [
+			$default_slug.'/?$' => 'index.php?post_type=product',
+			$default_slug.'/page/([0-9]{1,})/?$' => 'index.php?post_type=product&paged=$matches[1]'
+		];
+		$expected_rules = [
+			$current_slug.'/?$' => 'index.php?post_type=product',
+			$current_slug.'/page/([0-9]{1,})/?$' => 'index.php?post_type=product&paged=$matches[1]'
+		];
+
+		$default_language = 'en';
+		$current_shop_id = 12;
+		$default_shop_id = 10;
+
+		\WP_Mock::userFunction( 'wc_get_page_id', [
+			'args' => [ 'shop' ],
+			'return' => $current_shop_id
+		] );
+
+		\WP_Mock::userFunction( 'get_post', [
+			'args' => [ $current_shop_id ],
+			'return' => new stdClass()
+		] );
+
+		\WP_Mock::userFunction( 'get_post', [
+			'args' => [ $default_shop_id ],
+			'return' => new stdClass()
+		] );
+
+		\WP_Mock::userFunction( 'get_page_uri', [
+			'args' => [ $current_shop_id ],
+			'return' => urlencode( $current_slug )
+		] );
+
+		\WP_Mock::userFunction( 'get_page_uri', [
+			'args' => [ $default_shop_id ],
+			'return' => urlencode( $default_slug )
+		] );
+
+		\WP_Mock::onFilter( 'translate_object_id' )
+		        ->with( $current_shop_id, 'page', true, $default_language )
+		        ->reply( $default_shop_id );
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( [ 'get_default_language' ] )
+		                  ->getMock();
+
+		$sitepress->method( 'get_default_language' )->willReturn( $default_language );
+
+		$subject = $this->get_subject( null, $sitepress );
+		$this->assertEquals( $expected_rules, $subject->translate_shop_page_base_in_rewrite_rules( $rules ) );
+
+	}
+
+	public function shop_page_slugs(){
+		return [
+			[ 'shop', 'tienda' ],
+			[ 'shop', 'магазин' ],
+			[ 'магазин', 'shop' ],
+		];
+	}
 
 
 }
