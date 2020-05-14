@@ -541,8 +541,8 @@ class WCML_Url_Translation {
 			return $value;
 		}
 
-		$current_slug = get_page_uri( $current_shop_id );
-		$default_slug = get_page_uri( $default_shop_id );
+		$current_slug = urldecode( get_page_uri( $current_shop_id ) );
+		$default_slug = urldecode( get_page_uri( $default_shop_id ) );
 
 		if ( $current_slug != $default_slug ) {
 			$buff_value = [];
