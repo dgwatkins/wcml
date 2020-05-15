@@ -14,6 +14,7 @@ class Config {
 
 	public static function getSharedClasses() {
 		return [
+			\WCML_Multi_Currency::class,
 			\WCML_Currencies_Payment_Gateways::class,
 		];
 	}

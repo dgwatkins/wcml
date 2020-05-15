@@ -28,15 +28,11 @@ class WCML_Multi_Currency_Configuration {
 			add_action( 'wp_ajax_legacy_update_custom_rates', [ __CLASS__, 'legacy_update_custom_rates' ] );
 			add_action( 'wp_ajax_legacy_remove_custom_rates', [ __CLASS__, 'legacy_remove_custom_rates' ] );
 
-			add_action( 'wp_ajax_wcml_new_currency', [ __CLASS__, 'edit_currency' ] ); // @todo: remove this callback never used
 			add_action( 'wp_ajax_wcml_save_currency', [ __CLASS__, 'save_currency' ] );
 			add_action( 'wp_ajax_wcml_delete_currency', [ __CLASS__, 'delete_currency' ] );
-
 			add_action( 'wp_ajax_wcml_update_currency_lang', [ __CLASS__, 'update_currency_lang' ] );
 			add_action( 'wp_ajax_wcml_update_default_currency', [ __CLASS__, 'update_default_currency_ajax' ] );
-
 		}
-
 	}
 
 	public static function save_configuration() {
@@ -87,42 +83,6 @@ class WCML_Multi_Currency_Configuration {
 			$wpml_admin_notices->remove_notice( 'wcml-save-multi-currency-options', 'wcml-fixerio-api-key-required' );
 		}
 
-	}
-
-	public static function edit_currency() {
-
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( wp_verify_nonce( $nonce, 'wcml_edit_currency' ) ) {
-
-			self::$multi_currency->init_currencies();
-			$args['currencies']    = self::$multi_currency->currencies;
-			$args['wc_currencies'] = get_woocommerce_currencies();
-
-			if ( empty( $_POST['currency'] ) ) {
-
-				$args['title'] = empty( $_POST['currency'] ) ? __( 'Add new currency', 'woocommerce-multilingual' ) : __( 'Update currency', 'woocommerce-multilingual' );
-
-			} else {
-
-				$args['currency_code']   = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-				$args['currency_name']   = $args['wc_currencies'][ $args['currency_code'] ];
-				$args['currency_symbol'] = get_woocommerce_currency_symbol( $args['currency_code'] );
-
-				$args['title'] = sprintf(
-					__( 'Update settings for %s', 'woocommerce-multilingual' ),
-					'<strong>' . $args['currency_name'] . ' (' . $args['currency_symbol'] . ')</strong>'
-				);
-
-			}
-
-			$custom_currency_options = new WCML_Custom_Currency_Options( $args, self::$woocommerce_wpml );
-			$return['html']          = $custom_currency_options->get_view();
-
-			echo json_encode( $return );
-
-		}
-
-		exit;
 	}
 
 	public static function add_currency( $currency_code ) {

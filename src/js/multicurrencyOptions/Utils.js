@@ -41,19 +41,11 @@ const getFormatPlaceholder = (firstPart, secondPart, position) => {
     }
 };
 
-// @todo: To check
-const KEY_EVENTS = {
-    DOM_SUBTRACT: 109,
-    DOM_DASH: 189,
-    DOM_E: 69
-};
-
 export const validateRate = (value) => {
     const isPositive = value => value > 0;
     const isNumber = value => !isNaN(parseFloat(value)) && isFinite(value);
-    const hasNoInvalidChar = (value) => true; // @todo: To be confirmed with KEY_EVENTS
 
-    return isNumber(value) && isPositive(value) && hasNoInvalidChar(value);
+    return isNumber(value) && isPositive(value);
 };
 
 export const triggerActiveCurrenciesChange = function(payload) {
