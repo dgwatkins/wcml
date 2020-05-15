@@ -1,6 +1,6 @@
 import React from "react";
 import AddCurrency from "./AddCurrency";
-import Table from "./Table";
+import Table from "./Table/Table";
 import CurrencyModal from "./CurrencyModal";
 import {useStore} from "../Store";
 

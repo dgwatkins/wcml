@@ -248,4 +248,28 @@ class Test_WCML_Payment_Gateway_Bacs extends OTGS_TestCase {
 		$this->assertSame( $accounts, $filtered_accounts );
 	}
 
+	/**
+	 * @test
+	 * @group wcml-3178
+	 */
+	public function it_should_get_output_model() {
+		$subject = $this->get_subject();
+
+		$this->assertEquals(
+			[
+				'id'          => 'id',
+				'title'       => 'title',
+				'isSupported' => true,
+				'settings'    => [],
+				'tooltip'     => 'Set the currency in which your customer will see the final price when they checkout. Choose which accounts they will see in their payment message.',
+				'strings'     => [
+					'labelCurrency'    => 'Currency',
+					'labelBankAccount' => 'Bank Account',
+					'optionAll'        => 'All Accounts',
+					'optionAllIn'      => 'All in selected currency',
+				],
+			],
+			$subject->get_output_model()
+		);
+	}
 }

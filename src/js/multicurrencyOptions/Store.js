@@ -1,22 +1,26 @@
 import { action, createStore, useStoreState, useStoreActions, computed, thunk } from "easy-peasy";
 import {capitalize, triggerActiveCurrenciesChange} from "./Utils";
 import * as R from 'ramda';
-import {original} from 'immer';
 
 const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => createStore({
     activeCurrencies: activeCurrencies,
     allCurrencies: allCurrencies,
     languages: languages,
     gateways: gateways,
+    modalCurrency: null,
+    updating: false,
+
     setDefaultCurrencyForLang: action((state, data) => {
         const index = state.languages.findIndex(lang => lang.code === data.language);
         const language = state.languages[index];
         language.defaultCurrency = data.currency;
         state.languages[index] = language;
     }),
+
     getCurrencyIndex: action((state, code) => {
         state.activeCurrencies.findIndex(currency => currency.code === code);
     }),
+
     enableCurrencyForLang: action((state, data) => {
         const index = getCurrencyIndex(state.activeCurrencies)(data.currency);
         const currency = state.activeCurrencies[index];
@@ -29,36 +33,39 @@ const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => cr
 
         state.activeCurrencies[index] = currency;
     }),
+
     deleteCurrency: action((state, code) => {
         const index = getCurrencyIndex(state.activeCurrencies)(code);
         const removedCurrency = {...state.activeCurrencies[index]};
         state.activeCurrencies.splice(index, 1);
         triggerActiveCurrenciesChange({action:'remove', currency:removedCurrency});
     }),
-    modalCurrency: null,
+
     setModalCurrency: action((state, currency) => {
         state.modalCurrency = currency;
     }),
+
     saveModalCurrency: action(state => {
         const index = getCurrencyIndex(state.activeCurrencies)(state.modalCurrency.code);
 
         if (index < 0) {
-            const newCurrency = {...state.modalCurrency, ...{isNew:false}};
+            const newCurrency = {...state.modalCurrency, isNew:false};
             state.activeCurrencies.push(newCurrency);
             triggerActiveCurrenciesChange({action:'add', currency:newCurrency});
         } else {
             state.activeCurrencies[index] = state.modalCurrency;
         }
     }),
+
     newCurrencies: computed(state => {
         const usedCurrencyCodes = state.activeCurrencies.map(currency => currency.code);
         return state.allCurrencies.filter((currency) => ! usedCurrencyCodes.includes(currency.code));
     }),
+
     defaultCurrency: computed(state => {
         return state.activeCurrencies.filter(currency => currency.isDefault)[0];
     }),
 
-    updating: false,
     setUpdating: action((state, updating) => {
         state.updating = updating;
     }),

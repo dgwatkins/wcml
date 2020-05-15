@@ -21,9 +21,9 @@ jQuery( function($){
                 WCML_Currency_Switcher_Settings.open_dialog_from_hash();
 
                 document.addEventListener('wcmlActiveCurrenciesChange', function(e) {
-                    const action = e.detail.action;
-                    const currency = e.detail.currency;
-                    const currencyData = e.detail.currencyData;
+                    var action = e.detail.action;
+                    var currency = e.detail.currency;
+                    var currencyData = e.detail.currencyData;
 
                     if ('add' === action) {
                         $('#wcml_currencies_order').append('<li class="wcml_currencies_order_'+currency.code+' ui-sortable-handle" cur="'+currency.code+'">'+ currencyData.label + ' (' + currencyData.symbol + ')</li>');

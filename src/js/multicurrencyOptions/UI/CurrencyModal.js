@@ -26,7 +26,7 @@ const CurrencyModal = () => {
 
         if (result) {
             const formattedLastRateUpdate = R.path(['data', 'data', 'formattedLastRateUpdate'], result);
-            setModalCurrency({...currency, formattedLastRateUpdate:formattedLastRateUpdate})
+            setModalCurrency({...currency, formattedLastRateUpdate})
             saveModalCurrency();
             onClose();
         }
@@ -220,12 +220,10 @@ const NewCurrencySelector = ({updateCurrencyProp}) => {
 
 const getRowAttrs = (currency, prop, attrs={}) => {
     return {
-        ...{
-            id: "wcml_currency_options_" + prop + "_" + currency.code,
-            name: "currency_options[" + prop + "]",
-            className: "currency_option_" + prop,
-            value: currency[prop]
-        },
+        id: "wcml_currency_options_" + prop + "_" + currency.code,
+        name: "currency_options[" + prop + "]",
+        className: "currency_option_" + prop,
+        value: currency[prop],
         ...attrs
     };
 }

@@ -1,10 +1,10 @@
 import React from "react";
-import {createAjaxRequest} from "../Request";
-import {useStore, getStoreAction, getStoreProperty} from "../Store";
-import strings from "../Strings";
-import {Spinner} from "./FormElements";
+import {createAjaxRequest} from "../../Request";
+import {useStore, getStoreAction, getStoreProperty} from "../../Store";
+import strings from "../../Strings";
+import {Spinner} from "../FormElements";
 
-const TableFragmentRight = () => {
+const ColumnActions = () => {
     const activeCurrencies = getStoreProperty('activeCurrencies');
 
     return <table className="widefat currency_settings_table" id="currency-settings-table">
@@ -24,7 +24,7 @@ const TableFragmentRight = () => {
             </table>
 };
 
-export default TableFragmentRight;
+export default ColumnActions;
 
 const Row = ({currency}) => {
     const dataKey = 'wcml_currency_options_' + currency.code;

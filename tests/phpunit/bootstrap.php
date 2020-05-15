@@ -112,6 +112,7 @@ FunctionMocker::init(
 			realpath( WCML_PATH . '/inc' ),
 			realpath( WCML_PATH . '/tests/phpunit/includes' ),
 			realpath( WCML_PATH . '/tests/phpunit/stubs' ),
+			realpath( WCML_PATH . '/vendor/wpml' ),
 		],
 		'redefinable-internals' => [
 			'constant',

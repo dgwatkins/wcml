@@ -26,7 +26,7 @@
     "dependencies": {
         "@wordpress/babel-plugin-makepot": "^3.4.0",
         "@wordpress/hooks": "^2.0.3",
-        "antd": "^3.19.8",
+        "antd": "^4.2.4",
         "classnames": "~2.2.0",
         "collect.js": "^4.12.5",
         "cross-fetch": "~1.1.0",

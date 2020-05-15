@@ -277,4 +277,52 @@ class Test_WCML_Payment_Gateway_PayPal extends OTGS_TestCase {
 		$woocommerce_wpml = $this->woocommerce_wpml;
 	}
 
+	/**
+	 * @test
+	 * @group wcml-3178
+	 */
+	public function it_should_get_output_model() {
+		$defaultCurrency = 'USD';
+		$wcCurrencies    = [
+			$defaultCurrency => 'US Dollar',
+			'UAD'            => 'United Arab Emirate Dirham',
+		];
+
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option' )
+			->andReturn( $defaultCurrency );
+
+		\WP_Mock::userFunction( 'get_woocommerce_currencies' )
+			->andReturn( $wcCurrencies );
+
+		\WP_Mock::passthruFunction( 'remove_filter' );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals(
+			[
+				'id'          => 'id',
+				'title'       => 'title',
+				'isSupported' => true,
+				'settings'    => [
+					$defaultCurrency => [
+						'value'    => 'test_email',
+						'currency' => $defaultCurrency,
+						'isValid'  => true,
+					],
+					'UAD' => [
+						'value'    => '',
+						'currency' => 'UAD',
+						'isValid'  => false,
+					],
+				],
+				'tooltip'     => '',
+				'strings'     => [
+					'labelCurrency'       => 'Currency',
+					'labelPayPalEmail'    => 'PayPal Email',
+					'tooltipNotSupported' => 'This gateway does not support %s. To show this gateway please select another currency.',
+				],
+			],
+			$subject->get_output_model()
+		);
+	}
 }
