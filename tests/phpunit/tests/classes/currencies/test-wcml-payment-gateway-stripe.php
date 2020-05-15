@@ -177,4 +177,51 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 		$this->assertSame( $expected_settings, $filtered_settings );
 	}
 
+	/**
+	 * @test
+	 * @group wcml-3178
+	 */
+	public function it_should_get_output_model() {
+		$defaultCurrency = 'USD';
+		$wcCurrencies    = [
+			$defaultCurrency => 'US Dollar',
+			'UAD'            => 'United Arab Emirate Dirham',
+		];
+
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option' )
+			->andReturn( $defaultCurrency );
+
+		\WP_Mock::userFunction( 'get_woocommerce_currencies' )
+			->andReturn( $wcCurrencies );
+
+		\WP_Mock::passthruFunction( 'remove_filter' );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals(
+			[
+				'id'          => 'id',
+				'title'       => 'title',
+				'isSupported' => true,
+				'settings'    => [
+					$defaultCurrency => [
+						'publishable_key' => 'publishable_key',
+						'secret_key'      => 'secret_key',
+					],
+					'UAD' => [
+						'publishable_key' => '',
+						'secret_key'      => '',
+					],
+				],
+				'tooltip'     => '',
+				'strings'     => [
+					'labelCurrency'           => 'Currency',
+					'labelLivePublishableKey' => 'Live Publishable Key',
+					'labelLiveSecretKey'      => 'Live Secret Key',
+				],
+			],
+			$subject->get_output_model()
+		);
+	}
+
 }
