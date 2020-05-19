@@ -61,6 +61,7 @@
         "roave/security-advisories": "dev-master",
         "sebastian/phpcpd": "^3.0",
         "wpml/collect": "dev-wpml-collect-rename",
+        "wpml/fp": "dev-master",
         "wpml/page-builders-gutenberg": "dev-develop",
         "wpml/wp": "dev-master"
     },
