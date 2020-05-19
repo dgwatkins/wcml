@@ -1,10 +1,10 @@
 import React from "react";
-import {getSmallFormattedPrice, getCurrencyLabel} from '../Utils';
-import {getStoreProperty} from "../Store";
-import {getTooltip} from "./FormElements";
-import strings from "../Strings";
+import {getSmallFormattedPrice, getCurrencyLabel} from '../../Utils';
+import {getStoreProperty} from "../../Store";
+import {getTooltip} from "../FormElements";
+import strings from "../../Strings";
 
-const TableFragmentLeft = () => {
+const ColumnCurrencies = () => {
     const activeCurrencies = getStoreProperty('activeCurrencies');
 
     return <table className="widefat currency_table" id="currency-table">
@@ -25,7 +25,7 @@ const TableFragmentLeft = () => {
             </table>
 };
 
-export default TableFragmentLeft;
+export default ColumnCurrencies;
 
 const Rows = ({activeCurrencies}) => {
     const defaultCurrency = activeCurrencies.filter(currency => currency.isDefault)[0];

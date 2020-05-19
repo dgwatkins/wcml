@@ -6,7 +6,7 @@ import {sprintf} from "wpml-common-js-source/src/i18n";
 import {getCurrencyLabel} from "../../Utils";
 import {Spinner} from "../FormElements";
 
-const TableFragmentCenter = () => {
+const ColumnLanguages = () => {
     const activeCurrencies = getStoreProperty('activeCurrencies');
     const languages = getStoreProperty('languages');
 
@@ -40,7 +40,7 @@ const TableFragmentCenter = () => {
             </div>
 }
 
-export default TableFragmentCenter;
+export default ColumnLanguages;
 
 const Row = ({currency, languages}) => {
   return <tr id={'currency_row_langs_' + currency.code} className="wcml-row-currency-lang">
@@ -63,7 +63,7 @@ const Cell = ({language, currency}) => {
         getCurrencyLabel(currency.code)
     );
 
-    const onClick = async (event) => {
+    const toggleEnableLanguage = async (event) => {
         event.preventDefault();
 
         if (updating) {
@@ -91,7 +91,7 @@ const Cell = ({language, currency}) => {
                                    data-language={language.code}
                                    data-currency={currency.code} href="#"
                                    title={title}
-                                   onClick={onClick}
+                                   onClick={toggleEnableLanguage}
                                 />
                             )
                         }
@@ -125,7 +125,7 @@ const DefaultCell = ({language, activeCurrencies}) => {
         ...options
     ];
 
-    const onChange = async (event) => {
+    const changeDefaultCurrency = async (event) => {
         event.preventDefault();
 
         if (updating) {
@@ -148,7 +148,7 @@ const DefaultCell = ({language, activeCurrencies}) => {
     }
 
     return <td align="center">
-                <select value={language.defaultCurrency} onChange={onChange} rel={language.code}>
+                <select value={language.defaultCurrency} onChange={changeDefaultCurrency} rel={language.code}>
                     {
                         allOptions.map(option =>
                             <option key={'default-' + option.value} value={option.value}>{option.text}</option>
