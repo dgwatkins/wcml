@@ -2,8 +2,11 @@
 
 namespace WCML\Multicurrency\UI;
 
+use tad\FunctionMocker\FunctionMocker;
+
 /**
  * @group multicurrency
+ * @group wcml-3178
  */
 class TestHooks extends \OTGS_TestCase {
 
@@ -95,21 +98,6 @@ class TestHooks extends \OTGS_TestCase {
 
 		$subject = $this->getSubject( $multiCurrency, $currenciesPaymentGateways, $sitepress, $defaultCurrencies );
 
-		\WP_Mock::userFunction( 'wp_enqueue_script', [
-			'times' => 1,
-			'args'  => [
-				Hooks::HANDLE,
-				WCML_PLUGIN_URL . '/dist/js/multicurrencyOptions/app.js',
-				[],
-				WCML_VERSION
-			],
-		] );
-
-		\WP_Mock::userFunction( 'wp_create_nonce', [
-			'args'   => [ Hooks::HANDLE ],
-			'return' => self::NONCE,
-		] );
-
 		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', [
 			'return' => self::DEFAULT_CURRENCY,
 		] );
@@ -134,31 +122,24 @@ class TestHooks extends \OTGS_TestCase {
 
 		\WP_Mock::passthruFunction( 'add_query_arg' );
 
-		\WP_Mock::userFunction( 'wp_localize_script', [
-			'times'  => 1,
-			'return' => function( $handle, $varName, $data ) {
-				$this->assertEquals( Hooks::HANDLE, $handle );
-				$this->assertEquals( 'wcmlMultiCurrency', $varName );
-				$this->assertEquals( self::NONCE, $data['nonce'] );
-				$this->checkActiveCurrencies( $data['activeCurrencies'] );
-				$this->checkAllCurrencies( $data['allCurrencies'] );
-				$this->checkLanguages( $data['languages'] );
-				$this->checkGateways( $data['gateways'] );
-				$this->assertInternalType( 'array', $data['strings'] );
-			}
-		] );
-
-		\WP_Mock::userFunction( 'wp_enqueue_style', [
-			'times' => 1,
-			'args'  => [
-				Hooks::HANDLE,
-				WCML_PLUGIN_URL . '/dist/css/multicurrencyOptions/styles.css',
-				[],
-				WCML_VERSION
-			],
-		] );
+		$enqueueResources = FunctionMocker::replace( '\WPML\LIB\WP\App\Resources::enqueue', function( $app, $pluginBaseUrl, $pluginBasePath, $version, $domain, $localize ) {
+			$this->assertEquals( 'multicurrencyOptions', $app );
+			$this->assertEquals( WCML_PLUGIN_URL, $pluginBaseUrl );
+			$this->assertEquals( WCML_PLUGIN_PATH, $pluginBasePath );
+			$this->assertEquals( WCML_VERSION, $version );
+			$this->assertEquals( 'woocommerce-multilingual', $domain );
+			$this->assertEquals( 'wcmlMultiCurrency', $localize['name'] );
+			$this->assertEquals( Hooks::HANDLE, $localize['data']['endpoint'] );
+			$this->checkActiveCurrencies( $localize['data']['activeCurrencies'] );
+			$this->checkAllCurrencies( $localize['data']['allCurrencies'] );
+			$this->checkLanguages( $localize['data']['languages'] );
+			$this->checkGateways( $localize['data']['gateways'] );
+			$this->assertInternalType( 'array', $localize['data']['strings'] );
+		} );
 
 		$subject->loadAssets();
+
+		$enqueueResources->wasCalledOnce();
 	}
 
 	private function checkActiveCurrencies( array $currencies ) {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ee035ffdbfe78f6a1f5053aeb1ec08bf",
+    "content-hash": "f303a65ca0d77af023bb3033e38bbb18",
     "packages": [
         {
             "name": "composer/installers",
@@ -5107,6 +5107,40 @@
             ],
             "description": "A library used by WPML to handle Gutenberg",
             "time": "2020-05-14T11:55:57+00:00"
+        },
+        {
+            "name": "wpml/wp",
+            "version": "0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.onthegosystems.com/wpml-packages/wp.git",
+                "reference": "e1e8665b40a2dc1570f426634e6e0a788d80207f"
+            },
+            "require-dev": {
+                "antecedent/patchwork": "^2.0",
+                "otgs/unit-tests-framework": "~1.2.0",
+                "wpml/collect": "dev-wpml-collect-rename",
+                "wpml/fp": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "classes/"
+                ],
+                "files": []
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bruce Pearson",
+                    "email": "bruce@onthegosystems.com"
+                }
+            ],
+            "description": "Class and utilities to interface with WordPress from WPML",
+            "time": "2020-06-08T18:55:04+00:00"
         },
         {
             "name": "xrstf/composer-php52",

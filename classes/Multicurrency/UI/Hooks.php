@@ -3,6 +3,7 @@
 namespace WCML\Multicurrency\UI;
 
 use WPML\Collect\Support\Collection;
+use WPML\LIB\WP\App\Resources;
 
 class Hooks implements \IWPML_Action {
 
@@ -37,33 +38,27 @@ class Hooks implements \IWPML_Action {
 	}
 
 	public function loadAssets() {
-		wp_enqueue_script(
-			self::HANDLE,
-			WCML_PLUGIN_URL . '/dist/js/multicurrencyOptions/app.js',
-			[],
-			WCML_VERSION
-		);
-
 		$gateways = $this->getGateways();
 
-		wp_localize_script(
-			self::HANDLE,
-			'wcmlMultiCurrency',
-			[
-				'nonce'             => wp_create_nonce( self::HANDLE ),
-				'activeCurrencies'  => $this->getActiveCurrencies( $gateways ),
-				'allCurrencies'     => $this->getAllCurrencies(),
-				'languages'         => $this->getLanguages(),
-				'gateways'          => $gateways->toArray(),
-				'strings'           => $this->getStrings(),
-			]
-		);
+		$localize = [
+			'name' => 'wcmlMultiCurrency',
+			'data' => [
+				'endpoint'         => self::HANDLE,
+				'activeCurrencies' => $this->getActiveCurrencies( $gateways ),
+				'allCurrencies'    => $this->getAllCurrencies(),
+				'languages'        => $this->getLanguages(),
+				'gateways'         => $gateways->toArray(),
+				'strings'          => $this->getStrings(),
+			],
+		];
 
-		wp_enqueue_style(
-			self::HANDLE,
-			WCML_PLUGIN_URL . '/dist/css/multicurrencyOptions/styles.css',
-			[],
-			WCML_VERSION
+		Resources::enqueue(
+			'multicurrencyOptions',
+			WCML_PLUGIN_URL,
+			WCML_PLUGIN_PATH,
+			WCML_VERSION,
+			'woocommerce-multilingual',
+			$localize
 		);
 	}
 
