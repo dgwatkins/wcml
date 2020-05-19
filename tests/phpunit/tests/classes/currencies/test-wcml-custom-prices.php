@@ -791,4 +791,74 @@ class Test_WCML_Custom_Prices extends OTGS_TestCase {
 
 		$this->assertTrue( $subject->check_product_with_custom_prices( $is_purchasable, $product ) );
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_remove_custom_sale_prices(){
+
+		$currency = 'UAH';
+		$product_id = 10;
+		$regular_price = 110;
+
+		$currencies = [
+			$currency => []
+		];
+
+		$product_ids = [ $product_id ];
+
+		$woocommerce_wpml                                    = $this->get_woocommerce_wpml();
+
+		$woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( [ 'get_currencies' ] )
+		                                         ->getMock();
+
+		$woocommerce_wpml->multi_currency->method( 'get_currencies' )->willReturn( $currencies );
+
+		$product        = $this->getMockBuilder( 'WC_Product' )
+		                       ->disableOriginalConstructor()
+		                       ->setMethods( [ 'get_sale_price' ] )
+		                       ->getMock();
+		$product->method( 'get_sale_price' )->willReturn( '' );
+
+		\WP_Mock::userFunction( 'wc_get_product', [
+			'args'   => [ $product_id ],
+			'times'  => 1,
+			'return' => $product
+		] );
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $product_id, '_wcml_schedule_'.$currency, true ],
+			'times'  => 1,
+			'return' => 0
+		] );
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $product_id, '_wcml_custom_prices_status', true ],
+			'times'  => 1,
+			'return' => 1
+		] );
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $product_id, '_regular_price_'.$currency, true ],
+			'times'  => 1,
+			'return' => $regular_price
+		] );
+
+		\WP_Mock::userFunction( 'update_post_meta', [
+			'args'   => [ $product_id, '_price_' . $currency, $regular_price ],
+			'times'  => 1,
+			'return' => true
+		] );
+
+		\WP_Mock::userFunction( 'update_post_meta', [
+			'args'   => [ $product_id, '_sale_price_' . $currency, '' ],
+			'times'  => 1,
+			'return' => true
+		] );
+
+		$subject = $this->get_subject( $woocommerce_wpml );
+		$subject->maybe_remove_sale_prices( $product_ids );
+	}
 }
