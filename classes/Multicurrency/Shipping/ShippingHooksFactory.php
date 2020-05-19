@@ -16,7 +16,7 @@ class ShippingHooksFactory implements \IWPML_Deferred_Action_Loader, \IWPML_Back
 		if ( wcml_is_multi_currency_on()
 		     && $this->hasAdditionalCurrencyDefined()
 		) {
-			if ( $this->isShippingPageRequest() || is_ajax() ) {
+			if ( $this->isShippingPageRequest() || $this->isAjaxOnShippingPageRequest() ) {
 				$hooks[] = new AdminHooks( $woocommerce_wpml->get_multi_currency() );
 			} else {
 				$hooks[] = new FrontEndHooks( $woocommerce_wpml->get_multi_currency() );
@@ -43,5 +43,15 @@ class ShippingHooksFactory implements \IWPML_Deferred_Action_Loader, \IWPML_Back
 	private function isShippingPageRequest() {
 		return isset( $_GET['page'], $_GET['tab'] ) && 'wc-settings' === $_GET['page'] && 'shipping' === $_GET['tab']
 		       || isset( $_GET['action'] ) && 'woocommerce_shipping_zone_methods_save_settings' === $_GET['action'];
+	}
+
+	private function isAjaxOnShippingPageRequest() {
+		if ( ! isset( $_GET ) ) {
+			return false;
+		}
+		$getData = wpml_collect( $_GET );
+		$shippingActions = [ 'woocommerce_shipping_zone_add_method', 'woocommerce_shipping_zone_methods_save_changes' ];
+
+		return is_ajax() && wpml_collect( $shippingActions )->containsStrict( $getData->get( 'action' ) );
 	}
 }
