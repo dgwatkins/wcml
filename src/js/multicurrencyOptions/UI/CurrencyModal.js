@@ -26,7 +26,7 @@ const CurrencyModal = () => {
 
         if (result) {
             const formattedLastRateUpdate = R.path(['data', 'data', 'formattedLastRateUpdate'], result);
-            setModalCurrency({...currency, formattedLastRateUpdate:formattedLastRateUpdate})
+            setModalCurrency({...currency, formattedLastRateUpdate})
             saveModalCurrency();
             onClose();
         }
