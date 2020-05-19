@@ -3,6 +3,7 @@
 namespace WCML\Multicurrency\UI;
 
 use WPML\Collect\Support\Collection;
+use WPML\FP\Fns;
 use WPML\LIB\WP\App\Resources;
 
 class Hooks implements \IWPML_Action {
@@ -70,16 +71,16 @@ class Hooks implements \IWPML_Action {
 	private function getActiveCurrencies( Collection $gateways ) {
 		$defaultCurrency = wcml_get_woocommerce_currency_option();
 
-		$buildActiveCurrency = function( $currency, $code ) use ( $defaultCurrency ) {
-			return array_merge(
-				$currency,
-				[
-					'code'            => $code,
-					'isDefault'       => $code === $defaultCurrency,
-					'languages'       => array_map( 'intval', $currency['languages'] ),
-					'gatewaysEnabled' => $this->currenciesPaymentGateways->is_enabled( $code ),
-				]
-			);
+		$addCode = function( $currency, $code ) use ( $defaultCurrency ) {
+			return array_merge( $currency, [ 'code' => $code ] );
+		};
+
+		$buildActiveCurrency = function( $currency ) use ( $defaultCurrency ) {
+			return [
+				'isDefault'       => $currency['code'] === $defaultCurrency,
+				'languages'       => array_map( 'intval', $currency['languages'] ),
+				'gatewaysEnabled' => $this->currenciesPaymentGateways->is_enabled( $currency['code'] ),
+			];
 		};
 
 		$getGatewaySettingsForCurrency = function( $code ) use ( $gateways ) {
@@ -90,28 +91,25 @@ class Hooks implements \IWPML_Action {
 			} )->toArray();
 		};
 
-		$addGatewaysSettings = function( $currency, $code ) use ( $getGatewaySettingsForCurrency ) {
-			return array_merge(
-				$currency,
-				[ 'gatewaysSettings' => $getGatewaySettingsForCurrency( $code ) ]
-			);
+		$addGatewaysSettings = function( $currency ) use ( $getGatewaySettingsForCurrency ) {
+			return [ 'gatewaysSettings' => $getGatewaySettingsForCurrency( $currency['code'] ) ];
 		};
 
 		$addFormattedLastRateUpdate = function( $currency ) {
-			return array_merge(
-				$currency,
-				[
-					'formattedLastRateUpdate' => isset( $currency['updated'] )
-						? self::formatLastRateUpdate( $currency['updated'] )
-						: null
-				]
-			);
+			return [
+				'formattedLastRateUpdate' => isset( $currency['updated'] )
+					? self::formatLastRateUpdate( $currency['updated'] )
+					: null
+			];
 		};
 
+		$merge = function( $fn ) { return Fns::converge( 'array_merge', [ $fn, Fns::identity() ]  ); };
+
 		return wpml_collect( $this->multiCurrency->get_currencies( true ) )
-			->map( $buildActiveCurrency )
-			->map( $addFormattedLastRateUpdate )
-			->map( $addGatewaysSettings )
+			->map( $addCode )
+			->map( $merge( $buildActiveCurrency ) )
+			->map( $merge( $addFormattedLastRateUpdate ) )
+			->map( $merge( $addGatewaysSettings ) )
 			->values()
 			->toArray();
 	}

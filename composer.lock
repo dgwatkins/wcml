@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f303a65ca0d77af023bb3033e38bbb18",
+    "content-hash": "4aa1d369de2d78d03eb31e295c35c242",
     "packages": [
         {
             "name": "composer/installers",
@@ -5039,14 +5039,13 @@
         },
         {
             "name": "wpml/fp",
-            "version": "0.1.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/wpml-packages/fp.git",
-                "reference": "9931258b6b33f48f434b84540150219458cb3ff9"
+                "reference": "0ef1445eacaffc8dcddcebaa84f0358d6f2b9b6e"
             },
             "require-dev": {
-                "cvuorinen/phpdoc-markdown-public": "^0.2.0",
                 "lucatume/function-mocker": "~1.0",
                 "phpunit/phpunit": "^5",
                 "wpml/collect": "dev-wpml-collect-rename"
@@ -5063,7 +5062,7 @@
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2020-06-11T08:29:34+00:00"
+            "time": "2020-05-19T00:56:41+00:00"
         },
         {
             "name": "wpml/page-builders-gutenberg",
@@ -5110,11 +5109,11 @@
         },
         {
             "name": "wpml/wp",
-            "version": "0.1.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/wpml-packages/wp.git",
-                "reference": "e1e8665b40a2dc1570f426634e6e0a788d80207f"
+                "reference": "2395597d991cc3753b286cf1b78a4a14b7537893"
             },
             "require-dev": {
                 "antecedent/patchwork": "^2.0",
@@ -5140,7 +5139,7 @@
                 }
             ],
             "description": "Class and utilities to interface with WordPress from WPML",
-            "time": "2020-06-08T18:55:04+00:00"
+            "time": "2020-05-13T02:16:17+00:00"
         },
         {
             "name": "xrstf/composer-php52",
@@ -5183,7 +5182,9 @@
         "otgs/wp-plugin-version": 20,
         "roave/security-advisories": 20,
         "wpml/collect": 20,
-        "wpml/page-builders-gutenberg": 20
+        "wpml/fp": 20,
+        "wpml/page-builders-gutenberg": 20,
+        "wpml/wp": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
