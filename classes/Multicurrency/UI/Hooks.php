@@ -4,6 +4,7 @@ namespace WCML\Multicurrency\UI;
 
 use WPML\Collect\Support\Collection;
 use WPML\FP\Fns;
+use WPML\FP\Obj;
 use WPML\LIB\WP\App\Resources;
 
 class Hooks implements \IWPML_Action {
@@ -83,15 +84,15 @@ class Hooks implements \IWPML_Action {
 			];
 		};
 
-		$getGatewaySettingsForCurrency = function( $code ) use ( $gateways ) {
-			return $gateways->mapWithKeys( function( array $gateway ) use ( $code ) {
-				return [
-					$gateway['id'] => isset( $gateway['settings'][ $code ] ) ? $gateway['settings'][ $code ] : [],
-				];
-			} )->toArray();
-		};
+		$addGatewaysSettings = function( $currency ) use ( $gateways ) {
+			$getGatewaySettingsForCurrency = function( $code ) use ( $gateways ) {
+				$addSettingsForGateway = function( array $gateway ) use ( $code ) {
+					return [ $gateway['id'] => Obj::pathOr( [], [ 'settings', $code ], $gateway ) ];
+				};
 
-		$addGatewaysSettings = function( $currency ) use ( $getGatewaySettingsForCurrency ) {
+				return $gateways->mapWithKeys( $addSettingsForGateway )->toArray();
+			};
+
 			return [ 'gatewaysSettings' => $getGatewaySettingsForCurrency( $currency['code'] ) ];
 		};
 
