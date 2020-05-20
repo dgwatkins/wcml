@@ -51,10 +51,18 @@ class Test_WCML_Multi_Currency_Shipping_Front_End_Hooks extends OTGS_TestCase {
 	 *
 	 * @dataProvider ShippingCostData
 	 */
-	public function getShippingCost_runs_for_cost_field( $field, $cost, $expected ) {
+	public function getShippingCost_runs_for_cost_field( $field, $cost, $expected, $postAction, $postCurrency ) {
+		global $_POST;
+
+		$_POST = [
+			'action' => $postAction,
+			'currency' => $postCurrency
+		];
+
 		$wcml_multi_currency = $this->get_wcml_multi_currency_mock();
 		$wcml_multi_currency->method( 'get_client_currency' )
 		                    ->willReturn( 'PLN' );
+		$wcml_multi_currency->method( 'get_currency_codes' )->willReturn( [ 'USD', 'EUR', 'PLN' ] );
 
 		$subject = $this->get_subject( $wcml_multi_currency );
 		$method = $this->getMockBuilder( 'WCML\Multicurrency\Shipping\FlatRateShipping' )
@@ -71,13 +79,23 @@ class Test_WCML_Multi_Currency_Shipping_Front_End_Hooks extends OTGS_TestCase {
 		$result = $subject->getShippingCost( $method )( $cost, $field, $wcmethod  );
 
 		$this->assertEquals( $result, $expected );
+		unset( $_POST );
 	}
 
 	public function ShippingCostData() {
 		return [
-			['cost', 100, 200],
-			['class_cost_24', 100, 200],
-			['no_class_cost', 100, 200]
+			['cost', 100, 200, null, null],
+			['class_cost_24', 100, 200, null, null],
+			['no_class_cost', 100, 200, null, null],
+			['cost', 100, 200, 'wcml_switch_currency', 'USD'],
+			['class_cost_24', 100, 200, 'wcml_switch_currency', 'USD'],
+			['no_class_cost', 100, 200, 'wcml_switch_currency', 'USD'],
+			['cost', 100, 200, 'dont_switch', 'USD'],
+			['class_cost_24', 100, 200, 'dont_switch', 'USD'],
+			['no_class_cost', 100, 200, 'dont_switch', 'USD'],
+			['cost', 100, 200, 'wcml_switch_currency', 'invalid_currency_code'],
+			['class_cost_24', 100, 200, 'wcml_switch_currency', 'invalid_currency_code'],
+			['no_class_cost', 100, 200, 'wcml_switch_currency', 'invalid_currency_code'],
 		];
 	}
 }
