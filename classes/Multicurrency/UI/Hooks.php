@@ -2,10 +2,10 @@
 
 namespace WCML\Multicurrency\UI;
 
+use WCML\Utilities\Resources;
 use WPML\Collect\Support\Collection;
 use WPML\FP\Fns;
 use WPML\FP\Obj;
-use WPML\LIB\WP\App\Resources;
 
 class Hooks implements \IWPML_Action {
 
@@ -41,8 +41,9 @@ class Hooks implements \IWPML_Action {
 
 	public function loadAssets() {
 		$gateways = $this->getGateways();
+		$enqueue  = Resources::enqueueApp( 'multicurrencyOptions' );
 
-		$localize = [
+		$enqueue( [
 			'name' => 'wcmlMultiCurrency',
 			'data' => [
 				'endpoint'         => self::HANDLE,
@@ -52,16 +53,7 @@ class Hooks implements \IWPML_Action {
 				'gateways'         => $gateways->toArray(),
 				'strings'          => $this->getStrings(),
 			],
-		];
-
-		Resources::enqueue(
-			'multicurrencyOptions',
-			WCML_PLUGIN_URL,
-			WCML_PLUGIN_PATH,
-			WCML_VERSION,
-			'woocommerce-multilingual',
-			$localize
-		);
+		] );
 	}
 
 	/**
