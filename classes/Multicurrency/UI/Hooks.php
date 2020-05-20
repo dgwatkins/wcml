@@ -6,6 +6,7 @@ use WCML\Utilities\Resources;
 use WPML\Collect\Support\Collection;
 use WPML\FP\Fns;
 use WPML\FP\Obj;
+use function WPML\FP\curryN;
 
 class Hooks implements \IWPML_Action {
 
@@ -77,16 +78,13 @@ class Hooks implements \IWPML_Action {
 		};
 
 		$addGatewaysSettings = function( $currency ) use ( $gateways ) {
-			$getGatewaySettingsForCurrency = function( $code ) use ( $gateways ) {
-				$addSettingsForGateway = function( array $gateway ) use ( $code ) {
-					return [ $gateway['id'] => Obj::pathOr( [], [ 'settings', $code ], $gateway ) ];
-				};
+			$addSettingsForGateway = curryN( 2, function( $code, array $gateway ) {
+				return [ $gateway['id'] => Obj::pathOr( [], [ 'settings', $code ], $gateway ) ];
+			} );
 
-				return $gateways->mapWithKeys( $addSettingsForGateway )->toArray();
-			};
-
-			return [ 'gatewaysSettings' => $getGatewaySettingsForCurrency( $currency['code'] ) ];
+			return [ 'gatewaysSettings' => $gateways->mapWithKeys( $addSettingsForGateway( $currency['code'] ) )->toArray()  ];
 		};
+
 
 		$addFormattedLastRateUpdate = function( $currency ) {
 			return [
