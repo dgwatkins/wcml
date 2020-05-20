@@ -187,7 +187,7 @@ class woocommerce_wpml {
 			|| ( isset( $_GET['page'] ) && 'wpml-wcml' === $_GET['page'] && isset( $_GET['tab'] ) && 'multi-currency' === $_GET['tab'] )
 			|| ( isset( $_POST['action'] ) && in_array( $_POST['action'], $actions_that_need_mc, true ) )
 		) {
-			$this->multi_currency = $this->get_multi_currency();
+			$this->get_multi_currency();
 			$wcml_price_filters   = new WCML_Price_Filter( $this );
 			$wcml_price_filters->add_hooks();
 		} else {
