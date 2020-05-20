@@ -79,8 +79,9 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks extends OTGS_TestCase {
 	 */
 	public function fields_added_to_flat_rate() {
 		$wcShippingClass = new stdClass();
-		$wcShippingClass->term_id = 'foo';
-		$wcShippingClass->name    = 'bar';
+		$wcShippingClass->term_id  = 'foo';
+		$wcShippingClass->name     = 'bar';
+		$wcShippingClass->taxonomy = 'product_shipping_class';
 		$wcShippingClasses = [ $wcShippingClass ];
 
 		$WC = $this->getMockBuilder( 'WC' )->disableOriginalConstructor()->setMethods( [ 'shipping', 'get_shipping_classes' ] )->getMock();
@@ -89,6 +90,10 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks extends OTGS_TestCase {
 		WP_Mock::userFunction( 'WC', [
 			'return' => $WC
 		] );
+
+		$languageDetails = new stdClass();
+		$languageDetails->source_language_code = 'en';
+		WP_Mock::onFilter( 'wpml_element_language_details' )->with( null )->reply( $languageDetails );
 
 		$wcml_multi_currency = $this->get_wcml_multi_currency_mock();
 		$wcml_multi_currency->expects( $this->atLeastOnce() )

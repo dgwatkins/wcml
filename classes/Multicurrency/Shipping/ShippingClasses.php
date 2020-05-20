@@ -19,11 +19,51 @@ class ShippingClasses {
 					continue;
 				}
 				foreach ( $shippingClasses as $shippingClass ) {
-					$field = self::addShippingClassField( $field, $shippingClass, $currencyCode );
+					$classSourceLanguageCode = self::getSourceLanguageCode( $shippingClass );
+					if ( $classSourceLanguageCode === null ) {
+						$field = self::addShippingClassField( $field, $shippingClass, $currencyCode );
+					} else {
+						$field = self::askToSwitchLanguage( $field, $shippingClass, $classSourceLanguageCode );
+					}
 				}
 				$field = self::addNoShippingClassField( $field, $currencyCode );
 			}
 		}
+		return $field;
+	}
+
+	/**
+	 * Returns source language of the shipping class which was created originally.
+	 *
+	 * @param WP_Term $shippingClass
+	 *
+	 * @return string|null
+	 */
+	protected static function getSourceLanguageCode( $shippingClass ) {
+		$classLanguageDetails = apply_filters( 'wpml_element_language_details', null, [
+			'element_id' => $shippingClass->term_id,
+			'element_type' => $shippingClass->taxonomy,
+		] );
+		return isset( $classLanguageDetails->source_language_code ) ? $classLanguageDetails->source_language_code : null;
+	}
+
+	/**
+	 * Adds field to the GUI which explains user should switch to the other language to provide the data.
+	 *
+	 * @param array   $field
+	 * @param WP_Tern $shippingClass
+	 * @param string  $classSourceLanguageCode
+	 *
+	 * @return array
+	 */
+	protected static function askToSwitchLanguage( $field, $shippingClass, $classSourceLanguageCode ) {
+		$field[ 'wcml_ask_to_switch_language_' . $shippingClass->term_id ] = [
+			'title' => '',
+			'description' => sprintf( __( 'Your shipping class %s has been created in %s language. Please switch your language if you want to provide shipping costs in different currencies for this class.', 'woocommerce-multilingual' ),
+								$shippingClass->name,
+								$classSourceLanguageCode),
+			'type' => 'title'
+		];
 		return $field;
 	}
 
