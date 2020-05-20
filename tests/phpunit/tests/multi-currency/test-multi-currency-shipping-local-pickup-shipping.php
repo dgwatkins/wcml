@@ -129,4 +129,25 @@ class Test_WCML_Multi_Currency_Shipping_LocalPickupShipping extends OTGS_TestCas
 			['USDii', 'Cost in USDii', 'The shipping cost if customer choose USDii as a purchase currency.'],
 		];
 	}
+
+	/**
+	 * @dataProvider termIdData
+	 * @test
+	 */
+	public function testGetShippingClassTermId( $input, $expected) {
+		$subject = $this->get_subject();
+
+		$result = $subject->_testGetShippingClassTermId( $input );
+		$this->assertEquals( $result, $expected );
+	}
+
+	public function termIdData() {
+		return [
+			[ 'foo', false ],
+			[ 'class_cost_23', '23'],
+			[ 'class_cost_23_PLN', '23'],
+			[ 'class_cost_23_PLN_foo', false],
+			[ 'tt_class_cost_23', false]
+		];
+	}
 }

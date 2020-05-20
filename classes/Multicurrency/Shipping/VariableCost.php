@@ -45,7 +45,7 @@ trait VariableCost {
 	}
 
 	private function getShippingClassCostKey( $shippingClassKey, $currency ) {
-		return $shippingClassKey . '_' . $currency;
+		return $this->replaceShippingClassId( $shippingClassKey ) . '_' . $currency;
 	}
 
 	private function getNoShippingClassCostKey( $currency ) {
@@ -158,5 +158,56 @@ trait VariableCost {
 			$this->wpOption = get_option( $optionName );
 		}
 		return $this->wpOption;
+	}
+
+	/**
+	 * Extracts numeric shipping class ID from shipping class key.
+	 *
+	 * @param string $key
+	 *
+	 * @return false|string Class ID or false if not found.
+	 */
+	private function getShippingClassTermId( $key ) {
+		if ( preg_match( '/^class_cost_(\d*)(_[A-Z]*)*$/', $key, $matches ) && isset( $matches[1] ) ) {
+			return $matches[1];
+		}
+		return false;
+	}
+	/**
+	 * @param string $shippingClassKey
+	 *
+	 * @return string
+	 */
+	private function replaceShippingClassId( $shippingClassKey ) {
+		$termId         = $this->getShippingClassTermId( $shippingClassKey );
+		if ( $termId ) {
+			$termTrid = apply_filters( 'wpml_element_trid', null, $termId, 'tax_product_shipping_class' );
+			$termTranslations = apply_filters( 'wpml_get_element_translations', null, $termTrid, 'tax_product_shipping_class' );
+			if ( is_array( $termTranslations ) ) {
+				foreach ( $termTranslations as $languageCode => $translation ) {
+					if ( $translation->source_language_code === null ) {
+						$originalTermId = $translation->element_id;
+						break;
+					}
+				}
+				$shippingClassKey = str_replace( $termId, $originalTermId, $shippingClassKey );
+			}
+		}
+		return $shippingClassKey;
+	}
+
+
+	/**
+	 * wrapper for getShippingClassTermId to avail testing private method.
+	 *
+	 * @param $key
+	 *
+	 * @return bool|false|string
+	 */
+	public function _testGetShippingClassTermId( $key ) {
+		if ( ! isset( $_SERVER['SCRIPT_NAME'] ) || stristr( $_SERVER['SCRIPT_NAME'], 'phpunit' ) === false ) {
+			die( "don't run this method directly outside phpunit env" );
+		}
+		return $this->getShippingClassTermId( $key );
 	}
 }
