@@ -25,8 +25,9 @@ class Test_ShippingClasses extends OTGS_TestCase {
 		$WCML_Multi_Currency->method( 'get_default_currency' )->willReturn( 'EUR' );
 
 		$wcShippingClass = new stdClass();
-		$wcShippingClass->term_id = 'foo';
-		$wcShippingClass->name    = 'bar';
+		$wcShippingClass->term_id  = 'foo';
+		$wcShippingClass->name     = 'bar';
+		$wcShippingClass->taxonomy = 'product_shipping_class';
 		$wcShippingClasses = [ $wcShippingClass ];
 
 		$WC = $this->getMockBuilder( 'WC' )->disableOriginalConstructor()->setMethods( [ 'shipping', 'get_shipping_classes' ] )->getMock();
@@ -36,12 +37,14 @@ class Test_ShippingClasses extends OTGS_TestCase {
 			'return' => $WC
 		] );
 
+		$languageDetails = new stdClass();
+		$languageDetails->source_language_code = null;
+		WP_Mock::onFilter( 'wpml_element_language_details' )->with( null )->reply( $languageDetails );
+
 
 		$result = $subject->addFields( [], $WCML_Multi_Currency );
 
 		$this->assertTrue( isset( $result['class_cost_foo_PLN'] ) );
 		$this->assertTrue( isset( $result['no_class_cost_PLN'] ) );
 	}
-
-
 }
