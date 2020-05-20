@@ -1,5 +1,8 @@
 <?php
 
+use WCML\Multicurrency\UI\Hooks;
+use WPML\FP\Obj;
+
 class WCML_Multi_Currency_Configuration {
 
 
@@ -178,13 +181,11 @@ class WCML_Multi_Currency_Configuration {
 		$args['currency']         = self::$multi_currency->currencies[ $currency_code ];
 		$args['title']            = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ), $args['currency_name'] . ' (' . $args['currency_symbol'] . ')' );
 
-		wp_send_json_success([
-			'formattedLastRateUpdate' => \WCML\Multicurrency\UI\Hooks::formatLastRateUpdate(
-				isset( self::$multi_currency->currencies[ $currency_code ]['updated'] )
-					? self::$multi_currency->currencies[ $currency_code ]['updated']
-					: null
+		wp_send_json_success( [
+			'formattedLastRateUpdate' => Hooks::formatLastRateUpdate(
+				Obj::path( [ $currency_code, 'updated' ], self::$multi_currency->currencies )
 			),
-		]);
+		] );
 	}
 
 	public static function delete_currency() {
