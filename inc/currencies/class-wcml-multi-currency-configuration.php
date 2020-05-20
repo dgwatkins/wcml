@@ -136,7 +136,7 @@ class WCML_Multi_Currency_Configuration {
 				}
 			}
 
-			self::$multi_currency->currencies_payment_gateways->set_enabled( $currency_code, isset( $options['gatewaysEnabled'] ) ? true : false );
+			self::$multi_currency->currencies_payment_gateways->set_enabled( $currency_code, $options['gatewaysEnabled'] );
 		}
 
 		if ( $wc_currency !== $currency_code ) {
