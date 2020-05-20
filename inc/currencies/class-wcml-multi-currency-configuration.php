@@ -166,25 +166,6 @@ class WCML_Multi_Currency_Configuration {
 				self::$woocommerce_wpml->settings['currency_options'] = self::$multi_currency->currencies;
 				self::$woocommerce_wpml->update_settings();
 			}
-
-			switch ( self::$multi_currency->currencies[ $currency_code ]['position'] ) {
-				case 'left':
-					$price = sprintf( '%s99.99', get_woocommerce_currency_symbol( $currency_code ) );
-					break;
-				case 'right':
-					$price = sprintf( '99.99%s', get_woocommerce_currency_symbol( $currency_code ) );
-					break;
-				case 'left_space':
-					$price = sprintf( '%s 99.99', get_woocommerce_currency_symbol( $currency_code ) );
-					break;
-				case 'right_space':
-					$price = sprintf( '99.99 %s', get_woocommerce_currency_symbol( $currency_code ) );
-					break;
-			}
-
-			$return['currency_name_formatted'] = sprintf( '<span class="truncate">%s</span> <small>(%s)</small>', $wc_currencies[ $currency_code ], $price );
-
-			$return['currency_meta_info'] = sprintf( '1 %s = %s %s', $wc_currency, self::$multi_currency->currencies[ $currency_code ]['rate'], $currency_code );
 		}
 
 		$args                     = [];
@@ -196,11 +177,6 @@ class WCML_Multi_Currency_Configuration {
 		$args['currency_symbol']  = get_woocommerce_currency_symbol( $currency_code );
 		$args['currency']         = self::$multi_currency->currencies[ $currency_code ];
 		$args['title']            = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ), $args['currency_name'] . ' (' . $args['currency_symbol'] . ')' );
-
-		$custom_currency_options    = new WCML_Custom_Currency_Options( $args, self::$woocommerce_wpml );
-//		$return['currency_options'] = $custom_currency_options->get_view(); // failing now that we changed the Twig model...
-		$return['currency_name']    = $wc_currencies[ $currency_code ];
-		$return['currency_symbol']  = get_woocommerce_currency_symbol( $currency_code );
 
 		wp_send_json_success([
 			'formattedLastRateUpdate' => \WCML\Multicurrency\UI\Hooks::formatLastRateUpdate(
