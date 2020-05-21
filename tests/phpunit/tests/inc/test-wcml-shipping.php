@@ -292,4 +292,68 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 
 		$this->assertEquals( $rate, $filtered_rate );
 	}
+
+	/**
+	 * @dataProvider  shippingSettingsData
+	 *
+	 * @test
+	 */
+	public function update_woocommerce_shipping_settings_for_class_costs( $settings, $getTermResult, $expectedSettings, $termTranslations, $getTermByResult ) {
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array(
+			                  'get_element_translations',
+			                  'get_current_language',
+			                  'get_element_trid'
+		                  ) )
+		                  ->getMock();
+		$sitepress->method( 'get_element_translations' )->willReturn( $termTranslations );
+
+		$subject = $this->get_subject( $sitepress );
+
+		WP_Mock::passthruFunction( 'remove_filter' );
+		WP_Mock::userFunction( 'get_term', [ 'return' => $getTermResult ] );
+		WP_Mock::userFunction( 'get_term_by', [ 'return' => $getTermByResult ] );
+
+		$newSettings = $subject->update_woocommerce_shipping_settings_for_class_costs( $settings );
+
+		$this->assertEquals( $newSettings, $expectedSettings );
+	}
+
+	public function shippingSettingsData() {
+
+		$settings = [ 'class_cost_25' => 1 ];
+		$getTermResult = new stdClass();
+		$getTermResult->term_taxonomy_id = 2;
+		$expectedSettings = [ 'class_cost_25' => 1, 'class_cost_26' => 1 ];
+		$termTranslation = new stdClass();
+		$termTranslation->element_id = 26;
+		$termTranslations = [
+			$termTranslation
+		];
+		$getTermByResult = new stdClass();
+		$getTermByResult->term_id = 26;
+		$standardCase = [
+			$settings,
+			$getTermResult,
+			$expectedSettings,
+			$termTranslations,
+			$getTermByResult,
+		];
+
+		$settings = [ 'class_cost_25_PLN' => 1 ];
+		$expectedSettings = $settings;
+		$currencyCodeCase = [
+			$settings,
+			$getTermResult,
+			$expectedSettings,
+			$termTranslations,
+			$getTermByResult,
+		];
+
+		return [
+			$standardCase,
+			$currencyCodeCase
+		];
+	}
 }
