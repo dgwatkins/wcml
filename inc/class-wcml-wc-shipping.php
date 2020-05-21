@@ -193,18 +193,20 @@ class WCML_WC_Shipping {
 				} else {
 					$shipp_class = get_term_by( 'slug', $shipp_class_key, 'product_shipping_class' );
 				}
-				$trid = $this->sitepress->get_element_trid( $shipp_class->term_taxonomy_id, 'tax_product_shipping_class' );
+				if ( isset( $shipp_class->term_taxonomy_id ) ) {
+					$trid = $this->sitepress->get_element_trid( $shipp_class->term_taxonomy_id, 'tax_product_shipping_class' );
 
-				$translations = $this->sitepress->get_element_translations( $trid, 'tax_product_shipping_class' );
+					$translations = $this->sitepress->get_element_translations( $trid, 'tax_product_shipping_class' );
 
-				foreach ( $translations as $translation ) {
+					foreach ( $translations as $translation ) {
 
-					$tr_shipp_class = get_term_by( 'term_taxonomy_id', $translation->element_id, 'product_shipping_class' );
+						$tr_shipp_class = get_term_by( 'term_taxonomy_id', $translation->element_id, 'product_shipping_class' );
 
-					if ( is_numeric( $shipp_class_key ) ) {
-						$settings[ 'class_cost_' . $tr_shipp_class->term_id ] = $value;
-					} else {
-						$settings[ 'class_cost_' . $tr_shipp_class->slug ] = $value;
+						if ( is_numeric( $shipp_class_key ) ) {
+							$settings[ 'class_cost_' . $tr_shipp_class->term_id ] = $value;
+						} else {
+							$settings[ 'class_cost_' . $tr_shipp_class->slug ] = $value;
+						}
 					}
 				}
 			}
