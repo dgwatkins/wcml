@@ -40,7 +40,7 @@ class ShippingClasses {
 	 * @return string|null
 	 */
 	protected static function getSourceLanguageCode( $shippingClass ) {
-		$classLanguageDetails = apply_filters( 'wpml_element_language_details', null, [
+		$classLanguageDetails = apply_filters( 'wpml_element_language_details', false, [
 			'element_id' => $shippingClass->term_id,
 			'element_type' => $shippingClass->taxonomy,
 		] );
