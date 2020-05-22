@@ -47,4 +47,39 @@ class Test_ShippingClasses extends OTGS_TestCase {
 		$this->assertTrue( isset( $result['class_cost_foo_PLN'] ) );
 		$this->assertTrue( isset( $result['no_class_cost_PLN'] ) );
 	}
+
+	/**
+	 * @test
+	 * @group wcml-3224
+	 */
+	public function it_does_NOT_add_shipping_cost_field_when_language_switched() {
+		$subject = $this->get_subject();
+
+		$WCML_Multi_Currency = $this->get_wcml_multi_currency_mock();
+		$WCML_Multi_Currency->method( 'get_currency_codes' )->willReturn( [ 'EUR', 'PLN' ] );
+		$WCML_Multi_Currency->method( 'get_default_currency' )->willReturn( 'EUR' );
+
+		$wcShippingClass = new stdClass();
+		$wcShippingClass->term_id  = 'foo';
+		$wcShippingClass->name     = 'bar';
+		$wcShippingClass->taxonomy = 'product_shipping_class';
+		$wcShippingClasses = [ $wcShippingClass ];
+
+		$WC = $this->getMockBuilder( 'WC' )->disableOriginalConstructor()->setMethods( [ 'shipping', 'get_shipping_classes' ] )->getMock();
+		$WC->method( 'shipping' )->willReturnSelf();
+		$WC->method( 'get_shipping_classes' )->willReturn( $wcShippingClasses );
+		WP_Mock::userFunction( 'WC', [
+			'return' => $WC
+		] );
+
+		$langDetails = new stdClass();
+		$langDetails->source_language_code = 'en';
+
+		$args = [ 'element_id' => $wcShippingClass->term_id, 'element_type' => $wcShippingClass->taxonomy ];
+		WP_Mock::onFilter( 'wpml_element_language_details' )->with( false, $args )->reply( $langDetails );
+
+		$result = $subject->addFields( [], $WCML_Multi_Currency );
+		$this->assertTrue( isset( $result['wcml_ask_to_switch_language_foo'] ) );
+		$this->assertTrue( isset( $result['no_class_cost_PLN'] ) );
+	}
 }
