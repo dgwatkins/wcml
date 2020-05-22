@@ -102,7 +102,7 @@ class Test_WCML_Multi_Currency_Shipping_LocalPickupShipping extends OTGS_TestCas
 	public function it_returns_value_for_getShippingClassCostValue() {
 		$subject = $this->get_subject();
 		$rate = new stdClass();
-		$rate->cost = 10;
+		$rate->class_cost_24 = 10;
 
 		$this->assertEquals( 10, $subject->getShippingClassCostValue( $rate, 'PLN', 'class_cost_24' ) );
 	}
@@ -113,7 +113,7 @@ class Test_WCML_Multi_Currency_Shipping_LocalPickupShipping extends OTGS_TestCas
 	public function it_returns_value_for_getNoShippingClassCostValue() {
 		$subject = $this->get_subject();
 		$rate = new stdClass();
-		$rate->cost = 10;
+		$rate->no_class_cost = 10;
 
 		$this->assertEquals( 10, $subject->getNoShippingClassCostValue( $rate, 'PLN', 'class_cost_24' ) );
 	}

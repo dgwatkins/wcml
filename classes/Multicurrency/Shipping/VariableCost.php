@@ -86,7 +86,7 @@ trait VariableCost {
 	 */
 	public function getShippingCostValue( $rate, $currency ) {
 		$costName = $this->getCostKey( $currency );
-		return $this->getCostValueForName( $rate, $currency, $costName );
+		return $this->getCostValueForName( $rate, $currency, $costName, 'cost' );
 	}
 
 	/**
@@ -100,7 +100,7 @@ trait VariableCost {
 	 */
 	public function getShippingClassCostValue( $rate, $currency, $shippingClassKey ) {
 		$costName = $this->getShippingClassCostKey( $shippingClassKey, $currency );
-		return $this->getCostValueForName( $rate, $currency, $costName );
+		return $this->getCostValueForName( $rate, $currency, $costName, $shippingClassKey );
 	}
 
 	/**
@@ -113,24 +113,24 @@ trait VariableCost {
 	 */
 	public function getNoShippingClassCostValue( $rate, $currency ) {
 		$costName = $this->getNoShippingClassCostKey( $currency );
-		return $this->getCostValueForName( $rate, $currency, $costName );
+		return $this->getCostValueForName( $rate, $currency, $costName, 'no_class_cost' );
 	}
 
-	private function getCostValueForName( $rate, $currency, $costName ) {
-		if ( ! isset( $rate->cost ) ) {
-			$rate->cost = 0;
+	private function getCostValueForName( $rate, $currency, $costName, $rateField ) {
+		if ( ! isset( $rate->$rateField ) ) {
+			$rate->$rateField = 0;
 		}
 		if ( isset( $rate->instance_id ) ) {
 			if ( $this->isManualPricingEnabled( $rate ) ) {
 				$rateSettings = $this->getWpOption( $this->getMethodId(), $rate->instance_id );
 				if ( ! empty( $rateSettings[ $costName ] ) ) {
-					$rate->cost = $rateSettings[ $costName ];
+					$rate->$rateField = $rateSettings[ $costName ];
 				} else {
-					$rate->cost = $this->getValueFromDefaultCurrency( $rate->cost, $rateSettings, $costName, $currency );
+					$rate->$rateField = $this->getValueFromDefaultCurrency( $rate->$rateField, $rateSettings, $costName, $currency );
 				}
 			}
 		}
-		return $rate->cost;
+		return $rate->$rateField;
 	}
 
 	/**
