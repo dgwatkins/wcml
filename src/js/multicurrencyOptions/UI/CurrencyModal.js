@@ -1,6 +1,9 @@
 import React from "react";
 import {useState} from "react";
 import Modal from 'antd/lib/modal';
+import Select from "antd/lib/select";
+import 'antd/dist/antd.css';
+import 'antd/lib/select/style/index.css';
 import 'antd/lib/modal/style/index.css';
 import 'antd/lib/tooltip/style/index.css';
 import {useStore, getStoreProperty, getStoreAction} from "../Store";
@@ -71,6 +74,10 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
         setModalCurrency({...currency, [prop]:e.target.value});
     };
 
+    const updateCountries = (e) => {
+        setModalCurrency({...currency, ['countries']:e});
+    };
+
     const onChangeRate = (e) => {
         updateCurrencyProp('rate')(e);
 
@@ -79,7 +86,18 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
         } else {
             setIsValidRate(false);
         }
-    }
+    };
+
+    const [showCurrencyOptions, setCurrencyOptions] = useState(false);
+    const onEditClick = () => setCurrencyOptions(true);
+
+    const allCountries = getStoreProperty('allCountries');
+    const mode = getStoreProperty('mode');
+    const countries = [];
+
+    allCountries.map((country, key) => {
+        countries.push(<Select.Option key={key} value={country.code} label={country.label}>{country.label}</Select.Option>);
+    });
 
     return (
         <React.Fragment>
@@ -103,6 +121,20 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
 
             <PreviewCurrency currency={currency} />
 
+            {!showCurrencyOptions && <a href="#" title={strings.labelEdit} onClick={onEditClick}><i className="otgs-ico-edit" title={strings.labelEdit} /></a>}
+            {showCurrencyOptions && <CurrencyOptions currency={currency} updateCurrencyProp={updateCurrencyProp} strings={strings}/> }
+
+            <hr/>
+
+            {'by_location' === mode && <CountriesBlock currency={currency} onChangeMode={updateCurrencyProp('location_mode')} onChangeCountries={updateCountries} countries={countries} strings={strings} />}
+
+        </React.Fragment>
+    );
+};
+
+const CurrencyOptions = ({currency, updateCurrencyProp, strings}) => {
+    return (
+        <React.Fragment>
             <SelectRow attrs={getRowAttrs(currency, 'position')}
                        onChange={updateCurrencyProp('position')}
                        label={strings.labelPosition}
@@ -163,9 +195,46 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
                       label={strings.labelAutosubtract}
                       tooltip={strings.tooltipAutosubtract}
             />
+        </React.Fragment>
+    );
+};
 
+const CountriesBlock = ({currency, onChangeMode, onChangeCountries, countries, strings }) => {
+    return (
+        <React.Fragment>
+            <SelectRow attrs={getRowAttrs(currency, 'location_mode')}
+                       onChange={onChangeMode}
+                       label={strings.labelCurrencyAvailableIn}>
+                <option value="1">{strings.labelAllCountries}</option>
+                <option value="2">{strings.labelAllCountriesExcept}...</option>
+                <option value="3">{strings.labelSpecificCountries}</option>
+            </SelectRow>
+            {currency.location_mode !== '1' &&
+            <SelectCountries attrs={getRowAttrs(currency, 'countries')}
+                             onChange={onChangeCountries}
+                             countries={countries}
+                             label={currency.location_mode === '2' ? strings.labelAllCountriesExcept : strings.labelSpecificCountries}/>
+            }
             <hr/>
         </React.Fragment>
+    );
+};
+
+const SelectCountries = ({attrs, onChange, countries, label}) => {
+    return (
+        <div className="wpml-form-row">
+            <label htmlFor={attrs.id}>{label}</label>
+            <Select
+                mode="multiple"
+                style={{width: '145px'}}
+                value={attrs.value}
+                onChange={onChange}
+                optionLabelProp="label"
+                allowClear={true}
+            >
+                {countries}
+            </Select>
+        </div>
     );
 };
 

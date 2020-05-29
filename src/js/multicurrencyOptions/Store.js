@@ -1,12 +1,15 @@
 import { action, createStore, useStoreState, useStoreActions, computed, thunk } from "easy-peasy";
-import {capitalize, triggerActiveCurrenciesChange} from "./Utils";
+import {capitalize, triggerActiveCurrenciesChange, triggerModeChange} from "./Utils";
 import * as R from 'ramda';
 
-const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => createStore({
+const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, gateways, mode, maxMindKeyExist}) => createStore({
     activeCurrencies: activeCurrencies,
     allCurrencies: allCurrencies,
+    allCountries: allCountries,
     languages: languages,
     gateways: gateways,
+    mode: mode,
+    maxMindKeyExist: maxMindKeyExist,
     modalCurrency: null,
     updating: false,
 
@@ -68,6 +71,15 @@ const initStore = ({activeCurrencies, allCurrencies, languages, gateways}) => cr
 
     setUpdating: action((state, updating) => {
         state.updating = updating;
+    }),
+
+    setMode: action((state, mode) =>{
+        state.mode = mode;
+        triggerModeChange();
+    }),
+
+    setMaxMindKeyExist: action((state) =>{
+        state.maxMindKeyExist = true;
     }),
 });
 

@@ -31,6 +31,10 @@ jQuery( function($){
                         $('#wcml_currencies_order .wcml_currencies_order_'+ currency.code).remove();
                     }
                 });
+
+                document.addEventListener('wcmlModeChange', function(e) {
+                    $('#display_custom_prices_select,#currency-switcher, #currency-switcher-widget, #currency-switcher-product, #multi-currency-per-language-details, #online-exchange-rates').fadeIn();
+                });
             } );
 
         },

@@ -29,6 +29,12 @@ export const getCurrencyLabel = R.pipe( getCurrencyData, R.prop('label') );
 
 export const getCurrencySymbol = R.pipe( getCurrencyData, R.prop('symbol') );
 
+const getCountryData = code => {
+    return wcmlMultiCurrency.allCountries.filter(countryData => countryData.code === code )[0];
+};
+
+export const getCountryLabel = R.pipe( getCountryData, R.prop('label') );
+
 const getFormatPlaceholder = (thousands, units, position) => {
     switch(position){
         case 'left':
@@ -47,4 +53,8 @@ export const validateRate = R.allPass( [R.pipe( parseFloat, isNaN, R.not ), isFi
 export const triggerActiveCurrenciesChange = function(payload) {
     payload.currencyData = getCurrencyData(payload.currency.code);
     document.dispatchEvent(new CustomEvent('wcmlActiveCurrenciesChange', {detail:payload}));
+};
+
+export const triggerModeChange = function() {
+    document.dispatchEvent(new CustomEvent('wcmlModeChange'));
 };

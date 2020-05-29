@@ -26,6 +26,10 @@ class WCML_Multi_Currency_Configuration {
 
 		self::set_prices_config();
 
+		self::add_hooks();
+	}
+
+	public static function add_hooks(){
 		if ( is_ajax() ) {
 
 			add_action( 'wp_ajax_legacy_update_custom_rates', [ __CLASS__, 'legacy_update_custom_rates' ] );
@@ -35,6 +39,8 @@ class WCML_Multi_Currency_Configuration {
 			add_action( 'wp_ajax_wcml_delete_currency', [ __CLASS__, 'delete_currency' ] );
 			add_action( 'wp_ajax_wcml_update_currency_lang', [ __CLASS__, 'update_currency_lang' ] );
 			add_action( 'wp_ajax_wcml_update_default_currency', [ __CLASS__, 'update_default_currency_ajax' ] );
+			add_action( 'wp_ajax_wcml_set_currency_mode', [ __CLASS__, 'set_currency_mode' ] );
+			add_action( 'wp_ajax_wcml_set_max_mind_key', [ __CLASS__, 'set_max_mind_key' ] );
 		}
 	}
 
@@ -143,6 +149,8 @@ class WCML_Multi_Currency_Configuration {
 			$options['thousand_sep'] = wc_format_option_price_separators( null, null, $options['thousand_sep'] );
 			$options['decimal_sep']  = wc_format_option_price_separators( null, null, $options['decimal_sep'] );
 
+			$options['countries'] = wc_string_to_array( $options['countries'], ',' );
+
 			if ( ! isset( self::$multi_currency->currencies[ $currency_code ] ) ) {
 				self::add_currency( $currency_code );
 			}
@@ -231,7 +239,8 @@ class WCML_Multi_Currency_Configuration {
 		$data = self::get_data();
 
 		if ( ! empty( $woocommerce->session ) &&
-			$data['lang'] == $woocommerce->session->get( 'client_currency_language' ) ) {
+		     $data['lang'] == $woocommerce->session->get( 'client_currency_language' ) &&
+		     $data['code'] !== 'location' ) {
 			$woocommerce->session->set( 'client_currency', $data['code'] );
 		}
 
@@ -351,6 +360,34 @@ class WCML_Multi_Currency_Configuration {
 
 		if ( $save ) {
 			$sitepress->save_settings( $wpml_settings );
+		}
+	}
+
+	public static function set_currency_mode() {
+		self::verify_nonce();
+		$data = self::get_data();
+
+		self::$woocommerce_wpml->settings['currency_mode'] = $data['mode'];
+		self::$woocommerce_wpml->update_settings();
+
+		wp_send_json_success();
+	}
+
+	public static function set_max_mind_key() {
+		self::verify_nonce();
+		$data = self::get_data();
+
+		if ( isset( WC()->integrations ) ) {
+			$integrations = WC()->integrations->get_integrations();
+
+			if ( isset( $integrations['maxmind_geolocation'] ) ) {
+				try {
+					$integrations['maxmind_geolocation']->validate_license_key_field( 'license_key', $data['MaxMindKey'] );
+					wp_send_json_success();
+				} catch ( Exception $e ) {
+					wp_send_json_error( $e->getMessage() );
+				}
+			}
 		}
 	}
 
