@@ -6,6 +6,7 @@ import {Spinner} from "../FormElements";
 
 const ColumnActions = () => {
     const activeCurrencies = getStoreProperty('activeCurrencies');
+    const mode = getStoreProperty('mode');
 
     return <table className="widefat currency_settings_table" id="currency-settings-table">
                 <thead>
@@ -17,9 +18,10 @@ const ColumnActions = () => {
 
                     {activeCurrencies.map(currency => <Row key={currency.code} currency={currency} />)}
 
-                    <tr className="default_currency">
+                    {'by_language' === mode && <tr className="default_currency">
                         <td colSpan="2"/>
                     </tr>
+                    }
                 </tbody>
             </table>
 };

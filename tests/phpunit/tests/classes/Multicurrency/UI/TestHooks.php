@@ -27,6 +27,8 @@ class TestHooks extends \OTGS_TestCase {
 	 * @test
 	 */
 	public function itLoadsAssets() {
+		\WP_Mock::passthruFunction( 'admin_url' );
+
 		$activeLangs = [
 			'en' => [
 				'code'         => 'en',
@@ -69,10 +71,12 @@ class TestHooks extends \OTGS_TestCase {
 
 		$gateways = [ $gateway1 ];
 
-		$defaultCurrencies = [
+		$wcmlSettings['default_currencies'] = [
 			'en' => self::DEFAULT_CURRENCY,
 			'fr' => '0',
 		];
+
+		$wcmlSettings['currency_mode'] = 'by_location';
 
 		$codeToFlag = function( $code ) { return "flag:$code"; };
 
@@ -96,7 +100,7 @@ class TestHooks extends \OTGS_TestCase {
 		$sitepress->method( 'get_flag_url' )
 			->willReturnCallback( $codeToFlag );
 
-		$subject = $this->getSubject( $multiCurrency, $currenciesPaymentGateways, $sitepress, $defaultCurrencies );
+		$subject = $this->getSubject( $multiCurrency, $currenciesPaymentGateways, $sitepress, $wcmlSettings );
 
 		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', [
 			'return' => self::DEFAULT_CURRENCY,
@@ -120,6 +124,37 @@ class TestHooks extends \OTGS_TestCase {
 			}
 		] );
 
+		$WC = $this->getMockBuilder( 'WooCommerce' )
+		           ->disableOriginalConstructor()
+		           ->getMock();
+
+		$WC->countries = $this->getMockBuilder( 'WC_Countries' )
+		           ->disableOriginalConstructor()
+		           ->setMethods( [ 'get_countries' ] )
+		           ->getMock();
+		
+		$WC->countries->method( 'get_countries' )->willReturn( $this->getCountriesList() );
+
+		$integrations                        = [];
+		$integrations['maxmind_geolocation'] = $this->getMockBuilder( 'WC_Integration_MaxMind_Geolocation' )
+		                                            ->disableOriginalConstructor()
+		                                            ->setMethods( [ 'get_option' ] )
+		                                            ->getMock();
+
+		$integrations['maxmind_geolocation']->expects( $this->once() )->method( 'get_option' )->with( 'license_key' )->willReturn( false );
+
+		$WC->integrations = $this->getMockBuilder( 'WC_Integrations' )
+		                         ->disableOriginalConstructor()
+		                         ->setMethods( [ 'get_integrations' ] )
+		                         ->getMock();
+
+		$WC->integrations->expects( $this->once() )->method( 'get_integrations' )->willReturn( $integrations );
+
+		\WP_Mock::userFunction( 'WC', [
+			'return' => $WC,
+			'times'  => 2,
+		] );
+
 		\WP_Mock::passthruFunction( 'add_query_arg' );
 
 		$enqueueResources = FunctionMocker::replace( '\WPML\LIB\WP\App\Resources::enqueue', function( $app, $pluginBaseUrl, $pluginBasePath, $version, $domain, $localize ) {
@@ -134,6 +169,9 @@ class TestHooks extends \OTGS_TestCase {
 			$this->checkAllCurrencies( $localize['data']['allCurrencies'] );
 			$this->checkLanguages( $localize['data']['languages'] );
 			$this->checkGateways( $localize['data']['gateways'] );
+			$this->checkAllCountries( $localize['data']['allCountries'] );
+			$this->assertEquals( 'by_location', $localize['data']['mode'] );
+			$this->assertFalse( $localize['data']['maxMindKeyExist'] );
 			$this->assertInternalType( 'array', $localize['data']['strings'] );
 		} );
 
@@ -190,6 +228,24 @@ class TestHooks extends \OTGS_TestCase {
 		);
 	}
 
+	private function checkAllCountries( array $allCountries ) {
+
+		$expectedCountries = [];
+
+		foreach( $this->getCountriesList() as $code => $country ){
+			$object = new \stdClass();
+			$object->code = $code;
+			$object->label = html_entity_decode( $country );
+			$expectedCountries[] = $object;
+		}
+
+		return $allCountries;
+
+		$this->assertEquals( $expectedCountries,
+			$allCountries
+		);
+	}
+
 	private function checkLanguages( array $languages ) {
 		$this->assertEquals( [
 				(object) [ 'code' => 'en', 'displayName' => 'English', 'flagUrl' => 'flag:en', 'defaultCurrency' => 'USD' ],
@@ -220,12 +276,12 @@ class TestHooks extends \OTGS_TestCase {
 		);
 	}
 
-	private function getSubject( $multiCurrency = null, $currenciesPaymentGateways = null, $sitepress = null, $defaultCurrencies = [] ) {
+	private function getSubject( $multiCurrency = null, $currenciesPaymentGateways = null, $sitepress = null, $wcmlSettings = [] ) {
 		$multiCurrency             = $multiCurrency ?: $this->getMulticurrency();
 		$currenciesPaymentGateways = $currenciesPaymentGateways ?: $this->getCurrenciesPaymentGateways();
 		$sitepress                 = $sitepress ?: $this->getSitepress();
 
-		return new Hooks( $multiCurrency, $currenciesPaymentGateways, $sitepress, $defaultCurrencies );
+		return new Hooks( $multiCurrency, $currenciesPaymentGateways, $sitepress, $wcmlSettings );
 	}
 
 	private function getMulticurrency() {
@@ -262,5 +318,22 @@ class TestHooks extends \OTGS_TestCase {
 			] );
 
 		return $gateway;
+	}
+	
+	private function getCountriesList(){
+		return [
+			'AF' => 'Afghanistan',
+			'AX' => '&#197;land Islands',
+			'AL' => 'Albania',
+			'DZ' => 'Algeria',
+			'AS' => 'American Samoa',
+			'AD' => 'Andorra',
+			'AO' => 'Angola',
+			'AI' => 'Anguilla',
+			'AQ' => 'Antarctica',
+			'AG' => 'Antigua and Barbuda',
+			'AR' => 'Argentina',
+			'AM' => 'Armenia',
+		];
 	}
 }
