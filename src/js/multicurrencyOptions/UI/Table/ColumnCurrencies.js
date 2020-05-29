@@ -6,6 +6,7 @@ import strings from "../../Strings";
 
 const ColumnCurrencies = () => {
     const activeCurrencies = getStoreProperty('activeCurrencies');
+    const mode = getStoreProperty('mode');
 
     return <table className="widefat currency_table" id="currency-table">
                 <thead>
@@ -16,11 +17,12 @@ const ColumnCurrencies = () => {
                 </thead>
                 <tbody>
                     <Rows activeCurrencies={activeCurrencies}/>
-                    <tr className="default_currency">
+                    {'by_language' === mode && <tr className="default_currency">
                         <td colSpan="3">
                             {strings.labelDefaultCurrency} {getTooltip(strings.tooltipDefaultCurrency)}
                         </td>
                     </tr>
+                    }
                 </tbody>
             </table>
 };
