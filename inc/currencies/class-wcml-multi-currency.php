@@ -243,6 +243,8 @@ class WCML_Multi_Currency {
 			'rounding'           => 'disabled',
 			'rounding_increment' => 1,
 			'auto_subtract'      => 0,
+			'location_mode'      => 'all',
+			'countries'          => [],
 		];
 
 		foreach ( $this->currencies as $code => $currency ) {
@@ -278,7 +280,7 @@ class WCML_Multi_Currency {
 					unset( $this->woocommerce_wpml->settings['default_currencies'][ $language ] );
 					$save_to_db = true;
 				}
-				if ( ! empty( $value ) && ! in_array( $value, $this->currency_codes ) ) {
+				if ( ! empty( $value ) && ! in_array( $value, $this->currency_codes ) && $value !== 'location' ) {
 					$this->woocommerce_wpml->settings['default_currencies'][ $language ] = 0;
 					$save_to_db = true;
 				}

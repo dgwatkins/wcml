@@ -73,7 +73,7 @@ class WCML_Multi_Currency_UI extends WCML_Templates_Factory {
 
 			'active_languages'       => $this->sitepress->get_active_languages(),
 
-			'multi_currency_on'      => $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT,
+			'multi_currency_on'      => $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT && isset( $this->woocommerce_wpml->settings['currency_mode'] ) && $this->woocommerce_wpml->settings['currency_mode'],
 
 			'wc_currency_empty_warn' => sprintf(
 				__(
