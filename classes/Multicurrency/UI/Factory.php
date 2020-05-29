@@ -21,7 +21,7 @@ class Factory implements \IWPML_Backend_Action_Loader, \IWPML_Deferred_Action_Lo
 			return make(
 				Hooks::class,
 				[
-					':defaultCurrencies' => $woocommerce_wpml->settings['default_currencies'],
+					':wcmlSettings' => $woocommerce_wpml->settings,
 				]
 			);
 		}

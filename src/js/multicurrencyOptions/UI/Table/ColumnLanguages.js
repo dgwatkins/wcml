@@ -118,10 +118,16 @@ const DefaultCell = ({language, activeCurrencies}) => {
         .filter(currency => 1 == currency.languages[language.code])
         .map(currency => {
             return {text:currency.code, value:currency.code};
-        })
+        });
+
+    const locationBased = [
+        {text: strings.labelLocationBased, value: 'location'}
+    ];
+
 
     const allOptions = [
         {text: strings.labelKeep, value: 0},
+        ...locationBased,
         ...options
     ];
 

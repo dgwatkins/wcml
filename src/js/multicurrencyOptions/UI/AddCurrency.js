@@ -6,6 +6,7 @@ const AddCurrency = () => {
     const [ , setModalCurrency] = useStore('modalCurrency');
     const newCurrencies = getStoreProperty('newCurrencies');
     const languages = getStoreProperty('languages');
+    const allCountries = getStoreProperty('allCountries');
     const hasNewCurrencies = !! newCurrencies.length;
 
     const onClick = () => {
@@ -33,6 +34,8 @@ const AddCurrency = () => {
                 paypal: {currency:'', value:''},
                 stripe: {currency:'', publishable_key:'', secret_key:''},
             },
+            location_mode: 'all',
+            countries: [],
         };
 
         setModalCurrency(newCurrency);

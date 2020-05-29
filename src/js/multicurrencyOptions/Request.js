@@ -40,11 +40,27 @@ const buildSaveCurrencyPayload = (currency) => buildPayload(
     }
 );
 
+const buildSetCurrencyModePayload = (mode) => buildPayload(
+    'wcml_set_currency_mode',
+    {
+        mode: mode,
+    }
+);
+
+const buildSetMaxMindKeyPayload = (MaxMindKey) => buildPayload(
+    'wcml_set_max_mind_key',
+    {
+        MaxMindKey: MaxMindKey,
+    }
+);
+
 const payloadBuilders = {
     currencyForLang: buildCurrencyForLangPayload,
     defaultCurrencyForLang: buildDefaultCurrencyForLangPayload,
     deleteCurrency: buildDeleteCurrencyPayload,
     saveCurrency: buildSaveCurrencyPayload,
+    setCurrencyMode: buildSetCurrencyModePayload,
+    setMaxMindKey: buildSetMaxMindKeyPayload,
 };
 
 export const createAjaxRequest = (endpoint) => {

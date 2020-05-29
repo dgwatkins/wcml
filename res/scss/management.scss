@@ -448,6 +448,7 @@ table.widefat.currency_lang_table {
 }
 
 .currency_table,
+.widefat.currency_country_table,
 .currency_lang_table,
 .currency_settings_table {
 	clear: none;
@@ -464,6 +465,13 @@ table.widefat.currency_lang_table {
 			height: 55px;
 		}
 	}
+}
+
+.currency_country_table{
+	width: 100%;
+	max-width: calc(100% - 255px - 80px);
+	min-width: 70px;
+	float: left;
 }
 
 .currency_lang_table {

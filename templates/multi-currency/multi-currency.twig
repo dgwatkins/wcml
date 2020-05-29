@@ -43,7 +43,7 @@
 
         <div id="wcml-multicurrency-options" class="wcml-section-content wcml-section-content-wide"></div>
 
-        <ul id="display_custom_prices_select">
+        <ul id="display_custom_prices_select" {% if multi_currency_on is empty %}style="display: none;"{% endif %}>
             <li>
                 <input type="checkbox" name="display_custom_prices" id="display_custom_prices"
                    value="1" {% if form.custom_prices_select.checked %} checked="checked"{% endif %}>

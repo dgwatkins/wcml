@@ -10,8 +10,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const store = initStore({
         activeCurrencies: wcmlMultiCurrency.activeCurrencies,
         allCurrencies: wcmlMultiCurrency.allCurrencies,
+        allCountries: wcmlMultiCurrency.allCountries,
         languages: wcmlMultiCurrency.languages,
         gateways: wcmlMultiCurrency.gateways,
+        mode: wcmlMultiCurrency.mode,
+        maxMindKeyExist: wcmlMultiCurrency.maxMindKeyExist,
     });
 
     ReactDOM.render(
