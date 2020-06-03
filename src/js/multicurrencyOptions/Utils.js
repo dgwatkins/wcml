@@ -55,6 +55,6 @@ export const triggerActiveCurrenciesChange = function(payload) {
     document.dispatchEvent(new CustomEvent('wcmlActiveCurrenciesChange', {detail:payload}));
 };
 
-export const triggerModeChange = function() {
-    document.dispatchEvent(new CustomEvent('wcmlModeChange'));
+export const triggerModeChange = function(payload) {
+    document.dispatchEvent(new CustomEvent('wcmlCurrencyModeChange'), {detail:payload});
 };

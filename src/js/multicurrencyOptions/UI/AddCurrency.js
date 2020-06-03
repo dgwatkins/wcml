@@ -34,7 +34,7 @@ const AddCurrency = () => {
                 paypal: {currency:'', value:''},
                 stripe: {currency:'', publishable_key:'', secret_key:''},
             },
-            location_mode: '1',
+            location_mode: 'all',
             countries: [],
         };
 

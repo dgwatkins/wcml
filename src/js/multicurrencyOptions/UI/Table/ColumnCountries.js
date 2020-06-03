@@ -22,18 +22,18 @@ export default ColumnCountries;
 
 const Row = ({currency}) => {
     return <tr id={'currency_row_countries_' + currency.code} className="wcml-row-currency-country">
-        {currency.location_mode === '1' &&
+        {currency.location_mode === 'all' &&
             <td><span>{strings.labelAllCountries}</span></td>
         }
 
-        {currency.location_mode === '2' &&
+        {currency.location_mode === 'exclude' &&
         <td>
             <span>{strings.labelAllCountriesExcept}: </span>
             <RenderCountries currency={currency}/>
         </td>
         }
 
-        {currency.location_mode === '3' &&
+        {currency.location_mode === 'include' &&
             <td><RenderCountries currency={currency}/></td>
         }
     </tr>

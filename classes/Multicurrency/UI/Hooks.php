@@ -222,6 +222,7 @@ class Hooks implements \IWPML_Action {
 			'labelCurrencyAvailableIn'       => __( 'Currency available in', 'woocommerce-multilingual' ),
 			'labelAllCountries'              => __( 'All countries', 'woocommerce-multilingual' ),
 			'labelAllCountriesExcept'        => __( 'All countries except', 'woocommerce-multilingual' ),
+			'labelAllCountriesExceptDots'    => __( 'All countries except...', 'woocommerce-multilingual' ),
 			'labelSpecificCountries'         => __( 'Specific countries', 'woocommerce-multilingual' ),
 			'labelModeSelect'                => __( 'Show currencies based on', 'woocommerce-multilingual' ),
 			'labelChooseOption'              => __( 'Choose Option', 'woocommerce-multilingual' ),

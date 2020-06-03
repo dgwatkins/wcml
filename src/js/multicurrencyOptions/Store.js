@@ -75,7 +75,7 @@ const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, ga
 
     setMode: action((state, mode) =>{
         state.mode = mode;
-        triggerModeChange();
+        triggerModeChange({mode:mode});
     }),
 
     setMaxMindKeyExist: action((state) =>{

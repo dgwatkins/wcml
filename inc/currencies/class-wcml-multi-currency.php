@@ -242,8 +242,8 @@ class WCML_Multi_Currency {
 			'rounding'           => 'disabled',
 			'rounding_increment' => 1,
 			'auto_subtract'      => 0,
-			'location_mode'      => '1',
-			'countries'          => '',
+			'location_mode'      => 'all',
+			'countries'          => [],
 		];
 
 		foreach ( $this->currencies as $code => $currency ) {

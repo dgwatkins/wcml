@@ -8,32 +8,38 @@ import MaxMindSettings from "./MaxMindSettings"
 import {getStoreProperty} from "../Store";
 
 const App = () => {
-    const [modalCurrency] = useStore('modalCurrency');
-    const mode = getStoreProperty('mode');
-    const languages = getStoreProperty('languages');
-    const defaultByLocation = languages.filter( language => language.defaultCurrency == 'location' );
-
-    if (!mode) {
-        return <div>
-                <ModeSelect/>
-            </div>
-    }
 
     return <div className="wcml-section-content wcml-section-content-wide">
         <div>
             <ModeSelect/>
             <br/>
-            {('by_location' === mode || defaultByLocation.length > 0) && <MaxMindSettings/>}
-            <br/>
-            <div className="currencies-table-content">
-                <div className="tablenav top clearfix">
-                    <AddCurrency/>
-                </div>
-                <Table/>
-                {modalCurrency && <CurrencyModal />}
-            </div>
+            <RenderCurrenciesSettings/>
         </div>
     </div>
-}
+};
+
+const RenderCurrenciesSettings = () => {
+    const mode = getStoreProperty('mode');
+    const [modalCurrency] = useStore('modalCurrency');
+    const languages = getStoreProperty('languages');
+    const defaultByLocation = languages.filter(language => language.defaultCurrency == 'location');
+    const needsGeoLocation = 'by_location' === mode || defaultByLocation.length > 0;
+
+    if (!mode) {
+        return (null);
+    }
+
+    return (<React.Fragment>
+        {needsGeoLocation && <MaxMindSettings/>}
+        <br/>
+        <div className="currencies-table-content">
+            <div className="tablenav top clearfix">
+                <AddCurrency/>
+            </div>
+            <Table/>
+            {modalCurrency && <CurrencyModal/>}
+        </div>
+    </React.Fragment>);
+};
 
 export default App;

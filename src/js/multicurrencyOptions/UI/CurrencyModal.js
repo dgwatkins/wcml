@@ -74,8 +74,8 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
         setModalCurrency({...currency, [prop]:e.target.value});
     };
 
-    const updateCountries = (e) => {
-        setModalCurrency({...currency, ['countries']:e});
+    const updateCountries = (countries) => {
+        setModalCurrency({...currency, ['countries']:countries});
     };
 
     const onChangeRate = (e) => {
@@ -91,13 +91,7 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
     const [showCurrencyOptions, setCurrencyOptions] = useState(false);
     const onEditClick = () => setCurrencyOptions(true);
 
-    const allCountries = getStoreProperty('allCountries');
     const mode = getStoreProperty('mode');
-    const countries = [];
-
-    allCountries.map((country, key) => {
-        countries.push(<Select.Option key={key} value={country.code} label={country.label}>{country.label}</Select.Option>);
-    });
 
     return (
         <React.Fragment>
@@ -121,12 +115,15 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
 
             <PreviewCurrency currency={currency} />
 
-            {!showCurrencyOptions && <a href="#" title={strings.labelEdit} onClick={onEditClick}><i className="otgs-ico-edit" title={strings.labelEdit} /></a>}
-            {showCurrencyOptions && <CurrencyOptions currency={currency} updateCurrencyProp={updateCurrencyProp} strings={strings}/> }
+            {
+                showCurrencyOptions
+                    ? <CurrencyOptions currency={currency} updateCurrencyProp={updateCurrencyProp} strings={strings}/>
+                    : <a href="#" title={strings.labelEdit} onClick={onEditClick}><i className="otgs-ico-edit" title={strings.labelEdit}/></a>
+            }
 
             <hr/>
 
-            {'by_location' === mode && <CountriesBlock currency={currency} onChangeMode={updateCurrencyProp('location_mode')} onChangeCountries={updateCountries} countries={countries} strings={strings} />}
+            {'by_location' === mode && <CountriesBlock currency={currency} onChangeMode={updateCurrencyProp('location_mode')} onChangeCountries={updateCountries} strings={strings} />}
 
         </React.Fragment>
     );
@@ -199,21 +196,28 @@ const CurrencyOptions = ({currency, updateCurrencyProp, strings}) => {
     );
 };
 
-const CountriesBlock = ({currency, onChangeMode, onChangeCountries, countries, strings }) => {
+const CountriesBlock = ({currency, onChangeMode, onChangeCountries, strings }) => {
+    const allCountries = getStoreProperty('allCountries');
+    const countries = [];
+
+    allCountries.map((country, key) => {
+        countries.push(<Select.Option key={key} value={country.code} label={country.label}>{country.label}</Select.Option>);
+    });
+
     return (
         <React.Fragment>
             <SelectRow attrs={getRowAttrs(currency, 'location_mode')}
                        onChange={onChangeMode}
                        label={strings.labelCurrencyAvailableIn}>
-                <option value="1">{strings.labelAllCountries}</option>
-                <option value="2">{strings.labelAllCountriesExcept}...</option>
-                <option value="3">{strings.labelSpecificCountries}</option>
+                <option value="all">{strings.labelAllCountries}</option>
+                <option value="exclude">{strings.labelAllCountriesExceptDots}</option>
+                <option value="include">{strings.labelSpecificCountries}</option>
             </SelectRow>
-            {currency.location_mode !== '1' &&
+            {currency.location_mode !== 'all' &&
             <SelectCountries attrs={getRowAttrs(currency, 'countries')}
                              onChange={onChangeCountries}
                              countries={countries}
-                             label={currency.location_mode === '2' ? strings.labelAllCountriesExcept : strings.labelSpecificCountries}/>
+                             label={currency.location_mode === 'exclude' ? strings.labelAllCountriesExcept : strings.labelSpecificCountries}/>
             }
             <hr/>
         </React.Fragment>

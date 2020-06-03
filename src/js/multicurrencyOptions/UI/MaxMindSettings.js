@@ -7,7 +7,7 @@ import strings from "../Strings";
 
 const MaxMindSettings = () => {
     const [maxMindKeyExist, setMaxMindKeyExist] = useStore('maxMindKeyExist');
-    const [MaxMindKey, setMaxMindKey] = useState('');
+    const [maxMindKey, setMaxMindKey] = useState('');
     const [result, setResult] = useState(false);
 
     const onChange = e => {
@@ -17,18 +17,19 @@ const MaxMindSettings = () => {
     const ajax = createAjaxRequest('setMaxMindKey');
 
     const onApply = async e => {
-        setResult( await ajax.send(MaxMindKey) );
-        {(result.data && result.data.success) && setMaxMindKeyExist()}
+        setResult( await ajax.send(maxMindKey) );
+
+        if (result.data && result.data.success) {
+            setMaxMindKeyExist();
+        }
     };
 
     return (
-        <React.Fragment>
-            <div className="max-mind-block">
-                {maxMindKeyExist && <OnSuccess strings={strings}/>}
-                {(result.data && !result.data.success) && <OnError error={result.data.data}/>}
-                {!maxMindKeyExist && <SettingsBlock onChange={onChange} onApply={onApply} strings={strings}/>}
-            </div>
-        </React.Fragment>
+        <div className="max-mind-block">
+            {maxMindKeyExist && <OnSuccess strings={strings}/>}
+            {(result.data && !result.data.success) && <OnError error={result.data.data}/>}
+            {!maxMindKeyExist && <SettingsBlock onChange={onChange} onApply={onApply} strings={strings}/>}
+        </div>
     );
 };
 
@@ -63,30 +64,26 @@ const SettingsBlock = ({onChange, onApply, strings}) => {
 const OnSuccess = ({strings}) => {
 
     return (
-        <React.Fragment>
-            <div id="message" className="updated message fade">
-                <p>
-                    {strings.maxMindSuccess}
-                    <a className="wcml-max-min-settings"
-                       href={strings.maxMindSettingLink}
-                       target="_blank"
-                    >
-                        {strings.maxMindSettingLinkText}
-                    </a>
-                </p>
-            </div>
-        </React.Fragment>
+        <div className="updated message fade">
+            <p>
+                {strings.maxMindSuccess}
+                <a className="wcml-max-min-settings"
+                   href={strings.maxMindSettingLink}
+                   target="_blank"
+                >
+                    {strings.maxMindSettingLinkText}
+                </a>
+            </p>
+        </div>
     );
 };
 
 const OnError = ({error}) => {
 
     return (
-        <React.Fragment>
-            <div id="message" className="error inline">
-                <p className="wcml-max-min-error">{error}</p>
-            </div>
-        </React.Fragment>
+        <div id="message" className="error inline">
+            <p className="wcml-max-min-error">{error}</p>
+        </div>
     );
 };
 
