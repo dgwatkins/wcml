@@ -5,6 +5,8 @@ namespace WCML\MultiCurrency;
 class Geolocation {
 
 	const DEFAULT_COUNTRY_CURRENCY_CONFIG = 'country-currency.json';
+	const BY_LANGUAGE_MODE = 'by_language';
+	const BY_LOCATION_MODE = 'by_location';
 
 	/**
 	 * Get country code by user IP
@@ -50,6 +52,28 @@ class Geolocation {
 			$config = self::parseConfigFile();
 
 			return isset( $config[ $country ] ) ? $config[ $country ] : false;
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param array $currencySettings
+	 *
+	 * @return bool
+	 */
+	public static function isCurrencyAvailableForCountry( $currencySettings ) {
+
+		if ( 'all' === $currencySettings['location_mode'] ) {
+			return true;
+		}
+
+		if ( 'include' === $currencySettings['location_mode'] && in_array( self::getCountryByUserIp(),$currencySettings['countries'] ) ) {
+			return true;
+		}
+
+		if ( 'exclude' === $currencySettings['location_mode'] && ! in_array( self::getCountryByUserIp(), $currencySettings['countries'] ) ) {
+			return true;
 		}
 
 		return false;

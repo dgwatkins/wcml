@@ -1,5 +1,7 @@
 <?php
 
+use WCML\MultiCurrency\Geolocation;
+
 /**
  * Class WCML_Currency_Switcher
  *
@@ -128,14 +130,11 @@ class WCML_Currency_Switcher {
 				$wcml_settings['currencies_order'] :
 				$multi_currency_object->get_currency_codes();
 
+			if ( ! is_admin() ) {
+				$currencies = $this->filter_currencies_list_by_settings( $currencies, $wcml_settings );
+			}
+
 			if ( count( $currencies ) > 1 ) {
-				if ( ! is_admin() ) {
-					foreach ( $currencies as $k => $currency ) {
-						if ( $wcml_settings['currency_options'][ $currency ]['languages'][ $this->sitepress->get_current_language() ] != 1 ) {
-							unset( $currencies[ $k ] );
-						}
-					}
-				}
 
 				$template = $this->woocommerce_wpml->cs_templates->get_template( $args['switcher_style'] );
 
@@ -159,6 +158,27 @@ class WCML_Currency_Switcher {
 		} else {
 			return $preview;
 		}
+	}
+
+	/**
+	 * @param array $currencies
+	 * @param array $wcml_settings
+	 *
+	 * @return array
+	 */
+	private function filter_currencies_list_by_settings( $currencies, $wcml_settings ){
+		$currency_mode = $this->woocommerce_wpml->get_setting('currency_mode');
+
+		foreach ( $currencies as $k => $currency ) {
+			if (
+				( Geolocation::BY_LANGUAGE_MODE === $currency_mode && $wcml_settings['currency_options'][ $currency ]['languages'][ $this->sitepress->get_current_language() ] != 1 ) ||
+				( Geolocation::BY_LOCATION_MODE === $currency_mode && !Geolocation::isCurrencyAvailableForCountry( $wcml_settings['currency_options'][ $currency ] ) )
+			) {
+				unset( $currencies[ $k ] );
+			}
+		}
+
+		return $currencies;
 	}
 
 	public function get_model_data( $args, $currencies ) {
