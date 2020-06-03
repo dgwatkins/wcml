@@ -81,7 +81,7 @@ const OnSuccess = ({strings}) => {
 const OnError = ({error}) => {
 
     return (
-        <div id="message" className="error inline">
+        <div className="error inline">
             <p className="wcml-max-min-error">{error}</p>
         </div>
     );

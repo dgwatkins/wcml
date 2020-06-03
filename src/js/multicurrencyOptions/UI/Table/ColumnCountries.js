@@ -40,17 +40,10 @@ const Row = ({currency}) => {
 };
 
 const RenderCountries = ({currency}) => {
-    const counties = currency.countries.map((country, i) => <span key={i}>{getCountryLabel(country)}</span>);
-    const output = [];
 
-    counties.forEach((country, i) => {
-        // output the item
-        output.push(country);
-        // if list is more than 2 items, append a comma to all but the last item
-        if (counties.length > 2 && i < counties.length - 1) output.push(',');
-        // if list is more than 1 item, append a space to all but the last item
-        if (counties.length > 1 && i < counties.length - 1) output.push(' ');
-    });
-
-    return output;
+    return <span>{
+        currency.countries
+            .map(country => getCountryLabel(country))
+            .join(', ')
+    }</span>;
 };
