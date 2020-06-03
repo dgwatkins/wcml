@@ -15,13 +15,12 @@ const App = () => {
         <div>
             <ModeSelect/>
             <br/>
-            {mode && <RenderCurrenciesSettings mode={mode}/>}
+            {mode && <CurrenciesSettings mode={mode}/>}
         </div>
     </div>
 };
 
-const RenderCurrenciesSettings = ({mode}) => {
-    console.log(mode);
+const CurrenciesSettings = ({mode}) => {
     const [modalCurrency] = useStore('modalCurrency');
     const languages = getStoreProperty('languages');
     const defaultByLocation = languages.filter(language => language.defaultCurrency == 'location');
