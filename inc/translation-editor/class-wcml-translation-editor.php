@@ -404,7 +404,7 @@ class WCML_Translation_Editor {
 			<?php
 			printf(
 				__(
-					'To configure how the %1$sWooCommerce products%2$s are translated, visit the WooCommerce Multiligual %3$ssettings%4$s page.',
+					'To configure how the %1$sWooCommerce products%2$s are translated, visit the WooCommerce Multilingual %3$ssettings%4$s page.',
 					'woocommerce-multilingual'
 				),
 				'<strong>',
