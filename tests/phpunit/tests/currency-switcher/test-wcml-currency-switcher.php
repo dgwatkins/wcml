@@ -1,5 +1,8 @@
 <?php
 
+use WCML\MultiCurrency\Geolocation;
+use tad\FunctionMocker\FunctionMocker;
+
 /**
  * Class Test_WCML_Currency_Switcher
  * @group currency-switcher
@@ -239,7 +242,7 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 	 * @test
 	 * @dataProvider currency_switcher_shortcode_data
 	 */
-	public function currency_switcher_shortcode( $switcher_id ) {
+	public function currency_switcher_shortcode( $switcher_id, $currency_mode ) {
 		$shortcode_attrs = array();
 		if ( $switcher_id ) {
 			$shortcode_attrs['switcher_id'] = $switcher_id;
@@ -271,9 +274,17 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 					'color_scheme'   => 'gray',
 				),
 			),
-			'currency_options'   => array(),
+			'currency_options'   => [
+				'EUR' => [ 'location_mode' => 'all' ],
+				'USD' => [ 'location_mode' => 'all' ],
+				'JPY' => [ 'location_mode' => 'include', 'countries' => ['JP'] ],
+			],
+			'currency_mode'      => $currency_mode,
 		);
 		$currencies    = array( 'EUR', 'USD', 'JPY' );
+
+		FunctionMocker::replace( 'WCML\MultiCurrency\Geolocation::getCountryByUserIp', 'UA' );
+
 		foreach ( $currencies as $currency ) {
 			$wcml_settings['currency_options'][ $currency ]['languages']['en'] = ( 'JPY' !== $currency ) ? 1 : 0;
 		}
@@ -291,8 +302,9 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 		$shortcode_template->method( 'get_template' )->with( 'wcml-horizontal-list' )->willReturn( $switcher_template );
 		$shortcode_template->method( 'maybe_late_enqueue_template' )->willReturn( true );
 
-		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings' ) )->getMock();
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings', 'get_setting' ) )->getMock();
 		$woocommerce_wpml->expects( $this->once() )->method( 'get_settings' )->willReturn( $wcml_settings );
+		$woocommerce_wpml->expects( $this->once() )->method( 'get_setting' )->willReturn( $wcml_settings['currency_mode'] );
 		$woocommerce_wpml->multi_currency = $multi_currency;
 		$woocommerce_wpml->cs_templates   = $shortcode_template;
 
@@ -313,8 +325,9 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 
 	public function currency_switcher_shortcode_data() {
 		return array(
-			array( mt_rand( 1, 100 ) ),
-			array( false ),
+			array( mt_rand( 1, 100 ), Geolocation::MODE_BY_LANGUAGE ),
+			array( mt_rand( 1, 100 ), Geolocation::MODE_BY_LOCATION ),
+			array( false, Geolocation::MODE_BY_LANGUAGE ),
 		);
 	}
 
