@@ -93,7 +93,7 @@ class Test_WCML_Multi_Currency_Configuration extends OTGS_TestCase {
 		$key           = rand_str();
 		$_POST['data'] = json_encode( [ 'MaxMindKey' => $key ] );
 
-		\WP_Mock::wpFunction( 'wp_send_json_success', [
+		\WP_Mock::userFunction( 'wp_send_json_success', [
 			'return' => true,
 			'times'  => 1,
 		] );
@@ -103,7 +103,7 @@ class Test_WCML_Multi_Currency_Configuration extends OTGS_TestCase {
 		           ->disableOriginalConstructor()
 		           ->getMock();
 
-		\WP_Mock::wpFunction( 'WC', [
+		\WP_Mock::userFunction( 'WC', [
 			'return' => $WC,
 			'times'  => 2,
 		] );
@@ -122,6 +122,18 @@ class Test_WCML_Multi_Currency_Configuration extends OTGS_TestCase {
 		                         ->getMock();
 
 		$WC->integrations->expects( $this->once() )->method( 'get_integrations' )->willReturn( $integrations );
+
+		\WP_Mock::userFunction( 'get_option', [
+			'args' => [ 'woocommerce_maxmind_geolocation_settings' ],
+			'return' => [],
+			'times'  => 1,
+		] );
+
+		\WP_Mock::userFunction( 'update_option', [
+			'args' => [ 'woocommerce_maxmind_geolocation_settings', [ 'license_key' => $key ] ],
+			'return' => true,
+			'times'  => 1,
+		] );
 
 		WCML_Multi_Currency_Configuration::set_max_mind_key();
 		unset( $_POST );

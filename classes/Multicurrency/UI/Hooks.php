@@ -270,7 +270,7 @@ class Hooks implements \IWPML_Action {
 
 		$settings = get_option( 'woocommerce_maxmind_geolocation_settings' );
 
-		return $settings && isset( $settings['key'] );
+		return $settings && isset( $settings['license_key'] );
 	}
 
 	/**

@@ -383,6 +383,9 @@ class WCML_Multi_Currency_Configuration {
 			if ( isset( $integrations['maxmind_geolocation'] ) ) {
 				try {
 					$integrations['maxmind_geolocation']->validate_license_key_field( 'license_key', $data['MaxMindKey'] );
+					$settings                = get_option( 'woocommerce_maxmind_geolocation_settings' );
+					$settings['license_key'] = $data['MaxMindKey'];
+					update_option( 'woocommerce_maxmind_geolocation_settings', $settings );
 					wp_send_json_success();
 				} catch ( Exception $e ) {
 					wp_send_json_error( $e->getMessage() );
