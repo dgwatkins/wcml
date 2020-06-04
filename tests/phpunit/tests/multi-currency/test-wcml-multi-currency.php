@@ -112,7 +112,7 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 
 		$woocommerce_wpml = \Mockery::mock( 'woocommerce_wpml' );
 		$woocommerce_wpml->settings['currency_options'][ $country_currency ] = [];
-		$woocommerce_wpml->shouldReceive( 'get_setting' )->with( 'currency_mode' )->andReturn( Geolocation::BY_LOCATION_MODE );
+		$woocommerce_wpml->shouldReceive( 'get_setting' )->with( 'currency_mode' )->andReturn( Geolocation::MODE_BY_LOCATION );
 
 		FunctionMocker::replace( 'WCML\MultiCurrency\Geolocation::getCurrencyCodeByUserCountry', $country_currency );
 		FunctionMocker::replace( 'WCML\MultiCurrency\Geolocation::isCurrencyAvailableForCountry', true );
@@ -142,7 +142,7 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 		$woocommerce_session->method( 'get' )->with( 'client_currency' )->willReturn( 'USD' );
 
 		$woocommerce_wpml = \Mockery::mock( 'woocommerce_wpml' );
-		$woocommerce_wpml->shouldReceive( 'get_setting' )->with( 'currency_mode' )->andReturn( Geolocation::BY_LOCATION_MODE );
+		$woocommerce_wpml->shouldReceive( 'get_setting' )->with( 'currency_mode' )->andReturn( Geolocation::MODE_BY_LOCATION );
 
 		$subject                   = \Mockery::mock( 'WCML_Multi_Currency' )->makePartial();
 		$subject->currency_codes   = $currency_codes;
@@ -169,7 +169,7 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 		$woocommerce_session->method( 'get' )->with( 'client_currency' )->willReturn( false );
 
 		$woocommerce_wpml = \Mockery::mock( 'woocommerce_wpml' );
-		$woocommerce_wpml->shouldReceive( 'get_setting' )->with( 'currency_mode' )->andReturn( Geolocation::BY_LOCATION_MODE );
+		$woocommerce_wpml->shouldReceive( 'get_setting' )->with( 'currency_mode' )->andReturn( Geolocation::MODE_BY_LOCATION );
 
 		FunctionMocker::replace( 'WCML\MultiCurrency\Geolocation::getCurrencyCodeByUserCountry', $country_currency );
 
@@ -199,7 +199,7 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 		$woocommerce_session->method( 'get' )->with( 'client_currency' )->willReturn( false );
 
 		$woocommerce_wpml = \Mockery::mock( 'woocommerce_wpml' );
-		$woocommerce_wpml->shouldReceive( 'get_setting' )->with( 'currency_mode' )->andReturn( Geolocation::BY_LANGUAGE_MODE );
+		$woocommerce_wpml->shouldReceive( 'get_setting' )->with( 'currency_mode' )->andReturn( Geolocation::MODE_BY_LANGUAGE );
 
 		$subject                   = \Mockery::mock( 'WCML_Multi_Currency' )->makePartial();
 		$subject->currency_codes   = $currency_codes;

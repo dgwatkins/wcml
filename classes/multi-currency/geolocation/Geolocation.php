@@ -5,8 +5,8 @@ namespace WCML\MultiCurrency;
 class Geolocation {
 
 	const DEFAULT_COUNTRY_CURRENCY_CONFIG = 'country-currency.json';
-	const BY_LANGUAGE_MODE = 'by_language';
-	const BY_LOCATION_MODE = 'by_location';
+	const MODE_BY_LANGUAGE = 'by_language';
+	const MODE_BY_LOCATION = 'by_location';
 
 	/**
 	 * Get country code by user IP

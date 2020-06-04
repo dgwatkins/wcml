@@ -530,7 +530,7 @@ class WCML_Multi_Currency {
 	public function maybe_get_currency_by_geolocation( $client_currency, $woocommerce_session ) {
 
 		$is_currency_not_set_in_session = empty( $woocommerce_session ) || ! $woocommerce_session->get( 'client_currency' );
-		$is_by_location_mode            = Geolocation::BY_LOCATION_MODE === $this->woocommerce_wpml->get_setting( 'currency_mode' );
+		$is_by_location_mode            = Geolocation::MODE_BY_LOCATION === $this->woocommerce_wpml->get_setting( 'currency_mode' );
 
 		if (
 			$is_currency_not_set_in_session &&

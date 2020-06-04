@@ -325,9 +325,9 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 
 	public function currency_switcher_shortcode_data() {
 		return array(
-			array( mt_rand( 1, 100 ), Geolocation::BY_LANGUAGE_MODE ),
-			array( mt_rand( 1, 100 ), Geolocation::BY_LOCATION_MODE ),
-			array( false, Geolocation::BY_LANGUAGE_MODE ),
+			array( mt_rand( 1, 100 ), Geolocation::MODE_BY_LANGUAGE ),
+			array( mt_rand( 1, 100 ), Geolocation::MODE_BY_LOCATION ),
+			array( false, Geolocation::MODE_BY_LANGUAGE ),
 		);
 	}
 

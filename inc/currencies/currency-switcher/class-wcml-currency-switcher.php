@@ -169,16 +169,18 @@ class WCML_Currency_Switcher {
 	private function filter_currencies_list_by_settings( $currencies, $wcml_settings ){
 		$currency_mode = $this->woocommerce_wpml->get_setting('currency_mode');
 
-		foreach ( $currencies as $k => $currency ) {
-			if (
-				( Geolocation::BY_LANGUAGE_MODE === $currency_mode && $wcml_settings['currency_options'][ $currency ]['languages'][ $this->sitepress->get_current_language() ] != 1 ) ||
-				( Geolocation::BY_LOCATION_MODE === $currency_mode && !Geolocation::isCurrencyAvailableForCountry( $wcml_settings['currency_options'][ $currency ] ) )
-			) {
-				unset( $currencies[ $k ] );
-			}
-		}
+		$ifDisallowedByLanguage = function( $currency ) use ( $currency_mode, $wcml_settings ) {
+			return Geolocation::MODE_BY_LANGUAGE === $currency_mode && $wcml_settings['currency_options'][ $currency ]['languages'][ $this->sitepress->get_current_language() ] != 1;
+		};
 
-		return $currencies;
+		$ifDisallowedByLocation = function( $currency ) use ( $currency_mode, $wcml_settings ) {
+			return Geolocation::MODE_BY_LOCATION === $currency_mode && !Geolocation::isCurrencyAvailableForCountry( $wcml_settings['currency_options'][ $currency ] );
+		};
+
+		return wpml_collect( $currencies )
+			->reject( $ifDisallowedByLanguage )
+			->reject( $ifDisallowedByLocation )
+			->toArray();
 	}
 
 	public function get_model_data( $args, $currencies ) {
