@@ -1,6 +1,11 @@
 <?php
 
 use WCML\MultiCurrency\Geolocation;
+use WPML\FP\Fns;
+use WPML\FP\Logic;
+use WPML\FP\Maybe;
+use WPML\FP\Obj;
+use WPML\FP\Relation;
 
 /**
  * Class WCML_Multi_Currency
@@ -549,7 +554,7 @@ class WCML_Multi_Currency {
 	/**
 	 * @return bool|string
 	 */
-	private function get_currency_by_geolocation() {
+	public function get_currency_by_geolocation() {
 		$country_currency = Geolocation::getCurrencyCodeByUserCountry();
 
 		if ( $country_currency && $this->is_currency_active( $country_currency ) ) {
@@ -634,21 +639,17 @@ class WCML_Multi_Currency {
 	 * @return string|bool
 	 */
 	public function get_language_default_currency( $language ) {
+		// $getCurrency :: string -> string|false
+		$getCurrency = Logic::ifElse(
+			Relation::equals( 'location' ),
+			[ $this, 'get_currency_by_geolocation' ],
+			Fns::identity()
+		);
 
-		$default_currencies = $this->woocommerce_wpml->settings['default_currencies'];
-
-		if ( isset( $default_currencies[ $language ] ) ) {
-			if ( 'location' === $default_currencies[ $language ] ) {
-				$location_currency = $this->get_currency_by_geolocation();
-				if ( $location_currency ) {
-					return $location_currency;
-				}
-			} else {
-				return $default_currencies[ $language ];
-			}
-		}
-
-		return false;
+		Maybe::fromNullable( $this->woocommerce_wpml->settings['default_currencies'] )
+			->map( Obj::prop( $language ) )
+			->map( $getCurrency )
+			->getOrElse( false );
 	}
 }
 

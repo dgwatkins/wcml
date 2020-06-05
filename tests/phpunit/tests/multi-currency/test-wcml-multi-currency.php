@@ -210,8 +210,8 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 	}
 
 	/**
-	 *
 	 * @test
+	 * @group wcml-3232
 	 */
 	public function it_should_get_language_default_currency_by_location() {
 
@@ -232,8 +232,8 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 	}
 
 	/**
-	 *
 	 * @test
+	 * @group wcml-3232
 	 */
 	public function it_should_get_language_default_currency_by_setting() {
 
@@ -250,8 +250,8 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 	}
 
 	/**
-	 *
 	 * @test
+	 * @group wcml-3232
 	 */
 	public function it_should_not_get_language_default_currency() {
 
@@ -265,6 +265,4 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 
 		$this->assertFalse( $subject->get_language_default_currency( $client_language ) );
 	}
-
-
 }
