@@ -213,8 +213,12 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 					if ( $custom_fields_values ) {
 						$cf_fields_group = new WPML_Editor_UI_Field_Group();
 
-						foreach ( $custom_fields_values as $custom_field_index => $custom_field_val ) {
-							$cf_fields_group = $this->add_single_custom_field_content( $cf_fields_group, $custom_field, $custom_field_index, $custom_field_val );
+						$custom_field_index = 0;
+						foreach ( $custom_fields_values as $custom_field_val ) {
+							if ( ! empty( $custom_field_val ) ) {
+								$cf_fields_group = $this->add_single_custom_field_content( $cf_fields_group, $custom_field, $custom_field_index, $custom_field_val );
+								$custom_field_index++;
+							}
 						}
 
 						$custom_fields_section->add_field( $cf_fields_group );
