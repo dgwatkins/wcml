@@ -29,7 +29,7 @@ class Geolocation {
 	 */
 	private static function parseConfigFile() {
 		$config             = [];
-		$configuration_file = dirname( __FILE__ ) . '/' . self::DEFAULT_COUNTRY_CURRENCY_CONFIG;
+		$configuration_file = WCML_PLUGIN_PATH . '/res/geolocation/' . self::DEFAULT_COUNTRY_CURRENCY_CONFIG;
 
 		if ( file_exists( $configuration_file ) ) {
 			$json_content = file_get_contents( $configuration_file );
