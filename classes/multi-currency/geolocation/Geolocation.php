@@ -68,7 +68,7 @@ class Geolocation {
 	/**
 	 * Get country code from billing if user logged-in
 	 *
-	 * @return bool|string
+	 * @return null|string
 	 */
 	private static function getUserBillingCountry() {
 		$current_user_id = get_current_user_id();
@@ -81,7 +81,7 @@ class Geolocation {
 			}
 		}
 
-		return false;
+		return null;
 	}
 
 	/**
