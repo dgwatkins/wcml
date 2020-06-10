@@ -46,12 +46,39 @@ class Geolocation {
 	 */
 	public static function getCurrencyCodeByUserCountry() {
 
-		$country = self::getCountryByUserIp();
+		$country = self::getUserCountry();
 
 		if ( $country ) {
 			$config = self::parseConfigFile();
 
 			return isset( $config[ $country ] ) ? $config[ $country ] : false;
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return bool|string
+	 */
+	private static function getUserCountry(){
+		$billing_country = self::getUserBillingCountry();
+		return $billing_country ?: self::getCountryByUserIp();
+	}
+
+	/**
+	 * Get country code from billing if user logged-in
+	 *
+	 * @return bool|string
+	 */
+	private static function getUserBillingCountry() {
+		$current_user_id = get_current_user_id();
+
+		if ( $current_user_id ) {
+			$customer = new \WC_Customer( $current_user_id );
+
+			if ( $customer ) {
+				return $customer->get_billing_country();
+			}
 		}
 
 		return false;
@@ -68,11 +95,11 @@ class Geolocation {
 			return true;
 		}
 
-		if ( 'include' === $currencySettings['location_mode'] && in_array( self::getCountryByUserIp(),$currencySettings['countries'] ) ) {
+		if ( 'include' === $currencySettings['location_mode'] && in_array( self::getUserCountry(), $currencySettings['countries'] ) ) {
 			return true;
 		}
 
-		if ( 'exclude' === $currencySettings['location_mode'] && ! in_array( self::getCountryByUserIp(), $currencySettings['countries'] ) ) {
+		if ( 'exclude' === $currencySettings['location_mode'] && ! in_array( self::getUserCountry(), $currencySettings['countries'] ) ) {
 			return true;
 		}
 
