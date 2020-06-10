@@ -264,6 +264,9 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 		\WP_Mock::userFunction( 'is_admin', array(
 			'return' => false,
 		) );
+		\WP_Mock::userFunction( 'get_current_user_id', array(
+			'return' => false,
+		) );
 
 		$switcher_id = array_key_exists( 'switcher_id', $shortcode_attrs ) ? $shortcode_attrs['switcher_id'] : 'product';
 		$wcml_settings = array(
