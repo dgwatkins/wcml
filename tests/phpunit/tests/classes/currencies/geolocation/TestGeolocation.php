@@ -18,6 +18,40 @@ class TestGeolocation extends \OTGS_TestCase {
 		FunctionMocker::replace( 'WC_Geolocation::get_ip_address', '127.0.0.1' );
 		FunctionMocker::replace( 'WC_Geolocation::geolocate_ip', [ 'country' => 'UA' ] );
 
+		\WP_Mock::userFunction( 'get_current_user_id', [
+			'return' => false,
+			'times' => 1
+		]);
+
+		$code = Geolocation::getCurrencyCodeByUserCountry();
+
+		$this->assertEquals( $expected_code, $code );
+	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldGetCurrencyCodeByUserBillingAddress() {
+		$expected_code = 'UAH';
+		$user_id = 1;
+
+		$wc_customer = \Mockery::mock( 'overload:WC_Customer' );
+
+		$wc_customer->shouldReceive( 'get_billing_country' )
+		                 ->andReturn( 'UA' );
+
+		\WP_Mock::userFunction( 'get_current_user_id', [
+			'return' => $user_id,
+			'times' => 1
+		]);
+
+		$WC          = $this->getMockBuilder( 'WC' )->disableOriginalConstructor()->getMock();
+		$WC->session = $this->getMockBuilder( 'WC_Session_Handler' )->disableOriginalConstructor()->getMock();
+
+		\WP_Mock::userFunction( 'WC', [
+			'return' => $WC
+		] );
+
 		$code = Geolocation::getCurrencyCodeByUserCountry();
 
 		$this->assertEquals( $expected_code, $code );
@@ -30,6 +64,11 @@ class TestGeolocation extends \OTGS_TestCase {
 
 		FunctionMocker::replace( 'WC_Geolocation::get_ip_address', '127.0.0.1' );
 		FunctionMocker::replace( 'WC_Geolocation::geolocate_ip', [] );
+
+		\WP_Mock::userFunction( 'get_current_user_id', [
+			'return' => false,
+			'times' => 1
+		]);
 
 		$code = Geolocation::getCurrencyCodeByUserCountry();
 
@@ -70,6 +109,11 @@ class TestGeolocation extends \OTGS_TestCase {
 		FunctionMocker::replace( 'WC_Geolocation::get_ip_address', '127.0.0.1' );
 		FunctionMocker::replace( 'WC_Geolocation::geolocate_ip', [ 'country' => 'UA' ] );
 
+		\WP_Mock::userFunction( 'get_current_user_id', [
+			'return' => false,
+			'times' => 1
+		]);
+
 		$this->assertTrue( Geolocation::isCurrencyAvailableForCountry( $currencySettings ) );
 	}
 
@@ -83,6 +127,11 @@ class TestGeolocation extends \OTGS_TestCase {
 
 		FunctionMocker::replace( 'WC_Geolocation::get_ip_address', '127.0.0.1' );
 		FunctionMocker::replace( 'WC_Geolocation::geolocate_ip', [ 'country' => 'UA' ] );
+
+		\WP_Mock::userFunction( 'get_current_user_id', [
+			'return' => false,
+			'times' => 1
+		]);
 
 		$this->assertTrue( Geolocation::isCurrencyAvailableForCountry( $currencySettings ) );
 	}
