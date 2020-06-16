@@ -28,7 +28,7 @@ const Row = ({currency}) => {
 
         {currency.location_mode === 'exclude' &&
         <td>
-            <span>{strings.labelAllCountriesExcept}: </span>
+            <span className="all-countries-except">{strings.labelAllCountriesExcept}: </span>
             <RenderCountries currency={currency}/>
         </td>
         }
@@ -41,7 +41,7 @@ const Row = ({currency}) => {
 
 const RenderCountries = ({currency}) => {
 
-    return <span>{
+    return <span className="truncate">{
         currency.countries
             .map(country => getCountryLabel(country))
             .join(', ')

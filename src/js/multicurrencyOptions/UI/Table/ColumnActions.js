@@ -50,7 +50,9 @@ const Row = ({currency}) => {
                         <i className="otgs-ico-edit" title={strings.labelEdit} />
                     </a>
                 </td>
-                <DeleteCell currency={currency} />
+                <td className="wcml-col-delete">
+                    <DeleteCell currency={currency} />
+                </td>
             </tr>
 };
 
@@ -78,23 +80,21 @@ const DeleteCell = ({currency}) => {
 
     return ! currency.isDefault
         && (
-            <td className="wcml-col-delete">
-                <a title={strings.labelDelete} className="delete_currency"
-                   data-currency_name={currency.label}
-                   data-currency_symbol={currency.symbol}
-                   data-currency={currency.code} href="#"
-                   onClick={onClick}
-                >
-                    {
-                        ajax.fetching ?
-                            (
-                                <Spinner style={{margin: 0}}/>
-                            ) : (
-                                <i className="otgs-ico-delete" title={strings.labelDelete}/>
-                            )
-                    }
+            <a title={strings.labelDelete} className="delete_currency"
+               data-currency_name={currency.label}
+               data-currency_symbol={currency.symbol}
+               data-currency={currency.code} href="#"
+               onClick={onClick}
+            >
+                {
+                    ajax.fetching ?
+                        (
+                            <Spinner style={{margin: 0}}/>
+                        ) : (
+                            <i className="otgs-ico-delete" title={strings.labelDelete}/>
+                        )
+                }
 
-                </a>
-            </td>
+            </a>
         );
 };
