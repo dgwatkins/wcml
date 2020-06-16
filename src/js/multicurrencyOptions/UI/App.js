@@ -11,13 +11,11 @@ const App = () => {
 
     const mode = getStoreProperty('mode');
 
-    return <div className="wcml-section-content wcml-section-content-wide">
-        <div>
+    return <div>
             <ModeSelect/>
             <br/>
             {mode && <CurrenciesSettings mode={mode}/>}
         </div>
-    </div>
 };
 
 const CurrenciesSettings = ({mode}) => {
