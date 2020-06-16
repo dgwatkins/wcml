@@ -1,7 +1,7 @@
 import React from "react";
 import {getSmallFormattedPrice, getCurrencyLabel} from '../../Utils';
 import {getStoreProperty} from "../../Store";
-import {getTooltip} from "../FormElements";
+import {getTooltip} from "../../../sharedComponents/FormElements";
 import strings from "../../Strings";
 
 const ColumnCurrencies = () => {
