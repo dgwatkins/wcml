@@ -28,9 +28,11 @@ const MaxMindSettings = () => {
     return (
         <div className="max-mind-block">
             {maxMindKeyExist && <OnSuccess strings={strings}/>}
-            {(result.data && !result.data.success) && <OnError error={result.data.data}/>}
-            {!maxMindKeyExist && <SettingsBlock onChange={onChange} onApply={onApply} strings={strings}/>}
-            {ajax.fetching && <Spinner/>}
+            <div className="max-mind-block__wrapper">
+                {(result.data && !result.data.success) && <OnError error={result.data.data}/>}
+                {!maxMindKeyExist && <SettingsBlock onChange={onChange} onApply={onApply} strings={strings}/>}
+                {ajax.fetching && <Spinner/>}
+            </div>
         </div>
     );
 };
@@ -39,25 +41,28 @@ const SettingsBlock = ({onChange, onApply, strings}) => {
 
     return (
         <React.Fragment>
-            <span>{strings.maxMindDescription}</span>
-            <br/>
-            <label>{strings.maxMindLabel}</label>
-            <Input.Password onChange={onChange} />
-            <input type="button"
-                   className="max-mind-apply"
-                   onClick={onApply}
-                   value={strings.apply}
-            />
-            <br/>
-            <span>
+            <p>{strings.maxMindDescription}</p>
+            <div className="max-mind-block__wrapper-form">
+                <label>{strings.maxMindLabel}</label>
+                <div className="max-mind-block__wrapper-form-input">
+                    <Input.Password onChange={onChange} />
+                    <input type="button"
+                           className="max-mind-apply button-primary"
+                           onClick={onApply}
+                           value={strings.apply}
+                    />
+                </div>
+            </div>
+
+            <p className="max-mind-block__wrapper-generate">
                     {strings.maxMindDoc}
-                <a className="wcml-max-min-doc"
+                <a className="wcml-max-min-doc wpml-external-link"
                    href={strings.maxMindDocLink}
                    target="_blank"
                 >
                         {strings.maxMindDocLinkText}
                     </a>
-                </span>
+                </p>
         </React.Fragment>
     );
 };
