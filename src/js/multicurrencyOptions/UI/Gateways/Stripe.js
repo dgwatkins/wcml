@@ -1,5 +1,5 @@
 import React from "react";
-import {InputRow, SelectRow} from "../FormElements";
+import {InputRow, SelectRow} from "../../../sharedComponents/FormElements";
 import {getCurrencyIndex} from "../../Store";
 
 

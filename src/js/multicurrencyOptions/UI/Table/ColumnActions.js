@@ -2,7 +2,7 @@ import React from "react";
 import {createAjaxRequest} from "../../Request";
 import {useStore, getStoreAction, getStoreProperty} from "../../Store";
 import strings from "../../Strings";
-import {Spinner} from "../FormElements";
+import {Spinner} from "../../../sharedComponents/FormElements";
 
 const ColumnActions = () => {
     const activeCurrencies = getStoreProperty('activeCurrencies');

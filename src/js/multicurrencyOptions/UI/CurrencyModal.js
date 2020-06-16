@@ -9,7 +9,8 @@ import 'antd/lib/tooltip/style/index.css';
 import {useStore, getStoreProperty, getStoreAction} from "../Store";
 import {validateRate, getFormattedPricePreview, getCurrencyLabel, getCurrencySymbol} from '../Utils';
 import Gateways from "./Gateways/Gateways";
-import {SelectRow, InputRow} from "./FormElements";
+import {SelectRow, InputRow} from "../../sharedComponents/FormElements";
+import {CountriesFilter} from "../../sharedComponents/CountriesFilter";
 import {createAjaxRequest} from "../Request";
 import strings from "../Strings";
 import {sprintf} from "wpml-common-js-source/src/i18n";
@@ -74,8 +75,8 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
         setModalCurrency({...currency, [prop]:e.target.value});
     };
 
-    const updateCountries = (countries) => {
-        setModalCurrency({...currency, ['countries']:countries});
+    const updateCurrencyPropValue = (prop) => (value) => {
+        setModalCurrency({...currency, [prop]:value});
     };
 
     const onChangeRate = (e) => {
@@ -123,7 +124,7 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
 
             <hr/>
 
-            {'by_location' === mode && <CountriesBlock currency={currency} onChangeMode={updateCurrencyProp('location_mode')} onChangeCountries={updateCountries} strings={strings} />}
+            {'by_location' === mode && <CountriesBlock currency={currency} onChange={updateCurrencyPropValue} strings={strings} />}
 
         </React.Fragment>
     );
@@ -196,49 +197,20 @@ const CurrencyOptions = ({currency, updateCurrencyProp, strings}) => {
     );
 };
 
-const CountriesBlock = ({currency, onChangeMode, onChangeCountries, strings }) => {
+const CountriesBlock = ({currency, onChange, strings }) => {
     const allCountries = getStoreProperty('allCountries');
-    const countries = [];
-
-    allCountries.map((country, key) => {
-        countries.push(<Select.Option key={key} value={country.code} label={country.label}>{country.label}</Select.Option>);
-    });
 
     return (
         <React.Fragment>
-            <SelectRow attrs={getRowAttrs(currency, 'location_mode')}
-                       onChange={onChangeMode}
-                       label={strings.labelCurrencyAvailableIn}>
-                <option value="all">{strings.labelAllCountries}</option>
-                <option value="exclude">{strings.labelAllCountriesExceptDots}</option>
-                <option value="include">{strings.labelSpecificCountries}</option>
-            </SelectRow>
-            {currency.location_mode !== 'all' &&
-            <SelectCountries attrs={getRowAttrs(currency, 'countries')}
-                             onChange={onChangeCountries}
-                             countries={countries}
-                             label={currency.location_mode === 'exclude' ? strings.labelAllCountriesExcept : strings.labelSpecificCountries}/>
-            }
+            <CountriesFilter modeAttrs={getRowAttrs(currency, 'location_mode')}
+                             currentMode={currency.location_mode}
+                             onChangeMode={onChange('mode')}
+                             selectCountriesAttrs={getRowAttrs(currency, 'countries')}
+                             onChangeSelectedCountries={onChange('countries')}
+                             allCountries={allCountries}
+                             strings={strings}/>
             <hr/>
         </React.Fragment>
-    );
-};
-
-const SelectCountries = ({attrs, onChange, countries, label}) => {
-    return (
-        <div className="wpml-form-row">
-            <label htmlFor={attrs.id}>{label}</label>
-            <Select
-                mode="multiple"
-                style={{width: '145px'}}
-                value={attrs.value}
-                onChange={onChange}
-                optionLabelProp="label"
-                allowClear={true}
-            >
-                {countries}
-            </Select>
-        </div>
     );
 };
 
