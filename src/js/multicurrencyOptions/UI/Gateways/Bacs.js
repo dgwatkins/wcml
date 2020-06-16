@@ -1,5 +1,5 @@
 import React from "react";
-import {SelectRow} from "../FormElements";
+import {SelectRow} from "../../../sharedComponents/FormElements";
 
 const Bacs = ({gateway, settings, updateSettings, activeCurrencies, getName, currency}) => {
     const valueOptions = {

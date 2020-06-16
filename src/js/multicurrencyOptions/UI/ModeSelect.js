@@ -2,7 +2,7 @@ import React from "react";
 import {useStore} from "../Store";
 import {createAjaxRequest} from "../Request";
 import strings from "../Strings";
-import {Spinner} from "./FormElements";
+import {Spinner} from "../../sharedComponents/FormElements";
 
 const ModeSelect = () => {
     const [mode, setMode] = useStore('mode');

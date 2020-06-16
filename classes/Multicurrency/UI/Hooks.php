@@ -220,7 +220,7 @@ class Hooks implements \IWPML_Action {
 			'errorInvalidNumber'             => __( 'Please enter a valid number', 'woocommerce-multilingual' ),
 			'labelCancel'                    => __( 'Cancel', 'woocommerce-multilingual' ),
 			'labelSave'                      => __( 'Save', 'woocommerce-multilingual' ),
-			'labelCurrencyAvailableIn'       => __( 'Currency available in', 'woocommerce-multilingual' ),
+			'labelAvailability'              => __( 'Currency available in', 'woocommerce-multilingual' ),
 			'labelAllCountries'              => __( 'All countries', 'woocommerce-multilingual' ),
 			'labelAllCountriesExcept'        => __( 'All countries except', 'woocommerce-multilingual' ),
 			'labelAllCountriesExceptDots'    => __( 'All countries except...', 'woocommerce-multilingual' ),

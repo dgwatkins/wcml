@@ -1,5 +1,5 @@
 import React from "react";
-import {InputRow, SelectRow} from "../FormElements";
+import {InputRow, SelectRow} from "../../../sharedComponents/FormElements";
 import {getCurrencyIndex} from "../../Store"
 import Tooltip from "antd/lib/tooltip";
 import {sprintf} from "wpml-common-js-source/src/i18n";

@@ -9,7 +9,7 @@ const ColumnCountries = () => {
     return <table className="widefat currency_country_table" id="currency-country-table">
                 <thead>
                     <tr>
-                        <th>{strings.labelCurrencyAvailableIn}</th>
+                        <th>{strings.labelAvailability}</th>
                     </tr>
                 </thead>
                 <tbody>

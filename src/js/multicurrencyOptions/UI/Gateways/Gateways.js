@@ -5,7 +5,7 @@ import Bacs from "./Bacs";
 import PayPal from "./PayPal";
 import Stripe from "./Stripe";
 import Unsupported from "./Unsupported";
-import {getTooltip} from "../FormElements";
+import {getTooltip} from "../../../sharedComponents/FormElements";
 import strings from "../../Strings";
 
 const Gateways = () => {

@@ -1,0 +1,18 @@
+.wcml-payment-gateways{
+	.wpml-form-row{
+		label{
+			font-weight: 600;
+			color: #23282d;
+			font-size: 14px;
+			width: 195px;
+			text-align: left;
+			margin: 0;
+		}
+		select {
+			width: 185px;
+		}
+		.ant-select{
+			margin: 7px 15px;
+		}
+	}
+}

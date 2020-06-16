@@ -4,7 +4,7 @@ import {Input} from 'antd';
 import {useStore} from "../Store";
 import {createAjaxRequest} from "../Request";
 import strings from "../Strings";
-import {Spinner} from "./FormElements";
+import {Spinner} from "../../sharedComponents/FormElements";
 
 const MaxMindSettings = () => {
     const [maxMindKeyExist, setMaxMindKeyExist] = useStore('maxMindKeyExist');

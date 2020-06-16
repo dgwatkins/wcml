@@ -4,7 +4,7 @@ import {createAjaxRequest} from "../../Request";
 import strings from "../../Strings";
 import {sprintf} from "wpml-common-js-source/src/i18n";
 import {getCurrencyLabel} from "../../Utils";
-import {Spinner} from "../FormElements";
+import {Spinner} from "../../../sharedComponents/FormElements";
 
 const ColumnLanguages = () => {
     const activeCurrencies = getStoreProperty('activeCurrencies');
