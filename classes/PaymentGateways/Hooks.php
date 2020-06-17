@@ -6,6 +6,9 @@ use IWPML_Backend_Action;
 use IWPML_Frontend_Action;
 use IWPML_DIC_Action;
 use WCML\MultiCurrency\Geolocation;
+use WPML\FP\Maybe;
+use WPML\FP\Obj;
+use WPML\FP\Relation;
 
 
 class Hooks implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Action {
@@ -19,6 +22,7 @@ class Hooks implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Ac
 			if ( $this->isWCGatewaysSettingsScreen() ) {
 				add_action( 'woocommerce_update_options_checkout', [ $this, 'updateSettingsOnSave' ], self::PRIORITY );
 			}
+			add_action( 'admin_notices', [ $this, 'maybeAddNotice'] );
 		} else {
 			add_filter( 'woocommerce_available_payment_gateways', [ $this, 'filterByCountry' ], self::PRIORITY );
 		}
@@ -38,6 +42,8 @@ class Hooks implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Ac
 				'include'
 			], true ) ) {
 				$settings[ $gatewaySettings['ID'] ]['mode'] = $gatewaySettings['mode'];
+			} else {
+				$settings[ $gatewaySettings['ID'] ]['mode'] = 'all';
 			}
 
 			$settings[ $gatewaySettings['ID'] ]['countries'] = array_map( 'esc_attr', array_filter( explode( ',', $gatewaySettings['countries'] ) ) );
@@ -78,24 +84,39 @@ class Hooks implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Ac
 		return $payment_gateways;
 	}
 
+	public function maybeAddNotice(){
+		if( class_exists( 'WooCommerce_Gateways_Country_Limiter' ) ) {
+			echo $this->getNoticeText();
+		}
+	}
+
+	/**
+	 * @return string
+	 */
+	private function getNoticeText(){
+
+		$text = '<div id="message" class="updated error">';
+		$text .= '<p>';
+		$text .= __( 'We noticed that you\'re using our not supported WooCommerce Gateways Country Limiter plugin which was integrated into WooCommerce Multilingual, please remove it!', 'woocommerce-multilingual' );
+		$text .= '</p>';
+		$text .= '</div>';
+
+		return $text;
+	}
+
 	/**
 	 * @param string $gatewayId
 	 *
 	 * @return array
 	 */
 	private function getSettings( $gatewayId ) {
-
-		$settings = get_option( self::OPTION_KEY, false );
-
-		if ( $settings && isset( $settings[ $gatewayId ] ) ) {
-			return $settings[ $gatewayId ];
-		}
-
-		return [ 'mode' => 'all', 'countries' => [] ];
+		return Maybe::fromNullable( get_option( self::OPTION_KEY, false ) )
+		            ->map( Obj::prop( $gatewayId ) )
+		            ->getOrElse( [ 'mode' => 'all', 'countries' => [] ] );
 	}
 
 	/**
-	 * @param $settings
+	 * @param array $settings
 	 *
 	 * @return bool
 	 */
@@ -107,7 +128,7 @@ class Hooks implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Ac
 	 * @return bool
 	 */
 	private function isWCGatewaysSettingsScreen() {
-		return isset( $_GET['section'] ) && isset( $_GET['page'] ) && 'wc-settings' === $_GET['page'];
+		return Obj::prop( 'section', $_GET ) && Relation::equals( 'wc-settings', Obj::prop( 'page', $_GET ) );
 	}
 
 }

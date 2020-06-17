@@ -3,6 +3,9 @@
 namespace WCML\PaymentGateways;
 
 use tad\FunctionMocker\FunctionMocker;
+use WPML\FP\Maybe;
+use WPML\FP\Obj;
+use WPML\FP\Relation;
 
 /**
  * @group payment-gateways
@@ -31,6 +34,11 @@ class TestHooks extends \OTGS_TestCase {
 			$subject,
 			'updateSettingsOnSave'
 		], $subject::PRIORITY );
+
+		\WP_Mock::expectActionAdded( 'admin_notices', [
+			$subject,
+			'maybeAddNotice'
+		]);
 		$subject->add_hooks();
 
 		unset( $_GET );
@@ -72,6 +80,38 @@ class TestHooks extends \OTGS_TestCase {
 		$expectedSettings = [
 			'bacs' => [
 				'mode'      => 'include',
+				'countries' => [ 'UA', 'ES' ]
+			]
+		];
+
+		\WP_Mock::userFunction( 'update_option', [
+			'args'   => [ $subject::OPTION_KEY, $expectedSettings ],
+			'return' => true,
+		] );
+
+		$subject->updateSettingsOnSave();
+
+		unset( $_POST );
+	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldSetToAllWhenUpdatingSettingsWithHackedData() {
+
+		$subject = $this->getSubject();
+
+		$gatewaySettings = [
+			'ID'        => 'bacs',
+			'mode'      => 'hacked',
+			'countries' => 'UA,ES'
+		];
+
+		$_POST[ $subject::OPTION_KEY ] = $gatewaySettings;
+
+		$expectedSettings = [
+			'bacs' => [
+				'mode'      => 'all',
 				'countries' => [ 'UA', 'ES' ]
 			]
 		];
