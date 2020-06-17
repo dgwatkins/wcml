@@ -14,7 +14,8 @@ use WPML\FP\Relation;
 class Hooks implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Action {
 
 	const OPTION_KEY = 'wcml_payment_gateways';
-	const PRIORITY = 100;
+	/* took this priority from wcgcl but we could not recall the reason of this number.*/
+	const PRIORITY = 1000;
 
 	public function add_hooks() {
 
@@ -46,7 +47,11 @@ class Hooks implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Ac
 				$settings[ $gatewaySettings['ID'] ]['mode'] = 'all';
 			}
 
-			$settings[ $gatewaySettings['ID'] ]['countries'] = array_map( 'esc_attr', array_filter( explode( ',', $gatewaySettings['countries'] ) ) );
+			if ( isset( $gatewaySettings['countries'] ) ) {
+				$settings[ $gatewaySettings['ID'] ]['countries'] = array_map( 'esc_attr', array_filter( explode( ',', $gatewaySettings['countries'] ) ) );
+			} else {
+				$settings[ $gatewaySettings['ID'] ]['countries'] = [];
+			}
 
 			$this->updateSettings( $settings );
 		}
@@ -97,7 +102,7 @@ class Hooks implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Ac
 
 		$text = '<div id="message" class="updated error">';
 		$text .= '<p>';
-		$text .= __( 'We noticed that you\'re using our not supported WooCommerce Gateways Country Limiter plugin which was integrated into WooCommerce Multilingual, please remove it!', 'woocommerce-multilingual' );
+		$text .= __( 'We noticed that you\'re using WooCommerce Gateways Country Limiter plugin which was integrated into WooCommerce Multilingual, please remove it!', 'woocommerce-multilingual' );
 		$text .= '</p>';
 		$text .= '</div>';
 
