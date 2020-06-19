@@ -3,6 +3,7 @@
 class WCML_Attributes {
 
 	const PRIORITY_AFTER_WC_INIT = 100;
+	const CACHE_GROUP_VARIATION = 'wpml-all-meta-product-variation' ;
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
@@ -30,6 +31,7 @@ class WCML_Attributes {
 		$this->post_translations = $post_translations;
 		$this->term_translations = $term_translations;
 		$this->wpdb              = $wpdb;
+		wp_cache_add_non_persistent_groups( self::CACHE_GROUP_VARIATION );
 	}
 
 	private function get_wcml_terms_instance() {
@@ -748,9 +750,8 @@ class WCML_Attributes {
 
 		if ( '' === $meta_key && 'product_variation' === get_post_type( $object_id ) ) {
 
-			$cache_group  = 'wpml-all-meta-product-variation';
 			$cache_key    = $this->sitepress->get_current_language() . $object_id;
-			$cached_value = wp_cache_get( $cache_key, $cache_group );
+			$cached_value = wp_cache_get( $cache_key, self::CACHE_GROUP_VARIATION );
 
 			if ( $cached_value ) {
 				return $cached_value;
@@ -786,7 +787,7 @@ class WCML_Attributes {
 					}
 				}
 
-				wp_cache_add( $cache_key, $all_meta, $cache_group );
+				wp_cache_add( $cache_key, $all_meta, self::CACHE_GROUP_VARIATION );
 
 				return $all_meta;
 			}
