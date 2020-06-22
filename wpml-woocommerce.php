@@ -71,6 +71,10 @@ if ( WPML_Core_Version_Check::is_ok( WCML_PLUGIN_PATH . '/wpml-dependencies.json
  * Load WooCommerce Multilingual after WPML is loaded
  */
 function wcml_loader() {
+	if ( ! class_exists( 'WooCommerce' ) ) {
+		return;
+	}
+
 	\WPML\Container\share( \WCML\Container\Config::getSharedInstances() );
 
 	$xdomain_data = new WCML_xDomain_Data( new WPML_Cookie() );
