@@ -519,15 +519,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		$this->wcEmails = $this->getMockBuilder( 'WC_Emails' )
 		                       ->disableOriginalConstructor()
-		                       ->setMethods( [ 'low_stock' ] )
 		                       ->getMock();
-
-		$this->wcEmails->expects( $this->never() )->method( 'low_stock' );
-
-		WP_Mock::userFunction( 'remove_action', [
-			'args'   => [ 'woocommerce_low_stock_notification', [ $this->wcEmails, 'low_stock' ] ],
-			'return' => false
-		] );
 
 		$subject = $this->get_subject();
 
@@ -603,15 +595,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		$this->wcEmails = $this->getMockBuilder( 'WC_Emails' )
 		                       ->disableOriginalConstructor()
-		                       ->setMethods( [ 'no_stock' ] )
 		                       ->getMock();
-
-		$this->wcEmails->expects( $this->never() )->method( 'no_stock' );
-
-		WP_Mock::userFunction( 'remove_action', [
-			'args'   => [ 'woocommerce_no_stock_notification', [ $this->wcEmails, 'no_stock' ] ],
-			'return' => false
-		] );
 
 		$subject = $this->get_subject();
 

@@ -647,10 +647,11 @@ class WCML_Emails {
 	 */
 	private function admin_notification( $product, $action, $method ) {
 
-		$wcEmails          = $this->woocommerce->mailer();
-		$is_action_removed = remove_action( $action, [ $wcEmails, $method ] );
+		$wcEmails = $this->woocommerce->mailer();
 
-		if ( $is_action_removed ) {
+		remove_action( $action, [ $wcEmails, $method ] );
+
+		if ( method_exists( $wcEmails, $method ) ) {
 			$admin_language               = $this->get_admin_language_by_email( get_option( 'woocommerce_stock_email_recipient' ) );
 			$product_id_in_admin_language = wpml_object_id_filter(
 				$product->get_id(),
