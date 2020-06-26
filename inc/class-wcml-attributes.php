@@ -379,15 +379,21 @@ class WCML_Attributes {
 	public function get_attr_label_translations( $product_id, $lang = false ) {
 		$trnsl_labels = get_post_meta( $product_id, 'attr_label_translations', true );
 
-		if ( ! is_array( $trnsl_labels ) ) {
-			$trnsl_labels = [];
+		$remove_empty_values = function ( $values ) {
+			return \wpml_collect( $values )->filter()->toArray();
+		};
+
+		if ( ! $lang && is_array( $trnsl_labels ) ) {
+			return \wpml_collect( $trnsl_labels )
+				->map( $remove_empty_values )
+				->toArray();
 		}
 
 		if ( isset( $trnsl_labels[ $lang ] ) ) {
-			return $trnsl_labels[ $lang ];
+			return $remove_empty_values( $trnsl_labels[ $lang ] );
 		}
 
-		return $trnsl_labels;
+		return [];
 	}
 
 	public function sync_default_product_attr( $orig_post_id, $transl_post_id, $lang ) {

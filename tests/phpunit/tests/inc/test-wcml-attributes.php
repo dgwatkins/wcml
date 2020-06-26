@@ -1221,5 +1221,120 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$this->assertFalse( $subject->set_custom_product_attributes_as_translatable_for_tm_job( false, $job_translate ) );
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_should_get_attributes_label_translations() {
+
+		$product_id = 10;
+		$lang       = 'de';
+
+		$label_translations = [ $lang => [ 'color' => 'colore' ] ];
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $product_id, 'attr_label_translations', true ],
+			'return' => $label_translations
+		] );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( $label_translations[ $lang ], $subject->get_attr_label_translations( $product_id, $lang ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_remove_empty_strings_from_attributes_label_translations() {
+
+		$product_id = 10;
+		$lang       = 'de';
+
+		$label_translations = [ $lang => [ 'color' => 'colore', 'size' => '' ] ];
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $product_id, 'attr_label_translations', true ],
+			'return' => $label_translations
+		] );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( [ 'color' => 'colore' ], $subject->get_attr_label_translations( $product_id, $lang ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_remove_empty_strings_from_attributes_label_translations_in_all_languages() {
+
+		$product_id = 10;
+
+		$label_translations = [ 'de' => [ 'color' => 'colore', 'size' => '' ], 'fr' => [ 'color' => 'color', 'size' => '' ] ];
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $product_id, 'attr_label_translations', true ],
+			'return' => $label_translations
+		] );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( [ 'de' => [ 'color' => 'colore' ], 'fr' => [ 'color' => 'color' ] ], $subject->get_attr_label_translations( $product_id ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_return_empty_array_if_postmeta_corrupted_for_attributes_label_translations() {
+
+		$product_id = 10;
+		$lang       = 'de';
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $product_id, 'attr_label_translations', true ],
+			'return' => 'data'
+		] );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( [], $subject->get_attr_label_translations( $product_id, $lang ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_return_empty_array_for_not_translated_language_for_attributes_label_translations() {
+
+		$product_id = 10;
+		$lang       = 'fr';
+
+		$label_translations = [ 'de' => [ 'color' => 'colore' ] ];
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $product_id, 'attr_label_translations', true ],
+			'return' => $label_translations
+		] );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( [], $subject->get_attr_label_translations( $product_id, $lang ) );
+	}
+	/**
+	 * @test
+	 */
+	public function it_should_return_all_language_for_attributes_label_translations() {
+
+		$product_id = 10;
+
+		$label_translations = [ 'de' => [ 'color' => 'colore' ] ];
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $product_id, 'attr_label_translations', true ],
+			'return' => $label_translations
+		] );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( $label_translations, $subject->get_attr_label_translations( $product_id ) );
+	}
+
 
 }
