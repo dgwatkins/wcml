@@ -638,25 +638,41 @@ class WCML_Attributes {
 	/*
 	 * special case when original attribute language is German or Danish,
 	 * needs handle special chars accordingly
-	 * https://onthegosystems.myjetbrains.com/youtrack/issue/wcml-1785
 	 */
 	public function filter_attribute_name( $attribute_name, $product_id, $return_sanitized = false ) {
+
+		$special_symbols_languages = [ 'de', 'da' ];
+		$sanitize_in_origin        = false;
 
 		if ( $product_id ) {
 			$orig_lang        = $this->get_wcml_products_instance()->get_original_product_language( $product_id );
 			$current_language = $this->sitepress->get_current_language();
 
-			if ( in_array( $orig_lang, [ 'de', 'da' ] ) && $current_language !== $orig_lang ) {
+			if ( in_array( $orig_lang, $special_symbols_languages, true ) && $current_language !== $orig_lang ) {
 				$attribute_name = $this->sitepress->locale_utils->filter_sanitize_title( remove_accents( $attribute_name ), $attribute_name );
-				remove_filter( 'sanitize_title', [ $this->sitepress->locale_utils, 'filter_sanitize_title' ], 10 );
+				$this->remove_wpml_locale_sanitize_title_filter();
+			}
+
+			$sanitize_in_origin = in_array( $current_language, $special_symbols_languages, true ) && $current_language !== $orig_lang;
+			if ( $sanitize_in_origin ) {
+				$this->remove_wpml_locale_sanitize_title_filter();
+				$this->sitepress->switch_lang( $orig_lang );
 			}
 		}
 
 		if ( $return_sanitized ) {
 			$attribute_name = sanitize_title( $attribute_name );
+
+			if ( $sanitize_in_origin ) {
+				$this->sitepress->switch_lang( $current_language );
+			}
 		}
 
 		return $attribute_name;
+	}
+
+	private function remove_wpml_locale_sanitize_title_filter() {
+		remove_filter( 'sanitize_title', [ $this->sitepress->locale_utils, 'filter_sanitize_title' ], 10, 2 );
 	}
 
 	public function filter_adding_to_cart_product_attributes_names( $attributes ) {

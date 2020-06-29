@@ -44,7 +44,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 
 		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
 			->disableOriginalConstructor()
-			->setMethods( array( 'get_wp_api', 'get_current_language', 'get_setting', 'set_setting', 'verify_taxonomy_translations' ) )
+			->setMethods( array( 'get_wp_api', 'get_current_language', 'get_setting', 'set_setting', 'verify_taxonomy_translations', 'switch_lang' ) )
 			->getMock();
 
 		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )
@@ -376,6 +376,53 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$filtered_attribute_name = $subject->filter_attribute_name( $attribute_name, $product_id, false );
 
 		$this->assertEquals( $attribute_name, $filtered_attribute_name );
+	}
+
+	/**
+	 * @test
+	 */
+	public function filter_attribute_name_current_is_DE() {
+
+		\WP_Mock::passthruFunction( 'remove_filter' );
+
+		$attribute_name           = 'öööfff';
+		$expected_attribute_name  = 'ooofff';
+		$orig_lang                = 'sv';
+		$product_id               = 11;
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'get_original_product_language' ) )
+		                                         ->getMock();
+
+		$this->woocommerce_wpml->products
+			->method( 'get_original_product_language' )
+			->with( $product_id )
+			->willReturn( $orig_lang );
+
+		$this->sitepress->locale_utils = $this->getMockBuilder( 'WPML_Locale' )
+		                                      ->disableOriginalConstructor()
+		                                      ->getMock();
+
+		$this->sitepress
+			->method( 'get_current_language' )
+			->willReturn( 'de' );
+
+		$this->sitepress
+			->expects( $this->exactly( 2 ) )
+			->method( 'switch_lang' )
+			->willReturn( true );
+
+		\WP_Mock::userFunction( 'sanitize_title', [
+			'args'   => [ $attribute_name ],
+			'return' => $expected_attribute_name
+		] );
+
+		$subject = $this->get_subject();
+
+		$filtered_attribute_name = $subject->filter_attribute_name( $attribute_name, $product_id, true );
+
+		$this->assertEquals( $expected_attribute_name, $filtered_attribute_name );
 	}
 
 	/**
