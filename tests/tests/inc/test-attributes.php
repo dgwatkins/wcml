@@ -91,6 +91,9 @@ class Test_WCML_Attributes extends WCML_UnitTestCase {
 
 	}
 
+	/**
+	 * @group wcml-3272
+	 */
 	function test_is_attributes_fully_translated(){
 
 		$_POST[ 'wcml-is-translatable-attr' ] = 1;
@@ -102,12 +105,15 @@ class Test_WCML_Attributes extends WCML_UnitTestCase {
 		);
 		$this->woocommerce_wpml->attributes->set_attribute_readonly_config( $id, $data );
 
+		self::clear_attribute_taxonomies_cache();
 		$is_fully_translated = $this->woocommerce_wpml->attributes->is_attributes_fully_translated();
 
 		$this->assertTrue( $is_fully_translated );
 
 		$term = $this->wcml_helper->add_attribute_term( 'black', $this->attr, 'en' );
 		$this->woocommerce_wpml->terms->update_terms_translated_status( wc_attribute_taxonomy_name( $this->attr ) );
+
+		self::clear_attribute_taxonomies_cache();
 		$is_fully_translated = $this->woocommerce_wpml->attributes->is_attributes_fully_translated();
 
 		$this->assertFalse( $is_fully_translated );
@@ -115,7 +121,14 @@ class Test_WCML_Attributes extends WCML_UnitTestCase {
 		unset( $_POST[ 'wcml-is-translatable-attr' ] );
 		unset( $_POST[ 'attribute_name' ] );
 		unset( $_POST[ 'save_attribute' ] );
-
 	}
 
+	/**
+	 * @see wc_get_attribute_taxonomies
+	 */
+	public static function clear_attribute_taxonomies_cache() {
+		$prefix    = WC_Cache_Helper::get_cache_prefix( 'woocommerce-attributes' );
+		$cache_key = $prefix . 'attributes';
+		wp_cache_delete( $cache_key, 'woocommerce-attributes' );
+	}
 }
