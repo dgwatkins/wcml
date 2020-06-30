@@ -1,5 +1,9 @@
 <?php
 
+use WPML\FP\Fns;
+use WPML\FP\Maybe;
+use WPML\FP\Obj;
+
 class WCML_Orders {
 
 	const DASHBOARD_COOKIE_NAME = '_wcml_dashboard_order_language';
@@ -53,27 +57,32 @@ class WCML_Orders {
 		}
 	}
 
+	/**
+	 * This method will try to convert the comments in the current language
+	 * if the user is identified (i.e. he has an ID).
+	 *
+	 * Note: I was not able to find the place where the strings are
+	 * registered and maybe this code is not used anymore. This should
+	 * be investigated in the future.
+	 *
+	 * @param \WP_Comment[] $comments
+	 *
+	 * @return \WP_Comment[]
+	 */
 	public function get_filtered_comments( $comments ) {
+		// $ifIdentifiedUser :: void -> bool
+		$ifIdentifiedUser = function () { return (bool) get_current_user_id(); };
 
-		$user_id = get_current_user_id();
+		// $translateInWoocommerce :: string -> string
+		$translateInWoocommerce = \WPML\FP\partialRight( 'translate', 'woocommerce' );
 
-		if ( $user_id ) {
-			$user_language = get_user_meta( $user_id, 'icl_admin_language', true );
+		// $translateComment :: WP_Comment -> WP_Comment
+		$translateComment = Obj::over( Obj::lensProp( 'comment_content' ), $translateInWoocommerce );
 
-			foreach ( $comments as $key => $comment ) {
-				$comment_string_id = icl_get_string_id( $comment->comment_content, 'woocommerce' );
-
-				if ( $comment_string_id ) {
-					$comment_strings = icl_get_string_translations_by_id( $comment_string_id );
-
-					if ( $comment_strings && isset( $comment_strings[ $user_language ] ) ) {
-						$comments[ $key ]->comment_content = $comment_strings[ $user_language ]['value'];
-					}
-				}
-			}
-		}
-
-		return $comments;
+		return Maybe::of( $comments )
+		            ->filter( $ifIdentifiedUser )
+		            ->map( Fns::map( $translateComment ) )
+		            ->getOrElse( $comments );
 	}
 
 	public function woocommerce_order_get_items( $items, $order ) {
