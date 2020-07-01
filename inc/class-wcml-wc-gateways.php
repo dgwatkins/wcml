@@ -1,6 +1,7 @@
 <?php
 
 use WPML\Collect\Support\Collection;
+use WPML\FP\Fns;
 
 class WCML_WC_Gateways {
 
@@ -31,7 +32,7 @@ class WCML_WC_Gateways {
 
 	public function add_hooks() {
 		add_action( 'init', [ $this, 'on_init_hooks' ], 11 );
-		add_filter( 'woocommerce_payment_gateways', [ $this, 'loaded_woocommerce_payment_gateways' ] );
+		add_filter( 'woocommerce_payment_gateways', Fns::withoutRecursion( Fns::identity(), [ $this, 'loaded_woocommerce_payment_gateways' ] ) );
 	}
 
 	public function on_init_hooks() {

@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Fns;
+
 class Test_WCML_WC_Gateways extends OTGS_TestCase {
 
 	/**
@@ -41,13 +43,14 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @group wcml-3266
 	 */
 	public function it_adds_hooks() {
 		$subject = $this->get_subject();
 
 		\WP_Mock::expectActionAdded( 'init', array( $subject, 'on_init_hooks' ), 11 );
 
-		\WP_Mock::expectFilterAdded( 'woocommerce_payment_gateways', array( $subject, 'loaded_woocommerce_payment_gateways' ) );
+		\WP_Mock::expectFilterAdded( 'woocommerce_payment_gateways', Fns::withoutRecursion( Fns::identity(), array( $subject, 'loaded_woocommerce_payment_gateways' ) ) );
 		$subject->add_hooks();
 	}
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "41cfc8364c0e82b6f016f3d0dc5f1815",
+    "content-hash": "ee035ffdbfe78f6a1f5053aeb1ec08bf",
     "packages": [
         {
             "name": "composer/installers",
@@ -5036,6 +5036,34 @@
                 "source": "https://github.com/OnTheGoSystems/collect/tree/wpml-collect-rename"
             },
             "time": "2019-09-26T02:56:31+00:00"
+        },
+        {
+            "name": "wpml/fp",
+            "version": "0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.onthegosystems.com/wpml-packages/fp.git",
+                "reference": "9931258b6b33f48f434b84540150219458cb3ff9"
+            },
+            "require-dev": {
+                "cvuorinen/phpdoc-markdown-public": "^0.2.0",
+                "lucatume/function-mocker": "~1.0",
+                "phpunit/phpunit": "^5",
+                "wpml/collect": "dev-wpml-collect-rename"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "core"
+                ],
+                "files": [
+                    "core/functions.php",
+                    "core/strings_functions.php",
+                    "core/system.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "time": "2020-06-11T08:29:34+00:00"
         },
         {
             "name": "wpml/page-builders-gutenberg",
