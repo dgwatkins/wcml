@@ -32,7 +32,9 @@ const CurrenciesSettings = ({mode}) => {
                 <div className="tablenav top clearfix">
                     <AddCurrency/>
                 </div>
-                <Table/>
+                <div className="currencies-table-content-inner">
+                    <Table/>
+                </div>
                 {modalCurrency && <CurrencyModal/>}
             </div>
         </React.Fragment>

@@ -6,16 +6,20 @@ import {getCountryLabel} from '../../Utils';
 const ColumnCountries = () => {
     const activeCurrencies = getStoreProperty('activeCurrencies');
 
-    return <table className="widefat currency_country_table" id="currency-country-table">
-                <thead>
-                    <tr>
-                        <th>{strings.labelAvailability}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {activeCurrencies.map(currency => <Row key={currency.code} currency={currency}/>)}
-                </tbody>
-            </table>
+    return <div className="currency_wrap">
+                <div className="currency_inner">
+                    <table className="widefat currency_country_table" id="currency-country-table">
+                        <thead>
+                            <tr>
+                                <th>{strings.labelAvailability}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {activeCurrencies.map(currency => <Row key={currency.code} currency={currency}/>)}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 };
 
 export default ColumnCountries;
@@ -28,8 +32,7 @@ const Row = ({currency}) => {
 
         {currency.location_mode === 'exclude' &&
         <td>
-            <span className="all-countries-except">{strings.labelAllCountriesExcept}: </span>
-            <RenderCountries currency={currency}/>
+            <RenderCountries currency={currency} label={strings.labelAllCountriesExcept}/>
         </td>
         }
 
@@ -39,9 +42,9 @@ const Row = ({currency}) => {
     </tr>
 };
 
-const RenderCountries = ({currency}) => {
+const RenderCountries = ({currency, label}) => {
 
-    return <span className="truncate">{
+    return <span className="truncate">{label}{
         currency.countries
             .map(country => getCountryLabel(country))
             .join(', ')
