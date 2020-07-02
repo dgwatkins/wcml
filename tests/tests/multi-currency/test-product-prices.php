@@ -124,7 +124,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 	private function wc_format_price( $price, $currency_position = 'right' ) {
 
-		$price_formatted = '<span class="woocommerce-Price-amount amount">';
+		$price_formatted = '<span class="woocommerce-Price-amount amount"><bdi>';
 
 		$price_formatted .= str_replace(
 			array( '<cur>', '</cur>' ),
@@ -132,7 +132,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 			$price
 		);
 
-		$price_formatted .= '</span>';
+		$price_formatted .= '</bdi></span>';
 
 		return $price_formatted;
 	}
@@ -615,35 +615,55 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 	}
 
-	// Check prices for a simple product, for different currencies and different languages
+	/**
+	 * Check prices for a simple product, for different currencies and different languages
+	 *
+	 * @group wcml-3276
+	 */
 	public function test_simple_product(){
 
 		$this->run_product_test( $this->products['simple'], 'WC_Product_Simple' );
 
 	}
 
-	// Check prices for a simple product on sale, for different currencies and different languages
+	/**
+	 * Check prices for a simple product on sale, for different currencies and different languages
+	 *
+	 * @group wcml-3276
+	 */
 	public function test_simple_sale_product(){
 
 		$this->run_product_test( $this->products['simple_sale'], 'WC_Product_Simple' );
 
 	}
 
-	// Check prices for a variable product, for different currencies and different languages
+	/**
+	 * Check prices for a variable product, for different currencies and different languages
+	 *
+	 * @group wcml-3276
+	 */
 	public function test_variable_product(){
 
 		$this->run_product_test( $this->products['variable'], 'WC_Product_Variable' );
 
 	}
 
-	// Check prices for a variable product on sale, for different currencies and different languages
+	/**
+	 * Check prices for a variable product on sale, for different currencies and different languages
+	 *
+	 * @group wcml-3276
+	 */
 	public function test_variable_sale_product(){
 
 		$this->run_product_test( $this->products['variable_sale'], 'WC_Product_Variable' );
 
 	}
 
-	// Check prices for a variable product on sale, for different currencies and different languages
+	/**
+	 * Check prices for a variable product on sale, for different currencies and different languages
+	 *
+	 * @group wcml-3276
+	 */
 	public function test_variable_sale_free_product(){
 
 		$this->run_product_test( $this->products['variable_sale_free'], 'WC_Product_Variable' );

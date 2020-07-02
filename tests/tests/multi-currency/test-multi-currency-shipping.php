@@ -127,6 +127,9 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
 		return '12345';
 	}
 
+	/**
+	 * @group wcml-3276
+	 */
     public function test_convert_shipping_cost(){
 
         // We need this to have the calculate_totals() method calculate totals
@@ -172,7 +175,7 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
                     if( strpos( $method->id, 'free_shipping') === 0 ) continue;
 
                     $label = wc_cart_totals_shipping_method_label( $method );
-                    $cost = preg_replace('#[^<]+<span[^>]+><span[^>]+>[^<]+</span>(.+)</span>#', '$1', $label);
+                    $cost = $this->getCostFromPriceMarkup( $label );
                     $cost = str_replace(',', '', $cost);
                     $this->assertEquals( $this->expected_rates[$method->id][$code],  $cost );
                 }
@@ -181,9 +184,25 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
 
         // Delete the product
         wp_delete_post( $product->id, true );
-
-
     }
+
+	/**
+	 * @param string $markup
+	 *
+	 * @return string
+	 */
+	private function getCostFromPriceMarkup( $markup ) {
+		$dom = new \DOMDocument();
+		$dom->loadHTML( $markup );
+
+		$xpath = new \DOMXPath( $dom );
+
+		$priceNode = $xpath->query( '//span/bdi/text()' );
+
+		$this->assertEquals( 1, $priceNode->length, "Cannot find price in $markup" );
+
+		return $priceNode->item( 0 )->nodeValue;
+	}
 
     public function test_free_shipping_eligibiltiy(){
 
