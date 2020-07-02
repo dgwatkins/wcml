@@ -420,6 +420,14 @@ table.widefat.currency_settings_table {
 	.tablenav.top {
 		margin-bottom: 15px;
 	}
+	&-inner {
+		display: grid;
+		grid-template-columns: 255px auto 100px;
+
+		@media(max-width: 782px) {
+			grid-template-columns: 120px auto 100px;
+		}
+	}
 	@media(min-width: 1200px) {
 		min-width: 600px;
 	}
@@ -455,7 +463,6 @@ table.widefat.currency_lang_table {
 
 .currency_wrap {
 	width: 100%;
-	max-width: calc(100% - 255px - 80px);
 	min-width: 70px;
 	float: left;
 	margin-bottom: 10px;
@@ -468,9 +475,6 @@ table.widefat.currency_lang_table {
 		right: 0;
 		width: 15px;
 		background: linear-gradient(to right, transparent, #fff);
-	}
-	@media (max-width: 782px) {
-		max-width: calc(100% - 121px - 80px);
 	}
 }
 
@@ -493,39 +497,8 @@ table.widefat.currency_lang_table {
 		height: 50px;
 
 		&.wcml-row-currency-country {
-			.all-countries-except {
-				float: left;
-				margin-right: 2px;
-
-				& + .truncate {
-					@media (min-width: 992px)and(max-width: 1399px) {
-						max-width: 200px;
-					}
-					@media (min-width: 1400px)and(max-width: 1599px) {
-						max-width: 400px;
-					}
-					@media (min-width: 1600px) {
-						max-width: 500px;
-					}
-				}
-			}
 			.truncate {
 				display: block;
-				@media (max-width: 499px) {
-					max-width: 80px;
-				}
-				@media (min-width: 500px)and(max-width: 991px) {
-					max-width: 200px;
-				}
-				@media (min-width: 992px)and(max-width: 1399px) {
-					max-width: 240px;
-				}
-				@media (min-width: 1400px)and(max-width: 1599px) {
-					max-width: 500px;
-				}
-				@media (min-width: 1600px) {
-					max-width: 600px;
-				}
 			}
 		}
 	}
@@ -535,14 +508,14 @@ table.widefat.currency_lang_table {
 		}
 	}
 }
-
+/*
 .currency_country_table{
 	width: 100%;
 	max-width: calc(100% - 255px - 80px);
 	min-width: 70px;
 	float: left;
 }
-
+*/
 .currency_lang_table {
 	th {
 		text-align: center;
