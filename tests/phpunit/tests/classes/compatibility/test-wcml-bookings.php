@@ -124,6 +124,7 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'get_translatable_documents_all', array( $subject, 'filter_translatable_documents' ) );
 		\WP_Mock::expectFilterAdded( 'wp_count_posts', array( $subject, 'count_bookings_by_current_language' ), 10, 2 );
 		\WP_Mock::expectFilterAdded( 'views_edit-wc_booking', array( $subject, 'unset_mine_from_bookings_views' ) );
+		\WP_Mock::expectFilterAdded( 'schedule_event', [ $subject, 'prevent_events_on_duplicates' ] );
 		$subject->add_hooks();
 
 	}
@@ -1116,6 +1117,56 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$subject = $this->get_subject();
 		$this->assertTrue( $subject->filter_is_translated_post_type( true ) );
 		unset( $_GET['post_type'], $_GET['page'] );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider dp_should_not_alter_cron_event
+	 * @group wcml-3267
+	 *
+	 * @param mixed $event
+	 */
+	public function it_should_not_alter_cron_event( $event ) {
+		\WP_Mock::userFunction( 'get_post_meta' )->andReturn( false );
+		$this->get_subject()->prevent_events_on_duplicates( $event );
+	}
+
+	public function dp_should_not_alter_cron_event() {
+		return [
+			'falsy event'           => [ false ],
+			'empty event object'    => [ (object) [] ],
+			'missing hook property' => [ (object) [ 'args' => [ 123 ] ] ],
+			'missing args property' => [ (object) [ 'hook' => 'something' ] ],
+			'not matching event'    => [ (object) [ 'hook' => 'something', 'args' => [ 123 ] ] ],
+			'not a duplicate'       => [ (object) [ 'hook' => 'wc-booking-reminder', 'args' => [ 123 ] ] ],
+		];
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3267
+	 */
+	public function it_should_alter_cron_event_and_return_false_on_duplicated_bookings() {
+		$original_booking_id = 123;
+		$booking_id          = 456;
+
+		$event = (object) [
+			'hook' => 'wc-booking-reminder',
+			'args' => [ $booking_id ],
+		];
+
+		\WP_Mock::userFunction( 'get_post_meta' )
+		        ->with( $booking_id, '_booking_duplicate_of', true )
+		        ->andReturn( $original_booking_id );
+
+		$this->get_subject()->prevent_events_on_duplicates( $event );
+	}
+
+	public function dp_should_alter_cron_event_and_return_false_on_duplicated_bookings() {
+		return [
+			[ 'wc-booking-reminder' ],
+			[ 'wc-booking-complete' ],
+		];
 	}
 }
 

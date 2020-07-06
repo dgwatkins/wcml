@@ -306,6 +306,7 @@ class WCML_Bookings {
 
 		add_filter( 'woocommerce_bookings_account_tables', [ $this, 'filter_my_account_bookings_tables_by_current_language' ] );
 
+		add_filter( 'schedule_event', [ $this, 'prevent_events_on_duplicates' ] );
 	}
 
 	/**
@@ -2691,5 +2692,22 @@ class WCML_Bookings {
 	public function save_booking_data_to_translation( $post_id, $data, $job ){
 	    $this->save_person_translation( $post_id, $data, $job );
 	    $this->save_resource_translation( $post_id, $data, $job );
+    }
+
+	/**
+	 * @param stdClass|false $event
+	 *
+	 * @return stdClass|false
+	 */
+    public function prevent_events_on_duplicates( $event ) {
+        if (
+            isset( $event->hook, $event->args[0] )
+            && in_array( $event->hook, [ 'wc-booking-reminder', 'wc-booking-complete' ], true )
+            && get_post_meta( $event->args[0], '_booking_duplicate_of', true )
+        ) {
+            return false;
+        }
+
+        return $event;
     }
 }
