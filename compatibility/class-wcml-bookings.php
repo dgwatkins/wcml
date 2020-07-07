@@ -61,8 +61,13 @@ class WCML_Bookings {
 
 		// Translate emails.
 		add_filter( 'get_post_metadata', [ $this, 'get_order_language' ], 10, 4 );
-		add_filter( 'woocommerce_booking_reminder_notification', [ $this, 'translate_notification' ], 9 );
+
 		add_filter( 'woocommerce_booking_confirmed_notification', [ $this, 'translate_notification' ], 9 );
+		add_action( 'wc-booking-reminder', [ $this, 'translate_notification' ], 9 );
+
+		// @todo: Verify if 'woocommerce_booking_reminder_notification' and
+		// 'woocommerce_booking_cancelled_notification' are still needed.
+		add_filter( 'woocommerce_booking_reminder_notification', [ $this, 'translate_notification' ], 9 );
 		add_filter( 'woocommerce_booking_cancelled_notification', [ $this, 'translate_notification' ], 9 );
 
 		add_action(
@@ -270,14 +275,13 @@ class WCML_Bookings {
 			add_filter( 'woocommerce_email_get_option', [ $this, 'translate_emails_text_strings' ], 10, 4 );
 
 			add_action( 'woocommerce_booking_confirmed_notification', [ $this, 'translate_booking_confirmed_email_texts' ], 9 );
-
 			add_action( 'woocommerce_booking_pending-confirmation_to_cancelled_notification', [ $this, 'translate_booking_cancelled_email_texts' ], 9 );
 			add_action( 'woocommerce_booking_confirmed_to_cancelled_notification', [ $this, 'translate_booking_cancelled_email_texts' ], 9 );
 			add_action( 'woocommerce_booking_paid_to_cancelled_notification', [ $this, 'translate_booking_cancelled_email_texts' ], 9 );
 
-			add_action( 'wc-booking-reminder', [ $this, 'translate_booking_confirmed_email_texts' ], 9 );
+			// @todo: Verify 'wc-booking-reminder' because it happens in wp cron and we are in admin here.
+			add_action( 'wc-booking-reminder', [ $this, 'translate_booking_reminder_email_texts' ], 9 );
 			add_action( 'woocommerce_admin_new_booking_notification', [ $this, 'translate_new_booking_email_texts' ], 9 );
-
 
 			add_action( 'woocommerce_booking_pending-confirmation_to_cancelled_notification', [ $this, 'translate_booking_cancelled_admin_email_texts' ], 9 );
 			add_action( 'woocommerce_booking_confirmed_to_cancelled_notification', [ $this, 'translate_booking_cancelled_admin_email_texts' ], 9 );
@@ -345,6 +349,10 @@ class WCML_Bookings {
 
 	/**
 	 * Translate strings of notifications.
+	 *
+	 * If $order_id is a booking ID, the language will be
+	 * fetched from the parent order because we have a
+	 * filter on the post meta `wpml_language` for bookings.
 	 *
 	 * @param integer $order_id Order ID.
 	 */

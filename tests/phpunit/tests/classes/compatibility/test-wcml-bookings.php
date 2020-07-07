@@ -108,15 +108,16 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @group wcml-3268
 	 */
 	public function add_hooks(){
-
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
 		$_GET['post_type'] = 'wc_booking';
 		\WP_Mock::wpFunction( 'remove_action', array( 'times' => 1 ) );
 
 		$subject = $this->get_subject();
 		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'get_order_language' ), 10, 4 );
+		\WP_Mock::expectActionAdded( 'wc-booking-reminder', array( $subject, 'translate_notification' ), 9 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_booking_reminder_notification', array( $subject, 'translate_notification' ), 9 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_booking_confirmed_notification', array( $subject, 'translate_notification' ), 9 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_booking_cancelled_notification', array( $subject, 'translate_notification' ), 9 );
@@ -125,10 +126,10 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'wp_count_posts', array( $subject, 'count_bookings_by_current_language' ), 10, 2 );
 		\WP_Mock::expectFilterAdded( 'views_edit-wc_booking', array( $subject, 'unset_mine_from_bookings_views' ) );
 		\WP_Mock::expectFilterAdded( 'schedule_event', [ $subject, 'prevent_events_on_duplicates' ] );
+		\WP_Mock::expectActionAdded( 'wc-booking-reminder', [ $subject, 'translate_booking_reminder_email_texts' ], 9 );
+
 		$subject->add_hooks();
-
 	}
-
 
 	/**
 	 * @test
