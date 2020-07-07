@@ -360,35 +360,32 @@ class WCML_Emails {
 			$emailStrings->contains( $key )
 		) {
 
-			$language = null;
-
-			$adminEmails = wpml_collect([
+			$isAdminEmail = wpml_collect([
 				'new_order',
 				'cancelled_order',
 				'failed_order',
-			]);
+			])->contains( $object->id );
 
-			if ( $adminEmails->contains( $object->id ) ) {
-				$language = $this->get_admin_language_by_email( $object->recipient, $this->get_order_id_from_email_object( $object ) );
-			}
-
-			$translated_value = $this->get_email_translated_string( $key, $object, $language );
+			$translated_value = $this->get_email_translated_string( $key, $object, $isAdminEmail );
 		}
 
 		return $translated_value ?: $value;
 	}
 
 	/**
-	 * @param string $key
+	 * @param string   $key
 	 * @param WC_Email $object
-	 * @param string $language
+	 * @param bool     $isAdminEmail
 	 *
 	 * @return string
 	 */
-	public function get_email_translated_string( $key, $object, $language ) {
+	public function get_email_translated_string( $key, $object, $isAdminEmail ) {
 
-		$context = 'admin_texts_woocommerce_' . $object->id . '_settings';
-		$name    = '[woocommerce_' . $object->id . '_settings]' . $key;
+		$context  = 'admin_texts_woocommerce_' . $object->id . '_settings';
+		$name     = '[woocommerce_' . $object->id . '_settings]' . $key;
+		$language = $isAdminEmail
+			? $this->get_admin_language_by_email( $object->recipient, $this->get_order_id_from_email_object( $object ) )
+			: null;
 
 		return $this->wcml_get_translated_email_string( $context, $name, $this->get_order_id_from_email_object( $object ), $language );
 	}

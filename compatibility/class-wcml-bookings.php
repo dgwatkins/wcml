@@ -2508,16 +2508,39 @@ class WCML_Bookings {
 		return $text_keys;
 	}
 
+	/**
+	 * @param string   $value
+	 * @param WC_Email $object
+	 * @param string   $old_value
+	 * @param string   $key
+	 *
+	 * @return string
+	 */
 	public function translate_emails_text_strings( $value, $object, $old_value, $key ) {
+		$translated_value = false;
 
-		$emails_ids = [ 'admin_booking_cancelled', 'new_booking', 'booking_cancelled', 'booking_confirmed', 'booking_reminder' ];
-		$keys       = [ 'subject', 'subject_confirmation', 'heading', 'heading_confirmation' ];
+		$emails_ids = wpml_collect( [
+			// true if it's an admin email.
+			'admin_booking_cancelled' => true,
+			'new_booking'             => true,
+			'booking_cancelled'       => false,
+			'booking_confirmed'       => false,
+			'booking_reminder'        => false,
+		] );
 
-		if ( in_array( $key, $keys ) && in_array( $object->id, $emails_ids ) ) {
-			$translated_value = $object->$key;
+		$keys = [
+			'subject',
+			'subject_confirmation',
+			'heading',
+			'heading_confirmation',
+		];
+
+		if ( in_array( $key, $keys ) && $emails_ids->has( $object->id ) ) {
+			$is_admin_email   = $emails_ids->get( $object->id, false );
+			$translated_value = $this->woocommerce_wpml->emails->get_email_translated_string( $key, $object, $is_admin_email );
 		}
 
-		return ! empty( $translated_value ) ? $translated_value : $value;
+		return $translated_value ?: $value;
 	}
 
 	public function translate_booking_confirmed_email_texts( $booking_id ) {
