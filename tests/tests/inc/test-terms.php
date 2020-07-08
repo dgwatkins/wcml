@@ -87,4 +87,38 @@ class Test_WCML_Terms extends WCML_UnitTestCase {
 		$this->assertEquals( $args[ 'en' ][ 'count' ]-1, $this->woocommerce_wpml->terms->get_untranslated_terms_number( 'product_tag', true ) );
 	}
 
+	/**
+	 * @test
+	 * @dataProvider dp_should_get_product_terms_by_slug
+	 * @group wcml-3236
+	 *
+	 * @param string $fields
+	 */
+	public function it_should_get_product_terms_by_slug( $fields ) {
+		$terms    = [ 'Blue', 'Red' ];
+		$taxonomy = 'post_tag';
+
+		$productId = wpml_test_insert_post( 'en', 'product' );
+
+		foreach ( $terms as $term ) {
+			wp_insert_term( $term, $taxonomy );
+		}
+
+		wp_set_post_terms( $productId, $terms, $taxonomy );
+
+		$termSlugs = wc_get_product_terms( $productId, $taxonomy, [ 'fields' => $fields ] );
+
+		$this->assertCount( count( $terms ), $termSlugs );
+
+		foreach ( array_values( $termSlugs ) as $index => $termSlug ) {
+			$this->assertSame( strtolower( $terms[ $index ] ), $termSlug );
+		}
+	}
+
+	public function dp_should_get_product_terms_by_slug() {
+		return [
+			[ 'id=>slug' ],
+			[ 'slugs' ],
+		];
+	}
 }
