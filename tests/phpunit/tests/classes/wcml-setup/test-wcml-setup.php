@@ -279,14 +279,10 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		// has_completed = no
 		$woocommerce_wpml->settings['set_up_wizard_run'] = false;
 
-		\WP_Mock::userFunction( 'wp_safe_redirect', array(
-			'times' => 1
+		\WP_Mock::userFunction( 'wcml_safe_redirect', array(
+			'times'  => 1,
+			'return' => true,
 		) );
-		\WP_Mock::userFunction( 'wp_die', array(
-			'times' => 1
-		) );
-
-		\WP_Mock::expectFilterAdded( 'wp_die_handler', array( $subject, 'exit_wrapper' ) );
 
 		$subject->setup_redirect();
 	}

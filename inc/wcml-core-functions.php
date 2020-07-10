@@ -110,3 +110,18 @@ if ( ! function_exists( 'wcml_convert_price' ) ) {
 		return $woocommerce_wpml->multi_currency->prices->raw_price_filter( $price, $currency_code );
 	}
 }
+
+if ( ! function_exists( 'wcml_safe_redirect' ) ) {
+
+	/**
+	 * @since 4.10.0
+	 *
+	 * @param string $location
+	 * @param int    $status
+	 *
+	 * @return bool
+	 */
+	function wcml_safe_redirect( $location, $status = 302 ) {
+		return wp_safe_redirect( $location, $status, 'WCML' ) && exit;
+	};
+}

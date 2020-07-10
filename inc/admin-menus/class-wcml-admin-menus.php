@@ -241,13 +241,10 @@ class WCML_Admin_Menus {
 			) {
 				$prid = (int) $_GET['post'];
 				if ( 'auto-draft' !== get_post_status( $prid ) ) {
-					wp_redirect( admin_url( 'admin.php?page=wpml-wcml&tab=products&prid=' . $prid ) );
-					exit;
+					wcml_safe_redirect( admin_url( 'admin.php?page=wpml-wcml&tab=products&prid=' . $prid ) );
 				}
 			} elseif ( self::is_admin_duplicate_page_action( $pagenow ) && self::is_post_product_translation_screen() ) {
-
-				wp_redirect( admin_url( 'admin.php?page=wpml-wcml&tab=products' ) );
-				exit;
+			    wcml_safe_redirect( admin_url( 'admin.php?page=wpml-wcml&tab=products' ) );
 			}
 		} elseif ( 'post.php' === $pagenow && self::is_post_product_translation_screen() ) {
 			add_action( 'admin_notices', [ __CLASS__, 'inf_editing_product_in_non_default_lang' ] );
