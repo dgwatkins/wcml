@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Obj;
+
 /**
  * Class WCML_Currency_Switcher
  *
@@ -131,7 +133,12 @@ class WCML_Currency_Switcher {
 			if ( count( $currencies ) > 1 ) {
 				if ( ! is_admin() ) {
 					foreach ( $currencies as $k => $currency ) {
-						if ( $wcml_settings['currency_options'][ $currency ]['languages'][ $this->sitepress->get_current_language() ] != 1 ) {
+						if (
+							Obj::path(
+								[ 'currency_options', $currency, 'languages', $this->sitepress->get_current_language() ],
+								$wcml_settings
+							) != 1
+						) {
 							unset( $currencies[ $k ] );
 						}
 					}
