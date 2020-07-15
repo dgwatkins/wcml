@@ -148,7 +148,7 @@ class TestHooks extends \OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'admin_url', [
 			'times'  => 1,
-			'args'   => [ 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context=admin_texts_' . $emailOptionName . '&search=' ],
+			'args'   => [ 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context=admin_texts_' . $emailOptionName ],
 			'return' => 'http://path/to/string-translation',
 		] );
 

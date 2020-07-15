@@ -114,7 +114,7 @@ class Hooks implements IWPML_Backend_Action, IWPML_DIC_Action {
 								]
 							);
 
-							$stPage = admin_url( 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context=admin_texts_' . $emailOption . '&search=' . $settingsValue );
+							$stPage = admin_url( 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context=admin_texts_' . $emailOption );
 
 							?>
 							<script>
