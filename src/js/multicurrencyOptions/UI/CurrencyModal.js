@@ -96,7 +96,7 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
 
     return (
         <React.Fragment>
-            {currency.isNew && <NewCurrencySelector updateCurrencyProp={updateCurrencyProp} />}
+            {currency.isNew && <NewCurrencySelector currency={currency.code} updateCurrencyPropValue={updateCurrencyPropValue} />}
 
             <div className="wpml-form-row wcml-co-exchange-rate">
                 <label htmlFor={"wcml_currency_options_rate_" + currency.code}>{strings.labelExchangeRate}</label>
@@ -245,20 +245,28 @@ const PreviewCurrency = ({currency}) => {
     );
 };
 
-const NewCurrencySelector = ({updateCurrencyProp}) => {
+const NewCurrencySelector = ({currency, updateCurrencyPropValue}) => {
     const newCurrencies = getStoreProperty('newCurrencies');
+
+    const currencies = newCurrencies.map(currency => {
+        return <Select.Option key={currency.code} value={currency.code} label={currency.label}>{currency.label}</Select.Option>;
+    });
 
     return (
         <div className="wpml-form-row currency_code">
             <label htmlFor="wcml_currency_select_">{strings.labelSelectCurrency}</label>
-            <select name="currency_options[code]"
+            <Select showSearch
+                    style={{width: '185px'}}
+                    value={currency}
+                    onChange={updateCurrencyPropValue('code')}
+                    name="currency_options[code]"
                     id="wcml_currency_options_code_"
-                    onChange={updateCurrencyProp('code')}
+                    optionLabelProp="label"
+                    optionFilterProp="label"
+                    allowClear={false}
             >
-                {
-                    newCurrencies.map((currency) => <option key={currency.code} value={currency.code}>{currency.label}</option>)
-                }
-            </select>
+                {currencies}
+            </Select>
         </div>
     );
 };
