@@ -127,7 +127,6 @@ class WCML_Multi_Currency_Configuration {
 		$data = self::get_data();
 
 		$wc_currency   = wcml_get_woocommerce_currency_option();
-		$wc_currencies = get_woocommerce_currencies();
 
 		$options = $data['currency_options'];
 
@@ -146,11 +145,13 @@ class WCML_Multi_Currency_Configuration {
 			self::$multi_currency->currencies_payment_gateways->set_enabled( $currency_code, $options['gatewaysEnabled'] );
 		}
 
+		if ( isset( $options['countries'] ) ) {
+			$options['countries'] = wc_string_to_array( $options['countries'], ',' );
+		}
+
 		if ( $wc_currency !== $currency_code ) {
 			$options['thousand_sep'] = wc_format_option_price_separators( null, null, $options['thousand_sep'] );
 			$options['decimal_sep']  = wc_format_option_price_separators( null, null, $options['decimal_sep'] );
-
-			$options['countries'] = wc_string_to_array( $options['countries'], ',' );
 
 			if ( ! isset( self::$multi_currency->currencies[ $currency_code ] ) ) {
 				self::add_currency( $currency_code );
@@ -166,7 +167,7 @@ class WCML_Multi_Currency_Configuration {
 						$rate_changed  = true;
 					}
 					self::$multi_currency->currencies[ $currency_code ][ $key ] = $options[ $key ];
-					$changed = true;
+					$changed                                                    = true;
 				}
 			}
 
@@ -175,20 +176,13 @@ class WCML_Multi_Currency_Configuration {
 					self::$multi_currency->currencies[ $currency_code ]['previous_rate'] = $previous_rate;
 					self::$multi_currency->currencies[ $currency_code ]['updated']       = date( 'Y-m-d H:i:s' );
 				}
-				self::$woocommerce_wpml->settings['currency_options'] = self::$multi_currency->currencies;
-				self::$woocommerce_wpml->update_settings();
 			}
+		} else {
+			self::$multi_currency->currencies[ $currency_code ]['countries']     = $options['countries'];
+			self::$multi_currency->currencies[ $currency_code ]['location_mode'] = $options['location_mode'];
 		}
 
-		$args                     = [];
-		$args['default_currency'] = $wc_currency;
-		$args['currencies']       = self::$multi_currency->currencies;
-		$args['wc_currencies']    = $wc_currencies;
-		$args['currency_code']    = $currency_code;
-		$args['currency_name']    = $wc_currencies[ $currency_code ];
-		$args['currency_symbol']  = get_woocommerce_currency_symbol( $currency_code );
-		$args['currency']         = self::$multi_currency->currencies[ $currency_code ];
-		$args['title']            = sprintf( __( 'Update settings for %s', 'woocommerce-multilingual' ), $args['currency_name'] . ' (' . $args['currency_symbol'] . ')' );
+		self::$woocommerce_wpml->update_setting( 'currency_options', self::$multi_currency->currencies );
 
 		wp_send_json_success( [
 			'formattedLastRateUpdate' => Hooks::formatLastRateUpdate(

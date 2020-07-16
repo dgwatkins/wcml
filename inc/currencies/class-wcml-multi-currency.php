@@ -559,7 +559,7 @@ class WCML_Multi_Currency {
 			return $country_currency;
 		}
 
-		return false;
+		return Geolocation::getFirstAvailableCountryCurrencyFromSettings( $this->woocommerce_wpml->settings['currency_options'] );
 	}
 
 	public function maybe_show_switching_currency_prompt_dialog() {

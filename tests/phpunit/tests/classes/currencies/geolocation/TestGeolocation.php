@@ -145,4 +145,40 @@ class TestGeolocation extends \OTGS_TestCase {
 
 		$this->assertFalse( Geolocation::isCurrencyAvailableForCountry( $currencySettings ) );
 	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldGetFirstAvailableCountryCurrencyFromSettingsAllMode() {
+
+		$currencySettings['EUR']['location_mode'] = 'all';
+
+		$this->assertEquals( 'EUR', Geolocation::getFirstAvailableCountryCurrencyFromSettings( $currencySettings ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldGetFirstAvailableCountryCurrencyFromSettingsIncludeMode() {
+
+		$currencySettings['EUR']['location_mode'] = 'include';
+		$currencySettings['EUR']['countries']     = [ 'UA' ];
+
+		FunctionMocker::replace( 'WC_Geolocation::get_ip_address', '127.0.0.1' );
+		FunctionMocker::replace( 'WC_Geolocation::geolocate_ip', [ 'country' => 'UA' ] );
+
+		$this->assertEquals( 'EUR', Geolocation::getFirstAvailableCountryCurrencyFromSettings( $currencySettings ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldNotGetFirstAvailableCountryCurrencyFromSettings() {
+
+		$currencySettings['EUR']['location_mode'] = 'include';
+		$currencySettings['EUR']['countries']     = [ 'DE' ];
+
+		$this->assertFalse( Geolocation::getFirstAvailableCountryCurrencyFromSettings( $currencySettings ) );
+	}
+
 }
