@@ -52,6 +52,7 @@ const CountriesSelect = ({attrs, onChange, allCountries, label}) => {
                 optionLabelProp="label"
                 optionFilterProp="label"
                 allowClear={true}
+                defaultOpen={true}
             >
                 {countries}
             </Select>
