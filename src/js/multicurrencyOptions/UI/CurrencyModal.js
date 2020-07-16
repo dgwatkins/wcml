@@ -40,6 +40,12 @@ const CurrencyModal = () => {
         ? strings.labelAddNewCurrency
         : sprintf(strings.placeholderCurrencySettingsFor, getCurrencyLabel(currency.code) + ' (' + getCurrencySymbol(currency.code) + ')');
 
+    const mode = getStoreProperty('mode');
+
+    const updateCurrencyPropValue = (prop) => (value) => {
+        setModalCurrency({...currency, [prop]:value});
+    };
+
     return <Modal
         title={modalTitle}
         visible={true}
@@ -61,6 +67,8 @@ const CurrencyModal = () => {
                         )
                     }
 
+                    {'by_location' === mode && <CountriesBlock currency={currency} onChange={updateCurrencyPropValue} strings={strings} />}
+
                     <Gateways/>
                 </form>
             </div>
@@ -75,10 +83,6 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
         setModalCurrency({...currency, [prop]:e.target.value});
     };
 
-    const updateCurrencyPropValue = (prop) => (value) => {
-        setModalCurrency({...currency, [prop]:value});
-    };
-
     const onChangeRate = (e) => {
         updateCurrencyProp('rate')(e);
 
@@ -91,8 +95,6 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
 
     const [showCurrencyOptions, setCurrencyOptions] = useState(false);
     const onEditClick = () => setCurrencyOptions(true);
-
-    const mode = getStoreProperty('mode');
 
     return (
         <React.Fragment>
@@ -123,8 +125,6 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
             }
 
             <hr/>
-
-            {'by_location' === mode && <CountriesBlock currency={currency} onChange={updateCurrencyPropValue} strings={strings} />}
 
         </React.Fragment>
     );

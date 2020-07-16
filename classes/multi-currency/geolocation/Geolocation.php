@@ -58,6 +58,26 @@ class Geolocation {
 	}
 
 	/**
+	 * Get first available country currency from settings if default country currency not active
+	 *
+	 * @param array $currenciesSettings
+	 *
+	 * @return string|bool
+	 */
+	public static function getFirstAvailableCountryCurrencyFromSettings( $currenciesSettings ) {
+
+		$currency = false;
+
+		wpml_collect( $currenciesSettings )->each( function ( $settings, $code ) use ( &$currency ) {
+			if ( self::isCurrencyAvailableForCountry( $settings ) ) {
+				$currency = $code;
+			}
+		} );
+
+		return $currency;
+	}
+
+	/**
 	 * @return bool|string
 	 */
 	public static function getUserCountry(){
