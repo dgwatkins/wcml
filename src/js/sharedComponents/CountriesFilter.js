@@ -50,6 +50,7 @@ const CountriesSelect = ({attrs, onChange, allCountries, label}) => {
                 value={attrs.value}
                 onChange={onChange}
                 optionLabelProp="label"
+                optionFilterProp="label"
                 allowClear={true}
             >
                 {countries}
