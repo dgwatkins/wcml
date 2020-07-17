@@ -381,13 +381,32 @@ class WCML_Emails {
 	 */
 	public function get_email_translated_string( $key, $object, $isAdminEmail ) {
 
-		$context  = 'admin_texts_woocommerce_' . $object->id . '_settings';
-		$name     = '[woocommerce_' . $object->id . '_settings]' . $key;
+		list( $context, $name ) = $this->get_email_context_and_name( $object );
+
 		$language = $isAdminEmail
 			? $this->get_admin_language_by_email( $object->recipient, $this->get_order_id_from_email_object( $object ) )
 			: null;
 
-		return $this->wcml_get_translated_email_string( $context, $name, $this->get_order_id_from_email_object( $object ), $language );
+		return $this->wcml_get_translated_email_string( $context, $name . $key, $this->get_order_id_from_email_object( $object ), $language );
+	}
+
+	/**
+	 * @param WC_Email $emailObject
+	 *
+	 * @return array
+	 */
+	public function get_email_context_and_name( $emailObject ) {
+
+		$emailId = $emailObject->id;
+
+		if ( $emailObject instanceof WC_Email_Customer_Refunded_Order ) {
+			$emailId = 'customer_refunded_order';
+		}
+
+		$context = 'admin_texts_woocommerce_' . $emailId . '_settings';
+		$name    = '[woocommerce_' . $emailId . '_settings]';
+
+		return [ $context, $name ];
 	}
 
 	/**

@@ -825,4 +825,40 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$this->assertEquals( $value, $subject->filter_emails_strings( $value, $object, $value, $key ) );
 
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_get_email_context_and_name() {
+
+		$object     = $this->getMockBuilder( 'WC_Email_Customer_Completed_Order' )
+		                   ->disableOriginalConstructor()
+		                   ->getMock();
+		$object->id = 'customer_completed_order';
+
+		$subject = $this->get_subject();
+
+		list( $context, $name ) = $subject->get_email_context_and_name( $object );
+
+		$this->assertEquals( 'admin_texts_woocommerce_customer_completed_order_settings', $context );
+		$this->assertEquals( '[woocommerce_customer_completed_order_settings]', $name );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_get_main_email_context_and_name_for_partial_refunded_order() {
+
+		$object     = $this->getMockBuilder( 'WC_Email_Customer_Refunded_Order' )
+		                   ->disableOriginalConstructor()
+		                   ->getMock();
+		$object->id = 'customer_partial_refunded_order';
+
+		$subject = $this->get_subject();
+
+		list( $context, $name ) = $subject->get_email_context_and_name( $object );
+
+		$this->assertEquals( 'admin_texts_woocommerce_customer_refunded_order_settings', $context );
+		$this->assertEquals( '[woocommerce_customer_refunded_order_settings]', $name );
+	}
 }
