@@ -83,6 +83,10 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
         setModalCurrency({...currency, [prop]:e.target.value});
     };
 
+    const updateCurrencyPropValue = (prop) => (value) => {
+        setModalCurrency({...currency, [prop]:value});
+    };
+
     const onChangeRate = (e) => {
         updateCurrencyProp('rate')(e);
 
