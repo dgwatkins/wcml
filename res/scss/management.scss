@@ -1,6 +1,10 @@
 @import "mixins";
 @import "variables";
 
+body.woocommerce_page_wpml-wcml {
+	background-color: #f1f1f1 !important;
+}
+
 .dis_base {
 	opacity: 0.5;
 }
