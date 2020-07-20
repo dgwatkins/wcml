@@ -23,6 +23,7 @@ const ModeSelect = () => {
                 <option value="by_language">{strings.labelSiteLanguage}</option>
                 <option value="by_location">{strings.labelClientLocation}</option>
             </select>
+            <input type="hidden" name="currency_mode" value={mode}/>
         </React.Fragment>
     );
 };

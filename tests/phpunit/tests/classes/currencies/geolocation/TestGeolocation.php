@@ -149,6 +149,16 @@ class TestGeolocation extends \OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function currencyNotAvailableForCountryLocationModeNotSet() {
+
+		$currencySettings = [];
+
+		$this->assertFalse( Geolocation::isCurrencyAvailableForCountry( $currencySettings ) );
+	}
+
+	/**
+	 * @test
+	 */
 	public function itShouldGetFirstAvailableCountryCurrencyFromSettingsAllMode() {
 
 		$currencySettings['EUR']['location_mode'] = 'all';
