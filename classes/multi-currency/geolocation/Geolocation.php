@@ -111,16 +111,20 @@ class Geolocation {
 	 */
 	public static function isCurrencyAvailableForCountry( $currencySettings ) {
 
-		if ( 'all' === $currencySettings['location_mode'] ) {
-			return true;
-		}
+		if ( isset( $currencySettings['location_mode'] ) ) {
 
-		if ( 'include' === $currencySettings['location_mode'] && in_array( self::getUserCountry(), $currencySettings['countries'] ) ) {
-			return true;
-		}
+			if ( 'all' === $currencySettings['location_mode'] ) {
+				return true;
+			}
 
-		if ( 'exclude' === $currencySettings['location_mode'] && ! in_array( self::getUserCountry(), $currencySettings['countries'] ) ) {
-			return true;
+			if ( 'include' === $currencySettings['location_mode'] && in_array( self::getUserCountry(), $currencySettings['countries'] ) ) {
+				return true;
+			}
+
+			if ( 'exclude' === $currencySettings['location_mode'] && ! in_array( self::getUserCountry(), $currencySettings['countries'] ) ) {
+				return true;
+			}
+
 		}
 
 		return false;

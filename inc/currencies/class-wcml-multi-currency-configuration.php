@@ -53,6 +53,7 @@ class WCML_Multi_Currency_Configuration {
 
 			$wcml_settings['enable_multi_currency'] = isset( $_POST['multi_currency'] ) ? intval( $_POST['multi_currency'] ) : 0;
 			$wcml_settings['display_custom_prices'] = isset( $_POST['display_custom_prices'] ) ? intval( $_POST['display_custom_prices'] ) : 0;
+			$wcml_settings['currency_mode'] = filter_input( INPUT_POST, 'currency_mode', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
 			// update default currency settings
 			if ( $wcml_settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ) {
@@ -68,6 +69,10 @@ class WCML_Multi_Currency_Configuration {
 
 				foreach ( $options as $wc_key => $key ) {
 					$wcml_settings['currency_options'][ $woocommerce_currency ][ $key ] = get_option( $wc_key, true );
+				}
+
+				if ( ! isset( $wcml_settings['currency_options'][ $woocommerce_currency ]['location_mode'] ) ) {
+					$wcml_settings['currency_options'][ $woocommerce_currency ]['location_mode'] = 'all';
 				}
 			}
 
