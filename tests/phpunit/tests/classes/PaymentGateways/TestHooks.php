@@ -105,6 +105,42 @@ class TestHooks extends \OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function itShouldUpdateSettingsOnSaveAndSetCountriesToEmpty() {
+
+		$subject = $this->getSubject();
+
+		$gatewaySettings = [
+			'ID'        => 'bacs',
+			'mode'      => 'all'
+		];
+
+		$_POST[ $subject::OPTION_KEY ] = $gatewaySettings;
+
+		$expectedSettings = [
+			'bacs' => [
+				'mode'      => 'all',
+				'countries' => []
+			]
+		];
+
+		\WP_Mock::userFunction( 'get_option', [
+			'args'   => [ $subject::OPTION_KEY, [] ],
+			'return' => [],
+		] );
+
+		\WP_Mock::userFunction( 'update_option', [
+			'args'   => [ $subject::OPTION_KEY, $expectedSettings ],
+			'return' => true,
+		] );
+
+		$subject->updateSettingsOnSave();
+
+		unset( $_POST );
+	}
+
+	/**
+	 * @test
+	 */
 	public function itShouldSetToAllWhenUpdatingSettingsWithHackedData() {
 
 		$subject = $this->getSubject();

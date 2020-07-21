@@ -41,7 +41,6 @@ class Hooks implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Ac
 			$settings = $this->getSettings();
 
 			$gatewayId = filter_var( $gatewaySettings['ID'], FILTER_SANITIZE_STRING );
-			$countries = filter_var( $gatewaySettings['countries'], FILTER_SANITIZE_STRING );
 
 			$settings[ $gatewayId ]['mode'] = in_array( $gatewaySettings['mode'], [
 				'all',
@@ -49,7 +48,7 @@ class Hooks implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Ac
 				'include'
 			], true ) ? $gatewaySettings['mode'] : 'all';
 
-			$settings[ $gatewayId ]['countries'] = isset( $countries ) ? array_map( 'esc_attr', array_filter( explode( ',', $countries ) ) ) : [];
+			$settings[ $gatewayId ]['countries'] = isset( $gatewaySettings['countries'] ) ? array_map( 'esc_attr', array_filter( explode( ',', filter_var( $gatewaySettings['countries'], FILTER_SANITIZE_STRING ) ) ) ) : [];
 
 			$this->updateSettings( $settings );
 		}
