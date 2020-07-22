@@ -8,23 +8,25 @@ const ColumnCurrencies = () => {
     const activeCurrencies = getStoreProperty('activeCurrencies');
     const mode = getStoreProperty('mode');
 
-    return <table className="widefat currency_table" id="currency-table">
-                <thead>
-                    <tr>
-                        <th className="wcml-col-currency">{strings.labelCurrency}</th>
-                        <th className="wcml-col-rate">{strings.labelRate}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <Rows activeCurrencies={activeCurrencies}/>
-                    {'by_language' === mode && <tr className="default_currency">
-                        <td colSpan="3">
-                            {strings.labelDefaultCurrency} {getTooltip(strings.tooltipDefaultCurrency)}
-                        </td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
+    return <div className="currency_table_wrapper">
+                <table className="widefat currency_table" id="currency-table">
+                    <thead>
+                        <tr>
+                            <th className="wcml-col-currency">{strings.labelCurrency}</th>
+                            <th className="wcml-col-rate">{strings.labelRate}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <Rows activeCurrencies={activeCurrencies}/>
+                        {'by_language' === mode && <tr className="default_currency">
+                            <td colSpan="3">
+                                {strings.labelDefaultCurrency} {getTooltip(strings.tooltipDefaultCurrency)}
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
 };
 
 export default ColumnCurrencies;

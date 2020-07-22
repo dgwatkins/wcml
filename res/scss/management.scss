@@ -283,13 +283,13 @@
 }
 
 table.widefat.currency_table {
-	float: left;
 	width: 255px;
 	border-right: none;
 	@media (max-width: 782px) {
 		width: 120px;
 	}
 
+	td.wcml-col-currency,
 	td.wcml-col-currency,
 	td.wcml-col-rate {
 		padding-top: $margin-xs;
@@ -327,7 +327,6 @@ table.widefat.currency_table {
 }
 
 table.widefat.currency_settings_table {
-	float: left;
 	width: 80px;
 	border-left: none;
 	clear: none;
@@ -464,7 +463,6 @@ table.widefat.currency_lang_table {
 .currency_wrap {
 	width: 100%;
 	min-width: 70px;
-	float: left;
 	position: relative;
 	&::after {
 		content: '';
