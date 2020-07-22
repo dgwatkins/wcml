@@ -81,6 +81,11 @@ class Geolocation {
 	 * @return bool|string
 	 */
 	public static function getUserCountry(){
+
+		if ( defined( 'WCML_GEOLOCATED_COUNTRY' ) ) {
+			return WCML_GEOLOCATED_COUNTRY;
+		}
+
 		$billing_country = self::getUserBillingCountry();
 		return $billing_country ?: self::getCountryByUserIp();
 	}
