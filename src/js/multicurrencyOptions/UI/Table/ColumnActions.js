@@ -8,22 +8,24 @@ const ColumnActions = () => {
     const activeCurrencies = getStoreProperty('activeCurrencies');
     const mode = getStoreProperty('mode');
 
-    return <table className="widefat currency_settings_table" id="currency-settings-table">
-                <thead>
-                    <tr>
-                        <th colSpan="2">{strings.labelSettings}</th>
-                    </tr>
-                </thead>
-                <tbody>
+    return <div className="currency_settings_table_wrapper">
+                <table className="widefat currency_settings_table" id="currency-settings-table">
+                    <thead>
+                        <tr>
+                            <th colSpan="2">{strings.labelSettings}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                    {activeCurrencies.map(currency => <Row key={currency.code} currency={currency} />)}
+                        {activeCurrencies.map(currency => <Row key={currency.code} currency={currency} />)}
 
-                    {'by_language' === mode && <tr className="default_currency">
-                        <td colSpan="2"/>
-                    </tr>
-                    }
-                </tbody>
-            </table>
+                        {'by_language' === mode && <tr className="default_currency">
+                            <td colSpan="2"/>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
 };
 
 export default ColumnActions;
