@@ -60,6 +60,25 @@ class TestGeolocation extends \OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function itShouldGetCurrencyCodeByUserBillingAddressFromAjax() {
+		\WP_Mock::passthruFunction( 'wc_clean' );
+		\WP_Mock::passthruFunction( 'wp_unslash' );
+
+		$expected_code = 'EUR';
+
+		$_GET['wc-ajax']  = 'update_order_review';
+		$_POST['country'] = 'ES';
+
+		$code = Geolocation::getCurrencyCodeByUserCountry();
+
+		$this->assertEquals( $expected_code, $code );
+
+		unset( $_GET['wc-ajax'], $_POST['country'] );
+	}
+
+	/**
+	 * @test
+	 */
 	public function itShouldNotGetCurrencyCodeByUserCountryIfCountryNotFound() {
 
 		FunctionMocker::replace( 'WC_Geolocation::get_ip_address', '127.0.0.1' );
