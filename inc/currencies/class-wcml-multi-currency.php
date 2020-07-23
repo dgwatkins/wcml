@@ -532,16 +532,16 @@ class WCML_Multi_Currency {
 	 */
 	public function maybe_get_currency_by_geolocation( $client_currency, $woocommerce_session ) {
 
-		$is_currency_not_set_in_session = empty( $woocommerce_session ) || ! $woocommerce_session->get( 'client_currency' );
-		$is_by_location_mode            = Geolocation::MODE_BY_LOCATION === $this->woocommerce_wpml->get_setting( 'currency_mode' );
+	    if( Geolocation::MODE_BY_LOCATION !== $this->woocommerce_wpml->get_setting( 'currency_mode' ) ){
+		    return $client_currency;
+        }
 
-		if (
-			$is_currency_not_set_in_session &&
-			is_null( $client_currency ) &&
-			$is_by_location_mode
-		) {
+		$currency_not_in_session = is_null( $client_currency ) && ( empty( $woocommerce_session ) || ! $woocommerce_session->get( 'client_currency' ) );
+		$is_checkout_ajax        = is_ajax() && isset( $_GET['wc-ajax'] ) && 'update_order_review' === $_GET['wc-ajax'];
+
+		if ( $currency_not_in_session || $is_checkout_ajax ) {
 			$location_currency = $this->get_currency_by_geolocation();
-			if ( $location_currency && Geolocation::isCurrencyAvailableForCountry( $this->woocommerce_wpml->settings['currency_options'][ $location_currency ] ) ) {
+			if ( $location_currency ) {
 				return $location_currency;
 			}
 		}
@@ -553,13 +553,29 @@ class WCML_Multi_Currency {
 	 * @return bool|string
 	 */
 	private function get_currency_by_geolocation() {
-		$country_currency = Geolocation::getCurrencyCodeByUserCountry();
 
-		if ( $country_currency && $this->is_currency_active( $country_currency ) ) {
-			return $country_currency;
+		$cache_group = 'WCML_Multi_Currency';
+		$wpml_cache  = new WPML_WP_Cache( $cache_group );
+		wp_cache_add_non_persistent_groups( $cache_group );
+
+		$cache_key         = 'location_currency';
+		$found             = false;
+		$location_currency = $wpml_cache->get( $cache_key, $found );
+
+		if ( ! $found ) {
+			$location_currency = Geolocation::getCurrencyCodeByUserCountry();
+
+			if (
+				! $this->is_currency_active( $location_currency ) ||
+				! Geolocation::isCurrencyAvailableForCountry( $this->woocommerce_wpml->settings['currency_options'][ $location_currency ] )
+			) {
+				$location_currency = Geolocation::getFirstAvailableCountryCurrencyFromSettings( $this->woocommerce_wpml->settings['currency_options'] );
+			}
+
+			$wpml_cache->set( $cache_key, $location_currency );
 		}
 
-		return Geolocation::getFirstAvailableCountryCurrencyFromSettings( $this->woocommerce_wpml->settings['currency_options'] );
+		return $location_currency;
 	}
 
 	public function maybe_show_switching_currency_prompt_dialog() {
