@@ -1,6 +1,5 @@
 import React from "react";
 import Select from "antd/lib/select";
-import 'antd/dist/antd.css';
 import 'antd/lib/select/style/index.css';
 import 'antd/lib/tooltip/style/index.css';
 import {SelectRow} from "./FormElements";

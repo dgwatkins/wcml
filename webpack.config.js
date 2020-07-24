@@ -64,7 +64,7 @@ const nullModule = {
 
 
 const getModuleDefinition = (moduleName, isProduction, langFile) => ({
-	entry: ['regenerator-runtime/runtime', `./src/js/${moduleName}/app.js`],
+	entry: ['regenerator-runtime/runtime', './src/css/antd-motion.css', `./src/js/${moduleName}/app.js`],
 	output: {
 		path: path.join(__dirname, 'dist'),
 		filename: path.join('js', moduleName, 'app.js'),
