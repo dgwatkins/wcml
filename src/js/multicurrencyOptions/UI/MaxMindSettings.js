@@ -1,6 +1,6 @@
 import React from "react";
 import {useState} from "react";
-import {Input} from 'antd';
+import Input from 'antd/lib/input';
 import {useStore} from "../Store";
 import {createAjaxRequest} from "../Request";
 import strings from "../Strings";

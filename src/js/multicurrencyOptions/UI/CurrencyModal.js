@@ -2,7 +2,6 @@ import React from "react";
 import {useState} from "react";
 import Modal from 'antd/lib/modal';
 import Select from "antd/lib/select";
-import 'antd/dist/antd.css';
 import 'antd/lib/select/style/index.css';
 import 'antd/lib/modal/style/index.css';
 import 'antd/lib/tooltip/style/index.css';
