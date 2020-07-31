@@ -21,7 +21,8 @@ This 'glue' plugin makes it possible to run fully multilingual e-commerce sites 
 * Keeps the same language through the checkout process
 * Sends emails to clients and admins in their language
 * Allows inventory tracking without breaking products into languages
-* Enables running a single WooCommerce store with multiple currencies
+* Enables running a single WooCommerce store with multiple currencies based either on a customer’s language or location
+* Allows enabling different payment gateways based on a customer’s location
 
 = Compatibility with WooCommerce Extensions =
 
@@ -104,7 +105,7 @@ Make sure that your theme is not hard-coding any URL. Always use API calls to re
 
 In order for the checkout and store pages to appear translated, you need to create several WordPress pages and insert the WooCommerce shortcodes into them. You'll have to go over the [documentation](http://wpml.org/documentation/related-projects/woocommerce-multilingual/) and see that you performed all steps on the way.
 
-= Can I have different urls for the store in the different languages? =
+= Can I have different URLs for the store in different languages? =
 
 Yes. You can translate the product permalink base, product category base, product tag base and the product attribute base on the Store URLs section.
 
@@ -118,11 +119,11 @@ By default, the prices in the secondary currencies are determined using the exch
 
 = Can I have separate currencies for each language? =
 
-Yes. By default, each currency will be available for all languages, but you can customize this and disable certain currencies on certain languages.
+Yes. By default, each currency will be available for all languages, but you can customize this and disable certain currencies on certain languages. You also have the option to display different currencies based on your customers’ locations instead.
 
 = Is this plugin compatible with other WooCommerce extensions? =
 
-WooCommerce Multilingual is compatible with all major WooCommerce extensions. We're continuously work on checking and maintaining compatibility and collaborate closely with the authors of these extensions.
+WooCommerce Multilingual is compatible with all major WooCommerce extensions. We’re continuously working on checking and maintaining compatibility and collaborate closely with the authors of these extensions.
 
 
 
