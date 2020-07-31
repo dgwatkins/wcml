@@ -65,7 +65,8 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectActionAdded( 'comment_post', array( $subject, 'add_comment_rating' ) );
+		\WP_Mock::expectActionAdded( 'wp_insert_comment', array( $subject, 'add_comment_rating' ) );
+		\WP_Mock::expectActionAdded( 'added_comment_meta', array( $subject, 'maybe_duplicate_comment_rating' ), 10, 4 );
 		\WP_Mock::expectActionAdded( 'woocommerce_review_before_comment_meta', array( $subject, 'add_comment_flag' ), 9 );
 		\WP_Mock::expectActionAdded( 'trashed_comment', array( $subject, 'recalculate_average_rating_on_comment_hook' ), 10, 2 );
 
@@ -126,6 +127,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$wc_comment = \Mockery::mock( 'overload:WC_Comments' );
 		$wc_comment->shouldReceive( 'get_rating_counts_for_product' )->with( $product_obj )->andReturn( $original_ratings );
 		$wc_comment->shouldReceive( 'get_review_count_for_product' )->with( $product_obj )->andReturn( $original_ratings_count );
+		$wc_comment->shouldReceive( 'clear_transients' );
 
 		$translated_ratings_stars = mt_rand( 1, 5 );
 		$translated_ratings_count = mt_rand( 401, 500 );
@@ -639,4 +641,75 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 		$this->assertEquals( "({$expectedCount})", $filtered_count );
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_duplicate_comment_rating() {
+
+		\WP_Mock::passthruFunction( 'remove_action' );
+
+		$rating                = 4;
+		$comment_id            = 6;
+		$duplicated_comment_id = 7;
+
+		$duplicated_comments = [ $duplicated_comment_id ];
+		$wpdb                = $this->stubs->wpdb();
+		$wpdb->method( 'get_col' )->willReturn( $duplicated_comments );
+
+		\WP_Mock::userFunction( 'wpml_get_setting_filter', [
+			'args'   => [ null, 'sync_comments_on_duplicates' ],
+			'return' => true
+		] );
+
+		\WP_Mock::userFunction( 'add_comment_meta', [
+			'args'   => [ $duplicated_comment_id, 'rating', $rating ],
+			'return' => true
+		] );
+
+		$comment                  = new stdClass();
+		$comment->comment_post_ID = 12;
+
+		\WP_Mock::userFunction( 'get_comment', [
+			'args'   => [ $comment_id ],
+			'return' => $comment
+		] );
+
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
+		                               ->disableOriginalConstructor()
+		                               ->setMethods( array( 'get_element_translations' ) )
+		                               ->getMock();
+
+		$wpml_post_translations->method( 'get_element_translations' )->with( $comment->comment_post_ID )->willReturn( [] );
+
+		$subject = $this->get_subject( false, false, $wpml_post_translations, $wpdb );
+
+		$subject->maybe_duplicate_comment_rating( 2, $comment_id, 'rating', $rating );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_duplicate_comment_rating_when_sync_comments_on_duplicates_is_off() {
+
+		\WP_Mock::userFunction( 'wpml_get_setting_filter', [
+			'args'   => [ null, 'sync_comments_on_duplicates' ],
+			'return' => false
+		] );
+
+		$subject = $this->get_subject();
+
+		$subject->maybe_duplicate_comment_rating( 2, 12, 'rating', 4 );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_not_duplicate_for_not_rating_meta_key() {
+
+		$subject = $this->get_subject();
+
+		$subject->maybe_duplicate_comment_rating( 2, 23, 'verified', 0 );
+	}
+
 }
