@@ -32,8 +32,9 @@ class WCML_Comments {
 
 	public function add_hooks() {
 
-		add_action( 'comment_post', [ $this, 'add_comment_rating' ] );
+		add_action( 'wp_insert_comment', [ $this, 'add_comment_rating' ] );
 		add_action( 'woocommerce_review_before_comment_meta', [ $this, 'add_comment_flag' ], 9 );
+		add_action( 'added_comment_meta', [ $this, 'maybe_duplicate_comment_rating' ], 10, 4 );
 
 		add_filter( 'get_post_metadata', [ $this, 'filter_average_rating' ], 10, 4 );
 		add_filter( 'comments_clauses', [ $this, 'comments_clauses' ], 10, 2 );
@@ -107,6 +108,8 @@ class WCML_Comments {
 			foreach ( $translations as $translation ) {
 				update_post_meta( $translation, self::WCML_AVERAGE_RATING_KEY, $average_rating );
 				update_post_meta( $translation, self::WCML_REVIEW_COUNT_KEY, $reviews_count );
+
+				WC_Comments::clear_transients( $translation );
 			}
 		}
 
@@ -324,5 +327,40 @@ class WCML_Comments {
         ", $ratingTerm->term_taxonomy_id, $this->sitepress->get_current_language() ) );
 
 		return "({$productsCountInCurrentLanguage})";
+	}
+
+	/**
+	 * @param int $meta_id
+	 * @param int $comment_id
+	 * @param string $meta_key
+	 * @param string $meta_value
+	 */
+	public function maybe_duplicate_comment_rating( $meta_id, $comment_id, $meta_key, $meta_value ) {
+		if ( 'rating' === $meta_key && wpml_get_setting_filter( null, 'sync_comments_on_duplicates' ) ) {
+			remove_action( 'added_comment_meta', [ $this, 'maybe_duplicate_comment_rating' ], 10, 4 );
+			foreach ( $this->get_duplicated_comments( $comment_id ) as $duplicate ) {
+				add_comment_meta( $duplicate, 'rating', $meta_value );
+
+			}
+			$product_id = get_comment( $comment_id )->comment_post_ID;
+			$this->recalculate_comment_rating( $product_id );
+			add_action( 'added_comment_meta', [ $this, 'maybe_duplicate_comment_rating' ], 10, 4 );
+		}
+	}
+
+	/**
+	 * @param int $comment_id
+	 *
+	 * @return array
+	 */
+	private function get_duplicated_comments( $comment_id ) {
+		return $this->wpdb->get_col(
+			$this->wpdb->prepare(
+				"SELECT comment_id
+				FROM {$this->wpdb->commentmeta}
+				WHERE meta_key = '_icl_duplicate_of'
+				AND meta_value = %d", $comment_id
+			)
+		);
 	}
 }
