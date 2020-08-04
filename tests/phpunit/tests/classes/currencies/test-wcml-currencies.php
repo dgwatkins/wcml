@@ -97,4 +97,24 @@ class Test_WCML_Currencies extends OTGS_TestCase {
 		$subject->setup_multi_currency_on_currency_update( $old_value, $new_value );
 	}
 
+	/**
+	 * @test
+	 *
+	 */
+	public function it_should_not_update_default_currency_on_setup_multi_currency() {
+		\WP_Mock::wpFunction( 'wcml_is_multi_currency_on', [ 'return' => false ] );
+
+		$old_value        = rand_str();
+		$new_value        = rand_str();
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->setMethods( [ 'get_setting' ] )
+		                         ->getMock();
+		$woocommerce_wpml->expects( $this->once() )->method( 'get_setting' )->with( 'currency_options' )->willReturn( [] );
+
+		$subject = $this->get_subject( $woocommerce_wpml );
+		$subject->setup_multi_currency_on_currency_update( $old_value, $new_value );
+	}
+
 }
