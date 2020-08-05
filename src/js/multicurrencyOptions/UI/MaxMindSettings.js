@@ -30,14 +30,14 @@ const MaxMindSettings = () => {
             {maxMindKeyExist && <OnSuccess strings={strings}/>}
             <div className="max-mind-block__wrapper">
                 {(result.data && !result.data.success) && <OnError error={result.data.data}/>}
-                {!maxMindKeyExist && <SettingsBlock onChange={onChange} onApply={onApply} strings={strings}/>}
+                {!maxMindKeyExist && <SettingsBlock onChange={onChange} onApply={onApply} strings={strings} disableSave={!maxMindKey}/>}
                 {ajax.fetching && <Spinner/>}
             </div>
         </div>
     );
 };
 
-const SettingsBlock = ({onChange, onApply, strings}) => {
+const SettingsBlock = ({onChange, onApply, strings, disableSave}) => {
 
     return (
         <React.Fragment>
@@ -50,6 +50,7 @@ const SettingsBlock = ({onChange, onApply, strings}) => {
                            className="max-mind-apply button-primary"
                            onClick={onApply}
                            value={strings.apply}
+                           disabled={disableSave}
                     />
                 </div>
             </div>
