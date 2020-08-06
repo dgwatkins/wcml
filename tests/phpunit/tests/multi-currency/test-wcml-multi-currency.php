@@ -221,7 +221,7 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 	public function it_should_not_get_currency_by_geolocation_if_country_currency_not_active() {
 		\WP_Mock::passthruFunction( 'wp_cache_add_non_persistent_groups' );
 
-		$client_currency  = null;
+		$client_currency  = 'EUR';
 		$country_currency = 'UAH';
 		$currency_codes   = [ 'USD', 'EUR' ];
 
@@ -257,37 +257,19 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 	}
 
 	/**
-	 *
 	 * @test
 	 */
 	public function it_should_not_get_currency_by_geolocation_if_geolocation_not_enabled() {
 
-		$client_currency  = null;
-		$country_currency = 'UAH';
-		$currency_codes   = [ 'USD', $country_currency ];
-
-		$woocommerce_session = $this->getMockBuilder( 'WC_Session' )
-		                            ->disableOriginalConstructor()
-		                            ->setMethods( [ 'get' ] )
-		                            ->getMock();
-
-		$woocommerce_session->method( 'get' )->with( 'client_currency' )->willReturn( false );
+		$client_currency  = 'EUR';
 
 		$woocommerce_wpml = \Mockery::mock( 'woocommerce_wpml' );
 		$woocommerce_wpml->shouldReceive( 'get_setting' )->with( 'currency_mode' )->andReturn( Geolocation::MODE_BY_LANGUAGE );
 
 		$subject                   = \Mockery::mock( 'WCML_Multi_Currency' )->makePartial();
-		$subject->currency_codes   = $currency_codes;
 		$subject->woocommerce_wpml = $woocommerce_wpml;
 
-		\WP_Mock::userFunction(
-			'is_ajax',
-			[
-				'return' => false,
-			]
-		);
-
-		$this->assertEquals( $client_currency, $subject->maybe_get_currency_by_geolocation( $client_currency, $woocommerce_session ) );
+		$this->assertEquals( $client_currency, $subject->maybe_get_currency_by_geolocation( $client_currency, [] ) );
 
 	}
 
