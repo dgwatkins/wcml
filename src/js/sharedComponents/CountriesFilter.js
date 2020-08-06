@@ -41,7 +41,7 @@ const CountriesSelect = ({attrs, onChange, allCountries, label}) => {
         countries.push(<Select.Option key={key} value={country.code} label={country.label}>{country.label}</Select.Option>);
     });
     return (
-        <div className="wpml-form-row">
+        <div className="wpml-form-row wcml-countries-select">
             <label htmlFor={attrs.id}>{label}</label>
             <Select
                 mode="multiple"
