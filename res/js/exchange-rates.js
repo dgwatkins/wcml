@@ -17,7 +17,7 @@ jQuery( function($){
 
         toggleManualAutomatic: function(){
 
-            if($(this).attr('checked') == 'checked'){
+            if($(this).prop('checked')){
                 $('#exchange-rates-online-wrap').fadeIn();
             }else{
                 $('#exchange-rates-online-wrap').fadeOut();
