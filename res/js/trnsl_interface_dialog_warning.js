@@ -27,10 +27,10 @@ jQuery(document).ready(function ($) {
                     },
                     open: function (event, ui) {
                         jQuery(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
-						jQuery('#jquery-ui-style-css').attr('disabled', 'disabled');
+						jQuery('#jquery-ui-style-css').prop('disabled', true);
                     },
                     close: function (event, ui) {
-                        jQuery('#jquery-ui-style-css').removeAttr('disabled');
+                        jQuery('#jquery-ui-style-css').prop('disabled', false);
                     },
                     buttons : buttonsOpts
                 });
