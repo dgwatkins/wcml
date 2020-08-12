@@ -103,6 +103,9 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 
 	}
 
+	/**
+	 * @group wcml-3343
+	 */
 	function test_woocommerce_order_get_items(){
 		global $wp_actions;
 		$this->switch_to_admin();
@@ -125,6 +128,9 @@ class Test_WCML_Emails extends WCML_UnitTestCase {
 		$this->woocommerce_wpml->shipping->register_shipping_title( $this->shipping->method_id, $this->shipping->label );
 		$ship_string_id = icl_get_string_id( $this->shipping->label, 'admin_texts_woocommerce_shipping', $this->shipping->method_id.'_shipping_method_title' );
 		icl_add_string_translation( $ship_string_id, 'es', 'FLAT RATE ES', ICL_TM_COMPLETE );
+
+		// @see https://onthegosystems.myjetbrains.com/youtrack/issue/wcml-3343
+		$this->sitepress->switch_lang('es');
 
 		$this->wcml_helper->icl_clear_and_init_cache( 'es' );
 
