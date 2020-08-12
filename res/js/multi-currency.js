@@ -37,7 +37,7 @@ jQuery( function($){
 
             $('#multi_currency_independent').change(function(){
 
-                if($(this).attr('checked') == 'checked'){
+                if($(this).prop('checked')){
                     if($('#currency_mode').val()){
                         $('#currency-switcher, #currency-switcher-widget, #currency-switcher-product, #multi-currency-per-language-details, #online-exchange-rates').fadeIn();
                     }else{
