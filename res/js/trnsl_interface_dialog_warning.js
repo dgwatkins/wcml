@@ -8,7 +8,7 @@ jQuery(document).ready(function ($) {
                 var buttonsOpts = {};
                 buttonsOpts[ dialogBox.find('.cancel-button').val() ] = function () {
                     jQuery(this).dialog("close");
-                    jQuery('input[name="trnsl_interface"][value="1"]').attr('checked', 'checked');
+                    jQuery('input[name="trnsl_interface"][value="1"]').prop('checked', true);
                 };
                 buttonsOpts[ dialogBox.find('.ok-button').val() ] = function () {
                     jQuery(this).dialog("close");
