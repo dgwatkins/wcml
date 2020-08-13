@@ -81,7 +81,7 @@ class Test_WCML_Update_Product_Gallery_Translation extends OTGS_TestCase {
 
 		$subject = $this->get_subject( $translation_element_factory, $media_usage_factory );
 
-		$source_gallery_ids     = '41,42,43';
+		$source_gallery_ids     = '41,42,43,';  //Last element is an invalid element according to case in wcml-3338
 		$translated_gallery_ids = '51,52';
 
 		$expected_gallery = '51,52,43';
@@ -126,6 +126,7 @@ class Test_WCML_Update_Product_Gallery_Translation extends OTGS_TestCase {
 		$attachment_element[0]->method( 'get_translation' )->willReturn( $translated_attachment[0] );
 		$attachment_element[1]->method( 'get_translation' )->willReturn( $translated_attachment[1] );
 		$attachment_element[2]->method( 'get_translation' )->willReturn( null );
+		$attachment_element[3]->method( 'get_translation' )->willReturn( null );
 
 		$translated_post_id = 199;
 		$translated_post    = $this->get_wpml_post_element( $translated_post_id );
