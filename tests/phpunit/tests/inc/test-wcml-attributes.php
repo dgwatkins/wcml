@@ -441,6 +441,43 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function filter_attribute_name_return_not_santized() {
+
+		\WP_Mock::passthruFunction( 'remove_filter' );
+
+		$attribute_name           = 'öööfff';
+		$orig_lang                = 'sv';
+		$product_id               = 11;
+
+		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( array( 'get_original_product_language' ) )
+		                                         ->getMock();
+
+		$this->woocommerce_wpml->products
+			->method( 'get_original_product_language' )
+			->with( $product_id )
+			->willReturn( $orig_lang );
+
+		$this->sitepress
+			->method( 'get_current_language' )
+			->willReturn( 'de' );
+
+		$this->sitepress
+			->expects( $this->never() )
+			->method( 'switch_lang' )
+			->willReturn( true );
+
+		$subject = $this->get_subject();
+
+		$filtered_attribute_name = $subject->filter_attribute_name( $attribute_name, $product_id );
+
+		$this->assertEquals( $attribute_name, $filtered_attribute_name );
+	}
+
+	/**
+	 * @test
+	 */
 	public function it_filter_product_attributes_names_when_adding_to_cart() {
 
 		$product_id              = rand( 1, 100 );

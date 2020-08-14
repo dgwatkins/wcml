@@ -662,7 +662,7 @@ class WCML_Attributes {
 			}
 
 			$sanitize_in_origin = in_array( $current_language, $special_symbols_languages, true ) && $current_language !== $orig_lang;
-			if ( $sanitize_in_origin ) {
+			if ( $sanitize_in_origin && $return_sanitized ) {
 				$this->remove_wpml_locale_sanitize_title_filter();
 				$this->sitepress->switch_lang( $orig_lang );
 			}
