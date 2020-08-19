@@ -87,7 +87,9 @@ class WCML_Orders {
 
 	public function woocommerce_order_get_items( $items, $order ) {
 
-		if ( $items && ( is_admin() || is_view_order_page() ) ) {
+		$is_order_checkout_ajax = isset( $_GET['wc-ajax'] ) && 'checkout' === $_GET['wc-ajax'];
+
+		if ( $items && ( is_admin() || is_view_order_page() || is_order_received_page() || $is_order_checkout_ajax ) ) {
 
 			$language_to_filter = $this->get_order_items_language_to_filter( $order );
 

@@ -375,6 +375,39 @@ class Test_WCML_Orders extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function it_should_get_woocommerce_order_items_in_current_language_for_order_received_page(){
+
+		\WP_Mock::userFunction( 'is_order_received_page', array(
+				'return' => true
+			)
+		);
+
+		$language = 'en';
+
+		$this->sitepress->method( 'get_current_language' )->willReturn( $language );
+
+		$this->get_woocommerce_order_items_mock( $language, new stdClass() );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_get_woocommerce_order_items_in_current_language_for_checkout_order_ahjax(){
+
+		$_GET['wc-ajax'] = 'checkout';
+
+		$language = 'es';
+
+		$this->sitepress->method( 'get_current_language' )->willReturn( $language );
+
+		$this->get_woocommerce_order_items_mock( $language, new stdClass() );
+
+		unset( $_GET['wc-ajax'] );
+	}
+
+	/**
+	 * @test
+	 */
 	public function it_should_not_get_woocommerce_order_items_for_non_view_order_front_pages(){
 
 		\WP_Mock::userFunction( 'is_admin', array(
@@ -383,6 +416,11 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		);
 
 		\WP_Mock::userFunction( 'is_view_order_page', array(
+				'return' => false
+			)
+		);
+
+		\WP_Mock::userFunction( 'is_order_received_page', array(
 				'return' => false
 			)
 		);
