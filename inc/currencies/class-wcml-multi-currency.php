@@ -446,9 +446,19 @@ class WCML_Multi_Currency {
 		}
 
 		if ( isset( $_GET['pay_for_order'] ) && $_GET['pay_for_order'] == true && isset( $_GET['key'] ) ) {
-			$order_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_order_key' AND meta_value = %s", sanitize_text_field( $_GET['key'] ) ) );
-			if ( $order_id ) {
-				$this->client_currency = get_post_meta( $order_id, '_order_currency', true );
+
+			$cache_group    = 'wcml_client_currency';
+			$cache_key      = 'order' . sanitize_text_field( $_GET['key'] );
+			$order_currency = wp_cache_get( $cache_key, $cache_group );
+
+			if ( $order_currency ) {
+				$this->client_currency = $order_currency;
+			} else {
+				$order_id = wc_get_order_id_by_order_key( wc_clean( wp_unslash( $_GET['key'] ) ) );
+				if ( $order_id ) {
+					$this->client_currency = get_post_meta( $order_id, '_order_currency', true );
+					wp_cache_set( $cache_key, $this->client_currency, $cache_group );
+				}
 			}
 		}
 
