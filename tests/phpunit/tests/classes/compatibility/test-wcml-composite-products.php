@@ -349,8 +349,8 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 
 		$translated_assigned_product_id = 15;
 
-		WP_Mock::onFilter( 'translate_object_id' )->with( $assigned_original_product_id, 'product', true, $fr_translation->language_code )->reply( $translated_assigned_product_id );
-		WP_Mock::onFilter( 'translate_object_id' )->with( $assigned_original_product_id, 'product', false, $fr_translation->language_code )->reply( $translated_assigned_product_id );
+		WP_Mock::onFilter( 'wpml_object_id' )->with( $assigned_original_product_id, 'product', true, $fr_translation->language_code )->reply( $translated_assigned_product_id );
+		WP_Mock::onFilter( 'wpml_object_id' )->with( $assigned_original_product_id, 'product', false, $fr_translation->language_code )->reply( $translated_assigned_product_id );
 
 		$expected_bto_data = $translated_bto_data;
 		$expected_bto_data[0]['default_id'] = $translated_assigned_product_id;
@@ -358,7 +358,7 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 
 		$translated_assigned_category_id  = 16;
 
-		WP_Mock::onFilter( 'translate_object_id' )->with( $assigned_original_category_id, 'product_cat', false, $fr_translation->language_code )->reply( $translated_assigned_category_id );
+		WP_Mock::onFilter( 'wpml_object_id' )->with( $assigned_original_category_id, 'product_cat', false, $fr_translation->language_code )->reply( $translated_assigned_category_id );
 
 		$expected_bto_data[1]['default_id'] = $translated_assigned_category_id;
 		$expected_bto_data[1]['assigned_category_ids'] = [ $translated_assigned_category_id ];
