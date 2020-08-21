@@ -2,6 +2,8 @@
 
 class WCML_Upgrade {
 
+    const CHUNK_SIZE = 1000;
+
 	/** @var array */
 	private $versions = [
 		'2.9.9.1',
@@ -34,6 +36,7 @@ class WCML_Upgrade {
 		'4.7.6',
 		'4.7.8',
 		'4.10.0',
+		'4.11.0',
 	];
 
 	public function __construct() {
@@ -835,5 +838,37 @@ class WCML_Upgrade {
 			$wcml_settings['currency_mode'] = 'by_language';
 			update_option( '_wcml_settings', $wcml_settings );
 		}
+	}
+
+	private function upgrade_4_11_0() {
+		global $wpdb, $sitepress;
+
+		// Set default language for old orders before WCML was installed
+		$orders_needs_set_language = $wpdb->get_col(
+			"SELECT DISTINCT( pm.post_id ) FROM {$wpdb->postmeta} AS pm 
+					INNER JOIN {$wpdb->posts} AS p ON pm.post_id = p.ID 
+					WHERE p.post_type = 'shop_order' AND pm.post_id NOT IN 
+					( SELECT DISTINCT( post_id ) FROM {$wpdb->postmeta} WHERE meta_key = 'wpml_language' )"
+		);
+
+		$default_language = $sitepress->get_default_language();
+
+		$values_query = function ( $order_id ) use ( $wpdb, $default_language ) {
+			return $wpdb->prepare(
+				'(%d, %s, %s)',
+				$order_id,
+				'wpml_language',
+				$default_language
+			);
+		};
+
+		wpml_collect( array_chunk( $orders_needs_set_language, self::CHUNK_SIZE ) )->each( function ( $chunk ) use ( $values_query, $wpdb ) {
+
+			$query = "INSERT IGNORE INTO {$wpdb->postmeta} "
+			         . '(`post_id`, `meta_key`, `meta_value`) VALUES ';
+			$query .= implode( ',', array_map( $values_query, $chunk ) );
+
+			$wpdb->query( $query );
+		} );
 	}
 }
