@@ -138,14 +138,14 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 							foreach ( $component['assigned_ids'] as $idx => $assigned_id ) {
 								$composite_data[$component_id]['assigned_ids'][$idx] =
-									apply_filters( 'translate_object_id', $assigned_id, 'product', true, $product_translation->language_code );
+									apply_filters( 'wpml_object_id', $assigned_id, 'product', true, $product_translation->language_code );
 							}
 
 						} elseif( $component['query_type'] == 'category_ids' ){
 
 							foreach ( $component['assigned_category_ids'] as $idx => $assigned_id ) {
 								$composite_data[$component_id]['assigned_category_ids'][$idx] =
-									apply_filters( 'translate_object_id', $assigned_id, 'product_cat', true, $product_translation->language_code );
+									apply_filters( 'wpml_object_id', $assigned_id, 'product_cat', true, $product_translation->language_code );
 
 							}
 
@@ -153,7 +153,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 						//sync default
 						if ( isset( $component['default_id'] ) && $component['default_id'] ) {
-							$translated_default_id = apply_filters( 'translate_object_id', $component['default_id'], get_post_type( $component['default_id'] ), false, $product_translation->language_code );
+							$translated_default_id = apply_filters( 'wpml_object_id', $component['default_id'], get_post_type( $component['default_id'] ), false, $product_translation->language_code );
 							if ( $translated_default_id ) {
 								$composite_data[ $component_id ]['default_id'] = $translated_default_id;
 							}
@@ -167,30 +167,21 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 						foreach ( $composite_scenarios_meta as $scenario_key => $scenario_meta ) {
 							//sync product ids
 							foreach ( $scenario_meta['component_data'] as $component_id => $component_data ) {
-								if ( isset( $composite_data[ $component_id ] ) && $composite_data[ $component_id ]['query_type'] == 'product_ids' ) {
-									foreach ( $component_data as $key => $assigned_prod_id ) {
-										$translated_assigned_product_id = apply_filters( 'translate_object_id', $assigned_prod_id, get_post_type( $assigned_prod_id ), false, $product_translation->language_code );
-										if ( $translated_assigned_product_id ) {
-											$composite_scenarios_meta[ $scenario_key ]['component_data'][ $component_id ][ $key ] = $translated_assigned_product_id;
-										}
-									}
-								} elseif ( isset( $composite_data[ $component_id ] ) && $composite_data[ $component_id ]['query_type'] == 'category_ids' ) {
-									foreach ( $component_data as $key => $assigned_cat_id ) {
-										$translated_assigned_category_id = apply_filters( 'translate_object_id', $assigned_cat_id, 'product_cat', false, $product_translation->language_code );
-										if ( $translated_assigned_category_id ) {
-											$composite_scenarios_meta[ $scenario_key ]['component_data'][ $component_id ][ $key ] = $translated_assigned_category_id;
-										}
+								foreach ( $component_data as $key => $assigned_prod_id ) {
+									$translated_assigned_product_id = apply_filters( 'wpml_object_id', $assigned_prod_id, get_post_type( $assigned_prod_id ), false, $product_translation->language_code );
+									if ( $translated_assigned_product_id ) {
+										$composite_scenarios_meta[ $scenario_key ]['component_data'][ $component_id ][ $key ] = $translated_assigned_product_id;
 									}
 								}
 							}
 						}
-					}
 
-					update_post_meta( $product_translation->element_id, '_bto_scenario_data', $composite_scenarios_meta );
+						update_post_meta( $product_translation->element_id, '_bto_scenario_data', $composite_scenarios_meta );
+					}
 				}
 			}
-		}
 
+		}
 	}
 
 	public function custom_box_html( $obj, $product_id, $data ){
@@ -420,14 +411,14 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 					foreach ( $component['assigned_ids'] as $idx => $assigned_id ) {
 						$composite_data[$component_id]['assigned_ids'][$idx] =
-							apply_filters( 'translate_object_id', $assigned_id, 'product', true, $job->language_code );
+							apply_filters( 'wpml_object_id', $assigned_id, 'product', true, $job->language_code );
 					}
 
 				} elseif( $component['query_type'] == 'category_ids' ){
 
 					foreach ( $component['assigned_category_ids'] as $idx => $assigned_id ) {
 						$composite_data[$component_id]['assigned_category_ids'][$idx] =
-							apply_filters( 'translate_object_id', $assigned_id, 'product_cat', true, $job->language_code );
+							apply_filters( 'wpml_object_id', $assigned_id, 'product_cat', true, $job->language_code );
 
 					}
 
