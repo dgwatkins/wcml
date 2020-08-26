@@ -989,18 +989,25 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$tp = new WPML_Element_Translation_Package;
 		$bookings = $this->get_wcml_booking_object();
 
-		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
-		$product_obj = get_post( $product );
-		wp_set_post_terms( $product, array( (int) $this->booking_term['term_id'] ), 'product_type' );
+		$get_product = function() {
+			$product     = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
+			$product_obj = get_post( $product );
+			wp_set_post_terms( $product, array( (int) $this->booking_term['term_id'] ), 'product_type' );
+			return $product_obj;
+		};
 
-		$this->assertEquals( array(), $bookings->append_resources_to_translation_package( array(), $product_obj ) );
-		$person_title = random_string();
-		$bookable_resource = wpml_test_insert_post( $this->default_language, 'bookable_resource', false, $person_title, $product );
+		$product_without_resources = $get_product();
+
+		$this->assertEquals( array(), $bookings->append_resources_to_translation_package( array(), $product_without_resources ) );
+
+		$product_with_resources = $get_product();
+		$person_title           = random_string();
+		$bookable_resource_id   = wpml_test_insert_post( $this->default_language, 'bookable_resource', false, $person_title, $product_with_resources->ID );
 		$this->wpdb->insert(
 			$this->wpdb->prefix . 'wc_booking_relationships',
 			array(
-				'resource_id' => $bookable_resource,
-				'product_id'  => $product,
+				'resource_id' => $bookable_resource_id,
+				'product_id'  => $product_with_resources->ID,
 				'sort_order'  => 'ASC',
 			),
 			array(
@@ -1009,8 +1016,8 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 				'%s',
 			)
 		);
-		update_post_meta( $product, '_wc_booking_has_resources', 'yes' );
-		$bookable_resource = get_post( $bookable_resource );
+		update_post_meta( $product_with_resources->ID, '_wc_booking_has_resources', 'yes' );
+		$bookable_resource = get_post( $bookable_resource_id );
 		$expected = array(
 			'contents' => array(
 				'wc_bookings:resource:' . $bookable_resource->ID . ':name' => array(
@@ -1020,7 +1027,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 				),
 			),
 		);
-		$this->assertEquals( $expected, $bookings->append_resources_to_translation_package( array(), $product_obj ) );
+		$this->assertEquals( $expected, $bookings->append_resources_to_translation_package( array(), $product_with_resources ) );
 		set_current_screen( 'front' );
 	}
 
