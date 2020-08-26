@@ -27,9 +27,17 @@ class WCML_Compatibility {
 	 */
 	private $tp;
 	/**
-	 * @var WPML_Post_Translation
+	 * WPML Post Translation.
+	 *
+	 * @var wpml_post_translations
 	 */
 	private $wpml_post_translations;
+	/**
+	 * WOOF Woocommerce Product Filter class.
+	 *
+	 * @var woof_product_filter
+	 */
+	private $woof_product_filter;
 
 	/**
 	 * WCML_Compatibility constructor.
@@ -245,6 +253,12 @@ class WCML_Compatibility {
 		if ( defined( 'WPB_VC_VERSION' ) ) {
 			$this->wpb_vc = new WCML_Wpb_Vc();
 			$this->wpb_vc->add_hooks();
+		}
+
+		// WOOF Woocommerce Product Filter.
+		if ( defined( 'WOOF_PLUGIN_NAME' ) ) {
+			$this->woof_product_filter = new WCML\Compatibility\WOOF\WooCommerceProductFilter();
+			$this->woof_product_filter->addHooks();
 		}
 
 		// Relevanssi plugin.
