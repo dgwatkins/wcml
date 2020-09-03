@@ -1,5 +1,10 @@
 <?php
 
+use WPML\FP\Fns;
+use WPML\FP\Obj;
+use function WPML\FP\partial;
+use function WPML\FP\pipe;
+
 class WCML_Products {
 
 	/** @var woocommerce_wpml */
@@ -76,7 +81,12 @@ class WCML_Products {
 
 		add_filter( 'get_product_search_form', [ $this->sitepress, 'get_search_form_filter' ] );
 
-		add_filter( 'woocommerce_pre_customer_bought_product', [ $this, 'is_customer_bought_product' ], 10, 4 );
+		add_filter(
+			'woocommerce_pre_customer_bought_product',
+			Fns::withoutRecursion( Fns::identity(), [ $this, 'is_customer_bought_product' ] ),
+			10,
+			4
+		);
 
 		if ( $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.6.0', '>=' ) ) {
 			add_filter( 'get_post_metadata', [ $this, 'filter_product_data' ], 10, 3 );
@@ -679,45 +689,31 @@ class WCML_Products {
 		return apply_filters( 'wpml_is_display_as_translated_post_type', false, 'product' );
 	}
 
-
+	/**
+	 * @param bool   $value
+	 * @param string $customer_email
+	 * @param int    $user_id
+	 * @param int    $product_id
+	 *
+	 * @return bool
+	 */
 	public function is_customer_bought_product( $value, $customer_email, $user_id, $product_id ) {
+        if ( $value ) {
+            return $value;
+        }
 
-		if ( $this->is_customer_bought_original( $customer_email, $user_id, $product_id ) ) {
-			return true;
-		}
+        $post_type = get_post_type( $product_id );
+        $trid      = apply_filters( 'wpml_element_trid', 0, $product_id, 'post_' . $post_type );
 
-		return $value;
-	}
+        // $has_bought_original_or_translation :: object -> bool
+        $has_bought_original_or_translation = pipe(
+            Obj::prop( 'element_id' ),
+            partial( 'wc_customer_bought_product', $customer_email, $user_id )
+        );
 
-	private function is_customer_bought_original( $customer_email, $user_id, $product_id ) {
-
-		if ( ! $this->is_original_product( $product_id ) ) {
-			remove_filter(
-				'woocommerce_pre_customer_bought_product',
-				[
-					$this,
-					'is_customer_bought_product',
-				],
-				10,
-				4
-			);
-
-			$bought_original = wc_customer_bought_product( $customer_email, $user_id, $this->get_original_product_id( $product_id ) );
-
-			add_filter(
-				'woocommerce_pre_customer_bought_product',
-				[
-					$this,
-					'is_customer_bought_product',
-				],
-				10,
-				4
-			);
-
-			return (bool) $bought_original;
-		}
-
-		return false;
+        return (bool) wpml_collect(
+            apply_filters( 'wpml_get_element_translations', [], $trid, $post_type )
+        )->first( $has_bought_original_or_translation );
 	}
 
 	public function filter_product_data( $data, $product_id, $meta_key ) {

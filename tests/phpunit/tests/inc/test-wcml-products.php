@@ -1,6 +1,7 @@
 <?php
 
 use tad\FunctionMocker\FunctionMocker;
+use WPML\FP\Fns;
 
 /**
  * Class Test_WCML_Products
@@ -309,7 +310,12 @@ class Test_WCML_Products extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'wpml_user_can_translate', array( $subject, 'wcml_user_can_translate' ), 10, 2 );
 		\WP_Mock::expectFilterAdded( 'wc_product_has_unique_sku', array( $subject, 'check_product_sku' ), 10, 3 );
 		\WP_Mock::expectFilterAdded( 'get_product_search_form', array( $sitepress, 'get_search_form_filter' ) );
-		\WP_Mock::expectFilterAdded( 'woocommerce_pre_customer_bought_product', array( $subject, 'is_customer_bought_product' ), 10, 4 );
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_pre_customer_bought_product',
+			Fns::withoutRecursion( Fns::identity(), [ $subject, 'is_customer_bought_product' ] ),
+			10,
+			4
+		);
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_add_to_cart_url', array( $subject, 'maybe_add_language_parameter' ) );
 
 		$subject->add_hooks();
@@ -369,7 +375,12 @@ class Test_WCML_Products extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'wpml_user_can_translate', array( $subject, 'wcml_user_can_translate' ), 10, 2 );
 		\WP_Mock::expectFilterAdded( 'wc_product_has_unique_sku', array( $subject, 'check_product_sku' ), 10, 3 );
 		\WP_Mock::expectFilterAdded( 'get_product_search_form', array( $sitepress, 'get_search_form_filter' ) );
-		\WP_Mock::expectFilterAdded( 'woocommerce_pre_customer_bought_product', array( $subject, 'is_customer_bought_product' ), 10, 4 );
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_pre_customer_bought_product',
+			Fns::withoutRecursion( Fns::identity(), [ $subject, 'is_customer_bought_product' ] ),
+			10,
+			4
+		);
 
 		$subject->add_hooks();
 	}
@@ -598,69 +609,99 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$this->assertEquals( $file_path, $filtered_file_path );
 	}
 
-
 	/**
 	 * @test
+	 * @group wcml-3339
 	 */
-	public function is_customer_bought_product_in_original(){
-
-		\WP_Mock::passthruFunction( 'remove_filter' );
-		\WP_Mock::passthruFunction( 'wp_cache_set' );
-
-		$user_email = rand_str();
-		$user_id = mt_rand( 1, 10 );
-		$product_id = mt_rand( 11, 20 );
-		$original_product_id = mt_rand( 21, 30 );
-		$original_language = NULL;
-
-		WP_Mock::userFunction( 'wc_customer_bought_product', array(
-			'args'  => array( $user_email, $user_id, $original_product_id ),
-			'return' => true
-		));
-
-		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
-		                               ->disableOriginalConstructor()
-		                               ->setMethods( array( 'get_source_lang_code', 'get_original_element' ) )
-		                               ->getMock();
-
-		$wpml_post_translations->method( 'get_source_lang_code' )->with( $product_id )->wilLReturn( 'en' );
-		$wpml_post_translations->method( 'get_original_element' )->with( $product_id )->wilLReturn( $original_product_id );
-
-		$subject = $this->get_subject( false, false, $wpml_post_translations );
-		$is_customer_bought_product = $subject->is_customer_bought_product( false, $user_email, $user_id, $product_id );
-
-		$this->assertTrue( $is_customer_bought_product );
+	public function is_customer_bought_product_already_true() {
+		$this->assertTrue( $this->get_subject()->is_customer_bought_product( true, 'john@doe.com', 159, 456 ) );
 	}
 
 	/**
 	 * @test
+	 * @group wcml-3339
 	 */
-	public function is_customer_bought_product_not_in_original(){
+	public function is_customer_bought_product_in_original_or_translation() {
+		$user_email          = 'john@doe.com';
+		$user_id             = 159;
+		$trid                = 99;
+		$product_id          = 456;
+		$original_product_id = 123;
+		$original_language   = null;
+		$post_type           = 'product';
 
-		\WP_Mock::passthruFunction( 'remove_filter' );
+		$translations = [
+			(object) [ 'element_id' => $product_id ],
+			(object) [ 'element_id' => $original_product_id ],
+			(object) [ 'element_id' => 789 ],
+		];
 
-		$user_email = rand_str();
-		$user_id = mt_rand( 1, 10 );
-		$product_id = mt_rand( 11, 20 );
-		$original_product_id = mt_rand( 21, 30 );
+		WP_Mock::userFunction( 'get_post_type' )
+			->with( $product_id )
+			->andReturn( $post_type );
 
-		WP_Mock::userFunction( 'wc_customer_bought_product', array(
-			'args'  => array( $user_email, $user_id, $original_product_id ),
+		WP_Mock::onFilter( 'wpml_element_trid' )
+		       ->with( 0, $product_id, 'post_'. $post_type )
+		       ->reply( $trid );
+
+		WP_Mock::onFilter( 'wpml_get_element_translations' )
+		       ->with( [], $trid, $post_type )
+		       ->reply( $translations );
+
+		WP_Mock::userFunction( 'wc_customer_bought_product', [
+			'args'   => [ $user_email, $user_id, $product_id ],
 			'return' => false
-		));
+		] );
 
-		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
-		                               ->disableOriginalConstructor()
-		                               ->setMethods( array( 'get_source_lang_code', 'get_original_element' ) )
-		                               ->getMock();
+		WP_Mock::userFunction( 'wc_customer_bought_product', [
+			'args'   => [ $user_email, $user_id, $original_product_id ],
+			'return' => true
+		] );
 
-		$wpml_post_translations->method( 'get_source_lang_code' )->with( $product_id )->wilLReturn( 'fr' );
-		$wpml_post_translations->method( 'get_original_element' )->with( $product_id )->wilLReturn( $original_product_id );
+		$this->assertTrue( $this->get_subject()->is_customer_bought_product( false, $user_email, $user_id, $product_id ) );
+	}
 
-		$subject = $this->get_subject( false, false, $wpml_post_translations );
-		$is_customer_bought_product = $subject->is_customer_bought_product( null, $user_email, $user_id, $product_id );
+	/**
+	 * @test
+	 * @group wcml-3339
+	 */
+	public function is_customer_bought_product_returns_false_if_NOT_in_original_NOR_translation() {
+		$user_email          = 'john@doe.com';
+		$user_id             = 159;
+		$trid                = 99;
+		$product_id          = 456;
+		$original_product_id = 123;
+		$original_language   = null;
+		$post_type           = 'product';
 
-		$this->assertNull( $is_customer_bought_product );
+		$translations = [
+			(object) [ 'element_id' => $product_id ],
+			(object) [ 'element_id' => $original_product_id ],
+		];
+
+		WP_Mock::userFunction( 'get_post_type' )
+			->with( $product_id )
+			->andReturn( $post_type );
+
+		WP_Mock::onFilter( 'wpml_element_trid' )
+		       ->with( 0, $product_id, 'post_'. $post_type )
+		       ->reply( $trid );
+
+		WP_Mock::onFilter( 'wpml_get_element_translations' )
+		       ->with( [], $trid, $post_type )
+		       ->reply( $translations );
+
+		WP_Mock::userFunction( 'wc_customer_bought_product', [
+			'args'   => [ $user_email, $user_id, $product_id ],
+			'return' => false
+		] );
+
+		WP_Mock::userFunction( 'wc_customer_bought_product', [
+			'args'   => [ $user_email, $user_id, $original_product_id ],
+			'return' => false
+		] );
+
+		$this->assertFalse( $this->get_subject()->is_customer_bought_product( false, $user_email, $user_id, $product_id ) );
 	}
 
 	/**
