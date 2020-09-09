@@ -97,7 +97,7 @@ class Geolocation {
 	 */
 	private static function getUserBillingCountry() {
 
-		$orderCountry = self::getUserCountryFromOrderReview();
+		$orderCountry = self::getUserCountryFromOrder();
 		if( $orderCountry ){
 			return $orderCountry;
 		}
@@ -115,9 +115,14 @@ class Geolocation {
 		return null;
 	}
 
-	private static function getUserCountryFromOrderReview(){
-		if ( isset( $_GET['wc-ajax'], $_POST['country'] ) && 'update_order_review' === $_GET['wc-ajax'] ) {
-			return wc_clean( wp_unslash( $_POST['country'] ) );
+	private static function getUserCountryFromOrder() {
+		if ( isset( $_GET['wc-ajax'] ) ) {
+			if ( isset ( $_POST['country'] ) && 'update_order_review' === $_GET['wc-ajax'] ) {
+				return wc_clean( wp_unslash( $_POST['country'] ) );
+			}
+			if ( isset ( $_POST['shipping_country'] ) && 'checkout' === $_GET['wc-ajax'] ) {
+				return wc_clean( wp_unslash( $_POST['shipping_country'] ) );
+			}
 		}
 
 		return false;
