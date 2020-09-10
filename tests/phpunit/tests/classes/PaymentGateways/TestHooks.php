@@ -29,6 +29,7 @@ class TestHooks extends \OTGS_TestCase {
 
 		$_GET['section'] = 'bacs';
 		$_GET['page']    = 'wc-settings';
+		$_GET['tab']     = 'checkout';
 
 		\WP_Mock::expectActionAdded( 'woocommerce_update_options_checkout', [
 			$subject,
