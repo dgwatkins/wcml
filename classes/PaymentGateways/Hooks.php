@@ -193,7 +193,7 @@ class Hooks implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Ac
 	 * @return bool
 	 */
 	private function isWCGatewaysSettingsScreen() {
-		return Obj::prop( 'section', $_GET ) && Relation::equals( 'wc-settings', Obj::prop( 'page', $_GET ) );
+		return Obj::prop( 'section', $_GET ) && Relation::equals( 'wc-settings', Obj::prop( 'page', $_GET ) ) && Relation::equals( 'checkout', Obj::prop( 'tab', $_GET ) );
 	}
 
 }
