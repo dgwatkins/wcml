@@ -296,7 +296,7 @@ class WCML_Endpoints_Legacy {
 				$buff_value = array();
 
 				foreach ( $value as $k => $v ) {
-					$k                = preg_replace( '/(\/)?' . $endpoint_key . '(\/)?(\(\/\(\.\*\)\)\?\/\?\$)/', '$1' . $endpoint_translation . '$2$3', $k );
+					$k                = preg_replace( '/(\/|^)' . $endpoint_key . '(\/)?(\(\/\(\.\*\)\)\?\/\?\$)/', '$1' . $endpoint_translation . '$2$3', $k );
 					$buff_value[ $k ] = $v;
 				}
 				$value = $buff_value;
