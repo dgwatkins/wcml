@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Obj;
+
 class WCML_Custom_Prices {
 
 	/** @var woocommerce_wpml */
@@ -218,17 +220,14 @@ class WCML_Custom_Prices {
 
 	private function is_date_range_set( $product_meta, $currency ) {
 
-		$current_currency_schedule = isset( $product_meta[ '_sale_price_dates_from_' . $currency ] ) &&
-									 $product_meta[ '_sale_price_dates_from_' . $currency ][0] &&
-									 isset( $product_meta[ '_sale_price_dates_to_' . $currency ] ) &&
-									 $product_meta[ '_sale_price_dates_to_' . $currency ][0];
+		$get_currency_schedule = function ( $suffix ) use ( $product_meta ) {
+			return Obj::path( [
+					'_sale_price_dates_from' . $suffix,
+					0
+				], $product_meta ) || Obj::path( [ '_sale_price_dates_to' . $suffix, 0 ], $product_meta );
+		};
 
-		$default_currency_schedule = isset( $product_meta['_sale_price_dates_from'] ) &&
-									 $product_meta['_sale_price_dates_from'][0] &&
-									 isset( $product_meta['_sale_price_dates_to'] ) &&
-									 $product_meta['_sale_price_dates_to'][0];
-
-		return $current_currency_schedule || $default_currency_schedule;
+		return $get_currency_schedule( '' ) || $get_currency_schedule( "_$currency" );
 	}
 
 	private function is_on_sale_date_range( $product_meta, $currency ) {

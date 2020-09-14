@@ -298,6 +298,21 @@ class Test_WCML_Custom_Prices extends OTGS_TestCase {
 					'_sale_price'    => '',
 				)
 			),
+			array(
+				10,
+				10,
+				8,
+				'',
+				'',
+				'',
+				'',
+				strtotime( date( 'Y-m-d H:i:s', strtotime( "-1 day" ) ) ),
+				array(
+					'_price'         => 10,
+					'_regular_price' => 10,
+					'_sale_price'    => '',
+				)
+			),
 		);
 	}
 
