@@ -644,6 +644,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 	/**
 	 * @test
+<<<<<<< HEAD
 	 */
 	public function it_should_duplicate_comment_rating() {
 
@@ -712,4 +713,32 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$subject->maybe_duplicate_comment_rating( 2, 23, 'verified', 0 );
 	}
 
+	/**
+	 * @test
+	 * group wcml-3313
+	 */
+	public function it_should_return_zero_when_comment_rating_is_blank() {
+
+		$subject = $this->get_subject();
+
+		$value     = "4";
+		$object_id = "13";
+
+		\WP_Mock::userFunction( 'get_post_type', array(
+			'args'   => array( $object_id ),
+			'return' => 'product'
+		) );
+
+		$meta_key            = '_wc_average_rating';
+		$wcml_average_rating = "";
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $object_id, '_wcml_average_rating', false ),
+			'return' => $wcml_average_rating
+		) );
+
+		$filtered_value = $subject->filter_average_rating( $value, $object_id, $meta_key, false );
+
+		$this->assertEquals( 0, $filtered_value );
+	}
 }

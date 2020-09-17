@@ -134,6 +134,9 @@ class WCML_Comments {
 			switch ( $meta_key ) {
 				case '_wc_average_rating':
 					$filtered_value = get_post_meta( $object_id, self::WCML_AVERAGE_RATING_KEY, $single );
+					if ( empty( $filtered_value ) ) {
+						$filtered_value = 0;
+					}
 					break;
 				case self::WC_REVIEW_COUNT_KEY:
 					if ( $this->is_reviews_in_all_languages( $object_id ) ) {
@@ -143,7 +146,7 @@ class WCML_Comments {
 			}
 		}
 
-		return ! empty( $filtered_value ) ? $filtered_value : $value;
+		return ! empty( $filtered_value ) || $filtered_value === 0 ? $filtered_value : $value;
 	}
 
 	/**
