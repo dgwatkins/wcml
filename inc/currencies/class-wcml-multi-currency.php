@@ -171,7 +171,6 @@ class WCML_Multi_Currency {
 					[
 						'woocommerce_get_refreshed_fragments',
 						'woocommerce_update_order_review',
-						'woocommerce-checkout',
 						'woocommerce_checkout',
 						'woocommerce_add_to_cart',
 						'woocommerce_update_shipping_method',
