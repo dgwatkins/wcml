@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Fns;
+
 class WCML_Comments {
 
 	const WCML_AVERAGE_RATING_KEY = '_wcml_average_rating';
@@ -45,7 +47,11 @@ class WCML_Comments {
 		add_action( 'deleted_comment', [ $this, 'recalculate_average_rating_on_comment_hook' ], 10, 2 );
 		add_action( 'untrashed_comment', [ $this, 'recalculate_average_rating_on_comment_hook' ], 10, 2 );
 		//before WCML_Synchronize_Product_Data::sync_product_translations_visibility hook
-		add_action( 'woocommerce_product_set_visibility', [ $this, 'recalculate_comment_rating' ], 9 );
+		add_action(
+			'woocommerce_product_set_visibility',
+			Fns::withoutRecursion( Fns::noop(), [ $this, 'recalculate_comment_rating' ] ),
+			9
+		);
 
 		add_filter( 'woocommerce_top_rated_products_widget_args', [ $this, 'top_rated_products_widget_args' ] );
 		add_filter( 'woocommerce_rating_filter_count', [ $this, 'woocommerce_rating_filter_count' ], 10, 3 );
@@ -103,6 +109,7 @@ class WCML_Comments {
 		}
 
 		if ( $average_ratings_sum ) {
+
 			$average_rating = number_format( $average_ratings_sum / $average_ratings_count, 2, '.', '' );
 
 			foreach ( $translations as $translation ) {
@@ -111,6 +118,7 @@ class WCML_Comments {
 
 				WC_Comments::clear_transients( $translation );
 			}
+
 		}
 
 	}

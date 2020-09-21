@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Fns;
+
 class Test_WCML_Comments extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
@@ -74,7 +76,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'comments_clauses', array( $subject, 'comments_clauses' ), 10, 2 );
 		\WP_Mock::expectActionAdded( 'comment_form_before', array( $subject, 'comments_link' ) );
 		\WP_Mock::expectFilterAdded( 'wpml_is_comment_query_filtered', array( $subject, 'is_comment_query_filtered' ), 10, 2 );
-		\WP_Mock::expectActionAdded( 'woocommerce_product_set_visibility', array( $subject, 'recalculate_comment_rating' ), 9 );
+		\WP_Mock::expectActionAdded( 'woocommerce_product_set_visibility', Fns::withoutRecursion( Fns::noop(), [ $subject, 'recalculate_comment_rating' ] ), 9 );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_top_rated_products_widget_args', array( $subject, 'top_rated_products_widget_args' ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_rating_filter_count', array( $subject, 'woocommerce_rating_filter_count' ), 10, 3 );
