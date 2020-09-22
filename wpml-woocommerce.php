@@ -115,9 +115,8 @@ function wcml_loader() {
 	$action_filter_loader->load( $loaders );
 }
 
-$wcml_rest_api = new WCML_REST_API();
-if ( $wcml_rest_api->is_rest_api_request() ) {
-	add_action( 'wpml_before_init', [ $wcml_rest_api, 'remove_wpml_global_url_filters' ], 0 );
+if ( WCML\Rest\Functions::isRestApiRequest() ) {
+	add_action( 'wpml_before_init', [ WCML\Rest\Functions::class, 'removeWpmlGlobalUrlFilters' ], 0 );
 }
 
 add_action( 'plugins_loaded', 'load_wcml_without_wpml', 10000 );

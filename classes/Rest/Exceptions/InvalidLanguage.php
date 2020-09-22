@@ -1,10 +1,12 @@
 <?php
 
-class WCML_REST_Invalid_Language_Exception extends WC_REST_Exception {
+namespace WCML\Rest\Exceptions;
+
+use WC_REST_Exception;
+
+class InvalidLanguage extends WC_REST_Exception {
 
 	/**
-	 * WCML_REST_Invalid_Language_Exception constructor.
-	 *
 	 * @param string $language_code
 	 */
 	public function __construct( $language_code ) {
@@ -15,4 +17,5 @@ class WCML_REST_Invalid_Language_Exception extends WC_REST_Exception {
 			422
 		);
 	}
+
 }

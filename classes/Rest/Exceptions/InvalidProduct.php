@@ -1,10 +1,12 @@
 <?php
 
-class WCML_REST_Invalid_Product_Exception extends WC_REST_Exception {
+namespace WCML\Rest\Exceptions;
+
+use WC_REST_Exception;
+
+class InvalidProduct extends WC_REST_Exception {
 
 	/**
-	 * WCML_REST_Invalid_Product_Exception constructor.
-	 *
 	 * @param int $product_id
 	 */
 	public function __construct( $product_id ) {
@@ -15,4 +17,5 @@ class WCML_REST_Invalid_Product_Exception extends WC_REST_Exception {
 			422
 		);
 	}
+
 }

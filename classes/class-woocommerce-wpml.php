@@ -104,25 +104,10 @@ class woocommerce_wpml {
 	}
 
 	private function load_rest_api() {
-		global $sitepress, $wpdb, $wpml_query_filter, $wpml_post_translations;
+		global $sitepress;
 
-		$wcml_rest_api = new WCML_REST_API();
-
-		if ( class_exists( 'WooCommerce' ) && defined( 'WC_VERSION' ) && ! is_null( $sitepress ) && $wcml_rest_api->is_rest_api_request() ) {
-			$wcml_rest_api_query_filters_products = new WCML_REST_API_Query_Filters_Products( $wpml_query_filter );
-			$wcml_rest_api_query_filters_orders   = new WCML_REST_API_Query_Filters_Orders( $wpdb );
-			$wcml_rest_api_query_filters_terms    = new WCML_REST_API_Query_Filters_Terms( $sitepress );
-
-			$wcml_rest_api_support = new WCML_REST_API_Support(
-				$this,
-				$sitepress,
-				$wcml_rest_api_query_filters_products,
-				$wcml_rest_api_query_filters_orders,
-				$wcml_rest_api_query_filters_terms,
-				$wpml_post_translations
-			);
-
-			$wcml_rest_api_support->add_hooks();
+		if ( class_exists( 'WooCommerce' ) && defined( 'WC_VERSION' ) && ! is_null( $sitepress ) && WCML\Rest\Functions::isRestApiRequest() ) {
+			WCML\Rest\Hooks::addHooks();
 		}
 	}
 
@@ -142,8 +127,6 @@ class woocommerce_wpml {
 	 */
 	public function init() {
 		global $sitepress, $wpdb, $woocommerce, $wpml_url_converter, $wpml_post_translations, $wpml_term_translations;
-
-		$this->load_rest_api();
 
 		$this->dependencies        = new WCML_Dependencies();
 		$this->dependencies_are_ok = $this->dependencies->check();
@@ -277,6 +260,8 @@ class woocommerce_wpml {
 		$url_filters_redirect_location->add_hooks();
 
 		add_action( 'wp_ajax_wcml_update_setting_ajx', [ $this, 'update_setting_ajx' ] );
+
+		$this->load_rest_api();
 
 		return true;
 	}

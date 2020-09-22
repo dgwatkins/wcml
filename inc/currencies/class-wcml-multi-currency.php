@@ -406,9 +406,8 @@ class WCML_Multi_Currency {
 	public function get_client_currency() {
 		global $woocommerce, $sitepress, $wpdb;
 
-		$WCML_REST_API = new WCML_REST_API();
 		if (
-			$WCML_REST_API->is_rest_api_request() ||
+			WCML\Rest\Functions::isRestApiRequest() ||
 			! empty( $_REQUEST['woocommerce_quick_edit'] )
 		) {
 			return wcml_get_woocommerce_currency_option();
