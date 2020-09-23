@@ -114,6 +114,7 @@ class WCML_Orders {
 				if ( 'line_item' === $item->get_type() ) {
 					$this->adjust_product_item_if_translated( $item, $language_to_filter );
 					$this->adjust_variation_item_if_translated( $item, $language_to_filter );
+					$item->save();
 				}
 			} elseif ( $item instanceof WC_Order_Item_Shipping ) {
 				$shipping_id = $item->get_method_id();
@@ -130,9 +131,11 @@ class WCML_Orders {
 							$language_to_filter
 						)
 					);
+
+					$item->save();
 				}
 			}
-			$item->save();
+
 		}
 	}
 

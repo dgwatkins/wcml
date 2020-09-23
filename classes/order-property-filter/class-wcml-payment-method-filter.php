@@ -28,7 +28,7 @@ class WCML_Payment_Method_Filter {
 
 				$title = apply_filters(
 					'wpml_translate_single_string',
-					$settings['title'] ?: $payment_gateway->title,
+					! empty( $settings['title'] ) ? $settings['title'] : $payment_gateway->title,
 					'admin_texts_woocommerce_gateways',
 					$payment_gateway->id . '_gateway_title'
 				);
