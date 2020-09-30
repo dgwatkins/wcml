@@ -550,7 +550,7 @@ class WCML_Store_Pages {
 
 			if ( $current_language != $default_language ) {
 
-				$templates = [ 'woocommerce.php' ];
+				$templates = [];
 
 				$term = get_queried_object();
 
