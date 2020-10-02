@@ -73,7 +73,7 @@ class WCML_WC_Strings {
 			]
 		);
 
-		add_filter( 'woocommerce_get_breadcrumb', [ $this, 'filter_woocommerce_breadcrumbs' ], 10, 2 );
+		add_filter( 'woocommerce_get_breadcrumb', [ $this, 'filter_woocommerce_breadcrumbs' ] );
 	}
 
 	public function translated_attribute_label( $label, $name, $product_obj = false ) {
@@ -378,7 +378,7 @@ class WCML_WC_Strings {
 	 * Filter breadcrumbs
 	 *
 	 */
-	public function filter_woocommerce_breadcrumbs( $breadcrumbs, $object ) {
+	public function filter_woocommerce_breadcrumbs( $breadcrumbs ) {
 
 		$current_language = $this->sitepress->get_current_language();
 		$default_language = $this->sitepress->get_default_language();
