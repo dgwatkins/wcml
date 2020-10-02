@@ -2,6 +2,8 @@
 
 class WCML_Install {
 
+	const CHUNK_SIZE = 1000;
+
 	/**
 	 * @param woocommerce_wpml $woocommerce_wpml
 	 * @param SitePress        $sitepress
@@ -61,6 +63,8 @@ class WCML_Install {
 				WPML_Config::load_config_run();
 
 				add_action( 'init', [ __CLASS__, 'insert_default_categories' ] );
+
+				self::set_language_to_existing_orders();
 
 				$woocommerce_wpml->settings['set_up'] = 1;
 				$woocommerce_wpml->update_settings();
@@ -346,6 +350,38 @@ class WCML_Install {
 		}
 
 		$woocommerce_wpml->update_settings( $settings );
+	}
+
+	public static function set_language_to_existing_orders() {
+		global $wpdb, $sitepress;
+
+		// Set default language for old orders before WCML was installed
+		$orders_needs_set_language = $wpdb->get_col(
+			"SELECT DISTINCT( pm.post_id ) FROM {$wpdb->postmeta} AS pm 
+					INNER JOIN {$wpdb->posts} AS p ON pm.post_id = p.ID 
+					WHERE p.post_type = 'shop_order' AND pm.post_id NOT IN 
+					( SELECT DISTINCT( post_id ) FROM {$wpdb->postmeta} WHERE meta_key = 'wpml_language' )"
+		);
+
+		$default_language = $sitepress->get_default_language();
+
+		$values_query = function ( $order_id ) use ( $wpdb, $default_language ) {
+			return $wpdb->prepare(
+				'(%d, %s, %s)',
+				$order_id,
+				'wpml_language',
+				$default_language
+			);
+		};
+
+		wpml_collect( array_chunk( $orders_needs_set_language, self::CHUNK_SIZE ) )->each( function ( $chunk ) use ( $values_query, $wpdb ) {
+
+			$query = "INSERT IGNORE INTO {$wpdb->postmeta} "
+			         . '(`post_id`, `meta_key`, `meta_value`) VALUES ';
+			$query .= implode( ',', array_map( $values_query, $chunk ) );
+
+			$wpdb->query( $query );
+		} );
 	}
 
 }
