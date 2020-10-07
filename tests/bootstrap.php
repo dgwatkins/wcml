@@ -37,7 +37,6 @@ function _manually_load_wcml() {
 
 	$factory = new WPML_ST_Upgrade_Command_Factory( $wpdb, $sitepress );
 	$upgrade = new WPML_ST_Upgrade( $sitepress, $factory );
-	$upgrade->add_hooks();
 	$upgrade->run();
 
 	WPML_Package_Translation_Schema::run_update();
