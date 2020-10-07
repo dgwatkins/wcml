@@ -113,14 +113,19 @@ class WCML_Setup {
 
 	private function do_not_redirect_to_setup() {
 
+		// Before WC 4.6
 		$woocommerce_notices       = get_option( 'woocommerce_admin_notices', [] );
 		$woocommerce_setup_not_run = in_array( 'install', $woocommerce_notices, true );
+
+		// Since WC 4.6
+		$needsWcWizardFirst = get_transient( '_wc_activation_redirect' );
 
 		return $this->is_wcml_setup_page() ||
 			   is_network_admin() ||
 			   isset( $_GET['activate-multi'] ) ||
 			   ! current_user_can( 'manage_options' ) ||
-			   $woocommerce_setup_not_run;
+			   $woocommerce_setup_not_run ||
+		       $needsWcWizardFirst;
 
 	}
 

@@ -190,8 +190,52 @@ class Test_WCML_Setup extends OTGS_TestCase {
 			'return' => array('install')
 		) );
 
+		\WP_Mock::userFunction( 'get_transient', array(
+			'args'   => '_wc_activation_redirect',
+			'return' => false
+		) );
+
 		// is_wcml_setup_page = true
 		$_GET['page'] = 'wcml-setup';
+
+		$this->assertNull( $subject->setup_redirect() );
+
+	}
+
+	/**
+	 * @test
+	 */
+	public function setup_redirect_yes_activation_redirect_do_not_redirect_to_setup_if_is_already_in_WC_Wizard(){
+		$subject = $this->get_subject();
+
+		\WP_Mock::userFunction( 'get_transient', array(
+			'args'   => '_wcml_activation_redirect',
+			'return' => true
+		) );
+
+		\WP_Mock::userFunction( 'delete_transient', array(
+			'args' => '_wcml_activation_redirect',
+			'times' => 1
+		) );
+
+		\WP_Mock::userFunction( 'get_option', array(
+			'args'   => [ 'woocommerce_admin_notices', [] ],
+			'return' => [],
+		) );
+
+		// Is in WC wizard redirection
+		\WP_Mock::userFunction( 'get_transient', array(
+			'args'   => '_wc_activation_redirect',
+			'return' => true
+		) );
+
+		\WP_Mock::userFunction( 'is_network_admin', array(
+			'return' => false
+		) );
+
+		\WP_Mock::userFunction( 'current_user_can', array(
+			'return' => true
+		) );
 
 		$this->assertNull( $subject->setup_redirect() );
 
@@ -217,6 +261,11 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		\WP_Mock::userFunction( 'get_option', array(
 			'args'   => [ 'woocommerce_admin_notices', [] ],
 			'return' => array()
+		) );
+
+		\WP_Mock::userFunction( 'get_transient', array(
+			'args'   => '_wc_activation_redirect',
+			'return' => false
 		) );
 
 		// is_wcml_setup_page = false
@@ -263,6 +312,11 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		\WP_Mock::userFunction( 'get_option', array(
 			'args'   => [ 'woocommerce_admin_notices', [] ],
 			'return' => array()
+		) );
+
+		\WP_Mock::userFunction( 'get_transient', array(
+			'args'   => '_wc_activation_redirect',
+			'return' => false
 		) );
 
 		// is_wcml_setup_page = false
