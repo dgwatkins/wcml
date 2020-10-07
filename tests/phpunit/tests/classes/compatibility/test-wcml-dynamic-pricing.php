@@ -62,9 +62,10 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectActionAdded( 'woocommerce_dynamic_pricing_is_object_in_terms', [ $subject, 'is_object_in_translated_terms' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_dynamic_pricing_is_object_in_terms', [ $subject, 'is_object_in_translated_terms' ], 10, 3 );
 
 		\WP_Mock::expectFilterAdded( 'wc_dynamic_pricing_load_modules', [ $subject, 'filter_price' ] );
+		\WP_Mock::expectFilterAdded( 'wc_dynamic_pricing_load_modules', [ $subject, 'translate_collector_args' ] );
 		\WP_Mock::expectFilterAdded( 'woocommerce_dynamic_pricing_is_applied_to', [ $subject, 'woocommerce_dynamic_pricing_is_applied_to' ], 10, 5 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_dynamic_pricing_get_rule_amount', [ $subject, 'woocommerce_dynamic_pricing_get_rule_amount' ], 10, 2 );
 		\WP_Mock::expectFilterAdded( 'dynamic_pricing_product_rules', [ $subject, 'dynamic_pricing_product_rules' ] );
@@ -189,6 +190,54 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 		$this->assertTrue( $subject->woocommerce_dynamic_pricing_is_applied_to( false, $product, 1, $dynamic_pricing_instance, $cat_ids ) );
 	}
 
+	/**
+	 * @test
+	 * @dataProvider dp_included_dynamic_pricing_instances
+	 *
+	 * @param \WC_Dynamic_Pricing_Simple_Base $dynamic_pricing_instance
+	 * @param array                           $properties
+	 */
+	public function it_does_process_discounts_for_translations( WC_Dynamic_Pricing_Simple_Base $dynamic_pricing_instance, $properties = [] ) {
+		$taxonomy = 'product_cat';
+
+		foreach ( $properties as $property => $value ) {
+			$dynamic_pricing_instance->$property = $value;
+			if ( 'taxonomy' === $property ) {
+				$taxonomy = $value;
+			}
+		}
+
+
+		/** @var WC_Product|PHPUnit_Framework_MockObject_MockBuilder $product */
+		$product = $this->getMockBuilder( 'WC_Product' )->disableOriginalConstructor()->setMethods( [ 'get_id' ] )->getMock();
+
+		$product_id = 1;
+		$product->method( 'get_id' )->willReturn( $product_id );
+
+		$tr_product_id = 2;
+		WP_Mock::onFilter( 'wpml_object_id' )
+			->with( $product_id, 'product', true )
+			->reply( $tr_product_id );
+
+		$cat_ids    = [ 1, 2, 3 ];
+		$tr_cat_ids = [ 4, 5, 6 ];
+		for ( $i = 0; $i < 3; $i ++ ) {
+			WP_Mock::onFilter( 'translate_object_id' )
+				->with( $cat_ids[ $i ], $taxonomy, true )
+				->reply( $tr_cat_ids[ $i ] );
+		}
+
+		$subject = $this->get_subject();
+
+		WP_Mock::userFunction( 'is_object_in_term', [
+			'times'  => 1,
+			'args'   => [ $tr_product_id, $taxonomy, $tr_cat_ids ],
+			'return' => true,
+		] );
+
+		$this->assertTrue( $subject->woocommerce_dynamic_pricing_is_applied_to( false, $product, 1, $dynamic_pricing_instance, $cat_ids ) );
+	}
+
 	public function dp_ignored_dynamic_pricing_instances() {
 		return [
 			'WC_Dynamic_Pricing_Simple_Category'   => [
@@ -265,5 +314,37 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 				],
 			],
 		];
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_translates_collector_args() {
+		$catid   = 1;
+		$trcatid = 2;
+		$modules = [
+			'advanced-category' => (object) [ 'available_advanced_rulesets' => [
+				'rule1' => [
+					'targets' => [ $catid ],
+					'collector' => [ 'args' => [ 'cats' => [ $catid ] ] ],
+				]
+			] ],
+		];
+		$expected = [
+			'advanced-category' => (object) [ 'available_advanced_rulesets' => [
+				'rule1' => [
+					'targets' => [ $trcatid ],
+					'collector' => [ 'args' => [ 'cats' => [ $trcatid ] ] ],
+				]
+			] ],
+		];
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::onFilter( 'translate_object_id' )
+			->with( $catid, 'product_cat', true )
+			->reply( $trcatid );
+
+		$this->assertEquals( $expected, $subject->translate_collector_args( $modules ) );
 	}
 }

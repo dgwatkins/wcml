@@ -20,7 +20,6 @@ class WCML_Cart_Sync_Warnings {
 		'WC_Accommodation_Bookings_Plugin' => 'Woocommerce Accommodation Bookings',
 		'WC_Product_Bundle'                => 'Woocommerce Product Bundles',
 		'WC_Composite_Products'            => 'Woocommerce Composite Products',
-		'WC_Dynamic_Pricing'               => 'Woocommerce Dynamic Pricing',
 		'RP_WCDPD'                         => 'WooCommerce Dynamic Pricing & Discounts',
 	];
 
