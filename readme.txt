@@ -48,7 +48,7 @@ When you need help, go to [WooCommerce Multilingual support forum](http://wpml.o
 
 = Downloads =
 
-This version of WooCommerce Multilingual works with WooCommerce > 3.3.0
+This version of WooCommerce Multilingual works with WooCommerce > 3.9.0
 
 You will also need [WPML](http://wpml.org), together with the String Translation and the Translation Management modules, which are part of the [Multilingual CMS](http://wpml.org/purchase/) package.
 
@@ -66,7 +66,7 @@ If the checks fail, WooCommerce Multilingual will not be able to run.
 * PHP version 5.6 or later
 * MySQL version 5.6 or later
 
-* WooCommerce 3.3.0 or later
+* WooCommerce 3.9.0 or later
 * WPML Multilingual CMS 4.3.7 or later
 * WPML String Translation 3.0.7 or later
 * WPML Translation Management 2.9.5 or later

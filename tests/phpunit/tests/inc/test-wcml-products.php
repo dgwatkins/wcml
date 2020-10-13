@@ -260,43 +260,20 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 	/**
 	 * @test
-	 * @dataProvider wc_versions_provider
-	 *
-	 * @param string $wc_version
-	 * @param bool   $version_compare_result
 	 */
-	public function it_adds_frontend_hooks( $wc_version, $version_compare_result ){
+	public function it_adds_frontend_hooks(){
 		\WP_Mock::userFunction( 'is_admin', array(
 			'return' => false,
 			'times'  => 1
 		) );
 
-		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
-		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'constant', 'version_compare' ) )
-		               ->getMock();
-
-		$wp_api->method( 'constant' )
-		             ->with( 'WC_VERSION' )
-		             ->willReturn( $wc_version );
-
-		$wp_api->method( 'version_compare' )
-		             ->with( $wc_version, '3.6.0', '>=' )
-		             ->willReturn( $version_compare_result );
-
 		$sitepress = $this->getMockBuilder( 'SitePress' )
 		                  ->disableOriginalConstructor()
-		                  ->setMethods( array( 'get_wp_api' ) )
 		                  ->getMock();
-		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
 
 		$subject = $this->get_subject( false, $sitepress );
 
-		if( $version_compare_result ){
-			\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ), 10, 3 );
-		}else{
-			\WP_Mock::expectFilterNotAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ) );
-		}
+		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ), 10, 3 );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_shortcode_products_query', array( $subject, 'add_lang_to_shortcode_products_query' ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_file_download_path', array( $subject, 'filter_file_download_path' ) );
@@ -323,45 +300,21 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 	/**
 	 * @test
-	 * @dataProvider wc_versions_provider
-	 *
-	 * @param string $wc_version
-	 * @param bool   $version_compare_result
 	 */
-	public function it_adds_backend_hooks( $wc_version, $version_compare_result ){
+	public function it_adds_backend_hooks(){
 		\WP_Mock::userFunction( 'is_admin', array(
 			'return' => true,
 			'times'  => 1
 		) );
 
-		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
-		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'constant', 'version_compare' ) )
-		               ->getMock();
-
-		$wp_api->method( 'constant' )
-		       ->with( 'WC_VERSION' )
-		       ->willReturn( $wc_version );
-
-		$wp_api->method( 'version_compare' )
-		       ->with( $wc_version, '3.6.0', '>=' )
-		       ->willReturn( $version_compare_result );
-
 		$sitepress = $this->getMockBuilder( 'SitePress' )
 		                  ->disableOriginalConstructor()
-		                  ->setMethods( array( 'get_wp_api' ) )
 		                  ->getMock();
-		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
 
 		$subject = $this->get_subject( false, $sitepress );
 
-		if( $version_compare_result ){
-			\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ), 10, 3 );
-			\WP_Mock::expectFilterAdded( 'woocommerce_can_reduce_order_stock', array( $subject, 'remove_post_meta_data_filter_on_checkout_stock_update' ) );
-		}else{
-			\WP_Mock::expectFilterNotAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ) );
-			\WP_Mock::expectFilterNotAdded( 'woocommerce_can_reduce_order_stock', array( $subject, 'remove_post_meta_data_filter_on_checkout_stock_update' ) );
-		}
+		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ), 10, 3 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_can_reduce_order_stock', array( $subject, 'remove_post_meta_data_filter_on_checkout_stock_update' ) );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_json_search_found_products', array( $subject, 'filter_wc_searched_products_on_admin' ) );
 		\WP_Mock::expectFilterAdded( 'post_row_actions', array( $subject, 'filter_product_actions' ), 10, 2 );
@@ -383,13 +336,6 @@ class Test_WCML_Products extends OTGS_TestCase {
 		);
 
 		$subject->add_hooks();
-	}
-
-	public function wc_versions_provider(){
-		return array(
-			array( '3.5.0', false ),
-			array( '3.6.0', true )
-		);
 	}
 
 	/**
@@ -510,7 +456,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
 		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->setMethods( array( 'constant' ) )
 		               ->getMock();
 		$wp_api->method( 'constant' )
 		       ->with( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' )
@@ -541,7 +487,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
 		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->setMethods( array( 'constant' ) )
 		               ->getMock();
 		$wp_api->method( 'constant' )
 		             ->with( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' )
@@ -583,7 +529,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
 		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->setMethods( array( 'constant' ) )
 		               ->getMock();
 		$wp_api->method( 'constant' )
 		       ->with( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' )
@@ -775,7 +721,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
 		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->setMethods( array( 'constant' ) )
 		               ->getMock();
 		$wp_api->method( 'constant' )
 		       ->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )
@@ -841,7 +787,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
 		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->setMethods( array( 'constant' ) )
 		               ->getMock();
 		$wp_api->method( 'constant' )
 		       ->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )
@@ -906,7 +852,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
 		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'constant', 'version_compare' ) )
+		               ->setMethods( array( 'constant' ) )
 		               ->getMock();
 		$wp_api->method( 'constant' )
 		       ->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )

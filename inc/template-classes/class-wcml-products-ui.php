@@ -222,8 +222,7 @@ class WCML_Products_UI extends WCML_Templates_Factory {
 	 */
 	private function is_show_type_column() {
 
-		return $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.4.0', '<' ) ||
-			   apply_filters( 'wcml_show_type_column', false );
+		return apply_filters( 'wcml_show_type_column', false );
 	}
 
 	public function get_product_info_from_self_edit_mode() {

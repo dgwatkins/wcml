@@ -10,7 +10,7 @@
  * Tested up to: 5.5
  * Version: 4.11.0
  * Plugin Slug: woocommerce-multilingual
- * WC requires at least: 3.3.0
+ * WC requires at least: 3.9.0
  * WC tested up to: 4.4
  *
  * @package WCML

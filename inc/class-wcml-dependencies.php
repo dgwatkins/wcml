@@ -5,7 +5,7 @@ class WCML_Dependencies {
 	const MIN_WPML        = '4.3.5';
 	const MIN_WPML_TM     = '2.9.1';
 	const MIN_WPML_ST     = '3.0.5';
-	const MIN_WOOCOMMERCE = '3.3.0';
+	const MIN_WOOCOMMERCE = '3.9.0';
 
 	private $missing     = [];
 	private $err_message = '';

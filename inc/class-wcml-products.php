@@ -88,10 +88,8 @@ class WCML_Products {
 			4
 		);
 
-		if ( $this->sitepress->get_wp_api()->version_compare( $this->sitepress->get_wp_api()->constant( 'WC_VERSION' ), '3.6.0', '>=' ) ) {
-			add_filter( 'get_post_metadata', [ $this, 'filter_product_data' ], 10, 3 );
-			add_filter( 'woocommerce_can_reduce_order_stock', [ $this, 'remove_post_meta_data_filter_on_checkout_stock_update' ] );
-		}
+        add_filter( 'get_post_metadata', [ $this, 'filter_product_data' ], 10, 3 );
+        add_filter( 'woocommerce_can_reduce_order_stock', [ $this, 'remove_post_meta_data_filter_on_checkout_stock_update' ] );
 	}
 
 	/**

@@ -39,7 +39,7 @@ class WCML_Plugins_Wrap {
 			'tm_version'        => defined( 'WPML_TM_VERSION' ),
 			'st_version'        => defined( 'WPML_ST_VERSION' ) && function_exists( 'icl_get_string_id' ),
 			'wc'                => class_exists( 'WooCommerce' ),
-			'old_wc'            => class_exists( 'WooCommerce' ) && version_compare( WC_VERSION, '3.3.0', '<' ),
+			'old_wc'            => class_exists( 'WooCommerce' ) && version_compare( WC_VERSION, WCML_Dependencies::MIN_WOOCOMMERCE, '<' ),
 			'wc_link'           => 'http://wordpress.org/extend/plugins/woocommerce/',
 			'strings'           => [
 				'title'                => __( 'WooCommerce Multilingual', 'woocommerce-multilingual' ),
