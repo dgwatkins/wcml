@@ -95,6 +95,7 @@ function wcml_loader() {
 		\WCML\Multicurrency\UI\Factory::class,
 		\WCML\PaymentGateways\Hooks::class,
 		\WCML\CLI\Hooks::class,
+		\WCML\AdminNotices\CachePlugins::class,
 	];
 
 	if (

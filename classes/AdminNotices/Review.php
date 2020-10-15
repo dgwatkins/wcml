@@ -63,30 +63,10 @@ class Review implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_A
 			$reviewButton = $this->wpmlNotices->get_new_notice_action( __( 'Review WooCommerce Multilingual', 'woocommerce-multilingual' ), $reviewLink, false, false, true );
 			$notice->add_action( $reviewButton );
 
-			$notice->set_restrict_to_screen_ids( $this->getRestrictedScreenIds() );
+			$notice->set_restrict_to_screen_ids( RestrictedScreens::get() );
 			$notice->add_capability_check( [ 'manage_options', 'wpml_manage_woocommerce_multilingual' ] );
 			$this->wpmlNotices->add_notice( $notice );
 		}
-	}
-
-	/**
-	 * get screen ids to display notice
-	 *
-	 * @return array
-	 */
-	private function getRestrictedScreenIds() {
-		return [
-			'dashboard',
-			'woocommerce_page_wpml-wcml',
-			'woocommerce_page_wc-admin',
-			'woocommerce_page_wc-reports',
-			'woocommerce_page_wc-settings',
-			'woocommerce_page_wc-status',
-			'woocommerce_page_wc-addons',
-			'edit-shop_order',
-			'edit-shop_coupon',
-			'edit-product',
-		];
 	}
 
 	/**
