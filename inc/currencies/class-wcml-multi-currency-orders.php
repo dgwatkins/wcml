@@ -289,13 +289,16 @@ class WCML_Multi_Currency_Orders {
 
 	/**
 	 * @param WC_Order_Item_Product $item
-	 * @param array                 $coupons
+	 * @param array $coupons
+     * @param int|bool $order_id
 	 */
-	private function set_converted_totals_for_item( $item, $coupons ) {
+	public function set_converted_totals_for_item( $item, $coupons, $order_id = false ) {
 
 		if ( 'line_item' === $item->get_type() ) {
 
-			$order_currency = get_post_meta( $_POST['order_id'], '_order_currency', true );
+			$order_id =  $order_id ?: intval( $_POST['order_id'] );
+
+			$order_currency = get_post_meta( $order_id, '_order_currency', true );
 
 			if ( ! $order_currency ) {
 				$order_currency = $this->get_order_currency_cookie();
@@ -308,7 +311,7 @@ class WCML_Multi_Currency_Orders {
 					],
 					true
 				) ) {
-					update_post_meta( $_POST['order_id'], '_order_currency', $order_currency );
+					update_post_meta( $order_id, '_order_currency', $order_currency );
 				}
 			}
 
