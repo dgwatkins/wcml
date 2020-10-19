@@ -13,7 +13,7 @@ class Hooks {
 		add_action( 'rest_api_init', [ Generic::class, 'setLanguageForRequest' ] );
 		add_action( 'parse_query', [ Generic::class, 'autoAdjustIncludedIds' ] );
 
-		foreach ( [ 'product', 'shop_order', 'product_cat', 'product_tag' ] as $type ) {
+		foreach ( [ 'product', 'shop_order' ] as $type ) {
 
 			$restObject = Factory::create( $type );
 
@@ -22,6 +22,20 @@ class Hooks {
 			add_action( "woocommerce_rest_prepare_{$type}_object", [ $restObject, 'prepare' ], 10, 3 );
 			add_action( "woocommerce_rest_insert_{$type}_object", [ $restObject, 'insert' ], 10, 3 );
 		}
+
+		$attributeTaxonomies = wc_get_attribute_taxonomy_names();
+
+		foreach ( array_merge( [ 'product_cat', 'product_tag', 'product_shipping_class' ], $attributeTaxonomies ) as $type ) {
+
+			$restObject = Factory::create( 'term' );
+
+			add_filter( "woocommerce_rest_{$type}_query", [ $restObject, 'query' ], 10, 2 );
+			add_action( "woocommerce_rest_prepare_{$type}", [ $restObject, 'prepare' ], 10, 3 );
+			add_action( "woocommerce_rest_insert_{$type}", [ $restObject, 'insert' ], 10, 3 );
+		}
+
+
+
 
 
 		self::addHooksSpecificForV1();

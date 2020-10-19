@@ -23,6 +23,12 @@ class TestHooks extends \OTGS_TestCase {
 			'return' => true
 		]);
 
+		$attributes = [ 'attr_color' ];
+
+		\WP_Mock::userFunction( 'wc_get_attribute_taxonomy_names', [
+			'return' => $attributes
+		]);
+
 		$composite_mock = $this->getMockBuilder( 'Composite' )->disableOriginalConstructor()->getMock();
 
 		$factory = \Mockery::mock( 'overload:WCML\Rest\Wrapper\Factory' );
@@ -38,11 +44,7 @@ class TestHooks extends \OTGS_TestCase {
 		$terms_mock = $this->getMockBuilder( 'ProductTerms' )->disableOriginalConstructor()->getMock();
 
 		$factory->shouldReceive( 'create' )
-		                   ->with( 'product_cat' )
-		                   ->andReturn( $terms_mock );
-
-		$factory->shouldReceive( 'create' )
-		                   ->with( 'product_tag' )
+		                   ->with( 'term' )
 		                   ->andReturn( $terms_mock );
 
 		\WP_Mock::expectActionAdded( 'rest_api_init', [ Generic::class, 'setLanguageForRequest' ] );
@@ -57,8 +59,20 @@ class TestHooks extends \OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_shop_order_object', [ Factory::create( 'shop_order' ), 'prepare' ], 10, 3 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_shop_order_object', [ Factory::create( 'shop_order' ), 'insert' ], 10, 3 );
 
-		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_cat_query', [ Factory::create( 'product_cat' ), 'query' ], 10, 2 );
-		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_tag_query', [ Factory::create( 'product_tag' ), 'query' ], 10, 2 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_cat_query', [ Factory::create( 'term' ), 'query' ], 10, 2 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_tag_query', [ Factory::create( 'term' ), 'query' ], 10, 2 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_shipping_class_query', [ Factory::create( 'term' ), 'query' ], 10, 2 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_'.$attributes[0].'_query', [ Factory::create( 'term' ), 'query' ], 10, 2 );
+
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_cat', [ Factory::create( 'term' ), 'prepare' ], 10, 3 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_tag', [ Factory::create( 'term' ), 'prepare' ], 10, 3 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_shipping_class', [ Factory::create( 'term' ), 'prepare' ], 10, 3 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_'.$attributes[0], [ Factory::create( 'term' ), 'prepare' ], 10, 3 );
+
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product_cat', [ Factory::create( 'term' ), 'insert' ], 10, 3 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product_tag', [ Factory::create( 'term' ), 'insert' ], 10, 3 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product_shipping_class', [ Factory::create( 'term' ), 'insert' ], 10, 3 );
+		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_'.$attributes[0], [ Factory::create( 'term' ), 'insert' ], 10, 3 );
 
 		\Mockery::mock( 'overload:WCML\Rest\Functions' )->shouldReceive( 'getApiRequestVersion' )->andReturn( 1 );
 

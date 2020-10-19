@@ -15,7 +15,7 @@ class Factory {
 	 * @return Handler
 	 */
 	public static function create( $objectType ) {
-		global $woocommerce_wpml, $wpml_post_translations, $sitepress, $wpml_query_filter;
+		global $woocommerce_wpml, $wpml_post_translations, $wpml_term_translations, $sitepress, $wpml_query_filter;
 
 		$isMultiCurrencyOn = wcml_is_multi_currency_on();
 
@@ -35,9 +35,8 @@ class Factory {
 				}
 
 				return new Composite( $objects );
-			case 'product_cat':
-			case 'product_tag':
-				return new ProductTerms( $sitepress );
+			case 'term':
+				return new ProductTerms( $sitepress, $wpml_term_translations );
 		}
 
 		return new Handler();
