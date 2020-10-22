@@ -8,17 +8,10 @@
  * Text Domain: woocommerce-multilingual
  * Requires at least: 4.7
  * Tested up to: 5.5
-<<<<<<< HEAD
- * Version: 4.11.0
- * Plugin Slug: woocommerce-multilingual
- * WC requires at least: 3.9.0
- * WC tested up to: 4.4
-=======
  * Version: 4.10.3
  * Plugin Slug: woocommerce-multilingual
  * WC requires at least: 3.3.0
  * WC tested up to: 4.5
->>>>>>> Update Version Numbers and Tested Up to
  *
  * @package WCML
  * @author  OnTheGoSystems
@@ -103,6 +96,7 @@ function wcml_loader() {
 		\WCML\PaymentGateways\Hooks::class,
 		\WCML\CLI\Hooks::class,
 		\WCML\AdminNotices\CachePlugins::class,
+		\WCML\Reports\Products\Query::class,
 	];
 
 	if (

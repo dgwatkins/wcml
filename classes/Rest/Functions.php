@@ -12,17 +12,16 @@ class Functions {
 	 * @return bool
 	 */
 	public static function isRestApiRequest() {
+		return apply_filters( 'woocommerce_rest_is_request_to_rest_api', self::checkEndpoint( 'wc/' ) );
+	}
 
-		if ( empty( $_SERVER['REQUEST_URI'] ) ) {
-			return false;
-		}
-
-		$restPrefix = trailingslashit( rest_get_url_prefix() );
-		// Check if WooCommerce endpoint.
-		$woocommerce = ( false !== strpos( $_SERVER['REQUEST_URI'], $restPrefix . 'wc/' ) );
-
-		return apply_filters( 'woocommerce_rest_is_request_to_rest_api', $woocommerce );
-
+	/**
+	 * Check if is request to the WooCommerce Analytics REST API.
+	 *
+	 * @return bool
+	 */
+	public static function isAnalyticsRestRequest() {
+		return apply_filters( 'woocommerce_rest_is_request_to_analytics_api', self::checkEndpoint( 'wc-analytics/' ) );
 	}
 
 	/**
@@ -38,13 +37,26 @@ class Functions {
 
 		return $version;
 	}
-
 	/**
 	 * Use url without the language parameter. Needed for the signature match.
 	 */
 	public static function removeWpmlGlobalUrlFilters() {
 		global $wpml_url_filters;
 		remove_filter( 'home_url', [ $wpml_url_filters, 'home_url_filter' ], - 10 );
+	}
+
+	/**
+	 * @param string $endpoint
+	 *
+	 * @return bool
+	 */
+	private static function checkEndpoint( $endpoint = 'wc/' ) {
+		if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+			return false;
+		}
+
+		$rest_prefix = trailingslashit( rest_get_url_prefix() );
+		return ( false !== strpos( $_SERVER['REQUEST_URI'], $rest_prefix . $endpoint ) );
 	}
 
 }
