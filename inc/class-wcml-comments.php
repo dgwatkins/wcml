@@ -53,6 +53,10 @@ class WCML_Comments {
 			9
 		);
 
+		if ( ! defined( 'WPSEO_VERSION' ) && 'all' === WPML\FP\Obj::prop( 'clang', $_GET ) ) {
+			add_action( 'wp_head', [ $this, 'no_index_all_reviews_page' ], 10 );
+		}
+
 		add_filter( 'woocommerce_top_rated_products_widget_args', [ $this, 'top_rated_products_widget_args' ] );
 		add_filter( 'woocommerce_rating_filter_count', [ $this, 'woocommerce_rating_filter_count' ], 10, 3 );
 	}
@@ -218,7 +222,7 @@ class WCML_Comments {
 			}
 
 			if ( isset( $comments_link_text ) && $comments_link_text ) {
-				echo '<p><a id="lang-comments-link" href="' . $comments_link . '">' . $comments_link_text . '</a></p>';
+				echo '<p><a id="lang-comments-link" href="' . $comments_link . '" rel="nofollow" >' . $comments_link_text . '</a></p>';
 			}
 		}
 	}
@@ -373,5 +377,9 @@ class WCML_Comments {
 				AND meta_value = %d", $comment_id
 			)
 		);
+	}
+
+	public function no_index_all_reviews_page() {
+		echo '<meta name="robots" content="noindex">';
 	}
 }

@@ -16,7 +16,8 @@ class Test_WCML_Comments extends OTGS_TestCase {
 	public function setUp()
 	{
 		parent::setUp();
-		\WP_Mock::wpPassthruFunction( '__' );
+        $_GET = [];
+		\WP_Mock::passthruFunction( '__' );
 		
 	}
 
@@ -394,6 +395,38 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$subject->comments_link( array() );
 		$link = ob_get_clean();
 
+		$expected_link = '<p><a id="lang-comments-link" href="' . $expected_url . '" rel="nofollow" >Show only reviews in '.$language_details['display_name'].' ('.$wc_review_count.')</a></p>';
+		$this->assertEquals( $expected_link, $link );
+	}
+
+	private function comments_link_to_current_language_when_link_should_be_indexed( $subject, $product_id, $url, $current_language, $language_details ){
+
+		$_GET['clang'] = 'all';
+		$new_query_args = array( 'clang' => $current_language );
+		$expected_url   = $url . '?' . http_build_query( $new_query_args );
+		$wc_review_count = mt_rand( 201, 300 );
+
+		\WP_Mock::userFunction( 'add_query_arg', array(
+			'args'   => array( $new_query_args, $url ),
+			'return' => $expected_url,
+		));
+
+		\WP_Mock::userFunction( 'metadata_exists', array(
+			'args'   => array( 'post', $product_id, '_wcml_review_count' ),
+			'return' => $expected_url,
+		));
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => array( $product_id, '_wc_review_count', true ),
+			'return' => $wc_review_count
+		));
+
+		\WP_Mock::onFilter( 'wcml_noindex_all_reviews_page' )->with( true )->reply( false );
+
+		ob_start();
+		$subject->comments_link( array() );
+		$link = ob_get_clean();
+
 		$expected_link = '<p><a id="lang-comments-link" href="' . $expected_url . '">Show only reviews in '.$language_details['display_name'].' ('.$wc_review_count.')</a></p>';
 		$this->assertEquals( $expected_link, $link );
 	}
@@ -425,7 +458,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$subject->comments_link( array() );
 		$link = ob_get_clean();
 
-		$expected_link = '<p><a id="lang-comments-link" href="' . $expected_url . '">Show reviews in all languages  ('.$all_wcml_review_count.')</a></p>';
+		$expected_link = '<p><a id="lang-comments-link" href="' . $expected_url . '" rel="nofollow" >Show reviews in all languages  ('.$all_wcml_review_count.')</a></p>';
 		$this->assertEquals( $expected_link, $link );
 	}
 	
@@ -646,7 +679,6 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 	/**
 	 * @test
-<<<<<<< HEAD
 	 */
 	public function it_should_duplicate_comment_rating() {
 
@@ -742,5 +774,25 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$filtered_value = $subject->filter_average_rating( $value, $object_id, $meta_key, false );
 
 		$this->assertEquals( 0, $filtered_value );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_adds_noindex_to_all_reviews_page() {
+		global $_GET;
+		$_GET['clang'] = 'all';
+
+		$subject = $this->get_subject();
+
+		ob_start();
+		$subject->no_index_all_reviews_page();
+		$meta = ob_get_clean();
+
+		$expected = '<meta name="robots" content="noindex">';
+
+		$this->assertEquals( $meta, $expected );
+
+		unset( $_GET );
 	}
 }

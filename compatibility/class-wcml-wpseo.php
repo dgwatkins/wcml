@@ -8,6 +8,10 @@ class WCML_WPSEO {
 
 		add_filter( 'wcml_product_content_label', [ $this, 'wpseo_custom_field_label' ], 10, 2 );
 
+		if ( 'all' === WPML\FP\Obj::prop( 'clang', $_GET ) ) {
+			add_filter( 'wpseo_robots_array', [ $this, 'noindex_all_comments_page' ], 10, 1 );
+		}
+
 		if ( defined( 'WPSEO_VERSION' ) && defined( 'WPSEO_PATH' ) && isset( $_GET['page'] ) && $_GET['page'] == 'wpml-wcml' && isset( $_GET['tab'] ) && $_GET['tab'] == 'products' ) {
 			if ( version_compare( WPSEO_VERSION, '3', '<' ) ) {
 				require_once WPSEO_PATH . 'admin/class-metabox.php';
@@ -51,6 +55,14 @@ class WCML_WPSEO {
 		}
 
 		return $slug_changed_flag;
+	}
+
+	public function noindex_all_comments_page( $robotsArray ) {
+		if ( isset( $robotsArray['index'] ) ) {
+			unset( $robotsArray['index'] );
+		}
+		$robotsArray['noindex'] = 'noindex';
+		return $robotsArray;
 	}
 
 }
