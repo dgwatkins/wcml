@@ -1,0 +1,20 @@
+<?php
+
+namespace WPML\Core;
+
+class Twig_Extension {
+
+}
+
+class Twig_Environment {
+    public function __construct($loader = null, $options = [])
+    {
+    }
+}
+
+class Twig_Loader_Filesystem
+{
+    public function __construct($paths = [], $rootPath = null)
+    {
+    }
+}
