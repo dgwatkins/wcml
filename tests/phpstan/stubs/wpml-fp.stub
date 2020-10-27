@@ -1,0 +1,1495 @@
+<?php
+
+namespace WPML\FP;
+
+trait Curryable
+{
+    /**
+     * The registered string curried methods.
+     *
+     * @var string[]
+     */
+    protected static $curried = [];
+    /**
+     * Register a custom curried function.
+     *
+     * @param string   $name
+     * @param int      $argCount
+     * @param callable $fn
+     *
+     * @return void
+     */
+    public static function curryN($name, $argCount, callable $fn)
+    {
+    }
+    /**
+     * Checks if curried function is registered.
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public static function hasCurry($name)
+    {
+    }
+    /**
+     * Dynamically handle calls to the class.
+     *
+     * @param string  $method
+     * @param mixed[] $parameters
+     *
+     * @return mixed
+     *
+     * @throws \BadMethodCallException
+     */
+    public static function __callStatic($method, $parameters)
+    {
+    }
+    /**
+     * Dynamically handle calls to the class.
+     *
+     * @param string  $method
+     * @param mixed[] $parameters
+     *
+     * @return mixed
+     *
+     * @throws \BadMethodCallException
+     */
+    public function __call($method, $parameters)
+    {
+    }
+    /**
+     * @param int     $count
+     * @param \Closure $fn
+     *
+     * @return \Closure
+     */
+    private function curryItCall($count, \Closure $fn)
+    {
+    }
+    /**
+     * @param int     $count
+     * @param \Closure $fn
+     *
+     * @return \Closure
+     */
+    private static function curryItStaticCall($count, \Closure $fn)
+    {
+    }
+}
+/**
+ * Lst class contains functions for working on ordered arrays indexed with numerical keys
+ *
+ * @method static callable|array append( mixed ...$newItem, array ...$data ) - Curried :: mixed->array->array
+ * @method static callable|array fromPairs( array ...$array ) - Curried :: [[a, b]] → [a => b]
+ * @method static callable|array toObj( array ...$array ) - Curried :: array → object
+ * @method static callable|array pluck( ...$prop, ...$array ) - Curried :: string → array → array
+ * @method static callable|array partition( ...$predicate, ...$target ) - Curried :: ( a → bool ) → [a] → [[a], [a]]
+ * @method static callable|array sort( ...$fn, ...$target ) - Curried :: ( ( a, a ) → int ) → [a] → [a]
+ * @method static callable|array unfold( ...$fn, ...$seed ) - Curried :: ( a → [b] ) → * → [b]
+ * @method static callable|array zip( ...$a, ...$b ) - Curried :: [a] → [b] → [[a, b]]
+ * @method static callable|array zipObj( ...$a, ...$b ) - Curried :: [a] → [b] → [a => b]
+ * @method static callable|array zipWith( ...$f, ...$a, ...$b ) - Curried :: ( ( a, b ) → c ) → [a] → [b] → [c]
+ * @method static callable|string join( ...$glue, ...$array ) - Curried :: string → [a] → string
+ * @method static callable|array concat( ...$a, ...$b ) - Curried :: [a] → [a] → [a]
+ * @method static callable|array|null find( ...$predicate, ...$array ) - Curried :: ( a → bool ) → [a] → a | null
+ * @method static callable|array flattenToDepth( ...$depth, ...$array ) - Curried :: int → [[a]] → [a]
+ * @method static callable|array flatten( ...$array ) - Curried :: [[a]] → [a]
+ * @method static callable|bool includes( ...$val, ...$array ) - Curried :: a → [a] → bool
+ * @method static callable|bool nth( ...$n, ...$array ) - Curried :: int → [a] → a | null
+ * @method static callable|bool last( ...$array ) - Curried :: [a] → a | null
+ * @method static callable|int length( ...$array ) - Curried :: [a] → int
+ * @method static callable|array take( ...$n, ...$array ) - Curried :: int → [a] → [a]
+ * @method static callable|array takeLast( ...$n, ...$array ) - Curried :: int → [a] → [a]
+ * @method static callable|array slice( ...$offset, ...$limit, ...$array ) - Curried :: int → int->[a] → [a]
+ * @method static callable|array drop( ...$n, ...$array ) - Curried :: int → [a] → [a]
+ * @method static callable|array dropLast( ...$n, ...$array ) - Curried :: int → [a] → [a]
+ * @method static callable|array makePair( ...$a, ...$b ) - Curried :: mixed → mixed → array
+ * @method static callable|array make ( ...$a ) - Curried :: mixed → array
+ * @method static callable|array insert( ...$index, ...$v, ...$array ) - Curried :: int → mixed → array → array
+ * @method static callable|array range( ...$from, ...$to )  - Curried :: int → int → array
+ * @method static callable|array xprod( ...$a, ...$b ) - Curried :: [a]->[b]->[a, b]
+ *
+ * Creates a new list out of the two supplied by creating each possible pair from the lists.
+ *
+ * ```
+ * $a              = [ 1, 2, 3 ];
+ * $b              = [ 'a', 'b', 'c' ];
+ * $expectedResult = [
+ *   [ 1, 'a' ], [ 1, 'b' ], [ 1, 'c' ],
+ *   [ 2, 'a' ], [ 2, 'b' ], [ 2, 'c' ],
+ *   [ 3, 'a' ], [ 3, 'b' ], [ 3, 'c' ],
+ * ];
+ *
+ * $this->assertEquals( $expectedResult, Lst::xprod( $a, $b ) );
+ * ```
+ * @method static callable|array prepend( ...$val, ...$array ) - Curried:: a → [a] → [a]
+ *
+ * Returns a new array with the given element at the front, followed by the contents of the list.
+ *
+ * @method static callable|array reverse( ...$array ) - Curried:: [a] → [a]
+ *
+ * Returns a new array with the elements reversed.
+ *
+ */
+class Lst
+{
+    use \WPML\Collect\Support\Traits\Macroable;
+    /**
+     * @return void
+     */
+    public static function init()
+    {
+    }
+    /**
+     * Curried function that keys the array by the given key
+     *
+     * keyBy :: string -> array -> array
+     *
+     * ```
+     * $data = [
+     *    [ 'x' => 'a', 'y' => 123 ],
+     *    [ 'x' => 'b', 'y' => 456 ],
+     * ];
+     *
+     * Lst::keyBy( 'x', $data );
+     * [
+     *    'a' => [ 'x' => 'a', 'y' => 123 ],
+     *    'b' => [ 'x' => 'b', 'y' => 456 ],
+     * ],
+     * ```
+     *
+     * @param string $key
+     * @param mixed[]  $array
+     *
+     * @return mixed[]|callable
+     */
+    public static function keyBy($key = null, $array = null)
+    {
+    }
+}
+namespace WPML\FP\System;
+
+class System
+{
+    /**
+     * @return \Closure
+     */
+    public static function getPostData()
+    {
+    }
+}
+namespace WPML\FP;
+
+/**
+ * Class Undefined
+ * @package WPML\FP
+ *
+ * Class represents Undefined value. It let us handle correctly expected, but falsy values like null, 0 or false.
+ */
+class Undefined
+{
+}
+class Promise
+{
+    /** @var callable */
+    private $onResolved;
+    /** @var callable */
+    private $onReject;
+    /** @var Promise */
+    private $next;
+    /**
+     * @param mixed $data
+     *
+     * @return mixed
+     */
+    public function resolve($data)
+    {
+    }
+    /**
+     * @param mixed $data
+     *
+     * @return mixed
+     */
+    public function reject($data)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return Promise
+     */
+    public function then(callable $fn)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return Promise
+     */
+    public function onError(callable $fn)
+    {
+    }
+}
+/**
+ * @method static string tail( string ...$str ) - Curried :: string->string
+ * @method static array split( ...$delimiter, ...$str ) - Curried :: string->string->string
+ * @method static callable|bool includes( ...$needle, ...$str ) - Curried :: string → string → bool
+ * @method static callable|string trim( ...$trim, ...$str ) - Curried :: string → string → string
+ * @method static callable|string concat( ...$a, ...$b ) - Curried :: string → string → string
+ * @method static callable|string sub( ...$start, ...$str ) - Curried :: int → string → string
+ * @method static callable|string startsWith( ...$test, ...$str ) - Curried :: string → string → bool
+ * @method static callable|string pos( ...$test, ...$str ) - Curried :: string → string → int
+ * @method static callable|string len( ...$str ) - Curried :: string → int
+ * @method static callable|string replace( ...$find, ...$replace, ...$str ) - Curried :: string → string → string → string
+ * @method static callable|string pregReplace( ...$pattern, ...$replace, ...$str ) - Curried :: string → string → string → string
+ * @method static callable|string match( ...$pattern, ...$str ) - Curried :: string → string → array
+ * @method static callable|string matchAll( ...$pattern, ...$str ) - Curried :: string → string → array
+ * @method static callable|string wrap( ...$before, ...$after, ...$str ) - Curried :: string → string → string
+ *
+ * Wraps a string inside 2 other strings
+ *
+ * ```
+ * $wrapsInDiv = Str::wrap( '<div>', '</div>' );
+ * $wrapsInDiv( 'To be wrapped' ); // '<div>To be wrapped</div>'
+ * ```
+ *
+ */
+class Str
+{
+    use \WPML\Collect\Support\Traits\Macroable;
+    /**
+     * @return void
+     */
+    public static function init()
+    {
+    }
+}
+namespace WPML\FP\Functor;
+
+trait Functor
+{
+    /** @var mixed */
+    protected $value;
+    /**
+     * @param  mixed  $value
+     */
+    public function __construct($value)
+    {
+    }
+    /**
+     * @return mixed
+     */
+    public function get()
+    {
+    }
+    /**
+     * @param callable $callback
+     *
+     * @return \WPML\FP\Either
+     */
+    public abstract function map(callable $callback);
+}
+namespace WPML\FP;
+
+/**
+ * Class Either
+ * @package WPML\FP
+ *
+ * @method static callable|Right of( ...$value ) - Curried :: a → Right a
+ *
+ * @method static callable|Left left( ...$value ) - Curried :: a → Left a
+ *
+ * @method static callable|Right right( ...$value ) - Curried :: a → Right a
+ *
+ * @method static callable|Either fromNullable( ...$value ) - Curried :: a → Either a
+ */
+abstract class Either
+{
+    use \WPML\FP\Functor\Functor;
+    use \WPML\Collect\Support\Traits\Macroable;
+    /**
+     * @return void
+     */
+    public static function init()
+    {
+    }
+    /**
+     * @return Either
+     */
+    public function join()
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return mixed
+     */
+    public abstract function chain(callable $fn);
+    /**
+     * @param callable $fn
+     *
+     * @return mixed
+     */
+    public abstract function orElse(callable $fn);
+    public abstract function bimap(callable $leftFn, callable $rightFn);
+    public abstract function alt(\WPML\FP\Either $alt);
+}
+trait ConstApplicative
+{
+    /**
+     * @param mixed $otherContainer
+     *
+     * @return mixed
+     */
+    public function ap($otherContainer)
+    {
+    }
+}
+namespace WPML\FP\Functor;
+
+trait Pointed
+{
+    /**
+     * of :: a -> M a
+     *
+     * Curried function that returns an instance of the derived class
+     * @param mixed $value (optional)
+     *
+     * @return mixed|callable
+     */
+    public static function of($value = null)
+    {
+    }
+}
+namespace WPML\FP;
+
+class Left extends \WPML\FP\Either
+{
+    use \WPML\FP\ConstApplicative;
+    use \WPML\FP\Functor\Pointed;
+    /**
+     * @param callable $fn
+     *
+     * @return Either
+     */
+    public function map(callable $fn)
+    {
+    }
+    public function bimap(callable $leftFn, callable $rightFn)
+    {
+    }
+    /**
+     * @return void
+     * @throws \Exception
+     */
+    public function get()
+    {
+    }
+    /**
+     * @param mixed $other
+     *
+     * @return mixed
+     */
+    public function getOrElse($other)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return Right
+     */
+    public function orElse(callable $fn)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return Either
+     */
+    public function chain(callable $fn)
+    {
+    }
+    /**
+     * @param mixed $value
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function getOrElseThrow($value)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return Either
+     */
+    public function filter($fn)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return Either
+     */
+    public function tryCatch(callable $fn)
+    {
+    }
+    public function alt(\WPML\FP\Either $alt)
+    {
+    }
+}
+trait Applicative
+{
+    /**
+     * @param mixed $otherContainer
+     *
+     * @return mixed
+     */
+    public function ap($otherContainer)
+    {
+    }
+}
+class Right extends \WPML\FP\Either
+{
+    use \WPML\FP\Applicative;
+    use \WPML\FP\Functor\Pointed;
+    /**
+     * @param callable $fn
+     *
+     * @return Either
+     */
+    public function map(callable $fn)
+    {
+    }
+    public function bimap(callable $leftFn, callable $rightFn)
+    {
+    }
+    /**
+     * @param Either $other
+     *
+     * @return mixed
+     */
+    public function getOrElse($other)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return Either
+     */
+    public function orElse(callable $fn)
+    {
+    }
+    /**
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    public function getOrElseThrow($value)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return Either
+     */
+    public function chain(callable $fn)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return Either
+     */
+    public function filter(callable $fn)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return Either
+     */
+    public function tryCatch(callable $fn)
+    {
+    }
+    public function alt(\WPML\FP\Either $alt)
+    {
+    }
+}
+/**
+ * Class Maybe
+ * @package WPML\FP
+ * @method static callable|Just|Nothing fromNullable( ...$value ) - Curried :: a → Nothing | Just a
+ *
+ * if $value is null or false it returns a Nothing otherwise returns a Just containing the value
+ *
+ * @method static callable safe( ...$fn ) - Curried :: ( a → b ) → ( a → Maybe b )
+ *
+ * returns a function that when called will run the passed in function and put the result into a Maybe
+ *
+ * @method static callable safeAfter( ...$predicate, ...$fn ) - Curried :: ( b → bool ) → ( a → b ) → ( a → Maybe b )
+ *
+ * returns a function that when called will run the passed in function and pass the result of the function
+ * to the predicate. If the predicate returns true the result will be a Just containing the result of the function.
+ * Otherwise it returns a Nothing if the predicate returns false.
+ *
+ * @method static callable safeBefore( ...$predicate, ...$fn ) - Curried :: ( a → bool ) → ( a → b ) → ( a → Maybe b )
+ *
+ * returns a function that when called will pass the given value to the predicate.
+ * If the predicate returns true the value will be lifted into a Just instance and
+ * the passed in function will then be mapped.
+ * Otherwise it returns a Nothing if the predicate returns false.
+ *
+ * @method static callable|Just just( ...$value ) - Curried :: a → Just a
+ *
+ * returns a Just containing the value.
+ *
+ * @method static callable|Just of( ...$value ) - Curried :: a → Just a
+ *
+ * returns a Just containing the value.
+ *
+ */
+class Maybe
+{
+    use \WPML\Collect\Support\Traits\Macroable;
+    /**
+     * @return void
+     */
+    public static function init()
+    {
+    }
+    /**
+     * @return Nothing
+     */
+    public static function nothing()
+    {
+    }
+    /**
+     * @return bool
+     */
+    public function isNothing()
+    {
+    }
+    /**
+     * @return bool
+     */
+    public function isJust()
+    {
+    }
+}
+class Just extends \WPML\FP\Maybe
+{
+    use \WPML\FP\Functor\Functor;
+    use \WPML\FP\Functor\Pointed;
+    use \WPML\FP\Applicative;
+    /**
+     * @param callable $fn
+     *
+     * @return Just|Nothing
+     */
+    public function map(callable $fn)
+    {
+    }
+    /**
+     * @param mixed $other
+     *
+     * @return mixed
+     */
+    public function getOrElse($other)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return Just|Nothing
+     */
+    public function filter($fn = null)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return mixed
+     */
+    public function chain(callable $fn)
+    {
+    }
+    /**
+     * @return bool
+     */
+    public function isJust()
+    {
+    }
+}
+class Nothing extends \WPML\FP\Maybe
+{
+    use \WPML\FP\ConstApplicative;
+    /**
+     * @param callable $fn
+     *
+     * @return Nothing
+     */
+    public function map(callable $fn)
+    {
+    }
+    /**
+     * @return void
+     * @throws \Exception
+     */
+    public function get()
+    {
+    }
+    /**
+     * @param mixed|callable $other
+     *
+     * @return mixed
+     */
+    public function getOrElse($other)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return Nothing
+     */
+    public function filter(callable $fn)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return Nothing
+     */
+    public function chain(callable $fn)
+    {
+    }
+    /**
+     * @return bool
+     */
+    public function isNothing()
+    {
+    }
+}
+/**
+ * @method static callable|bool equals( ...$a, ...$b ) - Curried :: a->b->bool
+ * @method static callable|bool lt( ...$a, ...$b ) - Curried :: a->b->bool
+ * @method static callable|bool lte( ...$a, ...$b ) - Curried :: a->b->bool
+ * @method static callable|bool gt( ...$a, ...$b ) - Curried :: a->b->bool
+ * @method static callable|bool gte( ...$a, ...$b ) - Curried :: a->b->bool
+ * @method static callable|bool propEq( ...$prop, ...$value, ...$obj ) - Curried :: String → a → array → bool
+ * @method static callable|array sortWith( ...$comparators, ...$array ) - Curried :: [(a, a) → int] → [a] → [a]
+ */
+class Relation
+{
+    use \WPML\Collect\Support\Traits\Macroable;
+    /**
+     * @return void
+     */
+    public static function init()
+    {
+    }
+}
+/**
+ * @method static callable|mixed multiply( ...$a, ...$b ) - Curried :: Number → Number → Number
+ * @method static callable|mixed add( ...$a, ...$b ) - Curried :: Number → Number → Number
+ * @method static callable|mixed product( ...$array ) - Curried :: [Number] → Number
+ */
+class Math
+{
+    use \WPML\Collect\Support\Traits\Macroable;
+    /**
+     * @return void
+     */
+    public static function init()
+    {
+    }
+}
+/**
+ * @method static callable always( ...$a ) Curried :: a → ( * → a )
+ *
+ * Returns a function that always returns the given value.
+ *
+ * ```php
+ * $t = Fns::always( 'Tee' );
+ * $t(); //=> 'Tee'
+ * ```
+ *
+ * @method static callable converge( ...$convergingFn, ...$branchingFns ) - Curried :: ( ( x1, x2, … ) → z ) → [( ( a, b, … ) → x1 ), ( ( a, b, … ) → x2 ), …] → ( a → b → … → z )
+ *
+ * Accepts a converging function and a list of branching functions and returns a new function. The arity of the new function is the same as the arity of the longest branching function. When invoked, this new function is applied to some arguments, and each branching function is applied to those same arguments. The results of each branching function are passed as arguments to the converging function to produce the return value.
+ *
+ * ```php
+ * $divide = curryN( 2, function ( $num, $dom ) { return $num / $dom; } );
+ * $sum    = function ( Collection $collection ) { return $collection->sum(); };
+ * $length = function ( Collection $collection ) { return $collection->count(); };
+ *
+ * $average = Fns::converge( $divide, [ $sum, $length ] );
+ * $this->assertEquals( 4, $average( wpml_collect( [ 1, 2, 3, 4, 5, 6, 7 ] ) ) );
+ * ```
+ *
+ * @method static callable|mixed map( ...$fn, ...$target ) - Curried :: ( a→b )→f a→f b
+ *
+ * Takes a function and a *functor*, applies the function to each of the functor's values, and returns a functor of the same shape.
+ *
+ * And array is considered a *functor*
+ *
+ * Dispatches to the *map* method of the second argument, if present
+ *
+ * @method static callable|mixed each ( ...$fn, ...$target ) - Curried :: ( a→b )→f a→f b
+ * @method static callable|mixed identity( mixed ...$data ) - Curried :: a->a
+ * @method static callable|mixed tap( callable  ...$fn, mixed ...$data ) - Curried :: fn->data->data
+ * @method static callable|mixed reduce( ...$fn, ...$initial, ...$target ) - Curried :: ( ( a, b ) → a ) → a → [b] → a
+ * @method static callable|mixed reduceRight( ...$fn, ...$initial, ...$target ) - Curried :: ( ( a, b ) → a ) → a → [b] → a
+ *
+ * Takes a function, an initial value and an array and returns the result.
+ *
+ * The function receives two values, the accumulator and the current value, and should return a result.
+ *
+ * The array values are passed to the function in the reverse order.
+ *
+ * ```php
+ * $numbers = [ 1, 2, 3, 4, 5, 8, 19 ];
+ *
+ * $append = function( $acc, $val ) {
+ *    $acc[] = $val;
+ *    return $acc;
+ * };
+ *
+ * $reducer = Fns::reduceRight( $append, [] );
+ * $result = $reducer( $numbers ); // [ 19, 8, 5, 4, 3, 2, 1 ]
+ *
+ * // Works on collections too.
+ * $result = $reducer( wpml_collect( $numbers ) ); // [ 19, 8, 5, 4, 3, 2, 1 ]
+ * ```
+ *
+ * @method static callable|mixed filter( ...$predicate, ...$target ) - Curried :: ( a → bool ) → [a] → [a]
+ * @method static callable|mixed reject( ...$predicate, ...$target ) - Curried :: ( a → bool ) → [a] → [a]
+ * @method static callable|mixed value( mixed ...$data ) - Curried :: a|( *→a ) → a
+ * @method static callable|object constructN( ...$argCount, ...$className ) - Curried :: int → string → object
+ * @method static callable|int ascend( ...$fn, ...$a, ...$b ) - Curried :: ( a → b ) → a → a → int
+ * @method static callable|int descend( ...$fn, ...$a, ...$b ) - Curried :: ( a → b ) → a → a → int
+ * @method static callable useWith( ...$fn, ...$transformations ) - Curried :: ( ( x1, x2, … ) → z ) → [( a → x1 ), ( b → x2 ), …] → ( a → b → … → z )
+ * @method static callable nthArg( ...$n ) - Curried :: int → *… → *
+ * @method static callable|mixed either( ...$f, ...$g, ...$e ) - Curried:: ( a → b ) → ( b → c ) → Either a b → c
+ * @method static callable|mixed maybe( ...$v, ...$f, ...$m ) - Curried:: b → ( a → b ) → Maybe a → b
+ * @method static callable|bool isRight( ...$e ) - Curried:: e → bool
+ * @method static callable|bool isLeft( ...$e ) - Curried:: e → bool
+ * @method static callable|bool isJust( ...$m ) - Curried:: e → bool
+ * @method static callable|bool isNothing( ...$m ) - Curried:: e → bool
+ * @method static callable|mixed T( ...$_ ) - Curried :: _ → bool
+ * @method static callable|mixed F( ...$_ ) - Curried :: _ → bool
+ * @method static callable|Maybe safe( ...$fn ) - Curried :: ( a → b ) → ( a → Maybe b )
+ * @method static callable|object make( ...$className ) - Curried :: string → object
+ * @method static callable|object makeN( ...$argCount, ...$className ) - Curried :: int → string → object
+ * @method static callable unary( ...$fn ) - Curried:: ( * → b ) → ( a → b )
+ * @method static callable|mixed memorizeWith( ...$cacheKeyFn, ...$fn ) - Curried :: ( *… → String ) → ( *… → a ) → ( *… → a )
+ * @method static callable|mixed once( ...$fn ) - Curried :: ( *… → a ) → ( *… → a )
+ * @method static callable|mixed withNamedLock( ...$name, ...$returnFn, ...$fn ) - Curried :: String → ( *… → String ) → ( *… → a ) → ( *… → a )
+ *
+ * Creates a new function that is *locked* so that it wont be called recursively. Multiple functions can use the same lock so they are blocked from calling each other recursively
+ *
+ * ```php
+ *      $lockName = 'my-lock';
+ *      $addOne = Fns::withNamedLock(
+ *          $lockName,
+ *          Fns::identity(),
+ *          function ( $x ) use ( &$addOne ) { return $addOne( $x + 1 ); }
+ *      );
+ *
+ *      $this->assertEquals( 13, $addOne( 12 ), 'Should not recurse' );
+ *
+ *      $addTwo = Fns::withNamedLock(
+ *          $lockName,
+ *          Fns::identity(),
+ *          function ( $x ) use ( $addOne ) { return pipe( $addOne, $addOne) ( $x ); }
+ *      );
+ *
+ *      $this->assertEquals( 10, $addTwo( 10 ), 'Should return 10 because $addOne is locked by the same name as $addTwo' );
+ * ```
+ *
+ * @method static callable|mixed withoutRecursion( ...$returnFn, ...$fn ) - Curried :: ( *… → String ) → ( *… → a ) → ( *… → a )
+ * @method static callable|mixed liftA2( ...$fn, ...$monadA, ...$monadB ) - Curried :: ( a → b → c ) → m a → m b → m c
+ * @method static callable|mixed liftA3( ...$fn, ...$monadA, ...$monadB, ...$monadC ) - Curried :: ( a → b → c → d ) → m a → m b → m c → m d
+ * @method static callable|mixed liftN( ...$n, ...$fn, ...$monad ) - Curried :: Number->( ( * ) → a ) → ( *m ) → m a
+ *
+ * @method static callable|mixed until( ...$predicate, ...$fns ) - Curried :: ( b → bool ) → [( a → b )] → a → b
+ *
+ * Executes consecutive functions until their $predicate($fn(...$args)) is true. When a result fulfils predicate then it is returned.
+ *
+ * ```
+ *       $fns = [
+ *         $add(1),
+ *         $add(5),
+ *         $add(10),
+ *         $add(23),
+ *      ];
+ *
+ *      $this->assertSame( 20, Fns::until( Relation::gt( Fns::__, 18 ), $fns )( 10 ) );
+ * ```
+ *
+ */
+class Fns
+{
+    use \WPML\Collect\Support\Traits\Macroable;
+    const __ = '__CURRIED_PLACEHOLDER__';
+    /**
+     * @return void
+     */
+    public static function init()
+    {
+    }
+    /**
+     * @return \Closure
+     */
+    public static function noop()
+    {
+    }
+    /**
+     * Curried function that transforms a Maybe into an Either.
+     *
+     * @param mixed|null $or
+     * @param Maybe|null $maybe
+     *
+     * @return callable|Either
+     */
+    public static function maybeToEither($or = null, $maybe = null)
+    {
+    }
+}
+/**
+ * @method static callable|bool not( mixed ...$v ) - Curried :: mixed->bool
+ * @method static callable|bool isNotNull( mixed ...$v ) - Curried :: mixed->bool
+ * @method static callable ifElse( ...$predicate, ...$first, ...$second ) - Curried :: ( a->bool )->callable->callable->callable
+ * @method static callable when( ...$predicate, ...$fn ) - Curried :: ( a->bool )->callable->callable
+ * @method static callable unless( ...$predicate, ...$fn ) - Curried :: ( a->bool )->callable->callable
+ * @method static callable cond( ...$conditions, ...$fn ) - Curried :: [( a->bool ), callable]->callable
+ * @method static callable both( ...$a, ...$b, ...$data ) - Curried :: ( a → bool ) → ( a → bool ) → a → bool
+ * @method static callable allPass( array $predicates ) - Curried :: [( *… → bool )] → ( *… → bool )
+ * @method static callable anyPass( array $predicates ) - Curried :: [( *… → bool )] → ( *… → bool )
+ * @method static callable complement( ...$fn ) - Curried :: ( *… → * ) → ( *… → bool )
+ * @method static callable|mixed defaultTo( ...$a, ...$b ) - Curried :: a → b → a | b
+ * @method static callable|bool either( ...$a, ...$b ) - Curried :: ( *… → bool ) → ( *… → bool ) → ( *… → bool )
+ * @method static callable|mixed until ( ...$predicate, ...$transform, ...$data ) - Curried :: ( a → bool ) → ( a → a ) → a → a
+ * @method static callable|bool propSatisfies( ...$predicate, ...$prop, ...$data ) - Curried :: ( a → bool ) → String → [String => a] → bool
+ * @method static callable|bool isArray ( ...$a ) - Curried :: a → bool
+ * @method static callable|bool isEmpty( ...$a ) - Curried:: a → bool
+ */
+class Logic
+{
+    use \WPML\Collect\Support\Traits\Macroable;
+    /**
+     * @return void
+     */
+    public static function init()
+    {
+    }
+}
+/**
+ * @method static callable|array|null toArray(string ...$str) - Curried :: json -> array
+ * @method static callable|Collection|null toCollection(string ...$str) Curried :: json -> null | Collection
+ */
+class Json
+{
+    use \WPML\Collect\Support\Traits\Macroable;
+    /**
+     * @return void
+     */
+    public static function init()
+    {
+    }
+}
+namespace WPML\FP\System;
+
+class _Validator
+{
+    /**
+     * @var string
+     */
+    private $key;
+    /**
+     * @var callable
+     */
+    private $fn;
+    /**
+     * @var string
+     */
+    private $error;
+    /**
+     * _Validator constructor.
+     *
+     * @param string $key
+     */
+    public function __construct($key)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return _Validator
+     */
+    public function using(callable $fn)
+    {
+    }
+    /**
+     * @param string $error
+     *
+     * @return _Validator
+     */
+    public function error($error)
+    {
+    }
+    /**
+     * @param \WPML\Collect\Support\Collection<mixed> $collection
+     *
+     * @return callable|\WPML\FP\Either
+     */
+    public function __invoke(\WPML\Collect\Support\Collection $collection)
+    {
+    }
+}
+namespace WPML\FP;
+
+class Wrapper
+{
+    use \WPML\FP\Functor\Functor;
+    use \WPML\FP\Functor\Pointed;
+    /**
+     * @param callable $fn
+     *
+     * @return Wrapper
+     */
+    public function map(callable $fn)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return mixed|null
+     */
+    public function filter($fn = null)
+    {
+    }
+    /**
+     * @return mixed
+     */
+    public function join()
+    {
+    }
+    /**
+     * @param mixed $value
+     *
+     * @return Wrapper
+     */
+    public function ap($value)
+    {
+    }
+    /**
+     * @return mixed
+     */
+    public function get()
+    {
+    }
+}
+namespace WPML\FP\System;
+
+class _Filter
+{
+    /**
+     * @var string
+     */
+    private $key;
+    /**
+     * @var callable
+     */
+    private $fn;
+    /**
+     * @var mixed
+     */
+    private $default;
+    /**
+     * _Filter constructor.
+     *
+     * @param string $key
+     */
+    public function __construct($key)
+    {
+    }
+    /**
+     * @param callable $fn
+     *
+     * @return _Filter
+     */
+    public function using(callable $fn)
+    {
+    }
+    /**
+     * @param mixed $default
+     *
+     * @return _Filter
+     */
+    public function defaultTo($default)
+    {
+    }
+    /**
+     * @param \WPML\Collect\Support\Collection<mixed> $collection
+     *
+     * @return \WPML\Collect\Support\Collection<mixed>
+     */
+    public function __invoke(\WPML\Collect\Support\Collection $collection)
+    {
+    }
+}
+namespace WPML\FP;
+
+class _Invoker
+{
+    /**
+     * @var string
+     */
+    private $fnName;
+    /**
+     * @var mixed[]
+     */
+    private $args = [];
+    /**
+     * _Invoker constructor.
+     *
+     * @param string $fnName
+     */
+    public function __construct($fnName)
+    {
+    }
+    /**
+     * @param mixed ...$args
+     *
+     * @return _Invoker
+     */
+    public function with(...$args)
+    {
+    }
+    /**
+     * @param mixed $instance
+     *
+     * @return mixed
+     */
+    public function __invoke($instance)
+    {
+    }
+}
+namespace WPML\FP\Functor;
+
+class ConstFunctor
+{
+    use \WPML\FP\Functor\Functor;
+    use \WPML\FP\Functor\Pointed;
+    /**
+     * @param callable $callback
+     *
+     * @return ConstFunctor
+     */
+    public function map($callback)
+    {
+    }
+}
+class IdentityFunctor
+{
+    use \WPML\FP\Functor\Functor;
+    use \WPML\FP\Functor\Pointed;
+    /**
+     * @param callable $callback
+     *
+     * @return IdentityFunctor
+     */
+    public function map($callback)
+    {
+    }
+}
+namespace WPML\FP;
+
+/**
+ * @deprecated Use Fn instead
+ *
+ * @method static callable|mixed map( callable ...$fn, mixed ...$target ) - Curried :: (a -> b) -> f a -> f b
+ * @method static callable|mixed identity( mixed ...$data ) - Curried :: a -> a
+ * @method static callable|mixed always( ...$a, ...$b ) - Curried :: a -> b -> a
+ * @method static callable|mixed reduce( ...$fn, ...$initial, ...$target ) - Curried :: ((a, b) → a) → a → [b] → a
+ * @method static callable\mixed converge( ...$convergingFn, ...$branchingFns, ...$data ) - Curried :: callable -> [callable] -> mixed -> callable
+ */
+class FP
+{
+    use \WPML\Collect\Support\Traits\Macroable;
+    /**
+     * @return void
+     */
+    public static function init()
+    {
+    }
+}
+/**
+ * @method static callable prop( ...$key, ...$obj ) - Curried :: string->Collection|array|object->mixed|null
+ * @method static callable propOr( ...$default, ...$key, ...$obj ) - Curried :: mixed->string->Collection|array|object->mixed|null
+ * @method static callable|array props( ...$keys, ...$obj ) - Curried :: [keys] → Collection|array|object → [v]
+ * @method static callable path( ...$path, ...$obj ) - Curried :: array->Collection|array|object->mixed|null
+ * @method static callable|mixed pathOr( ...$default, ...$path, ...$obj ) - Curried :: mixed → array → Collection|array|object → mixed
+ * @method static callable assoc( ...$key, ...$value, ...$item ) - Curried :: string->mixed->Collection|array|object->mixed|null
+ * @method static callable assocPath( ...$path, ...$value, ...$item ) - Curried :: array->mixed->Collection|array|object->mixed|null
+ * @method static callable lens( ...$getter, ...$setter ) - Curried :: callable->callable->callable
+ * @method static callable lensProp( ...$prop ) - Curried :: string->callable
+ * @method static callable lensPath( ...$path ) - Curried :: array->callable
+ * @method static callable view( ...$lens, ...$obj ) - Curried :: callable->Collection|array|object->mixed
+ * @method static callable set( ...$lens, ...$value, ...$obj ) - Curried :: callable->mixed->Collection|array|object->mixed
+ * @method static callable over( ...$lens, ...$transformation, ...$obj ) - Curried :: callable->callable->Collection|array|object->mixed
+ * @method static callable pick( ...$props, ...$obj ) - Curried :: array->Collection|array->Collection|array
+ * @method static callable pickAll( ...$props, ...$obj ) - Curried :: array->Collection|array->Collection|array
+ * @method static callable pickBy( ...$predicate, ...$obj ) - Curried :: ( ( v, k ) → bool ) → Collection|array->Collection|array
+ * @method static callable project( ...$props, ...$target ) - Curried :: array->Collection|array->Collection|array
+ * @method static callable where( array $condition ) - Curried :: [string → ( * → bool )] → bool
+ * @method static callable|bool has( ...$prop, ...$item ) - Curried :: string → a → bool
+ * @method static callable|mixed evolve( ...$transformations, ...$item ) - Curried :: array → array → array
+ *
+ * @method static callable|array objOf(...$key, ...$value) - Curried :: string -> mixed -> array
+ *
+ * Creates an object containing a single key:value pair.
+ *
+ * @method static callable|array keys( ...$obj ) - Curried :: object|array->array
+ *
+ * Returns
+ *  - keys if argument is an array
+ *  - public properties' names if argument is an object
+ *  - keys if argument is Collection
+ *
+ * ```
+ * $this->assertEquals( [ 0, 1, 2 ], Obj::keys( [ 'a', 'b', 'c' ] ) );
+ * $this->assertEquals( [ 'a', 'b', 'c' ], Obj::keys( [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) );
+ *
+ * $this->assertEquals( [ 0, 1, 2 ], Obj::keys( \wpml_collect( [ 'a', 'b', 'c' ] ) ) );
+ * $this->assertEquals( [ 'a', 'b', 'c' ], Obj::keys( \wpml_collect( [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) ) );
+ *
+ * $this->assertEquals( [ 'a', 'b', 'c' ], Obj::keys( (object) [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) );
+ * ```
+ *
+ * @method static callable|array values( ...$obj ) - Curried :: object|array->array
+ *
+ * Returns
+ *  - values if argument is an array
+ *  - public properties' values if argument is an object
+ *  - values if argument is Collection
+ *
+ * ```
+ * $this->assertEquals( [ 'a', 'b', 'c' ], Obj::values( [ 'a', 'b', 'c' ] ) );
+ * $this->assertEquals( [ 1, 2, 3 ], Obj::values( [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) );
+ *
+ * $this->assertEquals( [ 'a', 'b', 'c' ], Obj::values( \wpml_collect( [ 'a', 'b', 'c' ] ) ) );
+ * $this->assertEquals( [ 1, 2, 3 ], Obj::values( \wpml_collect( [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) ) );
+ *
+ * $this->assertEquals( [ 1, 2, 3 ], Obj::values( (object) [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) );
+ * ```
+ *
+ * @method static callable|array replaceRecursive(array ...$newValue, ...$target) - Curried :: array->array->array
+ */
+class Obj
+{
+    use \WPML\Collect\Support\Traits\Macroable;
+    /**
+     * @return void
+     */
+    public static function init()
+    {
+    }
+    /**
+     * @param object|Collection $item
+     * @param object|Collection $reference
+     *
+     * @return object|Collection
+     */
+    private static function matchType($item, $reference)
+    {
+    }
+    /**
+     * @param mixed $item
+     *
+     * @return object[]|Collection[]
+     */
+    private static function toArray($item)
+    {
+    }
+}
+namespace WPML\FP\Strings;
+
+/**
+ * ltrimWith :: string -> ( string -> string )
+ * @param string $trim
+ *
+ * @return callable
+ */
+function ltrimWith($trim)
+{
+}
+/**
+ * rtrimWith :: string -> ( string -> string )
+ * @param string $trim
+ *
+ * @return callable
+ */
+function rtrimWith($trim)
+{
+}
+/**
+ * explodeToCollection :: string -> ( string -> Collection )
+ * @param string $delimiter
+ *
+ * @return callable
+ */
+function explodeToCollection($delimiter)
+{
+}
+/**
+ * replace :: string -> string -> ( string -> string )
+ * @param string $search
+ * @param string $replace
+ *
+ * @return callable
+ */
+function replace($search, $replace)
+{
+}
+/**
+ * remove :: string -> ( string -> string )
+ * @param string $remove
+ *
+ * @return callable
+ */
+function remove($remove)
+{
+}
+namespace WPML\FP\System;
+
+/**
+ * Returns a filter function to filter a collection by the given key
+ * Use like:
+ * $theCollection->map( getFilterFor( 'my-key' )->using( santatizeString() )->defaultTo( '' ) )
+ * This will filter the collection item with a key of 'my-key' using the 'FILTER_SANITIZE_STRING'.
+ * If the key doesn't exist it defaults to an empty string.
+ *
+ * defaultTo can be a value or a callable that returns a value
+ *
+ * @param string $key
+ *
+ * @return _Filter
+ */
+function getFilterFor($key)
+{
+}
+/**
+ * Returns a function of the defined type that can then be used to map
+ * over a variable.
+ *
+ * @param int $filter - Filter type same as for php filter_var function
+ *
+ * @return \Closure
+ */
+function filterVar($filter)
+{
+}
+/**
+ * returns a function that will sanitize using the FILTER_SANITIZE_STRING type.
+ * @return \Closure
+ */
+function sanitizeString()
+{
+}
+/**
+ * Returns a validator function to filter a collection by the given key
+ * Use like:
+ * map( getValidatorFor( 'my-key' )->using( Logic::isNotNull() )->error( 'It was false' ) ), $myCollection)
+ * This will run the validator on the collection item with a key of 'my-key' and return Either::Right
+ * containing the given collection or Either::Left containing the error depending if the supplied
+ * using function returns true or false
+ *
+ * error can be a value or a callable that returns a value
+ *
+ * @param string $key
+ *
+ * @return _Validator
+ */
+function getValidatorFor($key)
+{
+}
+namespace WPML\FP;
+
+/**
+ * Wraps the given function and returns a function that can take arguments as an array and invokes
+ * the wrapped function with individual arguments
+ *
+ * @param callable $fn
+ *
+ * @return \Closure
+ */
+function spreadArgs(callable $fn)
+{
+}
+/**
+ * Wraps the given function and returns a function that can take individual arguments and invokes
+ * the wrapped function with individual arguments gathered into an array
+ *
+ * @param callable $fn
+ *
+ * @return \Closure
+ */
+function gatherArgs(callable $fn)
+{
+}
+/**
+ * Returns new function which applies each given function to the result of another from right to left
+ * compose(f, g, h)(x) is the same as f(g(h(x)))
+ *
+ * @param callable $f
+ * @param callable $g
+ *
+ * @return callable
+ */
+function compose(callable $f, callable $g)
+{
+}
+/**
+ * Returns new function which applies each given function to the result of another from left to right
+ * pipe(f, g, h)(x) is the same as h(g(f(x)))
+ *
+ * @param callable $f
+ * @param callable $g
+ *
+ * @return callable
+ */
+function pipe(callable $f, callable $g)
+{
+}
+/**
+ * Returns new function which will behave like $function with
+ * predefined left arguments passed to partial
+ *
+ * @param callable $function
+ * @param mixed    $arg1
+ *
+ * @return callable
+ */
+function partial(callable $function, $arg1)
+{
+}
+/**
+ * Returns new partial function which will behave like $function with
+ * predefined right arguments passed to partialRight
+ *
+ * @param callable $function
+ * @param mixed    $arg1
+ *
+ * @return callable
+ */
+function partialRight(callable $function, $arg1)
+{
+}
+/**
+ * @param callable $fn
+ *
+ * @return \Closure
+ */
+function tap(callable $fn)
+{
+}
+/**
+ * @param callable $f
+ * @param callable $g
+ *
+ * @return \Closure
+ */
+function either(callable $f, callable $g)
+{
+}
+/**
+ * @param int      $count
+ * @param callable $fn
+ *
+ * @return \Closure
+ */
+function curryN($count, callable $fn)
+{
+}
+/**
+ * @param callable $fn
+ * @param bool     $required
+ *
+ * @return \Closure
+ * @throws \ReflectionException
+ */
+function curry(callable $fn, $required = true)
+{
+}
+/**
+ * @param string $fnName
+ *
+ * @return \Closure
+ */
+function apply($fnName)
+{
+}
+/**
+ * Returns an Invoker that runs the member function. Use `with` to set the arguments
+ * of the member function and then invoke with `()`
+ *
+ * eg. give Test class:
+ * class Test {
+ *
+ *    private $times;
+ *
+ *    public function __construct( $times ) {
+ *       $this->times = $times;
+ *    }
+ *
+ *    public function multiply( $x ) {
+ *       return $x * $this->times;
+ *    }
+ * }
+ *
+ * $invoker = invoke( 'multiply' )->with( 10 );
+ * $result = $invoker( new Test( 2 ) );  // 20
+ *
+ *
+ * @param string $fnName
+ *
+ * @return _Invoker
+ */
+function invoke($fnName)
+{
+}
+/**
+ * @param callable $fn
+ *
+ * @return \Closure
+ */
+function chain(callable $fn)
+{
+}
+/**
+ * @param callable $fn
+ *
+ * @return \Closure
+ */
+function flatMap(callable $fn)
+{
+}
+/**
+ * @param callable $fn
+ *
+ * @return Either
+ */
+function tryCatch(callable $fn)
+{
+}
+/**
+ * @param callable $fn
+ *
+ * @return \Closure
+ */
+function flip(callable $fn)
+{
+}

@@ -10,6 +10,12 @@ class WCML_Custom_Prices_UI extends WCML_Templates_Factory {
 	private $custom_prices;
 	private $is_variation;
 
+	/** @var array $custom_prices_fields */
+	private $custom_prices_fields;
+
+	/** @var array $custom_prices_fields_labels */
+	private $custom_prices_fields_labels;
+
 
 	/**
 	 * WCML_Custom_Prices_UI constructor.

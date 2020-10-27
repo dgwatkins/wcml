@@ -1,0 +1,35 @@
+<?php
+
+namespace WPML\Core;
+
+class Twig_Extension {
+
+}
+
+class Twig_Environment {
+    public function __construct($loader = null, $options = [])
+    {
+    }
+}
+
+class Twig_Loader_Filesystem
+{
+    public function __construct($paths = [], $rootPath = null)
+    {
+    }
+}
+
+class Twig_Error_Syntax extends \Exception
+{
+}
+
+class Twig_SimpleFunction
+{
+    public function __construct($name, $callable, array $options = [])
+    {
+    }
+}
+
+class Twig_Loader_String {
+
+}

@@ -26,7 +26,7 @@ class WCML_Mix_and_Match_Products {
 			if ( $woocommerce_wpml->products->is_original_product( $post_id ) ) {
 				$original_product_id = $post_id;
 			} else {
-				$original_product_id = $this->woocommerce_wpml->products->get_original_product_id( $post_id );
+				$original_product_id = $woocommerce_wpml->products->get_original_product_id( $post_id );
 			}
 
 			$mnm_data             = maybe_unserialize( get_post_meta( $original_product_id, '_mnm_data', true ) );

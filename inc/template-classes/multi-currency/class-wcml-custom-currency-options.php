@@ -7,6 +7,9 @@ class WCML_Custom_Currency_Options extends WCML_Templates_Factory {
 	private $woocommerce_wpml;
 	private $args;
 
+	/** @var string $current_currency_for_preview */
+	private $current_currency_for_preview;
+
 	/**
 	 * WCML_Custom_Currency_Options constructor.
 	 *

@@ -1,0 +1,63 @@
+<?php
+
+// MANUALLY EDITED FILE
+
+// WP Super Cache
+function wp_cache_is_enabled() {}
+
+// W3TC
+function w3_require_once() {}
+class W3_AdminActions_FlushActionsAdmin {
+    public function flush_pgcache() {}
+}
+
+// LiteSpeed Cache
+class LiteSpeed_Cache_API {
+    public static function v() {}
+    public static function force_vary() {}
+    public static function vary() {}
+}
+
+// Relevanssi
+function relevanssi_insert_edit() {}
+
+// WooCommerce Stripe Gateway
+class WC_Stripe_Helper {
+    public static function get_stripe_amount() {}
+}
+
+// WooCommerce Bookings
+class WC_Product_Booking {
+    public function __construct( $id ) {}
+}
+class WC_Booking_Form {
+    public function __construct( $id ) {}
+}
+function wc_bookings_get_posted_data() {}
+function get_wc_booking() {}
+
+// WooCommerce Composite Products
+function is_composite_product() {}
+
+// WooCommerce Dynamic Pricing
+class WC_Dynamic_Pricing_Advanced_Taxonomy {}
+class WC_Dynamic_Pricing_Simple_Taxonomy {}
+
+// WooCommerce Tab Manager
+function wc_tab_manager_duplicate_product() {}
+
+// WooCommerce Subscriptions
+class WC_Subscription {}
+class WC_Product_Variable_Subscription {}
+class WC_Product_Subscription_Variation {}
+class WCS_Email_Customer_Renewal_Invoice {}
+function wcs_cart_contains_resubscribe() {}
+function wcs_cart_contains_early_renewal() {}
+
+// WooCommerce Product Bundles
+class WC_Product_Bundle {
+    public function __construct( $id ) {}
+}
+class WC_Bundled_Item_Data {
+    public function __construct( $id ) {}
+}
