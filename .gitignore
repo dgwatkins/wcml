@@ -80,3 +80,9 @@ yarn.lock
 !.githooks/*.sh
 !Makefile
 !package-lock.json
+
+# Ignore composer-bin vendor directories
+vendor-bin/**/vendor
+!vendor-bin/**/composer.lock
+# Do not ignore bash scripts in tests/phpstan
+!tests/phpstan/*.sh
