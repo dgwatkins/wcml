@@ -50,6 +50,7 @@
     },
     "require-dev": {
         "antecedent/patchwork": "^2.0",
+        "bamarni/composer-bin-plugin": "^1.4",
         "composer/composer": "~1.9",
         "imangazaliev/didom": "^1.14",
         "otgs/build-tools": "~0.1",
@@ -70,8 +71,12 @@
             "make githooks"
         ],
         "post-install-cmd": [
-            "@make"
-        ]
+            "@make",
+            "@composer bin all install --ansi"
+        ],
+        "bin": "echo 'bin not installed'",
+        "post-update-cmd": ["@composer bin all update --ansi"]
+
     },
     "autoload": {
         "classmap": [

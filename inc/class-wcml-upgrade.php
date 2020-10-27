@@ -277,7 +277,7 @@ class WCML_Upgrade {
 
 		$currencies = $wpdb->get_results( 'SELECT * FROM ' . $wpdb->prefix . 'icl_currencies ORDER BY `id` ASC', OBJECT );
 		if ( $currencies ) {
-			foreach ( $this->currencies as $currency ) {
+			foreach ( $currencies as $currency ) {
 				$woocommerce_wpml->settings['currency_options'][ $currency->code ]['rate']      = $currency->value;
 				$woocommerce_wpml->settings['currency_options'][ $currency->code ]['updated']   = $currency->changed;
 				$woocommerce_wpml->settings['currency_options'][ $currency->code ]['position']  = 'left';

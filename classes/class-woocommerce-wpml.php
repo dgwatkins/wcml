@@ -73,8 +73,12 @@ class woocommerce_wpml {
 	// NOTE: reverted back to public after wcml-1218.
 	/** @var  WCML_Compatibility */
 	public $compatibility;
-	/** @var  WCML_xDomain_Data */
-	private $xdomain_data;
+	/** @var WCML_Currency_Switcher_Properties|null $cs_properties */
+	public $cs_properties;
+	/** @var WCML_WC_Admin_Duplicate_Product|null $duplicate_product */
+	public $duplicate_product;
+	/** @var WCML_Page_Builders|null $page_builders */
+	public $page_builders;
 
 	/**
 	 * @var WCML_Products_Screen_Options

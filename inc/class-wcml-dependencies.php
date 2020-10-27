@@ -16,6 +16,9 @@ class WCML_Dependencies {
 	 */
 	private $tracking_link;
 
+	/** @var array $xml_config_errors */
+	public $xml_config_errors = [];
+
 	public function __construct() {
 
 		if ( is_admin() ) {

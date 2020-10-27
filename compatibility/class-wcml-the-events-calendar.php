@@ -10,6 +10,9 @@ class WCML_The_Events_Calendar {
 	/** @var WPML_Element_Translation_Package */
 	private $tp;
 
+	/** @var int|null $ticket_post_id_backup */
+	private $ticket_post_id_backup;
+
 	/**
 	 * WCML_The_Events_Calendar constructor.
 	 *

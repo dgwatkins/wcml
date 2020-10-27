@@ -9,6 +9,9 @@ class WCML_WC_Subscriptions {
 	/** @var wpdb */
 	private $wpdb;
 
+	/** @var WC_Cart[]|null $recurring_carts */
+	private $recurring_carts;
+
 	public function __construct( woocommerce_wpml $woocommerce_wpml, wpdb $wpdb ) {
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->wpdb             = $wpdb;

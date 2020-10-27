@@ -11,7 +11,7 @@ class Prices extends Handler {
 	/** @var array */
 	private $currenciesOrderSettings;
 	/** @var WPML_Post_Translation */
-	private $wpml_post_translations;
+	private $wpmlPostTranslations;
 
 	public function __construct(
 		\WCML_Multi_Currency $wcmlMultiCurrency,

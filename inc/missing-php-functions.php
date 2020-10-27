@@ -16,6 +16,7 @@ function wcml_check_wpml_functions() {
 	}
 
 	if ( ! function_exists( 'wpml_is_rest_request' ) && defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSION, '4.2.0', '<' ) ) {
+		// @phpstan-ignore-next-line
 		function wpml_is_rest_request() {
 			return array_key_exists( 'rest_route', $_REQUEST ) || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-json' );
 		}

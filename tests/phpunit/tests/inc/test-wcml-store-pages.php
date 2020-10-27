@@ -132,12 +132,13 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @group pierre
 	 */
 	public function filter_shop_archive_link(){
-
-		$link = rand_str();
+		$link          = rand_str();
 		$expected_link = rand_str();
-		$post_type = 'product';
+		$post_type     = 'product';
+		$shop_page_id  = 456;
 
 		$sitepress = $this->getMockBuilder('SitePress')
 		                  ->disableOriginalConstructor()
@@ -146,12 +147,15 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 		$sitepress->method( 'get_current_language' )->willReturn( rand_str( 5 ) );
 		$sitepress->method( 'get_default_language' )->willReturn( rand_str( 6 ) );
 
-		\WP_Mock::wpFunction( 'home_url', array( 'return' => $expected_link ) );
+		\WP_Mock::userFunction( 'home_url', array( 'return' => $expected_link ) );
+		\WP_Mock::userFunction( 'is_admin' )->andReturn( false );
+		\WP_Mock::userFunction( 'get_option' )->with( 'page_on_front' )->andReturn( $shop_page_id );
+		\WP_Mock::userFunction( 'wc_get_page_id' )->with( 'shop' )->andReturn( $shop_page_id );
+		\WP_Mock::userFunction( 'get_post' )->with( $shop_page_id )
+		                                    ->andReturn( \Mockery::mock( '\WP_Post' ) );
 
 		$subject = $this->get_subject( null, $sitepress );
-		$shop_page_id = mt_rand( 1, 10 );
-		$subject->front_page_id = $shop_page_id;
-		$subject->shop_page_id = $shop_page_id;
+		$subject->init(); // Initialize the state with "page on front" and "shop"
 
 		$this->assertSame( $expected_link, $subject->filter_shop_archive_link( $link, $post_type ) );
 	}

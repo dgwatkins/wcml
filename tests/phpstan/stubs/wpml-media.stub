@@ -1,0 +1,2222 @@
+<?php
+
+class WPML_Media_Attachment_By_URL
+{
+    /**
+     * @var wpdb
+     */
+    private $wpdb;
+    /**
+     * @var string
+     */
+    private $url;
+    /**
+     * @var string
+     */
+    private $language;
+    const SIZE_SUFFIX_REGEXP = '/-([0-9]+)x([0-9]+)\\.([a-z]{3,4})$/';
+    const CACHE_KEY_PREFIX = 'attachment-id-from-guid-';
+    const CACHE_GROUP = 'wpml-media-setup';
+    const CACHE_EXPIRATION = 1800;
+    public $cache_hit_flag = \null;
+    /**
+     * WPML_Media_Attachment_By_URL constructor.
+     *
+     * @param wpdb $wpdb
+     * @param string $url
+     * @param string $language
+     */
+    public function __construct(\wpdb $wpdb, $url, $language)
+    {
+    }
+    public function get_id()
+    {
+    }
+    private function get_id_from_guid()
+    {
+    }
+    private function get_id_from_meta()
+    {
+    }
+    private function get_attachment_image_from_meta_fallback($relative_path)
+    {
+    }
+    private function validate_image_size($path, $attachment_meta_data)
+    {
+    }
+}
+/**
+ * Class WPML_Media_Editor_Notices_Factory
+ */
+class WPML_Media_Editor_Notices_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+/**
+ * Class WPML_Media_Screen_Options_Factory
+ */
+class WPML_Media_Screen_Options_Factory implements \IWPML_Backend_Action_Loader
+{
+    /**
+     * @return IWPML_Action|WPML_Media_Screen_Options
+     */
+    public function create()
+    {
+    }
+    /**
+     * @return bool
+     */
+    private function is_translation_dashboard()
+    {
+    }
+}
+class WPML_Media_Screen_Options implements \IWPML_Action
+{
+    /**
+     * @var array
+     */
+    private $options = array();
+    /**
+     * WPML_Media_Screen_Options constructor.
+     *
+     * @param array $options
+     */
+    public function __construct($options)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    public function add_options()
+    {
+    }
+    public function set_screen_option($status, $option_name, $value)
+    {
+    }
+    private function is_valid_option($option_name)
+    {
+    }
+}
+/**
+ * Class WPML_Media_Menus_Factory
+ */
+class WPML_Media_Menus_Factory
+{
+    public function create()
+    {
+    }
+}
+class WPML_Media_Help_Tab_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+/**
+ * Class WPML_Media_Translations_UI
+ */
+class WPML_Media_Translations_UI extends \WPML_Templates_Factory
+{
+    const PREVIEW_MAX_WIDTH = 800;
+    const PREVIEW_MAX_HEIGHT = 600;
+    /**
+     * @var SitePress
+     */
+    private $sitepress;
+    /**
+     * @var wpdb
+     */
+    private $wpdb;
+    /**
+     * @var WP_Locale
+     */
+    private $wp_locale;
+    /**
+     * @var WPML_Query_Filter
+     */
+    private $wpml_query_filter;
+    /**
+     * @var WPML_Admin_Pagination
+     */
+    private $pagination;
+    /**
+     * @var array
+     */
+    private $query_args = array();
+    /**
+     * WPML_Media_Translations_UI constructor.
+     *
+     * @param SitePress $sitepress
+     * @param wpdb $wpdb
+     * @param WP_Locale $wp_locale
+     * @param WPML_Query_Filter $wpml_query_filter
+     * @param WPML_Admin_Pagination $pagination
+     */
+    public function __construct(\SitePress $sitepress, \wpdb $wpdb, \WP_Locale $wp_locale, \WPML_Query_Filter $wpml_query_filter, \WPML_Admin_Pagination $pagination)
+    {
+    }
+    /**
+     * @return array
+     */
+    public function get_model()
+    {
+    }
+    public static function get_translation_status_labels()
+    {
+    }
+    private function set_query_args()
+    {
+    }
+    /**
+     * @return array
+     */
+    private function get_months()
+    {
+    }
+    /**
+     * @return array
+     */
+    private function get_languages()
+    {
+    }
+    private function get_items_per_page()
+    {
+    }
+    /**
+     * @param array $languages
+     *
+     * @return array
+     */
+    private function get_attachments($languages)
+    {
+    }
+    /**
+     * @param int $attachment_id
+     *
+     * @return array
+     */
+    private function get_attachment_url($attachment_id)
+    {
+    }
+    /**
+     * @param int  $attachment_id
+     * @param bool $is_image
+     *
+     * @return array
+     */
+    private function get_attachment_thumb($attachment_id, $is_image = \true)
+    {
+    }
+    public function set_total_items_in_pagination($query)
+    {
+    }
+    private function get_pagination()
+    {
+    }
+    private function get_batch_translation()
+    {
+    }
+    private function add_query_filters()
+    {
+    }
+    private function remove_query_filters()
+    {
+    }
+    public function filter_request_clause_join($join)
+    {
+    }
+    public function filter_request_clause_where($where)
+    {
+    }
+    private function should_filter_by_status()
+    {
+    }
+    private function should_filter_by_target_language()
+    {
+    }
+    protected function init_template_base_dir()
+    {
+    }
+    /**
+     * @return string
+     */
+    public function get_template()
+    {
+    }
+    /**
+     * @param $attachment_id
+     * @param $translation
+     *
+     * @return mixed|string
+     */
+    private function get_translation_status($attachment_id, $translation)
+    {
+    }
+}
+/**
+ * Class WPML_Media_Editor_Notices
+ */
+class WPML_Media_Editor_Notices implements \IWPML_Action
+{
+    const TEXT_EDIT_NOTICE_DISMISSED = '_wpml_media_editor_text_edit_notice_dismissed';
+    public function add_hooks()
+    {
+    }
+    public function dismiss_texts_change_notice()
+    {
+    }
+}
+class WPML_Media_Posts_Media_Flag_Notice_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+class WPML_Media_Menus
+{
+    /**
+     * @var IWPML_Template_Service
+     */
+    private $template_service;
+    /**
+     * @var SitePress
+     */
+    private $sitepress;
+    /**
+     * @var wpdb
+     */
+    private $wpdb;
+    /**
+     * @var WPML_Admin_Pagination
+     */
+    private $pagination;
+    /**
+     * WPML_Media_Menus constructor.
+     *
+     * @param WPML_Twig_Template_Loader $template_service
+     * @param SitePress $sitepress
+     * @param wpdb $wpdb
+     */
+    public function __construct(\WPML_Twig_Template_Loader $template_service, \SitePress $sitepress, \wpdb $wpdb, \WPML_Admin_Pagination $pagination = \null)
+    {
+    }
+    public function display()
+    {
+    }
+}
+class WPML_Media_Posts_Media_Flag_Notice implements \IWPML_Action
+{
+    const PREPARE_ACTION = 'wpml-media-has-media-flag-prepare';
+    const PROCESS_ACTION = 'wpml-media-has-media-flag';
+    const NOTICE_ID = 'wpml-media-posts-media-flag';
+    const NOTICE_GROUP = 'wpml-media';
+    /**
+     * @var SitePress
+     */
+    private $sitepress;
+    /**
+     * WPML_Media_Has_Media_Notice constructor.
+     *
+     * @param SitePress $sitepress
+     */
+    public function __construct(\SitePress $sitepress)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    public function override_default_menu($menu_elements)
+    {
+    }
+    public function enqueue_js()
+    {
+    }
+    private function is_wpml_media_screen()
+    {
+    }
+    public function add_top_notice()
+    {
+    }
+    public function render_menu()
+    {
+    }
+}
+class WPML_Media_Help_Tab implements \IWPML_Action
+{
+    public function add_hooks()
+    {
+    }
+    public function add()
+    {
+    }
+    private function is_media_related_screen($current_screen)
+    {
+    }
+}
+/**
+ * Class WPML_Media_String_Batch_Url_Translation
+ */
+class WPML_Media_String_Batch_Url_Translation_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+/**
+ * Class WPML_Media_Batch_Url_Translation
+ */
+abstract class WPML_Media_Batch_Url_Translation
+{
+    const BATCH_SIZE = 10;
+    const BATCH_SIZE_FACTOR_ALL_MEDIA = 1;
+    const BATCH_SIZE_FACTOR_SPECIFIC_MEDIA = 10;
+    /**
+     * @var wpdb
+     */
+    protected $wpdb;
+    /**
+     * WPML_Media_Batch_Url_Translation constructor.
+     *
+     * @param wpdb $wpdb
+     */
+    public function __construct(\wpdb $wpdb)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    public function run_batch()
+    {
+    }
+    /**
+     * @param int $number_of_elements_left
+     *
+     * @return string
+     */
+    protected abstract function get_response_message($number_of_elements_left);
+    /**
+     * @param int $offset
+     *
+     * @return int
+     */
+    protected abstract function process_batch($offset);
+    /**
+     * @param int $offset
+     * @param int $attachment_id
+     *
+     * @return int
+     */
+    protected abstract function process_batch_for_selected_media($offset, $attachment_id);
+    /**
+     * @return array
+     */
+    protected abstract function get_ajax_error_message();
+    /**
+     * @param int $batch_size_factor
+     *
+     * @return int
+     */
+    protected function get_batch_size($batch_size_factor = self::BATCH_SIZE_FACTOR_ALL_MEDIA)
+    {
+    }
+    /**
+     * @return string
+     */
+    protected abstract function get_ajax_action();
+}
+/**
+ * Class WPML_Media_Custom_Field_Batch_Url_Translation
+ */
+class WPML_Media_Custom_Field_Batch_Url_Translation extends \WPML_Media_Batch_Url_Translation implements \IWPML_Action
+{
+    const AJAX_ACTION = 'wpml_media_translate_media_url_in_custom_fields';
+    /**
+     * @var WPML_Media_Custom_Field_Images_Translation
+     */
+    private $custom_field_translation;
+    /**
+     * @var array
+     */
+    private $translatable_custom_fields;
+    /**
+     * WPML_Media_Custom_Field_Batch_Url_Translation constructor.
+     *
+     * @param WPML_Media_Custom_Field_Images_Translation $custom_field_translation
+     * @param wpdb $wpdb
+     * @param array $translatable_custom_fields
+     */
+    public function __construct(\WPML_Media_Custom_Field_Images_Translation $custom_field_translation, \wpdb $wpdb, array $translatable_custom_fields)
+    {
+    }
+    /**
+     * @return string
+     */
+    protected function get_ajax_action()
+    {
+    }
+    public static function is_ajax_request()
+    {
+    }
+    /**
+     * @param int $number_of_custom_fields_left
+     *
+     * @return string
+     */
+    protected function get_response_message($number_of_custom_fields_left)
+    {
+    }
+    protected function get_ajax_error_message()
+    {
+    }
+    protected function process_batch($offset)
+    {
+    }
+    protected function process_batch_for_selected_media($offset, $attachment_id)
+    {
+    }
+}
+/**
+ * Class WPML_Media_Custom_Field_Batch_Url_Translation_Factory
+ */
+class WPML_Media_Custom_Field_Batch_Url_Translation_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+/**
+ * Class WPML_Media_Post_Batch_Url_Translation
+ */
+class WPML_Media_Post_Batch_Url_Translation extends \WPML_Media_Batch_Url_Translation implements \IWPML_Action
+{
+    const AJAX_ACTION = 'wpml_media_translate_media_url_in_posts';
+    /**
+     * @var WPML_Media_Post_Images_Translation
+     */
+    private $post_image_translation;
+    /**
+     * WPML_Media_Post_Batch_Url_Translation constructor.
+     *
+     * @param WPML_Media_Post_Images_Translation $post_image_translation
+     * @param wpdb $wpdb
+     */
+    public function __construct(\WPML_Media_Post_Images_Translation $post_image_translation, \wpdb $wpdb)
+    {
+    }
+    /**
+     * @return string
+     */
+    protected function get_ajax_action()
+    {
+    }
+    public static function is_ajax_request()
+    {
+    }
+    /**
+     * @param int $number_of_posts_left
+     *
+     * @return string
+     */
+    protected function get_response_message($number_of_posts_left)
+    {
+    }
+    protected function get_ajax_error_message()
+    {
+    }
+    /**
+     * @param int $offset
+     *
+     * @return int
+     */
+    protected function process_batch($offset)
+    {
+    }
+    protected function process_batch_for_selected_media($offset, $attachment_id)
+    {
+    }
+}
+/**
+ * Class WPML_Media_String_Batch_Url_Translation
+ */
+class WPML_Media_String_Batch_Url_Translation extends \WPML_Media_Batch_Url_Translation implements \IWPML_Action
+{
+    const BATCH_SIZE = 500;
+    const AJAX_ACTION = 'wpml_media_translate_media_url_in_strings';
+    /**
+     * @var WPML_ST_String_Factory
+     */
+    private $string_factory;
+    /**
+     * WPML_Media_String_Batch_Url_Translation constructor.
+     *
+     * @param wpdb $wpdb
+     * @param WPML_ST_String_Factory $string_factory
+     */
+    public function __construct(\wpdb $wpdb, \WPML_ST_String_Factory $string_factory)
+    {
+    }
+    /**
+     * @param int $batch_size_factor
+     *
+     * @return int
+     */
+    protected function get_batch_size($batch_size_factor = self::BATCH_SIZE_FACTOR_ALL_MEDIA)
+    {
+    }
+    /**
+     * @return string
+     */
+    protected function get_ajax_action()
+    {
+    }
+    public static function is_ajax_request()
+    {
+    }
+    /**
+     * @param int $number_of_strings_left
+     *
+     * @return string
+     */
+    protected function get_response_message($number_of_strings_left)
+    {
+    }
+    protected function get_ajax_error_message()
+    {
+    }
+    /**
+     * @param int $offset
+     *
+     * @return int
+     */
+    protected function process_batch($offset)
+    {
+    }
+    protected function process_batch_for_selected_media($offset, $attachment_id)
+    {
+    }
+}
+/**
+ * Class WPML_Media_Post_Batch_Url_Translation_Factory
+ */
+class WPML_Media_Post_Batch_Url_Translation_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+class WPML_Media_Attachment_By_URL_Factory
+{
+    public function create($url, $language)
+    {
+    }
+}
+class WPML_Media_2_3_0_Migration
+{
+    const FLAG = 'wpml_media_2_3_migration';
+    const BATCH_SIZE = 200;
+    const MAX_BATCH_REQUEST_TIME = 5;
+    /**
+     * @var wpdb
+     */
+    private $wpdb;
+    /**
+     * @var SitePress
+     */
+    private $sitepress;
+    /**
+     * WPML_Media_2_3_0_Migration constructor.
+     *
+     * @param wpdb $wpdb
+     * @param SitePress $sitepress
+     */
+    public function __construct(\wpdb $wpdb, \SitePress $sitepress)
+    {
+    }
+    public static function migration_complete()
+    {
+    }
+    private function mark_migration_complete()
+    {
+    }
+    public function is_required()
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    public function override_default_menu($menu_elements)
+    {
+    }
+    public function maybe_show_admin_notice()
+    {
+    }
+    private function is_wpml_media_screen()
+    {
+    }
+    public function enqueue_js()
+    {
+    }
+    public function render_menu()
+    {
+    }
+    private function reset_new_content_settings()
+    {
+    }
+    public function run_upgrade()
+    {
+    }
+    private function migrate_attachments($offset = 0, $batch_size = self::BATCH_SIZE)
+    {
+    }
+    private function get_dynamic_batch_size($request)
+    {
+    }
+}
+/**
+ * Class WPML_Media_Custom_Field_Images_Translation_Factory
+ */
+class WPML_Media_Custom_Field_Images_Translation_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+class WPML_Media_Post_With_Media_Files_Factory
+{
+    /**
+     * @param $post_id
+     *
+     * @return WPML_Media_Post_With_Media_Files
+     */
+    public function create($post_id)
+    {
+    }
+}
+/**
+ * @author OnTheGo Systems
+ */
+class WPML_Media_Sizes
+{
+    /**
+     * @param array $img
+     *
+     * @return null|string
+     */
+    public function get_size_from_class(array $img)
+    {
+    }
+    /**
+     * @param array $img
+     *
+     * @return null|string
+     */
+    public function get_size_from_attributes(array $img)
+    {
+    }
+    /**
+     * @param array $img
+     *
+     * @return null|string
+     */
+    public function get_attachment_size(array $img)
+    {
+    }
+    /**
+     * @param string $width
+     * @param string $height
+     *
+     * @return null|string
+     */
+    private function get_image_size_name($width, $height)
+    {
+    }
+    /**
+     * @param array $img
+     *
+     * @return null|string
+     */
+    private function get_size_from_url(array $img)
+    {
+    }
+    /**
+     * @param $url
+     * @param $attachment_id
+     *
+     * @return null|string
+     */
+    public function get_image_size_from_url($url, $attachment_id)
+    {
+    }
+}
+/**
+ * Class WPML_Media_Post_Images_Translation_Factory
+ */
+class WPML_Media_Post_Images_Translation_Factory implements \IWPML_REST_Action_Loader, \IWPML_Backend_Action_Loader
+{
+    /**
+     * @return IWPML_Action|null|WPML_Media_Post_Images_Translation
+     */
+    public function create()
+    {
+    }
+}
+/**
+ * Class WPML_Media_Post_Images_Translation
+ * Translate images in posts translations when a post is created or updated
+ */
+class WPML_Media_Post_Images_Translation implements \IWPML_Action
+{
+    /**
+     * @var WPML_Media_Translated_Images_Update
+     */
+    private $images_updater;
+    /**
+     * @var SitePress
+     */
+    private $sitepress;
+    /**
+     * @var wpdb
+     */
+    private $wpdb;
+    /**
+     * @var WPML_Translation_Element_Factory
+     */
+    private $translation_element_factory;
+    /**
+     * @var WPML_Media_Custom_Field_Images_Translation_Factory
+     */
+    private $custom_field_images_translation_factory;
+    /**
+     * @var WPML_Media_Usage_Factory
+     */
+    private $media_usage_factory;
+    private $captions_map = array();
+    private $translate_locks = array();
+    public function __construct(\WPML_Media_Translated_Images_Update $images_updater, \SitePress $sitepress, \wpdb $wpdb, \WPML_Translation_Element_Factory $translation_element_factory, \WPML_Media_Custom_Field_Images_Translation_Factory $custom_field_images_translation_factory, \WPML_Media_Usage_Factory $media_usage_factory)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    /**
+     * @param int $post_id
+     */
+    public function translate_images($post_id)
+    {
+    }
+    /**
+     * @param int $master_post_id
+     * @param string $language
+     * @param array $post_array
+     * @param int $post_id
+     */
+    public function translate_images_in_duplicate($master_post_id, $language, $post_array, $post_id)
+    {
+    }
+    /**
+     * @param WP_Post $post
+     * @param WPML_Post_Element $post_element
+     */
+    private function translate_images_in_post_content(\WP_Post $post, \WPML_Post_Element $post_element)
+    {
+    }
+    private function is_updated_from_media_translation_menu()
+    {
+    }
+    /**
+     * @param int $post_id
+     */
+    private function translate_images_in_custom_fields($post_id)
+    {
+    }
+    /**
+     * @param array $postarr
+     * @param stdClass $job
+     *
+     * @return array
+     */
+    public function translate_images_in_content(array $postarr, \stdclass $job)
+    {
+    }
+    public function translate_url_in_post($attachment_id, $posts = array())
+    {
+    }
+    public function replace_placeholders_and_id_in_caption_shortcode(array $postarr, \stdClass $job)
+    {
+    }
+    public function replace_caption_placeholders_in_string($text, $media, $language)
+    {
+    }
+    /**
+     * @param int      $new_post_id
+     * @param array    $fields
+     * @param stdClass $job
+     */
+    public function replace_caption_placeholders_in_fields(array $fields, \stdClass $job)
+    {
+    }
+    private function replace_placeholder_with_caption($caption_shortcode, \WPML_Media_Caption $caption, $new_caption)
+    {
+    }
+    private function replace_placeholder_with_alt_text($caption_shortcode, \WPML_Media_Caption $caption, $new_alt_text)
+    {
+    }
+    private function replace_caption_id_with_translated_id($caption_shortcode, $attachment_id, $language)
+    {
+    }
+    private function find_media_in_job(\stdClass $job)
+    {
+    }
+    public function restore_placeholders_in_translated_job_body($new_body)
+    {
+    }
+}
+/**
+ * Class WPML_Media_Save_Translation_Factory
+ */
+class WPML_Media_Save_Translation_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+/**
+ * Class WPML_Media_Image_Translate
+ * Allows getting translated images in a give language from an attachment
+ */
+class WPML_Media_Image_Translate
+{
+    /**
+     * @var SitePress
+     */
+    private $sitepress;
+    /**
+     * @var WPML_Media_Attachment_By_URL_Factory
+     */
+    private $attachment_by_url_factory;
+    /**
+     * WPML_Media_Image_Translate constructor.
+     *
+     * @param SitePress                            $sitepress
+     * @param WPML_Media_Attachment_By_URL_Factory $attachment_by_url_factory
+     */
+    public function __construct(\SitePress $sitepress, \WPML_Media_Attachment_By_URL_Factory $attachment_by_url_factory)
+    {
+    }
+    /**
+     * @param int $attachment_id
+     * @param string $language
+     * @param string $size
+     *
+     * @return string
+     */
+    public function get_translated_image($attachment_id, $language, $size = \null)
+    {
+    }
+    /**
+     * @param string $img_src
+     * @param string $source_language
+     * @param string $target_language
+     *
+     * @return string|bool
+     */
+    public function get_translated_image_by_url($img_src, $source_language, $target_language)
+    {
+    }
+    /**
+     * @param string $img_src
+     * @param string $source_language
+     *
+     * @return int
+     */
+    public function get_attachment_id_by_url($img_src, $source_language)
+    {
+    }
+    /**
+     * @param string $url
+     * @param int $attachment_id
+     *
+     * @return string
+     */
+    private function get_image_size_from_url($url, $attachment_id)
+    {
+    }
+    /**
+     * @param $attachment_id
+     * @param $size
+     * @param $uploads_dir
+     *
+     * @return string
+     */
+    private function get_sized_image_url($attachment_id, $size, $uploads_dir)
+    {
+    }
+}
+class WPML_Media_Post_With_Media_Files
+{
+    /**
+     * @var int
+     */
+    private $post_id;
+    /**
+     * @var WPML_Media_Img_Parse
+     */
+    private $media_parser;
+    /**
+     * @var WPML_Media_Attachment_By_URL_Factory
+     */
+    private $attachment_by_url_factory;
+    /**
+     * @var SitePress $sitepress
+     */
+    private $sitepress;
+    /**
+     * @var WPML_Custom_Field_Setting_Factory
+     */
+    private $cf_settings_factory;
+    /**
+     * WPML_Media_Post_With_Media_Files constructor.
+     *
+     * @param $post_id
+     * @param WPML_Media_Img_Parse $media_parser
+     * @param WPML_Media_Attachment_By_URL_Factory $attachment_by_url_factory
+     * @param SitePress $sitepress
+     * @param WPML_Custom_Field_Setting_Factory $cf_settings_factory
+     */
+    public function __construct($post_id, \WPML_Media_Img_Parse $media_parser, \WPML_Media_Attachment_By_URL_Factory $attachment_by_url_factory, \SitePress $sitepress, \WPML_Custom_Field_Setting_Factory $cf_settings_factory)
+    {
+    }
+    public function get_media_ids()
+    {
+    }
+    /**
+     * @param array $media_array
+     *
+     * @return array
+     */
+    private function _get_ids_from_media_array($media_array)
+    {
+    }
+    /**
+     * @param string $post_content
+     *
+     * @return array
+     */
+    private function get_gallery_media_ids($post_content)
+    {
+    }
+    /**
+     * @param $languages
+     *
+     * @return array
+     */
+    public function get_untranslated_media($languages)
+    {
+    }
+    private function media_file_is_translated($attachment_id, $translated_attachment_id)
+    {
+    }
+    private function get_content_in_translatable_custom_fields()
+    {
+    }
+    private function get_attached_media_ids($post_id)
+    {
+    }
+}
+/**
+ * Class WPML_Media_Custom_Field_Images_Translation
+ * Translate images in posts custom fields translations when a custom field is created or updated
+ */
+class WPML_Media_Custom_Field_Images_Translation implements \IWPML_Action
+{
+    /**
+     * @var WPML_Media_Custom_Field_Images_Translation
+     */
+    private $images_updater;
+    /**
+     * @var SitePress
+     */
+    private $sitepress;
+    /**
+     * @var TranslationManagement
+     */
+    private $iclTranslationManagement;
+    /**
+     * WPML_Media_Custom_Field_Images_Translation constructor.
+     *
+     * @param WPML_Media_Translated_Images_Update $images_updater
+     * @param SitePress $sitepress
+     * @param TranslationManagement $iclTranslationManagement
+     */
+    public function __construct(\WPML_Media_Translated_Images_Update $images_updater, \SitePress $sitepress, \TranslationManagement $iclTranslationManagement)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    /**
+     * @param int $meta_id
+     * @param int $object_id
+     * @param string $meta_key
+     * @param string $meta_value
+     */
+    public function translate_images($meta_id, $object_id, $meta_key, $meta_value)
+    {
+    }
+    /**
+     * @param string $meta_value
+     * @param string $meta_key
+     * @param string $target_language
+     * @param string $source_language
+     * @param int    $post_id
+     *
+     * @return string
+     */
+    private function filter_meta_value_and_update($meta_value, $meta_key, $target_language, $source_language, $post_id)
+    {
+    }
+}
+class WPML_Media_Set_Posts_Media_Flag implements \IWPML_Action
+{
+    const HAS_MEDIA_POST_FLAG = '_wpml_media_has_media';
+    const BATCH_SIZE = 100;
+    /**
+     * @var wpdb $wpdb
+     */
+    private $wpdb;
+    /**
+     * @var WPML_Notices
+     */
+    private $wpml_notices;
+    /**
+     * @var WPML_Media_Post_Media_Usage
+     */
+    private $post_media_usage;
+    /**
+     * @var WPML_Media_Post_With_Media_Files_Factory
+     */
+    private $post_with_media_files_factory;
+    public function __construct(\wpdb $wpdb, \WPML_Notices $wpml_notices, \WPML_Media_Post_Media_Usage $post_media_usage, \WPML_Media_Post_With_Media_Files_Factory $post_with_media_files_factory)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    public function clear_flags()
+    {
+    }
+    public function process_batch()
+    {
+    }
+    private function verify_nonce($action)
+    {
+    }
+    /**
+     * @param array $posts
+     */
+    private function flag_posts($posts)
+    {
+    }
+    public function update_post_flag($post_id)
+    {
+    }
+    /**
+     * @param array $posts
+     */
+    private function record_media_usage($posts)
+    {
+    }
+    private function mark_complete()
+    {
+    }
+    private function mark_started()
+    {
+    }
+}
+/**
+ * Class WPML_Media_Translated_Images_Update
+ * Translates images in a given text
+ */
+class WPML_Media_Translated_Images_Update
+{
+    /**
+     * @var WPML_Media_Img_Parse
+     */
+    private $img_parser;
+    /**
+     * @var WPML_Media_Image_Translate
+     */
+    private $image_translator;
+    /**
+     * @var WPML_Media_Sizes
+     */
+    private $media_sizes;
+    /**
+     * WPML_Media_Translated_Images_Update constructor.
+     *
+     * @param WPML_Media_Img_Parse       $img_parser
+     * @param WPML_Media_Image_Translate $image_translator
+     * @param WPML_Media_Sizes           $media_sizes
+     */
+    public function __construct(\WPML_Media_Img_Parse $img_parser, \WPML_Media_Image_Translate $image_translator, \WPML_Media_Sizes $media_sizes)
+    {
+    }
+    /**
+     * @param string $text
+     * @param string $source_language
+     * @param string $target_language
+     *
+     * @return string
+     */
+    public function replace_images_with_translations($text, $target_language, $source_language = \null)
+    {
+    }
+    /**
+     * @param string $text
+     * @param string $from
+     * @param string $to
+     *
+     * @return string
+     */
+    private function replace_image_src($text, $from, $to)
+    {
+    }
+    /**
+     * @param string $text
+     * @param string $from
+     * @param string $to
+     *
+     * @return string
+     */
+    private function replace_att_class($text, $from, $to)
+    {
+    }
+    /**
+     * @param $target_language
+     * @param $source_language
+     * @param $img
+     *
+     * @return bool|string
+     */
+    private function get_translated_image_by_url($target_language, $source_language, $img)
+    {
+    }
+}
+class WPML_Media_Save_Translation implements \IWPML_Action
+{
+    /**
+     * @var SitePress
+     */
+    private $sitepress;
+    /**
+     * @var wpdb
+     */
+    private $wpdb;
+    /**
+     * @var WPML_Media_File_Factory
+     */
+    private $media_file_factory;
+    /**
+     * @var array
+     */
+    private $post_data;
+    /**
+     * @var WPML_Translation_Element_Factory
+     */
+    private $translation_element_factory;
+    /**
+     * WPML_Media_Save_Translation constructor.
+     *
+     * @param SitePress $sitepress
+     * @param wpdb $wpdb
+     * @param WPML_Media_File_Factory $media_file_factory
+     * @param WPML_Translation_Element_Factory $translation_element_factory
+     */
+    public function __construct(\SitePress $sitepress, \wpdb $wpdb, \WPML_Media_File_Factory $media_file_factory, \WPML_Translation_Element_Factory $translation_element_factory)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    public function save_media_translation()
+    {
+    }
+    private function has_media_upload()
+    {
+    }
+    private function should_restore_media()
+    {
+    }
+    /**
+     * @param int $original_attachment_id
+     * @param array $post_array
+     *
+     * @return int
+     */
+    private function create_attachment_translation($original_attachment_id, $post_array)
+    {
+    }
+    private function set_post_trid_value($value)
+    {
+    }
+    public function get_post_trid_value()
+    {
+    }
+    private function set_post_lang_value($value)
+    {
+    }
+    public function get_post_lang_value()
+    {
+    }
+    private function restore_media_file($attachment_id, $original_attachment_id, $language)
+    {
+    }
+    private function copy_attached_file_info_from_original($attachment_id, $original_attachment_id)
+    {
+    }
+    private function mark_media_as_not_translated($attachment_id, $language)
+    {
+    }
+    private function mark_media_as_translated($attachment_id, $language)
+    {
+    }
+    /**
+     * @param array $file
+     *
+     * @return array
+     */
+    private function get_attachment_post_data($file)
+    {
+    }
+    private function update_media_file($attachment_id, $original_attachment_id, $translated_language_code)
+    {
+    }
+}
+/**
+ * Class WPML_Media_Img_Parse
+ */
+class WPML_Media_Img_Parse
+{
+    /**
+     * @param string $text
+     *
+     * @return array
+     */
+    public function get_imgs($text)
+    {
+    }
+    /**
+     * @param string $text
+     *
+     * @return array
+     */
+    private function get_from_img_tags($text)
+    {
+    }
+    /**
+     * @param string $text
+     *
+     * @return array
+     */
+    private function get_from_css_background_images($text)
+    {
+    }
+    /**
+     * @param array $blocks
+     *
+     * @return array
+     */
+    private function get_from_css_background_images_in_blocks($blocks)
+    {
+    }
+    /**
+     * `parse_blocks` does not specify which kind of collection it should return
+     * (not always an array of `WP_Block_Parser_Block`) and the block parser can be filtered,
+     *  so we'll cast it to a standard object for now.
+     *
+     * @param mixed $block
+     *
+     * @return stdClass|WP_Block_Parser_Block
+     */
+    private function sanitize_block($block)
+    {
+    }
+    function can_parse_blocks($string)
+    {
+    }
+    /**
+     * @param $attributes
+     *
+     * @return null|int
+     */
+    private function get_attachment_id_from_attributes($attributes)
+    {
+    }
+}
+class WPML_Media_Set_Posts_Media_Flag_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+class WPML_Media_Translation_Status implements \IWPML_Action
+{
+    const NOT_TRANSLATED = 'media-not-translated';
+    const IN_PROGRESS = 'in-progress';
+    const TRANSLATED = 'media-translated';
+    const NEEDS_MEDIA_TRANSLATION = 'needs-media-translation';
+    const STATUS_PREFIX = '_translation_status_';
+    /**
+     * @var SitePress
+     */
+    private $sitepress;
+    public function __construct(\SitePress $sitepress)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    public function set_translation_status_in_progress(\WPML_TM_Translation_Batch $batch)
+    {
+    }
+    private function set_status($attachment_id, $language, $status)
+    {
+    }
+    public function save_bundled_media_translation($new_post_id, $fields, $job)
+    {
+    }
+    private function should_translate_media_image($job, $attachment_id)
+    {
+    }
+    private function get_media_translations($job)
+    {
+    }
+    /**
+     * @param int $attachment_id
+     * @param array $translation_data
+     * @param WPML_Element_Translation_Package $translation_package
+     * @param string $language
+     * @return bool|int|WP_Error
+     */
+    private function save_attachment_translation($attachment_id, $translation_data, $translation_package, $language)
+    {
+    }
+    private function copy_attached_file_info_from_original($attachment_id, $original_attachment_id)
+    {
+    }
+}
+class WPML_Media_Add_To_Translation_Package_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+/**
+ * Class WPML_Media_String_Images_Translation_Factory
+ */
+class WPML_Media_String_Images_Translation_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+/**
+ * Class WPML_Media_Caption_Tags_Parse
+ */
+class WPML_Media_Caption_Tags_Parse
+{
+    /**
+     * @param string $text
+     *
+     * @return array
+     */
+    public function get_captions($text)
+    {
+    }
+}
+/**
+ * Class WPML_Media_String_Images_Translation
+ * Translate images in posts strings translations when a string translation is created or updated
+ */
+class WPML_Media_String_Images_Translation implements \IWPML_Action
+{
+    /**
+     * @var WPML_Media_String_Images_Translation
+     */
+    private $images_updater;
+    /**
+     * @var WPML_ST_String_Factory
+     */
+    private $string_factory;
+    /**
+     * WPML_Media_String_Images_Translation constructor.
+     *
+     * @param WPML_Media_Translated_Images_Update $images_updater
+     * @param WPML_ST_String_Factory $string_factory
+     */
+    public function __construct(\WPML_Media_Translated_Images_Update $images_updater, \WPML_ST_String_Factory $string_factory)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    /**
+     * @param array  $translation_data
+     * @param string $target_language
+     * @param int $string_id
+     *
+     * @return array
+     */
+    public function translate_images($translation_data, $target_language, $string_id)
+    {
+    }
+}
+/**
+ * Class WPML_Media_Caption
+ */
+class WPML_Media_Caption
+{
+    private $shortcode;
+    private $content_string;
+    private $attributes;
+    private $attachment_id;
+    private $link;
+    private $img;
+    private $caption;
+    public function __construct($caption_shortcode, $attributes_data, $content_string)
+    {
+    }
+    /**
+     * @return int
+     */
+    public function get_id()
+    {
+    }
+    public function get_caption()
+    {
+    }
+    public function get_shortcode_string()
+    {
+    }
+    public function get_content()
+    {
+    }
+    public function get_image_alt()
+    {
+    }
+    public function get_link()
+    {
+    }
+    /**
+     * @param string $attributes_list
+     *
+     * @return array
+     */
+    private function find_attributes_array($attributes_list)
+    {
+    }
+    /**
+     * @param array $attributes
+     *
+     * @return null|int
+     */
+    private function find_attachment_id($attributes)
+    {
+    }
+    /**
+     * @param $string
+     *
+     * @return array
+     */
+    private function find_link($string)
+    {
+    }
+}
+class WPML_Media_Populate_Media_Strings_Translations_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+class WPML_Media_Populate_Media_Strings_Translations implements \IWPML_Action
+{
+    /**
+     * @var WPML_Translation_Element_Factory
+     */
+    private $translation_element_factory;
+    /**
+     * @var WPML_Element_Translation_Package
+     */
+    private $translation_package;
+    public function __construct(\WPML_Translation_Element_Factory $translation_element_factory, \WPML_Element_Translation_Package $translation_package)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    public function populate($prev_translation, $package, $lang)
+    {
+    }
+    private function is_media_field($field)
+    {
+    }
+    /**
+     * @param string $field
+     * @param int    $original_id
+     * @param int    $translation_id
+     *
+     * @return string
+     */
+    private function get_post_field($field, $original_id, $translation_id)
+    {
+    }
+}
+/**
+ * Class WPML_Media_Attachment_Image_Update
+ * Allows adding a custom image to a translated attachment
+ */
+class WPML_Media_Attachment_Image_Update implements \IWPML_Action
+{
+    const TRANSIENT_FILE_UPLOAD_PREFIX = 'wpml_media_file_update_';
+    /**
+     * @var wpdb
+     */
+    private $wpdb;
+    /**
+     * WPML_Media_Attachment_Image_Update constructor.
+     *
+     * @param wpdb $wpdb
+     */
+    public function __construct(\wpdb $wpdb)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    public function handle_upload()
+    {
+    }
+    private function is_valid_action()
+    {
+    }
+}
+class WPML_Media_Translation_Status_Factory implements \IWPML_Backend_Action_Loader, \IWPML_REST_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+/**
+ * Class WPML_Media_Attachment_Image_Update_Factory
+ */
+class WPML_Media_Attachment_Image_Update_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+class WPML_Media_Add_To_Translation_Package implements \IWPML_Action
+{
+    const ALT_PLACEHOLDER = '{%ALT_TEXT%}';
+    const CAPTION_PLACEHOLDER = '{%CAPTION%}';
+    /** @var WPML_Media_Post_With_Media_Files_Factory $post_media_factory */
+    private $post_media_factory;
+    public function __construct(\WPML_Media_Post_With_Media_Files_Factory $post_media_factory)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    public function add_media_strings($package, $post)
+    {
+    }
+    private function get_bundled_media_to_translate($post)
+    {
+    }
+    private function add_placeholders_for_duplicate_fields($package, $bundled_media_data)
+    {
+    }
+    private function replace_caption_with_placeholder($caption_shortcode, \WPML_Media_Caption $caption)
+    {
+    }
+    private function replace_alt_text_with_placeholder($caption_shortcode, \WPML_Media_Caption $caption)
+    {
+    }
+}
+/**
+ * Class WPML_Media_File_Factory
+ */
+class WPML_Media_File_Factory
+{
+    /**
+     * @param $attachment_id
+     *
+     * @return WPML_Media_File
+     */
+    public function create($attachment_id)
+    {
+    }
+    private function get_wp_filesystem()
+    {
+    }
+}
+class WPML_Media_Set_Initial_Language_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+/**
+ * Class WPML_Media_Set_Initial_Language
+ */
+class WPML_Media_Set_Initial_Language implements \IWPML_Action
+{
+    /**
+     * @var wpdb
+     */
+    private $wpdb;
+    /**
+     * @var string
+     */
+    private $language;
+    /**
+     * WPML_Media_Set_Initial_Language constructor.
+     *
+     * @param wpdb $wpdb
+     * @param string $language
+     */
+    public function __construct(\wpdb $wpdb, $language)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    public function set()
+    {
+    }
+    public function update_db()
+    {
+    }
+}
+/**
+ * Class WPML_Media_Factory
+ */
+class WPML_Media_Factory implements \IWPML_Frontend_Action_Loader, \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+/**
+ * Class WPML_Media_Attachments_Query_Factory
+ */
+class WPML_Media_Attachments_Query_Factory implements \IWPML_Frontend_Action_Loader, \IWPML_Backend_Action_Loader
+{
+    /**
+     * @return IWPML_Action|WPML_Media_Attachments_Query
+     */
+    public function create()
+    {
+    }
+}
+/**
+ * @author OnTheGo Systems
+ */
+class WPML_Media_Privacy_Content extends \WPML_Privacy_Content
+{
+    /**
+     * @return string
+     */
+    protected function get_plugin_name()
+    {
+    }
+    /**
+     * @return string|array
+     */
+    protected function get_privacy_policy()
+    {
+    }
+}
+/**
+ * @author OnTheGo Systems
+ */
+class WPML_Media_Privacy_Content_Factory implements \IWPML_Backend_Action_Loader
+{
+    /**
+     * @return IWPML_Action
+     */
+    public function create()
+    {
+    }
+}
+class WPML_Media_Usage
+{
+    const FIELD_NAME = '_wpml_media_usage';
+    /**
+     * @var int
+     */
+    private $attachment_id;
+    /**
+     * @var array
+     */
+    private $usage;
+    /**
+     * @param int $attachment_id
+     */
+    public function __construct($attachment_id)
+    {
+    }
+    /**
+     * @return array
+     */
+    public function get_posts()
+    {
+    }
+    /**
+     * @param int $post_id
+     */
+    public function add_post($post_id)
+    {
+    }
+    /**
+     * @param int $post_id
+     */
+    public function remove_post($post_id)
+    {
+    }
+    private function update_usage()
+    {
+    }
+}
+class WPML_Media_Post_Media_Usage implements \IWPML_Action
+{
+    /** @see WPML_Post_Translation::save_post_actions() */
+    const PRIORITY_AFTER_CORE_SAVE_POST_ACTIONS = 200;
+    /**
+     * @var SitePress
+     */
+    private $sitepress;
+    /**
+     * @var WPML_Media_Post_With_Media_Files_Factory
+     */
+    private $post_with_media_files_factory;
+    /**
+     * @var WPML_Media_Usage_Factory
+     */
+    private $media_usage_factory;
+    public function __construct(\SitePress $sitepress, \WPML_Media_Post_With_Media_Files_Factory $post_with_media_files_factory, \WPML_Media_Usage_Factory $media_usage_factory)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    /**
+     * @param int $post_id
+     * @param WP_Post|null $post
+     */
+    public function update_media_usage($post_id, $post = \null)
+    {
+    }
+}
+class WPML_Media_Usage_Factory
+{
+    public function create($attachment_id)
+    {
+    }
+}
+class WPML_Media_Post_Media_Usage_Factory implements \IWPML_Backend_Action_Loader, \IWPML_Frontend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+/**
+ * Class WPML_Media_Attachments_Query
+ */
+class WPML_Media_Attachments_Query implements \IWPML_Action
+{
+    public function add_hooks()
+    {
+    }
+    /**
+     * Set `suppress_filters` to false if attachment is displayed.
+     *
+     * @param WP_Query $query
+     *
+     * @return WP_Query
+     */
+    public function adjust_attachment_query($query)
+    {
+    }
+}
+/**
+ * Class WPML_Media
+ */
+class WPML_Media implements \IWPML_Action
+{
+    const SETUP_RUN = 'setup_run';
+    const SETUP_STARTED = 'setup_started';
+    private static $settings;
+    private static $settings_option_key = '_wpml_media';
+    private static $default_settings = array('version' => \false, 'media_files_localization' => array('posts' => \true, 'custom_fields' => \true, 'strings' => \true), 'wpml_media_2_3_migration' => \true, self::SETUP_RUN => \false);
+    public $languages;
+    public $parents;
+    public $unattached;
+    /**
+     * @var wpdb
+     */
+    private $wpdb;
+    /**
+     * @var SitePress
+     */
+    private $sitepress;
+    /**
+     * @var WPML_Media_Menus_Factory
+     */
+    private $menus_factory;
+    /**
+     * WPML_Media constructor.
+     *
+     * @param SitePress                $sitepress
+     * @param wpdb                     $wpdb
+     * @param WPML_Media_Menus_Factory $menus_factory
+     */
+    public function __construct(\SitePress $sitepress, \wpdb $wpdb, \WPML_Media_Menus_Factory $menus_factory)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    public static function has_settings()
+    {
+    }
+    public function loaded()
+    {
+    }
+    function is_admin_or_xmlrpc()
+    {
+    }
+    function is_uploading_plugin_or_theme()
+    {
+    }
+    function plugin_localization()
+    {
+    }
+    /**
+     *    Needed by class init and by all static methods that use self::$settings
+     */
+    public static function init_settings()
+    {
+    }
+    public static function has_setup_run()
+    {
+    }
+    public static function set_setup_run($value = 1)
+    {
+    }
+    public static function has_setup_started()
+    {
+    }
+    public static function set_setup_started($value = 1)
+    {
+    }
+    public static function get_setting($name, $default = \false)
+    {
+    }
+    public static function update_setting($name, $value)
+    {
+    }
+    function batch_scan_prepare()
+    {
+    }
+    static function is_valid_post_type($post_type)
+    {
+    }
+    function find_posts_filter()
+    {
+    }
+    function pre_get_posts($query)
+    {
+    }
+    function media_language_options()
+    {
+    }
+    /**
+     * Synchronizes _wpml_media_* meta fields with all translations
+     *
+     * @param int          $meta_id
+     * @param int          $object_id
+     * @param string       $meta_key
+     * @param string|mixed $meta_value
+     */
+    function updated_postmeta($meta_id, $object_id, $meta_key, $meta_value)
+    {
+    }
+    /**
+     *Add a filter to fix the links for attachments in the language switcher so
+     *they point to the corresponding pages in different languages.
+     */
+    function filter_link($url, $lang_info)
+    {
+    }
+    function wp_get_attachment_url($url, $post_id)
+    {
+    }
+    function icl_ls_languages($w_active_languages)
+    {
+    }
+    function get_post_metadata($value, $object_id, $meta_key, $single)
+    {
+    }
+    /**
+     * @param string $menu_id
+     */
+    public function menu($menu_id)
+    {
+    }
+    public function menu_content()
+    {
+    }
+    /**
+     * @param $ids
+     * @param $target_language
+     *
+     * @return array|string
+     */
+    public function translate_attachment_ids($ids, $target_language)
+    {
+    }
+    /**
+     * Update query for media-upload.php page.
+     *
+     * @param object $query WP_Query
+     */
+    public function filter_media_upload_items($query)
+    {
+    }
+}
+class WPML_Media_Add_To_Basket_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+class WPML_Media_Submitted_Basket_Notice_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+    private function basket_has_media()
+    {
+    }
+}
+class WPML_Media_Selector_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+class WPML_Media_Submitted_Basket_Notice implements \IWPML_Action
+{
+    /**
+     * @var WPML_Twig_Template_Loader
+     */
+    private $template_loader;
+    public function __construct(\WPML_Twig_Template_Loader $template_loader)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    public function load_js()
+    {
+    }
+    public function load_dialog_template()
+    {
+    }
+}
+class WPML_Media_Add_To_Basket implements \IWPML_Action
+{
+    /**
+     * @var SitePress
+     */
+    private $sitepress;
+    /**
+     * WPML_Media_Add_To_Basket constructor.
+     */
+    public function __construct(\SitePress $sitepress)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    public function add_media($data)
+    {
+    }
+    private function get_post_media($post_id)
+    {
+    }
+}
+class WPML_Media_Selector implements \IWPML_Action
+{
+    /**
+     * @var SitePress
+     */
+    private $sitepress;
+    /**
+     * @var WPML_Twig_Template_Loader
+     */
+    private $template_loader;
+    /**
+     * @var WPML_Media_Post_With_Media_Files_Factory
+     */
+    private $post_with_media_files_factory;
+    /**
+     * @var WPML_Media_Post_With_Media_Files_Factory
+     */
+    private $translation_element_factory;
+    const USER_META_HIDE_POST_MEDIA_SELECTOR = '_wpml_media_hide_post_media_selector';
+    public function __construct(\SitePress $sitepress, \WPML_Twig_Template_Loader $template_loader, \WPML_Media_Post_With_Media_Files_Factory $post_with_media_files_factory, \WPML_Translation_Element_Factory $translation_element_factory)
+    {
+    }
+    public function add_hooks()
+    {
+    }
+    public function enqueue_res()
+    {
+    }
+    public function load_images_selector()
+    {
+    }
+    /**
+     * @param int $post_id
+     * @param array $languages
+     *
+     * @return array
+     */
+    private function get_media_files_list($post_id, $languages)
+    {
+    }
+    private function media_file_is_translated($attachment_id, $languages)
+    {
+    }
+    public function toggle_show_media_selector()
+    {
+    }
+    /**
+     * @param array $row_data
+     * @param stdClass $doc_data
+     *
+     * @return array
+     */
+    public function add_media_data_to_dashboard_row($row_data, $doc_data)
+    {
+    }
+    /**
+     * @param array $data
+     * @param int $post_id
+     *
+     * @return array
+     */
+    private function add_post_has_media_flag(array $data, $post_id)
+    {
+    }
+    /**
+     * @param array $data
+     * @param int $post_id
+     *
+     * @return array
+     */
+    private function add_post_type_attribute_data($data, $post_id)
+    {
+    }
+    public function add_media_selector_preloader()
+    {
+    }
+}
+class WPML_Media_Translation_Editor_Layout implements \IWPML_Action
+{
+    public function add_hooks()
+    {
+    }
+    public function group_media_fields($fields)
+    {
+    }
+    private function is_media_field($field)
+    {
+    }
+    public function set_custom_labels($fields)
+    {
+    }
+    private function get_field_label($media_field)
+    {
+    }
+}
+class WPML_Media_Translation_Editor_Layout_Factory implements \IWPML_Backend_Action_Loader
+{
+    public function create()
+    {
+    }
+}
+class WPML_Media_File
+{
+    /**
+     * @var int
+     */
+    private $attachment_id;
+    /**
+     * @var WP_Filesystem_Base
+     */
+    private $wp_filesystem;
+    /**
+     * @var wpdb
+     */
+    private $wpdb;
+    public function __construct($attachment_id, \WP_Filesystem_Base $wp_filesystem, \wpdb $wpdb)
+    {
+    }
+    public function delete()
+    {
+    }
+    private function get_full_file_upload_path($relative_file_path)
+    {
+    }
+    private function file_is_shared($relative_file_path, $attachment_id)
+    {
+    }
+}
+class WPML_Media_Upgrade
+{
+    private static $versions = array('2.0', '2.0.1');
+    static function run()
+    {
+    }
+    /** @param int $current_version */
+    private static function run_upgrades_before_2_3_0($current_version)
+    {
+    }
+    /** @return bool */
+    private static function is_media_version_older_than_2_0()
+    {
+    }
+    private static function upgrade_2_0()
+    {
+    }
+    private static function upgrade_2_0_1()
+    {
+    }
+    private static function upgrade_2_3_0()
+    {
+    }
+}
+class WPML_Media_Dependencies
+{
+    function check()
+    {
+    }
+    function _no_wpml_warning()
+    {
+    }
+}

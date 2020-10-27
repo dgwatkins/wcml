@@ -1,0 +1,2669 @@
+<?php
+
+namespace {
+    class WPML_Page_Builders_Media_Usage
+    {
+        /** @var WPML_Page_Builders_Media_Translate $media_translate */
+        private $media_translate;
+        /** @var WPML_Media_Usage_Factory $media_usage_factory */
+        private $media_usage_factory;
+        public function __construct(\WPML_Page_Builders_Media_Translate $media_translate, \WPML_Media_Usage_Factory $media_usage_factory)
+        {
+        }
+        /** @param int $post_id */
+        public function update($post_id)
+        {
+        }
+    }
+    interface IWPML_PB_Media_Nodes_Iterator
+    {
+        public function translate($data, $lang, $source_lang);
+    }
+    interface IWPML_PB_Media_Update
+    {
+        /**
+         * @param WP_Post $post
+         */
+        public function translate($post);
+    }
+    interface IWPML_PB_Media_Update_Factory
+    {
+        /** @return IWPML_PB_Media_Update */
+        public function create();
+    }
+    class WPML_Page_Builders_Media_Shortcodes_Update_Factory implements \IWPML_PB_Media_Update_Factory
+    {
+        /** @var WPML_PB_Config_Import_Shortcode WPML_PB_Config_Import_Shortcode */
+        private $page_builder_config_import;
+        /** @var WPML_Translation_Element_Factory $element_factory */
+        private $element_factory;
+        /** @var WPML_Page_Builders_Media_Translate $media_translate */
+        private $media_translate;
+        public function __construct(\WPML_PB_Config_Import_Shortcode $page_builder_config_import)
+        {
+        }
+        public function create()
+        {
+        }
+        /** @return WPML_Translation_Element_Factory */
+        private function get_element_factory()
+        {
+        }
+        /** @return WPML_Page_Builders_Media_Translate */
+        private function get_media_translate()
+        {
+        }
+    }
+    class WPML_Page_Builders_Media_Shortcodes_Update implements \IWPML_PB_Media_Update
+    {
+        /** @var WPML_Translation_Element_Factory $element_factory */
+        private $element_factory;
+        /** @var WPML_Page_Builders_Media_Shortcodes $media_shortcodes*/
+        private $media_shortcodes;
+        /** @var WPML_Page_Builders_Media_Usage $media_usage */
+        private $media_usage;
+        public function __construct(\WPML_Translation_Element_Factory $element_factory, \WPML_Page_Builders_Media_Shortcodes $media_shortcodes, \WPML_Page_Builders_Media_Usage $media_usage)
+        {
+        }
+        /**
+         * @param WP_Post $post
+         */
+        public function translate($post)
+        {
+        }
+    }
+    class WPML_Page_Builders_Media_Shortcodes
+    {
+        const TYPE_URL = 'media-url';
+        const TYPE_IDS = 'media-ids';
+        /** @var WPML_Page_Builders_Media_Translate $media_translate */
+        private $media_translate;
+        /** @var string $target_lang */
+        private $target_lang;
+        /** @var string $source_lang */
+        private $source_lang;
+        /** @var array $config */
+        private $config;
+        public function __construct(\WPML_Page_Builders_Media_Translate $media_translate, array $config)
+        {
+        }
+        /**
+         * @param string $content
+         *
+         * @return string
+         */
+        public function translate($content)
+        {
+        }
+        /**
+         * @param string $content
+         *
+         * @return bool
+         */
+        public function has_media_shortcode($content)
+        {
+        }
+        /**
+         * @param array $shortcode
+         *
+         * @return array
+         */
+        private function sanitize_shortcode(array $shortcode)
+        {
+        }
+        /**
+         * @param string $content
+         * @param string $tag
+         * @param array  $attributes
+         *
+         * @return string
+         */
+        private function translate_attributes($content, $tag, array $attributes)
+        {
+        }
+        /**
+         * @param string $content
+         * @param string $tag
+         * @param array  $data
+         *
+         * @return string
+         */
+        private function translate_content($content, $tag, array $data)
+        {
+        }
+        /**
+         * @param string $type
+         *
+         * @return string
+         */
+        private function get_callback($type)
+        {
+        }
+        /**
+         * @param array $matches
+         *
+         * @return string
+         */
+        private function replace_url_callback(array $matches)
+        {
+        }
+        /**
+         * @param array $matches
+         *
+         * @return string
+         */
+        private function replace_ids_callback(array $matches)
+        {
+        }
+        /**
+         * @param string $target_lang
+         *
+         * @return self
+         */
+        public function set_target_lang($target_lang)
+        {
+        }
+        /**
+         * @param string $source_lang
+         *
+         * @return self
+         */
+        public function set_source_lang($source_lang)
+        {
+        }
+    }
+    class WPML_Page_Builders_Update_Media implements \IWPML_PB_Media_Update
+    {
+        /** @var WPML_Page_Builders_Update $pb_update */
+        private $pb_update;
+        /** @var WPML_Translation_Element_Factory $element_factory */
+        private $element_factory;
+        /** @var IWPML_PB_Media_Nodes_Iterator $node_iterator */
+        protected $node_iterator;
+        /** @var WPML_Page_Builders_Media_Usage $media_usage */
+        protected $media_usage;
+        public function __construct(\WPML_Page_Builders_Update $pb_update, \WPML_Translation_Element_Factory $element_factory, \IWPML_PB_Media_Nodes_Iterator $node_iterator, \WPML_Page_Builders_Media_Usage $media_usage = \null)
+        {
+        }
+        /**
+         * @param WP_Post $post
+         */
+        public function translate($post)
+        {
+        }
+    }
+    class WPML_Page_Builders_Media_Translate
+    {
+        /** @var WPML_Translation_Element_Factory $element_factory */
+        private $element_factory;
+        /** @var WPML_Media_Image_Translate $image_translate */
+        protected $image_translate;
+        /** @var array $translated_urls */
+        protected $translated_urls = array();
+        /** @var WP_Post[] $translated_posts */
+        protected $translated_posts = array();
+        /** @var array $translated_ids */
+        private $translated_ids = array();
+        public function __construct(\WPML_Translation_Element_Factory $element_factory, \WPML_Media_Image_Translate $image_translate)
+        {
+        }
+        /**
+         * @param string $url
+         * @param string $lang
+         * @param string $source_lang
+         *
+         * @return string
+         */
+        public function translate_image_url($url, $lang, $source_lang)
+        {
+        }
+        /**
+         * @param int    $id
+         * @param string $lang
+         *
+         * @return int
+         */
+        public function translate_id($id, $lang)
+        {
+        }
+        /**
+         * @param int    $id
+         * @param string $lang
+         *
+         * @return WP_Post|null
+         */
+        private function get_translated_attachment($id, $lang)
+        {
+        }
+        /** @param int */
+        private function add_translated_id($id)
+        {
+        }
+        public function reset_translated_ids()
+        {
+        }
+        /** @return array */
+        public function get_translated_ids()
+        {
+        }
+    }
+    class WPML_Page_Builders_Media_Hooks implements \IWPML_Action
+    {
+        /** @var IWPML_PB_Media_Update_Factory $media_update_factory */
+        private $media_update_factory;
+        /** @var string $page_builder_slug */
+        private $page_builder_slug;
+        /**
+         * WPML_Page_Builders_Media_Hooks constructor.
+         *
+         * @param IWPML_PB_Media_Update_Factory $media_update_factory
+         * @param string                        $page_builder_slug
+         */
+        public function __construct(\IWPML_PB_Media_Update_Factory $media_update_factory, $page_builder_slug)
+        {
+        }
+        public function add_hooks()
+        {
+        }
+        /**
+         * @param IWPML_PB_Media_Update[] $updaters
+         *
+         * @return IWPML_PB_Media_Update[]
+         */
+        public function add_media_updater($updaters)
+        {
+        }
+        /**
+         * @param string  $content
+         * @param WP_Post $post
+         *
+         * @return string
+         */
+        public function add_package_strings_content($content, $post)
+        {
+        }
+    }
+    class WPML_Page_Builders_Page_Built
+    {
+        private $config;
+        public function __construct(\WPML_Config_Built_With_Page_Builders $config)
+        {
+        }
+        /**
+         * @param WP_Post $post
+         *
+         * @return bool
+         */
+        public function is_page_builder_page(\WP_Post $post)
+        {
+        }
+    }
+    /**
+     * Based on https://github.com/paulgb/simplediff/blob/master/php/simplediff.php
+     */
+    class WPML_ST_Diff
+    {
+        /**
+         * @param string[] $old_words
+         * @param string[] $new_words
+         *
+         * @return array
+         */
+        public static function diff($old_words, $new_words)
+        {
+        }
+        /**
+         * @param string $old_text
+         * @param string $new_text
+         *
+         * @return float|int
+         */
+        public static function get_sameness_percent($old_text, $new_text)
+        {
+        }
+    }
+}
+namespace WPML\PB\Config {
+    class Hooks implements \IWPML_Action
+    {
+        const PRIORITY_AFTER_DEFAULT = 20;
+        /** @var Parser $parser */
+        private $parser;
+        /** @var Storage $storage */
+        private $storage;
+        /** @var string $translatableWidgetsHook */
+        private $translatableWidgetsHook;
+        public function __construct(\WPML\PB\Config\Parser $parser, \WPML\PB\Config\Storage $storage, $translatableWidgetsHook)
+        {
+        }
+        public function add_hooks()
+        {
+        }
+        public function extractConfig(array $allConfig)
+        {
+        }
+        /**
+         * @param array $widgets
+         *
+         * @return array
+         */
+        public function extendTranslatableWidgets(array $widgets)
+        {
+        }
+    }
+    class Parser
+    {
+        /** @var string $configRoot */
+        private $configRoot;
+        /** @var string $defaultConditionKey */
+        private $defaultConditionKey;
+        public function __construct($configRoot, $defaultConditionKey)
+        {
+        }
+        /**
+         * Receives a raw config array (from XML) and convert it into
+         * a page builder configuration array.
+         *
+         * @see WPML_Elementor_Translatable_Nodes::get_nodes_to_translate()
+         *
+         * @param array $allConfig
+         *
+         * @return array
+         */
+        public function extract(array $allConfig)
+        {
+        }
+        /**
+         * @param array  $widget
+         * @param string $widgetName
+         *
+         * @return array
+         */
+        private function parseConditions(array $widget, $widgetName)
+        {
+        }
+        /**
+         * @param array $rawFields
+         *
+         * @return array
+         */
+        private function parseFields(array $rawFields)
+        {
+        }
+        /**
+         * @param array $widget
+         *
+         * @return array
+         */
+        private function parseIntegrationClasses(array $widget)
+        {
+        }
+        /**
+         * If a sequence has only one element, we will wrap it
+         * in order to have the same data shape as for multiple elements.
+         *
+         * @param array $partialConfig
+         *
+         * @return array
+         */
+        public function normalize(array $partialConfig)
+        {
+        }
+    }
+    class Storage
+    {
+        const OPTION_GROUP = 'api-pb-config';
+        /** @var OptionManager $optionManager */
+        private $optionManager;
+        /** @var string $pbKey */
+        private $pbKey;
+        public function __construct(\WPML\WP\OptionManager $optionManager, $pbKey)
+        {
+        }
+        public function get()
+        {
+        }
+        public function update(array $pbConfig)
+        {
+        }
+    }
+    abstract class Factory implements \IWPML_Backend_Action_Loader, \IWPML_Frontend_Action_Loader
+    {
+        /**
+         * @return \IWPML_Action
+         * @throws \Auryn\InjectionException
+         */
+        public function create()
+        {
+        }
+        /**
+         * @param string $key
+         *
+         * @return mixed
+         */
+        protected abstract function getPbData($key);
+    }
+}
+namespace WPML\PB\Container {
+    class Config
+    {
+        public static function getSharedClasses()
+        {
+        }
+    }
+}
+namespace {
+    class WPML_PB_Handle_Custom_Fields
+    {
+        protected $data_settings;
+        public function __construct(\IWPML_Page_Builders_Data_Settings $data_settings)
+        {
+        }
+        public function add_hooks()
+        {
+        }
+        /**
+         * @param bool $is_page_builder_page
+         * @param WP_Post $post
+         *
+         * @return bool
+         */
+        public function is_page_builder_page_filter($is_page_builder_page, \WP_Post $post)
+        {
+        }
+        /**
+         * @param int $new_post_id
+         * @param int $original_post_id
+         */
+        public function copy_custom_fields($new_post_id, $original_post_id)
+        {
+        }
+        /**
+         * @param int $new_post_id
+         * @param int $original_post_id
+         * @param string $field
+         */
+        public static function copy_field($new_post_id, $original_post_id, $field)
+        {
+        }
+        /**
+         * @param mixed $data
+         *
+         * @return mixed string
+         */
+        public static function slash_json($data)
+        {
+        }
+    }
+    /**
+     * WPML_TM_Page_Builders_Field_Wrapper class file.
+     *
+     * @package wpml-page-builders
+     */
+    /**
+     * Class WPML_TM_Page_Builders_Field_Wrapper
+     */
+    class WPML_TM_Page_Builders_Field_Wrapper
+    {
+        const SLUG_BASE = 'package-string-';
+        /**
+         * Field slug.
+         *
+         * @var string
+         */
+        private $field_slug;
+        /**
+         * Package id.
+         *
+         * @var int
+         */
+        private $package_id;
+        /**
+         * String id.
+         *
+         * @var int
+         */
+        private $string_id;
+        /**
+         * WPML_TM_Page_Builders_Field_Wrapper constructor.
+         *
+         * @param string $field_slug Field slug.
+         */
+        public function __construct($field_slug)
+        {
+        }
+        /**
+         * Check if package is valid.
+         *
+         * @param bool $package_must_exist Demand existence of the package.
+         *
+         * @return bool
+         */
+        public function is_valid($package_must_exist = \false)
+        {
+        }
+        /**
+         * Get package id.
+         *
+         * @return false|int
+         */
+        public function get_package_id()
+        {
+        }
+        /**
+         * Get package.
+         *
+         * @return WPML_Package|null
+         */
+        public function get_package()
+        {
+        }
+        /**
+         * Get string id.
+         *
+         * @return false|int|string
+         */
+        public function get_string_id()
+        {
+        }
+        /**
+         * Get field slug.
+         *
+         * @return string
+         */
+        public function get_field_slug()
+        {
+        }
+        /**
+         * Get string type.
+         *
+         * @return false|string
+         */
+        public function get_string_type()
+        {
+        }
+        /**
+         * Get string wrap tag.
+         *
+         * @param stdClass $string WPML string.
+         *
+         * @return string
+         */
+        public static function get_wrap_tag($string)
+        {
+        }
+        /**
+         * Generate field slug.
+         *
+         * @param int $package_id Package id.
+         * @param int $string_id  String id.
+         *
+         * @return string
+         */
+        public static function generate_field_slug($package_id, $string_id)
+        {
+        }
+        /**
+         * Extract string id.
+         *
+         * @param string $field_slug Field slug.
+         *
+         * @return false|int|string
+         */
+        private function extract_string_id($field_slug)
+        {
+        }
+        /**
+         * Extract string package id.
+         *
+         * @param string $field_slug Field slug.
+         *
+         * @return false|int|string
+         */
+        private function extract_string_package_id($field_slug)
+        {
+        }
+        /**
+         * Get string title.
+         *
+         * @return string|boolean
+         */
+        public function get_string_title()
+        {
+        }
+    }
+    class WPML_TM_Page_Builders
+    {
+        const PACKAGE_TYPE_EXTERNAL = 'external';
+        const TRANSLATION_COMPLETE = 10;
+        const FIELD_STYLE_AREA = 'AREA';
+        const FIELD_STYLE_VISUAL = 'VISUAL';
+        const FIELD_STYLE_LINK = 'LINK';
+        /** @var SitePress $sitepress */
+        private $sitepress;
+        public function __construct(\SitePress $sitepress)
+        {
+        }
+        /**
+         * Filter translation job data.
+         *
+         * @param array $translation_package Translation package.
+         * @param mixed $post                Post.
+         *
+         * @return array
+         */
+        public function translation_job_data_filter(array $translation_package, $post)
+        {
+        }
+        /**
+         * @param int      $new_element_id
+         * @param array    $fields
+         * @param stdClass $job
+         */
+        public function pro_translation_completed_action($new_element_id, array $fields, \stdClass $job)
+        {
+        }
+        /**
+         * Adjust translation fields.
+         *
+         * @param array    $fields Translation fields.
+         * @param stdClass $job    Translation job.
+         *
+         * @return array
+         */
+        public function adjust_translation_fields_filter(array $fields, $job)
+        {
+        }
+        /**
+         * @param array $layout
+         *
+         * @return array
+         */
+        public function job_layout_filter(array $layout)
+        {
+        }
+        /**
+         * @param string $link
+         * @param int    $post_id
+         * @param string $lang
+         * @param int    $trid
+         *
+         * @return string
+         */
+        public function link_to_translation_filter($link, $post_id, $lang, $trid)
+        {
+        }
+        /**
+         * @param string $field_slug
+         *
+         * @return WPML_TM_Page_Builders_Field_Wrapper
+         */
+        public function create_field_wrapper($field_slug)
+        {
+        }
+    }
+    class WPML_TM_Page_Builders_Hooks
+    {
+        /* @var WPML_TM_Page_Builders $worker */
+        private $worker;
+        /** @var SitePress $sitepress */
+        private $sitepress;
+        /**
+         * WPML_TM_Page_Builders constructor.
+         *
+         * @param WPML_TM_Page_Builders $worker
+         */
+        public function __construct(\WPML_TM_Page_Builders $worker = \null, \SitePress $sitepress)
+        {
+        }
+        public function init_hooks()
+        {
+        }
+        /**
+         * @param array $translation_package
+         * @param mixed $post
+         *
+         * @return array
+         */
+        public function translation_job_data_filter(array $translation_package, $post)
+        {
+        }
+        /**
+         * @param int      $new_post_id
+         * @param array    $fields
+         * @param stdClass $job
+         */
+        public function pro_translation_completed_action($new_post_id, array $fields, \stdClass $job)
+        {
+        }
+        /**
+         * Filter translation fields.
+         *
+         * @param array    $fields Translation fields.
+         * @param stdClass $job    Translation job.
+         *
+         * @return array
+         */
+        public function adjust_translation_fields_filter(array $fields, $job)
+        {
+        }
+        /**
+         * @param array $layout
+         *
+         * @return array
+         */
+        public function job_layout_filter(array $layout)
+        {
+        }
+        /**
+         * @param string $link
+         * @param int    $post_id
+         * @param string $lang
+         * @param int    $trid
+         *
+         * @return string
+         */
+        public function link_to_translation_filter($link, $post_id, $lang, $trid)
+        {
+        }
+        /**
+         * Remove "Page Builder ShortCode Strings" from translation dashboard filters
+         *
+         * @param array $types
+         *
+         * @return mixed
+         */
+        public function remove_shortcode_strings_type_filter($types)
+        {
+        }
+        /**
+         * @return WPML_TM_Page_Builders
+         */
+        private function get_worker()
+        {
+        }
+    }
+    class WPML_PB_Handle_Post_Body implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_DIC_Action
+    {
+        private $page_builders_built;
+        public function __construct(\WPML_Page_Builders_Page_Built $page_builders_built)
+        {
+        }
+        public function add_hooks()
+        {
+        }
+        /**
+         * @param int $translate
+         * @param WP_Post $post
+         *
+         * @return int
+         */
+        public function should_translate($translate, \WP_Post $post)
+        {
+        }
+        /**
+         * @param int $new_post_id
+         * @param int $original_post_id
+         * @param array $fields
+         */
+        public function copy($new_post_id, $original_post_id, array $fields)
+        {
+        }
+        /**
+         * @param array $fields
+         *
+         * @return bool
+         */
+        private function job_has_packages(array $fields)
+        {
+        }
+    }
+}
+namespace WPML\PB\Compatibility\Toolset\Layouts {
+    class Hooks implements \IWPML_Action
+    {
+        public function add_hooks()
+        {
+        }
+        /**
+         * @see Toolset_User_Editors_Editor_Layouts::LAYOUTS_BUILDER_OPTION_NAME
+         * @see Toolset_User_Editors_Editor_Layouts::LAYOUTS_BUILDER_OPTION_VALUE
+         *
+         * @param bool     $isPbPage
+         * @param \WP_Post $post
+         */
+        public static function isLayoutPage($isPbPage, \WP_Post $post)
+        {
+        }
+    }
+    class HooksFactory implements \IWPML_Backend_Action_Loader, \IWPML_Frontend_Action_Loader
+    {
+        public function create()
+        {
+        }
+    }
+}
+namespace WPML\PB\Shutdown {
+    class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC_Action
+    {
+        const PRIORITY_REGISTER_STRINGS = 10;
+        const PRIORITY_SAVE_TRANSLATIONS_TO_POST = 20;
+        const PRIORITY_TRANSLATE_MEDIA = 30;
+        /** @var \WPML_PB_Integration $pbIntegration */
+        private $pbIntegration;
+        public function __construct(\WPML_PB_Integration $pbIntegration)
+        {
+        }
+        public function add_hooks()
+        {
+        }
+        /**
+         * This applies only on original posts.
+         */
+        public function registerStrings()
+        {
+        }
+        /**
+         * This applies only on post translations.
+         */
+        public function translateMedias()
+        {
+        }
+    }
+}
+namespace WPML\PB\AutoUpdate {
+    class Hooks implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_DIC_Action
+    {
+        const HASH_SEP = '-';
+        /** @var \WPML_PB_Integration $pbIntegration */
+        private $pbIntegration;
+        /** @var \WPML_Translation_Element_Factory $elementFactory */
+        private $elementFactory;
+        /** @var array $savePostQueue */
+        private $savePostQueue = [];
+        public function __construct(\WPML_PB_Integration $pbIntegration, \WPML_Translation_Element_Factory $elementFactory)
+        {
+        }
+        public function add_hooks()
+        {
+        }
+        public function isTmLoaded()
+        {
+        }
+        /**
+         * We remove the action callback because it will be
+         * called manually for each of the saved posts in the
+         * shutdown when the original strings are registered.
+         */
+        public function init()
+        {
+        }
+        /**
+         * @param int      $postId
+         * @param \WP_Post $post
+         */
+        public function addToSavePostQueue($postId, $post)
+        {
+        }
+        /**
+         * @param string   $content
+         * @param \WP_Post $post
+         *
+         * @return string
+         */
+        public function getMd5ContentFromPackageStrings($content, $post)
+        {
+        }
+        /**
+         * @param int $postId
+         *
+         * @return \WPML_Package[]
+         */
+        public static function getPackages($postId)
+        {
+        }
+        /**
+         * We need to call `wpml_tm_save_post` after string registration
+         * to make sure we build the content hash with the new strings.
+         */
+        public function afterRegisterAllStringsInShutdown()
+        {
+        }
+        /**
+         * @param int $postId
+         */
+        private function resaveTranslations($postId)
+        {
+        }
+    }
+    class TranslationStatus
+    {
+        /**
+         * @param WPML_Post_Element $element
+         *
+         * @return int|null
+         */
+        public static function get(\WPML_Post_Element $element)
+        {
+        }
+    }
+}
+namespace {
+    class WPML_PB_Update_Post
+    {
+        private $package_data;
+        /** @var  IWPML_PB_Strategy $strategy */
+        private $strategy;
+        /** @var  wpdb $wpdb */
+        private $wpdb;
+        /** @var  SitePress $sitepress */
+        private $sitepress;
+        public function __construct($wpdb, $sitepress, $package_data, \IWPML_PB_Strategy $strategy)
+        {
+        }
+        public function update()
+        {
+        }
+        /**
+         * @param string $content
+         * @param string $lang
+         *
+         * @return string
+         */
+        public function update_content($content, $lang)
+        {
+        }
+        private function update_post($translated_post_id, $original_post, $string_translations, $lang)
+        {
+        }
+    }
+    class WPML_PB_Reuse_Translations
+    {
+        /** @var WPML_ST_String_Factory $string_factory */
+        private $string_factory;
+        /** @var  array $original_strings */
+        private $original_strings;
+        /** @var  array $current_strings */
+        private $current_strings;
+        public function __construct(\WPML_ST_String_Factory $string_factory)
+        {
+        }
+        /**
+         * We receive arrays of strings with this structure:
+         *
+         * array(
+         *  'gf4544ds454sds542122sd' => array(
+         *      'value'      => 'The string value',
+         *      'context'    => 'the-string-context',
+         *      'name'       => 'the-string-name',
+         *      'id'         => 123,
+         *      'package_id' => 123,
+         *      'location'   => 123,
+         *     ),
+         *  )
+         *
+         * The key is the string hash.
+         *
+         * @param array[] $original_strings
+         * @param array[] $current_strings
+         * @param array[] $leftover_strings
+         */
+        public function find_and_reuse_translations(array $original_strings, array $current_strings, array $leftover_strings)
+        {
+        }
+        /** @return array */
+        private function find_new_strings()
+        {
+        }
+        /**
+         * @param int[]   $new_strings
+         * @param array[] $leftover_strings
+         *
+         * @return int[]
+         */
+        private function find_existing_strings_for_new_strings(array $new_strings, array $leftover_strings)
+        {
+        }
+        /**
+         * @param int[]   $new_strings
+         * @param array[] $leftover_strings
+         *
+         * @return array[]
+         */
+        private function find_by_location(array $new_strings, array $leftover_strings)
+        {
+        }
+        /**
+         * @param int[]   $new_strings
+         * @param array[] $leftover_strings
+         *
+         * @return int[]
+         */
+        private function find_by_similar_text(array $new_strings, array $leftover_strings)
+        {
+        }
+        /**
+         * @param array $current_string
+         * @param array $leftover_string
+         *
+         * @return bool
+         */
+        private function is_same_location_and_different_ids(array $current_string, array $leftover_string)
+        {
+        }
+        /**
+         * @param string $old_text
+         * @param string $new_text
+         *
+         * @return bool
+         */
+        private function is_similar_text($old_text, $new_text)
+        {
+        }
+        /**
+         * @param int[] $strings
+         */
+        private function reuse_translations(array $strings)
+        {
+        }
+    }
+    class WPML_PB_Reuse_Translations_By_Strategy extends \WPML_PB_Reuse_Translations
+    {
+        /** @var IWPML_PB_Strategy $strategy */
+        private $strategy;
+        /** @var array $original_strings */
+        private $original_strings_by_strategy;
+        public function __construct(\IWPML_PB_Strategy $strategy, \WPML_ST_String_Factory $string_factory)
+        {
+        }
+        /** @param array $strings */
+        public function set_original_strings(array $strings)
+        {
+        }
+        /**
+         * @param int   $post_id
+         * @param array $leftover_strings
+         */
+        public function find_and_reuse($post_id, array $leftover_strings)
+        {
+        }
+    }
+    /**
+     * Class WPML_Page_Builders_Integration
+     */
+    class WPML_Page_Builders_Integration
+    {
+        const STRINGS_TRANSLATED_PRIORITY = 10;
+        /** @var WPML_Page_Builders_Register_Strings */
+        private $register_strings;
+        /** @var WPML_Page_Builders_Update_Translation */
+        private $update_translation;
+        /** @var IWPML_Page_Builders_Data_Settings */
+        private $data_settings;
+        /**
+         * WPML_Page_Builders_Integration constructor.
+         *
+         * @param WPML_Page_Builders_Register_Strings $register_strings
+         * @param WPML_Page_Builders_Update_Translation $update_translation
+         * @param IWPML_Page_Builders_Data_Settings $data_settings
+         */
+        public function __construct(\WPML_Page_Builders_Register_Strings $register_strings, \WPML_Page_Builders_Update_Translation $update_translation, \IWPML_Page_Builders_Data_Settings $data_settings)
+        {
+        }
+        public function add_hooks()
+        {
+        }
+        /**
+         * @param array $page_builder_plugins
+         *
+         * @return array
+         */
+        public function support_required(array $page_builder_plugins)
+        {
+        }
+        /**
+         * @param $post
+         * @param $package_key
+         */
+        public function register_pb_strings($post, $package_key)
+        {
+        }
+        /**
+         * @param string $kind
+         * @param int $translated_post_id
+         * @param WP_Post $original_post
+         * @param $string_translations
+         * @param string $lang
+         */
+        public function update_translated_post($kind, $translated_post_id, \WP_Post $original_post, $string_translations, $lang)
+        {
+        }
+        public function remove_shortcode_strings_type_filter($types)
+        {
+        }
+    }
+    /**
+     * Class WPML_PB_String_Registration
+     */
+    class WPML_PB_String_Registration
+    {
+        /** @var IWPML_PB_Strategy $strategy */
+        private $strategy;
+        /** @var WPML_ST_String_Factory $string_factory */
+        private $string_factory;
+        /** @var  WPML_ST_Package_Factory $package_factory */
+        private $package_factory;
+        /** @var WPML_Translate_Link_Targets $translate_link_targets */
+        private $translate_link_targets;
+        /** @var callable $set_link_translations */
+        private $set_link_translations;
+        /** @var  bool $migration_mode */
+        private $migration_mode;
+        /**
+         * WPML_PB_String_Registration constructor.
+         *
+         * @param IWPML_PB_Strategy $strategy
+         * @param WPML_ST_String_Factory $string_factory
+         * @param WPML_ST_Package_Factory $package_factory
+         * @param WPML_Translate_Link_Targets $translate_link_targets
+         * @param callable $set_link_translations
+         * @param bool $migration_mode
+         */
+        public function __construct(\IWPML_PB_Strategy $strategy, \WPML_ST_String_Factory $string_factory, \WPML_ST_Package_Factory $package_factory, \WPML_Translate_Link_Targets $translate_link_targets, callable $set_link_translations, $migration_mode = \false)
+        {
+        }
+        /**
+         * @param int $post_id
+         * @param string $content
+         *
+         * @return null|int
+         */
+        public function get_string_id_from_package($post_id, $content, $name = '')
+        {
+        }
+        public function get_string_title($string_id)
+        {
+        }
+        /**
+         * Register string.
+         *
+         * @param int    $post_id  Post Id.
+         * @param string $content  String content.
+         * @param string $type     String editor type.
+         * @param string $title    String title.
+         * @param string $name     String name.
+         * @param int    $location String location.
+         * @param string $wrap_tag String wrap tag.
+         *
+         * @return null|integer $string_id
+         */
+        public function register_string($post_id, $content = '', $type = 'LINE', $title = '', $name = '', $location = 0, $wrap_tag = '')
+        {
+        }
+        /**
+         * Update string data: location and wrap tag.
+         * Wrap tag is used for SEO significance, can contain values as h1 ... h6, etc.
+         *
+         * @param int    $string_id String id.
+         * @param string $location  String location inside of the page builder content.
+         * @param string $wrap_tag  String wrap tag for SEO significance.
+         */
+        private function update_string_data($string_id, $location, $wrap_tag)
+        {
+        }
+    }
+    class WPML_PB_Package_Strings_Resave
+    {
+        /** @var WPML_ST_String_Factory $string_factory */
+        private $string_factory;
+        public function __construct(\WPML_ST_String_Factory $string_factory)
+        {
+        }
+        /**
+         * @param WPML_Post_Element $post_element
+         *
+         * @return WPML_Package[]
+         */
+        public function from_element(\WPML_Post_Element $post_element)
+        {
+        }
+        /**
+         * @param int    $string_id
+         * @param string $target_lang
+         */
+        private function resave_string_translation($string_id, $target_lang)
+        {
+        }
+    }
+    class WPML_PB_Loader
+    {
+        public function __construct(\SitePress $sitepress, \WPDB $wpdb, \WPML_ST_Settings $st_settings, $pb_integration = \null)
+        {
+        }
+        /**
+         * @param bool $has_page_builder_strategy
+         */
+        private static function load_hooks($has_page_builder_strategy)
+        {
+        }
+    }
+    /**
+     * Class WPML_String_Registration_Factory
+     */
+    class WPML_String_Registration_Factory
+    {
+        private $pb_plugin_name;
+        public function __construct($pb_plugin_name)
+        {
+        }
+        /**
+         * @return WPML_PB_String_Registration
+         */
+        public function create()
+        {
+        }
+    }
+    class WPML_PB_String
+    {
+        /** @var  string $value */
+        private $value;
+        /** @var  string $name */
+        private $name;
+        /** @var  string $title */
+        private $title;
+        /** @var  string $editor_type */
+        private $editor_type;
+        /**
+         * String wrap tag.
+         *
+         * @var  string $wrap_tag
+         */
+        private $wrap_tag;
+        /**
+         * WPML_PB_String constructor.
+         *
+         * @param string $value       String value.
+         * @param string $name        String name.
+         * @param string $title       String title.
+         * @param string $editor_type Editor type used.
+         * @param string $wrap_tag    String wrap tag.
+         */
+        public function __construct($value, $name, $title, $editor_type, $wrap_tag = '')
+        {
+        }
+        /**
+         * @return string
+         */
+        public function get_value()
+        {
+        }
+        /**
+         * @param string $value
+         */
+        public function set_value($value)
+        {
+        }
+        /**
+         * @return string
+         */
+        public function get_name()
+        {
+        }
+        /**
+         * @return string
+         */
+        public function get_title()
+        {
+        }
+        /**
+         * @return string
+         */
+        public function get_editor_type()
+        {
+        }
+        /**
+         * Get string wrap tag.
+         *
+         * @return string
+         */
+        public function get_wrap_tag()
+        {
+        }
+    }
+    /**
+     * Interface IWPML_Page_Builders_Data_Settings
+     */
+    interface IWPML_Page_Builders_Data_Settings
+    {
+        /**
+         * @return string
+         */
+        public function get_meta_field();
+        /**
+         * @return string
+         */
+        public function get_node_id_field();
+        /**
+         * @return array
+         */
+        public function get_fields_to_copy();
+        /**
+         * @return array
+         */
+        public function get_fields_to_save();
+        /**
+         * @param mixed $data
+         *
+         * @return array
+         */
+        public function convert_data_to_array($data);
+        /**
+         * @param array $data
+         *
+         * @return mixed
+         */
+        public function prepare_data_for_saving(array $data);
+        /**
+         * @return string
+         */
+        public function get_pb_name();
+        public function add_hooks();
+        /**
+         * @param int $postId
+         *
+         * @return bool
+         */
+        public function is_handling_post($postId);
+    }
+    /**
+     * Class WPML_Page_Builders_Register_Strings
+     */
+    abstract class WPML_Page_Builders_Register_Strings
+    {
+        /**
+         * @var IWPML_Page_Builders_Translatable_Nodes
+         */
+        private $translatable_nodes;
+        /**
+         * @var IWPML_Page_Builders_Data_Settings
+         */
+        protected $data_settings;
+        /**
+         * @var WPML_PB_String_Registration
+         */
+        private $string_registration;
+        /** @var int $string_location */
+        private $string_location;
+        /**
+         * WPML_Page_Builders_Register_Strings constructor.
+         *
+         * @param IWPML_Page_Builders_Translatable_Nodes $translatable_nodes
+         * @param IWPML_Page_Builders_Data_Settings $data_settings
+         * @param WPML_PB_String_Registration $string_registration
+         */
+        public function __construct(\IWPML_Page_Builders_Translatable_Nodes $translatable_nodes, \IWPML_Page_Builders_Data_Settings $data_settings, \WPML_PB_String_Registration $string_registration)
+        {
+        }
+        /**
+         * @param WP_Post $post
+         * @param array $package
+         */
+        public function register_strings(\WP_Post $post, array $package)
+        {
+        }
+        /**
+         * @param string $node_id
+         * @param mixed $element
+         * @param array $package
+         */
+        protected function register_strings_for_node($node_id, $element, array $package)
+        {
+        }
+        /**
+         * @param array $data_array
+         * @param array $package
+         */
+        protected abstract function register_strings_for_modules(array $data_array, array $package);
+    }
+    /**
+     * Class IWPML_Page_Builders_Module
+     */
+    interface IWPML_Page_Builders_Module
+    {
+        /**
+         * @param string|int $node_id
+         * @param mixed $element
+         * @param WPML_PB_String[] $strings
+         *
+         * @return WPML_PB_String[]
+         */
+        public function get($node_id, $element, $strings);
+        /**
+         * @param string|int $node_id
+         * @param mixed $element
+         * @param WPML_PB_String $string
+         *
+         * @return array
+         */
+        public function update($node_id, $element, \WPML_PB_String $string);
+    }
+    class WPML_Page_Builders_Update
+    {
+        /** @var IWPML_Page_Builders_Data_Settings */
+        protected $data_settings;
+        public function __construct(\IWPML_Page_Builders_Data_Settings $data_settings)
+        {
+        }
+        /**
+         * @param int $post_id
+         *
+         * @return array
+         */
+        public function get_converted_data($post_id)
+        {
+        }
+        /**
+         * @param int   $post_id
+         * @param int   $original_post_id
+         * @param array $converted_data
+         */
+        public function save($post_id, $original_post_id, $converted_data)
+        {
+        }
+        /**
+         * @param int   $post_id
+         * @param array $fields
+         * @param mixed $data
+         */
+        private function save_data($post_id, $fields, $data)
+        {
+        }
+        /**
+         * @param int   $translated_post_id
+         * @param int   $original_post_id
+         * @param array $meta_fields
+         */
+        private function copy_meta_fields($translated_post_id, $original_post_id, $meta_fields)
+        {
+        }
+    }
+    interface IWPML_Page_Builders_Translatable_Nodes
+    {
+        /**
+         * @param string $node_id
+         * @param array $element
+         *
+         * @return WPML_PB_String[]
+         */
+        public function get($node_id, $element);
+        /**
+         * @param string $node_id
+         * @param array $element
+         * @param WPML_PB_String $string
+         *
+         * @return mixed
+         */
+        public function update($node_id, $element, \WPML_PB_String $string);
+        /**
+         * @param string $node_id
+         * @param array $field
+         * @param mixed $settings
+         *
+         * @return mixed
+         */
+        public function get_string_name($node_id, $field, $settings);
+        public function initialize_nodes_to_translate();
+    }
+    /**
+     * Class WPML_Page_Builders_Update_Translation
+     */
+    abstract class WPML_Page_Builders_Update_Translation extends \WPML_Page_Builders_Update
+    {
+        const TRANSLATION_COMPLETE = 10;
+        /**
+         * @var IWPML_Page_Builders_Translatable_Nodes
+         */
+        protected $translatable_nodes;
+        private $string_translations;
+        private $lang;
+        public function __construct(\IWPML_Page_Builders_Translatable_Nodes $translatable_nodes, \IWPML_Page_Builders_Data_Settings $data_settings)
+        {
+        }
+        /**
+         * @param int $translated_post_id
+         * @param $original_post
+         * @param $string_translations
+         * @param string $lang
+         */
+        public function update($translated_post_id, $original_post, $string_translations, $lang)
+        {
+        }
+        /**
+         * @param WPML_PB_String $string
+         *
+         * @return WPML_PB_String
+         */
+        protected function get_translation(\WPML_PB_String $string)
+        {
+        }
+        protected abstract function update_strings_in_modules(array &$data_array);
+        protected abstract function update_strings_in_node($node_id, $settings);
+    }
+    /**
+     * Class WPML_Page_Builders_Defined
+     */
+    class WPML_Page_Builders_Defined
+    {
+        private $settings;
+        public function __construct()
+        {
+        }
+        public function has($page_builder)
+        {
+        }
+        /**
+         * @param array $components
+         *
+         * @return array
+         */
+        public function add_components($components)
+        {
+        }
+        public function init_settings()
+        {
+        }
+        /**
+         * @return array
+         */
+        public function get_settings()
+        {
+        }
+    }
+    class WPML_ST_PB_Plugin
+    {
+        function check_requirements()
+        {
+        }
+        function is_active()
+        {
+        }
+        function ask_to_deactivate()
+        {
+        }
+        function disable_old_pb_notice()
+        {
+        }
+    }
+    class WPML_PB_Last_Translation_Edit_Mode
+    {
+        const POST_META_KEY = '_last_translation_edit_mode';
+        const NATIVE_EDITOR = 'native-editor';
+        const TRANSLATION_EDITOR = 'translation-editor';
+        /**
+         * @param int $post_id
+         *
+         * @return bool
+         */
+        public function is_native_editor($post_id)
+        {
+        }
+        /**
+         * @param int $post_id
+         *
+         * @return bool
+         */
+        public function is_translation_editor($post_id)
+        {
+        }
+        /**
+         * @param int $post_id
+         *
+         * @return mixed
+         */
+        private function get_last_mode($post_id)
+        {
+        }
+        /**
+         * @param int $post_id
+         */
+        public function set_native_editor($post_id)
+        {
+        }
+        /**
+         * @param int $post_id
+         */
+        public function set_translation_editor($post_id)
+        {
+        }
+        /**
+         * @param int    $post_id
+         * @param string $mode
+         */
+        private function set_mode($post_id, $mode)
+        {
+        }
+    }
+    class WPML_PB_String_Translation
+    {
+        /** @var  wpdb $wpdb */
+        protected $wpdb;
+        public function __construct(\wpdb $wpdb)
+        {
+        }
+        /**
+         * @param array $package_data
+         *
+         * @return array
+         */
+        public function get_package_strings(array $package_data)
+        {
+        }
+        public function remove_string(array $string_data)
+        {
+        }
+        /**
+         * @param string $field_type
+         *
+         * @return bool
+         */
+        private function get_job_id($field_type)
+        {
+        }
+        /**
+         * @param int $job_id
+         *
+         * @return bool
+         */
+        private function is_job_in_progress($job_id)
+        {
+        }
+        /**
+         * @param array $package_data
+         *
+         * @return bool
+         */
+        private function get_package_id(array $package_data)
+        {
+        }
+        /**
+         * @param string $string_value
+         *
+         * @return string
+         */
+        public function get_string_hash($string_value)
+        {
+        }
+    }
+    class WPML_PB_String_Translation_By_Strategy extends \WPML_PB_String_Translation
+    {
+        /** @var WPML_PB_Factory $factory */
+        private $factory;
+        /** @var IWPML_PB_Strategy $strategy */
+        private $strategy;
+        /** @var array $packages_to_update */
+        private $packages_to_update = array();
+        public function __construct(\wpdb $wpdb, \WPML_PB_Factory $factory, \IWPML_PB_Strategy $strategy)
+        {
+        }
+        /** @param int $translated_string_id */
+        public function new_translation($translated_string_id)
+        {
+        }
+        public function save_translations_to_post()
+        {
+        }
+        /**
+         * @param string $content
+         * @param string $lang
+         *
+         * @return string
+         */
+        public function update_translations_in_content($content, $lang)
+        {
+        }
+        /**
+         * @param int $translated_string_id
+         *
+         * @return array
+         */
+        private function get_package_for_translated_string($translated_string_id)
+        {
+        }
+        /**
+         * @param WPML_Package $package
+         * @param string       $language
+         */
+        public function add_package_to_update_list(\WPML_Package $package, $language)
+        {
+        }
+    }
+    /**
+     * Class WPML_PB_Register_Shortcodes
+     */
+    class WPML_PB_Register_Shortcodes
+    {
+        private $handle_strings;
+        /** @var  WPML_PB_Shortcode_Strategy $shortcode_strategy */
+        private $shortcode_strategy;
+        /** @var  WPML_PB_Shortcode_Encoding $encoding */
+        private $encoding;
+        /** @var WPML_PB_Reuse_Translations_By_Strategy|null $reuse_translations */
+        private $reuse_translations;
+        /** @var StringCleanUp */
+        private $existingStrings;
+        /** @var  int $location_index */
+        private $location_index;
+        /**
+         * @param WPML_PB_String_Registration                 $handle_strings
+         * @param WPML_PB_Shortcode_Strategy                  $shortcode_strategy
+         * @param WPML_PB_Shortcode_Encoding                  $encoding
+         * @param WPML_PB_Reuse_Translations_By_Strategy|null $reuse_translations
+         */
+        public function __construct(\WPML_PB_String_Registration $handle_strings, \WPML_PB_Shortcode_Strategy $shortcode_strategy, \WPML_PB_Shortcode_Encoding $encoding, \WPML_PB_Reuse_Translations_By_Strategy $reuse_translations = \null)
+        {
+        }
+        /**
+         * @param string|int    $post_id
+         * @param string        $content
+         * @param StringCleanUp $externalStringCleanUp
+         *
+         * @return bool
+         */
+        public function register_shortcode_strings($post_id, $content, \WPML\PB\Shortcode\StringCleanUp $externalStringCleanUp = \null)
+        {
+        }
+        /**
+         * @param array $shortcode
+         *
+         * @return bool
+         */
+        private function should_handle_content($shortcode)
+        {
+        }
+        function get_updated_shortcode_string_title($string_id, $shortcode, $attribute)
+        {
+        }
+        function get_shortcode_string_title($string_id)
+        {
+        }
+        public function register_string($post_id, $content, $shortcode, $attribute, $editor_type)
+        {
+        }
+        /**
+         * @param int $post_id
+         */
+        private function mark_post_as_migrate_location_done($post_id)
+        {
+        }
+    }
+    interface IWPML_PB_Strategy
+    {
+        /**
+         * @param $post
+         *
+         */
+        public function register_strings($post);
+        /**
+         * @param int $post_id
+         * @param string $content
+         * @param WPML\PB\Shortcode\StringCleanUp $stringCleanUp
+         *
+         * @return bool - true if strings were added.
+         */
+        public function register_strings_in_content($post_id, $content, \WPML\PB\Shortcode\StringCleanUp $stringCleanUp);
+        /**
+         * @param WPML_PB_Factory $factory
+         *
+         */
+        public function set_factory($factory);
+        public function get_package_key($page_id);
+        public function get_package_kind();
+        public function get_update_post($package_data);
+        public function get_content_updater();
+        public function get_package_strings($package_data);
+        public function remove_string($string_data);
+        public function migrate_location($post_id, $post_content);
+    }
+    class WPML_PB_Shortcode_Strategy implements \IWPML_PB_Strategy
+    {
+        private $shortcodes = array(\WPML_PB_Shortcode_Content_Wrapper::WRAPPER_SHORTCODE_NAME => array('encoding' => '', 'encoding-condition' => '', 'type' => '', 'ignore-content' => \false, 'attributes' => array()));
+        /** @var  WPML_PB_Factory $factory */
+        private $factory;
+        /** @var WPML_Page_Builder_Settings $page_builder_settings */
+        private $page_builder_settings;
+        public function __construct(\WPML_Page_Builder_Settings $page_builder_settings)
+        {
+        }
+        public function add_shortcodes($shortcode_data)
+        {
+        }
+        public function get_shortcodes()
+        {
+        }
+        public function get_shortcode_attributes($tag)
+        {
+        }
+        public function get_shortcode_tag_encoding($tag)
+        {
+        }
+        public function get_shortcode_tag_encoding_condition($tag)
+        {
+        }
+        public function get_shortcode_tag_type($tag)
+        {
+        }
+        public function get_shortcode_ignore_content($tag)
+        {
+        }
+        public function get_shortcode_attribute_encoding($tag, $attribute)
+        {
+        }
+        public function get_shortcode_attribute_type($tag, $attribute)
+        {
+        }
+        public function get_shortcode_attribute_label($tag, $attribute)
+        {
+        }
+        public function get_shortcode_parser()
+        {
+        }
+        /**
+         * @param $post
+         *
+         */
+        public function register_strings($post)
+        {
+        }
+        /**
+         * @param string|int $post_id
+         * @param string     $content
+         * @param WPML\PB\Shortcode\StringCleanUp $stringCleanUp
+         *
+         * @return bool
+         */
+        public function register_strings_in_content($post_id, $content, \WPML\PB\Shortcode\StringCleanUp $stringCleanUp = \null)
+        {
+        }
+        public function set_factory($factory)
+        {
+        }
+        public function get_package_key($page_id)
+        {
+        }
+        public function get_package_kind()
+        {
+        }
+        public function get_update_post($package_data)
+        {
+        }
+        public function get_content_updater()
+        {
+        }
+        public function get_package_strings($package_data)
+        {
+        }
+        public function remove_string($string_data)
+        {
+        }
+        /**
+         * @param int $post_id
+         * @param object $post_content
+         */
+        public function migrate_location($post_id, $post_content)
+        {
+        }
+    }
+    /**
+     * Class WPML_PB_Register_Shortcodes
+     */
+    class WPML_PB_Shortcode_Encoding
+    {
+        const ENCODE_TYPES_BASE64 = 'base64';
+        const ENCODE_TYPES_VISUAL_COMPOSER_LINK = 'vc_link';
+        const ENCODE_TYPES_ENFOLD_LINK = 'av_link';
+        public function decode($string, $encoding, $encoding_condition = '')
+        {
+        }
+        public function encode($string, $encoding)
+        {
+        }
+        /**
+         * @param string $condition
+         *
+         * @return bool
+         */
+        private function should_decode($condition)
+        {
+        }
+    }
+}
+namespace WPML\PB\Shortcode {
+    class StringCleanUp
+    {
+        /* @var array */
+        private $existingStrings;
+        /* @var \WPML_PB_Shortcode_Strategy */
+        private $shortcodeStrategy;
+        /**
+         * StringCleanUp constructor.
+         *
+         * @param int                         $postId
+         * @param \WPML_PB_Shortcode_Strategy $shortcodeStrategy
+         */
+        public function __construct($postId, \WPML_PB_Shortcode_Strategy $shortcodeStrategy)
+        {
+        }
+        /**
+         * @return array
+         */
+        public function get()
+        {
+        }
+        /**
+         * @param string $value
+         */
+        public function remove($value)
+        {
+        }
+        public function cleanUp()
+        {
+        }
+    }
+}
+namespace {
+    class WPML_PB_Config_Import_Shortcode
+    {
+        const PB_SHORTCODE_SETTING = 'pb_shortcode';
+        const PB_MEDIA_SHORTCODE_SETTING = 'wpml_pb_media_shortcode';
+        /** @var  WPML_ST_Settings $st_settings */
+        private $st_settings;
+        public function __construct(\WPML_ST_Settings $st_settings)
+        {
+        }
+        public function add_hooks()
+        {
+        }
+        public function wpml_config_filter($config_data)
+        {
+        }
+        /** @param array $config_data */
+        private function update_shortcodes_config($config_data)
+        {
+        }
+        /** @param array $config_data */
+        private function update_media_shortcodes_config($config_data)
+        {
+        }
+        private function is_media_attribute(array $attribute)
+        {
+        }
+        private function convert_single_attribute_to_multiple_format(array $attribute)
+        {
+        }
+        public function get_settings()
+        {
+        }
+        public function get_media_settings()
+        {
+        }
+        public function has_settings()
+        {
+        }
+    }
+    class WPML_PB_Update_Shortcodes_In_Content
+    {
+        const LONG_STRING_THRESHOLD = 5000;
+        /** @var  WPML_PB_Shortcode_Strategy $strategy */
+        private $strategy;
+        /** @var WPML_PB_Shortcode_Encoding $encoding */
+        private $encoding;
+        private $new_content;
+        private $string_translations;
+        private $lang;
+        public function __construct(\WPML_PB_Shortcode_Strategy $strategy, \WPML_PB_Shortcode_Encoding $encoding)
+        {
+        }
+        public function update($translated_post_id, $original_post, $string_translations, $lang)
+        {
+        }
+        public function update_content($original_content, $string_translations, $lang)
+        {
+        }
+        private function update_shortcodes($shortcode_data)
+        {
+        }
+        private function update_shortcode_attributes($shortcode_data)
+        {
+        }
+        private function replace_string_with_translation($block, $original, $translation, $is_attribute = \false, $attr = '')
+        {
+        }
+        /**
+         * We need to escape backward references that could be included in the replacement text
+         * e.g. '$1999.each' => '$19' is considered as a backward reference
+         *
+         * @param string $string
+         *
+         * @return string
+         */
+        private function escape_backward_reference_on_replacement_string($string)
+        {
+        }
+        private function replace_content_without_delimiters($block, $replacement)
+        {
+        }
+        /**
+         * @param string $string
+         *
+         * @return bool
+         */
+        private function is_string_too_long_for_regex($string)
+        {
+        }
+        private function get_translation($original, $encoding = \false)
+        {
+        }
+        /**
+         * @param string $translation
+         * @param string $encoding
+         *
+         * @return string
+         */
+        private function filter_attribute_translation($translation, $encoding)
+        {
+        }
+    }
+    class WPML_PB_Shortcode_Content_Wrapper
+    {
+        const WRAPPER_SHORTCODE_NAME = 'wpml_string_wrapper';
+        /** @var string $content */
+        private $content;
+        /** @var array $valid_shortcodes */
+        private $valid_shortcodes;
+        /** @var array $shortcodes */
+        private $shortcodes = array();
+        /** @var array $content_array */
+        private $content_array;
+        /** @var array $insert_wrapper */
+        private $insert_wrapper = array();
+        /**
+         * @param string $content
+         * @param array  $valid_shortcodes
+         */
+        public function __construct($content, array $valid_shortcodes)
+        {
+        }
+        public function get_wrapped_content()
+        {
+        }
+        /**
+         * This is a multibyte safe version of `str_split`
+         */
+        private function split_content()
+        {
+        }
+        private function parse_shortcodes()
+        {
+        }
+        /**
+         * @param int $open_bracket_position
+         *
+         * @return int
+         */
+        private function parse_shortcode($open_bracket_position)
+        {
+        }
+        /**
+         * @param int $start
+         * @param int $end
+         */
+        private function remove_nested_shortcodes_between($start, $end)
+        {
+        }
+        private function analyze_unwrapped_text()
+        {
+        }
+        /**
+         * @param int $start
+         * @param int $end
+         */
+        private function set_wrapper_positions($start, $end)
+        {
+        }
+        /**
+         * @param int    $position
+         * @param string $type
+         *
+         * @return null|int
+         */
+        private function get_wrapper_insert_position($position, $type)
+        {
+        }
+        /**
+         * @param int $open_bracket_position
+         *
+         * @return string
+         */
+        private function get_shortcode_name($open_bracket_position)
+        {
+        }
+        /**
+         * @param int    $open_bracket_position
+         * @param string $shortcode_name
+         *
+         * @return int
+         */
+        private function get_shortcode_end($open_bracket_position, $shortcode_name)
+        {
+        }
+        /**
+         * @param string $shortcode_name
+         *
+         * @return int|null
+         */
+        private function find_last_opened_shortcode($shortcode_name)
+        {
+        }
+        private function insert_wrappers()
+        {
+        }
+        /**
+         * @param string $content
+         * @param array  $shortcodes
+         *
+         * @return string
+         */
+        public static function maybeWrap($content, array $shortcodes)
+        {
+        }
+        /**
+         * This will flag some regular text not wrapped in a shortcode.
+         * e.g. "[foo] Some text not wrapped [bar]"
+         *
+         * @param string $content
+         *
+         * @return bool
+         */
+        public static function isStrippedContentDifferent($content)
+        {
+        }
+        /**
+         * @param string $content
+         *
+         * @return string
+         */
+        public static function wrap($content)
+        {
+        }
+        /**
+         * @param string $content
+         *
+         * @return string
+         */
+        public static function unwrap($content)
+        {
+        }
+    }
+    class WPML_PB_Shortcodes
+    {
+        /** @var  WPML_PB_Shortcode_Strategy $shortcode_strategy */
+        private $shortcode_strategy;
+        /** @var bool $is_wrapping_regular_text */
+        private $is_wrapping_regular_text = \false;
+        public function __construct(\WPML_PB_Shortcode_Strategy $shortcode_strategy)
+        {
+        }
+        public function get_shortcodes($content)
+        {
+        }
+        /**
+         * @param string $content
+         *
+         * @return string
+         */
+        private function wrap_regular_text($content)
+        {
+        }
+        /**
+         * @param string $content
+         *
+         * @return bool
+         */
+        private function needs_wrapping_regular_text($content)
+        {
+        }
+    }
+    class WPML_PB_API_Hooks_Strategy implements \IWPML_PB_Strategy
+    {
+        /** @var  WPML_PB_Factory $factory */
+        private $factory;
+        private $name;
+        public function __construct($name)
+        {
+        }
+        /**
+         * @param $post
+         *
+         */
+        public function register_strings($post)
+        {
+        }
+        /**
+         * @param string|int $post_id
+         * @param string $content
+         * @param WPML\PB\Shortcode\StringCleanUp $stringCleanUp
+         *
+         * @return bool
+         */
+        public function register_strings_in_content($post_id, $content, \WPML\PB\Shortcode\StringCleanUp $stringCleanUp)
+        {
+        }
+        public function set_factory($factory)
+        {
+        }
+        /**
+         * @param int $page_id
+         *
+         * @return array
+         */
+        public function get_package_key($page_id)
+        {
+        }
+        public function get_package_kind()
+        {
+        }
+        public function get_update_post($package_data)
+        {
+        }
+        public function get_content_updater()
+        {
+        }
+        public function get_package_strings($package_data)
+        {
+        }
+        public function remove_string($string_data)
+        {
+        }
+        public function migrate_location($post_id, $post_content)
+        {
+        }
+    }
+    class WPML_PB_Update_API_Hooks_In_Content
+    {
+        /** @var  WPML_PB_API_Hooks_Strategy $strategy */
+        private $strategy;
+        public function __construct(\WPML_PB_API_Hooks_Strategy $strategy)
+        {
+        }
+        public function update($translated_post_id, $original_post, $string_translations, $lang)
+        {
+        }
+        /**
+         * @param string $original_content
+         * @param array  $string_translations
+         * @param string $lang
+         *
+         * @return string
+         */
+        public function update_content($original_content, $string_translations, $lang)
+        {
+        }
+    }
+    /**
+     * Class WPML_PB_Integration
+     */
+    class WPML_PB_Integration
+    {
+        const MIGRATION_DONE_POST_META = '_wpml_location_migration_done';
+        private $sitepress;
+        private $factory;
+        private $new_translations_recieved = \false;
+        private $save_post_queue = array();
+        private $is_registering_string = \false;
+        private $strategies = array();
+        /** @var StringCleanUp[]  */
+        private $stringCleanUp = [];
+        /**
+         * @var WPML_PB_Integration_Rescan
+         */
+        private $rescan;
+        /** @var IWPML_PB_Media_Update $media_updaters */
+        private $media_updaters;
+        /**
+         * WPML_PB_Integration constructor.
+         *
+         * @param SitePress $sitepress
+         * @param WPML_PB_Factory $factory
+         */
+        public function __construct(\SitePress $sitepress, \WPML_PB_Factory $factory)
+        {
+        }
+        /**
+         * @param IWPML_PB_Strategy $strategy
+         */
+        public function add_strategy(\IWPML_PB_Strategy $strategy)
+        {
+        }
+        /**
+         * @return WPML_PB_Integration_Rescan
+         */
+        public function get_rescan()
+        {
+        }
+        /**
+         * @param WPML_PB_Integration_Rescan $rescan
+         */
+        public function set_rescan(\WPML_PB_Integration_Rescan $rescan)
+        {
+        }
+        public function resave_post_translation_in_shutdown(\WPML_Post_Element $post_element, $disallowed_in_shutdown = \true)
+        {
+        }
+        /**
+         * @param $post_id
+         * @param $post
+         */
+        public function queue_save_post_actions($post_id, $post)
+        {
+        }
+        /**
+         * @return \WP_Post[]
+         */
+        public function get_save_post_queue()
+        {
+        }
+        /** @param int $post_id */
+        private function update_last_editor_mode($post_id)
+        {
+        }
+        /** @return bool */
+        private function is_editing_translation_with_native_editor()
+        {
+        }
+        /**
+         * @param int $postId
+         *
+         * @return bool
+         */
+        private function is_translation($postId)
+        {
+        }
+        /**
+         * @param WP_Post $post
+         */
+        public function register_all_strings_for_translation($post)
+        {
+        }
+        /**
+         * @param $post
+         *
+         * @return bool
+         */
+        private function is_original_post($post)
+        {
+        }
+        /**
+         * @param $post
+         *
+         * @return bool
+         */
+        private function is_post_status_ok($post)
+        {
+        }
+        /**
+         * Add all actions filters.
+         */
+        public function add_hooks()
+        {
+        }
+        /**
+         * @param int      $new_post_id
+         * @param array    $fields
+         * @param stdClass $job
+         */
+        public function cleanup_strings_after_translation_completed($new_post_id, array $fields, \stdClass $job)
+        {
+        }
+        public function new_translation($translated_string_id)
+        {
+        }
+        /**
+         * @param callable $callable
+         */
+        private function with_strategies(callable $callable)
+        {
+        }
+        /**
+         * When a Page Builder content has only a "LINK" string, it's won't be part
+         * of the translation job as it's automatically converted.
+         * We need to add the package to the update list (by strategies).
+         *
+         * @param int $new_post_id
+         * @param int $original_doc_id
+         */
+        public function process_pb_content_with_hidden_strings_only($new_post_id, $original_doc_id)
+        {
+        }
+        public function save_translations_to_post()
+        {
+        }
+        /**
+         * @param string $content
+         * @param string $lang
+         *
+         * @return string
+         */
+        public function update_translations_in_content($content, $lang)
+        {
+        }
+        /**
+         * @see https://onthegosystems.myjetbrains.com/youtrack/issue/wpmlst-958
+         * @param array                $translation_package
+         * @param WP_Post|WPML_Package $post
+         *
+         * @return array
+         */
+        public function rescan(array $translation_package, $post)
+        {
+        }
+        /**
+         * @param int $post_id
+         */
+        public function migrate_location($post_id)
+        {
+        }
+        /**
+         * @param bool $registered
+         * @param string|int $post_id
+         * @param string $content
+         * @param WPML\PB\Shortcode\StringCleanUp $stringCleanUp
+         *
+         * @return bool
+         */
+        public function register_strings_in_content($registered, $post_id, $content)
+        {
+        }
+        public function get_factory()
+        {
+        }
+        public function initialize_string_clean_up(\WP_Post $post)
+        {
+        }
+        public function clean_up_strings(\WP_Post $post)
+        {
+        }
+        /**
+         * @param int $post_id
+         *
+         * @return bool
+         */
+        private function post_has_strings($post_id)
+        {
+        }
+        /**
+         * @param int $post_id
+         *
+         * @return bool
+         */
+        private function is_migrate_location_done($post_id)
+        {
+        }
+        /**
+         * @param int $post_id
+         */
+        private function mark_migrate_location_done($post_id)
+        {
+        }
+        /**
+         * @param WP_Post $post
+         */
+        public function translate_media($post)
+        {
+        }
+        /** @return IWPML_PB_Media_Update[] $media_updaters */
+        private function get_media_updaters()
+        {
+        }
+    }
+    /**
+     * Class WPML_Page_Builders_App
+     */
+    class WPML_Page_Builders_App
+    {
+        /**
+         * @var WPML_Page_Builders_Defined
+         */
+        private $page_builder_plugins;
+        /**
+         * WPML_Page_Builders_App constructor.
+         *
+         * @param WPML_Page_Builders_Defined $page_builder_plugins
+         */
+        public function __construct(\WPML_Page_Builders_Defined $page_builder_plugins)
+        {
+        }
+        public function add_hooks()
+        {
+        }
+        public function load_integration()
+        {
+        }
+        public function add_components($components)
+        {
+        }
+    }
+}
+namespace WPML\PB {
+    /**
+     * Class ShortCodesInGutenbergBlocks
+     * @package WPML\PB
+     *
+     * This class is to handle an edge case when there is only one Gutenberg block
+     * that contains one or more shortcodes.
+     * In this case we need to force the Gutenberg processing as there will be
+     * no Gutenberg strings and only shortcode strings.
+     *
+     */
+    class ShortCodesInGutenbergBlocks
+    {
+        const FORCED_GUTENBERG = 'Forced-Gutenberg';
+        public static function recordPackage(\WPML_PB_String_Translation_By_Strategy $strategy, $strategyKind, \WPML_Package $package, $language)
+        {
+        }
+        public static function fixupPackage($package_data)
+        {
+        }
+        public static function normalizePackages(array $packagesToUpdate)
+        {
+        }
+    }
+    class TranslateLinks
+    {
+        /**
+         * @param \WPML_ST_String_Factory $stringFactory
+         * @param array $activeLanguages
+         *
+         * @return \Closure
+         */
+        public static function getTranslatorForString(\WPML_ST_String_Factory $stringFactory, $activeLanguages)
+        {
+        }
+    }
+}
+namespace {
+    class WPML_PB_Factory
+    {
+        /** @var wpdb */
+        private $wpdb;
+        /** @var SitePress */
+        private $sitepress;
+        private $string_translations = array();
+        public function __construct(\wpdb $wpdb, \SitePress $sitepress)
+        {
+        }
+        public function get_wpml_package($package_id)
+        {
+        }
+        public function get_string_translations(\IWPML_PB_Strategy $strategy)
+        {
+        }
+        public function get_shortcode_parser(\WPML_PB_Shortcode_Strategy $strategy)
+        {
+        }
+        /**
+         * @param WPML_PB_Shortcode_Strategy $strategy
+         * @param bool $migration_mode
+         *
+         * @return WPML_PB_Register_Shortcodes
+         */
+        public function get_register_shortcodes(\WPML_PB_Shortcode_Strategy $strategy, $migration_mode = \false)
+        {
+        }
+        public function get_update_post($package_data, \IWPML_PB_Strategy $strategy)
+        {
+        }
+        public function get_shortcode_content_updater(\IWPML_PB_Strategy $strategy)
+        {
+        }
+        public function get_api_hooks_content_updater(\IWPML_PB_Strategy $strategy)
+        {
+        }
+        public function get_package_strings_resave()
+        {
+        }
+        public function get_handle_post_body()
+        {
+        }
+        public function get_last_translation_edit_mode()
+        {
+        }
+        public function get_post_element($post_id)
+        {
+        }
+    }
+    class WPML_PB_Integration_Rescan
+    {
+        /**
+         * @var WPML_PB_Integration
+         */
+        private $integrator;
+        /**
+         * @param WPML_PB_Integration $integrator
+         */
+        public function __construct(\WPML_PB_Integration $integrator)
+        {
+        }
+        /**
+         * Rescan post content if it does not contain packages
+         *
+         * @see https://onthegosystems.myjetbrains.com/youtrack/issue/wpmlst-958
+         * @param array $translation_package
+         * @param $post
+         *
+         * @return array
+         */
+        public function rescan(array $translation_package, $post)
+        {
+        }
+    }
+}
