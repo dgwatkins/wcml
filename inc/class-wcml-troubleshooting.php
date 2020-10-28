@@ -354,6 +354,10 @@ class WCML_Troubleshooting {
 
 			$language = $this->sitepress->get_language_for_element( wp_get_post_parent_id( $translated_variation->meta_value ), 'post_product' );
 
+			if ( ! $language ) {
+				continue;
+			}
+
 			$language_current = $this->sitepress->get_language_for_element( wp_get_post_parent_id( $translated_variation->post_id ), 'post_product' );
 
 			$tr_info_for_current_variation = $this->get_translation_info_for_element( $translated_variation->post_id, 'post_product_variation' );
