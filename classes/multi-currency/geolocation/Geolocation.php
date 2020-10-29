@@ -120,8 +120,8 @@ class Geolocation {
 			if ( isset ( $_POST['country'] ) && 'update_order_review' === $_GET['wc-ajax'] ) {
 				return wc_clean( wp_unslash( $_POST['country'] ) );
 			}
-			if ( isset ( $_POST['shipping_country'] ) && 'checkout' === $_GET['wc-ajax'] ) {
-				return wc_clean( wp_unslash( $_POST['shipping_country'] ) );
+			if ( isset ( $_POST['billing_country'] ) && 'checkout' === $_GET['wc-ajax'] ) {
+				return wc_clean( wp_unslash( $_POST['billing_country'] ) );
 			}
 		}
 

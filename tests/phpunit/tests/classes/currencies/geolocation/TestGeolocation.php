@@ -86,7 +86,7 @@ class TestGeolocation extends \OTGS_TestCase {
 		$expected_code = 'EUR';
 
 		$_GET['wc-ajax']  = 'checkout';
-		$_POST['shipping_country'] = 'ES';
+		$_POST['billing_country'] = 'ES';
 
 		$code = Geolocation::getCurrencyCodeByUserCountry();
 
