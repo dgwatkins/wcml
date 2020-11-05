@@ -304,11 +304,6 @@ class WCML_Compatibility {
 			$this->wc_order_status_manager->add_hooks();
 		}
 
-		// YITH WooCommerce Points and Rewards
-		if ( class_exists( 'YITH_WC_Points_Rewards' ) ) {
-			$this->yith_wcpar = new \WCML\Compatibility\YITH\PointsRewards();
-			$this->yith_wcpar->addHooks();
-		}
 	}
 
 }
