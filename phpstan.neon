@@ -13,6 +13,8 @@ parameters:
 
     - tests/phpstan/stubs/otgs-installer.stub
 
+#    - tests/phpstan/stubs/wpml-collect.stub
+    - tests/phpstan/stubs/wpml-core-api.stub
     - tests/phpstan/stubs/wpml-core.stub
     - tests/phpstan/stubs/wpml-container-functions.stub
 
