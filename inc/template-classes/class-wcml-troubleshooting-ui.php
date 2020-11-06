@@ -74,8 +74,8 @@ class WCML_Troubleshooting_UI extends WCML_Templates_Factory {
 
 	public function get_all_products_taxonomies() {
 
+		/** @var array<string, WP_Taxonomy> $all_products_taxonomies */
 		$all_products_taxonomies = get_taxonomies( [ 'object_type' => [ 'product' ] ], 'objects' );
-		/** @phpstan-ignore-next-line */
 		unset(
 			$all_products_taxonomies['product_type'],
 			$all_products_taxonomies['product_cat'],

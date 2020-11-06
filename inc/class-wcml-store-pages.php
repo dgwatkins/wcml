@@ -11,6 +11,13 @@ class WCML_Store_Pages {
 	 */
 	private $sitepress;
 
+	/** @var int|string $front_page_id */
+	private $front_page_id;
+	/** @var int $shop_page_id */
+	private $shop_page_id;
+	/** @var WP_Post|null $shop_page */
+	private $shop_page;
+
 	public function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress ) {
 
 		$this->woocommerce_wpml = $woocommerce_wpml;
