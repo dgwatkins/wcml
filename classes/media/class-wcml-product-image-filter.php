@@ -27,14 +27,7 @@ class WCML_Product_Image_Filter implements IWPML_Action {
 
 		$image_id = false;
 		if ( ! $value && '_thumbnail_id' === $meta_key &&
-			 in_array( get_post_type( $object_id ), [ 'product', 'product_variation' ] ) &&
-			 (
-				 ! defined( 'WPML_Admin_Post_Actions::DISPLAY_FEATURED_IMAGE_AS_TRANSLATED_META_KEY' ) ||
-				 (
-					 ! get_post_meta( $object_id, WPML_Admin_Post_Actions::DISPLAY_FEATURED_IMAGE_AS_TRANSLATED_META_KEY, true ) ||
-					 get_post_meta( $object_id, WPML_Admin_Post_Actions::DISPLAY_FEATURED_IMAGE_AS_TRANSLATED_META_KEY, true ) === '0'
-				 )
-			 )
+			 in_array( get_post_type( $object_id ), [ 'product', 'product_variation' ] )
 		) {
 
 			$cache_key = $object_id . '_thumbnail_id';

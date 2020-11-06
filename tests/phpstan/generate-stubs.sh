@@ -53,7 +53,6 @@
   ../sitepress-multilingual-cms/inc/query-filtering \
   ../sitepress-multilingual-cms/inc/setup \
   ../sitepress-multilingual-cms/inc/taxonomy-term-translation \
-  ../sitepress-multilingual-cms/inc/template-constants.php \
   ../sitepress-multilingual-cms/inc/template-functions.php \
   ../sitepress-multilingual-cms/inc/tools \
   ../sitepress-multilingual-cms/inc/translation-management \
@@ -106,6 +105,34 @@
   --interfaces \
   --traits \
   \
+  --out=tests/phpstan/stubs/wpml-media.stub \
+  \
+  ../wpml-media-translation/classes \
+  ../wpml-media-translation/inc
+
+
+./vendor/bin/generate-stubs  \
+  --force  \
+  --functions \
+  --classes \
+  --interfaces \
+  --traits \
+  \
   --out=tests/phpstan/stubs/wp-background-processing.stub \
   \
   ../wpml-translation-management/vendor/a5hleyrich/wp-background-processing
+
+
+./vendor/bin/generate-stubs  \
+  --force  \
+  --functions \
+  --classes \
+  --interfaces \
+  --traits \
+  \
+  --out=tests/phpstan/stubs/woocommerce.stub \
+  \
+  ../woocommerce/includes \
+  ../woocommerce/packages \
+  ../woocommerce/src \
+  ../woocommerce/woocommerce.php

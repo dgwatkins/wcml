@@ -5,7 +5,11 @@ parameters:
   bootstrapFiles:
     - tests/phpstan/bootstrap.php
 
-    - tests/phpstan/stubs/wp-background-processing.stub
+#    - tests/phpstan/stubs/wp-background-processing.stub
+
+    - tests/phpstan/stubs/psr.stub
+    - tests/phpstan/stubs/wp-cli.stub
+    - tests/phpstan/stubs/woocommerce.stub
 
     - tests/phpstan/stubs/twig.stub
 
@@ -21,6 +25,7 @@ parameters:
     - tests/phpstan/stubs/page-builders.stub
     - tests/phpstan/stubs/wpml-tm.stub
     - tests/phpstan/stubs/wpml-st.stub
+    - tests/phpstan/stubs/wpml-media.stub
 
   paths:
     - classes
