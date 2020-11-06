@@ -11,6 +11,9 @@ class WCML_WC_Admin_Duplicate_Product {
 	 */
 	private $sitepress;
 
+	/** @var wpdb $wpdb */
+	private $wpdb;
+
 	/**
 	 * WCML_WC_Admin_Duplicate_Product constructor.
 	 *

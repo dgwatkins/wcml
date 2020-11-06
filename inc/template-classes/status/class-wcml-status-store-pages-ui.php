@@ -36,7 +36,6 @@ class WCML_Status_Store_Pages_UI extends WCML_Templates_Factory {
 			'strings'      => [
 				'store_pages'     => __( 'WooCommerce Store Pages', 'woocommerce-multilingual' ),
 				'pages_trnsl'     => __( "To run a multilingual e-commerce site, you need to have the WooCommerce shop pages translated to all the site's languages. Once all the pages are installed you can add the translations for them from this menu.", 'woocommerce-multilingual' ),
-				'store_pages'     => __( 'WooCommerce Store Pages', 'woocommerce-multilingual' ),
 				'not_created'     => __( 'One or more WooCommerce pages have not been created.', 'woocommerce-multilingual' ),
 				'install'         => __( 'Install WooCommerce Pages', 'woocommerce-multilingual' ),
 				'not_exist'       => __( 'WooCommerce store pages do not exist for these languages:', 'woocommerce-multilingual' ),

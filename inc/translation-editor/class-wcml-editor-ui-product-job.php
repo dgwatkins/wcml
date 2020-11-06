@@ -23,6 +23,9 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 	private $not_display_fields_for_variables_product;
 	private $not_display_custom_fields_for_product;
 
+	/** @var WP_Post|null $original_post */
+	private $original_post;
+
 	/**
 	 * WCML_Editor_UI_Product_Job constructor.
 	 *
