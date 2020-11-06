@@ -90,6 +90,18 @@
   --interfaces \
   --traits \
   \
+  --out=tests/phpstan/stubs/wpml-fp.stub \
+  \
+  ../sitepress-multilingual-cms/vendor/wpml/fp/core
+
+
+./vendor/bin/generate-stubs  \
+  --force  \
+  --functions \
+  --classes \
+  --interfaces \
+  --traits \
+  \
   --out=tests/phpstan/stubs/wpml-tm.stub \
   \
   ../wpml-translation-management/classes \
