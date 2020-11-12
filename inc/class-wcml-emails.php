@@ -8,6 +8,8 @@ class WCML_Emails {
 	private $order_id       = false;
 	private $locale         = false;
 	private $admin_language = false;
+	/** @var null|string $rest_language */
+	private $rest_language;
 	/** @var WCML_WC_Strings */
 	private $wcmlStrings;
 	/** @var Sitepress */
@@ -165,6 +167,8 @@ class WCML_Emails {
 
 		add_action( 'woocommerce_low_stock_notification', [ $this, 'low_stock_admin_notification' ], self::PRIORITY_BEFORE_EMAIL_SET_LANGUAGE );
 		add_action( 'woocommerce_no_stock_notification', [ $this, 'no_stock_admin_notification' ], self::PRIORITY_BEFORE_EMAIL_SET_LANGUAGE );
+
+		add_filter( 'woocommerce_rest_pre_insert_shop_order_object', [ $this, 'set_rest_language' ], 10, 2 );
 	}
 
 	private function add_hooks_to_restore_language_for_admin_notes(){
@@ -221,18 +225,35 @@ class WCML_Emails {
 
 	public function refresh_email_lang( $order_id ) {
 
+		$language = $this->get_order_language( $order_id );
+
+		if ( ! empty( $language ) ) {
+			$this->change_email_language( $language );
+		}
+	}
+
+	/**
+	 * @param array|int $order_id
+	 *
+	 * @return null|string
+	 */
+	public function get_order_language( $order_id ) {
+
 		if ( is_array( $order_id ) ) {
 			if ( isset( $order_id['order_id'] ) ) {
 				$order_id = $order_id['order_id'];
 			} else {
-				return;
+				return null;
 			}
 		}
 
-		$lang = get_post_meta( $order_id, 'wpml_language', true );
-		if ( ! empty( $lang ) ) {
-			$this->change_email_language( $lang );
+		$language = get_post_meta( $order_id, 'wpml_language', true );
+
+		if ( ! $language ) {
+			$language = $this->rest_language;
 		}
+
+		return $language;
 	}
 
 	/**
@@ -680,5 +701,18 @@ class WCML_Emails {
 			$wcEmails->$method( wc_get_product( $product_id_in_admin_language ) );
 			$this->sitepress->switch_lang();
 		}
+	}
+
+	/**
+	 * @param WC_Data         $order    Object object.
+	 * @param WP_REST_Request $request  Request object.
+	 *
+	 * @return WC_Data
+	 */
+	public function set_rest_language( $order, $request ) {
+
+		$this->rest_language = isset( $request['lang'] ) ? $request['lang'] : null;
+
+		return $order;
 	}
 }

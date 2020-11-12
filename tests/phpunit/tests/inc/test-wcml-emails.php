@@ -95,6 +95,8 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_email_get_option', array( $subject, 'filter_emails_strings' ), 10, 4 );
 
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_pre_insert_shop_order_object', [ $subject, 'set_rest_language' ], 10, 2 );
+
 		$subject->add_hooks();
 	}
 
@@ -372,6 +374,11 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			'return' => $user->ID
 		));
 
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => [ $order_id, 'wpml_language', true ],
+			'return' => false
+		) );
+
 		$this->wcEmails =  $this->getMockBuilder('WC_Emails')
 		                ->disableOriginalConstructor()
 		                ->getMock();
@@ -420,6 +427,11 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		WP_Mock::userFunction( 'get_current_user_id', array(
 			'return' => 0
 		));
+
+		\WP_Mock::userFunction( 'get_post_meta', array(
+			'args'   => [ $order_id, 'wpml_language', true ],
+			'return' => false
+		) );
 
 		$this->wcEmails =  $this->getMockBuilder('WC_Emails')
 		                ->disableOriginalConstructor()
@@ -860,5 +872,64 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		$this->assertEquals( 'admin_texts_woocommerce_customer_refunded_order_settings', $context );
 		$this->assertEquals( '[woocommerce_customer_refunded_order_settings]', $name );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_get_order_language_from_order_meta() {
+
+		$order_id = 10;
+		$language = 'es';
+
+		WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $order_id, 'wpml_language', true ],
+			'return' => $language
+		] );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( $language, $subject->get_order_language( $order_id ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_get_order_language_from_order_if_it_passed_as_array() {
+
+		$order_id = [ 'order_id' => 11 ];
+		$language = 'es';
+
+		WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $order_id['order_id'], 'wpml_language', true ],
+			'return' => $language
+		] );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals( $language, $subject->get_order_language( $order_id ) );
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_get_order_language_from_rest_api() {
+
+		$object          = $this->getMockBuilder( 'WC_Data' )
+		                        ->disableOriginalConstructor()
+		                        ->getMock();
+		$order_id        = 12;
+		$language        = 'es';
+		$request['lang'] = $language;
+
+		WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $order_id, 'wpml_language', true ],
+			'return' => false
+		] );
+
+		$subject = $this->get_subject();
+		$subject->set_rest_language( $object, $request );
+
+		$this->assertEquals( $language, $subject->get_order_language( $order_id ) );
 	}
 }
