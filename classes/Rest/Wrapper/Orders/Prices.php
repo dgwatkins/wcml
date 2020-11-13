@@ -41,12 +41,6 @@ class Prices extends Handler {
 			}
 
 			update_post_meta( $orderId, '_order_currency', $currency );
-
-			foreach ( $object->get_items( 'line_item' ) as $item ){
-				$this->wcmlMultiCurrencyOrders->set_converted_totals_for_item( $item, [], $orderId );
-			}
-
-			$object->calculate_totals();
 		}
 	}
 }

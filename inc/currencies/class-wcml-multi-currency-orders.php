@@ -20,6 +20,7 @@ class WCML_Multi_Currency_Orders {
 		}
 
 		add_action( 'woocommerce_view_order', [ $this, 'show_price_in_client_currency' ], 9 );
+		add_filter( 'woocommerce_rest_pre_insert_shop_order_object', [ $this, 'rest_set_line_item_currency' ], 10, 2 );
 	}
 
 	public function orders_init() {
@@ -290,28 +291,32 @@ class WCML_Multi_Currency_Orders {
 	/**
 	 * @param WC_Order_Item_Product $item
 	 * @param array $coupons
-     * @param int|bool $order_id
+	 * @param int|bool $order_id
+	 * @param string|bool $order_currency
 	 */
-	public function set_converted_totals_for_item( $item, $coupons, $order_id = false ) {
+	public function set_converted_totals_for_item( $item, $coupons, $order_id = false, $order_currency = false ) {
 
 		if ( 'line_item' === $item->get_type() ) {
 
-			$order_id =  $order_id ?: intval( $_POST['order_id'] );
-
-			$order_currency = get_post_meta( $order_id, '_order_currency', true );
-
 			if ( ! $order_currency ) {
-				$order_currency = $this->get_order_currency_cookie();
 
-				if ( in_array(
-					$_POST['action'],
-					[
-						'woocommerce_add_order_item',
-						'woocommerce_save_order_items',
-					],
-					true
-				) ) {
-					update_post_meta( $order_id, '_order_currency', $order_currency );
+				$order_id = $order_id ?: intval( $_POST['order_id'] );
+
+				$order_currency = get_post_meta( $order_id, '_order_currency', true );
+
+				if ( ! $order_currency ) {
+					$order_currency = $this->get_order_currency_cookie();
+
+					if ( in_array(
+						$_POST['action'],
+						[
+							'woocommerce_add_order_item',
+							'woocommerce_save_order_items',
+						],
+						true
+					) ) {
+						update_post_meta( $order_id, '_order_currency', $order_currency );
+					}
 				}
 			}
 
@@ -548,6 +553,25 @@ class WCML_Multi_Currency_Orders {
 		}
 
 		return $value;
+	}
+
+	/**
+	 * @param WC_Data         $order    Object object.
+	 * @param WP_REST_Request $request  Request object.
+	 *
+	 * @return WC_Data
+	 */
+	public function rest_set_line_item_currency( $order, $request ) {
+
+		$currency = isset( $request['currency'] ) ? $request['currency'] : false;
+
+		if ( $currency && $this->multi_currency->is_currency_active( $currency ) ) {
+			foreach ( $order->get_items( 'line_item' ) as $item ) {
+				$this->set_converted_totals_for_item( $item, [], $order->get_id(), $currency );
+			}
+		}
+
+		return $order;
 	}
 
 }
