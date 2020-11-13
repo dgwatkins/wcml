@@ -598,7 +598,7 @@ class WCML_Multi_Currency {
 		if ( ! empty( $woocommerce->session ) && $woocommerce->session->get( 'client_currency_switched' ) ) {
 			?>
 			<script type="text/javascript">
-				jQuery(document).ready(function () {
+				jQuery(function () {
 					wcml_reset_cart_fragments();
 				});
 			</script>

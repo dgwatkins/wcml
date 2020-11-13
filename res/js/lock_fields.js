@@ -1,4 +1,4 @@
-jQuery(document).ready(function($){
+jQuery(function($){
     var i;
     var ids = [
         '_virtual',

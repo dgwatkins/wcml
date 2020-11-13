@@ -7,7 +7,7 @@ jQuery( function($){
 
         init:  function(){
 
-            $(document).ready( function(){
+            $(function(){
 
                 $(document).on('change','#currency_switcher_style', WCML_Currency_Switcher_Settings.update_currency_switcher_style);
                 $(document).on('click','.currency_switcher_save', WCML_Currency_Switcher_Settings.save_currency_switcher_settings);

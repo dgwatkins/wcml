@@ -45,7 +45,7 @@ var WCML_Pointer = WCML_Pointer || {};
 
 } )( jQuery );
 
-jQuery( document ).ready( function($) {
+jQuery( function($) {
 
     $('.wcml-pointer-block').each( function(){
         var selector = $(this).data('selector');

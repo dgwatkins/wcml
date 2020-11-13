@@ -1,4 +1,4 @@
-jQuery(document).ready(function ($) {
+jQuery(function ($) {
 
     if (typeof wc_memberships_memebers_area_endpoint != 'undefined') {
 

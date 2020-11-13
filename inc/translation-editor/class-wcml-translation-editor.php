@@ -267,7 +267,7 @@ class WCML_Translation_Editor {
 
 			?>
 			<script type="text/javascript">
-				jQuery(document).ready(function() {
+				jQuery(function() {
 					wcml_lock_variation_fields( <?php echo json_encode( $file_path_sync ); ?> );
 				});
 			</script>

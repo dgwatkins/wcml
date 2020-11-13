@@ -1,4 +1,4 @@
-jQuery(document).ready(function($){
+jQuery(function($){
 
     if( $('form>table').size() > 0 ){
         $('.wcml-is-translatable-attr-block tr').insertAfter('form>table tr:nth-child(3)');

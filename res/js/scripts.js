@@ -1,4 +1,4 @@
-jQuery(document).ready(function ($) {
+jQuery(function ($) {
     var discard = false;
 
     window.onbeforeunload = function (e) {
@@ -138,7 +138,7 @@ jQuery(document).ready(function ($) {
      * Function to display larger image on hover while you are in product list.
      **/
 
-    $(document).ready(function() {
+    $(function() {
         $('.original-image').mousemove(function(e) {
             $img = $("#" + $(this).data('image-id'));
             $img.show(200);

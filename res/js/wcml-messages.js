@@ -1,4 +1,4 @@
-jQuery(document).ready(function($){
+jQuery(function($){
 
     $(document).on('click', '.wcml_ignore_link', function(e){
         e.preventDefault();

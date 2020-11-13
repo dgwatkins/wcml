@@ -1,4 +1,4 @@
-jQuery(document).ready(function ($) {
+jQuery(function ($) {
 
     $('.wc-pao-addon-header').each(function () {
         fix_dialogs_visibility($(this));

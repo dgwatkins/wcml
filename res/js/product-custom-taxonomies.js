@@ -6,7 +6,7 @@
     var taxonomySelector = jQuery('#wcml_product_custom_taxonomies');
 
 
-    jQuery(document).ready(function () {
+    jQuery(function () {
 
         taxonomySelector.on('change', switchTaxonomy);
 

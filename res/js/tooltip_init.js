@@ -8,7 +8,7 @@ var WCML_Tooltip = {
     },
 
     setup: function(){
-        jQuery(document).ready(function () {
+        jQuery(function () {
             WCML_Tooltip.init();
         });
     },

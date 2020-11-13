@@ -1,4 +1,4 @@
-jQuery(document).ready( function() {
+jQuery( function() {
 
     var bacs_accounts = jQuery('#bacs_accounts');
     var bacs_accounts_tbody = bacs_accounts.find('tbody');
