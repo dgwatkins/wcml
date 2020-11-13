@@ -1,4 +1,4 @@
-jQuery(document).ready(function($){
+jQuery(function($){
 
 
     $(document).on('click','#wcml_file_path_option', function( e ){

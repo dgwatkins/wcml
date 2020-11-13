@@ -1,4 +1,4 @@
-jQuery( document ).ready( function( $ ){
+jQuery( function( $ ){
     //lock fields
     if( typeof lock_settings != 'undefined'  && typeof lock_settings.lock_fields != 'undefined' && lock_settings.lock_fields == 1 ) {
 

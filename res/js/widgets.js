@@ -1,4 +1,4 @@
-jQuery(document).ready(function($){
+jQuery(function($){
     $(document).on('widget-added', function (e, widget) {
         var button = widget.find('.wcml-cs-widgets-edit-link');
 

@@ -1,4 +1,4 @@
-jQuery(document).ready(function() {
+jQuery(function() {
 
     jQuery(document).on('click', '.wcml_currency_switcher a', wcml_switch_currency_handler );
 

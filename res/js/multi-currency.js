@@ -5,7 +5,7 @@ jQuery( function($){
 
         init:  function(){
 
-            $(document).ready( function(){
+            $(function(){
 
                 WCML_Multi_Currency.setup_multi_currency_toggle();
 

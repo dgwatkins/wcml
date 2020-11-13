@@ -287,7 +287,7 @@ jQuery( function($){
 
     WCML_Dialog.init = function(){
 
-        $(document).ready(function() {
+        $(function() {
             if (typeof $.wp != 'undefined') {
                 WCML_Dialog.using_wpdialog = typeof $.wp.wpdialog != 'undefined';
             } else {

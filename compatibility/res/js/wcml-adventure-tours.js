@@ -1,4 +1,4 @@
-jQuery( document ).ready( function( $ ){
+jQuery( function( $ ){
 
 
     $( '.wcml_custom_cost_field').each( function(){

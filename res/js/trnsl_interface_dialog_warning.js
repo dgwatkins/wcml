@@ -1,9 +1,9 @@
-jQuery(document).ready(function ($) {
+jQuery(function ($) {
 
     $(document).on('click', 'input[name="trnsl_interface"]', function () {
 
         if ( $(this).val() == 0 ) {
-            jQuery(document).ready(function () {
+            jQuery(function () {
                 var dialogBox = jQuery("#wcml-translation-interface-dialog-confirm");
                 var buttonsOpts = {};
                 buttonsOpts[ dialogBox.find('.cancel-button').val() ] = function () {

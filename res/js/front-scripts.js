@@ -1,4 +1,4 @@
-jQuery(document).ready(function ($) {
+jQuery(function ($) {
 
     jQuery(document).on( 'click', '.wcml_removed_cart_items_clear', function(e){
         e.preventDefault();

@@ -6,7 +6,7 @@
     var attributeSelector = jQuery('#wcml_product_attributes');
 
 
-    jQuery(document).ready(function () {
+    jQuery(function () {
 
         attributeSelector.on('change', switchAttribute);
 

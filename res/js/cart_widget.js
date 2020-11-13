@@ -1,4 +1,4 @@
-jQuery(document).ready(function ($) {
+jQuery(function ($) {
 
     var empty_cart_hash = sessionStorage.getItem('woocommerce_cart_hash') == '';
     if ( empty_cart_hash || actions.is_lang_switched == 1 || actions.force_reset == 1 ) {
@@ -8,7 +8,7 @@ jQuery(document).ready(function ($) {
 
 function wcml_reset_cart_fragments(){
     try {
-        jQuery(document).ready(function () {
+        jQuery(function () {
             jQuery(document.body).trigger('wc_fragment_refresh');
             //backward compatibility for WC < 3.0
             sessionStorage.removeItem('wc_fragments');
