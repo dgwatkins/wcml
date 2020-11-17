@@ -29,7 +29,7 @@ class WCML_Terms {
 
 	public function add_hooks() {
 
-		add_action( 'updated_woocommerce_term_meta', [ $this, 'sync_term_order' ], 100, 4 );
+		add_action( 'update_term_meta', [ $this, 'sync_term_order' ], 100, 4 );
 
 		add_filter( 'wp_get_object_terms', [ $this->sitepress, 'get_terms_filter' ] );
 		add_action( 'created_term', [ $this, 'translated_terms_status_update' ], 10, 3 );
@@ -172,10 +172,12 @@ class WCML_Terms {
 
 	public function sync_term_order( $meta_id, $object_id, $meta_key, $meta_value ) {
 
+		remove_action( 'update_term_meta', [ $this, 'sync_term_order' ], 100 );
+
 		// WooCommerce before termmeta table migration.
 		$wc_before_term_meta = get_option( 'db_version' ) < 34370;
 
-		if ( ! isset( $_POST['thetaxonomy'] ) || ! taxonomy_exists( $_POST['thetaxonomy'] ) || substr( $meta_key, 0, 5 ) !== 'order' ) {
+		if ( ! isset( $_POST['thetaxonomy'] ) || ! taxonomy_exists( $_POST['thetaxonomy'] ) || ! $this->is_wc_taxonomy( $_POST['thetaxonomy'] ) || substr( $meta_key, 0, 5 ) !== 'order' ) {
 			return;
 		}
 
@@ -205,6 +207,8 @@ class WCML_Terms {
 				}
 			}
 		}
+
+		add_action( 'update_term_meta', [ $this, 'sync_term_order' ], 100, 4 );
 
 	}
 
@@ -1057,6 +1061,10 @@ class WCML_Terms {
 		}
 
 		return true;
+	}
+
+	private function is_wc_taxonomy( $taxonomy ) {
+		return 'product_cat' === $taxonomy || substr( $taxonomy, 0, 3 ) === 'pa_';
 	}
 
 	public function pre_option_default_product_cat() {
