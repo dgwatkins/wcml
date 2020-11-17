@@ -111,7 +111,7 @@ class TestLanguages extends \OTGS_TestCase {
 
 		$fr_translation_id = 14;
 
-		$this->wpml_post_translations->method( 'get_element_translations' )->with( $this->product_id_in_default_language, $trid, true )->willReturn( [ $fr_translation_id ] );
+		$this->wpml_post_translations->method( 'get_element_translations' )->with( $this->product_id_in_default_language, $trid )->willReturn( [ $fr_translation_id ] );
 
 		$that = $this;
 		$this->wpml_post_translations->method( 'get_element_lang_code' )->willReturnCallback( function ( $product_id ) use ( $that ) {

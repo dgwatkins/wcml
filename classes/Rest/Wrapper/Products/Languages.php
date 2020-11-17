@@ -60,7 +60,7 @@ class Languages extends Handler {
 		$trid = $this->wpmlPostTranslations->get_element_trid( $response->data['id'] );
 
 		if ( $trid ) {
-			$translations = $this->wpmlPostTranslations->get_element_translations( $response->data['id'], $trid, true );
+			$translations = $this->wpmlPostTranslations->get_element_translations( $response->data['id'], $trid );
 			foreach ( $translations as $translation ) {
 				$response->data['translations'][ $this->wpmlPostTranslations->get_element_lang_code( $translation ) ] = $translation;
 			}
