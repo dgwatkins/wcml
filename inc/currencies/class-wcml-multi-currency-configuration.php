@@ -79,6 +79,10 @@ class WCML_Multi_Currency_Configuration {
 			$wcml_settings['currency_switcher_product_visibility'] = isset( $_POST['currency_switcher_product_visibility'] ) ? intval( $_POST['currency_switcher_product_visibility'] ) : 0;
 			$wcml_settings['currency_switcher_additional_css']     = isset( $_POST['currency_switcher_additional_css'] ) ? sanitize_text_field( $_POST['currency_switcher_additional_css'] ) : '';
 
+			if ( ! isset( $wcml_settings['currencies_order'] ) ) {
+				$wcml_settings['currencies_order'] = self::$multi_currency->currency_codes;
+			}
+
 			self::$woocommerce_wpml->update_settings( $wcml_settings );
 
 			do_action( 'wcml_saved_mc_options', $_POST );
