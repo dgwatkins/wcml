@@ -13,7 +13,7 @@ class Hooks {
 		add_action( 'rest_api_init', [ Generic::class, 'setLanguageForRequest' ] );
 		add_action( 'parse_query', [ Generic::class, 'autoAdjustIncludedIds' ] );
 
-		foreach ( [ 'product', 'shop_order' ] as $type ) {
+		foreach ( [ 'product', 'shop_order', 'product_variation' ] as $type ) {
 
 			$restObject = Factory::create( $type );
 

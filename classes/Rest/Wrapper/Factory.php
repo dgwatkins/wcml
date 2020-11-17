@@ -30,6 +30,7 @@ class Factory {
 				}
 
 				return new Composite( $objects );
+			case 'product_variation':
 			case 'product':
 				$objects[] = new ProductsLanguages( $sitepress, $wpml_post_translations, $wpml_query_filter );
 				$objects[] = new ProductsImages( $woocommerce_wpml->products, $woocommerce_wpml->media );

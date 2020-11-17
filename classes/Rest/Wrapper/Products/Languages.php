@@ -102,7 +102,7 @@ class Languages extends Handler {
 				$trid = null;
 			}
 
-			$this->sitepress->set_element_language_details( $object->get_id(), 'post_product', $trid, $data['lang'] );
+			$this->sitepress->set_element_language_details( $object->get_id(), 'post_'.get_post_type( $object->get_id() ), $trid, $data['lang'] );
 			wpml_tm_save_post( $object->get_id(), get_post( $object->get_id() ), ICL_TM_COMPLETE );
 		} else {
 			if ( isset( $data['translation_of'] ) ) {
