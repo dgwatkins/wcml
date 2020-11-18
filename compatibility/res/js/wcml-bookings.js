@@ -64,7 +64,7 @@ jQuery( function( $ ){
 
             for (i = 0; i < buttons.length; i++) {
                 $('.'+buttons[i]).prop('disabled', true);
-                $('.'+buttons[i]).unbind('click');
+                $('.'+buttons[i]).off('click');
                 $('.'+buttons[i]).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
             }
             $('.add_row').removeAttr('data-row');

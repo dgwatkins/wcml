@@ -43,7 +43,7 @@ jQuery(function ($) {
 
     function enable_tax_translation_toggling() {
         $('.wcml-tax-translation-list .actions a')
-            .unbind('click', tax_translation_toggling_return_false)
+            .off('click')
             .css({cursor: 'pointer'});
     }
 
