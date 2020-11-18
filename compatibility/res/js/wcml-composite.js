@@ -7,11 +7,7 @@ jQuery( function( $ ){
             $(this).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
         });
 
-        $('#bto_product_data li,#bto_config_group_inner .subsubsub li a').bind({
-            click: function(e) {
-                return false;
-            }
-        });
+        $('#bto_product_data li,#bto_config_group_inner .subsubsub li a').on('click', function(){ return false; });
 
 
         //components fields

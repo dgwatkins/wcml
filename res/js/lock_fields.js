@@ -51,11 +51,8 @@ jQuery(function($){
         buttons.push('downloadable_files .insert');
         buttons.push('downloadable_files .delete');
 
-        $('.downloadable_files .upload_file_button,.downloadable_files .insert,.downloadable_files .delete').bind({
-            click: function(e) {
-                return false;
-            }
-        });
+        $('.downloadable_files .upload_file_button,.downloadable_files .insert,.downloadable_files .delete')
+            .on('click', function(){ return false; });
     }
 
     for (i = 0; i < buttons.length; i++) {
@@ -63,11 +60,7 @@ jQuery(function($){
         $('.'+buttons[i]).after($('.wcml_lock_img').clone().removeClass('wcml_lock_img').show());
     }
 
-    $('#visibility .edit-visibility span').bind({
-        click: function(e) {
-            return false;
-        }
-    });
+    $('#visibility .edit-visibility span').on('click', function() { return false; });
 
     $('.remove_variation').each(function(){
         $(this).prop('disabled', true);
