@@ -96,6 +96,8 @@ class Languages extends Handler {
 				if ( empty( $trid ) ) {
 					throw new InvalidProduct( $data['translation_of'] );
 				}
+
+				$this->sitepress->copy_custom_fields( $data['translation_of'], $object->get_id() );
 			} else {
 				$trid = null;
 			}

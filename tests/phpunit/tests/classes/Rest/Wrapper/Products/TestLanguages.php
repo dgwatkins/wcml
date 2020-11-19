@@ -25,7 +25,7 @@ class TestLanguages extends \OTGS_TestCase {
 		$this->sitepress = $this->getMockBuilder( 'SitePress' )
 		                        ->disableOriginalConstructor()
 		                        ->setMethods( [
-			                        'set_element_language_details'
+			                        'set_element_language_details', 'copy_custom_fields'
 		                        ] )
 		                        ->getMock();
 
@@ -221,6 +221,16 @@ class TestLanguages extends \OTGS_TestCase {
 		$this->expected_trid = null;
 		$this->actual_trid   = 12;
 
+		$post = $this->getMockBuilder( 'WC_Simple_Product' )
+		             ->disableOriginalConstructor()
+		             ->setMethods( [
+			             'get_id'
+		             ] )
+		             ->getMock();
+		$post->ID = rand( 1, 100 );
+
+		$post->method( 'get_id' )->willReturn( $post->ID );
+
 		$this->wpml_post_translations->method( 'get_element_trid' )->with( $translation_of )->willReturn( $this->actual_trid );
 
 		\WP_Mock::onFilter( 'wpml_language_is_active' )->with( false, 'ro' )->reply( true );
@@ -232,16 +242,7 @@ class TestLanguages extends \OTGS_TestCase {
 				return true;
 			}
 		) );
-
-		$post = $this->getMockBuilder( 'WC_Simple_Product' )
-		             ->disableOriginalConstructor()
-		             ->setMethods( [
-			             'get_id'
-		             ] )
-		             ->getMock();
-
-		$post->ID = rand( 1, 100 );
-		$post->method( 'get_id' )->willReturn( $post->ID );
+		$this->sitepress->method( 'copy_custom_fields' )->with( $translation_of, $post->ID )->willReturn( true );
 
 		if ( ! defined( 'ICL_TM_COMPLETE' ) ) {
 			define( 'ICL_TM_COMPLETE', true );
