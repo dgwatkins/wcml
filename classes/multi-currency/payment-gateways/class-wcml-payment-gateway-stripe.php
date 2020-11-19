@@ -55,11 +55,14 @@ class WCML_Payment_Gateway_Stripe extends WCML_Payment_Gateway {
 			if ( $default_currency === $code ) {
 				$currencies_details[ $code ]['publishable_key'] = $this->get_gateway()->settings['publishable_key'];
 				$currencies_details[ $code ]['secret_key']      = $this->get_gateway()->settings['secret_key'];
+				$currencies_details[ $code ]['currency'] = $code;
 			} else {
 				$currency_gateway_setting                       = $this->get_setting( $code );
 				$currencies_details[ $code ]['publishable_key'] = $currency_gateway_setting ? $currency_gateway_setting['publishable_key'] : '';
 				$currencies_details[ $code ]['secret_key']      = $currency_gateway_setting ? $currency_gateway_setting['secret_key'] : '';
+				$currencies_details[ $code ]['currency']      = $currency_gateway_setting ? $currency_gateway_setting['currency'] : $code;
 			}
+
 		}
 
 		return $currencies_details;
