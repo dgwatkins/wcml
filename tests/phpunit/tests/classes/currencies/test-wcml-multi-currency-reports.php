@@ -14,6 +14,29 @@ class Test_WCML_Multi_Currency_Reports extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function it_should_init_rest_hooks() {
+
+		\WP_Mock::userFunction(
+			'is_admin',
+			[
+				'return' => false
+			]
+		);
+
+		\Mockery::mock( 'overload:\WCML\Rest\Functions' )->shouldReceive( 'isRestApiRequest' )->andReturn( true );
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::expectFilterAdded( 'woocommerce_reports_get_order_report_query', [ $subject, 'admin_reports_query_filter' ] );
+
+		$subject->reports_init();
+	}
+
+	/**
+	 * @test
 	 */
 	public function it_should_filter_dashboard_status_widget_sales_query() {
 

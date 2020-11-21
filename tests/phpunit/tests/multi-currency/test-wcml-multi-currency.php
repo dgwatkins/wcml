@@ -12,6 +12,22 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function it_should_init_rest_hooks() {
+
+		\Mockery::mock( 'overload:\WCML\Rest\Functions' )->shouldReceive( 'isRestApiRequest' )->andReturn( true );
+
+		$subject = \Mockery::mock( 'WCML_Multi_Currency' )->makePartial();
+
+		\WP_Mock::expectFilterAdded( 'rest_request_before_callbacks', [ $subject, 'set_request_currency' ], 10, 3 );
+
+		$subject->init();
+	}
+
+	/**
+	 * @test
 	 */
 	public function it_gets_currency_codes() {
 		$subject                 = \Mockery::mock( 'WCML_Multi_Currency' )->makePartial();

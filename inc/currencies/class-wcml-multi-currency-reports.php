@@ -34,11 +34,15 @@ class WCML_Multi_Currency_Reports {
 			$this->wpml_cache = new WPML_WP_Cache( $cache_group );
 		}
 
+
 	}
 
 	public function add_hooks() {
+
+		add_action( 'init', array( $this, 'reports_init' ) );
+
 		if ( is_admin() ) {
-			add_filter( 'init', array( $this, 'reports_init' ) );
+
 			add_action( 'wp_ajax_wcml_reports_set_currency', array( $this, 'set_reports_currency' ) );
 
 			add_action( 'wc_reports_tabs', array( $this, 'reports_currency_selector' ) );
@@ -74,9 +78,14 @@ class WCML_Multi_Currency_Reports {
 	}
 
 	public function reports_init() {
-		if ( isset( $_GET['page'] ) && 'wc-reports' === $_GET['page'] ) { //wc-reports - 2.1.x, woocommerce_reports 2.0.x
 
+		$isReportsPage = isset( $_GET['page'] ) && 'wc-reports' === $_GET['page'];
+
+		if( $isReportsPage || \WCML\Rest\Functions::isRestApiRequest() ){
 			add_filter( 'woocommerce_reports_get_order_report_query', array( $this, 'admin_reports_query_filter' ) );
+		}
+
+		if ( $isReportsPage ) { //wc-reports - 2.1.x, woocommerce_reports 2.0.x
 
 			$wcml_reports_set_currency_nonce = wp_create_nonce( 'reports_set_currency' );
 
@@ -110,6 +119,14 @@ class WCML_Multi_Currency_Reports {
 	}
 
 	public function admin_reports_query_filter( $query ) {
+
+		if( \WCML\Rest\Functions::isRestApiRequest() ) {
+			$this->reports_currency = $this->woocommerce_wpml->multi_currency->get_rest_currency();
+		}
+
+		if( !$this->reports_currency ){
+			return $query;
+		}
 
 		$query['join']  .= " LEFT JOIN {$this->wpdb->postmeta} AS meta_order_currency ON meta_order_currency.post_id = posts.ID ";
 		$query['where'] .= sprintf( " AND meta_order_currency.meta_key='_order_currency' AND meta_order_currency.meta_value = '%s' ",

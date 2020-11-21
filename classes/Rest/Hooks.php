@@ -34,9 +34,9 @@ class Hooks {
 			add_action( "woocommerce_rest_insert_{$type}", [ $restObject, 'insert' ], 10, 3 );
 		}
 
-
-
-
+		add_filter( "woocommerce_rest_prepare_report_top_sellers", [ Factory::create( 'reports_top_seller' ), 'prepare' ], 10, 3 );
+		add_filter( "woocommerce_rest_prepare_report_products_count", [ Factory::create( 'reports_products_count' ), 'prepare' ], 10, 3 );
+		add_filter( "woocommerce_rest_prepare_report_sales", [ Factory::create( 'reports_products_sales' ), 'prepare' ], 10, 3 );
 
 		self::addHooksSpecificForV1();
 	}

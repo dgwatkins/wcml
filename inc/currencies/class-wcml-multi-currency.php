@@ -103,6 +103,10 @@ class WCML_Multi_Currency {
 	 */
 	public $switching_currency_html;
 
+	/**
+	 * @var string
+	 */
+	private $rest_currency;
 
 	/**
 	 * WCML_Multi_Currency constructor.
@@ -215,6 +219,9 @@ class WCML_Multi_Currency {
 		add_action( 'wp_footer', [ $this, 'maybe_show_switching_currency_prompt_dialog' ] );
 		add_action( 'wp_footer', [ $this, 'maybe_reset_cart_fragments' ] );
 
+		if( WCML\Rest\Functions::isRestApiRequest() ){
+			add_filter( 'rest_request_before_callbacks', [ $this, 'set_request_currency' ], 10, 3 );
+		}
 	}
 
 	public function enable() {
@@ -415,10 +422,11 @@ class WCML_Multi_Currency {
 	public function get_client_currency() {
 		global $sitepress;
 
-		if (
-			WCML\Rest\Functions::isRestApiRequest() ||
-			! empty( $_REQUEST['woocommerce_quick_edit'] )
-		) {
+		if( \WCML\Rest\Functions::isRestApiRequest() ){
+			return $this->rest_currency;
+		}
+
+		if ( ! empty( $_REQUEST['woocommerce_quick_edit'] )	) {
 			return wcml_get_woocommerce_currency_option();
 		}
 
@@ -685,4 +693,31 @@ class WCML_Multi_Currency {
 
 		return false;
 	}
+
+	/**
+	 * Set reports currency for REST request.
+	 *
+	 * @param WP_REST_Response|WP_HTTP_Response|WP_Error|mixed $response Result to send to the client. Usually a WP_REST_Response or WP_Error.
+	 * @param array                                            $handler  Route handler used for the request.
+	 * @param WP_REST_Request                                  $request  Request used to generate the response.
+	 *
+	 * @return WP_REST_Response|WP_HTTP_Response|WP_Error|mixed
+	 */
+	public function set_request_currency( $response, $handler, $request ) {
+
+		$this->rest_currency = \WPML\FP\Obj::prop( 'currency', $request->get_params() );
+
+		return $response;
+	}
+
+	/**
+	 * Get REST currency
+	 *
+	 * @return string
+	 */
+	public function get_rest_currency() {
+
+		return $this->rest_currency ? $this->rest_currency : wcml_get_woocommerce_currency_option();
+	}
+
 }
