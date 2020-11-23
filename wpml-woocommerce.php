@@ -113,6 +113,10 @@ function wcml_loader() {
 		$loaders[] = 'WCML_Append_Gallery_To_Post_Media_Ids_Factory';
 	}
 
+	if ( defined( 'WP_CLI' ) && WP_CLI ) {
+		$loaders[] = \WCML\CLI\Commands::class;
+	}
+
 	$action_filter_loader = new WPML_Action_Filter_Loader();
 	$action_filter_loader->load( $loaders );
 }
