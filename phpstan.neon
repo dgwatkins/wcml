@@ -27,15 +27,26 @@ parameters:
     - tests/phpstan/stubs/wpml-st.stub
     - tests/phpstan/stubs/wpml-media.stub
 
+    - tests/phpstan/stubs/compatibility.stub
+
   paths:
     - classes
-    - compatibility
+#    - compatibility
     - inc
     - templates
     - wpml-woocommerce.php
+
+  excludes_analyse:
+    - 'inc/missing-php-functions.php'
 
   scanDirectories:
     - vendor/otgs/installer
 
   checkFunctionNameCase: true
   inferPrivatePropertyTypeFromConstructor: true
+
+  ignoreErrors:
+    - '#Access to an undefined property WCML_Compatibility::#'
+
+  parallel:
+    processTimeout: 300.0

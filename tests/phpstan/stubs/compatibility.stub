@@ -1,0 +1,17 @@
+<?php
+
+// MANUALLY EDITED FILE
+
+// WP Super Cache
+function wp_cache_is_enabled() {}
+
+// W3TC
+function w3_require_once() {}
+class W3_AdminActions_FlushActionsAdmin {
+    public function flush_pgcache() {}
+}
+
+// WooCommerce Stripe Gateway
+class WC_Stripe_Helper {
+    public static function get_stripe_amount() {}
+}

@@ -10,6 +10,9 @@ class WCML_Multi_Currency_Orders {
 	/** @var WP $wp */
 	private $wp;
 
+	/** @var string|null $order_currency */
+	private $order_currency;
+
 	public function __construct( WCML_Multi_Currency $multi_currency, woocommerce_wpml $woocommerce_wpml, WP $wp ) {
 		$this->multi_currency   = $multi_currency;
 		$this->woocommerce_wpml = $woocommerce_wpml;
@@ -18,8 +21,6 @@ class WCML_Multi_Currency_Orders {
 		if ( is_admin() ) {
 			add_filter( 'init', [ $this, 'orders_init' ] );
 		}
-
-		add_action( 'woocommerce_view_order', [ $this, 'show_price_in_client_currency' ], 9 );
 	}
 
 	public function orders_init() {
@@ -523,12 +524,6 @@ class WCML_Multi_Currency_Orders {
 		}
 
 		return $currency;
-	}
-
-	public function show_price_in_client_currency( $order_id ) {
-		$currency_code = get_post_meta( $order_id, '_order_currency', true );
-
-		$this->client_currency = $currency_code;
 	}
 
 	public function get_currency_for_new_order( $value, $order ) {

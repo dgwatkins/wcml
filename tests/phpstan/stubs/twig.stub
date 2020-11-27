@@ -19,9 +19,17 @@ class Twig_Loader_Filesystem
     }
 }
 
+class Twig_Error_Syntax extends \Exception
+{
+}
+
 class Twig_SimpleFunction
 {
     public function __construct($name, $callable, array $options = [])
     {
     }
+}
+
+class Twig_Loader_String {
+
 }
