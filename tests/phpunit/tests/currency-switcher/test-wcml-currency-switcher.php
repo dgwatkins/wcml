@@ -243,6 +243,9 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 	 * @dataProvider currency_switcher_shortcode_data
 	 */
 	public function currency_switcher_shortcode( $switcher_id, $currency_mode ) {
+		\WP_Mock::passthruFunction( 'wc_clean' );
+		\WP_Mock::passthruFunction( 'wp_unslash' );
+
 		$shortcode_attrs = array();
 		if ( $switcher_id ) {
 			$shortcode_attrs['switcher_id'] = $switcher_id;

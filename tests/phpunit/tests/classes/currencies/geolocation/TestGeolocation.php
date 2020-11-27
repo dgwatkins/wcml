@@ -13,6 +13,9 @@ class TestGeolocation extends \OTGS_TestCase {
 	 * @test
 	 */
 	public function itShouldGetCurrencyCodeByUserCountry() {
+		\WP_Mock::passthruFunction( 'wc_clean' );
+		\WP_Mock::passthruFunction( 'wp_unslash' );
+
 		$expected_code = 'UAH';
 
 		FunctionMocker::replace( 'WC_Geolocation::get_ip_address', '127.0.0.1' );
@@ -20,7 +23,7 @@ class TestGeolocation extends \OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'get_current_user_id', [
 			'return' => false,
-			'times' => 1
+			'times' => 2
 		]);
 
 		$code = Geolocation::getCurrencyCodeByUserCountry();
@@ -32,6 +35,9 @@ class TestGeolocation extends \OTGS_TestCase {
 	 * @test
 	 */
 	public function itShouldGetCurrencyCodeByUserBillingAddress() {
+		\WP_Mock::passthruFunction( 'wc_clean' );
+		\WP_Mock::passthruFunction( 'wp_unslash' );
+
 		$expected_code = 'UAH';
 		$user_id = 1;
 
@@ -40,9 +46,12 @@ class TestGeolocation extends \OTGS_TestCase {
 		$wc_customer->shouldReceive( 'get_billing_country' )
 		                 ->andReturn( 'UA' );
 
+		$wc_customer->shouldReceive( 'get_shipping_country' )
+		                 ->andReturn( 'UA' );
+
 		\WP_Mock::userFunction( 'get_current_user_id', [
 			'return' => $user_id,
-			'times' => 1
+			'times' => 2
 		]);
 
 		$WC          = $this->getMockBuilder( 'WC' )->disableOriginalConstructor()->getMock();
@@ -87,12 +96,17 @@ class TestGeolocation extends \OTGS_TestCase {
 
 		$_GET['wc-ajax']  = 'checkout';
 		$_POST['billing_country'] = 'ES';
+		$_POST['shipping_country'] = 'UA';
+
+		\WP_Mock::onFilter( 'wcml_geolocation_get_user_country' )
+		        ->with( 'ES', [ 'billing' => 'ES', 'shipping' => 'UA', 'geolocation' => '' ] )
+		        ->reply( 'ES' );
 
 		$code = Geolocation::getCurrencyCodeByUserCountry();
 
 		$this->assertEquals( $expected_code, $code );
 
-		unset( $_GET['wc-ajax'], $_POST['shipping_country'] );
+		unset( $_GET['wc-ajax'], $_POST['billing_country'], $_POST['shipping_country'] );
 	}
 
 	/**
@@ -105,7 +119,7 @@ class TestGeolocation extends \OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'get_current_user_id', [
 			'return' => false,
-			'times' => 1
+			'times' => 2
 		]);
 
 		$code = Geolocation::getCurrencyCodeByUserCountry();
@@ -149,7 +163,7 @@ class TestGeolocation extends \OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'get_current_user_id', [
 			'return' => false,
-			'times' => 1
+			'times' => 2
 		]);
 
 		$this->assertTrue( Geolocation::isCurrencyAvailableForCountry( $currencySettings ) );
@@ -168,7 +182,7 @@ class TestGeolocation extends \OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'get_current_user_id', [
 			'return' => false,
-			'times' => 1
+			'times' => 2
 		]);
 
 		$this->assertTrue( Geolocation::isCurrencyAvailableForCountry( $currencySettings ) );

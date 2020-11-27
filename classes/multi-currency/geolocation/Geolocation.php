@@ -2,6 +2,8 @@
 
 namespace WCML\MultiCurrency;
 
+use WPML\FP\Obj;
+
 class Geolocation {
 
 	const DEFAULT_COUNTRY_CURRENCY_CONFIG = 'country-currency.json';
@@ -11,7 +13,7 @@ class Geolocation {
 	/**
 	 * Get country code by user IP
 	 *
-	 * @return string|bool
+	 * @return string
 	 */
 	private static function getCountryByUserIp() {
 
@@ -19,7 +21,7 @@ class Geolocation {
 
 		$country_info = \WC_Geolocation::geolocate_ip( $ip, true );
 
-		return isset( $country_info['country'] ) ? $country_info['country'] : false;
+		return isset( $country_info['country'] ) ? $country_info['country'] : '';
 	}
 
 	/**
@@ -78,7 +80,7 @@ class Geolocation {
 	}
 
 	/**
-	 * @return bool|string
+	 * @return string
 	 */
 	public static function getUserCountry(){
 
@@ -86,18 +88,40 @@ class Geolocation {
 			return WCML_GEOLOCATED_COUNTRY;
 		}
 
-		$billing_country = self::getUserBillingCountry();
-		return $billing_country ?: self::getCountryByUserIp();
+		$allUserCountries = [
+			'billing'     => self::getUserCountryByAddress( 'billing' ),
+			'shipping'    => self::getUserCountryByAddress( 'shipping' ),
+			'geolocation' => self::getCountryByUserIp()
+		];
+		$userCountry      = $allUserCountries['billing'] ?: $allUserCountries['geolocation'];
+
+		/**
+		 * This filter allows to override the address country declared by the user.
+		 *
+		 * @since 4.11.0
+		 *
+		 * @param string $userCountry Billing address used if set otherwise geolocation country used.
+		 * @param array  $allUserCountries {
+		 *      @type string $billing The billing address country
+		 *      @type string $shipping The shipping address country
+		 *      @type string $geolocation The geolocation country
+		 * }
+		 *
+		 * @return string
+		 */
+		return apply_filters( 'wcml_geolocation_get_user_country', $userCountry, $allUserCountries );
 	}
 
 	/**
-	 * Get country code from billing if user logged-in
+	 * Get country code from address if user logged-in.
 	 *
-	 * @return null|string
+	 * @param string $addressType Shipping or Billing address.
+	 *
+	 * @return string
 	 */
-	private static function getUserBillingCountry() {
+	private static function getUserCountryByAddress( $addressType ){
 
-		$orderCountry = self::getUserCountryFromOrder();
+		$orderCountry = self::getUserCountryFromOrder( $addressType );
 		if( $orderCountry ){
 			return $orderCountry;
 		}
@@ -107,25 +131,31 @@ class Geolocation {
 		if ( $current_user_id ) {
 			$customer = new \WC_Customer( $current_user_id, WC()->session ? true : false );
 
-			if ( $customer ) {
-				return $customer->get_billing_country();
-			}
+			return 'shipping' === $addressType ? $customer->get_shipping_country() : $customer->get_billing_country();
 		}
 
-		return null;
+		return '';
 	}
 
-	private static function getUserCountryFromOrder() {
-		if ( isset( $_GET['wc-ajax'] ) ) {
-			if ( isset ( $_POST['country'] ) && 'update_order_review' === $_GET['wc-ajax'] ) {
-				return wc_clean( wp_unslash( $_POST['country'] ) );
-			}
-			if ( isset ( $_POST['billing_country'] ) && 'checkout' === $_GET['wc-ajax'] ) {
-				return wc_clean( wp_unslash( $_POST['billing_country'] ) );
-			}
+	/**
+	 * Get country code from order based on address.
+	 *
+	 * @param string $addressType Shipping or Billing address.
+	 *
+	 * @return string
+	 */
+	private static function getUserCountryFromOrder( $addressType ) {
+
+		$country = '';
+		$wcAjax  = Obj::prop( 'wc-ajax', $_GET );
+
+		if ( 'update_order_review' === $wcAjax && isset( $_POST['country'] ) ) {
+			$country = $_POST['country'];
+		} elseif ( 'checkout' === $wcAjax && isset( $_POST[ $addressType . '_country' ] ) ) {
+			$country = $_POST[ $addressType . '_country' ];
 		}
 
-		return false;
+		return wc_clean( wp_unslash( $country ) );
 	}
 
 	/**
