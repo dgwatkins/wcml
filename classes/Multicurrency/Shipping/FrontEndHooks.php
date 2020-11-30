@@ -66,9 +66,6 @@ class FrontEndHooks implements IWPML_Action {
 	 * @return string Currency code.
 	 */
 	private function adjustCurrencyOnWidgetChange( $currencyCode ) {
-		if ( ! isset( $_POST ) ) {
-			return $currencyCode;
-		}
 		$postData = wpml_collect( $_POST );
 		$currencyCodeInRequest = $postData->get( 'currency' );
 		if ( 'wcml_switch_currency' === $postData->get( 'action' )

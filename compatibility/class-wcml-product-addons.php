@@ -150,7 +150,7 @@ class WCML_Product_Addons {
 
 		if ( '_product_addons' === $meta_key && 'global_product_addon' === get_post_type( $object_id ) ) {
 
-			remove_filter( 'get_post_metadata', [ $this, 'translate_addons_strings' ], 10, 4 );
+			remove_filter( 'get_post_metadata', [ $this, 'translate_addons_strings' ], 10 );
 			$addons = get_post_meta( $object_id, $meta_key, true );
 			add_filter( 'get_post_metadata', [ $this, 'translate_addons_strings' ], 10, 4 );
 
@@ -406,7 +406,7 @@ class WCML_Product_Addons {
 
 		if ( ! is_archive() ) {
 
-			remove_filter( 'get_terms_args', [ $this->sitepress, 'get_terms_args_filter' ], 10, 2 );
+			remove_filter( 'get_terms_args', [ $this->sitepress, 'get_terms_args_filter' ], 10 );
 			remove_filter( 'get_term', [ $this->sitepress, 'get_term_adjust_id' ], 1 );
 			remove_filter( 'terms_clauses', [ $this->sitepress, 'terms_clauses' ], 10 );
 

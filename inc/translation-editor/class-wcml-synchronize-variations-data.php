@@ -112,7 +112,7 @@ class WCML_Synchronize_Variations_Data {
 
 		if ( $is_variable_product ) {
 
-			remove_action( 'save_post', [ $wpml_post_translations, 'save_post_actions' ], 100, 2 );
+			remove_action( 'save_post', [ $wpml_post_translations, 'save_post_actions' ], 100 );
 
 			$all_variations     = $this->get_product_variations( $product_id );
 			$current_variations = $this->get_product_variations( $tr_product_id );

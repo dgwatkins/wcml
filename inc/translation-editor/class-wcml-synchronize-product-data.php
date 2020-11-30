@@ -452,7 +452,7 @@ class WCML_Synchronize_Product_Data {
 	 */
 	private function wc_taxonomies_recount_after_stock_change( $product_id ) {
 
-		remove_filter( 'get_term', [ $this->sitepress, 'get_term_adjust_id' ], 1, 1 );
+		remove_filter( 'get_term', [ $this->sitepress, 'get_term_adjust_id' ], 1 );
 
 		wp_cache_delete( $product_id, 'product_cat_relationships' );
 		wp_cache_delete( $product_id, 'product_tag_relationships' );
@@ -721,10 +721,12 @@ class WCML_Synchronize_Product_Data {
 						}
 					}
 
-					$this->sync_product_data( $orig_id, $trnsl_id, $lang );
-					$this->sync_date_and_parent( $orig_id, $trnsl_id, $lang );
-					$this->sitepress->copy_custom_fields( $orig_id, $trnsl_id );
-					$this->woocommerce_wpml->translation_editor->create_product_translation_package( $orig_id, $new_trid, $lang, ICL_TM_COMPLETE );
+					if ( isset( $orig_id, $trnsl_id, $lang ) ) {
+						$this->sync_product_data( $orig_id, $trnsl_id, $lang );
+						$this->sync_date_and_parent( $orig_id, $trnsl_id, $lang );
+						$this->sitepress->copy_custom_fields( $orig_id, $trnsl_id );
+						$this->woocommerce_wpml->translation_editor->create_product_translation_package( $orig_id, $new_trid, $lang, ICL_TM_COMPLETE );
+					}
 				}
 
 				add_action( 'wpml_translation_update', [ $this, 'icl_connect_translations_action' ] );
@@ -830,7 +832,7 @@ class WCML_Synchronize_Product_Data {
 			$this->woocommerce_wpml->products->is_original_product( $object_id )
 		) {
 			$translations = $this->post_translations->get_element_translations( $object_id, false, true );
-			remove_action( 'deleted_post_meta', [ $this, 'delete_empty_post_meta_for_translations' ], 10, 3 );
+			remove_action( 'deleted_post_meta', [ $this, 'delete_empty_post_meta_for_translations' ], 10 );
 			foreach ( $translations as $translation ) {
 				delete_post_meta( $translation, $meta_key );
 			}

@@ -951,7 +951,7 @@ class WCML_Bookings {
 
 						} else {
 
-							remove_filter( 'get_post_metadata', [ $this, 'filter_wc_booking_cost' ], 10, 4 );
+							remove_filter( 'get_post_metadata', [ $this, 'filter_wc_booking_cost' ], 10 );
 
 							$cost = get_post_meta( $object_id, $meta_key, true );
 
@@ -975,7 +975,7 @@ class WCML_Bookings {
 					]
 				) ) {
 
-					remove_filter( 'get_post_metadata', [ $this, 'filter_wc_booking_cost' ], 10, 4 );
+					remove_filter( 'get_post_metadata', [ $this, 'filter_wc_booking_cost' ], 10 );
 
 					if ( $meta_key == '_wc_booking_pricing' ) {
 
@@ -1026,7 +1026,7 @@ class WCML_Bookings {
 
 				} else {
 
-					remove_filter( 'get_post_metadata', [ $this, 'filter_wc_booking_cost' ], 10, 4 );
+					remove_filter( 'get_post_metadata', [ $this, 'filter_wc_booking_cost' ], 10 );
 
 					$value = get_post_meta( $original_id, $meta_key, true );
 
@@ -1563,7 +1563,7 @@ class WCML_Bookings {
 	public function wcml_products_tab_sync_resources_and_persons( $original_product_id, $tr_product_id, $data, $language ) {
 		global $wpml_post_translations;
 
-		remove_action( 'save_post', [ $wpml_post_translations, 'save_post_actions' ], 100, 2 );
+		remove_action( 'save_post', [ $wpml_post_translations, 'save_post_actions' ], 100 );
 
 		$orig_resources = $orig_resources = $this->get_original_resources( $original_product_id );
 

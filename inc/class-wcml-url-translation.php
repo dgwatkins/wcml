@@ -358,8 +358,7 @@ class WCML_Url_Translation {
 					$this->woocommerce_wpml->strings,
 					'category_base_in_strings_language',
 				],
-				99,
-				3
+				99
 			);
 			$taxonomies = [
 				'product_cat' => [
@@ -733,10 +732,10 @@ class WCML_Url_Translation {
 	}
 
 	public function get_base_translation( $base, $language ) {
+		$original_base = $base;
 
 		// case of attribute slugs
 		if ( strpos( $base, 'attribute_slug-' ) === 0 ) {
-			$slug = preg_replace( '#^attribute_slug-#', '', $base );
 			$base = 'attribute_slug';
 		}
 
@@ -762,6 +761,7 @@ class WCML_Url_Translation {
 				break;
 
 			case 'attribute_slug':
+				$slug           = preg_replace( '#^attribute_slug-#', '', $original_base );
 				$return['name'] = __( 'Attribute Slug', 'woocommerce-multilingual' );
 				$string_id      = icl_get_string_id( $slug, $this->url_strings_context(), $this->url_string_name( $base, $slug ) );
 				break;

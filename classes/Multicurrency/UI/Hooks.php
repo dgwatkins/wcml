@@ -69,7 +69,7 @@ class Hooks implements \IWPML_Action {
 	private function getActiveCurrencies( Collection $gateways ) {
 		$defaultCurrency = wcml_get_woocommerce_currency_option();
 
-		$addCode = function( $currency, $code ) use ( $defaultCurrency ) {
+		$addCode = function( $currency, $code ) {
 			return array_merge( $currency, [ 'code' => $code ] );
 		};
 

@@ -218,7 +218,7 @@ class WCML_Currency_Switcher_Ajax {
 		return is_array( $sidebars_widgets ) ? $sidebars_widgets : [];
 	}
 	public function update_sidebars_widgets( $sidebars_widgets ) {
-		remove_action( 'pre_update_option_sidebars_widgets', [ $this->woocommerce_wpml->multi_currency->currency_switcher, 'update_option_sidebars_widgets' ], 10, 2 );
+		remove_action( 'pre_update_option_sidebars_widgets', [ $this->woocommerce_wpml->multi_currency->currency_switcher, 'update_option_sidebars_widgets' ], 10 );
 
 		wp_set_sidebars_widgets( $sidebars_widgets );
 

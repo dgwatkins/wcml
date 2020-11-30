@@ -29,6 +29,12 @@ class WCML_WC_Admin_Duplicate_Product {
 		add_action( 'woocommerce_product_duplicate', [ $this, 'woocommerce_duplicate_product' ], 10, 2 );
 	}
 
+	/**
+	 * @param int|\WC_Product $new_id
+	 * @param \WC_Product     $post
+	 *
+	 * @return array|null
+	 */
 	public function woocommerce_duplicate_product( $new_id, $post ) {
 		$duplicated_products = [];
 
@@ -60,6 +66,10 @@ class WCML_WC_Admin_Duplicate_Product {
 				}
 				$this->sitepress->set_element_language_details( $new_id, 'post_' . $post->post_type, $new_trid, $this->sitepress->get_current_language() );
 			}
+		}
+
+		if ( ! isset( $new_orig_id, $new_trid ) ) {
+			return null;
 		}
 
 		// Set language info for variations.

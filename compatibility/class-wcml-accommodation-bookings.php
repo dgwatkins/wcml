@@ -172,7 +172,7 @@ class WCML_Accommodation_Bookings{
 		    ( $currency = $this->woocommerce_wpml->multi_currency->get_client_currency() ) !== wcml_get_woocommerce_currency_option()
 	    ) {
 
-            remove_filter( 'get_post_metadata', array( $this, 'product_price_filter' ), 9, 4 );
+            remove_filter( 'get_post_metadata', array( $this, 'product_price_filter' ), 9 );
 
             $original_product = $this->woocommerce_wpml->products->get_original_product_id( $object_id );
 

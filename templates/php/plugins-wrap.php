@@ -1,6 +1,6 @@
 <?php
 /**
- * @var $model \WPML\Templates\PHP\Model
+ * @var \WPML\Templates\PHP\Model $model
  *
  * phpcs:disable WordPress.XSS.EscapeOutput.OutputNotEscaped
  */

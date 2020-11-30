@@ -355,7 +355,7 @@ class WCML_Custom_Prices {
 
 				$client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
 
-				remove_filter( 'get_post_metadata', [ $this->woocommerce_wpml->multi_currency->prices, 'product_price_filter' ], 10, 4 );
+				remove_filter( 'get_post_metadata', [ $this->woocommerce_wpml->multi_currency->prices, 'product_price_filter' ], 10 );
 				foreach ( $matched_products_query as $product ) {
 					if ( ! get_post_meta( $product->ID, '_price_' . $client_currency, true ) ) {
 						continue;

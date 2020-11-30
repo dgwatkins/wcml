@@ -3,6 +3,17 @@
 use \WCML\Multicurrency\Shipping\ShippingHooksFactory;
 
 class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCase {
+
+	public function tearDown() {
+		global $woocommerce_wpml;
+
+		unset( $woocommerce_wpml );
+		$_GET  = [];
+		$_POST = [];
+
+		parent::tearDown();
+	}
+
 	private function get_subject() {
 		return new ShippingHooksFactory();
 	}
@@ -12,7 +23,6 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 	 */
 	public function itCreatesAdminHooks() {
 		global $woocommerce_wpml;
-		global $_GET;
 
 		$_GET = [
 			'page' => 'wc-settings',
@@ -37,8 +47,6 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 
 		$subject = $this->get_subject();
 		$this->assertInstanceOf( 'IWPML_Action', $subject->create()[0] );
-
-		unset( $woocommerce_wpml, $_GET );
 	}
 
 
@@ -70,8 +78,6 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 
 		$subject = $this->get_subject();
 		$this->assertInstanceOf( 'WCML\Multicurrency\Shipping\FrontEndHooks', $subject->create()[0] );
-
-		unset( $woocommerce_wpml );
 	}
 
 	/**
@@ -79,7 +85,6 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 	 */
 	public function itShouldReturnNullIfMultiCurrencyIsNotEnabled() {
 		global $woocommerce_wpml;
-		global $_GET;
 
 		$_GET = [
 			'page' => 'wc-settings',
@@ -104,8 +109,6 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 
 		$subject = $this->get_subject();
 		$this->assertEmpty( $subject->create() );
-
-		unset( $woocommerce_wpml, $_GET );
 	}
 
 	/**
@@ -113,7 +116,6 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 	 */
 	public function itShouldReturnNullIfNoSecondaryCurrency() {
 		global $woocommerce_wpml;
-		global $_GET;
 
 		$_GET = [
 			'page' => 'wc-settings',
@@ -138,8 +140,6 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 
 		$subject = $this->get_subject();
 		$this->assertEmpty( $subject->create() );
-
-		unset( $woocommerce_wpml, $_GET );
 	}
 
 	/**
@@ -149,7 +149,6 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 	 */
 	public function itCreatesAdminHooksForAjaxRequest( $action ) {
 		global $woocommerce_wpml;
-		global $_GET;
 
 		$_GET = [
 			'action' => $action
@@ -177,8 +176,6 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 
 		$subject = $this->get_subject();
 		$this->assertInstanceOf( 'WCML\Multicurrency\Shipping\AdminHooks', $subject->create()[0] );
-
-		unset( $woocommerce_wpml, $_GET );
 	}
 
 	public function ajaxActions() {
@@ -193,7 +190,7 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 	 */
 	public function itCreatesFrontEndHooksWhenAjaxRequestHasUnlistedAction() {
 		global $woocommerce_wpml;
-		global $_GET;
+
 
 		$_GET = [
 			'action' => 'foo'
@@ -221,8 +218,6 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 
 		$subject = $this->get_subject();
 		$this->assertInstanceOf( 'WCML\Multicurrency\Shipping\FrontEndHooks', $subject->create()[0] );
-
-		unset( $woocommerce_wpml, $_GET );
 	}
 
 	/**
@@ -230,7 +225,7 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 	 */
 	public function itCreatesFrontEndHooksWhenItIsShippingCostsUpdateOnCartPage() {
 		global $woocommerce_wpml;
-		global $_POST;
+
 
 		$_POST = [
 			'calc_shipping' => 'x'
@@ -258,8 +253,6 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 
 		$subject = $this->get_subject();
 		$this->assertInstanceOf( 'WCML\Multicurrency\Shipping\FrontEndHooks', $subject->create()[0] );
-
-		unset( $woocommerce_wpml, $_POST );
 	}
 
 }

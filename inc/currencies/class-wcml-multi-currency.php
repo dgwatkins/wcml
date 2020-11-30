@@ -633,7 +633,7 @@ class WCML_Multi_Currency {
 			die();
 		}
 
-		$this->set_client_currency( $currency, $force_switch );
+		$this->set_client_currency( $currency );
 
 		// force set user cookie when user is not logged in.
 		global $woocommerce, $current_user;

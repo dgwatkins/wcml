@@ -426,10 +426,8 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 			}
 
+			update_post_meta( $post_id, '_bto_data', $composite_data );
 		}
-
-		update_post_meta( $post_id, '_bto_data', $composite_data );
-
 	}
 
 	public function wcml_js_lock_fields_input_names( $names ){
@@ -523,7 +521,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 				} else {
 
-					remove_filter( 'get_post_metadata', array( $this, 'filter_composite_product_cost' ), 10, 4 );
+					remove_filter( 'get_post_metadata', array( $this, 'filter_composite_product_cost' ), 10 );
 
 					$cost = get_post_meta( $original_id, $meta_key, true );
 

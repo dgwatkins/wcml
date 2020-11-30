@@ -604,7 +604,7 @@ class WCML_Tab_Manager {
 			}
 
 			foreach ( $original_product_tabs as $original_product_tab ) {
-				if ( 'global' === $original_product_tab['type'] ) {
+				if ( isset( $translated_product_tabs ) && 'global' === $original_product_tab['type'] ) {
 					$translated_product_tabs         = $this->set_global_tab( $original_product_tab, $translated_product_tabs, $job->language_code );
 					$translated_product_tabs_updated = true;
 				}

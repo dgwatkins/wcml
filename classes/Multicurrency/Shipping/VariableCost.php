@@ -186,11 +186,10 @@ trait VariableCost {
 			if ( is_array( $termTranslations ) ) {
 				foreach ( $termTranslations as $languageCode => $translation ) {
 					if ( $translation->source_language_code === null ) {
-						$originalTermId = $translation->element_id;
+						$shippingClassKey = str_replace( $termId, $translation->element_id, $shippingClassKey );
 						break;
 					}
 				}
-				$shippingClassKey = str_replace( $termId, $originalTermId, $shippingClassKey );
 			}
 		}
 		return $shippingClassKey;

@@ -651,10 +651,10 @@ class WCML_Attributes {
 
 		$special_symbols_languages = [ 'de', 'da' ];
 		$sanitize_in_origin        = false;
+		$current_language          = $this->sitepress->get_current_language();
 
 		if ( $product_id ) {
-			$orig_lang        = $this->get_wcml_products_instance()->get_original_product_language( $product_id );
-			$current_language = $this->sitepress->get_current_language();
+			$orig_lang = $this->get_wcml_products_instance()->get_original_product_language( $product_id );
 
 			if ( in_array( $orig_lang, $special_symbols_languages, true ) && $current_language !== $orig_lang ) {
 				$attribute_name = $this->sitepress->locale_utils->filter_sanitize_title( remove_accents( $attribute_name ), $attribute_name );
@@ -680,7 +680,7 @@ class WCML_Attributes {
 	}
 
 	private function remove_wpml_locale_sanitize_title_filter() {
-		remove_filter( 'sanitize_title', [ $this->sitepress->locale_utils, 'filter_sanitize_title' ], 10, 2 );
+		remove_filter( 'sanitize_title', [ $this->sitepress->locale_utils, 'filter_sanitize_title' ], 10 );
 	}
 
 	public function filter_adding_to_cart_product_attributes_names( $attributes ) {

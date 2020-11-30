@@ -21,7 +21,7 @@ class WCML_Mix_and_Match_Products {
 		}
 
 		if ( 'product' === $post->post_type ) {
-			remove_action( 'updated_post_meta', [ $this, 'sync_mnm_data' ], 10, 4 );
+			remove_action( 'updated_post_meta', [ $this, 'sync_mnm_data' ], 10 );
 
 			if ( $woocommerce_wpml->products->is_original_product( $post_id ) ) {
 				$original_product_id = $post_id;

@@ -318,11 +318,11 @@ class WCML_Resources {
 			$original_id = $sitepress->get_original_element_id_by_trid( sanitize_text_field( $_GET['trid'] ) );
 		}
 
-		if ( isset( $_GET['lang'] ) ) {
-			$language = $_GET['lang'];
-		} else {
+		if ( ! isset( $_GET['lang'], $original_id ) ) {
 			return;
 		}
+
+		$language = filter_var( $_GET['lang'], FILTER_SANITIZE_STRING );
 
 		echo '<h3 class="wcml_prod_hidden_notice">' .
 			sprintf(

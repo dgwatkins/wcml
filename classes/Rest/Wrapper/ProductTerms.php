@@ -36,7 +36,7 @@ class ProductTerms extends Handler {
 		if ( $language ) {
 			if ( 'all' === $language ) {
 				remove_filter( 'terms_clauses', [ $this->sitepress, 'terms_clauses' ], 10 );
-				remove_filter( 'get_term', [ $this->sitepress, 'get_term_adjust_id' ], 1, 1 );
+				remove_filter( 'get_term', [ $this->sitepress, 'get_term_adjust_id' ], 1 );
 			} else {
 				$this->checkLanguage( $language );
 			}

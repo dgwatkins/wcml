@@ -166,24 +166,15 @@ class WCML_Multi_Currency_Configuration {
 				self::add_currency( $currency_code );
 			}
 
-			$changed      = false;
-			$rate_changed = false;
 			foreach ( self::$multi_currency->currencies[ $currency_code ] as $key => $value ) {
 
 				if ( isset( $options[ $key ] ) && $options[ $key ] != $value ) {
 					if ( $key === 'rate' ) {
 						$previous_rate = self::$multi_currency->currencies[ $currency_code ][ $key ];
-						$rate_changed  = true;
+						self::$multi_currency->currencies[ $currency_code ]['previous_rate'] = $previous_rate;
+						self::$multi_currency->currencies[ $currency_code ]['updated']       = date( 'Y-m-d H:i:s' );
 					}
 					self::$multi_currency->currencies[ $currency_code ][ $key ] = $options[ $key ];
-					$changed                                                    = true;
-				}
-			}
-
-			if ( $changed ) {
-				if ( $rate_changed ) {
-					self::$multi_currency->currencies[ $currency_code ]['previous_rate'] = $previous_rate;
-					self::$multi_currency->currencies[ $currency_code ]['updated']       = date( 'Y-m-d H:i:s' );
 				}
 			}
 		} else {

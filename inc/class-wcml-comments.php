@@ -221,7 +221,7 @@ class WCML_Comments {
 				$comments_link_text             = sprintf( __( 'Show only reviews in %1$s (%2$s)', 'woocommerce-multilingual' ), $language_details['display_name'], $current_language_reviews_count );
 			}
 
-			if ( isset( $comments_link_text ) && $comments_link_text ) {
+			if ( isset( $comments_link_text, $comments_link ) && $comments_link_text ) {
 				echo '<p><a id="lang-comments-link" href="' . $comments_link . '" rel="nofollow" >' . $comments_link_text . '</a></p>';
 			}
 		}
@@ -280,7 +280,7 @@ class WCML_Comments {
 	 */
 	public function get_reviews_count( $language = false ) {
 
-		remove_filter( 'get_post_metadata', [ $this, 'filter_average_rating' ], 10, 4 );
+		remove_filter( 'get_post_metadata', [ $this, 'filter_average_rating' ], 10 );
 
 		if ( ! metadata_exists( 'post', get_the_ID(), self::WCML_REVIEW_COUNT_KEY ) ) {
 			$this->recalculate_comment_rating( get_the_ID() );
@@ -352,7 +352,7 @@ class WCML_Comments {
 	 */
 	public function maybe_duplicate_comment_rating( $meta_id, $comment_id, $meta_key, $meta_value ) {
 		if ( 'rating' === $meta_key && wpml_get_setting_filter( null, 'sync_comments_on_duplicates' ) ) {
-			remove_action( 'added_comment_meta', [ $this, 'maybe_duplicate_comment_rating' ], 10, 4 );
+			remove_action( 'added_comment_meta', [ $this, 'maybe_duplicate_comment_rating' ], 10 );
 			foreach ( $this->get_duplicated_comments( $comment_id ) as $duplicate ) {
 				add_comment_meta( $duplicate, 'rating', $meta_value );
 

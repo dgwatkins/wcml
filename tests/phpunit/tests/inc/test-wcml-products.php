@@ -1122,7 +1122,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		WP_Mock::userFunction( 'remove_filter',
 			array(
-				'args' => array( 'get_post_metadata', array( $subject, 'filter_product_data' ), 10, 3 ),
+				'args' => array( 'get_post_metadata', array( $subject, 'filter_product_data' ), 10 ),
 				'times' => 1,
 				'return' => true
 			)

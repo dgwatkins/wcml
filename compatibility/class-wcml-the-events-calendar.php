@@ -286,7 +286,7 @@ class WCML_The_Events_Calendar {
 				'post_name'    => sanitize_title_with_dashes( $translation['post_title'] ),
 			];
 
-			remove_action( 'save_post', [ $wpml_post_translations, 'save_post_actions' ], 100, 2 );
+			remove_action( 'save_post', [ $wpml_post_translations, 'save_post_actions' ], 100 );
 			if ( $translated_ticket_post_id && $translated_ticket_post_id != $ticket_post_id ) {
 				$postarr['ID'] = $translated_ticket_post_id;
 				wp_update_post( $postarr );

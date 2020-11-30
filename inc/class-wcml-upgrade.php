@@ -228,7 +228,7 @@ class WCML_Upgrade {
 				$ccr = [];
 
 				foreach ( $translations as $translation ) {
-					if ( $translation->element_id != $row->ID ) {
+					if ( isset( $language_currencies ) && $translation->element_id != $row->ID ) {
 						$meta                                = get_post_meta( $translation->element_id );
 						$translated_prices['_price']         = $meta['_price'][0];
 						$translated_prices['_regular_price'] = $meta['_regular_price'][0];

@@ -85,7 +85,7 @@ class Test_WCML_Currency_Switcher_Ajax extends OTGS_TestCase {
 		\WP_Mock::wpFunction( 'remove_action', array(
 			'return' => $sidebars,
 			'times'  => 1,
-			'args'   => array( 'pre_update_option_sidebars_widgets', array( $woocommerce_wpml->multi_currency->currency_switcher, 'update_option_sidebars_widgets' ), 10, 2 ),
+			'args'   => array( 'pre_update_option_sidebars_widgets', array( $woocommerce_wpml->multi_currency->currency_switcher, 'update_option_sidebars_widgets' ), 10 ),
 		));
 
 		\WP_Mock::wpPassthruFunction( 'sanitize_text_field' );
@@ -194,7 +194,7 @@ class Test_WCML_Currency_Switcher_Ajax extends OTGS_TestCase {
 		\WP_Mock::wpFunction( 'remove_action', array(
 			'return' => $sidebars,
 			'times'  => 1,
-			'args'   => array( 'pre_update_option_sidebars_widgets', array( $woocommerce_wpml->multi_currency->currency_switcher, 'update_option_sidebars_widgets' ), 10, 2 ),
+			'args'   => array( 'pre_update_option_sidebars_widgets', array( $woocommerce_wpml->multi_currency->currency_switcher, 'update_option_sidebars_widgets' ), 10 ),
 		));
 
 		\WP_Mock::wpFunction( 'wp_set_sidebars_widgets', array(

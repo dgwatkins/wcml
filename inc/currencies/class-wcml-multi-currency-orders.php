@@ -265,7 +265,7 @@ class WCML_Multi_Currency_Orders {
 	 */
 	private function get_order_coupons_objects( $order ) {
 
-		remove_filter( 'woocommerce_order_get_items', [ $this, 'set_totals_for_order_items' ], 10, 2 );
+		remove_filter( 'woocommerce_order_get_items', [ $this, 'set_totals_for_order_items' ], 10 );
 
 		$order_coupons   = $order->get_items( 'coupon' );
 		$coupons_objects = [];

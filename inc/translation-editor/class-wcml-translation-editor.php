@@ -80,6 +80,8 @@ class WCML_Translation_Editor {
 					break;
 				}
 			}
+
+			if ( isset( $source_lang ) ) {
 				$terms = get_the_terms( $translations[ $source_lang ]->element_id, 'product_type' );
 				echo '<script type="text/javascript">';
 				echo PHP_EOL . '// <![CDATA[' . PHP_EOL;
@@ -89,6 +91,7 @@ class WCML_Translation_Editor {
 				echo '});' . PHP_EOL;
 				echo PHP_EOL . '// ]]>' . PHP_EOL;
 				echo '</script>';
+			}
 		}
 	}
 

@@ -180,8 +180,9 @@ class WCML_Product_Bundles {
 
 		if ( $this->is_bundle_product( $bundle_id ) ) {
 
-			$trid         = $this->sitepress->get_element_trid( $bundle_id, 'post_product' );
-			$translations = $this->sitepress->get_element_translations( $trid, 'post_product' );
+			$trid               = $this->sitepress->get_element_trid( $bundle_id, 'post_product' );
+			$translations       = $this->sitepress->get_element_translations( $trid, 'post_product' );
+			$original_bundle_id = null;
 
 			foreach ( $translations as $language => $translation ) {
 				if ( $translation->original ) {
@@ -191,7 +192,7 @@ class WCML_Product_Bundles {
 			}
 
 			foreach ( $translations as $language => $translation ) {
-				if ( $translation->element_id !== $original_bundle_id ) {
+				if ( $original_bundle_id && $translation->element_id !== $original_bundle_id ) {
 					$this->sync_product_bundle_meta( $original_bundle_id, $translation->element_id );
 				}
 			}
@@ -371,16 +372,16 @@ class WCML_Product_Bundles {
 
 		foreach ( $product_bundles as $item_id ) {
 
-			$product_id = $this->get_product_id_for_item_id( $item_id );
+			$product_id         = $this->get_product_id_for_item_id( $item_id );
+			$translated_item_id = null;
 
-			$translated_product_id = apply_filters( 'translate_object_id', $product_id, get_post_type( $product_id ), false, $lang );
 			if ( $translation ) {
 				$translated_item_id = $this->get_item_id_for_language( $item_id, $lang );
 			}
 
 			if ( $bundle_data[ $item_id ]['override_title'] == 'yes' ) {
 				$data[ 'bundle_' . $product_id . '_title' ] = [ 'original' => $bundle_data[ $item_id ]['title'] ];
-				if ( $translation && isset( $translated_bundle_data[ $translated_item_id ]['override_title'] ) ) {
+				if ( $translated_item_id && isset( $translated_bundle_data[ $translated_item_id ]['override_title'] ) ) {
 					$data[ 'bundle_' . $product_id . '_title' ]['translation'] = $translated_bundle_data[ $translated_item_id ]['title'];
 				} else {
 					$data[ 'bundle_' . $product_id . '_title' ]['translation'] = '';
@@ -389,7 +390,7 @@ class WCML_Product_Bundles {
 
 			if ( $bundle_data[ $item_id ]['override_description'] == 'yes' ) {
 				$data[ 'bundle_' . $product_id . '_desc' ] = [ 'original' => $bundle_data[ $item_id ]['description'] ];
-				if ( $translation && isset( $translated_bundle_data[ $translated_item_id ]['override_description'] ) ) {
+				if ( $translated_item_id && isset( $translated_bundle_data[ $translated_item_id ]['override_description'] ) ) {
 					$data[ 'bundle_' . $product_id . '_desc' ]['translation'] = $translated_bundle_data[ $translated_item_id ]['description'];
 				} else {
 					$data[ 'bundle_' . $product_id . '_desc' ]['translation'] = '';
@@ -513,7 +514,14 @@ class WCML_Product_Bundles {
 		return $translated_bundle_data;
 	}
 
-	// Sync product bundle data with translated values when the product is duplicated.
+	/**
+	 * Sync product bundle data with translated values when the product is duplicated.
+	 *
+	 * @param int $bundle_id
+	 * @param int $translated_bundle_id
+	 *
+	 * @return array|null
+	 */
 	public function sync_bundled_ids( $bundle_id, $translated_bundle_id ) {
 
 		$bundle_data = $this->get_product_bundle_data( $bundle_id );
@@ -611,14 +619,15 @@ class WCML_Product_Bundles {
 						}
 						$translated_bundle_data[ $translated_item_id ]['bundle_defaults'] = maybe_serialize( $translated_bundle_data[ $translated_item_id ]['bundle_defaults'] );
 					}
+
+					$this->save_product_bundle_data( $translated_bundle_id, $translated_bundle_data );
+
+					return $translated_bundle_data;
 				}
 			}
-
-			$this->save_product_bundle_data( $translated_bundle_id, $translated_bundle_data );
-
-			return $translated_bundle_data;
 		}
 
+		return null;
 	}
 
 	public function resync_bundle( $cart_item, $session_values, $cart_item_key ) {
@@ -684,7 +693,7 @@ class WCML_Product_Bundles {
 
 		if ( $this->is_bundle_product( $translated_bundle_id ) ) {
 
-			remove_action( 'wcml_after_duplicate_product_post_meta', [ $this, 'sync_bundled_ids' ], 10, 2 );
+			remove_action( 'wcml_after_duplicate_product_post_meta', [ $this, 'sync_bundled_ids' ], 10 );
 
 			$translated_bundle_data = $this->get_product_bundle_data( $translated_bundle_id );
 

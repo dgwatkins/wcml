@@ -139,7 +139,7 @@ class WCML_Endpoints_Legacy {
 			remove_filter( 'gettext_with_context', array(
 				$this->woocommerce_wpml->strings,
 				'category_base_in_strings_language'
-			), 99, 3 );
+			), 99 );
 			if ( (int) get_option( 'page_on_front' ) !== wc_get_page_id( 'myaccount' ) ) {
 				flush_rewrite_rules( false );
 			}

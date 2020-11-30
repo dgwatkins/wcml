@@ -46,9 +46,6 @@ class ShippingHooksFactory implements \IWPML_Deferred_Action_Loader, \IWPML_Back
 	}
 
 	private function isAjaxOnShippingPageRequest() {
-		if ( ! isset( $_GET ) ) {
-			return false;
-		}
 		$getData = wpml_collect( $_GET );
 		$shippingActions = [ 'woocommerce_shipping_zone_add_method', 'woocommerce_shipping_zone_methods_save_changes' ];
 

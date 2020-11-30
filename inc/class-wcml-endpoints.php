@@ -256,7 +256,7 @@ class WCML_Endpoints {
 
 	public function filter_get_endpoint_url( $url, $endpoint, $value, $permalink ) {
 
-		remove_filter( 'woocommerce_get_endpoint_url', array( $this, 'filter_get_endpoint_url' ), 10, 4 );
+		remove_filter( 'woocommerce_get_endpoint_url', array( $this, 'filter_get_endpoint_url' ), 10 );
 
 		$translated_endpoint = $this->get_endpoint_translation( $endpoint );
 		$url                 = wc_get_endpoint_url( $translated_endpoint, $value, $this->sitepress->convert_url( $permalink ) );

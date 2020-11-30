@@ -126,30 +126,36 @@ class WCML_Exchange_Rates {
 		wp_send_json( $response );
 	}
 
+	/**
+	 * @return array
+	 * @throws Exception
+	 */
 	public function update_exchange_rates() {
+		if ( ! isset( $this->services[ $this->settings['service'] ] ) ) {
+			throw new Exception( 'The exchange rate service "' . $this->settings['service'] . '" is not defined.' );
+		}
 
-		if ( isset( $this->services[ $this->settings['service'] ] ) ) {
-			$service =& $this->services[ $this->settings['service'] ];
+		/** @var \WCML_Exchange_Rate_Service $service */
+		$service =& $this->services[ $this->settings['service'] ];
 
-			$currencies           = $this->woocommerce_wpml->multi_currency->get_currency_codes();
-			$default_currency     = wcml_get_woocommerce_currency_option();
-			$secondary_currencies = array_diff( $currencies, [ $default_currency ] );
+		$currencies           = $this->woocommerce_wpml->multi_currency->get_currency_codes();
+		$default_currency     = wcml_get_woocommerce_currency_option();
+		$secondary_currencies = array_diff( $currencies, [ $default_currency ] );
 
-			try {
-				$rates = $service->get_rates( $default_currency, $secondary_currencies );
-			} catch ( Exception $e ) {
-				if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
-					error_log( 'Exchange rates update error (' . $this->settings['service'] . '): ' . $e->getMessage() );
-				}
-				throw new Exception( $e->getMessage() );
+		try {
+			$rates = $service->get_rates( $default_currency, $secondary_currencies );
+		} catch ( Exception $e ) {
+			if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+				error_log( 'Exchange rates update error (' . $this->settings['service'] . '): ' . $e->getMessage() );
 			}
+			throw new Exception( $e->getMessage() );
+		}
 
-			$this->apply_lifting_charge( $rates );
+		$this->apply_lifting_charge( $rates );
 
-			foreach ( $rates as $to => $rate ) {
-				if ( $rate && is_numeric( $rate ) ) {
-					$this->save_exchage_rate( $to, $rate );
-				}
+		foreach ( $rates as $to => $rate ) {
+			if ( $rate && is_numeric( $rate ) ) {
+				$this->save_exchage_rate( $to, $rate );
 			}
 		}
 

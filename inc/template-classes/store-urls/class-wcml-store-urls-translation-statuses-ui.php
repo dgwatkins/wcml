@@ -83,7 +83,7 @@ class WCML_Store_URLs_Translation_Statuses_UI extends WCML_Templates_Factory {
 				}
 			}
 
-			if ( $translated_base ) {
+			if ( isset( $translated_base ) && $translated_base ) {
 				$languages[ $key ]['status'] = 'edit';
 			} else {
 				$languages[ $key ]['status'] = 'add';

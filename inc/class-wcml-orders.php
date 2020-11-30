@@ -432,7 +432,7 @@ class WCML_Orders {
 			}
 		}
 
-		remove_filter( 'woocommerce_get_item_downloads', [ $this, 'filter_downloadable_product_items' ], 10, 3 );
+		remove_filter( 'woocommerce_get_item_downloads', [ $this, 'filter_downloadable_product_items' ], 10 );
 
 		$files = $item->get_item_downloads();
 

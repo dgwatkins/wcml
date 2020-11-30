@@ -195,8 +195,7 @@ class WCML_Table_Rate_Shipping {
 		remove_filter(
 			'woocommerce_shipping_table_rate_is_available',
 			[ $this, 'shipping_table_rate_is_available' ],
-			10,
-			3
+			10
 		);
 
 		$available = $object->is_available( $package );

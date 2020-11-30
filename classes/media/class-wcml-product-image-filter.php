@@ -35,7 +35,7 @@ class WCML_Product_Image_Filter implements IWPML_Action {
 			$image_id  = $this->wpml_cache->get( $cache_key, $found );
 
 			if ( ! $image_id ) {
-				remove_filter( 'get_post_metadata', [ $this, 'localize_image_id' ], 11, 3 );
+				remove_filter( 'get_post_metadata', [ $this, 'localize_image_id' ], 11 );
 
 				$meta_value = get_post_meta( $object_id, '_thumbnail_id', true );
 				if ( empty( $meta_value ) ) {

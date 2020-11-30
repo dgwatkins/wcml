@@ -240,7 +240,7 @@ class WCML_Sensei {
 
 		if ( $obj->query_vars['type'] == 'sensei_course_start' ) {
 
-			remove_filter( 'comments_clauses', [ $sitepress, 'comments_clauses' ], 10, 2 );
+			remove_filter( 'comments_clauses', [ $sitepress, 'comments_clauses' ], 10 );
 
 		}
 

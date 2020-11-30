@@ -6,24 +6,30 @@
 function wp_cache_is_enabled() {}
 
 // W3TC
-function w3_require_once() {}
+function w3_require_once( $file ) {}
 class W3_AdminActions_FlushActionsAdmin {
     public function flush_pgcache() {}
 }
 
+
 // LiteSpeed Cache
 class LiteSpeed_Cache_API {
-    public static function v() {}
+    public static function v( $v ) {}
     public static function force_vary() {}
-    public static function vary() {}
+    public static function vary( $arg1, $arg2, $arg3 ) {}
 }
 
 // Relevanssi
-function relevanssi_insert_edit() {}
+/**
+ * @param int $post_id
+ *
+ * @return string|int
+ */
+function relevanssi_insert_edit( $post_id ) {}
 
 // WooCommerce Stripe Gateway
 class WC_Stripe_Helper {
-    public static function get_stripe_amount() {}
+    public static function get_stripe_amount( $total, $currency = '' ) {}
 }
 
 // WooCommerce Bookings
@@ -33,8 +39,17 @@ class WC_Product_Booking {
 class WC_Booking_Form {
     public function __construct( $id ) {}
 }
-function wc_bookings_get_posted_data() {}
-function get_wc_booking() {}
+/**
+ * @param  array $posted
+ * @param  object $product
+ * @return array
+ */
+function wc_bookings_get_posted_data( $posted, $product ) {}
+/**
+ * @param  int $id
+ * @return WC_Booking|false
+ */
+function get_wc_booking( $id ) {}
 
 // WooCommerce Composite Products
 function is_composite_product() {}
@@ -44,7 +59,7 @@ class WC_Dynamic_Pricing_Advanced_Taxonomy {}
 class WC_Dynamic_Pricing_Simple_Taxonomy {}
 
 // WooCommerce Tab Manager
-function wc_tab_manager_duplicate_product() {}
+function wc_tab_manager_duplicate_product( $new_id, $original_post ) {}
 
 // WooCommerce Subscriptions
 class WC_Subscription {}

@@ -76,7 +76,7 @@ class WCML_Adventure_tours {
 
 		if ( 'product' === $post->post_type ) {
 
-			remove_action( 'updated_post_meta', [ $this, 'sync_tour_data_across_translations' ], 10, 4 );
+			remove_action( 'updated_post_meta', [ $this, 'sync_tour_data_across_translations' ], 10 );
 
 			$original_product_id = $post_id;
 			if ( ! $this->woocommerce_wpml->products->is_original_product( $post_id ) ) {
@@ -171,7 +171,7 @@ class WCML_Adventure_tours {
 					$tour_tabs_meta['tabs'][ $tour_tab_id ]['content'] = $data[ md5( 'adventure_tour_' . $tour_tab_id . '_content' ) ];
 				}
 			}
-			remove_action( 'updated_post_meta', [ $this, 'sync_tour_data_across_translations' ], 10, 4 );
+			remove_action( 'updated_post_meta', [ $this, 'sync_tour_data_across_translations' ], 10 );
 
 			update_post_meta( $product_id, 'tour_tabs_meta', $tour_tabs_meta );
 
@@ -240,10 +240,11 @@ class WCML_Adventure_tours {
 					$tour_tabs_meta['tabs'][ $tour_tab_id ]['content'] = $translated_tour_data[ $tour_tab_id ]['content'];
 				}
 			}
+
+			remove_action( 'updated_post_meta', [ $this, 'sync_tour_data_across_translations' ], 10 );
+			update_post_meta( $post_id, 'tour_tabs_meta', $tour_tabs_meta );
+			add_action( 'updated_post_meta', [ $this, 'sync_tour_data_across_translations' ], 10, 4 );
 		}
-		remove_action( 'updated_post_meta', [ $this, 'sync_tour_data_across_translations' ], 10, 4 );
-		update_post_meta( $post_id, 'tour_tabs_meta', $tour_tabs_meta );
-		add_action( 'updated_post_meta', [ $this, 'sync_tour_data_across_translations' ], 10, 4 );
 
 	}
 
@@ -313,7 +314,7 @@ class WCML_Adventure_tours {
 			( $currency = $this->woocommerce_wpml->multi_currency->get_client_currency() ) !== wcml_get_woocommerce_currency_option()
 		) {
 
-			remove_filter( 'get_post_metadata', [ $this, 'product_price_filter' ], 9, 4 );
+			remove_filter( 'get_post_metadata', [ $this, 'product_price_filter' ], 9 );
 
 			$original_language = $this->woocommerce_wpml->products->get_original_product_language( $object_id );
 			$original_product  = apply_filters( 'translate_object_id', $object_id, 'product', true, $original_language );

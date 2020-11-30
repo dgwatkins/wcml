@@ -564,7 +564,7 @@ class WCML_Products {
 			}
 		}
 
-		if ( isset( $from_lang ) ) {
+		if ( isset( $from_lang, $to_lang ) ) {
 
 			$translators = $iclTranslationManagement->get_blog_translators(
 				[
@@ -797,7 +797,7 @@ class WCML_Products {
 	 */
 	public function remove_post_meta_data_filter_on_checkout_stock_update( $reduce_stock ) {
 		if ( isset( $_GET['wc-ajax'] ) && 'checkout' === $_GET['wc-ajax'] ) {
-			remove_filter( 'get_post_metadata', [ $this, 'filter_product_data' ], 10, 3 );
+			remove_filter( 'get_post_metadata', [ $this, 'filter_product_data' ], 10 );
 		}
 		return $reduce_stock;
 	}

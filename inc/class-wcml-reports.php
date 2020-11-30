@@ -150,14 +150,13 @@ class WCML_Reports{
                 case 'top_sellers_spark':
                     $key = $row->trid . '#' . substr($row->post_date, 0, 10);
                     break;
+	            default:
+	            	$key = null;
             }
 
-            if($row->order_language===$current_language){
-
+            if($key && $row->order_language===$current_language){
                 $combined_results[$key] = $row;
-
             }
-
         }
 
         foreach($results as $k => $row){
@@ -172,9 +171,11 @@ class WCML_Reports{
                     case 'top_sellers_spark':
                         $key = $row->trid . '#' . substr($row->post_date, 0, 10);
                         break;
+	                default:
+		                $key = null;
                 }
 
-                if(isset($combined_results[$key])){
+                if($key && isset($combined_results[$key])){
 
                     switch($mode){
                         case 'top_sellers':

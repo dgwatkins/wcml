@@ -224,7 +224,7 @@ class WCML_Currency_Switcher {
 
 		if ( is_null( $this->is_touch_screen ) ) {
 			if ( ! class_exists( 'WPML_Mobile_Detect' ) ) {
-				require_once ICL_PLUGIN_PATH . '/lib/mobile-detect.php';
+				require_once WPML_PLUGIN_PATH . '/lib/mobile-detect.php';
 			}
 			$mobile_detect         = new WPML_Mobile_Detect();
 			$this->is_touch_screen = $mobile_detect->isMobile() || $mobile_detect->isTablet();

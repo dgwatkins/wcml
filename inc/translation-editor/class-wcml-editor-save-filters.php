@@ -16,9 +16,9 @@ class WCML_Editor_Save_Filters {
 	}
 
 	public function __destruct() {
-		remove_filter( 'wpml_tm_save_post_trid_value', [ $this, 'wpml_tm_save_post_trid_value' ], 10, 2 );
-		remove_filter( 'wpml_tm_save_post_lang_value', [ $this, 'wpml_tm_save_post_lang_value' ], 10, 2 );
-		remove_filter( 'wpml_save_post_trid_value', [ $this, 'wpml_save_post_trid_value' ], 10, 3 );
+		remove_filter( 'wpml_tm_save_post_trid_value', [ $this, 'wpml_tm_save_post_trid_value' ], 10 );
+		remove_filter( 'wpml_tm_save_post_lang_value', [ $this, 'wpml_tm_save_post_lang_value' ], 10 );
+		remove_filter( 'wpml_save_post_trid_value', [ $this, 'wpml_save_post_trid_value' ], 10 );
 		remove_filter( 'wpml_save_post_lang', [ $this, 'wpml_save_post_lang_value' ], 10 );
 	}
 

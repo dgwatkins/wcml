@@ -78,7 +78,7 @@ class WCML_Variation_Swatches_And_Photos {
 		$attribute_values = explode( '|', $attribute['value'] );
 
 		wpml_collect( $attribute_values )->each(
-			function ( $attribute_value ) use ( $attribute_key, $attribute, $attribute_name_hash, $swatch_options, &$translated_swatch_options, $original_product_id, $translated_product_id ) {
+			function ( $attribute_value ) use ( $attribute_key, $attribute_name_hash, $swatch_options, &$translated_swatch_options, $original_product_id, $translated_product_id ) {
 				$attribute_value           = trim( $attribute_value, ' ' );
 				$attribute_value_md5       = md5( sanitize_title( strtolower( $attribute_value ) ) );
 				$translated_swatch_options = $this->translate_custom_attribute_value( $attribute_key, $attribute_value, $attribute_value_md5, $attribute_name_hash, $swatch_options, $translated_swatch_options, $original_product_id, $translated_product_id );

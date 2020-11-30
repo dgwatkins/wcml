@@ -120,7 +120,7 @@ class Test_WCML_Product_Image_Filter extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'remove_filter', [
 			'times' => 1,
-			'args'  => [ 'get_post_metadata', array( $subject, 'localize_image_id' ), 11, 3 ]
+			'args'  => [ 'get_post_metadata', array( $subject, 'localize_image_id' ), 11 ]
 		] );
 
 		\WP_Mock::userFunction( 'get_post_meta', [
@@ -156,7 +156,7 @@ class Test_WCML_Product_Image_Filter extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'remove_filter', [
 			'times' => 1,
-			'args'  => [ 'get_post_metadata', array( $subject, 'localize_image_id' ), 11, 3 ]
+			'args'  => [ 'get_post_metadata', array( $subject, 'localize_image_id' ), 11 ]
 		] );
 
 		\WP_Mock::userFunction( 'get_post_meta', [
