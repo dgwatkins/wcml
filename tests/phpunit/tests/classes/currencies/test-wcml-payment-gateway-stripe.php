@@ -59,10 +59,10 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 			'return' => [ 'USD' => [], 'UAH' => [] ],
 		] );
 
-		$expected_currencies_details = array(
-			'USD' => array( 'publishable_key' => 'publishable_key', 'secret_key' => 'secret_key' ),
-			'UAH' => array( 'publishable_key' => '', 'secret_key' => '' )
-		);
+		$expected_currencies_details = [
+			'USD' => [ 'currency' => 'USD', 'publishable_key' => 'publishable_key', 'secret_key' => 'secret_key' ],
+			'UAH' => [ 'currency' => 'UAH', 'publishable_key' => '', 'secret_key' => '' ]
+		];
 
 		$this->assertEquals( $expected_currencies_details, $subject->get_currencies_details() );
 	}
@@ -205,10 +205,12 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 				'isSupported' => true,
 				'settings'    => [
 					$defaultCurrency => [
+						'currency'        => $defaultCurrency,
 						'publishable_key' => 'publishable_key',
 						'secret_key'      => 'secret_key',
 					],
 					'UAD' => [
+						'currency'        => 'UAD',
 						'publishable_key' => '',
 						'secret_key'      => '',
 					],

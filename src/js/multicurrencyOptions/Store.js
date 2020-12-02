@@ -45,8 +45,30 @@ const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, ga
     }),
 
     setModalCurrency: action((state, currency) => {
-        state.modalCurrency = currency;
+        state.modalCurrency = state.setInitialGatewayCurrency(currency, state.activeCurrencies);
     }),
+
+    setInitialGatewayCurrency: (currency, activeCurrencies) => {
+        const isActiveCurrency = code => {
+            return activeCurrencies.find(activeCurrency => activeCurrency.code === code);
+        };
+
+        const setInitialCurrency = gateway => {
+            if (gateway.currency !== undefined && !isActiveCurrency(gateway.currency)) {
+                gateway = {...gateway, currency: currency.code};
+            }
+
+            return gateway;
+        };
+
+        if (currency && currency.gatewaysSettings) {
+            Object.keys(currency.gatewaysSettings).map(name => {
+                currency.gatewaysSettings[name] = setInitialCurrency(currency.gatewaysSettings[name]);
+            })
+        }
+
+        return currency;
+    },
 
     saveModalCurrency: action(state => {
         const index = getCurrencyIndex(state.activeCurrencies)(state.modalCurrency.code);

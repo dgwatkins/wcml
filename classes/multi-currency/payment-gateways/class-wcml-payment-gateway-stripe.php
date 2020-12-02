@@ -51,6 +51,7 @@ class WCML_Payment_Gateway_Stripe extends WCML_Payment_Gateway {
 		$active_currencies  = get_woocommerce_currencies();
 
 		foreach ( $active_currencies as $code => $currency ) {
+			$currencies_details[ $code ]['currency'] = $code;
 
 			if ( $default_currency === $code ) {
 				$currencies_details[ $code ]['publishable_key'] = $this->get_gateway()->settings['publishable_key'];
