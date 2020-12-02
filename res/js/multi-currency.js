@@ -82,12 +82,20 @@ jQuery( function($){
         },
 
         read_form_fields_status: function(){
-            this.mc_form_status = $('#wcml_mc_options').serialize();
+            this.mc_form_status = this.get_serialized_options();
         },
 
         form_fields_changed: function(){
-            return this.mc_form_status != $('#wcml_mc_options').serialize();
+            return this.mc_form_status != this.get_serialized_options();
         },
+
+        get_serialized_options: function() {
+            var reactUiElements = $('#wcml_mc_options .js-wcml-react-ui').find('input, select, textarea');
+            reactUiElements.prop('disabled', true);
+            var serializedData = $('#wcml_mc_options').serialize();
+            reactUiElements.prop('disabled', false);
+            return serializedData;
+        }
     }
 
     WCML_Multi_Currency.init();
