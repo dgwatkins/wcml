@@ -233,10 +233,9 @@ class WCML_Multi_Currency_Configuration {
 
 		$data = self::get_data();
 
-		if ( ! empty( $woocommerce->session ) &&
-		     $data['lang'] == $woocommerce->session->get( 'client_currency_language' ) &&
-		     $data['code'] !== 'location' ) {
-			$woocommerce->session->set( 'client_currency', $data['code'] );
+		if ( $data['lang'] == $woocommerce->session->get( 'client_currency_language' ) && $data['code'] !== 'location' ) {
+
+			self::$woocommerce_wpml->multi_currency->set_currency_in_storage( $data['code'] );
 		}
 
 		self::$woocommerce_wpml->settings['default_currencies'][ $data['lang'] ] = $data['code'];
