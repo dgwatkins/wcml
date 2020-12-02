@@ -15,14 +15,7 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 
 	private function get_subject( $gateway = null ) {
 		if( null === $gateway ){
-			$gateway = $this->getMockBuilder('WC_Payment_Gateway')
-			                ->disableOriginalConstructor()
-			                ->getMock();
-
-			$gateway->id = 'id';
-			$gateway->title = 'title';
-			$gateway->settings['publishable_key'] = 'publishable_key';
-			$gateway->settings['secret_key'] = 'secret_key';
+			$gateway = $this->getWcGateway();
 
 			WP_Mock::userFunction( 'get_option', array(
 				'args' => array( WCML_Payment_Gateway::OPTION_KEY.$gateway->id, array() ),
@@ -32,6 +25,19 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 		}
 
 		return new WCML_Payment_Gateway_Stripe( $gateway, $this->woocommerce_wpml );
+	}
+
+	private function getWcGateway() {
+		$gateway = $this->getMockBuilder('WC_Payment_Gateway')
+		                ->disableOriginalConstructor()
+		                ->getMock();
+
+		$gateway->id = 'stripe';
+		$gateway->title = 'title';
+		$gateway->settings['publishable_key'] = 'publishable_key';
+		$gateway->settings['secret_key'] = 'secret_key';
+
+		return $gateway;
 	}
 
 	/**
@@ -49,7 +55,9 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 	 * @test
 	 */
 	public function is_should_get_currencies_details() {
-		$subject = $this->get_subject();
+		$uahStripeCurrency = 'EUR';
+		$uahPublishableKey = "The $uahStripeCurrency publishable key";
+		$uahSecretKey      = "The $uahStripeCurrency secret key";
 
 		WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
 			'return' => 'USD'
@@ -59,10 +67,23 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 			'return' => [ 'USD' => [], 'UAH' => [] ],
 		] );
 
-		$expected_currencies_details = array(
-			'USD' => array( 'publishable_key' => 'publishable_key', 'secret_key' => 'secret_key' ),
-			'UAH' => array( 'publishable_key' => '', 'secret_key' => '' )
-		);
+		WP_Mock::userFunction( 'get_option', [
+			'args'   => [ 'wcml_payment_gateway_stripe', [] ],
+			'return' => [
+				'UAH' => [
+					'currency'        => $uahStripeCurrency,
+					'publishable_key' => $uahPublishableKey,
+					'secret_key'      => $uahSecretKey,
+				]
+			]
+		] );
+
+		$expected_currencies_details = [
+			'USD' => [ 'currency' => 'USD', 'publishable_key' => 'publishable_key', 'secret_key' => 'secret_key' ],
+			'UAH' => [ 'currency' => $uahStripeCurrency, 'publishable_key' => $uahPublishableKey, 'secret_key' => $uahSecretKey ]
+		];
+
+		$subject = $this->get_subject( $this->getWcGateway() );
 
 		$this->assertEquals( $expected_currencies_details, $subject->get_currencies_details() );
 	}
@@ -200,15 +221,17 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 
 		$this->assertEquals(
 			[
-				'id'          => 'id',
+				'id'          => 'stripe',
 				'title'       => 'title',
 				'isSupported' => true,
 				'settings'    => [
 					$defaultCurrency => [
+						'currency'        => $defaultCurrency,
 						'publishable_key' => 'publishable_key',
 						'secret_key'      => 'secret_key',
 					],
 					'UAD' => [
+						'currency'        => '',
 						'publishable_key' => '',
 						'secret_key'      => '',
 					],
