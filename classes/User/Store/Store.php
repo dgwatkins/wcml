@@ -11,6 +11,9 @@ class Store implements Strategy {
 	 * @return mixed
 	 */
 	public function get( $key ) {
+
+		$key = $this->adjustKey( $key );
+
 		return $this->getStrategy( $key )->get( $key );
 	}
 
@@ -19,6 +22,9 @@ class Store implements Strategy {
 	 * @param mixed    $value
 	 */
 	public function set( $key, $value ) {
+
+		$key = $this->adjustKey( $key );
+
 		$this->getStrategy( $key )->set( $key, $value );
 	}
 
@@ -28,24 +34,39 @@ class Store implements Strategy {
 	 * @return Strategy
 	 */
 	private function getStrategy( $key ) {
+		global $woocommerce;
+
 		/**
 		 * This filter hook allows to override the storage strategy.
 		 *
 		 * @since 4.11.0
 		 *
-		 * @param string 'session' Storage strategy
+		 * @param string 'wc-session' Storage strategy
 		 * @param string $key      The key operating the storage
 		 */
-		switch ( apply_filters( 'wcml_user_store_strategy', 'session', $key ) ) {
+		switch ( apply_filters( 'wcml_user_store_strategy', 'wc-session', $key ) ) {
 			case 'cookie':
-				$store = new Cookie();
+				$store = \WPML\Container\make( Cookie::class );
 				break;
 
-			case 'session':
+			case 'wc-session':
 			default:
-				$store = new WcSession();
+				$store = isset( $woocommerce->session ) ? new WcSession( $woocommerce->session ) : new Noop();
 		}
 
 		return $store;
 	}
+
+	/**
+	 * @param string $key
+	 *
+	 * @return string $key
+	 */
+	private function adjustKey( $key ) {
+
+		$prefix = 'wcml_';
+
+		return strpos( $key, $prefix ) === 0 ? $key : $prefix . $key;
+	}
+
 }

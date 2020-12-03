@@ -12,7 +12,8 @@ use WCML\MultiCurrency\Geolocation;
  */
 class WCML_Multi_Currency {
 
-	const CURRENCY_STORAGE_KEY = 'wcml_client_currency';
+	const CURRENCY_STORAGE_KEY = 'client_currency';
+	const CURRENCY_LANGUAGE_STORAGE_KEY = 'client_currency_language';
 
 	/** @var  array */
 	public $currencies = [];
@@ -476,13 +477,14 @@ class WCML_Multi_Currency {
 
 		$this->client_currency = $this->maybe_get_currency_by_geolocation( $this->client_currency );
 
-		if ( is_null( $this->client_currency ) && ! empty( $this->woocommerce->session ) && $current_language != $this->woocommerce->session->get( 'client_currency_language' ) ) {
+		$client_currency_language = wcml_user_store_get( self::CURRENCY_LANGUAGE_STORAGE_KEY );
+		if ( is_null( $this->client_currency ) && $client_currency_language && $current_language !== $client_currency_language ) {
 
-			$current_currency          = wcml_user_store_get( self::CURRENCY_STORAGE_KEY );
 			$language_default_currency = $this->get_language_default_currency( $current_language );
 
-			if ( $current_currency && $language_default_currency ) {
+			if ( $language_default_currency ) {
 
+				$current_currency  = wcml_user_store_get( self::CURRENCY_STORAGE_KEY );
 				$prevent_switching = apply_filters( 'wcml_switch_currency_exception', false, $current_currency, $language_default_currency, true );
 
 				$this->client_currency = $language_default_currency;
@@ -533,9 +535,7 @@ class WCML_Multi_Currency {
 
 		if ( $this->client_currency ) {
 			wcml_user_store_set( self::CURRENCY_STORAGE_KEY, $this->client_currency );
-			if ( ! empty( $this->woocommerce->session ) ) {
-				$this->woocommerce->session->set( 'client_currency_language', $current_language );
-			}
+			wcml_user_store_set( self::CURRENCY_LANGUAGE_STORAGE_KEY, $current_language );
 		}
 
 		return $this->client_currency;
@@ -622,7 +622,7 @@ class WCML_Multi_Currency {
 		$this->client_currency = $currency;
 
 		wcml_user_store_set( self::CURRENCY_STORAGE_KEY, $currency );
-		$woocommerce->session->set( 'client_currency_language', $sitepress->get_current_language() );
+		wcml_user_store_set( self::CURRENCY_LANGUAGE_STORAGE_KEY, $sitepress->get_current_language() );
 
 		do_action( 'wcml_set_client_currency', $currency );
 

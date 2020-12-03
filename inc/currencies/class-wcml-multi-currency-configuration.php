@@ -229,11 +229,10 @@ class WCML_Multi_Currency_Configuration {
 	}
 
 	public static function update_default_currency() {
-		global $woocommerce;
 
 		$data = self::get_data();
 
-		if ( $data['lang'] == $woocommerce->session->get( 'client_currency_language' ) && $data['code'] !== 'location' ) {
+		if ( $data['lang'] === wcml_user_store_get( WCML_Multi_Currency::CURRENCY_LANGUAGE_STORAGE_KEY ) && $data['code'] !== 'location' ) {
 
 			wcml_user_store_set( WCML_Multi_Currency::CURRENCY_STORAGE_KEY, $data['code'] );
 		}
