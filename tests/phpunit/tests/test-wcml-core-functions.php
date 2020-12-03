@@ -124,4 +124,99 @@ class Test_WCML_Core_Functions extends OTGS_TestCase {
 		$this->assertSame( $default_keys, wcml_price_custom_fields( $object_id ) );
 	}
 
+	/**
+	 *
+	 * @test
+	 */
+	public function it_should_set_currency_to_session() {
+
+		$this->make_mock();
+
+		$client_currency = 'UAH';
+
+		$sessionHandler = \Mockery::mock( 'overload:WC_Session_Handler' );
+
+		$sessionHandler->shouldReceive( 'set' )->once()->with( WCML_Multi_Currency::CURRENCY_STORAGE_KEY, $client_currency )->andReturn( true );
+
+		wcml_user_store_set( WCML_Multi_Currency::CURRENCY_STORAGE_KEY, $client_currency );
+	}
+
+	/**
+	 *
+	 * @test
+	 */
+	public function it_should_get_currency_from_session() {
+
+		$this->make_mock();
+
+		$client_currency = 'UAH';
+
+		$sessionHandler = \Mockery::mock( 'overload:WC_Session_Handler' );
+
+		$sessionHandler->shouldReceive( 'get' )->once()->with( WCML_Multi_Currency::CURRENCY_STORAGE_KEY )->andReturn( $client_currency );
+
+		$this->assertEquals( $client_currency, wcml_user_store_get( WCML_Multi_Currency::CURRENCY_STORAGE_KEY  ) );
+	}
+
+	/**
+	 *
+	 * @test
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function it_should_set_currency_to_cookie() {
+
+		$this->make_mock();
+
+		\WP_Mock::onFilter( 'wcml_user_store_strategy' )
+		        ->with( 'session', WCML_Multi_Currency::CURRENCY_STORAGE_KEY  )
+		        ->reply( 'cookie' );
+
+		$client_currency = 'EUR';
+
+		$cookieHandler = \Mockery::mock( 'overload:WPML_Cookie' );
+
+		$cookieHandler->shouldReceive( 'headers_sent' )->once()->andReturn( false );
+
+		$session_expiration = time() + (int) 60 * 60 * 48;
+
+		$cookieHandler->shouldReceive( 'set_cookie' )->once()->with( WCML_Multi_Currency::CURRENCY_STORAGE_KEY, $client_currency, $session_expiration, COOKIEPATH, COOKIE_DOMAIN )->andReturn( true );
+
+		wcml_user_store_set( WCML_Multi_Currency::CURRENCY_STORAGE_KEY, $client_currency );
+	}
+
+	/**
+	 *
+	 * @test
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function it_should_get_currency_from_cookie() {
+
+		$this->make_mock();
+
+		\WP_Mock::onFilter( 'wcml_user_store_strategy' )
+		        ->with( 'session', WCML_Multi_Currency::CURRENCY_STORAGE_KEY )
+		        ->reply( 'cookie' );
+
+		$client_currency = 'EUR';
+
+		$cookieHandler = \Mockery::mock( 'overload:WPML_Cookie' );
+
+		$cookieHandler->shouldReceive( 'get_cookie' )->once()->andReturn( $client_currency );
+
+		$this->assertEquals( $client_currency, wcml_user_store_get( WCML_Multi_Currency::CURRENCY_STORAGE_KEY  ) );
+	}
+
+	private function make_mock(){
+
+		\WP_Mock::userFunction( 'WPML\Container\make', [
+			'return' => function ( $className ) {
+				return new $className();
+			},
+		] );
+	}
+
 }

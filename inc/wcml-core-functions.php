@@ -125,3 +125,29 @@ if ( ! function_exists( 'wcml_safe_redirect' ) ) {
 		return wp_safe_redirect( $location, $status, 'WCML' ) && exit;
 	};
 }
+
+if ( ! function_exists( 'wcml_user_store_get' ) ) {
+	/**
+	 * @since 4.11.0
+	 *
+	 * @param string $key
+	 *
+	 * @return mixed
+	 */
+	function wcml_user_store_get( $key ) {
+		return \WPML\Container\make( WCML\User\Store\Store::class )->get( $key );
+	}
+}
+
+if ( ! function_exists( 'wcml_user_store_set' ) ) {
+	/**
+	 * @since 4.11.0
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 */
+	function wcml_user_store_set( $key, $value ) {
+		\WPML\Container\make( WCML\User\Store\Store::class )->set( $key, $value );
+	}
+}
+

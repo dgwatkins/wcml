@@ -106,14 +106,12 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 		$country_currency = 'UAH';
 		$currency_codes   = [ 'USD', $country_currency ];
 
-		$woocommerce = \Mockery::mock( 'woocommerce' );
-
-		$woocommerce->session = $this->getMockBuilder( 'WC_Session' )
-		                            ->disableOriginalConstructor()
-		                            ->setMethods( [ 'get' ] )
-		                            ->getMock();
-
-		$woocommerce->session->method( 'get' )->with( 'client_currency' )->willReturn( false );
+		\WP_Mock::userFunction(
+			'wcml_user_store_get',
+			[
+				'return' => false,
+			]
+		);
 
 		\WP_Mock::userFunction(
 			'is_ajax',
@@ -136,7 +134,6 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 		$subject                   = \Mockery::mock( 'WCML_Multi_Currency' )->makePartial();
 		$subject->currency_codes   = $currency_codes;
 		$subject->woocommerce_wpml = $woocommerce_wpml;
-		$subject->woocommerce      = $woocommerce;
 
 		$this->assertEquals( $country_currency, $subject->maybe_get_currency_by_geolocation( $client_currency ) );
 
@@ -193,14 +190,12 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 		$country_currency = 'UAH';
 		$currency_codes   = [ 'USD', $country_currency ];
 
-		$woocommerce = \Mockery::mock( 'woocommerce' );
-
-		$woocommerce->session = $this->getMockBuilder( 'WC_Session' )
-		                            ->disableOriginalConstructor()
-		                            ->setMethods( [ 'get' ] )
-		                            ->getMock();
-
-		$woocommerce->session->method( 'get' )->with( 'client_currency' )->willReturn( 'USD' );
+		\WP_Mock::userFunction(
+			'wcml_user_store_get',
+			[
+				'return' => 'USD',
+			]
+		);
 
 		$woocommerce_wpml = \Mockery::mock( 'woocommerce_wpml' );
 		$woocommerce_wpml->shouldReceive( 'get_setting' )->with( 'currency_mode' )->andReturn( Geolocation::MODE_BY_LOCATION );
@@ -208,7 +203,6 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 		$subject                       = \Mockery::mock( 'WCML_Multi_Currency' )->makePartial();
 		$subject->currency_codes       = $currency_codes;
 		$subject->woocommerce_wpml     = $woocommerce_wpml;
-		$subject->woocommerce          = $woocommerce;
 
 		\WP_Mock::userFunction(
 			'is_ajax',
@@ -233,15 +227,6 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 		$country_currency = 'UAH';
 		$currency_codes   = [ 'USD', 'EUR' ];
 
-		$woocommerce = \Mockery::mock( 'woocommerce' );
-
-		$woocommerce->session = $this->getMockBuilder( 'WC_Session' )
-		                            ->disableOriginalConstructor()
-		                            ->setMethods( [ 'get' ] )
-		                            ->getMock();
-
-		$woocommerce->session->method( 'get' )->with( 'client_currency' )->willReturn( false );
-
 		$wpml_cache = \Mockery::mock( 'overload:WPML_WP_Cache' );
 		$wpml_cache->shouldReceive( 'get' )->with( 'location_currency', false )->andReturn( false );
 		$wpml_cache->shouldReceive( 'set' )->with( 'location_currency', $client_currency )->andReturn( true );
@@ -254,7 +239,6 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 		$subject                   = \Mockery::mock( 'WCML_Multi_Currency' )->makePartial();
 		$subject->currency_codes   = $currency_codes;
 		$subject->woocommerce_wpml = $woocommerce_wpml;
-		$subject->woocommerce      = $woocommerce;
 
 		\WP_Mock::userFunction(
 			'is_ajax',
@@ -348,105 +332,6 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 		$subject->woocommerce_wpml = $woocommerce_wpml;
 
 		$this->assertFalse( $subject->get_language_default_currency( $client_language ) );
-	}
-
-	/**
-	 *
-	 * @test
-	 */
-	public function it_should_set_currency_to_session() {
-
-		$client_currency = 'UAH';
-
-		$woocommerce = \Mockery::mock( 'woocommerce' );
-
-		$woocommerce->session = $this->getMockBuilder( 'WC_Session' )
-		                             ->disableOriginalConstructor()
-		                             ->setMethods( [ 'set' ] )
-		                             ->getMock();
-
-		$woocommerce->session->expects( $this->once() )->method( 'set' )->with( 'client_currency', $client_currency )->willReturn( true );
-
-		$subject              = \Mockery::mock( 'WCML_Multi_Currency' )->makePartial();
-		$subject->woocommerce = $woocommerce;
-
-		$subject->set_currency_in_storage( $client_currency );
-	}
-
-	/**
-	 *
-	 * @test
-	 */
-	public function it_should_get_currency_from_session() {
-
-		$client_currency = 'UAH';
-
-		$woocommerce = \Mockery::mock( 'woocommerce' );
-
-		$woocommerce->session = $this->getMockBuilder( 'WC_Session' )
-		                             ->disableOriginalConstructor()
-		                             ->setMethods( [ 'get' ] )
-		                             ->getMock();
-
-		$woocommerce->session->expects( $this->once() )->method( 'get' )->with( 'client_currency' )->willReturn( $client_currency );
-
-		$subject              = \Mockery::mock( 'WCML_Multi_Currency' )->makePartial();
-		$subject->woocommerce = $woocommerce;
-
-		$this->assertEquals( $client_currency, $subject->get_currency_from_storage() );
-	}
-
-	/**
-	 *
-	 * @test
-	 */
-	public function it_should_set_currency_to_cookie() {
-
-		\WP_Mock::onFilter( 'wcml_store_currency_in_session' )
-		        ->with( true )
-		        ->reply( false );
-
-		$client_currency = 'EUR';
-
-		$cookie_handler = $this->getMockBuilder( 'WPML_Cookie' )
-		                       ->disableOriginalConstructor()
-		                       ->setMethods( [ 'headers_sent', 'set_cookie' ] )
-		                       ->getMock();
-
-		$session_expiration = time() + (int) 60 * 60 * 48;
-
-		$cookie_handler->expects( $this->once() )->method( 'headers_sent' )->willReturn( false );
-		$cookie_handler->expects( $this->once() )->method( 'set_cookie' )->with( 'wcml_client_currency', $client_currency, $session_expiration, COOKIEPATH, COOKIE_DOMAIN )->willReturn( true );
-
-		$subject                 = \Mockery::mock( 'WCML_Multi_Currency' )->makePartial();
-		$subject->cookie_handler = $cookie_handler;
-
-		$subject->set_currency_in_storage( $client_currency );
-	}
-
-	/**
-	 *
-	 * @test
-	 */
-	public function it_should_get_currency_from_cookie() {
-
-		\WP_Mock::onFilter( 'wcml_store_currency_in_session' )
-		        ->with( true )
-		        ->reply( false );
-
-		$client_currency = 'EUR';
-
-		$cookie_handler = $this->getMockBuilder( 'WPML_Cookie' )
-		                       ->disableOriginalConstructor()
-		                       ->setMethods( [ 'get_cookie' ] )
-		                       ->getMock();
-
-		$cookie_handler->expects( $this->once() )->method( 'get_cookie' )->willReturn( $client_currency );
-
-		$subject                 = \Mockery::mock( 'WCML_Multi_Currency' )->makePartial();
-		$subject->cookie_handler = $cookie_handler;
-
-		$this->assertEquals( $client_currency, $subject->get_currency_from_storage() );
 	}
 
 }

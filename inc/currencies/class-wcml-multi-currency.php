@@ -12,8 +12,7 @@ use WCML\MultiCurrency\Geolocation;
  */
 class WCML_Multi_Currency {
 
-	const CURRENCY_COOKIE_NAME = 'wcml_client_currency';
-	const CURRENCY_SESSION_KEY = 'client_currency';
+	const CURRENCY_STORAGE_KEY = 'wcml_client_currency';
 
 	/** @var  array */
 	public $currencies = [];
@@ -84,11 +83,6 @@ class WCML_Multi_Currency {
 	public $woocommerce;
 
 	/**
-	 * @var WPML_Cookie
-	 */
-	public $cookie_handler;
-
-	/**
 	 * @var WCML_Exchange_Rate_Service
 	 */
 	public $exchange_rate_services;
@@ -117,8 +111,6 @@ class WCML_Multi_Currency {
 
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->woocommerce      = $woocommerce;
-
-		$this->cookie_handler = new WPML_Cookie();
 
 		$this->install = new WCML_Multi_Currency_Install( $this, $woocommerce_wpml );
 
@@ -486,7 +478,7 @@ class WCML_Multi_Currency {
 
 		if ( is_null( $this->client_currency ) && ! empty( $this->woocommerce->session ) && $current_language != $this->woocommerce->session->get( 'client_currency_language' ) ) {
 
-			$current_currency          = $this->get_currency_from_storage();
+			$current_currency          = wcml_user_store_get( self::CURRENCY_STORAGE_KEY );
 			$language_default_currency = $this->get_language_default_currency( $current_language );
 
 			if ( $current_currency && $language_default_currency ) {
@@ -513,7 +505,7 @@ class WCML_Multi_Currency {
 
 		// client currency in general / if enabled for this language.
 		if ( is_null( $this->client_currency ) ) {
-			$storage_currency = $this->get_currency_from_storage();
+			$storage_currency = wcml_user_store_get( self::CURRENCY_STORAGE_KEY );
 			if ( $storage_currency && ! empty( $this->currencies[ $storage_currency ]['languages'][ $current_language ] ) ) {
 
 				$this->client_currency = $storage_currency;
@@ -540,58 +532,13 @@ class WCML_Multi_Currency {
 		$this->client_currency = apply_filters( 'wcml_client_currency', $this->client_currency );
 
 		if ( $this->client_currency ) {
-			$this->set_currency_in_storage( $this->client_currency );
+			wcml_user_store_set( self::CURRENCY_STORAGE_KEY, $this->client_currency );
 			if ( ! empty( $this->woocommerce->session ) ) {
 				$this->woocommerce->session->set( 'client_currency_language', $current_language );
 			}
 		}
 
 		return $this->client_currency;
-	}
-
-	/**
-	 * Store currency in session or cookie.
-	 *
-	 * @param string $currency
-	 */
-	public function set_currency_in_storage( $currency ) {
-		if ( $this->is_session_storage_enabled() ) {
-			if ( ! empty( $this->woocommerce->session ) ) {
-				$this->woocommerce->session->set( self::CURRENCY_SESSION_KEY, $currency );
-			}
-		} else {
-			$session_expiration = time() + (int) apply_filters( 'wcml_cookie_expiration', 60 * 60 * 48 ); // 48 Hours.
-
-			if ( ! $this->cookie_handler->headers_sent() ) {
-				$this->cookie_handler->set_cookie( self::CURRENCY_COOKIE_NAME, $currency, $session_expiration, COOKIEPATH, COOKIE_DOMAIN );
-			}
-		}
-	}
-
-
-	/**
-	 * Get client currency from storage.
-	 *
-	 * @return string|bool
-	 */
-	public function get_currency_from_storage() {
-
-		if ( $this->is_session_storage_enabled() ) {
-			if ( ! empty( $this->woocommerce->session ) ) {
-				return $this->woocommerce->session->get( self::CURRENCY_SESSION_KEY );
-			}
-		} else {
-			return $this->cookie_handler->get_cookie( self::CURRENCY_COOKIE_NAME );
-		}
-
-		return false;
-	}
-
-	/**
-	 * @return bool
-	 */
-	private function is_session_storage_enabled() {
-		return (bool) apply_filters( 'wcml_store_currency_in_session', true );
 	}
 
 	/**
@@ -605,7 +552,7 @@ class WCML_Multi_Currency {
 		    return $client_currency;
         }
 
-		$currency_not_in_storage = is_null( $client_currency ) && ! $this->get_currency_from_storage();
+		$currency_not_in_storage = is_null( $client_currency ) && ! wcml_user_store_get( self::CURRENCY_STORAGE_KEY );
 		$is_checkout_ajax        = is_ajax() && isset( $_GET['wc-ajax'] ) && 'update_order_review' === $_GET['wc-ajax'];
 
 		if ( $currency_not_in_storage || $is_checkout_ajax ) {
@@ -674,7 +621,7 @@ class WCML_Multi_Currency {
 
 		$this->client_currency = $currency;
 
-		$this->set_currency_in_storage( $currency );
+		wcml_user_store_set( self::CURRENCY_STORAGE_KEY, $currency );
 		$woocommerce->session->set( 'client_currency_language', $sitepress->get_current_language() );
 
 		do_action( 'wcml_set_client_currency', $currency );
