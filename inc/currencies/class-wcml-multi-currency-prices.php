@@ -78,7 +78,7 @@ class WCML_Multi_Currency_Prices {
 			add_filter( 'wc_price_args', [ $this, 'filter_wc_price_args' ] );
 		}
 
-		add_action( 'woocommerce_cart_loaded_from_session', [ $this, 'recalculate_totals' ] );
+		add_action( 'woocommerce_cart_loaded_from_session', [ $this, 'recalculate_totals' ], PHP_INT_MAX );
 
 		// formatting options.
 		add_filter( 'option_woocommerce_price_thousand_sep', [ $this, 'filter_currency_thousand_sep_option' ] );

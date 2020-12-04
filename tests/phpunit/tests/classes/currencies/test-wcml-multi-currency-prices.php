@@ -42,7 +42,7 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'woocommerce_cart_loaded_from_session', [
 			$subject,
 			'recalculate_totals'
-		] );
+		], PHP_INT_MAX );
 
 		\WP_Mock::expectFilterAdded( 'wcml_raw_price_amount', array( $subject, 'raw_price_filter' ), 10, 2 );
 
