@@ -1,5 +1,7 @@
 <?php
 
+use function WPML\FP\tap as tap;
+
 class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
@@ -62,6 +64,8 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 		WP_Mock::expectActionAdded( 'woocommerce_after_calculate_totals', array( $subject, 'maybe_restore_recurring_carts' ), 200, 1 );
 
 		WP_Mock::expectFilterAdded( 'wcs_get_subscription', array( $subject, 'filter_subscription_items' ) );
+
+		WP_Mock::expectFilterAdded( 'wcs_switch_proration_new_price_per_day', tap( [ $subject, 'set_prorating_price' ] ) );
 
 		\WP_Mock::wpFunction( 'wcs_cart_contains_resubscribe', array(
 			'return' => false
@@ -498,6 +502,42 @@ class Test_WCML_WC_Subscriptions extends OTGS_TestCase {
 		$this->assertSame( $subscription_sign_up_fee, $filtered_subscription_sign_up_fee );
 	}
 
+	/**
+	 * @test
+	 * @group wcml-3472
+	 */
+	public function it_does_not_filter_subscriptions_product_sign_up_fee_for_prorated_prices() {
+
+		$subscription_sign_up_fee = 123;
+		$client_currency          = 'EUR';
+
+		$product = $this->getMockBuilder( 'WC_Product' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		\WP_Mock::userFunction( 'wcml_is_multi_currency_on', [
+			'return' => true,
+		] );
+
+		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'get_client_currency' ] )
+			->getMock();
+
+		$this->woocommerce_wpml->multi_currency->method( 'get_client_currency' )
+			->willReturn( $client_currency );
+
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', [
+			'return' => 'USD',
+		] );
+
+		$subject = $this->get_subject();
+		$subject->set_prorating_price();
+
+		$filtered_subscription_sign_up_fee = $subject->subscriptions_product_sign_up_fee_filter( $subscription_sign_up_fee, $product );
+
+		$this->assertSame( $subscription_sign_up_fee, $filtered_subscription_sign_up_fee );
+	}
 
 	/**
 	 * @test
