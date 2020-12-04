@@ -1,11 +1,18 @@
 <?php
 
+use function WPML\FP\tap as tap;
+
 class WCML_WC_Subscriptions {
 
+	/** @var bool */
 	private $new_subscription = false;
+
+	/** @var bool */
+	private $prorating_price = false;
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
+
 	/** @var wpdb */
 	private $wpdb;
 
@@ -26,7 +33,7 @@ class WCML_WC_Subscriptions {
 		add_filter( 'wcml_register_endpoints_query_vars', [ $this, 'register_endpoint' ], 10, 3 );
 		add_filter( 'wcml_endpoint_permalink_filter', [ $this, 'endpoint_permalink_filter' ], 10, 2 );
 
-		// custom prices
+		// Custom prices
 		add_filter( 'wcml_custom_prices_fields', [ $this, 'set_prices_fields' ], 10, 2 );
 		add_filter( 'wcml_custom_prices_strings', [ $this, 'set_labels_for_prices_fields' ], 10, 2 );
 		add_filter( 'wcml_custom_prices_fields_labels', [ $this, 'set_labels_for_prices_fields' ], 10, 2 );
@@ -51,7 +58,6 @@ class WCML_WC_Subscriptions {
 		// Add language links to email settings
 		add_filter( 'wcml_emails_options_to_translate', [ $this, 'translate_email_options' ] );
 		add_filter( 'wcml_emails_section_name_prefix', [ $this, 'email_option_section_prefix' ], 10, 2 );
-
 	}
 
 	public function init() {
@@ -77,8 +83,18 @@ class WCML_WC_Subscriptions {
 		// Translate emails
 		add_filter( 'woocommerce_generated_manual_renewal_order_renewal_notification', [ $this, 'translate_renewal_notification' ], 9 );
 		add_filter( 'woocommerce_order_status_failed_renewal_notification', [ $this, 'translate_renewal_notification' ], 9 );
+
+		add_filter( 'wcs_switch_proration_new_price_per_day', tap( [ $this, 'set_prorating_price' ] ) );
 	}
 
+	/**
+	 * Set a flag when we are prorating the price (upgrades/downgrades).
+	 * We do this to skip currency conversion in the sign_up_fee because
+	 * when switching subscription it has already been converted.
+	 */
+	public function set_prorating_price() {
+		$this->prorating_price = true;
+	}
 
 	/**
 	 * Filter Subscription Sign-up fee cost
@@ -89,7 +105,7 @@ class WCML_WC_Subscriptions {
 	 */
 	public function subscriptions_product_sign_up_fee_filter( $subscription_sign_up_fee, $product ) {
 
-		if ( $product && wcml_is_multi_currency_on() ) {
+		if ( $product && wcml_is_multi_currency_on() && ! $this->prorating_price ) {
 			$currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
 
 			if ( $currency !== wcml_get_woocommerce_currency_option() ) {
