@@ -146,7 +146,19 @@ class WCML_WC_Shipping {
 			$is_edit_order = false;
 		}
 
-		if ( ! is_admin() || $is_edit_order ) {
+		/**
+		 * This filter hook allows to override if we need to translate shipping method title.
+		 *
+		 * @since 4.11.0
+		 *
+		 * @param bool True if we should translate shipping method title.
+		 * @param string $title Shipping title.
+		 * @param string $shipping_id Shipping id.
+		 * @param string $language Language.
+		 */
+		$translate_title = apply_filters( 'wcml_should_translate_shipping_method_title', ! is_admin() || $is_edit_order, $title, $shipping_id, $language );
+
+		if ( $translate_title ) {
 
 			$shipping_id = str_replace( ':', '', $shipping_id );
 
