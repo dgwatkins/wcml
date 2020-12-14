@@ -40,7 +40,7 @@ class Factory {
 
 				return new Composite( $objects );
 			case 'term':
-				return new ProductTerms( $sitepress, $wpml_term_translations );
+				return new ProductTerms( $sitepress, $wpml_term_translations, $woocommerce_wpml->terms );
 			case 'reports_top_seller':
 				return new TopSeller( $sitepress );
 			case 'reports_products_count':

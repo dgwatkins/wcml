@@ -12,6 +12,8 @@ class TestProductTerms extends \OTGS_TestCase {
 	private $sitepress;
 	/** @var WPML_Term_Translation */
 	private $wpmlTermTranslations;
+	/** @var WCML_Terms */
+	private $wcmlTerms;
 
 	public function setUp() {
 		parent::setUp();
@@ -32,11 +34,18 @@ class TestProductTerms extends \OTGS_TestCase {
 			                                   'get_element_lang_code',
 		                                   ] )
 		                                   ->getMock();
+
+		$this->wcmlTerms = $this->getMockBuilder( 'WCML_Terms' )
+		                        ->disableOriginalConstructor()
+		                        ->setMethods( [
+			                        'update_terms_translated_status'
+		                        ] )
+		                        ->getMock();
 	}
 
 
 	function get_subject() {
-		return new ProductTerms( $this->sitepress, $this->wpmlTermTranslations );
+		return new ProductTerms( $this->sitepress, $this->wpmlTermTranslations, $this->wcmlTerms );
 	}
 
 
@@ -166,6 +175,7 @@ class TestProductTerms extends \OTGS_TestCase {
 		$request1->method( 'get_method' )->willReturn( $api_method_type );
 
 		$this->sitepress->expects( $this->never() )->method( 'set_element_language_details' );
+		$this->wcmlTerms->expects( $this->never() )->method( 'update_terms_translated_status' );
 
 		$term          = $this->getMockBuilder( 'WP_Term' )
 		                      ->disableOriginalConstructor()
@@ -204,6 +214,9 @@ class TestProductTerms extends \OTGS_TestCase {
 		                      ->disableOriginalConstructor()
 		                      ->getMock();
 		$term->term_id = 1;
+		$term->taxonomy = 'product_cat';
+
+		$this->wcmlTerms->method( 'update_terms_translated_status' )->with( $term->taxonomy )->willReturn( true );
 
 		$subject = $this->get_subject();
 		$subject->insert( $term, $request1, true );
@@ -242,6 +255,8 @@ class TestProductTerms extends \OTGS_TestCase {
 		$this->sitepress->method( 'is_active_language' )->with( $lang )->willReturn( true );
 
 		$this->sitepress->method( 'set_element_language_details' )->with( $term->term_id, 'tax_' . $term->taxonomy, $trid, $lang )->willReturn( true );
+
+		$this->wcmlTerms->method( 'update_terms_translated_status' )->with( $term->taxonomy )->willReturn( true );
 
 		$subject = $this->get_subject();
 		$subject->insert( $term, $request1, true );
@@ -298,6 +313,7 @@ class TestProductTerms extends \OTGS_TestCase {
 
 		$this->wpmlTermTranslations->method( 'get_element_trid' )->willReturn( null );
 		$this->sitepress->method( 'set_element_language_details' )->with( $term->term_id, 'tax_' . $term->taxonomy, null, $lang )->willReturn( true );
+		$this->wcmlTerms->method( 'update_terms_translated_status' )->with( $term->taxonomy )->willReturn( true );
 
 		$subject = $this->get_subject();
 		$subject->insert( $term, $request1, true );

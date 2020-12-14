@@ -13,13 +13,17 @@ class ProductTerms extends Handler {
 	private $sitepress;
 	/** @var WPML_Term_Translation */
 	private $wpmlTermTranslations;
+	/** @var WCML_Terms */
+	private $wcmlTerms;
 
 	public function __construct(
 		\SitePress $sitepress,
-		\WPML_Term_Translation $wpmlTermTranslations
+		\WPML_Term_Translation $wpmlTermTranslations,
+		\WCML_Terms $wcmlTerms
 	) {
 		$this->sitepress            = $sitepress;
 		$this->wpmlTermTranslations = $wpmlTermTranslations;
+		$this->wcmlTerms            = $wcmlTerms;
 	}
 
 	/**
@@ -99,6 +103,8 @@ class ProductTerms extends Handler {
 			}
 
 			$this->sitepress->set_element_language_details( $term->term_id, 'tax_' . $term->taxonomy, $trid, $language );
+
+			$this->wcmlTerms->update_terms_translated_status( $term->taxonomy );
 		} elseif ( $translationOf ) {
 			throw new MissingLanguage();
 		}
