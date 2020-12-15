@@ -3,6 +3,11 @@
 use WPML\FP\Obj;
 use function WPML\Container\make;
 use WCML\MultiCurrency\Geolocation;
+use WCML\MultiCurrency\ExchangeRateServices\Service;
+use WCML\MultiCurrency\ExchangeRateServices\Fixerio;
+use WCML\MultiCurrency\ExchangeRateServices\CurrencyLayer;
+use WCML\MultiCurrency\ExchangeRateServices\ExchangeRatesApi;
+use WCML\MultiCurrency\ExchangeRateServices\OpenExchangeRates;
 
 /**
  * Class WCML_Multi_Currency
@@ -150,8 +155,19 @@ class WCML_Multi_Currency {
 		$this->exchange_rate_services = new WCML_Exchange_Rates( $this->woocommerce_wpml, $wp_locale );
 		$this->exchange_rate_services->initialize_settings();
 		$this->exchange_rate_services->add_actions();
-		$this->exchange_rate_services->add_service( 'fixerio', new WCML_Exchange_Rates_Fixerio() );
-		$this->exchange_rate_services->add_service( 'currencylayer', new WCML_Exchange_Rates_Currencylayer() );
+
+		wpml_collect(
+			[
+				new Fixerio(),
+				new CurrencyLayer(),
+				new ExchangeRatesApi(),
+				new OpenExchangeRates(),
+			]
+		)->each(
+			function( Service $service ) {
+				$this->exchange_rate_services->add_service( $service->getId(), $service );
+			}
+		);
 
 		$this->currencies_payment_gateways = make( WCML_Currencies_Payment_Gateways::class );
 		$this->currencies_payment_gateways->add_hooks();

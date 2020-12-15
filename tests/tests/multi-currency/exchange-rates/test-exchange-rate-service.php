@@ -1,6 +1,8 @@
 <?php
 
-class WCML_Test_Exchange_Rate_Service extends WCML_UnitTestCase {
+namespace WCML\MultiCurrency\ExchangeRateServices;
+
+class Test_Service extends \WCML_UnitTestCase {
 
     private $_mock_http_response = false;
 
@@ -13,28 +15,28 @@ class WCML_Test_Exchange_Rate_Service extends WCML_UnitTestCase {
      */
     function test_currencylayer(){
 
-        $currencylayer = new WCML_Exchange_Rates_Currencylayer();
+        $currencylayer = new CurrencyLayer();
 
-        $this->assertEquals( 'currencylayer',  $currencylayer->get_name() );
-        $this->assertEquals( 'https://currencylayer.com/',  $currencylayer->get_url() );
+        $this->assertEquals( 'currencylayer',  $currencylayer->getName() );
+        $this->assertEquals( 'https://currencylayer.com/',  $currencylayer->getUrl() );
 
         $random_key   = random_string();
         $random_value = random_string();
-        $currencylayer->save_setting( $random_key, $random_value );
+        $currencylayer->saveSetting( $random_key, $random_value );
 
-        $this->assertEquals( $random_value,  $currencylayer->get_setting( $random_key ) );
+        $this->assertEquals( $random_value,  $currencylayer->getSetting( $random_key ) );
 
-        $settings = $currencylayer->get_settings();
+        $settings = $currencylayer->getSettings();
         $this->assertEquals( $random_value,  $settings[$random_key] );
 
         add_filter( 'pre_http_request', array( $this, 'mock_api_response' ) );
 
 
         // 1) WP error
-        $this->_mock_http_response = new WP_Error( 500, 'some_wp_error' );
-        try{
-            $rates = $currencylayer->get_rates( 'EUR', array( 'USD', 'RON' ) );
-        } catch ( Exception $e ){
+        $this->_mock_http_response = new \WP_Error( 500, 'some_wp_error' );
+        try {
+            $rates = $currencylayer->getRates( 'EUR', array( 'USD', 'RON' ) );
+        } catch ( \Exception $e ) {
             $this->assertEquals( 'some_wp_error', $e->getMessage() );
         }
 
@@ -51,14 +53,14 @@ class WCML_Test_Exchange_Rate_Service extends WCML_UnitTestCase {
                 )
             )
         );
-        try{
-            $rates = $currencylayer->get_rates( 'EUR', array( 'USD', 'RON' ) );
-        } catch ( Exception $e ){
+        try {
+            $rates = $currencylayer->getRates( 'EUR', array( 'USD', 'RON' ) );
+        } catch ( \Exception $e ) {
             $this->assertEquals( 'You have entered an incorrect API Access Key', $e->getMessage() );
         }
 
-        $currencylayer->save_setting( 'api-key', 'INCORRECT_a1e7e888e1ce81ac7c6f4a9b4374a748' );
-        $currencylayer = new WCML_Exchange_Rates_Currencylayer(); // New Instance to take key
+        $currencylayer->saveSetting( 'api-key', 'INCORRECT_a1e7e888e1ce81ac7c6f4a9b4374a748' );
+        $currencylayer = new CurrencyLayer(); // New Instance to take key
 
         // 3) Incorrect API key
         $this->_mock_http_response = array(
@@ -73,16 +75,16 @@ class WCML_Test_Exchange_Rate_Service extends WCML_UnitTestCase {
                 )
             )
         );
-        try{
-            $rates = $currencylayer->get_rates( 'EUR', array( 'USD', 'RON' ) );
-        } catch ( Exception $e ){
+        try {
+            $rates = $currencylayer->getRates( 'EUR', array( 'USD', 'RON' ) );
+        } catch ( \Exception $e ) {
             $this->assertEquals( 0, strpos( $e->getMessage(), 'You have not supplied a valid API Access Key' ) );
         }
 
 
         // 4) Correct API key
-        $currencylayer->save_setting( 'api-key', 'a1e7e888e1ce81ac7c6f4a9b4374a748' );
-        $currencylayer = new WCML_Exchange_Rates_Currencylayer(); // New Instance to take key
+        $currencylayer->saveSetting( 'api-key', 'a1e7e888e1ce81ac7c6f4a9b4374a748' );
+        $currencylayer = new CurrencyLayer(); // New Instance to take key
 
         $source = 'USD';
         $tos    = array( 'EUR', 'RON' );
@@ -99,14 +101,14 @@ class WCML_Test_Exchange_Rate_Service extends WCML_UnitTestCase {
                 )
             )
         );
-        try{
-            $rates = $currencylayer->get_rates( $source, $tos );
+        try {
+            $rates = $currencylayer->getRates( $source, $tos );
 
-            foreach ($tos as $to ){
+            foreach ($tos as $to ) {
                 $this->assertEquals( $quotes[ $source . $to ], $rates[ $to ] );
             }
 
-        } catch ( Exception $e ){
+        } catch ( \Exception $e ) {
             $this->assertFalse( $e->getMessage() ); // Reveal this! Should not happen.
         }
 
@@ -125,18 +127,18 @@ class WCML_Test_Exchange_Rate_Service extends WCML_UnitTestCase {
 
         $random = random_string();
 
-        $currencylayer = new WCML_Exchange_Rates_Currencylayer();
-        $currencylayer->save_last_error( $random );
+        $currencylayer = new CurrencyLayer();
+        $currencylayer->saveLastError( $random );
 
         // save & get
-        $currencylayer = new WCML_Exchange_Rates_Currencylayer();
-        $last_error    = $currencylayer->get_last_error();
+        $currencylayer = new CurrencyLayer();
+        $last_error    = $currencylayer->getLastError();
         $this->assertEquals( $random,  $last_error['text'] );
 
         //clear
-        $currencylayer = new WCML_Exchange_Rates_Currencylayer();
-        $currencylayer->clear_last_error();
-        $this->assertFalse( $currencylayer->get_last_error() );
+        $currencylayer = new CurrencyLayer();
+        $currencylayer->clearLastError();
+        $this->assertFalse( $currencylayer->getLastError() );
 
     }
 
@@ -147,14 +149,14 @@ class WCML_Test_Exchange_Rate_Service extends WCML_UnitTestCase {
 
         add_filter( 'pre_http_request', array( $this, 'mock_api_response' ) );
 
-        $fixer = new WCML_Exchange_Rates_Fixerio();
+        $fixer = new Fixerio();
 
 
         // 1) WP error
-        $this->_mock_http_response = new WP_Error( 500, 'some_wp_error' );
-        try{
-            $rates = $fixer->get_rates( 'USD', array( 'RON', 'BGN' ) );
-        } catch ( Exception $e ){
+        $this->_mock_http_response = new \WP_Error( 500, 'some_wp_error' );
+        try {
+            $rates = $fixer->getRates( 'USD', array( 'RON', 'BGN' ) );
+        } catch ( \Exception $e ) {
             $this->assertEquals( 'some_wp_error', $e->getMessage() );
         }
 
@@ -175,10 +177,10 @@ class WCML_Test_Exchange_Rate_Service extends WCML_UnitTestCase {
             )
         );
 
-        try{
-            $rates = $fixer->get_rates( $from, $tos );
+        try {
+            $rates = $fixer->getRates( $from, $tos );
             $this->assertEquals( $quotes, $rates );
-        } catch ( Exception $e ){
+        } catch ( \Exception $e ) {
             $this->assertFalse( $e->getMessage() ); // Reveal this! Should not happen.
         }
 

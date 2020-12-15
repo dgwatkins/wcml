@@ -54,7 +54,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
      */
     public function test_get_services(){
 
-        $expected_services = array('fixerio', 'currencylayer');
+        $expected_services = array( 'fixerio', 'currencylayer', 'exchangeratesapi', 'openexchangerates' );
         $actual_services   = array_keys( $this->exchange_rate_services->get_services() );
 
         $this->assertEquals( $expected_services, $actual_services );
@@ -145,15 +145,15 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
         $exchange_rate_services = new WCML_Exchange_Rates( $this->woocommerce_wpml, $wp_locale );
 	    $exchange_rate_services->initialize_settings();
 
-	    $mocked_exchange_rate_service = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
+	    $mocked_exchange_rate_service = $this->getMockBuilder( 'Fixerio' )
             ->disableOriginalConstructor()
-            ->setMethods( array( 'get_rates' ) )
+            ->setMethods( array( 'getRates' ) )
             ->getMock();
 
         $exchange_rate_services->add_service( 'dummy_service', $mocked_exchange_rate_service );
         $exchange_rate_services->save_setting( 'service',  'dummy_service' );
 
-        // Set random rates for the mocked get_rates method
+        // Set random rates for the mocked getRates method
         $currencies = $this->woocommerce_wpml->multi_currency->get_currency_codes();
         $default_currency = wcml_get_woocommerce_currency_option();
         $secondary_currencies = array_diff( $currencies, array( $default_currency ) );
@@ -161,7 +161,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
             $rates[ $currency ] = round( rand( 1, 1000 ) / 100 , 2);
         }
 
-        $mocked_exchange_rate_service->method( 'get_rates' )->willReturn( $rates );
+        $mocked_exchange_rate_service->method( 'getRates' )->willReturn( $rates );
 
         // Update
         $exchange_rate_services->update_exchange_rates();
@@ -244,7 +244,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
 
         $services = $this->exchange_rate_services->get_services();
         $this->assertEquals( $custom['services']['currencylayer']['api-key'],
-            $services['currencylayer']->get_setting('api-key') );
+            $services['currencylayer']->getSetting('api-key') );
 
 
         // when the schedule changes from manual to daily, a cron is set

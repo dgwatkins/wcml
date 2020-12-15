@@ -30,11 +30,11 @@ class WCML_Exchange_Rates_UI extends WCML_Templates_Factory {
 
 		foreach ( $services as $id => $service ) {
 			$this->services[ $id ] = [
-				'name'         => $service->get_name(),
-				'url'          => $service->get_url(),
-				'requires_key' => $service->is_key_required(),
-				'api_key'      => $service->get_setting( 'api-key' ),
-				'last_error'   => $service->get_last_error(),
+				'name'         => $service->getName(),
+				'url'          => $service->getUrl(),
+				'requires_key' => $service->isKeyRequired(),
+				'api_key'      => $service->getSetting( 'api-key' ),
+				'last_error'   => $service->getLastError(),
 			];
 		}
 	}

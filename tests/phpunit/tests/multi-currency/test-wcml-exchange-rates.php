@@ -312,11 +312,11 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 			$cur_2 => random_int( 1, 1000 )
 		];
 		$service_id = 'fixerio';
-		$service    = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
+		$service    = $this->getMockBuilder( '\WCML\MultiCurrency\ExchangeRateServices\Fixerio' )
 		                   ->disableOriginalConstructor()
-		                   ->setMethods( [ 'get_rates' ] )
+		                   ->setMethods( [ 'getRates' ] )
 		                   ->getMock();
-		$service->method( 'get_rates' )
+		$service->method( 'getRates' )
 		        ->willReturn( $rates );
 
 		$subject->add_service( $service_id, $service );
@@ -368,11 +368,11 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		) );
 
 		$service_id = 'fixerio';
-		$service    = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
+		$service    = $this->getMockBuilder( '\WCML\MultiCurrency\ExchangeRateServices\Fixerio' )
 		                   ->disableOriginalConstructor()
-		                   ->setMethods( [ 'get_rates' ] )
+		                   ->setMethods( [ 'getRates' ] )
 		                   ->getMock();
-		$service->method( 'get_rates' )
+		$service->method( 'getRates' )
 		        ->will( $this->throwException( new Exception ) );
 
 		$subject->add_service( $service_id, $service );
@@ -490,13 +490,14 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 			'args'  => $subject::CRONJOB_EVENT
 		] );
 
-		$preexisting_service = rand_str();
-		$service             = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
-		                            ->disableOriginalConstructor()
-		                            ->getMock();
+		$preexisting_service = 'fixerio';
+		$service             = $this->getMockBuilder( '\WCML\MultiCurrency\ExchangeRateServices\Fixerio' )
+									->setMethods( [ 'clearLastError' ] )
+									->disableOriginalConstructor()
+									->getMock();
 
 		$service->expects( $this->once() )
-		        ->method( 'clear_last_error' );
+				->method( 'clearLastError' );
 
 		$subject->add_service( $preexisting_service, $service );
 		$subject->save_setting( 'service', $preexisting_service );
@@ -552,13 +553,14 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 			'args'  => $subject::CRONJOB_EVENT
 		] );
 
-		$preexisting_service = rand_str();
-		$service             = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
-		                            ->disableOriginalConstructor()
-		                            ->getMock();
+		$preexisting_service = 'fixerio';
+		$service             = $this->getMockBuilder( '\WCML\MultiCurrency\ExchangeRateServices\Fixerio' )
+									->setMethods( [ 'clearLastError' ] )
+									->disableOriginalConstructor()
+									->getMock();
 
 		$service->expects( $this->never() )
-		        ->method( 'clear_last_error' );
+				->method( 'clearLastError' );
 
 		$subject->add_service( $preexisting_service, $service );
 		$subject->save_setting( 'service', rand_str() );
@@ -608,10 +610,11 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject          = $this->get_subject( $woocommerce_wpml );
 
-		$preexisting_service = rand_str();
-		$service             = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
-		                            ->disableOriginalConstructor()
-		                            ->getMock();
+		$preexisting_service = 'fixerio';
+		$service             = $this->getMockBuilder( '\WCML\MultiCurrency\ExchangeRateServices\Fixerio' )
+									->setMethods( [ 'clearLastError' ] )
+									->disableOriginalConstructor()
+									->getMock();
 		$subject->add_service( $preexisting_service, $service );
 		$subject->save_setting( 'service', $preexisting_service );
 
@@ -660,11 +663,11 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject          = $this->get_subject( $woocommerce_wpml );
 
-		$preexisting_service = rand_str();
-		$service             = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
-		                            ->disableOriginalConstructor()
-		                            ->setMethods( [ 'save_setting' ] )
-		                            ->getMock();
+		$preexisting_service = 'fixerio';
+		$service             = $this->getMockBuilder( '\WCML\MultiCurrency\ExchangeRateServices\Fixerio' )
+									->disableOriginalConstructor()
+									->setMethods( [ 'saveSetting', 'clearLastError' ] )
+									->getMock();
 
 		$subject->add_service( $preexisting_service, $service );
 		$subject->save_setting( 'service', $preexisting_service );
@@ -706,12 +709,12 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 			]
 		] );
 
-		$service->expects( $this->exactly( 2 ) )
-		        ->method( 'save_setting' )
-		        ->withConsecutive(
-			        [ 'last_error', false ],
-			        [ 'api-key', $api_key ]
-		        );
+		$service->expects( $this->once() )
+				->method( 'clearLastError' );
+
+		$service->expects( $this->once() )
+				->method( 'saveSetting' )
+				->with( 'api-key', $api_key );
 
 		$subject->update_exchange_rate_options( $post_data );
 
