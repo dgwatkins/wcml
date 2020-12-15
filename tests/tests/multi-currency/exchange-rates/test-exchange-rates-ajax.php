@@ -41,19 +41,19 @@ class Test_WCML_Exchange_Rates_Ajax extends WP_Ajax_UnitTestCase {
      */
     public function test_update_exchange_rates_ajax(){
 
-	    $exchange_rate_service_fixerio = $this->getMockBuilder( 'WCML_Exchange_Rates_Fixerio' )
+	    $exchange_rate_service_fixerio = $this->getMockBuilder( 'Fixerio' )
             ->disableOriginalConstructor()
-            ->setMethods( array( 'get_rates' ) )
+            ->setMethods( array( 'getRates' ) )
             ->getMock();
 
-        // Set random rates for the mocked get_rates method
+        // Set random rates for the mocked getRates method
         $currencies = $this->woocommerce_wpml->multi_currency->get_currency_codes();
         $default_currency = wcml_get_woocommerce_currency_option();
         $secondary_currencies = array_diff( $currencies, array( $default_currency ) );
         foreach( $secondary_currencies as $currency ){
             $rates[ $currency ] = round( rand( 1, 1000 ) / 100 , 2);
         }
-	    $exchange_rate_service_fixerio->method( 'get_rates' )->willReturn( $rates );
+	    $exchange_rate_service_fixerio->method( 'getRates' )->willReturn( $rates );
 
 	    $this->exchange_rate_services->add_service( 'fixerio', $exchange_rate_service_fixerio );
 

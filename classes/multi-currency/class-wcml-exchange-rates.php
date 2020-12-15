@@ -70,7 +70,7 @@ class WCML_Exchange_Rates {
 
 	/**
 	 * @param string                     $service_id
-	 * @param WCML_Exchange_Rate_Service $service
+	 * @param \WCML\MultiCurrency\ExchangeRateServices\Service $service
 	 */
 	public function add_service( $service_id, $service ) {
 		$this->services[ $service_id ] = $service;
@@ -135,7 +135,7 @@ class WCML_Exchange_Rates {
 			throw new Exception( 'The exchange rate service "' . $this->settings['service'] . '" is not defined.' );
 		}
 
-		/** @var \WCML_Exchange_Rate_Service $service */
+		/** @var \WCML\MultiCurrency\ExchangeRateServices\Service $service */
 		$service =& $this->services[ $this->settings['service'] ];
 
 		$currencies           = $this->woocommerce_wpml->multi_currency->get_currency_codes();
@@ -143,7 +143,7 @@ class WCML_Exchange_Rates {
 		$secondary_currencies = array_diff( $currencies, [ $default_currency ] );
 
 		try {
-			$rates = $service->get_rates( $default_currency, $secondary_currencies );
+			$rates = $service->getRates( $default_currency, $secondary_currencies );
 		} catch ( Exception $e ) {
 			if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
 				error_log( 'Exchange rates update error (' . $this->settings['service'] . '): ' . $e->getMessage() );
@@ -204,7 +204,7 @@ class WCML_Exchange_Rates {
 
 				// clear errors for replaced service
 				if ( isset( $this->services[ $this->settings['service'] ] ) && $post_data['exchange-rates-service'] !== $this->settings['service'] ) {
-					$this->services[ $this->settings['service'] ]->clear_last_error();
+					$this->services[ $this->settings['service'] ]->clearLastError();
 				}
 
 				$this->settings['service'] = sanitize_text_field( $post_data['exchange-rates-service'] );
@@ -215,7 +215,7 @@ class WCML_Exchange_Rates {
 
 				foreach ( $post_data['services'] as $service_id => $service_data ) {
 					if ( isset( $service_data['api-key'] ) ) {
-						$this->services[ $service_id ]->save_setting( 'api-key', $service_data['api-key'] );
+						$this->services[ $service_id ]->saveSetting( 'api-key', $service_data['api-key'] );
 					}
 				}
 			}
