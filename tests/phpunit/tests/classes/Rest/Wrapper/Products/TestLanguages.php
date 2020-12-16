@@ -15,29 +15,48 @@ class TestLanguages extends \OTGS_TestCase {
 	private $sitepress;
 	/** @var WPML_Post_Translation */
 	private $wpml_post_translations;
+	/** @var WCML_Synchronize_Variations_Data */
+	private $sync_variations_data;
+	/** @var WCML_Attributes */
+	private $attributes;
 
-	public function setUp(){
+	public function setUp() {
 		parent::setUp();
 		$this->wpml_query_filter = $this->getMockBuilder( 'WPML_Query_Filter' )
-		                                ->disableOriginalConstructor()
-		                                ->getMock();
+										->disableOriginalConstructor()
+										->getMock();
 
 		$this->sitepress = $this->getMockBuilder( 'SitePress' )
-		                        ->disableOriginalConstructor()
-		                        ->setMethods( [
-			                        'set_element_language_details', 'copy_custom_fields'
-		                        ] )
-		                        ->getMock();
+								->disableOriginalConstructor()
+								->setMethods( [
+									'set_element_language_details',
+									'copy_custom_fields'
+								] )
+								->getMock();
 
 		$this->wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
-		                                     ->disableOriginalConstructor()
-		                                     ->setMethods( [ 'get_element_trid', 'get_element_translations', 'get_element_lang_code' ] )
-		                                     ->getMock();
+											 ->disableOriginalConstructor()
+											 ->setMethods( [
+												 'get_element_trid',
+												 'get_element_translations',
+												 'get_element_lang_code'
+											 ] )
+											 ->getMock();
+
+		$this->sync_variations_data = $this->getMockBuilder( 'WCML_Synchronize_Variations_Data' )
+										   ->disableOriginalConstructor()
+										   ->setMethods( [ 'sync_product_variations' ] )
+										   ->getMock();
+
+		$this->attributes = $this->getMockBuilder( 'WCML_Attributes' )
+								 ->disableOriginalConstructor()
+								 ->setMethods( [ 'sync_default_product_attr' ] )
+								 ->getMock();
 	}
 
 
 	function get_subject() {
-		return new Languages( $this->sitepress, $this->wpml_post_translations, $this->wpml_query_filter );
+		return new Languages( $this->sitepress, $this->wpml_post_translations, $this->wpml_query_filter, $this->sync_variations_data, $this->attributes );
 	}
 
 
@@ -211,9 +230,10 @@ class TestLanguages extends \OTGS_TestCase {
 		                 ->setMethods( [ 'get_params', 'get_method' ] )
 		                 ->getMock();
 		$translation_of = 11;
+		$lang = 'ro';
 
 		$request1->method( 'get_params' )->willReturn( [
-			'lang'           => 'ro',
+			'lang'           => $lang,
 			'translation_of' => $translation_of
 		] );
 		$request1->method( 'get_method' )->willReturn( $api_method_type );
@@ -221,17 +241,21 @@ class TestLanguages extends \OTGS_TestCase {
 		$this->expected_trid = null;
 		$this->actual_trid   = 12;
 
-		$post = $this->getMockBuilder( 'WC_Simple_Product' )
+		$post = $this->getMockBuilder( 'WC_Variable_Product' )
 		             ->disableOriginalConstructor()
 		             ->setMethods( [
-			             'get_id'
+			             'get_id', 'get_type'
 		             ] )
 		             ->getMock();
 		$post->ID = rand( 1, 100 );
 
 		$post->method( 'get_id' )->willReturn( $post->ID );
+		$post->method( 'get_type' )->willReturn( 'variable' );
 
 		$this->wpml_post_translations->method( 'get_element_trid' )->with( $translation_of )->willReturn( $this->actual_trid );
+
+		$this->sync_variations_data->expects( $this->once() )->method( 'sync_product_variations' )->with( $translation_of, $post->ID, $lang )->willReturn( true );
+		$this->attributes->expects( $this->once() )->method( 'sync_default_product_attr' )->with( $translation_of, $post->ID, $lang )->willReturn( true );
 
 		\WP_Mock::onFilter( 'wpml_language_is_active' )->with( false, 'ro' )->reply( true );
 
@@ -253,6 +277,11 @@ class TestLanguages extends \OTGS_TestCase {
 		\WP_Mock::userFunction( 'get_post', [
 			'args'  => [ $post->ID ],
 			'return' => $post
+		] );
+
+		\WP_Mock::userFunction( 'get_post_type', [
+			'args'  => [ $post->ID ],
+			'return' => 'product'
 		] );
 
 		\WP_Mock::userFunction( 'wpml_tm_save_post', [
@@ -326,6 +355,11 @@ class TestLanguages extends \OTGS_TestCase {
 
 		$post->ID = rand( 1, 100 );
 		$post->method( 'get_id' )->willReturn( $post->ID );
+
+		\WP_Mock::userFunction( 'get_post_type', [
+			'args'  => [ $post->ID ],
+			'return' => 'product'
+		] );
 
 		\WP_Mock::onFilter( 'wpml_language_is_active' )->with( false, 'ro' )->reply( true );
 

@@ -16,15 +16,23 @@ class Languages extends Handler {
 	private $wpmlPostTranslations;
 	/** @var WPML_Query_Filter */
 	private $wpmlQueryFilter;
+	/** @var WCML_Synchronize_Variations_Data */
+	private $wcmlSyncVariationsData;
+	/** @var WCML_Attributes */
+	private $wcmlAttributes;
 
 	public function __construct(
 		\Sitepress $sitepress,
 		\WPML_Post_Translation $wpmlPostTranslations,
-		\WPML_Query_Filter $wpmlQueryFilter
+		\WPML_Query_Filter $wpmlQueryFilter,
+		\WCML_Synchronize_Variations_Data $wcmlSyncVariationsData,
+		\WCML_Attributes $wcmlAttributes
 	) {
-		$this->sitepress            = $sitepress;
-		$this->wpmlPostTranslations = $wpmlPostTranslations;
-		$this->wpmlQueryFilter      = $wpmlQueryFilter;
+		$this->sitepress              = $sitepress;
+		$this->wpmlPostTranslations   = $wpmlPostTranslations;
+		$this->wpmlQueryFilter        = $wpmlQueryFilter;
+		$this->wcmlSyncVariationsData = $wcmlSyncVariationsData;
+		$this->wcmlAttributes         = $wcmlAttributes;
 	}
 
 	/**
@@ -104,11 +112,30 @@ class Languages extends Handler {
 
 			$this->sitepress->set_element_language_details( $object->get_id(), 'post_'.get_post_type( $object->get_id() ), $trid, $data['lang'] );
 			wpml_tm_save_post( $object->get_id(), get_post( $object->get_id() ), ICL_TM_COMPLETE );
+
+			if ( isset( $data['translation_of'] ) ) {
+				// needs run after set_element_language_details
+				$this->syncVariableProduct( $object, $data['translation_of'], $data['lang'] );
+			}
 		} else {
 			if ( isset( $data['translation_of'] ) ) {
 				throw new Generic( __( 'Using "translation_of" requires providing a "lang" parameter too', 'woocommerce-multilingual' ) );
 			}
 		}
 	}
+
+	/**
+	 * @param object $object
+	 * @param string $translationOf
+	 * @param string $lang
+	 */
+	private function syncVariableProduct( $object, $translationOf, $lang ) {
+
+		if ( 'variable' === $object->get_type() ) {
+			$this->wcmlAttributes->sync_default_product_attr( $translationOf, $object->get_id(), $lang );
+			$this->wcmlSyncVariationsData->sync_product_variations( $translationOf, $object->get_id(), $lang );
+		}
+	}
+
 
 }

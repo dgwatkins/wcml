@@ -423,7 +423,7 @@ class WCML_Multi_Currency {
 		global $sitepress;
 
 		if( \WCML\Rest\Functions::isRestApiRequest() ){
-			return $this->rest_currency;
+			return $this->get_rest_currency();
 		}
 
 		if ( ! empty( $_REQUEST['woocommerce_quick_edit'] )	) {
