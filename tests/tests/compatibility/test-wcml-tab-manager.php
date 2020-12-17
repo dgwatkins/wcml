@@ -541,6 +541,15 @@ class Test_WCML_Tab_Manager extends WCML_UnitTestCase {
 		$this->assertEquals( $tab_id, $this->get_test_subject()->wc_tab_manager_tab_id( $translated_tab ) );
 	}
 
+    /**
+     * @test
+     */
+    public function wc_tab_manager_tab_id_returns_same_id_for_non_numeric_tab_ids() {
+        $tab_id = 'foo';
+        $this->assertEquals( $tab_id, $this->get_test_subject()->wc_tab_manager_tab_id( $tab_id ) );
+    }
+
+
 	/**
 	 * @test
 	 */

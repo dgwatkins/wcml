@@ -679,12 +679,16 @@ class WCML_Tab_Manager {
 	}
 
 	/**
-	 * @param $tab_id
+	 * @param int|string $tab_id
 	 *
-	 * @return mixed|void
+	 * @return int|string
 	 */
 	public function wc_tab_manager_tab_id( $tab_id ) {
-		return apply_filters( 'wpml_object_id', $tab_id, 'wc_product_tab', true );
+		if ( is_int( $tab_id ) ) {
+			return apply_filters( 'wpml_object_id', $tab_id, 'wc_product_tab', true );
+		} else {
+			return $tab_id;
+		}
 	}
 
 	public function filter_default_layout( $default_tabs ) {
