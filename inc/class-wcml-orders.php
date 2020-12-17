@@ -95,7 +95,7 @@ class WCML_Orders {
 
 		$is_order_checkout_ajax = isset( $_GET['wc-ajax'] ) && 'checkout' === $_GET['wc-ajax'];
 
-		$translate_order_items = is_admin() || is_view_order_page() || is_order_received_page() || $is_order_checkout_ajax;
+		$translate_order_items = is_admin() || is_view_order_page() || is_order_received_page() || $is_order_checkout_ajax || \WCML\Rest\Functions::isRestApiRequest();
 		/**
 		 * This filter hook allows to override if we need to translate order items.
 		 *

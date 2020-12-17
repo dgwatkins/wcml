@@ -392,7 +392,7 @@ class Test_WCML_Orders extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_should_get_woocommerce_order_items_in_current_language_for_checkout_order_ahjax(){
+	public function it_should_get_woocommerce_order_items_in_current_language_for_checkout_order_ajax(){
 
 		$_GET['wc-ajax'] = 'checkout';
 
@@ -407,6 +407,39 @@ class Test_WCML_Orders extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function it_should_get_woocommerce_order_items_in_current_language_for_rest_api_call(){
+
+		\WP_Mock::userFunction( 'is_admin', array(
+				'return' => false
+			)
+		);
+
+		\WP_Mock::userFunction( 'is_view_order_page', array(
+				'return' => false
+			)
+		);
+
+		\WP_Mock::userFunction( 'is_order_received_page', array(
+				'return' => false
+			)
+		);
+
+		\Mockery::mock( 'overload:\WCML\Rest\Functions' )->shouldReceive( 'isRestApiRequest' )->andReturn( true );
+
+		$language = 'es';
+
+		$this->sitepress->method( 'get_current_language' )->willReturn( $language );
+
+		$this->get_woocommerce_order_items_mock( $language, new stdClass() );
+	}
+
+	/**
+	 * @test
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function it_should_not_get_woocommerce_order_items_for_non_view_order_front_pages(){
 
@@ -424,6 +457,8 @@ class Test_WCML_Orders extends OTGS_TestCase {
 				'return' => false
 			)
 		);
+
+		\Mockery::mock( 'overload:\WCML\Rest\Functions' )->shouldReceive( 'isRestApiRequest' )->andReturn( false );
 
 		$subject = $this->get_subject();
 		$subject->woocommerce_order_get_items( [ 'test' ], new stdClass() );
