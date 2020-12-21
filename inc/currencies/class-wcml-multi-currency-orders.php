@@ -21,8 +21,6 @@ class WCML_Multi_Currency_Orders {
 		if ( is_admin() ) {
 			add_filter( 'init', [ $this, 'orders_init' ] );
 		}
-
-		add_filter( 'woocommerce_rest_pre_insert_shop_order_object', [ $this, 'rest_set_line_item_currency' ], 10, 2 );
 	}
 
 	public function orders_init() {
@@ -549,25 +547,6 @@ class WCML_Multi_Currency_Orders {
 		}
 
 		return $value;
-	}
-
-	/**
-	 * @param WC_Data         $order    Object object.
-	 * @param WP_REST_Request $request  Request object.
-	 *
-	 * @return WC_Data
-	 */
-	public function rest_set_line_item_currency( $order, $request ) {
-
-		$currency = isset( $request['currency'] ) ? $request['currency'] : false;
-
-		if ( $currency && $this->multi_currency->is_currency_active( $currency ) ) {
-			foreach ( $order->get_items( 'line_item' ) as $item ) {
-				$this->set_converted_totals_for_item( $item, [], $order->get_id(), $currency );
-			}
-		}
-
-		return $order;
 	}
 
 }
