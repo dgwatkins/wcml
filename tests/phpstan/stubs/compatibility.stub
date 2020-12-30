@@ -54,6 +54,16 @@ function get_wc_booking( $id ) {}
 // WooCommerce Composite Products
 function is_composite_product() {}
 
+// Name Your Price
+class WC_Name_Your_Price_Compatibility {
+    /**
+     * @param string $version_number
+     *
+     * @return boolean
+     **/
+    static function is_nyp_gte( $version_number ) {}
+}
+
 // WooCommerce Dynamic Pricing
 class WC_Dynamic_Pricing_Advanced_Taxonomy {}
 class WC_Dynamic_Pricing_Simple_Taxonomy {}
