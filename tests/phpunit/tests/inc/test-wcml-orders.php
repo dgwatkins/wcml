@@ -391,22 +391,6 @@ class Test_WCML_Orders extends OTGS_TestCase {
 
 	/**
 	 * @test
-	 */
-	public function it_should_get_woocommerce_order_items_in_current_language_for_checkout_order_ajax(){
-
-		$_GET['wc-ajax'] = 'checkout';
-
-		$language = 'es';
-
-		$this->sitepress->method( 'get_current_language' )->willReturn( $language );
-
-		$this->get_woocommerce_order_items_mock( $language, new stdClass() );
-
-		unset( $_GET['wc-ajax'] );
-	}
-
-	/**
-	 * @test
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
