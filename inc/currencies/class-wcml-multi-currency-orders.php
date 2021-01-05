@@ -336,6 +336,10 @@ class WCML_Multi_Currency_Orders {
 
 			foreach ( array_keys( $converted_totals ) as $key ) {
 
+				if ( ! $item->get_total() ) {
+					continue;
+				}
+
 				if ( 'total' === $key && $item->get_total() !== $item->get_subtotal() ) {
 					$converted_totals[ $key ] = $item->get_total();
 				} else {
