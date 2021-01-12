@@ -3,12 +3,33 @@
 namespace WCML\MultiCurrency;
 
 use WPML\FP\Obj;
+use WPML\FP\Relation;
 
 class Geolocation {
 
 	const DEFAULT_COUNTRY_CURRENCY_CONFIG = 'country-currency.json';
 	const MODE_BY_LANGUAGE = 'by_language';
 	const MODE_BY_LOCATION = 'by_location';
+
+	/**
+	 * @return bool
+	 */
+	public static function isUsed() {
+		/** @var \woocommerce_wpml $woocommerce_wpml */
+		global $woocommerce_wpml;
+
+		$isByLocationMode = function() use ( $woocommerce_wpml ) {
+			return Geolocation::MODE_BY_LOCATION === $woocommerce_wpml->get_setting( 'currency_mode' );
+		};
+
+		$useDefaultCurrencyByLocation = function() use ( $woocommerce_wpml ) {
+			return (bool) wpml_collect( $woocommerce_wpml->get_setting( 'default_currencies', [] ) )
+				->first( Relation::equals( 'location' ) );
+		};
+
+		return wcml_is_multi_currency_on()
+		       && ( $isByLocationMode() || $useDefaultCurrencyByLocation() );
+	}
 
 	/**
 	 * Get country code by user IP
