@@ -97,6 +97,8 @@ function wcml_loader() {
 		\WCML\CLI\Hooks::class,
 		\WCML\AdminNotices\CachePlugins::class,
 		\WCML\Reports\Products\Query::class,
+		\WCML\MultiCurrency\GeolocationFrontendHooks::class,
+		\WCML\MultiCurrency\GeolocationBackendHooks::class,
 	];
 
 	if (
