@@ -9,6 +9,83 @@ use tad\FunctionMocker\FunctionMocker;
  */
 class TestGeolocation extends \OTGS_TestCase {
 
+	public function tearDown() {
+		global $woocommerce_wpml;
+		unset( $woocommerce_wpml );
+		parent::tearDown();
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3503
+	 */
+	public function testIsUsedWithoutMulticurrency() {
+		\WP_Mock::userFunction( 'wcml_is_multi_currency_on' )->andReturn( false );
+
+		$this->assertFalse( Geolocation::isUsed() );
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3503
+	 */
+	public function testIsUsedWithMulticurrencyAndNoActualUsage() {
+		\WP_Mock::userFunction( 'wcml_is_multi_currency_on' )->andReturn( true );
+
+		$this->mockWcmlSettings( [
+			'currency_mode' => Geolocation::MODE_BY_LANGUAGE,
+			'default_currencies' => [
+				'fr' => 0,
+				'en',
+				'de' => 'EUR',
+			],
+		] );
+
+		$this->assertFalse( Geolocation::isUsed() );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider dpWcmlSettingsUsingGeolocation
+	 * @group wcml-3503
+	 *
+	 * @param array $wcmlSettings
+	 */
+	public function testIsUsedWithMulticurrencyAndIsActuallyUsed( array $wcmlSettings ) {
+		\WP_Mock::userFunction( 'wcml_is_multi_currency_on' )->andReturn( true );
+
+		$this->mockWcmlSettings( $wcmlSettings );
+
+		$this->assertFalse( Geolocation::isUsed() );
+	}
+
+	public function dpWcmlSettingsUsingGeolocation() {
+		return [
+			'mode by location' => [
+				[
+					'currency_mode' => Geolocation::MODE_BY_LOCATION,
+					'default_currencies' => [
+						'fr' => 0,
+						'en',
+						'de' => 'EUR',
+					],
+
+				],
+			],
+			'location in default currencies' => [
+				[
+					'currency_mode' => Geolocation::MODE_BY_LANGUAGE,
+					'default_currencies' => [
+						'fr' => 0,
+						'en' => 'location',
+						'de' => 'EUR',
+					],
+
+				],
+			],
+		];
+	}
+
 	/**
 	 * @test
 	 */
@@ -243,4 +320,16 @@ class TestGeolocation extends \OTGS_TestCase {
 		$this->assertFalse( Geolocation::getFirstAvailableCountryCurrencyFromSettings( $currencySettings ) );
 	}
 
+	private function mockWcmlSettings( array $settings ) {
+		global $woocommerce_wpml;
+
+		$woocommerce_wpml = $this->getMockBuilder( '\woocommerce_wpml' )
+			->setMethods( [ 'get_setting' ] )
+			->disableOriginalConstructor()->getMock();
+
+		$woocommerce_wpml->method( 'get_setting' )
+			->willReturnCallback( function ( $key, $default = null ) use ( $settings ) {
+				return isset( $settings[ $key ] ) ? isset( $settings[ $key ] ) : $default;
+			} );
+	}
 }
