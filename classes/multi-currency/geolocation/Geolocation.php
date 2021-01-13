@@ -37,12 +37,19 @@ class Geolocation {
 	 * @return string
 	 */
 	private static function getCountryByUserIp() {
+		wp_cache_add_non_persistent_groups( __CLASS__ );
 
-		$ip = \WC_Geolocation::get_ip_address();
+		$key     = 'country';
+		$country = wp_cache_get( $key, __CLASS__ );
 
-		$country_info = \WC_Geolocation::geolocate_ip( $ip, true );
+		if ( ! is_string( $country ) ) {
+			$geolocationData = \WC_Geolocation::geolocate_ip( \WC_Geolocation::get_ip_address(), true );
+			$country         = (string) Obj::propOr( '', 'country', $geolocationData );
 
-		return isset( $country_info['country'] ) ? $country_info['country'] : '';
+			wp_cache_add( $key, $country, __CLASS__ );
+		}
+
+		return $country;
 	}
 
 	/**
