@@ -493,7 +493,7 @@
             ],
             "authors": [
                 {
-                    "name": "Christian L??ck",
+                    "name": "Christian Lück",
                     "email": "christian@lueck.tv"
                 }
             ],
@@ -507,6 +507,16 @@
                 "stream",
                 "stream_filter_append",
                 "stream_filter_register"
+            ],
+            "funding": [
+                {
+                    "url": "https://clue.engineering/support",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/clue",
+                    "type": "github"
+                }
             ],
             "time": "2019-04-09T12:31:48+00:00"
         },
@@ -1593,7 +1603,7 @@
             ],
             "authors": [
                 {
-                    "name": "P??draic Brady",
+                    "name": "Pádraic Brady",
                     "email": "padraic.brady@gmail.com",
                     "homepage": "http://blog.astrumfutura.com"
                 },
@@ -2180,7 +2190,7 @@
             ],
             "authors": [
                 {
-                    "name": "M??rk S??gi-Kaz??r",
+                    "name": "Márk Sági-Kazár",
                     "email": "mark.sagikazar@gmail.com"
                 }
             ],
@@ -2241,7 +2251,7 @@
             ],
             "authors": [
                 {
-                    "name": "M??rk S??gi-Kaz??r",
+                    "name": "Márk Sági-Kazár",
                     "email": "mark.sagikazar@gmail.com"
                 },
                 {
@@ -2301,7 +2311,7 @@
                     "email": "geloen.eric@gmail.com"
                 },
                 {
-                    "name": "M??rk S??gi-Kaz??r",
+                    "name": "Márk Sági-Kazár",
                     "email": "mark.sagikazar@gmail.com"
                 }
             ],
@@ -2372,7 +2382,7 @@
             ],
             "authors": [
                 {
-                    "name": "M??rk S??gi-Kaz??r",
+                    "name": "Márk Sági-Kazár",
                     "email": "mark.sagikazar@gmail.com"
                 }
             ],
@@ -2420,7 +2430,7 @@
             ],
             "authors": [
                 {
-                    "name": "M??rk S??gi-Kaz??r",
+                    "name": "Márk Sági-Kazár",
                     "email": "mark.sagikazar@gmail.com"
                 }
             ],
@@ -2527,7 +2537,7 @@
             ],
             "authors": [
                 {
-                    "name": "M??rk S??gi-Kaz??r",
+                    "name": "Márk Sági-Kazár",
                     "email": "mark.sagikazar@gmail.com"
                 },
                 {
