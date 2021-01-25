@@ -5,6 +5,8 @@ use WCML\Utilities\AdminPages;
 use WPML\FP\Fns;
 use WPML\FP\Str;
 use function WCML\functions\isStandAlone;
+use Automattic\WooCommerce\Admin\Features\Navigation\Menu;
+use Automattic\WooCommerce\Admin\Features\Navigation\Screen;
 
 /**
  * Class WCML_Admin_Menus
@@ -113,19 +115,41 @@ class WCML_Admin_Menus {
 
 		return $menu;
 	}
-
+	
 	public static function register_menus() {
 		$pageTitle = $menuTitle = self::getWcmlLabel();
 
 		if ( self::$woocommerce_wpml->dependencies_are_ok || class_exists( 'WooCommerce' ) ) {
-			add_submenu_page(
-				'woocommerce',
-				$pageTitle,
-				$menuTitle,
-				'wpml_operate_woocommerce_multilingual',
-				self::SLUG,
-				[ __CLASS__, 'render_menus' ]
-			);
+			if (
+				! class_exists( '\Automattic\WooCommerce\Admin\Features\Navigation\Menu' ) ||
+				! class_exists( '\Automattic\WooCommerce\Admin\Features\Navigation\Screen' )
+			) {
+				add_submenu_page(
+					'woocommerce',
+					$pageTitle,
+					$pageTitle,
+					'wpml_operate_woocommerce_multilingual',
+					self::SLUG,
+					[ __CLASS__, 'render_menus' ]
+				);
+			} else {
+				add_menu_page(
+					$pageTitle,
+					$pageTitle,
+					'wpml_manage_woocommerce_multilingual',
+					self::SLUG,
+					[ __CLASS__, 'render_menus' ]
+				);
+				
+				Menu::add_plugin_item(
+					array(
+						'id'         => 'woocommerce-multilingual',
+						'title'      => $pageTitle,
+						'capability' => 'wpml_manage_woocommerce_multilingual',
+						'url'        => self::SLUG,
+					)
+				);
+			}
 		} else {
 			add_menu_page(
 				$pageTitle,
@@ -135,7 +159,7 @@ class WCML_Admin_Menus {
 				[ __CLASS__, 'render_menus' ],
 				WCML_PLUGIN_URL . '/res/images/icon16.png'
 			);
-
+			
 		}
 	}
 
