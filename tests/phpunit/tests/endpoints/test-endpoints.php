@@ -65,6 +65,8 @@ class Test_Endpoints extends OTGS_TestCase {
 			}
 		}
 
+		$expected[] = '/order-pay/';
+
 		$subject = $this->get_subject();
 
 		$that = $this;
@@ -94,6 +96,8 @@ class Test_Endpoints extends OTGS_TestCase {
 			$expected = array_merge( $expected, $this->get_expected( $code ) );
 		}
 
+		$expected[] = '/order-pay/';
+
 		$subject = $this->get_subject();
 
 		$actual = $subject->reserved_requests( array() );
@@ -114,6 +118,8 @@ class Test_Endpoints extends OTGS_TestCase {
 		foreach ( $this->endpoints_translations as $code => $translated_query_vars ) {
 			$expected = array_merge( $expected, $this->get_expected( $code ) );
 		}
+
+		$expected[] = '/order-pay/';
 
 		$subject = $this->get_subject( null, $this->get_sitepress( true ) );
 
