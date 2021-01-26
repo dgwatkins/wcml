@@ -155,9 +155,7 @@ class WCML_Endpoints {
 
 			$reserved_requests[] = '/order-pay/'; // Order pay action page.
 
-			if ( $reserved_requests ) {
-				wp_cache_set( $cache_key, $reserved_requests, $cache_group );
-			}
+			wp_cache_set( $cache_key, $reserved_requests, $cache_group );
 		}
 
 		if ( $reserved_requests ) {
