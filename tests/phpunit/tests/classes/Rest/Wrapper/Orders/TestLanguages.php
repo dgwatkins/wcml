@@ -44,19 +44,11 @@ class TestLanguages extends \OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider OrderData
 	 */
-	function filter_order_items_by_language() {
+	function filter_order_items_by_language( $object ) {
 
 		$subject = $this->get_subject();
-
-		$order     = $this->getMockBuilder( 'WC_Order' )
-		                  ->disableOriginalConstructor()
-		                  ->setMethods( [
-			                  'get_id'
-		                  ] )
-		                  ->getMock();
-		$order->ID = rand( 1, 100 );
-		$order->method( 'get_id' )->willReturn( $order->ID );
 
 		$test_lang  = 'ro';
 		$other_lang = 'fr';
@@ -137,7 +129,7 @@ class TestLanguages extends \OTGS_TestCase {
 		];
 
 		\WP_Mock::userFunction( 'get_post_meta', [
-			'args'   => [ $order->ID, 'wpml_language', true ],
+			'args'   => [ 10, 'wpml_language', true ],
 			'return' => $other_lang
 		] );
 
@@ -181,19 +173,56 @@ class TestLanguages extends \OTGS_TestCase {
 
 		// Another language - no filtering
 		$this->test_data['query_var']['lang'] = $other_lang;
-		$response_out                         = $subject->prepare( $response, $order, $request );
+		$response_out                         = $subject->prepare( $response, $object, $request );
 		$this->assertEquals( $response, $response_out );
 
 
 		// The right language
 		$this->test_data['query_var']['lang'] = $test_lang;
-		$response_out                         = $subject->prepare( $response, $order, $request );
+		$response_out                         = $subject->prepare( $response, $object, $request );
 		$this->assertEquals( $expected_response, $response_out );
 
 		// cleanup
 		unset( $this->test_data['query_var']['lang'] );
 		unset( $this->order_items );
 
+	}
+
+	public function OrderData() {
+		$WC_Order = $this->getMockBuilder( 'WC_Order' )
+			->disableOriginalConstructor()
+			->setMethods( [
+				'get_id'
+			] )
+			->getMock();
+		$WC_Order->method( 'get_id' )->willReturn( 10 );
+
+		$WP_Post = $this->getMockBuilder( 'WP_Post' )
+			->disableOriginalConstructor()
+			->getMock();
+		$WP_Post->ID = 10;
+
+		return [
+			[ $WC_Order ],
+			[ $WP_Post ]
+		];
+	}
+
+	/**
+	 * @test
+	 */
+	public function prepare_throws_exception_when_can_NOT_get_order_id() {
+		\WP_Mock::userFunction( 'get_query_var', [
+			'return' => function ( $var ) {
+				return isset( $this->test_data['query_var'][ $var ] ) ?
+					$this->test_data['query_var'][ $var ] : null;
+			}
+		] );
+
+		$subject = $this->get_subject();
+		$order = 'foo';
+		$this->expectExceptionMessage( 'Order has no ID set.' );
+		$response_out = $subject->prepare( null, $order, null );
 	}
 
 	/**

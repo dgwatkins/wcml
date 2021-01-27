@@ -8,7 +8,7 @@ use WCML\Rest\Exceptions\InvalidLanguage;
 class Languages extends Handler {
 
 	/**
-	 * @param array $args
+	 * @param array           $args
 	 * @param WP_REST_Request $request Request object.
 	 *
 	 * @return array
@@ -30,15 +30,15 @@ class Languages extends Handler {
 	/**
 	 * Appends the language and translation information to the get_product response
 	 *
-	 * @param WP_REST_Response $response
-	 * @param object $object
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Response   $response
+	 * @param \WP_Post|\WC_Order $object
+	 * @param WP_REST_Request    $request
 	 *
 	 * @return WP_REST_Response
 	 */
 	public function prepare( $response, $object, $request ) {
 		$language      = get_query_var( 'lang' );
-		$orderLanguage = get_post_meta( $object->get_id(), 'wpml_language', true );
+		$orderLanguage = get_post_meta( $this->get_id( $object ), 'wpml_language', true );
 
 		if ( $orderLanguage !== $language ) {
 			foreach ( $response->data['line_items'] as $k => $item ) {
@@ -46,7 +46,7 @@ class Languages extends Handler {
 				if ( $translatedProductId ) {
 					$translatedProduct                                = get_post( $translatedProductId );
 					$response->data['line_items'][ $k ]['product_id'] = $translatedProductId;
-					if ( $translatedProduct->post_type == 'product_variation' ) {
+					if ( $translatedProduct->post_type === 'product_variation' ) {
 						$postParent = get_post( $translatedProduct->post_parent );
 						$postName   = $postParent->post_title;
 					} else {
@@ -58,6 +58,21 @@ class Languages extends Handler {
 		}
 
 		return $response;
+	}
+
+	/**
+	 * @param \WP_Post|\WC_Order $object
+	 * @return int
+	 * @throws Exception
+	 */
+	private function get_id( $object ) {
+		if ( method_exists( $object, 'get_id' )) {
+			return $object->get_id();
+		} elseif ( isset( $object->ID ) ) {
+			return $object->ID;
+		}
+
+		throw new \Exception( 'Order has no ID set.' );
 	}
 
 
