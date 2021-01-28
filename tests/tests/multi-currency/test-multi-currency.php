@@ -66,7 +66,6 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 		$this->multi_currency = $this->woocommerce_wpml->multi_currency;
 	}
 
-
 	function test_get_client_currency(){
 		$this->check_language_default_currency();
 		$this->check_switch_currency_exception();
@@ -106,7 +105,7 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
 		//get default currency during REST API call #wcml-1961
 		$req_uri = $_SERVER['REQUEST_URI'];
-		$_SERVER['REQUEST_URI'] = 'wp-json/wc/';
+		$_SERVER['REQUEST_URI'] = 'wp-json/wc/v3/foo/bar';
 		$curr = $this->multi_currency->get_client_currency();
 		$this->assertEquals( wcml_get_woocommerce_currency_option(), $curr );
 		$_SERVER['REQUEST_URI'] = $req_uri;
