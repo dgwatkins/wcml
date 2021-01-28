@@ -526,6 +526,7 @@ class WCML_Product_Bundles {
 
 		$bundle_data = $this->get_product_bundle_data( $bundle_id );
 		if ( $bundle_data ) {
+			$translated_bundle_data               = [];
 			$lang                                 = $this->sitepress->get_language_for_element( $translated_bundle_id, 'post_product' );
 			$translated_bundle_data_before_update = $this->get_product_bundle_data( $translated_bundle_id );
 
@@ -619,12 +620,12 @@ class WCML_Product_Bundles {
 						}
 						$translated_bundle_data[ $translated_item_id ]['bundle_defaults'] = maybe_serialize( $translated_bundle_data[ $translated_item_id ]['bundle_defaults'] );
 					}
-
-					$this->save_product_bundle_data( $translated_bundle_id, $translated_bundle_data );
-
-					return $translated_bundle_data;
 				}
 			}
+
+			$this->save_product_bundle_data( $translated_bundle_id, $translated_bundle_data );
+
+			return $translated_bundle_data;
 		}
 
 		return null;
