@@ -40,6 +40,10 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 			]
 		);
 
+		WP_Mock::userFunction( 'otgs_is_rest_request', [
+			'return' => false
+		] );
+
 		$subject = $this->get_subject();
 
 		\WP_Mock::expectActionAdded(
@@ -68,6 +72,32 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function it_does_NOT_add_hooks_when_rest_request() {
+		WP_Mock::userFunction(
+			'is_admin',
+			[
+				'times'  => 1,
+				'return' => false,
+			]
+		);
+
+		WP_Mock::userFunction( 'otgs_is_rest_request', [
+			'return' => true
+		] );
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::expectActionNotAdded(
+			'wp_loaded',
+			[ $subject, 'init_gateways' ]
+		);
+
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
 	public function add_hooks_in_admin() {
 
 		WP_Mock::userFunction(
@@ -77,6 +107,10 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 				'return' => true,
 			]
 		);
+
+		WP_Mock::userFunction( 'otgs_is_rest_request', [
+			'return' => false
+		] );
 
 		$subject = $this->get_subject();
 

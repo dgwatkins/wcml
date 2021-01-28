@@ -32,7 +32,9 @@ class WCML_Currencies_Payment_Gateways {
 	}
 
 	public function add_hooks() {
-		add_action( 'wp_loaded', [ $this, 'init_gateways' ] );
+		if ( ! otgs_is_rest_request() ) {
+			add_action( 'wp_loaded', [ $this, 'init_gateways' ] );
+		}
 
 		add_filter( 'woocommerce_gateway_description', [ $this, 'filter_gateway_description' ], 10, 2 );
 		add_filter( 'option_woocommerce_stripe_settings', [ 'WCML_Payment_Gateway_Stripe', 'filter_stripe_settings' ] );
