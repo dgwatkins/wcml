@@ -150,11 +150,13 @@ class WCML_Endpoints {
 					}
 				}
 			}
+
 			$this->sitepress->switch_lang( $current_language );
 
-			if ( $reserved_requests ) {
-				wp_cache_set( $cache_key, $reserved_requests, $cache_group );
-			}
+			$reserved_requests[] = '/' . get_option( 'woocommerce_checkout_pay_endpoint', 'order-pay' ) . '/'; // Order pay action page.
+
+			wp_cache_set( $cache_key, $reserved_requests, $cache_group );
+
 		}
 
 		if ( $reserved_requests ) {
