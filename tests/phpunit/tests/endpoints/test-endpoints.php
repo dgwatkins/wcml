@@ -51,6 +51,10 @@ class Test_Endpoints extends OTGS_TestCase {
 	function it_adds_blacklisted_endpoints( $shop_base ) {
 		$this->shop_base = $shop_base;
 
+		WP_Mock::userFunction( 'get_option', [
+			'return' => 'order-pay'
+		] );
+
 		$expected = array();
 		foreach ( $this->endpoints_translations as $code => $translated_query_vars ) {
 			$expected = array_merge( $expected, $this->get_expected( $code ) );
@@ -64,6 +68,8 @@ class Test_Endpoints extends OTGS_TestCase {
 				}
 			}
 		}
+
+		$expected[] = '/order-pay/';
 
 		$subject = $this->get_subject();
 
@@ -87,12 +93,18 @@ class Test_Endpoints extends OTGS_TestCase {
 	function it_adds_no_blacklisted_endpoints( $shop_base ) {
 		$this->shop_base = $shop_base;
 
+		WP_Mock::userFunction( 'get_option', [
+			'return' => 'order-pay'
+		] );
+
 		$this->query_vars = array();
 
 		$expected = array();
 		foreach ( $this->endpoints_translations as $code => $translated_query_vars ) {
 			$expected = array_merge( $expected, $this->get_expected( $code ) );
 		}
+
+		$expected[] = '/order-pay/';
 
 		$subject = $this->get_subject();
 
@@ -108,12 +120,18 @@ class Test_Endpoints extends OTGS_TestCase {
 	function it_adds_no_blacklisted_endpoints_for_display_pages_as_translated( $shop_base ) {
 		$this->shop_base = $shop_base;
 
+		WP_Mock::userFunction( 'get_option', [
+			'return' => 'order-pay'
+		] );
+
 		$this->query_vars = array();
 
 		$expected = array();
 		foreach ( $this->endpoints_translations as $code => $translated_query_vars ) {
 			$expected = array_merge( $expected, $this->get_expected( $code ) );
 		}
+
+		$expected[] = '/order-pay/';
 
 		$subject = $this->get_subject( null, $this->get_sitepress( true ) );
 
