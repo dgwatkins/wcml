@@ -641,7 +641,7 @@ class WCML_Multi_Currency {
 	}
 
 	public function set_client_currency( $currency ) {
-		global $woocommerce, $sitepress;
+		global $sitepress;
 
 		$this->client_currency = $currency;
 

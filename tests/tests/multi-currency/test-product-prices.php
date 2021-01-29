@@ -19,6 +19,15 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 		add_filter('wcml_load_multi_currency_in_ajax', '__return_true');
 		set_current_screen( 'front' );
 
+		// LANGUAGE AND CURRENCIES
+		$this->default_currency 	= 'GBP';
+		$this->secondary_currencies	= array('USD', 'RON', 'AUD', 'CHF');
+
+		$this->woocommerce_wpml->settings['enable_multi_currency'] = WCML_MULTI_CURRENCIES_INDEPENDENT;
+		$this->woocommerce_wpml->settings['currency_mode'] = \WCML\MultiCurrency\Geolocation::MODE_BY_LANGUAGE;
+		$this->set_up_languages();
+		$this->set_up_currencies();
+
 		// Multi currency objects
 		$this->woocommerce_wpml->multi_currency = new WCML_Multi_Currency();
 		$this->woocommerce_wpml->multi_currency->init();
@@ -26,13 +35,6 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 		// settings
 		$this->settings 				=& $this->woocommerce_wpml->settings;
 		$this->multi_currency 			=& $this->woocommerce_wpml->multi_currency;
-
-		// LANGUAGE AND CURRENCIES
-		$this->default_currency 	= 'GBP';
-		$this->secondary_currencies	= array('USD', 'RON', 'AUD', 'CHF');
-
-		$this->set_up_languages();
-		$this->set_up_currencies();
 
 		// PRODUCTS
 		$this->products['simple']             = $this->add_simple_product( 'Test Product Simple' );
@@ -168,8 +170,8 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 			// symbol right (w/ space), '.' thousands separator, ',' decimal separator, 0 decimals
 			'RON' => $this->wc_format_price('2.099<cur>lei</cur>', 'right'),
 			// according to settings defined in self::set_up_currencies ->
-			// symbol right (w space), '.' thousands separator, ',' decimal separator, 1 decimals
-			'AUD' => $this->wc_format_price('1.111,0<cur>&#36;</cur>', 'right'),
+			// symbol right (w space), ',' thousands separator, '.' decimal separator, 1 decimals
+			'AUD' => $this->wc_format_price('1,111.0&nbsp;<cur>&#36;</cur>', 'right'),
 			// according to settings defined in self::set_up_currencies ->
 			// symbol right (w/ space), '.' thousands separator, ',' decimal separator, 2 decimals
 			'CHF' => $this->wc_format_price('67.900,80<cur>&#67;&#72;&#70;</cur>', 'right'),
@@ -563,7 +565,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 	}
 
 	private function run_product_test( $product, $wc_product_type ){
-
+		$this->switch_language( $this->default_language );
 
 		$currencies = array_merge( array($this->default_currency), $this->secondary_currencies );
 
@@ -590,7 +592,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 			$wc_product = new $wc_product_type( $product['post']->id );
 
 			// Compare price with expected price for language
-			$this->assertEquals( $product['expected']['price_on_language'][$language], $wc_product->get_price() );
+			$this->assertEquals( $product['expected']['price_on_language'][$language], $wc_product->get_price(), "Language: $language - Currency: $currency" );
 
 		}
 
@@ -672,21 +674,16 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 
 	// Operations that simulate switching to a different language
 	private function switch_language( $language ){
-		global $woocommerce;
-
 		$this->sitepress->switch_lang( $language );
 
 		$client_currency = $this->multi_currency->get_client_currency();
-		$this->multi_currency->set_client_currency(null);
 
-		$woocommerce->session->set('client_currency_language', '');
-		$woocommerce->session->save_data();
+		$this->multi_currency->set_client_currency( null );
+		wcml_user_store_set( 'client_currency_language', 'dummy-lang' );
 
-		if( empty( $this->settings['default_currencies'][$language] ) ){
+		if( empty( $this->settings['default_currencies'][ $language ] ) ){
 			$this->multi_currency->set_client_currency( $client_currency );
 		}
-
 	}
-
 
 }
