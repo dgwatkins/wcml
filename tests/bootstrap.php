@@ -8,9 +8,9 @@ if ( ! defined( 'WPML_CORE_PATH' ) ) {
 if ( ! defined( 'WPML_CORE_ST_PATH' ) ) {
 	define( 'WPML_CORE_ST_PATH', WP_PLUGIN_DIR . '/wpml-string-translation' );
 }
-if ( ! defined( 'WPML_CORE_TM_PATH' ) ) {
-	define( 'WPML_CORE_TM_PATH', WP_PLUGIN_DIR . '/wpml-translation-management' );
-}
+//if ( ! defined( 'WPML_CORE_TM_PATH' ) ) {
+//	define( 'WPML_CORE_TM_PATH', WP_PLUGIN_DIR . '/wpml-translation-management' );
+//}
 if ( ! defined( 'WCML_CORE_PATH' ) ) {
 	define( 'WCML_CORE_PATH', WP_PLUGIN_DIR . '/woocommerce-multilingual' );
 }
@@ -45,7 +45,7 @@ function _manually_load_wcml() {
 	$st_initialize = new WPML_ST_Initialize();
 	$st_initialize->run();
 
-	require_once WPML_CORE_TM_PATH . '/plugin.php';
+//	require_once WPML_CORE_TM_PATH . '/plugin.php';
 
 	// Make WPML-TM related tests to run in admin mode.
 	add_action(
