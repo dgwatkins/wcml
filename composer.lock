@@ -463,12 +463,12 @@
             "version": "v1.4.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/clue/stream-filter.git",
+                "url": "https://github.com/clue/php-stream-filter.git",
                 "reference": "5a58cc30a8bd6a4eb8f856adf61dd3e013f53f71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/clue/stream-filter/zipball/5a58cc30a8bd6a4eb8f856adf61dd3e013f53f71",
+                "url": "https://api.github.com/repos/clue/php-stream-filter/zipball/5a58cc30a8bd6a4eb8f856adf61dd3e013f53f71",
                 "reference": "5a58cc30a8bd6a4eb8f856adf61dd3e013f53f71",
                 "shasum": ""
             },
@@ -493,7 +493,7 @@
             ],
             "authors": [
                 {
-                    "name": "Christian Lück",
+                    "name": "Christian L??ck",
                     "email": "christian@lueck.tv"
                 }
             ],
@@ -507,16 +507,6 @@
                 "stream",
                 "stream_filter_append",
                 "stream_filter_register"
-            ],
-            "funding": [
-                {
-                    "url": "https://clue.engineering/support",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/clue",
-                    "type": "github"
-                }
             ],
             "time": "2019-04-09T12:31:48+00:00"
         },
@@ -1603,7 +1593,7 @@
             ],
             "authors": [
                 {
-                    "name": "Pádraic Brady",
+                    "name": "P??draic Brady",
                     "email": "padraic.brady@gmail.com",
                     "homepage": "http://blog.astrumfutura.com"
                 },
@@ -1870,7 +1860,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-php-integration-tests.git",
-                "reference": "511a0e4e3a5add1208531438b0e9de571569ded0"
+                "reference": "c21d5c9ec1706784fa578018462b03e0c5a31b25"
             },
             "require": {
                 "symfony/console": "^3.4"
@@ -1891,7 +1881,7 @@
                 ]
             },
             "description": "Clone, install, setup dependencies and run the integration tests of the current project",
-            "time": "2020-11-26T14:14:05+00:00"
+            "time": "2021-02-01T11:55:50+00:00"
         },
         {
             "name": "otgs/unit-tests-framework",
@@ -2190,7 +2180,7 @@
             ],
             "authors": [
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M??rk S??gi-Kaz??r",
                     "email": "mark.sagikazar@gmail.com"
                 }
             ],
@@ -2251,7 +2241,7 @@
             ],
             "authors": [
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M??rk S??gi-Kaz??r",
                     "email": "mark.sagikazar@gmail.com"
                 },
                 {
@@ -2311,7 +2301,7 @@
                     "email": "geloen.eric@gmail.com"
                 },
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M??rk S??gi-Kaz??r",
                     "email": "mark.sagikazar@gmail.com"
                 }
             ],
@@ -2382,7 +2372,7 @@
             ],
             "authors": [
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M??rk S??gi-Kaz??r",
                     "email": "mark.sagikazar@gmail.com"
                 }
             ],
@@ -2430,7 +2420,7 @@
             ],
             "authors": [
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M??rk S??gi-Kaz??r",
                     "email": "mark.sagikazar@gmail.com"
                 }
             ],
@@ -2537,7 +2527,7 @@
             ],
             "authors": [
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M??rk S??gi-Kaz??r",
                     "email": "mark.sagikazar@gmail.com"
                 },
                 {
