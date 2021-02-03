@@ -11,6 +11,7 @@ use WCML\Rest\Wrapper\Orders\Prices as OrdersPrices;
 use WCML\Rest\Wrapper\Reports\ProductsCount;
 use WCML\Rest\Wrapper\Reports\ProductsSales;
 use WCML\Rest\Wrapper\Reports\TopSeller;
+use WPML\FP\Obj;
 
 class Factory {
 
@@ -35,7 +36,7 @@ class Factory {
 				$objects[] = new ProductsLanguages( $sitepress, $wpml_post_translations, $wpml_query_filter, $woocommerce_wpml->sync_variations_data, $woocommerce_wpml->attributes );
 				$objects[] = new ProductsImages( $woocommerce_wpml->products, $woocommerce_wpml->media );
 				if ( $isMultiCurrencyOn ) {
-					$objects[] = new ProductsPrices( $woocommerce_wpml->multi_currency, $woocommerce_wpml->settings['currencies_order'], $wpml_post_translations );
+					$objects[] = new ProductsPrices( $woocommerce_wpml->multi_currency, (array) Obj::propOr( [], 'currencies_order', $woocommerce_wpml->settings ), $wpml_post_translations );
 				}
 
 				return new Composite( $objects );
