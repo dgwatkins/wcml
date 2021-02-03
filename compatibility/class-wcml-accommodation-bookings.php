@@ -8,14 +8,18 @@ class WCML_Accommodation_Bookings{
     private $woocommerce_wpml;
 
 	/**
-	 * WCML_Accommodation_Bookings constructor.
-	 *
-	 * @param woocommerce_wpml $woocommerce_wpml
+	 * @var WCML_Bookings
 	 */
-	public function __construct( $woocommerce_wpml ) {
+	private $bookings;
+
+	public function __construct(
+		woocommerce_wpml $woocommerce_wpml,
+		WCML_Bookings $bookings
+	) {
 		// @todo Cover by tests, required for wcml-3037.
 
 		$this->woocommerce_wpml = $woocommerce_wpml;
+		$this->bookings         = $bookings;
 
 		add_action( 'woocommerce_accommodation_bookings_after_booking_base_cost', [ $this, 'wcml_price_field_after_booking_base_cost', ] );
 		add_action( 'woocommerce_accommodation_bookings_after_booking_pricing_override_block_cost', [ $this, 'wcml_price_field_after_booking_pricing_override_block_cost', ], 10, 2 );
@@ -189,7 +193,7 @@ class WCML_Accommodation_Bookings{
 
     public function load_assets(){
 
-        $this->woocommerce_wpml->compatibility->bookings->load_assets( 'accommodation-booking' );
+        $this->bookings->load_assets( 'accommodation-booking' );
     }
 
 }
