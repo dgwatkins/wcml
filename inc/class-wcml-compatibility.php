@@ -140,7 +140,7 @@ class WCML_Compatibility {
 
 			// WooCommerce Accommodation Bookings.
 			if ( defined( 'WC_ACCOMMODATION_BOOKINGS_VERSION' ) ) {
-				new WCML_Accommodation_Bookings( $this->woocommerce_wpml );
+				new WCML_Accommodation_Bookings( $this->woocommerce_wpml, $bookings );
 			}
 		}
 
