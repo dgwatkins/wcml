@@ -113,7 +113,7 @@ class Languages extends Handler {
 				$this->sitepress->set_element_language_details( $object->get_id(), 'post_' . get_post_type( $object->get_id() ), $trid, $data['lang'] );
 				wpml_tm_save_post( $object->get_id(), get_post( $object->get_id() ), ICL_TM_COMPLETE );
 
-				if ( isset( $data['translation_of'] ) && $this->isVariation( $object ) ) {
+				if ( isset( $data['translation_of'] ) && $this->isVariable( $object ) ) {
 					// needs run after set_element_language_details.
 					$this->syncVariableProduct( $data['translation_of'], $object->get_id(), $data['lang'] );
 				}
@@ -138,6 +138,17 @@ class Languages extends Handler {
 	}
 
 	/**
+	 * Returns true if this a product variation.
+	 *
+	 * @param mixed $object
+	 *
+	 * @return bool
+	 */
+	private function isVariable( $object ) {
+		return 'variable' === $object->get_type();
+	}
+
+	/**
 	 * Returns true if this a variable product.
 	 *
 	 * @param mixed $object
@@ -145,7 +156,7 @@ class Languages extends Handler {
 	 * @return bool
 	 */
 	private function isVariation( $object ) {
-		return (bool) in_array( $object->get_type(), [ 'variable', 'variation' ], true );
+		return 'variation' === $object->get_type();
 	}
 
 	/**
