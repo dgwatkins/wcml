@@ -16,6 +16,8 @@ use WPML\FP\Obj;
 class Factory {
 
 	/**
+	 * @param string $objectType
+	 *
 	 * @return Handler
 	 */
 	public static function create( $objectType ) {

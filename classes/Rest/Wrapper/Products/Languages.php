@@ -36,14 +36,14 @@ class Languages extends Handler {
 	}
 
 	/**
-	 * @param array $args
+	 * @param array           $args
 	 * @param WP_REST_Request $request Request object.
 	 *
 	 * @return array
 	 */
 	public function query( $args, $request ) {
 		$data = $request->get_params();
-		if ( isset( $data['lang'] ) && $data['lang'] === 'all' ) {
+		if ( isset( $data['lang'] ) && 'all' === $data['lang'] ) {
 			remove_filter( 'posts_join', [ $this->wpmlQueryFilter, 'posts_join_filter' ] );
 			remove_filter( 'posts_where', [ $this->wpmlQueryFilter, 'posts_where_filter' ] );
 		}
@@ -56,14 +56,14 @@ class Languages extends Handler {
 	 * Appends the language and translation information to the get_product response
 	 *
 	 * @param WP_REST_Response $response
-	 * @param object $object
-	 * @param WP_REST_Request $request
+	 * @param object           $object
+	 * @param WP_REST_Request  $request
 	 *
 	 * @return WP_REST_Response
 	 */
 	public function prepare( $response, $object, $request ) {
 
-		$response->data['translations'] = array();
+		$response->data['translations'] = [];
 
 		$trid = $this->wpmlPostTranslations->get_element_trid( $response->data['id'] );
 
@@ -82,60 +82,80 @@ class Languages extends Handler {
 	/**
 	 * Sets the product information according to the provided language
 	 *
-	 * @param object $object
+	 * @param object          $object
 	 * @param WP_REST_Request $request
-	 * @param bool $creating
+	 * @param bool            $creating
 	 *
 	 * @throws InvalidLanguage
 	 * @throws InvalidProduct
 	 * @throws Generic
-	 *
 	 */
 	public function insert( $object, $request, $creating ) {
-		$data = $request->get_params();
+		if ( in_array( $request->get_method(), [ 'POST', 'PUT' ], true ) ) {
+			$data = $request->get_params();
 
-		if ( isset( $data['lang'] ) && in_array( $request->get_method(), array( 'POST', 'PUT' ), true ) ) {
+			if ( isset( $data['lang'] ) ) {
 
-			if ( ! apply_filters( 'wpml_language_is_active', false, $data['lang'] ) ) {
-				throw new InvalidLanguage( $data['lang'] );
-			}
-			if ( isset( $data['translation_of'] ) ) {
-				$trid = $this->wpmlPostTranslations->get_element_trid( $data['translation_of'] );
-				if ( empty( $trid ) ) {
-					throw new InvalidProduct( $data['translation_of'] );
+				if ( ! apply_filters( 'wpml_language_is_active', false, $data['lang'] ) ) {
+					throw new InvalidLanguage( $data['lang'] );
+				}
+				if ( isset( $data['translation_of'] ) ) {
+					$trid = $this->wpmlPostTranslations->get_element_trid( $data['translation_of'] );
+					if ( empty( $trid ) ) {
+						throw new InvalidProduct( $data['translation_of'] );
+					}
+
+					$this->sitepress->copy_custom_fields( $data['translation_of'], $object->get_id() );
+				} else {
+					$trid = null;
 				}
 
-				$this->sitepress->copy_custom_fields( $data['translation_of'], $object->get_id() );
-			} else {
-				$trid = null;
-			}
+				$this->sitepress->set_element_language_details( $object->get_id(), 'post_' . get_post_type( $object->get_id() ), $trid, $data['lang'] );
+				wpml_tm_save_post( $object->get_id(), get_post( $object->get_id() ), ICL_TM_COMPLETE );
 
-			$this->sitepress->set_element_language_details( $object->get_id(), 'post_'.get_post_type( $object->get_id() ), $trid, $data['lang'] );
-			wpml_tm_save_post( $object->get_id(), get_post( $object->get_id() ), ICL_TM_COMPLETE );
-
-			if ( isset( $data['translation_of'] ) ) {
-				// needs run after set_element_language_details
-				$this->syncVariableProduct( $object, $data['translation_of'], $data['lang'] );
-			}
-		} else {
-			if ( isset( $data['translation_of'] ) ) {
+				if ( isset( $data['translation_of'] ) && $this->isVariation( $object ) ) {
+					// needs run after set_element_language_details.
+					$this->syncVariableProduct( $data['translation_of'], $object->get_id(), $data['lang'] );
+				}
+			} elseif ( isset( $data['translation_of'] ) ) {
 				throw new Generic( __( 'Using "translation_of" requires providing a "lang" parameter too', 'woocommerce-multilingual' ) );
+			} else {
+				$productId = $this->isVariation( $object ) ? $object->get_parent_id() : $object->get_id();
+				$trid      = $this->wpmlPostTranslations->get_element_trid( $productId );
+				if ( empty( $trid ) ) {
+					throw new InvalidProduct( $productId );
+				}
+
+				$translations = $this->wpmlPostTranslations->get_element_translations( $productId, $trid, true );
+				foreach ( $translations as $lang => $translation ) {
+					$this->sitepress->copy_custom_fields( $productId, $translation );
+					if ( $this->isVariation( $object ) ) {
+						$this->syncVariableProduct( $productId, $translation, $lang );
+					}
+				}
 			}
 		}
 	}
 
 	/**
-	 * @param object $object
+	 * Returns true if this a variable product.
+	 *
+	 * @param mixed $object
+	 *
+	 * @return bool
+	 */
+	private function isVariation( $object ) {
+		return (bool) in_array( $object->get_type(), [ 'variable', 'variation' ], true );
+	}
+
+	/**
+	 * @param int    $productId
 	 * @param string $translationOf
 	 * @param string $lang
 	 */
-	private function syncVariableProduct( $object, $translationOf, $lang ) {
-
-		if ( 'variable' === $object->get_type() ) {
-			$this->wcmlAttributes->sync_default_product_attr( $translationOf, $object->get_id(), $lang );
-			$this->wcmlSyncVariationsData->sync_product_variations( $translationOf, $object->get_id(), $lang );
-		}
+	private function syncVariableProduct( $productId, $translationOf, $lang ) {
+		$this->wcmlAttributes->sync_default_product_attr( $productId, $translationOf, $lang );
+		$this->wcmlSyncVariationsData->sync_product_variations( $productId, $translationOf, $lang );
 	}
-
 
 }

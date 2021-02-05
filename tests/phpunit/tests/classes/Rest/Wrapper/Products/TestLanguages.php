@@ -305,9 +305,10 @@ class TestLanguages extends \OTGS_TestCase {
 
 		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
 		                 ->disableOriginalConstructor()
-		                 ->setMethods( [ 'get_params' ] )
+		                 ->setMethods( [ 'get_params', 'get_method' ] )
 		                 ->getMock();
 		$request1->method( 'get_params' )->willReturn( [ 'translation_of' => rand( 1, 100 ) ] );
+		$request1->method( 'get_method' )->willReturn( 'POST' );
 
 		$post     = $this->getMockBuilder( 'WP_Post' )
 		                 ->disableOriginalConstructor()
@@ -399,6 +400,72 @@ class TestLanguages extends \OTGS_TestCase {
 			'Use POST' => [ 'POST' ],
 			'User PUT' => [ 'PUT' ],
 		];
+	}
+
+	/**
+	 * @test
+	 */
+	function it_updates_simple_product_translations() {
+		$post_id         = '1234';
+		$post_trid       = 456;
+		$post_translated = 789;
+		$lang            = 'fr';
+
+		$request = $this->getMockBuilder( 'WP_REST_Request' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'get_params', 'get_method' ] )
+			->getMock();
+		$request->method( 'get_params' )->willReturn( [] );
+		$request->method( 'get_method' )->willReturn( 'POST' );
+
+		$post = $this->getMockBuilder( 'WC_Simple_Product' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'get_id', 'get_type' ] )
+			->getMock();
+		$post->method( 'get_id' )->willReturn( $post_id );
+		$post->method( 'get_type' )->willReturn( 'simple' );
+
+		$this->wpml_post_translations->method( 'get_element_trid' )->with( $post_id )->willReturn( $post_trid );
+		$this->wpml_post_translations->method( 'get_element_translations' )->with( $post_id, $post_trid )->willReturn( [ $lang => $post_translated ] );
+
+		$this->sitepress->expects( $this->once() )->method( 'copy_custom_fields' )->with( $post_id, $post_translated );
+
+		$subject = $this->get_subject();
+		$subject->insert( $post, $request, true );
+	}
+
+	/**
+	 * @test
+	 */
+	function it_updates_variable_product_translations() {
+		$post_id         = '1234';
+		$post_trid       = 456;
+		$post_translated = 789;
+		$lang            = 'fr';
+
+		$request = $this->getMockBuilder( 'WP_REST_Request' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'get_params', 'get_method' ] )
+			->getMock();
+		$request->method( 'get_params' )->willReturn( [] );
+		$request->method( 'get_method' )->willReturn( 'POST' );
+
+		$post = $this->getMockBuilder( 'WC_Variable_Product' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'get_parent_id', 'get_type' ] )
+			->getMock();
+		$post->method( 'get_parent_id' )->willReturn( $post_id );
+		$post->method( 'get_type' )->willReturn( 'variation' );
+
+		$this->wpml_post_translations->method( 'get_element_trid' )->with( $post_id )->willReturn( $post_trid );
+		$this->wpml_post_translations->method( 'get_element_translations' )->with( $post_id, $post_trid )->willReturn( [ $lang => $post_translated ] );
+
+		$this->sitepress->expects( $this->once() )->method( 'copy_custom_fields' )->with( $post_id, $post_translated );
+		$this->sync_variations_data->expects( $this->once() )->method( 'sync_product_variations' )->with( $post_id, $post_translated, $lang );
+		$this->attributes->expects( $this->once() )->method( 'sync_default_product_attr' )->with( $post_id, $post_translated, $lang );
+
+		$subject = $this->get_subject();
+		$subject->insert( $post, $request, true );
 	}
 
 }
