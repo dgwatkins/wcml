@@ -60,7 +60,6 @@
         "otgs/unit-tests-framework": "~1.2.0",
         "otgs/wp-plugin-version": "dev-master",
         "roave/security-advisories": "dev-master",
-        "sebastian/phpcpd": "^3.0",
         "wpml/collect": "dev-wpml-collect-rename",
         "wpml/fp": "0.1.4",
         "wpml/page-builders-gutenberg": "dev-develop",
