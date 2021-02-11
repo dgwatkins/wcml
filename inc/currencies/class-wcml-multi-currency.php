@@ -502,12 +502,15 @@ class WCML_Multi_Currency {
 		$this->client_currency = $this->maybe_get_currency_by_geolocation( $this->client_currency );
 
 		$client_currency_language = wcml_user_store_get( self::CURRENCY_LANGUAGE_STORAGE_KEY );
-		if ( is_null( $this->client_currency ) && $client_currency_language && $current_language !== $client_currency_language ) {
 
+		// use language default currency
+		if ( is_null( $this->client_currency ) && 
+			 ( empty( $woocommerce->session ) || ! $woocommerce->session->get( 'client_currency_switched' ) ) &&
+			 ( is_null( $client_currency_language ) || ( $client_currency_language !== $current_language ) ) ) {
+			
 			$language_default_currency = $this->get_language_default_currency( $current_language );
 
 			if ( $language_default_currency ) {
-
 				$current_currency  = wcml_user_store_get( self::CURRENCY_STORAGE_KEY );
 				$prevent_switching = apply_filters( 'wcml_switch_currency_exception', false, $current_currency, $language_default_currency, true );
 
