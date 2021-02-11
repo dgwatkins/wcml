@@ -436,7 +436,7 @@ class WCML_Multi_Currency {
 	}
 
 	public function get_client_currency() {
-		global $sitepress;
+		global $sitepress, $woocommerce;
 
 		if( \WCML\Rest\Functions::isRestApiRequest() ){
 			return $this->get_rest_currency();
