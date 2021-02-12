@@ -1018,6 +1018,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		);
 		update_post_meta( $product_with_resources->ID, '_wc_booking_has_resources', 'yes' );
 		$bookable_resource = get_post( $bookable_resource_id );
+		wp_cache_flush();
 		$expected = array(
 			'contents' => array(
 				'wc_bookings:resource:' . $bookable_resource->ID . ':name' => array(
@@ -1222,6 +1223,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	private function create_bookable_product( $lang, $trid = false ) {
 		$product_id = wpml_test_insert_post( $lang, 'product', $trid, random_string() );
 		wp_set_post_terms( $product_id, array( (int) $this->booking_term['term_id'] ), 'product_type' );
+		wp_cache_flush(); // This is required because the post terms are cached in WC_Product_Data_Store_CPT::get_product_type
 
 		return $product_id;
 	}

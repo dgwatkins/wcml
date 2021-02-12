@@ -680,6 +680,7 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 		);
 		$this->test_data->translated_variable_product_in_bundle = $this->wcml_helper->add_variable_product( $variation_data, $variable_product_in_bundle->trid, $this->second_language );
 
+		wp_cache_flush(); // This is required because the post terms are cached in WC_Product_Data_Store_CPT::get_product_type
 		$allowed_variations = array();
 		foreach( wc_get_product( $variable_product_in_bundle->id )->get_available_variations() as $variation_data ){
 			$allowed_variations[] = $variation_data[ 'variation_id' ];
