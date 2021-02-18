@@ -1,5 +1,6 @@
 <?php
 
+use WPML\FP\Obj;
 use function WPML\Container\make;
 use WCML\MultiCurrency\Geolocation;
 use WCML\MultiCurrency\ExchangeRateServices\Service;
@@ -653,6 +654,11 @@ class WCML_Multi_Currency {
 	}
 
 	public function switch_currency() {
+        /**
+         * @global SitePress $GLOBALS['sitepress']
+         * @name $sitepress
+         */
+	    global $sitepress;
 
 		$currency     = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$force_switch = filter_input( INPUT_POST, 'force_switch', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
@@ -663,6 +669,12 @@ class WCML_Multi_Currency {
 
 		if ( ! $force_switch && apply_filters( 'wcml_switch_currency_exception', false, $from_currency, $currency ) ) {
 			die();
+		}
+
+		$lang = Obj::prop( 'lang', $params );
+
+		if ( $lang ) {
+		    $sitepress->switch_lang( $lang );
 		}
 
 		$this->set_client_currency( $currency );
@@ -721,7 +733,7 @@ class WCML_Multi_Currency {
 	 */
 	public function set_request_currency( $response, $handler, $request ) {
 
-		$this->rest_currency = \WPML\FP\Obj::prop( 'currency', $request->get_params() );
+		$this->rest_currency = Obj::prop( 'currency', $request->get_params() );
 
 		return $response;
 	}
