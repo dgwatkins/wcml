@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Fns;
+
 /**
  * @group email
  */
@@ -355,6 +357,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @group wcml-3545
 	 */
 	public function it_should_get_email_language_from_admin_user_settings_for_new_order_admin_email(){
 
@@ -364,6 +367,8 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$user = new stdClass();
 		$user->ID = 1;
 		$user_language = 'en';
+
+		\WP_Mock::expectFilterAdded( 'woocommerce_new_order_email_allows_resend', Fns::always( true ) );
 
 		WP_Mock::userFunction( 'get_user_by', array(
 			'args' => array( 'email', $recipient ),
