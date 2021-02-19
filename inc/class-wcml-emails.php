@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Fns;
+
 class WCML_Emails {
 
 	const PRIORITY_AFTER_STATUS_CHANGE_EMAIL = 11;
@@ -455,6 +457,8 @@ class WCML_Emails {
 
 		if ( $email ) {
 			$recipients = explode( ',', $email->get_recipient() );
+			add_filter( 'woocommerce_new_order_email_allows_resend', Fns::always( true ) );
+
 			foreach ( $recipients as $recipient ) {
 				/**
 				 * Filter new order admin email language for recipient
