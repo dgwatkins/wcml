@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Obj;
+
 /**
  * Class WCML_Dynamic_Pricing
  */
@@ -123,9 +125,12 @@ class WCML_Dynamic_Pricing {
 		if ( ! $_product || ! $cat_ids || ! $this->has_requirements( $dynamic_pricing ) ) {
 			return $process_discounts;
 		}
-
 		$taxonomy   = $this->get_taxonomy( $dynamic_pricing );
-		$product_id = apply_filters( 'wpml_object_id', $_product->get_id(), 'product', true );
+		$product_id = 'product_variation' === Obj::prop( 'post_type', $_product )
+			? $_product->get_parent_id()
+			: $_product->get_id();
+
+		$product_id = apply_filters( 'wpml_object_id', $product_id, 'product', true );
 
 		return is_object_in_term( $product_id, $taxonomy, $this->adjust_cat_ids( $cat_ids, $taxonomy ) );
 	}

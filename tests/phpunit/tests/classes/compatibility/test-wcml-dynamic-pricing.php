@@ -159,8 +159,9 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 	 *
 	 * @param \WC_Dynamic_Pricing_Simple_Base $dynamic_pricing_instance
 	 * @param array                           $properties
+	 * @param string                          $post_type
 	 */
-	public function it_does_process_discounts( WC_Dynamic_Pricing_Simple_Base $dynamic_pricing_instance, $properties = [] ) {
+	public function it_does_process_discounts( WC_Dynamic_Pricing_Simple_Base $dynamic_pricing_instance, $properties = [], $post_type = 'product' ) {
 		$taxonomy = 'product_cat';
 
 		foreach ( $properties as $property => $value ) {
@@ -170,12 +171,14 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 			}
 		}
 
+		$product = $this->get_product_mock();
 
-		/** @var WC_Product|PHPUnit_Framework_MockObject_MockBuilder $product */
-		$product = $this->getMockBuilder( 'WC_Product' )->disableOriginalConstructor()->setMethods( [ 'get_id' ] )->getMock();
+		$product_id = 123;
+		$parent_id  = 99;
 
-		$product_id = 1;
 		$product->method( 'get_id' )->willReturn( $product_id );
+		$product->method( 'get_parent_id' )->willReturn( $parent_id );
+		$product->post_type = $post_type;
 
 		$cat_ids = [ 1, 2, 3 ];
 
@@ -183,7 +186,11 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 
 		WP_Mock::userFunction( 'is_object_in_term', [
 			'times'  => 1,
-			'args'   => [ $product_id, $taxonomy, $cat_ids ],
+			'args'   => [
+			    'product_variation' === $post_type ? $parent_id : $product_id,
+			    $taxonomy,
+			    $cat_ids
+            ],
 			'return' => true,
 		] );
 
@@ -196,8 +203,9 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 	 *
 	 * @param \WC_Dynamic_Pricing_Simple_Base $dynamic_pricing_instance
 	 * @param array                           $properties
+	 * @param string                          $post_type
 	 */
-	public function it_does_process_discounts_for_translations( WC_Dynamic_Pricing_Simple_Base $dynamic_pricing_instance, $properties = [] ) {
+	public function it_does_process_discounts_for_translations( WC_Dynamic_Pricing_Simple_Base $dynamic_pricing_instance, $properties = [], $post_type = 'product' ) {
 		$taxonomy = 'product_cat';
 
 		foreach ( $properties as $property => $value ) {
@@ -207,17 +215,21 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 			}
 		}
 
+		$product = $this->get_product_mock();
+		$product->post_type = $post_type;
 
-		/** @var WC_Product|PHPUnit_Framework_MockObject_MockBuilder $product */
-		$product = $this->getMockBuilder( 'WC_Product' )->disableOriginalConstructor()->setMethods( [ 'get_id' ] )->getMock();
+		$product_id = 123;
+		$parent_id  = 99;
 
-		$product_id = 1;
 		$product->method( 'get_id' )->willReturn( $product_id );
+		$product->method( 'get_parent_id' )->willReturn( $parent_id );
 
-		$tr_product_id = 2;
+		$tr_product_id = 246;
+		$tr_parent_id  = 198;
+
 		WP_Mock::onFilter( 'wpml_object_id' )
-			->with( $product_id, 'product', true )
-			->reply( $tr_product_id );
+			->with( 'product_variation' === $post_type ? $parent_id : $product_id, 'product', true )
+			->reply( 'product_variation' === $post_type ? $tr_parent_id : $tr_product_id );
 
 		$cat_ids    = [ 1, 2, 3 ];
 		$tr_cat_ids = [ 4, 5, 6 ];
@@ -231,7 +243,11 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 
 		WP_Mock::userFunction( 'is_object_in_term', [
 			'times'  => 1,
-			'args'   => [ $tr_product_id, $taxonomy, $tr_cat_ids ],
+			'args'   => [
+			    'product_variation' === $post_type ? $tr_parent_id : $tr_product_id,
+			    $taxonomy,
+			    $tr_cat_ids
+            ],
 			'return' => true,
 		] );
 
@@ -241,19 +257,19 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 	public function dp_ignored_dynamic_pricing_instances() {
 		return [
 			'WC_Dynamic_Pricing_Simple_Category'   => [
-				$this->getMockBuilder( 'WC_Dynamic_Pricing_Simple_Base' )->setMockClassName( 'WC_Dynamic_Pricing_Simple_Category' )->disableOriginalConstructor()->getMock(),
+				$this->get_dynamic_pricing_mock( 'WC_Dynamic_Pricing_Simple_Category' ),
 				[
 					'available_rulesets' => [],
 				],
 			],
 			'WC_Dynamic_Pricing_Simple_Membership' => [
-				$this->getMockBuilder( 'WC_Dynamic_Pricing_Simple_Base' )->setMockClassName( 'WC_Dynamic_Pricing_Simple_Membership' )->disableOriginalConstructor()->getMock(),
+                $this->get_dynamic_pricing_mock( 'WC_Dynamic_Pricing_Simple_Membership' ),
 				[
 					'available_rulesets' => [],
 				],
 			],
 			'WC_Dynamic_Pricing_Simple_Product'    => [
-				$this->getMockBuilder( 'WC_Dynamic_Pricing_Simple_Base' )->setMockClassName( 'WC_Dynamic_Pricing_Simple_Product' )->disableOriginalConstructor()->getMock(),
+				$this->get_dynamic_pricing_mock( 'WC_Dynamic_Pricing_Simple_Product' ),
 				[
 					'available_rulesets' => [],
 				],
@@ -264,20 +280,20 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 	public function dp_included_dynamic_pricing_instances() {
 		return [
 			'WC_Dynamic_Pricing_Advanced_Category' => [
-				$this->getMockBuilder( 'WC_Dynamic_Pricing_Simple_Base' )->setMockClassName( 'WC_Dynamic_Pricing_Advanced_Category' )->disableOriginalConstructor()->getMock(),
+				$this->get_dynamic_pricing_mock( 'WC_Dynamic_Pricing_Advanced_Category' ),
 				[
 					'adjustment_sets' => [ 1, 2, 3 ],
 				],
 			],
 			'WC_Dynamic_Pricing_Advanced_Taxonomy' => [
-				$this->getMockBuilder( 'WC_Dynamic_Pricing_Simple_Base' )->setMockClassName( 'WC_Dynamic_Pricing_Advanced_Taxonomy' )->disableOriginalConstructor()->getMock(),
+				$this->get_dynamic_pricing_mock( 'WC_Dynamic_Pricing_Advanced_Taxonomy' ),
 				[
 					'adjustment_sets' => [ 1, 2, 3 ],
 					'taxonomy'        => 'a-taxonomy'
 				],
 			],
 			'WC_Dynamic_Pricing_Advanced_Totals'   => [
-				$this->getMockBuilder( 'WC_Dynamic_Pricing_Simple_Base' )->setMockClassName( 'WC_Dynamic_Pricing_Advanced_Totals' )->disableOriginalConstructor()->getMock(),
+				$this->get_dynamic_pricing_mock( 'WC_Dynamic_Pricing_Advanced_Totals' ),
 				[
 					'adjustment_sets' => [ 1, 2, 3 ],
 				],
@@ -289,32 +305,51 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 				],
 			],
 			'WC_Dynamic_Pricing_Simple_Category'   => [
-				$this->getMockBuilder( 'WC_Dynamic_Pricing_Simple_Base' )->setMockClassName( 'WC_Dynamic_Pricing_Simple_Category' )->disableOriginalConstructor()->getMock(),
+				$this->get_dynamic_pricing_mock( 'WC_Dynamic_Pricing_Simple_Category' ),
 				[
 					'available_rulesets' => [ 1, 2, 3 ],
 				],
 			],
 			'WC_Dynamic_Pricing_Simple_Membership' => [
-				$this->getMockBuilder( 'WC_Dynamic_Pricing_Simple_Base' )->setMockClassName( 'WC_Dynamic_Pricing_Simple_Membership' )->disableOriginalConstructor()->getMock(),
+				$this->get_dynamic_pricing_mock( 'WC_Dynamic_Pricing_Simple_Membership' ),
 				[
 					'available_rulesets' => [ 1, 2, 3 ],
 				],
 			],
 			'WC_Dynamic_Pricing_Simple_Product'    => [
-				$this->getMockBuilder( 'WC_Dynamic_Pricing_Simple_Base' )->setMockClassName( 'WC_Dynamic_Pricing_Simple_Product' )->disableOriginalConstructor()->getMock(),
+				$this->get_dynamic_pricing_mock( 'WC_Dynamic_Pricing_Simple_Product' ),
 				[
 					'available_rulesets' => [ 1, 2, 3 ],
 				],
 			],
 			'WC_Dynamic_Pricing_Simple_Taxonomy'   => [
-				$this->getMockBuilder( 'WC_Dynamic_Pricing_Simple_Base' )->setMockClassName( 'WC_Dynamic_Pricing_Simple_Taxonomy' )->disableOriginalConstructor()->getMock(),
+				$this->get_dynamic_pricing_mock( 'WC_Dynamic_Pricing_Simple_Taxonomy' ),
 				[
 					'available_rulesets' => [ 1, 2, 3 ],
 					'taxonomy'           => 'a-taxonomy',
 				],
 			],
+			'With a product variation'   => [
+				$this->get_dynamic_pricing_mock( 'WC_Dynamic_Pricing_Simple_Taxonomy' ),
+				[
+					'available_rulesets' => [ 1, 2, 3 ],
+					'taxonomy'           => 'a-taxonomy',
+				],
+                'product_variation',
+			],
 		];
 	}
+
+	/**
+	 * @param $classname
+	 * @return \PHPUnit\Framework\MockObject\MockObject|PHPUnit_Framework_MockObject_MockObject|WC_Dynamic_Pricing_Simple_Base
+	 */
+	private function get_dynamic_pricing_mock( $classname ) {
+	    return $this->getMockBuilder( 'WC_Dynamic_Pricing_Simple_Base' )
+            ->setMockClassName( $classname )
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
 
 	/**
 	 * @test
@@ -347,4 +382,14 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 
 		$this->assertEquals( $expected, $subject->translate_collector_args( $modules ) );
 	}
+
+	/**
+	 * @return \PHPUnit\Framework\MockObject\MockObject|PHPUnit_Framework_MockObject_MockObject|WC_Product
+	 */
+	private function get_product_mock() {
+        return $this->getMockBuilder( 'WC_Product' )
+            ->disableOriginalConstructor()
+            ->setMethods( [ 'get_id', 'get_parent_id' ] )
+            ->getMock();
+    }
 }
