@@ -40,6 +40,9 @@ class WCML_Requests {
 			$wcml_sync_media = empty( $_POST['sync_media'] ) ? 0 : 1;
 			$woocommerce_wpml->update_setting( 'sync_media', $wcml_sync_media, true );
 
+			$reviews_in_all_languages = ! empty( $_POST['reviews_in_all_languages'] );
+			$woocommerce_wpml->update_setting( 'reviews_in_all_languages', $reviews_in_all_languages, true );
+
 			$wcml_file_path_sync = filter_input( INPUT_POST, 'wcml_file_path_sync', FILTER_SANITIZE_NUMBER_INT );
 
 			$woocommerce_wpml->settings['file_path_sync'] = $wcml_file_path_sync;
