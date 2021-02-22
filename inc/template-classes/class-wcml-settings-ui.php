@@ -71,6 +71,15 @@ class WCML_Settings_UI extends WCML_Templates_Factory {
 					'label_diff' => __( 'Add separate download files for translations when translating products', 'woocommerce-multilingual' ),
 				],
 
+				'product_reviews' => [
+					'heading' => __( 'Product reviews', 'woocommerce-multilingual' ),
+					'tip' => __( 'Define how to display product reviews on the product page by default. The customer will be still able to filter reviews by language.', 'woocommerce-multilingual' ),
+					'reviews_in_all_languages' => [
+						'value' => $this->woocommerce_wpml->get_setting( 'reviews_in_all_languages', false ),
+						'label' => __( 'By default, show reviews in all languages', 'woocommerce-multilingual' ),
+					],
+				],
+
 				'cart_sync'             => [
 					'tip'                        => __( 'You can choose to clear the cart contents when you change language or currency in case you have problems in cart or checkout page', 'woocommerce-multilingual' ),
 					'heading'                    => __( 'Cart', 'woocommerce-multilingual' ),
