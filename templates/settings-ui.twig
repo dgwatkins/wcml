@@ -114,6 +114,29 @@
 
     </div> <!-- .wcml-section -->
 
+    <div class="wcml-section">
+
+        <div class="wcml-section-header">
+            <h3>
+                {{ form.product_reviews.heading }}
+                <i class="otgs-ico-help wcml-tip" data-tip="{{ form.product_reviews.tip }}"></i>
+            </h3>
+        </div>
+
+        <div class="wcml-section-content">
+
+            <ul>
+                <li>
+                    <input type="checkbox" name="reviews_in_all_languages" value="1"
+                            {% if form.product_reviews.reviews_in_all_languages.value == 1 %} checked="checked"{% endif %} id="wcml_reviews_in_all_languages" />
+                    <label for="wcml_reviews_in_all_languages">{{ form.product_reviews.reviews_in_all_languages.label }}</label>
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+
 
     <div class="wcml-section cart-sync-section">
         <div class="wcml-section-header">

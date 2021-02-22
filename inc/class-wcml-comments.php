@@ -1,6 +1,7 @@
 <?php
 
 use WPML\FP\Fns;
+use WPML\FP\Obj;
 
 class WCML_Comments {
 
@@ -202,29 +203,49 @@ class WCML_Comments {
 	public function comments_link() {
 
 		if ( is_product() ) {
-			$current_url      = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-			$current_language = $this->sitepress->get_current_language();
-
-			if ( ! isset( $_GET['clang'] ) || $current_language === $_GET['clang'] ) {
-				$comments_link                  = add_query_arg( [ 'clang' => 'all' ], $current_url );
-				$all_languages_reviews_count    = $this->get_reviews_count( 'all' );
-				$current_language_reviews_count = $this->get_reviews_count();
-
-				if ( $all_languages_reviews_count > $current_language_reviews_count ) {
-					$comments_link_text = sprintf( __( 'Show reviews in all languages  (%s)', 'woocommerce-multilingual' ), $all_languages_reviews_count );
-				}
-			} elseif ( 'all' === $_GET['clang'] ) {
-
-				$current_language_reviews_count = $this->get_reviews_count();
-				$comments_link                  = add_query_arg( [ 'clang' => $current_language ], $current_url );
-				$language_details               = $this->sitepress->get_language_details( $current_language );
-				$comments_link_text             = sprintf( __( 'Show only reviews in %1$s (%2$s)', 'woocommerce-multilingual' ), $language_details['display_name'], $current_language_reviews_count );
-			}
-
-			if ( isset( $comments_link_text, $comments_link ) && $comments_link_text ) {
-				echo '<p><a id="lang-comments-link" href="' . $comments_link . '" rel="nofollow" >' . $comments_link_text . '</a></p>';
+			if ( $this->is_reviews_in_all_languages( get_the_ID() ) ) {
+				$this->show_link_to_current_language_reviews();
+			} else {
+				$this->show_link_to_all_reviews();
 			}
 		}
+	}
+
+	/**
+	 * @return bool
+	 */
+	private function is_reviews_in_all_languages_by_default_selected() {
+		return (bool) $this->woocommerce_wpml->get_setting( 'reviews_in_all_languages', false );
+	}
+
+	/**
+	 * Echoes link to product page with all reviews.
+	 */
+	private function show_link_to_all_reviews() {
+		$comments_link                  = add_query_arg( [ 'clang' => 'all' ] );
+		$all_languages_reviews_count    = $this->get_reviews_count( 'all' );
+		$current_language_reviews_count = $this->get_reviews_count();
+
+		if ( $all_languages_reviews_count > $current_language_reviews_count ) {
+			$comments_link_text = sprintf( __( 'Show reviews in all languages  (%s)', 'woocommerce-multilingual' ), $all_languages_reviews_count );
+			echo '<p><a id="lang-comments-link" href="' . $comments_link . '" rel="nofollow" class="all-languages-reviews" >' . $comments_link_text . '</a></p>';
+		}
+	}
+
+	/**
+	 * Echoes link to product page with reviews in current language.
+	 */
+	private function show_link_to_current_language_reviews() {
+
+		$current_language_reviews_count = $this->get_reviews_count();
+		$current_language = $this->sitepress->get_current_language();
+
+		$comments_link                  = add_query_arg( [ 'clang' => $current_language ] );
+		$language_details               = $this->sitepress->get_language_details( $current_language );
+		$comments_link_text             = sprintf( __( 'Show only reviews in %1$s (%2$s)', 'woocommerce-multilingual' ), $language_details['display_name'], $current_language_reviews_count );
+
+		echo '<p><a id="lang-comments-link" href="' . $comments_link . '" rel="nofollow" class="current-language-reviews" >' . $comments_link_text . '</a></p>';
+
 	}
 
 	/**
@@ -268,8 +289,12 @@ class WCML_Comments {
 	 * @return bool
 	 */
 	public function is_reviews_in_all_languages( $product_id ) {
+		$reviewsLang = Obj::prop( 'clang', $_GET );
 
-		return isset( $_GET['clang'] ) && 'all' === $_GET['clang'] && 'product' === get_post_type( $product_id );
+		return (
+				'all' === $reviewsLang
+				|| ( ! $reviewsLang && $this->is_reviews_in_all_languages_by_default_selected() )
+			) && 'product' === get_post_type( $product_id );
 	}
 
 	/**

@@ -307,160 +307,95 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$this->assertEquals( $expected_comments_clauses_where, $filtered_comments_clauses['where']);
 		
 	}
-	
+
 	/**
 	 * @test
+	 * @dataProvider comments_link_data
 	 */
-	public function comments_link(){
+	public function comments_link( $is_product, $clang_in_current_url, $default_all, $expected ) {
+		if ( $clang_in_current_url ) {
+			$_GET[ 'clang' ] = $clang_in_current_url;
+		}
+		$_SERVER['HTTP_HOST'] = 'example.com';
+		$_SERVER['REQUEST_URI'] = '/foo/';
 
-		$current_language = rand_str();
-		$language_details = array();
-		$language_details['display_name'] = rand_str();
+		$post_id = 10;
+		$all_reviews = 100;
+		$reviews_in_current_language = 11;
 
-		$_SERVER['HTTP_HOST']   = $this->http_host;
-		$_SERVER['REQUEST_URI'] = $this->request_uri;
-		$url = $this->scheme . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+			->disableOriginalConstructor()
+			->setMethods( array( 'get_setting' ) )
+			->getMock();
+		$woocommerce_wpml->method( 'get_setting' )->willReturn( $default_all );
 
 		$sitepress = $this->getMockBuilder( 'SitePress' )
-		                  ->disableOriginalConstructor()
-		                  ->setMethods( array( 'get_current_language', 'get_language_details' ) )
-		                  ->getMock();
+			->disableOriginalConstructor()
+			->setMethods( array( 'get_current_language', 'get_language_details' ) )
+			->getMock();
+		$sitepress->method( 'get_language_details' )->with( 'en' )->willReturn( [ 'display_name' => 'English' ] );
+		$sitepress->method( 'get_current_language' )->willReturn( 'en' );
 
-		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
-		$sitepress->expects( $this->once() )->method( 'get_language_details' )->with( $current_language )->willReturn( $language_details );
 
-		$subject = $this->get_subject( false, $sitepress );
+		$subject = $this->get_subject( $woocommerce_wpml, $sitepress );
 
-		\WP_Mock::userFunction( 'is_product', array(
-			'return' => true
-		));
-
-		\WP_Mock::userFunction( 'is_ssl', array(
-			'times'   => 2,
+		WP_Mock::userFunction( 'is_ssl', [
 			'return' => false
-		));
+		] );
 
-		\WP_Mock::userFunction( 'remove_filter', array(
+		WP_Mock::userFunction( 'is_product', [
+			'return' => $is_product
+		] );
+
+		WP_Mock::userFunction( 'get_the_ID', [
+			'return' => $post_id
+		] );
+
+		WP_Mock::userFunction( 'add_query_arg', [
+			'args' => [ [ 'clang' => 'all' ] ],
+			'return' => 'http://example.com/foo/?clang=all'
+		] );
+
+		WP_Mock::userFunction( 'add_query_arg', [
+			'args' => [ [ 'clang' => 'en' ] ],
+			'return' => 'http://example.com/foo/?clang=en'
+		] );
+
+		WP_Mock::passthruFunction( 'remove_filter' );
+
+		WP_Mock::userFunction( 'metadata_exists', [
 			'return' => true
-		));
+		] );
 
-		$product_id = mt_rand( 1, 100 );
+		WP_Mock::userFunction( 'get_post_meta', [
+			'return_in_order' => [ $all_reviews, $reviews_in_current_language ]
+		] );
 
-		\WP_Mock::userFunction( 'get_the_ID', array(
-			'times'   => 6,
-			'return' => $product_id
-		));
+		WP_Mock::userFunction( 'get_post_type', [
+			'return' => $is_product ? 'product' : 'not_product'
+		] );
 
-		$this->comments_link_to_current_language( $subject, $product_id, $url, $current_language, $language_details );
-		$this->comments_link_to_all_languages( $subject, $product_id, $url, $current_language );
+		$this->expectOutputRegex( $expected );
 
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_should_not_filter_comments_link_for_non_product(){
-
-		\WP_Mock::userFunction( 'is_product', array(
-			'return' => false
-		));
-
-		$subject = $this->get_subject();
 		$subject->comments_link();
+
+		unset( $_GET['clang'] );
+
 	}
 
-	private function comments_link_to_current_language( $subject, $product_id, $url, $current_language, $language_details ){
-
-		$_GET['clang'] = 'all';
-		$new_query_args = array( 'clang' => $current_language );
-		$expected_url   = $url . '?' . http_build_query( $new_query_args );
-		$wc_review_count = mt_rand( 201, 300 );
-
-		\WP_Mock::userFunction( 'add_query_arg', array(
-			'args'   => array( $new_query_args, $url ),
-			'return' => $expected_url,
-		));
-
-		\WP_Mock::userFunction( 'metadata_exists', array(
-			'args'   => array( 'post', $product_id, '_wcml_review_count' ),
-			'return' => $expected_url,
-		));
-
-		\WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => array( $product_id, '_wc_review_count', true ),
-			'return' => $wc_review_count
-		));
-
-		ob_start();
-		$subject->comments_link( array() );
-		$link = ob_get_clean();
-
-		$expected_link = '<p><a id="lang-comments-link" href="' . $expected_url . '" rel="nofollow" >Show only reviews in '.$language_details['display_name'].' ('.$wc_review_count.')</a></p>';
-		$this->assertEquals( $expected_link, $link );
+	public function comments_link_data() {
+			// $is_product, $clang_in_current_url, $default_all, $expected
+		return [
+			[ true, null, 0, '/all-languages-reviews/' ],
+			[ true, null, 1, '/current-language-reviews/' ],
+			[ true, 'en', 0, '/all-languages-reviews/' ],
+			[ true, 'all', 0, '/current-language-reviews/' ],
+			[ true, 'en', 1, '/all-languages-reviews/' ],
+			[ true, 'all', 1, '/current-language-reviews/' ],
+			[ 'false', null, 0, '//' ],
+		];
 	}
 
-	private function comments_link_to_current_language_when_link_should_be_indexed( $subject, $product_id, $url, $current_language, $language_details ){
-
-		$_GET['clang'] = 'all';
-		$new_query_args = array( 'clang' => $current_language );
-		$expected_url   = $url . '?' . http_build_query( $new_query_args );
-		$wc_review_count = mt_rand( 201, 300 );
-
-		\WP_Mock::userFunction( 'add_query_arg', array(
-			'args'   => array( $new_query_args, $url ),
-			'return' => $expected_url,
-		));
-
-		\WP_Mock::userFunction( 'metadata_exists', array(
-			'args'   => array( 'post', $product_id, '_wcml_review_count' ),
-			'return' => $expected_url,
-		));
-
-		\WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => array( $product_id, '_wc_review_count', true ),
-			'return' => $wc_review_count
-		));
-
-		\WP_Mock::onFilter( 'wcml_noindex_all_reviews_page' )->with( true )->reply( false );
-
-		ob_start();
-		$subject->comments_link( array() );
-		$link = ob_get_clean();
-
-		$expected_link = '<p><a id="lang-comments-link" href="' . $expected_url . '">Show only reviews in '.$language_details['display_name'].' ('.$wc_review_count.')</a></p>';
-		$this->assertEquals( $expected_link, $link );
-	}
-
-	private function comments_link_to_all_languages( $subject, $product_id, $url, $current_language ){
-
-		$_GET['clang'] = $current_language;
-		$new_query_args = array( 'clang' => 'all' );
-		$expected_url   = $url . '?' . http_build_query( $new_query_args );
-		$current_review_count = mt_rand( 201, 300 );
-		$all_wcml_review_count = mt_rand( 301, 400 );
-
-		\WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => array( $product_id, '_wc_review_count', true ),
-			'return' => $current_review_count
-		));
-
-		\WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => array( $product_id, '_wcml_review_count', true ),
-			'return' => $all_wcml_review_count
-		));
-
-		\WP_Mock::userFunction( 'add_query_arg', array(
-			'args'   => array( $new_query_args, $url ),
-			'return' => $expected_url,
-		));
-
-		ob_start();
-		$subject->comments_link( array() );
-		$link = ob_get_clean();
-
-		$expected_link = '<p><a id="lang-comments-link" href="' . $expected_url . '" rel="nofollow" >Show reviews in all languages  ('.$all_wcml_review_count.')</a></p>';
-		$this->assertEquals( $expected_link, $link );
-	}
 	
 	/**
 	 * @test
