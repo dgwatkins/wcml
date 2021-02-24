@@ -65,7 +65,7 @@ class WCML_Endpoints {
 			foreach ( $endpoint_keys as $endpoint_key ) {
 
 				$existing_string_id = $this->wpdb->get_var(
-					$this->wpdb->prepare( "SELECT id FROM {$this->wpdb->prefix}icl_strings 
+					$this->wpdb->prepare( "SELECT id FROM {$this->wpdb->prefix}icl_strings
 											WHERE context = %s AND name = %s",
 						WPML_Endpoints_Support::STRING_CONTEXT, $endpoint_key )
 				);
@@ -73,7 +73,7 @@ class WCML_Endpoints {
 				if( $existing_string_id ){
 
 					$existing_wcml_string_id = $this->wpdb->get_var(
-						$this->wpdb->prepare( "SELECT id FROM {$this->wpdb->prefix}icl_strings 
+						$this->wpdb->prepare( "SELECT id FROM {$this->wpdb->prefix}icl_strings
 											WHERE context = %s AND name = %s",
 							'WooCommerce Endpoints', $endpoint_key )
 					);
@@ -224,7 +224,7 @@ class WCML_Endpoints {
 
 			$endpoint_not_pagename         = isset( $q->query['pagename'] ) && urldecode( $q->query['pagename'] ) != $endpoint_in_url;
 			$endpoint_url_not_in_endpoints = ! in_array( $endpoint_in_url, $endpoints );
-			$uri_vars_not_in_query_vars    = ! in_array( urldecode( prev( $uri_vars ) ), $q->query_vars );
+			$uri_vars_not_in_query_vars    = ! array_key_exists( urldecode( prev( $uri_vars ) ), $q->query_vars );
 
 			if ( $endpoint_not_pagename && $endpoint_url_not_in_endpoints && is_numeric( $endpoint_in_url ) && $uri_vars_not_in_query_vars ) {
 				$wp_query->set_404();
