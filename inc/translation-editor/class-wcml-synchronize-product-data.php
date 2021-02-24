@@ -34,6 +34,8 @@ class WCML_Synchronize_Product_Data {
 	public function add_hooks() {
 		if ( is_admin() || wpml_is_rest_request() ) {
 			add_action( 'icl_pro_translation_completed', [ $this, 'icl_pro_translation_completed' ] );
+			add_action( 'save_post', 'icl_cache_clear', PHP_INT_MAX );
+			add_action( 'save_post', 'wp_cache_flush', PHP_INT_MAX );
 		}
 
 		if ( is_admin() ) {
@@ -95,7 +97,7 @@ class WCML_Synchronize_Product_Data {
 			$post_type !== 'product' ||
 			empty( $original_product_id ) ||
 			isset( $_POST['autosave'] ) ||
-			( $pagenow !== 'post.php' && $pagenow !== 'post-new.php' && $pagenow !== 'admin.php' && ! $ajax_call && ! $api_call ) ||
+			//( $pagenow !== 'post.php' && $pagenow !== 'post-new.php' && $pagenow !== 'admin.php' && ! $ajax_call && ! $api_call ) ||
 			$trashing ||
 			$auto_draft
 		) {

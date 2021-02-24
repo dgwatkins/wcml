@@ -92,6 +92,8 @@ class Languages extends Handler {
 	 *
 	 */
 	public function insert( $object, $request, $creating ) {
+	    /** @var \woocommerce_wpml $woocommerce_wpml */
+	    global $woocommerce_wpml;
 		$data = $request->get_params();
 
 		if ( isset( $data['lang'] ) && in_array( $request->get_method(), array( 'POST', 'PUT' ), true ) ) {
@@ -112,6 +114,7 @@ class Languages extends Handler {
 
 			$this->sitepress->set_element_language_details( $object->get_id(), 'post_'.get_post_type( $object->get_id() ), $trid, $data['lang'] );
 			wpml_tm_save_post( $object->get_id(), get_post( $object->get_id() ), ICL_TM_COMPLETE );
+			$woocommerce_wpml->sync_product_data->synchronize_products( $object->get_id(), get_post( $object->get_id() ) );
 
 			if ( isset( $data['translation_of'] ) ) {
 				// needs run after set_element_language_details
