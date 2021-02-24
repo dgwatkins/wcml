@@ -19,12 +19,13 @@ class TestFactory extends \OTGS_TestCase {
 		$woocommerce_wpml->multi_currency         = \Mockery::mock( '\WCML_Multi_Currency' );
 		$woocommerce_wpml->multi_currency->orders = \Mockery::mock( '\WCML_Multi_Currency_Orders' );
 		$woocommerce_wpml->products               = \Mockery::mock( '\WCML_Products' );
-		$woocommerce_wpml->sync_variations_data   = \Mockery::mock( '\WCML_Synchronize_Variations_Data' );
+		$woocommerce_wpml->sync_product_data      = \Mockery::mock( '\WCML_Synchronize_Product_Data' );
 		$woocommerce_wpml->terms                  = \Mockery::mock( '\WCML_Terms' );
 
 		$wpml_post_translations = \Mockery::mock( '\WPML_Post_Translation' );
 		$wpml_term_translations = \Mockery::mock( '\WPML_Term_Translation' );
 		$sitepress              = \Mockery::mock( '\SitePress' );
+		$sitepress->shouldReceive( 'get_settings' )->andReturn( [] );
 		$wpml_query_filter      = \Mockery::mock( '\WPML_Query_Filter' );
 		$wpdb                   = \Mockery::mock( '\wpdb' );
 	}

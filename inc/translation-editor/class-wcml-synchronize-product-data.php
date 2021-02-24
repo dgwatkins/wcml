@@ -66,8 +66,12 @@ class WCML_Synchronize_Product_Data {
 
 	/**
 	 * This function takes care of synchronizing products
+	 *
+	 * @param int     $post_id
+	 * @param WP_Post $post
+	 * @param bool    $force_valid_context
 	 */
-	public function synchronize_products( $post_id, $post ) {
+	public function synchronize_products( $post_id, $post, $force_valid_context = false ) {
 		global $pagenow, $wp;
 
 		$original_language   = $this->woocommerce_wpml->products->get_original_product_language( $post_id );
@@ -87,15 +91,20 @@ class WCML_Synchronize_Product_Data {
 		}
 
 		// exceptions.
-		$ajax_call  = ( ! empty( $_POST['icl_ajx_action'] ) && 'make_duplicates' === $_POST['icl_ajx_action'] );
-		$api_call   = ! empty( $wp->query_vars['wc-api-version'] );
-		$auto_draft = 'auto-draft' === $post->post_status;
-		$trashing   = isset( $_GET['action'] ) && 'trash' === $_GET['action'];
+		$ajax_call        = ( ! empty( $_POST['icl_ajx_action'] ) && 'make_duplicates' === $_POST['icl_ajx_action'] );
+		$api_call         = ! empty( $wp->query_vars['wc-api-version'] );
+		$auto_draft       = 'auto-draft' === $post->post_status;
+		$trashing         = isset( $_GET['action'] ) && 'trash' === $_GET['action'];
+		$is_valid_context = $force_valid_context
+		                    || $ajax_call
+		                    || $api_call
+		                    || in_array( $pagenow, [ 'post.php', 'post-new.php', 'admin.php' ], true );
+
 		if (
 			$post_type !== 'product' ||
 			empty( $original_product_id ) ||
 			isset( $_POST['autosave'] ) ||
-			( $pagenow !== 'post.php' && $pagenow !== 'post-new.php' && $pagenow !== 'admin.php' && ! $ajax_call && ! $api_call ) ||
+			! $is_valid_context ||
 			$trashing ||
 			$auto_draft
 		) {

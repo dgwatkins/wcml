@@ -2,11 +2,13 @@
 
 namespace WCML\Rest\Wrapper\Products;
 
+use WCML\Rest\ProductSaveActions;
+
 /**
  * @group rest
  * @group rest-products
  */
-class TestLanguages extends \OTGS_TestCase {
+class TestProduct extends \OTGS_TestCase {
 
 
 	/** @var WPML_Query_Filter */
@@ -19,6 +21,8 @@ class TestLanguages extends \OTGS_TestCase {
 	private $sync_variations_data;
 	/** @var WCML_Attributes */
 	private $attributes;
+	/** @var ProductSaveActions */
+	private $product_save_actions;
 
 	public function setUp() {
 		parent::setUp();
@@ -30,7 +34,8 @@ class TestLanguages extends \OTGS_TestCase {
 								->disableOriginalConstructor()
 								->setMethods( [
 									'set_element_language_details',
-									'copy_custom_fields'
+									'copy_custom_fields',
+									'is_active_language',
 								] )
 								->getMock();
 
@@ -43,20 +48,15 @@ class TestLanguages extends \OTGS_TestCase {
 											 ] )
 											 ->getMock();
 
-		$this->sync_variations_data = $this->getMockBuilder( 'WCML_Synchronize_Variations_Data' )
+		$this->product_save_actions = $this->getMockBuilder( ProductSaveActions::class )
 										   ->disableOriginalConstructor()
-										   ->setMethods( [ 'sync_product_variations' ] )
+										   ->setMethods( [ 'run' ] )
 										   ->getMock();
-
-		$this->attributes = $this->getMockBuilder( 'WCML_Attributes' )
-								 ->disableOriginalConstructor()
-								 ->setMethods( [ 'sync_default_product_attr' ] )
-								 ->getMock();
 	}
 
 
 	function get_subject() {
-		return new Languages( $this->sitepress, $this->wpml_post_translations, $this->wpml_query_filter, $this->sync_variations_data, $this->attributes );
+		return new Products( $this->sitepress, $this->wpml_post_translations, $this->wpml_query_filter, $this->product_save_actions );
 	}
 
 
@@ -159,75 +159,13 @@ class TestLanguages extends \OTGS_TestCase {
 	}
 
 	/**
-	* @test
-	* @dataProvider api_method_type
-	* @expectedException Exception
-	* @expectedExceptionCode 422
-	* @expectedExceptionMessage Invalid language parameter
-	*/
-	function set_product_language_wrong_lang( $api_method_type ) {
-
-		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( [ 'get_params', 'get_method' ] )
-		                 ->getMock();
-		$request1->method( 'get_params' )->willReturn( [ 'lang' => 'ru' ] );
-		$request1->method( 'get_method' )->willReturn( $api_method_type );
-
-		$this->sitepress->method( 'set_element_language_details' )->willReturn( true );
-
-		$post     = $this->getMockBuilder( 'WP_Post' )
-		                 ->disableOriginalConstructor()
-		                 ->getMock();
-		$post->ID = 1;
-
-		$subject = $this->get_subject();
-		$subject->insert( $post, $request1, true );
-
-	}
-
-	/**
 	 * @test
-	 * @dataProvider api_method_type
-	 * @expectedException Exception
-	 * @expectedExceptionCode 422
-	 * @expectedExceptionMessage Product not found:
 	 */
-	function set_product_language_no_source_product( $api_method_type ) { // with translation_of
+	function set_product_language_with_trid() {
 
 		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
 		                 ->disableOriginalConstructor()
-		                 ->setMethods( [ 'get_params', 'get_method' ] )
-		                 ->getMock();
-		$request1->method( 'get_params' )->willReturn( [
-			'lang'           => 'ro',
-			'translation_of' => 11
-		] );
-		$request1->method( 'get_method' )->willReturn( $api_method_type );
-
-		\WP_Mock::onFilter( 'wpml_language_is_active' )->with( false, 'ro' )->reply( true );
-
-		$this->sitepress->method( 'set_element_language_details' )->willReturn( true );
-
-		$post     = $this->getMockBuilder( 'WP_Post' )
-		                 ->disableOriginalConstructor()
-		                 ->getMock();
-		$post->ID = 12;
-
-		$subject = $this->get_subject();
-		$subject->insert( $post, $request1, true );
-
-	}
-
-	/**
-	 * @test
-	 * @dataProvider api_method_type
-	 */
-	function set_product_language_with_trid( $api_method_type ) {
-
-		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( [ 'get_params', 'get_method' ] )
+		                 ->setMethods( [ 'get_params' ] )
 		                 ->getMock();
 		$translation_of = 11;
 		$lang = 'ro';
@@ -236,7 +174,6 @@ class TestLanguages extends \OTGS_TestCase {
 			'lang'           => $lang,
 			'translation_of' => $translation_of
 		] );
-		$request1->method( 'get_method' )->willReturn( $api_method_type );
 
 		$this->expected_trid = null;
 		$this->actual_trid   = 12;
@@ -252,46 +189,20 @@ class TestLanguages extends \OTGS_TestCase {
 		$post->method( 'get_id' )->willReturn( $post->ID );
 		$post->method( 'get_type' )->willReturn( 'variable' );
 
-		$this->wpml_post_translations->method( 'get_element_trid' )->with( $translation_of )->willReturn( $this->actual_trid );
+		$this->wpml_post_translations->method( 'get_element_trid' )
+			->with( $translation_of )
+			->willReturn( $this->actual_trid );
 
-		$this->sync_variations_data->expects( $this->once() )->method( 'sync_product_variations' )->with( $translation_of, $post->ID, $lang )->willReturn( true );
-		$this->attributes->expects( $this->once() )->method( 'sync_default_product_attr' )->with( $translation_of, $post->ID, $lang )->willReturn( true );
+		$this->sitepress->method( 'is_active_language' )
+			->with( 'ro' )
+			->willReturn( true );
 
-		\WP_Mock::onFilter( 'wpml_language_is_active' )->with( false, 'ro' )->reply( true );
-
-		$this->sitepress->method( 'set_element_language_details' )->will( $this->returnCallback(
-			function ( $post_id, $element_type, $trid, $lang ) {
-				$this->expected_trid = $trid;
-
-				return true;
-			}
-		) );
-		$this->sitepress->method( 'copy_custom_fields' )->with( $translation_of, $post->ID )->willReturn( true );
-
-		if ( ! defined( 'ICL_TM_COMPLETE' ) ) {
-			define( 'ICL_TM_COMPLETE', true );
-		}
-
-		$this->test_data['posts'][ $post->ID ] = $post;
-
-		\WP_Mock::userFunction( 'get_post', [
-			'args'  => [ $post->ID ],
-			'return' => $post
-		] );
-
-		\WP_Mock::userFunction( 'get_post_type', [
-			'args'  => [ $post->ID ],
-			'return' => 'product'
-		] );
-
-		\WP_Mock::userFunction( 'wpml_tm_save_post', [
-			'times' => 1,
-			'args'  => [ $post->ID, $post, ICL_TM_COMPLETE ]
-		] );
+		$this->product_save_actions->expects( $this->once() )
+			->method( 'run' )
+			->with( $post, $this->actual_trid, $lang, $translation_of );
 
 		$subject = $this->get_subject();
 		$subject->insert( $post, $request1, true );
-		$this->assertEquals( $this->expected_trid, $this->actual_trid );
 
 	}
 
@@ -321,30 +232,22 @@ class TestLanguages extends \OTGS_TestCase {
 
 	/**
 	 * @test
-	 * @dataProvider api_method_type
 	 */
-	function set_product_language_new_product( $api_method_type ) { // no translation_of
+	function set_product_language_new_product() { // no translation_of
+		$lang = 'ro';
 
 		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
 		                 ->disableOriginalConstructor()
 		                 ->setMethods( [ 'get_params', 'get_method' ] )
 		                 ->getMock();
 		$request1->method( 'get_params' )->willReturn( [
-			'lang' => 'ro'
+			'lang' => $lang,
 		] );
-		$request1->method( 'get_method' )->willReturn( $api_method_type );
 
 		$this->expected_trid = null;
 		$this->actual_trid   = null;
 
 		$this->wpml_post_translations->method( 'get_element_trid' )->willReturn( $this->actual_trid );
-		$this->sitepress->method( 'set_element_language_details' )->will( $this->returnCallback(
-			function ( $post_id, $element_type, $trid, $lang ) {
-				$this->expected_trid = null;
-
-				return true;
-			}
-		) );
 
 		$post = $this->getMockBuilder( 'WC_Simple_Product' )
 		             ->disableOriginalConstructor()
@@ -361,44 +264,16 @@ class TestLanguages extends \OTGS_TestCase {
 			'return' => 'product'
 		] );
 
-		\WP_Mock::onFilter( 'wpml_language_is_active' )->with( false, 'ro' )->reply( true );
+		$this->sitepress->method( 'is_active_language' )
+			->with( $lang )
+			->willReturn( true );
+
+		$this->product_save_actions->expects( $this->once() )
+			->method( 'run' )
+			->with( $post, $this->actual_trid, $lang, null );
 
 		$subject = $this->get_subject();
 		$subject->insert( $post, $request1, true );
-		$this->assertEquals( $this->expected_trid, $this->actual_trid );
 
 	}
-
-	/**
-	 * @test
-	 */
-	function do_no_set_poduct_language_if_method_not_post_or_put(){
-
-
-		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( [ 'get_params', 'get_method' ] )
-		                 ->getMock();
-		$request1->method( 'get_params' )->willReturn( [
-			'lang' => 'en'
-		] );
-		$request1->method( 'get_method' )->willReturn( 'GET' );
-
-
-		$post = $this->getMockBuilder( 'WP_Post' )
-		             ->disableOriginalConstructor()
-		             ->getMock();
-		$post->ID = rand(1,100);
-
-		$subject = $this->get_subject();
-		$subject->insert( $post, $request1, true );
-	}
-
-	function api_method_type() {
-		return [
-			'Use POST' => [ 'POST' ],
-			'User PUT' => [ 'PUT' ],
-		];
-	}
-
 }
