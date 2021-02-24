@@ -37,6 +37,9 @@ class WCML_Comments {
 
 		add_action( 'wp_insert_comment', [ $this, 'add_comment_rating' ] );
 		add_action( 'woocommerce_review_before_comment_meta', [ $this, 'add_comment_flag' ], 9 );
+		add_action( 'woocommerce_review_before_comment_text', [ $this, 'open_lang_div' ] );
+		add_action( 'woocommerce_review_after_comment_text', [ $this, 'close_lang_div' ] );
+
 		add_action( 'added_comment_meta', [ $this, 'maybe_duplicate_comment_rating' ], 10, 4 );
 
 		add_filter( 'get_post_metadata', [ $this, 'filter_average_rating' ], 10, 4 );
@@ -270,16 +273,45 @@ class WCML_Comments {
 	 * @param WP_Comment $comment
 	 */
 	public function add_comment_flag( $comment ) {
-
-		if ( $this->is_reviews_in_all_languages( $comment->comment_post_ID ) ) {
-			$comment_language = $this->post_translations->get_element_lang_code( $comment->comment_post_ID );
-
-			$html  = '<div style="float: left; padding-right: 5px;">';
-			$html .= '<img src="' . $this->sitepress->get_flag_url( $comment_language ) . '" width=18" height="12">';
-			$html .= '</div>';
-
-			echo $html;
+		$comment_language = $this->get_comment_language_on_all_languages_reviews( $comment );
+		if ( $comment_language ) {
+			printf(
+				'<div style="float: left; padding-right: 5px;"><img src="%s" width=18" height="12"></div>',
+				$this->sitepress->get_flag_url( $comment_language )
+			);
 		}
+	}
+
+	/**
+	 * @param WP_Comment $comment
+	 */
+	public function open_lang_div( $comment ) {
+		$comment_language = $this->get_comment_language_on_all_languages_reviews( $comment );
+		if ( $comment_language ) {
+			printf( '<div lang="%s">', $comment_language );
+		}
+	}
+
+	/**
+	 * @param WP_Comment $comment
+	 */
+	public function close_lang_div( $comment ) {
+		if ( $this->get_comment_language_on_all_languages_reviews( $comment ) ) {
+			print( '</div>' ) ;
+		}
+	}
+
+	/**
+	 * Return review language code only if it displayed on mulilingual reviews list.
+	 *
+	 * @param WP_Comment $comment
+	 * @return string|null Review language or null.
+	 */
+	private function get_comment_language_on_all_languages_reviews($comment ) {
+		if ( $this->is_reviews_in_all_languages( $comment->comment_post_ID ) ) {
+			return $this->post_translations->get_element_lang_code( $comment->comment_post_ID );
+		}
+		return null;
 	}
 
 	/**
