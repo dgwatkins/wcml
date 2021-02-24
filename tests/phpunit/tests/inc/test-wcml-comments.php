@@ -71,6 +71,8 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'wp_insert_comment', array( $subject, 'add_comment_rating' ) );
 		\WP_Mock::expectActionAdded( 'added_comment_meta', array( $subject, 'maybe_duplicate_comment_rating' ), 10, 4 );
 		\WP_Mock::expectActionAdded( 'woocommerce_review_before_comment_meta', array( $subject, 'add_comment_flag' ), 9 );
+		\WP_Mock::expectActionAdded( 'woocommerce_review_before_comment_text', [ $subject, 'open_lang_div' ] );
+		\WP_Mock::expectActionAdded( 'woocommerce_review_after_comment_text', [ $subject, 'close_lang_div' ] );
 		\WP_Mock::expectActionAdded( 'trashed_comment', array( $subject, 'recalculate_average_rating_on_comment_hook' ), 10, 2 );
 
 		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_average_rating' ), 10, 4 );
@@ -464,6 +466,46 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 		$expected_comment_flag = '<div style="float: left; padding-right: 5px;"><img src="' . $flag_url . '" width=18" height="12"></div>';
 		$this->assertEquals( $expected_comment_flag, $comment_flag );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider lang_div_data_provider
+	 */
+	public function open_and_close_lang_div( $clang, $preg ) {
+		$_GET['clang'] = $clang;
+
+		\WP_Mock::userFunction( 'get_post_type', array(
+			'args'   => array( 10 ),
+			'return' => 'product'
+		));
+
+		$comment = new stdClass();
+		$comment->comment_post_ID = 10;
+
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
+			->disableOriginalConstructor()
+			->setMethods( array( 'get_element_lang_code' ) )
+			->getMock();
+
+		$wpml_post_translations->method( 'get_element_lang_code' )->with( 10 )->willReturn( 'en' );
+
+		$subject = $this->get_subject( false, false, $wpml_post_translations );
+
+		$this->expectOutputRegex( $preg );
+
+		$subject->open_lang_div( $comment );
+
+		$subject->close_lang_div( $comment );
+
+		unset( $_GET['clang'] );
+	}
+
+	public function lang_div_data_provider() {
+		return [
+			[ 'all', '/<div lang=\"en\"><\/div>/' ],
+			[ 'en', '//' ],
+		];
 	}
 
 
