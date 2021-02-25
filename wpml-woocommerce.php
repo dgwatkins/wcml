@@ -96,9 +96,12 @@ function wcml_loader() {
 		\WCML\PaymentGateways\Hooks::class,
 		\WCML\CLI\Hooks::class,
 		\WCML\AdminNotices\CachePlugins::class,
+		\WCML\Reports\Hooks::class,
 		\WCML\Reports\Products\Query::class,
 		\WCML\MultiCurrency\GeolocationFrontendHooks::class,
 		\WCML\MultiCurrency\GeolocationBackendHooks::class,
+		\WCML\Reports\Categories\Query::class,
+		\WCML\Multicurrency\Analytics\Factory::class,
 		\WCML\Setup\BeforeHooks::class,
 	];
 
