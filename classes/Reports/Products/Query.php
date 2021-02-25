@@ -13,7 +13,8 @@ class Query implements \IWPML_REST_Action {
 	 */
 	public function add_hooks() {
 		if ( Functions::isAnalyticsRestRequest() ) {
-			add_filter( 'woocommerce_analytics_products_select_query', [ $this, 'joinProductTranslations' ], 10 );
+			add_filter( 'woocommerce_analytics_products_select_query', [ $this, 'joinProductTranslations' ] );
+			add_filter( 'woocommerce_analytics_products_select_query', [ $this, 'translateProductTitles' ] );
 		}
 	}
 
@@ -161,4 +162,26 @@ class Query implements \IWPML_REST_Action {
 		];
 		return apply_filters( 'wpml_element_language_details', null, $args );
 	}
+
+	/**
+	 * @param object $results Categories query (note: in March 2021, WC Admin code is showing a PHPDoc returning an array which is not what we get)
+	 *
+	 * @return object
+	 */
+	public function translateProductTitles( $results ) {
+		$results->data = wpml_collect( $results->data )
+			->map( function( $row ) {
+				if ( $row['extended_info']['name'] ) {
+					$row['product_id'] = apply_filters( 'wpml_object_id', $row['product_id'], get_post_type( $row['product_id'] ), true );
+					$product = wc_get_product( $row['product_id'] );
+					if ( $product ) {
+						$row['extended_info']['name'] = $product->get_title();
+					}
+				}
+				return $row;
+			} )->toArray();
+
+		return $results;
+	}
+
 }
