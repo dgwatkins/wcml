@@ -2,9 +2,20 @@
 
 namespace WCML\Rest;
 
-use WPML_URL_Filters;
+use WPML\FP\Obj;
 
 class Functions {
+
+	/**
+	 * Check if we are requesting a WooCommerce Analytics page.
+	 *
+	 * @return bool
+	 */
+	public static function isAnalyticsPage() {
+		return is_admin()
+			&& 'wc-admin' === Obj::prop( 'page', $_GET )
+			&& 0 === strpos( sanitize_text_field( wp_unslash( Obj::prop( 'path', $_GET ) ) ), '/analytics/' );
+	}
 
 	/**
 	 * Check if is request to the WooCommerce REST API.
