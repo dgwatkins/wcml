@@ -95,5 +95,6 @@ const createModule = R.curryN(2, (moduleName, env) => {
 module.exports = [
 	createModule('multicurrencyShippingAdmin'),
 	createModule('multicurrencyOptions'),
+	createModule('multicurrencyAnalytics'),
 	createModule('paymentGatewaysAdmin'),
 ];
