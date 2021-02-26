@@ -24,9 +24,10 @@ class Query implements \IWPML_REST_Action {
 	 */
 	public function joinProductTranslations( $results ) {
 		if ( $this->isValidResultsObject( $results ) ) {
+			$previousCount = count( $results->data );
 			$results->data = $this->merge( $results->data );
 			if ( isset( $results->total ) ) {
-				$results->total = count( $results->data );
+				$results->total -= $previousCount - count( $results->data );
 			}
 		}
 
