@@ -7,11 +7,11 @@
  * Author URI: http://www.onthegosystems.com/
  * Text Domain: woocommerce-multilingual
  * Requires at least: 4.7
- * Tested up to: 5.8
- * Version: 4.11.7
+ * Tested up to: 5.6
+ * Version: 4.11
  * Plugin Slug: woocommerce-multilingual
- * WC requires at least: 3.9
- * WC tested up to: 5.6
+ * WC requires at least: 3.9.0
+ * WC tested up to: 4.8
  *
  * @package WCML
  * @author  OnTheGoSystems
@@ -33,7 +33,7 @@ if ( ! $wpml_php_version_check->is_ok() ) {
 	return;
 }
 
-define( 'WCML_VERSION', '4.11.7' );
+define( 'WCML_VERSION', '4.11' );
 define( 'WCML_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WCML_PLUGIN_FOLDER', basename( WCML_PLUGIN_PATH ) );
 define( 'WCML_LOCALE_PATH', WCML_PLUGIN_PATH . '/locale' );
@@ -97,7 +97,6 @@ function wcml_loader() {
 		\WCML\CLI\Hooks::class,
 		\WCML\AdminNotices\CachePlugins::class,
 		\WCML\Reports\Products\Query::class,
-		\WCML\Setup\BeforeHooks::class,
 	];
 
 	if (
