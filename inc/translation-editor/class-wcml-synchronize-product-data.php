@@ -34,13 +34,13 @@ class WCML_Synchronize_Product_Data {
 	public function add_hooks() {
 		if ( is_admin() || wpml_is_rest_request() ) {
 			add_action( 'icl_pro_translation_completed', [ $this, 'icl_pro_translation_completed' ] );
+            // filters to sync variable products.
+            add_action( 'save_post', [ $this, 'synchronize_products' ], PHP_INT_MAX, 2 ); // After WPML.
 			add_action( 'save_post', 'icl_cache_clear', PHP_INT_MAX );
 			add_action( 'save_post', 'wp_cache_flush', PHP_INT_MAX );
 		}
 
 		if ( is_admin() ) {
-			// filters to sync variable products.
-			add_action( 'save_post', [ $this, 'synchronize_products' ], PHP_INT_MAX, 2 ); // After WPML.
 
 			add_filter( 'icl_make_duplicate', [ $this, 'icl_make_duplicate' ], 110, 4 );
 
