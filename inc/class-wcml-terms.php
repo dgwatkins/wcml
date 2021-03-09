@@ -63,7 +63,6 @@ class WCML_Terms {
 			add_filter( 'update_option_default_product_cat', [ $this, 'update_option_default_product_cat' ], 1, 2 );
 		}
 
-		add_action( 'update_term_meta', [ $this, 'update_category_count_meta' ], 10, 4 );
 		add_action( 'delete_term', [ $this, 'wcml_delete_term' ], 10, 4 );
 		add_filter( 'get_the_terms', [ $this, 'shipping_terms' ], 10, 3 );
 		add_filter( 'get_terms', [ $this, 'filter_shipping_classes_terms' ], 10, 3 );
@@ -1100,24 +1099,6 @@ class WCML_Terms {
 			if ( isset( $wcml_settings ) ) {
 				$this->woocommerce_wpml->update_settings( $wcml_settings );
 			}
-		}
-	}
-
-	public function update_category_count_meta( $meta_id, $object_id, $meta_key, $meta_value ) {
-
-		if ( 'product_count_product_cat' === $meta_key ) {
-			remove_action( 'update_term_meta', [ $this, 'update_category_count_meta' ], 10 );
-
-			$trid         = $this->sitepress->get_element_trid( $object_id, 'tax_product_cat' );
-			$translations = $this->sitepress->get_element_translations( $trid, 'tax_product_cat' );
-
-			foreach ( $translations as $translation ) {
-				if ( $translation->element_id !== $object_id ) {
-					update_term_meta( $translation->element_id, $meta_key, $meta_value );
-				}
-			}
-
-			add_action( 'update_term_meta', [ $this, 'update_category_count_meta' ], 10, 4 );
 		}
 	}
 
