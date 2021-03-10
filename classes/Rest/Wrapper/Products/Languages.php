@@ -125,6 +125,7 @@ class Languages extends Handler {
 			}
 		}
 
+		do_action( 'wpml_sync_all_custom_fields', $object->get_id() );
         $woocommerce_wpml->sync_product_data->synchronize_products( $object->get_id(), get_post( $object->get_id() ) );
 	}
 

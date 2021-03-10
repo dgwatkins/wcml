@@ -2,12 +2,14 @@
 
 namespace WCML\Rest\Wrapper;
 
+use WCML\Rest\ProductSaveActions;
 use WCML\Rest\Wrapper\Products\Images as ProductsImages;
 use WCML\Rest\Wrapper\Products\Languages as ProductsLanguages;
 use WCML\Rest\Wrapper\Products\Prices as ProductsPrices;
 
 use WCML\Rest\Wrapper\Orders\Languages as OrdersLanguages;
 use WCML\Rest\Wrapper\Orders\Prices as OrdersPrices;
+use WCML\Rest\Wrapper\Products\Products;
 use WCML\Rest\Wrapper\Reports\ProductsCount;
 use WCML\Rest\Wrapper\Reports\ProductsSales;
 use WCML\Rest\Wrapper\Reports\TopSeller;
@@ -33,11 +35,13 @@ class Factory {
 				return new Composite( $objects );
 			case 'product_variation':
 			case 'product':
-				$objects[] = new ProductsLanguages( $sitepress, $wpml_post_translations, $wpml_query_filter, $woocommerce_wpml->sync_variations_data, $woocommerce_wpml->attributes );
-				$objects[] = new ProductsImages( $woocommerce_wpml->products, $woocommerce_wpml->media );
-				if ( $isMultiCurrencyOn ) {
-					$objects[] = new ProductsPrices( $woocommerce_wpml->multi_currency, (array) Obj::propOr( [], 'currencies_order', $woocommerce_wpml->settings ), $wpml_post_translations );
-				}
+				$productSaveAction = new ProductSaveActions( $sitepress->get_settings(), $wpdb, $woocommerce_wpml->sync_product_data );
+				$objects[] = new Products( $sitepress, $wpml_post_translations, $wpml_query_filter, $productSaveAction );
+//				$objects[] = new ProductsLanguages( $sitepress, $wpml_post_translations, $wpml_query_filter, $woocommerce_wpml->sync_variations_data, $woocommerce_wpml->attributes );
+//				$objects[] = new ProductsImages( $woocommerce_wpml->products, $woocommerce_wpml->media );
+//				if ( $isMultiCurrencyOn ) {
+//					$objects[] = new ProductsPrices( $woocommerce_wpml->multi_currency, (array) Obj::propOr( [], 'currencies_order', $woocommerce_wpml->settings ), $wpml_post_translations );
+//				}
 
 				return new Composite( $objects );
 			case 'term':
