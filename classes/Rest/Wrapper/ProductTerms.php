@@ -2,6 +2,7 @@
 
 namespace WCML\Rest\Wrapper;
 
+use WPML\FP\Fns;
 use WPML\FP\Obj;
 use WCML\Rest\Exceptions\InvalidLanguage;
 use WCML\Rest\Exceptions\InvalidTerm;
@@ -9,11 +10,11 @@ use WCML\Rest\Exceptions\MissingLanguage;
 
 class ProductTerms extends Handler {
 
-	/** @var Sitepress */
+	/** @var \Sitepress */
 	private $sitepress;
-	/** @var WPML_Term_Translation */
+	/** @var \WPML_Term_Translation */
 	private $wpmlTermTranslations;
-	/** @var WCML_Terms */
+	/** @var \WCML_Terms */
 	private $wcmlTerms;
 
 	public function __construct(
@@ -27,8 +28,8 @@ class ProductTerms extends Handler {
 	}
 
 	/**
-	 * @param array $args
-	 * @param WP_REST_Request $request Request object.
+	 * @param array            $args
+	 * @param \WP_REST_Request $request Request object.
 	 *
 	 * @return array
 	 *
@@ -52,57 +53,72 @@ class ProductTerms extends Handler {
 	/**
 	 * Appends the language and translation information to the get_product response
 	 *
-	 * @param WP_REST_Response $response
-	 * @param object $object
-	 * @param WP_REST_Request $request
+	 * @param \WP_REST_Response $response
+	 * @param object|\WP_Term   $object
+	 * @param \WP_REST_Request  $request
 	 *
-	 * @return WP_REST_Response
+	 * @return \WP_REST_Response
 	 */
 	public function prepare( $response, $object, $request ) {
 
 		$response->data['translations'] = [];
 
-		$id   = Obj::prop( 'id', $response->data );
-		$trid = $this->wpmlTermTranslations->get_element_trid( $id );
+		$termTaxonomyId = (int) Obj::prop( 'term_taxonomy_id', $object );
+		$trid           = $this->wpmlTermTranslations->get_element_trid( $termTaxonomyId );
 
 		if ( $trid ) {
-			$response->data['translations'] = $this->wpmlTermTranslations->get_element_translations( $id, $trid );
-			$response->data['lang']         = $this->wpmlTermTranslations->get_element_lang_code( $id );
+			$getTermId = function( $termTaxonomyId ) {
+				$term = get_term_by( 'term_taxonomy_id', $termTaxonomyId );
+				return isset( $term->term_id ) ? $term->term_id : null;
+			};
+
+			$response->data['translations'] = Fns::map(
+				$getTermId,
+				$this->wpmlTermTranslations->get_element_translations( $termTaxonomyId, $trid )
+			);
+
+			$response->data['lang'] = $this->wpmlTermTranslations->get_element_lang_code( $termTaxonomyId );
 		}
 
 		return $response;
 	}
 
-
 	/**
 	 * Sets the product information according to the provided language
 	 *
-	 * @param WP_Term $term
-	 * @param WP_REST_Request $request
-	 * @param bool $creating
+	 * @param \WP_Term         $term
+	 * @param \WP_REST_Request $request
+	 * @param bool             $creating
 	 *
 	 * @throws InvalidLanguage
 	 * @throws InvalidTerm
 	 *
 	 */
 	public function insert( $term, $request, $creating ) {
-		$language      = Obj::prop( 'lang', $request->get_params() );
-		$translationOf = Obj::prop( 'translation_of', $request->get_params() );
+		$getParam = Obj::prop( Fns::__, $request->get_params() );
 
-		if ( $language && in_array( $request->get_method(), array( 'POST', 'PUT' ), true ) ) {
+		$language      = $getParam( 'lang' );
+		$translationOf = $getParam( 'translation_of' );
+
+		if ( $language ) {
 
 			$this->checkLanguage( $language );
 
 			if ( $translationOf ) {
-				$trid = $this->wpmlTermTranslations->get_element_trid( $translationOf );
-				if ( empty( $trid ) ) {
+				$translationOfTerm = get_term( $translationOf, $term->taxonomy );
+
+				$trid = isset( $translationOfTerm->term_taxonomy_id )
+					? $this->wpmlTermTranslations->get_element_trid( $translationOfTerm->term_taxonomy_id )
+					: null;
+
+				if ( ! $trid ) {
 					throw new InvalidTerm( $translationOf );
 				}
 			} else {
 				$trid = null;
 			}
 
-			$this->sitepress->set_element_language_details( $term->term_id, 'tax_' . $term->taxonomy, $trid, $language );
+			$this->sitepress->set_element_language_details( $term->term_taxonomy_id, 'tax_' . $term->taxonomy, $trid, $language );
 
 			$this->wcmlTerms->update_terms_translated_status( $term->taxonomy );
 		} elseif ( $translationOf ) {
@@ -110,10 +126,14 @@ class ProductTerms extends Handler {
 		}
 	}
 
+	/**
+	 * @param string $language
+	 *
+	 * @throws InvalidLanguage
+	 */
 	private function checkLanguage( $language ) {
 		if ( ! $this->sitepress->is_active_language( $language ) ) {
 			throw new InvalidLanguage( $language );
 		}
 	}
-
 }
