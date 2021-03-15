@@ -8,11 +8,11 @@ namespace WCML\Rest\Wrapper;
  */
 class TestProductTerms extends \OTGS_TestCase {
 
-	/** @var Sitepress */
+	/** @var \Sitepress */
 	private $sitepress;
-	/** @var WPML_Term_Translation */
+	/** @var \WPML_Term_Translation */
 	private $wpmlTermTranslations;
-	/** @var WCML_Terms */
+	/** @var \WCML_Terms */
 	private $wcmlTerms;
 
 	public function setUp() {
@@ -58,11 +58,7 @@ class TestProductTerms extends \OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		$request = $this->getMockBuilder( 'WP_REST_Request' )
-		                ->disableOriginalConstructor()
-		                ->setMethods( [ 'get_params' ] )
-		                ->getMock();
-		$request->method( 'get_params' )->willReturn( [ 'lang' => 'en' ] );
+		$request = $this->getRestRequest( [ 'lang' => 'en' ] );
 
 		$args = [];
 		\WP_Mock::userFunction( 'remove_filter', [ 'times' => 0 ] );
@@ -77,11 +73,7 @@ class TestProductTerms extends \OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		$request = $this->getMockBuilder( 'WP_REST_Request' )
-		                ->disableOriginalConstructor()
-		                ->setMethods( [ 'get_params' ] )
-		                ->getMock();
-		$request->method( 'get_params' )->willReturn( [ 'lang' => 'all' ] );
+		$request = $this->getRestRequest( [ 'lang' => 'all' ] );
 
 		$args = [];
 
@@ -102,13 +94,9 @@ class TestProductTerms extends \OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		$request = $this->getMockBuilder( 'WP_REST_Request' )
-		                ->disableOriginalConstructor()
-		                ->setMethods( [ 'get_params' ] )
-		                ->getMock();
-		$request->method( 'get_params' )->willReturn( [ 'lang' => 'EXCEPTION' ] );
+		$request = $this->getRestRequest( [ 'lang' => 'EXCEPTION' ] );
 
-		\WP_Mock::wpPassthruFunction( '__' );
+		\WP_Mock::passthruFunction( '__' );
 
 		$args = [];
 		$subject->query( $args, $request );
@@ -119,68 +107,82 @@ class TestProductTerms extends \OTGS_TestCase {
 	 * @test
 	 */
 	public function append_product_language_and_translations() {
+		$originalTerm   = $this->getTerm( 1, 2 );
+		$translatedTerm = $this->getTerm( 11, 12 );
 
-		$this->default_language   = 'en';
-		$this->secondary_language = 'fr';
+		$originalLang  = 'en';
+		$secondaryLang = 'fr';
 
-		$trid                                 = 11;
-		$this->term_id_in_default_language = 12;
+		$trid = 11;
+
+		\WP_Mock::userFunction( 'get_term_by', [
+			'return' => function( $by, $TermTaxonomyId ) use ( $originalTerm, $translatedTerm ) {
+				if ( 'term_taxonomy_id' === $by ) {
+					switch( $TermTaxonomyId ) {
+						case $originalTerm->term_taxonomy_id:
+							return $originalTerm;
+
+						case $translatedTerm->term_taxonomy_id:
+							return $translatedTerm;
+					}
+				}
+
+				return false;
+			},
+		] );
 
 		// for original
-		$product_data       = $this->getMockBuilder( 'WP_REST_Response' )
-		                           ->disableOriginalConstructor()
-		                           ->getMock();
-		$product_data->data = [
-			'id' => $this->term_id_in_default_language
+		$response = $this->getMockBuilder( '\WP_REST_Response' )->getMock();
+		$response->data = [
+			'id' => $originalTerm->term_id,
 		];
 
-		$this->wpmlTermTranslations->method( 'get_element_trid' )->with( $this->term_id_in_default_language )->willReturn( $trid );
+		$this->wpmlTermTranslations->method( 'get_element_trid' )
+		                           ->with( $originalTerm->term_taxonomy_id )
+		                           ->willReturn( $trid );
 
-		$fr_translation_id = 14;
+		$this->wpmlTermTranslations->method( 'get_element_translations' )
+		                           ->with( $originalTerm->term_taxonomy_id, $trid )
+		                           ->willReturn( [
+		                           	    $originalLang  => $originalTerm->term_taxonomy_id,
+		                           	    $secondaryLang => $translatedTerm->term_taxonomy_id
+		                           ] );
 
-		$this->wpmlTermTranslations->method( 'get_element_translations' )->with( $this->term_id_in_default_language, $trid )->willReturn( [ $this->secondary_language => $fr_translation_id ] );
-		$this->wpmlTermTranslations->method( 'get_element_lang_code' )->with( $this->term_id_in_default_language )->willReturn( $this->default_language );
+		$this->wpmlTermTranslations->method( 'get_element_lang_code' )
+		                           ->with( $originalTerm->term_taxonomy_id )
+		                           ->willReturn( $originalLang );
 
-		$subject      = $this->get_subject();
-		$product_data = $subject->prepare( $product_data,
-			$this->getMockBuilder( 'WC_Data' )
-			     ->disableOriginalConstructor()
-			     ->getMock(),
-			$this->getMockBuilder( 'WP_REST_Request' )
-			     ->disableOriginalConstructor()
-			     ->getMock() );
+		$filteredResponse = $this->get_subject()->prepare(
+			$response,
+			$originalTerm,
+			$this->getRestRequest()
+		);
 
-		$this->assertEquals( $this->default_language, $product_data->data['lang'] );
+		$this->assertEquals( $originalLang, $filteredResponse->data['lang'] );
 		$this->assertEquals(
-			[ $this->secondary_language => $fr_translation_id ],
-			$product_data->data['translations']
+			[
+				$originalLang  => $originalTerm->term_id,
+				$secondaryLang => $translatedTerm->term_id,
+			],
+			$filteredResponse->data['translations']
 		);
 	}
 
 
 	/**
 	 * @test
-	 * @dataProvider api_method_type
 	 * @expectedException Exception
 	 * @expectedExceptionCode 422
 	 * @expectedExceptionMessage Invalid language parameter
 	 */
-	function set_term_language_wrong_lang( $api_method_type ) {
+	function set_term_language_wrong_lang() {
 
-		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( [ 'get_params', 'get_method' ] )
-		                 ->getMock();
-		$request1->method( 'get_params' )->willReturn( [ 'lang' => 'ru' ] );
-		$request1->method( 'get_method' )->willReturn( $api_method_type );
+		$request1 = $this->getRestRequest( [ 'lang' => 'ru' ] );
 
 		$this->sitepress->expects( $this->never() )->method( 'set_element_language_details' );
 		$this->wcmlTerms->expects( $this->never() )->method( 'update_terms_translated_status' );
 
-		$term          = $this->getMockBuilder( 'WP_Term' )
-		                      ->disableOriginalConstructor()
-		                      ->getMock();
-		$term->term_id = 1;
+		$term = $this->getTerm( 1, 2 );
 
 		$subject = $this->get_subject();
 		$subject->insert( $term, $request1, true );
@@ -189,33 +191,35 @@ class TestProductTerms extends \OTGS_TestCase {
 
 	/**
 	 * @test
-	 * @dataProvider api_method_type
-	 * @expectedException Exception
+	 * @expectedException \Exception
 	 * @expectedExceptionCode 422
-	 * @expectedExceptionMessage Term not found:
+	 * @expectedExceptionMessage Term not found: 11
 	 */
-	function set_term_language_no_source_product( $api_method_type ) { // with translation_of
+	function set_term_language_no_source_product() { // with translation_of
+		$term = $this->getTerm( 1, 2 );
 
-		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( [ 'get_params', 'get_method' ] )
-		                 ->getMock();
-		$request1->method( 'get_params' )->willReturn( [
+		$request1 = $this->getRestRequest( [
 			'lang'           => 'ro',
 			'translation_of' => 11
 		] );
-		$request1->method( 'get_method' )->willReturn( $api_method_type );
+
+		\WP_Mock::userFunction( 'get_term', [
+			'return' => function( $termId, $taxonomy ) use( $term ) {
+				if (
+					$termId === $term->term_id
+					&& $taxonomy === $term->taxonomy
+				) {
+					return $term;
+				}
+
+				return false;
+			}
+		] );
 
 		$this->sitepress->method( 'is_active_language' )->with( 'ro' )->willReturn( true );
 
 		$this->sitepress->method( 'set_element_language_details' )->willReturn( true );
 
-		$term          = $this->getMockBuilder( 'WP_Term' )
-		                      ->disableOriginalConstructor()
-		                      ->getMock();
-		$term->term_id = 1;
-		$term->taxonomy = 'product_cat';
-
 		$this->wcmlTerms->method( 'update_terms_translated_status' )->with( $term->taxonomy )->willReturn( true );
 
 		$subject = $this->get_subject();
@@ -225,61 +229,55 @@ class TestProductTerms extends \OTGS_TestCase {
 
 	/**
 	 * @test
-	 * @dataProvider api_method_type
 	 */
-	function set_term_language_with_trid( $api_method_type ) {
-
-		$request1       = $this->getMockBuilder( 'WP_REST_Request' )
-		                       ->disableOriginalConstructor()
-		                       ->setMethods( [ 'get_params', 'get_method' ] )
-		                       ->getMock();
-		$translation_of = 11;
+	function set_term_language_with_trid() {
+		$translation_of = 1;
 		$lang           = 'es';
 
-		$request1->method( 'get_params' )->willReturn( [
+		$request1 = $this->getRestRequest( [
 			'lang'           => $lang,
 			'translation_of' => $translation_of
 		] );
-		$request1->method( 'get_method' )->willReturn( $api_method_type );
 
-		$term           = $this->getMockBuilder( 'WP_Term' )
-		                       ->disableOriginalConstructor()
-		                       ->getMock();
-		$term->term_id  = 1;
-		$term->taxonomy = 'product_cat';
+		$originalTerm   = $this->getTerm( 1, 2 );
+		$translatedTerm = $this->getTerm( 11, 12 );
 
 		$trid = 12;
 
-		$this->wpmlTermTranslations->method( 'get_element_trid' )->with( $translation_of )->willReturn( $trid );
+		\WP_Mock::userFunction( 'get_term', [
+			'return' => function( $termId, $taxonomy ) use( $originalTerm ) {
+				if (
+					$termId === $originalTerm->term_id
+					&& $taxonomy === $originalTerm->taxonomy
+				) {
+					return $originalTerm;
+				}
+
+				return false;
+			}
+		] );
+
+		$this->wpmlTermTranslations->method( 'get_element_trid' )->with( $originalTerm->term_taxonomy_id )->willReturn( $trid );
 
 		$this->sitepress->method( 'is_active_language' )->with( $lang )->willReturn( true );
 
-		$this->sitepress->method( 'set_element_language_details' )->with( $term->term_id, 'tax_' . $term->taxonomy, $trid, $lang )->willReturn( true );
+		$this->sitepress->method( 'set_element_language_details' )->with( $translatedTerm->term_taxonomy_id, 'tax_' . $translatedTerm->taxonomy, $trid, $lang )->willReturn( true );
 
-		$this->wcmlTerms->method( 'update_terms_translated_status' )->with( $term->taxonomy )->willReturn( true );
+		$this->wcmlTerms->method( 'update_terms_translated_status' )->with( $translatedTerm->taxonomy )->willReturn( true );
 
 		$subject = $this->get_subject();
-		$subject->insert( $term, $request1, true );
+		$subject->insert( $translatedTerm, $request1, true );
 	}
 
 	/**
 	 * @test
-	 * @expectedException Exception
+	 * @expectedException \Exception
 	 * @expectedExceptionCode 422
 	 * @expectedExceptionMessage Using "translation_of" requires providing a "lang" parameter too
 	 */
 	function set_term_language_missing_lang() {
-
-		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( [ 'get_params' ] )
-		                 ->getMock();
-		$request1->method( 'get_params' )->willReturn( [ 'translation_of' => rand( 1, 100 ) ] );
-
-		$term          = $this->getMockBuilder( 'WP_Term' )
-		                      ->disableOriginalConstructor()
-		                      ->getMock();
-		$term->term_id = 1;
+		$request1 = $this->getRestRequest( [ 'translation_of' => rand( 1, 100 ) ] );
+		$term     = $this->getTerm( 1, 2 );
 
 		$subject = $this->get_subject();
 		$subject->insert( $term, $request1, true );
@@ -288,31 +286,20 @@ class TestProductTerms extends \OTGS_TestCase {
 
 	/**
 	 * @test
-	 * @dataProvider api_method_type
 	 */
-	function set_term_language_new_term( $api_method_type ) { // no translation_of
-
+	function set_term_language_new_term() { // no translation_of
 		$lang = 'es';
 
-		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( [ 'get_params', 'get_method' ] )
-		                 ->getMock();
-		$request1->method( 'get_params' )->willReturn( [
+		$request1 = $this->getRestRequest( [
 			'lang' => $lang
 		] );
-		$request1->method( 'get_method' )->willReturn( $api_method_type );
 
-		$term           = $this->getMockBuilder( 'WP_Term' )
-		                       ->disableOriginalConstructor()
-		                       ->getMock();
-		$term->term_id  = 1;
-		$term->taxonomy = 'product_cat';
+		$term = $this->getTerm( 1, 2 );
 
 		$this->sitepress->method( 'is_active_language' )->with( $lang )->willReturn( true );
 
 		$this->wpmlTermTranslations->method( 'get_element_trid' )->willReturn( null );
-		$this->sitepress->method( 'set_element_language_details' )->with( $term->term_id, 'tax_' . $term->taxonomy, null, $lang )->willReturn( true );
+		$this->sitepress->method( 'set_element_language_details' )->with( $term->term_taxonomy_id, 'tax_' . $term->taxonomy, null, $lang )->willReturn( true );
 		$this->wcmlTerms->method( 'update_terms_translated_status' )->with( $term->taxonomy )->willReturn( true );
 
 		$subject = $this->get_subject();
@@ -320,35 +307,36 @@ class TestProductTerms extends \OTGS_TestCase {
 	}
 
 	/**
-	 * @test
+	 * @param int $termId
+	 * @param int $termTaxonomyId
+	 *
+	 * @return \PHPUnit_Framework_MockObject_MockObject|\WP_Term
 	 */
-	function do_no_set_term_language_if_method_not_post_or_put() {
+	private function getTerm( $termId, $termTaxonomyId ) {
+		$term = $this->getMockBuilder( 'WP_Term' )
+		     ->disableOriginalConstructor()
+		     ->getMock();
+		$term->term_id = $termId;
+		$term->term_taxonomy_id = $termTaxonomyId;
+		$term->taxonomy = 'product_cat';
 
-
-		$request1 = $this->getMockBuilder( 'WP_REST_Request' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( [ 'get_params', 'get_method' ] )
-		                 ->getMock();
-		$request1->method( 'get_params' )->willReturn( [
-			'lang' => 'en'
-		] );
-		$request1->method( 'get_method' )->willReturn( 'GET' );
-
-
-		$term          = $this->getMockBuilder( 'WP_Term' )
-		                      ->disableOriginalConstructor()
-		                      ->getMock();
-		$term->term_id = 1;
-
-		$subject = $this->get_subject();
-		$subject->insert( $term, $request1, true );
+		return $term;
 	}
 
-	function api_method_type() {
-		return [
-			'Use POST' => [ 'POST' ],
-			'User PUT' => [ 'PUT' ],
-		];
-	}
+	/**
+	 * @param array $params
+	 *
+	 * @return \PHPUnit_Framework_MockObject_MockObject|\WP_REST_Request
+	 */
+	private function getRestRequest( array $params = [] ) {
+		$request = $this->getMockBuilder( 'WP_REST_Request' )
+		                       ->disableOriginalConstructor()
+		                       ->setMethods( [ 'get_params' ] )
+		                       ->getMock();
 
+		$request->method( 'get_params' )
+		        ->willReturn( $params );
+
+		return $request;
+	}
 }
