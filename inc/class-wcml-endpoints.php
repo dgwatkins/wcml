@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Obj;
+
 class WCML_Endpoints {
 
 	/** @var woocommerce_wpml */
@@ -37,9 +39,6 @@ class WCML_Endpoints {
 
 		add_filter( 'wpml_sl_blacklist_requests', array( $this, 'reserved_requests' ) );
 		add_filter( 'woocommerce_get_endpoint_url', array( $this, 'filter_get_endpoint_url' ), 10, 4 );
-		if ( ! is_admin() ) {
-			add_filter( 'pre_get_posts', array( $this, 'check_if_endpoint_exists' ) );
-		}
 	}
 
 	public function migrate_ones_string_translations() {
@@ -198,41 +197,6 @@ class WCML_Endpoints {
 		$endpoint = apply_filters( 'wcml_endpoint_permalink_filter', $endpoint, $endpoint_key );
 
 		return array( $link, $endpoint );
-	}
-
-	/*
-	 * We need check special case - when you manually put in URL default not translated endpoint it not generated 404 error
-	 */
-	public function check_if_endpoint_exists( $q ) {
-		global $wp_query;
-
-		$my_account_id = wc_get_page_id( 'myaccount' );
-
-		$current_id = $q->query_vars['page_id'];
-		if ( ! $current_id ) {
-			$current_id = $q->queried_object_id;
-		}
-
-		if ( ! $q->is_404 && $current_id == $my_account_id && $q->is_page ) {
-
-			$uri_vars        = array_filter( explode( '/', $_SERVER['REQUEST_URI'] ) );
-			$endpoints       = WC()->query->get_query_vars();
-			$endpoint_in_url = urldecode( end( $uri_vars ) );
-
-			$endpoints['shipping'] = urldecode( $this->get_translated_edit_address_slug( 'shipping' ) );
-			$endpoints['billing']  = urldecode( $this->get_translated_edit_address_slug( 'billing' ) );
-
-			$endpoint_not_pagename         = isset( $q->query['pagename'] ) && urldecode( $q->query['pagename'] ) != $endpoint_in_url;
-			$endpoint_url_not_in_endpoints = ! in_array( $endpoint_in_url, $endpoints );
-			$uri_vars_not_in_query_vars    = ! array_key_exists( urldecode( prev( $uri_vars ) ), $q->query_vars );
-
-			if ( $endpoint_not_pagename && $endpoint_url_not_in_endpoints && is_numeric( $endpoint_in_url ) && $uri_vars_not_in_query_vars ) {
-				$wp_query->set_404();
-				status_header( 404 );
-				include( get_query_template( '404' ) );
-				die();
-			}
-		}
 	}
 
 	private function get_translated_edit_address_slug( $slug, $language = false ) {
