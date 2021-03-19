@@ -116,6 +116,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$subject = $this->get_subject();
 		\WP_Mock::expectFilterAdded( 'woocommerce_available_variation', array( $subject, 'filter_available_variation_attribute_values_in_current_language' ) );
 		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_variation_post_meta_attribute_values_in_current_language' ), 10 ,4 );
+		\WP_Mock::expectActionAdded( 'added_post_meta', array( $subject, 'invalidateVariationMetaCache' ), 10 ,3 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_get_default_attributes', array( $subject, 'filter_product_variation_default_attributes' ) );
 		\WP_Mock::expectActionAdded( 'update_post_meta', array( $subject, 'set_translation_status_as_needs_update' ), 10, 3 );
 		\WP_Mock::expectActionAdded( 'wc_ajax_get_variation', array( $subject, 'maybe_filter_get_variation' ), 9 );
@@ -998,6 +999,35 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 		$this->assertEquals( $filter_attribute[ 'attributes' ][ $attribute_key ], $attribute_value );
 	}
 
+	/**
+	 * @test
+	 * @dataProvider dpShouldInvalidatePostMetaCache
+	 * @group wcml-3527
+	 *
+	 * @param string $metaKey
+	 * @param bool   $expectInvalidation
+	 */
+	public function itShouldInvalidatePostMetaCache( $metaKey, $expectInvalidation ) {
+		$postId = 123;
+		$lang   = 'fr';
+
+		\WP_Mock::userFunction( 'wp_cache_delete' )
+			->times( $expectInvalidation ? 1 : 0 )
+			->withArgs( [ $lang . $postId, WCML_Attributes::CACHE_GROUP_VARIATION ] );
+
+		$this->sitepress->method( 'get_current_language' )
+			->willReturn( $lang );
+
+		$subject = $this->get_subject();
+		$subject->invalidateVariationMetaCache( 999, $postId, $metaKey );
+	}
+
+	public function dpShouldInvalidatePostMetaCache() {
+		return [
+			'attribute key'     => [ 'attribute_foo_bar', true ],
+			'not attribute key' => [ 'foo_bar', false ],
+		];
+	}
 
 	/**
 	 * @test

@@ -91,6 +91,7 @@ class WCML_Attributes {
 				10,
 				4
 			);
+			add_action( 'added_post_meta', [ $this, 'invalidateVariationMetaCache' ], 10, 3 );
 			add_filter(
 				'woocommerce_product_get_default_attributes',
 				[
@@ -750,7 +751,7 @@ class WCML_Attributes {
 
 		if ( '' === $meta_key && 'product_variation' === get_post_type( $object_id ) ) {
 
-			$cache_key    = $this->sitepress->get_current_language() . $object_id;
+			$cache_key    = $this->getCacheKey( $object_id );
 			$cached_value = wp_cache_get( $cache_key, self::CACHE_GROUP_VARIATION );
 
 			if ( $cached_value ) {
@@ -780,7 +781,7 @@ class WCML_Attributes {
 
 			if ( $all_meta ) {
 				foreach ( $all_meta as $meta_key => $meta_value ) {
-					if ( 'attribute_' === substr( $meta_key, 0, 10 ) ) {
+					if ( self::isAttributeMeta( $meta_key ) ) {
 						foreach ( $meta_value as $key => $value ) {
 							$all_meta[ $meta_key ][ $key ] = $this->get_attribute_term_translation_in_current_language( substr( $meta_key, 10 ), $value );
 						}
@@ -797,6 +798,34 @@ class WCML_Attributes {
 
 	}
 
+	/**
+	 * @param int    $mid
+	 * @param int    $objectId
+	 * @param string $key
+	 */
+	public function invalidateVariationMetaCache( $mid, $objectId, $key ) {
+		if ( self::isAttributeMeta( $key ) ) {
+			wp_cache_delete( $this->getCacheKey( $objectId ), self::CACHE_GROUP_VARIATION );
+		}
+	}
+
+	/**
+	 * @param string $key
+	 *
+	 * @return bool
+	 */
+	private static function isAttributeMeta( $key ) {
+		return 'attribute_' === substr( $key, 0, 10 );
+	}
+
+	/**
+	 * @param int $variationId
+	 *
+	 * @return string
+	 */
+	private function getCacheKey( $variationId ) {
+		return $this->sitepress->get_current_language() . $variationId;
+	}
 
 	/**
 	 * @param array $default_attributes
