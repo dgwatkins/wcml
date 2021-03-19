@@ -7,6 +7,7 @@ class WCML_Pip {
 		add_filter( 'wcml_send_email_order_id', [ $this, 'wcml_send_email_order_id' ] );
 		add_filter( 'woocommerce_currency_symbol', [ $this, 'filter_pip_currency_symbol' ] );
 		add_filter( 'wcml_filter_currency_position', [ $this, 'filter_pip_currency_position' ] );
+		add_action( 'wc_pip_print', [ $this, 'print_invoice_language' ], 10, 3 );
 
 	}
 
@@ -87,6 +88,16 @@ class WCML_Pip {
 		}
 
 		return $currency;
+
+	}
+
+	public function print_invoice_language( $type, $order_id, $order_ids ) {
+
+		$order_language = get_post_meta( $order_id, 'wpml_language', true );
+
+		if ( $order_language ) {
+			do_action( 'wpml_switch_language', $order_language );
+		}
 
 	}
 
