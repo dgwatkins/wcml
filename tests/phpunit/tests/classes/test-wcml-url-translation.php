@@ -414,5 +414,53 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 		];
 	}
 
+	/**
+	 * @test
+	 * @dataProvider dp_encode_shop_slug
+	 */
+	public function it_encodes_shop_slug( $slug, $expected ) {
+		$page_id   = 123;
+		$post_type = 'product';
+		$lang      = 'en';
+
+		WP_Mock::userFunction( 'get_post_type', [
+			'args'   => $page_id,
+			'return' => $post_type,
+		] );
+		WP_Mock::userFunction( 'get_query_var', [
+			'args'   => 'p',
+			'return' => $page_id,
+		] );
+
+		$woocommerce_wpml = $this->get_woocommerce_multilingual();
+		$woocommerce_wpml->strings = $this->getMockBuilder( 'WCML_WC_Strings' )
+			->disableOriginalConstructor()
+			->setMethods( array( 'product_permalink_slug' ) )
+			->getMock();
+		$woocommerce_wpml->strings->method( 'product_permalink_slug' )
+			->willReturn( $slug );
+
+		$sitepress = $this->getMockBuilder( 'SitePress' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'get_language_for_element', 'get_current_language' ] )
+			->getMock();
+		$sitepress->method( 'get_language_for_element' )
+			->with( $page_id, 'post_product' )
+			->willReturn( $lang );
+		$sitepress->method( 'get_current_language' )
+			->willReturn( $lang );
+
+		$subject = $this->get_subject( $woocommerce_wpml, $sitepress );
+		$result  = $subject->encode_shop_slug( $slug );
+		$this->assertEquals( $result, $expected );
+	}
+
+	public function dp_encode_shop_slug() {
+		return [
+			[ 'shop', 'shop' ],
+			[ 'shop/category', 'shop/category' ],
+			[ 'магазин/категория', '%D0%BC%D0%B0%D0%B3%D0%B0%D0%B7%D0%B8%D0%BD/%D0%BA%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F' ],
+		];
+	}
 
 }
