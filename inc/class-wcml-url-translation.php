@@ -84,7 +84,7 @@ class WCML_Url_Translation {
 		add_action( 'wp_ajax_wcml_update_base_translation', [ $this, 'wcml_update_base_translation' ] );
 		add_filter( 'redirect_canonical', [ $this, 'check_wc_tax_url_on_redirect' ], 10, 2 );
 		add_filter( 'query_vars', [ $this, 'translate_query_var_for_product' ] );
-		add_filter( 'wp_redirect', [ $this, 'encode_shop_slug' ], 10, 2 );
+		add_filter( 'wp_redirect', [ $this, 'encode_shop_slug' ] );
 		add_action( 'switch_blog', [ $this, 'maybe_remove_query_vars_filter' ] );
 
 		add_filter( 'post_type_link', [ $this, 'translate_product_post_type_link' ], 10, 2 );
@@ -939,12 +939,12 @@ class WCML_Url_Translation {
 		return $translated_slug;
 	}
 
-	public function encode_shop_slug( $location, $status ) {
+	public function encode_shop_slug( $location ) {
 		if ( get_post_type( get_query_var( 'p' ) ) == 'product' ) {
 			$language  = $this->sitepress->get_language_for_element( get_query_var( 'p' ), 'post_product' );
 			$base_slug = $this->get_translated_product_base_by_lang( $language );
 
-			$location = str_replace( $base_slug, urlencode( $base_slug ), $location );
+			$location = str_replace( $base_slug, implode( '/', array_map( 'rawurlencode', explode( '/', $base_slug ) ) ), $location );
 		}
 
 		return $location;
