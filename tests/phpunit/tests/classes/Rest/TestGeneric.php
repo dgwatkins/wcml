@@ -171,4 +171,23 @@ class TestGeneric extends \OTGS_TestCase {
 		unset( $_SERVER['REQUEST_URI'] );
 
 	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldDisableGetTermAdjustIds() {
+		global $sitepress;
+
+		$sitepress = \Mockery::mock( '\SitePress' );
+
+		\WP_Mock::userFunction( 'remove_filter' )
+			->once()
+			->withArgs( [
+				'get_term',
+				[ $sitepress, 'get_term_adjust_id' ],
+				1
+			] );
+
+		Generic::disableGetTermAdjustIds();
+	}
 }

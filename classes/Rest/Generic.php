@@ -46,4 +46,9 @@ class Generic {
 		}
 	}
 
+	public static function disableGetTermAdjustIds() {
+		global $sitepress;
+
+		remove_filter( 'get_term', [ $sitepress, 'get_term_adjust_id' ], 1 );
+	}
 }

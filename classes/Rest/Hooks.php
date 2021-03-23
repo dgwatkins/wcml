@@ -11,6 +11,7 @@ class Hooks {
 		Generic::preventDefaultLangUrlRedirect();
 
 		add_action( 'rest_api_init', [ Generic::class, 'setLanguageForRequest' ] );
+		add_action( 'rest_api_init', [ Generic::class, 'disableGetTermAdjustIds' ] );
 		add_action( 'parse_query', [ Generic::class, 'autoAdjustIncludedIds' ] );
 
 		foreach ( [ 'product', 'shop_order', 'product_variation' ] as $type ) {
