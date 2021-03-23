@@ -67,8 +67,6 @@ if ( !defined( 'COOKIE_DOMAIN' ) ) {
 }
 
 
-require_once __DIR__ . '/includes/missing-php-functions.php';
-
 require_once WCML_PATH . '/vendor/autoload.php';
 
 try {
