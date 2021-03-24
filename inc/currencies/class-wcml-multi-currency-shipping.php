@@ -23,7 +23,7 @@ class WCML_Multi_Currency_Shipping {
 		// shipping method cost settings.
 		$rates = $this->wpdb->get_results( "SELECT * FROM {$this->wpdb->prefix}woocommerce_shipping_zone_methods WHERE method_id IN('flat_rate', 'local_pickup', 'free_shipping')" );
 		foreach ( $rates as $method ) {
-			$option_name = sprintf( 'woocommerce_%s_%d_settings', $method->method_id, $method->instance_id );
+			$option_name = self::getShippingOptionName( $method->method_id, $method->instance_id );
 			add_filter( 'option_' . $option_name, [ $this, 'convert_shipping_method_cost_settings' ] );
 		}
 
@@ -144,5 +144,15 @@ class WCML_Multi_Currency_Shipping {
 		}
 		return $price;
 
+	}
+
+	/**
+	 * @param string $methodId
+	 * @param int    $instanceId
+	 *
+	 * @return string
+	 */
+	public static function getShippingOptionName( $methodId, $instanceId ) {
+		return sprintf( 'woocommerce_%s_%d_settings', $methodId, $instanceId );
 	}
 }
