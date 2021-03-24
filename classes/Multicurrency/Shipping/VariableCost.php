@@ -18,8 +18,6 @@ trait VariableCost {
 			'woocommerce-multilingual' ), $currencyCode );
 	}
 
-	private $wpOption = null;
-
 	/**
 	 * @see \WCML\Multicurrency\Shipping\ShippingMode::getFieldDescription
 	 *
@@ -153,11 +151,7 @@ trait VariableCost {
 	 * @return bool|mixed|void|null
 	 */
 	private function getWpOption( $methodId, $instanceId ) {
-		if ( null === $this->wpOption ) {
-			$optionName = sprintf( 'woocommerce_%s_%d_settings', $methodId, $instanceId );
-			$this->wpOption = get_option( $optionName );
-		}
-		return $this->wpOption;
+		return get_option( \WCML_Multi_Currency_Shipping::getShippingOptionName( $methodId, $instanceId ) );
 	}
 
 	/**
