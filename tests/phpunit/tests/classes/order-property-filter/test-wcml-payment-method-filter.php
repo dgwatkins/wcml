@@ -1,15 +1,23 @@
 <?php
 
+use WPML\FP\Fns;
+
 /**
  * @group wcml-2009
  */
 class Test_WCML_Payment_Method_Filter extends OTGS_TestCase {
 	/**
 	 * @test
+	 * @group wcml-3588
 	 */
 	public function it_adds_hooks() {
 		$subject = new WCML_Payment_Method_Filter();
-		\WP_Mock::expectFilterAdded( 'woocommerce_order_get_payment_method_title', array( $subject, 'payment_method_string' ), 10, 2 );
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_order_get_payment_method_title',
+			Fns::withoutRecursion( Fns::identity(), [ $subject, 'payment_method_string' ] ),
+			10,
+			2
+		);
 
 		$subject->add_hooks();
 	}
