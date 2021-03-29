@@ -31,6 +31,10 @@
             "type": "vcs",
             "url": "ssh://git@git.onthegosystems.com:10022/wpml-shared/wpml-lib-dependencies.git"
         },
+        "wpml-lib-cache": {
+            "type": "vcs",
+            "url": "ssh://git@git.onthegosystems.com:10022/wpml-shared/wpml-lib-cache.git"
+        },
         "wp-plugin-version": {
             "type": "vcs",
             "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-wp-plugin-version.git"
@@ -46,7 +50,8 @@
     "prefer-stable": true,
     "require": {
         "otgs/installer": "~2.6.0",
-        "wpml-shared/wpml-lib-dependencies": "dev-master"
+        "wpml-shared/wpml-lib-cache": "~0.1",
+        "wpml-shared/wpml-lib-dependencies": "~0.1"
     },
     "require-dev": {
         "antecedent/patchwork": "^2.0",
@@ -82,6 +87,9 @@
             "classes/",
             "compatibility/",
             "inc/"
+        ],
+        "exclude-from-classmap": [
+            "/vendor/wpml"
         ]
     }
 }

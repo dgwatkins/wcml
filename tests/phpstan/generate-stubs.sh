@@ -80,19 +80,22 @@
   ../sitepress-multilingual-cms/sitepress.php \
   \
   ../sitepress-multilingual-cms/classes \
+  ../sitepress-multilingual-cms/classes/templating \
   ../sitepress-multilingual-cms/sitepress.class.php
 
 
 ./vendor/bin/generate-stubs  \
   --force  \
-  --functions \
   --classes \
   --interfaces \
   --traits \
   \
-  --out=tests/phpstan/stubs/wpml-fp.stub \
+  --out=tests/phpstan/stubs/wpml-vendor.stub \
   \
-  ../sitepress-multilingual-cms/vendor/wpml/fp/core
+  ../sitepress-multilingual-cms/vendor/wpml/collect/src \
+  ../sitepress-multilingual-cms/vendor/wpml/core-api/core \
+  ../sitepress-multilingual-cms/vendor/wpml/fp/core \
+  ../sitepress-multilingual-cms/vendor/wpml/wp/classes
 
 
 ./vendor/bin/generate-stubs  \
