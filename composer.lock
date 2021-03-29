@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f4907fee74f11daf4071a310f9fd5ff3",
+    "content-hash": "255c5bd9e08c12abdb8f3de7e71f7c53",
     "packages": [
         {
             "name": "composer/installers",
@@ -194,11 +194,11 @@
         },
         {
             "name": "otgs/installer",
-            "version": "2.6.2",
+            "version": "2.6.1",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/installer/installer.git",
-                "reference": "92d8e18dc832919c77f48d497ad4b78d344a4e43"
+                "reference": "90c563b2e08927803f7857b04f077ef5a5c7c9f9"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -282,7 +282,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2021-03-09T09:15:35+00:00"
+            "time": "2021-01-15T09:46:13+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -850,7 +850,7 @@
             ],
             "authors": [
                 {
-                    "name": "Christian Lück",
+                    "name": "Christian L??ck",
                     "email": "christian@lueck.tv"
                 }
             ],
@@ -864,16 +864,6 @@
                 "stream",
                 "stream_filter_append",
                 "stream_filter_register"
-            ],
-            "funding": [
-                {
-                    "url": "https://clue.engineering/support",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/clue",
-                    "type": "github"
-                }
             ],
             "time": "2019-04-09T12:31:48+00:00"
         },
@@ -1960,7 +1950,7 @@
             ],
             "authors": [
                 {
-                    "name": "Pádraic Brady",
+                    "name": "P??draic Brady",
                     "email": "padraic.brady@gmail.com",
                     "homepage": "http://blog.astrumfutura.com"
                 },
@@ -2547,7 +2537,7 @@
             ],
             "authors": [
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M??rk S??gi-Kaz??r",
                     "email": "mark.sagikazar@gmail.com"
                 }
             ],
@@ -2608,7 +2598,7 @@
             ],
             "authors": [
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M??rk S??gi-Kaz??r",
                     "email": "mark.sagikazar@gmail.com"
                 },
                 {
@@ -2668,7 +2658,7 @@
                     "email": "geloen.eric@gmail.com"
                 },
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M??rk S??gi-Kaz??r",
                     "email": "mark.sagikazar@gmail.com"
                 }
             ],
@@ -2739,7 +2729,7 @@
             ],
             "authors": [
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M??rk S??gi-Kaz??r",
                     "email": "mark.sagikazar@gmail.com"
                 }
             ],
@@ -2787,7 +2777,7 @@
             ],
             "authors": [
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M??rk S??gi-Kaz??r",
                     "email": "mark.sagikazar@gmail.com"
                 }
             ],
@@ -2894,7 +2884,7 @@
             ],
             "authors": [
                 {
-                    "name": "Márk Sági-Kazár",
+                    "name": "M??rk S??gi-Kaz??r",
                     "email": "mark.sagikazar@gmail.com"
                 },
                 {
@@ -4321,7 +4311,6 @@
             ],
             "description": "Provides a list of PHP built-in functions that operate on resources",
             "homepage": "https://www.github.com/sebastianbergmann/resource-operations",
-            "abandoned": true,
             "time": "2015-07-28T20:34:47+00:00"
         },
         {
@@ -5820,49 +5809,12 @@
             "time": "2020-10-28T08:07:38+00:00"
         },
         {
-            "name": "wpml/core-api",
-            "version": "0.1.3",
-            "source": {
-                "type": "git",
-                "url": "https://git.onthegosystems.com/wpml-packages/core-api.git",
-                "reference": "f1a888d977d8aca80269b0c5711f958f0064fcc6"
-            },
-            "require-dev": {
-                "10up/wp_mock": "0.2.0",
-                "antecedent/patchwork": "^2.0",
-                "cvuorinen/phpdoc-markdown-public": "^0.2.0",
-                "otgs/unit-tests-framework": "~1.2.0",
-                "wpml/collect": "dev-wpml-collect-rename",
-                "wpml/fp": "dev-develop",
-                "wpml/wp": "dev-develop"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "core"
-                ],
-                "files": []
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bruce Pearson",
-                    "email": "bruce@onthegosystems.com"
-                }
-            ],
-            "description": "Class and utilities to interface with WPML core functionality",
-            "time": "2021-06-29T05:05:38+00:00"
-        },
-        {
             "name": "wpml/fp",
-            "version": "0.1.6",
+            "version": "0.1.4",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/wpml-packages/fp.git",
-                "reference": "6e477a6d3e00b8cf3d0bdfc36e4959ebf77bf10d"
+                "reference": "49c1cc25fad99cc63bf224028fedc593280c6863"
             },
             "require-dev": {
                 "cvuorinen/phpdoc-markdown-public": "^0.2.0",
@@ -5882,7 +5834,7 @@
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2021-06-04T21:05:42+00:00"
+            "time": "2020-10-21T09:15:01+00:00"
         },
         {
             "name": "wpml/page-builders-gutenberg",
@@ -5890,12 +5842,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/OnTheGoSystems/wpml-page-builders-gutenberg.git",
-                "reference": "0537786990745b9aac60ec6c8cb9bdfa14c9e358"
+                "reference": "818a9dfd9af972decec97865512749c3e038677f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OnTheGoSystems/wpml-page-builders-gutenberg/zipball/0537786990745b9aac60ec6c8cb9bdfa14c9e358",
-                "reference": "0537786990745b9aac60ec6c8cb9bdfa14c9e358",
+                "url": "https://api.github.com/repos/OnTheGoSystems/wpml-page-builders-gutenberg/zipball/818a9dfd9af972decec97865512749c3e038677f",
+                "reference": "818a9dfd9af972decec97865512749c3e038677f",
                 "shasum": ""
             },
             "require": {
@@ -5906,10 +5858,8 @@
                 "otgs/unit-tests-framework": "~1.2.0",
                 "phpunit/phpunit": "~5.7",
                 "wpml/collect": "dev-wpml-collect-rename",
-                "wpml/core-api": "dev-develop",
-                "wpml/fp": "dev-develop",
-                "wpml/page-builders": "dev-master",
-                "wpml/wp": "dev-develop"
+                "wpml/fp": "dev-master",
+                "wpml/page-builders": "dev-master"
             },
             "type": "library",
             "autoload": {
@@ -5928,21 +5878,21 @@
                 }
             ],
             "description": "A library used by WPML to handle Gutenberg",
-            "time": "2021-07-08T11:53:32+00:00"
+            "time": "2021-02-11T10:13:21+00:00"
         },
         {
             "name": "wpml/wp",
-            "version": "0.1.6",
+            "version": "0.1.2",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/wpml-packages/wp.git",
-                "reference": "9508f540079cd0ac6c76ae732f1d90048343a9c8"
+                "reference": "e66aa7eb7e6a5d9a5f6872f57353f669e6438a8b"
             },
             "require-dev": {
                 "antecedent/patchwork": "^2.0",
                 "otgs/unit-tests-framework": "~1.2.0",
                 "wpml/collect": "dev-wpml-collect-rename",
-                "wpml/fp": "dev-develop"
+                "wpml/fp": "dev-master"
             },
             "type": "library",
             "autoload": {
@@ -5962,7 +5912,7 @@
                 }
             ],
             "description": "Class and utilities to interface with WordPress from WPML",
-            "time": "2021-06-29T03:51:54+00:00"
+            "time": "2020-07-31T14:42:11+00:00"
         },
         {
             "name": "xrstf/composer-php52",
