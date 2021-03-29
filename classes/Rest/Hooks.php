@@ -10,7 +10,8 @@ class Hooks {
 
 		Generic::preventDefaultLangUrlRedirect();
 
-		add_action( 'rest_api_init', [ Generic::class, 'setLanguageForRequest' ] );
+		add_action( 'rest_api_init', [ Language\Set::class, 'fromUrlQueryVar' ] );
+		add_filter( 'rest_request_before_callbacks', [ Language\Set::class, 'beforeCallbacks' ], 10, 3 );
 		add_action( 'parse_query', [ Generic::class, 'autoAdjustIncludedIds' ] );
 
 		foreach ( [ 'product', 'shop_order', 'product_variation' ] as $type ) {

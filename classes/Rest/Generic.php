@@ -5,19 +5,6 @@ namespace WCML\Rest;
 class Generic {
 
 	/**
-	 * Enforces the language of request as the current language to be able to filter items by language
-	 *
-	 * @param WP_REST_Server $wp_rest_server
-	 */
-	public static function setLanguageForRequest( \WP_REST_Server $wp_rest_server ) {
-		if ( isset( $_GET['lang'] ) ) {
-			if ( apply_filters( 'wpml_language_is_active', false, $_GET['lang'] ) ) {
-				wpml_switch_language_action( $_GET['lang'] );
-			}
-		}
-	}
-
-	/**
 	 * Prevent WPML redirection when using the default language as a parameter in the url
 	 */
 	public static function preventDefaultLangUrlRedirect() {
