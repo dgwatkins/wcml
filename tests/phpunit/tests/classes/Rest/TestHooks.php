@@ -69,7 +69,8 @@ class TestHooks extends \OTGS_TestCase {
 		        ->with( 'reports_products_count' )
 		        ->andReturn( $reports_products_count );
 
-		\WP_Mock::expectActionAdded( 'rest_api_init', [ Generic::class, 'setLanguageForRequest' ] );
+		\WP_Mock::expectActionAdded( 'rest_api_init', [ Language\Set::class, 'fromUrlQueryVar' ] );
+		\WP_Mock::expectFilterAdded( 'rest_request_before_callbacks', [ Language\Set::class, 'beforeCallbacks' ], 10, 3 );
 		\WP_Mock::expectActionAdded( 'parse_query', [ Generic::class, 'autoAdjustIncludedIds' ] );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_query', [ Factory::create( 'product' ), 'query' ], 10, 2 );
