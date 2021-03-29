@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "46daf8d67cc2e4a303f83423d0441b8e",
+    "content-hash": "c66429ad5728ea06d2b8280298751e70",
     "packages": [
         {
             "name": "composer/installers",
@@ -5785,11 +5785,11 @@
         },
         {
             "name": "wpml/fp",
-            "version": "0.1.4",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/wpml-packages/fp.git",
-                "reference": "49c1cc25fad99cc63bf224028fedc593280c6863"
+                "reference": "72b0a82ead8bbf18c77bafa4a1cec00539155cec"
             },
             "require-dev": {
                 "cvuorinen/phpdoc-markdown-public": "^0.2.0",
@@ -5809,7 +5809,7 @@
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2020-10-21T09:15:01+00:00"
+            "time": "2021-03-19T03:05:25+00:00"
         },
         {
             "name": "wpml/page-builders-gutenberg",
@@ -5857,17 +5857,17 @@
         },
         {
             "name": "wpml/wp",
-            "version": "0.1.2",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/wpml-packages/wp.git",
-                "reference": "e66aa7eb7e6a5d9a5f6872f57353f669e6438a8b"
+                "reference": "8ddb45c3c7d4d6948229a3feb6ecbf0e27fed677"
             },
             "require-dev": {
                 "antecedent/patchwork": "^2.0",
                 "otgs/unit-tests-framework": "~1.2.0",
                 "wpml/collect": "dev-wpml-collect-rename",
-                "wpml/fp": "dev-master"
+                "wpml/fp": "dev-develop"
             },
             "type": "library",
             "autoload": {
@@ -5887,7 +5887,7 @@
                 }
             ],
             "description": "Class and utilities to interface with WordPress from WPML",
-            "time": "2020-07-31T14:42:11+00:00"
+            "time": "2021-03-15T08:20:07+00:00"
         },
         {
             "name": "xrstf/composer-php52",
@@ -5930,7 +5930,9 @@
         "otgs/wp-plugin-version": 20,
         "roave/security-advisories": 20,
         "wpml/collect": 20,
-        "wpml/page-builders-gutenberg": 20
+        "wpml/fp": 20,
+        "wpml/page-builders-gutenberg": 20,
+        "wpml/wp": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
