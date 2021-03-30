@@ -98,6 +98,7 @@ function wcml_loader() {
 		\WCML\AdminNotices\CachePlugins::class,
 		\WCML\Reports\Products\Query::class,
 		\WCML\Setup\BeforeHooks::class,
+		\WCML\Rest\UrlHooks::class,
 	];
 
 	if (
