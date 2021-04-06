@@ -73,6 +73,9 @@ class WCML_Multi_Currency_Reports {
 				$this,
 				'filter_dashboard_status_widget_sales_query'
 			) ); // woocommerce 2.6
+
+			// Temporary fix for dashboard widget (see wcml-3598).
+			add_filter( 'woocommerce_admin_disabled', '__return_true' );
 		}
 
 	}
