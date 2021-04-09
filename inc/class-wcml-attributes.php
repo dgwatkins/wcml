@@ -632,8 +632,6 @@ class WCML_Attributes {
 	public function filter_dropdown_variation_attribute_options_args( $args ) {
 
 		if ( isset( $args['attribute'] ) && isset( $args['product'] ) ) {
-			$args['attribute'] = $this->filter_attribute_name( $args['attribute'], $args['product']->get_id() );
-
 			if ( $this->get_wcml_products_instance()->is_product_display_as_translated_post_type() ) {
 				foreach ( $args['options'] as $key => $attribute_value ) {
 					$args['options'][ $key ] = $this->get_attribute_term_translation_in_current_language( $args['attribute'], $attribute_value );
