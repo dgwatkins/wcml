@@ -1,5 +1,9 @@
 <?php
 
+use WPML\FP\Relation;
+use function WPML\FP\pipe;
+use function WPML\FP\invoke;
+
 class WCML_WC_Strings {
 
 	private $translations_from_mo_file = [];
@@ -77,7 +81,7 @@ class WCML_WC_Strings {
 	}
 
 	public function translated_attribute_label( $label, $name, $product_obj = false ) {
-		global $product, $sitepress_settings;
+		global $product;
 
 		$product_id = false;
 		$lang       = $this->sitepress->get_current_language();
@@ -94,7 +98,7 @@ class WCML_WC_Strings {
 			$product_id = $product_obj->get_id();
 		}
 
-		$name = $this->woocommerce_wpml->attributes->filter_attribute_name( $name, $product_id, true );
+		$name = $this->get_attribute_slug_by_name( $name, $product_id );
 
 		if ( $product_id ) {
 
@@ -136,6 +140,26 @@ class WCML_WC_Strings {
 		}
 
 		return $label;
+	}
+
+	private function get_attribute_slug_by_name( $name, $product_id ) {
+		$product = wc_get_product( $product_id );
+		$slug    = false;
+
+		if ( $product ) {
+			$matchName = pipe( invoke( 'get_name' ), Relation::equals( $name ) );
+
+			$slug = wpml_collect( $product->get_attributes() )
+				->filter( $matchName )
+				->keys()
+				->first();
+		}
+
+		if ( ! $slug ) {
+			$slug = $this->woocommerce_wpml->attributes->filter_attribute_name( $name, $product_id, true );
+		}
+
+		return $slug;
 	}
 
 	/**
