@@ -25,7 +25,8 @@ class WCML_Taxonomy_Translation_Link_Filters {
 	public function override_translation_notice_text( $text, $notice ) {
 		if ( 'taxonomy-term-help-notices' === $notice['group'] ) {
 			$taxonomy = get_taxonomy( $notice['id'] );
-			if ( false !== $taxonomy ) {
+			$built_in_taxonomies = [ 'product_cat', 'product_tag', 'product_shipping_class' ];
+			if ( false !== $taxonomy && in_array( $notice['id'], $built_in_taxonomies ) ) {
 
 				$link = sprintf(
 					'<a href="%s">%s</a>',
