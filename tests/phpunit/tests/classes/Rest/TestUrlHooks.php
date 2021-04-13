@@ -11,6 +11,7 @@ use tad\FunctionMocker\FunctionMocker;
 class TestUrlHooks extends \OTGS_TestCase {
 
 	const LANGUAGE_NEGOTIATION_TYPE_DIRECTORY = 1;
+	const ABS_HOME = 'https://example.com';
 
 	public function setUp() {
 		parent::setUp();
@@ -69,13 +70,16 @@ class TestUrlHooks extends \OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider dpAbsHome
+	 *
+	 * @param string $absHome
 	 */
-	public function itShouldAlterUrlForDefaultLanguage() {
-		$path        = '/wc/v3/products/';
-		$absHome     = 'https://example.com';
-		$urlLang     = 'en';
-		$url         = $absHome . '/' . $urlLang . '/wp-json' . $path;
-		$filteredUrl = $absHome . '/wp-json' . $path;
+	public function itShouldAlterUrlForDefaultLanguage( $absHome ) {
+		$path          = '/wc/v3/products/';
+		$urlLang       = 'en';
+		$trimmedAbsUrl = rtrim( $absHome, '/' );
+		$url           = $trimmedAbsUrl . '/' . $urlLang . '/wp-json' . $path;
+		$filteredUrl   = $trimmedAbsUrl . '/wp-json' . $path;
 
 		$urlConverter = $this->getUrlConverter();
 		$urlConverter->method( 'get_language_from_url' )
@@ -100,17 +104,20 @@ class TestUrlHooks extends \OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider dpAbsHome
+	 *
+	 * @param string $absHome
 	 */
-	public function itShouldAlterUrlForSecondaryLanguage() {
-		$path        = '/wc/v3/products/';
-		$absHome     = 'https://example.com';
-		$urlLang     = 'en';
-		$defaultLang = 'fr';
-		$url         = $absHome . '/' . $urlLang . '/wp-json' . $path;
-		$filteredUrl = $absHome . '/wp-json' . $path . '?lang=' . $urlLang;
+	public function itShouldAlterUrlForSecondaryLanguage( $absHome  ) {
+		$path          = '/wc/v3/products/';
+		$urlLang       = 'en';
+		$defaultLang   = 'fr';
+		$trimmedAbsUrl = rtrim( $absHome, '/' );
+		$url           = $trimmedAbsUrl . '/' . $urlLang . '/wp-json' . $path;
+		$filteredUrl   = $trimmedAbsUrl . '/wp-json' . $path . '?lang=' . $urlLang;
 
 		\WP_Mock::userFunction( 'add_query_arg' )
-			->with( [ 'lang' => $urlLang ], $absHome . '/wp-json' . $path )
+			->with( [ 'lang' => $urlLang ], $trimmedAbsUrl . '/wp-json' . $path )
 			->andReturn( $filteredUrl );
 
 		$urlConverter = $this->getUrlConverter();
@@ -132,6 +139,13 @@ class TestUrlHooks extends \OTGS_TestCase {
 			$filteredUrl,
 			$subject->handleLanguageInDirectories( $url, $path )
 		);
+	}
+
+	public function dpAbsHome() {
+		return [
+			'without trailing slash' => [ self::ABS_HOME ],
+			'with trailing slash'    => [ self::ABS_HOME . '/' ],
+		];
 	}
 
 	private function getSubject( $urlConverter = null, $sitepress = null ) {

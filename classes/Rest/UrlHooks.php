@@ -76,7 +76,7 @@ class UrlHooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_
 	 * @return string
 	 */
 	private function stripLangDirectory( $url, $urlLang ) {
-		$absUrl  = $this->urlConverter->get_abs_home();
+		$absUrl  = rtrim( $this->urlConverter->get_abs_home(), '/' );
 		$pattern = '/^(' . preg_quote( $absUrl, '/' ) . '\/)(' . $urlLang .'\/)/';
 		return preg_replace( $pattern, '$1', $url, 1 );
 	}
