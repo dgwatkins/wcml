@@ -649,6 +649,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 				return new WP_Error( 'empty_content', __( 'Content, title, and excerpt are empty.' ) );
 			}
 
+			$args['post_author']    = $this->original_post->post_author;
 			$args['post_status']    = $this->original_post->post_status;
 			$args['menu_order ']    = $this->original_post->menu_order;
 			$args['ping_status']    = $this->original_post->ping_status;
@@ -702,6 +703,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 			$args['post_title']     = $translations[ md5( 'title' ) ];
 			$args['post_content']   = isset( $translations[ md5( 'product_content' ) ] ) ? $translations[ md5( 'product_content' ) ] : '';
 			$args['post_excerpt']   = $translations[ md5( 'product_excerpt' ) ];
+			$args['post_author']    = $this->original_post->post_author;
 			$args['post_status']    = $this->original_post->post_status;
 			$args['ping_status']    = $this->original_post->ping_status;
 			$args['comment_status'] = $this->original_post->comment_status;
