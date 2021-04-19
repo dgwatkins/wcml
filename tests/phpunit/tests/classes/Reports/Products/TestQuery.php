@@ -25,7 +25,8 @@ class TestQuery extends \OTGS_TestCase {
 			'return' => ''
 		] );
 
-		\WP_Mock::expectFilterAdded( 'woocommerce_analytics_products_select_query', [ $subject, 'joinProductTranslations' ], 10 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_analytics_products_select_query', [ $subject, 'joinProductTranslations' ] );
+		\WP_Mock::expectFilterAdded( 'woocommerce_analytics_products_select_query', [ $subject, 'translateProductTitles' ] );
 
 		$subject->add_hooks();
 	}
@@ -130,6 +131,72 @@ class TestQuery extends \OTGS_TestCase {
 		$filtered = $subject->joinProductTranslations( $results );
 
 		$this->assertSame( $filtered->data, $results->data );
+	}
+
+	/**
+	 * @test
+	 */
+	public function itTranslatesProductTitlesAndCategoryIds() {
+		$originalProductId     = 123;
+		$translatedProductId   = 456;
+		$originalCategoryId    = 78;
+		$translatedCategoryId  = 90;
+		$originalProductName   = 'Sample Product';
+		$translatedProductName = 'Sample Product FR';
+
+		$data = new \stdClass();
+		$data->data = [
+			[
+				'product_id'    => $originalProductId,
+				'extended_info' => [
+					'name'         => $originalProductName,
+					'category_ids' => [
+						$originalCategoryId,
+					],
+				],
+			],
+		];
+
+		$expected = new \stdClass();
+		$expected->data = [
+			[
+				'product_id'    => $translatedProductId,
+				'extended_info' => [
+					'name'         => $translatedProductName,
+					'category_ids' => [
+						$translatedCategoryId,
+					],
+				],
+			],
+		];
+
+		\WP_Mock::userFunction( 'get_post_type', [
+			'args'   => $originalProductId,
+			'return' => 'product',
+		] );
+
+		\WP_Mock::onFilter( 'wpml_object_id' )
+			->with( $originalProductId, 'product', true )
+			->reply( $translatedProductId );
+
+		\WP_Mock::onFilter( 'wpml_object_id' )
+			->with( $originalCategoryId, 'product_cat', true )
+			->reply( $translatedCategoryId );
+
+		$product = $this->getMockBuilder( 'WC_Product' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'get_title' ] )
+			->getMock();
+
+		$product->method( 'get_title' )->willReturn( $translatedProductName );
+
+		\WP_Mock::userFunction( 'wc_get_product', [
+			'args'   => $translatedProductId,
+			'return' => $product,
+		] );
+
+		$subject = $this->get_subject();
+		$this->assertEquals( $expected, $subject->translateProductTitles( $data ) );
 	}
 
 }
