@@ -460,15 +460,6 @@ class WCML_Emails {
 			add_filter( 'woocommerce_new_order_email_allows_resend', Fns::always( true ) );
 
 			foreach ( $recipients as $recipient ) {
-				/**
-				 * Filter new order admin email language for recipient
-				 *
-				 * @since 4.7.0
-				 *
-				 * @param string $admin_language Admin language
-				 * @param string $recipient Admin email
-				 * @param int $order_id Order ID
-				 */
 				$admin_language = $this->get_admin_language_by_email( $recipient, $order_id );
 
 				$this->change_email_language( $admin_language );
@@ -505,7 +496,21 @@ class WCML_Emails {
 			$language = $this->sitepress->get_default_language();
 		}
 
-		return apply_filters( 'wcml_new_order_admin_email_language', $language, $recipient, $order_id );
+		/**
+		 * @depreacted since 4.12.0, use `wcml_get_admin_language_by_email` instead.
+		 */
+		$language = apply_filters( 'wcml_new_order_admin_email_language', $language, $recipient, $order_id );
+
+		/**
+		 * Filter admin email language for recipient
+		 *
+		 * @since 4.12.0
+		 *
+		 * @param string $admin_language Admin language
+		 * @param string $recipient      Admin email
+		 * @param int    $order_id       Order ID
+		 */
+		return apply_filters( 'wcml_get_admin_language_by_email', $language, $recipient, $order_id );
 	}
 
 	public function new_order_email_heading( $heading ) {
