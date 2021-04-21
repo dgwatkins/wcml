@@ -14,6 +14,8 @@
 
 1. Clone the project
 2. Run `make setup` (see [here](https://git.onthegosystems.com/wpml-shared/makefile-git-hooks/tree/master))
+3. If you are setting up for development, run `make dev`, if you want to build for production, run `make prod`
+
 
 ## Development
 
