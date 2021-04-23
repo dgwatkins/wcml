@@ -201,36 +201,36 @@ class WCML_Multi_Currency_Orders {
 
 			wc_enqueue_js(
 				"
-                var order_currency_current_value = jQuery('#dropdown_shop_order_currency option:selected').val();
+				var order_currency_current_value = jQuery('#dropdown_shop_order_currency option:selected').val();
 
-                jQuery('#dropdown_shop_order_currency').on('change', function(){
+				jQuery('#dropdown_shop_order_currency').on('change', function(){
 
-                    if(confirm('" . esc_js( __( 'All the products will be removed from the current order in order to change the currency', 'woocommerce-multilingual' ) ) . "')){
-                        jQuery.ajax({
-                            url: ajaxurl,
-                            type: 'post',
-                            dataType: 'json',
-                            data: {
-                                action: 'wcml_order_set_currency',
-                                currency: jQuery('#dropdown_shop_order_currency option:selected').val(),
-                                wcml_nonce: '" . $wcml_order_set_currency_nonce . "'
-                                },
-                            success: function( response ){
-                                if(typeof response.error !== 'undefined'){
-                                    alert(response.error);
-                                }else{
-                                   window.location = window.location.href;
-                                }
-                            }
-                        });
-                    }else{
-                        jQuery(this).val( order_currency_current_value );
-                        return false;
-                    }
+					if(confirm('" . esc_js( __( 'All the products will be removed from the current order in order to change the currency', 'woocommerce-multilingual' ) ) . "')){
+						jQuery.ajax({
+							url: ajaxurl,
+							type: 'post',
+							dataType: 'json',
+							data: {
+								action: 'wcml_order_set_currency',
+								currency: jQuery('#dropdown_shop_order_currency option:selected').val(),
+								wcml_nonce: '" . $wcml_order_set_currency_nonce . "'
+								},
+							success: function( response ){
+								if(typeof response.error !== 'undefined'){
+									alert(response.error);
+								}else{
+								   window.location = window.location.href;
+								}
+							}
+						});
+					}else{
+						jQuery(this).val( order_currency_current_value );
+						return false;
+					}
 
-                });
+				});
 
-            "
+			"
 			);
 
 		}
@@ -340,7 +340,11 @@ class WCML_Multi_Currency_Orders {
 					continue;
 				}
 
-				if ( 'total' === $key && $item->get_total() !== $item->get_subtotal() ) {
+				if ( ('total' === $key
+					 && $item->get_total() !== $item->get_subtotal()
+					 )
+					 || $this->total_is_changed( $item )
+				) {
 					$converted_totals[ $key ] = $item->get_total();
 				} else {
 					if ( ! $converted_price ) {
@@ -370,6 +374,10 @@ class WCML_Multi_Currency_Orders {
 			$item->update_meta_data( '_wcml_total_qty', $item->get_quantity() );
 			$item->save();
 		}
+	}
+	
+	private function total_is_changed( $item ) {
+		return (int) $item->get_product()->get_price() * (int) $item->get_quantity() !== (int) $item->get_total();
 	}
 
 	/**
@@ -499,11 +507,11 @@ class WCML_Multi_Currency_Orders {
 
 				$currency = $this->multi_currency->admin_currency_selector->get_cookie_dashboard_currency();
 				$query    = "SELECT post_status, COUNT( * ) AS num_posts FROM {$wpdb->posts}
-                          WHERE post_type = 'shop_order' AND ID IN
-                            ( SELECT order_currency.post_id FROM {$wpdb->postmeta} AS order_currency
-                              WHERE order_currency.meta_key = '_order_currency'
-                                AND order_currency.meta_value = '{$currency}' )
-                                GROUP BY post_status";
+						  WHERE post_type = 'shop_order' AND ID IN
+							( SELECT order_currency.post_id FROM {$wpdb->postmeta} AS order_currency
+							  WHERE order_currency.meta_key = '_order_currency'
+								AND order_currency.meta_value = '{$currency}' )
+								GROUP BY post_status";
 
 			}
 		}
