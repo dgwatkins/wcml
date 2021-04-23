@@ -8,6 +8,7 @@ class WCML_Orders {
 
 	const DASHBOARD_COOKIE_NAME = '_wcml_dashboard_order_language';
 	const COOKIE_TTL            = 86400;
+	const KEY_LANGUAGE          = 'wpml_language';
 
 	private $woocommerce_wpml;
 	private $sitepress;
@@ -27,6 +28,7 @@ class WCML_Orders {
 
 	public function init() {
 		add_action( 'woocommerce_checkout_update_order_meta', [ $this, 'set_order_language' ] );
+		add_action( 'woocommerce_before_order_object_save', [ $this, 'setOrderLanguageBeforeSave' ] );
 
 		add_filter( 'icl_lang_sel_copy_parameters', [ $this, 'append_query_parameters' ] );
 
@@ -222,7 +224,7 @@ class WCML_Orders {
 		if ( $this->is_on_order_edit_page() ) {
 			$language = $this->sitepress->get_user_admin_language( get_current_user_id(), true );
 		} elseif ( $this->is_order_action_triggered_for_customer() ) {
-			$order_language = get_post_meta( $order->get_id(), 'wpml_language', true );
+			$order_language = get_post_meta( $order->get_id(), self::KEY_LANGUAGE, true );
 
 			$language = $order_language ? $order_language : $this->sitepress->get_default_language();
 		} else {
@@ -306,7 +308,7 @@ class WCML_Orders {
 
 		$order_id = $wpdb->get_var( $wpdb->prepare( "SELECT order_id FROM {$wpdb->prefix}woocommerce_order_items WHERE order_item_id = %d", $item_id ) );
 
-		return get_post_meta( $order_id, 'wpml_language', true );
+		return get_post_meta( $order_id, self::KEY_LANGUAGE, true );
 	}
 
 	// force update to display attribute in correct language on edit order page.
@@ -333,13 +335,25 @@ class WCML_Orders {
 	/**
 	 * Adds language to order post type.
 	 *
-	 * @param type $order_id
+	 * @param int $order_id
 	 */
 	public function set_order_language( $order_id ) {
-		if ( ! get_post_meta( $order_id, 'wpml_language' ) ) {
-			update_post_meta( $order_id, 'wpml_language', ICL_LANGUAGE_CODE );
+		if ( ! get_post_meta( $order_id, self::KEY_LANGUAGE ) ) {
+			update_post_meta( $order_id, self::KEY_LANGUAGE, ICL_LANGUAGE_CODE );
 		}
 	}
+
+	/**
+	 * @param \WC_Abstract_Legacy_Order $order
+	 */
+	public function setOrderLanguageBeforeSave( $order ) {
+		if (
+			$order->get_status() !== 'checkout-draft'
+			&& ! $order->get_meta( self::KEY_LANGUAGE )
+		) {
+			$order->add_meta_data( self::KEY_LANGUAGE, constant( 'ICL_LANGUAGE_CODE' ), true );
+		}
+    }
 
 	public function append_query_parameters( $parameters ) {
 
@@ -454,13 +468,13 @@ class WCML_Orders {
 	public function set_order_language_backend( $post_id, $post ) {
 
 		if ( isset( $_POST['wcml_shop_order_language'] ) ) {
-			update_post_meta( $post_id, 'wpml_language', filter_input( INPUT_POST, 'wcml_shop_order_language', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) );
+			update_post_meta( $post_id, self::KEY_LANGUAGE, filter_input( INPUT_POST, 'wcml_shop_order_language', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) );
 		}
 	}
 
 	public function filter_downloadable_product_items( $files, $item, $object ) {
 
-		$order_language = get_post_meta( $object->get_id(), 'wpml_language', true );
+		$order_language = get_post_meta( $object->get_id(), self::KEY_LANGUAGE, true );
 
 		if ( $item->get_variation_id() > 0 ) {
 			$translated_variation_id = apply_filters( 'translate_object_id', $item->get_variation_id(), 'product_variation', false, $order_language );

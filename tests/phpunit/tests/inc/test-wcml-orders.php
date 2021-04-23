@@ -142,7 +142,7 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		$item->method( 'set_variation_id' )->with( $translated_variation_id )->willReturn( true );
 		$item->method( 'get_item_downloads' )->willReturn( $expected_downloads );
 
-		
+
 		\WP_Mock::wpFunction( 'remove_filter', array( 'times' => 1, 'return' => true ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_get_item_downloads', array( $subject, 'filter_downloadable_product_items' ), 10, 3 );
 
@@ -326,10 +326,7 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		$language       = 'fr';
 		$_GET['action'] = $action;
 		$order_id       = 100;
-		$order          = $this->getMockBuilder( 'WC_Order' )
-		                       ->disableOriginalConstructor()
-		                       ->setMethods( array( 'get_id' ) )
-		                       ->getMock();
+		$order          = $this->getOrder();
 		$order->method( 'get_id' )->willReturn( $order_id );
 
 		\WP_Mock::userFunction( 'get_post_meta', array(
@@ -572,4 +569,62 @@ class Test_WCML_Orders extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 * @dataProvider  dpShouldNOTSetOrderLanguageBeforeSave
+	 * @group wcml-3621
+	 *
+	 * @param string $status
+	 * @param mixed  $orderLanguage
+	 */
+	public function itShouldNOTSetOrderLanguageBeforeSave( $status, $orderLanguage ) {
+		$order = $this->getOrder();
+		$order->method( 'get_status' )->willReturn( $status );
+		$order->method( 'get_meta' )->willReturn( $orderLanguage );
+		$order->expects( $this->never() )->method( 'add_meta_data' );
+
+		$subject = $this->get_subject();
+		$subject->setOrderLanguageBeforeSave( $order );
+	}
+
+	public function dpShouldNOTSetOrderLanguageBeforeSave() {
+		return [
+			'draft order'          => [ 'checkout-draft', '' ],
+			'language already set' => [ 'pending', 'fr' ],
+		];
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3621
+	 */
+	public function itShouldSetOrderLanguageBeforeSave() {
+		$globalLanguage = 'fr';
+
+		FunctionMocker::replace( 'constant', function( $constantName ) use ( $globalLanguage ) {
+			return 'ICL_LANGUAGE_CODE' === $constantName ? $globalLanguage : null;
+		} );
+
+		$order = $this->getOrder();
+		$order->method( 'get_status' )->willReturn( 'pending' );
+		$order->method( 'get_meta' )->willReturn( '' );
+		$order->expects( $this->once() )
+		      ->method( 'add_meta_data' )
+		      ->with( 'wpml_language', $globalLanguage, true );
+
+		$subject = $this->get_subject();
+		$subject->setOrderLanguageBeforeSave( $order );
+	}
+
+	private function getOrder() {
+		return $this->getMockBuilder( \WC_Order::class )
+		     ->disableOriginalConstructor()
+		     ->setMethods( [
+				'get_id',
+				'get_status',
+				'get_meta',
+				'add_meta_data',
+		     ] )
+		     ->getMock();
+	}
 }
