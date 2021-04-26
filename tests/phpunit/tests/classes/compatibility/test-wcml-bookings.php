@@ -629,25 +629,27 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 	 * @dataProvider customer_emails_classes
 	 */
 	public function it_should_translate_booking_customer_emails_in_order_language( $email_class, $method_name ) {
-
 		$booking_id         = 11;
 		$order_id           = 12;
+		$order_lang         = 'fr';
 		$email_heading      = rand_str();
 		$translated_heading = rand_str();
 		$email_subject      = rand_str();
 		$translated_subject = rand_str();
 
+		$this->mockOrderGetLanguageCallable( $order_id, $order_lang );
+
 		$booking = $this->get_booking_mock( $booking_id, $this->get_wc_order_mock( $order_id ) );
 
-		$woocommerce = $this->get_woocommerce_with_mailer_mock( $email_class, array(
+		$woocommerce = $this->get_woocommerce_with_mailer_mock( $email_class, [
 			'heading' => $email_heading,
 			'subject' => $email_subject
-		) );
+		] );
 
-		$woocommerce_wpml = $this->get_woocommerce_wpml_with_translated_strings_mock( array(
+		$woocommerce_wpml = $this->get_woocommerce_wpml_with_translated_strings_mock( [
 			'heading' => $translated_heading,
 			'subject' => $translated_subject
-		) );
+		] );
 
 		$subject = $this->get_subject( null, $woocommerce_wpml, $woocommerce );
 
@@ -741,9 +743,9 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 	 * @test
 	 */
 	public function it_should_translate_new_booking_email_in_order_language() {
-
 		$booking_id                      = 11;
 		$order_id                        = 12;
+		$order_lang                      = 'fr';
 		$user_email                      = 'admin@test.com';
 		$email_heading                   = rand_str();
 		$translated_heading              = rand_str();
@@ -753,6 +755,8 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$translated_subject              = rand_str();
 		$email_subject_confirmation      = rand_str();
 		$translated_subject_confirmation = rand_str();
+
+		$this->mockOrderGetLanguageCallable( $order_id, $order_lang );
 
 		$booking = $this->get_booking_mock( $booking_id, $this->get_wc_order_mock( $order_id ) );
 
@@ -827,14 +831,16 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 	 * @test
 	 */
 	public function it_should_translate_booking_cancelled_email_in_order_language() {
-
 		$booking_id         = 11;
 		$order_id           = 12;
+		$order_lang         = 'fr';
 		$user_email         = 'admin@test.com';
 		$email_heading      = rand_str();
 		$translated_heading = rand_str();
 		$email_subject      = rand_str();
 		$translated_subject = rand_str();
+
+		$this->mockOrderGetLanguageCallable( $order_id, $order_lang );
 
 		$booking = $this->get_booking_mock( $booking_id, $this->get_wc_order_mock( $order_id ) );
 
@@ -1228,6 +1234,21 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 			[ 'wc-booking-reminder' ],
 			[ 'wc-booking-complete' ],
 		];
+	}
+
+	/**
+	 * @param int    $order_id
+	 * @param string $order_lang
+	 */
+	private function mockOrderGetLanguageCallable( $order_id, $order_lang ) {
+		FunctionMocker::replace(
+			WCML_Orders::class . '::getLanguage',
+			function() use ( $order_id, $order_lang ) {
+				return function ( $orderIdArg ) use ( $order_id, $order_lang ) {
+					return $orderIdArg === $order_id ? $order_lang : null;
+				};
+			}
+		);
 	}
 }
 
