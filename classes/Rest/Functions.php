@@ -32,7 +32,7 @@ class Functions {
 	 * @return bool
 	 */
 	public static function isAnalyticsRestRequest() {
-		return apply_filters( 'woocommerce_rest_is_request_to_analytics_api', self::checkEndpoint( 'wc-analytics/' ) );
+		return self::checkEndpoint( 'wc-analytics/' );
 	}
 
 	/**
@@ -48,7 +48,7 @@ class Functions {
 		}
 
 		$restPrefix = trailingslashit( rest_get_url_prefix() );
-		if ( preg_match( "@" . $restPrefix . "wc/v([0-9]+)/@", $_SERVER['REQUEST_URI'], $matches ) ) {
+		if ( preg_match( "@" . $restPrefix . "wc/v([0-9]+)/@i", $_SERVER['REQUEST_URI'], $matches ) ) {
 			$version = intval( $matches[1] );
 		}
 
@@ -66,7 +66,7 @@ class Functions {
 		}
 
 		$rest_prefix = trailingslashit( rest_get_url_prefix() );
-		return ( false !== strpos( $_SERVER['REQUEST_URI'], $rest_prefix . $endpoint ) );
+		return ( false !== stripos( $_SERVER['REQUEST_URI'], $rest_prefix . $endpoint ) );
 	}
 
 	/**
