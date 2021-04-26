@@ -578,12 +578,12 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 
 		$woocommerce_wpml->emails = $this->getMockBuilder( 'WCML_Emails' )
 		                                 ->disableOriginalConstructor()
-		                                 ->setMethods( array( 'wcml_get_translated_email_string' ) )
+		                                 ->setMethods( array( 'getStringTranslation' ) )
 		                                 ->getMock();
 
 		$that          = $this;
 		$that->strings = $strings;
-		$woocommerce_wpml->emails->method( 'wcml_get_translated_email_string' )->willReturnCallback( function ( $context, $name, $order_id = false, $language_code = null ) use ( $that ) {
+		$woocommerce_wpml->emails->method( 'getStringTranslation' )->willReturnCallback( function ( $context, $name, $language_code, $originalValue, $originalDomain ) use ( $that ) {
 			if ( 'heading' === substr( $name, - 7 ) ) {
 				return $that->strings['heading'];
 			}

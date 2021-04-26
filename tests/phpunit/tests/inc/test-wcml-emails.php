@@ -178,6 +178,67 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @group wcml-3428
+	 */
+	public function itShouldGetStringTranslationFromAdminString() {
+		$domain          = 'my-context';
+		$name            = 'my-name';
+		$translatedValue = 'The translation';
+		$lang            = 'fr';
+
+		$subject = $this->get_subject();
+
+		$this->wcmlStrings
+			->method( 'get_translated_string_by_name_and_context' )
+			->with( $domain, $name, $lang )
+			->willReturn( $translatedValue );
+
+		$this->assertEquals(
+			$translatedValue,
+			$subject->getStringTranslation( $domain, $name, $lang )
+		);
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3428
+	 */
+	public function itShouldGetStringTranslationFromGettext() {
+		$domain          = 'my-context';
+		$name            = 'my-name';
+		$originalValue   = 'The string';
+		$originalDomain  = 'woocommerce-super-addon';
+		$translatedValue = 'The translation';
+		$lang            = 'fr';
+		$currentLang     = 'en';
+
+		$subject = $this->get_subject();
+
+		$this->wcmlStrings
+			->method( 'get_translated_string_by_name_and_context' )
+			->with( $domain, $name, $lang )
+			->willReturn( false );
+
+		$this->sitepress->expects( $this->exactly( 2 ) )
+			->method( 'switch_lang' )
+			->withConsecutive( [ $lang ], [ $currentLang ] );
+
+		$this->sitepress
+			->method( 'get_current_language' )
+			->willReturn( $currentLang );
+
+		\WP_Mock::userFunction( '__' )
+			->with( $originalValue, $originalDomain )
+			->andReturn( $translatedValue );
+
+		$this->assertEquals(
+			$translatedValue,
+			$subject->getStringTranslation( $domain, $name, $lang, $originalValue, $originalDomain )
+		);
+	}
+
+	/**
+	 * @test
 	 */
 	public function email_refresh_in_ajax(){
 

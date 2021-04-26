@@ -2,11 +2,14 @@
 
 use WPML\FP\Maybe;
 use function WPML\FP\invoke;
+use function WPML\FP\pipe;
 
 /**
  * Class WCML_Bookings.
  */
 class WCML_Bookings {
+
+	const DOMAIN = 'woocommerce-bookings';
 
 	/**
 	 * @var WPML_Element_Translation_Package
@@ -2540,37 +2543,33 @@ class WCML_Bookings {
 
 		if ( in_array( $key, $keys ) && $emails_ids->has( $object->id ) ) {
 			$is_admin_email   = $emails_ids->get( $object->id, false );
-			$translated_value = $this->woocommerce_wpml->emails->get_email_translated_string( $key, $object, $is_admin_email );
+			$translated_value = $this->woocommerce_wpml->emails->get_email_translated_string( $key, $object, $is_admin_email, $value, self::DOMAIN );
 		}
 
 		return $translated_value ?: $value;
 	}
 
-	public function translate_booking_confirmed_email_texts( $booking_id ) {
-	    $this->translate_email_strings( 'WC_Email_Booking_Confirmed', 'woocommerce_booking_confirmed_settings', self::getLanguage( $booking_id ) );
-	}
+    public function translate_booking_confirmed_email_texts( $booking_id ) {
+        $this->translate_email_strings( 'WC_Email_Booking_Confirmed', 'woocommerce_booking_confirmed_settings', self::getLanguage( $booking_id ) );
+    }
 
-	public function translate_booking_cancelled_email_texts( $booking_id ) {
-	    $this->translate_email_strings( 'WC_Email_Booking_Cancelled', 'woocommerce_booking_cancelled_settings', self::getLanguage( $booking_id ) );
-	}
+    public function translate_booking_cancelled_email_texts( $booking_id ) {
+        $this->translate_email_strings( 'WC_Email_Booking_Cancelled', 'woocommerce_booking_cancelled_settings', self::getLanguage( $booking_id ) );
+    }
 
-	public function translate_booking_reminder_email_texts( $booking_id ) {
-		$this->translate_email_strings( 'WC_Email_Booking_Reminder', 'woocommerce_booking_reminder_settings', self::getLanguage( $booking_id ) );
-	}
+    public function translate_booking_reminder_email_texts( $booking_id ) {
+        $this->translate_email_strings( 'WC_Email_Booking_Reminder', 'woocommerce_booking_reminder_settings', self::getLanguage( $booking_id ) );
+    }
 
-	public function translate_new_booking_email_texts( $booking_id ) {
-		if ( $this->email_class_exists( 'WC_Email_New_Booking' ) ) {
-			$user_lang = $this->get_admin_user_email_language( 'WC_Email_New_Booking' ) ?: self::getLanguage( $booking_id );
-			$this->translate_email_strings( 'WC_Email_New_Booking', 'woocommerce_new_booking_settings', $user_lang );
-			$this->woocommerce->mailer()->emails['WC_Email_New_Booking']->heading_confirmation = $this->woocommerce_wpml->emails->wcml_get_translated_email_string( 'admin_texts_woocommerce_new_booking_settings', '[woocommerce_new_booking_settings]heading_confirmation', null, $user_lang );
-			$this->woocommerce->mailer()->emails['WC_Email_New_Booking']->subject_confirmation = $this->woocommerce_wpml->emails->wcml_get_translated_email_string( 'admin_texts_woocommerce_new_booking_settings', '[woocommerce_new_booking_settings]subject_confirmation', null, $user_lang );
-		}
-	}
+    public function translate_new_booking_email_texts( $booking_id ) {
+        $user_lang = $this->get_admin_user_email_language( 'WC_Email_New_Booking' ) ?: self::getLanguage( $booking_id );
+        $this->translate_email_strings( 'WC_Email_New_Booking', 'woocommerce_new_booking_settings', $user_lang, [ 'heading_confirmation', 'subject_confirmation' ] );
+    }
 
-	public function translate_booking_cancelled_admin_email_texts( $booking_id ) {
-		$user_lang = $this->get_admin_user_email_language( 'WC_Email_Admin_Booking_Cancelled' ) ?: self::getLanguage( $booking_id );
-	    $this->translate_email_strings( 'WC_Email_Admin_Booking_Cancelled', 'woocommerce_admin_booking_cancelled_settings', $user_lang );
-	}
+    public function translate_booking_cancelled_admin_email_texts( $booking_id ) {
+        $user_lang = $this->get_admin_user_email_language( 'WC_Email_Admin_Booking_Cancelled' ) ?: self::getLanguage( $booking_id );
+        $this->translate_email_strings( 'WC_Email_Admin_Booking_Cancelled', 'woocommerce_admin_booking_cancelled_settings', $user_lang );
+    }
 
 	/**
 	 * @param string $email_class
@@ -2588,23 +2587,13 @@ class WCML_Bookings {
 	 */
 	private function get_admin_user_email_language( $email_class ) {
 
-		$user = get_user_by( 'email', $this->woocommerce->mailer()->emails[ $email_class ]->recipient );
+		$user = get_user_by( 'email', $this->getEmailObject( $email_class )->recipient );
 		if ( $user ) {
 			return $this->sitepress->get_user_admin_language( $user->ID, true );
 		}
 
 		return null;
 	}
-
-	/**
-	 * @param int $booking_id
-	 *
-	 * @return bool|WC_Order
-	 */
-	public static function get_booking_order( $booking_id ) {
-		return get_wc_booking( $booking_id )->get_order();
-	}
-
 
 	/**
 	 * @param string $current_language
@@ -2627,26 +2616,41 @@ class WCML_Bookings {
 	 * @param string      $email_class
 	 * @param string      $setting_slug
 	 * @param string|null $user_lang
+	 * @param array       $extra_fields
 	 */
-	private function translate_email_strings( $email_class, $setting_slug, $user_lang ) {
-		if ( $this->email_class_exists( $email_class ) && $user_lang ) {
-			$this->woocommerce->mailer()->emails[ $email_class ]->heading = $this->woocommerce_wpml->emails->wcml_get_translated_email_string( 'admin_texts_' . $setting_slug, '[' . $setting_slug . ']heading', null, $user_lang );
-			$this->woocommerce->mailer()->emails[ $email_class ]->subject = $this->woocommerce_wpml->emails->wcml_get_translated_email_string( 'admin_texts_' . $setting_slug, '[' . $setting_slug . ']subject', null, $user_lang );
-		}
+	private function translate_email_strings( $email_class, $setting_slug, $user_lang, $extra_fields = [] ) {
+        if ( $this->email_class_exists( $email_class ) && $user_lang ) {
+            $getTranslation = function( $key ) use ( $email_class, $user_lang, $setting_slug ) {
+                return $this->woocommerce_wpml->emails->getStringTranslation(
+                    'admin_texts_' . $setting_slug,
+                    '[' . $setting_slug . ']' . $key,
+                    $user_lang,
+                    $this->getEmailObject( $email_class )->{$key},
+                    self::DOMAIN
+                );
+            };
+
+            foreach ( array_merge( [ 'heading', 'subject' ], $extra_fields ) as $field ) {
+                $this->getEmailObject( $email_class )->{$field} = $getTranslation( $field );
+            }
+        }
 	}
 
-	/**
-	 * @param int $bookingId
-	 *
-	 * @return string|null
-	 */
-	private static function getLanguage( $bookingId ) {
-	    return Maybe::of( $bookingId )
-	                ->map( [ __CLASS__, 'get_booking_order' ] )
-	                ->map( invoke( 'get_id' ) )
-	                ->map( WCML_Orders::getLanguage() )
-	                ->getOrElse( null );
-	}
+    /**
+     * @param int $bookingId
+     *
+     * @return string|null
+     */
+    private static function getLanguage( $bookingId ) {
+        // @see https://onthegosystems.myjetbrains.com/youtrack/issue/wcml-2827
+        $getOrder = pipe( 'get_wc_booking', invoke( 'get_order' ) );
+
+        return Maybe::of( $bookingId )
+                    ->map( $getOrder )
+                    ->map( invoke( 'get_id' ) )
+                    ->map( WCML_Orders::getLanguage() )
+                    ->getOrElse( null );
+    }
 
 	public function maybe_set_booking_language( $booking_id ) {
 
@@ -2739,5 +2743,14 @@ class WCML_Bookings {
         }
 
         return $event;
+    }
+
+    /**
+     * @param string $class
+     *
+     * @return WC_Email
+     */
+    private function getEmailObject( $class ) {
+        return $this->woocommerce->mailer()->emails[ $class ];
     }
 }
