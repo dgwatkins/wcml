@@ -3,6 +3,8 @@
 use WPML\FP\Fns;
 use WPML\FP\Maybe;
 use WPML\FP\Obj;
+use function WPML\FP\curryN;
+use function WPML\FP\partialRight;
 
 class WCML_Orders {
 
@@ -224,9 +226,7 @@ class WCML_Orders {
 		if ( $this->is_on_order_edit_page() ) {
 			$language = $this->sitepress->get_user_admin_language( get_current_user_id(), true );
 		} elseif ( $this->is_order_action_triggered_for_customer() ) {
-			$order_language = get_post_meta( $order->get_id(), self::KEY_LANGUAGE, true );
-
-			$language = $order_language ? $order_language : $this->sitepress->get_default_language();
+			$language = self::getLanguage( $order->get_id() ) ?: $this->sitepress->get_default_language();
 		} else {
 			$language = $this->sitepress->get_current_language();
 		}
@@ -308,7 +308,7 @@ class WCML_Orders {
 
 		$order_id = $wpdb->get_var( $wpdb->prepare( "SELECT order_id FROM {$wpdb->prefix}woocommerce_order_items WHERE order_item_id = %d", $item_id ) );
 
-		return get_post_meta( $order_id, self::KEY_LANGUAGE, true );
+		return self::getLanguage( $order_id );
 	}
 
 	// force update to display attribute in correct language on edit order page.
@@ -338,7 +338,7 @@ class WCML_Orders {
 	 * @param int $order_id
 	 */
 	public function set_order_language( $order_id ) {
-		if ( ! get_post_meta( $order_id, self::KEY_LANGUAGE ) ) {
+		if ( ! self::getLanguage( $order_id ) ) {
 			update_post_meta( $order_id, self::KEY_LANGUAGE, ICL_LANGUAGE_CODE );
 		}
 	}
@@ -351,7 +351,7 @@ class WCML_Orders {
 			$order->get_status() !== 'checkout-draft'
 			&& ! $order->get_meta( self::KEY_LANGUAGE )
 		) {
-			$order->add_meta_data( self::KEY_LANGUAGE, constant( 'ICL_LANGUAGE_CODE' ), true );
+			$order->add_meta_data( self::KEY_LANGUAGE, $this->sitepress->get_current_language(), true );
 		}
     }
 
@@ -474,7 +474,7 @@ class WCML_Orders {
 
 	public function filter_downloadable_product_items( $files, $item, $object ) {
 
-		$order_language = get_post_meta( $object->get_id(), self::KEY_LANGUAGE, true );
+		$order_language = self::getLanguage( $object->get_id() );
 
 		if ( $item->get_variation_id() > 0 ) {
 			$translated_variation_id = apply_filters( 'translate_object_id', $item->get_variation_id(), 'product_variation', false, $order_language );
@@ -511,4 +511,14 @@ class WCML_Orders {
 		return $downloads;
 	}
 
+    /**
+     * Curried function to get the order language.
+     *
+     * @param int|null $orderId
+     *
+     * @return callable|string|false
+     */
+	public static function getLanguage( $orderId = null ) {
+		return call_user_func_array( curryN( 1, partialRight( 'get_post_meta', self::KEY_LANGUAGE, true ) ), func_get_args() );
+	}
 }

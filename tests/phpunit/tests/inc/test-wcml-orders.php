@@ -599,21 +599,38 @@ class Test_WCML_Orders extends OTGS_TestCase {
 	 * @group wcml-3621
 	 */
 	public function itShouldSetOrderLanguageBeforeSave() {
-		$globalLanguage = 'fr';
-
-		FunctionMocker::replace( 'constant', function( $constantName ) use ( $globalLanguage ) {
-			return 'ICL_LANGUAGE_CODE' === $constantName ? $globalLanguage : null;
-		} );
+		$currentLanguage = 'fr';
 
 		$order = $this->getOrder();
 		$order->method( 'get_status' )->willReturn( 'pending' );
 		$order->method( 'get_meta' )->willReturn( '' );
 		$order->expects( $this->once() )
 		      ->method( 'add_meta_data' )
-		      ->with( 'wpml_language', $globalLanguage, true );
+		      ->with( 'wpml_language', $currentLanguage, true );
+
+		$this->sitepress->method( 'get_current_language' )->willReturn( $currentLanguage );
 
 		$subject = $this->get_subject();
 		$subject->setOrderLanguageBeforeSave( $order );
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3621
+	 */
+	public function itShouldGetLanguage() {
+		$orderId = 123;
+		$lang    = 'fr';
+
+		\WP_Mock::userFunction( 'get_post_meta' )
+			->with( $orderId, WCML_Orders::KEY_LANGUAGE, true )
+			->andReturn( $lang );
+
+		$this->assertEquals( $lang, WCML_Orders::getLanguage( $orderId ) );
+
+		$orderLanguage = WCML_Orders::getLanguage();
+
+		$this->assertEquals( $lang, $orderLanguage( $orderId ) );
 	}
 
 	private function getOrder() {
