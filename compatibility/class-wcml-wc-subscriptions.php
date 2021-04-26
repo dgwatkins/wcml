@@ -405,7 +405,7 @@ class WCML_WC_Subscriptions {
 
 		if ( $obj instanceof WCS_Email_Customer_Renewal_Invoice ) {
 			if ( $key == 'subject' || $key == 'heading' ) {
-				$translated_admin_string = $this->woocommerce_wpml->emails->wcml_get_translated_email_string( 'admin_texts_woocommerce_customer_renewal_invoice_settings', '[woocommerce_customer_renewal_invoice_settings]' . $key );
+				$translated_admin_string = $this->woocommerce_wpml->emails->getStringTranslation( 'admin_texts_woocommerce_customer_renewal_invoice_settings', '[woocommerce_customer_renewal_invoice_settings]' . $key );
 				return empty( $translated_admin_string ) ? $return_value : $translated_admin_string;
 			}
 		}

@@ -1,6 +1,7 @@
 <?php
 
 use WPML\FP\Fns;
+use WPML\FP\Obj;
 
 class WCML_Emails {
 
@@ -282,7 +283,8 @@ class WCML_Emails {
 			$translate = $this->getTranslatorFor(
 				'admin_texts_woocommerce_customer_completed_order_settings',
 				'[woocommerce_customer_completed_order_settings]',
-				$order_id
+				WCML_Orders::getLanguage( $order_id ),
+				$email
 			);
 
 			$email->heading              = $translate( 'heading' );
@@ -325,7 +327,8 @@ class WCML_Emails {
 			$translate = $this->getTranslatorFor(
 				'admin_texts_' . $string_name,
 				'[' . $string_name . ']',
-				$order_id
+				WCML_Orders::getLanguage( $order_id ),
+				$email
 			);
 
 			$email->heading         = $translate( 'heading' );
@@ -351,7 +354,9 @@ class WCML_Emails {
 		if ( $email ) {
 			$translate = $this->getTranslatorFor(
 				'admin_texts_woocommerce_customer_note_settings',
-				'[woocommerce_customer_note_settings]'
+				'[woocommerce_customer_note_settings]',
+				null,
+				$email
 			);
 
 			$email->heading         = $translate( 'heading' );
@@ -391,28 +396,31 @@ class WCML_Emails {
 				'failed_order',
 			])->contains( $object->id );
 
-			$translated_value = $this->get_email_translated_string( $key, $object, $isAdminEmail );
+			$translated_value = $this->get_email_translated_string( $key, $object, $isAdminEmail, $value );
 		}
 
 		return $translated_value ?: $value;
 	}
 
 	/**
-	 * @param string   $key
-	 * @param WC_Email $object
-	 * @param bool     $isAdminEmail
+	 * @param string      $key
+	 * @param WC_Email    $object
+	 * @param bool        $isAdminEmail
+	 * @param string|null $originalValue
+	 * @param string      $originalDomain
 	 *
 	 * @return string
 	 */
-	public function get_email_translated_string( $key, $object, $isAdminEmail ) {
+	public function get_email_translated_string( $key, $object, $isAdminEmail, $originalValue = null, $originalDomain = 'woocommerce' ) {
 
 		list( $context, $name ) = $this->get_email_context_and_name( $object );
+		$orderId                = $this->get_order_id_from_email_object( $object );
 
 		$language = $isAdminEmail
-			? $this->get_admin_language_by_email( $object->recipient, $this->get_order_id_from_email_object( $object ) )
-			: null;
+			? $this->get_admin_language_by_email( $object->recipient, $orderId )
+			: WCML_Orders::getLanguage( $orderId );
 
-		return $this->wcml_get_translated_email_string( $context, $name . $key, $this->get_order_id_from_email_object( $object ), $language );
+		return $this->getStringTranslation( $context, $name . $key, $language, $originalValue, $originalDomain );
 	}
 
 	/**
@@ -467,8 +475,8 @@ class WCML_Emails {
 				$translate = $this->getTranslatorFor(
 					'admin_texts_woocommerce_new_order_settings',
 					'[woocommerce_new_order_settings]',
-					$order_id,
-					$admin_language
+					$admin_language ?: WCML_Orders::getLanguage( $order_id ),
+					$email
 				);
 
 				$email->heading   = $translate( 'heading' );
@@ -515,7 +523,7 @@ class WCML_Emails {
 		}
 
 		/**
-		 * @depreacted since 4.12.0, use `wcml_get_admin_language_by_email` instead.
+		 * @deprecated since 4.12.0, use `wcml_get_admin_language_by_email` instead.
 		 */
 		$language = apply_filters( 'wcml_new_order_admin_email_language', $language, $recipient, $order_id );
 
@@ -581,6 +589,16 @@ class WCML_Emails {
 		$this->locale = $this->sitepress->get_locale( $lang );
 	}
 
+	/**
+	 * @depreacted since WCML 4.12, use `getStringTranslation` instead.
+	 *
+	 * @param string $context
+	 * @param string $name
+	 * @param false  $order_id
+	 * @param null   $language_code
+	 *
+	 * @return string|false
+	 */
 	public function wcml_get_translated_email_string( $context, $name, $order_id = false, $language_code = null ) {
 
 		if ( $order_id && ! $language_code ) {
@@ -591,6 +609,41 @@ class WCML_Emails {
 		}
 
 		return $this->wcmlStrings->get_translated_string_by_name_and_context( $context, $name, $language_code );
+	}
+
+	/**
+	 * First we try to get the string translation from admin string.
+	 * If falsy, we try to translate the string with the default gettext.
+	 *
+	 * @param string      $domain
+	 * @param string      $name
+	 * @param string|null $lang
+	 * @param string|null $originalValue
+	 * @param string      $originalDomain
+	 *
+	 * @return string
+	 */
+	public function getStringTranslation( $domain, $name, $lang = null, $originalValue = null, $originalDomain = 'woocommerce' ) {
+		return $this->wcmlStrings->get_translated_string_by_name_and_context( $domain, $name, $lang ) ?: $this->getStringTranslationWithGettext( $originalValue, $originalDomain, $lang );
+	}
+
+	/**
+	 * @param string $value
+	 * @param string $domain
+	 * @param string $lang
+	 *
+	 * @return string
+	 */
+	private function getStringTranslationWithGettext( $value, $domain, $lang ) {
+		if ( $value && $lang ) {
+			$switchLang = new WPML_Temporary_Switch_Language( $this->sitepress, $lang );
+			$translation = __( $value, $domain );
+			$switchLang->restore_lang();
+
+			return $translation;
+		}
+
+		return $value;
 	}
 
 	public function icl_current_string_language( $current_language, $name ) {
@@ -681,14 +734,14 @@ class WCML_Emails {
 	/**
 	 * @param string      $domain
 	 * @param string      $namePrefix
-	 * @param int|false   $orderId
 	 * @param string|null $languageCode
+	 * @param WC_Email    $email
 	 *
 	 * @return Closure
 	 */
-	private function getTranslatorFor( $domain, $namePrefix, $orderId = false, $languageCode = null ) {
-		return function( $field ) use ( $domain, $namePrefix, $orderId, $languageCode ) {
-			return $this->wcml_get_translated_email_string( $domain, $namePrefix . $field, $orderId, $languageCode );
+	private function getTranslatorFor( $domain, $namePrefix, $languageCode, $email ) {
+		return function( $field ) use ( $domain, $namePrefix, $languageCode, $email ) {
+			return $this->getStringTranslation( $domain, $namePrefix . $field, $languageCode, Obj::prop( $field, $email ) );
 		};
 	}
 

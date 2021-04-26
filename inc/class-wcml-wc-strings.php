@@ -538,7 +538,7 @@ class WCML_WC_Strings {
 	 * @param string $name
 	 * @param string $language
 	 *
-	 * @return string
+	 * @return string|false
 	 */
 	public function get_translated_string_by_name_and_context( $context, $name, $language ) {
 		return apply_filters( 'wpml_translate_single_string', false, $context, $name, $language );
