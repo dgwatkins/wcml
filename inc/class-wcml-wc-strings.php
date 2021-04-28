@@ -1,6 +1,7 @@
 <?php
 
 use WPML\FP\Relation;
+use WPML\FP\Fns;
 use function WPML\FP\pipe;
 use function WPML\FP\invoke;
 
@@ -47,7 +48,7 @@ class WCML_WC_Strings {
 		}
 
 		// translate attribute label.
-		add_filter( 'woocommerce_attribute_label', [ $this, 'translated_attribute_label' ], 10, 3 );
+		add_filter( 'woocommerce_attribute_label', Fns::withoutRecursion( Fns::identity(), [ $this, 'translated_attribute_label' ] ), 10, 3 );
 		add_filter( 'woocommerce_checkout_product_title', [ $this, 'translated_checkout_product_title' ], 10, 2 );
 		add_filter( 'woocommerce_cart_item_name', [ $this, 'translated_cart_item_name' ], -1, 2 );
 
@@ -98,7 +99,7 @@ class WCML_WC_Strings {
 			$product_id = $product_obj->get_id();
 		}
 
-		$name = $this->get_attribute_slug_by_name( $name, $product_id );
+		$name = $this->woocommerce_wpml->attributes->filter_attribute_name( $name, $product_id, true );
 
 		if ( $product_id ) {
 
@@ -140,26 +141,6 @@ class WCML_WC_Strings {
 		}
 
 		return $label;
-	}
-
-	private function get_attribute_slug_by_name( $name, $product_id ) {
-		$product = wc_get_product( $product_id );
-		$slug    = false;
-
-		if ( $product ) {
-			$matchName = pipe( invoke( 'get_name' ), Relation::equals( $name ) );
-
-			$slug = wpml_collect( $product->get_attributes() )
-				->filter( $matchName )
-				->keys()
-				->first();
-		}
-
-		if ( ! $slug ) {
-			$slug = $this->woocommerce_wpml->attributes->filter_attribute_name( $name, $product_id, true );
-		}
-
-		return $slug;
 	}
 
 	/**
