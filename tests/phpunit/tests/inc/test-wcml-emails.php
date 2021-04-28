@@ -210,7 +210,9 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$originalDomain  = 'woocommerce-super-addon';
 		$translatedValue = 'The translation';
 		$lang            = 'fr';
-		$currentLang     = 'en';
+
+		$switchLang = \Mockery::mock( 'overload:WPML_Temporary_Switch_Language' );
+		$switchLang->shouldReceive( 'restore_lang' )->once();
 
 		$subject = $this->get_subject();
 
@@ -218,14 +220,6 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			->method( 'get_translated_string_by_name_and_context' )
 			->with( $domain, $name, $lang )
 			->willReturn( false );
-
-		$this->sitepress->expects( $this->exactly( 2 ) )
-			->method( 'switch_lang' )
-			->withConsecutive( [ $lang ], [ $currentLang ] );
-
-		$this->sitepress
-			->method( 'get_current_language' )
-			->willReturn( $currentLang );
 
 		\WP_Mock::userFunction( '__' )
 			->with( $originalValue, $originalDomain )

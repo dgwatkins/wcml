@@ -618,10 +618,9 @@ class WCML_Emails {
 	 */
 	private function getStringTranslationWithGettext( $value, $domain, $lang ) {
 		if ( $value && $lang ) {
-			$initialLang = $this->sitepress->get_current_language();
-			$this->sitepress->switch_lang( $lang );
+			$switchLang = new WPML_Temporary_Switch_Language( $this->sitepress, $lang );
 			$translation = __( $value, $domain );
-			$this->sitepress->switch_lang( $initialLang );
+			$switchLang->restore_lang();
 
 			return $translation;
 		}
