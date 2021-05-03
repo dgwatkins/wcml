@@ -477,9 +477,27 @@ class WCML_Emails {
 
 				$email->trigger( $order_id );
 			}
-			$email->enabled = false;
+
+			add_filter(
+				'woocommerce_email_enabled_new_order',
+				self::getPreventDuplicatedNewOrderEmail( $order_id ),
+				PHP_INT_MAX,
+				2
+			);
+
 			$this->refresh_email_lang( $order_id );
 		}
+	}
+
+	/**
+	 * @param int $processedOrderId
+	 *
+	 * @return Closure ( bool, \WC_Order ) -> bool
+	 */
+	public static function getPreventDuplicatedNewOrderEmail( $processedOrderId ) {
+		return function( $isEmailEnabled, $order ) use ( $processedOrderId ) {
+			return $order->get_id() === $processedOrderId ? false : $isEmailEnabled;
+		};
 	}
 
 	/**
