@@ -79,10 +79,6 @@ class WCML_WC_Subscriptions {
 			add_filter( 'wcs_get_subscription', [ $this, 'filter_subscription_items' ] );
 		}
 
-		// Translate emails
-		add_filter( 'woocommerce_generated_manual_renewal_order_renewal_notification', [ $this, 'translate_renewal_notification' ], 9 );
-		add_filter( 'woocommerce_order_status_failed_renewal_notification', [ $this, 'translate_renewal_notification' ], 9 );
-
 		add_filter( 'wcs_switch_proration_new_price_per_day', tap( [ $this, 'set_prorating_price' ] ) );
 	}
 
@@ -371,45 +367,6 @@ class WCML_WC_Subscriptions {
 		$allowed_types[] = 'subscription_variation';
 
 		return $allowed_types;
-	}
-
-	/**
-	 * Translate strings of renewal notifications
-	 *
-	 * @param integer $order_id Order ID
-	 */
-	public function translate_renewal_notification( $order_id ) {
-
-	    if ( isset( WC()->mailer()->emails['WCS_Email_Customer_Renewal_Invoice'] ) ) {
-		$this->woocommerce_wpml->emails->refresh_email_lang( $order_id );
-
-		$WCS_Email_Customer_Renewal_Invoice = WC()->mailer()->emails['WCS_Email_Customer_Renewal_Invoice'];
-		$WCS_Email_Customer_Renewal_Invoice->heading = __( $WCS_Email_Customer_Renewal_Invoice->heading, 'woocommerce-subscriptions' );
-		$WCS_Email_Customer_Renewal_Invoice->subject = __( $WCS_Email_Customer_Renewal_Invoice->subject, 'woocommerce-subscriptions' );
-
-			add_filter( 'woocommerce_email_get_option', [ $this, 'translate_heading_subject' ], 10, 4 );
-		}
-	}
-
-	/**
-	 * Translate custom heading and subject for renewal notification
-	 *
-	 * @param string                             $return_value original string
-	 * @param WCS_Email_Customer_Renewal_Invoice $obj Object of email class
-	 * @param string                             $value Original value from setting
-	 * @param string                             $key Name of the key
-	 * @return string Translated value or original value incase of not translated
-	 */
-	public function translate_heading_subject( $return_value, $obj, $value, $key ) {
-
-		if ( $obj instanceof WCS_Email_Customer_Renewal_Invoice ) {
-			if ( $key == 'subject' || $key == 'heading' ) {
-				$translated_admin_string = $this->woocommerce_wpml->emails->wcml_get_translated_email_string( 'admin_texts_woocommerce_customer_renewal_invoice_settings', '[woocommerce_customer_renewal_invoice_settings]' . $key );
-				return empty( $translated_admin_string ) ? $return_value : $translated_admin_string;
-			}
-		}
-
-		return $return_value;
 	}
 
 	/**
