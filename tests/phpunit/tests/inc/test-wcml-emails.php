@@ -409,6 +409,13 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$this->sitepress->method( 'get_user_admin_language' )->with( $user->ID, true )->willReturn( $user_language );
 		$this->sitepress->expects( $this->once() )->method( 'switch_lang' )->with( $user_language );
 
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_email_enabled_new_order',
+			WCML_Emails::getPreventDuplicatedNewOrderEmail( $order_id ),
+			PHP_INT_MAX,
+			2
+		);
+
 		$subject = $this->get_subject();
 
 		$subject->new_order_admin_email( $order_id );
@@ -463,9 +470,34 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$this->sitepress->method( 'get_default_language' )->willReturn( $default_language );
 		$this->sitepress->expects( $this->once() )->method( 'switch_lang' )->with( $default_language );
 
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_email_enabled_new_order',
+			WCML_Emails::getPreventDuplicatedNewOrderEmail( $order_id ),
+			PHP_INT_MAX,
+			2
+		);
+
 		$subject = $this->get_subject();
 
 		$subject->new_order_admin_email( $order_id );
+	}
+
+	/**
+	 * @test
+	 * @group wcml-2381
+	 */
+	public function itShouldPreventDuplicatedNewOrderEmail() {
+		$orderId = 123;
+
+		$isEmailEnabled = WCML_Emails::getPreventDuplicatedNewOrderEmail( $orderId );
+
+		$order = Mockery::mock( WC_Order::class, [ 'get_id' => $orderId ] );
+		$this->assertFalse( $isEmailEnabled( true, $order ) );
+
+		$anotherOrder = Mockery::mock( WC_Order::class, [ 'get_id' => 999 ] );
+		$this->assertFalse( $isEmailEnabled( false, $anotherOrder ) );
+		$this->assertTrue( $isEmailEnabled( true, $anotherOrder ) );
+
 	}
 
 	/**
