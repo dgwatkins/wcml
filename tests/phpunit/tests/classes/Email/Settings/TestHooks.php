@@ -137,6 +137,8 @@ class TestHooks extends \OTGS_TestCase {
 			'section' => $section,
 		];
 
+		$this->mockWcEmails();
+
 		\WP_Mock::userFunction( 'apply_filters', [
 			'return_arg' => 1,
 		] );
@@ -180,6 +182,31 @@ class TestHooks extends \OTGS_TestCase {
 		$output = ob_get_clean();
 
 		$this->assertRegExp( '#woocommerce_customer_on_hold_order_additional_content#', $output );
+	}
+
+	private function mockWcEmails() {
+		$mailer = \Mockery::mock( \WC_Emails::class );
+		$mailer->shouldReceive( 'get_emails' )
+		       ->andReturn( [
+					$this->getEmailMock( \WC_Email_Customer_On_Hold_Order::class,
+					'woocommerce_customer_on_hold_order_settings' )
+		       ] );
+
+		$wc = \Mockery::mock( \WooCommerce::class );
+		$wc->shouldReceive( 'mailer' )->andReturn( $mailer );
+
+		\WP_Mock::userFunction( 'WC' )->andReturn( $wc );
+	}
+
+	private function getEmailMock( $className, $optionKey ) {
+		$email = $this->getMockBuilder( $className )
+			->setMethods( [
+				'get_option_key',
+			] )->getMock();
+
+		$email->method( 'get_option_key' )->willReturn( $optionKey );
+
+		return $email;
 	}
 
 	private function getSubject( $sitepress = null, $wcmlStrings = null ) {

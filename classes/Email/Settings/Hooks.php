@@ -5,8 +5,10 @@ namespace WCML\Email\Settings;
 use IWPML_Backend_Action;
 use IWPML_DIC_Action;
 use SitePress;
+use WCML\Email\Fields;
 use WCML_WC_Strings;
 use WPML_Simple_Language_Selector;
+use function WPML\FP\invoke;
 
 class Hooks implements IWPML_Backend_Action, IWPML_DIC_Action {
 
@@ -44,37 +46,13 @@ class Hooks implements IWPML_Backend_Action, IWPML_DIC_Action {
 	}
 
 	public function showLanguageLinksForWcEmails() {
-		$emailOptions = [
-			'woocommerce_new_order_settings',
-			'woocommerce_cancelled_order_settings',
-			'woocommerce_failed_order_settings',
-			'woocommerce_customer_on_hold_order_settings',
-			'woocommerce_customer_processing_order_settings',
-			'woocommerce_customer_completed_order_settings',
-			'woocommerce_customer_refunded_order_settings',
-			'woocommerce_customer_invoice_settings',
-			'woocommerce_customer_note_settings',
-			'woocommerce_customer_reset_password_settings',
-			'woocommerce_customer_new_account_settings',
-		];
+		$emailOptions = wpml_collect( WC()->mailer()->get_emails() )
+            ->map( invoke( 'get_option_key' ) )
+            ->toArray();
 
 		$emailOptions = apply_filters( 'wcml_emails_options_to_translate', $emailOptions );
 
-		$textKeys = [
-			'subject',
-			'heading',
-			'subject_downloadable',
-			'heading_downloadable',
-			'subject_full',
-			'subject_partial',
-			'heading_full',
-			'heading_partial',
-			'subject_paid',
-			'heading_paid',
-			'additional_content',
-		];
-
-		$textKeys = apply_filters( 'wcml_emails_text_keys_to_translate', $textKeys );
+		$textKeys = Fields::get();
 
 		foreach ( $emailOptions as $emailOption ) {
 			$sectionPrefix = apply_filters( 'wcml_emails_section_name_prefix', 'wc_email_', $emailOption );
@@ -89,7 +67,7 @@ class Hooks implements IWPML_Backend_Action, IWPML_DIC_Action {
 
 					foreach ( $emailSettings as $settingsKey => $settingsValue ) {
 
-						if ( in_array( $settingsKey, $textKeys ) ) {
+						if ( $textKeys->contains( $settingsKey ) ) {
 
 							$emailInputKey = self::getEmailInputKey( $emailOption, $settingsKey );
 							$langSelector  = new WPML_Simple_Language_Selector( $this->sitepress );

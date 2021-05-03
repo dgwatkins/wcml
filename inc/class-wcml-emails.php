@@ -1,5 +1,6 @@
 <?php
 
+use WCML\Email\Fields;
 use WPML\FP\Fns;
 
 class WCML_Emails {
@@ -363,35 +364,26 @@ class WCML_Emails {
 		}
 	}
 
-	public function filter_emails_strings( $value, $object, $old_value, $key ) {
+	/**
+	 * @param mixed     $value
+	 * @param \WC_Email $emailObject
+	 * @param mixed     $old_value
+	 * @param string    $key
+	 *
+	 * @return mixed
+	 */
+	public function filter_emails_strings( $value, $emailObject, $old_value, $key ) {
+		$translated_value = null;
 
-		$translated_value = false;
-		$emailStrings     = wpml_collect( [
-			'subject',
-			'subject_downloadable',
-			'subject_partial',
-			'subject_full',
-			'subject_paid',
-			'heading',
-			'heading_paid',
-			'heading_downloadable',
-			'heading_partial',
-			'heading_full',
-			'additional_content'
-		] );
+		if ( is_string( $value ) ) {
+			$emailFields = Fields::get();
 
-		if (
-			isset( $object->object ) &&
-			$emailStrings->contains( $key )
-		) {
-
-			$isAdminEmail = wpml_collect([
-				'new_order',
-				'cancelled_order',
-				'failed_order',
-			])->contains( $object->id );
-
-			$translated_value = $this->get_email_translated_string( $key, $object, $isAdminEmail );
+			if (
+				isset( $emailObject->object ) &&
+				$emailFields->contains( $key )
+			) {
+				$translated_value = $this->get_email_translated_string( $key, $emailObject, ! $emailObject->is_customer_email() );
+			}
 		}
 
 		return $translated_value ?: $value;

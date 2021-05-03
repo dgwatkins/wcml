@@ -624,7 +624,6 @@ class Test_WCML_Emails extends OTGS_TestCase {
 	 * @dataProvider email_string_key
 	 */
 	public function it_should_filter_emails_strings_order_is_object( $emailOption, $textKey ) {
-
 		$value            = rand_str();
 		$old_value        = '';
 		$translated_value = rand_str();
@@ -748,11 +747,14 @@ class Test_WCML_Emails extends OTGS_TestCase {
 	}
 
 	private function get_wc_email_mock( $order_object, $emailOption, $language ){
+		$isCustomerEmail = true;
 
-		$object         = $this->getMockBuilder( 'WC_Email' )
-		                       ->disableOriginalConstructor()
-		                       ->getMock();
-		$object->id     = $emailOption;
+		$emailObject = $this->getMockBuilder( 'WC_Email' )
+		               ->setMethods( [ 'is_customer_email' ] )
+		               ->disableOriginalConstructor()
+		               ->getMock();
+		$emailObject->id = $emailOption;
+
 
 		$adminEmails = wpml_collect([
 			'new_order',
@@ -760,24 +762,28 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			'failed_order',
 		]);
 
-		$object->object = $order_object;
+		$emailObject->object = $order_object;
 
-		if ( $adminEmails->contains( $object->id ) ) {
+		if ( $adminEmails->contains( $emailObject->id ) ) {
+			$isCustomerEmail = false;
+
 			$user     = new stdClass();
 			$user->ID = 1;
 			$language = 'en';
 
-			$object->recipient = 'admin@test.com';
+			$emailObject->recipient = 'admin@test.com';
 
 			WP_Mock::userFunction( 'get_user_by', [
-				'args'   => [ 'email', $object->recipient ],
+				'args'   => [ 'email', $emailObject->recipient ],
 				'return' => $user
 			] );
 
 			$this->sitepress->expects( $this->once() )->method( 'get_user_admin_language' )->with( $user->ID, true )->willReturn( $language );
 		}
 
-		return [ $object, $language ];
+		$emailObject->method( 'is_customer_email' )->willReturn( $isCustomerEmail );
+
+		return [ $emailObject, $language ];
 	}
 
 	public function email_string_key() {

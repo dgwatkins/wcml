@@ -56,7 +56,6 @@ class WCML_WC_Subscriptions {
 		add_filter( 'wcml_xliff_allowed_variations_types', [ $this, 'set_allowed_variations_types_in_xliff' ] );
 
 		// Add language links to email settings
-		add_filter( 'wcml_emails_options_to_translate', [ $this, 'translate_email_options' ] );
 		add_filter( 'wcml_emails_section_name_prefix', [ $this, 'email_option_section_prefix' ], 10, 2 );
 	}
 
@@ -411,21 +410,6 @@ class WCML_WC_Subscriptions {
 		}
 
 		return $return_value;
-	}
-
-	/**
-	 * Add customer renewal invoice option to translate
-	 *
-	 * @param array $emails_options list of option to translate
-	 * @return array $emails_options
-	 */
-	public function translate_email_options( $emails_options ) {
-
-		if ( is_array( $emails_options ) ) {
-			$emails_options[] = 'woocommerce_customer_renewal_invoice_settings';
-		}
-
-		return $emails_options;
 	}
 
 	/**

@@ -1,5 +1,7 @@
 <?php
 
+use WCML\Email\Fields;
+
 /**
  * Class WCML_Bookings.
  */
@@ -268,11 +270,7 @@ class WCML_Bookings {
 
 			add_action( 'save_post', [ $this, 'sync_booking_status' ], 10, 3 );
 
-			add_filter( 'wcml_emails_options_to_translate', [ $this, 'emails_options_to_translate' ] );
-
 			add_filter( 'wcml_emails_text_keys_to_translate', [ $this, 'emails_text_keys_to_translate' ] );
-
-			add_filter( 'woocommerce_email_get_option', [ $this, 'translate_emails_text_strings' ], 10, 4 );
 
 			add_action( 'woocommerce_booking_confirmed_notification', [ $this, 'translate_booking_confirmed_email_texts' ], 9 );
 			add_action( 'woocommerce_booking_pending-confirmation_to_cancelled_notification', [ $this, 'translate_booking_cancelled_email_texts' ], 9 );
@@ -2491,56 +2489,11 @@ class WCML_Bookings {
 		return $tables;
 	}
 
-	public function emails_options_to_translate( $emails_options ) {
-		$emails_options[] = 'woocommerce_new_booking_settings';
-		$emails_options[] = 'woocommerce_booking_reminder_settings';
-		$emails_options[] = 'woocommerce_booking_confirmed_settings';
-		$emails_options[] = 'woocommerce_booking_cancelled_settings';
-		$emails_options[] = 'woocommerce_admin_booking_cancelled_settings';
-
-		return $emails_options;
-	}
-
 	public function emails_text_keys_to_translate( $text_keys ) {
 		$text_keys[] = 'subject_confirmation';
 		$text_keys[] = 'heading_confirmation';
 
 		return $text_keys;
-	}
-
-	/**
-	 * @param string   $value
-	 * @param WC_Email $object
-	 * @param string   $old_value
-	 * @param string   $key
-	 *
-	 * @return string
-	 */
-	public function translate_emails_text_strings( $value, $object, $old_value, $key ) {
-		$translated_value = false;
-
-		$emails_ids = wpml_collect( [
-			// true if it's an admin email.
-			'admin_booking_cancelled' => true,
-			'new_booking'             => true,
-			'booking_cancelled'       => false,
-			'booking_confirmed'       => false,
-			'booking_reminder'        => false,
-		] );
-
-		$keys = [
-			'subject',
-			'subject_confirmation',
-			'heading',
-			'heading_confirmation',
-		];
-
-		if ( in_array( $key, $keys ) && $emails_ids->has( $object->id ) ) {
-			$is_admin_email   = $emails_ids->get( $object->id, false );
-			$translated_value = $this->woocommerce_wpml->emails->get_email_translated_string( $key, $object, $is_admin_email );
-		}
-
-		return $translated_value ?: $value;
 	}
 
 	public function translate_booking_confirmed_email_texts( $booking_id ) {

@@ -280,19 +280,6 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_should_add_bookings_emails_options_to_translate(){
-
-		$subject = $this->get_subject();
-
-		$options = array();
-		$options = $subject->emails_options_to_translate( $options );
-
-		$this->assertContains( 'woocommerce_new_booking_settings', $options );
-	}
-
-	/**
-	 * @test
-	 */
 	public function it_should_add_bookings_emails_text_keys_to_translate(){
 
 		$subject = $this->get_subject();
@@ -301,86 +288,6 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$text_keys = $subject->emails_text_keys_to_translate( $text_keys );
 
 		$this->assertEquals( array( 'subject_confirmation','heading_confirmation' ), $text_keys );
-	}
-
-	/**
-	 * @test
-	 * @dataProvider dp_should_NOT_translate_emails_text_strings
-	 * @group wcml-3279
-	 *
-	 * @param string $key
-	 * @param string $objectId
-	 */
-	public function it_should_NOT_translate_emails_text_strings( $key, $objectId ){
-		$value = 'original value';
-
-		$object = (object) [
-			'id' => $objectId,
-			$key => 'some value',
-		];
-
-		$this->assertEquals(
-			$value,
-			$this->get_subject()->translate_emails_text_strings( $value, $object , 'old original value', $key )
-		);
-	}
-
-	public function dp_should_NOT_translate_emails_text_strings() {
-		return [
-			'not handled key' => [ 'some-key', 'new_booking' ],
-			'not handled id'  => [ 'subject', 'some_email_object_id' ],
-		];
-	}
-
-	/**
-	 * @test
-	 * @dataProvider dp_should_translate_emails_text_strings
-	 * @group wcml-3279
-	 *
-	 * @param string $key
-	 * @param string $objectId
-	 * @param bool   $isAdminEmail
-	 * @param string $translatedValue
-	 */
-	public function it_should_translate_emails_text_strings( $key, $objectId, $isAdminEmail, $translatedValue ) {
-		$value = 'original value';
-
-		$object = (object) [
-			'id' => $objectId,
-			$key => 'some value',
-		];
-
-		$emails = $this->getMockBuilder( '\WCML_Emails' )
-			->setMethods( [ 'get_email_translated_string' ] )
-			->disableOriginalConstructor()->getMock();
-		$emails->method( 'get_email_translated_string' )
-			->with( $key, $object, $isAdminEmail )
-			->willReturn( $translatedValue );
-
-		$woocommerce_wpml         = $this->get_woocommerce_wpml_mock();
-		$woocommerce_wpml->emails = $emails;
-
-		$subject = $this->get_subject( null, $woocommerce_wpml );
-
-		$this->assertEquals(
-			$translatedValue ? $translatedValue : $value,
-			$subject->translate_emails_text_strings( $value, $object , 'some old value', $key )
-		);
-	}
-
-	public function dp_should_translate_emails_text_strings() {
-		return [
-			'id:admin_booking_cancelled' => [ 'subject', 'admin_booking_cancelled', true, 'translated value' ],
-			'id:new_booking'             => [ 'subject', 'new_booking', true, 'translated value' ],
-			'id:booking_cancelled'       => [ 'subject', 'booking_cancelled', false, 'translated value' ],
-			'id:booking_confirmed'       => [ 'subject', 'booking_confirmed', false, 'translated value' ],
-			'id:booking_reminder'        => [ 'subject', 'booking_reminder', false, 'translated value' ],
-			'key:subject'                => [ 'subject', 'booking_reminder', false, 'translated value' ],
-			'key:subject_confirmation'   => [ 'subject_confirmation', 'booking_reminder', false, 'translated value' ],
-			'key:heading'                => [ 'heading', 'booking_reminder', false, 'translated value' ],
-			'key:heading_confirmation'   => [ 'heading_confirmation', 'booking_reminder', false, 'translated value' ],
-			'empty translation'          => [ 'heading_confirmation', 'booking_reminder', false, '' ],
-		];
 	}
 
 	/**
