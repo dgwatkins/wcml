@@ -79,8 +79,12 @@ class WCML_Dynamic_Pricing {
 			if ( isset( $module->available_advanced_rulesets ) ) {
 				foreach ( $module->available_advanced_rulesets as $rule_key => $rule ) {
 					$taxonomy = $this->get_taxonomy( $rule );
-					$modules[ $mod_key ]->available_advanced_rulesets[ $rule_key ]['targets']                   = $this->adjust_cat_ids( $rule['targets'], $taxonomy );
-					$modules[ $mod_key ]->available_advanced_rulesets[ $rule_key ]['collector']['args']['cats'] = $this->adjust_cat_ids( $rule['collector']['args']['cats'], $taxonomy );
+					if ( ! empty( $rule['targets'] ) ) {
+						$modules[ $mod_key ]->available_advanced_rulesets[ $rule_key ]['targets'] = $this->adjust_cat_ids( $rule['targets'], $taxonomy );
+					}
+					if ( ! empty( $rule['collector']['args']['cats'] ) ) {
+						$modules[ $mod_key ]->available_advanced_rulesets[ $rule_key ]['collector']['args']['cats'] = $this->adjust_cat_ids( $rule['collector']['args']['cats'], $taxonomy );
+					}
 				}
 			}
 		}
