@@ -179,7 +179,8 @@ class WCML_Currency_Switcher {
 		$currency_mode = $this->woocommerce_wpml->get_setting('currency_mode');
 
 		$ifDisallowedByLanguage = function( $currency ) use ( $currency_mode, $wcml_settings ) {
-			return Geolocation::MODE_BY_LANGUAGE === $currency_mode && $wcml_settings['currency_options'][ $currency ]['languages'][ $this->sitepress->get_current_language() ] != 1;
+			return Geolocation::MODE_BY_LANGUAGE === $currency_mode
+			       && Obj::path( [ 'currency_options', $currency, 'languages', $this->sitepress->get_current_language() ], $wcml_settings ) != 1;
 		};
 
 		$ifDisallowedByLocation = function( $currency ) use ( $currency_mode, $wcml_settings ) {
