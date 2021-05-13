@@ -92,9 +92,13 @@ class WCML_Variation_Swatches_And_Photos {
 		wpml_collect( $swatch_options[ $attribute_name_hash ]['attributes'] )->each(
 			function ( $swatch_attribute, $swatch_attribute_key ) use ( $attribute_key, $attribute_value, $attribute_value_md5, $attribute_name_hash, &$translated_swatch_options, $original_product_id, $translated_product_id ) {
 				if ( $attribute_value_md5 === $swatch_attribute_key ) {
-					$translated_attribute_value = $this->woocommerce_wpml->attributes->get_custom_attr_translation( $original_product_id, $translated_product_id, $attribute_key, $attribute_value );
-					$translated_swatch_options[ $attribute_name_hash ]['attributes'][ md5( sanitize_title( strtolower( $translated_attribute_value ) ) ) ] = $swatch_attribute;
-					unset( $translated_swatch_options[ $attribute_name_hash ]['attributes'][ $swatch_attribute_key ] );
+					$translated_attribute_value     = $this->woocommerce_wpml->attributes->get_custom_attr_translation( $original_product_id, $translated_product_id, $attribute_key, $attribute_value );
+					$translated_attribute_value_md5 = md5( sanitize_title( strtolower( $translated_attribute_value ) ) );
+					$translated_swatch_options[ $attribute_name_hash ]['attributes'][ $translated_attribute_value_md5 ] = $swatch_attribute;
+
+					if ( $translated_attribute_value_md5 !== $swatch_attribute_key ) {
+						unset( $translated_swatch_options[ $attribute_name_hash ]['attributes'][ $swatch_attribute_key ] );
+					}
 				}
 			}
 		);
