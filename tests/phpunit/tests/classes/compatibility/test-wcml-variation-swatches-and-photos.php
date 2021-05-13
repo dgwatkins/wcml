@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @group variation-swatches-and-photos
+ */
 class Test_WCML_Variation_Swatches_And_Photos extends OTGS_TestCase {
 
 	private function get_woocommerce_wpml_mock() {
@@ -59,8 +62,12 @@ class Test_WCML_Variation_Swatches_And_Photos extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider dp_should_sync_variation_swatches_and_photos
+	 *
+	 * @param string $original_value
+	 * @param string $translated_value
 	 */
-	public function it_should_sync_variation_swatches_and_photos() {
+	public function it_should_sync_variation_swatches_and_photos( $original_value, $translated_value ) {
 
 		\WP_Mock::passthruFunction( 'sanitize_title' );
 		\WP_Mock::passthruFunction( 'maybe_unserialize' );
@@ -77,12 +84,12 @@ class Test_WCML_Variation_Swatches_And_Photos extends OTGS_TestCase {
 			],
 			'custom'                => [
 				'name'        => 'custom',
-				'value'       => 'val 1',
+				'value'       => $original_value,
 				'is_taxonomy' => false
 			]
 		];
 
-		$translated_custom_attribute_value = 'val 1 es';
+		$translated_custom_attribute_value = $translated_value;
 
 		$term          = new stdClass();
 		$term->slug    = 'white';
@@ -157,7 +164,13 @@ class Test_WCML_Variation_Swatches_And_Photos extends OTGS_TestCase {
 			'return' => true
 		] );
 
-		$filtered_swatch_options = $subject->sync_variation_swatches_and_photos( $original_product_id, $translated_product_id, $language );
+		$subject->sync_variation_swatches_and_photos( $original_product_id, $translated_product_id, $language );
 	}
 
+	public function dp_should_sync_variation_swatches_and_photos() {
+		return [
+			'Same name value'                  => [ 'val 1', 'val 1' ],
+			'Different name translation value' => [ 'val 1', 'val 1 es' ],
+		];
+	}
 }
