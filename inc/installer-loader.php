@@ -1,10 +1,8 @@
 <?php
-$installer_path = 'vendor/otgs/installer';
-if ( isset( $wp_installer_instance ) && file_exists( WCML_PLUGIN_PATH . '/' . $installer_path . '/loader.php' ) ) {
+$wp_installer_instance = WCML_PLUGIN_PATH . '/vendor/otgs/installer/loader.php';
 
-	include WCML_PLUGIN_PATH . '/' . $installer_path . '/loader.php';
-	$args = [
-		'plugins_install_tab' => 1,
-	];
-	WP_Installer_Setup( $wp_installer_instance, $args );
+if ( file_exists( $wp_installer_instance ) ) {
+	include_once $wp_installer_instance;
+
+	WP_Installer_Setup( $wp_installer_instance, [ 'plugins_install_tab' => 1 ] );
 }
