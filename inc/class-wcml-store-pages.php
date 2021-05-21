@@ -42,9 +42,10 @@ class WCML_Store_Pages {
 			add_action( 'icl_post_languages_options_before', [ $this, 'show_translate_shop_pages_notice' ] );
 		}
 
-		$getData = wpml_collect( $_GET );
+		$getData              = wpml_collect( $_GET );
+		$isTranslationPreview = $getData->get( 'preview' ) && $getData->get( 'jobId' );
 		if (
-			! $is_admin ||
+			! ( $is_admin || $isTranslationPreview ) ||
 			( 'admin.php' === $pagenow && 'wc-settings' === $getData->get( 'page' ) ) ||
 			( 'edit.php' === $pagenow && 'page' === $getData->get( 'post_type' ) )
 		) {
