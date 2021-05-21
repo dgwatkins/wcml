@@ -402,7 +402,8 @@ class WCML_Store_Pages {
 						$args['comment_status'] = $orig_page->comment_status;
 						$post_parent            = apply_filters( 'translate_object_id', $orig_page->post_parent, 'page', false, $mis_lang );
 						$args['post_parent']    = is_null( $post_parent ) ? 0 : $post_parent;
-						$new_page_id            = wp_insert_post( $args );
+
+						$new_page_id = WCML\Utilities\Post::insert( $args, $mis_lang, $trid );
 
 						if ( isset( $translations[ $mis_lang ]->element_id ) && get_post_status( $translations[ $mis_lang ]->element_id ) == 'trash' && $mis_lang == $default_language ) {
 							update_option( 'woocommerce_' . $page . '_page_id', $new_page_id );
@@ -411,9 +412,6 @@ class WCML_Store_Pages {
 						if ( isset( $translations[ $mis_lang ]->element_id ) && ! is_null( $translations[ $mis_lang ]->element_id ) ) {
 							$this->sitepress->set_element_language_details( $translations[ $mis_lang ]->element_id, 'post_page', false, $mis_lang );
 						}
-
-						$trid = $this->sitepress->get_element_trid( $orig_id, 'post_page' );
-						$this->sitepress->set_element_language_details( $new_page_id, 'post_page', $trid, $mis_lang );
 					}
 				}
 				$this->switch_lang();

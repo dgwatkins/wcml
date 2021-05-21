@@ -1,6 +1,11 @@
 <?php
 
+/**
+ * @group store-pages
+ */
 class Test_WCML_Store_Pages extends WCML_UnitTestCase {
+
+	private $originalSitePressSetup;
 
 	function setUp(){
 		parent::setUp();
@@ -8,6 +13,15 @@ class Test_WCML_Store_Pages extends WCML_UnitTestCase {
 		$this->orig_pages = array();
 		$this->install_wc_pages();
 
+		$this->originalSitePressSetup = $GLOBALS['sitepress']->get_setting( 'setup_complete' );
+		$GLOBALS['sitepress']->set_setting( 'setup_complete', true );
+
+		$this->switch_to_langs_as_params();
+	}
+
+	public function tearDown() {
+		$GLOBALS['sitepress']->set_setting( 'setup_complete', $this->originalSitePressSetup );
+		return parent::tearDown();
 	}
 
 	function install_wc_pages(){
@@ -39,8 +53,7 @@ class Test_WCML_Store_Pages extends WCML_UnitTestCase {
 	}
 
 	function test_create_missing_pages(){
-
-		$this->woocommerce_wpml->store->create_missing_store_pages();
+		$this->create_missing_store_pages();
 		$this->wcml_helper->icl_clear_and_init_cache( 'es' );
 		$missed_pages = $this->woocommerce_wpml->store->get_missing_store_pages();
 
@@ -50,7 +63,7 @@ class Test_WCML_Store_Pages extends WCML_UnitTestCase {
 
 	function test_get_page_id(){
 		$this->woocommerce_wpml->store->add_filter_to_get_shop_translated_page_id();
-		$this->woocommerce_wpml->store->create_missing_store_pages();
+		$this->create_missing_store_pages();
 		$this->wcml_helper->icl_clear_and_init_cache( 'es' );
 		$this->sitepress->switch_lang( 'es' );
 		$page_id = wc_get_page_id( 'shop' );
@@ -67,7 +80,7 @@ class Test_WCML_Store_Pages extends WCML_UnitTestCase {
 	}
 
 	function test_get_checkout_url(){
-		$this->woocommerce_wpml->store->create_missing_store_pages();
+		$this->create_missing_store_pages();
 		$this->wcml_helper->icl_clear_and_init_cache( 'es' );
 		$this->sitepress->switch_lang( 'fr' );
 
@@ -78,7 +91,7 @@ class Test_WCML_Store_Pages extends WCML_UnitTestCase {
 	}
 
 	function test_get_shop_url(){
-		$this->woocommerce_wpml->store->create_missing_store_pages();
+		$this->create_missing_store_pages();
 
 		// shop page as front
 		$shop_page = wc_get_page_id('shop');
@@ -109,6 +122,23 @@ class Test_WCML_Store_Pages extends WCML_UnitTestCase {
 				$this->assertContains( 'lang='.$key, $shop_url['url'] );
 				$this->assertContains( 'page_id='.$trnslt_shop_id, $shop_url['url'] );
 			}
+		}
+	}
+
+	/**
+	 * Store pages are created in the admin context.
+	 */
+	private function create_missing_store_pages() {
+		$isAdmin = is_admin();
+
+		if ( ! $isAdmin ) {
+			$this->switch_to_admin();
+		}
+
+		$this->woocommerce_wpml->store->create_missing_store_pages();
+
+		if ( ! $isAdmin ) {
+			$this->switch_to_front();
 		}
 	}
 }
