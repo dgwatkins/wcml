@@ -111,6 +111,29 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 		unset( $_GET['post_type'] );
 	}
 
+	/**
+	 * @test
+	 * @group wcml-3648
+	 */
+	public function it_should_NOT_filter_woocommerce_page_id_on_translation_preview() {
+		$_GET['preview'] = '1';
+		$_GET['jobId']   = '123';
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::userFunction( 'is_admin' )->andReturn( false );
+
+		foreach ( $this->woocommerce_page_option_name() as $case ) {
+			$page = reset( $case );
+			WP_Mock::expectFilterNotAdded( 'woocommerce_get_' . $page, [ $subject, 'translate_pages_in_settings' ] );
+			WP_Mock::expectFilterNotAdded( 'option_woocommerce_' . $page, [ $subject, 'translate_pages_in_settings' ] );
+		}
+
+		$subject->add_hooks();
+
+		unset( $_GET['preview'], $_GET['jobId'] );
+	}
+
 	public function woocommerce_page_option_name(){
 
 		return array(
