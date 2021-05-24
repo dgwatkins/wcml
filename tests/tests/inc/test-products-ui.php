@@ -169,6 +169,11 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
     function test_wcml_get_product_info_for_translators(){
         global $wpdb, $wpml_post_translations, $wpml_term_translations;
 
+		/**
+		 * @see \WCML\Setup\BeforeHooks::blockProductTranslation() which is globally loaded in the tests.
+		 */
+		remove_all_filters( 'get_translatable_documents_all' );
+
         $product = $this->wcml_helper->add_product( 'en' , false, 'Test Product for translator' );
         $user_id    = $this->make_current_user_admin();
 

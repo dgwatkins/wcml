@@ -97,6 +97,7 @@ function wcml_loader() {
 		\WCML\CLI\Hooks::class,
 		\WCML\AdminNotices\CachePlugins::class,
 		\WCML\Reports\Products\Query::class,
+		\WCML\Setup\BeforeHooks::class,
 	];
 
 	if (
