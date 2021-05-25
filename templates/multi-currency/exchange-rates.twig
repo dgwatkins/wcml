@@ -91,6 +91,15 @@
                 </li>
 
                 <li>
+                    <input type="radio" id="update-frequency-hourly" name="update-schedule" value="hourly"
+                           {% if exchange_rates.settings.schedule == 'hourly' %}checked="checked"{% endif %}/>
+                    <label for="update-frequency-hourly">{{ exchange_rates.strings.hourly }}</label>
+                    <p class="notice inline notice-error" {% if 'hourly' != exchange_rates.settings.schedule %}style="display:none"{% endif %}>
+                        {{ exchange_rates.strings.daily_warning }}
+                    </p>
+                </li>
+
+                <li>
                     <input type="radio" id="update-frequency-weekly" name="update-schedule" value="weekly"
                            {% if exchange_rates.settings.schedule == 'weekly' %}checked="checked"{% endif %} />
                     <label for="update-frequency-weekly">{{ exchange_rates.strings.weekly }}</label>
