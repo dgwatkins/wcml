@@ -403,6 +403,7 @@ class WCML_Products_UI extends WCML_Templates_Factory {
 		$current_language = $slang;
 		$prepare_arg      = [];
 		$prepare_arg[]    = '%' . $title . '%';
+		$prepare_arg[]    = wc_get_product_id_by_sku( $title ) ?: $title;
 		if ( $slang ) {
 			$prepare_arg[] = $current_language;
 		}
@@ -434,7 +435,7 @@ class WCML_Products_UI extends WCML_Templates_Factory {
 			}
 		}
 
-		$sql .= " WHERE p.post_title LIKE '%s' AND p.post_type = 'product' AND t.element_type = 'post_product' AND t.source_language_code IS NULL";
+		$sql .= " WHERE (p.post_title LIKE '%s' OR p.id = '%s') AND p.post_type = 'product' AND t.element_type = 'post_product' AND t.source_language_code IS NULL";
 
 		if ( $slang ) {
 			$sql .= ' AND t.language_code = %s';
