@@ -73,6 +73,10 @@ class Test_WCML_Products_UI extends OTGS_TestCase {
 		$_GET['st'] = 'all';
 		$_GET['slang'] = 'all';
 
+		\WP_Mock::userFunction( 'wc_get_product_id_by_sku' )
+			->with( '' )
+			->andReturn( 0 );
+
 		global $wpdb;
 		$wpdb = $this->stubs->wpdb();
 
