@@ -46,7 +46,7 @@ install_wp() {
 
   if [[ ! -d ${WP_CORE_DIR} || ${CI:0} == 1 ]]; then
     rm -rf ${WP_CORE_DIR}
-    git clone ${GIT_CLONE_VERBOSITY_ARGS} git://github.com/WordPress/WordPress.git ${WP_CORE_DIR}
+    git clone ${GIT_CLONE_VERBOSITY_ARGS} --depth=1 git://github.com/WordPress/WordPress.git ${WP_CORE_DIR}
   fi
 
   if [[ ! -d ${WP_CORE_DIR} ]]; then
@@ -87,7 +87,7 @@ install_test_suite() {
 
   if [[ ! -d wordpress-develop || ${CI:0} == 1 ]]; then
     rm -rf wordpress-develop
-    git clone ${GIT_CLONE_VERBOSITY_ARGS} git://github.com/WordPress/wordpress-develop.git
+    git clone ${GIT_CLONE_VERBOSITY_ARGS} --depth=1 git://github.com/WordPress/wordpress-develop.git
   fi
 
   if [[ ! -d wordpress-develop ]]; then
