@@ -1,9 +1,7 @@
 <?php
 
-use WPML\FP\Relation;
 use WPML\FP\Fns;
-use function WPML\FP\pipe;
-use function WPML\FP\invoke;
+use WPML\FP\Str;
 
 class WCML_WC_Strings {
 
@@ -36,7 +34,16 @@ class WCML_WC_Strings {
 	public function add_hooks() {
 
 		add_action( 'init', [ $this, 'add_on_init_hooks' ] );
-		add_action( 'registered_taxonomy', [ $this, 'translate_attributes_label_in_wp_taxonomies' ], 100, 3 );
+
+		// Needs to run before WC registers taxonomies on init priority 5.
+		foreach ( wc_get_attribute_taxonomies() as $tax ) {
+			add_filter(
+				'woocommerce_taxonomy_args_' . wc_attribute_taxonomy_name( $tax->attribute_name ),
+				function ( $args ) use ( $tax ) {
+					return $this->translate_attribute_labels( $args, $tax->attribute_label );
+				}
+			);
+		}
 	}
 
 	public function add_on_init_hooks() {
@@ -264,9 +271,9 @@ class WCML_WC_Strings {
 						$value = trim( $permalink_options['product_base'], '/' );
 					}
 					break;
-                default:
-	                $input_name = '';
-	                $value      = '';
+				default:
+					$input_name = '';
+					$value      = '';
 			}
 
 			$language = $this->get_string_language( trim( $value, '/' ), $this->woocommerce_wpml->url_translation->url_strings_context(), $this->woocommerce_wpml->url_translation->url_string_name( $base ) );
@@ -513,24 +520,25 @@ class WCML_WC_Strings {
 
 	}
 
-	public function translate_attributes_label_in_wp_taxonomies( $taxonomy, $obj_type, $args ) {
-		global $wp_taxonomies;
-		$obj_type = array_unique( (array) $obj_type );
-
-		$current_language = $this->sitepress->get_current_language();
-
-		if ( $current_language != 'all' && in_array( 'product', $obj_type ) && substr( $taxonomy, 0, 3 ) == 'pa_' && isset( $wp_taxonomies[ $taxonomy ] ) ) {
-
-			if ( is_array( $args['labels'] ) ) {
-				$name = $args['labels']['singular_name'];
-			} else {
-				$name = $args['labels']->name;
-			}
-
-			$wp_taxonomies[ $taxonomy ]->labels->name = apply_filters( 'wpml_translate_single_string', $name, 'WordPress', 'taxonomy singular name: ' . $name, $current_language );
-
+	/**
+	 * @param array  $args
+	 * @param string $attribute_label
+	 *
+	 * @return array
+	 */
+	public function translate_attribute_labels( $args, $attribute_label ) {
+		$singular_label = $this->get_translated_string_by_name_and_context( 'WordPress', 'taxonomy singular name: ' . $attribute_label );
+		if ( $singular_label ) {
+			$args['labels']['singular_name'] = $singular_label;
 		}
 
+		$label = sprintf( 'Product %s', $attribute_label );
+		$label = $this->get_translated_string_by_name_and_context( 'WordPress', 'taxonomy general name: ' . $label );
+		if ( $label ) {
+			$args['labels']['name'] = $label;
+		}
+
+		return $args;
 	}
 
 	/**
@@ -540,7 +548,7 @@ class WCML_WC_Strings {
 	 *
 	 * @return string|false
 	 */
-	public function get_translated_string_by_name_and_context( $context, $name, $language ) {
+	public function get_translated_string_by_name_and_context( $context, $name, $language = null ) {
 		return apply_filters( 'wpml_translate_single_string', false, $context, $name, $language );
 	}
 
