@@ -166,6 +166,8 @@ class woocommerce_wpml {
 			'wcml_currencies_switcher_save_settings',
 			'wcml_delete_currency_switcher',
 			'wcml_currencies_order',
+			'wcml_set_currency_mode',
+			'wcml_set_max_mind_key',
 		];
 
 		$this->cart = new WCML_Cart( $this, $sitepress, $woocommerce );
