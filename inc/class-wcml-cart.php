@@ -85,6 +85,8 @@ class WCML_Cart {
 
 			$this->localize_flat_rates_shipping_classes();
 		}
+
+		add_filter('woocommerce_cart_crosssell_ids', [ $this, 'convert_crosssell_ids' ] );
 	}
 
 	public function is_clean_cart_enabled() {
@@ -675,4 +677,22 @@ class WCML_Cart {
 		return $cart_hash_key . '-' . $this->sitepress->get_current_language();
 	}
 
+	/**
+	 * @param int[] $productIds
+	 *
+	 * @return int[]
+	 */
+	public function convert_crosssell_ids( $productIds ) {
+		$returnOriginal = $this->sitepress->is_display_as_translated_post_type( 'product' );
+
+		// $convertId :: int -> int|null
+		$convertId = function( $id ) use ( $returnOriginal ) {
+			return $this->sitepress->get_object_id( $id, 'product', $returnOriginal );
+		};
+
+		return wpml_collect( $productIds )
+			->map( $convertId )
+			->filter()
+			->toArray();
+	}
 }
