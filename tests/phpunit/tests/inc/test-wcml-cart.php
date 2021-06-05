@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Test_WCML_Cart
+ * @group cart
  */
 class Test_WCML_Cart extends OTGS_TestCase {
 
@@ -29,7 +29,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 		$this->sitepress = $this->getMockBuilder('SitePress')
 			->disableOriginalConstructor()
-			->setMethods( array( 'get_wp_api', 'get_element_trid', 'get_setting', 'get_current_language' ) )
+			->setMethods( array( 'get_wp_api', 'get_element_trid', 'get_setting', 'get_current_language', 'get_object_id', 'is_display_as_translated_post_type' ) )
 			->getMock();
 
 		$this->wp_api = $this->getMockBuilder( 'WPML_WP_API' )
@@ -102,6 +102,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		], 10, 4 );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_cart_hash_key', [ $subject, 'add_language_to_cart_hash_key' ] );
+		\WP_Mock::expectFilterAdded( 'woocommerce_cart_crosssell_ids', [ $subject, 'convert_crosssell_ids' ] );
 
 		$subject->add_hooks();
 	}
@@ -138,6 +139,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 		\WP_Mock::expectActionAdded( 'wcml_removed_cart_items', array( $subject, 'wcml_removed_cart_items_widget' ) );
+		\WP_Mock::expectFilterAdded( 'woocommerce_cart_crosssell_ids', [ $subject, 'convert_crosssell_ids' ] );
 
 		$subject->add_hooks();
 	}
@@ -647,4 +649,46 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		$this->assertEquals( $cart_hash_key . '-' . $current_language, $subject->add_language_to_cart_hash_key( $cart_hash_key ) );
 	}
 
+	/**
+	 * @test
+	 * @dataProvider dpBool
+	 * @group wcml-3655
+	 *
+	 * @param bool $displayAsTranslated
+	 */
+	public function it_should_convert_crosssell_ids( $displayAsTranslated ) {
+		$idsMap = [
+			123 => 456,
+			124 => null,
+			125 => 457,
+		];
+
+		$originalIds = array_keys( $idsMap );
+		$convertIds  = array_filter( array_values( $idsMap ) );
+
+		$this->sitepress->method( 'is_display_as_translated_post_type' )
+			->with( 'product' )
+			->willReturn( $displayAsTranslated );
+
+		$this->sitepress->method( 'get_object_id' )
+			->willReturnCallback( function( $id, $type, $returnOriginal ) use( $idsMap, $displayAsTranslated ) {
+				$this->assertEquals( 'product', $type );
+				$this->assertSame( $displayAsTranslated, $returnOriginal );
+				return $idsMap[ $id ];
+			} );
+
+		$subject = $this->get_subject();
+
+		$this->assertEquals(
+			$convertIds,
+			$subject->convert_crosssell_ids( $originalIds )
+		);
+	}
+
+	public function dpBool() {
+		return [
+			[ true ],
+			[ false ],
+		];
+	}
 }
