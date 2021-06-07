@@ -1,6 +1,7 @@
 import React from "react";
 import {useState} from "react";
 import Modal from 'antd/lib/modal';
+import {getPopupContainer} from '../../sharedComponents/helpers';
 import Select from "antd/lib/select";
 import 'antd/lib/select/style/index.css';
 import 'antd/lib/modal/style/index.css';
@@ -267,6 +268,7 @@ const NewCurrencySelector = ({currency, updateCurrencyPropValue}) => {
                     optionLabelProp="label"
                     optionFilterProp="label"
                     allowClear={false}
+                    getPopupContainer={getPopupContainer}
             >
                 {currencies}
             </Select>
