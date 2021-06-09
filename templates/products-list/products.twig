@@ -1,5 +1,7 @@
 <form method="post" action="{{ request_uri|e }}">
 
+	{{ auto_translate_container|raw }}
+
 	{% include 'filter.twig' with filter %}
 
 	<table class="widefat fixed wpml-list-table wp-list-table striped" cellspacing="0">
