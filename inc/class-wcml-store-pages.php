@@ -369,12 +369,12 @@ class WCML_Store_Pages {
 				$this->switch_lang( $mis_lang );
 
 				foreach ( $check_pages as $page ) {
-					$orig_id      = wc_get_page_id( $page );
-					$trid         = $this->sitepress->get_element_trid( $orig_id, 'post_page' );
-					$translations = $this->sitepress->get_element_translations( $trid, 'post_page', true );
+					$orig_id       = wc_get_page_id( $page );
+					$trid          = $this->sitepress->get_element_trid( $orig_id, 'post_page' );
+					$translations  = $this->sitepress->get_element_translations( $trid, 'post_page', true );
 					$translationId = Obj::path( [ $mis_lang, 'element_id' ], $translations );
 
-					if ( ! $translationId || get_post_status( $translationId ) !== 'publish' ) {
+					if ( ! $translationId ) {
 						$orig_page = get_post( $orig_id );
 
 						switch ( $page ) {
@@ -399,23 +399,30 @@ class WCML_Store_Pages {
 						$args['post_type']      = $orig_page->post_type;
 						$args['post_content']   = $orig_page->post_content;
 						$args['post_excerpt']   = $orig_page->post_excerpt;
-						$args['post_status']    = ( $translationId && get_post_status( $translationId ) !== 'publish' ) ? 'publish' : $orig_page->post_status;
+						$args['post_status']    = $orig_page->post_status;
 						$args['menu_order']     = $orig_page->menu_order;
 						$args['ping_status']    = $orig_page->ping_status;
 						$args['comment_status'] = $orig_page->comment_status;
 						$post_parent            = apply_filters( 'translate_object_id', $orig_page->post_parent, 'page', false, $mis_lang );
 						$args['post_parent']    = is_null( $post_parent ) ? 0 : $post_parent;
 
-						$new_page_id = WCML\Utilities\Post::insert( $args, $mis_lang, $trid );
-
-						if ( $translationId && get_post_status( $translationId ) == 'trash' && $mis_lang == $default_language ) {
-							update_option( 'woocommerce_' . $page . '_page_id', $new_page_id );
+						WCML\Utilities\Post::insert( $args, $mis_lang, $trid );
+					} elseif ( get_post_status( $translationId ) !== 'publish' ) {
+						if ( get_post_status( $translationId ) == 'trash' && $mis_lang == $default_language ) {
+							update_option( 'woocommerce_' . $page . '_page_id', $translationId );
 						}
 
-						if ( $translationId ) {
-							$this->sitepress->set_element_language_details( $translationId, 'post_page', false, $mis_lang );
-						}
+						$this->sitepress->set_element_language_details( $translationId, 'post_page', $trid, $mis_lang );
+
+						$args = [
+							'ID'          => $translationId,
+							'post_status' => 'publish',
+						];
+
+						wp_update_post( $args );
 					}
+
+
 				}
 				$this->switch_lang();
 			}
