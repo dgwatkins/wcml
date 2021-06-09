@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Obj;
+
 class WCML_Store_Pages {
 
 	/**
@@ -370,8 +372,9 @@ class WCML_Store_Pages {
 					$orig_id      = wc_get_page_id( $page );
 					$trid         = $this->sitepress->get_element_trid( $orig_id, 'post_page' );
 					$translations = $this->sitepress->get_element_translations( $trid, 'post_page', true );
+					$translationId = Obj::path( [ $mis_lang, 'element_id' ], $translations );
 
-					if ( ! isset( $translations[ $mis_lang ] ) || ( ! is_null( $translations[ $mis_lang ]->element_id ) && get_post_status( $translations[ $mis_lang ]->element_id ) !== 'publish' ) ) {
+					if ( ! $translationId || get_post_status( $translationId ) !== 'publish' ) {
 						$orig_page = get_post( $orig_id );
 
 						switch ( $page ) {
@@ -396,7 +399,7 @@ class WCML_Store_Pages {
 						$args['post_type']      = $orig_page->post_type;
 						$args['post_content']   = $orig_page->post_content;
 						$args['post_excerpt']   = $orig_page->post_excerpt;
-						$args['post_status']    = ( isset( $translations[ $mis_lang ]->element_id ) && get_post_status( $translations[ $mis_lang ]->element_id ) !== 'publish' ) ? 'publish' : $orig_page->post_status;
+						$args['post_status']    = ( $translationId && get_post_status( $translationId ) !== 'publish' ) ? 'publish' : $orig_page->post_status;
 						$args['menu_order']     = $orig_page->menu_order;
 						$args['ping_status']    = $orig_page->ping_status;
 						$args['comment_status'] = $orig_page->comment_status;
@@ -405,12 +408,12 @@ class WCML_Store_Pages {
 
 						$new_page_id = WCML\Utilities\Post::insert( $args, $mis_lang, $trid );
 
-						if ( isset( $translations[ $mis_lang ]->element_id ) && get_post_status( $translations[ $mis_lang ]->element_id ) == 'trash' && $mis_lang == $default_language ) {
+						if ( $translationId && get_post_status( $translationId ) == 'trash' && $mis_lang == $default_language ) {
 							update_option( 'woocommerce_' . $page . '_page_id', $new_page_id );
 						}
 
-						if ( isset( $translations[ $mis_lang ]->element_id ) && ! is_null( $translations[ $mis_lang ]->element_id ) ) {
-							$this->sitepress->set_element_language_details( $translations[ $mis_lang ]->element_id, 'post_page', false, $mis_lang );
+						if ( $translationId ) {
+							$this->sitepress->set_element_language_details( $translationId, 'post_page', false, $mis_lang );
 						}
 					}
 				}
