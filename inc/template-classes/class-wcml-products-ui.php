@@ -119,6 +119,10 @@ class WCML_Products_UI extends WCML_Templates_Factory {
 					'last'     => __( 'Go to the last page', 'woocommerce-multilingual' ),
 				],
 			],
+			/**
+			 * @see \WPML\TM\ATE\Loader::getWpmlAutoTranslateContainer()
+			 */
+			'auto_translate_container' => apply_filters( 'wpml_tm_get_wpml_auto_translate_container', '' ),
 		];
 
 		if ( $this->is_show_type_column() ) {
