@@ -339,8 +339,13 @@ class WCML_Multi_Currency_Orders {
 				if ( ! $item->get_total() ) {
 					continue;
 				}
-
-				if ( 'total' === $key && $item->get_total() !== $item->get_subtotal() ) {
+				
+				if ( ('total' === $key
+				      && $item->get_total() !== $item->get_subtotal()
+				     )
+				     || $this->total_is_changed( $item )
+				) {
+					
 					$converted_totals[ $key ] = $item->get_total();
 				} else {
 					if ( ! $converted_price ) {
@@ -371,7 +376,16 @@ class WCML_Multi_Currency_Orders {
 			$item->save();
 		}
 	}
-
+	
+	/**
+	 * @param WC_Order_Item_Product $item
+	 *
+	 * @return bool
+	 */
+	private function total_is_changed( $item ) {
+		return (int) $item->get_product()->get_price() * (int) $item->get_quantity() !== (int) $item->get_total();
+	}
+	
 	/**
 	 * @param string $key
 	 *
