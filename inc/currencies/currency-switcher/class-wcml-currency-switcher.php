@@ -2,6 +2,8 @@
 
 use WPML\FP\Obj;
 use WCML\MultiCurrency\Geolocation;
+use WPML\FP\Str;
+use function WPML\Container\make;
 
 /**
  * Class WCML_Currency_Switcher
@@ -36,6 +38,8 @@ class WCML_Currency_Switcher {
 		// Built in currency switcher
 		add_action( 'woocommerce_product_meta_start', [ $this, 'show_currency_switcher' ] );
 		add_action( 'pre_update_option_sidebars_widgets', [ $this, 'update_option_sidebars_widgets' ], 10, 2 );
+
+//		add_action( 'rest_after_save_widget', [ $this, 'restAfterSaveWidgetAction' ], 10, 2 );
 	}
 
 	public static function get_settings( $switcher_id ) {
@@ -352,4 +356,22 @@ class WCML_Currency_Switcher {
 		return $args;
 	}
 
+	public function restAfterSaveWidgetAction( $id, $sidebar_id ) {
+		$parsedId = wp_parse_widget_id( $id );
+		$baseId   = Obj::prop( 'id_base', $parsedId );
+		$number   = Obj::prop( 'number', $parsedId );
+
+		if ( WCML_Currency_Switcher_Widget::SLUG === $baseId ) {
+			$currencyWidget = make( WCML_Currency_Switcher_Widget::class );
+			$settings       = $currencyWidget->get_settings();
+
+			$settings[ $number ] = [
+				'id'       => $sidebar_id,
+				'settings' => $this->get_settings( $sidebar_id ),
+			];
+
+			$currencyWidget->save_settings( $settings );
+		}
+
+	}
 }

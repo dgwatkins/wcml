@@ -28,9 +28,10 @@ class WCML_Currency_Switcher_Widget extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 
 		if ( ! $new_instance ) {
+			$sidebar = Obj::prop( 'sidebar', $_POST );
 			$new_instance = [
-				'id'       => $_POST['sidebar'],
-				'settings' => WCML_Currency_Switcher::get_settings( $_POST['sidebar'] ),
+				'id'       => $sidebar,
+				'settings' => WCML_Currency_Switcher::get_settings( $sidebar ),
 			];
 		}
 

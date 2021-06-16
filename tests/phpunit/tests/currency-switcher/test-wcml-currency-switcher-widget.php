@@ -1,5 +1,7 @@
 <?php
 
+use tad\FunctionMocker\FunctionMocker;
+
 /**
  * Class Test_WCML_Currency_Switcher_Widget
  * @group currency-switcher
@@ -8,26 +10,17 @@ class Test_WCML_Currency_Switcher_Widget extends OTGS_TestCase {
 
 	const WIDGET_INSTANCE_ID = 'sidebar-1';
 
-	function setUp() {
-		parent::setUp();
-	}
-
 	/**
 	 * @test
 	 * @dataProvider dp_widget
 	 * @group wcml-3670
 	 *
-	 * @param array $args
-	 * @param array $instance
-	 *
-	 * runInSeparateProcess
-	 * preserveGlobalState disabled
+	 * @param array $widget_args
+	 * @param array $widget_instance
 	 */
 	public function widget( $widget_args, $widget_instance ) {
 		$id                       = 'sidebar-1';
 		$currency_switcher_output = 'The currency switcher output';
-
-		\WP_Mock::userFunction( '__' );
 
 		\WP_Mock::onAction( 'wcml_currency_switcher' )
 			->with( [ 'switcher_id' => $id ] )
@@ -35,7 +28,6 @@ class Test_WCML_Currency_Switcher_Widget extends OTGS_TestCase {
 				echo $currency_switcher_output;
 			} );
 
-//		$this->stubs->WP_Widget();
 		$subject = new WCML_Currency_Switcher_Widget();
 		ob_start();
 		$subject->widget( $widget_args, $widget_instance );
@@ -59,10 +51,10 @@ class Test_WCML_Currency_Switcher_Widget extends OTGS_TestCase {
 			],
 		];
 
-		$args_with_id = $args;
+		$args_with_id       = $args;
 		$args_with_id['id'] = self::WIDGET_INSTANCE_ID;
 
-		$instance_with_id = $instance;
+		$instance_with_id       = $instance;
 		$instance_with_id['id'] = self::WIDGET_INSTANCE_ID;
 
 		return [
@@ -73,44 +65,33 @@ class Test_WCML_Currency_Switcher_Widget extends OTGS_TestCase {
 
 	/**
 	 * @test
-	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 */
 	public function update() {
-		$this->stubs->WP_Widget();
-		$sidebar_settings = array( 'settings' => 'sidebar_settings' );
-		$mock             = \Mockery::mock( 'alias:WCML_Currency_Switcher' );
-		$mock->shouldReceive( 'get_settings' )->with( 'sidebar1' )->andReturn( $sidebar_settings );
-		$_POST['sidebar'] = 'sidebar1';
-		$expected_instance = array(
-			'id'       => 'sidebar1',
+		$sidebar_settings  = [ 'settings' => 'sidebar_settings' ];
+		$cs                = FunctionMocker::replace( 'WCML_Currency_Switcher::get_settings', $sidebar_settings );
+		$_POST['sidebar']  = self::WIDGET_INSTANCE_ID;
+		$expected_instance = [
+			'id'       => self::WIDGET_INSTANCE_ID,
 			'settings' => $sidebar_settings,
-		);
-		\WP_Mock::wpPassthruFunction( '__' );
+		];
 		$subject = new WCML_Currency_Switcher_Widget();
 		$this->assertEquals( $expected_instance, $subject->update( false, false ) );
+		$cs->wasCalledWithOnce( [ self::WIDGET_INSTANCE_ID ] );
+		unset( $_POST['sidebar'] );
 	}
 
 	/**
 	 * @test
-	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 */
 	public function form() {
-		$instance = array( 'id' => mt_rand( 1, 20 ) );
+		$instance = [ 'id' => mt_rand( 1, 20 ) ];
 		$admin_url = 'http://testsite.dev/wp-adminadmin.php?page=wpml-wcml&tab=multi-currency#currency-switcher/' . $instance['id'];
 		$text = 'Customize the currency switcher';
 		$expected = sprintf( '<p><a class="button button-secondary wcml-cs-widgets-edit-link" href="%s"><span class="otgs-ico-edit"></span> %s</a></p>', $admin_url, $text );
-		\WP_Mock::wpFunction( 'admin_url', array(
+		\WP_Mock::userFunction( 'admin_url', [
 			'args'   => 'admin.php?page=wpml-wcml&tab=multi-currency#currency-switcher/' . $instance['id'],
 			'return' => 'http://testsite.dev/wp-adminadmin.php?page=wpml-wcml&tab=multi-currency#currency-switcher/' . $instance['id'],
-		));
-		$this->stubs->WP_Widget();
-		\WP_Mock::wpPassthruFunction( 'esc_html__' );
-		\WP_Mock::wpPassthruFunction( 'esc_url' );
-		\WP_Mock::wpPassthruFunction( '__' );
+		] );
 		$subject = new WCML_Currency_Switcher_Widget();
 		ob_start();
 		$subject->form( $instance );
