@@ -6,38 +6,69 @@
  */
 class Test_WCML_Currency_Switcher_Widget extends OTGS_TestCase {
 
+	const WIDGET_INSTANCE_ID = 'sidebar-1';
+
 	function setUp() {
 		parent::setUp();
 	}
 
 	/**
 	 * @test
+	 * @dataProvider dp_widget
+	 * @group wcml-3670
 	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
+	 * @param array $args
+	 * @param array $instance
+	 *
+	 * runInSeparateProcess
+	 * preserveGlobalState disabled
 	 */
-	public function widget() {
-		\WP_Mock::wpPassthruFunction( '__' );
-		$widget_args = array(
-			'before_widget' => 'Text before widget',
-			'after_widget'  => 'Text after widget',
-			'before_title'  => 'Text before title',
-			'after_title'   => 'Text after title',
-			'id'            => mt_rand( 1, 10 ),
-		);
-		$widget_instance = array(
-			'settings' => array(
-				'widget_title' => 'Widget Title',
-			),
-		);
-		$this->stubs->WP_Widget();
+	public function widget( $widget_args, $widget_instance ) {
+		$id                       = 'sidebar-1';
+		$currency_switcher_output = 'The currency switcher output';
+
+		\WP_Mock::userFunction( '__' );
+
+		\WP_Mock::onAction( 'wcml_currency_switcher' )
+			->with( [ 'switcher_id' => $id ] )
+			->perform( function () use ( $currency_switcher_output ) {
+				echo $currency_switcher_output;
+			} );
+
+//		$this->stubs->WP_Widget();
 		$subject = new WCML_Currency_Switcher_Widget();
 		ob_start();
 		$subject->widget( $widget_args, $widget_instance );
 		$output = ob_get_clean();
 		$expected = $widget_args['before_widget'] . $widget_args['before_title'] . $widget_instance['settings']['widget_title'];
-		$expected .= $widget_args['after_title'] . $widget_args['after_widget'];
+		$expected .= $widget_args['after_title'] . $currency_switcher_output . $widget_args['after_widget'];
 		$this->assertEquals( $expected, $output );
+	}
+
+	public function dp_widget() {
+		$args = [
+			'before_widget' => 'Text before widget',
+			'after_widget'  => 'Text after widget',
+			'before_title'  => 'Text before title',
+			'after_title'   => 'Text after title',
+			'id'            => self::WIDGET_INSTANCE_ID,
+		];
+		$instance = [
+			'settings' => [
+				'widget_title' => 'Widget Title',
+			],
+		];
+
+		$args_with_id = $args;
+		$args_with_id['id'] = self::WIDGET_INSTANCE_ID;
+
+		$instance_with_id = $instance;
+		$instance_with_id['id'] = self::WIDGET_INSTANCE_ID;
+
+		return [
+			'ID from args'     => [ $args_with_id, $instance ],
+			'ID from instance' => [ $args, $instance_with_id ],
+		];
 	}
 
 	/**

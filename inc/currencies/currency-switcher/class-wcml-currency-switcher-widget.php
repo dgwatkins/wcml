@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Obj;
+
 class WCML_Currency_Switcher_Widget extends WP_Widget {
 
 	const SLUG = 'currency_sel_widget';
@@ -17,7 +19,8 @@ class WCML_Currency_Switcher_Widget extends WP_Widget {
 			echo $args['before_title'] . $widget_title . $args['after_title'];
 		}
 
-		do_action( 'wcml_currency_switcher', [ 'switcher_id' => $args['id'] ] );
+		$getId = Obj::prop( 'id' );
+		do_action( 'wcml_currency_switcher', [ 'switcher_id' => $getId( $args ) ?: $getId( $instance ) ] );
 
 		echo $args['after_widget'];
 	}
