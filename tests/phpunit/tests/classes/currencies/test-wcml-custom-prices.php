@@ -876,4 +876,50 @@ class Test_WCML_Custom_Prices extends OTGS_TestCase {
 		$subject = $this->get_subject( $woocommerce_wpml );
 		$subject->maybe_remove_sale_prices( $product_ids );
 	}
+	
+	/**
+	 * @test
+	 */
+	public function it_should_set_custom_sale_prices() {
+		$currency = 'UAH';
+		$product_id = 10;
+		$sale_price = 110;
+		
+		$currencies = [
+			$currency => []
+		];
+		
+		$product_ids = [ $product_id ];
+		
+		$woocommerce_wpml                                    = $this->get_woocommerce_wpml();
+		
+		$woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
+		                                         ->disableOriginalConstructor()
+		                                         ->setMethods( [ 'get_currencies' ] )
+		                                         ->getMock();
+		
+		$woocommerce_wpml->multi_currency->method( 'get_currencies' )->willReturn( $currencies );
+		
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $product_id, '_wcml_custom_prices_status', true ],
+			'times'  => 1,
+			'return' => 1
+		] );
+		
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $product_id, '_sale_price_'.$currency, true ],
+			'times'  => 1,
+			'return' => $sale_price
+		] );
+		
+		\WP_Mock::userFunction( 'update_post_meta', [
+			'args'   => [ $product_id, '_price_' . $currency, $sale_price ],
+			'times'  => 1,
+			'return' => true
+		] );
+		
+		
+		$subject = $this->get_subject( $woocommerce_wpml );
+		$subject->maybe_set_sale_prices( $product_ids );
+	}
 }
