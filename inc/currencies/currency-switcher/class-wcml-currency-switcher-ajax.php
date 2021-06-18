@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Obj;
+
 /**
  * Class WCML_Currency_Switcher_Ajax
  */
@@ -120,7 +122,7 @@ class WCML_Currency_Switcher_Ajax {
 			if ( ! $found ) {
 
 				foreach ( $widget_settings as $key => $widget_setting ) {
-					if ( $widget_setting['id'] == $sidebar ) {
+					if ( is_array( $widget_setting ) && Obj::prop( 'id', $widget_setting ) == $sidebar ) {
 						array_unshift( $sidebars_widgets[ $sidebar ], WCML_Currency_Switcher_Widget::SLUG . '-' . $key );
 					}
 				}
