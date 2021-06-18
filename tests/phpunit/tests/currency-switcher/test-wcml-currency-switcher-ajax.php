@@ -112,11 +112,8 @@ class Test_WCML_Currency_Switcher_Ajax extends OTGS_TestCase {
 
 	/**
 	 * @test
-	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 */
-	public function wcml_currencies_switcher_save_settings() {
+	public function wcml_currencies_switcher_save_settings_with_new_widget() {
 		$woocommerce_wpml                                    = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array(
 			'update_settings'
 		) )->getMock();
@@ -129,85 +126,186 @@ class Test_WCML_Currency_Switcher_Ajax extends OTGS_TestCase {
 		$_POST['template']                                   = 'widget_template';
 		$_POST['widget_title']                               = 'widget_title';
 		$_POST['switcher_style']                             = 'some_style';
-		$_POST['color_scheme']                               = array(
+		$_POST['color_scheme']                               = [
 			'id1' => '#000000',
 			'id2' => '#000001',
 			'id3' => '#000003',
-		);
-		$woocommerce_wpml->settings                          = array(
-			'currency_switchers' => array(
-				$_POST['widget_id'] => array(),
-			),
-		);
-		\WP_Mock::wpFunction( 'wp_verify_nonce', array(
-			'args'   => array( $_POST['wcml_nonce'], 'wcml_currencies_switcher_save_settings' ),
+		];
+		$woocommerce_wpml->settings                          = [
+			'currency_switchers' => [
+				$_POST['widget_id'] => [],
+			],
+		];
+		\WP_Mock::userFunction( 'wp_verify_nonce', [
+			'args'   => [ $_POST['wcml_nonce'], 'wcml_currencies_switcher_save_settings' ],
 			'return' => true,
 			'times'  => 1,
-		) );
-		\WP_Mock::wpPassthruFunction( 'stripslashes_deep' );
-		\WP_Mock::wpPassthruFunction( 'sanitize_text_field' );
-		\WP_Mock::wpPassthruFunction( 'sanitize_hex_color' );
-		\WP_Mock::wpFunction( 'get_option', array(
-			'args'   => array( 'widget_currency_sel_widget' ),
-			'return' => array(),
+		] );
+		\WP_Mock::passthruFunction( 'stripslashes_deep' );
+		\WP_Mock::passthruFunction( 'sanitize_text_field' );
+		\WP_Mock::passthruFunction( 'sanitize_hex_color' );
+		\WP_Mock::userFunction( 'get_option', [
+			'args'   => [ 'widget_currency_sel_widget' ],
+			'return' => [],
 			'times'  => 1,
-		) );
+		] );
 
-		$widget_settings   = array();
-		$widget_settings[] = array(
+		$widget_settings   = [];
+		$widget_settings[] = [
 			'id'       => $_POST['widget_id'],
-			'settings' => array(
+			'settings' => [
 				'widget_title'   => $_POST['widget_title'],
 				'switcher_style' => $_POST['switcher_style'],
 				'template'       => $_POST['template'],
 				'color_scheme'   => $_POST['color_scheme'],
-			),
-		);
-		\WP_Mock::wpFunction( 'update_option', array(
-			'args'   => array( 'widget_currency_sel_widget', $widget_settings ),
+			],
+		];
+		\WP_Mock::userFunction( 'update_option', [
+			'args'   => [ 'widget_currency_sel_widget', $widget_settings ],
 			'return' => true,
 			'times'  => 1,
-		));
-		$wcml_settings = array(
-			'currency_switchers' => array(
+		] );
+		$wcml_settings = [
+			'currency_switchers' => [
 				$_POST['widget_id'] => $widget_settings[0]['settings'],
-			),
-		);
+			],
+		];
 		$woocommerce_wpml->expects( $this->once() )->method( 'update_settings' )->with( $wcml_settings )->willReturn( true );
 
-		$sidebars = array(
-			$switcher_id => array(
+		$sidebars = [
+			$switcher_id => [
 				'currency_sel_widget',
 				'other_widget',
-			),
-			'other_id'  => array(
+			],
+			'other_id'  => [
 				'other_widget1',
 				'other_widget2',
-			),
-		);
+			],
+		];
 
-		\WP_Mock::wpFunction( 'wp_get_sidebars_widgets', array(
+		\WP_Mock::userFunction( 'wp_get_sidebars_widgets', [
 			'return' => $sidebars,
 			'times'  => 1,
-		));
+		] );
 
-		\WP_Mock::wpFunction( 'remove_action', array(
+		\WP_Mock::userFunction( 'remove_action', [
 			'return' => $sidebars,
 			'times'  => 1,
-			'args'   => array( 'pre_update_option_sidebars_widgets', array( $woocommerce_wpml->multi_currency->currency_switcher, 'update_option_sidebars_widgets' ), 10 ),
-		));
+			'args'   => [ 'pre_update_option_sidebars_widgets', [ $woocommerce_wpml->multi_currency->currency_switcher, 'update_option_sidebars_widgets' ], 10 ],
+		] );
 
-		\WP_Mock::wpFunction( 'wp_set_sidebars_widgets', array(
-			'args'   => array( $sidebars ),
+		\WP_Mock::userFunction( 'wp_set_sidebars_widgets', [
+			'args'   => [ $sidebars ],
 			'return' => true,
-		));
+		] );
 
-		\WP_Mock::wpFunction( 'wp_send_json_success', array(
+		\WP_Mock::userFunction( 'wp_send_json_success', [
 			'return' => true,
 			'times'  => 1,
-		));
+		] );
 
-		$this->stubs->WP_Widget();
+		$subject           = new WCML_Currency_Switcher_Ajax( $woocommerce_wpml );
+		$subject->wcml_currencies_switcher_save_settings();
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3673
+	 */
+	public function wcml_currencies_switcher_save_settings_with_edited_widget() {
+		$woocommerce_wpml                                    = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array(
+			'update_settings'
+		) )->getMock();
+		$woocommerce_wpml->multi_currency                    = new stdClass();
+		$woocommerce_wpml->multi_currency->currency_switcher = new stdClass();
+		$switcher_id                                         = 'new_widget';
+		$_POST['switcher_id']                                = $switcher_id;
+		$_POST['widget_id']                                  = mt_rand( 1, 20 );
+		$_POST['wcml_nonce']                                 = 'test_nonce';
+		$_POST['template']                                   = 'widget_template';
+		$_POST['widget_title']                               = 'widget_title';
+		$_POST['switcher_style']                             = 'some_style';
+		$_POST['color_scheme']                               = [
+			'id1' => '#000000',
+			'id2' => '#000001',
+			'id3' => '#000003',
+		];
+		$woocommerce_wpml->settings                          = [
+			'currency_switchers' => [
+				$_POST['widget_id'] => [],
+			],
+		];
+		\WP_Mock::userFunction( 'wp_verify_nonce', [
+			'args'   => [ $_POST['wcml_nonce'], 'wcml_currencies_switcher_save_settings' ],
+			'return' => true,
+			'times'  => 1,
+		] );
+		\WP_Mock::passthruFunction( 'stripslashes_deep' );
+		\WP_Mock::passthruFunction( 'sanitize_text_field' );
+		\WP_Mock::passthruFunction( 'sanitize_hex_color' );
+
+		$widget_settings   = [];
+		$widget_settings[] = [
+			'id'       => $_POST['widget_id'],
+			'settings' => [
+				'widget_title'   => $_POST['widget_title'],
+				'switcher_style' => $_POST['switcher_style'],
+				'template'       => $_POST['template'],
+				'color_scheme'   => $_POST['color_scheme'],
+			],
+		];
+		$widget_settings['_multiwidget'] = 1; // _multiwidget item, not a widget instance.
+
+		\WP_Mock::userFunction( 'get_option', [
+			'args'   => [ 'widget_currency_sel_widget' ],
+			'return' => $widget_settings,
+			'times'  => 1,
+		] );
+
+		\WP_Mock::userFunction( 'update_option', [
+			'args'   => [ 'widget_currency_sel_widget', $widget_settings ],
+			'return' => true,
+			'times'  => 1,
+		] );
+		$wcml_settings = [
+			'currency_switchers' => [
+				$_POST['widget_id'] => $widget_settings[0]['settings'],
+			],
+		];
+		$woocommerce_wpml->expects( $this->once() )->method( 'update_settings' )->with( $wcml_settings )->willReturn( true );
+
+		$sidebars = [
+			$switcher_id => [
+				'currency_sel_widget',
+				'other_widget',
+			],
+			'other_id'  => [
+				'other_widget1',
+				'other_widget2',
+			],
+		];
+
+		\WP_Mock::userFunction( 'wp_get_sidebars_widgets', [
+			'return' => $sidebars,
+			'times'  => 1,
+		] );
+
+		\WP_Mock::userFunction( 'remove_action', [
+			'return' => $sidebars,
+			'times'  => 1,
+			'args'   => [ 'pre_update_option_sidebars_widgets', [ $woocommerce_wpml->multi_currency->currency_switcher, 'update_option_sidebars_widgets' ], 10 ],
+		] );
+
+		\WP_Mock::userFunction( 'wp_set_sidebars_widgets', [
+			'args'   => [ $sidebars ],
+			'return' => true,
+		] );
+
+		\WP_Mock::userFunction( 'wp_send_json_success', [
+			'return' => true,
+			'times'  => 1,
+		] );
+
 		$subject           = new WCML_Currency_Switcher_Ajax( $woocommerce_wpml );
 		$subject->wcml_currencies_switcher_save_settings();
 	}
