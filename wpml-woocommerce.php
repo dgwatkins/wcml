@@ -103,6 +103,7 @@ function wcml_loader() {
 		\WCML\Reports\Categories\Query::class,
 		\WCML\Multicurrency\Analytics\Factory::class,
 		\WCML\Setup\BeforeHooks::class,
+		\WCML\AdminNotices\MultiCurrencyMissing::class,
 	];
 
 	if (
