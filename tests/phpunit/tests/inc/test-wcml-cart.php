@@ -139,7 +139,6 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 		\WP_Mock::expectActionAdded( 'wcml_removed_cart_items', array( $subject, 'wcml_removed_cart_items_widget' ) );
-		\WP_Mock::expectFilterAdded( 'woocommerce_cart_crosssell_ids', [ $subject, 'convert_crosssell_ids' ] );
 
 		$subject->add_hooks();
 	}
