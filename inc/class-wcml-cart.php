@@ -82,11 +82,11 @@ class WCML_Cart {
 			);
 
 			add_filter( 'woocommerce_cart_hash_key', [ $this, 'add_language_to_cart_hash_key' ] );
+			add_filter('woocommerce_cart_crosssell_ids', [ $this, 'convert_crosssell_ids' ] );
 
 			$this->localize_flat_rates_shipping_classes();
 		}
 
-		add_filter('woocommerce_cart_crosssell_ids', [ $this, 'convert_crosssell_ids' ] );
 	}
 
 	public function is_clean_cart_enabled() {
