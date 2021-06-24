@@ -32,14 +32,14 @@ class ExchangeRatesApi extends Service {
 	 * @return string
 	 */
 	public function getApiUrl() {
-		return 'https://api.exchangeratesapi.io/latest?base=%1$s&symbols=%2$s';
+		return 'http://api.exchangeratesapi.io/v1/latest?access_key=%1$s&base=%2$s&symbols=%3$s';
 	}
 
 	/**
 	 * @return bool
 	 */
 	public function isKeyRequired() {
-		return false;
+		return true;
 	}
 
 }
