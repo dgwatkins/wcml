@@ -153,6 +153,7 @@ const CurrencyOptions = ({currency, updateCurrencyProp, strings}) => {
             >
                 <option value=".">.</option>
                 <option value=",">,</option>
+                <option value=" ">{strings.labelSpaceSep}</option>
             </SelectRow>
 
             <SelectRow attrs={getRowAttrs(currency, 'decimal_sep')}
