@@ -197,6 +197,7 @@ class Hooks implements \IWPML_Action {
 			'optionLeftSpace'                => __( 'Left with space', 'woocommerce-multilingual' ),
 			'optionRightSpace'               => __( 'Right with space', 'woocommerce-multilingual' ),
 			'labelThousandSep'               => __( 'Thousand Separator', 'woocommerce-multilingual' ),
+			'labelSpaceSep'                  => __( '(Space)', 'woocommerce-multilingual' ),
 			'labelDecimalSep'                => __( 'Decimal Separator', 'woocommerce-multilingual' ),
 			'labelNumDecimals'               => __( 'Number of Decimals', 'woocommerce-multilingual' ),
 			'labelRounding'                  => __( 'Rounding to the nearest integer', 'woocommerce-multilingual' ),
