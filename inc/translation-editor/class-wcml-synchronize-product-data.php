@@ -49,7 +49,6 @@ class WCML_Synchronize_Product_Data {
 			add_action( 'wpml_translation_update', [ $this, 'icl_connect_translations_action' ] );
 
 			add_action( 'deleted_term_relationships', [ $this, 'delete_term_relationships_update_term_count' ], 10, 2 );
-			add_action( 'deleted_post_meta', [ $this, 'delete_empty_post_meta_for_translations' ], 10, 3 );
 		}
 
 		add_action( 'woocommerce_product_set_visibility', [ $this, 'sync_product_translations_visibility' ] );
@@ -574,6 +573,8 @@ class WCML_Synchronize_Product_Data {
 				}
 			}
 
+			self::syncDeletedCustomFields( $original_product_id, $translated_product_id );
+
 			$wcml_data_store = wcml_product_data_store_cpt();
 			$wcml_data_store->update_lookup_table_data( $translated_product_id );
 		}
@@ -831,22 +832,29 @@ class WCML_Synchronize_Product_Data {
 	}
 
 	/**
-	 * @param array  $meta_ids    An array of deleted metadata entry IDs.
-	 * @param int    $object_id   Object ID.
-	 * @param string $meta_key    Meta key.
+	 * @param int $originalId
+	 * @param int $translationId
 	 */
-	public function delete_empty_post_meta_for_translations( $meta_ids, $object_id, $meta_key ) {
-		if (
-			wpml_collect( [ 'product', 'product_variation' ] )->contains( get_post_type( $object_id ) ) &&
-			$this->woocommerce_wpml->products->is_original_product( $object_id )
-		) {
-			$translations = $this->post_translations->get_element_translations( $object_id, false, true );
-			remove_action( 'deleted_post_meta', [ $this, 'delete_empty_post_meta_for_translations' ], 10 );
-			foreach ( $translations as $translation ) {
-				delete_post_meta( $translation, $meta_key );
-			}
-			add_action( 'deleted_post_meta', [ $this, 'delete_empty_post_meta_for_translations' ], 10, 3 );
-		}
+	public static function syncDeletedCustomFields( $originalId, $translationId ) {
+		$settingsFactory = wpml_load_core_tm()->settings_factory();
 
+		// $isCopiedField :: string -> bool
+		$isCopiedField = function( $field ) use ( $settingsFactory ) {
+			return WPML_COPY_CUSTOM_FIELD === $settingsFactory->post_meta_setting( $field )->status();
+		};
+
+		// $deleteFieldInTranslation :: string -> void
+		$deleteFieldInTranslation = function( $field ) use ( $translationId ) {
+			delete_post_meta( $translationId, $field );
+		};
+
+		$deletedInOriginal = wpml_collect( array_diff(
+			array_keys( get_post_custom( $translationId ) ),
+			array_keys( get_post_custom( $originalId ) )
+		) );
+
+		$deletedInOriginal
+			->filter( $isCopiedField )
+			->map( $deleteFieldInTranslation );
 	}
 }

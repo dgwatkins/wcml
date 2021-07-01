@@ -100,7 +100,6 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 		\WP_Mock::expectActionAdded( 'woocommerce_product_bulk_edit_save', array( $subject, 'woocommerce_product_quick_edit_save' ) );
 		\WP_Mock::expectActionAdded( 'wpml_translation_update', array( $subject, 'icl_connect_translations_action' ) );
 		\WP_Mock::expectActionAdded( 'deleted_term_relationships', array( $subject, 'delete_term_relationships_update_term_count' ), 10, 2 );
-		\WP_Mock::expectActionAdded( 'deleted_post_meta', array( $subject, 'delete_empty_post_meta_for_translations' ), 10, 3 );
 
 		$subject->add_hooks();
 	}
@@ -749,114 +748,6 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_should_delete_empty_post_meta_for_translations() {
-
-		$meta_ids = array();
-		$object_id = 10;
-		$meta_key = '_sale_price';
-
-		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
-		                         ->disableOriginalConstructor()
-		                         ->getMock();
-
-		$woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
-		                                   ->disableOriginalConstructor()
-		                                   ->setMethods( array( 'is_original_product' ) )
-		                                   ->getMock();
-
-		$woocommerce_wpml->products->method( 'is_original_product' )->with( $object_id )->willReturn( true );
-
-		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
-		                               ->disableOriginalConstructor()
-		                               ->setMethods( array( 'get_element_translations' ) )
-		                               ->getMock();
-
-		$translations['fr'] = 12;
-
-		$wpml_post_translations->expects( $this->once() )->method( 'get_element_translations' )->with( $object_id, false, true )->willReturn( $translations );
-
-		\WP_Mock::userFunction( 'get_post_type', array(
-			'args' => array( $object_id ),
-			'times' => 1,
-			'return' => 'product',
-		) );
-
-		\WP_Mock::userFunction( 'delete_post_meta', array(
-			'args' => array( $translations['fr'], $meta_key ),
-			'times' => 1,
-			'return' => true,
-		) );
-
-		$subject = $this->get_subject( $woocommerce_wpml, null, $wpml_post_translations );
-
-		$subject->delete_empty_post_meta_for_translations( $meta_ids, $object_id, $meta_key );
-
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_should_not_delete_empty_post_meta_for_not_original() {
-
-		$meta_ids = array();
-		$object_id = 10;
-		$meta_key = '_sale_price';
-
-		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
-		                         ->disableOriginalConstructor()
-		                         ->getMock();
-
-		$woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
-		                                   ->disableOriginalConstructor()
-		                                   ->setMethods( array( 'is_original_product' ) )
-		                                   ->getMock();
-
-		$woocommerce_wpml->products->method( 'is_original_product' )->with( $object_id )->willReturn( false );
-
-		\WP_Mock::userFunction( 'get_post_type', array(
-			'args' => array( $object_id ),
-			'times' => 1,
-			'return' => 'product',
-		) );
-
-		\WP_Mock::userFunction( 'delete_post_meta', array(
-			'times' => 0
-		) );
-
-		$subject = $this->get_subject( $woocommerce_wpml );
-
-		$subject->delete_empty_post_meta_for_translations( $meta_ids, $object_id, $meta_key );
-
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_should_not_delete_empty_post_meta_for_not_products() {
-
-		$meta_ids = array();
-		$object_id = 10;
-		$meta_key = '_sale_price';
-
-		\WP_Mock::userFunction( 'get_post_type', array(
-			'args' => array( $object_id ),
-			'times' => 1,
-			'return' => rand_str(),
-		) );
-
-		\WP_Mock::userFunction( 'delete_post_meta', array(
-			'times' => 0
-		) );
-
-		$subject = $this->get_subject();
-
-		$subject->delete_empty_post_meta_for_translations( $meta_ids, $object_id, $meta_key );
-
-	}
-
-	/**
-	 * @test
-	 */
 	public function it_should_sync_product_total_sales() {
 
 		\WP_Mock::passthruFunction( 'absint' );
@@ -911,6 +802,68 @@ class Test_WCML_Synchronize_Product_Data extends OTGS_TestCase {
 
 		$subject->sync_product_total_sales( $order_id );
 
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3682
+	 */
+	public function itShouldSyncDeletedFields() {
+		$originalId    = 123;
+		$translationId = 456;
+
+		$fieldKeyIgnored = 'key_ignored';
+		$fieldKeyCopied  = 'key_copied';
+
+		$originalFields = [
+			'foo' => [],
+		];
+
+		$translationFields = array_merge(
+			$originalFields,
+			[
+				$fieldKeyCopied  => [],
+				$fieldKeyIgnored => [],
+			]
+		);
+
+		$getFieldSetting = function( $status ) {
+			$setting = $this->getMockBuilder( WPML_Post_Custom_Field_Setting::class )
+				->setMethods( [ 'status' ] )
+				->getMock();
+			$setting->method( 'status' )->willReturn( $status );
+
+			return $setting;
+		};
+
+		$settingsFactory = $this->getMockBuilder( WPML_Custom_Field_Setting_Factory::class )
+			->setMethods( [ 'post_meta_setting' ] )
+			->getMock();
+		$settingsFactory->method( 'post_meta_setting' )
+			->willReturnMap( [
+				[ $fieldKeyIgnored, $getFieldSetting( WPML_IGNORE_CUSTOM_FIELD ) ],
+				[ $fieldKeyCopied, $getFieldSetting( WPML_COPY_CUSTOM_FIELD ) ],
+			] );
+
+		$tm = $this->getMockBuilder( TranslationManagement::class )
+			->setMethods( [ 'settings_factory' ] )
+			->getMock();
+		$tm->method( 'settings_factory' )->willReturn( $settingsFactory );
+
+		\WP_Mock::userFunction( 'wpml_load_core_tm' )->andReturn( $tm );
+
+		\WP_Mock::userFunction( 'get_post_custom' )
+			->with( $originalId )
+			->andReturn( $originalFields );
+
+		\WP_Mock::userFunction( 'get_post_custom' )
+			->with( $translationId )
+			->andReturn( $translationFields );
+
+		\WP_Mock::userFunction( 'delete_post_meta' )->with( $translationId, $fieldKeyIgnored )->never();
+		\WP_Mock::userFunction( 'delete_post_meta' )->with( $translationId, $fieldKeyCopied )->once();
+
+		WCML_Synchronize_Product_Data::syncDeletedCustomFields( $originalId, $translationId );
 	}
 
 }
