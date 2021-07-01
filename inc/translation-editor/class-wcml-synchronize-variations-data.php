@@ -324,6 +324,9 @@ class WCML_Synchronize_Variations_Data {
 					}
 				}
 			}
+
+			WCML_Synchronize_Product_Data::syncDeletedCustomFields( $original_variation_id, $variation_id );
+
 			$wcml_data_store = wcml_product_data_store_cpt();
 			$wcml_data_store->update_lookup_table_data( $variation_id );
 		}
