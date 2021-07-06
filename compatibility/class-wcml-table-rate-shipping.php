@@ -1,5 +1,9 @@
 <?php
 
+use WPML\FP\Fns;
+use WPML\FP\Logic;
+use WPML\FP\Obj;
+
 /**
  * Class WCML_Table_Rate_Shipping
  */
@@ -16,14 +20,23 @@ class WCML_Table_Rate_Shipping {
 	public $woocommerce_wpml;
 
 	/**
+	 * @var wpdb
+	 */
+	private $wpdb;
+
+	const PRIORITY_BEFORE_DELETE = 5;
+
+	/**
 	 * WCML_Table_Rate_Shipping constructor.
 	 *
 	 * @param SitePress        $sitepress
 	 * @param woocommerce_wpml $woocommerce_wpml
+	 * @param wpdb             $wpdb
 	 */
-	public function __construct( SitePress $sitepress, woocommerce_wpml $woocommerce_wpml ) {
+	public function __construct( SitePress $sitepress, woocommerce_wpml $woocommerce_wpml, wpdb $wpdb ) {
 		$this->sitepress        = $sitepress;
 		$this->woocommerce_wpml = $woocommerce_wpml;
+		$this->wpdb             = $wpdb;
 	}
 
 	public function add_hooks() {
@@ -48,6 +61,17 @@ class WCML_Table_Rate_Shipping {
 				3
 			);
 		}
+
+		if ( is_admin() ) {
+			// phpcs:disable WordPress.Security.NonceVerification.Missing
+			if ( Obj::prop( 'shipping_abort_reason', $_POST ) ) {
+				// phpcs:enable WordPress.Security.NonceVerification.Missing
+				add_filter( 'woocommerce_table_rate_get_shipping_rates', [ $this, 'register_abort_messages' ] );
+			}
+			add_action( 'wp_ajax_woocommerce_table_rate_delete', [ $this, 'unregister_abort_messages_ajax' ], self::PRIORITY_BEFORE_DELETE );
+			add_action( 'delete_product_shipping_class', [ $this, 'unregister_abort_messages_shipping_class' ], self::PRIORITY_BEFORE_DELETE );
+		}
+		add_filter( 'woocommerce_table_rate_query_rates', [ $this, 'translate_abort_messages' ] );
 
 	}
 
@@ -177,6 +201,108 @@ class WCML_Table_Rate_Shipping {
 		}
 
 		return $row_base_price;
+	}
+
+	/**
+	 * Register the new rate's shipping abort reasons.
+	 *
+	 * @param array[] $rates
+	 * @return array[]
+	 */
+	public function register_abort_messages( $rates ) {
+		// $registerAbortReason :: array -> void
+		$registerAbortReason = function( $rate ) {
+			do_action(
+				'wpml_register_single_string',
+				WCML_WC_Shipping::STRINGS_CONTEXT,
+				$this->get_rate_name( $rate['rate_id'] ),
+				$rate['rate_abort_reason']
+			);
+		};
+
+		return wpml_collect( $rates )
+			->filter( Obj::prop( 'rate_abort_reason' ) )
+			->map( $registerAbortReason )
+			->toArray();
+	}
+
+	/**
+	 * Unregister the deleted rate's shipping abort reasons when deleted via AJAX.
+	 */
+	public function unregister_abort_messages_ajax() {
+		check_ajax_referer( 'delete-rate', 'security' );
+
+		wpml_collect( (array) Obj::prop( 'rate_id', $_POST ) )
+			->map( Fns::unary( 'intval' ) )
+			->map( [ $this, 'unregister_abort_messages' ] );
+	}
+
+	/**
+	 * Unregister the deleted rate's shipping abort reasons when the shipping class it's for is deleted.
+	 *
+	 * @param int $term_id
+	 */
+	public function unregister_abort_messages_shipping_class( $term_id ) {
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$table = $this->wpdb->prefix . 'woocommerce_shipping_table_rates';
+		$query = $this->wpdb->prepare(
+			"SELECT rate_id FROM $table WHERE rate_class=%d",
+			[ $term_id ]
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+		wpml_collect( $this->wpdb->get_col( $query ) )
+			->map( [ $this, 'unregister_abort_messages' ] );
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
+	}
+
+	/**
+	 * Translate the rate's shipping abort reasons
+	 *
+	 * @param stdClass[] $rates
+	 * @return stdClass[]
+	 */
+	public function translate_abort_messages( $rates ) {
+		// translateAbortReason :: stdClass -> stdClass
+		$translateAbortReason = function( $rate ) {
+			return Obj::assoc(
+				'rate_abort_reason',
+				apply_filters(
+					'wpml_translate_single_string',
+					$rate->rate_abort_reason,
+					WCML_WC_Shipping::STRINGS_CONTEXT,
+					$this->get_rate_name( $rate->rate_id )
+				),
+				$rate
+			);
+		};
+
+		return wpml_collect( $rates )
+			->map( Logic::ifElse( Obj::prop( 'rate_abort_reason' ), $translateAbortReason, Fns::identity() ) )
+			->toArray();
+	}
+
+
+	/**
+	 * Unregister the deleted rate's shipping abort reasons for list of ids
+	 *
+	 * @param int $rate_id
+	 */
+	public function unregister_abort_messages( $rate_id ) {
+		icl_unregister_string(
+			WCML_WC_Shipping::STRINGS_CONTEXT,
+			$this->get_rate_name( $rate_id )
+		);
+	}
+
+	/**
+	 * The name for the rate's shipping abort reason
+	 *
+	 * @param int $rate_id
+	 * @return string
+	 */
+	private function get_rate_name( $rate_id ) {
+		return 'table_rate_shipping_abort_reason_' . $rate_id;
 	}
 
 	/**
