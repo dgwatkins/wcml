@@ -63,7 +63,7 @@ class WCML_Compatibility {
 
 		// WooCommerce Table Rate Shipping plugin.
 		if ( defined( 'TABLE_RATE_SHIPPING_VERSION' ) ) {
-			$table_rate_shipping = new WCML_Table_Rate_Shipping( $this->sitepress, $this->woocommerce_wpml );
+			$table_rate_shipping = new WCML_Table_Rate_Shipping( $this->sitepress, $this->woocommerce_wpml, $this->wpdb );
 			$table_rate_shipping->add_hooks();
 		}
 
@@ -80,7 +80,7 @@ class WCML_Compatibility {
 
 		// Product Bundle.
 		if ( class_exists( 'WC_Product_Bundle' ) && function_exists( 'WC_PB' ) ) {
-			$product_bundle_items  = new WCML_WC_Product_Bundles_Items();
+			$product_bundle_items = new WCML_WC_Product_Bundles_Items();
 			new WCML_Product_Bundles( $this->sitepress, $this->woocommerce_wpml, $product_bundle_items, $this->wpdb );
 		}
 

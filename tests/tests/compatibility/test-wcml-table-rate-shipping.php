@@ -34,7 +34,7 @@ class Test_WCML_Table_Rate_Shipping extends WCML_UnitTestCase {
 		$domain = 'admin_texts_woocommerce_shipping';
 		$context = '';
 
-		$table_rate = new WCML_Table_Rate_Shipping( $this->sitepress, $this->woocommerce_wpml );
+		$table_rate = new WCML_Table_Rate_Shipping( $this->sitepress, $this->woocommerce_wpml, $this->wpdb );
 		ob_start(); // hide pointer
 		$table_rate->init();
 		ob_end_clean();
@@ -72,7 +72,7 @@ class Test_WCML_Table_Rate_Shipping extends WCML_UnitTestCase {
 			$tr_shipping_class['term_id'] => get_term( $tr_shipping_class['term_id'], 'product_shipping_class' ),
 		);
 
-		$table_rate = new WCML_Table_Rate_Shipping( $this->sitepress, $this->woocommerce_wpml );
+		$table_rate = new WCML_Table_Rate_Shipping( $this->sitepress, $this->woocommerce_wpml, $this->wpdb );
 		$this->assertEquals( $terms, $table_rate->shipping_class_id_in_default_language( $terms, null, 'category' ) );
 
 		$expected = array(
@@ -95,7 +95,7 @@ class Test_WCML_Table_Rate_Shipping extends WCML_UnitTestCase {
 		$this->woocommerce_wpml->multi_currency->set_client_currency('USD');
 
 		$args['price'] = 134;
-		$table_rate = new WCML_Table_Rate_Shipping( $this->sitepress, $this->woocommerce_wpml );
+		$table_rate = new WCML_Table_Rate_Shipping( $this->sitepress, $this->woocommerce_wpml, $this->wpdb );
 		// will unconvert the price (exchange rate of 1.34)
 		$args = $table_rate->filter_query_rates_args( $args );
 
