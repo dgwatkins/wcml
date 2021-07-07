@@ -1,5 +1,10 @@
 <?php
 
+use WPML\FP\Fns;
+use WPML\FP\Obj;
+
+use function WPML\FP\partial;
+use function WPML\FP\pipe;
 
 class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
@@ -164,17 +169,21 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 					update_post_meta( $product_translation->element_id, '_bto_data', $composite_data );
 
 					if ( $composite_scenarios_meta ) {
-						foreach ( $composite_scenarios_meta as $scenario_key => $scenario_meta ) {
-							//sync product ids
-							foreach ( $scenario_meta['component_data'] as $component_id => $component_data ) {
-								foreach ( $component_data as $key => $assigned_prod_id ) {
-									$translated_assigned_product_id = apply_filters( 'wpml_object_id', $assigned_prod_id, get_post_type( $assigned_prod_id ), false, $product_translation->language_code );
-									if ( $translated_assigned_product_id ) {
-										$composite_scenarios_meta[ $scenario_key ]['component_data'][ $component_id ][ $key ] = $translated_assigned_product_id;
-									}
-								}
-							}
-						}
+						// sync product ids
+						$translate_product_ids = function ( $component_data ) use ( $product_translation ) {
+							$translate_assigned_product_id = function( $assigned_product_id ) use ( $product_translation ) {
+								return apply_filters( 'wpml_object_id', $assigned_product_id, get_post_type( $assigned_product_id ), false, $product_translation->language_code ) ?: $assigned_product_id;
+							};
+
+							return wpml_collect( (array) $component_data )
+								->map( Fns::map( $translate_assigned_product_id ) )
+								->toArray();
+						};
+
+						$composite_scenarios_meta = wpml_collect( $composite_scenarios_meta )
+							->map( Obj::over( Obj::lensPath( [ 'component_data' ] ), $translate_product_ids ) )
+							->map( Obj::over( Obj::lensPath( [ 'scenario_actions', 'conditional_options', 'component_data' ] ), $translate_product_ids ) )
+							->toArray();
 
 						update_post_meta( $product_translation->element_id, '_bto_scenario_data', $composite_scenarios_meta );
 					}
