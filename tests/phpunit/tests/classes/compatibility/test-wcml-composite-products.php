@@ -299,8 +299,17 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 				'component_data' => [
 					[ $assigned_original_product_id ],
 					[ $assigned_original_category_id ],
-				]
-			]
+				],
+				'scenario_actions'      => [
+					'conditional_options' => [
+						'is_active' => "yes",
+						'component_data' => [
+							[ $assigned_original_product_id ],
+							[ $assigned_original_category_id ],
+						],
+					],
+				],
+			],
 		];
 
 		\WP_Mock::userFunction(
@@ -377,7 +386,16 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 				'component_data' => [
 					[ $translated_assigned_product_id ],
 					[ $translated_assigned_category_id ],
-				]
+				],
+				'scenario_actions'      => [
+					'conditional_options' => [
+						'is_active' => "yes",
+						'component_data' => [
+							[ $translated_assigned_product_id ],
+							[ $translated_assigned_category_id ],
+						],
+					],
+				],
 			]
 		];
 

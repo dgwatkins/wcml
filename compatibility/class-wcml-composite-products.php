@@ -164,18 +164,26 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 					update_post_meta( $product_translation->element_id, '_bto_data', $composite_data );
 
 					if ( $composite_scenarios_meta ) {
+						// sync product ids
+						$paths = [
+							[ 'component_data' ], // for scenario component_data
+							[ 'scenario_actions', 'conditional_options', 'component_data' ], // for scenario condition component_data
+						];
+
 						foreach ( $composite_scenarios_meta as $scenario_key => $scenario_meta ) {
-							//sync product ids
-							foreach ( $scenario_meta['component_data'] as $component_id => $component_data ) {
-								foreach ( $component_data as $key => $assigned_prod_id ) {
-									$translated_assigned_product_id = apply_filters( 'wpml_object_id', $assigned_prod_id, get_post_type( $assigned_prod_id ), false, $product_translation->language_code );
-									if ( $translated_assigned_product_id ) {
-										$composite_scenarios_meta[ $scenario_key ]['component_data'][ $component_id ][ $key ] = $translated_assigned_product_id;
+							foreach ( $paths as $path ) {
+								$component_data_list = \WPML\FP\Obj::pathOr( [], $path, $scenario_meta );
+								foreach ( $component_data_list as $component_id =>$component_data ) {
+									foreach ( $component_data as $key => $assigned_prod_id ) {
+										$translated_assigned_product_id = apply_filters( 'wpml_object_id', $assigned_prod_id, get_post_type( $assigned_prod_id ), false, $product_translation->language_code );
+										if ( $translated_assigned_product_id ) {
+											$savePath = array_merge( [ $scenario_key ], $path, [$component_id, $key ] );
+											$composite_scenarios_meta = \WPML\FP\Obj::assocPath($savePath, $translated_assigned_product_id, $composite_scenarios_meta);
+										}
 									}
 								}
 							}
 						}
-
 						update_post_meta( $product_translation->element_id, '_bto_scenario_data', $composite_scenarios_meta );
 					}
 				}
