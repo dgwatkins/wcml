@@ -330,6 +330,7 @@ class WCML_Multi_Currency {
 		}
 
 		if ( $save_to_db ) {
+			$this->woocommerce_wpml->settings['currency_options'] = $this->currencies;
 			$this->woocommerce_wpml->update_settings();
 		}
 
