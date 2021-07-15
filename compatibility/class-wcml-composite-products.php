@@ -1,5 +1,9 @@
 <?php
 
+use WPML\FP\Obj;
+
+use function WPML\FP\partial;
+use function WPML\FP\pipe;
 
 class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
@@ -165,25 +169,30 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 					if ( $composite_scenarios_meta ) {
 						// sync product ids
-						$paths = [
-							[ 'component_data' ], // for scenario component_data
-							[ 'scenario_actions', 'conditional_options', 'component_data' ], // for scenario condition component_data
-						];
 
-						foreach ( $composite_scenarios_meta as $scenario_key => $scenario_meta ) {
-							foreach ( $paths as $path ) {
-								$component_data_list = \WPML\FP\Obj::pathOr( [], $path, $scenario_meta );
-								foreach ( $component_data_list as $component_id =>$component_data ) {
-									foreach ( $component_data as $key => $assigned_prod_id ) {
-										$translated_assigned_product_id = apply_filters( 'wpml_object_id', $assigned_prod_id, get_post_type( $assigned_prod_id ), false, $product_translation->language_code );
-										if ( $translated_assigned_product_id ) {
-											$savePath = array_merge( [ $scenario_key ], $path, [$component_id, $key ] );
-											$composite_scenarios_meta = \WPML\FP\Obj::assocPath($savePath, $translated_assigned_product_id, $composite_scenarios_meta);
-										}
-									}
-								}
+						$translate_assigned_product_id = function( $assigned_product_id ) use ( $product_translation ) {
+							$translated_id =  apply_filters( 'wpml_object_id', $assigned_product_id, get_post_type( $assigned_product_id ), false, $product_translation->language_code );
+							return $translated_id ? $translated_id : $assigned_product_id;
+						};
+
+						$translate_product_ids = function ( $path, $scenario_meta ) use ( $translate_assigned_product_id ) {
+							$component_data = Obj::pathOr( [], $path, $scenario_meta );
+							foreach( $component_data as $component_id => $assigned_product_ids ) {
+								$component_data[ $component_id ] = wpml_collect( $assigned_product_ids )
+									->map( $translate_assigned_product_id )
+									->toArray();
+
 							}
-						}
+							return Obj::assocPath( $path, $component_data, $scenario_meta );
+						};
+
+						$composite_scenarios_meta = wpml_collect( $composite_scenarios_meta )
+							->map( pipe(
+								partial($translate_product_ids, [ 'component_data' ] ),
+								partial($translate_product_ids, [ 'scenario_actions', 'conditional_options', 'component_data' ] )
+							) )
+							->toArray();
+
 						update_post_meta( $product_translation->element_id, '_bto_scenario_data', $composite_scenarios_meta );
 					}
 				}
