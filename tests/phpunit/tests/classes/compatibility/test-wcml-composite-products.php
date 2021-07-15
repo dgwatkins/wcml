@@ -297,15 +297,15 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 		$original_bto_scenario_data = [
 			[
 				'component_data' => [
-					[ $assigned_original_product_id ],
-					[ $assigned_original_category_id ],
+					1451 => [ $assigned_original_product_id ],
+					1452 => [ $assigned_original_category_id ],
 				],
 				'scenario_actions'      => [
 					'conditional_options' => [
 						'is_active' => "yes",
 						'component_data' => [
-							[ $assigned_original_product_id ],
-							[ $assigned_original_category_id ],
+							1451 => [ $assigned_original_product_id ],
+							1452 => [ $assigned_original_category_id ],
 						],
 					],
 				],
@@ -384,15 +384,15 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 		$expected_scenario_data = [
 			[
 				'component_data' => [
-					[ $translated_assigned_product_id ],
-					[ $translated_assigned_category_id ],
+					1451 => [ $translated_assigned_product_id ],
+					1452 => [ $translated_assigned_category_id ],
 				],
 				'scenario_actions'      => [
 					'conditional_options' => [
 						'is_active' => "yes",
 						'component_data' => [
-							[ $translated_assigned_product_id ],
-							[ $translated_assigned_category_id ],
+							1451 => [ $translated_assigned_product_id ],
+							1452 => [ $translated_assigned_category_id ],
 						],
 					],
 				],
