@@ -593,7 +593,10 @@ class Test_WCML_Tab_Manager extends WCML_UnitTestCase {
 		$this->assertFalse( isset( $default_layout[ 'global_tab_'.$tab_id ] ) );
 
 		$this->sitepress->switch_lang( $this->default_language );
-		set_current_screen( $current_screen_buff );
+
+		if ( $current_screen_buff ) {
+			set_current_screen( $current_screen_buff );
+		}
 	}
 
 	/**
