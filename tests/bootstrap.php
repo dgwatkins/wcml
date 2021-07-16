@@ -25,7 +25,6 @@ require_once $_tests_dir . '/includes/functions.php';
 function _manually_load_wcml() {
 	global $wpdb, $sitepress;
 
-	wp_styles();
 	require_once WPML_CORE_PATH . '/tests/util/functions.php';
 	require_once WPML_CORE_PATH . '/sitepress.php';
 	require_once WPML_CORE_ST_PATH . '/plugin.php';
