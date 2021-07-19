@@ -100,7 +100,6 @@ class WCML_Resources {
 
 			self::load_taxonomy_translation_scripts();
 
-			wp_register_script( 'jquery-cookie', WCML_PLUGIN_URL . '/res/js/jquery.cookie' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION, true );
 			wp_register_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs' . WCML_JS_MIN . '.js', [ 'jquery', 'jquery-ui-core', 'jquery-ui-dialog', 'underscore' ], WCML_VERSION, true );
 			wp_register_script( 'wcml-troubleshooting', WCML_PLUGIN_URL . '/res/js/troubleshooting' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION, true );
 
@@ -112,7 +111,6 @@ class WCML_Resources {
 			wp_enqueue_script( 'wcml-scripts' );
 			wp_enqueue_script( 'wp-color-picker' );
 			wp_enqueue_script( 'wcml-dialogs' );
-			wp_enqueue_script( 'jquery-cookie' );
 			wp_enqueue_script( 'wcml-troubleshooting' );
 
 			wp_localize_script(
