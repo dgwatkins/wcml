@@ -170,6 +170,23 @@ class WCML_Synchronize_Product_Data {
 		// sync taxonomies
 		$this->sync_product_taxonomies( $original_product_id, $tr_product_id, $lang );
 
+		if ( $original_product_id !== $tr_product_id ) {
+			/**
+			 * This action hook was initially located in the CTE callback,
+			 * but now we also need to run it with ATE, so when product data
+			 * is synchronized.
+			 *
+			 * @param int    $original_product_id
+			 * @param int    $tr_product_id
+			 * @param array 'translation_job_fields'
+			 * @param string $lang
+			 *
+			 * @see \WCML_Editor_UI_Product_Job::save_translations()
+			 *
+			 */
+			do_action( 'wcml_update_extra_fields', $original_product_id, $tr_product_id, $this->get_translation_job_fields( $tr_product_id, $lang ), $lang );
+		}
+
 		// duplicate variations
 		$this->woocommerce_wpml->sync_variations_data->sync_product_variations( $original_product_id, $tr_product_id, $lang, [ 'is_duplicate' => $duplicate ] );
 
@@ -181,6 +198,31 @@ class WCML_Synchronize_Product_Data {
 		wc_delete_product_transients( $tr_product_id );
 
 		do_action( 'wcml_after_sync_product_data', $original_product_id, $tr_product_id, $lang );
+	}
+
+	/**
+	 * We need to re-build the job field as it was done in CTE.
+	 * @see \WCML_Editor_UI_Product_Job::save()
+	 *
+	 * @param int    $tr_product_id
+	 * @param string $lang
+	 *
+	 * @return array
+	 */
+	private function get_translation_job_fields( $tr_product_id, $lang ) {
+		$job_factory = wpml_tm_load_job_factory();
+		$trid        = $this->sitepress->get_element_trid( $tr_product_id, 'post_' . get_post_type( $tr_product_id ) );
+		$job         = $job_factory->get_translation_job( $job_factory->job_id_by_trid_and_lang( $trid, $lang ) );
+
+		if ( $job ) {
+			return wpml_collect( $job->elements )
+				->mapWithKeys( function( $element ) {
+					return [ md5( $element->field_type ) => base64_decode( $element->field_data_translated ) ];
+				} )
+				->toArray();
+		}
+
+		return [];
 	}
 
 	public function sync_product_taxonomies( $original_product_id, $tr_product_id, $lang ) {
