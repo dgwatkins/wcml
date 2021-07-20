@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @group wcml-3687
+ */
 class Test_WCML_Composite_Products extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
