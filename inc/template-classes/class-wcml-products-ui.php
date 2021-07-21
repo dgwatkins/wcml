@@ -282,7 +282,7 @@ class WCML_Products_UI extends WCML_Templates_Factory {
 	 * if($page = 0 && $limit=0) return all products;
 	 * return array;
 	*/
-	public function get_product_list( $page = 1, $limit = 20, $slang ) {
+	public function get_product_list( $page = 1, $limit = 20, $slang = false ) {
 		global $wpdb;
 
 		$sql = "SELECT p.ID,p.post_parent FROM $wpdb->posts AS p

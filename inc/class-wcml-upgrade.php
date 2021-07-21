@@ -34,7 +34,8 @@ class WCML_Upgrade {
 		'4.7.6',
 		'4.7.8',
 		'4.10.0',
-        '4.11.0'
+		'4.11.0',
+		'4.12.0',
 	];
 
 	public function __construct() {
@@ -839,6 +840,13 @@ class WCML_Upgrade {
 	}
 
 	private function upgrade_4_11_0() {
-	    WCML_Install::set_language_to_existing_orders();
+		global $sitepress;
+
+		WCML_Install::set_language_to_existing_orders( $sitepress->get_default_language() );
 	}
+
+	private function upgrade_4_12_0() {
+		wp_schedule_single_event( time() + 10, 'generate_category_lookup_table' );
+	}
+
 }
