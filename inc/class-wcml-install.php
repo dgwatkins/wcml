@@ -64,7 +64,9 @@ class WCML_Install {
 
 				add_action( 'init', [ __CLASS__, 'insert_default_categories' ] );
 
-				self::set_language_to_existing_orders();
+				self::set_language_to_existing_orders( $sitepress->get_default_language() );
+
+				wp_schedule_single_event( time() + 10, 'generate_category_lookup_table' );
 
 				$woocommerce_wpml->settings['set_up'] = 1;
 				$woocommerce_wpml->update_settings();
@@ -352,8 +354,11 @@ class WCML_Install {
 		$woocommerce_wpml->update_settings( $settings );
 	}
 
-	public static function set_language_to_existing_orders() {
-		global $wpdb, $sitepress;
+	/**
+	 * @param string $default_language
+	 */
+	public static function set_language_to_existing_orders( $default_language ) {
+		global $wpdb;
 
 		// Set default language for old orders before WCML was installed
 		$orders_needs_set_language = $wpdb->get_col(
@@ -362,8 +367,6 @@ class WCML_Install {
 					WHERE p.post_type = 'shop_order' AND pm.post_id NOT IN 
 					( SELECT DISTINCT( post_id ) FROM {$wpdb->postmeta} WHERE meta_key = 'wpml_language' )"
 		);
-
-		$default_language = $sitepress->get_default_language();
 
 		$values_query = function ( $order_id ) use ( $wpdb, $default_language ) {
 			return $wpdb->prepare(

@@ -120,6 +120,7 @@ FunctionMocker::init(
 			'setcookie',
 			'time',
 			'defined',
+			'time',
 		],
 	]
 );
