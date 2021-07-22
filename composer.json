@@ -66,9 +66,10 @@
         "otgs/wp-plugin-version": "dev-master",
         "roave/security-advisories": "dev-master",
         "wpml/collect": "dev-wpml-collect-rename",
-        "wpml/fp": "0.1.4",
+        "wpml/core-api": "0.1.3",
+        "wpml/fp": "0.1.6",
         "wpml/page-builders-gutenberg": "dev-develop",
-        "wpml/wp": "0.1.2"
+        "wpml/wp": "0.1.6"
     },
     "scripts": {
         "make": [
