@@ -210,9 +210,7 @@ class WCML_Emails {
 	/**
 	 * Translate WooCommerce emails.
 	 *
-	 * @global type $sitepress
-	 * @global type $order_id
-	 * @return type
+	 * @param array|object $order
 	 */
 	public function email_header( $order ) {
 

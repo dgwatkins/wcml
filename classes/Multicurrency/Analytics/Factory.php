@@ -12,7 +12,7 @@ class Factory implements \IWPML_Backend_Action_Loader, \IWPML_REST_Action_Loader
 	}
 
 	/**
-	 * @return \IWPML_Action
+	 * @return \IWPML_Action|null
 	 */
 	public function create() {
 		/**
