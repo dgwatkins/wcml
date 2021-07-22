@@ -5,15 +5,15 @@ namespace WCML\Multicurrency\Shipping;
 class UnsupportedShipping implements ShippingMode {
 
 	public function getMethodId() {
-		// TODO: Implement getMethodId() method.
+		return null;
 	}
 
 	public function getFieldTitle( $currencyCode ) {
-		// TODO: Implement getFieldTitle() method.
+		return null;
 	}
 
 	public function getFieldDescription( $currencyCode ) {
-		// TODO: Implement getFieldDescription() method.
+		return null;
 	}
 
 	public function getSettingsFormKey( $currencyCode ) {

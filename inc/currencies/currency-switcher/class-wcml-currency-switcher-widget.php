@@ -34,6 +34,11 @@ class WCML_Currency_Switcher_Widget extends WP_Widget {
 		return $new_instance;
 	}
 
+	/**
+	 * @param array $instance
+	 *
+	 * @return string|void
+	 */
 	public function form( $instance ) {
 		if ( ! isset( $instance['id'] ) ) {
 			$instance['id'] = '';
