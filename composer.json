@@ -89,6 +89,9 @@
             "compatibility/",
             "inc/"
         ],
+        "files":[
+            "inc/functions.php"
+        ],
         "exclude-from-classmap": [
             "/vendor/wpml"
         ]

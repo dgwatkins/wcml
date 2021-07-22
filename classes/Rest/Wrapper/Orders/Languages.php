@@ -5,6 +5,8 @@ namespace WCML\Rest\Wrapper\Orders;
 use WCML\Rest\Wrapper\Handler;
 use WCML\Rest\Exceptions\InvalidLanguage;
 
+use function WCML\functions\getId;
+
 class Languages extends Handler {
 
 	/**
@@ -30,9 +32,9 @@ class Languages extends Handler {
 	/**
 	 * Appends the language and translation information to the get_product response
 	 *
-	 * @param WP_REST_Response   $response
-	 * @param \WP_Post|\WC_Order $object
-	 * @param WP_REST_Request    $request
+	 * @param WP_REST_Response         $response
+	 * @param \WP_Post|\WC_Order|mixed $object
+	 * @param WP_REST_Request          $request
 	 *
 	 * @return WP_REST_Response
 	 */
@@ -61,30 +63,27 @@ class Languages extends Handler {
 	}
 
 	/**
-	 * @param \WP_Post|\WC_Order $object
+	 * @param \WP_Post|\WC_Order|mixed $object
 	 * @return int
-	 * @throws Exception
+	 * @throws \Exception If order has no id.
 	 */
 	private function get_id( $object ) {
-		if ( method_exists( $object, 'get_id' )) {
-			return $object->get_id();
-		} elseif ( isset( $object->ID ) ) {
-			return $object->ID;
+		try {
+			return getId( $object );
+		} catch ( \Exception $err ) {
+			throw new \Exception( 'Order has no ID set.' );
 		}
-
-		throw new \Exception( 'Order has no ID set.' );
 	}
 
 
 	/**
 	 * Sets the product information according to the provided language
 	 *
-	 * @param object $object
+	 * @param object          $object
 	 * @param WP_REST_Request $request
-	 * @param bool $creating
+	 * @param bool            $creating
 	 *
 	 * @throws InvalidLanguage
-	 *
 	 */
 	public function insert( $object, $request, $creating ) {
 		$data = $request->get_params();
