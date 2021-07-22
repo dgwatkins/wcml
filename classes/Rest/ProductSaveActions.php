@@ -2,6 +2,8 @@
 
 namespace WCML\Rest;
 
+use function WCML\functions\getId;
+
 /**
  * We need to reuse the `after_save_post` protected method
  * of the \WPML_Post_Translation and the only way is by inheritance.
@@ -35,7 +37,7 @@ class ProductSaveActions extends \WPML_Post_Translation {
 	 * @param int|null                           $translationOf
 	 */
 	public function run( $product, $trid, $langCode, $translationOf ) {
-		$productId      = $product->get_id();
+		$productId      = getId( $product );
 		$trid           = $trid ? $trid : $this->get_save_post_trid( $productId, null );
 		$langCode       = $langCode ? $langCode : parent::get_save_post_lang( $productId, $this->sitepress );
 		$sourceLangCode = $this->get_element_lang_code( $translationOf );
@@ -43,7 +45,7 @@ class ProductSaveActions extends \WPML_Post_Translation {
 		$this->after_save_post( $trid, get_post( $productId, ARRAY_A ), $langCode, $sourceLangCode );
 		$this->productDataSync->synchronize_products( $productId, get_post( $productId ), true );
 	}
-	
+
 	public function save_post_actions( $postId, $post ) {
 		throw new \Exception( 'This method should not be called, use `run` instead.' );
 	}
