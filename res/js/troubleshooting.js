@@ -111,6 +111,36 @@ jQuery( function($) {
             });
         },
 
+        register_reviews_in_st: function() {
+            jQuery.ajax({
+                type : "post",
+                url : ajaxurl,
+                data : {
+                    action: "register_reviews_in_st",
+                    wcml_nonce: jQuery('#register_reviews_in_st_nonce').val(),
+                    page: jQuery('#register_reviews_in_st_page').val()
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if(jQuery('#count_unregistered_reviews').val() == 0){
+                        WCML_Troubleshooting.run_next_troubleshooting_action();
+                        jQuery('.unregistered_reviews_status').html(0);
+                    }else{
+                        var left = jQuery('#count_unregistered_reviews').val()-5;
+                        if(left < 0 ){
+                            left = 0;
+                            jQuery('#register_reviews_in_st').prop('checked', false);
+                        }else{
+                            jQuery('#register_reviews_in_st_page').val(parseInt(jQuery('#register_reviews_in_st_page').val())+1)
+                        }
+                        jQuery('.unregistered_reviews_status').html(left);
+                        jQuery('#count_unregistered_reviews').val(left);
+                        WCML_Troubleshooting.register_reviews_in_st();
+                    }
+                }
+            });
+        },
+
         sync_product_categories: function(){
             jQuery.ajax({
                 type : "post",
@@ -277,7 +307,9 @@ jQuery( function($) {
                 WCML_Troubleshooting.fix_translated_variations_relationships();
             }else if(jQuery('#wcml_sync_deleted_meta').is(':checked') && parseInt( jQuery('#count_meta').val() ) !== 0 ){
                 WCML_Troubleshooting.sync_deleted_meta();
-            }else{
+           }else if(jQuery('#register_reviews_in_st').is(':checked') ){
+               WCML_Troubleshooting.register_reviews_in_st();
+           }else{
                 jQuery('#wcml_trbl').prop('disabled', false);
                 jQuery('.spinner').hide();
                 jQuery('#wcml_trbl').next().fadeOut();

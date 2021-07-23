@@ -1,5 +1,7 @@
 <?php
 
+use function WPML\Container\make;
+
 class WCML_Troubleshooting {
 
 	const ITEMS_PER_AJAX = 5;
@@ -27,6 +29,7 @@ class WCML_Troubleshooting {
 	public function init() {
 		add_action( 'wp_ajax_trbl_sync_variations', [ $this, 'trbl_sync_variations' ] );
 		add_action( 'wp_ajax_trbl_gallery_images', [ $this, 'trbl_gallery_images' ] );
+		add_action( 'wp_ajax_register_reviews_in_st', [ $this, 'register_reviews_in_st' ] );
 		add_action( 'wp_ajax_trbl_update_count', [ $this, 'trbl_update_count' ] );
 		add_action( 'wp_ajax_trbl_sync_categories', [ $this, 'trbl_sync_categories' ] );
 		add_action( 'wp_ajax_trbl_duplicate_terms', [ $this, 'trbl_duplicate_terms' ] );
@@ -150,6 +153,17 @@ class WCML_Troubleshooting {
 
 		wp_send_json_success();
 
+	}
+	
+	public function register_reviews_in_st() {
+		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'register_reviews_in_st' ) ) {
+			wp_send_json_error( 'Invalid nonce' );
+		}
+
+		make( \WCML\Reviews\Translations\Mapper::class )->registerMissingReviewStrings();
+		
+		wp_send_json_success();
 	}
 
 	public function get_products_needs_gallery_sync( $limit = false ) {
@@ -430,6 +444,10 @@ class WCML_Troubleshooting {
 		$results = $this->get_products_variations_needs_fix_relationships();
 
 		return count( $results );
+	}
+	
+	public function wcml_count_unregistered_reviews() {
+		return make( \WCML\Reviews\Translations\Mapper::class )->countMissingReviewStrings();
 	}
 
 
