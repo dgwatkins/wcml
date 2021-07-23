@@ -97,4 +97,5 @@ module.exports = [
 	createModule('multicurrencyOptions'),
 	createModule('multicurrencyAnalytics'),
 	createModule('paymentGatewaysAdmin'),
+	createModule('reportsOrders'),
 ];

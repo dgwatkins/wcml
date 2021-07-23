@@ -101,7 +101,9 @@ function wcml_loader() {
 		\WCML\MultiCurrency\GeolocationFrontendHooks::class,
 		\WCML\MultiCurrency\GeolocationBackendHooks::class,
 		\WCML\Reports\Categories\Query::class,
+		\WCML\Reports\Orders\Factory::class,
 		\WCML\Multicurrency\Analytics\Factory::class,
+		\WCML\Multicurrency\Analytics\Export::class,
 		\WCML\Setup\BeforeHooks::class,
 		\WCML\AdminNotices\MultiCurrencyMissing::class,
 	];
