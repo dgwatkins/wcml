@@ -25,51 +25,49 @@ class Hooks implements \IWPML_Action {
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueueAssets' ] );
 		}
 
-		if ( Functions::isAnalyticsRestRequest() ) {
-			wpml_collect(
-				[
-					'revenue',
-					'orders',
-					'orders_stats',
-					'products',
-					'products_stats',
-					'categories',
-					'coupons',
-					'coupons_stats',
-					'taxes',
-					'taxes_stats',
-					'variations',
-					'variations_stats',
-				]
-			)->each(
-				function( $item ) {
-					add_filter( "woocommerce_analytics_{$item}_query_args", [ $this, 'addCurrencyArg' ] );
-				}
-			);
+		wpml_collect(
+			[
+				'revenue',
+				'orders',
+				'orders_stats',
+				'products',
+				'products_stats',
+				'categories',
+				'coupons',
+				'coupons_stats',
+				'taxes',
+				'taxes_stats',
+				'variations',
+				'variations_stats',
+			]
+		)->each(
+			function( $item ) {
+				add_filter( "woocommerce_analytics_{$item}_query_args", [ $this, 'addCurrencyArg' ] );
+			}
+		);
 
-			wpml_collect(
-				[
-					'products',
-					'orders',
-					'variations',
-					'categories',
-					'coupons',
-					'taxes',
-				]
-			)->each(
-				function( $item ) {
-					add_filter( "woocommerce_analytics_clauses_join_{$item}_subquery", [ $this, 'addJoin' ] );
-					add_filter( "woocommerce_analytics_clauses_join_{$item}_stats_total", [ $this, 'addJoin' ] );
-					add_filter( "woocommerce_analytics_clauses_join_{$item}_stats_interval", [ $this, 'addJoin' ] );
-					add_filter( "woocommerce_analytics_clauses_where_{$item}_subquery", [ $this, 'addWhere' ] );
-					add_filter( "woocommerce_analytics_clauses_where_{$item}_stats_total", [ $this, 'addWhere' ] );
-					add_filter( "woocommerce_analytics_clauses_where_{$item}_stats_interval", [ $this, 'addWhere' ] );
-					add_filter( "woocommerce_analytics_clauses_select_{$item}_subquery", [ $this, 'addSelect' ] );
-					add_filter( "woocommerce_analytics_clauses_select_{$item}_stats_total", [ $this, 'addSelect' ] );
-					add_filter( "woocommerce_analytics_clauses_select_{$item}_stats_interval", [ $this, 'addSelect' ] );
-				}
-			);
-		}
+		wpml_collect(
+			[
+				'products',
+				'orders',
+				'variations',
+				'categories',
+				'coupons',
+				'taxes',
+			]
+		)->each(
+			function( $item ) {
+				add_filter( "woocommerce_analytics_clauses_join_{$item}_subquery", [ $this, 'addJoin' ] );
+				add_filter( "woocommerce_analytics_clauses_join_{$item}_stats_total", [ $this, 'addJoin' ] );
+				add_filter( "woocommerce_analytics_clauses_join_{$item}_stats_interval", [ $this, 'addJoin' ] );
+				add_filter( "woocommerce_analytics_clauses_where_{$item}_subquery", [ $this, 'addWhere' ] );
+				add_filter( "woocommerce_analytics_clauses_where_{$item}_stats_total", [ $this, 'addWhere' ] );
+				add_filter( "woocommerce_analytics_clauses_where_{$item}_stats_interval", [ $this, 'addWhere' ] );
+				add_filter( "woocommerce_analytics_clauses_select_{$item}_subquery", [ $this, 'addSelect' ] );
+				add_filter( "woocommerce_analytics_clauses_select_{$item}_stats_total", [ $this, 'addSelect' ] );
+				add_filter( "woocommerce_analytics_clauses_select_{$item}_stats_interval", [ $this, 'addSelect' ] );
+			}
+		);
 	}
 
 	public function enqueueAssets() {
