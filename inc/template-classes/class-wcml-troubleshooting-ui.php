@@ -34,6 +34,7 @@ class WCML_Troubleshooting_UI extends WCML_Templates_Factory {
 			'prod_categories_count'        => $this->woocommerce_wpml->troubleshooting->wcml_count_product_categories(),
 			'product_and_variations_count' => $this->woocommerce_wpml->troubleshooting->wcml_count_products_and_variations(),
 			'fix_relationships_count'      => $this->woocommerce_wpml->troubleshooting->wcml_count_product_fix_relationships(),
+			'unregistered_reviews'         => $this->woocommerce_wpml->troubleshooting->wcml_count_unregistered_reviews(),
 			'all_products_taxonomies'      => $this->get_all_products_taxonomies(),
 			'product_type_sync_needed'     => ! empty( $translated_product_type_terms ) ? true : false,
 			'media_def'                    => defined( 'WPML_MEDIA_VERSION' ),
@@ -54,6 +55,7 @@ class WCML_Troubleshooting_UI extends WCML_Templates_Factory {
 				'sync_stock'            => __( 'Sync product stock quantity and status ( synchronizing min stock between translations )', 'woocommerce-multilingual' ),
 				'sync_relationships'    => __( 'Fix translated variations relationships', 'woocommerce-multilingual' ),
 				'sync_deleted_meta'     => __( 'Sync removed product meta from original products to translations', 'woocommerce-multilingual' ),
+				'register_reviews_in_st'=> __( 'Register product reviews for translations', 'woocommerce-multilingual' ),
 				'product_type_fix_done' => __( 'Done!', 'woocommerce-multilingual' ),
 			],
 			'nonces'                       => [
@@ -66,6 +68,7 @@ class WCML_Troubleshooting_UI extends WCML_Templates_Factory {
 				'trbl_sync_stock'         => wp_nonce_field( 'trbl_sync_stock', 'trbl_sync_stock_nonce' ),
 				'fix_relationships'       => wp_nonce_field( 'fix_relationships', 'fix_relationships_nonce' ),
 				'sync_deleted_meta'       => wp_nonce_field( 'sync_deleted_meta', 'sync_deleted_meta_nonce' ),
+				'register_reviews_in_st'  => wp_nonce_field( 'register_reviews_in_st', 'register_reviews_in_st_nonce' ),
 			],
 		];
 

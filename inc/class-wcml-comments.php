@@ -289,6 +289,10 @@ class WCML_Comments {
 		$comment_language = $this->get_comment_language_on_all_languages_reviews( $comment );
 		if ( $comment_language ) {
 			printf( '<div lang="%s">', $comment_language );
+
+			if ( self::is_translated( $comment ) ) {
+				echo '<span class="wcml-review-translated">(' . esc_html__( 'translated', 'woocommerce-multilingual' ) . ')</span>';
+			}
 		}
 	}
 
@@ -307,8 +311,10 @@ class WCML_Comments {
 	 * @param WP_Comment $comment
 	 * @return string|null Review language or null.
 	 */
-	private function get_comment_language_on_all_languages_reviews($comment ) {
-		if ( $this->is_reviews_in_all_languages( $comment->comment_post_ID ) ) {
+	private function get_comment_language_on_all_languages_reviews( $comment ) {
+		if ( self::is_translated( $comment ) ) {
+			return $this->sitepress->get_current_language();
+		} elseif ( $this->is_reviews_in_all_languages( $comment->comment_post_ID ) ) {
 			return $this->post_translations->get_element_lang_code( $comment->comment_post_ID );
 		}
 		return null;
@@ -438,5 +444,16 @@ class WCML_Comments {
 
 	public function no_index_all_reviews_page() {
 		echo '<meta name="robots" content="noindex">';
+	}
+
+	/**
+	 * @see \WCML\Reviews\Translations::translateReview
+	 *
+	 * @param WP_Comment $comment
+	 *
+	 * @return bool
+	 */
+	private static function is_translated( $comment ) {
+		return (bool) Obj::prop( 'is_translated', $comment );
 	}
 }

@@ -29,6 +29,9 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 	private function get_sitepress() {
 		return $this->getMockBuilder( 'SitePress' )
+					->setMethods( [
+						'get_current_language'
+					] )
 		            ->disableOriginalConstructor()
 		            ->getMock();
 	}
@@ -508,6 +511,39 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		];
 	}
 
+	/**
+	 * @test
+	 * @group wcml-3442
+	 */
+	public function open_and_close_lang_div_with_translated_comment() {
+		$product_id   = 123;
+		$current_lang = 'fr';
+
+		$_GET['clang'] = 'all';
+
+		\WP_Mock::userFunction( 'get_post_type', [
+			'args'   => [ $product_id ],
+			'return' => 'product'
+		] );
+
+		$comment = new stdClass();
+		$comment->comment_post_ID = $product_id;
+		$comment->is_translated   = true;
+
+		$sitepress = $this->get_sitepress();
+		$sitepress->method( 'get_current_language' )
+			->willReturn( $current_lang );
+
+		$subject = $this->get_subject( null, $sitepress );
+
+		$this->expectOutputRegex( '/<div lang=\"' . $current_lang . '\"><span class=\"wcml-review-translated\">\(translated\)<\/span><\/div>/' );
+
+		$subject->open_lang_div( $comment );
+
+		$subject->close_lang_div( $comment );
+
+		unset( $_GET['clang'] );
+	}
 
 	/**
 	 * @test
