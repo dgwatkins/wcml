@@ -29,14 +29,23 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider get_filter_supported_currencies
 	 */
-	public function add_hooks() {
+	public function add_hooks( $is_multi_currency_on ) {
 
 		WP_Mock::userFunction(
 			'is_admin',
 			[
 				'times'  => 1,
 				'return' => false,
+			]
+		);
+
+		WP_Mock::userFunction(
+			'wcml_is_multi_currency_on',
+			[
+				'times'  => 1,
+				'return' => $is_multi_currency_on,
 			]
 		);
 
@@ -57,10 +66,18 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 			'option_woocommerce_stripe_settings',
 			[ 'WCML_Payment_Gateway_Stripe', 'filter_stripe_settings' ]
 		);
-		\WP_Mock::expectFilterAdded(
-			'woocommerce_paypal_supported_currencies',
-			[ 'WCML_Payment_Gateway_PayPal', 'filter_supported_currencies' ]
-		);
+
+		if ( $is_multi_currency_on ) {
+			\WP_Mock::expectFilterAdded(
+				'woocommerce_paypal_supported_currencies',
+				[ 'WCML_Payment_Gateway_PayPal', 'filter_supported_currencies' ]
+			);
+		} else {
+			\WP_Mock::expectFilterNotAdded(
+				'woocommerce_paypal_supported_currencies',
+				[ 'WCML_Payment_Gateway_PayPal', 'filter_supported_currencies' ]
+			);
+		}
 
 		$subject->add_hooks();
 	}
@@ -350,5 +367,13 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 		$filtered_description = $subject->filter_gateway_description( $description, 'gateway_id' );
 
 		$this->assertSame( $description, $description );
+	}
+
+	/** @return array [ $is_multi_currency_on ] */
+	public function get_filter_supported_currencies() {
+		return [
+			[ true ],
+			[ false ],
+		];
 	}
 }
