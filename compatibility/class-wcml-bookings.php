@@ -371,6 +371,8 @@ class WCML_Bookings {
 		$this->maybe_set_booking_language( $booking_id );
 
 		$this->save_custom_costs( $booking_id );
+
+		$this->maybe_sync_updated_booking_meta( $booking_id );
 	}
 
 	public function wcml_price_field_after_booking_base_cost( $post_id ) {
@@ -1829,9 +1831,9 @@ class WCML_Bookings {
 
 	}
 
-	public function get_translated_bookings( $booking_id ) {
+	public function get_translated_bookings( $booking_id, $actual_translations_only = true ) {
 
-		return $this->wpml_post_translations->get_element_translations( $booking_id, false, true );
+		return $this->wpml_post_translations->get_element_translations( $booking_id, false, $actual_translations_only );
 	}
 
 	public function booking_filters_query( $query ) {
@@ -2753,4 +2755,44 @@ class WCML_Bookings {
     private function getEmailObject( $class ) {
         return $this->woocommerce->mailer()->emails[ $class ];
     }
+
+	/**
+	 * Sync updated booking meta.
+	 *
+	 * @param int $booking_id
+	 */
+	public function maybe_sync_updated_booking_meta( $booking_id ) {
+		if ( 'wc_booking' === get_post_type( $booking_id ) ) {
+
+			$booking_translations = $this->get_translated_bookings( $booking_id, false );
+
+			$base_meta_args = [
+				'_booking_order_item_id' => get_post_meta( $booking_id, '_booking_order_item_id', true ),
+				'_booking_cost'          => get_post_meta( $booking_id, '_booking_cost', true ),
+				'_booking_start'         => get_post_meta( $booking_id, '_booking_start', true ),
+				'_booking_end'           => get_post_meta( $booking_id, '_booking_end', true ),
+				'_booking_all_day'       => intval( get_post_meta( $booking_id, '_booking_all_day', true ) ),
+				'_booking_parent_id'     => get_post_meta( $booking_id, '_booking_parent_id', true ),
+				'_booking_customer_id'   => get_post_meta( $booking_id, '_booking_customer_id', true ),
+			];
+
+			foreach ( $booking_translations as $language_code => $translated_booking_id ) {
+				if ( $translated_booking_id == $booking_id ) {
+					continue;
+				}
+				$meta_args = array_merge(
+					$base_meta_args,
+					[
+						'_booking_product_id'  => $this->get_translated_booking_product_id( $booking_id, $language_code ),
+						'_booking_resource_id' => $this->get_translated_booking_resource_id( $booking_id, $language_code ),
+						'_booking_persons'     => $this->get_translated_booking_persons_ids( $booking_id, $language_code ),
+					]
+				);
+
+				foreach ( $meta_args as $key => $value ) {
+					update_post_meta( $translated_booking_id, $key, $value );
+				}
+			}
+		}
+	}
 }
