@@ -90,6 +90,7 @@ function wcml_loader() {
 		\WCML\MO\Hooks::class,
 		\WCML\Multicurrency\Shipping\ShippingHooksFactory::class,
 		\WCML\Reviews\Translations\Factory::class,
+		\WCML\Tax\Prices\Hooks::class,
 		\WCML\Tax\Strings\Hooks::class,
 		\WCML\AdminDashboard\Hooks::class,
 		\WCML\AdminNotices\Review::class,
