@@ -38,9 +38,7 @@
         {% endif %}
         {% if can_manage_options %}
             <a class="nav-tab {{ menu.status.active }}" href="{{ menu.status.url }}">{{ menu.status.name }}</a>
-            {% if menu.troubleshooting.active %}
-                <a class="nav-tab troubleshooting {{ menu.troubleshooting.active }}" href="{{ menu.troubleshooting.url }}">{{ menu.troubleshooting.name }}</a>
-            {% endif %}
+            <a class="nav-tab troubleshooting {{ menu.troubleshooting.active }}" href="{{ menu.troubleshooting.url }}">{{ menu.troubleshooting.name }}</a>
         {% endif %}
     </nav>
 
