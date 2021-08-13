@@ -48,8 +48,11 @@ class Set {
 	 * @return string
 	 */
 	private static function getFromProduct( $handler, \WP_REST_Request $request ) {
+		$callback = Obj::prop( 'callback', $handler );
+
 		if (
-			Obj::path( [ 'callback', 0 ], $handler ) instanceof \WC_REST_Products_Controller
+			is_array( $callback )
+			&& Obj::prop( 0, $callback ) instanceof \WC_REST_Products_Controller
 			&& $request->get_param( 'id' )
 		) {
 			return (string) Obj::prop(

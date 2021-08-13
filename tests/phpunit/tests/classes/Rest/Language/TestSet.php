@@ -99,14 +99,14 @@ class TestSet extends \OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider dpInvalidCallbacks
+	 *
+	 * @param mixed $callback
 	 */
-	public function itShouldNotSetBeforeCallbacks() {
+	public function itShouldNotSetBeforeCallbacks( $callback ) {
 		$response = 'This is a response object';
 		$handler  = [
-			'callback' => [
-				$this->getMockBuilder( '\SomeResController' )->getMock(),
-				'doSomething',
-			],
+			'callback' => $callback,
 		];
 		$request  = $this->getRestRequest();
 
@@ -117,6 +117,22 @@ class TestSet extends \OTGS_TestCase {
 			$response,
 			Set::beforeCallbacks( $response, $handler, $request )
 		);
+	}
+
+	public function dpInvalidCallbacks() {
+		return [
+			'Not a \WC_REST_Products_Controller' => [
+				[
+					$this->getMockBuilder( '\SomeRestController' )->getMock(),
+					'doSomething',
+				],
+			],
+			'Just a simple function - wcml-3716' => [
+				[
+					'a_dummy_simple_function'
+				],
+			],
+		];
 	}
 
 	private function getRestServer() {
