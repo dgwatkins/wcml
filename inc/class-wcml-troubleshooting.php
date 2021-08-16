@@ -1,5 +1,6 @@
 <?php
 
+use WPML\FP\Obj;
 use function WPML\Container\make;
 
 class WCML_Troubleshooting {
@@ -44,11 +45,7 @@ class WCML_Troubleshooting {
 	}
 
 	public function trbl_update_count() {
-
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'trbl_update_count' ) ) {
-			wp_send_json_error( 'Invalid nonce' );
-		}
+		self::checkNonce( 'trbl_update_count' );
 
 		$this->wcml_sync_variations_update_option();
 
@@ -97,11 +94,7 @@ class WCML_Troubleshooting {
 
 
 	public function trbl_sync_variations() {
-
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'trbl_sync_variations' ) ) {
-			wp_send_json_error( 'Invalid nonce' );
-		}
+		self::checkNonce( 'trbl_sync_variations' );
 
 		$get_variables_products = get_option( 'wcml_products_to_sync' );
 		$all_active_lang        = $this->sitepress->get_active_languages();
@@ -139,10 +132,7 @@ class WCML_Troubleshooting {
 	}
 
 	public function trbl_gallery_images() {
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'trbl_gallery_images' ) ) {
-			wp_send_json_error( 'Invalid nonce' );
-		}
+		self::checkNonce( 'trbl_gallery_images' );
 
 		$all_products = $this->get_products_needs_gallery_sync( true );
 
@@ -156,10 +146,7 @@ class WCML_Troubleshooting {
 	}
 	
 	public function register_reviews_in_st() {
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'register_reviews_in_st' ) ) {
-			wp_send_json_error( 'Invalid nonce' );
-		}
+		self::checkNonce( 'register_reviews_in_st' );
 
 		make( \WCML\Reviews\Translations\Mapper::class )->registerMissingReviewStrings();
 		
@@ -184,10 +171,7 @@ class WCML_Troubleshooting {
 	}
 
 	public function trbl_sync_categories() {
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'trbl_sync_categories' ) ) {
-			wp_send_json_error( 'Invalid nonce' );
-		}
+		self::checkNonce( 'trbl_sync_categories' );
 
 		$all_categories = $this->get_product_categories_needs_sync( true );
 
@@ -229,10 +213,7 @@ class WCML_Troubleshooting {
 
 
 	public function trbl_duplicate_terms() {
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'trbl_duplicate_terms' ) ) {
-			wp_send_json_error( 'Invalid nonce' );
-		}
+		self::checkNonce( 'trbl_duplicate_terms' );
 
 		$attr = isset( $_POST['attr'] ) ? $_POST['attr'] : false;
 
@@ -276,10 +257,7 @@ class WCML_Troubleshooting {
 	}
 
 	public function trbl_fix_product_type_terms() {
-		$nonce = filter_input( INPUT_POST, 'wcml_nonce', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'trbl_product_type_terms' ) ) {
-			wp_send_json_error( 'Invalid nonce' );
-		}
+		self::checkNonce( 'trbl_product_type_terms' );
 
 		WCML_Install::check_product_type_terms();
 
@@ -294,11 +272,7 @@ class WCML_Troubleshooting {
 	}
 
 	public function trbl_sync_stock() {
-
-		$nonce = array_key_exists( 'wcml_nonce', $_POST ) ? sanitize_text_field( $_POST['wcml_nonce'] ) : false;
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'trbl_sync_stock' ) ) {
-			wp_send_json_error( 'Invalid nonce' );
-		}
+		self::checkNonce( 'trbl_sync_stock' );
 
 		$results = $this->get_original_products_and_variations();
 
@@ -346,11 +320,7 @@ class WCML_Troubleshooting {
 	}
 
 	public function fix_translated_variations_relationships() {
-
-		$nonce = array_key_exists( 'wcml_nonce', $_POST ) ? sanitize_text_field( $_POST['wcml_nonce'] ) : false;
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'fix_relationships' ) ) {
-			wp_send_json_error( 'Invalid nonce' );
-		}
+		self::checkNonce( 'fix_relationships' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Access error' );
@@ -452,11 +422,7 @@ class WCML_Troubleshooting {
 
 
 	public function sync_deleted_meta() {
-
-		$nonce = array_key_exists( 'wcml_nonce', $_POST ) ? sanitize_text_field( $_POST['wcml_nonce'] ) : false;
-		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'sync_deleted_meta' ) ) {
-			wp_send_json_error( 'Invalid nonce' );
-		}
+		self::checkNonce( 'sync_deleted_meta' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Access error' );
@@ -497,4 +463,13 @@ class WCML_Troubleshooting {
 		wp_send_json_success();
 	}
 
+	/**
+	 * @param string $action
+	 */
+	private static function checkNonce( $action ) {
+		$nonce = filter_var( Obj::prop( 'wcml_nonce', $_POST ), FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, $action ) ) {
+			wp_send_json_error( 'Invalid nonce' );
+		}
+	}
 }
