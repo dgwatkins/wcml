@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Test_WCML_Multi_Currency_Price
+ * @group multi-currency-prices
  */
 class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 
@@ -333,38 +333,45 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider dp_should_filter_price_filter_post_clauses
+	 *
+	 * @param string $whereFormat
 	 */
-	public function it_should_filter_price_filter_post_clauses() {
-
+	public function it_should_filter_price_filter_post_clauses( $whereFormat ) {
 		WP_Mock::passthruFunction( 'wp_unslash' );
 
 		$wp_query = $this->getMockBuilder( 'WP_Query' )
 		                 ->disableOriginalConstructor()
-		                 ->setMethods( array( 'is_main_query' ) )
+		                 ->setMethods( [ 'is_main_query' ] )
 		                 ->getMock();
 		$wp_query->method( 'is_main_query' )->willReturn( true );
 
-		$currency                 = 'EUR';
-		$exchange_rates           = array( $currency => 2 );
-		$currencies_without_cents = array();
-		$_GET['min_price']        = 10;
-		$_GET['max_price']        = 20;
-		$converted_min_price      = $_GET['min_price'] / $exchange_rates[ $currency ];
-		$converted_max_price      = $_GET['max_price'] / $exchange_rates[ $currency ];
+		$currency            = 'EUR';
+		$exchange_rates      = [ $currency => 2 ];
+		$_GET['min_price']   = 10;
+		$_GET['max_price']   = 19.99;
+		$converted_min_price = $_GET['min_price'] / $exchange_rates[ $currency ];
+		$converted_max_price = $_GET['max_price'] / $exchange_rates[ $currency ];
 
-		$args          = array( 'where' => 'wc_product_meta_lookup.min_price >= ' . $_GET['min_price'] . ' AND wc_product_meta_lookup.max_price <= ' . $_GET['max_price'] );
-		$expected_args = array( 'where' => 'wc_product_meta_lookup.min_price >= ' . $converted_min_price . ' AND wc_product_meta_lookup.max_price <= ' . $converted_max_price );
+		$prepareWhere = function( $min, $max ) use ( $whereFormat ) {
+			return str_replace(
+				[ '__MIN_PRICE__', '__MAX_PRICE__' ],
+				[ $min, $max ],
+				$whereFormat
+			);
+		};
+
+		$args          = [ 'where' => $prepareWhere( $_GET['min_price'], $_GET['max_price'] ) ];
+		$expected_args = [ 'where' => $prepareWhere( $converted_min_price, $converted_max_price ) ];
 
 		$multi_currency = $this->get_multi_currency_mock();
 		$multi_currency->method( 'get_client_currency' )->willReturn( $currency );
 		$multi_currency->method( 'get_exchange_rates' )->willReturn( $exchange_rates );
 		$multi_currency->method( 'get_currencies_without_cents' )->willReturn( $exchange_rates );
 
-
-		WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
+		WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', [
 			'return' => 'USD'
-		));
-
+		] );
 
 		global $wpdb;
 		$wpdb = $this->stubs->wpdb();
@@ -379,10 +386,19 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 
 		$this->assertSame( $expected_args, $subject->price_filter_post_clauses( $args, $wp_query ) );
 
-		unset( $_GET['min_price'] );
-		unset( $_GET['max_price'] );
+		unset( $_GET['min_price'], $_GET['max_price'] );
 	}
 
+	public function dp_should_filter_price_filter_post_clauses() {
+		return [
+			'before WC 5.1' => [
+				'wc_product_meta_lookup.min_price >= __MIN_PRICE__ AND wc_product_meta_lookup.max_price <= __MAX_PRICE__',
+			],
+			'since WC 5.1' => [ // This is counter-intuitive, but this SQL piece is wrapped in NOT()
+				'__MAX_PRICE__<wc_product_meta_lookup.min_price AND __MIN_PRICE__>wc_product_meta_lookup.max_price',
+			],
+		];
+	}
 
 	/**
 	 * @test

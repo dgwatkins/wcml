@@ -1,5 +1,9 @@
 <?php
 
+use WPML\FP\Obj;
+use WPML\FP\Str;
+use function WPML\FP\pipe;
+
 class WCML_Multi_Currency_Prices {
 
 	const WC_DEFAULT_STEP = 10;
@@ -617,8 +621,21 @@ class WCML_Multi_Currency_Prices {
 			$min_price_in_default_currency = $this->unconvert_price_amount( $min_price, $currency );
 			$max_price_in_default_currency = $this->unconvert_price_amount( $max_price, $currency );
 
-			$args['where'] = str_replace( $wpdb->prepare( 'wc_product_meta_lookup.min_price >= %f', $min_price ), $wpdb->prepare( 'wc_product_meta_lookup.min_price >= %f', $min_price_in_default_currency ), $args['where'] );
-			$args['where'] = str_replace( $wpdb->prepare( 'wc_product_meta_lookup.max_price <= %f', $max_price ), $wpdb->prepare( 'wc_product_meta_lookup.max_price <= %f', $max_price_in_default_currency ), $args['where'] );
+			$replaceSinceWc5_1 = Str::replace(
+				[ $wpdb->prepare( '%f<wc_product_meta_lookup.min_price', $max_price ), $wpdb->prepare( '%f>wc_product_meta_lookup.max_price', $min_price ) ],
+				[ $wpdb->prepare( '%f<wc_product_meta_lookup.min_price', $max_price_in_default_currency ), $wpdb->prepare( '%f>wc_product_meta_lookup.max_price', $min_price_in_default_currency ) ]
+			);
+
+			$replaceBeforeWc5_1 = Str::replace(
+				[ $wpdb->prepare( 'wc_product_meta_lookup.min_price >= %f', $min_price ), $wpdb->prepare( 'wc_product_meta_lookup.max_price <= %f', $max_price ) ],
+				[ $wpdb->prepare( 'wc_product_meta_lookup.min_price >= %f', $min_price_in_default_currency ), $wpdb->prepare( 'wc_product_meta_lookup.max_price <= %f', $max_price_in_default_currency ) ]
+			);
+
+			return Obj::over(
+				Obj::lensProp( 'where' ),
+				pipe( $replaceSinceWc5_1, $replaceBeforeWc5_1 ),
+				$args
+			);
 		}
 
 		return $args;
