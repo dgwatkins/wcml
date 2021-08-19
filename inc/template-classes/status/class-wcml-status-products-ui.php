@@ -1,5 +1,7 @@
 <?php
 
+use WCML\Options\WPML;
+
 class WCML_Status_Products_UI extends WCML_Templates_Factory {
 
 	private $woocommerce_wpml;
@@ -19,7 +21,35 @@ class WCML_Status_Products_UI extends WCML_Templates_Factory {
 	}
 
 	public function get_model() {
+		$autoTranslateProducts = WPML::shouldTranslateEverything()
+		                         && $this->sitepress->is_translated_post_type( 'product' )
+		                         && ! $this->sitepress->is_display_as_translated_post_type( 'product' );
 
+		$model = [
+			'auto_trnsl_products'   => $autoTranslateProducts,
+			'products'              => $autoTranslateProducts ? [] : $this->get_untranslated_products(),
+			'trnsl_link'            => admin_url( 'admin.php?page=wpml-wcml' ),
+			'strings'               => [
+				'products_missing' => __( 'Products Missing Translations', 'woocommerce-multilingual' ),
+				'miss_trnsl_one'   => __( '%1$d %2$s translation missing.', 'woocommerce-multilingual' ),
+				'miss_trnsl_more'  => __( '%1$d %2$s translations missing.', 'woocommerce-multilingual' ),
+				'transl'           => __( 'Translate Products', 'woocommerce-multilingual' ),
+				'not_to_trnsl'     => __( 'Right now, there are no products needing translation.', 'woocommerce-multilingual' ),
+				'auto_trnsl_prod'  => sprintf(
+						esc_html__( '%s is currently translating all your products automatically.', 'woocommerce-multilingual' ),
+						'<a href="https://wpml.org/documentation/automatic-translation/?utm_source=plugin&utm_medium=gui&utm_campaign=wcml" class="wpml-external-link" rel="noopener" target="_blank">'
+						. __( 'Translate Everything mode', 'woocommerce-multilingual' )
+						. '</a>'
+					),
+			],
+		];
+
+		return $model;
+
+	}
+
+	/** @return array */
+	private function get_untranslated_products() {
 		$products = [];
 
 		foreach ( $this->sitepress->get_active_languages() as $language ) {
@@ -32,20 +62,7 @@ class WCML_Status_Products_UI extends WCML_Templates_Factory {
 			}
 		}
 
-		$model = [
-			'products'   => $products,
-			'trnsl_link' => admin_url( 'admin.php?page=wpml-wcml' ),
-			'strings'    => [
-				'products_missing' => __( 'Products Missing Translations', 'woocommerce-multilingual' ),
-				'miss_trnsl_one'   => __( '%1$d %2$s translation missing.', 'woocommerce-multilingual' ),
-				'miss_trnsl_more'  => __( '%1$d %2$s translations missing.', 'woocommerce-multilingual' ),
-				'transl'           => __( 'Translate Products', 'woocommerce-multilingual' ),
-				'not_to_trnsl'     => __( 'Right now, there are no products needing translation.', 'woocommerce-multilingual' ),
-			],
-		];
-
-		return $model;
-
+		return $products;
 	}
 
 	public function init_template_base_dir() {
