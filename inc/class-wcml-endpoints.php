@@ -1,7 +1,5 @@
 <?php
 
-use WPML\FP\Obj;
-
 class WCML_Endpoints {
 
 	/** @var woocommerce_wpml */
@@ -25,7 +23,10 @@ class WCML_Endpoints {
 
 	public function add_hooks() {
 		add_action( 'init', array( $this, 'migrate_ones_string_translations' ), 9 );
-		add_action( 'wpml_after_add_endpoints_translations', array( $this, 'add_wc_endpoints_translations' ) );
+
+		if ( ! is_admin() ) {
+			add_action( 'wpml_after_add_endpoints_translations', array( $this, 'add_wc_endpoints_translations' ) );
+		}
 
 		add_filter( 'wpml_endpoint_permalink_filter', array( $this, 'endpoint_permalink_filter' ), 10, 2 );
 		add_filter( 'wpml_endpoint_url_value', array( $this, 'filter_endpoint_url_value' ), 10, 2 );

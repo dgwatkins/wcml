@@ -46,6 +46,35 @@ class Test_Endpoints extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider get_adds_hooks_data
+	 *
+	 * @param bool $is_admin
+	 * @param bool $expected
+	 */
+	public function it_adds_hooks( $is_admin, $expected ) {
+		\WP_Mock::userFunction( 'is_admin', [ 'times' => 1, 'return' => $is_admin ] );
+		
+		$subject = $this->get_subject();
+
+		if ( $expected ) {
+			\WP_Mock::expectActionAdded( 'wpml_after_add_endpoints_translations', [ $subject, 'add_wc_endpoints_translations' ] );
+		} else {
+			\WP_Mock::expectActionNotAdded( 'wpml_after_add_endpoints_translations', [ $subject, 'add_wc_endpoints_translations' ] );
+		}
+
+		$subject->add_hooks();
+	}
+
+	/** @return [ $is_admin, $expected ] */
+	public function get_adds_hooks_data() {
+		return [
+			[ true, false ],
+			[ false, true ],
+		];
+	}
+
+	/**
+	 * @test
 	 * @dataProvider shop_base_dp
 	 */
 	function it_adds_blacklisted_endpoints( $shop_base ) {
@@ -299,7 +328,7 @@ class Test_Endpoints extends OTGS_TestCase {
 	private function mock_generic_functions() {
 		/** @noinspection PhpUnusedParameterInspection */
 		/** @noinspection MoreThanThreeArgumentsInspection */
-		WP_Mock::wpFunction(
+		WP_Mock::userFunction(
 			'wp_cache_get',
 			array(
 				'args'   => array( 'reserved_requests', 'wpml-endpoints', false, '*' ),
@@ -308,18 +337,14 @@ class Test_Endpoints extends OTGS_TestCase {
 				}
 			)
 		);
-		WP_Mock::wpFunction(
-			'is_admin',
-			array( 'return' => false )
-		);
-		WP_Mock::wpFunction(
+		WP_Mock::userFunction(
 			'get_option',
 			array(
 				'args'   => array( 'flush_rules_for_endpoints_translations' ),
 				'return' => false,
 			)
 		);
-		WP_Mock::wpFunction( 'wp_cache_set' );
+		WP_Mock::userFunction( 'wp_cache_set' );
 	}
 
 	public function shop_base_dp() {
