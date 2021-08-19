@@ -1,5 +1,7 @@
 <?php
 
+use WCML\Options\WPML;
+
 class WCML_Setup_Ready_UI extends WCML_Templates_Factory {
 
 	private $woocommerce_wpml;
@@ -38,7 +40,11 @@ class WCML_Setup_Ready_UI extends WCML_Templates_Factory {
 				'description2' => __( "For your convenience, we've marked items that require your attention with a notice icon. You can see a list of everything that you should complete in the %1\$sStatus%2\$s tab.", 'woocommerce-multilingual' ),
 				'continue'     => __( 'Close setup', 'woocommerce-multilingual' ),
 			],
-			'continue_url' => admin_url( 'admin.php?page=wpml-wcml&tab=status&src=setup' ),
+			'continue_url' => admin_url(
+				WPML::shouldTranslateEverything()
+				? 'admin.php?page=tm/menu/main.php' // TM Dashboard
+				: 'admin.php?page=wpml-wcml&tab=status&src=setup' // WCML status tab
+			),
 		];
 
 		return $model;
