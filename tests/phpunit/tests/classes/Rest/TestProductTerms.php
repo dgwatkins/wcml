@@ -115,6 +115,10 @@ class TestProductTerms extends \OTGS_TestCase {
 
 		$trid = 11;
 
+		\WP_Mock::userFunction( 'remove_filter', [ 'return' => true ] );
+
+		\WP_Mock::expectFilterAdded( 'get_term', [ $this->sitepress, 'get_term_adjust_id' ], 1 );
+
 		\WP_Mock::userFunction( 'get_term_by', [
 			'return' => function( $by, $TermTaxonomyId ) use ( $originalTerm, $translatedTerm ) {
 				if ( 'term_taxonomy_id' === $by ) {
