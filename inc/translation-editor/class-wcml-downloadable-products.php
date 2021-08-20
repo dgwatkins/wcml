@@ -1,5 +1,12 @@
 <?php
 
+use WCML\Media\DownloadableFiles;
+use WCML\Utilities\Jobs;
+use WPML\FP\Fns;
+use WPML\FP\Obj;
+use WPML\FP\Relation;
+use function WPML\Container\make;
+
 class WCML_Downloadable_Products {
 
 	/** @var woocommerce_wpml */
@@ -75,8 +82,37 @@ class WCML_Downloadable_Products {
 		wp_enqueue_script( 'wcml-scripts-files' );
 	}
 
+	/**
+	 * @param int         $original_id
+	 * @param int         $trnsl_id
+	 * @param array|false $data
+	 */
 	public function sync_files_to_translations( $original_id, $trnsl_id, $data ) {
+		$target_lang = Obj::prop( 'language_code', $this->sitepress->get_element_language_details( $trnsl_id, 'post_' . get_post_type( $trnsl_id ) ) );
+		$job         = Jobs::getProductJob( $trnsl_id, $target_lang );
 
+		if ( Jobs::isAte( $job ) ) {
+			$this->sync_files_to_translations_for_ate( $original_id, $trnsl_id, $job );
+		} else {
+			$this->sync_files_to_translations_for_cte( $original_id, $trnsl_id, $data );
+		}
+	}
+
+	/**
+	 * @param int            $original_id
+	 * @param int            $trnsl_id
+	 * @param stdClass|false $job
+	 */
+	private function sync_files_to_translations_for_ate( $original_id, $trnsl_id, $job ) {
+		DownloadableFiles\Sync::toTranslation( $original_id, $trnsl_id, $job );
+	}
+
+	/**
+	 * @param int         $original_id
+	 * @param int         $trnsl_id
+	 * @param array|false $data
+	 */
+	private function sync_files_to_translations_for_cte( $original_id, $trnsl_id, $data ) {
 		$custom_product_sync = get_post_meta( $original_id, 'wcml_sync_files', true );
 
 		if ( ( $custom_product_sync && $custom_product_sync === 'self' ) || ( ! $custom_product_sync && ! $this->woocommerce_wpml->settings['file_path_sync'] ) ) {

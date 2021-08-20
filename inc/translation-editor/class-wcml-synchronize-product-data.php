@@ -1,5 +1,7 @@
 <?php
 
+use WCML\Utilities\Jobs;
+
 class WCML_Synchronize_Product_Data {
 
 	const CUSTOM_FIELD_KEY_SEPARATOR = ':::';
@@ -153,9 +155,11 @@ class WCML_Synchronize_Product_Data {
 
 	public function sync_product_data( $original_product_id, $tr_product_id, $lang, $duplicate = false ) {
 
+		$translation_job_fields = $this->get_translation_job_fields( $tr_product_id, $lang );
+
 		do_action( 'wcml_before_sync_product_data', $original_product_id, $tr_product_id, $lang );
 
-		$this->duplicate_product_post_meta( $original_product_id, $tr_product_id );
+		$this->duplicate_product_post_meta( $original_product_id, $tr_product_id, $translation_job_fields );
 
 		$this->sync_date_and_parent( $original_product_id, $tr_product_id, $lang );
 
@@ -178,13 +182,13 @@ class WCML_Synchronize_Product_Data {
 			 *
 			 * @param int    $original_product_id
 			 * @param int    $tr_product_id
-			 * @param array 'translation_job_fields'
+			 * @param array  $translation_job_fields
 			 * @param string $lang
 			 *
 			 * @see \WCML_Editor_UI_Product_Job::save_translations()
 			 *
 			 */
-			do_action( 'wcml_update_extra_fields', $original_product_id, $tr_product_id, $this->get_translation_job_fields( $tr_product_id, $lang ), $lang );
+			do_action( 'wcml_update_extra_fields', $original_product_id, $tr_product_id, $translation_job_fields, $lang );
 		}
 
 		// duplicate variations
@@ -210,9 +214,7 @@ class WCML_Synchronize_Product_Data {
 	 * @return array
 	 */
 	private function get_translation_job_fields( $tr_product_id, $lang ) {
-		$job_factory = wpml_tm_load_job_factory();
-		$trid        = $this->sitepress->get_element_trid( $tr_product_id, 'post_' . get_post_type( $tr_product_id ) );
-		$job         = $job_factory->get_translation_job( $job_factory->job_id_by_trid_and_lang( $trid, $lang ) );
+		$job = Jobs::getProductJob( $tr_product_id, $lang );
 
 		if ( $job ) {
 			return wpml_collect( $job->elements )
