@@ -72,10 +72,16 @@ class ProductTerms extends Handler {
 				return isset( $term->term_id ) ? $term->term_id : null;
 			};
 
+			$hasFilter = remove_filter( 'get_term', [ $this->sitepress, 'get_term_adjust_id' ], 1 );
+
 			$response->data['translations'] = Fns::map(
 				$getTermId,
 				$this->wpmlTermTranslations->get_element_translations( $termTaxonomyId, $trid )
 			);
+
+			if ( $hasFilter ) {
+				add_filter( 'get_term', [ $this->sitepress, 'get_term_adjust_id' ], 1 );
+			}
 
 			$response->data['lang'] = $this->wpmlTermTranslations->get_element_lang_code( $termTaxonomyId );
 		}
