@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @group product-bundles
+ */
 class Test_WCML_Product_Bundles extends OTGS_TestCase {
 
 	/** @var  woocommerce_wpml */

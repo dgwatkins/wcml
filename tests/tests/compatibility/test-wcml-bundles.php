@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Test_WCML_Bundles
+ * @group product-bundles
  */
 class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 
