@@ -715,7 +715,7 @@ class WCML_Tab_Manager {
 
 		$pointer_ui = new WCML_Pointer_UI(
 			sprintf( __( 'You can translate your custom product tabs on the %1$sWooCommerce product translation page%2$s', 'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=wpml-wcml' ) . '">', '</a>' ),
-			'https://wpml.org/documentation/woocommerce-extensions-compatibility/translating-woocommerce-tab-manager-woocommerce-multilingual/',
+			WCML_Tracking_Link::getWcmlTabManagerDoc(),
 			'woocommerce_product_tabs>p'
 		);
 

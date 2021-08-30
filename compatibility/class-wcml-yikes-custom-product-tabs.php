@@ -243,7 +243,7 @@ class WCML_YIKES_Custom_Product_Tabs {
 
 		$pointer_ui = new WCML_Pointer_UI(
 			sprintf( $a, $link ),
-			'https://wpml.org/documentation/woocommerce-extensions-compatibility/',
+			WCML_Tracking_Link::getWcmlCustomProductTabs(),
 			'yikes_woocommerce_custom_product_tabs',
 			'prepend'
 		);

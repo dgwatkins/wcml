@@ -190,12 +190,7 @@ class WCML_Admin_Menus {
 			$pos = strpos( $_GET['taxonomy'], 'pa_' );
 
 			if ( $pos !== false && $pagenow === 'edit-tags.php' ) {
-				$href      = $tracking_link->generate(
-					'https://wpml.org/documentation/related-projects/woocommerce-multilingual/',
-					'woocommerce-multilingual',
-					'documentation',
-					'#3'
-				);
+				$href      = $tracking_link->getWcmlMainDoc( '#3' );
 				$prot_link = sprintf( $template, $href, __( 'How to translate attributes', 'woocommerce-multilingual' ) );
 				?>
 				<script type="text/javascript">
@@ -206,12 +201,7 @@ class WCML_Admin_Menus {
 		}
 
 		if ( isset( $_GET['taxonomy'] ) && 'product_cat' === $_GET['taxonomy'] ) {
-			$href      = $tracking_link->generate(
-				'https://wpml.org/documentation/related-projects/woocommerce-multilingual/',
-				'woocommerce-multilingual',
-				'documentation',
-				'#3'
-			);
+			$href      = $tracking_link->getWcmlMainDoc( '#3' );
 			$prot_link = sprintf( $template, $href, __( 'How to translate product categories', 'woocommerce-multilingual' ) );
 			?>
 			<script type="text/javascript">

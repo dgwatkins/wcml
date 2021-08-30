@@ -113,7 +113,7 @@ class WCML_Custom_Currency_Options extends WCML_Templates_Factory {
 				'payment_gateways' => [
 					'label'          => __( 'Payment Gateways', 'woocommerce-multilingual' ),
 					'settings_label' => sprintf( __( 'Custom settings for %s', 'woocommerce-multilingual' ), $current_currency ),
-					'learn_url'      => $tracking_link->generate( 'https://wpml.org/?page_id=290080#payment-gateways-settings', 'payment-gateways-settings', 'documentation' ),
+					'learn_url'      => $tracking_link->getWcmlMultiCurrencyDoc( '#payment-gateways-settings' ),
 					'learn_txt'      => __( 'Learn more', 'woocommerce-multilingual' ),
 				],
 				'number_error'     => __( 'Please enter a valid number', 'woocommerce-multilingual' ),

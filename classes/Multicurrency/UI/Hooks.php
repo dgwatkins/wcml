@@ -216,7 +216,7 @@ class Hooks implements \IWPML_Action {
 			'labelAutosubtract'              => __( 'Autosubtract amount', 'woocommerce-multilingual' ),
 			'labelPaymentGateways'           => __( 'Payment Gateways', 'woocommerce-multilingual' ),
 			'placeholderCustomSettings'      => __( 'Custom settings for %s', 'woocommerce-multilingual' ),
-			'linkUrlLearn'                   => $trackingLink->generate( 'https://wpml.org/?page_id=290080#payment-gateways-settings', 'payment-gateways-settings', 'documentation' ),
+			'linkUrlLearn'                   => $trackingLink->getWcmlMultiCurrencyDoc( '#payment-gateways-settings' ),
 			'linkLabelLearn'                 => __( 'Learn more', 'woocommerce-multilingual' ),
 			'errorInvalidNumber'             => __( 'Please enter a valid number', 'woocommerce-multilingual' ),
 			'labelCancel'                    => __( 'Cancel', 'woocommerce-multilingual' ),

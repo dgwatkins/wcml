@@ -32,7 +32,7 @@ class WCML_Dependencies {
 		global $sitepress, $woocommerce;
 
 		if ( ! defined( 'ICL_SITEPRESS_VERSION' ) || ICL_PLUGIN_INACTIVE || is_null( $sitepress ) || ! class_exists( 'SitePress' ) ) {
-			$this->missing['WPML'] = $this->tracking_link->generate( 'https://wpml.org/' );
+			$this->missing['WPML'] = $this->tracking_link->getWpmlHome();
 			$this->allok           = false;
 		} elseif ( version_compare( ICL_SITEPRESS_VERSION, self::MIN_WPML, '<' ) ) {
 			add_action( 'admin_notices', [ $this, '_old_wpml_warning' ] );
@@ -56,7 +56,7 @@ class WCML_Dependencies {
 		}
 
 		if ( ! defined( 'WPML_TM_VERSION' ) || ! has_action( 'wpml_loaded', 'wpml_tm_load' ) ) {
-			$this->missing['WPML Translation Management'] = $this->tracking_link->generate( 'https://wpml.org/' );
+			$this->missing['WPML Translation Management'] = $this->tracking_link->getWpmlHome();
 			$this->allok                                  = false;
 		} elseif ( version_compare( WPML_TM_VERSION, self::MIN_WPML_TM, '<' ) ) {
 			add_action( 'admin_notices', [ $this, '_old_wpml_tm_warning' ] );
@@ -64,7 +64,7 @@ class WCML_Dependencies {
 		}
 
 		if ( ! defined( 'WPML_ST_VERSION' ) || ! function_exists( 'icl_get_string_id' ) ) {
-			$this->missing['WPML String Translation'] = $this->tracking_link->generate( 'https://wpml.org/' );
+			$this->missing['WPML String Translation'] = $this->tracking_link->getWpmlHome();
 			$this->allok                              = false;
 		} elseif ( version_compare( WPML_ST_VERSION, self::MIN_WPML_ST, '<' ) ) {
 			add_action( 'admin_notices', [ $this, '_old_wpml_st_warning' ] );
@@ -101,7 +101,7 @@ class WCML_Dependencies {
 					'WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%1$s">WPML</a> versions prior %2$s.',
 					'woocommerce-multilingual'
 				),
-				$this->tracking_link->generate( 'https://wpml.org/' ),
+				$this->tracking_link->getWpmlHome(),
 				self::MIN_WPML
 			);
 			?>
@@ -147,7 +147,7 @@ class WCML_Dependencies {
 					'WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%1$s">WPML Translation Management</a> versions prior %2$s.',
 					'woocommerce-multilingual'
 				),
-				$this->tracking_link->generate( 'https://wpml.org/' ),
+				$this->tracking_link->getWpmlHome(),
 				self::MIN_WPML_TM
 			);
 			?>
@@ -166,7 +166,7 @@ class WCML_Dependencies {
 					'WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%1$s">WPML String Translation</a> versions prior %2$s.',
 					'woocommerce-multilingual'
 				),
-				$this->tracking_link->generate( 'https://wpml.org/' ),
+				$this->tracking_link->getWpmlHome(),
 				self::MIN_WPML_ST
 			);
 			?>
@@ -191,7 +191,7 @@ class WCML_Dependencies {
 		}
 
 		if ( $show_error ) {
-			$support_link = '<a href="https://wpml.org/forums/forum/english-support/">' . __( 'WPML support', 'woocommerce-multilingual' ) . '</a>';
+			$support_link = '<a href="' . WCML_Tracking_Link::getWpmlSupport() . '">' . __( 'WPML support', 'woocommerce-multilingual' ) . '</a>';
 
 			/* translators: Part 1/6 of a message telling users that some taxonomies, required for WCML to work, are not set as translatable when they should */
 			$sentences[] = _x( "Some taxonomies in your site are forced to be untranslatable. This is causing a problem when you're trying to run a multilingual WooCommerce site.", 'Default taxonomies must be translatable: 1/6', 'woocommerce-multilingual' );
@@ -394,7 +394,7 @@ class WCML_Dependencies {
 		if ( class_exists( 'WP_Installer_API' ) ) {
 			$url = WP_Installer_API::get_product_installer_link( $repository );
 		} else {
-			$url = $this->tracking_link->generate( 'https://wpml.org/' );
+			$url = $this->tracking_link->getWpmlHome();
 		}
 
 		return $url;

@@ -252,7 +252,7 @@ class WCML_Product_Addons {
 
 		$pointer_ui = new WCML_Pointer_UI(
 			sprintf( __( 'You can translate strings related to global add-ons on the %1$sWPML String Translation page%2$s. Use the search on the top of that page to find the strings.', 'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context=wc_product_addons_strings' ) . '">', '</a>' ),
-			'https://wpml.org/documentation/woocommerce-extensions-compatibility/translating-woocommerce-product-add-ons-woocommerce-multilingual/',
+			WCML_Tracking_Link::getWcmlProductAddonsDoc(),
 			'wpbody-content .woocommerce>h2'
 		);
 
@@ -371,7 +371,7 @@ class WCML_Product_Addons {
 
 		$pointer_ui = new WCML_Pointer_UI(
 			sprintf( __( 'You can translate the Group Name, Group Description and every Option Label of your product add-on on the %1$sWooCommerce product translation page%2$s', 'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=wpml-wcml' ) . '">', '</a>' ),
-			'https://wpml.org/documentation/woocommerce-extensions-compatibility/translating-woocommerce-product-add-ons-woocommerce-multilingual/',
+			WCML_Tracking_Link::getWcmlProductAddonsDoc(),
 			'product_addons_data>p'
 		);
 
