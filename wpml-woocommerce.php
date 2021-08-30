@@ -7,11 +7,11 @@
  * Author URI: http://www.onthegosystems.com/
  * Text Domain: woocommerce-multilingual
  * Requires at least: 4.7
- * Tested up to: 5.6
+ * Tested up to: 5.8
  * Version: 4.12-develop
  * Plugin Slug: woocommerce-multilingual
- * WC requires at least: 3.9.0
- * WC tested up to: 4.8
+ * WC requires at least: 3.9
+ * WC tested up to: 5.6
  *
  * @package WCML
  * @author  OnTheGoSystems
