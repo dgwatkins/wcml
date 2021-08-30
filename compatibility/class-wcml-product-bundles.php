@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Obj;
+
 class WCML_Product_Bundles {
 
 	/**
@@ -95,7 +97,7 @@ class WCML_Product_Bundles {
 		foreach ( $bundle_items as $item_id => $bundle_item ) {
 			$bundled_item_data = $this->product_bundles_items->get_item_data_object( $item_id );
 
-			foreach ( $product_bundle_data[ $item_id ] as $key => $value ) {
+			foreach ( (array) Obj::prop( $item_id, (array) $product_bundle_data ) as $key => $value ) {
 				$this->product_bundles_items->update_item_meta( $bundled_item_data, $key, $value );
 			}
 			$this->product_bundles_items->save_item_meta( $bundled_item_data );
