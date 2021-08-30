@@ -172,7 +172,7 @@ class WCML_Table_Rate_Shipping {
 	public function show_pointer_info() {
 		$pointer_ui = new WCML_Pointer_UI(
 			sprintf( __( 'You can translate this method title on the %1$sWPML String Translation page%2$s. Use the search on the top of that page to find the method title string.', 'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php' ) . '">', '</a>' ),
-			'https://wpml.org/documentation/woocommerce-extensions-compatibility/translating-woocommerce-table-rate-shipping-woocommerce-multilingual/',
+			WCML_Tracking_Link::getWcmlTableRateShippingDoc(),
 			'woocommerce_table_rate_title'
 		);
 
@@ -180,7 +180,7 @@ class WCML_Table_Rate_Shipping {
 
 		$pointer_ui = new WCML_Pointer_UI(
 			sprintf( __( 'You can translate the labels of your table rates on the %1$sWPML String Translation page%2$s. Use the search on the top of that page to find the labels strings.', 'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php' ) . '">', '</a>' ),
-			'https://wpml.org/documentation/woocommerce-extensions-compatibility/translating-woocommerce-table-rate-shipping-woocommerce-multilingual/',
+			WCML_Tracking_Link::getWcmlTableRateShippingDoc(),
 			'shipping_rates .shipping_label a'
 		);
 

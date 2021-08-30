@@ -2392,7 +2392,7 @@ class WCML_Bookings {
 
 		$pointer_ui = new WCML_Pointer_UI(
 			sprintf( __( 'You can translate the titles of your custom Resources on the %1$sWooCommerce product translation page%2$s', 'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=wpml-wcml' ) . '">', '</a>' ),
-			'https://wpml.org/documentation/woocommerce-extensions-compatibility/translating-woocommerce-bookings-woocommerce-multilingual/',
+			WCML_Tracking_Link::getWcmlBookingsDoc(),
 			'bookings_resources .woocommerce_bookable_resources #message'
 		);
 
@@ -2400,7 +2400,7 @@ class WCML_Bookings {
 
 		$pointer_ui = new WCML_Pointer_UI(
 			sprintf( __( 'You can translate the Person Type Name and Description on the  %1$sWooCommerce product translation page%2$s', 'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=wpml-wcml' ) . '">', '</a>' ),
-			'https://wpml.org/documentation/woocommerce-extensions-compatibility/translating-woocommerce-bookings-woocommerce-multilingual/',
+			WCML_Tracking_Link::getWcmlBookingsDoc(),
 			'bookings_persons #persons-types>div.toolbar'
 		);
 

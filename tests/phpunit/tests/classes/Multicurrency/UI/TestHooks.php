@@ -155,7 +155,11 @@ class TestHooks extends \OTGS_TestCase {
 			'times'  => 2,
 		] );
 
-		\WP_Mock::passthruFunction( 'add_query_arg' );
+		\WP_Mock::userFunction( 'add_query_arg', [
+			'return' => function( $args, $url ) {
+				return $url;
+			}
+		] );
 
 		$enqueueResources = FunctionMocker::replace( '\WPML\LIB\WP\App\Resources::enqueue', function( $app, $pluginBaseUrl, $pluginBasePath, $version, $domain, $localize ) {
 			$this->assertEquals( 'multicurrencyOptions', $app );

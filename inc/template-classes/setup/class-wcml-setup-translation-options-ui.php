@@ -32,7 +32,7 @@ class WCML_Setup_Translation_Options_UI extends WCML_Templates_Factory {
 						'Yes - show products even if they are not yet translated (%1$smore on how this will work%2$s)',
 						'woocommerce-multilingual'
 					),
-					'<a target="blank" href="https://wpml.org/documentation/related-projects/woocommerce-multilingual/displaying-untranslated-products-in-secondary-languages/">',
+					'<a target="blank" href="' . WCML_Tracking_Link::getWcmlDisplayAsTranslatedDoc() . '">',
 					'</a>'
 				),
 				'label_translated'            => __( 'No - only display products on other languages once they are translated', 'woocommerce-multilingual' ),

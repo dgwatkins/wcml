@@ -65,7 +65,7 @@ class WCML_Cart_Sync_Warnings {
 		$request_url        = esc_url( $_SERVER['REQUEST_URI'] );
 
 		$admin_settings_url = esc_url( admin_url( 'admin.php?page=wpml-wcml&tab=settings#cart' ) );
-		$documentation_link = esc_url( 'https://wpml.org/documentation/related-projects/woocommerce-multilingual/clearing-cart-contents-when-language-or-currency-change/' );
+		$documentation_link = esc_url( WCML_Tracking_Link::getWcmlClearCartDoc() );
 
 		$reset_cart_strings[] = esc_html_x( 'Because of some elements in your site configuration, when the users switch the currency or the language on the front end, the cart content might not be synchronized correctly.', 'Reset cart option warning 1', 'woocommerce-multilingual' );
 		$reset_cart_strings[] = esc_html_x( 'It is recommended that you %s with the option to reset the cart in a situation like this.', 'Reset cart option warning 2', 'woocommerce-multilingual' );

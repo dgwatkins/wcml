@@ -261,13 +261,7 @@ class WCML_Install {
 				<p>
 					<a class="button-primary align-right" href="
 					<?php
-					echo esc_url(
-						$tracking_link->generate(
-							'https://wpml.org/documentation/related-projects/woocommerce-multilingual/',
-							'woocommerce-multilingual',
-							'documentation'
-						)
-					);
+					echo esc_url( $tracking_link->getWcmlMainDoc() );
 					?>
 							" target="_blank">
 						<?php _e( 'Learn how to turn your e-commerce site multilingual', 'woocommerce-multilingual' ); ?>

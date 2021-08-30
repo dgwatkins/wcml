@@ -37,7 +37,7 @@ class WCML_Status_Products_UI extends WCML_Templates_Factory {
 				'not_to_trnsl'     => __( 'Right now, there are no products needing translation.', 'woocommerce-multilingual' ),
 				'auto_trnsl_prod'  => sprintf(
 						esc_html__( '%s is currently translating all your products automatically.', 'woocommerce-multilingual' ),
-						'<a href="https://wpml.org/documentation/automatic-translation/?utm_source=plugin&utm_medium=gui&utm_campaign=wcml" class="wpml-external-link" rel="noopener" target="_blank">'
+						'<a href="' . WCML_Tracking_Link::getWpmlAutoTranslationDoc() . '" class="wpml-external-link" rel="noopener" target="_blank">'
 						. __( 'Translate Everything mode', 'woocommerce-multilingual' )
 						. '</a>'
 					),

@@ -109,7 +109,7 @@ class WCML_Settings_UI extends WCML_Templates_Factory {
 							'Not sure which option to choose? Read about %1$spotential issues when switching languages and currencies while the cart has items%2$s.',
 							'woocommerce-multilingual'
 						),
-						'<a href="https://wpml.org/documentation/related-projects/woocommerce-multilingual/clearing-cart-contents-when-language-or-currency-change/" target="_blank">',
+						'<a href="' . WCML_Tracking_Link::getWcmlClearCartDoc() . '" target="_blank">',
 						'</a>'
 					),
 				],
