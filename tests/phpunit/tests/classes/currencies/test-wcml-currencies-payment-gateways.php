@@ -66,6 +66,10 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 			'option_woocommerce_stripe_settings',
 			[ 'WCML_Payment_Gateway_Stripe', 'filter_stripe_settings' ]
 		);
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_should_load_paypal_standard',
+			'__return_true'
+		);
 
 		if ( $is_multi_currency_on ) {
 			\WP_Mock::expectFilterAdded(
@@ -111,6 +115,10 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded(
 			'option_woocommerce_stripe_settings',
 			[ 'WCML_Payment_Gateway_Stripe', 'filter_stripe_settings' ]
+		);
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_should_load_paypal_standard',
+			'__return_true'
 		);
 		\WP_Mock::expectFilterNotAdded(
 			'woocommerce_paypal_supported_currencies',
