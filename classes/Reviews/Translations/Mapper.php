@@ -31,7 +31,7 @@ class Mapper {
 	 */
 	private function getUnregisteredReviews() {
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
-		$q = "SELECT c.comment_ID, c.comment_post_ID, c.comment_content, tr.language_code, st.name, st.value
+		$q = "SELECT c.comment_ID, c.comment_post_ID, c.comment_content, c.comment_type, tr.language_code, st.name, st.value
 				FROM {$this->wpdb->comments} AS c
 				LEFT JOIN {$this->wpdb->prefix}icl_translations AS tr
 					ON tr.element_id = c.comment_post_ID AND tr.element_type = 'post_product'
