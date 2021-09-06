@@ -160,11 +160,12 @@ class WCML_Setup {
 			[
 				'dashicons',
 				'install',
+				OTGS_Assets_Handles::POPOVER_TOOLTIP,
 			],
 			WCML_VERSION
 		);
 
-		wp_enqueue_script( 'wcml-setup', WCML_PLUGIN_URL . '/res/js/wcml-setup.js', [ 'jquery' ], WCML_VERSION, true );
+		wp_enqueue_script( 'wcml-setup', WCML_PLUGIN_URL . '/res/js/wcml-setup.js', [ 'jquery', OTGS_Assets_Handles::POPOVER_TOOLTIP ], WCML_VERSION, true );
 
 		$this->ui->setup_header( $this->steps, $this->step );
 

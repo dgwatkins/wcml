@@ -86,6 +86,7 @@ function autoload_tests_classes( $class ) {
 		$dirs = [
 			WCML_PATH . "/tests/phpunit/stubs",
 			WCML_PATH . "/vendor/wpml",
+			WCML_PATH . "/vendor/otgs/ui",
 		];
 
 		$maps = array();
