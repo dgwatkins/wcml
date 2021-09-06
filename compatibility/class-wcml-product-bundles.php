@@ -42,8 +42,6 @@ class WCML_Product_Bundles {
 		add_action( 'woocommerce_get_cart_item_from_session', [ $this, 'resync_bundle' ], 5, 3 );
 		add_filter( 'woocommerce_cart_loaded_from_session', [ $this, 'resync_bundle_clean' ], 10 );
 		add_action( 'wpml_translation_job_saved', [ $this, 'save_bundle_data_translation' ], 10, 3 );
-		add_action( 'wcml_after_duplicate_product_post_meta', [ $this, 'sync_bundled_ids' ], 10, 2 );
-		add_action( 'wcml_update_extra_fields', [ $this, 'bundle_update' ], 10, 4 );
 
 		if ( is_admin() ) {
 			$this->tp = new WPML_Element_Translation_Package();
@@ -60,6 +58,9 @@ class WCML_Product_Bundles {
 
 			add_action( 'wcml_gui_additional_box_html', [ $this, 'custom_box_html' ], 10, 3 );
 			add_filter( 'wcml_gui_additional_box_data', [ $this, 'custom_box_html_data' ], 10, 4 );
+
+			add_action( 'wcml_after_duplicate_product_post_meta', [ $this, 'sync_bundled_ids' ], 10, 2 );
+			add_action( 'wcml_update_extra_fields', [ $this, 'bundle_update' ], 10, 4 );
 
 			add_action( 'wp_insert_post', [ $this, 'sync_product_bundle_meta_with_translations' ], 10 );
 
