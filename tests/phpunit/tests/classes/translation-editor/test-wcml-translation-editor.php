@@ -181,5 +181,66 @@ class Test_WCML_Translation_Editor extends OTGS_TestCase {
 		$this->assertFalse( $subject->force_woocommerce_native_editor_for_wcml_products_screen( false ) );
 	}
 
+	/**
+	 * @test
+	 * @dataProvider get_add_languages_column_data
+	 */
+	public function it_should_order_columns_consistently( $expected, $columns ) {
+		$subject = $this->get_subject();
 
+		$this->assertSame( $expected, $subject->add_languages_column( $columns ) );
+	}
+
+	/**
+	 * @return array [ $expected, $columns ]
+	 */
+	public function get_add_languages_column_data() {
+		$expected = [
+			'cb' => '',
+			'thumb' => '',
+			'name' => '',
+			'sku' => '',
+			'is_in_stock' => '',
+			'price' => '',
+			'product_cat' => '',
+			'product_tag' => '',
+			'featured' => '',
+			'date' => '',
+			'icl_translations' => '',
+			'seo' => ''
+		];
+		$ordered = [
+			'cb' => '',
+			'thumb' => '',
+			'name' => '',
+			'sku' => '',
+			'is_in_stock' => '',
+			'price' => '',
+			'product_cat' => '',
+			'product_tag' => '',
+			'featured' => '',
+			'date' => '',
+			'icl_translations' => '',
+			'seo' => ''
+		];
+		$unordered = [
+			'cb' => '',
+			'icl_translations' => '',
+			'thumb' => '',
+			'name' => '',
+			'sku' => '',
+			'is_in_stock' => '',
+			'price' => '',
+			'product_cat' => '',
+			'product_tag' => '',
+			'featured' => '',
+			'date' => '',
+			'seo' => ''
+		];
+		
+		return [
+			[ $expected, $unordered ],
+			[ $expected, $ordered ],
+		];
+	}
 }

@@ -160,7 +160,7 @@ class WCML_Translation_Editor {
 	public function add_languages_column( $columns ) {
 
 		if ( array_key_exists( 'icl_translations', $columns ) ) {
-			return $columns;
+			return $this->set_icl_translations_column_position( $columns );
 		}
 		$active_languages = $this->sitepress->get_active_languages();
 
@@ -219,7 +219,56 @@ class WCML_Translation_Editor {
 			$new_columns['icl_translations'] = $flags_column;
 		}
 
-		return $new_columns;
+		return $this->set_icl_translations_column_position( $new_columns );
+	}
+
+	/**
+	 * Consistently set the `icl_translations` column after WordPress and WooCommerce columns
+	 *
+	 * @param  array $columns
+	 * @return array $columns
+	 */
+	private function set_icl_translations_column_position( $columns ) {
+		$column_keys          = array_keys( $columns );
+		$max_inbuilt_key      = null;
+		$max_inbuilt_pos      = -1;
+		$icl_translations_pos = -1;
+		foreach ( $column_keys as $pos => $column_key ) {
+			$is_inbuilt_column = (
+				'cb' === $column_key ||
+				'thumb' === $column_key ||
+				'name' === $column_key ||
+				'sku' === $column_key ||
+				'is_in_stock' === $column_key ||
+				'price' === $column_key ||
+				'product_cat' === $column_key ||
+				'product_tag' === $column_key ||
+				'featured' === $column_key ||
+				'date' === $column_key );
+			if ( $is_inbuilt_column && $max_inbuilt_pos < $pos ) {
+				$max_inbuilt_pos = $pos;
+				$max_inbuilt_key = $column_key;
+			} elseif ( 'icl_translations' === $column_key ) {
+				$icl_translations_pos = $pos;
+			}
+		}
+
+		if ( $max_inbuilt_pos > $icl_translations_pos ) {
+			$icl_translations = $columns['icl_translations'];
+			$new_columns      = [];
+			foreach ( $columns as $key => $value ) {
+				if ( 'icl_translations' === $key ) {
+					continue;
+				} elseif ( $key === $max_inbuilt_key ) {
+					$new_columns[ $key ]             = $value;
+					$new_columns['icl_translations'] = $icl_translations;
+				} else {
+					$new_columns[ $key ] = $value;
+				}
+			}
+			return $new_columns;
+		}
+		return $columns;
 	}
 
 	/**
