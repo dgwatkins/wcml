@@ -194,11 +194,11 @@
         },
         {
             "name": "otgs/installer",
-            "version": "2.6.1",
+            "version": "2.6.2",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/installer/installer.git",
-                "reference": "90c563b2e08927803f7857b04f077ef5a5c7c9f9"
+                "reference": "92d8e18dc832919c77f48d497ad4b78d344a4e43"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -282,7 +282,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2021-01-15T09:46:13+00:00"
+            "time": "2021-03-09T09:15:35+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -5843,6 +5843,7 @@
                 ],
                 "files": []
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -5860,7 +5861,7 @@
             "version": "0.1.6",
             "source": {
                 "type": "git",
-                "url": "ssh://git@git.onthegosystems.com:10022/wpml-packages/fp.git",
+                "url": "https://git.onthegosystems.com/wpml-packages/fp.git",
                 "reference": "6e477a6d3e00b8cf3d0bdfc36e4959ebf77bf10d"
             },
             "require-dev": {
@@ -5880,6 +5881,7 @@
                     "core/system.php"
                 ]
             },
+            "notification-url": "https://packagist.org/downloads/",
             "time": "2021-06-04T21:05:42+00:00"
         },
         {
@@ -5933,7 +5935,7 @@
             "version": "0.1.6",
             "source": {
                 "type": "git",
-                "url": "ssh://git@git.onthegosystems.com:10022/wpml-packages/wp.git",
+                "url": "https://git.onthegosystems.com/wpml-packages/wp.git",
                 "reference": "9508f540079cd0ac6c76ae732f1d90048343a9c8"
             },
             "require-dev": {
@@ -5949,6 +5951,7 @@
                 ],
                 "files": []
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
