@@ -259,11 +259,12 @@ class WCML_Translation_Editor {
 			foreach ( $columns as $key => $value ) {
 				if ( 'icl_translations' === $key ) {
 					continue;
-				} elseif ( $key === $max_inbuilt_key ) {
-					$new_columns[ $key ]             = $value;
+				}
+
+				$new_columns[ $key ] = $value;
+
+				if ( $key === $max_inbuilt_key ) {
 					$new_columns['icl_translations'] = $icl_translations;
-				} else {
-					$new_columns[ $key ] = $value;
 				}
 			}
 			return $new_columns;
