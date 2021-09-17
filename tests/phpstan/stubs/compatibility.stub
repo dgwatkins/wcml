@@ -86,3 +86,32 @@ class WC_Product_Bundle {
 class WC_Bundled_Item_Data {
     public function __construct( $id ) {}
 }
+
+// Mix and Match
+/**
+ * @param array $item
+ * @return boolean
+ */
+function wc_mnm_is_container_cart_item( $item ) {}
+
+/**
+ * @param  array    $container_cart_item
+ * @param  array    $cart_contents
+ * @param  bool  $return_ids
+ * @return array
+ */
+function wc_mnm_get_child_cart_items( $container_cart_item, $cart_contents = false, $return_ids = false ) {}
+
+/**
+ * @param array $item
+ * @return boolean
+ */
+function wc_mnm_maybe_is_child_cart_item( $item ) {}
+
+/**
+ * @param  array $child_cart_item
+ * @param  array $cart_contents
+ * @param  bool  $return_id
+ * @return mixed
+ */
+function wc_mnm_get_cart_item_container( $child_cart_item, $cart_contents = false, $return_id = false ) {}
