@@ -178,9 +178,10 @@ class WCML_Compatibility {
 		}
 
 		if ( class_exists( 'WC_Mix_and_Match' ) ) {
-			new WCML_Mix_and_Match_Products();
+			$wc_mnm_products = new WCML_Mix_and_Match_Products( $this->sitepress );
+			$wc_mnm_products->add_hooks();
 		}
-
+		
 		if ( defined( 'WPSEO_VERSION' ) ) {
 			new WCML_WPSEO();
 		}
