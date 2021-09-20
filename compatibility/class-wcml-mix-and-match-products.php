@@ -52,11 +52,11 @@ class WCML_Mix_and_Match_Products {
 						$translated_child_id = $translated_variation_id = apply_filters( 'translate_object_id', $data[ 'variation_id' ] , 'product_variation', false, $lang );			
 					}
 					
-					$translated_data[ $translated_child_id ] = array( 
+					$translated_data[ $translated_child_id ] = [
 						'child_id'     => $translated_child_id,
 						'product_id'   => $translated_product_id,
 						'variation_id' => $translated_variation_id,
-					);
+					];
 					
 				}
 				
@@ -88,7 +88,7 @@ class WCML_Mix_and_Match_Products {
 		// Translate container.
 		if ( wc_mnm_is_container_cart_item( $new_cart_contents[ $new_key ] ) ) {
 			
-			$new_config = array();
+			$new_config = [];
 					
 			// Translate config.
 			foreach( $new_cart_contents[ $new_key ][ 'mnm_config'] as $id => $data ) {
@@ -102,13 +102,13 @@ class WCML_Mix_and_Match_Products {
 				
 				$tr_child_id = $tr_variation_id ? intval( $tr_variation_id ) : intval( $tr_product_id );
 				
-				$new_config[ $tr_child_id ] = array( 
+				$new_config[ $tr_child_id ] = [
 					'mnm_child_id' => $tr_child_id,
 					'product_id'   => intval( $tr_product_id ),
 					'variation_id' => intval( $tr_variation_id ),
 					'quantity'     => $data[ 'quantity' ],
 					'variation'    => $data[ 'variation' ], // @todo: translate attributes
-				);	
+				];
 				
 			}
 			
