@@ -73,6 +73,13 @@ class WCML_Mix_and_Match_Products {
 	 * @param string $new_key
 	 */
 	public function sync_mnm_cart( $new_cart_contents, $cart_contents, $key, $new_key ) {
+		if ( ! function_exists( 'wc_mnm_is_container_cart_item' )
+		     || ! function_exists( 'wc_mnm_get_child_cart_items' )
+		     || ! function_exists( 'wc_mnm_maybe_is_child_cart_item' )
+		     || ! function_exists( 'wc_mnm_get_cart_item_container' )
+		) {
+			return $new_cart_contents;
+		}
 	
 		global $sitepress;
 		
@@ -111,7 +118,7 @@ class WCML_Mix_and_Match_Products {
 			
 			// Find all children and stash new container cart key. Need to direclty manipulate the wc()->cart as $cart_contents isn't persisted.
 			foreach ( wc_mnm_get_child_cart_items( $new_cart_contents[ $new_key ] ) as $child_key => $child_item ) {
-				wc()->cart->cart_contents[ $child_key ][ 'translated_mnm_container' ] = $new_key;
+				WC()->cart->cart_contents[ $child_key ][ 'translated_mnm_container' ] = $new_key;
 			}
 				
 		}
