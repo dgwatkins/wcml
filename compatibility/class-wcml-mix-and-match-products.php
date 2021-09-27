@@ -80,10 +80,8 @@ class WCML_Mix_and_Match_Products {
 		) {
 			return $new_cart_contents;
 		}
-	
-		global $sitepress;
 		
-		$current_language = $sitepress->get_current_language();
+		$current_language = $this->sitepress->get_current_language();
 
 		// Translate container.
 		if ( wc_mnm_is_container_cart_item( $new_cart_contents[ $new_key ] ) ) {
