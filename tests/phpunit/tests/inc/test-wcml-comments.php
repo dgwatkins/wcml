@@ -93,6 +93,29 @@ class Test_WCML_Comments extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function it_does_not_register_no_index_all_reviews_page_hook_when_languages_by_default_selected() {
+		global $_GET;
+		$_GET['clang'] = 'all';
+		
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+		                         ->disableOriginalConstructor()
+		                         ->setMethods( array( 'get_setting' ) )
+		                         ->getMock();
+		$woocommerce_wpml->method( 'get_setting' )->willReturn( 1 );
+		
+		
+		$subject = $this->get_subject( $woocommerce_wpml );
+		
+		\WP_Mock::expectActionNotAdded( 'wp_head', [ $subject, 'no_index_all_reviews_page' ] );
+		
+		$subject->add_hooks();
+		
+		unset( $_GET );
+	}
+	
+	/**
+	 * @test
+	 */
 	public function add_comment_rating(){
 
 		$product_id = mt_rand( 1, 100 );

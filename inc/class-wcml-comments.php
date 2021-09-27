@@ -57,7 +57,10 @@ class WCML_Comments {
 			9
 		);
 
-		if ( ! defined( 'WPSEO_VERSION' ) && 'all' === WPML\FP\Obj::prop( 'clang', $_GET ) ) {
+		if ( ! defined( 'WPSEO_VERSION' )
+		     && 'all' === WPML\FP\Obj::prop( 'clang', $_GET )
+			 && ! $this->is_reviews_in_all_languages_by_default_selected()
+		) {
 			add_action( 'wp_head', [ $this, 'no_index_all_reviews_page' ], 10 );
 		}
 
@@ -443,7 +446,7 @@ class WCML_Comments {
 	}
 
 	public function no_index_all_reviews_page() {
-		echo '<meta name="robots" content="noindex">';
+			echo '<meta name="robots" content="noindex">';
 	}
 
 	/**
