@@ -2761,13 +2761,12 @@ class WCML_Bookings {
 	 *
 	 * @param int $booking_id
 	 */
-	public function maybe_sync_updated_booking_meta( $booking_id ) {
+	private function maybe_sync_updated_booking_meta( $booking_id ) {
 		if ( 'wc_booking' === get_post_type( $booking_id ) ) {
 
 			$booking_translations = $this->get_translated_bookings( $booking_id, false );
 
 			$base_meta_args = [
-				'_booking_order_item_id' => get_post_meta( $booking_id, '_booking_order_item_id', true ),
 				'_booking_cost'          => get_post_meta( $booking_id, '_booking_cost', true ),
 				'_booking_start'         => get_post_meta( $booking_id, '_booking_start', true ),
 				'_booking_end'           => get_post_meta( $booking_id, '_booking_end', true ),

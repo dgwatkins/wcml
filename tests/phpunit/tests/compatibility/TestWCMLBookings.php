@@ -26,7 +26,7 @@ class TestWCMLBookings extends OTGS_TestCase {
 		WP_Mock::userFunction(
 			'get_post_type',
 			[
-				'times'  => 1,
+				'times'  => 2,
 				'args'   => $bookingId,
 				'return' => $postType,
 			]
@@ -55,12 +55,12 @@ class TestWCMLBookings extends OTGS_TestCase {
 			WP_Mock::userFunction(
 				'update_post_meta',
 				[
-					'args'  => $args,
+					'args' => $args,
 				]
 			);
 		}
 
-		$this->getSubject( null, null, null, null, null, $wpmlPostTranslations )->maybe_sync_updated_booking_meta( $bookingId );
+		$this->getSubject( null, null, null, null, null, $wpmlPostTranslations )->save_booking_action_handler( $bookingId );
 	}
 
 	/** @return array [ $postType, $bookingId, $translatedBookings, $expectedGetPostMeta, $expectUpdatePostMeta ] */
@@ -73,7 +73,6 @@ class TestWCMLBookings extends OTGS_TestCase {
 				[ 'fr' => 200 ],
 				[
 					// [ $returns, $args ]
-					[ 1, [ 100, '_booking_order_item_id', true ] ],
 					[ 2, [ 100, '_booking_product_id', true ] ],
 					[ 3, [ 100, '_booking_resource_id', true ] ],
 					[ 'a:0:{}', [ 100, '_booking_persons', true ] ],
@@ -86,7 +85,6 @@ class TestWCMLBookings extends OTGS_TestCase {
 				],
 				[
 					// [ $args ]
-					[ 200, '_booking_order_item_id', 1 ],
 					[ 200, '_booking_product_id', 2 ],
 					[ 200, '_booking_resource_id', 3 ],
 					[ 200, '_booking_persons', [] ],
@@ -109,37 +107,47 @@ class TestWCMLBookings extends OTGS_TestCase {
 		$wpmlElementTranslationPackage = null,
 		$wpmlPostTranslations = null
 	 ) {
-		if ( $sitepress === null ) {
+		if ( null === $sitepress ) {
 			$sitepress = $this->getMockBuilder( SitePress::class )
-			->disableOriginalConstructor()
+				->disableOriginalConstructor()
+				->setMethods( [ 'get_element_language_details' ] )
 				->getMock();
+			$sitepress->expects( $this->any() )
+				->method( 'get_element_language_details' )
+				->willReturn(
+					(object) [
+						'trid'                 => 1,
+						'language_code'        => 'en',
+						'source_language_code' => 'en',
+					]
+				);
 		}
 
-		if ( $woocommerce_wpml === null ) {
+		if ( null === $woocommerce_wpml ) {
 			$woocommerce_wpml = $this->getMockBuilder( woocommerce_wpml::class )
 				->disableOriginalConstructor()
 				->getMock();
 		}
 
-		if ( $woocommerce === null ) {
+		if ( null === $woocommerce ) {
 			$woocommerce = $this->getMockBuilder( woocommerce::class )
 				->disableOriginalConstructor()
 				->getMock();
 		}
 
-		if ( $wpdb === null ) {
+		if ( null === $wpdb ) {
 			$wpdb = $this->getMockBuilder( wpdb::class )
 				->disableOriginalConstructor()
 				->getMock();
 		}
 
-		if ( $wpmlElementTranslationPackage === null ) {
+		if ( null === $wpmlElementTranslationPackage ) {
 			$wpmlElementTranslationPackage = $this->getMockBuilder( WPML_Element_Translation_Package::class )
 				->disableOriginalConstructor()
 				->getMock();
 		}
 
-		if ( $wpmlPostTranslations === null ) {
+		if ( null === $wpmlPostTranslations ) {
 			$wpmlPostTranslations = $this->getMockBuilder( WPML_Post_Translation::class )
 				->disableOriginalConstructor()
 				->getMock();
