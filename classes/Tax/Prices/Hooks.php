@@ -8,6 +8,7 @@ use IWPML_Frontend_Action;
 use WC_Shipping_Rate;
 use WCML_Multi_Currency_Shipping;
 use woocommerce_wpml;
+use WPML\FP\Obj;
 
 /**
  * Hooks applied with enabled multicurrency mode & taxes
@@ -33,7 +34,13 @@ class Hooks implements IWPML_Frontend_Action, IWPML_Backend_Action, IWPML_DIC_Ac
 	 * @return int|float
 	 */
 	public function applyRoundingRules( $price ) {
-		return $this->wcml->get_multi_currency()->prices->apply_rounding_rules( $price );
+		$multiCurrency = $this->wcml->get_multi_currency();
+		$currency      = $multiCurrency->get_client_currency();
+
+		if ( $this->isRoundingEnabled( $currency ) ) {
+			return $multiCurrency->prices->apply_rounding_rules( $price, $currency );
+		}
+		return $price;
 	}
 
 	/**
@@ -79,5 +86,15 @@ class Hooks implements IWPML_Frontend_Action, IWPML_Backend_Action, IWPML_DIC_Ac
 			$taxes[ $index ] = $this->applyRoundingRules( $tax );
 		}
 		return $taxes;
+	}
+
+	/**
+	 * @param string $currency
+	 * @return bool
+	 */
+	private function isRoundingEnabled( $currency ) {
+		$currencyOptions    = $this->wcml->get_setting( 'currency_options' );
+		$getRoundingSetting = Obj::path( [ $currency, 'rounding' ] );
+		return $getRoundingSetting( $currencyOptions ) !== 'disabled';
 	}
 }

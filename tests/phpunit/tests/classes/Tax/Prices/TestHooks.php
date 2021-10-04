@@ -3,6 +3,8 @@
 namespace WCML\Tax\Prices;
 
 use OTGS_TestCase;
+use WCML_Multi_Currency;
+use WCML_Multi_Currency_Prices;
 use WCML_Multi_Currency_Shipping;
 use woocommerce_wpml;
 use WP_Mock;
@@ -42,22 +44,27 @@ class TestHooks extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider getApplyRoundingRulesScenarios
+	 * @param float  $price
+	 * @param float  $expectedPrice
+	 * @param string $currency
+	 * @param array  $currencyOptions
 	 */
-	public function itApplyRoundingRules() {
-		$expectedPrice = 2;
-		$price         = 1.7;
-
-		$subject = $this->getSubject( $this->getMockWcml( $expectedPrice, $price ) );
+	public function itApplyRoundingRules( $price, $expectedPrice, $currency, $currencyOptions ) {
+		$subject = $this->getSubject( $this->getMockWcml( $currency, $currencyOptions ) );
 
 		$this->assertEquals( $expectedPrice, $subject->applyRoundingRules( $price ) );
 	}
 
 	/**
 	 * @test
+	 * @dataProvider getApplyRoundingRulesScenarios
+	 * @param float  $price
+	 * @param float  $expectedPrice
+	 * @param string $currency
+	 * @param array  $currencyOptions
 	 */
-	public function itApplyShippingRoundingRules() {
-		$expectedPrice    = 2;
-		$price            = 1.7;
+	public function itApplyShippingRoundingRules( $price, $expectedPrice, $currency, $currencyOptions ) {
 		$expectedPackages = [
 			[
 				'rates' => [
@@ -79,7 +86,7 @@ class TestHooks extends OTGS_TestCase {
 			],
 		];
 
-		$subject = $this->getSubject( $this->getMockWcml( $expectedPrice, $price ) );
+		$subject = $this->getSubject( $this->getMockWcml( $currency, $currencyOptions ) );
 
 		$this->assertEquals( $expectedPackages, $subject->applyShippingRoundingRules( $packages ) );
 	}
@@ -97,22 +104,31 @@ class TestHooks extends OTGS_TestCase {
 	 * @param float $price
 	 * @return woocommerce_wpml
 	 */
-	private function getMockWcml( $expectedPrice, $price ) {
-		$prices = $this->getMockBuilder( WCML_Multi_Currency_Prices::class )
+	private function getMockWcml( $currency, $currencyOptions ) {
+		$multiCurrency = $this->getMockBuilder( WCML_Multi_Currency::class )
 			->disableOriginalConstructor()
-			->setMethods( [ 'apply_rounding_rules' ] )
+			->setMethods( [ 'apply_rounding_rules', 'get_client_currency' ] )
 			->getMock();
-		$prices->expects( $this->any() )
-			->method( 'apply_rounding_rules' )
-			->with( $price )->willReturn( $expectedPrice );
+		$multiCurrency->expects( $this->any() )
+			->method( 'get_client_currency' )
+			->willReturn( $currency );
+
+		/** @var WCML_Multi_Currency $multiCurrency */
+		$prices = new WCML_Multi_Currency_Prices( $multiCurrency, $currencyOptions );
 
 		$wcml = $this->getMockBuilder( woocommerce_wpml::class )
 			->disableOriginalConstructor()
-			->setMethods( [ 'get_multi_currency' ] )
+			->setMethods( [ 'get_multi_currency', 'get_setting' ] )
 			->getMock();
 		$wcml->expects( $this->any() )
 			->method( 'get_multi_currency' )
-			->willReturn( (object) [ 'prices' => $prices ] );
+			->willReturn( $multiCurrency );
+		$wcml->expects( $this->any() )
+			->method( 'get_setting' )
+			->with( 'currency_options' )
+			->willReturn( $currencyOptions );
+
+		$multiCurrency->prices = $prices;
 
 		return $wcml;
 	}
@@ -122,6 +138,34 @@ class TestHooks extends OTGS_TestCase {
 		return [
 			[ true ],
 			[ false ],
+		];
+	}
+
+	/** @return array [ $price, $expectedPrice, $currency, $currencyOptions ] */
+	public function getApplyRoundingRulesScenarios() {
+		return [
+			[
+				0.99,
+				0.99,
+				'USD',
+				[
+					'USD' => [
+						'rounding' => 'disabled',
+					],
+				],
+			],
+			[
+				0.99,
+				1,
+				'USD',
+				[
+					'USD' => [
+						'rounding'           => 'up',
+						'rounding_increment' => 0,
+						'auto_subtract'      => 0,
+					],
+				],
+			],
 		];
 	}
 }
