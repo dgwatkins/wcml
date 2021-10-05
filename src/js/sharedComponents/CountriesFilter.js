@@ -3,6 +3,7 @@ import Select from "antd/lib/select";
 import 'antd/lib/select/style/index.css';
 import 'antd/lib/tooltip/style/index.css';
 import {SelectRow} from "./FormElements";
+import {getPopupContainer} from './helpers';
 
 /**
  * Component for showing countries mode and list of countries
@@ -52,6 +53,7 @@ const CountriesSelect = ({attrs, onChange, allCountries, label}) => {
                 optionFilterProp="label"
                 allowClear={true}
                 defaultOpen={true}
+                getPopupContainer={getPopupContainer}
             >
                 {countries}
             </Select>
