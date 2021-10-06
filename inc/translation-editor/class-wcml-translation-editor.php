@@ -229,47 +229,32 @@ class WCML_Translation_Editor {
 	 * @return array $columns
 	 */
 	private function set_icl_translations_column_position( $columns ) {
-		$column_keys          = array_keys( $columns );
-		$max_inbuilt_key      = null;
-		$max_inbuilt_pos      = -1;
-		$icl_translations_pos = -1;
-		foreach ( $column_keys as $pos => $column_key ) {
-			$is_inbuilt_column = (
-				'cb' === $column_key ||
-				'thumb' === $column_key ||
-				'name' === $column_key ||
-				'sku' === $column_key ||
-				'is_in_stock' === $column_key ||
-				'price' === $column_key ||
-				'product_cat' === $column_key ||
-				'product_tag' === $column_key ||
-				'featured' === $column_key ||
-				'date' === $column_key );
-			if ( $is_inbuilt_column && $max_inbuilt_pos < $pos ) {
-				$max_inbuilt_pos = $pos;
-				$max_inbuilt_key = $column_key;
-			} elseif ( 'icl_translations' === $column_key ) {
-				$icl_translations_pos = $pos;
-			}
-		}
+		$isTranslationColumn = function( $_, $key ) {
+			return 'icl_translations' === $key;
+		};
+		$isBuiltIn           = function( $_, $key ) {
+			return in_array(
+				$key,
+				[
+					'cb',
+					'thumb',
+					'name',
+					'sku',
+					'is_in_stock',
+					'price',
+					'product_cat',
+					'product_tag',
+					'featured',
+					'date',
+				],
+				true
+			);
+		};
 
-		if ( $max_inbuilt_pos > $icl_translations_pos ) {
-			$icl_translations = $columns['icl_translations'];
-			$new_columns      = [];
-			foreach ( $columns as $key => $value ) {
-				if ( 'icl_translations' === $key ) {
-					continue;
-				}
-
-				$new_columns[ $key ] = $value;
-
-				if ( $key === $max_inbuilt_key ) {
-					$new_columns['icl_translations'] = $icl_translations;
-				}
-			}
-			return $new_columns;
-		}
-		return $columns;
+		return wpml_collect( $columns )
+			->prioritize( $isTranslationColumn )
+			->prioritize( $isBuiltIn )
+			->toArray();
 	}
 
 	/**
