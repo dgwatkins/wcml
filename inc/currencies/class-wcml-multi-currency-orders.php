@@ -340,10 +340,8 @@ class WCML_Multi_Currency_Orders {
 					continue;
 				}
 				
-				if ( ('total' === $key
-				      && $item->get_total() !== $item->get_subtotal()
-				     )
-				     || $this->total_is_changed( $item )
+				if ( 'total' === $key
+				     && ( $item->get_total() !== $item->get_subtotal() || $this->total_is_changed( $item ) )
 				) {
 					
 					$converted_totals[ $key ] = $item->get_total();
