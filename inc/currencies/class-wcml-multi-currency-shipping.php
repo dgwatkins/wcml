@@ -11,9 +11,6 @@ class WCML_Multi_Currency_Shipping {
 	/** @var wpdb */
 	private $wpdb;
 
-	/** @var int */
-	const PRIORITY_SHIPPING = 10;
-
 	public function __construct( WCML_Multi_Currency $multi_currency, Sitepress $sitepress, wpdb $wpdb ) {
 
 		$this->multi_currency = $multi_currency;
@@ -36,7 +33,7 @@ class WCML_Multi_Currency_Shipping {
 
 		add_filter( 'woocommerce_evaluate_shipping_cost_args', [ $this, 'woocommerce_evaluate_shipping_cost_args' ] );
 
-		add_filter( 'woocommerce_shipping_packages', [ $this, 'convert_shipping_taxes' ], self::PRIORITY_SHIPPING );
+		add_filter( 'woocommerce_shipping_packages', [ $this, 'convert_shipping_taxes' ] );
 
 		add_filter( 'woocommerce_package_rates', [ $this, 'convert_shipping_costs_in_package_rates' ] );
 	}
