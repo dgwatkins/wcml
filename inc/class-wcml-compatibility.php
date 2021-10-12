@@ -75,7 +75,8 @@ class WCML_Compatibility {
 
 		// WooCommerce Name Your Price.
 		if ( class_exists( 'WC_Name_Your_Price' ) ) {
-			$name_your_price = new WCML_WC_Name_Your_Price();
+			$name_your_price = new WCML_WC_Name_Your_Price( $this->sitepress, $this->woocommerce_wpml );
+			$name_your_price->add_hooks();
 		}
 
 		// Product Bundle.
