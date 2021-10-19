@@ -23,7 +23,10 @@ class Functions {
 	 * @return bool
 	 */
 	public static function isRestApiRequest() {
-		return apply_filters( 'woocommerce_rest_is_request_to_rest_api', self::checkEndpoint( 'wc/v' . self::getApiRequestVersion() . '/' ) );
+		return apply_filters(
+			'woocommerce_rest_is_request_to_rest_api',
+			self::checkEndpoint( 'wc/v' . self::getApiRequestVersion() . '/' ) || self::isAnalyticsRestRequest()
+		);
 	}
 
 	/**

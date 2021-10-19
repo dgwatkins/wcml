@@ -8,6 +8,11 @@ namespace WCML\Rest;
  */
 class TestFunctions extends \OTGS_TestCase {
 
+	public function tearDown() {
+		unset( $_SERVER['REQUEST_URI'] );
+		parent::tearDown();
+	}
+
 	/**
 	 * @test
 	 */
@@ -36,6 +41,10 @@ class TestFunctions extends \OTGS_TestCase {
 		// test
 		$this->assertTrue( Functions::isRestApiRequest() );
 
+		// Part 3
+		$_SERVER['REQUEST_URI'] = 'wp-json/wc-analytics/';
+		// test
+		$this->assertTrue( Functions::isRestApiRequest() );
 	}
 
 	/**
