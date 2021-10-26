@@ -91,8 +91,13 @@ class WCML_Store_URLs_UI extends WCML_Templates_Factory {
 
 	public function get_endpoint_info() {
 
+		$is_original_slug    = function( $endpoint ) {
+			return (bool) apply_filters( 'wpml_get_string_language', '', WCML_Endpoints::STRING_CONTEXT, $endpoint );
+		};
+		$filtered_query_vars = wpml_collect( WC()->query->query_vars )->filter( $is_original_slug )->toArray();
+
 		$endpoints_info = [];
-		foreach ( WC()->query->query_vars as $key => $endpoint ) {
+		foreach ( $filtered_query_vars as $key => $endpoint ) {
 			if ( class_exists( 'WPML_Endpoints_Support' ) ) {
 				$key = $endpoint;
 			}

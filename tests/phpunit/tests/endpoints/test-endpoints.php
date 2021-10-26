@@ -46,31 +46,14 @@ class Test_Endpoints extends OTGS_TestCase {
 
 	/**
 	 * @test
-	 * @dataProvider get_adds_hooks_data
-	 *
-	 * @param bool $is_admin
-	 * @param bool $expected
 	 */
-	public function it_adds_hooks( $is_admin, $expected ) {
-		\WP_Mock::userFunction( 'is_admin', [ 'times' => 1, 'return' => $is_admin ] );
+	public function it_adds_hooks() {
 		
 		$subject = $this->get_subject();
 
-		if ( $expected ) {
-			\WP_Mock::expectActionAdded( 'wpml_after_add_endpoints_translations', [ $subject, 'add_wc_endpoints_translations' ] );
-		} else {
-			\WP_Mock::expectActionNotAdded( 'wpml_after_add_endpoints_translations', [ $subject, 'add_wc_endpoints_translations' ] );
-		}
+		\WP_Mock::expectActionAdded( 'wpml_after_add_endpoints_translations', [ $subject, 'add_wc_endpoints_translations' ] );
 
 		$subject->add_hooks();
-	}
-
-	/** @return [ $is_admin, $expected ] */
-	public function get_adds_hooks_data() {
-		return [
-			[ true, false ],
-			[ false, true ],
-		];
 	}
 
 	/**
