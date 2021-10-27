@@ -1,6 +1,7 @@
 <?php
 
 use WPML\FP\Maybe;
+use WPML\FP\Str;
 use function WPML\FP\invoke;
 use function WPML\FP\pipe;
 
@@ -236,6 +237,7 @@ class WCML_Bookings {
 		add_action( 'before_delete_post', [ $this, 'delete_bookings' ] );
 		add_action( 'wp_trash_post', [ $this, 'trash_bookings' ] );
 		add_action( 'wpml_translation_job_saved', [ $this, 'save_booking_data_to_translation' ], 10, 3 );
+		add_action( 'wpml_pro_translation_completed', [ $this, 'synchronize_bookings_on_translation_completed' ], 10, 3 );
 
 		if ( is_admin() ) {
 
@@ -1992,61 +1994,57 @@ class WCML_Bookings {
 	private function save_person_translation( $post_id, $data, $job ) {
 		$person_translations = [];
 
-		if ( $this->is_booking( $post_id ) ) {
+        foreach ( $data as $value ) {
 
-			foreach ( $data as $value ) {
+            if ( $value['finished'] && strpos( $value['field_type'], 'wc_bookings:person:' ) === 0 ) {
 
-				if ( $value['finished'] && strpos( $value['field_type'], 'wc_bookings:person:' ) === 0 ) {
+                $exp = explode( ':', $value['field_type'] );
 
-					$exp = explode( ':', $value['field_type'] );
+                $person_id = $exp[2];
+                $field     = $exp[3];
 
-					$person_id = $exp[2];
-					$field     = $exp[3];
+                $person_translations[ $person_id ][ $field ] = $value['data'];
 
-					$person_translations[ $person_id ][ $field ] = $value['data'];
+            }
+        }
 
-				}
-			}
+        if ( $person_translations ) {
 
-			if ( $person_translations ) {
+            foreach ( $person_translations as $person_id => $pt ) {
 
-				foreach ( $person_translations as $person_id => $pt ) {
+                $person_trid = $this->sitepress->get_element_trid( $person_id, 'post_bookable_person' );
 
-					$person_trid = $this->sitepress->get_element_trid( $person_id, 'post_bookable_person' );
+                $person_id_translated = apply_filters( 'translate_object_id', $person_id, 'bookable_person', false, $job->language_code );
 
-					$person_id_translated = apply_filters( 'translate_object_id', $person_id, 'bookable_person', false, $job->language_code );
+                if ( empty( $person_id_translated ) ) {
 
-					if ( empty( $person_id_translated ) ) {
+                    $person_post = [
 
-						$person_post = [
+                        'post_type'    => 'bookable_person',
+                        'post_status'  => 'publish',
+                        'post_title'   => $pt['name'],
+                        'post_parent'  => $post_id,
+                        'post_excerpt' => isset( $pt['description'] ) ? $pt['description'] : '',
 
-							'post_type'    => 'bookable_person',
-							'post_status'  => 'publish',
-							'post_title'   => $pt['name'],
-							'post_parent'  => $post_id,
-							'post_excerpt' => isset( $pt['description'] ) ? $pt['description'] : '',
+                    ];
 
-						];
+                    $person_id_translated = wp_insert_post( $person_post );
 
-						$person_id_translated = wp_insert_post( $person_post );
+                    $this->sitepress->set_element_language_details( $person_id_translated, 'post_bookable_person', $person_trid, $job->language_code );
 
-						$this->sitepress->set_element_language_details( $person_id_translated, 'post_bookable_person', $person_trid, $job->language_code );
+                } else {
 
-					} else {
+                    $person_post = [
+                        'ID'           => $person_id_translated,
+                        'post_title'   => $pt['name'],
+                        'post_excerpt' => isset( $pt['description'] ) ? $pt['description'] : '',
+                    ];
 
-						$person_post = [
-							'ID'           => $person_id_translated,
-							'post_title'   => $pt['name'],
-							'post_excerpt' => isset( $pt['description'] ) ? $pt['description'] : '',
-						];
+                    wp_update_post( $person_post );
 
-						wp_update_post( $person_post );
-
-					}
-				}
-			}
-		}
-
+                }
+            }
+        }
 	}
 
 	public function append_resources_to_translation_package( $package, $post ) {
@@ -2076,76 +2074,72 @@ class WCML_Bookings {
 	private function save_resource_translation( $post_id, $data, $job ) {
 		$resource_translations = [];
 
-		if ( $this->is_booking( $post_id ) ) {
+        foreach ( $data as $value ) {
 
-			foreach ( $data as $value ) {
+            if ( $value['finished'] && strpos( $value['field_type'], 'wc_bookings:resource:' ) === 0 ) {
 
-				if ( $value['finished'] && strpos( $value['field_type'], 'wc_bookings:resource:' ) === 0 ) {
+                $exp = explode( ':', $value['field_type'] );
 
-					$exp = explode( ':', $value['field_type'] );
+                $resource_id = $exp[2];
+                $field       = $exp[3];
 
-					$resource_id = $exp[2];
-					$field       = $exp[3];
+                $resource_translations[ $resource_id ][ $field ] = $value['data'];
 
-					$resource_translations[ $resource_id ][ $field ] = $value['data'];
+            }
+        }
 
-				}
-			}
+        if ( $resource_translations ) {
 
-			if ( $resource_translations ) {
+            foreach ( $resource_translations as $resource_id => $rt ) {
 
-				foreach ( $resource_translations as $resource_id => $rt ) {
+                $resource_trid = $this->sitepress->get_element_trid( $resource_id, 'post_bookable_resource' );
 
-					$resource_trid = $this->sitepress->get_element_trid( $resource_id, 'post_bookable_resource' );
+                $resource_id_translated = apply_filters( 'translate_object_id', $resource_id, 'bookable_resource', false, $job->language_code );
 
-					$resource_id_translated = apply_filters( 'translate_object_id', $resource_id, 'bookable_resource', false, $job->language_code );
+                if ( empty( $resource_id_translated ) ) {
 
-					if ( empty( $resource_id_translated ) ) {
+                    $resource_post = [
 
-						$resource_post = [
+                        'post_type'   => 'bookable_resource',
+                        'post_status' => 'publish',
+                        'post_title'  => $rt['name'],
+                        'post_parent' => $post_id,
+                    ];
 
-							'post_type'   => 'bookable_resource',
-							'post_status' => 'publish',
-							'post_title'  => $rt['name'],
-							'post_parent' => $post_id,
-						];
+                    $resource_id_translated = wp_insert_post( $resource_post );
 
-						$resource_id_translated = wp_insert_post( $resource_post );
+                    $this->sitepress->set_element_language_details( $resource_id_translated, 'post_bookable_resource', $resource_trid, $job->language_code );
 
-						$this->sitepress->set_element_language_details( $resource_id_translated, 'post_bookable_resource', $resource_trid, $job->language_code );
+                    $sort_order   = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT sort_order FROM {$this->wpdb->prefix}wc_booking_relationships WHERE resource_id=%d", $resource_id ) );
+                    $relationship = [
+                        'product_id'  => $post_id,
+                        'resource_id' => $resource_id_translated,
+                        'sort_order'  => $sort_order,
+                    ];
+                    $this->wpdb->insert( $this->wpdb->prefix . 'wc_booking_relationships', $relationship );
 
-						$sort_order   = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT sort_order FROM {$this->wpdb->prefix}wc_booking_relationships WHERE resource_id=%d", $resource_id ) );
-						$relationship = [
-							'product_id'  => $post_id,
-							'resource_id' => $resource_id_translated,
-							'sort_order'  => $sort_order,
-						];
-						$this->wpdb->insert( $this->wpdb->prefix . 'wc_booking_relationships', $relationship );
+                } else {
 
-					} else {
+                    $resource_post = [
+                        'ID'         => $resource_id_translated,
+                        'post_title' => $rt['name'],
+                    ];
 
-						$resource_post = [
-							'ID'         => $resource_id_translated,
-							'post_title' => $rt['name'],
-						];
+                    wp_update_post( $resource_post );
 
-						wp_update_post( $resource_post );
+                    $sort_order = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT sort_order FROM {$this->wpdb->prefix}wc_booking_relationships WHERE resource_id=%d", $resource_id ) );
+                    $this->wpdb->update(
+                        $this->wpdb->prefix . 'wc_booking_relationships',
+                        [ 'sort_order' => $sort_order ],
+                        [
+                            'product_id'  => $post_id,
+                            'resource_id' => $resource_id_translated,
+                        ]
+                    );
 
-						$sort_order = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT sort_order FROM {$this->wpdb->prefix}wc_booking_relationships WHERE resource_id=%d", $resource_id ) );
-						$this->wpdb->update(
-							$this->wpdb->prefix . 'wc_booking_relationships',
-							[ 'sort_order' => $sort_order ],
-							[
-								'product_id'  => $post_id,
-								'resource_id' => $resource_id_translated,
-							]
-						);
-
-					}
-				}
-			}
-		}
-
+                }
+            }
+        }
 	}
 
 	public function wcml_js_lock_fields_ids( $ids ) {
@@ -2726,8 +2720,24 @@ class WCML_Bookings {
 	}
 
 	public function save_booking_data_to_translation( $post_id, $data, $job ){
-	    $this->save_person_translation( $post_id, $data, $job );
-	    $this->save_resource_translation( $post_id, $data, $job );
+		if ( $this->is_booking( $job->original_doc_id ) ) {
+			$this->save_person_translation( $post_id, $data, $job );
+			$this->save_resource_translation( $post_id, $data, $job );
+		}
+    }
+
+    /**
+     * @param int       $new_post_id
+     * @param array     $fields
+     * @param \stdClass $job
+     */
+    public function synchronize_bookings_on_translation_completed( $new_post_id, $fields, $job ) {
+        if (
+            Str::startsWith( 'post_', $job->original_post_type )
+            && $this->is_booking( $job->original_doc_id )
+        ) {
+            $this->woocommerce_wpml->sync_product_data->synchronize_products( $new_post_id, get_post( $new_post_id ), true );
+        }
     }
 
 	/**
