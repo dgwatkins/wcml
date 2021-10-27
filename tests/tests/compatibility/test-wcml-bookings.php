@@ -283,9 +283,11 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function save_resource_translation() {
-		$post_name = random_string();
-		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
-		$bookable_resource = wpml_test_insert_post( $this->default_language, 'bookable_resource', false, random_string() );
+		$post_name          = random_string();
+		$original_product   = $this->create_bookable_product( $this->default_language );
+		$trid               = $this->sitepress->get_element_trid( $original_product, 'post_product' );
+		$translated_product = $this->create_bookable_product( $this->second_language, $trid );
+		$bookable_resource  = wpml_test_insert_post( $this->default_language, 'bookable_resource', false, random_string() );
 		$data = array(
 			array(
 				'finished'   => true,
@@ -295,15 +297,17 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		);
 		$job = new stdClass();
 		$job->language_code = $this->second_language;
+		$job->original_doc_id = $original_product;
+		$job->original_post_type = 'post_product';
 
 		$bookings = $this->get_wcml_booking_object();
 		$relationship = array(
-			'product_id'    => $product,
+			'product_id'    => $original_product,
 			'resource_id'   => $bookable_resource,
 			'sort_order'    => 'ASC',
 		);
 		$this->wpdb->insert( $this->wpdb->prefix . 'wc_booking_relationships',  $relationship );
-		$bookings->save_booking_data_to_translation( $product, $data, $job );
+		$bookings->save_booking_data_to_translation( $translated_product, $data, $job );
 	}
 
 	/**
@@ -859,6 +863,8 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		);
 		$job = new stdClass();
 		$job->language_code = $this->second_language;
+		$job->original_doc_id = $product;
+		$job->original_post_type = 'post_product';
 
 		$woocommerce_wpml = $this->get_test_subject();
 		$woocommerce_wpml->settings['enable_multi_currency'] = 0;
