@@ -26,6 +26,7 @@ define( 'WP_CONTENT_URL', WPML_TESTS_SITE_URL . '/wp-content' );
 define( 'WP_CONTENT_DIR', WPML_TESTS_SITE_DIR . '/wp-content' );
 define( 'WP_PLUGIN_URL', WP_CONTENT_URL . '/plugins' );
 define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
+define( 'WP_LANG_DIR', WP_CONTENT_DIR . '/languages' );
 define( 'WPML_TM_FOLDER',  WP_CONTENT_DIR . '/plugins/wpml-translation-management/' );
 define( 'WCML_PLUGIN_URL', WP_CONTENT_DIR . '/plugins/woocommerce-multilingual/' );
 define( 'WPML_ST_FOLDER', WP_CONTENT_DIR . '/plugins/wpml-string-translation/' );
