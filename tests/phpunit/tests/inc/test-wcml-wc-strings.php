@@ -1,5 +1,7 @@
 <?php
 
+use tad\FunctionMocker\FunctionMocker;
+
 class Test_WCML_WC_Strings extends OTGS_TestCase {
 
 	/**
@@ -17,7 +19,7 @@ class Test_WCML_WC_Strings extends OTGS_TestCase {
 	private function get_sitepress( $wp_api = null ) {
 		$sitepress = $this->getMockBuilder('SitePress')
 		                  ->disableOriginalConstructor()
-		                  ->setMethods( array( 'get_wp_api','get_current_language', 'get_default_language' ) )
+		                  ->setMethods( array( 'get_wp_api','get_current_language', 'get_default_language', 'get_locale' ) )
 		                  ->getMock();
 
 		if( null === $wp_api ){
@@ -275,6 +277,48 @@ class Test_WCML_WC_Strings extends OTGS_TestCase {
 		$filtered_breadcrumbs = $subject->filter_woocommerce_breadcrumbs( $breadcrumbs, new stdClass() );
 
 		$this->assertEquals( $expected_breadcrumbs, $filtered_breadcrumbs );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider data_get_msgid_for_mo
+	 */
+	public function it_correctly_applies_string_context( $expected, $string, $context ) {
+		$subject = $this->get_subject();
+		$this->assertEquals( $expected, $subject->get_msgid_for_mo( $string, $context ) );
+	}
+
+	/**
+	 * @test
+	 * @dataProvider data_get_translation_from_woocommerce_mo_file
+	 */
+	public function it_gets_translated_edit_address_slug_without_mo_context( $expected, $string, $language )
+	{
+		FunctionMocker::replace( 'file_exists', false );
+		$subject = $this->get_subject();
+		$this->assertEquals( $expected, $subject->get_translation_from_woocommerce_mo_file( $string, $language ) );
+	}
+
+	/**
+	 * @return array [ $expected, $string, $context ]
+	 */
+	public function data_get_msgid_for_mo() {
+		return [
+			[ '' . chr( 4 ) . '', '', '' ],
+			[ 'context' . chr( 4 ) . '', '', 'context' ],
+			[ 'context' . chr( 4 ) . 'test', 'test', 'context' ],
+		];
+	}
+
+	/**
+	 * @return array [ $expected, $string, $language ]
+	 */
+	public function data_get_translation_from_woocommerce_mo_file() {
+		return [
+			[ "shipping", "edit-address-slugshipping", "de" ],
+			[ "billing", "edit-address-slugbilling", "de" ],
+			[ 'product', 'product', "de" ],
+		];
 	}
 
 	/**

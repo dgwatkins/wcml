@@ -1,6 +1,7 @@
 <?php
 
 use WPML\FP\Fns;
+use WPML\FP\Lst;
 use WPML\FP\Str;
 
 class WCML_WC_Strings {
@@ -498,7 +499,7 @@ class WCML_WC_Strings {
 				$mo      = new MO();
 				$mo_file = WP_LANG_DIR . '/plugins/woocommerce-' . $this->sitepress->get_locale( $language ) . '.mo';
 				if ( ! file_exists( $mo_file ) ) {
-					return $return_original ? $string : null;
+					return $return_original ? $this->get_original_string( $original_string ) : null;
 				}
 
 				$mo->import_from_file( $mo_file );
@@ -506,13 +507,13 @@ class WCML_WC_Strings {
 			}
 
 			if ( in_array( $string, [ 'product', 'product-category', 'product-tag' ] ) ) {
-				$string = 'slug' . chr( 4 ) . $string;
+				$string = $this->get_msgid_for_mo( $string, 'slug' );
 			}
 
 			if ( isset( $this->mo_files[ $language ][ $string ] ) ) {
 				$this->translations_from_mo_file[ $original_string ][ $language ] = $this->mo_files[ $language ][ $string ]->translations[0];
 			} else {
-				$this->translations_from_mo_file[ $original_string ][ $language ] = $return_original ? $original_string : null;
+				$this->translations_from_mo_file[ $original_string ][ $language ] = $return_original ? $this->get_original_string( $original_string ) : null;
 			}
 		}
 
@@ -552,4 +553,33 @@ class WCML_WC_Strings {
 		return apply_filters( 'wpml_translate_single_string', false, $context, $name, $language );
 	}
 
+	/**
+	 * Return what msgid lookup would be for a specific content in a MO file.
+	 *
+	 * @param string $string The 'msgid' string to look up translation.
+	 * @param string $string_context The string context.
+	 * @return string
+	 */
+	public function get_msgid_for_mo( $string, $string_context ) {
+		return $string_context . self::mo_context_separator() . $string;
+	}
+
+	/**
+	 * The context separator used in MO files
+	 *
+	 * @return string
+	 */
+	private static function mo_context_separator() {
+		return chr( 4 );
+	}
+
+	/**
+	 * Return original msgid from modified lookup used in MO file
+	 *
+	 * @param string $string The 'msgid' string to look up translation.
+	 * @return string
+	 */
+	private function get_original_string( $string ) {
+		return Lst::last( Str::split( self::mo_context_separator(), $string ) );
+	}
 }
