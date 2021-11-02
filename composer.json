@@ -78,11 +78,17 @@
         ],
         "post-install-cmd": [
             "@make",
-            "@composer bin all install --ansi"
+            "@composer bin all install --ansi",
+            "@install-extras"
         ],
         "bin": "echo 'bin not installed'",
-        "post-update-cmd": ["@composer bin all update --ansi"]
-
+        "post-update-cmd": [
+            "@composer bin all update --ansi",
+            "@install-extras"
+        ],
+        "install-extras": [
+            "@composer install --working-dir=extras --no-dev --prefer-dist"
+        ]
     },
     "autoload": {
         "classmap": [
@@ -90,7 +96,7 @@
             "compatibility/",
             "inc/"
         ],
-        "files":[
+        "files": [
             "inc/functions.php"
         ],
         "exclude-from-classmap": [

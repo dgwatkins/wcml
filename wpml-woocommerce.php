@@ -47,6 +47,7 @@ require WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
 require WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
 
 require WCML_PLUGIN_PATH . '/vendor/autoload.php';
+require WCML_PLUGIN_PATH . '/extras/vendor/wpml/wcml-dependencies/autoload.php';
 
 if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ) {
 	global $sitepress;
