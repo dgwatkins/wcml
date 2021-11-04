@@ -53,7 +53,7 @@ class Hooks implements \IWPML_Action {
 	 * @return array
 	 */
 	public function addJoin( $clauses ) {
-		$clauses[] = "LEFT JOIN {$this->wpdb->postmeta} wcml_language_postmeta ON {$this->wpdb->prefix}wc_order_stats.order_id = wcml_language_postmeta.post_id";
+		$clauses[] = "LEFT JOIN {$this->wpdb->postmeta} wcml_language_postmeta ON wcml_language_postmeta.post_id = IF( {$this->wpdb->prefix}wc_order_stats.parent_id = 0, {$this->wpdb->prefix}wc_order_stats.order_id, {$this->wpdb->prefix}wc_order_stats.parent_id )";
 
 		return $clauses;
 	}
