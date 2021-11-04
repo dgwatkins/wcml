@@ -47,7 +47,6 @@ require WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
 require WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
 
 require WCML_PLUGIN_PATH . '/vendor/autoload.php';
-require WCML_PLUGIN_PATH . '/extras/vendor/wpml/wcml-dependencies/autoload.php';
 
 if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ) {
 	global $sitepress;
@@ -141,6 +140,8 @@ add_action( 'plugins_loaded', 'load_wcml_without_wpml', 10000 );
  */
 function load_wcml_without_wpml() {
 	if ( ! did_action( 'wpml_loaded' ) ) {
+		require_once WCML_PLUGIN_PATH . '/addons/vendor/autoload.php';
+
 		global $woocommerce_wpml;
 		$woocommerce_wpml = new woocommerce_wpml();
 	}
