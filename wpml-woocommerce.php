@@ -79,10 +79,8 @@ function wcml_loader() {
 	\WPML\Container\share( \WCML\Container\Config::getSharedClasses() );
 	\WPML\Container\alias( \WCML\Container\Config::getAliases() );
 
-	$xdomain_data = new WCML_xDomain_Data( new WPML_Cookie() );
-	$xdomain_data->add_hooks();
-
 	$loaders = [
+		WCML_xDomain_Data::class,
 		'WCML_Privacy_Content_Factory',
 		'WCML_ATE_Activate_Synchronization',
 		\WCML\RewriteRules\Hooks::class,
@@ -126,7 +124,7 @@ function wcml_loader() {
 		$loaders[] = 'WCML_Append_Gallery_To_Post_Media_Ids_Factory';
 	}
 
-	$action_filter_loader = new WPML_Action_Filter_Loader();
+	$action_filter_loader = new \WCML\StandAlone\ActionFilterLoader();
 	$action_filter_loader->load( $loaders );
 }
 
@@ -145,6 +143,7 @@ function load_wcml_without_wpml() {
 
 		global $woocommerce_wpml;
 		$woocommerce_wpml = new woocommerce_wpml();
+		wcml_loader();
 	}
 }
 
