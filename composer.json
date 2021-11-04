@@ -79,15 +79,15 @@
         "post-install-cmd": [
             "@make",
             "@composer bin all install --ansi",
-            "@install-extras"
+            "@install-addons"
         ],
         "bin": "echo 'bin not installed'",
         "post-update-cmd": [
             "@composer bin all update --ansi",
-            "@install-extras"
+            "@install-addons"
         ],
-        "install-extras": [
-            "@composer install --working-dir=extras --no-dev --prefer-dist"
+        "install-addons": [
+            "@composer install --working-dir=addons --no-dev --prefer-dist"
         ]
     },
     "autoload": {
