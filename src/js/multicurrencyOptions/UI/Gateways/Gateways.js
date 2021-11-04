@@ -80,6 +80,7 @@ const Gateway = ({gateway, currency, setModalCurrency, ...attrs}) => {
         case 'bacs':
             gatewayUi = <Bacs gateway={gateway} updateSettings={updateSettings} getName={getName} currency={currency} {...attrs}/>;
             break;
+        case 'ppcp-gateway':
         case 'paypal':
             gatewayUi = ! currency.isDefault && <PayPal gateway={gateway} updateSettings={updateSettings} getName={getName} currency={currency} {...attrs}/>
             break;

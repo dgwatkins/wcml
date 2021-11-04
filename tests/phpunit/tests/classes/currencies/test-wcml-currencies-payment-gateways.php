@@ -66,10 +66,6 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 			'option_woocommerce_stripe_settings',
 			[ 'WCML_Payment_Gateway_Stripe', 'filter_stripe_settings' ]
 		);
-		\WP_Mock::expectFilterAdded(
-			'woocommerce_should_load_paypal_standard',
-			'__return_true'
-		);
 
 		if ( $is_multi_currency_on ) {
 			\WP_Mock::expectFilterAdded(
@@ -115,10 +111,6 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded(
 			'option_woocommerce_stripe_settings',
 			[ 'WCML_Payment_Gateway_Stripe', 'filter_stripe_settings' ]
-		);
-		\WP_Mock::expectFilterAdded(
-			'woocommerce_should_load_paypal_standard',
-			'__return_true'
 		);
 		\WP_Mock::expectFilterNotAdded(
 			'woocommerce_paypal_supported_currencies',
@@ -229,15 +221,26 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 			'return' => $wc,
 		] );
 
-		$expected_payment_gateways[ $not_supported_gateway->id ] = $wcml_not_supported_payment_gateway;
-		$expected_payment_gateways[ $paypal_gateway->id ]        = $wcml_paypal_payment_gateway;
+		$expected_payment_gateways_from_wc[ $not_supported_gateway->id ] = $wcml_not_supported_payment_gateway;
+		$expected_payment_gateways_from_wc[ $paypal_gateway->id ]        = $wcml_paypal_payment_gateway;
 
 		$subject = $this->get_subject();
 
 		$subject->init_gateways();
 		$payment_gateways = $subject->get_gateways();
+		
+		$expected_gateways_from_init = [
+			'bacs'   => 'WCML_Payment_Gateway_Bacs',
+			'paypal' => 'WCML_Payment_Gateway_PayPal',
+			'ppcp-gateway' => 'WCML_Payment_Gateway_PayPal',
+			'stripe' => 'WCML_Payment_Gateway_Stripe',
+		];
+		
+		$supported_gateways = $subject->get_supported_gateways();
+		
+		$this->assertEquals( $expected_gateways_from_init, $supported_gateways );
 
-		$this->assertEquals( $expected_payment_gateways, $payment_gateways );
+		$this->assertEquals( $expected_payment_gateways_from_wc, $payment_gateways );
 	}
 
 	/**
