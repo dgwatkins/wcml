@@ -409,4 +409,189 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 		$this->assertSame( 'settings_template', $template );
 	}
 
+	/**
+	 * @test
+	 * @group wcml-3804
+	 */
+	public function it_should_append_addons_to_translation_package() {
+		$package = [
+			'contents' => [
+				'foo' => [],
+			],
+		];
+
+		/** @var \WP_Post $post */
+		$post            = \Mockery::mock( \WP_Post::class );
+		$post->ID        = 123;
+		$post->post_type = 'product';
+
+		$addons = [
+			[
+				'name'        => 'The name',
+				'description' => 'The description',
+				'options'     => [
+					[
+						'label' => 'The first option label',
+					],
+					[
+						// another option with no label
+					],
+				],
+			],
+			[
+				// addon with no option
+			],
+		];
+
+		\WP_Mock::userFunction( 'get_post_meta' )
+		        ->with( $post->ID, WCML_Product_Addons::ADDONS_OPTION_KEY, true )
+				->andReturn( $addons );
+
+		\WP_Mock::passthruFunction( 'maybe_unserialize' );
+
+		$expected_package = $package;
+		$expected_package['contents'][ 'addon_0_name' ] = [
+			'translate' => 1,
+			'data'      => base64_encode( 'The name' ),
+			'format'    => 'base64',
+		];
+		$expected_package['contents'][ 'addon_0_description' ] = [
+			'translate' => 1,
+			'data'      => base64_encode( 'The description' ),
+			'format'    => 'base64',
+		];
+		$expected_package['contents'][ 'addon_0_option_0_label' ] = [
+			'translate' => 1,
+			'data'      => base64_encode( 'The first option label' ),
+			'format'    => 'base64',
+		];
+
+		$this->assertEquals(
+			$expected_package,
+			$this->get_subject()->append_addons_to_translation_package( $package, $post )
+		);
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3804
+	 */
+	public function it_should_NOT_append_addons_to_translation_package_if_not_a_product() {
+		$package = [
+			'contents' => [
+				'foo' => [],
+			],
+		];
+
+		/** @var \WP_Post $post */
+		$post            = \Mockery::mock( \WP_Post::class );
+		$post->ID        = 123;
+		$post->post_type = 'page';
+
+		$this->assertEquals(
+			$package,
+			$this->get_subject()->append_addons_to_translation_package( $package, $post )
+		);
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3804
+	 */
+	public function it_should_save_addons_to_translation() {
+		$post_id = 123;
+
+		$fields = [
+			'foo'                    => [ 'data' => 'FR bar' ],
+			'addon_0_name'           => [ 'data' => 'FR The name' ],
+			'addon_0_description'    => [ 'data' => 'FR The description' ],
+			'addon_0_option_0_label' => [ 'data' => 'FR The first option label' ],
+		];
+
+		$job = (object) [
+			'original_post_type' => 'post_product',
+		];
+
+		$addons = [
+			[
+				'name'        => 'The name',
+				'description' => 'The description',
+				'options'     => [
+					[
+						'label' => 'The first option label',
+					],
+					[
+						// another option with no label
+					],
+				],
+			],
+			[
+				// addon with no option
+			],
+		];
+
+		$expected_addons = [
+			[
+				'name'        => 'FR The name',
+				'description' => 'FR The description',
+				'options'     => [
+					[
+						'label' => 'FR The first option label',
+					],
+					[
+						// another option with no label
+					],
+				],
+			],
+			[
+				// addon with no option
+			],
+		];
+
+		\WP_Mock::userFunction( 'get_post_type' )
+			->with( $post_id )
+			->andReturn( 'product' );
+
+		\WP_Mock::userFunction( 'get_post_meta' )
+		        ->with( $post_id, WCML_Product_Addons::ADDONS_OPTION_KEY, true )
+				->andReturn( $addons );
+
+		\WP_Mock::passthruFunction( 'maybe_unserialize' );
+
+		\WP_Mock::userFunction( 'update_post_meta', [
+			'times' => 1,
+			'args'  => [ $post_id, WCML_Product_Addons::ADDONS_OPTION_KEY, true ],
+		] );
+
+		$this->get_subject()->save_addons_to_translation( $post_id, $fields, $job );
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3804
+	 */
+	public function it_should_NOT_save_addons_to_translation_if_not_a_product() {
+		$post_id = 123;
+
+		$fields = [
+			'foo'                    => [ 'data' => 'FR bar' ],
+			'addon_0_name'           => [ 'data' => 'FR The name' ],
+			'addon_0_description'    => [ 'data' => 'FR The description' ],
+			'addon_0_option_0_label' => [ 'data' => 'FR The first option label' ],
+		];
+
+		$job = (object) [
+			'original_post_type' => 'tax_something',
+		];
+
+		\WP_Mock::userFunction( 'get_post_type' )
+			->with( $post_id )
+			->andReturn( 'product' );
+
+		\WP_Mock::userFunction( 'update_post_meta', [
+			'times' => 0,
+		] );
+
+		$this->get_subject()->save_addons_to_translation( $post_id, $fields, $job );
+	}
 }

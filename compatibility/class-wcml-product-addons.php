@@ -1,5 +1,9 @@
 <?php
 
+use WCML\Options\WPML;
+use WPML\FP\Obj;
+use WPML\FP\Str;
+
 /**
  * Class WCML_Product_Addons
  */
@@ -8,6 +12,7 @@ class WCML_Product_Addons {
 	const TEMPLATE_FOLDER   = '/templates/compatibility/';
 	const DIALOG_TEMPLATE   = 'product-addons-prices-dialog.twig';
 	const SETTINGS_TEMPLATE = 'product-addons-prices-settings.twig';
+	const ADDONS_OPTION_KEY = '_product_addons';
 	const PRICE_OPTION_KEY  = '_product_addon_prices';
 
 	/**
@@ -46,6 +51,10 @@ class WCML_Product_Addons {
 
 		add_action( 'woocommerce-product-addons_panel_start', [ $this, 'show_pointer_info' ] );
 
+		if ( WPML::useAte() ) {
+			add_action( 'wpml_pro_translation_completed', [ $this, 'save_addons_to_translation' ], 10, 3 );
+		}
+
 		if ( is_admin() ) {
 
 			if ( $this->is_global_addon_edit_page() ) {
@@ -54,9 +63,13 @@ class WCML_Product_Addons {
 				}
 			}
 
-			add_action( 'wcml_gui_additional_box_html', [ $this, 'custom_box_html' ], 10, 3 );
-			add_filter( 'wcml_gui_additional_box_data', [ $this, 'custom_box_html_data' ], 10, 3 );
-			add_action( 'wcml_update_extra_fields', [ $this, 'addons_update' ], 10, 3 );
+			if ( WPML::useAte() ) {
+				add_filter( 'wpml_tm_translation_job_data', [ $this, 'append_addons_to_translation_package' ], 10, 2 );
+			} else {
+				add_action( 'wcml_gui_additional_box_html', [ $this, 'custom_box_html' ], 10, 3 );
+				add_filter( 'wcml_gui_additional_box_data', [ $this, 'custom_box_html_data' ], 10, 3 );
+				add_action( 'wcml_update_extra_fields', [ $this, 'addons_update' ], 10, 3 );
+			}
 
 			add_action( 'woocommerce_product_data_panels', [ $this, 'show_pointer_info' ] );
 
@@ -108,7 +121,7 @@ class WCML_Product_Addons {
 	 * @return array
 	 */
 	private function get_product_addons( $product_id ) {
-		return maybe_unserialize( get_post_meta( $product_id, '_product_addons', true ) );
+		return (array) maybe_unserialize( get_post_meta( $product_id, self::ADDONS_OPTION_KEY, true ) );
 	}
 
 	/**
@@ -118,7 +131,7 @@ class WCML_Product_Addons {
 	 * @param $addons
 	 */
 	public function register_addons_strings( $meta_id, $id, $meta_key, $addons ) {
-		if ( '_product_addons' === $meta_key && 'global_product_addon' === get_post_type( $id ) ) {
+		if ( self::ADDONS_OPTION_KEY === $meta_key && 'global_product_addon' === get_post_type( $id ) ) {
 			$this->update_custom_prices_values( $id );
 			foreach ( $addons as $addon ) {
 				$addon_data     = wpml_collect( $addon );
@@ -148,7 +161,7 @@ class WCML_Product_Addons {
 	 */
 	public function translate_addons_strings( $null, $object_id, $meta_key, $single ) {
 
-		if ( '_product_addons' === $meta_key && 'global_product_addon' === get_post_type( $object_id ) ) {
+		if ( self::ADDONS_OPTION_KEY === $meta_key && 'global_product_addon' === get_post_type( $object_id ) ) {
 
 			remove_filter( 'get_post_metadata', [ $this, 'translate_addons_strings' ], 10 );
 			$addons = get_post_meta( $object_id, $meta_key, true );
@@ -260,6 +273,84 @@ class WCML_Product_Addons {
 	}
 
 	/**
+	 * @param array    $package
+	 * @param \WP_Post $post
+	 *
+	 * @return array
+	 */
+	public function append_addons_to_translation_package( $package, $post ) {
+		if ( 'product' === $post->post_type ) {
+			$add_field = function( $name, $value ) use ( &$package ) {
+				if ( $value ) {
+					$package['contents'][ $name ] = [
+						'translate' => 1,
+						'data'      => base64_encode( $value ),
+						'format'    => 'base64',
+					];
+				}
+			};
+
+			foreach ( $this->get_product_addons( $post->ID ) as $addon_id => $addon_data ) {
+				$add_field( self::get_job_field_name( $addon_id , 'name' ), Obj::prop( 'name', $addon_data ) );
+				$add_field( self::get_job_field_name( $addon_id , 'description' ), Obj::prop( 'description', $addon_data ) );
+
+				foreach ( (array) Obj::prop( 'options', $addon_data ) as $option_id => $option ) {
+					$add_field( self::get_job_field_name( $addon_id , $option_id ), Obj::prop( 'label', $option ) );
+				}
+			}
+		}
+
+		return $package;
+	}
+
+	/**
+	 * @param int    $post_id
+	 * @param array  $fields
+	 * @param object $job
+	 */
+	public function save_addons_to_translation( $post_id, $fields, $job ) {
+		if (
+			Str::startsWith( 'post_', $job->original_post_type )
+			&& 'product' === get_post_type( $post_id )
+		) {
+			$get_translation = function( $field_name ) use ( $fields ) {
+				return Obj::path( [ $field_name, 'data' ], $fields );
+			};
+
+			$addons = $this->get_product_addons( $post_id );
+
+			foreach ( $addons as $addon_id => $addon_data ) {
+				if ( isset( $addons[ $addon_id ]['name'] ) ) {
+					$addons[ $addon_id ]['name']        = $get_translation( self::get_job_field_name( $addon_id , 'name' ) );
+					$addons[ $addon_id ]['description'] = $get_translation( self::get_job_field_name( $addon_id , 'description' ) );
+				}
+
+				foreach ( (array) Obj::prop( 'options', $addon_data ) as $option_id => $option ) {
+					if ( isset( $addons[ $addon_id ]['options'][ $option_id ]['label'] ) ) {
+						$addons[ $addon_id ]['options'][ $option_id ]['label'] = $get_translation( self::get_job_field_name( $addon_id , $option_id ) );
+					}
+				}
+			}
+
+			update_post_meta( $post_id, self::ADDONS_OPTION_KEY, $addons );
+		}
+	}
+
+	/**
+	 * @param int        $addon_id
+	 * @param int|string $name_or_id
+	 *
+	 * @return string
+	 */
+	private static function get_job_field_name( $addon_id, $name_or_id ) {
+		return is_numeric( $name_or_id )
+			? 'addon_' . $addon_id . '_option_' . $name_or_id . '_label'
+			: 'addon_' . $addon_id . '_' . $name_or_id;
+	}
+
+	/**
+	 * @deprecated This method is used by CTE only.
+	 *
 	 * @param $obj
 	 * @param $product_id
 	 * @param $data
@@ -298,6 +389,8 @@ class WCML_Product_Addons {
 	}
 
 	/**
+	 * @deprecated This method is used by CTE only.
+	 *
 	 * @param $data
 	 * @param $product_id
 	 * @param $translation
@@ -341,6 +434,8 @@ class WCML_Product_Addons {
 	}
 
 	/**
+	 * @deprecated This method is used by CTE only.
+	 *
 	 * @param $original_product_id
 	 * @param $product_id
 	 * @param $data
@@ -364,7 +459,7 @@ class WCML_Product_Addons {
 			}
 		}
 
-		update_post_meta( $product_id, '_product_addons', $product_addons );
+		update_post_meta( $product_id, self::ADDONS_OPTION_KEY, $product_addons );
 	}
 
 	public function show_pointer_info() {
@@ -379,7 +474,7 @@ class WCML_Product_Addons {
 	}
 
 	public function replace_tm_editor_custom_fields_with_own_sections( $fields ) {
-		$fields[] = '_product_addons';
+		$fields[] = self::ADDONS_OPTION_KEY;
 
 		return $fields;
 	}
@@ -557,7 +652,7 @@ class WCML_Product_Addons {
 					}
 				}
 
-				update_post_meta( $product_id, '_product_addons', $product_addons );
+				update_post_meta( $product_id, self::ADDONS_OPTION_KEY, $product_addons );
 			}
 		}
 	}
