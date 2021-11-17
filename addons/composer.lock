@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e913bc392f807444b53d0987cfea947f",
+    "content-hash": "ce8e6d2827db7a5732b650e835425fe2",
     "packages": [
         {
             "name": "otgs/auryn",
@@ -688,11 +688,11 @@
         },
         {
             "name": "wpml/wpml-dependencies",
-            "version": "dev-wcml-3782",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/glue-plugins/wpml/packages/wpml-dependencies.git",
-                "reference": "2c8ef9d7d8d088a93ff856d5f7fea6b55f09179f"
+                "reference": "94e6f6813ca590ceac2aa6c3e472157db45c17af"
             },
             "require": {
                 "otgs/auryn": "dev-master",
@@ -735,7 +735,7 @@
             ],
             "description": "WPML dependencies for running WCML independently.",
             "homepage": "https://git.onthegosystems.com/glue-plugins/wpml/packages/wpml-dependencies",
-            "time": "2021-11-17T08:53:39+00:00"
+            "time": "2021-11-17T09:01:44+00:00"
         }
     ],
     "packages-dev": [],
