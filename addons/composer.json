@@ -1,6 +1,6 @@
 {
     "repositories": {
-        "wcml-dependencies": {
+        "wpml-dependencies": {
             "type": "vcs",
             "url": "ssh://git@git.onthegosystems.com:10022/glue-plugins/wpml/packages/wpml-dependencies.git"
         }
@@ -14,6 +14,6 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "wpml/wcml-dependencies": "dev-wcml-3782"
+        "wpml/wpml-dependencies": "dev-wcml-3782"
     }
 }
