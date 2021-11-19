@@ -50,8 +50,9 @@ const CurrencyModal = () => {
         title={modalTitle}
         visible={true}
         onCancel={onClose}
+        style={{ top: 30 }}
         footer={<Footer onClose={onClose} onSave={onSave} disableSave={!isValidRate && ajax.fetching} />}
-        bodyStyle={{maxHeight:769, height:575, overflow:'auto'}}
+        bodyStyle={{maxHeight:769, overflow:'auto'}}
     >
         <div className="wcml-dialog ui-dialog-content" id={'wcml_currency_options_' + currency.code}>
             <div className="wcml_currency_options wcml-co-dialog">
