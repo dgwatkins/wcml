@@ -1,5 +1,6 @@
 import React from "react";
 import Tooltip from "antd/lib/tooltip";
+import {getPopupContainer} from './helpers';
 
 /**
  * Component for showing Select with label and tooltip
@@ -51,7 +52,7 @@ export const InputRow = ({onChange, label, attrs, tooltip}) => {
  * @returns {*|XML}
  */
 export const getTooltip = tooltip => {
-    return tooltip && <Tooltip title={allowBreakRules(tooltip)}> <i className="wcml-tip otgs-ico-help" /></Tooltip>;
+    return tooltip && <Tooltip getPopupContainer={getPopupContainer} title={allowBreakRules(tooltip)}> <i className="wcml-tip otgs-ico-help" /></Tooltip>;
 };
 
 const allowBreakRules = (string) => {
