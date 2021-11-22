@@ -76,11 +76,16 @@
         ],
         "post-install-cmd": [
             "@make",
-            "@composer bin all install --ansi"
+            "@composer bin all install --ansi",
+            "@install-addons"
         ],
         "bin": "echo 'bin not installed'",
-        "post-update-cmd": ["@composer bin all update --ansi"]
-
+        "post-update-cmd": [
+            "@composer bin all update --ansi",
+            "@update-addons"
+        ],
+        "install-addons": "@composer install --working-dir=addons --no-dev --prefer-dist",
+        "update-addons": "@composer update --working-dir=addons --no-dev --prefer-dist"
     },
     "autoload": {
         "classmap": [
@@ -88,7 +93,7 @@
             "compatibility/",
             "inc/"
         ],
-        "files":[
+        "files": [
             "inc/functions.php"
         ],
         "exclude-from-classmap": [
