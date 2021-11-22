@@ -140,6 +140,8 @@ add_action( 'plugins_loaded', 'load_wcml_without_wpml', 10000 );
  */
 function load_wcml_without_wpml() {
 	if ( ! did_action( 'wpml_loaded' ) ) {
+		require_once WCML_PLUGIN_PATH . '/addons/vendor/autoload.php';
+
 		global $woocommerce_wpml;
 		$woocommerce_wpml = new woocommerce_wpml();
 	}
