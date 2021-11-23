@@ -98,8 +98,10 @@ class WCML_Multi_Currency_Configuration {
 			];
 			ICL_AdminNotifier::add_message( $message );
 
-			$wpml_admin_notices = wpml_get_admin_notices();
-			$wpml_admin_notices->remove_notice( 'wcml-save-multi-currency-options', 'wcml-fixerio-api-key-required' );
+			if ( ! \WCML\functions\isStandAlone() )  {
+				$wpml_admin_notices = wpml_get_admin_notices();
+				$wpml_admin_notices->remove_notice( 'wcml-save-multi-currency-options', 'wcml-fixerio-api-key-required' );
+			}
 		}
 
 	}

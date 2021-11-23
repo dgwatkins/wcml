@@ -129,4 +129,15 @@ class NullSitePress implements ISitePress {
 	public function is_rtl( $lang = false ) {
 		return is_rtl();
 	}
+
+	/**
+	 * @param int    $element_id   Use term_taxonomy_id for taxonomies, post_id for posts.
+	 * @param string $element_type Use comment, post, page, {custom post time name}, nav_menu, nav_menu_item, category,
+	 *                             post_tag, etc. (prefixed with 'post_', 'tax_', or nothing for 'comment').
+	 *
+	 * @return null|string
+	 */
+	public function get_language_for_element( $element_id, $element_type ) {
+		return $this->get_current_language();
+	}
 }

@@ -33,13 +33,6 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 	}
 
 	private function get_subject(){
-		return new woocommerce_wpml();
-	}
-
-	/**
-	 * @test
-	 */
-	public function creating_instance_in_admin(){
 		global $sitepress;
 
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
@@ -52,14 +45,18 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 		$woocommerce->version = '3.0.0';
 		\WP_Mock::wpFunction( 'WC', array( 'return' => $woocommerce, ) );
 
+		$wp_api = $this->getMockBuilder( \WPML_WP_API::class )
+						->disableOriginalConstructor()
+						->getMock();
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                        ->disableOriginalConstructor()
-								->setMethods( array( 'get_settings' ) )
+								->setMethods( array( 'get_settings', 'get_wp_api' ) )
 		                        ->getMock();
 		$sitepress->method( 'get_settings' )->willReturn( array() );
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
 
-		$woocommerce_wpml = new woocommerce_wpml();
+		return new woocommerce_wpml();
 
 	}
 
