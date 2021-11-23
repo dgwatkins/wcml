@@ -202,13 +202,49 @@ class WCML_Multi_Currency_Prices {
 	}
 
 	public function product_price_filter( $null, $object_id, $meta_key, $single ) {
-		global $sitepress;
+		$sitepress = \WCML\functions\getSitePress();
 
 		static $no_filter = false;
 
 		if ( empty( $no_filter ) && in_array( get_post_type( $object_id ), [ 'product', 'product_variation' ] ) ) {
 
 			$price_keys = wcml_price_custom_fields( $object_id );
+			$price_meta_keys = [
+				'_price',
+				'_regular_price',
+				'_sale_price',
+			];
+
+			if ( ! $single && '' === $meta_key && \WCML\functions\isStandAlone() ) {
+				$meta_values   = get_post_meta( $object_id );
+				$ccr           = get_post_meta( $object_id, '_custom_conversion_rate', true );
+				$manual_prices = $this->multi_currency->custom_prices->get_product_custom_prices( $object_id, $this->multi_currency->get_client_currency() );
+
+				foreach ( $meta_values as $key => $price ) {
+                    if ( is_array( $price_keys ) && in_array( $meta_key, $price_keys ) ) {
+                        if (
+							in_array( $key, $price_meta_keys, true )
+                        	&& ! empty($ccr) && isset($ccr[ $meta_key ][ $this->multi_currency->get_client_currency() ])
+						) {
+							if ( is_numeric( $price ) ) {
+								$meta_values[ $key ] = $price * $ccr[ $meta_key ][ $this->multi_currency->get_client_currency() ];
+							}
+
+                        } else {
+							if ( $manual_prices && isset( $manual_prices[ $meta_key ] ) ) {
+								$meta_values[ $key ] = $manual_prices[ $meta_key ];
+							} else {
+								// 2. automatic conversion
+								if( is_numeric( $price ) ){
+									$meta_values[ $key ] = apply_filters( 'wcml_raw_price_amount', $price );
+								}
+							}
+                        }
+                    }
+				}
+
+				return $meta_values;
+			}
 
 			if ( is_array( $price_keys ) && in_array( $meta_key, $price_keys ) && $this->is_multi_currency_filters_loaded() ) {
 				$no_filter = true;
@@ -217,15 +253,10 @@ class WCML_Multi_Currency_Prices {
 				// legacy prior 3.1.
 				$original_object_id = apply_filters( 'translate_object_id', $object_id, get_post_type( $object_id ), false, $sitepress->get_default_language() );
 				$ccr                = get_post_meta( $original_object_id, '_custom_conversion_rate', true );
+				
 
-				if ( in_array(
-					$meta_key,
-					[
-						'_price',
-						'_regular_price',
-						'_sale_price',
-					]
-				) && ! empty( $ccr ) && isset( $ccr[ $meta_key ][ $this->multi_currency->get_client_currency() ] )
+				if ( in_array( $meta_key, $price_meta_keys, true )
+					&& ! empty( $ccr ) && isset( $ccr[ $meta_key ][ $this->multi_currency->get_client_currency() ] )
 				) {
 					$price_original = get_post_meta( $original_object_id, $meta_key, $single );
 					if( is_numeric( $price_original ) ){
