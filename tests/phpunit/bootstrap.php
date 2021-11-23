@@ -96,6 +96,10 @@ function autoload_tests_classes( $class ) {
 		}
 	}
 
+	/** @var \Composer\Autoload\ClassLoader $loader */
+	$loader = require WCML_PATH . "/addons/vendor/autoload.php";
+	$maps = array_merge( $loader->getClassMap(), $maps );
+
 	if ( $maps && array_key_exists( $class, $maps ) ) {
 		/** @noinspection PhpIncludeInspection */
 		require_once $maps[ $class ];
