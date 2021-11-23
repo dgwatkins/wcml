@@ -30,7 +30,7 @@ class WCML_Plugins_Wrap {
 	public function get_model() {
 
 		$model = [
-			'link_url'          => admin_url( 'admin.php?page=wpml-wcml' ),
+			'link_url'          => admin_url( 'admin.php?page=wpml-wcml&tab=multi-currency' ),
 			'old_wpml'          => defined( 'ICL_SITEPRESS_VERSION' ) && version_compare( ICL_SITEPRESS_VERSION, '4.0', '<' ),
 			'tracking_link'     => $this->tracking_link->getWpmlAccount(),
 			'install_wpml_link' => $this->woocommerce_wpml->dependencies->required_plugin_install_link( 'wpml' ),
