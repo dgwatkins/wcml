@@ -2,9 +2,11 @@
 
 namespace WCML\Multicurrency\UI;
 
+use WCML\StandAlone\IStandAloneAction;
+
 use function WPML\Container\make;
 
-class Factory implements \IWPML_Backend_Action_Loader, \IWPML_Deferred_Action_Loader {
+class Factory implements \IWPML_Backend_Action_Loader, \IWPML_Deferred_Action_Loader, IStandAloneAction {
 
 	public function get_load_action() {
 		return 'init';

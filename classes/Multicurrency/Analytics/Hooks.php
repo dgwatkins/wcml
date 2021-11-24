@@ -4,10 +4,11 @@ namespace WCML\Multicurrency\Analytics;
 
 use WCML\Utilities\Resources;
 use WCML\Rest\Functions;
+use WCML\StandAlone\IStandAloneAction;
 use WPML\FP\Obj;
 use WPML\FP\Fns;
 
-class Hooks implements \IWPML_Action {
+class Hooks implements \IWPML_Action, IStandAloneAction {
 
 	/** @var \woocommerce_wpml $woocommerce_wpml */
 	private $woocommerce_wpml;
