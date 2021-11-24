@@ -3,13 +3,14 @@
 namespace WCML\Multicurrency\UI;
 
 use WCML\MultiCurrency\Geolocation;
+use WCML\StandAlone\IStandAloneAction;
 use WCML\Utilities\Resources;
 use WPML\Collect\Support\Collection;
 use WPML\FP\Fns;
 use WPML\FP\Obj;
 use function WPML\FP\curryN;
 
-class Hooks implements \IWPML_Action {
+class Hooks implements \IWPML_Action, IStandAloneAction {
 
 	const HANDLE = 'wcml-multicurrency-options';
 
