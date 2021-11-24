@@ -3,9 +3,10 @@
 namespace WCML\Multicurrency\Shipping;
 
 use IWPML_Action;
+use WCML\StandAlone\IStandAloneAction;
 use WCML_Multi_Currency;
 
-class AdminHooks implements IWPML_Action {
+class AdminHooks implements IWPML_Action, IStandAloneAction {
 	const WCML_SHIPPING_COSTS = 'wcml_shipping_costs';
 
 	/** @var WCML_Multi_Currency */
