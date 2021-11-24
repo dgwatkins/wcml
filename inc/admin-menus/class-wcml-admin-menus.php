@@ -125,8 +125,7 @@ class WCML_Admin_Menus {
 			$menus_wrap = new WCML_Menus_Wrap( self::$woocommerce_wpml );
 			$menus_wrap->show();
 		} else {
-			global $sitepress;
-			$plugins_wrap = new WCML_Plugins_Wrap( self::$woocommerce_wpml, $sitepress );
+			$plugins_wrap = new \WCML\StandAlone\UI\AdminMenu( self::$sitepress, self::$woocommerce_wpml );
 			$plugins_wrap->show();
 		}
 	}
