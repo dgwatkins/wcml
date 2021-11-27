@@ -105,44 +105,63 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @dataProvider dp_sets_global_ids_without_adjusting_term_ids_in_query_args
+	 *
+	 * @param \WP_Post[]|int[] $global_addons
+	 * @param int[] $expected_ids
 	 */
-	public function it_sets_global_ids_without_adjusting_term_ids_in_query_args() {
+	public function it_sets_global_ids_without_adjusting_term_ids_in_query_args( $global_addons, $expected_ids ) {
+		$args = [
+			'tax_query' => [ 'some query' ],
+		];
 
-		$args              = array();
-		$args['tax_query'] = array();
-
-		$global_addons    = array();
-		$global_addon     = new stdClass();
-		$global_addon->ID = mt_rand( 1, 10 );
-		$global_addons[]  = $global_addon;
-
-		\WP_Mock::wpFunction( 'is_archive', array(
+		\WP_Mock::userFunction( 'is_archive', [
 			'return' => false
-		) );
+		] );
 
-		\WP_Mock::wpFunction( 'get_posts', array(
-			'args'   => array( $args ),
+		\WP_Mock::userFunction( 'get_posts', [
+			'args'   => [ $args ],
 			'return' => $global_addons
-		) );
+		] );
 
-		\WP_Mock::wpFunction( 'wp_list_pluck', array(
-			'return' => array( $global_addon->ID )
-		) );
+		\WP_Mock::userFunction( 'wp_list_pluck', [
+			'args'   => [ $global_addons, 'ID' ],
+			'return' => function( $array, $property ) {
+				return array_map( function( $addon ) use ( $property ) {
+					return $addon->{$property};
+				}, $array );
+			},
+		] );
 
-		\WP_Mock::wpFunction( 'remove_filter', array(
+		\WP_Mock::userFunction( 'remove_filter', [
 			'return' => true,
 			'times'  => 3
-		) );
+		] );
 
-		\WP_Mock::expectFilterAdded( 'get_terms_args', array( $this->sitepress, 'get_terms_args_filter' ), 10, 2 );
-		\WP_Mock::expectFilterAdded( 'get_term', array( $this->sitepress, 'get_term_adjust_id' ), 1 );
-		\WP_Mock::expectFilterAdded( 'terms_clauses', array( $this->sitepress, 'terms_clauses' ), 10, 3 );
+		\WP_Mock::expectFilterAdded( 'get_terms_args', [ $this->sitepress, 'get_terms_args_filter' ], 10, 2 );
+		\WP_Mock::expectFilterAdded( 'get_term', [ $this->sitepress, 'get_term_adjust_id' ], 1 );
+		\WP_Mock::expectFilterAdded( 'terms_clauses', [ $this->sitepress, 'terms_clauses' ], 10, 3 );
 
 		$subject             = $this->get_subject();
 		$filtered_query_args = $subject->set_global_ids_in_query_args( $args );
 
-		$this->assertEquals( array( 'include' => array( $global_addon->ID ) ), $filtered_query_args );
+		$this->assertEquals( [ 'include' => $expected_ids ], $filtered_query_args );
+	}
 
+	public function dp_sets_global_ids_without_adjusting_term_ids_in_query_args() {
+		$global_addon     = Mockery::mock( WP_Post::class );
+		$global_addon->ID = 123;
+
+		return [
+			'get_posts returns objects' => [
+				[ $global_addon ],
+				[ $global_addon->ID ],
+			],
+			'get_posts returns ids'     => [
+				[ $global_addon->ID ],
+				[ $global_addon->ID ],
+			],
+		];
 	}
 
 	/**
