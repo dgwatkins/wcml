@@ -505,7 +505,10 @@ class WCML_Product_Addons {
 			remove_filter( 'get_term', [ $this->sitepress, 'get_term_adjust_id' ], 1 );
 			remove_filter( 'terms_clauses', [ $this->sitepress, 'terms_clauses' ], 10 );
 
-			$matched_addons_ids = wp_list_pluck( get_posts( $args ), 'ID' );
+			$matched_addons_ids = get_posts( $args );
+			if ( is_object( reset( $matched_addons_ids ) ) ) {
+				$matched_addons_ids = wp_list_pluck( $matched_addons_ids, 'ID' );
+			}
 
 			if ( $matched_addons_ids ) {
 				$args['include'] = $matched_addons_ids;
