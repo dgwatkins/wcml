@@ -215,10 +215,13 @@ class WCML_Dependencies {
 	 * Adds admin notice.
 	 */
 	public function _missing_plugins_warning() {
+		if ( $this->is_notice_hidden() ) {
+			return;
+		}
 
 		$missing = '';
 		$counter = 0;
-		foreach ( $this->missing as $title => $url ) {
+		foreach ( $this->filtered_missing() as $title => $url ) {
 			$counter ++;
 			if ( $counter == sizeof( $this->missing ) ) {
 				$sep = '';
@@ -235,6 +238,28 @@ class WCML_Dependencies {
 			<p><?php printf( __( 'WooCommerce Multilingual is enabled but not effective. It requires %s in order to work.', 'woocommerce-multilingual' ), $missing ); ?></p>
 		</div>
 		<?php
+	}
+
+	/**
+	 * If all three (WPML, TM, ST) are missing, we will assume running standalone.
+	 * So the notice is hidden.
+	 *
+	 * @return bool
+	 */
+	private function is_notice_hidden() {
+		return count( $this->missing ) === 3 && empty( $this->missing['WooCommerce'] );
+	}
+
+	/**
+	 * With only WCML active assume running standalone. Only require WooCommerce.
+	 *
+	 * @return array<string, string>
+	 */
+	private function filtered_missing() {
+		if ( count( $this->missing ) === 4 ) {
+			return array_intersect_key( $this->missing, [ 'WooCommerce' => 1 ] );
+		}
+		return $this->missing;
 	}
 
 	/**
