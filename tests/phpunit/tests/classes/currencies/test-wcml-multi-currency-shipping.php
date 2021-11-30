@@ -19,7 +19,7 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 		                             ->setMethods( array( 'get_client_currency' ) )
 		                             ->getMock();
 
-		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
+		$this->sitepress = $this->getMockBuilder( WPML\Core\ISitePress::class )
 		                        ->disableOriginalConstructor()
 		                        ->setMethods( array( 'get_wp_api' ) )
 		                        ->getMock();

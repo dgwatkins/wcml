@@ -11,7 +11,7 @@ class WCML_Multi_Currency_Shipping {
 	/** @var wpdb */
 	private $wpdb;
 
-	public function __construct( WCML_Multi_Currency $multi_currency, Sitepress $sitepress, wpdb $wpdb ) {
+	public function __construct( WCML_Multi_Currency $multi_currency, \WPML\Core\ISitePress $sitepress, wpdb $wpdb ) {
 
 		$this->multi_currency = $multi_currency;
 		$this->sitepress      = $sitepress;

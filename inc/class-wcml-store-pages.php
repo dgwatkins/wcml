@@ -20,7 +20,7 @@ class WCML_Store_Pages {
 	/** @var WP_Post|null $shop_page */
 	private $shop_page;
 
-	public function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress ) {
+	public function __construct( woocommerce_wpml $woocommerce_wpml, \WPML\Core\ISitePress $sitepress ) {
 
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->sitepress        = $sitepress;

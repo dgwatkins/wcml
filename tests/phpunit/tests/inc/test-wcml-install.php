@@ -22,7 +22,7 @@ class Test_WCML_Install extends OTGS_TestCase {
 			->setMethods( [ 'is_wpml_prior_4_2', 'update_settings' ] )
 			->getMock();
 
-		$this->sitepress = $this->getMockBuilder('SitePress')
+		$this->sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 			->disableOriginalConstructor()
 			->setMethods( [ 'get_default_language', 'is_translated_taxonomy' ] )
 			->getMock();

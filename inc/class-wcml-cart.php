@@ -15,7 +15,7 @@ class WCML_Cart {
 	 * @param SitePress        $sitepress
 	 * @param WooCommerce      $woocommerce
 	 */
-	public function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress, WooCommerce $woocommerce ) {
+	public function __construct( woocommerce_wpml $woocommerce_wpml, \WPML\Core\ISitePress $sitepress, WooCommerce $woocommerce ) {
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->sitepress        = $sitepress;
 		$this->woocommerce      = $woocommerce;

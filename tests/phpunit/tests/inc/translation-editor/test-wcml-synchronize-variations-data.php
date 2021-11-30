@@ -18,7 +18,7 @@ class Test_WCML_Synchronize_Variations_Data extends OTGS_TestCase {
 	 */
 	public function get_sitepress() {
 
-		return $this->getMockBuilder( 'SitePress' )
+		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		            ->disableOriginalConstructor()
 		            ->getMock();
 
@@ -113,7 +113,7 @@ class Test_WCML_Synchronize_Variations_Data extends OTGS_TestCase {
 
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock_sync_variations_taxonomies();
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'is_translated_taxonomy' ) )
 		                  ->getMock();

@@ -18,4 +18,17 @@ class Config {
 			\WCML_Currencies_Payment_Gateways::class,
 		];
 	}
+
+	/**
+	 * Replaces global $sitepress with null object.
+	 *
+	 * @return array
+	 */
+	public static function getAliases() {
+		return [
+			\WPML\Core\ISitePress::class => \WCML\functions\isStandAlone()
+						? \WCML\StandAlone\NullSitePress::class
+						: \SitePress::class,
+		];
+	}
 }

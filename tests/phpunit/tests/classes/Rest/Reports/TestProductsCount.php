@@ -18,7 +18,7 @@ class TestProductsCount extends \OTGS_TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->sitepress = $this->getMockBuilder( 'SitePress' )
+		$this->sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                        ->disableOriginalConstructor()
 		                        ->setMethods( [
 			                        'is_active_language'

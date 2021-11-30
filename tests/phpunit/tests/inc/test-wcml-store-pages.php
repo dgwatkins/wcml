@@ -11,7 +11,7 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 	}
 
 	private function get_sitepress(){
-		return $this->getMockBuilder('SitePress')
+		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		            ->disableOriginalConstructor()
 		            ->getMock();
 	}
@@ -163,7 +163,7 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 		$post_type     = 'product';
 		$shop_page_id  = 456;
 
-		$sitepress = $this->getMockBuilder('SitePress')
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_current_language', 'get_default_language' ) )
 		                  ->getMock();

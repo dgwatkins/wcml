@@ -25,6 +25,7 @@ parameters:
     - tests/phpstan/stubs/wpml-media.stub
 
     - tests/phpstan/stubs/compatibility.stub
+    - addons/vendor/autoload.php
 
   paths:
     - classes

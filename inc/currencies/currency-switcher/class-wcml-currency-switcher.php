@@ -17,7 +17,7 @@ class WCML_Currency_Switcher {
 	/** @var boolean */
 	private $is_touch_screen;
 
-	public function __construct( woocommerce_wpml $woocommerce_wpml, Sitepress $sitepress ) {
+	public function __construct( woocommerce_wpml $woocommerce_wpml, \WPML\Core\ISitePress $sitepress ) {
 
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->sitepress        = $sitepress;

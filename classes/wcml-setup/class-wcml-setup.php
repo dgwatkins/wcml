@@ -28,7 +28,7 @@ class WCML_Setup {
 	 * @param woocommerce_wpml    $woocommerce_wpml
 	 * @param SitePress           $sitepress
 	 */
-	public function __construct( WCML_Setup_UI $ui, WCML_Setup_Handlers $handlers, woocommerce_wpml $woocommerce_wpml, SitePress $sitepress ) {
+	public function __construct( WCML_Setup_UI $ui, WCML_Setup_Handlers $handlers, woocommerce_wpml $woocommerce_wpml, \WPML\Core\ISitePress $sitepress ) {
 
 		$this->ui               = $ui;
 		$this->handlers         = $handlers;

@@ -120,7 +120,7 @@ class Test_WCML_Products_SKU extends OTGS_TestCase {
 	 */
 	private function get_stubs() {
 		$wcml                   = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
-		$sitepress              = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->getMock();
+		$sitepress              = $this->getMockBuilder( \WPML\Core\ISitePress::class )->disableOriginalConstructor()->getMock();
 		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )->disableOriginalConstructor()->setMethods( array( 'get_element_trid' ) )->getMock();
 
 		$wpdb = $this->getMockBuilder( 'wpdb' )->disableOriginalConstructor()->setMethods( array(

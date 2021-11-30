@@ -34,7 +34,7 @@ class WCML_Compatibility {
 	private $wpml_post_translations;
 
 	public function __construct(
-		SitePress $sitepress,
+		\WPML\Core\ISitePress $sitepress,
 		woocommerce_wpml $woocommerce_wpml,
 		wpdb $wpdb,
 		WPML_Element_Translation_Package $tp,

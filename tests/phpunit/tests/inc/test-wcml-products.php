@@ -32,7 +32,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 	}
 
 	private function get_sitepress() {
-		return $this->getMockBuilder( 'SitePress' )
+		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		            ->disableOriginalConstructor()
 		            ->getMock();
 	}
@@ -267,7 +267,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'times'  => 1
 		) );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->getMock();
 
@@ -307,7 +307,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'times'  => 1
 		) );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->getMock();
 
@@ -343,7 +343,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 	 */
 	public function add_lang_to_shortcode_products_query(){
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_current_language' ) )
 		                  ->getMock();
@@ -462,7 +462,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		       ->with( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' )
 		       ->willReturn( 1 );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_wp_api', 'get_setting', 'convert_url' ) )
 		                  ->getMock();
@@ -493,7 +493,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		             ->with( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' )
 		             ->willReturn( $negotation_type_domain );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_wp_api', 'get_setting', 'convert_url' ) )
 		                  ->getMock();
@@ -535,7 +535,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		       ->with( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' )
 		       ->willReturn( $negotation_type_domain );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_wp_api', 'get_setting' ) )
 		                  ->getMock();
@@ -727,7 +727,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		       ->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )
 		       ->willReturn( $enable_multi_currency );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_wp_api' ) )
 		                  ->getMock();
@@ -793,7 +793,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		       ->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )
 		       ->willReturn( 2 );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_wp_api' ) )
 		                  ->getMock();
@@ -822,7 +822,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$query = array( 'join' => 'test', 'where' => 'test' );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_current_language' ) )
 		                  ->getMock();
@@ -858,7 +858,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		       ->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )
 		       ->willReturn( 2 );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_wp_api' ) )
 		                  ->getMock();
@@ -992,7 +992,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 	 */
 	public function it_should_filter_wc_searched_products_on_front_in_current_language() {
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_current_language' ) )
 		                  ->getMock();
@@ -1034,7 +1034,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 	 */
 	public function it_should_filter_wc_searched_products_on_admin_in_current_language() {
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_current_language' ) )
 		                  ->getMock();
@@ -1160,7 +1160,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$url               = rand_str();
 		$expected_url      = $url . '&lang=' . $current_language;
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( [ 'get_current_language', 'get_setting', 'get_default_language' ] )
 		                  ->getMock();
@@ -1198,7 +1198,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 			return 'WPML_LANGUAGE_NEGOTIATION_TYPE_PARAMETER' === $name ? 3 : null;
 		});
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( [ 'get_current_language', 'get_setting', 'get_default_language' ] )
 		                  ->getMock();
@@ -1229,7 +1229,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 			return 'WPML_LANGUAGE_NEGOTIATION_TYPE_PARAMETER' === $name ? 3 : null;
 		});
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( [ 'get_setting' ] )
 		                  ->getMock();

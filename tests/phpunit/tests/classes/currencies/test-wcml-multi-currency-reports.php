@@ -417,7 +417,7 @@ class Test_WCML_Multi_Currency_Reports extends OTGS_TestCase {
 	}
 
 	private function get_sitepress_mock() {
-		return $this->getMockBuilder( 'SitePress' )
+		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		            ->disableOriginalConstructor()
 		            ->setMethods( array() )
 		            ->getMock();
