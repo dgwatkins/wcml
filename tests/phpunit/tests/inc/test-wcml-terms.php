@@ -27,7 +27,7 @@ class Test_WCML_Terms extends OTGS_TestCase {
 	 */
 	public function get_sitepress() {
 
-		return $this->getMockBuilder( 'SitePress' )
+		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		            ->disableOriginalConstructor()
 		            ->getMock();
 
@@ -87,7 +87,7 @@ class Test_WCML_Terms extends OTGS_TestCase {
 
 		$product_language           = 'es';
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_current_language', 'get_default_language' ) )
 		                  ->getMock();
@@ -132,7 +132,7 @@ class Test_WCML_Terms extends OTGS_TestCase {
 
 		$this->wpdb->method( 'get_var' )->willReturn( $new_value );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_element_trid', 'get_element_translations' ) )
 		                  ->getMock();
@@ -189,7 +189,7 @@ class Test_WCML_Terms extends OTGS_TestCase {
 			'return' => $expected_terms
 		] );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'switch_lang', 'get_default_language' ) )
 		                  ->getMock();
@@ -279,7 +279,7 @@ class Test_WCML_Terms extends OTGS_TestCase {
 		$taxonomies = [ 'product_shipping_class' ];
 		$args       = [ 'taxonomy' => $taxonomies ];
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'switch_lang', 'get_default_language' ) )
 		                  ->getMock();
@@ -302,7 +302,7 @@ class Test_WCML_Terms extends OTGS_TestCase {
 		$cache_key = rand_str();
 		$current_language = 'es';
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( ['get_current_language'] )
 		                  ->getMock();

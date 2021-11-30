@@ -20,7 +20,7 @@ class WCML_WC_Gateways {
 	 * @param woocommerce_wpml $woocommerce_wpml
 	 * @param SitePress        $sitepress
 	 */
-	public function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress ) {
+	public function __construct( woocommerce_wpml $woocommerce_wpml, \WPML\Core\ISitePress $sitepress ) {
 		$this->sitepress        = $sitepress;
 		$this->woocommerce_wpml = $woocommerce_wpml;
 

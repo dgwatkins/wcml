@@ -79,7 +79,7 @@ class Test_WCML_Store_URLs_UI extends OTGS_TestCase {
 			->disableOriginalConstructor()
 			->getMock();
 		$woocommerce_wpml->url_translation = $url_translation;
-		$sitepress                         = $this->getMockBuilder( SitePress::class )
+		$sitepress                         = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 			->disableOriginalConstructor()
 			->setMethods( [ 'get_active_languages', 'get_flag_url' ] )
 			->getMock();

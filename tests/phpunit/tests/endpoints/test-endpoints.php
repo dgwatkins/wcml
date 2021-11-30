@@ -166,7 +166,7 @@ class Test_Endpoints extends OTGS_TestCase {
 		$translated_endpoint_url = rand_str();
 
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->setMethods(
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )->disableOriginalConstructor()->setMethods(
 			array(
 				'convert_url'
 			)
@@ -232,7 +232,7 @@ class Test_Endpoints extends OTGS_TestCase {
 	private function get_sitepress( $is_display_as_translated = false ) {
 		$that = $this;
 		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
-		$sitepress = $this->getMockBuilder( 'SitePress' )->disableOriginalConstructor()->setMethods(
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )->disableOriginalConstructor()->setMethods(
 			array(
 				'get_current_language',
 				'get_active_languages',

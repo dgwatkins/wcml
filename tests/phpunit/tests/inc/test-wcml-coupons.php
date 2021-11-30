@@ -20,7 +20,7 @@ class Test_WCML_Coupons extends OTGS_TestCase {
 	 * @return \PHPUnit_Framework_MockObject_MockObject|\SitePress
 	 */
 	private function get_sitepress_mock() {
-		return $this->getMockBuilder( 'SitePress' )
+		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
 					->disableOriginalConstructor()
 					->setMethods( array( 'get_current_language', 'get_object_id' ) )
 					->getMock();

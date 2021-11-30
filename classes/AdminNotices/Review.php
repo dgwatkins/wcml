@@ -7,7 +7,7 @@ use IWPML_Backend_Action;
 use IWPML_Frontend_Action;
 use IWPML_DIC_Action;
 use wpdb;
-use SitePress;
+use WPML\Core\ISitePress;
 
 class Review implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Action {
 
@@ -29,7 +29,7 @@ class Review implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_A
 	 * @param wpdb $wpdb
 	 * @param SitePress $sitepress
 	 */
-	public function __construct( WPML_Notices $wpmlNotices, wpdb $wpdb, SitePress $sitepress ) {
+	public function __construct( WPML_Notices $wpmlNotices, wpdb $wpdb, ISitePress $sitepress ) {
 		$this->wpmlNotices = $wpmlNotices;
 		$this->wpdb        = $wpdb;
 		$this->sitepress   = $sitepress;

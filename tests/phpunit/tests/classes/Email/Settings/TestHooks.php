@@ -190,7 +190,7 @@ class TestHooks extends \OTGS_TestCase {
 	}
 
 	private function getSitepress() {
-		return $this->getMockBuilder( '\SitePress' )
+		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
 			->setMethods(
 				[
 					'get_default_language',

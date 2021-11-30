@@ -1,5 +1,7 @@
 <?php
 
+use WCML\StandAlone\NullSitePress;
+
 use function WPML\Container\make;
 
 /**
@@ -86,7 +88,7 @@ class woocommerce_wpml {
 	private $wcml_products_screen;
 
 	public function __construct() {
-		global $sitepress;
+		$sitepress = \WCML\functions\getSitePress();
 
 		$this->settings   = $this->get_settings();
 		$this->currencies = new WCML_Currencies( $this );
@@ -108,7 +110,7 @@ class woocommerce_wpml {
 	}
 
 	private function load_rest_api() {
-		global $sitepress;
+		$sitepress = \WCML\functions\getSitePress();
 
 		if ( class_exists( 'WooCommerce' ) && defined( 'WC_VERSION' ) && ! is_null( $sitepress ) && WCML\Rest\Functions::isRestApiRequest() ) {
 			WCML\Rest\Hooks::addHooks();
@@ -130,7 +132,8 @@ class woocommerce_wpml {
 	 * @return bool
 	 */
 	public function init() {
-		global $sitepress, $wpdb, $woocommerce, $wpml_url_converter, $wpml_post_translations, $wpml_term_translations;
+		$sitepress = \WCML\functions\getSitePress();
+		global $wpdb, $woocommerce, $wpml_url_converter, $wpml_post_translations, $wpml_term_translations;
 
 		$this->dependencies        = new WCML_Dependencies();
 		$this->dependencies_are_ok = $this->dependencies->check();
@@ -470,7 +473,7 @@ class woocommerce_wpml {
 	 * @return bool
 	 */
 	public function is_wpml_prior_4_2() {
-		global $sitepress;
+		$sitepress = \WCML\functions\getSitePress();
 
 		return $sitepress->get_wp_api()->version_compare( $this->get_constant( 'ICL_SITEPRESS_VERSION' ), '4.2.0', '<' ) ||
 			   $sitepress->get_wp_api()->version_compare( $this->get_constant( 'WPML_TM_VERSION' ), '2.8.0', '<' );

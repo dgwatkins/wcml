@@ -15,7 +15,7 @@ class WCML_Settings_UI extends WCML_Templates_Factory {
 	 * @param woocommerce_wpml $woocommerce_wpml
 	 * @param SitePress        $sitepress
 	 */
-	public function __construct( woocommerce_wpml $woocommerce_wpml, Sitepress $sitepress ) {
+	public function __construct( woocommerce_wpml $woocommerce_wpml, \WPML\Core\ISitePress $sitepress ) {
 
 		$functions = [
 			new Twig_SimpleFunction( 'wp_do_action', [ $this, 'wp_do_action' ] ),

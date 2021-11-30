@@ -17,7 +17,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 	 * @return SitePress
 	 */
 	private function get_sitepress( $wp_api = null ) {
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_current_language', 'get_default_language' ) )
 		                  ->getMock();
