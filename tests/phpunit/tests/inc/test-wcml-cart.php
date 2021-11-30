@@ -27,7 +27,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 		\WP_Mock::passthruFunction( 'esc_html__' );
 		\WP_Mock::passthruFunction( 'esc_url' );
 
-		$this->sitepress = $this->getMockBuilder('SitePress')
+		$this->sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 			->disableOriginalConstructor()
 			->setMethods( array( 'get_wp_api', 'get_element_trid', 'get_setting', 'get_current_language', 'get_object_id', 'is_display_as_translated_post_type' ) )
 			->getMock();

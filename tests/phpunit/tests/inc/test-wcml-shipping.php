@@ -19,7 +19,7 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 	}
 
 	private function get_sitepress_mock() {
-		return $this->getMockBuilder( 'SitePress' )
+		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		            ->disableOriginalConstructor()
 		            ->setMethods( array(
 			            'get_current_language',
@@ -86,7 +86,7 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 
 		$shipping_id = rand_str();
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 			->disableOriginalConstructor()
 			->setMethods( array(
 				'get_current_language'
@@ -123,7 +123,7 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 		$language = 'de';
 
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array(
 			                  'get_current_language'
@@ -149,7 +149,7 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 
 		$shipping_id      = rand_str();
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array(
 			                  'get_current_language'
@@ -197,7 +197,7 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 		$shipping_id      = rand_str();
 		$language         = 'en';
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array(
 			                  'get_current_language'
@@ -237,7 +237,7 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 		$shipping_method->instance_settings = array();
 		$shipping_method->instance_settings['class_cost_'.$original_class_id] = 100;
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array(
 			                  'term_translations',
@@ -299,7 +299,7 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 	 * @test
 	 */
 	public function update_woocommerce_shipping_settings_for_class_costs( $settings, $getTermResult, $expectedSettings, $termTranslations, $getTermByResult ) {
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array(
 			                  'get_element_translations',

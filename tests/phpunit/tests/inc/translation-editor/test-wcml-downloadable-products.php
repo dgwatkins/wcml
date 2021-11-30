@@ -25,7 +25,7 @@ class Test_WCML_Downloadable_Products extends OTGS_TestCase {
 		                               ->disableOriginalConstructor()
 		                               ->getMock();
 
-		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
+		$this->sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                        ->disableOriginalConstructor()
 		                        ->setMethods( array( 'get_wp_api' ) )
 		                        ->getMock();

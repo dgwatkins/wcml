@@ -28,7 +28,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 	}
 
 	private function get_sitepress() {
-		return $this->getMockBuilder( 'SitePress' )
+		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
 					->setMethods( [
 						'get_current_language'
 					] )
@@ -357,7 +357,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 			->getMock();
 		$woocommerce_wpml->method( 'get_setting' )->willReturn( $default_all );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 			->disableOriginalConstructor()
 			->setMethods( array( 'get_current_language', 'get_language_details' ) )
 			->getMock();
@@ -470,7 +470,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 			'return' => 'product'
 		));
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_language_for_element', 'get_flag_url' ) )
 		                  ->getMock();
@@ -691,7 +691,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$ratingTerm->term_taxonomy_id = 10;
 
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( [ 'get_current_language' ] )
 		                  ->getMock();

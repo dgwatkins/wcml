@@ -12,7 +12,7 @@ class WCML_Status_Media_UI extends WCML_Templates_Factory {
 	 *
 	 * @param SitePress $sitepress
 	 */
-	public function __construct( SitePress $sitepress ) {
+	public function __construct( \WPML\Core\ISitePress $sitepress ) {
 		parent::__construct();
 
 		$this->sitepress = $sitepress;

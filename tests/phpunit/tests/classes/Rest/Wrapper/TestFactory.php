@@ -24,7 +24,7 @@ class TestFactory extends \OTGS_TestCase {
 
 		$wpml_post_translations = \Mockery::mock( '\WPML_Post_Translation' );
 		$wpml_term_translations = \Mockery::mock( '\WPML_Term_Translation' );
-		$sitepress              = \Mockery::mock( '\SitePress' );
+		$sitepress              = \Mockery::mock( \WPML\Core\ISitePress::class );
 		$sitepress->shouldReceive( 'get_settings' )->andReturn( [] );
 		$wpml_query_filter      = \Mockery::mock( '\WPML_Query_Filter' );
 		$wpdb                   = \Mockery::mock( '\wpdb' );

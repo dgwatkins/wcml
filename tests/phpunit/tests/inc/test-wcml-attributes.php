@@ -42,7 +42,7 @@ class Test_WCML_Attributes extends OTGS_TestCase {
 			->setMethods( array( ) )
 			->getMock();
 
-		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
+		$this->sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 			->disableOriginalConstructor()
 			->setMethods( array( 'get_wp_api', 'get_current_language', 'get_setting', 'set_setting', 'verify_taxonomy_translations', 'switch_lang' ) )
 			->getMock();

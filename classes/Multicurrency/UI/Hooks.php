@@ -28,7 +28,7 @@ class Hooks implements \IWPML_Action {
 	public function __construct(
 		\WCML_Multi_Currency $multiCurrency,
 		\WCML_Currencies_Payment_Gateways $currenciesPaymentGateways,
-		\SitePress $sitepress,
+		\WPML\Core\ISitePress $sitepress,
 		array $wcmlSettings
 	) {
 		$this->multiCurrency             = $multiCurrency;

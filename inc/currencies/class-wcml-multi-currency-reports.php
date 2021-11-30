@@ -22,7 +22,7 @@ class WCML_Multi_Currency_Reports {
 	 * @param wpdb $wpdb
 	 * @param WPML_WP_Cache $wpml_cache
 	 */
-	public function __construct( woocommerce_wpml $woocommerce_wpml, Sitepress $sitepress, wpdb $wpdb, $wpml_cache = null ) {
+	public function __construct( woocommerce_wpml $woocommerce_wpml, \WPML\Core\ISitePress $sitepress, wpdb $wpdb, $wpml_cache = null ) {
 
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->sitepress        = $sitepress;

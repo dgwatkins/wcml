@@ -22,7 +22,7 @@ class WCML_Emails {
 	/** @var wpdb */
 	private $wpdb;
 
-	public function __construct( WCML_WC_Strings $wcmlStrings, SitePress $sitepress, woocommerce $woocommerce, wpdb $wpdb ) {
+	public function __construct( WCML_WC_Strings $wcmlStrings, \WPML\Core\ISitePress $sitepress, woocommerce $woocommerce, wpdb $wpdb ) {
 		$this->wcmlStrings = $wcmlStrings;
 		$this->sitepress   = $sitepress;
 		$this->woocommerce = $woocommerce;

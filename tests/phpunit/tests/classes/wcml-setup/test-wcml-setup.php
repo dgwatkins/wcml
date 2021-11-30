@@ -49,7 +49,7 @@ class Test_WCML_Setup extends OTGS_TestCase {
 
 	private function get_sitepress_mock() {
 
-		$sitepress = $this->getMockBuilder( 'Sitepress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                        ->disableOriginalConstructor()
 		                        ->setMethods( array( 'get_wp_api' ) )
 		                        ->getMock();

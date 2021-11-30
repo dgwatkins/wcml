@@ -83,7 +83,7 @@ class TestHooks extends \OTGS_TestCase {
 	 * @return \PHPUnit_Framework_MockObject_MockObject|\SitePress
 	 */
 	private function getSitepress() {
-		return $this->getMockBuilder( '\SitePress' )
+		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
 			->setMethods(
 				[
 					'get_current_language',

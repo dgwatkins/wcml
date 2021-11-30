@@ -15,7 +15,7 @@ class WCML_Currency_Switcher {
 	/** @var Sitepress */
 	private $sitepress;
 
-	public function __construct( woocommerce_wpml $woocommerce_wpml, Sitepress $sitepress ) {
+	public function __construct( woocommerce_wpml $woocommerce_wpml, \WPML\Core\ISitePress $sitepress ) {
 
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->sitepress        = $sitepress;

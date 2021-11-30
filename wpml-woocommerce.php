@@ -77,6 +77,7 @@ function wcml_loader() {
 
 	\WPML\Container\share( \WCML\Container\Config::getSharedInstances() );
 	\WPML\Container\share( \WCML\Container\Config::getSharedClasses() );
+	\WPML\Container\alias( \WCML\Container\Config::getAliases() );
 
 	$xdomain_data = new WCML_xDomain_Data( new WPML_Cookie() );
 	$xdomain_data->add_hooks();

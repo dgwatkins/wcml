@@ -6,7 +6,7 @@
 class Test_WCML_Status_Media_UI extends OTGS_TestCase {
 
 	private function get_sitepress() {
-		return $this->getMockBuilder( 'SitePress' )
+		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		            ->disableOriginalConstructor()
 		            ->setMethods( [ 'get_wp_api' ] )
 		            ->getMock();

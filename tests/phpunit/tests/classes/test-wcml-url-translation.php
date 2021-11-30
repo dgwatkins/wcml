@@ -22,7 +22,7 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 	 * @return SitePress
 	 */
 	private function get_sitepress( $wp_api = null ) {
-		$sitepress = $this->getMockBuilder('SitePress')
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_wp_api' ) )
 		                  ->getMock();
@@ -136,7 +136,7 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 
 		$woocommerce_wpml->strings->method( 'get_string_language' )->willReturn( rand_str() );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_current_language' ) )
 		                  ->getMock();
@@ -209,7 +209,7 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 
 		$woocommerce_wpml->strings->expects($this->once())->method( 'get_translation_from_woocommerce_mo_file' )->willReturn( $translated_slug );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_language_for_element' ) )
 		                  ->getMock();
@@ -394,7 +394,7 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 		        ->with( $current_shop_id, 'page', true, $default_language )
 		        ->reply( $default_shop_id );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( [ 'get_default_language' ] )
 		                  ->getMock();
@@ -440,7 +440,7 @@ class Test_WCML_url_translation extends OTGS_TestCase {
 		$woocommerce_wpml->strings->method( 'product_permalink_slug' )
 			->willReturn( $slug );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
 			->disableOriginalConstructor()
 			->setMethods( [ 'get_language_for_element', 'get_current_language' ] )
 			->getMock();

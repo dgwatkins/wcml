@@ -15,7 +15,7 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 
 	public function get_sitepress() {
 
-		return $this->getMockBuilder( 'SitePress' )
+		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
 		            ->disableOriginalConstructor()
 					->setMethods( [ 'get_current_language', 'get_default_language' ] )
 		            ->getMock();
