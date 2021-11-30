@@ -1,14 +1,16 @@
 <?php
 
+use WCML\Options\WPML;
 use WPML\FP\Fns;
 use WPML\FP\Obj;
-
-use function WPML\FP\partial;
-use function WPML\FP\pipe;
+use WPML\FP\Str;
 
 class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 	const PRICE_FILTERS_PRIORITY_AFTER_COMPOSITE = 99;
+
+	const META_KEY_DATA     = '_bto_data';
+	const META_KEY_SCENARIO = '_bto_scenario_data';
 
 	/**
 	 * @var SitePress
@@ -42,11 +44,15 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 		add_filter( 'woocommerce_composite_component_options_query_args', array($this, 'wpml_composites_transients_cache_per_language'), 10, 3 );
 		add_action( 'wcml_before_sync_product_data', array( $this, 'sync_composite_data_across_translations' ), 10, 2 );
 		add_action( 'wpml_translation_job_saved',   array( $this, 'save_composite_data_translation' ), 10, 3 );
+
 		if( is_admin() ){
 
-			add_action( 'wcml_gui_additional_box_html', array( $this, 'custom_box_html' ), 10, 3 );
-			add_filter( 'wcml_gui_additional_box_data', array( $this, 'custom_box_html_data' ), 10, 4 );
-			add_action( 'wcml_update_extra_fields', array( $this, 'update_component_strings' ), 10, 4 );
+			if ( ! WPML::useAte() ) {  // Legacy actions/filters for CTE
+				add_action( 'wcml_gui_additional_box_html', [ $this, 'custom_box_html' ], 10, 3 );
+				add_filter( 'wcml_gui_additional_box_data', [ $this, 'custom_box_html_data' ], 10, 4 );
+				add_action( 'wcml_update_extra_fields', [ $this, 'update_component_strings' ], 10, 4 );
+			}
+
 			add_filter( 'woocommerce_json_search_found_products', array( $this, 'woocommerce_json_search_found_products' ) );
 
 			add_filter( 'wpml_tm_translation_job_data', array( $this, 'append_composite_data_translation_package' ), 10, 2 );
@@ -166,7 +172,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 					}
 
-					update_post_meta( $product_translation->element_id, '_bto_data', $composite_data );
+					update_post_meta( $product_translation->element_id, self::META_KEY_DATA, $composite_data );
 
 					if ( $composite_scenarios_meta ) {
 						// sync product ids
@@ -185,7 +191,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 							->map( Obj::over( Obj::lensPath( [ 'scenario_actions', 'conditional_options', 'component_data' ] ), $translate_product_ids ) )
 							->toArray();
 
-						update_post_meta( $product_translation->element_id, '_bto_scenario_data', $composite_scenarios_meta );
+						update_post_meta( $product_translation->element_id, self::META_KEY_SCENARIO, $composite_scenarios_meta );
 					}
 				}
 			}
@@ -193,6 +199,13 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 		}
 	}
 
+	/**
+	 * @deprecated This method is used by CTE only.
+	 *
+	 * @param object     $obj
+	 * @param string|int $product_id
+	 * @param mixed      $data
+	 */
 	public function custom_box_html( $obj, $product_id, $data ){
 
 		if( $this->get_product_type( $product_id ) == 'composite' ){
@@ -248,6 +261,16 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 	}
 
+	/**
+	 * @deprecated This method is used by CTE only.
+	 *
+	 * @param array      $data
+	 * @param string|int $bundle_id
+	 * @param object     $translation
+	 * @param string     $lang
+	 *
+	 * @return array
+	 */
 	public function custom_box_html_data( $data, $product_id, $translation, $lang ){
 
 		if( $this->get_product_type( $product_id ) == 'composite' ){
@@ -310,7 +333,16 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 		return $data;
 	}
 
-
+	/**
+	 * @deprecated This method is used by CTE only.
+	 *
+	 * @param string|int $original_product_id
+	 * @param string|int $product_id
+	 * @param array      $data
+	 * @param string     $language
+	 *
+	 * @return array
+	 */
 	public function update_component_strings( $original_product_id, $product_id, $data, $language ){
 
 		$composite_data = $this->get_composite_data( $product_id );
@@ -327,7 +359,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 
 		}
 
-		update_post_meta( $product_id, '_bto_data', $composite_data );
+		update_post_meta( $product_id, self::META_KEY_DATA, $composite_data );
 
 		$composite_scenarios_meta = $this->get_composite_scenarios_meta( $product_id );
 		if( $composite_scenarios_meta ){
@@ -342,7 +374,7 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 			}
 		}
 
-		update_post_meta( $product_id, '_bto_scenario_data', $composite_scenarios_meta );
+		update_post_meta( $product_id, self::META_KEY_SCENARIO, $composite_scenarios_meta );
 
 		return array(
 			'components' => $composite_data,
@@ -350,92 +382,117 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 		);
 	}
 
+	/**
+	 * @param array              $package
+	 * @param \stdClass|\WP_Post $post
+	 *
+	 * @return array
+	 */
 	public function append_composite_data_translation_package( $package, $post ){
-
-		if( $post->post_type == 'product' ) {
-
-			$composite_data = get_post_meta( $post->ID, '_bto_data', true );
-
-			if( $composite_data ){
-
-				$fields = array( 'title', 'description' );
-
-				foreach( $composite_data as $component_id => $component ){
-
-					foreach( $fields as $field ) {
-						if ( !empty($component[$field]) ) {
-
-							$package['contents']['wc_composite:' . $component_id . ':' . $field] = array(
-								'translate' => 1,
-								'data' => $this->tp->encode_field_data( $component[$field], 'base64' ),
-								'format' => 'base64'
-							);
-
+		if( 'product' === $post->post_type ) {
+			// $add_titles_and_descriptions :: (array, string, array) -> void
+			$add_fields_to_package = function( $data, $fields, $subtype ) use ( &$package ) {
+				if ( $data ) {
+					foreach( $data as $key => $meta ){
+						foreach( $fields as $field ) {
+							if ( ! empty( $meta[ $field ] ) ) {
+								$package['contents'][ self::get_field_name( $key, $field, $subtype ) ] = [
+									'translate' => 1,
+									'data'      => base64_encode( $meta[ $field ] ),
+									'format'    => 'base64',
+								];
+							}
 						}
 					}
-
 				}
+			};
 
-			}
-
+			$add_fields_to_package( $this->get_composite_data( $post->ID ), [ 'title', 'description' ], '' );
+			$add_fields_to_package( $this->get_composite_scenarios_meta( $post->ID ), [ 'title', 'description' ], 'scenario' );
 		}
 
 		return $package;
-
 	}
 
+	/**
+	 * @param string $component_id
+	 * @param string $field
+	 * @param string $subtype
+	 *
+	 * @return string
+	 */
+	private static function get_field_name( $component_id, $field, $subtype ) {
+		$subtype = $subtype ? $subtype . ':' : $subtype;
+		return 'wc_composite:' . $subtype . $component_id . ':' . $field;
+	}
+
+	/**
+	 * @param string|int $post_id
+	 * @param array      $data
+	 * @param object     $job
+	 */
 	public function save_composite_data_translation( $post_id, $data, $job ){
+		if (
+			Str::startsWith( 'post_', $job->original_post_type )
+			&& 'product' === get_post_type( $job->original_doc_id )
+		) {
+			$composite_data = $this->get_composite_data( $job->original_doc_id );
 
+			if ( $composite_data ) {
+				$get_translation = function ( $name ) use ( $data ) {
+					return Obj::path( [ $name, 'data' ], $data );
+				};
 
-		$translated_composite_data = array();
-		foreach( $data as $value){
+				// $apply_translations :: (array, array, string) -> array
+				$apply_translations = function ( $data, $fields, $subtype ) use ( $get_translation ) {
+					foreach ( $data as $key => $meta ) {
+						foreach ( $fields as $field ) {
+							$translation = $get_translation( self::get_field_name( $key, $field, $subtype ) );
 
-			if( preg_match( '/wc_composite:([0-9]+):(.+)/', $value['field_type'], $matches ) ){
-
-				$component_id = $matches[1];
-				$field        = $matches[2];
-
-				$translated_composite_data[$component_id][$field] = $value['data'];
-
-			}
-
-		}
-
-		if( $translated_composite_data ){
-
-			$composite_data = get_post_meta( $job->original_doc_id, '_bto_data', true );
-
-
-			foreach ( $composite_data as $component_id => $component ) {
-
-				if( isset( $translated_composite_data[$component_id]['title'] ) ){
-					$composite_data[$component_id]['title'] =  $translated_composite_data[$component_id]['title'];
-				}
-
-				if( isset( $translated_composite_data[$component_id]['description'] ) ){
-					$composite_data[$component_id]['description'] =  $translated_composite_data[$component_id]['description'];
-				}
-
-				if ( $component['query_type'] == 'product_ids' ) {
-
-					foreach ( $component['assigned_ids'] as $idx => $assigned_id ) {
-						$composite_data[$component_id]['assigned_ids'][$idx] =
-							apply_filters( 'wpml_object_id', $assigned_id, 'product', true, $job->language_code );
+							if ( $translation ) {
+								$data[ $key ][ $field ] = $translation;
+							}
+						}
 					}
 
-				} elseif( $component['query_type'] == 'category_ids' ){
+					return $data;
+				};
 
-					foreach ( $component['assigned_category_ids'] as $idx => $assigned_id ) {
-						$composite_data[$component_id]['assigned_category_ids'][$idx] =
-							apply_filters( 'wpml_object_id', $assigned_id, 'product_cat', true, $job->language_code );
+				// $adjust_ids :: (array, string) -> array
+				$adjust_ids = function ( $data, $lang ) {
+					foreach ( $data as $key => $meta ) {
+						$ids_key = $cpt = null;
 
+						if ( 'product_ids' === $meta['query_type'] ) {
+							$ids_key = 'assigned_ids';
+							$cpt     = 'product';
+						} elseif ( 'category_ids' === $meta['query_type'] ) {
+							$ids_key = 'assigned_category_ids';
+							$cpt     = 'product_cat';
+						}
+
+						if ( $ids_key && $cpt ) {
+							foreach ( $meta[ $ids_key ] as $idx => $assigned_id ) {
+								$data[ $key ][ $ids_key ][ $idx ] = apply_filters( 'wpml_object_id', $assigned_id, $cpt, true, $lang );
+							}
+						}
 					}
 
-				}
+					return $data;
+				};
 
+				update_post_meta(
+					$post_id,
+					self::META_KEY_DATA,
+					$adjust_ids( $apply_translations( $composite_data, [ 'title', 'description' ], '' ), $job->language_code )
+				);
+
+				update_post_meta(
+					$post_id,
+					self::META_KEY_SCENARIO,
+					$apply_translations( $this->get_composite_scenarios_meta( $job->original_doc_id ), [ 'title', 'description' ], 'scenario' )
+				);
 			}
-
-			update_post_meta( $post_id, '_bto_data', $composite_data );
 		}
 	}
 
@@ -494,11 +551,11 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 	}
 
 	public function get_composite_scenarios_meta( $product_id ){
-		return get_post_meta( $product_id, '_bto_scenario_data', true );
+		return get_post_meta( $product_id, self::META_KEY_SCENARIO, true );
 	}
 
 	public function get_composite_data( $product_id ){
-		return get_post_meta( $product_id, '_bto_data', true ) ?: [];
+		return get_post_meta( $product_id, self::META_KEY_DATA, true ) ?: [];
 	}
 
 
@@ -565,8 +622,8 @@ class WCML_Composite_Products extends WCML_Compatibility_Helper{
 	}
 
 	public function replace_tm_editor_custom_fields_with_own_sections( $fields ){
-		$fields[] = '_bto_data';
-		$fields[] = '_bto_scenario_data';
+		$fields[] = self::META_KEY_DATA;
+		$fields[] = self::META_KEY_SCENARIO;
 
 		return $fields;
 	}

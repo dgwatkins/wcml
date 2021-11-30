@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Str;
+
 /**
  * @group wcml-3687
  */
@@ -439,5 +441,187 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 		$subject->sync_composite_data_across_translations( $original_product_id, $current_product_id );
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3841
+	 */
+	public function it_should_append_composite_data_translation_package() {
+		$get_item = function( $string ) {
+			return [
+				'translate' => 1,
+				'data'      => base64_encode( $string ),
+				'format'    => 'base64',
+			];
+		};
+
+		$post            = \Mockery::mock( \WP_Post::class );
+		$post->post_type = 'product';
+		$post->ID        = 123;
+
+		$component_id = 1638382248;
+		$title        = 'The title';
+		$description  = 'The description';
+
+		$package = [
+			'contents' => [
+				'foo' => $get_item( 'bar' ),
+			],
+		];
+
+		$expected_package = [
+			'contents' => [
+				'foo'                                             => $get_item( 'bar' ),
+				"wc_composite:$component_id:title"                => $get_item( $title ),
+				"wc_composite:$component_id:description"          => $get_item( $description ),
+				"wc_composite:scenario:$component_id:title"       => $get_item( $title ),
+				"wc_composite:scenario:$component_id:description" => $get_item( $description ),
+			],
+		];
+
+		$original_cp_data = [
+			$component_id => [
+				'title'       => $title,
+				'description' => $description,
+			]
+		];
+
+		$original_cp_scenario = [
+			$component_id => [
+				'title'        => $title,
+				'description'  => $description,
+			]
+		];
+
+		\WP_Mock::userFunction( 'get_post_meta' )
+		        ->withArgs( [ $post->ID, '_bto_data', true ] )
+		        ->andReturn( $original_cp_data );
+
+		\WP_Mock::userFunction( 'get_post_meta' )
+		        ->withArgs( [ $post->ID, '_bto_scenario_data', true ] )
+		        ->andReturn( $original_cp_scenario );
+
+		$this->assertEquals(
+			$expected_package,
+			$this->get_subject()->append_composite_data_translation_package( $package, $post )
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider dp_should_save_composite_data_translation
+	 * @group wcml-3841
+	 *
+	 * @param string $query_type
+	 * @param string $query_cpt
+	 * @param string $ids_key
+	 */
+	public function it_should_save_composite_data_translation( $query_type, $query_cpt, $ids_key ) {
+		$original_post_id   = 123;
+		$post_id            = 456;
+		$post_type          = 'product';
+		$target_lang        = 'fr';
+		$component_id       = 1638382248;
+		$original_target_id = 1000;
+		$target_id          = 1001;
+		$title              = 'The title';
+		$description        = 'The description';
+
+		$translate = Str::concat( "$target_lang " );
+
+		$data = [
+			"wc_composite:$component_id:title" => [
+				'data' => $translate( $title ),
+			],
+			"wc_composite:$component_id:description" => [
+				'data' => $translate( $description ),
+			],
+			"wc_composite:scenario:$component_id:title" => [
+				'data' => $translate( $title ),
+			],
+			"wc_composite:scenario:$component_id:description" => [
+				'data' => $translate( $description ),
+			],
+		];
+
+		$job = (object) [
+			'original_post_type' => "post_$post_type",
+			'original_doc_id'    => $original_post_id,
+			'language_code'      => $target_lang,
+		];
+
+		$original_cp_data = [
+			$component_id => [
+				'query_type'  => $query_type,
+				$ids_key      => [ $original_target_id ],
+				'title'       => $title,
+				'description' => $description,
+			]
+		];
+
+		$original_cp_scenario = [
+			$component_id => [
+				'title'        => $title,
+				'description'  => $description,
+			]
+		];
+
+		$expected_cp_data   = [
+			$component_id => [
+				'query_type'  => $query_type,
+				$ids_key      => [ $target_id ],
+				'title'       => $translate( $title ),
+				'description' => $translate( $description ),
+			]
+		];
+
+		$expected_cp_scenario = [
+			$component_id => [
+				'title'        => $translate( $title ),
+				'description'  => $translate( $description ),
+			]
+		];
+
+		\WP_Mock::userFunction( 'get_post_type' )
+			->withArgs( [ $original_post_id ] )
+			->andReturn( $post_type );
+
+		\WP_Mock::userFunction( 'get_post_meta' )
+			->withArgs( [ $original_post_id, '_bto_data', true ] )
+			->andReturn( $original_cp_data );
+
+		\WP_Mock::userFunction( 'get_post_meta' )
+			->withArgs( [ $original_post_id, '_bto_scenario_data', true ] )
+			->andReturn( $original_cp_scenario );
+
+		\WP_Mock::onFilter( 'wpml_object_id' )
+			->with( $original_target_id, $query_cpt, true, $target_lang )
+			->reply( $target_id );
+
+		\WP_Mock::userFunction( 'update_post_meta' )
+			->times( 1 )
+			->withArgs( [ $post_id, '_bto_data', $expected_cp_data ] );
+
+		\WP_Mock::userFunction( 'update_post_meta' )
+			->times( 1 )
+			->withArgs( [ $post_id, '_bto_scenario_data', $expected_cp_scenario ] );
+
+		$this->get_subject()->save_composite_data_translation( $post_id, $data, $job );
+	}
+
+	public function dp_should_save_composite_data_translation() {
+		return [
+			'product ids' => [
+				'product_ids',
+				'product',
+				'assigned_ids',
+			],
+			'category ids' => [
+				'category_ids',
+				'product_cat',
+				'assigned_category_ids',
+			],
+		];
 	}
 }
