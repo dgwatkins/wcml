@@ -159,7 +159,7 @@ class WCML_Setup {
 
 		$this->step = isset( $_GET['step'] ) ? sanitize_key( $_GET['step'] ) : current( array_keys( $this->steps ) );
 
-		wp_enqueue_style( 'otgs-ico', ICL_PLUGIN_URL . '/res/css/otgs-ico.css', null, ICL_SITEPRESS_VERSION );
+		wp_enqueue_style( 'otgs-ico', \WCML\functions\assetLink( '/res/css/otgs-ico.css' ), null, ICL_SITEPRESS_VERSION );
 		wp_enqueue_style(
 			'wcml-setup',
 			WCML_PLUGIN_URL . '/res/css/wcml-setup.css',
