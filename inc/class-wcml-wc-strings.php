@@ -218,18 +218,15 @@ class WCML_WC_Strings {
 
 
 	public function show_custom_url_base_language_requirement() {
-		$category_base = ( $c = get_option( 'category_base' ) ) ? $c : 'category';
+		$category_base   = ( $c = get_option( 'category_base' ) ) ? $c : 'category';
+		$category_notice = __( 'You are using the same value as for the regular category base. This is known to create conflicts resulting in urls not working properly.', 'woocommerce-multilingual' );
 		?>
 		<script>
 			if (jQuery('#woocommerce_permalink_structure').length) {
 				jQuery('#woocommerce_permalink_structure').parent().append(jQuery('#wpml_wcml_custom_base_req').html());
 			}
 			if (jQuery('input[name="woocommerce_product_category_slug"]').length && jQuery('input[name="woocommerce_product_category_slug"]').val() == '<?php echo $category_base; ?>') {
-				jQuery('input[name="woocommerce_product_category_slug"]').parent().append('<br><i class="icon-warning-sign">
-				<?php
-					_e( 'You are using the same value as for the regular category base. This is known to create conflicts resulting in urls not working properly.', 'woocommerce-multilingual' )
-				?>
-					</i>');
+				jQuery('input[name="woocommerce_product_category_slug"]').parent().append('<br><i class="icon-warning-sign"><?php echo $category_notice; ?></i>');
 			}
 		</script>
 		<?php
