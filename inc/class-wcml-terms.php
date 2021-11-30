@@ -697,7 +697,7 @@ class WCML_Terms {
 					'<strong>' . mb_strtolower( $wp_taxonomies[ $taxonomy ]->labels->name ) . '</strong>',
 					'<strong>' . mb_strtolower( $wp_post_types[ $object_type ]->labels->name ) . '</strong>'
 				) . '</a>' .
-					'&nbsp;<img src="' . ICL_PLUGIN_URL . '/res/img/ajax-loader.gif" alt="loading" height="16" width="16" class="wcml_tt_spinner" />';
+					'&nbsp;<img src="' . \WCML\functions\assetLink( '/res/img/ajax-loader.gif' ) . '" alt="loading" height="16" width="16" class="wcml_tt_spinner" />';
 				$out .= '</form>';
 			} else {
 				$out .= sprintf(

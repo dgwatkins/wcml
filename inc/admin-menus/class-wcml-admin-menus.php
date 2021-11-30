@@ -181,7 +181,7 @@ class WCML_Admin_Menus {
 
 		$template = '
             <span class="button" style="padding:4px;margin-top:0px; float: left;">
-                <img align="baseline" src="' . ICL_PLUGIN_URL . '/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> 
+                <img align="baseline" src="' . \WCML\functions\assetLink( '/res/img/icon16.png' ) . '" width="16" height="16" style="margin-bottom:-4px" /> 
                 <a href="%1$s" target="_blank" style="text-decoration: none;">%2$s</a>
             </span><br /><br />
         ';

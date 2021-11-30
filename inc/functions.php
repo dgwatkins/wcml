@@ -49,3 +49,18 @@ if ( ! function_exists( 'WCML\functions\isStandAlone' ) ) {
 				|| defined( 'ICL_SITEPRESS_VERSION' ) );
 	}
 }
+
+if ( ! function_exists( 'WCML\functions\assetLink' ) ) {
+	/**
+	 * Return correct link to asset
+	 *
+	 * @param  string $asset
+	 * @return string
+	 */
+	function assetLink( $asset ) {
+		if ( isStandAlone() ) {
+			return WCML_PLUGIN_URL . '/addons/vendor/wpml/wpml-dependencies/lib' . $asset;
+		}
+		return ICL_PLUGIN_URL . $asset;
+	}
+}
