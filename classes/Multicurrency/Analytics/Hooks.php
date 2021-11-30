@@ -184,7 +184,7 @@ class Hooks implements \IWPML_Action {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		return isset( $_GET['currency'] )
 			? sanitize_text_field( wp_unslash( $_GET['currency'] ) )
-			: get_woocommerce_currency();
+			: wcml_get_woocommerce_currency_option();
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	}
 

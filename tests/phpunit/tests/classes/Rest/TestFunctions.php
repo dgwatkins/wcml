@@ -40,11 +40,6 @@ class TestFunctions extends \OTGS_TestCase {
 		$_SERVER['REQUEST_URI'] = 'wp-json/wc/v3/';
 		// test
 		$this->assertTrue( Functions::isRestApiRequest() );
-
-		// Part 3
-		$_SERVER['REQUEST_URI'] = 'wp-json/wc-analytics/';
-		// test
-		$this->assertTrue( Functions::isRestApiRequest() );
 	}
 
 	/**
