@@ -226,7 +226,7 @@ class WCML_WC_Strings {
 				jQuery('#woocommerce_permalink_structure').parent().append(jQuery('#wpml_wcml_custom_base_req').html());
 			}
 			if (jQuery('input[name="woocommerce_product_category_slug"]').length && jQuery('input[name="woocommerce_product_category_slug"]').val() == '<?php echo $category_base; ?>') {
-				jQuery('input[name="woocommerce_product_category_slug"]').parent().append('<br><i class="icon-warning-sign"><?php echo $category_notice; ?></i>');
+				jQuery('input[name="woocommerce_product_category_slug"]').parent().append('<br><i class="icon-warning-sign"><?php echo esc_js( $category_notice ); ?></i>');
 			}
 		</script>
 		<?php
