@@ -292,6 +292,15 @@ table.widefat.currency_table {
 		padding-top: $margin-xs;
 		padding-bottom: 0;
 		vertical-align: top;
+
+		span.rate {
+			display: inline-block;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-width: 65px;
+			vertical-align: bottom;
+		}
 	}
 
 	td.wcml-col-currency {
