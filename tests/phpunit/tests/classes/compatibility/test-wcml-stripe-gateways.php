@@ -4,7 +4,7 @@ use WCML\Compatibility\Stripe_Gateway;
 
 class Test_WCML_Stripe_Gateways extends OTGS_TestCase {
 
-	private function get_subject() {
+	private function get_woocommerce_wpml() {
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
 			->disableOriginalConstructor()
 			->getMock();
@@ -13,7 +13,13 @@ class Test_WCML_Stripe_Gateways extends OTGS_TestCase {
 			'orders' => 'foo'
 		];
 
-		return new Stripe_Gateway( $woocommerce_wpml );
+		return $woocommerce_wpml;
+	}
+
+	private function get_subject() {
+
+
+		return new Stripe_Gateway( $this->get_woocommerce_wpml() );
 	}
 
 	/**
@@ -42,6 +48,8 @@ class Test_WCML_Stripe_Gateways extends OTGS_TestCase {
 		WP_Mock::userFunction( 'add_filter' );
 
 		$subject->deregister_currency_symbol_filter();
+
+		WP_Mock::expectFilterAdded( 'woocommerce_currency_symbol', [ $this->get_woocommerce_wpml()->multi_currency->orders, '_use_order_currency_symbol' ] );
 
 		$subject->register_currency_symbol_filter();
 
