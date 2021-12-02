@@ -7,9 +7,12 @@ use WCML\StandAlone\ActionFilterLoader;
 use WPML_Action_Filter_Loader;
 
 class TestActionFilterLoader extends OTGS_TestCase {
-	/**
-	 * @runInSeparateProcess
-	 */
+
+	public function setUp() {
+		parent::setUp();
+		$this->markTestSkipped( 'https://onthegosystems.myjetbrains.com/youtrack/issue/wcml-3843' );
+	}
+
 	public function testLoadAllLoaders() {
 		define( 'ICL_SITEPRESS_VERSION', '4.5.1' );
 
