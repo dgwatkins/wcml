@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @group test
  * Class Test_woocommerce_wcml
  * Doesn't doo much for now before refactoring the woocommerce_wpml class with a proper constructor and dependency injections
  */
@@ -46,6 +47,7 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 		\WP_Mock::wpFunction( 'WC', array( 'return' => $woocommerce, ) );
 
 		$wp_api = $this->getMockBuilder( \WPML_WP_API::class )
+						->setMethods( [ 'get_wp_filesystem_direct', 'constant' ] )
 						->disableOriginalConstructor()
 						->getMock();
 
@@ -55,6 +57,11 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 		                        ->getMock();
 		$sitepress->method( 'get_settings' )->willReturn( array() );
 		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		\WP_Mock::userFunction( 'WPML\Container\make', [
+			'args'   => [ WPML_File::class ],
+			'return' => Mockery::mock( WPML_File::class ),
+		] );
 
 		return new woocommerce_wpml();
 
