@@ -36,7 +36,9 @@ class TestFactory extends \OTGS_TestCase {
 	public function itShouldCreateNonTranslatableWrapper() {
 		$this->mockSettings( false );
 
-		$woocommerce_wpml = $this->getMockBuilder( woocommerce_wpml::class )->getMock();
+		$woocommerce_wpml = $this->getMockBuilder( woocommerce_wpml::class )
+		                         ->disableOriginalConstructor()
+		                         ->getMock();
 
 		$this->assertInstanceOf( NonTranslatable::class, Factory::create( $woocommerce_wpml ) );
 	}
@@ -47,7 +49,9 @@ class TestFactory extends \OTGS_TestCase {
 	public function itShouldCreateTranslatableWrapper() {
 		$this->mockSettings( true );
 
-		$woocommerce_wpml = $this->getMockBuilder( woocommerce_wpml::class )->getMock();
+		$woocommerce_wpml = $this->getMockBuilder( woocommerce_wpml::class )
+		                         ->disableOriginalConstructor()
+		                         ->getMock();
 
 		$this->assertInstanceOf( Translatable::class, Factory::create( $woocommerce_wpml ) );
 	}
