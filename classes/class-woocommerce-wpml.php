@@ -101,7 +101,7 @@ class woocommerce_wpml {
 		$wpml_wp_api         = $sitepress->get_wp_api();
 		$wpml_wp_api->get_wp_filesystem_direct();
 
-		$this->cs_templates = new WCML_Currency_Switcher_Templates( $this, $wpml_wp_api, new WPML_File( $wpml_wp_api ) );
+		$this->cs_templates = new WCML_Currency_Switcher_Templates( $this, $wpml_wp_api, make( WPML_File::class ) );
 		$this->cs_templates->init_hooks();
 
 		$wc_shortccode_product_category = new WCML_WC_Shortcode_Product_Category( $sitepress );
