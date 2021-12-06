@@ -54,13 +54,14 @@ class Test_WCML_Multi_Currency_Configuration extends OTGS_TestCase {
 	 * @test
 	 */
 	public function it_should_set_currency_mode() {
-		global $sitepress;
 		\WP_Mock::userFunction( 'wp_verify_nonce', [ 'return' => true ] );
 
 		$sitepress = $this->getMockBuilder( 'SitePress' )
 		                  ->setMethods( [ 'get_settings' ] )
 		                  ->disableOriginalConstructor()->getMock();
 		$sitepress->expects( $this->once() )->method( 'get_settings' )->willReturn( [] );
+
+		\WP_Mock::userFunction( 'WCML\functions\getSitePress' )->andReturn( $sitepress );
 
 		$_POST['data'] = json_encode( [ 'mode' => 'by_language' ] );
 

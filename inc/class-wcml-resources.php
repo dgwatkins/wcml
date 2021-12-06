@@ -1,5 +1,7 @@
 <?php
 
+use function WCML\functions\isStandAlone;
+
 class WCML_Resources {
 
 	private static $page;
@@ -59,7 +61,7 @@ class WCML_Resources {
 
 	private static function load_css() {
 
-		if ( self::$is_wpml_wcml_page || self::$page == WPML_TM_FOLDER . '/menu/translations-queue.php' ) {
+		if ( self::$is_wpml_wcml_page || self::is_translation_queue() ) {
 
 			self::load_management_css();
 
@@ -124,7 +126,7 @@ class WCML_Resources {
 			self::load_tooltip_resources();
 		}
 
-		if ( self::$page == WPML_TM_FOLDER . '/menu/main.php' ) {
+		if ( self::is_translation_dashboard() ) {
 			wp_register_script( 'wpml_tm', WCML_PLUGIN_URL . '/res/js/wpml_tm' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION, true );
 			wp_enqueue_script( 'wpml_tm' );
 		}
@@ -180,7 +182,7 @@ class WCML_Resources {
 			wp_enqueue_script( 'wcml-attributes' );
 		}
 
-		if ( self::$page == WPML_TM_FOLDER . '/menu/translations-queue.php' ) {
+		if ( self::is_translation_queue() ) {
 
 			self::load_tooltip_resources();
 			wp_enqueue_media();
@@ -332,5 +334,19 @@ class WCML_Resources {
 				'<a href="' . self::linkToTranslation( $original_id, $language ) . '" >' .
 				__( 'WooCommerce Multilingual products translator', 'woocommerce-multilingual' ) . '</a>'
 			) . '</h3>';
+	}
+
+	/**
+	 * @return bool
+	 */
+	private static function is_translation_queue() {
+		return ! isStandAlone() && self::$page == WPML_TM_FOLDER . '/menu/translations-queue.php';
+	}
+
+	/**
+	 * @return bool
+	 */
+	private static function is_translation_dashboard() {
+		return ! isStandAlone() && self::$page == WPML_TM_FOLDER . '/menu/main.php';
 	}
 }

@@ -3,6 +3,7 @@
 use WCML\Multicurrency\UI\Hooks;
 use WCML\MultiCurrency\Geolocation;
 use WPML\FP\Obj;
+use function WCML\functions\getSitePress;
 
 class WCML_Multi_Currency_Configuration {
 
@@ -107,13 +108,9 @@ class WCML_Multi_Currency_Configuration {
 	}
 
 	public static function add_currency( $currency_code ) {
-		global $sitepress;
-
 		$settings = self::$woocommerce_wpml->get_settings();
 
-		$active_languages    = $sitepress->get_active_languages();
-		$return['languages'] = '';
-		foreach ( $active_languages as $language ) {
+		foreach ( getSitePress()->get_active_languages() as $language ) {
 			if ( ! isset( $settings['currency_options'][ $currency_code ]['languages'][ $language['code'] ] ) ) {
 				$settings['currency_options'][ $currency_code ]['languages'][ $language['code'] ] = 1;
 			}
@@ -305,8 +302,9 @@ class WCML_Multi_Currency_Configuration {
 	}
 
 	public static function set_prices_config() {
-		global $iclTranslationManagement, $sitepress_settings, $sitepress;
+		global $iclTranslationManagement, $sitepress_settings;
 
+		$sitepress     = getSitePress();
 		$wpml_settings = $sitepress->get_settings();
 
 		if ( ! isset( $wpml_settings['translation-management'] ) ||

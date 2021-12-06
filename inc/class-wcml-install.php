@@ -1,5 +1,7 @@
 <?php
 
+use function WCML\functions\isStandAlone;
+
 class WCML_Install {
 
 	const CHUNK_SIZE = 1000;
@@ -102,14 +104,15 @@ class WCML_Install {
 				add_action( 'admin_notices', [ __CLASS__, 'admin_notice_after_install' ] );
 			}
 
-			$translated_product_type_terms = self::translated_product_type_terms();
-			if ( ! empty( $translated_product_type_terms ) ) {
-				add_action( 'admin_notices', [ __CLASS__, 'admin_translated_product_type_terms_notice' ] );
-			} elseif ( $sitepress->is_translated_taxonomy( 'product_type' ) ) {
-				add_action( 'admin_notices', [ __CLASS__, 'admin_translated_product_type_notice' ] );
+			if ( ! isStandAlone() ) {
+	            $translated_product_type_terms = self::translated_product_type_terms();
+	            if ( ! empty( $translated_product_type_terms ) ) {
+		            add_action( 'admin_notices', [ __CLASS__, 'admin_translated_product_type_terms_notice' ] );
+	            } elseif ( $sitepress->is_translated_taxonomy( 'product_type' ) ) {
+		            add_action( 'admin_notices', [ __CLASS__, 'admin_translated_product_type_notice' ] );
+	            }
 			}
 		}
-
 	}
 
 	/**
