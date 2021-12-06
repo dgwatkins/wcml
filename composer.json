@@ -94,7 +94,7 @@
             "inc/"
         ],
         "files": [
-            "inc/functions.php"
+            "inc/functions-pure.php"
         ],
         "exclude-from-classmap": [
             "/vendor/wpml",

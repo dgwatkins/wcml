@@ -7,7 +7,6 @@
  */
 class Test_woocommerce_wcml extends OTGS_TestCase {
 
-
 	public function setUp() {
 		parent::setUp();
 
@@ -18,13 +17,24 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 			define( 'WCML_CART_SYNC', true );
 		}
 
-		$that = $this;
-
 		\WP_Mock::wpFunction( 'get_option', array(
 			'args' => array( '_wcml_settings' ),
 			'return' => null
 		) );
 
+		$wp_api = $this->getMockBuilder( \WPML_WP_API::class )
+		               ->setMethods( [ 'get_wp_filesystem_direct', 'constant' ] )
+		               ->disableOriginalConstructor()
+		               ->getMock();
+
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		                  ->disableOriginalConstructor()
+		                  ->setMethods( array( 'get_settings', 'get_wp_api' ) )
+		                  ->getMock();
+		$sitepress->method( 'get_settings' )->willReturn( array() );
+		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
+
+		\WP_Mock::userFunction( 'WCML\functions\getSitePress' )->andReturn( $sitepress );
 	}
 
 	public function tearDown(){
@@ -34,8 +44,6 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 	}
 
 	private function get_subject(){
-		global $sitepress;
-
 		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
 		// Multi-currency ON
 		\WP_Mock::wpFunction( 'wcml_is_multi_currency_on', array( 'return' => true ) );
@@ -46,25 +54,12 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 		$woocommerce->version = '3.0.0';
 		\WP_Mock::wpFunction( 'WC', array( 'return' => $woocommerce, ) );
 
-		$wp_api = $this->getMockBuilder( \WPML_WP_API::class )
-						->setMethods( [ 'get_wp_filesystem_direct', 'constant' ] )
-						->disableOriginalConstructor()
-						->getMock();
-
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
-		                        ->disableOriginalConstructor()
-								->setMethods( array( 'get_settings', 'get_wp_api' ) )
-		                        ->getMock();
-		$sitepress->method( 'get_settings' )->willReturn( array() );
-		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
-
 		\WP_Mock::userFunction( 'WPML\Container\make', [
 			'args'   => [ WPML_File::class ],
 			'return' => Mockery::mock( WPML_File::class ),
 		] );
 
 		return new woocommerce_wpml();
-
 	}
 
 	/**

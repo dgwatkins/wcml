@@ -43,6 +43,7 @@ define( 'WCML_PLUGIN_URL', untrailingslashit( plugin_dir_url( __FILE__ ) ) );
 require WCML_PLUGIN_PATH . '/inc/constants.php';
 require WCML_PLUGIN_PATH . '/inc/missing-php-functions.php';
 require WCML_PLUGIN_PATH . '/inc/installer-loader.php';
+require WCML_PLUGIN_PATH . '/inc/functions.php';
 require WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
 require WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
 

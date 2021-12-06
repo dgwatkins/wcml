@@ -8,13 +8,8 @@ use WPML_Action_Filter_Loader;
 
 class TestActionFilterLoader extends OTGS_TestCase {
 
-	public function setUp() {
-		parent::setUp();
-		$this->markTestSkipped( 'https://onthegosystems.myjetbrains.com/youtrack/issue/wcml-3843' );
-	}
-
 	public function testLoadAllLoaders() {
-		define( 'ICL_SITEPRESS_VERSION', '4.5.1' );
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( false );
 
 		$loaded = [];
 		$subject = $this->getSubject( $loaded );
@@ -31,6 +26,8 @@ class TestActionFilterLoader extends OTGS_TestCase {
 	}
 
 	public function testLoadOnlyStandAloneLoaders() {
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( true );
+
 		$loaded = [];
 		$subject = $this->getSubject( $loaded );
 		$subject->load(

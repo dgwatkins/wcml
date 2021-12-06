@@ -1,7 +1,5 @@
 <?php
 
-use tad\FunctionMocker\FunctionMocker;
-
 /**
  * Class Test_WCML_Setup
  * @group wcml-1987
@@ -25,7 +23,7 @@ class Test_WCML_Setup extends OTGS_TestCase {
 			}
 		) );
 
-
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( false );
 	}
 
 	private function get_wcml_setup_ui_mock(){
@@ -175,7 +173,7 @@ class Test_WCML_Setup extends OTGS_TestCase {
 	 * @test
 	 */
 	public function setup_redirect_yes_activation_redirect_do_not_redirect_to_setup(){
-		$this->markTestSkipped( 'https://onthegosystems.myjetbrains.com/youtrack/issue/wcml-3843' );
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( false );
 
 		$subject = $this->get_subject();
 
@@ -210,7 +208,7 @@ class Test_WCML_Setup extends OTGS_TestCase {
 	 * @test
 	 */
 	public function setup_redirect_yes_activation_redirect_do_not_redirect_to_setup_if_is_already_in_WC_Wizard(){
-		$this->markTestSkipped( 'https://onthegosystems.myjetbrains.com/youtrack/issue/wcml-3843' );
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( false );
 
 		$subject = $this->get_subject();
 
@@ -251,7 +249,7 @@ class Test_WCML_Setup extends OTGS_TestCase {
 	 * @test
 	 */
 	public function setup_redirect_yes_activation_redirect_do_redirect_to_setup_Has_completed(){
-		$this->markTestSkipped( 'https://onthegosystems.myjetbrains.com/youtrack/issue/wcml-3843' );
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( false );
 
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject = $this->get_subject( $woocommerce_wpml );
@@ -369,6 +367,7 @@ class Test_WCML_Setup extends OTGS_TestCase {
 	 * @test
 	 */
 	public function wizard_is_setup_page(){
+		\WP_Mock::userFunction( 'WCML\functions\assetLink' )->andReturn( '/uri/to/asset/' );
 
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject = $this->get_subject( $woocommerce_wpml );
