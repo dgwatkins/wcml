@@ -98,7 +98,7 @@ class WCML_Products {
 	 * @return bool
 	 */
 	public function is_original_product( $product_id ) {
-		return null === $this->post_translations->get_source_lang_code( $product_id );
+		return ! $this->post_translations || null === $this->post_translations->get_source_lang_code( $product_id );
 	}
 
 	/**
