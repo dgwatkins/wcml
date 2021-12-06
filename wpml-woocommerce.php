@@ -138,6 +138,10 @@ if ( WCML\Rest\Functions::isRestApiRequest() ) {
  */
 function load_wcml_without_wpml() {
 	if ( ! did_action( 'wpml_loaded' ) ) {
+		/**
+		 * Initialize some constants for the addon.
+		 */
+		define( 'WCML_WPML_DEPENDENCY_URL', WCML_PLUGIN_URL . '/addons/vendor/wpml/lib' );
 		require_once WCML_PLUGIN_PATH . '/addons/vendor/autoload.php';
 
 		global $woocommerce_wpml;
