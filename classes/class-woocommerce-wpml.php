@@ -2,6 +2,7 @@
 
 use WCML\StandAlone\NullSitePress;
 
+use function WCML\functions\getSitePress;
 use function WPML\Container\make;
 
 /**
@@ -88,7 +89,7 @@ class woocommerce_wpml {
 	private $wcml_products_screen;
 
 	public function __construct() {
-		$sitepress = \WCML\functions\getSitePress();
+		$sitepress = getSitePress();
 
 		$this->settings   = $this->get_settings();
 		$this->currencies = new WCML_Currencies( $this );
@@ -110,7 +111,7 @@ class woocommerce_wpml {
 	}
 
 	private function load_rest_api() {
-		$sitepress = \WCML\functions\getSitePress();
+		$sitepress = getSitePress();
 
 		if ( class_exists( 'WooCommerce' ) && defined( 'WC_VERSION' ) && ! is_null( $sitepress ) && WCML\Rest\Functions::isRestApiRequest() ) {
 			WCML\Rest\Hooks::addHooks();
@@ -132,8 +133,9 @@ class woocommerce_wpml {
 	 * @return bool
 	 */
 	public function init() {
-		$sitepress = \WCML\functions\getSitePress();
 		global $wpdb, $woocommerce, $wpml_url_converter, $wpml_post_translations, $wpml_term_translations;
+
+		$sitepress = getSitePress();
 
 		$this->dependencies        = new WCML_Dependencies();
 		$this->dependencies_are_ok = $this->dependencies->check();
@@ -187,7 +189,7 @@ class woocommerce_wpml {
 		if ( $this->dependencies_are_ok ) {
 			return $this->init_full( $sitepress, $wpdb, $woocommerce, $wpml_url_converter, $wpml_post_translations, $wpml_term_translations );
 		} else {
-			return $this->init_standalone( $sitepress, $wpdb, $woocommerce, $wpml_url_converter, $wpml_post_translations, $wpml_term_translations );
+			return $this->init_standalone( $sitepress, $wpdb, $wpml_post_translations );
 		}
 	}
 
@@ -285,41 +287,19 @@ class woocommerce_wpml {
 		return true;
 	}
 
-	private function init_standalone( $sitepress, $wpdb, $woocommerce, $wpml_url_converter, $wpml_post_translations, $wpml_term_translations ) {
+	private function init_standalone( $sitepress, $wpdb, $wpml_post_translations ) {
 		$this->currencies = new WCML_Currencies( $this );
 		$this->currencies->add_hooks();
 
-		$this->sync_variations_data = new WCML_Synchronize_Variations_Data( $this, $sitepress, $wpdb );
-
 		if ( is_admin() ) {
-			$this->troubleshooting      = new WCML_Troubleshooting( $this, $sitepress, $wpdb );
-			$this->languages_upgrader   = new WCML_Languages_Upgrader();
-			$this->wcml_products_screen = new WCML_Products_Screen_Options();
-			$wcml_pointers              = new WCML_Pointers();
+			( new WCML_Pointers() )->add_hooks();
 		}
 
-		$this->duplicate_product = new WCML_WC_Admin_Duplicate_Product( $this, $sitepress, $wpdb );
-		$this->products          = new WCML_Products( $this, $sitepress, $wpml_post_translations, $wpdb );
-		$this->store             = new WCML_Store_Pages( $this, $sitepress );
-		$this->strings           = new WCML_WC_Strings( $this, $sitepress, $wpdb );
-		// do not pass mailer instance instead of $woocommerce.
-		$this->emails          = new WCML_Emails( $this->strings, $sitepress, $woocommerce, $wpdb );
-		$this->terms           = new WCML_Terms( $this, $sitepress, $wpdb );
-		$this->orders          = new WCML_Orders( $this, $sitepress );
-		$this->shipping        = new WCML_WC_Shipping( $sitepress, $this->strings );
-		$this->gateways        = new WCML_WC_Gateways( $this, $sitepress );
-		$this->url_translation = new WCML_Url_Translation( $this, $sitepress, $wpdb );
-		$this->endpoints       = new WCML_Endpoints( $this, $sitepress, $wpdb );
-		$this->requests        = new WCML_Requests();
+		$this->products = new WCML_Products( $this, $sitepress, $wpml_post_translations, $wpdb );
+		$this->gateways = new WCML_WC_Gateways( $this, $sitepress );
 		$this->cart->add_hooks(); // object is instantiated before.
-		$this->coupons              = new WCML_Coupons( $this, $sitepress );
-		$this->locale               = new WCML_Locale( $this, $sitepress );
-		$this->downloadable         = new WCML_Downloadable_Products( $this, $sitepress );
-		$this->page_builders        = new WCML_Page_Builders( $sitepress );
-		$this->reports              = new WCML_Reports();
-		$this->wcml_products_screen = new WCML_Products_Screen_Options();
-		$this->cart_sync_warnings   = new WCML_Cart_Sync_Warnings( $this, $sitepress );
-		$payment_method_filter      = new WCML_Payment_Method_Filter();
+		$this->cart_sync_warnings = new WCML_Cart_Sync_Warnings( $this, $sitepress );
+		$payment_method_filter    = new WCML_Payment_Method_Filter();
 		$payment_method_filter->add_hooks();
 
 		$wcml_ajax_setup = new WCML_Ajax_Setup( $sitepress );
@@ -533,7 +513,7 @@ class woocommerce_wpml {
 	 * @return bool
 	 */
 	public function is_wpml_prior_4_2() {
-		$sitepress = \WCML\functions\getSitePress();
+		$sitepress = getSitePress();
 
 		return $sitepress->get_wp_api()->version_compare( $this->get_constant( 'ICL_SITEPRESS_VERSION' ), '4.2.0', '<' ) ||
 			   $sitepress->get_wp_api()->version_compare( $this->get_constant( 'WPML_TM_VERSION' ), '2.8.0', '<' );
@@ -545,8 +525,6 @@ class woocommerce_wpml {
 	 * @return int|string
 	 */
 	private function get_constant( $name ) {
-		global $sitepress;
-
-		return $sitepress->get_wp_api()->constant( $name );
+		return getSitePress()->get_wp_api()->constant( $name );
 	}
 }

@@ -1,6 +1,7 @@
 <?php
 
 use WPML\FP\Obj;
+use function WCML\functions\getSitePress;
 use function WPML\Container\make;
 use WCML\MultiCurrency\Geolocation;
 use WCML\MultiCurrency\ExchangeRateServices\Service;
@@ -118,7 +119,9 @@ class WCML_Multi_Currency {
 	 * WCML_Multi_Currency constructor.
 	 */
 	public function __construct() {
-		global $woocommerce_wpml, $woocommerce, $sitepress, $wpdb, $wp_locale, $wp;
+		global $woocommerce_wpml, $woocommerce, $wpdb, $wp_locale, $wp;
+
+        $sitepress = getSitePress();
 
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->woocommerce      = $woocommerce;
@@ -252,7 +255,7 @@ class WCML_Multi_Currency {
 	}
 
 	public function init_currencies() {
-		global $sitepress;
+		$sitepress = getSitePress();
 
 		$this->default_currency = wcml_get_woocommerce_currency_option();
 		$this->currencies       = $this->woocommerce_wpml->settings['currency_options'];
@@ -438,7 +441,7 @@ class WCML_Multi_Currency {
 	}
 
 	public function get_client_currency() {
-		global $sitepress;
+		$sitepress = getSitePress();
 
 		if( \WCML\Rest\Functions::isRestApiRequest() ){
 			return $this->get_rest_currency();
@@ -643,23 +646,17 @@ class WCML_Multi_Currency {
 	}
 
 	public function set_client_currency( $currency ) {
-		global $sitepress;
-
 		$this->client_currency = $currency;
 
 		wcml_user_store_set( self::CURRENCY_STORAGE_KEY, $currency );
-		wcml_user_store_set( self::CURRENCY_LANGUAGE_STORAGE_KEY, $sitepress->get_current_language() );
+		wcml_user_store_set( self::CURRENCY_LANGUAGE_STORAGE_KEY, getSitePress()->get_current_language() );
 
 		do_action( 'wcml_set_client_currency', $currency );
 
 	}
 
 	public function switch_currency() {
-        /**
-         * @global SitePress $GLOBALS['sitepress']
-         * @name $sitepress
-         */
-	    global $sitepress;
+		$sitepress = getSitePress();
 
 		$currency     = filter_input( INPUT_POST, 'currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$force_switch = filter_input( INPUT_POST, 'force_switch', FILTER_SANITIZE_FULL_SPECIAL_CHARS );

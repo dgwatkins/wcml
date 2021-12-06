@@ -27,7 +27,7 @@ class WCML_Products {
 	 * @param wpdb                  $wpdb
 	 * @param WPML_WP_Cache         $wpml_cache
 	 */
-	public function __construct( woocommerce_wpml $woocommerce_wpml, \WPML\Core\ISitePress $sitepress, WPML_Post_Translation $post_translations, wpdb $wpdb, WPML_WP_Cache $wpml_cache = null ) {
+	public function __construct( woocommerce_wpml $woocommerce_wpml, \WPML\Core\ISitePress $sitepress, WPML_Post_Translation $post_translations = null, wpdb $wpdb, WPML_WP_Cache $wpml_cache = null ) {
 		$this->woocommerce_wpml  = $woocommerce_wpml;
 		$this->sitepress         = $sitepress;
 		$this->post_translations = $post_translations;

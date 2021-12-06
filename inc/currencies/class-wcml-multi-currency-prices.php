@@ -2,6 +2,7 @@
 
 use WPML\FP\Obj;
 use WPML\FP\Str;
+use function WCML\functions\getSitePress;
 use function WPML\FP\pipe;
 
 class WCML_Multi_Currency_Prices {
@@ -202,7 +203,7 @@ class WCML_Multi_Currency_Prices {
 	}
 
 	public function product_price_filter( $null, $object_id, $meta_key, $single ) {
-		$sitepress = \WCML\functions\getSitePress();
+		$sitepress = getSitePress();
 
 		static $no_filter = false;
 
