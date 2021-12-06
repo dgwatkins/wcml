@@ -8,6 +8,11 @@ namespace WCML\AdminNotices;
  */
 class TestCachePlugins extends \OTGS_TestCase {
 
+	public function setUp() {
+		parent::setUp();
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( false );
+	}
+
 	/**
 	 * @test
 	 */

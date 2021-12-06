@@ -5,6 +5,12 @@
  */
 class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 
+	public function setUp() {
+		parent::setUp();
+
+		\WP_Mock::userFunction( 'WCML\functions\getSitePress' )->andReturn( Mockery::mock( \WPML\Core\ISitePress::class ) );
+	}
+
 	private function get_subject( $multi_currency ){
 		return new WCML_Multi_Currency_Prices( $multi_currency, array() );
 	}

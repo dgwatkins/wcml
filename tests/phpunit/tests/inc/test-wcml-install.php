@@ -42,6 +42,8 @@ class Test_WCML_Install extends OTGS_TestCase {
 
 		$wpdb->method( 'get_col' )
 			->willReturn( [] );
+
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( false );
 	}
 
 	public function test_initialize() {
