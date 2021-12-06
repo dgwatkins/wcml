@@ -189,7 +189,7 @@ class woocommerce_wpml {
 		if ( $this->dependencies_are_ok ) {
 			return $this->init_full( $sitepress, $wpdb, $woocommerce, $wpml_url_converter, $wpml_post_translations, $wpml_term_translations );
 		} else {
-			return $this->init_standalone( $sitepress, $wpdb, $wpml_post_translations );
+			return $this->init_standalone( $sitepress, $wpdb );
 		}
 	}
 
@@ -287,7 +287,7 @@ class woocommerce_wpml {
 		return true;
 	}
 
-	private function init_standalone( $sitepress, $wpdb, $wpml_post_translations ) {
+	private function init_standalone( $sitepress, $wpdb ) {
 		$this->currencies = new WCML_Currencies( $this );
 		$this->currencies->add_hooks();
 
@@ -295,15 +295,14 @@ class woocommerce_wpml {
 			( new WCML_Pointers() )->add_hooks();
 		}
 
-		$this->products = new WCML_Products( $this, $sitepress, $wpml_post_translations, $wpdb );
+		$this->products = new WCML_Products( $this, $sitepress, null, $wpdb );
+		$this->products->add_hooks();
 		$this->gateways = new WCML_WC_Gateways( $this, $sitepress );
 		$this->cart->add_hooks(); // object is instantiated before.
 		$this->cart_sync_warnings = new WCML_Cart_Sync_Warnings( $this, $sitepress );
 		$payment_method_filter    = new WCML_Payment_Method_Filter();
 		$payment_method_filter->add_hooks();
 
-		$wcml_ajax_setup = new WCML_Ajax_Setup( $sitepress );
-		$wcml_ajax_setup->add_hooks();
 		WCML_Install::initialize( $this, $sitepress );
 
 		WCML_Resources::set_up_resources( $this, $sitepress );
