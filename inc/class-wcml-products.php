@@ -120,7 +120,7 @@ class WCML_Products {
 	 */
 	public function get_original_product_id( $product_id ) {
 
-		$original_product_id = $this->post_translations->get_original_element( $product_id );
+		$original_product_id = $this->post_translations ? $this->post_translations->get_original_element( $product_id ) : true;
 
 		return $original_product_id ? $original_product_id : $product_id;
 	}

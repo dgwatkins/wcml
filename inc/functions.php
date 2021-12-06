@@ -24,8 +24,7 @@ if ( ! function_exists( 'WCML\functions\isStandAlone' ) ) {
 	 * @return bool
 	 */
 	function isStandAlone() {
-		return ! ( class_exists( \SitePress::class )
-				|| defined( 'ICL_SITEPRESS_VERSION' ) );
+		return ! defined( 'ICL_SITEPRESS_VERSION' );
 	}
 }
 

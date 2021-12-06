@@ -217,6 +217,7 @@ class WCML_Multi_Currency_Prices {
 			];
 
 			if ( ! $single && '' === $meta_key && \WCML\functions\isStandAlone() ) {
+				$no_filter     = true;
 				$meta_values   = get_post_meta( $object_id );
 				$ccr           = get_post_meta( $object_id, '_custom_conversion_rate', true );
 				$manual_prices = $this->multi_currency->custom_prices->get_product_custom_prices( $object_id, $this->multi_currency->get_client_currency() );
@@ -243,6 +244,8 @@ class WCML_Multi_Currency_Prices {
                         }
                     }
 				}
+
+				$no_filter = false;
 
 				return $meta_values;
 			}
