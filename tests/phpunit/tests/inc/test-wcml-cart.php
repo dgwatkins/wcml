@@ -58,6 +58,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 	 * @test
 	 */
 	public function it_adds_correct_hooks_when_clean_cart_is_disabled() {
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( false );
 
 		\WP_Mock::userFunction( 'wp_doing_ajax', [ 'return' => false ] );
 
