@@ -695,7 +695,7 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/glue-plugins/wpml/packages/wpml-dependencies.git",
-                "reference": "908de96dc40a2f8ab377d7f47c332a14e1d95e45"
+                "reference": "187f8adac13e48e0083ea81b5b02f0b734585e14"
             },
             "require": {
                 "otgs/auryn": "dev-master",
@@ -738,7 +738,7 @@
             ],
             "description": "WPML dependencies for running WCML independently.",
             "homepage": "https://git.onthegosystems.com/glue-plugins/wpml/packages/wpml-dependencies",
-            "time": "2021-12-02T20:51:47+00:00"
+            "time": "2021-12-07T12:41:19+00:00"
         }
     ],
     "packages-dev": [],
