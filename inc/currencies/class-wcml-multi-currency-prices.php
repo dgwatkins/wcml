@@ -183,7 +183,7 @@ class WCML_Multi_Currency_Prices {
 		} else {
 
 			$product = wc_get_product( $product_id );
-			$price   = $this->raw_price_filter( $product->get_price(), $currency );
+			$price   = $this->raw_price_filter( wc_get_price_including_tax( $product ), $currency );
 
 		}
 
