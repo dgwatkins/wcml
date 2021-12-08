@@ -1,5 +1,8 @@
 <?php
 
+use WCML\StandAlone\UI\AdminMenu;
+use function WCML\functions\isStandAlone;
+
 /**
  * Class WCML_Admin_Menus
  */
@@ -122,11 +125,13 @@ class WCML_Admin_Menus {
 
 	public static function render_menus() {
 		if ( self::$woocommerce_wpml->dependencies_are_ok ) {
-			$menus_wrap = new WCML_Menus_Wrap( self::$woocommerce_wpml );
-			$menus_wrap->show();
-		} else {
-			$plugins_wrap = new \WCML\StandAlone\UI\AdminMenu( self::$sitepress, self::$woocommerce_wpml );
-			$plugins_wrap->show();
+			if ( isStandAlone() ) {
+				$plugins_wrap = new AdminMenu( self::$sitepress, self::$woocommerce_wpml );
+				$plugins_wrap->show();
+			} else {
+				$menus_wrap = new WCML_Menus_Wrap( self::$woocommerce_wpml );
+				$menus_wrap->show();
+			}
 		}
 	}
 
