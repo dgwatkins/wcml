@@ -10,14 +10,14 @@ class AdminMenu extends WCML_Templates_Factory {
 	/** @var \SitePress|\WCML\StandAlone\NullSitePress */
 	private $sitepress;
 
-	/** @var woocommerce_wpml */
+	/** @var \woocommerce_wpml */
 	private $woocommerce_wpml;
 
 	/**
 	 * WCML_Menus_Wrap constructor.
 	 *
 	 * @param \SitePress|\WCML\StandAlone\NullSitePress $sitepress
-	 * @param woocommerce_wpml                          $woocommerce_wpml
+	 * @param \woocommerce_wpml                          $woocommerce_wpml
 	 */
 	public function __construct( \WPML\Core\ISitePress $sitepress, $woocommerce_wpml ) {
 		parent::__construct();

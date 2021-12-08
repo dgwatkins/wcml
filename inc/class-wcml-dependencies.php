@@ -31,58 +31,64 @@ class WCML_Dependencies {
 	public function check() {
 		global $sitepress, $woocommerce;
 
+		$core_ok = $st_ok = $tm_ok = $wc_ok = true;
+
 		if ( ! defined( 'ICL_SITEPRESS_VERSION' ) || ICL_PLUGIN_INACTIVE || is_null( $sitepress ) || ! class_exists( 'SitePress' ) ) {
 			$this->missing['WPML'] = $this->tracking_link->getWpmlHome();
-			$this->allok           = false;
+			$core_ok               = false;
 		} elseif ( version_compare( ICL_SITEPRESS_VERSION, self::MIN_WPML, '<' ) ) {
 			add_action( 'admin_notices', [ $this, '_old_wpml_warning' ] );
-			$this->allok = false;
+			$core_ok = false;
 		} elseif ( ! $sitepress->setup() ) {
 			if ( ! ( isset( $_GET['page'] ) && WPML_PLUGIN_FOLDER . '/menu/languages.php' === $_GET['page'] ) ) {
 				add_action( 'admin_notices', [ $this, '_wpml_not_installed_warning' ] );
 			}
-			$this->allok = false;
+			$core_ok = false;
 		}
 
 		if ( ! class_exists( 'WooCommerce' ) || ! function_exists( 'WC' ) ) {
 			$this->missing['WooCommerce'] = 'http://www.woothemes.com/woocommerce/';
-			$this->allok                  = false;
+			$wc_ok                        = false;
 		} elseif (
 			defined( 'WC_VERSION' ) && version_compare( WC_VERSION, self::MIN_WOOCOMMERCE, '<' ) ||
 			isset( $woocommerce->version ) && version_compare( $woocommerce->version, self::MIN_WOOCOMMERCE, '<' )
 		) {
 			add_action( 'admin_notices', [ $this, '_old_wc_warning' ] );
-			$this->allok = false;
+			$wc_ok = false;
 		}
 
 		if ( ! defined( 'WPML_TM_VERSION' ) || ! has_action( 'wpml_loaded', 'wpml_tm_load' ) ) {
 			$this->missing['WPML Translation Management'] = $this->tracking_link->getWpmlHome();
-			$this->allok                                  = false;
+			$tm_ok                                        = false;
 		} elseif ( version_compare( WPML_TM_VERSION, self::MIN_WPML_TM, '<' ) ) {
 			add_action( 'admin_notices', [ $this, '_old_wpml_tm_warning' ] );
-			$this->allok = false;
+			$tm_ok = false;
 		}
 
 		if ( ! defined( 'WPML_ST_VERSION' ) || ! function_exists( 'icl_get_string_id' ) ) {
 			$this->missing['WPML String Translation'] = $this->tracking_link->getWpmlHome();
-			$this->allok                              = false;
+			$st_ok                                    = false;
 		} elseif ( version_compare( WPML_ST_VERSION, self::MIN_WPML_ST, '<' ) ) {
 			add_action( 'admin_notices', [ $this, '_old_wpml_st_warning' ] );
-			$this->allok = false;
+			$st_ok = false;
 		}
 
 		if ( $this->missing ) {
 			add_action( 'admin_notices', [ $this, '_missing_plugins_warning' ] );
 		}
 
-		if ( $this->allok ) {
+		$full_mode   = $core_ok && $tm_ok && $st_ok && $wc_ok;
+		$standalone  = ! ( $core_ok || $tm_ok || $st_ok ) && $wc_ok;
+		$this->allok = $full_mode || $standalone;
+
+		if ( $full_mode ) {
 			$this->check_for_incompatible_permalinks();
 			add_action( 'init', [ $this, 'check_for_translatable_default_taxonomies' ] );
 		}
 
 		if ( isset( $sitepress ) ) {
 			// @todo Cover by tests, required for wcml-3037.
-			$this->allok = $this->allok && $sitepress->setup();
+			$this->allok = $full_mode && $sitepress->setup();
 		}
 
 		return $this->allok;

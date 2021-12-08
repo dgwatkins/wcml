@@ -1,8 +1,10 @@
 <?php
 
+use WCML\Multicurrency\UI\Factory;
 use WCML\StandAlone\NullSitePress;
 
 use function WCML\functions\getSitePress;
+use function WCML\functions\isStandAlone;
 use function WPML\Container\make;
 
 /**
@@ -141,17 +143,21 @@ class woocommerce_wpml {
 		$this->dependencies_are_ok = $this->dependencies->check();
 
 		WCML_Admin_Menus::set_up_menus( $this, $sitepress, $wpdb );
+		$page = filter_input( INPUT_GET, 'page' );
 
-		$page              = filter_input( INPUT_GET, 'page' );
-		$is_dashboard_page = 'wpml-wcml' === $page;
-		if ( is_admin() && $is_dashboard_page ) {
-			WCML_Capabilities::set_up_capabilities();
+		if ( ! $this->dependencies_are_ok ) {
+			$is_dashboard_page = 'wpml-wcml' === $page;
+			if ( is_admin() && $is_dashboard_page ) {
+				WCML_Capabilities::set_up_capabilities();
 
-			wp_register_style( 'otgs-ico', WCML_PLUGIN_URL . '/res/css/otgs-ico.css', null, WCML_VERSION );
-			wp_enqueue_style( 'otgs-ico' );
+				wp_register_style( 'otgs-ico', WCML_PLUGIN_URL . '/res/css/otgs-ico.css', null, WCML_VERSION );
+				wp_enqueue_style( 'otgs-ico' );
 
-			WCML_Resources::load_management_css();
-			WCML_Resources::load_tooltip_resources();
+				WCML_Resources::load_management_css();
+				WCML_Resources::load_tooltip_resources();
+			}
+
+			return false;
 		}
 
 		new WCML_Upgrade();
@@ -173,10 +179,9 @@ class woocommerce_wpml {
 
 		$this->cart = new WCML_Cart( $this, $sitepress, $woocommerce );
 
-		$tab    = filter_input( INPUT_GET, 'tab' );
 		$action = filter_input( INPUT_POST, 'action' );
 		if ( WCML_MULTI_CURRENCIES_INDEPENDENT === (int) $this->settings['enable_multi_currency']
-			|| ( 'wpml-wcml' === $page && 'multi-currency' === $tab )
+			|| Factory::isMultiCurrencySettings()
 			|| ( in_array( $action, $actions_that_need_mc, true ) )
 		) {
 			$this->get_multi_currency();
@@ -187,9 +192,11 @@ class woocommerce_wpml {
 		}
 
 		if ( $this->dependencies_are_ok ) {
-			return $this->init_full( $sitepress, $wpdb, $woocommerce, $wpml_url_converter, $wpml_post_translations, $wpml_term_translations );
-		} else {
-			return $this->init_standalone( $sitepress, $wpdb );
+			if ( isStandAlone() ) {
+				return $this->init_standalone( $sitepress, $wpdb );
+			} else {
+				return $this->init_full( $sitepress, $wpdb, $woocommerce, $wpml_url_converter, $wpml_post_translations, $wpml_term_translations );
+			}
 		}
 	}
 
