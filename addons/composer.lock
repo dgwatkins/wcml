@@ -65,9 +65,6 @@
                 "dic",
                 "ioc"
             ],
-            "support": {
-                "source": "https://github.com/OnTheGoSystems/auryn/tree/master"
-            },
             "time": "2020-10-29T12:28:42+00:00"
         },
         {
@@ -128,12 +125,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "40581b6c391cffa5d211ac1659ea9cffc6dc2b13"
+                "reference": "661f78bd557b2acb20e6da7745de77b1ddc69e59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/40581b6c391cffa5d211ac1659ea9cffc6dc2b13",
-                "reference": "40581b6c391cffa5d211ac1659ea9cffc6dc2b13",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/661f78bd557b2acb20e6da7745de77b1ddc69e59",
+                "reference": "661f78bd557b2acb20e6da7745de77b1ddc69e59",
                 "shasum": ""
             },
             "conflict": {
@@ -152,7 +149,7 @@
                 "bagisto/bagisto": "<0.1.5",
                 "barrelstrength/sprout-base-email": "<1.2.7",
                 "barrelstrength/sprout-forms": "<3.9",
-                "baserproject/basercms": "<=4.5",
+                "baserproject/basercms": "<4.5.4",
                 "billz/raspap-webgui": "<=2.6.6",
                 "bk2k/bootstrap-package": ">=7.1,<7.1.2|>=8,<8.0.8|>=9,<9.0.4|>=9.1,<9.1.3|>=10,<10.0.10|>=11,<11.0.3",
                 "bolt/bolt": "<3.7.2",
@@ -173,6 +170,7 @@
                 "codiad/codiad": "<=2.8.4",
                 "composer/composer": "<1.10.23|>=2-alpha.1,<2.1.9",
                 "concrete5/concrete5": "<8.5.5",
+                "concrete5/core": "<8.5.7",
                 "contao-components/mediaelement": ">=2.14.2,<2.21.1",
                 "contao/core": ">=2,<3.5.39",
                 "contao/core-bundle": ">=4,<4.4.56|>=4.5,<4.9.18|>=4.10,<4.11.7|= 4.10.0",
@@ -198,6 +196,7 @@
                 "drupal/drupal": ">=7,<7.80|>=8,<8.9.16|>=9,<9.1.12|>=9.2,<9.2.4",
                 "dweeves/magmi": "<=0.7.24",
                 "ecodev/newsletter": "<=4",
+                "elgg/elgg": "<3.3.22",
                 "endroid/qr-code-bundle": "<3.4.2",
                 "enshrined/svg-sanitize": "<0.13.1",
                 "erusev/parsedown": "<1.7.2",
@@ -207,10 +206,11 @@
                 "ezsystems/ezdemo-ls-extension": ">=5.4,<5.4.2.1",
                 "ezsystems/ezfind-ls": ">=5.3,<5.3.6.1|>=5.4,<5.4.11.1|>=2017.12,<2017.12.0.1",
                 "ezsystems/ezplatform": "<=1.13.6|>=2,<=2.5.24",
-                "ezsystems/ezplatform-admin-ui": ">=1.3,<1.3.5|>=1.4,<1.4.6",
+                "ezsystems/ezplatform-admin-ui": ">=1.3,<1.3.5|>=1.4,<1.4.6|>=1.5,<=1.5.25",
                 "ezsystems/ezplatform-admin-ui-assets": ">=4,<4.2.1|>=5,<5.0.1|>=5.1,<5.1.1",
                 "ezsystems/ezplatform-kernel": "<=1.2.5|>=1.3,<=1.3.1",
                 "ezsystems/ezplatform-rest": ">=1.2,<=1.2.2|>=1.3,<1.3.8",
+                "ezsystems/ezplatform-richtext": ">=2.3,<=2.3.7",
                 "ezsystems/ezplatform-user": ">=1,<1.0.1",
                 "ezsystems/ezpublish-kernel": "<=6.13.8.1|>=7,<=7.5.15.1",
                 "ezsystems/ezpublish-legacy": "<=2017.12.7.3|>=2018.6,<=2019.3.5.1",
@@ -228,7 +228,7 @@
                 "fooman/tcpdf": "<6.2.22",
                 "forkcms/forkcms": "<=5.9.2",
                 "fossar/tcpdf-parser": "<6.2.22",
-                "francoisjacquet/rosariosis": "<6.5.1",
+                "francoisjacquet/rosariosis": "<8.1.1",
                 "friendsofsymfony/oauth2-php": "<1.3",
                 "friendsofsymfony/rest-bundle": ">=1.2,<1.2.2",
                 "friendsofsymfony/user-bundle": ">=1.2,<1.3.5",
@@ -243,7 +243,7 @@
                 "gos/web-socket-bundle": "<1.10.4|>=2,<2.6.1|>=3,<3.3",
                 "gree/jose": "<=2.2",
                 "gregwar/rst": "<1.0.3",
-                "grumpydictator/firefly-iii": "<5.6.3",
+                "grumpydictator/firefly-iii": "<5.6.5",
                 "guzzlehttp/guzzle": ">=4-rc.2,<4.2.4|>=5,<5.3.1|>=6,<6.2.1",
                 "helloxz/imgurl": "<=2.31",
                 "hjue/justwriting": "<=1",
@@ -264,19 +264,20 @@
                 "joomla/session": "<1.3.1",
                 "jsmitty12/phpwhois": "<5.1",
                 "kazist/phpwhois": "<=4.2.6",
+                "kevinpapst/kimai2": "<1.16.3",
                 "kitodo/presentation": "<3.1.2",
                 "klaviyo/magento2-extension": ">=1,<3",
                 "kreait/firebase-php": ">=3.2,<3.8.1",
                 "la-haute-societe/tcpdf": "<6.2.22",
                 "laminas/laminas-http": "<2.14.2",
-                "laravel/framework": "<6.20.26|>=7,<7.30.5|>=8,<8.40",
+                "laravel/framework": "<6.20.42|>=7,<7.30.6|>=8,<8.75",
                 "laravel/socialite": ">=1,<1.0.99|>=2,<2.0.10",
                 "lavalite/cms": "<=5.8",
                 "lcobucci/jwt": ">=3.4,<3.4.6|>=4,<4.0.4|>=4.1,<4.1.5",
                 "league/commonmark": "<0.18.3",
                 "league/flysystem": "<1.1.4|>=2,<2.1.1",
                 "lexik/jwt-authentication-bundle": "<2.10.7|>=2.11,<2.11.3",
-                "librenms/librenms": "<=21.10.2",
+                "librenms/librenms": "<=21.11",
                 "limesurvey/limesurvey": "<3.27.19",
                 "livewire/livewire": ">2.2.4,<2.2.6",
                 "lms/routes": "<2.1.1",
@@ -345,6 +346,7 @@
                 "prestashop/autoupgrade": ">=4,<4.10.1",
                 "prestashop/contactform": ">1.0.1,<4.3",
                 "prestashop/gamification": "<2.3.2",
+                "prestashop/prestashop": ">=1.7.5,<=1.7.8.1",
                 "prestashop/productcomments": ">=4,<4.2.1",
                 "prestashop/ps_emailsubscription": "<2.6.1",
                 "prestashop/ps_facetedsearch": "<3.4.1",
@@ -363,11 +365,11 @@
                 "scheb/two-factor-bundle": ">=0,<3.26|>=4,<4.11",
                 "sensiolabs/connect": "<4.2.3",
                 "serluck/phpwhois": "<=4.2.6",
-                "shopware/core": "<=6.4.3",
-                "shopware/platform": "<=6.4.3",
+                "shopware/core": "<=6.4.6",
+                "shopware/platform": "<=6.4.6",
                 "shopware/production": "<=6.3.5.2",
                 "shopware/shopware": "<5.7.6",
-                "showdoc/showdoc": "<=2.9.12",
+                "showdoc/showdoc": "<2.9.13",
                 "silverstripe/admin": "<4.8.1",
                 "silverstripe/assets": ">=1,<1.4.7|>=1.5,<1.5.2",
                 "silverstripe/cms": "<4.3.6|>=4.4,<4.4.4",
@@ -387,12 +389,12 @@
                 "simplito/elliptic-php": "<1.0.6",
                 "slim/slim": "<2.6",
                 "smarty/smarty": "<3.1.39",
-                "snipe/snipe-it": "<=5.3.1",
+                "snipe/snipe-it": "<5.3.3",
                 "socalnick/scn-social-auth": "<1.15.2",
                 "socialiteproviders/steam": "<1.1",
                 "spoonity/tcpdf": "<6.2.22",
                 "squizlabs/php_codesniffer": ">=1,<2.8.1|>=3,<3.0.1",
-                "ssddanbrown/bookstack": "<21.0.3",
+                "ssddanbrown/bookstack": "<21.11.2",
                 "stormpath/sdk": ">=0,<9.9.99",
                 "studio-42/elfinder": "<2.1.59",
                 "subrion/cms": "<=4.2.1",
@@ -414,7 +416,7 @@
                 "symfony/form": ">=2.3,<2.3.35|>=2.4,<2.6.12|>=2.7,<2.7.50|>=2.8,<2.8.49|>=3,<3.4.20|>=4,<4.0.15|>=4.1,<4.1.9|>=4.2,<4.2.1",
                 "symfony/framework-bundle": ">=2,<2.3.18|>=2.4,<2.4.8|>=2.5,<2.5.2|>=2.7,<2.7.51|>=2.8,<2.8.50|>=3,<3.4.26|>=4,<4.1.12|>=4.2,<4.2.7",
                 "symfony/http-foundation": ">=2,<2.8.52|>=3,<3.4.35|>=4,<4.2.12|>=4.3,<4.3.8|>=4.4,<4.4.7|>=5,<5.0.7",
-                "symfony/http-kernel": ">=2,<2.8.52|>=3,<3.4.35|>=4,<4.2.12|>=4.3,<4.4.13|>=5,<5.1.5",
+                "symfony/http-kernel": ">=2,<2.8.52|>=3,<3.4.35|>=4,<4.2.12|>=4.3,<4.4.13|>=5,<5.1.5|>=5.2,<5.3.12",
                 "symfony/intl": ">=2.7,<2.7.38|>=2.8,<2.8.31|>=3,<3.2.14|>=3.3,<3.3.13",
                 "symfony/maker-bundle": ">=1.27,<1.29.2|>=1.30,<1.31.1",
                 "symfony/mime": ">=4.3,<4.3.8",
@@ -424,13 +426,13 @@
                 "symfony/proxy-manager-bridge": ">=2.7,<2.7.51|>=2.8,<2.8.50|>=3,<3.4.26|>=4,<4.1.12|>=4.2,<4.2.7",
                 "symfony/routing": ">=2,<2.0.19",
                 "symfony/security": ">=2,<2.7.51|>=2.8,<3.4.49|>=4,<4.4.24|>=5,<5.2.8",
-                "symfony/security-bundle": ">=2,<2.7.48|>=2.8,<2.8.41|>=3,<3.3.17|>=3.4,<3.4.11|>=4,<4.0.11",
+                "symfony/security-bundle": ">=2,<2.7.48|>=2.8,<2.8.41|>=3,<3.3.17|>=3.4,<3.4.11|>=4,<4.0.11|>=5.3,<5.3.12",
                 "symfony/security-core": ">=2.4,<2.6.13|>=2.7,<2.7.9|>=2.7.30,<2.7.32|>=2.8,<3.4.49|>=4,<4.4.24|>=5,<5.2.9",
                 "symfony/security-csrf": ">=2.4,<2.7.48|>=2.8,<2.8.41|>=3,<3.3.17|>=3.4,<3.4.11|>=4,<4.0.11",
                 "symfony/security-guard": ">=2.8,<3.4.48|>=4,<4.4.23|>=5,<5.2.8",
                 "symfony/security-http": ">=2.3,<2.3.41|>=2.4,<2.7.51|>=2.8,<3.4.48|>=4,<4.4.23|>=5,<5.2.8|>=5.3,<5.3.2",
-                "symfony/serializer": ">=2,<2.0.11",
-                "symfony/symfony": ">=2,<3.4.49|>=4,<4.4.24|>=5,<5.2.9|>=5.3,<5.3.2",
+                "symfony/serializer": ">=2,<2.0.11|>=4.1,<4.4.35|>=5,<5.3.12",
+                "symfony/symfony": ">=2,<3.4.49|>=4,<4.4.35|>=5,<5.3.12",
                 "symfony/translation": ">=2,<2.0.17",
                 "symfony/validator": ">=2,<2.0.24|>=2.1,<2.1.12|>=2.2,<2.2.5|>=2.3,<2.3.3",
                 "symfony/var-exporter": ">=4.2,<4.2.12|>=4.3,<4.3.8",
@@ -538,7 +540,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-11-19T21:12:46+00:00"
+            "time": "2021-12-08T20:16:08+00:00"
         },
         {
             "name": "wpml/collect",
@@ -585,18 +587,15 @@
                 "collection",
                 "laravel"
             ],
-            "support": {
-                "source": "https://github.com/OnTheGoSystems/collect/tree/wpml-collect-rename"
-            },
             "time": "2020-10-28T08:07:38+00:00"
         },
         {
             "name": "wpml/core-api",
-            "version": "0.1.3",
+            "version": "0.1.5",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/wpml-packages/core-api.git",
-                "reference": "f1a888d977d8aca80269b0c5711f958f0064fcc6"
+                "reference": "369cfd53dba15e4dceb55e0e0458c16a5a142eab"
             },
             "require-dev": {
                 "10up/wp_mock": "0.2.0",
@@ -625,15 +624,15 @@
                 }
             ],
             "description": "Class and utilities to interface with WPML core functionality",
-            "time": "2021-06-29T05:05:38+00:00"
+            "time": "2021-11-16T12:50:12+00:00"
         },
         {
             "name": "wpml/fp",
-            "version": "0.1.6",
+            "version": "0.1.8",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/wpml-packages/fp.git",
-                "reference": "6e477a6d3e00b8cf3d0bdfc36e4959ebf77bf10d"
+                "reference": "5f233620422988ca47f3180d2fc1c2aa18191bee"
             },
             "require-dev": {
                 "cvuorinen/phpdoc-markdown-public": "^0.2.0",
@@ -653,15 +652,15 @@
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2021-06-04T21:05:42+00:00"
+            "time": "2021-10-19T01:39:15+00:00"
         },
         {
             "name": "wpml/wp",
-            "version": "0.1.6",
+            "version": "0.1.7",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/wpml-packages/wp.git",
-                "reference": "9508f540079cd0ac6c76ae732f1d90048343a9c8"
+                "reference": "dc2fbeb965133f5e569f51009b919a585a5fc1a9"
             },
             "require-dev": {
                 "antecedent/patchwork": "^2.0",
@@ -687,7 +686,7 @@
                 }
             ],
             "description": "Class and utilities to interface with WordPress from WPML",
-            "time": "2021-06-29T03:51:54+00:00"
+            "time": "2021-10-08T07:51:31+00:00"
         },
         {
             "name": "wpml/wpml-dependencies",
@@ -695,15 +694,15 @@
             "source": {
                 "type": "git",
                 "url": "ssh://git@git.onthegosystems.com:10022/glue-plugins/wpml/packages/wpml-dependencies.git",
-                "reference": "187f8adac13e48e0083ea81b5b02f0b734585e14"
+                "reference": "d8a25ab64fa3876f3d20532d36d664be8ea2b99c"
             },
             "require": {
                 "otgs/auryn": "dev-master",
                 "otgs/ui": "dev-master",
                 "wpml/collect": "dev-wpml-collect-rename",
-                "wpml/core-api": "0.1.3",
-                "wpml/fp": "0.1.6",
-                "wpml/wp": "0.1.6"
+                "wpml/core-api": "0.1.5",
+                "wpml/fp": "0.1.8",
+                "wpml/wp": "0.1.7"
             },
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.4"
@@ -738,7 +737,7 @@
             ],
             "description": "WPML dependencies for running WCML independently.",
             "homepage": "https://git.onthegosystems.com/glue-plugins/wpml/packages/wpml-dependencies",
-            "time": "2021-12-07T12:41:19+00:00"
+            "time": "2021-12-09T12:04:13+00:00"
         }
     ],
     "packages-dev": [],
