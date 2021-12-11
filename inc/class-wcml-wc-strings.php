@@ -164,7 +164,8 @@ class WCML_WC_Strings {
 			$product_id = $values['variation_id'] ? $values['variation_id'] : $values['product_id'];
 
 			$translated_product_id = apply_filters( 'translate_object_id', $product_id, 'product', true );
-			$translated_title      = get_the_title( $translated_product_id );
+			$translated_product = wc_get_product( $translated_product_id );
+			$translated_title   = $translated_product ? $translated_product->get_name() : '';
 
 			if ( strstr( $title, '</a>' ) ) {
 				$title = sprintf( '<a href="%s">%s</a>', $values['data']->get_permalink(), $translated_title );
