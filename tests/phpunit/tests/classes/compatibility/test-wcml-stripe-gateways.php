@@ -28,8 +28,7 @@ class Test_WCML_Stripe_Gateways extends OTGS_TestCase {
 	public function add_hooks() {
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectActionAdded( 'woocommerce_admin_order_totals_after_total', [ $subject, 'deregister_currency_symbol_filter'], 1 );
-		\WP_Mock::expectActionAdded( 'woocommerce_admin_order_totals_after_total', [ $subject, 'register_currency_symbol_filter'], 100 );
+		\WP_Mock::expectActionAdded( 'woocommerce_admin_order_totals_after_total', [ $subject, 'suspendCurrencySymbolFilter'], 9 );
 
 		$subject->add_hooks();
 	}
@@ -47,12 +46,7 @@ class Test_WCML_Stripe_Gateways extends OTGS_TestCase {
 
 		WP_Mock::userFunction( 'add_filter' );
 
-		$subject->deregister_currency_symbol_filter();
-
-		WP_Mock::expectFilterAdded( 'woocommerce_currency_symbol', [ $this->get_woocommerce_wpml()->multi_currency->orders, '_use_order_currency_symbol' ] );
-
-		$subject->register_currency_symbol_filter();
-
+		$subject->suspendCurrencySymbolFilter();
 	}
 
 }
