@@ -1,5 +1,7 @@
 <?php
 
+use WCML\Compatibility\Stripe_Gateway;
+
 class WCML_Compatibility {
 
 	/**
@@ -182,7 +184,7 @@ class WCML_Compatibility {
 			$wc_mnm_products = new WCML_Mix_and_Match_Products( $this->sitepress );
 			$wc_mnm_products->add_hooks();
 		}
-		
+
 		if ( defined( 'WPSEO_VERSION' ) ) {
 			new WCML_WPSEO();
 		}
@@ -222,6 +224,11 @@ class WCML_Compatibility {
 		if ( class_exists( 'WC_Gateway_Klarna' ) ) {
 			$klarna_gateway = new WCML_Klarna_Gateway();
 			$klarna_gateway->add_hooks();
+		}
+
+		if ( class_exists( 'WC_Gateway_Stripe' ) && isset( $this->woocommerce_wpml->multi_currency->orders ) ) {
+			$stripe_gateway = new Stripe_Gateway( $this->woocommerce_wpml->multi_currency->orders );
+			$stripe_gateway->add_hooks();
 		}
 
 		// YITH_WCQV.
