@@ -4,14 +4,14 @@ namespace WCML\Compatibility;
 
 class Stripe_Gateway {
 	/**
-	 * @var \woocommerce_wpml
+	 * @var \WCML_Multi_Currency_Orders $orders
 	 */
-	private $woocommerce_wpml;
+	private $orders;
 
 	const PRIORITY = 10;
 
-	public function __construct( \woocommerce_wpml $woocommerce_wpml ) {
-		$this->woocommerce_wpml = $woocommerce_wpml;
+	public function __construct( \WCML_Multi_Currency_Orders $orders ) {
+		$this->orders = $orders;
 	}
 
 	public function add_hooks() {
@@ -19,11 +19,11 @@ class Stripe_Gateway {
 	}
 
 	public function suspendCurrencySymbolFilter() {
-		if ( remove_filter( 'woocommerce_currency_symbol', [ $this->woocommerce_wpml->multi_currency->orders, '_use_order_currency_symbol' ] ) ) {
+		if ( remove_filter( 'woocommerce_currency_symbol', [ $this->orders, '_use_order_currency_symbol' ] ) ) {
 			add_action(
 				'woocommerce_admin_order_totals_after_total',
 				function() {
-					add_filter( 'woocommerce_currency_symbol', [ $this->woocommerce_wpml->multi_currency->orders, '_use_order_currency_symbol' ] );
+					add_filter( 'woocommerce_currency_symbol', [ $this->orders, '_use_order_currency_symbol' ] );
 				},
 				self::PRIORITY + 100
 			);

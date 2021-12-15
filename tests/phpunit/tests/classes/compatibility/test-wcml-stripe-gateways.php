@@ -4,22 +4,14 @@ use WCML\Compatibility\Stripe_Gateway;
 
 class Test_WCML_Stripe_Gateways extends OTGS_TestCase {
 
-	private function get_woocommerce_wpml() {
-		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+	private function get_orders() {
+		return $this->getMockBuilder( 'WCML_Multi_Currency_Orders' )
 			->disableOriginalConstructor()
 			->getMock();
-
-		$woocommerce_wpml->multi_currency = (object) [
-			'orders' => 'foo'
-		];
-
-		return $woocommerce_wpml;
 	}
 
 	private function get_subject() {
-
-
-		return new Stripe_Gateway( $this->get_woocommerce_wpml() );
+		return new Stripe_Gateway( $this->get_orders() );
 	}
 
 	/**

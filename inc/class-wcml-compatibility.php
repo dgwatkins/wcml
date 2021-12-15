@@ -1,6 +1,7 @@
 <?php
 
 use WCML\Compatibility\Stripe_Gateway;
+use function WPML\Container\make;
 
 class WCML_Compatibility {
 
@@ -227,8 +228,7 @@ class WCML_Compatibility {
 		}
 
 		if ( class_exists( 'WC_Gateway_Stripe' ) ) {
-			$stripe_gateway = new Stripe_Gateway( $this->woocommerce_wpml );
-			$stripe_gateway->add_hooks();
+			make( Stripe_Gateway::class )->add_hooks();
 		}
 
 		// YITH_WCQV.
