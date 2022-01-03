@@ -49,6 +49,6 @@ class ShippingHooksFactory implements \IWPML_Deferred_Action_Loader, \IWPML_Back
 		$getData = wpml_collect( $_GET );
 		$shippingActions = [ 'woocommerce_shipping_zone_add_method', 'woocommerce_shipping_zone_methods_save_changes' ];
 
-		return is_ajax() && wpml_collect( $shippingActions )->containsStrict( $getData->get( 'action' ) );
+		return wp_doing_ajax() && wpml_collect( $shippingActions )->containsStrict( $getData->get( 'action' ) );
 	}
 }

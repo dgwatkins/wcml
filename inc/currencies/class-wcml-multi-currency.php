@@ -181,7 +181,7 @@ class WCML_Multi_Currency {
 
 		add_filter( 'init', [ $this, 'init' ], 5 );
 
-		if ( is_ajax() ) {
+		if ( wp_doing_ajax() ) {
 			add_action( 'wp_ajax_nopriv_wcml_switch_currency', [ $this, 'switch_currency' ] );
 			add_action( 'wp_ajax_wcml_switch_currency', [ $this, 'switch_currency' ] );
 		}
@@ -194,7 +194,7 @@ class WCML_Multi_Currency {
 		if ( ! is_admin() && $this->get_client_currency() !== wcml_get_woocommerce_currency_option() ) {
 			$load = true;
 		} else {
-			if ( is_ajax() && $this->get_client_currency() !== wcml_get_woocommerce_currency_option() ) {
+			if ( wp_doing_ajax() && $this->get_client_currency() !== wcml_get_woocommerce_currency_option() ) {
 
 				$ajax_actions = apply_filters(
 					'wcml_multi_currency_ajax_actions',
@@ -579,7 +579,7 @@ class WCML_Multi_Currency {
         }
 
 		$currency_not_in_storage = is_null( $client_currency ) && ! wcml_user_store_get( self::CURRENCY_STORAGE_KEY );
-		$is_checkout_ajax        = is_ajax() && isset( $_GET['wc-ajax'] ) && 'update_order_review' === $_GET['wc-ajax'];
+		$is_checkout_ajax        = wp_doing_ajax() && isset( $_GET['wc-ajax'] ) && 'update_order_review' === $_GET['wc-ajax'];
 
 		if ( $currency_not_in_storage || $is_checkout_ajax ) {
 			$location_currency = $this->get_currency_by_geolocation();

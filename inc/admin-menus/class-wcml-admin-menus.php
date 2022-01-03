@@ -225,7 +225,7 @@ class WCML_Admin_Menus {
 
 			if (
 				'post.php' === $pagenow &&
-				! is_ajax() &&
+				! wp_doing_ajax() &&
 				self::is_post_product_translation_screen() &&
 				self::is_post_action_needs_redirect()
 			) {

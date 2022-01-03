@@ -12,7 +12,7 @@ class Test_WCML_Multi_Currency_Configuration extends OTGS_TestCase {
 	 * @test
 	 */
 	public function it_add_hooks() {
-		WP_Mock::userFunction( 'is_ajax', [ 'return' => true ] );
+		WP_Mock::userFunction( 'wp_doing_ajax', [ 'return' => true ] );
 
 		WP_Mock::expectActionAdded( 'wp_ajax_legacy_update_custom_rates', [
 			WCML_Multi_Currency_Configuration::class,

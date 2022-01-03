@@ -130,7 +130,7 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 		);
 
 		\WP_Mock::userFunction(
-			'is_ajax',
+			'wp_doing_ajax',
 			[
 				'return' => false,
 			]
@@ -168,7 +168,7 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 		$currency_codes   = [ 'USD', $country_currency ];
 
 		\WP_Mock::userFunction(
-			'is_ajax',
+			'wp_doing_ajax',
 			[
 				'return' => true,
 			]
@@ -221,7 +221,7 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 		$subject->woocommerce_wpml     = $woocommerce_wpml;
 
 		\WP_Mock::userFunction(
-			'is_ajax',
+			'wp_doing_ajax',
 			[
 				'return' => false,
 			]
@@ -257,7 +257,7 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 		$subject->woocommerce_wpml = $woocommerce_wpml;
 
 		\WP_Mock::userFunction(
-			'is_ajax',
+			'wp_doing_ajax',
 			[
 				'return' => false,
 			]
