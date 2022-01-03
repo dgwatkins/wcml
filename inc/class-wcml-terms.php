@@ -405,7 +405,7 @@ class WCML_Terms {
 	public function sync_taxonomy_translations( $html, $taxonomy, $taxonomy_obj ) {
 
 		$is_wcml = is_admin() && $taxonomy && isset( $_GET['page'] ) && $_GET['page'] == 'wpml-wcml' && isset( $_GET['tab'] );
-		$is_ajax = is_ajax() && $taxonomy && isset( $_POST['action'] ) && $_POST['action'] === 'wpml_get_terms_and_labels_for_taxonomy_table';
+		$is_ajax = wp_doing_ajax() && $taxonomy && isset( $_POST['action'] ) && $_POST['action'] === 'wpml_get_terms_and_labels_for_taxonomy_table';
 
 		if ( $is_wcml || $is_ajax ) {
 
@@ -832,7 +832,7 @@ class WCML_Terms {
 				if ( isset( $is_slug ) ) {
 					$filtered_terms[] = get_term( $trnsl_term_id, $taxonomy )->slug;
 				} else {
-					$filtered_terms[] = ( is_ajax() && isset( $_POST['action'] ) && in_array(
+					$filtered_terms[] = ( wp_doing_ajax() && isset( $_POST['action'] ) && in_array(
 						$_POST['action'],
 						[
 							'woocommerce_add_variation',

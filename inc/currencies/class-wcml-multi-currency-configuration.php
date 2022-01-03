@@ -31,7 +31,7 @@ class WCML_Multi_Currency_Configuration {
 	}
 
 	public static function add_hooks(){
-		if ( is_ajax() ) {
+		if ( wp_doing_ajax() ) {
 
 			add_action( 'wp_ajax_legacy_update_custom_rates', [ __CLASS__, 'legacy_update_custom_rates' ] );
 			add_action( 'wp_ajax_legacy_remove_custom_rates', [ __CLASS__, 'legacy_remove_custom_rates' ] );

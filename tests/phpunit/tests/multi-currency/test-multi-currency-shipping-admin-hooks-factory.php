@@ -72,7 +72,7 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 			'return' => true
 		] );
 
-		\WP_Mock::userFunction( 'is_ajax', [
+		\WP_Mock::userFunction( 'wp_doing_ajax', [
 			'return' => false
 		] );
 
@@ -170,7 +170,7 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 			'return' => true
 		] );
 
-		\WP_Mock::userFunction( 'is_ajax', [
+		\WP_Mock::userFunction( 'wp_doing_ajax', [
 			'return' => true
 		] );
 
@@ -212,7 +212,7 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 			'return' => true
 		] );
 
-		\WP_Mock::userFunction( 'is_ajax', [
+		\WP_Mock::userFunction( 'wp_doing_ajax', [
 			'return' => true
 		] );
 
@@ -247,7 +247,7 @@ class Test_WCML_Multi_Currency_Shipping_Admin_Hooks_Factory extends OTGS_TestCas
 			'return' => true
 		] );
 
-		\WP_Mock::userFunction( 'is_ajax', [
+		\WP_Mock::userFunction( 'wp_doing_ajax', [
 			'return' => true
 		] );
 

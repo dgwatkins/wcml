@@ -59,7 +59,7 @@ class Test_WCML_Cart extends OTGS_TestCase {
 	 */
 	public function it_adds_correct_hooks_when_clean_cart_is_disabled() {
 
-		\WP_Mock::userFunction( 'is_ajax', [ 'return' => false ] );
+		\WP_Mock::userFunction( 'wp_doing_ajax', [ 'return' => false ] );
 
 		$this->woocommerce_wpml->settings['cart_sync'] = [
 			'lang_switch' => false,

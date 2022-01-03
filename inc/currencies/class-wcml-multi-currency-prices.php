@@ -673,7 +673,7 @@ class WCML_Multi_Currency_Prices {
 			'woocommerce_calc_line_taxes',
 		];
 		$is_ajax_order_action =
-			is_ajax() &&
+			wp_doing_ajax() &&
 			(
 			(
 				isset( $_POST['action'] ) &&
