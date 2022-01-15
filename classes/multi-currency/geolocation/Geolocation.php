@@ -4,6 +4,7 @@ namespace WCML\MultiCurrency;
 
 use WPML\FP\Obj;
 use WPML\FP\Relation;
+use WPML\FP\Logic;
 
 class Geolocation {
 
@@ -39,17 +40,20 @@ class Geolocation {
 	private static function getCountryByUserIp() {
 		wp_cache_add_non_persistent_groups( __CLASS__ );
 
-		$key     = 'country';
-		$country = wp_cache_get( $key, __CLASS__ );
-
-		if ( ! is_string( $country ) ) {
+		$isResolved = Logic::complement( Relation::equals( false ) );
+		$key        = 'country';
+		$country    = wp_cache_get( $key, __CLASS__ );
+		
+		if ( ! $isResolved( $country ) ) {
 			$geolocationData = \WC_Geolocation::geolocate_ip( \WC_Geolocation::get_ip_address(), true );
-			$country         = (string) Obj::propOr( '', 'country', $geolocationData );
-
-			wp_cache_add( $key, $country, __CLASS__ );
+			$country         = Obj::propOr( false, 'country', $geolocationData );
+			
+			if ( $isResolved( $country ) ) {
+				wp_cache_add( $key, (string) $country, __CLASS__ );
+			}
 		}
 
-		return $country;
+		return (string) $country;
 	}
 
 	/**
