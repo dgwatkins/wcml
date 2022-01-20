@@ -38,6 +38,9 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 	 * @return WCML_Multi_Currency_Shipping
 	 */
 	private function get_subject(){
+		WP_Mock::userFunction( 'wp_cache_add_non_persistent_groups' )
+		       ->times( 1 )
+		       ->with( 'converted_shipping_cost' );
 		$subject = new WCML_Multi_Currency_Shipping( $this->multi_currency, $this->sitepress, $this->wpdb );
 
 		return $subject;
