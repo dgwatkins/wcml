@@ -3,82 +3,6 @@
 /**
  * @author OnTheGo Systems
  */
-class OTGS_UI_Assets
-{
-    const ASSETS_TYPES_SCRIPT = 'script';
-    const ASSETS_TYPES_STYLE = 'style';
-    /** @var string */
-    private $assets_root_url;
-    /** @var OTGS_Assets_Store */
-    private $assets_store;
-    /**
-     * OTGS_UI_Assets constructor.
-     *
-     * @param string             $assets_root_url Root URL for the dist directory on this vendor library.
-     * @param \OTGS_Assets_Store $assets_store
-     */
-    public function __construct($assets_root_url, \OTGS_Assets_Store $assets_store)
-    {
-    }
-    /**
-     * Registers both scripts and styles
-     */
-    public function register()
-    {
-    }
-    /**
-     * Registers scripts
-     */
-    private function register_scripts()
-    {
-    }
-    /**
-     * @param string $handle
-     * @param string $path
-     */
-    private function register_script($handle, $path)
-    {
-    }
-    /**
-     * @param string $type
-     * @param string $handle
-     * @param array  $path
-     */
-    private function register_resource($type, $handle, $path)
-    {
-    }
-    /**
-     * @return string
-     */
-    private function get_assets_base_url()
-    {
-    }
-    /**
-     * Registers styles
-     */
-    private function register_styles()
-    {
-    }
-    /**
-     * @param string $handle
-     * @param string $path
-     */
-    private function register_style($handle, $path)
-    {
-    }
-}
-/**
- * @author OnTheGo Systems
- */
-class OTGS_Assets_Handles
-{
-    const POPOVER_TOOLTIP = 'otgsPopoverTooltip';
-    const SWITCHER = 'otgsSwitcher';
-    const TABLE_STICKY_HEADER = 'otgsTableStickyHeader';
-}
-/**
- * @author OnTheGo Systems
- */
 class OTGS_UI_Loader
 {
     /** @var \OTGS_UI_Assets */
@@ -150,6 +74,82 @@ class OTGS_Assets_Store
      * @param array  $resources
      */
     private function add_resources($handle, $resources)
+    {
+    }
+}
+/**
+ * @author OnTheGo Systems
+ */
+class OTGS_Assets_Handles
+{
+    const POPOVER_TOOLTIP = 'otgsPopoverTooltip';
+    const SWITCHER = 'otgsSwitcher';
+    const TABLE_STICKY_HEADER = 'otgsTableStickyHeader';
+}
+/**
+ * @author OnTheGo Systems
+ */
+class OTGS_UI_Assets
+{
+    const ASSETS_TYPES_SCRIPT = 'script';
+    const ASSETS_TYPES_STYLE = 'style';
+    /** @var string */
+    private $assets_root_url;
+    /** @var OTGS_Assets_Store */
+    private $assets_store;
+    /**
+     * OTGS_UI_Assets constructor.
+     *
+     * @param string             $assets_root_url Root URL for the dist directory on this vendor library.
+     * @param \OTGS_Assets_Store $assets_store
+     */
+    public function __construct($assets_root_url, \OTGS_Assets_Store $assets_store)
+    {
+    }
+    /**
+     * Registers both scripts and styles
+     */
+    public function register()
+    {
+    }
+    /**
+     * Registers scripts
+     */
+    private function register_scripts()
+    {
+    }
+    /**
+     * @param string $handle
+     * @param string $path
+     */
+    private function register_script($handle, $path)
+    {
+    }
+    /**
+     * @param string $type
+     * @param string $handle
+     * @param array  $path
+     */
+    private function register_resource($type, $handle, $path)
+    {
+    }
+    /**
+     * @return string
+     */
+    private function get_assets_base_url()
+    {
+    }
+    /**
+     * Registers styles
+     */
+    private function register_styles()
+    {
+    }
+    /**
+     * @param string $handle
+     * @param string $path
+     */
+    private function register_style($handle, $path)
     {
     }
 }
