@@ -11,10 +11,6 @@
         }
     ],
     "repositories": {
-        "otgs-php-integration-tests": {
-            "type": "vcs",
-            "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-php-integration-tests.git"
-        },
         "otgs-build-tools": {
             "type": "vcs",
             "url": "ssh://git@git.onthegosystems.com:10022/shared/otgs-build-tools.git"
@@ -44,6 +40,11 @@
         "sort-packages": true,
         "platform": {
             "php": "5.6"
+        },
+        "allow-plugins": {
+            "bamarni/composer-bin-plugin": true,
+            "composer/installers": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
     "minimum-stability": "dev",
@@ -54,16 +55,13 @@
         "wpml-shared/wpml-lib-dependencies": "~0.1"
     },
     "require-dev": {
-        "antecedent/patchwork": "^2.0",
         "bamarni/composer-bin-plugin": "^1.4",
-        "composer/composer": "~1.9",
+        "composer/composer": "~2.0",
         "imangazaliev/didom": "^1.14",
         "otgs/build-tools": "~0.1",
-        "otgs/build-tools-ci": "^0.12",
+        "otgs/build-tools-ci": "dev-develop",
         "otgs/changelog": "dev-develop",
-        "otgs/php-integration-tests": "dev-develop",
         "otgs/ui": "dev-master",
-        "otgs/unit-tests-framework": "~1.2.0",
         "otgs/wp-plugin-version": "dev-master",
         "roave/security-advisories": "dev-master",
         "wpml/collect": "dev-wpml-collect-rename",

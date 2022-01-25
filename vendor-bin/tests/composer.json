@@ -1,0 +1,21 @@
+{
+  "repositories": {
+    "otgs-php-integration-tests": {
+      "type": "vcs",
+      "url" : "ssh://git@git.onthegosystems.com:10022/shared/otgs-php-integration-tests.git"
+    }
+  },
+  "config"      : {
+    "platform"     : {
+      "php": "7.3"
+    }
+  },
+  "require-dev"      : {
+    "antecedent/patchwork"       : "^2.0",
+    "mikey179/vfsstream"         : "~1.6.8",
+    "otgs/php-integration-tests" : "dev-develop",
+    "otgs/unit-tests-framework"  : "^2.0",
+    "roave/security-advisories"  : "dev-master",
+    "yoast/phpunit-polyfills"    : "^1.0"
+  }
+}

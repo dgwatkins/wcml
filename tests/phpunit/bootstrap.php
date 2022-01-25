@@ -126,4 +126,4 @@ FunctionMocker::init(
 	]
 );
 
-require_once WCML_PATH . '/vendor/otgs/unit-tests-framework/phpunit/bootstrap.php';
+require_once WCML_PATH . '/vendor-bin/tests/vendor/otgs/unit-tests-framework/phpunit/bootstrap.php';
