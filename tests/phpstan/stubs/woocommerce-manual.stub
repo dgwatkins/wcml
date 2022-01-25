@@ -1,0 +1,44 @@
+<?php
+
+namespace Automattic\WooCommerce\Vendor\League\Container\ServiceProvider {
+
+    interface ServiceProviderInterface
+    {
+        public function provides(string $service) : bool;
+
+        public function register();
+
+        public function setIdentifier(string $id) : ServiceProviderInterface;
+
+        public function getIdentifier() : string;
+    }
+
+    abstract class AbstractServiceProvider implements ServiceProviderInterface
+    {
+        public function provides(string $alias) : bool
+        {
+            return in_array($alias, $this->provides, true);
+        }
+
+        public function setIdentifier(string $id) : ServiceProviderInterface
+        {
+            $this->identifier = $id;
+
+            return $this;
+        }
+
+        public function getIdentifier() : string
+        {
+            return $this->identifier ?? get_class($this);
+        }
+    }
+
+}
+
+namespace Automattic\WooCommerce\Vendor\League\Container {
+    class Container {}
+}
+
+namespace Automattic\WooCommerce\Vendor\League\Container\Definition {
+    class Definition {}
+}

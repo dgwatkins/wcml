@@ -18,7 +18,7 @@
   \
   --out=tests/phpstan/stubs/page-builders.stub \
   \
-  ../sitepress-multilingual-cms/vendor/wpml/page-builders/src \
+  ../sitepress-multilingual-cms/addons/wpml-page-builders/classes \
 
 ./vendor/bin/generate-stubs \
   -vvv \
@@ -37,6 +37,7 @@
   ../sitepress-multilingual-cms/inc/functions-debug-information.php \
   ../sitepress-multilingual-cms/inc/functions-helpers.php \
   ../sitepress-multilingual-cms/inc/functions-load.php \
+  ../sitepress-multilingual-cms/inc/functions-load-tm.php \
   ../sitepress-multilingual-cms/inc/functions-network.php \
   ../sitepress-multilingual-cms/inc/functions-sanitation.php \
   ../sitepress-multilingual-cms/inc/functions-security.php \
@@ -55,6 +56,7 @@
   ../sitepress-multilingual-cms/inc/taxonomy-term-translation \
   ../sitepress-multilingual-cms/inc/template-functions.php \
   ../sitepress-multilingual-cms/inc/tools \
+  ../sitepress-multilingual-cms/inc/translation-jobs \
   ../sitepress-multilingual-cms/inc/translation-management \
   ../sitepress-multilingual-cms/inc/upgrade.php \
   ../sitepress-multilingual-cms/inc/url-handling \
@@ -98,19 +100,19 @@
   ../sitepress-multilingual-cms/vendor/wpml/wp/classes
 
 
-./vendor/bin/generate-stubs  \
-  --force  \
-  --functions \
-  --classes \
-  --interfaces \
-  --traits \
-  \
-  --out=tests/phpstan/stubs/wpml-tm.stub \
-  \
-  ../wpml-translation-management/classes \
-  ../wpml-translation-management/inc \
-  ../wpml-translation-management/menu \
-  ../wpml-translation-management/templates
+#./vendor/bin/generate-stubs  \
+#  --force  \
+#  --functions \
+#  --classes \
+#  --interfaces \
+#  --traits \
+#  \
+#  --out=tests/phpstan/stubs/wpml-tm.stub \
+#  \
+#  ../wpml-translation-management/classes \
+#  ../wpml-translation-management/inc \
+#  ../wpml-translation-management/menu \
+#  ../wpml-translation-management/templates
 
 
 ./vendor/bin/generate-stubs  \
@@ -148,6 +150,6 @@
   --out=tests/phpstan/stubs/woocommerce.stub \
   \
   ../woocommerce/includes \
-  ../woocommerce/packages \
+  ../woocommerce/packages/woocommerce-blocks/src \
   ../woocommerce/src \
   ../woocommerce/woocommerce.php

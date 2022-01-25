@@ -7,20 +7,19 @@ parameters:
 
     - tests/phpstan/stubs/psr.stub
     - tests/phpstan/stubs/wp-cli.stub
+    - tests/phpstan/stubs/woocommerce-manual.stub
     - tests/phpstan/stubs/woocommerce.stub
 
     - tests/phpstan/stubs/twig.stub
 
     - tests/phpstan/stubs/otgs-ui.stub
 
-    - tests/phpstan/stubs/otgs-installer.stub
-
     - tests/phpstan/stubs/wpml-vendor.stub
     - tests/phpstan/stubs/wpml-core.stub
     - tests/phpstan/stubs/wpml-container-functions.stub
 
+    - tests/phpstan/stubs/page-builders-manual.stub
     - tests/phpstan/stubs/page-builders.stub
-    - tests/phpstan/stubs/wpml-tm.stub
     - tests/phpstan/stubs/wpml-st.stub
     - tests/phpstan/stubs/wpml-media.stub
 

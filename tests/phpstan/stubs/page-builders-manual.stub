@@ -1,0 +1,4 @@
+<?php
+namespace Elementor;
+
+abstract class Widget_Base {}
