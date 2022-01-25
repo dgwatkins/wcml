@@ -53,7 +53,7 @@ class ProductSaveActions extends \WPML_Post_Translation {
 	/**
 	 * @inheritDoc
 	 */
-	function get_save_post_trid( $postId, $post_status ) {
+	public function get_save_post_trid( $postId, $post_status ) {
 		return $this->get_element_trid( $postId );
 	}
 

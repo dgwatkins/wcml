@@ -25,7 +25,7 @@ class Generic {
 		$lang    = $wp_query->get( 'lang' );
 		$include = $wp_query->get( 'post__in' );
 		if ( empty( $lang ) && ! empty( $include ) ) {
-			$filtered_include = array();
+			$filtered_include = [];
 			foreach ( $include as $id ) {
 				$filtered_include[] = wpml_object_id_filter( $id, get_post_type( $id ), true );
 			}
