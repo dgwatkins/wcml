@@ -60,7 +60,7 @@ class Products extends Handler {
 	 * @return \WP_REST_Response
 	 */
 	public function prepare( $response, $object, $request ) {
-		$response->data['translations'] = array();
+		$response->data['translations'] = [];
 
 		$trid = $this->wpmlPostTranslations->get_element_trid( $response->data['id'] );
 

@@ -19,10 +19,10 @@ class Languages extends Handler {
 		$lang = $request->get_param( 'lang' );
 
 		if ( ! is_null( $lang ) && $lang !== 'all' ) {
-			$args['meta_query'][] = array(
+			$args['meta_query'][] = [
 				'key'   => 'wpml_language',
 				'value' => strval( $lang )
-			);
+			];
 		}
 
 		return $args;
