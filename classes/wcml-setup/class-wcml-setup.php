@@ -204,7 +204,7 @@ class WCML_Setup {
 			}
 
 			if ( ! current_user_can( 'manage_options' ) ) {
-				wp_die( esc_html__( "Cheatin' huh?", 'woocommerce' ) );
+				wp_die( esc_html__( "Cheatin' huh?", 'woocommerce-multilingual' ) );
 			}
 
 			$this->complete_setup();
