@@ -313,6 +313,8 @@ class Test_WCML_Admin_Menus extends OTGS_TestCase {
 		FunctionMocker::replace( 'WCML_Admin_Menus::is_page_without_admin_language_switcher', false );
 
 		\WP_Mock::userFunction( 'is_admin' )->once()->with()->andReturn( true );
+		
+		FunctionMocker::replace( 'WCML_Capabilities::canManageWcml', true );
 
 		\WP_Mock::expectActionAdded( 'admin_footer', [ 'WCML_Admin_Menus', 'documentation_links' ] );
 		\WP_Mock::expectActionAdded( 'admin_head', [ 'WCML_Admin_Menus', 'hide_multilingual_content_setup_box' ] );

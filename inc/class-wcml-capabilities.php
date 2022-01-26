@@ -31,5 +31,12 @@ class WCML_Capabilities {
 		}
 
 	}
+	
+	public static function canManageWcml(){
+		$allowedRoles = ['shop_manager', 'administrator', 'super_admin'];
+
+		return (bool) array_intersect( $allowedRoles, wp_get_current_user()->roles );
+		
+	}
 
 }

@@ -8,11 +8,15 @@ class WCML_Pointers{
 
 	public function setup() {
 		$current_screen = get_current_screen();
-
+		
 		if ( empty( $current_screen ) ) {
 			return;
 		}
-
+		
+		if ( ! WCML_Capabilities::canManageWcml() ) {
+			return;
+		}
+		
 		$tab     = isset( $_GET['tab'] ) ? $_GET['tab'] : '';
 		$section = isset( $_GET['section'] ) ? $_GET['section'] : '';
 		wp_register_style( 'wcml-pointers', WCML_PLUGIN_URL . '/res/css/wcml-pointers.css' );

@@ -41,7 +41,7 @@ class WCML_Admin_Menus {
 			self::remove_wpml_admin_language_switcher();
 		}
 
-		if ( is_admin() && ! is_null( $sitepress ) && self::$woocommerce_wpml->dependencies_are_ok ) {
+		if ( is_admin() && ! is_null( $sitepress ) && self::$woocommerce_wpml->dependencies_are_ok && WCML_Capabilities::canManageWcml() ) {
 			add_action( 'admin_footer', [ __CLASS__, 'documentation_links' ] );
 			add_action( 'admin_head', [ __CLASS__, 'hide_multilingual_content_setup_box' ] );
 			add_action( 'admin_init', [ __CLASS__, 'restrict_admin_with_redirect' ] );
@@ -141,7 +141,7 @@ class WCML_Admin_Menus {
 		if ( ! $post ) {
 			return;
 		}
-
+		
 		$tracking_link = new WCML_Tracking_Link();
 
 		$get_post_type = get_post_type( $post->ID );

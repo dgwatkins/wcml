@@ -1,5 +1,7 @@
 <?php
 
+use tad\FunctionMocker\FunctionMocker;
+
 /**
  * @author OnTheGo Systems
  * @group  pointers
@@ -47,6 +49,8 @@ class Test_WCML_Pointers extends OTGS_TestCase {
 		WP_Mock::wpFunction( 'wp_register_style', array( 'times' => 1, 'args' => array( 'wcml-pointers', WCML_PLUGIN_URL . '/res/css/wcml-pointers.css' ) ) );
 
 		$subject = new WCML_Pointers();
+		
+		FunctionMocker::replace( 'WCML_Capabilities::canManageWcml', true );
 
 		WP_Mock::expectActionAdded( 'admin_footer', array( $subject, 'add_products_translation_link' ), 100 );
 
@@ -70,6 +74,8 @@ class Test_WCML_Pointers extends OTGS_TestCase {
 		$_GET['section'] = 'classes';
 
 		$subject = new WCML_Pointers();
+		
+		FunctionMocker::replace( 'WCML_Capabilities::canManageWcml', true );
 
 		$this->expectActionAdded( 'admin_footer', array( $subject, 'add_products_translation_link' ), 100, 1, 0 );
 
@@ -93,6 +99,8 @@ class Test_WCML_Pointers extends OTGS_TestCase {
 		$_GET['tab'] = 'general';
 
 		$subject = new WCML_Pointers();
+		
+		FunctionMocker::replace( 'WCML_Capabilities::canManageWcml', true );
 
 		$this->expectActionAdded( 'admin_footer', array( $subject, 'add_products_translation_link' ), 100, 1, 0 );
 		$this->expectActionAdded( 'admin_footer', array( $subject, 'add_shipping_classes_translation_link' ), 10, 1, 0 );
@@ -114,6 +122,8 @@ class Test_WCML_Pointers extends OTGS_TestCase {
 		WP_Mock::wpFunction( 'wp_register_style', array( 'times' => 1, 'args' => array( 'wcml-pointers', WCML_PLUGIN_URL . '/res/css/wcml-pointers.css' ) ) );
 
 		$subject = new WCML_Pointers();
+		
+		FunctionMocker::replace( 'WCML_Capabilities::canManageWcml', true );
 
 		$this->expectActionAdded( 'admin_footer', array( $subject, 'add_products_translation_link' ), 100, 1, 0 );
 		$this->expectActionAdded( 'admin_footer', array( $subject, 'add_shipping_classes_translation_link' ), 10, 1, 0 );
@@ -137,6 +147,8 @@ class Test_WCML_Pointers extends OTGS_TestCase {
 		$_GET['tab'] = 'account';
 
 		$subject = new WCML_Pointers();
+		
+		FunctionMocker::replace( 'WCML_Capabilities::canManageWcml', true );
 
 		$this->expectActionAdded( 'admin_footer', array( $subject, 'add_products_translation_link' ), 100, 1, 0 );
 		$this->expectActionAdded( 'admin_footer', array( $subject, 'add_shipping_classes_translation_link' ), 10, 1, 0 );
