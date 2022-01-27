@@ -62,9 +62,6 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 
 	/**
 	 * @test
-	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 */
 	public function it_gets_model_data() {
 		$currencies      = array( 'EUR', 'USD', 'JPY' );
@@ -84,9 +81,8 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 			'format'            => '%name% (%symbol%) - %code%',
 			'switcher_id'    => mt_rand( 1, 10 ),
 		);
-		$mock_hard                        = \Mockery::mock( 'overload:WPML_Mobile_Detect' );
-		$mock_hard->shouldReceive( 'isMobile' )->once()->andReturn( false );
-		$mock_hard->shouldReceive( 'isTablet' )->once()->andReturn( true );
+		
+		FunctionMocker::replace( 'wp_is_mobile', true );
 
 		$expected_model = array(
 			'css_classes'       => 'random_style ' . $args['switcher_id'] . ' wcml_currency_switcher wcml-cs-touch-device',
