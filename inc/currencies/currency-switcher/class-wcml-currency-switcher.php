@@ -14,8 +14,6 @@ class WCML_Currency_Switcher {
 	private $woocommerce_wpml;
 	/** @var Sitepress */
 	private $sitepress;
-	/** @var boolean */
-	private $is_touch_screen;
 
 	public function __construct( woocommerce_wpml $woocommerce_wpml, Sitepress $sitepress ) {
 
@@ -222,16 +220,8 @@ class WCML_Currency_Switcher {
 	}
 
 	public function add_user_agent_touch_device_classes( $classes ) {
-
-		if ( is_null( $this->is_touch_screen ) ) {
-			if ( ! class_exists( 'WPML_Mobile_Detect' ) ) {
-				require_once WPML_PLUGIN_PATH . '/lib/mobile-detect.php';
-			}
-			$mobile_detect         = new WPML_Mobile_Detect();
-			$this->is_touch_screen = $mobile_detect->isMobile() || $mobile_detect->isTablet();
-		}
-
-		if ( $this->is_touch_screen ) {
+		
+		if ( wp_is_mobile() ) {
 			$classes[] = 'wcml-cs-touch-device';
 		}
 
