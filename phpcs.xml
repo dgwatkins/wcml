@@ -78,7 +78,4 @@
 		<severity>0</severity>
 	</rule>
 	<rule ref="Generic.Arrays.DisallowLongArraySyntax.Found"/>
-	<rule ref="WordPress.PHP.DisallowShortTernary.Found">
-		<severity>0</severity>
-	</rule>
 </ruleset>
