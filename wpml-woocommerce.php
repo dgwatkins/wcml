@@ -133,8 +133,6 @@ if ( WCML\Rest\Functions::isRestApiRequest() ) {
 	add_action( 'wpml_before_init', [ WCML\Rest\Functions::class, 'removeWpmlGlobalUrlFilters' ], 0 );
 }
 
-add_action( 'plugins_loaded', 'load_wcml_without_wpml', 10000 );
-
 /**
  * Load WooCommerce Multilingual when WPML is NOT active.
  */
@@ -146,3 +144,4 @@ function load_wcml_without_wpml() {
 }
 
 add_action( 'plugins_loaded', 'load_wcml_without_wpml', 10000 );
+
