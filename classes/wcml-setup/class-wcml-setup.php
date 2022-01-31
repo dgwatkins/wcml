@@ -96,9 +96,7 @@ class WCML_Setup {
 		}
 
 		if ( ! $this->has_completed() ) {
-			if ( ! \WCML\functions\isStandAlone() ) {
-				$this->ui->add_wizard_notice_hook();
-			}
+			$this->ui->add_wizard_notice_hook();
 			add_action( 'admin_init', [ $this, 'skip_setup' ], 1 );
 		}
 	}
@@ -107,12 +105,8 @@ class WCML_Setup {
 		if ( get_transient( '_wcml_activation_redirect' ) ) {
 			delete_transient( '_wcml_activation_redirect' );
 
-			if ( \WCML\functions\isStandAlone() ) {
-				wcml_safe_redirect( admin_url( 'admin.php?page=wpml-wcml&tab=multi-currency' ) );
-			} else {
-				if ( ! $this->do_not_redirect_to_setup() && ! $this->has_completed() ) {
-					wcml_safe_redirect( admin_url( 'index.php?page=wcml-setup' ) );
-				}
+			if ( ! $this->do_not_redirect_to_setup() && ! $this->has_completed() ) {
+				wcml_safe_redirect( admin_url( 'index.php?page=wcml-setup' ) );
 			}
 		}
 	}
