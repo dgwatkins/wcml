@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "46611aa2dc3a0c3bcab975243ef98970",
+    "content-hash": "5c25487759e3ce727b3359ec36172c32",
     "packages": [
         {
             "name": "composer/installers",
@@ -212,11 +212,11 @@
         },
         {
             "name": "otgs/installer",
-            "version": "2.6.2",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/installer/installer.git",
-                "reference": "92d8e18dc832919c77f48d497ad4b78d344a4e43"
+                "reference": "72211a308a2dc60eaee4e701ee7a52ffb9b33b42"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -242,8 +242,8 @@
             ],
             "authors": [
                 {
-                    "name": "Adriano Ferreira",
-                    "email": "adriano.f@onthegosystems.com",
+                    "name": "Grzegorz Wierzba",
+                    "email": "grzegorz.w@onthegosystems.com",
                     "homepage": "http://www.wpml.org"
                 },
                 {
@@ -300,7 +300,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2021-03-09T09:15:35+00:00"
+            "time": "2022-01-14T14:14:17+00:00"
         },
         {
             "name": "roave/security-advisories",
