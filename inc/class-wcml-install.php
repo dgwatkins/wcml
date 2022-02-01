@@ -12,17 +12,11 @@ class WCML_Install {
 	 */
 	public static function initialize( $woocommerce_wpml, $sitepress ) {
 		if ( is_admin() ) {
-			$WCML_Setup_UI = new WCML_Setup_UI( $woocommerce_wpml );
-			$WCML_Setup_UI->add_hooks();
 
 			if ( isStandAlone() ) {
 				self::initialize_standalone( $woocommerce_wpml );
 			} else {
 				self::initialize_full( $woocommerce_wpml, $sitepress );
-
-				$WCML_Setup = new WCML_Setup( $WCML_Setup_UI, new WCML_Setup_Handlers( $woocommerce_wpml ), $woocommerce_wpml, $sitepress );
-				$WCML_Setup->setup_redirect();
-				$WCML_Setup->add_hooks();
 			}
 		}
 	}
@@ -110,6 +104,12 @@ class WCML_Install {
 				'hide_variation_type_on_tm_dashboard',
 			]
 		);
+
+		$WCML_Setup_UI = new WCML_Setup_UI( $woocommerce_wpml );
+		$WCML_Setup_UI->add_hooks();
+		$WCML_Setup = new WCML_Setup( $WCML_Setup_UI, new WCML_Setup_Handlers( $woocommerce_wpml ), $woocommerce_wpml, $sitepress );
+		$WCML_Setup->setup_redirect();
+		$WCML_Setup->add_hooks();
 
 		if ( ! empty( $woocommerce_wpml->settings['set_up_wizard_run'] ) ) {
 			add_action( 'admin_notices', [ __CLASS__, 'admin_notice_after_install' ] );
