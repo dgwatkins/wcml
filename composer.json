@@ -50,7 +50,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "otgs/installer": "~2.6.0",
+        "otgs/installer": "~3",
         "wpml-shared/wpml-lib-cache": "~0.1",
         "wpml-shared/wpml-lib-dependencies": "~0.1"
     },
