@@ -130,7 +130,7 @@ function wcml_loader() {
 }
 
 if ( WCML\Rest\Functions::isRestApiRequest() ) {
-	add_action( 'wpml_before_init', [ WCML\Rest\Functions::class, 'removeWpmlGlobalUrlFilters' ], 0 );
+	add_action( 'wpml_before_init', [ WCML\Rest\Generic::class, 'removeHomeUrlFilterOnRestAuthentication' ] );
 }
 
 /**
