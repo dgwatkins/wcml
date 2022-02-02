@@ -1,0 +1,44 @@
+<?php
+
+namespace WCML\StandAlone;
+
+use WCML\Multicurrency\UI\Factory;
+
+class DependencyAssets {
+
+	/** @var string $dependencyBaseUrl */
+	private $dependencyBaseUrl;
+
+	/**
+	 * @param string $dependencyBaseUrl
+	 */
+	public function __construct( $dependencyBaseUrl ) {
+		$this->dependencyBaseUrl = $dependencyBaseUrl;
+	}
+
+	public function add_hooks() {
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue' ] );
+	}
+
+	public function enqueue() {
+		if ( Factory::isMultiCurrencySettings() ) {
+			wp_register_script( 'wpml-scripts', $this->dependencyBaseUrl . '/res/js/scripts.js', [], WCML_VERSION );
+			wp_enqueue_script( 'wpml-scripts' );
+
+			wp_register_style( 'wpml-styles', $this->dependencyBaseUrl . '/res/css/styles.css', [], WCML_VERSION );
+			wp_register_style( 'otgs-dialogs', $this->dependencyBaseUrl . '/res/css/otgs-dialogs.css', [ 'wp-jquery-ui-dialog' ], WCML_VERSION );
+			wp_register_style( 'wpml-dialog', $this->dependencyBaseUrl . '/res/css/dialog.css', [ 'otgs-dialogs' ], WCML_VERSION );
+			wp_register_style( 'otgs-ico', $this->dependencyBaseUrl . '/res/css/otgs-ico.css', [], WCML_VERSION );
+			wp_enqueue_style( 'wpml-styles' );
+			wp_enqueue_style( 'wpml-dialog' );
+
+			wp_enqueue_style( \OTGS_Assets_Handles::SWITCHER );
+			wp_enqueue_script( \OTGS_Assets_Handles::SWITCHER );
+			wp_enqueue_style( \OTGS_Assets_Handles::POPOVER_TOOLTIP );
+			wp_enqueue_script( \OTGS_Assets_Handles::POPOVER_TOOLTIP );
+
+			wp_enqueue_style( \OTGS_ASSETS_ICONS_STYLES );
+			wp_enqueue_style( 'otgs-ico' );
+		}
+	}
+}
