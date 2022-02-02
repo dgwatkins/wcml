@@ -6,6 +6,8 @@ define( 'COOKIEPATH', 'the cookie path' );
 define( 'WP_PLUGIN_DIR', 'plugins' );
 define( 'WP_LANG_DIR', 'language-dir' );
 
+define( 'OTGS_ASSETS_ICONS_STYLES', 'otgs-assets-icons-style' );
+
 define( 'ICL_SITEPRESS_VERSION', '4.4.6' );
 define( 'WC_VERSION', '4.7.0' );
 

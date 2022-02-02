@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5c25487759e3ce727b3359ec36172c32",
+    "content-hash": "cd1c85f91ff4de30f2ca7630b0d4fab6",
     "packages": [
         {
             "name": "composer/installers",
@@ -301,6 +301,59 @@
                 "utils"
             ],
             "time": "2022-01-14T14:14:17+00:00"
+        },
+        {
+            "name": "otgs/ui",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://git.onthegosystems.com/otgs-public/otgs-ui.git",
+                "reference": "d8b11b073ba3247f25108b0dd88742ca3b0d4628"
+            },
+            "require": {
+                "roave/security-advisories": "dev-master"
+            },
+            "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "*",
+                "otgs/unit-tests-framework": "~1.2.0",
+                "phpcompatibility/php-compatibility": "*",
+                "phpunit/phpunit": "~5.7",
+                "sebastian/phpcpd": "^3.0",
+                "squizlabs/php_codesniffer": "~3",
+                "wp-coding-standards/wpcs": "^0"
+            },
+            "suggest": {
+                "otgs/icons": "Needed for displaying Company's glyphs and icons,"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/php/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Andrea Sciamanna",
+                    "email": "andrea.s@onthegosystems.com",
+                    "homepage": "https://onthegosystems.com"
+                },
+                {
+                    "name": "Kasia Janoska",
+                    "email": "kasia.j@onthegosystems.com",
+                    "homepage": "https://onthegosystems.com"
+                }
+            ],
+            "description": "UI library from OnTheGoSystems",
+            "homepage": "https://git.onthegosystems.com/otgs-public/otgs-ui",
+            "keywords": [
+                "ui"
+            ],
+            "time": "2020-11-26T14:58:07+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -2641,59 +2694,6 @@
                 "cli"
             ],
             "time": "2020-11-26T10:56:13+00:00"
-        },
-        {
-            "name": "otgs/ui",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://git.onthegosystems.com/otgs-public/otgs-ui.git",
-                "reference": "d8b11b073ba3247f25108b0dd88742ca3b0d4628"
-            },
-            "require": {
-                "roave/security-advisories": "dev-master"
-            },
-            "require-dev": {
-                "dealerdirect/phpcodesniffer-composer-installer": "*",
-                "otgs/unit-tests-framework": "~1.2.0",
-                "phpcompatibility/php-compatibility": "*",
-                "phpunit/phpunit": "~5.7",
-                "sebastian/phpcpd": "^3.0",
-                "squizlabs/php_codesniffer": "~3",
-                "wp-coding-standards/wpcs": "^0"
-            },
-            "suggest": {
-                "otgs/icons": "Needed for displaying Company's glyphs and icons,"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src/php/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Andrea Sciamanna",
-                    "email": "andrea.s@onthegosystems.com",
-                    "homepage": "https://onthegosystems.com"
-                },
-                {
-                    "name": "Kasia Janoska",
-                    "email": "kasia.j@onthegosystems.com",
-                    "homepage": "https://onthegosystems.com"
-                }
-            ],
-            "description": "UI library from OnTheGoSystems",
-            "homepage": "https://git.onthegosystems.com/otgs-public/otgs-ui",
-            "keywords": [
-                "ui"
-            ],
-            "time": "2020-11-26T14:58:07+00:00"
         },
         {
             "name": "otgs/wp-plugin-version",
@@ -5314,9 +5314,9 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "otgs/ui": 20,
         "otgs/build-tools-ci": 20,
         "otgs/changelog": 20,
-        "otgs/ui": 20,
         "otgs/wp-plugin-version": 20,
         "roave/security-advisories": 20,
         "wpml/collect": 20,

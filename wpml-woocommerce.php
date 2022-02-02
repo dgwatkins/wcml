@@ -49,6 +49,9 @@ require WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
 
 require WCML_PLUGIN_PATH . '/vendor/autoload.php';
 
+require_once( WCML_PLUGIN_PATH . '/vendor/otgs/ui/loader.php' );
+otgs_ui_initialize( WCML_PLUGIN_PATH . '/vendor/otgs/ui', WCML_PLUGIN_URL . '/vendor/otgs/ui' ); // @phpstan-ignore-line
+
 if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ) {
 	global $sitepress;
 	// Detecting language switching.
@@ -138,7 +141,7 @@ if ( WCML\Rest\Functions::isRestApiRequest() ) {
  */
 function load_wcml_without_wpml() {
 	if ( ! did_action( 'wpml_loaded' ) ) {
-		require_once WCML_PLUGIN_PATH . '/addons/bootstrap.php';
+		require_once WCML_PLUGIN_PATH . '/addons/load-standalone-dependencies.php';
 
 		global $woocommerce_wpml;
 		$woocommerce_wpml = new woocommerce_wpml();
@@ -147,4 +150,3 @@ function load_wcml_without_wpml() {
 }
 
 add_action( 'plugins_loaded', 'load_wcml_without_wpml', 10000 );
-
