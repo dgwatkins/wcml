@@ -1,5 +1,7 @@
 <?php
 
+use tad\FunctionMocker\FunctionMocker;
+
 /**
  * Class Test_WCML_Currency_Switcher_Templates
  * @group currency-switcher
@@ -298,6 +300,8 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 		$wpml_file->method( 'fix_dir_separator' )->will( $this->returnCallback( array( $this, 'fix_dir_separator' ) ) );
 		$wpml_file->method( 'get_uri_from_path' )->will( $this->returnCallback( array( $this, 'get_uri_from_path' ) ) );
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
+
+		FunctionMocker::replace( 'WCML\Utilities\AdminPages::isMultiCurrency', false );
 
 		\WP_Mock::userFunction( 'get_template_directory', array(
 			'return' => './',

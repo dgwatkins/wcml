@@ -1,8 +1,6 @@
 <?php
 
-use WCML\Multicurrency\UI\Factory;
-use WCML\StandAlone\NullSitePress;
-
+use WCML\Utilities\AdminPages;
 use function WCML\functions\getSitePress;
 use function WCML\functions\isStandAlone;
 use function WPML\Container\make;
@@ -181,7 +179,7 @@ class woocommerce_wpml {
 
 		$action = filter_input( INPUT_POST, 'action' );
 		if ( WCML_MULTI_CURRENCIES_INDEPENDENT === (int) $this->settings['enable_multi_currency']
-			|| Factory::isMultiCurrencySettings()
+			|| AdminPages::isMultiCurrency()
 			|| ( in_array( $action, $actions_that_need_mc, true ) )
 		) {
 			$this->get_multi_currency();

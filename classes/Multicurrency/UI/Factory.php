@@ -4,8 +4,7 @@ namespace WCML\Multicurrency\UI;
 
 use WCML\StandAlone\IStandAloneAction;
 
-use WPML\FP\Relation;
-use function WCML\functions\isStandAlone;
+use WCML\Utilities\AdminPages;
 use function WPML\Container\make;
 
 class Factory implements \IWPML_Backend_Action_Loader, \IWPML_Deferred_Action_Loader, IStandAloneAction {
@@ -21,7 +20,7 @@ class Factory implements \IWPML_Backend_Action_Loader, \IWPML_Deferred_Action_Lo
 		/** @var \woocommerce_wpml $woocommerce_wpml */
 		global $woocommerce_wpml;
 
-		if ( self::isMultiCurrencySettings() ) {
+		if ( AdminPages::isMultiCurrency() ) {
 			return make(
 				Hooks::class,
 				[
@@ -31,19 +30,5 @@ class Factory implements \IWPML_Backend_Action_Loader, \IWPML_Deferred_Action_Lo
 		}
 
 		return null;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public static function isMultiCurrencySettings() {
-		$isWcmlPage = Relation::propEq( 'page', 'wpml-wcml', $_GET );
-
-		if ( isStandAlone() ) {
-			return $isWcmlPage;
-		}
-
-		return $isWcmlPage
-			&& Relation::propEq( 'tab', 'multi-currency', $_GET );
 	}
 }

@@ -59,4 +59,57 @@ class TestAdminPages extends \OTGS_TestCase {
 			[ [ 'page' => 'other' ], 'foo', false ],
 		];
 	}
+
+	/**
+	 * @test
+	 * @dataProvider dpIsMultiCurrency
+	 *
+	 * @param array $_get
+	 * @param bool  $isStandalone
+	 * @param bool  $expected
+	 *
+	 * @return void
+	 */
+	public function testIsMultiCurrency( $_get, $isStandalone, $expected ) {
+		$_GET = $_get;
+
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( $isStandalone );
+
+		$this->assertSame( $expected, AdminPages::isMultiCurrency() );
+	}
+
+	public function dpIsMultiCurrency() {
+		return [
+			'full mode, not wcml page' => [
+				[ 'page' => 'other' ],
+				false,
+				false,
+			],
+			'full mode, wcml page, not mc' => [
+				[ 'page' => 'wpml-wcml', 'tab'  => 'other' ],
+				false,
+				false,
+			],
+			'full mode, wcml page, mc' => [
+				[ 'page' => 'wpml-wcml', 'tab'  => 'multi-currency' ],
+				false,
+				true,
+			],
+			'standalone mode, wcml page, mc' => [
+				[ 'page' => 'wpml-wcml', 'tab'  => 'multi-currency' ],
+				true,
+				true,
+			],
+			'standalone mode, wcml page, no tab' => [
+				[ 'page' => 'wpml-wcml' ],
+				true,
+				true,
+			],
+			'standalone mode, wcml page, other tab' => [
+				[ 'page' => 'wpml-wcml', 'tab' => 'other' ],
+				true,
+				false,
+			],
+		];
+	}
 }
