@@ -59,7 +59,7 @@ class WCML_Resources {
 
 			self::load_management_css();
 
-			if ( AdminPages::isTab( [ 'multi-currency', 'slugs' ] ) ) {
+			if ( AdminPages::isMultiCurrency() || AdminPages::isTab( 'slugs' ) ) {
 				wp_register_style( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/css/dialogs.css', [ 'wpml-dialog' ], WCML_VERSION );
 				wp_enqueue_style( 'wcml-dialogs' );
 			}
@@ -130,7 +130,7 @@ class WCML_Resources {
 			wp_enqueue_script( 'wcml_widgets' );
 		}
 
-		if ( AdminPages::isWcmlSettings() && AdminPages::isTab( 'multi-currency' ) ) {
+		if ( AdminPages::isMultiCurrency() ) {
 			wp_register_script( 'multi-currency', WCML_PLUGIN_URL . '/res/js/multi-currency' . WCML_JS_MIN . '.js', [ 'jquery', 'jquery-ui-sortable' ], WCML_VERSION, true );
 			wp_enqueue_script( 'multi-currency' );
 

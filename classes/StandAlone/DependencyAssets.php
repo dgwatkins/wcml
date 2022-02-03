@@ -2,7 +2,7 @@
 
 namespace WCML\StandAlone;
 
-use WCML\Multicurrency\UI\Factory;
+use WCML\Utilities\AdminPages;
 
 class DependencyAssets {
 
@@ -21,7 +21,7 @@ class DependencyAssets {
 	}
 
 	public function enqueue() {
-		if ( Factory::isMultiCurrencySettings() ) {
+		if ( AdminPages::isMultiCurrency() ) {
 			wp_register_script( 'wpml-scripts', $this->dependencyBaseUrl . '/res/js/scripts.js', [], WCML_VERSION );
 			wp_enqueue_script( 'wpml-scripts' );
 

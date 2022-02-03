@@ -37,6 +37,19 @@ class AdminPages {
 	/**
 	 * @return bool
 	 */
+	public static function isMultiCurrency() {
+		$tabs = [ 'multi-currency' ];
+
+		if ( isStandAlone() ) {
+			$tabs[] = null; // Also the default tab in Standalone mode.
+		}
+
+		return self::isWcmlSettings() && self::isTab( $tabs );
+	}
+
+	/**
+	 * @return bool
+	 */
 	public static function isTranslationQueue() {
 		return ! isStandAlone() && self::isPage( WPML_TM_FOLDER . '/menu/translations-queue.php' );
 	}
