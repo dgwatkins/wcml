@@ -1,9 +1,7 @@
 <?php
 
-use WPML\FP\Lst;
-use WPML\FP\Obj;
+use WCML\Utilities\AdminPages;
 use WPML\FP\Relation;
-use function WCML\functions\isStandAlone;
 
 class WCML_Resources {
 
@@ -57,11 +55,11 @@ class WCML_Resources {
 
 	private static function load_css() {
 
-		if ( self::is_wcml_settings_page() || self::is_translation_queue() ) {
+		if ( AdminPages::isWcmlSettings() || AdminPages::isTranslationQueue() ) {
 
 			self::load_management_css();
 
-			if ( self::is_tabs( [ 'multi-currency', 'slugs' ] ) ) {
+			if ( AdminPages::isTab( [ 'multi-currency', 'slugs' ] ) ) {
 				wp_register_style( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/css/dialogs.css', [ 'wpml-dialog' ], WCML_VERSION );
 				wp_enqueue_style( 'wcml-dialogs' );
 			}
@@ -92,7 +90,7 @@ class WCML_Resources {
 
 	public static function admin_scripts() {
 
-		if ( self::is_wcml_settings_page() ) {
+		if ( AdminPages::isWcmlSettings() ) {
 
 			wp_register_script( 'wcml-scripts', WCML_PLUGIN_URL . '/res/js/scripts' . WCML_JS_MIN . '.js', [ 'jquery', 'jquery-ui-core', 'jquery-ui-resizable' ], WCML_VERSION, true );
 
@@ -122,7 +120,7 @@ class WCML_Resources {
 			self::load_tooltip_resources();
 		}
 
-		if ( self::is_translation_dashboard() ) {
+		if ( AdminPages::isTranslationsDashboard() ) {
 			wp_register_script( 'wpml_tm', WCML_PLUGIN_URL . '/res/js/wpml_tm' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION, true );
 			wp_enqueue_script( 'wpml_tm' );
 		}
@@ -132,7 +130,7 @@ class WCML_Resources {
 			wp_enqueue_script( 'wcml_widgets' );
 		}
 
-		if ( self::is_wcml_settings_page() && self::is_tabs( 'multi-currency' ) ) {
+		if ( AdminPages::isWcmlSettings() && AdminPages::isTab( 'multi-currency' ) ) {
 			wp_register_script( 'multi-currency', WCML_PLUGIN_URL . '/res/js/multi-currency' . WCML_JS_MIN . '.js', [ 'jquery', 'jquery-ui-sortable' ], WCML_VERSION, true );
 			wp_enqueue_script( 'multi-currency' );
 
@@ -150,12 +148,12 @@ class WCML_Resources {
 			wp_enqueue_script( 'exchange-rates' );
 		}
 
-		if ( self::is_wcml_settings_page() && self::is_tabs( 'product-attributes' ) ) {
+		if ( AdminPages::isWcmlSettings() && AdminPages::isTab( 'product-attributes' ) ) {
 			wp_register_script( 'product-attributes', WCML_PLUGIN_URL . '/res/js/product-attributes' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION, true );
 			wp_enqueue_script( 'product-attributes' );
 		}
 
-		if ( self::is_wcml_settings_page() && self::is_tabs( 'custom-taxonomies' ) ) {
+		if ( AdminPages::isWcmlSettings() && AdminPages::isTab( 'custom-taxonomies' ) ) {
 			wp_register_script( 'custom-taxonomies', WCML_PLUGIN_URL . '/res/js/product-custom-taxonomies' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION, true );
 			wp_enqueue_script( 'custom-taxonomies' );
 		}
@@ -171,14 +169,14 @@ class WCML_Resources {
 		wp_register_script( 'wcml-messages', WCML_PLUGIN_URL . '/res/js/wcml-messages' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION, true );
 		wp_enqueue_script( 'wcml-messages' );
 
-		$is_attr_page = apply_filters( 'wcml_is_attributes_page', self::is_page( 'product_attributes' ) && Relation::propEq( 'post_type', 'product', $_GET ) );
+		$is_attr_page = apply_filters( 'wcml_is_attributes_page', AdminPages::isPage( 'product_attributes' ) && Relation::propEq( 'post_type', 'product', $_GET ) );
 
 		if ( $is_attr_page ) {
 			wp_register_script( 'wcml-attributes', WCML_PLUGIN_URL . '/res/js/wcml-attributes' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION, true );
 			wp_enqueue_script( 'wcml-attributes' );
 		}
 
-		if ( self::is_translation_queue() ) {
+		if ( AdminPages::isTranslationQueue() ) {
 
 			self::load_tooltip_resources();
 			wp_enqueue_media();
@@ -330,44 +328,5 @@ class WCML_Resources {
 				'<a href="' . self::linkToTranslation( $original_id, $language ) . '" >' .
 				__( 'WooCommerce Multilingual products translator', 'woocommerce-multilingual' ) . '</a>'
 			) . '</h3>';
-	}
-
-	/**
-	 * @param string|array $tabs A single tab (string) or one of multiple tabs (array).
-	 *
-	 * @return bool
-	 */
-	private static function is_tabs( $tabs ) {
-		return Lst::includes( Obj::prop( 'tab', $_GET ), (array) $tabs );
-	}
-
-	/**
-	 * @param string $page
-	 *
-	 * @return bool
-	 */
-	private static function is_page( $page ) {
-		return Relation::propEq( 'page', $page, $_GET );
-	}
-
-	/**
-	 * @return bool
-	 */
-	private static function is_wcml_settings_page() {
-		return self::is_page( 'wpml-wcml' );
-	}
-
-	/**
-	 * @return bool
-	 */
-	private static function is_translation_queue() {
-		return ! isStandAlone() && self::is_page( WPML_TM_FOLDER . '/menu/translations-queue.php' );
-	}
-
-	/**
-	 * @return bool
-	 */
-	private static function is_translation_dashboard() {
-		return ! isStandAlone() && self::is_page( WPML_TM_FOLDER . '/menu/main.php' );
 	}
 }
