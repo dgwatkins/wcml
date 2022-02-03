@@ -1,43 +1,34 @@
 import React from "react";
-import {useState} from "react";
+import {useState, useRef} from "react";
 import Input from 'antd/lib/input';
-import {useStore} from "../Store";
-import {createAjaxRequest} from "../Request";
+import {getStoreAction, getStoreProperty, useStore} from "../Store";
 import strings from "../Strings";
 import {Spinner} from "../../sharedComponents/FormElements";
 
 const MaxMindSettings = () => {
-    const [maxMindKeyExist, setMaxMindKeyExist] = useStore('maxMindKeyExist');
-    const [maxMindKey, setMaxMindKey] = useState('');
-    const [result, setResult] = useState(false);
+    const isRegistered = getStoreProperty('isMaxMindRegistered');
+    const showSettings = useRef( ! isRegistered ).current;
+    const registerMaxMindKey = getStoreAction('registerMaxMindKey');
+    const [key, setKey] = useState('');
+    const isValidating = getStoreProperty('isValidatingMaxMindRegistration');
 
-    const onChange = e => {
-        setMaxMindKey(e.target.value);
-    };
+    const onChange = e => setKey(e.target.value);
 
-    const ajax = createAjaxRequest('setMaxMindKey');
+    const onApply = () => registerMaxMindKey(key);
 
-    const onApply = async e => {
-        setResult( await ajax.send(maxMindKey) );
-
-        if (result.data && result.data.success) {
-            setMaxMindKeyExist();
-        }
-    };
-
-    return (
+    return ( showSettings &&
         <div className="max-mind-block">
-            {maxMindKeyExist && <OnSuccess strings={strings}/>}
+            <Success />
             <div className="max-mind-block__wrapper">
-                {(result.data && !result.data.success) && <OnError error={result.data.data}/>}
-                {!maxMindKeyExist && <SettingsBlock onChange={onChange} onApply={onApply} strings={strings} disableSave={!maxMindKey}/>}
-                {ajax.fetching && <Spinner/>}
+                <Error />
+                {!isRegistered && <SettingsBlock onChange={onChange} onApply={onApply} disableSave={!key}/>}
+                {isValidating && <Spinner />}
             </div>
         </div>
     );
 };
 
-const SettingsBlock = ({onChange, onApply, strings, disableSave}) => {
+const SettingsBlock = ({onChange, onApply, disableSave}) => {
 
     return (
         <React.Fragment>
@@ -69,10 +60,10 @@ const SettingsBlock = ({onChange, onApply, strings, disableSave}) => {
 };
 
 
-const OnSuccess = ({strings}) => {
+const Success = () => {
 
-    return (
-        <div className="updated message fade">
+    return getStoreProperty( 'isMaxMindRegistered' )
+        ? <div className="updated message fade">
             <p>
                 {strings.maxMindSuccess}
                 <a className="wcml-max-min-settings"
@@ -83,16 +74,17 @@ const OnSuccess = ({strings}) => {
                 </a>
             </p>
         </div>
-    );
+        : null;
 };
 
-const OnError = ({error}) => {
+const Error = () => {
+    const error = getStoreProperty('errorOnMaxMindRegistration');
 
-    return (
-        <div className="error inline">
+    return error
+        ? <div className="error inline">
             <p className="wcml-max-min-error">{error}</p>
         </div>
-    );
+        : null;
 };
 
 export default MaxMindSettings;

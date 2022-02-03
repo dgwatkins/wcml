@@ -1,6 +1,7 @@
 import { action, createStore, useStoreState, useStoreActions, computed, thunk } from "easy-peasy";
 import {capitalize, triggerActiveCurrenciesChange, triggerModeChange} from "./Utils";
 import * as R from 'ramda';
+import {doAjaxForSetMaxMindKey} from "./Request";
 
 const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, gateways, mode, maxMindKeyExist}) => createStore({
     activeCurrencies: activeCurrencies,
@@ -9,7 +10,9 @@ const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, ga
     languages: languages,
     gateways: gateways,
     mode: mode,
-    maxMindKeyExist: maxMindKeyExist,
+    isMaxMindRegistered: maxMindKeyExist,
+    isValidatingMaxMindRegistration: null,
+    errorOnMaxMindRegistration: null,
     modalCurrency: null,
     updating: false,
 
@@ -103,6 +106,37 @@ const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, ga
     setMaxMindKeyExist: action((state) =>{
         state.maxMindKeyExist = true;
     }),
+
+    registerMaxMindKey: thunk(async (actions, key) => {
+        actions._setErrorOnMaxMindRegistration(null);
+        actions._setIsValidatingMaxMindRegistration(true);
+
+        const {data:response} = await doAjaxForSetMaxMindKey(key);
+
+        actions._setIsValidatingMaxMindRegistration(false);
+
+        const isSuccess   = R.prop('success');
+        const getErrorMsg = R.prop('data');
+
+        if (isSuccess(response)) {
+            actions._setIsMaxMindRegistered();
+        } else {
+            const error = getErrorMsg(response);
+            actions._setErrorOnMaxMindRegistration(error ? error : 'Error');
+        }
+    }),
+
+    _setErrorOnMaxMindRegistration: action((state, error) => {
+         state.errorOnMaxMindRegistration = error;
+    }),
+
+    _setIsValidatingMaxMindRegistration: action((state, isValidating) => {
+         state.isValidatingMaxMindRegistration = isValidating;
+    }),
+
+    _setIsMaxMindRegistered: action((state) => {
+        state.isMaxMindRegistered = true;
+    })
 });
 
 export default initStore;
