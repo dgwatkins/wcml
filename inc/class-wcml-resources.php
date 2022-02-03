@@ -1,12 +1,12 @@
 <?php
 
+use WPML\FP\Lst;
+use WPML\FP\Obj;
+use WPML\FP\Relation;
 use function WCML\functions\isStandAlone;
 
 class WCML_Resources {
 
-	private static $page;
-	private static $tab;
-	private static $is_wpml_wcml_page;
 	private static $pagenow;
 
 	private static $woocommerce_wpml;
@@ -26,11 +26,7 @@ class WCML_Resources {
 
 		self::$woocommerce_wpml = $woocommerce_wpml;
 		self::$sitepress        = $sitepress;
-
-		self::$page              = isset( $_GET['page'] ) ? $_GET['page'] : null;
-		self::$tab               = isset( $_GET['tab'] ) ? $_GET['tab'] : null;
-		self::$is_wpml_wcml_page = self::$page == 'wpml-wcml';
-		self::$pagenow           = $pagenow;
+		self::$pagenow          = $pagenow;
 
 		self::load_css();
 
@@ -61,11 +57,11 @@ class WCML_Resources {
 
 	private static function load_css() {
 
-		if ( self::$is_wpml_wcml_page || self::is_translation_queue() ) {
+		if ( self::is_wcml_settings_page() || self::is_translation_queue() ) {
 
 			self::load_management_css();
 
-			if ( in_array( self::$tab, [ 'multi-currency', 'slugs' ] ) ) {
+			if ( self::is_tabs( [ 'multi-currency', 'slugs' ] ) ) {
 				wp_register_style( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/css/dialogs.css', [ 'wpml-dialog' ], WCML_VERSION );
 				wp_enqueue_style( 'wcml-dialogs' );
 			}
@@ -96,7 +92,7 @@ class WCML_Resources {
 
 	public static function admin_scripts() {
 
-		if ( self::$is_wpml_wcml_page ) {
+		if ( self::is_wcml_settings_page() ) {
 
 			wp_register_script( 'wcml-scripts', WCML_PLUGIN_URL . '/res/js/scripts' . WCML_JS_MIN . '.js', [ 'jquery', 'jquery-ui-core', 'jquery-ui-resizable' ], WCML_VERSION, true );
 
@@ -136,7 +132,7 @@ class WCML_Resources {
 			wp_enqueue_script( 'wcml_widgets' );
 		}
 
-		if ( self::$page == 'wpml-wcml' && self::$tab == 'multi-currency' ) {
+		if ( self::is_wcml_settings_page() && self::is_tabs( 'multi-currency' ) ) {
 			wp_register_script( 'multi-currency', WCML_PLUGIN_URL . '/res/js/multi-currency' . WCML_JS_MIN . '.js', [ 'jquery', 'jquery-ui-sortable' ], WCML_VERSION, true );
 			wp_enqueue_script( 'multi-currency' );
 
@@ -154,12 +150,12 @@ class WCML_Resources {
 			wp_enqueue_script( 'exchange-rates' );
 		}
 
-		if ( self::$page == 'wpml-wcml' && self::$tab == 'product-attributes' ) {
+		if ( self::is_wcml_settings_page() && self::is_tabs( 'product-attributes' ) ) {
 			wp_register_script( 'product-attributes', WCML_PLUGIN_URL . '/res/js/product-attributes' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION, true );
 			wp_enqueue_script( 'product-attributes' );
 		}
 
-		if ( self::$page == 'wpml-wcml' && self::$tab == 'custom-taxonomies' ) {
+		if ( self::is_wcml_settings_page() && self::is_tabs( 'custom-taxonomies' ) ) {
 			wp_register_script( 'custom-taxonomies', WCML_PLUGIN_URL . '/res/js/product-custom-taxonomies' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION, true );
 			wp_enqueue_script( 'custom-taxonomies' );
 		}
@@ -175,7 +171,7 @@ class WCML_Resources {
 		wp_register_script( 'wcml-messages', WCML_PLUGIN_URL . '/res/js/wcml-messages' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION, true );
 		wp_enqueue_script( 'wcml-messages' );
 
-		$is_attr_page = apply_filters( 'wcml_is_attributes_page', self::$page == 'product_attributes' && isset( $_GET['post_type'] ) && $_GET['post_type'] == 'product' );
+		$is_attr_page = apply_filters( 'wcml_is_attributes_page', self::is_page( 'product_attributes' ) && Relation::propEq( 'post_type', 'product', $_GET ) );
 
 		if ( $is_attr_page ) {
 			wp_register_script( 'wcml-attributes', WCML_PLUGIN_URL . '/res/js/wcml-attributes' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION, true );
@@ -337,16 +333,41 @@ class WCML_Resources {
 	}
 
 	/**
+	 * @param string|array $tabs A single tab (string) or one of multiple tabs (array).
+	 *
+	 * @return bool
+	 */
+	private static function is_tabs( $tabs ) {
+		return Lst::includes( Obj::prop( 'tab', $_GET ), (array) $tabs );
+	}
+
+	/**
+	 * @param string $page
+	 *
+	 * @return bool
+	 */
+	private static function is_page( $page ) {
+		return Relation::propEq( 'page', $page, $_GET );
+	}
+
+	/**
+	 * @return bool
+	 */
+	private static function is_wcml_settings_page() {
+		return self::is_page( 'wpml-wcml' );
+	}
+
+	/**
 	 * @return bool
 	 */
 	private static function is_translation_queue() {
-		return ! isStandAlone() && self::$page == WPML_TM_FOLDER . '/menu/translations-queue.php';
+		return ! isStandAlone() && self::is_page( WPML_TM_FOLDER . '/menu/translations-queue.php' );
 	}
 
 	/**
 	 * @return bool
 	 */
 	private static function is_translation_dashboard() {
-		return ! isStandAlone() && self::$page == WPML_TM_FOLDER . '/menu/main.php';
+		return ! isStandAlone() && self::is_page( WPML_TM_FOLDER . '/menu/main.php' );
 	}
 }
