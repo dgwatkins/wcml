@@ -1,5 +1,22 @@
-import {createAjax, stringify} from "wpml-common-js-source/src/Ajax";
+import {createAjax, doAjax, stringify} from "wpml-common-js-source/src/Ajax";
 
+const doAjaxFor = (action, data) => {
+    const payload = {
+        action,
+        nonce: wcmlMultiCurrency.nonce,
+        data: JSON.stringify(data)
+    };
+
+    return doAjax(payload);
+};
+
+export const doAjaxForSetMaxMindKey = (key) => {
+    return doAjaxFor('wcml_set_max_mind_key', {MaxMindKey:key});
+};
+
+/**
+ * @deprecated
+ */
 const buildPayload = (action, data) => ({
     body: stringify({
         action,
@@ -8,6 +25,9 @@ const buildPayload = (action, data) => ({
     })
 });
 
+/**
+ * @deprecated
+ */
 const buildCurrencyForLangPayload = ({isEnabled, currencyCode, languageCode}) => buildPayload(
     'wcml_update_currency_lang',
     {
@@ -17,7 +37,9 @@ const buildCurrencyForLangPayload = ({isEnabled, currencyCode, languageCode}) =>
     }
 );
 
-
+/**
+ * @deprecated
+ */
 const buildDefaultCurrencyForLangPayload = ({languageCode, currencyCode}) => buildPayload(
     'wcml_update_default_currency',
     {
@@ -26,6 +48,9 @@ const buildDefaultCurrencyForLangPayload = ({languageCode, currencyCode}) => bui
     }
 );
 
+/**
+ * @deprecated
+ */
 const buildDeleteCurrencyPayload = ({currencyCode}) => buildPayload(
     'wcml_delete_currency',
     {
@@ -33,6 +58,9 @@ const buildDeleteCurrencyPayload = ({currencyCode}) => buildPayload(
     }
 );
 
+/**
+ * @deprecated
+ */
 const buildSaveCurrencyPayload = (currency) => buildPayload(
     'wcml_save_currency',
     {
@@ -40,6 +68,9 @@ const buildSaveCurrencyPayload = (currency) => buildPayload(
     }
 );
 
+/**
+ * @deprecated
+ */
 const buildSetCurrencyModePayload = (mode) => buildPayload(
     'wcml_set_currency_mode',
     {
@@ -47,6 +78,9 @@ const buildSetCurrencyModePayload = (mode) => buildPayload(
     }
 );
 
+/**
+ * @deprecated
+ */
 const buildSetMaxMindKeyPayload = (MaxMindKey) => buildPayload(
     'wcml_set_max_mind_key',
     {
@@ -54,6 +88,9 @@ const buildSetMaxMindKeyPayload = (MaxMindKey) => buildPayload(
     }
 );
 
+/**
+ * @deprecated
+ */
 const payloadBuilders = {
     currencyForLang: buildCurrencyForLangPayload,
     defaultCurrencyForLang: buildDefaultCurrencyForLangPayload,
@@ -63,6 +100,15 @@ const payloadBuilders = {
     setMaxMindKey: buildSetMaxMindKeyPayload,
 };
 
+/**
+ * @deprecated Use `doAjaxFor` instead.
+ *
+ * `createAjax` uses `useFetch` (a React hook)
+ * that prevent use from using it outside the component.
+ *
+ * We should rather execute the AJAX request inside
+ * the store for instance.
+ */
 export const createAjaxRequest = (endpoint) => {
     if (!payloadBuilders[endpoint]) {
         throw new Error('The endpoint ' + endpoint + ' is not defined');
