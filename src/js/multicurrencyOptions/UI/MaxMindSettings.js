@@ -5,32 +5,40 @@ import {useStore} from "../Store";
 import {createAjaxRequest} from "../Request";
 import strings from "../Strings";
 import {Spinner} from "../../sharedComponents/FormElements";
+import {path} from 'ramda';
 
 const MaxMindSettings = () => {
-    const [maxMindKeyExist, setMaxMindKeyExist] = useStore('maxMindKeyExist');
-    const [maxMindKey, setMaxMindKey] = useState('');
-    const [result, setResult] = useState(false);
+    const [keyExist, setKeyExist] = useStore('maxMindKeyExist');
+    const [key, setKey] = useState('');
+    const [isSuccess, setIsSuccess] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
+    const show = isSuccess || errorMsg || ! keyExist;
 
     const onChange = e => {
-        setMaxMindKey(e.target.value);
+        setKey(e.target.value);
     };
 
     const ajax = createAjaxRequest('setMaxMindKey');
 
     const onApply = async e => {
-        setResult( await ajax.send(maxMindKey) );
+        const response    = await ajax.send(key);
+        const isSuccess   = path(['data', 'success']);
+        const getErrorMsg = path(['data', 'data']);
 
-        if (result.data && result.data.success) {
-            setMaxMindKeyExist();
+        if (isSuccess(response)) {
+            setIsSuccess(true);
+            setKeyExist(true);
+        } else if (getErrorMsg(response)) {
+            setErrorMsg(getErrorMsg(response));
         }
     };
 
-    return (
+    return ( show &&
         <div className="max-mind-block">
-            {maxMindKeyExist && <OnSuccess strings={strings}/>}
+            {isSuccess && <Success strings={strings}/>}
             <div className="max-mind-block__wrapper">
-                {(result.data && !result.data.success) && <OnError error={result.data.data}/>}
-                {!maxMindKeyExist && <SettingsBlock onChange={onChange} onApply={onApply} strings={strings} disableSave={!maxMindKey}/>}
+                {errorMsg && <Error error={errorMsg}/>}
+                {!keyExist && <SettingsBlock onChange={onChange} onApply={onApply} strings={strings} disableSave={!key}/>}
                 {ajax.fetching && <Spinner/>}
             </div>
         </div>
@@ -69,7 +77,7 @@ const SettingsBlock = ({onChange, onApply, strings, disableSave}) => {
 };
 
 
-const OnSuccess = ({strings}) => {
+const Success = ({strings}) => {
 
     return (
         <div className="updated message fade">
@@ -86,7 +94,7 @@ const OnSuccess = ({strings}) => {
     );
 };
 
-const OnError = ({error}) => {
+const Error = ({error}) => {
 
     return (
         <div className="error inline">
