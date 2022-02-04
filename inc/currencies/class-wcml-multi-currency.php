@@ -1,5 +1,6 @@
 <?php
 
+use WCML\MultiCurrency\Settings;
 use WPML\FP\Obj;
 use function WCML\functions\getSitePress;
 use function WPML\Container\make;
@@ -577,7 +578,7 @@ class WCML_Multi_Currency {
 	 */
 	public function maybe_get_currency_by_geolocation( $client_currency ) {
 
-	    if( Geolocation::MODE_BY_LOCATION !== $this->woocommerce_wpml->get_setting( 'currency_mode' ) ){
+	    if ( ! Settings::isModeByLocation() ){
 		    return $client_currency;
         }
 

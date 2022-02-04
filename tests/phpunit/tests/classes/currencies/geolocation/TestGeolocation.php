@@ -32,8 +32,9 @@ class TestGeolocation extends \OTGS_TestCase {
 	public function testIsUsedWithMulticurrencyAndNoActualUsage() {
 		\WP_Mock::userFunction( 'wcml_is_multi_currency_on' )->andReturn( true );
 
+		FunctionMocker::replace( Settings::class . '::isModeByLocation', false );
+
 		$this->mockWcmlSettings( [
-			'currency_mode' => Geolocation::MODE_BY_LANGUAGE,
 			'default_currencies' => [
 				'fr' => 0,
 				'en',
@@ -54,19 +55,21 @@ class TestGeolocation extends \OTGS_TestCase {
 	public function testIsUsedWithMulticurrencyAndIsActuallyUsed( array $wcmlSettings ) {
 		\WP_Mock::userFunction( 'wcml_is_multi_currency_on' )->andReturn( true );
 
+		FunctionMocker::replace( Settings::class . '::isModeByLocation', Settings::MODE_BY_LOCATION === $wcmlSettings['currency_mode'] );
+
 		$this->mockWcmlSettings( $wcmlSettings );
 
-		$this->assertFalse( Geolocation::isUsed() );
+		$this->assertTrue( Geolocation::isUsed() );
 	}
 
 	public function dpWcmlSettingsUsingGeolocation() {
 		return [
 			'mode by location' => [
 				[
-					'currency_mode' => Geolocation::MODE_BY_LOCATION,
+					'currency_mode' => Settings::MODE_BY_LOCATION,
 					'default_currencies' => [
 						'fr' => 0,
-						'en',
+						'en' => 'USD',
 						'de' => 'EUR',
 					],
 
@@ -74,7 +77,7 @@ class TestGeolocation extends \OTGS_TestCase {
 			],
 			'location in default currencies' => [
 				[
-					'currency_mode' => Geolocation::MODE_BY_LANGUAGE,
+					'currency_mode' => Settings::MODE_BY_LANGUAGE,
 					'default_currencies' => [
 						'fr' => 0,
 						'en' => 'location',
@@ -213,7 +216,6 @@ class TestGeolocation extends \OTGS_TestCase {
 
 	/**
 	 * @test
-	 * @group debug
 	 */
 	public function itShouldGetCurrencyCodeByUserBillingAddressFromCheckoutAjax() {
 		\WP_Mock::passthruFunction( 'wc_clean' );
@@ -394,7 +396,7 @@ class TestGeolocation extends \OTGS_TestCase {
 
 		$woocommerce_wpml->method( 'get_setting' )
 			->willReturnCallback( function ( $key, $default = null ) use ( $settings ) {
-				return isset( $settings[ $key ] ) ? isset( $settings[ $key ] ) : $default;
+				return isset( $settings[ $key ] ) ? $settings[ $key ] : $default;
 			} );
 	}
 

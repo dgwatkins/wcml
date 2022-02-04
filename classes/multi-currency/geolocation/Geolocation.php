@@ -19,17 +19,13 @@ class Geolocation {
 		/** @var \woocommerce_wpml $woocommerce_wpml */
 		global $woocommerce_wpml;
 
-		$isByLocationMode = function() use ( $woocommerce_wpml ) {
-			return Geolocation::MODE_BY_LOCATION === $woocommerce_wpml->get_setting( 'currency_mode' );
-		};
-
 		$useDefaultCurrencyByLocation = function() use ( $woocommerce_wpml ) {
 			return (bool) wpml_collect( $woocommerce_wpml->get_setting( 'default_currencies', [] ) )
 				->first( Relation::equals( 'location' ) );
 		};
 
 		return wcml_is_multi_currency_on()
-		       && ( $isByLocationMode() || $useDefaultCurrencyByLocation() );
+		       && ( Settings::isModeByLocation() || $useDefaultCurrencyByLocation() );
 	}
 
 	/**

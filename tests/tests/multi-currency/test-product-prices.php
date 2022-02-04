@@ -24,7 +24,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 		$this->secondary_currencies	= array('USD', 'RON', 'AUD', 'CHF');
 
 		$this->woocommerce_wpml->settings['enable_multi_currency'] = WCML_MULTI_CURRENCIES_INDEPENDENT;
-		$this->woocommerce_wpml->settings['currency_mode'] = \WCML\MultiCurrency\Geolocation::MODE_BY_LANGUAGE;
+		$this->woocommerce_wpml->settings['currency_mode'] = \WCML\MultiCurrency\Settings::MODE_BY_LANGUAGE;
 		$this->set_up_languages();
 		$this->set_up_currencies();
 

@@ -2,6 +2,7 @@
 
 namespace WCML\Multicurrency\UI;
 
+use WCML\MultiCurrency\Settings;
 use WCML\StandAlone\IStandAloneAction;
 use WCML\Utilities\Resources;
 use WPML\Collect\Support\Collection;
@@ -56,7 +57,7 @@ class Hooks implements \IWPML_Action, IStandAloneAction {
 				'languages'        => $this->getLanguages(),
 				'gateways'         => $gateways->toArray(),
 				'strings'          => $this->getStrings(),
-				'mode'             => $this->getMode(),
+				'mode'             => Settings::getMode(),
 				'maxMindKeyExist'  => $this->checkMaxMindKeyExist(),
 				'isStandalone'     => isStandAlone(),
 			],
@@ -258,13 +259,6 @@ class Hooks implements \IWPML_Action, IStandAloneAction {
 		};
 
 		return wpml_collect( WC()->countries->get_countries() )->map( $buildCountry )->values()->toArray();
-	}
-
-	/**
-	 * @return string
-	 */
-	private function getMode(){
-		return isset( $this->wcmlSettings['currency_mode'] ) ? $this->wcmlSettings['currency_mode'] : '';
 	}
 
 	/**

@@ -1,5 +1,7 @@
 <?php
 
+use WCML\MultiCurrency\Settings as McSettings;
+
 class WCML_Upgrade {
 
 	/** @var array */
@@ -834,8 +836,7 @@ class WCML_Upgrade {
 	private function upgrade_4_10_0() {
 		$wcml_settings = get_option( '_wcml_settings' );
 		if ( WCML_MULTI_CURRENCIES_INDEPENDENT === $wcml_settings['enable_multi_currency'] ) {
-			$wcml_settings['currency_mode'] = 'by_language';
-			update_option( '_wcml_settings', $wcml_settings );
+			McSettings::setMode( McSettings::MODE_BY_LANGUAGE );
 		}
 	}
 

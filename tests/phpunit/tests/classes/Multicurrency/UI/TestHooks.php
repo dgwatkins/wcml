@@ -3,6 +3,7 @@
 namespace WCML\Multicurrency\UI;
 
 use tad\FunctionMocker\FunctionMocker;
+use WCML\MultiCurrency\Settings;
 
 /**
  * @group multicurrency
@@ -76,7 +77,7 @@ class TestHooks extends \OTGS_TestCase {
 			'fr' => '0',
 		];
 
-		$wcmlSettings['currency_mode'] = 'by_location';
+		FunctionMocker::replace( Settings::class . '::getMode', 'by_location' );
 
 		$codeToFlag = function( $code ) { return "flag:$code"; };
 

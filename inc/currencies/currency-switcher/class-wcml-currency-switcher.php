@@ -1,5 +1,6 @@
 <?php
 
+use WCML\MultiCurrency\Settings;
 use WPML\FP\Obj;
 use WCML\MultiCurrency\Geolocation;
 
@@ -174,15 +175,13 @@ class WCML_Currency_Switcher {
 	 * @return array
 	 */
 	private function filter_currencies_list_by_settings( $currencies, $wcml_settings ){
-		$currency_mode = $this->woocommerce_wpml->get_setting('currency_mode');
-
-		$ifDisallowedByLanguage = function( $currency ) use ( $currency_mode, $wcml_settings ) {
-			return Geolocation::MODE_BY_LANGUAGE === $currency_mode
+		$ifDisallowedByLanguage = function( $currency ) use ( $wcml_settings ) {
+			return Settings::isModeByLanguage()
 			       && Obj::path( [ 'currency_options', $currency, 'languages', $this->sitepress->get_current_language() ], $wcml_settings ) != 1;
 		};
 
-		$ifDisallowedByLocation = function( $currency ) use ( $currency_mode, $wcml_settings ) {
-			return Geolocation::MODE_BY_LOCATION === $currency_mode && !Geolocation::isCurrencyAvailableForCountry( $wcml_settings['currency_options'][ $currency ] );
+		$ifDisallowedByLocation = function( $currency ) use ( $wcml_settings ) {
+			return Settings::isModeByLocation() && !Geolocation::isCurrencyAvailableForCountry( $wcml_settings['currency_options'][ $currency ] );
 		};
 
 		return wpml_collect( $currencies )
