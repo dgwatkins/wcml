@@ -1,6 +1,7 @@
 import { action, createStore, useStoreState, useStoreActions, computed, thunk } from "easy-peasy";
 import {capitalize, triggerActiveCurrenciesChange, triggerModeChange} from "./Utils";
 import * as R from 'ramda';
+import {doAjaxForSetMaxMindKey} from "./Request";
 
 const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, gateways, mode, maxMindKeyExist}) => createStore({
     activeCurrencies: activeCurrencies,
@@ -10,6 +11,7 @@ const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, ga
     gateways: gateways,
     mode: mode,
     maxMindKeyExist: maxMindKeyExist,
+    maxMindRegistrationStatus: null,
     modalCurrency: null,
     updating: false,
 
@@ -103,6 +105,27 @@ const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, ga
     setMaxMindKeyExist: action((state) =>{
         state.maxMindKeyExist = true;
     }),
+
+    registerMaxMindKey: thunk(async (actions, key) => {
+        actions.setMaxMindRegistrationStatus('fetching');
+
+        const {data:response} = await doAjaxForSetMaxMindKey(key);
+
+        const isSuccess   = R.prop('success');
+        const getErrorMsg = R.prop('data');
+
+        if (isSuccess(response)) {
+           actions.setMaxMindKeyExist();
+           actions.setMaxMindRegistrationStatus('success');
+        } else {
+            const error = getErrorMsg(response);
+            actions.setMaxMindRegistrationStatus(error ? error : 'Error');
+        }
+    }),
+
+    setMaxMindRegistrationStatus: action((state, status) => {
+        state.maxMindRegistrationStatus = status;
+    })
 });
 
 export default initStore;

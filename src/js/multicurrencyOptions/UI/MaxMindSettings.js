@@ -1,45 +1,35 @@
 import React from "react";
 import {useState} from "react";
 import Input from 'antd/lib/input';
-import {useStore} from "../Store";
-import {createAjaxRequest} from "../Request";
+import {getStoreAction, getStoreProperty, useStore} from "../Store";
 import strings from "../Strings";
 import {Spinner} from "../../sharedComponents/FormElements";
-import {path} from 'ramda';
 
 const MaxMindSettings = () => {
-    const [keyExist, setKeyExist] = useStore('maxMindKeyExist');
+    const keyExist = getStoreProperty('maxMindKeyExist');
+    const status = getStoreProperty('maxMindRegistrationStatus');
+    const registerMaxMindKey = getStoreAction('registerMaxMindKey');
     const [key, setKey] = useState('');
-    const [isSuccess, setIsSuccess] = useState(null);
-    const [errorMsg, setErrorMsg] = useState(null);
-    const show = isSuccess || errorMsg || ! keyExist;
+    const isFetching = 'fetching' === status;
+    const isSuccess = 'success' === status;
+    const error = status && ! isFetching && ! isSuccess;
+    const show = isSuccess || error || !keyExist;
 
     const onChange = e => {
         setKey(e.target.value);
     };
 
-    const ajax = createAjaxRequest('setMaxMindKey');
-
-    const onApply = async e => {
-        const response    = await ajax.send(key);
-        const isSuccess   = path(['data', 'success']);
-        const getErrorMsg = path(['data', 'data']);
-
-        if (isSuccess(response)) {
-            setIsSuccess(true);
-            setKeyExist(true);
-        } else if (getErrorMsg(response)) {
-            setErrorMsg(getErrorMsg(response));
-        }
-    };
+    const onApply = e => {
+        registerMaxMindKey(key);
+    }
 
     return ( show &&
         <div className="max-mind-block">
             {isSuccess && <Success strings={strings}/>}
             <div className="max-mind-block__wrapper">
-                {errorMsg && <Error error={errorMsg}/>}
+                {error && <Error error={status}/>}
                 {!keyExist && <SettingsBlock onChange={onChange} onApply={onApply} strings={strings} disableSave={!key}/>}
-                {ajax.fetching && <Spinner/>}
+                {isFetching && <Spinner/>}
             </div>
         </div>
     );
