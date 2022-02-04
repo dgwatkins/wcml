@@ -9,8 +9,8 @@ use WPML\FP\Logic;
 class Geolocation {
 
 	const DEFAULT_COUNTRY_CURRENCY_CONFIG = 'country-currency.json';
-	const MODE_BY_LANGUAGE = 'by_language';
-	const MODE_BY_LOCATION = 'by_location';
+	const MODE_BY_LANGUAGE = Settings::MODE_BY_LANGUAGE;
+	const MODE_BY_LOCATION = Settings::MODE_BY_LOCATION;
 
 	/**
 	 * @return bool

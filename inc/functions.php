@@ -57,7 +57,7 @@ if ( ! function_exists( '\WCML\functions\getSetting' ) ) {
 	}
 }
 
-if ( ! function_exists( '\WCML\function\updateSetting' ) ) {
+if ( ! function_exists( '\WCML\functions\updateSetting' ) ) {
 	/**
 	 * @param string $key
 	 * @param mixed  $value

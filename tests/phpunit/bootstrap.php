@@ -85,6 +85,7 @@ function autoload_tests_classes( $class ) {
 
 	if ( ! $maps ) {
 		$dirs = [
+			WCML_PATH . "/tests/phpunit/mocks",
 			WCML_PATH . "/tests/phpunit/stubs",
 			WCML_PATH . "/vendor/wpml",
 			WCML_PATH . "/vendor/otgs/ui",
