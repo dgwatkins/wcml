@@ -2,6 +2,8 @@
 
 namespace WCML\functions;
 
+use function WPML\Container\make;
+
 if ( ! function_exists( 'WCML\functions\getSitePress' ) ) {
 	/**
 	 * @global \SitePress|null $sitepress
@@ -40,5 +42,30 @@ if ( ! function_exists( 'WCML\functions\assetLink' ) ) {
 			return WCML_PLUGIN_URL . '/addons/vendor/wpml/wpml-dependencies/lib' . $asset;
 		}
 		return ICL_PLUGIN_URL . $asset;
+	}
+}
+
+if ( ! function_exists( '\WCML\functions\getSetting' ) ) {
+	/**
+	 * @param string $key
+	 * @param mixed  $default
+	 *
+	 * @return mixed
+	 */
+	function getSetting( $key, $default = null ) {
+		return make( \woocommerce_wpml::class )->get_setting( $key, $default );
+	}
+}
+
+if ( ! function_exists( '\WCML\function\updateSetting' ) ) {
+	/**
+	 * @param string $key
+	 * @param mixed  $value
+	 * @param bool   $autoload
+	 *
+	 * @return void
+	 */
+	function updateSetting( $key, $value, $autoload = false ) {
+		make( \woocommerce_wpml::class )->update_setting( $key, $value, $autoload );
 	}
 }
