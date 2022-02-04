@@ -3,7 +3,7 @@ import {capitalize, triggerActiveCurrenciesChange, triggerModeChange} from "./Ut
 import * as R from 'ramda';
 import {doAjaxForSetMaxMindKey} from "./Request";
 
-const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, gateways, mode, maxMindKeyExist}) => createStore({
+const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, gateways, mode, maxMindKeyExist, isStandalone}) => createStore({
     activeCurrencies: activeCurrencies,
     allCurrencies: allCurrencies,
     allCountries: allCountries,
@@ -13,6 +13,7 @@ const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, ga
     isMaxMindRegistered: maxMindKeyExist,
     isValidatingMaxMindRegistration: null,
     errorOnMaxMindRegistration: null,
+    isStandalone: isStandalone,
     modalCurrency: null,
     updating: false,
 
