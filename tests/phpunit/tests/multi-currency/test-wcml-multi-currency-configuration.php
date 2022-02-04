@@ -54,37 +54,24 @@ class Test_WCML_Multi_Currency_Configuration extends OTGS_TestCase {
 	 * @test
 	 */
 	public function it_should_set_currency_mode() {
+		$currency_mode = 'by_language';
+
 		\WP_Mock::userFunction( 'wp_verify_nonce', [ 'return' => true ] );
 
-		$sitepress = $this->getMockBuilder( 'SitePress' )
-		                  ->setMethods( [ 'get_settings' ] )
-		                  ->disableOriginalConstructor()->getMock();
-		$sitepress->expects( $this->once() )->method( 'get_settings' )->willReturn( [] );
+		$_POST['data'] = json_encode( [ 'mode' => $currency_mode ] );
 
-		\WP_Mock::userFunction( 'WCML\functions\getSitePress' )->andReturn( $sitepress );
+		$set_mode = FunctionMocker::replace( \WCML\MultiCurrency\Settings::class . '::setMode', null );
 
-		$_POST['data'] = json_encode( [ 'mode' => 'by_language' ] );
-
-		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
-		                         ->disableOriginalConstructor()
-		                         ->setMethods( [ 'update_settings' ] )
-		                         ->getMock();
-
-		$woocommerce_wpml->expects( $this->once() )->method( 'update_settings' )->willReturn( true );
-
-		\WP_Mock::wpFunction( 'wp_send_json_success', [
+		\WP_Mock::userFunction( 'wp_send_json_success', [
 			'return' => true,
 			'times'  => 1,
 		] );
 
-		$multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
-		                       ->disableOriginalConstructor()
-		                       ->getMock();
-
-		WCML_Multi_Currency_Configuration::set_up( $multi_currency, $woocommerce_wpml );
 		WCML_Multi_Currency_Configuration::set_currency_mode();
 
-		unset( $sitepress, $_POST );
+		$set_mode->wasCalledWithOnce( [ $currency_mode ] );
+
+		unset( $_POST );
 	}
 
 	/**

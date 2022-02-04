@@ -1,7 +1,7 @@
 <?php
 
-use WCML\MultiCurrency\Geolocation;
 use tad\FunctionMocker\FunctionMocker;
+use WCML\MultiCurrency\Settings as McSettings;
 
 /**
  * Class Test_WCML_Currency_Switcher
@@ -306,9 +306,10 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings', 'get_setting' ) )->getMock();
 		$woocommerce_wpml->expects( $this->once() )->method( 'get_settings' )->willReturn( $wcml_settings );
-		$woocommerce_wpml->expects( $this->once() )->method( 'get_setting' )->willReturn( $wcml_settings['currency_mode'] );
 		$woocommerce_wpml->multi_currency = $multi_currency;
 		$woocommerce_wpml->cs_templates   = $shortcode_template;
+
+		FunctionMocker::replace( McSettings::class . '::getMode', $currency_mode );
 
 		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
 		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )->disableOriginalConstructor()->setMethods( array( 'get_current_language' ) )->getMock();
@@ -326,11 +327,11 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 	}
 
 	public function currency_switcher_shortcode_data() {
-		return array(
-			array( mt_rand( 1, 100 ), Geolocation::MODE_BY_LANGUAGE ),
-			array( mt_rand( 1, 100 ), Geolocation::MODE_BY_LOCATION ),
-			array( false, Geolocation::MODE_BY_LANGUAGE ),
-		);
+		return [
+			[ 123, McSettings::MODE_BY_LANGUAGE ],
+			[ 123, McSettings::MODE_BY_LOCATION ],
+			[ false, McSettings::MODE_BY_LANGUAGE ],
+		];
 	}
 
 	/**

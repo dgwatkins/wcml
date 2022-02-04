@@ -1,5 +1,6 @@
 <?php
 
+use WCML\MultiCurrency\Settings;
 use WCML\Multicurrency\UI\Hooks;
 use WCML\MultiCurrency\Geolocation;
 use WPML\FP\Obj;
@@ -54,7 +55,6 @@ class WCML_Multi_Currency_Configuration {
 
 			$wcml_settings['enable_multi_currency'] = isset( $_POST['multi_currency'] ) ? intval( $_POST['multi_currency'] ) : 0;
 			$wcml_settings['display_custom_prices'] = isset( $_POST['display_custom_prices'] ) ? intval( $_POST['display_custom_prices'] ) : 0;
-			$wcml_settings['currency_mode'] = filter_input( INPUT_POST, 'currency_mode', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
 			// update default currency settings
 			if ( $wcml_settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ) {
@@ -84,6 +84,7 @@ class WCML_Multi_Currency_Configuration {
 				$wcml_settings['currencies_order'] = self::$multi_currency->currency_codes;
 			}
 
+			Settings::setMode( filter_input( INPUT_POST, 'currency_mode', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) );
 			self::$woocommerce_wpml->update_settings( $wcml_settings );
 
 			do_action( 'wcml_saved_mc_options', $_POST );
@@ -360,8 +361,7 @@ class WCML_Multi_Currency_Configuration {
 		self::verify_nonce();
 		$data = self::get_data();
 
-		self::$woocommerce_wpml->settings['currency_mode'] = $data['mode'];
-		self::$woocommerce_wpml->update_settings();
+		Settings::setMode( $data['mode'] );
 
 		wp_send_json_success();
 	}
