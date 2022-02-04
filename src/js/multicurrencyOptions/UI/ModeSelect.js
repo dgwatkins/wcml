@@ -1,11 +1,12 @@
 import React from "react";
-import {useStore} from "../Store";
+import {getStoreProperty, useStore} from "../Store";
 import {createAjaxRequest} from "../Request";
 import strings from "../Strings";
 import {Spinner} from "../../sharedComponents/FormElements";
 
 const ModeSelect = () => {
     const [mode, setMode] = useStore('mode');
+    const isStandalone = getStoreProperty('isStandalone');
     const ajax = createAjaxRequest('setCurrencyMode');
 
     const onChange = async e => {
@@ -20,7 +21,7 @@ const ModeSelect = () => {
             <label>{strings.labelModeSelect}</label>
             <select id="currency_mode" value={mode} onChange={onChange}>
                 {!mode && <option value="">{strings.labelChooseOption}</option>}
-                <option value="by_language">{strings.labelSiteLanguage}</option>
+                <option value="by_language" disabled={isStandalone}>{strings.labelSiteLanguage}</option>
                 <option value="by_location">{strings.labelClientLocation}</option>
             </select>
             <input type="hidden" name="currency_mode" value={mode}/>

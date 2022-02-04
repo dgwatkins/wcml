@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
         gateways: wcmlMultiCurrency.gateways,
         mode: wcmlMultiCurrency.mode,
         maxMindKeyExist: wcmlMultiCurrency.maxMindKeyExist,
+        isStandalone: wcmlMultiCurrency.isStandalone,
     });
 
     ReactDOM.render(

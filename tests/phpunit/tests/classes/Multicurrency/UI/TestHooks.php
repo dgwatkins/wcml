@@ -155,6 +155,8 @@ class TestHooks extends \OTGS_TestCase {
 			'times'  => 2,
 		] );
 
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( false );
+
 		\WP_Mock::userFunction( 'add_query_arg', [
 			'return' => function( $args, $url ) {
 				return $url;
@@ -176,6 +178,7 @@ class TestHooks extends \OTGS_TestCase {
 			$this->checkAllCountries( $localize['data']['allCountries'] );
 			$this->assertEquals( 'by_location', $localize['data']['mode'] );
 			$this->assertFalse( $localize['data']['maxMindKeyExist'] );
+			$this->assertFalse( $localize['data']['isStandalone'] );
 			$this->assertInternalType( 'array', $localize['data']['strings'] );
 		} );
 

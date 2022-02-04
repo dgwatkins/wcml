@@ -2,12 +2,12 @@
 
 namespace WCML\Multicurrency\UI;
 
-use WCML\MultiCurrency\Geolocation;
 use WCML\StandAlone\IStandAloneAction;
 use WCML\Utilities\Resources;
 use WPML\Collect\Support\Collection;
 use WPML\FP\Fns;
 use WPML\FP\Obj;
+use function WCML\functions\isStandAlone;
 use function WPML\FP\curryN;
 
 class Hooks implements \IWPML_Action, IStandAloneAction {
@@ -58,6 +58,7 @@ class Hooks implements \IWPML_Action, IStandAloneAction {
 				'strings'          => $this->getStrings(),
 				'mode'             => $this->getMode(),
 				'maxMindKeyExist'  => $this->checkMaxMindKeyExist(),
+				'isStandalone'     => isStandAlone(),
 			],
 		] );
 	}
