@@ -1,6 +1,7 @@
 <?php
 
 use WPML\FP\Obj;
+use function WCML\functions\isStandAlone;
 
 class WCML_Custom_Prices {
 
@@ -19,7 +20,14 @@ class WCML_Custom_Prices {
 	}
 
 	public function custom_prices_init() {
+
 		if ( is_admin() ) {
+			if ( isStandAlone() ) {
+				// In the full mode, this is done in the product sync logic.
+				add_action( 'save_post_product', [ $this, 'save_custom_prices' ] );
+				add_action( 'save_post_product_variation', [ $this, 'sync_product_variations_custom_prices' ] );
+			}
+
 			add_action( 'woocommerce_variation_options', [ $this, 'add_individual_variation_nonce' ], 10, 3 );
 
 			// custom prices for different currencies for products/variations [BACKEND].
