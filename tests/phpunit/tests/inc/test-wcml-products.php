@@ -364,13 +364,12 @@ class Test_WCML_Products extends OTGS_TestCase {
 	 * @test
 	 */
 	public function get_original_product_id(){
-
-		$product_id = rand( 1, 100 );
-		$original_product_id = rand( 1, 100 );
+		$product_id          = 456;
+		$original_product_id = 123;
 
 		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
 		                               ->disableOriginalConstructor()
-		                               ->setMethods( array( 'get_original_element' ) )
+		                               ->setMethods( [ 'get_original_element' ] )
 		                               ->getMock();
 
 		$wpml_post_translations->method( 'get_original_element' )->with( $product_id )->willReturn( $original_product_id );
@@ -379,7 +378,17 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$subject_original_product_id = $subject->get_original_product_id( $product_id );
 
 		$this->assertEquals( $original_product_id, $subject_original_product_id );
+	}
 
+	/**
+	 * @test
+	 */
+	public function get_original_product_id_in_standalone_mode(){
+		$product_id = 456;
+
+		$subject = new WCML_Products( $this->get_woocommerce_wpml(), $this->get_sitepress(), null, $this->get_wpdb() );
+
+		$this->assertEquals( $product_id, $subject->get_original_product_id( $product_id ) );
 	}
 
 	/**
