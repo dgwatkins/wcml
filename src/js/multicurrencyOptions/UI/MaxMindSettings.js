@@ -1,35 +1,29 @@
 import React from "react";
-import {useState} from "react";
+import {useState, useRef} from "react";
 import Input from 'antd/lib/input';
 import {getStoreAction, getStoreProperty, useStore} from "../Store";
 import strings from "../Strings";
 import {Spinner} from "../../sharedComponents/FormElements";
 
 const MaxMindSettings = () => {
-    const keyExist = getStoreProperty('maxMindKeyExist');
-    const status = getStoreProperty('maxMindRegistrationStatus');
+    const isRegistered = getStoreProperty('isMaxMindRegistered');
+    const showSettings = useRef( ! isRegistered ).current;
     const registerMaxMindKey = getStoreAction('registerMaxMindKey');
     const [key, setKey] = useState('');
-    const isFetching = 'fetching' === status;
-    const isSuccess = 'success' === status;
-    const error = status && ! isFetching && ! isSuccess;
-    const show = isSuccess || error || !keyExist;
+    const isValidating = getStoreProperty('isValidatingMaxMindRegistration');
+    const error = getStoreProperty('errorOnMaxMindRegistration');
 
-    const onChange = e => {
-        setKey(e.target.value);
-    };
+    const onChange = e => setKey(e.target.value);
 
-    const onApply = e => {
-        registerMaxMindKey(key);
-    }
+    const onApply = () => registerMaxMindKey(key);
 
-    return ( show &&
+    return ( showSettings &&
         <div className="max-mind-block">
-            {isSuccess && <Success strings={strings}/>}
+            <Success strings={strings}/>
             <div className="max-mind-block__wrapper">
-                {error && <Error error={status}/>}
-                {!keyExist && <SettingsBlock onChange={onChange} onApply={onApply} strings={strings} disableSave={!key}/>}
-                {isFetching && <Spinner/>}
+                <Error error={error}/>
+                {!isRegistered && <SettingsBlock onChange={onChange} onApply={onApply} strings={strings} disableSave={!key}/>}
+                {isValidating && <Spinner/>}
             </div>
         </div>
     );
@@ -69,8 +63,8 @@ const SettingsBlock = ({onChange, onApply, strings, disableSave}) => {
 
 const Success = ({strings}) => {
 
-    return (
-        <div className="updated message fade">
+    return getStoreProperty( 'isMaxMindRegistered' )
+        ? <div className="updated message fade">
             <p>
                 {strings.maxMindSuccess}
                 <a className="wcml-max-min-settings"
@@ -81,16 +75,17 @@ const Success = ({strings}) => {
                 </a>
             </p>
         </div>
-    );
+        : null;
 };
 
-const Error = ({error}) => {
+const Error = () => {
+    const error = getStoreProperty('errorOnMaxMindRegistration');
 
-    return (
-        <div className="error inline">
+    return error
+        ? <div className="error inline">
             <p className="wcml-max-min-error">{error}</p>
         </div>
-    );
+        : null;
 };
 
 export default MaxMindSettings;

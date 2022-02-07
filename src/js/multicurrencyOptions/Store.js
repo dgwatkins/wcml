@@ -10,8 +10,9 @@ const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, ga
     languages: languages,
     gateways: gateways,
     mode: mode,
-    maxMindKeyExist: maxMindKeyExist,
-    maxMindRegistrationStatus: null,
+    isMaxMindRegistered: maxMindKeyExist,
+    isValidatingMaxMindRegistration: null,
+    errorOnMaxMindRegistration: null,
     modalCurrency: null,
     updating: false,
 
@@ -106,25 +107,35 @@ const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, ga
         state.maxMindKeyExist = true;
     }),
 
-    registerMaxMindKey: thunk(async (actions, key) => {
-        actions.setMaxMindRegistrationStatus('fetching');
+    registerMaxMindKey: thunk(async (actions, key, { getState }) => {
+        actions.setErrorOnMaxMindRegistration(null);
+        actions.setIsValidatingMaxMindRegistration(true);
 
         const {data:response} = await doAjaxForSetMaxMindKey(key);
+
+        actions.setIsValidatingMaxMindRegistration(false);
 
         const isSuccess   = R.prop('success');
         const getErrorMsg = R.prop('data');
 
         if (isSuccess(response)) {
-           actions.setMaxMindKeyExist();
-           actions.setMaxMindRegistrationStatus('success');
+            actions.setIsMaxMindRegistered();
         } else {
             const error = getErrorMsg(response);
-            actions.setMaxMindRegistrationStatus(error ? error : 'Error');
+            actions.setErrorOnMaxMindRegistration(error ? error : 'Error');
         }
     }),
 
-    setMaxMindRegistrationStatus: action((state, status) => {
-        state.maxMindRegistrationStatus = status;
+    setErrorOnMaxMindRegistration: action((state, error) => {
+         state.errorOnMaxMindRegistration = error;
+    }),
+
+    setIsValidatingMaxMindRegistration: action((state, isValidating) => {
+         state.isValidatingMaxMindRegistration = isValidating;
+    }),
+
+    setIsMaxMindRegistered: action((state) => {
+        state.isMaxMindRegistered = true;
     })
 });
 
