@@ -1,5 +1,12 @@
 <?php
 
+use function WPML\FP\pipe;
+use WPML\FP\Obj;
+use WPML\FP\Cast;
+use WPML\FP\Relation;
+use WPML\FP\Lst;
+use WPML\FP\Fns;
+
 class WCML_Terms {
 
 	const PRODUCT_SHIPPING_CLASS           = 'product_shipping_class';
@@ -30,6 +37,7 @@ class WCML_Terms {
 	public function add_hooks() {
 
 		add_action( 'update_term_meta', [ $this, 'sync_term_order' ], 100, 4 );
+		add_action( 'updated_term_meta', Fns::withoutRecursion( Fns::noop(), [ $this, 'addProductCatToRecount' ] ), 10, 3 );
 
 		add_filter( 'wp_get_object_terms', [ $this->sitepress, 'get_terms_filter' ] );
 		add_action( 'created_term', [ $this, 'translated_terms_status_update' ], 10, 3 );
@@ -1112,4 +1120,27 @@ class WCML_Terms {
 		return $key . '-' . $this->sitepress->get_current_language();
 	}
 
+	/**
+	 * @param int    $meta_id
+	 * @param int    $object_id
+	 * @param string $meta_key
+	 *
+	 * @return void
+	 */
+	public function addProductCatToRecount( $meta_id, $object_id, $meta_key ) {
+		
+		if ( 'product_count_product_cat' === $meta_key ) {
+			
+			$trid         = $this->sitepress->get_element_trid( $object_id, 'tax_product_cat' );
+			$translations = $this->sitepress->get_element_translations( $trid, 'tax_product_cat' );
+			
+			// $isCurrentCat :: object -> bool
+			$isCurrentCat = pipe( Obj::prop( 'element_id' ), Cast::toInt(), Relation::equals( $object_id ) );
+			
+			$productCatToRecount = Lst::pluck( 'element_id', Fns::reject( $isCurrentCat, $translations ) );
+			
+			_wc_term_recount( $productCatToRecount, get_taxonomy( 'product_cat' ) );
+			
+		}
+	}
 }
