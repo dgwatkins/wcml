@@ -1,4 +1,4 @@
-import { action, createStore, useStoreState, useStoreActions, computed, thunk } from "easy-peasy";
+import { action, createStore, useStoreState, useStoreActions, computed, thunk, reducer } from "easy-peasy";
 import {capitalize, triggerActiveCurrenciesChange, triggerModeChange} from "./Utils";
 import * as R from 'ramda';
 import {doAjaxForSetMaxMindKey} from "./Request";
@@ -10,9 +10,15 @@ const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, ga
     languages: languages,
     gateways: gateways,
     mode: mode,
-    isMaxMindRegistered: maxMindKeyExist,
-    isValidatingMaxMindRegistration: null,
-    errorOnMaxMindRegistration: null,
+    isMaxMindRegistered: reducer( ( state = maxMindKeyExist, { type } ) =>
+        type === 'SET_IS_MAX_MIND_REGISTERED' ? true : state
+    ),
+    isValidatingMaxMindRegistration: reducer( ( state = false, { type, payload } ) =>
+        type === 'SET_IS_VALIDATING_MAX_MIND_REGISTRATION' ? payload : state
+    ),
+    errorOnMaxMindRegistration: reducer( ( state = '', { type, payload } ) =>
+        type === 'SET_ERROR_ON_MAX_MIND_REGISTRATION' ? payload : state
+    ),
     modalCurrency: null,
     updating: false,
 
@@ -103,40 +109,23 @@ const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, ga
         triggerModeChange({mode:mode});
     }),
 
-    setMaxMindKeyExist: action((state) =>{
-        state.maxMindKeyExist = true;
-    }),
+    registerMaxMindKey: thunk(async (actions, key, { dispatch }) => {
+        dispatch( { type: 'SET_ERROR_ON_MAX_MIND_REGISTRATION', payload: '' } );
 
-    registerMaxMindKey: thunk(async (actions, key, { getState }) => {
-        actions.setErrorOnMaxMindRegistration(null);
-        actions.setIsValidatingMaxMindRegistration(true);
-
+        dispatch( { type: 'SET_IS_VALIDATING_MAX_MIND_REGISTRATION', payload: true } );
         const {data:response} = await doAjaxForSetMaxMindKey(key);
-
-        actions.setIsValidatingMaxMindRegistration(false);
+        dispatch( { type: 'SET_IS_VALIDATING_MAX_MIND_REGISTRATION', payload: false } );
 
         const isSuccess   = R.prop('success');
         const getErrorMsg = R.prop('data');
 
         if (isSuccess(response)) {
-            actions.setIsMaxMindRegistered();
+            dispatch( { type: 'SET_IS_MAX_MIND_REGISTERED' } );
         } else {
             const error = getErrorMsg(response);
-            actions.setErrorOnMaxMindRegistration(error ? error : 'Error');
+            dispatch( { type: 'SET_ERROR_ON_MAX_MIND_REGISTRATION', payload: error ? error : 'Error' } );
         }
     }),
-
-    setErrorOnMaxMindRegistration: action((state, error) => {
-         state.errorOnMaxMindRegistration = error;
-    }),
-
-    setIsValidatingMaxMindRegistration: action((state, isValidating) => {
-         state.isValidatingMaxMindRegistration = isValidating;
-    }),
-
-    setIsMaxMindRegistered: action((state) => {
-        state.isMaxMindRegistered = true;
-    })
 });
 
 export default initStore;

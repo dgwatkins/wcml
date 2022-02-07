@@ -11,7 +11,6 @@ const MaxMindSettings = () => {
     const registerMaxMindKey = getStoreAction('registerMaxMindKey');
     const [key, setKey] = useState('');
     const isValidating = getStoreProperty('isValidatingMaxMindRegistration');
-    const error = getStoreProperty('errorOnMaxMindRegistration');
 
     const onChange = e => setKey(e.target.value);
 
@@ -19,9 +18,9 @@ const MaxMindSettings = () => {
 
     return ( showSettings &&
         <div className="max-mind-block">
-            <Success strings={strings}/>
+            <Success />
             <div className="max-mind-block__wrapper">
-                <Error error={error}/>
+                <Error />
                 {!isRegistered && <SettingsBlock onChange={onChange} onApply={onApply} strings={strings} disableSave={!key}/>}
                 {isValidating && <Spinner/>}
             </div>
@@ -61,8 +60,7 @@ const SettingsBlock = ({onChange, onApply, strings, disableSave}) => {
 };
 
 
-const Success = ({strings}) => {
-
+const Success = () => {
     return getStoreProperty( 'isMaxMindRegistered' )
         ? <div className="updated message fade">
             <p>
