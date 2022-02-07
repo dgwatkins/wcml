@@ -1026,4 +1026,35 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		$this->assertEquals( $language, $subject->get_order_language( $order_id ) );
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_force_translating_admin_texts_when_refreshing_language() {
+		$order_id = 123;
+		$options  = [
+			'woocommerce_checkout_privacy_policy_text',
+			'woocommerce_email_footer_text',
+			'woocommerce_email_from_address',
+			'woocommerce_email_from_name',
+			'woocommerce_price_decimal_sep',
+			'woocommerce_price_thousand_sep',
+			'woocommerce_registration_privacy_policy_text',
+		];
+
+		WP_Mock::expectAction( 'wpml_st_force_translate_admin_options', $options );
+
+		WP_Mock::userFunction( 'get_post_meta', [
+			'args'   => [ $order_id, 'wpml_language', true ],
+			'return' => 'en'
+		] );
+
+		WP_Mock::userFunction( 'get_current_user_id', [
+			'return' => 321
+		] );
+
+		$subject = $this->get_subject();
+		$subject->refresh_email_lang( $order_id );
+	}
+
 }
