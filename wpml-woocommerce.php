@@ -17,8 +17,6 @@
  * @author  OnTheGoSystems
  */
 
-use function WCML\functions\isStandAlone;
-
 if ( defined( 'WCML_VERSION' ) ) {
 	return;
 }
@@ -128,15 +126,6 @@ function wcml_loader() {
 		$loaders[] = 'WCML_Product_Gallery_Filter_Factory';
 		$loaders[] = 'WCML_Update_Product_Gallery_Translation_Factory';
 		$loaders[] = 'WCML_Append_Gallery_To_Post_Media_Ids_Factory';
-	}
-
-	if ( isStandAlone() ) {
-		$loaders = array_merge(
-			$loaders,
-			[
-				\WCML\StandAlone\Settings\Hooks::class,
-			]
-		);
 	}
 
 	$action_filter_loader = new \WCML\StandAlone\ActionFilterLoader();

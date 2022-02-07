@@ -3,6 +3,7 @@
 namespace WCML\MultiCurrency;
 
 use function WCML\functions\getSetting;
+use function WCML\functions\isStandAlone;
 use function WCML\functions\updateSetting;
 
 class Settings {
@@ -14,7 +15,15 @@ class Settings {
 	 * @return string|null
 	 */
 	public static function getMode() {
-		return getSetting( 'currency_mode' );
+		$persistedMode = getSetting( 'currency_mode' );
+
+		// Force location mode at runtime in standalone
+		// to preserve settings in case of temporary change.
+		if ( self::MODE_BY_LANGUAGE === $persistedMode && isStandAlone() ) {
+			return self::MODE_BY_LOCATION;
+		}
+
+		return $persistedMode;
 	}
 
 	/**
