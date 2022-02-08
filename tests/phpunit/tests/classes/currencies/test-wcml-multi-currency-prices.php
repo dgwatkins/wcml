@@ -1,5 +1,7 @@
 <?php
 
+use WPML\Core\ISitePress;
+
 /**
  * @group multi-currency-prices
  */
@@ -7,8 +9,18 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 
 	public function setUp() {
 		parent::setUp();
+	}
 
-		\WP_Mock::userFunction( 'WCML\functions\getSitePress' )->andReturn( Mockery::mock( \WPML\Core\ISitePress::class ) );
+	/**
+	 * @return \Mockery\LegacyMockInterface|\Mockery\MockInterface|ISitePress
+	 */
+	private function get_sitepress_mock() {
+		$sitepress = Mockery::mock( ISitePress::class );
+
+		\WP_Mock::userFunction( 'WCML\functions\getSitePress' )
+		        ->andReturn( $sitepress );
+
+		return $sitepress;
 	}
 
 	private function get_subject( $multi_currency ){
@@ -224,25 +236,26 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 	 */
 	public function it_should_call_wcml_price_custom_fields() {
 		$product_id = 123;
-		$post_type = 'product';
-		$meta_key = null;
+		$post_type  = 'product';
+		$meta_key   = null;
 
 		$multi_currency = $this->get_multi_currency_mock();
 		$multi_currency->method( 'are_filters_need_loading' )->willReturn( true );
 
 		$subject = $this->get_subject( $multi_currency );
 
-		WP_Mock::userFunction( 'get_post_type', array(
+		WP_Mock::userFunction( 'get_post_type', [
 			'times'  => 1,
-			'args'   => array( $product_id ),
+			'args'   => [ $product_id ],
 			'return' => $post_type,
-		) );
-		WP_Mock::userFunction( 'wcml_price_custom_fields', array(
-			'times' => 1,
-			'args'  => array( $product_id ),
-		) );
+		] );
+		WP_Mock::userFunction( 'wcml_price_custom_fields', [
+			'times'  => 1,
+			'args'   => [ $product_id ],
+			'return' => [],
+		] );
 
-		$subject->product_price_filter( array(), $product_id, $meta_key, true );
+		$subject->product_price_filter( [], $product_id, $meta_key, true );
 	}
 
 	/**
@@ -251,22 +264,203 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 	 */
 	public function it_should_NOT_call_wcml_price_custom_fields_if_the_post_type_is_not_a_product_or_a_product_variation() {
 		$product_id = 123;
-		$post_type = 'post';
-		$meta_key = null;
+		$post_type  = 'product';
+		$meta_key   = null;
+
+		$this->get_sitepress_mock();
 
 		$multi_currency = $this->get_multi_currency_mock();
 		$multi_currency->method( 'are_filters_need_loading' )->willReturn( true );
 
 		$subject = $this->get_subject( $multi_currency );
 
-		WP_Mock::userFunction( 'get_post_type', array(
+		WP_Mock::userFunction( 'get_post_type', [
 			'times'  => 1,
-			'args'   => array( $product_id ),
+			'args'   => [ $product_id ],
 			'return' => $post_type,
-		) );
-		WP_Mock::userFunction( 'wcml_price_custom_fields', array( 'times' => 0 ) );
+		] );
+		WP_Mock::userFunction( 'wcml_price_custom_fields', [ 'times' => 0 ] );
 
-		$subject->product_price_filter( array(), $product_id, $meta_key, true );
+		$subject->product_price_filter( [], $product_id, $meta_key, true );
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3847
+	 *
+	 * @return void
+	 */
+	public function test_product_price_filter_with_legacy_ccr_conversion() {
+		$product_id      = 123;
+		$post_type       = 'product';
+		$meta_key        = '_price';
+		$client_currency = 'GBP';
+		$default_lang    = 'en';
+		$original_price  = 60;
+		$factor          = 2;
+		$expected_price  = $original_price * $factor;
+
+		$ccr = [
+			$meta_key => [
+				$client_currency => $factor,
+			],
+		];
+
+		WP_Mock::userFunction( 'get_post_type', [
+			'args'   => [ $product_id ],
+			'return' => $post_type,
+		] );
+		WP_Mock::userFunction( 'wcml_price_custom_fields', [
+			'args'   => [ $product_id ],
+			'return' => [ 'foo', 'bar', $meta_key ],
+		] );
+
+		WP_Mock::onFilter( 'translate_object_id' )
+			->with( $product_id, $post_type, false, $default_lang )
+			->reply( $product_id );
+
+		$this->get_sitepress_mock()->shouldReceive( 'get_default_language' )->andReturn( $default_lang );
+
+		$multi_currency = $this->get_multi_currency_mock();
+		$multi_currency->method( 'are_filters_need_loading' )->willReturn( true );
+		$multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
+
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( $product_id, '_custom_conversion_rate', true )
+		       ->andReturn( $ccr );
+
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( $product_id, $meta_key, true )
+		       ->andReturn( $original_price );
+
+		$subject = $this->get_subject( $multi_currency );
+
+		$this->assertEquals(
+			$expected_price,
+			$subject->product_price_filter( null, $product_id, $meta_key, true )
+		);
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3847
+	 *
+	 * @return void
+	 */
+	public function test_product_price_filter_with_custom_price() {
+		$product_id      = 123;
+		$post_type       = 'product';
+		$meta_key        = '_price';
+		$client_currency = 'GBP';
+		$default_lang    = 'en';
+		$original_price  = 60;
+		$expected_price  = 120;
+
+		$manual_prices = [
+			$meta_key => $expected_price,
+		];
+
+		WP_Mock::userFunction( 'get_post_type', [
+			'args'   => [ $product_id ],
+			'return' => $post_type,
+		] );
+		WP_Mock::userFunction( 'wcml_price_custom_fields', [
+			'args'   => [ $product_id ],
+			'return' => [ 'foo', 'bar', $meta_key ],
+		] );
+
+		WP_Mock::onFilter( 'translate_object_id' )
+			->with( $product_id, $post_type, false, $default_lang )
+			->reply( $product_id );
+
+		$this->get_sitepress_mock()->shouldReceive( 'get_default_language' )->andReturn( $default_lang );
+
+		$multi_currency = $this->get_multi_currency_mock();
+		$multi_currency->method( 'are_filters_need_loading' )->willReturn( true );
+		$multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
+
+		$multi_currency->custom_prices = $this->getMockBuilder( WCML_Custom_Prices::class )
+		                                     ->setMethods( [ 'get_product_custom_prices' ] )
+		                                     ->disableOriginalConstructor()->getMock();
+		$multi_currency->custom_prices->method( 'get_product_custom_prices' )
+	          ->with( $product_id, $client_currency )
+	          ->willReturn( $manual_prices );
+
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( $product_id, '_custom_conversion_rate', true )
+		       ->andReturn( '' );
+
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( $product_id, $meta_key, true )
+		       ->andReturn( $original_price );
+
+		$subject = $this->get_subject( $multi_currency );
+
+		$this->assertEquals(
+			$expected_price,
+			$subject->product_price_filter( null, $product_id, $meta_key, true )
+		);
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3847
+	 *
+	 * @return void
+	 */
+	public function test_product_price_filter_with_automatic_conversion() {
+		$product_id      = 123;
+		$post_type       = 'product';
+		$meta_key        = '_price';
+		$client_currency = 'GBP';
+		$default_lang    = 'en';
+		$original_price  = 60;
+		$expected_price  = 120;
+
+		WP_Mock::userFunction( 'get_post_type', [
+			'args'   => [ $product_id ],
+			'return' => $post_type,
+		] );
+		WP_Mock::userFunction( 'wcml_price_custom_fields', [
+			'args'   => [ $product_id ],
+			'return' => [ 'foo', 'bar', $meta_key ],
+		] );
+
+		WP_Mock::onFilter( 'translate_object_id' )
+			->with( $product_id, $post_type, false, $default_lang )
+			->reply( $product_id );
+
+		$this->get_sitepress_mock()->shouldReceive( 'get_default_language' )->andReturn( $default_lang );
+
+		$multi_currency = $this->get_multi_currency_mock();
+		$multi_currency->method( 'are_filters_need_loading' )->willReturn( true );
+		$multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
+
+		$multi_currency->custom_prices = $this->getMockBuilder( WCML_Custom_Prices::class )
+		                                     ->setMethods( [ 'get_product_custom_prices' ] )
+		                                     ->disableOriginalConstructor()->getMock();
+		$multi_currency->custom_prices->method( 'get_product_custom_prices' )
+	          ->with( $product_id, $client_currency )
+	          ->willReturn( [] );
+
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( $product_id, '_custom_conversion_rate', true )
+		       ->andReturn( '' );
+
+		WP_Mock::userFunction( 'get_post_meta' )
+		       ->with( $product_id, $meta_key, true )
+		       ->andReturn( $original_price );
+
+		\WP_Mock::onFilter( 'wcml_raw_price_amount' )
+		        ->with( $original_price )
+		        ->reply( $expected_price );
+
+		$subject = $this->get_subject( $multi_currency );
+
+		$this->assertEquals(
+			$expected_price,
+			$subject->product_price_filter( null, $product_id, $meta_key, true )
+		);
 	}
 
 	/**
