@@ -264,7 +264,7 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 	 */
 	public function it_should_NOT_call_wcml_price_custom_fields_if_the_post_type_is_not_a_product_or_a_product_variation() {
 		$product_id = 123;
-		$post_type  = 'product';
+		$post_type  = 'post';
 		$meta_key   = null;
 
 		$this->get_sitepress_mock();
@@ -275,7 +275,6 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		$subject = $this->get_subject( $multi_currency );
 
 		WP_Mock::userFunction( 'get_post_type', [
-			'times'  => 1,
 			'args'   => [ $product_id ],
 			'return' => $post_type,
 		] );
@@ -443,20 +442,32 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 	          ->with( $product_id, $client_currency )
 	          ->willReturn( [] );
 
+		$subject = $this->get_subject( $multi_currency );
+
 		WP_Mock::userFunction( 'get_post_meta' )
 		       ->with( $product_id, '_custom_conversion_rate', true )
 		       ->andReturn( '' );
 
-		WP_Mock::userFunction( 'get_post_meta' )
-		       ->with( $product_id, $meta_key, true )
-		       ->andReturn( $original_price );
+		WP_Mock::userFunction( 'get_post_meta', [
+			'args' => [ $product_id, $meta_key, true ],
+			'return' => function() use ( $original_price, $subject, $product_id, $meta_key ) {
+				// Simulate nested call to make sure it's locked
+				$subject->product_price_filter( null, $product_id, $meta_key, true );
+
+				return $original_price;
+			},
+		] );
 
 		\WP_Mock::onFilter( 'wcml_raw_price_amount' )
 		        ->with( $original_price )
 		        ->reply( $expected_price );
 
-		$subject = $this->get_subject( $multi_currency );
+		$this->assertEquals(
+			$expected_price,
+			$subject->product_price_filter( null, $product_id, $meta_key, true )
+		);
 
+		// 2nd call to make sure the function is unlocked after the 1st one.
 		$this->assertEquals(
 			$expected_price,
 			$subject->product_price_filter( null, $product_id, $meta_key, true )
