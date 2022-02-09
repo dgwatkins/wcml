@@ -1,5 +1,7 @@
 <?php
 
+use tad\FunctionMocker\FunctionMocker;
+use WCML\Utilities\WcAdminPages;
 use WPML\FP\Fns;
 
 class Test_WCML_WC_Gateways extends OTGS_TestCase {
@@ -45,12 +47,56 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 	 * @test
 	 * @group wcml-3266
 	 */
-	public function it_adds_hooks() {
+	public function it_adds_hooks_in_fullmode() {
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( false );
+
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectActionAdded( 'init', array( $subject, 'on_init_hooks' ), 11 );
+		\WP_Mock::expectActionAdded( 'init', [ $subject, 'on_init_hooks' ], 11 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_payment_gateways', Fns::withoutRecursion( Fns::identity(), [ $subject, 'loaded_woocommerce_payment_gateways' ] ) );
 
-		\WP_Mock::expectFilterAdded( 'woocommerce_payment_gateways', Fns::withoutRecursion( Fns::identity(), array( $subject, 'loaded_woocommerce_payment_gateways' ) ) );
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3890
+	 */
+	public function it_adds_hooks_in_standalone_on_any_page() {
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( true );
+
+		FunctionMocker::replace( WcAdminPages::class . '::isPaymentSettings', false );
+
+		$subject = $this->get_subject();
+
+		// Standalone mode
+		\WP_Mock::expectActionNotAdded( 'init', [ $subject, 'load_bacs_gateway_currency_selector_hooks' ] );
+
+		// Full mode
+		\WP_Mock::expectActionNotAdded( 'init', [ $subject, 'on_init_hooks' ] );
+		\WP_Mock::expectFilterNotAdded( 'woocommerce_payment_gateways', Fns::withoutRecursion( Fns::identity(), [ $subject, 'loaded_woocommerce_payment_gateways' ] ) );
+
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3890
+	 */
+	public function it_adds_hooks_in_standalone_on_wc_payment_settings() {
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( true );
+
+		FunctionMocker::replace( WcAdminPages::class . '::isPaymentSettings', true );
+
+		$subject = $this->get_subject();
+
+		// Standalone mode
+		\WP_Mock::expectActionAdded( 'init', [ $subject, 'load_bacs_gateway_currency_selector_hooks' ], 11 );
+
+		// Full mode
+		\WP_Mock::expectActionNotAdded( 'init', [ $subject, 'on_init_hooks' ] );
+		\WP_Mock::expectFilterNotAdded( 'woocommerce_payment_gateways', Fns::withoutRecursion( Fns::identity(), [ $subject, 'loaded_woocommerce_payment_gateways' ] ) );
+
 		$subject->add_hooks();
 	}
 

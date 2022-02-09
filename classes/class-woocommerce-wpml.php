@@ -303,6 +303,7 @@ class woocommerce_wpml {
 		$this->products = new WCML_Products( $this, $sitepress, null, $wpdb );
 		$this->products->add_hooks();
 		$this->gateways = new WCML_WC_Gateways( $this, $sitepress );
+		$this->gateways->add_hooks();
 		$this->cart->add_hooks(); // object is instantiated before.
 		$this->cart_sync_warnings = new WCML_Cart_Sync_Warnings( $this, $sitepress );
 		$payment_method_filter    = new WCML_Payment_Method_Filter();
