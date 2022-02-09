@@ -1,6 +1,7 @@
 <?php
 
 use tad\FunctionMocker\FunctionMocker;
+use WPML\Core\ISitePress;
 use WPML\FP\Fns;
 
 /**
@@ -32,7 +33,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 	}
 
 	private function get_sitepress() {
-		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		return $this->getMockBuilder( ISitePress::class )
 		            ->disableOriginalConstructor()
 		            ->getMock();
 	}
@@ -261,39 +262,36 @@ class Test_WCML_Products extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_adds_frontend_hooks(){
-		\WP_Mock::userFunction( 'is_admin', array(
-			'return' => false,
-			'times'  => 1
-		) );
+	public function it_adds_frontend_fullmode_hooks(){
+		\WP_Mock::userFunction( 'is_admin' )->andReturn( false );
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( false );
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
-		                  ->disableOriginalConstructor()
-		                  ->getMock();
+		$sitepress = Mockery::mock( ISitePress::class );
+		$subject   = $this->get_subject( false, $sitepress );
 
-		$subject = $this->get_subject( false, $sitepress );
+		// Frontend
+		\WP_Mock::expectFilterAdded( 'woocommerce_related_products_args', [ $subject, 'filter_related_products_args' ] );
 
-		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ), 10, 3 );
+		// Frontend and full mode
+		\WP_Mock::expectFilterAdded( 'woocommerce_json_search_found_products', [ $subject, 'filter_wc_searched_products_on_front' ] );
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_related_posts_query', [ $subject, 'filter_related_products_query' ] );
+		\WP_Mock::expectFilterAdded( 'woocommerce_shortcode_products_query', [ $subject, 'add_lang_to_shortcode_products_query' ] );
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_file_download_path', [ $subject, 'filter_file_download_path' ] );
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_add_to_cart_url', [ $subject, 'maybe_add_language_parameter' ] );
 
-		\WP_Mock::expectFilterAdded( 'woocommerce_shortcode_products_query', array( $subject, 'add_lang_to_shortcode_products_query' ) );
-		\WP_Mock::expectFilterAdded( 'woocommerce_product_file_download_path', array( $subject, 'filter_file_download_path' ) );
-		\WP_Mock::expectFilterAdded( 'woocommerce_product_related_posts_query', array( $subject, 'filter_related_products_query' ) );
-		\WP_Mock::expectFilterAdded( 'woocommerce_json_search_found_products', array( $subject, 'filter_wc_searched_products_on_front' ) );
+		// Full mode
+		\WP_Mock::expectFilterAdded( 'woocommerce_upsell_crosssell_search_products', [ $subject, 'filter_woocommerce_upsell_crosssell_posts_by_language' ] );
+		\WP_Mock::expectActionAdded( 'woocommerce_after_product_ordering', [ $subject, 'update_all_products_translations_ordering' ] );
+		\WP_Mock::expectFilterAdded( 'wpml_copy_from_original_custom_fields', [ $subject, 'filter_excerpt_field_content_copy' ] );
+		\WP_Mock::expectFilterAdded( 'wpml_override_is_translator', [ $subject, 'wcml_override_is_translator' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'wpml_user_can_translate', [ $subject, 'wcml_user_can_translate' ], 10, 2 );
+		\WP_Mock::expectFilterAdded( 'wc_product_has_unique_sku', [ $subject, 'check_product_sku' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'get_product_search_form', [ $sitepress, 'get_search_form_filter' ] );
+		\WP_Mock::expectFilterAdded( 'woocommerce_pre_customer_bought_product', Fns::withoutRecursion( Fns::identity(), [ $subject, 'is_customer_bought_product' ] ), 10, 4 );
 
-		\WP_Mock::expectFilterAdded( 'woocommerce_upsell_crosssell_search_products', array( $subject, 'filter_woocommerce_upsell_crosssell_posts_by_language' ) );
-		\WP_Mock::expectActionAdded( 'woocommerce_after_product_ordering', array( $subject, 'update_all_products_translations_ordering' ) );
-		\WP_Mock::expectFilterAdded( 'wpml_copy_from_original_custom_fields', array( $subject, 'filter_excerpt_field_content_copy' ) );
-		\WP_Mock::expectFilterAdded( 'wpml_override_is_translator', array( $subject, 'wcml_override_is_translator' ), 10, 3 );
-		\WP_Mock::expectFilterAdded( 'wpml_user_can_translate', array( $subject, 'wcml_user_can_translate' ), 10, 2 );
-		\WP_Mock::expectFilterAdded( 'wc_product_has_unique_sku', array( $subject, 'check_product_sku' ), 10, 3 );
-		\WP_Mock::expectFilterAdded( 'get_product_search_form', array( $sitepress, 'get_search_form_filter' ) );
-		\WP_Mock::expectFilterAdded(
-			'woocommerce_pre_customer_bought_product',
-			Fns::withoutRecursion( Fns::identity(), [ $subject, 'is_customer_bought_product' ] ),
-			10,
-			4
-		);
-		\WP_Mock::expectFilterAdded( 'woocommerce_product_add_to_cart_url', array( $subject, 'maybe_add_language_parameter' ) );
+		// All contexts
+		\WP_Mock::expectFilterAdded( 'woocommerce_can_reduce_order_stock', [ $subject, 'remove_post_meta_data_filter_on_checkout_stock_update' ] );
+		\WP_Mock::expectFilterAdded( 'get_post_metadata', [ $subject, 'filter_product_data' ], 10, 3 );
 
 		$subject->add_hooks();
 	}
@@ -301,39 +299,102 @@ class Test_WCML_Products extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_adds_backend_hooks(){
-		\WP_Mock::userFunction( 'is_admin', array(
-			'return' => true,
-			'times'  => 1
-		) );
+	public function it_adds_backend_fullmode_hooks(){
+		\WP_Mock::userFunction( 'is_admin' )->andReturn( true );
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( false );
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
-		                  ->disableOriginalConstructor()
-		                  ->getMock();
+		$sitepress = Mockery::mock( ISitePress::class );
+		$subject   = $this->get_subject( false, $sitepress );
 
-		$subject = $this->get_subject( false, $sitepress );
+		// Backend
+		\WP_Mock::expectFilterAdded( 'woocommerce_json_search_found_products', [ $subject, 'filter_wc_searched_products_on_admin' ] );
+		\WP_Mock::expectActionAdded( 'wp_ajax_wpml_switch_post_language', [ $subject, 'switch_product_variations_language' ], 9 );
+		\WP_Mock::expectFilterAdded( 'post_row_actions', [ $subject, 'filter_product_actions' ], 10, 2 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_type_query', [ $subject, 'override_product_type_query' ], 10, 2 );
 
-		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_product_data' ), 10, 3 );
-		\WP_Mock::expectFilterAdded( 'woocommerce_can_reduce_order_stock', array( $subject, 'remove_post_meta_data_filter_on_checkout_stock_update' ) );
+		// All contexts and full mode
+		\WP_Mock::expectFilterAdded( 'woocommerce_upsell_crosssell_search_products', [ $subject, 'filter_woocommerce_upsell_crosssell_posts_by_language' ] );
+		\WP_Mock::expectActionAdded( 'woocommerce_after_product_ordering', [ $subject, 'update_all_products_translations_ordering' ] );
+		\WP_Mock::expectFilterAdded( 'wpml_copy_from_original_custom_fields', [ $subject, 'filter_excerpt_field_content_copy' ] );
+		\WP_Mock::expectFilterAdded( 'wpml_override_is_translator', [ $subject, 'wcml_override_is_translator' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'wpml_user_can_translate', [ $subject, 'wcml_user_can_translate' ], 10, 2 );
+		\WP_Mock::expectFilterAdded( 'wc_product_has_unique_sku', [ $subject, 'check_product_sku' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'get_product_search_form', [ $sitepress, 'get_search_form_filter' ] );
+		\WP_Mock::expectFilterAdded( 'woocommerce_pre_customer_bought_product', Fns::withoutRecursion( Fns::identity(), [ $subject, 'is_customer_bought_product' ] ), 10, 4 );
 
-		\WP_Mock::expectFilterAdded( 'woocommerce_json_search_found_products', array( $subject, 'filter_wc_searched_products_on_admin' ) );
-		\WP_Mock::expectFilterAdded( 'post_row_actions', array( $subject, 'filter_product_actions' ), 10, 2 );
-		\WP_Mock::expectFilterAdded( 'woocommerce_product_type_query', array( $subject, 'override_product_type_query' ), 10, 2 );
-		\WP_Mock::expectActionAdded( 'wp_ajax_wpml_switch_post_language', array( $subject, 'switch_product_variations_language' ), 9 );
+		// All contexts
+		\WP_Mock::expectFilterAdded( 'woocommerce_can_reduce_order_stock', [ $subject, 'remove_post_meta_data_filter_on_checkout_stock_update' ] );
+		\WP_Mock::expectFilterAdded( 'get_post_metadata', [ $subject, 'filter_product_data' ], 10, 3 );
 
-		\WP_Mock::expectFilterAdded( 'woocommerce_upsell_crosssell_search_products', array( $subject, 'filter_woocommerce_upsell_crosssell_posts_by_language' ) );
-		\WP_Mock::expectActionAdded( 'woocommerce_after_product_ordering', array( $subject, 'update_all_products_translations_ordering' ) );
-		\WP_Mock::expectFilterAdded( 'wpml_copy_from_original_custom_fields', array( $subject, 'filter_excerpt_field_content_copy' ) );
-		\WP_Mock::expectFilterAdded( 'wpml_override_is_translator', array( $subject, 'wcml_override_is_translator' ), 10, 3 );
-		\WP_Mock::expectFilterAdded( 'wpml_user_can_translate', array( $subject, 'wcml_user_can_translate' ), 10, 2 );
-		\WP_Mock::expectFilterAdded( 'wc_product_has_unique_sku', array( $subject, 'check_product_sku' ), 10, 3 );
-		\WP_Mock::expectFilterAdded( 'get_product_search_form', array( $sitepress, 'get_search_form_filter' ) );
-		\WP_Mock::expectFilterAdded(
-			'woocommerce_pre_customer_bought_product',
-			Fns::withoutRecursion( Fns::identity(), [ $subject, 'is_customer_bought_product' ] ),
-			10,
-			4
-		);
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_adds_frontend_standalone_hooks(){
+		\WP_Mock::userFunction( 'is_admin' )->andReturn( false );
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( true );
+
+		$sitepress = Mockery::mock( ISitePress::class );
+		$subject   = $this->get_subject( false, $sitepress );
+
+		// Frontend
+		\WP_Mock::expectFilterAdded( 'woocommerce_related_products_args', [ $subject, 'filter_related_products_args' ] );
+
+		// Frontend and full mode
+		\WP_Mock::expectFilterNotAdded( 'woocommerce_json_search_found_products', [ $subject, 'filter_wc_searched_products_on_front' ] );
+		\WP_Mock::expectFilterNotAdded( 'woocommerce_product_related_posts_query', [ $subject, 'filter_related_products_query' ] );
+		\WP_Mock::expectFilterNotAdded( 'woocommerce_shortcode_products_query', [ $subject, 'add_lang_to_shortcode_products_query' ] );
+		\WP_Mock::expectFilterNotAdded( 'woocommerce_product_file_download_path', [ $subject, 'filter_file_download_path' ] );
+		\WP_Mock::expectFilterNotAdded( 'woocommerce_product_add_to_cart_url', [ $subject, 'maybe_add_language_parameter' ] );
+
+		// Full mode
+		\WP_Mock::expectFilterNotAdded( 'woocommerce_upsell_crosssell_search_products', [ $subject, 'filter_woocommerce_upsell_crosssell_posts_by_language' ] );
+		\WP_Mock::expectActionNotAdded( 'woocommerce_after_product_ordering', [ $subject, 'update_all_products_translations_ordering' ] );
+		\WP_Mock::expectFilterNotAdded( 'wpml_copy_from_original_custom_fields', [ $subject, 'filter_excerpt_field_content_copy' ] );
+		\WP_Mock::expectFilterNotAdded( 'wpml_override_is_translator', [ $subject, 'wcml_override_is_translator' ], 10, 3 );
+		\WP_Mock::expectFilterNotAdded( 'wpml_user_can_translate', [ $subject, 'wcml_user_can_translate' ], 10, 2 );
+		\WP_Mock::expectFilterNotAdded( 'wc_product_has_unique_sku', [ $subject, 'check_product_sku' ], 10, 3 );
+		\WP_Mock::expectFilterNotAdded( 'get_product_search_form', [ $sitepress, 'get_search_form_filter' ] );
+		\WP_Mock::expectFilterNotAdded( 'woocommerce_pre_customer_bought_product', Fns::withoutRecursion( Fns::identity(), [ $subject, 'is_customer_bought_product' ] ), 10, 4 );
+
+		// All contexts
+		\WP_Mock::expectFilterAdded( 'woocommerce_can_reduce_order_stock', [ $subject, 'remove_post_meta_data_filter_on_checkout_stock_update' ] );
+		\WP_Mock::expectFilterAdded( 'get_post_metadata', [ $subject, 'filter_product_data' ], 10, 3 );
+
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_adds_backend_standalone_hooks(){
+		\WP_Mock::userFunction( 'is_admin' )->andReturn( true );
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( true );
+
+		$sitepress = Mockery::mock( ISitePress::class );
+		$subject   = $this->get_subject( false, $sitepress );
+
+		// Backend
+		\WP_Mock::expectFilterNotAdded( 'woocommerce_json_search_found_products', [ $subject, 'filter_wc_searched_products_on_admin' ] );
+		\WP_Mock::expectActionNotAdded( 'wp_ajax_wpml_switch_post_language', [ $subject, 'switch_product_variations_language' ], 9 );
+		\WP_Mock::expectFilterNotAdded( 'post_row_actions', [ $subject, 'filter_product_actions' ], 10, 2 );
+		\WP_Mock::expectFilterNotAdded( 'woocommerce_product_type_query', [ $subject, 'override_product_type_query' ], 10, 2 );
+
+		// All contexts and full mode
+		\WP_Mock::expectFilterNotAdded( 'woocommerce_upsell_crosssell_search_products', [ $subject, 'filter_woocommerce_upsell_crosssell_posts_by_language' ] );
+		\WP_Mock::expectActionNotAdded( 'woocommerce_after_product_ordering', [ $subject, 'update_all_products_translations_ordering' ] );
+		\WP_Mock::expectFilterNotAdded( 'wpml_copy_from_original_custom_fields', [ $subject, 'filter_excerpt_field_content_copy' ] );
+		\WP_Mock::expectFilterNotAdded( 'wpml_override_is_translator', [ $subject, 'wcml_override_is_translator' ], 10, 3 );
+		\WP_Mock::expectFilterNotAdded( 'wpml_user_can_translate', [ $subject, 'wcml_user_can_translate' ], 10, 2 );
+		\WP_Mock::expectFilterNotAdded( 'wc_product_has_unique_sku', [ $subject, 'check_product_sku' ], 10, 3 );
+		\WP_Mock::expectFilterNotAdded( 'get_product_search_form', [ $sitepress, 'get_search_form_filter' ] );
+		\WP_Mock::expectFilterNotAdded( 'woocommerce_pre_customer_bought_product', Fns::withoutRecursion( Fns::identity(), [ $subject, 'is_customer_bought_product' ] ), 10, 4 );
+
+		// All contexts
+		\WP_Mock::expectFilterAdded( 'woocommerce_can_reduce_order_stock', [ $subject, 'remove_post_meta_data_filter_on_checkout_stock_update' ] );
+		\WP_Mock::expectFilterAdded( 'get_post_metadata', [ $subject, 'filter_product_data' ], 10, 3 );
 
 		$subject->add_hooks();
 	}
@@ -343,7 +404,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 	 */
 	public function add_lang_to_shortcode_products_query(){
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_current_language' ) )
 		                  ->getMock();
@@ -471,7 +532,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		       ->with( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' )
 		       ->willReturn( 1 );
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_wp_api', 'get_setting', 'convert_url' ) )
 		                  ->getMock();
@@ -502,7 +563,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		             ->with( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' )
 		             ->willReturn( $negotation_type_domain );
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_wp_api', 'get_setting', 'convert_url' ) )
 		                  ->getMock();
@@ -544,7 +605,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		       ->with( 'WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN' )
 		       ->willReturn( $negotation_type_domain );
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_wp_api', 'get_setting' ) )
 		                  ->getMock();
@@ -736,7 +797,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		       ->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )
 		       ->willReturn( $enable_multi_currency );
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_wp_api' ) )
 		                  ->getMock();
@@ -802,7 +863,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		       ->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )
 		       ->willReturn( 2 );
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_wp_api' ) )
 		                  ->getMock();
@@ -831,7 +892,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$query = array( 'join' => 'test', 'where' => 'test' );
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_current_language' ) )
 		                  ->getMock();
@@ -867,7 +928,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		       ->with( 'WCML_MULTI_CURRENCIES_INDEPENDENT' )
 		       ->willReturn( 2 );
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_wp_api' ) )
 		                  ->getMock();
@@ -1001,7 +1062,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 	 */
 	public function it_should_filter_wc_searched_products_on_front_in_current_language() {
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_current_language' ) )
 		                  ->getMock();
@@ -1043,7 +1104,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 	 */
 	public function it_should_filter_wc_searched_products_on_admin_in_current_language() {
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_current_language' ) )
 		                  ->getMock();
@@ -1169,7 +1230,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$url               = rand_str();
 		$expected_url      = $url . '&lang=' . $current_language;
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( [ 'get_current_language', 'get_setting', 'get_default_language' ] )
 		                  ->getMock();
@@ -1207,7 +1268,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 			return 'WPML_LANGUAGE_NEGOTIATION_TYPE_PARAMETER' === $name ? 3 : null;
 		});
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( [ 'get_current_language', 'get_setting', 'get_default_language' ] )
 		                  ->getMock();
@@ -1238,7 +1299,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 			return 'WPML_LANGUAGE_NEGOTIATION_TYPE_PARAMETER' === $name ? 3 : null;
 		});
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( ISitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( [ 'get_setting' ] )
 		                  ->getMock();
