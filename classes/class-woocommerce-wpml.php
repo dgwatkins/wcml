@@ -313,8 +313,6 @@ class woocommerce_wpml {
 
 		add_action( 'wp_ajax_wcml_update_setting_ajx', [ $this, 'update_setting_ajx' ] );
 
-		$this->load_rest_api();
-
 		return true;
 	}
 
