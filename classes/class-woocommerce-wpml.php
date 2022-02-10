@@ -305,8 +305,6 @@ class woocommerce_wpml {
 		$this->gateways = new WCML_WC_Gateways( $this, $sitepress );
 		$this->gateways->add_hooks();
 		$this->cart->add_hooks(); // object is instantiated before.
-		$payment_method_filter = new WCML_Payment_Method_Filter();
-		$payment_method_filter->add_hooks();
 
 		WCML_Install::initialize( $this, $sitepress );
 
