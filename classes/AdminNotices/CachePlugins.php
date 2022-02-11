@@ -46,9 +46,10 @@ class CachePlugins implements \IWPML_Backend_Action, \IWPML_DIC_Action {
 	 * @return bool
 	 */
 	private static function hasActiveCachePlugin() {
-		if ( \WCML\functions\isStandAlone() ) {
+		if ( ! function_exists( 'is_plugin_active' ) ) {
 			include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 		}
+
 		// $isActive :: ( array, string ) -> bool
 		$isActive = pipe(
 			Fns::nthArg( 1 ), // array index
