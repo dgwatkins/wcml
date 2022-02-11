@@ -214,8 +214,6 @@ class WCML_Terms {
 	public function translated_terms_status_update( $term_id, $tt_id, $taxonomy ) {
 
 		if ( isset( $_POST['product_cat_thumbnail_id'] ) || isset( $_POST['display_type'] ) ) {
-			global $sitepress_settings;
-
 			if ( $this->is_original_category( $tt_id, 'tax_' . $taxonomy ) ) {
 				$trid         = $this->sitepress->get_element_trid( $tt_id, 'tax_' . $taxonomy );
 				$translations = $this->sitepress->get_element_translations( $trid, 'tax_' . $taxonomy );
@@ -225,13 +223,16 @@ class WCML_Terms {
 						if ( isset( $_POST['display_type'] ) ) {
 							update_term_meta( $translation->term_id, 'display_type', esc_attr( $_POST['display_type'] ) );
 						}
-						update_term_meta( $translation->term_id, 'thumbnail_id', apply_filters( 'translate_object_id', esc_attr( $_POST['product_cat_thumbnail_id'] ), 'attachment', true, $translation->language_code ) );
+						if ( isset( $_POST['product_cat_thumbnail_id'] ) ) {
+							update_term_meta( $translation->term_id, 'thumbnail_id', apply_filters( 'translate_object_id', esc_attr( $_POST['product_cat_thumbnail_id'] ), 'attachment', true, $translation->language_code ) );
+						}
 					}
 				}
 			}
 		}
 
 		global $wp_taxonomies;
+
 		if ( in_array( 'product', $wp_taxonomies[ $taxonomy ]->object_type ) || in_array( 'product_variation', $wp_taxonomies[ $taxonomy ]->object_type ) ) {
 			$this->update_terms_translated_status( $taxonomy );
 		}
