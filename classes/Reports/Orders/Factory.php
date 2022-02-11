@@ -2,9 +2,7 @@
 
 namespace WCML\Reports\Orders;
 
-use WCML\StandAlone\IStandAloneAction;
-
-class Factory implements \IWPML_Backend_Action_Loader, \IWPML_REST_Action_Loader, \IWPML_Deferred_Action_Loader, IStandAloneAction {
+class Factory implements \IWPML_Backend_Action_Loader, \IWPML_REST_Action_Loader, \IWPML_Deferred_Action_Loader {
 
 	/**
 	 * @return string
