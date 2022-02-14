@@ -28,7 +28,7 @@ class TestGeolocationFrontendHooks  extends \OTGS_TestCase {
 
 		$subject = new GeolocationFrontendHooks();
 
-		\WP_Mock::expectActionNotAdded( 'after_setup_theme', [ GeolocationFrontendHooks::class, 'storeUserCountry' ] );
+		\WP_Mock::expectActionNotAdded( 'init', [ GeolocationFrontendHooks::class, 'storeUserCountry' ] );
 
 		$subject->add_hooks();
 	}
@@ -42,7 +42,7 @@ class TestGeolocationFrontendHooks  extends \OTGS_TestCase {
 
 		$subject = new GeolocationFrontendHooks();
 
-		\WP_Mock::expectActionAdded( 'after_setup_theme', [ GeolocationFrontendHooks::class, 'storeUserCountry' ] );
+		\WP_Mock::expectActionAdded( 'init', [ GeolocationFrontendHooks::class, 'storeUserCountry' ] );
 
 		$subject->add_hooks();
 	}
