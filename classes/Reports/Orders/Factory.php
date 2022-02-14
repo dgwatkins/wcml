@@ -12,7 +12,7 @@ class Factory implements \IWPML_Backend_Action_Loader, \IWPML_REST_Action_Loader
 	}
 
 	/**
-	 * @return \IWPML_Action|null
+	 * @return \IWPML_Action
 	 */
 	public function create() {
 		/**
@@ -21,9 +21,6 @@ class Factory implements \IWPML_Backend_Action_Loader, \IWPML_REST_Action_Loader
 		 */
 		global $wpdb;
 
-		if ( wcml_is_multi_currency_on() ) {
-			return new Hooks( $wpdb );
-		}
+		return new Hooks( $wpdb );
 	}
-
 }
