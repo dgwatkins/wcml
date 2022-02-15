@@ -310,6 +310,7 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 		$woocommerce_wpml->cs_templates   = $shortcode_template;
 
 		FunctionMocker::replace( McSettings::class . '::getMode', $currency_mode );
+		FunctionMocker::replace( McSettings::class . '::getCurrenciesOptions', $wcml_settings['currency_options'] );
 
 		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
 		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )->disableOriginalConstructor()->setMethods( array( 'get_current_language' ) )->getMock();

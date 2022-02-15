@@ -66,14 +66,7 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 		$this->multi_currency = $this->woocommerce_wpml->multi_currency;
 	}
 
-	function test_get_client_currency(){
-		$this->check_language_default_currency();
-		$this->check_switch_currency_exception();
-		$this->check_order_currency();
-	}
-
-	function check_language_default_currency(){
-		$current_language = $this->sitepress->get_current_language();
+	function test_get_client_currency_with_language_default_currency(){
 		$second_language = 'de';
 
 		$this->multi_currency->set_client_currency( NULL );
@@ -82,27 +75,29 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 		$this->assertSame( $this->settings[ 'default_currencies' ][ $second_language ], $client_currency );
 	}
 
-	function check_switch_currency_exception(){
-
+	function test_get_client_currency_with_switch_currency_exception(){
 		$current_language = $this->sitepress->get_current_language();
-		$second_language = 'de';
-		$wc_default_currency = wcml_get_woocommerce_currency_option();
-
-		$this->multi_currency->set_client_currency( NULL );
+		$different_lang   = 'en' === $current_language ? 'de' : 'en';
+		wcml_user_store_set( WCML_Multi_Currency::CURRENCY_LANGUAGE_STORAGE_KEY, $different_lang );
+		$currency_for_switched_lang = \WCML\MultiCurrency\Settings::getDefaultCurrencyForLang( $current_language );
+		$this->multi_currency->set_client_currency( null );
 		$this->sitepress->switch_lang( $current_language );
 		add_filter( 'wcml_switch_currency_exception', '__return_true');
 		$client_currency = $this->multi_currency->get_client_currency();
-		$this->assertEquals( $wc_default_currency, $client_currency );
+		$this->assertEquals( $currency_for_switched_lang, $client_currency );
 	}
 
-	function check_order_currency(){
+	function test_get_client_currency_with_order_currency(){
 		//test order currency when add product to order on order edit page
-		$order = wp_insert_post( array( 'title'=> 'TEST Order', 'post_type' => 'shop_order' ) );
+		$order = wp_insert_post( [ 'title' => 'TEST Order', 'post_type' => 'shop_order' ] );
 		update_post_meta( $order, '_order_currency','CHF' );
+		$this->multi_currency->set_client_currency( null );
 		$_SERVER['HTTP_REFERER'] = 'wp-admin/post.php?post='.$order.'&action=edit';
 		$curr = $this->multi_currency->get_client_currency();
 		$this->assertEquals( 'CHF', $curr );
+	}
 
+	function test_get_client_currency_with_REST_request(){
 		//get default currency during REST API call #wcml-1961
 		$req_uri = $_SERVER['REQUEST_URI'];
 		$_SERVER['REQUEST_URI'] = 'wp-json/wc/v3/foo/bar';

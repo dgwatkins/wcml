@@ -127,7 +127,7 @@ class WCML_Currency_Switcher {
 				$multi_currency_object->get_currency_codes();
 
 			if ( ! is_admin() ) {
-				$currencies = $this->filter_currencies_list_by_settings( $currencies, $wcml_settings );
+				$currencies = $this->filter_currencies_list_by_settings( $currencies );
 			}
 
 			if ( count( $currencies ) > 1 ) {
@@ -170,18 +170,18 @@ class WCML_Currency_Switcher {
 
 	/**
 	 * @param array $currencies
-	 * @param array $wcml_settings
 	 *
 	 * @return array
 	 */
-	private function filter_currencies_list_by_settings( $currencies, $wcml_settings ){
-		$ifDisallowedByLanguage = function( $currency ) use ( $wcml_settings ) {
+	private function filter_currencies_list_by_settings( $currencies ){
+		$ifDisallowedByLanguage = function( $currency ) {
 			return Settings::isModeByLanguage()
-			       && Obj::path( [ 'currency_options', $currency, 'languages', $this->sitepress->get_current_language() ], $wcml_settings ) != 1;
+			       && ! Settings::isValidCurrencyForLang( $currency, $this->sitepress->get_current_language() );
 		};
 
-		$ifDisallowedByLocation = function( $currency ) use ( $wcml_settings ) {
-			return Settings::isModeByLocation() && !Geolocation::isCurrencyAvailableForCountry( $wcml_settings['currency_options'][ $currency ] );
+		$ifDisallowedByLocation = function( $currency ) {
+			return Settings::isModeByLocation()
+			       && ! Settings::isValidCurrencyByCountry( $currency, Geolocation::getUserCountry() );
 		};
 
 		return wpml_collect( $currencies )
