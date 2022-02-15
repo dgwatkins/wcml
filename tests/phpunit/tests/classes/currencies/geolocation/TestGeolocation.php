@@ -9,9 +9,16 @@ use tad\FunctionMocker\FunctionMocker;
  */
 class TestGeolocation extends \OTGS_TestCase {
 
+	public function setUp() {
+		parent::setUp();
+		\WP_Mock::passthruFunction( 'wc_clean' );
+		\WP_Mock::passthruFunction( 'wp_unslash' );
+	}
+
 	public function tearDown() {
 		global $woocommerce_wpml;
 		unset( $woocommerce_wpml );
+		$_GET = $_POST = [];
 		parent::tearDown();
 	}
 
@@ -92,299 +99,86 @@ class TestGeolocation extends \OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function itShouldGetCurrencyCodeByUserCountryFromNonPersistentCache() {
-		\WP_Mock::passthruFunction( 'wc_clean' );
-		\WP_Mock::passthruFunction( 'wp_unslash' );
-
-		$geolocatedCountryCode = 'UA';
-		$expected_code         = 'UAH';
-
-		\WP_Mock::userFunction( 'wp_cache_add_non_persistent_groups' )
-		        ->times( 1 )
-		        ->with( Geolocation::class );
-
-		\WP_Mock::userFunction( 'wp_cache_get' )
-		        ->with( 'country', Geolocation::class )
-		        ->andReturn( $geolocatedCountryCode );
-
-		\WP_Mock::userFunction( 'wp_cache_add' )
-		        ->times( 0 );
-
-		FunctionMocker::replace( 'WC_Geolocation::get_ip_address', '127.0.0.1' );
-		FunctionMocker::replace( 'WC_Geolocation::geolocate_ip', [ 'country' => $geolocatedCountryCode ] );
-
-		\WP_Mock::userFunction( 'get_current_user_id', [
-			'return' => false,
-			'times' => 2
-		]);
-
-		$code = Geolocation::getCurrencyCodeByUserCountry();
-
-		$this->assertEquals( $expected_code, $code );
-	}
-
-	/**
-	 * @test
-	 * @dataProvider geolocatedCountryCodes
-	 */
-	public function itShouldGetCurrencyCodeByUserCountry( $geolocatedCountryCode, $expected_code ) {
-		\WP_Mock::passthruFunction( 'wc_clean' );
-		\WP_Mock::passthruFunction( 'wp_unslash' );
-
-		$this->mockGeolocationCache( $geolocatedCountryCode );
-
-		FunctionMocker::replace( 'WC_Geolocation::get_ip_address', '127.0.0.1' );
-		FunctionMocker::replace( 'WC_Geolocation::geolocate_ip', [ 'country' => $geolocatedCountryCode ] );
-
-		\WP_Mock::userFunction( 'get_current_user_id', [
-			'return' => false,
-			'times' => 2
-		]);
-
-		$code = Geolocation::getCurrencyCodeByUserCountry();
-		
-		$this->assertSame( $expected_code, $code );
-	}
-	
-	/**
-	 * Data Provider for test itShouldGetCurrencyCodeByUserCountry.
-	 */
-	public function geolocatedCountryCodes() {
-		return [
-			[false, false],
-			['UA', 'UAH']
-		];
+	public function itShouldGetOfficialCurrencyCodeByCountry() {
+		$this->assertEquals( 'UAH', Geolocation::getOfficialCurrencyCodeByCountry( 'UA' ) );
+		$this->assertEquals( 'EUR', Geolocation::getOfficialCurrencyCodeByCountry( 'FR' ) );
+		$this->assertEquals( 'USD', Geolocation::getOfficialCurrencyCodeByCountry( 'US' ) );
 	}
 
 	/**
 	 * @test
 	 */
-	public function itShouldGetCurrencyCodeByUserBillingAddress() {
-		\WP_Mock::passthruFunction( 'wc_clean' );
-		\WP_Mock::passthruFunction( 'wp_unslash' );
+	public function itShouldGetUserCountryByUserBillingAddress() {
+		$country = 'FR';
+		$userId  = 1;
 
-		$expected_code         = 'UAH';
-		$user_id               = 1;
+		$this->mockGeolocationCache( 'US' );
+		$this->mockWcCustomer( $country, $country );
+		$this->mockCurrentUserId( $userId );
 
-		$this->mockGeolocationCache( '' );
-
-		$wc_customer = \Mockery::mock( 'overload:WC_Customer' );
-
-		$wc_customer->shouldReceive( 'get_billing_country' )
-		                 ->andReturn( 'UA' );
-
-		$wc_customer->shouldReceive( 'get_shipping_country' )
-		                 ->andReturn( 'UA' );
-
-		\WP_Mock::userFunction( 'get_current_user_id', [
-			'return' => $user_id,
-			'times' => 2
-		]);
-
-		$WC          = $this->getMockBuilder( 'WC' )->disableOriginalConstructor()->getMock();
-		$WC->session = $this->getMockBuilder( 'WC_Session_Handler' )->disableOriginalConstructor()->getMock();
-
-		\WP_Mock::userFunction( 'WC', [
-			'return' => $WC
-		] );
-
-		$code = Geolocation::getCurrencyCodeByUserCountry();
-
-		$this->assertEquals( $expected_code, $code );
+		$this->assertEquals( $country, Geolocation::getUserCountry() );
 	}
 
 	/**
 	 * @test
 	 */
-	public function itShouldGetCurrencyCodeByUserBillingAddressFromAjax() {
-		\WP_Mock::passthruFunction( 'wc_clean' );
-		\WP_Mock::passthruFunction( 'wp_unslash' );
+	public function itShouldGetUserCountryByGeolocationFromCacheIfUnidentifiedUser() {
+		$country = 'FR';
 
-		$expected_code = 'EUR';
+		$this->mockGeolocationCache( $country );
+		$this->mockWcCustomer( '', '' );
+		$this->mockCurrentUserId( 0 );
+
+		$this->assertEquals( $country, Geolocation::getUserCountry() );
+	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldGetUserCountryByGeolocationIfUnidentifiedUser() {
+		$country = 'FR';
+
+		$this->mockGeolocationCache( false, $country );
+		$this->mockWcGeolocation( $country );
+		$this->mockWcCustomer( '', '' );
+		$this->mockCurrentUserId( 0 );
+
+		$this->assertEquals( $country, Geolocation::getUserCountry() );
+	}
+
+	/**
+	 * @test
+	 */
+	public function itShouldGetUserCountryCodeByUserAddressFromAjax() {
+		$country = 'ES';
 
 		$_GET['wc-ajax']  = 'update_order_review';
-		$_POST['country'] = 'ES';
+		$_POST['country'] = $country;
 
-		$this->mockGeolocationCache( '' );
+		$this->mockGeolocationCache( 'US' );
 
-		$code = Geolocation::getCurrencyCodeByUserCountry();
-
-		$this->assertEquals( $expected_code, $code );
-
-		unset( $_GET['wc-ajax'], $_POST['country'] );
+		$this->assertEquals( $country, Geolocation::getUserCountry() );
 	}
 
 	/**
 	 * @test
 	 */
-	public function itShouldGetCurrencyCodeByUserBillingAddressFromCheckoutAjax() {
-		\WP_Mock::passthruFunction( 'wc_clean' );
-		\WP_Mock::passthruFunction( 'wp_unslash' );
+	public function itShouldGetCountryCodeByUserAddressFromCheckoutAjax() {
+		$billingCountry        = 'ES';
+		$shippingCountry       = 'UA';
+		$geolocatedCountryCode = 'US';
 
-		$expected_code         = 'EUR';
-		$geolocatedCountryCode = '';
-
-		$_GET['wc-ajax']  = 'checkout';
-		$_POST['billing_country'] = 'ES';
-		$_POST['shipping_country'] = 'UA';
+		$_GET['wc-ajax']           = 'checkout';
+		$_POST['billing_country']  = $billingCountry;
+		$_POST['shipping_country'] = $shippingCountry;
 
 		$this->mockGeolocationCache( $geolocatedCountryCode );
 
 		\WP_Mock::onFilter( 'wcml_geolocation_get_user_country' )
-		        ->with( 'ES', [ 'billing' => 'ES', 'shipping' => 'UA', 'geolocation' => $geolocatedCountryCode ] )
-		        ->reply( 'ES' );
+		        ->with( $billingCountry, [ 'billing' => $billingCountry, 'shipping' => $shippingCountry, 'geolocation' => $geolocatedCountryCode ] )
+		        ->reply( $billingCountry );
 
-		$code = Geolocation::getCurrencyCodeByUserCountry();
-
-		$this->assertSame( $expected_code, $code );
-
-		unset( $_GET['wc-ajax'], $_POST['billing_country'], $_POST['shipping_country'] );
-	}
-
-	/**
-	 * @test
-	 */
-	public function itShouldNotGetCurrencyCodeByUserCountryIfCountryNotFound() {
-
-		FunctionMocker::replace( 'WC_Geolocation::get_ip_address', '127.0.0.1' );
-		FunctionMocker::replace( 'WC_Geolocation::geolocate_ip', [] );
-
-		$this->mockGeolocationCache( false );
-
-		\WP_Mock::userFunction( 'get_current_user_id', [
-			'return' => false,
-			'times' => 2
-		]);
-
-		$code = Geolocation::getCurrencyCodeByUserCountry();
-
-		$this->assertFalse( $code );
-	}
-
-	/**
-	 * @test
-	 */
-	public function itShouldNotGetCurrencyCodeByUserCountryIfCountryNotInConfig() {
-		$geolocatedCountryCode = 'UAU';
-
-		FunctionMocker::replace( 'WC_Geolocation::get_ip_address', '127.0.0.1' );
-		FunctionMocker::replace( 'WC_Geolocation::geolocate_ip', [ 'country' => $geolocatedCountryCode ] );
-
-		$this->mockGeolocationCache( $geolocatedCountryCode );
-
-		$code = Geolocation::getCurrencyCodeByUserCountry();
-
-		$this->assertFalse( $code );
-	}
-
-	/**
-	 * @test
-	 */
-	public function currencyAvailableForCountryWhenEnabledForAllCountries() {
-
-		$currencySettings['location_mode'] = 'all';
-
-		$this->assertTrue( Geolocation::isCurrencyAvailableForCountry( $currencySettings ) );
-	}
-
-	/**
-	 * @test
-	 */
-	public function currencyAvailableForCountryWhenCountryIncluded() {
-		$geolocatedCountryCode             = 'UA';
-		$currencySettings['location_mode'] = 'include';
-		$currencySettings['countries']     = [ 'UA', 'DE' ];
-
-		FunctionMocker::replace( 'WC_Geolocation::get_ip_address', '127.0.0.1' );
-		FunctionMocker::replace( 'WC_Geolocation::geolocate_ip', [ 'country' => $geolocatedCountryCode ] );
-
-		$this->mockGeolocationCache( $geolocatedCountryCode );
-
-		\WP_Mock::userFunction( 'get_current_user_id', [
-			'return' => false,
-			'times' => 2
-		]);
-
-		$this->assertTrue( Geolocation::isCurrencyAvailableForCountry( $currencySettings ) );
-	}
-
-	/**
-	 * @test
-	 */
-	public function currencyAvailableForCountryWhenCountryNotInExcludedList() {
-		$geolocatedCountryCode             = 'UA';
-		$currencySettings['location_mode'] = 'exclude';
-		$currencySettings['countries']     = [ 'DE' ];
-
-		FunctionMocker::replace( 'WC_Geolocation::get_ip_address', '127.0.0.1' );
-		FunctionMocker::replace( 'WC_Geolocation::geolocate_ip', [ 'country' => $geolocatedCountryCode ] );
-
-		$this->mockGeolocationCache( $geolocatedCountryCode );
-
-		\WP_Mock::userFunction( 'get_current_user_id', [
-			'return' => false,
-			'times' => 2
-		]);
-
-		$this->assertTrue( Geolocation::isCurrencyAvailableForCountry( $currencySettings ) );
-	}
-
-	/**
-	 * @test
-	 */
-	public function currencyNotAvailableForCountry() {
-
-		$currencySettings['location_mode'] = '';
-
-		$this->assertFalse( Geolocation::isCurrencyAvailableForCountry( $currencySettings ) );
-	}
-
-	/**
-	 * @test
-	 */
-	public function currencyNotAvailableForCountryLocationModeNotSet() {
-
-		$currencySettings = [];
-
-		$this->assertFalse( Geolocation::isCurrencyAvailableForCountry( $currencySettings ) );
-	}
-
-	/**
-	 * @test
-	 */
-	public function itShouldGetFirstAvailableCountryCurrencyFromSettingsAllMode() {
-
-		$currencySettings['EUR']['location_mode'] = 'all';
-
-		$this->assertEquals( 'EUR', Geolocation::getFirstAvailableCountryCurrencyFromSettings( $currencySettings ) );
-	}
-
-	/**
-	 * @test
-	 */
-	public function itShouldGetFirstAvailableCountryCurrencyFromSettingsIncludeMode() {
-		$cachedCountryCode = 'UA';
-
-		$currencySettings['EUR']['location_mode'] = 'include';
-		$currencySettings['EUR']['countries']     = [ $cachedCountryCode];
-
-		$this->mockGeolocationCache( $cachedCountryCode );
-
-		FunctionMocker::replace( 'WC_Geolocation::get_ip_address', '127.0.0.1' );
-		FunctionMocker::replace( 'WC_Geolocation::geolocate_ip', [ 'country' => $cachedCountryCode ] );
-
-		$this->assertEquals( 'EUR', Geolocation::getFirstAvailableCountryCurrencyFromSettings( $currencySettings ) );
-	}
-
-	/**
-	 * @test
-	 */
-	public function itShouldNotGetFirstAvailableCountryCurrencyFromSettings() {
-
-		$currencySettings['EUR']['location_mode'] = 'include';
-		$currencySettings['EUR']['countries']     = [ 'DE' ];
-
-		$this->assertFalse( Geolocation::getFirstAvailableCountryCurrencyFromSettings( $currencySettings ) );
+		$this->assertSame( $billingCountry, Geolocation::getUserCountry() );
 	}
 
 	private function mockWcmlSettings( array $settings ) {
@@ -401,19 +195,56 @@ class TestGeolocation extends \OTGS_TestCase {
 	}
 
 	/**
-	 * @param string $rawCountryCode
+	 * @param string      $cachedCountryCode
+	 * @param string|null $resolvedCountryCode
 	 */
-	private function mockGeolocationCache( $rawCountryCode ) {
+	private function mockGeolocationCache( $cachedCountryCode, $resolvedCountryCode = null ) {
 		\WP_Mock::userFunction( 'wp_cache_add_non_persistent_groups' )
 		        ->times( 1 )
 		        ->with( Geolocation::class );
 
 		\WP_Mock::userFunction( 'wp_cache_get' )
 		        ->with( 'country', Geolocation::class )
-		        ->andReturn( false );
+		        ->andReturn( $cachedCountryCode );
 
 		\WP_Mock::userFunction( 'wp_cache_add' )
-		        ->times( $rawCountryCode === false ? 0 : 1 )
-		        ->with( 'country', $rawCountryCode, Geolocation::class );
+		        ->times( $resolvedCountryCode ? 1 : 0 )
+		        ->with( 'country', $resolvedCountryCode, Geolocation::class );
+	}
+
+	/**
+	 * @param string $country
+	 *
+	 * @return void
+	 */
+	private function mockWcGeolocation( $country ) {
+		FunctionMocker::replace( 'WC_Geolocation::get_ip_address', '127.0.0.1' );
+		FunctionMocker::replace( 'WC_Geolocation::geolocate_ip', [ 'country' => $country ] );
+	}
+
+	/**
+	 * @param string $billingCountry
+	 * @param string $shippingCountry
+	 *
+	 * @return void
+	 */
+	private function mockWcCustomer( $billingCountry, $shippingCountry ) {
+		$wc_customer = \Mockery::mock( 'overload:WC_Customer' );
+		$wc_customer->shouldReceive( 'get_billing_country' )->andReturn( $billingCountry );
+		$wc_customer->shouldReceive( 'get_shipping_country' )->andReturn( $shippingCountry );
+
+		$WC          = $this->getMockBuilder( 'WC' )->disableOriginalConstructor()->getMock();
+		$WC->session = $this->getMockBuilder( 'WC_Session_Handler' )->disableOriginalConstructor()->getMock();
+
+		\WP_Mock::userFunction( 'WC' )->andReturn( $WC );
+	}
+
+	/**
+	 * @param int $userId
+	 *
+	 * @return void
+	 */
+	private function mockCurrentUserId( $userId ) {
+		\WP_Mock::userFunction( 'get_current_user_id' )->andReturn( $userId );
 	}
 }
