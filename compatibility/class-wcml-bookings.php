@@ -672,7 +672,7 @@ class WCML_Bookings {
 				continue;
 			}
 
-			$booking_translations = $this->get_translated_bookings( $booking->id );
+			$booking_translations = $this->get_translated_bookings( $booking->id, false );
 
 			if ( ! isset( $booking_translations[ $language ] ) ) {
 				$this->duplicate_booking_for_translations( $booking->id, $language );
