@@ -49,7 +49,7 @@ require WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
 
 require WCML_PLUGIN_PATH . '/vendor/autoload.php';
 
-require_once( WCML_PLUGIN_PATH . '/vendor/otgs/ui/loader.php' );
+require_once WCML_PLUGIN_PATH . '/vendor/otgs/ui/loader.php';
 otgs_ui_initialize( WCML_PLUGIN_PATH . '/vendor/otgs/ui', WCML_PLUGIN_URL . '/vendor/otgs/ui' ); // @phpstan-ignore-line
 
 if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ) {
@@ -105,7 +105,7 @@ function wcml_loader() {
 		\WCML\MultiCurrency\GeolocationFrontendHooks::class,
 		\WCML\MultiCurrency\GeolocationBackendHooks::class,
 		\WCML\Reports\Categories\Query::class,
-		\WCML\Reports\Orders\Factory::class,
+		\WCML\Reports\Orders\Hooks::class,
 		\WCML\Multicurrency\Analytics\Factory::class,
 		\WCML\Multicurrency\Analytics\Export::class,
 		\WCML\Setup\BeforeHooks::class,
