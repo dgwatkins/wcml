@@ -27,6 +27,8 @@ class TestQuery extends \OTGS_TestCase {
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_analytics_products_select_query', [ $subject, 'joinProductTranslations' ] );
 		\WP_Mock::expectFilterAdded( 'woocommerce_analytics_products_select_query', [ $subject, 'translateProductTitles' ] );
+		\WP_Mock::expectFilterAdded( 'woocommerce_analytics_variations_select_query', [ $subject, 'joinProductTranslations' ] );
+		\WP_Mock::expectFilterAdded( 'woocommerce_analytics_variations_select_query', [ $subject, 'translateProductTitles' ] );
 
 		$subject->add_hooks();
 	}
