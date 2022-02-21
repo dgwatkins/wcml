@@ -101,7 +101,7 @@ class WCML_Settings_UI extends WCML_Templates_Factory {
 							'This feature was disabled. Please enable %1$sWPML cookies%2$s to continue.',
 							'woocommerce-multilingual'
 						),
-						'<a href="' . admin_url( '?page=' . WPML_PLUGIN_FOLDER . '/menu/languages.php#cookie' ) . '" target="_blank">',
+						'<a href="' . admin_url( 'admin.php?page=' . WPML_PLUGIN_FOLDER . '/menu/languages.php#cookie' ) . '" target="_blank">',
 						'</a>'
 					),
 					'doc_link'                   => sprintf(
