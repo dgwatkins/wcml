@@ -664,32 +664,32 @@ class WCML_Bookings {
 
 	// sync existing product bookings for translations.
 	public function sync_bookings( $original_product_id, $product_id, $language ) {
-	 
-		if (  get_option( '_wcml_5_0_0_migrate_corrupted_booking_required' ) ) {
+		
+		if ( get_option( '_wcml_5_0_0_migrate_corrupted_booking_required' ) ) {
 			return;
 		}
-	    
-	    $find_all_booking_products = $this->get_translated_bookings_products( $original_product_id );
-	    
-	    foreach ( $find_all_booking_products as $booking_product ){
-	     
-		    $all_bookings_for_product = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id as id FROM {$this->wpdb->postmeta} WHERE meta_key = '_booking_product_id' AND meta_value = %d", $booking_product ) );
 		
-		    foreach ( $all_bookings_for_product as $booking ) {
+		$find_all_booking_products = $this->get_translated_bookings_products( $original_product_id );
+		
+		foreach ( $find_all_booking_products as $booking_product ) {
 			
-			    if ( $language === $this->wpml_post_translations->get_source_lang_code( $booking->id ) ) {
-				    continue;
-			    }
+			$all_bookings_for_product = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id as id FROM {$this->wpdb->postmeta} WHERE meta_key = '_booking_product_id' AND meta_value = %d", $booking_product ) );
 			
-			    $booking_translations = $this->get_translated_bookings( $booking->id );
-			
-			    if ( ! isset( $booking_translations[ $language ] ) ) {
-				    $this->duplicate_booking_for_translations( $booking->id, $language );
-			    } elseif ( ! get_post_meta( $booking_translations[ $language ], '_booking_product_id', true ) ) {
-				    $this->update_translated_booking_meta( $booking_translations[ $language ], $booking_product, $language );
-			    }
-		    }
-        }
+			foreach ( $all_bookings_for_product as $booking ) {
+				
+				if ( $language === $this->wpml_post_translations->get_source_lang_code( $booking->id ) ) {
+					continue;
+				}
+				
+				$booking_translations = $this->get_translated_bookings( $booking->id );
+				
+				if ( ! isset( $booking_translations[ $language ] ) ) {
+					$this->duplicate_booking_for_translations( $booking->id, $language );
+				} elseif ( ! get_post_meta( $booking_translations[ $language ], '_booking_product_id', true ) ) {
+					$this->update_translated_booking_meta( $booking_translations[ $language ], $booking_product, $language );
+				}
+			}
+		}
 	}
 	
 	private function get_translated_bookings_products( $booking_id, $actual_translations_only = false ) {

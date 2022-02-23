@@ -852,7 +852,6 @@ class WCML_Upgrade {
 	}
 	
 	private function upgrade_5_0_0(){
-	    
 	    \WCML\Upgrade\Command\MigrateCorruptedBookings::class->run();
 	}
 
