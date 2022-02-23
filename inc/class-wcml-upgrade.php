@@ -38,7 +38,7 @@ class WCML_Upgrade {
 		'4.10.0',
 		'4.11.0',
 		'4.12.0',
-        '5.0.0'
+		'5.0.0'
 	];
 
 	public function __construct() {
@@ -851,8 +851,8 @@ class WCML_Upgrade {
 		wp_schedule_single_event( time() + 10, 'generate_category_lookup_table' );
 	}
 	
-	private function upgrade_5_0_0(){
-	    \WCML\Upgrade\Command\MigrateCorruptedBookings::class->run();
+	private function upgrade_5_0_0() {
+		\WCML\Upgrade\Command\MigrateCorruptedBookings::class->run();
 	}
 
 }
