@@ -102,9 +102,6 @@ class WCML_Upgrade {
 		}
 	}
 	
-	/**
-	 *
-	 */
 	public function run() {
 		$version_in_db = get_option( '_wcml_version' );
 
