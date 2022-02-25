@@ -2,7 +2,9 @@
 
 namespace WCML\Upgrade\Command;
 
-
-interface UpgradeCommand {
+interface Command {
+	/**
+	 * @return bool|void|null
+	 */
 	public function run();
 }

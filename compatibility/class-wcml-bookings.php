@@ -664,11 +664,6 @@ class WCML_Bookings {
 
 	// sync existing product bookings for translations.
 	public function sync_bookings( $original_product_id, $product_id, $language ) {
-		
-		if ( get_option( '_wcml_5_0_0_migrate_corrupted_booking_required' ) ) {
-			return;
-		}
-		
 		$find_all_booking_products = $this->get_translated_bookings_products( $original_product_id );
 		
 		foreach ( $find_all_booking_products as $booking_product ) {
@@ -692,9 +687,9 @@ class WCML_Bookings {
 		}
 	}
 	
-	private function get_translated_bookings_products( $booking_id, $actual_translations_only = false ) {
+	private function get_translated_bookings_products( $product_id, $actual_translations_only = false ) {
 		
-		return $this->wpml_post_translations->get_element_translations( $booking_id, false, $actual_translations_only );
+		return $this->wpml_post_translations->get_element_translations( $product_id, false, $actual_translations_only );
 	}
 
 	/**

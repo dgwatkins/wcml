@@ -1,6 +1,7 @@
 <?php
 
 use WCML\MultiCurrency\Settings as McSettings;
+use WCML\Upgrade\Command\MigrateCorruptedBookings;
 
 class WCML_Upgrade {
 
@@ -100,7 +101,10 @@ class WCML_Upgrade {
 			update_option( '_wcml_settings', $wcml_settings );
 		}
 	}
-
+	
+	/**
+	 *
+	 */
 	public function run() {
 		$version_in_db = get_option( '_wcml_version' );
 
@@ -117,8 +121,8 @@ class WCML_Upgrade {
 					$upgrade_method = 'upgrade_' . str_replace( '.', '_', $version );
 
 					if ( method_exists( $this, $upgrade_method ) ) {
-						$this->$upgrade_method();
-						$migration_ran = true;
+					    $result = $this->$upgrade_method();
+						$migration_ran = ( $result || null === $result ) ? true : false;
 					}
 				}
 			}
@@ -851,8 +855,10 @@ class WCML_Upgrade {
 		wp_schedule_single_event( time() + 10, 'generate_category_lookup_table' );
 	}
 	
+	/**
+	 * @return bool
+	 */
 	private function upgrade_5_0_0() {
-		\WCML\Upgrade\Command\MigrateCorruptedBookings::class->run();
+		return ( new MigrateCorruptedBookings() )->run();
 	}
-
 }
