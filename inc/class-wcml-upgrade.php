@@ -101,7 +101,7 @@ class WCML_Upgrade {
 			update_option( '_wcml_settings', $wcml_settings );
 		}
 	}
-	
+
 	public function run() {
 		$version_in_db = get_option( '_wcml_version' );
 
@@ -856,6 +856,8 @@ class WCML_Upgrade {
 	 * @return bool
 	 */
 	private function upgrade_5_0_0() {
-		return ( new MigrateCorruptedBookings() )->run();
+		global $wpdb;
+		
+		return ( new MigrateCorruptedBookings( $wpdb ) )->run();
 	}
 }
