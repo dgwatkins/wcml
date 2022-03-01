@@ -9,7 +9,7 @@ class MigrateCorruptedBookings implements Command {
 	 */
 	private $wpdb;
 	
-	public function __construct( $wpdb ) {
+	public function __construct( \wpdb $wpdb ) {
 		$this->wpdb = $wpdb;
 	}
 	
@@ -25,10 +25,11 @@ class MigrateCorruptedBookings implements Command {
 			$offset = get_option( '_wcml_5_0_0_migrate_corrupted_booking_required' );
 		}
 		
-		$returnBookingDuplicates = $this->wpdb->get_results( $this->wpdb->prepare( "SELECT post_id FROM {$this->wpdb->postmeta}
-																					WHERE meta_key = '_booking_duplicate_of'
-																					  AND meta_value IS NOT NULL
-																					  LIMIT %d,20", $offset ) );
+		$returnBookingDuplicates = $this->wpdb->get_results(
+			$this->wpdb->prepare(
+				"SELECT post_id FROM {$this->wpdb->postmeta}
+				WHERE meta_key = '_booking_duplicate_of'
+				  AND meta_value IS NOT NULL LIMIT %d,20", $offset ) );
 		
 		if ( empty( $returnBookingDuplicates ) ) {
 			delete_option( '_wcml_5_0_0_migrate_corrupted_booking_required' );
@@ -37,10 +38,10 @@ class MigrateCorruptedBookings implements Command {
 		}
 		
 		$updateCorrectData = function ( $bookingDuplicate ) {
-			$this->wpdb->query( $this->wpdb->prepare( "UPDATE {$this->wpdb->postmeta}
-													   SET meta_value = ''
-													   WHERE meta_key = '_booking_product_id'
-													     AND post_id = %d", $bookingDuplicate->post_id ) );
+			$this->wpdb->query( $this->wpdb->prepare(
+				"UPDATE {$this->wpdb->postmeta} SET meta_value = ''
+				WHERE meta_key = '_booking_product_id'
+				  AND post_id = %d", $bookingDuplicate->post_id ) );
 		};
 		
 		wpml_collect( $returnBookingDuplicates )
