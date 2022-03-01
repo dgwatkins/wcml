@@ -23,7 +23,8 @@ class MigrateCorruptedBookings implements Command {
  INNER JOIN {$this->wpdb->postmeta} b
  ON p.post_id = b.post_id AND p.meta_key = '_booking_product_id'
    SET p.meta_value = ''
-   WHERE b.meta_key = '_booking_duplicate_of' AND b.meta_value IS NOT NULL"
+   WHERE b.meta_key = '_booking_duplicate_of'
+       AND b.meta_value IS NOT NULL"
 		);
 		
 		return true;
