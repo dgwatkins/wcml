@@ -17,7 +17,10 @@
  * @author  OnTheGoSystems
  */
 
-if ( defined( 'WCML_VERSION' ) ) {
+if (
+	defined( 'WCML_VERSION' )
+	|| ( isset( $_SERVER['REQUEST_URI'] ) && '/favicon.ico' === $_SERVER['REQUEST_URI'] )
+) {
 	return;
 }
 
