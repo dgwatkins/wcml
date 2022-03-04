@@ -20,7 +20,6 @@ class FrontEndHooks implements IWPML_Action {
 		if ( apply_filters( 'wcml_enable_product_review_translation', true ) ) {
 			add_action( 'wp_insert_comment', [ $this, 'insertCommentAction' ], 10, 2 );
 			add_action( 'woocommerce_review_before', [ $this, 'translateReview' ] );
-			add_filter( 'woocommerce_product_get_rating_counts', [$this, 'ratingCount'] );
 		}
 	}
 
@@ -48,19 +47,6 @@ class FrontEndHooks implements IWPML_Action {
 				$comment->is_translated   = true;
 				$comment->comment_content = $reviewTranslation;
 			}
-		}
-	}
-	
-	public function ratingCount() {
-		global $post;
-		if ( ( $post->post_type === "product" ) && is_single() ) {
-			$trid = apply_filters( 'wpml_element_trid', NULL, $post->ID, 'post_'.$post->post_type );
-			$translations = apply_filters( 'wpml_get_element_translations', NULL, $trid , $post->post_type );
-			foreach ( $translations as $translation ) {
-				$product = wc_get_product( $translation->element_id );
-				$rating[]  = $product->get_average_rating();
-			}
-			return $rating;
 		}
 	}
 	

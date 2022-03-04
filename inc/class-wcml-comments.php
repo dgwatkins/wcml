@@ -97,6 +97,7 @@ class WCML_Comments {
 		$average_ratings_sum   = 0;
 		$average_ratings_count = 0;
 		$reviews_count         = 0;
+		$tapa = wc_get_product(48 );
 
 		foreach ( $translations as $translation ) {
 			$product = wc_get_product( $translation );
@@ -126,6 +127,7 @@ class WCML_Comments {
 			foreach ( $translations as $translation ) {
 				update_post_meta( $translation, self::WCML_AVERAGE_RATING_KEY, $average_rating );
 				update_post_meta( $translation, self::WCML_REVIEW_COUNT_KEY, $reviews_count );
+				//update_post_meta( $translation, '_wc_rating_count', WC_Comments::get_review_count_for_product( $tapa ) );
 
 				WC_Comments::clear_transients( $translation );
 			}
