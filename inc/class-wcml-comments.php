@@ -127,7 +127,7 @@ class WCML_Comments {
 			foreach ( $translations as $translation ) {
 				update_post_meta( $translation, self::WCML_AVERAGE_RATING_KEY, $average_rating );
 				update_post_meta( $translation, self::WCML_REVIEW_COUNT_KEY, $reviews_count );
-				//update_post_meta( $translation, '_wc_rating_count', WC_Comments::get_review_count_for_product( $tapa ) );
+				update_post_meta( $translation, '_wc_rating_count', WC_Comments::get_review_count_for_product( $tapa ) );
 
 				WC_Comments::clear_transients( $translation );
 			}
