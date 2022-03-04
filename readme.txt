@@ -5,7 +5,7 @@ Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multili
 License: GPLv2
 Requires at least: 4.7
 Tested up to: 5.9
-Stable tag: 4.12.6
+Stable tag: 5.0.0
 Requires PHP: 5.6
 
 Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
@@ -67,9 +67,8 @@ If the checks fail, WooCommerce Multilingual will not be able to run.
 * MySQL version 5.6 or later
 
 * WooCommerce 3.9.0 or later
-* WPML Multilingual CMS 4.4.11 or later
-* WPML String Translation 3.1.9 or later
-* WPML Translation Management 2.10.7 or later
+* WPML Multilingual CMS 4.5.2 or later
+* WPML String Translation 3.2.0 or later
 
 = WordPress automatic installation =
 In your WordPress dashboard, go to the Plugins section and click 'Add new'.
