@@ -141,6 +141,13 @@ class Settings {
 	}
 
 	/**
+	 * @return array
+	 */
+	public static function getOrderedCurrencyCodes() {
+		return (array) getSetting( 'currencies_order' ) ?: self::getActiveCurrencyCodes();
+	}
+
+	/**
 	 * @param string $lang
 	 *
 	 * @return bool
