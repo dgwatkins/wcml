@@ -68,7 +68,6 @@ class WCML_Currency_Switcher {
 		}
 
 		$wcml_settings              = $this->woocommerce_wpml->get_settings();
-		$multi_currency_object      = $this->woocommerce_wpml->multi_currency;
 		$currency_switcher_settings = [];
 
 		if ( isset( $wcml_settings['currency_switchers'][ $args['switcher_id'] ] ) ) {
@@ -122,28 +121,13 @@ class WCML_Currency_Switcher {
 
 		if ( $show_currency_switcher ) {
 
-			$currencies = isset( $wcml_settings['currencies_order'] ) ?
-				$wcml_settings['currencies_order'] :
-				$multi_currency_object->get_currency_codes();
+			$currencies = Settings::getOrderedCurrencyCodes();
 
 			if ( ! is_admin() ) {
-				$currencies = $this->filter_currencies_list_by_settings( $currencies );
+				$currencies = $this->filter_allowed_currencies_on_frontend( $currencies );
 			}
 
 			if ( count( $currencies ) > 1 ) {
-				if ( ! is_admin() ) {
-					foreach ( $currencies as $k => $currency ) {
-						if (
-							Obj::path(
-								[ 'currency_options', $currency, 'languages', $this->sitepress->get_current_language() ],
-								$wcml_settings
-							) != 1
-						) {
-							unset( $currencies[ $k ] );
-						}
-					}
-				}
-
 				$template = $this->woocommerce_wpml->cs_templates->get_template( $args['switcher_style'] );
 
 				if ( $template ) {
@@ -151,13 +135,8 @@ class WCML_Currency_Switcher {
 					$template->set_model( $this->get_model_data( $args, $currencies ) );
 					$preview = $template->get_view();
 				}
-			} else {
-
-				if ( is_admin() ) {
-					$preview = '<i>' . esc_html__( "You haven't added any secondary currencies.", 'woocommerce-multilingual' ) . '</i>';
-				} else {
-					$preview = '';
-				}
+			} elseif ( is_admin() ) {
+				$preview = '<i>' . esc_html__( "You haven't added any secondary currencies.", 'woocommerce-multilingual' ) . '</i>';
 			}
 		}
 
@@ -173,20 +152,17 @@ class WCML_Currency_Switcher {
 	 *
 	 * @return array
 	 */
-	private function filter_currencies_list_by_settings( $currencies ){
+	private function filter_allowed_currencies_on_frontend( $currencies ){
 		$ifDisallowedByLanguage = function( $currency ) {
-			return Settings::isModeByLanguage()
-			       && ! Settings::isValidCurrencyForLang( $currency, $this->sitepress->get_current_language() );
+			return ! Settings::isValidCurrencyForLang( $currency, $this->sitepress->get_current_language() );
 		};
 
 		$ifDisallowedByLocation = function( $currency ) {
-			return Settings::isModeByLocation()
-			       && ! Settings::isValidCurrencyByCountry( $currency, Geolocation::getUserCountry() );
+			return ! Settings::isValidCurrencyByCountry( $currency, Geolocation::getUserCountry() );
 		};
 
 		return wpml_collect( $currencies )
-			->reject( $ifDisallowedByLanguage )
-			->reject( $ifDisallowedByLocation )
+			->reject( Settings::isModeByLanguage() ? $ifDisallowedByLanguage : $ifDisallowedByLocation )
 			->toArray();
 	}
 

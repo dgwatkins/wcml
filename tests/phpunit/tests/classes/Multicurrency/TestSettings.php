@@ -228,6 +228,34 @@ class TestSettings extends \OTGS_TestCase {
 	 *
 	 * @return void
 	 */
+	public function testGetOrderedCurrencyCodes() {
+		$currencyOptions = [
+			'EUR' => [],
+			'GBP' => [],
+			'USD' => [],
+		];
+
+		$currenciesOrder = [
+			'USD',
+			'EUR',
+			'GBP',
+		];
+
+		// Test when order is set
+		updateSetting( 'currency_options', $currencyOptions );
+		updateSetting( 'currencies_order', $currenciesOrder );
+		$this->assertSame( $currenciesOrder, Settings::getOrderedCurrencyCodes() );
+
+		// Test fallback to currency options
+		updateSetting( 'currencies_order', null );
+		$this->assertSame( array_keys( $currencyOptions ), Settings::getOrderedCurrencyCodes() );
+	}
+
+	/**
+	 * @test
+	 *
+	 * @return void
+	 */
 	public function testGetDefaultCurrencyForLang() {
 		$default_currencies = [
 			'en' => 0, // i.e. keep

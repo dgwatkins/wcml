@@ -81,7 +81,7 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 			'format'            => '%name% (%symbol%) - %code%',
 			'switcher_id'    => mt_rand( 1, 10 ),
 		);
-		
+
 		FunctionMocker::replace( 'wp_is_mobile', true );
 
 		$expected_model = array(
@@ -242,87 +242,85 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 		\WP_Mock::passthruFunction( 'wc_clean' );
 		\WP_Mock::passthruFunction( 'wp_unslash' );
 
-		$shortcode_attrs = array();
+		$shortcode_attrs = [];
 		if ( $switcher_id ) {
 			$shortcode_attrs['switcher_id'] = $switcher_id;
 		}
-		\WP_Mock::userFunction( 'shortcode_atts', array(
+		\WP_Mock::userFunction( 'shortcode_atts', [
 			'return' => $shortcode_attrs,
-			'args'   => array( array(), $shortcode_attrs ),
-		) );
-		\WP_Mock::userFunction( 'wc_get_page_id', array(
+			'args'   => [ [], $shortcode_attrs ],
+		] );
+		\WP_Mock::userFunction( 'wc_get_page_id', [
 			'return' => 'requested_page_id',
-		) );
-		\WP_Mock::userFunction( 'is_page', array(
+		] );
+		\WP_Mock::userFunction( 'is_page', [
 			'return' => false,
-			'args'   => array( 'requested_page_id' ),
-		) );
-		\WP_Mock::userFunction( 'is_product', array(
+			'args'   => [ 'requested_page_id' ],
+		] );
+		\WP_Mock::userFunction( 'is_product', [
 			'return' => false,
-		) );
-		\WP_Mock::userFunction( 'is_admin', array(
+		] );
+		\WP_Mock::userFunction( 'is_admin', [
 			'return' => false,
-		) );
-		\WP_Mock::userFunction( 'get_current_user_id', array(
+		] );
+		\WP_Mock::userFunction( 'get_current_user_id', [
 			'return' => false,
-		) );
+		] );
 
 		$switcher_id = array_key_exists( 'switcher_id', $shortcode_attrs ) ? $shortcode_attrs['switcher_id'] : 'product';
-		$wcml_settings = array(
-			'currency_switchers' => array(
-				$switcher_id => array(
+		$wcml_settings = [
+			'currency_switchers' => [
+				$switcher_id => [
 					'switcher_style' => 'wcml-horizontal-list',
 					'template'       => 'Testing Switcher - %name% (%symbol%) - %code%',
 					'color_scheme'   => 'gray',
-				),
-			),
+				],
+			],
 			'currency_options'   => [
 				'EUR' => [ 'location_mode' => 'all' ],
 				'USD' => [ 'location_mode' => 'all' ],
 				'JPY' => [ 'location_mode' => 'include', 'countries' => ['JP'] ],
 			],
 			'currency_mode'      => $currency_mode,
-		);
-		$currencies    = array( 'EUR', 'USD', 'JPY' );
+		];
+		$currencies = [ 'EUR', 'USD', 'JPY' ];
 
 		FunctionMocker::replace( 'WCML\MultiCurrency\Geolocation::getCountryByUserIp', 'UA' );
 
 		foreach ( $currencies as $currency ) {
 			$wcml_settings['currency_options'][ $currency ]['languages']['en'] = ( 'JPY' !== $currency ) ? 1 : 0;
 		}
-		$multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )->disableOriginalConstructor()->setMethods( array( 'get_currency_codes' ) )->getMock();
-		$multi_currency->expects( $this->once() )->method( 'get_currency_codes' )->willReturn( $currencies );
 
-		$switcher_template = $this->getMockBuilder( 'WCML_Currency_Switcher_Templates' )->disableOriginalConstructor()->setMethods( array(
+		$switcher_template = $this->getMockBuilder( 'WCML_Currency_Switcher_Templates' )->disableOriginalConstructor()->setMethods( [
 			'set_model',
 			'get_view',
-		) )->getMock();
+		] )->getMock();
 		$switcher_template->method( 'set_model' )->with( 'MODEL_DATA' )->willReturn( false );
 		$switcher_template->method( 'get_view' )->willReturn( 'SHORTCODE_VIEW' );
 
-		$shortcode_template = $this->getMockBuilder( 'WCML_CS_Templates' )->disableOriginalConstructor()->setMethods( array( 'get_template', 'maybe_late_enqueue_template' ) )->getMock();
+		$shortcode_template = $this->getMockBuilder( 'WCML_CS_Templates' )->disableOriginalConstructor()->setMethods( [ 'get_template', 'maybe_late_enqueue_template' ] )->getMock();
 		$shortcode_template->method( 'get_template' )->with( 'wcml-horizontal-list' )->willReturn( $switcher_template );
 		$shortcode_template->method( 'maybe_late_enqueue_template' )->willReturn( true );
 
-		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( array( 'get_settings', 'get_setting' ) )->getMock();
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->setMethods( [ 'get_settings', 'get_setting' ] )->getMock();
 		$woocommerce_wpml->expects( $this->once() )->method( 'get_settings' )->willReturn( $wcml_settings );
-		$woocommerce_wpml->multi_currency = $multi_currency;
 		$woocommerce_wpml->cs_templates   = $shortcode_template;
 
 		FunctionMocker::replace( McSettings::class . '::getMode', $currency_mode );
 		FunctionMocker::replace( McSettings::class . '::getCurrenciesOptions', $wcml_settings['currency_options'] );
+		FunctionMocker::replace( McSettings::class . '::getOrderedCurrencyCodes',$currencies );
 
 		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )->disableOriginalConstructor()->setMethods( array( 'get_current_language' ) )->getMock();
+		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )->disableOriginalConstructor()->setMethods( [ 'get_current_language' ] )->getMock();
 		$sitepress->method( 'get_current_language' )->willReturn( 'en' );
 
-		$subject = \Mockery::mock( 'WCML_Currency_Switcher[get_model_data]', array( $woocommerce_wpml, $sitepress ) );
-		$subject->shouldReceive( 'get_model_data' )->with( array(
+		$subject = \Mockery::mock( 'WCML_Currency_Switcher[get_model_data]', [ $woocommerce_wpml, $sitepress ] );
+		$subject->shouldReceive( 'get_model_data' )->with( [
 			'switcher_id'    => $switcher_id,
 			'switcher_style' => 'wcml-horizontal-list',
 			'format'         => 'Testing Switcher - %name% (%symbol%) - %code%',
 			'color_scheme'   => 'gray',
-		), array( 'EUR', 'USD' ) )->andReturn( 'MODEL_DATA' );
+		], [ 'EUR', 'USD' ] )->andReturn( 'MODEL_DATA' );
 
 		$this->assertEquals( 'SHORTCODE_VIEW', $subject->currency_switcher_shortcode( $shortcode_attrs ) );
 	}
@@ -364,7 +362,6 @@ class Test_WCML_Currency_Switcher extends OTGS_TestCase {
 
 		$this->assertEquals( $currency_switcher_output, $output );
 	}
-
 
 	/**
 	 * @test
