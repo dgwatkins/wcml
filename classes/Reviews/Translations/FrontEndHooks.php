@@ -5,6 +5,7 @@ namespace WCML\Reviews\Translations;
 use IWPML_Action;
 use WPML\FP\Obj;
 use WPML\FP\Relation;
+use WPML\Element\API;
 
 class FrontEndHooks implements IWPML_Action {
 
@@ -20,6 +21,7 @@ class FrontEndHooks implements IWPML_Action {
 		if ( apply_filters( 'wcml_enable_product_review_translation', true ) ) {
 			add_action( 'wp_insert_comment', [ $this, 'insertCommentAction' ], 10, 2 );
 			add_action( 'woocommerce_review_before', [ $this, 'translateReview' ] );
+			add_filter( 'woocommerce_product_get_rating_counts', [ $this, 'getRatingCount'] );
 		}
 	}
 
@@ -48,6 +50,22 @@ class FrontEndHooks implements IWPML_Action {
 				$comment->comment_content = $reviewTranslation;
 			}
 		}
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function getRatingCount() {
+		$getTranslationsId = API\PostTranslations::get( get_the_ID() );
+		
+		$getAverageRating = function ( $translation ) {
+			return ( wc_get_product( $translation ) )->get_average_rating();
+		};
+		
+		return wpml_collect( $getTranslationsId )
+			->pluck( 'element_id' )
+			->map( $getAverageRating )
+			->toArray();
 	}
 	
 	/**

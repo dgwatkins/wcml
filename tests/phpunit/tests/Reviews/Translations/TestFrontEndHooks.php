@@ -40,6 +40,7 @@ class TestFrontEndHooks extends \OTGS_TestCase {
 
 		\WP_Mock::expectActionAdded( 'wp_insert_comment', [ $subject, 'insertCommentAction' ], 10, 2 );
 		\WP_Mock::expectActionAdded( 'woocommerce_review_before',      [ $subject, 'translateReview' ] );
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_get_rating_counts', [ $subject, 'getRatingCount' ] );
 
 		$subject->add_hooks();
 	}
@@ -56,8 +57,35 @@ class TestFrontEndHooks extends \OTGS_TestCase {
 
 		\WP_Mock::expectActionNotAdded( 'wp_insert_comment', [ $subject, 'insertCommentAction' ] );
 		\WP_Mock::expectActionNotAdded( 'woocommerce_review_before',      [ $subject, 'translateReview' ] );
+		\WP_Mock::expectFilterNotAdded( 'woocommerce_product_get_rating_counts', [ $subject, 'getRatingCount' ] );
 
 		$subject->add_hooks();
+	}
+	
+	/**
+	 * @test
+	 */
+	public function it_returns_ratings_count(){
+		$post_id = 48;
+		
+		\WP_Mock::userFunction( 'get_the_ID', [
+			'return' => $post_id
+		] );
+		
+		$product_obj = $this->getMockBuilder( 'WC_Product' )
+		                    ->disableOriginalConstructor()
+		                    ->setMethods( ['get_average_rating'] )
+		                    ->getMock();
+		
+		$product_obj->method( 'get_average_rating' )->willReturn( '5' );
+		
+		\WP_Mock::userFunction( 'wc_get_product', array(
+			'args'   => array( $post_id ),
+			'return' => $product_obj
+		));
+		
+		//$this->get_subject()->getRatingCount();
+
 	}
 	
 	/**
