@@ -2,15 +2,40 @@
 
 namespace WCML\Reviews\Translations;
 
+use WPML\Element\API\LanguagesMock;
+use WPML\Element\API\PostTranslations;
+use WPML\Element\API\TranslationsMock;
+use WPML\LIB\WP\PostMock;
+use WPML\LIB\WP\WPDBMock;
+
 /**
  * @group reviews
  * @group wcml-3442
  */
 class TestFrontEndHooks extends \OTGS_TestCase {
+	
+	use TranslationsMock;
+	use WPDBMock;
+	use PostMock;
+	use LanguagesMock;
 
 	const COMMENT_ID          = 123;
 	const COMMENT_POST_ID     = 456;
 	const COMMENT_STRING_NAME = 'product-' . self::COMMENT_POST_ID . '-review-' . self::COMMENT_ID;
+	
+	public function setUp() {
+		parent::setUp();
+		
+		$this->setUpWPDBMock();
+		$this->setUpPostMock();
+		$this->setupLanguagesMock();
+		$this->setupElementTranslations();
+	}
+	
+	public function tearDown() {
+		$this->tearDownLanguagesMock();
+		parent::tearDown();
+	}
 
 	private function get_subject( $wpdb = null ) {
 		$wpdb = $wpdb ?: $this->getMockBuilder( '\wpdb' )->getMock();
@@ -66,10 +91,12 @@ class TestFrontEndHooks extends \OTGS_TestCase {
 	 * @test
 	 */
 	public function it_returns_ratings_count(){
-		$post_id = 48;
+		$postId   = 48;
+		$postType = 'product';
+		$lang     = 'en';
 		
 		\WP_Mock::userFunction( 'get_the_ID', [
-			'return' => $post_id
+			'return' => $postId
 		] );
 		
 		$product_obj = $this->getMockBuilder( 'WC_Product' )
@@ -80,11 +107,16 @@ class TestFrontEndHooks extends \OTGS_TestCase {
 		$product_obj->method( 'get_average_rating' )->willReturn( '5' );
 		
 		\WP_Mock::userFunction( 'wc_get_product', array(
-			'args'   => array( $post_id ),
+			'args'   => array( $postId ),
 			'return' => $product_obj
 		));
 		
-		//$this->get_subject()->getRatingCount();
+		$this->mockPostType( $postId, $postType );
+		PostTranslations::setAsSource( $postId, $lang );
+		
+		$translations = PostTranslations::get( $postId );
+		
+		$this->get_subject()->getRatingCount();
 
 	}
 	
