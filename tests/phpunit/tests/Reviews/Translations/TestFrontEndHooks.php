@@ -2,40 +2,15 @@
 
 namespace WCML\Reviews\Translations;
 
-use WPML\Element\API\LanguagesMock;
-use WPML\Element\API\PostTranslations;
-use WPML\Element\API\TranslationsMock;
-use WPML\LIB\WP\PostMock;
-use WPML\LIB\WP\WPDBMock;
-
 /**
  * @group reviews
  * @group wcml-3442
  */
 class TestFrontEndHooks extends \OTGS_TestCase {
-	
-	use TranslationsMock;
-	use WPDBMock;
-	use PostMock;
-	use LanguagesMock;
 
 	const COMMENT_ID          = 123;
 	const COMMENT_POST_ID     = 456;
 	const COMMENT_STRING_NAME = 'product-' . self::COMMENT_POST_ID . '-review-' . self::COMMENT_ID;
-	
-	public function setUp() {
-		parent::setUp();
-		
-		$this->setUpWPDBMock();
-		$this->setUpPostMock();
-		$this->setupLanguagesMock();
-		$this->setupElementTranslations();
-	}
-	
-	public function tearDown() {
-		$this->tearDownLanguagesMock();
-		parent::tearDown();
-	}
 
 	private function get_subject( $wpdb = null ) {
 		$wpdb = $wpdb ?: $this->getMockBuilder( '\wpdb' )->getMock();
@@ -65,7 +40,6 @@ class TestFrontEndHooks extends \OTGS_TestCase {
 
 		\WP_Mock::expectActionAdded( 'wp_insert_comment', [ $subject, 'insertCommentAction' ], 10, 2 );
 		\WP_Mock::expectActionAdded( 'woocommerce_review_before',      [ $subject, 'translateReview' ] );
-		\WP_Mock::expectFilterAdded( 'woocommerce_product_get_rating_counts', [ $subject, 'getRatingCount' ] );
 
 		$subject->add_hooks();
 	}
@@ -82,42 +56,8 @@ class TestFrontEndHooks extends \OTGS_TestCase {
 
 		\WP_Mock::expectActionNotAdded( 'wp_insert_comment', [ $subject, 'insertCommentAction' ] );
 		\WP_Mock::expectActionNotAdded( 'woocommerce_review_before',      [ $subject, 'translateReview' ] );
-		\WP_Mock::expectFilterNotAdded( 'woocommerce_product_get_rating_counts', [ $subject, 'getRatingCount' ] );
 
 		$subject->add_hooks();
-	}
-	
-	/**
-	 * @test
-	 */
-	public function it_returns_ratings_count(){
-		$postId   = 48;
-		$postType = 'product';
-		$lang     = 'en';
-		
-		\WP_Mock::userFunction( 'get_the_ID', [
-			'return' => $postId
-		] );
-		
-		$product_obj = $this->getMockBuilder( 'WC_Product' )
-		                    ->disableOriginalConstructor()
-		                    ->setMethods( ['get_average_rating'] )
-		                    ->getMock();
-		
-		$product_obj->method( 'get_average_rating' )->willReturn( '5' );
-		
-		\WP_Mock::userFunction( 'wc_get_product', array(
-			'args'   => array( $postId ),
-			'return' => $product_obj
-		));
-		
-		$this->mockPostType( $postId, $postType );
-		PostTranslations::setAsSource( $postId, $lang );
-		
-		$translations = PostTranslations::get( $postId );
-		
-		$this->get_subject()->getRatingCount();
-
 	}
 	
 	/**
