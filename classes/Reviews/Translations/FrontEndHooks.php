@@ -3,10 +3,8 @@
 namespace WCML\Reviews\Translations;
 
 use IWPML_Action;
-use WC_Data;
 use WPML\FP\Obj;
 use WPML\FP\Relation;
-use WPML\Element\API;
 
 class FrontEndHooks implements IWPML_Action {
 
@@ -22,7 +20,6 @@ class FrontEndHooks implements IWPML_Action {
 		if ( apply_filters( 'wcml_enable_product_review_translation', true ) ) {
 			add_action( 'wp_insert_comment', [ $this, 'insertCommentAction' ], 10, 2 );
 			add_action( 'woocommerce_review_before', [ $this, 'translateReview' ] );
-			//add_filter( 'woocommerce_product_get_rating_counts', [ $this, 'getRatingCount'], 10, 2 );
 		}
 	}
 
@@ -45,33 +42,14 @@ class FrontEndHooks implements IWPML_Action {
 				self::CONTEXT,
 				self::getReviewStringName( $comment )
 			);
-			
+
 			if ( $reviewTranslation !== $comment->comment_content ) {
 				$comment->is_translated   = true;
 				$comment->comment_content = $reviewTranslation;
 			}
 		}
 	}
-	
-	/**
-	 * @param array $counts
-	 * @param WC_Data $product
-	 *
-	 * @return array
-	 */
-	public function getRatingCount( $counts, $product ) {
-		$getAverageRating = function ( $translation ) {
-			return ( wc_get_product( $translation ) )->get_average_rating();
-		};
-		
-		$temp = wpml_collect( API\PostTranslations::get( $product->get_id() ) )
-			->pluck( 'element_id' )
-			->map( $getAverageRating )
-			->toArray();
-		
-		return $temp;
-	}
-	
+
 	/**
 	 * @param \WP_Comment|\stdClass $review
 	 */
