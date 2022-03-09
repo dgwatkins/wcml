@@ -8,6 +8,7 @@ class WCML_Comments {
 	const WCML_AVERAGE_RATING_KEY = '_wcml_average_rating';
 	const WCML_REVIEW_COUNT_KEY   = '_wcml_review_count';
 	const WC_REVIEW_COUNT_KEY     = '_wc_review_count';
+	const WC_RATING_COUNT_KEY     = '_wc_rating_count';
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
@@ -104,6 +105,10 @@ class WCML_Comments {
 			$ratings      = WC_Comments::get_rating_counts_for_product( $product );
 			$review_count = WC_Comments::get_review_count_for_product( $product );
 
+			if ( empty( $ratings ) ) {
+				$products_id_without_comments[] = $translation;
+			}
+			
 			if ( is_array( $ratings ) ) {
 				foreach ( $ratings as $rating => $count ) {
 					$average_ratings_sum   += $rating * $count;
@@ -116,6 +121,7 @@ class WCML_Comments {
 			} else {
 				update_post_meta( $translation, self::WCML_AVERAGE_RATING_KEY, null );
 				update_post_meta( $translation, self::WCML_REVIEW_COUNT_KEY, null );
+				update_post_meta( $translation, self::WC_RATING_COUNT_KEY, null );
 			}
 		}
 
@@ -124,10 +130,15 @@ class WCML_Comments {
 			$average_rating = number_format( $average_ratings_sum / $average_ratings_count, 2, '.', '' );
 
 			foreach ( $translations as $translation ) {
+				
 				update_post_meta( $translation, self::WCML_AVERAGE_RATING_KEY, $average_rating );
 				update_post_meta( $translation, self::WCML_REVIEW_COUNT_KEY, $reviews_count );
-
+				
 				WC_Comments::clear_transients( $translation );
+				
+				if ( in_array( $translation, $products_id_without_comments) ){
+					update_post_meta( $translation, self::WC_RATING_COUNT_KEY, [$average_rating => $reviews_count] );
+				}
 			}
 
 		}
@@ -147,7 +158,7 @@ class WCML_Comments {
 	public function filter_average_rating( $value, $object_id, $meta_key, $single ) {
 
 		$filtered_value = $value;
-
+		
 		if ( in_array( $meta_key, [ '_wc_average_rating', self::WC_REVIEW_COUNT_KEY ] ) && 'product' === get_post_type( $object_id ) ) {
 
 			switch ( $meta_key ) {
