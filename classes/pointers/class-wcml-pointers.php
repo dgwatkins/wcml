@@ -57,7 +57,7 @@ class WCML_Pointers{
 	 */
 	public function add_multi_currency_link( array $settings ) {
 		$link = admin_url( 'admin.php?page=wpml-wcml&tab=multi-currency' );
-		$name = __( 'Configure multi-currency for multilingual sites', 'woocommerce-multilingual' );
+		$name = __( 'Configure multicurrency for multilingual sites', 'woocommerce-multilingual' );
 
 		$anchor = '<a class="button button-small button-wpml wcml-pointer-multi_currency" href="{{ url }}">{{ text }}</a>';
 

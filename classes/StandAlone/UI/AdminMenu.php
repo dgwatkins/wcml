@@ -42,7 +42,7 @@ class AdminMenu extends WCML_Templates_Factory {
 					'url'    => admin_url( 'admin.php?page=wpml-wcml&tab=multilingual' ),
 				],
 				'multi_currency'    => [
-					'name'   => __( 'Multi-currency', 'woocommerce-multilingual' ),
+					'name'   => __( 'Multicurrency', 'woocommerce-multilingual' ),
 					'active' => 'multi-currency' === $current_tab ? 'nav-tab-active' : '',
 					'url'    => admin_url( 'admin.php?page=wpml-wcml&tab=multi-currency' ),
 				],

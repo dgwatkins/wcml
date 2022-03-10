@@ -274,7 +274,7 @@ class Test_WCML_Pointers extends OTGS_TestCase {
 
 	function dp_descriptions() {
 		return array(
-			array( 'Configure multi-currency for multilingual sites', 'admin.php?page=wpml-wcml&tab=multi-currency', 'pricing_options', 'add_multi_currency_link' ),
+			array( 'Configure multicurrency for multilingual sites', 'admin.php?page=wpml-wcml&tab=multi-currency', 'pricing_options', 'add_multi_currency_link' ),
 			array( 'Translate endpoints', 'admin.php?page=wpml-wcml&tab=slugs', 'account_endpoint_options', 'add_endpoints_translation_link' ),
 		);
 	}

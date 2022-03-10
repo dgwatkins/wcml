@@ -683,7 +683,7 @@ class WCML_Upgrade {
 			$announcement_link  = '<a href="' . $announcement_url . '" target="_blank">' . __( 'important change about this service', 'woocommerce-multilingual' ) . '</a>';
 			$fixer_api_key_link = '<a href="' . $api_key_url . '" target="_blank">' . __( 'Fixer.io API key', 'woocommerce-multilingual' ) . '</a>';
 			$fixerio_name       = '<strong>Fixer.io</strong>';
-			$mc_settings_link   = '<a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=multi-currency' ) . '">' . __( 'multi-currency settings page', 'woocommerce-multilingual' ) . '</a>';
+			$mc_settings_link   = '<a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=multi-currency' ) . '">' . __( 'multicurrency settings page', 'woocommerce-multilingual' ) . '</a>';
 
 			// translators: 1: Fixer.io, 2: Announcement link.
 			$message = sprintf( __( 'Your site uses %1$s to automatically calculate prices in the secondary currency. There is an %2$s effective June 1st, 2018.', 'woocommerce-multilingual' ), $fixerio_name, $announcement_link );
