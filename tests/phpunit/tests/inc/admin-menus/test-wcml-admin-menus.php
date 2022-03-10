@@ -436,4 +436,51 @@ class Test_WCML_Admin_Menus extends OTGS_TestCase {
 
 		$this->assertSame( $menu, WCML_Admin_Menus::wpml_menu_page( $menu ) );
 	}
+
+	/**
+	 * @test
+	 * @group wcml-3908
+	 *
+	 * @return void
+	 */
+	public function it_should_add_settings_links_to_plugin_actions() {
+		$adminUrl = function( $path ) {
+			return 'https://example.com/wp-admin/' . $path;
+		};
+
+		\WP_Mock::userFunction( 'admin_url', [ 'return' => $adminUrl ] );
+
+		$originalActions = [
+			'foo' => 'bar',
+		];
+
+		$expectedActions = [
+			'settings-ml' => '<a href="' . $adminUrl( 'admin.php?page=' . WCML_Admin_Menus::SLUG . '&tab=multilingual' ) . '">Multilingual Settings</a>',
+			'settings-mc' => '<a href="' . $adminUrl( 'admin.php?page=' . WCML_Admin_Menus::SLUG . '&tab=multi-currency' ) . '">Multicurrency Settings</a>',
+			'foo'         => 'bar',
+		];
+
+		// Standalone mode
+		$isStandalone = true;
+		\WP_Mock::userFunction( 'WCML\functions\isStandAlone', [
+			'return' => function() use ( &$isStandalone ) {
+				return $isStandalone;
+			}
+		] );
+
+		$this->assertEquals(
+			$expectedActions,
+			WCML_Admin_Menus::add_settings_links_to_plugin_actions( $originalActions )
+		);
+
+		// Full mode
+		$isStandalone = false;
+
+		$expectedActions['settings-ml'] = '<a href="' . $adminUrl( 'admin.php?page=' . WCML_Admin_Menus::SLUG ) . '">Multilingual Settings</a>';
+
+		$this->assertEquals(
+			$expectedActions,
+			WCML_Admin_Menus::add_settings_links_to_plugin_actions( $originalActions )
+		);
+	}
 }
