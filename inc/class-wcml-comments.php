@@ -98,6 +98,7 @@ class WCML_Comments {
 		$average_ratings_sum   = 0;
 		$average_ratings_count = 0;
 		$reviews_count         = 0;
+		$products_id_without_comments = [];
 
 		foreach ( $translations as $translation ) {
 			$product = wc_get_product( $translation );
