@@ -89,7 +89,7 @@ class WCML_Multi_Currency_UI extends WCML_Templates_Factory {
 				'nonce'                      => wp_nonce_field( 'wcml_mc_options', 'wcml_nonce', true, false ),
 				'multi_currency_option'      => WCML_MULTI_CURRENCIES_INDEPENDENT,
 				'mco_disabled'               => empty( $wc_currency ),
-				'label_mco'                  => __( 'Enable the multi-currency mode', 'woocommerce-multilingual' ),
+				'label_mco'                  => __( 'Enable the multicurrency mode', 'woocommerce-multilingual' ),
 				'label_mco_learn_url'        => $this->tracking_link->getWcmlMultiCurrencyDoc(),
 				'label_mco_learn_txt'        => __( 'Learn more', 'woocommerce-multilingual' ),
 				'custom_prices_select'       => [
