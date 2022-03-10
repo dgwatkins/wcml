@@ -27,75 +27,25 @@ class AdminMenu extends WCML_Templates_Factory {
 	}
 
 	public function get_model() {
-
 		$current_tab = $this->get_current_tab();
 
 		$model = [
-
 			'strings'             => [
 				'title'              => __( 'WooCommerce Multilingual', 'woocommerce-multilingual' ),
-				'untranslated_terms' => __( 'You have untranslated terms!', 'woocommerce-multilingual' ),
 			],
+			'is_standalone'       => true,
 			'menu'                => [
-				'products'          => [
-					'title'  => __( 'Products', 'woocommerce-multilingual' ),
-					'active' => '',
-					'url'    => '#',
-				],
-				'taxonomies'        => [
-					'product_cat' => [
-						'name'   => __( 'Categories', 'woocommerce-multilingual' ),
-						'active' => '',
-						'url'    => '#',
-					],
-					'product_tag' => [
-						'name'   => __( 'Tags', 'woocommerce-multilingual' ),
-						'active' => '',
-						'url'    => '#',
-					],
-				],
-				'custom_taxonomies' => [
-					'name'   => __( 'Custom Taxonomies', 'woocommerce-multilingual' ),
-					'active' => '',
-					'url'    => '#',
-				],
-				'attributes'        => [
-					'name'   => __( 'Attributes', 'woocommerce-multilingual' ),
-					'active' => '',
-					'url'    => '#',
-				],
-				'shipping_classes'  => [
-					'name'   => __( 'Shipping Classes', 'woocommerce-multilingual' ),
-					'active' => '',
-					'url'    => '#',
-				],
-				'settings'          => [
-					'name'   => __( 'Settings', 'woocommerce-multilingual' ),
-					'active' => '',
-					'url'    => '#',
+				'multilingual'          => [
+					'title'  => __( 'Multilingual', 'woocommerce-multilingual' ),
+					'active' => 'multilingual' === $current_tab ? 'nav-tab-active' : '',
+					'url'    => admin_url( 'admin.php?page=wpml-wcml&tab=multilingual' ),
 				],
 				'multi_currency'    => [
 					'name'   => __( 'Multi-currency', 'woocommerce-multilingual' ),
 					'active' => 'multi-currency' === $current_tab ? 'nav-tab-active' : '',
 					'url'    => admin_url( 'admin.php?page=wpml-wcml&tab=multi-currency' ),
 				],
-				'slugs'             => [
-					'name'   => __( 'Store URLs', 'woocommerce-multilingual' ),
-					'active' => '',
-					'url'    => '#',
-				],
-				'status'            => [
-					'name'   => __( 'Status', 'woocommerce-multilingual' ),
-					'active' => '',
-					'url'    => '#',
-				],
-				'troubleshooting'   => [
-					'name'   => __( 'Troubleshooting', 'woocommerce-multilingual' ),
-					'active' => '',
-					'url'    => '#',
-				],
 			],
-			'can_manage_options'  => current_user_can( 'wpml_manage_woocommerce_multilingual' ),
 			'can_operate_options' => current_user_can( 'wpml_operate_woocommerce_multilingual' ),
 			'rate'                => [
 				'on'        => $this->woocommerce_wpml->get_setting( 'rate-block', true ),
@@ -145,22 +95,17 @@ class AdminMenu extends WCML_Templates_Factory {
 	protected function get_current_menu_content( $current_tab ) {
 		$content = '';
 		switch ( $current_tab ) {
+			case 'multilingual':
+				$content = "Multilingual content...";
+				break;
+
 			case 'multi-currency':
+			default:
 				if ( current_user_can( 'wpml_operate_woocommerce_multilingual' ) ) {
 					$wcml_mc_ui = new WCML_Multi_Currency_UI( $this->woocommerce_wpml, $this->sitepress );
 					$content    = $wcml_mc_ui->get_view();
 				}
 
-				break;
-
-			case 'products':
-			case 'product-attributes':
-			case 'custom-taxonomies':
-			case 'slugs':
-			case 'status':
-			case 'troubleshooting':
-			case 'settings':
-			default:
 				break;
 		}
 
