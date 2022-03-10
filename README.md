@@ -1,4 +1,4 @@
-# WooCommerce Multilingual
+# WooCommerce Multilingual & Multicurrency
 
 ## CI
 

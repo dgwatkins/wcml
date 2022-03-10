@@ -1,4 +1,4 @@
-=== WooCommerce Multilingual - run WooCommerce with WPML ===
+=== WooCommerce Multilingual & Multicurrency - run WooCommerce with WPML ===
 Contributors: AmirHelzer, strategio, dgwatkins, andrewp-2
 Donate link: http://wpml.org/documentation/related-projects/woocommerce-multilingual/
 Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multilingual, e-shop, shop
@@ -8,7 +8,7 @@ Tested up to: 5.9
 Stable tag: 5.0.0
 Requires PHP: 5.6
 
-Allows running fully multilingual e-commerce sites using WooCommerce and WPML.
+Allows running fully multilingual & multicurrency e-commerce sites using WooCommerce and WPML.
 
 == Description ==
 
