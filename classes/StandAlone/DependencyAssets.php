@@ -21,7 +21,7 @@ class DependencyAssets {
 	}
 
 	public function enqueue() {
-		if ( AdminPages::isMultiCurrency() ) {
+		if ( AdminPages::isMultiCurrency() || AdminPages::isTab( 'multilingual' ) ) {
 			wp_register_script( 'wpml-scripts', $this->dependencyBaseUrl . '/res/js/scripts.js', [], WCML_VERSION );
 			wp_enqueue_script( 'wpml-scripts' );
 
