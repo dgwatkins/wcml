@@ -50,6 +50,7 @@ class WCML_Admin_Menus {
 			add_action( 'admin_footer', [ __CLASS__, 'documentation_links' ] );
 			add_action( 'admin_head', [ __CLASS__, 'hide_multilingual_content_setup_box' ] );
 			add_action( 'admin_init', [ __CLASS__, 'restrict_admin_with_redirect' ] );
+			add_filter( 'plugin_action_links_woocommerce-multilingual/wpml-woocommerce.php', [ __CLASS__, 'add_settings_links_to_plugin_actions' ] );
 		}
 
 		add_filter( 'woocommerce_prevent_admin_access', [ __CLASS__, 'check_user_admin_access' ] );
@@ -103,7 +104,7 @@ class WCML_Admin_Menus {
 	}
 
 	public static function register_menus() {
-        $pageTitle = $menuTitle = self::getWcmlLabel();
+		$pageTitle = $menuTitle = self::getWcmlLabel();
 
 		if ( self::$woocommerce_wpml->dependencies_are_ok || class_exists( 'WooCommerce' ) ) {
 			add_submenu_page(
@@ -277,6 +278,26 @@ class WCML_Admin_Menus {
 	 */
 	private static function is_admin_duplicate_page_action( $pagenow ) {
 		return 'admin.php' === $pagenow && isset( $_GET['action'] ) && 'duplicate_product' === $_GET['action'];
+	}
+
+	/**
+	 * @param array $actions
+	 *
+	 * @return array
+	 */
+	public static function add_settings_links_to_plugin_actions( $actions ) {
+		// $getLink :: (string, string) -> string
+		$getLink = function( $label, $urlQuerySuffix ) {
+			return '<a href="' . admin_url( 'admin.php?page=' . self::SLUG . $urlQuerySuffix ) . '">' . $label . '</a>';
+		};
+
+		return array_merge(
+			[
+				'settings-ml' => $getLink( esc_html__( 'Multilingual Settings', 'woocommerce-multilingual' ), isStandAlone() ? '&tab=multilingual' : '' ),
+				'settings-mc' => $getLink( esc_html__( 'Multicurrency Settings', 'woocommerce-multilingual' ), '&tab=multi-currency' ),
+			],
+			$actions
+		);
 	}
 
 	public static function inf_editing_product_in_non_default_lang() {
