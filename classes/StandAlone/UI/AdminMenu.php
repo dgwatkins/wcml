@@ -2,6 +2,7 @@
 
 namespace WCML\StandAlone\UI;
 
+use WCML_Admin_Menus;
 use WCML_Multi_Currency_UI;
 use WCML_Templates_Factory;
 
@@ -31,7 +32,7 @@ class AdminMenu extends WCML_Templates_Factory {
 
 		$model = [
 			'strings'             => [
-				'title'              => __( 'WooCommerce Multilingual', 'woocommerce-multilingual' ),
+				'title'              => WCML_Admin_Menus::getWcmlLabel(),
 			],
 			'is_standalone'       => true,
 			'menu'                => [
@@ -51,7 +52,7 @@ class AdminMenu extends WCML_Templates_Factory {
 				'on'        => $this->woocommerce_wpml->get_setting( 'rate-block', true ),
 				'message'   => sprintf(
 					// translators: Sorry but I don't know what this is.
-					__( 'Thank you for using %1$sWooCommerce Multilingual%2$s! You can express your love and support by %3$s rating our plugin and saying that %4$sit works%5$s for you.', 'woocommerce-multilingual' ),
+					__( 'Thank you for using %1$sWooCommerce Multilingual & Multicurrency%2$s! You can express your love and support by %3$s rating our plugin and saying that %4$sit works%5$s for you.', 'woocommerce-multilingual' ),
 					'<strong>',
 					'</strong>',
 					'<a href="https://wordpress.org/support/view/plugin-reviews/woocommerce-multilingual?filter=5#postform" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>',

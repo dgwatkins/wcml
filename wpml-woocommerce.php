@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: WooCommerce Multilingual
+ * Plugin Name: WooCommerce Multilingual & Multicurrency
  * Plugin URI: https://wpml.org/documentation/related-projects/woocommerce-multilingual/?utm_source=plugin&utm_medium=gui&utm_campaign=wcml
  * Description: Allows running fully multilingual e-Commerce sites with WooCommerce and WPML. <a href="https://wpml.org/documentation/related-projects/woocommerce-multilingual/?utm_source=plugin&utm_medium=gui&utm_campaign=wcml">Documentation</a>.
  * Author: OnTheGoSystems
@@ -28,7 +28,7 @@ require_once 'vendor/wpml-shared/wpml-lib-dependencies/src/dependencies/class-wp
 
 $wpml_php_version_check = new WPML_PHP_Version_Check(
 	'5.6',
-	'WooCommerce Multilingual',
+	'WooCommerce Multilingual & Multicurrency',
 	__FILE__,
 	'woocommerce-multilingual'
 );

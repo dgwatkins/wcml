@@ -203,7 +203,7 @@ class TestReview extends \OTGS_TestCase {
 		] )->willReturn( true );
 
 		$reviewLink = 'https://wordpress.org/support/plugin/woocommerce-multilingual/reviews/?filter=5#new-post';
-		$wpmlNotices->method( 'get_new_notice_action' )->with( __( 'Review WooCommerce Multilingual', 'woocommerce-multilingual' ), $reviewLink, false, false, true )->willReturn( $reviewButton );
+		$wpmlNotices->method( 'get_new_notice_action' )->with( __( 'Review WooCommerce Multilingual & Multicurrency', 'woocommerce-multilingual' ), $reviewLink, false, false, true )->willReturn( $reviewButton );
 		$wpmlNotices->method( 'get_new_notice' )->with( 'wcml-rate', $this->getNoticeText(), 'wcml-admin-notices' )->willReturn( $notice );
 		$wpmlNotices->method( 'is_notice_dismissed' )->willReturn( false );
 		$wpmlNotices->expects( $this->once() )->method( 'add_notice' )->with( $notice )->willReturn( true );
@@ -215,7 +215,7 @@ class TestReview extends \OTGS_TestCase {
 
 	private function getNoticeText() {
 		$text = '<h2>';
-		$text .= __( 'Congrats! You\'ve just earned some money using WooCommerce Multilingual.', 'woocommerce-multilingual' );
+		$text .= __( 'Congrats! You\'ve just earned some money using WooCommerce Multilingual & Multicurrency.', 'woocommerce-multilingual' );
 		$text .= '</h2>';
 
 		$text .= '<p>';

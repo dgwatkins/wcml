@@ -8,6 +8,8 @@ use function WCML\functions\isStandAlone;
  */
 class WCML_Admin_Menus {
 
+    const SLUG = 'wpml-wcml';
+
 	/** @var woocommerce_wpml */
 	private static $woocommerce_wpml;
 
@@ -65,7 +67,7 @@ class WCML_Admin_Menus {
 		$get_post      = isset( $_GET['post'] ) ? $_GET['post'] : false;
 		$get_page      = isset( $_GET['page'] ) ? $_GET['page'] : false;
 
-		$is_page_wpml_wcml       = isset( $_GET['page'] ) && 'wpml-wcml' === $_GET['page'];
+		$is_page_wpml_wcml       = isset( $_GET['page'] ) && self::SLUG === $_GET['page'];
 		$is_new_order_or_coupon  = in_array( $pagenow, [ 'edit.php', 'post-new.php' ], true ) &&
 								   $get_post_type &&
 								   in_array( $get_post_type, [ 'shop_coupon', 'shop_order' ], true );
@@ -101,21 +103,23 @@ class WCML_Admin_Menus {
 	}
 
 	public static function register_menus() {
+        $pageTitle = $menuTitle = self::getWcmlLabel();
+
 		if ( self::$woocommerce_wpml->dependencies_are_ok || class_exists( 'WooCommerce' ) ) {
 			add_submenu_page(
 				'woocommerce',
-				__( 'WooCommerce Multilingual', 'woocommerce-multilingual' ),
-				__( 'WooCommerce Multilingual', 'woocommerce-multilingual' ),
+				$pageTitle,
+				$menuTitle,
 				'wpml_operate_woocommerce_multilingual',
-				'wpml-wcml',
+				self::SLUG,
 				[ __CLASS__, 'render_menus' ]
 			);
 		} else {
 			add_menu_page(
-				__( 'WooCommerce Multilingual', 'woocommerce-multilingual' ),
-				__( 'WooCommerce Multilingual', 'woocommerce-multilingual' ),
+				$pageTitle,
+				$menuTitle,
 				'wpml_manage_woocommerce_multilingual',
-				'wpml-wcml',
+				self::SLUG,
 				[ __CLASS__, 'render_menus' ],
 				WCML_PLUGIN_URL . '/res/images/icon16.png'
 			);
@@ -156,7 +160,7 @@ class WCML_Admin_Menus {
 			$quick_edit_notice .= sprintf(
 				/* translators: 1: WooCommerce Multilingual products editor, 2: Edit this product translation */
 				__( 'Quick edit is disabled for product translations. It\'s recommended to use the %1$s for editing products translations. %2$s', 'woocommerce-multilingual' ),
-				'<a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=products' ) . '" >' . __( 'WooCommerce Multilingual products editor', 'woocommerce-multilingual' ) . '</a>',
+				'<a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=products' ) . '" >' . __( 'WooCommerce Multilingual & Multicurrency products editor', 'woocommerce-multilingual' ) . '</a>',
 				'<a href="" class="quick_product_trnsl_link" >' . __( 'Edit this product translation', 'woocommerce-multilingual' ) . '</a>'
 			);
 			$quick_edit_notice .= '</p></div>';
@@ -284,8 +288,8 @@ class WCML_Admin_Menus {
 			$message .= sprintf(
 				/* translators: 1: open <a> tag, 2: close <a> tag */
 				__(
-					'The recommended way to translate WooCommerce products is using the %1$sWooCommerce Multilingual products translation%2$s page.
-					Please use this page only for translating elements that are not available in the WooCommerce Multilingual products translation table.',
+					'The recommended way to translate WooCommerce products is using the %1$sWooCommerce Multilingual & Multicurrency products translation%2$s page.
+					Please use this page only for translating elements that are not available in the WooCommerce Multilingual & Multicurrency products translation table.',
 					'woocommerce-multilingual'
 				),
 				'<strong><a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=products' ) . '">',
@@ -329,7 +333,7 @@ class WCML_Admin_Menus {
 		) {
 			if ( isset( $submenu['woocommerce'] ) ) {
 				foreach ( $submenu['woocommerce'] as $key => $menu_item ) {
-					if ( __( 'WooCommerce Multilingual', 'woocommerce-multilingual' ) === $menu_item[0] ) {
+					if ( self::getWcmlLabel() === $menu_item[0] ) {
 						// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 						$submenu['woocommerce'][ $key ][0] .= '<span class="wcml-menu-warn"><i class="otgs-ico-warning"></i></span>';
 						break;
@@ -345,5 +349,12 @@ class WCML_Admin_Menus {
 				}
 			}
 		}
+	}
+
+	/**
+	 * @return string
+	 */
+	public static function getWcmlLabel() {
+		return __( 'WooCommerce Multilingual & Multicurrency', 'woocommerce-multilingual' );
 	}
 }

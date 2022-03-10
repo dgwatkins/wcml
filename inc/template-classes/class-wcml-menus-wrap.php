@@ -92,7 +92,7 @@ class WCML_Menus_Wrap extends WCML_Templates_Factory {
 		$model = [
 
 			'strings'             => [
-				'title'              => __( 'WooCommerce Multilingual', 'woocommerce-multilingual' ),
+				'title'              => WCML_Admin_Menus::getWcmlLabel(),
 				'untranslated_terms' => __( 'You have untranslated terms!', 'woocommerce-multilingual' ),
 			],
 			'menu'                => [
@@ -171,7 +171,7 @@ class WCML_Menus_Wrap extends WCML_Templates_Factory {
 			'rate'                => [
 				'on'        => $this->woocommerce_wpml->get_setting( 'rate-block', true ),
 				'message'   => sprintf(
-					__( 'Thank you for using %1$sWooCommerce Multilingual%2$s! You can express your love and support by %3$s rating our plugin and saying that %4$sit works%5$s for you.', 'woocommerce-multilingual' ),
+					__( 'Thank you for using %1$sWooCommerce Multilingual & Multicurrency%2$s! You can express your love and support by %3$s rating our plugin and saying that %4$sit works%5$s for you.', 'woocommerce-multilingual' ),
 					'<strong>',
 					'</strong>',
 					'<a href="https://wordpress.org/support/view/plugin-reviews/woocommerce-multilingual?filter=5#postform" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>',

@@ -2,6 +2,7 @@
 
 namespace WCML\Utilities;
 
+use WCML_Admin_Menus;
 use WPML\FP\Lst;
 use WPML\FP\Obj;
 use WPML\FP\Relation;
@@ -31,7 +32,7 @@ class AdminPages {
 	 * @return bool
 	 */
 	public static function isWcmlSettings() {
-		return self::isPage( 'wpml-wcml' );
+		return self::isPage( WCML_Admin_Menus::SLUG );
 	}
 
 	/**
