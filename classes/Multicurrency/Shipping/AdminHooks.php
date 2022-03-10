@@ -71,7 +71,7 @@ class AdminHooks implements IWPML_Action, IStandAloneAction {
 			'title'       => __( 'Costs and values in custom currencies', 'woocommerce-multilingual' ),
 			'type'        => 'title',
 			'default'     => '',
-			'description' => __( 'Woocommerce Multilingual by default will multiply all your costs and values defined above by currency exchange rates. If you don\'t want this and you prefer static values instead, you can define them here.', 'woocommerce-multilingual' ),
+			'description' => __( 'WooCommerce Multilingual & Multicurrency by default will multiply all your costs and values defined above by currency exchange rates. If you don\'t want this and you prefer static values instead, you can define them here.', 'woocommerce-multilingual' ),
 		];
 		return $field;
 	}

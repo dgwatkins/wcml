@@ -33,7 +33,7 @@ class WCML_Status_Status_UI extends WCML_Templates_Factory {
 				'tm'          => '<strong>WPML Translation Management</strong>',
 				'st'          => '<strong>WPML String Translation</strong>',
 				'wc'          => '<strong>WooCommerce</strong>',
-				'depends'     => __( 'WooCommerce Multilingual depends on several plugins to work. If any required plugin is missing, you should install and activate it.', 'woocommerce-multilingual' ),
+				'depends'     => __( 'WooCommerce Multilingual & Multicurrency depends on several plugins to work. If any required plugin is missing, you should install and activate it.', 'woocommerce-multilingual' ),
 			],
 		];
 

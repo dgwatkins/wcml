@@ -326,7 +326,7 @@ class WCML_Resources {
 				),
 				'<a href="' . get_edit_post_link( $original_id ) . '" >' . get_the_title( $original_id ) . '</a>',
 				'<a href="' . self::linkToTranslation( $original_id, $language ) . '" >' .
-				__( 'WooCommerce Multilingual products translator', 'woocommerce-multilingual' ) . '</a>'
+				__( 'WooCommerce Multilingual & Multicurrency products translator', 'woocommerce-multilingual' ) . '</a>'
 			) . '</h3>';
 	}
 }
