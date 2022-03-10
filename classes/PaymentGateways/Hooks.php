@@ -154,7 +154,7 @@ class Hooks implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Ac
 
 		$text = '<div id="message" class="updated error">';
 		$text .= '<p>';
-		$text .= __( 'We noticed that you\'re using WooCommerce Gateways Country Limiter plugin which is now integrated into WooCommerce Multilingual. Please remove it!', 'woocommerce-multilingual' );
+		$text .= __( 'We noticed that you\'re using WooCommerce Gateways Country Limiter plugin which is now integrated into WooCommerce Multilingual & Multicurrency. Please remove it!', 'woocommerce-multilingual' );
 		$text .= '</p>';
 		$text .= '</div>';
 

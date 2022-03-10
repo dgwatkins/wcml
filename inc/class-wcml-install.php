@@ -285,7 +285,7 @@ class WCML_Install {
 				<p>
 					<?php
 					printf(
-						esc_html__( "You've successfully installed %1\$sWooCommerce Multilingual%2\$s. Would you like to see a quick overview?", 'woocommerce-multilingual' ),
+						esc_html__( "You've successfully installed %1\$sWooCommerce Multilingual & Multicurrency%2\$s. Would you like to see a quick overview?", 'woocommerce-multilingual' ),
 						'<strong>',
 						'</strong>'
 					);
@@ -323,7 +323,7 @@ class WCML_Install {
 
 		<div id="message" class="updated error">
 			<p>
-				<?php printf( __( 'We detected that the %1$sproduct_type%2$s field was set incorrectly for some product translations. This happened because the product_type taxonomy was translated. You can fix this in the WooCommerce Multilingual %3$stroubleshooting page%4$s.', 'woocommerce-multilingual' ), '<i>', '</i>', '<a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=troubleshooting' ) . '">', '</a>' ); ?>
+				<?php printf( __( 'We detected that the %1$sproduct_type%2$s field was set incorrectly for some product translations. This happened because the product_type taxonomy was translated. You can fix this in the WooCommerce Multilingual & Multicurrency %3$stroubleshooting page%4$s.', 'woocommerce-multilingual' ), '<i>', '</i>', '<a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=troubleshooting' ) . '">', '</a>' ); ?>
 			</p>
 		</div>
 

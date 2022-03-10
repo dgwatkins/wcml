@@ -104,7 +104,7 @@ class WCML_Terms {
 		if ( $taxonomy && in_array( $taxonomy, $taxonomies ) ) {
 			$taxonomy_obj = get_taxonomy( $taxonomy );
 			$message      = sprintf(
-				__( 'To translate %1$s please use the %2$s translation%3$s page, inside the %4$sWooCommerce Multilingual admin%5$s.', 'woocommerce-multilingual' ),
+				__( 'To translate %1$s please use the %2$s translation%3$s page, inside the %4$sWooCommerce Multilingual & Multicurrency admin%5$s.', 'woocommerce-multilingual' ),
 				$taxonomy_obj->labels->name,
 				'<strong><a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=' . $taxonomy ) . '">' . $taxonomy_obj->labels->singular_name,
 				'</a></strong>',

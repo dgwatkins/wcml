@@ -104,7 +104,7 @@ class WCML_Dependencies {
 			<?php
 			printf(
 				__(
-					'WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%1$s">WPML</a> versions prior %2$s.',
+					'WooCommerce Multilingual & Multicurrency is enabled but not effective. It is not compatible with  <a href="%1$s">WPML</a> versions prior %2$s.',
 					'woocommerce-multilingual'
 				),
 				$this->tracking_link->getWpmlHome(),
@@ -119,7 +119,7 @@ class WCML_Dependencies {
 	public function _wpml_not_installed_warning() {
 		?>
 		<div class="message error">
-			<p><?php printf( __( 'WooCommerce Multilingual is enabled but not effective. Please finish the installation of WPML first.', 'woocommerce-multilingual' ) ); ?></p>
+			<p><?php printf( __( 'WooCommerce Multilingual & Multicurrency is enabled but not effective. Please finish the installation of WPML first.', 'woocommerce-multilingual' ) ); ?></p>
 		</div>
 		<?php
 	}
@@ -131,7 +131,7 @@ class WCML_Dependencies {
 			<?php
 			printf(
 				__(
-					'WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%1$s">Woocommerce</a> versions prior %2$s.',
+					'WooCommerce Multilingual & Multicurrency is enabled but not effective. It is not compatible with  <a href="%1$s">Woocommerce</a> versions prior %2$s.',
 					'woocommerce-multilingual'
 				),
 				'http://www.woothemes.com/woocommerce/',
@@ -150,7 +150,7 @@ class WCML_Dependencies {
 			<?php
 			printf(
 				__(
-					'WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%1$s">WPML Translation Management</a> versions prior %2$s.',
+					'WooCommerce Multilingual & Multicurrency is enabled but not effective. It is not compatible with  <a href="%1$s">WPML Translation Management</a> versions prior %2$s.',
 					'woocommerce-multilingual'
 				),
 				$this->tracking_link->getWpmlHome(),
@@ -169,7 +169,7 @@ class WCML_Dependencies {
 			<?php
 			printf(
 				__(
-					'WooCommerce Multilingual is enabled but not effective. It is not compatible with  <a href="%1$s">WPML String Translation</a> versions prior %2$s.',
+					'WooCommerce Multilingual & Multicurrency is enabled but not effective. It is not compatible with  <a href="%1$s">WPML String Translation</a> versions prior %2$s.',
 					'woocommerce-multilingual'
 				),
 				$this->tracking_link->getWpmlHome(),
@@ -241,7 +241,7 @@ class WCML_Dependencies {
 		?>
 
 		<div class="message error">
-			<p><?php printf( __( 'WooCommerce Multilingual is enabled but not effective. It requires %s in order to work.', 'woocommerce-multilingual' ), $missing ); ?></p>
+			<p><?php printf( __( 'WooCommerce Multilingual & Multicurrency is enabled but not effective. It requires %s in order to work.', 'woocommerce-multilingual' ), $missing ); ?></p>
 		</div>
 		<?php
 	}
@@ -321,7 +321,7 @@ class WCML_Dependencies {
 
 		$file = realpath( WCML_PLUGIN_PATH . '/wpml-config.xml' );
 		if ( ! file_exists( $file ) ) {
-			$this->xml_config_errors[] = __( 'wpml-config.xml file missing from WooCommerce Multilingual folder.', 'woocommerce-multilingual' );
+			$this->xml_config_errors[] = __( 'wpml-config.xml file missing from WooCommerce Multilingual & Multicurrency folder.', 'woocommerce-multilingual' );
 		} else {
 			$config = icl_xml2array( file_get_contents( $file ) );
 
