@@ -2,6 +2,7 @@
 
 namespace WCML\AdminNotices;
 
+use WCML\StandAlone\IStandAloneAction;
 use WPML_Notices;
 use IWPML_Backend_Action;
 use IWPML_Frontend_Action;
@@ -9,7 +10,7 @@ use IWPML_DIC_Action;
 use wpdb;
 use WPML\Core\ISitePress;
 
-class Review implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Action {
+class Review implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Action, IStandAloneAction {
 
 	const OPTION_NAME = 'wcml-rate-notice';
 
