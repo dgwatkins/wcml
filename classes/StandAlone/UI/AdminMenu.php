@@ -5,6 +5,8 @@ namespace WCML\StandAlone\UI;
 use WCML_Admin_Menus;
 use WCML_Multi_Currency_UI;
 use WCML_Templates_Factory;
+use WPML\FP\Fns;
+use WPML\FP\Str;
 
 class AdminMenu extends WCML_Templates_Factory {
 
@@ -97,7 +99,17 @@ class AdminMenu extends WCML_Templates_Factory {
 		$content = '';
 		switch ( $current_tab ) {
 			case 'multilingual':
-				$content = "Multilingual content...";
+				$inP = Str::wrap( '<p>', '</p>' );
+
+				$wrapLink = function( $text, $url ) {
+					return sprintf( $text, '<a href="' . $url . '" target="_blank" class="wpml-external-link">', '</a>' );
+				};
+
+				$content .= $inP( $wrapLink( esc_html__( 'To run your store in multiple languages, you need to use the %1$sWPML plugin%2$s.', 'woocommerce-multilingual' ), \WCML_Tracking_Link::getWpmlHome( true ) ) );
+				$content .= $inP(
+					$wrapLink( esc_html__( 'If you have it already, install and activate it. Otherwise, %1$sbuy WPML%2$s.', 'woocommerce-multilingual' ), \WCML_Tracking_Link::getWpmlPurchase( true ) )
+					. ' ' . esc_html__( 'You will need either the Multilingual CMS or Multilingual Agency package to use WPML with WooCommerce.', 'woocommerce-multilingual' )
+				);
 				break;
 
 			case 'multi-currency':
