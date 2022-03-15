@@ -115,6 +115,7 @@ function wcml_loader() {
 		\WCML\AdminNotices\MultiCurrencyMissing::class,
 		\WCML\Products\Hooks::class,
 		\WCML\API\VendorAddon\Hooks::class,
+		\WCML\Attributes\LookupTableFactory::class,
 	];
 
 	if (

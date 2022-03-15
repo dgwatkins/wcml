@@ -1,6 +1,8 @@
 <?php
 
 use WCML\MultiCurrency\Settings as McSettings;
+use Automattic\WooCommerce\Internal\ProductAttributesLookup\DataRegenerator;
+use WCML\Attributes\LookupTableFactory;
 
 class WCML_Upgrade {
 
@@ -38,6 +40,7 @@ class WCML_Upgrade {
 		'4.10.0',
 		'4.11.0',
 		'4.12.0',
+		'5.0.0',
 	];
 
 	public function __construct() {
@@ -848,6 +851,12 @@ class WCML_Upgrade {
 
 	private function upgrade_4_12_0() {
 		wp_schedule_single_event( time() + 10, 'generate_category_lookup_table' );
+	}
+
+	private function upgrade_5_0_0() {
+		if ( LookupTableFactory::hasFeature() ) {
+			wc_get_container()->get( DataRegenerator::class )->initiate_regeneration();
+		}
 	}
 
 }
