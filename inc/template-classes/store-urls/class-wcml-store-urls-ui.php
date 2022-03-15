@@ -60,12 +60,12 @@ class WCML_Store_URLs_UI extends WCML_Templates_Factory {
 				'notice'           => __( 'This page allows you to translate all strings that are being used by WooCommerce in building different type of urls. Translating them enables you to have fully localized urls that match the language of the pages.', 'woocommerce-multilingual' ),
 				'notice_defaults'  => sprintf(
 					__(
-						'You can enter or edit your default values on the %1$sPermalinks settings%2$s page or, for the endpoints, on the WooCommerce %3$sAccount settings%4$s page.',
+						'You can enter or edit your default values on the %1$sPermalinks settings%2$s page or, for the endpoints, on the WooCommerce %3$sAdvanced settings%4$s page.',
 						'woocommerce-multilingual'
 					),
 					'<a href="' . admin_url( 'options-permalink.php' ) . '">',
 					'</a>',
-					'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=account' ) . '">',
+					'<a href="' . admin_url( 'admin.php?page=wc-settings&tab=advanced' ) . '">',
 					'</a>'
 				),
 				'perm_settings'    => '<a href="' . admin_url( 'options-permalink.php' ) . '" >' . __( 'permalinks settings', 'woocommerce-multilingual' ) . '</a>',
