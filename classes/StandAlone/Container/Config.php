@@ -47,7 +47,7 @@ class Config {
 	 */
 	public static function getDelegated() {
 		return [
-			\WPML_Notices::class => 'wpml_get_admin_notices',
+			\WPML_Notices::class => 'wcml_wpml_get_admin_notices',
 		];
 	}
 }

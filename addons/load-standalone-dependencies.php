@@ -40,7 +40,7 @@ if ( is_admin() ) {
 
 	( new \WCML\StandAlone\DependencyAssets( WCML_WPML_DEPENDENCY_URL ) )->add_hooks();
 
-	wpml_get_admin_notices(); // Initialize the notices hooks
+	wcml_wpml_get_admin_notices(); // Initialize the notices hooks
 
 	( new WPML_Action_Filter_Loader() )->load( [
 		\WPML\Notices\DismissNotices::class,
