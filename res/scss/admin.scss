@@ -130,3 +130,48 @@ div[data-selector="wpbody-content .woocommerce h2"] a{
     }
   }
 }
+
+body.wpml-wcml-multilingual {
+  #wpwrap {
+    background-color: #fff;
+
+    .wcml-tabs + .wcml-wrap {
+      border-left: none;
+      border-right: none;
+      border-bottom: none;
+      padding: 40px 0;
+
+      .wcml-banner {
+        padding: 30px 30px 20px 80px;
+        background: rgba(51, 135, 158, 0.1) url(../images/wpml-logo.svg) no-repeat 30px 30px;
+        background-size: 30px 36px;
+        border-radius: 5px;
+
+        p {
+          font-size: 14px;
+          line-height: 24px;
+          color: #373737;
+          margin: 0 0 10px;
+
+          &:first-of-type {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+          }
+          a {
+            color: #33879e;
+
+            &:hover {
+              text-decoration: none;
+            }
+          }
+        }
+      }
+
+      @media screen and (max-width: 980px) {
+        border-top: none;
+        padding-top: 20px;
+      }
+    }
+  }
+}

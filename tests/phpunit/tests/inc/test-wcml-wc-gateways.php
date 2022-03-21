@@ -6,6 +6,11 @@ use WPML\FP\Fns;
 
 class Test_WCML_WC_Gateways extends OTGS_TestCase {
 
+	public function setUp() {
+		parent::setUp();
+		WP_Mock::passthruFunction( 'sanitize_key' );
+	}
+
 	/**
 	 * @return woocommerce_wpml
 	 */
@@ -48,12 +53,12 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 	 * @group wcml-3266
 	 */
 	public function it_adds_hooks_in_fullmode() {
-		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( false );
+		WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( false );
 
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectActionAdded( 'init', [ $subject, 'on_init_hooks' ], 11 );
-		\WP_Mock::expectFilterAdded( 'woocommerce_payment_gateways', Fns::withoutRecursion( Fns::identity(), [ $subject, 'loaded_woocommerce_payment_gateways' ] ) );
+		WP_Mock::expectActionAdded( 'init', [ $subject, 'on_init_hooks' ], 11 );
+		WP_Mock::expectFilterAdded( 'woocommerce_payment_gateways', Fns::withoutRecursion( Fns::identity(), [ $subject, 'loaded_woocommerce_payment_gateways' ] ) );
 
 		$subject->add_hooks();
 	}
@@ -63,18 +68,18 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 	 * @group wcml-3890
 	 */
 	public function it_adds_hooks_in_standalone_on_any_page() {
-		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( true );
+		WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( true );
 
 		FunctionMocker::replace( WcAdminPages::class . '::isPaymentSettings', false );
 
 		$subject = $this->get_subject();
 
 		// Standalone mode
-		\WP_Mock::expectActionNotAdded( 'init', [ $subject, 'load_bacs_gateway_currency_selector_hooks' ] );
+		WP_Mock::expectActionNotAdded( 'init', [ $subject, 'load_bacs_gateway_currency_selector_hooks' ] );
 
 		// Full mode
-		\WP_Mock::expectActionNotAdded( 'init', [ $subject, 'on_init_hooks' ] );
-		\WP_Mock::expectFilterNotAdded( 'woocommerce_payment_gateways', Fns::withoutRecursion( Fns::identity(), [ $subject, 'loaded_woocommerce_payment_gateways' ] ) );
+		WP_Mock::expectActionNotAdded( 'init', [ $subject, 'on_init_hooks' ] );
+		WP_Mock::expectFilterNotAdded( 'woocommerce_payment_gateways', Fns::withoutRecursion( Fns::identity(), [ $subject, 'loaded_woocommerce_payment_gateways' ] ) );
 
 		$subject->add_hooks();
 	}
@@ -84,18 +89,18 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 	 * @group wcml-3890
 	 */
 	public function it_adds_hooks_in_standalone_on_wc_payment_settings() {
-		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( true );
+		WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( true );
 
 		FunctionMocker::replace( WcAdminPages::class . '::isPaymentSettings', true );
 
 		$subject = $this->get_subject();
 
 		// Standalone mode
-		\WP_Mock::expectActionAdded( 'init', [ $subject, 'load_bacs_gateway_currency_selector_hooks' ], 11 );
+		WP_Mock::expectActionAdded( 'init', [ $subject, 'load_bacs_gateway_currency_selector_hooks' ], 11 );
 
 		// Full mode
-		\WP_Mock::expectActionNotAdded( 'init', [ $subject, 'on_init_hooks' ] );
-		\WP_Mock::expectFilterNotAdded( 'woocommerce_payment_gateways', Fns::withoutRecursion( Fns::identity(), [ $subject, 'loaded_woocommerce_payment_gateways' ] ) );
+		WP_Mock::expectActionNotAdded( 'init', [ $subject, 'on_init_hooks' ] );
+		WP_Mock::expectFilterNotAdded( 'woocommerce_payment_gateways', Fns::withoutRecursion( Fns::identity(), [ $subject, 'loaded_woocommerce_payment_gateways' ] ) );
 
 		$subject->add_hooks();
 	}
@@ -111,17 +116,17 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$_GET['page']    = 'wc-settings';
 		$_GET['tab']     = 'checkout';
 		$_GET['section'] = 'bacs';
-		\WP_Mock::userFunction( 'is_admin', array( 'return' => true ) );
-		\WP_Mock::userFunction( 'wcml_is_multi_currency_on', array( 'return' => true ) );
+		WP_Mock::userFunction( 'is_admin', array( 'return' => true ) );
+		WP_Mock::userFunction( 'wcml_is_multi_currency_on', array( 'return' => true ) );
 
 		$subject = $this->get_subject();
-		\WP_Mock::expectFilterAdded( 'woocommerce_gateway_title', array( $subject, 'translate_gateway_title' ), 10, 2 );
-		\WP_Mock::expectFilterAdded( 'woocommerce_gateway_description', array(
+		WP_Mock::expectFilterAdded( 'woocommerce_gateway_title', array( $subject, 'translate_gateway_title' ), 10, 2 );
+		WP_Mock::expectFilterAdded( 'woocommerce_gateway_description', array(
 			$subject,
 			'translate_gateway_description'
 		), 10, 2 );
-		\WP_Mock::expectActionAdded( 'admin_footer', array( $subject, 'show_language_links_for_gateways' ) );
-		\WP_Mock::expectActionAdded( 'admin_footer', array(
+		WP_Mock::expectActionAdded( 'admin_footer', array( $subject, 'show_language_links_for_gateways' ) );
+		WP_Mock::expectActionAdded( 'admin_footer', array(
 			$subject,
 			'append_currency_selector_to_bacs_account_settings'
 		) );
@@ -146,15 +151,15 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$settings['instructions'] = rand_str(32);
 
 
-		\WP_Mock::userFunction( 'icl_get_string_id', array(
+		WP_Mock::userFunction( 'icl_get_string_id', array(
 			'args'   => array( $settings['title'], 'admin_texts_woocommerce_gateways', $gateway_name .'_gateway_title' ),
 			'return' => false
 		) );
-		\WP_Mock::userFunction( 'icl_get_string_id', array(
+		WP_Mock::userFunction( 'icl_get_string_id', array(
 			'args'   => array( $settings['description'], 'admin_texts_woocommerce_gateways', $gateway_name .'_gateway_description' ),
 			'return' => false
 		) );
-		\WP_Mock::userFunction( 'icl_get_string_id', array(
+		WP_Mock::userFunction( 'icl_get_string_id', array(
 			'args'   => array( $settings['instructions'], 'admin_texts_woocommerce_gateways', $gateway_name .'_gateway_instructions' ),
 			'return' => false
 		) );
@@ -166,17 +171,17 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$subject = $this->get_subject( false, $sitepress );
 
 
-		\WP_Mock::userFunction( 'icl_register_string', array(
+		WP_Mock::userFunction( 'icl_register_string', array(
 			'args'   => array( 'admin_texts_woocommerce_gateways', $gateway_name .'_gateway_title', $settings['title'], false, $default_language ),
 			'times' => 1,
 			'return' => true
 		) );
-		\WP_Mock::userFunction( 'icl_register_string', array(
+		WP_Mock::userFunction( 'icl_register_string', array(
 			'args'   => array( 'admin_texts_woocommerce_gateways', $gateway_name .'_gateway_description', $settings['description'], false, $default_language ),
 			'times' => 1,
 			'return' => true
 		) );
-		\WP_Mock::userFunction( 'icl_register_string', array(
+		WP_Mock::userFunction( 'icl_register_string', array(
 			'args'   => array( 'admin_texts_woocommerce_gateways', $gateway_name .'_gateway_instructions', $settings['instructions'], false, $default_language ),
 			'times' => 1,
 			'return' => true
@@ -205,11 +210,11 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$_GET['page']    = 'wc-settings';
 		$_GET['tab']     = 'checkout';
 		$_GET['section'] = 'bacs';
-		\WP_Mock::userFunction( 'is_admin', array( 'return' => true ) );
-		\WP_Mock::userFunction( 'wcml_is_multi_currency_on', array( 'return' => false ) );
+		WP_Mock::userFunction( 'is_admin', array( 'return' => true ) );
+		WP_Mock::userFunction( 'wcml_is_multi_currency_on', array( 'return' => false ) );
 
 		$subject = $this->get_subject();
-		\WP_Mock::expectActionNotAdded( 'admin_footer', array(
+		WP_Mock::expectActionNotAdded( 'admin_footer', array(
 			$subject,
 			'append_currency_selector_to_bacs_account_settings'
 		) );
@@ -230,16 +235,16 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$active_currencies        = array( 'USD', 'EUR' );
 		$default_dropdown         = '<select><option>USD</option></select>';
 
-		\WP_Mock::userFunction( 'get_option', array(
+		WP_Mock::userFunction( 'get_option', array(
 			'args'   => array( 'woocommerce_bacs_accounts', array() ),
 			'return' => $bacs_settings
 		) );
 
-		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
+		WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
 			'return' => $default_currency
 		) );
 
-		\WP_Mock::userFunction( 'get_option', array(
+		WP_Mock::userFunction( 'get_option', array(
 			'args'   => array( 'wcml_bacs_accounts_currencies', array() ),
 			'return' => $bacs_accounts_currencies
 		) );
@@ -279,16 +284,16 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$this->default_dropdown         = '<select><option>USD</option></select>';
 		$this->eur_dropdown             = '<select><option>EUR</option></select>';
 
-		\WP_Mock::userFunction( 'get_option', array(
+		WP_Mock::userFunction( 'get_option', array(
 			'args'   => array( 'woocommerce_bacs_accounts', array() ),
 			'return' => $bacs_settings
 		) );
 
-		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
+		WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
 			'return' => $default_currency
 		) );
 
-		\WP_Mock::userFunction( 'get_option', array(
+		WP_Mock::userFunction( 'get_option', array(
 			'args'   => array( 'wcml_bacs_accounts_currencies', array() ),
 			'return' => $this->bacs_accounts_currencies
 		) );
@@ -398,7 +403,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		\WP_Mock::userFunction( 'get_post_meta', array(
+		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $_POST['post_ID'], 'wpml_language', true ),
 			'return' => $order_language
 		) );
@@ -437,7 +442,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		\WP_Mock::userFunction( 'get_post_meta', array(
+		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $_POST['post_ID'], 'wpml_language', true ),
 			'return' => $order_language
 		) );
@@ -476,7 +481,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		\WP_Mock::userFunction( 'get_post_meta', array(
+		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $_POST['post_ID'], 'wpml_language', true ),
 			'return' => $order_language
 		) );
@@ -515,7 +520,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		\WP_Mock::userFunction( 'get_post_meta', array(
+		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $_POST['post_ID'], 'wpml_language', true ),
 			'return' => $order_language
 		) );
@@ -553,7 +558,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		\WP_Mock::userFunction( 'get_post_meta', array(
+		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $_POST['post_ID'], 'wpml_language', true ),
 			'return' => $order_language
 		) );
@@ -590,7 +595,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		\WP_Mock::userFunction( 'get_post_meta', array(
+		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $_POST['order_id'], 'wpml_language', true ),
 			'return' => $order_language
 		) );
@@ -628,7 +633,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		\WP_Mock::userFunction( 'get_post_meta', array(
+		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $_POST['post_id'], 'wpml_language', true ),
 			'return' => $order_language
 		) );
@@ -667,7 +672,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		\WP_Mock::userFunction( 'get_post_meta', array(
+		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $_GET['order_id'], 'wpml_language', true ),
 			'return' => $order_language
 		) );
@@ -705,7 +710,7 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		\WP_Mock::userFunction( 'get_post_meta', array(
+		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $_GET['order_id'], 'wpml_language', true ),
 			'return' => $order_language
 		) );
