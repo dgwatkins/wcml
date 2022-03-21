@@ -1,6 +1,9 @@
 <?php
 
 use WCML\StandAlone\UI\AdminMenu;
+use WCML\Utilities\AdminPages;
+use WPML\FP\Fns;
+use WPML\FP\Str;
 use function WCML\functions\isStandAlone;
 
 /**
@@ -41,6 +44,10 @@ class WCML_Admin_Menus {
 		}
 
 		add_action( 'admin_menu', [ __CLASS__, 'register_menus' ], 80 );
+
+		if ( AdminPages::isWcmlSettings() ) {
+			add_action( 'admin_body_class', Str::concat( Fns::__, ' ' . self::SLUG . '-' . AdminPages::getTabToDisplay() ) );
+		}
 
 		if ( self::is_page_without_admin_language_switcher() ) {
 			self::remove_wpml_admin_language_switcher();
@@ -152,7 +159,7 @@ class WCML_Admin_Menus {
 		if ( ! $post ) {
 			return;
 		}
-		
+
 		$tracking_link = new WCML_Tracking_Link();
 
 		$get_post_type = get_post_type( $post->ID );

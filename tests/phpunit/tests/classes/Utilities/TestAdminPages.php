@@ -2,10 +2,19 @@
 
 namespace WCML\Utilities;
 
+use tad\FunctionMocker\FunctionMocker;
+use WCML_Capabilities;
+use WP_Mock;
+
 /**
  * @group wcml-3848
  */
 class TestAdminPages extends \OTGS_TestCase {
+
+	public function setUp() {
+		parent::setUp();
+		WP_Mock::passthruFunction( 'sanitize_key' );
+	}
 
 	public function tearDown() {
 		$_GET = [];
@@ -73,7 +82,7 @@ class TestAdminPages extends \OTGS_TestCase {
 	public function testIsMultiCurrency( $_get, $isStandalone, $expected ) {
 		$_GET = $_get;
 
-		\WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( $isStandalone );
+		WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( $isStandalone );
 
 		$this->assertSame( $expected, AdminPages::isMultiCurrency() );
 	}
@@ -109,6 +118,61 @@ class TestAdminPages extends \OTGS_TestCase {
 				[ 'page' => 'wpml-wcml', 'tab' => 'other' ],
 				true,
 				false,
+			],
+		];
+	}
+
+	/**
+	 * @test
+	 * @dataProvider dpGetTabToDisplay
+	 *
+	 * @param bool   $hasCapabilities
+	 * @param bool   $isStandalone
+	 * @param string $expected
+	 *
+	 *
+	 * @return void
+	 */
+	public function testGetTabToDisplay( $hasCapabilities, $isStandalone, $_get, $expected ) {
+		$_GET = $_get;
+
+		FunctionMocker::replace( WCML_Capabilities::class . '::canAccessAllWcmlTabs', $hasCapabilities );
+		WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( $isStandalone );
+
+		$this->assertEquals( $expected, AdminPages::getTabToDisplay() );
+	}
+
+	public function dpGetTabToDisplay() {
+		return [
+			'no capability and standalone mode' => [
+				false,
+				true,
+				[ 'tab' => 'foo' ],
+				AdminPages::TAB_MULTICURRENCY,
+			],
+			'has capability with standalone mode and no tab' => [
+				true,
+				true,
+				[],
+				AdminPages::TAB_MULTICURRENCY,
+			],
+			'no capability and full mode' => [
+				false,
+				false,
+				[ 'tab' => 'foo' ],
+				AdminPages::TAB_PRODUCTS,
+			],
+			'has capability with full mode and no tab' => [
+				true,
+				false,
+				[],
+				AdminPages::TAB_PRODUCTS,
+			],
+			'has capability and valid tab' => [
+				true,
+				false, // not relevant
+				[ 'tab' => 'foo' ],
+				'foo',
 			],
 		];
 	}

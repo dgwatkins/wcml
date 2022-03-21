@@ -2,10 +2,17 @@
 
 namespace WCML\Utilities;
 
+use WP_Mock;
+
 /**
  * @group wcml-3890
  */
 class TestWcAdminPages extends \OTGS_TestCase {
+
+	public function setUp() {
+		parent::setUp();
+		WP_Mock::passthruFunction( 'sanitize_key' );
+	}
 
 	public function tearDown() {
 		$_GET = [];
@@ -53,7 +60,7 @@ class TestWcAdminPages extends \OTGS_TestCase {
 		$GLOBALS['pagenow'] = $pagenow;
 		$_GET               = $_get;
 
-		\WP_Mock::userFunction( 'is_admin' )->andReturn( $isAdmin );
+		WP_Mock::userFunction( 'is_admin' )->andReturn( $isAdmin );
 
 		$this->assertSame( $expected, WcAdminPages::isPaymentSettings() );
 	}

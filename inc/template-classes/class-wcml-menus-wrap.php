@@ -1,5 +1,7 @@
 <?php
 
+use WCML\Utilities\AdminPages;
+
 class WCML_Menus_Wrap extends WCML_Templates_Factory {
 
 	private $woocommerce_wpml;
@@ -86,8 +88,7 @@ class WCML_Menus_Wrap extends WCML_Templates_Factory {
 	}
 
 	public function get_model() {
-
-		$current_tab = $this->get_current_tab();
+		$current_tab = AdminPages::getTabToDisplay();
 
 		$model = [
 
@@ -195,21 +196,6 @@ class WCML_Menus_Wrap extends WCML_Templates_Factory {
 
 	public function get_template() {
 		return 'menus-wrap.twig';
-	}
-
-	protected function get_current_tab() {
-
-		if ( isset( $_GET['tab'] ) ) {
-			$current_tab = $_GET['tab'];
-			if ( ! current_user_can( 'wpml_manage_woocommerce_multilingual' ) && ! current_user_can( 'wpml_operate_woocommerce_multilingual' ) ) {
-				$current_tab = 'products';
-			}
-		} else {
-			$current_tab = 'products';
-		}
-
-		return $current_tab;
-
 	}
 
 	protected function get_current_menu_content( $current_tab ) {

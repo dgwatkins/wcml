@@ -36,7 +36,13 @@ class WCML_Capabilities {
 		$allowedRoles = ['shop_manager', 'administrator', 'super_admin'];
 
 		return (bool) array_intersect( $allowedRoles, wp_get_current_user()->roles );
-		
 	}
 
+	/**
+	 * @return bool
+	 */
+	public static function canAccessAllWcmlTabs() {
+		return current_user_can( 'wpml_manage_woocommerce_multilingual' )
+			|| current_user_can( 'wpml_operate_woocommerce_multilingual' );
+	}
 }

@@ -2,6 +2,7 @@
 
 namespace WCML\StandAlone\UI;
 
+use WCML\Utilities\AdminPages;
 use WCML_Admin_Menus;
 use WCML_Multi_Currency_UI;
 use WCML_Templates_Factory;
@@ -30,7 +31,7 @@ class AdminMenu extends WCML_Templates_Factory {
 	}
 
 	public function get_model() {
-		$current_tab = $this->get_current_tab();
+		$current_tab = AdminPages::getTabToDisplay();
 
 		$model = [
 			'strings'             => [
@@ -70,21 +71,6 @@ class AdminMenu extends WCML_Templates_Factory {
 		return $model;
 	}
 
-	protected function get_current_tab() {
-
-		$current_tab = filter_input( INPUT_GET, 'tab' );
-		if ( $current_tab ) {
-			if ( ! current_user_can( 'wpml_manage_woocommerce_multilingual' ) && ! current_user_can( 'wpml_operate_woocommerce_multilingual' ) ) {
-				$current_tab = 'multi-currency';
-			}
-		} else {
-			$current_tab = 'multi-currency';
-		}
-
-		return $current_tab;
-
-	}
-
 	protected function init_template_base_dir() {
 		$this->template_paths = [
 			WCML_PLUGIN_PATH . '/templates/',
@@ -99,7 +85,8 @@ class AdminMenu extends WCML_Templates_Factory {
 		$content = '';
 		switch ( $current_tab ) {
 			case 'multilingual':
-				$inP = Str::wrap( '<p>', '</p>' );
+				$inP       = Str::wrap( '<p>', '</p>' );
+				$inWrapper = Str::wrap( '<div class="wcml-banner">', '</div>' );
 
 				$wrapLink = function( $text, $url ) {
 					return sprintf( $text, '<a href="' . $url . '" target="_blank" class="wpml-external-link">', '</a>' );
@@ -110,6 +97,8 @@ class AdminMenu extends WCML_Templates_Factory {
 					$wrapLink( esc_html__( 'If you have it already, install and activate it. Otherwise, %1$sbuy WPML%2$s.', 'woocommerce-multilingual' ), \WCML_Tracking_Link::getWpmlPurchase( true ) )
 					. ' ' . esc_html__( 'You will need either the Multilingual CMS or Multilingual Agency package to use WPML with WooCommerce.', 'woocommerce-multilingual' )
 				);
+
+				$content = $inWrapper( $content );
 				break;
 
 			case 'multi-currency':
