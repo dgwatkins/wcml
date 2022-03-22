@@ -2,7 +2,7 @@
 
 use WCML\Utilities\AdminPages;
 
-class WCML_Menus_Wrap extends WCML_Templates_Factory {
+class WCML_Menus_Wrap extends WCML_Menu_Wrap_Base {
 
 	private $woocommerce_wpml;
 
@@ -186,16 +186,6 @@ class WCML_Menus_Wrap extends WCML_Templates_Factory {
 		];
 
 		return $model;
-	}
-
-	protected function init_template_base_dir() {
-		$this->template_paths = [
-			WCML_PLUGIN_PATH . '/templates/',
-		];
-	}
-
-	public function get_template() {
-		return 'menus-wrap.twig';
 	}
 
 	protected function get_current_menu_content( $current_tab ) {
