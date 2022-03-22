@@ -49,6 +49,8 @@ class TestLookupTable extends \OTGS_TestCase {
 			->with( false, $productId, 'post_product' )
 			->willReturn( false );
 
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_get_attributes', [ $subject, 'translateAttributeOptions' ], 10, 2 );
+
 		\WP_Mock::userFunction( 'remove_filter', [
 			'args'   => [ 'terms_clauses', [ $this->sitepress, 'terms_clauses' ] ],
 			'return' => true,
@@ -77,6 +79,11 @@ class TestLookupTable extends \OTGS_TestCase {
 		] );
 
 		\WP_Mock::expectFilterAdded( 'terms_clauses', [ $this->sitepress, 'terms_clauses' ], 10, 3 );
+
+		\WP_Mock::userFunction( 'remove_filter', [
+			'args'   => [ 'woocommerce_product_get_attributes', [ $subject, 'translateAttributeOptions' ] ],
+			'return' => true,
+		] );
 
 		$subject->add_hooks();
 
@@ -175,6 +182,64 @@ class TestLookupTable extends \OTGS_TestCase {
 		$this->assertEquals( $steps, $this->runFilter( 'woocommerce_attribute_lookup_regeneration_step_size', $steps ) );
 	}
 
+	/**
+	 * @test
+	 */
+	public function itTranslatesAttributeOptions() {
+		$productId = 11;
+		$lang      = 'it';
+		$taxonomy  = 'pa_colors';
+		$termId    = 123;
+		$transTerm = 456;
+		$options   = [
+			$termId,
+		];
+		$expected  = [
+			$transTerm,
+		];
+
+		$attribute = $this->getMockBuilder( 'WC_Product_Attribute' )
+			->setMethods( [ 'set_options', 'get_options' ] )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$attribute->method( 'get_options' )
+			->willReturnCallback( function() {
+				return $this->options;
+			} );
+
+		$attribute->method( 'set_options' )
+			->willReturnCallback( function( $set ) {
+				$this->options = $set;
+			} );
+		$attribute->set_options( $options );
+
+		$attrs = [
+			$taxonomy => $attribute,
+		];
+
+		$product = $this->getMockBuilder( 'WC_Product' )
+			->setMethods( [ 'get_id' ] )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$product->method( 'get_id' )
+			->willReturn( $productId );
+
+		$subject = $this->getSubject();
+
+		$this->sitepress->method( 'get_language_for_element' )
+			->with( $productId, 'post_product' )
+			->willReturn( $lang );
+		$this->sitepress->method( 'get_object_id' )
+			->with( $termId, $taxonomy, false, $lang )
+			->willReturn( $transTerm );
+
+		$result = $subject->translateAttributeOptions( $attrs, $product );
+
+		$this->assertSame( $expected, reset($result)->get_options() );
+	}
+
 	private function getSubject( $sitepress = null ) {
 		$this->sitepress = $sitepress ?: $this->getSitepress();
 
@@ -183,7 +248,7 @@ class TestLookupTable extends \OTGS_TestCase {
 
 	private function getSitepress() {
 		return $this->getMockBuilder( \SitePress::class )
-			->setMethods( [ 'is_original_content_filter' ] )
+			->setMethods( [ 'is_original_content_filter', 'get_language_for_element', 'get_object_id' ] )
 			->disableOriginalConstructor()
 			->getMock();
 	}
