@@ -5,11 +5,9 @@ namespace WCML\StandAlone\UI;
 use WCML\Utilities\AdminPages;
 use WCML_Admin_Menus;
 use WCML_Multi_Currency_UI;
-use WCML_Templates_Factory;
-use WPML\FP\Fns;
 use WPML\FP\Str;
 
-class AdminMenu extends WCML_Templates_Factory {
+class AdminMenu extends \WCML_Menu_Wrap_Base {
 
 	/** @var \SitePress|\WCML\StandAlone\NullSitePress */
 	private $sitepress;
@@ -69,16 +67,6 @@ class AdminMenu extends WCML_Templates_Factory {
 		];
 
 		return $model;
-	}
-
-	protected function init_template_base_dir() {
-		$this->template_paths = [
-			WCML_PLUGIN_PATH . '/templates/',
-		];
-	}
-
-	public function get_template() {
-		return 'menus-wrap.twig';
 	}
 
 	protected function get_current_menu_content( $current_tab ) {
