@@ -8,6 +8,17 @@ use tad\FunctionMocker\FunctionMocker;
  */
 class Test_WCML_Admin_Menus extends OTGS_TestCase {
 
+	private $isStandalone = false;
+
+	public function setUp() {
+		parent::setUp();
+		WP_Mock::userFunction( 'WCML\functions\isStandAlone', [
+			'return' => function() {
+				return $this->isStandalone;
+			}
+		] );
+	}
+
 	/**
 	 * @test
 	 */
@@ -461,12 +472,7 @@ class Test_WCML_Admin_Menus extends OTGS_TestCase {
 		];
 
 		// Standalone mode
-		$isStandalone = true;
-		\WP_Mock::userFunction( 'WCML\functions\isStandAlone', [
-			'return' => function() use ( &$isStandalone ) {
-				return $isStandalone;
-			}
-		] );
+		$this->isStandalone = true;
 
 		$this->assertEquals(
 			$expectedActions,
@@ -474,7 +480,7 @@ class Test_WCML_Admin_Menus extends OTGS_TestCase {
 		);
 
 		// Full mode
-		$isStandalone = false;
+		$this->isStandalone = false;
 
 		$expectedActions['settings-ml'] = '<a href="' . $adminUrl( 'admin.php?page=' . WCML_Admin_Menus::SLUG ) . '">Multilingual Settings</a>';
 

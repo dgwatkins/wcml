@@ -55,7 +55,9 @@ class WCML_Admin_Menus {
 
 		add_filter( 'woocommerce_prevent_admin_access', [ __CLASS__, 'check_user_admin_access' ] );
 
-		add_action( 'admin_head', [ __CLASS__, 'add_menu_warning' ] );
+		if ( ! isStandAlone() ) {
+			add_action( 'admin_head', [ __CLASS__, 'add_menu_warning' ] );
+		}
 	}
 
 	/**
