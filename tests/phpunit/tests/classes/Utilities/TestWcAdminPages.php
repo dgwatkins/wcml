@@ -75,4 +75,35 @@ class TestWcAdminPages extends \OTGS_TestCase {
 			'correct payment tab' => [ true, 'admin.php', [ 'page' => 'wc-settings', 'tab' => 'checkout' ], true ],
 		];
 	}
+
+	/**
+	 * @test
+	 * @dataProvider dpIsHomeScreen
+	 *
+	 * @param bool   $isAdmin
+	 * @param string $pagenow
+	 * @param array  $_get
+	 * @param bool   $expected
+	 *
+	 * @return void
+	 */
+	public function testIsHomeScreen( $isAdmin, $pagenow, $_get, $expected ) {
+		$GLOBALS['pagenow'] = $pagenow;
+		$_GET               = $_get;
+
+		\WP_Mock::userFunction( 'is_admin' )->andReturn( $isAdmin );
+
+		$this->assertSame( $expected, WcAdminPages::isHomeScreen() );
+	}
+
+	public function dpIsHomeScreen() {
+		return [
+			'not in backend'      => [ false, 'admin.php', [ 'page' => 'wc-admin' ], false ],
+			'not admin.php'       => [ true, 'something.php', [ 'page' => 'wc-admin' ], false ],
+			'no page'             => [ true, 'admin.php', [], false ],
+			'not home screen'     => [ true, 'admin.php', [ 'page' => 'something' ], false ],
+			'correct home screen' => [ true, 'admin.php', [ 'page' => 'wc-admin' ], true ],
+		];
+	}
+
 }

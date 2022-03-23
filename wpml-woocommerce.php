@@ -19,6 +19,7 @@
 
 if (
 	defined( 'WCML_VERSION' )
+	/* phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected */
 	|| ( isset( $_SERVER['REQUEST_URI'] ) && '/favicon.ico' === $_SERVER['REQUEST_URI'] )
 ) {
 	return;
@@ -116,6 +117,7 @@ function wcml_loader() {
 		\WCML\Products\Hooks::class,
 		\WCML\API\VendorAddon\Hooks::class,
 		\WCML\Attributes\LookupTableFactory::class,
+		\WCML\HomeScreen\Factory::class,
 	];
 
 	if (

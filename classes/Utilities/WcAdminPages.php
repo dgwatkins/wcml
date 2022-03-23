@@ -22,15 +22,32 @@ class WcAdminPages {
 	 * @return bool
 	 */
 	private static function isSettingsPage() {
-		global $pagenow;
-
-		return is_admin() && 'admin.php' === $pagenow && AdminPages::isPage( 'wc-settings' );
+		return self::isAdminPhpPage( 'wc-settings' );
 	}
 
 	/**
 	 * @return bool
 	 */
-	public static function isPaymentSettings( ) {
+	public static function isHomeScreen() {
+		return self::isAdminPhpPage( 'wc-admin' );
+	}
+
+	/**
+	 * @return bool
+	 */
+	public static function isPaymentSettings() {
 		return self::isSettingsPage() &&  AdminPages::isTab( 'checkout' );
 	}
+
+	/**
+	 * @param string $page
+	 *
+	 * @return bool
+	 */
+	private static function isAdminPhpPage( $page ) {
+		global $pagenow;
+
+		return is_admin() && 'admin.php' === $pagenow && AdminPages::isPage( $page );
+	}
+
 }
