@@ -98,4 +98,5 @@ module.exports = [
 	createModule('multicurrencyAnalytics'),
 	createModule('paymentGatewaysAdmin'),
 	createModule('reportsOrders'),
+	createModule('homeScreen'),
 ];
