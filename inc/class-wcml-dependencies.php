@@ -3,13 +3,13 @@
 class WCML_Dependencies {
 
 	const MIN_WPML        = '4.3.5';
-	const MIN_WPML_TM     = '2.9.1';
 	const MIN_WPML_ST     = '3.0.5';
 	const MIN_WOOCOMMERCE = '3.9.0';
 
-	private $missing     = [];
 	private $err_message = '';
-	private $allok       = true;
+
+	/** @var bool|null $allok */
+	private $allok;
 
 	/**
 	 * @var WCML_Tracking_Link
@@ -29,66 +29,68 @@ class WCML_Dependencies {
 	}
 
 	public function check() {
+		/**
+		 * @var SitePress|null   $sitepress
+		 * @var WooCommerce|null $woocommerce
+		 */
 		global $sitepress, $woocommerce;
 
-		$core_ok = $st_ok = $tm_ok = $wc_ok = true;
+		if ( null === $this->allok ) {
+			$this->allok = true;
 
-		if ( ! defined( 'ICL_SITEPRESS_VERSION' ) || ICL_PLUGIN_INACTIVE || is_null( $sitepress ) || ! class_exists( 'SitePress' ) ) {
-			$this->missing['WPML'] = $this->tracking_link->getWpmlHome();
-			$core_ok               = false;
-		} elseif ( version_compare( ICL_SITEPRESS_VERSION, self::MIN_WPML, '<' ) ) {
-			add_action( 'admin_notices', [ $this, '_old_wpml_warning' ] );
-			$core_ok = false;
-		} elseif ( ! $sitepress->setup() ) {
-			if ( ! ( isset( $_GET['page'] ) && WPML_PLUGIN_FOLDER . '/menu/languages.php' === $_GET['page'] ) ) {
-				add_action( 'admin_notices', [ $this, '_wpml_not_installed_warning' ] );
+			$missing = [];
+			$core_ok = $st_ok = $wc_ok = true;
+
+			if ( ! defined( 'ICL_SITEPRESS_VERSION' ) || ICL_PLUGIN_INACTIVE || is_null( $sitepress ) || ! class_exists( 'SitePress' ) ) {
+				$missing['WPML'] = $this->tracking_link->getWpmlHome();
+				$core_ok         = false;
+			} elseif ( version_compare( ICL_SITEPRESS_VERSION, self::MIN_WPML, '<' ) ) {
+				add_action( 'admin_notices', [ $this, '_old_wpml_warning' ] );
+				$core_ok = false;
+			} elseif ( ! $sitepress->setup() ) {
+				if ( ! ( isset( $_GET['page'] ) && WPML_PLUGIN_FOLDER . '/menu/languages.php' === $_GET['page'] ) ) {
+					add_action( 'admin_notices', [ $this, '_wpml_not_installed_warning' ] );
+				}
+				$core_ok = false;
 			}
-			$core_ok = false;
-		}
 
-		if ( ! class_exists( 'WooCommerce' ) || ! function_exists( 'WC' ) ) {
-			$this->missing['WooCommerce'] = 'http://www.woothemes.com/woocommerce/';
-			$wc_ok                        = false;
-		} elseif (
-			defined( 'WC_VERSION' ) && version_compare( WC_VERSION, self::MIN_WOOCOMMERCE, '<' ) ||
-			isset( $woocommerce->version ) && version_compare( $woocommerce->version, self::MIN_WOOCOMMERCE, '<' )
-		) {
-			add_action( 'admin_notices', [ $this, '_old_wc_warning' ] );
-			$wc_ok = false;
-		}
+			if ( ! class_exists( 'WooCommerce' ) || ! function_exists( 'WC' ) ) {
+				$missing['WooCommerce'] = 'http://www.woothemes.com/woocommerce/';
+				$wc_ok                  = false;
+			} elseif (
+				defined( 'WC_VERSION' ) && version_compare( WC_VERSION, self::MIN_WOOCOMMERCE, '<' ) ||
+				isset( $woocommerce->version ) && version_compare( $woocommerce->version, self::MIN_WOOCOMMERCE, '<' )
+			) {
+				add_action( 'admin_notices', [ $this, '_old_wc_warning' ] );
+				$wc_ok = false;
+			}
 
-		if ( ! defined( 'WPML_TM_VERSION' ) || ! has_action( 'wpml_loaded', 'wpml_tm_load' ) ) {
-			$this->missing['WPML Translation Management'] = $this->tracking_link->getWpmlHome();
-			$tm_ok                                        = false;
-		} elseif ( version_compare( WPML_TM_VERSION, self::MIN_WPML_TM, '<' ) ) {
-			add_action( 'admin_notices', [ $this, '_old_wpml_tm_warning' ] );
-			$tm_ok = false;
-		}
+			if ( ! defined( 'WPML_ST_VERSION' ) ) {
+				$missing['WPML String Translation'] = $this->tracking_link->getWpmlHome();
+				$st_ok                              = false;
+			} elseif ( version_compare( WPML_ST_VERSION, self::MIN_WPML_ST, '<' ) ) {
+				add_action( 'admin_notices', [ $this, '_old_wpml_st_warning' ] );
+				$st_ok = false;
+			}
 
-		if ( ! defined( 'WPML_ST_VERSION' ) || ! function_exists( 'icl_get_string_id' ) ) {
-			$this->missing['WPML String Translation'] = $this->tracking_link->getWpmlHome();
-			$st_ok                                    = false;
-		} elseif ( version_compare( WPML_ST_VERSION, self::MIN_WPML_ST, '<' ) ) {
-			add_action( 'admin_notices', [ $this, '_old_wpml_st_warning' ] );
-			$st_ok = false;
-		}
+			$has_no_wpml_plugin = ! ( $core_ok || $st_ok );
+			$full_mode          = $core_ok && $st_ok && $wc_ok;
+			$standalone         = $has_no_wpml_plugin && $wc_ok;
+			$this->allok        = $full_mode || $standalone;
 
-		if ( $this->missing ) {
-			add_action( 'admin_notices', [ $this, '_missing_plugins_warning' ] );
-		}
+			if ( ! $this->allok ) {
+				$possibly_standalone = $has_no_wpml_plugin && ! $wc_ok;
+				add_action( 'admin_notices', self::show_missing_plugins_warning( $missing, $possibly_standalone ) );
+			}
 
-		$full_mode   = $core_ok && $tm_ok && $st_ok && $wc_ok;
-		$standalone  = ! ( $core_ok || $tm_ok || $st_ok ) && $wc_ok;
-		$this->allok = $full_mode || $standalone;
+			if ( $full_mode ) {
+				$this->check_for_incompatible_permalinks();
+				add_action( 'init', [ $this, 'check_for_translatable_default_taxonomies' ] );
+			}
 
-		if ( $full_mode ) {
-			$this->check_for_incompatible_permalinks();
-			add_action( 'init', [ $this, 'check_for_translatable_default_taxonomies' ] );
-		}
-
-		if ( isset( $sitepress ) ) {
-			// @todo Cover by tests, required for wcml-3037.
-			$this->allok = $full_mode && $sitepress->setup();
+			if ( isset( $sitepress ) ) {
+				$this->allok = $full_mode && $sitepress->setup();
+			}
 		}
 
 		return $this->allok;
@@ -136,25 +138,6 @@ class WCML_Dependencies {
 				),
 				'http://www.woothemes.com/woocommerce/',
 				self::MIN_WOOCOMMERCE
-			);
-			?>
-					</p>
-		</div>
-		<?php
-	}
-
-	public function _old_wpml_tm_warning() {
-		?>
-		<div class="message error">
-			<p>
-			<?php
-			printf(
-				__(
-					'WooCommerce Multilingual & Multicurrency is enabled but not effective. It is not compatible with  <a href="%1$s">WPML Translation Management</a> versions prior %2$s.',
-					'woocommerce-multilingual'
-				),
-				$this->tracking_link->getWpmlHome(),
-				self::MIN_WPML_TM
 			);
 			?>
 					</p>
@@ -218,54 +201,38 @@ class WCML_Dependencies {
 	}
 
 	/**
-	 * Adds admin notice.
+	 * @param array $missing_plugins
+	 * @param bool  $possibly_standalone
+	 *
+	 * @return Closure
 	 */
-	public function _missing_plugins_warning() {
-		if ( $this->is_notice_hidden() ) {
-			return;
-		}
-
-		$missing = '';
-		$counter = 0;
-		foreach ( $this->filtered_missing() as $title => $url ) {
-			$counter ++;
-			if ( $counter == sizeof( $this->missing ) ) {
-				$sep = '';
-			} elseif ( $counter == sizeof( $this->missing ) - 1 ) {
-				$sep = ' ' . __( 'and', 'woocommerce-multilingual' ) . ' ';
-			} else {
-				$sep = ', ';
+	private static function show_missing_plugins_warning( $missing_plugins, $possibly_standalone ) {
+		return function() use ( $missing_plugins, $possibly_standalone ) {
+			if ( $possibly_standalone ) {
+				// Limit missing plugins to 'WooCommerce'
+				$missing_plugins = array_intersect_key( $missing_plugins, [ 'WooCommerce' => 1 ] );
 			}
-			$missing .= '<a href="' . $url . '">' . $title . '</a>' . $sep;
-		}
-		?>
 
-		<div class="message error">
-			<p><?php printf( __( 'WooCommerce Multilingual & Multicurrency is enabled but not effective. It requires %s in order to work.', 'woocommerce-multilingual' ), $missing ); ?></p>
-		</div>
-		<?php
-	}
+			$missing = '';
+			$counter = 0;
+			foreach ( $missing_plugins as $title => $url ) {
+				$counter ++;
+				if ( $counter == sizeof( $missing_plugins ) ) {
+					$sep = '';
+				} elseif ( $counter == sizeof( $missing_plugins ) - 1 ) {
+					$sep = ' ' . __( 'and', 'woocommerce-multilingual' ) . ' ';
+				} else {
+					$sep = ', ';
+				}
+				$missing .= '<a href="' . $url . '">' . $title . '</a>' . $sep;
+			}
+			?>
 
-	/**
-	 * If all three (WPML, TM, ST) are missing, we will assume running standalone.
-	 * So the notice is hidden.
-	 *
-	 * @return bool
-	 */
-	private function is_notice_hidden() {
-		return count( $this->missing ) === 3 && empty( $this->missing['WooCommerce'] );
-	}
-
-	/**
-	 * With only WCML active assume running standalone. Only require WooCommerce.
-	 *
-	 * @return array<string, string>
-	 */
-	private function filtered_missing() {
-		if ( count( $this->missing ) === 4 ) {
-			return array_intersect_key( $this->missing, [ 'WooCommerce' => 1 ] );
-		}
-		return $this->missing;
+			<div class="message error">
+				<p><?php printf( __( 'WooCommerce Multilingual & Multicurrency is enabled but not effective. It requires %s in order to work.', 'woocommerce-multilingual' ), $missing ); ?></p>
+			</div>
+			<?php
+		};
 	}
 
 	/**
