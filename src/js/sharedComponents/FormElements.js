@@ -49,10 +49,11 @@ export const InputRow = ({onChange, label, attrs, tooltip}) => {
  * Component for showing tooltip text
  *
  * @param {string} tooltip Tooltip text
+ * @param {string|undefined} classes Tooltip CSS classes
  * @returns {*|XML}
  */
-export const getTooltip = tooltip => {
-    return tooltip && <Tooltip getPopupContainer={getPopupContainer} title={allowBreakRules(tooltip)}> <i className="wcml-tip otgs-ico-help" /></Tooltip>;
+export const getTooltip = (tooltip, classes = 'otgs-ico-help') => {
+    return tooltip && <Tooltip getPopupContainer={getPopupContainer} title={allowBreakRules(tooltip)}> <i className={`wcml-tip ${classes}`} /></Tooltip>;
 };
 
 const allowBreakRules = (string) => {
