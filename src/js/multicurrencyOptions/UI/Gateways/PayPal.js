@@ -1,7 +1,6 @@
 import React from "react";
-import {InputRow, SelectRow} from "../../../sharedComponents/FormElements";
+import {getTooltip, InputRow, SelectRow} from "../../../sharedComponents/FormElements";
 import {getCurrencyIndex} from "../../Store"
-import Tooltip from "antd/lib/tooltip";
 import {sprintf} from "wpml-common-js-source/src/i18n";
 
 
@@ -19,11 +18,8 @@ const PayPal = ({gateway, settings, updateSettings, activeCurrencies, getName, c
         updateSettings({currency:targetCode, value:presetEmail});
     };
 
-    const warning = ! isSupportedCurrency(selectedCode) && (
-        <Tooltip title={sprintf(gateway.strings.tooltipNotSupported, selectedCode)}>
-            <i className="wcml-tip otgs-ico-warning paypal-gateway-warning" />
-        </Tooltip>
-    );
+    const warning = ! isSupportedCurrency(selectedCode)
+        && getTooltip(sprintf(gateway.strings.tooltipNotSupported, selectedCode), 'otgs-ico-warning paypal-gateway-warning')
 
     return ! currency.isDefault && (
         <React.Fragment>
