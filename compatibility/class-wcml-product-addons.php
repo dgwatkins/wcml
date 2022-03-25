@@ -121,7 +121,8 @@ class WCML_Product_Addons {
 	 * @return array
 	 */
 	private function get_product_addons( $product_id ) {
-		return (array) maybe_unserialize( get_post_meta( $product_id, self::ADDONS_OPTION_KEY, true ) );
+		$data = get_post_meta( $product_id, self::ADDONS_OPTION_KEY, true );
+		return $data ? maybe_unserialize( $data ) : [];
 	}
 
 	/**
