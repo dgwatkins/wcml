@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @group product-addons
+ */
 class Test_WCML_Product_Addons extends OTGS_TestCase {
 
 	/** @var Sitepress */
@@ -347,9 +350,11 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 			]
 		];
 
-		WP_Mock::userFunction( 'maybe_unserialize', array(
+		WP_Mock::userFunction( 'get_post_meta', array(
 			'return' => $product_addons
 		) );
+
+		WP_Mock::passthruFunction( 'maybe_unserialize' );
 
 
 		WP_Mock::userFunction( 'update_post_meta', array(
@@ -579,7 +584,40 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'update_post_meta', [
 			'times' => 1,
-			'args'  => [ $post_id, WCML_Product_Addons::ADDONS_OPTION_KEY, true ],
+			'args'  => [ $post_id, WCML_Product_Addons::ADDONS_OPTION_KEY, $expected_addons ],
+		] );
+
+		$this->get_subject()->save_addons_to_translation( $post_id, $fields, $job );
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3804
+	 */
+	public function it_should_save_addons_to_translation_with_empty_addons_data() {
+		$post_id = 123;
+
+		$fields = [];
+
+		$job = (object) [
+			'original_post_type' => 'post_product',
+		];
+
+		$addons = '';
+
+		\WP_Mock::userFunction( 'get_post_type' )
+		        ->with( $post_id )
+		        ->andReturn( 'product' );
+
+		\WP_Mock::userFunction( 'get_post_meta' )
+		        ->with( $post_id, WCML_Product_Addons::ADDONS_OPTION_KEY, true )
+		        ->andReturn( $addons );
+
+		\WP_Mock::userFunction( 'maybe_unserialize' )->times( 0 );
+
+		\WP_Mock::userFunction( 'update_post_meta', [
+			'times' => 1,
+			'args'  => [ $post_id, WCML_Product_Addons::ADDONS_OPTION_KEY, [] ],
 		] );
 
 		$this->get_subject()->save_addons_to_translation( $post_id, $fields, $job );
