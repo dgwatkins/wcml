@@ -60,10 +60,21 @@ class woocommerce_wpml {
 	public $comments;
 	/** @var  WCML_Translation_Editor */
 	public $translation_editor;
-	/** @var WCML_Dependencies */
+
+	/**
+	 * @depreacted Use `make( WCML_Dependencies::class )` instead.
+	 *
+	 * @var WCML_Dependencies
+	 */
 	public $dependencies;
-	/** @var bool|int */
+
+	/**
+	 * @depreacted Use `make( WCML_Dependencies::class )->check()` instead.
+	 *
+	 * @var bool|int
+	 */
 	public $dependencies_are_ok;
+
 	/** @var WCML_Cart */
 	public $cart;
 	/** @var WCML_Cart_Sync_Warnings */
@@ -137,15 +148,13 @@ class woocommerce_wpml {
 
 		$sitepress = getSitePress();
 
-		$this->dependencies        = new WCML_Dependencies();
+		$this->dependencies        = make( WCML_Dependencies::class );
 		$this->dependencies_are_ok = $this->dependencies->check();
 
 		WCML_Admin_Menus::set_up_menus( $this, $sitepress, $wpdb );
-		$page = filter_input( INPUT_GET, 'page' );
 
 		if ( ! $this->dependencies_are_ok ) {
-			$is_dashboard_page = 'wpml-wcml' === $page;
-			if ( is_admin() && $is_dashboard_page ) {
+			if ( is_admin() && AdminPages::isWcmlSettings() ) {
 				WCML_Capabilities::set_up_capabilities();
 
 				wp_register_style( 'otgs-ico', WCML_PLUGIN_URL . '/res/css/otgs-ico.css', null, WCML_VERSION );

@@ -1,5 +1,7 @@
 <?php
 
+use function WPML\Container\make;
+
 class WCML_Cart_Switch_Lang_Functions {
 
 	private $lang_from;
@@ -45,9 +47,7 @@ class WCML_Cart_Switch_Lang_Functions {
 	public function wcml_language_switch_dialog() {
 		global $woocommerce_wpml, $sitepress, $wp, $post;
 
-		$dependencies = new WCML_Dependencies();
-
-		if ( $dependencies->check() ) {
+		if ( make( WCML_Dependencies::class )->check() ) {
 
 			$current_url = home_url( add_query_arg( [], $wp->request ) );
 
