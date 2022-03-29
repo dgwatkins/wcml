@@ -1,10 +1,15 @@
 <?php
 
 use WCML\Options\WPML;
+use WPML\FP\Fns;
 use WPML\FP\Obj;
 use WPML\FP\Str;
 
 class WCML_Product_Bundles implements \IWPML_Action {
+
+	const META_SELL_IDS       = '_wc_pb_bundle_sell_ids';
+	const META_SELLS_TITLE    = '_wc_pb_bundle_sells_title';
+	const META_SELLS_DISCOUNT = '_wc_pb_bundle_sells_discount';
 
 	/**
 	 * @var WPML_Element_Translation_Package
@@ -80,7 +85,7 @@ class WCML_Product_Bundles implements \IWPML_Action {
 		}
 
 		add_action( 'init', [ $this, 'upgrade_bundles_items_relationships' ] );
-
+		add_filter( 'wpml_custom_field_values_for_post_signature', [ __CLASS__, 'adjust_bundle_sells_product_signature' ], 10, 2 );
 	}
 
 	/**
@@ -201,27 +206,45 @@ class WCML_Product_Bundles implements \IWPML_Action {
 	}
 
 	public function sync_product_bundle_meta_with_translations( $bundle_id ) {
+		/**
+		 * @return array {
+		 * @var int                              $original_bundle_id
+		 * @var \WPML\Collect\Support\Collection $translations_only
+		 * }
+		 */
+		$get_original_id_and_translations = Fns::memorize( function() use ( $bundle_id ) {
+			$trid               = $this->sitepress->get_element_trid( $bundle_id, 'post_product' );
+			$translations       = wpml_collect( $this->sitepress->get_element_translations( $trid, 'post_product' ) );
+			$original_bundle_id = (int) $translations->filter( Obj::prop( 'original' ) )
+			                                         ->map( Obj::prop( 'element_id' ) )
+			                                         ->first();
+
+			$translations_only = $translations
+				->reject( function( $translation ) use ( $original_bundle_id ) {
+					return (int) $translation->element_id === $original_bundle_id;
+				} );
+
+			return [ $original_bundle_id, $translations_only ];
+		} );
+
 
 		if ( $this->is_bundle_product( $bundle_id ) ) {
+			list( $original_bundle_id, $translations_only ) = $get_original_id_and_translations();
 
-			$trid               = $this->sitepress->get_element_trid( $bundle_id, 'post_product' );
-			$translations       = $this->sitepress->get_element_translations( $trid, 'post_product' );
-			$original_bundle_id = null;
-
-			foreach ( $translations as $language => $translation ) {
-				if ( $translation->original ) {
-					$original_bundle_id = $translation->element_id;
-					break;
-				}
-			}
-
-			foreach ( $translations as $language => $translation ) {
-				if ( $original_bundle_id && $translation->element_id !== $original_bundle_id ) {
-					$this->sync_product_bundle_meta( $original_bundle_id, $translation->element_id );
-				}
-			}
+			$translations_only->each( function( $translation ) use ( $original_bundle_id ) {
+				$this->sync_product_bundle_meta( $original_bundle_id, $translation->element_id );
+			} );
 		}
 
+		$bundle_sell_ids = get_post_meta( $bundle_id, self::META_SELL_IDS, true );
+
+		if ( $bundle_sell_ids ) {
+			list( $original_bundle_id, $translations_only ) = $get_original_id_and_translations();
+
+			$translations_only->each( function( $translation ) use ( $original_bundle_id ) {
+				$this->sync_bundle_sells( $original_bundle_id, $translation->element_id, $translation->language_code );
+			} );
+		}
 	}
 
 	/**
@@ -480,6 +503,16 @@ class WCML_Product_Bundles implements \IWPML_Action {
 					}
 				}
 			}
+
+			$bundle_sell = get_post_meta( $post->ID, self::META_SELLS_TITLE, true );
+
+			if ( $bundle_sell ) {
+				$package['contents'][ self::META_SELLS_TITLE ] = [
+					'translate' => 1,
+					'data'      => $this->tp->encode_field_data( $bundle_sell ),
+					'format'    => 'base64',
+				];
+			}
 		}
 
 		return $package;
@@ -504,6 +537,32 @@ class WCML_Product_Bundles implements \IWPML_Action {
 			};
 
 			$this->apply_translation( $bundle_id, $translated_bundle_id, $get_field_translation, $job->language_code );
+			$this->sync_bundle_sells( $bundle_id, $translated_bundle_id, $job->language_code, Obj::path( [ self::META_SELLS_TITLE, 'data' ], $fields ) );
+		}
+	}
+
+	private function sync_bundle_sells( $bundle_id, $translated_bundle_id, $language_code, $translated_title = null ) {
+		// $transpose_post_meta :: (string, callable) -> void
+		$transpose_post_meta = function( $meta_name, callable $transpose ) use ( $bundle_id, $translated_bundle_id ) {
+			$value = get_post_meta( $bundle_id, $meta_name, true );
+
+			if ( $value ) {
+				update_post_meta( $translated_bundle_id, $meta_name, $transpose( $value ) );
+			} else {
+				delete_post_meta( $translated_bundle_id, $meta_name );
+			}
+		};
+
+		// $convert_product_ids :: array -> array
+		$convert_product_ids = Fns::map( function( $id ) use ( $language_code ) {
+			return $this->sitepress->get_object_id( $id, 'product', true, $language_code );
+		} );
+
+		$transpose_post_meta( self::META_SELL_IDS, $convert_product_ids );
+		$transpose_post_meta( self::META_SELLS_DISCOUNT, Fns::identity() );
+
+		if ( $translated_title ) {
+			$transpose_post_meta( self::META_SELLS_TITLE, Fns::always( $translated_title ) );
 		}
 	}
 
@@ -967,4 +1026,13 @@ class WCML_Product_Bundles implements \IWPML_Action {
 
 	}
 
+	/**
+	 * @param array $values
+	 * @param int   $postId
+	 *
+	 * @return array
+	 */
+	public static function adjust_bundle_sells_product_signature( $values, $postId ) {
+		return Obj::assoc( self::META_SELLS_TITLE, get_post_meta( $postId, self::META_SELLS_TITLE, true ), $values );
+	}
 }
