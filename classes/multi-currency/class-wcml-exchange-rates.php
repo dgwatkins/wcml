@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Obj;
+
 /**
  * Class WCML_Exchange_Rates
  */
@@ -16,6 +18,7 @@ class WCML_Exchange_Rates {
 
 	const CRONJOB_EVENT              = 'wcml_exchange_rates_update';
 	const DIGITS_AFTER_DECIMAL_POINT = 6;
+	const KEY_RATES_UPDATED_FLAG     = 'wcml_exchange_rates_manually_updated';
 
 	/**
 	 * WCML_Exchange_Rates constructor.
@@ -197,6 +200,10 @@ class WCML_Exchange_Rates {
 	public function update_exchange_rate_options( $post_data ) {
 
 		if ( isset( $post_data['exchange-rates-automatic'] ) && $post_data['exchange-rates-automatic'] ) {
+			$active_service_changed = false;
+			$active_key_changed     = false;
+			$active_service_id      = Obj::prop( 'service', $this->settings );
+			$active_service         = Obj::prop( $active_service_id, $this->services );
 
 			$this->settings['automatic'] = (int) $post_data['exchange-rates-automatic'];
 
@@ -208,14 +215,19 @@ class WCML_Exchange_Rates {
 				}
 
 				$this->settings['service'] = sanitize_text_field( $post_data['exchange-rates-service'] );
-
+				$active_service_changed    = $active_service_id !== $this->settings['service'];
 			}
 
 			if ( isset( $post_data['services'] ) ) {
+				$active_service_key = $active_service ? $active_service->getSetting( 'api-key' ) : '';
 
 				foreach ( $post_data['services'] as $service_id => $service_data ) {
 					if ( isset( $service_data['api-key'] ) ) {
 						$this->services[ $service_id ]->saveSetting( 'api-key', $service_data['api-key'] );
+
+						if ( $service_id === $active_service_id ) {
+							$active_key_changed = $active_service_key !== $service_data['api-key'];
+						}
 					}
 				}
 			}
@@ -243,13 +255,27 @@ class WCML_Exchange_Rates {
 			} else {
 				$this->enable_update_cronjob();
 			}
+
+			if ( $active_key_changed || $active_service_changed ) {
+				add_action( 'init', [ $this, 'update_rates_on_service_or_key_changed' ], 5 );
+			}
 		} else {
 			$this->settings['automatic'] = 0;
 			$this->delete_update_cronjob();
 		}
 
 		$this->save_settings();
+	}
 
+	public function update_rates_on_service_or_key_changed() {
+		try {
+			$this->update_exchange_rates();
+			$this->woocommerce_wpml->get_multi_currency()->init_currencies(); // Re-init currencies.
+			wp_cache_add( self::KEY_RATES_UPDATED_FLAG, true );
+			add_action( 'shutdown', function() {
+				wp_cache_delete( WCML_Exchange_Rates::KEY_RATES_UPDATED_FLAG );
+			} );
+		} catch ( \Exception $e ) {} // Exception is handled inside `update_exchange_rates`.
 	}
 
 	public function enable_update_cronjob() {

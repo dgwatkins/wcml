@@ -83,6 +83,7 @@ class WCML_Exchange_Rates_UI extends WCML_Templates_Factory {
 
 			'secondary_currencies' => $this->woocommerce_wpml->multi_currency->get_currencies(),
 
+			'exchange_rates_manually_updated' => (bool) wp_cache_get( WCML_Exchange_Rates::KEY_RATES_UPDATED_FLAG ),
 		];
 
 		return $model;
