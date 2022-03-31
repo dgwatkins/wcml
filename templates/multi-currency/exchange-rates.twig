@@ -29,7 +29,7 @@
             </p>
 
             <p class="notice inline notice-success" id="exchange-rates-success"
-               style="display:none">{{ exchange_rates.strings.updated_success }}</p>
+               style="{% if not exchange_rates_manually_updated %}display:none{% endif %}">{{ exchange_rates.strings.updated_success }}</p>
             <p class="notice inline notice-error" id="exchange-rates-error" style="display:none"></p>
         </div>
 
