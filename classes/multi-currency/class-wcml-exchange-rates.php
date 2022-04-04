@@ -13,7 +13,7 @@ class WCML_Exchange_Rates {
 	private $services = [];
 	/** @var array */
 	private $settings;
-	/** @var  WP_Locale */
+	/** @var WP_Locale|mixed */
 	private $wp_locale;
 
 	const CRONJOB_EVENT              = 'wcml_exchange_rates_update';
@@ -21,14 +21,27 @@ class WCML_Exchange_Rates {
 	const KEY_RATES_UPDATED_FLAG     = 'wcml_exchange_rates_manually_updated';
 
 	/**
-	 * WCML_Exchange_Rates constructor.
-	 *
-	 * @param $woocommerce_wpml
-	 * @param WP_Locale
+	 * @param woocommerce_wpml $woocommerce_wpml
+	 * @param WP_Locale|mixed  $wp_locale
 	 */
-	public function __construct( $woocommerce_wpml, $wp_locale ) {
+	public function __construct( woocommerce_wpml $woocommerce_wpml, $wp_locale ) {
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->wp_locale        = $wp_locale;
+	}
+
+	/**
+	 * Please use `make( WCML_Exchange_Rates::class )` to get the instance of this class.
+	 *
+	 * @return WCML_Exchange_Rates
+	 */
+	public static function create() {
+		/**
+		 * @var woocommerce_wpml $woocommerce_wpml
+		 * @var WP_Locale|mixed  $wp_locale
+		 */
+		global $woocommerce_wpml, $wp_locale;
+
+		return new self( $woocommerce_wpml, $wp_locale );
 	}
 
 	public function add_actions() {
@@ -134,6 +147,28 @@ class WCML_Exchange_Rates {
 	 * @throws Exception
 	 */
 	public function update_exchange_rates() {
+		$currencies = $this->woocommerce_wpml->multi_currency->get_currency_codes();
+		$rates      = $this->fetch_exchange_rates_from_active_service( $currencies );
+
+		foreach ( $rates as $to => $rate ) {
+			if ( $rate && is_numeric( $rate ) ) {
+				$this->save_exchage_rate( $to, $rate );
+			}
+		}
+
+		$this->settings['last_updated'] = current_time( 'timestamp' );
+		$this->save_settings();
+
+		return $rates;
+	}
+
+	/**
+	 * @param array $currencies
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	public function fetch_exchange_rates_from_active_service( $currencies ) {
 		if ( ! isset( $this->services[ $this->settings['service'] ] ) ) {
 			throw new Exception( 'The exchange rate service "' . $this->settings['service'] . '" is not defined.' );
 		}
@@ -141,7 +176,6 @@ class WCML_Exchange_Rates {
 		/** @var \WCML\MultiCurrency\ExchangeRateServices\Service $service */
 		$service =& $this->services[ $this->settings['service'] ];
 
-		$currencies           = $this->woocommerce_wpml->multi_currency->get_currency_codes();
 		$default_currency     = wcml_get_woocommerce_currency_option();
 		$secondary_currencies = array_diff( $currencies, [ $default_currency ] );
 
@@ -155,15 +189,6 @@ class WCML_Exchange_Rates {
 		}
 
 		$this->apply_lifting_charge( $rates );
-
-		foreach ( $rates as $to => $rate ) {
-			if ( $rate && is_numeric( $rate ) ) {
-				$this->save_exchage_rate( $to, $rate );
-			}
-		}
-
-		$this->settings['last_updated'] = current_time( 'timestamp' );
-		$this->save_settings();
 
 		return $rates;
 	}
@@ -397,5 +422,4 @@ class WCML_Exchange_Rates {
 		}
 		return $month_day;
 	}
-
 }

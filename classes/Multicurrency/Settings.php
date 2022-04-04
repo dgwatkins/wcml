@@ -186,4 +186,18 @@ class Settings {
 			->keys()
 			->first();
 	}
+
+	/**
+	 * @return bool
+	 */
+	public static function isAutomaticRateEnabled() {
+		return (bool) Obj::prop( 'automatic', self::getAutomaticRateSettings() );
+	}
+
+	/**
+	 * @return array
+	 */
+	private static function getAutomaticRateSettings() {
+		return Obj::propOr( [], 'exchange_rates', getSetting( 'multi_currency', [] ) );
+	}
 }

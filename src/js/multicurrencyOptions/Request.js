@@ -14,6 +14,10 @@ export const doAjaxForSetMaxMindKey = (key) => {
     return doAjaxFor('wcml_set_max_mind_key', {MaxMindKey:key});
 };
 
+export const doAjaxForGetAutoExchangeRate = (currency) => {
+    return doAjaxFor('wcml_get_auto_exchange_rate', {currency});
+};
+
 /**
  * @deprecated
  */

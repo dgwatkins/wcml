@@ -1,9 +1,9 @@
 import { action, createStore, useStoreState, useStoreActions, computed, thunk } from "easy-peasy";
-import {capitalize, triggerActiveCurrenciesChange, triggerModeChange} from "./Utils";
+import {capitalize, triggerActiveCurrenciesChange, triggerModeChange, validateRate} from "./Utils";
 import * as R from 'ramda';
-import {doAjaxForSetMaxMindKey} from "./Request";
+import {doAjaxForGetAutoExchangeRate, doAjaxForSetMaxMindKey} from "./Request";
 
-const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, gateways, mode, maxMindKeyExist, isStandalone}) => createStore({
+const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, gateways, mode, maxMindKeyExist, isStandalone, isAutoRateEnabled}) => createStore({
     activeCurrencies: activeCurrencies,
     allCurrencies: allCurrencies,
     allCountries: allCountries,
@@ -16,6 +16,8 @@ const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, ga
     isStandalone: isStandalone,
     modalCurrency: null,
     updating: false,
+    isPresettingRate: false,
+    isAutoRateEnabled: isAutoRateEnabled,
 
     setDefaultCurrencyForLang: action((state, data) => {
         const index = state.languages.findIndex(lang => lang.code === data.language);
@@ -137,7 +139,29 @@ const initStore = ({activeCurrencies, allCurrencies, allCountries, languages, ga
 
     _setIsMaxMindRegistered: action((state) => {
         state.isMaxMindRegistered = true;
-    })
+    }),
+
+    presetExchangeRate: thunk(async (actions, currencyCode, store) => {
+        if (store.getState().isAutoRateEnabled) {
+            actions._setIsPresettingRate( true );
+            const {data:response} = await doAjaxForGetAutoExchangeRate(currencyCode);
+            actions._setIsPresettingRate( false );
+
+            actions.setModalCurrency({
+                ...store.getState().modalCurrency,
+                rate: response.success ? response.data : 'invalid'
+            });
+        }
+    }),
+
+    _setIsPresettingRate: action((state, isPresetting) => {
+        state.isPresettingRate = isPresetting
+    }),
+
+    isValidModalRate: computed(state => {
+        const rate = state.modalCurrency ? state.modalCurrency.rate : '1';
+        return validateRate(rate);
+    }),
 });
 
 export default initStore;

@@ -86,6 +86,7 @@ function wcml_loader() {
 	\WPML\Container\share( \WCML\Container\Config::getSharedInstances() );
 	\WPML\Container\share( \WCML\Container\Config::getSharedClasses() );
 	\WPML\Container\alias( \WCML\Container\Config::getAliases() );
+	\WPML\Container\delegate( \WCML\Container\Config::getDelegated() );
 
 	$loaders = [
 		WCML_xDomain_Data::class,

@@ -2,9 +2,9 @@
 
 use WCML\MultiCurrency\Settings;
 use WCML\Multicurrency\UI\Hooks;
-use WCML\MultiCurrency\Geolocation;
 use WPML\FP\Obj;
 use function WCML\functions\getSitePress;
+use function WPML\Container\make;
 
 class WCML_Multi_Currency_Configuration {
 
@@ -44,6 +44,7 @@ class WCML_Multi_Currency_Configuration {
 			add_action( 'wp_ajax_wcml_update_default_currency', [ __CLASS__, 'update_default_currency_ajax' ] );
 			add_action( 'wp_ajax_wcml_set_currency_mode', [ __CLASS__, 'set_currency_mode' ] );
 			add_action( 'wp_ajax_wcml_set_max_mind_key', [ __CLASS__, 'set_max_mind_key' ] );
+			add_action( 'wp_ajax_wcml_get_auto_exchange_rate', [ __CLASS__, 'get_auto_exchange_rate' ] );
 		}
 	}
 
@@ -385,4 +386,20 @@ class WCML_Multi_Currency_Configuration {
 		}
 	}
 
+	public static function get_auto_exchange_rate() {
+		self::verify_nonce();
+
+		try {
+			$currency = sanitize_text_field( Obj::prop( 'currency', self::get_data() ) );
+			$rate     = Obj::prop( $currency, make( \WCML_Exchange_Rates::class )->fetch_exchange_rates_from_active_service( [ $currency ] ) );
+
+			if ( null === $rate ) {
+				throw new \Exception();
+			}
+
+			wp_send_json_success( $rate );
+		} catch ( \Exception $e ) {
+			wp_send_json_error();
+		}
+	}
 }

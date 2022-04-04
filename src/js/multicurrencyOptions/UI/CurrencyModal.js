@@ -1,5 +1,5 @@
 import React from "react";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import Modal from 'antd/lib/modal';
 import {getPopupContainer} from '../../sharedComponents/helpers';
 import Select from "antd/lib/select";
@@ -9,7 +9,7 @@ import 'antd/lib/tooltip/style/index.css';
 import {useStore, getStoreProperty, getStoreAction} from "../Store";
 import {validateRate, getFormattedPricePreview, getCurrencyLabel, getCurrencySymbol} from '../Utils';
 import Gateways from "./Gateways/Gateways";
-import {SelectRow, InputRow} from "../../sharedComponents/FormElements";
+import {SelectRow, InputRow, Spinner} from "../../sharedComponents/FormElements";
 import {CountriesFilter} from "../../sharedComponents/CountriesFilter";
 import {createAjaxRequest} from "../Request";
 import strings from "../Strings";
@@ -19,11 +19,18 @@ import * as R from "ramda";
 const CurrencyModal = () => {
     const [currency, setModalCurrency] = useStore('modalCurrency');
     const saveModalCurrency = getStoreAction('saveModalCurrency');
-    const [isValidRate, setIsValidRate] = useState(true);
+    const isValidRate = getStoreProperty('isValidModalRate');
     const defaultCurrency = getStoreProperty('defaultCurrency');
     const onClose = () => setModalCurrency(null);
 
     const ajax = createAjaxRequest('saveCurrency');
+    const presetExchangeRate = getStoreAction('presetExchangeRate');
+
+    if ( currency.isNew ) {
+        useEffect(() => {
+            presetExchangeRate(currency.code);
+        }, [currency.code]);
+    }
 
     const onSave = async () => {
         const result = await ajax.send(currency);
@@ -60,8 +67,6 @@ const CurrencyModal = () => {
 
                     {!currency.isDefault && (
                             <CurrencySettingsFields currency={currency}
-                                                    isValidRate={isValidRate}
-                                                    setIsValidRate={setIsValidRate}
                                                     setModalCurrency={setModalCurrency}
                                                     defaultCurrency={defaultCurrency}
                             />
@@ -79,7 +84,10 @@ const CurrencyModal = () => {
 
 export default CurrencyModal;
 
-const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModalCurrency, defaultCurrency}) => {
+const CurrencySettingsFields = ({currency, setModalCurrency, defaultCurrency}) => {
+    const isPresettingRate = getStoreProperty('isPresettingRate');
+    const isValidRate = getStoreProperty('isValidModalRate');
+
     const updateCurrencyProp = (prop) => (e) => {
         setModalCurrency({...currency, [prop]:e.target.value});
     };
@@ -90,12 +98,6 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
 
     const onChangeRate = (e) => {
         updateCurrencyProp('rate')(e);
-
-        if (validateRate(e.target.value)) {
-            setIsValidRate(true);
-        } else {
-            setIsValidRate(false);
-        }
     };
 
     const [showCurrencyOptions, setCurrencyOptions] = useState(false);
@@ -112,8 +114,10 @@ const CurrencySettingsFields = ({currency, isValidRate, setIsValidRate, setModal
                                    className="wcml-exchange-rate" min="0.01" step="0.01" value={currency.rate}
                                    data-message={strings.labelOnlyNumeric} id={"wcml_currency_options_rate_" + currency.code}
                                    onChange={onChangeRate}
+                                   disabled={isPresettingRate}
                 />
                     <span className="this-currency">{currency.code}</span>
+                    {isPresettingRate && <Spinner />}
                     {!isValidRate && <span className="wcml-error">{strings.errorInvalidNumber}</span>}
                     <small>{currency.formattedLastRateUpdate}</small>
                 </div>
