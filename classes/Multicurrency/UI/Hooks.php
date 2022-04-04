@@ -50,16 +50,17 @@ class Hooks implements \IWPML_Action, IStandAloneAction {
 		$enqueue( [
 			'name' => 'wcmlMultiCurrency',
 			'data' => [
-				'endpoint'         => self::HANDLE,
-				'activeCurrencies' => $this->getActiveCurrencies( $gateways ),
-				'allCurrencies'    => $this->getAllCurrencies(),
-				'allCountries'     => $this->getAllCountries(),
-				'languages'        => $this->getLanguages(),
-				'gateways'         => $gateways->toArray(),
-				'strings'          => $this->getStrings(),
-				'mode'             => Settings::getMode(),
-				'maxMindKeyExist'  => $this->checkMaxMindKeyExist(),
-				'isStandalone'     => isStandAlone(),
+				'endpoint'          => self::HANDLE,
+				'activeCurrencies'  => $this->getActiveCurrencies( $gateways ),
+				'allCurrencies'     => $this->getAllCurrencies(),
+				'allCountries'      => $this->getAllCountries(),
+				'languages'         => $this->getLanguages(),
+				'gateways'          => $gateways->toArray(),
+				'strings'           => $this->getStrings(),
+				'mode'              => Settings::getMode(),
+				'maxMindKeyExist'   => $this->checkMaxMindKeyExist(),
+				'isStandalone'      => isStandAlone(),
+				'isAutoRateEnabled' => Settings::isAutomaticRateEnabled(),
 			],
 		] );
 	}

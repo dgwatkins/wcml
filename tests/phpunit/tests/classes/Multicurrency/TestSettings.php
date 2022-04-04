@@ -357,4 +357,28 @@ class TestSettings extends \OTGS_TestCase {
 		$this->assertEquals( 'GBP', Settings::getFirstAvailableCurrencyForLang( 'en' ) );
 		$this->assertEquals( 'BRL', Settings::getFirstAvailableCurrencyForLang( 'pt-br' ) );
 	}
+
+	/**
+	 * @test
+	 * @dataProvider dpIsAutomaticRateEnabled
+	 *
+	 * @param mixed $settings
+	 * @param bool  $expected
+	 *
+	 * @return void
+	 */
+	public function testIsAutomaticRateEnabled( $settings, $expected ) {
+		updateSetting( 'multi_currency', $settings );
+		$this->assertSame( $expected, Settings::isAutomaticRateEnabled() );
+	}
+
+	public function dpIsAutomaticRateEnabled() {
+		return [
+			[ null, false ],
+			[ [], false ],
+			[ [ 'exchange_rates' => [] ], false ],
+			[ [ 'exchange_rates' => [ 'automatic' => 0 ] ], false ],
+			[ [ 'exchange_rates' => [ 'automatic' => 1 ] ], true ],
+		];
+	}
 }

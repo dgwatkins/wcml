@@ -157,7 +157,7 @@ class WCML_Multi_Currency {
 		$this->currency_switcher->add_hooks();
 		$this->currency_switcher_ajax = new WCML_Currency_Switcher_Ajax( $woocommerce_wpml );
 
-		$this->exchange_rate_services = new WCML_Exchange_Rates( $this->woocommerce_wpml, $wp_locale );
+		$this->exchange_rate_services = make( \WCML_Exchange_Rates::class );
 		$this->exchange_rate_services->initialize_settings();
 		$this->exchange_rate_services->add_actions();
 
