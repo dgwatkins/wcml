@@ -118,7 +118,7 @@ const CurrencySettingsFields = ({currency, setModalCurrency, defaultCurrency}) =
                 />
                     <span className="this-currency">{currency.code}</span>
                     {isPresettingRate && <Spinner />}
-                    {!isValidRate && <span className="wcml-error">{strings.errorInvalidNumber}</span>}
+                    {!isValidRate && <React.Fragment><br /><span className="wcml-error">{strings.errorInvalidNumber}</span></React.Fragment>}
                     <small>{currency.formattedLastRateUpdate}</small>
                 </div>
             </div>
