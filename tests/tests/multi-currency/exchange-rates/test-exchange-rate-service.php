@@ -2,6 +2,10 @@
 
 namespace WCML\MultiCurrency\ExchangeRateServices;
 
+/**
+ * @group multicurrency
+ * @group exchange-rate-services
+ */
 class Test_Service extends \WCML_UnitTestCase {
 
     private $_mock_http_response = false;
@@ -29,78 +33,59 @@ class Test_Service extends \WCML_UnitTestCase {
         $settings = $currencylayer->getSettings();
         $this->assertEquals( $random_value,  $settings[$random_key] );
 
-        add_filter( 'pre_http_request', array( $this, 'mock_api_response' ) );
+        add_filter( 'pre_http_request', [ $this, 'mock_api_response' ] );
 
 
         // 1) WP error
         $this->_mock_http_response = new \WP_Error( 500, 'some_wp_error' );
         try {
-            $rates = $currencylayer->getRates( 'EUR', array( 'USD', 'RON' ) );
+            $rates = $currencylayer->getRates( 'EUR', [ 'USD', 'RON' ] );
         } catch ( \Exception $e ) {
             $this->assertEquals( 'some_wp_error', $e->getMessage() );
-        }
-
-        // 2) Missing access key
-        $this->_mock_http_response = array(
-            'body' => json_encode(
-                array(
-                    'success' => false,
-                    'error'   => array(
-                        'code' => 101,
-                        'type' => 'missing_access_key',
-                        'info' => 'You have not supplied an API Access Key. [Required format: access_key=YOUR_ACCESS_KEY]'
-                    )
-                )
-            )
-        );
-        try {
-            $rates = $currencylayer->getRates( 'EUR', array( 'USD', 'RON' ) );
-        } catch ( \Exception $e ) {
-            $this->assertEquals( 'You have entered an incorrect API Access Key', $e->getMessage() );
         }
 
         $currencylayer->saveSetting( 'api-key', 'INCORRECT_a1e7e888e1ce81ac7c6f4a9b4374a748' );
         $currencylayer = new CurrencyLayer(); // New Instance to take key
 
-        // 3) Incorrect API key
-        $this->_mock_http_response = array(
-            'body' => json_encode(
-                array(
-                    'success' => false,
-                    'error'   => array(
-                        'code' => 101,
-                        'type' => 'invalid_access_key',
-                        'info' => 'You have not supplied a valid API Access Key. [Technical Support: support@apilayer.com]'
-                    )
-                )
-            )
-        );
+        // 2) Error in API response
+		$error_body = [
+			'success' => false,
+			'error'   => [
+				'code' => 101,
+				'type' => 'invalid_access_key',
+				'info' => 'You have not supplied a valid API Access Key. [Technical Support: support@apilayer.com]'
+			]
+		];
+
+        $this->_mock_http_response = [ 'body' => json_encode( $error_body ) ];
         try {
-            $rates = $currencylayer->getRates( 'EUR', array( 'USD', 'RON' ) );
+            $rates = $currencylayer->getRates( 'EUR', [ 'USD', 'RON' ] );
         } catch ( \Exception $e ) {
-            $this->assertEquals( 0, strpos( $e->getMessage(), 'You have not supplied a valid API Access Key' ) );
+            $this->assertStringContainsString( $error_body['error']['code'], $e->getMessage() );
+            $this->assertStringContainsString( $error_body['error']['type'], $e->getMessage() );
+            $this->assertStringContainsString( $error_body['error']['info'], $e->getMessage() );
         }
 
 
-        // 4) Correct API key
+        // 3) Correct API key
         $currencylayer->saveSetting( 'api-key', 'a1e7e888e1ce81ac7c6f4a9b4374a748' );
         $currencylayer = new CurrencyLayer(); // New Instance to take key
 
         $source = 'USD';
-        $tos    = array( 'EUR', 'RON' );
-        foreach ($tos as $to ){
+        $tos    = [ 'EUR', 'RON' ];
+        foreach ( $tos as $to ){
             $quotes[ $source . $to ] = round( rand(1, 10000) / 100, 2 );
         }
 
-        $this->_mock_http_response = array(
+        $this->_mock_http_response = [
             'body' => json_encode(
-                array(
+                [
                     'success' => 1,
                     'source'  => $source,
                     'quotes'  => $quotes
-                )
+                ]
             )
-        );
+        ];
         try {
             $rates = $currencylayer->getRates( $source, $tos );
 
@@ -113,7 +98,7 @@ class Test_Service extends \WCML_UnitTestCase {
         }
 
 
-        remove_filter( 'pre_http_request', array( $this, 'mock_api_response' ) );
+        remove_filter( 'pre_http_request', [ $this, 'mock_api_response' ] );
         $this->_mock_http_response = false;
 
 
