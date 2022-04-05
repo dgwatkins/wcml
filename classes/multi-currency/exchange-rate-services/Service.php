@@ -68,11 +68,7 @@ abstract class Service {
 		$json = json_decode( $data['body'] );
 
 		if ( empty( $json->rates ) ) {
-			if ( isset( $json->error->info ) ) {
-				$error = $json->error->info;
-			} else {
-				$error = __( 'Cannot get exchange rates. Connection failed.', 'woocommerce-multilingual' );
-			}
+			$error = self::get_formatted_error( $json );
 			$this->saveLastError( $error );
 			throw new \Exception( $error );
 		}
@@ -82,6 +78,52 @@ abstract class Service {
 		}
 
 		return $rates;
+	}
+
+	/**
+	 * Each service has its own response signature,
+	 * and I also noticed that it does not always
+	 * respect their own doc.
+	 *
+	 * So the idea is to just catch all possible information
+	 * and return it as raw output.
+	 *
+	 * Example: "error_code: 104 - error_message: ..."
+	 *
+	 * @param array|\stdClass $response
+	 *
+	 * @return string
+	 */
+	public static function get_formatted_error( $response ) {
+		// $getFromPath :: array -> string|null
+		$getFromPath = function( $path ) use ( $response ) {
+			try {
+				$value = Obj::path( $path, $response );
+				return is_string( $value ) || is_int( $value ) ? $value : null;
+			} catch ( \Exception $e ) {
+				return null;
+			}
+		};
+
+		$formattedError = wpml_collect( [
+			// Codes or types
+			'error'         => $getFromPath( [ 'error' ] ),
+			'error_code'    => $getFromPath( [ 'error', 'code' ] ),
+			'error_type'    => $getFromPath( [ 'error', 'type' ] ),
+			// Descriptions or messages
+			'error_info'    => $getFromPath( [ 'error', 'info' ] ),
+			'error_message' => $getFromPath( [ 'error', 'message' ] ),
+			'message'       => $getFromPath( [ 'message' ] ),
+			'description'   => $getFromPath( [ 'description' ] ),
+		] )->filter()
+		   ->map( function( $value, $key ) {
+			   return "$key: $value";
+		   } )
+		   ->implode( ' - ' );
+
+		return $formattedError
+			? strip_tags( $formattedError )
+			: esc_html__( 'Cannot get exchange rates. Connection failed.', 'woocommerce-multilingual' );
 	}
 
 	/**

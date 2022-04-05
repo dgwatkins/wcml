@@ -69,15 +69,7 @@ class CurrencyLayer extends Service {
 		$json = json_decode( $data['body'] );
 
 		if ( empty( $json->success ) ) {
-			if ( ! empty( $json->error->info ) ) {
-				if ( strpos( $json->error->info, 'You have not supplied an API Access Key' ) !== false ) {
-					$error = __( 'You have entered an incorrect API Access Key', 'woocommerce-multilingual' );
-				} else {
-					$error = $json->error->info;
-				}
-			} else {
-				$error = __( 'Cannot get exchange rates. Connection failed.', 'woocommerce-multilingual' );
-			}
+			$error = Service::get_formatted_error( $json );
 			$this->saveLastError( $error );
 			throw new \Exception( $error );
 		}

@@ -1,8 +1,10 @@
 <?php
 
 namespace WCML\MultiCurrency\ExchangeRateServices;
+
 /**
- * Class TestService
+ * @group multicurrency
+ * @group exchange-rate-services
  */
 class TestService extends \OTGS_TestCase {
 
@@ -106,26 +108,85 @@ class TestService extends \OTGS_TestCase {
 		$this->assertFalse( $subject->getLastError() );
 	}
 
+	/**
+	 * @test
+	 * @dataProvider dp_should_get_formatted_error
+	 * @group wcml-3996
+	 *
+	 * @param \stdClass $response
+	 * @param string    $expected_error
+	 *
+	 * @return void
+	 */
+	public function it_should_get_formatted_error( $response, $expected_error ) {
+		$this->assertEquals( $expected_error, Service::get_formatted_error( $response ) );
+	}
+
+	public function dp_should_get_formatted_error() {
+		$code_string = 'the code';
+		$code_int    = 123;
+		$message     = 'the message';
+
+		return [
+			'no parsable data' => [
+				(object) [ 'foo' => 'bar' ],
+				'Cannot get exchange rates. Connection failed.', // default string
+			],
+			'error as string property' => [
+				(object) [ 'error' => $code_string ],
+				"error: $code_string",
+			],
+			'error as int property' => [
+				(object) [ 'error' => $code_int ],
+				"error: $code_int",
+			],
+			'error code as string' => [
+				(object) [ 'error' => (object) [ 'code' => $code_string ] ],
+				"error_code: $code_string",
+			],
+			'error code as int' => [
+				(object) [ 'error' => (object) [ 'code' => $code_int ] ],
+				"error_code: $code_int",
+			],
+			'all properties' => [
+				(object) [
+					'error'       => (object) [
+						'code'    => $code_int,
+						'type'    => $code_string,
+						'info'    => $message,
+						'message' => $message,
+					],
+					'message'     => $message,
+					'description' => $message,
+				],
+				"error_code: $code_int - error_type: $code_string - error_info: $message - error_message: $message - message: $message - description: $message",
+			],
+			'strip tags' => [
+				(object) [ 'error' => 'Some <b>important</b> content' ],
+				'error: Some important content',
+			],
+		];
+	}
 }
 
 class Concrete extends Service {
 
 	/**
-	 * @return string 
+	 * @return string
 	 */
 	public function getId() {
 		return 'concrete';
 	}
 
 	/**
-	 * @return string 
+	 * @return string
 	 */
 	public function getName() {
 		return 'Concrete';
 	}
 
 	/**
-	 * @return string 
+	 * @return string
 	 */
 	public function getUrl() {
 		return 'https://concrete.demo/';
@@ -139,7 +200,7 @@ class Concrete extends Service {
 	}
 
 	/**
-	 * @return string 
+	 * @return string
 	 */
 	public function getApiUrl() {
 		return 'http://concrete.demo/api/?source=%s&currencies=%s';
