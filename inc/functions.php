@@ -69,3 +69,12 @@ if ( ! function_exists( '\WCML\functions\updateSetting' ) ) {
 		make( \woocommerce_wpml::class )->update_setting( $key, $value, $autoload );
 	}
 }
+
+if ( ! function_exists( '\WCML\functions\getClientCurrency' ) ) {
+	/**
+	 * @return string
+	 */
+	function getClientCurrency() {
+		return make( \WCML_Multi_Currency::class )->get_client_currency();
+	}
+}

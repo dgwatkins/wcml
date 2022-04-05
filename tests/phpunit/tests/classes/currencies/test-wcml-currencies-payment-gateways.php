@@ -230,10 +230,10 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 		$payment_gateways = $subject->get_gateways();
 		
 		$expected_gateways_from_init = [
-			'bacs'   => 'WCML_Payment_Gateway_Bacs',
-			'paypal' => 'WCML_Payment_Gateway_PayPal',
-			'ppcp-gateway' => 'WCML_Payment_Gateway_PayPal',
-			'stripe' => 'WCML_Payment_Gateway_Stripe',
+			'bacs'         => 'WCML_Payment_Gateway_Bacs',
+			'paypal'       => 'WCML_Payment_Gateway_PayPal',
+			'ppcp-gateway' => 'WCML_Payment_Gateway_PayPal_V2',
+			'stripe'       => 'WCML_Payment_Gateway_Stripe',
 		];
 		
 		$supported_gateways = $subject->get_supported_gateways();
