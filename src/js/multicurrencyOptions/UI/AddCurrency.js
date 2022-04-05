@@ -30,9 +30,10 @@ const AddCurrency = () => {
             isDefault: false,
             gatewaysEnabled: false,
             gatewaysSettings: {
-                bacs: {currency:'', value:''},
-                paypal: {currency:'', value:''},
-                stripe: {currency:'', publishable_key:'', secret_key:''},
+                'bacs': {currency:'', value:''},
+                'paypal': {currency:'', value:''},
+                'ppcp-gateway': {currency:'', merchant_email:'', merchant_id:'', client_id:'', client_secret: ''},
+                'stripe': {currency:'', publishable_key:'', secret_key:''},
             },
             location_mode: 'all',
             countries: [],

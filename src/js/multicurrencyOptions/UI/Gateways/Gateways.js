@@ -3,6 +3,7 @@ import {useStore, getStoreProperty} from "../../Store";
 import {assocPath} from "ramda";
 import Bacs from "./Bacs";
 import PayPal from "./PayPal";
+import PpcpGateway from "./PpcpGateway";
 import Stripe from "./Stripe";
 import Unsupported from "./Unsupported";
 import {getTooltip} from "../../../sharedComponents/FormElements";
@@ -81,6 +82,8 @@ const Gateway = ({gateway, currency, setModalCurrency, ...attrs}) => {
             gatewayUi = <Bacs gateway={gateway} updateSettings={updateSettings} getName={getName} currency={currency} {...attrs}/>;
             break;
         case 'ppcp-gateway':
+            gatewayUi = ! currency.isDefault && <PpcpGateway gateway={gateway} updateSettings={updateSettings} getName={getName} currency={currency} {...attrs}/>
+            break;
         case 'paypal':
             gatewayUi = ! currency.isDefault && <PayPal gateway={gateway} updateSettings={updateSettings} getName={getName} currency={currency} {...attrs}/>
             break;

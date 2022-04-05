@@ -36,6 +36,7 @@ class WCML_Currencies_Payment_Gateways {
 
 		add_filter( 'woocommerce_gateway_description', [ $this, 'filter_gateway_description' ], 10, 2 );
 		add_filter( 'option_woocommerce_stripe_settings', [ 'WCML_Payment_Gateway_Stripe', 'filter_stripe_settings' ] );
+		add_filter( 'option_woocommerce-ppcp-settings', [ 'WCML_Payment_Gateway_PayPal_V2', 'filter_ppcp_args' ] );
 
 		if ( ! is_admin() && wcml_is_multi_currency_on() ) {
 			add_filter(
@@ -94,7 +95,7 @@ class WCML_Currencies_Payment_Gateways {
 		$this->supported_gateways = [
 			'bacs'         => 'WCML_Payment_Gateway_Bacs',
 			'paypal'       => 'WCML_Payment_Gateway_PayPal',
-			'ppcp-gateway' => 'WCML_Payment_Gateway_PayPal',
+			'ppcp-gateway' => 'WCML_Payment_Gateway_PayPal_V2',
 			'stripe'       => 'WCML_Payment_Gateway_Stripe',
 		];
 		$this->supported_gateways = apply_filters( 'wcml_supported_currency_payment_gateways', $this->supported_gateways );
