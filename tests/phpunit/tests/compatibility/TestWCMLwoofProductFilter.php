@@ -18,7 +18,7 @@ class TestWCMLwoofProductFilter extends OTGS_TestCase {
 		WP_Mock::expectActionAdded( 'init', [ $subject, 'setupCurrencies'] );
 		WP_Mock::expectFilterAdded( 'woof_get_meta_query', [ $subject, 'priceInDefaultCurrency' ], 10, 1 );
 		WP_Mock::expectFilterAdded( 'wcml_exchange_rates', [ $subject, 'storeExchangeRates' ], 10, 1 );
-		$subject->addHooks();
+		$subject->add_hooks();
 	}
 
 	/**
@@ -32,7 +32,7 @@ class TestWCMLwoofProductFilter extends OTGS_TestCase {
 		WP_Mock::expectActionNotAdded( 'init', [ $subject, 'setupCurrencies'] );
 		WP_Mock::expectFilterNotAdded( 'woof_get_meta_query', [ $subject, 'priceInDefaultCurrency' ], 10, 1 );
 		WP_Mock::expectFilterNotAdded( 'wcml_exchange_rates', [ $subject, 'storeExchangeRates' ], 10, 1 );
-		$subject->addHooks();
+		$subject->add_hooks();
 	}
 
 	/**
@@ -219,6 +219,6 @@ class TestWCMLwoofProductFilter extends OTGS_TestCase {
 	}
 
 	private function getSubject() {
-		return new WCML\Compatibility\WOOF\WooCommerceProductFilter();
+		return new WCML\Compatibility\WoofWcProductFilter\Hooks();
 	}
 }

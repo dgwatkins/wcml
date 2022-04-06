@@ -1,8 +1,8 @@
 <?php
 
-use WCML\Compatibility\Stripe_Gateway;
+namespace WCML\Compatibility\StripePayments;
 
-class Test_WCML_Stripe_Gateways extends OTGS_TestCase {
+class Test_WCML_Stripe_Gateways extends \OTGS_TestCase {
 
 	private function get_orders() {
 		return $this->getMockBuilder( 'WCML_Multi_Currency_Orders' )
@@ -11,7 +11,7 @@ class Test_WCML_Stripe_Gateways extends OTGS_TestCase {
 	}
 
 	private function get_subject() {
-		return new Stripe_Gateway( $this->get_orders() );
+		return new Hooks( $this->get_orders() );
 	}
 
 	/**
@@ -31,12 +31,12 @@ class Test_WCML_Stripe_Gateways extends OTGS_TestCase {
 	public function deregister_and_register_currency_symbol() {
 		$subject = $this->get_subject();
 
-		WP_Mock::userFunction( 'remove_filter', [
+		\WP_Mock::userFunction( 'remove_filter', [
 			'return' => true,
 			'times' => 1
 		] );
 
-		WP_Mock::userFunction( 'add_filter' );
+		\WP_Mock::userFunction( 'add_filter' );
 
 		$subject->suspendCurrencySymbolFilter();
 	}

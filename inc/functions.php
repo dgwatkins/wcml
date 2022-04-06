@@ -19,6 +19,20 @@ if ( ! function_exists( 'WCML\functions\getSitePress' ) ) {
 	}
 }
 
+if ( ! function_exists( 'WCML\functions\getWooCommerceWpml' ) ) {
+	/**
+	 * @return \woocommerce_wpml
+	 */
+	function getWooCommerceWpml() {
+		/**
+		 * @global \woocommerce_wpml $woocommerce_wpml
+		 */
+		global $woocommerce_wpml;
+
+		return $woocommerce_wpml;
+	}
+}
+
 if ( ! function_exists( 'WCML\functions\isStandAlone' ) ) {
 	/**
 	 * Test whether we are running in standalone mode.

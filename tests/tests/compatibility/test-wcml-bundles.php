@@ -74,8 +74,10 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 	 */
 	private function get_test_subject() {
 
-		return new WCML_Product_Bundles( $this->sitepress, $this->woocommerce_wpml, $this->WCML_WC_Product_Bundles_Items_Mock, $this->wpdb );
+		$pb = new WCML_Product_Bundles( $this->sitepress, $this->woocommerce_wpml, $this->WCML_WC_Product_Bundles_Items_Mock, $this->wpdb );
+		$pb->add_hooks();
 
+		return $pb;
 	}
 
 	public function get_items( $bundle_id ){
