@@ -199,6 +199,9 @@ class woocommerce_wpml {
 		}
 
 		if ( $this->dependencies_are_ok ) {
+			$this->compatibility = new WCML_Compatibility();
+			$this->compatibility->init();
+
 			if ( isStandAlone() ) {
 				return $this->init_standalone( $sitepress, $wpdb );
 			} else {
@@ -208,9 +211,6 @@ class woocommerce_wpml {
 	}
 
 	private function init_full( $sitepress, $wpdb, $woocommerce, $wpml_url_converter, $wpml_post_translations, $wpml_term_translations ) {
-
-		$this->compatibility = new WCML_Compatibility( $sitepress, $this, $wpdb, new WPML_Element_Translation_Package(), $wpml_post_translations );
-
 		$this->currencies = new WCML_Currencies( $this );
 		$this->currencies->add_hooks();
 
