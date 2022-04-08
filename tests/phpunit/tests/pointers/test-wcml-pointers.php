@@ -8,6 +8,11 @@ use tad\FunctionMocker\FunctionMocker;
  * @group  wcml-1986
  */
 class Test_WCML_Pointers extends OTGS_TestCase {
+	public function setUp() {
+		parent::setUp();
+		WP_Mock::userFunction( 'WCML\functions\isStandAlone' )->andReturn( false );
+	}
+
 	function tearDown() {
 		unset( $_GET['tab'], $_GET['section'] );
 		parent::tearDown();
@@ -154,7 +159,25 @@ class Test_WCML_Pointers extends OTGS_TestCase {
 		$this->expectActionAdded( 'admin_footer', array( $subject, 'add_shipping_classes_translation_link' ), 10, 1, 0 );
 		$this->expectActionAdded( 'woocommerce_general_settings', array( $subject, 'add_multi_currency_link' ), 10, 1, 0 );
 
-		WP_Mock::expectFilterAdded( 'woocommerce_account_settings', array( $subject, 'add_endpoints_translation_link' ) );
+		$subject->setup();
+	}
+
+	/**
+	 * @test
+	 */
+	function it_does_add_endpoints_translation_link_in_advanced_tab() {
+		$current_screen     = new stdClass();
+		$current_screen->id = 'woocommerce_page_wc-settings';
+		WP_Mock::userFunction( 'get_current_screen', [ 'return' => $current_screen ] );
+		WP_Mock::userFunction( 'wp_register_style', [ 'times' => 1, 'args' => [ 'wcml-pointers', WCML_PLUGIN_URL . '/res/css/wcml-pointers.css' ] ] );
+
+		$_GET['tab'] = 'advanced';
+
+		$subject = new WCML_Pointers();
+
+		FunctionMocker::replace( 'WCML_Capabilities::canManageWcml', true );
+
+		WP_Mock::expectFilterAdded( 'woocommerce_settings_pages', [ $subject, 'add_endpoints_translation_link' ] );
 
 		$subject->setup();
 	}
@@ -275,7 +298,7 @@ class Test_WCML_Pointers extends OTGS_TestCase {
 	function dp_descriptions() {
 		return array(
 			array( 'Configure multicurrency for multilingual sites', 'admin.php?page=wpml-wcml&tab=multi-currency', 'pricing_options', 'add_multi_currency_link' ),
-			array( 'Translate endpoints', 'admin.php?page=wpml-wcml&tab=slugs', 'account_endpoint_options', 'add_endpoints_translation_link' ),
+			array( 'Translate endpoints', 'admin.php?page=wpml-wcml&tab=slugs', 'checkout_endpoint_options', 'add_endpoints_translation_link' ),
 		);
 	}
 

@@ -31,8 +31,8 @@ class WCML_Pointers{
 				add_action( 'admin_footer', array( $this, 'add_shipping_classes_translation_link' ) );
 			} elseif ( ! $tab || 'general' === $tab ) {
 				add_filter( 'woocommerce_general_settings', array( $this, 'add_multi_currency_link' ) );
-			} elseif ( $isFullMode && 'account' === $tab ) {
-				add_filter( 'woocommerce_account_settings', array( $this, 'add_endpoints_translation_link' ) );
+			} elseif ( $isFullMode && 'advanced' === $tab ) {
+				add_filter( 'woocommerce_settings_pages', array( $this, 'add_endpoints_translation_link' ) );
 			}
 		}
 	}
@@ -78,7 +78,7 @@ class WCML_Pointers{
 
 		$anchor = '<a class="button button-small button-wpml wcml-pointer-endpoints_translation" href="{{ url }}">{{ text }}</a>';
 
-		return $this->add_link_with_settings( $link, $name, 'account_endpoint_options', $settings, $anchor );
+		return $this->add_link_with_settings( $link, $name, 'checkout_endpoint_options', $settings, $anchor );
 	}
 
 	/**
