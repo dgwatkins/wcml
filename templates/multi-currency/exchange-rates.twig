@@ -57,7 +57,7 @@
                                        size="40" />
                             {% endif %}
 
-                            <p class="notice inline notice-error" {% if 'fixerio' != id %}style="display:none"{% endif %}>
+                            <p class="notice inline notice-warning" {% if 'fixerio' != id %}style="display:none"{% endif %}>
                                 {{ exchange_rates.strings.fixerio_warning }}
                             </p>
                             <p class="notice inline notice-error" id="service-error-{{ id }}" {% if service.last_error == false %}style="display:none"{% endif %}>
