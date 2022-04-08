@@ -1,5 +1,7 @@
 <?php
 
+use function WCML\functions\isStandAlone;
+
 class WCML_Pointers{
 
 	public function add_hooks() {
@@ -16,19 +18,20 @@ class WCML_Pointers{
 		if ( ! WCML_Capabilities::canManageWcml() ) {
 			return;
 		}
-		
-		$tab     = isset( $_GET['tab'] ) ? $_GET['tab'] : '';
-		$section = isset( $_GET['section'] ) ? $_GET['section'] : '';
+
+		$tab        = isset( $_GET['tab'] ) ? $_GET['tab'] : '';
+		$section    = isset( $_GET['section'] ) ? $_GET['section'] : '';
+		$isFullMode = ! isStandAlone();
 		wp_register_style( 'wcml-pointers', WCML_PLUGIN_URL . '/res/css/wcml-pointers.css' );
 
-		if ( 'edit-product' === $current_screen->id ) {
+		if ( $isFullMode && 'edit-product' === $current_screen->id ) {
 			add_action( 'admin_footer', array( $this, 'add_products_translation_link' ), 100 );
 		} elseif ( 'woocommerce_page_wc-settings' === $current_screen->id ) {
-			if ( 'shipping' === $tab && 'classes' === $section ) {
+			if ( $isFullMode && 'shipping' === $tab && 'classes' === $section ) {
 				add_action( 'admin_footer', array( $this, 'add_shipping_classes_translation_link' ) );
 			} elseif ( ! $tab || 'general' === $tab ) {
 				add_filter( 'woocommerce_general_settings', array( $this, 'add_multi_currency_link' ) );
-			} elseif ( 'account' === $tab ) {
+			} elseif ( $isFullMode && 'account' === $tab ) {
 				add_filter( 'woocommerce_account_settings', array( $this, 'add_endpoints_translation_link' ) );
 			}
 		}
