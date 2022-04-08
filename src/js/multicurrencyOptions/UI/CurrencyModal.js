@@ -21,6 +21,7 @@ const CurrencyModal = () => {
     const saveModalCurrency = getStoreAction('saveModalCurrency');
     const isValidRate = getStoreProperty('isValidModalRate');
     const defaultCurrency = getStoreProperty('defaultCurrency');
+    const isStandalone = getStoreProperty('isStandalone');
     const onClose = () => setModalCurrency(null);
 
     const ajax = createAjaxRequest('saveCurrency');
@@ -75,7 +76,7 @@ const CurrencyModal = () => {
 
                     {'by_location' === mode && <CountriesBlock currency={currency} onChange={updateCurrencyPropValue} strings={strings} />}
 
-                    <Gateways/>
+                    {!isStandalone && <Gateways/>}
                 </form>
             </div>
         </div>
