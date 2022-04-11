@@ -54,7 +54,7 @@ class Test_WCML_Exchange_Rates extends WCML_UnitTestCase {
      */
     public function test_get_services(){
 
-        $expected_services = array( 'fixerio', 'currencylayer', 'exchangeratesapi', 'openexchangerates' );
+        $expected_services = [ 'currencylayer', 'exchangeratesapi', 'fixerio', 'openexchangerates' ];
         $actual_services   = array_keys( $this->exchange_rate_services->get_services() );
 
         $this->assertEquals( $expected_services, $actual_services );
