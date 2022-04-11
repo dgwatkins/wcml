@@ -22,52 +22,14 @@ class WCML_Dynamic_Pricing implements \IWPML_Action {
 	}
 
 	public function add_hooks() {
-
 		if ( ! is_admin() ) {
 			add_filter( 'woocommerce_dynamic_pricing_is_object_in_terms', [ $this, 'is_object_in_translated_terms' ], 10, 3 );
-
-			add_filter( 'wc_dynamic_pricing_load_modules', [ $this, 'filter_price' ] );
 			add_filter( 'wc_dynamic_pricing_load_modules', [ $this, 'translate_collector_args' ] );
 			add_filter( 'woocommerce_dynamic_pricing_is_applied_to', [ $this, 'woocommerce_dynamic_pricing_is_applied_to' ], 10, 5 );
-			add_filter( 'woocommerce_dynamic_pricing_get_rule_amount', [ $this, 'woocommerce_dynamic_pricing_get_rule_amount' ], 10, 2 );
-			add_filter( 'dynamic_pricing_product_rules', [ $this, 'dynamic_pricing_product_rules' ] );
 		} else {
 			$this->hide_language_switcher_for_settings_page();
 		}
 		add_filter( 'woocommerce_product_get__pricing_rules', [ $this, 'translate_variations_in_rules' ] );
-
-	}
-
-	/**
-	 * @param array $modules
-	 *
-	 * @return array
-	 */
-	public function filter_price( $modules ) {
-
-		foreach ( $modules as $mod_key => $module ) {
-			if ( isset( $module->available_rulesets ) ) {
-				$available_rulesets = $module->available_rulesets;
-
-				foreach ( $available_rulesets as $rule_key => $available_ruleset ) {
-
-					if ( isset( $available_ruleset['rules'] ) && is_array( $available_ruleset['rules'] ) ) {
-						$rules = $available_ruleset['rules'];
-						foreach ( $rules as $r_key => $rule ) {
-							if ( 'fixed_product' === $rule['type'] ) {
-								$rules[ $r_key ]['amount'] = apply_filters( 'wcml_raw_price_amount', $rule['amount'] );
-							}
-						}
-						$modules[ $mod_key ]->available_rulesets[ $rule_key ]['rules'] = $rules;
-
-					} elseif ( isset( $available_ruleset['type'] ) && 'fixed_product' === $available_ruleset['type'] ) {
-						$modules[ $mod_key ]->available_rulesets[ $rule_key ]['amount'] = apply_filters( 'wcml_raw_price_amount', $available_ruleset['amount'] );
-					}
-				}
-			}
-		}
-
-		return $modules;
 	}
 
 	/**
@@ -76,7 +38,6 @@ class WCML_Dynamic_Pricing implements \IWPML_Action {
 	 * @return array
 	 */
 	public function translate_collector_args( $modules ) {
-
 		foreach ( $modules as $mod_key => $module ) {
 			if ( isset( $module->available_advanced_rulesets ) ) {
 				foreach ( $module->available_advanced_rulesets as $rule_key => $rule ) {
@@ -110,7 +71,6 @@ class WCML_Dynamic_Pricing implements \IWPML_Action {
 
 		return is_object_in_term( $product_id, 'product_cat', $categories );
 	}
-
 
 	/**
 	 * @param bool                                                            $process_discounts
@@ -190,7 +150,7 @@ class WCML_Dynamic_Pricing implements \IWPML_Action {
 			return wpml_collect( $requirements[ $class_name ] )
 				->filter(
 					function ( $property ) use ( $dynamic_pricing ) {
-							return isset( $dynamic_pricing->$property ) && $dynamic_pricing->$property;
+						return isset( $dynamic_pricing->$property ) && $dynamic_pricing->$property;
 					}
 				)
 				->count();
@@ -216,40 +176,6 @@ class WCML_Dynamic_Pricing implements \IWPML_Action {
 			},
 			$cat_ids
 		);
-	}
-
-	/**
-	 * @param float  $amount
-	 * @param object $rule
-	 *
-	 * @return float
-	 */
-	public function woocommerce_dynamic_pricing_get_rule_amount( $amount, $rule ) {
-
-		if ( 'price_discount' === $rule['type'] || 'fixed_price' === $rule['type'] ) {
-			$amount = apply_filters( 'wcml_raw_price_amount', $amount );
-		}
-
-		return $amount;
-	}
-
-
-	/**
-	 * @param array $rules
-	 *
-	 * @return array
-	 */
-	public function dynamic_pricing_product_rules( $rules ) {
-		if ( is_array( $rules ) ) {
-			foreach ( $rules as $r_key => $rule ) {
-				foreach ( $rule['rules'] as $key => $product_rule ) {
-					if ( 'price_discount' === $product_rule['type'] || 'fixed_price' === $product_rule['type'] ) {
-						$rules[ $r_key ]['rules'][ $key ]['amount'] = apply_filters( 'wcml_raw_price_amount', $product_rule['amount'] );
-					}
-				}
-			}
-		}
-		return $rules;
 	}
 
 	/**
