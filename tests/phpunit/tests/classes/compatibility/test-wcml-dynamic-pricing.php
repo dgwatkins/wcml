@@ -63,13 +63,8 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 		$subject = $this->get_subject();
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_dynamic_pricing_is_object_in_terms', [ $subject, 'is_object_in_translated_terms' ], 10, 3 );
-
-		\WP_Mock::expectFilterAdded( 'wc_dynamic_pricing_load_modules', [ $subject, 'filter_price' ] );
 		\WP_Mock::expectFilterAdded( 'wc_dynamic_pricing_load_modules', [ $subject, 'translate_collector_args' ] );
 		\WP_Mock::expectFilterAdded( 'woocommerce_dynamic_pricing_is_applied_to', [ $subject, 'woocommerce_dynamic_pricing_is_applied_to' ], 10, 5 );
-		\WP_Mock::expectFilterAdded( 'woocommerce_dynamic_pricing_get_rule_amount', [ $subject, 'woocommerce_dynamic_pricing_get_rule_amount' ], 10, 2 );
-		\WP_Mock::expectFilterAdded( 'dynamic_pricing_product_rules', [ $subject, 'dynamic_pricing_product_rules' ] );
-
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_get__pricing_rules', [ $subject, 'translate_variations_in_rules' ] );
 
 		$subject->add_hooks();

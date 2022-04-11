@@ -60,7 +60,7 @@ class Test_WCML_Dynamic_Pricing extends WCML_UnitTestCase {
 		$expected = array(
 			'mod_key' => $expected_obj,
 		);
-		$dynamic_pricing = new WCML_Dynamic_Pricing( $this->sitepress );
+		$dynamic_pricing = new WCML\Compatibility\WcDynamicPricing\MulticurrencyHooks();
 		$this->assertEquals( $expected, $dynamic_pricing->filter_price( $modules ) );
 	}
 
@@ -90,7 +90,7 @@ class Test_WCML_Dynamic_Pricing extends WCML_UnitTestCase {
 		$expected = array(
 			'mod_key' => $expected_obj,
 		);
-		$dynamic_pricing = new WCML_Dynamic_Pricing( $this->sitepress );
+		$dynamic_pricing = new WCML\Compatibility\WcDynamicPricing\MulticurrencyHooks();
 		$this->assertEquals( $expected, $dynamic_pricing->filter_price( $modules ) );
 	}
 
@@ -137,7 +137,7 @@ class Test_WCML_Dynamic_Pricing extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function woocommerce_dynamic_pricing_get_rule_amount() {
-		$dynamic_pricing = new WCML_Dynamic_Pricing( $this->sitepress );
+		$dynamic_pricing = new WCML\Compatibility\WcDynamicPricing\MulticurrencyHooks();
 		$amount = random_int( 1, 999 );
 
 		foreach ( array( 'fixed_price', 'price_discount', 'dummy_type' ) as $type ) {
@@ -156,7 +156,7 @@ class Test_WCML_Dynamic_Pricing extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function dynamic_pricing_product_rules() {
-		$dynamic_pricing = new WCML_Dynamic_Pricing( $this->sitepress );
+		$dynamic_pricing = new WCML\Compatibility\WcDynamicPricing\MulticurrencyHooks();
 		$amount1 = random_int( 1, 999 );
 		$amount2 = random_int( 1, 999 );
 		$amount3 = random_int( 1, 999 );
