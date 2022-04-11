@@ -158,7 +158,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 
 		$expected_settings = array(
 			'automatic'      => 0,
-			'service'        => 'fixerio',
+			'service'        => 'currencylayer',
 			'lifting_charge' => 0,
 			'schedule'       => 'manual',
 			'week_day'       => 1,

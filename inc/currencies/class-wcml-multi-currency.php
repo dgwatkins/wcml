@@ -163,9 +163,9 @@ class WCML_Multi_Currency {
 
 		wpml_collect(
 			[
-				new Fixerio(),
 				new CurrencyLayer(),
 				new ExchangeRatesApi(),
+				new Fixerio(),
 				new OpenExchangeRates(),
 			]
 		)->each(
