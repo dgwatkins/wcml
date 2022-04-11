@@ -3,7 +3,7 @@
 class WCML_gravityforms implements \IWPML_Action {
 
 	/**
-	 * @param SitePress $sitepress
+	 * @var SitePress $sitepress
 	 */
 	private $sitepress;
 
@@ -18,25 +18,7 @@ class WCML_gravityforms implements \IWPML_Action {
 	}
 
 	public function add_hooks() {
-		add_filter( 'gform_formatted_money', [ $this, 'wcml_convert_price' ], 10, 2 );
-		add_filter( 'wcml_multi_currency_ajax_actions', [ $this, 'add_ajax_action' ] );
-
 		add_action( 'wcml_after_duplicate_product_post_meta', [ $this, 'sync_gf_data' ], 10, 2 );
-	}
-
-	public function wcml_convert_price( $formatted, $unformatted ) {
-		if ( ! is_admin() ) {
-			$currency  = apply_filters( 'wcml_price_currency', wcml_get_woocommerce_currency_option() );
-			$formatted = strip_tags( wc_price( apply_filters( 'wcml_raw_price_amount', $unformatted ), [ 'currency' => $currency ] ) );
-		}
-		return $formatted;
-	}
-
-
-	public function add_ajax_action( $actions ) {
-		$actions[] = 'get_updated_price'; // Deprecated from 2.7.
-		$actions[] = 'gforms_get_updated_price';
-		return $actions;
 	}
 
 	/**
@@ -44,7 +26,7 @@ class WCML_gravityforms implements \IWPML_Action {
 	 * @param int $trnsl_product_id
 	 */
 	public function sync_gf_data( $original_product_id, $trnsl_product_id ) {
-		// sync only if WCML editor is in use
+		// sync only if WCML editor is in use.
 		if ( $this->woocommerce_wpml->is_wpml_prior_4_2() ) {
 			$wcml_settings      = get_option( '_wcml_settings' );
 			$is_using_tm_editor = $wcml_settings['trnsl_interface'];
@@ -53,7 +35,7 @@ class WCML_gravityforms implements \IWPML_Action {
 		}
 
 		if ( $is_using_tm_editor ) {
-			$orig_gf  = maybe_unserialize( get_post_meta( $original_product_id, '_gravity_form_data', true ) );
+			$orig_gf = maybe_unserialize( get_post_meta( $original_product_id, '_gravity_form_data', true ) );
 
 			if ( $orig_gf ) {
 				$trnsl_gf = maybe_unserialize( get_post_meta( $trnsl_product_id, '_gravity_form_data', true ) );
