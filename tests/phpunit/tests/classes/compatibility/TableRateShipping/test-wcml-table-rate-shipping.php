@@ -12,36 +12,33 @@ class Test_WCML_Table_Rate_Shipping extends OTGS_TestCase {
 	}
 
 	private function get_woocommerce_wpml(){
-
 		return $this->getMockBuilder('woocommerce_wpml')
-		                               ->disableOriginalConstructor()
-		                               ->getMock();
+			->disableOriginalConstructor()
+			->getMock();
 	}
 
 	private function get_sitepress(){
 		return $this->getMockBuilder( 'Sitepress' )
-		                        ->disableOriginalConstructor()
-		                        ->getMock();
+			->disableOriginalConstructor()
+			->getMock();
 	}
 
 	private function get_wpdb() {
-
 		return $this->getMockBuilder('wpdb')
 			->disableOriginalConstructor()
 			->getMock();
 	}
 
-	private function get_subject( $sitepress = null, $woocommerce_wpml = null, $wpdb = null ){
-
-		if( !$sitepress ){
+	private function get_subject( $sitepress = null, $woocommerce_wpml = null, $wpdb = null ) {
+		if ( ! $sitepress ) {
 			$sitepress = $this->get_sitepress();
 		}
 
-		if( !$woocommerce_wpml ){
+		if ( !$woocommerce_wpml ) {
 			$woocommerce_wpml = $this->get_woocommerce_wpml();
 		}
 
-		if( !$wpdb ){
+		if ( ! $wpdb ) {
 			$wpdb = $this->get_wpdb();
 		}
 
@@ -52,12 +49,11 @@ class Test_WCML_Table_Rate_Shipping extends OTGS_TestCase {
 	 * @test
 	 */
 	public function front_adds_hooks(){
-		\WP_Mock::wpFunction( 'is_admin', array( 'return' => false ) );
-		\WP_Mock::wpFunction( 'wcml_is_multi_currency_on', array( 'return' => false ) );
+		\WP_Mock::userFunction( 'is_admin', [ 'return' => false ] );
 
 		$subject = $this->get_subject();
-		\WP_Mock::expectFilterAdded( 'get_the_terms', array( $subject, 'shipping_class_id_in_default_language' ), 10, 3 );
-		\WP_Mock::expectFilterAdded(  'woocommerce_shipping_table_rate_is_available', array( $subject, 'shipping_table_rate_is_available' ), 10, 3 );
+		\WP_Mock::expectFilterAdded( 'get_the_terms', [ $subject, 'shipping_class_id_in_default_language' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_shipping_table_rate_is_available', [ $subject, 'shipping_table_rate_is_available' ], 10, 3 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_table_rate_query_rates', [ $subject, 'translate_abort_messages' ] );
 		$subject->add_hooks();
 
@@ -68,31 +64,13 @@ class Test_WCML_Table_Rate_Shipping extends OTGS_TestCase {
 	 */
 	public function mc_adds_hooks(){
 		\WP_Mock::userFunction( 'is_admin', array( 'return' => true ) );
-		\WP_Mock::userFunction( 'wcml_is_multi_currency_on', array( 'return' => true ) );
 		$_POST = [ 'shipping_abort_reason' => 1 ];
 
-		$sitepress = $this->getMockBuilder( 'Sitepress' )
-		                  ->disableOriginalConstructor()
-		                  ->setMethods( array( 'get_wp_api' ) )
-		                  ->getMock();
-
-		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
-		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'constant', 'version_compare' ) )
-		               ->getMock();
-
-		$wp_api->method( 'version_compare' )->willReturn( true );
-
-		$sitepress->method( 'get_wp_api' )->willReturn( $wp_api );
-
-		$subject = $this->get_subject( $sitepress );
-		\WP_Mock::expectFilterAdded( 'woocommerce_table_rate_query_rates_args', [ $subject, 'filter_query_rates_args' ] );
-		\WP_Mock::expectFilterAdded( 'woocommerce_table_rate_package_row_base_price', [ $subject, 'filter_product_base_price' ], 10, 3 );
+		$subject = $this->get_subject();
 		\WP_Mock::expectFilterAdded( 'woocommerce_table_rate_get_shipping_rates', [ $subject, 'register_abort_messages' ] );
 		\WP_Mock::expectActionAdded( 'wp_ajax_woocommerce_table_rate_delete', [ $subject, 'unregister_abort_messages_ajax' ], WCML_Table_Rate_Shipping::PRIORITY_BEFORE_DELETE );
 		\WP_Mock::expectActionAdded( 'delete_product_shipping_class', [ $subject, 'unregister_abort_messages_shipping_class' ], WCML_Table_Rate_Shipping::PRIORITY_BEFORE_DELETE );
 		$subject->add_hooks();
-
 	}
 
 	/**
@@ -163,53 +141,7 @@ class Test_WCML_Table_Rate_Shipping extends OTGS_TestCase {
 
 		\WP_Mock::expectFilterAdded( 'option_woocommerce_table_rate_priorities_'.$object->instance_id, array( $subject, 'filter_table_rate_priorities' ) );
 
-		$filtered_values = $subject->shipping_table_rate_is_available( $available, array(), $object );
-	}
-
-	/**
-	 * @test
-	 */
-	public function it_should_filter_product_base_price() {
-
-		$default_currency = 'USD';
-		$client_currency = 'EUR';
-
-		WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
-			'times' => 1,
-			'return' => $default_currency
-		));
-
-		$product_id = 1;
-		$product_price = 10;
-		$qty = 3;
-
-		$product = $this->getMockBuilder( 'WC_Product' )
-		                ->disableOriginalConstructor()
-		                ->setMethods( array( 'get_id' ) )
-		                ->getMock();
-		$product->method( 'get_id' )->willReturn( $product_id );
-
-		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
-		                               ->disableOriginalConstructor()
-		                               ->getMock();
-
-		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
-		                                               ->disableOriginalConstructor()
-		                                               ->setMethods( array( 'get_client_currency' ) )
-		                                               ->getMock();
-
-		$this->woocommerce_wpml->multi_currency->method('get_client_currency')->willReturn( $client_currency );
-
-
-		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
-		                                         ->disableOriginalConstructor()
-		                                         ->setMethods( array( 'get_product_price_from_db' ) )
-		                                         ->getMock();
-		$this->woocommerce_wpml->products->method('get_product_price_from_db')->with( $product_id )->willReturn( $product_price );
-
-		$subject         = $this->get_subject( null, $this->woocommerce_wpml );
-
-		$this->assertEquals( $product_price * $qty, $subject->filter_product_base_price( 10, $product, $qty ) );
+		$subject->shipping_table_rate_is_available( $available, array(), $object );
 	}
 
 	/**

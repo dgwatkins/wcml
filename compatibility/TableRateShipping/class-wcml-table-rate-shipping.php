@@ -48,20 +48,6 @@ class WCML_Table_Rate_Shipping implements \IWPML_Action {
 			add_filter( 'woocommerce_shipping_table_rate_is_available', [ $this, 'shipping_table_rate_is_available' ], 10, 3 );
 		}
 
-		if ( wcml_is_multi_currency_on() ) {
-			$wpml_api = $this->sitepress->get_wp_api();
-			if ( $wpml_api->version_compare( $wpml_api->constant( 'TABLE_RATE_SHIPPING_VERSION' ), '3.0.11', '<' ) ) {
-				add_filter( 'woocommerce_table_rate_query_rates_args', [ $this, 'filter_query_rates_args' ] );
-			}
-
-			add_filter(
-				'woocommerce_table_rate_package_row_base_price',
-				[ $this, 'filter_product_base_price' ],
-				10,
-				3
-			);
-		}
-
 		if ( is_admin() ) {
 			// phpcs:disable WordPress.Security.NonceVerification.Missing
 			if ( Obj::prop( 'shipping_abort_reason', $_POST ) ) {
@@ -154,21 +140,6 @@ class WCML_Table_Rate_Shipping implements \IWPML_Action {
 		return $terms;
 	}
 
-	/**
-	 * It's not possible to filter rate_min and rate_max so we use the original price to compare against these values
-	 *
-	 * @param array $args
-	 *
-	 * @return mixed
-	 */
-	public function filter_query_rates_args( $args ) {
-		if ( isset( $args['price'] ) && wcml_get_woocommerce_currency_option() !== $this->woocommerce_wpml->multi_currency->get_client_currency() ) {
-			$args['price'] = $this->woocommerce_wpml->multi_currency->prices->unconvert_price_amount( $args['price'] );
-		}
-
-		return $args;
-	}
-
 	public function show_pointer_info() {
 		$pointer_ui = new WCML_Pointer_UI(
 			/* translators: %1$s and %2$s are opening and closing HTML link tag */
@@ -187,22 +158,6 @@ class WCML_Table_Rate_Shipping implements \IWPML_Action {
 		);
 
 		$pointer_ui->show();
-	}
-
-	/**
-	 * @param $row_base_price
-	 * @param WC_Product     $_product
-	 * @param $qty
-	 *
-	 * @return mixed
-	 */
-	public function filter_product_base_price( $row_base_price, $_product, $qty ) {
-
-		if ( $_product && wcml_get_woocommerce_currency_option() !== $this->woocommerce_wpml->multi_currency->get_client_currency() ) {
-			$row_base_price = $this->woocommerce_wpml->products->get_product_price_from_db( $_product->get_id() ) * $qty;
-		}
-
-		return $row_base_price;
 	}
 
 	/**

@@ -189,7 +189,7 @@ class Test_WCML_Custom_Prices extends OTGS_TestCase {
 
 		$woocommerce_wpml = $this->get_woocommerce_wpml();
 
-		$woocommerce_wpml->products = $this->getMockBuilder( 'wcml_products' )
+		$woocommerce_wpml->products = $this->getMockBuilder( \WCML_Products::class )
 		                                   ->disableOriginalConstructor()
 		                                   ->setMethods( array( 'get_original_product_id' ) )
 		                                   ->getMock();
@@ -360,7 +360,7 @@ class Test_WCML_Custom_Prices extends OTGS_TestCase {
 
 		$woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
 
-		$woocommerce_wpml->products = $this->getMockBuilder( 'wcml_products' )
+		$woocommerce_wpml->products = $this->getMockBuilder( \WCML_Products::class )
 		                                   ->disableOriginalConstructor()
 		                                   ->setMethods( array( 'get_original_product_id' ) )
 		                                   ->getMock();
@@ -539,7 +539,7 @@ class Test_WCML_Custom_Prices extends OTGS_TestCase {
 
 		$woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
 
-		$woocommerce_wpml->products = $this->getMockBuilder( 'wcml_products' )
+		$woocommerce_wpml->products = $this->getMockBuilder( \WCML_Products::class )
 		                                   ->disableOriginalConstructor()
 		                                   ->setMethods( array( 'get_original_product_id' ) )
 		                                   ->getMock();
@@ -600,7 +600,7 @@ class Test_WCML_Custom_Prices extends OTGS_TestCase {
 
 		$woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
 
-		$woocommerce_wpml->products = $this->getMockBuilder( 'wcml_products' )
+		$woocommerce_wpml->products = $this->getMockBuilder( \WCML_Products::class )
 		                                   ->disableOriginalConstructor()
 		                                   ->setMethods( array( 'get_original_product_id' ) )
 		                                   ->getMock();
@@ -794,7 +794,7 @@ class Test_WCML_Custom_Prices extends OTGS_TestCase {
 
 		$woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
 
-		$woocommerce_wpml->products = $this->getMockBuilder( 'wcml_products' )
+		$woocommerce_wpml->products = $this->getMockBuilder( \WCML_Products::class )
 		                                   ->disableOriginalConstructor()
 		                                   ->setMethods( array( 'get_original_product_id' ) )
 		                                   ->getMock();

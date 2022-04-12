@@ -92,7 +92,7 @@ class Test_WCML_Translation_Editor extends OTGS_TestCase {
 			'return' => 'publish'
 		));
 
-		$this->woocommerce_wpml->products = $this->getMockBuilder( 'wcml_products' )
+		$this->woocommerce_wpml->products = $this->getMockBuilder( \WCML_Products::class )
 		                                         ->disableOriginalConstructor()
 												->setMethods( array( 'is_original_product', 'get_original_product_id'))
 		                                         ->getMock();

@@ -85,7 +85,7 @@ class Test_WCML_Table_Rate_Shipping extends WCML_UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function filter_query_rates_args(){
+	public function filterQueryRatesArgs(){
 
 		$settings_backup = $this->woocommerce_wpml->settings;
 		$this->multi_currency_helper = new WCML_Helper_Multi_Currency( $this->woocommerce_wpml );
@@ -95,9 +95,9 @@ class Test_WCML_Table_Rate_Shipping extends WCML_UnitTestCase {
 		$this->woocommerce_wpml->multi_currency->set_client_currency('USD');
 
 		$args['price'] = 134;
-		$table_rate = new WCML_Table_Rate_Shipping( $this->sitepress, $this->woocommerce_wpml, $this->wpdb );
+		$table_rate = new WCML\Compatibility\TableRateShipping\MulticurrencyHooks( $this->woocommerce_wpml, $this->woocommerce_wpml->multi_currency );
 		// will unconvert the price (exchange rate of 1.34)
-		$args = $table_rate->filter_query_rates_args( $args );
+		$args = $table_rate->filterQueryRatesArgs( $args );
 
 		$this->assertEquals( 100, $args['price'] );
 
