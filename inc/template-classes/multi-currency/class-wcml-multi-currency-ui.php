@@ -94,8 +94,12 @@ class WCML_Multi_Currency_UI extends WCML_Templates_Factory {
 				'label_mco_learn_txt'        => __( 'Multicurrency documentation', 'woocommerce-multilingual' ),
 				'custom_prices_select'       => [
 					'checked' => $this->woocommerce_wpml->settings['display_custom_prices'] == 1,
-					'label'   => __( 'Show only products with custom prices in secondary currencies', 'woocommerce-multilingual' ),
-					'tip'     => __( 'When this option is on, when you switch to a secondary currency on the front end, only the products with custom prices in that currency are being displayed. Products with prices determined based on the exchange rate are hidden.', 'woocommerce-multilingual' ),
+					'label'   => sprintf(
+						__( 'Only display products with defined %1$scustom prices%2$s in the selected currency', 'woocommerce-multilingual' ),
+						'<a href="'. WCML_Tracking_Link::getWcmlMultiCurrencyDoc( '#configure-distinct-prices-for-different-currencies' ) . '" target="_blank" class="wpml-external-link">',
+						'</a>'
+					),
+					'tip'     => __( 'Hides products with prices that are determined by an exchange rate.', 'woocommerce-multilingual' ),
 				],
 				'submit'                     => __( 'Save changes', 'woocommerce-multilingual' ),
 				'navigate_warn'              => __( 'The changes you made will be lost if you navigate away from this page.', 'woocommerce-multilingual' ),
