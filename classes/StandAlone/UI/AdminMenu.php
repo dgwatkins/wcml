@@ -76,14 +76,24 @@ class AdminMenu extends \WCML_Menu_Wrap_Base {
 				$inP       = Str::wrap( '<p>', '</p>' );
 				$inWrapper = Str::wrap( '<div class="wcml-banner">', '</div>' );
 
-				$wrapLink = function( $text, $url ) {
-					return sprintf( $text, '<a href="' . $url . '" target="_blank" class="wpml-external-link">', '</a>' );
+				$wrapLink = function( $text, $url, $isExternal = true ) {
+					$attrs = $isExternal ? ' target="_blank" class="wpml-external-link" ' : '';
+					return sprintf( $text, '<a href="' . $url . '"' . $attrs . '">', '</a>' );
 				};
 
 				$content .= $inP( $wrapLink( esc_html__( 'To run your store in multiple languages, you need to use the %1$sWPML plugin%2$s.', 'woocommerce-multilingual' ), \WCML_Tracking_Link::getWpmlHome( true ) ) );
+
 				$content .= $inP(
 					$wrapLink( esc_html__( 'If you have it already, install and activate it. Otherwise, %1$sbuy WPML%2$s.', 'woocommerce-multilingual' ), \WCML_Tracking_Link::getWpmlPurchase( true ) )
 					. ' ' . esc_html__( 'You will need either the Multilingual CMS or Multilingual Agency package to use WPML with WooCommerce.', 'woocommerce-multilingual' )
+				);
+
+				$content .= $inP(
+					$wrapLink(
+						esc_html__( 'You can still use the %1$smulticurrency features%2$s without buying anything.', 'woocommerce-multilingual' ),
+						admin_url( 'admin.php?page=wpml-wcml&tab=multi-currency' ),
+						false
+					)
 				);
 
 				$content = $inWrapper( $content );
