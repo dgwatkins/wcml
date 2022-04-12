@@ -56,7 +56,7 @@ export const getTooltip = (tooltip, classes = 'otgs-ico-help') => {
     return tooltip && <Tooltip getPopupContainer={getPopupContainer} title={allowBreakRules(tooltip)}> <i className={`wcml-tip ${classes}`} /></Tooltip>;
 };
 
-const allowBreakRules = (string) => {
+export const allowBreakRules = (string) => {
     return <div dangerouslySetInnerHTML={{__html:string}}/>;
 };
 
