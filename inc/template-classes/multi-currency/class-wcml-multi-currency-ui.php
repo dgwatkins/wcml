@@ -91,7 +91,7 @@ class WCML_Multi_Currency_UI extends WCML_Templates_Factory {
 				'mco_disabled'               => empty( $wc_currency ),
 				'label_mco'                  => __( 'Enable the multicurrency mode', 'woocommerce-multilingual' ),
 				'label_mco_learn_url'        => $this->tracking_link->getWcmlMultiCurrencyDoc(),
-				'label_mco_learn_txt'        => __( 'Learn more', 'woocommerce-multilingual' ),
+				'label_mco_learn_txt'        => __( 'Multicurrency documentation', 'woocommerce-multilingual' ),
 				'custom_prices_select'       => [
 					'checked' => $this->woocommerce_wpml->settings['display_custom_prices'] == 1,
 					'label'   => __( 'Show only products with custom prices in secondary currencies', 'woocommerce-multilingual' ),
