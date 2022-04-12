@@ -5,8 +5,7 @@ use WPML\FP\Fns;
 use function WCML\functions\getClientCurrency;
 
 /**
- * WooCommerce PayPal Payments
- * https://wordpress.org/plugins/woocommerce-paypal-payments/
+ * @see https://wordpress.org/plugins/woocommerce-paypal-payments/
  */
 class WCML_Payment_Gateway_PayPal_V2 extends WCML_Payment_Gateway_PayPal {
 

@@ -324,7 +324,7 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
-	public function id_should_not_filter_gateway_description_for_default_currency() {
+	public function it_should_not_filter_gateway_description_for_default_currency() {
 
 		$client_currency = 'USD';
 		$description     = rand_str();

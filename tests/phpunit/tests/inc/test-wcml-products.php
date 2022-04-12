@@ -10,19 +10,6 @@ use WPML\FP\Fns;
  */
 class Test_WCML_Products extends OTGS_TestCase {
 
-	/** @var \woocommerce_wpml|\PHPUnit_Framework_MockObject_MockObject */
-	private $woocommerce_wpml;
-	/** @var \WPML_Post_Translation|\PHPUnit_Framework_MockObject_MockObject */
-	private $wpml_post_translations;
-	/** @var \Sitepress|\PHPUnit_Framework_MockObject_MockObject */
-	private $sitepress;
-	/** @var \wpdb|\PHPUnit_Framework_MockObject_MockObject */
-	private $wpdb;
-	/** @var \WPML_WP_Cache|\PHPUnit_Framework_MockObject_MockObject */
-	private $wpml_cache;
-	/** @var \WPML_WP_API|\PHPUnit_Framework_MockObject_MockObject */
-	private $wp_api;
-
 	private $default_language = 'en';
 	private $cached_data = array();
 
@@ -833,6 +820,8 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$product_id = 112;
 
+		WP_Mock::passthruFunction( 'remove_filter' );
+
 		WP_Mock::userFunction( 'is_admin', array(
 			'times' => 1,
 			'return' => false
@@ -920,6 +909,8 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$multi_currency_setting = 1;
 		$meta_key = null;
 
+		WP_Mock::passthruFunction( 'remove_filter' );
+
 		$wp_api = $this->getMockBuilder( 'WPML_WP_API' )
 		               ->disableOriginalConstructor()
 		               ->setMethods( array( 'constant' ) )
@@ -999,14 +990,14 @@ class Test_WCML_Products extends OTGS_TestCase {
 	 */
 	public function it_should_NOT_call_wcml_price_custom_fields_if_the_a_meta_key_is_provided() {
 		$product_id = 125;
-		$meta_key = null;
+		$meta_key = 'key';
 
 		$subject = $this->get_subject();
 
-		WP_Mock::userFunction( 'get_post_meta', array( 'times' => 0 ) );
-		WP_Mock::userFunction( 'wcml_price_custom_fields', array( 'times' => 0 ) );
+		WP_Mock::userFunction( 'get_post_meta', [ 'times' => 0 ] );
+		WP_Mock::userFunction( 'wcml_price_custom_fields', [ 'times' => 0 ] );
 
-		$subject->filter_product_data( array(), $product_id, $meta_key );
+		$subject->filter_product_data( [], $product_id, $meta_key );
 	}
 
 	/**
