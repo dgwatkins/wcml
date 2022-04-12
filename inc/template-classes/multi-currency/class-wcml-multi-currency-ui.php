@@ -122,6 +122,11 @@ class WCML_Multi_Currency_UI extends WCML_Templates_Factory {
 					'delete'         => __( 'Delete', 'woocommerce-multilingual' ),
 					'edit'           => __( 'Edit currency switcher', 'woocommerce-multilingual' ),
 					'add_widget'     => __( 'Add a new currency switcher to a widget area', 'woocommerce-multilingual' ),
+					'no_sidebar'     => sprintf(
+						esc_html__( 'Your theme does not support a currency switcher widget. Please %1$sadd your currency switcher%2$s using a shortcode or PHP.', 'woocommerce-multilingual' ),
+						'<a href="' . WCML_Tracking_Link::getWcmlMultiCurrencyDoc( '#adding-a-currency-switcher-to-the-front-end' ) . '" class="wpml-external-link" target="_blank">',
+						'</a>'
+					),
 				],
 				'preview'                   => $this->get_currency_switchers_preview(),
 				'widget_currency_switchers' => $this->widget_currency_switchers(),
