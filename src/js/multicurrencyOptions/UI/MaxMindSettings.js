@@ -32,7 +32,16 @@ const SettingsBlock = ({onChange, onApply, disableSave}) => {
 
     return (
         <React.Fragment>
-            <p>{strings.maxMindDescription}</p>
+            <p>
+                {strings.maxMindDescription}
+                &nbsp;
+                <a className="wcml-max-min-doc wpml-external-link"
+                   href={strings.maxMindDocLink}
+                   target="_blank"
+                >
+                    {strings.maxMindDocLinkText}
+                </a>
+            </p>
             <div className="max-mind-block__wrapper-form">
                 <label>{strings.maxMindLabel}</label>
                 <div className="max-mind-block__wrapper-form-input">
@@ -47,13 +56,7 @@ const SettingsBlock = ({onChange, onApply, disableSave}) => {
             </div>
 
             <p className="max-mind-block__wrapper-generate">
-                    {strings.maxMindDoc}
-                <a className="wcml-max-min-doc wpml-external-link"
-                   href={strings.maxMindDocLink}
-                   target="_blank"
-                >
-                        {strings.maxMindDocLinkText}
-                    </a>
+                    {strings.maxMindNote}
                 </p>
         </React.Fragment>
     );

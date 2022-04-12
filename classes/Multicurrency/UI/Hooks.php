@@ -235,15 +235,15 @@ class Hooks implements \IWPML_Action, IStandAloneAction {
 			'labelSiteLanguage'              => __( 'Site Language', 'woocommerce-multilingual' ),
 			'labelClientLocation'            => __( 'Client Location', 'woocommerce-multilingual' ),
 			'labelLocationBased'             => __( 'Location based', 'woocommerce-multilingual' ),
-			'maxMindDescription'             => __( 'WooCommerce uses integration with MaxMind Geolocation in order to determine the correct location for the customer. You need to generate a free MaxMind Geolocation licence key.', 'woocommerce-multilingual' ),
+			'maxMindDescription'             => __( 'WooCommerce integrates with MaxMind Geolocation to reliably determine the location of your customers.', 'woocommerce-multilingual' ),
 			'maxMindSuccess'                 => __( 'Great! Now you can use Geolocation to determine default currency for chosen languages. You can edit that key in ', 'woocommerce-multilingual' ),
 			'maxMindSettingLink'             => admin_url( 'admin.php?page=wc-settings&tab=integration' ),
 			'maxMindSettingLinkText'         => __( 'WooCommerce settings page.', 'woocommerce-multilingual' ),
 			'maxMindLabel'                   => __( 'MaxMind Licence Key', 'woocommerce-multilingual' ),
 			'apply'                          => __( 'Apply', 'woocommerce-multilingual' ),
-			'maxMindDoc'                     => __( 'You can read how to generate one in ', 'woocommerce-multilingual' ),
+			'maxMindNote'                    => __( 'Please note: without a free MaxMind key, your geolocation calls will be limited and your site performance may be impacted.', 'woocommerce-multilingual' ),
 			'maxMindDocLink'                 => 'https://docs.woocommerce.com/document/maxmind-geolocation-integration/',
-			'maxMindDocLinkText'             => __( 'MaxMind Geolocation Integration documentation.', 'woocommerce-multilingual' ),
+			'maxMindDocLinkText'             => __( 'Learn how to generate a free license key', 'woocommerce-multilingual' ),
 		];
 	}
 
