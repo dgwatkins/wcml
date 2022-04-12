@@ -231,7 +231,8 @@ class Hooks implements \IWPML_Action, IStandAloneAction {
 			'labelAllCountriesExceptDots'    => __( 'All countries except...', 'woocommerce-multilingual' ),
 			'labelSpecificCountries'         => __( 'Specific countries', 'woocommerce-multilingual' ),
 			'labelModeSelect'                => __( 'Show currencies based on', 'woocommerce-multilingual' ),
-			'labelChooseOption'              => __( 'Choose Option', 'woocommerce-multilingual' ),
+			'labelSiteLanguageTooltip'       => esc_html__( "You need the WPML plugin to make your store multilingual and display currencies based on site language. Don't have it yet?", 'woocommerce-multilingual' ) . '<br />' .
+			                                    '<a href="' . \WCML_Tracking_Link::getWpmlPurchase( true ) . '" class="wpml-external-link" target="_blank">' . esc_html__( 'Purchase WPML now', 'woocommerce-multilingual' ) . '</a>',
 			'labelSiteLanguage'              => __( 'Site Language', 'woocommerce-multilingual' ),
 			'labelClientLocation'            => __( 'Client Location', 'woocommerce-multilingual' ),
 			'labelLocationBased'             => __( 'Location based', 'woocommerce-multilingual' ),

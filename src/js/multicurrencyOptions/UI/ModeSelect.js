@@ -2,29 +2,48 @@ import React from "react";
 import {getStoreProperty, useStore} from "../Store";
 import {createAjaxRequest} from "../Request";
 import strings from "../Strings";
-import {Spinner} from "../../sharedComponents/FormElements";
+import {allowBreakRules, Spinner} from "../../sharedComponents/FormElements";
+import Radio from "antd/lib/radio";
+import 'antd/lib/radio/style/index.css';
+import {equals} from 'ramda';
+import Tooltip from "antd/lib/tooltip";
+import "../styles.scss";
 
 const ModeSelect = () => {
     const [mode, setMode] = useStore('mode');
     const isStandalone = getStoreProperty('isStandalone');
     const ajax = createAjaxRequest('setCurrencyMode');
+    const isMode = equals(mode);
 
     const onChange = async e => {
         const newMode = e.target.value;
-        await ajax.send(newMode);
-        setMode(newMode);
+
+        if (!isMode(newMode)) {
+            await ajax.send(newMode);
+            setMode(newMode);
+        }
+    };
+
+    const wrapInByLanguageTooltip = radioOption => {
+        return isStandalone
+            ? <Tooltip id="wcml-by-language-tooltip" title={allowBreakRules(strings.labelSiteLanguageTooltip)}>{radioOption}</Tooltip>
+            : radioOption;
     };
 
     return (
         <React.Fragment>
             {ajax.fetching && <Spinner/>}
-            <label>{strings.labelModeSelect}</label>
-            <select id="currency_mode" value={mode} onChange={onChange}>
-                {!mode && <option value="">{strings.labelChooseOption}</option>}
-                <option value="by_language" disabled={isStandalone}>{strings.labelSiteLanguage}</option>
-                <option value="by_location">{strings.labelClientLocation}</option>
-            </select>
-            <input type="hidden" name="currency_mode" value={mode}/>
+            <p>{strings.labelModeSelect}</p>
+            <div>
+                <p>
+                    {wrapInByLanguageTooltip(
+                        <Radio name="currency_mode" value="by_language" disabled={isStandalone} onClick={onChange} checked={isMode("by_language")}> {strings.labelSiteLanguage}</Radio>
+                    )}
+                </p>
+                <p>
+                    <Radio name="currency_mode" value="by_location" onClick={onChange} checked={isMode("by_location")}> {strings.labelClientLocation}</Radio>
+                </p>
+            </div>
         </React.Fragment>
     );
 };
