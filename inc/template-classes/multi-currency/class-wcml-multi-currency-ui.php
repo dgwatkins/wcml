@@ -138,7 +138,7 @@ class WCML_Multi_Currency_UI extends WCML_Templates_Factory {
 				'order_nonce'               => wp_create_nonce( 'set_currencies_order_nonce' ),
 				'delete_nonce'              => wp_create_nonce( 'delete_currency_switcher' ),
 				'order_tip'                 => __( 'Drag and drop the currencies to change their order', 'woocommerce-multilingual' ),
-				'visibility_label'          => __( 'Show a currency selector on the product page template', 'woocommerce-multilingual' ),
+				'visibility_label'          => __( 'Show a currency switcher on the product page template', 'woocommerce-multilingual' ),
 				'visibility_on'             => isset( $this->woocommerce_wpml->settings['currency_switcher_product_visibility'] ) ?
 										$this->woocommerce_wpml->settings['currency_switcher_product_visibility'] : 1,
 				'additional_css'            => isset( $this->woocommerce_wpml->settings['currency_switcher_additional_css'] ) ?
