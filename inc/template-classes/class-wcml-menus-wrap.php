@@ -4,8 +4,6 @@ use WCML\Utilities\AdminPages;
 
 class WCML_Menus_Wrap extends WCML_Menu_Wrap_Base {
 
-	private $woocommerce_wpml;
-
 	private $product_attribute_names = [];
 
 	// Is 'product_type' is used for tags?
@@ -32,9 +30,7 @@ class WCML_Menus_Wrap extends WCML_Menu_Wrap_Base {
 	 */
 	public function __construct( $woocommerce_wpml ) {
 		// @todo Cover by tests, required for wcml-3037.
-		parent::__construct();
-
-		$this->woocommerce_wpml = $woocommerce_wpml;
+		parent::__construct( $woocommerce_wpml );
 
 		$this->product_attributes = $this->woocommerce_wpml->attributes->get_translatable_attributes();
 		if ( $this->product_attributes ) {
@@ -87,7 +83,10 @@ class WCML_Menus_Wrap extends WCML_Menu_Wrap_Base {
 
 	}
 
-	public function get_model() {
+	/**
+	 * @return array
+	 */
+	protected function get_child_model() {
 		$current_tab = AdminPages::getTabToDisplay();
 
 		$model = [
@@ -168,20 +167,6 @@ class WCML_Menus_Wrap extends WCML_Menu_Wrap_Base {
 				],
 			],
 			'can_manage_options'  => current_user_can( 'wpml_manage_woocommerce_multilingual' ),
-			'can_operate_options' => current_user_can( 'wpml_operate_woocommerce_multilingual' ),
-			'rate'                => [
-				'on'        => $this->woocommerce_wpml->get_setting( 'rate-block', true ),
-				'message'   => sprintf(
-					__( 'Thank you for using %1$sWooCommerce Multilingual & Multicurrency%2$s! You can express your love and support by %3$s rating our plugin and saying that %4$sit works%5$s for you.', 'woocommerce-multilingual' ),
-					'<strong>',
-					'</strong>',
-					'<a href="https://wordpress.org/support/view/plugin-reviews/woocommerce-multilingual?filter=5#postform" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a>',
-					'<a href="https://wordpress.org/plugins/woocommerce-multilingual/?compatibility[version]=' . $this->woocommerce_wpml->get_supported_wp_version() . '&compatibility[topic_version]=' . WCML_VERSION . '&compatibility[compatible]=1#compatibility" target="_blank">',
-					'</a>'
-				),
-				'hide_text' => __( 'Hide', 'woocommerce-multilingual' ),
-				'nonce'     => wp_nonce_field( 'wcml_settings', 'wcml_settings_nonce', true, false ),
-			],
 			'content'             => $this->get_current_menu_content( $current_tab ),
 		];
 
