@@ -1,5 +1,6 @@
 <?php
 
+use WCML\MultiCurrency\ExchangeRateServices\Service;
 use WPML\FP\Obj;
 
 /**
@@ -86,7 +87,7 @@ class WCML_Exchange_Rates {
 
 	/**
 	 * @param string                     $service_id
-	 * @param \WCML\MultiCurrency\ExchangeRateServices\Service $service
+	 * @param Service $service
 	 */
 	public function add_service( $service_id, $service ) {
 		$this->services[ $service_id ] = $service;
@@ -173,8 +174,8 @@ class WCML_Exchange_Rates {
 			throw new Exception( 'The exchange rate service "' . $this->settings['service'] . '" is not defined.' );
 		}
 
-		/** @var \WCML\MultiCurrency\ExchangeRateServices\Service $service */
-		$service =& $this->services[ $this->settings['service'] ];
+		/** @var Service $service */
+		$service = $this->get_current_service();
 
 		$default_currency     = wcml_get_woocommerce_currency_option();
 		$secondary_currencies = array_diff( $currencies, [ $default_currency ] );
@@ -421,5 +422,27 @@ class WCML_Exchange_Rates {
 				break;
 		}
 		return $month_day;
+	}
+
+	/**
+	 * @return Service|null
+	 */
+	private function get_current_service() {
+		return Obj::prop( Obj::prop( 'service', (array) $this->settings ), (array) $this->services );
+	}
+
+	/**
+	 * Check if a service is defined and has a key if needed.
+	 *
+	 * @return bool
+	 */
+	public function is_current_service_actionable() {
+		$current_service = $this->get_current_service();
+
+		return $current_service
+			&& (
+				! $current_service->isKeyRequired()
+				|| $current_service->getSetting( 'api-key' )
+		       );
 	}
 }

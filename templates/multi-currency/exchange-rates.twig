@@ -22,8 +22,12 @@
 
             <p>
                 <input type="button" id="update-rates-manually" class="button-secondary"
-                       value="{{ exchange_rates.strings.update }}" />
-                <i class="otgs-ico-help wcml-tip" data-tip="{{ exchange_rates.strings.update_tip }}" style="display: none"></i>
+                       value="{{ exchange_rates.strings.update }}"
+                       {% if not exchange_rates.has_actionable_service %}disabled="disabled"{% endif %}
+                />
+                <i class="otgs-ico-help wcml-tip" data-tip="{{ exchange_rates.strings.update_tip }}"
+                   {% if exchange_rates.has_actionable_service %}style="display: none"{% endif %}
+                ></i>
                 <span id="update-rates-spinner" class="spinner" style="float:none;"></span>
                 <input type="hidden" id="update-exchange-rates-nonce" value="{{ exchange_rates.strings.nonce }}"/>
             </p>
