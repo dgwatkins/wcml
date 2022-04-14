@@ -30,8 +30,8 @@ DB_HOST=${4-localhost}
 WP_VERSION=${5}
 
 if [[ ${WP_VERSION} == "latest" || ${WP_VERSION} == "" ]]; then
-  WP_VERSION="master"
-  WP_TEST_VERSION="master"
+  WP_VERSION="5.9.2"
+  WP_TEST_VERSION="5.9.2"
 fi
 
 SCRIPTPATH=$(pwd -P)
@@ -46,7 +46,7 @@ install_wp() {
 
   if [[ ! -d ${WP_CORE_DIR} || ${CI:0} == 1 ]]; then
     rm -rf ${WP_CORE_DIR}
-    git clone ${GIT_CLONE_VERBOSITY_ARGS} --depth=1 git://github.com/WordPress/WordPress.git ${WP_CORE_DIR}
+    git clone ${GIT_CLONE_VERBOSITY_ARGS} https://github.com/WordPress/WordPress ${WP_CORE_DIR}
   fi
 
   if [[ ! -d ${WP_CORE_DIR} ]]; then
@@ -87,7 +87,7 @@ install_test_suite() {
 
   if [[ ! -d wordpress-develop || ${CI:0} == 1 ]]; then
     rm -rf wordpress-develop
-    git clone ${GIT_CLONE_VERBOSITY_ARGS} --depth=1 git://github.com/WordPress/wordpress-develop.git
+    git clone ${GIT_CLONE_VERBOSITY_ARGS} https://github.com/WordPress/wordpress-develop
   fi
 
   if [[ ! -d wordpress-develop ]]; then
@@ -96,7 +96,6 @@ install_test_suite() {
   fi
 
   cd wordpress-develop
-
   git checkout ${WP_VERSION}
 
   cp -rf tests/phpunit/includes ${WP_TESTS_DIR}/includes
@@ -127,6 +126,7 @@ install_test_suite() {
   fi
 
   sed $ioption "s:dirname( __FILE__ ) . '/src/':'${WP_CORE_DIR}':" wp-tests-config.php
+  sed $ioption "s:__DIR__ . '/src/':'${WP_CORE_DIR}':" wp-tests-config.php
   sed $ioption "s/youremptytestdbnamehere/${DB_NAME}/" wp-tests-config.php
   sed $ioption "s/yourusernamehere/${DB_USER}/" wp-tests-config.php
   sed $ioption "s/yourpasswordhere/${DB_PASS}/" wp-tests-config.php
