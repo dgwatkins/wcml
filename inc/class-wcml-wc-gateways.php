@@ -64,7 +64,15 @@ class WCML_WC_Gateways {
 
 		foreach ( $load_gateways as $key => $gateway ) {
 
-			$load_gateway = is_string( $gateway ) ? new $gateway() : $gateway;
+			$load_gateway = $gateway;
+
+			if ( is_string( $gateway ) ) {
+				if ( class_exists( $gateway ) ) {
+					$load_gateway = new $gateway();
+				} else {
+					continue;
+				}
+			}
 
 			$this->register_gateway_settings_strings( $load_gateway->id, $load_gateway->settings );
 			$this->payment_gateways_filters( $load_gateway );
