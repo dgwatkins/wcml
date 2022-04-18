@@ -251,13 +251,15 @@ class WCML_Dependencies {
 			return;
 		}
 
+		$tm_folder = defined( 'WPML_TM_FOLDER' ) ? WPML_TM_FOLDER : 'tm';
+
 		$message  = __( 'Because this site uses the default permalink structure, you cannot use slug translation for product permalinks.', 'woocommerce-multilingual' );
 		$message .= '<br /><br />';
 		$message .= __( 'Please choose a different permalink structure or disable slug translation.', 'woocommerce-multilingual' );
 		$message .= '<br /><br />';
 		$message .= '<a href="' . admin_url( 'options-permalink.php' ) . '">' . __( 'Permalink settings', 'woocommerce-multilingual' ) . '</a>';
 		$message .= ' | ';
-		$message .= '<a href="' . admin_url( 'admin.php?page=' . WPML_TM_FOLDER . '/menu/main.php&sm=mcsetup#icl_custom_posts_sync_options' ) . '">' . __( 'Configure products slug translation', 'woocommerce-multilingual' ) . '</a>';
+		$message .= '<a href="' . admin_url( 'admin.php?page=' . $tm_folder . '/menu/main.php&sm=mcsetup#icl_custom_posts_sync_options' ) . '">' . __( 'Configure products slug translation', 'woocommerce-multilingual' ) . '</a>';
 
 		// Check if slug translation is enabled
 		$compatible          = true;
