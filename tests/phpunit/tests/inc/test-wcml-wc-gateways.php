@@ -107,6 +107,23 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @group wcml-4034
+	 *
+	 * @return void
+	 */
+	public function it_should_not_throw_error_when_gateway_class_does_not_exist() {
+		$gateways = [
+			'A_Class_That_Does_Not_Exist_12345',
+		];
+
+		$this->assertSame(
+			$gateways,
+			$this->get_subject()->loaded_woocommerce_payment_gateways( $gateways )
+		);
+	}
+
+	/**
+	 * @test
 	 */
 	public function add_on_init_hooks() {
 		global $pagenow;
