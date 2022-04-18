@@ -82,13 +82,22 @@ class AdminPages {
 	 * @return bool
 	 */
 	public static function isTranslationQueue() {
-		return ! isStandAlone() && self::isPage( WPML_TM_FOLDER . '/menu/translations-queue.php' );
+		return ! isStandAlone() && self::isTmPage( '/menu/translations-queue.php' );
 	}
 
 	/**
 	 * @return bool
 	 */
 	public static function isTranslationsDashboard() {
-		return ! isStandAlone() && self::isPage( WPML_TM_FOLDER . '/menu/main.php' );
+		return ! isStandAlone() && self::isTmPage( '/menu/main.php' );
+	}
+
+	/**
+	 * @param string $path Path after the TM folder (e.g. '/menu/main.php')
+	 *
+	 * @return bool
+	 */
+	private static function isTmPage( $path ) {
+		return defined( 'WPML_TM_FOLDER' ) && self::isPage( WPML_TM_FOLDER . $path );
 	}
 }
