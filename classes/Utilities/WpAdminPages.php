@@ -10,6 +10,6 @@ class WpAdminPages {
 	public static function isDashboard() {
 		global $pagenow;
 
-		return 'index.php' === $pagenow;
+		return is_admin() && 'index.php' === $pagenow;
 	}
 }
