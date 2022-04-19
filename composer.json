@@ -84,7 +84,8 @@
             "@composer bin all update --ansi"
         ],
         "install-addons": "@composer install --working-dir=addons --no-dev --prefer-dist",
-        "update-addons": "@composer update --working-dir=addons --no-dev --prefer-dist"
+        "update-addons": "@composer update --working-dir=addons --no-dev --prefer-dist",
+        "make-php-pot": "wp i18n make-pot . locale/orig/woocommerce-multilingual.pot --include=classes,compatibility,inc,wpml-woocommerce.php"
     },
     "autoload": {
         "classmap": [
