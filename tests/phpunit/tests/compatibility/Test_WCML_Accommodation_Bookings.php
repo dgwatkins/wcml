@@ -1,5 +1,7 @@
 <?php
 
+use WCML\Compatibility\WcBookings\SharedHooks;
+
 /**
  * @group compatibility
  * @group woocommerce-bookings
@@ -10,32 +12,33 @@ class Test_WCML_Accommodation_Bookings extends OTGS_TestCase {
 	 * @test
 	 */
 	public function itShouldLoadAssets() {
-		$bookings = $this->getbookings();
-		$bookings->expects( $this->once() )
-			->method( 'load_assets' )
-			->with( 'accommodation-booking' );
+		$loadAssets = tad\FunctionMocker\replace( SharedHooks::class . '::load_assets' );
 
-		$subject = $this->getSubject( null, $bookings );
+		$subject = $this->getSubject();
 
 		$subject->load_assets();
+
+		$loadAssets->wasCalledWithOnce( [ 'accommodation-booking' ] );
 	}
 
-	private function getSubject( $woocommerce_wpml = null, $bookings = null ) {
-		$woocommerce_wpml = $woocommerce_wpml ?: $this->getWoocommerceWpml();
-		$bookings         = $bookings ?: $this->getbookings();
+	private function getSubject( $products = null, $multiCurrency = null ) {
+		$woocommerce_wpml = $this->getMockBuilder( \woocommerce_wpml::class )->disableOriginalConstructor()->getMock();
 
-		return new WCML_Accommodation_Bookings( $woocommerce_wpml, $bookings );
+		$woocommerce_wpml->products       = $products ?: $this->getProducts();
+		$woocommerce_wpml->multi_currency = $multiCurrency ?: $this->getMultiCurrency();
+
+		return new WCML_Accommodation_Bookings( $woocommerce_wpml );
 	}
 
-	private function getWoocommerceWpml() {
-		return $this->getMockBuilder( '\woocommerce_wpml' )
+	private function getProducts() {
+		return $this->getMockBuilder( WCML_Products::class )
 			->disableOriginalConstructor()
 			->getMock();
 	}
 
-	private function getbookings() {
-		return $this->getMockBuilder( '\WCML_Bookings' )
-			->setMethods( [ 'load_assets' ] )
+	private function getMultiCurrency() {
+		return $this->getMockBuilder( WCML_Multi_Currency::class )
+			->setMethods( [] )
 			->disableOriginalConstructor()
 			->getMock();
 	}

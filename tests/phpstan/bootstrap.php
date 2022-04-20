@@ -54,3 +54,4 @@ define( 'WCML_TRANSLATION_METHOD_EDITOR', 1 );
 define( 'WC_PLUGIN_FILE', 'the WC plugin file' );
 
 define( 'W3TC_LIB_W3_DIR', '/path/to/w3tc/lib/w3/dir/' );
+define( 'WC_BOOKINGS_VERSION', '1.15.52' );
