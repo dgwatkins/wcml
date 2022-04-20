@@ -1,11 +1,17 @@
 <?php
 
-/**
- * Class Test_WCML_Bookings
- */
-class Test_WCML_Bookings extends WCML_UnitTestCase {
+use WCML\Compatibility\WcBookings\MulticurrencyHooks;
+use WCML\Compatibility\WcBookings\SharedHooks;
 
-	private $bookings;
+/**
+ * @group compatibility
+ * @group wc-bookings
+ */
+class TestMulticurrencyHooks extends WCML_UnitTestCase {
+
+	/** @var MulticurrencyHooks $multicurrencyHooks */
+	private $multicurrencyHooks;
+
 	private $currencies;
 	private $usd_code;
 	private $euro_code;
@@ -61,13 +67,20 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$this->booking_term = get_term_by( 'name', 'booking', 'product_type', ARRAY_A );
 		$trid = $this->sitepress->get_element_trid( $this->booking_term['term_id'], 'tax_product_type' );
 		$this->booking_term_tranlsation = wpml_test_insert_term( $this->second_language, 'product_type', $trid, 'booking' . $this->second_language );
-
 	}
 
 	/**
 	 * @test
 	 */
 	public function save_custom_costs() {
+		// This test is very weak because the filter `filter_wc_booking_cost`
+		// is not loaded in all contexts and the original code was also
+		// checking `enable_multi_currency` setting inside the filter.
+		// This does not make sense anymore now since we load the
+		// filter only when this setting is enabled.
+		// So we'll consider this test is running in admin to not load the filter.
+		$this->switch_to_admin();
+
 		$product_id = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
 		$_POST['_wcml_custom_costs_nonce'] = wp_create_nonce( 'wcml_save_custom_costs' );
 
@@ -78,15 +91,16 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			->method( 'get_original_product_id' )
 			->willReturn( $product_id );
 
-		$this->bookings = $this->get_wcml_booking_object( $woocommerce_wpml );
+		$this->get_wcml_booking_object( $woocommerce_wpml ); // Init also legacy bookings hooks.
+		$this->multicurrencyHooks = $this->getMulticurrencyHooks( $woocommerce_wpml );
 
 		// Check bail out.
 		$_POST['_wcml_custom_costs'] = 1;
-		$this->assertFalse( $this->bookings->save_custom_costs( 0 ) );
+		$this->assertFalse( $this->multicurrencyHooks->save_custom_costs( 0 ) );
 
 		// Check with disabled custom costs.
 		$_POST['_wcml_custom_costs'] = 0;
-		$this->bookings->save_custom_costs( $product_id );
+		$this->multicurrencyHooks->save_custom_costs( $product_id );
 		$this->assertEquals( '0', get_post_meta( $product_id, '_wcml_custom_costs_status', true ) );
 		$this->assertEquals( '', get_post_meta( $product_id, '_wc_booking_pricing', true ) );
 
@@ -114,7 +128,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			$_POST['wcml_wc_display_cost'][ $currency_code ] = 102;
 		}
 
-		$this->bookings->save_custom_costs( $product_id );
+		$this->multicurrencyHooks->save_custom_costs( $product_id );
 		$this->assertEquals( '1', get_post_meta( $product_id, '_wcml_custom_costs_status', true ) );
 
 		foreach ( $this->currencies as $currency_code => $currency_data ) {
@@ -147,7 +161,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			$_POST['wcml_wc_booking_pricing_cost'][ $currency_code ]['test_booking_key'] = 901;
 		}
 
-		$this->bookings->save_custom_costs( $product_id );
+		$this->multicurrencyHooks->save_custom_costs( $product_id );
 		$result = get_post_meta( $product_id, '_wc_booking_pricing', true );
 		$this->assertTrue( isset( $result['test_booking_key'] ) );
 
@@ -174,7 +188,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		);
 
 		$_POST['_wcml_custom_costs'] = 1;
-		$this->bookings->save_custom_costs( $product_id );
+		$this->multicurrencyHooks->save_custom_costs( $product_id );
 
 		$this->assertEquals( $this->usd_price, get_post_meta( $bookable_person, 'cost_' . $this->usd_code, true ) );
 		$this->assertEquals( $this->eur_price, get_post_meta( $bookable_person, 'cost_' . $this->euro_code, true ) );
@@ -199,7 +213,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		// Enable custom costs.
 		$_POST['_wcml_custom_costs'] = 1;
 
-		$this->bookings->save_custom_costs( $product_id );
+		$this->multicurrencyHooks->save_custom_costs( $product_id );
 
 		$this->assertEquals( $this->usd_price, get_post_meta( $bookable_person, 'block_cost_' . $this->usd_code, true ) );
 		$this->assertEquals( $this->eur_price, get_post_meta( $bookable_person, 'block_cost_' . $this->euro_code, true ) );
@@ -219,7 +233,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 				$this->euro_code => $this->eur_price,
 			),
 		);
-		$this->bookings->save_custom_costs( $product_id );
+		$this->multicurrencyHooks->save_custom_costs( $product_id );
 
 		$custom_costs = get_post_meta( $product_id, '_resource_base_costs', true );
 		$this->assertTrue( isset( $custom_costs['custom_costs'] ) );
@@ -245,7 +259,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 				$this->euro_code => 101,
 			),
 		);
-		$this->bookings->save_custom_costs( $product_id );
+		$this->multicurrencyHooks->save_custom_costs( $product_id );
 
 		$custom_costs = get_post_meta( $product_id, '_resource_block_costs', true );
 		$this->assertTrue( isset( $custom_costs['custom_costs'] ) );
@@ -446,13 +460,13 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function get_cookie_booking_currency() {
-		$bookings = $this->get_wcml_booking_object();
+		$subject = $this->getMulticurrencyHooks();
 		$_COOKIE['_wcml_booking_currency'] = 'USD';
 		$backup = wcml_get_woocommerce_currency_option();
 		update_option( 'woocommerce_currency', 'EUR', 'no' );
-		$this->assertEquals( 'USD', $bookings->get_cookie_booking_currency() );
+		$this->assertEquals( 'USD', $subject->get_cookie_booking_currency() );
 		unset( $_COOKIE['_wcml_booking_currency'] );
-		$this->assertEquals( 'EUR', $bookings->get_cookie_booking_currency() );
+		$this->assertEquals( 'EUR', $subject->get_cookie_booking_currency() );
 		update_option( 'woocommerce_currency', $backup );
 	}
 
@@ -464,13 +478,13 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$_COOKIE['_wcml_booking_currency'] = 'USD';
 		$_GET['page'] = 'create_booking';
 		$pagenow = 'edit.php';
-		$bookings = $this->get_wcml_booking_object();
-		$this->assertEquals( 10, has_filter( 'woocommerce_currency_symbol', array( $bookings, 'filter_booking_currency_symbol' ) ) );
-		$this->assertEquals( '&#36;', $bookings->filter_booking_currency_symbol( $_COOKIE['_wcml_booking_currency'] ) );
+		$subject = $this->getMulticurrencyHooks();
+		$this->assertEquals( 10, has_filter( 'woocommerce_currency_symbol', [ $subject, 'filter_booking_currency_symbol' ] ) );
+		$this->assertEquals( '&#36;', $subject->filter_booking_currency_symbol( $_COOKIE['_wcml_booking_currency'] ) );
 		unset( $_COOKIE['_wcml_booking_currency'] );
-		$this->assertEquals( 'test', $bookings->filter_booking_currency_symbol( 'test' ) );
+		$this->assertEquals( 'test', $subject->filter_booking_currency_symbol( 'test' ) );
 		$_COOKIE['_wcml_booking_currency'] = random_string();
-		$this->assertEquals( '', $bookings->filter_booking_currency_symbol( $_COOKIE['_wcml_booking_currency'] ) );
+		$this->assertEquals( '', $subject->filter_booking_currency_symbol( $_COOKIE['_wcml_booking_currency'] ) );
 		unset( $_GET['page'] );
 	}
 
@@ -636,16 +650,16 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 				),
 			) );
 
-		$bookings = $this->get_wcml_booking_object( $woocommerce_wpml );
-		$this->assertEquals( $cost, $bookings->filter_pricing_cost( $cost, 'filed', 'name', 'name_key' ) );
+		$subject = $this->getMulticurrencyHooks( $woocommerce_wpml );
+		$this->assertEquals( $cost, $subject->filter_pricing_cost( $cost, 'filed', 'name', 'name_key' ) );
 
 		$woocommerce_wpml->settings['enable_multi_currency'] = 2;
-		$bookings = $this->get_wcml_booking_object( $woocommerce_wpml );
-		$this->assertEquals( $block_cost, $bookings->filter_pricing_cost( $cost, array( 'cost_USD' => $block_cost, 'modifier' => '' ), 'cost_', 'name_key' ) );
+		$subject = $this->getMulticurrencyHooks( $woocommerce_wpml );
+		$this->assertEquals( $block_cost, $subject->filter_pricing_cost( $cost, array( 'cost_USD' => $block_cost, 'modifier' => '' ), 'cost_', 'name_key' ) );
 
-		$bookings = $this->get_wcml_booking_object( $woocommerce_wpml );
-		$this->assertEquals( $cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $cost, array( 'modifier' => '' ), 'cost_', 'name_key' ) );
-		$this->assertEquals( $block_cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $block_cost, array( 'base_modifier' => '' ), 'base_cost_', 'name_key' ) );
+		$subject = $this->getMulticurrencyHooks( $woocommerce_wpml );
+		$this->assertEquals( $cost * $rates[ $this->usd_code ], $subject->filter_pricing_cost( $cost, array( 'modifier' => '' ), 'cost_', 'name_key' ) );
+		$this->assertEquals( $block_cost * $rates[ $this->usd_code ], $subject->filter_pricing_cost( $block_cost, array( 'base_modifier' => '' ), 'base_cost_', 'name_key' ) );
 
 		$product = $this->create_bookable_product( $this->default_language );
 		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
@@ -655,14 +669,14 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			->method( 'get_original_product_id' )
 			->willReturn( $product );
 
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->woocommerce, $this->wpdb, $this->tp, $this->wpml_post_translations );
-		$this->assertEquals( $cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $cost, array( 'modifier' => '' ), 'cost_', 'name_key' ) );
-		$this->assertEquals( $block_cost * $rates[ $this->usd_code ], $bookings->filter_pricing_cost( $block_cost, array( 'base_modifier' => '' ), 'base_cost_', 'name_key' ) );
+		$subject = $this->getMulticurrencyHooks( $woocommerce_wpml );
+		$this->assertEquals( $cost * $rates[ $this->usd_code ], $subject->filter_pricing_cost( $cost, array( 'modifier' => '' ), 'cost_', 'name_key' ) );
+		$this->assertEquals( $block_cost * $rates[ $this->usd_code ], $subject->filter_pricing_cost( $block_cost, array( 'base_modifier' => '' ), 'base_cost_', 'name_key' ) );
 
 		update_post_meta( $product, '_wc_booking_pricing', array( 'name_key' => array( 'cost_USD' => $cost * 1.1, 'modifier' => '' ) ) );
 
 		$_POST['add-to-cart'] = $translation;
-		$this->assertEquals( $cost * 1.1, $bookings->filter_pricing_cost( $cost, array( 'modifier' => '' ), 'cost_', 'name_key' ) );
+		$this->assertEquals( $cost * 1.1, $subject->filter_pricing_cost( $cost, array( 'modifier' => '' ), 'cost_', 'name_key' ) );
 		unset( $_POST['add-to-cart'] );
 	}
 
@@ -1234,7 +1248,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		return $product_id;
 	}
 
-	public function get_wcml_booking_object($woocommerce_wpml = false ){
+	private function get_wcml_booking_object($woocommerce_wpml = false ){
 
 		if( !$woocommerce_wpml) {
 			$woocommerce_wpml = $this->get_test_subject();
@@ -1244,6 +1258,14 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 		$subject->add_hooks();
 
 		return $subject;
+	}
+
+	private function getMulticurrencyHooks( $woocommerce_wpml = null ) {
+		$woocommerce_wpml = $woocommerce_wpml ?: $this->get_test_subject();
+		$this->multicurrencyHooks = new MulticurrencyHooks( $woocommerce_wpml );
+		$this->multicurrencyHooks->add_hooks();
+
+		return $this->multicurrencyHooks;
 	}
 
 	/**
@@ -1281,7 +1303,7 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 				)
 			) );
 
-		$bookings = $this->get_wcml_booking_object( $woocommerce_wpml );
+		$subject = $this->getMulticurrencyHooks( $woocommerce_wpml );
 		$product = wpml_test_insert_post( $this->default_language, 'product', false, random_string() );
 		$trid = $this->sitepress->get_element_trid( $product, 'post_product' );
 		$translation = wpml_test_insert_post( $this->second_language, 'product', $trid, random_string() );
@@ -1290,11 +1312,11 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			->method( 'get_original_product_id' )
 			->willReturn( $translation );
 
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->woocommerce, $this->wpdb, $this->tp, $this->wpml_post_translations );
+		$subject = $this->getMulticurrencyHooks( $woocommerce_wpml );
 		update_post_meta( $product, '_resource_base_costs', array( 1 => $block_cost ) );
-		$output = $bookings->filter_wc_booking_cost( $check, $product, '_resource_base_costs', true );
+		$output = $subject->filter_wc_booking_cost( $check, $product, '_resource_base_costs', true );
 		$this->assertEquals( $block_cost, $output[0][1] );
-		$this->assertEquals( $check, $bookings->filter_wc_booking_cost( $check, $translation, '_resource_base_costs', true ) );
+		$this->assertEquals( $check, $subject->filter_wc_booking_cost( $check, $translation, '_resource_base_costs', true ) );
 
 		$woocommerce_wpml = $this->get_test_subject();
 		$woocommerce_wpml->settings['enable_multi_currency'] = 2;
@@ -1313,11 +1335,11 @@ class Test_WCML_Bookings extends WCML_UnitTestCase {
 			->method( 'get_original_product_id' )
 			->willReturn( $product );
 
-		$bookings = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->woocommerce, $this->wpdb, $this->tp, $this->wpml_post_translations );
+		$subject = $this->getMulticurrencyHooks( $woocommerce_wpml );
 
 		update_post_meta( $product, '_wc_display_cost_' . $this->usd_code, $base_costs );
 		update_post_meta( $product, '_wcml_custom_costs_status', true );
-		$this->assertEquals( $base_costs, $bookings->filter_wc_booking_cost( $check, $product, '_wc_display_cost', true ) );
+		$this->assertEquals( $base_costs, $subject->filter_wc_booking_cost( $check, $product, '_wc_display_cost', true ) );
 	}
 
 	/**

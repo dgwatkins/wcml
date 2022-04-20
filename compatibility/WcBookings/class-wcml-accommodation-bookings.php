@@ -1,25 +1,14 @@
 <?php
 
+use WCML\Compatibility\WcBookings\SharedHooks;
+
 class WCML_Accommodation_Bookings implements \IWPML_Action {
 
-    /**
-     * @var woocommerce_wpml
-     */
-    private $woocommerce_wpml;
+	/** @var \woocommerce_wpml $woocommerce_wpml */
+	private $woocommerce_wpml;
 
-	/**
-	 * @var WCML_Bookings
-	 */
-	private $bookings;
-
-	public function __construct(
-		woocommerce_wpml $woocommerce_wpml,
-		WCML_Bookings $bookings
-	) {
-		// @todo Cover by tests, required for wcml-3037.
-
+	public function __construct( \woocommerce_wpml $woocommerce_wpml ) {
 		$this->woocommerce_wpml = $woocommerce_wpml;
-		$this->bookings         = $bookings;
 	}
 
 	public function add_hooks() {
@@ -50,8 +39,7 @@ class WCML_Accommodation_Bookings implements \IWPML_Action {
         $product_terms = wp_get_post_terms( $post_id, 'product_type', array( "fields" => "names" ) );
 
 	    if(
-		    in_array( 'accommodation-booking', $product_terms )&&
-		    $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT &&
+		    in_array( 'accommodation-booking', $product_terms ) &&
 		    $this->woocommerce_wpml->products->is_original_product( $post_id )
 	    ){
 
@@ -78,14 +66,9 @@ class WCML_Accommodation_Bookings implements \IWPML_Action {
 
     function echo_wcml_price_field( $post_id, $field, $pricing = false, $check = true, $resource_id = false ){
 
-	    if(
-		    $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT &&
-		    ( !$check || $this->woocommerce_wpml->products->is_original_product( $post_id ) )
-	    ){
+	    if ( ! $check || $this->woocommerce_wpml->products->is_original_product( $post_id ) ) {
 
             $currencies = $this->woocommerce_wpml->multi_currency->get_currencies();
-
-            $wc_currencies = get_woocommerce_currencies();
 
             echo '<div class="wcml_custom_cost_field" >';
 
@@ -172,7 +155,6 @@ class WCML_Accommodation_Bookings implements \IWPML_Action {
 
 	    if(
 		    $meta_key == '_price' &&
-		    $this->woocommerce_wpml->settings[ 'enable_multi_currency' ] == WCML_MULTI_CURRENCIES_INDEPENDENT &&
 		    !is_admin() &&
 		    get_post_type( $object_id ) == 'product' &&
 		    ( $currency = $this->woocommerce_wpml->multi_currency->get_client_currency() ) !== wcml_get_woocommerce_currency_option()
@@ -193,9 +175,8 @@ class WCML_Accommodation_Bookings implements \IWPML_Action {
         return isset( $price) ? $price : $value;
     }
 
-    public function load_assets(){
-
-        $this->bookings->load_assets( 'accommodation-booking' );
+    public function load_assets() {
+		SharedHooks::load_assets( 'accommodation-booking' );
     }
 
 }
