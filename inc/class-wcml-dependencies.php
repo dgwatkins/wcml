@@ -105,6 +105,7 @@ class WCML_Dependencies {
 			<p>
 			<?php
 			printf(
+			    /* translators: %1$s is a URL and %2$s is a version number */
 				__(
 					'WooCommerce Multilingual & Multicurrency is enabled but not effective. It is not compatible with  <a href="%1$s">WPML</a> versions prior %2$s.',
 					'woocommerce-multilingual'
@@ -132,6 +133,7 @@ class WCML_Dependencies {
 			<p>
 			<?php
 			printf(
+			    /* translators: %1$s is a URL and %2$s is a version number */
 				__(
 					'WooCommerce Multilingual & Multicurrency is enabled but not effective. It is not compatible with  <a href="%1$s">Woocommerce</a> versions prior %2$s.',
 					'woocommerce-multilingual'
@@ -151,6 +153,7 @@ class WCML_Dependencies {
 			<p>
 			<?php
 			printf(
+			    /* translators: %1$s is a URL and %2$s is a version number */
 				__(
 					'WooCommerce Multilingual & Multicurrency is enabled but not effective. It is not compatible with  <a href="%1$s">WPML String Translation</a> versions prior %2$s.',
 					'woocommerce-multilingual'
@@ -229,7 +232,10 @@ class WCML_Dependencies {
 			?>
 
 			<div class="message error">
-				<p><?php printf( __( 'WooCommerce Multilingual & Multicurrency is enabled but not effective. It requires %s in order to work.', 'woocommerce-multilingual' ), $missing ); ?></p>
+				<p><?php
+					/* translators: %s is a list of plugin names  */
+                    printf( __( 'WooCommerce Multilingual & Multicurrency is enabled but not effective. It requires %s in order to work.', 'woocommerce-multilingual' ), $missing );
+                    ?></p>
 			</div>
 			<?php
 		};
@@ -317,6 +323,7 @@ class WCML_Dependencies {
 							$correct_config_value   = $cf['attr']['action'] == 'copy' ? 1 : ( $cf['attr']['action'] == 'translate' ? 2 : 0 );
 
 							if ( $effective_config_value != $correct_config_value ) {
+								/* translators: %s is a field name */
 								$this->xml_config_errors[] = sprintf( __( 'Custom field %s configuration from wpml-config.xml file was altered!', 'woocommerce-multilingual' ), '<i>' . $cf['value'] . '</i>' );
 							}
 						}
@@ -348,6 +355,7 @@ class WCML_Dependencies {
 							}
 
 							if ( $effective_config_value != $correct_config_value ) {
+								/* translators: %s is a custom post type name */
 								$this->xml_config_errors[] = sprintf( __( 'Custom type %s configuration from wpml-config.xml file was altered!', 'woocommerce-multilingual' ), '<i>' . $ct['value'] . '</i>' );
 							}
 						}
@@ -379,6 +387,7 @@ class WCML_Dependencies {
 							}
 
 							if ( $effective_config_value != $correct_config_value ) {
+								/* translators: %s is a custom taxonomy name */
 								$this->xml_config_errors[] = sprintf( __( 'Custom taxonomy %s configuration from wpml-config.xml file was altered!', 'woocommerce-multilingual' ), '<i>' . $tx['value'] . '</i>' );
 							}
 						}

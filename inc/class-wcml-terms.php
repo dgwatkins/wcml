@@ -104,6 +104,7 @@ class WCML_Terms {
 		if ( $taxonomy && in_array( $taxonomy, $taxonomies ) ) {
 			$taxonomy_obj = get_taxonomy( $taxonomy );
 			$message      = sprintf(
+				/* translators: %1$s/%2$s and %3$s/%4$s are opening and closing HTML link tags */
 				__( 'To translate %1$s please use the %2$s translation%3$s page, inside the %4$sWooCommerce Multilingual & Multicurrency admin%5$s.', 'woocommerce-multilingual' ),
 				$taxonomy_obj->labels->name,
 				'<strong><a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=' . $taxonomy ) . '">' . $taxonomy_obj->labels->singular_name,
@@ -511,6 +512,7 @@ class WCML_Terms {
 
 		}
 
+		/* translators: %d is a number of products */
 		$response['progress'] = $response['go'] ? sprintf( __( '%d products left', 'woocommerce-multilingual' ), count( $post_ids ) - $posts_processed ) : __( 'Synchronization complete!', 'woocommerce-multilingual' );
 
 		if ( $response['go'] && isset( $wcml_settings['variations_needed'][ $taxonomy ] ) && ! empty( $variations_processed ) ) {
@@ -547,6 +549,7 @@ class WCML_Terms {
 
 			}
 		} else {
+			/* translators: %s is a taxonomy name */
 			$errors = sprintf( __( 'Invalid taxonomy %s', 'woocommerce-multilingual' ), $_POST['taxonomy'] );
 		}
 
@@ -574,6 +577,7 @@ class WCML_Terms {
 			$html .= $this->render_assignment_status( $_POST['post'], $_POST['taxonomy'], $preview = false );
 
 		} else {
+			/* translators: %s is a taxonomy name */
 			$errors .= sprintf( __( 'Invalid taxonomy %s', 'woocommerce-multilingual' ), $_POST['taxonomy'] );
 		}
 
@@ -697,11 +701,13 @@ class WCML_Terms {
 				$out .= wp_nonce_field( 'wcml_sync_taxonomies_in_content', 'wcml_sync_taxonomies_in_content_nonce', true, false );
 				$out .= '<input type="hidden" name="taxonomy" value="' . $taxonomy . '" />';
 				$out .= sprintf(
+					/* translators: %%1$s is a post type name and %2$s is a taxonomy name */
 					__( 'Some translated %1$s have different %2$s assignments.', 'woocommerce-multilingual' ),
 					'<strong>' . mb_strtolower( $wp_post_types[ $object_type ]->labels->name ) . '</strong>',
 					'<strong>' . mb_strtolower( $wp_taxonomies[ $taxonomy ]->labels->name ) . '</strong>'
 				);
 				$out .= '&nbsp;<a class="submit button-secondary" href="#">' . sprintf(
+					/* translators: %%1$s is a taxonomy name and %2$s is a post type name */
 					__( 'Update %1$s for all translated %2$s', 'woocommerce-multilingual' ),
 					'<strong>' . mb_strtolower( $wp_taxonomies[ $taxonomy ]->labels->name ) . '</strong>',
 					'<strong>' . mb_strtolower( $wp_post_types[ $object_type ]->labels->name ) . '</strong>'
@@ -710,6 +716,7 @@ class WCML_Terms {
 				$out .= '</form>';
 			} else {
 				$out .= sprintf(
+					/* translators: %%1$s is a taxonomy name and %2$s is a post type name */
 					__( 'All %1$s have the same %2$s assignments.', 'woocommerce-multilingual' ),
 					'<strong>' . mb_strtolower( $wp_taxonomies[ $taxonomy ]->labels->name ) . '</strong>',
 					'<strong>' . mb_strtolower( $wp_post_types[ $object_type ]->labels->name ) . '</strong>'
@@ -718,7 +725,7 @@ class WCML_Terms {
 			$out .= '</div>';
 
 		} else {
-
+			/* translators: %%1$s is a taxonomy name and %2$s is a post type name */
 			$out .= sprintf( __( 'Successfully updated %1$s for all translated %2$s.', 'woocommerce-multilingual' ), $wp_taxonomies[ $taxonomy ]->labels->name, $wp_post_types[ $object_type ]->labels->name );
 
 		}

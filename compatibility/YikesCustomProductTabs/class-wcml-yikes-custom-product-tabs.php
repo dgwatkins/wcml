@@ -237,6 +237,7 @@ class WCML_YIKES_Custom_Product_Tabs implements \IWPML_Action {
 
 	public function show_pointer_info() {
 
+		/* translators: %s is an HTML link pointing to WooCommerce product translation page */
 		$a    = __( 'You can translate your custom product tabs on the %s', 'woocommerce-multilingual' );
 		$b    = __( 'WooCommerce product translation page', 'woocommerce-multilingual' );
 		$link = '<a href="' . admin_url( 'admin.php?page=wpml-wcml' ) . '">' . $b . '</a>';

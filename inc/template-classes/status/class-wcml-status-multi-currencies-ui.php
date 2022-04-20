@@ -35,6 +35,7 @@ class WCML_Status_Multi_Currencies_UI extends WCML_Templates_Factory {
 			'strings'        => [
 				'mc_missing'     => __( 'Multicurrency', 'woocommerce-multilingual' ),
 				'no_secondary'   => __( "You haven't added any secondary currencies.", 'woocommerce-multilingual' ),
+				/* translators: %s is a list of currency codes */
 				'sec_currencies' => __( 'Secondary currencies: %s', 'woocommerce-multilingual' ),
 				'not_enabled'    => __( 'Multi-currency is not enabled.', 'woocommerce-multilingual' ),
 				'add_cur'        => __( 'Add Currencies', 'woocommerce-multilingual' ),

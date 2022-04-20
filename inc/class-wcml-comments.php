@@ -233,6 +233,7 @@ class WCML_Comments {
 		$current_language_reviews_count = $this->get_reviews_count();
 
 		if ( $all_languages_reviews_count > $current_language_reviews_count ) {
+			/* translators: %s is the number of reviews */
 			$comments_link_text = sprintf( __( 'Show reviews in all languages  (%s)', 'woocommerce-multilingual' ), $all_languages_reviews_count );
 			echo '<p><a id="lang-comments-link" href="' . $comments_link . '" rel="nofollow" class="all-languages-reviews" >' . $comments_link_text . '</a></p>';
 		}
@@ -248,6 +249,7 @@ class WCML_Comments {
 
 		$comments_link                  = add_query_arg( [ 'clang' => $current_language ] );
 		$language_details               = $this->sitepress->get_language_details( $current_language );
+		/* translators: %1$s is a language name and %2$s is the number of reviews */
 		$comments_link_text             = sprintf( __( 'Show only reviews in %1$s (%2$s)', 'woocommerce-multilingual' ), $language_details['display_name'], $current_language_reviews_count );
 
 		echo '<p><a id="lang-comments-link" href="' . $comments_link . '" rel="nofollow" class="current-language-reviews" >' . $comments_link_text . '</a></p>';
