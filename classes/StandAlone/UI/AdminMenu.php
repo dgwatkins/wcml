@@ -65,15 +65,18 @@ class AdminMenu extends \WCML_Menu_Wrap_Base {
 					return sprintf( $text, '<a href="' . $url . '"' . $attrs . '">', '</a>' );
 				};
 
+				/* translators: %1$s and %2$s are opening and closing HTML link tags */
 				$content .= $inP( $wrapLink( esc_html__( 'To run your store in multiple languages, you need to use the %1$sWPML plugin%2$s.', 'woocommerce-multilingual' ), \WCML_Tracking_Link::getWpmlHome( true ) ) );
 
 				$content .= $inP(
+					/* translators: %1$s and %2$s are opening and closing HTML link tags */
 					$wrapLink( esc_html__( 'If you have it already, install and activate it. Otherwise, %1$sbuy WPML%2$s.', 'woocommerce-multilingual' ), \WCML_Tracking_Link::getWpmlPurchase( true ) )
 					. ' ' . esc_html__( 'You will need either the Multilingual CMS or Multilingual Agency package to use WPML with WooCommerce.', 'woocommerce-multilingual' )
 				);
 
 				$content .= $inP(
 					$wrapLink(
+						/* translators: %1$s and %2$s are opening and closing HTML link tags */
 						esc_html__( 'You can still use the %1$smulticurrency features%2$s without buying anything.', 'woocommerce-multilingual' ),
 						admin_url( 'admin.php?page=wpml-wcml&tab=multi-currency' ),
 						false

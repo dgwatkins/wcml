@@ -774,6 +774,7 @@ class WCML_Url_Translation {
 					$slug      = isset( $endpoints[ $base ] ) ? $endpoints[ $base ] : false;
 				}
 
+				/* translators: %s is a slug */
 				$return['name'] = sprintf( __( 'Endpoint: %s', 'woocommerce-multilingual' ), $base );
 				$string_id      = icl_get_string_id( $slug, $this->get_endpoint_string_context(), $base );
 				break;

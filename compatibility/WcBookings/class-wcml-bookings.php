@@ -2385,6 +2385,7 @@ class WCML_Bookings implements \IWPML_Action {
 	public function show_pointer_info() {
 
 		$pointer_ui = new WCML_Pointer_UI(
+		    /* translators: %1$s and %2$s are opening and closing HTML link tags */
 			sprintf( __( 'You can translate the titles of your custom Resources on the %1$sWooCommerce product translation page%2$s', 'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=wpml-wcml' ) . '">', '</a>' ),
 			WCML_Tracking_Link::getWcmlBookingsDoc(),
 			'bookings_resources .woocommerce_bookable_resources #message'
@@ -2393,6 +2394,7 @@ class WCML_Bookings implements \IWPML_Action {
 		$pointer_ui->show();
 
 		$pointer_ui = new WCML_Pointer_UI(
+		    /* translators: %1$s and %2$s are opening and closing HTML link tags */
 			sprintf( __( 'You can translate the Person Type Name and Description on the  %1$sWooCommerce product translation page%2$s', 'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=wpml-wcml' ) . '">', '</a>' ),
 			WCML_Tracking_Link::getWcmlBookingsDoc(),
 			'bookings_persons #persons-types>div.toolbar'

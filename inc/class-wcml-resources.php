@@ -320,6 +320,7 @@ class WCML_Resources {
 
 		echo '<h3 class="wcml_prod_hidden_notice">' .
 			sprintf(
+				/* translators: %1$s and %2$s are HTML links pointing to post edit screen and translation edit screen */
 				__(
 					"This is a translation of %1\$s. Some of the fields are not editable. It's recommended to use the %2\$s for translating products.",
 					'woocommerce-multilingual'

@@ -285,6 +285,7 @@ class WCML_Install {
 				<p>
 					<?php
 					printf(
+					    /* translators: %1$s and %2$s are opening and closing HTML strong tags */
 						esc_html__( "You've successfully installed %1\$sWooCommerce Multilingual & Multicurrency%2\$s. Would you like to see a quick overview?", 'woocommerce-multilingual' ),
 						'<strong>',
 						'</strong>'
@@ -311,7 +312,10 @@ class WCML_Install {
 
 		<div id="message" class="updated error">
 			<p>
-				<?php printf( __( 'We detected a problem in your WPML configuration: the %1$sproduct_type%2$s taxonomy is set as translatable and this would cause problems with translated products. You can fix this in the %3$sMultilingual Content Setup page%4$s.', 'woocommerce-multilingual' ), '<i>', '</i>', '<a href="' . admin_url( 'admin.php?page=' . WPML_TM_FOLDER . '/menu/main.php&sm=mcsetup#ml-content-setup-sec-8' ) . '">', '</a>' ); ?>
+				<?php
+				/* translators: %1$s and %2$s are opening and closing HTML italic tags and %3$s and %4$s are opening and closing HTML link tags */
+                printf( __( 'We detected a problem in your WPML configuration: the %1$sproduct_type%2$s taxonomy is set as translatable and this would cause problems with translated products. You can fix this in the %3$sMultilingual Content Setup page%4$s.', 'woocommerce-multilingual' ), '<i>', '</i>', '<a href="' . admin_url( 'admin.php?page=' . WPML_TM_FOLDER . '/menu/main.php&sm=mcsetup#ml-content-setup-sec-8' ) . '">', '</a>' );
+                ?>
 			</p>
 		</div>
 
@@ -323,7 +327,10 @@ class WCML_Install {
 
 		<div id="message" class="updated error">
 			<p>
-				<?php printf( __( 'We detected that the %1$sproduct_type%2$s field was set incorrectly for some product translations. This happened because the product_type taxonomy was translated. You can fix this in the WooCommerce Multilingual & Multicurrency %3$stroubleshooting page%4$s.', 'woocommerce-multilingual' ), '<i>', '</i>', '<a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=troubleshooting' ) . '">', '</a>' ); ?>
+				<?php
+				/* translators: %1$s and %2$s are opening and closing HTML italic tags and %3$s and %4$s are opening and closing HTML link tags */
+                printf( __( 'We detected that the %1$sproduct_type%2$s field was set incorrectly for some product translations. This happened because the product_type taxonomy was translated. You can fix this in the WooCommerce Multilingual & Multicurrency %3$stroubleshooting page%4$s.', 'woocommerce-multilingual' ), '<i>', '</i>', '<a href="' . admin_url( 'admin.php?page=wpml-wcml&tab=troubleshooting' ) . '">', '</a>' );
+                ?>
 			</p>
 		</div>
 

@@ -459,6 +459,7 @@ class WCML_WC_Strings {
 		if ( isset( $_GET['post'] ) && $this->sitepress->get_default_language() != $this->sitepress->get_current_language() ) {
 			$original_product_id = apply_filters( 'translate_object_id', $_GET['post'], 'product', true, $this->sitepress->get_default_language() );
 
+			/* translators: %s is a URL */
 			printf( '<p>' . __( 'In order to edit custom attributes you need to use the <a href="%s">custom product translation editor</a>', 'woocommerce-multilingual' ) . '</p>', admin_url( 'admin.php?page=wpml-wcml&tab=products&prid=' . $original_product_id ) );
 		}
 	}

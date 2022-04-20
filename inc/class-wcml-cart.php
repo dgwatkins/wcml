@@ -194,7 +194,8 @@ class WCML_Cart {
 
 		$dialog_title         = __( 'Switching currency?', 'woocommerce-multilingual' );
 		$confirmation_message = __( 'Your cart is not empty! After you switched the currency, all items from the cart will be removed and you have to add them again.', 'woocommerce-multilingual' );
-		$stay_in              = sprintf( __( 'Keep using %s', 'woocommerce-multilingual' ), $current_currency );
+		/* translators: %s is a currency */
+        $stay_in              = sprintf( __( 'Keep using %s', 'woocommerce-multilingual' ), $current_currency );
 		$switch_to            = __( 'Proceed', 'woocommerce-multilingual' );
 
 		ob_start();

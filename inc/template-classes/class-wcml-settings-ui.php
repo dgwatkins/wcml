@@ -97,6 +97,7 @@ class WCML_Settings_UI extends WCML_Templates_Factory {
 					],
 					'wpml_cookie_enabled'        => $this->sitepress->get_setting( WPML_Cookie_Setting::COOKIE_SETTING_FIELD ),
 					'cookie_not_enabled_message' => sprintf(
+						/* translators: %1$s and %2$s are opening and closing HTML link tags */
 						__(
 							'This feature was disabled. Please enable %1$sWPML cookies%2$s to continue.',
 							'woocommerce-multilingual'
@@ -105,6 +106,7 @@ class WCML_Settings_UI extends WCML_Templates_Factory {
 						'</a>'
 					),
 					'doc_link'                   => sprintf(
+						/* translators: %1$s and %2$s are opening and closing HTML link tags */
 						__(
 							'Not sure which option to choose? Read about %1$spotential issues when switching languages and currencies while the cart has items%2$s.',
 							'woocommerce-multilingual'

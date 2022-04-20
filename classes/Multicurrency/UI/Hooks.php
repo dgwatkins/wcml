@@ -185,14 +185,18 @@ class Hooks implements \IWPML_Action, IStandAloneAction {
 			'labelKeep'                      => __( 'Keep', 'woocommerce-multilingual' ),
 			'labelDelete'                    => __( 'Delete', 'woocommerce-multilingual' ),
 			'labelCurrenciesToDisplay'       => __( 'Currencies to display for each language', 'woocommerce-multilingual' ),
+			/* translators: %1$s is for language name and %2$s for currency name */
 			'placeholderEnableFor'           => __( 'Enable %1$s for %2$s', 'woocommerce-multilingual' ),
+			/* translators: %1$s is for language name and %2$s for currency name */
 			'placeholderDisableFor'          => __( 'Disable %1$s for %2$s', 'woocommerce-multilingual' ),
 			'labelSettings'                  => __( 'Settings', 'woocommerce-multilingual' ),
 			'labelAddNewCurrency'            => __( 'Add new currency', 'woocommerce-multilingual' ),
+			/* translators: %s for currency label */
 			'placeholderCurrencySettingsFor' => __( 'Currency settings for %s', 'woocommerce-multilingual' ),
 			'labelSelectCurrency'            => __( 'Select currency', 'woocommerce-multilingual' ),
 			'labelExchangeRate'              => __( 'Exchange Rate', 'woocommerce-multilingual' ),
 			'labelOnlyNumeric'               => __( 'Only numeric', 'woocommerce-multilingual' ),
+			/* translators: %s for currency exchange rate value */
 			'placeholderPreviousRate'        => __( '(previous value: %s)', 'woocommerce-multilingual' ),
 			'labelCurrencyPreview'           => __( 'Currency Preview', 'woocommerce-multilingual' ),
 			'labelPosition'                  => __( 'Currency Position', 'woocommerce-multilingual' ),
@@ -210,15 +214,18 @@ class Hooks implements \IWPML_Action, IStandAloneAction {
 			'optionDown'                     => __( 'Down', 'woocommerce-multilingual' ),
 			'optionNearest'                  => __( 'Nearest', 'woocommerce-multilingual' ),
 			'labelIncrement'                 => __( 'Increment for nearest integer', 'woocommerce-multilingual' ),
+			/* translators: %s is an HTML break line */
 			'tooltipIncrement'               => sprintf( __( 'The resulting price will be an increment of this value after initial rounding.%se.g.:', 'woocommerce-multilingual' ), '<br>' ) . '<br />' .
 			                                    __( '1454.07 &raquo; 1454 when set to 1', 'woocommerce-multilingual' ) . '<br />' .
 			                                    __( '1454.07 &raquo; 1450 when set to 10', 'woocommerce-multilingual' ) . '<br />' .
 			                                    __( '1454.07 &raquo; 1500 when set to 100', 'woocommerce-multilingual' ) . '<br />',
+			/* translators: %s is an HTML break line */
 			'tooltipRounding'                => sprintf( __( 'Round the converted price to the closest integer. %se.g. 15.78 becomes 16.00', 'woocommerce-multilingual' ), '<br />' ),
 			'tooltipAutosubtract'            => __( 'The value to be subtracted from the amount obtained previously.', 'woocommerce-multilingual' ) . '<br /><br />' .
 			                                    __( 'For 1454.07, when the increment for the nearest integer is 100 and the auto-subtract amount is 1, the resulting amount is 1499.', 'woocommerce-multilingual' ),
 			'labelAutosubtract'              => __( 'Autosubtract amount', 'woocommerce-multilingual' ),
 			'labelPaymentGateways'           => __( 'Payment Gateways', 'woocommerce-multilingual' ),
+			/* translators: %s is a currency code */
 			'placeholderCustomSettings'      => __( 'Custom settings for %s', 'woocommerce-multilingual' ),
 			'linkUrlLearn'                   => $trackingLink->getWcmlMultiCurrencyDoc( '#payment-gateways-settings' ),
 			'linkLabelLearn'                 => __( 'Learn more', 'woocommerce-multilingual' ),
@@ -280,6 +287,7 @@ class Hooks implements \IWPML_Action, IStandAloneAction {
 	public static function formatLastRateUpdate( $lastRateUpdate ) {
 		return $lastRateUpdate
 			? sprintf(
+				/* translators: %s is a date */
 				__( 'Set on %s', 'woocommerce-multilingual' ),
 				date( 'F j, Y g:i a', strtotime( $lastRateUpdate ) )
 			)

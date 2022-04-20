@@ -76,6 +76,7 @@ class WCML_Multi_Currency_UI extends WCML_Templates_Factory {
 			'multi_currency_on'      => WCML_MULTI_CURRENCIES_INDEPENDENT === (int) $this->woocommerce_wpml->settings['enable_multi_currency'],
 
 			'wc_currency_empty_warn' => sprintf(
+				/* translators: %1$s and %2$s are opening and closing HTML link tags */
 				__(
 					'The multi-currency mode cannot be enabled as a specific currency was not set. Go to the %1$sWooCommerce settings%2$s page and select the default currency for your store.',
 					'woocommerce-multilingual'
@@ -95,6 +96,7 @@ class WCML_Multi_Currency_UI extends WCML_Templates_Factory {
 				'custom_prices_select'       => [
 					'checked' => $this->woocommerce_wpml->settings['display_custom_prices'] == 1,
 					'label'   => sprintf(
+						/* translators: %1$s and %2$s are opening and closing HTML link tags */
 						__( 'Only display products with defined %1$scustom prices%2$s in the selected currency', 'woocommerce-multilingual' ),
 						'<a href="'. WCML_Tracking_Link::getWcmlMultiCurrencyDoc( '#configure-distinct-prices-for-different-currencies' ) . '" target="_blank" class="wpml-external-link">',
 						'</a>'
@@ -123,6 +125,7 @@ class WCML_Multi_Currency_UI extends WCML_Templates_Factory {
 					'edit'           => __( 'Edit currency switcher', 'woocommerce-multilingual' ),
 					'add_widget'     => __( 'Add a new currency switcher to a widget area', 'woocommerce-multilingual' ),
 					'no_sidebar'     => sprintf(
+						/* translators: %1$s and %2$s are opening and closing HTML link tags */
 						esc_html__( 'Your theme does not support a currency switcher widget. Please %1$sadd your currency switcher%2$s using a shortcode or PHP.', 'woocommerce-multilingual' ),
 						'<a href="' . WCML_Tracking_Link::getWcmlMultiCurrencyDoc( '#adding-a-currency-switcher-to-the-front-end' ) . '" class="wpml-external-link" target="_blank">',
 						'</a>'
@@ -210,6 +213,7 @@ class WCML_Multi_Currency_UI extends WCML_Templates_Factory {
 			} elseif ( $switcher_id == 'new_widget' ) {
 				$dialog_title = __( 'New Widget Area Currency Switcher', 'woocommerce-multilingual' );
 			} else {
+				/* translators: %s is sidebar name */
 				$dialog_title = sprintf( __( 'Edit %s Currency Switcher', 'woocommerce-multilingual' ), $widget_currency_switchers[ $switcher_id ]['name'] );
 			}
 

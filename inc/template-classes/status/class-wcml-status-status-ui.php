@@ -26,8 +26,11 @@ class WCML_Status_Status_UI extends WCML_Templates_Factory {
 			'icl_setup'   => $this->sitepress->setup(),
 			'strings'     => [
 				'status'      => __( 'Plugins Status', 'woocommerce-multilingual' ),
+				/* translators: %s is a plugin name */
 				'inst_active' => __( '%s is installed and active.', 'woocommerce-multilingual' ),
+				/* translators: %s is a plugin name */
 				'is_setup'    => __( '%s is set up.', 'woocommerce-multilingual' ),
+				/* translators: %s is a plugin name */
 				'not_setup'   => __( '%s is not set up.', 'woocommerce-multilingual' ),
 				'wpml'        => '<strong>WPML</strong>',
 				'tm'          => '<strong>WPML Translation Management</strong>',

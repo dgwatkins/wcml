@@ -265,6 +265,7 @@ class WCML_Product_Addons implements \IWPML_Action {
 	public function inf_translate_strings() {
 
 		$pointer_ui = new WCML_Pointer_UI(
+			/* translators: %1$s and %2$s are opening and closing HTML link tags */
 			sprintf( __( 'You can translate strings related to global add-ons on the %1$sWPML String Translation page%2$s. Use the search on the top of that page to find the strings.', 'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context=wc_product_addons_strings' ) . '">', '</a>' ),
 			WCML_Tracking_Link::getWcmlProductAddonsDoc(),
 			'wpbody-content .woocommerce>h2'
@@ -364,6 +365,7 @@ class WCML_Product_Addons implements \IWPML_Action {
 			foreach ( $product_addons as $addon_id => $product_addon ) {
 				$addon_data = wpml_collect( $product_addon );
 
+				/* translators: %s is a product addon name */
 				$addons_section = new WPML_Editor_UI_Field_Section( sprintf( __( 'Product Add-ons Group "%s"', 'woocommerce-multilingual' ), $addon_data->get( 'name' ) ) );
 
 				$group       = new WPML_Editor_UI_Field_Group( '', true );
@@ -466,6 +468,7 @@ class WCML_Product_Addons implements \IWPML_Action {
 	public function show_pointer_info() {
 
 		$pointer_ui = new WCML_Pointer_UI(
+			/* translators: %1$s and %2$s are opening and closing HTML link tags */
 			sprintf( __( 'You can translate the Group Name, Group Description and every Option Label of your product add-on on the %1$sWooCommerce product translation page%2$s', 'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=wpml-wcml' ) . '">', '</a>' ),
 			WCML_Tracking_Link::getWcmlProductAddonsDoc(),
 			'product_addons_data>p'
@@ -715,6 +718,7 @@ class WCML_Product_Addons implements \IWPML_Action {
 		return [
 			'strings'           => [
 				'dialog_title' => __( 'Multi-currency settings', 'woocommerce-multilingual' ),
+				/* translators: %s is an option label */
 				'description'  => sprintf( __( 'Here you can set different prices for the %s in multiple currencies:', 'woocommerce-multilingual' ), '<strong>' . $label . '</strong>' ),
 				'apply'        => __( 'Apply', 'woocommerce-multilingual' ),
 				'cancel'       => __( 'Cancel', 'woocommerce-multilingual' ),

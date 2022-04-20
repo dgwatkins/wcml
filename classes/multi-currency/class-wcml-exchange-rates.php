@@ -389,6 +389,7 @@ class WCML_Exchange_Rates {
 
 			$schedules[ 'wcml_monthly_on_' . $this->settings['month_day'] ] = [
 				'interval' => $interval,
+				/* translators: %s is the month day */
 				'display'  => sprintf( __( 'Monthly on the %s', 'woocommerce-multilingual' ), $month_day ),
 			];
 
@@ -397,6 +398,7 @@ class WCML_Exchange_Rates {
 			$week_day = $this->wp_locale->get_weekday( $this->settings['week_day'] );
 			$schedules[ 'wcml_weekly_on_' . $this->settings['week_day'] ] = [
 				'interval' => WEEK_IN_SECONDS,
+				/* translators: %s is the week day */
 				'display'  => sprintf( __( 'Weekly on %s', 'woocommerce-multilingual' ), $week_day ),
 			];
 

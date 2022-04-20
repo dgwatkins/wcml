@@ -406,6 +406,7 @@ class WCML_Translation_Editor {
 		<p class="icl-admin-message" style="margin-top: 0">
 			<?php
 			printf(
+			    /* translators: %1$s/%2$s are opening and closing HTML strong tags and %3$s/%4$s are opening and closing HTML link tags */
 				__(
 					'To configure how the %1$sWooCommerce products%2$s are translated, visit the WooCommerce Multilingual & Multicurrency %3$ssettings%4$s page.',
 					'woocommerce-multilingual'

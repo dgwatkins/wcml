@@ -50,6 +50,7 @@ class WCML_Status_Config_Warnings_UI extends WCML_Templates_Factory {
 				'change_def_lang' => __( 'Change default language', 'woocommerce-multilingual' ),
 				'attent_sett'     => __( 'There are some settings that require careful attention.', 'woocommerce-multilingual' ),
 				'over_sett'       => __( 'Some settings from the WooCommerce Multilingual & Multicurrency wpml-config.xml file have been overwritten.', 'woocommerce-multilingual' ),
+				/* translators: %s is link to Multilingual Content Setup */
 				'check_conf'      => __( 'You should check WPML configuration files added by other plugins or manual settings on the %s section.', 'woocommerce-multilingual' ),
 				'cont_set'        => '<a href="' . admin_url( 'admin.php?page=' . WPML_TM_FOLDER . '/menu/main.php&sm=mcsetup' ) . '">' . __( 'Multilingual Content Setup', 'woocommerce-multilingual' ) . '</a>',
 			],

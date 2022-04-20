@@ -256,6 +256,7 @@ class WCML_Multi_Currency_Configuration {
 		$message_args = [
 			'id'           => $message_id,
 			'text'         => sprintf(
+				/* translators: %1$s and %2$s are opening and closing HTML link tags */
 				__(
 					'The default currency was changed. In order to show accurate prices in all currencies, you need to update the exchange rates under the %1$sMulti-currency%2$s configuration.',
 					'woocommerce-multilingual'

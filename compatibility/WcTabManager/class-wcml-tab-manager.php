@@ -714,6 +714,7 @@ class WCML_Tab_Manager implements \IWPML_Action {
 	public function show_pointer_info() {
 
 		$pointer_ui = new WCML_Pointer_UI(
+			/* translators: %1$s and %2$s are opening and closing HTML link tags */
 			sprintf( __( 'You can translate your custom product tabs on the %1$sWooCommerce product translation page%2$s', 'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=wpml-wcml' ) . '">', '</a>' ),
 			WCML_Tracking_Link::getWcmlTabManagerDoc(),
 			'woocommerce_product_tabs>p'

@@ -275,6 +275,7 @@ class WCML_WC_Subscriptions implements \IWPML_Action {
 	public function show_pointer_info() {
 
 		$pointer_ui = new WCML_Pointer_UI(
+		    /* translators: %1$s and %2$s are opening and closing HTML link tags */
 			sprintf( __( 'You can translate strings related to subscription products on the %1$sWPML String Translation page%2$s. Use the search on the top of that page to find the strings.', 'woocommerce-multilingual' ), '<a href="' . admin_url( 'admin.php?page=' . WPML_ST_FOLDER . '/menu/string-translation.php&context=woocommerce_subscriptions' ) . '">', '</a>' ),
 			WCML_Tracking_Link::getWcmlSubscriptionsDoc(),
 			'general_product_data .subscription_pricing',
