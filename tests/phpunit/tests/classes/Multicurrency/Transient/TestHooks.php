@@ -36,6 +36,7 @@ class TestHooks extends \OTGS_TestCase {
 		] );
 
 		\WP_Mock::userFunction( 'get_transient', [
+			'times'  => 1,
 			'args'   => [ $key . '_' . $currency ],
 			'return' => $value,
 		] );
@@ -60,16 +61,20 @@ class TestHooks extends \OTGS_TestCase {
 			'return' => $currency,
 		] );
 
+		\WP_Mock::userFunction( 'delete_option', [
+			'times'  => 1,
+			'args'   => [ '_transient_' . $key ],
+		] );
+
 		\WP_Mock::userFunction( 'set_transient', [
+			'times'  => 1,
 			'args'   => [ $key . '_' . $currency, $value ],
 			'return' => true,
 		] );
 
 		Hooks::addHooks( $key );
 
-		$this->assertTrue(
-			$this->runFilter( 'set_transient_' . $key, $value )
-		);
+		$this->runAction( 'set_transient_' . $key, $value );
 	}
 
 	/**
