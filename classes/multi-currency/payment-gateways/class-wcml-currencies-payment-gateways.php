@@ -1,6 +1,6 @@
 <?php
 
-use WCML\MultiCurrency\Transient\Factory as TransientFactory;
+use WCML\Multicurrency\Transient\Factory as TransientFactory;
 
 /**
  * Class WCML_Currencies_Payment_Gateways
