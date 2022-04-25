@@ -22,20 +22,16 @@ class Hooks {
 
 		WpHooks::onAction( 'set_transient_' . $key )
 			->then( spreadArgs( function( $value ) use ( $key, $getKeyWithClientCurrency ) {
-				global $settingTransient;
-
-				$settingTransient = true;
+				add_filter( 'wcml_multi_currency_is_saving_transient', '__return_true' );
 				delete_transient( $key );
-				$settingTransient = false;
+				remove_filter( 'wcml_multi_currency_is_saving_transient', '__return_true' );
 
 				return set_transient( $getKeyWithClientCurrency(), $value );
 			} ) );
 
 		WpHooks::onAction( 'delete_transient_' . $key )
 			->then( function() use ( $getKeyWithCurrency ) {
-				global $settingTransient;
-
-				if ( ! $settingTransient ) {
+				if ( ! apply_filters( 'wcml_multi_currency_is_saving_transient', false ) ) {
 					foreach ( McSettings::getActiveCurrencyCodes() as $code ) {
 						delete_transient( $getKeyWithCurrency( $code ) );
 					}
