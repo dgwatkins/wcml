@@ -61,9 +61,9 @@ class TestHooks extends \OTGS_TestCase {
 			'return' => $currency,
 		] );
 
-		\WP_Mock::userFunction( 'delete_option', [
+		\WP_Mock::userFunction( 'delete_transient', [
 			'times'  => 1,
-			'args'   => [ '_transient_' . $key ],
+			'args'   => [ $key ],
 		] );
 
 		\WP_Mock::userFunction( 'set_transient', [

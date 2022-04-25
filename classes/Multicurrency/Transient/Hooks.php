@@ -22,24 +22,23 @@ class Hooks {
 
 		WpHooks::onAction( 'set_transient_' . $key )
 			->then( spreadArgs( function( $value ) use ( $key, $getKeyWithClientCurrency ) {
-				if ( wp_using_ext_object_cache() || wp_installing() ) {
-					wp_cache_delete( $key, 'transient' );
-				} else {
-					$option_timeout = '_transient_timeout_' . $key;
-					$option         = '_transient_' . $key;
-					$result         = delete_option( $option );
-					if ( $result ) {
-						delete_option( $option_timeout );
-					}
-				}
+				global $settingTransient;
+
+				$settingTransient = true;
+				delete_transient( $key );
+				$settingTransient = false;
 
 				return set_transient( $getKeyWithClientCurrency(), $value );
 			} ) );
 
 		WpHooks::onAction( 'delete_transient_' . $key )
 			->then( function() use ( $getKeyWithCurrency ) {
-				foreach ( McSettings::getActiveCurrencyCodes() as $code ) {
-					delete_transient( $getKeyWithCurrency( $code ) );
+				global $settingTransient;
+
+				if ( ! $settingTransient ) {
+					foreach ( McSettings::getActiveCurrencyCodes() as $code ) {
+						delete_transient( $getKeyWithCurrency( $code ) );
+					}
 				}
 			} );
 	}
