@@ -6,6 +6,7 @@ use WCML\MultiCurrency\Settings as McSettings;
 use WPML\FP\Fns;
 use WPML\FP\Str;
 use WPML\LIB\WP\Hooks as WpHooks;
+use function WCML\functions\getClientCurrency;
 use function WPML\FP\compose;
 use function WPML\FP\spreadArgs;
 
@@ -16,7 +17,9 @@ class Hooks {
 	 */
 	public static function addHooks( $key ) {
 		$getKeyWithCurrency       = Str::concat( $key . '_' );
-		$getKeyWithClientCurrency = compose( $getKeyWithCurrency, '\WCML\functions\getClientCurrency' );
+		$getKeyWithClientCurrency = function() use ( $getKeyWithCurrency ) {
+			return $getKeyWithCurrency( getClientCurrency() );
+		};
 
 		WpHooks::onFilter( 'pre_transient_' . $key )
 			->then( compose( 'get_transient', $getKeyWithClientCurrency ) );
