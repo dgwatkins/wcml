@@ -1,5 +1,7 @@
 <?php
 
+use WCML\MultiCurrency\Transient\Factory as TransientFactory;
+
 /**
  * Class WCML_Currencies_Payment_Gateways
  */
@@ -39,6 +41,8 @@ class WCML_Currencies_Payment_Gateways {
 		add_filter( 'option_woocommerce-ppcp-settings', [ 'WCML_Payment_Gateway_PayPal_V2', 'filter_ppcp_args' ] );
 
 		if ( ! is_admin() && wcml_is_multi_currency_on() ) {
+			TransientFactory::create( WCML_Payment_Gateway_PayPal_V2::BEARER_TOKEN_TRANSIENT )->addHooks();
+
 			add_filter(
 				'woocommerce_paypal_supported_currencies',
 				[ 'WCML_Payment_Gateway_PayPal', 'filter_supported_currencies' ]

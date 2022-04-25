@@ -39,7 +39,7 @@ class Hooks {
 	 *
 	 * @return bool
 	 */
-	public function setCurrencySpecificTransientx( $value, $expiration ) {
+	public function setCurrencySpecificTransient( $value, $expiration ) {
 		delete_transient( $this->key );
 
 		return set_transient( $this->getKeyWithCurrency(), $value, $expiration );

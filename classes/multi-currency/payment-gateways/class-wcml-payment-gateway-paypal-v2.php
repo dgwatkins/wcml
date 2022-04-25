@@ -67,7 +67,7 @@ class WCML_Payment_Gateway_PayPal_V2 extends WCML_Payment_Gateway_PayPal {
 	}
 
 	public function add_hooks() {
-		\WCML\Multicurrency\Transient\Factory::create( self::BEARER_TOKEN_TRANSIENT )->addHooks();
+
 	}
 
 	/**
