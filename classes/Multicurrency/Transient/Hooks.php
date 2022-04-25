@@ -22,7 +22,17 @@ class Hooks {
 
 		WpHooks::onAction( 'set_transient_' . $key )
 			->then( spreadArgs( function( $value ) use ( $key, $getKeyWithClientCurrency ) {
-				delete_option( '_transient_' . $key );
+				if ( wp_using_ext_object_cache() || wp_installing() ) {
+					wp_cache_delete( $key, 'transient' );
+				} else {
+					$option_timeout = '_transient_timeout_' . $key;
+					$option         = '_transient_' . $key;
+					$result         = delete_option( $option );
+					if ( $result ) {
+						delete_option( $option_timeout );
+					}
+				}
+
 				return set_transient( $getKeyWithClientCurrency(), $value );
 			} ) );
 
