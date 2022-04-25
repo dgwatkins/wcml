@@ -3,6 +3,7 @@
 namespace WCML\Multicurrency\Transient;
 
 use WCML\MultiCurrency\Settings as McSettings;
+use WCML\Utilities\InMemoryLock;
 use WPML\FP\Fns;
 use WPML\FP\Str;
 use WPML\LIB\WP\Hooks as WpHooks;
@@ -21,23 +22,23 @@ class Hooks {
 			return $getKeyWithCurrency( getClientCurrency() );
 		};
 
+		$lock = new InMemoryLock();
+
 		WpHooks::onFilter( 'pre_transient_' . $key )
 			->then( compose( 'get_transient', $getKeyWithClientCurrency ) );
 
 		WpHooks::onAction( 'set_transient_' . $key )
-			->then( spreadArgs( function( $value ) use ( $key, $getKeyWithClientCurrency ) {
-				$true = Fns::always( true );
-
-				add_filter( 'wcml_multi_currency_is_saving_transient', $true );
+			->then( spreadArgs( function( $value ) use ( $key, $getKeyWithClientCurrency, &$lock ) {
+				$lock->lock();
 				delete_transient( $key );
-				remove_filter( 'wcml_multi_currency_is_saving_transient', $true );
+				$lock->release();
 
 				return set_transient( $getKeyWithClientCurrency(), $value );
 			} ) );
 
 		WpHooks::onAction( 'delete_transient_' . $key )
-			->then( function() use ( $getKeyWithCurrency ) {
-				if ( ! apply_filters( 'wcml_multi_currency_is_saving_transient', false ) ) {
+			->then( function() use ( $getKeyWithCurrency, &$lock ) {
+				if ( ! $lock->isLocked() ) {
 					foreach ( McSettings::getActiveCurrencyCodes() as $code ) {
 						delete_transient( $getKeyWithCurrency( $code ) );
 					}
