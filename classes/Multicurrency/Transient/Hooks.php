@@ -3,6 +3,7 @@
 namespace WCML\Multicurrency\Transient;
 
 use WCML\MultiCurrency\Settings as McSettings;
+use WPML\FP\Fns;
 use WPML\FP\Str;
 use WPML\LIB\WP\Hooks as WpHooks;
 use function WPML\FP\compose;
@@ -22,9 +23,11 @@ class Hooks {
 
 		WpHooks::onAction( 'set_transient_' . $key )
 			->then( spreadArgs( function( $value ) use ( $key, $getKeyWithClientCurrency ) {
-				add_filter( 'wcml_multi_currency_is_saving_transient', '__return_true' );
+				$true = Fns::always( true );
+
+				add_filter( 'wcml_multi_currency_is_saving_transient', $true );
 				delete_transient( $key );
-				remove_filter( 'wcml_multi_currency_is_saving_transient', '__return_true' );
+				remove_filter( 'wcml_multi_currency_is_saving_transient', $true );
 
 				return set_transient( $getKeyWithClientCurrency(), $value );
 			} ) );

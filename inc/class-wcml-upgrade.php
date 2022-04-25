@@ -857,6 +857,8 @@ class WCML_Upgrade {
 		if ( LookupTableFactory::hasFeature() ) {
 			wc_get_container()->get( DataRegenerator::class )->initiate_regeneration();
 		}
+
+		delete_transient( WCML_Payment_Gateway_PayPal_V2::BEARER_TOKEN_TRANSIENT );
 	}
 
 }

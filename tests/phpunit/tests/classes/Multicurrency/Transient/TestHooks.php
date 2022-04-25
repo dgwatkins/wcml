@@ -61,6 +61,10 @@ class TestHooks extends \OTGS_TestCase {
 			'return' => $currency,
 		] );
 
+		\WP_Mock::passthruFunction( 'remove_filter', [
+			'times'  => 1,
+		] );
+
 		\WP_Mock::userFunction( 'delete_transient', [
 			'times'  => 1,
 			'args'   => [ $key ],
