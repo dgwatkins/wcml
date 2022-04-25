@@ -1,7 +1,11 @@
 <?php
 
+use WCML\Compatibility\WcProductAddons\MulticurrencyHooks;
+
 /**
  * Class Test_WCML_Product_Addons
+ * @group compatibility
+ * @group wc-product-addons
  */
 class Test_WCML_Product_Addons extends WCML_UnitTestCase {
 
@@ -275,7 +279,7 @@ class Test_WCML_Product_Addons extends WCML_UnitTestCase {
 		$cart_item         = array();
 		$cart_item['data'] = new stdClass();
 
-		$product_addons = new WCML_Product_Addons( $this->sitepress, $this->woocommerce_wpml );
+		$product_addons = new MulticurrencyHooks( $this->woocommerce_wpml );
 
 		$filtered_cart_item = $product_addons->filter_booking_addon_product_in_cart_contents( $cart_item );
 		$this->assertEquals( $cart_item, $filtered_cart_item );
@@ -291,7 +295,7 @@ class Test_WCML_Product_Addons extends WCML_UnitTestCase {
 
 		$this->woocommerce_wpml->settings['enable_multi_currency'] = self::MULTI_CURRENCIES_INDEPENDENT;
 
-		$product_addons = new WCML_Product_Addons( $this->sitepress, $this->woocommerce_wpml );
+		$product_addons = new MulticurrencyHooks( $this->woocommerce_wpml );
 
 		$product_id        = $this->wcml_helper->add_product( $this->sitepress->get_default_language(), false, rand_str() );
 		$cart_item['data'] = new WC_Product_Booking( $product_id->id );
@@ -308,7 +312,7 @@ class Test_WCML_Product_Addons extends WCML_UnitTestCase {
 		$cart_item = array();
 
 		$this->woocommerce_wpml->settings['enable_multi_currency'] = self::MULTI_CURRENCIES_INDEPENDENT;
-		$product_addons = new WCML_Product_Addons( $this->sitepress, $this->woocommerce_wpml );
+		$product_addons = new MulticurrencyHooks( $this->woocommerce_wpml );
 
 		$product_id        = $this->wcml_helper->add_product( $this->sitepress->get_default_language(), false, rand_str() );
 		$cart_item['data'] = new WC_Product_Booking( $product_id->id );
