@@ -86,7 +86,7 @@ class WCML_Payment_Gateway_PayPal_V2 extends WCML_Payment_Gateway_PayPal {
 			$getSetting = Obj::prop( Fns::__, $gateway );
 
 			foreach ( self::FIELDS as $key ) {
-				$settings[ $key ] = $getSetting( $key );
+				$settings[ $key ] = $getSetting( $key ) ?: $settings[ $key ];
 			}
 		}
 
