@@ -1,5 +1,7 @@
 <?php
 
+use WCML\Multicurrency\Transient\Hooks as TransientHooks;
+
 /**
  * Class WCML_Currencies_Payment_Gateways
  */
@@ -37,6 +39,8 @@ class WCML_Currencies_Payment_Gateways {
 		add_filter( 'woocommerce_gateway_description', [ $this, 'filter_gateway_description' ], 10, 2 );
 		add_filter( 'option_woocommerce_stripe_settings', [ 'WCML_Payment_Gateway_Stripe', 'filter_stripe_settings' ] );
 		add_filter( 'option_woocommerce-ppcp-settings', [ 'WCML_Payment_Gateway_PayPal_V2', 'filter_ppcp_args' ] );
+
+		TransientHooks::addHooks( WCML_Payment_Gateway_PayPal_V2::BEARER_TOKEN_TRANSIENT );
 
 		if ( ! is_admin() && wcml_is_multi_currency_on() ) {
 			add_filter(

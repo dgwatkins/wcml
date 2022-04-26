@@ -3,65 +3,48 @@
 namespace WCML\Multicurrency\Transient;
 
 use WCML\MultiCurrency\Settings as McSettings;
-
+use WPML\FP\Fns;
+use WPML\FP\Str;
+use WPML\LIB\WP\Hooks as WpHooks;
 use function WCML\functions\getClientCurrency;
+use function WPML\FP\spreadArgs;
 
 class Hooks {
 
 	/**
-	 * @var string
-	 */
-	private $key;
-
-	/**
 	 * @param string $key
 	 */
-	public function __construct( $key ) {
-		$this->key = $key;
-	}
+	public static function addHooks( $key ) {
+		$getKeyWithCurrency       = Str::concat( $key . '_' );
+		$getKeyWithClientCurrency = function() use ( $getKeyWithCurrency ) {
+			return $getKeyWithCurrency( getClientCurrency() );
+		};
 
-	public function addHooks() {
-		add_filter( 'pre_transient_' . $this->key, [ $this, 'getCurrencySpecificTransient' ] );
-		add_filter( 'set_transient_' . $this->key, [ $this, 'setCurrencySpecificTransient' ], 10, 2 );
-		add_action( 'delete_transient_' . $this->key, [ $this, 'deleteCurrencySpecificTransient' ] );
-	}
+		$getTransient = function() use ( $getKeyWithClientCurrency ) {
+			return get_transient( $getKeyWithClientCurrency() );
+		};
 
-	/**
-	 * @return bool
-	 */
-	public function getCurrencySpecificTransient() {
-		return get_transient( $this->getKeyWithCurrency() );
-	}
+		$setTransient = function( $value ) use ( $key, $getKeyWithClientCurrency ) {
+			delete_transient( $key );
+			return set_transient( $getKeyWithClientCurrency(), $value );
+		};
 
-	/**
-	 * @param string $value
-	 * @param string $expiration
-	 *
-	 * @return bool
-	 */
-	public function setCurrencySpecificTransientx( $value, $expiration ) {
-		delete_transient( $this->key );
+		$deleteTransient = function() use ( $getKeyWithCurrency ) {
+			foreach ( McSettings::getActiveCurrencyCodes() as $code ) {
+				delete_transient( $getKeyWithCurrency( $code ) );
+			}
+		};
 
-		return set_transient( $this->getKeyWithCurrency(), $value, $expiration );
-	}
+		$withLock = Fns::withNamedLock( __CLASS__ . "_$key", Fns::identity() );
 
-	public function deleteCurrencySpecificTransient() {
-		foreach ( McSettings::getActiveCurrencyCodes() as $code ) {
-			delete_transient( $this->getKeyWithCurrency( $code ) );
-		}
-	}
+		WpHooks::onFilter( 'pre_transient_' . $key )
+			->then( $getTransient );
 
-	/**
-	 * @param string|null $code
-	 *
-	 * @return string
-	 */
-	private function getKeyWithCurrency( $code = null ) {
-		if ( null === $code ) {
-			$code = getClientCurrency();
-		}
+		WpHooks::onAction( 'set_transient_' . $key )
+			->then( spreadArgs( $withLock( $setTransient ) ) );
 
-		return $this->key . '_' . $code;
+		WpHooks::onAction( 'delete_transient_' . $key )
+			->then( $withLock( $deleteTransient ) );
 	}
 
 }
