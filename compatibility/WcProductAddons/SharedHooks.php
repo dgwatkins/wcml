@@ -25,7 +25,7 @@ class SharedHooks implements \IWPML_Action {
 
 		if ( $isProductPage || $isProductNewPage || self::isGlobalAddonEditPage() ) {
 			wp_enqueue_script( 'wcml-product-addons', WCML_PLUGIN_URL . '/compatibility/res/js/wcml-product-addons' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION );
-			wp_enqueue_style( 'wcml-product-addons', WCML_PLUGIN_URL . '/compatibility/res/css/wcml-product-addons.css', '', WCML_VERSION );
+			wp_enqueue_style( 'wcml-product-addons', WCML_PLUGIN_URL . '/compatibility/res/css/wcml-product-addons.css', [ 'wpml-dialog' ], WCML_VERSION );
 		}
 	}
 

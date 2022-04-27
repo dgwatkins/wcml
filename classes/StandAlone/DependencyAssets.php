@@ -21,14 +21,15 @@ class DependencyAssets {
 	}
 
 	public function enqueue() {
+		wp_register_script( 'wpml-scripts', $this->dependencyBaseUrl . '/res/js/scripts.js', [], WCML_VERSION );
+		wp_register_style( 'wpml-styles', $this->dependencyBaseUrl . '/res/css/styles.css', [], WCML_VERSION );
+		wp_register_style( 'otgs-dialogs', $this->dependencyBaseUrl . '/res/css/otgs-dialogs.css', [ 'wp-jquery-ui-dialog' ], WCML_VERSION );
+		wp_register_style( 'wpml-dialog', $this->dependencyBaseUrl . '/res/css/dialog.css', [ 'otgs-dialogs' ], WCML_VERSION );
+		wp_register_style( 'otgs-ico', $this->dependencyBaseUrl . '/res/css/otgs-ico.css', [], WCML_VERSION );
+
 		if ( AdminPages::isMultiCurrency() || AdminPages::isTab( 'multilingual' ) ) {
-			wp_register_script( 'wpml-scripts', $this->dependencyBaseUrl . '/res/js/scripts.js', [], WCML_VERSION );
 			wp_enqueue_script( 'wpml-scripts' );
 
-			wp_register_style( 'wpml-styles', $this->dependencyBaseUrl . '/res/css/styles.css', [], WCML_VERSION );
-			wp_register_style( 'otgs-dialogs', $this->dependencyBaseUrl . '/res/css/otgs-dialogs.css', [ 'wp-jquery-ui-dialog' ], WCML_VERSION );
-			wp_register_style( 'wpml-dialog', $this->dependencyBaseUrl . '/res/css/dialog.css', [ 'otgs-dialogs' ], WCML_VERSION );
-			wp_register_style( 'otgs-ico', $this->dependencyBaseUrl . '/res/css/otgs-ico.css', [], WCML_VERSION );
 			wp_enqueue_style( 'wpml-styles' );
 			wp_enqueue_style( 'wpml-dialog' );
 
