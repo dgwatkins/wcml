@@ -3,13 +3,21 @@
 namespace WCML\Compatibility\WoofWcProductFilter;
 
 use WCML\Compatibility\ComponentFactory;
+use WCML\StandAlone\IStandAloneAction;
 
-class Factory extends ComponentFactory {
+class Factory extends ComponentFactory implements IStandAloneAction {
 
 	/**
 	 * @inheritDoc
 	 */
 	public function create() {
-		return new Hooks();
+		$hooks = [];
+
+		if ( wcml_is_multi_currency_on() ) {
+			$hooks[] = new MulticurrencyHooks();
+		}
+
+		return $hooks;
 	}
+
 }
