@@ -2,7 +2,7 @@
 
 namespace WCML\Compatibility\WoofWcProductFilter;
 
-class Hooks implements \IWPML_Action {
+class MulticurrencyHooks implements \IWPML_Action {
 	/**
 	 * @var string
 	 */
@@ -20,11 +20,9 @@ class Hooks implements \IWPML_Action {
 	 * Registers hooks.
 	 */
 	public function add_hooks() {
-		if ( wcml_is_multi_currency_on() ) {
-			add_action( 'init', [ $this, 'setupCurrencies' ] );
-			add_filter( 'woof_get_meta_query', [ $this, 'priceInDefaultCurrency' ], 10, 1 );
-			add_filter( 'wcml_exchange_rates', [ $this, 'storeExchangeRates' ], 10, 1 );
-		}
+		add_action( 'init', [ $this, 'setupCurrencies' ] );
+		add_filter( 'woof_get_meta_query', [ $this, 'priceInDefaultCurrency' ], 10, 1 );
+		add_filter( 'wcml_exchange_rates', [ $this, 'storeExchangeRates' ], 10, 1 );
 	}
 
 	/**
@@ -74,15 +72,14 @@ class Hooks implements \IWPML_Action {
 	 * @return bool
 	 */
 	private function priceIsInSwitchedCurrency() {
-		$multicurrencyOn = wcml_is_multi_currency_on();
-		return $multicurrencyOn && $this->currentCurrency !== $this->defaultCurrency;
+		return $this->currentCurrency !== $this->defaultCurrency;
 	}
 
 	/**
 	 * Checks if meta data has a correct format.
 	 *
-	 * @param $index
-	 * @param $meta
+	 * @param int   $index
+	 * @param array $meta
 	 *
 	 * @return bool
 	 */
