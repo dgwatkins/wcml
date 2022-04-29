@@ -1,9 +1,11 @@
 <?php
 
-class Test_WCML_WpFastest_Cache extends OTGS_TestCase {
+namespace WCML\Compatibility\WpFastestCache;
+
+class TestMulticurrencyHooks extends \OTGS_TestCase {
 
 	private function get_subject() {
-		return new WCML_WpFastest_Cache();
+		return new MulticurrencyHooks();
 	}
 
 	/**
@@ -23,7 +25,7 @@ class Test_WCML_WpFastest_Cache extends OTGS_TestCase {
 	 */
 	public function it_should_set_is_cache_enabled_for_switching_currency() {
 
-		$cache_options                       = new stdClass();
+		$cache_options                       = new \stdClass();
 		$cache_options->wpFastestCacheStatus = 'on';
 		$cache_options                       = json_encode( $cache_options );
 
@@ -42,8 +44,8 @@ class Test_WCML_WpFastest_Cache extends OTGS_TestCase {
 	 */
 	public function it_should_not_set_is_cache_enabled_for_switching_currency() {
 
-		$cache_options                       = new stdClass();
-		$cache_options                       = json_encode( $cache_options );
+		$cache_options = new \stdClass();
+		$cache_options = json_encode( $cache_options );
 
 		\WP_Mock::userFunction( 'get_option', array(
 			'args'   => array( 'WpFastestCache' ),

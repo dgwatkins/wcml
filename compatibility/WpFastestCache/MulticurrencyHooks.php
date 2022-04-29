@@ -1,6 +1,8 @@
 <?php
 
-class WCML_WpFastest_Cache implements \IWPML_Action {
+namespace WCML\Compatibility\WpFastestCache;
+
+class MulticurrencyHooks implements \IWPML_Action {
 
 	public function add_hooks() {
 		add_filter(
