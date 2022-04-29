@@ -11,7 +11,7 @@ class Test_WCML_Stripe_Gateways extends \OTGS_TestCase {
 	}
 
 	private function get_subject() {
-		return new Hooks( $this->get_orders() );
+		return new MulticurrencyHooks( $this->get_orders() );
 	}
 
 	/**

@@ -2,7 +2,8 @@
 
 namespace WCML\Compatibility\StripePayments;
 
-class Hooks implements \IWPML_Action {
+class MulticurrencyHooks implements \IWPML_Action {
+
 	/**
 	 * @var \WCML_Multi_Currency_Orders
 	 */
