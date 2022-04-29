@@ -7,6 +7,9 @@ use WCML\StandAlone\IStandAloneAction;
 
 use function WCML\functions\getWooCommerceWpml;
 
+/**
+ * @see https://wordpress.org/plugins/woocommerce-gateway-stripe/
+ */
 class Factory extends ComponentFactory implements IStandAloneAction {
 
 	/**

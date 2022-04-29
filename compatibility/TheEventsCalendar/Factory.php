@@ -10,7 +10,7 @@ use function WCML\functions\getWooCommerceWpml;
 use function WCML\functions\isStandAlone;
 
 /**
- * @see https://theeventscalendar.com/
+ * @see https://wordpress.org/plugins/the-events-calendar/
  */
 class Factory extends ComponentFactory implements IStandAloneAction {
 

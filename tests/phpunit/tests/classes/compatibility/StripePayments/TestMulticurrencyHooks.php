@@ -2,7 +2,7 @@
 
 namespace WCML\Compatibility\StripePayments;
 
-class Test_WCML_Stripe_Gateways extends \OTGS_TestCase {
+class TestMulticurrencyHooks extends \OTGS_TestCase {
 
 	private function get_orders() {
 		return $this->getMockBuilder( 'WCML_Multi_Currency_Orders' )

@@ -3,14 +3,24 @@
 namespace WCML\Compatibility\WpFastestCache;
 
 use WCML\Compatibility\ComponentFactory;
+use WCML\StandAlone\IStandAloneAction;
 use WCML_WpFastest_Cache;
 
-class Factory extends ComponentFactory {
+/**
+ * @see https://wordpress.org/plugins/wp-fastest-cache/
+ */
+class Factory extends ComponentFactory implements IStandAloneAction {
 
 	/**
 	 * @inheritDoc
 	 */
 	public function create() {
-		return new WCML_WpFastest_Cache();
+		$hooks = [];
+
+		if ( wcml_is_multi_currency_on() ) {
+			$hooks[] = new MulticurrencyHooks();
+		}
+
+		return $hooks;
 	}
 }
