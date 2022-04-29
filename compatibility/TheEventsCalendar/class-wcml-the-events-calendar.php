@@ -26,10 +26,10 @@ class WCML_The_Events_Calendar implements \IWPML_Action {
 	}
 
 	public function add_hooks() {
+		/* phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected */
 		if ( isset( $_POST['action'] ) && 0 === strpos( $_POST['action'], 'tribe-ticket-add-' ) ) {
 			add_action( 'tribe_tickets_ticket_add', [ $this, 'unset_post_post_id' ] );
 			add_action( 'event_tickets_after_save_ticket', [ $this, 'restore_post_post_id' ] );
-
 		}
 
 		if ( is_admin() ) {
@@ -52,7 +52,6 @@ class WCML_The_Events_Calendar implements \IWPML_Action {
 		} else {
 			add_action( 'event_tickets_rsvp_tickets_generated', [ $this, 'sync_rsvp_fields_on_attendee_created' ], 10, 3 );
 			add_filter( 'tribe_get_organizer_ids', [ $this, 'get_translated_organizer_ids' ], 10, 2 );
-			add_filter( 'tribe_events_cost_unformatted', [ $this, 'convert_events_cost' ], 10, 1 );
 		}
 
 	}
@@ -484,9 +483,4 @@ class WCML_The_Events_Calendar implements \IWPML_Action {
 		return $organizer_ids;
 	}
 
-	public function convert_events_cost( $cost ) {
-		return apply_filters( 'wcml_raw_price_amount', $cost );
-	}
-
 }
-
