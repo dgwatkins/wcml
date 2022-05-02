@@ -1,14 +1,14 @@
 <?php
 
+use WCML\Compatibility\WcCompositeProducts\MulticurrencyHooks;
+
 /**
  * Class Test_WCML_Composite_Products
  */
 class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 
-	private $composite;
 	private $default_language;
 	private $second_language;
-	private $tp;
 	private $test_data;
 
 
@@ -18,7 +18,6 @@ class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 
 		$this->default_language = $this->sitepress->get_default_language();
 		$this->second_language = 'es';
-		$this->tp = new WPML_Element_Translation_Package;
 
 		$this->test_data = new stdClass();
 		//add composite product
@@ -34,7 +33,7 @@ class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 	 * @return WCML_Composite_Products
 	 */
 	private function get_test_subject( ) {
-		return new WCML_Composite_Products( $this->sitepress, $this->woocommerce_wpml, $this->tp );
+		return new WCML_Composite_Products( $this->sitepress );
 	}
 
 	private function setup_composite_product_data( $product_id ){
@@ -297,18 +296,18 @@ class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function filter_composite_product_cost() {
-		$base_regular_price = random_int( 1, 99999 );
-		$base_sale_price = random_int( 1, 99999 );
-		$base_price = random_int( 1, 9999 );
+		$base_regular_price = 50.90;
+		$base_sale_price = 40.90;
+		$base_price = 30.90;
 		$check = null;
 		$composite_product = $this->wcml_helper->add_product( $this->default_language, false, random_string() );
 		wp_set_object_terms( $composite_product->id, 'composite', 'product_type', true );
 
 		$usd_code  = 'USD';
 
-		$rates = array(
-			$usd_code => random_int( 1, 9 ),
-		);
+		$rates = [
+			$usd_code => 2,
+		];
 
 		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
 		$woocommerce_wpml->settings['enable_multi_currency'] = WCML_MULTI_CURRENCIES_INDEPENDENT;
@@ -330,38 +329,38 @@ class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 
 		$woocommerce_wpml->multi_currency->prices
 			->method( 'convert_price_amount' )
-			->willReturnMap( array(
-				array(
+			->willReturnMap( [
+				[
 					(string)$base_regular_price,
 					$usd_code,
 					$base_regular_price,
-				),
-				array(
+				],
+				[
 					(string)$base_sale_price,
 					$usd_code,
 					$base_sale_price,
-				),
-				array(
+				],
+				[
 					(string)$base_price,
 					$usd_code,
 					$base_price * $rates[ $usd_code ],
-				)
-			) );
+				]
+			] );
 
-		$wcml_composite_products = new WCML_Composite_Products( $this->sitepress, $woocommerce_wpml, $this->tp );
+		$subject = new MulticurrencyHooks( $woocommerce_wpml );
 
 		update_post_meta( $composite_product->id, '_bto_base_regular_price', $base_regular_price );
 		update_post_meta( $composite_product->id, '_bto_base_sale_price', $base_sale_price );
 		update_post_meta( $composite_product->id, '_bto_base_price', $base_price );
 
-		$this->assertEquals( $base_regular_price, $wcml_composite_products->filter_composite_product_cost( $check, $composite_product->id, '_bto_base_regular_price', true ) );
-		$this->assertEquals( $base_sale_price, $wcml_composite_products->filter_composite_product_cost( $check, $composite_product->id, '_bto_base_sale_price', true ) );
-		$this->assertEquals( $base_price * $rates[ $usd_code ], $wcml_composite_products->filter_composite_product_cost( $check, $composite_product->id, '_bto_base_price', true ) );
+		$this->assertEquals( $base_regular_price, $subject->filter_composite_product_cost( $check, $composite_product->id, '_bto_base_regular_price' ) );
+		$this->assertEquals( $base_sale_price, $subject->filter_composite_product_cost( $check, $composite_product->id, '_bto_base_sale_price' ) );
+		$this->assertEquals( $base_price * $rates[ $usd_code ], $subject->filter_composite_product_cost( $check, $composite_product->id, '_bto_base_price' ) );
 
-		$base_price = random_int( 1, 9999 );
+		$base_price = 20.90;
 		update_post_meta( $composite_product->id, '_bto_base_price_' . $usd_code, $base_price );
 		update_post_meta( $composite_product->id, '_wcml_custom_prices_status', true );
-		$this->assertEquals( $base_price, $wcml_composite_products->filter_composite_product_cost( $check, $composite_product->id, '_bto_base_price', true ) );
+		$this->assertEquals( $base_price, $subject->filter_composite_product_cost( $check, $composite_product->id, '_bto_base_price' ) );
 	}
 
 	function tearDown() {
