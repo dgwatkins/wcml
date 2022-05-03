@@ -55,7 +55,6 @@ class WCML_Compatibility {
 			\WCML\Compatibility\WoofWcProductFilter\Factory::class    => defined( 'WOOF_PLUGIN_NAME' ),
 			\WCML\Compatibility\Relevanssi\Factory::class             => function_exists( 'relevanssi_insert_edit' ),
 			\WCML\Compatibility\WooVariationsTable\Factory::class     => defined( 'WOO_VARIATIONS_TABLE_VERSION' ),
-			\WCML\Compatibility\LiteSpeedCache\Factory::class         => class_exists( 'LiteSpeed_Cache' ),
 			\WCML\Compatibility\WpFastestCache\Factory::class         => class_exists( 'WpFastestCache' ),
 			\WCML\Compatibility\WcProductTypeColumn\Factory::class    => class_exists( 'WC_Product_Type_Column' ),
 			\WCML\Compatibility\YikesCustomProductTabs\Factory::class => class_exists( 'YIKES_Custom_Product_Tabs' ),
