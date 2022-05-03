@@ -1,4 +1,7 @@
 <?php
+
+use WCML\Compatibility\WcCheckoutAddons\OptionIterator;
+
 /**
  * Compatibility class for  wc_checkout_addons plugin.
  *
@@ -7,29 +10,21 @@
 class WCML_Checkout_Addons implements \IWPML_Action {
 
 	public function add_hooks() {
-		add_filter( 'option_wc_checkout_add_ons', [ $this, 'option_wc_checkout_add_ons' ], 10, 2 );
+		add_filter( 'option_wc_checkout_add_ons', [ $this, 'option_wc_checkout_add_ons' ] );
 	}
 
-	public function option_wc_checkout_add_ons( $option_value, $option_name = null ) {
-		if ( is_array( $option_value ) ) {
-			foreach ( $option_value as $addon_id => $addon_conf ) {
-				$addon_conf = $this->handle_option_part( $addon_id, $addon_conf );
-				if ( isset( $addon_conf['options'] ) ) {
-					foreach ( $addon_conf['options'] as $index => $fields ) {
-						$addon_conf['options'][ $index ] = $this->handle_option_part( $index, $fields );
-					}
-				}
-				$option_value[ $addon_id ] = $addon_conf;
-			}
-		}
-
-		return $option_value;
+	/**
+	 * @param array|mixed $option_value
+	 *
+	 * @return array|mixed
+	 */
+	public function option_wc_checkout_add_ons( $option_value ) {
+		return OptionIterator::apply( [ $this, 'handle_option_part' ], $option_value );
 	}
 
-	private function handle_option_part( $index, $conf ) {
+	public function handle_option_part( $index, $conf ) {
 		$conf = $this->register_or_translate( 'label', $conf, $index );
 		$conf = $this->register_or_translate( 'description', $conf, $index );
-		$conf = $this->adjust_price( $conf );
 		return $conf;
 	}
 
@@ -43,17 +38,6 @@ class WCML_Checkout_Addons implements \IWPML_Action {
 				$conf[ $element ] = apply_filters( 'wpml_translate_single_string', $string, 'wc_checkout_addons', $key );
 			}
 		}
-		return $conf;
-	}
-
-	private function adjust_price( $conf ) {
-		if (
-			isset( $conf['adjustment'], $conf['adjustment_type'] )
-			&& $conf['adjustment_type'] === 'fixed'
-		) {
-			$conf['adjustment'] = apply_filters( 'wcml_raw_price_amount', $conf['adjustment'] );
-		}
-
 		return $conf;
 	}
 
