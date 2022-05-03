@@ -5,9 +5,6 @@
  * @group wc-checkout-addons
  */
 class Test_WCML_Checkout_Addons extends OTGS_TestCase {
-	public function setUp()	{
-		parent::setUp();
-	}
 
 	private function get_subject() {
 		return new WCML_Checkout_Addons();
@@ -18,18 +15,18 @@ class Test_WCML_Checkout_Addons extends OTGS_TestCase {
 	 */
 	public function add_hooks(){
 		$subject = $this->get_subject();
-		\WP_Mock::expectFilterAdded( 'option_wc_checkout_add_ons', array( $subject, 'option_wc_checkout_add_ons' ), 10, 2 );
-		$result = $subject->add_hooks();
+		\WP_Mock::expectFilterAdded( 'option_wc_checkout_add_ons', array( $subject, 'option_wc_checkout_add_ons' ) );
+		$subject->add_hooks();
 	}
 
 	/**
 	 * @test
 	 */
 	public function should_return_same_array_if_empty() {
-		$option_value = array();
+		$option_value = [];
 
 		$subject = $this->get_subject();
-		$returned = $subject->option_wc_checkout_add_ons($option_value, null);
+		$returned = $subject->option_wc_checkout_add_ons( $option_value ) ;
 
 		$this->assertEquals( $option_value, $returned );
 	}
@@ -41,7 +38,7 @@ class Test_WCML_Checkout_Addons extends OTGS_TestCase {
 		$option_value = null;
 
 		$subject = $this->get_subject();
-		$returned = $subject->option_wc_checkout_add_ons($option_value, null);
+		$returned = $subject->option_wc_checkout_add_ons( $option_value );
 
 		$this->assertEquals( $option_value, $returned );
 	}
@@ -50,10 +47,10 @@ class Test_WCML_Checkout_Addons extends OTGS_TestCase {
 	 * @test
 	 */
 	public function should_return_same_on_different_array() {
-		$option_value = array(
+		$option_value = [
 			'foo' => 'bar',
 			'baz' => 'no'
-		);
+		];
 
 		$subject = $this->get_subject();
 		$returned = $subject->option_wc_checkout_add_ons($option_value, null);
@@ -64,121 +61,109 @@ class Test_WCML_Checkout_Addons extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_should_register_the_strings_and_return_same_on_default_language_and_convert_price() {
-		$originalPrice  = 10;
-		$convertedPrice = 20;
-
-		$getOptionValue = function( $price ) {
-			return [
-				'addonid' => [
-					'label'           => 'foo',
-					'description'     => 'bar',
-					'adjustment_type' => 'fixed',
-					'adjustment'      => $price,
-				],
-			];
-		};
-
-		$optionValue   = $getOptionValue( $originalPrice );
-		$expectedValue = $getOptionValue( $convertedPrice );
+	public function it_should_register_the_strings_and_return_same_on_default_language() {
+		$option = [
+			'addonid' => [
+				'label'           => 'foo',
+				'description'     => 'bar',
+				'adjustment_type' => 'fixed',
+				'adjustment'      => 10.90,
+			],
+		];
 
 		\WP_Mock::onFilter( 'wpml_current_language' )->with( null )->reply( 'en' );
 		\WP_Mock::onFilter( 'wpml_default_language' )->with( null )->reply( 'en' );
 
 		\WP_Mock::expectAction( 'wpml_register_single_string', 'wc_checkout_addons', 'addonid_label_' . md5( 'foo' ), 'foo' );
 		\WP_Mock::expectAction( 'wpml_register_single_string', 'wc_checkout_addons', 'addonid_description_' . md5( 'bar' ), 'bar' );
-		\WP_Mock::onFilter( 'wcml_raw_price_amount' )->with( $originalPrice )->reply( $convertedPrice );
 
-		$this->assertEquals( $expectedValue, $this->get_subject()->option_wc_checkout_add_ons( $optionValue ) );
+		$this->assertEquals( $option, $this->get_subject()->option_wc_checkout_add_ons( $option ) );
 	}
 
 	/**
 	 * @test
 	 */
-	public function should_return_translated_with_different_price_on_secondary_language() {
-		$option_value = array(
-			'addonid' => array(
+	public function should_return_translated_on_secondary_language() {
+		$option_value = [
+			'addonid' => [
 				'label' => 'foo',
 				'description' => 'bar',
 				'adjustment_type' => 'fixed',
 				'adjustment' => 10
-			)
-		);
+			]
+		];
 
-		$option_value_translated = array(
-			'addonid' => array(
+		$option_value_translated = [
+			'addonid' => [
 				'label' => 'foo pl',
 				'description' => 'bar pl',
 				'adjustment_type' => 'fixed',
-				'adjustment' => 20
-			)
-		);
+				'adjustment' => 10
+			]
+		];
 
 		\WP_Mock::onFilter( 'wpml_current_language' )->with( null )->reply( 'pl' );
 		\WP_Mock::onFilter( 'wpml_default_language' )->with( null )->reply( 'en' );
 
 		\WP_Mock::onFilter( 'wpml_translate_single_string' )->with( 'foo', 'wc_checkout_addons', 'addonid_label_' . md5( 'foo' ) )->reply( 'foo pl' );
 		\WP_Mock::onFilter( 'wpml_translate_single_string' )->with( 'bar', 'wc_checkout_addons', 'addonid_description_' . md5( 'bar' ) )->reply( 'bar pl' );
-		\WP_Mock::onFilter( 'wcml_raw_price_amount' )->with( 10 )->reply( 20 );
 
-		$subject = $this->get_subject();
-		$returned = $subject->option_wc_checkout_add_ons($option_value, null);
-
-		$this->assertEquals( $returned, $option_value_translated );
+		$this->assertEquals(
+			$option_value_translated,
+			$this->get_subject()->option_wc_checkout_add_ons( $option_value )
+		);
 	}
 
 	/**
 	 * @test
 	 */
-	public function should_return_translated_with_different_price_with_options() {
-		$option_value = array(
-			'addonid' => array(
+	public function should_return_translated_with_options() {
+		$option_value = [
+			'addonid' => [
 				'label' => 'foo',
 				'description' => 'bar',
 				'adjustment_type' => 'fixed',
 				'adjustment' => 10,
-				'options' => array(
-					'optionid' => array(
+				'options' => [
+					'optionid' => [
 						'label' => 'optionfoo',
 						'description' => 'optionbar',
 						'adjustment_type' => 'fixed',
 						'adjustment' => 30
-					)
-				)
-			)
-		);
+					]
+				]
+			]
+		];
 
-		$option_value_translated = array(
-			'addonid' => array(
+		$option_value_translated = [
+			'addonid' => [
 				'label' => 'foo pl',
 				'description' => 'bar pl',
 				'adjustment_type' => 'fixed',
-				'adjustment' => 20,
-				'options' => array(
-					'optionid' => array(
+				'adjustment' => 10,
+				'options' => [
+					'optionid' => [
 						'label' => 'optionfoo pl',
 						'description' => 'optionbar pl',
 						'adjustment_type' => 'fixed',
-						'adjustment' => 40
-					)
-				)
-			)
-		);
+						'adjustment' => 30
+					]
+				]
+			]
+		];
 
 		\WP_Mock::onFilter( 'wpml_current_language' )->with( null )->reply( 'pl' );
 		\WP_Mock::onFilter( 'wpml_default_language' )->with( null )->reply( 'en' );
 
 		\WP_Mock::onFilter( 'wpml_translate_single_string' )->with( 'foo', 'wc_checkout_addons', 'addonid_label_' . md5( 'foo' ) )->reply( 'foo pl' );
 		\WP_Mock::onFilter( 'wpml_translate_single_string' )->with( 'bar', 'wc_checkout_addons', 'addonid_description_' . md5( 'bar' ) )->reply( 'bar pl' );
-		\WP_Mock::onFilter( 'wcml_raw_price_amount' )->with( 10 )->reply( 20 );
 
 		\WP_Mock::onFilter( 'wpml_translate_single_string' )->with( 'optionfoo', 'wc_checkout_addons', 'optionid_label_' . md5( 'optionfoo' ) )->reply( 'optionfoo pl' );
 		\WP_Mock::onFilter( 'wpml_translate_single_string' )->with( 'optionbar', 'wc_checkout_addons', 'optionid_description_' . md5( 'optionbar' ) )->reply( 'optionbar pl' );
-		\WP_Mock::onFilter( 'wcml_raw_price_amount' )->with( 30 )->reply( 40 );
 
-		$subject = $this->get_subject();
-		$returned = $subject->option_wc_checkout_add_ons($option_value, null);
-
-		$this->assertEquals( $returned, $option_value_translated );
+		$this->assertEquals(
+			$option_value_translated,
+			$this->get_subject()->option_wc_checkout_add_ons( $option_value  )
+		);
 	}
 }
