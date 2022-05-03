@@ -47,11 +47,13 @@ class WCML_Checkout_Addons implements \IWPML_Action {
 	}
 
 	private function adjust_price( $conf ) {
-		if ( isset( $conf['adjustment'], $conf['adjustment_type'] )
-			 && $conf['adjustment_type'] === 'fixed'
-			 && ! $this->is_default_language() ) {
+		if (
+			isset( $conf['adjustment'], $conf['adjustment_type'] )
+			&& $conf['adjustment_type'] === 'fixed'
+		) {
 			$conf['adjustment'] = apply_filters( 'wcml_raw_price_amount', $conf['adjustment'] );
 		}
+
 		return $conf;
 	}
 

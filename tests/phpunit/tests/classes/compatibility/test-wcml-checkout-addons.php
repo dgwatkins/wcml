@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @group compatibility
+ * @group wc-checkout-addons
+ */
 class Test_WCML_Checkout_Addons extends OTGS_TestCase {
 	public function setUp()	{
 		parent::setUp();
@@ -60,28 +64,32 @@ class Test_WCML_Checkout_Addons extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_should_register_the_strings_and_return_same_on_default_language() {
+	public function it_should_register_the_strings_and_return_same_on_default_language_and_convert_price() {
+		$originalPrice  = 10;
+		$convertedPrice = 20;
 
-		$option_value = array(
-			'addonid' => array(
-				'label' => 'foo',
-				'description' => 'bar',
-				'adjustment_type' => 'fixed',
-				'adjustment' => 10
-			)
-		);
+		$getOptionValue = function( $price ) {
+			return [
+				'addonid' => [
+					'label'           => 'foo',
+					'description'     => 'bar',
+					'adjustment_type' => 'fixed',
+					'adjustment'      => $price,
+				],
+			];
+		};
+
+		$optionValue   = $getOptionValue( $originalPrice );
+		$expectedValue = $getOptionValue( $convertedPrice );
 
 		\WP_Mock::onFilter( 'wpml_current_language' )->with( null )->reply( 'en' );
 		\WP_Mock::onFilter( 'wpml_default_language' )->with( null )->reply( 'en' );
 
 		\WP_Mock::expectAction( 'wpml_register_single_string', 'wc_checkout_addons', 'addonid_label_' . md5( 'foo' ), 'foo' );
 		\WP_Mock::expectAction( 'wpml_register_single_string', 'wc_checkout_addons', 'addonid_description_' . md5( 'bar' ), 'bar' );
+		\WP_Mock::onFilter( 'wcml_raw_price_amount' )->with( $originalPrice )->reply( $convertedPrice );
 
-
-		$subject = $this->get_subject();
-		$returned = $subject->option_wc_checkout_add_ons($option_value, null);
-
-		$this->assertEquals( $option_value, $returned );
+		$this->assertEquals( $expectedValue, $this->get_subject()->option_wc_checkout_add_ons( $optionValue ) );
 	}
 
 	/**
