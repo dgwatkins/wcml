@@ -96,4 +96,9 @@
     <rule ref="WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid">
     	<severity>0</severity>
     </rule>
+	<rule ref="WordPress.Arrays.MultipleStatementAlignment">
+		<properties>
+			<property name="maxColumn" value="80" />
+		</properties>
+	</rule>
 </ruleset>
