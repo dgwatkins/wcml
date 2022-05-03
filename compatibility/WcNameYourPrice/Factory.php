@@ -3,19 +3,24 @@
 namespace WCML\Compatibility\WcNameYourPrice;
 
 use WCML\Compatibility\ComponentFactory;
-use WCML_WC_Name_Your_Price;
-use function WCML\functions\getSitePress;
-use function WCML\functions\getWooCommerceWpml;
+use WCML\StandAlone\IStandAloneAction;
 
 /**
  * @see https://woocommerce.com/products/name-your-price/
  */
-class Factory extends ComponentFactory {
+class Factory extends ComponentFactory implements IStandAloneAction {
 
 	/**
 	 * @inheritDoc
 	 */
 	public function create() {
-		return new WCML_WC_Name_Your_Price( getSitePress(), getWooCommerceWpml() );
+		$hooks = [];
+
+		if ( wcml_is_multi_currency_on() ) {
+			$hooks[] = new MulticurrencyHooks();
+		}
+
+		return $hooks;
 	}
+
 }
