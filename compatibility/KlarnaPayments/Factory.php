@@ -3,16 +3,24 @@
 namespace WCML\Compatibility\KlarnaPayments;
 
 use WCML\Compatibility\ComponentFactory;
+use WCML\StandAlone\IStandAloneAction;
 
 /**
  * @see https://wordpress.org/plugins/klarna-payments-for-woocommerce/
  */
-class Factory extends ComponentFactory {
+class Factory extends ComponentFactory implements IStandAloneAction {
 
 	/**
 	 * @inheritDoc
 	 */
 	public function create() {
-		return new \WCML_Klarna_Gateway();
+		$hooks = [];
+
+		if ( wcml_is_multi_currency_on() ) {
+			$hooks[] = new MulticurrencyHooks();
+		}
+
+		return $hooks;
 	}
+
 }
