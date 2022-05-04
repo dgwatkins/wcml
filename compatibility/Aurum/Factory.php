@@ -3,14 +3,23 @@
 namespace WCML\Compatibility\Aurum;
 
 use WCML\Compatibility\ComponentFactory;
-use WCML_Aurum;
+use WCML\StandAlone\IStandAloneAction;
 
-class Factory extends ComponentFactory {
+/**
+ * @see https://laborator.co/themes/aurum/
+ */
+class Factory extends ComponentFactory implements IStandAloneAction {
 
 	/**
 	 * @inheritDoc
 	 */
 	public function create() {
-		return new WCML_Aurum();
+		$hooks = [];
+
+		if ( wcml_is_multi_currency_on() ) {
+			$hooks[] = new MulticurrencyHooks();
+		}
+
+		return $hooks;
 	}
 }
