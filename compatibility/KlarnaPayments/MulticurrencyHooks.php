@@ -1,15 +1,14 @@
 <?php
 
-class WCML_Klarna_Gateway implements \IWPML_Action {
+namespace WCML\Compatibility\KlarnaPayments;
+
+class MulticurrencyHooks implements \IWPML_Action {
 
 	public function add_hooks() {
-
 		add_filter( 'wcml_multi_currency_ajax_actions', [ $this, 'ajax_action_needs_multi_currency' ] );
-
 	}
 
 	public function ajax_action_needs_multi_currency( $actions ) {
-
 		$actions[] = 'klarna_checkout_cart_callback_update';
 		$actions[] = 'klarna_checkout_coupons_callback';
 		$actions[] = 'klarna_checkout_remove_coupon_callback';
