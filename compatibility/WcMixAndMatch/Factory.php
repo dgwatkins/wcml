@@ -3,14 +3,28 @@
 namespace WCML\Compatibility\WcMixAndMatch;
 
 use WCML\Compatibility\ComponentFactory;
-use function WCML\functions\getSitePress;
+use WCML\StandAlone\IStandAloneAction;
 
-class Factory extends ComponentFactory {
+use function WCML\functions\getSitePress;
+use function WCML\functions\isStandAlone;
+
+class Factory extends ComponentFactory implements IStandAloneAction {
 
 	/**
 	 * @inheritDoc
 	 */
 	public function create() {
-		return new \WCML_Mix_And_Match_Products( getSitePress() );
+		$hooks = [];
+
+		if ( wcml_is_multi_currency_on() ) {
+			$hooks[] = new MulticurrencyHooks();
+		}
+
+		if ( ! isStandAlone() ) {
+			$hooks[] = new \WCML_Mix_And_Match_Products( getSitePress() );
+		}
+
+		return $hooks;
 	}
+
 }
