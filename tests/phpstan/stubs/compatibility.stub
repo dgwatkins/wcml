@@ -115,3 +115,88 @@ function wc_mnm_maybe_is_child_cart_item( $item ) {}
  * @return mixed
  */
 function wc_mnm_get_cart_item_container( $child_cart_item, $cart_contents = false, $return_id = false ) {}
+
+/**
+ * WC_Mix_and_Match_Compatibility Class.
+ *
+ * Load classes for making Mix and Match compatible with other plugins|woocommerce|legacy.
+ */
+class WC_MNM_Compatibility
+{
+    /**
+     * Array of deprecated hook handlers.
+     *
+     * @var array of WC_Deprecated_Hooks
+     * @since 2.0.0
+     */
+    public $deprecated_hook_handlers = array();
+    /**
+     * The single instance of the class.
+     * @var WC_MNM_Compatibility
+     *
+     * @since 1.9.2
+     */
+    protected static $_instance = \null;
+    /**
+     * Main class instance. Ensures only one instance of class is loaded or can be loaded.
+     *
+     * @static
+     * @return WC_Mix_and_Match_Compatibility
+     * @since  1.9.2
+     */
+    public static function get_instance()
+    {
+    }
+    function __construct()
+    {
+    }
+    /**
+     * Unload mini-extensions.
+     */
+    public function unload()
+    {
+    }
+    /**
+     * Init compatibility classes.
+     */
+    public function init()
+    {
+    }
+    /**
+     * Checks versions of compatible/integrated/deprecated extensions.
+     */
+    public function add_compatibility_notices()
+    {
+    }
+    /**
+     * Tells if a product is a Name Your Price product, provided that the extension is installed.
+     *
+     * @param  mixed  $product
+     * @return bool
+     */
+    public function is_nyp($product)
+    {
+    }
+    /**
+     * Returns true if the plugin version of MNM is greater than or equal to $version.
+     *
+     * @since  2.0.0
+     *
+     * @param  string  $version the version to compare
+     * @return bool true if the installed version of MNM is > $version
+     */
+    public static function is_version_gte($version)
+    {
+    }
+    /**
+     * Returns true if the DB version of MNM is greater than or equal to $version.
+     *
+     * @since  2.0.0
+     *
+     * @param  string  $version the version to compare
+     * @return bool true if the installed version of MNM is > $version
+     */
+    public static function is_db_version_gte($version)
+    {
+    }
+}

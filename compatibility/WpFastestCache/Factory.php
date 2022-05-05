@@ -4,7 +4,6 @@ namespace WCML\Compatibility\WpFastestCache;
 
 use WCML\Compatibility\ComponentFactory;
 use WCML\StandAlone\IStandAloneAction;
-use WCML_WpFastest_Cache;
 
 /**
  * @see https://wordpress.org/plugins/wp-fastest-cache/
