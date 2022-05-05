@@ -315,6 +315,7 @@ class woocommerce_wpml {
 		$this->gateways->add_hooks();
 		$this->cart->add_hooks(); // object is instantiated before.
 
+		WCML_Locale::load_locale();
 		WCML_Install::initialize( $this, $sitepress );
 
 		WCML_Resources::set_up_resources( $this, $sitepress );
