@@ -337,7 +337,7 @@ class WCML_Multi_Currency {
 			}
 		}
 
-		if ( $save_to_db ) {
+		if ( $save_to_db && is_admin() ) {
 			$this->woocommerce_wpml->settings['currency_options'] = $this->currencies;
 			$this->woocommerce_wpml->update_settings();
 		}
