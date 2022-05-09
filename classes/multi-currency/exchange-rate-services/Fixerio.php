@@ -32,21 +32,13 @@ class Fixerio extends ApiLayerService {
 	 * @return string
 	 */
 	protected function getApiLayerUrl() {
-		return 'https://api.apilayer.com/fixer/latest?base=%1$s&symbols=%2$s';
+		return 'https://api.apilayer.com/fixer/latest?base=%2$s&symbols=%3$s';
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getApiUrl() {
+	protected function getApiLegacyUrl() {
 		return 'http://data.fixer.io/api/latest?access_key=%1$s&base=%2$s&symbols=%3$s';
 	}
-
-	/**
-	 * @return bool
-	 */
-	public function isKeyRequired() {
-		return true;
-	}
-
 }

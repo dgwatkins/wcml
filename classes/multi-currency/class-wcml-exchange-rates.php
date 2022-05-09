@@ -283,6 +283,12 @@ class WCML_Exchange_Rates {
 			}
 
 			if ( $active_key_changed || $active_service_changed ) {
+				$currentService = $this->get_current_service();
+
+				if ( $currentService ) {
+					$currentService->resetConnectionCache();
+				}
+
 				add_action( 'init', [ $this, 'update_rates_on_service_or_key_changed' ], 5 );
 			}
 		} else {

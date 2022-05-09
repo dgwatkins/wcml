@@ -32,21 +32,13 @@ class ExchangeRatesApi extends ApiLayerService {
 	 * @return string
 	 */
 	protected function getApiLayerUrl() {
-		return 'https://api.apilayer.com/exchangerates_data/latest?base=%1$s&symbols=%2$s&amount=1';
+		return 'https://api.apilayer.com/exchangerates_data/latest?base=%2$s&symbols=%3$s&amount=1';
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getApiUrl() {
+	protected function getApiLegacyUrl() {
 		return 'http://api.exchangeratesapi.io/v1/latest?access_key=%1$s&base=%2$s&symbols=%3$s';
 	}
-
-	/**
-	 * @return bool
-	 */
-	public function isKeyRequired() {
-		return true;
-	}
-
 }
