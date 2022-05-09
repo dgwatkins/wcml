@@ -5,7 +5,7 @@ namespace WCML\MultiCurrency\ExchangeRateServices;
 /**
  * Class Fixerio
  */
-class Fixerio extends Service {
+class Fixerio extends ApiLayerService {
 
 	/**
 	 * @return string
@@ -26,6 +26,13 @@ class Fixerio extends Service {
 	 */
 	public function getUrl() {
 		return 'http://fixer.io/';
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getApiLayerUrl() {
+		return 'https://api.apilayer.com/fixer/latest?base=%1$s&symbols=%2$s';
 	}
 
 	/**

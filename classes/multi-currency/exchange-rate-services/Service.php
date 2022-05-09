@@ -47,33 +47,61 @@ abstract class Service {
 	public function getRates( $from, $tos ) {
 		$this->clearLastError();
 
-		$rates = [];
-
-		if ( $this->isKeyRequired() ) {
-			$url = sprintf( $this->getApiUrl(), $this->getSetting( 'api-key' ), $from, implode( ',', $tos ) );
-		} else {
-			$url = sprintf( $this->getApiUrl(), $from, implode( ',', $tos ) );
-		}
-
-		$data = wp_safe_remote_get( $url );
+		$data = $this->getRawData( $from, $tos );
 
 		if ( is_wp_error( $data ) ) {
-
 			$http_error = implode( "\n", $data->get_error_messages() );
 			$this->saveLastError( $http_error );
 			throw new \Exception( $http_error );
-
 		}
 
 		$json = json_decode( $data['body'] );
 
-		if ( empty( $json->rates ) ) {
+		if ( $this->isInvalidResponse( $json ) ) {
 			$error = self::get_formatted_error( $json );
 			$this->saveLastError( $error );
 			throw new \Exception( $error );
 		}
 
-		foreach ( $json->rates as $to => $rate ) {
+		return $this->extractRates( $json, $from, $tos );
+	}
+
+	/**
+	 * @param string $from The base currency code.
+	 * @param array  $tos  The target currency codes.
+	 *
+	 * @return array|\WP_Error
+	 */
+	protected function getRawData( $from, $tos ) {
+		if ( $this->isKeyRequired() ) {
+			$url = sprintf( $this->getApiUrl(), $this->getApiKey(), $from, implode( ',', $tos ) );
+		} else {
+			$url = sprintf( $this->getApiUrl(), $from, implode( ',', $tos ) );
+		}
+
+		return wp_safe_remote_get( $url );
+	}
+
+	/**
+	 * @param object $decodedData
+	 *
+	 * @return bool
+	 */
+	protected function isInvalidResponse( $decodedData ) {
+		return empty( $decodedData->rates );
+	}
+
+	/**
+	 * @param object $validData
+	 * @param string $from
+	 * @param array  $tos
+	 *
+	 * @return array
+	 */
+	protected function extractRates( $validData, $from, $tos ) {
+		$rates = [];
+
+		foreach ( $validData->rates as $to => $rate ) {
 			$rates[ $to ] = round( $rate, \WCML_Exchange_Rates::DIGITS_AFTER_DECIMAL_POINT );
 		}
 
@@ -184,4 +212,10 @@ abstract class Service {
 		return $this->getSetting( 'last_error' );
 	}
 
+	/**
+	 * @return string|null
+	 */
+	protected function getApiKey() {
+		return $this->getSetting( 'api-key' );
+	}
 }
