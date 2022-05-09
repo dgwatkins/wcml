@@ -711,7 +711,7 @@ class WCML_Products {
 					$meta_keys_to_filter = wcml_price_custom_fields( $product_id );
 				}
 
-				if ( ! is_admin() ) {
+				if ( ! is_admin() && ! isStandAlone() ) {
 					if ( 'product' === $post_type ) {
 						$meta_keys_to_filter[] = '_wc_review_count';
 						$meta_keys_to_filter[] = '_wc_average_rating';
