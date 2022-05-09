@@ -38,6 +38,13 @@ abstract class Service {
 	abstract public function isKeyRequired();
 
 	/**
+	 * @return void
+	 */
+	public function resetConnectionCache() {
+
+	}
+
+	/**
 	 * @param string $from Base currency.
 	 * @param array  $tos  Target currencies.
 	 *
@@ -47,23 +54,23 @@ abstract class Service {
 	public function getRates( $from, $tos ) {
 		$this->clearLastError();
 
-		$data = $this->getRawData( $from, $tos );
+		$response = $this->makeRequest( $from, $tos );
 
-		if ( is_wp_error( $data ) ) {
-			$http_error = implode( "\n", $data->get_error_messages() );
+		if ( is_wp_error( $response ) ) {
+			$http_error = implode( "\n", $response->get_error_messages() );
 			$this->saveLastError( $http_error );
 			throw new \Exception( $http_error );
 		}
 
-		$json = json_decode( $data['body'] );
+		$data = json_decode( $response['body'] );
 
-		if ( $this->isInvalidResponse( $json ) ) {
-			$error = self::get_formatted_error( $json );
+		if ( $this->isInvalidResponse( $data ) ) {
+			$error = self::get_formatted_error( $data );
 			$this->saveLastError( $error );
 			throw new \Exception( $error );
 		}
 
-		return $this->extractRates( $json, $from, $tos );
+		return $this->extractRates( $data, $from, $tos );
 	}
 
 	/**
@@ -72,14 +79,21 @@ abstract class Service {
 	 *
 	 * @return array|\WP_Error
 	 */
-	protected function getRawData( $from, $tos ) {
+	protected function makeRequest( $from, $tos ) {
 		if ( $this->isKeyRequired() ) {
 			$url = sprintf( $this->getApiUrl(), $this->getApiKey(), $from, implode( ',', $tos ) );
 		} else {
 			$url = sprintf( $this->getApiUrl(), $from, implode( ',', $tos ) );
 		}
 
-		return wp_safe_remote_get( $url );
+		return wp_safe_remote_get( $url, [ 'headers' => $this->getRequestHeaders() ] );
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function getRequestHeaders() {
+		return [];
 	}
 
 	/**

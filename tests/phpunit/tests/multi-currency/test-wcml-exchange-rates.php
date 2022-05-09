@@ -2,6 +2,7 @@
 
 /**
  * Class Test_WCML_Exchange_Rates
+ * @group exchange-rates
  */
 class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 
@@ -39,12 +40,24 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 	}
 
 	/**
+	 * @param string $className
+	 *
+	 * @return \PHPUnit\Framework\MockObject\MockObject|\WCML\MultiCurrency\ExchangeRateServices\Service
+	 */
+	private function getServiceMock( $className ) {
+		return $this->getMockBuilder( $className )
+		            ->setMethods( [ 'getRates', 'getSetting', 'saveSetting', 'clearLastError', 'resetConnectionCache' ] )
+		            ->disableOriginalConstructor()
+		            ->getMock();
+	}
+
+	/**
 	 * @test
 	 */
 	public function add_actions_admin() {
 		$subject = $this->get_subject();
 
-		\WP_Mock::wpFunction( 'is_admin', array(
+		\WP_Mock::userFunction( 'is_admin', array(
 			'times'  => 1,
 			'return' => true
 		) );
@@ -61,7 +74,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 	public function add_actions_NOT_admin() {
 		$subject = $this->get_subject();
 
-		\WP_Mock::wpFunction( 'is_admin', array(
+		\WP_Mock::userFunction( 'is_admin', array(
 			'times'  => 1,
 			'return' => false
 		) );
@@ -107,7 +120,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		                                 ->method( 'get_currencies' )
 		                                 ->willReturn( [ 'EUR' ] );
 
-		\WP_Mock::wpFunction( 'is_admin', array(
+		\WP_Mock::userFunction( 'is_admin', array(
 			'times'  => 1,
 			'return' => false
 		) );
@@ -134,7 +147,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		                                 ->method( 'get_currencies' )
 		                                 ->willReturn( [ 'EUR' ] );
 
-		\WP_Mock::wpFunction( 'is_admin', array(
+		\WP_Mock::userFunction( 'is_admin', array(
 			'times'  => 1,
 			'return' => true
 		) );
@@ -261,13 +274,13 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 
 		$_POST['wcml_nonce'] = rand_str();
 
-		\WP_Mock::wpFunction( 'wp_create_nonce', array(
+		\WP_Mock::userFunction( 'wp_create_nonce', array(
 			'times'  => 1,
 			'args'   => [ 'update-exchange-rates' ],
 			'return' => $_POST['wcml_nonce'] . rand_str()
 		) );
 
-		\WP_Mock::wpFunction( 'wp_send_json', array(
+		\WP_Mock::userFunction( 'wp_send_json', array(
 			'times' => 1,
 			'args'  => [ [ 'success' => 0, 'error' => 'Invalid nonce' ] ]
 		) );
@@ -289,14 +302,14 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$cur_1 = rand_str();
 		$cur_2 = rand_str();
 
-		\WP_Mock::wpFunction( 'current_time', array(
+		\WP_Mock::userFunction( 'current_time', array(
 			'times'  => 1,
 			'return' => time()
 		) );
 
 		$last_updated = time() - random_int( 10000, 90000 );
 		$subject->save_setting( 'last_updated', $last_updated );
-		\WP_Mock::wpFunction( 'date_i18n', array(
+		\WP_Mock::userFunction( 'date_i18n', array(
 			'times'  => 1,
 			'return' => date( 'F j, Y g:i a', $last_updated )
 		) );
@@ -312,10 +325,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 			$cur_2 => random_int( 1, 1000 )
 		];
 		$service_id = 'fixerio';
-		$service    = $this->getMockBuilder( '\WCML\MultiCurrency\ExchangeRateServices\Fixerio' )
-		                   ->disableOriginalConstructor()
-		                   ->setMethods( [ 'getRates' ] )
-		                   ->getMock();
+		$service    = $this->getServiceMock( \WCML\MultiCurrency\ExchangeRateServices\Fixerio::class );
 		$service->method( 'getRates' )
 		        ->willReturn( $rates );
 
@@ -329,7 +339,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 
 		$subject->save_setting( 'lifting_charge', 0 );
 
-		\WP_Mock::wpFunction( 'wcml_get_woocommerce_currency_option', array(
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
 			'times'  => 1,
 			'return' => $cur_1
 		) );
@@ -337,7 +347,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$woocommerce_wpml->settings['currency_options'][ $cur_1 ]['rate'] = random_int( 1, 100 );
 		$woocommerce_wpml->settings['currency_options'][ $cur_2 ]['rate'] = random_int( 1, 100 );
 
-		\WP_Mock::wpFunction( 'wp_send_json', array(
+		\WP_Mock::userFunction( 'wp_send_json', array(
 			'times' => 1,
 			'args'  => [
 				[
@@ -357,21 +367,20 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 	 * @expectedException
 	 */
 	public function update_exchange_rates_ajax_valid_nonce_service_error() {
+		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option' )->andReturn( 'EUR' );
+
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject          = $this->get_subject( $woocommerce_wpml );
 
 		$_POST['wcml_nonce'] = rand_str();
-		\WP_Mock::wpFunction( 'wp_create_nonce', array(
+		\WP_Mock::userFunction( 'wp_create_nonce', array(
 			'times'  => 1,
 			'args'   => [ 'update-exchange-rates' ],
 			'return' => $_POST['wcml_nonce']
 		) );
 
 		$service_id = 'fixerio';
-		$service    = $this->getMockBuilder( '\WCML\MultiCurrency\ExchangeRateServices\Fixerio' )
-		                   ->disableOriginalConstructor()
-		                   ->setMethods( [ 'getRates' ] )
-		                   ->getMock();
+		$service    = $this->getServiceMock( \WCML\MultiCurrency\ExchangeRateServices\Fixerio::class );
 		$service->method( 'getRates' )
 		        ->will( $this->throwException( new Exception ) );
 
@@ -442,7 +451,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 			'exchange-rates-automatic' => 0
 		];
 
-		\WP_Mock::wpFunction( 'wp_clear_scheduled_hook', [
+		\WP_Mock::userFunction( 'wp_clear_scheduled_hook', [
 			'times' => 1,
 			'args'  => $subject::CRONJOB_EVENT
 		] );
@@ -465,7 +474,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 			'update-schedule' => 'manual'
 		];
 
-		\WP_Mock::wpFunction( 'wp_clear_scheduled_hook', [
+		\WP_Mock::userFunction( 'wp_clear_scheduled_hook', [
 			'times' => 1,
 			'args'  => $subject::CRONJOB_EVENT
 		] );
@@ -485,46 +494,40 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject          = $this->get_subject( $woocommerce_wpml );
 
-		\WP_Mock::wpFunction( 'wp_clear_scheduled_hook', [
+		\WP_Mock::userFunction( 'wp_clear_scheduled_hook', [
 			'times' => 1,
 			'args'  => $subject::CRONJOB_EVENT
 		] );
 
 		$preexisting_service = 'fixerio';
-		$service             = $this->getMockBuilder( '\WCML\MultiCurrency\ExchangeRateServices\Fixerio' )
-									->setMethods( [ 'clearLastError' ] )
-									->disableOriginalConstructor()
-									->getMock();
-
-		$service->expects( $this->once() )
-				->method( 'clearLastError' );
+		$service             = $this->getServiceMock( \WCML\MultiCurrency\ExchangeRateServices\Fixerio::class );
 
 		$subject->add_service( $preexisting_service, $service );
 		$subject->save_setting( 'service', $preexisting_service );
 
-		\WP_Mock::wpPassthruFunction( 'sanitize_text_field' );
+		\WP_Mock::passthruFunction( 'sanitize_text_field' );
 
 		$post_data = [
 			'exchange-rates-automatic' => 1,
 			'update-schedule'          => 'monthly',
-			'exchange-rates-service'   => rand_str(),
+			'exchange-rates-service'   => $preexisting_service,
 			'lifting_charge'           => rand_str(),
 			'update-time'              => rand_str(),
 			'update-weekly-day'        => random_int(1,7),
 			'update-monthly-day'       => random_int(1,30)
 		];
 
-		\WP_Mock::wpFunction( 'wp_get_schedule', [
+		\WP_Mock::userFunction( 'wp_get_schedule', [
 			'times' => 1,
 			'args'  => $subject::CRONJOB_EVENT
 		] );
 
-		\WP_Mock::wpFunction( 'wp_next_scheduled', [
+		\WP_Mock::userFunction( 'wp_next_scheduled', [
 			'times' => 1,
 			'args'  => $subject::CRONJOB_EVENT
 		] );
 
-		\WP_Mock::wpFunction( 'wp_schedule_event', [
+		\WP_Mock::userFunction( 'wp_schedule_event', [
 			'times' => 1,
 			'args'  => [
 				\Mockery::type( 'int' ),
@@ -548,16 +551,13 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject          = $this->get_subject( $woocommerce_wpml );
 
-		\WP_Mock::wpFunction( 'wp_clear_scheduled_hook', [
+		\WP_Mock::userFunction( 'wp_clear_scheduled_hook', [
 			'times' => 1,
 			'args'  => $subject::CRONJOB_EVENT
 		] );
 
 		$preexisting_service = 'fixerio';
-		$service             = $this->getMockBuilder( '\WCML\MultiCurrency\ExchangeRateServices\Fixerio' )
-									->setMethods( [ 'clearLastError' ] )
-									->disableOriginalConstructor()
-									->getMock();
+		$service             = $this->getServiceMock( \WCML\MultiCurrency\ExchangeRateServices\Fixerio::class );
 
 		$service->expects( $this->never() )
 				->method( 'clearLastError' );
@@ -565,7 +565,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$subject->add_service( $preexisting_service, $service );
 		$subject->save_setting( 'service', rand_str() );
 
-		\WP_Mock::wpPassthruFunction( 'sanitize_text_field' );
+		\WP_Mock::passthruFunction( 'sanitize_text_field' );
 
 		$post_data = [
 			'exchange-rates-automatic' => 1,
@@ -577,17 +577,17 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 			'update-monthly-day'       => random_int(1,30)
 		];
 
-		\WP_Mock::wpFunction( 'wp_get_schedule', [
+		\WP_Mock::userFunction( 'wp_get_schedule', [
 			'times' => 1,
 			'args'  => $subject::CRONJOB_EVENT
 		] );
 
-		\WP_Mock::wpFunction( 'wp_next_scheduled', [
+		\WP_Mock::userFunction( 'wp_next_scheduled', [
 			'times' => 1,
 			'args'  => $subject::CRONJOB_EVENT
 		] );
 
-		\WP_Mock::wpFunction( 'wp_schedule_event', [
+		\WP_Mock::userFunction( 'wp_schedule_event', [
 			'times' => 1,
 			'args'  => [
 				\Mockery::type( 'int' ),
@@ -611,14 +611,11 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$subject          = $this->get_subject( $woocommerce_wpml );
 
 		$preexisting_service = 'fixerio';
-		$service             = $this->getMockBuilder( '\WCML\MultiCurrency\ExchangeRateServices\Fixerio' )
-									->setMethods( [ 'clearLastError' ] )
-									->disableOriginalConstructor()
-									->getMock();
+		$service             = $this->getServiceMock( \WCML\MultiCurrency\ExchangeRateServices\Fixerio::class );
 		$subject->add_service( $preexisting_service, $service );
 		$subject->save_setting( 'service', $preexisting_service );
 
-		\WP_Mock::wpPassthruFunction( 'sanitize_text_field' );
+		\WP_Mock::passthruFunction( 'sanitize_text_field' );
 
 		$post_data = [
 			'exchange-rates-automatic' => 1,
@@ -630,17 +627,17 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 			'update-monthly-day'       => random_int(1,30)
 		];
 
-		\WP_Mock::wpFunction( 'wp_get_schedule', [
+		\WP_Mock::userFunction( 'wp_get_schedule', [
 			'times' => 1,
 			'args'  => $subject::CRONJOB_EVENT
 		] );
 
-		\WP_Mock::wpFunction( 'wp_next_scheduled', [
+		\WP_Mock::userFunction( 'wp_next_scheduled', [
 			'times' => 1,
 			'args'  => $subject::CRONJOB_EVENT
 		] );
 
-		\WP_Mock::wpFunction( 'wp_schedule_event', [
+		\WP_Mock::userFunction( 'wp_schedule_event', [
 			'times' => 1,
 			'args'  => [
 				\Mockery::type( 'int' ),
@@ -664,15 +661,12 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$subject          = $this->get_subject( $woocommerce_wpml );
 
 		$preexisting_service = 'fixerio';
-		$service             = $this->getMockBuilder( '\WCML\MultiCurrency\ExchangeRateServices\Fixerio' )
-									->disableOriginalConstructor()
-									->setMethods( [ 'saveSetting', 'clearLastError' ] )
-									->getMock();
+		$service             = $this->getServiceMock( \WCML\MultiCurrency\ExchangeRateServices\Fixerio::class );
 
 		$subject->add_service( $preexisting_service, $service );
 		$subject->save_setting( 'service', $preexisting_service );
 
-		\WP_Mock::wpPassthruFunction( 'sanitize_text_field' );
+		\WP_Mock::passthruFunction( 'sanitize_text_field' );
 
 		$new_service_id = rand_str();
 		$api_key        = rand_str();
@@ -690,17 +684,17 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 			'update-monthly-day'       => random_int(1,30)
 		];
 
-		\WP_Mock::wpFunction( 'wp_get_schedule', [
+		\WP_Mock::userFunction( 'wp_get_schedule', [
 			'times' => 1,
 			'args'  => $subject::CRONJOB_EVENT
 		] );
 
-		\WP_Mock::wpFunction( 'wp_next_scheduled', [
+		\WP_Mock::userFunction( 'wp_next_scheduled', [
 			'times' => 1,
 			'args'  => $subject::CRONJOB_EVENT
 		] );
 
-		\WP_Mock::wpFunction( 'wp_schedule_event', [
+		\WP_Mock::userFunction( 'wp_schedule_event', [
 			'times' => 1,
 			'args'  => [
 				\Mockery::type( 'int' ),
@@ -711,6 +705,10 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 
 		$service->expects( $this->once() )
 				->method( 'clearLastError' );
+
+		$service->method( 'getSetting' )
+				->with( 'api-key' )
+				->willReturn( 'some-old-key' );
 
 		$service->expects( $this->once() )
 				->method( 'saveSetting' )
@@ -737,7 +735,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject          = $this->get_subject( $woocommerce_wpml );
 
-		\WP_Mock::wpFunction( 'wp_clear_scheduled_hook', [
+		\WP_Mock::userFunction( 'wp_clear_scheduled_hook', [
 			'times' => 1,
 			'args'  => $subject::CRONJOB_EVENT
 		] );
@@ -752,7 +750,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject          = $this->get_subject( $woocommerce_wpml );
 
-		\WP_Mock::wpPassthruFunction( '__' );
+		\WP_Mock::passthruFunction( '__' );
 
 		$schedules = [];
 
@@ -783,7 +781,7 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject          = $this->get_subject( $woocommerce_wpml, $wp_locale );
 
-		\WP_Mock::wpPassthruFunction( '__' );
+		\WP_Mock::passthruFunction( '__' );
 
 		$schedules = [];
 
@@ -805,5 +803,4 @@ class Test_WCML_Exchange_Rates extends OTGS_TestCase {
 		$this->assertSame( "Weekly on {$day_name}", $schedules[ 'wcml_weekly_on_' . $week_day ]['display'] );
 		$this->assertSame( WEEK_IN_SECONDS, $schedules[ 'wcml_weekly_on_' . $week_day ]['interval'] );
 	}
-
 }

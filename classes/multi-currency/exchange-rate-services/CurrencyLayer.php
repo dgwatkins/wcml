@@ -32,21 +32,14 @@ class CurrencyLayer extends ApiLayerService {
 	 * @return string
 	 */
 	protected function getApiLayerUrl() {
-		return 'https://api.apilayer.com/currency_data/live?source=%1$s&currencies=%2$s';
+		return 'https://api.apilayer.com/currency_data/live?source=%2$s&currencies=%3$s';
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getApiUrl() {
+	protected function getApiLegacyUrl() {
 		return 'http://apilayer.net/api/live?access_key=%s&source=%s&currencies=%s&amount=1';
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function isKeyRequired() {
-		return true;
 	}
 
 	/**

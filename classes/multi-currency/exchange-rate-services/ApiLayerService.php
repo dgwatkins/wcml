@@ -3,7 +3,6 @@
 namespace WCML\MultiCurrency\ExchangeRateServices;
 
 use WPML\FP\Obj;
-use WPML\FP\Relation;
 
 abstract class ApiLayerService extends Service {
 
@@ -13,19 +12,60 @@ abstract class ApiLayerService extends Service {
 	abstract protected function getApiLayerUrl();
 
 	/**
+	 * @return string
+	 */
+	abstract protected function getApiLegacyUrl();
+
+	/**
+	 * @return string
+	 */
+	public function getApiUrl() {
+		return $this->getSelectedApiEndpoint();
+	}
+
+	/**
+	 * @return void
+	 */
+	public function resetConnectionCache() {
+		$this->setSelectedApiEndpoint( null );
+	}
+
+	/**
+	 * @param string|null $endpoint
+	 *
+	 * @return void
+	 */
+	private function setSelectedApiEndpoint( $endpoint ) {
+		$this->saveSetting( 'selected-endpoint', $endpoint );
+	}
+
+	/**
+	 * @return string|null
+	 */
+	private function getSelectedApiEndpoint() {
+		return $this->getSetting( 'selected-endpoint' );
+	}
+
+	/**
 	 * @param string $from The base currency code.
 	 * @param array  $tos  The target currency codes.
 	 *
 	 * @return array|\WP_Error
 	 */
-	protected function getRawData( $from, $tos ) {
-		$data = $this->getRawDataFromApiLayerEndpoint( $from, $tos );
+	protected function makeRequest( $from, $tos ) {
+		if ( $this->getSelectedApiEndpoint() ) {
+			$response = parent::makeRequest( $from, $tos );
+		} else {
+			$this->setSelectedApiEndpoint( $this->getApiLayerUrl() );
+			$response = parent::makeRequest( $from, $tos );
 
-		if ( $this->isWrongAuthenticationWithApiLayer( $data ) ) {
-			$data = $this->getRawDataFromLegacyEndpoint( $from, $tos );
+			if ( $this->isWrongAuthenticationWithApiLayer( $response ) ) {
+				$this->setSelectedApiEndpoint( $this->getApiLegacyUrl() );
+				$response = parent::makeRequest( $from, $tos );
+			}
 		}
 
-		return $data;
+		return $response;
 	}
 
 	/**
@@ -38,25 +78,16 @@ abstract class ApiLayerService extends Service {
 	}
 
 	/**
-	 * @param string $from The base currency code.
-	 * @param array  $tos  The target currency codes.
-	 *
-	 * @return array|\WP_Error
+	 * @return array
 	 */
-	private function getRawDataFromApiLayerEndpoint( $from, $tos ) {
-		return wp_safe_remote_get(
-			sprintf( $this->getApiLayerUrl(), $from, implode( ',', $tos ) ),
-			[ 'headers' => [ 'apikey' => $this->getApiKey() ] ]
-		);
+	protected function getRequestHeaders() {
+		return [ 'apikey' => $this->getApiKey() ];
 	}
 
 	/**
-	 * @param string $from The base currency code.
-	 * @param array  $tos  The target currency codes.
-	 *
-	 * @return array|\WP_Error
+	 * @return bool
 	 */
-	private function getRawDataFromLegacyEndpoint( $from, $tos ) {
-		return parent::getRawData( $from, $tos );
+	public function isKeyRequired() {
+		return true;
 	}
 }
