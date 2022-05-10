@@ -30,10 +30,16 @@ class WCML_Capabilities {
 			$role->add_cap( 'wpml_operate_woocommerce_multilingual' );
 		}
 
+		self::reload_capabilities();
 	}
-	
-	public static function canManageWcml(){
-		$allowedRoles = ['shop_manager', 'administrator', 'super_admin'];
+
+	public static function reload_capabilities() {
+		$user = wp_get_current_user();
+		$user->get_role_caps();
+	}
+
+	public static function canManageWcml() {
+		$allowedRoles = [ 'shop_manager', 'administrator', 'super_admin' ];
 
 		return (bool) array_intersect( $allowedRoles, wp_get_current_user()->roles );
 	}

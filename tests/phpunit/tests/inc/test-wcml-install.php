@@ -70,6 +70,15 @@ class Test_WCML_Install extends OTGS_TestCase {
 			'return' => false,
 		] );
 
+		$currentUser = $this->getMockBuilder( \WP_User::class )
+			->setMethods( [ 'get_role_caps' ] )
+			->getMock();
+		$currentUser->expects( $this->once() )->method( 'get_role_caps' );
+
+		WP_Mock::userFunction( 'wp_get_current_user', [
+			'return' => $currentUser,
+		] );
+
 		WP_Mock::userFunction( 'is_multisite', [
 			'return' => false,
 		] );
