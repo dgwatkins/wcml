@@ -3,7 +3,7 @@ Contributors: AmirHelzer, strategio, dgwatkins, andrewp-2
 Tags: CMS, woocommerce, commerce, ecommerce, e-commerce, products, WPML, multilingual, e-shop, shop
 License: GPLv2
 Requires at least: 4.7
-Tested up to: 5.9
+Tested up to: 6.0
 Stable tag: 5.0.0
 Requires PHP: 5.6
 
