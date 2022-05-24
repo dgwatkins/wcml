@@ -6,6 +6,13 @@
  */
 class WCML_Mix_And_Match_Products implements \IWPML_Action {
 
+    /**
+	 * An array of translated cart keys.
+	 *
+	 * @var array
+	 */
+	private $translated_cart_keys;
+
 	/**
 	 * @var SitePress
 	 */
@@ -27,7 +34,9 @@ class WCML_Mix_And_Match_Products implements \IWPML_Action {
 		// Support MNM 2.0 custom tables, cart syncing.
 		if ( is_callable( [ 'WC_MNM_Compatibility', 'is_db_version_gte' ] ) && WC_MNM_Compatibility::is_db_version_gte( '2.0' ) ) {
 			add_action( 'wcml_after_sync_product_data', [ $this, 'sync_allowed_contents' ], 10, 2 );
-			add_filter( 'wcml_cart_contents', [ $this, 'sync_cart' ], 10, 4 );
+			add_filter( 'wcml_translate_cart_item', [ $this, 'translate_cart_item' ], 10, 2 );
+            add_action( 'wcml_translated_cart_item', array( $this, 'translated_cart_item' ), 10, 2 );
+            add_filter( 'wcml_translate_cart_contents', [ $this, 'sync_cart' ], 10, 2 );
 		} else {
 			add_action( 'updated_post_meta', [ $this, 'sync_mnm_data' ], 10, 4 );
 		}
@@ -96,40 +105,29 @@ class WCML_Mix_And_Match_Products implements \IWPML_Action {
 	}
 
 	/**
-	 * Update the cart contents to the new language
+	 * Update the container config to the new language
 	 *
-	 * @since 5.0.0
+	 * @since 5.1.0
 	 *
-	 * @param array  $new_cart_contents
-	 * @param array  $cart_contents
-	 * @param string $key
-	 * @param string $new_key
+	 * @param array  $cart_item Cart item.
+     * @param string $current_language Language code.
 	 *
 	 * @return array
 	 */
-	public function sync_cart( $new_cart_contents, $cart_contents, $key, $new_key ) {
-		if ( ! function_exists( 'wc_mnm_is_container_cart_item' )
-			 || ! function_exists( 'wc_mnm_get_child_cart_items' )
-			 || ! function_exists( 'wc_mnm_maybe_is_child_cart_item' )
-			 || ! function_exists( 'wc_mnm_get_cart_item_container' )
-		) {
-			return $new_cart_contents;
-		}
-
-		$current_language = $this->sitepress->get_current_language();
+	public function translate_cart_item( $cart_item, $current_language ) {
 
 		// Translate container.
-		if ( wc_mnm_is_container_cart_item( $new_cart_contents[ $new_key ] ) ) {
+		if ( wc_mnm_is_container_cart_item( $cart_item ) ) {
 
 			$new_config = [];
 
 			// Translate config.
-			foreach ( $new_cart_contents[ $new_key ]['mnm_config'] as $id => $data ) {
+			foreach ( $cart_item['mnm_config'] as $id => $data ) {
 
 				$tr_product_id   = apply_filters( 'wpml_object_id', $data['product_id'], 'product', false, $current_language );
 				$tr_variation_id = 0;
 
-				if ( isset( $data['variation_id'] ) && $data['variation_id'] ) {
+				if ( ! empty( $data['variation_id'] ) ) {
 					$tr_variation_id = apply_filters( 'wpml_object_id', $data['variation_id'], 'product_variation', false, $current_language );
 				}
 
@@ -146,35 +144,84 @@ class WCML_Mix_And_Match_Products implements \IWPML_Action {
 			}
 
 			if ( ! empty( $new_config ) ) {
-				$new_cart_contents[ $new_key ]['mnm_config'] = $new_config;
+				$cart_item['mnm_config'] = $new_config;
 			}
 
-			// Find all children and stash new container cart key. Need to direclty manipulate the wc()->cart as $cart_contents isn't persisted.
-			foreach ( wc_mnm_get_child_cart_items( $new_cart_contents[ $new_key ] ) as $child_key => $child_item ) {
-				WC()->cart->cart_contents[ $child_key ]['translated_mnm_container'] = $new_key;
+            // Stash the content keys for later. Cannot translate now as the child products have not yet been translated.
+            if ( isset( $cart_item['mnm_contents'] ) ) {
+                $cart_item['mnm_contents_tr'] = $cart_item['mnm_contents'];
+                $cart_item['mnm_contents']    = array();
+            }
+
+		} else if ( wc_mnm_maybe_is_child_cart_item( $cart_item ) ) {
+            if ( isset( $cart_item['mnm_container'], $this->translated_cart_keys[ $cart_item[ 'mnm_container' ] ] ) ) {
+                $cart_item['mnm_container'] = $this->translated_cart_keys[ $cart_item[ 'mnm_container' ] ];
+            }
+        }
+
+		return $cart_item;
+	}
+
+
+    /**
+	 * Stores new cart keys as function of previous values.
+	 * Later needed to restore the relationship between the Mix and Match product and contained products.
+	 * Hooked to the action 'pllwc_translated_cart_item'.
+	 *
+	 * @since 5.1
+	 *
+	 * @param array  $item Cart item.
+	 * @param string $key  Previous cart item key. The new key can be found in $item['key'].
+	 * @return void
+	 */
+	public function translated_cart_item( $item, $key ) {
+		$this->translated_cart_keys[ $key ] = $item['key'];
+	}
+
+
+	/**
+	 * Re-sync the parent/child relationships
+	 *
+	 * @since 5.0.0
+	 *
+	 * @param array  $cart_contents Cart items.
+     * @param string $current_language Language code.
+	 *
+	 * @return array
+	 */
+	public function sync_cart( $cart_contents, $current_language ) {
+
+        if ( is_array( $this->translated_cart_keys ) && ! empty( $this->translated_cart_keys ) ) {
+
+            foreach ( $cart_contents as $key => $cart_item ) {
+
+                // Translate container.
+                if ( wc_mnm_is_container_cart_item( $cart_item ) && ! empty( $cart_item[ 'mnm_contents_tr' ] ) ) {
+                    $tr_contents = array_unique( array_keys( array_intersect( array_flip( $this->translated_cart_keys ), $cart_item[ 'mnm_contents_tr' ] ) ) );
+                    $cart_contents[ $key ][ 'mnm_contents' ] = $tr_contents;
+                    unset( $cart_contents[ $key ][ 'mnm_contents_tr' ] );
+                }
+
+            }
+
+        }
+
+		return $cart_contents;
+	}
+
+    /**
+	 * Allows WooCommerce Mix and Match to filter the cart prices after the cart has been translated.
+	 * We need to do it here as WooCommerce Mix and Match directly access to WC()->cart->cart_contents.
+	 * Hooked to the action 'woocommerce_cart_loaded_from_session'.
+	 *
+	 * @since 5.1.0
+	 */
+	public function cart_loaded_from_session() {
+		foreach ( WC()->cart->cart_contents as $key => $cart_item ) {
+			if ( ! empty( $cart_item['data'] ) ) {
+				WC()->cart->cart_contents[ $key ] = WC_Mix_and_Match()->cart->add_cart_item_filter( $cart_item, $key );
 			}
 		}
-
-		// Translate children.
-		if ( wc_mnm_maybe_is_child_cart_item( $new_cart_contents[ $new_key ] ) ) {
-
-			// Update the child's container and remove the stashed version.
-			$new_cart_contents[ $new_key ]['mnm_container'] = $cart_contents[ $key ]['translated_mnm_container'];
-			unset( $cart_contents[ $key ]['translated_mnm_container'] );
-
-			$container_key = wc_mnm_get_cart_item_container( $new_cart_contents[ $new_key ], $new_cart_contents, true );
-
-			if ( $container_key ) {
-
-				// Swap keys in container's content array.
-				$remove_key = array_search( $key, $new_cart_contents[ $container_key ]['mnm_contents'] );
-				unset( $new_cart_contents[ $container_key ]['mnm_contents'][ $remove_key ] );
-				$new_cart_contents[ $container_key ]['mnm_contents'][] = $new_key;
-
-			}
-		}
-
-		return $new_cart_contents;
 	}
 
 	/**
@@ -218,9 +265,24 @@ class WCML_Mix_And_Match_Products implements \IWPML_Action {
 				if ( empty( $product_translation->original ) ) {
 					foreach ( $mnm_data as $key => $mnm_element ) {
 
-						$trnsl_prod                = apply_filters( 'translate_object_id', $key, 'product', true, $product_translation->language_code );
-						$mnm_element['product_id'] = $trnsl_prod;
-						$mnm_data[ $trnsl_prod ]   = $mnm_element;
+                        if ( empty( $mnm_element ) ) {
+                            
+                            $mnm_data[ $tr_id ] = apply_filters( 'translate_object_id', $key, 'product', true, $product_translation->language_code );
+                        
+                        } else {
+                            $trnsl_prod_id = ! empty( $mnm_element[ 'product_id' ] ) ? apply_filters( 'translate_object_id', $mnm_element[ 'product_id' ], 'product', true, $product_translation->language_code ) : 0;
+
+                            $trsnl_var_id = ! empty( $mnm_element[ 'variation_id' ] ) ? apply_filters( 'translate_object_id', $mnm_element[ 'variation_id' ], 'product_variation', true, $product_translation->language_code ) : 0;
+
+                            $mnm_element[ 'child_id' ]     = $trsnl_var_id ? $trsnl_var_id : $trnsl_prod;
+                            $mnm_element[ 'product_id' ]   = $trnsl_prod;
+                            $mnm_element[ 'variation_id' ] = $trnsl_prod;
+
+                            
+                            $mnm_data[ $mnm_element[ 'child_id' ] ]   = $mnm_element;
+
+                        }
+
 						unset( $mnm_data[ $key ] );
 					}
 
