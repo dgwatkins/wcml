@@ -69,7 +69,7 @@ class WCML_Cart {
 			add_action( 'woocommerce_before_checkout_process', [ $this, 'wcml_refresh_cart_total' ] );
 
 			if ( ! isStandAlone() ) {
-			    add_action( 'woocommerce_before_calculate_totals', [ $this, 'woocommerce_calculate_totals' ], 100 );
+			    add_action( 'woocommerce_cart_loaded_from_session', [ $this, 'wcml_cart_loaded_from_session' ], 0 );
 			    add_filter( 'woocommerce_cart_item_data_to_validate', [ $this, 'validate_cart_item_data' ], 10, 2 );
 			    add_filter( 'woocommerce_cart_item_product', [ $this, 'adjust_cart_item_product_name' ] );
 			    add_filter( 'woocommerce_cart_item_permalink', [ $this, 'cart_item_permalink' ], 10, 2 );
@@ -297,6 +297,137 @@ class WCML_Cart {
 		WC()->cart->calculate_totals();
 	}
 
+	/**
+	 * Translate cart when loaded from session.
+     * 
+     * @since 5.1.0
+     * 
+     * @param WC_Cart
+	 */
+    public function wcml_cart_loaded_from_session( $cart ) {
+        $cart->cart_contents = $this->translate_cart_contents( $cart->cart_contents );
+		$cart->removed_cart_contents = $this->translate_cart_contents( $cart->removed_cart_contents );
+    }
+
+
+	/**
+	 * Translates the cart contents.
+	 *
+	 * @since 5.1.0
+	 *
+	 * @param array  $contents Cart contents.
+	 * @param string $current_language     Language code.
+	 * @return array
+	 */
+	protected function translate_cart_contents( $contents, $current_language = '' ) {
+		if ( empty( $current_language ) ) {
+			$current_language = $this->sitepress->get_current_language();
+		}
+
+		$tr_contents           = [];
+        $display_as_translated = apply_filters( 'wpml_is_display_as_translated_post_type', false, 'product' );
+
+        foreach ( $contents as $key => $cart_item ) {
+
+            $tr_product_id = apply_filters( 'wpml_object_id', $cart_item['product_id'], 'product', false, $current_language );
+
+            if ( $cart_item[ 'product_id' ] === $tr_product_id || ( $display_as_translated && ! $tr_product_id ) ) {
+                $tr_contents[ $key ]                = apply_filters( 'wcml_cart_contents_not_changed', $cart_item, $key, $current_language );
+                $tr_contents[ $key ][ 'data_hash' ] = $this->get_data_cart_hash( $cart_item );
+
+            } elseif ( ! is_null( $tr_product_id ) ) {
+
+                $cart_item[ 'product_id' ] = $tr_product_id;
+
+            	// Variable product.
+                if ( ! empty( $cart_item['variation_id'] ) && $tr_variation_id = apply_filters( 'wpml_object_id', $cart_item['variation_id'], 'product_variation', false, $current_language ) ) {
+
+                    $cart_item['variation_id'] = $tr_variation_id;
+
+                    if ( ! empty( $cart_item['data'] ) ) {
+                        $cart_item['data'] = wc_get_product( $cart_item['variation_id'] );
+                    }
+
+                    // Translate variations attributes.
+                    if ( ! empty( $cart_item['variation'] ) && is_array( $cart_item['variation'] ) ) {
+                        foreach ( $cart_item['variation'] as $attr_key => $attribute ) {
+                            $cart_item['variation'][ $attr_key ] = $this->get_cart_attribute_translation(
+                                $attr_key,
+                                $attribute,
+                                $cart_item['variation_id'],
+                                $current_language,
+                                $cart_item['product_id'],
+                                $tr_product_id
+                            );
+                        }
+                    }
+                } elseif ( ! empty( $cart_item['data'] ) ) {
+                    // Simple product.
+                    $cart_item['data'] = wc_get_product( $cart_item['product_id'] );
+                }
+
+                /**
+                 * Filters a cart item when it is translated.
+                 *
+                 * @since 5.1.0
+                 *
+                 * @param array  $cart_item Cart item.
+                 * @param string $current_language Language code.
+                 */
+                $cart_item = apply_filters( 'wcml_translate_cart_item', $cart_item, $current_language );
+
+                $new_key   = $this->wcml_generate_cart_item_key( $cart_item );          
+
+                /**
+                 * wcml_update_cart_contents_lang_switch filter
+                 * @todo - Needs deprecating.
+                 */
+                if ( has_filter( 'wcml_update_cart_contents_lang_switch' ) ) {
+                    wc()->cart->cart_contents = apply_filters( 'wcml_update_cart_contents_lang_switch', wc()->cart->cart_contents, $key, $new_key, $current_language );
+                }
+
+                // Set the new key and hash.
+                $cart_item['key'] = $new_key;
+                $cart_item['data_hash'] = $this->get_data_cart_hash( $cart_item );
+
+                /**
+                 * wcml_cart_contents filter
+                 * @todo - Needs deprecating - replace with wcml_translate_cart_item filter.
+                 */
+                if ( has_filter( 'wcml_cart_contents' ) ) {
+                    $tr_contents = apply_filters( 'wcml_cart_contents', $tr_contents, wc()->cart->cart_contents, $key, $new_key );
+                }
+
+                /**
+				 * Fires after a cart item has been translated.
+				 *
+				 * @since 5.1.0
+				 *
+				 * @param array  $item Cart item.
+				 * @param string $key  Previous cart item key. The new key can be found in $item['key'].
+				 */
+				do_action( 'wcml_translated_cart_item', $cart_item, $key );
+
+                // Add item to new contents.
+				$tr_contents[ $cart_item['key'] ] = $cart_item;
+
+            }
+
+        }
+
+		/**
+		 * Filters the cart contents after all cart items have been translated.
+		 *
+		 * @since 5.1
+		 *
+		 * @param array  $tr_contents Translated Cart contents.
+		 * @param string $current_language        Language code.
+		 */
+		return apply_filters( 'wcml_translate_cart_contents', $tr_contents, $current_language );
+
+    }
+
+
 	/*
 	 *  Update cart and cart session when switch language
 	 */
@@ -488,6 +619,27 @@ class WCML_Cart {
 			$cart_contents[ $key ]['product_id'],
 			$cart_contents[ $key ]['variation_id'],
 			$cart_contents[ $key ]['variation'],
+			$cart_item_data
+		);
+	}
+
+
+	/**
+     * 
+     * Generate cart item key
+     * 
+     * @since 5.1.0
+	 * @param array $cart_item
+	 *
+	 * @return string
+	 */
+	public function wcml_generate_cart_item_key( $cart_item ) {
+		$cart_item_data = $this->get_cart_item_data_from_cart( $cart_item );
+
+		return WC()->cart->generate_cart_id(
+			$cart_item['product_id'],
+			$cart_item['variation_id'],
+			$cart_item['variation'],
 			$cart_item_data
 		);
 	}
