@@ -3,12 +3,12 @@
 ## CI
 
 ### Develop
-[![build status](https://git.onthegosystems.com/wpml/woocommerce-multilingual/badges/develop/build.svg)](https://git.onthegosystems.com/wpml/woocommerce-multilingual/commits/develop)
-[![coverage report](https://git.onthegosystems.com/wpml/woocommerce-multilingual/badges/develop/coverage.svg)](https://git.onthegosystems.com/wpml/woocommerce-multilingual/commits/develop)
+[![build status](https://git.onthegosystems.com/glue-plugins/wpml/woocommerce-multilingual/badges/develop/pipeline.svg)](https://git.onthegosystems.com/glue-plugins/wpml/woocommerce-multilingual/commits/develop)
+[![coverage report](https://git.onthegosystems.com/glue-plugins/wpml/woocommerce-multilingual/badges/develop/coverage.svg)](https://git.onthegosystems.com/glue-plugins/wpml/woocommerce-multilingual/commits/develop)
 
 ### Master
-[![build status](https://git.onthegosystems.com/wpml/woocommerce-multilingual/badges/master/build.svg)](https://git.onthegosystems.com/wpml/woocommerce-multilingual/commits/master)
-[![coverage report](https://git.onthegosystems.com/wpml/woocommerce-multilingual/badges/master/coverage.svg)](https://git.onthegosystems.com/wpml/woocommerce-multilingual/commits/master)
+[![build status](https://git.onthegosystems.com/glue-plugins/wpml/woocommerce-multilingual/badges/master/pipeline.svg)](https://git.onthegosystems.com/glue-plugins/wpml/woocommerce-multilingual/commits/master)
+[![coverage report](https://git.onthegosystems.com/glue-plugins/wpml/woocommerce-multilingual/badges/master/coverage.svg)](https://git.onthegosystems.com/glue-plugins/wpml/woocommerce-multilingual/commits/master)
 
 ## Setup
 
@@ -20,3 +20,7 @@
 ## Development
 
 - Run all unit tests: run `make test`
+
+## Wiki links
+
+- [Integrate caching for multicurrency](https://git.onthegosystems.com/glue-plugins/wpml/woocommerce-multilingual/-/wikis/Integrate-caching-for-multicurrency)
