@@ -2,6 +2,7 @@
 
 use WCML\MultiCurrency\Settings as McSettings;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\DataRegenerator;
+use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore;
 use WCML\Attributes\LookupTableFactory;
 
 class WCML_Upgrade {
@@ -854,11 +855,11 @@ class WCML_Upgrade {
 	}
 
 	private function upgrade_5_0_0() {
-		if ( LookupTableFactory::hasFeature() ) {
-			$data_store = wc_get_container()->get( DataRegenerator::class );
-			if ( ! $data_store->regeneration_is_in_progress() ) {
-				$data_store->initiate_regeneration();
-			}
+		if (
+			LookupTableFactory::hasFeature() &&
+			! wc_get_container()->get( LookupDataStore::class )->regeneration_is_in_progress()
+		) {
+			wc_get_container()->get( DataRegenerator::class )->initiate_regeneration();
 		}
 
 		delete_transient( WCML_Payment_Gateway_PayPal_V2::BEARER_TOKEN_TRANSIENT );
