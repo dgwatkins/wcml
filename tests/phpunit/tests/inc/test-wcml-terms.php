@@ -61,8 +61,6 @@ class Test_WCML_Terms extends OTGS_TestCase {
 		WP_Mock::userFunction( 'is_admin', [ 'return' => true ] );
 
 		$subject = $this->get_subject();
-		
-		\WP_Mock::expectActionAdded( 'updated_term_meta', Fns::withoutRecursion( Fns::noop(), [ $subject, 'addProductCatToRecount' ] ), 10,3 );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_get_product_subcategories_cache_key', [ $subject, 'add_lang_parameter_to_cache_key'] );
 
@@ -317,56 +315,4 @@ class Test_WCML_Terms extends OTGS_TestCase {
 
 		$this->assertEquals( $cache_key.'-'.$current_language, $subject->add_lang_parameter_to_cache_key( $cache_key ) );
 	}
-	
-	/**
-	 * @test
-	 */
-	function it_should_update_category_count_meta() {
-		$taxonomy        = 'product_cat';
-		$taxonomy_object = $this->getMockBuilder( 'WP_Taxonomy' )->disableOriginalConstructor()->getMock();
-		
-		$meta_id = 1;
-		$object_id = 10;
-		$trid = 11;
-		$meta_key = $taxonomy;
-		$meta_value = 2;
-		
-		$getTranslation = function( $lang, $id ) {
-			return (object) [
-				'language_code' => $lang,
-				'element_id'    => $id,
-			];
-		};
-		
-		$translations = [
-			'en' => $getTranslation( 'en', $object_id ),
-			'fr' => $getTranslation( 'fr', 20 ),
-			'es' => $getTranslation( 'es', 30 ),
-		];
-		
-		
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
-		                  ->disableOriginalConstructor()
-		                  ->setMethods( [ 'get_element_trid', 'get_element_translations' ] )
-		                  ->getMock();
-		
-		$sitepress->method( 'get_element_trid' )->with( $object_id, 'tax_product_cat' )->willReturn( $trid );
-		$sitepress->method( 'get_element_translations' )->with( $trid )->willReturn( $translations );
-		
-		$subject = $this->get_subject( null, $sitepress );
-		
-		$expectedProductCatToRecount = [ $translations['fr']->element_id , $translations['es']->element_id ];
-		
-		
-		\WP_Mock::userFunction( 'get_taxonomy', [
-			'return' => $taxonomy_object,
-		]);
-		
-		\WP_Mock::userFunction( '_wc_term_recount', [
-			'args' => [ $expectedProductCatToRecount, $taxonomy_object, $meta_value ],
-		]);
-		
-		$subject->addProductCatToRecount( $meta_id, $object_id, $meta_key );
-	}
-
 }
