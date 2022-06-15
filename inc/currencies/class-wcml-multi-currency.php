@@ -445,18 +445,37 @@ class WCML_Multi_Currency {
 		return apply_filters( 'wcml_exchange_rates', $this->exchange_rates );
 	}
 
+	/**
+	 * @return string
+	 */
 	public function get_client_currency() {
 		if ( Functions::isRestApiRequest() ) {
 			return $this->get_rest_currency();
 		} elseif ( null === $this->client_currency ) {
-			$clientCurrency = ResolverFactory::create()->getClientCurrency();
-
-			$this->client_currency = apply_filters( 'wcml_client_currency', $clientCurrency );
+			$this->client_currency = ResolverFactory::create()->getClientCurrency();
 
 			if ( $this->client_currency ) {
 				wcml_user_store_set( self::CURRENCY_STORAGE_KEY, $this->client_currency );
 				wcml_user_store_set( self::CURRENCY_LANGUAGE_STORAGE_KEY, ResolverHelperByLang::getCurrentLanguage() );
 			}
+		}
+
+		/**
+		 * This filter allows overriding the client currency.
+		 *
+		 * WARNING!
+		 * This method is called several times during a request.
+		 * If a filter alters the currency, it's strongly recommended
+		 * to force reloading the page to avoid inconsistencies between
+		 * price numbers and currencies.
+		 *
+		 * @param string $client_currency
+		 */
+		$filteredCurrency = apply_filters( 'wcml_client_currency', $this->client_currency );
+
+		if ( $filteredCurrency !== $this->client_currency ) {
+			$this->client_currency = $filteredCurrency;
+			wcml_user_store_set( self::CURRENCY_STORAGE_KEY, $this->client_currency );
 		}
 
 		return $this->client_currency;
