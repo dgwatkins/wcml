@@ -1,5 +1,26 @@
 <?php
 
+namespace WPML\Collect\Contracts\Support {
+    interface Jsonable
+    {
+        /**
+         * Convert the object to its JSON representation.
+         *
+         * @param  int  $options
+         * @return string
+         */
+        public function toJson($options = 0);
+    }
+    interface Arrayable
+    {
+        /**
+         * Get the instance as an array.
+         *
+         * @return array
+         */
+        public function toArray();
+    }
+}
 namespace WPML\Collect\Support\Traits {
     trait Macroable
     {
@@ -52,278 +73,6 @@ namespace WPML\Collect\Support\Traits {
         public function __call($method, $parameters)
         {
         }
-    }
-}
-namespace WPML\Collect\Support {
-    class Arr
-    {
-        use \WPML\Collect\Support\Traits\Macroable;
-        /**
-         * Determine whether the given value is array accessible.
-         *
-         * @param  mixed  $value
-         * @return bool
-         */
-        public static function accessible($value)
-        {
-        }
-        /**
-         * Add an element to an array using "dot" notation if it doesn't exist.
-         *
-         * @param  mixed[]   $array
-         * @param  string  $key
-         * @param  mixed   $value
-         * @return mixed[]
-         */
-        public static function add($array, $key, $value)
-        {
-        }
-        /**
-         * Collapse an array of arrays into a single array.
-         *
-         * @param  mixed[]  $array
-         * @return mixed[]
-         */
-        public static function collapse($array)
-        {
-        }
-        /**
-         * Divide an array into two arrays. One with keys and the other with values.
-         *
-         * @param  mixed[]  $array
-         * @return mixed[]
-         */
-        public static function divide($array)
-        {
-        }
-        /**
-         * Flatten a multi-dimensional associative array with dots.
-         *
-         * @param  mixed[]   $array
-         * @param  string  $prepend
-         * @return mixed[]
-         */
-        public static function dot($array, $prepend = '')
-        {
-        }
-        /**
-         * Get all of the given array except for a specified array of items.
-         *
-         * @param  mixed[]  $array
-         * @param  mixed[]|string  $keys
-         * @return mixed[]
-         */
-        public static function except($array, $keys)
-        {
-        }
-        /**
-         * Determine if the given key exists in the provided array.
-         *
-         * @param  \ArrayAccess<mixed>|mixed[]  $array
-         * @param  string|int  $key
-         * @return bool
-         */
-        public static function exists($array, $key)
-        {
-        }
-        /**
-         * Return the first element in an array passing a given truth test.
-         *
-         * @param  mixed[]  $array
-         * @param  callable|null  $callback
-         * @param  mixed  $default
-         * @return mixed
-         */
-        public static function first($array, callable $callback = null, $default = null)
-        {
-        }
-        /**
-         * Return the last element in an array passing a given truth test.
-         *
-         * @param  mixed[]  $array
-         * @param  callable|null  $callback
-         * @param  mixed  $default
-         * @return mixed
-         */
-        public static function last($array, callable $callback = null, $default = null)
-        {
-        }
-        /**
-         * Flatten a multi-dimensional array into a single level.
-         *
-         * @param  mixed[]  $array
-         * @param  int  $depth
-         * @return array
-         */
-        public static function flatten($array, $depth = INF)
-        {
-        }
-        /**
-         * Remove one or many array items from a given array using "dot" notation.
-         *
-         * @param  mixed[]  $array
-         * @param  mixed[]|string  $keys
-         * @return void
-         */
-        public static function forget(&$array, $keys)
-        {
-        }
-        /**
-         * Get an item from an array using "dot" notation.
-         *
-         * @param  \ArrayAccess<mixed>|mixed[]  $array
-         * @param  string  $key
-         * @param  mixed   $default
-         * @return mixed
-         */
-        public static function get($array, $key, $default = null)
-        {
-        }
-        /**
-         * Check if an item or items exist in an array using "dot" notation.
-         *
-         * @param  \ArrayAccess<mixed>|mixed[]  $array
-         * @param  string|mixed[]  $keys
-         * @return bool
-         */
-        public static function has($array, $keys)
-        {
-        }
-        /**
-         * Determines if an array is associative.
-         *
-         * An array is "associative" if it doesn't have sequential numerical keys beginning with zero.
-         *
-         * @param  mixed[]  $array
-         * @return bool
-         */
-        public static function isAssoc(array $array)
-        {
-        }
-        /**
-         * Get a subset of the items from the given array.
-         *
-         * @param  mixed[]  $array
-         * @param  mixed[]|string  $keys
-         * @return array
-         */
-        public static function only($array, $keys)
-        {
-        }
-        /**
-         * Pluck an array of values from an array.
-         *
-         * @param  mixed[]  $array
-         * @param  string|mixed[]  $value
-         * @param  string|mixed[]|null  $key
-         * @return mixed[]
-         */
-        public static function pluck($array, $value, $key = null)
-        {
-        }
-        /**
-         * Explode the "value" and "key" arguments passed to "pluck".
-         *
-         * @param  string|mixed[]  $value
-         * @param  string|mixed[]|null  $key
-         * @return mixed[]
-         */
-        protected static function explodePluckParameters($value, $key)
-        {
-        }
-        /**
-         * Push an item onto the beginning of an array.
-         *
-         * @param  mixed[]  $array
-         * @param  mixed  $value
-         * @param  mixed  $key
-         * @return mixed[]
-         */
-        public static function prepend($array, $value, $key = null)
-        {
-        }
-        /**
-         * Get a value from the array, and remove it.
-         *
-         * @param  mixed[]   $array
-         * @param  string  $key
-         * @param  mixed   $default
-         * @return mixed
-         */
-        public static function pull(&$array, $key, $default = null)
-        {
-        }
-        /**
-         * Set an array item to a given value using "dot" notation.
-         *
-         * If no key is given to the method, the entire array will be replaced.
-         *
-         * @param  mixed[]   $array
-         * @param  string  $key
-         * @param  mixed   $value
-         * @return mixed[]
-         */
-        public static function set(&$array, $key, $value)
-        {
-        }
-        /**
-         * Sort the array using the given callback or "dot" notation.
-         *
-         * @param  mixed[]  $array
-         * @param  callable|string  $callback
-         * @return mixed[]
-         */
-        public static function sort($array, $callback)
-        {
-        }
-        /**
-         * Recursively sort an array by keys and values.
-         *
-         * @param  mixed[]  $array
-         * @return mixed[]
-         */
-        public static function sortRecursive($array)
-        {
-        }
-        /**
-         * Filter the array using the given callback.
-         *
-         * @param  mixed[]  $array
-         * @param  callable  $callback
-         * @return mixed[]
-         */
-        public static function where($array, callable $callback)
-        {
-        }
-        /**
-         * @param mixed ...$arrays
-         *
-         * @return mixed[]|mixed[mixed]
-         */
-        public static function crossJoin(...$arrays)
-        {
-        }
-    }
-}
-namespace WPML\Collect\Contracts\Support {
-    interface Arrayable
-    {
-        /**
-         * Get the instance as an array.
-         *
-         * @return array
-         */
-        public function toArray();
-    }
-    interface Jsonable
-    {
-        /**
-         * Convert the object to its JSON representation.
-         *
-         * @param  int  $options
-         * @return string
-         */
-        public function toJson($options = 0);
     }
 }
 namespace WPML\Collect\Support {
@@ -1055,6 +804,7 @@ namespace WPML\Collect\Support {
          *
          * @return array
          */
+        #[\ReturnTypeWillChange]
         public function jsonSerialize()
         {
         }
@@ -1072,6 +822,7 @@ namespace WPML\Collect\Support {
          *
          * @return \ArrayIterator
          */
+        #[\ReturnTypeWillChange]
         public function getIterator()
         {
         }
@@ -1089,6 +840,7 @@ namespace WPML\Collect\Support {
          *
          * @return int
          */
+        #[\ReturnTypeWillChange]
         public function count()
         {
         }
@@ -1106,6 +858,7 @@ namespace WPML\Collect\Support {
          * @param  mixed  $key
          * @return bool
          */
+        #[\ReturnTypeWillChange]
         public function offsetExists($key)
         {
         }
@@ -1115,6 +868,7 @@ namespace WPML\Collect\Support {
          * @param  mixed  $key
          * @return mixed
          */
+        #[\ReturnTypeWillChange]
         public function offsetGet($key)
         {
         }
@@ -1125,6 +879,7 @@ namespace WPML\Collect\Support {
          * @param  mixed  $value
          * @return void
          */
+        #[\ReturnTypeWillChange]
         public function offsetSet($key, $value)
         {
         }
@@ -1134,6 +889,7 @@ namespace WPML\Collect\Support {
          * @param  string  $key
          * @return void
          */
+        #[\ReturnTypeWillChange]
         public function offsetUnset($key)
         {
         }
@@ -1233,118 +989,526 @@ namespace WPML\Collect\Support {
         {
         }
     }
-}
-namespace WPML\Setup {
-    class Option
+    class Arr
     {
-        const POSTS_LIMIT_FOR_AUTOMATIC_TRANSLATION = 10;
-        const OPTION_GROUP = 'setup';
-        const CURRENT_STEP = 'current-step';
-        const ORIGINAL_LANG = 'original-lang';
-        const TRANSLATED_LANGS = 'translated-langs';
-        const LANGUAGES_MAPPING = 'languages-mapping';
-        const WHO_MODE = 'who-mode';
-        const TRANSLATE_EVERYTHING = 'translate-everything';
-        const TRANSLATE_EVERYTHING_COMPLETED = 'translate-everything-completed';
-        const TM_ALLOWED = 'is-tm-allowed';
-        const REVIEW_MODE = 'review-mode';
-        const NO_REVIEW = 'no-review';
-        const PUBLISH_AND_REVIEW = 'publish-and-review';
-        const HOLD_FOR_REVIEW = 'before-publish';
-        public static function getCurrentStep()
-        {
-        }
-        public static function saveCurrentStep($step)
-        {
-        }
-        public static function getOriginalLang()
-        {
-        }
-        public static function setOriginalLang($lang)
-        {
-        }
-        public static function getTranslationLangs()
-        {
-        }
-        public static function setTranslationLangs(array $langs)
-        {
-        }
-        public static function setOnlyMyselfAsDefault()
-        {
-        }
-        public static function setTranslationMode(array $mode)
-        {
-        }
-        public static function getTranslationMode()
-        {
-        }
-        public static function setTranslateEverythingDefault()
-        {
-        }
-        public static function shouldTranslateEverything($default = false)
-        {
-        }
-        /** @param bool $state */
-        public static function setTranslateEverything($state)
-        {
-        }
+        use \WPML\Collect\Support\Traits\Macroable;
         /**
+         * Determine whether the given value is array accessible.
+         *
+         * @param  mixed  $value
          * @return bool
          */
-        public static function getTranslateEverything()
-        {
-        }
-        public static function setTranslateEverythingCompleted($completed)
-        {
-        }
-        public static function markPostTypeAsCompleted($postType, $languages)
-        {
-        }
-        public static function removeLanguageFromCompleted($language)
-        {
-        }
-        public static function getTranslateEverythingCompleted()
-        {
-        }
-        public static function isTMAllowed()
-        {
-        }
-        public static function setTMAllowed($isTMAllowed)
-        {
-        }
-        public static function setReviewMode($mode)
-        {
-        }
-        public static function getReviewMode()
-        {
-        }
-        public static function shouldBeReviewed()
+        public static function accessible($value)
         {
         }
         /**
-         * @return LanguageMapping[]
+         * Add an element to an array using "dot" notation if it doesn't exist.
+         *
+         * @param  mixed[]   $array
+         * @param  string  $key
+         * @param  mixed   $value
+         * @return mixed[]
          */
-        public static function getLanguageMappings()
+        public static function add($array, $key, $value)
         {
         }
         /**
-         * @param LanguageMapping $languageMapping
+         * Collapse an array of arrays into a single array.
+         *
+         * @param  mixed[]  $array
+         * @return mixed[]
          */
-        public static function addLanguageMapping(\WPML\Element\API\Entity\LanguageMapping $languageMapping)
+        public static function collapse($array)
         {
         }
-        private static function get($key, $default = null)
+        /**
+         * Divide an array into two arrays. One with keys and the other with values.
+         *
+         * @param  mixed[]  $array
+         * @return mixed[]
+         */
+        public static function divide($array)
         {
         }
-        private static function set($key, $value)
+        /**
+         * Flatten a multi-dimensional associative array with dots.
+         *
+         * @param  mixed[]   $array
+         * @param  string  $prepend
+         * @return mixed[]
+         */
+        public static function dot($array, $prepend = '')
         {
         }
-        public static function getTranslateEverythingDefaultInSetup()
+        /**
+         * Get all of the given array except for a specified array of items.
+         *
+         * @param  mixed[]  $array
+         * @param  mixed[]|string  $keys
+         * @return mixed[]
+         */
+        public static function except($array, $keys)
+        {
+        }
+        /**
+         * Determine if the given key exists in the provided array.
+         *
+         * @param  \ArrayAccess<mixed>|mixed[]  $array
+         * @param  string|int  $key
+         * @return bool
+         */
+        public static function exists($array, $key)
+        {
+        }
+        /**
+         * Return the first element in an array passing a given truth test.
+         *
+         * @param  mixed[]  $array
+         * @param  callable|null  $callback
+         * @param  mixed  $default
+         * @return mixed
+         */
+        public static function first($array, callable $callback = null, $default = null)
+        {
+        }
+        /**
+         * Return the last element in an array passing a given truth test.
+         *
+         * @param  mixed[]  $array
+         * @param  callable|null  $callback
+         * @param  mixed  $default
+         * @return mixed
+         */
+        public static function last($array, callable $callback = null, $default = null)
+        {
+        }
+        /**
+         * Flatten a multi-dimensional array into a single level.
+         *
+         * @param  mixed[]  $array
+         * @param  int  $depth
+         * @return array
+         */
+        public static function flatten($array, $depth = INF)
+        {
+        }
+        /**
+         * Remove one or many array items from a given array using "dot" notation.
+         *
+         * @param  mixed[]  $array
+         * @param  mixed[]|string  $keys
+         * @return void
+         */
+        public static function forget(&$array, $keys)
+        {
+        }
+        /**
+         * Get an item from an array using "dot" notation.
+         *
+         * @param  \ArrayAccess<mixed>|mixed[]  $array
+         * @param  string  $key
+         * @param  mixed   $default
+         * @return mixed
+         */
+        public static function get($array, $key, $default = null)
+        {
+        }
+        /**
+         * Check if an item or items exist in an array using "dot" notation.
+         *
+         * @param  \ArrayAccess<mixed>|mixed[]  $array
+         * @param  string|mixed[]  $keys
+         * @return bool
+         */
+        public static function has($array, $keys)
+        {
+        }
+        /**
+         * Determines if an array is associative.
+         *
+         * An array is "associative" if it doesn't have sequential numerical keys beginning with zero.
+         *
+         * @param  mixed[]  $array
+         * @return bool
+         */
+        public static function isAssoc(array $array)
+        {
+        }
+        /**
+         * Get a subset of the items from the given array.
+         *
+         * @param  mixed[]  $array
+         * @param  mixed[]|string  $keys
+         * @return array
+         */
+        public static function only($array, $keys)
+        {
+        }
+        /**
+         * Pluck an array of values from an array.
+         *
+         * @param  mixed[]  $array
+         * @param  string|mixed[]  $value
+         * @param  string|mixed[]|null  $key
+         * @return mixed[]
+         */
+        public static function pluck($array, $value, $key = null)
+        {
+        }
+        /**
+         * Explode the "value" and "key" arguments passed to "pluck".
+         *
+         * @param  string|mixed[]  $value
+         * @param  string|mixed[]|null  $key
+         * @return mixed[]
+         */
+        protected static function explodePluckParameters($value, $key)
+        {
+        }
+        /**
+         * Push an item onto the beginning of an array.
+         *
+         * @param  mixed[]  $array
+         * @param  mixed  $value
+         * @param  mixed  $key
+         * @return mixed[]
+         */
+        public static function prepend($array, $value, $key = null)
+        {
+        }
+        /**
+         * Get a value from the array, and remove it.
+         *
+         * @param  mixed[]   $array
+         * @param  string  $key
+         * @param  mixed   $default
+         * @return mixed
+         */
+        public static function pull(&$array, $key, $default = null)
+        {
+        }
+        /**
+         * Set an array item to a given value using "dot" notation.
+         *
+         * If no key is given to the method, the entire array will be replaced.
+         *
+         * @param  mixed[]   $array
+         * @param  string  $key
+         * @param  mixed   $value
+         * @return mixed[]
+         */
+        public static function set(&$array, $key, $value)
+        {
+        }
+        /**
+         * Sort the array using the given callback or "dot" notation.
+         *
+         * @param  mixed[]  $array
+         * @param  callable|string  $callback
+         * @return mixed[]
+         */
+        public static function sort($array, $callback)
+        {
+        }
+        /**
+         * Recursively sort an array by keys and values.
+         *
+         * @param  mixed[]  $array
+         * @return mixed[]
+         */
+        public static function sortRecursive($array)
+        {
+        }
+        /**
+         * Filter the array using the given callback.
+         *
+         * @param  mixed[]  $array
+         * @param  callable  $callback
+         * @return mixed[]
+         */
+        public static function where($array, callable $callback)
+        {
+        }
+        /**
+         * @param mixed ...$arrays
+         *
+         * @return mixed[]|mixed[mixed]
+         */
+        public static function crossJoin(...$arrays)
+        {
+        }
+    }
+}
+namespace WPML\Settings\PostType {
+    class Automatic
+    {
+        const GROUP = 'post-type';
+        const FROM_CONFIG = 'automatic-config';
+        const OVERRIDE = 'automatic-override';
+        public static function saveFromConfig(array $config)
+        {
+        }
+        public static function isAutomatic($postType)
+        {
+        }
+        public static function set($postType, $state)
+        {
+        }
+        public static function shouldTranslate($postType)
+        {
+        }
+    }
+}
+namespace WPML {
+    class DocPage
+    {
+        public static function getTranslateAutomatically()
+        {
+        }
+        public static function gettingStartedGuide()
+        {
+        }
+        public static function editorOptions()
+        {
+        }
+        public static function addTranslationServiceForm()
+        {
+        }
+        public static function aboutATE()
+        {
+        }
+    }
+}
+namespace WPML\Records {
+    /**
+     * Class Translations
+     * @package WPML\Records
+     *
+     * @method static callable|array getByTrid( ...$trid )
+     *
+     * Returns array of records from wp_icl_translations matching given $trid
+     */
+    class Translations
+    {
+        const OLDEST_FIRST = 'ASC';
+        const NEWEST_FIRST = 'DESC';
+        use \WPML\Collect\Support\Traits\Macroable;
+        /**
+         * @return void
+         */
+        public static function init()
+        {
+        }
+        /**
+         * @param array|null  $order
+         * @param string|null $postType
+         *
+         * @return callable|Collection
+         */
+        public static function getForPostType(array $order = null, $postType = null)
+        {
+        }
+        /**
+         * @param string|null     $lang
+         * @param Collection|null $translations
+         *
+         * @return callable|Collection
+         */
+        public static function getSourceInLanguage($lang = null, \WPML\Collect\Support\Collection $translations = null)
+        {
+        }
+        public static function getSource(\WPML\Collect\Support\Collection $translations = null)
+        {
+        }
+        public static function getSourceByTrid($trid = null)
+        {
+        }
+    }
+}
+namespace WPML\API {
+    class Settings
+    {
+        const WPML_DOWNLOADED_LOCALES_KEY = 'wpml_downloaded_locales';
+        /**
+         * @param string $key
+         * @param bool|mixed $default
+         *
+         * @return bool|mixed
+         */
+        public static function get($key, $default = false)
+        {
+        }
+        /**
+         * @param mixed $default
+         * @param string $key
+         *
+         * @return bool|mixed
+         */
+        public static function getOr($default, $key)
+        {
+        }
+        /**
+         * @param string $key
+         * @param mixed $value
+         *
+         * @return bool
+         */
+        public static function set($key, $value)
+        {
+        }
+        /**
+         * @param string $key
+         * @param mixed $value
+         *
+         * @return bool
+         */
+        public static function setAndSave($key, $value)
+        {
+        }
+        /**
+         * Updates the setting using the sub key and value.
+         * Assumes that the setting found by the main key is an array or object
+         *
+         * @param string $key
+         * @param string $subKey
+         * @param mixed $value
+         *
+         * @return bool
+         */
+        public static function assoc($key, $subKey, $value)
+        {
+        }
+        public static function pathOr($default, $path)
         {
         }
     }
 }
 namespace WPML\Element\API {
+    class TranslationsRepository
+    {
+        /**
+         * It contains merged data from 3 tables: icl_translations, icl_translation_status and the latest record from icl_translate_job
+         *
+         * @var array
+         */
+        private static $data = [];
+        /**
+         * @var array
+         */
+        private static $tridLanguageIndex = [];
+        /** @var array */
+        private static $translationIdIndex = [];
+        public static function preloadForPosts($posts)
+        {
+        }
+        public static function reset()
+        {
+        }
+        public static function getByTridAndLanguage($trid, $language)
+        {
+        }
+        public static function getByTranslationId($translationId)
+        {
+        }
+        private static function getSqlTemplate()
+        {
+        }
+        private static function appendResult($sql)
+        {
+        }
+    }
+}
+namespace WPML\FP {
+    trait Curryable
+    {
+        /**
+         * The registered string curried methods.
+         *
+         * @var string[]
+         */
+        protected static $curried = [];
+        /**
+         * Register a custom curried function.
+         *
+         * @param string   $name
+         * @param int      $argCount
+         * @param callable $fn
+         *
+         * @return void
+         */
+        public static function curryN($name, $argCount, callable $fn)
+        {
+        }
+        /**
+         * Checks if curried function is registered.
+         *
+         * @param string $name
+         *
+         * @return bool
+         */
+        public static function hasCurry($name)
+        {
+        }
+        /**
+         * Dynamically handle calls to the class.
+         *
+         * @param string  $method
+         * @param mixed[] $parameters
+         *
+         * @return mixed
+         *
+         * @throws \BadMethodCallException
+         */
+        public static function __callStatic($method, $parameters)
+        {
+        }
+        /**
+         * Dynamically handle calls to the class.
+         *
+         * @param string  $method
+         * @param mixed[] $parameters
+         *
+         * @return mixed
+         *
+         * @throws \BadMethodCallException
+         */
+        public function __call($method, $parameters)
+        {
+        }
+        /**
+         * @param int     $count
+         * @param \Closure $fn
+         *
+         * @return \Closure
+         */
+        private function curryItCall($count, \Closure $fn)
+        {
+        }
+        /**
+         * @param int     $count
+         * @param \Closure $fn
+         *
+         * @return \Closure
+         */
+        private static function curryItStaticCall($count, \Closure $fn)
+        {
+        }
+    }
+}
+namespace WPML\Element\API {
+    /**
+     * Class Post
+     * @package WPML\Element\API
+     *
+     * @method static callable|string getLang( ...$postId ): Curried :: int->string
+     */
+    class Post
+    {
+        use \WPML\FP\Curryable;
+        public static function init()
+        {
+        }
+    }
     /**
      * @method static array getActive()
      *
@@ -1552,6 +1716,28 @@ namespace WPML\Element\API {
         }
     }
 }
+namespace WPML\API {
+    class Sanitize
+    {
+        /**
+         * @param string $value
+         *
+         * @return false|string
+         */
+        public static function string($value, $flags = ENT_QUOTES)
+        {
+        }
+        /**
+         * @param string $property
+         * @param array $arr
+         *
+         * @return null|false|string
+         */
+        public static function stringProp($property, $arr, $flags = ENT_QUOTES)
+        {
+        }
+    }
+}
 namespace WPML\Element\API\Entity {
     class LanguageMapping
     {
@@ -1589,100 +1775,205 @@ namespace WPML\Element\API\Entity {
         }
     }
 }
-namespace WPML\Records {
-    /**
-     * Class Translations
-     * @package WPML\Records
-     *
-     * @method static callable|array getByTrid( ...$trid )
-     *
-     * Returns array of records from wp_icl_translations matching given $trid
-     */
-    class Translations
+namespace WPML\Setup {
+    class Option
     {
-        const OLDEST_FIRST = 'ASC';
-        const NEWEST_FIRST = 'DESC';
-        use \WPML\Collect\Support\Traits\Macroable;
-        /**
-         * @return void
-         */
-        public static function init()
+        const POSTS_LIMIT_FOR_AUTOMATIC_TRANSLATION = 10;
+        const OPTION_GROUP = 'setup';
+        const CURRENT_STEP = 'current-step';
+        const ORIGINAL_LANG = 'original-lang';
+        const TRANSLATED_LANGS = 'translated-langs';
+        const LANGUAGES_MAPPING = 'languages-mapping';
+        const WHO_MODE = 'who-mode';
+        const TRANSLATE_EVERYTHING = 'translate-everything';
+        const TRANSLATE_EVERYTHING_COMPLETED = 'translate-everything-completed';
+        const TM_ALLOWED = 'is-tm-allowed';
+        const REVIEW_MODE = 'review-mode';
+        const NO_REVIEW = 'no-review';
+        const PUBLISH_AND_REVIEW = 'publish-and-review';
+        const HOLD_FOR_REVIEW = 'before-publish';
+        public static function getCurrentStep()
+        {
+        }
+        public static function saveCurrentStep($step)
+        {
+        }
+        public static function getOriginalLang()
+        {
+        }
+        public static function setOriginalLang($lang)
+        {
+        }
+        public static function getTranslationLangs()
+        {
+        }
+        public static function setTranslationLangs(array $langs)
         {
         }
         /**
-         * @param array|null  $order
-         * @param string|null $postType
+         * Sets service as default translation mode if there's a default Translation Service linked to this instance.
          *
-         * @return callable|Collection
+         * @param bool $hasPreferredTranslationService
          */
-        public static function getForPostType(array $order = null, $postType = null)
+        public static function setDefaultTranslationMode($hasPreferredTranslationService = false)
+        {
+        }
+        public static function setOnlyMyselfAsDefault()
+        {
+        }
+        public static function setTranslationMode(array $mode)
+        {
+        }
+        public static function getTranslationMode()
+        {
+        }
+        public static function setTranslateEverythingDefault()
+        {
+        }
+        public static function shouldTranslateEverything($default = false)
+        {
+        }
+        /** @param bool $state */
+        public static function setTranslateEverything($state)
         {
         }
         /**
-         * @param string|null     $lang
-         * @param Collection|null $translations
-         *
-         * @return callable|Collection
+         * @return bool
          */
-        public static function getSourceInLanguage($lang = null, \WPML\Collect\Support\Collection $translations = null)
+        public static function getTranslateEverything()
         {
         }
-        public static function getSource(\WPML\Collect\Support\Collection $translations = null)
+        public static function setTranslateEverythingCompleted($completed)
         {
         }
-        public static function getSourceByTrid($trid = null)
+        public static function markPostTypeAsCompleted($postType, $languages)
         {
         }
-    }
-}
-namespace WPML\Settings\PostType {
-    class Automatic
-    {
-        const GROUP = 'post-type';
-        const FROM_CONFIG = 'automatic-config';
-        const OVERRIDE = 'automatic-override';
-        public static function saveFromConfig(array $config)
+        public static function removeLanguageFromCompleted($language)
         {
         }
-        public static function isAutomatic($postType)
+        public static function getTranslateEverythingCompleted()
         {
         }
-        public static function set($postType, $state)
+        public static function isTMAllowed()
         {
         }
-        public static function shouldTranslate($postType)
+        public static function setTMAllowed($isTMAllowed)
+        {
+        }
+        public static function setReviewMode($mode)
+        {
+        }
+        public static function getReviewMode()
+        {
+        }
+        public static function shouldBeReviewed()
+        {
+        }
+        /**
+         * @return LanguageMapping[]
+         */
+        public static function getLanguageMappings()
+        {
+        }
+        /**
+         * @param LanguageMapping $languageMapping
+         */
+        public static function addLanguageMapping(\WPML\Element\API\Entity\LanguageMapping $languageMapping)
+        {
+        }
+        private static function get($key, $default = null)
+        {
+        }
+        private static function set($key, $value)
+        {
+        }
+        /**
+         * @param bool $hasPreferredTranslationService
+         * @return bool
+         */
+        public static function getTranslateEverythingDefaultInSetup($hasPreferredTranslationService = false)
         {
         }
     }
 }
 namespace WPML\Element\API {
+    class IfOriginalPost
+    {
+        /**
+         * Gets the element details for the translations of the given post id.
+         * Returns an empty array if the id is not an original post.
+         *
+         * element details structure:
+         * ```php
+         * (object) [
+         *  'original' => false,            // bool True if the element is the original, false if a translation
+         *  'element_id' => 123,            // int The element id
+         *  'source_language_code' => 'en', // string The source language code
+         *  'language_code' => 'de',        // string The language of the element
+         *  'trid' => 456,                  // int The translation id that links translations to source.
+         * ]
+         * ```
+         *
+         * @param int $id The post id. Optional. If missing then returns a callable waiting for the id.
+         *
+         * @return \WPML\Collect\Support\Collection<mixed>|callable
+         */
+        public static function getTranslations($id = null)
+        {
+        }
+        /**
+         * Get the element ids for the translations of the given post id.
+         * Returns an empty array if the id is not an original post.
+         *
+         * @param int $id The post id. Optional. If missing then returns a callable waiting for the id.
+         *
+         * @return \WPML\Collect\Support\Collection<mixed>|callable
+         */
+        public static function getTranslationIds($id = null)
+        {
+        }
+    }
+}
+namespace WPML {
+    class Timer
+    {
+        private $endTime;
+        public function start($timeOut)
+        {
+        }
+        public function hasTimedOut()
+        {
+        }
+        public function hasNotTimedOut()
+        {
+        }
+    }
+}
+namespace WPML\API {
     /**
-     * Class PostTranslations
-     * @package WPML\Element\API
-     * @method static callable|int setAsSource( ...$el_id, ...$language_code ) - Curried :: int → string → void
-     * @method static callable|int setAsTranslationOf( ...$el_id, ...$translated_id, ...$language_code )
-     * @method static callable|array get( ...$el_id ) - Curried :: int → [object]
-     * @method static callable|array|null getInLanguage( ...$el_id, ...$language_code ) - Curried :: int → string → array|null
-     * @method static callable|array|null getInCurrentLanguage( ...$el_id ) - Curried :: int → array|null
-     * @method static callable|array getIfOriginal( ...$el_id ) - Curried :: int → [object]
-     * @method static callable|array getOriginal( ...$element_id ) - Curried :: int → object|null
-     * @method static callable|array getOriginalId( ...$element_id ) - Curried :: int → int
+     * Class Version
+     * @package WPML\API
+     *
+     * @method static string firstInstallation()
+     *
+     * It returns the version of WPML which has been used during the first installation.
+     *
+     * @method static callback|bool isHigherThanInstallation( ...$version ) - Curried :: string->bool
+     *
+     * It compares the specified version with the version which has been used during the first installation.
+     *
+     * @method static string current()
+     *
+     * It gets the current WPML version.
      */
-    class PostTranslations
+    class Version
     {
         use \WPML\Collect\Support\Traits\Macroable;
         /**
          * @return void
          */
         public static function init()
-        {
-        }
-        /**
-         * @param callable $fn
-         *
-         * @return \Closure
-         */
-        public static function withPostType($fn)
         {
         }
     }
@@ -1777,421 +2068,6 @@ namespace WPML\WP {
         }
     }
 }
-namespace WPML\FP {
-    trait Curryable
-    {
-        /**
-         * The registered string curried methods.
-         *
-         * @var string[]
-         */
-        protected static $curried = [];
-        /**
-         * Register a custom curried function.
-         *
-         * @param string   $name
-         * @param int      $argCount
-         * @param callable $fn
-         *
-         * @return void
-         */
-        public static function curryN($name, $argCount, callable $fn)
-        {
-        }
-        /**
-         * Checks if curried function is registered.
-         *
-         * @param string $name
-         *
-         * @return bool
-         */
-        public static function hasCurry($name)
-        {
-        }
-        /**
-         * Dynamically handle calls to the class.
-         *
-         * @param string  $method
-         * @param mixed[] $parameters
-         *
-         * @return mixed
-         *
-         * @throws \BadMethodCallException
-         */
-        public static function __callStatic($method, $parameters)
-        {
-        }
-        /**
-         * Dynamically handle calls to the class.
-         *
-         * @param string  $method
-         * @param mixed[] $parameters
-         *
-         * @return mixed
-         *
-         * @throws \BadMethodCallException
-         */
-        public function __call($method, $parameters)
-        {
-        }
-        /**
-         * @param int     $count
-         * @param \Closure $fn
-         *
-         * @return \Closure
-         */
-        private function curryItCall($count, \Closure $fn)
-        {
-        }
-        /**
-         * @param int     $count
-         * @param \Closure $fn
-         *
-         * @return \Closure
-         */
-        private static function curryItStaticCall($count, \Closure $fn)
-        {
-        }
-    }
-}
-namespace WPML\Element\API {
-    /**
-     * Class Post
-     * @package WPML\Element\API
-     *
-     * @method static callable|string getLang( ...$postId ): Curried :: int->string
-     */
-    class Post
-    {
-        use \WPML\FP\Curryable;
-        public static function init()
-        {
-        }
-    }
-}
-namespace WPML {
-    class DocPage
-    {
-        public static function getTranslateAutomatically()
-        {
-        }
-        public static function gettingStartedGuide()
-        {
-        }
-        public static function editorOptions()
-        {
-        }
-        public static function addTranslationServiceForm()
-        {
-        }
-        public static function aboutATE()
-        {
-        }
-    }
-}
-namespace WPML\Element\API {
-    class IfOriginalPost
-    {
-        /**
-         * Gets the element details for the translations of the given post id.
-         * Returns an empty array if the id is not an original post.
-         *
-         * element details structure:
-         * ```php
-         * (object) [
-         *  'original' => false,            // bool True if the element is the original, false if a translation
-         *  'element_id' => 123,            // int The element id
-         *  'source_language_code' => 'en', // string The source language code
-         *  'language_code' => 'de',        // string The language of the element
-         *  'trid' => 456,                  // int The translation id that links translations to source.
-         * ]
-         * ```
-         *
-         * @param int $id The post id. Optional. If missing then returns a callable waiting for the id.
-         *
-         * @return \WPML\Collect\Support\Collection<mixed>|callable
-         */
-        public static function getTranslations($id = null)
-        {
-        }
-        /**
-         * Get the element ids for the translations of the given post id.
-         * Returns an empty array if the id is not an original post.
-         *
-         * @param int $id The post id. Optional. If missing then returns a callable waiting for the id.
-         *
-         * @return \WPML\Collect\Support\Collection<mixed>|callable
-         */
-        public static function getTranslationIds($id = null)
-        {
-        }
-    }
-}
-namespace WPML\Utilities {
-    interface ILock
-    {
-        public function create($release_timeout = null);
-        public function release();
-    }
-}
-namespace {
-    /**
-     * @author OnTheGo Systems
-     */
-    interface IWPML_Action
-    {
-        public function add_hooks();
-    }
-    /**
-     * @author OnTheGo Systems
-     */
-    interface IWPML_Backend_Action extends \IWPML_Action
-    {
-    }
-}
-namespace WPML\Core {
-    /**
-     * Class BackgroundTask
-     * @package WPML\Core
-     *
-     * class to add background ajax tasks.
-     * Call the `add` function with the class name of the endpoint and any data that the end point requires.
-     * The Ajax endpoint will then be called on document ready with the data provided.
-     */
-    class BackgroundTask implements \IWPML_Backend_Action
-    {
-        private static $endpoints = [];
-        /**
-         * @param string     $endpoint - Class name of the handler usually implementing the IHandler interface
-         * @param null|array $data
-         */
-        public static function add($endpoint, $data = null)
-        {
-        }
-        public function add_hooks()
-        {
-        }
-        public static function getEndPoints()
-        {
-        }
-        public static function localize($endpoints)
-        {
-        }
-    }
-}
-namespace WPML\Utilities {
-    class Lock implements \WPML\Utilities\ILock
-    {
-        /** @var \wpdb  */
-        private $wpdb;
-        /** @var string  */
-        protected $name;
-        /**
-         * Lock constructor.
-         *
-         * @param \wpdb  $wpdb
-         * @param string $name
-         */
-        public function __construct(\wpdb $wpdb, $name)
-        {
-        }
-        public static function whileLocked($lockName, $releaseTimeout, callable $fn)
-        {
-        }
-        /**
-         * Creates a lock using WordPress options ( Based on WP class WP_Upgrader ).
-         *
-         * @param int $release_timeout Optional. The duration in seconds to respect an existing lock.
-         *                             Default: 1 hour.
-         * @return bool False if a lock couldn't be created or if the lock is still valid. True otherwise.
-         */
-        public function create($release_timeout = null)
-        {
-        }
-        /**
-         * Releases an upgrader lock.
-         *
-         * @return bool True if the lock was successfully released. False on failure.
-         */
-        public function release()
-        {
-        }
-    }
-}
-namespace WPML\API {
-    /**
-     * Class Version
-     * @package WPML\API
-     *
-     * @method static string firstInstallation()
-     *
-     * It returns the version of WPML which has been used during the first installation.
-     *
-     * @method static callback|bool isHigherThanInstallation( ...$version ) - Curried :: string->bool
-     *
-     * It compares the specified version with the version which has been used during the first installation.
-     *
-     * @method static string current()
-     *
-     * It gets the current WPML version.
-     */
-    class Version
-    {
-        use \WPML\Collect\Support\Traits\Macroable;
-        /**
-         * @return void
-         */
-        public static function init()
-        {
-        }
-    }
-    class Settings
-    {
-        const WPML_DOWNLOADED_LOCALES_KEY = 'wpml_downloaded_locales';
-        /**
-         * @param string $key
-         * @param bool|mixed $default
-         *
-         * @return bool|mixed
-         */
-        public static function get($key, $default = false)
-        {
-        }
-        /**
-         * @param mixed $default
-         * @param string $key
-         *
-         * @return bool|mixed
-         */
-        public static function getOr($default, $key)
-        {
-        }
-        /**
-         * @param string $key
-         * @param mixed $value
-         *
-         * @return bool
-         */
-        public static function set($key, $value)
-        {
-        }
-        /**
-         * @param string $key
-         * @param mixed $value
-         *
-         * @return bool
-         */
-        public static function setAndSave($key, $value)
-        {
-        }
-        /**
-         * Updates the setting using the sub key and value.
-         * Assumes that the setting found by the main key is an array or object
-         *
-         * @param string $key
-         * @param string $subKey
-         * @param mixed $value
-         *
-         * @return bool
-         */
-        public static function assoc($key, $subKey, $value)
-        {
-        }
-        public static function pathOr($default, $path)
-        {
-        }
-    }
-}
-namespace WPML\Media {
-    class Option
-    {
-        const OPTION_KEY = '_wpml_media';
-        const SETUP_FINISHED = 'starting_help';
-        public static function isSetupFinished()
-        {
-        }
-        public static function setSetupFinished($setupFinished = true)
-        {
-        }
-        private static function get($name, $default = false)
-        {
-        }
-        private static function set($name, $value)
-        {
-        }
-    }
-}
-namespace WPML\Element\API {
-    class TranslationsRepository
-    {
-        /**
-         * It contains merged data from 3 tables: icl_translations, icl_translation_status and the latest record from icl_translate_job
-         *
-         * @var array
-         */
-        private static $data = [];
-        /**
-         * @var array
-         */
-        private static $tridLanguageIndex = [];
-        /** @var array */
-        private static $translationIdIndex = [];
-        public static function preloadForPosts($posts)
-        {
-        }
-        public static function reset()
-        {
-        }
-        public static function getByTridAndLanguage($trid, $language)
-        {
-        }
-        public static function getByTranslationId($translationId)
-        {
-        }
-        private static function getSqlTemplate()
-        {
-        }
-        private static function appendResult($sql)
-        {
-        }
-    }
-}
-namespace WPML\API {
-    class PostTypes
-    {
-        /**
-         * @return array  eg. [ 'page', 'post' ]
-         */
-        public static function getTranslatable()
-        {
-        }
-        /**
-         * @return array  eg. [ 'page', 'post' ]
-         */
-        public static function getDisplayAsTranslated()
-        {
-        }
-        /**
-         * Gets post types that are translatable and excludes ones that are display as translated.
-         *
-         * @return array  eg. [ 'page', 'post' ]
-         */
-        public static function getOnlyTranslatable()
-        {
-        }
-        /**
-         * Gets post types that are automatically translatable.
-         *
-         * @return array  eg. [ 'page', 'post' ]
-         */
-        public static function getAutomaticTranslatable()
-        {
-        }
-        public static function withNames($postTypes)
-        {
-        }
-    }
-}
 namespace WPML {
     /**
      * Class UIPage
@@ -2205,6 +2081,7 @@ namespace WPML {
      * @method static callback|bool isTMTranslators( ...$get ) - Curried :: array → bool
      * @method static callback|bool isTMATE( ...$get ) - Curried :: array → bool
      * @method static callback|bool isTroubleshooting( ...$get ) - Curried :: array → bool
+     * @method static callback|bool isTranslationQueue( ...$get ) - Curried :: array → bool
      * @method static callback|bool isPage( ...$page, ...$get ) - Curried :: string → array → bool
      * @method static string getLanguages()
      * @method static string getTroubleshooting()
@@ -2262,19 +2139,6 @@ namespace WPML {
         {
         }
     }
-    class Timer
-    {
-        private $endTime;
-        public function start($timeOut)
-        {
-        }
-        public function hasTimedOut()
-        {
-        }
-        public function hasNotTimedOut()
-        {
-        }
-    }
 }
 namespace WPML\Element\API {
     /**
@@ -2316,11 +2180,116 @@ namespace WPML\Element\API {
         }
     }
 }
+namespace WPML\API {
+    class PostTypes
+    {
+        /**
+         * @return array  eg. [ 'page', 'post' ]
+         */
+        public static function getTranslatable()
+        {
+        }
+        /**
+         * Get an array of post types where keys are like: 'post', 'page' and so on
+         *
+         * @return array<string, \WP_Post_Type>
+         */
+        public static function getTranslatableWithInfo()
+        {
+        }
+        /**
+         * @return array  eg. [ 'page', 'post' ]
+         */
+        public static function getDisplayAsTranslated()
+        {
+        }
+        /**
+         * Gets post types that are translatable and excludes ones that are display as translated.
+         *
+         * @return array  eg. [ 'page', 'post' ]
+         */
+        public static function getOnlyTranslatable()
+        {
+        }
+        /**
+         * Gets post types that are automatically translatable.
+         *
+         * @return array  eg. [ 'page', 'post' ]
+         */
+        public static function getAutomaticTranslatable()
+        {
+        }
+        public static function withNames($postTypes)
+        {
+        }
+    }
+}
+namespace WPML\Element\API {
+    /**
+     * Class PostTranslations
+     * @package WPML\Element\API
+     * @method static callable|int setAsSource( ...$el_id, ...$language_code ) - Curried :: int → string → void
+     * @method static callable|int setAsTranslationOf( ...$el_id, ...$translated_id, ...$language_code )
+     * @method static callable|array get( ...$el_id ) - Curried :: int → [object]
+     * @method static callable|array|null getInLanguage( ...$el_id, ...$language_code ) - Curried :: int → string → array|null
+     * @method static callable|array|null getInCurrentLanguage( ...$el_id ) - Curried :: int → array|null
+     * @method static callable|array getIfOriginal( ...$el_id ) - Curried :: int → [object]
+     * @method static callable|array getOriginal( ...$element_id ) - Curried :: int → object|null
+     * @method static callable|array getOriginalId( ...$element_id ) - Curried :: int → int
+     */
+    class PostTranslations
+    {
+        use \WPML\Collect\Support\Traits\Macroable;
+        /**
+         * @return void
+         */
+        public static function init()
+        {
+        }
+        /**
+         * @param callable $fn
+         *
+         * @return \Closure
+         */
+        public static function withPostType($fn)
+        {
+        }
+    }
+}
 namespace {
     /**
      * @author OnTheGo Systems
      */
-    interface IWPML_DIC_Action extends \IWPML_Action
+    interface IWPML_Action_Loader_Factory
+    {
+        /**
+         * @return IWPML_Action|IWPML_Action[]|callable|null
+         */
+        public function create();
+    }
+    /**
+     * @author OnTheGo Systems
+     */
+    interface IWPML_REST_Action_Loader extends \IWPML_Action_Loader_Factory
+    {
+    }
+    /**
+     * @author OnTheGo Systems
+     */
+    interface IWPML_Action
+    {
+        public function add_hooks();
+    }
+    /**
+     * @author OnTheGo Systems
+     */
+    interface IWPML_AJAX_Action extends \IWPML_Action
+    {
+    }
+    /**
+     * @author OnTheGo Systems
+     */
+    interface IWPML_Frontend_Action extends \IWPML_Action
     {
     }
     /**
@@ -2332,12 +2301,32 @@ namespace {
     /**
      * @author OnTheGo Systems
      */
-    interface IWPML_Action_Loader_Factory
+    interface IWPML_AJAX_Action_Loader extends \IWPML_Action_Loader_Factory
     {
-        /**
-         * @return IWPML_Action|IWPML_Action[]|callable|null
-         */
-        public function create();
+    }
+    /**
+     * @author OnTheGo Systems
+     */
+    interface IWPML_DIC_Action extends \IWPML_Action
+    {
+    }
+    /**
+     * @author OnTheGo Systems
+     */
+    interface IWPML_REST_Action extends \IWPML_Action
+    {
+    }
+    /**
+     * @author OnTheGo Systems
+     */
+    interface IWPML_Backend_Action extends \IWPML_Action
+    {
+    }
+    /**
+     * @author OnTheGo Systems
+     */
+    interface IWPML_Backend_Action_Loader extends \IWPML_Action_Loader_Factory
+    {
     }
     /**
      * IWPML_CLI_Action_Loader interface
@@ -2355,13 +2344,7 @@ namespace {
     /**
      * @author OnTheGo Systems
      */
-    interface IWPML_REST_Action extends \IWPML_Action
-    {
-    }
-    /**
-     * @author OnTheGo Systems
-     */
-    interface IWPML_Frontend_Action extends \IWPML_Action
+    interface IWPML_Frontend_Action_Loader extends \IWPML_Action_Loader_Factory
     {
     }
     /**
@@ -2374,36 +2357,6 @@ namespace {
          */
         public function get_load_action();
     }
-    /**
-     * @author OnTheGo Systems
-     */
-    interface IWPML_AJAX_Action extends \IWPML_Action
-    {
-    }
-    /**
-     * @author OnTheGo Systems
-     */
-    interface IWPML_Frontend_Action_Loader extends \IWPML_Action_Loader_Factory
-    {
-    }
-    /**
-     * @author OnTheGo Systems
-     */
-    interface IWPML_REST_Action_Loader extends \IWPML_Action_Loader_Factory
-    {
-    }
-    /**
-     * @author OnTheGo Systems
-     */
-    interface IWPML_Backend_Action_Loader extends \IWPML_Action_Loader_Factory
-    {
-    }
-    /**
-     * @author OnTheGo Systems
-     */
-    interface IWPML_AJAX_Action_Loader extends \IWPML_Action_Loader_Factory
-    {
-    }
 }
 namespace WPML\Ajax {
     interface IHandler
@@ -2414,6 +2367,149 @@ namespace WPML\Ajax {
          * @return \WPML\FP\Either
          */
         public function run(\WPML\Collect\Support\Collection $data);
+    }
+}
+namespace WPML\Utilities {
+    class Logger implements \Psr\Log\LoggerInterface
+    {
+        /** @inheritDoc */
+        public function emergency($message, array $context = [])
+        {
+        }
+        /** @inheritDoc */
+        public function alert($message, array $context = [])
+        {
+        }
+        /** @inheritDoc */
+        public function critical($message, array $context = [])
+        {
+        }
+        /** @inheritDoc */
+        public function error($message, array $context = [])
+        {
+        }
+        /** @inheritDoc */
+        public function warning($message, array $context = [])
+        {
+        }
+        /** @inheritDoc */
+        public function notice($message, array $context = [])
+        {
+        }
+        /** @inheritDoc */
+        public function info($message, array $context = [])
+        {
+        }
+        /** @inheritDoc */
+        public function debug($message, array $context = [])
+        {
+        }
+        /** @inheritDoc */
+        public function log($level, $message, array $context = [])
+        {
+        }
+        /**
+         * Interpolates context values into the message placeholders.
+         *
+         * @param string $message
+         * @param array  $context
+         *
+         * @return string
+         */
+        protected function interpolate($message, array $context = [])
+        {
+        }
+    }
+    interface ILock
+    {
+        public function create($release_timeout = null);
+        public function release();
+    }
+    class Lock implements \WPML\Utilities\ILock
+    {
+        /** @var \wpdb  */
+        private $wpdb;
+        /** @var string  */
+        protected $name;
+        /**
+         * Lock constructor.
+         *
+         * @param \wpdb  $wpdb
+         * @param string $name
+         */
+        public function __construct(\wpdb $wpdb, $name)
+        {
+        }
+        public static function whileLocked($lockName, $releaseTimeout, callable $fn)
+        {
+        }
+        /**
+         * Creates a lock using WordPress options ( Based on WP class WP_Upgrader ).
+         *
+         * @param int $release_timeout Optional. The duration in seconds to respect an existing lock.
+         *                             Default: 1 hour.
+         * @return bool False if a lock couldn't be created or if the lock is still valid. True otherwise.
+         */
+        public function create($release_timeout = null)
+        {
+        }
+        /**
+         * Releases an upgrader lock.
+         *
+         * @return bool True if the lock was successfully released. False on failure.
+         */
+        public function release()
+        {
+        }
+    }
+}
+namespace WPML\Core {
+    /**
+     * Class BackgroundTask
+     * @package WPML\Core
+     *
+     * class to add background ajax tasks.
+     * Call the `add` function with the class name of the endpoint and any data that the end point requires.
+     * The Ajax endpoint will then be called on document ready with the data provided.
+     */
+    class BackgroundTask implements \IWPML_Backend_Action
+    {
+        private static $endpoints = [];
+        /**
+         * @param string     $endpoint - Class name of the handler usually implementing the IHandler interface
+         * @param null|array $data
+         */
+        public static function add($endpoint, $data = null)
+        {
+        }
+        public function add_hooks()
+        {
+        }
+        public static function getEndPoints()
+        {
+        }
+        public static function localize($endpoints)
+        {
+        }
+    }
+}
+namespace WPML\Media {
+    class Option
+    {
+        const OPTION_KEY = '_wpml_media';
+        const SETUP_FINISHED = 'starting_help';
+        public static function isSetupFinished()
+        {
+        }
+        public static function setSetupFinished($setupFinished = true)
+        {
+        }
+        private static function get($name, $default = false)
+        {
+        }
+        private static function set($name, $value)
+        {
+        }
     }
 }
 namespace WPML\FP\Functor {
@@ -2440,79 +2536,6 @@ namespace WPML\FP\Functor {
          */
         public abstract function map(callable $callback);
     }
-}
-namespace WPML\FP {
-    /**
-     * Class Either
-     * @package WPML\FP
-     *
-     * @method static callable|Right of( ...$value ) - Curried :: a → Right a
-     *
-     * @method static callable|Left left( ...$value ) - Curried :: a → Left a
-     *
-     * @method static callable|Right right( ...$value ) - Curried :: a → Right a
-     *
-     * @method static callable|Left|Right fromNullable( ...$value ) - Curried :: a → Either a
-     *
-     * @method static callable|Left|Right fromBool( ...$value ) - Curried :: a → Either a
-     *
-     * @method static Either tryCatch( ...$fn ) - Curried :: a → Either a
-     *
-     * @method static mixed getOrElse( ...$other )
-     */
-    abstract class Either
-    {
-        use \WPML\FP\Functor\Functor;
-        use \WPML\Collect\Support\Traits\Macroable;
-        /**
-         * @return void
-         */
-        public static function init()
-        {
-        }
-        /**
-         * @return Either
-         */
-        public function join()
-        {
-        }
-        /**
-         * @param callable $fn
-         *
-         * @return mixed
-         */
-        public abstract function chain(callable $fn);
-        /**
-         * @param callable $leftFn
-         * @param callable $rightFn
-         *
-         * @return Either|Left|Right
-         */
-        public abstract function bichain(callable $leftFn, callable $rightFn);
-        /**
-         * @param callable $fn
-         *
-         * @return mixed
-         */
-        public abstract function orElse(callable $fn);
-        public abstract function bimap(callable $leftFn, callable $rightFn);
-        public abstract function coalesce(callable $leftFn, callable $rightFn);
-        public abstract function alt(\WPML\FP\Either $alt);
-        public abstract function filter(callable $fn);
-    }
-    trait ConstApplicative
-    {
-        /**
-         * @param mixed $otherContainer
-         *
-         * @return mixed
-         */
-        public function ap($otherContainer)
-        {
-        }
-    }
-}
-namespace WPML\FP\Functor {
     trait Pointed
     {
         /**
@@ -2527,101 +2550,49 @@ namespace WPML\FP\Functor {
         {
         }
     }
-}
-namespace WPML\FP {
-    class Left extends \WPML\FP\Either
+    class ConstFunctor
     {
-        use \WPML\FP\ConstApplicative;
+        use \WPML\FP\Functor\Functor;
         use \WPML\FP\Functor\Pointed;
         /**
-         * @param callable $fn
+         * @param callable $callback
          *
-         * @return Either
+         * @return ConstFunctor
          */
-        public function map(callable $fn)
-        {
-        }
-        public function bimap(callable $leftFn, callable $rightFn)
-        {
-        }
-        /**
-         * @param callable $leftFn
-         * @param callable $rightFn
-         *
-         * @return Right
-         */
-        public function coalesce(callable $leftFn, callable $rightFn)
-        {
-        }
-        /**
-         * @return void
-         * @throws \Exception
-         */
-        public function get()
-        {
-        }
-        /**
-         * @param mixed $other
-         *
-         * @return mixed
-         */
-        public function getOrElse($other)
-        {
-        }
-        /**
-         * @param callable $fn
-         *
-         * @return Right
-         */
-        public function orElse(callable $fn)
-        {
-        }
-        /**
-         * @param callable $fn
-         *
-         * @return Either
-         */
-        public function chain(callable $fn)
-        {
-        }
-        /**
-         * @param callable $leftFn
-         * @param callable $rightFn
-         *
-         * @return Either|Left|Right
-         */
-        public function bichain(callable $leftFn, callable $rightFn)
-        {
-        }
-        /**
-         * @param mixed $value
-         *
-         * @return void
-         * @throws \Exception
-         */
-        public function getOrElseThrow($value)
-        {
-        }
-        /**
-         * @param callable $fn
-         *
-         * @return Either
-         */
-        public function filter(callable $fn)
-        {
-        }
-        /**
-         * @param callable $fn
-         *
-         * @return Either
-         */
-        public function tryCatch(callable $fn)
-        {
-        }
-        public function alt(\WPML\FP\Either $alt)
+        public function map($callback)
         {
         }
     }
+}
+namespace WPML\FP {
+    trait ConstApplicative
+    {
+        /**
+         * @param mixed $otherContainer
+         *
+         * @return mixed
+         */
+        public function ap($otherContainer)
+        {
+        }
+    }
+}
+namespace WPML\FP\Functor {
+    class IdentityFunctor
+    {
+        use \WPML\FP\Functor\Functor;
+        use \WPML\FP\Functor\Pointed;
+        /**
+         * @param callable $callback
+         *
+         * @return IdentityFunctor
+         */
+        public function map($callback)
+        {
+        }
+    }
+}
+namespace WPML\FP {
     trait Applicative
     {
         /**
@@ -2633,210 +2604,21 @@ namespace WPML\FP {
         {
         }
     }
-    class Right extends \WPML\FP\Either
-    {
-        use \WPML\FP\Applicative;
-        use \WPML\FP\Functor\Pointed;
-        /**
-         * @param callable $fn
-         *
-         * @return Either
-         */
-        public function map(callable $fn)
-        {
-        }
-        public function bimap(callable $leftFn, callable $rightFn)
-        {
-        }
-        /**
-         * @param callable $leftFn
-         * @param callable $rightFn
-         *
-         * @return Right
-         */
-        public function coalesce(callable $leftFn, callable $rightFn)
-        {
-        }
-        /**
-         * @param Either $other
-         *
-         * @return mixed
-         */
-        public function getOrElse($other)
-        {
-        }
-        /**
-         * @param callable $fn
-         *
-         * @return Either
-         */
-        public function orElse(callable $fn)
-        {
-        }
-        /**
-         * @param mixed $value
-         *
-         * @return mixed
-         */
-        public function getOrElseThrow($value)
-        {
-        }
-        /**
-         * @param callable $fn
-         *
-         * @return Either
-         */
-        public function chain(callable $fn)
-        {
-        }
-        /**
-         * @param callable $leftFn
-         * @param callable $rightFn
-         *
-         * @return Either|Left|Right
-         */
-        public function bichain(callable $leftFn, callable $rightFn)
-        {
-        }
-        /**
-         * @param callable $fn
-         *
-         * @return Either
-         */
-        public function filter(callable $fn)
-        {
-        }
-        /**
-         * @param callable $fn
-         *
-         * @return Either
-         */
-        public function tryCatch(callable $fn)
-        {
-        }
-        public function alt(\WPML\FP\Either $alt)
-        {
-        }
-    }
     /**
-     * Class Undefined
-     * @package WPML\FP
-     *
-     * Class represents Undefined value. It let us handle correctly expected, but falsy values like null, 0 or false.
+     * @method static callable|bool equals( ...$a, ...$b ) - Curried :: a->b->bool
+     * @method static callable|bool lt( ...$a, ...$b ) - Curried :: a->b->bool
+     * @method static callable|bool lte( ...$a, ...$b ) - Curried :: a->b->bool
+     * @method static callable|bool gt( ...$a, ...$b ) - Curried :: a->b->bool
+     * @method static callable|bool gte( ...$a, ...$b ) - Curried :: a->b->bool
+     * @method static callable|bool propEq( ...$prop, ...$value, ...$obj ) - Curried :: String → a → array → bool
+     * @method static callable|array sortWith( ...$comparators, ...$array ) - Curried :: [(a, a) → int] → [a] → [a]
      */
-    class Undefined
-    {
-    }
-    /**
-     * @method static callable|mixed multiply( ...$a, ...$b ) - Curried :: Number → Number → Number
-     * @method static callable|mixed divide( ...$a, ...$b ) - Curried :: Number → Number → Number
-     * @method static callable|mixed add( ...$a, ...$b ) - Curried :: Number → Number → Number
-     * @method static callable|mixed product( ...$array ) - Curried :: [Number] → Number
-     */
-    class Math
+    class Relation
     {
         use \WPML\Collect\Support\Traits\Macroable;
         /**
          * @return void
          */
-        public static function init()
-        {
-        }
-    }
-}
-namespace WPML\FP\System {
-    class _Filter
-    {
-        /**
-         * @var string
-         */
-        private $key;
-        /**
-         * @var callable
-         */
-        private $fn;
-        /**
-         * @var mixed
-         */
-        private $default;
-        /**
-         * _Filter constructor.
-         *
-         * @param string $key
-         */
-        public function __construct($key)
-        {
-        }
-        /**
-         * @param callable $fn
-         *
-         * @return _Filter
-         */
-        public function using(callable $fn)
-        {
-        }
-        /**
-         * @param mixed $default
-         *
-         * @return _Filter
-         */
-        public function defaultTo($default)
-        {
-        }
-        /**
-         * @param \WPML\Collect\Support\Collection<mixed> $collection
-         *
-         * @return \WPML\Collect\Support\Collection<mixed>
-         */
-        public function __invoke(\WPML\Collect\Support\Collection $collection)
-        {
-        }
-    }
-}
-namespace WPML\FP {
-    /**
-     * @method static callable|array|null toArray(string ...$str) - Curried :: json -> array
-     * @method static callable|Collection|null toCollection(string ...$str) Curried :: json -> null | Collection
-     */
-    class Json
-    {
-        use \WPML\Collect\Support\Traits\Macroable;
-        /**
-         * @return void
-         */
-        public static function init()
-        {
-        }
-    }
-    /**
-     * @deprecated Use Fn instead
-     *
-     * @method static callable|mixed map( callable ...$fn, mixed ...$target ) - Curried :: (a -> b) -> f a -> f b
-     * @method static callable|mixed identity( mixed ...$data ) - Curried :: a -> a
-     * @method static callable|mixed always( ...$a, ...$b ) - Curried :: a -> b -> a
-     * @method static callable|mixed reduce( ...$fn, ...$initial, ...$target ) - Curried :: ((a, b) → a) → a → [b] → a
-     * @method static callable\mixed converge( ...$convergingFn, ...$branchingFns, ...$data ) - Curried :: callable -> [callable] -> mixed -> callable
-     */
-    class FP
-    {
-        use \WPML\Collect\Support\Traits\Macroable;
-        /**
-         * @return void
-         */
-        public static function init()
-        {
-        }
-    }
-    /**
-     * @method static callable|mixed inspect( mixed ...$input )
-     * @method static callable|mixed log( string ...$label )
-     * @method static callable|mixed logDump( string ...$label, mixed ...$input )
-     * @method static callable|mixed logPrintR( string ...$label, mixed ...$input )
-     * @method static callable|mixed logBacktrace( string ...$label, mixed ...$input )
-     */
-    class Debug
-    {
-        use \WPML\Collect\Support\Traits\Macroable;
         public static function init()
         {
         }
@@ -2892,98 +2674,77 @@ namespace WPML\FP\System {
     }
 }
 namespace WPML\FP {
-    class Promise
+    /**
+     * @method static callable|bool toBool( mixed ...$v ) - Curried :: mixed->bool
+     * @method static callable|int toInt( mixed ...$v ) - Curried :: mixed->int
+     */
+    class Cast
     {
-        /** @var callable */
-        private $onResolved;
-        /** @var callable */
-        private $onReject;
-        /** @var Promise */
-        private $next;
-        /**
-         * @param mixed $data
-         *
-         * @return mixed
-         */
-        public function resolve($data)
-        {
-        }
-        /**
-         * @param mixed $data
-         *
-         * @return mixed
-         */
-        public function reject($data)
-        {
-        }
-        /**
-         * @param callable $fn
-         *
-         * @return Promise
-         */
-        public function then(callable $fn)
-        {
-        }
-        /**
-         * @param callable $fn
-         *
-         * @return Promise
-         */
-        public function onError(callable $fn)
+        use \WPML\Collect\Support\Traits\Macroable;
+        public static function init()
         {
         }
     }
+}
+namespace WPML\FP\Monoid {
+    abstract class Monoid
+    {
+        public static function concat($a = null, $b = null)
+        {
+        }
+        public static function of(array $array = null)
+        {
+        }
+    }
+    class Str extends \WPML\FP\Monoid\Monoid
+    {
+        public static function _concat($a, $b)
+        {
+        }
+        public static function mempty()
+        {
+        }
+    }
+    class All extends \WPML\FP\Monoid\Monoid
+    {
+        public static function _concat($a, $b)
+        {
+        }
+        public static function mempty()
+        {
+        }
+    }
+    class Any extends \WPML\FP\Monoid\Monoid
+    {
+        public static function _concat($a, $b)
+        {
+        }
+        public static function mempty()
+        {
+        }
+    }
+    class Sum extends \WPML\FP\Monoid\Monoid
+    {
+        public static function _concat($a, $b)
+        {
+        }
+        public static function mempty()
+        {
+        }
+    }
+}
+namespace WPML\FP {
     /**
-     * @method static callable|bool equals( ...$a, ...$b ) - Curried :: a->b->bool
-     * @method static callable|bool lt( ...$a, ...$b ) - Curried :: a->b->bool
-     * @method static callable|bool lte( ...$a, ...$b ) - Curried :: a->b->bool
-     * @method static callable|bool gt( ...$a, ...$b ) - Curried :: a->b->bool
-     * @method static callable|bool gte( ...$a, ...$b ) - Curried :: a->b->bool
-     * @method static callable|bool propEq( ...$prop, ...$value, ...$obj ) - Curried :: String → a → array → bool
-     * @method static callable|array sortWith( ...$comparators, ...$array ) - Curried :: [(a, a) → int] → [a] → [a]
+     * @method static callable|array|null toArray(string ...$str) - Curried :: json -> array
+     * @method static callable|Collection|null toCollection(string ...$str) Curried :: json -> null | Collection
      */
-    class Relation
+    class Json
     {
         use \WPML\Collect\Support\Traits\Macroable;
         /**
          * @return void
          */
         public static function init()
-        {
-        }
-    }
-    class _Invoker
-    {
-        /**
-         * @var string
-         */
-        private $fnName;
-        /**
-         * @var mixed[]
-         */
-        private $args = [];
-        /**
-         * _Invoker constructor.
-         *
-         * @param string $fnName
-         */
-        public function __construct($fnName)
-        {
-        }
-        /**
-         * @param mixed ...$args
-         *
-         * @return _Invoker
-         */
-        public function with(...$args)
-        {
-        }
-        /**
-         * @param mixed $instance
-         *
-         * @return mixed
-         */
-        public function __invoke($instance)
         {
         }
     }
@@ -3140,6 +2901,47 @@ namespace WPML\FP {
         {
         }
     }
+    class Promise
+    {
+        /** @var callable */
+        private $onResolved;
+        /** @var callable */
+        private $onReject;
+        /** @var Promise */
+        private $next;
+        /**
+         * @param mixed $data
+         *
+         * @return mixed
+         */
+        public function resolve($data)
+        {
+        }
+        /**
+         * @param mixed $data
+         *
+         * @return mixed
+         */
+        public function reject($data)
+        {
+        }
+        /**
+         * @param callable $fn
+         *
+         * @return Promise
+         */
+        public function then(callable $fn)
+        {
+        }
+        /**
+         * @param callable $fn
+         *
+         * @return Promise
+         */
+        public function onError(callable $fn)
+        {
+        }
+    }
     /**
      * Lst class contains functions for working on ordered arrays indexed with numerical keys
      *
@@ -3293,6 +3095,344 @@ namespace WPML\FP {
         {
         }
     }
+    /**
+     * @method static callable|mixed prop( ...$key, ...$obj ) - Curried :: string->Collection|array|object->mixed|null
+     * @method static callable|mixed propOr( ...$default, ...$key, ...$obj ) - Curried :: mixed->string->Collection|array|object->mixed|null
+     * @method static callable|array props( ...$keys, ...$obj ) - Curried :: [keys] → Collection|array|object → [v]
+     * @method static callable|array|\stdClass addProp( ...$key, ...$transformation, ...$obj ) - Curried :: string->callable->object|array->object->array
+     * @method static callable|array|\stdClass removeProp( ...$key, ...$obj ) - Curried :: string->object|array->object->array
+     * @method static callable|array|\stdClass renameProp( ...$key, ...$newKey, ...$obj ) - Curried :: string->string->object|array->object->array
+     * @method static callable|mixed path( ...$path, ...$obj ) - Curried :: array->Collection|array|object->mixed|null
+     * @method static callable|mixed pathOr( ...$default, ...$path, ...$obj ) - Curried :: mixed → array → Collection|array|object → mixed
+     * @method static callable assoc( ...$key, ...$value, ...$item ) - Curried :: string->mixed->Collection|array|object->mixed|null
+     * @method static callable assocPath( ...$path, ...$value, ...$item ) - Curried :: array->mixed->Collection|array|object->mixed|null
+     * @method static callable lens( ...$getter, ...$setter ) - Curried :: callable->callable->callable
+     * @method static callable lensProp( ...$prop ) - Curried :: string->callable
+     * @method static callable lensPath( ...$path ) - Curried :: array->callable
+     * @method static callable lensMapped( ...$toFunctorFn ) - Curried :: callable->callable
+     * @method static callable lensMappedProp( ...$prop ) - Curried :: string->callable
+     * @method static callable view( ...$lens, ...$obj ) - Curried :: callable->Collection|array|object->mixed
+     * @method static callable set( ...$lens, ...$value, ...$obj ) - Curried :: callable->mixed->Collection|array|object->mixed
+     * @method static callable over( ...$lens, ...$transformation, ...$obj ) - Curried :: callable->callable->Collection|array|object->mixed
+     * @method static callable pick( ...$props, ...$obj ) - Curried :: array->Collection|array->Collection|array
+     * @method static callable pickAll( ...$props, ...$obj ) - Curried :: array->Collection|array->Collection|array
+     * @method static callable pickBy( ...$predicate, ...$obj ) - Curried :: ( ( v, k ) → bool ) → Collection|array->Collection|array
+     * @method static callable pickByKey( ...$predicate, ...$obj ) - Curried :: ( ( k ) → bool ) → Collection|array->callable|Collection|array|object
+     * @method static callable project( ...$props, ...$target ) - Curried :: array->Collection|array->Collection|array
+     * @method static callable where( array $condition ) - Curried :: [string → ( * → bool )] → bool
+     * @method static callable|bool has( ...$prop, ...$item ) - Curried :: string → a → bool
+     * @method static callable|bool hasPath( ...$path, ...$item ) - Curried :: array<string> → a → bool
+     * @method static callable|mixed evolve( ...$transformations, ...$item ) - Curried :: array → array → array
+     *
+     * @method static callable|array objOf( ...$key, ...$value ) - Curried :: string->mixed->array
+     *
+     * Creates an object containing a single key:value pair.
+     *
+     * @method static callable|array keys( ...$obj ) - Curried :: object|array->array
+     *
+     * Returns
+     *  - keys if argument is an array
+     *  - public properties' names if argument is an object
+     *  - keys if argument is Collection
+     *
+     * ```
+     * $this->assertEquals( [ 0, 1, 2 ], Obj::keys( [ 'a', 'b', 'c' ] ) );
+     * $this->assertEquals( [ 'a', 'b', 'c' ], Obj::keys( [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) );
+     *
+     * $this->assertEquals( [ 0, 1, 2 ], Obj::keys( \wpml_collect( [ 'a', 'b', 'c' ] ) ) );
+     * $this->assertEquals( [ 'a', 'b', 'c' ], Obj::keys( \wpml_collect( [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) ) );
+     *
+     * $this->assertEquals( [ 'a', 'b', 'c' ], Obj::keys( (object) [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) );
+     * ```
+     *
+     * @method static callable|array values( ...$obj ) - Curried :: object|array->array
+     *
+     * Returns
+     *  - values if argument is an array
+     *  - public properties' values if argument is an object
+     *  - values if argument is Collection
+     *
+     * ```
+     * $this->assertEquals( [ 'a', 'b', 'c' ], Obj::values( [ 'a', 'b', 'c' ] ) );
+     * $this->assertEquals( [ 1, 2, 3 ], Obj::values( [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) );
+     *
+     * $this->assertEquals( [ 'a', 'b', 'c' ], Obj::values( \wpml_collect( [ 'a', 'b', 'c' ] ) ) );
+     * $this->assertEquals( [ 1, 2, 3 ], Obj::values( \wpml_collect( [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) ) );
+     *
+     * $this->assertEquals( [ 1, 2, 3 ], Obj::values( (object) [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) );
+     * ```
+     *
+     * @method static callable|array replaceRecursive( array ...$newValue, ...$target ) - Curried :: array->array->array
+     *
+     * @method static callable|array toArray( Collection|Object ...$item ) - Curried :: Collection|Object->array
+     */
+    class Obj
+    {
+        use \WPML\Collect\Support\Traits\Macroable;
+        /**
+         * @return void
+         */
+        public static function init()
+        {
+        }
+        /**
+         * @param object|Collection $item
+         * @param object|Collection $reference
+         *
+         * @return object|Collection
+         */
+        private static function matchType($item, $reference)
+        {
+        }
+        /**
+         * Curried :: mixed → array|object|Collection → array|object|Collection
+         * function to remove an item by key from an array.
+         *
+         * @param string|int                   $key
+         * @param array|object|Collection|null $item
+         *
+         * @return callable|array|object|Collection
+         */
+        static function without($key = null, $item = null)
+        {
+        }
+    }
+    /**
+     * Class Either
+     * @package WPML\FP
+     *
+     * @method static callable|Right of( ...$value ) - Curried :: a → Right a
+     *
+     * @method static callable|Left left( ...$value ) - Curried :: a → Left a
+     *
+     * @method static callable|Right right( ...$value ) - Curried :: a → Right a
+     *
+     * @method static callable|Left|Right fromNullable( ...$value ) - Curried :: a → Either a
+     *
+     * @method static callable|Left|Right fromBool( ...$value ) - Curried :: a → Either a
+     *
+     * @method static Either tryCatch( ...$fn ) - Curried :: a → Either a
+     *
+     * @method static mixed getOrElse( ...$other )
+     */
+    abstract class Either
+    {
+        use \WPML\FP\Functor\Functor;
+        use \WPML\Collect\Support\Traits\Macroable;
+        /**
+         * @return void
+         */
+        public static function init()
+        {
+        }
+        /**
+         * @return Either
+         */
+        public function join()
+        {
+        }
+        /**
+         * @param callable $fn
+         *
+         * @return mixed
+         */
+        public abstract function chain(callable $fn);
+        /**
+         * @param callable $leftFn
+         * @param callable $rightFn
+         *
+         * @return Either|Left|Right
+         */
+        public abstract function bichain(callable $leftFn, callable $rightFn);
+        /**
+         * @param callable $fn
+         *
+         * @return mixed
+         */
+        public abstract function orElse(callable $fn);
+        public abstract function bimap(callable $leftFn, callable $rightFn);
+        public abstract function coalesce(callable $leftFn, callable $rightFn);
+        public abstract function alt(\WPML\FP\Either $alt);
+        public abstract function filter(callable $fn);
+    }
+    class Left extends \WPML\FP\Either
+    {
+        use \WPML\FP\ConstApplicative;
+        use \WPML\FP\Functor\Pointed;
+        /**
+         * @param callable $fn
+         *
+         * @return Either
+         */
+        public function map(callable $fn)
+        {
+        }
+        public function bimap(callable $leftFn, callable $rightFn)
+        {
+        }
+        /**
+         * @param callable $leftFn
+         * @param callable $rightFn
+         *
+         * @return Right
+         */
+        public function coalesce(callable $leftFn, callable $rightFn)
+        {
+        }
+        /**
+         * @return void
+         * @throws \Exception
+         */
+        public function get()
+        {
+        }
+        /**
+         * @param mixed $other
+         *
+         * @return mixed
+         */
+        public function getOrElse($other)
+        {
+        }
+        /**
+         * @param callable $fn
+         *
+         * @return Right
+         */
+        public function orElse(callable $fn)
+        {
+        }
+        /**
+         * @param callable $fn
+         *
+         * @return Either
+         */
+        public function chain(callable $fn)
+        {
+        }
+        /**
+         * @param callable $leftFn
+         * @param callable $rightFn
+         *
+         * @return Either|Left|Right
+         */
+        public function bichain(callable $leftFn, callable $rightFn)
+        {
+        }
+        /**
+         * @param mixed $value
+         *
+         * @return void
+         * @throws \Exception
+         */
+        public function getOrElseThrow($value)
+        {
+        }
+        /**
+         * @param callable $fn
+         *
+         * @return Either
+         */
+        public function filter(callable $fn)
+        {
+        }
+        /**
+         * @param callable $fn
+         *
+         * @return Either
+         */
+        public function tryCatch(callable $fn)
+        {
+        }
+        public function alt(\WPML\FP\Either $alt)
+        {
+        }
+    }
+    class Right extends \WPML\FP\Either
+    {
+        use \WPML\FP\Applicative;
+        use \WPML\FP\Functor\Pointed;
+        /**
+         * @param callable $fn
+         *
+         * @return Either
+         */
+        public function map(callable $fn)
+        {
+        }
+        public function bimap(callable $leftFn, callable $rightFn)
+        {
+        }
+        /**
+         * @param callable $leftFn
+         * @param callable $rightFn
+         *
+         * @return Right
+         */
+        public function coalesce(callable $leftFn, callable $rightFn)
+        {
+        }
+        /**
+         * @param Either $other
+         *
+         * @return mixed
+         */
+        public function getOrElse($other)
+        {
+        }
+        /**
+         * @param callable $fn
+         *
+         * @return Either
+         */
+        public function orElse(callable $fn)
+        {
+        }
+        /**
+         * @param mixed $value
+         *
+         * @return mixed
+         */
+        public function getOrElseThrow($value)
+        {
+        }
+        /**
+         * @param callable $fn
+         *
+         * @return Either
+         */
+        public function chain(callable $fn)
+        {
+        }
+        /**
+         * @param callable $leftFn
+         * @param callable $rightFn
+         *
+         * @return Either|Left|Right
+         */
+        public function bichain(callable $leftFn, callable $rightFn)
+        {
+        }
+        /**
+         * @param callable $fn
+         *
+         * @return Either
+         */
+        public function filter(callable $fn)
+        {
+        }
+        /**
+         * @param callable $fn
+         *
+         * @return Either
+         */
+        public function tryCatch(callable $fn)
+        {
+        }
+        public function alt(\WPML\FP\Either $alt)
+        {
+        }
+    }
 }
 namespace WPML\FP\System {
     class System
@@ -3306,6 +3446,39 @@ namespace WPML\FP\System {
     }
 }
 namespace WPML\FP {
+    /**
+     * @deprecated Use Fn instead
+     *
+     * @method static callable|mixed map( callable ...$fn, mixed ...$target ) - Curried :: (a -> b) -> f a -> f b
+     * @method static callable|mixed identity( mixed ...$data ) - Curried :: a -> a
+     * @method static callable|mixed always( ...$a, ...$b ) - Curried :: a -> b -> a
+     * @method static callable|mixed reduce( ...$fn, ...$initial, ...$target ) - Curried :: ((a, b) → a) → a → [b] → a
+     * @method static callable\mixed converge( ...$convergingFn, ...$branchingFns, ...$data ) - Curried :: callable -> [callable] -> mixed -> callable
+     */
+    class FP
+    {
+        use \WPML\Collect\Support\Traits\Macroable;
+        /**
+         * @return void
+         */
+        public static function init()
+        {
+        }
+    }
+    /**
+     * @method static callable|mixed inspect( mixed ...$input )
+     * @method static callable|mixed log( string ...$label )
+     * @method static callable|mixed logDump( string ...$label, mixed ...$input )
+     * @method static callable|mixed logPrintR( string ...$label, mixed ...$input )
+     * @method static callable|mixed logBacktrace( string ...$label, mixed ...$input )
+     */
+    class Debug
+    {
+        use \WPML\Collect\Support\Traits\Macroable;
+        public static function init()
+        {
+        }
+    }
     /**
      * @method static string tail( string ...$str ) - Curried :: string->string
      * @method static array split( ...$delimiter, ...$str ) - Curried :: string->string->string
@@ -3351,6 +3524,82 @@ namespace WPML\FP {
         {
         }
     }
+    /**
+     * @method static callable|mixed multiply( ...$a, ...$b ) - Curried :: Number → Number → Number
+     * @method static callable|mixed divide( ...$a, ...$b ) - Curried :: Number → Number → Number
+     * @method static callable|mixed add( ...$a, ...$b ) - Curried :: Number → Number → Number
+     * @method static callable|mixed product( ...$array ) - Curried :: [Number] → Number
+     */
+    class Math
+    {
+        use \WPML\Collect\Support\Traits\Macroable;
+        /**
+         * @return void
+         */
+        public static function init()
+        {
+        }
+    }
+}
+namespace WPML\FP\System {
+    class _Filter
+    {
+        /**
+         * @var string
+         */
+        private $key;
+        /**
+         * @var callable
+         */
+        private $fn;
+        /**
+         * @var mixed
+         */
+        private $default;
+        /**
+         * _Filter constructor.
+         *
+         * @param string $key
+         */
+        public function __construct($key)
+        {
+        }
+        /**
+         * @param callable $fn
+         *
+         * @return _Filter
+         */
+        public function using(callable $fn)
+        {
+        }
+        /**
+         * @param mixed $default
+         *
+         * @return _Filter
+         */
+        public function defaultTo($default)
+        {
+        }
+        /**
+         * @param \WPML\Collect\Support\Collection<mixed> $collection
+         *
+         * @return \WPML\Collect\Support\Collection<mixed>
+         */
+        public function __invoke(\WPML\Collect\Support\Collection $collection)
+        {
+        }
+    }
+}
+namespace WPML\FP {
+    /**
+     * Class Undefined
+     * @package WPML\FP
+     *
+     * Class represents Undefined value. It let us handle correctly expected, but falsy values like null, 0 or false.
+     */
+    class Undefined
+    {
+    }
     class Wrapper
     {
         use \WPML\FP\Functor\Functor;
@@ -3389,6 +3638,41 @@ namespace WPML\FP {
          * @return mixed
          */
         public function get()
+        {
+        }
+    }
+    class _Invoker
+    {
+        /**
+         * @var string
+         */
+        private $fnName;
+        /**
+         * @var mixed[]
+         */
+        private $args = [];
+        /**
+         * _Invoker constructor.
+         *
+         * @param string $fnName
+         */
+        public function __construct($fnName)
+        {
+        }
+        /**
+         * @param mixed ...$args
+         *
+         * @return _Invoker
+         */
+        public function with(...$args)
+        {
+        }
+        /**
+         * @param mixed $instance
+         *
+         * @return mixed
+         */
+        public function __invoke($instance)
         {
         }
     }
@@ -3563,17 +3847,6 @@ namespace WPML\FP {
         }
     }
     /**
-     * @method static callable|bool toBool( mixed ...$v ) - Curried :: mixed->bool
-     * @method static callable|int toInt( mixed ...$v ) - Curried :: mixed->int
-     */
-    class Cast
-    {
-        use \WPML\Collect\Support\Traits\Macroable;
-        public static function init()
-        {
-        }
-    }
-    /**
      * @method static callable|bool not( mixed ...$v ) - Curried :: mixed->bool
      * @method static callable|bool isNotNull( mixed ...$v ) - Curried :: mixed->bool
      * @method static callable|mixed ifElse( ...$predicate, ...$first, ...$second, ...$data ) - Curried :: ( a->bool )->callable->callable->callable
@@ -3591,6 +3864,7 @@ namespace WPML\FP {
      * @method static callable|bool isArray ( ...$a ) - Curried :: a → bool
      * @method static callable|bool isMappable ( ...$a ) - Curried :: a → bool
      * @method static callable|bool isEmpty( ...$a ) - Curried:: a → bool
+     * @method static callable|bool isNotEmpty( ...$a ) - Curried:: a → bool
      * @method static callable|mixed firstSatisfying( ...$predicate, ...$functions, ...$data ) - Curried:: callable->callable[]->mixed->mixed
      * @method static callable|bool isTruthy( ...$data ) - Curried:: mixed->bool
      */
@@ -3605,150 +3879,44 @@ namespace WPML\FP {
         }
     }
 }
-namespace WPML\FP\Functor {
-    class IdentityFunctor
-    {
-        use \WPML\FP\Functor\Functor;
-        use \WPML\FP\Functor\Pointed;
-        /**
-         * @param callable $callback
-         *
-         * @return IdentityFunctor
-         */
-        public function map($callback)
-        {
-        }
-    }
-    class ConstFunctor
-    {
-        use \WPML\FP\Functor\Functor;
-        use \WPML\FP\Functor\Pointed;
-        /**
-         * @param callable $callback
-         *
-         * @return ConstFunctor
-         */
-        public function map($callback)
-        {
-        }
-    }
-}
-namespace WPML\FP {
-    /**
-     * @method static callable|mixed prop( ...$key, ...$obj ) - Curried :: string->Collection|array|object->mixed|null
-     * @method static callable|mixed propOr( ...$default, ...$key, ...$obj ) - Curried :: mixed->string->Collection|array|object->mixed|null
-     * @method static callable|array props( ...$keys, ...$obj ) - Curried :: [keys] → Collection|array|object → [v]
-     * @method static callable|array|\stdClass addProp( ...$key, ...$transformation, ...$obj ) - Curried :: string->callable->object|array->object->array
-     * @method static callable|array|\stdClass removeProp( ...$key, ...$obj ) - Curried :: string->object|array->object->array
-     * @method static callable|array|\stdClass renameProp( ...$key, ...$newKey, ...$obj ) - Curried :: string->string->object|array->object->array
-     * @method static callable|mixed path( ...$path, ...$obj ) - Curried :: array->Collection|array|object->mixed|null
-     * @method static callable|mixed pathOr( ...$default, ...$path, ...$obj ) - Curried :: mixed → array → Collection|array|object → mixed
-     * @method static callable assoc( ...$key, ...$value, ...$item ) - Curried :: string->mixed->Collection|array|object->mixed|null
-     * @method static callable assocPath( ...$path, ...$value, ...$item ) - Curried :: array->mixed->Collection|array|object->mixed|null
-     * @method static callable lens( ...$getter, ...$setter ) - Curried :: callable->callable->callable
-     * @method static callable lensProp( ...$prop ) - Curried :: string->callable
-     * @method static callable lensPath( ...$path ) - Curried :: array->callable
-     * @method static callable lensMapped( ...$toFunctorFn ) - Curried :: callable->callable
-     * @method static callable lensMappedProp( ...$prop ) - Curried :: string->callable
-     * @method static callable view( ...$lens, ...$obj ) - Curried :: callable->Collection|array|object->mixed
-     * @method static callable set( ...$lens, ...$value, ...$obj ) - Curried :: callable->mixed->Collection|array|object->mixed
-     * @method static callable over( ...$lens, ...$transformation, ...$obj ) - Curried :: callable->callable->Collection|array|object->mixed
-     * @method static callable pick( ...$props, ...$obj ) - Curried :: array->Collection|array->Collection|array
-     * @method static callable pickAll( ...$props, ...$obj ) - Curried :: array->Collection|array->Collection|array
-     * @method static callable pickBy( ...$predicate, ...$obj ) - Curried :: ( ( v, k ) → bool ) → Collection|array->Collection|array
-     * @method static callable project( ...$props, ...$target ) - Curried :: array->Collection|array->Collection|array
-     * @method static callable where( array $condition ) - Curried :: [string → ( * → bool )] → bool
-     * @method static callable|bool has( ...$prop, ...$item ) - Curried :: string → a → bool
-     * @method static callable|mixed evolve( ...$transformations, ...$item ) - Curried :: array → array → array
-     *
-     * @method static callable|array objOf( ...$key, ...$value ) - Curried :: string->mixed->array
-     *
-     * Creates an object containing a single key:value pair.
-     *
-     * @method static callable|array keys( ...$obj ) - Curried :: object|array->array
-     *
-     * Returns
-     *  - keys if argument is an array
-     *  - public properties' names if argument is an object
-     *  - keys if argument is Collection
-     *
-     * ```
-     * $this->assertEquals( [ 0, 1, 2 ], Obj::keys( [ 'a', 'b', 'c' ] ) );
-     * $this->assertEquals( [ 'a', 'b', 'c' ], Obj::keys( [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) );
-     *
-     * $this->assertEquals( [ 0, 1, 2 ], Obj::keys( \wpml_collect( [ 'a', 'b', 'c' ] ) ) );
-     * $this->assertEquals( [ 'a', 'b', 'c' ], Obj::keys( \wpml_collect( [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) ) );
-     *
-     * $this->assertEquals( [ 'a', 'b', 'c' ], Obj::keys( (object) [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) );
-     * ```
-     *
-     * @method static callable|array values( ...$obj ) - Curried :: object|array->array
-     *
-     * Returns
-     *  - values if argument is an array
-     *  - public properties' values if argument is an object
-     *  - values if argument is Collection
-     *
-     * ```
-     * $this->assertEquals( [ 'a', 'b', 'c' ], Obj::values( [ 'a', 'b', 'c' ] ) );
-     * $this->assertEquals( [ 1, 2, 3 ], Obj::values( [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) );
-     *
-     * $this->assertEquals( [ 'a', 'b', 'c' ], Obj::values( \wpml_collect( [ 'a', 'b', 'c' ] ) ) );
-     * $this->assertEquals( [ 1, 2, 3 ], Obj::values( \wpml_collect( [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) ) );
-     *
-     * $this->assertEquals( [ 1, 2, 3 ], Obj::values( (object) [ 'a' => 1, 'b' => 2, 'c' => 3 ] ) );
-     * ```
-     *
-     * @method static callable|array replaceRecursive( array ...$newValue, ...$target ) - Curried :: array->array->array
-     *
-     * @method static callable|array toArray( Collection|Object ...$item ) - Curried :: Collection|Object->array
-     */
-    class Obj
-    {
-        use \WPML\Collect\Support\Traits\Macroable;
-        /**
-         * @return void
-         */
-        public static function init()
-        {
-        }
-        /**
-         * @param object|Collection $item
-         * @param object|Collection $reference
-         *
-         * @return object|Collection
-         */
-        private static function matchType($item, $reference)
-        {
-        }
-        /**
-         * Curried :: mixed → array|object|Collection → array|object|Collection
-         * function to remove an item by key from an array.
-         *
-         * @param string|int                   $key
-         * @param array|object|Collection|null $item
-         *
-         * @return callable|array|object|Collection
-         */
-        static function without($key = null, $item = null)
-        {
-        }
-    }
-}
 namespace WPML\LIB\WP {
-    /**
-     * @method static callable|bool hasBlock( ...$string ) - Curried :: string → bool
-     * @method static callable|bool doesNotHaveBlock( ...$string ) - Curried :: string → bool
-     * @method static callable|bool stripBlockData( ...$string ) - Curried :: string → string
-     */
-    class Gutenberg
+    class Hooks
     {
-        use \WPML\FP\Curryable;
-        const GUTENBERG_OPENING_START = '<!-- wp:';
         /**
-         * @return void
+         * @param string|string[] $action
+         * @param int             $priority
+         * @param int             $accepted_args
+         *
+         * @return \WPML\FP\Promise
          */
-        public static function init()
+        public static function onAction($action, $priority = 10, $accepted_args = 1)
+        {
+        }
+        /**
+         * @param string|string[] $filter
+         * @param int             $priority
+         * @param int             $accepted_args
+         *
+         * @return \WPML\FP\Promise
+         */
+        public static function onFilter($filter, $priority = 10, $accepted_args = 1)
+        {
+        }
+        /**
+         * @param callable        $fn
+         * @param string|string[] $actionOrFilter
+         * @param int             $priority
+         * @param int             $accepted_args
+         *
+         * @return \WPML\FP\Promise
+         */
+        public static function onHook(callable $fn, $actionOrFilter, $priority = 10, $accepted_args = 1)
+        {
+        }
+        public static function callWithFilter($fn, $name, $filterFn, $priority = 10, $acceptedArgs = 1)
+        {
+        }
+        public static function getArgs(array $argsLabels)
         {
         }
     }
@@ -3762,6 +3930,30 @@ namespace WPML\LIB\WP {
          * @return mixed
          */
         public static function withoutError(callable $func)
+        {
+        }
+    }
+    /**
+     * Class PostType
+     * @package WPML\LIB\WP
+     * @method static callable|int getPublishedCount( ...$postType ) - Curried :: string → int
+     * @method static callable|Just|Nothing getObject( ...$postType ) - Curried :: string → Maybe( WP_Post_Type )|Nothing
+     * @method static callable|Just|Nothing getPluralName( ...$postType ) - Curried :: string → Maybe(string) |Nothing
+     * @method static callable|Just|Nothing getSingularName( ...$postType ) - Curried :: string → Maybe(string) |Nothing
+     */
+    class PostType
+    {
+        use \WPML\Collect\Support\Traits\Macroable;
+        /**
+         * @return void
+         */
+        public static function init()
+        {
+        }
+    }
+    class Roles
+    {
+        public static function hasCap($cap = null, $role = null)
         {
         }
     }
@@ -3792,27 +3984,56 @@ namespace WPML\LIB\WP {
         {
         }
     }
-    class Roles
+    /**
+     * @method static callable|bool hasBlock( ...$string ) - Curried :: string → bool
+     * @method static callable|bool doesNotHaveBlock( ...$string ) - Curried :: string → bool
+     * @method static callable|bool stripBlockData( ...$string ) - Curried :: string → string
+     */
+    class Gutenberg
     {
-        public static function hasCap($cap = null, $role = null)
+        use \WPML\FP\Curryable;
+        const GUTENBERG_OPENING_START = '<!-- wp:';
+        /**
+         * @return void
+         */
+        public static function init()
         {
         }
     }
     /**
-     * Class PostType
+     * Class Cache
      * @package WPML\LIB\WP
-     * @method static callable|int getPublishedCount( ...$postType ) - Curried :: string → int
-     * @method static callable|Just|Nothing getObject( ...$postType ) - Curried :: string → Maybe( WP_Post_Type )|Nothing
-     * @method static callable|Just|Nothing getPluralName( ...$postType ) - Curried :: string → Maybe(string) |Nothing
-     * @method static callable|Just|Nothing getSingularName( ...$postType ) - Curried :: string → Maybe(string) |Nothing
+     * @method static callable|mixed memorize( ...$group, ...$fn ) :: string → callable → mixed
+     * @method static callable|mixed memorizeWithCheck( ...$group, ...$checkingFn, ...$fn ) :: string → callable → callable → mixed
+     * @method static callable|bool set( ...$group, ...$key, ...$value ) :: string → string → mixed → bool
+     * @method static callable|Maybe get( ...$group, ...$key ) :: string → string → Nothing | Just( mixed )
      */
-    class PostType
+    class Cache
     {
         use \WPML\Collect\Support\Traits\Macroable;
         /**
          * @return void
          */
         public static function init()
+        {
+        }
+        /**
+         * @param string $group
+         * @param string $key
+         *
+         * @return \WPML\FP\Just|\WPML\FP\Nothing
+         */
+        public static function getInternal($group, $key)
+        {
+        }
+        /**
+         * @param string $group
+         * @param string $key
+         * @param mixed  $value
+         *
+         * @return bool|true
+         */
+        public static function setInternal($group, $key, $value)
         {
         }
     }
@@ -3927,14 +4148,9 @@ namespace WPML\LIB\WP {
         }
     }
     /**
-     * Class Cache
-     * @package WPML\LIB\WP
-     * @method static callable|mixed memorize( ...$group, ...$fn ) :: string → callable → mixed
-     * @method static callable|mixed memorizeWithCheck( ...$group, ...$checkingFn, ...$fn ) :: string → callable → callable → mixed
-     * @method static callable|bool set( ...$group, ...$key, ...$value ) :: string → string → mixed → bool
-     * @method static callable|Maybe get( ...$group, ...$key ) :: string → string → Nothing | Just( mixed )
+     * @method static callable|Either post( ...$url, ...$args ) - Curried :: string → array → Left( WP_Error ) | Right(string)
      */
-    class Cache
+    class Http
     {
         use \WPML\Collect\Support\Traits\Macroable;
         /**
@@ -3943,30 +4159,26 @@ namespace WPML\LIB\WP {
         public static function init()
         {
         }
-        /**
-         * @param string $group
-         * @param string $key
-         *
-         * @return \WPML\FP\Just|\WPML\FP\Nothing
-         */
-        public static function getInternal($group, $key)
-        {
-        }
-        /**
-         * @param string $group
-         * @param string $key
-         * @param mixed  $value
-         *
-         * @return bool|true
-         */
-        public static function setInternal($group, $key, $value)
+    }
+    /**
+     * @method static callable|mixed get( ...$name ) - Curried :: string → mixed
+     * @method static callable|mixed getOr( ...$name, ...$default ) - Curried :: string → mixed → mixed
+     * @method static callable|mixed set( ...$name, ...$value, ...$expiration ) - Curried :: string → mixed → int -> mixed
+     * @method static callable|mixed delete( ...$name ) - Curried :: string → mxied
+     */
+    class Transient
+    {
+        use \WPML\Collect\Support\Traits\Macroable;
+        public static function init()
         {
         }
     }
     /**
-     * @method static callable|Either post( ...$url, ...$args ) - Curried :: string → array → Left( WP_Error ) | Right(string)
+     * @method static callable|Either verify(string ...$action, Collection ...$data) - Curried :: string -> Collection -> Left('Nonce error') | Right(Collection)
+     * @method static callable|Either verifyEndPoint(Collection ...$data) - Curried :: Collection -> Left('Nonce error') | Right(Collection)
+     * @method static callable|string create(string ...$action ) - Curried :: string -> string
      */
-    class Http
+    class Nonce
     {
         use \WPML\Collect\Support\Traits\Macroable;
         /**
@@ -4016,27 +4228,6 @@ namespace WPML\LIB\WP\App {
     }
 }
 namespace WPML\LIB\WP {
-    class WordPress
-    {
-        /**
-         * Compare the WordPress version.
-         * @param string $operator
-         * @param string $version
-         *
-         * @return bool
-         */
-        public static function versionCompare($operator, $version)
-        {
-        }
-        /**
-         * @param mixed $var
-         *
-         * @return \WPML\FP\Either|callable
-         */
-        public static function handleError($var = null)
-        {
-        }
-    }
     class Attachment
     {
         private static $withOutSizeRegEx = '/-\\d+[Xx]\\d+\\./';
@@ -4057,71 +4248,24 @@ namespace WPML\LIB\WP {
         {
         }
     }
-    class Hooks
+    class WordPress
     {
         /**
-         * @param string|string[] $action
-         * @param int             $priority
-         * @param int             $accepted_args
+         * Compare the WordPress version.
+         * @param string $operator
+         * @param string $version
          *
-         * @return \WPML\FP\Promise
+         * @return bool
          */
-        public static function onAction($action, $priority = 10, $accepted_args = 1)
+        public static function versionCompare($operator, $version)
         {
         }
         /**
-         * @param string|string[] $filter
-         * @param int             $priority
-         * @param int             $accepted_args
+         * @param mixed $var
          *
-         * @return \WPML\FP\Promise
+         * @return \WPML\FP\Either|callable
          */
-        public static function onFilter($filter, $priority = 10, $accepted_args = 1)
-        {
-        }
-        /**
-         * @param callable        $fn
-         * @param string|string[] $actionOrFilter
-         * @param int             $priority
-         * @param int             $accepted_args
-         *
-         * @return \WPML\FP\Promise
-         */
-        public static function onHook(callable $fn, $actionOrFilter, $priority = 10, $accepted_args = 1)
-        {
-        }
-        public static function callWithFilter($fn, $name, $filterFn, $priority = 10, $acceptedArgs = 1)
-        {
-        }
-        public static function getArgs(array $argsLabels)
-        {
-        }
-    }
-    /**
-     * @method static callable|Either verify(string ...$action, Collection ...$data) - Curried :: string -> Collection -> Left('Nonce error') | Right(Collection)
-     * @method static callable|Either verifyEndPoint(Collection ...$data) - Curried :: Collection -> Left('Nonce error') | Right(Collection)
-     * @method static callable|string create(string ...$action ) - Curried :: string -> string
-     */
-    class Nonce
-    {
-        use \WPML\Collect\Support\Traits\Macroable;
-        /**
-         * @return void
-         */
-        public static function init()
-        {
-        }
-    }
-    /**
-     * @method static callable|mixed get( ...$name ) - Curried :: string → mixed
-     * @method static callable|mixed getOr( ...$name, ...$default ) - Curried :: string → mixed → mixed
-     * @method static callable|mixed set( ...$name, ...$value, ...$expiration ) - Curried :: string → mixed → int -> mixed
-     * @method static callable|mixed delete( ...$name ) - Curried :: string → mxied
-     */
-    class Transient
-    {
-        use \WPML\Collect\Support\Traits\Macroable;
-        public static function init()
+        public static function handleError($var = null)
         {
         }
     }

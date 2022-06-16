@@ -1,6 +1,7 @@
 <?php
 
 use WCML\Utilities\AdminPages;
+use WPML\API\Sanitize;
 use WPML\FP\Relation;
 
 use function WCML\functions\isStandAlone;
@@ -322,7 +323,7 @@ class WCML_Resources {
 			return;
 		}
 
-		$language = filter_var( $_GET['lang'], FILTER_SANITIZE_STRING );
+		$language = Sanitize::stringProp( 'lang', $_GET );
 
 		echo '<h3 class="wcml_prod_hidden_notice">' .
 			sprintf(

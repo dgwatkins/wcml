@@ -1,4 +1,9 @@
 {
+    "config": {
+        "platform": {
+            "php": "7.3"
+        }
+    },
     "require-dev": {
         "giacocorsiglia/stubs-generator": "^0.5.0"
     }

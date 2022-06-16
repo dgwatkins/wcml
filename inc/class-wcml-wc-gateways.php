@@ -2,6 +2,7 @@
 
 use WCML\StandAlone\NullSitePress;
 use WCML\Utilities\WcAdminPages;
+use WPML\API\Sanitize;
 use WPML\Collect\Support\Collection;
 use WPML\Core\ISitePress;
 use WPML\FP\Fns;
@@ -338,7 +339,7 @@ class WCML_WC_Gateways {
 
 		if ( isset( $gateway ) ) {
 			if ( 'woocommerce_bacs' === $gateway && isset( $_POST['bacs-currency'] ) ) {
-				update_option( self::WCML_BACS_ACCOUNTS_CURRENCIES_OPTION, filter_var_array( $_POST['bacs-currency'], FILTER_SANITIZE_STRING ) );
+				update_option( self::WCML_BACS_ACCOUNTS_CURRENCIES_OPTION, array_map( [ Sanitize::class, 'string' ], $_POST['bacs-currency'] ) );
 			}
 		}
 

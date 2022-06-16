@@ -18,7 +18,7 @@ class Test_woocommerce_wcml extends OTGS_TestCase {
 		}
 
 		\WP_Mock::wpFunction( 'get_option', array(
-			'args' => array( '_wcml_settings' ),
+			'args' => array( '_wcml_settings', [] ),
 			'return' => null
 		) );
 

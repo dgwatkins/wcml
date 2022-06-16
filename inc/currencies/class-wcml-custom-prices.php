@@ -77,7 +77,7 @@ class WCML_Custom_Prices {
 		}
 
 		$product_meta  = get_post_custom( $this->woocommerce_wpml->products->get_original_product_id( $product_id ) );
-		$custom_prices = false;
+		$custom_prices = [];
 
 		if ( ! empty( $product_meta['_wcml_custom_prices_status'][0] ) ) {
 

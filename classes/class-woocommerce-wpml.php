@@ -349,7 +349,7 @@ class woocommerce_wpml {
 		];
 
 		if ( empty( $this->settings ) ) {
-			$this->settings = get_option( '_wcml_settings' );
+			$this->settings = get_option( '_wcml_settings', [] );
 		}
 
 		foreach ( $defaults as $key => $value ) {
