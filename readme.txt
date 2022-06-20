@@ -80,11 +80,13 @@ No. This plugin is tailored for WooCommerce.
 
 Make sure that your theme is not hard-coding any URL. Always use API calls to receive URLs to pages and you'll be fine.
 
-= Why does my checkout page display in the same language? =
+= How do I edit the translations of the cart or checkout page? =
 
-Some themes and plugins provide their own translations via localization files. To apply these translations, you need to scan the theme or plugin providing these files. Go to **WPML &rarr; Theme and Plugins Localization**, select the theme or plugin providing the checkout page, and scan it.
+Some themes and plugins provide their own translations via localization files. WordPress loads these translations automatically.
 
-You can also translate the checkout page yourself by going to **WPML &rarr; String Translation**.
+To change any of these translations, you need to scan the theme or plugin providing these files. Go to **WPML &rarr; Theme and Plugins Localization**, select the theme or plugin providing the checkout page, and scan it.
+
+After scanning, you should have the strings available in **WPML &rarr; String Translation**.
 
 Read more about [translating cart and checkout pages](https://wpml.org/documentation/related-projects/woocommerce-multilingual/translating-cart-and-checkout-pages/).
 
