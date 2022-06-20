@@ -120,7 +120,7 @@ function wcml_loader() {
 		\WCML\API\VendorAddon\Hooks::class,
 		\WCML\Attributes\LookupTableFactory::class,
 		\WCML\Attributes\LookupFiltersFactory::class,
-		\WCML\HomeScreen\Factory::class
+		\WCML\HomeScreen\Factory::class,
 	];
 
 	if (

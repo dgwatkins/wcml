@@ -13,9 +13,9 @@ embedded/
 build/vendor/
 tests/phpunit/vendor/
 vendor/**
-addons/vendor/**
 dist/**
 node_modules
+addons/**
 
 /build/dist
 %{TEMP}
@@ -87,3 +87,9 @@ vendor-bin/**/vendor
 !vendor-bin/**/composer.lock
 # Do not ignore bash scripts in tests/phpstan
 !tests/phpstan/*.sh
+
+# "addons" exceptions
+!addons/composer.json
+!addons/composer.lock
+!addons/load-standalone-dependencies.php
+

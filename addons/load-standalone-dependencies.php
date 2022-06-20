@@ -10,10 +10,10 @@
  * This constant `WCML_WPML_DEPENDENCY_URL` is used in several places inside
  * the dependency files (it replaces hard-coded URL base).
  */
-define( 'WCML_WPML_DEPENDENCY_URL', WCML_PLUGIN_URL . '/addons/vendor/wpml/wpml-dependencies/lib' );
+define( 'WCML_WPML_DEPENDENCY_URL', WCML_PLUGIN_URL . '/addons/wpml-dependencies/lib' );
 
-require_once WCML_PLUGIN_PATH . '/addons/vendor/autoload.php';
-require_once WCML_PLUGIN_PATH . '/addons/vendor/wpml/wpml-dependencies/lib/missing-functions.php';
+require_once WCML_PLUGIN_PATH . '/addons/wpml-dependencies/vendor/autoload.php';
+require_once WCML_PLUGIN_PATH . '/addons/wpml-dependencies/lib/missing-functions.php';
 
 $setPartialDicConfigFromCore = function() {
 	\WPML\Container\share( \WCML\StandAlone\Container\Config::getSharedInstances() );
@@ -25,11 +25,11 @@ $setPartialDicConfigFromCore = function() {
 $setPartialDicConfigFromCore();
 
 if ( is_admin() ) {
-	require_once WCML_PLUGIN_PATH . '/addons/vendor/wpml/wpml-dependencies/lib/inc/icl-admin-notifier.php';
+	require_once WCML_PLUGIN_PATH . '/addons/wpml-dependencies/lib/inc/icl-admin-notifier.php';
 
 	$loadOtgsIconsStyles = function() {
-		$vendor_root_url = WCML_PLUGIN_URL . '/addons/vendor';
-		require_once WCML_PLUGIN_PATH . '/addons/vendor/otgs/icons/loader.php';
+		$vendor_root_url = WCML_PLUGIN_URL . '/addons/wpml-dependencies/vendor';
+		require_once WCML_PLUGIN_PATH . '/addons/wpml-dependencies/vendor/otgs/icons/loader.php';
 
 		add_action( 'admin_init', function() {
 			wp_enqueue_style( OTGS_ASSETS_ICONS_STYLES );
