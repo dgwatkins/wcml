@@ -4,6 +4,7 @@
 
 	<!-- What to scan -->
 	<file>.</file>
+	<exclude-pattern>/addons/*</exclude-pattern>
 	<exclude-pattern>*/.git/*</exclude-pattern>
 	<exclude-pattern>*/.githooks/*</exclude-pattern>
 	<exclude-pattern>*/.make/*</exclude-pattern>
