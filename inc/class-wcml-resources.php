@@ -3,6 +3,8 @@
 use WCML\Utilities\AdminPages;
 use WPML\FP\Relation;
 
+use function WCML\functions\isStandAlone;
+
 class WCML_Resources {
 
 	private static $pagenow;
@@ -27,6 +29,10 @@ class WCML_Resources {
 		self::$pagenow          = $pagenow;
 
 		self::load_css();
+
+		if ( isStandAlone() ) {
+			return;
+		}
 
 		$is_edit_product     = self::$pagenow == 'post.php' && isset( $_GET['post'] ) && get_post_type( $_GET['post'] ) == 'product';
 		$is_original_product = isset( $_GET['post'] ) && ! is_array( $_GET['post'] ) && self::$woocommerce_wpml->products->is_original_product( $_GET['post'] );
@@ -99,7 +105,7 @@ class WCML_Resources {
 			wp_register_script( 'wcml-dialogs', WCML_PLUGIN_URL . '/res/js/dialogs' . WCML_JS_MIN . '.js', [ 'jquery', 'jquery-ui-core', 'jquery-ui-dialog', 'underscore' ], WCML_VERSION, true );
 			wp_register_script( 'wcml-troubleshooting', WCML_PLUGIN_URL . '/res/js/troubleshooting' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION, true );
 
-			if ( self::$woocommerce_wpml->is_wpml_prior_4_2() ) {
+			if ( ! isStandalone() && self::$woocommerce_wpml->is_wpml_prior_4_2() ) {
 				wp_register_script( 'wcml-translation-interface-dialog-warning', WCML_PLUGIN_URL . '/res/js/trnsl_interface_dialog_warning' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION, true );
 				wp_enqueue_script( 'wcml-translation-interface-dialog-warning' );
 			}

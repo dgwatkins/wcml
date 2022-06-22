@@ -56,7 +56,9 @@ class WCML_Admin_Menus {
 		if ( is_admin() && ! is_null( $sitepress ) && self::$woocommerce_wpml->dependencies_are_ok && WCML_Capabilities::canManageWcml() ) {
 			add_action( 'admin_footer', [ __CLASS__, 'documentation_links' ] );
 			add_action( 'admin_head', [ __CLASS__, 'hide_multilingual_content_setup_box' ] );
-			add_action( 'admin_init', [ __CLASS__, 'restrict_admin_with_redirect' ] );
+			if ( ! isStandAlone() ) {
+				add_action( 'admin_init', [ __CLASS__, 'restrict_admin_with_redirect' ] );
+			}
 			add_filter( 'plugin_action_links_woocommerce-multilingual/wpml-woocommerce.php', [ __CLASS__, 'add_settings_links_to_plugin_actions' ] );
 		}
 
