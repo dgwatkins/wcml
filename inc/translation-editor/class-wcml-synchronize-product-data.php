@@ -271,13 +271,9 @@ class WCML_Synchronize_Product_Data {
 						$tr_id
 					)
 				);
-				if ( is_taxonomy_hierarchical( $taxonomy ) ) {
-					$terms_to_insert[] = (int) $translated_term->term_id;
-				} else {
-					$terms_to_insert[] = $translated_term->slug;
-				}
 
-				$terms_array[] = $translated_term->term_taxonomy_id;
+				$terms_to_insert[] = (int) $translated_term->term_id;
+				$terms_array[]     = $translated_term->term_taxonomy_id;
 			}
 		}
 
