@@ -53,7 +53,7 @@ if ( ! function_exists( 'WCML\functions\assetLink' ) ) {
 	 */
 	function assetLink( $asset ) {
 		if ( isStandAlone() ) {
-			return WCML_PLUGIN_URL . '/addons/vendor/wpml/wpml-dependencies/lib' . $asset;
+			return WCML_PLUGIN_URL . '/addons/wpml-dependencies/lib' . $asset;
 		}
 		return ICL_PLUGIN_URL . $asset;
 	}
