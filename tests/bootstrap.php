@@ -12,7 +12,7 @@ if ( ! defined( 'WCML_CORE_PATH' ) ) {
 	define( 'WCML_CORE_PATH', WP_PLUGIN_DIR . '/woocommerce-multilingual' );
 }
 if ( ! defined( 'WC_PATH' ) ) {
-	define( 'WC_PATH', WP_PLUGIN_DIR . '/woocommerce' );
+	define( 'WC_PATH', WP_PLUGIN_DIR . '/woocommerce/plugins/woocommerce' );
 }
 
 if ( ! defined( 'WC_BOOKING_PATH' ) ) {
@@ -81,6 +81,7 @@ function _install_wc() {
 	global $wpdb;
 
 	$tables_to_empty = array(
+		"{$wpdb->prefix}wc_download_log",
 		"{$wpdb->prefix}woocommerce_api_keys",
 		"{$wpdb->prefix}woocommerce_attribute_taxonomies",
 		"{$wpdb->prefix}woocommerce_downloadable_product_permissions",
@@ -117,7 +118,7 @@ tests_add_filter( 'wpml_loaded', 'wpml_test_install_setup' );
 tests_add_filter( 'init', '_install_wc', -1 );
 // Launch WCML
 tests_add_filter( 'wpml_loaded', 'load_wcml' );
-function load_wcml(){
+function load_wcml() {
 	global $woocommerce_wpml;
 	$woocommerce_wpml = new woocommerce_wpml();
 	$woocommerce_wpml->add_hooks();
@@ -131,11 +132,28 @@ function WP_REST_Server_placeholder(){
 	}
 }
 
+// Taken from woocommerce/tests/legacy/bootstrap.php
+function initialize_wc_dependency_injection() {
+	global $wc_container;
+
+	$wc_container_property = new \ReflectionProperty( \Automattic\WooCommerce\Container::class, 'container' );
+	$wc_container_property->setAccessible( true );
+
+	$wc_container = $wc_container_property->getValue( wc_get_container() );
+	$wc_container->replace(
+		\Automattic\WooCommerce\Proxies\LegacyProxy::class,
+		\Automattic\WooCommerce\Testing\Tools\DependencyManagement\MockableLegacyProxy::class
+	);
+	$wc_container->reset_all_resolved();
+}
+
 require_once $_tests_dir . '/includes/bootstrap.php';
 require_once WPML_CORE_PATH . '/tests/util/wpml-unittestcase.class.php';
 require_once WC_PATH . '/tests/legacy/includes/wp-http-testcase.php';
 require_once WC_PATH . '/tests/legacy/framework/class-wc-unit-test-case.php';
 require_once WC_PATH . '/tests/legacy/framework/class-wc-unit-test-factory.php';
+
+initialize_wc_dependency_injection();
 
 require_once WCML_CORE_PATH . '/tests/util/wcml-unittestcase.class.php';
 require_once WCML_CORE_PATH . '/tests/util/class-wcml-helper.php';
