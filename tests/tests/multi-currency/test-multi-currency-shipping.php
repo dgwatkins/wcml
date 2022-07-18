@@ -132,6 +132,8 @@ class Test_WCML_Multi_Currency_Shipping extends WCML_UnitTestCase {
 	 */
     public function test_convert_shipping_cost(){
 
+		$this->markTestSkipped( 'Waiting for fix in compdev-25' );
+
         // We need this to have the calculate_totals() method calculate totals
         if ( ! defined( 'WOOCOMMERCE_CHECKOUT' ) ) {
             define( 'WOOCOMMERCE_CHECKOUT', true );

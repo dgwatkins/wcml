@@ -86,6 +86,7 @@ class Test_WCML_Table_Rate_Shipping extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function filterQueryRatesArgs(){
+		$this->markTestSkipped( 'Waiting for fix in compdev-25' );
 
 		$settings_backup = $this->woocommerce_wpml->settings;
 		$this->multi_currency_helper = new WCML_Helper_Multi_Currency( $this->woocommerce_wpml );

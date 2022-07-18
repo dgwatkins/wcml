@@ -619,6 +619,8 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function filter_pricing_cost() {
+		$this->markTestSkipped( 'Waiting for fix in compdev-25' );
+
 		$woocommerce_wpml = $this->get_test_subject();
 		$woocommerce_wpml->settings['enable_multi_currency'] = 1;
 		$block_cost = random_int( 1, 9999 );
@@ -1272,6 +1274,8 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 	 * @test
 	 */
 	public function filter_wc_booking_cost() {
+		$this->markTestSkipped( 'Waiting for fix in compdev-25' );
+
 		$block_cost = random_int( 1, 99999 );
 		$cost = random_int( 1, 99999 );
 		$check = random_int( 1, 9999 );
