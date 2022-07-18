@@ -117,8 +117,8 @@ tests_add_filter( 'wpml_loaded', 'wpml_test_install_setup' );
 // install WC
 tests_add_filter( 'init', '_install_wc', -1 );
 // Launch WCML
-tests_add_filter( 'wpml_loaded', 'load_wcml' );
-function load_wcml() {
+tests_add_filter( 'wpml_loaded', '_load_wcml' );
+function _load_wcml() {
 	global $woocommerce_wpml;
 	$woocommerce_wpml = new woocommerce_wpml();
 	$woocommerce_wpml->add_hooks();

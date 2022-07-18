@@ -3,7 +3,7 @@
  * This bootstrap file is loaded only when WCML is running in the Standalone mode.
  * It's executed on `plugins_loaded` priority 10000.
  *
- * @see load_wcml_without_wpml
+ * @see load_wcml
  */
 
 /**

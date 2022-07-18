@@ -55,23 +55,6 @@ require WCML_PLUGIN_PATH . '/vendor/autoload.php';
 require_once WCML_PLUGIN_PATH . '/vendor/otgs/ui/loader.php';
 otgs_ui_initialize( WCML_PLUGIN_PATH . '/vendor/otgs/ui', WCML_PLUGIN_URL . '/vendor/otgs/ui' ); // @phpstan-ignore-line
 
-if ( WPML_Core_Version_Check::is_ok( WCML_PLUGIN_PATH . '/wpml-dependencies.json' ) ) {
-	global $woocommerce_wpml;
-
-	if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ) {
-		( new WPML_Action_Filter_Loader() )->load( [
-			WCML_Switch_Lang_Request::class,
-			WCML_Cart_Switch_Lang_Functions::class,
-			WCML\AdminTexts\Hooks::class,
-		] );
-	}
-
-	$woocommerce_wpml = new woocommerce_wpml();
-	$woocommerce_wpml->add_hooks();
-
-	add_action( 'wpml_loaded', 'wcml_loader' );
-}
-
 /**
  * Load WooCommerce Multilingual after WPML is loaded
  */
@@ -144,17 +127,26 @@ if ( WCML\Rest\Functions::isRestApiRequest() ) {
 	add_action( 'wpml_before_init', [ WCML\Rest\Generic::class, 'removeHomeUrlFilterOnRestAuthentication' ] );
 }
 
-/**
- * Load WooCommerce Multilingual when WPML is NOT active.
- */
-function load_wcml_without_wpml() {
-	if ( ! did_action( 'wpml_loaded' ) ) {
-		require_once WCML_PLUGIN_PATH . '/addons/load-standalone-dependencies.php';
+function load_wcml() {
+	global $woocommerce_wpml;
+	
+	if ( WPML_Core_Version_Check::is_ok( WCML_PLUGIN_PATH . '/wpml-dependencies.json' ) ) {
+		if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ) {
+			( new WPML_Action_Filter_Loader() )->load( [
+				WCML_Switch_Lang_Request::class,
+				WCML_Cart_Switch_Lang_Functions::class,
+				WCML\AdminTexts\Hooks::class,
+			] );
+		}
 
-		global $woocommerce_wpml;
 		$woocommerce_wpml = new woocommerce_wpml();
-		wcml_loader();
+		$woocommerce_wpml->add_hooks();
+	} else {
+		require_once WCML_PLUGIN_PATH . '/addons/load-standalone-dependencies.php';
+		$woocommerce_wpml = new woocommerce_wpml();
 	}
+
+	wcml_loader();
 }
 
-add_action( 'plugins_loaded', 'load_wcml_without_wpml', 10000 );
+add_action( 'plugins_loaded', 'load_wcml', 10000 );
