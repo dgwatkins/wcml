@@ -62,6 +62,8 @@ class Test_WCML_Multi_Currency_Orders extends WCML_UnitTestCase {
 	public function it_shows_order_currencies_selector() {
 		global $wp_query, $typenow;
 
+		$this->markTestSkipped( 'Waiting for fix in compdev-25' );
+
 		$typenow = 'shop_order';
 
 		ob_start();
@@ -86,6 +88,8 @@ class Test_WCML_Multi_Currency_Orders extends WCML_UnitTestCase {
 	 */
 	public function it_shows_order_currencies_selector_with_selected_currency() {
 		global $wp_query, $typenow;
+
+		$this->markTestSkipped( 'Waiting for fix in compdev-25' );
 
 		$wp_query->query[ '_order_currency' ] = 'GBP';
 		$typenow = 'shop_order';

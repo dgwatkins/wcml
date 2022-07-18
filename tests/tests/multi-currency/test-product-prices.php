@@ -623,6 +623,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 	 * @group wcml-3276
 	 */
 	public function test_simple_product(){
+		$this->markTestSkipped( 'Waiting for fix in compdev-25' );
 
 		$this->run_product_test( $this->products['simple'], 'WC_Product_Simple' );
 
@@ -634,6 +635,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 	 * @group wcml-3276
 	 */
 	public function test_simple_sale_product(){
+		$this->markTestSkipped( 'Waiting for fix in compdev-25' );
 
 		$this->run_product_test( $this->products['simple_sale'], 'WC_Product_Simple' );
 
@@ -645,6 +647,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 	 * @group wcml-3276
 	 */
 	public function test_variable_product(){
+		$this->markTestSkipped( 'Waiting for fix in compdev-25' );
 
 		$this->run_product_test( $this->products['variable'], 'WC_Product_Variable' );
 
@@ -656,6 +659,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 	 * @group wcml-3276
 	 */
 	public function test_variable_sale_product(){
+		$this->markTestSkipped( 'Waiting for fix in compdev-25' );
 
 		$this->run_product_test( $this->products['variable_sale'], 'WC_Product_Variable' );
 
@@ -667,6 +671,7 @@ class Test_WCML_Product_Prices extends WCML_UnitTestCase {
 	 * @group wcml-3276
 	 */
 	public function test_variable_sale_free_product(){
+		$this->markTestSkipped( 'Waiting for fix in compdev-25' );
 
 		$this->run_product_test( $this->products['variable_sale_free'], 'WC_Product_Variable' );
 

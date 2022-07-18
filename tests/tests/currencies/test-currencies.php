@@ -46,7 +46,7 @@ class Test_WCML_Currencies extends WCML_UnitTestCase {
 	 *  When the default WooCommerce currency is updated, update list of currencies configure for the multi-currency
 	 */
 	public function test_woocommerce_currency_update(){
-
+		$this->markTestSkipped( 'Waiting for fix in compdev-25' );
 
 		// change currency from GBP (default) to RON
 		// It means that only USD will be a secondary currency
