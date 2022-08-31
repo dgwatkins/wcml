@@ -1,7 +1,10 @@
 <?php
 
+use WPML\FP\Fns;
+use WPML\FP\Maybe;
 use WPML\FP\Obj;
 use function WCML\functions\isStandAlone;
+use function WPML\FP\invoke;
 
 class WCML_Custom_Prices {
 
@@ -26,6 +29,7 @@ class WCML_Custom_Prices {
 				// In the full mode, this is done in the product sync logic.
 				add_action( 'save_post_product', [ $this, 'save_custom_prices' ] );
 				add_action( 'save_post_product_variation', [ $this, 'sync_product_variations_custom_prices' ] );
+				add_action( 'woocommerce_ajax_save_product_variations', [ $this, 'sync_product_variations_custom_prices_on_ajax' ] );
 			}
 
 			add_action( 'woocommerce_variation_options', [ $this, 'add_individual_variation_nonce' ], 10, 3 );
@@ -507,6 +511,18 @@ class WCML_Custom_Prices {
 		return $custom_prices['_sale_price'] !== '' && ( $not_depend_on_date || $valid_sale_date );
 	}
 
+	/**
+	 * @param int $product_id
+	 */
+	public function sync_product_variations_custom_prices_on_ajax( $product_id ) {
+		Maybe::fromNullable( wc_get_product( $product_id ) )
+			->map( invoke( 'get_children' ) )
+			->map( Fns::map( [ $this, 'sync_product_variations_custom_prices' ] ) );
+	}
+
+	/**
+	 * @param int $product_id
+	 */
 	public function sync_product_variations_custom_prices( $product_id ) {
 
 		if ( isset( $_POST['_wcml_custom_prices'][ $product_id ] ) ) {
@@ -582,10 +598,10 @@ class WCML_Custom_Prices {
 	 *
 	 * @return mixed
 	 */
-	private function is_custom_prices_set_for_product( $product_id ){
+	private function is_custom_prices_set_for_product( $product_id ) {
 		return get_post_meta( $product_id, '_wcml_custom_prices_status', true );
 	}
-	
+
 	/**
 	 * WC when starts the sale copies price from _sale_price into _price field
 	 * we should do the same for _sale_price_{currency} and _price_{currency}
