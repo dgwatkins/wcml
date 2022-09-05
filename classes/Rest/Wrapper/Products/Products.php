@@ -12,7 +12,7 @@ use WPML\FP\Obj;
 
 class Products extends Handler {
 
-	/** @var \Sitepress */
+	/** @var \SitePress */
 	private $sitepress;
 	/** @var \WPML_Post_Translation */
 	private $wpmlPostTranslations;

@@ -136,7 +136,7 @@ class WCML_Orders {
 			 *
 			 * @since 4.11.0
 			 *
-			 * @param bool          true                True if we should save adjusted order item.
+			 * @param bool          $true               True if we should save adjusted order item.
 			 * @param WC_Order_Item $item
 			 * @param string        $language_to_filter Language to filter.
 			 */
@@ -343,7 +343,7 @@ class WCML_Orders {
 	}
 
 	/**
-	 * @param \WC_Abstract_Legacy_Order $order
+	 * @param WC_Abstract_Order $order
 	 */
 	public function setOrderLanguageBeforeSave( $order ) {
 		if (

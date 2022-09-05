@@ -4,9 +4,9 @@ class Test_WCML_Tab_Manager extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
-	/** @var woocommerce */
+	/** @var WooCommerce */
 	private $woocommerce;
 	/** @var wpdb */
 	private $wpdb;
@@ -20,7 +20,7 @@ class Test_WCML_Tab_Manager extends OTGS_TestCase {
 	{
 		parent::setUp();
 
-		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
+		$this->sitepress = $this->getMockBuilder( 'SitePress' )
 			->disableOriginalConstructor()
 			->getMock();
 

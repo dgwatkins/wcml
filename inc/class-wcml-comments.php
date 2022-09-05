@@ -11,7 +11,7 @@ class WCML_Comments {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 	/** @var WPML_Post_Translation */
 	private $post_translations;
@@ -135,13 +135,13 @@ class WCML_Comments {
 	}
 
 	/**
-	 * Filter WC reviews meta
+	 * Filter WC reviews meta.
 	 *
-	 * @param null|array|string $value    The value get_metadata() should return a single metadata value, or an
-	 *                                    array of values.
-	 * @param int               $object_id  Post ID.
-	 * @param string            $meta_key Meta key.
-	 * @param bool
+	 * @param null|array|string $value     get_metadata() should return a single value or array of values.
+	 * @param int               $object_id Post ID.
+	 * @param string            $meta_key  Meta key.
+	 * @param bool              $single
+	 *
 	 * @return array|null|string Filtered metadata value, array of values, or null.
 	 */
 	public function filter_average_rating( $value, $object_id, $meta_key, $single ) {
@@ -343,7 +343,8 @@ class WCML_Comments {
 	/**
 	 * Return reviews count in language
 	 *
-	 * @param string $language
+	 * @param string|false $language
+	 *
 	 * @return int
 	 */
 	public function get_reviews_count( $language = false ) {

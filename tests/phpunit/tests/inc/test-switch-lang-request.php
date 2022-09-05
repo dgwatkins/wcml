@@ -10,7 +10,7 @@ class Test_WCML_Switch_Lang_Request extends OTGS_TestCase {
 	private $cookie;
 	/** @var WPML_WP_API $wp_api */
 	private $wp_api;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 
 	public function setUp(){

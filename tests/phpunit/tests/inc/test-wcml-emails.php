@@ -9,15 +9,15 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 	/** @var WCML_WC_Strings */
 	private $wcmlStrings;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
-	/** @var woocommerce $woocommerce */
+	/** @var WooCommerce */
 	private $woocommerce;
-	/** @var \WC_Emails $wcEmails */
+	/** @var WC_Emails */
 	private $wcEmails;
 	/** @var wpdb */
 	private $wpdb;
-	/** @var WPML_WP_API $wp_api */
+	/** @var WPML_WP_API */
 	private $wp_api;
 
 	public function setUp(){

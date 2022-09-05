@@ -8,7 +8,7 @@ namespace WCML\Rest\Wrapper;
  */
 class TestProductTerms extends \OTGS_TestCase {
 
-	/** @var \Sitepress */
+	/** @var \SitePress */
 	private $sitepress;
 	/** @var \WPML_Term_Translation */
 	private $wpmlTermTranslations;

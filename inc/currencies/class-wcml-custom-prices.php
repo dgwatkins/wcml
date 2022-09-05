@@ -594,7 +594,7 @@ class WCML_Custom_Prices {
 	}
 
 	/**
-	 * @param $product_id
+	 * @param int $product_id
 	 *
 	 * @return mixed
 	 */

@@ -6,7 +6,7 @@ class Test_WCML_Orders extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 
 

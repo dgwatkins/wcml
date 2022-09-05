@@ -1,12 +1,5 @@
 <?php
 
-use function WPML\FP\pipe;
-use WPML\FP\Obj;
-use WPML\FP\Cast;
-use WPML\FP\Relation;
-use WPML\FP\Lst;
-use WPML\FP\Fns;
-
 class WCML_Terms {
 
 	const PRODUCT_SHIPPING_CLASS           = 'product_shipping_class';
@@ -656,7 +649,11 @@ class WCML_Terms {
 							$terms_array        = [];
 							$term_id_translated = apply_filters( 'translate_object_id', $term_id, $taxonomy, false, $language );
 
-							// not using get_term.
+							/**
+							 * Not using get_term.
+							 *
+							 * @var stdClass
+							 */
 							$translated_term = $this->wpdb->get_row(
 								$this->wpdb->prepare(
 									"

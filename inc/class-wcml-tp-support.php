@@ -73,7 +73,7 @@ class WCML_TP_Support {
 
 					$package['contents'][ 'wc_attribute_name:' . $attribute_key ] = array(
 						'translate' => 1,
-						'data'      => $this->tp->encode_field_data( $attribute['name'], 'base64' ),
+						'data'      => $this->tp->encode_field_data( $attribute['name'] ),
 						'format'    => 'base64'
 					);
 					$values                                                       = explode( '|', $attribute['value'] );
@@ -82,7 +82,7 @@ class WCML_TP_Support {
 					foreach ( $values as $value_key => $value ) {
 						$package['contents'][ 'wc_attribute_value:' . $value_key . ':' . $attribute_key ] = array(
 							'translate' => 1,
-							'data'      => $this->tp->encode_field_data( $value, 'base64' ),
+							'data'      => $this->tp->encode_field_data( $value ),
 							'format'    => 'base64'
 						);
 					}
@@ -190,7 +190,7 @@ class WCML_TP_Support {
 						if ( $meta_value && !is_array( $meta_value ) ) {
 							$package['contents'][ self::CUSTOM_FIELD_NAME.$meta_key.':' . $variation->ID ] = array(
 								'translate' => 1,
-								'data'      => $this->tp->encode_field_data( $meta_value, 'base64' ),
+								'data'      => $this->tp->encode_field_data( $meta_value ),
 								'format'    => 'base64'
 							);
 						}
@@ -262,6 +262,7 @@ class WCML_TP_Support {
 
 			$product_images = $this->woocommerce_wpml->media->product_images_ids( $post->ID );
 			foreach ( $product_images as $image_id ) {
+				/** @var stdClass */
 				$attachment_data = $this->wpdb->get_row( $this->wpdb->prepare( "SELECT post_title,post_excerpt,post_content FROM {$this->wpdb->posts} WHERE ID = %d", $image_id ) );
 				if ( ! $attachment_data ) {
 					continue;
@@ -339,7 +340,7 @@ class WCML_TP_Support {
 	private function add_to_package( &$package, $key, $data ) {
 		$package['contents'][ $key ] = array(
 			'translate' => 1,
-			'data'      => $this->tp->encode_field_data( $data, 'base64' ),
+			'data'      => $this->tp->encode_field_data( $data ),
 			'format'    => 'base64'
 		);
 

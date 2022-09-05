@@ -4,7 +4,7 @@ class Test_WCML_Multi_Currency_Shipping extends OTGS_TestCase {
 
 	/** @var WCML_Multi_Currency */
 	private $multi_currency;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 	/** @var wpdb */
 	private $wpdb;

@@ -14,7 +14,7 @@ use woocommerce_wpml;
 class TestMulticurrencyHooks extends \OTGS_TestCase {
 
 	/**
-	 * @param $woocommerce_wpml
+	 * @param woocommerce_wpml $woocommerce_wpml
 	 *
 	 * @return MulticurrencyHooks
 	 */

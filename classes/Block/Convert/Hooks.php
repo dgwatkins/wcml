@@ -11,7 +11,7 @@ use WPML\FP\Str;
 
 class Hooks implements IWPML_Frontend_Action, IWPML_DIC_Action {
 
-	/** @var SitePress $sitepress */
+	/** @var \SitePress $sitepress */
 	private $sitepress;
 
 	/** @var Language $frontendRestLang */

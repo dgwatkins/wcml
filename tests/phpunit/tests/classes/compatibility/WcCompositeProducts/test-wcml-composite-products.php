@@ -11,7 +11,7 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 	/** @var WPML_Element_Translation_Package */
 	private $tp;
@@ -19,7 +19,7 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 	private function get_subject( $sitepress = null, $woocommerce_wpml = null, $tp = null ) {
 
 		if ( null === $sitepress ) {
-			$sitepress = $this->getMockBuilder( 'Sitepress' )
+			$sitepress = $this->getMockBuilder( 'SitePress' )
 			                  ->disableOriginalConstructor()
 			                  ->getMock();
 		}
@@ -226,7 +226,7 @@ class Test_WCML_Composite_Products extends OTGS_TestCase {
 
 
 
-		$sitepress = $this->getMockBuilder( 'Sitepress' )
+		$sitepress = $this->getMockBuilder( 'SitePress' )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( [ 'get_element_trid', 'get_element_translations' ] )
 		                  ->getMock();

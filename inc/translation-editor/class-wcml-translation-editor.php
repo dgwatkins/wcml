@@ -277,9 +277,10 @@ class WCML_Translation_Editor {
 	}
 
 	/**
-	 * Forces the translation editor to be used for products when enabled in WCML
+	 * Forces the translation editor to be used for products when enabled in WCML.
 	 *
-	 * @param $use_tm_editor
+	 * @param int $use_tm_editor
+	 *
 	 * @return int
 	 */
 	public function force_woocommerce_native_editor( $use_tm_editor ) {
@@ -301,7 +302,8 @@ class WCML_Translation_Editor {
 	}
 
 	/**
-	 * @param $use_tm_editor
+	 * @param int $use_tm_editor
+	 *
 	 * @return int
 	 */
 	public function force_woocommerce_native_editor_for_wcml_products_screen( $use_tm_editor ) {

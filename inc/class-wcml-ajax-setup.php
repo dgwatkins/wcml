@@ -37,9 +37,9 @@ class WCML_Ajax_Setup {
 	}
 
 	/**
-	 * @param $endpoint string
+	 * Adds a language parameter to the url when different domains for each language are used.
 	 *
-	 * Adds a language parameter to the url when different domains for each language are used
+	 * @param string $endpoint
 	 *
 	 * @return string
 	 */

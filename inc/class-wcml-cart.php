@@ -5,7 +5,7 @@ use function WCML\functions\isStandAlone;
 class WCML_Cart {
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 	/** @var WooCommerce */
 	private $woocommerce;
@@ -367,7 +367,7 @@ class WCML_Cart {
 	}
 
 	/**
-	 * @param $cart_item array
+	 * @param array $cart_item
 	 *
 	 * @return string
 	 */
@@ -518,8 +518,8 @@ class WCML_Cart {
 	public function localize_flat_rates_shipping_classes() {
 
 		if ( wp_doing_ajax() && isset( $_POST['action'] ) && $_POST['action'] == 'woocommerce_update_order_review' ) {
-			$this->woocommerce->shipping->load_shipping_methods();
-			$shipping_methods = $this->woocommerce->shipping->get_shipping_methods();
+			$this->woocommerce->shipping()->load_shipping_methods();
+			$shipping_methods = $this->woocommerce->shipping()->get_shipping_methods();
 			foreach ( $shipping_methods as $method ) {
 				if ( isset( $method->flat_rate_option ) ) {
 					add_filter( 'option_' . $method->flat_rate_option, [ $this, 'translate_shipping_class' ] );
@@ -614,7 +614,7 @@ class WCML_Cart {
 	}
 
 	/**
-	 * @param $currency
+	 * @param string $currency
 	 *
 	 * @return float
 	 */
@@ -624,7 +624,7 @@ class WCML_Cart {
 		$cart_total      = 0;
 		$cart_items      = WC()->cart->get_cart_contents();
 
-		// items total
+		// Items total.
 		foreach ( $cart_items as $item ) {
 			$item_product_id = $item['variation_id'] ?: $item['product_id'];
 			$cart_total     += $this->woocommerce_wpml->multi_currency->prices->get_product_price_in_currency( $item_product_id, $currency ) * $item['quantity'];

@@ -11,8 +11,8 @@ use WPML\Core\Twig_Loader_Filesystem;
 abstract class WCML_Templates_Factory extends WPML_Templates_Factory {
 
 	/**
-	 * @param $template
-	 * @param $model
+	 * @param string $template
+	 * @param array  $model
 	 *
 	 * @return string
 	 * @throws Twig_Error_Syntax
@@ -31,6 +31,7 @@ abstract class WCML_Templates_Factory extends WPML_Templates_Factory {
 		}
 
 		try {
+			/* @phpstan-ignore-next-line */
 			$output = $this->twig->render( $template, $model );
 		} catch ( RuntimeException $e ) {
 			if ( $this->is_caching_enabled() ) {
@@ -42,6 +43,7 @@ abstract class WCML_Templates_Factory extends WPML_Templates_Factory {
 				$this->add_exception_notice( $e );
 			}
 		} catch ( Twig_Error_Syntax $e ) {
+			/* @phpstan-ignore-next-line */
 			$message = 'Invalid Twig template string: ' . $e->getRawMessage() . "\n" . $template;
 			$this->get_wp_api()->error_log( $message );
 		}
@@ -77,11 +79,13 @@ abstract class WCML_Templates_Factory extends WPML_Templates_Factory {
 			$this->twig = $this->get_twig_environment( $loader, $environment_args );
 			if ( $this->custom_functions && count( $this->custom_functions ) > 0 ) {
 				foreach ( $this->custom_functions as $custom_function ) {
+					/* @phpstan-ignore-next-line */
 					$this->twig->addFunction( $custom_function );
 				}
 			}
 			if ( $this->custom_filters && count( $this->custom_filters ) > 0 ) {
 				foreach ( $this->custom_filters as $custom_filter ) {
+					/* @phpstan-ignore-next-line */
 					$this->twig->addFilter( $custom_filter );
 				}
 			}

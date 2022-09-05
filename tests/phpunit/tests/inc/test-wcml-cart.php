@@ -7,9 +7,9 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
-	/** @var woocommerce */
+	/** @var WooCommerce */
 	private $woocommerce;
 	/** @var WPML_WP_API $wp_api */
 	private $wp_api;

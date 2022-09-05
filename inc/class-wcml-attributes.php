@@ -7,7 +7,7 @@ class WCML_Attributes {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 	/** @var WPML_Post_Translation */
 	private $post_translations;

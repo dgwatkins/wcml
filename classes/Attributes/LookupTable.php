@@ -75,10 +75,10 @@ class LookupTable implements \IWPML_Action {
 	}
 
 	/**
-	 * @param WC_Product_Attribute[] $attrs
-	 * @param WC_Product             $product
+	 * @param \WC_Product_Attribute[] $attrs
+	 * @param \WC_Product             $product
 	 *
-	 * @return WC_Product_Attribute[]
+	 * @return \WC_Product_Attribute[]
 	 */
 	public function translateAttributeOptions( $attrs, $product ) {
 		$language = $this->sitepress->get_language_for_element(

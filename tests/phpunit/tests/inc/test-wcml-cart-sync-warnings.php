@@ -7,7 +7,7 @@ class Test_WCML_Cart_Sync_Warnings extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 	/** @var WPML_WP_API $wp_api */
 	private $wp_api;

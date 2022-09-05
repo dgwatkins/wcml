@@ -4,7 +4,7 @@ class Test_WCML_Adventure_tours extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 	/** @var WPML_Element_Translation_Package */
 	private $tp;
@@ -12,7 +12,7 @@ class Test_WCML_Adventure_tours extends OTGS_TestCase {
 	public function setUp(){
 		parent::setUp();
 
-		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
+		$this->sitepress = $this->getMockBuilder( 'SitePress' )
 			->disableOriginalConstructor()
 			->getMock();
 

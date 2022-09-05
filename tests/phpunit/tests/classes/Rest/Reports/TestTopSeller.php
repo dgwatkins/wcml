@@ -10,7 +10,7 @@ use WCML\Rest\Wrapper\Reports\TopSeller;
  */
 class TestTopSeller extends \OTGS_TestCase {
 
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 
 	public function setUp() {

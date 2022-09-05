@@ -45,8 +45,8 @@ class Test_Adding_New_Products extends WCML_UnitTestCase {
 	/**
 	 * Variable product checks.
 	 *
-	 * @param $orig_lang
-	 * @param $second_lang
+	 * @param string $orig_lang
+	 * @param string $second_lang
 	 */
 	private function add_and_check_variable_product( $orig_lang, $second_lang ) {
 		global $woocommerce_wpml;
@@ -69,8 +69,8 @@ class Test_Adding_New_Products extends WCML_UnitTestCase {
 	/**
 	 * Grouped product scenario.
 	 *
-	 * @param $orig_lang
-	 * @param $second_lang
+	 * @param string $orig_lang
+	 * @param string $second_lang
 	 */
 	public function add_and_check_grouped_product( $orig_lang, $second_lang ) {
 		global $woocommerce_wpml;
@@ -111,8 +111,8 @@ class Test_Adding_New_Products extends WCML_UnitTestCase {
 	/**
 	 * Simple product scenario.
 	 *
-	 * @param $orig_lang
-	 * @param $second_lang
+	 * @param string $orig_lang
+	 * @param string $second_lang
 	 */
 	private function add_and_check_simple_product( $orig_lang, $second_lang ) {
 		global $woocommerce_wpml;
@@ -129,9 +129,9 @@ class Test_Adding_New_Products extends WCML_UnitTestCase {
 	/**
 	 * Group some common checks.
 	 *
-	 * @param $original_id
-	 * @param $translation_id
-	 * @param $lang
+	 * @param int    $original_id
+	 * @param int    $translation_id
+	 * @param string $lang
 	 */
 	private function common_checks( $original_id, $translation_id, $lang ) {
 		global $woocommerce_wpml;

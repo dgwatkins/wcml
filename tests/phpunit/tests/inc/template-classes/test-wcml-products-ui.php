@@ -9,7 +9,7 @@ class Test_WCML_Products_UI extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 
 	private $default_language = 'en';

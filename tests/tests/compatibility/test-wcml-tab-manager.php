@@ -161,10 +161,10 @@ class Test_WCML_Tab_Manager extends WCML_UnitTestCase {
 	}
 
 	/**
-	 * @param $product
-	 * @param $translated_product
-	 * @param $tab_manager
-	 * @param $title
+	 * @param int    $product
+	 * @param int    $translated_product
+	 * @param object $tab_manager
+	 * @param string $title
 	 */
 	private function setup_and_check_global_tab_type( $product, $translated_product, $tab_manager, $title ) {
 		$tab_data = array(
@@ -192,10 +192,10 @@ class Test_WCML_Tab_Manager extends WCML_UnitTestCase {
 	}
 
 	/**
-	 * @param $product
-	 * @param $translated_product
-	 * @param $tab_manager
-	 * @param $title
+	 * @param int    $product
+	 * @param int    $translated_product
+	 * @param object $tab_manager
+	 * @param string $title
 	 */
 	private function setup_and_check_product_tab_type( $product, $translated_product, $tab_manager, $title ) {
 		$tab_data = array(
@@ -269,10 +269,10 @@ class Test_WCML_Tab_Manager extends WCML_UnitTestCase {
 	}
 
 	/**
-	 * @param $product
-	 * @param $translated_product
-	 * @param $tab_manager
-	 * @param $title
+	 * @param int    $product
+	 * @param int    $translated_product
+	 * @param object $tab_manager
+	 * @param string $title
 	 */
 	private function setup_and_check_core_tab_type( $product, $translated_product, $tab_manager, $title ) {
 		$tab_id         = wpml_test_insert_post( $this->default_language, 'wc_product_tab', false, random_string() );

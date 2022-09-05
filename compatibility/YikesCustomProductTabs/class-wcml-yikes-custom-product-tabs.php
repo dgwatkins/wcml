@@ -184,7 +184,7 @@ class WCML_YIKES_Custom_Product_Tabs implements \IWPML_Action {
 					if ( isset( $prod_tab['title'] ) ) {
 						$package['contents'][ self::CUSTOM_TABS_FIELD . ':product_tab:' . $key . ':title' ] = [
 							'translate' => 1,
-							'data'      => $this->tp->encode_field_data( $prod_tab['title'], 'base64' ),
+							'data'      => $this->tp->encode_field_data( $prod_tab['title'] ),
 							'format'    => 'base64',
 						];
 					}
@@ -192,7 +192,7 @@ class WCML_YIKES_Custom_Product_Tabs implements \IWPML_Action {
 					if ( isset( $prod_tab['content'] ) ) {
 						$package['contents'][ self::CUSTOM_TABS_FIELD . ':product_tab:' . $key . ':content' ] = [
 							'translate' => 1,
-							'data'      => $this->tp->encode_field_data( $prod_tab['content'], 'base64' ),
+							'data'      => $this->tp->encode_field_data( $prod_tab['content'] ),
 							'format'    => 'base64',
 						];
 					}

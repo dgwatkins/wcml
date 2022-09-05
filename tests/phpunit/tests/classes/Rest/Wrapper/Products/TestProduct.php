@@ -13,7 +13,7 @@ class TestProduct extends \OTGS_TestCase {
 
 	/** @var WPML_Query_Filter */
 	private $wpml_query_filter;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 	/** @var WPML_Post_Translation */
 	private $wpml_post_translations;

@@ -18,7 +18,7 @@ class Test_WCML_Table_Rate_Shipping extends OTGS_TestCase {
 	}
 
 	private function get_sitepress(){
-		return $this->getMockBuilder( 'Sitepress' )
+		return $this->getMockBuilder( 'SitePress' )
 			->disableOriginalConstructor()
 			->getMock();
 	}

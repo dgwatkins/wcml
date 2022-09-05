@@ -141,7 +141,9 @@ class WCML_Upgrade {
 		global $wpdb;
 
 		// Migrate existing currencies.
-		$currencies = $wpdb->get_results( 'SELECT * FROM ' . $wpdb->prefix . 'icl_currencies ORDER BY `id` DESC' );
+		$currencies = $wpdb->get_results( 'SELECT * FROM ' . $wpdb->prefix . 'icl_currencies ORDER BY id DESC' );
+
+		/** @var stdClass $currency */
 		foreach ( $currencies as $currency ) {
 			if ( isset( $currency->language_code ) ) {
 				$wpdb->insert(

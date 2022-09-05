@@ -4,7 +4,7 @@ class Test_WCML_YIKES_Custom_Product_Tabs extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 	/** @var WPML_Element_Translation_Package */
 	private $tp;
@@ -14,7 +14,7 @@ class Test_WCML_YIKES_Custom_Product_Tabs extends OTGS_TestCase {
 
 		parent::setUp();
 
-		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
+		$this->sitepress = $this->getMockBuilder( 'SitePress' )
 		                        ->disableOriginalConstructor()
 		                        ->getMock();
 
@@ -281,7 +281,7 @@ class Test_WCML_YIKES_Custom_Product_Tabs extends OTGS_TestCase {
 			'format'    => $base
 		);
 
-		$this->tp->method( 'encode_field_data' )->willReturnCallback( function ( $value, $base ) {
+		$this->tp->method( 'encode_field_data' )->willReturnCallback( function ( $value ) {
 			return $value;
 		});
 

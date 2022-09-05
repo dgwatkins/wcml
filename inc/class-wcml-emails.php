@@ -15,14 +15,14 @@ class WCML_Emails {
 	private $rest_language;
 	/** @var WCML_WC_Strings */
 	private $wcmlStrings;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
-	/** @var woocommerce $woocommerce */
+	/** @var WooCommerce $woocommerce */
 	private $woocommerce;
 	/** @var wpdb */
 	private $wpdb;
 
-	public function __construct( WCML_WC_Strings $wcmlStrings, \WPML\Core\ISitePress $sitepress, woocommerce $woocommerce, wpdb $wpdb ) {
+	public function __construct( WCML_WC_Strings $wcmlStrings, \WPML\Core\ISitePress $sitepress, WooCommerce $woocommerce, wpdb $wpdb ) {
 		$this->wcmlStrings = $wcmlStrings;
 		$this->sitepress   = $sitepress;
 		$this->woocommerce = $woocommerce;
@@ -293,6 +293,7 @@ class WCML_Emails {
 
 
 	public function email_heading_completed( $order_id, $no_checking = false ) {
+		/** @var WC_Email_Customer_Completed_Order */
 		$email = $this->getEmailObject( 'WC_Email_Customer_Completed_Order', $no_checking );
 
 		if ( $email ) {
@@ -351,6 +352,7 @@ class WCML_Emails {
 			$email->subject         = $translate( 'subject' );
 			$original_enabled_state = $email->enabled;
 			$email->enabled         = false;
+			/* @phpstan-ignore-next-line */
 			$email->trigger( $order_id );
 			$email->enabled = $original_enabled_state;
 		}
@@ -365,6 +367,7 @@ class WCML_Emails {
 	}
 
 	public function email_heading_note( $args ) {
+		/** @var WC_Email_Customer_Note */
 		$email = $this->getEmailObject( 'WC_Email_Customer_Note' );
 
 		if ( $email ) {
@@ -384,6 +387,14 @@ class WCML_Emails {
 		}
 	}
 
+	/**
+	 * @param string   $value
+	 * @param WC_Email $object
+	 * @param string   $old_value
+	 * @param string   $key
+	 *
+	 * @return mixed
+	 */
 	public function filter_emails_strings( $value, $object, $old_value, $key ) {
 
 		$translated_value = false;
@@ -477,6 +488,7 @@ class WCML_Emails {
 	}
 
 	public function new_order_admin_email( $order_id ) {
+		/** @var WC_Email_New_Order */
 		$email = $this->getEmailObject( 'WC_Email_New_Order', true );
 
 		if ( $email ) {

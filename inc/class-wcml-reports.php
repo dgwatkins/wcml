@@ -65,8 +65,8 @@ class WCML_Reports{
                 $query[ 'where' ] .= " AND translations.element_type IN ('post_product','post_product_variation') ";
 
                 if(!$sparkline_query){
-                    $limit = str_replace('LIMIT ', '', trim($query[ 'limit' ]));
-                    $query[ 'limit' ] = sprintf(" LIMIT %d ", $limit * count($active_languages));
+                    $limit          = (int) trim( str_replace( 'LIMIT ', '', $query['limit'] ) );
+                    $query['limit'] = sprintf( ' LIMIT %d ', $limit * count( $active_languages ) );
                 }
 
 

@@ -9,7 +9,7 @@ use IWPML_Backend_Action;
 
 class Hooks implements IWPML_Backend_Action, IWPML_DIC_Action {
 
-	/** @var SitePress $sitepress */
+	/** @var \SitePress $sitepress */
 	private $sitepress;
 
 	/** @var wpdb $wpdb */

@@ -213,6 +213,7 @@ class WCML_Products {
 				}
 
 				if ( ! current_user_can( 'wpml_manage_woocommerce_multilingual' ) && isset( $product_translations[ $language['code'] ] ) ) {
+					/** @var stdClass */
 					$tr_status = $this->wpdb->get_row(
 						$this->wpdb->prepare(
 							"SELECT status,translator_id FROM {$this->wpdb->prefix}icl_translation_status

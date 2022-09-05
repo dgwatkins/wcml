@@ -421,8 +421,8 @@ class WCML_Currency_Switcher_Templates {
 
 
 	/**
-	 * @param $slug
-	 * @param $template
+	 * @param string $slug
+	 * @param string $template
 	 */
 	public function maybe_late_enqueue_template( $slug, $template ) {
 		if ( ! in_array( $slug, $this->enqueued_templates ) ) {

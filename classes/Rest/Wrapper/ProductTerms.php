@@ -10,7 +10,7 @@ use WCML\Rest\Exceptions\MissingLanguage;
 
 class ProductTerms extends Handler {
 
-	/** @var \Sitepress */
+	/** @var \SitePress */
 	private $sitepress;
 	/** @var \WPML_Term_Translation */
 	private $wpmlTermTranslations;

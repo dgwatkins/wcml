@@ -9,7 +9,7 @@ class Test_WCML_Install extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml $woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 
 	public function setUp(){

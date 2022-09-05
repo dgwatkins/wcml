@@ -91,12 +91,12 @@ class WCML_Multi_Currency {
 	public $woocommerce_wpml;
 
 	/**
-	 * @var woocommerce
+	 * @var WooCommerce
 	 */
 	public $woocommerce;
 
 	/**
-	 * @var WCML_Exchange_Rate_Service
+	 * @var WCML_Exchange_Rates
 	 */
 	public $exchange_rate_services;
 
@@ -248,7 +248,7 @@ class WCML_Multi_Currency {
 		add_action( 'wp_footer', [ $this, 'maybe_show_switching_currency_prompt_dialog' ] );
 		add_action( 'wp_footer', [ $this, 'maybe_reset_cart_fragments' ] );
 
-		if( WCML\Rest\Functions::isRestApiRequest() ){
+		if ( WCML\Rest\Functions::isRestApiRequest() ) {
 			add_filter( 'rest_request_before_callbacks', [ $this, 'set_request_currency' ], 10, 3 );
 		}
 	}

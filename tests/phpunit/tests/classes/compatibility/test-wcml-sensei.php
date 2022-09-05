@@ -2,7 +2,7 @@
 
 class Test_WCML_Sensei extends OTGS_TestCase {
 
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 	/** @var wpdb */
 	private $wpdb;
@@ -13,7 +13,7 @@ class Test_WCML_Sensei extends OTGS_TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
+		$this->sitepress = $this->getMockBuilder( 'SitePress' )
 		                        ->disableOriginalConstructor()
 		                        ->getMock();
 

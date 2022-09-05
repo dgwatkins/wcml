@@ -36,7 +36,7 @@ class Test_WCML_TP_Support extends OTGS_TestCase {
 			->getMock();
 
 		$base = 'base64';
-		$this->tp->method( 'encode_field_data' )->willReturnCallback( function ( $value, $base ) {
+		$this->tp->method( 'encode_field_data' )->willReturnCallback( function ( $value ) {
 			return $value;
 		});
 

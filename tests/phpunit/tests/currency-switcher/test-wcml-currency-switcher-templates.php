@@ -13,7 +13,7 @@ class Test_WCML_Currency_Switcher_Templates extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 	/** @var WPML_File */
 	private $wpml_file;

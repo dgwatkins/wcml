@@ -2,7 +2,7 @@
 
 class Test_WCML_Ajax_Setup extends OTGS_TestCase {
 
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 	/** @var WPML_WP_API $wp_api */
 	private $wp_api;

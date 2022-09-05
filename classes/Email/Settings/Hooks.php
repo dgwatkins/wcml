@@ -12,7 +12,7 @@ class Hooks implements IWPML_Backend_Action, IWPML_DIC_Action {
 
 	const KEY_PREFIX = 'wcml_lang';
 
-	/** @var SitePress */
+	/** @var \SitePress */
 	private $sitepress;
 
 	/** @var WCML_WC_Strings */

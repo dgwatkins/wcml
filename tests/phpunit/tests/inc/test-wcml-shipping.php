@@ -60,15 +60,22 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 		WP_Mock::expectFilterAdded( 'pre_update_option_woocommerce_international_delivery_settings', array( $subject, 'update_woocommerce_shipping_settings_for_class_costs' ) );
 		WP_Mock::expectFilterAdded( 'woocommerce_shipping_flat_rate_instance_option', array( $subject, 'get_original_shipping_class_rate' ), 10, 3 );
 
-		$wc = $this->getMockBuilder( 'WooCommerce' )->disableOriginalConstructor()->getMock();
-
-		$wc->shipping = $this->getMockBuilder( 'WC_Shipping' )->setMethods( array( 'get_shipping_methods' ) )->disableOriginalConstructor()->getMock();
-
+		$wc = $this->getMockBuilder( 'WooCommerce' )
+			->setMethods( array( 'shipping' ) )
+			->disableOriginalConstructor()
+			->getMock();
+		$wc->shipping = $this->getMockBuilder( 'WC_Shipping' )
+			->setMethods( array( 'get_shipping_methods' ) )
+			->disableOriginalConstructor()
+			->getMock();
 		$shipping_method = new stdClass();
 		$shipping_method->id = 1;
-		$wc->shipping->expects( $this->once() )
-		                     ->method( 'get_shipping_methods' )
-		                     ->willReturn( array( $shipping_method ) );
+		$wc->shipping
+			->expects( $this->once() )
+			->method( 'get_shipping_methods' )
+			->willReturn( array( $shipping_method ) );
+		$wc->method( 'shipping' )
+			->willReturn( $wc->shipping );
 
 		WP_Mock::userFunction( 'WC', array( 'return' => $wc ) );
 

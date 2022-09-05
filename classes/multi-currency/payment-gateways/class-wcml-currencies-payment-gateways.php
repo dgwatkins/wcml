@@ -9,7 +9,7 @@ class WCML_Currencies_Payment_Gateways {
 
 	const OPTION_KEY = 'wcml_custom_payment_gateways_for_currencies';
 
-	/** @var array */
+	/** @var WCML_Payment_Gateway[] */
 	private $payment_gateways;
 
 	/** @var array */
@@ -181,7 +181,6 @@ class WCML_Currencies_Payment_Gateways {
 
 	private function store_supported_gateways() {
 		if ( is_array( $this->supported_gateways ) ) {
-			/** @var \WCML_Payment_Gateway $supported_gateway */
 			$client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
 			foreach ( $this->supported_gateways as $id => $supported_gateway ) {
 				if ( $this->is_a_valid_gateway( $id, $supported_gateway ) ) {

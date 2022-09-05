@@ -175,8 +175,6 @@ class Hooks implements IWPML_Backend_Action, IWPML_Frontend_Action, IWPML_DIC_Ac
 	}
 
 	/**
-	 * @param string $gatewayId
-	 *
 	 * @return array
 	 */
 	private function getSettings() {

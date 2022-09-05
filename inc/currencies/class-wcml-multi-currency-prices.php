@@ -19,7 +19,7 @@ class WCML_Multi_Currency_Prices {
 	 */
 	private $multi_currency;
 	/**
-	 * @var orders_list_currency
+	 * @var string
 	 */
 	private $orders_list_currency;
 
@@ -221,7 +221,7 @@ class WCML_Multi_Currency_Prices {
 			&& $this->is_multi_currency_filters_loaded()
 		) {
 			$unlocked = false;
-			$currency  = $this->multi_currency->get_client_currency();
+			$currency = $this->multi_currency->get_client_currency();
 
 			// $get_price_by_legacy_ccr :: void -> float|void
 			$get_price_by_legacy_ccr = function() use ( $object_id, $meta_key, $single, $currency ) {
@@ -232,7 +232,7 @@ class WCML_Multi_Currency_Prices {
 
 				if (
 					$ccr_rate
-					&& in_array( $meta_key, [ '_price', '_regular_price', '_sale_price'] )
+					&& in_array( $meta_key, [ '_price', '_regular_price', '_sale_price' ] )
 				) {
 					$price_original = get_post_meta( $original_object_id, $meta_key, $single );
 					if ( is_numeric( $price_original ) ) {
@@ -249,7 +249,7 @@ class WCML_Multi_Currency_Prices {
 			// $get_price_by_auto_conversion :: void -> float|void
 			$get_price_by_auto_conversion = function() use ( $object_id, $meta_key, $single ) {
 				$price_original = get_post_meta( $object_id, $meta_key, $single );
-				if( is_numeric( $price_original ) ){
+				if ( is_numeric( $price_original ) ) {
 					return apply_filters( 'wcml_raw_price_amount', $price_original );
 				}
 			};
@@ -378,7 +378,14 @@ class WCML_Multi_Currency_Prices {
 
 	}
 
-	// convert back to default currency.
+	/**
+	 * Convert back to default currency.
+	 *
+	 * @param float        $amount
+	 * @param string|false $currency
+	 *
+	 * @return float
+	 */
 	public function unconvert_price_amount( $amount, $currency = false ) {
 
 		if ( empty( $currency ) ) {

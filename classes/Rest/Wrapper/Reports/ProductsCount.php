@@ -8,9 +8,9 @@ use WPML\FP\Obj;
 
 class ProductsCount extends Handler {
 
-	/** @var Sitepress */
+	/** @var \SitePress */
 	private $sitepress;
-	/** @var wpdb */
+	/** @var \wpdb */
 	private $wpdb;
 
 	public function __construct(
@@ -24,13 +24,13 @@ class ProductsCount extends Handler {
 	/**
 	 * Check the language information for top sellers response.
 	 *
-	 * @param WP_REST_Response $response
-	 * @param object $object
-	 * @param WP_REST_Request $request
+	 * @param \WP_REST_Response $response
+	 * @param object            $object
+	 * @param \WP_REST_Request  $request
 	 *
 	 * @throws InvalidLanguage
 	 *
-	 * @return WP_REST_Response
+	 * @return \WP_REST_Response
 	 */
 	public function prepare( $response, $object, $request ) {
 

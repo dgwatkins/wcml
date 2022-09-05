@@ -6,7 +6,7 @@
  */
 class Test_WCML_Product_Addons extends OTGS_TestCase {
 
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
@@ -18,7 +18,7 @@ class Test_WCML_Product_Addons extends OTGS_TestCase {
 
 		$this->independent_currencies = 2;
 
-		$this->sitepress = $this->getMockBuilder( 'Sitepress' )
+		$this->sitepress = $this->getMockBuilder( 'SitePress' )
 		                        ->disableOriginalConstructor()
 		                        ->setMethods( array( 'get_wp_api' ) )
 		                        ->getMock();

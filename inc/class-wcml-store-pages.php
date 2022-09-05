@@ -206,7 +206,9 @@ class WCML_Store_Pages {
 	}
 
 	/**
-	 * Filters WooCommerce query for translated shop page
+	 * Filters WooCommerce query for translated shop page.
+	 *
+	 * @param WP_Query $q
 	 */
 	public function shop_page_query( $q ) {
 		if ( ! $q->is_main_query() ) {

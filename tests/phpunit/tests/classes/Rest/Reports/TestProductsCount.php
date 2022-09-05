@@ -10,7 +10,7 @@ use WCML\Rest\Wrapper\Reports\ProductsCount;
  */
 class TestProductsCount extends \OTGS_TestCase {
 
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 	/** @var wpdb */
 	private $wpdb;
