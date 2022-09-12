@@ -17,8 +17,6 @@ class WCML_Setup {
 	private $woocommerce_wpml;
 	/** @var  SitePress */
 	private $sitepress;
-	/** @var  string */
-	private $next_step = false;
 
 	/**
 	 * WCML_Setup constructor.
@@ -168,11 +166,6 @@ class WCML_Setup {
 		wp_enqueue_script( 'wcml-setup', WCML_PLUGIN_URL . '/res/js/wcml-setup.js', [ 'jquery', OTGS_Assets_Handles::POPOVER_TOOLTIP ], WCML_VERSION, true );
 
 		$this->ui->setup_header( $this->steps, $this->step );
-
-		$steps_keys      = array_keys( $this->steps );
-		$step_index      = array_search( $this->step, $steps_keys );
-		$this->next_step = isset( $steps_keys[ $step_index + 1 ] ) ? $steps_keys[ $step_index + 1 ] : '';
-
 		$this->ui->setup_steps( $this->steps, $this->step );
 		$this->ui->setup_content( $this->steps[ $this->step ]['view'] );
 		$this->ui->setup_footer( ! empty( $this->steps[ $this->step ]['handler'] ) );
@@ -243,16 +236,7 @@ class WCML_Setup {
 	 * @return string
 	 */
 	private function step_url( $step ) {
-		$url = admin_url( 'admin.php?page=wcml-setup&step=' . $step );
-		return $url;
-	}
-
-	/**
-	 * @return string|void
-	 */
-	public function next_step_url() {
-		$url = $this->step_url( $this->next_step );
-		return $url;
+		return admin_url( 'admin.php?page=wcml-setup&step=' . $step );
 	}
 
 	/**

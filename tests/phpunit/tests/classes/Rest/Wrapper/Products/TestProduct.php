@@ -11,17 +11,17 @@ use WCML\Rest\ProductSaveActions;
 class TestProduct extends \OTGS_TestCase {
 
 
-	/** @var WPML_Query_Filter */
+	/** @var \WPML_Query_Filter */
 	private $wpml_query_filter;
-	/** @var SitePress */
+	/** @var \SitePress|\PHPUnit_Framework_MockObject_MockObject */
 	private $sitepress;
-	/** @var WPML_Post_Translation */
+	/** @var \WPML_Post_Translation|\PHPUnit_Framework_MockObject_MockObject */
 	private $wpml_post_translations;
-	/** @var WCML_Synchronize_Variations_Data */
+	/** @var \WCML_Synchronize_Variations_Data */
 	private $sync_variations_data;
-	/** @var WCML_Attributes */
+	/** @var \WCML_Attributes */
 	private $attributes;
-	/** @var ProductSaveActions */
+	/** @var ProductSaveActions|\PHPUnit_Framework_MockObject_MockObject */
 	private $product_save_actions;
 
 	public function setUp() {
@@ -30,7 +30,7 @@ class TestProduct extends \OTGS_TestCase {
 										->disableOriginalConstructor()
 										->getMock();
 
-		$this->sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$this->sitepress = $this->getMockBuilder( \SitePress::class )
 								->disableOriginalConstructor()
 								->setMethods( [
 									'set_element_language_details',

@@ -876,7 +876,7 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$_GET['post_type'] = 'wc_booking';
 
 		$subject = $this->get_subject();
-		$this->assertFalse( $subject->filter_is_translated_post_type( true ) );
+		$this->assertNull( $subject->filter_is_translated_post_type( true ) );
 		unset( $_GET['post_type'] );
 	}
 

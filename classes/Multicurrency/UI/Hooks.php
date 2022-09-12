@@ -5,7 +5,12 @@ namespace WCML\Multicurrency\UI;
 use WCML\MultiCurrency\Settings;
 use WCML\StandAlone\IStandAloneAction;
 use WCML\Utilities\Resources;
+use WCML_Multi_Currency;
+use WCML_Currencies_Payment_Gateways;
 use WPML\Collect\Support\Collection;
+use WPML\Core\ISitePress;
+use WCML\StandAlone\NullSitePress;
+use SitePress;
 use WPML\FP\Fns;
 use WPML\FP\Obj;
 use function WCML\functions\isStandAlone;
@@ -15,22 +20,28 @@ class Hooks implements \IWPML_Action, IStandAloneAction {
 
 	const HANDLE = 'wcml-multicurrency-options';
 
-	/** @var \WCML_Multi_Currency $multiCurrency */
+	/** @var WCML_Multi_Currency $multiCurrency */
 	private $multiCurrency;
 
-	/** @var \WCML_Currencies_Payment_Gateways $currenciesPaymentGateways */
+	/** @var WCML_Currencies_Payment_Gateways $currenciesPaymentGateways */
 	private $currenciesPaymentGateways;
 
-	/** @var \SitePress $sitepress */
+	/** @var SitePress|NullSitePress $sitepress */
 	private $sitepress;
 
 	/** @var array $wcmlSettings */
 	private $wcmlSettings;
 
+	/**
+	 * @param WCML_Multi_Currency              $multiCurrency
+	 * @param WCML_Currencies_Payment_Gateways $currenciesPaymentGateways
+	 * @param SitePress|NullSitePress          $sitepress
+	 * @param array                            $wcmlSettings
+	 */
 	public function __construct(
-		\WCML_Multi_Currency $multiCurrency,
-		\WCML_Currencies_Payment_Gateways $currenciesPaymentGateways,
-		\WPML\Core\ISitePress $sitepress,
+		WCML_Multi_Currency $multiCurrency,
+		WCML_Currencies_Payment_Gateways $currenciesPaymentGateways,
+		ISitePress $sitepress,
 		array $wcmlSettings
 	) {
 		$this->multiCurrency             = $multiCurrency;

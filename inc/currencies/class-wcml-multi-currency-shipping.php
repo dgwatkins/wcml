@@ -1,6 +1,7 @@
 <?php
 
 use \WCML\Multicurrency\Shipping\ShippingModeProvider as ManualCost;
+use WPML\Core\ISitePress;
 
 class WCML_Multi_Currency_Shipping {
 
@@ -8,12 +9,12 @@ class WCML_Multi_Currency_Shipping {
 
 	/** @var WCML_Multi_Currency */
 	private $multi_currency;
-	/** @var SitePress */
+	/** @var ISitePress */
 	private $sitepress;
 	/** @var wpdb */
 	private $wpdb;
 
-	public function __construct( WCML_Multi_Currency $multi_currency, \WPML\Core\ISitePress $sitepress, wpdb $wpdb ) {
+	public function __construct( WCML_Multi_Currency $multi_currency, ISitePress $sitepress, wpdb $wpdb ) {
 
 		$this->multi_currency = $multi_currency;
 		$this->sitepress      = $sitepress;

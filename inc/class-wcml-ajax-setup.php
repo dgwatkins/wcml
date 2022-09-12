@@ -1,15 +1,11 @@
 <?php
 
-
 class WCML_Ajax_Setup {
 
-	/**
-	 * @var SitePress
-	 */
+	/** @var SitePress $sitepress */
 	private $sitepress;
 
-	public function __construct( \WPML\Core\ISitePress $sitepress ) {
-
+	public function __construct( SitePress $sitepress ) {
 		$this->sitepress = $sitepress;
 	}
 

@@ -20,7 +20,7 @@ class Test_WCML_Coupons extends OTGS_TestCase {
 	 * @return \PHPUnit_Framework_MockObject_MockObject|\SitePress
 	 */
 	private function get_sitepress_mock() {
-		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		return $this->getMockBuilder( SitePress::class )
 					->disableOriginalConstructor()
 					->setMethods( array( 'get_current_language', 'get_object_id' ) )
 					->getMock();
@@ -95,11 +95,11 @@ class Test_WCML_Coupons extends OTGS_TestCase {
 
 		$coupon_mock->method( 'is_valid_for_product' )->willReturn( true );
 
-		WP_Mock::wpFunction( 'remove_filter', array(
+		WP_Mock::userFunction( 'remove_filter', array(
 			'return' => true
 		) );
 
-		WP_Mock::wpFunction( 'wc_get_product', array(
+		WP_Mock::userFunction( 'wc_get_product', array(
 			'args'   => $translated_id,
 			'return' => true
 		) );

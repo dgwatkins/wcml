@@ -1508,14 +1508,14 @@ class WCML_Bookings implements \IWPML_Action {
 	 *
 	 * @param string $type
 	 *
-	 * @return string
+	 * @return string|null
 	 */
 	public function filter_is_translated_post_type( $type ) {
 
 		$getData = wpml_collect( $_GET );
 
 		if ( 'wc_booking' === $getData->get('post_type') && 'create_booking' !== $getData->get( 'page' ) ) {
-			return false;
+			return null;
 		}
 
 		return $type;

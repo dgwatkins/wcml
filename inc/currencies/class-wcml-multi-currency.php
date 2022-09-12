@@ -83,7 +83,7 @@ class WCML_Multi_Currency {
 	/**
 	 * @var WCML_W3TC_Multi_Currency
 	 */
-	public $W3TC = false;
+	public $W3TC = null;
 
 	/**
 	 * @var woocommerce_wpml

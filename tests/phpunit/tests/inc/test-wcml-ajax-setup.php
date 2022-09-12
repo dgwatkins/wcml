@@ -2,15 +2,15 @@
 
 class Test_WCML_Ajax_Setup extends OTGS_TestCase {
 
-	/** @var SitePress */
+	/** @var SitePress|PHPUnit_Framework_MockObject_MockObject */
 	private $sitepress;
-	/** @var WPML_WP_API $wp_api */
+	/** @var WPML_WP_API|PHPUnit_Framework_MockObject_MockObject $wp_api */
 	private $wp_api;
 
 	public function setUp() {
 		parent::setUp();
 
-		$this->sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$this->sitepress = $this->getMockBuilder( SitePress::class )
 			->disableOriginalConstructor()
 			->setMethods( array( 'get_wp_api', 'get_current_language', 'get_default_language', 'switch_lang' ) )
 			->getMock();
@@ -38,7 +38,7 @@ class Test_WCML_Ajax_Setup extends OTGS_TestCase {
 	 */
 	public function add_hooks()
 	{
-		\WP_Mock::wpFunction( 'wpml_is_ajax', array(
+		\WP_Mock::userFunction( 'wpml_is_ajax', array(
 			'return' => true
 		) );
 
@@ -63,7 +63,7 @@ class Test_WCML_Ajax_Setup extends OTGS_TestCase {
 		$this->sitepress->method( 'get_current_language' )->willReturn( rand_str( 2 ) );
 		$this->sitepress->method( 'get_default_language' )->willReturn( rand_str( 2 ) );
 
-		\WP_Mock::wpFunction( 'add_query_arg', array(
+		\WP_Mock::userFunction( 'add_query_arg', array(
 			'times' => 1,
 			'return' => $expected_ajax_url
 		) );

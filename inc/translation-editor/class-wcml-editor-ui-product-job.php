@@ -888,7 +888,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 	 * @param string    $field
 	 * @param int|false $variation_id
 	 *
-	 * @return string
+	 * @return string|false
 	 */
 	public function get_product_custom_field_label( $field, $variation_id = false ) {
 		global $sitepress;

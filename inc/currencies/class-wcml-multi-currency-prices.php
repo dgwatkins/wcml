@@ -469,9 +469,9 @@ class WCML_Multi_Currency_Prices {
 	/**
 	 * The PHP 5.2 compatible equivalent to "round($amount, 0, PHP_ROUND_HALF_UP)"
 	 *
-	 * @param int $amount
+	 * @param float|int $amount
 	 *
-	 * @return int
+	 * @return float|int
 	 */
 	private function round_up( $amount ) {
 		if ( $amount - floor( $amount ) < 0.5 ) {

@@ -11,9 +11,7 @@ class TopSeller extends Handler {
 	/** @var \SitePress */
 	private $sitepress;
 
-	public function __construct(
-		\WPML\Core\ISitePress $sitepress
-	) {
+	public function __construct( \SitePress $sitepress ) {
 		$this->sitepress = $sitepress;
 	}
 

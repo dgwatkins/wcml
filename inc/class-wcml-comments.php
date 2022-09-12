@@ -397,7 +397,7 @@ class WCML_Comments {
 	 * @param int $count
 	 * @param int $rating
 	 *
-	 * @return array
+	 * @return string
 	 */
 	public function woocommerce_rating_filter_count( $label, $count, $rating ) {
 

@@ -1589,11 +1589,11 @@ namespace WPML\Element\API {
      * ]
      *```
      *
-     * @method static array getDefaultCode()
+     * @method static string getDefaultCode()
      *
      * It returns a default language code.
      *
-     * @method static array getCurrentCode()
+     * @method static string getCurrentCode()
      *
      * It returns a current language code.
      *

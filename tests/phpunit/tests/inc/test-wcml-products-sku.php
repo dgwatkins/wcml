@@ -135,23 +135,14 @@ class Test_WCML_Products_SKU extends OTGS_TestCase {
 			'insert',
 		) )->getMock();
 
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->blogid = 1;
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->prefix = 'wp_';
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->posts = 'posts';
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->postmeta = 'post_meta';
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->comments = 'comments';
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->commentmeta = 'comment_meta';
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->terms = 'terms';
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->term_taxonomy = 'term_taxonomy';
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->term_relationships = 'term_relationships';
 
 		$wpml_cache = $this->get_wpml_cache_mock();

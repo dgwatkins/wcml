@@ -6,7 +6,7 @@ interface ShippingMode {
 	/**
 	 * Returns shipping method id (shipping option key).
 	 *
-	 * @return string
+	 * @return string|null
 	 */
 	public function getMethodId();
 
@@ -17,7 +17,7 @@ interface ShippingMode {
 	 *
 	 * @param string $currencyCode
 	 *
-	 * @return string
+	 * @return string|null
 	 */
 	public function getFieldTitle( $currencyCode );
 
@@ -29,7 +29,7 @@ interface ShippingMode {
 	 *
 	 * @param string $currencyCode
 	 *
-	 * @return string
+	 * @return string|null
 	 */
 	public function getFieldDescription( $currencyCode );
 

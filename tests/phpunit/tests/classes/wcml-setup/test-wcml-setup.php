@@ -535,16 +535,6 @@ class Test_WCML_Setup extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function next_step_url(){
-		$subject = $this->get_subject();
-
-		$url = $subject->next_step_url();
-		$this->assertTrue( is_string( $url ) );
-	}
-
-	/**
-	 * @test
-	 */
 	public function handle_steps_invalid_nonce(){
 		$subject = $this->get_subject();
 

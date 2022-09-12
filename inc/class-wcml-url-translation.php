@@ -290,7 +290,7 @@ class WCML_Url_Translation {
 	}
 
 	/**
-	 * @param string $permalinks
+	 * @param mixed $permalinks
 	 *
 	 * @return mixed
 	 */

@@ -10,13 +10,13 @@ use WCML\Rest\Wrapper\Reports\TopSeller;
  */
 class TestTopSeller extends \OTGS_TestCase {
 
-	/** @var SitePress */
+	/** @var \SitePress|\PHPUnit_Framework_MockObject_MockObject */
 	private $sitepress;
 
 	public function setUp() {
 		parent::setUp();
 
-		$this->sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$this->sitepress = $this->getMockBuilder( \SitePress::class )
 		                        ->disableOriginalConstructor()
 		                        ->setMethods( [
 			                        'get_language_for_element',

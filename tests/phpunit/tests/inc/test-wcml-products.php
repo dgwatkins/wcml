@@ -1373,25 +1373,15 @@ class Test_WCML_Products extends OTGS_TestCase {
 
 		$wpdb = $this->getMockBuilder( 'wpdb' )->disableOriginalConstructor()->setMethods( $methods )->getMock();
 
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->blogid             = 1;
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->prefix             = 'wp_';
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->posts              = 'posts';
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->postmeta           = 'post_meta';
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->comments           = 'comments';
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->commentmeta        = 'comment_meta';
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->terms              = 'terms';
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->term_taxonomy      = 'term_taxonomy';
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->term_relationships = 'term_relationships';
-		/** @noinspection PhpUndefinedFieldInspection */
 		$wpdb->wc_product_meta_lookup = 'wc_product_meta_lookup';
 
 		return $wpdb;

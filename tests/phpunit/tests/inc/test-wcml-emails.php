@@ -23,7 +23,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 	public function setUp(){
 		parent::setUp();
 
-		$this->sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$this->sitepress = $this->getMockBuilder( SitePress::class )
 			->disableOriginalConstructor()
 			->setMethods( array( 'get_wp_api', 'get_current_language', 'switch_lang', 'get_locale', 'get_user_admin_language', 'get_default_language' ) )
 			->getMock();
@@ -110,7 +110,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$lang = 'pt-br';
 		$user_id = 1;
 
-		$sitepress = $this->getMockBuilder(  \WPML\Core\ISitePress::class  )
+		$sitepress = $this->getMockBuilder( SitePress::class )
 			->setMethods( array( 'switch_lang', 'get_locale', 'get_user_admin_language' ) )
 			->disableOriginalConstructor()
 			->getMock();

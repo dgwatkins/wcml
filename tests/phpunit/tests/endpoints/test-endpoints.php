@@ -166,7 +166,7 @@ class Test_Endpoints extends OTGS_TestCase {
 		$translated_endpoint_url = rand_str();
 
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )->disableOriginalConstructor()->setMethods(
+		$sitepress = $this->getMockBuilder( SitePress::class )->disableOriginalConstructor()->setMethods(
 			array(
 				'convert_url'
 			)
@@ -177,8 +177,8 @@ class Test_Endpoints extends OTGS_TestCase {
 		$subject = $this->get_subject( null, $sitepress );
 
 		WP_Mock::onFilter( 'wpml_get_endpoint_translation' )->with( $endpoint, $endpoint, null )->reply( $translated_endpoint );
-		WP_Mock::wpFunction( 'remove_filter', array( 'times' => 1, 'return' => true ) );
-		WP_Mock::wpFunction(
+		WP_Mock::userFunction( 'remove_filter', array( 'times' => 1, 'return' => true ) );
+		WP_Mock::userFunction(
 			'wc_get_endpoint_url',
 			array(
 				'args'   => array( $translated_endpoint, $value, $permalink ),
@@ -232,7 +232,7 @@ class Test_Endpoints extends OTGS_TestCase {
 	private function get_sitepress( $is_display_as_translated = false ) {
 		$that = $this;
 		/** @var SitePress|PHPUnit_Framework_MockObject_MockObject $sitepress */
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )->disableOriginalConstructor()->setMethods(
+		$sitepress = $this->getMockBuilder( SitePress::class )->disableOriginalConstructor()->setMethods(
 			array(
 				'get_current_language',
 				'get_active_languages',
@@ -260,8 +260,8 @@ class Test_Endpoints extends OTGS_TestCase {
 		$that = $this;
 
 		$woocommerce_my_account_page_id = mt_rand( 1, 100 );
-		/** @noinspection SpellCheckingInspection */
-		WP_Mock::wpFunction(
+
+		WP_Mock::userFunction(
 			'wc_get_page_id',
 			array(
 				'args'   => array( 'myaccount' ),
@@ -275,7 +275,6 @@ class Test_Endpoints extends OTGS_TestCase {
 				'return' => function () use ( $that ) {
 					$uri = $that->shop_base . $that->my_account_page_title;
 					if ( $that->current_language !== 'en' ) {
-						/** @noinspection PhpUndefinedFieldInspection */
 						$uri = $that->shop_base . $that->my_account_page_title . '-' . $that->current_language;
 					}
 
@@ -309,8 +308,6 @@ class Test_Endpoints extends OTGS_TestCase {
 	}
 
 	private function mock_generic_functions() {
-		/** @noinspection PhpUnusedParameterInspection */
-		/** @noinspection MoreThanThreeArgumentsInspection */
 		WP_Mock::userFunction(
 			'wp_cache_get',
 			array(

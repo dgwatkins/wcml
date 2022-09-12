@@ -1,5 +1,6 @@
 <?php
 
+use WPML\Core\ISitePress;
 use WPML\FP\Fns;
 use WPML\FP\Obj;
 
@@ -22,7 +23,7 @@ class WCML_Emails {
 	/** @var wpdb */
 	private $wpdb;
 
-	public function __construct( WCML_WC_Strings $wcmlStrings, \WPML\Core\ISitePress $sitepress, WooCommerce $woocommerce, wpdb $wpdb ) {
+	public function __construct( WCML_WC_Strings $wcmlStrings, SitePress $sitepress, WooCommerce $woocommerce, wpdb $wpdb ) {
 		$this->wcmlStrings = $wcmlStrings;
 		$this->sitepress   = $sitepress;
 		$this->woocommerce = $woocommerce;
@@ -309,7 +310,7 @@ class WCML_Emails {
 			$email->heading_downloadable = $translate( 'heading_downloadable' );
 			$email->subject_downloadable = $translate( 'subject_downloadable' );
 			$original_enabled_state      = $email->enabled;
-			$email->enabled              = false;
+			$email->enabled              = 'no';
 			$email->trigger( $order_id );
 			$email->enabled = $original_enabled_state;
 		}
@@ -351,7 +352,7 @@ class WCML_Emails {
 			$email->heading         = $translate( 'heading' );
 			$email->subject         = $translate( 'subject' );
 			$original_enabled_state = $email->enabled;
-			$email->enabled         = false;
+			$email->enabled         = 'no';
 			/* @phpstan-ignore-next-line */
 			$email->trigger( $order_id );
 			$email->enabled = $original_enabled_state;
@@ -381,7 +382,7 @@ class WCML_Emails {
 			$email->heading         = $translate( 'heading' );
 			$email->subject         = $translate( 'subject' );
 			$original_enabled_state = $email->enabled;
-			$email->enabled         = false;
+			$email->enabled         = 'no';
 			$email->trigger( $args );
 			$email->enabled = $original_enabled_state;
 		}

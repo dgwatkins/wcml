@@ -13,16 +13,13 @@ class ProductsCount extends Handler {
 	/** @var \wpdb */
 	private $wpdb;
 
-	public function __construct(
-		\WPML\Core\ISitePress $sitepress,
-		\wpdb $wpdb
-	) {
+	public function __construct( \SitePress $sitepress, \wpdb $wpdb ) {
 		$this->sitepress = $sitepress;
 		$this->wpdb      = $wpdb;
 	}
 
 	/**
-	 * Check the language information for top sellers response.
+	 * Check the language information for products count response.
 	 *
 	 * @param \WP_REST_Response $response
 	 * @param object            $object

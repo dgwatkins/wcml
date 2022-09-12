@@ -36,7 +36,7 @@ abstract class WCML_Templates_Factory extends WPML_Templates_Factory {
 		} catch ( RuntimeException $e ) {
 			if ( $this->is_caching_enabled() ) {
 				$this->disable_twig_cache();
-				$this->twig = null;
+				unset( $this->twig );
 				$this->maybe_init_twig();
 				$output = $this->get_view( $template, $model );
 			} else {
@@ -76,6 +76,7 @@ abstract class WCML_Templates_Factory extends WPML_Templates_Factory {
 				}
 			}
 
+			/* @phpstan-ignore-next-line */
 			$this->twig = $this->get_twig_environment( $loader, $environment_args );
 			if ( $this->custom_functions && count( $this->custom_functions ) > 0 ) {
 				foreach ( $this->custom_functions as $custom_function ) {
@@ -93,7 +94,7 @@ abstract class WCML_Templates_Factory extends WPML_Templates_Factory {
 	}
 
 	/**
-	 * @return Twig_LoaderInterface
+	 * @return Twig_Loader_Filesystem|Twig_Loader_String
 	 */
 	protected function get_twig_loader() {
 		if ( $this->is_string_template() ) {

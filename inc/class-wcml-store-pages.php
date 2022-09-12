@@ -4,13 +4,9 @@ use WPML\FP\Obj;
 
 class WCML_Store_Pages {
 
-	/**
-	 * @var woocommerce_wpml
-	 */
+	/** @var woocommerce_wpml $woocommerce_wpml */
 	private $woocommerce_wpml;
-	/**
-	 * @var SitePress
-	 */
+	/** @var SitePress $sitepress */
 	private $sitepress;
 
 	/** @var int|string $front_page_id */
@@ -20,7 +16,7 @@ class WCML_Store_Pages {
 	/** @var WP_Post|null $shop_page */
 	private $shop_page;
 
-	public function __construct( woocommerce_wpml $woocommerce_wpml, \WPML\Core\ISitePress $sitepress ) {
+	public function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress ) {
 
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->sitepress        = $sitepress;

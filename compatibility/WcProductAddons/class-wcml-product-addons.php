@@ -99,7 +99,7 @@ class WCML_Product_Addons implements \IWPML_Action {
 	 * @param string $meta_key
 	 * @param bool   $single
 	 *
-	 * @return array
+	 * @return array|null
 	 */
 	public function translate_addons_strings( $null, $object_id, $meta_key, $single ) {
 
