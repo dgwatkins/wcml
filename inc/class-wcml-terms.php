@@ -880,14 +880,12 @@ class WCML_Terms {
 		foreach ( $taxonomies_to_check as $check_taxonomy ) {
 			$terms = get_terms(
 				$check_taxonomy,
-				[
-					'hide_empty' => false,
-					'fields'     => 'ids',
-				]
+				[ 'hide_empty' => false ]
 			);
 			if ( is_array( $terms ) ) {
+				/** @var WP_Term $term */
 				foreach ( $terms as $term ) {
-					if ( $this->check_if_sync_term_translation_needed( $term['term_taxonomy_id'], $check_taxonomy ) ) {
+					if ( $this->check_if_sync_term_translation_needed( $term->term_taxonomy_id, $check_taxonomy ) ) {
 						break;
 					}
 				}
@@ -900,14 +898,12 @@ class WCML_Terms {
 
 			$terms = get_terms(
 				'pa_' . $a->attribute_name,
-				[
-					'hide_empty' => false,
-					'fields'     => 'ids',
-				]
+				[ 'hide_empty' => false ]
 			);
 			if ( is_array( $terms ) ) {
+				/** @var WP_Term $term */
 				foreach ( $terms as $term ) {
-					$flag_set = $this->check_if_sync_term_translation_needed( $term['term_taxonomy_id'], 'pa_' . $a->attribute_name );
+					$flag_set = $this->check_if_sync_term_translation_needed( $term->term_taxonomy_id, 'pa_' . $a->attribute_name );
 					if ( $flag_set ) {
 						break;
 					}
