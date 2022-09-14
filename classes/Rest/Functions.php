@@ -38,6 +38,15 @@ class Functions {
 	}
 
 	/**
+	 * Check if is request to the WooCommerce Store API.
+	 *
+	 * @return bool
+	 */
+	public static function isStoreAPIRequest() {
+		return self::checkEndpoint( 'wc/store' );
+	}
+
+	/**
 	 * @return int
 	 * Returns the version number of the API used for the current request
 	 */
