@@ -338,14 +338,12 @@ class WCML_Cart {
 				if ( ! is_null( $tr_variation_id ) ) {
 					$cart->cart_contents[ $key ]['product_id']   = intval( $tr_product_id );
 					$cart->cart_contents[ $key ]['variation_id'] = intval( $tr_variation_id );
-					$cart->cart_contents[ $key ]['data']->set_id( intval( $tr_variation_id ) );
-					$cart->cart_contents[ $key ]['data']->post = get_post( $tr_variation_id );
+					$cart->cart_contents[ $key ]['data'] = wc_get_product( $tr_variation_id );
 				}
 			} else {
 				if ( ! is_null( $tr_product_id ) ) {
 					$cart->cart_contents[ $key ]['product_id'] = intval( $tr_product_id );
-					$cart->cart_contents[ $key ]['data']->set_id( intval( $tr_product_id ) );
-					$cart->cart_contents[ $key ]['data']->post = get_post( $tr_product_id );
+					$cart->cart_contents[ $key ]['data'] = wc_get_product( $tr_product_id );
 				}
 			}
 
@@ -354,6 +352,7 @@ class WCML_Cart {
 				$new_key                                = $this->wcml_generate_cart_key( $cart->cart_contents, $key );
 				$cart->cart_contents                    = apply_filters( 'wcml_update_cart_contents_lang_switch', $cart->cart_contents, $key, $new_key, $current_language );
 				$new_cart_data[ $new_key ]              = $cart->cart_contents[ $key ];
+				$new_cart_data[ $new_key ]['key']       = $new_key;
 				$new_cart_data[ $new_key ]['data_hash'] = $this->get_data_cart_hash( $new_cart_data[ $new_key ] );
 
 				$new_cart_data = apply_filters( 'wcml_cart_contents', $new_cart_data, $cart->cart_contents, $key, $new_key );
@@ -451,7 +450,6 @@ class WCML_Cart {
 					$attr_translation = $term->slug;
 				}
 			} elseif ( $variation_id ) {
-
 				$trnsl_attr = get_post_meta( $variation_id, $attr_key, true );
 
 				if ( $trnsl_attr ) {
