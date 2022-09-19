@@ -297,8 +297,13 @@ class WCML_Cart {
 		WC()->cart->calculate_totals();
 	}
 
-	/*
-	 *  Update cart and cart session when switch language
+	/**
+	 * Update cart and cart session when switch language.
+	 *
+	 * @param WC_Cart      $cart
+	 * @param string|false $currency
+	 *
+	 * @return array
 	 */
 	public function woocommerce_calculate_totals( $cart, $currency = false ) {
 
@@ -307,14 +312,16 @@ class WCML_Cart {
 
 		foreach ( $cart->cart_contents as $key => $cart_item ) {
 			$tr_product_id = apply_filters( 'translate_object_id', $cart_item['product_id'], 'product', false, $current_language );
-			// translate custom attr labels in cart object
-			// translate custom attr value in cart object
+			// translate custom attr labels in cart object.
+			// translate custom attr value in cart object.
+			$tr_variation_id = null;
 			if ( isset( $cart_item['variation'] ) && is_array( $cart_item['variation'] ) ) {
+				$tr_variation_id = apply_filters( 'translate_object_id', $cart_item['variation_id'], 'product_variation', false, $current_language );
 				foreach ( $cart_item['variation'] as $attr_key => $attribute ) {
 					$cart->cart_contents[ $key ]['variation'][ $attr_key ] = $this->get_cart_attribute_translation(
 						$attr_key,
 						$attribute,
-						$cart_item['variation_id'],
+						$tr_variation_id,
 						$current_language,
 						$cart_item['product_id'],
 						$tr_product_id
@@ -322,28 +329,34 @@ class WCML_Cart {
 				}
 			}
 
-			if ( $currency !== false ) {
+			if ( false !== $currency ) {
 				$cart->cart_contents[ $key ]['data']->price = get_post_meta( $cart_item['product_id'], '_price', 1 );
 			}
 
 			$display_as_translated = apply_filters( 'wpml_is_display_as_translated_post_type', false, 'product' );
-			if ( $cart_item['product_id'] == $tr_product_id || ( $display_as_translated && !$tr_product_id ) ) {
+			if ( $cart_item['product_id'] == $tr_product_id || ( $display_as_translated && ! $tr_product_id ) ) {
 				$new_cart_data[ $key ]              = apply_filters( 'wcml_cart_contents_not_changed', $cart->cart_contents[ $key ], $key, $current_language );
 				$new_cart_data[ $key ]['data_hash'] = $this->get_data_cart_hash( $cart_item );
 				continue;
 			}
 
 			if ( isset( $cart->cart_contents[ $key ]['variation_id'] ) && $cart->cart_contents[ $key ]['variation_id'] ) {
-				$tr_variation_id = apply_filters( 'translate_object_id', $cart_item['variation_id'], 'product_variation', false, $current_language );
 				if ( ! is_null( $tr_variation_id ) ) {
 					$cart->cart_contents[ $key ]['product_id']   = intval( $tr_product_id );
 					$cart->cart_contents[ $key ]['variation_id'] = intval( $tr_variation_id );
-					$cart->cart_contents[ $key ]['data'] = wc_get_product( $tr_variation_id );
+					$cart->cart_contents[ $key ]['data']->set_id( intval( $tr_variation_id ) );
+					$cart->cart_contents[ $key ]['data']->set_parent_id( intval( $tr_product_id ) );
+					$cart->cart_contents[ $key ]['data']->set_name( get_the_title( $tr_variation_id ) );
+
+					$parent_data          = $cart->cart_contents[ $key ]['data']->get_parent_data();
+					$parent_data['title'] = get_the_title( $tr_product_id );
+					$cart->cart_contents[ $key ]['data']->set_parent_data( $parent_data );
 				}
 			} else {
 				if ( ! is_null( $tr_product_id ) ) {
 					$cart->cart_contents[ $key ]['product_id'] = intval( $tr_product_id );
-					$cart->cart_contents[ $key ]['data'] = wc_get_product( $tr_product_id );
+					$cart->cart_contents[ $key ]['data']->set_id( intval( $tr_product_id ) );
+					$cart->cart_contents[ $key ]['data']->set_name( get_the_title( $tr_product_id ) );
 				}
 			}
 
