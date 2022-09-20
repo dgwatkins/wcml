@@ -1,5 +1,7 @@
 <?php
 
+use WCML\Utilities\DB;
+
 class WCML_Translation_Editor {
 
 	/** @var woocommerce_wpml */
@@ -175,14 +177,11 @@ class WCML_Translation_Editor {
 		}
 		$res = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"
-			SELECT f.lang_code, f.flag, f.from_template, l.name
-			FROM {$this->wpdb->prefix}icl_flags f
-				JOIN {$this->wpdb->prefix}icl_languages_translations l ON f.lang_code = l.language_code
-			WHERE l.display_language_code = %s AND f.lang_code IN (%s)
-		",
-				$this->sitepress->get_admin_language(),
-				implode( "','", $languages )
+				"SELECT f.lang_code, f.flag, f.from_template, l.name
+					FROM {$this->wpdb->prefix}icl_flags f
+					JOIN {$this->wpdb->prefix}icl_languages_translations l ON f.lang_code = l.language_code
+					WHERE l.display_language_code = %s AND f.lang_code IN (" . DB::prepareIn( $languages ) . ')',
+				$this->sitepress->get_admin_language()
 			)
 		);
 

@@ -1,5 +1,6 @@
 <?php
 
+use WCML\Utilities\DB;
 use WPML\FP\Fns;
 use WPML\FP\Maybe;
 use WPML\FP\Obj;
@@ -122,7 +123,7 @@ class WCML_Custom_Prices {
 				$rows = $this->wpdb->get_results(
 					"SELECT post_id, meta_key, meta_vakue FROM {$this->wpdb->postmeta}
 					WHERE meta_key IN ('_price', '_regular_price', '_sale_price', '_price_$currency', '_regular_price_$currency', '_sale_price_$currency')
-						AND post_id IN (" . wpml_prepare_in( $variation_ids, '%d' ) . ')'
+						AND post_id IN (" . DB::prepareIn( $variation_ids, '%d' ) . ')'
 				);
 
 				// $extractPricesByType :: array, string => array

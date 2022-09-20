@@ -1,5 +1,6 @@
 <?php
 
+use tad\FunctionMocker\FunctionMocker;
 use WPML\FP\Fns;
 
 class Test_WCML_Comments extends OTGS_TestCase {
@@ -18,7 +19,6 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		parent::setUp();
         $_GET = [];
 		\WP_Mock::passthruFunction( '__' );
-		
 	}
 
 	private function get_woocommerce_wpml(){
@@ -298,7 +298,6 @@ class Test_WCML_Comments extends OTGS_TestCase {
 	 * @test
 	 */
 	public function comments_clauses(){
-
 		$product_id = mt_rand( 1, 100 );
 		$translated_product_id = mt_rand( 100, 200 );
 		$trid = mt_rand( 200, 300 );
@@ -308,7 +307,11 @@ class Test_WCML_Comments extends OTGS_TestCase {
 			'args'   => array( $product_id ),
 			'return' => 'product'
 		));
-		
+
+		FunctionMocker::replace( '\WCML\Utilities\DB::prepareIn', function( $args ) {
+			return implode( ',', $args );
+		} );
+
 		$translations = array();
 		$translations[] = $product_id;
 		$translations[] = $translated_product_id;

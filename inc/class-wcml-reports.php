@@ -1,5 +1,6 @@
 <?php
 
+use WCML\Utilities\DB;
 
 class WCML_Reports{
 
@@ -81,8 +82,7 @@ class WCML_Reports{
                         $product_ids[] = $translation->element_id;
                     }
 
-                    $query[ 'where' ] = str_replace("order_item_meta__product_id.meta_value = '{$product_id}'", "order_item_meta__product_id.meta_value IN(" . join(',', array_filter( $product_ids ) ) . ")", $query[ 'where' ]);
-
+                    $query[ 'where' ] = str_replace( "order_item_meta__product_id.meta_value = '{$product_id}'", "order_item_meta__product_id.meta_value IN (" . DB::prepareIn( array_filter( $product_ids ), '%d' ) . ")", $query[ 'where' ] );
                 }
 
                 $query[ 'select' ] .= ', translations.language_code AS language_code_' . esc_sql( str_replace('-', '_', $current_language)  ); // user for per-language caching.
@@ -110,9 +110,7 @@ class WCML_Reports{
                     }
                 }
 
-                $query[ 'where' ] = preg_replace("#order_item_meta__product_id_array\.meta_value IN \(([^\)]+)\)#", "order_item_meta__product_id_array.meta_value IN (" . join(',', array_filter( $all_product_ids ) ) . ")", $query[ 'where' ]);
-
-
+                $query[ 'where' ] = preg_replace( "#order_item_meta__product_id_array\.meta_value IN \(([^\)]+)\)#", "order_item_meta__product_id_array.meta_value IN (" . DB::prepareIn( array_filter( $all_product_ids ), '%d' ) . ')', $query[ 'where' ] );
             }
 
         }

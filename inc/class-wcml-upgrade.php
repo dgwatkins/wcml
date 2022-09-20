@@ -4,6 +4,7 @@ use WCML\MultiCurrency\Settings as McSettings;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\DataRegenerator;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore;
 use WCML\Attributes\LookupTableFactory;
+use WCML\Utilities\DB;
 
 class WCML_Upgrade {
 
@@ -498,7 +499,7 @@ class WCML_Upgrade {
 		$sql = "
             UPDATE {$wpdb->postmeta} 
             SET meta_value = '' 
-            WHERE meta_key IN('" . join( "','", $meta_keys_to_fix ) . "') 
+            WHERE meta_key IN (" . DB::prepareIn( $meta_keys_to_fix ) . ")
                 AND meta_value IS NULL";
 
 		$wpdb->query( $sql );
@@ -722,7 +723,7 @@ class WCML_Upgrade {
 			$wpdb->query( "DELETE FROM {$wpdb->prefix}woocommerce_bundled_itemmeta WHERE `meta_key` LIKE 'translation_item_id_of_%' AND `meta_value` IN ( SELECT bundled_item_id FROM {$wpdb->prefix}woocommerce_bundled_items WHERE `product_id` = 0 AND `bundle_id` = 0 ) " );
 			$wpdb->query( "DELETE FROM {$wpdb->prefix}woocommerce_bundled_items WHERE `product_id` = 0 AND `bundle_id` = 0 " );
 			$not_existing_items = $wpdb->get_col( "SELECT m.`meta_id` FROM {$wpdb->prefix}woocommerce_bundled_itemmeta AS m LEFT JOIN {$wpdb->prefix}woocommerce_bundled_items as i ON m.meta_value = i.bundled_item_id WHERE m.`meta_key` LIKE 'translation_item_id_of_%' AND i.`bundled_item_id` IS NULL" );
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}woocommerce_bundled_itemmeta WHERE `meta_id` IN ( %s )", join( ',', $not_existing_items ) ) );
+			$wpdb->query( "DELETE FROM {$wpdb->prefix}woocommerce_bundled_itemmeta WHERE `meta_id` IN (" . DB::prepareIn( $not_existing_items ) . ')' );
 		}
 	}
 

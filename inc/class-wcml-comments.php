@@ -1,5 +1,6 @@
 <?php
 
+use WCML\Utilities\DB;
 use WPML\FP\Fns;
 use WPML\FP\Obj;
 
@@ -180,9 +181,9 @@ class WCML_Comments {
 
 		if ( $this->is_reviews_in_all_languages( $obj->query_vars['post_id'] ) ) {
 
-			$ids = $this->get_translations_ids_list( $obj->query_vars['post_id'] );
+			$ids = $this->get_translations_ids( $obj->query_vars['post_id'] );
 
-			$clauses['where'] = str_replace( 'comment_post_ID = ' . $obj->query_vars['post_id'], 'comment_post_ID IN (' . $ids . ')', $clauses['where'] );
+			$clauses['where'] = str_replace( 'comment_post_ID = ' . $obj->query_vars['post_id'], 'comment_post_ID IN (' . DB::prepareIn( $ids, '%d' ) . ')', $clauses['where'] );
 		}
 
 		return $clauses;
@@ -193,13 +194,13 @@ class WCML_Comments {
 	 *
 	 * @param int $product_id
 	 *
-	 * @return string list of ids
+	 * @return array
 	 */
-	private function get_translations_ids_list( $product_id ) {
+	private function get_translations_ids( $product_id ) {
 
 		$translations = $this->post_translations->get_element_translations( $product_id );
 
-		return implode( ',', array_filter( $translations ) );
+		return array_filter( $translations );
 
 	}
 
