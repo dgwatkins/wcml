@@ -747,4 +747,26 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		$subject->recalculate_totals();
 	}
 
+	public function test_product_price_filter_is_skipped_when_saving_translation() {
+		$post_id = 123;
+
+		WP_Mock::userFunction( 'get_post_type', [
+			'args'   => [ $post_id ],
+			'return' => 'product',
+		] );
+
+		WP_Mock::userFunction( 'wcml_price_custom_fields', [
+			'args'   => [ $post_id ],
+			'return' => [ '_price' ],
+		] );
+
+		$multi_currency = $this->get_multi_currency_mock();
+		$multi_currency->method( 'are_filters_need_loading' )->willReturn( true );
+
+		$subject = $this->get_subject( $multi_currency );
+		$subject->enableSavingPost();
+
+		$this->assertNull( $subject->product_price_filter( null, $post_id, '_price', true ) );
+	}
+
 }

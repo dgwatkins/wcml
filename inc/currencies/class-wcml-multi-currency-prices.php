@@ -1,5 +1,6 @@
 <?php
 
+use WPML\FP\Fns;
 use WPML\FP\Logic;
 use WPML\FP\Obj;
 use WPML\FP\Str;
@@ -14,14 +15,21 @@ class WCML_Multi_Currency_Prices {
 	 * @var array
 	 */
 	private $currency_options;
+
 	/**
 	 * @var WCML_Multi_Currency
 	 */
 	private $multi_currency;
+
 	/**
 	 * @var string
 	 */
 	private $orders_list_currency;
+
+	/**
+	 * @var bool
+	 */
+	private $isSavingPost = false;
 
 	public function __construct( WCML_Multi_Currency $multi_currency, array $currency_options ) {
 		$this->multi_currency   = $multi_currency;
@@ -94,6 +102,18 @@ class WCML_Multi_Currency_Prices {
 
 		// need for display correct price format for order on orders list page.
 		add_filter( 'get_post_metadata', [ $this, 'save_order_currency_for_filter' ], 10, 4 );
+
+		// Set a flag to skip the currency filter while applying a translation.
+		add_filter( 'wpml_pre_save_pro_translation', Fns::tap( [ $this, 'enableSavingPost' ] ) );
+		add_action( 'wpml_pro_translation_completed', [ $this, 'disableSavingPost' ] );
+	}
+
+	public function enableSavingPost() {
+		$this->isSavingPost = true;
+	}
+
+	public function disableSavingPost() {
+		$this->isSavingPost = false;
 	}
 
 	public function currency_filter( $currency ) {
@@ -219,6 +239,7 @@ class WCML_Multi_Currency_Prices {
 			&& in_array( get_post_type( $object_id ), [ 'product', 'product_variation' ] )
 			&& in_array( $meta_key, wcml_price_custom_fields( $object_id ) )
 			&& $this->is_multi_currency_filters_loaded()
+			&& ! $this->isSavingPost
 		) {
 			$unlocked = false;
 			$currency = $this->multi_currency->get_client_currency();
