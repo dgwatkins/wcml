@@ -59,15 +59,9 @@ class Hooks implements \IWPML_Action, IStandAloneAction {
 			]
 		)->each(
 			function( $item ) {
-				add_filter( "woocommerce_analytics_clauses_join_{$item}_subquery", [ $this, 'addJoin' ] );
-				add_filter( "woocommerce_analytics_clauses_join_{$item}_stats_total", [ $this, 'addJoin' ] );
-				add_filter( "woocommerce_analytics_clauses_join_{$item}_stats_interval", [ $this, 'addJoin' ] );
 				add_filter( "woocommerce_analytics_clauses_where_{$item}_subquery", [ $this, 'addWhere' ] );
 				add_filter( "woocommerce_analytics_clauses_where_{$item}_stats_total", [ $this, 'addWhere' ] );
 				add_filter( "woocommerce_analytics_clauses_where_{$item}_stats_interval", [ $this, 'addWhere' ] );
-				add_filter( "woocommerce_analytics_clauses_select_{$item}_subquery", [ $this, 'addSelect' ] );
-				add_filter( "woocommerce_analytics_clauses_select_{$item}_stats_total", [ $this, 'addSelect' ] );
-				add_filter( "woocommerce_analytics_clauses_select_{$item}_stats_interval", [ $this, 'addSelect' ] );
 			}
 		);
 	}
@@ -154,30 +148,16 @@ class Hooks implements \IWPML_Action, IStandAloneAction {
 	 *
 	 * @return array
 	 */
-	public function addJoin( $clauses ) {
-		$clauses[] = "JOIN {$this->wpdb->postmeta} wcml_currency_postmeta ON {$this->wpdb->prefix}wc_order_stats.order_id = wcml_currency_postmeta.post_id";
-
-		return $clauses;
-	}
-
-	/**
-	 * @param array $clauses
-	 *
-	 * @return array
-	 */
 	public function addWhere( $clauses ) {
-		$clauses[] = $this->wpdb->prepare( "AND wcml_currency_postmeta.meta_key = '_order_currency' AND wcml_currency_postmeta.meta_value = %s", $this->getCurrency() );
-
-		return $clauses;
-	}
-
-	/**
-	 * @param array $clauses
-	 *
-	 * @return array
-	 */
-	public function addSelect( $clauses ) {
-		$clauses[] = ', wcml_currency_postmeta.meta_value AS currency';
+		$clauses[] = $this->wpdb->prepare(
+			"AND EXISTS (
+				SELECT 1 FROM {$this->wpdb->postmeta}
+				  WHERE post_id = {$this->wpdb->prefix}wc_order_stats.order_id
+				  AND meta_key = '_order_currency'
+				  AND meta_value = %s
+			)",
+			$this->getCurrency()
+		);
 
 		return $clauses;
 	}
