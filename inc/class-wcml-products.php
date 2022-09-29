@@ -715,8 +715,9 @@ class WCML_Products {
 
 				if ( ! is_admin() && ! isStandAlone() ) {
 					if ( 'product' === $post_type ) {
-						$meta_keys_to_filter[] = '_wc_review_count';
-						$meta_keys_to_filter[] = '_wc_average_rating';
+						$meta_keys_to_filter[] = WCML_Comments::WC_RATING_COUNT_KEY;
+						$meta_keys_to_filter[] = WCML_Comments::WC_REVIEW_COUNT_KEY;
+						$meta_keys_to_filter[] = WCML_Comments::WC_AVERAGE_RATING_KEY;
 					}
 
 					$is_original_product = $this->woocommerce_wpml->products->is_original_product( $product_id );

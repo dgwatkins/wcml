@@ -718,6 +718,7 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$expected_data = array(
 			'_price' => array( array( 20 ) ),
 			'_wc_review_count' => array( array( 2 ) ),
+			'_wc_rating_count' => array( array( 2 ) ),
 			'_wc_average_rating' => array( array( 5 ) ),
 			'_product_image_gallery' => array( array( '3, 4' ) ),
 			'_thumbnail_id' => array( array( 6 ) ),
@@ -741,6 +742,11 @@ class Test_WCML_Products extends OTGS_TestCase {
 		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'  => array( $product_id, '_wc_review_count', true ),
 			'return' => $expected_data['_wc_review_count'][0]
+		));
+
+		WP_Mock::userFunction( 'get_post_meta', array(
+			'args'  => array( $product_id, '_wc_rating_count', true ),
+			'return' => $expected_data['_wc_rating_count'][0]
 		));
 
 		WP_Mock::userFunction( 'get_post_meta', array(

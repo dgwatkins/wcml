@@ -189,7 +189,18 @@ class Test_WCML_Comments extends OTGS_TestCase {
 			'times'   => 1,
 			'return' => true
 		));
-		
+
+		\WP_Mock::userFunction( 'update_post_meta', array(
+			'args'   => array( $translated_product_id, '_wcml_rating_count', $expected_reviews_count ),
+			'times'   => 1,
+			'return' => true
+		));
+		\WP_Mock::userFunction( 'update_post_meta', array(
+			'args'   => array( $product_id, '_wcml_rating_count', $expected_reviews_count ),
+			'times'   => 1,
+			'return' => true
+		));
+
 		$original_ratings_sum = $original_ratings_stars*$original_ratings_count;
 		$translated_ratings_sum = $translated_ratings_stars*$translated_ratings_count;
 		$expected_average_rating = number_format( ( $original_ratings_sum + $translated_ratings_sum ) / $expected_reviews_count, 2, '.', '' );

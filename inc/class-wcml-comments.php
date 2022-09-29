@@ -7,7 +7,10 @@ use WPML\FP\Obj;
 class WCML_Comments {
 
 	const WCML_AVERAGE_RATING_KEY = '_wcml_average_rating';
+	const WCML_RATING_COUNT_KEY   = '_wcml_rating_count';
 	const WCML_REVIEW_COUNT_KEY   = '_wcml_review_count';
+	const WC_AVERAGE_RATING_KEY   = '_wc_average_rating';
+	const WC_RATING_COUNT_KEY     = '_wc_rating_count';
 	const WC_REVIEW_COUNT_KEY     = '_wc_review_count';
 
 	/** @var woocommerce_wpml */
@@ -117,6 +120,7 @@ class WCML_Comments {
 			} else {
 				update_post_meta( $translation, self::WCML_AVERAGE_RATING_KEY, null );
 				update_post_meta( $translation, self::WCML_REVIEW_COUNT_KEY, null );
+				update_post_meta( $translation, self::WCML_RATING_COUNT_KEY, null );
 			}
 		}
 
@@ -127,6 +131,7 @@ class WCML_Comments {
 			foreach ( $translations as $translation ) {
 				update_post_meta( $translation, self::WCML_AVERAGE_RATING_KEY, $average_rating );
 				update_post_meta( $translation, self::WCML_REVIEW_COUNT_KEY, $reviews_count );
+				update_post_meta( $translation, self::WCML_RATING_COUNT_KEY, $average_ratings_count );
 
 				WC_Comments::clear_transients( $translation );
 			}
@@ -149,10 +154,10 @@ class WCML_Comments {
 
 		$filtered_value = $value;
 
-		if ( in_array( $meta_key, [ '_wc_average_rating', self::WC_REVIEW_COUNT_KEY ] ) && 'product' === get_post_type( $object_id ) ) {
+		if ( in_array( $meta_key, [ self::WC_AVERAGE_RATING_KEY, self::WC_REVIEW_COUNT_KEY, self::WC_RATING_COUNT_KEY ] ) && 'product' === get_post_type( $object_id ) ) {
 
 			switch ( $meta_key ) {
-				case '_wc_average_rating':
+				case self::WC_AVERAGE_RATING_KEY:
 					$filtered_value = get_post_meta( $object_id, self::WCML_AVERAGE_RATING_KEY, $single );
 					if ( empty( $filtered_value ) ) {
 						$filtered_value = 0;
@@ -161,6 +166,11 @@ class WCML_Comments {
 				case self::WC_REVIEW_COUNT_KEY:
 					if ( $this->is_reviews_in_all_languages( $object_id ) ) {
 						$filtered_value = get_post_meta( $object_id, self::WCML_REVIEW_COUNT_KEY, $single );
+					}
+					break;
+				case self::WC_RATING_COUNT_KEY:
+					if ( $this->is_reviews_in_all_languages( $object_id ) ) {
+						$filtered_value = get_post_meta( $object_id, self::WCML_RATING_COUNT_KEY, $single );
 					}
 					break;
 			}
