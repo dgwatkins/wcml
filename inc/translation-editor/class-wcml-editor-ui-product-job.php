@@ -366,7 +366,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
 		foreach ( $custom_fields as $custom_field ) {
 
-			if ( '_variation_description' === $custom_field || $this->get_custom_field_values( $variation_id, $custom_field ) ) {
+			if ( $this->get_custom_field_values( $variation_id, $custom_field ) ) {
 
 				$custom_field_id = $custom_field . $variation_id;
 
