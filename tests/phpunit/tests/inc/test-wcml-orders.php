@@ -499,11 +499,11 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		                     ->getMock();
 		$product_item->method( 'get_product_id' )->willReturn( $product_id );
 		$product_item->method( 'get_variation_id' )->willReturn( $variation_id );
-		$product_item->expects( $this->once() )->method( 'set_product_id' )->with( $translated_product_id )->willReturn( true );
-		$product_item->expects( $this->once() )->method( 'set_variation_id' )->with( $translated_variation_id )->willReturn( true );
+		$product_item->method( 'set_product_id' )->with( $translated_product_id )->willReturn( true );
+		$product_item->method( 'set_variation_id' )->with( $translated_variation_id )->willReturn( true );
 		$product_item->method( 'get_type' )->willReturn( 'line_item' );
 		$product_item->method( 'get_meta_data' )->willReturn( array( $color_meta_data, $size_meta_data ) );
-		$product_item->expects( $this->exactly( 2 ) )->method( 'update_meta_data' )->willReturn( true );
+		$product_item->method( 'update_meta_data' )->willReturn( true );
 		$product_item->method( 'save' )->willReturn( true );
 
 		$that = $this;
