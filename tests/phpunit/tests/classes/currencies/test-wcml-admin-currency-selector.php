@@ -336,4 +336,35 @@ class Test_WCML_Admin_Currency_Selector extends OTGS_TestCase {
 
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_does_NOT_filter_dashboard_currency_symbol_in_index_with_action() {
+		global $pagenow;
+		$pagenow = 'index.php';
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::expectFilterAdded( 'woocommerce_currency_symbol', array(
+			$subject,
+			'filter_dashboard_currency_symbol'
+		) );
+
+		\WP_Mock::userFunction( 'remove_filter', [
+				'args' => [
+					'woocommerce_currency_symbol',
+					[ $subject, 'filter_dashboard_currency_symbol' ]
+				]
+			]
+		);
+
+		$currency                            = rand_str();
+		$_COOKIE['_wcml_dashboard_currency'] = rand_str();
+		$_REQUEST['action']                  = 'some_other_action';
+
+		$this->assertSame( $currency, $subject->filter_dashboard_currency_symbol( $currency ) );
+
+		unset( $_REQUEST['action'] );
+	}
+
 }
