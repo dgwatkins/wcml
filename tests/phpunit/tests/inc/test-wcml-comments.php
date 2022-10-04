@@ -186,23 +186,31 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'update_post_meta', array(
 			'args'   => array( $translated_product_id, '_wcml_review_count', $expected_reviews_count ),
-			'times'   => 1,
+			'times'  => 1,
 			'return' => true
 		));
 		\WP_Mock::userFunction( 'update_post_meta', array(
 			'args'   => array( $product_id, '_wcml_review_count', $expected_reviews_count ),
-			'times'   => 1,
+			'times'  => 1,
 			'return' => true
 		));
 
+		$expected_ratings_count = $original_ratings;
+		foreach ( $translated_ratings as $rating => $count ) {
+			if ( ! isset( $expected_ratings_count[ $rating ] ) ) {
+				$expected_ratings_count[ $rating ] = 0;
+			}
+			$expected_ratings_count[ $rating ] += $count;
+		}
+
 		\WP_Mock::userFunction( 'update_post_meta', array(
-			'args'   => array( $translated_product_id, '_wcml_rating_count', $expected_reviews_count ),
-			'times'   => 1,
+			'args'   => array( $translated_product_id, '_wcml_rating_count', $expected_ratings_count ),
+			'times'  => 1,
 			'return' => true
 		));
 		\WP_Mock::userFunction( 'update_post_meta', array(
-			'args'   => array( $product_id, '_wcml_rating_count', $expected_reviews_count ),
-			'times'   => 1,
+			'args'   => array( $product_id, '_wcml_rating_count', $expected_ratings_count ),
+			'times'  => 1,
 			'return' => true
 		));
 
@@ -212,18 +220,18 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		
 		\WP_Mock::userFunction( 'update_post_meta', array(
 			'args'   => array( $translated_product_id, '_wcml_average_rating', $expected_average_rating ),
-			'times'   => 1,
+			'times'  => 1,
 			'return' => true
 		));
 		\WP_Mock::userFunction( 'update_post_meta', array(
 			'args'   => array( $product_id, '_wcml_average_rating', $expected_average_rating ),
-			'times'   => 1,
+			'times'  => 1,
 			'return' => true
 		));
 
 		\WP_Mock::userFunction( 'sanitize_text_field', array(
 			'args'   => array( $product_id ),
-			'times'   => 1,
+			'times'  => 1,
 			'return' => $product_id
 		));
 
@@ -276,6 +284,15 @@ class Test_WCML_Comments extends OTGS_TestCase {
 			'return' => $wcml_average_rating
 		) );
 
+		\WP_Mock::userFunction( 'get_the_ID', array(
+			'return' => $object_id,
+		) );
+
+		\WP_Mock::userFunction( 'metadata_exists', array(
+			'args'   => array( 'post', $object_id, '_wcml_rating_count' ),
+			'return' => true,
+		) );
+
 		$filtered_value = $subject->filter_average_rating( $value, $object_id, $meta_key, false );
 
 		$this->assertEquals( $wcml_average_rating, $filtered_value );
@@ -294,6 +311,15 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		\WP_Mock::userFunction( 'get_post_type', array(
 			'args'   => array( $object_id ),
 			'return' => 'product'
+		) );
+
+		\WP_Mock::userFunction( 'get_the_ID', array(
+			'return' => $object_id,
+		) );
+
+		\WP_Mock::userFunction( 'metadata_exists', array(
+			'args'   => array( 'post', $object_id, '_wcml_rating_count' ),
+			'return' => true,
 		) );
 
 		$meta_key          = '_wc_rating_count';
@@ -333,6 +359,15 @@ class Test_WCML_Comments extends OTGS_TestCase {
 			'args'   => array( $object_id, '_wcml_review_count', false ),
 			'return' => $wcml_review_count
 		));
+
+		\WP_Mock::userFunction( 'get_the_ID', array(
+			'return' => $object_id,
+		) );
+
+		\WP_Mock::userFunction( 'metadata_exists', array(
+			'args'   => array( 'post', $object_id, '_wcml_rating_count' ),
+			'return' => true,
+		) );
 
 		$filtered_value = $subject->filter_average_rating( $value, $object_id, $meta_key, false );
 
@@ -741,7 +776,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'update_post_meta', array(
 			'args'   => array( $translated_product_id, '_wcml_average_rating', 0 ),
-			'times'   => 0,
+			'times'  => 0,
 			'return' => false
 		));
 
@@ -942,6 +977,15 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		\WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $object_id, '_wcml_average_rating', false ),
 			'return' => $wcml_average_rating
+		) );
+
+		\WP_Mock::userFunction( 'get_the_ID', array(
+			'return' => $object_id,
+		) );
+
+		\WP_Mock::userFunction( 'metadata_exists', array(
+			'args'   => array( 'post', $object_id, '_wcml_rating_count' ),
+			'return' => true,
 		) );
 
 		$filtered_value = $subject->filter_average_rating( $value, $object_id, $meta_key, false );

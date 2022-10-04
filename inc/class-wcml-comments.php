@@ -101,6 +101,7 @@ class WCML_Comments {
 		$average_ratings_sum   = 0;
 		$average_ratings_count = 0;
 		$reviews_count         = 0;
+		$ratings_count         = [];
 
 		foreach ( $translations as $translation ) {
 			$product = wc_get_product( $translation );
@@ -112,6 +113,11 @@ class WCML_Comments {
 				foreach ( $ratings as $rating => $count ) {
 					$average_ratings_sum   += $rating * $count;
 					$average_ratings_count += $count;
+					if ( isset( $ratings_count[ $rating ] ) ) {
+						$ratings_count[ $rating ] += $count;
+					} else {
+						$ratings_count[ $rating ] = $count;
+					}
 				}
 			}
 
@@ -131,7 +137,7 @@ class WCML_Comments {
 			foreach ( $translations as $translation ) {
 				update_post_meta( $translation, self::WCML_AVERAGE_RATING_KEY, $average_rating );
 				update_post_meta( $translation, self::WCML_REVIEW_COUNT_KEY, $reviews_count );
-				update_post_meta( $translation, self::WCML_RATING_COUNT_KEY, $average_ratings_count );
+				update_post_meta( $translation, self::WCML_RATING_COUNT_KEY, $ratings_count );
 
 				WC_Comments::clear_transients( $translation );
 			}
@@ -153,7 +159,11 @@ class WCML_Comments {
 
 		$filtered_value = $value;
 
-		if ( in_array( $meta_key, [ self::WC_AVERAGE_RATING_KEY, self::WC_REVIEW_COUNT_KEY, self::WC_RATING_COUNT_KEY ] ) && 'product' === get_post_type( $object_id ) ) {
+		if ( in_array( $meta_key, [ self::WC_AVERAGE_RATING_KEY, self::WC_REVIEW_COUNT_KEY, self::WC_RATING_COUNT_KEY ], true ) && 'product' === get_post_type( $object_id ) ) {
+
+			if ( ! metadata_exists( 'post', $object_id, self::WCML_RATING_COUNT_KEY ) ) {
+				$this->recalculate_comment_rating( $object_id );
+			}
 
 			switch ( $meta_key ) {
 				case self::WC_AVERAGE_RATING_KEY:
@@ -169,6 +179,9 @@ class WCML_Comments {
 					break;
 				case self::WC_RATING_COUNT_KEY:
 					$filtered_value = get_post_meta( $object_id, self::WCML_RATING_COUNT_KEY, $single );
+					if ( $single ) {
+						$filtered_value = [ $filtered_value ];
+					}
 					break;
 			}
 		}
