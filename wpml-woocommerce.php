@@ -68,6 +68,10 @@ if ( WPML_Core_Version_Check::is_ok( WCML_PLUGIN_PATH . '/wpml-dependencies.json
 		// Cart related language switching functions.
 		$wcml_cart_switch_lang_functions = new WCML_Cart_Switch_Lang_Functions();
 		$wcml_cart_switch_lang_functions->add_actions();
+
+		( new WPML_Action_Filter_Loader() )->load( [
+			WCML\AdminTexts\Hooks::class,
+		] );
 	}
 
 	$woocommerce_wpml = new woocommerce_wpml();
