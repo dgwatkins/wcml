@@ -8,7 +8,7 @@ class Factory implements \IWPML_Backend_Action_Loader, \IWPML_Frontend_Action_Lo
 	 * @return string
 	 */
 	public function get_load_action() {
-		return 'init';
+		return 'plugins_loaded';
 	}
 
 	/**
