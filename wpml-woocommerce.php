@@ -68,6 +68,9 @@ if ( WPML_Core_Version_Check::is_ok( WCML_PLUGIN_PATH . '/wpml-dependencies.json
 		// Cart related language switching functions.
 		$wcml_cart_switch_lang_functions = new WCML_Cart_Switch_Lang_Functions();
 		$wcml_cart_switch_lang_functions->add_actions();
+
+		// Blacklist admin-texts.
+		( new WCML\AdminTexts\Hooks() )->add_hooks();
 	}
 
 	$woocommerce_wpml = new woocommerce_wpml();
@@ -124,7 +127,6 @@ function wcml_loader() {
 		\WCML\Terms\Count\Hooks::class,
 		\WCML\Rest\Store\Hooks::class,
 		\WCML\Importer\Products::class,
-		\WCML\AdminTexts\Factory::class,
 	];
 
 	if (
