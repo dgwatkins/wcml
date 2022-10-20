@@ -30,7 +30,7 @@ class WCML_Comments {
 	 * @param WPML_Post_Translation $post_translations
 	 * @param wpdb                  $wpdb
 	 */
-	public function __construct( woocommerce_wpml $woocommerce_wpml, \WPML\Core\ISitePress $sitepress, WPML_Post_Translation $post_translations, wpdb $wpdb ) {
+	public function __construct( woocommerce_wpml $woocommerce_wpml, SitePress $sitepress, WPML_Post_Translation $post_translations, wpdb $wpdb ) {
 		$this->woocommerce_wpml  = $woocommerce_wpml;
 		$this->sitepress         = $sitepress;
 		$this->post_translations = $post_translations;
@@ -302,8 +302,9 @@ class WCML_Comments {
 		$comment_language = $this->get_comment_language_on_all_languages_reviews( $comment );
 		if ( $comment_language ) {
 			printf(
-				'<div style="float: left; padding-right: 5px;"><img src="%s" width=18" height="12"></div>',
-				$this->sitepress->get_flag_url( $comment_language )
+				'<div style="float: left; padding: 6px 5px 0 0;"><img src="%s" width="18" height="12" alt="%s"></div>',
+				esc_url( $this->sitepress->get_flag_url( $comment_language ) ),
+				esc_attr( $this->sitepress->get_display_language_name( $comment_language ) )
 			);
 		}
 	}

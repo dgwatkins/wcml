@@ -28,7 +28,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 	}
 
 	private function get_sitepress() {
-		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		return $this->getMockBuilder( SitePress::class )
 					->setMethods( [
 						'get_current_language'
 					] )
@@ -440,7 +440,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 			->getMock();
 		$woocommerce_wpml->method( 'get_setting' )->willReturn( $default_all );
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( SitePress::class )
 			->disableOriginalConstructor()
 			->setMethods( array( 'get_current_language', 'get_language_details' ) )
 			->getMock();
@@ -634,6 +634,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$comment->comment_post_ID = mt_rand( 1, 100 );
 		$language = rand_str();
 		$flag_url = rand_str();
+		$flag_name = rand_str();
 
 		$_GET['clang'] = 'all';
 
@@ -642,12 +643,13 @@ class Test_WCML_Comments extends OTGS_TestCase {
 			'return' => 'product'
 		));
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( SitePress::class )
 		                  ->disableOriginalConstructor()
-		                  ->setMethods( array( 'get_language_for_element', 'get_flag_url' ) )
+		                  ->setMethods( array( 'get_language_for_element', 'get_flag_url', 'get_display_language_name' ) )
 		                  ->getMock();
 
 		$sitepress->method( 'get_flag_url' )->with( $language )->willReturn( $flag_url );
+		$sitepress->method( 'get_display_language_name' )->with( $language )->willReturn( $flag_name );
 
 		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
 		                               ->disableOriginalConstructor()
@@ -662,7 +664,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$subject->add_comment_flag( $comment );
 		$comment_flag = ob_get_clean();
 
-		$expected_comment_flag = '<div style="float: left; padding-right: 5px;"><img src="' . $flag_url . '" width=18" height="12"></div>';
+		$expected_comment_flag = '<div style="float: left; padding: 6px 5px 0 0;"><img src="' . $flag_url . '" width="18" height="12" alt="' . $flag_name . '"></div>';
 		$this->assertEquals( $expected_comment_flag, $comment_flag );
 	}
 
@@ -863,7 +865,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		$ratingTerm->term_taxonomy_id = 10;
 
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( SitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( [ 'get_current_language' ] )
 		                  ->getMock();
