@@ -1,6 +1,6 @@
 <?php
 
-class WCML_Switch_Lang_Request {
+class WCML_Switch_Lang_Request implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC_Action {
 
 	const COOKIE_NAME = 'wp-wpml_current_language';
 
@@ -13,7 +13,12 @@ class WCML_Switch_Lang_Request {
 	/** @var SitePress */
 	private $sitepress;
 
-	public function __construct( WPML_Cookie $cookie, WPML_WP_API $wp_api, $sitepress ) {
+	/**
+	 * @param WPML_Cookie $cookie
+	 * @param WPML_WP_API $wp_api
+	 * @param SitePress   $sitepress
+	 */
+	public function __construct( WPML_Cookie $cookie, WPML_WP_API $wp_api, SitePress $sitepress ) {
 
 		if ( ! is_admin() ) {
 			$this->cookie           = $cookie;

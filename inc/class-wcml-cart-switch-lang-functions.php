@@ -2,12 +2,15 @@
 
 use function WPML\Container\make;
 
-class WCML_Cart_Switch_Lang_Functions {
+class WCML_Cart_Switch_Lang_Functions implements \IWPML_Frontend_Action, \IWPML_Backend_Action {
 
+	/** @var string $lang_from */
 	private $lang_from;
+
+	/** @var string $lang_to */
 	private $lang_to;
 
-	public function add_actions() {
+	public function add_hooks() {
 		add_action( 'wp_footer', [ $this, 'wcml_language_switch_dialog' ] );
 		add_action( 'wp_loaded', [ $this, 'wcml_language_force_switch' ] );
 		add_action( 'wcml_user_switch_language', [ $this, 'language_has_switched' ], 10, 2 );

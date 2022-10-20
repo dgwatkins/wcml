@@ -60,16 +60,9 @@ if ( WPML_Core_Version_Check::is_ok( WCML_PLUGIN_PATH . '/wpml-dependencies.json
 	global $woocommerce_wpml;
 
 	if ( defined( 'ICL_SITEPRESS_VERSION' ) && ! ICL_PLUGIN_INACTIVE && class_exists( 'SitePress' ) ) {
-		global $sitepress;
-		// Detecting language switching.
-		$wcml_switch_lang_request = new WCML_Switch_Lang_Request( new WPML_Cookie(), new WPML_WP_API(), $sitepress );
-		$wcml_switch_lang_request->add_hooks();
-
-		// Cart related language switching functions.
-		$wcml_cart_switch_lang_functions = new WCML_Cart_Switch_Lang_Functions();
-		$wcml_cart_switch_lang_functions->add_actions();
-
 		( new WPML_Action_Filter_Loader() )->load( [
+			WCML_Switch_Lang_Request::class,
+			WCML_Cart_Switch_Lang_Functions::class,
 			WCML\AdminTexts\Hooks::class,
 		] );
 	}
