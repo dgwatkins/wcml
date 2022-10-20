@@ -3,11 +3,15 @@
 namespace WCML\AdminTexts;
 
 use WPML\FP\Lst;
+use WPML\LIB\WP\Hooks as WPHooks;
+
+use function WPML\FP\spreadArgs;
 
 class Hooks {
 
 	public function add_hooks() {
-		add_filter( 'wpml_st_blacklisted_options', Lst::append( 'woocommerce_permalinks' ) );
+		WPHooks::onFilter( 'wpml_st_blacklisted_options' )
+			->then( spreadArgs( Lst::append( 'woocommerce_permalinks' ) ) );
 	}
 
 }

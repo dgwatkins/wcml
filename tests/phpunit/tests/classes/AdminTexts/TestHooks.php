@@ -3,18 +3,37 @@
 namespace WCML\AdminTexts;
 
 use WPML\FP\Lst;
+use WPML\LIB\WP\OnActionMock;
 
 class TestHooks extends \OTGS_TestCase {
+
+	use OnActionMock;
+
+	public function setUp() {
+		parent::setUp();
+
+		$this->setUpOnAction();
+	}
+
+	public function tearDown() {
+		$this->tearDownOnAction();
+
+		parent::tearDown();
+	}
 
 	/**
 	 * @test
 	 */
 	public function itAddsHooks() {
-		$subject = new Hooks();
+		$array    = [ 'existing' ];
+		$expected = Lst::append( 'woocommerce_permalinks', $array );
 
-		\WP_Mock::expectFilterAdded( 'wpml_st_blacklisted_options', Lst::append( 'woocommerce_permalinks' ) );
+		( new Hooks() )->add_hooks();
 
-		$subject->add_hooks();
+		$this->assertSame(
+			$expected,
+			$this->runFilter( 'wpml_st_blacklisted_options', $array )
+		);
 	}
 
 }
