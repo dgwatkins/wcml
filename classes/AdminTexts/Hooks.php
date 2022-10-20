@@ -7,7 +7,7 @@ use WPML\LIB\WP\Hooks as WPHooks;
 
 use function WPML\FP\spreadArgs;
 
-class Hooks {
+class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action {
 
 	public function add_hooks() {
 		WPHooks::onFilter( 'wpml_st_blacklisted_options' )

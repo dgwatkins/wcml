@@ -70,7 +70,9 @@ if ( WPML_Core_Version_Check::is_ok( WCML_PLUGIN_PATH . '/wpml-dependencies.json
 		$wcml_cart_switch_lang_functions->add_actions();
 
 		// Blacklist admin-texts.
-		( new WCML\AdminTexts\Hooks() )->add_hooks();
+		( new WPML_Action_Filter_Loader() )->load( [
+			WCML\AdminTexts\Hooks::class,
+		] );
 	}
 
 	$woocommerce_wpml = new woocommerce_wpml();
