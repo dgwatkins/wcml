@@ -49,7 +49,6 @@ require WCML_PLUGIN_PATH . '/inc/missing-php-functions.php';
 require WCML_PLUGIN_PATH . '/inc/installer-loader.php';
 require WCML_PLUGIN_PATH . '/inc/functions.php';
 require WCML_PLUGIN_PATH . '/inc/wcml-core-functions.php';
-require WCML_PLUGIN_PATH . '/inc/wcml-switch-lang-request.php';
 
 require WCML_PLUGIN_PATH . '/vendor/autoload.php';
 
