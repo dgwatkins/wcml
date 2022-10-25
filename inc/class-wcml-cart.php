@@ -629,23 +629,12 @@ class WCML_Cart {
 	 *
 	 * @return float
 	 */
-	public function get_cart_total_in_currency( $currency ) {
+	public function convert_cart_total_to_currency( $currency ) {
+		$total          = WC()->cart->get_total( 'raw' );
+		$total_default  = $this->woocommerce_wpml->multi_currency->prices->unconvert_price_amount( $total );
+		$total_currency = $this->woocommerce_wpml->multi_currency->prices->convert_price_amount( $total_default, $currency );
 
-		$client_currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
-		$cart_total      = 0;
-		$cart_items      = WC()->cart->get_cart_contents();
-
-		// Items total.
-		foreach ( $cart_items as $item ) {
-			$item_product_id = $item['variation_id'] ?: $item['product_id'];
-			$cart_total     += $this->woocommerce_wpml->multi_currency->prices->get_product_price_in_currency( $item_product_id, $currency ) * $item['quantity'];
-		}
-
-		$cart_total += $this->get_cart_shipping_in_currency( $currency );
-
-		$cart_total = $this->woocommerce_wpml->multi_currency->prices->apply_rounding_rules( $cart_total, $currency );
-
-		return $cart_total;
+		return $total_currency;
 	}
 
 	/**
@@ -653,11 +642,11 @@ class WCML_Cart {
 	 *
 	 * @return string
 	 */
-	public function get_formatted_cart_total_in_currency( $currency ) {
-		return $this->woocommerce_wpml->multi_currency->prices->format_price_in_currency( $this->get_cart_total_in_currency( $currency ), $currency );
+	public function format_converted_cart_total_in_currency( $currency ) {
+		return $this->woocommerce_wpml->multi_currency->prices->format_price_in_currency( $this->convert_cart_total_to_currency( $currency ), $currency );
 	}
 
-	public function get_cart_shipping_in_currency( $currency ) {
+	public function convert_cart_shipping_to_currency( $currency ) {
 		$shipping_amount_in_default_currency = $this->woocommerce_wpml->multi_currency->prices->unconvert_price_amount( WC()->cart->get_shipping_total() );
 
 		return $this->woocommerce_wpml->multi_currency->prices->convert_price_amount( $shipping_amount_in_default_currency, $currency );

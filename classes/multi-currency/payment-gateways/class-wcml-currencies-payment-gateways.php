@@ -153,12 +153,12 @@ class WCML_Currencies_Payment_Gateways {
 				$client_currency !== $gateway_setting['currency'] &&
 				in_array( $gateway_setting['currency'], $active_currencies, true )
 			) {
-				$cart_total = $this->woocommerce_wpml->cart->get_formatted_cart_total_in_currency( $gateway_setting['currency'] );
+				$cart_total = $this->woocommerce_wpml->cart->format_converted_cart_total_in_currency( $gateway_setting['currency'] );
 
 				$description .= '<p>';
 				$description .= sprintf(
 					// translators: 1: Currency, 2: Cart total.
-					__( 'Please note that the payment will be made in %1$s. %2$s will be debited from your account.', 'woocommerce-multilingual' ),
+					__( 'Please note that the payment will be made in %1$s. Your total will be approximately %2$s, depending on the current exchange rate.', 'woocommerce-multilingual' ),
 					$gateway_setting['currency'],
 					$cart_total
 				);

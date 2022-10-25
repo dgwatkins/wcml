@@ -264,7 +264,7 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 		$gateway->settings = [ $client_currency => [ 'currency' => 'EUR', 'value' => 'test' ] ];
 		$currency_codes    = [ 'USD', 'EUR' ];
 
-		$expected_user_notice_text = '<p>Please note that the payment will be made in ' . $gateway->settings[ $client_currency ]['currency'] . '. ' . $cart_total . ' will be debited from your account.</p>';
+		$expected_user_notice_text = '<p>Please note that the payment will be made in ' . $gateway->settings[ $client_currency ]['currency'] . '. Your total will be approximately ' . $cart_total . ', depending on the current exchange rate.</p>';
 
 		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
 		                                               ->disableOriginalConstructor()
@@ -276,10 +276,10 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 
 		$this->woocommerce_wpml->cart = $this->getMockBuilder( 'WCML_Cart' )
 		                                     ->disableOriginalConstructor()
-		                                     ->setMethods( [ 'get_formatted_cart_total_in_currency' ] )
+		                                     ->setMethods( [ 'format_converted_cart_total_in_currency' ] )
 		                                     ->getMock();
 
-		$this->woocommerce_wpml->cart->method( 'get_formatted_cart_total_in_currency' )->willReturn( $cart_total );
+		$this->woocommerce_wpml->cart->method( 'format_converted_cart_total_in_currency' )->willReturn( $cart_total );
 
 
 		\WP_Mock::userFunction( 'get_option', [

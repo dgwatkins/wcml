@@ -164,11 +164,11 @@ class Test_WCML_Payment_Gateway_PayPal extends OTGS_TestCase {
 		$this->woocommerce_wpml->cart = $this->getMockBuilder( 'WCML_Cart' )
 		                                     ->disableOriginalConstructor()
 		                                     ->setMethods( array(
-			                                     'get_cart_shipping_in_currency'
+			                                     'convert_cart_shipping_to_currency'
 		                                     ) )
 		                                     ->getMock();
 
-		$this->woocommerce_wpml->cart->method( 'get_cart_shipping_in_currency' )->with( $gateway->settings[ $client_currency ]['currency'] )->willReturn( $converted_shipping_total );
+		$this->woocommerce_wpml->cart->method( 'convert_cart_shipping_to_currency' )->with( $gateway->settings[ $client_currency ]['currency'] )->willReturn( $converted_shipping_total );
 
 		$subject = $this->get_subject( $gateway );
 
