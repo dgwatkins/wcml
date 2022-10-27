@@ -50,7 +50,7 @@ class WCML_Comments {
 		add_filter( 'comments_clauses', [ $this, 'comments_clauses' ], 10, 2 );
 		add_action( 'comment_form_before', [ $this, 'comments_link' ] );
 
-		add_filter( 'wpml_is_comment_query_filtered', [ $this, 'is_comment_query_filtered' ], 10, 2 );
+		add_filter( 'wpml_is_comment_query_filtered', [ $this, 'is_comment_query_filtered' ], 10, 3 );
 		add_action( 'trashed_comment', [ $this, 'recalculate_average_rating_on_comment_hook' ], 10, 2 );
 		add_action( 'deleted_comment', [ $this, 'recalculate_average_rating_on_comment_hook' ], 10, 2 );
 		add_action( 'untrashed_comment', [ $this, 'recalculate_average_rating_on_comment_hook' ], 10, 2 );
@@ -200,7 +200,6 @@ class WCML_Comments {
 	public function comments_clauses( $clauses, $obj ) {
 
 		if ( $this->is_reviews_in_all_languages( $obj->query_vars['post_id'] ) ) {
-
 			$ids = $this->get_translations_ids( $obj->query_vars['post_id'] );
 
 			$clauses['where'] = str_replace( 'comment_post_ID = ' . $obj->query_vars['post_id'], 'comment_post_ID IN (' . DB::prepareIn( $ids, '%d' ) . ')', $clauses['where'] );
@@ -280,13 +279,14 @@ class WCML_Comments {
 	/**
 	 * Checks if comments needs filtering by language.
 	 *
-	 * @param bool $filtered
-	 * @param int  $post_id
+	 * @param bool             $filtered
+	 * @param int              $post_id
+	 * @param WP_Comment_Query $comment_query
 	 * @return bool
 	 */
-	public function is_comment_query_filtered( $filtered, $post_id ) {
+	public function is_comment_query_filtered( $filtered, $post_id, $comment_query = null ) {
 
-		if ( $this->is_reviews_in_all_languages( $post_id ) ) {
+		if ( $this->is_reviews_in_all_languages( $post_id, $comment_query ) ) {
 			$filtered = false;
 		}
 
@@ -350,16 +350,23 @@ class WCML_Comments {
 	/**
 	 * Checks if reviews in all languages should be displayed.
 	 *
-	 * @param int $product_id
+	 * @param int              $product_id
+	 * @param WP_Comment_Query $comment_query
+	 *
 	 * @return bool
 	 */
-	public function is_reviews_in_all_languages( $product_id ) {
+	public function is_reviews_in_all_languages( $product_id, $comment_query = null ) {
 		$reviewsLang = Obj::prop( 'clang', $_GET );
+		$post_type   = Obj::path( [ 'query_vars', 'post_type' ], $comment_query );
+
+		if ( ! $post_type && $product_id ) {
+			$post_type = get_post_type( $product_id );
+		}
 
 		return (
 				'all' === $reviewsLang
 				|| ( ! $reviewsLang && $this->is_reviews_in_all_languages_by_default_selected() )
-			) && 'product' === get_post_type( $product_id );
+			) && 'product' === $post_type;
 	}
 
 	/**

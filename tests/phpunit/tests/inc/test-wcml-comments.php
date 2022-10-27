@@ -86,7 +86,7 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'filter_average_rating' ), 10, 4 );
 		\WP_Mock::expectFilterAdded( 'comments_clauses', array( $subject, 'comments_clauses' ), 10, 2 );
 		\WP_Mock::expectActionAdded( 'comment_form_before', array( $subject, 'comments_link' ) );
-		\WP_Mock::expectFilterAdded( 'wpml_is_comment_query_filtered', array( $subject, 'is_comment_query_filtered' ), 10, 2 );
+		\WP_Mock::expectFilterAdded( 'wpml_is_comment_query_filtered', array( $subject, 'is_comment_query_filtered' ), 10, 3 );
 		\WP_Mock::expectActionAdded( 'woocommerce_product_set_visibility', Fns::withoutRecursion( Fns::noop(), [ $subject, 'recalculate_comment_rating' ] ), 9 );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_top_rated_products_widget_args', array( $subject, 'top_rated_products_widget_args' ) );
@@ -623,6 +623,21 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		));
 
 		$this->assertTrue( $subject->is_comment_query_filtered( true, $product_id ) );
+
+		$product_id                = 0;
+		$comment_query             = $this->getMockBuilder( 'WP_Comment_Query' )->disableOriginalConstructor()->getMock();
+		$comment_query->query_vars = [ 'post_type' => 'product' ];
+
+		\WP_Mock::userFunction( 'get_post_type', array(
+			'args'   => array( $product_id ),
+			'return' => false,
+		));
+
+		$this->assertFalse( $subject->is_comment_query_filtered( true, $product_id, $comment_query ) );
+
+		$comment_query->query_vars = [ 'post_type' => 'post' ];
+
+		$this->assertTrue( $subject->is_comment_query_filtered( true, $product_id, $comment_query ) );
 	}
 
 	/**
