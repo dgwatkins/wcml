@@ -2,6 +2,7 @@
 
 use tad\FunctionMocker\FunctionMocker;
 use WPML\FP\Fns;
+use WPML\Convert\Ids;
 
 class Test_WCML_Comments extends OTGS_TestCase {
 
@@ -1102,6 +1103,52 @@ class Test_WCML_Comments extends OTGS_TestCase {
 		] );
 
 		$subject->recalculate_comment_rating( $product_id );
+	}
+
+	/**
+	 * @test
+	 */
+	public function test_translating_post_ids_in_reviews() {
+		$original_product_id   = 123;
+		$translated_product_id = 456;
+
+		$comment = $this->getMockBuilder( WP_Comment::class )
+			->disableOriginalConstructor()
+			->getMock();
+		$comment->comment_post_ID = $original_product_id;
+		$comment->comment_type    = 'review';
+
+		$comments = [ $comment ];
+
+		FunctionMocker::replace( Ids::class . '::convert', $translated_product_id );
+
+		$subject = $this->get_subject();
+		$results = $subject->translate_product_ids( $comments );
+
+		$this->assertEquals( $translated_product_id, $results[0]->comment_post_ID );
+	}
+
+	/**
+	 * @test
+	 */
+	public function test_does_not_translate_post_ids_in_comments() {
+		$original_product_id   = 123;
+		$translated_product_id = 456;
+
+		$comment = $this->getMockBuilder( WP_Comment::class )
+			->disableOriginalConstructor()
+			->getMock();
+		$comment->comment_post_ID = $original_product_id;
+		$comment->comment_type    = 'comment';
+
+		$comments = [ $comment ];
+
+		FunctionMocker::replace( Ids::class . '::convert', $translated_product_id );
+
+		$subject = $this->get_subject();
+		$results = $subject->translate_product_ids( $comments );
+
+		$this->assertEquals( $original_product_id, $results[0]->comment_post_ID );
 	}
 
 }

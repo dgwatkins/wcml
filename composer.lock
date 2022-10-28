@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a9fac6bcb063ff9d5076322bb9a08f0b",
+    "content-hash": "8ff99f4f28693f12e4b638746be4dd60",
     "packages": [
         {
             "name": "composer/installers",
@@ -5298,11 +5298,14 @@
         },
         {
             "name": "wpml/core-api",
-            "version": "0.1.7",
+            "version": "0.1.8",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/wpml-packages/core-api.git",
-                "reference": "ac18bac28b770ca86c8d098511e84b2833db0ae2"
+                "reference": "4b5a7f175d346a4b65f267b6db797db70eef3ca0"
+            },
+            "require": {
+                "psr/log": "^1.1"
             },
             "require-dev": {
                 "10up/wp_mock": "0.2.0",
@@ -5331,7 +5334,7 @@
                 }
             ],
             "description": "Class and utilities to interface with WPML core functionality",
-            "time": "2022-02-16T22:23:03+00:00"
+            "time": "2022-08-08T10:40:30+00:00"
         },
         {
             "name": "wpml/fp",

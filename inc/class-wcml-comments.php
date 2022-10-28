@@ -3,6 +3,7 @@
 use WCML\Utilities\DB;
 use WPML\FP\Fns;
 use WPML\FP\Obj;
+use WPML\Convert\Ids;
 
 class WCML_Comments {
 
@@ -70,6 +71,8 @@ class WCML_Comments {
 
 		add_filter( 'woocommerce_top_rated_products_widget_args', [ $this, 'top_rated_products_widget_args' ] );
 		add_filter( 'woocommerce_rating_filter_count', [ $this, 'woocommerce_rating_filter_count' ], 10, 3 );
+
+		add_filter( 'the_comments', [ $this, 'translate_product_ids' ] );
 	}
 
 	/**
@@ -479,6 +482,29 @@ class WCML_Comments {
 
 	public function no_index_all_reviews_page() {
 			echo '<meta name="robots" content="noindex">';
+	}
+
+	/**
+	 * @param WP_Comment[] $comments
+	 *
+	 * @return WP_Comment[]
+	 */
+	public function translate_product_ids( $comments ) {
+		$convertProductId = function( $comment ) {
+			if ( 'review' === Obj::prop( 'comment_type', $comment ) ) {
+				$comment = Obj::assoc(
+					'comment_post_ID',
+					Ids::convert( Obj::prop( 'comment_post_ID', $comment ), 'product', true ),
+					$comment
+				);
+			}
+
+			return $comment;
+		};
+
+		return wpml_collect( $comments )
+			->map( $convertProductId )
+			->toArray();
 	}
 
 	/**
