@@ -94,6 +94,7 @@ function wcml_loader() {
 		\WCML\Block\Convert\Hooks::class,
 		\WCML\MO\Hooks::class,
 		\WCML\Multicurrency\Shipping\ShippingHooksFactory::class,
+		\WCML\Reviews\Backend\Hooks::class,
 		\WCML\Reviews\Translations\Factory::class,
 		\WCML\Tax\Strings\Hooks::class,
 		\WCML\AdminDashboard\Hooks::class,
