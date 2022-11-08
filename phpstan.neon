@@ -41,6 +41,7 @@ parameters:
     - WC_Shipping_Rate
     - WC_Session
     - WC_Email_Customer_Completed_Order
+    - WC_Payment_Gateway
 
   checkFunctionNameCase: true
   inferPrivatePropertyTypeFromConstructor: true

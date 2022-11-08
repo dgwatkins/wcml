@@ -21,6 +21,13 @@ class Test_WCML_Payment_Gateway_Bacs extends OTGS_TestCase {
 
 			$gateway->id = 'id';
 			$gateway->title = 'title';
+			$gateway->account_details = [];
+
+			WP_Mock::userFunction( 'wp_list_pluck', array(
+				'return' => function( $list, $key ) {
+					return array_column( $list, $key );
+				}
+			) );
 
 			WP_Mock::userFunction( 'get_option', array(
 				'args' => array( WCML_Payment_Gateway::OPTION_KEY.$gateway->id, array() ),
@@ -261,6 +268,7 @@ class Test_WCML_Payment_Gateway_Bacs extends OTGS_TestCase {
 				'title'       => 'title',
 				'isSupported' => true,
 				'settings'    => [],
+				'accounts'    => [],
 				'tooltip'     => 'Set the currency in which your customer will see the final price when they checkout. Choose which accounts they will see in their payment message.',
 				'strings'     => [
 					'labelCurrency'    => 'Currency',
