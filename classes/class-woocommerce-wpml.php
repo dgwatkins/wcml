@@ -186,6 +186,9 @@ class woocommerce_wpml {
 
 		$this->cart = new WCML_Cart( $this, $sitepress, $woocommerce );
 
+		$this->compatibility = new WCML_Compatibility();
+		$this->compatibility->init_before_multicurrency();
+
 		$action = filter_input( INPUT_POST, 'action' );
 		if ( WCML_MULTI_CURRENCIES_INDEPENDENT === (int) $this->settings['enable_multi_currency']
 			|| AdminPages::isMultiCurrency()
@@ -198,15 +201,12 @@ class woocommerce_wpml {
 			add_shortcode( 'currency_switcher', '__return_empty_string' );
 		}
 
-		if ( $this->dependencies_are_ok ) {
-			$this->compatibility = new WCML_Compatibility();
-			$this->compatibility->init();
+		$this->compatibility->init();
 
-			if ( isStandAlone() ) {
-				return $this->init_standalone( $sitepress, $wpdb );
-			} else {
-				return $this->init_full( $sitepress, $wpdb, $woocommerce, $wpml_url_converter, $wpml_post_translations, $wpml_term_translations );
-			}
+		if ( isStandAlone() ) {
+			return $this->init_standalone( $sitepress, $wpdb );
+		} else {
+			return $this->init_full( $sitepress, $wpdb, $woocommerce, $wpml_url_converter, $wpml_post_translations, $wpml_term_translations );
 		}
 	}
 

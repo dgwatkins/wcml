@@ -80,9 +80,11 @@ class TestCachePlugins extends \OTGS_TestCase {
 	public function itShouldAddHooksIfHasActiveCachePlugin( $keyword ) {
 		$plugins = [
 			'foo/bar' => [
+				'Name'        => 'Foo bar',
 				'Description' => 'The best foo/bar plugin',
 			],
 			'super-rocket/plugin.php' => [
+				'Name'        => 'Super Rocket',
 				'Description' => "The best $keyword plugin in the world",
 			],
 		];

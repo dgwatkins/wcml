@@ -251,7 +251,7 @@ class WCML_TP_Support {
 			return Obj::propOr( $lang, 'language_code', $job );
 		};
 
-		// $saveSlug :: ( string, array ) -> void
+		// $saveSlug :: void -> void
 		$saveSlug = function() use ( $post_id, $data ) {
 			foreach ( $data as $value ) {
 				if ( $value['finished'] && isset( $value['field_type'] ) && 'slug' === $value['field_type'] ) {
