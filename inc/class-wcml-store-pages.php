@@ -1,9 +1,12 @@
 <?php
 
 use WPML\Convert\Ids;
+use WPML\FP\Logic;
+use WPML\FP\Maybe;
 use WPML\FP\Obj;
 use WPML\FP\Fns;
 
+use function WPML\FP\invoke;
 use function WPML\FP\partialRight;
 
 class WCML_Store_Pages {
@@ -177,34 +180,41 @@ class WCML_Store_Pages {
 	}
 
 	public function add_filter_to_get_shop_translated_page_id() {
-
-		// $convertPageId :: int -> int
-		$convertPageId = partialRight( [ Ids::class, 'convert' ], 'page', true );
-
-		// $addFilter :: string -> void
-		$addFilter = function( $slug ) use ( $convertPageId ) {
-			add_filter( 'woocommerce_get_' . $slug . '_page_id', $convertPageId );
-		};
-
-		// $getOption :: string -> int
-		$getOption = function( $slug ) {
-			return get_option( 'woocommerce_' . $slug . '_page_id' );
-		};
-
-		$ids = wpml_collect( [
+		$slugs = [
 			'shop',
 			'cart',
 			'checkout',
 			'myaccount',
 			'terms',
 			'refund_returns',
-		] )->map( Fns::tap( $addFilter ) )
-			->map( $getOption )
-			->filter()
-			->toArray();
+		];
 
-		$post_translations = $this->sitepress->post_translations();
-		$post_translations->prefetch_ids( $ids );
+		$prefetchTranslationIds = function() use ( $slugs ) {
+			// $getOption :: string -> int|false
+			$getOption = function( $slug ) {
+				return get_option( 'woocommerce_' . $slug . '_page_id' );
+			};
+
+			Maybe::of( $slugs )
+			     ->map( Fns::map( $getOption ) )
+			     ->map( 'array_filter' )
+			     ->map( [ $this->sitepress->post_translations(), 'prefetch_ids' ] );
+		};
+
+		$addFilters = function() use ( $slugs ) {
+			// $convertPageId :: int -> int
+			$convertPageId = partialRight( [ Ids::class, 'convert' ], 'page', true );
+
+			// $addFilter :: string -> void
+			$addFilter = function( $slug ) use ( $convertPageId ) {
+				add_filter( 'woocommerce_get_' . $slug . '_page_id', $convertPageId );
+			};
+
+			wpml_collect( $slugs )->map( $addFilter );
+		};
+
+		$prefetchTranslationIds();
+		$addFilters();
 	}
 
 	/**
