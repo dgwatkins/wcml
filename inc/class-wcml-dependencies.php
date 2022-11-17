@@ -6,6 +6,7 @@ class WCML_Dependencies {
 	const MIN_WPML_ST     = '3.0.5';
 	const MIN_WOOCOMMERCE = '3.9.0';
 
+	/** @var string $err_message */
 	private $err_message = '';
 
 	/** @var bool|null $allok */
@@ -39,7 +40,9 @@ class WCML_Dependencies {
 			$this->allok = true;
 
 			$missing = [];
-			$core_ok = $st_ok = $wc_ok = true;
+			$core_ok = true;
+			$st_ok   = true;
+			$wc_ok   = true;
 
 			if ( ! defined( 'ICL_SITEPRESS_VERSION' ) || ICL_PLUGIN_INACTIVE || is_null( $sitepress ) || ! class_exists( 'SitePress' ) ) {
 				$missing['WPML'] = $this->tracking_link->getWpmlHome();
@@ -66,7 +69,7 @@ class WCML_Dependencies {
 			}
 
 			if ( ! defined( 'WPML_ST_VERSION' ) ) {
-				$missing['WPML String Translation'] = $this->tracking_link->getWpmlHome();
+				$missing['WPML String Translation'] = $this->tracking_link->getWpmlStFaq();
 				$st_ok                              = false;
 			} elseif ( version_compare( WPML_ST_VERSION, self::MIN_WPML_ST, '<' ) ) {
 				add_action( 'admin_notices', [ $this, '_old_wpml_st_warning' ] );
@@ -105,7 +108,7 @@ class WCML_Dependencies {
 			<p>
 			<?php
 			printf(
-			    /* translators: %1$s is a URL and %2$s is a version number */
+				/* translators: %1$s is a URL and %2$s is a version number */
 				__(
 					'WooCommerce Multilingual & Multicurrency is enabled but not effective. It is not compatible with  <a href="%1$s">WPML</a> versions prior %2$s.',
 					'woocommerce-multilingual'
@@ -133,7 +136,7 @@ class WCML_Dependencies {
 			<p>
 			<?php
 			printf(
-			    /* translators: %1$s is a URL and %2$s is a version number */
+				/* translators: %1$s is a URL and %2$s is a version number */
 				__(
 					'WooCommerce Multilingual & Multicurrency is enabled but not effective. It is not compatible with  <a href="%1$s">Woocommerce</a> versions prior %2$s.',
 					'woocommerce-multilingual'
@@ -153,7 +156,7 @@ class WCML_Dependencies {
 			<p>
 			<?php
 			printf(
-			    /* translators: %1$s is a URL and %2$s is a version number */
+				/* translators: %1$s is a URL and %2$s is a version number */
 				__(
 					'WooCommerce Multilingual & Multicurrency is enabled but not effective. It is not compatible with  <a href="%1$s">WPML String Translation</a> versions prior %2$s.',
 					'woocommerce-multilingual'
@@ -234,8 +237,8 @@ class WCML_Dependencies {
 			<div class="message error">
 				<p><?php
 					/* translators: %s is a list of plugin names  */
-                    printf( __( 'WooCommerce Multilingual & Multicurrency is enabled but not effective. It requires %s in order to work.', 'woocommerce-multilingual' ), $missing );
-                    ?></p>
+					printf( __( 'WooCommerce Multilingual & Multicurrency is enabled but not effective. It requires %s in order to work.', 'woocommerce-multilingual' ), $missing );
+				?></p>
 			</div>
 			<?php
 		};
@@ -332,7 +335,7 @@ class WCML_Dependencies {
 
 				// custom-types
 				if ( isset( $config['wpml-config']['custom-types'] ) ) {
-				    $cts = [];
+					$cts = [];
 
 					if ( isset( $config['wpml-config']['custom-types']['custom-type']['value'] ) ) { // single
 						$cts[] = $config['wpml-config']['custom-types']['custom-type'];
@@ -364,7 +367,7 @@ class WCML_Dependencies {
 
 				// taxonomies
 				if ( isset( $config['wpml-config']['taxonomies'] ) ) {
-				    $txs = [];
+					$txs = [];
 
 					if ( isset( $config['wpml-config']['taxonomies']['taxonomy']['value'] ) ) { // single
 						$txs[] = $config['wpml-config']['taxonomies']['taxonomy'];
