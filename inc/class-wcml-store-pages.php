@@ -1,6 +1,10 @@
 <?php
 
+use WPML\Convert\Ids;
 use WPML\FP\Obj;
+use WPML\FP\Fns;
+
+use function WPML\FP\partialRight;
 
 class WCML_Store_Pages {
 
@@ -174,31 +178,33 @@ class WCML_Store_Pages {
 
 	public function add_filter_to_get_shop_translated_page_id() {
 
-		$woo_pages = [
-			'shop_page_id',
-			'cart_page_id',
-			'checkout_page_id',
-			'myaccount_page_id',
-			'lost_password_page_id',
-			'edit_address_page_id',
-			'view_order_page_id',
-			'change_password_page_id',
-			'logout_page_id',
-			'pay_page_id',
-			'thanks_page_id',
-			'terms_page_id',
-			'review_order_page_id',
-		];
+		// $convertPageId :: int -> int
+		$convertPageId = partialRight( [ Ids::class, 'convert' ], 'page', true );
 
-		foreach ( $woo_pages as $woo_page ) {
-			add_filter( 'woocommerce_get_' . $woo_page, [ $this, 'translate_pages_in_settings' ] );
-			// I think following filter not needed because "option_woocommerce_..." not used in Woo, but I need ask David to confirm this
-			add_filter( 'option_woocommerce_' . $woo_page, [ $this, 'translate_pages_in_settings' ] );
-		}
-	}
+		// $addFilter :: string -> void
+		$addFilter = function( $slug ) use ( $convertPageId ) {
+			add_filter( 'woocommerce_get_' . $slug . '_page_id', $convertPageId );
+		};
 
-	public function translate_pages_in_settings( $id ) {
-		return apply_filters( 'translate_object_id', $id, 'page', true );
+		// $getOption :: string -> int
+		$getOption = function( $slug ) {
+			return get_option( 'woocommerce_' . $slug . '_page_id' );
+		};
+
+		$ids = wpml_collect( [
+			'shop',
+			'cart',
+			'checkout',
+			'myaccount',
+			'terms',
+			'refund_returns',
+		] )->map( Fns::tap( $addFilter ) )
+			->map( $getOption )
+			->filter()
+			->toArray();
+
+		$post_translations = $this->sitepress->post_translations();
+		$post_translations->prefetch_ids( $ids );
 	}
 
 	/**
