@@ -1,5 +1,7 @@
 <?php
 
+use function WCML\functions\getSetting;
+
 class WCML_Terms {
 
 	const PRODUCT_SHIPPING_CLASS           = 'product_shipping_class';
@@ -28,7 +30,9 @@ class WCML_Terms {
 	}
 
 	public function add_hooks() {
-		add_action( 'update_term_meta', [ $this, 'sync_term_order' ], 100, 4 );
+		if ( 1 === getSetting( 'products_sync_order', 1 ) ) {
+			add_action( 'update_term_meta', [ $this, 'sync_term_order' ], 100, 4 );
+		}
 
 		add_filter( 'wp_get_object_terms', [ $this->sitepress, 'get_terms_filter' ] );
 		add_action( 'created_term', [ $this, 'translated_terms_status_update' ], 10, 3 );
@@ -170,16 +174,15 @@ class WCML_Terms {
 	}
 
 	public function sync_term_order( $meta_id, $object_id, $meta_key, $meta_value ) {
-
 		remove_action( 'update_term_meta', [ $this, 'sync_term_order' ], 100 );
 
 		// WooCommerce before termmeta table migration.
 		$wc_before_term_meta = get_option( 'db_version' ) < 34370;
 
+		/* phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected */
 		if ( ! isset( $_POST['thetaxonomy'] ) || ! taxonomy_exists( $_POST['thetaxonomy'] ) || ! $this->is_wc_taxonomy( $_POST['thetaxonomy'] ) || substr( $meta_key, 0, 5 ) !== 'order' ) {
 			return;
 		}
-
 		$tax = filter_input( INPUT_POST, 'thetaxonomy', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
 		$term_taxonomy_id = $this->wpdb->get_var( $this->wpdb->prepare( "SELECT term_taxonomy_id FROM {$this->wpdb->term_taxonomy} WHERE term_id=%d AND taxonomy=%s", $object_id, $tax ) );
@@ -187,7 +190,7 @@ class WCML_Terms {
 		$translations     = $this->sitepress->get_element_translations( $trid, 'tax_' . $tax );
 		if ( $translations ) {
 			foreach ( $translations as $trans ) {
-				if ( $trans->element_id != $term_taxonomy_id ) {
+				if ( $trans->element_id !== $term_taxonomy_id ) {
 
 					// Backwards compatibility - WooCommerce termmeta table.
 					if ( $wc_before_term_meta ) {
@@ -771,10 +774,10 @@ class WCML_Terms {
 
 	public function filter_shipping_classes_terms( $terms, $taxonomies, $args ) {
 
-	    if( $taxonomies && is_admin() && in_array( self::PRODUCT_SHIPPING_CLASS, $taxonomies ) ){
-		    $on_wc_settings_page = isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] === 'wc-settings';
-		    $on_shipping_tab = isset( $_GET[ 'tab' ] ) && $_GET[ 'tab' ] === 'shipping';
-		    $on_classes_section = isset( $_GET[ 'section' ] ) && $_GET[ 'section' ] === 'classes';
+		if ( $taxonomies && is_admin() && in_array( self::PRODUCT_SHIPPING_CLASS, $taxonomies ) ) {
+			$on_wc_settings_page = isset( $_GET['page'] ) && $_GET['page'] === 'wc-settings';
+			$on_shipping_tab     = isset( $_GET['tab'] ) && $_GET['tab'] === 'shipping';
+			$on_classes_section  = isset( $_GET['section'] ) && $_GET['section'] === 'classes';
 
 			if ( $on_wc_settings_page && $on_shipping_tab && ! $on_classes_section ) {
 				remove_filter( 'get_terms', [ $this, 'filter_shipping_classes_terms' ] );
@@ -946,10 +949,10 @@ class WCML_Terms {
 			if ( isset( $original_count ) && $original_count != $count ) {
 
 				if ( in_array( $taxonomy, [ 'product_cat', 'product_tag', self::PRODUCT_SHIPPING_CLASS ] ) ) {
-					$wcml_settings[ 'sync_'.$taxonomy ] = 1;
-                    $this->woocommerce_wpml->update_settings($wcml_settings);
-                    return true;
-                }
+					$wcml_settings[ 'sync_' . $taxonomy ] = 1;
+					$this->woocommerce_wpml->update_settings( $wcml_settings );
+					return true;
+				}
 
 				if ( in_array( $taxonomy, $attribute_taxonomies_arr ) ) {
 					$wcml_settings['sync_variations'] = 1;
@@ -1117,4 +1120,5 @@ class WCML_Terms {
 	public function add_lang_parameter_to_cache_key( $key ) {
 		return $key . '-' . $this->sitepress->get_current_language();
 	}
+
 }
