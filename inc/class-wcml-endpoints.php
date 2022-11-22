@@ -171,7 +171,8 @@ class WCML_Endpoints {
 			return false;
 		}
 
-		$wc_vars = WC()->query->query_vars;
+		$wc_vars    = WC()->query->query_vars;
+		$query_vars = [];
 
 		if ( ! empty( $wc_vars ) ) {
 
