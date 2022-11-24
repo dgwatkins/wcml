@@ -5,7 +5,8 @@
         "build:dev": "webpack --env.production=false --mode development",
         "build:watch": "webpack --env.production=false --mode development --watch",
         "build:prod": "webpack -p --env production --mode production",
-        "test": "jest"
+        "test": "jest",
+        "uglifyjs": "rm -f res/js/*.min.js; uglifyjs-folder --config-file=uglifyjs.json res/js -eo res/js"
     },
     "jest": {
         "automock": false,
@@ -97,6 +98,7 @@
         "ts-jest": "^24.0.2",
         "ts-loader": "^6.0.4",
         "typescript": "^3.5.3",
+        "uglifyjs-folder": "^3.1.4",
         "webpack": "~4.5.0",
         "webpack-ant-icon-loader": "^1.0.8",
         "webpack-bundle-analyzer": "^3.3.2",
