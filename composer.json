@@ -66,8 +66,8 @@
         "roave/security-advisories": "dev-master",
         "wpml/collect": "dev-wpml-collect-rename",
         "wpml/core-api": "0.1.8",
-        "wpml/fp": "0.2.1",
-        "wpml/wp": "0.1.8",
+        "wpml/fp": "0.2.2",
+        "wpml/wp": "0.1.9",
         "wpml/page-builders-gutenberg": "dev-develop"
     },
     "scripts": {

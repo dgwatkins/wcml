@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ff99f4f28693f12e4b638746be4dd60",
+    "content-hash": "e4efbb178782bc3486f9573100b9c24e",
     "packages": [
         {
             "name": "composer/installers",
@@ -5338,14 +5338,15 @@
         },
         {
             "name": "wpml/fp",
-            "version": "0.2.1",
+            "version": "0.2.2",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/wpml-packages/fp.git",
-                "reference": "b01a80c8da22efeab6db53277b753c9f13aa87ca"
+                "reference": "1266f5579106371d1cc43fe624a683b8cec35206"
             },
             "require-dev": {
                 "cvuorinen/phpdoc-markdown-public": "^0.2.0",
+                "jakeasmith/http_build_url": "^1.0",
                 "lucatume/function-mocker": "~1.0",
                 "phpunit/phpunit": "^5",
                 "wpml/collect": "dev-wpml-collect-rename"
@@ -5362,7 +5363,7 @@
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2022-04-20T13:32:55+00:00"
+            "time": "2022-09-21T09:15:23+00:00"
         },
         {
             "name": "wpml/page-builders-gutenberg",
@@ -5417,11 +5418,11 @@
         },
         {
             "name": "wpml/wp",
-            "version": "0.1.8",
+            "version": "0.1.9",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/wpml-packages/wp.git",
-                "reference": "453e022c55862d3f5cc7a204ddcb729f21b545a4"
+                "reference": "b7f100c6fa9bc447407139dd32a7259ff0745949"
             },
             "require-dev": {
                 "antecedent/patchwork": "^2.0",
@@ -5447,7 +5448,7 @@
                 }
             ],
             "description": "Class and utilities to interface with WordPress from WPML",
-            "time": "2021-11-11T17:22:59+00:00"
+            "time": "2022-05-10T04:06:04+00:00"
         }
     ],
     "aliases": [],
