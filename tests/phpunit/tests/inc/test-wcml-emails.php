@@ -1,7 +1,5 @@
 <?php
 
-use WPML\FP\Fns;
-
 /**
  * @group email
  */
@@ -423,7 +421,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$user->ID = 1;
 		$user_language = 'en';
 
-		\WP_Mock::expectFilterAdded( 'woocommerce_new_order_email_allows_resend', Fns::always( true ) );
+		WP_Mock::expectFilterAdded( 'woocommerce_new_order_email_allows_resend', function() {}, 20 );
 
 		WP_Mock::userFunction( 'get_user_by', array(
 			'args' => array( 'email', $recipient ),

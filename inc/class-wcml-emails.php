@@ -31,7 +31,7 @@ class WCML_Emails {
 	}
 
 	public function add_hooks() {
-		// wrappers for email's header
+		// Wrappers for email's header.
 		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
 			add_action(
 				'woocommerce_order_status_completed_notification',
@@ -81,14 +81,14 @@ class WCML_Emails {
 			);
 		}
 
-		// wrappers for email's body
+		// Wrappers for email's body.
 		add_action( 'woocommerce_before_resend_order_emails', [ $this, 'email_header' ] );
 		add_action( 'woocommerce_after_resend_order_email', [ $this, 'email_footer' ] );
 
-		// filter string language before for emails
+		// Filter string language before for emails.
 		add_filter( 'icl_current_string_language', [ $this, 'icl_current_string_language' ], 10, 2 );
 
-		// change order status
+		// Change order status.
 		add_action( 'woocommerce_order_status_completed', [ $this, 'refresh_email_lang_complete' ], self::PRIORITY_BEFORE_EMAIL_SET_LANGUAGE );
 
 		add_action(
@@ -175,7 +175,7 @@ class WCML_Emails {
 		add_filter( 'woocommerce_rest_pre_insert_shop_order_object', [ $this, 'set_rest_language' ], 10, 2 );
 	}
 
-	private function add_hooks_to_restore_language_for_admin_notes(){
+	private function add_hooks_to_restore_language_for_admin_notes() {
 		wpml_collect( [
 			'pending',
 			'processing',
@@ -190,6 +190,7 @@ class WCML_Emails {
 	}
 
 	public function email_refresh_in_ajax() {
+		/* phpcs:disable WordPress.VIP.SuperGlobalInputUsage.AccessDetected */
 		if ( isset( $_GET['order_id'] ) ) {
 			$this->refresh_email_lang( $_GET['order_id'] );
 
@@ -199,6 +200,7 @@ class WCML_Emails {
 
 			return true;
 		}
+		/* phpcs:enable WordPress.VIP.SuperGlobalInputUsage.AccessDetected */
 	}
 
 	public function refresh_email_lang_complete( $order_id ) {
@@ -494,7 +496,20 @@ class WCML_Emails {
 
 		if ( $email ) {
 			$recipients = explode( ',', $email->get_recipient() );
-			add_filter( 'woocommerce_new_order_email_allows_resend', Fns::always( true ) );
+
+			$allowResendForAllRecipients = function() use ( $recipients ) {
+				static $numberOfAllowedResend;
+
+				if ( null === $numberOfAllowedResend ) {
+					$numberOfAllowedResend = count( $recipients );
+				} else {
+					$numberOfAllowedResend --;
+				}
+
+				return (bool) $numberOfAllowedResend;
+			};
+
+			add_filter( 'woocommerce_new_order_email_allows_resend', $allowResendForAllRecipients, 20 );
 
 			foreach ( $recipients as $recipient ) {
 				$admin_language = $this->get_admin_language_by_email( $recipient, $order_id );
@@ -826,4 +841,5 @@ class WCML_Emails {
 
 		return $order;
 	}
+
 }
