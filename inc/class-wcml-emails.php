@@ -479,7 +479,7 @@ class WCML_Emails {
 	 */
 	private function get_order_id_from_email_object( $object ) {
 
-		if ( method_exists( $object->object, 'get_id' ) ) {
+		if ( is_callable( [ $object->object, 'get_id' ] ) ) {
 			return $object->object->get_id();
 		}
 
