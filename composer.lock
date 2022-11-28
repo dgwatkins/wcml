@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e4efbb178782bc3486f9573100b9c24e",
+    "content-hash": "3b05bdcf00a50465f238bc533e2a1194",
     "packages": [
         {
             "name": "composer/installers",
@@ -196,11 +196,11 @@
         },
         {
             "name": "otgs/icons",
-            "version": "1.0.3",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/otgs-public/otgs-icons.git",
-                "reference": "669342319e44a036105266518702b23514ac0b32"
+                "reference": "3713721fa754e07013dd86cc0e89b17577d27e4b"
             },
             "type": "library",
             "notification-url": "https://packagist.org/downloads/",
@@ -208,7 +208,7 @@
                 "GPL-2.0"
             ],
             "description": "Toolset and WPML icons",
-            "time": "2022-05-11T07:40:05+00:00"
+            "time": "2022-10-13T07:53:43+00:00"
         },
         {
             "name": "otgs/installer",

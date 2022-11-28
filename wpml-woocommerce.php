@@ -55,6 +55,9 @@ require WCML_PLUGIN_PATH . '/vendor/autoload.php';
 require_once WCML_PLUGIN_PATH . '/vendor/otgs/ui/loader.php';
 otgs_ui_initialize( WCML_PLUGIN_PATH . '/vendor/otgs/ui', WCML_PLUGIN_URL . '/vendor/otgs/ui' ); // @phpstan-ignore-line
 
+$vendor_root_url = WCML_PLUGIN_URL . '/vendor';
+require_once WCML_PLUGIN_PATH . '/vendor/otgs/icons/loader.php';
+
 if ( WPML_Core_Version_Check::is_ok( WCML_PLUGIN_PATH . '/wpml-dependencies.json' ) ) {
 	global $woocommerce_wpml;
 

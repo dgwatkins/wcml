@@ -52,6 +52,7 @@
     "require": {
         "otgs/installer": "~3",
         "otgs/ui": "dev-master",
+        "otgs/icons": "^1.0",
         "wpml-shared/wpml-lib-cache": "~0.1",
         "wpml-shared/wpml-lib-dependencies": "~0.1"
     },

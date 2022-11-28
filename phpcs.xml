@@ -101,4 +101,7 @@
 			<property name="maxColumn" value="80" />
 		</properties>
 	</rule>
+	<rule ref="Squiz.Commenting.FileComment.MissingPackageTag">
+    	<severity>0</severity>
+    </rule>
 </ruleset>

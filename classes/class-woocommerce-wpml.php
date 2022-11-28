@@ -8,6 +8,7 @@ use function WPML\Container\make;
 /**
  * Class woocommerce_wpml
  */
+/* phpcs:ignore PEAR.NamingConventions.ValidClassName.StartWithCapital, PEAR.NamingConventions.ValidClassName.Invalid */
 class woocommerce_wpml {
 
 	/** @var mixed|void Settings */
@@ -157,8 +158,7 @@ class woocommerce_wpml {
 			if ( is_admin() && AdminPages::isWcmlSettings() ) {
 				WCML_Capabilities::set_up_capabilities();
 
-				wp_register_style( 'otgs-ico', WCML_PLUGIN_URL . '/res/css/otgs-ico.css', null, WCML_VERSION );
-				wp_enqueue_style( 'otgs-ico' );
+				wp_enqueue_style( 'otgs-icons' );
 
 				WCML_Resources::load_management_css();
 				WCML_Resources::load_tooltip_resources();
