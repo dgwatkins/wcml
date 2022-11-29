@@ -51,6 +51,7 @@ class WCML_Dependencies {
 				add_action( 'admin_notices', [ $this, '_old_wpml_warning' ] );
 				$core_ok = false;
 			} elseif ( ! $sitepress->setup() ) {
+				/* phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected */
 				if ( ! ( isset( $_GET['page'] ) && WPML_PLUGIN_FOLDER . '/menu/languages.php' === $_GET['page'] ) ) {
 					add_action( 'admin_notices', [ $this, '_wpml_not_installed_warning' ] );
 				}
@@ -81,7 +82,7 @@ class WCML_Dependencies {
 			$standalone         = $has_no_wpml_plugin && $wc_ok;
 			$this->allok        = $full_mode || $standalone;
 
-			if ( ! $this->allok ) {
+			if ( ! $this->allok && count( $missing ) ) {
 				$possibly_standalone = $has_no_wpml_plugin && ! $wc_ok;
 				add_action( 'admin_notices', self::show_missing_plugins_warning( $missing, $possibly_standalone ) );
 			}
