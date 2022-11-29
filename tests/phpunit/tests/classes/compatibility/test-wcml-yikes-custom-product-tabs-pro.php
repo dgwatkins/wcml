@@ -334,7 +334,7 @@ class Test_WCML_YIKES_Custom_Product_Tabs extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'get_post_meta', array(
 			'args' => array( $post_id, 'yikes_woo_products_tabs', true ),
-			'return' => array()
+			'return' => array( '' )
 		));
 
 		\WP_Mock::userFunction( 'update_post_meta', array(
