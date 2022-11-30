@@ -17,6 +17,9 @@ class Hooks implements \IWPML_Action, IStandAloneAction {
 	/** @var \wpdb $wpdb */
 	private $wpdb;
 
+	/** @var string $requestedCurrencyForReport */
+	private $requestedCurrencyForReport;
+
 	public function __construct( \woocommerce_wpml $woocommerce_wpml, \wpdb $wpdb ) {
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->wpdb             = $wpdb;
@@ -64,6 +67,8 @@ class Hooks implements \IWPML_Action, IStandAloneAction {
 				add_filter( "woocommerce_analytics_clauses_where_{$item}_stats_interval", [ $this, 'addWhere' ] );
 			}
 		);
+
+		add_action( 'woocommerce_admin_report_export', [ $this, 'saveRequestedCurrencyForReport' ], -PHP_INT_MAX, 4 );
 	}
 
 	public function enqueueAssets() {
@@ -162,7 +167,23 @@ class Hooks implements \IWPML_Action, IStandAloneAction {
 		return $clauses;
 	}
 
+	/**
+	 * @param int    $page
+	 * @param string $id
+	 * @param string $type
+	 * @param array  $args
+	 */
+	public function saveRequestedCurrencyForReport( $page, $id, $type, $args ) {
+		if ( 'orders' === $type && isset( $args['currency'] ) ) {
+			$this->requestedCurrencyForReport = $args['currency'];
+		}
+	}
+
 	private function getCurrency() {
+		if ( ! empty( $this->requestedCurrencyForReport ) ) {
+			return $this->requestedCurrencyForReport;
+		}
+
 		$rawCurrency = WpAdminPages::isDashboard()
 			? Obj::prop( '_wcml_dashboard_currency', $_COOKIE )
 			: Obj::prop( 'currency', $_GET );
