@@ -1,6 +1,7 @@
 <?php
 
 use WPML\FP\Fns;
+use function WCML\functions\isCli;
 
 class WCML_Synchronize_Product_Data {
 
@@ -35,7 +36,7 @@ class WCML_Synchronize_Product_Data {
 			add_action( 'icl_pro_translation_completed', [ $this, 'icl_pro_translation_completed' ] );
 		}
 
-		if ( is_admin() ) {
+		if ( is_admin() || isCli() ) {
 			// filters to sync variable products.
 			add_action( 'save_post', [ $this, 'synchronize_products' ], PHP_INT_MAX, 2 ); // After WPML.
 
@@ -93,14 +94,16 @@ class WCML_Synchronize_Product_Data {
 		$api_call         = ! empty( $wp->query_vars['wc-api-version'] );
 		$auto_draft       = 'auto-draft' === $post->post_status;
 		$trashing         = isset( $_GET['action'] ) && 'trash' === $_GET['action'];
-		$is_valid_context = $force_valid_context
-		                    || $ajax_call
-		                    || $api_call
-		                    || in_array( $pagenow, [ 'post.php', 'post-new.php', 'admin.php' ], true );
+		$is_valid_context = isCli()
+							|| $force_valid_context
+							|| $ajax_call
+							|| $api_call
+							|| in_array( $pagenow, [ 'post.php', 'post-new.php', 'admin.php' ], true );
 
 		if (
-			$post_type !== 'product' ||
+			'product' !== $post_type ||
 			empty( $original_product_id ) ||
+			/* phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected, WordPress.CSRF.NonceVerification.NoNonceVerification */
 			isset( $_POST['autosave'] ) ||
 			! $is_valid_context ||
 			$trashing ||

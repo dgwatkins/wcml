@@ -95,3 +95,12 @@ if ( ! function_exists( '\WCML\functions\getClientCurrency' ) ) {
 		return make( \WCML_Multi_Currency::class )->get_client_currency();
 	}
 }
+
+if ( ! function_exists( 'WCML\functions\isCli' ) ) {
+	/**
+	 * @return bool
+	 */
+	function isCli() {
+		return defined( 'WP_CLI' ) && WP_CLI;
+	}
+}
