@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Fns;
+
 /**
  * Class Test_WCML_Store_Pages
  */
@@ -11,7 +13,7 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 	}
 
 	private function get_sitepress(){
-		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		return $this->getMockBuilder( SitePress::class )
 		            ->disableOriginalConstructor()
 		            ->getMock();
 	}
@@ -42,15 +44,37 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 	 */
 	public function it_should_add_front_end_hooks_to_filter_woocommerce_page_id( $woo_page ) {
 
-		$subject = $this->get_subject();
+		$options = array_column( $this->woocommerce_page_option_name(), 1, 0 );
 
-		\WP_Mock::userFunction( 'is_admin', array( 'times' => 1, 'return' => false ) );
+		$post_translations = $this->getMockBuilder( WPML_Post_Translation::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'prefetch_ids' ] )
+			->getMock();
 
-		WP_Mock::expectFilterAdded( 'woocommerce_get_' . $woo_page, array( $subject, 'translate_pages_in_settings' ) );
-		WP_Mock::expectFilterAdded( 'option_woocommerce_' . $woo_page, array(
-			$subject,
-			'translate_pages_in_settings'
+		$post_translations->expects( $this->once() )
+			->method( 'prefetch_ids' )
+			->with( array_filter( array_values( $options ) ) );
+
+		$sitepress = $this->getMockBuilder( SitePress::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'post_translations' ] )
+			->getMock();
+
+		$sitepress->method( 'post_translations' )
+			->willReturn( $post_translations );
+
+		$subject = $this->get_subject( null, $sitepress );
+
+		WP_Mock::userFunction( 'is_admin', array( 'times' => 1, 'return' => false ) );
+
+		WP_Mock::userFunction( 'get_option', array(
+			'return' => function( $slug ) use ( $options ) {
+				$slug = str_replace( 'woocommerce_', '', $slug );
+				return isset( $options[ $slug ] ) ? $options[ $slug ] : false;
+			}
 		) );
+
+		WP_Mock::expectFilterAdded( 'woocommerce_get_' . $woo_page, Fns::always( true ) );
 
 		WP_Mock::expectFilterAdded( 'woocommerce_get_checkout_url', array( $subject, 'get_checkout_page_url' ) );
 
@@ -68,15 +92,37 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 		$pagenow      = 'admin.php';
 		$_GET['page'] = 'wc-settings';
 
-		$subject = $this->get_subject();
+		$options = array_column( $this->woocommerce_page_option_name(), 1, 0 );
 
-		\WP_Mock::userFunction( 'is_admin', array( 'times' => 1, 'return' => true ) );
+		$post_translations = $this->getMockBuilder( WPML_Post_Translation::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'prefetch_ids' ] )
+			->getMock();
 
-		WP_Mock::expectFilterAdded( 'woocommerce_get_' . $woo_page, array( $subject, 'translate_pages_in_settings' ) );
-		WP_Mock::expectFilterAdded( 'option_woocommerce_' . $woo_page, array(
-			$subject,
-			'translate_pages_in_settings'
+		$post_translations->expects( $this->once() )
+			->method( 'prefetch_ids' )
+			->with( array_filter( array_values( $options ) ) );
+
+		$sitepress = $this->getMockBuilder( SitePress::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'post_translations' ] )
+			->getMock();
+
+		$sitepress->method( 'post_translations' )
+			->willReturn( $post_translations );
+
+		$subject = $this->get_subject( null, $sitepress );
+
+		WP_Mock::userFunction( 'is_admin', array( 'times' => 1, 'return' => true ) );
+
+		WP_Mock::userFunction( 'get_option', array(
+			'return' => function( $slug ) use ( $options ) {
+				$slug = str_replace( 'woocommerce_', '', $slug );
+				return isset( $options[ $slug ] ) ? $options[ $slug ] : false;
+			}
 		) );
+
+		WP_Mock::expectFilterAdded( 'woocommerce_get_' . $woo_page, Fns::always( true ) );
 
 		$subject->add_hooks();
 
@@ -95,15 +141,37 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 		$pagenow      = 'edit.php';
 		$_GET['post_type'] = 'page';
 
-		$subject = $this->get_subject();
+		$options = array_column( $this->woocommerce_page_option_name(), 1, 0 );
 
-		\WP_Mock::userFunction( 'is_admin', array( 'times' => 1, 'return' => true ) );
+		$post_translations = $this->getMockBuilder( WPML_Post_Translation::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'prefetch_ids' ] )
+			->getMock();
 
-		WP_Mock::expectFilterAdded( 'woocommerce_get_' . $woo_page, array( $subject, 'translate_pages_in_settings' ) );
-		WP_Mock::expectFilterAdded( 'option_woocommerce_' . $woo_page, array(
-			$subject,
-			'translate_pages_in_settings'
+		$post_translations->expects( $this->once() )
+			->method( 'prefetch_ids' )
+			->with( array_filter( array_values( $options ) ) );
+
+		$sitepress = $this->getMockBuilder( SitePress::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'post_translations' ] )
+			->getMock();
+
+		$sitepress->method( 'post_translations' )
+			->willReturn( $post_translations );
+
+		$subject = $this->get_subject( null, $sitepress );
+
+		WP_Mock::userFunction( 'is_admin', array( 'times' => 1, 'return' => true ) );
+
+		WP_Mock::userFunction( 'get_option', array(
+			'return' => function( $slug ) use ( $options ) {
+				$slug = str_replace( 'woocommerce_', '', $slug );
+				return isset( $options[ $slug ] ) ? $options[ $slug ] : false;
+			}
 		) );
+
+		WP_Mock::expectFilterAdded( 'woocommerce_get_' . $woo_page, Fns::always( true ) );
 
 		$subject->add_hooks();
 
@@ -125,8 +193,7 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 
 		foreach ( $this->woocommerce_page_option_name() as $case ) {
 			$page = reset( $case );
-			WP_Mock::expectFilterNotAdded( 'woocommerce_get_' . $page, [ $subject, 'translate_pages_in_settings' ] );
-			WP_Mock::expectFilterNotAdded( 'option_woocommerce_' . $page, [ $subject, 'translate_pages_in_settings' ] );
+			WP_Mock::expectFilterNotAdded( 'woocommerce_get_' . $page, Fns::always( true ) );
 		}
 
 		$subject->add_hooks();
@@ -137,19 +204,12 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 	public function woocommerce_page_option_name(){
 
 		return array(
-			array( 'shop_page_id' ),
-			array( 'cart_page_id' ),
-			array( 'checkout_page_id' ),
-			array( 'myaccount_page_id' ),
-			array( 'lost_password_page_id' ),
-			array( 'edit_address_page_id' ),
-			array( 'view_order_page_id' ),
-			array( 'change_password_page_id' ),
-			array( 'logout_page_id' ),
-			array( 'pay_page_id' ),
-			array( 'thanks_page_id' ),
-			array( 'terms_page_id' ),
-			array( 'review_order_page_id' )
+			array( 'shop_page_id', 6 ),
+			array( 'cart_page_id', 7 ),
+			array( 'checkout_page_id', 8 ),
+			array( 'myaccount_page_id', 9 ),
+			array( 'terms_page_id', false ),
+			array( 'refund_returns_page_id', '' )
 		);
 	}
 
@@ -163,7 +223,7 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 		$post_type     = 'product';
 		$shop_page_id  = 456;
 
-		$sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$sitepress = $this->getMockBuilder( SitePress::class )
 		                  ->disableOriginalConstructor()
 		                  ->setMethods( array( 'get_current_language', 'get_default_language' ) )
 		                  ->getMock();

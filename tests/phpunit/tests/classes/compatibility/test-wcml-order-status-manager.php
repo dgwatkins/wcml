@@ -141,8 +141,8 @@ class Test_WCML_Order_Status_Manager extends OTGS_TestCase {
 	}
 
 	/**
-	 * @param int $post_id
-	 * @param $current_language
+	 * @param int    $post_id
+	 * @param string $current_language
 	 */
 	private function given_post_language( $post_id, $current_language ) {
 		\WP_Mock::onFilter( 'wpml_post_language_details' )
@@ -153,7 +153,7 @@ class Test_WCML_Order_Status_Manager extends OTGS_TestCase {
 	}
 
 	/**
-	 * @param $current_language
+	 * @param string $current_language
 	 */
 	private function given_current_language( $current_language ) {
 		\WP_Mock::onFilter( 'wpml_current_language' )

@@ -1,5 +1,5 @@
 parameters:
-  level: 1
+  level: 3
   featureToggles:
     disableRuntimeReflectionProvider: true
   bootstrapFiles:
@@ -35,6 +35,13 @@ parameters:
 
   scanDirectories:
     - vendor/otgs/installer
+
+  universalObjectCratesClasses:
+    - wpdb
+    - WC_Shipping_Rate
+    - WC_Session
+    - WC_Email_Customer_Completed_Order
+    - WC_Payment_Gateway
 
   checkFunctionNameCase: true
   inferPrivatePropertyTypeFromConstructor: true

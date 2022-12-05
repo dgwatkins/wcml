@@ -33,11 +33,15 @@ class WC_Stripe_Helper {
 }
 
 // WooCommerce Bookings
-class WC_Product_Booking {
+class WC_Product_Booking extends WC_Product {
     public function __construct( $id ) {}
+    public function get_person_types( $context = 'view' ) {}
+    public function has_resources() {}
+    public function get_resources() {}
 }
 class WC_Booking_Form {
     public function __construct( $id ) {}
+    public function calculate_booking_cost( $posted ) {}
 }
 /**
  * @param  array $posted
@@ -67,136 +71,47 @@ class WC_Name_Your_Price_Compatibility {
 // WooCommerce Dynamic Pricing
 class WC_Dynamic_Pricing_Advanced_Taxonomy {}
 class WC_Dynamic_Pricing_Simple_Taxonomy {}
+class WC_Dynamic_Pricing_Simple_Base {}
+class WC_Dynamic_Pricing_Advanced_Base {}
 
 // WooCommerce Tab Manager
 function wc_tab_manager_duplicate_product( $new_id, $original_post ) {}
 
 // WooCommerce Subscriptions
-class WC_Subscription {}
-class WC_Product_Variable_Subscription {}
-class WC_Product_Subscription_Variation {}
-class WCS_Email_Customer_Renewal_Invoice {}
+class WC_Subscription extends WC_Order {}
+class WC_Product_Variable_Subscription extends WC_Product_Variable {}
+class WC_Product_Subscription_Variation extends WC_Product_Variation {}
+class WCS_Email_Customer_Renewal_Invoice extends WC_Email_Customer_Invoice {}
 function wcs_cart_contains_resubscribe() {}
 function wcs_cart_contains_early_renewal() {}
 
 // WooCommerce Product Bundles
 class WC_Product_Bundle {
     public function __construct( $id ) {}
+    public function get_bundled_items( $context = 'view' ) {}
+}
+class WC_Bundled_Item {
+    public function get_data() {}
 }
 class WC_Bundled_Item_Data {
     public function __construct( $id ) {}
+    public function update_meta( $key, $value ) {}
+    public function get_meta_data() {}
+    public function save() {}
+    public function delete() {}
 }
 
 // Mix and Match
-/**
- * @param array $item
- * @return boolean
- */
+class WC_Product_Mix_and_Match extends WC_Product {
+    public function get_child_items( $context = 'view' ) {}
+    public function set_child_items( array $data ) {}
+    public function get_child_category_ids( $context = 'view' ) {}
+    public function set_child_category_ids( $value ) {}
+}
 function wc_mnm_is_container_cart_item( $item ) {}
-
-/**
- * @param  array    $container_cart_item
- * @param  array    $cart_contents
- * @param  bool  $return_ids
- * @return array
- */
 function wc_mnm_get_child_cart_items( $container_cart_item, $cart_contents = false, $return_ids = false ) {}
-
-/**
- * @param array $item
- * @return boolean
- */
 function wc_mnm_maybe_is_child_cart_item( $item ) {}
-
-/**
- * @param  array $child_cart_item
- * @param  array $cart_contents
- * @param  bool  $return_id
- * @return mixed
- */
 function wc_mnm_get_cart_item_container( $child_cart_item, $cart_contents = false, $return_id = false ) {}
-
-/**
- * WC_Mix_and_Match_Compatibility Class.
- *
- * Load classes for making Mix and Match compatible with other plugins|woocommerce|legacy.
- */
-class WC_MNM_Compatibility
-{
-    /**
-     * Array of deprecated hook handlers.
-     *
-     * @var array of WC_Deprecated_Hooks
-     * @since 2.0.0
-     */
-    public $deprecated_hook_handlers = array();
-    /**
-     * The single instance of the class.
-     * @var WC_MNM_Compatibility
-     *
-     * @since 1.9.2
-     */
-    protected static $_instance = \null;
-    /**
-     * Main class instance. Ensures only one instance of class is loaded or can be loaded.
-     *
-     * @static
-     * @return WC_Mix_and_Match_Compatibility
-     * @since  1.9.2
-     */
-    public static function get_instance()
-    {
-    }
-    function __construct()
-    {
-    }
-    /**
-     * Unload mini-extensions.
-     */
-    public function unload()
-    {
-    }
-    /**
-     * Init compatibility classes.
-     */
-    public function init()
-    {
-    }
-    /**
-     * Checks versions of compatible/integrated/deprecated extensions.
-     */
-    public function add_compatibility_notices()
-    {
-    }
-    /**
-     * Tells if a product is a Name Your Price product, provided that the extension is installed.
-     *
-     * @param  mixed  $product
-     * @return bool
-     */
-    public function is_nyp($product)
-    {
-    }
-    /**
-     * Returns true if the plugin version of MNM is greater than or equal to $version.
-     *
-     * @since  2.0.0
-     *
-     * @param  string  $version the version to compare
-     * @return bool true if the installed version of MNM is > $version
-     */
-    public static function is_version_gte($version)
-    {
-    }
-    /**
-     * Returns true if the DB version of MNM is greater than or equal to $version.
-     *
-     * @since  2.0.0
-     *
-     * @param  string  $version the version to compare
-     * @return bool true if the installed version of MNM is > $version
-     */
-    public static function is_db_version_gte($version)
-    {
-    }
+class WC_MNM_Compatibility {
+    public static function is_db_version_gte($version) {}
 }

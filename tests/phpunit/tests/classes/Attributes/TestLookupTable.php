@@ -23,6 +23,8 @@ class TestLookupTable extends \OTGS_TestCase {
 	}
 
 	public function tearDown() {
+		unset( $GLOBALS['sitepress'] );
+
 		$this->tearDownOnAction();
 		parent::tearDown();
 	}
@@ -50,6 +52,7 @@ class TestLookupTable extends \OTGS_TestCase {
 			->willReturn( false );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_get_attributes', [ $subject, 'translateAttributeOptions' ], 10, 2 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_product_variation_get_attributes', [ $subject, 'translateVariationTerms' ], 10, 2 );
 
 		\WP_Mock::userFunction( 'remove_filter', [
 			'args'   => [ 'terms_clauses', [ $this->sitepress, 'terms_clauses' ] ],
@@ -82,6 +85,11 @@ class TestLookupTable extends \OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'remove_filter', [
 			'args'   => [ 'woocommerce_product_get_attributes', [ $subject, 'translateAttributeOptions' ] ],
+			'return' => true,
+		] );
+
+		\WP_Mock::userFunction( 'remove_filter', [
+			'args'   => [ 'woocommerce_product_variation_get_attributes', [ $subject, 'translateVariationTerms' ] ],
 			'return' => true,
 		] );
 
@@ -232,7 +240,7 @@ class TestLookupTable extends \OTGS_TestCase {
 			->with( $productId, 'post_product' )
 			->willReturn( $lang );
 		$this->sitepress->method( 'get_object_id' )
-			->with( $termId, $taxonomy, false, $lang )
+			->with( $termId, $taxonomy, true, $lang )
 			->willReturn( $transTerm );
 
 		$result = $subject->translateAttributeOptions( $attrs, $product );
@@ -240,8 +248,75 @@ class TestLookupTable extends \OTGS_TestCase {
 		$this->assertSame( $expected, reset($result)->get_options() );
 	}
 
+	/**
+	 * @test
+	 */
+	public function itTranslatesVariationTerms() {
+		$productId = 11;
+		$lang      = 'it';
+		$taxonomy  = 'pa_colors';
+		$termId      = 123;
+		$termSlug    = 'red';
+		$transTermId = 456;
+		$transTermSlug = 'rosso';
+
+		$term = $this->getMockBuilder( 'WP_Term' )
+			->disableOriginalConstructor()
+			->getMock();
+		$term->term_id = $termId;
+		$term->slug    = $termSlug;
+
+		$transTerm = $this->getMockBuilder( 'WP_Term' )
+			->disableOriginalConstructor()
+			->getMock();
+		$transTerm->term_id = $transTermId;
+		$transTerm->slug    = $transTermSlug;
+
+		$attrs = [
+			$taxonomy => $termSlug,
+		];
+
+		$expected  = [
+			$taxonomy => $transTermSlug,
+		];
+
+		$product = $this->getMockBuilder( 'WC_Product' )
+			->setMethods( [ 'get_id' ] )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$product->method( 'get_id' )
+			->willReturn( $productId );
+
+		$subject = $this->getSubject();
+
+		$this->sitepress->method( 'get_language_for_element' )
+			->with( $productId, 'post_product_variation' )
+			->willReturn( $lang );
+		$this->sitepress->method( 'get_object_id' )
+			->with( $termId, $taxonomy, true, $lang )
+			->willReturn( $transTermId );
+
+		\WP_Mock::userFunction( 'get_term_by', [
+			'args' => [ 'slug', $termSlug, $taxonomy ],
+			'return' => $term,
+		] );
+
+		\WP_Mock::userFunction( 'get_term', [
+			'args' => [ $transTermId, $taxonomy ],
+			'return' => $transTerm,
+		] );
+
+		$result = $subject->translateVariationTerms( $attrs, $product );
+
+		$this->assertSame( $expected, $result );
+	}
+
 	private function getSubject( $sitepress = null ) {
 		$this->sitepress = $sitepress ?: $this->getSitepress();
+
+		// Required for Ids::convert().
+		$GLOBALS['sitepress'] = $this->sitepress;
 
 		return new LookupTable( $this->sitepress );
 	}

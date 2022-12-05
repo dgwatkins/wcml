@@ -10,15 +10,15 @@ use WCML\Rest\Wrapper\Reports\ProductsCount;
  */
 class TestProductsCount extends \OTGS_TestCase {
 
-	/** @var Sitepress */
+	/** @var \SitePress|\PHPUnit_Framework_MockObject_MockObject */
 	private $sitepress;
-	/** @var wpdb */
+	/** @var \wpdb|\PHPUnit_Framework_MockObject_MockObject */
 	private $wpdb;
 
 	public function setUp() {
 		parent::setUp();
 
-		$this->sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$this->sitepress = $this->getMockBuilder( \SitePress::class )
 		                        ->disableOriginalConstructor()
 		                        ->setMethods( [
 			                        'is_active_language'

@@ -224,13 +224,13 @@ class Test_WCML_Setup_UI extends OTGS_TestCase {
 	 * @test
 	 * @group wizard_notice
 	 */
-	public function it_should_add_wizard_notice_hook_on_wcml_dashboard_page(){
+	public function it_should_NOT_add_wizard_notice_hook_on_wcml_dashboard_page(){
 
 		$_GET['page'] = 'wpml-wcml';
 
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectFilterAdded( 'admin_notices', array( $subject, 'wizard_notice') );
+		\WP_Mock::expectFilterNotAdded( 'admin_notices', array( $subject, 'wizard_notice') );
 
 		$subject->add_wizard_notice_hook();
 

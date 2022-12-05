@@ -19,7 +19,7 @@ class Test_WCML_Product_Bundles extends OTGS_TestCase {
 		parent::setUp();
 
 		$this->woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )->disableOriginalConstructor()->getMock();
-		$this->sitepress = $this->getMockBuilder( 'Sitepress' )->setMethods( array( 'get_language_for_element', 'get_current_language' ) )->disableOriginalConstructor()->getMock();
+		$this->sitepress = $this->getMockBuilder( 'SitePress' )->setMethods( array( 'get_language_for_element', 'get_current_language' ) )->disableOriginalConstructor()->getMock();
 		$this->product_bundles_items = $this->getMockBuilder( 'WCML_WC_Product_Bundles_Items' )->setMethods( array(
 			'get_items',
 			'get_item_data',

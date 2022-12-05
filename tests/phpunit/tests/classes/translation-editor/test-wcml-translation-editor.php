@@ -7,7 +7,7 @@ class Test_WCML_Translation_Editor extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
 	/** @var wpdb */
 	private $wpdb;

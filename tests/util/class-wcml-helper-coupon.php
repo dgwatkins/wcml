@@ -54,7 +54,7 @@ class WCML_Helper_Coupon {
     /**
      * Delete a coupon.
      *
-     * @param $coupon_id
+     * @param int $coupon_id
      *
      * @return bool
      */

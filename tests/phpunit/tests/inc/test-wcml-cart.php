@@ -7,9 +7,9 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
-	/** @var woocommerce */
+	/** @var WooCommerce */
 	private $woocommerce;
 	/** @var WPML_WP_API $wp_api */
 	private $wp_api;
@@ -484,83 +484,48 @@ class Test_WCML_Cart extends OTGS_TestCase {
 
 	/**
 	 * @test
-	 * @dataProvider get_cart_contents
-	 *
-	 * @param array $cart_contents
 	 */
-	public function it_should_get_formatted_cart_total_in_currency( $cart_contents ) {
+	public function it_should_convert_cart_total_to_currency() {
 
-		$currency        = 'EUR';
-		$client_currency = 'USD';
-		$converted_product_price  = 10;
-		$shipping_total           = 10;
-		$converted_shipping_total = 100;
-		$converted_cart_total     = ( $converted_product_price * $cart_contents['quantity'] ) + $converted_shipping_total;
-		$formatted_cart_total     = $converted_cart_total . ' €';
+		$currency             = 'EUR';
+		$cart_total           = 10;
+		$converted_cart_total = 100;
+		$formatted_cart_total = $converted_cart_total . ' €';
 
 		$wc = $this->getMockBuilder( 'WC' )
-		           ->disableOriginalConstructor()
-		           ->getMock();
+			->disableOriginalConstructor()
+			->getMock();
 
 		$wc->cart = $this->getMockBuilder( 'WC_Cart' )
-		                 ->disableOriginalConstructor()
-		                 ->setMethods( array( 'get_cart_contents', 'get_shipping_total' ) )
-		                 ->getMock();
+			->disableOriginalConstructor()
+			->setMethods( array( 'get_total' ) )
+			->getMock();
 
-		$wc->cart->method( 'get_cart_contents' )->willReturn( [ $cart_contents ] );
-		$wc->cart->method( 'get_shipping_total' )->willReturn( $shipping_total );
+		$wc->cart->method( 'get_total' )->with( 'raw' )->willReturn( $converted_cart_total );
 
 		WP_Mock::userFunction( 'WC', array(
 			'return' => $wc
 		) );
 
-
 		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
-		                                               ->disableOriginalConstructor()
-		                                               ->setMethods( array( 'get_client_currency' ) )
-		                                               ->getMock();
-
-		$this->woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
+			->disableOriginalConstructor()
+			->getMock();
 
 		$this->woocommerce_wpml->multi_currency->prices = $this->getMockBuilder( 'WCML_Multi_Currency_Prices' )
-		                                                       ->disableOriginalConstructor()
-		                                                       ->setMethods( array(
-			                                                       'format_price_in_currency',
-			                                                       'get_product_price_in_currency',
-			                                                       'unconvert_price_amount',
-			                                                       'apply_rounding_rules',
-			                                                       'convert_price_amount'
-		                                                       ) )
-		                                                       ->getMock();
+			->disableOriginalConstructor()
+			->setMethods( array(
+				'unconvert_price_amount',
+				'convert_price_amount',
+				'format_price_in_currency',
+			) )
+			->getMock();
 
-		$item_product_id = $cart_contents[ 'variation_id' ] ? $cart_contents[ 'variation_id' ] : $cart_contents[ 'product_id' ];
-		$this->woocommerce_wpml->multi_currency->prices->method( 'get_product_price_in_currency' )->with( $item_product_id, $currency )->willReturn( $converted_product_price );
-		$this->woocommerce_wpml->multi_currency->prices->method( 'unconvert_price_amount' )->with( $shipping_total )->willReturn( $shipping_total );
-		$this->woocommerce_wpml->multi_currency->prices->method( 'convert_price_amount' )->with( $shipping_total, $currency )->willReturn( $converted_shipping_total );
-		$this->woocommerce_wpml->multi_currency->prices->method( 'apply_rounding_rules' )->with( $converted_cart_total, $currency )->willReturn( $converted_cart_total );
+		$this->woocommerce_wpml->multi_currency->prices->method( 'unconvert_price_amount' )->with( $converted_cart_total )->willReturn( $cart_total );
+		$this->woocommerce_wpml->multi_currency->prices->method( 'convert_price_amount' )->with( $cart_total, $currency )->willReturn( $converted_cart_total );
 		$this->woocommerce_wpml->multi_currency->prices->method( 'format_price_in_currency' )->with( $converted_cart_total, $currency )->willReturn( $formatted_cart_total );
 
 		$subject = $this->get_subject();
-		$this->assertEquals( $formatted_cart_total, $subject->get_formatted_cart_total_in_currency( $currency ) );
-	}
-
-	public function get_cart_contents(){
-		return [
-			[
-				[
-					'product_id'   => 11,
-					'variation_id' => 0,
-					'quantity'     => 1
-				]
-			],
-			[
-				[
-					'product_id'   => 12,
-					'variation_id' => 14,
-					'quantity'     => 2
-				]
-			]
-		];
+		$this->assertEquals( $formatted_cart_total, $subject->format_converted_cart_total_in_currency( $currency ) );
 	}
 
 	/**

@@ -53,7 +53,7 @@ class Test_WCML_Cart_Switch_Lang_Functions extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function add_actions(){
+	public function add_hooks(){
 
 		$subject = $this->get_subject();
 
@@ -63,7 +63,7 @@ class Test_WCML_Cart_Switch_Lang_Functions extends OTGS_TestCase {
 
         \WP_Mock::expectFilterAdded( 'woocommerce_product_add_to_cart_url', array( $subject, 'remove_force_switch_from_add_to_cart_url' ) );
 
-		$subject->add_actions();
+		$subject->add_hooks();
 
 	}
 

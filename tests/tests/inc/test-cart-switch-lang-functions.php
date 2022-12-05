@@ -10,7 +10,7 @@ class Test_WCML_Cart_Switch_Lang_Functions extends WCML_UnitTestCase {
 		parent::setUp();
 
         $this->wcml_cart_switch_lang_functions = new WCML_Cart_Switch_Lang_Functions();
-		$this->wcml_cart_switch_lang_functions->add_actions();
+		$this->wcml_cart_switch_lang_functions->add_hooks();
 
 		$this->default_language = $this->sitepress->get_default_language();
 		$this->second_language = 'es';

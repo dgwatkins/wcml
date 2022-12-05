@@ -5,7 +5,7 @@ const Bacs = ({gateway, settings, updateSettings, activeCurrencies, getName, cur
     const valueOptions = {
         'all': gateway.strings.optionAll,
         'all_in': gateway.strings.optionAllIn,
-        '0': ''
+        ...gateway.accounts
     };
 
     const settingsCurrency = currency.isDefault ? currency.code : settings.currency;

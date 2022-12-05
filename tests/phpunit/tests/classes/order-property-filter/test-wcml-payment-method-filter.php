@@ -156,14 +156,12 @@ class Test_WCML_Payment_Method_Filter extends OTGS_TestCase {
 
 		$payment_gateways[ $post_payment_gateway->id ] = $post_payment_gateway;
 		$wc = $this->getMockBuilder( 'WooCommerce' )->setMethods( array( 'payment_gateways' ) )->disableOriginalConstructor()->getMock();
-		$wc->expects( $this->once() )
-		        ->method( 'payment_gateways' )
-		        ->willReturn( $payment_gateways );
-
 		$wc->payment_gateways = $this->getMockBuilder( 'WC_Payment_Gateways' )->setMethods( array( 'payment_gateways' ) )->disableOriginalConstructor()->getMock();
 		$wc->payment_gateways->expects( $this->once() )
 		   ->method( 'payment_gateways' )
 		   ->willReturn( $payment_gateways );
+		$wc->method( 'payment_gateways' )
+			->willReturn( $wc->payment_gateways );
 
 		WP_Mock::userFunction( 'WC', array( 'return' => $wc ) );
 

@@ -43,17 +43,6 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function add_hooks() {
-		$subject = $this->get_subject();
-
-		\WP_Mock::expectFilterAdded( 'woocommerce_stripe_request_body', array( $subject, 'filter_request_body' ) );
-
-		$subject->add_hooks();
-	}
-
-	/**
-	 * @test
-	 */
 	public function is_should_get_currencies_details() {
 		$uahStripeCurrency = 'EUR';
 		$uahPublishableKey = "The $uahStripeCurrency publishable key";
@@ -86,58 +75,6 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 		$subject = $this->get_subject( $this->getWcGateway() );
 
 		$this->assertEquals( $expected_currencies_details, $subject->get_currencies_details() );
-	}
-
-	/**
-	 * @test
-	 */
-	public function filter_request_body() {
-
-		$client_currency = 'USD';
-		$request         = array( 'currency' => strtolower( $client_currency ), 'amount' => 10 );
-		$convert_amount  = 100;
-
-		$gateway           = $this->getMockBuilder( 'WC_Payment_Gateway' )
-		                          ->disableOriginalConstructor()
-		                          ->getMock();
-		$gateway->id       = 'id';
-		$gateway->title    = 'title';
-		$gateway->settings = array( $client_currency => array( 'currency' => 'EUR' ) );
-
-		WP_Mock::userFunction( 'get_option', array(
-			'args'   => array( WCML_Payment_Gateway::OPTION_KEY . $gateway->id, array() ),
-			'times'  => 1,
-			'return' => $gateway->settings
-		) );
-
-		$this->woocommerce_wpml->multi_currency = $this->getMockBuilder( 'WCML_Multi_Currency' )
-		                                               ->disableOriginalConstructor()
-		                                               ->setMethods( array( 'get_client_currency' ) )
-		                                               ->getMock();
-
-		$this->woocommerce_wpml->multi_currency->method( 'get_client_currency' )->willReturn( $client_currency );
-
-		$this->woocommerce_wpml->cart = $this->getMockBuilder( 'WCML_Cart' )
-		                                     ->disableOriginalConstructor()
-		                                     ->setMethods( array( 'get_cart_total_in_currency' ) )
-		                                     ->getMock();
-
-		$this->woocommerce_wpml->cart->method( 'get_cart_total_in_currency' )->with( $gateway->settings[ $client_currency ]['currency'] )->willReturn( $convert_amount );
-
-		$stripe_helper = \Mockery::mock( 'overload:WC_Stripe_Helper' );
-		$stripe_helper->shouldReceive( 'get_stripe_amount' )
-		              ->andReturn( $convert_amount );
-
-		$subject = $this->get_subject( $gateway );
-
-		$expected_request = array(
-			'currency' => strtolower( $gateway->settings[ $client_currency ]['currency'] ),
-			'amount'   => $convert_amount
-		);
-
-		$filtered_request = $subject->filter_request_body( $request );
-
-		$this->assertSame( $expected_request, $filtered_request );
 	}
 
 	/**

@@ -1,7 +1,5 @@
 <?php
 
-use WPML\FP\Fns;
-
 /**
  * @group email
  */
@@ -9,21 +7,21 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 	/** @var WCML_WC_Strings */
 	private $wcmlStrings;
-	/** @var Sitepress */
+	/** @var SitePress */
 	private $sitepress;
-	/** @var woocommerce $woocommerce */
+	/** @var WooCommerce */
 	private $woocommerce;
-	/** @var \WC_Emails $wcEmails */
+	/** @var WC_Emails */
 	private $wcEmails;
 	/** @var wpdb */
 	private $wpdb;
-	/** @var WPML_WP_API $wp_api */
+	/** @var WPML_WP_API */
 	private $wp_api;
 
 	public function setUp(){
 		parent::setUp();
 
-		$this->sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$this->sitepress = $this->getMockBuilder( SitePress::class )
 			->disableOriginalConstructor()
 			->setMethods( array( 'get_wp_api', 'get_current_language', 'switch_lang', 'get_locale', 'get_user_admin_language', 'get_default_language' ) )
 			->getMock();
@@ -110,7 +108,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$lang = 'pt-br';
 		$user_id = 1;
 
-		$sitepress = $this->getMockBuilder(  \WPML\Core\ISitePress::class  )
+		$sitepress = $this->getMockBuilder( SitePress::class )
 			->setMethods( array( 'switch_lang', 'get_locale', 'get_user_admin_language' ) )
 			->disableOriginalConstructor()
 			->getMock();
@@ -423,7 +421,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$user->ID = 1;
 		$user_language = 'en';
 
-		\WP_Mock::expectFilterAdded( 'woocommerce_new_order_email_allows_resend', Fns::always( true ) );
+		WP_Mock::expectFilterAdded( 'woocommerce_new_order_email_allows_resend', function() {}, 20 );
 
 		WP_Mock::userFunction( 'get_user_by', array(
 			'args' => array( 'email', $recipient ),

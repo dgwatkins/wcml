@@ -8,17 +8,17 @@ namespace WCML\Rest\Wrapper;
  */
 class TestProductTerms extends \OTGS_TestCase {
 
-	/** @var \Sitepress */
+	/** @var \SitePress|\PHPUnit_Framework_MockObject_MockObject */
 	private $sitepress;
-	/** @var \WPML_Term_Translation */
+	/** @var \WPML_Term_Translation|\PHPUnit_Framework_MockObject_MockObject */
 	private $wpmlTermTranslations;
-	/** @var \WCML_Terms */
+	/** @var \WCML_Terms|\PHPUnit_Framework_MockObject_MockObject */
 	private $wcmlTerms;
 
 	public function setUp() {
 		parent::setUp();
 
-		$this->sitepress = $this->getMockBuilder( \WPML\Core\ISitePress::class )
+		$this->sitepress = $this->getMockBuilder( \SitePress::class )
 		                        ->disableOriginalConstructor()
 		                        ->setMethods( [
 			                        'set_element_language_details',

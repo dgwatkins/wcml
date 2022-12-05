@@ -119,7 +119,8 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 
 	/**
 	 * Specific check of `WCML_Bookings::update_booking_costs`
-	 * @param $product_id
+	 *
+	 * @param int $product_id
 	 */
 	private function check_update_booking_costs( $product_id ) {
 		foreach ( $this->currencies as $currency_code => $currency_data ) {
@@ -143,7 +144,8 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 
 	/**
 	 * Specific check of `WCML_Bookings::update_booking_pricing`
-	 * @param $product_id
+	 *
+	 * @param int $product_id
 	 */
 	private function check_update_booking_pricing( $product_id ) {
 		$dummy_bookings = array(
@@ -175,7 +177,8 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 
 	/**
 	 * Specific check of `WCML_Bookings::update_booking_person_cost`
-	 * @param $product_id
+	 *
+	 * @param int $product_id
 	 */
 	private function check_update_booking_person_cost( $product_id ) {
 		unset( $_POST['_wcml_custom_costs'] );
@@ -198,7 +201,8 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 
 	/**
 	 * Specific check of `WCML_Bookings::update_booking_person_block_cost`
-	 * @param $product_id
+	 *
+	 * @param int $product_id
 	 */
 	private function check_update_booking_person_block_cost( $product_id ) {
 		unset( $_POST['_wcml_custom_costs'] );
@@ -223,7 +227,8 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 
 	/**
 	 * Specific check of `WCML_Bookings::update_booking_resource_cost`
-	 * @param $product_id
+	 *
+	 * @param int $product_id
 	 */
 	private function check_update_booking_resource_cost( $product_id ) {
 		$resource_id = random_int( 90, 999 );
@@ -246,7 +251,8 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 
 	/**
 	 * Specific check of `WCML_Bookings::update_booking_resource_block_cost`
-	 * @param $product_id
+	 *
+	 * @param int $product_id
 	 */
 	private function check_update_booking_resource_block_cost( $product_id ) {
 
@@ -447,8 +453,9 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 
 	/**
 	 * Used by `Test_WCML_Bookings::sync_persons`
-	 * @param $post_id
-	 * @param $expected
+	 *
+	 * @param int   $post_id
+	 * @param array $expected
 	 */
 	private function check_meta_values( $post_id, $expected ) {
 		foreach ( $expected as $meta_key => $expected_value ) {
@@ -520,9 +527,9 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 	}
 
 	/**
-	 * @param $bookings
-	 * @param $product
-	 * @param $translation
+	 * @param object $bookings
+	 * @param int    $product
+	 * @param object $translation
 	 */
 	private function add_and_check_resource_labels( $bookings, $product, $translation ) {
 		update_post_meta( $product, '_wc_booking_has_resources', 'yes' );
@@ -536,9 +543,9 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 	}
 
 	/**
-	 * @param $bookings
-	 * @param $product
-	 * @param $translation
+	 * @param object $bookings
+	 * @param int    $product
+	 * @param object $translation
 	 */
 	private function add_and_check_original_resources( $bookings, $product, $translation ) {
 		$resource_cost = random_int( 1, 999 );

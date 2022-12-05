@@ -19,7 +19,7 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 	}
 
 	private function get_sitepress_mock() {
-		return $this->getMockBuilder( 'Sitepress' )
+		return $this->getMockBuilder( 'SitePress' )
 		            ->disableOriginalConstructor()
 		            ->getMock();
 	}
@@ -336,7 +336,8 @@ class Test_WCML_Dynamic_Pricing extends OTGS_TestCase {
 	}
 
 	/**
-	 * @param $classname
+	 * @param string $classname
+	 *
 	 * @return \PHPUnit\Framework\MockObject\MockObject|PHPUnit_Framework_MockObject_MockObject|WC_Dynamic_Pricing_Simple_Base
 	 */
 	private function get_dynamic_pricing_mock( $classname ) {
