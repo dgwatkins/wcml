@@ -729,6 +729,16 @@ class Test_WCML_Products extends OTGS_TestCase {
 			'return' => false
 		));
 
+		WP_Mock::userFunction( 'is_single', [
+			'times'  => 1,
+			'return' => true,
+		] );
+
+		WP_Mock::userFunction( 'WCML\functions\isStandAlone', [
+			'times'  => 1,
+			'return' => false,
+		] );
+
 		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'  => array( $product_id ),
 			'return' => array()
@@ -807,11 +817,6 @@ class Test_WCML_Products extends OTGS_TestCase {
 		$products->method( 'is_original_product' )->with( $product_id )->willReturn( false );
 
 		$woocommerce_wpml->products = $products;
-
-		WP_Mock::userFunction( 'is_product', array(
-			'times'  => 1,
-			'return' => true
-		) );
 
 		$subject = $this->get_subject( $woocommerce_wpml, $sitepress );
 		$filtered_data = $subject->filter_product_data( false, $product_id, false );
