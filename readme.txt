@@ -3,7 +3,7 @@ Contributors: AmirHelzer, strategio, dgwatkins, andrewp-2
 Tags: CMS, commerce, ecommerce, e-commerce, woocommerce, multilingual, multicurrency, multi-currency
 License: GPLv2
 Requires at least: 4.7
-Tested up to: 6.0.1
+Tested up to: 6.1.1
 Stable tag: 5.1.0
 Requires PHP: 5.6
 
