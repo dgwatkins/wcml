@@ -121,7 +121,7 @@ class WCML_Custom_Prices {
 
 				// get all prices for the above variations.
 				$rows = $this->wpdb->get_results(
-					"SELECT post_id, meta_key, meta_vakue FROM {$this->wpdb->postmeta}
+					"SELECT post_id, meta_key, meta_value FROM {$this->wpdb->postmeta}
 					WHERE meta_key IN ('_price', '_regular_price', '_sale_price', '_price_$currency', '_regular_price_$currency', '_sale_price_$currency')
 						AND post_id IN (" . DB::prepareIn( $variation_ids, '%d' ) . ')'
 				);
