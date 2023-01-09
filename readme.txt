@@ -125,4 +125,4 @@ Install and activate “WooCommerce Multilingual & Multicurrency” on your Word
 If you also use the WPML plugin for multilingual functionality, follow the setup wizard to translate the store pages, configure what attributes should be translated, enable the multi-currency mode and more. Read more about [translating your online store](https://wpml.org/documentation/related-projects/woocommerce-multilingual/).
 
 == Changelog ==
-{{changelog}}
+https://wpml.org/download/woocommerce-multilingual-multicurrency/?section=changelog
