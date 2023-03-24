@@ -74,7 +74,7 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 			}
 		) );
 
-		WP_Mock::expectFilterAdded( 'woocommerce_get_' . $woo_page, Fns::always( true ) );
+		WP_Mock::expectFilterAdded( 'option_woocommerce_' . $woo_page, Fns::always( true ) );
 
 		WP_Mock::expectFilterAdded( 'woocommerce_get_checkout_url', array( $subject, 'get_checkout_page_url' ) );
 
@@ -122,7 +122,7 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 			}
 		) );
 
-		WP_Mock::expectFilterAdded( 'woocommerce_get_' . $woo_page, Fns::always( true ) );
+		WP_Mock::expectFilterAdded( 'option_woocommerce_' . $woo_page, Fns::always( true ) );
 
 		$subject->add_hooks();
 
@@ -171,7 +171,7 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 			}
 		) );
 
-		WP_Mock::expectFilterAdded( 'woocommerce_get_' . $woo_page, Fns::always( true ) );
+		WP_Mock::expectFilterAdded( 'option_woocommerce_' . $woo_page, Fns::always( true ) );
 
 		$subject->add_hooks();
 
