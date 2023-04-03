@@ -121,7 +121,7 @@ function wcml_loader() {
 		\WCML\Attributes\LookupFiltersFactory::class,
 		\WCML\HomeScreen\Factory::class,
 		\WCML\Terms\Count\Hooks::class,
-		\WCML\Rest\Store\Hooks::class,
+		\WCML\Rest\Store\HooksFactory::class,
 		\WCML\Importer\Products::class,
 	];
 

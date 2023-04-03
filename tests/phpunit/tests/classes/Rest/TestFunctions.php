@@ -46,7 +46,7 @@ class TestFunctions extends \OTGS_TestCase {
 	 * @test
 	 * @dataProvider dp_api_requests
 	 */
-	function test_get_api_request_version( $uri, $version ) {
+	public function test_get_api_request_version( $uri, $version ) {
 
 		\WP_Mock::userFunction( 'trailingslashit', [
 			'return' => function ( $url ) {
@@ -62,10 +62,40 @@ class TestFunctions extends \OTGS_TestCase {
 		$this->assertEquals( 0, Functions::getApiRequestVersion() );
 	}
 
-	function dp_api_requests() {
+	public function dp_api_requests() {
 		return [
 			[ '/wp-json/wc/v3/', 3 ],
 			[ '/wp-json/wc/V2/', 2 ],
 		];
 	}
+
+	/**
+	 * @test
+	 * @dataProvider dpTestGetStoreStrippedEndpoint
+	 */
+	public function TestGetStoreStrippedEndpoint( $route, $expected ) {
+		\WP_Mock::userFunction( 'trailingslashit', [
+			'return' => function( $url ) {
+				return rtrim( $url, '/' ) . '/';
+			},
+		] );
+
+		$request = $this->getMockBuilder( '\WP_REST_Request' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'get_route' ] )
+			->getMock();
+
+		$request->method( 'get_route' )
+			->willReturn( $route );
+
+		$this->assertEquals( $expected, Functions::getStoreStrippedEndpoint( $request ) );
+	}
+
+	public function dpTestGetStoreStrippedEndpoint() {
+		return [
+			'other rest url' => [ '/any-url/',             null ],
+			'store rest url' => [ '/wc/store/v1/test/it/', 'test/it' ],
+		];
+	}
+
 }
