@@ -149,7 +149,7 @@ class WCML_Orders {
 
 			if ( $item instanceof WC_Order_Item_Product ) {
 				if ( 'line_item' === $item->get_type() ) {
-					if ( 'product_variation' === get_post_type( $item->get_product_id() ) ) {
+					if ( $item->get_variation_id() ) {
 						$item_was_adjusted = $this->adjust_variation_item_if_translated( $item, $language_to_filter );
 					} else {
 						$item_was_adjusted = $this->adjust_product_item_if_translated( $item, $language_to_filter );
