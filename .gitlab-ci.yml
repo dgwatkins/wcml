@@ -37,7 +37,7 @@ include:
     -   project: 'wpml/wpml-plugin-template'
         file: '.gitlab-ci/test/cc.yml'
     -   project: 'wpml/wpml-plugin-template'
-        file: '.gitlab-ci/test/unit/php73.with-report.yml'
+        file: '.gitlab-ci/test/unit/php.with-report.yml'
     -   project: 'wpml/wpml-plugin-template'
         file: '.gitlab-ci/test/integration/php.yml'
 
