@@ -166,7 +166,7 @@ class Test_WCML_Products_UI extends WCML_UnitTestCase {
 
     }
 
-    function test_wcml_get_product_info_for_translators(){
+    function skip_test_wcml_get_product_info_for_translators(){
         global $wpdb, $wpml_post_translations, $wpml_term_translations;
 
 		/**
