@@ -6,7 +6,8 @@
         "build:watch": "webpack --env.production=false --mode development --watch",
         "build:prod": "webpack -p --env production --mode production",
         "test": "jest",
-        "uglifyjs": "rm -f res/js/*.min.js; uglifyjs-folder --config-file=uglifyjs.json res/js -eo res/js"
+        "assets:js": "rm -f res/js/*.min.js; uglifyjs-folder --config-file=uglifyjs.json res/js -eo res/js",
+        "assets:css": "sass --style=compressed --no-source-map res/scss:res/css"
     },
     "jest": {
         "automock": false,
@@ -93,6 +94,7 @@
         "raf": "~3.4.0",
         "react-test-renderer": "^16.8.6",
         "recursive-copy": "^2.0.9",
+        "sass": "^1.62.0",
         "sass-loader": "~7.0.0",
         "style-loader": "~0.20.0",
         "ts-jest": "^24.0.2",

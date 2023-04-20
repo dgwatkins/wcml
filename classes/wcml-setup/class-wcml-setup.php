@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Obj;
+
 /**
  * Class WCML_Setup
  */
@@ -26,7 +28,7 @@ class WCML_Setup {
 	 * @param woocommerce_wpml    $woocommerce_wpml
 	 * @param SitePress           $sitepress
 	 */
-	public function __construct( WCML_Setup_UI $ui, WCML_Setup_Handlers $handlers, woocommerce_wpml $woocommerce_wpml, \WPML\Core\ISitePress $sitepress ) {
+	public function __construct( WCML_Setup_UI $ui, WCML_Setup_Handlers $handlers, woocommerce_wpml $woocommerce_wpml, SitePress $sitepress ) {
 
 		$this->ui               = $ui;
 		$this->handlers         = $handlers;
@@ -34,15 +36,14 @@ class WCML_Setup {
 		$this->sitepress        = $sitepress;
 
 		$this->steps = [
-			'introduction'   => [
+			'introduction'          => [
 				'name'    => __( 'Introduction', 'woocommerce-multilingual' ),
 				'view'    => new WCML_Setup_Introduction_UI(
-					$this->woocommerce_wpml,
 					$this->step_url( 'store-pages' )
 				),
 				'handler' => '',
 			],
-			'store-pages'    => [
+			'store-pages'           => [
 				'name'    => __( 'Store Pages', 'woocommerce-multilingual' ),
 				'view'    => new WCML_Setup_Store_Pages_UI(
 					$this->woocommerce_wpml,
@@ -51,7 +52,7 @@ class WCML_Setup {
 				),
 				'handler' => [ $this->handlers, 'install_store_pages' ],
 			],
-			'attributes'     => [
+			'attributes'            => [
 				'name'    => __( 'Global Attributes', 'woocommerce-multilingual' ),
 				'view'    => new WCML_Setup_Attributes_UI(
 					$this->woocommerce_wpml,
@@ -59,31 +60,35 @@ class WCML_Setup {
 				),
 				'handler' => [ $this->handlers, 'save_attributes' ],
 			],
-			'multi-currency' => [
+			'multi-currency'        => [
 				'name'    => __( 'Multiple Currencies', 'woocommerce-multilingual' ),
 				'view'    => new WCML_Setup_Multi_Currency_UI(
-					$this->woocommerce_wpml,
 					$this->step_url( 'translation-options' )
 				),
 				'handler' => [ $this->handlers, 'save_multi_currency' ],
 			],
+			'translation-options'   => [
+				'name'    => __( 'Translation Options', 'woocommerce-multilingual' ),
+				'view'    => new WCML_Setup_Translation_Options_UI(
+					$this->step_url( 'display-as-translated' )
+				),
+				'handler' => [ $this->handlers, 'save_translation_options' ],
+			],
+			'display-as-translated' => [
+				'name'    => '',
+				'view'    => new WCML_Setup_Display_As_Translated_UI(
+					$this->step_url( 'ready' )
+				),
+				'handler' => [ $this->handlers, 'save_display_as_translated' ],
+			],
+			'ready'                 => [
+				'name'    => __( 'Ready!', 'woocommerce-multilingual' ),
+				'view'    => new WCML_Setup_Ready_UI(),
+				'handler' => '',
+			],
 		];
 
-		$this->steps['translation-options'] = [
-			'name'    => __( 'Translation Options', 'woocommerce-multilingual' ),
-			'view'    => new WCML_Setup_Translation_Options_UI(
-				$this->woocommerce_wpml,
-				$this->step_url( 'ready' )
-			),
-			'handler' => [ $this->handlers, 'save_translation_options' ],
-		];
-
-		$this->steps['ready'] = [
-			'name'    => __( 'Ready!', 'woocommerce-multilingual' ),
-			'view'    => new WCML_Setup_Ready_UI( $this->woocommerce_wpml ),
-			'handler' => '',
-		];
-
+		$this->maybe_remove_display_as_translated_step();
 	}
 
 	public function add_hooks() {
@@ -111,19 +116,19 @@ class WCML_Setup {
 
 	private function do_not_redirect_to_setup() {
 
-		// Before WC 4.6
+		// Before WC 4.6.
 		$woocommerce_notices       = get_option( 'woocommerce_admin_notices', [] );
 		$woocommerce_setup_not_run = in_array( 'install', $woocommerce_notices, true );
 
-		// Since WC 4.6
+		// Since WC 4.6.
 		$needsWcWizardFirst = get_transient( '_wc_activation_redirect' );
 
 		return $this->is_wcml_setup_page() ||
-			   is_network_admin() ||
-			   isset( $_GET['activate-multi'] ) ||
-			   ! current_user_can( 'manage_options' ) ||
-			   $woocommerce_setup_not_run ||
-		       $needsWcWizardFirst;
+			is_network_admin() ||
+			isset( $_GET['activate-multi'] ) ||  /* phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected */
+			! current_user_can( 'manage_options' ) ||
+			$woocommerce_setup_not_run ||
+			$needsWcWizardFirst;
 
 	}
 
@@ -254,9 +259,20 @@ class WCML_Setup {
 			$step_name = sanitize_text_field( $_POST['handle_step'] );
 			if ( $handler = $this->get_handler( $step_name ) ) {
 				if ( is_callable( $handler, true ) ) {
-					call_user_func( $handler, $_POST );
+					call_user_func( $handler, $_REQUEST );
 				}
 			}
+		}
+	}
+
+	/**
+	 * If translate-everything was just selected, we need to skip
+	 * the display-as-translated step.
+	 */
+	public function maybe_remove_display_as_translated_step() {
+		if ( 'translate_everything' === Obj::prop( 'translation-option', $_POST ) ) {
+			wp_redirect( $this->step_url( 'ready' ) );
+			exit;
 		}
 	}
 

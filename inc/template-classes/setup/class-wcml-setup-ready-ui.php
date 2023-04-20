@@ -4,53 +4,40 @@ use WCML\Options\WPML;
 
 class WCML_Setup_Ready_UI extends WCML_Templates_Factory {
 
-	private $woocommerce_wpml;
-
-	/**
-	 * WCML_Setup_Ready_UI constructor.
-	 *
-	 * @param woocommerce_wpml $woocommerce_wpml
-	 */
-	public function __construct( $woocommerce_wpml ) {
-		// @todo Cover by tests, required for wcml-3037.
-		parent::__construct();
-
-		$this->woocommerce_wpml = $woocommerce_wpml;
-	}
-
 	public function get_model() {
-
-		$translated_attributes        = $this->woocommerce_wpml->attributes->get_translatable_attributes();
-		$untranslated_attribute_terms = [];
-		foreach ( $translated_attributes as $attribute ) {
-			if ( ! $this->woocommerce_wpml->terms->is_fully_translated( 'pa_' . $attribute->attribute_name ) ) {
-				$untranslated_attribute_terms[] = '<strong>' . $attribute->attribute_label . '</strong>';
-			}
-		}
-
-		$untranslated_categories       = ! $this->woocommerce_wpml->terms->is_fully_translated( 'product_cat' );
-		$untranslated_tags             = ! $this->woocommerce_wpml->terms->is_fully_translated( 'product_tag' );
-		$untranslated_shipping_classes = ! $this->woocommerce_wpml->terms->is_fully_translated( 'product_shipping_class' );
-
 		$model = [
-			'strings'      => [
+			'strings' => [
 				'step_id'      => 'ready_step',
-				'heading'      => __( 'Setup Complete', 'woocommerce-multilingual' ),
-				/* translators: %1$s and %2$s are opening and closing HTML strong tags */
-				'description1' => __( 'Your multilingual shop is almost ready. Next, you should go to the different tabs in %1$sWooCommerce &raquo; WooCommerce Multilingual & Multicurrency%2$s admin and do the final setup.', 'woocommerce-multilingual' ),
-				/* translators: %1$s and %2$s are opening and closing HTML strong tags */
 				'description2' => __( "For your convenience, we've marked items that require your attention with a notice icon. You can see a list of everything that you should complete in the %1\$sStatus%2\$s tab.", 'woocommerce-multilingual' ),
 				'continue'     => __( 'Close setup', 'woocommerce-multilingual' ),
 			],
-			'continue_url' => admin_url(
-				WPML::shouldTranslateEverything()
-				? 'admin.php?page=tm/menu/main.php' // TM Dashboard
-				: 'admin.php?page=wpml-wcml&tab=status&src=setup' // WCML status tab
-			),
 		];
 
-		return $model;
+		if ( WPML::isAutomatic( 'product' ) ) {
+			$model['strings']['heading']      = __( 'WPML is translating your products!', 'woocommerce-multilingual' );
+			$model['strings']['description1'] = __( 'Sit tight while we make your store completely multilingual.', 'woocommerce-multilingual' );
+			if ( wcml_is_multi_currency_on() ) {
+				/* translators: %1$s and %2$s are opening and closing HTML strong tags */
+				$model['strings']['description2'] = __( 'Don\'t forget to go to %1$sWooCommerce &raquo; WooCommerce Multilingual & Multicurrency%2$s to add currencies to your site.', 'woocommerce-multilingual' );
+			} else {
+				$model['strings']['description2'] = '';
+			}
+			$model['continue_url'] = admin_url( 'admin.php?page=tm/menu/main.php' );
+		} else {
+			$model['strings']['heading'] = __( 'Your multilingual shop is ready to be translated!', 'woocommerce-multilingual' );
+			if ( wcml_is_multi_currency_on() ) {
+				/* translators: %1$s and %2$s are opening and closing HTML strong tags */
+				$model['strings']['description1'] = __( 'Go to %1$sWooCommerce &raquo; WooCommerce Multilingual & Multicurrency%2$s to add currencies to your site and translate your products, taxonomies, shipping classes, and more.', 'woocommerce-multilingual' );
+			} else {
+				/* translators: %1$s and %2$s are opening and closing HTML strong tags */
+				$model['strings']['description1'] = __( 'Go to %1$sWooCommerce &raquo; WooCommerce Multilingual & Multicurrency%2$s to translate your products, taxonomies, shipping classes, and more.', 'woocommerce-multilingual' );
+			}
+			/* translators: %1$s and %2$s are opening and closing HTML strong tags */
+			$model['strings']['description2'] = __( 'Check the %1$sStatus%2$s tab to see items that require your attention.', 'woocommerce-multilingual' );
+			$model['continue_url']            = admin_url( 'admin.php?page=wpml-wcml&tab=status&src=setup' );
+		}
 
+		return $model;
 	}
 
 	protected function init_template_base_dir() {

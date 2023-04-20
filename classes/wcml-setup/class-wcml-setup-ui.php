@@ -43,6 +43,7 @@ class WCML_Setup_UI {
 	 * @return bool
 	 */
 	private function is_wcml_setup_page() {
+		/* phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected */
 		return isset( $_GET['page'] ) && $_GET['page'] === 'wcml-setup';
 	}
 
@@ -75,15 +76,17 @@ class WCML_Setup_UI {
 		?>
 		<ol class="wcml-setup-steps">
 			<?php foreach ( $steps as $step_key => $step ) : ?>
-				<li class="
-				<?php
-				if ( $step_key === $current_step ) {
-					echo 'active';
-				} elseif ( array_search( $current_step, $step_keys ) > array_search( $step_key, $step_keys ) ) {
-					echo 'done';
-				}
-				?>
-				"><?php echo esc_html( $step['name'] ); ?></li>
+				<?php if ( $step['name'] ) : ?>
+					<li class="
+					<?php
+					if ( $step_key === $current_step ) {
+						echo 'active';
+					} elseif ( array_search( $current_step, $step_keys ) > array_search( $step_key, $step_keys ) ) {
+						echo 'done';
+					}
+					?>
+					"><?php echo esc_html( $step['name'] ); ?></li>
+				<?php endif; ?>
 			<?php endforeach; ?>
 		</ol>
 		<?php

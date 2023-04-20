@@ -1,22 +1,21 @@
 <?php
 
+use WPML\Core\Twig_SimpleFunction;
+
 class WCML_Setup_Multi_Currency_UI extends WCML_Templates_Factory {
 
-	private $woocommerce_wpml;
+	/** @var string */
 	private $next_step_url;
 
 	/**
 	 * WCML_Setup_Multi_Currency_UI constructor.
 	 *
-	 * @param woocommerce_wpml $woocommerce_wpml
-	 * @param string           $next_step_url
+	 * @param string $next_step_url
 	 */
-	public function __construct( $woocommerce_wpml, $next_step_url ) {
-		// @todo Cover by tests, required for wcml-3037.
+	public function __construct( $next_step_url ) {
 		parent::__construct();
 
-		$this->woocommerce_wpml = $woocommerce_wpml;
-		$this->next_step_url    = $next_step_url;
+		$this->next_step_url = $next_step_url;
 	}
 
 	public function get_model() {
@@ -24,13 +23,17 @@ class WCML_Setup_Multi_Currency_UI extends WCML_Templates_Factory {
 		$model = [
 			'strings'           => [
 				'step_id'     => 'currency_step',
-				'heading'     => __( 'Enable Multiple Currencies', 'woocommerce-multilingual' ),
-				'description' => __( 'This will allow you to set prices for products in different currencies. The prices can be determined based on a given exchange rate or set explicitly for specific products.', 'woocommerce-multilingual' ),
-				'label_mco'   => __( 'Enable the multicurrency mode', 'woocommerce-multilingual' ),
-				'continue'    => __( 'Continue', 'woocommerce-multilingual' ),
-				'later'       => __( 'Later', 'woocommerce-multilingual' ),
+				'heading'     => __( 'Do you want to add more currencies to your store?', 'woocommerce-multilingual' ),
+				'description' => __( 'You will be able to:', 'woocommerce-multilingual' ),
+				'bullet1'     => __( 'Add a currency switcher to your store', 'woocommerce-multilingual' ),
+				'bullet2'     => __( 'Set exchange rates', 'woocommerce-multilingual' ),
+				'bullet3'     => __( 'Create custom pricing in each currency', 'woocommerce-multilingual' ),
+				'bullet4'     => __( 'And more!', 'woocommerce-multilingual' ),
+				'enable'      => __( 'Yes, enable multicurrency mode', 'woocommerce-multilingual' ),
+				'continue'    => __( 'No, use only one currency', 'woocommerce-multilingual' ),
 			],
-			'multi_currency_on' => $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT,
+			'documentation_url' => WCML_Tracking_Link::getWcmlMultiCurrencyDoc( '&utm_term=wcml-setup-wizard' ),
+			'multi_currency_on' => wcml_is_multi_currency_on(),
 			'continue_url'      => $this->next_step_url,
 		];
 
@@ -47,6 +50,5 @@ class WCML_Setup_Multi_Currency_UI extends WCML_Templates_Factory {
 	public function get_template() {
 		return '/setup/multi-currency.twig';
 	}
-
 
 }

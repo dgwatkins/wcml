@@ -2,7 +2,10 @@
 
 class WCML_Setup_Attributes_UI extends WCML_Templates_Factory {
 
+	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
+
+	/** @var string */
 	private $next_step_url;
 
 	/**
@@ -33,14 +36,14 @@ class WCML_Setup_Attributes_UI extends WCML_Templates_Factory {
 			$attributes[] = [
 				'name'       => $attribute->attribute_name,
 				'label'      => $attribute->attribute_label,
-				'translated' => in_array( $attribute->attribute_name, $attribute_names ),
+				'translated' => in_array( $attribute->attribute_name, $attribute_names, true ),
 			];
 		}
 
 		$model = [
 			'strings'      => [
 				'step_id'       => 'attributes_step',
-				'heading'       => __( 'Select Translatable Attributes', 'woocommerce-multilingual' ),
+				'heading'       => __( 'Which attributes will you want to translate?', 'woocommerce-multilingual' ),
 				'no_attributes' => __( 'There are no attributes defined', 'woocommerce-multilingual' ),
 				'continue'      => __( 'Continue', 'woocommerce-multilingual' ),
 				'later'         => __( 'Later', 'woocommerce-multilingual' ),

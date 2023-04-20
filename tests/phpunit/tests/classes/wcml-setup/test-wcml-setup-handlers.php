@@ -93,11 +93,9 @@ class Test_WCML_Setup_Handlers extends OTGS_TestCase {
 
 		$woocommerce_wpml->multi_currency = $this->get_wcml_currency_mock();
 
-		$data = [ 'enabled' => false ];
-
 		$woocommerce_wpml->multi_currency->expects( $this->once() )->method( 'disable' );
 
-		$subject->save_multi_currency( $data );
+		$subject->save_multi_currency( [] );
 	}
 
 	/**
@@ -145,8 +143,8 @@ class Test_WCML_Setup_Handlers extends OTGS_TestCase {
 	 *
 	 * @param array $data
 	 */
-	public function it_should_save_translation_options( $data, $display_as_translated, $auto_translate ) {
-		$this->mock_settings_helper( $display_as_translated );
+	public function it_should_save_translation_options( $data, $auto_translate ) {
+		$this->mock_settings_helper( false );
 
 		$set_automatic = FunctionMocker::replace( WPML::class . '::setAutomatic' );
 
@@ -158,11 +156,28 @@ class Test_WCML_Setup_Handlers extends OTGS_TestCase {
 
 	public function dp_should_save_translation_options() {
 		return [
-			'translate everything'     => [ [ 'translation-option' => 'translate_everything' ], false, true ],
-			'translate some'           => [ [ 'translation-option' => 'translate_some' ], false, false ],
-			'display as translated'    => [ [ 'translation-option' => 'display_as_translated' ], true, false ],
-			'default (translate some)' => [ [], false, false ],
+			'translate everything'     => [ [ 'translation-option' => 'translate_everything' ], true ],
+			'translate some'           => [ [ 'translation-option' => 'translate_some' ], false ],
 		];
+	}
+
+	/**
+	 * @test
+	 * @group wcml-3724
+	 *
+	 * @param array $data
+	 */
+	public function it_should_save_display_as_translated() {
+		$data = [ 'display-as-translated' => 'yes' ];
+
+		$this->mock_settings_helper( true );
+
+		$set_automatic = FunctionMocker::replace( WPML::class . '::setAutomatic' );
+
+		$subject = $this->get_subject();
+		$subject->save_display_as_translated( $data );
+
+		$set_automatic->wasCalledWithOnce( [ 'product', false ] );
 	}
 
 	/**
