@@ -123,6 +123,7 @@ function wcml_loader() {
 		\WCML\Terms\Count\Hooks::class,
 		\WCML\Rest\Store\HooksFactory::class,
 		\WCML\Importer\Products::class,
+		\WCML\COT\Hooks::class,
 	];
 
 	if (
