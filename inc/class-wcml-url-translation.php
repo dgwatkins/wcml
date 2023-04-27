@@ -836,7 +836,7 @@ class WCML_Url_Translation {
 
 		$original_base       = $_POST['base'];
 		$original_base_value = $_POST['base_value'];
-		$base_translation    = sanitize_title( trim( $_POST['base_translation'], '/' ) );
+		$base_translation    = wc_sanitize_permalink( trim( $_POST['base_translation'], '/' ) );
 		$language            = $_POST['language'];
 
 		if ( $original_base == 'shop' ) {
