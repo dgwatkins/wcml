@@ -11,7 +11,7 @@
                 {% endif %}
             >
                 <input type="radio" value="translate_everything" name="translation-option" required
-                    {% if is_translate_some_mode %} disabled="disabled"{% endif %}
+                    {% if is_translate_some_mode %} disabled="disabled"{%else%} checked="checked"{% endif %}
                 />
                 <strong>{{ strings.label_translate_everything }}</strong>
                 <p>{{ strings.description_translate_everything }}</p>
@@ -19,7 +19,9 @@
         </li>
         <li>
             <label class="wcml-translate-some">
-                <input type="radio" value="translate_some" name="translation-option" required />
+                <input type="radio" value="translate_some" name="translation-option" required
+                    {% if is_translate_some_mode %} checked="checked"{% endif %}
+                />
                 <strong>{{ strings.label_translate_some }}</strong>
                 <p>{{ strings.description_translate_some }}</p>
             </label>
