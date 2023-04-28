@@ -600,8 +600,15 @@ class Test_WCML_Orders extends OTGS_TestCase {
 	 */
 	public function itShouldSetOrderLanguageBeforeSave() {
 		$currentLanguage = 'fr';
+		$cacheKey        = 'wc-generated-cache-key';
+
+		WP_Mock::userFunction( 'wp_cache_delete', [
+			'args'  => [ $cacheKey, 'orders' ],
+			'times' => 1,
+		] );
 
 		$order = $this->getOrder();
+		$order->method( 'generate_meta_cache_key' )->willReturn( $cacheKey );
 		$order->method( 'get_status' )->willReturn( 'pending' );
 		$order->method( 'get_meta' )->willReturn( '' );
 		$order->expects( $this->once() )
@@ -641,6 +648,7 @@ class Test_WCML_Orders extends OTGS_TestCase {
 				'get_status',
 				'get_meta',
 				'add_meta_data',
+				'generate_meta_cache_key',
 		     ] )
 		     ->getMock();
 	}

@@ -356,6 +356,8 @@ class WCML_Orders {
 			&& ! $order->get_meta( self::KEY_LANGUAGE )
 		) {
 			$order->add_meta_data( self::KEY_LANGUAGE, $this->sitepress->get_current_language(), true );
+
+			wp_cache_delete( $order->generate_meta_cache_key( $order->get_id(), 'orders' ), 'orders' );
 		}
 	}
 
