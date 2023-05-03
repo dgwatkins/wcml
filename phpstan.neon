@@ -1,5 +1,9 @@
 parameters:
   level: 3
+  phpVersion: 80100
+  checkFunctionArgumentTypes: true
+  checkArgumentsPassedByReference: true
+  checkUnionTypes: true
   featureToggles:
     disableRuntimeReflectionProvider: true
   bootstrapFiles:
