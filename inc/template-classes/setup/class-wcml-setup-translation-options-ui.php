@@ -44,6 +44,7 @@ class WCML_Setup_Translation_Options_UI extends WCML_Templates_Factory {
 				'description_translate_some'       => __( 'You can still use automatic translation, but you decide what gets translated and how.', 'woocommerce-multilingual' ),
 				/* translators: %1$s and %2$s are opening and closing HTML strong tags */
 				'description_footer'               => __( 'You can change these settings later by going to %1$sWPML &raquo; Settings.%2$s', 'woocommerce-multilingual' ),
+				'label_choose'                     => __( 'Choose', 'woocommerce-multilingual' ),
 				'continue'                         => __( 'Continue', 'woocommerce-multilingual' ),
 			],
 			'is_translate_some_mode' => ! WPML::shouldTranslateEverything(),

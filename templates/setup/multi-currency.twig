@@ -1,7 +1,7 @@
 <span id="{{ strings.step_id }}">
 <h1>{{ strings.heading }}</h1>
 
-<div>{{ strings.description }}</div>
+<div><strong>{{ strings.description }}</strong></div>
 
 <ul>
     <li>{{ strings.bullet1 }}</li>
@@ -11,7 +11,7 @@
 </ul>
 
 <p class="wcml-setup-actions step">
-    <a href="{{ continue_url }}&enabled=1" class="submit">{{ strings.enable }}</a>
-    <a href="{{ continue_url }}&enabled=0" class="button button-large button-primary submit">{{ strings.continue }}</a>
+    <a href="{{ continue_url }}&enabled=1" class="button button-primary submit">{{ strings.enable }}</a>
+    <a href="{{ continue_url }}&enabled=0" class="button button-primary submit">{{ strings.continue }}</a>
 </p>
 </span>

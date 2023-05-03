@@ -73,19 +73,23 @@ class WCML_Setup_UI {
 	public function setup_steps( array $steps, $current_step ) {
 		$step_keys = array_keys( $steps );
 		array_shift( $steps );
+		$i = 1;
 		?>
 		<ol class="wcml-setup-steps">
 			<?php foreach ( $steps as $step_key => $step ) : ?>
 				<?php if ( $step['name'] ) : ?>
 					<li class="
 					<?php
+					$step_status = $i;
 					if ( $step_key === $current_step ) {
 						echo 'active';
 					} elseif ( array_search( $current_step, $step_keys ) > array_search( $step_key, $step_keys ) ) {
 						echo 'done';
+						$step_status = '<i class="otgs-ico otgs-ico-ok"></i>';
 					}
 					?>
-					"><?php echo esc_html( $step['name'] ); ?></li>
+					"><span><?php echo $step_status; ?></span><?php echo esc_html( $step['name'] ); ?></li>
+					<?php $i++; ?>
 				<?php endif; ?>
 			<?php endforeach; ?>
 		</ol>
