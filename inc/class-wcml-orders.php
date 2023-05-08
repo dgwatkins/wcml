@@ -478,7 +478,17 @@ class WCML_Orders {
 		}
 	}
 
+	/**
+	 * @param array                  $files
+	 * @param \WC_Order_Item_Product $item
+	 * @param \WC_Order|false        $object
+	 *
+	 * @return array
+	 */
 	public function filter_downloadable_product_items( $files, $item, $object ) {
+		if ( ! $object ) {
+			return $files;
+		}
 
 		$order_language = self::getLanguage( $object->get_id() );
 

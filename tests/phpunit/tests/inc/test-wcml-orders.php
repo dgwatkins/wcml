@@ -117,11 +117,11 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		$language = 'fr';
 		$order_id =  mt_rand( 1, 100 );
 
-		$product = $this->getMockBuilder( 'WC_Product' )
+		$order = $this->getMockBuilder( 'WC_Order' )
 		                ->disableOriginalConstructor()
 		                ->setMethods( array( 'get_id' ) )
 		                ->getMock();
-		$product->method( 'get_id' )->willReturn( $order_id );
+		$order->method( 'get_id' )->willReturn( $order_id );
 
 
 		\WP_Mock::wpFunction( 'get_post_meta', array(
@@ -146,7 +146,7 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		\WP_Mock::wpFunction( 'remove_filter', array( 'times' => 1, 'return' => true ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_get_item_downloads', array( $subject, 'filter_downloadable_product_items' ), 10, 3 );
 
-		$filtered_files = $subject->filter_downloadable_product_items( array(), $item, $product );
+		$filtered_files = $subject->filter_downloadable_product_items( array(), $item, $order );
 
 		$this->assertEquals( $expected_downloads, $filtered_files );
 	}
@@ -160,11 +160,11 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		$language = 'fr';
 		$order_id =  mt_rand( 1, 100 );
 
-		$product = $this->getMockBuilder( 'WC_Product' )
+		$order = $this->getMockBuilder( 'WC_Order' )
 		                ->disableOriginalConstructor()
 		                ->setMethods( array( 'get_id' ) )
 		                ->getMock();
-		$product->method( 'get_id' )->willReturn( $order_id );
+		$order->method( 'get_id' )->willReturn( $order_id );
 
 
 		\WP_Mock::wpFunction( 'get_post_meta', array(
@@ -190,9 +190,28 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		\WP_Mock::wpFunction( 'remove_filter', array( 'times' => 1, 'return' => true ) );
 		\WP_Mock::expectFilterAdded( 'woocommerce_get_item_downloads', array( $subject, 'filter_downloadable_product_items' ), 10, 3 );
 
-		$filtered_files = $subject->filter_downloadable_product_items( array(), $item, $product );
+		$filtered_files = $subject->filter_downloadable_product_items( array(), $item, $order );
 
 		$this->assertEquals( $expected_downloads, $filtered_files );
+	}
+
+	/**
+	 * @test
+	 *
+	 * @return void
+	 */
+	public function it_should_not_filter_files_when_order_item_is_falsy() {
+		$files = [ 'some files' ];
+		$item  = $this->getMockBuilder( 'WC_Order_Item_Product' )
+			->setMethods( [ 'get_item_downloads' ] )
+			->getMock();
+		$item->expects( $this->never() )->method( 'get_item_downloads' );
+		$order = false;
+
+		$this->assertSame(
+			$files,
+			$this->get_subject()->filter_downloadable_product_items( $files, $item, $order )
+		);
 	}
 
 	/**
