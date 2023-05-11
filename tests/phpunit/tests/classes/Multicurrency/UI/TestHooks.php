@@ -228,9 +228,33 @@ class TestHooks extends \OTGS_TestCase {
 
 	private function checkAllCurrencies( array $allCurrencies ) {
 		$this->assertEquals( [
-				(object) [ 'code' => 'USD', 'label' => 'US Dollar', 'symbol' => '$' ],
-				(object) [ 'code' => 'EUR', 'label' => 'Euro', 'symbol' => '€' ],
-				(object) [ 'code' => 'GBP', 'label' => 'Pound Sterling', 'symbol' => '£' ],
+				(object) [
+					'code'         => 'USD',
+					'label'        => 'US Dollar',
+					'symbol'       => '$',
+					'position'     => 'left',
+					'thousand_sep' => ' ',
+					'decimal_sep'  => '.',
+					'num_decimals' => 2,
+				],
+				(object) [
+					'code'         => 'EUR',
+					'label'        => 'Euro',
+					'symbol'       => '€',
+					'position'     => 'left',
+					'thousand_sep' => ' ',
+					'decimal_sep'  => '.',
+					'num_decimals' => 2,
+				],
+				(object) [
+					'code'         => 'GBP',
+					'label'        => 'Pound Sterling',
+					'symbol'       => '£',
+					'position'     => 'left',
+					'thousand_sep' => ' ',
+					'decimal_sep'  => '.',
+					'num_decimals' => 2,
+				],
 			],
 			$allCurrencies
 		);

@@ -6,7 +6,7 @@ import Select from "antd/lib/select";
 import 'antd/lib/select/style/index.css';
 import 'antd/lib/modal/style/index.css';
 import 'antd/lib/tooltip/style/index.css';
-import {useStore, getStoreProperty, getStoreAction} from "../Store";
+import {useStore, getCurrencyIndex, getStoreProperty, getStoreAction} from "../Store";
 import {validateRate, getFormattedPricePreview, getCurrencyLabel, getCurrencySymbol} from '../Utils';
 import Gateways from "./Gateways/Gateways";
 import {SelectRow, InputRow, Spinner} from "../../sharedComponents/FormElements";
@@ -88,14 +88,16 @@ export default CurrencyModal;
 const CurrencySettingsFields = ({currency, setModalCurrency, defaultCurrency}) => {
     const isPresettingRate = getStoreProperty('isPresettingRate');
     const isValidRate = getStoreProperty('isValidModalRate');
+	const newCurrencies = getStoreProperty('newCurrencies');
 
     const updateCurrencyProp = (prop) => (e) => {
         setModalCurrency({...currency, [prop]:e.target.value});
     };
 
-    const updateCurrencyPropValue = (prop) => (value) => {
-        setModalCurrency({...currency, [prop]:value});
-    };
+	const changeCurrencyCode = code => {
+		const index = getCurrencyIndex(newCurrencies)(code);
+		setModalCurrency({...currency, ...newCurrencies[index]});
+	};
 
     const onChangeRate = (e) => {
         updateCurrencyProp('rate')(e);
@@ -106,7 +108,7 @@ const CurrencySettingsFields = ({currency, setModalCurrency, defaultCurrency}) =
 
     return (
         <React.Fragment>
-            {currency.isNew && <NewCurrencySelector currency={currency.code} updateCurrencyPropValue={updateCurrencyPropValue} />}
+            {currency.isNew && <NewCurrencySelector currency={currency.code} changeCurrencyCode={changeCurrencyCode} />}
 
             <div className="wpml-form-row wcml-co-exchange-rate">
                 <label htmlFor={"wcml_currency_options_rate_" + currency.code}>{strings.labelExchangeRate}</label>
@@ -256,7 +258,7 @@ const PreviewCurrency = ({currency}) => {
     );
 };
 
-const NewCurrencySelector = ({currency, updateCurrencyPropValue}) => {
+const NewCurrencySelector = ({currency, changeCurrencyCode}) => {
     const newCurrencies = getStoreProperty('newCurrencies');
 
     const currencies = newCurrencies.map(currency => {
@@ -269,7 +271,7 @@ const NewCurrencySelector = ({currency, updateCurrencyPropValue}) => {
             <Select showSearch
                     style={{width: '185px'}}
                     value={currency}
-                    onChange={updateCurrencyPropValue('code')}
+                    onChange={code => changeCurrencyCode(code)}
                     name="currency_options[code]"
                     id="wcml_currency_options_code_"
                     optionLabelProp="label"
