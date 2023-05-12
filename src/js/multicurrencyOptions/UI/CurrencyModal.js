@@ -265,10 +265,18 @@ const NewCurrencySelector = ({currency, changeCurrencyCode}) => {
         return <Select.Option key={currency.code} value={currency.code} label={currency.label}>{currency.label}</Select.Option>;
     });
 
-    return (
+	const searchCurrencyByLabelAndCode = (input, option) => {
+		const userInput = input.toLowerCase();
+		const isIn = prop => option[prop].toLowerCase().includes(userInput);
+
+		return isIn('label') || isIn('value');
+	};
+
+	return (
         <div className="wpml-form-row currency_code">
             <label htmlFor="wcml_currency_select_">{strings.labelSelectCurrency}</label>
             <Select showSearch
+                    filterOption={searchCurrencyByLabelAndCode}
                     style={{width: '185px'}}
                     value={currency}
                     onChange={code => changeCurrencyCode(code)}
