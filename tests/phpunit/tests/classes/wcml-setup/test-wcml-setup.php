@@ -241,6 +241,8 @@ class Test_WCML_Setup extends OTGS_TestCase {
 			'return' => true
 		) );
 
+		\WP_Mock::userFunction( 'wpml_is_ajax' )->andReturn( false );
+
 		$this->assertNull( $subject->setup_redirect() );
 
 	}
@@ -284,6 +286,8 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		\WP_Mock::userFunction( 'current_user_can', array(
 			'return' => true
 		) );
+
+		\WP_Mock::userFunction( 'wpml_is_ajax' )->andReturn( false );
 
 		// has_completed = yes
 		$woocommerce_wpml->settings['set_up_wizard_run'] = true;
@@ -335,6 +339,8 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		\WP_Mock::userFunction( 'current_user_can', array(
 			'return' => true
 		) );
+
+		\WP_Mock::userFunction( 'wpml_is_ajax' )->andReturn( false );
 
 		// has_completed = no
 		$woocommerce_wpml->settings['set_up_wizard_run'] = false;

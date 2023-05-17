@@ -115,7 +115,6 @@ class WCML_Setup {
 	}
 
 	private function do_not_redirect_to_setup() {
-
 		// Before WC 4.6.
 		$woocommerce_notices       = get_option( 'woocommerce_admin_notices', [] );
 		$woocommerce_setup_not_run = in_array( 'install', $woocommerce_notices, true );
@@ -128,7 +127,8 @@ class WCML_Setup {
 			isset( $_GET['activate-multi'] ) ||  /* phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected */
 			! current_user_can( 'manage_options' ) ||
 			$woocommerce_setup_not_run ||
-			$needsWcWizardFirst;
+			$needsWcWizardFirst ||
+			wpml_is_ajax();
 
 	}
 
