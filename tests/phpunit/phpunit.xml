@@ -24,6 +24,7 @@
 				<directory>../../locale</directory>
 				<directory>../../tests</directory>
 				<directory>../../vendor</directory>
+				<directory>../../vendor-bin</directory>
 			</exclude>
 		</whitelist>
 	</filter>
