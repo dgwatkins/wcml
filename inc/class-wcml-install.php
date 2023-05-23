@@ -111,10 +111,6 @@ class WCML_Install {
 		$WCML_Setup->setup_redirect();
 		$WCML_Setup->add_hooks();
 
-		if ( ! empty( $woocommerce_wpml->settings['set_up_wizard_run'] ) ) {
-			add_action( 'admin_notices', [ __CLASS__, 'admin_notice_after_install' ] );
-		}
-
 		$translated_product_type_terms = self::translated_product_type_terms();
 		if ( ! empty( $translated_product_type_terms ) ) {
 			add_action( 'admin_notices', [ __CLASS__, 'admin_translated_product_type_terms_notice' ] );
@@ -265,35 +261,6 @@ class WCML_Install {
 					add_option( $option_name, $email->settings );
 				}
 			}
-		}
-	}
-
-	public static function admin_notice_after_install() {
-		global $woocommerce_wpml;
-
-		$tracking_link = new WCML_Tracking_Link();
-		if ( ! $woocommerce_wpml->settings['dismiss_doc_main'] ) {
-			$url = add_query_arg( 'wcml_action', 'dismiss' );
-			?>
-			<div id="message" class="updated message fade otgs-is-dismissible">
-				<p>
-					<?php
-					printf(
-						/* translators: %1$s and %2$s are opening and closing HTML strong tags */
-						esc_html__( "You've successfully installed %1\$sWooCommerce Multilingual & Multicurrency%2\$s. Would you like to see a quick overview?", 'woocommerce-multilingual' ),
-						'<strong>',
-						'</strong>'
-					);
-					?>
-				</p>
-				<p>
-					<a class="button-primary align-right" href="<?php echo esc_url( $tracking_link->getWcmlMainDoc() ); ?>" target="_blank">
-						<?php esc_html_e( 'Learn how to turn your e-commerce site multilingual', 'woocommerce-multilingual' ); ?>
-					</a>
-				</p>
-				<a class="notice-dismiss" href="<?php echo esc_url( $url ); ?>"><span class="screen-reader-text"><?php esc_html_e( 'Dismiss', 'woocommerce-multilingual' ); ?></span></a>
-			</div>
-			<?php
 		}
 	}
 

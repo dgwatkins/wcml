@@ -1,26 +1,11 @@
 <?php
 
-use WPML\Core\Twig_SimpleFunction;
+class WCML_Setup_Multi_Currency_UI extends WCML_Setup_Step {
 
-class WCML_Setup_Multi_Currency_UI extends WCML_Templates_Factory {
-
-	/** @var string */
-	private $next_step_url;
-
-	/**
-	 * WCML_Setup_Multi_Currency_UI constructor.
-	 *
-	 * @param string $next_step_url
-	 */
-	public function __construct( $next_step_url ) {
-		parent::__construct();
-
-		$this->next_step_url = $next_step_url;
-	}
+	const SLUG = 'multi-currency';
 
 	public function get_model() {
-
-		$model = [
+		return [
 			'strings'           => [
 				'step_id'     => 'currency_step',
 				'heading'     => __( 'Do you want to add more currencies to your store?', 'woocommerce-multilingual' ),
@@ -31,24 +16,16 @@ class WCML_Setup_Multi_Currency_UI extends WCML_Templates_Factory {
 				'bullet4'     => __( 'And more!', 'woocommerce-multilingual' ),
 				'enable'      => __( 'Yes, enable multicurrency mode', 'woocommerce-multilingual' ),
 				'continue'    => __( 'No, use only one currency', 'woocommerce-multilingual' ),
+				'go_back'     => __( 'Go back', 'woocommerce-multilingual' ),
 			],
-			'documentation_url' => WCML_Tracking_Link::getWcmlMultiCurrencyDoc( '&utm_term=wcml-setup-wizard' ),
+			'documentation_url' => WCML_Tracking_Link::getWcmlMultiCurrencyDoc( false, [ 'utm_term' => WCML_Tracking_Link::UTM_TERM_WIZARD ] ),
 			'multi_currency_on' => wcml_is_multi_currency_on(),
 			'continue_url'      => $this->next_step_url,
-		];
-
-		return $model;
-
-	}
-
-	protected function init_template_base_dir() {
-		$this->template_paths = [
-			WCML_PLUGIN_PATH . '/templates/',
+			'go_back_url'       => $this->previous_step_url,
 		];
 	}
 
 	public function get_template() {
 		return '/setup/multi-currency.twig';
 	}
-
 }

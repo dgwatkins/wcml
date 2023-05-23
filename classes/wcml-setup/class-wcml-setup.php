@@ -1,6 +1,7 @@
 <?php
 
-use WPML\FP\Obj;
+use WCML\Options\WPML;
+use WPML\API\Sanitize;
 
 /**
  * Class WCML_Setup
@@ -35,11 +36,17 @@ class WCML_Setup {
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->sitepress        = $sitepress;
 
+		$stepUrlStorePages          = $this->step_url( WCML_Setup_Store_Pages_UI::SLUG );
+		$stepUrlAttributes          = $this->step_url( WCML_Setup_Attributes_UI::SLUG );
+		$stepUrlMulticurrency       = $this->step_url( WCML_Setup_Multi_Currency_UI::SLUG );
+		$stepUrlTranslationOptions  = $this->step_url( WCML_Setup_Translation_Options_UI::SLUG );
+		$stepUrlDisplayAsTranslated = $this->step_url( WCML_Setup_Display_As_Translated_UI::SLUG );
+
 		$this->steps = [
 			'introduction'          => [
 				'name'    => __( 'Introduction', 'woocommerce-multilingual' ),
 				'view'    => new WCML_Setup_Introduction_UI(
-					$this->step_url( 'store-pages' )
+					$stepUrlStorePages
 				),
 				'handler' => '',
 			],
@@ -48,7 +55,8 @@ class WCML_Setup {
 				'view'    => new WCML_Setup_Store_Pages_UI(
 					$this->woocommerce_wpml,
 					$this->sitepress,
-					$this->step_url( 'attributes' )
+					$stepUrlAttributes,
+					$this->step_url( WCML_Setup_Introduction_UI::SLUG )
 				),
 				'handler' => [ $this->handlers, 'install_store_pages' ],
 			],
@@ -56,39 +64,43 @@ class WCML_Setup {
 				'name'    => __( 'Global Attributes', 'woocommerce-multilingual' ),
 				'view'    => new WCML_Setup_Attributes_UI(
 					$this->woocommerce_wpml,
-					$this->step_url( 'multi-currency' )
+					$stepUrlMulticurrency,
+					$stepUrlStorePages
 				),
 				'handler' => [ $this->handlers, 'save_attributes' ],
 			],
 			'multi-currency'        => [
 				'name'    => __( 'Multiple Currencies', 'woocommerce-multilingual' ),
 				'view'    => new WCML_Setup_Multi_Currency_UI(
-					$this->step_url( 'translation-options' )
+					$stepUrlTranslationOptions,
+					$stepUrlAttributes
 				),
 				'handler' => [ $this->handlers, 'save_multi_currency' ],
 			],
-			'translation-options'   => [
+			'translation-options-1' => [
 				'name'    => __( 'Translation Options', 'woocommerce-multilingual' ),
 				'view'    => new WCML_Setup_Translation_Options_UI(
-					$this->step_url( 'display-as-translated' )
+					$stepUrlDisplayAsTranslated,
+					$stepUrlMulticurrency
 				),
 				'handler' => [ $this->handlers, 'save_translation_options' ],
 			],
-			'display-as-translated' => [
-				'name'    => '',
+			'translation-options-2' => [
+				'name'    => __( 'Translation Options', 'woocommerce-multilingual' ),
 				'view'    => new WCML_Setup_Display_As_Translated_UI(
-					$this->step_url( 'ready' )
+					'',
+					$stepUrlTranslationOptions
 				),
 				'handler' => [ $this->handlers, 'save_display_as_translated' ],
 			],
-			'ready'                 => [
-				'name'    => __( 'Ready!', 'woocommerce-multilingual' ),
-				'view'    => new WCML_Setup_Ready_UI(),
-				'handler' => '',
-			],
 		];
+	}
 
-		$this->maybe_remove_display_as_translated_step();
+	/**
+	 * @return bool
+	 */
+	private function is_selecting_translate_some() {
+		return 'translate_some' === Sanitize::stringProp( 'translation-option', $_POST );
 	}
 
 	public function add_hooks() {
@@ -171,15 +183,57 @@ class WCML_Setup {
 		wp_enqueue_script( 'wcml-setup', WCML_PLUGIN_URL . '/res/js/wcml-setup.js', [ 'jquery', OTGS_Assets_Handles::POPOVER_TOOLTIP ], WCML_VERSION, true );
 
 		$this->ui->setup_header( $this->steps, $this->step );
-		$this->ui->setup_steps( $this->steps, $this->step );
+		$this->ui->setup_steps( $this->filter_split_translation_options_step( $this->steps ), $this->step );
 		$this->ui->setup_content( $this->steps[ $this->step ]['view'] );
 		$this->ui->setup_footer( ! empty( $this->steps[ $this->step ]['handler'] ) );
 
-		if ( 'ready' === $this->step ) {
+		if ( $this->is_setup_complete( $this->step ) ) {
 			$this->complete_setup();
+			$this->add_setup_complete_notice();
+			$this->redirect_to_tm_dashboard_on_setup_complete();
 		}
 
 		wp_die();
+	}
+
+	/**
+	 * The "Translation Options" step might be split into 2 steps
+	 * if the user select the "Translate Some" mode.
+	 * In that case, we show an extra steps to define if products
+	 * should "display as translated".
+	 *
+	 * @param array $steps
+	 *
+	 * @return array
+	 */
+	private function filter_split_translation_options_step( $steps ) {
+		if ( $this->is_selecting_translate_some() ) {
+			unset( $steps[ WCML_Setup_Translation_Options_UI::SLUG ] );
+		} else {
+			unset( $steps[ WCML_Setup_Display_As_Translated_UI::SLUG ] );
+		}
+
+		return $steps;
+	}
+
+	/**
+	 * @param string $step
+	 *
+	 * @return bool
+	 */
+	private function is_setup_complete( $step ) {
+		if ( WCML_Setup_Display_As_Translated_UI::SLUG === $step && ! $this->is_selecting_translate_some() ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return void
+	 */
+	private function redirect_to_tm_dashboard_on_setup_complete() {
+		wcml_safe_redirect( 'admin.php?page=tm/menu/main.php' );
 	}
 
 	private function splash_wizard_on_wcml_pages() {
@@ -217,6 +271,36 @@ class WCML_Setup {
 		$this->woocommerce_wpml->settings['set_up_wizard_run']    = 1;
 		$this->woocommerce_wpml->settings['set_up_wizard_splash'] = 1;
 		$this->woocommerce_wpml->update_settings();
+	}
+
+	/**
+	 * @return void
+	 */
+	private function add_setup_complete_notice() {
+		$getRenderedNotice = function( $title, $descriptionWithBoldPlaceholders ) {
+			return '<h2>' . $title . '</h2>' .
+			       '<p>' . sprintf( $descriptionWithBoldPlaceholders, '<b>', '</b>' ) . '</p>';
+		};
+
+		if ( WPML::isAutomatic( 'product' ) ) {
+			$text = $getRenderedNotice(
+				esc_html__( 'WPML is translating your products', 'woocommerce-multilingual' ),
+				// translators: The placeholders are opening and closing bold HTML tags.
+				esc_html__( 'You\'re all set and WPML is translating your products automatically. Go to %1$sWooCommerce » WooCommerce Multilingual & Multicurrency%2$s to translate your categories and shipping classes, check the store translation status, and more.', 'woocommerce-multilingual' )
+			);
+		} else {
+			$text = $getRenderedNotice(
+				esc_html__( 'Your store is ready to be translated', 'woocommerce-multilingual' ),
+				// translators: The placeholders are opening and closing bold HTML tags.
+				esc_html__( 'You\'re all set and can start translating your store. Go to %1$sWooCommerce » WooCommerce Multilingual & Multicurrency%2$s to translate your products, categories, and shipping classes, check the store translation status, and more.', 'woocommerce-multilingual' )
+			);
+		}
+
+		$notices = wpml_get_admin_notices();
+		$notice = $notices->create_notice( 'setup_complete', $text, 'wcml' );
+		$notice->set_flash();
+		$notice->set_hideable( true );
+		$notices->add_notice( $notice );
 	}
 
 	private function has_completed() {
@@ -264,16 +348,4 @@ class WCML_Setup {
 			}
 		}
 	}
-
-	/**
-	 * If translate-everything was just selected, we need to skip
-	 * the display-as-translated step.
-	 */
-	public function maybe_remove_display_as_translated_step() {
-		if ( 'translate_everything' === Obj::prop( 'translation-option', $_POST ) ) {
-			wp_redirect( $this->step_url( 'ready' ) );
-			exit;
-		}
-	}
-
 }

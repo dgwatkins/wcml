@@ -1,6 +1,8 @@
 <?php
 
-class WCML_Setup_Store_Pages_UI extends WCML_Templates_Factory {
+class WCML_Setup_Store_Pages_UI extends WCML_Setup_Step {
+
+	const SLUG = 'store-pages';
 
 	/** @var woocommerce_wpml */
 	private $woocommerce_wpml;
@@ -8,27 +10,23 @@ class WCML_Setup_Store_Pages_UI extends WCML_Templates_Factory {
 	/** @var SitePress */
 	private $sitepress;
 
-	/** @var string */
-	private $next_step_url;
-
 	/**
 	 * WCML_Setup_Store_Pages_UI constructor.
 	 *
 	 * @param woocommerce_wpml $woocommerce_wpml
 	 * @param SitePress        $sitepress
 	 * @param string           $next_step_url
+	 * @param string           $previous_step_url
 	 */
-	public function __construct( $woocommerce_wpml, $sitepress, $next_step_url ) {
+	public function __construct( $woocommerce_wpml, $sitepress, $next_step_url, $previous_step_url ) {
 		// @todo Cover by tests, required for wcml-3037.
-		parent::__construct();
+		parent::__construct( $next_step_url, $previous_step_url );
 
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->sitepress        = $sitepress;
-		$this->next_step_url    = $next_step_url;
 	}
 
 	public function get_model() {
-
 		$WCML_Status_Store_Pages_UI = new WCML_Status_Store_Pages_UI( $this->sitepress, $this->woocommerce_wpml );
 		$store_pages_view           = $WCML_Status_Store_Pages_UI->get_view();
 
@@ -67,24 +65,17 @@ class WCML_Setup_Store_Pages_UI extends WCML_Templates_Factory {
 
 		$store_pages_view .= '<input type="hidden" name="next_step_url" value="' . esc_url( $this->next_step_url ) . '">';
 
-		$model = [
+		return [
 			'strings'      => [
 				'step_id'     => 'store_pages_step',
 				'heading'     => __( "Create store pages in all your site's languages", 'woocommerce-multilingual' ),
 				'description' => __( 'WPML automatically generates translated versions of default WooCommerce pages, such as Shop, Account, Checkout, and Cart.', 'woocommerce-multilingual' ),
 				'continue'    => __( 'Continue', 'woocommerce-multilingual' ),
+				'go_back'     => __( 'Go back', 'woocommerce-multilingual' ),
 			],
 			'store_pages'  => $store_pages_view,
 			'continue_url' => $this->next_step_url,
-		];
-
-		return $model;
-
-	}
-
-	protected function init_template_base_dir() {
-		$this->template_paths = [
-			WCML_PLUGIN_PATH . '/templates/',
+			'go_back_url'  => $this->previous_step_url,
 		];
 	}
 
@@ -109,5 +100,4 @@ class WCML_Setup_Store_Pages_UI extends WCML_Templates_Factory {
 
 		return PHP_EOL . '<ul class="wcml-lang-list">' . implode( PHP_EOL, $secondary_languages ) . '</ul>' . PHP_EOL;
 	}
-
 }

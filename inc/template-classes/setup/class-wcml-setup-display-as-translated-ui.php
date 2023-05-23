@@ -2,16 +2,9 @@
 
 use WCML\Options\WPML;
 
-class WCML_Setup_Display_As_Translated_UI extends WCML_Templates_Factory {
+class WCML_Setup_Display_As_Translated_UI extends WCML_Setup_Step {
 
-	/** @var string */
-	private $next_step_url;
-
-	public function __construct( $next_step_url ) {
-		parent::__construct();
-
-		$this->next_step_url = $next_step_url;
-	}
+	const SLUG = 'translation-options-2';
 
 	public function get_model() {
 
@@ -22,40 +15,32 @@ class WCML_Setup_Display_As_Translated_UI extends WCML_Templates_Factory {
 											&& 1 === $custom_posts_unlocked['product']
 											&& WPML_CONTENT_TYPE_DISPLAY_AS_IF_TRANSLATED === $custom_posts_sync['product'];
 
-		$model = [
+		return [
 			'strings'                          => [
 				'step_id'                          => 'display_as_translated_step',
-				'heading'                          => __( 'What do you want to do with products you don’t translate?', 'woocommerce-multilingual' ),
+				'heading'                          => __( 'What do you want to do with products that are not translated?', 'woocommerce-multilingual' ),
 				'label_display_as_translated'      => sprintf(
 					/* translators: %1$s and %2$s are opening and closing HTML link tags */
-					__(
-						'Show the products %1$sin the default language%2$s.',
+					esc_html__(
+						'Allow viewing products in languages they are not translated to but %1$sdisplay their content in the default language%2$s',
 						'woocommerce-multilingual'
 					),
-					'<a target="_blank" class="wpml-external-link" rel="noopener" href="' . WCML_Tracking_Link::getWcmlDisplayAsTranslatedDoc() . '">',
+					'<a target="_blank" class="wpml-external-link" rel="noopener" href="' . WCML_Tracking_Link::getWcmlDisplayAsTranslatedDoc( [ 'utm_term' => WCML_Tracking_Link::UTM_TERM_WIZARD ] ) . '">',
 					'</a>'
 				),
-				'label_dont_display_as_translated' => __( 'Only show translated products', 'woocommerce-multilingual' ),
+				'label_dont_display_as_translated' => __( 'Do not allow viewing products in languages they are not translated to', 'woocommerce-multilingual' ),
 				/* translators: %1$s and %2$s are opening and closing HTML strong tags */
-				'description_footer'               => __( 'You can change these settings later by going to %1$sWPML &raquo; Settings.%2$s', 'woocommerce-multilingual' ),
+				'description_footer'               => esc_html__( 'You can change these settings later by going to %1$sWPML &raquo; Settings.%2$s', 'woocommerce-multilingual' ),
 				'continue'                         => __( 'Continue', 'woocommerce-multilingual' ),
+				'go_back'                          => __( 'Go back', 'woocommerce-multilingual' ),
 			],
 			'is_display_as_translated_checked' => $is_display_as_translated_checked,
 			'continue_url'                     => $this->next_step_url,
-		];
-
-		return $model;
-
-	}
-
-	protected function init_template_base_dir() {
-		$this->template_paths = [
-			WCML_PLUGIN_PATH . '/templates/',
+			'go_back_url'                      => $this->previous_step_url,
 		];
 	}
 
 	public function get_template() {
 		return '/setup/display-as-translated.twig';
 	}
-
 }

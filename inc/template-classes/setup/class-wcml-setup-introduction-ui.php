@@ -1,22 +1,14 @@
 <?php
 
-class WCML_Setup_Introduction_UI extends WCML_Templates_Factory {
+class WCML_Setup_Introduction_UI extends WCML_Setup_Step {
 
-	/** @var string */
-	private $next_step_url;
-
-	public function __construct( $next_step_url ) {
-		parent::__construct();
-
-		$this->next_step_url = $next_step_url;
-	}
+	const SLUG = 'introduction';
 
 	public function get_model() {
-
-		$model = [
+		return [
 			'strings'      => [
 				'step_id'     => 'introduction_step',
-				'heading'     => __( "Let's make your WooCommerce shop multilingual", 'woocommerce-multilingual' ),
+				'heading'     => __( "Let's make your WooCommerce store multilingual", 'woocommerce-multilingual' ),
 				'description' => [
 
 					'title' => __( 'To get started, we need to set up the following:', 'woocommerce-multilingual' ),
@@ -26,28 +18,15 @@ class WCML_Setup_Introduction_UI extends WCML_Templates_Factory {
 					'step4' => __( 'Decide if you want to add multiple currencies to your store', 'woocommerce-multilingual' ),
 
 				],
-				/* translators: %1$s and %2$s are opening and closing HTML strong tags */
-				'footer'      => sprintf( __( 'You can change these settings later by going to %1$sWooCommerce &raquo; WooCommerce Multilingual & Multicurrency%2$s.', 'woocommerce-multilingual' ), '<strong>', '</strong>' ),
 				'continue'    => __( "Let's continue", 'woocommerce-multilingual' ),
 				'later'       => __( "I'll do the setup later", 'woocommerce-multilingual' ),
 			],
 			'later_url'    => admin_url( 'admin.php?page=wpml-wcml&src=setup_later' ),
 			'continue_url' => $this->next_step_url,
 		];
-
-		return $model;
-
-	}
-
-	protected function init_template_base_dir() {
-		$this->template_paths = [
-			WCML_PLUGIN_PATH . '/templates/',
-		];
 	}
 
 	public function get_template() {
 		return '/setup/introduction.twig';
 	}
-
-
 }

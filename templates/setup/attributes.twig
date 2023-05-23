@@ -1,6 +1,9 @@
 <span id="{{ strings.step_id }}">
 <h1>{{ strings.heading|raw }}</h1>
 
+<p>{{ strings.description_1|raw }}</p>
+<p>{{ strings.description_2 }}</p>
+
 {% if attributes %}
     <ul class="no-bullets" >
     {% for attribute in attributes %}
@@ -18,6 +21,7 @@
 {% endif %}
 
 <p class="wcml-setup-actions step">
+    <a href="{{ go_back_url }}" class="go-back">{{ strings.go_back }}</a>
     <a href="{{ continue_url }}" class="button button-large button-primary submit">{{ strings.continue }}</a>
 </p>
 </span>

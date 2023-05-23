@@ -3,8 +3,6 @@
 /**
  * Class Test_WCML_Setup
  * @group wcml-1987
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
  *
  */
 class Test_WCML_Setup extends OTGS_TestCase {
@@ -14,8 +12,6 @@ class Test_WCML_Setup extends OTGS_TestCase {
 
 		\WP_Mock::passthruFunction('__');
 		\WP_Mock::passthruFunction('esc_html__');
-
-		$templates_factory_stub = Mockery::mock( 'overload:WCML_Templates_Factory' );
 
 		\WP_Mock::userFunction( 'admin_url', array(
 			'return' => function ( $step ) {
