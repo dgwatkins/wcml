@@ -8,7 +8,7 @@
  * Text Domain: woocommerce-multilingual
  * Requires at least: 4.7
  * Tested up to: 6.2
- * Version: 5.1.3
+ * Version: 5.2.0
  * Plugin Slug: woocommerce-multilingual
  * WC requires at least: 3.9
  * WC tested up to: 7.6
@@ -37,7 +37,7 @@ if ( ! $wpml_php_version_check->is_ok() ) {
 	return;
 }
 
-define( 'WCML_VERSION', '5.1.3' );
+define( 'WCML_VERSION', '5.2.0' );
 define( 'WCML_PLUGIN_PATH', dirname( __FILE__ ) );
 define( 'WCML_PLUGIN_FOLDER', basename( WCML_PLUGIN_PATH ) );
 define( 'WCML_LOCALE_PATH', WCML_PLUGIN_PATH . '/locale' );
