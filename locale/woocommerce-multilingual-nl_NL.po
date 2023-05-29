@@ -1,0 +1,2481 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Multilingual & Multicurrency 5.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-"
+"multilingual\n"
+"PO-Revision-Date: 2023-01-03 20:49+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.2.2\n"
+"X-Domain: woocommerce-multilingual\n"
+
+msgid "\"%1$s\" shipping class cost in %2$s"
+msgstr "\"%1$s\" kosten van verzendklasse in %2$s"
+
+msgid "%1$d %2$s are missing translations."
+msgstr "%1$d %2$s zijn ontbrekende vertalingen."
+
+msgid "%1$d %2$s is missing translations."
+msgstr "%1$d %2$s zijn ontbrekende vertalingen."
+
+msgid "%1$d %2$s translation missing."
+msgstr "%1$d %2$s vertaling ontbreekt."
+
+msgid "%1$d %2$s translations missing."
+msgstr "%1$d %2$s vertalingen ontbreken."
+
+msgid "%d items"
+msgstr "%d items"
+
+msgid "%d products left"
+msgstr "%d resterende producten"
+
+msgid "%s do not require translation."
+msgstr "%s vereisen geen vertaling."
+
+msgid "%s is currently translating all your products automatically."
+msgstr "%s vertaalt momenteel al uw producten automatisch."
+
+msgid "%s is installed and active."
+msgstr "%s is geïnstalleerd en actief."
+
+msgid "%s is not active."
+msgstr "%s is niet actief."
+
+msgid ""
+"%s is not required in order to run WooCommerce Multilingual & Multicurrency "
+"but it’s recommended if you want to use separate product images and "
+"galleries for different languages."
+msgstr ""
+"%s is niet vereist voor het uitvoeren van WooCommerce Multilingual & "
+"Multicurrency maar wordt aanbevolen als u aparte productafbeeldingen en "
+"galerijen voor verschillende talen wilt gebruiken."
+
+msgid "%s is not set up."
+msgstr "%s is niet ingesteld."
+
+msgid "%s is set up."
+msgstr "%s is ingesteld."
+
+msgid "%s translation"
+msgstr "%s vertaling"
+
+msgid "(Space)"
+msgstr "(Spatie)"
+
+msgid "(previous value: %s)"
+msgstr "(vorige waarde: %s)"
+
+msgid "-- Choose a widget area --"
+msgstr "-- Kies een widgetzone --"
+
+msgid "--Attribute--"
+msgstr "--Attribuut--"
+
+msgid "--Taxonomy--"
+msgstr "--Taxonomie--"
+
+msgid "1454.07 &raquo; 1450 when set to 10"
+msgstr "1454,07 &raquo; 1450 wanneer ingesteld op 10"
+
+msgid "1454.07 &raquo; 1454 when set to 1"
+msgstr "1454,07 &raquo; 1454 wanneer ingesteld op 1"
+
+msgid "1454.07 &raquo; 1500 when set to 100"
+msgstr "1454.07 &raquo; 1500 wanneer ingesteld op 100"
+
+msgid ""
+"<strong>WooCommerce Translation Available</strong> &#8211; Install or update "
+"your <code>%1$s</code> translations to version <code>%2$s</code>."
+msgstr ""
+"<strong>WooCommerce Vertaling beschikbaar</strong> &#8211; Installeer of "
+"update uw <code>%1$s</code> vertalingen naar versie <code>%2$s</code>."
+
+msgid "API key (required)"
+msgstr "API code (vereist)"
+
+msgid "Account settings"
+msgstr "Account instellingen"
+
+msgid "Action"
+msgstr "Actie"
+
+msgid "Action failed. Please refresh the page and retry."
+msgstr "Actie mislukt. Vernieuw de pagina en probeer het nogmaals."
+
+msgid "Actions"
+msgstr "Acties"
+
+msgid "Add Currencies"
+msgstr "Valuta's toevoegen"
+
+msgid "Add a new currency switcher to a widget area"
+msgstr "Een nieuwe munteenheidschakelaar toevoegen aan een widgetzone"
+
+msgid "Add currency"
+msgstr "Valuta toevoegen"
+
+msgid "Add new currency"
+msgstr "Nieuwe valuta toevoegen"
+
+msgid "Add separate download files for translations when translating products"
+msgstr ""
+"Aparte downloadbestanden voor vertalingen toevoegen bij het vertalen van "
+"producten"
+
+msgid ""
+"Add separate download files for translations when you translate this product"
+msgstr ""
+"Voeg aparte downloadbestanden voor vertalingen toe als u dit product vertaalt"
+
+msgid "Add translation"
+msgstr "Vertaling toevoegen"
+
+msgid "Additional CSS"
+msgstr "Extra CSS"
+
+msgid "All %1$s have the same %2$s assignments."
+msgstr "Alle %1$s hebben dezelfde %2$s opdrachten."
+
+msgid "All %s are translated."
+msgstr "Alle %s zijn vertaald."
+
+msgid "All Accounts"
+msgstr "Alle rekeningen"
+
+msgid "All categories"
+msgstr "Alle categorieën"
+
+msgid "All countries"
+msgstr "Alle landen"
+
+msgid "All countries except"
+msgstr "Alle landen behalve"
+
+msgid "All countries except..."
+msgstr "Alle landen behalve..."
+
+msgid "All countries except: "
+msgstr "Alle landen behalve: "
+
+msgid ""
+"All currency switchers in your site are affected by the settings in this "
+"section."
+msgstr ""
+"Alle munteenheidschakelaar van uw site wijzigen door de instellingen van dit "
+"gedeelte."
+
+msgid "All in selected currency"
+msgstr "Alles in gekozen valuta"
+
+msgid "All languages"
+msgstr "Alle talen"
+
+msgid "All statuses"
+msgstr "Alle statussen"
+
+msgid ""
+"All store pages must be translated in the languages configured on the site."
+msgstr "Alle winkelpagina's moeten vertaald worden in de talen van de site."
+
+msgid ""
+"All the products will be removed from the current order in order to change "
+"the currency"
+msgstr ""
+"Alle producten zullen verwijderd worden uit de huidige volgorde om de valuta "
+"te wijzigen"
+
+msgid ""
+"All the products will be removed from the current order in order to change "
+"the language"
+msgstr ""
+"Alle producten zullen verwijderd worden uit de huidige volgorde om de taal "
+"te wijzigen"
+
+msgid "All translation statuses"
+msgstr "Alle vertalingstatussen"
+
+msgid "Allowed HTML tags: <img> <span> <u> <strong> <em>"
+msgstr "Toegestane HTML tags: <img> <span> <u> <strong> <em>"
+
+msgid "Apply"
+msgstr "Toepassen"
+
+msgid "At least one currency must be enabled for this language!"
+msgstr "Minstens één valuta moet ingeschakeld worden voor deze taal!"
+
+msgid "At least one of these fields is required: title, content or excerpt"
+msgstr "Minstens één van deze velden is vereist: titel, inhoud of uittreksel"
+
+msgid "Attribute Slug"
+msgstr "Attribuut Slug"
+
+msgid "Attribute slug: %s"
+msgstr "Attribuut slug: %s"
+
+msgid "Attributes"
+msgstr "Attributen"
+
+msgid "Automatic Exchange Rates"
+msgstr "Automatische Wisselkoersen"
+
+msgid "Autosubtract amount"
+msgstr "Autosubtract getal"
+
+msgid "Available parameters"
+msgstr "Beschikbare parameters"
+
+msgid "Bank Account"
+msgstr "Bankrekening"
+
+msgid ""
+"Because this site uses the default permalink structure, you cannot use slug "
+"translation for product permalinks."
+msgstr ""
+"Omdat deze site de standaard permalinkstructuur gebruikt, kunt u geen "
+"slugvertaling voor productpermalinks gebruiken."
+
+msgid "Blue"
+msgstr "Blauw"
+
+msgid "Booking currency"
+msgstr "Boekingsvaluta"
+
+msgid "Bookings"
+msgstr "Boekingen"
+
+msgid "Border"
+msgstr "Grens"
+
+msgid "Button text"
+msgstr "Knoptekst"
+
+msgid "By default, show reviews in all languages"
+msgstr "Standaard worden de beoordelingen in alle talen weergegeven"
+
+msgid ""
+"Caching may cause currency display issues for your customers if you are "
+"using the multicurrency feature."
+msgstr ""
+"Caching kan problemen veroorzaken met de weergave van valuta voor uw klanten "
+"als u de multi-valutafunctie gebruikt."
+
+msgid "Calculate costs in other currencies automatically"
+msgstr "Bereken automatisch de kosten in vreemde valuta's"
+
+msgid "Calculate prices in other currencies automatically"
+msgstr "Automatisch prijzen berekenen in andere valuta"
+
+msgid "Calculate shipping costs in other currencies automatically"
+msgstr "Verzendkosten in andere valuta's automatisch berekenen"
+
+msgid "Cancel"
+msgstr "Annuleren"
+
+msgid "Cancel (stay with the Translation Editor)"
+msgstr "Annuleren (bij de Vertaaleditor blijven)"
+
+msgid "Cannot get exchange rates. Connection failed."
+msgstr "Kan wisselkoersen niet ontvangen. Verbinding mislukt."
+
+msgid "Cart"
+msgstr "Winkelkarretje"
+
+msgid "Categories"
+msgstr "Categorieën"
+
+msgid "Change Password"
+msgstr "Wachtwoord wijzigen"
+
+msgid "Change default language"
+msgstr "Standaardtaal wijzigen"
+
+msgid ""
+"Changes in these translations will affect terms in general! ( Not only for "
+"this product )"
+msgstr ""
+"Wijzigingen in deze vertaling zullen invloed hebben op termen in het "
+"algemeenl! (Niet alleen voor dit product)"
+
+msgid "Cheatin' huh?"
+msgstr "Valsspelen hè?"
+
+msgid "Checkout"
+msgstr "Afronden"
+
+msgid "Checkout &rarr; Pay"
+msgstr "Afronden &rarr; Betalen"
+
+msgid "Choose a file"
+msgstr "Een bestand selecteren"
+
+msgid "Choose if you need multiple currencies"
+msgstr "Kies als u meerdere valuta's nodig hebt"
+
+msgid "Choose which attributes to make translatable"
+msgstr "Kies welke attributen u vertaalbaar wilt maken"
+
+msgid "Choose which currency to display when a client switches languages"
+msgstr ""
+"Kies welke valuta moet worden weergegeven wanneer een klant van taal wisselt"
+
+msgid "Choosing if you need multiple currencies"
+msgstr "Kies of u meerdere valuta's nodig hebt"
+
+msgid "Choosing which attributes to make translatable"
+msgstr "Kies welke attributen er vertaald kunnen worden"
+
+msgid "Clear all colors"
+msgstr "Alle kleuren wissen"
+
+msgid "Clear list"
+msgstr "Lijst wissen"
+
+msgid ""
+"Click to see the prices in the other currencies as they are currently shown "
+"on the front end."
+msgstr ""
+"Klik om de prijzen in een andere valuta te zien omdat ze op dit moment in de "
+"front-end weergegeven worden."
+
+msgid "Client ID"
+msgstr "Klant-ID"
+
+msgid "Client Location"
+msgstr "Klantlocatie"
+
+msgid "Close setup"
+msgstr "Setup sluiten"
+
+msgid "Collapse"
+msgstr "Samenvouwen"
+
+msgid "Color theme"
+msgstr "Kleur thema"
+
+msgid "Composite Products ( Components )"
+msgstr "Samengestelde Producten (Componenten)"
+
+msgid "Composite Products ( Scenarios )"
+msgstr "Samengestelde Producten ( Scenario's )"
+
+msgid "Configuration Warnings"
+msgstr "Instellingswaarschuwingen"
+
+msgid "Configure multicurrency for multilingual sites"
+msgstr "Meerdere valuta configureren voor meertalige sites"
+
+msgid "Configure multicurrency mode"
+msgstr "Multi-valutamodus configureren"
+
+msgid "Configure per country availability for this payment gateway"
+msgstr "Configureer per land de beschikbaarheid voor deze betaalgateway"
+
+msgid "Configure products slug translation"
+msgstr "Slug-vertaling van producten configureren"
+
+msgid ""
+"Configure specific product properties that should be synced to translations."
+msgstr ""
+"Configureer specifieke productkenmerken die met de vertalingen moeten worden "
+"gesynchroniseerd."
+
+msgid "Configure thumbnail and gallery synchronization to translations."
+msgstr "Configureer thumbnail en galerijsynchronisatie met vertalingen."
+
+msgid ""
+"Congrats! You've just earned some money using WooCommerce Multilingual & "
+"Multicurrency."
+msgstr ""
+"Gefeliciteerd! U hebt zojuist wat geld verdiend met WooCommerce Multilingual "
+"& Multicurrency."
+
+msgid "Content"
+msgstr "Inhoud"
+
+msgid "Content / Description"
+msgstr "Inhoud / Beschrijving"
+
+msgid "Continue"
+msgstr "Doorgaan"
+
+msgid "Core"
+msgstr "Kern"
+
+msgid "Costs and values in custom currencies"
+msgstr "Kosten en waarden in aangepaste valuta"
+
+msgid "Country availability"
+msgstr "Beschikbaarheid per land"
+
+msgid "Create missing translations"
+msgstr "Ontbrekende vertalingen aanmaken"
+
+msgid "Currencies"
+msgstr "Valuta's"
+
+msgid "Currencies order updated"
+msgstr "Valuta volgorde bijgewerkt"
+
+msgid "Currencies to display for each language"
+msgstr "Valuta's om weer te geven voor elke taal"
+
+msgid "Currency"
+msgstr "Valuta"
+
+msgid "Currency - no orders found"
+msgstr "Valuta - geen volgordes gevonden"
+
+msgid "Currency Position"
+msgstr "Valuta positie"
+
+msgid "Currency Preview"
+msgstr "Voorvertoning valuta"
+
+msgid "Currency available in"
+msgstr "Valuta beschikbaar in"
+
+msgid "Currency displayed first"
+msgstr "Valuta als eerste weergegeven"
+
+msgid "Currency settings for %s"
+msgstr "Valuta-instellingen voor %s"
+
+msgid "Currency switcher"
+msgstr "Valutawisselaar"
+
+msgid "Currency switcher colors"
+msgstr "Kleuren munteenheidschakelaar"
+
+msgid "Currency switcher options"
+msgstr "Opties valutawisselaar"
+
+msgid "Currency switcher preview"
+msgstr "Voorvertoning valutawisselaar"
+
+msgid "Currency switcher style"
+msgstr "Stijl valutawisselaar"
+
+msgid "Current currency background color"
+msgstr "Huidige munteenheid achtergrondkleur"
+
+msgid "Current currency font color"
+msgstr "Huidige munteenheidkleur"
+
+msgid "Current page"
+msgstr "Huidige pagina"
+
+msgid "Currently, there are %s variations that need to be created."
+msgstr "Er zijn momenteel %s variaties die gecreëerd moeten worden."
+
+msgid "Custom"
+msgstr "Aangepast"
+
+msgid "Custom Fields"
+msgstr "Aangepaste Velden"
+
+msgid "Custom Product attributes"
+msgstr "Specifieke Productattributen"
+
+msgid "Custom Tabs"
+msgstr "Aangepaste tabbladen"
+
+msgid "Custom Taxonomies"
+msgstr "Aangepaste Taxonomieën"
+
+msgid "Custom field %s configuration from wpml-config.xml file was altered!"
+msgstr ""
+"Aangepast veld %s configuratie van wpml-config.xml bestand is gewijzigd!"
+
+msgid "Custom settings for %s"
+msgstr "Aangepaste instellingen voor %s"
+
+msgid "Custom taxonomy %s configuration from wpml-config.xml file was altered!"
+msgstr ""
+"Aangepaste taxonomie %s configuratie van wpml-config.xml bestand is "
+"gewijzigd!"
+
+msgid "Custom type %s configuration from wpml-config.xml file was altered!"
+msgstr ""
+"Aangepast type %s configuratie van wpml-config.xml bestand is gewijzigd!"
+
+msgid "Customize the currency switcher"
+msgstr "De valutawisselaar aanpassen"
+
+msgid "Daily"
+msgstr "Dagelijks"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Decimal Separator"
+msgstr "Decimaalscheider"
+
+msgctxt "Default taxonomies must be translatable: 1/6"
+msgid ""
+"Some taxonomies in your site are forced to be untranslatable. This is "
+"causing a problem when you're trying to run a multilingual WooCommerce site."
+msgstr ""
+"Sommige taxonomieën van uw site kunnen niet vertaald worden. Dit veroorzaakt "
+"een probleem als u probeert een meertalige WooCommerce site te hebben."
+
+msgctxt "Default taxonomies must be translatable: 2/6"
+msgid "A plugin or the theme are probably doing this."
+msgstr "Waarschijnlijk komt dit door een plugin of het thema."
+
+msgctxt "Default taxonomies must be translatable: 3/6"
+msgid "What you can do:"
+msgstr "Wat u kunt doen:"
+
+msgctxt "Default taxonomies must be translatable: 4/6"
+msgid "1. Temporarily disable plugins and see if this message disappears."
+msgstr "1. Schakel tijdig de plugins uit en zie of dit bericht verdwijnt."
+
+msgctxt "Default taxonomies must be translatable: 5/6"
+msgid "2. Temporarily switch the theme and see if this message disappears."
+msgstr "2.  Schakel tijdig van thema en zie of het bericht verdwijnt."
+
+msgctxt "Default taxonomies must be translatable: 6/6"
+msgid ""
+"It's best to contact %s, tell that you're getting this message and offer to "
+"send a Duplicator copy of the site. We will work with the theme/plugin "
+"author and fix the problem for good. In the meanwhile, we'll give you a "
+"temporary solution, so you're not stuck."
+msgstr ""
+"Het beste is om contact op te nemen met %s, hen te informeren dat u dit "
+"bericht ontvangen en aanbieden om een kopie van de site te sturen. Wij "
+"zullen werken met de them/plugin auteur en het probleem voor eeuwig "
+"oplossen. Ondertussen bieden wij een tijdelijke oplossing zodat u niet met "
+"de problemen zit."
+
+msgid "Default: %name% (%1$symbol%) - %2$code%"
+msgstr "Standaard: %name% (%1$symbol%) - %2$code%"
+
+msgid ""
+"Define how to display product reviews on the product page by default. The "
+"customer will be still able to filter reviews by language."
+msgstr ""
+"Definieer hoe de productbeoordelingen standaard op de productpagina "
+"weergegeven moeten worden. De klant zal nog steeds de beoordelingen op taal "
+"kunnen filteren."
+
+msgid "Delete"
+msgstr "Verwijderen"
+
+msgid "Description"
+msgstr "Beschrijving"
+
+msgid "Determined automatically based on exchange rate"
+msgstr "Automatisch bepaald op basis van de wisselkoers"
+
+msgid "Disable %1$s for %2$s"
+msgstr "%1$s uitschakelen voor %2$s"
+
+msgid "Disabled"
+msgstr "Uitgeschakeld"
+
+msgid "Dismiss"
+msgstr "Verwijderen"
+
+msgid ""
+"Display original images on the translated product front page if images not "
+"specified"
+msgstr ""
+"De originele afbeeldingen weergeven op de vertaalde product frontpagina als "
+"de afbeeldingen niet zijn gespecificeerd"
+
+msgid "Done!"
+msgstr "Klaar!"
+
+msgid "Down"
+msgstr "Omlaag"
+
+msgid "Download Files"
+msgstr "Bestanden downloaden"
+
+msgid "Download Files for Variation #%s"
+msgstr "Download Bestanden voor Variatie #%s"
+
+msgid "Downloading translations... Please don't close this page."
+msgstr "Vertalingen aan het downloaden... Deze pagina niet sluiten."
+
+msgid "Draft"
+msgstr "Kladversie"
+
+msgid "Drag and drop the currencies to change their order"
+msgstr "Sleep en zet de munteenheden neer om de volgorde te wijzigen"
+
+msgid "Duplicate terms ( please select attribute ):"
+msgstr "Termen kopiëren (selecteer attribuut):"
+
+msgid "Edit"
+msgstr "Bewerken"
+
+msgid "Edit %s Currency Switcher"
+msgstr "%s munteenheidschakelaar bewerken"
+
+msgid "Edit My Address"
+msgstr "Mijn adres bewerken"
+
+msgid "Edit Product Currency Switcher"
+msgstr "Product munteenheidschakelaar bewerken"
+
+msgid "Edit currency switcher"
+msgstr "Munteenheidschakelaar bewerken"
+
+msgid "Edit this item"
+msgstr "Dit item bewerken"
+
+msgid "Edit this item inline"
+msgstr "Dit item inline bewerken"
+
+msgid "Edit this product translation"
+msgstr "Bewerk deze productvertaling"
+
+msgid "Edit translation"
+msgstr "Vertaling bewerken"
+
+msgid "Enable %1$s for %2$s"
+msgstr "%1$s inschakelen voor %2$s"
+
+msgid "Enable Multiple Currencies"
+msgstr "Meerdere valuta's inschakelen"
+
+msgid "Enable automatic exchange rates"
+msgstr "Automatische wisselkoersen inschakelen"
+
+msgid "Enable costs in custom currencies"
+msgstr "Kosten in aangepaste valuta mogelijk maken"
+
+msgid "Enable the multicurrency mode"
+msgstr "De multi-valutamodus inschakelen"
+
+msgid ""
+"Enable this if you want to translate attribute values with WooCommerce "
+"Multilingual & Multicurrency"
+msgstr ""
+"Schakel dit in als u attributen wilt vertalen met WooCommerce Multilingual & "
+"Multicurrency"
+
+msgid "Enable/disable"
+msgstr "In-/Uitschakelen"
+
+msgid "Endpoint: %s"
+msgstr "Eindpunt: %s"
+
+msgid "Enter API key"
+msgstr "Voer API code in"
+
+msgid "Enter prices in other currencies"
+msgstr "Prijzen in andere valuta invoeren"
+
+msgid "Excerpt"
+msgstr "Uittreksel"
+
+msgid "Exchange Rate"
+msgstr "Wisselkoers"
+
+msgid "Exchange rate = %s exchange rate x (1 + lifting charge / 100)"
+msgstr "Wisselkoers = %s wisselkoers x (1 + commissie / 100)"
+
+msgid "Exchange rate updated automatically from %s"
+msgstr "Wisselkoers automatisch bijgewerkt vanuit %s"
+
+msgid "Exchange rates source"
+msgstr "Bron wisselkoersen"
+
+msgid "Exchange rates updated successfully"
+msgstr "Wisselkoersen succesvol bijgewerkt"
+
+msgid "Existing translations and variations associated will be deleted."
+msgstr ""
+"Bestaande vertalingen en betreffende variaties zullen verwijderd worden."
+
+msgid "External Product"
+msgstr "Extern Product"
+
+msgid "File URL"
+msgstr "Bestand-URL"
+
+msgid "Filter"
+msgstr "Filteren"
+
+msgid "Fix product_type taxonomy terms"
+msgstr "Taxonomietermen product_type herstellen"
+
+msgid "Fix translated variations relationships"
+msgstr "Vaste vertaalde variatieverhoudingen"
+
+msgid "Fixer.io API key"
+msgstr "Fixer.io API-sleutel"
+
+msgid ""
+"For 1454.07, when the increment for the nearest integer is 100 and the auto-"
+"subtract amount is 1, the resulting amount is 1499."
+msgstr ""
+"Voor 1454.07, als de vermeerdering voor het dichtsbijzijnd geheel getal 100 "
+"is en het automatisch aftrekbaar bedrag 1 is, is het eindbedrag 1499."
+
+msgid ""
+"For your convenience, we've marked items that require your attention with a "
+"notice icon. You can see a list of everything that you should complete in "
+"the %1$sStatus%2$s tab."
+msgstr ""
+"Voor uw gemak hebben we items die uw aandacht nodig hebben, aangegeven met "
+"een envelopje. U kunt een lijst zien van alles wat u moet invullen in het "
+"tabblad %1$sStatus%2$s."
+
+msgid "From&hellip;"
+msgstr "Van&hellip;"
+
+msgid ""
+"Give us <span class=\"rating\">5.0 <i class=\"otgs-ico-star\"></i></span> "
+"review now."
+msgstr ""
+"Geef ons nu een beoordeling van <span class=\"rating\">5.0 <i class=\"otgs-"
+"ico-star\"></i></span>."
+
+msgid "Global Attributes"
+msgstr "Globale attributen"
+
+msgid "Go to the first page"
+msgstr "Ga naar de eerste pagina"
+
+msgid "Go to the last page"
+msgstr "Ga naar de laatste pagina"
+
+msgid "Go to the next page"
+msgstr "Ga naar de volgende pagina"
+
+msgid "Go to the previous page"
+msgstr "Ga naar de vorige pagina"
+
+msgid "Gray"
+msgstr "Grijs"
+
+msgid ""
+"Great! Now you can use Geolocation to determine default currency for chosen "
+"languages. You can edit that key in "
+msgstr ""
+"Geweldig! Nu kunt u met behulp van Geolocatie de standaardvaluta voor de "
+"gekozen talen bepalen. U kunt die sleutel bewerken op de "
+
+msgid "Heading"
+msgstr "Kop"
+
+msgid "Here you can set different prices for the %s in multiple currencies:"
+msgstr ""
+"Hier kunt u verschillende prijzen instellen voor de %s in meerdere valuta:"
+
+msgid "Hide"
+msgstr "Verbergen"
+
+msgid "Hide This Message"
+msgstr "Dit bericht verbergen"
+
+msgid "Hide prices in other currencies"
+msgstr "Prijzen in andere valuta verbergen"
+
+msgid "Hourly"
+msgstr "Uurlijks"
+
+msgid "Hover"
+msgstr "De muisaanwijzer bewegen over"
+
+msgid ""
+"How do you feel getting your very first order in foreign language or "
+"currency?"
+msgstr ""
+"Hoe voelt het om uw eerste bestelling in een vreemde taal of valuta te "
+"ontvangen?"
+
+msgid ""
+"How do you want to translate and display your products in secondary "
+"languages?"
+msgstr "Hoe wilt u uw producten vertalen en weergeven in secundaire talen?"
+
+msgid "How to translate attributes"
+msgstr "Hoe attributen vertalen"
+
+msgid "How to translate product categories"
+msgstr "Hoe productcategorieën vertalen"
+
+msgid "How to translate this?"
+msgstr "Hoe vertaalt u dit?"
+
+msgid ""
+"I'll choose which products to translate. If products don't have "
+"translations, %1$sshow them as untranslated%2$s."
+msgstr ""
+"Ik kies welke producten vertaald moeten worden. Als producten geen "
+"vertalingen hebben, %1$sze als onvertaald weergeven%2$s."
+
+msgid "I'll choose which products to translate. Only show translated products."
+msgstr ""
+"Ik kies welke producten vertaald moeten worden. Alleen vertaalde producten "
+"weergeven."
+
+msgid "I'll do the setup later"
+msgstr "Ik zal de setup later doen"
+
+msgid ""
+"If you are using a page builder to design WooCommerce products, you should "
+"only use WPML's Translation Editor."
+msgstr ""
+"Als een paginabouwer gebruikt om WooCommerce producten te ontwerpen, dan "
+"dient u alleen de Vertaaleditor van WPML te gebruiken."
+
+msgid ""
+"If you are using downloadable products, you can choose to have their paths\n"
+"                                            synchronized, or seperate for "
+"each language."
+msgstr ""
+"Als u gebruikmaakt van producten die gedownload kunnen worden, kunt u kiezen "
+"om hun routes\\n te synchroniseren of gescheiden te houden voor elke taal."
+
+msgid ""
+"If you have it already, install and activate it. Otherwise, %1$sbuy WPML%2$s."
+msgstr ""
+"Als u de plugin al heeft, dient u deze te installeren en te activeren. Zo "
+"niet, %1$skoop dan WPML%2$s."
+
+msgid "Image"
+msgstr "Afbeelding"
+
+msgid "Images"
+msgstr "Afbeeldingen"
+
+msgid ""
+"In order to edit custom attributes you need to use the <a href=\"%s\">custom "
+"product translation editor</a>"
+msgstr ""
+"Om aangepaste attributen te bewerken, dient u de <a href=\"%s\">aangepaste "
+"productvertalingeditor</a> te gebruiken"
+
+msgid "Increment for nearest integer"
+msgstr "Verhogen naar dichtstbijzijnde gehele getal"
+
+msgid "Install WooCommerce Pages"
+msgstr "Installeer de WooCommerce pagina's"
+
+msgid "Install missing WooCommerce pages and create translations."
+msgstr "Installeer ontbrekende WooCommerce pagina's en creëer vertalingen."
+
+msgid "Introduction"
+msgstr "Inleiding"
+
+msgid "Invalid currency parameter: \"%s\""
+msgstr "Ongeldige valuta-parameter: \"%s\""
+
+msgid "Invalid language parameter: \"%s\""
+msgstr "Ongeldige taal-parameter: \"%s\""
+
+msgid "Invalid nonce"
+msgstr "Ongeldige nonce"
+
+msgid "Invalid taxonomy %s"
+msgstr "Ongeldige taxonomie %s"
+
+msgid "Keep"
+msgstr "Behouden"
+
+msgid "Keep %s"
+msgstr "%s blijven gebruiken"
+
+msgid "Keep using %s"
+msgstr "%s blijven gebruiken"
+
+msgid "Label"
+msgstr "Label"
+
+msgid "Language"
+msgstr "Taal"
+
+msgid "Last Modified"
+msgstr "Laatst gewijzigd"
+
+msgid "Last updated: %s"
+msgstr "Laatst bijgewerkt: %s"
+
+msgid "Later"
+msgstr "Later"
+
+msgid "Learn how to generate a free license key"
+msgstr "Ontdek hoe u een gratis licentiesleutel genereert"
+
+msgid "Learn how to turn your e-commerce site multilingual"
+msgstr "Leer hoe u uw e-commerce site meertalig kunt maken"
+
+msgid "Learn more"
+msgstr "Meer lezen"
+
+msgid "Left"
+msgstr "Links"
+
+msgid "Left with space"
+msgstr "Links met spatie"
+
+msgid "Let's continue"
+msgstr "Laten we verdergaan"
+
+msgid "Let's turn your WooCommerce shop multilingual"
+msgstr "Laten we uw WooCommerce winkel meertalig maken"
+
+msgid "Lifting charge"
+msgstr "Commissie"
+
+msgid "Live Publishable Key"
+msgstr "Live publiceerbare sleutel"
+
+msgid "Live Secret Key"
+msgstr "Live geheime sleutel"
+
+msgid "Loading ..."
+msgstr "Bezig met laden ..."
+
+msgid "Location based"
+msgstr "Locatie gebaseerd"
+
+msgid "Logout"
+msgstr "Afmelden"
+
+msgid ""
+"Looks like you are upgrading from a previous version of WooCommerce "
+"Multilingual & Multicurrency. Would you like to automatically create "
+"translated variations and images?"
+msgstr ""
+"Het ziet ernaar uit dat u een vorige versie van WooCommerce Multilingual & "
+"Multicurrency wilt upgraden. Wilt u automatisch vertaalde variaties en "
+"afbeeldingen creëren?"
+
+msgid "Lost Password"
+msgstr "Wachtwoord vergeten"
+
+msgid ""
+"Make your store multilingual and enable multiple currencies | <a "
+"href=\"https://wpml.org/documentation/related-projects/woocommerce-"
+"multilingual/?"
+"utm_source=plugin&utm_medium=gui&utm_campaign=wcml\">Documentation</a>"
+msgstr ""
+"Maak uw winkel meertalig en schakel meerdere valuta in | <a href= \"https://"
+"wpml.org/documentation/related-projects/woocommerce-multilingual/? "
+"utm_source=plugin&utm_medium=gui&utm_campaign=wcml\">Documentatie</a>"
+
+msgid "Manually"
+msgstr "Handmatig"
+
+msgid "MaxMind Licence Key"
+msgstr "MaxMind Licentiesleutel"
+
+msgid "Media"
+msgstr "Media"
+
+msgid "Merchant ID"
+msgstr "Verkoper-ID"
+
+msgid "Monthly on the"
+msgstr "Maandelijks op de"
+
+msgid "Monthly on the %s"
+msgstr "Maandelijks op de %s"
+
+msgid "More details"
+msgstr "Meer informatie"
+
+msgid ""
+"Multi-currency is enabled, but no secondary currencies have been set. "
+"%1$sAdd secondary currency%2$s."
+msgstr ""
+"Multi-currency is ingeschakeld, maar er zijn geen secundaire valuta's "
+"ingesteld. %1$sSecundaire valuta toevoegen%2$s."
+
+msgid "Multi-currency is not enabled."
+msgstr "Multicurrency is niet ingeschakeld."
+
+msgid "Multi-currency settings"
+msgstr "Instellingen voor meerdere valuta's"
+
+msgid "Multicurrency"
+msgstr "Meerdere valuta"
+
+msgid "Multicurrency Settings"
+msgstr "Instellingen voor meerdere valuta"
+
+msgid "Multicurrency documentation"
+msgstr "Documentatie meerdere valuta"
+
+msgid "Multilingual"
+msgstr "Meertalig"
+
+msgid "Multilingual Content Setup"
+msgstr "Meertalige inhoud configureren"
+
+msgid "Multilingual Settings"
+msgstr "Instellingen voor meerdere talen"
+
+msgid "Multiple Currencies"
+msgstr "Meerdere valuta's"
+
+msgid "My Account"
+msgstr "Mijn account"
+
+msgid "N/A"
+msgstr "N.V.T."
+
+msgid "Name"
+msgstr "Naam"
+
+msgid "Native WooCommerce product editing screen"
+msgstr "Natief WooCommerce product bewerkingsscherm"
+
+msgid "Nearest"
+msgstr "Dichtstbijzijnde"
+
+msgid "Needs updating"
+msgstr "Update nodig"
+
+msgid "New Widget Area Currency Switcher"
+msgstr "Nieuwe widgetzone munteenheidschakelaar"
+
+msgid "No - dismiss"
+msgstr "Nee - negeren"
+
+msgid "No products found"
+msgstr "Geen producten gevonden"
+
+msgid "No shipping class cost in %s"
+msgstr "Geen kosten van verzendklasse in %s"
+
+msgid "Normal"
+msgstr "Normaal"
+
+msgid ""
+"Not sure which option to choose? Read about %1$spotential issues when "
+"switching languages and currencies while the cart has items%2$s."
+msgstr ""
+"Niet zeker welke optie u moet kiezen? Lees over %1$spotentiële problemen bij "
+"het wisselen van talen en valuta's terwijl de winkelwagen artikelen "
+"heeft%2$s."
+
+msgid "Not translated or needs updating"
+msgstr "Niet vertaald of moet worden geüpdatet"
+
+msgid "Not yet supported"
+msgstr "Nog niet ondersteund"
+
+msgid "Number of Decimals"
+msgstr "Aantal decimalen"
+
+msgid "OK (translate with the WordPress editor)"
+msgstr "OK (vertalen met de WordPress editor)"
+
+msgid "OnTheGoSystems"
+msgstr "OnTheGoSystems"
+
+msgid "One or more WooCommerce pages have not been created."
+msgstr "Een of meer WooCommerce pagina's zijn niet aangemaakt."
+
+msgid "Only numeric"
+msgstr "Enkel numeriek"
+
+msgid "Options"
+msgstr "Opties"
+
+msgid "Order Received"
+msgstr "Bestelling ontvangen"
+
+msgid "Order currency:"
+msgstr "Volgorde valuta:"
+
+msgid "Order of currencies"
+msgstr "Volgorde van munteenheden"
+
+msgid "Original"
+msgstr "Origineel"
+
+msgid "Original Slug"
+msgstr "Originele Slug"
+
+msgid "Original language"
+msgstr "Oorspronkelijke taal"
+
+msgid "Other currency background color"
+msgstr "Andere munteenheid achtergrondkleur"
+
+msgid "Other currency font color"
+msgstr "Andere munteenheidkleur"
+
+msgid "Parent product: %s"
+msgstr "Ouderproduct: %s"
+
+msgid "PayPal Email"
+msgstr "PayPal E-mail"
+
+msgid "Payment Gateways"
+msgstr "Betaling Gateways"
+
+msgid "Pending"
+msgstr "Openstaand"
+
+msgid "Permalink settings"
+msgstr "Permalink-instellingen"
+
+msgid "Person Type Name"
+msgstr "Persoontype naam"
+
+msgid "Person Types"
+msgstr "Persoontypes"
+
+msgid ""
+"Please add another currency to fully utilize multicurrency mode. If you do "
+"not need multiple currencies, you can disable this setting to improve your "
+"site's performance."
+msgstr ""
+"Voeg een andere valuta toe om volledig gebruik te maken van de multi-"
+"valutamodus. Als u geen meerdere valuta nodig hebt, kunt u deze instelling "
+"uitschakelen om de prestaties van uw site te verbeteren."
+
+msgid ""
+"Please choose a different permalink structure or disable slug translation."
+msgstr "Kies een andere permalinkstructuur of schakel de slugvertaling uit."
+
+msgid "Please enter a valid number"
+msgstr "Voer een geldig nummer in"
+
+msgid "Please enter in a value less than the regular price"
+msgstr "Voer een lagere waarde in dan de normale prijs"
+
+msgid "Please go to the %1$s and fill in your %2$s."
+msgstr "Ga naar de %1$s en vul al uw %2$s in."
+
+msgid ""
+"Please make a backup of your database before you start the synchronization"
+msgstr ""
+"Maak aub een back-up van uw database voordat u met synchroniseren begint"
+
+msgid ""
+"Please note that the payment will be made in %1$s. Your total will be "
+"approximately %2$s, depending on the current exchange rate."
+msgstr ""
+"Houd er rekening mee dat de betaling zal worden gedaan in %1$s. Uw totaal "
+"zal ongeveer %2$s zijn, afhankelijk van de huidige wisselkoers."
+
+msgid ""
+"Please note: without a free MaxMind key, your geolocation calls will be "
+"limited and your site performance may be impacted."
+msgstr ""
+"Let op: zonder een gratis MaxMind-sleutel zijn uw geolocatie-oproepen "
+"beperkt en kunnen de prestaties van uw site worden beïnvloed."
+
+msgid "Plugins Status"
+msgstr "Status van plug-ins"
+
+msgid "Position"
+msgstr "Positie"
+
+msgid "Prepare your WooCommerce store to run multilingual!"
+msgstr "Bereid uw WooCommerce winkel voor om over te gaan naar meerdere talen!"
+
+msgid "Preview"
+msgstr "Voorvertoning"
+
+msgid "Private"
+msgstr "Privé"
+
+msgid "Proceed"
+msgstr "Verdergaan"
+
+msgid "Product"
+msgstr "Product"
+
+msgid "Product Add-ons Group \"%s\""
+msgstr "Product Add-ons Groep \"%s\""
+
+msgid "Product Attribute Base"
+msgstr "Product Attribuut Basis"
+
+msgid "Product Base"
+msgstr "Productbasis"
+
+msgid "Product Bundles"
+msgstr "Productbundels"
+
+msgid "Product Category Base"
+msgstr "Product Categorie Basis"
+
+msgid "Product Shop Base"
+msgstr "Product Winkel Basis"
+
+msgid "Product Tag Base"
+msgstr "Product Tag Basis"
+
+msgid "Product Translation Interface"
+msgstr "Interface voor productvertaling"
+
+msgid "Product attribute base"
+msgstr "Product attribuut basis"
+
+msgid "Product base"
+msgstr "Productbasis"
+
+msgid "Product category base"
+msgstr "Product categorie basis"
+
+msgid "Product not found: %d"
+msgstr "Product niet gevonden: %d"
+
+msgid "Product page Currency Switcher"
+msgstr "Productpagina Munteenheidschakelaar"
+
+msgid "Product reviews"
+msgstr "Productbeoordelingen"
+
+msgid "Product tabs"
+msgstr "Product tabs"
+
+msgid "Product tag base"
+msgstr "Product tag basis"
+
+msgid "Product url"
+msgstr "Product url"
+
+msgid "Products"
+msgstr "Producten"
+
+msgid "Products Download Files"
+msgstr "Download bestanden van producten"
+
+msgid "Products Media Synchronization"
+msgstr "Producten Media-Synchronisatie"
+
+msgid "Products Missing Translations"
+msgstr "Producten zonder vertaling"
+
+msgid "Products Synchronization"
+msgstr "Synchronisatie van producten"
+
+msgid "Products before cart reset"
+msgstr "Producten voor het resetten van winkelmandje"
+
+msgid "Products removed after switching to %s:"
+msgstr "Producten verwijderd na het overgaan naar %s:"
+
+msgid "Prompt for a confirmation and reset the cart"
+msgstr "Venster om het winkelmandje te bevestigen en te resetten"
+
+msgid "Published"
+msgstr "Gepubliceerd"
+
+msgid "Purchase WPML now"
+msgstr "Koop WPML nu"
+
+msgid "Purchase note"
+msgstr "Aankoopbon"
+
+msgid "Quick Edit"
+msgstr "Snel Bewerken"
+
+msgid ""
+"Quick edit is disabled for product translations. It's recommended to use the "
+"%1$s for editing products translations. %2$s"
+msgstr ""
+"Quick edit is uitgeschakeld voor productvertalingen. Het wordt aanbevolen om "
+"de %1$s te gebruiken voor het bewerken van productvertalingen. %2$s"
+
+msgid "Rate"
+msgstr "Koers"
+
+msgid "Ready!"
+msgstr "Klaar!"
+
+msgid "Register product reviews for translations"
+msgstr "Productbesprekingen registreren voor vertalingen"
+
+msgid "Regular Price"
+msgstr "Normale prijs"
+
+msgid "Reset"
+msgstr "Opnieuw instellen"
+
+msgctxt "Reset cart option warning 1"
+msgid ""
+"Because of some elements in your site configuration, when the users switch "
+"the currency or the language on the front end, the cart content might not be "
+"synchronized correctly."
+msgstr ""
+"Vanwege sommige elementen in uw siteconfiguratie, als de gebruiker van "
+"valuta of taal verandert in de frontend, zal de inhoud van het winkelmandje "
+"niet goed gesynchroniseerd worden."
+
+msgctxt "Reset cart option warning 2"
+msgid ""
+"It is recommended that you %s with the option to reset the cart in a "
+"situation like this."
+msgstr ""
+"Het is aanbevolen dat u %s met de topie om het winkelmandje in dit soort "
+"situaties te resetten."
+
+msgid "Resources"
+msgstr "Middelen"
+
+msgid "Resources Label"
+msgstr "Hulpbronlabel"
+
+msgid "Resources label"
+msgstr "Label voor middelen"
+
+msgid "Review WooCommerce Multilingual & Multicurrency"
+msgstr "WooCommerce Multilingual & Multicurrency beoordelen"
+
+msgid "Right"
+msgstr "Rechts"
+
+msgid "Right now, there are no products needing translation."
+msgstr "Op dit moment zijn er geen producten die vertaald moeten worden."
+
+msgid "Right now, there are no taxonomy terms needing translation."
+msgstr "Nu zijn er geen taxonomietermen die nog vertaald moeten worden."
+
+msgid "Right with space"
+msgstr "Rechts met spatie"
+
+msgid ""
+"Round the converted price to the closest integer. %se.g. 15.78 becomes 16.00"
+msgstr ""
+"Rond de omgezette prijs af naar het dichtstbijzijnde gehele getal. %sbijv. "
+"15.78 wordt 16.00"
+
+msgid "Rounding to the nearest integer"
+msgstr "Afronden op het dichtstbijzijnde gehele getal"
+
+msgid ""
+"Running WooCommerce Multilingual & Multicurrency with default language other "
+"than English."
+msgstr ""
+"Het uitvoeren van WooCommerce Multilingual & Multicurrency met een andere "
+"standaardtaal dan Engels."
+
+msgid "Sale Price"
+msgstr "Verkoopprijs"
+
+msgid "Same as default currency"
+msgstr "Hetzelfde als de standaard valuta"
+
+msgid "Save"
+msgstr "Opslaan"
+
+msgid "Save changes"
+msgstr "Wijzigingen opslaan"
+
+msgid "Schedule"
+msgstr "Schema"
+
+msgid "Scheduled"
+msgstr "Gepland"
+
+msgid "Search"
+msgstr "Zoeken"
+
+msgid "Secondary currencies: %s"
+msgstr "Secundaire valuta's: %s"
+
+msgid "Secret Key"
+msgstr "Geheime sleutel"
+
+msgid "Select Page"
+msgstr "Pagina selecteren"
+
+msgid "Select Translatable Attributes"
+msgstr "Vertaalbare Attributen selecteren"
+
+msgid "Select a preset"
+msgstr "Selecteer een voorinstelling"
+
+msgid "Select currency"
+msgstr "Valuta selecteren"
+
+msgid "Select the attribute to translate: "
+msgstr "Selecteer het attribuut om te vertalen: "
+
+msgid "Select the taxonomy to translate: "
+msgstr "Selecteer de taxonomie om te laten vertalen: "
+
+msgid "Set costs in other currencies manually"
+msgstr "Stel de kosten in vreemde valuta's handmatig in"
+
+msgid "Set dates"
+msgstr "Data instellen"
+
+msgid ""
+"Set different slugs in different languages for %s on WooCommerce "
+"Multilingual & Multicurrency URLs translations page"
+msgstr ""
+"Stel verschillende slugs in in verschillende talen voor %s op de "
+"vertaalpagina van WooCommerce Multilingual & Multicurrency URL's"
+
+msgid "Set on %s"
+msgstr "Ingesteld op %s"
+
+msgid "Set prices in other currencies manually"
+msgstr "Manueel de prijzen omschakelen naar andere valuta"
+
+msgid "Set shipping costs in other currencies manually"
+msgstr "Verzendkosten in andere valuta's handmatig instellen"
+
+msgid ""
+"Set the currency in which your customer will see the final price when they "
+"checkout. Choose which accounts they will see in their payment message."
+msgstr ""
+"Stel de valuta in die uw klant wil zien voor de eindprijs als ze uitchecken. "
+"Kies welke rekeningen zij zullen zien in hun betaalbericht."
+
+msgid "Settings"
+msgstr "Instellingen"
+
+msgid "Setup Complete"
+msgstr "Setup voltooid"
+
+msgid "Shipping Classes"
+msgstr "Vervoerklasse"
+
+msgid "Shop"
+msgstr "Winkel"
+
+msgid "Shop page"
+msgstr "Winkelpagina"
+
+msgid "Show"
+msgstr "Weergeven"
+
+msgid "Show a currency switcher on the product page template"
+msgstr "Geef een valutaschakelaar weer op de sjabloon van de productpagina"
+
+msgid "Show all currencies"
+msgstr "Alle valuta weergeven"
+
+msgid "Show currencies based on"
+msgstr "Valuta's tonen op basis van"
+
+msgid "Show only products with %1$scustom prices%2$s in secondary currencies"
+msgstr ""
+"Toon alleen producten met %1$saangepaste prijzen%2$s in secundaire valuta"
+
+msgid "Show only reviews in %1$s (%2$s)"
+msgstr "Alleen beoordelingen in het %1$s (%2$s) laten zien"
+
+msgid "Show reviews in all languages  (%s)"
+msgstr "Beoordelingen in alle talen weergeven  (%s)"
+
+msgid ""
+"Shows a list of the products that existed in the cart before the cart is "
+"reset on the front end after switching the language or the currency. It will "
+"be hidden when there are no products to show."
+msgstr ""
+"Geeft een lijst weer met de product die in het winkelmandje lagen voordat "
+"het mandje gereset is in het frontend na het wisselen van taal of valuta. "
+"Deze zal verborgen worden als er geen producten zijn om weer te geven."
+
+msgid "Sign-up Fee"
+msgstr "Aanmeldingstarief"
+
+msgid "Site Language"
+msgstr "Taal van de site"
+
+msgid "Skip"
+msgstr "Overslaan"
+
+msgid "Slug"
+msgstr "Slug"
+
+msgid "Slug type"
+msgstr "Slugtype"
+
+msgid ""
+"Some settings from the WooCommerce Multilingual & Multicurrency wpml-config."
+"xml file have been overwritten."
+msgstr ""
+"Enkele instellingen van het WooCommerce Multilingual & Multicurrency wpml-"
+"config. xml-bestand zijn overschreven."
+
+msgid "Some translated %1$s have different %2$s assignments."
+msgstr "Sommige vertaalde %1$s hebben verschillende %2$s opdrachten."
+
+msgid "Specific countries"
+msgstr "Specifieke landen"
+
+msgid "Start"
+msgstr "starten"
+
+msgid "Start the Setup Wizard"
+msgstr "Start de Setup Wizard"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Store Pages"
+msgstr "Pagina's oplsaan"
+
+msgid "Store URLs"
+msgstr "URL's opslaan"
+
+msgid "Subscription Price"
+msgstr "Abonnementsprijs"
+
+msgid "Successfully updated %1$s for all translated %2$s."
+msgstr "%1$s succesvol bijgewerkt voor alle vertaalde %2$s."
+
+msgid "Switch back to %s"
+msgstr "Terugschakelen naar %s"
+
+msgid "Switching currencies when there are items in the cart"
+msgstr ""
+"Het wisselen van munteenheid als er voorwerpen in het winkelmandje zitten"
+
+msgid "Switching currency?"
+msgstr "Wisselen van munteenheid?"
+
+msgid "Switching language?"
+msgstr "Van taal veranderen?"
+
+msgid "Switching languages when there are items in the cart"
+msgstr "Het wisselen van taal als er voorwerpen in het winkelmandje zitten"
+
+msgid ""
+"Sync product stock quantity and status ( synchronizing min stock between "
+"translations )"
+msgstr ""
+"Synchroniseer productvoorraad en status (synchronisatie van min voorraad "
+"tussen vertalingen)"
+
+msgid "Sync products \"gallery images\":"
+msgstr "\"gallerij afbeeldingen\" producten synchroniseren:"
+
+msgid "Sync products and product taxonomies order."
+msgstr "Synchroniseer producten en de producttaxonomie-volgorde."
+
+msgid "Sync products categories (display type, thumbnail):"
+msgstr "Synchroniseer productcategoriën (weergavetype, korte beschrijving):"
+
+msgid "Sync products variations:"
+msgstr "Productvariaties synchroniseren:"
+
+msgid "Sync publishing date for translated products."
+msgstr "Synchroniseer publicatiedatum voor vertaalde producten."
+
+msgid "Sync removed product meta from original products to translations"
+msgstr ""
+"Sync heeft productmeta verwijderd van originele producten naar vertalingen"
+
+msgid "Sync variables products"
+msgstr "Variabelen van de producten synchroniseren"
+
+msgid "Synchronization complete!"
+msgstr "Synchronisatie voltooid!"
+
+msgid "Synchronize %s assignment in content"
+msgstr "%staak in inhoud synchroniseren"
+
+msgid "Synchronize attributes and update product variations"
+msgstr "Attributen synchroniseren en productvariaties updaten"
+
+msgid "Synchronize cart content when switching currencies"
+msgstr "Inhoud van winkelmandje synchroniseren bij het wisselen van taal"
+
+msgid "Synchronize cart content when switching languages"
+msgstr "Inhoud van het winkelmandje synchroniseren bij het wisselen van taal"
+
+msgid "Tab Title"
+msgstr "Tabblad titel"
+
+msgid "Tags"
+msgstr "Tags"
+
+msgid "Take this and edit"
+msgstr "Deze nemen en bewerken"
+
+msgid "Taxonomies Missing Translations"
+msgstr "Taxonomieën zonder vertaling"
+
+msgid "Template for currency switcher"
+msgstr "Sjabloon voor valutawisselaar"
+
+msgid "Term not found: %d"
+msgstr "Term niet gevonden: %d"
+
+msgid ""
+"Thank you for choosing WooCommerce Multilingual & Multicurrency. We need to "
+"do a few upgrades to your site, so that it has everything needed to run "
+"multilingual."
+msgstr ""
+"Hartelijk dank dat u voor WooCommerce Multilingual & Multicurrency hebt "
+"gekozen. We moeten nog een paar upgrades uitvoeren op uw site zodat alles in "
+"meerdere talen bestaat."
+
+msgid "The changes you made will be lost if you navigate away from this page."
+msgstr ""
+"De wijzigingen die u hebt aangebracht zullen verloren gaan als u van deze "
+"pagina weggaat."
+
+msgid ""
+"The default currency was changed. In order to show accurate prices in all "
+"currencies, you need to update the exchange rates under the %1$sMulti-"
+"currency%2$s configuration."
+msgstr ""
+"De standaardvaluta werd gewijzigd. Om accurate prijzen in alle valuta's te "
+"tonen, moet u de wisselkoersen onder de configuratie %1$sMulti-currency%2$s "
+"updaten."
+
+msgctxt ""
+"The description for the field with minimal order amount in additional "
+"currency. The currency symbol will be added in place of %s specifier."
+msgid "The minimal order amount if customer choose %s as a purchase currency."
+msgstr "Het minimale bestelbedrag als de klant kiest voor %s als valuta."
+
+msgctxt ""
+"The description for the field with shipping cost in additional currency. The "
+"currency symbol will be added in place of %s specifier."
+msgid "The shipping cost if customer choose %s as a purchase currency."
+msgstr "De verzendkosten als de klant kiest voor %s als aankoopvaluta."
+
+msgctxt ""
+"The label for the field with minimal order amount in additional currency. "
+"The currency symbol will be added in place of %s specifier."
+msgid "Minimal order amount in %s"
+msgstr "Minimaal bestelbedrag in %s"
+
+msgctxt ""
+"The label for the field with shipping cost in additional currency. The "
+"currency symbol will be added in place of %s specifier."
+msgid "Cost in %s"
+msgstr "Kosten in %s"
+
+msgid ""
+"The lifting charge adjusts the exchange rate provided by the selected "
+"service before it is saved. The exchange rates displayed in the table above "
+"include the lifting charge."
+msgstr ""
+"De commissie zal de wisselkoers die gegeven is voor de geselecteerde service "
+"wijzigen voordat deze wordt opgeslagen. De wisselkoersen die in bovenstaande "
+"tabel staan zijn inclusief commissie."
+
+msgid ""
+"The multi-currency mode cannot be enabled as a specific currency was not "
+"set. Go to the %1$sWooCommerce settings%2$s page and select the default "
+"currency for your store."
+msgstr ""
+"De multi-valutamodus kan niet worden ingeschakeld omdat er geen specifieke "
+"valuta is ingesteld. Ga naar de pagina %1$sWooCommerce instellingen%2$s en "
+"selecteer de standaard valuta voor uw winkel."
+
+msgid ""
+"The recommended way is using the WPML Translation Editor. It is streamlined "
+"for making the translation process much easier while also providing a much "
+"better integration with various WooCommerce extensions."
+msgstr ""
+"De aanbevolen wijze is om WPML Translation Editor te gebruiken. Het is "
+"bedoeld om het vertaalproces veel eenvoudiger te maken terwijl het ook zorgt "
+"voor een betere integratie met verschillende WooCommerce uitbreidingen."
+
+msgid ""
+"The recommended way to translate WooCommerce products is using the "
+"%1$sWooCommerce Multilingual & Multicurrency products translation%2$s page.\n"
+"\t\t\t\t\tPlease use this page only for translating elements that are not "
+"available in the WooCommerce Multilingual & Multicurrency products "
+"translation table."
+msgstr ""
+"De aanbevolen manier om WooCommerce producten te vertalen is door gebruik te "
+"maken van de pagina %1$sWooCommerce Multilingual & Multicurrency "
+"productvertaling%2$s.\n"
+" \t\t\t\t\tGebruik deze pagina alleen voor het vertalen van elementen die "
+"niet beschikbaar zijn in de WooCommerce Multilingual & Multicurrency "
+"productvertalingstabel."
+
+msgid ""
+"The resulting price will be an increment of this value after initial "
+"rounding.%se.g.:"
+msgstr "De eindprijs is een verhoging van deze waarde na het afronden.%sbijv.:"
+
+msgid "The value to be subtracted from the amount obtained previously."
+msgstr "De waarde dient afgetrokken te worden van het eerder verkregen bedrag."
+
+msgid "There are no attributes defined"
+msgstr "Er zijn geen attributen vastgesteld"
+
+msgid "There are no translatable product attributes defined"
+msgstr "Er zijn geen vertaalbare productattributen bepaald"
+
+msgid "There are no translatable product custom taxonomies defined"
+msgstr "Er zijn geen vertaalbare aangepaste producttaxonomieën bepaald"
+
+msgid "There are some settings that require careful attention."
+msgstr "Er zijn sommige instellingen waar naar gekeken moet worden."
+
+msgid "These pages are currently being translated by translators via WPML: "
+msgstr "Deze pagina's worden vertaald door vertalers via WPML: "
+
+msgid ""
+"This action lets you automatically apply the %s taxonomy to your content in "
+"different languages. It will scan the original content and apply the same "
+"taxonomy to translated content."
+msgstr ""
+"Met deze actie kunt u automatisch de %s-taxonomie op uw inhoud in "
+"verschillende talen toepassen. De originele inhoud wordt gescand en dezelfde "
+"taxonomie zal op de vertaalde inhoud toegepast worden."
+
+msgid ""
+"This feature was disabled. Please enable %1$sWPML cookies%2$s to continue."
+msgstr ""
+"Deze functie was uitgeschakeld. Schakel %1$sWPML cookies%2$s in om door te "
+"gaan."
+
+msgid ""
+"This field is locked for editing because WPML will copy its value from the "
+"original language."
+msgstr ""
+"Dit veld is voor bewerking vergrendeld, omdat WPML zijn waarden zal kopiëren "
+"vanaf de originele taal."
+
+msgid ""
+"This gateway does not support %s. To show this gateway please select another "
+"currency."
+msgstr ""
+"Deze gateway ondersteunt geen %s. Selecteer een andere valuta om deze "
+"gateway weer te geven."
+
+msgid ""
+"This is a translation of %1$s. Some of the fields are not editable. It's "
+"recommended to use the %2$s for translating products."
+msgstr ""
+"Dit is een vertaling van %1$s. Sommige velden zijn niet bewerkbaar. Het "
+"wordt aanbevolen om de %2$s te gebruiken voor het vertalen van producten."
+
+msgid "This may cause problems with URLs in different languages."
+msgstr "Dit kan problemen met URL's in verschillende talen veroorzaken."
+
+msgid ""
+"This option is only available when using %1$sTranslate Everything%2$s mode. "
+"%3$sRead More →%4$s"
+msgstr ""
+"Deze optie is alleen beschikbaar wanneer u de modus %1$sAlles vertalen%2$s "
+"gebruikt. %3$sLees meer →%4$s"
+
+msgid ""
+"This page allows you to translate all strings that are being used by "
+"WooCommerce in building different type of urls. Translating them enables you "
+"to have fully localized urls that match the language of the pages."
+msgstr ""
+"Met deze pagina kunt u alle strings vertalen die gebruikt worden door "
+"WooCommerce bij het bouwen van verschillende soorten url's. Door ze te "
+"vertalen hebt u volledig gelokaliseerde url's die overeenkomen met de taal "
+"van de pagina's."
+
+msgid "This taxonomy does not require translation."
+msgstr "Deze taxonomie vereist geen vertaling."
+
+msgid "This taxonomy requires translation."
+msgstr "Deze taxonomie vereist een vertaling."
+
+msgid ""
+"This translation job will no longer be assigned to you. Other translators "
+"will be able take it and continue the translation."
+msgstr ""
+"Deze vertaaltaak is niet lang voor u. Andere vertalers kunnen deze overnemen "
+"en verdergaan met de vertaling."
+
+msgid ""
+"This will allow you to set prices for products in different currencies. The "
+"prices can be determined based on a given exchange rate or set explicitly "
+"for specific products."
+msgstr ""
+"Hiermee kunt u prijzen in verschillende valuta's instellen voor uw "
+"producten. De prijzen kunnen bepaald worden op basis van een bepaalde "
+"wisselkoers of kunnen uitsluitend ingesteld worden voor specifieke producten."
+
+msgid ""
+"This will automatically generate variations for translated products "
+"corresponding to recently translated attributes."
+msgstr ""
+"Dit zal automatisch variaties genereren voor vertaalde producten die "
+"corresponderen met recent vertaalde attributen."
+
+msgid "Thousand Separator"
+msgstr "Duizendtallenscheider"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid ""
+"To avoid this, set your cache plugin to not cache pages for visitors that "
+"have a cookie set in their browser."
+msgstr ""
+"Om dit te voorkomen, stelt u uw cache-plugin in op het niet cachen van "
+"pagina's voor bezoekers die een cookie hebben ingesteld in hun browser."
+
+msgid "To change this later, go to %1$sWPML &raquo; Settings.%2$s"
+msgstr ""
+"Om dit later te veranderen, gaat u naar de %1$sInstellingen van WPML.%2$s"
+
+msgid ""
+"To configure product taxonomies or attributes as translatable or not "
+"translatable, go to the %1$sMultilingual Content Setup%2$s"
+msgstr ""
+"Om producttaxonomieën of -attributen te configureren als vertaalbaar of niet "
+"vertaalbaar, ga naar de %1$sMultilingual Content Setup%2$s"
+
+msgid ""
+"To quickly translate this and other WooCommerce store pages, please run the "
+"%1$ssetup wizard%2$s."
+msgstr ""
+"Om deze en andere WooCommerce winkelpagina's snel te vertalen, kunt u de "
+"%1$ssetup wizard%2$s uitvoeren."
+
+msgid ""
+"To run a fully translated site, you should translate all taxonomy terms. "
+"Some store elements, such as variations, depend on taxonomy translation."
+msgstr ""
+"Om een volledig vertaalde site te beheren, moet u alle taxonomietermen "
+"vertalen. Sommige winkelelementen, zoals variaties, zijn afhankelijk van de "
+"taxonomievertaling."
+
+msgid ""
+"To run a multilingual e-commerce site, you need to have the WooCommerce shop "
+"pages translated to all the site's languages. Once all the pages are "
+"installed you can add the translations for them from this menu."
+msgstr ""
+"Voor een meertalige e-commerce site, dient u alle WooCommerce winkelpagina's "
+"te vertalen naar alle talen van de site. Zodra alle pagina's geïnstalleerd "
+"zijn, kunt u de vertalingen toevoegen vanuit dit menu."
+
+msgid ""
+"To run your store in multiple languages, you need to use the %1$sWPML "
+"plugin%2$s."
+msgstr ""
+"Om uw winkel in meerdere talen te runnen, moet u de %1$s-WPML-plugin %2$s "
+"gebruiken."
+
+msgid ""
+"To translate %1$s please use the %2$s translation%3$s page, inside the "
+"%4$sWooCommerce Multilingual & Multicurrency admin%5$s."
+msgstr ""
+"Gebruik om %1$s te vertalen de %2$svertaalpagina%3$s in de %4$sWooCommerce "
+"Multilingual & Multicurrency admin%5$s."
+
+msgid ""
+"To translate Extra Options strings please save %1$s and go to the <b><a "
+"href=\"%2$s\">String Translation interface</a></b>"
+msgstr ""
+"Om Extra Opties te vertalen, sla %1$s op en ga naar de <b><a "
+"href=\"%2$s\">interface String Translation</a></b>"
+
+msgid ""
+"To translate the attribute slug, please set the option \"Enable archives?\" "
+"for the attribute %s in WooCommerce"
+msgstr ""
+"Om het attribuut slug te vertalen, moet u de optie \"Archieven inschakelen\" "
+"voor het attribuut %s in WooCommerce instellen"
+
+msgid "To&hellip;"
+msgstr "Naar&hellip;"
+
+msgid "Tour Data"
+msgstr "Tour-gegevens"
+
+msgid "Translatable?"
+msgstr "Vertaalbaar?"
+
+msgid "Translate %s"
+msgstr "%s vertalen"
+
+msgid "Translate Everything mode"
+msgstr "Alles vertalen-modus"
+
+msgid "Translate Products"
+msgstr "Producten vertalen"
+
+msgid "Translate Store Pages"
+msgstr "Vertaal Winkelpagina's"
+
+msgid "Translate URLs"
+msgstr "URL's vertalen"
+
+msgid "Translate WooCommerce products"
+msgstr "WooCommerce producten vertalen"
+
+msgid "Translate all products automatically as I create and edit them."
+msgstr "Vertaal alle producten automatisch terwijl ik ze maak en bewerk."
+
+msgid "Translate endpoints"
+msgstr "Eindpunten vertalen"
+
+msgid "Translate shipping classes"
+msgstr "Vervoerklasse vertalen"
+
+msgid "Translate the 'store' pages"
+msgstr "Vertaal de \"winkel\" pagina's"
+
+msgid "Translating %1$s? Use the %2$s table for easier translation."
+msgstr ""
+"%1$s aan het vertalen? Gebruik de %2$s tabel voor een makkelijkere vertaling."
+
+msgid "Translating the 'store' pages"
+msgstr "Het vertalen van de \"winkel\" pagina's"
+
+msgid "Translation Options"
+msgstr "Vertaalopties"
+
+msgid "Translation complete"
+msgstr "Vertaling voltooid"
+
+msgid "Translation in progress"
+msgstr "Vertaling in uitvoering"
+
+msgid "Translation to"
+msgstr "Vertaling naar het"
+
+msgid "Troubleshooting"
+msgstr "Probleemoplossing"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Up"
+msgstr "Omhoog"
+
+msgid "Update %1$s for all translated %2$s"
+msgstr "Update %1$s voor alle vertaalde %2$s"
+
+msgid "Update Translation"
+msgstr "Vertaling updaten"
+
+msgid "Update frequency"
+msgstr "Frequentie updaten"
+
+msgid "Update manually now"
+msgstr "Un handmatig updaten"
+
+msgid "Update products count:"
+msgstr "Aantal producten updaten:"
+
+msgid "Update translation"
+msgstr "Vertaling updaten"
+
+msgid ""
+"Updating the exchange rates on an hourly basis generates around 744 API "
+"calls a month. Please check that your exchange rates source can accommodate "
+"this higher usage."
+msgstr ""
+"Het bijwerken van de wisselkoersen op uurbasis genereert ongeveer 744 API-"
+"oproepen per maand. Controleer of uw wisselkoersbron dit hogere gebruik "
+"aankan."
+
+msgid "Uploads"
+msgstr "Uploads"
+
+msgid "Use custom settings for translations download files"
+msgstr "Gebruik aangepaste ingestellingen voor vertaal-downloadbestanden"
+
+msgid "Use the same files for translations"
+msgstr "Gebruik dezelfde bestanden voor vertalingen"
+
+msgid "Using \"translation_of\" requires providing a \"lang\" parameter too"
+msgstr ""
+"Het gebruikmaken van \"translation_of\" vereist ook het leveren van een "
+"\"lang\" parameter"
+
+msgid "Value(s)"
+msgstr "Waarde(s)"
+
+msgid "Variations data"
+msgstr "Variatiegegevens"
+
+msgid "View"
+msgstr "Bekijken"
+
+msgid "View \"%s\""
+msgstr "Zie \"%s\""
+
+msgid "View Order"
+msgstr "Bestelling bekijken"
+
+msgid "Visit website"
+msgstr "Bezoek de website"
+
+msgid ""
+"WARNING! Minor limitations include 1000 requests/month limit and EUR being "
+"the only available base currency for customers using a free account. If you "
+"need more than 1000 requests per month or want to use all 170 available base "
+"currencies, you’ll need to choose one of the paid plans starting at only $10 "
+"per month."
+msgstr ""
+"WAARSCHUWING! Kleine beperkingen omvat een limiet van 1000 verzoeken/maand "
+"en EUR als enige beschikbare basisvaluta voor klanten die een gratis account "
+"gebruiken. Als u meer dan 1000 verzoeken per maand nodig hebt of alle 170 "
+"beschikbare basisvaluta's wilt gebruiken, dient u een van de betaalde "
+"plannen vanaf slechts $10 per maand te kiezen."
+
+msgid "WPML Translation Editor"
+msgstr "WPML Translation Editor"
+
+msgid "WPML support"
+msgstr "WPML ondersteuning"
+
+msgid ""
+"We detected a problem in your WPML configuration: the %1$sproduct_type%2$s "
+"taxonomy is set as translatable and this would cause problems with "
+"translated products. You can fix this in the %3$sMultilingual Content Setup "
+"page%4$s."
+msgstr ""
+"We hebben een probleem waargenomen in uw WPML-configuratie: de "
+"%1$sproduct_type%2$s taxonomie is ingesteld als vertaalbaar en dit zou "
+"problemen veroorzaken met vertaalde producten. U kunt dit oplossen in de "
+"%3$sMultilingual Content Setup pagina%4$s."
+
+msgid ""
+"We detected that the %1$sproduct_type%2$s field was set incorrectly for some "
+"product translations. This happened because the product_type taxonomy was "
+"translated. You can fix this in the WooCommerce Multilingual & Multicurrency "
+"%3$stroubleshooting page%4$s."
+msgstr ""
+"We hebben waargenomen dat het veld %1$sproduct_type%2$s onjuist was "
+"ingesteld voor sommige productvertalingen. Dit gebeurde omdat de "
+"product_type taxonomie werd vertaald. U kunt dit verhelpen op de "
+"%3$sprobleemoplossingspagina%4$s van WooCommerce Multilingual & "
+"Multicurrency."
+
+msgid ""
+"We for sure are super thrilled about your success! Will you help WCML "
+"improve and grow?"
+msgstr ""
+"Wij zijn erg enthousiast over uw succes! Helpt u WCML te verbeteren en te "
+"groeien?"
+
+msgid ""
+"We need to help you with a few steps to turn your WooCommerce store "
+"multilingual. These steps include:"
+msgstr ""
+"Wij hebben uw hulp nodig bij een aantal stappen om uw WooCommerce winkel "
+"meertalig te maken. Deze stappen omvatten:"
+
+msgid ""
+"We noticed that you're using WooCommerce Gateways Country Limiter plugin "
+"which is now integrated into WooCommerce Multilingual & Multicurrency. "
+"Please remove it!"
+msgstr ""
+"We hebben gemerkt dat u gebruik maakt van de WooCommerce Gateways Country "
+"Limiter plugin, die nu in WooCommerce Multilingual & Multicurrency is "
+"geïntegreerd. Verwijder deze alstublieft!"
+
+msgid "We'll help you:"
+msgstr "Wij zullen u helpen:"
+
+msgid "Weekly on"
+msgstr "Wekelijks op"
+
+msgid "Weekly on %s"
+msgstr "Wekelijks op %s"
+
+msgid ""
+"When enabled, products with prices based on the exchange rate are hidden"
+msgstr ""
+"Indien ingeschakeld, worden producten met prijzen op basis van de "
+"wisselkoers verborgen"
+
+msgid "White"
+msgstr "Wit"
+
+msgid "Widget Currency Switcher"
+msgstr "Widget Munteenheidschakelaar"
+
+msgid "Widget area"
+msgstr "Widgetzone"
+
+msgid "Widget title"
+msgstr "Widget titel"
+
+msgid "WooCommerce Multilingual & Multicurrency"
+msgstr "WooCommerce Multilingual & Multicurrency"
+
+msgid ""
+"WooCommerce Multilingual & Multicurrency by default will multiply all your "
+"costs and values defined above by currency exchange rates. If you don't want "
+"this and you prefer static values instead, you can define them here."
+msgstr ""
+"WooCommerce Multilingual & Multicurrency zal standaard al uw kosten en "
+"waarden, zoals hierboven gedefinieerd, vermenigvuldigen met valutakoersen. "
+"Als u dit niet wilt, en u geeft de voorkeur aan statische waarden, kunt u "
+"deze hier vastleggen."
+
+msgid ""
+"WooCommerce Multilingual & Multicurrency depends on several plugins to work. "
+"If any required plugin is missing, you should install and activate it."
+msgstr ""
+"De juiste werking van WooCommerce Multilingual & Multicurrency is "
+"afhankelijk van meerdere plug-ins. Als er een vereiste plug-in ontbreekt, "
+"dan moet u die installeren en activeren."
+
+msgid ""
+"WooCommerce Multilingual & Multicurrency detected an active cache plugin on "
+"your site."
+msgstr ""
+"WooCommerce Multilingual & Multicurrency heeft een actieve cache-plugin "
+"gedetecteerd op uw site."
+
+msgid ""
+"WooCommerce Multilingual & Multicurrency is enabled but not effective. It is "
+"not compatible with  <a href=\"%1$s\">WPML String Translation</a> versions "
+"prior %2$s."
+msgstr ""
+"WooCommerce Multilingual & Multicurrency is ingeschakeld, maar werkt niet. "
+"Het is niet compatibel met <a href=\"%1$s\">WPML String Translation</a> "
+"versies vóór %2$s."
+
+msgid ""
+"WooCommerce Multilingual & Multicurrency is enabled but not effective. It is "
+"not compatible with  <a href=\"%1$s\">WPML</a> versions prior %2$s."
+msgstr ""
+"WooCommerce Multilingual & Multicurrency is ingeschakeld, maar werkt niet. "
+"Het is niet compatibel met <a href=\"%1$s\">WPML</a> versies vóór %2$s."
+
+msgid ""
+"WooCommerce Multilingual & Multicurrency is enabled but not effective. It is "
+"not compatible with  <a href=\"%1$s\">Woocommerce</a> versions prior %2$s."
+msgstr ""
+"WooCommerce Multilingual & Multicurrency is ingeschakeld, maar werkt niet. "
+"Het is niet compatibel met <a href=\"%1$s\">WooCommerce</a> versies vóór "
+"%2$s."
+
+msgid ""
+"WooCommerce Multilingual & Multicurrency is enabled but not effective. It "
+"requires %s in order to work."
+msgstr ""
+"WooCommerce Multilingual & Multicurrency is ingeschakeld, maar werkt niet. "
+"Voor de juiste werking is %s vereist."
+
+msgid ""
+"WooCommerce Multilingual & Multicurrency is enabled but not effective. "
+"Please finish the installation of WPML first."
+msgstr ""
+"WooCommerce Multilingual & Multicurrency is ingeschakeld, maar werkt niet. "
+"Rond eerst de installatie van WPML af."
+
+msgid "WooCommerce Multilingual & Multicurrency products editor"
+msgstr "WooCommerce Multilingual & Multicurrency producten-editor"
+
+msgid "WooCommerce Multilingual & Multicurrency products translator"
+msgstr "WooCommerce Multilingual & Multicurrency productenvertaler"
+
+msgid ""
+"WooCommerce Multilingual & Multicurrency will also use cookies to identify "
+"the language and currency of each customer’s order as well as the currency "
+"of the reports created by WooCommerce. WooCommerce Multilingual extends "
+"these reports by adding the currency’s information."
+msgstr ""
+"WooCommerce Multilingual & Multicurrency zal ook gebruikmaken van cookies om "
+"de taal en valuta van iedere bestelling van de klant te identificeren "
+"evenals de valuta van de verslagen van WooCommerce. WooCommerce Multilingual "
+"breidt deze verslagen uit door de informatie van de valuta toe te voegen."
+
+msgid ""
+"WooCommerce Multilingual & Multicurrency will use cookies to understand the "
+"basket info when using languages in domains and to transfer data between the "
+"domains."
+msgstr ""
+"WooCommerce Multilingual & Multicurrency maakt gebruik van cookies om de "
+"informatie van het winkelmandje te begrijpen als er talen in domeinen "
+"gebruikt worden en om gegevens tussen domeinen over te brengen."
+
+msgid "WooCommerce Multilingual & Multicurrency › Setup Wizard"
+msgstr "WooCommerce Multilingual & Multicurrency › Installatiewizard"
+
+msgid "WooCommerce Store Pages"
+msgstr "WooCommerce-winkelpagina's"
+
+msgid ""
+"WooCommerce integrates with MaxMind Geolocation to reliably determine the "
+"location of your customers."
+msgstr ""
+"WooCommerce integreert met MaxMind Geolocation om op betrouwbare wijze de "
+"locatie van uw klanten te bepalen."
+
+msgid "WooCommerce product translation page"
+msgstr "WooCommerce product vertaalpagina"
+
+msgid "WooCommerce settings page."
+msgstr "instellingspagina van WooCommerce."
+
+msgid "WooCommerce store pages are translated to all the site's languages."
+msgstr "WooCommerce winkelpagina's zijn vertaald naar alle talen van de site."
+
+msgid "WooCommerce store pages do not exist for these languages:"
+msgstr "WooCommerce winkelpagina's bestaan niet in deze talen:"
+
+msgid "Yes, go to the troubleshooting page"
+msgstr "Ja, ga naar de probleemoplossingspagina"
+
+msgid ""
+"You are using the same value as for the regular category base. This is known "
+"to create conflicts resulting in urls not working properly."
+msgstr ""
+"U gebruikt dezelfde waarde als voor de regulaire categoriebasis. Dit is "
+"bekend vanwege het creëren van conflicten die leiden in url's die niet goed "
+"werken. ."
+
+msgid ""
+"You can choose to clear the cart contents when you change language or "
+"currency in case you have problems in cart or checkout page"
+msgstr ""
+"U kunt kiezen om de inhoud van het winkelmandje te wissen wanneer u van taal "
+"of valuta verandert als u problemen hebt op het winkelmandje- of "
+"uitcheckpagina"
+
+msgid ""
+"You can enter or edit your default values on the %1$sPermalinks settings%2$s "
+"page or, for the endpoints, on the WooCommerce %3$sAdvanced settings%4$s "
+"page."
+msgstr ""
+"U kunt uw standaardwaarden invoeren of bewerken op de pagina %1$sPermalinks-"
+"instellingen%2$s of, voor de eindpunten, op de pagina WooCommerce "
+"%3$sGeavanceerde instellingen%4$s."
+
+msgid ""
+"You can express your love and support by %1$srating our plugin %2$s%3$s and "
+"saying that it works for you."
+msgstr ""
+"U kunt uw liefde en steun uitdrukken door %1$shet beoordelen van onze plugin "
+"%2$s%3$s en te zeggen dat deze voor u goed werkt."
+
+msgid ""
+"You can make these updates now, or later from the %1$sWooCommerce &raquo; "
+"WooCommerce Multilingual & Multicurrency%2$s menu."
+msgstr ""
+"U kunt deze updates nu doen, of later, vanuit het menu %1$sWooCommerce "
+"&raquo; WooCommerce Multilingual & Multicurrency%2$s."
+
+msgid ""
+"You can still use the %1$smulticurrency features%2$s without buying anything."
+msgstr ""
+"U kunt nog steeds gebruikmaken van de %1$sfuncties voor meerdere valuta%2$s "
+"zonder iets te kopen."
+
+msgid ""
+"You can translate strings related to global add-ons on the %1$sWPML String "
+"Translation page%2$s. Use the search on the top of that page to find the "
+"strings."
+msgstr ""
+"U kunt strings met betrekking tot globale add-ons vertalen op de %1$sWPML "
+"String Translation pagina%2$s. Gebruik de zoekopdracht bovenaan op die "
+"pagina om de strings te vinden."
+
+msgid ""
+"You can translate strings related to subscription products on the %1$sWPML "
+"String Translation page%2$s. Use the search on the top of that page to find "
+"the strings."
+msgstr ""
+"U kunt strings met betrekking tot abonnementsproducten vertalen op de "
+"%1$sWPML String Translation pagina%2$s. Gebruik de zoekopdracht bovenaan op "
+"die pagina om de strings te vinden."
+
+msgid ""
+"You can translate the Group Name, Group Description and every Option Label "
+"of your product add-on on the %1$sWooCommerce product translation page%2$s"
+msgstr ""
+"U kunt de Groepsnaam, de Groepsbeschrijving en elk Optie-label van uw "
+"product add-on vertalen op de %1$sWooCommerce productvertalingspagina%2$s"
+
+msgid ""
+"You can translate the Person Type Name and Description on the  "
+"%1$sWooCommerce product translation page%2$s"
+msgstr ""
+"U kunt de Persoonstype Naam en Beschrijving op de %1$sWooCommerce "
+"productvertalingspagina%2$s vertalen"
+
+msgid ""
+"You can translate the labels of your table rates on the %1$sWPML String "
+"Translation page%2$s. Use the search on the top of that page to find the "
+"labels strings."
+msgstr ""
+"U kunt de labels van uw tabeltarieven vertalen op de %1$sWPML String "
+"Translation pagina%2$s. Gebruik de zoekopdracht bovenaan op die pagina om de "
+"labelstrings te vinden."
+
+msgid ""
+"You can translate the titles of your custom Resources on the %1$sWooCommerce "
+"product translation page%2$s"
+msgstr ""
+"U kunt de titels van uw aangepaste hulpmiddelen vertalen op de "
+"%1$sWooCommerce productvertalingspagina%2$s"
+
+msgid ""
+"You can translate this method title on the %1$sWPML String Translation "
+"page%2$s. Use the search on the top of that page to find the method title "
+"string."
+msgstr ""
+"U kunt deze method titel vertalen op de %1$sWPML String Translation "
+"pagina%2$s. Gebruik de zoekfunctie bovenaan op de pagina om de methodetitel "
+"te vinden."
+
+msgid ""
+"You can translate your custom product tabs on the %1$sWooCommerce product "
+"translation page%2$s"
+msgstr ""
+"U kunt uw aangepaste producttabbladen vertalen op de %1$sWooCommerce "
+"productvertalingspagina%2$s"
+
+msgid "You can translate your custom product tabs on the %s"
+msgstr "U kunt uw aangepaste producttabbladen vertalen op de %s"
+
+msgid "You have to save all settings before updating exchange rates"
+msgstr ""
+"U dient alle instellingen op te slaan voordat de wisselkoerzen bijgewerkt "
+"worden"
+
+msgid "You have untranslated terms!"
+msgstr "U hebt nog onvertaalde termen!"
+
+msgid "You haven't added any secondary currencies"
+msgstr "U heeft geen secundaire valuta toegevoegd"
+
+msgid "You haven't added any secondary currencies."
+msgstr "U hebt geen secundaire valuta's toegevoegd."
+
+msgid ""
+"You need the WPML plugin to make your store multilingual and display "
+"currencies based on site language. Don't have it yet?"
+msgstr ""
+"U hebt de WPML-plugin nodig om uw winkel meertalig te maken en valuta’s weer "
+"te geven op basis van de taal van de site. Heeft u de plugin nog niet?"
+
+msgid ""
+"You should check WPML configuration files added by other plugins or manual "
+"settings on the %s section."
+msgstr ""
+"U dient de WPML configuratiebestanden te controleren die toegevoegd zijn "
+"door andere plugins of handmatige instellingen in het %s gedeelte."
+
+msgid ""
+"You will need either the Multilingual CMS or Multilingual Agency package to "
+"use WPML with WooCommerce."
+msgstr ""
+"U heeft ofwel het Multilingual CMS ofwel het Multilingual Agency-pakket "
+"nodig om WPML met WooCommerce te gebruiken."
+
+msgid ""
+"You've successfully installed %1$sWooCommerce Multilingual & "
+"Multicurrency%2$s. Would you like to see a quick overview?"
+msgstr ""
+"U hebt met succes %1$sWooCommerce Multilingual & Multicurrency%2$s "
+"geïnstalleerd. Wilt u een snel overzicht zien?"
+
+msgid ""
+"You've switched the language and there are items in the cart. If you keep "
+"the %s language, the cart will be emptied and you will have to add the items "
+"again to the cart."
+msgstr ""
+"U hebt van taal geschakeld en er zitten items in het winkelmandje. Als u %s "
+"taal blijft gebruiken, zal het winkelmandje geleegd worden en dient u de "
+"items weer in het mandje te stoppen."
+
+msgid ""
+"Your cart is not empty! After you switched the currency, all items from the "
+"cart will be removed and you have to add them again."
+msgstr ""
+"Uw winkelmandje is niet leeg! Nadat u van munteenhei hebt veranderd, zullen "
+"alle voorwerpen worden verwijderd uit het winkelmandje en dient u deze "
+"opnieuw toe te voegen."
+
+msgid ""
+"Your multilingual shop is almost ready. Next, you should go to the different "
+"tabs in %1$sWooCommerce &raquo; WooCommerce Multilingual & Multicurrency%2$s "
+"admin and do the final setup."
+msgstr ""
+"Uw meertalige winkel is bijna klaar. Vervolgens moet u naar de verschillende "
+"tabbladen in %1$sWooCommerce &raquo; WooCommerce Multilingual & "
+"Multicurrency%2$s admin gaan en de uiteindelijke setup uitvoeren."
+
+msgid "Your product permalink base is not translated to:"
+msgstr "De permalink basis van uw product is niet vertaald naar het:"
+
+msgid "Your settings have been saved."
+msgstr "Uw instellingen zijn opgeslagen."
+
+msgid ""
+"Your shipping class %1$s has been created in %2$s language. Please switch "
+"your language if you want to provide shipping costs in different currencies "
+"for this class."
+msgstr ""
+"Uw verzendklasse %1$s is aangemaakt in de taal %2$s. Verander van taal als u "
+"de verzendkosten in verschillende valuta's voor deze klasse wilt opgeven."
+
+msgid ""
+"Your site uses %1$s to automatically calculate prices in the secondary "
+"currency. There is an %2$s effective June 1st, 2018."
+msgstr ""
+"Uw site gebruikt %1$s om automatisch prijzen in de secundaire valuta uit te "
+"rekenen. Er is een  %2$s van toepassing sinds 1 juni 2018."
+
+msgid ""
+"Your theme does not support a currency switcher widget. Please %1$sadd your "
+"currency switcher%2$s using a shortcode or PHP."
+msgstr ""
+"Uw thema ondersteunt geen widgets voor een valutaschakelaar. %1$sVoeg uw "
+"valutaschakelaar toe%2$s met behulp van een shortcode of PHP."
+
+msgid "and"
+msgstr "en"
+
+msgid "configure WooCommerce Multilingual & Multicurrency"
+msgstr "WooCommerce Multilingual & Multicurrency configureren"
+
+msgid "default"
+msgstr "standaard"
+
+msgid "http://www.onthegosystems.com/"
+msgstr "http://www.onthegosystems.com/"
+
+msgid ""
+"https://wpml.org/documentation/related-projects/woocommerce-multilingual/?"
+"utm_source=plugin&utm_medium=gui&utm_campaign=wcml"
+msgstr ""
+"https://wpml.org/documentation/related-projects/woocommerce-multilingual/? "
+"utm_source=plugin&utm_medium=gui&utm_campaign=wcml"
+
+msgid "important change about this service"
+msgstr "belangrijke wijziging van deze dienst"
+
+msgid "left"
+msgstr "resterend"
+
+msgid "multicurrency settings page"
+msgstr "pagina met instellingen voor meerdere valuta"
+
+msgid "never"
+msgstr "nooit"
+
+msgid "none"
+msgstr "geen"
+
+msgid "of"
+msgstr "van"
+
+msgid "permalinks settings"
+msgstr "permalinks instellingen"
+
+msgid "products with variations"
+msgstr "producten met variaties"
+
+msgid "translated"
+msgstr "vertaald"
+
+msgid "translations"
+msgstr "vertalingen"
+
+msgid ""
+"wpml-config.xml file missing from WooCommerce Multilingual & Multicurrency "
+"folder."
+msgstr ""
+"Het bestand wpml-config.xml ontbreekt in de WooCommerce Multilingual & "
+"Multicurrency-map."
