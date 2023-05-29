@@ -86,7 +86,8 @@
         ],
         "install-addons": "@composer install --working-dir=addons --no-dev --prefer-dist",
         "update-addons": "@composer update --working-dir=addons --no-dev --prefer-dist",
-        "make-php-pot": "wp i18n make-pot . locale/orig/woocommerce-multilingual.pot --include=classes,compatibility,inc,wpml-woocommerce.php"
+        "i18n-make-php-pot": "wp i18n make-pot . locale/orig/woocommerce-multilingual.pot --include=classes,compatibility,inc,wpml-woocommerce.php",
+		"i18n-merge-pot-in-po": "cd locale && for i in ./*.po ; do msgmerge -q -U \"$i\" ./orig/woocommerce-multilingual.pot ; done && rm ./*.po~"
     },
     "autoload": {
         "classmap": [
