@@ -36,6 +36,8 @@ class WCML_Setup {
 		$this->woocommerce_wpml = $woocommerce_wpml;
 		$this->sitepress        = $sitepress;
 
+		$isRunningTranslateEverything = WPML::shouldTranslateEverything();
+
 		$stepUrlStorePages          = $this->step_url( WCML_Setup_Store_Pages_UI::SLUG );
 		$stepUrlAttributes          = $this->step_url( WCML_Setup_Attributes_UI::SLUG );
 		$stepUrlMulticurrency       = $this->step_url( WCML_Setup_Multi_Currency_UI::SLUG );
@@ -72,7 +74,7 @@ class WCML_Setup {
 			'multi-currency'        => [
 				'name'    => __( 'Multiple Currencies', 'woocommerce-multilingual' ),
 				'view'    => new WCML_Setup_Multi_Currency_UI(
-					$stepUrlTranslationOptions,
+					$isRunningTranslateEverything ? $stepUrlTranslationOptions : $stepUrlDisplayAsTranslated,
 					$stepUrlAttributes
 				),
 				'handler' => [ $this->handlers, 'save_multi_currency' ],
@@ -89,7 +91,7 @@ class WCML_Setup {
 				'name'    => __( 'Translation Options', 'woocommerce-multilingual' ),
 				'view'    => new WCML_Setup_Display_As_Translated_UI(
 					'',
-					$stepUrlTranslationOptions
+					$isRunningTranslateEverything ? $stepUrlTranslationOptions : $stepUrlMulticurrency
 				),
 				'handler' => [ $this->handlers, 'save_display_as_translated' ],
 			],
@@ -99,8 +101,15 @@ class WCML_Setup {
 	/**
 	 * @return bool
 	 */
+	private function is_submitting_display_as_translated() {
+		return (bool) Sanitize::stringProp( WCML_Setup_Handlers::KEY_DISPLAY_AS_TRANSLATED, $_POST );
+	}
+
+	/**
+	 * @return bool
+	 */
 	private function is_selecting_translate_some() {
-		return 'translate_some' === Sanitize::stringProp( 'translation-option', $_POST );
+		return 'translate_some' === Sanitize::stringProp( WCML_Setup_Handlers::KEY_TRANSLATION_OPTION, $_POST );
 	}
 
 	public function add_hooks() {
@@ -207,7 +216,7 @@ class WCML_Setup {
 	 * @return array
 	 */
 	private function filter_split_translation_options_step( $steps ) {
-		if ( $this->is_selecting_translate_some() ) {
+		if ( ! WPML::shouldTranslateEverything() || $this->is_selecting_translate_some() ) {
 			unset( $steps[ WCML_Setup_Translation_Options_UI::SLUG ] );
 		} else {
 			unset( $steps[ WCML_Setup_Display_As_Translated_UI::SLUG ] );
@@ -222,11 +231,14 @@ class WCML_Setup {
 	 * @return bool
 	 */
 	private function is_setup_complete( $step ) {
-		if ( WCML_Setup_Display_As_Translated_UI::SLUG === $step && ! $this->is_selecting_translate_some() ) {
-			return true;
+		if ( WCML_Setup_Display_As_Translated_UI::SLUG !== $step ) {
+			return false;
 		}
 
-		return false;
+		$isCompletingFromTranslationOptionSubmission   = WPML::shouldTranslateEverything() && ! $this->is_selecting_translate_some();
+		$isCompletingFromDisplayAsTranslatedSubmission = $this->is_submitting_display_as_translated();
+
+		return $isCompletingFromTranslationOptionSubmission || $isCompletingFromDisplayAsTranslatedSubmission;
 	}
 
 	/**

@@ -3,17 +3,10 @@
 
 <div class="translation-options">
     <ul class="no-bullets">
-        <li{% if is_translate_some_mode %} class="disabled"{% endif %}>
-            <label class="wcml-translate-everything{% if is_translate_some_mode %} js-otgs-popover-tooltip{% endif %}"
-                {% if is_translate_some_mode %}
-                data-tippy-zindex="999999"
-                title="{{ strings.tooltip_translate_everything }}"
-                {% endif %}
-            >
+        <li>
+            <label class="wcml-translate-everything">
                 <span class="wpml-translate-choose">{{ strings.label_choose }}</span>
-                <input type="radio" value="translate_everything" name="translation-option" required
-                    {% if is_translate_some_mode %} disabled="disabled"{%else%} checked="checked"{% endif %}
-                />
+                <input type="radio" value="translate_everything" name="translation-option" required checked="checked" />
                 <div class="wcml-icon"><i class="otgs-ico otgs-ico-lightning-o"></i></div>
                 <h3>{{ strings.label_translate_everything }}</h3>
                 <p>{{ strings.description_translate_everything }}</p>
@@ -22,9 +15,7 @@
         <li>
             <label class="wcml-translate-some">
                 <span class="wpml-translate-choose">{{ strings.label_choose }}</span>
-                <input type="radio" value="translate_some" name="translation-option" required
-                    {% if is_translate_some_mode %} checked="checked"{% endif %}
-                />
+                <input type="radio" value="translate_some" name="translation-option" required />
                 <div class="wcml-icon"><i class="otgs-ico otgs-ico-wpml-translation-management"></i></div>
                 <h3>{{ strings.label_translate_some }}</h3>
                 <strong>{{ strings.label_translate_some }}</strong>
