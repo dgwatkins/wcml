@@ -1,0 +1,16 @@
+{
+	"repositories": {
+		"i18n-tools": {
+			"type": "vcs",
+			"url": "ssh://git@git.onthegosystems.com:10022/shared/i18n-tools.git"
+		}
+	},
+	"require-dev": {
+		"otgs/i18n-tools": "dev-master"
+	},
+	"config": {
+		"platform": {
+			"php": "7.3"
+		}
+	}
+}
