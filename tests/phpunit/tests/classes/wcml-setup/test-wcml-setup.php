@@ -500,6 +500,10 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock();
 		$subject = $this->get_subject( $woocommerce_wpml );
 		$woocommerce_wpml->expects( $this->once() )->method( 'update_settings' );
+		add_action( 'wcml_setup_completed', function() {
+			$this->addToAssertionCount( 1 );
+		} );
+
 		$subject->complete_setup();
 	}
 

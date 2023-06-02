@@ -283,6 +283,13 @@ class WCML_Setup {
 		$this->woocommerce_wpml->settings['set_up_wizard_run']    = 1;
 		$this->woocommerce_wpml->settings['set_up_wizard_splash'] = 1;
 		$this->woocommerce_wpml->update_settings();
+
+		/**
+		 * Fires after the setup wizard finishes.
+		 *
+		 * @since 5.3.0
+		 */
+		do_action( 'wcml_setup_completed' );
 	}
 
 	/**
