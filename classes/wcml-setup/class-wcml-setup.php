@@ -310,6 +310,7 @@ class WCML_Setup {
 
 		$notices = wpml_get_admin_notices();
 		$notice = $notices->create_notice( 'setup_complete', $text, 'wcml' );
+		$notice->set_css_classes( [ 'otgs-installer-notice otgs-installer-notice-wpml otgs-installer-notice-plugin-recommendation otgs-is-dismissible wcml-notice' ] );
 		$notice->set_flash();
 		$notice->set_hideable( true );
 		$notices->add_notice( $notice );

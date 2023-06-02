@@ -1,3 +1,6 @@
+@import "mixins";
+@import "variables";
+
 .wcml-menu-warn{
   display: inline-block;
   color: #d54e21;
@@ -142,6 +145,7 @@ body.wpml-wcml-multilingual {
       border-bottom: none;
       padding: 40px 0;
 
+
       .wcml-banner {
         padding: 30px 30px 20px 80px;
         background: rgba(51, 135, 158, 0.1) url(../images/wpml-logo.svg) no-repeat 30px 30px;
@@ -167,6 +171,24 @@ body.wpml-wcml-multilingual {
             }
           }
         }
+		  .submit {
+			  margin-bottom: 0;
+			  padding-bottom: $padding-base;
+
+			  .button-primary {
+				  @extend %wpml-button;
+				  margin: 0;
+				  opacity: 1;
+				  box-shadow: none;
+				  text-shadow: none;
+				  border: none;
+				  padding: $padding-base/2 $padding-sm;
+
+				  &:hover {
+					  background-color: $gray-dark;
+				  }
+			  }
+		  }
       }
 
       @media screen and (max-width: 980px) {
@@ -175,4 +197,53 @@ body.wpml-wcml-multilingual {
       }
     }
   }
+}
+
+.wcml-notice {
+	@extend %wcml-notice;
+	position: relative;
+	padding: 35px 30px 30px 80px;
+	border-top: 1px solid #ccd0d4;
+	border-right: 1px solid #ccd0d4;
+	border-bottom: 1px solid #ccd0d4;
+	border-left: 4px solid #f15d30;
+	background-size: 32px;
+	background-repeat: no-repeat;
+	background-position: 28px 28px;
+
+	&:before {
+		content: '';
+		position: absolute;
+		left: -4px;
+		top: 0;
+		bottom: 0;
+		width: 4px;
+	}
+
+	.otgs-installer-notice-content {
+		color: $gray-dim;
+
+		h2 {
+			color: $gray-dim;
+			margin-top: 0;
+		}
+
+		.otgs-installer-notice-status {
+			margin-top: 15px;
+
+			.otgs-installer-notice-status-item-btn {
+				display: inline-block;
+				color: #fff;
+				text-decoration: none;
+				font-weight: 600;
+				border-radius: 5px;
+				padding: 9px 15px;
+				background-color: $gray-dim;
+
+				&:hover {
+					background-color: $gray-dark;
+				}
+			}
+		}
+	}
 }

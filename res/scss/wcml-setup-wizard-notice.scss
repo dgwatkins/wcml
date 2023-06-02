@@ -15,3 +15,6 @@ div.wpml-message {
 		margin: 0;
 	}
 }
+.wcml-notice {
+	@extend %wcml-notice;
+}

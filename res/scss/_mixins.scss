@@ -41,3 +41,23 @@
 		border-color: $wpml-blue-dark;
 	}
 }
+%wcml-notice {
+	background-image: url(../images/wpml-logo.svg) !important;
+	margin-bottom: 15px !important;
+	padding-left: 80px !important;
+
+	&.otgs-notice {
+		p:first-of-type,
+		p:last-of-type {
+			display: none;
+		}
+
+		h2 {
+			margin-top: 0;
+		}
+	}
+
+	&:before {
+		background: $wpml-blue !important;
+	}
+}
