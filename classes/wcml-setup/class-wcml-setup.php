@@ -281,7 +281,7 @@ class WCML_Setup {
 			       '<p>' . sprintf( $descriptionWithBoldPlaceholders, '<b>', '</b>' ) . '</p>';
 		};
 
-		if ( WPML::isAutomatic( 'product' ) ) {
+		if ( self::is_product_automatically_translated() ) {
 			$text = $getRenderedNotice(
 				esc_html__( 'WPML is translating your products', 'woocommerce-multilingual' ),
 				// translators: The placeholders are opening and closing bold HTML tags.
@@ -301,6 +301,13 @@ class WCML_Setup {
 		$notice->set_flash();
 		$notice->set_hideable( true );
 		$notices->add_notice( $notice );
+	}
+
+	/**
+	 * @return bool
+	 */
+	public static function is_product_automatically_translated() {
+		return WPML::isAutomatic( 'product' );
 	}
 
 	private function has_completed() {
