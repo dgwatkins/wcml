@@ -122,7 +122,6 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		) );
 
 		$woocommerce_wpml->settings['set_up_wizard_run'] = false;
-		\WP_Mock::expectActionAdded( 'admin_init', array( $subject, 'skip_setup'), 1 );
 
 		$subject->add_hooks();
 
@@ -141,7 +140,6 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		) );
 
 		$woocommerce_wpml->settings['set_up_wizard_run'] = true;
-		$this->expectActionAdded( 'admin_init', array( $subject, 'skip_setup'), 11, 1, 0 );
 
 		$subject->add_hooks();
 
@@ -402,95 +400,6 @@ class Test_WCML_Setup extends OTGS_TestCase {
 		) );
 
 		$subject->wizard();
-	}
-
-	/**
-	 * @test
-	 */
-	public function skip_setup_should_not_do_anything_without_get_params(){
-		$subject = $this->get_subject();
-
-		\WP_Mock::userFunction( 'wp_verify_nonce', array(
-			'times' => 0
-		) );
-		\WP_Mock::userFunction( 'remove_filter', array(
-			'times' => 0
-		) );
-		\WP_Mock::userFunction( 'delete_transient', array(
-			'times' => 0
-		) );
-
-		$subject->skip_setup();
-	}
-
-	/**
-	 * @test
-	 */
-	public function skip_setup_should_fail_on_invalid_nonce_or_lack_of_permissions(){
-		$subject = $this->get_subject();
-
-		$_GET['wcml-setup-skip'] = rand_str();
-		$_GET['_wcml_setup_nonce'] = rand_str();
-
-		\WP_Mock::userFunction( 'wp_verify_nonce', array(
-			'times' => 1,
-			'return' => false
-		) );
-
-		\WP_Mock::userFunction( 'wp_die', array(
-			'times' => 2
-		) );
-
-		\WP_Mock::userFunction( 'current_user_can', array(
-			'args' => [ 'manage_options' ],
-			'return' => false
-		) );
-
-		\WP_Mock::userFunction( 'remove_filter', array(
-			'times' => 1
-		) );
-
-		\WP_Mock::userFunction( 'delete_transient', array(
-			'args' => '_wcml_activation_redirect',
-			'times' => 1
-		) );
-
-		$subject->skip_setup();
-	}
-
-	/**
-	 * @test
-	 */
-	public function skip_setup_should_not_fail_on_valid_nonce_and_ok_permissions(){
-		$subject = $this->get_subject();
-
-		$_GET['wcml-setup-skip'] = rand_str();
-		$_GET['_wcml_setup_nonce'] = rand_str();
-
-		\WP_Mock::userFunction( 'wp_verify_nonce', array(
-			'times' => 1,
-			'return' => true
-		) );
-
-		\WP_Mock::userFunction( 'wp_die', array(
-			'times' => 0
-		) );
-
-		\WP_Mock::userFunction( 'current_user_can', array(
-			'args' => [ 'manage_options' ],
-			'return' => true
-		) );
-
-		\WP_Mock::userFunction( 'remove_filter', array(
-			'times' => 1
-		) );
-
-		\WP_Mock::userFunction( 'delete_transient', array(
-			'args' => '_wcml_activation_redirect',
-			'times' => 1
-		) );
-
-		$subject->skip_setup();
 	}
 
 	/**

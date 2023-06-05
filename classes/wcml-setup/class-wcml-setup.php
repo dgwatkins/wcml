@@ -121,7 +121,6 @@ class WCML_Setup {
 
 		if ( ! $this->has_completed() ) {
 			$this->ui->add_wizard_notice_hook();
-			add_action( 'admin_init', [ $this, 'skip_setup' ], 1 );
 		}
 	}
 
@@ -258,25 +257,6 @@ class WCML_Setup {
 		if ( $this->is_wcml_admin_page() && ! $this->has_completed() && empty( $this->woocommerce_wpml->settings['set_up_wizard_splash'] ) ) {
 			wcml_safe_redirect( 'admin.php?page=wcml-setup' );
 		}
-	}
-
-	public function skip_setup() {
-
-		if ( isset( $_GET['wcml-setup-skip'] ) && isset( $_GET['_wcml_setup_nonce'] ) ) {
-			if ( ! wp_verify_nonce( $_GET['_wcml_setup_nonce'], 'wcml_setup_skip_nonce' ) ) {
-				wp_die( esc_html__( 'Action failed. Please refresh the page and retry.', 'woocommerce-multilingual' ) );
-			}
-
-			if ( ! current_user_can( 'manage_options' ) ) {
-				wp_die( esc_html__( "Cheatin' huh?", 'woocommerce-multilingual' ) );
-			}
-
-			$this->complete_setup();
-			remove_filter( 'admin_notices', [ $this->ui, 'wizard_notice' ] );
-
-			delete_transient( '_wcml_activation_redirect' );
-		}
-
 	}
 
 	public function complete_setup() {
