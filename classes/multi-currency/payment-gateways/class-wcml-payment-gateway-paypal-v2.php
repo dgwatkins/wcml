@@ -66,7 +66,16 @@ class WCML_Payment_Gateway_PayPal_V2 extends WCML_Payment_Gateway_PayPal {
 	}
 
 	public function add_hooks() {
+		add_filter( 'ppcp_create_order_request_body_data', [ $this, 'filter_request_body_data' ] );
+		add_filter( 'ppcp_smart_button_currency', function( $currency ) {
+			$gateway_setting = $this->get_setting( $currency );
 
+			if ( $gateway_setting ) {
+				return $gateway_setting['currency'];
+			}
+
+			return $currency;
+		} );
 	}
 
 	/**
@@ -92,4 +101,46 @@ class WCML_Payment_Gateway_PayPal_V2 extends WCML_Payment_Gateway_PayPal {
 		return $settings;
 	}
 
+	/**
+	 * @param array $data
+	 *
+	 * @return array
+	 */
+	public function filter_request_body_data( $data ) {
+		$client_currency = Obj::path( [ 'purchase_units', 0, 'amount', 'currency_code' ], $data );
+		$gateway_setting = $this->get_setting( $client_currency );
+
+		if ( $gateway_setting ) {
+			$gatewayCurrency = $gateway_setting['currency'];
+
+			if ( $client_currency !== $gatewayCurrency ) {
+				$convertAmount = function( $amount ) use ( $gatewayCurrency ) {
+					$value    = $amount['value'];
+					$currency = $amount['currency_code'];
+
+					$priceInDefaultCurrency = $this->woocommerce_wpml->multi_currency->prices->unconvert_price_amount( $value, $currency );
+					$priceInGatewayCurrency = $this->woocommerce_wpml->multi_currency->prices->convert_price_amount( $priceInDefaultCurrency, $gatewayCurrency );
+
+					return [
+						'value'         => $priceInGatewayCurrency,
+						'currency_code' => $gatewayCurrency,
+					];
+				};
+
+				foreach ( $data['purchase_units'] as &$purchaseUnit ) {
+					$purchaseUnit['amount'] = array_merge( $purchaseUnit['amount'], $convertAmount( $purchaseUnit['amount'] ) );
+
+					$purchaseUnit['amount']['breakdown']['item_total'] = $convertAmount( $purchaseUnit['amount']['breakdown']['item_total'] );
+					$purchaseUnit['amount']['breakdown']['shipping']   = $convertAmount( $purchaseUnit['amount']['breakdown']['shipping'] );
+					$purchaseUnit['amount']['breakdown']['tax_total']  = $convertAmount( $purchaseUnit['amount']['breakdown']['tax_total'] );
+
+					foreach ( $purchaseUnit['items'] as &$item ) {
+						$item['unit_amount'] = $convertAmount( $item['unit_amount'] );
+					}
+				}
+			}
+		}
+
+		return $data;
+	}
 }
