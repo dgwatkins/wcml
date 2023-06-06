@@ -281,23 +281,27 @@ class WCML_Setup {
 			       '<p>' . sprintf( $descriptionWithBoldPlaceholders, '<b>', '</b>' ) . '</p>';
 		};
 
+		$cssClasses = [ 'otgs-installer-notice', 'otgs-installer-notice-wpml', 'otgs-installer-notice-plugin-recommendation', 'otgs-is-dismissible', 'wcml-notice' ];
+
 		if ( self::is_product_automatically_translated() ) {
 			$text = $getRenderedNotice(
 				esc_html__( 'WPML is translating your products', 'woocommerce-multilingual' ),
 				// translators: The placeholders are opening and closing bold HTML tags.
 				esc_html__( 'You\'re all set and WPML is translating your products automatically. Go to %1$sWooCommerce » WooCommerce Multilingual & Multicurrency%2$s to translate your categories and shipping classes, check the store translation status, and more.', 'woocommerce-multilingual' )
 			);
+			$cssClasses[] = 'wcml-notice-setup-auto-translate-products';
 		} else {
 			$text = $getRenderedNotice(
 				esc_html__( 'Your store is ready to be translated', 'woocommerce-multilingual' ),
 				// translators: The placeholders are opening and closing bold HTML tags.
 				esc_html__( 'You\'re all set and can start translating your store. Go to %1$sWooCommerce » WooCommerce Multilingual & Multicurrency%2$s to translate your products, categories, and shipping classes, check the store translation status, and more.', 'woocommerce-multilingual' )
 			);
+			$cssClasses[] = 'wcml-notice-setup-manually-translate-products';
 		}
 
 		$notices = wpml_get_admin_notices();
 		$notice = $notices->create_notice( 'setup_complete', $text, 'wcml' );
-		$notice->set_css_classes( [ 'otgs-installer-notice otgs-installer-notice-wpml otgs-installer-notice-plugin-recommendation otgs-is-dismissible wcml-notice' ] );
+		$notice->set_css_classes( $cssClasses );
 		$notice->set_flash();
 		$notice->set_hideable( true );
 		$notices->add_notice( $notice );
