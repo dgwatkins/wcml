@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Cannot assign offset 'lang' to WP_REST_Request\\.$#"
+			count: 1
+			path: inc/class-wcml-emails.php
+
