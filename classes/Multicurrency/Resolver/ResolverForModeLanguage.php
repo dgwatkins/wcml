@@ -24,7 +24,7 @@ class ResolverForModeLanguage implements Resolver {
 		};
 
 		$reInitCurrencyIfLangHasChanged = function() use ( $currentLang, $storedLang, $storedCurrency, $getInitialCurrencyForLang ) {
-			$hasChangedLang = $storedLang && $currentLang !== $storedLang;
+			$hasChangedLang = $storedLang && $currentLang !== $storedLang && ! wp_doing_ajax();
 
 			if ( $hasChangedLang ) {
 				$initialCurrencyForLang = $getInitialCurrencyForLang();

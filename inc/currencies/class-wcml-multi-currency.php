@@ -455,12 +455,19 @@ class WCML_Multi_Currency {
 	public function get_client_currency() {
 		if ( Functions::isRestApiRequest() ) {
 			return $this->get_rest_currency();
-		} elseif ( null === $this->client_currency ) {
-			$this->client_currency = ResolverFactory::create()->getClientCurrency();
+		}
 
-			if ( $this->client_currency ) {
-				wcml_user_store_set( self::CURRENCY_STORAGE_KEY, $this->client_currency );
-				wcml_user_store_set( self::CURRENCY_LANGUAGE_STORAGE_KEY, ResolverHelperByLang::getCurrentLanguage() );
+		if ( null === $this->client_currency ) {
+			$stored_currency = wcml_user_store_get( self::CURRENCY_STORAGE_KEY );
+			if ( $stored_currency && wp_doing_ajax() ) {
+				$this->client_currency = $stored_currency;
+			} else {
+				$this->client_currency = ResolverFactory::create()->getClientCurrency();
+
+				if ( $this->client_currency ) {
+					wcml_user_store_set( self::CURRENCY_STORAGE_KEY, $this->client_currency );
+					wcml_user_store_set( self::CURRENCY_LANGUAGE_STORAGE_KEY, ResolverHelperByLang::getCurrentLanguage() );
+				}
 			}
 		}
 
