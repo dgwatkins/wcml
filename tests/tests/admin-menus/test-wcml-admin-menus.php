@@ -22,7 +22,7 @@ class Test_WCML_Admin_Menus extends WCML_UnitTestCase {
 		$prevent_access = WCML_Admin_Menus::check_user_admin_access( true );
 		$this->assertTrue( $prevent_access );
 
-		$user->add_cap( \WPML\LIB\WP\User::CAP_TRANSLATE );
+		$user->add_cap( 'translate' ); /** @see \WPML\LIB\WP\User::CAP_TRANSLATE */
 		$language_pair_records = new WPML_Language_Pair_Records( $wpdb, new WPML_Language_Records( $wpdb ) );
 		$language_pair_records->store( $user->ID, array( 'en' => array( 'es' ) ) );
 		wp_set_current_user( $user->ID );
