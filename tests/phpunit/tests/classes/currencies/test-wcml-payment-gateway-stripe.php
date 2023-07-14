@@ -34,8 +34,10 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 
 		$gateway->id = 'stripe';
 		$gateway->title = 'title';
-		$gateway->settings['publishable_key'] = 'publishable_key';
-		$gateway->settings['secret_key'] = 'secret_key';
+		$gateway->settings['publishable_key']      = 'publishable_key';
+		$gateway->settings['secret_key']           = 'secret_key';
+		$gateway->settings['test_publishable_key'] = 'test_publishable_key';
+		$gateway->settings['test_secret_key']      = 'test_secret_key';
 
 		return $gateway;
 	}
@@ -44,9 +46,11 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 	 * @test
 	 */
 	public function is_should_get_currencies_details() {
-		$uahStripeCurrency = 'EUR';
-		$uahPublishableKey = "The $uahStripeCurrency publishable key";
-		$uahSecretKey      = "The $uahStripeCurrency secret key";
+		$uahStripeCurrency     = 'EUR';
+		$uahPublishableKey     = "The $uahStripeCurrency publishable key";
+		$uahSecretKey          = "The $uahStripeCurrency secret key";
+		$uahTestPublishableKey = "The $uahStripeCurrency test publishable key";
+		$uahTestSecretKey      = "The $uahStripeCurrency test secret key";
 
 		WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', array(
 			'return' => 'USD'
@@ -60,16 +64,30 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 			'args'   => [ 'wcml_payment_gateway_stripe', [] ],
 			'return' => [
 				'UAH' => [
-					'currency'        => $uahStripeCurrency,
-					'publishable_key' => $uahPublishableKey,
-					'secret_key'      => $uahSecretKey,
+					'currency'             => $uahStripeCurrency,
+					'publishable_key'      => $uahPublishableKey,
+					'secret_key'           => $uahSecretKey,
+					'test_publishable_key' => $uahTestPublishableKey,
+					'test_secret_key'      => $uahTestSecretKey,
 				]
 			]
 		] );
 
 		$expected_currencies_details = [
-			'USD' => [ 'currency' => 'USD', 'publishable_key' => 'publishable_key', 'secret_key' => 'secret_key' ],
-			'UAH' => [ 'currency' => $uahStripeCurrency, 'publishable_key' => $uahPublishableKey, 'secret_key' => $uahSecretKey ]
+			'USD' => [
+				'currency'             => 'USD',
+				'publishable_key'      => 'publishable_key',
+				'secret_key'           => 'secret_key',
+				'test_publishable_key' => 'test_publishable_key',
+				'test_secret_key'      => 'test_secret_key',
+			],
+			'UAH' => [
+				'currency'             => $uahStripeCurrency,
+				'publishable_key'      => $uahPublishableKey,
+				'secret_key'           => $uahSecretKey,
+				'test_publishable_key' => $uahTestPublishableKey,
+				'test_secret_key'      => $uahTestSecretKey,
+			],
 		];
 
 		$subject = $this->get_subject( $this->getWcGateway() );
@@ -84,7 +102,8 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 
 		$client_currency = 'USD';
 		$settings        = array(
-			'testmode'             => 'yes',
+			'publishable_key'      => rand_str(),
+			'secret_key'           => rand_str(),
 			'test_publishable_key' => rand_str(),
 			'test_secret_key'      => rand_str()
 		);
@@ -101,33 +120,25 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 
 		$gateway_settings = array(
 			$client_currency => array(
-				'currency'        => 'EUR',
-				'publishable_key' => rand_str(),
-				'secret_key'      => rand_str()
+				'currency'             => 'EUR',
+				'publishable_key'      => rand_str(),
+				'secret_key'           => rand_str(),
+				'test_publishable_key' => rand_str(),
+				'test_secret_key'      => rand_str(),
 			)
 		);
 
 		WP_Mock::userFunction( 'get_option', array(
 			'args'   => array( WCML_Payment_Gateway_Stripe::OPTION_KEY . WCML_Payment_Gateway_Stripe::ID, array() ),
-			'times'  => 2,
+			'times'  => 1,
 			'return' => $gateway_settings
 		) );
 
 		$expected_settings = array(
-			'testmode'             => 'yes',
-			'test_publishable_key' => $gateway_settings[ $client_currency ]['publishable_key'],
-			'test_secret_key'      => $gateway_settings[ $client_currency ]['secret_key']
-		);
-
-		$filtered_settings = WCML_Payment_Gateway_Stripe::filter_stripe_settings( $settings );
-
-		$this->assertSame( $expected_settings, $filtered_settings );
-
-		$settings          = array( 'testmode' => 'no', 'publishable_key' => rand_str(), 'secret_key' => rand_str() );
-		$expected_settings = array(
-			'testmode'        => 'no',
-			'publishable_key' => $gateway_settings[ $client_currency ]['publishable_key'],
-			'secret_key'      => $gateway_settings[ $client_currency ]['secret_key']
+			'publishable_key'      => $gateway_settings[ $client_currency ]['publishable_key'],
+			'secret_key'           => $gateway_settings[ $client_currency ]['secret_key'],
+			'test_publishable_key' => $gateway_settings[ $client_currency ]['test_publishable_key'],
+			'test_secret_key'      => $gateway_settings[ $client_currency ]['test_secret_key'],
 		);
 
 		$filtered_settings = WCML_Payment_Gateway_Stripe::filter_stripe_settings( $settings );
@@ -163,14 +174,18 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 				'isSupported' => true,
 				'settings'    => [
 					$defaultCurrency => [
-						'currency'        => $defaultCurrency,
-						'publishable_key' => 'publishable_key',
-						'secret_key'      => 'secret_key',
+						'currency'             => $defaultCurrency,
+						'publishable_key'      => 'publishable_key',
+						'secret_key'           => 'secret_key',
+						'test_publishable_key' => 'test_publishable_key',
+						'test_secret_key'      => 'test_secret_key',
 					],
 					'UAD' => [
-						'currency'        => '',
-						'publishable_key' => '',
-						'secret_key'      => '',
+						'currency'             => '',
+						'publishable_key'      => '',
+						'secret_key'           => '',
+						'test_publishable_key' => '',
+						'test_secret_key'      => '',
 					],
 				],
 				'tooltip'     => '',
@@ -178,6 +193,8 @@ class Test_WCML_Payment_Gateway_Stripe extends OTGS_TestCase {
 					'labelCurrency'           => 'Currency',
 					'labelLivePublishableKey' => 'Live Publishable Key',
 					'labelLiveSecretKey'      => 'Live Secret Key',
+					'labelTestPublishableKey' => 'Test Publishable Key',
+					'labelTestSecretKey'      => 'Test Secret Key',
 				],
 			],
 			$subject->get_output_model()

@@ -16,7 +16,9 @@ const Stripe = ({gateway, settings, updateSettings, activeCurrencies, getName, c
         updateSettings({
             currency: targetCode,
             publishable_key: getSettingFromTarget('publishable_key'),
-            secret_key: getSettingFromTarget('publishable_key')
+            secret_key: getSettingFromTarget('secret_key'),
+            test_publishable_key: getSettingFromTarget('test_publishable_key'),
+            test_secret_key: getSettingFromTarget('test_secret_key')
         });
     };
 
@@ -33,14 +35,24 @@ const Stripe = ({gateway, settings, updateSettings, activeCurrencies, getName, c
                 }
             </SelectRow>
 
-            <InputRow attrs={{name: getName('publishable_key'), value:settings.publishable_key, type:'password'}}
+            <InputRow attrs={{name: getName('publishable_key'), value:settings.publishable_key, type:'text'}}
                       onChange={e => updateSettings({publishable_key:e.target.value})}
                       label={gateway.strings.labelLivePublishableKey}
             />
 
-            <InputRow attrs={{name: getName('secret_key'), value:settings.secret_key, type:'password'}}
+            <InputRow attrs={{name: getName('secret_key'), value:settings.secret_key, type:'text'}}
                       onChange={e => updateSettings({secret_key:e.target.value})}
                       label={gateway.strings.labelLiveSecretKey}
+            />
+
+            <InputRow attrs={{name: getName('test_publishable_key'), value:settings.test_publishable_key, type:'text'}}
+                      onChange={e => updateSettings({test_publishable_key:e.target.value})}
+                      label={gateway.strings.labelTestPublishableKey}
+            />
+
+            <InputRow attrs={{name: getName('test_secret_key'), value:settings.test_secret_key, type:'text'}}
+                      onChange={e => updateSettings({test_secret_key:e.target.value})}
+                      label={gateway.strings.labelTestSecretKey}
             />
         </React.Fragment>
     );
