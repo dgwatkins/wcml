@@ -104,6 +104,7 @@ function wcml_loader() {
 		\WCML\AdminNotices\Review::class,
 		\WCML\Multicurrency\UI\Factory::class,
 		\WCML\PaymentGateways\Hooks::class,
+		\WCML\PaymentGateways\BlockHooks::class,
 		\WCML\CLI\Hooks::class,
 		\WCML\Reports\Hooks::class,
 		\WCML\Reports\Products\Query::class,
