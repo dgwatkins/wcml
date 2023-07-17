@@ -211,7 +211,7 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 
 				} else {
 
-					$custom_fields_values = $this->get_custom_field_values( $this->product_id, $custom_field );
+					$custom_fields_values = (array) $this->get_custom_field_values( $this->product_id, $custom_field );
 
 					if ( $custom_fields_values ) {
 						$cf_fields_group = new WPML_Editor_UI_Field_Group();

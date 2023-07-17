@@ -55,8 +55,7 @@ class WCML_Orders {
 		add_filter(
 			'woocommerce_customer_get_downloadable_products',
 			[ $this, 'filter_customer_get_downloadable_products' ],
-			10,
-			3
+			10
 		);
 
 		if ( is_admin() ) {

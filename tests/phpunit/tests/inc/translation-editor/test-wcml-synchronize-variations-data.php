@@ -63,12 +63,11 @@ class Test_WCML_Synchronize_Variations_Data extends OTGS_TestCase {
 
 		$original_variation_id   = mt_rand( 1, 100 );
 		$translated_variation_id = mt_rand( 101, 200 );
-		$taxonomy                = new stdClass();;
-		$taxonomy->name = rand_str();
+		$taxonomy                = rand_str();
 
 		$woocommerce_wpml = $this->get_woocommerce_wpml_mock_sync_variations_taxonomies();
 
-		$woocommerce_wpml->terms->expects( $this->once() )->method( 'is_translatable_wc_taxonomy' )->with( $taxonomy->name )->willReturn( false );
+		$woocommerce_wpml->terms->expects( $this->once() )->method( 'is_translatable_wc_taxonomy' )->with( $taxonomy )->willReturn( false );
 
 		$subject = $this->get_subject( $woocommerce_wpml );
 
@@ -85,14 +84,14 @@ class Test_WCML_Synchronize_Variations_Data extends OTGS_TestCase {
 
 		$terms_for_original = array();
 		\WP_Mock::wpFunction( 'get_the_terms', array(
-			'args'   => array( $original_variation_id, $taxonomy->name ),
+			'args'   => array( $original_variation_id, $taxonomy ),
 			'times'  => 1,
 			'return' => $terms_for_original
 		) );
 
 		$expected_terms_for_translation = array();
 		\WP_Mock::wpFunction( 'wp_set_object_terms', array(
-			'args'   => array( $translated_variation_id, $expected_terms_for_translation, $taxonomy->name ),
+			'args'   => array( $translated_variation_id, $expected_terms_for_translation, $taxonomy ),
 			'times'  => 1,
 			'return' => true
 		) );

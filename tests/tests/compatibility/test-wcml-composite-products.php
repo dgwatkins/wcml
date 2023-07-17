@@ -124,14 +124,16 @@ class Test_WCML_Composite_Products extends WCML_UnitTestCase {
 			$data[ md5( 'composite_scenario_'.$scenario_id.'_description' ) ] = $expected[ $scenario_id ][ 'description' ] = rand_str();
 		}
 
-		$tr_composite_data = $composite_products->update_component_strings( $this->test_data->composite_product->id, $this->test_data->translated_composite_product->id, $data, $this->second_language );
+		$composite_products->update_component_strings( $this->test_data->composite_product->id, $this->test_data->translated_composite_product->id, $data, $this->second_language );
 
-		foreach( $tr_composite_data['components'] as $component_id => $component ){
+		$components = get_post_meta( $this->test_data->translated_composite_product->id, '_bto_data', true );
+		foreach( $components as $component_id => $component ){
 			$this->assertEquals( $expected[ $component_id ][ 'title' ], $component[ 'title' ] );
 			$this->assertEquals( $expected[ $component_id ][ 'description' ], $component[ 'description' ] );
 		}
 
-		foreach( $tr_composite_data['scenarios'] as $scenario_id => $scenario ){
+		$scenarios = get_post_meta( $this->test_data->translated_composite_product->id, '_bto_scenario_data', true );
+		foreach( $scenarios as $scenario_id => $scenario ){
 			$this->assertEquals( $expected[ $scenario_id ][ 'title' ], $scenario[ 'title' ] );
 			$this->assertEquals( $expected[ $scenario_id ][ 'description' ], $scenario[ 'description' ] );
 		}
