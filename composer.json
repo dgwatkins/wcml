@@ -58,7 +58,7 @@
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.4",
-        "composer/composer": "~2.0",
+        "composer/composer": "2.2.*",
         "imangazaliev/didom": "^1.14",
         "otgs/build-tools": "~0.1",
         "otgs/build-tools-ci": "dev-develop",
@@ -68,8 +68,8 @@
         "wpml/collect": "dev-wpml-collect-rename",
         "wpml/core-api": "0.1.8",
         "wpml/fp": "0.2.2",
-        "wpml/wp": "0.1.9",
-        "wpml/page-builders-gutenberg": "dev-develop"
+        "wpml/page-builders-gutenberg": "dev-develop",
+        "wpml/wp": "0.1.9"
     },
     "scripts": {
         "make": [
