@@ -75,16 +75,16 @@ class TestHooks extends \OTGS_TestCase {
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_query', [ Factory::create( 'product' ), 'query' ], 10, 2 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_object_query', [ Factory::create( 'product' ), 'query' ], 10, 2 );
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_object', [ Factory::create( 'product' ), 'prepare' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_prepare_product_object', [ Factory::create( 'product' ), 'prepare' ], 10, 3 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product_object', [ Factory::create( 'product' ), 'insert' ], 10, 3 );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_variation_query', [ Factory::create( 'product' ), 'query' ], 10, 2 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_variation_object_query', [ Factory::create( 'product' ), 'query' ], 10, 2 );
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_variation_object', [ Factory::create( 'product' ), 'prepare' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_prepare_product_variation_object', [ Factory::create( 'product' ), 'prepare' ], 10, 3 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product_variation_object', [ Factory::create( 'product' ), 'insert' ], 10, 3 );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_shop_order_object_query', [ Factory::create( 'shop_order' ), 'query' ], 10, 2 );
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_shop_order_object', [ Factory::create( 'shop_order' ), 'prepare' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_prepare_shop_order_object', [ Factory::create( 'shop_order' ), 'prepare' ], 10, 3 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_shop_order_object', [ Factory::create( 'shop_order' ), 'insert' ], 10, 3 );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_cat_query', [ Factory::create( 'term' ), 'query' ], 10, 2 );
@@ -92,10 +92,10 @@ class TestHooks extends \OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_product_shipping_class_query', [ Factory::create( 'term' ), 'query' ], 10, 2 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_'.$attributes[0].'_query', [ Factory::create( 'term' ), 'query' ], 10, 2 );
 
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_cat', [ Factory::create( 'term' ), 'prepare' ], 10, 3 );
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_tag', [ Factory::create( 'term' ), 'prepare' ], 10, 3 );
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product_shipping_class', [ Factory::create( 'term' ), 'prepare' ], 10, 3 );
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_'.$attributes[0], [ Factory::create( 'term' ), 'prepare' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_prepare_product_cat', [ Factory::create( 'term' ), 'prepare' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_prepare_product_tag', [ Factory::create( 'term' ), 'prepare' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_prepare_product_shipping_class', [ Factory::create( 'term' ), 'prepare' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_prepare_'.$attributes[0], [ Factory::create( 'term' ), 'prepare' ], 10, 3 );
 
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product_cat', [ Factory::create( 'term' ), 'insert' ], 10, 3 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product_tag', [ Factory::create( 'term' ), 'insert' ], 10, 3 );
@@ -114,11 +114,11 @@ class TestHooks extends \OTGS_TestCase {
 	}
 
 	private function add_hooks_specific_for_v1(){
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_product', [ Factory::create( 'product' ), 'prepare' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_prepare_product', [ Factory::create( 'product' ), 'prepare' ], 10, 3 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_product', [ Factory::create( 'product' ), 'insert' ], 10, 3 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_update_product', [ Factory::create( 'product' ), 'insert' ], 10, 3 );
 
-		\WP_Mock::expectActionAdded( 'woocommerce_rest_prepare_shop_order', [ Factory::create( 'shop_order' ), 'prepare' ], 10, 3 );
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_prepare_shop_order', [ Factory::create( 'shop_order' ), 'prepare' ], 10, 3 );
 		\WP_Mock::expectActionAdded( 'woocommerce_rest_insert_shop_order', [ Factory::create( 'shop_order' ), 'insert' ], 10, 3 );
 	}
 

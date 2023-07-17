@@ -20,7 +20,7 @@ class WCML_Translation_Editor {
 	public function add_hooks() {
 
 		add_filter( 'wpml-translation-editor-fetch-job', [ $this, 'fetch_translation_job_for_editor' ], 10, 2 );
-		add_filter( 'wpml-translation-editor-job-data', [ $this, 'get_translation_job_data_for_editor' ], 10, 2 );
+		add_filter( 'wpml-translation-editor-job-data', [ $this, 'get_translation_job_data_for_editor' ], 10 );
 		add_action( 'admin_print_scripts', [ $this, 'preselect_product_type_in_admin_screen' ], 11 );
 
 		add_filter( 'icl_post_alternative_languages', [ $this, 'hide_post_translation_links' ] );

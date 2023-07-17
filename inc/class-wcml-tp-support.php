@@ -179,7 +179,7 @@ class WCML_TP_Support {
 
 			$allowed_variations_types = apply_filters( 'wcml_xliff_allowed_variations_types', array( 'variable' ) );
 
-			if ( ! empty( $product ) && in_array( $product->get_type(), $allowed_variations_types, true ) ) {
+			if ( $product && in_array( $product->get_type(), $allowed_variations_types, true ) ) {
 
 				$variations = $this->woocommerce_wpml->sync_variations_data->get_product_variations( $post->ID );
 

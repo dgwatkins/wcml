@@ -18,7 +18,7 @@ class TestMulticurrencyHooks extends \OTGS_TestCase {
 	public function itShouldAddHooks() {
 		$subject = $this->getSubject();
 
-		WP_Mock::expectFilterAdded( 'wcml_price_custom_fields_filtered', [ $subject, 'getPriceCustomFields' ], 10, 2 );
+		WP_Mock::expectFilterAdded( 'wcml_price_custom_fields_filtered', [ $subject, 'getPriceCustomFields' ], 10 );
 		WP_Mock::expectFilterAdded( 'wcml_update_custom_prices_values', [ $subject, 'updateBundlesCustomPricesValues' ], 10, 2 );
 		WP_Mock::expectActionAdded( 'wcml_after_save_custom_prices', [ $subject, 'updateBundlesBasePrice' ], 10, 4 );
 
