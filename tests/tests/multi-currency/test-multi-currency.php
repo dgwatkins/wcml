@@ -129,7 +129,7 @@ class Test_WCML_Multi_Currency extends WCML_UnitTestCase {
 
 		$this->assertEquals( 12399, $this->multi_currency->prices->apply_rounding_rules(12345, 'RON') );
 
-		$this->assertEquals( 123.3, $this->multi_currency->prices->apply_rounding_rules(123.37, 'AUD') ); //disabled
+		$this->assertEquals( 123.4, $this->multi_currency->prices->apply_rounding_rules(123.37, 'AUD') );
 	}
 
 	/**
