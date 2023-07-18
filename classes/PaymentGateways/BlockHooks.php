@@ -31,7 +31,9 @@ class BlockHooks implements \IWPML_Frontend_Action, \IWPML_DIC_Action {
 			Hooks::onFilter( 'option_woocommerce_' . $gatewayId . '_settings' )
 				->then( spreadArgs( function( $settings ) use ( $gatewayId ) {
 					foreach ( [ 'title', 'description' ] as $name ) {
-						$settings[ $name ] = $this->woocommerce_wpml->gateways->get_translated_gateway_string( $settings[ $name ], $gatewayId, $name );
+						if ( isset( $settings[ $name ] ) ) {
+							$settings[ $name ] = $this->woocommerce_wpml->gateways->get_translated_gateway_string( $settings[ $name ], $gatewayId, $name );
+						}
 					}
 
 					return $settings;
