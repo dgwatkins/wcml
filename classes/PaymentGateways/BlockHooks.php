@@ -7,7 +7,7 @@ use WPML\LIB\WP\Hooks;
 
 use function WPML\FP\spreadArgs;
 
-class BlockHooks implements \IWPML_Frontend_Action, \IWPML_DIC_Action {
+class BlockHooks implements \IWPML_Action {
 
 	/**
 	 * @var \woocommerce_wpml
