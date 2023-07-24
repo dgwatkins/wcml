@@ -202,14 +202,14 @@ body.wpml-wcml-multilingual {
 .wcml-notice {
 	@extend %wcml-notice;
 	position: relative;
-	padding: 35px 30px 30px 80px;
+	padding: 35px 30px 30px 80px !important;
 	border-top: 1px solid #ccd0d4;
 	border-right: 1px solid #ccd0d4;
 	border-bottom: 1px solid #ccd0d4;
 	border-left: 4px solid #f15d30;
-	background-size: 32px;
-	background-repeat: no-repeat;
-	background-position: 28px 28px;
+	background-size: 32px !important;
+	background-repeat: no-repeat !important;
+	background-position: 28px 28px !important;
 
 	&:before {
 		content: '';
