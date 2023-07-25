@@ -27,17 +27,19 @@ class BlockHooks implements \IWPML_Action {
 	 * @param PaymentMethodRegistry $registry
 	 */
 	public function translateSettings( $registry ) {
-		foreach ( $registry->get_all_registered() as $gatewayId => $gateway ) {
-			Hooks::onFilter( 'option_woocommerce_' . $gatewayId . '_settings' )
-				->then( spreadArgs( function( $settings ) use ( $gatewayId ) {
-					foreach ( [ 'title', 'description' ] as $name ) {
-						if ( isset( $settings[ $name ] ) ) {
-							$settings[ $name ] = $this->woocommerce_wpml->gateways->get_translated_gateway_string( $settings[ $name ], $gatewayId, $name );
+		if ( $this->woocommerce_wpml->gateways ) {
+			foreach ( $registry->get_all_registered() as $gatewayId => $gateway ) {
+				Hooks::onFilter( 'option_woocommerce_' . $gatewayId . '_settings' )
+					->then( spreadArgs( function( $settings ) use ( $gatewayId ) {
+						foreach ( [ 'title', 'description' ] as $name ) {
+							if ( isset( $settings[ $name ] ) ) {
+								$settings[ $name ] = $this->woocommerce_wpml->gateways->get_translated_gateway_string( $settings[ $name ], $gatewayId, $name );
+							}
 						}
-					}
 
-					return $settings;
-				} ) );
+						return $settings;
+					} ) );
+			}
 		}
 	}
 
