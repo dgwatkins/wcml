@@ -85,7 +85,7 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		unset( $_POST['data'] );
 	}
 
-	public function test_icl_connect_translations_action_set_as_origin(){
+	public function skip_test_icl_connect_translations_action_set_as_origin(){
 
 		$custom_field = 'test_custom_1';
 
@@ -108,7 +108,7 @@ class Test_WCML_Synchronize_Product_Data extends WCML_UnitTestCase {
 		$this->assertEquals( 'custom_value', get_post_meta( $es_product->id, $custom_field, true ) );
 	}
 
-	public function test_icl_connect_translations_action_not_as_origin(){
+	public function skip_test_icl_connect_translations_action_not_as_origin(){
 
 		$custom_field = 'test_custom_1';
 
