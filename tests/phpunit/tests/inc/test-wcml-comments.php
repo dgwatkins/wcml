@@ -826,6 +826,53 @@ class Test_WCML_Comments extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
+	public function it_should_not_recalculate_rating_on_non_products(){
+
+		$product_id = 5;
+		$translated_product_id_1 = 13;
+		$translated_product_id_2 = 57;
+
+		$translations = array();
+		$translations[] = $translated_product_id_1;
+		$translations[] = $translated_product_id_2;
+
+		$wpml_post_translations = $this->getMockBuilder( 'WPML_Post_Translation' )
+			->disableOriginalConstructor()
+			->setMethods( array( 'get_element_translations' ) )
+			->getMock();
+
+		$wpml_post_translations->method( 'get_element_translations' )->with( $product_id )->willReturn( $translations );
+
+		\WP_Mock::userFunction( 'wc_get_product', array(
+			'args'   => $translated_product_id_1,
+			'return' => false,
+		));
+
+		\WP_Mock::userFunction( 'wc_get_product', array(
+			'args'   => $translated_product_id_2,
+			'return' => null,
+		));
+
+		$subject = $this->get_subject( false, false, $wpml_post_translations );
+
+		\WP_Mock::userFunction( 'update_post_meta', array(
+			'args'   => array( $translated_product_id_1, '_wcml_average_rating', 0 ),
+			'times'  => 0,
+			'return' => false
+		));
+
+		\WP_Mock::userFunction( 'update_post_meta', array(
+			'args'   => array( $translated_product_id_2, '_wcml_average_rating', 0 ),
+			'times'  => 0,
+			'return' => false
+		));
+
+		$subject->recalculate_comment_rating( $product_id );
+	}
+
+	/**
+	 * @test
+	 */
 	public function it_should_get_comment_object_for_WP_lower_4_9(){
 
 		$comment_id = 101;
