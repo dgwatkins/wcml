@@ -769,4 +769,22 @@ class Test_WCML_Multi_Currency_Prices extends OTGS_TestCase {
 		$this->assertNull( $subject->product_price_filter( null, $post_id, '_price', true ) );
 	}
 
+	/**
+	 * @test
+	 * @dataProvider dp_amounts
+	 */
+	public function test_convert_price_amount_returns_same_type( $amount, $type ) {
+		$subject = $this->get_subject( $this->get_multi_currency_mock() );
+
+		$this->assertSame( $type, gettype( $subject->convert_price_amount( $amount ) ) );
+	}
+
+	public function dp_amounts() {
+		return [
+			[ 900, 'integer' ],
+			[ '100', 'string' ],
+			[ 50.0, 'double' ],
+		];
+	}
+
 }
