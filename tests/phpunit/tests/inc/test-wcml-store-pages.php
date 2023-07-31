@@ -242,4 +242,69 @@ class Test_WCML_Store_Pages extends OTGS_TestCase {
 
 		$this->assertSame( $expected_link, $subject->filter_shop_archive_link( $link, $post_type ) );
 	}
+
+	/**
+	 * @dataProvider dp_template_loader
+	 */
+	public function test_template_loader_doesnt_override_other_templates( $taxonomy, $template, $expected ) {
+		$query = (object) [
+			'taxonomy' => $taxonomy,
+			'term_id'  => 10,
+			'slug'     => 'slug',
+		];
+
+		$sitepress = $this->getMockBuilder( SitePress::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'get_current_language', 'get_default_language', 'get_object_id' ] )
+			->getMock();
+
+		$sitepress->method( 'get_current_language' )->willReturn( 'en' );
+		$sitepress->method( 'get_default_language' )->willReturn( 'es' );
+		$sitepress->method( 'get_object_id' )->willReturn( $query->term_id );
+
+		$woocommerce = $this->getMockBuilder( 'WooCommerce' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'template_path' ] )
+			->getMock();
+
+		$woocommerce->method( 'template_path' )->willReturn( 'woocommerce/' );
+
+		$woocommerce_wpml = $this->getMockBuilder( 'woocommerce_wpml' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$wcmlTerms = $this->getMockBuilder( 'WCML_Terms' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'wcml_get_term_by_id' ] )
+			->getMock();
+
+		$wcmlTerms->method( 'wcml_get_term_by_id' )
+			->with( $query->term_id, $taxonomy )
+			->willReturn( $query );
+
+		$woocommerce_wpml->terms = $wcmlTerms;
+
+		WP_Mock::userFunction( 'WC', [ 'return' => $woocommerce ] );
+		WP_Mock::userFunction( 'is_product_taxonomy', [ 'return' => ! empty( $taxonomy ) ] );
+		WP_Mock::userFunction( 'is_tax', [ 'callback' => function( $tax ) use ( $taxonomy ) {
+			return $taxonomy === $tax;
+		} ] );
+		WP_Mock::userFunction( 'get_queried_object', [ 'return' => $query ] );
+		WP_Mock::userFunction( 'locate_template', [ 'return' => function( $templates ) {
+			return reset( $templates );
+		} ] );
+
+		$subject = $this->get_subject( $woocommerce_wpml, $sitepress );
+
+		$this->assertSame( $expected, $subject->template_loader( $template ) );
+	}
+
+	public function dp_template_loader() {
+		return [
+			'not a taxonomy'  => [ null, 'page.php', 'page.php' ],
+			'random template' => [ 'product_cat', 'random-template.php', 'random-template.php' ],
+			'category'        => [ 'product_cat', 'taxonomy-product_cat.php', 'taxonomy-product_cat-en-slug.php' ],
+		];
+	}
+
 }
