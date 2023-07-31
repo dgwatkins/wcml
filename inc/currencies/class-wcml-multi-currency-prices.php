@@ -27,6 +27,11 @@ class WCML_Multi_Currency_Prices {
 	private $orders_list_currency;
 
 	/**
+	 * @var string
+	 */
+	private $order_currency;
+
+	/**
 	 * @var bool
 	 */
 	private $isSavingPost = false;
@@ -329,10 +334,10 @@ class WCML_Multi_Currency_Prices {
 	}
 
 	/**
-	 * @param float|int   $amount
+	 * @param mixed       $amount
 	 * @param bool|string $currency
 	 *
-	 * @return float|int
+	 * @return mixed
 	 */
 	public function convert_price_amount( $amount, $currency = false ) {
 
@@ -351,11 +356,11 @@ class WCML_Multi_Currency_Prices {
 	}
 
 	/**
-	 * @param float|int $amount
-	 * @param string    $from_currency
-	 * @param string    $to_currency
+	 * @param mixed  $amount
+	 * @param string $from_currency
+	 * @param string $to_currency
 	 *
-	 * @return float|int
+	 * @return mixed
 	 */
 	public function convert_price_amount_by_currencies( $amount, $from_currency, $to_currency ) {
 
@@ -369,15 +374,17 @@ class WCML_Multi_Currency_Prices {
 	}
 
 	/**
-	 * @param float|int $amount
-	 * @param string    $currency
-	 * @param string    $operator
+	 * @param mixed  $amount
+	 * @param string $currency
+	 * @param string $operator
 	 *
-	 * @return float|int
+	 * @return mixed
 	 */
 	private function calculate_exchange_rate_price( $amount, $currency, $operator ) {
 
 		$exchange_rates = $this->multi_currency->get_exchange_rates();
+
+		$initialType = gettype( $amount );
 
 		if ( isset( $exchange_rates[ $currency ] ) && is_numeric( $amount ) ) {
 
@@ -393,6 +400,10 @@ class WCML_Multi_Currency_Prices {
 			}
 		} else {
 			$amount = 0;
+		}
+
+		if ( 'string' === $initialType ) {
+			$amount = (string) $amount;
 		}
 
 		return $amount;
@@ -657,6 +668,7 @@ class WCML_Multi_Currency_Prices {
 
 	public function price_filter_post_clauses( $args, $wp_query ) {
 
+		/* phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected */
 		if ( ! $wp_query->is_main_query() || ( ! isset( $_GET['max_price'] ) && ! isset( $_GET['min_price'] ) ) ) {
 			return $args;
 		}
