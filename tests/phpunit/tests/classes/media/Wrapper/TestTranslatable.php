@@ -95,7 +95,7 @@ class TestTranslatable extends \OTGS_TestCase {
 
 		$wp_api->expects( $this->once() )
 		       ->method( 'constant' )
-		       ->with( 'WPML_Admin_Post_Actions::DUPLICATE_FEATURED_META_KEY' )
+		       ->with( 'WPML\Media\Option::DUPLICATE_FEATURED_META_KEY' )
 		       ->willReturn( $setting_key );
 
 		\WP_Mock::userFunction( 'get_post_meta',
@@ -203,7 +203,7 @@ class TestTranslatable extends \OTGS_TestCase {
 
 		$wp_api->expects( $this->once() )
 		       ->method( 'constant' )
-		       ->with( 'WPML_Admin_Post_Actions::DUPLICATE_FEATURED_META_KEY' )
+		       ->with( 'WPML\Media\Option::DUPLICATE_FEATURED_META_KEY' )
 		       ->willReturn( $setting_key );
 
 		$sitepress = $this->get_sitepress( $wp_api );

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "393afb9d837e1e224edbf661b0a40950",
+    "content-hash": "12f992a7d6d6925654b2bc4b3255092c",
     "packages": [
         {
             "name": "composer/installers",
@@ -5298,11 +5298,11 @@
         },
         {
             "name": "wpml/core-api",
-            "version": "0.1.8",
+            "version": "0.1.12",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/wpml-packages/core-api.git",
-                "reference": "4b5a7f175d346a4b65f267b6db797db70eef3ca0"
+                "reference": "e21dc535a76d3b50025fcc1cabc5b503f1ece4da"
             },
             "require": {
                 "psr/log": "^1.1"
@@ -5334,15 +5334,15 @@
                 }
             ],
             "description": "Class and utilities to interface with WPML core functionality",
-            "time": "2022-08-08T10:40:30+00:00"
+            "time": "2023-07-17T10:34:24+00:00"
         },
         {
             "name": "wpml/fp",
-            "version": "0.2.2",
+            "version": "0.2.5",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/wpml-packages/fp.git",
-                "reference": "1266f5579106371d1cc43fe624a683b8cec35206"
+                "reference": "d4441f95d34b6878540a0484eb7855f759c091f1"
             },
             "require-dev": {
                 "cvuorinen/phpdoc-markdown-public": "^0.2.0",
@@ -5363,7 +5363,7 @@
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2022-09-21T09:15:23+00:00"
+            "time": "2023-06-02T13:23:51+00:00"
         },
         {
             "name": "wpml/page-builders-gutenberg",
@@ -5418,11 +5418,11 @@
         },
         {
             "name": "wpml/wp",
-            "version": "0.1.9",
+            "version": "0.1.13",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/wpml-packages/wp.git",
-                "reference": "b7f100c6fa9bc447407139dd32a7259ff0745949"
+                "reference": "a371da56ff7f6311270edee12138fdc7ab79de98"
             },
             "require-dev": {
                 "antecedent/patchwork": "^2.0",
@@ -5448,7 +5448,7 @@
                 }
             ],
             "description": "Class and utilities to interface with WordPress from WPML",
-            "time": "2022-05-10T04:06:04+00:00"
+            "time": "2023-07-27T14:26:09+00:00"
         }
     ],
     "aliases": [],
