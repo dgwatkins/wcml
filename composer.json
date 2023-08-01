@@ -66,10 +66,10 @@
         "otgs/wp-plugin-version": "dev-master",
         "roave/security-advisories": "dev-master",
         "wpml/collect": "dev-wpml-collect-rename",
-        "wpml/core-api": "0.1.8",
-        "wpml/fp": "0.2.2",
+        "wpml/core-api": "0.1.12",
+        "wpml/fp": "0.2.5",
         "wpml/page-builders-gutenberg": "dev-develop",
-        "wpml/wp": "0.1.9"
+        "wpml/wp": "0.1.13"
     },
     "scripts": {
         "make": [
