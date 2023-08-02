@@ -126,7 +126,9 @@ class WCML_Editor_UI_Product_Job extends WPML_Editor_UI_Job {
 	public function add_elements() {
 
 		$this->add_field( new WPML_Editor_UI_Single_Line_Field( 'title', __( 'Title', 'woocommerce-multilingual' ), $this->data, true ) );
-		$this->add_field( new WPML_Editor_UI_Single_Line_Field( 'slug', __( 'Slug', 'woocommerce-multilingual' ), $this->data, true ) );
+		if ( 'translate' === apply_filters( 'wpml_setting', '', 'translated_document_page_url' ) ) {
+			$this->add_field( new WPML_Editor_UI_Single_Line_Field( 'slug', __( 'Slug', 'woocommerce-multilingual' ), $this->data, true ) );
+		}
 
 		if ( $this->woocommerce_wpml->page_builders->get_page_builders_string_packages( $this->product_id ) ) {
 			$page_builders_strings_section = $this->woocommerce_wpml->page_builders->get_page_builders_strings_section( $this->data, $this->product_id, $this->get_target_language() );
