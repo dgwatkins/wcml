@@ -293,15 +293,6 @@ class Test_WCML_Product_Bundles extends WCML_UnitTestCase {
 				'field_finished'        => '0',
 			),
 			array(
-				'title'                 => 'Slug',
-				'tid'                   => '0',
-				'field_style'           => '0',
-				'field_type'            => 'slug',
-				'field_data'            => $product_obj->post_name,
-				'field_data_translated' => '',
-				'field_finished'        => '0',
-			),
-			array(
 				'title'                 => 'Content / Description',
 				'tid'                   => '0',
 				'field_style'           => '2',
