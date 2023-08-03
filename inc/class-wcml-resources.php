@@ -8,9 +8,13 @@ use function WCML\functions\isStandAlone;
 
 class WCML_Resources {
 
+	/** @var string */
 	private static $pagenow;
 
+	/** @var woocommerce_wpml */
 	private static $woocommerce_wpml;
+
+	/** @var SitePress */
 	private static $sitepress;
 
 	public static function add_hooks() {
@@ -35,9 +39,11 @@ class WCML_Resources {
 			return;
 		}
 
-		$is_edit_product     = self::$pagenow == 'post.php' && isset( $_GET['post'] ) && get_post_type( $_GET['post'] ) == 'product';
-		$is_original_product = isset( $_GET['post'] ) && ! is_array( $_GET['post'] ) && self::$woocommerce_wpml->products->is_original_product( $_GET['post'] );
-		$is_new_product      = self::$pagenow == 'post-new.php' && isset( $_GET['source_lang'] ) && isset( $_GET['post_type'] ) && $_GET['post_type'] == 'product';
+		/** phpcs:disable WordPress.VIP.SuperGlobalInputUsage.AccessDetected */
+		$is_edit_product     = 'post.php' === self::$pagenow && isset( $_GET['post'] ) && 'product' === get_post_type( (int) $_GET['post'] );
+		$is_original_product = isset( $_GET['post'] ) && ! is_array( $_GET['post'] ) && self::$woocommerce_wpml->products->is_original_product( (int) $_GET['post'] );
+		$is_new_product      = 'post-new.php' === self::$pagenow && isset( $_GET['source_lang'] ) && isset( $_GET['post_type'] ) && 'product' === $_GET['post_type'];
+		/** phpcs:enable WordPress.VIP.SuperGlobalInputUsage.AccessDetected */
 
 		if ( self::$woocommerce_wpml->is_wpml_prior_4_2() ) {
 			$is_using_native_editor = ! self::$woocommerce_wpml->settings['trnsl_interface'];
@@ -213,9 +219,6 @@ class WCML_Resources {
 	public static function front_scripts() {
 
 		if ( self::$pagenow !== 'wp-login.php' ) {
-
-			wp_register_script( 'wcml-front-scripts', WCML_PLUGIN_URL . '/res/js/front-scripts' . WCML_JS_MIN . '.js', [ 'jquery' ], WCML_VERSION, true );
-			wp_enqueue_script( 'wcml-front-scripts' );
 
 			$referer = isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : '';
 
