@@ -6,6 +6,7 @@ use WPML\FP\Obj;
 use WPML\LIB\WP\OnActionMock;
 use Automattic\WooCommerce\Container as WcContainer;
 use Automattic\WooCommerce\Internal\ProductAttributesLookup\LookupDataStore as ProductAttributesLookupDataStore;
+use tad\FunctionMocker\FunctionMocker;
 
 /**
  * @group wcml-3916
@@ -54,10 +55,14 @@ class TestLookupTable extends \OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_get_attributes', [ $subject, 'translateAttributeOptions' ], 10, 2 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_variation_get_attributes', [ $subject, 'translateVariationTerms' ], 10, 2 );
 
-		\WP_Mock::userFunction( 'remove_filter', [
-			'args'   => [ 'terms_clauses', [ $this->sitepress, 'terms_clauses' ] ],
-			'return' => true,
-		] );
+		$suspend = $this->getMockBuilder( '\WCML\Utilities\Suspend\Suspend' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'resume', 'runAndResume' ] )
+			->getMock();
+
+		FunctionMocker::replace( '\WCML\Terms\SuspendWpmlFiltersFactory::create', function() use ( $suspend ) {
+			return $suspend;
+		} );
 
 		$lookupDataStore = $this->getMockBuilder( ProductAttributesLookupDataStore::class )
 			->setMethods( [ 'on_product_changed' ] )
@@ -80,8 +85,6 @@ class TestLookupTable extends \OTGS_TestCase {
 		\WP_Mock::userFunction( 'wc_get_container', [
 			'return' => $container,
 		] );
-
-		\WP_Mock::expectFilterAdded( 'terms_clauses', [ $this->sitepress, 'terms_clauses' ], 10, 3 );
 
 		\WP_Mock::userFunction( 'remove_filter', [
 			'args'   => [ 'woocommerce_product_get_attributes', [ $subject, 'translateAttributeOptions' ] ],
@@ -182,6 +185,15 @@ class TestLookupTable extends \OTGS_TestCase {
 	public function itRegeneratesTable() {
 		$steps   = 10;
 		$subject = $this->getSubject();
+
+		$suspend = $this->getMockBuilder( '\WCML\Utilities\Suspend\Suspend' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'resume', 'runAndResume' ] )
+			->getMock();
+
+		FunctionMocker::replace( '\WCML\Terms\SuspendWpmlFiltersFactory::create', function() use ( $suspend ) {
+			return $suspend;
+		} );
 
 		\WP_Mock::expectFilterAdded( 'woocommerce_product_object_query_args', Obj::assoc( 'suppress_filters', true ) );
 
