@@ -190,11 +190,11 @@ class Translatable implements IMedia {
 	}
 
 	private function is_thumbnail_image_duplication_enabled( $product_id ) {
-		return $this->is_duplication_enabled( $product_id, 'WPML\Media\Option::DUPLICATE_FEATURED_META_KEY', 'WPML_Admin_Post_Actions::DUPLICATE_FEATURED_GLOBAL_KEY' );
+		return $this->is_duplication_enabled( $product_id, 'WPML\Media\Option::DUPLICATE_FEATURED_KEY', 'WPML_Admin_Post_Actions::DUPLICATE_FEATURED_GLOBAL_KEY' );
 	}
 
 	private function is_media_duplication_enabled( $product_id ) {
-		return $this->is_duplication_enabled( $product_id, 'WPML\Media\Option::DUPLICATE_MEDIA_META_KEY', 'WPML_Admin_Post_Actions::DUPLICATE_MEDIA_GLOBAL_KEY' );
+		return $this->is_duplication_enabled( $product_id, 'WPML\Media\Option::DUPLICATE_MEDIA_KEY', 'WPML_Admin_Post_Actions::DUPLICATE_MEDIA_GLOBAL_KEY' );
 	}
 
 	private function is_duplication_enabled( $product_id, $meta_key, $global_key ) {
