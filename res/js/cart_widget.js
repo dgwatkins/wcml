@@ -16,7 +16,13 @@ jQuery(function ($) {
         });
     });
 
-    var empty_cart_hash = sessionStorage.getItem('woocommerce_cart_hash') == '';
+	var getCookieValue = function( name ) {
+		return document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || '';
+	};
+	
+    // Check sessionStorage as well as cookies, for backward compatibility.
+    var empty_cart_hash = ! sessionStorage.getItem('woocommerce_cart_hash')
+        && ! getCookieValue('woocommerce_cart_hash');
     if ( empty_cart_hash || actions.is_lang_switched == 1 || actions.force_reset == 1 ) {
         wcml_reset_cart_fragments();
     }
