@@ -222,7 +222,7 @@ class WCML_Resources {
 
 			$referer = isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : '';
 
-			wcml_register_script( 'cart-widget', 'res/js/cart_widget' . WCML_JS_MIN . '.js', [], [ 'strategy' => 'defer', 'in_footer' => true ] );
+			wcml_register_script( 'cart-widget', 'res/js/cart_widget' . WCML_JS_MIN . '.js', [ 'jquery' ], [ 'strategy' => 'defer', 'in_footer' => true ] );
 			wp_enqueue_script( 'cart-widget' );
 			wp_localize_script(
 				'cart-widget',
