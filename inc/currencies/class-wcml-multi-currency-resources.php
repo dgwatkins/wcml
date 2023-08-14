@@ -26,7 +26,7 @@ class WCML_Multi_Currency_Resources {
 
 	private static function load_inline_js() {
 
-		wcml_register_script( 'wcml-mc-scripts', 'res/js/wcml-multi-currency' . WCML_JS_MIN . '.js', [], [ 'strategy' => 'defer', 'in_footer' => true ] );
+		wcml_register_script( 'wcml-mc-scripts', 'res/js/wcml-multi-currency' . WCML_JS_MIN . '.js', [ 'jquery' ], [ 'strategy' => 'defer', 'in_footer' => true ] );
 
 		$script_vars['wcml_spinner']     = \WCML\functions\assetLink( '/res/img/ajax-loader.gif' );
 		$script_vars['current_currency'] = [
