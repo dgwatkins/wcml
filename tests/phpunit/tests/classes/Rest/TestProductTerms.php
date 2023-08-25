@@ -311,6 +311,40 @@ class TestProductTerms extends \OTGS_TestCase {
 	}
 
 	/**
+	 * @test
+	 */
+	function update_term_description() {
+		$lang = 'es';
+
+		$request = $this->getRestRequest( [
+			'lang'        => $lang,
+			'description' => 'Wingardium Leviosa',
+		] );
+
+		$term = $this->getTerm( 1, 11 );
+		$trid = 111;
+
+		$this->sitepress->method( 'is_active_language' )->with( $lang )->willReturn( true );
+
+		$this->wpmlTermTranslations
+			->method( 'get_element_trid' )
+			->with( $term->term_taxonomy_id )
+			->willReturn( $trid );
+
+		$this->sitepress
+			->expects( $this->once() )
+			->method( 'set_element_language_details' )
+			->with( $term->term_taxonomy_id, 'tax_' . $term->taxonomy, $trid, $lang );
+		$this->wcmlTerms
+			->expects( $this->once() )
+			->method( 'update_terms_translated_status' )
+			->with( $term->taxonomy );
+
+		$subject = $this->get_subject();
+		$subject->insert( $term, $request, false );
+	}
+
+	/**
 	 * @param int $termId
 	 * @param int $termTaxonomyId
 	 *
