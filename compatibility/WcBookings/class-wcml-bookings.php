@@ -12,6 +12,8 @@ class WCML_Bookings implements \IWPML_Action {
 
 	const DOMAIN = 'woocommerce-bookings';
 
+	const POST_TYPE = 'wc_booking';
+
 	const PRIORITY_SAVE_POST_ACTION = 110;
 
 	/**
@@ -197,7 +199,7 @@ class WCML_Bookings implements \IWPML_Action {
 			if ( $this->is_bookings_listing_page() ) {
 				$this->remove_language_switcher();
 				add_filter( 'wp_count_posts', [ $this, 'count_bookings_by_current_language' ], 10, 2 );
-				add_filter( 'views_edit-wc_booking', [ $this, 'unset_mine_from_bookings_views' ] );
+				add_filter( 'views_edit-' . self::POST_TYPE, [ $this, 'unset_mine_from_bookings_views' ] );
 			}
 		}
 
@@ -223,7 +225,7 @@ class WCML_Bookings implements \IWPML_Action {
 	 */
 	public function get_order_language( $check, $object_id, $meta_key, $single ) {
 
-		if ( 'wpml_language' === $meta_key && 'wc_booking' === get_post_type( $object_id ) ) {
+		if ( 'wpml_language' === $meta_key && self::POST_TYPE === get_post_type( $object_id ) ) {
 			// Get the order_item_id which might be in the original booking.
 			$order_item_id = get_post_meta( $object_id, '_booking_order_item_id', true );
 			if ( empty( $order_item_id ) ) {
@@ -278,11 +280,12 @@ class WCML_Bookings implements \IWPML_Action {
 
 		foreach ( $all_bookings_for_product as $booking ) {
 
-			if ( $language === $this->wpml_post_translations->get_source_lang_code( $booking->id ) ) {
+			$source_language_code = $this->wpml_post_translations->get_source_lang_code( $booking->id );
+
+			if ( $language ===  $source_language_code ) {
 				continue;
 			}
-
-			$booking_translations = $this->get_translated_bookings( $booking->id );
+			$booking_translations = $this->get_translated_bookings( $booking->id, false );
 
 			if ( ! isset( $booking_translations[ $language ] ) ) {
 				$this->duplicate_booking_for_translations( $booking->id, $language );
@@ -934,7 +937,7 @@ class WCML_Bookings implements \IWPML_Action {
 		$booking_object = get_post( $booking_id );
 
 		$booking_data = [
-			'post_type'   => 'wc_booking',
+			'post_type'   => self::POST_TYPE,
 			'post_title'  => $booking_object->post_title,
 			'post_status' => $booking_object->post_status,
 			'ping_status' => 'closed',
@@ -980,7 +983,7 @@ class WCML_Bookings implements \IWPML_Action {
 
 			$trnsl_booking_id = wp_insert_post( $booking_data );
 			$trid             = $this->sitepress->get_element_trid( $booking_id );
-			$this->sitepress->set_element_language_details( $trnsl_booking_id, 'post_wc_booking', $trid, $language['code'] );
+			$this->sitepress->set_element_language_details( $trnsl_booking_id, 'post_' . self::POST_TYPE, $trid, $language['code'] );
 
 			$meta_args = [
 				'_booking_order_item_id' => 0,
@@ -1090,9 +1093,7 @@ class WCML_Bookings implements \IWPML_Action {
 	}
 
 	public function booking_filters_query( $query ) {
-		global $typenow;
-
-		if ( ( isset( $query->query_vars['post_type'] ) && $query->query_vars['post_type'] == 'wc_booking' ) ) {
+		if ( ( isset( $query->query_vars['post_type'] ) && $query->query_vars['post_type'] === self::POST_TYPE ) ) {
 
 			$current_lang = $this->sitepress->get_current_language();
 
@@ -1147,7 +1148,7 @@ class WCML_Bookings implements \IWPML_Action {
 		if (
 			! $this->is_delete_all_action()
 			&& $booking_id
-			&& get_post_type( $booking_id ) == 'wc_booking'
+			&& get_post_type( $booking_id ) === self::POST_TYPE
 		) {
 			remove_action( 'before_delete_post', [ $this, 'delete_bookings' ] );
 
@@ -1176,7 +1177,7 @@ class WCML_Bookings implements \IWPML_Action {
 
 	public function trash_bookings( $booking_id ) {
 
-		if ( $booking_id > 0 && get_post_type( $booking_id ) == 'wc_booking' ) {
+		if ( $booking_id > 0 && get_post_type( $booking_id ) === self::POST_TYPE ) {
 
 			foreach ( $this->get_translated_bookings( $booking_id ) as $translated_booking_id ) {
 
@@ -1431,7 +1432,7 @@ class WCML_Bookings implements \IWPML_Action {
 
 	public function extra_conditions_to_filter_bookings( $extra_conditions ) {
 
-		if ( isset( $_GET['post_type'] ) && $_GET['post_type'] == 'wc_booking' && ! isset( $_GET['post_status'] ) ) {
+		if ( isset( $_GET['post_type'] ) && $_GET['post_type'] === self::POST_TYPE && ! isset( $_GET['post_status'] ) ) {
 			$extra_conditions = str_replace( 'GROUP BY', " AND post_status = 'confirmed' GROUP BY", $extra_conditions );
 		}
 
@@ -1439,7 +1440,8 @@ class WCML_Bookings implements \IWPML_Action {
 	}
 
 	public function hide_bookings_type_on_tm_dashboard( $types ) {
-		unset( $types['wc_booking'] );
+		unset( $types[ self::POST_TYPE ] );
+
 		return $types;
 	}
 
@@ -1494,10 +1496,10 @@ class WCML_Bookings implements \IWPML_Action {
 	public function filter_translatable_documents( $icl_post_types ) {
 
 		if (
-			( isset( $_GET['post_type'] ) && 'wc_booking' === $_GET['post_type'] ) ||
-			( isset( $_GET['post'] ) && 'wc_booking' === get_post_type( $_GET['post'] ) )
+			( isset( $_GET['post_type'] ) && self::POST_TYPE === $_GET['post_type'] ) ||
+			( isset( $_GET['post'] ) && self::POST_TYPE === get_post_type( $_GET['post'] ) )
 		) {
-			unset( $icl_post_types['wc_booking'] );
+			unset( $icl_post_types[ self::POST_TYPE ] );
 		}
 
 		return $icl_post_types;
@@ -1514,7 +1516,7 @@ class WCML_Bookings implements \IWPML_Action {
 
 		$getData = wpml_collect( $_GET );
 
-		if ( 'wc_booking' === $getData->get('post_type') && 'create_booking' !== $getData->get( 'page' ) ) {
+		if ( self::POST_TYPE === $getData->get('post_type') && 'create_booking' !== $getData->get( 'page' ) ) {
 			return null;
 		}
 
@@ -1528,7 +1530,7 @@ class WCML_Bookings implements \IWPML_Action {
 	 */
 	public function sync_booking_status( $post_id, $post, $update ) {
 
-		if ( $post->post_type === 'wc_booking' && $update ) {
+		if ( $post->post_type === self::POST_TYPE && $update ) {
 
 			foreach ( $this->get_translated_bookings( $post_id ) as $translated_booking_id ) {
 				$this->wpdb->update(
@@ -1673,7 +1675,7 @@ class WCML_Bookings implements \IWPML_Action {
 	 */
 	public function booking_email_language( $current_language ) {
 
-		if ( isset( $_POST['post_type'] ) && 'wc_booking' === $_POST['post_type'] && isset( $_POST['_booking_order_id'] ) ) {
+		if ( isset( $_POST['post_type'] ) && self::POST_TYPE === $_POST['post_type'] && isset( $_POST['_booking_order_id'] ) ) {
 			$order_language = get_post_meta( $_POST['_booking_order_id'], 'wpml_language', true );
 			if ( $order_language ) {
 				$current_language = $order_language;
@@ -1725,11 +1727,11 @@ class WCML_Bookings implements \IWPML_Action {
 
 	public function maybe_set_booking_language( $booking_id ) {
 
-		if ( 'wc_booking' === get_post_type( $booking_id ) ) {
-			$language_details = $this->sitepress->get_element_language_details( $booking_id, 'post_wc_booking' );
+		if ( self::POST_TYPE === get_post_type( $booking_id ) ) {
+			$language_details = $this->sitepress->get_element_language_details( $booking_id, 'post_' . self::POST_TYPE );
 			if ( ! $language_details ) {
 				$current_language = $this->sitepress->get_current_language();
-				$this->sitepress->set_element_language_details( $booking_id, 'post_wc_booking', false, $current_language );
+				$this->sitepress->set_element_language_details( $booking_id, 'post_' . self::POST_TYPE, false, $current_language );
 			}
 		}
 
@@ -1760,7 +1762,7 @@ class WCML_Bookings implements \IWPML_Action {
 				  LEFT JOIN {$this->wpdb->prefix}icl_translations as icl ON p.ID = icl.element_id
 				  WHERE p.post_type = %s AND icl.language_code = %s AND icl.element_type = %s GROUP BY p.post_status";
 
-		$results = $this->wpdb->get_results( $this->wpdb->prepare( $query, $type, $this->sitepress->get_current_language(), 'post_wc_booking' ), ARRAY_A );
+		$results = $this->wpdb->get_results( $this->wpdb->prepare( $query, $type, $this->sitepress->get_current_language(), 'post_' . self::POST_TYPE ), ARRAY_A );
 		$counts  = array_fill_keys( get_post_stati(), 0 );
 
 		foreach ( $results as $row ) {
@@ -1791,7 +1793,7 @@ class WCML_Bookings implements \IWPML_Action {
 	 * @return bool
 	 */
 	private function is_bookings_listing_page() {
-		return isset( $_GET['post_type'] ) && 'wc_booking' === $_GET['post_type'];
+		return isset( $_GET['post_type'] ) && self::POST_TYPE === $_GET['post_type'];
 	}
 
 	public function save_booking_data_to_translation( $post_id, $data, $job ) {
@@ -1847,7 +1849,7 @@ class WCML_Bookings implements \IWPML_Action {
 	 * @param int $booking_id
 	 */
 	private function maybe_sync_updated_booking_meta( $booking_id ) {
-		if ( 'wc_booking' === get_post_type( $booking_id ) ) {
+		if ( self::POST_TYPE === get_post_type( $booking_id ) ) {
 
 			$booking_translations = $this->get_translated_bookings( $booking_id, false );
 
