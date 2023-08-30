@@ -49,6 +49,33 @@ class WC_Booking_Form {
  * @return array
  */
 function wc_bookings_get_posted_data( $posted, $product ) {}
+abstract class WC_Bookings_Data extends WC_Data {}
+/**
+ * Main model class for all bookings.
+ */
+class WC_Booking extends \WC_Bookings_Data
+{
+    public function __construct($booking = 0) {}
+    /**
+     * Get product_id.
+     *
+     * @param  string $context
+     * @return integer
+     */
+    public function get_product_id($context = 'view') {}
+    /**
+     * Set product_id.
+     *
+     * @param integer $value
+     */
+    public function set_product_id($value) {}
+    /**
+     * Returns the object of the order corresponding to this booking.
+     *
+     * @return WC_Product|Boolean
+     */
+    public function get_product() {}
+}
 /**
  * @param  int $id
  * @return WC_Booking|false
