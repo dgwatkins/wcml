@@ -31,6 +31,7 @@ class Factory extends ComponentFactory implements IStandAloneAction {
 				self::getElementTranslationPackage(),
 				self::getPostTranslations()
 			);
+			$hooks[] = new Templates\MyBookings();
 		}
 
 		if ( defined( 'WC_ACCOMMODATION_BOOKINGS_VERSION' ) && wcml_is_multi_currency_on() ) {
