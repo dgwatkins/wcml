@@ -87,12 +87,22 @@ class Test_WCML_YIKES_Custom_Product_Tabs extends OTGS_TestCase {
 
 		\WP_Mock::userFunction( 'get_post_meta', array(
 			'args' => array( $product_id, 'yikes_woo_products_tabs', true ),
-			'return' => $original_tabs
+			'return' => serialize( $original_tabs ), //wcml-4450 - also testing ability to deal with double-serialized datai
 		));
 
 		\WP_Mock::userFunction( 'get_post_meta', array(
 			'args' => array( $translation->ID, 'yikes_woo_products_tabs', true ),
-			'return' => $translated_tabs
+			'return' => $translated_tabs,
+		));
+
+		\WP_Mock::userFunction( 'maybe_unserialize', array(
+			'args' => array( serialize( $original_tabs ) ),
+			'return' => $original_tabs,
+		));
+
+		\WP_Mock::userFunction( 'maybe_unserialize', array(
+			'args' => array( $translated_tabs ),
+			'return' => $translated_tabs,
 		));
 
 		$subject = $this->get_subject();
@@ -168,6 +178,8 @@ class Test_WCML_YIKES_Custom_Product_Tabs extends OTGS_TestCase {
 
 		\WP_Mock::wpPassthruFunction( 'sanitize_text_field' );
 		\WP_Mock::wpPassthruFunction( 'wp_kses_post' );
+		\WP_Mock::wpPassthruFunction( 'maybe_unserialize' );
+
 		$product_id = 1;
 		$translated_product_id = 2;
 		$lang = 'es';
@@ -258,6 +270,8 @@ class Test_WCML_YIKES_Custom_Product_Tabs extends OTGS_TestCase {
 	 */
 	public function it_should_append_custom_tabs_to_translation_package(){
 
+		\WP_Mock::wpPassthruFunction( 'maybe_unserialize' );
+
 		$post = new stdClass();
 		$post->ID = 1;
 		$post->post_type = 'product';
@@ -304,6 +318,7 @@ class Test_WCML_YIKES_Custom_Product_Tabs extends OTGS_TestCase {
 
 		\WP_Mock::wpPassthruFunction( 'sanitize_text_field' );
 		\WP_Mock::wpPassthruFunction( 'wp_kses_post' );
+		\WP_Mock::wpPassthruFunction( 'maybe_unserialize' );
 
 		$job = new stdClass();
 		$job->original_doc_id = 1;
