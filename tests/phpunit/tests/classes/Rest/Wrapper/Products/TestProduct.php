@@ -23,6 +23,8 @@ class TestProduct extends \OTGS_TestCase {
 	private $attributes;
 	/** @var ProductSaveActions|\PHPUnit_Framework_MockObject_MockObject */
 	private $product_save_actions;
+	/** @var \WCML_WC_Strings */
+	private $strings;
 
 	public function setUp() {
 		parent::setUp();
@@ -52,11 +54,16 @@ class TestProduct extends \OTGS_TestCase {
 										   ->disableOriginalConstructor()
 										   ->setMethods( [ 'run' ] )
 										   ->getMock();
+
+		$this->strings = $this->getMockBuilder( 'WCML_WC_Strings' )
+							  ->disableOriginalConstructor()
+							  ->setMethods( array( 'get_translated_string_by_name_and_context' ) )
+							  ->getMock();
 	}
 
 
 	function get_subject() {
-		return new Products( $this->sitepress, $this->wpml_post_translations, $this->wpml_query_filter, $this->product_save_actions );
+		return new Products( $this->sitepress, $this->wpml_post_translations, $this->wpml_query_filter, $this->product_save_actions, $this->strings );
 	}
 
 
@@ -149,6 +156,7 @@ class TestProduct extends \OTGS_TestCase {
 			     ->getMock(),
 			$this->getMockBuilder( 'WP_REST_Request' )
 			     ->disableOriginalConstructor()
+			     ->setMethods( [ 'get_params' ] )
 			     ->getMock() );
 
 		$this->assertEquals( $this->default_language, $product_data->data['lang'] );
@@ -275,5 +283,54 @@ class TestProduct extends \OTGS_TestCase {
 		$subject = $this->get_subject();
 		$subject->insert( $post, $request1, true );
 
+	}
+
+	/**
+	 * @test
+	 */
+	public function translate_product_attributes_for_product() {
+		$lang = 'de';
+		$attribute1_english = 'Size';
+		$attribute2_english = 'Weight';
+		$attribute1_deutsch = 'Große';
+		$attribute2_deutsch = 'Gewicht';
+
+		$product_data = $this->getMockBuilder( 'WP_REST_Response' )
+			->disableOriginalConstructor()
+			->getMock();
+		$product_data->data = [
+			'id' => 13,
+			'attributes' => [
+				[ 'name' => $attribute1_english ],
+				[ 'name' => $attribute2_english ],
+			],
+		];
+
+		$translated_attributes =  [
+			[ 'name' => $attribute1_deutsch ],
+			[ 'name' => $attribute2_deutsch ],
+		];
+
+		$request = $this->getMockBuilder( 'WP_REST_Request' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'get_params' ] )
+			->getMock();
+		$request->method( 'get_params' )->willReturn( [
+			'lang' => $lang,
+		] );
+
+		$this->strings->method( 'get_translated_string_by_name_and_context' )
+			->withConsecutive(
+				[ 'WordPress', 'taxonomy singular name: ' . $attribute1_english, $lang, $attribute1_english ],
+				[ 'WordPress', 'taxonomy singular name: ' . $attribute2_english, $lang, $attribute2_english ] )
+			->willReturnOnConsecutiveCalls( $attribute1_deutsch, $attribute2_deutsch );
+
+		$subject      = $this->get_subject();
+		$product_data = $subject->prepare( $product_data,
+			$this->getMockBuilder( 'WC_Data' )
+				->disableOriginalConstructor()
+				->getMock(), $request );
+
+		$this->assertEquals( $translated_attributes, $product_data->data['attributes'] );
 	}
 }

@@ -48,8 +48,14 @@ class Factory {
 						$sitepress,
 						$wpml_post_translations,
 						$wpml_query_filter,
-						new ProductSaveActions( $sitepress->get_settings(), $wpdb, $sitepress, $woocommerce_wpml->sync_product_data )
+						new ProductSaveActions( $sitepress->get_settings(), $wpdb, $sitepress, $woocommerce_wpml->sync_product_data ),
+						$woocommerce_wpml->strings
 					);
+				}
+				break;
+			case 'product_attribute':
+				if ( ! isStandAlone() ) {
+					return new ProductAttributes( $woocommerce_wpml->strings );
 				}
 				break;
 			case 'term':
