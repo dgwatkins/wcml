@@ -21,6 +21,7 @@ class TestFactory extends \OTGS_TestCase {
 		$woocommerce_wpml->products               = \Mockery::mock( '\WCML_Products' );
 		$woocommerce_wpml->sync_product_data      = \Mockery::mock( '\WCML_Synchronize_Product_Data' );
 		$woocommerce_wpml->terms                  = \Mockery::mock( '\WCML_Terms' );
+		$woocommerce_wpml->strings                = \Mockery::mock( '\WCML_WC_Strings' );
 
 		$wpml_post_translations = \Mockery::mock( '\WPML_Post_Translation' );
 		$wpml_term_translations = \Mockery::mock( '\WPML_Term_Translation' );

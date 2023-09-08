@@ -69,6 +69,12 @@ class TestHooks extends \OTGS_TestCase {
 		        ->with( 'reports_products_count' )
 		        ->andReturn( $reports_products_count );
 
+		$product_attributes = $this->getMockBuilder( 'ProductAttributes' )->disableOriginalConstructor()->getMock();
+
+		$factory->shouldReceive( 'create' )
+		        ->with( 'product_attribute' )
+		        ->andReturn( $product_attributes );
+
 		\WP_Mock::expectActionAdded( 'rest_api_init', [ Language\Set::class, 'fromUrlQueryVar' ] );
 		\WP_Mock::expectFilterAdded( 'rest_request_before_callbacks', [ Language\Set::class, 'beforeCallbacks' ], 10, 3 );
 		\WP_Mock::expectActionAdded( 'parse_query', [ Generic::class, 'autoAdjustIncludedIds' ] );
@@ -105,6 +111,8 @@ class TestHooks extends \OTGS_TestCase {
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_prepare_report_top_sellers', [ Factory::create( 'reports_top_seller' ), 'prepare' ], 10, 3 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_prepare_report_sales', [ Factory::create( 'reports_products_sales' ), 'prepare' ], 10, 3 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_rest_prepare_report_products_count', [ Factory::create( 'reports_products_count' ), 'prepare' ], 10, 3 );
+
+		\WP_Mock::expectFilterAdded( 'woocommerce_rest_prepare_product_attribute', [ Factory::create( 'product_attribute' ), 'prepare' ], 10, 3 );
 
 		\Mockery::mock( 'overload:WCML\Rest\Functions' )->shouldReceive( 'getApiRequestVersion' )->andReturn( 1 );
 
