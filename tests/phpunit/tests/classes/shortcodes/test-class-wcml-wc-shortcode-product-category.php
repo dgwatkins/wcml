@@ -49,6 +49,7 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 
 		$categoryBySlug = 'my-cool-category';
 		$categoryById   = 123;
+		$relation       = 'AND';
 
 		$args = [
 			'tax_query' => [
@@ -63,7 +64,8 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 					'terms'    => $categoryById,
 					'field'    => 'id',
 					'operator' => 'IN'
-				]
+				],
+				'relation' => $relation,
 			]
 		];
 
@@ -87,6 +89,7 @@ class Test_WCML_WC_Shortcode_Product_Category extends OTGS_TestCase {
 
 		$this->assertSame( $translatedCat1->slug, $args['tax_query'][0][0]['terms'][0] );
 		$this->assertSame( $translatedCat2->slug, $args['tax_query'][0][0]['terms'][1] );
+		$this->assertEquals( $relation, $args['tax_query']['relation'] );
 	}
 
 	/**
