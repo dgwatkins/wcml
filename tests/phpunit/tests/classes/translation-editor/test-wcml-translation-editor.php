@@ -48,14 +48,40 @@ class Test_WCML_Translation_Editor extends OTGS_TestCase {
 	 * @test
 	 */
 	public function add_admin_hooks(){
-		\WP_Mock::wpFunction( 'is_admin', array( 'return' => true ) );
+		\WP_Mock::userFunction( 'is_admin', [
+			'return' => true,
+		] );
+
+		\WP_Mock::userFunction( 'WCML\functions\getSetting', [
+			'args'   => [ 'set_up_wizard_run' ],
+			'return' => 1,
+		] );
 
 		$subject = $this->get_subject();
+		\WP_Mock::expectFilterAdded( 'manage_product_posts_columns', array( $subject, 'add_languages_column' ), 100 );
 		\WP_Mock::expectFilterAdded( 'wpml_tm_show_page_builders_translation_editor_warning', array( $subject, 'show_page_builders_translation_editor_warning' ), 10 ,2 );
 
 		$subject->add_hooks();
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_doesnt_add_admin_hook_if_wizard_incomplete(){
+		\WP_Mock::userFunction( 'is_admin', [
+			'return' => true,
+		] );
+
+		\WP_Mock::userFunction( 'WCML\functions\getSetting', [
+			'args'   => [ 'set_up_wizard_run' ],
+			'return' => null,
+		] );
+
+		$subject = $this->get_subject();
+		\WP_Mock::expectFilterNotAdded( 'manage_product_posts_columns', array( $subject, 'add_languages_column' ), 100 );
+
+		$subject->add_hooks();
+	}
 
 	/**
 	 * @test
