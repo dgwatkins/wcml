@@ -262,6 +262,18 @@ class WCML_Orders {
 	}
 
 	/**
+	 * @param int    $product_id
+	 * @param string $attribute
+	 *
+	 * @return array
+	 */
+	private function get_attribute_options( $product_id, $attribute ) {
+		$product    = wc_get_product( $product_id );
+		$attributes = $product->get_attributes();
+		return $attributes[ $attribute ]->get_options();
+	}
+
+	/**
 	 * @param WC_Order_Item_Product $item
 	 * @param int                   $variation_id
 	 */
@@ -269,6 +281,22 @@ class WCML_Orders {
 		foreach ( $item->get_meta_data() as $meta_data ) {
 			$data            = $meta_data->get_data();
 			$attribute_value = get_post_meta( $variation_id, 'attribute_' . $data['key'], true );
+
+			$isAnyAttribute = '' === $attribute_value;
+			if ( $isAnyAttribute ) {
+				$product_id = $item->get_product_id();
+				$options    = $this->get_attribute_options( $product_id, $data['key'] );
+
+				$order_language   = $item->get_order()->get_meta( 'wpml_language' );
+				$order_product_id = apply_filters( 'wpml_object_id', $product_id, 'product', false, $order_language );
+				$order_options    = $this->get_attribute_options( $order_product_id, $data['key'] );
+
+				$position = array_search( $data['value'], $order_options );
+				if ( false !== $position ) {
+					$attribute_value = $options[ $position ];
+				}
+			}
+
 			if ( $attribute_value ) {
 				$item->update_meta_data( $data['key'], $attribute_value, isset( $data['id'] ) ? $data['id'] : 0 );
 			}
