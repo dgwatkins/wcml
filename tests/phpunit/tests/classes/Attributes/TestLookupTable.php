@@ -36,7 +36,12 @@ class TestLookupTable extends \OTGS_TestCase {
 	public function itTriggersUpdateForPublishedProductTranslations() {
 		$subject = $this->getSubject();
 
+		$blog_id   = 1;
 		$productId = 11;
+
+		\WP_Mock::userFunction( 'get_current_blog_id', [
+			'return' => $blog_id,
+		] );
 
 		\WP_Mock::userFunction( 'get_post_type', [
 			'args'   => $productId,

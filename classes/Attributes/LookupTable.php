@@ -44,14 +44,26 @@ class LookupTable implements \IWPML_Action {
 			&& 'publish' === get_post_status( $productId )
 			&& ! $this->sitepress->is_original_content_filter( false, $productId, 'post_product' )
 		) {
+			$savedOnBlogId = get_current_blog_id();
+
 			Hooks::onAction( 'shutdown' )
-				->then( function() use ( $productId ) {
+				->then( function() use ( $productId, $savedOnBlogId ) {
+					$savedOnAnotherBlog = get_current_blog_id() !== $savedOnBlogId;
+
+					if ( $savedOnAnotherBlog ) {
+						switch_to_blog( $savedOnBlogId );
+					}
+
 					// For direct updates, we adjust terms filters just before triggering the update.
-					$filtersSuspend = $this->adjustTermsFilters();
+					$hasTermsClausesFilter = $this->adjustTermsFilters();
 
 					wc_get_container()->get( ProductAttributesLookupDataStore::class )->on_product_changed( $productId );
 
-					$this->restoreTermsFilters( $filtersSuspend );
+					$this->restoreTermsFilters( $hasTermsClausesFilter );
+
+					if ( $savedOnAnotherBlog ) {
+						restore_current_blog();
+					}
 				} );
 		}
 	}
