@@ -108,4 +108,20 @@ class Test_WCML_Multi_Currency extends OTGS_TestCase {
 		$this->assertFalse( $subject->is_currency_active( 'EUR' ) );
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_doesnt_geolocate_when_mc_is_off() {
+		$currency = 'EUR';
+
+		FunctionMocker::replace( \WCML\Rest\Functions::class . '::isRestApiRequest', false );
+
+		WP_Mock::userFunction( 'wcml_is_multi_currency_on', [ 'return' => false ] );
+		WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', [ 'return' => $currency ] );
+
+		$subject = Mockery::mock( 'WCML_Multi_Currency' )->makePartial();
+
+		$this->assertSame( $currency, $subject->get_client_currency() );
+	}
+
 }
