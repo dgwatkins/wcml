@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Fns;
+
 class WCML_WC_Shipping {
 
 	const STRINGS_CONTEXT = 'admin_texts_woocommerce_shipping';
@@ -38,7 +40,10 @@ class WCML_WC_Shipping {
 		add_filter( 'pre_update_option_woocommerce_international_delivery_settings', [ $this, 'update_woocommerce_shipping_settings_for_class_costs' ] );
 		add_filter( 'woocommerce_shipping_flat_rate_instance_option', [ $this, 'get_original_shipping_class_rate' ], 10, 3 );
 
-		$this->shipping_methods_filters();
+		add_action( 'woocommerce_load_shipping_methods', Fns::withoutRecursion(
+			Fns::identity(),
+			[ $this, 'shipping_methods_filters' ]
+		), PHP_INT_MAX );
 	}
 
 	public function shipping_methods_filters() {

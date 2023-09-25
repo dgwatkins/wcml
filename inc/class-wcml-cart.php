@@ -525,7 +525,6 @@ class WCML_Cart {
 	public function localize_flat_rates_shipping_classes() {
 
 		if ( wp_doing_ajax() && isset( $_POST['action'] ) && $_POST['action'] == 'woocommerce_update_order_review' ) {
-			$this->woocommerce->shipping()->load_shipping_methods();
 			$shipping_methods = $this->woocommerce->shipping()->get_shipping_methods();
 			foreach ( $shipping_methods as $method ) {
 				if ( isset( $method->flat_rate_option ) ) {

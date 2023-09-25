@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Fns;
+
 /**
  * Class Test_WCML_Shipping
  */
@@ -60,6 +62,21 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 		WP_Mock::expectFilterAdded( 'pre_update_option_woocommerce_international_delivery_settings', array( $subject, 'update_woocommerce_shipping_settings_for_class_costs' ) );
 		WP_Mock::expectFilterAdded( 'woocommerce_shipping_flat_rate_instance_option', array( $subject, 'get_original_shipping_class_rate' ), 10, 3 );
 
+		WP_Mock::expectActionAdded( 'woocommerce_load_shipping_methods', Fns::withoutRecursion(
+			Fns::identity(),
+			[ $subject, 'shipping_methods_filters' ],
+		), PHP_INT_MAX );
+
+		$subject->add_hooks();
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_adds_shipping_hooks() {
+
+		$subject = $this->get_subject();
+
 		$wc = $this->getMockBuilder( 'WooCommerce' )
 			->setMethods( array( 'shipping' ) )
 			->disableOriginalConstructor()
@@ -82,7 +99,7 @@ class Test_WCML_Shipping extends OTGS_TestCase {
 		WP_Mock::expectFilterAdded( 'woocommerce_shipping_' . $shipping_method->id . '_instance_settings_values', array( $subject, 'register_zone_shipping_strings' ), 9, 2 );
 		WP_Mock::expectFilterAdded( 'option_woocommerce_' . $shipping_method->id . '_settings', array( $subject, 'translate_shipping_strings' ), 9, 2 );
 
-		$subject->add_hooks();
+		$subject->shipping_methods_filters();
 	}
 
 	/**

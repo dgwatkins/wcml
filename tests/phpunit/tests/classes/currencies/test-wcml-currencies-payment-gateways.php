@@ -1,5 +1,7 @@
 <?php
 
+use WPML\FP\Fns;
+
 /**
  * @group wcml-2992
  *
@@ -51,9 +53,13 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectActionAdded(
-			'wp_loaded',
-			[ $subject, 'init_gateways' ]
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_payment_gateways',
+			Fns::tap( Fns::withoutRecursion(
+				Fns::identity(),
+				[ $subject, 'init_gateways' ]
+			) ),
+			PHP_INT_MAX
 		);
 
 		\WP_Mock::expectFilterAdded(
@@ -97,9 +103,13 @@ class Test_WCML_Currencies_Payment_Gateways extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectActionAdded(
-			'wp_loaded',
-			[ $subject, 'init_gateways' ]
+		\WP_Mock::expectFilterAdded(
+			'woocommerce_payment_gateways',
+			Fns::tap( Fns::withoutRecursion(
+				Fns::identity(),
+				[ $subject, 'init_gateways' ]
+			) ),
+			PHP_INT_MAX
 		);
 
 		\WP_Mock::expectFilterAdded(
