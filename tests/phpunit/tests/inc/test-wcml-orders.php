@@ -557,28 +557,34 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		$items[] = $shipping_item;
 
 		\WP_Mock::userFunction( 'get_post', array(
-				'args'   => array( $translated_product_id ),
-				'return' => $this->translated_post_object
-			)
-		);
+			'args'   => array( $translated_product_id ),
+			'return' => $this->translated_post_object
+		) );
 
 		\WP_Mock::userFunction( 'wc_get_product', array(
-				'args'   => array( $translated_variation_id ),
-				'return' => $translated_variation_object
-			)
-		);
+			'args'   => array( $translated_variation_id ),
+			'return' => $translated_variation_object
+		) );
+
+		\WP_Mock::userFunction( 'metadata_exists', array(
+			'args'   => array( 'post', $translated_variation_id, 'attribute_' . $color_data['key'] ),
+			'return' => $updated_color_meta_data_value
+		) );
 
 		\WP_Mock::userFunction( 'get_post_meta', array(
-				'args'   => array( $translated_variation_id, 'attribute_' . $color_data['key'], true ),
-				'return' => $updated_color_meta_data_value
-			)
-		);
+			'args'   => array( $translated_variation_id, 'attribute_' . $color_data['key'], true ),
+			'return' => $updated_color_meta_data_value
+		) );
+
+		\WP_Mock::userFunction( 'metadata_exists', array(
+			'args'   => array( 'post', $translated_variation_id, 'attribute_' . $size_data_with_missing_id['key'] ),
+			'return' => $updated_size_meta_data_value
+		) );
 
 		\WP_Mock::userFunction( 'get_post_meta', array(
-				'args'   => array( $translated_variation_id, 'attribute_' . $size_data_with_missing_id['key'], true ),
-				'return' => $updated_size_meta_data_value
-			)
-		);
+			'args'   => array( $translated_variation_id, 'attribute_' . $size_data_with_missing_id['key'], true ),
+			'return' => $updated_size_meta_data_value
+		) );
 
 		\WP_Mock::onFilter( 'translate_object_id' )->with( $product_id, 'product', false, $language )->reply( $translated_product_id );
 		\WP_Mock::onFilter( 'translate_object_id' )->with( $variation_id, 'product_variation', false, $language )->reply( $translated_variation_id );
