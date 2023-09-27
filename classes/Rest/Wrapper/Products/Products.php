@@ -7,6 +7,7 @@ use WCML\Rest\Exceptions\InvalidLanguage;
 use WCML\Rest\Exceptions\InvalidProduct;
 use WCML\Rest\ProductSaveActions;
 use WCML\Rest\Wrapper\Handler;
+use WCML\Utilities\Suspend\PostsQueryFiltersFactory as SuspendPostsQueryFiltersFactory;
 use WPML\FP\Fns;
 use WPML\FP\Obj;
 
@@ -16,8 +17,6 @@ class Products extends Handler {
 	private $sitepress;
 	/** @var \WPML_Post_Translation */
 	private $wpmlPostTranslations;
-	/** @var \WPML_Query_Filter */
-	private $wpmlQueryFilter;
 	/** @var ProductSaveActions $productSaveActions */
 	private $productSaveActions;
 	/** @var \WCML_WC_Strings $strings */
@@ -26,13 +25,11 @@ class Products extends Handler {
 	public function __construct(
 		\SitePress $sitepress,
 		\WPML_Post_Translation $wpmlPostTranslations,
-		\WPML_Query_Filter $wpmlQueryFilter,
 		ProductSaveActions $productSaveActions,
 		\WCML_WC_Strings $strings
 	) {
 		$this->sitepress            = $sitepress;
 		$this->wpmlPostTranslations = $wpmlPostTranslations;
-		$this->wpmlQueryFilter      = $wpmlQueryFilter;
 		$this->productSaveActions   = $productSaveActions;
 		$this->strings              = $strings;
 	}
@@ -46,8 +43,7 @@ class Products extends Handler {
 	public function query( $args, $request ) {
 		$data = $request->get_params();
 		if ( isset( $data['lang'] ) && $data['lang'] === 'all' ) {
-			remove_filter( 'posts_join', [ $this->wpmlQueryFilter, 'posts_join_filter' ] );
-			remove_filter( 'posts_where', [ $this->wpmlQueryFilter, 'posts_where_filter' ] );
+			SuspendPostsQueryFiltersFactory::create();
 		}
 
 		return $args;

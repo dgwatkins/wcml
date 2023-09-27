@@ -28,9 +28,6 @@ class TestProduct extends \OTGS_TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->wpml_query_filter = $this->getMockBuilder( 'WPML_Query_Filter' )
-										->disableOriginalConstructor()
-										->getMock();
 
 		$this->sitepress = $this->getMockBuilder( \SitePress::class )
 								->disableOriginalConstructor()
@@ -63,7 +60,7 @@ class TestProduct extends \OTGS_TestCase {
 
 
 	function get_subject() {
-		return new Products( $this->sitepress, $this->wpml_post_translations, $this->wpml_query_filter, $this->product_save_actions, $this->strings );
+		return new Products( $this->sitepress, $this->wpml_post_translations, $this->product_save_actions, $this->strings );
 	}
 
 
