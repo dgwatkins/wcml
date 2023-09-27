@@ -129,6 +129,7 @@ function wcml_loader() {
 		\WCML\DisplayAsTranslated\FrontendHooksFactory::class,
 		\WCML\OrderNotes\Hooks::class,
 		\WCML\User\Hooks::class,
+		\WCML\Exporter\AllLanguagesHooks::class,
 	];
 
 	if (
