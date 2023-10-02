@@ -52,8 +52,8 @@ class Test_WCML_Ajax_Setup extends OTGS_TestCase {
 	 */
 	public function it_adds_language_parameter_to_ajax_url()
 	{
-		$woocommerce_params['ajax_url'] = rand_str();
-		$expected_ajax_url = rand_str();
+		$woocommerce_params['ajax_url'] = 'random-url';
+		$expected_ajax_url = 'expected';
 
 		$this->wp_api->expects( $this->once() )
 		             ->method('constant')

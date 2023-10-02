@@ -1,7 +1,5 @@
 <?php
 
-use WPML\Core\ISitePress;
-use WPML\FP\Fns;
 use WPML\FP\Obj;
 
 class WCML_Emails {
@@ -269,7 +267,7 @@ class WCML_Emails {
 			}
 		}
 
-		$language = get_post_meta( $order_id, 'wpml_language', true );
+		$language = WCML_Orders::getLanguage( $order_id );
 
 		if ( ! $language ) {
 			$language = $this->rest_language;
@@ -646,7 +644,7 @@ class WCML_Emails {
 	public function wcml_get_translated_email_string( $context, $name, $order_id = false, $language_code = null ) {
 
 		if ( $order_id && ! $language_code ) {
-			$order_language = get_post_meta( $order_id, 'wpml_language', true );
+			$order_language = WCML_Orders::getLanguage( $order_id );
 			if ( $order_language ) {
 				$language_code = $order_language;
 			}
@@ -716,7 +714,7 @@ class WCML_Emails {
 		$order_id = apply_filters( 'wcml_send_email_order_id', $order_id );
 
 		if ( $order_id ) {
-			$order_language = get_post_meta( $order_id, 'wpml_language', true );
+			$order_language = WCML_Orders::getLanguage( $order_id );
 			if ( $order_language ) {
 				$current_language = $order_language;
 			} else {

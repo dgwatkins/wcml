@@ -420,10 +420,9 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => array( $_POST['post_ID'], 'wpml_language', true ),
-			'return' => $order_language
-		) );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_language ) {
+			return ( $_POST['post_ID'] === $orderId ) ? $order_language : false;
+		} );
 
 		$subject = $this->get_subject( false, $sitepress );
 
@@ -458,6 +457,10 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
+
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_language ) {
+			return ( $_POST['post_ID'] === $orderId ) ? $order_language : false;
+		} );
 
 		WP_Mock::userFunction( 'get_post_meta', array(
 			'args'   => array( $_POST['post_ID'], 'wpml_language', true ),
@@ -498,10 +501,9 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => array( $_POST['post_ID'], 'wpml_language', true ),
-			'return' => $order_language
-		) );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_language ) {
+			return ( $_POST['post_ID'] === $orderId ) ? $order_language : false;
+		} );
 
 		$subject = $this->get_subject( false, $sitepress );
 
@@ -537,10 +539,9 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => array( $_POST['post_ID'], 'wpml_language', true ),
-			'return' => $order_language
-		) );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_language ) {
+			return ( $_POST['post_ID'] === $orderId ) ? $order_language : false;
+		} );
 
 		$subject = $this->get_subject( false, $sitepress );
 
@@ -575,10 +576,9 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => array( $_POST['post_ID'], 'wpml_language', true ),
-			'return' => $order_language
-		) );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_language ) {
+			return ( $_POST['post_ID'] === $orderId ) ? $order_language : false;
+		} );
 
 		$subject = $this->get_subject( false, $sitepress );
 
@@ -612,10 +612,9 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => array( $_POST['order_id'], 'wpml_language', true ),
-			'return' => $order_language
-		) );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_language ) {
+			return ( $_POST['order_id'] === $orderId ) ? $order_language : false;
+		} );
 
 		$subject = $this->get_subject( false, $sitepress );
 
@@ -650,10 +649,9 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => array( $_POST['post_id'], 'wpml_language', true ),
-			'return' => $order_language
-		) );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_language ) {
+			return ( $_POST['post_id'] === $orderId ) ? $order_language : false;
+		} );
 
 		$subject = $this->get_subject( false, $sitepress );
 
@@ -689,10 +687,9 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => array( $_GET['order_id'], 'wpml_language', true ),
-			'return' => $order_language
-		) );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_language ) {
+			return ( $_GET['order_id'] === $orderId ) ? $order_language : false;
+		} );
 
 		$subject = $this->get_subject( false, $sitepress );
 
@@ -727,10 +724,9 @@ class Test_WCML_WC_Gateways extends OTGS_TestCase {
 		$sitepress = $this->get_sitepress();
 		$sitepress->method( 'get_current_language' )->willReturn( $current_language );
 
-		WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => array( $_GET['order_id'], 'wpml_language', true ),
-			'return' => $order_language
-		) );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_language ) {
+			return ( $_GET['order_id'] === $orderId ) ? $order_language : false;
+		} );
 
 		$subject = $this->get_subject( false, $sitepress );
 

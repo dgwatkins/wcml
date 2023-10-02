@@ -4,7 +4,7 @@ use WPML\FP\Fns;
 use WPML\FP\Maybe;
 use WPML\FP\Obj;
 use function WPML\FP\curryN;
-use function WPML\FP\partialRight;
+use function WPML\FP\invoke;
 
 class WCML_Orders {
 
@@ -289,7 +289,7 @@ class WCML_Orders {
 					$product_id = $item->get_product_id();
 					$options    = $this->get_attribute_options( $product_id, $data['key'] );
 
-					$order_language   = $item->get_order()->get_meta( 'wpml_language' );
+					$order_language   = $item->get_order()->get_meta( self::KEY_LANGUAGE );
 					$order_product_id = apply_filters( 'wpml_object_id', $product_id, 'product', false, $order_language );
 					$order_options    = $this->get_attribute_options( $order_product_id, $data['key'] );
 
@@ -301,7 +301,7 @@ class WCML_Orders {
 	
 				if ( $attribute_value ) {
 					$item->update_meta_data( $data['key'], $attribute_value, isset( $data['id'] ) ? $data['id'] : 0 );
-				}	
+				}
 			}
 		}
 	}
@@ -373,7 +373,9 @@ class WCML_Orders {
 	 */
 	public function set_order_language( $order_id ) {
 		if ( ! self::getLanguage( $order_id ) ) {
-			update_post_meta( $order_id, self::KEY_LANGUAGE, ICL_LANGUAGE_CODE );
+			$order = wc_get_order( $order_id );
+			$order->update_meta_data( self::KEY_LANGUAGE, ICL_LANGUAGE_CODE );
+			$order->save();
 		}
 	}
 
@@ -565,6 +567,14 @@ class WCML_Orders {
 	 * @return callable|string|false
 	 */
 	public static function getLanguage( $orderId = null ) {
-		return call_user_func_array( curryN( 1, partialRight( 'get_post_meta', self::KEY_LANGUAGE, true ) ), func_get_args() );
+		$getLanguage = function( $orderId ) {
+			return Maybe::of( wc_get_order( $orderId ) )
+				->map( invoke( 'get_meta' )->with( self::KEY_LANGUAGE ) )
+				->getOrElse( false );
+		};
+
+		/* phpcs:ignore PHPCompatibility.FunctionUse.ArgumentFunctionsReportCurrentValue.NeedsInspection */
+		return call_user_func_array( curryN( 1, $getLanguage ), func_get_args() );
 	}
+
 }

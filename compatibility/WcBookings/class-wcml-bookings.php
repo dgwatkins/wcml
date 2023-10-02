@@ -1,5 +1,6 @@
 <?php
 
+use WPML\FP\Fns;
 use WPML\FP\Maybe;
 use WPML\FP\Str;
 use function WPML\FP\invoke;
@@ -71,7 +72,7 @@ class WCML_Bookings implements \IWPML_Action {
 	public function add_hooks() {
 
 		// Translate emails.
-		add_filter( 'get_post_metadata', [ $this, 'get_order_language' ], 10, 4 );
+		add_filter( 'get_post_metadata', Fns::withoutRecursion( Fns::identity(), [ $this, 'get_order_language' ] ), 10, 4 );
 
 		add_filter( 'woocommerce_booking_confirmed_notification', [ $this, 'translate_notification' ], 9 );
 		add_action( 'wc-booking-reminder', [ $this, 'translate_notification' ], 9 );
@@ -240,9 +241,7 @@ class WCML_Bookings implements \IWPML_Action {
 					$order_item_id
 				)
 			); // WPCS: unprepared SQL OK.
-			remove_filter( 'get_post_metadata', [ $this, 'get_order_language' ], 10 );
-			$check = get_post_meta( $order_id, 'wpml_language', $single );
-			add_filter( 'get_post_metadata', [ $this, 'get_order_language' ], 10, 4 );
+			$check    = WCML_Orders::getLanguage( $order_id );
 		}
 
 		return $check;
@@ -663,7 +662,9 @@ class WCML_Bookings implements \IWPML_Action {
 	}
 
 	public function set_order_language_on_create_booking_page( $order_id ) {
-		update_post_meta( $order_id, 'wpml_language', $this->sitepress->get_current_language() );
+		$order = wc_get_order( $order_id );
+		$order->update_meta_data( 'wpml_language', $this->sitepress->get_current_language() );
+		$order->save();
 	}
 
 	public function filter_get_booking_products_args( $args ) {
@@ -1676,7 +1677,7 @@ class WCML_Bookings implements \IWPML_Action {
 	public function booking_email_language( $current_language ) {
 
 		if ( isset( $_POST['post_type'] ) && self::POST_TYPE === $_POST['post_type'] && isset( $_POST['_booking_order_id'] ) ) {
-			$order_language = get_post_meta( $_POST['_booking_order_id'], 'wpml_language', true );
+			$order_language = WCML_Orders::getLanguage( (int) $_POST['_booking_order_id'] );
 			if ( $order_language ) {
 				$current_language = $order_language;
 			}

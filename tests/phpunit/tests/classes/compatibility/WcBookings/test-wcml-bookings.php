@@ -1,6 +1,7 @@
 <?php
 
 use tad\FunctionMocker\FunctionMocker;
+use WPML\FP\Fns;
 
 /**
  * Class Test_WCML_Bookings
@@ -118,7 +119,7 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		\WP_Mock::wpFunction( 'remove_action', array( 'times' => 1 ) );
 
 		$subject = $this->get_subject();
-		\WP_Mock::expectFilterAdded( 'get_post_metadata', array( $subject, 'get_order_language' ), 10, 4 );
+		\WP_Mock::expectFilterAdded( 'get_post_metadata', Fns::withoutRecursion( Fns::identity(), array( $subject, 'get_order_language' ) ), 10, 4 );
 		\WP_Mock::expectActionAdded( 'wc-booking-reminder', array( $subject, 'translate_notification' ), 9 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_booking_reminder_notification', array( $subject, 'translate_notification' ), 9 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_booking_confirmed_notification', array( $subject, 'translate_notification' ), 9 );
@@ -173,12 +174,9 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		$this->wpdb->method( 'prepare' )->will( $this->returnCallback( function() {
 			return call_user_func_array( 'sprintf', func_get_args() );
 		} ) );
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args'   => array( $order_id, 'wpml_language', true ),
-			'return' => $expected,
-		) );
-		\WP_Mock::wpFunction( 'remove_filter' );
-		\WP_Mock::wpFunction( 'add_filter' );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_id, $expected ) {
+			return ( $order_id === $orderId ) ? $expected : false;
+		} );
 
 		$subject = $this->get_subject();
 		$language = $subject->get_order_language( null, $booking_id, 'wpml_language', true );
@@ -392,19 +390,20 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		$current_language = rand_str( 2 );
+		$current_language = 'en';
 		$_POST[ 'post_type' ] = 'wc_booking';
-		$_POST[ '_booking_order_id' ] = mt_rand( 1, 10 );
+		$_POST[ '_booking_order_id' ] = '456';
 
-		$order_language = rand_str(2);
-		\WP_Mock::userFunction( 'get_post_meta', array(
-			'args' => array( $_POST[ '_booking_order_id' ], 'wpml_language', true ),
-			'return' => $order_language
-		) );
+		$order_language = 'fr';
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_language ) {
+			return ( (int) $_POST['_booking_order_id'] === $orderId ) ? $order_language : false;
+		} );
 
 		$booking_language = $subject->booking_email_language( $current_language );
 
 		$this->assertEquals( $order_language, $booking_language );
+
+		$_POST = [];
 	}
 
 	/**
@@ -414,11 +413,14 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		$current_language = rand_str( 2 );
+		$current_language = 'es';
 		$_POST[ 'post_type' ] = 'wc_booking';
+
 		$booking_language = $subject->booking_email_language( $current_language );
 
 		$this->assertEquals( $current_language, $booking_language );
+
+		$_POST = [];
 	}
 
 	/**

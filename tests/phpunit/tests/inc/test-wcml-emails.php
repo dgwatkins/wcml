@@ -1,5 +1,7 @@
 <?php
 
+use tad\FunctionMocker\FunctionMocker;
+
 /**
  * @group email
  */
@@ -141,10 +143,9 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		$subject = $this->get_subject( );
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args'   => array( $order_id, 'wpml_language', true ),
-			'return' => $language_code
-		) );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_id, $language_code ) {
+			return ( $order_id === $orderId ) ? $language_code : false;
+		} );
 
 		$this->wcmlStrings->method( 'get_translated_string_by_name_and_context' )->with( $context, $name, $language_code )->willReturn( $trnsl_name );
 
@@ -236,10 +237,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		$order_id = $_GET['order_id'] = mt_rand( 1, 100 );
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args'   => array( $order_id, 'wpml_language', true ),
-			'return' => false
-		) );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', false );
 
 		$subject = $this->get_subject();
 
@@ -255,10 +253,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$order_id = $_GET['order_id'] = mt_rand( 1, 100 );
 		$_GET['status'] = 'completed';
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args'   => array( $order_id, 'wpml_language', true ),
-			'return' => false
-		) );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', false );
 
 		$this->wcEmails =  $this->getMockBuilder('WC_Emails')
 		                ->disableOriginalConstructor()
@@ -374,14 +369,15 @@ class Test_WCML_Emails extends OTGS_TestCase {
 	public function it_should_filter_email_headings( $class_name, $method ){
 
 		$order_id = 10;
-		$this->wcEmails =  $this->getMockBuilder('WC_Emails')
-		                ->disableOriginalConstructor()
-		                ->getMock();
+
+		$this->wcEmails = $this->getMockBuilder( 'WC_Emails' )
+			->disableOriginalConstructor()
+			->getMock();
 
 		$wc_mailer_class = $this->getMockBuilder( $class_name )
-		                                ->disableOriginalConstructor()
-		                                ->setMethods( array( 'trigger' ) )
-		                                ->getMock();
+			->disableOriginalConstructor()
+			->setMethods( array( 'trigger' ) )
+			->getMock();
 		$wc_mailer_class->subject = rand_str();
 		$wc_mailer_class->heading = rand_str();
 		$wc_mailer_class->enabled = true;
@@ -389,8 +385,10 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$this->wcEmails->emails = array( $class_name => $wc_mailer_class );
 
 		$wc_mailer_class->expects( $this->once() )
-		                        ->method( 'trigger' )
-		                        ->willReturn( true );
+				->method( 'trigger' )
+				->willReturn( true );
+
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', false );
 
 		$subject = $this->get_subject();
 		$subject->$method( $order_id );
@@ -432,10 +430,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			'return' => $user->ID
 		));
 
-		\WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => [ $order_id, 'wpml_language', true ],
-			'return' => false
-		) );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', false );
 
 		$this->wcEmails =  $this->getMockBuilder('WC_Emails')
 		                ->disableOriginalConstructor()
@@ -493,10 +488,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			'return' => 0
 		));
 
-		\WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => [ $order_id, 'wpml_language', true ],
-			'return' => false
-		) );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', false );
 
 		$this->wcEmails =  $this->getMockBuilder('WC_Emails')
 		                ->disableOriginalConstructor()
@@ -683,6 +675,8 @@ class Test_WCML_Emails extends OTGS_TestCase {
 			'return' => $product_in_admin_language
 		] );
 
+//		FunctionMocker::replace( 'WCML_Orders::getLanguage', false );
+
 		$this->sitepress->method( 'get_user_admin_language' )->with( $user->ID, true )->willReturn( $user_language );
 
 		$subject = $this->get_subject();
@@ -723,11 +717,6 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		$order_object->method( 'get_id' )
 		       ->willReturn( $order_id );
-
-		WP_Mock::userFunction( 'get_post_meta', [
-			'args'   => [ $order_id, 'wpml_language', true ],
-			'return' => $language
-		] );
 
 		list( $wc_email_object, $language ) = $this->get_wc_email_mock( $order_object, $emailOption, $language );
 
@@ -775,11 +764,6 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$order_id         = 12;
 
 		$order_object = [ 'ID' => $order_id ];
-
-		WP_Mock::userFunction( 'get_post_meta', [
-			'args'   => [ $order_id, 'wpml_language', true ],
-			'return' => $language
-		] );
 
 		list( $wc_email_object, $language ) = $this->get_wc_email_mock( $order_object, $emailOption, $language );
 
@@ -861,6 +845,8 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 			$this->sitepress->expects( $this->once() )->method( 'get_user_admin_language' )->with( $user->ID, true )->willReturn( $language );
 		}
+
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', $language );
 
 		return [ $object, $language ];
 	}
@@ -974,10 +960,9 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$order_id = 10;
 		$language = 'es';
 
-		WP_Mock::userFunction( 'get_post_meta', [
-			'args'   => [ $order_id, 'wpml_language', true ],
-			'return' => $language
-		] );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_id, $language ) {
+			return ( $order_id === $orderId ) ? $language : false;
+		} );
 
 		$subject = $this->get_subject();
 
@@ -992,10 +977,9 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$order_id = [ 'order_id' => 11 ];
 		$language = 'es';
 
-		WP_Mock::userFunction( 'get_post_meta', [
-			'args'   => [ $order_id['order_id'], 'wpml_language', true ],
-			'return' => $language
-		] );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_id, $language ) {
+			return ( $order_id['order_id'] === $orderId ) ? $language : false;
+		} );
 
 		$subject = $this->get_subject();
 
@@ -1014,10 +998,7 @@ class Test_WCML_Emails extends OTGS_TestCase {
 		$language        = 'es';
 		$request['lang'] = $language;
 
-		WP_Mock::userFunction( 'get_post_meta', [
-			'args'   => [ $order_id, 'wpml_language', true ],
-			'return' => false
-		] );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', false );
 
 		$subject = $this->get_subject();
 		$subject->set_rest_language( $object, $request );
@@ -1042,10 +1023,9 @@ class Test_WCML_Emails extends OTGS_TestCase {
 
 		WP_Mock::expectAction( 'wpml_st_force_translate_admin_options', $options );
 
-		WP_Mock::userFunction( 'get_post_meta', [
-			'args'   => [ $order_id, 'wpml_language', true ],
-			'return' => 'en'
-		] );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_id ) {
+			return ( $order_id === $orderId ) ? 'en' : false;
+		} );
 
 		WP_Mock::userFunction( 'get_current_user_id', [
 			'return' => 321

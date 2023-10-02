@@ -115,7 +115,7 @@ class Test_WCML_Orders extends OTGS_TestCase {
 
 		$subject = $this->get_subject( );
 		$language = 'fr';
-		$order_id =  mt_rand( 1, 100 );
+		$order_id =  12345;
 
 		$order = $this->getMockBuilder( 'WC_Order' )
 		                ->disableOriginalConstructor()
@@ -123,14 +123,12 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		                ->getMock();
 		$order->method( 'get_id' )->willReturn( $order_id );
 
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_id, $language ) {
+			return ( $order_id === $orderId ) ? $language : false;
+		} );
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args'   => array( $order_id, 'wpml_language', true ),
-			'return' => $language
-		));
-
-		$variation_id = mt_rand( 101, 200 );
-		$translated_variation_id = mt_rand( 201, 300 );
+		$variation_id = 123;
+		$translated_variation_id = 456;
 		$expected_downloads = array( 'test' );
 
 		\WP_Mock::onFilter( 'translate_object_id' )->with( $variation_id, 'product_variation', false, $language )->reply( $translated_variation_id );
@@ -166,11 +164,9 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		                ->getMock();
 		$order->method( 'get_id' )->willReturn( $order_id );
 
-
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args'   => array( $order_id, 'wpml_language', true ),
-			'return' => $language
-		));
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_id, $language ) {
+			return ( $order_id === $orderId ) ? $language : false;
+		} );
 
 		$product_id = mt_rand( 101, 200 );
 		$translated_product_id = null;
@@ -348,10 +344,9 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		$order          = $this->getOrder();
 		$order->method( 'get_id' )->willReturn( $order_id );
 
-		\WP_Mock::userFunction( 'get_post_meta', array(
-			'args'   => array( $order_id, 'wpml_language', true ),
-			'return' => $language
-		) );
+		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_id, $language ) {
+			return ( $order_id === $orderId ) ? $language : false;
+		} );
 
 		\WP_Mock::userFunction( 'is_admin', array(
 				'return' => true
@@ -654,9 +649,18 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		$orderId = 123;
 		$lang    = 'fr';
 
-		\WP_Mock::userFunction( 'get_post_meta' )
-			->with( $orderId, WCML_Orders::KEY_LANGUAGE, true )
-			->andReturn( $lang );
+		$order = $this->getMockBuilder( 'WC_Order' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'get_meta' ] )
+			->getMock();
+		$order->method( 'get_meta' )
+			->with( 'wpml_language' )
+			->willReturn( $lang );
+
+		WP_Mock::userFunction( 'wc_get_order', [
+			'args'   => $orderId,
+			'return' => $order,
+		] );
 
 		$this->assertEquals( $lang, WCML_Orders::getLanguage( $orderId ) );
 
