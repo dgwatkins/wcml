@@ -3,6 +3,7 @@
 namespace WCML\Rest\Wrapper\Orders;
 
 use stdClass;
+use tad\FunctionMocker\FunctionMocker;
 
 /**
  * @group rest
@@ -128,11 +129,7 @@ class TestLanguages extends \OTGS_TestCase {
 			]
 		];
 
-		\WP_Mock::userFunction( 'get_post_meta', [
-			'args'   => [ 10, 'wpml_language', true ],
-			'return' => $other_lang
-		] );
-
+		FunctionMocker::replace( \WCML_Orders::class . '::getLanguage', $other_lang );
 
 		$request = $this->getMockBuilder( 'WP_REST_Request' )
 		                ->disableOriginalConstructor()
@@ -272,26 +269,24 @@ class TestLanguages extends \OTGS_TestCase {
 			'lang' => $expected_language
 		] );
 
-		$post = $this->getMockBuilder( 'WC_Order' )
+		$order = $this->getMockBuilder( 'WC_Order' )
 		             ->disableOriginalConstructor()
 		             ->setMethods( [
 			             'get_id'
 		             ] )
 		             ->getMock();
 
-		$post->ID = rand( 1, 100 );
-		$post->method( 'get_id' )->willReturn( $post->ID );
+		$order->ID = 123;
+		$order->method( 'get_id' )->willReturn( $order->ID );
 
-		\WP_Mock::userFunction( 'update_post_meta', [
-			'args'   => [ $post->ID, 'wpml_language', $expected_language ],
-			'times'  => 1,
-			'return' => true,
-		] );
+		$setOrderLang = FunctionMocker::replace( \WCML_Orders::class . '::setLanguage' );
 
 		\WP_Mock::onFilter( 'wpml_language_is_active' )->with( false, $expected_language )->reply( true );
 
 		$subject = $this->get_subject();
-		$subject->insert( $post, $request1, true );
+		$subject->insert( $order, $request1, true );
+
+		$setOrderLang->wasCalledWithOnce( [ $order->ID, $expected_language ] );
 	}
 
 }

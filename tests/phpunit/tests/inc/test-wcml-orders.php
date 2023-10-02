@@ -2,6 +2,9 @@
 
 use tad\FunctionMocker\FunctionMocker;
 
+/**
+ * @group orders
+ */
 class Test_WCML_Orders extends OTGS_TestCase {
 
 	/** @var woocommerce_wpml */
@@ -669,6 +672,24 @@ class Test_WCML_Orders extends OTGS_TestCase {
 		$this->assertEquals( $lang, $orderLanguage( $orderId ) );
 	}
 
+	/**
+	 * @test
+	 *
+	 * @return void
+	 */
+	public function itShouldSetLanguage() {
+		$orderId = 123;
+		$lang    = 'fr';
+
+		$order = $this->getOrder();
+		$order->expects( $this->once() )->method( 'update_meta_data' )->with( \WCML_Orders::KEY_LANGUAGE, $lang );
+		$order->expects( $this->once() )->method( 'save' );
+
+		\WP_Mock::userFunction( 'wc_get_order' )->with( $orderId )->andReturn( $order );
+
+		\WCML_Orders::setLanguage( $orderId, $lang );
+	}
+
 	private function getOrder() {
 		return $this->getMockBuilder( \WC_Order::class )
 		     ->disableOriginalConstructor()
@@ -677,7 +698,9 @@ class Test_WCML_Orders extends OTGS_TestCase {
 				'get_status',
 				'get_meta',
 				'add_meta_data',
+				'update_meta_data',
 				'generate_meta_cache_key',
+				'save',
 		     ] )
 		     ->getMock();
 	}

@@ -577,4 +577,15 @@ class WCML_Orders {
 		return call_user_func_array( curryN( 1, $getLanguage ), func_get_args() );
 	}
 
+	/**
+	 * @param int    $orderId
+	 * @param string $language
+	 *
+	 * @return void
+	 */
+	public static function setLanguage( $orderId, $language ) {
+		Maybe::fromNullable( \wc_get_order( $orderId ) )
+			->map( Fns::tap( invoke( 'update_meta_data' )->with( self::KEY_LANGUAGE, $language ) ) )
+			->map( invoke( 'save' ) );
+	}
 }
