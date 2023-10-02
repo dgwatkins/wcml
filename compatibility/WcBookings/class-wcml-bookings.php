@@ -662,9 +662,7 @@ class WCML_Bookings implements \IWPML_Action {
 	}
 
 	public function set_order_language_on_create_booking_page( $order_id ) {
-		$order = wc_get_order( $order_id );
-		$order->update_meta_data( 'wpml_language', $this->sitepress->get_current_language() );
-		$order->save();
+		\WCML_Orders::setLanguage( $order_id, $this->sitepress->get_current_language() );
 	}
 
 	public function filter_get_booking_products_args( $args ) {

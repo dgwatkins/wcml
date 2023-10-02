@@ -373,9 +373,7 @@ class WCML_Orders {
 	 */
 	public function set_order_language( $order_id ) {
 		if ( ! self::getLanguage( $order_id ) ) {
-			$order = wc_get_order( $order_id );
-			$order->update_meta_data( self::KEY_LANGUAGE, ICL_LANGUAGE_CODE );
-			$order->save();
+			self::setLanguage( $order_id, ICL_LANGUAGE_CODE );
 		}
 	}
 
