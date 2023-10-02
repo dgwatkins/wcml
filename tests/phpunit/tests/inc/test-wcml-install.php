@@ -102,6 +102,7 @@ class Test_WCML_Install extends OTGS_TestCase {
 			'times' => 1,
 		] );
 
+		FunctionMocker::replace( \WCML\COT\Helper::class . '::getTableExists', false );
 
 		$subject = new WCML_Install();
 		$subject->initialize( $this->woocommerce_wpml, $this->sitepress );
