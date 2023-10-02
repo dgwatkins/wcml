@@ -212,11 +212,11 @@
         },
         {
             "name": "otgs/installer",
-            "version": "3.1.0",
+            "version": "3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://git.onthegosystems.com/installer/installer.git",
-                "reference": "2e1a2799db7b004526d4ab093090db24d821ede0"
+                "reference": "5e4ddc0eeb33bfc967a6c067242de470f1a2412d"
             },
             "require": {
                 "composer/installers": "~1.0",
@@ -300,7 +300,7 @@
                 "update",
                 "utils"
             ],
-            "time": "2023-06-06T10:40:59+00:00"
+            "time": "2023-09-17T21:06:11+00:00"
         },
         {
             "name": "otgs/ui",
