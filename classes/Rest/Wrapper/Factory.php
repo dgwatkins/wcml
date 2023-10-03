@@ -37,7 +37,7 @@ class Factory {
 			case 'shop_order':
 				$objects[] = new OrdersLanguages();
 				if ( $isMultiCurrencyOn ) {
-					$objects[] = new OrdersPrices( $woocommerce_wpml->multi_currency->orders );
+					$objects[] = new OrdersPrices();
 				}
 
 				return new Composite( $objects );

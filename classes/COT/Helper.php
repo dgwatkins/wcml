@@ -2,6 +2,7 @@
 
 namespace WCML\COT;
 
+use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
 use WPML\FP\Maybe;
@@ -19,6 +20,8 @@ class Helper {
 	}
 
 	/**
+	 * The name of the custom order table.
+	 *
 	 * @return string|null
 	 */
 	public static function getTableName() {
@@ -26,10 +29,21 @@ class Helper {
 	}
 
 	/**
+	 * The name of the custom order meta table.
+	 *
 	 * @return string|null
 	 */
 	public static function getMetaTableName() {
 		return self::callStaticMethod( OrdersTableDataStore::class, 'get_meta_table_name', null ); // @phpstan-ignore-line
+	}
+
+	/**
+	 * Determine if the custom order table is in usage.
+	 *
+	 * @return bool
+	 */
+	public static function isUsageEnabled() {
+		return self::callStaticMethod( CustomOrdersTableController::class, 'custom_orders_table_usage_is_enabled', false ); // @phpstan-ignore-line
 	}
 
 	/**

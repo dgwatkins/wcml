@@ -1,5 +1,7 @@
 <?php
 
+use WCML\Orders\Helper as OrdersHelper;
+
 class WCML_Multi_Currency_Orders {
 	const WCML_CONVERTED_META_KEY_PREFIX = '_wcml_converted_';
 
@@ -35,7 +37,7 @@ class WCML_Multi_Currency_Orders {
 		add_filter( 'woocommerce_currency_symbol', [ $this, '_use_order_currency_symbol' ] );
 
 		// new order currency/language switchers.
-		add_action( 'woocommerce_process_shop_order_meta', [ $this, 'set_order_currency_on_update' ], 10, 2 );
+		add_action( 'woocommerce_process_shop_order_meta', [ $this, 'set_order_currency_on_update' ] );
 		add_action( 'woocommerce_order_actions_start', [ $this, 'show_order_currency_selector' ] );
 
 		add_filter( 'woocommerce_order_get_items', [ $this, 'set_totals_for_order_items' ], 10, 2 );
@@ -147,7 +149,7 @@ class WCML_Multi_Currency_Orders {
 
 			if ( isset( $_COOKIE['_wcml_order_currency'] ) ) {
 				$currency = get_woocommerce_currency_symbol( $_COOKIE['_wcml_order_currency'] );
-			} elseif ( isset( $_POST['order_id'] ) && $order_currency = get_post_meta( sanitize_text_field( $_POST['order_id'] ), '_order_currency', true ) ) {
+			} elseif ( isset( $_POST['order_id'] ) && $order_currency = OrdersHelper::getCurrency( (int) $_POST['order_id'] ) ) {
 				$currency = get_woocommerce_currency_symbol( $order_currency );
 			}
 
@@ -156,7 +158,7 @@ class WCML_Multi_Currency_Orders {
 				if ( isset( $arg['query'] ) ) {
 					parse_str( $arg['query'], $arg );
 					if ( isset( $arg['post'] ) && get_post_type( $arg['post'] ) == 'shop_order' ) {
-						$currency = get_woocommerce_currency_symbol( get_post_meta( $arg['post'], '_order_currency', true ) );
+						$currency = get_woocommerce_currency_symbol( OrdersHelper::getCurrency( $arg['post'] ) );
 					}
 				}
 			}
@@ -167,16 +169,18 @@ class WCML_Multi_Currency_Orders {
 		return $currency;
 	}
 
-	public function set_order_currency_on_update( $post_id, $post ) {
+	public function set_order_currency_on_update( $post_id ) {
 
 		if ( isset( $_POST['wcml_shop_order_currency'] ) ) {
-			update_post_meta( $post_id, '_order_currency', filter_input( INPUT_POST, 'wcml_shop_order_currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) );
+			OrdersHelper::setCurrency( $post_id, filter_input( INPUT_POST, 'wcml_shop_order_currency', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) );
 		}
 
 	}
 
 	public function show_order_currency_selector( $order_id ) {
-		if ( ! get_post_meta( $order_id, '_order_currency' ) ) {
+		$order = wc_get_order( $order_id );
+
+		if ( $order && $order->get_status() === 'auto-draft' ) { /** @see https://onthegosystems.myjetbrains.com/youtrack/issue/wcml-4500 */
 
 			$current_order_currency = $this->get_order_currency_cookie();
 
@@ -302,7 +306,7 @@ class WCML_Multi_Currency_Orders {
 
 				$order_id = $order_id ?: intval( $_POST['order_id'] );
 
-				$order_currency = get_post_meta( $order_id, '_order_currency', true );
+				$order_currency = OrdersHelper::getCurrency( $order_id );
 
 				if ( ! $order_currency ) {
 					$order_currency = $this->get_order_currency_cookie();
@@ -315,7 +319,7 @@ class WCML_Multi_Currency_Orders {
 						],
 						true
 					) ) {
-						update_post_meta( $order_id, '_order_currency', $order_currency );
+						OrdersHelper::setCurrency( $order_id, $order_currency );
 					}
 				}
 			}
@@ -553,7 +557,7 @@ class WCML_Multi_Currency_Orders {
 			$current_screen = get_current_screen();
 			if ( ! empty( $current_screen ) && $current_screen->id == 'shop_order' ) {
 				$order_id       = method_exists( $order, 'get_id' ) ? $order->get_id() : $order->id;
-				$order_currency = get_post_meta( $order_id, '_order_currency', true );
+				$order_currency = OrdersHelper::getCurrency( $order_id, true );
 				if ( empty( $order_currency ) ) {
 					$value = $this->get_order_currency_cookie();
 				}
@@ -562,5 +566,4 @@ class WCML_Multi_Currency_Orders {
 
 		return $value;
 	}
-
 }

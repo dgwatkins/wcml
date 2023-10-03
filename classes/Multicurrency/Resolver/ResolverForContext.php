@@ -3,6 +3,7 @@
 namespace WCML\MultiCurrency\Resolver;
 
 use WCML\MultiCurrency\Settings;
+use WCML\Orders\Helper as OrdersHelper;
 use WPML\FP\Logic;
 use WPML\FP\Obj;
 use WPML\FP\Relation;
@@ -70,7 +71,7 @@ class ResolverForContext implements Resolver {
 					// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 					$orderId = wc_get_order_id_by_order_key( wc_clean( wp_unslash( $_GET['key'] ) ) );
 					if ( $orderId ) {
-						$clientCurrency = get_post_meta( $orderId, '_order_currency', true );
+						$clientCurrency = OrdersHelper::getCurrency( $orderId, true );
 						wp_cache_set( $cacheKey, $clientCurrency, $cacheGroup );
 						return $clientCurrency;
 					}
@@ -96,10 +97,10 @@ class ResolverForContext implements Resolver {
 
 				if ( $query ) {
 					parse_str( $query, $queryArgs );
-					$postId = Obj::prop( 'post', $queryArgs );
+					$postId = (int) Obj::prop( 'post', $queryArgs );
 
 					if ( $postId && get_post_type( $postId ) === 'shop_order' ) {
-						return get_post_meta( $postId, '_order_currency', true );
+						return OrdersHelper::getCurrency( $postId, true );
 					}
 				}
 			}

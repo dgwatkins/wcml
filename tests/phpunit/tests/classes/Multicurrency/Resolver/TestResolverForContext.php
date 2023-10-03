@@ -5,6 +5,7 @@ namespace WCML\MultiCurrency\Resolver;
 use tad\FunctionMocker\FunctionMocker;
 use WC_Product;
 use WCML\MultiCurrency\Settings;
+use WCML\Orders\Helper as OrdersHelper;
 use WP_Mock;
 use WPML\FP\Fns;
 
@@ -169,7 +170,7 @@ class TestResolverForContext extends \OTGS_TestCase {
 		WP_Mock::userFunction( 'wp_cache_get' )->with( $cacheKey, $cacheGroup )->andReturn( false );
 
 		WP_Mock::userFunction( 'wc_get_order_id_by_order_key' )->with( $key )->andReturn( $orderId );
-		WP_Mock::userFunction( 'get_post_meta' )->with( $orderId, '_order_currency', true )->andReturn( $orderCurrency );
+		self::mockOrderCurrency( $orderId, $orderCurrency );
 
 		WP_Mock::userFunction( 'wp_cache_set' )->once()->with( $cacheKey, $orderCurrency, $cacheGroup );
 
@@ -226,7 +227,7 @@ class TestResolverForContext extends \OTGS_TestCase {
 		$_SERVER['HTTP_REFERER'] = "https://example.com/foo/bar/?foo=bar&post=$orderId";
 
 		WP_Mock::userFunction( 'get_post_type' )->with( $orderId )->andReturn( 'shop_order' );
-		WP_Mock::userFunction( 'get_post_meta' )->with( $orderId, '_order_currency', true )->andReturn( $orderCurrency );
+		self::mockOrderCurrency( $orderId, $orderCurrency );
 
 		$this->assertEquals( $orderCurrency, self::getSubject()->getClientCurrency() );
 	}
@@ -258,5 +259,11 @@ class TestResolverForContext extends \OTGS_TestCase {
 	 */
 	private static function mockIsDisplayOnlyCustomPrices( $bool ) {
 		FunctionMocker::replace( Settings::class . '::isDisplayOnlyCustomPrices', $bool );
+	}
+
+	private static function mockOrderCurrency( $orderId, $orderCurrency ) {
+		FunctionMocker::replace( OrdersHelper::class . '::getCurrency', function( $id ) use ( $orderId, $orderCurrency ) {
+			return $id === $orderId ? $orderCurrency : null;
+		} );
 	}
 }

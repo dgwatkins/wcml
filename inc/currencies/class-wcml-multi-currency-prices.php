@@ -1,5 +1,6 @@
 <?php
 
+use WCML\Orders\Helper as OrdersHelper;
 use WPML\FP\Fns;
 use WPML\FP\Logic;
 use WPML\FP\Obj;
@@ -752,7 +753,7 @@ class WCML_Multi_Currency_Prices {
 		if ( ( $is_ajax_order_action || $is_shop_order_new ) && isset( $_COOKIE['_wcml_order_currency'] ) ) {
 			$currency_code = $_COOKIE['_wcml_order_currency'];
 		} elseif ( isset( $_GET['post'] ) && get_post_type( $_GET['post'] ) == 'shop_order' ) {
-			$currency_code = get_post_meta( $_GET['post'], '_order_currency', true );
+			$currency_code = OrdersHelper::getCurrency( $_GET['post'], true );
 		} elseif ( isset( $_GET['post_type'] ) && $_GET['post_type'] == 'shop_order' && ! is_null( $this->orders_list_currency ) ) {
 			$currency_code = $this->orders_list_currency;
 		} elseif ( isset( $_GET['page'] ) && $_GET['page'] == 'wc-reports' && isset( $_COOKIE['_wcml_reports_currency'] ) ) {

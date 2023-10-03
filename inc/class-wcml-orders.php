@@ -1,5 +1,6 @@
 <?php
 
+use WCML\Orders\Helper as OrdersHelper;
 use WPML\FP\Fns;
 use WPML\FP\Maybe;
 use WPML\FP\Obj;
@@ -410,7 +411,7 @@ class WCML_Orders {
 	}
 
 	public function order_language_dropdown( $order_id ) {
-		if ( ! get_post_meta( $order_id, '_order_currency' ) ) {
+		if ( ! OrdersHelper::getCurrency( $order_id ) ) { // This is probably a bug, I don't see why we would check on the currency here.
 			$languages     = apply_filters(
 				'wpml_active_languages',
 				[],

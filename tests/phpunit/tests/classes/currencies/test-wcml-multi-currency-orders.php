@@ -1,7 +1,10 @@
 <?php
 
+use tad\FunctionMocker\FunctionMocker;
+use WCML\Orders\Helper as OrdersHelper;
+
 /**
- * Class Test_WCML_Multi_Currency_Orders
+ * @group multi-currency-orders
  */
 class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
@@ -18,6 +21,9 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 	private $current_screen = '';
 
 	private $post_meta = [];
+
+	private $order_meta = [];
+
 	private $options = [];
 
 	public function setUp() {
@@ -37,10 +43,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		                               ->disableOriginalConstructor()
 		                               ->getMock();
 
-		$this->order = $this->getMockBuilder( 'WC_Order' )
-		                    ->disableOriginalConstructor()
-							->setMethods( array( 'get_id', 'set_id' ) )
-		                    ->getMock();
+		$this->order = $this->getOrder();
 		$this->order->method( 'get_id' )->will( $this->returnCallback(
 			function (){
 				return $this->id;
@@ -108,16 +111,9 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 			},
 		) );
 
-		\WP_Mock::wpFunction( 'update_post_meta', array(
-			'return' => function ( $id, $meta, $value ) use ( $that ) {
-				return $that->post_meta[ $id ][ $meta ] = $value;
-			},
-		) );
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'return' => function ( $id, $meta, $single ) use ( $that ) {
-				return $that->post_meta[ $id ][ $meta ];
-			},
-		) );
+		$updateOrderCurrency = function( $orderId, $currency ) {
+			$this->order_meta[ $orderId ]['currency'] = $currency;
+		};
 
 		\WP_Mock::wpFunction( 'get_option', array(
 			'return' => function ( $option_name ) use ( $that ) {
@@ -130,6 +126,10 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 				$that->options[$option_name] = $option_value;
 			},
 		) );
+
+		FunctionMocker::replace( OrdersHelper::class . '::getCurrency', function( $orderId ) {
+			return $this->order_meta[ $orderId ]['currency'];
+		} );
 
 		$subject = $this->get_subject();
 
@@ -157,7 +157,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$this->is_admin = true;
 		$this->current_screen->id = 'shop_order';
 		$this->order->set_id( rand(1, 1000) );
-		update_post_meta( $this->order->get_id(), '_order_currency', 'EUR' );
+		$updateOrderCurrency( $this->order->get_id(), 'EUR' );
 		$filtered_currency = $subject->get_currency_for_new_order( $original_currency, $this->order );
 		$this->assertEquals( $original_currency, $filtered_currency );
 
@@ -165,7 +165,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$this->is_admin = true;
 		$this->current_screen->id = 'shop_order';
 		$this->order->set_id( rand(1, 1000) );
-		update_post_meta( $this->order->get_id(), '_order_currency', false );
+		$updateOrderCurrency( $this->order->get_id(), false );
 		update_option( 'woocommerce_currency', $wocommerce_currency = rand_str() );
 		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', [ 'return' => $wocommerce_currency ] );
 		$filtered_currency = $subject->get_currency_for_new_order( $original_currency, $this->order );
@@ -175,7 +175,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$this->is_admin = true;
 		$this->current_screen->id = 'shop_order';
 		$this->order->set_id( rand(1, 1000) );
-		update_post_meta( $this->order->get_id(), '_order_currency', false );
+		$updateOrderCurrency( $this->order->get_id(), false );
 		$_COOKIE['_wcml_order_currency'] = rand_str();
 		$filtered_currency = $subject->get_currency_for_new_order( $original_currency, $this->order );
 		$this->assertEquals( $_COOKIE['_wcml_order_currency'], $filtered_currency );
@@ -190,10 +190,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$_POST['action'] = rand_str();
 
 		$items = array();
-		$order =  $this->getMockBuilder( 'WC_Order' )
-		              ->disableOriginalConstructor()
-		              ->setMethods( array( 'get_items' ) )
-		              ->getMock();
+		$order =  $this->getOrder();
 		$order->method( 'get_items' )->with('coupon')->willReturn( array() );
 
 		\WP_Mock::wpFunction( 'is_admin', [ 'return' => false ] );
@@ -225,10 +222,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$items = array( $item );
 
-		$order =  $this->getMockBuilder( 'WC_Order' )
-		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'get_items' ) )
-		               ->getMock();
+		$order =  $this->getOrder();
 		$order->method( 'get_items' )->with('coupon')->willReturn( array() );
 
 		$product_obj =  $this->getMockBuilder( 'WC_Product' )
@@ -236,10 +230,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		              ->setMethods( [ 'get_price' ] )
 		              ->getMock();
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args' => array( $_POST['order_id'], '_order_currency', true ),
-			'return' => $order_currency
-		) );
+		self::mockGetCurrency( $_POST['order_id'], $order_currency );
 
 		\WP_Mock::wpFunction( 'wc_get_price_excluding_tax', array(
 			'args' => array( $product_obj, array( 'price' => $converted_price , 'qty' => 1 ) ),
@@ -327,10 +318,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$items = array( $item );
 
-		$order =  $this->getMockBuilder( 'WC_Order' )
-		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'get_items' ) )
-		               ->getMock();
+		$order =  $this->getOrder();
 		$order->method( 'get_items' )->with('coupon')->willReturn( array() );
 
 		$product_obj =  $this->getMockBuilder( 'WC_Product' )
@@ -338,10 +326,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		              ->setMethods( [ 'get_price' ] )
 		              ->getMock();
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args' => array( $_POST['order_id'], '_order_currency', true ),
-			'return' => $order_currency
-		) );
+		self::mockGetCurrency( $_POST['order_id'], $order_currency );
 
 		\WP_Mock::wpFunction( 'wc_get_price_excluding_tax', array(
 			'args' => array( $product_obj, array( 'price' => $converted_price , 'qty' => 1 ) ),
@@ -405,10 +390,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$items = array( $item );
 
-		$order =  $this->getMockBuilder( 'WC_Order' )
-		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'get_items' ) )
-		               ->getMock();
+		$order =  $this->getOrder();
 		$order->method( 'get_items' )->with('coupon')->willReturn( array() );
 
 		$product_obj =  $this->getMockBuilder( 'WC_Product' )
@@ -416,10 +398,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		              ->setMethods( [ 'get_price' ] )
 		              ->getMock();
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args' => array( $_POST['order_id'], '_order_currency', true ),
-			'return' => $order_currency
-		) );
+		self::mockGetCurrency( $_POST['order_id'], $order_currency );
 
 		\WP_Mock::wpFunction( 'wc_get_price_excluding_tax', array(
 			'args' => array( $product_obj, array( 'price' => $converted_price , 'qty' => 1 ) ),
@@ -484,10 +463,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$items = array( $item );
 
-		$order =  $this->getMockBuilder( 'WC_Order' )
-		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'get_items' ) )
-		               ->getMock();
+		$order =  $this->getOrder();
 		$order->method( 'get_items' )->with('coupon')->willReturn( array() );
 
 		$product_obj =  $this->getMockBuilder( 'WC_Product' )
@@ -497,10 +473,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$product_obj->method( 'get_price' )->willReturn( $original_price );
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args' => array( $_POST['order_id'], '_order_currency', true ),
-			'return' => $order_currency
-		) );
+		self::mockGetCurrency( $_POST['order_id'], $order_currency );
 
 		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
 		                                         ->disableOriginalConstructor()
@@ -576,22 +549,11 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$items = array( $item );
 
-		$order =  $this->getMockBuilder( 'WC_Order' )
-		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'get_items' ) )
-		               ->getMock();
+		$order =  $this->getOrder();
 		$order->method( 'get_items' )->with('coupon')->willReturn( array() );
 
-		\WP_Mock::wpFunction( 'get_post_meta', [
-			'args'   => [ $_POST['order_id'], '_order_currency', true ],
-			'return' => $order_currency,
-		] );
-
-		\WP_Mock::wpFunction( 'update_post_meta', array(
-			'args' => array( $_POST['order_id'], '_order_currency', $_COOKIE['_wcml_order_currency'] ),
-			'times' => 1,
-			'return' => true
-		) );
+		self::mockGetCurrency( $_POST['order_id'], $order_currency );
+		$this->mockSetCurrency( $_POST['order_id'], $_COOKIE['_wcml_order_currency'] );
 
 		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
 		                                         ->disableOriginalConstructor()
@@ -691,10 +653,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$wc_coupon->shouldReceive( 'is_type' )->with( 'percent' )->andReturn( true );
 		$wc_coupon->shouldReceive( 'get_discount_amount' )->with( $converted_price )->andReturn( $coupon_discount );
 
-		$order =  $this->getMockBuilder( 'WC_Order' )
-		               ->disableOriginalConstructor()
-		               ->setMethods( array( 'get_items' ) )
-		               ->getMock();
+		$order =  $this->getOrder();
 		$order->method( 'get_items' )->with('coupon')->willReturn( array( $order_item_coupon ) );
 
 		$product_obj =  $this->getMockBuilder( 'WC_Product' )
@@ -708,10 +667,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		                                          ->setMethods( array( 'raw_price_filter' ) )
 		                                          ->getMock();
 
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args' => array( $_POST['order_id'], '_order_currency', true ),
-			'return' => $order_currency
-		) );
+		self::mockGetCurrency( $_POST['order_id'], $order_currency );
 
 		$this->woocommerce_wpml->products = $this->getMockBuilder( 'WCML_Products' )
 		                                         ->disableOriginalConstructor()
@@ -766,5 +722,51 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 		$filtered_itemmeta = $subject->add_woocommerce_hidden_order_itemmeta( $itemmeta );
 
 		$this->assertSame( array( '_wcml_converted_subtotal', '_wcml_converted_total', '_wcml_total_qty' ), $filtered_itemmeta );
+	}
+
+	/**
+	 * @return WC_Order&\PHPUnit\Framework\MockObject\MockObject
+	 */
+	private function getOrder() {
+		return $this->getMockBuilder( \WC_Order::class )
+			->setMethods( [
+				'get_id',
+				'set_id',
+				'get_currency',
+				'set_currency',
+				'get_items',
+				'get_status',
+				'save',
+			] )
+			->getMock();
+	}
+
+	/**
+	 * @param int    $orderId
+	 * @param string $currency
+	 *
+	 * @return void
+	 */
+	private static function mockGetCurrency( $orderId, $currency ) {
+		FunctionMocker::replace( OrdersHelper::class . '::getCurrency', function( $id ) use ( $orderId, $currency ) {
+			return $id == $orderId ? $currency : null;
+		} );
+	}
+
+	/**
+	 * @param int    $orderId
+	 * @param string $currency
+	 *
+	 * @return void
+	 */
+	private function mockSetCurrency( $orderId, $currency ) {
+		$order = $this->getOrder();
+		$order->expects( $this->once() )->method( 'set_currency' )->with( $currency );
+		$order->expects( $this->once() )->method( 'save' );
+
+		WP_Mock::userFunction( 'wc_get_order', [
+			'args'   => $orderId,
+			'return' => $order,
+		] );
 	}
 }

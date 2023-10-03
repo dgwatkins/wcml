@@ -2,7 +2,9 @@
 
 namespace WCML\Compatibility\WcSubscriptions;
 
+use tad\FunctionMocker\FunctionMocker;
 use WC_Product_Subscription_Variation;
+use WCML\Orders\Helper as OrdersHelper;
 use woocommerce_wpml;
 use WP_Mock;
 use wpdb;
@@ -213,10 +215,9 @@ class TestMulticurrencyHooks extends \OTGS_TestCase {
 		$subscription_currency = 'EUR';
 		$client_currency       = 'USD';
 
-		WP_Mock::wpFunction( 'get_post_meta', [
-			'args'   => [ $subscription_id, '_order_currency', true ],
-			'return' => $subscription_currency
-		] );
+		FunctionMocker::replace( OrdersHelper::class . '::getCurrency', function( $id ) use ( $subscription_id, $subscription_currency ) {
+			return $id === $subscription_id ? $subscription_currency : null;
+		} );
 
 		WP_Mock::wpFunction( 'wcml_is_multi_currency_on', [
 			'return' => true

@@ -2,6 +2,8 @@
 
 namespace WCML\Compatibility\WcBookings;
 
+use WCML\Orders\Helper as OrdersHelper;
+
 /**
  * @todo: Most of the code in this class was just moved from
  * the original \WCML_Bookings class with the minimal
@@ -765,7 +767,7 @@ class MulticurrencyHooks implements \IWPML_Action {
 	}
 
 	public function set_order_currency_on_create_booking_page( $order_id ) {
-		update_post_meta( $order_id, '_order_currency', $this->get_cookie_booking_currency() );
+		OrdersHelper::setCurrency( $order_id, $this->get_cookie_booking_currency() );
 	}
 
 	public function filter_booking_currency_symbol( $currency ) {
