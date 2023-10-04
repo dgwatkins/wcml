@@ -7,13 +7,10 @@ namespace WCML\AdminNotices;
  */
 class TestReview extends \OTGS_TestCase {
 
-	private function getSubject( $wpmlNotices = null, $wpdb = null, $sitepress = null ) {
+	private function getSubject( $wpmlNotices = null ) {
 		$wpmlNotices = $wpmlNotices ?: $this->getWpmlNotices();
-		$wpdb        = $wpdb ?: $this->getWpdb();
-		$sitepress   = $sitepress ?: $this->getSitepress();
 
-
-		return new Review( $wpmlNotices, $wpdb, $sitepress );
+		return new Review( $wpmlNotices );
 	}
 
 	private function getWpmlNotices() {
@@ -26,19 +23,6 @@ class TestReview extends \OTGS_TestCase {
 				            'add_notice',
 			            ]
 		            )->disableOriginalConstructor()->getMock();
-	}
-
-	private function getSitepress() {
-		return $this->getMockBuilder( \WPML\Core\ISitePress::class )
-		            ->setMethods(
-			            [
-				            'get_default_language',
-			            ]
-		            )->disableOriginalConstructor()->getMock();
-	}
-
-	private function getWpdb() {
-		return $this->stubs->wpdb();
 	}
 
 	/**
@@ -79,7 +63,11 @@ class TestReview extends \OTGS_TestCase {
 			'return' => true,
 		] );
 
-		$subject->onNewOrder();
+		$order = $this->getMockBuilder( '\WC_Order' )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$subject->onNewOrder( $order );
 	}
 
 	/**
@@ -95,28 +83,19 @@ class TestReview extends \OTGS_TestCase {
 
 		$defaultCurrency = 'USD';
 		$defaultLanguage = 'en';
-		$wpdb            = $this->getWpdb();
-		$sitepress       = $this->getSitepress();
+
+		\WP_Mock::userFunction( 'wcml_is_multi_currency_on', [
+			'return' => true,
+		] );
 
 		\WP_Mock::userFunction( 'wcml_get_woocommerce_currency_option', [
 			'times'  => 1,
 			'return' => $defaultCurrency,
 		] );
 
-		$sitepress->method( 'get_default_language' )->willReturn( $defaultLanguage );
+		\WP_Mock::onFilter( 'wpml_default_language')->with( '' )->reply( $defaultLanguage );
 
-		$query = $wpdb->prepare( "SELECT COUNT(p.ID) FROM {$wpdb->postmeta} as pm 
-				INNER JOIN {$wpdb->posts} as p ON pm.post_id = p.ID 
-				WHERE p.post_type = 'shop_order' AND ( 
- 				( pm.meta_key = '_order_currency' AND pm.meta_value != %s ) 
- 				OR 
- 				( pm.meta_key = 'wpml_language' AND pm.meta_value != %s  ) )",
-			$defaultCurrency, $defaultLanguage );
-
-		$wpdb->method( 'get_var' )->with( $query )->willReturn( 1 );
-
-		$subject = $this->getSubject( null, $wpdb, $sitepress );
-
+		$subject = $this->getSubject();
 
 		\WP_Mock::userFunction( 'add_option', [
 			'args'   => [ Review::OPTION_NAME, true ],
@@ -124,7 +103,15 @@ class TestReview extends \OTGS_TestCase {
 			'return' => true,
 		] );
 
-		$subject->onNewOrder();
+		$order = $this->getMockBuilder( '\WC_Order' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'get_currency', 'get_meta' ] )
+			->getMock();
+
+		$order->method( 'get_currency' )->willReturn( $defaultCurrency );
+		$order->method( 'get_meta' )->with( 'wpml_language' )->willReturn( $defaultCurrency );
+
+		$subject->onNewOrder( $order );
 	}
 
 	/**
@@ -240,6 +227,7 @@ class TestReview extends \OTGS_TestCase {
 			'woocommerce_page_wc-settings',
 			'woocommerce_page_wc-status',
 			'woocommerce_page_wc-addons',
+			'woocommerce_page_wc-orders',
 			'edit-shop_order',
 			'edit-shop_coupon',
 			'edit-product',
