@@ -1,10 +1,7 @@
 <?php
 
 /**
- * Class Test_WCML_Setup_UI
  * @group wcml-1987
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
  *
  */
 class Test_WCML_Setup_UI extends OTGS_TestCase {
@@ -89,6 +86,8 @@ class Test_WCML_Setup_UI extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function setup_header(){
 		$subject = $this->get_subject();
@@ -143,6 +142,8 @@ class Test_WCML_Setup_UI extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function setup_content(){
 		$subject = $this->get_subject();
@@ -157,6 +158,8 @@ class Test_WCML_Setup_UI extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function setup_footer(){
 		$subject = $this->get_subject();
@@ -172,6 +175,8 @@ class Test_WCML_Setup_UI extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function wizard_notice(){
 		$subject = $this->get_subject();

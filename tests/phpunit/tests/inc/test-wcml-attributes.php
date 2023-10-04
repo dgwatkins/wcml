@@ -1,10 +1,5 @@
 <?php
 /**
- * Class Test_WCML_Attributes
- *
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
- *
  * @group wcml-attributes
  */
 class Test_WCML_Attributes extends OTGS_TestCase {
