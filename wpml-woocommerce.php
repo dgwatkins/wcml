@@ -124,6 +124,7 @@ function wcml_loader() {
 		\WCML\Rest\Store\HooksFactory::class,
 		\WCML\Importer\Products::class,
 		\WCML\COT\Hooks::class,
+		\WCML\COT\Notice::class,
 		\WCML\DisplayAsTranslated\FrontendHooksFactory::class,
 	];
 
