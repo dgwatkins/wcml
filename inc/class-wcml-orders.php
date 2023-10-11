@@ -566,12 +566,20 @@ class WCML_Orders {
 	 */
 	public static function getLanguage( $orderId = null ) {
 		$getLanguage = function( $orderId ) {
-			return Maybe::of( wc_get_order( $orderId ) )
+			/**
+			 * Allow adjusting the order ID before fetching the language.
+			 *
+			 * @since 5.3
+			 *
+			 * @param int $orderId
+			 */
+			$orderId = apply_filters( 'wcml_order_id_for_language', $orderId );
+
+			return Maybe::fromNullable( \wc_get_order( $orderId ) )
 				->map( invoke( 'get_meta' )->with( self::KEY_LANGUAGE ) )
 				->getOrElse( false );
 		};
 
-		/* phpcs:ignore PHPCompatibility.FunctionUse.ArgumentFunctionsReportCurrentValue.NeedsInspection */
 		return call_user_func_array( curryN( 1, $getLanguage ), func_get_args() );
 	}
 

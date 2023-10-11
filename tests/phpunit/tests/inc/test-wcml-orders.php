@@ -674,6 +674,25 @@ class Test_WCML_Orders extends OTGS_TestCase {
 
 	/**
 	 * @test
+	 */
+	public function itShouldNotFailWithInexistantOrder() {
+		$orderId = 123;
+		$lang    = false;
+
+		WP_Mock::userFunction( 'wc_get_order', [
+			'args'   => $orderId,
+			'return' => false,
+		] );
+
+		$this->assertEquals( $lang, WCML_Orders::getLanguage( $orderId ) );
+
+		$orderLanguage = WCML_Orders::getLanguage();
+
+		$this->assertEquals( $lang, $orderLanguage( $orderId ) );
+	}
+
+	/**
+	 * @test
 	 *
 	 * @return void
 	 */

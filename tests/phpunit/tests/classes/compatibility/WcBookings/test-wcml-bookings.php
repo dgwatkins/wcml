@@ -119,7 +119,7 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 		\WP_Mock::wpFunction( 'remove_action', array( 'times' => 1 ) );
 
 		$subject = $this->get_subject();
-		\WP_Mock::expectFilterAdded( 'get_post_metadata', Fns::withoutRecursion( Fns::identity(), array( $subject, 'get_order_language' ) ), 10, 4 );
+		\WP_Mock::expectFilterAdded( 'wcml_order_id_for_language', array( $subject, 'order_id_for_language' ) );
 		\WP_Mock::expectActionAdded( 'wc-booking-reminder', array( $subject, 'translate_notification' ), 9 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_booking_reminder_notification', array( $subject, 'translate_notification' ), 9 );
 		\WP_Mock::expectFilterAdded( 'woocommerce_booking_confirmed_notification', array( $subject, 'translate_notification' ), 9 );
@@ -154,33 +154,24 @@ class Test_WCML_Bookings extends OTGS_TestCase {
 	/**
 	 * @test
 	 */
-	public function get_order_language() {
+	public function order_id_for_language() {
 
-		$booking_id    = mt_rand( 1, 100 );
-		$order_item_id = mt_rand( 1, 100 );
-		$order_id      = mt_rand( 1, 100 );
-		$expected      = rand_str();
+		$booking_id = 1234;
+		$order_id   = 5678;
 
-		\WP_Mock::wpFunction( 'get_post_type', array(
-			'args'   => array( $booking_id ),
-			'return' => 'wc_booking',
-		) );
-		\WP_Mock::wpFunction( 'get_post_meta', array(
-			'args'   => array( $booking_id, '_booking_order_item_id', true ),
-			'return' => $order_item_id,
-		) );
-		$sql = 'SELECT order_id FROM wp_woocommerce_order_items WHERE order_item_id = ' . $order_item_id;
-		$this->wpdb->method( 'get_var' )->with( $sql )->willReturn( $order_id );
-		$this->wpdb->method( 'prepare' )->will( $this->returnCallback( function() {
-			return call_user_func_array( 'sprintf', func_get_args() );
-		} ) );
-		FunctionMocker::replace( 'WCML_Orders::getLanguage', function( $orderId ) use ( $order_id, $expected ) {
-			return ( $order_id === $orderId ) ? $expected : false;
-		} );
+		\WP_Mock::userFunction( 'get_post_type', [
+			'args'   => [ $booking_id ],
+			'return' => WCML_Bookings::POST_TYPE,
+		] );
+
+		\WP_Mock::userFunction( 'wp_get_post_parent_id', [
+			'args'   => [ $booking_id ],
+			'return' => $order_id,
+		] );
 
 		$subject = $this->get_subject();
-		$language = $subject->get_order_language( null, $booking_id, 'wpml_language', true );
-		$this->assertEquals( $language, $expected );
+		$result = $subject->order_id_for_language( $booking_id );
+		$this->assertEquals( $result, $order_id );
 	}
 
 
