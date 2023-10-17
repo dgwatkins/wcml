@@ -98,6 +98,8 @@ class WCML_Multi_Currency_Prices {
 			add_filter( 'wc_price_args', [ $this, 'filter_wc_price_args' ] );
 		}
 
+		add_filter( 'wc_price_args', [ $this, 'filter_wc_price_args_on_order_admin_screen' ] );
+
 		add_action( 'woocommerce_cart_loaded_from_session', [ $this, 'recalculate_totals' ], PHP_INT_MAX );
 
 		// formatting options.
@@ -884,8 +886,19 @@ class WCML_Multi_Currency_Prices {
 
 	}
 
-	public function filter_wc_price_args( $args ) {
+	/**
+	 * @param array $args
+	 *
+	 * @return array
+	 */
+	public function filter_wc_price_args_on_order_admin_screen( $args ) {
+		if ( \WCML\COT\Helper::isOrderAdminScreen() ) {
+			$args = $this->filter_wc_price_args( $args );
+		}
+		return $args;
+	}
 
+	public function filter_wc_price_args( $args ) {
 		if ( isset( $args['currency'] ) ) {
 
 			if ( isset( $this->multi_currency->currencies[ $args['currency'] ]['decimal_sep'] ) ) {

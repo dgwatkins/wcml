@@ -5,6 +5,7 @@ namespace WCML\COT;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
+use Automattic\WooCommerce\Utilities\OrderUtil;
 use WPML\FP\Maybe;
 use function WPML\FP\invoke;
 
@@ -72,5 +73,30 @@ class Helper {
 		}
 
 		return $object;
+	}
+
+	/**
+	 * Checks if the current screen is an admin screen for WooCommerce orders with the HPOS.
+	 *
+	 * This method is designed to safeguard the code by first checking if the necessary class
+	 * and method are available in the current environment.
+	 *
+	 * @return bool
+	 */
+	public static function isOrderAdminScreen() {
+		static $isOrderAdminScreen;
+
+		if ( ! isset( $isOrderAdminScreen ) ) {
+			$isOrderAdminScreen = false;
+
+			if ( is_admin() ) {
+				$currentScreen = get_current_screen();
+				if ( $currentScreen ) {
+					$isOrderAdminScreen = self::callStaticMethod( OrderUtil::class, 'get_order_admin_screen', null ) === $currentScreen->id; // @phpstan-ignore-line
+				}
+			}
+		}
+
+		return $isOrderAdminScreen;
 	}
 }
