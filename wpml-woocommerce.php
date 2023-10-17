@@ -130,6 +130,7 @@ function wcml_loader() {
 		\WCML\OrderNotes\Hooks::class,
 		\WCML\User\Hooks::class,
 		\WCML\Exporter\AllLanguagesHooks::class,
+		\WCML\Exporter\AttributeHeadersHooks::class,
 	];
 
 	if (

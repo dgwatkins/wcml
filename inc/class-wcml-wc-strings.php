@@ -112,7 +112,21 @@ class WCML_WC_Strings {
 			$product_id = $product_obj->get_id();
 		}
 
-		$name = $this->woocommerce_wpml->attributes->filter_attribute_name( $name, $product_id, true );
+		$name = $this->woocommerce_wpml->attributes->filter_attribute_name(
+			$name,
+			$product_id,
+			/**
+			 * This filter allows to override the attribute name sanitization, used only for legacy and specific purposes.
+			 *
+			 *
+			 * @param  bool   $state Whether we should run sanitization.
+			 * @param  string $name  Attribute name
+			 * @param  string $label Attribute label
+			 *
+			 * @return string
+			 */
+			apply_filters( 'wcml_sanitize_name_for_translated_attribute_label', true, $name, $label )
+		);
 
 		if ( $product_id ) {
 
