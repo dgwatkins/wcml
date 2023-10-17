@@ -28,8 +28,10 @@ class WCML_Multi_Currency_Orders {
 	public function orders_init() {
 
 		add_action( 'restrict_manage_posts', [ $this, 'show_orders_currencies_selector' ] );
+		add_action( 'woocommerce_order_list_table_restrict_manage_orders', [ $this, 'show_orders_currencies_selector' ] );
 		$this->wp->add_query_var( '_order_currency' );
 
+		add_filter( 'woocommerce_order_list_table_prepare_items_query_args', [ $this, 'hpos_filter_orders_by_currency' ] );
 		add_filter( 'posts_join', [ $this, 'filter_orders_by_currency_join' ] );
 		add_filter( 'posts_where', [ $this, 'filter_orders_by_currency_where' ] );
 
@@ -61,9 +63,9 @@ class WCML_Multi_Currency_Orders {
 	}
 
 	public function show_orders_currencies_selector() {
-		global $wp_query, $typenow;
-
-		if ( 'shop_order' !== $typenow ) {
+		global $wp_query;
+		$isOrderAdminScreen = \WCML\COT\Helper::isOrderAdminScreen();
+		if ( ! $isOrderAdminScreen && ! $this->is_legacy_orders_page() ) {
 			return;
 		}
 
@@ -77,6 +79,8 @@ class WCML_Multi_Currency_Orders {
 				$selected = '';
 				if ( isset( $wp_query->query['_order_currency'] ) ) {
 					$selected = selected( $currency, $wp_query->query['_order_currency'], false );
+				} elseif ( $isOrderAdminScreen ) {
+					$selected = selected( $currency, $this->get_order_currency_get(), false );
 				}
 				$text = sprintf( '%s (%s)', $currencies[ $currency ], get_woocommerce_currency_symbol( $currency ) );
 				?>
@@ -88,10 +92,30 @@ class WCML_Multi_Currency_Orders {
 		<?php
 	}
 
-	public function filter_orders_by_currency_join( $join ) {
-		global $wp_query, $typenow, $wpdb;
+	/**
+	 * Check if the current page is a WooCommerce orders page (non-HPOS).
+	 *
+	 * @return bool True if it's a WooCommerce orders page, false otherwise.
+	 */
+	private function is_legacy_orders_page() {
+		global $typenow;
+		return 'shop_order' === $typenow;
+	}
 
-		if ( $typenow == 'shop_order' && ! empty( $wp_query->query['_order_currency'] ) ) {
+	/**
+	 * Check if a currency filter is applied on the current page.
+	 *
+	 * @return bool True if a currency filter is applied, false otherwise.
+	 */
+	private function is_currency_filter_applied() {
+		global $wp_query;
+		return ! empty( $wp_query->query['_order_currency'] );
+	}
+
+	public function filter_orders_by_currency_join( $join ) {
+		global $wpdb;
+
+		if ( $this->is_legacy_orders_page() && $this->is_currency_filter_applied() ) {
 			$join .= " JOIN {$wpdb->postmeta} wcml_pm ON {$wpdb->posts}.ID = wcml_pm.post_id AND wcml_pm.meta_key='_order_currency'";
 		}
 
@@ -99,13 +123,34 @@ class WCML_Multi_Currency_Orders {
 	}
 
 	public function filter_orders_by_currency_where( $where ) {
-		global $wp_query, $typenow;
+		global $wp_query;
 
-		if ( $typenow == 'shop_order' && ! empty( $wp_query->query['_order_currency'] ) ) {
+		if ( $this->is_legacy_orders_page() && $this->is_currency_filter_applied() ) {
 			$where .= " AND wcml_pm.meta_value = '" . esc_sql( $wp_query->query['_order_currency'] ) . "'";
 		}
 
 		return $where;
+	}
+
+	/**
+	 * Filter orders by currency in a WooCommerce system.
+	 *
+	 * This method is responsible for modifying the query arguments used for filtering orders
+	 * based on the selected currency from the WooCommerce admin selector. If a currency is
+	 * selected in the admin, it adds the 'currency' filter to the query arguments.
+	 *
+	 * @param array $query_args The original query arguments for filtering orders.
+	 *
+	 * @return array The modified query arguments, including the 'currency' filter if applicable.
+	 */
+	public function hpos_filter_orders_by_currency( $query_args ) {
+		$currencyFromAdminSelector = $this->get_order_currency_get();
+
+		if ( $currencyFromAdminSelector ) {
+			$query_args['currency'] = $currencyFromAdminSelector;
+		}
+
+		return $query_args;
 	}
 
 	public function _use_order_currency_symbol( $currency ) {
@@ -117,14 +162,14 @@ class WCML_Multi_Currency_Orders {
 		$current_screen = get_current_screen();
 
 		remove_filter( 'woocommerce_currency_symbol', [ $this, '_use_order_currency_symbol' ] );
-		if ( ! empty( $current_screen ) && $current_screen->id == 'shop_order' ) {
+		if ( ! empty( $current_screen ) && ( 'shop_order' === $current_screen->id ) ) {
 
 			$the_order = new WC_Order( get_the_ID() );
 			if ( $the_order ) {
 				$order_currency = $the_order->get_currency();
 
 				if ( ! $order_currency && isset( $_COOKIE['_wcml_order_currency'] ) ) {
-					$order_currency = $_COOKIE['_wcml_order_currency'];
+					$order_currency = sanitize_text_field( wp_unslash( $_COOKIE['_wcml_order_currency'] ) );
 				}
 
 				$currency = get_woocommerce_currency_symbol( $order_currency );
@@ -345,7 +390,7 @@ class WCML_Multi_Currency_Orders {
 				}
 				
 				if ( 'total' === $key
-				     && ( $item->get_total() !== $item->get_subtotal() || $this->total_is_changed( $item ) )
+					&& ( $item->get_total() !== $item->get_subtotal() || $this->total_is_changed( $item ) )
 				) {
 					
 					$converted_totals[ $key ] = $item->get_total();
@@ -473,6 +518,16 @@ class WCML_Multi_Currency_Orders {
 			return wcml_get_woocommerce_currency_option();
 		}
 
+	}
+
+	/**
+	 * This function extracts and sanitizes the order currency filter value from the QUERY_STRING.
+	 *
+	 * @return string|null The sanitized value, or null if it is not present.
+	 */
+
+	private function get_order_currency_get() {
+		return isset( $_GET['_order_currency'] ) ? sanitize_text_field( wp_unslash( $_GET['_order_currency'] ) ) : null;
 	}
 
 	public function set_order_currency_on_ajax_update() {
