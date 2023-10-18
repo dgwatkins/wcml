@@ -26,11 +26,11 @@ class Factory extends ComponentFactory implements IStandAloneAction {
 			$hooks[] = new \WCML_Bookings(
 				getSitePress(),
 				getWooCommerceWpml(),
-				self::getWooCommerce(),
 				self::getWpdb(),
 				self::getElementTranslationPackage(),
 				self::getPostTranslations()
 			);
+			$hooks[] = new Emails( getSitePress(), getWooCommerceWpml(), self::getWooCommerce() );
 			$hooks[] = new Templates\MyBookings();
 		}
 

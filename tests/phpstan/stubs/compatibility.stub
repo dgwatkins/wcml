@@ -82,6 +82,12 @@ class WC_Booking extends \WC_Bookings_Data
  */
 function get_wc_booking( $id ) {}
 
+class WC_Email_New_Booking extends WC_Email {}
+class WC_Email_Booking_Confirmed extends WC_Email {}
+class WC_Email_Booking_Reminder extends WC_Email {}
+class WC_Email_Booking_Cancelled extends WC_Email {}
+class WC_Email_Admin_Booking_Cancelled extends WC_Email {}
+
 // WooCommerce Composite Products
 function is_composite_product() {}
 

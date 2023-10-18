@@ -60,7 +60,7 @@ class TestWCMLBookings extends OTGS_TestCase {
 			);
 		}
 
-		$this->getSubject( null, null, null, null, null, $wpmlPostTranslations )->save_booking_action_handler( $bookingId );
+		$this->getSubject( null, null, null, null, $wpmlPostTranslations )->save_booking_action_handler( $bookingId );
 	}
 
 	/** @return array [ $postType, $bookingId, $translatedBookings, $expectedGetPostMeta, $expectUpdatePostMeta ] */
@@ -102,7 +102,6 @@ class TestWCMLBookings extends OTGS_TestCase {
 	private function getSubject(
 		$sitepress = null,
 		$woocommerce_wpml = null,
-		$woocommerce = null,
 		$wpdb = null,
 		$wpmlElementTranslationPackage = null,
 		$wpmlPostTranslations = null
@@ -129,12 +128,6 @@ class TestWCMLBookings extends OTGS_TestCase {
 				->getMock();
 		}
 
-		if ( null === $woocommerce ) {
-			$woocommerce = $this->getMockBuilder( woocommerce::class )
-				->disableOriginalConstructor()
-				->getMock();
-		}
-
 		if ( null === $wpdb ) {
 			$wpdb = $this->getMockBuilder( wpdb::class )
 				->disableOriginalConstructor()
@@ -156,7 +149,6 @@ class TestWCMLBookings extends OTGS_TestCase {
 		return new WCML_Bookings(
 			$sitepress,
 			$woocommerce_wpml,
-			$woocommerce,
 			$wpdb,
 			$wpmlElementTranslationPackage,
 			$wpmlPostTranslations

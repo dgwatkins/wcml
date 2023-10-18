@@ -124,6 +124,7 @@ FunctionMocker::init(
 			'time',
 			'defined',
 			'time',
+			'get_class',
 		],
 	]
 );

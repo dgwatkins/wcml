@@ -1263,7 +1263,7 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 			$woocommerce_wpml = $this->get_test_subject();
 		}
 
-		$subject = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->woocommerce, $this->wpdb , $this->tp, $this->wpml_post_translations );
+		$subject = new WCML_Bookings( $this->sitepress, $woocommerce_wpml, $this->wpdb , $this->tp, $this->wpml_post_translations );
 		$subject->add_hooks();
 
 		return $subject;
