@@ -1,6 +1,7 @@
 <?php
 
 use WCML\Orders\Helper as OrdersHelper;
+use WPML\FP\Fns;
 
 class WCML_Multi_Currency_Orders {
 	const WCML_CONVERTED_META_KEY_PREFIX = '_wcml_converted_';
@@ -42,7 +43,7 @@ class WCML_Multi_Currency_Orders {
 		add_action( 'woocommerce_process_shop_order_meta', [ $this, 'set_order_currency_on_update' ] );
 		add_action( 'woocommerce_order_actions_start', [ $this, 'show_order_currency_selector' ] );
 
-		add_filter( 'woocommerce_order_get_items', [ $this, 'set_totals_for_order_items' ], 10, 2 );
+		add_filter( 'woocommerce_order_get_items', Fns::withoutRecursion( Fns::identity(), [ $this, 'set_totals_for_order_items' ] ), 10, 2 );
 
 		add_filter( 'woocommerce_hidden_order_itemmeta', [ $this, 'add_woocommerce_hidden_order_itemmeta' ] );
 
@@ -311,9 +312,6 @@ class WCML_Multi_Currency_Orders {
 	 * @return array
 	 */
 	private function get_order_coupons_objects( $order ) {
-
-		remove_filter( 'woocommerce_order_get_items', [ $this, 'set_totals_for_order_items' ], 10 );
-
 		$order_coupons   = $order->get_items( 'coupon' );
 		$coupons_objects = [];
 
@@ -323,8 +321,6 @@ class WCML_Multi_Currency_Orders {
 				$coupons_objects[] = new WC_Coupon( $coupon_data['code'] );
 			}
 		}
-
-		add_filter( 'woocommerce_order_get_items', [ $this, 'set_totals_for_order_items' ], 10, 2 );
 
 		return $coupons_objects;
 	}

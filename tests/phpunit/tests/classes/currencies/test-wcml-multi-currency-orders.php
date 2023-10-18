@@ -2,6 +2,7 @@
 
 use tad\FunctionMocker\FunctionMocker;
 use WCML\Orders\Helper as OrdersHelper;
+use WPML\FP\Fns;
 
 /**
  * @group multi-currency-orders
@@ -86,7 +87,7 @@ class Test_WCML_Multi_Currency_Orders extends OTGS_TestCase {
 
 		$subject = $this->get_subject();
 
-		$this->expectFilterAdded( 'woocommerce_order_get_items', array( $subject, 'set_totals_for_order_items' ), 10, 2 );
+		WP_Mock::expectFilterAdded( 'woocommerce_order_get_items', Fns::withoutRecursion( Fns::identity(), array( $subject, 'set_totals_for_order_items' ) ), 10, 2 );
 
 		$subject->orders_init();
 	}
