@@ -1,6 +1,7 @@
 <?php // phpcs:disable WordPress.WP.PreparedSQL.NotPrepared
 
 use WPML\FP\Str;
+use WCML\Compatibility\WcBookings\Prices;
 
 /**
  * Class WCML_Bookings.
@@ -392,7 +393,7 @@ class WCML_Bookings implements \IWPML_Action {
 					update_post_meta( $trnsl_person_id, 'max', get_post_meta( $person, 'max', true ) );
 					update_post_meta( $trnsl_person_id, 'min', get_post_meta( $person, 'min', true ) );
 
-					if ( get_post_meta( $person, '_wcml_custom_costs_status', true ) && $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ) {
+					if ( get_post_meta( $person, Prices::CUSTOM_COSTS_STATUS_KEY, true ) && $this->woocommerce_wpml->settings['enable_multi_currency'] == WCML_MULTI_CURRENCIES_INDEPENDENT ) {
 						$currencies = $this->woocommerce_wpml->multi_currency->get_currencies();
 
 						foreach ( $currencies as $code => $currency ) {

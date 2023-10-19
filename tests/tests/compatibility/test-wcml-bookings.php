@@ -2,6 +2,7 @@
 
 use WCML\Compatibility\WcBookings\MulticurrencyHooks;
 use WCML\Compatibility\WcBookings\SharedHooks;
+use WCML\Compatibility\WcBookings\Prices;
 
 /**
  * @group compatibility
@@ -101,7 +102,7 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 		// Check with disabled custom costs.
 		$_POST['_wcml_custom_costs'] = 0;
 		$this->multicurrencyHooks->save_custom_costs( $product_id );
-		$this->assertEquals( '0', get_post_meta( $product_id, '_wcml_custom_costs_status', true ) );
+		$this->assertEquals( '0', get_post_meta( $product_id, Prices::CUSTOM_COSTS_STATUS_KEY, true ) );
 		$this->assertEquals( '', get_post_meta( $product_id, '_wc_booking_pricing', true ) );
 
 		// Enable custom costs.
@@ -130,7 +131,7 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 		}
 
 		$this->multicurrencyHooks->save_custom_costs( $product_id );
-		$this->assertEquals( '1', get_post_meta( $product_id, '_wcml_custom_costs_status', true ) );
+		$this->assertEquals( '1', get_post_meta( $product_id, Prices::CUSTOM_COSTS_STATUS_KEY, true ) );
 
 		foreach ( $this->currencies as $currency_code => $currency_data ) {
 			$this->assertEquals( '100', get_post_meta( $product_id, '_wc_booking_cost_' . $currency_code, true ) );
@@ -441,7 +442,7 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 		$this->check_meta_values( $translated_bookable_person, $expected );
 
 		// Enable custom costs for this specific post.
-		update_post_meta( $bookable_person, '_wcml_custom_costs_status', true );
+		update_post_meta( $bookable_person, Prices::CUSTOM_COSTS_STATUS_KEY, true );
 		$expected = array();
 		foreach ( $this->currencies as $currency_code => $currency ) {
 			$expected[ 'block_cost_' . $currency_code ] = $rates[ $currency_code ] * $block_cost;
@@ -1349,7 +1350,7 @@ class TestMulticurrencyHooks extends WCML_UnitTestCase {
 		$subject = $this->getMulticurrencyHooks( $woocommerce_wpml );
 
 		update_post_meta( $product, '_wc_display_cost_' . $this->usd_code, $base_costs );
-		update_post_meta( $product, '_wcml_custom_costs_status', true );
+		update_post_meta( $product, Prices::CUSTOM_COSTS_STATUS_KEY, true );
 		$this->assertEquals( $base_costs, $subject->filter_wc_booking_cost( $check, $product, '_wc_display_cost', true ) );
 	}
 

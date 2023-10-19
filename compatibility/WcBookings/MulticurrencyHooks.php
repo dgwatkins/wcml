@@ -36,7 +36,7 @@ class MulticurrencyHooks implements \IWPML_Action {
 		add_action( 'save_post', [ $this, 'save_custom_costs' ], \WCML_Bookings::PRIORITY_SAVE_POST_ACTION - 1 );
 
 		add_filter( 'woocommerce_bookings_process_cost_rules_cost', [ $this, 'wc_bookings_process_cost_rules_cost' ], 10, 3 );
-		add_filter(	'woocommerce_bookings_process_cost_rules_base_cost', [ $this, 'wc_bookings_process_cost_rules_base_cost' ], 10, 3 );
+		add_filter( 'woocommerce_bookings_process_cost_rules_base_cost', [ $this, 'wc_bookings_process_cost_rules_base_cost' ], 10, 3 );
 		add_filter( 'woocommerce_bookings_process_cost_rules_override_block', [ $this, 'wc_bookings_process_cost_rules_override_block_cost' ], 10, 3 );
 
 		add_action( 'woocommerce_bookings_after_create_booking_page', [ $this, 'booking_currency_dropdown' ] );
@@ -322,7 +322,7 @@ class MulticurrencyHooks implements \IWPML_Action {
 
 		if ( in_array( 'booking', wp_get_post_terms( $postId, 'product_type', [ 'fields' => 'names' ] ) ) && $this->woocommerce_wpml->products->is_original_product( $postId ) ) {
 
-			$customCostsStatus = get_post_meta( $postId, '_wcml_custom_costs_status', true );
+			$customCostsStatus = get_post_meta( $postId, Prices::CUSTOM_COSTS_STATUS_KEY, true );
 
 			$checked = ! $customCostsStatus ? 'checked="checked"' : ' ';
 
@@ -352,7 +352,7 @@ class MulticurrencyHooks implements \IWPML_Action {
 
 		if ( isset( $_POST['_wcml_custom_costs'] ) && isset( $nonce ) && wp_verify_nonce( $nonce, 'wcml_save_custom_costs' ) ) {
 
-			update_post_meta( $postId, '_wcml_custom_costs_status', $_POST['_wcml_custom_costs'] );
+			update_post_meta( $postId, Prices::CUSTOM_COSTS_STATUS_KEY, $_POST['_wcml_custom_costs'] );
 
 			if ( 1 === (int) $_POST['_wcml_custom_costs'] ) {
 
@@ -815,7 +815,7 @@ class MulticurrencyHooks implements \IWPML_Action {
 
 			$original_id = $this->woocommerce_wpml->products->get_original_product_id( $object_id );
 
-			$cost_status = get_post_meta( $original_id, '_wcml_custom_costs_status', true );
+			$cost_status = get_post_meta( $original_id, Prices::CUSTOM_COSTS_STATUS_KEY, true );
 
 			$currency = $this->woocommerce_wpml->multi_currency->get_client_currency();
 
@@ -828,7 +828,7 @@ class MulticurrencyHooks implements \IWPML_Action {
 				if ( get_post_type( $object_id ) == 'bookable_person' ) {
 
 					$original_id = apply_filters( 'translate_object_id', wp_get_post_parent_id( $object_id ), 'product', true, $this->woocommerce_wpml->products->get_original_product_language( wp_get_post_parent_id( $object_id ) ) );
-					$cost_status = get_post_meta( $original_id, '_wcml_custom_costs_status', true );
+					$cost_status = get_post_meta( $original_id, Prices::CUSTOM_COSTS_STATUS_KEY, true );
 
 					$value = get_post_meta( $object_id, $meta_key . '_' . $currency, true );
 

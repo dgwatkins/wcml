@@ -44,7 +44,7 @@ class TestPrices extends \OTGS_TestCase {
 		] );
 
 		\WP_Mock::userFunction( 'get_post_meta', [
-			'args'   => [ $productId, '_wcml_custom_costs_status', true ],
+			'args'   => [ $productId, Prices::CUSTOM_COSTS_STATUS_KEY, true ],
 			'return' => '1',
 		] );
 
