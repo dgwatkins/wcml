@@ -20,6 +20,7 @@ class Factory extends ComponentFactory implements IStandAloneAction {
 
 		if ( wcml_is_multi_currency_on() ) {
 			$hooks[] = new MulticurrencyHooks( getWooCommerceWpml() );
+			$hooks[] = new Prices();
 		}
 
 		if ( ! isStandAlone() ) {
