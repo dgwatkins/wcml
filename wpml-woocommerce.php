@@ -113,7 +113,6 @@ function wcml_loader() {
 		\WCML\Reports\Categories\Query::class,
 		\WCML\Reports\Orders\Hooks::class,
 		\WCML\Multicurrency\Analytics\Factory::class,
-		\WCML\Multicurrency\Analytics\Export::class,
 		\WCML\Setup\BeforeHooks::class,
 		\WCML\AdminNotices\MultiCurrencyMissing::class,
 		\WCML\Products\Hooks::class,
